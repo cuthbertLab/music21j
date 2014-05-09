@@ -1,0 +1,130 @@
+<html>
+<head>
+  <title>VexFlow - HTML5 Music Engraving</title>
+  <link href='http://fonts.googleapis.com/css?family=OFL+Sorts+Mill+Goudy+TT|Yanone+Kaffeesatz|Tangerine'
+   rel='stylesheet' type='text/css'>
+  <link href="vextab/tabdiv.css" media="screen" rel="Stylesheet" type="text/css" />
+  <link href="vextab/style.css" media="screen" rel="Stylesheet" type="text/css" />
+
+  <!-- VexFlow Compiled Source -->
+  <script src="vextab/support/vexflow-min.js"></script>
+  <script src="vextab/support/jquery.js"></script>
+  <!-- <script src="vextab/support/raphael.js"></script> -->
+  <script src="vextab/support/underscore-min.js"></script>
+  <script src="vextab/support/tabdiv-min.js"></script>
+</head>
+
+<body>
+  <div class="vex">
+    <a href="http://my.vexflow.com">My VexFlow</a> |
+    <a href="http://vexflow.com/vextab">VexTab</a> |
+    <a href="http://vexmachines.com">VexMachines</a> |
+    <a href="http://0xfe.blogspot.com">0xfe</a>
+  </div>
+
+  <div class="header">
+    <h1>VexFlow</h1>
+    <div class="main">
+      <b>Music Engraving in JavaScript and HTML5</b>
+    </div>
+    pre-pre-pre-alpha by <a href="http://0xfe.blogspot.com">0xfe</a>.
+  </div>
+
+  <div class="content">
+    <h2>What is VexFlow?</h2>
+
+    <div class="description">
+      VexFlow is an open-source online music notation rendering API. It is written
+      completely in JavaScript, and runs right in the browser. VexFlow supports
+      HTML5 Canvas and SVG.
+      <p/>
+      The score below was rendered in your browser.
+    </div>
+
+    <div style="width:680; margin-left: auto; margin-right: auto;">
+    <div class="vex-tabdiv"
+      width=700 scale=0.9 editor="false"
+      editor_width=640 editor_height=230>options space=20
+tabstave notation=true key=A time=4/4
+notes :q =|: (5/2.5/3.7/4) :8 7-5h6/3 ^3^ 5h6-7/5 ^3^ :q 7V/4 |
+notes :8 t12p7/4 s5s3/4 :8 3s:16:5-7/5 :h p5/4
+text :w, |#segno, ,|, :hd, , #tr
+
+
+options space=25
+tabstave notation=true
+notes :q (5/4.5/5) (7/4.7/5)s(5/4.5/5) ^3^
+notes :8 7-5/4 $.a./b.$ (5/4.5/5)h(7/5) =:|
+notes :8 (12/5.12/4)ds(5/5.5/4)u 3b4/5
+notes :h (5V/6.5/4.6/3.7/2) $.italic.let ring$ =|=
+text :h, ,.font=Times-12-italic, D.S. al coda, |#coda
+text :h, ,.-1, .font=Arial-14-bold,A13
+text ++, .23, #f
+</div>
+
+    <p/>
+    <h2>Where Do I Start?</h2>
+    <div class="docs">
+    If you want to use VexFlow to publish your music online, check out
+    <a href="http://my.vexflow.com">My VexFlow</a>.
+      <p/>
+      If you're a programmer interested in rendering music notation in your
+      own applications, take a look at
+    <a href="docs/tutorial.html">The VexFlow Tutorial</a>.
+    </div>
+
+
+    <p/>
+    <h2>Features</h2>
+    <div class="docs">
+      It sings, it dances, it does your dishes. Actually it does none of that.
+      But it can render a mean score. New features in VexFlow are incorporated
+      quickly into <a href="http://my.vexflow.com">My VexFlow</a>.
+      
+      <p/>Have a look
+      at the <a href="http://my.vexflow.com/articles/53?source=enabled">
+        New in My VexFlow</a> page for a comprehensive list of features.
+    </div>
+
+    <h2>What is VexTab?</h2>
+    <div class="description">
+      <a href="http://vexflow.com/vextab">VexTab</a> is an easy-to-use
+      language to quickly create, edit, and render standard notation and guitar
+      tablature.
+      <p/>
+      Follow the tutorial on the <a href="vextab/tutorial.html">VexTab Tutorial</a> page
+      to get started using VexTab.
+    </div>
+
+    <h2>The Code</h2>
+    <div class="description">
+      VexFlow is distributed under the MIT license, and all the code is
+      available at the <a href="http://github.com/0xfe/vexflow">VexFlow GitHub
+        Repository</a>.
+
+      <p/>
+      VexTab is an open specification and the reference implementation is
+      open source. This implementation is free for non-commercial use. See details
+      at the <a href="http://github.com/0xfe/vextab">VexTab GitHub
+        Repository</a>.
+    </div>
+
+    <h2>Stay in Touch</h2>
+    Keep up with changes at
+    <a href="http://0xfe.blogspot.com">the 0xFE blog</a> or
+    <a href="https://plus.google.com/111867441083313519234/posts">Google Plus</a>.
+  </div>
+<script>
+ var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-8346562-6']);
+  _gaq.push(['_setDomainName', 'vexflow.com']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+</body>
+</html>
