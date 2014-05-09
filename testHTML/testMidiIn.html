@@ -1,0 +1,213 @@
+<html>
+<head>
+<!-- for MSIE 10 on Windows 8 -->
+<meta http-equiv="X-UA-Compatible" content="requiresActiveX=true"/>
+ <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+ <!-- midi.js package -->
+ <script src="/m21j/ext/midijs/js/MIDI/AudioDetect.js" type="text/javascript"></script>
+ <script src="/m21j/ext/midijs/js/MIDI/LoadPlugin.js" type="text/javascript"></script>
+ <script src="/m21j/ext/midijs/js/MIDI/Plugin.js" type="text/javascript"></script>
+ <script src="/m21j/ext/midijs/js/MIDI/Player.js" type="text/javascript"></script>
+ <script src="/m21j/ext/midijs/js/Window/DOMLoader.XMLHttp.js" type="text/javascript"></script>
+ <script src="/m21j/ext/midijs/js/Window/DOMLoader.script.js" type="text/javascript"></script>
+ <!-- extras -->
+ <script src="/m21j/ext/midijs/inc/Base64.js" type="text/javascript"></script>
+ <script src="/m21j/ext/midijs/inc/base64binary.js" type="text/javascript"></script>
+ <!-- vexflow -->
+ <script src='http://code.jquery.com/jquery-latest.js'></script>
+ <script src='http://www.vexflow.com/support/vexflow-min.js'></script>
+
+ <!-- jQuery UI for drag and drop... -->
+ <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.2/jquery-ui.min.js" type="text/javascript" ></script>
+
+ <!-- music21j -->
+ <script src="/m21j/music21j.js" type="text/javascript"></script>
+ 
+ <!-- music21theory -->
+ <script src="/m21j/music21theory.js" type="text/javascript"></script>
+ <link rel="stylesheet" href="http://web.mit.edu/music21/doc/_static/m21.css" type="text/css" />
+ <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Source+Code+Pro|Open+Sans:300italic,400italic,700italic,400,300,700" type="text/css" />
+
+<style>
+.lightInput { border: 1px gray dotted;
+			  background-color: #ffffcc;
+			   }
+.unanswered { background-color: #ffffbb; 
+			  opacity: .7;
+}
+.correct    { background-color: #bbffbb; }
+.incorrect  { background-color: #ffbbbb; }
+
+</style>
+
+</head>
+<body>
+<div id="jazzHere"></div>
+
+<script><!--
+/* create the Jazz plug-in.
+
+Download at http://jazz-soft.net/download/Jazz-Plugin/
+
+*/
+
+var Jazz;
+
+function create_plugin (where) {
+ var obj=document.createElement('object');
+ obj.classid="CLSID:1ACE1618-1C7D-4561-AEE1-34842AA85E90";
+ if(!obj.isJazz) obj.type="audio/x-jazz";
+ obj.style.visibility='hidden';
+ obj.style.width='0px'; obj.style.height='0px';
+ where.appendChild(obj);
+ if(obj.isJazz) return obj;
+ where.removeChild(obj);
+ throw "Cannot create Jazz-Plugin";
+}
+-->
+
+window.onload = function () {
+	Jazz = create_plugin ( document.getElementById('jazzHere') );
+	populateMidiList2();
+	
+	MIDI.loadPlugin({
+		soundfontUrl: "/m21j/ext/midijs/soundfont/",
+		instrument: "acoustic_grand_piano",
+		callback: function() {
+			M21Theory.playMotto();
+			startTime = new Date().getTime();
+		}
+	});
+}
+
+var current_in;
+
+MidiEvent = function (t, a, b, c) {
+	this.timing = t;
+	this.data1 = a; 
+	this.data2 = b; 
+	this.data3 = c; 
+	this.midiCommand = (a >> 4);
+	
+	this.noteOff = (this.midiCommand == 8);
+	this.noteOn = (this.midiCommand == 9);
+	
+	this.midiNote;
+	if (this.noteOn || this.noteOff) {
+		this.midiNote = this.data2;
+		this.velocity = this.data3;
+	}
+	
+	this.noteInfo = function () {
+		if (this.noteOn) {
+			console.log('Note on: ' + this.midiNote + " ; Velocity: " + this.velocity);
+		}
+	};
+	this.sendToMIDIjs = function () {
+		if (this.noteOn) {
+			MIDI.noteOn(0, this.midiNote, this.velocity, 0);
+		} else if (this.noteOff) {
+			MIDI.noteOff(0, this.midiNote, 0);		
+		}
+	};
+	this.music21Note = function () {
+		var m21n = new Music21.Note();
+		m21n.pitch.ps = this.midiNote;
+		return m21n;
+	}
+}
+
+var usedNotes = [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1];
+var noteIndex = 0;
+
+function limitToTwelveToneRow(n) {
+	if (n.noteOn) {
+		var pc = n.midiNote % 12;
+		var found = -1;
+		for (var i = 0; i < usedNotes.length; i++) {
+			if (pc == usedNotes[i]) {
+				found = i;
+				console.log("found " + i);
+				break;
+			}
+		}
+		if (found == -1) {
+			usedNotes[noteIndex] = pc;
+			console.log(usedNotes + " " + noteIndex);
+			noteIndex += 1;
+			noteIndex = noteIndex % usedNotes.length;
+			n.sendToMIDIjs();
+		} else if (found == noteIndex - 1) {
+			// allow immediate repetition
+			n.sendToMIDIjs();
+			console.log(usedNotes + " --  " + noteIndex);
+		}
+	} else { 
+		n.sendToMIDIjs();
+	}
+}
+
+var s = new Music21.Stream();
+
+function displayStream(me) {
+	me.sendToMIDIjs();
+	if (me.noteOn) {
+		var m21n = me.music21Note();
+		//console.log(m21n.pitch.nameWithOctave);
+		if (s._elements.length > 7) {
+			s._elements = s._elements.slice(1)
+		}
+		s.append(m21n);
+		var canv = s.replaceLastCanvas();
+		canv.onclick = function (e) {
+			var offset = $(this).offset();
+			console.log(e.clientX - offset.left);
+		}
+	}
+}
+
+function midiProc(t, a, b, c){
+	var me = new MidiEvent(t, a, b, c);
+	displayStream(me);
+	//me.limitToTwelveToneRow();
+}
+
+function populateMidiList2() {
+	var midiSelectDiv = $('#midiSelect');
+	var newOption = $("<select>").attr('id','midiInSelect');
+	newOption.change( function () { 
+		var selectedInput = $('#midiSelect option:selected').text();
+		current_in = Jazz.MidiInOpen(selectedInput, midiProc);
+		console.log("current input changed to: " + current_in);
+	} );
+	var midiOptions = Jazz.MidiInList();
+	var appendOption = $("<option value='None selected'>None selected</option>");
+	newOption.append(appendOption);
+	
+	var anySelected = false;
+	for (var i = 0; i < midiOptions.length; i++) {
+		var appendOption = $("<option value='" + midiOptions[i] + "'>" + midiOptions[i] + "</option>");
+		if (midiOptions[i] == current_in) {
+			appendOption.attr("selected", true);
+			anySelected = true;
+		}
+		console.log(appendOption);
+		newOption.append(appendOption);
+	}
+	midiSelectDiv.append(newOption);
+	if (anySelected == false && midiOptions.length > 0) {
+		midiSelectDiv.val(midiOptions[0]);
+		current_in = Jazz.MidiInOpen(midiOptions[0], midiProc);
+	}
+}
+
+</script>
+<div>
+MIDI Input: <div id="midiSelect" />
+</div>
+<div>
+<canvas />
+</div>
+
+</body>
+</html>

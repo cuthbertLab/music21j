@@ -4,9 +4,9 @@ M21Theory -- supplemental routines for music theory teaching and
 assessment using the javascript reimplementation of music21 (music21j).  
 See http://web.mit.edu/music21/ for more details.
 
-Copyright (c) 2013, Michael Scott Cuthbert and cuthbertLab
+Copyright (c) 2013-14, Michael Scott Cuthbert and cuthbertLab
 
-This version is released for use in 2013–14 in non-minimized form under LGPL or 
+This version is released for use in 2013-14 in non-minimized form under LGPL or 
 proprietary licenses (your choice; the former is Free; the latter costs money,
 but lets you use minimizers, etc. to optimize web loading).  The permanent license 
 is still under discussion; please contact cuthbert@mit.edu for more information.

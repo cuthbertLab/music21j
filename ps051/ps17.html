@@ -1,0 +1,110 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns = "http://www.w3.org/1999/xhtml">
+<head>
+ <title>21M.051: Problem Set 17</title>
+ <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+ <script src='../ext/jquery/jquery-1.10.2.min.js'></script>
+ <!-- midi.js package -->
+ <script src="../ext/midijs/js/MIDI/AudioDetect.js" type="text/javascript"></script>
+ <script src="../ext/midijs/js/MIDI/LoadPlugin.js" type="text/javascript"></script>
+ <script src="../ext/midijs/js/MIDI/Plugin.js" type="text/javascript"></script>
+ <script src="../ext/midijs/js/MIDI/Player.js" type="text/javascript"></script>
+ <script src="../ext/midijs/js/Window/DOMLoader.XMLHttp.js" type="text/javascript"></script>
+ <script src="../ext/midijs/js/Window/DOMLoader.script.js" type="text/javascript"></script>
+ <!-- extras -->
+ <script src="../ext/midijs/inc/Base64.js" type="text/javascript"></script>
+ <script src="../ext/midijs/inc/base64binary.js" type="text/javascript"></script>
+ <!-- vexflow -->
+ <script src="../ext/vexflow/vexflow-min.js"></script>
+
+ <!-- jQuery UI for drag and drop... -->
+ <script src="../ext/jqueryPlugins/jqueryUI/jquery-ui.min.js" type="text/javascript" ></script>
+
+ <!-- music21j -->
+ <script src="../music21j.js" type="text/javascript"></script>
+ 
+ <!-- music21theory -->
+ <script src="../music21theory.js" type="text/javascript"></script>
+ <link rel="stylesheet" href="../css/m21.css" type="text/css" />
+
+
+
+<style>
+.lightInput { border: 1px gray dotted;
+			  background-color: #ffffcc;
+			  opacity: .7;
+			   }
+.unanswered { background-color: #ffffbb; 
+			  opacity: .7;
+}
+.correct    { background-color: #bbffbb; }
+.incorrect  { background-color: #ffbbbb; }
+
+</style>
+
+</head>
+<body>
+<script type="text/javascript">
+var m2;
+
+window.onload = function () {
+	MIDI.loadPlugin({
+		soundfontUrl: "../ext/midijs/soundfont/",
+		instrument: "acoustic_grand_piano",
+		callback: function() {
+			M21Theory.playMotto();
+		}
+	});
+	//M21Theory.randomGeneratorType = 'fixed';
+	//M21Theory.randomSeed = 1000;
+	//M21Theory.debug = true;
+	//Music21.debug = true;
+
+    var cc4 = new M21Theory.ChordCreationTest();
+    cc4.totalQs = 22;
+    cc4.allowEarlySubmit = true;
+    cc4.modeChoices = ['major','minor'];
+    cc4.inversionChoices = [0, 1, 2];
+    cc4.minSharps = -4;
+    cc4.maxSharps = 3;
+    cc4.assignmentId = 'inversionChordCreation';
+    cc4.title = 'Writing chords in inversion';
+    cc4.instructions = "<p>Create the appropriate chord with the proper inversion. Start by finding the right chord without inversion, then lower the appropriate note so it is below the root.</p>";
+    cc4.chordChoicesMode = {
+            'major': ['I','IV','V','vi','viio'],
+            'minor': ['i','iv','V','viio']
+    };
+    var ci = new M21Theory.ChordIdentificationTest();
+    ci.maxMistakes = 3;
+    ci.chords = M21Theory.randomShuffle(["C3 E3 G3", "E-3 G3 C4", "G3 E3 C4",
+                                           "F#2 C#3 A3", "C#2 A3 F#3", "A2 C#3 F#3", 
+                                           "G2 D3 B-3","D3 G3 B-3", "B-2 D3 G3",
+                                           "A-2 C3 E-3", "C3 E-3 A-3", "E-2 A-2 C3",
+                                           ]);
+    ci.subtype = 'inversions';
+    ci.instructions = "<p>Identify the following chords as Root Position, First Inversion, or Second Inversion. Double click on the chord to listen to it, then drag it to the appropriate space.</p>";
+       
+	var testBank = new M21Theory.TestBank();
+	testBank.testId = "ps17";
+	testBank.title = "Chords in Inversion";
+	
+    testBank.append(cc4);
+    testBank.append(ci);
+	testBank.render();
+};
+
+</script>
+<div class="related">
+	<ul><li><a href="#">21m.051 Cuthbert</a> &raquo; <a href="#">PS 17</a></li></ul>
+</div>
+<div class="document">
+  <div class="documentwrapper">
+	<div class="bodywrapper">
+	  <div class="body" id="testBank">
+	  </div>
+	</div>
+  </div>
+</div>
+
+</body>
+</html>

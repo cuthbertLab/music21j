@@ -1,0 +1,355 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns = "http://www.w3.org/1999/xhtml">
+<head>
+ <title>21M.051 Interval Worksheet</title>
+ <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+ <!-- midi.js package -->
+ <script src="/m21j/ext/midijs/js/MIDI/AudioDetect.js" type="text/javascript"></script>
+ <script src="/m21j/ext/midijs/js/MIDI/LoadPlugin.js" type="text/javascript"></script>
+ <script src="/m21j/ext/midijs/js/MIDI/Plugin.js" type="text/javascript"></script>
+ <script src="/m21j/ext/midijs/js/MIDI/Player.js" type="text/javascript"></script>
+ <script src="/m21j/ext/midijs/js/Window/DOMLoader.XMLHttp.js" type="text/javascript"></script>
+ <script src="/m21j/ext/midijs/js/Window/DOMLoader.script.js" type="text/javascript"></script>
+ <!-- extras -->
+ <script src="/m21j/ext/midijs/inc/Base64.js" type="text/javascript"></script>
+ <script src="/m21j/ext/midijs/inc/base64binary.js" type="text/javascript"></script>
+ <!-- vexflow -->
+ <script src='http://code.jquery.com/jquery-latest.js'></script>
+ <script src='http://www.vexflow.com/support/vexflow-min.js'></script>
+ <!-- music21j -->
+ <script src="/m21j/music21j.js" type="text/javascript"></script>
+ <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.2/jquery-ui.min.js"></script>
+
+ <link rel="stylesheet" href="http://web.mit.edu/music21/doc/_static/m21.css" type="text/css" />
+ <link href='http://fonts.googleapis.com/css?family=Source+Code+Pro|Open+Sans:300italic,400italic,700italic,400,300,700' rel='stylesheet' type='text/css'>
+
+<style>
+.lightInput { border: 1px gray dotted;
+			  background-color: #ffffcc; }
+.unanswered { background-color: #ffffbb; }
+.correct    { background-color: #bbffbb; }
+.incorrect  { background-color: #ffbbbb; }
+
+</style>
+
+</head>
+<body>
+<script type="text/javascript">
+
+var stopIntervalId;
+var numPlays = 0;
+var playedNote = 70;
+
+
+function refreshMe() {
+    stopIntervalId = setInterval(playSeventy, 100);
+}
+
+function drawME() {
+	var myNote = new Music21.Rest(4.0);
+    var myStream = new Music21.Stream();
+    myStream.append(myNote);
+	myStream.appendNewCanvas();
+}
+
+var allStream;
+var startTime = 0;
+
+window.onload = function () {
+	fillNameDiv();
+	MIDI.loadPlugin({
+		soundfontUrl: "/m21j/ext/midijs/soundfont/",
+		instrument: "acoustic_grand_piano",
+		callback: function() {
+			var delay = 0; // play one note every quarter second
+			var note = 60; // the MIDI note
+			var velocity = 127; // how hard the note hits
+			// play the note
+			MIDI.setVolume(0, 127);
+			MIDI.noteOn(0, note, velocity, delay);
+			MIDI.noteOff(0, note, delay + 0.75);
+			renderIntervals();
+			startTime = new Date().getTime();
+		}
+	});
+};
+
+studentName = {}; 
+function fillNameDiv() {
+	var nameDivContents = $("<h3>Enter your name here</h3>" +
+							"<p><b>First name: </b><span id='firstName'></span>" +
+							" &raquo; " + 
+							"<b>Last name: </b><span id='lastName'></span>" +
+							"<br/>&nbsp;</p>");
+	$("#nameDiv").append(nameDivContents);
+	var tempStudentInfo = localStorage["studentInfo"];
+	if (tempStudentInfo != undefined) {
+		studentName = JSON.parse(localStorage["studentInfo"]);
+	}
+	if (studentName.first == undefined) {
+		studentName.first = "";
+	}
+	if (studentName.last == undefined) {
+		studentName.last = "";
+	}
+	$("<input type='text' size='20' value='" + studentName.first + "'/>")
+		.attr('onchange','changeName("first",this.value)')
+		.attr('class', 'lightInput')
+		.appendTo("#firstName");
+	$("<input type='text' size='20' value='" + studentName.last + "'/>")
+		.attr('onchange','changeName("last",this.value)')
+		.attr('class', 'lightInput')
+		.appendTo("#lastName");	
+}
+
+function changeName(which, newName) {
+	if (which == 'first') {
+		studentName.first = newName;
+	} else if (which == 'last') {
+		studentName.last = newName;	
+	}
+    localStorage["studentInfo"] = JSON.stringify(studentName);
+}
+
+
+var totalInts = 34;
+var practiceInts = 4;
+
+function randInt(low, high) {
+	return Math.floor((Math.random() * (high - low + 1)) + low);
+}
+
+function seededRandom(index) {
+	if (index == undefined) {
+		index = 1;
+	}
+    return parseInt(Math.sin(index).toString().substr(5,9))/1E9
+}
+
+function getRandomInterval() {
+	var noteNames = ['C','D','E','F','G','A','B','C','C','C','F','F'];
+	var accidentals = ["", "", "", "", "", "", "#", "-"];
+	var randomGeneric = randInt(-5, 5);
+	if ((randomGeneric == 0) || (randomGeneric == -1)) {
+		randomGeneric = 3;
+	}
+	if (randomGeneric == 1) {
+		randomGeneric = 2;
+	}
+	
+	var genericInterval = new Music21.GenericInterval(randomGeneric);
+	var diatonicSpecifier = "P";
+	if (genericInterval.perfectable == false) {
+		var randomDiatonic = Math.floor((Math.random() * 2));
+		if (randomDiatonic == 1) {
+			diatonicSpecifier = 'm';
+		} else {
+			diatonicSpecifier = 'M';
+		}
+	}
+	var diatonicInterval = new Music21.DiatonicInterval(diatonicSpecifier, genericInterval);
+	var fullInterval = new Music21.Interval(diatonicInterval);
+	console.log(fullInterval.name);
+	
+	var noteNumber = Math.floor((Math.random()*noteNames.length));
+	var noteName = noteNames[noteNumber];
+	var accNumber = Math.floor((Math.random()*accidentals.length));
+	var accName = accidentals[accNumber];
+	var n1 = new Music21.Note(noteName + accName);
+	var p2 = fullInterval.transposePitch(n1.pitch);
+	var n2 = new Music21.Note("C");
+	n2.pitch = p2;
+	return [n1, n2, fullInterval];		
+}
+
+function renderIntervals() {
+	var disallowDoubleAccs = true;
+	var lastN1 = undefined;
+	var lastN2 = undefined;
+
+	for (var i = 0; i < totalInts; i++) {
+		var validIntervals = false;
+		do {
+			var _ = getRandomInterval(),
+				n1 = _[0],
+				n2 = _[1],
+				fullInterval = _[2];
+			validIntervals = true;
+			if ((lastN1 == n1.pitch.nameWithOctave) &&
+				(lastN2 == n2.pitch.nameWithOctave)) {
+				validIntervals = false;
+			} else if (disallowDoubleAccs) {
+				if ((n1.pitch.accidental != undefined) &&
+					(Math.abs(n1.pitch.accidental.alter) > 1)) {
+					validIntervals = false;	
+				} else if ((n2.pitch.accidental != undefined) &&
+					(Math.abs(n2.pitch.accidental.alter) > 1)) {
+					validIntervals = false;			
+				} else if ((n1.pitch.name == "C-") ||
+							(n1.pitch.name == "F-") ||
+							(n1.pitch.name == "B#") ||
+							(n1.pitch.name == "E#")) {
+					validIntervals = false;
+					// n.b. we allow intervals that create these notes, but not starting.			
+				} else if ((n2.pitch.name == "C-") ||
+							(n2.pitch.name == "F-") ||
+							(n2.pitch.name == "B#") ||
+							(n2.pitch.name == "E#")) {
+					// not for assignment 1 we dont...
+					validIntervals = false;
+				}		
+			}
+		} while (validIntervals == false);
+		lastN1 = n1.pitch.nameWithOctave;
+		lastN2 = n2.pitch.nameWithOctave;
+		
+		var s = new Music21.Stream();
+		if (randInt(0,1)) {
+			s.clef = Music21.Clef('treble');
+		} else {
+			s.clef = Music21.Clef('bass');
+			if (n1.pitch.diatonicNoteNum > 32) {
+				var octaveShift = -2;
+			} else {
+				var octaveShift = -1;
+			}
+			n1.pitch.octave = n1.pitch.octave + octaveShift;
+			n2.pitch.octave = n2.pitch.octave + octaveShift;
+			console.log("name1: " + n1.pitch.name);
+			console.log("octave: " + n1.pitch.octave);
+			console.log("name2: " + n2.pitch.name);
+			console.log("octave: " + n2.pitch.octave);
+		}
+		
+		s.append(n1);
+		s.append(n2);
+		var nc = s.createPlayableCanvas();
+		var niceDiv = $("<div style='width: 180px; float: left; padding-bottom: 20px'></div>");
+		niceDiv.append(nc);
+		if (i < practiceInts) {
+			niceDiv.append( $("<div style='padding-left: 50px; position: relative; top: -20px'>" + fullInterval.name + "</div>") );
+		} else {
+			var inputBox = $("<input type='text' size='5' class='unanswered'/>")
+							 .change( function () { validateInterval(this, this.storedInterval.name) } )
+							 .focus( function () { this.storedStream.playStream() } )
+							 ;
+			inputBox[0].storedStream = s;
+			inputBox[0].storedInterval = fullInterval;
+			niceDiv.append( $("<div style='padding-left: 30px; position: relative; top: -20px'/>")
+							 .append(inputBox) );
+
+		}
+		$('#themeDiv').append(niceDiv);
+	}
+}
+
+var numWrong = 0;
+var numRight = 0;
+
+
+function validateInterval(valueBox, intervalName) {
+	var intervalGiven = valueBox.value;
+	//console.log(intervalName);
+	//console.log(intervalGiven);
+	
+	if (intervalName == intervalGiven) {
+		if (valueBox.className != 'correct') {
+			numRight += 1;
+		} // do not decrement numWrong...
+		valueBox.className = 'correct';
+	} else {
+		if (valueBox.className != 'incorrect') {
+			numWrong += 1;
+		}
+		if (valueBox.className == 'correct') {
+			numRight += -1;
+		}
+		valueBox.className = 'incorrect';
+	}
+	console.log("Right " + numRight + " ; Wrong " + numWrong);
+	if (numRight == totalInts - practiceInts) {
+		if (numWrong <= 8) {
+			$("<br clear='all'><div  style='float: right'><b>Great Work!</b><br> Make sure your <b>name</b> is filled in above and "+
+			  "click <input type='button' onClick='submitCorrect()' value='SUBMIT' class='submitButton'/> "+
+			  "to finish. Add any comments here: <br><textarea id='commentTextArea' rows='7' cols='80'></textarea></div>").appendTo("#themeDiv");
+		} else {
+			$("<br clear='all'><div  style='float: right'>You got them all!<br>" +
+			"But you need a bit more practice.  Hit <b>reload to try again</b> and " +
+			"see if you can work slowly and have fewer errors next time. Use a piano or " +
+			"the keyboard layout in the back of the book or print one from online.</div>"
+			).appendTo("#themeDiv");
+		
+		}
+	}
+	
+}
+
+jsonError = undefined;
+
+function submitCorrect() {
+	var textComments = $("#commentTextArea").val();
+	if (studentName.last == "") {
+		alert("You are submitting without a last name! you will not get credit; fill form and submit again...");
+	}
+	var endTime = Math.floor((new Date().getTime() - startTime)/1000)
+	$.ajax({
+		type: "GET",
+		url: "http://ciconia.mit.edu/m21j/intervalsResponse.cgi",
+		data: { comments: textComments,
+				first: studentName.first,
+				last: studentName.last,
+				totalTime: endTime
+				},
+		dataType: 'json',
+		success: function (data) { alert(data.reply) },
+		error: function (data, errorThrown) { jsonError = data;
+		alert("Got a problem -- print this page as a PDF and email it to cuthbert@mit.edu: " + data) }
+		});		
+}
+
+</script>
+    <div class="related">
+		<ul><li><a href="#">21m.051 Cuthbert</a> &raquo; <a href="#">Intervals</a></li></ul>
+	</div>
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+
+<h2>Interval identification (General and Specific)</h2>
+
+<p>
+For each set of <b>ascending</b> or <b>descending</b> intervals below, write in the
+yellow box the abbreviated name of the interval using the terms
+"<b>m</b>" for <b>minor</b>, "<b>M</b>" for major, or "<b>P</b>"
+for perfect (<i>N.B.: capital P</i>). The intervals range in size
+from m2 to P5.  The first four are done for you.<p>
+
+<p>
+<b>Click any score fragment to hear the intervals played</b>.  Practice
+learning the sounds of these intervals.
+<p>
+
+<p>
+When you have entered your response, the box will turn green on
+correct answers or red for incorrect answers. You must have <b>all boxes
+green</b> to submit this problem set and you may not have more than eight
+incorrect answers <b>in one session</b>; if you have gotten than eight incorrect, hit <b>Reload</b>
+to get another set of intervals.
+</p>
+
+<p>When you enter in an interval you can hit <b>tab</b> to move to the next field.</p>
+
+<div id="nameDiv"></div>
+<div id="themeDiv" style="height: 2000px">
+</div>
+
+			</div>
+		</div>
+	</div>
+</div>
+
+
+
+</body>
+</html>

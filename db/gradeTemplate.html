@@ -1,0 +1,184 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns = "http://www.w3.org/1999/xhtml">
+<head>
+<title>Cuthbert gradebook</title>
+<script type="text/javascript" src='http://code.jquery.com/jquery-latest.js'></script>
+<script type="text/javascript" src="../ext/jqueryPlugins/tablesorter/jquery.tablesorter.js"></script> 
+<script>
+var gradesInfo = %(jsonInfo)s;
+var filterCuthbert = true;
+
+var lastToEmail = {
+		'Al-Rashed': 'alrashed',
+		'Browne': 'dabrowne',
+		'Chang': 'bchang',
+		'Han': 'than',
+		'Jimenez': 'gabrielj',
+		'Joh': 'katiejoh',
+		'King': 'erinking',
+		'Landman': 'landmann',
+		'Ogutveren': 'nursen',
+		'Pantawongdecha': 'payutp',
+		'Park': 'pdhyun',
+		'Sanneman': 'lindsays',
+		'Shahbazi Moghaddam': 'arvin',
+		'Tsang': 'shirleyt',
+		'Vasiliev': 'vasilvv',
+		'Wandia': 'wandia',
+		};
+
+function processGrades(bankFilter) {
+    var tableInfo = $("#nameTable");
+    var thead = $("<thead/>");
+    var header = $("<tr>" +
+"        <th width='100'>Date</th>" +
+"        <th>Last</th>" +
+"        <th>First</th>" +
+"        <th>Bank</th>" +
+"        <th>Section</th>" +
+"        <th style='text-align: right'>Time</th>" +
+"        <th>Right</th>" +
+"        <th>Wrong</th>" +
+"        <th>Unans.</th>" +
+"        <th>Mista.</th>" +
+"        <th>Comments</th>" +
+"    </tr>");
+    thead.append(header);
+    tableInfo.append(thead);
+    
+    var tbody = $("<tbody/>");
+    
+    var lastLast = undefined;
+    var lastColor = '#eeeeff';
+	$.each(gradesInfo, function(i, row) {
+	    var time = row[0],
+	        first = row[1],
+	        last = row[2],
+	        bank = row[3],
+	        section = row[4],
+	        completionTime = row[5],
+	        comments = row[6],
+	        scoreSummary = row[7]
+	    ;
+	    if (bankFilter && bank != bankFilter) {
+	    	return;
+	    }
+	    
+	    if (filterCuthbert) {
+	    	if (last == 'Cuthbert') {
+	    		return;
+	    	}
+	    }
+	    if (last != lastLast) {
+	    	lastLast = last;
+	    	if (lastColor == '#eeeeff') {
+	    		lastColor = '#ffffee';
+	    	} else {
+	    		lastColor = '#eeeeff';
+	    	}
+	    	//console.log('newClass = ' + lastColor);
+	    }
+		var rowHtml = $("<tr/>").css('background-color', lastColor);
+		
+		var dateObj = new Date(time * 1000);
+		var dateMin = (dateObj.getMinutes() < 10) ? "0" + dateObj.getMinutes() : dateObj.getMinutes();
+		var dateStr = dateObj.getMonth() + "/" + dateObj.getDate() + " " + dateObj.getHours() + ":" + dateMin;
+		
+		var completionHrs = Math.floor(completionTime/3600);
+		var remCompletion = completionTime - 3600*completionHrs;
+		var completionMin = Math.floor(remCompletion/60);
+		var completionMinStr = (completionMin < 10) ? "0" + completionMin.toString() : completionMin.toString();
+        
+		remCompletion = remCompletion - 60*completionMin;
+		var completionSec = Math.floor(remCompletion);
+	    var completionSecStr = (completionSec < 10) ? "0" + completionSec.toString() : completionSec.toString();
+		
+	    var completionStr;
+	    if (completionHrs > 0) {
+			completionStr = completionHrs.toString() + ":" + completionMinStr + ":" + completionSecStr;
+		} else if (completionMin > 10) {
+			completionStr = completionMinStr + ":" + completionSecStr;
+		} else {
+			// less than ten min
+			completionStr = completionMin.toString() + ":" + completionSecStr;
+		}
+		
+		
+    	var timeCell = $("<td>").append(dateStr);
+    	timeCell.attr('time', time);
+    	rowHtml.append(timeCell);
+    	
+    	var lastInfo = last.substr(0, 10);
+    	if (lastToEmail[last]) {
+    		lastInfo = $("<a href='mailto:" + lastToEmail[last] + "@mit.edu'>" + lastInfo + "</a>");
+    	}
+    	
+        var lastCell = $("<td>").append(lastInfo);
+        rowHtml.append(lastCell);
+        var firstCell = $("<td>").append(first);
+        rowHtml.append(firstCell);
+        var bankCell = $("<td>").append(bank);
+        rowHtml.append(bankCell);
+        var sectionCell = $("<td>").append(section);
+        rowHtml.append(sectionCell);
+        var completionCell = $("<td>").append(completionStr).css('text-align','right');
+        completionCell.attr('time', completionTime);
+        rowHtml.append(completionCell);
+        
+        scoreSummary = scoreSummary.replace(/u\'/g, '"');
+        scoreSummary = scoreSummary.replace(/'/g, '"');
+        var scoreDict = JSON.parse(scoreSummary);
+        $.each(['right', 'wrong', 'unanswered', 'mistakes'], function (i,n) {
+        	//console.log(n);
+        	var val = scoreDict[n];
+            var valCell = $("<td>").append(val.toString()).css('text-align','right');
+            rowHtml.append(valCell);
+        	
+        });
+        
+        if (comments == 'no comment') {
+        	comments = '';
+        }
+        var commentCell = $("<td>").append(comments);
+        rowHtml.append(commentCell);
+        
+    	tbody.append(rowHtml);
+    });
+	tableInfo.append(tbody);
+	tableInfo.tablesorter({textExtraction: function(node) { 
+		if (node.getAttribute('time') != null) {
+			return node.getAttribute('time');
+		} else {
+			console.log(node.innerText);
+			return node.innerText;
+		}
+	}  } );
+}
+
+function changeFilter() {
+	filterVal = $(this).val();
+	$("#nameTable").empty();
+	processGrades(filterVal);
+}
+
+window.onload = function () {
+	processGrades();
+	$("#filterInput").on('change', changeFilter);
+}
+
+</script>
+<style>
+    BODY { font-family: "Gill sans"}
+    TH { text-align: left};
+    TD { padding-right: 10px; vertical-align: top};
+    .rowAlternateOne { background-color: #eeeeff};
+    .rowAlternateTwo { background-color: #ffffee};
+</style>
+
+<body>
+<div style="text-align: center">Bank Filter: <input type="text" width="30" id="filterInput"/></div>
+<table id='nameTable' class='tablesorter'>
+</table>
+
+</body>
+</html>

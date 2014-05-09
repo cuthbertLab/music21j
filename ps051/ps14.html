@@ -1,0 +1,164 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns = "http://www.w3.org/1999/xhtml">
+<head>
+ <title>21M.051: Problem Set 14</title>
+ <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+ <script src='../ext/jquery/jquery-1.10.2.min.js'></script>
+ <!-- midi.js package -->
+ <script src="../ext/midijs/js/MIDI/AudioDetect.js" type="text/javascript"></script>
+ <script src="../ext/midijs/js/MIDI/LoadPlugin.js" type="text/javascript"></script>
+ <script src="../ext/midijs/js/MIDI/Plugin.js" type="text/javascript"></script>
+ <script src="../ext/midijs/js/MIDI/Player.js" type="text/javascript"></script>
+ <script src="../ext/midijs/js/Window/DOMLoader.XMLHttp.js" type="text/javascript"></script>
+ <script src="../ext/midijs/js/Window/DOMLoader.script.js" type="text/javascript"></script>
+ <!-- extras -->
+ <script src="../ext/midijs/inc/Base64.js" type="text/javascript"></script>
+ <script src="../ext/midijs/inc/base64binary.js" type="text/javascript"></script>
+ <!-- vexflow -->
+ <script src="../ext/vexflow/vexflow-min.js"></script>
+
+ <!-- jQuery UI for drag and drop... -->
+ <script src="../ext/jqueryPlugins/jqueryUI/jquery-ui.min.js" type="text/javascript" ></script>
+
+ <!-- music21j -->
+ <script src="../music21j.js" type="text/javascript"></script>
+ 
+ <!-- music21theory -->
+ <script src="../music21theory.js" type="text/javascript"></script>
+ <link rel="stylesheet" href="../css/m21.css" type="text/css" />
+
+
+
+<style>
+.lightInput { border: 1px gray dotted;
+			  background-color: #ffffcc;
+			  opacity: .7;
+			   }
+.unanswered { background-color: #ffffbb; 
+			  opacity: .7;
+}
+.correct    { background-color: #bbffbb; }
+.incorrect  { background-color: #ffbbbb; }
+
+</style>
+
+</head>
+<body>
+<script type="text/javascript">
+var m2;
+
+window.onload = function () {
+	MIDI.loadPlugin({
+		soundfontUrl: "../ext/midijs/soundfont/",
+		instrument: "acoustic_grand_piano",
+		callback: function() {
+			M21Theory.playMotto();
+		}
+	});
+	//M21Theory.randomGeneratorType = 'fixed';
+	//M21Theory.randomSeed = 1000;
+	//M21Theory.debug = true;
+	//Music21.debug = true;
+
+	var ks1 = new M21Theory.KeySignatureTest();
+	ks1.allowEarlySubmit = true;
+	ks1.totalQs = 8;
+	ks1.instructions = "<p>More review of major Key Signatures...</p>";
+	
+	var ks2 = new M21Theory.KeySignatureTest();
+	ks2.allowEarlySubmit = true;
+	ks2.mode = 'minor';
+	ks2.minSharps = -5;
+	ks2.maxSharps = 4;
+	ks2.title = 'Minor Key Signature';
+	ks2.assignmentId = 'minorKeySignatures';
+	ks2.instructions = "<p>Now identify the minor key indicated by each of these key signatures.  Remember to write MINOR key names with lowercase letters... They're hard, so go slow. The minor key has three sharps less (or three flats more) than the major key of the same name.</p>";
+	
+	
+	var scales = new M21Theory.ScaleMajorMinorWrittenTest();
+    scales.instructions = "<p>More work on identifying major and minor scales by sight OR by ear.</p>";
+	
+	var scales2 = new M21Theory.ScaleMajorMinorWrittenTest();
+	scales2.hide367 = true;
+	scales2.assignmentId = 'hiddenScales';
+	scales2.instructions = "<p>Same as above, but now scale degrees ^3, ^6, and ^7, are missing, so you'll need to do this by ear. Now descending scales are also tested</p>";
+	scales2.totalQs = 12;
+	
+    var cc = new M21Theory.ChordCreationTest();
+    cc.allowEarlySubmit = true;
+    cc.modeChoices = ['minor'];
+    cc.chordChoicesMode = {'minor': ['V']};
+    cc.minSharps = -4;
+    cc.maxSharps = 2;
+    cc.assignmentId = 'VinMinor';
+    cc.title = 'Dominant Chord Review';
+    cc.instructions = "<p>Create a major chord on the Dominant in each of the following keys.  Since the Dominant chord is the same in Major and Minor, this is a review of what you know from major.</p>"
+
+    var cc3 = new M21Theory.ChordCreationTest();
+    cc3.allowEarlySubmit = true;
+    cc3.modeChoices = ['minor'];
+    cc3.chordChoicesMode = {'minor': ['viio']};
+    cc3.minSharps = -4;
+    cc3.maxSharps = 2;
+    cc3.assignmentId = 'viioinMinor';
+    cc3.title = 'Diminished chords on the leading tone';
+    cc3.instructions = "<p>Create a diminished chord on the leading tone in each of the following minor keys.  The diminished chord has two minor thirds in a row, creating a diminished fifth.  The diminished chord on the leading tone is the same in Major and Minor, so you will be learning skills for both modes. Make sure first that you find the leading tone properly!</p>"
+
+    var cc2 = new M21Theory.ChordCreationTest();
+    cc2.allowEarlySubmit = true;
+    cc2.modeChoices = ['minor'];
+    cc2.chordChoicesMode = {'minor': ['V7']};
+    cc2.minSharps = -4;
+    cc2.maxSharps = 2;
+    cc2.assignmentId = 'V7inMinor';
+    cc2.title = 'Dominant Seventh Chords';
+    cc2.instructions = "<p>Create a dominant-seventh chord in each of the following minor keys.  The dominant seventh is like a dominant triad in the lowest 3 notes and a diminished triad in the highest three notes.  The Dominant Seventh chord is the same in Major and Minor, so you will be learning skills for both modes.</p>"
+    
+    var cc4 = new M21Theory.ChordCreationTest();
+    cc4.allowEarlySubmit = true;
+    cc4.modeChoices = ['minor'];
+    cc4.chordChoicesMode = {'minor': ['viio7']};
+    cc4.minSharps = -4;
+    cc4.maxSharps = 2;
+    cc4.assignmentId = 'viio7inMinor';
+    cc4.title = 'Diminished seventh chords on the leading tone';
+    cc4.instructions = "<p>Create a diminished-seventh chord on the leading tone in each of the following minor keys.  The diminished seventh chord is a diminished seventh with another minor third added on top of it. It is generally used only in minor keys.</p>";
+
+    var ctp = new M21Theory.FirstSpecies();
+    ctp.totalQs = 1;
+    ctp.title = 'First Species Counterpoint Review';
+    ctp.instructions = '<p>Like before, but you only need to do one.</p>';
+
+	var testBank = new M21Theory.TestBank();
+	testBank.testId = "ps14";
+	testBank.title = "Seventh chords, Keys in the minor mode, etc.";
+	//testBank.instructions = "When you get stuck, read Duckworth, <i>Music Fundamentals</i>, chp. 9 and 10; You may use a piano to do these.";
+    testBank.instructions = "<p>Definitely review Duckworth, chp. 10 and have a keyboard nearby (or at least the drawing in the back of the book) when you do these NINE parts.</p>";
+	
+	testBank.append(ks1);
+	testBank.append(ks2);
+	testBank.append(scales);
+	testBank.append(scales2);
+    testBank.append(cc);
+    testBank.append(cc3);
+    testBank.append(cc2);
+    testBank.append(cc4);
+    testBank.append(ctp);
+	testBank.render();
+};
+
+</script>
+<div class="related">
+	<ul><li><a href="#">21m.051 Cuthbert</a> &raquo; <a href="#">PS 14</a></li></ul>
+</div>
+<div class="document">
+  <div class="documentwrapper">
+	<div class="bodywrapper">
+	  <div class="body" id="testBank">
+	  </div>
+	</div>
+  </div>
+</div>
+
+</body>
+</html>
