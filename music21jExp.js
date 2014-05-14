@@ -2914,3 +2914,107 @@ Music21.RenderNotationDivs = function (classTypes) {
 		}
 	}
 };
+
+Music21.Dynamic = function (value) {
+    shortNames = ['pppppp', 'ppppp', 'pppp', 'ppp', 'pp', 'p', 'mp', 'mf', 'f', 'fp', 'sf', 'ff', 'fff', 'ffff', 'fffff', 'ffffff'];
+    longNames = {'ppp': ['pianississimo'],
+                 'pp': ['pianissimo'],
+                 'p': ['piano'],
+                 'mp': ['mezzopiano'],
+                 'mf': ['mezzoforte'],
+                 'f': ['forte'],
+                 'fp': ['fortepiano'],
+                 'sf': ['sforzando'],
+                 'ff': ['fortissimo'],
+                 'fff': ['fortississimo']
+                };
+    englishNames = {'ppp': ['extremely soft'],
+                    'pp': ['very soft'],
+                    'p': ['soft'],
+                    'mp': ['moderately soft'],
+                    'mf': ['moderately loud'],
+                    'f': ['loud'],
+                    'ff': ['very loud'],
+                    'fff': ['extremely loud']
+                   };
+    dynamicStrToScalar = {'None': [.5], //default value
+                          'n': [0],
+                          'pppp': [0.1],
+                          'ppp': [.15],
+                          'pp': [.25],
+                          'p': [.35],
+                          'mp': [.45],
+                          'mf': [.55],
+                          'f': [.7],
+                          'fp': [.75],
+                          'sf': [.85],
+                          'ff': [.85],
+                          'fff': [.9],
+                          'ffff': [.95]
+                         };
+    this._value = undefined;
+    this._volumeScalar = 'None';
+    Object.defineProperties(this, {
+        'value': {
+            get: function() {
+                return this._value;
+            },
+            set: function(value){
+                if (typeof(value) !== 'string') {
+                    //assume number
+                    if (value <= 0) {
+                        this._value = 'n';
+                    }
+                    else if (value < .11) {
+                        this._value = 'pppp';
+                    }
+                    else if (value < .16) {
+                        this._value = 'ppp';
+                    }
+                    else if (value < .26) {
+                        this._value = 'pp';
+                    }
+                    else if (value < .36) {
+                        this._value = 'p';
+                    }
+                    else if (value < .5) {
+                        this._value = 'mp';
+                    }
+                    else if (value < .65) {
+                        this._value = 'mf';
+                    }
+                    else if (value < .8) {
+                        this._value = 'f';
+                    }
+                    else if (value < .9) {
+                        this._value = 'ff';
+                    }
+                    else {
+                        this._value = 'fff';
+                    }
+                }
+                else {
+                    this._value = value;
+                }
+            }
+        },
+        'volumeScalar': {
+            get: function () {
+                if (this._volumeScalar !== "None") {
+                    return this._volumeScalar;
+                }
+                else {//try to find something better than eval
+                    if (this._value in dynamicStrToScalar){
+                        return dynamicStrToScalar[this._value][0];
+                    }
+                }
+            },
+            set: function (value) {
+                if ((typeof(value) === 'number') && (value <= 1) && (value >=0)) {
+                    this._volumeScalar = value;
+                }
+            }
+        }
+    });
+    this.value = value;
+};
