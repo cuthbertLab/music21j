@@ -2953,7 +2953,7 @@ Music21.Dynamic = function (value) {
                           'ffff': [.95]
                          };
     this._value = undefined;
-    this._volumeScalar = 'None';
+    this._volumeScalar = undefined;
     this.longName = undefined;
     this.englishName = undefined;
     Object.defineProperties(this, {
@@ -2998,19 +2998,25 @@ Music21.Dynamic = function (value) {
                 }
                 else {
                     this._value = value;
+                    this._volumeScalar = undefined;
                 }
                 if (this._value in longNames){
                     this.longName = longNames[this._value][0];
                 }
+                else {
+                    this.longName = undefined;
+                }
                 if (this._value in englishNames){
                     this.englishName = englishNames[this._value][0];
                 }
-                    
+                else {
+                    this.englishName = undefined;
+                }
             }
         },
         'volumeScalar': {
             get: function () {
-                if (this._volumeScalar !== "None") {
+                if (this._volumeScalar !== undefined) {
                     return this._volumeScalar;
                 }
                 else {
