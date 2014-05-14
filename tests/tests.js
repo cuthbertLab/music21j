@@ -141,3 +141,11 @@ test( "Music21.Stream.canvas", function() {
 	equal (c.attr('width'), 100, 'stored width matches');
 	equal (c.attr('height'), 50, 'stored height matches');
 });
+
+test( "Music21.Dynamic", function() {
+    var dynamic = new Music21.Dynamic("pp");
+    equal (dynamic.value, "pp", "matching dynamic");
+    dynamic = new Music21.Dynamic(.98);
+    equal (dynamic.value, "fff", "number conversion successful");
+    equal (dynamic.volumeScalar, .9, "correct volume");
+});
