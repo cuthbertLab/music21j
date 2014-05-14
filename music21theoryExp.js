@@ -14,6 +14,7 @@ is still under discussion; please contact cuthbert@mit.edu for more information.
 All interfaces are alpha and may change radically from day to day and release to release.
 Do not use this in production code yet.
 
+2014-05-01 -- v.0.2.alpha (release)
 2013-10-05 -- v.0.1.alpha 
 
 */
@@ -590,7 +591,7 @@ M21Theory.TestSection = function () {
 		answerInformation['wrong'] = this.numWrong;
 		answerInformation['unanswered'] = this.totalQs - this.practiceQs - this.numRight - this.numWrong;
 		answerInformation['mistakes'] = this.numMistakes;
-		return answerInformation; 
+		return answerInformation;
 	};
 	
 	this.submitWork = function () {
