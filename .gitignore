@@ -1,5 +1,9 @@
 *.py[cod]
 
+# emacs
+.*~
+*~
+
 # OSX
 .DS_Store
 
