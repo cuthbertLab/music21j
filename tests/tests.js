@@ -141,3 +141,24 @@ test( "Music21.Stream.canvas", function() {
 	equal (c.attr('width'), 100, 'stored width matches');
 	equal (c.attr('height'), 50, 'stored height matches');
 });
+
+test( "Music21.Dynamic", function() {
+    var dynamic = new Music21.Dynamic("pp");
+    equal (dynamic.value, "pp", "matching dynamic");
+    dynamic = new Music21.Dynamic(.98);
+    equal (dynamic.value, "fff", "number conversion successful");
+    equal (dynamic.volumeScalar, .98, "correct volume");
+    equal (dynamic.longName, "fortississimo", "matching long name");
+    equal (dynamic.englishName, "extremely loud", "matching english names");
+    dynamic = new Music21.Dynamic("other");
+    equal (dynamic.value, "other", "record non standard dynamic");
+    equal (dynamic.longName, undefined, "no long name for non standard dynamic");
+    equal (dynamic.englishName, undefined, "no english name for non standard dynamic");
+    dynamic.value = .18;
+    equal (dynamic.value, "pp", "change in dynamic");
+    equal (dynamic.volumeScalar, .18, "change in volume");
+    dynamic.value = "other";
+    equal (dynamic.value, "other", "change to non standard");
+    equal (dynamic.longName, undefined, "change to non standard dynamic");
+    equal (dynamic.englishName, undefined, "change to non standard dynamic");
+});
