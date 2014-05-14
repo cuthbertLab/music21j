@@ -157,4 +157,8 @@ test( "Music21.Dynamic", function() {
     dynamic.value = .18;
     equal (dynamic.value, "pp", "change in dynamic");
     equal (dynamic.volumeScalar, .18, "change in volume");
+    dynamic.value = "other";
+    equal (dynamic.value, "other", "change to non standard");
+    equal (dynamic.longName, undefined, "change to non standard dynamic");
+    equal (dynamic.englishName, undefined, "change to non standard dynamic");
 });
