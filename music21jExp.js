@@ -2954,6 +2954,8 @@ Music21.Dynamic = function (value) {
                          };
     this._value = undefined;
     this._volumeScalar = 'None';
+    this.longName = undefined;
+    this.englishName = undefined;
     Object.defineProperties(this, {
         'value': {
             get: function() {
@@ -2962,6 +2964,7 @@ Music21.Dynamic = function (value) {
             set: function(value){
                 if (typeof(value) !== 'string') {
                     //assume number
+                    this._volumeScalar=value;
                     if (value <= 0) {
                         this._value = 'n';
                     }
@@ -2996,6 +2999,13 @@ Music21.Dynamic = function (value) {
                 else {
                     this._value = value;
                 }
+                if (this._value in longNames){
+                    this.longName = longNames[this._value][0];
+                }
+                if (this._value in englishNames){
+                    this.englishName = englishNames[this._value][0];
+                }
+                    
             }
         },
         'volumeScalar': {
@@ -3003,7 +3013,7 @@ Music21.Dynamic = function (value) {
                 if (this._volumeScalar !== "None") {
                     return this._volumeScalar;
                 }
-                else {//try to find something better than eval
+                else {
                     if (this._value in dynamicStrToScalar){
                         return dynamicStrToScalar[this._value][0];
                     }
