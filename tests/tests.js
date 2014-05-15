@@ -162,3 +162,15 @@ test( "Music21.Dynamic", function() {
     equal (dynamic.longName, undefined, "change to non standard dynamic");
     equal (dynamic.englishName, undefined, "change to non standard dynamic");
 });
+
+test( "Music21.Articulation", function() {
+    var acc = new Music21.Accent();
+    equal (acc.name, 'accent', 'matching names for accent');
+    var ten = new Music21.Tenuto();
+    equal (ten.name, 'tenuto', 'matching names for tenuto');
+    var n = new Music21.Note("C");
+    n.articulations.push(acc);
+    n.articulations.push(ten);
+    equal (n.articulations[0].name, 'accent', 'accent in array');
+    equal (n.articulations[1].name, 'tenuto', 'tenuto in array');
+});

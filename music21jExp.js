@@ -334,8 +334,8 @@ Music21.Pitch = function (pn) {
 Music21.GeneralNote = function () {
 	Music21.Music21Object.call(this);
 	this.classes.push('GeneralNote');
-    this.activeVexflowNote = undefined;    
-	
+    this.activeVexflowNote = undefined;
+	this.articulations = [];
 	this.vexflowAccidentalsAndDisplay = function (vfn) {
         if (this.duration.dots == 1) {
             vfn.addDotToAll();
@@ -388,7 +388,11 @@ Music21.Note = function (nn, ql) {
 				vfn.addAccidental(0, new Vex.Flow.Accidental(this.pitch.accidental.vexflowModifier));			
 			}
 		}
-
+        if (this.articulations[0] != undefined){
+            for (var i = 0; i < this.articulations.length; i++){
+                vfn.addArticulation(0, new Vex.Flow.Articulation(this.articulations[i].vexflowModifier));
+            } 
+        }
         this.activeVexflowNote = vfn;
 	    return vfn;
     };
@@ -3034,3 +3038,55 @@ Music21.Dynamic = function (value) {
     });
     this.value = value;
 };
+
+Music21.Articulation = function(){
+    this.name = undefined;
+    this.placement = 'above';
+    this.vexflowModifier = undefined;
+};
+
+Music21.LengthArticulation = function(){
+};
+Music21.LengthArticulation.prototype = new Music21.Articulation();
+
+Music21.DynamicArticulation = function(){
+};
+Music21.DynamicArticulation.prototype = new Music21.Articulation();
+
+Music21.PitchArticulation = function(){
+};
+Music21.PitchArticulation.prototype = new Music21.Articulation();
+
+Music21.TimbreArticulation = function(){
+};
+Music21.TimbreArticulation.prototype = new Music21.Articulation();
+
+Music21.Accent = function(){
+    this.name = 'accent';
+    this.vexflowModifier = "a>";
+};
+Music21.Accent.prototype = new Music21.DynamicArticulation();
+
+Music21.StrongAccent = function(){
+    this.name = 'strong accent';
+    this.vexflowModifier = "a^";
+};
+Music21.StrongAccent.prototype = new Music21.Accent();
+
+Music21.Staccato = function(){
+    this.name = 'staccato';
+    this.vexflowModifier = "a.";
+};
+Music21.Staccato.prototype = new Music21.LengthArticulation();
+
+Music21.Staccatissimo = function(){
+    this.name = 'staccatissimo';
+    this.vexflowModifier = "av";
+};
+Music21.Staccatissimo.prototype = new Music21.Staccato();
+
+Music21.Tenuto = function(){
+    this.name = 'tenuto';
+    this.vexflowModifier = "a-";
+};
+Music21.Tenuto.prototype = new Music21.LengthArticulation();
