@@ -47,7 +47,8 @@ if (typeof(jQuery) != "undefined") {
 
 define(['music21/pitch', 'music21/duration', 'music21/baseObjects', 'music21/note',
         'music21/chord', 'music21/roman', 'music21/key', 'music21/interval', 'music21/clef',
-        'music21/renderOptions', 'music21/tinyNotation', 'music21/dynamics', 'music21/stream'], 
+        'music21/renderOptions', 'music21/tinyNotation', 'music21/dynamics', 'music21/stream',
+        'music21/jazzMidi'], 
         function(require) {
 			return music21;
 		}

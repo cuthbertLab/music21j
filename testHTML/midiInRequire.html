@@ -1,0 +1,41 @@
+<html>
+    <head>
+        <title>MIDI In/Jazz Test for Music21j</title>
+        <!-- for MSIE 10 on Windows 8 -->
+        <meta http-equiv="X-UA-Compatible" content="requiresActiveX=true"/>
+        <script data-main="../src/m21theory.js" src="../ext/require/require.js"></script>
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+
+		<script>
+		var s = "";
+		function displayStream(me) {
+		    me.sendToMIDIjs();
+		    if (me.noteOn) {
+		        var m21n = me.music21Note();
+		        if (s.elements.length > 7) {
+		            s.elements = s.elements.slice(1)
+		        }
+		        s.append(m21n);
+		        var canv = s.replaceLastCanvas();
+		    }
+		}
+		
+		require(['music21'], function () { 
+		    s = new music21.stream.Stream();
+		    var Jazz = music21.jazzMidi.createPlugin();
+		    music21.jazzMidi.createSelector($("#putMidiSelectHere"));
+		    music21.jazzMidi.callBacks.general = displayStream;
+		});
+		
+		
+		</script>
+    </head>
+    <body>
+	<div>
+	MIDI Input: <div id="putMidiSelectHere" />
+	</div>
+	<div>
+        <canvas />
+    </div>
+</body>
+</html>
