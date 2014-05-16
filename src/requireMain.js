@@ -8,8 +8,8 @@ Call with
 
 */
 
-require(['music21'], function(music21) {
-	var n = new music21.note.Note("C#4");
+require(['m21theory'], function() {
+	var n = new music21.note.Note("B4");
 	n.duration.type="half";
 	var n2 = new music21.chord.Chord(["F#4", "A#4","C5"]);
 	n2.duration.type="half";
@@ -20,6 +20,13 @@ require(['music21'], function(music21) {
 
 	var k = new music21.key.Key('C#');
 	s.keySignature = k;
-	
+
 	s.appendNewCanvas();	
+
+	var TB = new m21theory.bank.TestBank();
+	var itClass = m21theory.tests.interval;
+	it = new itClass();
+	TB.append(it);
+	TB.render();
+
 });
