@@ -16,6 +16,7 @@ require(['music21'], function(music21) {
 	var s = new music21.Stream();
 	s.append(n);
 	s.append(n2);
+	// s.clef = new music21.clef.Clef('treble');
 
 	var k = new music21.key.Key('C#');
 	s.keySignature = k;
