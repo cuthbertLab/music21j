@@ -2,25 +2,11 @@
 <html xmlns = "http://www.w3.org/1999/xhtml">
 <head>
  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
- <!-- midi.js package -->
- <script src="/m21j/ext/midijs/js/MIDI/AudioDetect.js" type="text/javascript"></script>
- <script src="/m21j/ext/midijs/js/MIDI/LoadPlugin.js" type="text/javascript"></script>
- <script src="/m21j/ext/midijs/js/MIDI/Plugin.js" type="text/javascript"></script>
- <script src="/m21j/ext/midijs/js/MIDI/Player.js" type="text/javascript"></script>
- <script src="/m21j/ext/midijs/js/Window/DOMLoader.XMLHttp.js" type="text/javascript"></script>
- <script src="/m21j/ext/midijs/js/Window/DOMLoader.script.js" type="text/javascript"></script>
- <!-- extras -->
- <script src="/m21j/ext/midijs/inc/Base64.js" type="text/javascript"></script>
- <script src="/m21j/ext/midijs/inc/base64binary.js" type="text/javascript"></script>
- <!-- vexflow -->
- <script src='http://code.jquery.com/jquery-latest.js'></script>
- <script src='http://www.vexflow.com/support/vexflow-min.js'></script>
- <!-- music21j -->
- <script src="/m21j/music21j.js" type="text/javascript"></script>
+  <script data-main="../src/music21.js" src="../ext/require/require.js"></script>
+
 </head>
 <body>
 <script type="text/javascript">
-
 
 
 function playNote(midiNum) {
@@ -47,27 +33,9 @@ function refreshMe() {
     stopIntervalId = setInterval(playSeventy, 100);
 }
 
-
-window.onload = function () {
-	MIDI.loadPlugin({
-		soundfontUrl: "/m21j/ext/midijs/soundfont/",
-		instrument: "acoustic_grand_piano",
-		callback: function() {
-			var delay = 0; // play one note every quarter second
-			var note = 50; // the MIDI note
-			var velocity = 127; // how hard the note hits
-			// play the note
-			MIDI.setVolume(0, 127);
-			MIDI.noteOn(0, note, velocity, delay);
-			MIDI.noteOff(0, note, delay + 0.75);
-			drawME();
-		}
-	});
-};
-
-function drawME() {
-	var myNote = new Music21.Rest(4.0);
-    var myStream = new Music21.Stream();
+function drawMe() {
+	var myNote = new music21.note.Rest(4.0);
+    var myStream = new music21.stream.Stream();
     myStream.append(myNote);
 	myStream.appendNewCanvas();
 }
@@ -75,19 +43,22 @@ function drawME() {
 function renderIt() {
     var valueur = document.getElementById("textId").value;
     var notes = valueur.split(" ");
-    var newStream = new Music21.Stream();
+    var newStream = new music21.stream.Stream();
     for (var i = 0; i < notes.length; i++) {
        var noteContent = notes[i].split("_");
        var noteName = noteContent[0];
        var noteValue = parseFloat(noteContent[1]);
-       var newNote = new Music21.Note(noteName, noteValue);
+       var newNote = new music21.note.Note(noteName, noteValue);
        newStream.append(newNote);
     }
     newStream.replaceLastCanvas();
 }
 
+require(['music21'], drawMe);
+
 </script>
 </body>
+This was the oldest/first experiment with music21j, from summer 2013.  Updated so it still works.
 <input type="button" onClick="playNote(60)" value="clickMe" />
 <input type="button" onClick="refreshMe()" value="playSeventy" /><br />
 <input type="text" value="E_2 F_1.5 G_.5 E_2" id="textId" onchange="renderIt()"/>
