@@ -399,11 +399,17 @@ define(['m21theory/random'], function(require) {
 		
 		this.submitWork = function () {
 			var textCommentsArea = this.submissionContents;
-			console.log(textCommentsArea);
+			if (m21theory.debug) {
+				console.log(textCommentsArea);
+			}
 			var ta = textCommentsArea.find(".commentTextArea");
-			console.log(ta);
+			if (m21theory.debug) {
+				console.log(ta);
+			}
 			var textComments = ta.val();
-			console.log(textComments);
+			if (m21theory.debug) {
+				console.log(textComments);
+			}
 			if (m21theory.userData.studentName.last == "") {
 				alert("You are submitting without a last name! you will not get credit; fill form and submit again...");
 				return false;

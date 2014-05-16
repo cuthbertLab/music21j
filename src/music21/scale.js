@@ -14,8 +14,8 @@ define(['music21/pitch', 'music21/interval'], function(require) {
 	scale.SimpleDiatonicScale = function(tonic, scaleSteps) {
 		if (tonic == undefined) {
 			tonic = new music21.pitch.Pitch("C4");
-		} else if ( ! (tonic instanceof music21.Pitch) ) {
-			throw("Cannot make a scale not from a music21.Pitch object: " + tonic);
+		} else if ( ! (tonic instanceof music21.pitch.Pitch) ) {
+			throw("Cannot make a scale not from a music21.pitch.Pitch object: " + tonic);
 		}
 		if (scaleSteps == undefined) {
 			scaleSteps = ['M','M','m','M','M','M','m'];		

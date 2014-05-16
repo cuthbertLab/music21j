@@ -1,5 +1,5 @@
 define("m21theory/tests/interval", ["m21theory/section"], function () {
-	var IntervalTest = function () {
+	var ThisTest = function () {
 		m21theory.section.Generic.call(this);
 		
 		this.assignmentId = 'interval';
@@ -197,7 +197,7 @@ define("m21theory/tests/interval", ["m21theory/section"], function () {
 		};
 	};
 
-	IntervalTest.prototype = new m21theory.section.Generic();
-	IntervalTest.prototype.constructor = IntervalTest;
-	return IntervalTest;
+	ThisTest.prototype = new m21theory.section.Generic();
+	ThisTest.prototype.constructor = ThisTest;
+	return ThisTest;
 });

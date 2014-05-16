@@ -24,8 +24,10 @@ require(['m21theory'], function() {
 	s.appendNewCanvas();	
 
 	var TB = new m21theory.bank.TestBank();
-	var itClass = m21theory.tests.interval;
+	var itClass = m21theory.tests.keySignature;
 	it = new itClass();
+	TB.append(it);
+	it = m21theory.tests.get('interval');
 	TB.append(it);
 	TB.render();
 
