@@ -46,75 +46,12 @@ if (typeof(jQuery) != "undefined") {
 }
 
 define(['music21/pitch', 'music21/duration', 'music21/baseObjects', 'music21/note',
-        'music21/chord', 'music21/roman', 'music21/key', 'music21/interval'], 
+        'music21/chord', 'music21/roman', 'music21/key', 'music21/interval', 'music21/clef',
+        'music21/renderOptions', 'music21/tinyNotation'], 
         function(require) {
-
-/*  music21.Clef
-
-	must be defined before Stream since Stream subclasses call new music21.Clef...
-
-*/
-
-music21.Clef = function (name) {
-	music21.baseObjects.Music21Object.call(this);
-	this.classes.push('Clef');
-    var firstLines = {'treble': 31, 'bass': 19};
-    if (name != undefined) {
-        this.name = name;
-		this.firstLine = firstLines[name];
-    } else {
-    	this.name = undefined;
-    	this.firstLine = firstLines['treble'];
-    }
-    
-    this.setStemDirection = function (note) {
-        if (note.stemDirection != undefined) {
-        	return;
-        }
-        if (note.pitch != undefined) {
-            if (note.pitch.diatonicNoteNum != undefined) {
-                if (note.pitch.diatonicNoteNum < this.firstLine + 4) {
-                    note.stemDirection = 'up';
-                } else {
-                    note.stemDirection = 'down';
-                }
-            }
-        }
-    };
-};
-
-
-music21.Clef.prototype = new music21.baseObjects.Music21Object();
-music21.Clef.prototype.constructor = music21.Clef;
-
 
 
 /* Stream functions ... */
-music21.RenderOptions = function() {
-	return {
-		displayClef: true,
-		displayTimeSignature: true,
-		displayKeySignature: true,
-		top: 0,
-		left: undefined,
-		width: undefined,
-		height: undefined,
-		systemIndex: 0,
-		partIndex: 0,
-		measureIndex: 0,
-		systemMeasureIndex: 0,
-		maxSystemWidth: undefined,
-		rightBarline: undefined,
-		staffConnectors: ['single', 'brace'],
-		events: {
-			'click': 'play',
-			'dblclick': undefined,
-				},
-		startNewSystem: false,
-		startNewPage: false,
-		showMeasureNumber: undefined,
-	};
-};
 
 music21.Stream = function () {
 	music21.baseObjects.Music21Object.call(this);
@@ -130,7 +67,7 @@ music21.Stream = function () {
     
     this.autoBeam = true;
     this.activeVFStave = undefined;
-    this.renderOptions = new music21.RenderOptions();
+    this.renderOptions = new music21.renderOptions.RenderOptions();
     this._tempo = undefined;
     
     this._stopPlaying = false;
@@ -189,7 +126,7 @@ music21.Stream = function () {
 		'clef': {
 			get: function () {
 				if (this._clef == undefined && this.parent == undefined) {
-					return new music21.Clef('treble');
+					return new music21.clef.Clef('treble');
 				} else if (this._clef == undefined) {
 					return this.parent.clef;
 				} else {
@@ -436,7 +373,7 @@ music21.Stream = function () {
     	/* does nothing for standard streams ... */
     };
     this.resetRenderOptionsRecursive = function () {
-    	this.renderOptions = new music21.RenderOptions();
+    	this.renderOptions = new music21.renderOptions.RenderOptions();
     	for (var i = 0; i < this.length; i++) {
     		var el = this.elements[i];
     		if (el.inClass('Stream')) {
@@ -1427,84 +1364,6 @@ music21.Score = function () {
 music21.Score.prototype = new music21.Stream();
 music21.Score.prototype.constructor = music21.Score;
 
-var tinyNotationRegularExpressions = {  REST    : /r/,
-                            OCTAVE2 : /([A-G])[A-G]+/,
-                            OCTAVE3 : /([A-G])/,
-                            OCTAVE5 : /([a-g])(\'+)/, 
-                            OCTAVE4 : /([a-g])/,
-                            EDSHARP : /\((\#+)\)/,
-                            EDFLAT  : /\((\-+)\)/,
-                            EDNAT   : /\(n\)/,
-                            SHARP   : /^[A-Ga-g]+\'*(\#+)/,  // simple notation finds 
-                            FLAT    : /^[A-Ga-g]+\'*(\-+)/,  // double sharps too
-                            TYPE    : /(\d+)/,
-                            TIE     : /.\~/, // not preceding ties
-                            PRECTIE : /\~/,  // front ties
-                            ID_EL   : /\=([A-Za-z0-9]*)/,
-                            LYRIC   : /\_(.*)/,
-                            DOT     : /\.+/,
-                            TIMESIG : /(\d+)\/(\d+)/
-						  };
-
-
-music21.TinyNotation = function (textIn) {
-    var tokens = textIn.split(" ");
-    var s = new music21.Measure();
-    // s.clef = new music21.Clef('bass');
-    var lastDuration = 1.0;
-    var tnre = tinyNotationRegularExpressions; // faster typing
-    for (var i = 0; i < tokens.length; i++ ) {
-        var token = tokens[i];
-        var noteObj = undefined;
-        var MATCH;
-        if (MATCH = tnre.TIMESIG.exec(token)) {
-        	var numerator = MATCH[1];
-        	var denominator = MATCH[2];
-        	// does nothing...
-        	s.timeSignature = numerator + '/' + denominator;
-        	continue;
-        } else if (tnre.REST.exec(token)) {
-            noteObj = new music21.note.Rest(lastDuration);
-        } else if (MATCH = tnre.OCTAVE2.exec(token)) {
-            noteObj = new music21.note.Note(MATCH[1], lastDuration);
-			noteObj.pitch.octave = 4 - MATCH[0].length;
-        } else if (MATCH = tnre.OCTAVE3.exec(token)) {
-            noteObj = new music21.note.Note(MATCH[1], lastDuration);
-			noteObj.pitch.octave = 3;
-        } else if (MATCH = tnre.OCTAVE5.exec(token)) {
-        	// must match octave 5 before 4
-            noteObj = new music21.note.Note(MATCH[1].toUpperCase(), lastDuration);
-			noteObj.pitch.octave = 3 + MATCH[0].length;
-		} else if (MATCH = tnre.OCTAVE4.exec(token)) {
-            noteObj = new music21.note.Note(MATCH[1].toUpperCase(), lastDuration);
-			noteObj.pitch.octave = 4;
-		}
-
-		if (noteObj == undefined) {
-			continue;
-		}
-		
-		if (tnre.SHARP.exec(token)) {
-		    noteObj.pitch.accidental = new music21.pitch.Accidental('sharp');
-		} else if (tnre.FLAT.exec(token)) {
-		    noteObj.pitch.accidental = new music21.pitch.Accidental('flat');
-		}
-		
-		if (MATCH = tnre.TYPE.exec(token)) {
-			var durationType = parseInt(MATCH[0]);
-			noteObj.duration.quarterLength = 4.0 / durationType;
-		}
-		
-		if (MATCH = tnre.DOT.exec(token)) {
-			var numDots = MATCH[0].length;
-			var multiplier = 1 + (1 - Math.pow(.5, numDots));
-			noteObj.duration.quarterLength = multiplier * noteObj.duration.quarterLength;
-		}
-		lastDuration = noteObj.duration.quarterLength;
-        s.append(noteObj);
-    }
-    return s;
-};
 
 
 
