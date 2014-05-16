@@ -6,7 +6,7 @@
  * Based on music21 (=music21p), Copyright (c) 2006–14, Michael Scott Cuthbert and cuthbertLab
  * 
  */
-define(['music21/baseObjects','music21/pitch','music21/note'], function(require) {
+define(['music21/base','music21/pitch','music21/note'], function(require) {
 	var tinyNotation = {};
 	tinyNotation.regularExpressions = {  
 			REST    : /r/,

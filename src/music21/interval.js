@@ -366,8 +366,8 @@ define(['music21/pitch'], function(require) {
 	interval.IntervalStepNames = ['C','D','E','F','G','A','B'];
 
 	interval.IntervalConvertDiatonicNumberToStep = function (dn) {
-		varStepNumber = undefined;
-		varOctave = undefined;
+		var stepNumber = undefined;
+		var octave = undefined;
 		if (dn == 0) {
 			return ["B", -1];
 		} else if (dn > 0) {

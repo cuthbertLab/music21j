@@ -8,14 +8,14 @@
  * Based on music21 (=music21p), Copyright (c) 2006–14, Michael Scott Cuthbert and cuthbertLab
  * 
  */
-define(['music21/baseObjects',], function(require) {
+define(['music21/base',], function(require) {
 	var clef = {};
 	/*  music21.Clef
 	must be defined before Stream since Stream subclasses call new music21.Clef...
 	 */
 
 	clef.Clef = function (name) {
-		music21.baseObjects.Music21Object.call(this);
+		music21.base.Music21Object.call(this);
 		this.classes.push('Clef');
 	    var firstLines = {'treble': 31, 'bass': 19};
 	    if (name != undefined) {
@@ -43,7 +43,7 @@ define(['music21/baseObjects',], function(require) {
 	};
 	
 	
-	clef.Clef.prototype = new music21.baseObjects.Music21Object();
+	clef.Clef.prototype = new music21.base.Music21Object();
 	clef.Clef.prototype.constructor = clef.Clef;
 
 	// end of define
