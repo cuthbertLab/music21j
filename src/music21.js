@@ -41,7 +41,7 @@ if ( typeof define === "function" && define.amd) {
                         'jquery-ui',
                         'vexflow',
                         'loadMIDI',
-                        'music21/base', ], 
+                        'music21/moduleLoader', ], 
     		function (require) { 
     	MIDI.loadPlugin({
     		soundfontUrl: "../ext/midijs/soundfont/",

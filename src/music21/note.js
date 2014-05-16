@@ -8,7 +8,7 @@
  */
 
 
-define(['music21/baseObjects', 'music21/pitch'], function(require) {
+define(['music21/base', 'music21/pitch'], function(require) {
 
 	var note = {};
 
@@ -16,7 +16,7 @@ define(['music21/baseObjects', 'music21/pitch'], function(require) {
 	/* Notes and rests etc... */
 
 	note.GeneralNote = function () {
-		music21.baseObjects.Music21Object.call(this);
+		music21.base.Music21Object.call(this);
 		this.classes.push('GeneralNote');
 	    this.activeVexflowNote = undefined;    
 		
@@ -34,7 +34,7 @@ define(['music21/baseObjects', 'music21/pitch'], function(require) {
 		};
 	};
 
-	note.GeneralNote.prototype = new music21.baseObjects.Music21Object();
+	note.GeneralNote.prototype = new music21.base.Music21Object();
 	note.GeneralNote.prototype.constructor = note.GeneralNote;
 
 	note.NotRest = function () {
@@ -108,6 +108,14 @@ define(['music21/baseObjects', 'music21/pitch'], function(require) {
 	note.Rest.prototype = new note.GeneralNote();
 	note.Rest.prototype.constructor = note.Rest;
 	
+	note.tests = function () {
+	    test( "music21.note.Note", function() {
+	        var n = new music21.note.Note("D#5");
+	        equal ( n.pitch.name, "D#", "Pitch Name set to D#");
+	        equal ( n.pitch.step, "D",  "Pitch Step set to D");
+	        equal ( n.pitch.octave, 5, "Pitch octave set to 5");
+	    });
+	}
 	
 	// end of define
 	if (typeof(music21) != "undefined") {
