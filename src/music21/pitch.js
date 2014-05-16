@@ -168,7 +168,21 @@ define(function(require) {
 	        }
 	    };
 	};
-	
+	pitch.tests = function () {
+	    test( "music21.pitch.Accidental", function () {
+	        var a = new music21.pitch.Accidental("-");
+	        equal(a.alter, -1.0, "flat alter passed");
+	        equal(a.name, 'flat', "flat name passed");
+	    });
+
+	    test( "music21.pitch.Pitch", function() {
+	        var p = new music21.pitch.Pitch("D#5");
+	        equal ( p.name, "D#", "Pitch Name set to D#");
+	        equal ( p.step, "D",  "Pitch Step set to D");
+	        equal ( p.octave, 5, "Pitch octave set to 5");
+	    });
+  
+	};
 	// end of define
 	if (typeof(music21) != "undefined") {
 		music21.pitch = pitch;

@@ -8,11 +8,11 @@
  * Based on music21 (=music21p), Copyright (c) 2006–14, Michael Scott Cuthbert and cuthbertLab
  * 
  */
-define(['music21/baseObjects','music21/renderOptions','music21/clef'], function(require) {
+define(['music21/base','music21/renderOptions','music21/clef'], function(require) {
 	var stream = {};
 	
 	stream.Stream = function () {
-		music21.baseObjects.Music21Object.call(this);
+		music21.base.Music21Object.call(this);
 		this.classes.push('Stream');
 
 	    this._elements = [];
@@ -889,7 +889,7 @@ define(['music21/baseObjects','music21/renderOptions','music21/clef'], function(
 
 	};
 
-	stream.Stream.prototype = new music21.baseObjects.Music21Object();
+	stream.Stream.prototype = new music21.base.Music21Object();
 	stream.Stream.prototype.constructor = stream.Stream;
 
 	stream.Measure = function () { 
@@ -1321,6 +1321,30 @@ define(['music21/baseObjects','music21/renderOptions','music21/clef'], function(
 	stream.Score.prototype = new stream.Stream();
 	stream.Score.prototype.constructor = stream.Score;
 
+	stream.tests = function () {
+	    test( "music21.stream.Stream", function() {
+	        var s = new music21.stream.Stream();
+	        s.append( new music21.note.Note("C#5"));
+	        s.append( new music21.note.Note("D#5"));
+	        var n =  new music21.note.Note("F5");
+	        n.duration.type = 'half';
+	        s.append(n);
+	        equal (s.length, 3, "Simple stream length");
+	    });
+
+	    test( "music21.stream.Stream.canvas", function() {
+	        var s = new music21.stream.Stream();
+	        s.append( new music21.note.Note("C#5"));
+	        s.append( new music21.note.Note("D#5"));
+	        var n =  new music21.note.Note("F5");
+	        n.duration.type = 'half';
+	        s.append(n);
+	        var c = s.createNewCanvas({}, 100, 50);
+	        equal (c.attr('width'), 100, 'stored width matches');
+	        equal (c.attr('height'), 50, 'stored height matches');
+	    });  
+	};
+	
 	// end of define
 	if (typeof(music21) != "undefined") {
 		music21.stream = stream;
