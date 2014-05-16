@@ -66,7 +66,7 @@ define(['music21/chord', 'music21/key', 'music21/pitch', 'music21/interval'], fu
 			var lastPitch = this.root;
 			for (var j = 0; j < chordSpacing.length; j++) {
 				var thisTransStr = chordSpacing[j];
-				var thisTrans = new music21.Interval(thisTransStr);
+				var thisTrans = new music21.interval.Interval(thisTransStr);
 				var nextPitch = thisTrans.transposePitch(lastPitch);
 				chordPitches.push(nextPitch);
 				lastPitch = nextPitch;
@@ -76,9 +76,9 @@ define(['music21/chord', 'music21/key', 'music21/pitch', 'music21/interval'], fu
 	    
 		this.key = undefined;
 		if (typeof(keyStr) == 'string') {
-			this.key = new music21.Key(keyStr);
+			this.key = new music21.key.Key(keyStr);
 		} else if (typeof(keyStr) == 'undefined') {
-			this.key = new music21.Key('C');
+			this.key = new music21.key.Key('C');
 		} else {
 			this.key = keyStr;
 		}
@@ -112,7 +112,7 @@ define(['music21/chord', 'music21/key', 'music21/pitch', 'music21/interval'], fu
 		
 		if (this.key.mode == 'minor' && (this.scaleDegree == 6 || this.scaleDegree == 7)) {
 			if (['minor','diminished','half-diminished'].indexOf(impliedQuality) != -1) {
-				var raiseTone = new music21.Interval('A1');
+				var raiseTone = new music21.interval.Interval('A1');
 				this.root = raiseTone.transposePitch(this.root);
 				if (music21.debug) {
 					console.log('raised root because minor/dim on scaleDegree 6 or 7');
