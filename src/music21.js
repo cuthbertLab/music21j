@@ -22,7 +22,7 @@ Do not use this in production code yet.
 
 */
 
-requirejs.config({
+require.config({
 	paths: {
 		'jquery': '../ext/jquery/jquery-1.11.1.min',
 		'jquery-ui': '../ext/jqueryPlugins/jqueryUI/jquery-ui.min',
