@@ -2,7 +2,8 @@
 music21j -- Javascript reimplementation of Core music21 features.  
 See http://web.mit.edu/music21/ for more details.
 
-Copyright (c) 2013, Michael Scott Cuthbert and cuthbertLab
+Copyright (c) 2013-14, Michael Scott Cuthbert and cuthbertLab
+Based on music21, Copyright (c) 2006–14, Michael Scott Cuthbert and cuthbertLab
 
 This version is released in non-minimized form under LGPL or proprietary licenses (your choice; the
 former is Free; the latter costs money, but lets you use minimizers, etc. to optimize
@@ -40,7 +41,7 @@ if ( typeof define === "function" && define.amd) {
     			startTime = new Date().getTime();
     		}
     	});
-    	var m21 = Music21;
+    	var m21 = music21;
     	return m21;
     });
 }
