@@ -1,8 +1,19 @@
-define(function() {
-	
-if (typeof (Music21) == "undefined") {
-	Music21 = {};
+
+// Not fully AMD since music21 is given as a global variable.
+if (typeof (music21) == "undefined") {
+	music21 = {};
 }
+
+music21.debug = false;
+music21._inClass = function (testClass) {
+	if ($.inArray(testClass, this.classes) != -1) {
+		return true;
+	} else {
+		return false;
+	}
+};
+
+
 /* jQuery extensions
  * 
  */
@@ -34,286 +45,14 @@ if (typeof(jQuery) != "undefined") {
 	};
 }
 
+define(['music21/pitch', 'music21/duration', 'music21/baseObjects'], function(require) {
 
-Music21.debug = false;
 
-Music21._inClass = function (testClass) {
-	if ($.inArray(testClass, this.classes) != -1) {
-		return true;
-	} else {
-		return false;
-	}
-};
-
-var Music21DurationArray = ['breve','whole','half','quarter','eighth','16th','32nd','64th','128th'];
-var VexflowDurationArray = [undefined, 'w', 'h', 'q', '8', '16', '32', undefined, undefined];
-
-Music21.Duration = function (ql) {
-    this.classes = ['Duration'];
-    this._quarterLength = 1.0;
-    this._dots = 0;
-	this._powerOfTwo = undefined;
-	this._durationNumber = undefined;
-	this._type = 'quarter';
-
-	this.inClass = Music21._inClass;
-
-    this._findDots = function (ql) {
-        var undottedQL = Math.pow(2, this._powerOfTwo);
-    	// alert(undottedQL * 1.5 + " " + ql)
-        if (Math.abs(undottedQL * 1.5 - ql) < 0.0001) {
-           return 1;
-        } else if (Math.abs(undottedQL * 1.75 - ql) < 0.0001) {
-           return 2;
-        } else {
-           return 0;
-        }
-    };
-
-    Object.defineProperties(this, {
-    	'dots': { 
-    		get: function () { 
-		       		return this._dots;
-    			},
-    		set: function (numDots) {
-    			var undottedQL = this._powerOfTwo;
-    			var dottedMultiplier = 1 + ( (Math.pow(2, numDots) - 1) / Math.pow(2, numDots) );
-    			var newQL = undottedQL * dottedMultiplier;
-    			this._dots = numDots;
-    			this._quarterLength = newQL;
-    		}
-    	},
-    	'quarterLength': {
-			get: function () {
-				return this._quarterLength;
-			},
-			set: function (ql) {
-				if (ql == undefined) {
-					ql = 1.0;
-				}
-				this._quarterLength = ql;
-				this._powerOfTwo = Math.floor(Math.log(ql+.00001)/Math.log(2));
-				this._durationNumber = 3 - this._powerOfTwo;
-				this._type = Music21DurationArray[this._durationNumber];
-				//alert(this._findDots);
-				this._dots = this._findDots(ql);	
-			}
-		},
-		'type': {
-			get: function () {
-				return this._type;
-			},
-			set: function (typeIn) {
-				var typeNumber = $.inArray(typeIn, Music21DurationArray);
-				if (typeNumber == -1) {
-					console.log('invalid type ' + typeIn);
-					return;
-				}
-				this._durationNumber = typeNumber;
-				this._powerOfTwo = Math.pow(2, 3 - typeNumber);
-				this._type = typeIn;
-				var dottedMultiplier = 1 + ( (Math.pow(2, this.dots) - 1) / Math.pow(2, this.dots) );
-				this._quarterLength = this._powerOfTwo * dottedMultiplier;
-			}
-		},
-		'vexflowDuration': {
-			get: function() {
-				var vd = VexflowDurationArray[this._durationNumber];
-				if (this._dots == 1) {
-					vd += "d"; // vexflow does not handle double dots
-				}
-				return vd;
-			}
-		}
-	});
-	
-    if (typeof(ql) == 'string') {
-    	this.type = ql;
-    } else {
-    	this.quarterLength = ql;
-    }
-    //alert(ql + " " + this.type + " " + this.dots);
-};
-
-/*   main class   from base.py   */
-
-Music21.Music21Object = function () {
-	this.classes = ['Music21Object'];
-	this.classSortOrder = 20; // default;
-	this.priority = 0; // default;
-	this.parent = undefined;
-	this.isStream = false;
-	// this.isSpanner = false; // add when supported,
-	// this.isVariant = false; // add when supported, if ever...
-	this.duration = new Music21.Duration();
-	this.groups = []; // custom object in m21p
-	// this.sites, this.activeSites, this.offset -- not yet...
-	// beat, measureNumber, etc.
-	// lots to do...
-	this.inClass = Music21._inClass;
-};
-
-/*  pitch based objects; from pitch.py */
-
-Music21.Accidental = function (accName) {
-	this.classes = ['Accidental'];
-
-	this.alter = 0.0;
-	this.modifier = undefined;
-	this.vexflowModifier = "n";
-	this.displayType = "normal";
-	this.displayStatus = undefined; // true, false, undefined
-	this.inClass = Music21._inClass;
-	
-	this.set = function (accName) {
-		if (accName.toLowerCase != undefined) {
-	    	accName = accName.toLowerCase();
-	    }
-	    if (accName == 'natural' || accName == 'n' || accName == 0 || accName == undefined) {
-	        this.name = 'natural';
-	        this.alter = 0.0;
-	        this.modifier = "";
-	        this.vexflowModifier = "n";
-	    } else if (accName == 'sharp' || accName == '#' || accName == 1) {
-	        this.name = 'sharp';
-	        this.alter = 1.0;
-	        this.modifier = "#";
-	        this.vexflowModifier = "#";
-	    } else if (accName == 'flat' || accName == '-' || accName == -1) {
-	        this.name = 'flat';
-	        this.alter = -1.0;
-	        this.modifier = "-";
-	        this.vexflowModifier = "b";
-	    } else if (accName == 'double-flat' || accName == '--' || accName == -2) {
-	        this.name = 'double-flat';
-	        this.alter = -2.0;
-	        this.modifier = "--";
-	        this.vexflowModifier = "bb";
-	    } else if (accName == 'double-sharp' || accName == '##' || accName == 2) {
-	        this.name = 'double-sharp';
-	        this.alter = 2.0;
-	        this.modifier = "##";
-	        this.vexflowModifier = "##";
-	    } else if (accName == 'triple-flat' || accName == '---' || accName == -3) {
-	        this.name = 'triple-flat';
-	        this.alter = -3.0;
-	        this.modifier = "---";
-	        this.vexflowModifier = "bbb";
-	    } else if (accName == 'triple-sharp' || accName == '###' || accName == 3) {
-	        this.name = 'triple-sharp';
-	        this.alter = 3.0;
-	        this.modifier = "###";
-	        this.vexflowModifier = "###";
-	    }
-	};
-	this.set(accName);
-};
-
-/* a Music21Object in m21p; the overhead is too high here to follow ... */
-
-Music21.Pitch = function (pn) {
-    if (pn == undefined) {
-    	pn = "C";
-    }
-    this.step = 'C';
-    this.octave = 4;
-	this.classes = ['Pitch'];
-	this.inClass = Music21._inClass;
-    
-    Object.defineProperties(this, {
-    	'name': {
-    		get: function () {
-				if (this.accidental == undefined) {
-					return this.step;
-				} else {
-					return this.step + this.accidental.modifier;
-				}
-			},
-    		set: function(nn) {
-				this.step = nn.slice(0,1).toUpperCase();
-				var tempAccidental = nn.slice(1);
-				if (tempAccidental != undefined) {
-					this.accidental = new Music21.Accidental(tempAccidental);
-				} else {
-					this.accidental = undefined;
-				}
-			}
-		},
-		'nameWithOctave': {
-			get: function () {
-				return this.name + this.octave.toString();
-			}
-		},
-    	'diatonicNoteNum': { 
-    		get: function () { 
-		    	var nameToSteps = {'C': 0, 'D': 1, 'E': 2, 'F': 3, 'G': 4, 'A': 5, 'B': 6};
-       			return (this.octave * 7) + nameToSteps[this.step] + 1;
-   			},
-    		set: function (newDNN) {
-   				var stepsToName = ['C','D','E','F','G','A','B'];
-   				newDNN = newDNN - 1; // makes math easier
-   				this.octave = Math.floor(newDNN / 7);
-   				this.step = stepsToName[newDNN % 7];
-   			}
-   		},    		
-    	'midi': { 
-    		get: function () { 
-    			return this.ps;
-    		}
-    	},
-    	'ps': {
-    		get: function () {
-				var nameToMidi = {'C': 0, 'D': 2, 'E': 4, 'F': 5, 'G': 7, 'A': 9, 'B': 11};
-				var accidentalAlter = 0;
-				if (this.accidental != undefined) {
-					accidentalAlter = parseInt(this.accidental.alter);
-				}
-				return (this.octave + 1) * 12 + nameToMidi[this.step] + accidentalAlter;
-			},
-    		set: function (ps) {
-    			var midiToName = ['C','C#','D','E-','E','F','F#','G','A-','A','B-','B'];
-    			this.name = midiToName[ps % 12];
-    			this.octave = Math.floor(ps / 12) - 1;
-    		}
-    	}
-    });
-    var storedOctave = pn.match(/\d+/);
-    if (storedOctave != undefined) {
-    	pn = pn.replace(/\d+/, "");
-    	this.octave = parseInt(storedOctave);
-    }
-	this.name = pn;
-    	
-    this.vexflowName = function (clefName) {
-    	//alert(this.octave + " " + clefName);
-	    var bassToTrebleMapping = {'E': 'C', 'F': 'D', 'G': 'E', 'A': 'F', 'B': 'G', 'C': 'A', 'D': 'B'};
-    	var accidentalType = 'n';
-    	if (this.accidental != undefined) {
-          	accidentalType = this.accidental.vexflowModifier;
-    	}
-    	
-    	
-    	if (clefName == 'treble' || clefName == undefined) {
-            var outName = this.step + accidentalType + '/' + this.octave; 
-            return outName;
-        } else if (clefName == 'bass') {
-        	var tempPn = bassToTrebleMapping[this.step];
-            var tempPitch = new Music21.Pitch(tempPn);
-            tempPitch.octave = this.octave;
-            if (this.step == 'C' || this.step == 'D') {
-                tempPitch.octave += 1;
-            } else {
-                tempPitch.octave += 2;
-            }
-            return tempPitch.step + accidentalType + '/' + tempPitch.octave;
-        }
-    };
-};
 
 /* Notes and rests etc... */
 
-Music21.GeneralNote = function () {
-	Music21.Music21Object.call(this);
+music21.GeneralNote = function () {
+	music21.baseObjects.Music21Object.call(this);
 	this.classes.push('GeneralNote');
     this.activeVexflowNote = undefined;    
 	
@@ -330,31 +69,31 @@ Music21.GeneralNote = function () {
 	};
 };
 
-Music21.GeneralNote.prototype = new Music21.Music21Object();
-Music21.GeneralNote.prototype.constructor = Music21.GeneralNote;
+music21.GeneralNote.prototype = new music21.baseObjects.Music21Object();
+music21.GeneralNote.prototype.constructor = music21.GeneralNote;
 
-Music21.NotRest = function () {
-	Music21.GeneralNote.call(this);
+music21.NotRest = function () {
+	music21.GeneralNote.call(this);
 	this.classes.push('NotRest');
     this.stemDirection = undefined; // ['up','down','noStem', undefined] -- 'double' not supported
 };
 
-Music21.NotRest.prototype = new Music21.GeneralNote();
-Music21.NotRest.prototype.constructor = Music21.NotRest;
+music21.NotRest.prototype = new music21.GeneralNote();
+music21.NotRest.prototype.constructor = music21.NotRest;
 
 
-Music21.Note = function (nn, ql) {
-	Music21.NotRest.call(this);
+music21.Note = function (nn, ql) {
+	music21.NotRest.call(this);
 	this.classes.push('Note');
     
-    this.pitch = new Music21.Pitch(nn);
+    this.pitch = new music21.pitch.Pitch(nn);
 	
 	if (ql != undefined) {
 	    this.duration.quarterLength = ql;
     }
     
     this.vexflowNote = function (clefName) {
-    	if (Music21.debug) {
+    	if (music21.debug) {
         	console.log("Pitch name for clef " + 
         				clefName + " ( " + this.pitch.name + " ) : " + 
         				this.pitch.vexflowName(clefName));
@@ -375,12 +114,12 @@ Music21.Note = function (nn, ql) {
     };
 };
 
-Music21.Note.prototype = new Music21.NotRest();
-Music21.Note.prototype.constructor = Music21.Note;
+music21.Note.prototype = new music21.NotRest();
+music21.Note.prototype.constructor = music21.Note;
 
 
-Music21.Rest = function (ql) {
-	Music21.GeneralNote.call(this);
+music21.Rest = function (ql) {
+	music21.GeneralNote.call(this);
 	this.classes.push('Rest');
 	if (ql != undefined) {
 	    this.duration.quarterLength = ql;
@@ -401,23 +140,23 @@ Music21.Rest = function (ql) {
     };
 };
 
-Music21.Rest.prototype = new Music21.GeneralNote();
-Music21.Rest.prototype.constructor = Music21.Rest;
+music21.Rest.prototype = new music21.GeneralNote();
+music21.Rest.prototype.constructor = music21.Rest;
 
-Music21.Chord = function (noteArray) {
+music21.Chord = function (noteArray) {
 	if (typeof(noteArray) == 'undefined') {
 		noteArray = [];
 	}
-	Music21.NotRest.call(this);
+	music21.NotRest.call(this);
 	this.classes.push('Chord');
     this._noteArray = [];
 	
 	this.addNoteFromArray = function (noteObj, index, fullArray ) {
 		if (typeof(noteObj) == 'string') {	
-			noteObj = new Music21.Note(noteObj);
+			noteObj = new music21.Note(noteObj);
 		} else if (noteObj.inClass('Pitch')) {
 			var pitchObj = noteObj;
-			var noteObj2 = new Music21.Note();
+			var noteObj2 = new music21.Note();
 			noteObj2.pitch = pitchObj;
 			noteObj = noteObj2;
 		}
@@ -434,7 +173,7 @@ Music21.Chord = function (noteArray) {
 				nonDuplicatingPitches.push(p);
 			}
 		}
-		var closedChord = new Music21.Chord(nonDuplicatingPitches);
+		var closedChord = new music21.Chord(nonDuplicatingPitches);
 		return closedChord;
 	};
 	
@@ -581,9 +320,9 @@ Music21.Chord = function (noteArray) {
     			for (var i = 0; i < tempPitches.length; i++ ) {
     				var addNote;
     				if (typeof(tempPitches[i]) == 'string') {
-    					addNote = new Music21.Note(tempPitches[i]);
+    					addNote = new music21.Note(tempPitches[i]);
     				} else if (tempPitches[i].inClass('Pitch')) {
-    					addNote = new Music21.Note();
+    					addNote = new music21.Note();
     					addNote.pitch = tempPitches[i];
     				} else if (tempPitches[i].inClass('Note')) {
     					addNote = tempPitches[i];
@@ -623,12 +362,12 @@ Music21.Chord = function (noteArray) {
 
 };
 
-Music21.Chord.prototype = new Music21.NotRest();
-Music21.Chord.prototype.constructor = Music21.Chord;
+music21.Chord.prototype = new music21.NotRest();
+music21.Chord.prototype.constructor = music21.Chord;
 
-Music21._romanToNumber = [undefined, 'i','ii','iii','iv','v','vi','vii'];
+music21._romanToNumber = [undefined, 'i','ii','iii','iv','v','vi','vii'];
 
-Music21._chordDefinitions = {
+music21._chordDefinitions = {
 		'major': ['M3', 'm3'],
 		'minor': ['m3', 'M3'],
 		'diminished': ['m3', 'm3'],
@@ -640,7 +379,7 @@ Music21._chordDefinitions = {
 		'half-diminished-seventh': ['m3','m3','M3'],
 };
 
-Music21.RomanNumeral = function (figure, keyStr) {
+music21.RomanNumeral = function (figure, keyStr) {
 	/*
 	 * current limitations:
 	 * 
@@ -654,7 +393,7 @@ Music21.RomanNumeral = function (figure, keyStr) {
 	 */
 	this.figure = figure;
 	this._scale = undefined;
-	Music21.Chord.call(this);
+	music21.Chord.call(this);
 	
     Object.defineProperties(this, {
     	'scale': {
@@ -672,7 +411,7 @@ Music21.RomanNumeral = function (figure, keyStr) {
     			if (this.scaleDegree < 7) {
     				return [undefined, 'Tonic', 'Supertonic','Mediant','Subdominant','Dominant','Submediant'][this.scaleDegree];
     			} else {
-    				var tonicPitch = new Music21.Pitch(this.key.tonic);
+    				var tonicPitch = new music21.pitch.Pitch(this.key.tonic);
     				var diffRootToTonic = (tonicPitch.ps - this.root.ps) % 12;
     				if (diffRootToTonic < 0) {
     					diffRootToTonic += 12;
@@ -689,12 +428,12 @@ Music21.RomanNumeral = function (figure, keyStr) {
 
     this.updatePitches = function () {
     	var impliedQuality = this.impliedQuality;
-    	var chordSpacing = Music21._chordDefinitions[impliedQuality];
+    	var chordSpacing = music21._chordDefinitions[impliedQuality];
     	var chordPitches = [this.root];
 		var lastPitch = this.root;
 		for (var j = 0; j < chordSpacing.length; j++) {
 			var thisTransStr = chordSpacing[j];
-			var thisTrans = new Music21.Interval(thisTransStr);
+			var thisTrans = new music21.Interval(thisTransStr);
 			var nextPitch = thisTrans.transposePitch(lastPitch);
 			chordPitches.push(nextPitch);
 			lastPitch = nextPitch;
@@ -704,9 +443,9 @@ Music21.RomanNumeral = function (figure, keyStr) {
     
 	this.key = undefined;
 	if (typeof(keyStr) == 'string') {
-		this.key = new Music21.Key(keyStr);
+		this.key = new music21.Key(keyStr);
 	} else if (typeof(keyStr) == 'undefined') {
-		this.key = new Music21.Key('C');
+		this.key = new music21.Key('C');
 	} else {
 		this.key = keyStr;
 	}
@@ -731,7 +470,7 @@ Music21.RomanNumeral = function (figure, keyStr) {
 		this.numbers = parseInt(numbersArr[0]);
 	}
 	
-	var scaleDegree = Music21._romanToNumber.indexOf(currentFigure.toLowerCase());
+	var scaleDegree = music21._romanToNumber.indexOf(currentFigure.toLowerCase());
 	if (scaleDegree == -1) {
 		throw("Cannot make a romanNumeral from " + currentFigure);
 	}
@@ -740,9 +479,9 @@ Music21.RomanNumeral = function (figure, keyStr) {
 	
 	if (this.key.mode == 'minor' && (this.scaleDegree == 6 || this.scaleDegree == 7)) {
 		if (['minor','diminished','half-diminished'].indexOf(impliedQuality) != -1) {
-			var raiseTone = new Music21.Interval('A1');
+			var raiseTone = new music21.Interval('A1');
 			this.root = raiseTone.transposePitch(this.root);
-			if (Music21.debug) {
+			if (music21.debug) {
 				console.log('raised root because minor/dim on scaleDegree 6 or 7');
 			}
 		}
@@ -763,18 +502,18 @@ Music21.RomanNumeral = function (figure, keyStr) {
 	this.updatePitches();	
 };
 
-Music21.RomanNumeral.prototype = new Music21.Chord();
-Music21.RomanNumeral.prototype.constructor = Music21.RomanNumeral;
+music21.RomanNumeral.prototype = new music21.Chord();
+music21.RomanNumeral.prototype.constructor = music21.RomanNumeral;
 
 
-/*  Music21.Clef
+/*  music21.Clef
 
-	must be defined before Stream since Stream subclasses call new Music21.Clef...
+	must be defined before Stream since Stream subclasses call new music21.Clef...
 
 */
 
-Music21.Clef = function (name) {
-	Music21.Music21Object.call(this);
+music21.Clef = function (name) {
+	music21.baseObjects.Music21Object.call(this);
 	this.classes.push('Clef');
     var firstLines = {'treble': 31, 'bass': 19};
     if (name != undefined) {
@@ -802,11 +541,11 @@ Music21.Clef = function (name) {
 };
 
 
-Music21.Clef.prototype = new Music21.Music21Object();
-Music21.Clef.prototype.constructor = Music21.Clef;
+music21.Clef.prototype = new music21.baseObjects.Music21Object();
+music21.Clef.prototype.constructor = music21.Clef;
 
-Music21.KeySignature = function(sharps) {
-	Music21.Music21Object.call(this);
+music21.KeySignature = function(sharps) {
+	music21.baseObjects.Music21Object.call(this);
 	this.classes.push('KeySignature');
 	this.sharps = sharps || 0; // if undefined
 	this.mode = 'major';
@@ -843,7 +582,7 @@ Music21.KeySignature = function(sharps) {
 					return undefined;
 				}
 				// make a new accidental;
-				return new Music21.Accidental(aps[i].accidental.alter);
+				return new music21.pitch.Accidental(aps[i].accidental.alter);
 			}
 		}
 		return undefined;
@@ -852,13 +591,13 @@ Music21.KeySignature = function(sharps) {
 		var transInterval = undefined;
 		var transTimes = undefined;
 		if (this.sharps == 0) {
-			return new Music21.Pitch(pitch.nameWithOctave);
+			return new music21.pitch.Pitch(pitch.nameWithOctave);
 		} else if (this.sharps < 0) {
 			transTimes = Math.abs(this.sharps);
-			transInterval = new Music21.Interval("P4");
+			transInterval = new music21.Interval("P4");
 		} else {
 			transTimes = this.sharps;
-			transInterval = new Music21.Interval("P5");
+			transInterval = new music21.Interval("P5");
 		}
 		var newPitch = pitch;
 		for (var i = 0; i < transTimes; i++) {
@@ -882,9 +621,9 @@ Music21.KeySignature = function(sharps) {
     				transStr = "P4";
     				startPitch = "F";
     			}
-				var transInterval = new Music21.Interval(transStr);
+				var transInterval = new music21.Interval(transStr);
 				var post = [];
-				var pKeep = new Music21.Pitch(startPitch);
+				var pKeep = new music21.pitch.Pitch(startPitch);
 				for (var i = 0; i < Math.abs(this.sharps); i++) {
 					pKeep = transInterval.transposePitch(pKeep);
 					pKeep.octave = 4;
@@ -897,10 +636,10 @@ Music21.KeySignature = function(sharps) {
     });
 };
 
-Music21.KeySignature.prototype = new Music21.Music21Object();
-Music21.KeySignature.prototype.constructor = Music21.KeySignature;
+music21.KeySignature.prototype = new music21.baseObjects.Music21Object();
+music21.KeySignature.prototype.constructor = music21.KeySignature;
 
-Music21.Key = function (keyName, mode) {
+music21.Key = function (keyName, mode) {
 	if (keyName == undefined) {
 		keyName = 'C';
 	}
@@ -923,10 +662,10 @@ Music21.Key = function (keyName, mode) {
 		modeShift = -3;
 	}
 	var sharps = sharpsIndex + modeShift - 11;
-	if (Music21.debug) {
+	if (music21.debug) {
 		console.log("Found sharps " + sharps + " for key: " + keyName);
 	}
-	Music21.KeySignature.call(this, sharps);
+	music21.KeySignature.call(this, sharps);
 	this.tonic = keyName;
 	this.mode = mode;
 	
@@ -934,22 +673,22 @@ Music21.Key = function (keyName, mode) {
 		if (scaleType == undefined) {
 			scaleType = this.mode;
 		}
-		var pitchObj = new Music21.Pitch(this.tonic);
+		var pitchObj = new music21.pitch.Pitch(this.tonic);
 		if (scaleType == 'major') {
-			return Music21.ScaleSimpleMajor(pitchObj);
+			return music21.ScaleSimpleMajor(pitchObj);
 		} else {
-			return Music21.ScaleSimpleMinor(pitchObj, scaleType);
+			return music21.ScaleSimpleMinor(pitchObj, scaleType);
 		}
 	};
 };
 
-Music21.Key.prototype = new Music21.KeySignature();
-Music21.Key.prototype.constructor = Music21.Key;
+music21.Key.prototype = new music21.KeySignature();
+music21.Key.prototype.constructor = music21.Key;
 
 
 
 /* Stream functions ... */
-Music21.RenderOptions = function() {
+music21.RenderOptions = function() {
 	return {
 		displayClef: true,
 		displayTimeSignature: true,
@@ -975,8 +714,8 @@ Music21.RenderOptions = function() {
 	};
 };
 
-Music21.Stream = function () {
-	Music21.Music21Object.call(this);
+music21.Stream = function () {
+	music21.baseObjects.Music21Object.call(this);
 	this.classes.push('Stream');
 
     this._elements = [];
@@ -984,12 +723,12 @@ Music21.Stream = function () {
     this._clef = undefined;
     this.displayClef = undefined;
     
-    this._keySignature =  undefined; // a Music21.KeySignature object
+    this._keySignature =  undefined; // a music21.KeySignature object
     this._timeSignature = undefined; // temp hack -- a string...
     
     this.autoBeam = true;
     this.activeVFStave = undefined;
-    this.renderOptions = new Music21.RenderOptions();
+    this.renderOptions = new music21.RenderOptions();
     this._tempo = undefined;
     
     this._stopPlaying = false;
@@ -1048,7 +787,7 @@ Music21.Stream = function () {
 		'clef': {
 			get: function () {
 				if (this._clef == undefined && this.parent == undefined) {
-					return new Music21.Clef('treble');
+					return new music21.Clef('treble');
 				} else if (this._clef == undefined) {
 					return this.parent.clef;
 				} else {
@@ -1219,7 +958,7 @@ Music21.Stream = function () {
         else if (numSixteenths % 4 == 0) { beatValue = 4; numSixteenths = numSixteenths / 4; }
         else if (numSixteenths % 2 == 0) { beatValue = 8; numSixteenths = numSixteenths / 2; }
         //console.log('creating voice');
-        if (Music21.debug) {
+        if (music21.debug) {
         	console.log("New voice, num_beats: " + numSixteenths.toString() + " beat_value: " + beatValue.toString());
         }
         var vfv = new Vex.Flow.Voice({ num_beats: numSixteenths,
@@ -1279,7 +1018,7 @@ Music21.Stream = function () {
     		if (!ignoreSystems) {
     			numSystems = this.numSystems();
     		}
-    		if (Music21.debug) {
+    		if (music21.debug) {
     			console.log("estimateStreamHeight for Part: numSystems [" + numSystems +
     			"] * staffHeight [" + staffHeight + "] + (numSystems [" + numSystems +
     			"] - 1) * systemPadding [" + systemPadding + "]."
@@ -1295,7 +1034,7 @@ Music21.Stream = function () {
     	/* does nothing for standard streams ... */
     };
     this.resetRenderOptionsRecursive = function () {
-    	this.renderOptions = new Music21.RenderOptions();
+    	this.renderOptions = new music21.RenderOptions();
     	for (var i = 0; i < this.length; i++) {
     		var el = this.elements[i];
     		if (el.inClass('Stream')) {
@@ -1396,7 +1135,7 @@ Music21.Stream = function () {
 		} 
 			
 		var formatter = new Vex.Flow.Formatter();
-		if (Music21.debug) {
+		if (music21.debug) {
 			console.log("Voice: ticksUsed: " + voice.ticksUsed + " totalTicks: " + voice.totalTicks);
 		}
 		//Vex.Flow.Formatter.FormatAndDraw(ctx, stave, notes);
@@ -1426,7 +1165,7 @@ Music21.Stream = function () {
         //var staveHeight = 80;
         if (stave != undefined) {
         	noteOffsetLeft = stave.start_x + stave.glyph_start_x;
-        	if (Music21.debug) {
+        	if (music21.debug) {
         		console.log("noteOffsetLeft: " + noteOffsetLeft + " ; stave.start_x: " + stave.start_x);
             	console.log("Bottom y: " + stave.getBottomY() );	        			
         	}
@@ -1450,7 +1189,7 @@ Music21.Stream = function () {
 			    }
 		    }
 		}
-		if (Music21.debug) {
+		if (music21.debug) {
 	        for (var i = 0; i < this.length; i ++ ) {
 	            var n = this.elements[i];
 	            if (n.pitch != undefined) {
@@ -1627,7 +1366,7 @@ Music21.Stream = function () {
 		/* var firstLineOffset = ( (storedVFStave.options.num_lines - 1) + linesAboveStaff) * lineSpacing; 
 		   var actualVFStaffOnlyHeight = (storedVFStave.height - (linesAboveStaff * lineSpacing)); */
 		var pixelScaling = totalLines * lineSpacing/canvasHeight;		
-		if (Music21.debug) {
+		if (music21.debug) {
 			console.log('canvasHeight: ' + canvasHeight + " totalLines*lineSpacing: " + totalLines*lineSpacing + " staveHeight: " + storedVFStave.height);
 		}
 		return pixelScaling;
@@ -1744,7 +1483,7 @@ Music21.Stream = function () {
 			 clickedDiatonicNoteNum = _[0],
 			 foundNote = _[1];
 		if (foundNote == undefined) {
-			if (Music21.debug) {
+			if (music21.debug) {
 				console.log('No note found');				
 			}
 		}
@@ -1754,7 +1493,7 @@ Music21.Stream = function () {
 	this.noteChanged = function (clickedDiatonicNoteNum, foundNote, canvas) {
 		if (foundNote != undefined) {
 			var n = foundNote;
-			p = new Music21.Pitch("C");
+			p = new music21.pitch.Pitch("C");
 			p.diatonicNoteNum = clickedDiatonicNoteNum;
 			p.accidental = n.pitch.accidental;
 			n.pitch = p;
@@ -1813,7 +1552,7 @@ Music21.Stream = function () {
 			var s = siblingCanvas[0].storedStream;
 			if (s.activeNote != undefined) {
 				n = s.activeNote;
-				n.pitch.accidental = new Music21.Accidental(alter);
+				n.pitch.accidental = new music21.pitch.Accidental(alter);
 				/* console.log(n.pitch.name); */
 				s.redrawCanvas(siblingCanvas[0]);
 				if (s.changedCallbackFunction != undefined) {
@@ -1853,20 +1592,20 @@ Music21.Stream = function () {
 
 };
 
-Music21.Stream.prototype = new Music21.Music21Object();
-Music21.Stream.prototype.constructor = Music21.Stream;
+music21.Stream.prototype = new music21.baseObjects.Music21Object();
+music21.Stream.prototype.constructor = music21.Stream;
 
 
-Music21.Measure = function () { 
-	Music21.Stream.call(this);
+music21.Measure = function () { 
+	music21.Stream.call(this);
 	this.classes.push('Measure');
 };
 
-Music21.Measure.prototype = new Music21.Stream();
-Music21.Measure.prototype.constructor = Music21.Measure;
+music21.Measure.prototype = new music21.Stream();
+music21.Measure.prototype.constructor = music21.Measure;
 
-Music21.Part = function () {
-	Music21.Stream.call(this);
+music21.Part = function () {
+	music21.Stream.call(this);
 	this.classes.push('Part');
 	this.systemHeight = 120;
 	
@@ -1891,7 +1630,7 @@ Music21.Part = function () {
 		var x = _[1];
 		
 		var scalingFunction = this.estimateStreamHeight()/$(canvas).height();
-		if (Music21.debug) {
+		if (music21.debug) {
 			console.log('Scaling function: ' + scalingFunction + ', i.e. this.estimateStreamHeight(): ' + 
 					this.estimateStreamHeight() + " / $(canvas).height(): " + $(canvas).height());
 		}
@@ -1918,7 +1657,7 @@ Music21.Part = function () {
 			var right = left + vfro.width;
 			var top = vfro.top;
 			var bottom = top + vfro.height;
-			if (Music21.debug) {
+			if (music21.debug) {
 				console.log("Searching for X:" + Math.round(scaledX) + 
 						" Y:" + Math.round(scaledY) + " in M " + i + 
 						" with boundaries L:" + left + " R:" + right +
@@ -2004,7 +1743,7 @@ Music21.Part = function () {
 		if (systemHeight == undefined) {
 			systemHeight = this.systemHeight; /* part.show() called... */
 		} else {
-			if (Music21.debug) {
+			if (music21.debug) {
 				console.log ('overridden systemHeight: ' + systemHeight);
 			}
 		}
@@ -2088,11 +1827,11 @@ Music21.Part = function () {
 	};
 };
 
-Music21.Part.prototype = new Music21.Stream();
-Music21.Part.prototype.constructor = Music21.Part;
+music21.Part.prototype = new music21.Stream();
+music21.Part.prototype.constructor = music21.Part;
 
-Music21.Score = function () {
-	Music21.Stream.call(this);
+music21.Score = function () {
+	music21.Stream.call(this);
 	this.classes.push('Score');
 	this.measureWidths = [];
 	this.partSpacing = 120;
@@ -2182,7 +1921,7 @@ Music21.Score = function () {
 			systemIndex = Math.floor(partNum/this.length);
 			partNum = partNum % this.length;
 		}
-		if (Music21.debug) {
+		if (music21.debug) {
 			console.log(y + " scaled = " + scaledY + " part Num: " + partNum + " scaledYinPart: " + scaledYinPart + " systemIndex: " + systemIndex);
 		}
 		var rightPart = this.elements[partNum];
@@ -2283,8 +2022,8 @@ Music21.Score = function () {
 	};
 };
 
-Music21.Score.prototype = new Music21.Stream();
-Music21.Score.prototype.constructor = Music21.Score;
+music21.Score.prototype = new music21.Stream();
+music21.Score.prototype.constructor = music21.Score;
 
 var tinyNotationRegularExpressions = {  REST    : /r/,
                             OCTAVE2 : /([A-G])[A-G]+/,
@@ -2306,10 +2045,10 @@ var tinyNotationRegularExpressions = {  REST    : /r/,
 						  };
 
 
-Music21.TinyNotation = function (textIn) {
+music21.TinyNotation = function (textIn) {
     var tokens = textIn.split(" ");
-    var s = new Music21.Measure();
-    // s.clef = new Music21.Clef('bass');
+    var s = new music21.Measure();
+    // s.clef = new music21.Clef('bass');
     var lastDuration = 1.0;
     var tnre = tinyNotationRegularExpressions; // faster typing
     for (var i = 0; i < tokens.length; i++ ) {
@@ -2323,19 +2062,19 @@ Music21.TinyNotation = function (textIn) {
         	s.timeSignature = numerator + '/' + denominator;
         	continue;
         } else if (tnre.REST.exec(token)) {
-            noteObj = new Music21.Rest(lastDuration);
+            noteObj = new music21.Rest(lastDuration);
         } else if (MATCH = tnre.OCTAVE2.exec(token)) {
-            noteObj = new Music21.Note(MATCH[1], lastDuration);
+            noteObj = new music21.Note(MATCH[1], lastDuration);
 			noteObj.pitch.octave = 4 - MATCH[0].length;
         } else if (MATCH = tnre.OCTAVE3.exec(token)) {
-            noteObj = new Music21.Note(MATCH[1], lastDuration);
+            noteObj = new music21.Note(MATCH[1], lastDuration);
 			noteObj.pitch.octave = 3;
         } else if (MATCH = tnre.OCTAVE5.exec(token)) {
         	// must match octave 5 before 4
-            noteObj = new Music21.Note(MATCH[1].toUpperCase(), lastDuration);
+            noteObj = new music21.Note(MATCH[1].toUpperCase(), lastDuration);
 			noteObj.pitch.octave = 3 + MATCH[0].length;
 		} else if (MATCH = tnre.OCTAVE4.exec(token)) {
-            noteObj = new Music21.Note(MATCH[1].toUpperCase(), lastDuration);
+            noteObj = new music21.Note(MATCH[1].toUpperCase(), lastDuration);
 			noteObj.pitch.octave = 4;
 		}
 
@@ -2344,9 +2083,9 @@ Music21.TinyNotation = function (textIn) {
 		}
 		
 		if (tnre.SHARP.exec(token)) {
-		    noteObj.pitch.accidental = new Music21.Accidental('sharp');
+		    noteObj.pitch.accidental = new music21.pitch.Accidental('sharp');
 		} else if (tnre.FLAT.exec(token)) {
-		    noteObj.pitch.accidental = new Music21.Accidental('flat');
+		    noteObj.pitch.accidental = new music21.pitch.Accidental('flat');
 		}
 		
 		if (MATCH = tnre.TYPE.exec(token)) {
@@ -2366,23 +2105,23 @@ Music21.TinyNotation = function (textIn) {
 };
 
 
-Music21.IntervalDirections = {
+music21.IntervalDirections = {
 	DESCENDING: -1,
 	OBLIQUE: 0,
 	ASCENDING: 1
 };
 
 // N.B. a dict in music21p -- the indexes here let IntervalDirections call them + 1
-Music21.IntervalDirectionTerms = ['Descending', 'Oblique','Ascending'];
+music21.IntervalDirectionTerms = ['Descending', 'Oblique','Ascending'];
 
 
-Music21.MusicOrdinals = [undefined, 'Unison', 'Second', 'Third', 'Fourth',
+music21.MusicOrdinals = [undefined, 'Unison', 'Second', 'Third', 'Fourth',
 						 'Fifth', 'Sixth', 'Seventh', 'Octave',
 						 'Ninth', 'Tenth', 'Eleventh', 'Twelfth',
 						 'Thirteenth', 'Fourteenth', 'Double Octave'];
 						 
 
-Music21.GenericInterval = function (gi) {
+music21.GenericInterval = function (gi) {
 	this.classes = ['GenericInterval'];
 	if (gi == undefined) {
 		gi = 1;
@@ -2391,9 +2130,9 @@ Music21.GenericInterval = function (gi) {
 	this.directed =	this.value;
 	this.undirected = Math.abs(this.value);
 	
-	if (this.directed == 1) { this.direction = Music21.IntervalDirections.OBLIQUE; }
-	else if (this.directed < 0) { this.direction = Music21.IntervalDirections.DESCENDING; }
-	else if (this.directed > 1) { this.direction = Music21.IntervalDirections.ASCENDING; }
+	if (this.directed == 1) { this.direction = music21.IntervalDirections.OBLIQUE; }
+	else if (this.directed < 0) { this.direction = music21.IntervalDirections.DESCENDING; }
+	else if (this.directed > 1) { this.direction = music21.IntervalDirections.ASCENDING; }
 	// else (raise exception)
 	
 	if (this.undirected > 2) { this.isSkip = true; }
@@ -2421,7 +2160,7 @@ Music21.GenericInterval = function (gi) {
 		this.semiSimpleUndirected = this.simpleUndirected;
 	}
 	
-	if (this.direction == Music21.IntervalDirections.DESCENDING) {
+	if (this.direction == music21.IntervalDirections.DESCENDING) {
 		this.octaves = -1 * tempOctaves;
 		if (tempSteps != 1) {
 			this.simpleDirected = -1 * tempSteps;
@@ -2442,14 +2181,14 @@ Music21.GenericInterval = function (gi) {
 		this.perfectable = false;
 	}
 
-	if (this.undirected < Music21.MusicOrdinals.length) {
-		this.niceName = Music21.MusicOrdinals[this.undirected];
+	if (this.undirected < music21.MusicOrdinals.length) {
+		this.niceName = music21.MusicOrdinals[this.undirected];
 	} else {
 		this.niceName = this.undirected.toString();
 	}
 	
-	this.simpleNiceName = Music21.MusicOrdinals[this.simpleUndirected];
-	this.semiSimpleNiceName = Music21.MusicOrdinals[this.semiSimpleUndirected];
+	this.simpleNiceName = music21.MusicOrdinals[this.simpleUndirected];
+	this.semiSimpleNiceName = music21.MusicOrdinals[this.semiSimpleUndirected];
 	
 
 	if (Math.abs(this.directed) == 1) {
@@ -2464,30 +2203,30 @@ Music21.GenericInterval = function (gi) {
 	// 2 -> 7; 3 -> 6; 8 -> 1 etc.
 	this.mod7inversion = 9 - this.semiSimpleUndirected ;
 
-	if (this.direction == Music21.IntervalDirections.DESCENDING) {
+	if (this.direction == music21.IntervalDirections.DESCENDING) {
 		this.mod7 = this.mod7inversion;  // see chord.semitonesFromChordStep for usage...
 	} else {
 		this.mod7 = this.simpleDirected;
 	}
 	
 	this.complement = function () {
-		return new Music21.GenericInterval(this.mod7inversion);
+		return new music21.GenericInterval(this.mod7inversion);
 	};
 	
 	this.reverse = function () {
 		if (this.undirected == 1) {
-			return new Music21.GenericInterval(1);
+			return new music21.GenericInterval(1);
 		} else {
-			return new Music21.GenericInterval(this.undirected * (-1 * this.direction));
+			return new music21.GenericInterval(this.undirected * (-1 * this.direction));
 		}
 	};
 	
 	this.getDiatonic = function (specifier) {
-		return new Music21.DiatonicInterval(specifier, this);
+		return new music21.DiatonicInterval(specifier, this);
 	};	
 };
 
-Music21.IntervalSpecifiersEnum = { 
+music21.IntervalSpecifiersEnum = { 
 	PERFECT:    1,
 	MAJOR:      2,
 	MINOR:      3,
@@ -2501,61 +2240,61 @@ Music21.IntervalSpecifiersEnum = {
 	QUADDIM:   11
 };
 
-Music21.IntervalNiceSpecNames = [
+music21.IntervalNiceSpecNames = [
 	'ERROR', 'Perfect', 'Major', 'Minor', 
 	'Augmented', 'Diminished', 'Doubly-Augmented', 'Doubly-Diminished', 
 	'Triply-Augmented', 'Triply-Diminished', "Quadruply-Augmented", "Quadruply-Diminished"
 ];
-Music21.IntervalPrefixSpecs = [
+music21.IntervalPrefixSpecs = [
 	undefined, 'P', 'M', 'm', 'A', 'd', 'AA', 'dd', 'AAA', 'ddd', 'AAAA', 'dddd'
 ];
 
 
 
-Music21.IntervalOrderedPerfSpecs = [
+music21.IntervalOrderedPerfSpecs = [
 	'dddd', 'ddd', 'dd', 'd', 'P', 'A', 'AA', 'AAA', 'AAAA'
 ];
 
-Music21.IntervalPerfSpecifiers = [
-	Music21.IntervalSpecifiersEnum.QUADDMIN,
-	Music21.IntervalSpecifiersEnum.TRPDIM,
-	Music21.IntervalSpecifiersEnum.DBLDIM,
-	Music21.IntervalSpecifiersEnum.DIMINISHED,
-	Music21.IntervalSpecifiersEnum.PERFECT,
-	Music21.IntervalSpecifiersEnum.AUGMENTED,
-	Music21.IntervalSpecifiersEnum.DBLAUG,
-	Music21.IntervalSpecifiersEnum.TRPAUG,
-	Music21.IntervalSpecifiersEnum.QUADAUG
+music21.IntervalPerfSpecifiers = [
+	music21.IntervalSpecifiersEnum.QUADDMIN,
+	music21.IntervalSpecifiersEnum.TRPDIM,
+	music21.IntervalSpecifiersEnum.DBLDIM,
+	music21.IntervalSpecifiersEnum.DIMINISHED,
+	music21.IntervalSpecifiersEnum.PERFECT,
+	music21.IntervalSpecifiersEnum.AUGMENTED,
+	music21.IntervalSpecifiersEnum.DBLAUG,
+	music21.IntervalSpecifiersEnum.TRPAUG,
+	music21.IntervalSpecifiersEnum.QUADAUG
 ];
-Music21.IntervalPerfOffset = 4;
+music21.IntervalPerfOffset = 4;
 
-Music21.IntervalOrderedImperfSpecs = [
+music21.IntervalOrderedImperfSpecs = [
 	'dddd', 'ddd', 'dd', 'd', 'm', 'M', 'A', 'AA', 'AAA', 'AAAA'
 ];
 
-Music21.IntervalSpecifiers = [
-	Music21.IntervalSpecifiersEnum.QUADDMIN,
-	Music21.IntervalSpecifiersEnum.TRPDIM,
-	Music21.IntervalSpecifiersEnum.DBLDIM,
-	Music21.IntervalSpecifiersEnum.DIMINISHED,
-	Music21.IntervalSpecifiersEnum.MINOR,
-	Music21.IntervalSpecifiersEnum.MAJOR,
-	Music21.IntervalSpecifiersEnum.AUGMENTED,
-	Music21.IntervalSpecifiersEnum.DBLAUG,
-	Music21.IntervalSpecifiersEnum.TRPAUG,
-	Music21.IntervalSpecifiersEnum.QUADAUG
+music21.IntervalSpecifiers = [
+	music21.IntervalSpecifiersEnum.QUADDMIN,
+	music21.IntervalSpecifiersEnum.TRPDIM,
+	music21.IntervalSpecifiersEnum.DBLDIM,
+	music21.IntervalSpecifiersEnum.DIMINISHED,
+	music21.IntervalSpecifiersEnum.MINOR,
+	music21.IntervalSpecifiersEnum.MAJOR,
+	music21.IntervalSpecifiersEnum.AUGMENTED,
+	music21.IntervalSpecifiersEnum.DBLAUG,
+	music21.IntervalSpecifiersEnum.TRPAUG,
+	music21.IntervalSpecifiersEnum.QUADAUG
 ];
-Music21.IntervalMajOffset = 5;
+music21.IntervalMajOffset = 5;
 
-Music21.IntervalSemitonesGeneric = {
+music21.IntervalSemitonesGeneric = {
 	1: 0, 2: 2, 3: 4, 4: 5, 5: 7, 6: 9, 7: 11
 };
-Music21.IntervalAdjustPerfect = {
+music21.IntervalAdjustPerfect = {
 	"P": 0, "A": 1, "AA": 2, "AAA": 3, "AAAA": 4,
 	"d": -1, "dd": -2, "ddd": -3, "dddd": -4
 }; // offset from Perfect
 
-Music21.IntervalAdjustImperf = {
+music21.IntervalAdjustImperf = {
 	"M": 0, "m": -1, "A": 1, "AA": 2, "AAA": 3, "AAAA": 4,
 	"d": -2, "dd": -3, "ddd": -4, "dddd": -5
 }; // offset from major
@@ -2563,44 +2302,44 @@ Music21.IntervalAdjustImperf = {
 
 
 
-Music21.DiatonicInterval = function (specifier, generic) {
+music21.DiatonicInterval = function (specifier, generic) {
 	this.classes = ['DiatonicInterval'];
 
 	if (specifier == undefined) {
 		specifier = "P";
 	}
 	if (generic == undefined) {
-		generic = new Music21.GenericInterval();
+		generic = new music21.GenericInterval();
 	}
 	
 	this.name = "";
-	this.specifier = Music21.IntervalPrefixSpecs.indexOf(specifier); // todo: convertSpecifier();
+	this.specifier = music21.IntervalPrefixSpecs.indexOf(specifier); // todo: convertSpecifier();
 	this.generic = generic;
 	
-	if ((generic.undirected != 1) || (specifier == Music21.IntervalSpecifiersEnum.PERFECT)) {
+	if ((generic.undirected != 1) || (specifier == music21.IntervalSpecifiersEnum.PERFECT)) {
 		this.direction = generic.direction;
 	} else {
 		// diminished unisons -- very controversial
-		if (Music21.IntervalPerfSpecifiers.indexOf(specifier) <= Music21.IntervalPerfSpecifiers.indexOf(Music21.IntervalSpecifiersEnum.DIMINISHED)) {
-			this.direction = Music21.IntervalDirections.DESCENDING;
+		if (music21.IntervalPerfSpecifiers.indexOf(specifier) <= music21.IntervalPerfSpecifiers.indexOf(music21.IntervalSpecifiersEnum.DIMINISHED)) {
+			this.direction = music21.IntervalDirections.DESCENDING;
 		} else {
-			this.direction = Music21.IntervalDirections.ASCENDING;
+			this.direction = music21.IntervalDirections.ASCENDING;
 		}
 	}
-	var diatonicDirectionNiceName = Music21.IntervalDirectionTerms[this.direction + 1];
-	this.name = Music21.IntervalPrefixSpecs[this.specifier] + generic.undirected.toString();
-	this.niceName = Music21.IntervalNiceSpecNames[this.specifier] + " " + generic.niceName;
-	this.simpleName = Music21.IntervalPrefixSpecs[this.specifier] + generic.simpleUndirected.toString();
-	this.simpleNiceName = Music21.IntervalNiceSpecNames[this.specifier] + " " + generic.simpleNiceName;
-	this.semiSimpleName = Music21.IntervalPrefixSpecs[this.specifier] + generic.semiSimpleUndirected.toString();
-	this.semiSimpleNiceName = Music21.IntervalNiceSpecNames[this.specifier] + " " + generic.semiSimpleNiceName;
-	this.directedName = Music21.IntervalPrefixSpecs[this.specifier] + generic.directed.toString();
+	var diatonicDirectionNiceName = music21.IntervalDirectionTerms[this.direction + 1];
+	this.name = music21.IntervalPrefixSpecs[this.specifier] + generic.undirected.toString();
+	this.niceName = music21.IntervalNiceSpecNames[this.specifier] + " " + generic.niceName;
+	this.simpleName = music21.IntervalPrefixSpecs[this.specifier] + generic.simpleUndirected.toString();
+	this.simpleNiceName = music21.IntervalNiceSpecNames[this.specifier] + " " + generic.simpleNiceName;
+	this.semiSimpleName = music21.IntervalPrefixSpecs[this.specifier] + generic.semiSimpleUndirected.toString();
+	this.semiSimpleNiceName = music21.IntervalNiceSpecNames[this.specifier] + " " + generic.semiSimpleNiceName;
+	this.directedName = music21.IntervalPrefixSpecs[this.specifier] + generic.directed.toString();
 	this.directedNiceName = diatonicDirectionNiceName + " " + this.niceName;
-	this.directedSimpleName = Music21.IntervalPrefixSpecs[this.specifier] + generic.simpleDirected.toString();
+	this.directedSimpleName = music21.IntervalPrefixSpecs[this.specifier] + generic.simpleDirected.toString();
 	this.directedSimpleNiceName = diatonicDirectionNiceName + " " + this.simpleNiceName;
-	this.directedSemiSimpleName = Music21.IntervalPrefixSpecs[this.specifier] + generic.semiSimpleDirected.toString();
+	this.directedSemiSimpleName = music21.IntervalPrefixSpecs[this.specifier] + generic.semiSimpleDirected.toString();
 	this.directedSemiSimpleNiceName = diatonicDirectionNiceName + " " + this.semiSimpleNameName;
-	this.specificName = Music21.IntervalNiceSpecNames[this.specifier];
+	this.specificName = music21.IntervalNiceSpecNames[this.specifier];
 
 	
 
@@ -2610,17 +2349,17 @@ Music21.DiatonicInterval = function (specifier, generic) {
 	
 	// generate inversions
 	if (this.perfectable) {
-		this.orderedSpecifierIndex = Music21.IntervalOrderedPerfSpecs.indexOf(Music21.IntervalPrefixSpecs[this.specifier]);
-		this.invertedOrderedSpecIndex = (Music21.IntervalOrderedPerfSpecs.length - 1 - this.orderedSpecifierIndex);
-		this.invertedOrderedSpecifier = Music21.IntervalOrderedPerfSpecs[this.invertedOrderedSpecIndex];
+		this.orderedSpecifierIndex = music21.IntervalOrderedPerfSpecs.indexOf(music21.IntervalPrefixSpecs[this.specifier]);
+		this.invertedOrderedSpecIndex = (music21.IntervalOrderedPerfSpecs.length - 1 - this.orderedSpecifierIndex);
+		this.invertedOrderedSpecifier = music21.IntervalOrderedPerfSpecs[this.invertedOrderedSpecIndex];
 	} else {
-		this.orderedSpecifierIndex = Music21.IntervalOrderedImperfSpecs.indexOf(Music21.IntervalPrefixSpecs[this.specifier]);
-		this.invertedOrderedSpecIndex = (Music21.IntervalOrderedImperfSpecs.length - 1 - this.orderedSpecifierIndex);
-		this.invertedOrderedSpecifier = Music21.IntervalOrderedImperfSpecs[this.invertedOrderedSpecIndex];
+		this.orderedSpecifierIndex = music21.IntervalOrderedImperfSpecs.indexOf(music21.IntervalPrefixSpecs[this.specifier]);
+		this.invertedOrderedSpecIndex = (music21.IntervalOrderedImperfSpecs.length - 1 - this.orderedSpecifierIndex);
+		this.invertedOrderedSpecifier = music21.IntervalOrderedImperfSpecs[this.invertedOrderedSpecIndex];
 	}
 
 	this.mod7inversion = this.invertedOrderedSpecifier + generic.mod7inversion.toString();
-	/* ( if (this.direction == Music21.IntervalDirections.DESCENDING) {
+	/* ( if (this.direction == music21.IntervalDirections.DESCENDING) {
 		this.mod7 = this.mod7inversion;
 	} else {
 		this.mod7 = this.simpleName;
@@ -2632,14 +2371,14 @@ Music21.DiatonicInterval = function (specifier, generic) {
 	
 	this.getChromatic = function () {
 		var octaveOffset = Math.floor(Math.abs(this.generic.staffDistance)/7);
-		var semitonesStart = Music21.IntervalSemitonesGeneric[this.generic.simpleUndirected];
-		var specName = Music21.IntervalPrefixSpecs[this.specifier];
+		var semitonesStart = music21.IntervalSemitonesGeneric[this.generic.simpleUndirected];
+		var specName = music21.IntervalPrefixSpecs[this.specifier];
 		
 		var semitonesAdjust = 0;
 		if (this.generic.perfectable) {
-			semitonesAdjust = Music21.IntervalAdjustPerfect[specName];
+			semitonesAdjust = music21.IntervalAdjustPerfect[specName];
 		} else {
-			semitonesAdjust = Music21.IntervalAdjustImperf[specName];
+			semitonesAdjust = music21.IntervalAdjustImperf[specName];
 		}
 
 		var semitones = (octaveOffset * 12) + semitonesStart + semitonesAdjust;
@@ -2647,21 +2386,21 @@ Music21.DiatonicInterval = function (specifier, generic) {
 
 		// direction should be same as original
 		
-		if (this.generic.direction == Music21.IntervalDirections.DESCENDING) {
+		if (this.generic.direction == music21.IntervalDirections.DESCENDING) {
 			semitones *= -1;	
 		}
-		if (Music21.debug) {
+		if (music21.debug) {
 			console.log('DiatonicInterval.getChromatic -- octaveOffset: ' + octaveOffset);
 			console.log('DiatonicInterval.getChromatic -- semitonesStart: ' + semitonesStart);
 			console.log('DiatonicInterval.getChromatic -- specName: ' + specName);
 			console.log('DiatonicInterval.getChromatic -- semitonesAdjust: ' + semitonesAdjust);
 			console.log('DiatonicInterval.getChromatic -- semitones: ' + semitones);
 		}
-		return new Music21.ChromaticInterval(semitones);
+		return new music21.ChromaticInterval(semitones);
 	};
 };
 
-Music21.ChromaticInterval = function (value) {
+music21.ChromaticInterval = function (value) {
 	this.classes = ['ChromaticInterval'];
 	
 	this.semitones = value;
@@ -2670,16 +2409,16 @@ Music21.ChromaticInterval = function (value) {
 	this.undirected = Math.abs(value);
 	
 	if (this.directed == 0) {
-		this.direction = Music21.IntervalDirections.OBLIQUE;
+		this.direction = music21.IntervalDirections.OBLIQUE;
 	} else if (this.directed == this.undirected) {
-		this.direction = Music21.IntervalDirections.ASCENDING;	
+		this.direction = music21.IntervalDirections.ASCENDING;	
 	} else {
-		this.direction = Music21.IntervalDirections.DESCENDING;
+		this.direction = music21.IntervalDirections.DESCENDING;
 	}
 
 	this.mod12 = this.semitones % 12;
 	this.simpleUndirected = this.undirected % 12;
-	if (this.direction == Music21.IntervalDirections.DESCENDING) {
+	if (this.direction == music21.IntervalDirections.DESCENDING) {
 		this.simpleDirected = -1 * this.simpleUndirected;
 	} else {
 		this.simpleDirected = this.simpleUndirected;
@@ -2697,7 +2436,7 @@ Music21.ChromaticInterval = function (value) {
 	}
 	
 	this.reverse = function () {
-		return new Music21.ChromaticInterval(this.undirected * (-1 * this.direction));
+		return new music21.ChromaticInterval(this.undirected * (-1 * this.direction));
 	};
 	
 	// TODO: this.getDiatonic()
@@ -2710,7 +2449,7 @@ Music21.ChromaticInterval = function (value) {
 			useImplicitOctave = true;
 		}
 		var pps = p.ps;
-		newPitch = new Music21.Pitch();
+		newPitch = new music21.pitch.Pitch();
 		newPitch.ps = pps + this.semitones;
 		if (useImplicitOctave) {
 			newPitch.octave = undefined;
@@ -2719,9 +2458,9 @@ Music21.ChromaticInterval = function (value) {
 	};
 };
 
-Music21.IntervalStepNames = ['C','D','E','F','G','A','B'];
+music21.IntervalStepNames = ['C','D','E','F','G','A','B'];
 
-Music21.IntervalConvertDiatonicNumberToStep = function (dn) {
+music21.IntervalConvertDiatonicNumberToStep = function (dn) {
 	varStepNumber = undefined;
 	varOctave = undefined;
 	if (dn == 0) {
@@ -2733,11 +2472,11 @@ Music21.IntervalConvertDiatonicNumberToStep = function (dn) {
 		octave = Math.floor(dn/7);
 		stepNumber = (dn - 1) - ( (octave + 1) * 7);
 	}
-	var stepName = Music21.IntervalStepNames[stepNumber];
+	var stepName = music21.IntervalStepNames[stepNumber];
 	return [stepName, octave];
 };
 
-Music21.Interval = function () {
+music21.Interval = function () {
 	this.classes = ['Interval'];
 
 	// todo: allow full range of ways of specifying as in m21p
@@ -2747,8 +2486,8 @@ Music21.Interval = function () {
 			// simple...
 			var specifier = arg0.slice(0,1);
 			var generic = parseInt(arg0.slice(1));
-			var gI = new Music21.GenericInterval(generic);
-			var dI = new Music21.DiatonicInterval(specifier, gI);
+			var gI = new music21.GenericInterval(generic);
+			var dI = new music21.DiatonicInterval(specifier, gI);
 			this.diatonic = dI;
 			this.chromatic = this.diatonic.getChromatic();			
 		} else if (arg0.specifier != undefined) {
@@ -2793,7 +2532,7 @@ Music21.Interval = function () {
 		}
 		*/
 		
-		var pitch2 = new Music21.Pitch();
+		var pitch2 = new music21.pitch.Pitch();
 		pitch2.step = p.step;
 		pitch2.octave = p.octave;
 		// no accidental yet...
@@ -2804,15 +2543,15 @@ Music21.Interval = function () {
 
 		// if not reverse...
 		var newDiatonicNumber = oldDiatonicNum + distanceToMove;
-		var newInfo = Music21.IntervalConvertDiatonicNumberToStep(newDiatonicNumber);
+		var newInfo = music21.IntervalConvertDiatonicNumberToStep(newDiatonicNumber);
 		pitch2.step = newInfo[0];
 		pitch2.octave = newInfo[1];
 		// step and octave are right now, but not necessarily accidental
 		var halfStepsToFix = this.chromatic.semitones - parseInt(pitch2.ps - p.ps);
 		if (halfStepsToFix != 0) {
-			pitch2.accidental = new Music21.Accidental(halfStepsToFix);
+			pitch2.accidental = new music21.pitch.Accidental(halfStepsToFix);
 		}
-		if (Music21.debug) {
+		if (music21.debug) {
 			console.log('Interval.transposePitch -- distance to move' + distanceToMove);
 			console.log('Interval.transposePitch -- old diatonic num' + oldDiatonicNum);
 			console.log("Interval.transposePitch -- new step " + pitch2.step);
@@ -2827,23 +2566,23 @@ Music21.Interval = function () {
 };
 
 
-Music21.SimpleDiatonicScale = function(tonic, scaleSteps) {
+music21.SimpleDiatonicScale = function(tonic, scaleSteps) {
 	if (tonic == undefined) {
-		tonic = new Music21.Pitch("C4");
-	} else if ( ! (tonic instanceof Music21.Pitch) ) {
-		throw("Cannot make a scale not from a Music21.Pitch object: " + tonic);
+		tonic = new music21.pitch.Pitch("C4");
+	} else if ( ! (tonic instanceof music21.Pitch) ) {
+		throw("Cannot make a scale not from a music21.Pitch object: " + tonic);
 	}
 	if (scaleSteps == undefined) {
 		scaleSteps = ['M','M','m','M','M','M','m'];		
 	}
-	var gi = new Music21.GenericInterval(2);
+	var gi = new music21.GenericInterval(2);
 	var pitches = [tonic];
 	var lastPitch = tonic;
 	for (var i = 0; i < scaleSteps.length; i++ ) {
-		var di = new Music21.DiatonicInterval(scaleSteps[i], gi);
-		var ii = new Music21.Interval(di);
+		var di = new music21.DiatonicInterval(scaleSteps[i], gi);
+		var ii = new music21.Interval(di);
 		var newPitch = ii.transposePitch(lastPitch);
-		if (Music21.debug) {
+		if (music21.debug) {
 			console.log('ScaleSimpleMajor -- adding pitch: ' + newPitch.name);
 		}
 		pitches.push(newPitch);
@@ -2852,12 +2591,12 @@ Music21.SimpleDiatonicScale = function(tonic, scaleSteps) {
 	return pitches;
 };
 
-Music21.ScaleSimpleMajor = function (tonic) {
+music21.ScaleSimpleMajor = function (tonic) {
 	var scaleSteps = ['M','M','m','M','M','M','m'];
-	return new Music21.SimpleDiatonicScale(tonic, scaleSteps);
+	return new music21.SimpleDiatonicScale(tonic, scaleSteps);
 };
 
-Music21.ScaleSimpleMinor = function (tonic, type) {
+music21.ScaleSimpleMinor = function (tonic, type) {
 	var scaleSteps = ['M','m','M','M','m','M','M'];
 	if (typeof(type) == 'string') {
 		type = type.replace(/\s/g, "-");
@@ -2870,11 +2609,11 @@ Music21.ScaleSimpleMinor = function (tonic, type) {
 		scaleSteps[4] = 'M';
 		scaleSteps[6] = 'm';
 	}
-	return new Music21.SimpleDiatonicScale(tonic, scaleSteps);
+	return new music21.SimpleDiatonicScale(tonic, scaleSteps);
 };
 
 
-Music21.RenderNotationDivs = function (classTypes) {
+music21.RenderNotationDivs = function (classTypes) {
 	if (classTypes == undefined) {
 		classTypes = '.tinyNotation';
 	}
@@ -2886,7 +2625,7 @@ Music21.RenderNotationDivs = function (classTypes) {
 			thisTNContents = thisTNContents.trim(); // remove leading, trailing whitespace
 		}
 		if (thisTNContents != "") {
-			var st = Music21.TinyNotation(thisTNContents);
+			var st = music21.TinyNotation(thisTNContents);
 			var newCanvas = st.createPlayableCanvas();
 			$(thisTN).attr("tinyNotationContents", thisTNContents);
 			$(thisTN).empty();
@@ -2896,7 +2635,7 @@ Music21.RenderNotationDivs = function (classTypes) {
 	}
 };
 
-Music21.Dynamic = function (value) {
+music21.Dynamic = function (value) {
     shortNames = ['pppppp', 'ppppp', 'pppp', 'ppp', 'pp', 'p', 'mp', 'mf', 'f', 'fp', 'sf', 'ff', 'fff', 'ffff', 'fffff', 'ffffff'];
     longNames = {'ppp': ['pianississimo'],
                  'pp': ['pianissimo'],
@@ -3016,6 +2755,6 @@ Music21.Dynamic = function (value) {
     this.value = value;
 };
 
-return Music21;
+return music21;
 }); // end define
 
