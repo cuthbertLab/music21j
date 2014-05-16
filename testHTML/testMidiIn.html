@@ -44,7 +44,7 @@
 <body>
 <div id="jazzHere"></div>
 
-<script><!--
+<script>
 /* create the Jazz plug-in.
 
 Download at http://jazz-soft.net/download/Jazz-Plugin/
@@ -53,21 +53,27 @@ Download at http://jazz-soft.net/download/Jazz-Plugin/
 
 var Jazz;
 
-function create_plugin (where) {
- var obj=document.createElement('object');
- obj.classid="CLSID:1ACE1618-1C7D-4561-AEE1-34842AA85E90";
- if(!obj.isJazz) obj.type="audio/x-jazz";
- obj.style.visibility='hidden';
- obj.style.width='0px'; obj.style.height='0px';
- where.appendChild(obj);
- if(obj.isJazz) return obj;
- where.removeChild(obj);
- throw "Cannot create Jazz-Plugin";
+function createJazzPlugin (appendElement) {
+   var obj = document.createElement('object');
+   obj.classid="CLSID:1ACE1618-1C7D-4561-AEE1-34842AA85E90";
+   if (!obj.isJazz) {
+	   obj.type="audio/x-jazz";
+   }
+   obj.style.visibility='hidden';
+   obj.style.width='0px'; 
+   obj.style.height='0px';
+   appendElement.appendChild(obj);
+   if(obj.isJazz) {
+	   return obj;
+   } else {
+	   appendElement.removeChild(obj);
+	   throw "Cannot create Jazz-Plugin";
+   }
 }
--->
+
 
 window.onload = function () {
-	Jazz = create_plugin ( document.getElementById('jazzHere') );
+	Jazz = createJazzPlugin ( document.getElementById('jazzHere') );
 	populateMidiList2();
 	
 	MIDI.loadPlugin({
