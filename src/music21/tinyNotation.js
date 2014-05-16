@@ -86,6 +86,31 @@ define(['music21/baseObjects','music21/pitch','music21/note'], function(require)
 		return s;
 	};
 
+	// render notation divs in HTML
+	tinyNotation.RenderNotationDivs = function (classTypes) {
+		if (classTypes == undefined) {
+			classTypes = '.tinyNotation';
+		}
+		var allRender = $(classTypes);
+		for (var i = 0 ; i < allRender.length ; i ++) {
+			var thisTN = allRender[i];
+			var thisTNContents = thisTN.innerText;
+			if (String.prototype.trim != undefined) {
+				thisTNContents = thisTNContents.trim(); // remove leading, trailing whitespace
+			}
+			if (thisTNContents != "") {
+				var st = tinyNotation.TinyNotation(thisTNContents);
+				var newCanvas = st.createPlayableCanvas();
+				$(thisTN).attr("tinyNotationContents", thisTNContents);
+				$(thisTN).empty();
+				$(thisTN).append(newCanvas);
+				//console.log(thisTNContents);		
+			}
+		}
+	};
+
+	
+	
 	// end of define
 	if (typeof(music21) != "undefined") {
 		music21.tinyNotation = tinyNotation;
