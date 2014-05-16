@@ -17,31 +17,40 @@ python music21 (music21p).
 All interfaces are alpha and may change radically from day to day and release to release.
 Do not use this in production code yet.
 
-2013-10-04 -- v.0.1.alpha 
+2014-05-16 -- v.0.2 (alpha) -- refactor into modules using require.js
+2013-10-04 -- v.0.1 (alpha)  
 
 */
 
+requirejs.config({
+	paths: {
+		'jquery': '../ext/jquery/jquery-1.11.1.min',
+		'jquery-ui': '../ext/jqueryPlugins/jqueryUI/jquery-ui.min',
+		'vexflow': '../ext/vexflow/vexflow-min'
+	},
+	shim: {
+		'jquery-ui': {
+			deps: [ 'jquery' ],
+			exports: 'jQuery.ui'
+		}
+	}
+});
+
 if ( typeof define === "function" && define.amd) {
-    define( "music21", ['../ext/jquery/jquery-1.11.1.min', 
-                        '../ext/vexflow/vexflow-min',
-                        '../ext/midijs/js/MIDI/AudioDetect',
-                        '../ext/midijs/js/MIDI/LoadPlugin',
-                        '../ext/midijs/js/MIDI/Plugin',
-                        '../ext/midijs/js/MIDI/Player',
-                        '../ext/midijs/js/Window/DOMLoader.XMLHttp',
-                        '../ext/midijs/js/Window/DOMLoader.script',                        
-                        '../ext/midijs/inc/Base64',
-                        '../ext/midijs/inc/base64binary',
+    define( "music21", ['jquery',
+                        'jquery-ui',
+                        'vexflow',
+                        'loadMIDI',
                         'music21/base', ], 
     		function (require) { 
-        MIDI.loadPlugin({
+    	MIDI.loadPlugin({
     		soundfontUrl: "../ext/midijs/soundfont/",
     		instrument: "acoustic_grand_piano",
     		callback: function() {
     			startTime = new Date().getTime();
     		}
     	});
-    	var m21 = music21;
+        var m21 = music21;
     	return m21;
     });
 }
