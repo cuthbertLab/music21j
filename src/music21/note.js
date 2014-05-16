@@ -28,7 +28,8 @@ define(['music21/baseObjects', 'music21/pitch'], function(require) {
 									Vex.Flow.StaveNote.STEM_DOWN : 
 									Vex.Flow.StaveNote.STEM_UP);
 			if (this.stemDirection == 'noStem') {
-				vfn.render_options.stem_height = 0;
+				vfn.hasStem = function() { return false }; // need to override... 
+				//vfn.render_options.stem_height = 0;
 			}		
 		};
 	};
