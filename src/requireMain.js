@@ -13,7 +13,7 @@ require(['music21'], function(music21) {
 	n.duration.type="half";
 	var n2 = new music21.chord.Chord(["F#4", "A#4","C5"]);
 	n2.duration.type="half";
-	var s = new music21.Stream();
+	var s = new music21.stream.Stream();
 	s.append(n);
 	s.append(n2);
 	// s.clef = new music21.clef.Clef('treble');
