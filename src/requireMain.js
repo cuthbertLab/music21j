@@ -8,31 +8,14 @@ Call with
 
 */
 
-require.config({
-    paths: {
-        // the left side is the module ID,
-        // the right side is the path to
-        // the jQuery file, relative to baseUrl. (/src)
-        // Also, the path should NOT include
-        // the '.js' file extension.
-        'jquery': '../ext/jquery/jquery-1.11.1.min',
-        'Music21': 'music21/music21jExp',
-        'MIDI': '../ext/midijs/js/MIDI',
-        'Window': '../ext/midijs/js/Window',
-        'Base64': '../ext/midijs/inc/Base64',
-        'base64binary': '../ext/midijs/inc/base64binary',
-        'Vexflow': '../ext/vexflow/vexflow-min',
-        'base': 'music21/base',
-    }
+require(['music21'], function(music21) {
+	var n = new music21.Note("C#4");
+	n.duration.type="half";
+	var n2 = new music21.Note("F#4");
+	n2.duration.type="half";
+	var s = new music21.Stream();
+	s.append(n);
+	s.append(n2);
+	
+	s.appendNewCanvas();	
 });
-
-require(['jquery', 'MIDI/AudioDetect', 'MIDI/LoadPlugin',
-           'MIDI/Plugin', 'MIDI/Player', 'Window/DOMLoader.XMLHttp', 
-           'Window/DOMLoader.script', 'Base64', 'base64binary',
-           'Vexflow', 'Music21', 'base'],
-		  function($, MIDI, MIDIPl, MIDIPlay, WindowDOM, WindowDOMScript,
-				  Base64, base64binary, Vex, Music21, base) {
-	// jquery and Music21 are defined now...
-
-});
-
