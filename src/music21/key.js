@@ -7,11 +7,11 @@
  * Based on music21 (=music21p), Copyright (c) 2006–14, Michael Scott Cuthbert and cuthbertLab
  * 
  */
-define(['music21/baseObjects', 'music21/pitch', 'music21/interval', 'music21/scale'], function(require) {
+define(['music21/base', 'music21/pitch', 'music21/interval', 'music21/scale'], function(require) {
 	var key = {};
 
 	key.KeySignature = function(sharps) {
-		music21.baseObjects.Music21Object.call(this);
+		music21.base.Music21Object.call(this);
 		this.classes.push('KeySignature');
 		this.sharps = sharps || 0; // if undefined
 		this.mode = 'major';
@@ -102,7 +102,7 @@ define(['music21/baseObjects', 'music21/pitch', 'music21/interval', 'music21/sca
 	    });
 	};
 
-	key.KeySignature.prototype = new music21.baseObjects.Music21Object();
+	key.KeySignature.prototype = new music21.base.Music21Object();
 	key.KeySignature.prototype.constructor = key.KeySignature;
 
 	key.Key = function (keyName, mode) {
@@ -151,6 +151,47 @@ define(['music21/baseObjects', 'music21/pitch', 'music21/interval', 'music21/sca
 	key.Key.prototype = new key.KeySignature();
 	key.Key.prototype.constructor = key.Key;
 
+	key.tests = function () {
+
+	    test ( "music21.key.Key" , function() {
+	        var testSharps = [
+	           // sharps, mode, given name, given mode
+	           [0, 'minor', 'a'],
+	           [0, 'major', 'C'],
+	           [0, 'major'],
+	           [6, 'major', 'F#'],
+	           [3, 'minor', 'f#'],
+	           [6, 'major', 'f#', 'major'],
+	           [-2, 'major', 'B-'],
+	           [-5, 'minor', 'b-'],
+	        ];
+	        for (var i = 0; i < testSharps.length; i++ ) {
+	            var thisTest = testSharps[i];
+	            var expectedSharps = thisTest[0];
+	            var expectedMode = thisTest[1];
+	            var givenKeyName = thisTest[2];
+	            var givenMode = thisTest[3];
+	            var k = new music21.key.Key(givenKeyName, givenMode);
+	            var foundSharps = k.sharps;
+	            var foundMode = k.mode;
+	            equal (foundSharps, expectedSharps, "Test sharps: " + givenKeyName + " (mode: " + givenMode + ") ");
+	            equal (foundMode, expectedMode, "Test mode: " + givenKeyName + " (mode: " + givenMode + ") ");
+	        }
+
+	        var k = new music21.key.Key("f#");
+	        var s = k.getScale();
+	        equal (s[2].nameWithOctave, "A4", "test minor scale");
+	        equal (s[6].nameWithOctave, "E5");
+	        s = k.getScale('major');
+	        equal (s[2].nameWithOctave, "A#4", "test major scale");
+	        equal (s[6].nameWithOctave, "E#5");
+	        s = k.getScale("harmonic minor");
+	        equal (s[2].nameWithOctave, "A4", "test harmonic minor scale");
+	        equal (s[5].nameWithOctave, "D5");
+	        equal (s[6].nameWithOctave, "E#5");
+	    });
+
+	}
 	
 	// end of define
 	if (typeof(music21) != "undefined") {
