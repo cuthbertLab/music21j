@@ -14,7 +14,8 @@ define(['music21/base','music21/renderOptions','music21/clef'], function(require
 	stream.Stream = function () {
 		music21.base.Music21Object.call(this);
 		this.classes.push('Stream');
-
+		this._duration = undefined;
+		
 	    this._elements = [];
 	    this.quarterLength = 0;
 	    this._clef = undefined;
@@ -52,7 +53,27 @@ define(['music21/base','music21/renderOptions','music21/clef'], function(require
 	    };
 	    
 	    Object.defineProperties(this, {
-	    	'flat': {
+            'duration': {
+                configurable: true,
+                enumerable: true,
+                get: function () {
+                    if (this._duration) {
+                        return this._duration;
+                    }
+                    var totalQL = 0.0;
+                    for (var i = 0; i < this.length; i++) {
+                        var el = this.elements[i];
+                        totalQL += el.duration.quarterLength;
+                    }
+                    return new music21.duration.Duration(totalQL);
+                },
+                set: function(newDuration) {
+                    this._duration = newDuration;
+                }
+            },
+	        'flat': {
+                configurable: true,
+                enumerable: true,
 	    		get: function () {
 	    			if (this.hasSubStreams()) {
 	        			var tempEls = [];
@@ -68,6 +89,8 @@ define(['music21/base','music21/renderOptions','music21/clef'], function(require
 	    		},
 	    	},
 			'tempo': {
+                configurable: true,
+                enumerable: true,
 				get: function () {
 					if (this._tempo == undefined && this.parent != undefined) {
 						return this.parent.tempo;
@@ -82,6 +105,8 @@ define(['music21/base','music21/renderOptions','music21/clef'], function(require
 				}
 			},
 			'clef': {
+                configurable: true,
+                enumerable: true,
 				get: function () {
 					if (this._clef == undefined && this.parent == undefined) {
 						return new music21.clef.Clef('treble');
@@ -96,6 +121,8 @@ define(['music21/base','music21/renderOptions','music21/clef'], function(require
 				}
 			},
 			'keySignature': {
+                configurable: true,
+                enumerable: true,
 				get: function () {
 					if (this._keySignature == undefined && this.parent != undefined) {
 						return this.parent.keySignature;
@@ -108,6 +135,8 @@ define(['music21/base','music21/renderOptions','music21/clef'], function(require
 				}
 			},
 			'timeSignature': {
+                configurable: true,
+                enumerable: true,
 				get: function () {
 					if (this._timeSignature == undefined && this.parent != undefined) {
 						return this.parent.timeSignature;
@@ -120,6 +149,8 @@ define(['music21/base','music21/renderOptions','music21/clef'], function(require
 				}
 			},
 			'maxSystemWidth': {
+                configurable: true,
+                enumerable: true,
 				get: function () {
 					if (this.renderOptions.maxSystemWidth == undefined && this.parent != undefined) {
 						return this.parent.maxSystemWidth;
@@ -134,6 +165,8 @@ define(['music21/base','music21/renderOptions','music21/clef'], function(require
 				}
 			},
 			'parts': {
+                configurable: true,
+                enumerable: true,
 				get: function() {
 					var parts = [];
 					for (var i = 0; i < this.length; i++) {
@@ -145,6 +178,8 @@ define(['music21/base','music21/renderOptions','music21/clef'], function(require
 				}
 			},
 			'measures': {
+                configurable: true,
+                enumerable: true,
 				get: function() {
 					var measures = [];
 					for (var i = 0; i < this.length; i++) {
@@ -156,11 +191,15 @@ define(['music21/base','music21/renderOptions','music21/clef'], function(require
 				}
 			},
 			'length': {
+                configurable: true,
+                enumerable: true,
 				get: function() {
 					return this.elements.length;
 				}
 			},
 			'elements': {
+                configurable: true,
+                enumerable: true,
 				get: function() {
 					return this._elements;
 				},
@@ -220,11 +259,16 @@ define(['music21/base','music21/renderOptions','music21/clef'], function(require
 			if ((lastStepDict[p.step] != newAlter) ||
 				(lastOctavelessStepDict[p.step] != newAlter)
 				 ) {
-				p.accidental.displayStatus = true;
+			    if (p.accidental === undefined) {
+			        p.accidental = new music21.pitch.Accidental('natural');
+			    }
+			    p.accidental.displayStatus = true;
 				//console.log("setting displayStatus to true");
 			} else if ( (lastStepDict[p.step] == newAlter) &&
 						(lastOctavelessStepDict[p.step] == newAlter) ) {
-				p.accidental.displayStatus = false;
+                if (p.accidental !== undefined) {
+                    p.accidental.displayStatus = false;
+                }
 				//console.log("setting displayStatus to false");
 			}
 			lastStepDict[p.step] = newAlter;
@@ -1332,6 +1376,21 @@ define(['music21/base','music21/renderOptions','music21/clef'], function(require
 	        equal (s.length, 3, "Simple stream length");
 	    });
 
+       test( "music21.stream.Stream.duration", function() {
+            var s = new music21.stream.Stream();
+            equal (s.duration.quarterLength, 0, "EmptyString QuarterLength");
+            s.append( new music21.note.Note("C#5"));
+            equal (s.duration.quarterLength, 1.0, "1 quarter QuarterLength");
+            var n =  new music21.note.Note("F5");
+            n.duration.type = 'half';
+            s.append(n);
+            equal (s.duration.quarterLength, 3.0, "3 quarter QuarterLength");
+            s.duration = new music21.duration.Duration(3.0);
+            s.append( new music21.note.Note("D#5"));
+            equal (s.duration.quarterLength, 3.0, "overridden duration -- remains");
+        });
+
+	    
 	    test( "music21.stream.Stream.canvas", function() {
 	        var s = new music21.stream.Stream();
 	        s.append( new music21.note.Note("C#5"));

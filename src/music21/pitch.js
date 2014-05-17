@@ -74,13 +74,39 @@ define(function(require) {
 	    if (pn == undefined) {
 	    	pn = "C";
 	    }
-	    this.step = 'C';
-	    this.octave = 4;
+	    this._step = 'C';
+	    this._octave = 4;
+	    this._accidental = undefined;
 		this.classes = ['Pitch'];
 		this.inClass = music21._inClass;
 	    
 	    Object.defineProperties(this, {
-	    	'name': {
+	    	'step' : {
+	    	  enumerable: true,
+	    	  configurable: true,
+	    	  get: function () { return this._step },
+	    	  set: function (s) { this._step = s }
+	    	},
+            'octave' : {
+                enumerable: true,
+                configurable: true,
+                get: function () { return this._octave },
+                set: function (o) { this._octave = o }
+              },
+            'accidental' : {
+                  enumerable: true,
+                  configurable: true,
+                  get: function () { return this._accidental },
+                  set: function (a) { 
+                      if (typeof(a) != 'object') {
+                          a = new music21.pitch.Accidental(a);
+                      }
+                      this._accidental = a; 
+                  }
+                },	        
+	        'name': {
+	    	    enumerable: true,
+	    	    configurable: true,
 	    		get: function () {
 					if (this.accidental == undefined) {
 						return this.step;
@@ -92,18 +118,22 @@ define(function(require) {
 					this.step = nn.slice(0,1).toUpperCase();
 					var tempAccidental = nn.slice(1);
 					if (tempAccidental != undefined) {
-						this.accidental = new pitch.Accidental(tempAccidental);
+						this.accidental = tempAccidental; // converts automatically
 					} else {
 						this.accidental = undefined;
 					}
 				}
 			},
 			'nameWithOctave': {
+                enumerable: true,
+                configurable: true,
 				get: function () {
 					return this.name + this.octave.toString();
 				}
 			},
 	    	'diatonicNoteNum': { 
+                enumerable: true,
+                configurable: true,
 	    		get: function () { 
 			    	var nameToSteps = {'C': 0, 'D': 1, 'E': 2, 'F': 3, 'G': 4, 'A': 5, 'B': 6};
 	       			return (this.octave * 7) + nameToSteps[this.step] + 1;
@@ -116,11 +146,15 @@ define(function(require) {
 	   			}
 	   		},    		
 	    	'midi': { 
+                enumerable: true,
+                configurable: true,
 	    		get: function () { 
 	    			return this.ps;
 	    		}
 	    	},
 	    	'ps': {
+                enumerable: true,
+                configurable: true,
 	    		get: function () {
 					var nameToMidi = {'C': 0, 'D': 2, 'E': 4, 'F': 5, 'G': 7, 'A': 9, 'B': 11};
 					var accidentalAlter = 0;
