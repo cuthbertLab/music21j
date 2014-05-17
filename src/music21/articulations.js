@@ -1,5 +1,6 @@
 define([], function() {
    var articulations = {};
+
    articulations.Articulation = function(){
        this.name = undefined;
        this.placement = 'above';
@@ -11,26 +12,31 @@ define([], function() {
    };
    
    articulations.LengthArticulation = function(){
+       articulations.Articulation.call(this);
    };
    articulations.LengthArticulation.prototype = new articulations.Articulation();
    articulations.LengthArticulation.prototype.constructor = articulations.LengthArticulation;
    
    articulations.DynamicArticulation = function(){
+       articulations.Articulation.call(this);
    };
    articulations.DynamicArticulation.prototype = new articulations.Articulation();
    articulations.DynamicArticulation.prototype.constructor = articulations.DynamicArticulation;
    
    articulations.PitchArticulation = function(){
+       articulations.Articulation.call(this);
    };
    articulations.PitchArticulation.prototype = new articulations.Articulation();
    articulations.PitchArticulation.prototype.constructor = articulations.PitchArticulation;
    
    articulations.TimbreArticulation = function(){
+       articulations.Articulation.call(this);
    };
    articulations.TimbreArticulation.prototype = new articulations.Articulation();
    articulations.TimbreArticulation.prototype.constructor = articulations.TimbreArticulation;
    
    articulations.Accent = function(){
+       articulations.DynamicArticulation.call(this);
        this.name = 'accent';
        this.vexflowModifier = "a>";
    };
@@ -38,6 +44,7 @@ define([], function() {
    articulations.Accent.prototype.constructor = articulations.Accent;
    
    articulations.StrongAccent = function(){
+       articulations.Accent.call(this);
        this.name = 'strong accent';
        this.vexflowModifier = "a^";
    };
@@ -45,6 +52,7 @@ define([], function() {
    articulations.StrongAccent.prototype.constructor = articulations.StrongAccent;
    
    articulations.Staccato = function(){
+       articulations.LengthArticulation.call(this);
        this.name = 'staccato';
        this.vexflowModifier = "a.";
    };
@@ -52,6 +60,7 @@ define([], function() {
    articulations.Staccato.prototype.constructor = articulations.Staccato;
    
    articulations.Staccatissimo = function(){
+       articulations.Staccato.call(this);
        this.name = 'staccatissimo';
        this.vexflowModifier = "av";
    };
@@ -59,11 +68,21 @@ define([], function() {
    articulations.Staccatissimo.prototype.constructor = articulations.Staccatissimo;
    
    articulations.Tenuto = function(){
+       articulations.LengthArticulation.call(this);
        this.name = 'tenuto';
        this.vexflowModifier = "a-";
    };
    articulations.Tenuto.prototype = new articulations.LengthArticulation();
    articulations.Tenuto.prototype.constructor = articulations.Tenuto;
+
+   articulations.Fermata = function(){
+       articulations.LengthArticulation.call(this);
+       this.name = 'fermata';
+       this.vexflowModifier = "a@a";
+   };
+   articulations.Fermata.prototype = new articulations.LengthArticulation();
+   articulations.Fermata.prototype.constructor = articulations.Fermata;
+
    
    articulations.tests = function () {
        test( "music21.articulations.Articulation", function() {
