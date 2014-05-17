@@ -4,6 +4,9 @@
 .*~
 *~
 
+#Eclipse
+.settings
+
 # OSX
 .DS_Store
 
