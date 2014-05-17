@@ -145,7 +145,10 @@ define(['music21/base','music21/renderOptions','music21/clef'], function(require
 					}
 				},
 				set: function (newTimeSignature) {
-					this._timeSignature = newTimeSignature;
+					if (typeof(newTimeSignature) == 'string') {
+					    newTimeSignature = new music21.meter.TimeSignature(newTimeSignature);
+					}
+				    this._timeSignature = newTimeSignature;
 				}
 			},
 			'maxSystemWidth': {
@@ -444,7 +447,10 @@ define(['music21/base','music21/renderOptions','music21/clef'], function(require
 			}
 			
 	        if ((this.timeSignature != undefined) && (vfro.displayTimeSignature)) {
-				stave.addTimeSignature(this.timeSignature); // TODO: convertToVexflow...
+				stave.addTimeSignature(
+				        this.timeSignature.numerator.toString() 
+				        + "/" 
+				        + this.timeSignature.denominator.toString()); // TODO: convertToVexflow...
 			}
 	        if (this.renderOptions.rightBarline != undefined) {
 	        	var bl = this.renderOptions.rightBarline;

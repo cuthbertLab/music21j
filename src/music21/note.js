@@ -18,7 +18,8 @@ define(['music21/base', 'music21/pitch'], function(require) {
 	note.GeneralNote = function () {
 		music21.base.Music21Object.call(this);
 		this.classes.push('GeneralNote');
-	    this.activeVexflowNote = undefined;    
+	    this.activeVexflowNote = undefined;
+        this.expressions = [];
 		
 		this.vexflowAccidentalsAndDisplay = function (vfn) {
 	        if (this.duration.dots == 1) {
@@ -83,6 +84,12 @@ define(['music21/base', 'music21/pitch'], function(require) {
 	                vfn.addArticulation(0, art.vexflow()); // 0 refers to the first pitch (for chords etc.)...
 	            }
 	        }
+            if (this.expressions[0] != undefined) {
+                for (var i = 0; i < this.expressions.length; i++ ) {
+                    var exp = this.expressions[i];
+                    vfn.addArticulation(0, exp.vexflow()); // 0 refers to the first pitch (for chords etc.)...
+                }
+            }
 	        
 	        if (this.noteheadColor) {
 	            vfn.setKeyStyle(0, {fillStyle: this.noteheadColor});
