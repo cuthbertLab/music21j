@@ -18,17 +18,35 @@ define(['music21/duration'], function(require) {
 	base.Music21Object = function () {
 		this.classes = ['Music21Object'];
 		this.classSortOrder = 20; // default;
-		this.priority = 0; // default;
+		this._priority = 0; // default;
 		this.parent = undefined;
 		this.isStream = false;
 		// this.isSpanner = false; // add when supported,
 		// this.isVariant = false; // add when supported, if ever...
-		this.duration = new music21.duration.Duration();
+		this._duration = new music21.duration.Duration();
 		this.groups = []; // custom object in m21p
 		// this.sites, this.activeSites, this.offset -- not yet...
 		// beat, measureNumber, etc.
 		// lots to do...
 		this.inClass = music21._inClass;
+		
+		Object.defineProperties(this, {
+            'priority': {
+                configurable: true,
+                enumerable: true,
+                get: function () { return this._priority },
+                set: function (p) { this._priority = p }
+            },
+		    'duration': {
+                configurable: true,
+                get: function () {
+                    return this._duration;
+                },
+                set: function(newDuration) {
+                    this._duration = newDuration;
+                }
+            },
+		});
 	};
 	
 	
