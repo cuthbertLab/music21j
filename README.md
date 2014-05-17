@@ -9,6 +9,7 @@ under LGPL but the license will change soon.
 
 To use, place in a html page like:
 
+```html
 <head>
    <script data-main="src/music21" src="ext/require/require.js">
    <script>
@@ -21,6 +22,6 @@ To use, place in a html page like:
    </script>
 </head>
 <body />
-
+```
 See the Python version of music21 at http://web.mit.edu/music21/ for documentation. Only a small
 part of the functionality there exists in music21j.
