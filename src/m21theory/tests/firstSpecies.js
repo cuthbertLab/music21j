@@ -53,6 +53,7 @@ define("m21theory/tests/firstSpecies", ["m21theory/section"], function () {
 				n.stemDirection = undefined;
 				this.clef.setStemDirection(n);
 				this.activeNote = n;
+				this.activeCanvas = canvas;
 				this.redrawCanvas(canvas);
 				if (this.changedCallbackFunction != undefined) {
 					this.changedCallbackFunction();
@@ -65,11 +66,12 @@ define("m21theory/tests/firstSpecies", ["m21theory/section"], function () {
 
 		};
 		this.evaluateCtp = function () {
-			var th = this.testHandler;
+		    var th = this.testHandler;
 			if (th.testHandler != undefined) {
 				return;
 			}
-			var existingAlerts = $(th.testSectionDiv).find('#alertDiv');
+            var activeCanvas = this.activeCanvas;            
+            var existingAlerts = $(th.testSectionDiv).find('#alertDiv');
 			if (existingAlerts.length > 0) {
 				$(existingAlerts[0]).remove();
 			}
@@ -180,6 +182,7 @@ define("m21theory/tests/firstSpecies", ["m21theory/section"], function () {
 				prevInt = genericInterval;
 				prevNote = studentNote;
 			}
+            this.redrawCanvas(activeCanvas);
 			if (totalUnanswered > 5) {
 				th.showAlert(":-)", 'update');
 			} else if (totalUnanswered > 0) {

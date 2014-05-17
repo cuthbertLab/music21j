@@ -3,78 +3,28 @@
 <head>
  <title>21M.051: Problem Set 12</title>
  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
- <script src='../ext/jquery/jquery-1.10.2.min.js'></script>
- <!-- midi.js package -->
- <script src="../ext/midijs/js/MIDI/AudioDetect.js" type="text/javascript"></script>
- <script src="../ext/midijs/js/MIDI/LoadPlugin.js" type="text/javascript"></script>
- <script src="../ext/midijs/js/MIDI/Plugin.js" type="text/javascript"></script>
- <script src="../ext/midijs/js/MIDI/Player.js" type="text/javascript"></script>
- <script src="../ext/midijs/js/Window/DOMLoader.XMLHttp.js" type="text/javascript"></script>
- <script src="../ext/midijs/js/Window/DOMLoader.script.js" type="text/javascript"></script>
- <!-- extras -->
- <script src="../ext/midijs/inc/Base64.js" type="text/javascript"></script>
- <script src="../ext/midijs/inc/base64binary.js" type="text/javascript"></script>
- <!-- vexflow -->
- <script src="../ext/vexflow/vexflow-min.js"></script>
-
- <!-- jQuery UI for drag and drop... -->
- <script src="../ext/jqueryPlugins/jqueryUI/jquery-ui.min.js" type="text/javascript" ></script>
-
- <!-- music21j -->
- <script src="../music21j.js" type="text/javascript"></script>
- 
- <!-- music21theory -->
- <script src="../music21theory.js" type="text/javascript"></script>
- <link rel="stylesheet" href="../css/m21.css" type="text/css" />
-
-
-
-<style>
-.lightInput { border: 1px gray dotted;
-			  background-color: #ffffcc;
-			  opacity: .7;
-			   }
-.unanswered { background-color: #ffffbb; 
-			  opacity: .7;
-}
-.correct    { background-color: #bbffbb; }
-.incorrect  { background-color: #ffbbbb; }
-
-</style>
-
+ <script data-main="../src/m21theory" src="../ext/require/require.js"></script>
+  <link rel="stylesheet" href="../css/m21.css" type="text/css" />
+   <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Source+Code+Pro|Open+Sans:300italic,400italic,700italic,400,300,700" type="text/css" />
 </head>
 <body>
 <script type="text/javascript">
-var m2;
-
-window.onload = function () {
-	MIDI.loadPlugin({
-		soundfontUrl: "../ext/midijs/soundfont/",
-		instrument: "acoustic_grand_piano",
-		callback: function() {
-			M21Theory.playMotto();
-		}
-	});
-	//M21Theory.randomGeneratorType = 'fixed';
-	//M21Theory.randomSeed = 1000;
-	//M21Theory.debug = true;
-	//Music21.debug = true;
-
-	var ctp = new M21Theory.FirstSpecies();
+require(['m21theory'], function () { 
+    var ctp = m21theory.tests.get('firstSpecies');
 	ctp.totalQs = 1;
 	
-	var testBank = new M21Theory.TestBank();
+	var testBank = new m21theory.bank.TestBank();
 	testBank.testId = "inclass10";
 	testBank.title = "Species Counterpoint";
 	testBank.instructions = "Introduction to writing in Species.  <b>REMEMBER, you must do Three of these</b>.";
 		
 	testBank.append(ctp);
 	testBank.render();
-};
+});
 
 </script>
 <div class="related">
-	<ul><li><a href="#">21m.051 Cuthbert</a> &raquo; <a href="#">Local Test</a></li></ul>
+	<ul><li><a href="#">21m.051 Cuthbert</a> &raquo; <a href="#">Problem Set 12</a></li></ul>
 </div>
 <div class="document">
   <div class="documentwrapper">
