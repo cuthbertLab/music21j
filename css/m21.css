@@ -423,3 +423,12 @@ div.viewcode-block:target {
     white-space: -o-pre-wrap;
     word-wrap: break-word;
     }
+
+.lightInput { border: 1px gray dotted;
+              background-color: #ffffcc;
+               }
+.unanswered { background-color: #ffffbb; 
+              opacity: .7;
+}
+.correct    { background-color: #bbffbb; }
+.incorrect  { background-color: #ffbbbb; }
