@@ -13,7 +13,7 @@ define(['music21/base', 'music21/pitch', 'music21/interval', 'music21/scale'], f
 	key.KeySignature = function(sharps) {
 		music21.base.Music21Object.call(this);
 		this.classes.push('KeySignature');
-		this.sharps = sharps || 0; // if undefined
+		this._sharps = sharps || 0; // if undefined
 		this.mode = 'major';
 		this._alteredPitchesCache = undefined;
 		
@@ -21,6 +21,15 @@ define(['music21/base', 'music21/pitch', 'music21/interval', 'music21/scale'], f
 		this.flatMapping = ['C','F','B-','E-','A-','D-','G-','C-','F-','B--'];
 		this.sharpMapping = ['C','G','D','A','E','B','F#','C#','G#','D#'];
 
+        Object.defineProperties(this, {
+            'sharps' : {
+              enumerable: true,
+              configurable: true,
+              get: function () { return this._sharps },
+              set: function (s) { this._alteredPitchesCache = [] ; this._sharps = s }
+            },
+        });
+		
 		this.majorName = function () {
 			if (this.sharps >= 0) {
 				return this.sharpMapping[this.sharps];

@@ -14,6 +14,7 @@ define(function(require) {
         this.m21Version = undefined;
         this.streamJsonObj = undefined;
         this.debug = false;
+        this.currentPart = undefined;
         
         this.run = function (jsonString) {
             var jsonObject = this.toJSjson(jsonString);
@@ -55,8 +56,17 @@ define(function(require) {
         this.pyObjToJsObj = function (pyObjString) {
             if (pyObjString.indexOf('music21.') === 0) {
                 // music21 object -- probably safe
-                var newObj = eval("new " + pyObjString + "()");
-                return newObj
+                try {
+                    var newObj = eval("new " + pyObjString + "()");
+                } catch(err) {
+                    console.warn("Could not convert object type: ", pyObjString, " => ", err);
+                    var newObj = undefined;
+                    return newObj;
+                }
+                if (pyObjString == 'music21.stream.Part') {
+                    this.currentPart = newObj;
+                }
+                return newObj;
             } else {
                 console.log("Cannot process non m21 object like this...", pyObjString)
             }
@@ -77,7 +87,7 @@ define(function(require) {
                 return undefined;
             } else if (tv == 'undefined') {
                 return undefined;    
-            } else if (tv == 'list') {
+            } else if (value instanceof Array) {
                 var newList = [];
                 for (var i = 0; i < value.length; i++) {
                     var newEntry = this.objFromValue(value[i]);
@@ -92,11 +102,16 @@ define(function(require) {
                         newObj.quarterLength = value['_qtrLength']; // short circuit great complexity...
                         return newObj
                     }
+                    if (cls == 'music21.articulations.Fermata') {
+                        console.log('fermata', value, newObj);
+                    }
                 } else {
                     var newObj = value;
                 }
                 // recurse into dict;
-                this.jsonDictToJSObj(value, newObj);
+                if (newObj !== undefined) {
+                    this.jsonDictToJSObj(value, newObj);
+                }
                 return newObj;
             } else {
                 return value;
@@ -128,13 +143,34 @@ define(function(require) {
             }
             if (this.representsStream(m21Json)) {
                 var storeTup = m21Json['_storedElementOffsetTuples'];
+                processElements:
                 for (var i = 0; i < storeTup.length; i++ ) {
                     var storedElement = storeTup[i]['py/tuple'][0];
                     if (this.debug) {
                         console.log(" recursing into element:", storedElement);
                     }
                     var newM21pObj = this.objFromValue(storedElement);
+                    if (newM21pObj == undefined) {
+                        continue;
+                    } 
+                    var classList = newM21pObj.classes;
+                    if (this.currentPart !== undefined) {
+                        for (var j = 0; j < classList.length; j++) {
+                            var thisClass = classList[j];
+                            if (thisClass == "TimeSignature") {
+                                this.currentPart.timeSignature = newM21pObj;
+                                continue processElements;
+                            } else if (thisClass == "Clef") {
+                                this.currentPart.clef = newM21pObj;
+                                continue processElements;
+                            } else if (thisClass == "KeySignature") {
+                                this.currentPart.keySignature = newM21pObj;
+                                continue processElements;
+                            }
+                         } // not one of the three special elements...                    
+                    }
                     m21Obj.append(newM21pObj);
+                    
                 }
             }
             return m21Obj;

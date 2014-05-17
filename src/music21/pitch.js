@@ -16,52 +16,83 @@ define(function(require) {
 	pitch.Accidental = function (accName) {
 		this.classes = ['Accidental'];
 
-		this.alter = 0.0;
-		this.modifier = undefined;
-		this.vexflowModifier = "n";
+		this._name = ""
+		this._alter = 0.0;
+		this._modifier = "";
 		this.displayType = "normal";
 		this.displayStatus = undefined; // true, false, undefined
 		this.inClass = music21._inClass;
 		
+        Object.defineProperties(this, {
+            'name' : {
+              enumerable: true,
+              configurable: true,
+              get: function () { return this._name },
+              set: function (n) { this.set(n) },
+            },
+            'alter' : {
+                enumerable: true,
+                configurable: true,
+                get: function () { return this._alter },
+                set: function (n) { this.set(n) },
+            },
+            'modifier' : {
+                  enumerable: true,
+                  configurable: true,
+                  get: function () { return this._modifier },
+                  set: function (n) { this.set(n) },
+            },
+            'vexflowModifier' : {
+                  enumerable: true,
+                  configurable: true,
+                  get: function () { 
+                      m = this.modifier;
+                      if (m == "") { return "n" }
+                      else if (m == "#") { return "#" }
+                      else if (m == '-') { return "b" }
+                      else if (m == "##") { return "##" }
+                      else if (m == '--') { return "bb" }
+                      else if (m == "###") { return "###" }
+                      else if (m == '---') { return "bbb" }
+                      else { throw ("Vexflow does not support: " + m) }
+                  },
+            }
+              
+        });		
+		
+		
 		this.set = function (accName) {
-			if (accName.toLowerCase != undefined) {
+			if ((accName != undefined) && (accName.toLowerCase != undefined)) {
 		    	accName = accName.toLowerCase();
 		    }
 		    if (accName == 'natural' || accName == 'n' || accName == 0 || accName == undefined) {
-		        this.name = 'natural';
-		        this.alter = 0.0;
-		        this.modifier = "";
-		        this.vexflowModifier = "n";
+		        this._name = 'natural';
+		        this._alter = 0.0;
+		        this._modifier = "";
 		    } else if (accName == 'sharp' || accName == '#' || accName == 1) {
-		        this.name = 'sharp';
-		        this.alter = 1.0;
-		        this.modifier = "#";
-		        this.vexflowModifier = "#";
+		        this._name = 'sharp';
+		        this._alter = 1.0;
+		        this._modifier = "#";
 		    } else if (accName == 'flat' || accName == '-' || accName == -1) {
-		        this.name = 'flat';
-		        this.alter = -1.0;
-		        this.modifier = "-";
-		        this.vexflowModifier = "b";
+		        this._name = 'flat';
+		        this._alter = -1.0;
+		        this._modifier = "-";
 		    } else if (accName == 'double-flat' || accName == '--' || accName == -2) {
-		        this.name = 'double-flat';
-		        this.alter = -2.0;
-		        this.modifier = "--";
-		        this.vexflowModifier = "bb";
+		        this._name = 'double-flat';
+		        this._alter = -2.0;
+		        this._modifier = "--";
 		    } else if (accName == 'double-sharp' || accName == '##' || accName == 2) {
-		        this.name = 'double-sharp';
-		        this.alter = 2.0;
-		        this.modifier = "##";
-		        this.vexflowModifier = "##";
+		        this._name = 'double-sharp';
+		        this._alter = 2.0;
+		        this._modifier = "##";
 		    } else if (accName == 'triple-flat' || accName == '---' || accName == -3) {
-		        this.name = 'triple-flat';
-		        this.alter = -3.0;
-		        this.modifier = "---";
-		        this.vexflowModifier = "bbb";
+		        this._name = 'triple-flat';
+		        this._alter = -3.0;
+		        this._modifier = "---";
 		    } else if (accName == 'triple-sharp' || accName == '###' || accName == 3) {
-		        this.name = 'triple-sharp';
-		        this.alter = 3.0;
-		        this.modifier = "###";
-		        this.vexflowModifier = "###";
+		        this._name = 'triple-sharp';
+		        this._alter = 3.0;
+		        this._modifier = "###";
 		    }
 		};
 		this.set(accName);
