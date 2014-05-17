@@ -43,8 +43,9 @@ if ( typeof define === "function" && define.amd) {
                         'loadMIDI',
                         'music21/moduleLoader', ], 
     		function (require) { 
-    	MIDI.loadPlugin({
-    		soundfontUrl: "../ext/midijs/soundfont/",
+        var soundfontUrl = requirejs.toUrl('../ext/midijs/soundfont/');
+        MIDI.loadPlugin({
+    		soundfontUrl: soundfontUrl,
     		instrument: "acoustic_grand_piano",
     		callback: function() {
     			startTime = new Date().getTime();

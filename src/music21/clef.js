@@ -46,6 +46,22 @@ define(['music21/base',], function(require) {
 	clef.Clef.prototype = new music21.base.Music21Object();
 	clef.Clef.prototype.constructor = clef.Clef;
 
+	clef.TrebleClef = function () {
+        music21.clef.Clef.call(this, 'treble');
+        this.classes.push('TrebleClef');
+	}
+    clef.TrebleClef.prototype = new clef.Clef();
+    clef.TrebleClef.prototype.constructor = clef.TrebleClef;
+
+    clef.BassClef = function () {
+        music21.clef.Clef.call(this, 'bass');
+        this.classes.push('BassClef');
+    }
+    clef.BassClef.prototype = new clef.Clef();
+    clef.BassClef.prototype.constructor = clef.BassClef;
+
+    
+    
 	// end of define
 	if (typeof(music21) != "undefined") {
 		music21.clef = clef;
