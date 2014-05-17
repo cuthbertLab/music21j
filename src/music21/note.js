@@ -40,6 +40,7 @@ define(['music21/base', 'music21/pitch'], function(require) {
 	note.NotRest = function () {
 		note.GeneralNote.call(this);
 		this.classes.push('NotRest');
+		this.articulations = [];
 	    this.stemDirection = undefined; // ['up','down','noStem', undefined] -- 'double' not supported
 	};
 
@@ -75,6 +76,14 @@ define(['music21/base', 'music21/pitch'], function(require) {
 					vfn.addAccidental(0, new Vex.Flow.Accidental(this.pitch.accidental.vexflowModifier));			
 				}
 			}
+	        
+	        if (this.articulations[0] != undefined) {
+	            for (var i = 0; i < this.articulations.length; i++ ) {
+	                var art = this.articulations[i];
+	                vfn.addArticulation(0, art.vexflow()); // 0 refers to the first pitch (for chords etc.)...
+	            }
+	        }
+	        
 	        if (this.noteheadColor) {
 	            vfn.setKeyStyle(0, {fillStyle: this.noteheadColor});
 	        }
