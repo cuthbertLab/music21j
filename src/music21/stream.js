@@ -799,7 +799,7 @@ define(['music21/base','music21/renderOptions','music21/clef'], function(require
 				this.activeNote = n;
 				this.redrawCanvas(canvas);
 				if (this.changedCallbackFunction != undefined) {
-					this.changedCallbackFunction();
+					this.changedCallbackFunction({foundNote: n, canvas: canvas});
 				}
 			}
 		};
@@ -853,7 +853,7 @@ define(['music21/base','music21/renderOptions','music21/clef'], function(require
 					/* console.log(n.pitch.name); */
 					s.redrawCanvas(siblingCanvas[0]);
 					if (s.changedCallbackFunction != undefined) {
-						s.changedCallbackFunction();
+						s.changedCallbackFunction({canvas: siblingCanvas[0]});
 					}
 				}
 			};

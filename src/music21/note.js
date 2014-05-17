@@ -30,7 +30,7 @@ define(['music21/base', 'music21/pitch'], function(require) {
 			if (this.stemDirection == 'noStem') {
 				vfn.hasStem = function() { return false }; // need to override... 
 				//vfn.render_options.stem_height = 0;
-			}		
+			}
 		};
 	};
 
@@ -50,7 +50,9 @@ define(['music21/base', 'music21/pitch'], function(require) {
 	note.Note = function (nn, ql) {
 		note.NotRest.call(this);
 		this.classes.push('Note');
-	    
+		
+	    this.noteheadColor = undefined;
+		
 	    this.pitch = new music21.pitch.Pitch(nn);
 		
 		if (ql != undefined) {
@@ -73,6 +75,9 @@ define(['music21/base', 'music21/pitch'], function(require) {
 					vfn.addAccidental(0, new Vex.Flow.Accidental(this.pitch.accidental.vexflowModifier));			
 				}
 			}
+	        if (this.noteheadColor) {
+	            vfn.setKeyStyle(0, {fillStyle: this.noteheadColor});
+	        }
 
 	        this.activeVexflowNote = vfn;
 		    return vfn;
