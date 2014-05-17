@@ -5,6 +5,8 @@ define("m21theory/tests/scaleEar", ["m21theory/section"], function () {
         this.totalQs = 16;
         this.practiceQs = 2;
         this.screwyFraction = .6;
+        this.minSharps = -6;
+        this.maxSharps = 6;
         
         this.title = "Hearing Major Scales Test";
         this.instructions = "<p>" +
@@ -31,7 +33,7 @@ define("m21theory/tests/scaleEar", ["m21theory/section"], function () {
             }
             var keySignatureSharps = undefined;
             while (keySignatureSharps == undefined) {
-                keySignatureSharps = m21theory.random.randint(-6, 6);
+                keySignatureSharps = m21theory.random.randint(this.minSharps, this.maxSharps);
                 for (var j = 0; j < this.usedKeySignatures.length; j++) {
                     if (this.usedKeySignatures[j] == keySignatureSharps) {
                         keySignatureSharps = undefined;

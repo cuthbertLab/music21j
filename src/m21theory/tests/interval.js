@@ -13,7 +13,6 @@ define("m21theory/tests/interval", ["m21theory/section"], function () {
 		this.minInterval = -3;
 		this.maxInterval = 5;
 		
-		// Forgot to teach P1!!! oops...
 		this.skipP1 = false;
 			
 		this.disallowDoubleAccs = true;
@@ -37,7 +36,8 @@ define("m21theory/tests/interval", ["m21theory/section"], function () {
 			"green</b> to submit this problem set and you may not have more than eight " +
 			"incorrect answers <b>in one session</b>; if you have gotten than eight " +
 			"incorrect, hit <b>Reload</b> " +
-			"to get another set of intervals.</p>";
+			"to get another set of intervals.</p>" +
+			"<p>When you enter in an interval you can hit tab to move to the next field.</p>";
 		
 		this.getRandomInterval = function () {
 			var randomGeneric = undefined;		
