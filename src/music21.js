@@ -14,17 +14,19 @@ The plan is to implement all core music21 features as Javascript and to expose
 more sophisticated features via server-side connections to remote servers running the
 python music21 (music21p).
 
+Requires a (mostly) ECMAScript 5 compatible browser w/ SVG/Canvas. IE 9+ or any recent version of
+Firefox, Safari, Chrome, etc. will do.
+
 All interfaces are alpha and may change radically from day to day and release to release.
 Do not use this in production code yet.
 
-2014-05-16 -- v.0.2 (alpha) -- refactor into modules using require.js
-2013-10-04 -- v.0.1 (alpha)  
+See src/moduleLoader.js for version and version history.
 
 */
 
 require.config({
 	paths: {
-		'jquery': '../ext/jquery/jquery-1.11.1.min',
+		'jquery': '../ext/jquery/jquery-2.1.1.min',
 		'jquery-ui': '../ext/jqueryPlugins/jqueryUI/jquery-ui.min',
 		'vexflow': '../ext/vexflow/vexflow-min'
 	},
