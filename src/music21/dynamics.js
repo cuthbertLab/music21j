@@ -9,7 +9,7 @@
  * Based on music21 (=music21p), Copyright (c) 2006–14, Michael Scott Cuthbert and cuthbertLab
  * 
  */
-define([], function(require) {
+define(['music21/base'], function(require) {
 	var dynamics = {};
 	dynamics.shortNames = ['pppppp', 'ppppp', 'pppp', 'ppp', 'pp', 'p', 'mp', 'mf', 'f', 'fp', 'sf', 'ff', 'fff', 'ffff', 'fffff', 'ffffff'];
 	dynamics.longNames = {'ppp': ['pianississimo'],
@@ -48,7 +48,9 @@ define([], function(require) {
                      'ffff': [.95]
                     };    
 	
-	dynamics.Dynamic = function (value) {    
+	dynamics.Dynamic = function (value) {
+        music21.base.Music21Object.call(this);
+	    this.classes.push('Dynamic');
 	    this._value = undefined;
 	    this._volumeScalar = undefined;
 	    this.longName = undefined;
@@ -131,6 +133,11 @@ define([], function(require) {
 	    });
 	    this.value = value;
 	};
+	
+	dynamics.Dynamic.prototype = new music21.base.Music21Object();
+	dynamics.Dynamic.prototype.constructor = dynamics.Dynamic;
+	
+	
 	dynamics.tests = function() {
 	    test( "music21.dynamics.Dynamic", function() {
 	        var dynamic = new music21.dynamics.Dynamic("pp");
