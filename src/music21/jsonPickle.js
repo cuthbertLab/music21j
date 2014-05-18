@@ -58,7 +58,9 @@ define(function(require) {
                                   'music21.layout.StaffLayout',
                                   'music21.layout.SystemLayout',
                                   'music21.layout.PageLayout',
-                                  'music21.expressions.TextExpression'
+                                  'music21.expressions.TextExpression',
+                                  'music21.bar.Barline',
+                                  'music21.tempo.MetronomeMark', // should be possible
                                   ];
         this.pyObjToJsObj = function (pyObjString) {
             if (pyObjString.indexOf('music21.') === 0) {
