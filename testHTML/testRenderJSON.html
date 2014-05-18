@@ -52,7 +52,7 @@ require(['music21'], function() {
 	    var canvasWidth = newWidth;
 	    //console.log(canvasWidth);
 	    s.resetRenderOptionsRecursive();
-	    s.maxSystemWidth = canvasWidth;
+	    s.maxSystemWidth = canvasWidth - 40;
 	    $('#testBank').empty();
 	    s.appendNewCanvas('#testBank');
 	});
