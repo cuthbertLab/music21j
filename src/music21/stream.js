@@ -17,7 +17,6 @@ define(['music21/base','music21/renderOptions','music21/clef'], function(require
 		this._duration = undefined;
 		
 	    this._elements = [];
-	    this.quarterLength = 0;
 	    this._clef = undefined;
 	    this.displayClef = undefined;
 	    
@@ -39,7 +38,6 @@ define(['music21/base','music21/renderOptions','music21/clef'], function(require
     	    	}
     	    	this.elements.push(el);
     	    	el.parent = this; // would prefer weakref, but does not exist in JS.
-    	    	this.quarterLength += el.duration.quarterLength;
 	    	} catch (err) {
 	    	    console.error("Cannot append element ", el, " to stream ", this, " : ", err);
 	    	}
@@ -61,13 +59,15 @@ define(['music21/base','music21/renderOptions','music21/clef'], function(require
                 configurable: true,
                 enumerable: true,
                 get: function () {
-                    if (this._duration) {
+                    if (this._duration !== undefined) {
                         return this._duration;
                     }
                     var totalQL = 0.0;
                     for (var i = 0; i < this.length; i++) {
                         var el = this.elements[i];
-                        totalQL += el.duration.quarterLength;
+                        if (el.duration !== undefined) {
+                            totalQL += el.duration.quarterLength;                            
+                        } 
                     }
                     return new music21.duration.Duration(totalQL);
                 },
@@ -287,7 +287,7 @@ define(['music21/base','music21/renderOptions','music21/clef'], function(require
 	        var notes = [];
 	        for (var i = 0; i < this.length; i++) {
 	        	var thisEl = this.elements[i];
-	        	if (thisEl.inClass('GeneralNote')) {
+	        	if (thisEl.inClass('GeneralNote') && (thisEl.duration !== undefined)) {
 		        	var tn = thisEl.vexflowNote(this.clef.name);
 		        	notes.push(tn);
 	        	}
@@ -296,10 +296,7 @@ define(['music21/base','music21/renderOptions','music21/clef'], function(require
 	        return notes;
 	    };
 	    this.vexflowVoice = function () {
-	        var totalLength = 0.0;
-	        for (var i = 0; i < this.length; i++) {
-	            totalLength += this.elements[i].duration.quarterLength;
-	        }
+	        var totalLength = this.duration.quarterLength;
 	        var numSixteenths = totalLength / 0.25;
 	        var beatValue = 16;
 	        if (numSixteenths % 8 == 0) { beatValue = 2; numSixteenths = numSixteenths / 8; }
@@ -528,11 +525,18 @@ define(['music21/base','music21/renderOptions','music21/clef'], function(require
 				var el = this.elements[i];
 				if (el.inClass('Note') || el.inClass('Chord')) { // note or chord.
 					var vfn = el.activeVexflowNote;
+					if (vfn === undefined) {
+					    continue;
+					}
 					var nTicks = parseInt(vfn.ticks);
-					var formatterNote = formatter.tContexts.map[String(nextTicks)];
-				    nextTicks += nTicks;
+					var formatterNote = formatter.tContexts.map[String(nextTicks)];				   
+					nextTicks += nTicks;
 				    el.x = vfn.getAbsoluteX();
 				    //console.log(i + " " + el.x + " " + formatterNote.x + " " + noteOffsetLeft);
+				    if (formatterNote === undefined) {
+				        continue;
+				    }
+				    
 				    el.width = formatterNote.width;		    
 				    if (el.pitch != undefined) { // note only...
 				    	el.y = stave.getBottomY() - (this.clef.firstLine - el.pitch.diatonicNoteNum) * stave.options.spacing_between_lines_px;
@@ -570,19 +574,22 @@ define(['music21/base','music21/renderOptions','music21/clef'], function(require
 	        var playNext = function (elements) {
 	            if (currentNote < lastNote && !thisStream._stopPlaying) {
 	                var el = elements[currentNote];
-	                var ql = el.duration.quarterLength;
-	                var milliseconds = 60 * ql * 1000 / tempo;
-	                if (el.inClass('Note')) { // Note, not rest
-				 	    var midNum = el.pitch.midi;
-				 	    MIDI.noteOn(0, midNum, 100, 0);
-				    } else if (el.inClass('Chord')) {
-					    for (var j = 0; j < el._noteArray.length; j++) {
-					 	    var midNum = el._noteArray[j].pitch.midi;
-					 	    MIDI.noteOn(0, midNum, 100, 0);					   
-					    }
-				     }
-	                 currentNote += 1;
-	            	 setTimeout( function () { playNext(elements); }, milliseconds);
+	                if (el.duration !== undefined) {
+    	                    
+    	                var ql = el.duration.quarterLength;
+    	                var milliseconds = 60 * ql * 1000 / tempo;
+    	                if (el.inClass('Note')) { // Note, not rest
+    				 	    var midNum = el.pitch.midi;
+    				 	    MIDI.noteOn(0, midNum, 100, 0);
+    				    } else if (el.inClass('Chord')) {
+    					    for (var j = 0; j < el._noteArray.length; j++) {
+    					 	    var midNum = el._noteArray[j].pitch.midi;
+    					 	    MIDI.noteOn(0, midNum, 100, 0);					   
+    					    }
+    				    }
+	                }
+	                currentNote += 1;
+	            	setTimeout( function () { playNext(elements); }, milliseconds);
 	            }
 	        };
 	        playNext(flatEls);

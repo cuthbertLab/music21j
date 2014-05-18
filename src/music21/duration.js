@@ -84,6 +84,9 @@ define(function(require) {
 			},
 			'vexflowDuration': {
 				get: function() {
+				    if (this._durationNumber == undefined) {
+				        return undefined;
+				    }
 					var vd = VexflowDurationArray[this._durationNumber];
 					if (this._dots == 1) {
 						vd += "d"; // vexflow does not handle double dots
