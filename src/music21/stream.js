@@ -591,6 +591,38 @@ define(['music21/base','music21/renderOptions','music21/clef'], function(require
 	    	}
 		};
 	    
+		// reflow
+		
+		this.windowReflowStart = function (jCanvas) {
+		    // set up a bunch of windowReflow bindings that affect the canvas.
+		    var callingStream = this;
+		    var jCanvasNow = jCanvas;
+		    $(window).bind('resizeEnd', function() {
+		        //do something, window hasn't changed size in 500ms
+		        var jCanvasParent = jCanvasNow.parent();
+		        var newWidth = jCanvasParent.width();
+		        var canvasWidth = newWidth;
+		        //console.log(canvasWidth);
+		        //console.log('resizeEnd triggered', newWidth);
+		        callingStream.resetRenderOptionsRecursive();
+		        callingStream.maxSystemWidth = canvasWidth - 40;
+		        jCanvasNow.remove();
+		        var canvasObj = callingStream.appendNewCanvas(jCanvasParent);
+		        jCanvasNow = $(canvasObj);
+		    });
+		    $(window).resize( function() {
+		        if (this.resizeTO) {
+		            clearTimeout(this.resizeTO);
+		        }
+		        this.resizeTO = setTimeout(function() {
+		            $(this).trigger('resizeEnd');
+		        }, 200);
+		    })
+		    setTimeout(function() {
+                $(this).trigger('resizeEnd');
+            }, 1000);
+		};
+		
 	    // Canvas Routines ... 
 	    
 		this.createNewCanvas = function (scaleInfo, width, height) {
@@ -668,14 +700,17 @@ define(['music21/base','music21/renderOptions','music21/clef'], function(require
 			 *    'play' (string)
 			 *    customFunction
 			 */
-			jCanvas = $(canvas);
+			var jCanvas = $(canvas);
+			
 			$.each(this.renderOptions.events, $.proxy(function (eventType, eventFunction) {
 				if (typeof(eventFunction) == 'string' && eventFunction == 'play') {
 					jCanvas.on(eventType, function () { this.storedStream.playStream(); });
+				} else if (typeof(eventFunction) == 'string' && eventType == 'resize' && eventFunction == 'reflow') {
+				    this.windowReflowStart(jCanvas);
 				} else if (eventFunction != undefined) {
 					jCanvas.on(eventType, eventFunction);
 				}
-			} ) );
+			}, this ) );
 		};
 		this.recursiveGetStoredVexflowStave = function () {
 			/*
