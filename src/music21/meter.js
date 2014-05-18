@@ -13,8 +13,25 @@ define(['music21/base', 'music21/duration'], function(require) {
     meter.TimeSignature = function (meterString) {
         music21.base.Music21Object.call(this);
         this.classes.push('TimeSignature');
-        this.numerator = 4;
-        this.denominator = 4;
+        this._numerator = 4;
+        this._denominator = 4;
+        
+        Object.defineProperties(this, {
+            'numerator' : {
+              enumerable: true,
+              configurable: true,
+              get: function () { return this._numerator },
+              set: function (s) { this._numerator }
+            },
+            'denominator' : {
+                enumerable: true,
+                configurable: true,
+                get: function () { return this._denominator },
+                set: function (s) { this._denominator }
+              },
+
+        });
+
         
         if (typeof(meterString) == 'string') {
             var meterList = meterString.split('/');

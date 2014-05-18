@@ -53,13 +53,22 @@ define(function(require) {
             }
         };
 
+        this.knownUnparseables = ['music21.spanner.Line',
+                                  'music21.instrument.Instrument',
+                                  'music21.layout.StaffLayout',
+                                  'music21.layout.SystemLayout',
+                                  'music21.layout.PageLayout',
+                                  'music21.expressions.TextExpression'
+                                  ];
         this.pyObjToJsObj = function (pyObjString) {
             if (pyObjString.indexOf('music21.') === 0) {
                 // music21 object -- probably safe
                 try {
                     var newObj = eval("new " + pyObjString + "()");
                 } catch(err) {
-                    console.warn("Could not convert object type: ", pyObjString, " => ", err);
+                    if (this.knownUnparseables.indexOf(pyObjString) == -1) {
+                        console.warn("Could not convert object type: ", pyObjString, " => ", err);
+                    }
                     var newObj = undefined;
                     return newObj;
                 }
@@ -154,21 +163,28 @@ define(function(require) {
                         continue;
                     } 
                     var classList = newM21pObj.classes;
-                    if (this.currentPart !== undefined) {
-                        for (var j = 0; j < classList.length; j++) {
-                            var thisClass = classList[j];
-                            if (thisClass == "TimeSignature") {
-                                this.currentPart.timeSignature = newM21pObj;
-                                continue processElements;
-                            } else if (thisClass == "Clef") {
-                                this.currentPart.clef = newM21pObj;
-                                continue processElements;
-                            } else if (thisClass == "KeySignature") {
-                                this.currentPart.keySignature = newM21pObj;
-                                continue processElements;
-                            }
-                         } // not one of the three special elements...                    
-                    }
+                    for (var j = 0; j < classList.length; j++) {
+                        var thisClass = classList[j];
+                        var streamPart = this.currentPart;
+                        if (streamPart == undefined) {
+                            streamPart = m21Obj; // possibly a Stream constructed from .measures()
+                        }
+                        if (thisClass == "TimeSignature") {
+                            //console.log("Got timeSignature", streamPart, newM21pObj, storedElement);
+                            newM21pObj._numerator = storedElement.displaySequence._numerator;
+                            newM21pObj._denominator = storedElement.displaySequence._denominator;
+                            
+                            streamPart.timeSignature = newM21pObj;
+                            continue processElements;
+                        } else if (thisClass == "Clef") {
+                            streamPart.clef = newM21pObj;
+                            continue processElements;
+                        } else if (thisClass == "KeySignature") {
+                            streamPart.keySignature = newM21pObj;
+                            continue processElements;
+                        }
+                    } // not one of the three special elements...                    
+                    
                     m21Obj.append(newM21pObj);
                     
                 }
