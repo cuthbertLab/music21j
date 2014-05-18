@@ -33,12 +33,16 @@ define(['music21/base','music21/renderOptions','music21/clef'], function(require
 	    this._allowMultipleSimultaneousPlays = true; // not implemented yet.
 
 	    this.append = function (el) {
-	    	if (el.inClass('NotRest')) {
-	        	this.clef.setStemDirection(el);    		
+	    	try {
+    	        if ((el.inClass !== undefined) && el.inClass('NotRest')) {
+    	        	this.clef.setStemDirection(el);    		
+    	    	}
+    	    	this.elements.push(el);
+    	    	el.parent = this; // would prefer weakref, but does not exist in JS.
+    	    	this.quarterLength += el.duration.quarterLength;
+	    	} catch (err) {
+	    	    console.error("Cannot append element ", el, " to stream ", this, " : ", err);
 	    	}
-	    	this.elements.push(el);
-	    	el.parent = this; // would prefer weakref, but does not exist in JS.
-	    	this.quarterLength += el.duration.quarterLength;
 	    };
 	    this.hasSubStreams = function () {
 	    	var hasSubStreams = false;
