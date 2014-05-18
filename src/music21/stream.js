@@ -27,7 +27,9 @@ define(['music21/base','music21/renderOptions','music21/clef'], function(require
 	    this.activeVFStave = undefined;
 	    this.renderOptions = new music21.renderOptions.RenderOptions();
 	    this._tempo = undefined;
-	    
+
+        this.staffLines = 5;
+
 	    this._stopPlaying = false;
 	    this._allowMultipleSimultaneousPlays = true; // not implemented yet.
 
