@@ -163,6 +163,10 @@ define(function(require) {
                         continue;
                     } 
                     var classList = newM21pObj.classes;
+                    if (classList === undefined) {
+                        console.warn("M21object without classes: ", newM21pObj);
+                        classList = [];
+                    }
                     for (var j = 0; j < classList.length; j++) {
                         var thisClass = classList[j];
                         var streamPart = this.currentPart;
