@@ -11,11 +11,11 @@ define(['music21/base'], function() {
        this.setPosition = undefined;
        
        this.vexflow = function () {
-           var vfn =  new Vex.Flow.Articulation(this.vexflowModifier);
+           var vfe =  new Vex.Flow.Articulation(this.vexflowModifier);
            if (this.setPosition) {
-               vfn.setPosition(this.setPosition);
+               vfe.setPosition(this.setPosition);
            }
-           return vfn
+           return vfe
        }
    }
    expressions.Expression.prototype = new music21.base.Music21Object();

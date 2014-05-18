@@ -5,9 +5,13 @@ define([], function() {
        this.name = undefined;
        this.placement = 'above';
        this.vexflowModifier = undefined;
-
+       this.setPosition = undefined;
        this.vexflow = function () {
-           return new Vex.Flow.Articulation(this.vexflowModifier);
+           var vfa = new Vex.Flow.Articulation(this.vexflowModifier);
+           if (this.setPosition) {
+               vfa.setPosition(this.setPosition);
+           }
+           return vfa;
        }
    };
    
@@ -75,13 +79,6 @@ define([], function() {
    articulations.Tenuto.prototype = new articulations.LengthArticulation();
    articulations.Tenuto.prototype.constructor = articulations.Tenuto;
 
-   articulations.Fermata = function(){
-       articulations.LengthArticulation.call(this);
-       this.name = 'fermata';
-       this.vexflowModifier = "a@a";
-   };
-   articulations.Fermata.prototype = new articulations.LengthArticulation();
-   articulations.Fermata.prototype.constructor = articulations.Fermata;
 
    
    articulations.tests = function () {
