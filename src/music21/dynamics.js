@@ -159,7 +159,7 @@ define(['music21/base'], function(require) {
 	        equal (dynamic.longName, undefined, "change to non standard dynamic");
 	        equal (dynamic.englishName, undefined, "change to non standard dynamic");
 	    });    
-	}
+	};
 	                
 	// end of define
 	if (typeof(music21) != "undefined") {

@@ -58,7 +58,7 @@ define(['music21/base',], function(require) {
 	clef.TrebleClef = function () {
         music21.clef.Clef.call(this, 'treble');
         this.classes.push('TrebleClef');
-	}
+	};
     clef.TrebleClef.prototype = new clef.Clef();
     clef.TrebleClef.prototype.constructor = clef.TrebleClef;
 
@@ -66,49 +66,49 @@ define(['music21/base',], function(require) {
         // temporary Vex.Flow hack -- no 8vb setting; use Bass instead.
         music21.clef.Clef.call(this, 'bass');
         this.classes.push('Treble8vbClef');
-    }
+    };
     clef.Treble8vbClef.prototype = new clef.Clef();
     clef.Treble8vbClef.prototype.constructor = clef.Treble8vbClef;
 
     clef.BassClef = function () {
         music21.clef.Clef.call(this, 'bass');
         this.classes.push('BassClef');
-    }
+    };
     clef.BassClef.prototype = new clef.Clef();
     clef.BassClef.prototype.constructor = clef.BassClef;
 
     clef.AltoClef = function () {
         music21.clef.Clef.call(this, 'alto');
         this.classes.push('AltoClef');
-    }
+    };
     clef.AltoClef.prototype = new clef.Clef();
     clef.AltoClef.prototype.constructor = clef.AltoClef;
 
     clef.TenorClef = function () {
         music21.clef.Clef.call(this, 'tenor');
         this.classes.push('TenorClef');
-    }
+    };
     clef.TenorClef.prototype = new clef.Clef();
     clef.TenorClef.prototype.constructor = clef.TenorClef;
 
     clef.SopranoClef = function () {
         music21.clef.Clef.call(this, 'soprano');
         this.classes.push('SopranoClef');
-    }
+    };
     clef.SopranoClef.prototype = new clef.Clef();
     clef.SopranoClef.prototype.constructor = clef.SopranoClef;
     
     clef.MezzoSopranoClef = function () {
         music21.clef.Clef.call(this, 'mezzo-soprano');
         this.classes.push('MezzoSopranoClef');
-    }
+    };
     clef.MezzoSopranoClef.prototype = new clef.Clef();
     clef.MezzoSopranoClef.prototype.constructor = clef.MezzoSopranoClef;
 
     clef.PercussionClef = function () {
         music21.clef.Clef.call(this, 'percussion');
         this.classes.push('PercussionClef');
-    }
+    };
     clef.PercussionClef.prototype = new clef.Clef();
     clef.PercussionClef.prototype.constructor = clef.PercussionClef;
 

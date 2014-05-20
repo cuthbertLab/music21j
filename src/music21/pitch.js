@@ -16,7 +16,7 @@ define(function(require) {
 	pitch.Accidental = function (accName) {
 		this.classes = ['Accidental'];
 
-		this._name = ""
+		this._name = "";
 		this._alter = 0.0;
 		this._modifier = "";
 		this.displayType = "normal";
@@ -27,34 +27,34 @@ define(function(require) {
             'name' : {
               enumerable: true,
               configurable: true,
-              get: function () { return this._name },
-              set: function (n) { this.set(n) },
+              get: function () { return this._name; },
+              set: function (n) { this.set(n); },
             },
             'alter' : {
                 enumerable: true,
                 configurable: true,
-                get: function () { return this._alter },
-                set: function (n) { this.set(n) },
+                get: function () { return this._alter; },
+                set: function (n) { this.set(n); },
             },
             'modifier' : {
                   enumerable: true,
                   configurable: true,
-                  get: function () { return this._modifier },
-                  set: function (n) { this.set(n) },
+                  get: function () { return this._modifier; },
+                  set: function (n) { this.set(n); },
             },
             'vexflowModifier' : {
                   enumerable: true,
                   configurable: true,
                   get: function () { 
                       m = this.modifier;
-                      if (m == "") { return "n" }
-                      else if (m == "#") { return "#" }
-                      else if (m == '-') { return "b" }
-                      else if (m == "##") { return "##" }
-                      else if (m == '--') { return "bb" }
-                      else if (m == "###") { return "###" }
-                      else if (m == '---') { return "bbb" }
-                      else { throw ("Vexflow does not support: " + m) }
+                      if (m == "") { return "n"; }
+                      else if (m == "#") { return "#"; }
+                      else if (m == '-') { return "b"; }
+                      else if (m == "##") { return "##"; }
+                      else if (m == '--') { return "bb"; }
+                      else if (m == "###") { return "###"; }
+                      else if (m == '---') { return "bbb"; }
+                      else { throw ("Vexflow does not support: " + m); }
                   },
             }
               
@@ -115,19 +115,19 @@ define(function(require) {
 	    	'step' : {
 	    	  enumerable: true,
 	    	  configurable: true,
-	    	  get: function () { return this._step },
-	    	  set: function (s) { this._step = s }
+	    	  get: function () { return this._step; },
+	    	  set: function (s) { this._step = s; }
 	    	},
             'octave' : {
                 enumerable: true,
                 configurable: true,
-                get: function () { return this._octave },
-                set: function (o) { this._octave = o }
+                get: function () { return this._octave; },
+                set: function (o) { this._octave = o; }
               },
             'accidental' : {
                   enumerable: true,
                   configurable: true,
-                  get: function () { return this._accidental },
+                  get: function () { return this._accidental; },
                   set: function (a) { 
                       if (typeof(a) != 'object') {
                           a = new music21.pitch.Accidental(a);

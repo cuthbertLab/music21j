@@ -26,5 +26,5 @@ require(['music21','q-unit'], function () {
     QUnit.load();
     QUnit.start();
 
-})
+});
 
