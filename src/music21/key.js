@@ -25,8 +25,8 @@ define(['music21/base', 'music21/pitch', 'music21/interval', 'music21/scale'], f
             'sharps' : {
               enumerable: true,
               configurable: true,
-              get: function () { return this._sharps },
-              set: function (s) { this._alteredPitchesCache = [] ; this._sharps = s }
+              get: function () { return this._sharps; },
+              set: function (s) { this._alteredPitchesCache = [] ; this._sharps = s; }
             },
         });
 		
@@ -200,7 +200,7 @@ define(['music21/base', 'music21/pitch', 'music21/interval', 'music21/scale'], f
 	        equal (s[6].nameWithOctave, "E#5");
 	    });
 
-	}
+	};
 	
 	// end of define
 	if (typeof(music21) != "undefined") {
