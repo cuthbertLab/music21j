@@ -34,8 +34,8 @@ define(['music21/duration'], function(require) {
             'priority': {
                 configurable: true,
                 enumerable: true,
-                get: function () { return this._priority },
-                set: function (p) { this._priority = p }
+                get: function () { return this._priority; },
+                set: function (p) { this._priority = p; }
             },
 		    'duration': {
                 configurable: true,

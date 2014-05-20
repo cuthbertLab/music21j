@@ -29,7 +29,7 @@ define(['music21/base', 'music21/pitch'], function(require) {
 									Vex.Flow.StaveNote.STEM_DOWN : 
 									Vex.Flow.StaveNote.STEM_UP);
 			if (this.stemDirection == 'noStem') {
-				vfn.hasStem = function() { return false }; // need to override... 
+				vfn.hasStem = function() { return false; }; // need to override... 
 				//vfn.render_options.stem_height = 0;
 			}
 		};
@@ -144,7 +144,7 @@ define(['music21/base', 'music21/pitch'], function(require) {
 	        equal ( n.pitch.step, "D",  "Pitch Step set to D");
 	        equal ( n.pitch.octave, 5, "Pitch octave set to 5");
 	    });
-	}
+	};
 	
 	// end of define
 	if (typeof(music21) != "undefined") {

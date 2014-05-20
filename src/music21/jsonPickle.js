@@ -19,7 +19,7 @@ define(function(require) {
         this.run = function (jsonString) {
             var jsonObject = this.toJSjson(jsonString);
             return this.objFromValue(jsonObject);
-        }
+        };
         this.toJSjson = function (pickleIn) {
             var jsonObj = JSON.parse(pickleIn);
             if (jsonObj.m21Version == undefined) {
@@ -65,13 +65,14 @@ define(function(require) {
         this.pyObjToJsObj = function (pyObjString) {
             if (pyObjString.indexOf('music21.') === 0) {
                 // music21 object -- probably safe
+                var newObj = undefined;
                 try {
-                    var newObj = eval("new " + pyObjString + "()");
+                    newObj = eval("new " + pyObjString + "()");
                 } catch(err) {
                     if (this.knownUnparseables.indexOf(pyObjString) == -1) {
                         console.warn("Could not convert object type: ", pyObjString, " => ", err);
                     }
-                    var newObj = undefined;
+                    newObj = undefined;
                     return newObj;
                 }
                 if (pyObjString == 'music21.stream.Part') {
@@ -79,7 +80,7 @@ define(function(require) {
                 }
                 return newObj;
             } else {
-                console.log("Cannot process non m21 object like this...", pyObjString)
+                console.log("Cannot process non m21 object like this...", pyObjString);
             }
             
         };
@@ -106,18 +107,19 @@ define(function(require) {
                 }
                 return newList;
             } else if (tv == 'object') {
+                var newObj = undefined;
                 if (value['py/object'] !== undefined) {
                     var cls = value['py/object'];
-                    var newObj = this.pyObjToJsObj(cls);
+                    newObj = this.pyObjToJsObj(cls);
                     if (cls == 'music21.duration.Duration') {
                         newObj.quarterLength = value['_qtrLength']; // short circuit great complexity...
-                        return newObj
+                        return newObj;
                     }
                     if (cls == 'music21.articulations.Fermata') {
                         console.log('fermata', value, newObj);
                     }
                 } else {
-                    var newObj = value;
+                    newObj = value;
                 }
                 // recurse into dict;
                 if (newObj !== undefined) {
