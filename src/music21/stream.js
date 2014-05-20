@@ -576,10 +576,11 @@ define(['music21/base','music21/renderOptions','music21/clef'], function(require
 	        var playNext = function (elements) {
 	            if (currentNote < lastNote && !thisStream._stopPlaying) {
 	                var el = elements[currentNote];
+	                var milliseconds = 60 * 1000 / tempo;
 	                if (el.duration !== undefined) {
     	                    
     	                var ql = el.duration.quarterLength;
-    	                var milliseconds = 60 * ql * 1000 / tempo;
+    	                milliseconds = 60 * ql * 1000 / tempo;
     	                if (el.inClass('Note')) { // Note, not rest
     				 	    var midNum = el.pitch.midi;
     				 	    MIDI.noteOn(0, midNum, 100, 0);
@@ -630,7 +631,7 @@ define(['music21/base','music21/renderOptions','music21/clef'], function(require
 		        this.resizeTO = setTimeout(function() {
 		            $(this).trigger('resizeEnd');
 		        }, 200);
-		    })
+		    });
 		    setTimeout(function() {
                 $(this).trigger('resizeEnd');
             }, 1000);

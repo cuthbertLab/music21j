@@ -15,9 +15,9 @@ define(['music21/base'], function() {
            if (this.setPosition) {
                vfe.setPosition(this.setPosition);
            }
-           return vfe
-       }
-   }
+           return vfe;
+       };
+   };
    expressions.Expression.prototype = new music21.base.Music21Object();
    expressions.Expression.prototype.constructor = expressions.Expression;
    

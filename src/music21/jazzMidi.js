@@ -18,10 +18,10 @@ define(['music21/jazzMidi'], function(require) {
 	
 	jazzMidi.defaultGeneralCallback = function(midiEvent) {
 	    midiEvent.sendToMIDIjs();
-	}
+	};
 
     jazzMidi.callBacks = {
-        raw : function (t, a, b, c) { return new jazzMidi.Event(t, a, b, c)},
+        raw : function (t, a, b, c) { return new jazzMidi.Event(t, a, b, c); },
         general : jazzMidi.defaultGeneralCallback,
     };
 
@@ -53,7 +53,7 @@ define(['music21/jazzMidi'], function(require) {
 		    appendElement.removeChild(obj);
 		    throw("Cannot use jazz plugin; install at http://jazz-soft.net/doc/Jazz-Plugin/Plugin.html");
 	    }
-	}
+	};
 
 	jazzMidi.createSelector = function (midiSelectDiv, Jazz) {
 	    if (typeof(Jazz) == 'undefined') {
@@ -80,7 +80,7 @@ define(['music21/jazzMidi'], function(require) {
 		newOption.append(noneAppendOption);
 		
 		var anySelected = false;
-		var allAppendOptions = []
+		var allAppendOptions = [];
 		for (var i = 0; i < midiOptions.length; i++) {
 			var appendOption = $("<option value='" + midiOptions[i] + "'>" + midiOptions[i] + "</option>");
 			if (midiOptions[i] == jazzMidi.selectedInterface) {
@@ -100,7 +100,7 @@ define(['music21/jazzMidi'], function(require) {
 		    noneAppendOption.attr("selected", true);
 		}
 		
-	}
+	};
 	
 	jazzMidi.Event = function (t, a, b, c) {
 	    this.timing = t;
@@ -134,8 +134,8 @@ define(['music21/jazzMidi'], function(require) {
 	        var m21n = new music21.note.Note();
 	        m21n.pitch.ps = this.midiNote;
 	        return m21n;
-	    }
-	}
+	    };
+	};
 
 	
 	// end of define

@@ -27,8 +27,7 @@ define(dependencies, function(require) {
 		// return a newly created object by test name...
 		thisTest = m21theory.tests[testName];
 		return new thisTest();
-	}
-	
+	};
 	
 	// end of define
 	if (typeof(m21theory) != "undefined") {

@@ -12,7 +12,7 @@ define([], function() {
                vfa.setPosition(this.setPosition);
            }
            return vfa;
-       }
+       };
    };
    
    articulations.LengthArticulation = function(){
