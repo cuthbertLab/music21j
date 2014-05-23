@@ -67,6 +67,7 @@ define(function(require) {
                 // music21 object -- probably safe
                 var newObj = undefined;
                 try {
+                    // TODO: fix to not use Eval.
                     newObj = eval("new " + pyObjString + "()");
                 } catch(err) {
                     if (this.knownUnparseables.indexOf(pyObjString) == -1) {

@@ -6,7 +6,7 @@
  * Based on music21 (=music21p), Copyright (c) 2006–14, Michael Scott Cuthbert and cuthbertLab
  * 
  */
-define(['music21/base','music21/pitch','music21/note'], function(require) {
+define(['music21/base','music21/pitch','music21/note', 'music21/meter'], function(require) {
 	var tinyNotation = {};
 	tinyNotation.regularExpressions = {  
 			REST    : /r/,
@@ -30,18 +30,29 @@ define(['music21/base','music21/pitch','music21/note'], function(require) {
 
 	tinyNotation.TinyNotation = function (textIn) {
 		var tokens = textIn.split(" ");
-		var s = new music21.stream.Measure();
+		var p = new music21.stream.Part();
+		var m = new music21.stream.Measure();
+		var currentTSBarDuration = 4.0;		
 		var lastDuration = 1.0;
 		var tnre = tinyNotation.regularExpressions; // faster typing
 		for (var i = 0; i < tokens.length; i++ ) {
-			var token = tokens[i];
+		    // check at first so that a full measure but not over full
+		    // gets returned as a stream.Measure object.
+            if (m.duration.quarterLength >= currentTSBarDuration) {
+                p.append(m);
+                m = new music21.stream.Measure();
+            }
+
+		    var token = tokens[i];
 			var noteObj = undefined;
 			var MATCH;
 			if (MATCH = tnre.TIMESIG.exec(token)) {
-				var numerator = MATCH[1];
-				var denominator = MATCH[2];
-				// does nothing...
-				s.timeSignature = numerator + '/' + denominator;
+                var ts = new music21.meter.TimeSignature();
+				ts.numerator = MATCH[1];
+				ts.denominator = MATCH[2];
+				m.timeSignature = ts;
+				currentTSBarDuration = ts.barDuration.quarterLength;
+				console.log(currentTSBarDuration);
 				continue;
 			} else if (tnre.REST.exec(token)) {
 				noteObj = new music21.note.Rest(lastDuration);
@@ -81,29 +92,42 @@ define(['music21/base','music21/pitch','music21/note'], function(require) {
 				noteObj.duration.quarterLength = multiplier * noteObj.duration.quarterLength;
 			}
 			lastDuration = noteObj.duration.quarterLength;
-			s.append(noteObj);
+			m.append(noteObj);
 		}
-		return s;
+		if (p._elements.length > 0) {
+            p.append(m);
+	        return p; // return measure object if one measure or less		    
+		} else {
+		    return m;
+		}
 	};
 
 	// render notation divs in HTML
 	tinyNotation.RenderNotationDivs = function (classTypes) {
 		if (classTypes == undefined) {
-			classTypes = '.tinyNotation';
+			classTypes = '.music21.tinyNotation';
 		}
 		var allRender = $(classTypes);
 		for (var i = 0 ; i < allRender.length ; i ++) {
 			var thisTN = allRender[i];
+			var thisTNJQ = $(thisTN);
 			var thisTNContents = thisTN.innerText;
 			if (String.prototype.trim != undefined) {
 				thisTNContents = thisTNContents.trim(); // remove leading, trailing whitespace
 			}
 			if (thisTNContents != "") {
 				var st = tinyNotation.TinyNotation(thisTNContents);
-				var newCanvas = st.createPlayableCanvas();
-				$(thisTN).attr("tinyNotationContents", thisTNContents);
-				$(thisTN).empty();
-				$(thisTN).append(newCanvas);
+				var newCanvas;
+				if (thisTNJQ.hasClass('noPlayback')) {
+                    st.renderOptions.events['click'] = undefined;
+                    newCanvas = st.createCanvas();
+				} else {
+                    newCanvas = st.createPlayableCanvas();
+				}
+
+				thisTNJQ.attr("tinyNotationContents", thisTNContents);
+				thisTNJQ.empty();
+				thisTNJQ.append(newCanvas);
 				//console.log(thisTNContents);		
 			}
 		}
