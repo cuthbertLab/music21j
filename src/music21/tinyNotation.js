@@ -112,7 +112,7 @@ define(['music21/base','music21/pitch','music21/note', 'music21/meter'], functio
 			var thisTN = allRender[i];
 			var thisTNJQ = $(thisTN);
 			var thisTNContents = thisTN.innerText;
-			if (String.prototype.trim != undefined) {
+			if ((String.prototype.trim != undefined) && (thisTNContents != undefined)) {
 				thisTNContents = thisTNContents.trim(); // remove leading, trailing whitespace
 			}
 			if (thisTNContents != "") {
