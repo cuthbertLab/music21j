@@ -52,7 +52,7 @@ define(['music21/base','music21/pitch','music21/note', 'music21/meter'], functio
 				ts.denominator = MATCH[2];
 				m.timeSignature = ts;
 				currentTSBarDuration = ts.barDuration.quarterLength;
-				console.log(currentTSBarDuration);
+				//console.log(currentTSBarDuration);
 				continue;
 			} else if (tnre.REST.exec(token)) {
 				noteObj = new music21.note.Rest(lastDuration);
@@ -96,8 +96,11 @@ define(['music21/base','music21/pitch','music21/note', 'music21/meter'], functio
 		}
 		if (p._elements.length > 0) {
             p.append(m);
+            var thisClef = music21.clef.bestClef(p);
+            p.clef = thisClef;
 	        return p; // return measure object if one measure or less		    
 		} else {
+            m.clef = music21.clef.bestClef(m);
 		    return m;
 		}
 	};

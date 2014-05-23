@@ -112,6 +112,37 @@ define(['music21/base',], function(require) {
     clef.PercussionClef.prototype = new clef.Clef();
     clef.PercussionClef.prototype.constructor = clef.PercussionClef;
 
+    
+    clef.bestClef = function(st) {
+        var stFlat = st.flat;
+        var totalNotes = 0;
+        var totalPitch = 0.0;
+        for (var i = 0; i < stFlat.length; i++) {
+            var el = stFlat.elements[i];
+            if (el.pitch != undefined) {
+                totalNotes += 1;
+                totalPitch += el.pitch.diatonicNoteNum;
+            } else if (el.pitches != undefined) {
+                for (var j = 0; j < el.pitches.length; j++) {
+                    totalNotes += 1;
+                    totalPitch += el.pitches[j].diatonicNoteNum;
+                }
+            }      
+        }
+        var averageHeight;
+        if (totalNotes == 0) {
+            averageHeight = 29;
+        } else {
+            averageHeight = totalPitch / totalNotes;            
+        }
+        //console.log('bestClef: average height', averageHeight);
+        if (averageHeight > 28) {    // 29 = c4
+            return new clef.TrebleClef();
+        } else {
+            return new clef.BassClef();
+        }
+    };
+    
 	// end of define
 	if (typeof(music21) != "undefined") {
 		music21.clef = clef;

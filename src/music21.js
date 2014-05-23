@@ -40,7 +40,7 @@ var getM21attribute = function (attrName) {
         var dataMain = s.getAttribute('data-main');
         if (dataMain && ((/music21/.test(dataMain)) || (/m21/.test(dataMain)))) {
            var m21Attribute = s.getAttribute(attrName);
-           console.log(m21Attribute);
+           //console.log(m21Attribute);
            return m21Attribute;
         }
     }
