@@ -97,6 +97,9 @@ if ((Object.defineProperties === undefined) && warnBanner) {
         define( "music21", m21modules, 
         		function (require) { 
             music21.scriptConfig = m21conf;
+            if (MIDI) {
+                music21.MIDI = MIDI;
+            }
             var soundfontUrl;
             if (music21.scriptConfig.soundfontUrl === undefined) {
                 soundfontUrl = requirejs.toUrl('../ext/midijs/soundfont/');
