@@ -103,7 +103,7 @@ if ((Object.defineProperties === undefined) && warnBanner) {
             } else {
                 soundfontUrl = music21.scriptConfig.soundfontUrl;
             }
-            console.log(soundfontUrl);
+            //console.log(soundfontUrl);
             if (music21.MIDI) {
                 if ((music21.scriptConfig.loadSoundfont === undefined) ||
                         (music21.scriptConfig.loadSoundfont != false)) {
