@@ -75,8 +75,8 @@ define("m21theory/tests/firstSpecies", ["m21theory/section"], function () {
 			if (existingAlerts.length > 0) {
 				$(existingAlerts[0]).remove();
 			}
-			var studentLine = this.elements[0].flat;
-			var cf = this.elements[1].flat;
+			var studentLine = this.elements[0].flat.elements;
+			var cf = this.elements[1].flat.elements;
 			var totalUnanswered = 0;
 			var niceNames = {
 					1: "unison or octave",
