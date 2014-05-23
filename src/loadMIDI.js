@@ -9,8 +9,6 @@ if ( typeof define === "function" && define.amd) {
             '../ext/require/order!../ext/midijs/inc/base64binary',], 
            function(require) {
 				MIDI.audioDetect(function(){return true;} );
-				if (music21 !== undefined) {
-				    music21.MIDI = MIDI;
-				}
+				return MIDI;
 	});
 }
