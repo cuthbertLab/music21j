@@ -85,12 +85,18 @@ define(['music21/base','music21/renderOptions','music21/clef'], function(require
 	        			var tempEls = [];
 	        			for (var i = 0; i < this.length; i++) {
 	        				var el = this.elements[i];
-	        				var tempArray = el.flat;
-	        				tempEls.push.apply(tempEls, tempArray);
+	        				if (el.elements !== undefined) {
+	                            var tempArray = el.flat.elements;	        				    
+	                            tempEls.push.apply(tempEls, tempArray);
+	        				} else {
+	        				    tempEls.push(el);
+	        				}	        				
 	        			}
-	        			return tempEls;
+	                    var newSt = new stream.Stream(); // TODO: take Stream class Part, etc.
+	                    newSt.elements = tempEls;
+	        			return newSt;
 	    			} else {
-	    				return this.elements;
+	    				return this;
 	    			}
 	    		},
 	    	},
@@ -567,7 +573,7 @@ define(['music21/base','music21/renderOptions','music21/clef'], function(require
 	        if (startNote !== undefined) {
 	        	currentNote = startNote;
 	        }
-	        var flatEls = this.flat;
+	        var flatEls = this.flat.elements;
 	        var lastNote = flatEls.length;
 	        var tempo = this.tempo;
 	        this._stopPlaying = false;
