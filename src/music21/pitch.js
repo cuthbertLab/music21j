@@ -19,7 +19,7 @@ define(function(require) {
 		this._name = "";
 		this._alter = 0.0;
 		this._modifier = "";
-		this.displayType = "normal";
+		this.displayType = "normal"; // "normal", "always" supported currently
 		this.displayStatus = undefined; // true, false, undefined
 		this.inClass = music21._inClass;
 		
