@@ -6,9 +6,12 @@ if ( typeof define === "function" && define.amd) {
             '../ext/require/order!../ext/midijs/js/Window/DOMLoader.XMLHttp',
             '../ext/require/order!../ext/midijs/js/Window/DOMLoader.script',                        
             '../ext/require/order!../ext/midijs/inc/Base64',
-            '../ext/require/order!../ext/midijs/inc/base64binary',], 
+            '../ext/require/order!../ext/midijs/inc/base64binary',
+            'jquery'], 
            function(require) {
-				MIDI.audioDetect(function(){return true;} );
+	            $(document).ready( function() {
+	                    MIDI.audioDetect(function(){return true;} );
+	            });
 				return MIDI;
 	});
 }
