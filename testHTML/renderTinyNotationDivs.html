@@ -3,7 +3,10 @@
 <head>
  <title>21M.051 Note changer</title>
  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <script data-main="../src/music21" src="../ext/require/require.js"></script>
+    <script data-main="../src/music21" 
+        m21conf='{"loadSoundfont": true }'
+        warnBanner="no" 
+        src="../ext/require/require.js"></script>
  <link rel="stylesheet" href="http://web.mit.edu/music21/doc/_static/m21.css" type="text/css" />
  <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Source+Code+Pro|Open+Sans:300italic,400italic,700italic,400,300,700" type="text/css" />
 </head>
@@ -23,8 +26,6 @@ require(['music21'], function() {
 	s2.clef = new music21.clef.Clef('treble');
 	var d2 = s2.editableAccidentalCanvas();
 	$("#editable").append(d2);
-
-	music21.tinyNotation.RenderNotationDivs();
 });
 
 
@@ -46,10 +47,21 @@ require(['music21'], function() {
 <div id="editable">
 </div>
 
-<h2>Just testing down here -- automatic rendering of TinyNotation</h2>
-<div class="tinyNotation">c4 d8 e8 f2</div>
-<div class="tinyNotation">d8. f#16 e8 f g a</div>
-<div class="tinyNotation">   </div>
+<h2>Just testing down here -- automatic rendering of TinyNotation;
+</h2>
+<div>To do it, put somewhere: <br/><code>&lt;script data-main="../src/music21" warnBanner="no" src="../ext/require/require.js"&gt;&lt;/script&gt;</code><br/>
+
+
+set <code>class=""music21 tinyNotation"</code> or
+<code>"music21 tinyNotation noPlayback"</code></div><br/>
+<div>
+&lt;div class="music21 tinyNotation"&gt;c4 d8 e8 f2&lt;/div&gt; (click me)
+</div>
+<div class="music21 tinyNotation">c4 d8 e8 f2</div>
+<div>
+&lt;div class="music21 tinyNotation noPlayback"&gt;3/4 d8. f#16 e8 f g a c'#2. d'2.&lt;/div&gt; (clicking does nothing)
+</div> 
+<div class="music21 tinyNotation noPlayback">3/4 d8. f#16 e8 f g a c'#2. d'2.</div>
 
 </body>
 </html>
