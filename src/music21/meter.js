@@ -21,17 +21,25 @@ define(['music21/base', 'music21/duration'], function(require) {
               enumerable: true,
               configurable: true,
               get: function () { return this._numerator; },
-              set: function (s) { this._numerator; }
+              set: function (s) { this._numerator = s; }
             },
             'denominator' : {
                 enumerable: true,
                 configurable: true,
                 get: function () { return this._denominator; },
-                set: function (s) { this._denominator; }
+                set: function (s) { this._denominator = s; }
               },
-
+            'barDuration' : {
+                enumerable: true,
+                configurable: true,
+                get: function () {
+                    var ql = 4.0 * this._numerator / this._denominator;
+                    return new music21.duration.Duration(ql);
+                }
+            },
         });
 
+        
         
         if (typeof(meterString) == 'string') {
             var meterList = meterString.split('/');
