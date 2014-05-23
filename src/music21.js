@@ -118,7 +118,9 @@ if ((Object.defineProperties === undefined) && warnBanner) {
             }
             if ((music21.scriptConfig.renderHTML === undefined) ||
                     (music21.scriptConfig.renderHTML != false)) {
-                music21.tinyNotation.RenderNotationDivs();
+                $(document).ready(function() {
+                    music21.tinyNotation.RenderNotationDivs();
+                });
             }
             var m21 = music21;
         	return m21;
