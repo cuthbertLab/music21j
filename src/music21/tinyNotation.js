@@ -19,6 +19,7 @@ define(['music21/base','music21/pitch','music21/note', 'music21/meter'], functio
             EDNAT   : /\(n\)/,
             SHARP   : /^[A-Ga-g]+\'*(\#+)/,  // simple notation finds 
             FLAT    : /^[A-Ga-g]+\'*(\-+)/,  // double sharps too
+            NAT     : /^[A-Ga-g]+\'*n/,  // explicit naturals
             TYPE    : /(\d+)/,
             TIE     : /.\~/, // not preceding ties
             PRECTIE : /\~/,  // front ties
@@ -79,7 +80,10 @@ define(['music21/base','music21/pitch','music21/note', 'music21/meter'], functio
 				noteObj.pitch.accidental = new music21.pitch.Accidental('sharp');
 			} else if (tnre.FLAT.exec(token)) {
 				noteObj.pitch.accidental = new music21.pitch.Accidental('flat');
-			}
+            } else if (tnre.NAT.exec(token)) {
+                noteObj.pitch.accidental = new music21.pitch.Accidental('natural');
+                noteObj.pitch.accidental.displayType = "always";
+            }
 			
 			if (MATCH = tnre.TYPE.exec(token)) {
 				var durationType = parseInt(MATCH[0]);
@@ -118,7 +122,7 @@ define(['music21/base','music21/pitch','music21/note', 'music21/meter'], functio
 			if ((String.prototype.trim != undefined) && (thisTNContents != undefined)) {
 				thisTNContents = thisTNContents.trim(); // remove leading, trailing whitespace
 			}
-			if (thisTNContents != "") {
+			if (thisTNContents) {
 				var st = tinyNotation.TinyNotation(thisTNContents);
 				var newCanvas;
 				if (thisTNJQ.hasClass('noPlayback')) {
