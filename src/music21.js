@@ -77,13 +77,18 @@ if ((Object.defineProperties === undefined) && warnBanner) {
     		'jquery-ui': {
     			deps: [ 'jquery' ],
     			exports: 'jQuery.ui'
-    		}
+    		},
+            'vexflow': {
+                deps: [ 'jquery' ],
+                exports: 'Vex'
+            }
+
     	}
     });
-    var m21modules = ['jquery',
-                      'jquery-ui',
+    var m21modules = ['loadMIDI',
                       'vexflow',
-                      'loadMIDI',
+                      'jquery',
+                      'jquery-ui',
                       'music21/moduleLoader', ];
     if (m21conf.noLoad !== undefined) {
         m21conf.noLoad.forEach(function(val, i, noLoad) {
@@ -95,10 +100,15 @@ if ((Object.defineProperties === undefined) && warnBanner) {
     }
     if ( typeof define === "function" && define.amd) {
         define( "music21", m21modules, 
-        		function (require) { 
+        		function (midi, vexflow) { 
             music21.scriptConfig = m21conf;
-            if (MIDI) {
-                music21.MIDI = MIDI;
+            if (midi) {
+                music21.MIDI = midi;
+            }
+            if (vexflow) {
+                music21.Vex = vexflow;
+            } else {
+                console.log('could not load VexFlow');
             }
             var soundfontUrl;
             if (music21.scriptConfig.soundfontUrl === undefined) {
