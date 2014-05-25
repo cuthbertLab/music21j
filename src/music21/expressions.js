@@ -11,7 +11,7 @@ define(['music21/base'], function() {
        this.setPosition = undefined;
        
        this.vexflow = function () {
-           var vfe =  new Vex.Flow.Articulation(this.vexflowModifier);
+           var vfe =  new music21.Vex.Flow.Articulation(this.vexflowModifier);
            if (this.setPosition) {
                vfe.setPosition(this.setPosition);
            }

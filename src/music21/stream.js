@@ -314,9 +314,9 @@ define(['music21/base','music21/renderOptions','music21/clef'], function(require
 	        if (music21.debug) {
 	        	console.log("New voice, num_beats: " + numSixteenths.toString() + " beat_value: " + beatValue.toString());
 	        }
-	        var vfv = new Vex.Flow.Voice({ num_beats: numSixteenths,
+	        var vfv = new music21.Vex.Flow.Voice({ num_beats: numSixteenths,
 	                                    beat_value: beatValue,
-	                                    resolution: Vex.Flow.RESOLUTION });
+	                                    resolution: music21.Vex.Flow.RESOLUTION });
 			//alert(numSixteenths + " " + beatValue);
 	        //console.log('voice created');
 	        vfv.setMode(Vex.Flow.Voice.Mode.SOFT);
@@ -402,7 +402,7 @@ define(['music21/base','music21/renderOptions','music21/clef'], function(require
 
 	    this.renderVexflowOnCanvas = function (canvas, renderer) {
 	    	if (renderer == undefined) {
-	    		renderer = new Vex.Flow.Renderer(canvas, Vex.Flow.Renderer.Backends.CANVAS);
+	    		renderer = new music21.Vex.Flow.Renderer(canvas, music21.Vex.Flow.Renderer.Backends.CANVAS);
 	    	}
 	    	var hasSubStreams = this.hasSubStreams();
 	    	if (hasSubStreams) {
@@ -425,7 +425,7 @@ define(['music21/base','music21/renderOptions','music21/clef'], function(require
 		
 	    this.renderVexflowNotesOnCanvas = function (canvas, renderer) { 	
 	    	if (renderer == undefined) {
-	    		renderer = new Vex.Flow.Renderer(canvas, Vex.Flow.Renderer.Backends.CANVAS);
+	    		renderer = new music21.Vex.Flow.Renderer(canvas, music21.Vex.Flow.Renderer.Backends.CANVAS);
 	    	}
 	    	var ctx = renderer.getContext();
 
@@ -444,7 +444,7 @@ define(['music21/base','music21/renderOptions','music21/clef'], function(require
 				left = 10;
 			}
 			//console.log('streamLength: ' + streamLength);
-			var stave = new Vex.Flow.Stave(left, top, width);
+			var stave = new music21.Vex.Flow.Stave(left, top, width);
 	        if (vfro.showMeasureNumber) {
 	        	stave.setMeasure(vfro.measureIndex + 1);
 	        }
@@ -487,10 +487,10 @@ define(['music21/base','music21/renderOptions','music21/clef'], function(require
 			//      screws up middle line stems -- worth it for now.
 			var beamGroups = [];
 			if (this.autoBeam) {
-				beamGroups = Vex.Flow.Beam.applyAndGetBeams(voice);
+				beamGroups = music21.Vex.Flow.Beam.applyAndGetBeams(voice);
 			} 
 				
-			var formatter = new Vex.Flow.Formatter();
+			var formatter = new music21.Vex.Flow.Formatter();
 			if (music21.debug) {
 				console.log("Voice: ticksUsed: " + voice.ticksUsed + " totalTicks: " + voice.totalTicks);
 			}
@@ -1397,10 +1397,10 @@ define(['music21/base','music21/renderOptions','music21/clef'], function(require
 				return;
 			}
 			staffConnectorsMap = {
-					'brace': Vex.Flow.StaveConnector.type.BRACE, 
-					'single': Vex.Flow.StaveConnector.type.SINGLE, 
-					'double': Vex.Flow.StaveConnector.type.DOUBLE, 
-					'bracket': Vex.Flow.StaveConnector.type.BRACKET, 
+					'brace': music21.Vex.Flow.StaveConnector.type.BRACE, 
+					'single': music21.Vex.Flow.StaveConnector.type.SINGLE, 
+					'double': music21.Vex.Flow.StaveConnector.type.DOUBLE, 
+					'bracket': music21.Vex.Flow.StaveConnector.type.BRACKET, 
 			};
 			var firstPart = this.elements[0];
 			var lastPart = this.elements[numParts - 1];
@@ -1412,7 +1412,7 @@ define(['music21/base','music21/renderOptions','music21/clef'], function(require
 					var bottomVFStaff = lastPart.elements[mIndex].activeVFStave;
 					/* TODO: warning if no staves... */;
 					for (var i = 0; i < this.renderOptions.staffConnectors.length; i++) {
-						var sc = new Vex.Flow.StaveConnector(topVFStaff, bottomVFStaff);
+						var sc = new music21.Vex.Flow.StaveConnector(topVFStaff, bottomVFStaff);
 						var scTypeM21 = this.renderOptions.staffConnectors[i];
 						var scTypeVF = staffConnectorsMap[scTypeM21];
 						sc.setType(scTypeVF);

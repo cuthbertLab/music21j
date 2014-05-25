@@ -75,14 +75,14 @@ define(['music21/base', 'music21/pitch'], function(require) {
 	    	if (vfd === undefined) {
 	    	    return undefined;
 	    	}
-	        var vfn = new Vex.Flow.StaveNote({keys: [this.pitch.vexflowName(clefName)], 
+	        var vfn = new music21.Vex.Flow.StaveNote({keys: [this.pitch.vexflowName(clefName)], 
 										  duration: vfd});
 	        this.vexflowAccidentalsAndDisplay(vfn); // clean up stuff...
 	        if (this.pitch.accidental != undefined) {
 				if (this.pitch.accidental.vexflowModifier != 'n' && this.pitch.accidental.displayStatus != false) {
-					vfn.addAccidental(0, new Vex.Flow.Accidental(this.pitch.accidental.vexflowModifier));
+					vfn.addAccidental(0, new music21.Vex.Flow.Accidental(this.pitch.accidental.vexflowModifier));
 				} else if (this.pitch.accidental.displayType == 'always' || this.pitch.accidental.displayStatus == true) {
-					vfn.addAccidental(0, new Vex.Flow.Accidental(this.pitch.accidental.vexflowModifier));			
+					vfn.addAccidental(0, new music21.Vex.Flow.Accidental(this.pitch.accidental.vexflowModifier));			
 				}
 			}
 	        
@@ -124,7 +124,7 @@ define(['music21/base', 'music21/pitch'], function(require) {
 	    	if (this.duration.type == 'whole') {
 	    		keyLine = 'd/5';
 	    	}
-	        var vfn = new Vex.Flow.StaveNote({keys: [keyLine], 
+	        var vfn = new music21.Vex.Flow.StaveNote({keys: [keyLine], 
 											duration: this.duration.vexflowDuration + 'r'});
 	        if (this.duration.dots == 1) {
 	            vfn.addDotToAll();
