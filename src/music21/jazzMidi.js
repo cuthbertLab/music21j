@@ -125,9 +125,9 @@ define(['music21/jazzMidi'], function(require) {
 	    };
 	    this.sendToMIDIjs = function () {
 	        if (this.noteOn) {
-	            MIDI.noteOn(0, this.midiNote, this.velocity, 0);
+	            music21.MIDI.noteOn(0, this.midiNote, this.velocity, 0);
 	        } else if (this.noteOff) {
-	            MIDI.noteOff(0, this.midiNote, 0);      
+	            music21.MIDI.noteOff(0, this.midiNote, 0);      
 	        }
 	    };
 	    this.music21Note = function () {
