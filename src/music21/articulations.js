@@ -7,7 +7,7 @@ define([], function() {
        this.vexflowModifier = undefined;
        this.setPosition = undefined;
        this.vexflow = function () {
-           var vfa = new Vex.Flow.Articulation(this.vexflowModifier);
+           var vfa = new music21.Vex.Flow.Articulation(this.vexflowModifier);
            if (this.setPosition) {
                vfa.setPosition(this.setPosition);
            }
