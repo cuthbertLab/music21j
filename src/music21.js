@@ -69,9 +69,9 @@ if ((Object.defineProperties === undefined) && warnBanner) {
     }
     require.config({
     	paths: {
-    		'jquery': '../ext/jquery/jquery-2.1.1.min',
-    		'jquery-ui': '../ext/jqueryPlugins/jqueryUI/jquery-ui.min',
-    		'vexflow': '../ext/vexflow/vexflow-min'
+    		'jquery': 'ext/jquery/jquery-2.1.1.min',
+    		'jquery-ui': 'ext/jqueryPlugins/jqueryUI/jquery-ui.min',
+    		'vexflow': 'ext/vexflow/vexflow-min'
     	},
     	shim: {
     		'jquery-ui': {
@@ -102,7 +102,7 @@ if ((Object.defineProperties === undefined) && warnBanner) {
             }
             var soundfontUrl;
             if (music21.scriptConfig.soundfontUrl === undefined) {
-                soundfontUrl = requirejs.toUrl('../ext/midijs/soundfont/');
+                soundfontUrl = requirejs.toUrl('ext/midijs/soundfont/');
             } else {
                 soundfontUrl = music21.scriptConfig.soundfontUrl;
             }
