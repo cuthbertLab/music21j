@@ -208,16 +208,16 @@ define(['music21/note'], function(require) {
 	        for (var i = 0; i < this._noteArray.length; i++) {
 	        	pitchKeys.push(this._noteArray[i].pitch.vexflowName(clefName));	
 	        }
-	        var vfn = new music21.Vex.Flow.StaveNote({keys: pitchKeys, 
+	        var vfn = new Vex.Flow.StaveNote({keys: pitchKeys, 
 										  duration: this.duration.vexflowDuration});
 	        this.vexflowAccidentalsAndDisplay(vfn); // clean up stuff...
 	        for (var i = 0; i < this._noteArray.length; i++) {
 	        	var tn = this._noteArray[i];
 		        if (tn.pitch.accidental != undefined) {
 					if (tn.pitch.accidental.vexflowModifier != 'n' && tn.pitch.accidental.displayStatus != false) {
-						vfn.addAccidental(i, new music21.Vex.Flow.Accidental(tn.pitch.accidental.vexflowModifier));
+						vfn.addAccidental(i, new Vex.Flow.Accidental(tn.pitch.accidental.vexflowModifier));
 					} else if (tn.pitch.accidental.displayType == 'always' || tn.pitch.accidental.displayStatus == true) {
-						vfn.addAccidental(i, new music21.Vex.Flow.Accidental(tn.pitch.accidental.vexflowModifier));			
+						vfn.addAccidental(i, new Vex.Flow.Accidental(tn.pitch.accidental.vexflowModifier));			
 					}
 				}
 	        }
