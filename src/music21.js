@@ -32,6 +32,7 @@ this module would not be possible.
 */
 
 // must be defined before loading, jQuery, etc. because needed to see if warnBanner is defined
+if (typeof(music21) === "undefined") var music21 = {};
 
 var getM21attribute = function (attrName) {
     var scripts = document.getElementsByTagName('script');
@@ -110,23 +111,16 @@ if ((Object.defineProperties === undefined) && warnBanner) {
             } else {
                 console.log('could not load VexFlow');
             }
-            var soundfontUrl;
-            if (music21.scriptConfig.soundfontUrl === undefined) {
-                soundfontUrl = requirejs.toUrl('ext/midijs/soundfont/');
-            } else {
-                soundfontUrl = music21.scriptConfig.soundfontUrl;
-            }
-            //console.log(soundfontUrl);
             if (music21.MIDI) {
+//                if (music21.scriptConfig.soundfontUrl === undefined) {
+//                    soundfontUrl = 'http://web.mit.edu/music21/music21j/src/ext/midijs/soundfont/';
+//                } else {
+//                    soundfontUrl = music21.scriptConfig.soundfontUrl;
+//                }
+//
                 if ((music21.scriptConfig.loadSoundfont === undefined) ||
                         (music21.scriptConfig.loadSoundfont != false)) {
-                    music21.MIDI.loadPlugin({
-                        soundfontUrl: soundfontUrl,
-                        instrument: "acoustic_grand_piano",
-                        callback: function() {
-                            startTime = new Date().getTime();
-                        }
-                    });                
+                   music21.MIDI.loadSoundfont('acoustic_grand_piano', function() {});
                 }
             }
             if ((music21.scriptConfig.renderHTML === undefined) ||
