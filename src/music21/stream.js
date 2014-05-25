@@ -589,11 +589,11 @@ define(['music21/base','music21/renderOptions','music21/clef'], function(require
     	                milliseconds = 60 * ql * 1000 / tempo;
     	                if (el.inClass('Note')) { // Note, not rest
     				 	    var midNum = el.pitch.midi;
-    				 	    MIDI.noteOn(0, midNum, 100, 0);
+    				 	    music21.MIDI.noteOn(0, midNum, 100, 0);
     				    } else if (el.inClass('Chord')) {
     					    for (var j = 0; j < el._noteArray.length; j++) {
     					 	    var midNum = el._noteArray[j].pitch.midi;
-    					 	    MIDI.noteOn(0, midNum, 100, 0);					   
+    					 	   music21.MIDI.noteOn(0, midNum, 100, 0);					   
     					    }
     				    }
 	                }
@@ -607,7 +607,7 @@ define(['music21/base','music21/renderOptions','music21/clef'], function(require
 	    this.stopPlayStream = function () {
 	    	this._stopPlaying = true;
 	    	for (var i = 0; i < 127; i++) {
-	    		MIDI.noteOff(0, midNum, 0);
+	    	    music21.MIDI.noteOff(0, midNum, 0);
 	    	}
 		};
 	    
