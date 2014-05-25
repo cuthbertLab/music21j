@@ -29,15 +29,12 @@ if ( typeof define === "function" && define.amd) {
     define( "m21theory", ['music21', 
                           'm21theory/userData', 'm21theory/random', 'm21theory/misc',
                           'm21theory/bank', 'm21theory/section', 'm21theory/tests'], 
-    		function (require) { 
+    		function (music21) { 
+        
+        music21.MIDI.loadSoundfont('acoustic_grand_piano', function() { 
+                m21theory.misc.playMotto(music21.MIDI); 
+            });
 
     	// this may get loaded twice, but I think the cache handles it...
-        MIDI.loadPlugin({
-    		soundfontUrl: "../ext/midijs/soundfont/",
-    		instrument: "acoustic_grand_piano",
-    		callback: function() {
-    			m21theory.misc.playMotto(); // disable this to not play the motto on loading...
-    		}
-    	});
-    });
+	});
 }
