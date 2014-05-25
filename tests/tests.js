@@ -1,7 +1,7 @@
 require.config({
     paths: {
         'music21': '../src/music21',
-        'q-unit': '../ext/qUnit/qunit-1.12.0',
+        'q-unit': '../src/ext/qUnit/qunit-1.12.0',
     },
     baseUrl: '../src',
     shim: {
