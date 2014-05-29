@@ -33,28 +33,6 @@ define(['music21/base','music21/renderOptions','music21/clef'], function(require
 	    this._stopPlaying = false;
 	    this._allowMultipleSimultaneousPlays = true; // not implemented yet.
 
-	    this.append = function (el) {
-	    	try {
-    	        if ((el.inClass !== undefined) && el.inClass('NotRest')) {
-    	        	this.clef.setStemDirection(el);    		
-    	    	}
-    	    	this.elements.push(el);
-    	    	el.parent = this; // would prefer weakref, but does not exist in JS.
-	    	} catch (err) {
-	    	    console.error("Cannot append element ", el, " to stream ", this, " : ", err);
-	    	}
-	    };
-	    this.hasSubStreams = function () {
-	    	var hasSubStreams = false;
-	    	for (var i = 0; i < this.length; i++) {
-	    		var el = this.elements[i];
-	    		if (el.inClass('Stream')) {
-	    			hasSubStreams = true;
-	    			break;
-	    		}
-	    	}
-	    	return hasSubStreams;
-	    };
 	    
 	    Object.defineProperties(this, {
             'duration': {
@@ -99,6 +77,11 @@ define(['music21/base','music21/renderOptions','music21/clef'], function(require
 	    				return this;
 	    			}
 	    		},
+	    	},
+	    	'notes': {
+                configurable: true,
+                enumerable: true,
+                get: function () { return this.getElementsByClass('Note'); },
 	    	},
 			'tempo': {
                 configurable: true,
@@ -195,6 +178,7 @@ define(['music21/base','music21/renderOptions','music21/clef'], function(require
 			'measures': {
                 configurable: true,
                 enumerable: true,
+                /* TODO -- make Stream */
 				get: function() {
 					var measures = [];
 					for (var i = 0; i < this.length; i++) {
@@ -225,77 +209,13 @@ define(['music21/base','music21/renderOptions','music21/clef'], function(require
 	    });
 	    
 	    
-	    this.makeAccidentals = function () {
-			// cheap version of music21p method
-			var extendableStepList = {};
-			var stepNames = ['C','D','E','F','G','A','B'];
-	    	for (var i = 0; i < stepNames.length; i++) {
-	    		var stepName = stepNames[i];
-	    		var stepAlter = 0;
-	    		if (this.keySignature != undefined) {
-	    			var tempAccidental = this.keySignature.accidentalByStep(stepName);
-	    			if (tempAccidental != undefined) {
-	    				stepAlter = tempAccidental.alter;
-	    				//console.log(stepAlter + " " + stepName);
-	    			}
-	    		}
-	    		extendableStepList[stepName] = stepAlter;
-	    	}
-			var lastOctaveStepList = [];
-			for (var i =0; i < 10; i++) {
-				var lastStepDict = $.extend({}, extendableStepList);
-				lastOctaveStepList.push(lastStepDict);
-			}
-			var lastOctavelessStepDict = $.extend({}, extendableStepList); // probably unnecessary, but safe...
-			for (var i = 0; i < this.length; i++) {
-				el = this.elements[i];
-				if (el.pitch != undefined) {
-					var p = el.pitch;
-					var lastStepDict = lastOctaveStepList[p.octave];
-					this.makeAccidentalForOnePitch(p, lastStepDict, lastOctavelessStepDict);
-				} else if (el._noteArray != undefined) {
-					for (var j = 0; j < el._noteArray.length; j++) {
-						var p = el._noteArray[j].pitch;
-						var lastStepDict = lastOctaveStepList[p.octave];
-						this.makeAccidentalForOnePitch(p, lastStepDict, lastOctavelessStepDict);
-					}
-				}
-			}
-	    };
-
-	    this.makeAccidentalForOnePitch = function (p, lastStepDict, lastOctavelessStepDict) {
-			var newAlter;
-			if (p.accidental == undefined) {
-				newAlter = 0;
-			} else {
-				newAlter = p.accidental.alter;
-			}
-			//console.log(p.name + " " + lastStepDict[p.step].toString());
-			if ((lastStepDict[p.step] != newAlter) ||
-				(lastOctavelessStepDict[p.step] != newAlter)
-				 ) {
-			    if (p.accidental === undefined) {
-			        p.accidental = new music21.pitch.Accidental('natural');
-			    }
-			    p.accidental.displayStatus = true;
-				//console.log("setting displayStatus to true");
-			} else if ( (lastStepDict[p.step] == newAlter) &&
-						(lastOctavelessStepDict[p.step] == newAlter) ) {
-                if (p.accidental !== undefined) {
-                    p.accidental.displayStatus = false;
-                }
-				//console.log("setting displayStatus to false");
-			}
-			lastStepDict[p.step] = newAlter;
-			lastOctavelessStepDict[p.step] = newAlter;
-	    };
 	    /*  VexFlow functionality */
 	    
 	    this.vexflowNotes = function () {
 	        var notes = [];
 	        for (var i = 0; i < this.length; i++) {
 	        	var thisEl = this.elements[i];
-	        	if (thisEl.inClass('GeneralNote') && (thisEl.duration !== undefined)) {
+	        	if (thisEl.isClassOrSubclass('GeneralNote') && (thisEl.duration !== undefined)) {
 		        	var tn = thisEl.vexflowNote(this.clef.name);
 		        	notes.push(tn);
 	        	}
@@ -329,7 +249,7 @@ define(['music21/base','music21/renderOptions','music21/clef'], function(require
 	    		//console.log("Overridden staff width: " + this.vexflowStaffWidth);
 	    		return this.vexflowStaffWidth;
 	    	}
-	    	if (this.inClass('Score')) {
+	    	if (this.isClassOrSubclass('Score')) {
 	    		var tl = this.elements[0].estimateStaffLength(); // get from first part... 
 	    		//console.log('total Length: ' + tl);
 	    		return tl;
@@ -357,7 +277,7 @@ define(['music21/base','music21/renderOptions','music21/clef'], function(require
 	    this.estimateStreamHeight = function (ignoreSystems) {
 	    	var staffHeight = 120;
 	    	var systemPadding = 30;
-	    	if (this.inClass('Score')) {
+	    	if (this.isClassOrSubclass('Score')) {
 	    		var numParts = this.length;
 	    		var numSystems = this.numSystems();
 	    		if (numSystems == undefined || ignoreSystems) {
@@ -366,7 +286,7 @@ define(['music21/base','music21/renderOptions','music21/clef'], function(require
 	    		var scoreHeight = (numSystems * staffHeight * numParts) + ((numSystems - 1) * systemPadding);
 	    		//console.log('scoreHeight of ' + scoreHeight);
 	    		return scoreHeight;
-	    	} else if (this.inClass('Part')) {
+	    	} else if (this.isClassOrSubclass('Part')) {
 	    		var numSystems = 1;
 	    		if (!ignoreSystems) {
 	    			numSystems = this.numSystems();
@@ -390,7 +310,7 @@ define(['music21/base','music21/renderOptions','music21/clef'], function(require
 	    	this.renderOptions = new music21.renderOptions.RenderOptions();
 	    	for (var i = 0; i < this.length; i++) {
 	    		var el = this.elements[i];
-	    		if (el.inClass('Stream')) {
+	    		if (el.isClassOrSubclass('Stream')) {
 	    			el.resetRenderOptionsRecursive();
 	    		}
 	    	}
@@ -418,7 +338,7 @@ define(['music21/base','music21/renderOptions','music21/clef'], function(require
 	    		var stave = this.renderVexflowNotesOnCanvas(canvas, renderer);
 	    		this.activeVFStave = stave;
 	    	}
-	    	if (this.inClass('Score')) {
+	    	if (this.isClassOrSubclass('Score')) {
 	    		this.addStaffConnectors(renderer);
 	    	}
 		};
@@ -531,7 +451,7 @@ define(['music21/base','music21/renderOptions','music21/clef'], function(require
 			var nextTicks = 0;
 			for (var i = 0; i < this.length; i ++ ) {
 				var el = this.elements[i];
-				if (el.inClass('Note') || el.inClass('Chord')) { // note or chord.
+				if (el.isClassOrSubclass(['Note', 'Chord'])) {
 					var vfn = el.activeVexflowNote;
 					if (vfn === undefined) {
 					    continue;
@@ -587,10 +507,10 @@ define(['music21/base','music21/renderOptions','music21/clef'], function(require
     	                    
     	                var ql = el.duration.quarterLength;
     	                milliseconds = 60 * ql * 1000 / tempo;
-    	                if (el.inClass('Note')) { // Note, not rest
+    	                if (el.isClassOrSubclass('Note')) { // Note, not rest
     				 	    var midNum = el.pitch.midi;
     				 	    music21.MIDI.noteOn(0, midNum, 100, 0);
-    				    } else if (el.inClass('Chord')) {
+    				    } else if (el.isClassOrSubclass('Chord')) {
     					    for (var j = 0; j < el._noteArray.length; j++) {
     					 	    var midNum = el._noteArray[j].pitch.midi;
     					 	   music21.MIDI.noteOn(0, midNum, 100, 0);					   
@@ -997,6 +917,110 @@ define(['music21/base','music21/renderOptions','music21/clef'], function(require
 	stream.Stream.prototype = new music21.base.Music21Object();
 	stream.Stream.prototype.constructor = stream.Stream;
 
+	stream.Stream.prototype.append = function (el) {
+        try {
+            if ((el.isClassOrSubclass !== undefined) && el.isClassOrSubclass('NotRest')) {
+                this.clef.setStemDirection(el);         
+            }
+            this.elements.push(el);
+            el.parent = this; // would prefer weakref, but does not exist in JS.
+        } catch (err) {
+            console.error("Cannot append element ", el, " to stream ", this, " : ", err);
+        }
+    };
+    stream.Stream.prototype.hasSubStreams = function () {
+        var hasSubStreams = false;
+        for (var i = 0; i < this.length; i++) {
+            var el = this.elements[i];
+            if (el.isClassOrSubclass('Stream')) {
+                hasSubStreams = true;
+                break;
+            }
+        }
+        return hasSubStreams;
+    };
+    stream.Stream.prototype.getElementsByClass = function (classList) {
+        var tempEls = [];
+        for (var i = 0; i < this.elements.length; i++ ) {
+            var thisEl = this.elements[i];
+            //console.warn(thisEl);
+            if (thisEl.isClassOrSubclass === undefined) {
+                console.err('what the hell is a ', thisEl, 'doing in a Stream?');
+            } else if (thisEl.isClassOrSubclass(classList)) {
+                tempEls.push(thisEl);
+            }
+        }
+        var newSt = new stream.Stream(); // TODO: take Stream class Part, etc.
+        newSt.elements = tempEls;
+        return newSt;           
+    };
+    
+    stream.Stream.prototype.makeAccidentals = function () {
+        // cheap version of music21p method
+        var extendableStepList = {};
+        var stepNames = ['C','D','E','F','G','A','B'];
+        for (var i = 0; i < stepNames.length; i++) {
+            var stepName = stepNames[i];
+            var stepAlter = 0;
+            if (this.keySignature != undefined) {
+                var tempAccidental = this.keySignature.accidentalByStep(stepName);
+                if (tempAccidental != undefined) {
+                    stepAlter = tempAccidental.alter;
+                    //console.log(stepAlter + " " + stepName);
+                }
+            }
+            extendableStepList[stepName] = stepAlter;
+        }
+        var lastOctaveStepList = [];
+        for (var i =0; i < 10; i++) {
+            var lastStepDict = $.extend({}, extendableStepList);
+            lastOctaveStepList.push(lastStepDict);
+        }
+        var lastOctavelessStepDict = $.extend({}, extendableStepList); // probably unnecessary, but safe...
+        for (var i = 0; i < this.length; i++) {
+            el = this.elements[i];
+            if (el.pitch != undefined) {
+                var p = el.pitch;
+                var lastStepDict = lastOctaveStepList[p.octave];
+                this.makeAccidentalForOnePitch(p, lastStepDict, lastOctavelessStepDict);
+            } else if (el._noteArray != undefined) {
+                for (var j = 0; j < el._noteArray.length; j++) {
+                    var p = el._noteArray[j].pitch;
+                    var lastStepDict = lastOctaveStepList[p.octave];
+                    this.makeAccidentalForOnePitch(p, lastStepDict, lastOctavelessStepDict);
+                }
+            }
+        }
+    };
+
+    stream.Stream.prototype.makeAccidentalForOnePitch = function (p, lastStepDict, lastOctavelessStepDict) {
+        var newAlter;
+        if (p.accidental == undefined) {
+            newAlter = 0;
+        } else {
+            newAlter = p.accidental.alter;
+        }
+        //console.log(p.name + " " + lastStepDict[p.step].toString());
+        if ((lastStepDict[p.step] != newAlter) ||
+            (lastOctavelessStepDict[p.step] != newAlter)
+             ) {
+            if (p.accidental === undefined) {
+                p.accidental = new music21.pitch.Accidental('natural');
+            }
+            p.accidental.displayStatus = true;
+            //console.log("setting displayStatus to true");
+        } else if ( (lastStepDict[p.step] == newAlter) &&
+                    (lastOctavelessStepDict[p.step] == newAlter) ) {
+            if (p.accidental !== undefined) {
+                p.accidental.displayStatus = false;
+            }
+            //console.log("setting displayStatus to false");
+        }
+        lastStepDict[p.step] = newAlter;
+        lastOctavelessStepDict[p.step] = newAlter;
+    };	
+	
+	
 	stream.Measure = function () { 
 		stream.Stream.call(this);
 		this.classes.push('Measure');
@@ -1084,7 +1108,7 @@ define(['music21/base','music21/renderOptions','music21/clef'], function(require
 			var vfro = this.renderOptions;
 			for (var i = 0; i < this.length; i++) {
 				var el = this.elements[i];
-				if (el.inClass('Measure')) {
+				if (el.isClassOrSubclass('Measure')) {
 					var elvfro = el.renderOptions;
 					elvfro.measureIndex = currentMeasureIndex;
 					elvfro.top = vfro.top;
@@ -1113,10 +1137,8 @@ define(['music21/base','music21/renderOptions','music21/clef'], function(require
 			var measureWidths = [];
 			for (var i = 0; i < this.length; i++) {
 				var el = this.elements[i];
-				//console.log(el.classes);
-				if (el.inClass('Measure')) {
+				if (el.isClassOrSubclass('Measure')) {
 					var elvfro = el.renderOptions;
-					//console.log(i);
 					measureWidths[elvfro.measureIndex] = elvfro.width;
 				}
 			}
@@ -1241,7 +1263,7 @@ define(['music21/base','music21/renderOptions','music21/clef'], function(require
 	    	// play multiple parts in parallel...
 	    	for (var i = 0; i < this.length; i++) {
 	    		var el = this.elements[i];
-	    		if (el.inClass('Part')) {
+	    		if (el.isClassOrSubclass('Part')) {
 	    			el.playStream();
 	    		}
 	    	}
@@ -1249,7 +1271,7 @@ define(['music21/base','music21/renderOptions','music21/clef'], function(require
 	    this.stopStream = function () {
 	    	for (var i = 0; i < this.length; i++) {
 	    		var el = this.elements[i];
-	    		if (el.inClass('Part')) {
+	    		if (el.isClassOrSubclass('Part')) {
 	    	    	el._stopPlaying = true;
 	    		}
 	    	}
@@ -1261,7 +1283,7 @@ define(['music21/base','music21/renderOptions','music21/clef'], function(require
 			for (var i = 0; i < this.length; i++) {
 				var el = this.elements[i];
 				
-				if (el.inClass('Part')) {
+				if (el.isClassOrSubclass('Part')) {
 					el.renderOptions.partIndex = currentPartNumber;
 					el.renderOptions.top = currentPartTop;
 					el.setSubstreamRenderOptions();
@@ -1274,7 +1296,7 @@ define(['music21/base','music21/renderOptions','music21/clef'], function(require
 			var currentScoreHeight = this.estimateStreamHeight(ignoreNumSystems);
 			for (var i = 0; i < this.length; i++) {
 				var el = this.elements[i];	
-				if (el.inClass('Part')) {
+				if (el.isClassOrSubclass('Part')) {
 					el.fixSystemInformation(currentScoreHeight);
 				}
 			}
@@ -1359,7 +1381,7 @@ define(['music21/base','music21/renderOptions','music21/clef'], function(require
 
 			for (var i = 0; i < this.length; i++) {
 				var el = this.elements[i];
-				if (el.inClass('Part')) {
+				if (el.isClassOrSubclass('Part')) {
 					var measureWidths = el.getMeasureWidths();
 					for (var j = 0; j < measureWidths.length; j++) {
 						thisMeasureWidth = measureWidths[j];
@@ -1463,6 +1485,29 @@ define(['music21/base','music21/renderOptions','music21/clef'], function(require
 	        equal (c.attr('width'), 100, 'stored width matches');
 	        equal (c.attr('height'), 50, 'stored height matches');
 	    });  
+
+        test( "music21.stream.Stream.getElementsByClass", function() {
+            var s = new music21.stream.Stream();
+            var n1 = new music21.note.Note("C#5");
+            var n2 = new music21.note.Note("D#5");
+            var r = new music21.note.Rest();
+            var tc = new music21.clef.TrebleClef();
+            s.append( tc );
+            s.append( n1 );
+            s.append( r );
+            s.append( n2 );
+            var c = s.getElementsByClass('Note');
+            equal (c.length, 2, 'got two notes');
+            equal (c.elements[0], n1, 'n1 first');
+            equal (c.elements[1], n2, 'n2 second');
+            c = s.getElementsByClass('Clef');
+            equal (c.length, 1, 'got clef from subclass');
+            c = s.getElementsByClass(['Note', 'TrebleClef']);
+            equal (c.length, 3, 'got multiple classes');
+            c = s.getElementsByClass('GeneralNote');            
+            equal (c.length, 3, 'got multiple subclasses');
+        });  
+	
 	};
 	
 	// end of define

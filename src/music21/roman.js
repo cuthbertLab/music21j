@@ -26,10 +26,13 @@ define(['music21/chord', 'music21/key', 'music21/pitch', 'music21/interval'], fu
 		 */
 		this.figure = figure;
 		this._scale = undefined;
+		this._key = undefined;
 		music21.chord.Chord.call(this);
+		this.classes.push('RomanNumeral');
 		
 	    Object.defineProperties(this, {
 	    	'scale': {
+	    	    enumerable: true,
 	    		get: function () {
 	    			if (this._scale != undefined) {
 	    				return this._scale;
@@ -39,7 +42,21 @@ define(['music21/chord', 'music21/key', 'music21/pitch', 'music21/interval'], fu
 	    			}
 	    		},
 	    	},
+	    	'key' : { 
+               enumerable: true,	    	    
+	    	   get: function () { return this._key; },
+	    	   set: function(keyStr) {
+	    	       if (typeof(keyStr) == 'string') {
+	    	            this._key = new music21.key.Key(keyStr);
+	    	        } else if (typeof(keyStr) == 'undefined') {
+	    	            this._key = new music21.key.Key('C');
+	    	        } else {
+	    	            this._key = keyStr;
+	    	        }
+	    	   },
+	    	},
 	    	'degreeName': {
+                enumerable: true,
 	    		get: function () {
 	    			if (this.scaleDegree < 7) {
 	    				return [undefined, 'Tonic', 'Supertonic','Mediant','Subdominant','Dominant','Submediant'][this.scaleDegree];
@@ -65,6 +82,7 @@ define(['music21/chord', 'music21/key', 'music21/pitch', 'music21/interval'], fu
 	    	var chordPitches = [this.root];
 			var lastPitch = this.root;
 			for (var j = 0; j < chordSpacing.length; j++) {
+	            console.log('got them', lastPitch);
 				var thisTransStr = chordSpacing[j];
 				var thisTrans = new music21.interval.Interval(thisTransStr);
 				var nextPitch = thisTrans.transposePitch(lastPitch);
@@ -74,14 +92,7 @@ define(['music21/chord', 'music21/key', 'music21/pitch', 'music21/interval'], fu
 			this.pitches = chordPitches;
 	    };
 	    
-		this.key = undefined;
-		if (typeof(keyStr) == 'string') {
-			this.key = new music21.key.Key(keyStr);
-		} else if (typeof(keyStr) == 'undefined') {
-			this.key = new music21.key.Key('C');
-		} else {
-			this.key = keyStr;
-		}
+		this.key = keyStr;
 		var currentFigure = figure;
 		
 		var impliedQuality = 'major';
@@ -131,7 +142,6 @@ define(['music21/chord', 'music21/key', 'music21/pitch', 'music21/interval'], fu
 		
 		
 		this.impliedQuality = impliedQuality;
-
 		this.updatePitches();	
 	};
 
@@ -141,6 +151,7 @@ define(['music21/chord', 'music21/key', 'music21/pitch', 'music21/interval'], fu
 	roman.tests = function () {
 	    test ( "music21.roman.RomanNumeral" , function() {
 	        var t1 = "IV";
+            console.log(t1, "Roman");
 	        var rn1 = new music21.roman.RomanNumeral(t1, "F");
 	        equal (rn1.scaleDegree, 4, 'test scale dgree of F IV');
 	        var scale = rn1.scale;

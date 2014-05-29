@@ -7,7 +7,6 @@
  * 
  */
 
-/* a Music21Object in m21p; the overhead is too high here to follow ... */
 define(function(require) {
 	var pitch = {};
 	
@@ -21,7 +20,17 @@ define(function(require) {
 		this._modifier = "";
 		this.displayType = "normal"; // "normal", "always" supported currently
 		this.displayStatus = undefined; // true, false, undefined
-		this.inClass = music21._inClass;
+		this.isClassOrSubclass = function (testClass) {
+		    if (testClass instanceof Array == false) {
+		        testClass = [testClass];
+		    }
+		    for (var i = 0; i < testClass.length; i++) {
+		        if ($.inArray(testClass[i], this.classes) != -1) {
+		            return true;
+		        }   
+		    }
+		    return false;
+		};
 		
         Object.defineProperties(this, {
             'name' : {
@@ -109,7 +118,17 @@ define(function(require) {
 	    this._octave = 4;
 	    this._accidental = undefined;
 		this.classes = ['Pitch'];
-		this.inClass = music21._inClass;
+		this.isClassOrSubclass = function (testClass) {
+		    if (testClass instanceof Array == false) {
+		        testClass = [testClass];
+		    }
+		    for (var i = 0; i < testClass.length; i++) {
+		        if ($.inArray(testClass[i], this.classes) != -1) {
+		            return true;
+		        }   
+		    }
+		    return false;
+		};
 	    
 	    Object.defineProperties(this, {
 	    	'step' : {
@@ -160,7 +179,17 @@ define(function(require) {
                 configurable: true,
 				get: function () {
 					return this.name + this.octave.toString();
-				}
+				},
+				set: function (pn) {
+			        var storedOctave = pn.match(/\d+/);
+			        if (storedOctave != undefined) {
+			            pn = pn.replace(/\d+/, "");
+			            this.octave = parseInt(storedOctave);
+			            this.name = pn;
+			        } else {
+			            this.name = pn;
+			        }
+				},
 			},
 	    	'diatonicNoteNum': { 
                 enumerable: true,
@@ -201,12 +230,13 @@ define(function(require) {
 	    		}
 	    	}
 	    });
-	    var storedOctave = pn.match(/\d+/);
-	    if (storedOctave != undefined) {
-	    	pn = pn.replace(/\d+/, "");
-	    	this.octave = parseInt(storedOctave);
+
+	    /* pn can be a nameWithOctave */
+	    if (pn.match(/\d+/)) {
+	        this.nameWithOctave = pn;
+	    } else {
+	        this.name = pn;	        
 	    }
-		this.name = pn;
 	    	
 	    this.vexflowName = function (clefName) {
 	    	//alert(this.octave + " " + clefName);
