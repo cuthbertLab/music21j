@@ -40,8 +40,9 @@ music21.debug = false;
 define(['music21/pitch', 'music21/duration', 'music21/base', 'music21/note', 'music21/meter',
         'music21/chord', 'music21/roman', 'music21/key', 'music21/interval', 'music21/clef',
         'music21/renderOptions', 'music21/tinyNotation', 'music21/dynamics', 'music21/stream',
-        'music21/jazzMidi','music21/articulations','music21/jsonPickle', 'music21/expressions',
-        'music21/metronome'], 
+        'music21/jazzMidi','music21/miditools',
+        'music21/articulations','music21/jsonPickle', 'music21/expressions',
+        'music21/tempo'], 
         function(require) {
 			return music21;
 		}
