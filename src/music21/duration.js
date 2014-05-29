@@ -22,7 +22,17 @@ define(function(require) {
 		this._durationNumber = undefined;
 		this._type = 'quarter';
 	
-		this.inClass = music21._inClass;
+		this.isClassOrSubclass = function (testClass) {
+		    if (testClass instanceof Array == false) {
+		        testClass = [testClass];
+		    }
+		    for (var i = 0; i < testClass.length; i++) {
+		        if ($.inArray(testClass[i], this.classes) != -1) {
+		            return true;
+		        }   
+		    }
+		    return false;
+		};
 	
 	    this._findDots = function (ql) {
 	        var undottedQL = Math.pow(2, this._powerOfTwo);

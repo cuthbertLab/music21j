@@ -26,7 +26,7 @@ define(['music21/note'], function(require) {
 		    // takes in either a note or a pitch
 			if (typeof(noteObj) == 'string') {	
 				noteObj = new music21.note.Note(noteObj);
-			} else if (noteObj.inClass('Pitch')) {
+			} else if (noteObj.isClassOrSubclass('Pitch')) {
 				var pitchObj = noteObj;
 				var noteObj2 = new music21.note.Note();
 				noteObj2.pitch = pitchObj;
@@ -198,12 +198,13 @@ define(['music21/note'], function(require) {
 	    				var addNote;
 	    				if (typeof(tempPitches[i]) == 'string') {
 	    					addNote = new music21.note.Note(tempPitches[i]);
-	    				} else if (tempPitches[i].inClass('Pitch')) {
+	    				} else if (tempPitches[i].isClassOrSubclass('Pitch')) {
 	    					addNote = new music21.note.Note();
 	    					addNote.pitch = tempPitches[i];
-	    				} else if (tempPitches[i].inClass('Note')) {
+	    				} else if (tempPitches[i].isClassOrSubclass('Note')) {
 	    					addNote = tempPitches[i];
 	    				} else {
+	    				    console.warn('bad pitch', tempPitches[i]);
 	    					throw("Cannot add pitch from " + tempPitches[i]);
 	    				}
 	    				this._noteArray.push(addNote);

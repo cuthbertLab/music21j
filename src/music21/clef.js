@@ -143,6 +143,14 @@ define(['music21/base',], function(require) {
         }
     };
     
+    // tests
+    clef.tests = function () {
+        test ( "music21.clef.Clef" , function() {
+            var c1 = new music21.clef.Clef();            
+            equal (c1.isClassOrSubclass('Clef'), true, 'clef is a Clef');
+        });
+    };
+    
 	// end of define
 	if (typeof(music21) != "undefined") {
 		music21.clef = clef;
