@@ -33,6 +33,8 @@ define(['music21/note'], function(require) {
 				noteObj = noteObj2;
 			}
 			this._noteArray.push(noteObj);
+			// inefficient because sorts after each add, but safe and #(p) is small
+	        this._noteArray.sort( function(a,b) { return a.pitch.ps - b.pitch.ps; }); 
 		};
 		this.removeDuplicatePitches = function () {
 			var stepsFound = [];
@@ -235,7 +237,6 @@ define(['music21/note'], function(require) {
 			this.activeVexflowNote = vfn;
 		    return vfn;
 	    };
-		
 		noteArray.forEach( this.add, this );
 
 	};
