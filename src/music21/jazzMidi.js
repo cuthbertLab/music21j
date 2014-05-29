@@ -16,18 +16,132 @@ define(['music21/jazzMidi'], function(require) {
 	jazzMidi._storedPlugin = undefined;
 	jazzMidi.selectedInterface = undefined; // not the same as "" etc. uses last selected interface by default.
 	
-	jazzMidi.defaultGeneralCallback = function(midiEvent) {
+	jazzMidi.tempo = 60;
+    jazzMidi.maxDelay = 100; // in ms
+    jazzMidi.heldChordTime = 0;
+    jazzMidi.heldChordNotes = undefined;
+    jazzMidi.timeOfLastNote = Date.now(); // in ms
+    
+    jazzMidi.numBeatsPerMeasure = 4;
+    jazzMidi.beat = jazzMidi.numBeatsPerMeasure;
+    jazzMidi.chirpTimeout = undefined;
+	
+    /* --------- metronome ---------- */
+    jazzMidi.chirp = function () {
+        jazzMidi.beat += 1;
+        if (jazzMidi.beat > jazzMidi.numBeatsPerMeasure) {
+            jazzMidi.beat = 1;
+            music21.MIDI.noteOn(0, 96, 100, 0);
+            music21.MIDI.noteOff(0, 96, .1);
+        } else {
+            music21.MIDI.noteOn(0, 84, 70, 0);
+            music21.MIDI.noteOff(0, 84, .1);
+        }
+        jazzMidi.chirpTimeout = setTimeout(jazzMidi.chirp, 1000*60/jazzMidi.tempo);
+    };
+    jazzMidi.stopChirp = function () {
+        if (this.chirpTimeout != undefined) {
+            clearTimeout(this.chirpTimeout);
+            this.chirpTimeout = undefined;
+        }
+    };
+    
+    
+    /* --------- chords ------------- */
+    jazzMidi.clearOldChords = function () {
+        // clear out notes that may be a chord...
+        var nowInMs = Date.now(); // in ms
+        if ((jazzMidi.heldChordTime + 
+                jazzMidi.maxDelay) < nowInMs) {
+            jazzMidi.heldChordTime = nowInMs;
+            if (jazzMidi.heldChordNotes !== undefined) {
+                console.log('to send out chords');
+
+                jazzMidi.sendOutChord(jazzMidi.heldChordNotes);
+                jazzMidi.heldChordNotes = undefined;
+            }           
+        }
+        setTimeout(jazzMidi.clearOldChords, jazzMidi.maxDelay);
+    };
+    jazzMidi.makeChords = function (jEvent) {
+        if (jEvent.noteOn) {
+            var m21n = jEvent.music21Note();
+            if (jazzMidi.heldChordNotes === undefined) {
+                jazzMidi.heldChordNotes = [m21n];
+            } else {
+                jazzMidi.heldChordNotes.push(m21n);
+            }
+        }
+    };
+
+    jazzMidi.lastElement = undefined;
+    jazzMidi.sendOutChord = function (chordNoteList) {
+        var appendObject = undefined;
+        if (chordNoteList.length > 1) {
+            chordNoteList.sort( function(a,b) { return a.pitch.ps - b.pitch.ps; });
+            console.log(chordNoteList[0].name, chordNoteList[1].name);
+            appendObject = new music21.chord.Chord(chordNoteList);
+        } else {
+            appendObject = chordNoteList[0]; // note object
+        }
+        appendObject.stemDirection = 'noStem';
+        jazzMidi.quantizeLastNote();
+        jazzMidi.lastElement = appendObject;
+        this.callBacks.sendOutChord(appendObject);
+    };
+
+    jazzMidi.quantizeLastNote = function (lastElement) {
+        if (lastElement === undefined) {
+            lastElement = this.lastElement;
+            if (lastElement === undefined) {
+                return;
+            }
+        }
+        lastElement.stemDirection = undefined;
+        var nowInMS = Date.now();
+        var msSinceLastNote = nowInMS - this.timeOfLastNote;
+        this.timeOfLastNote = nowInMS;
+        var normalQuarterNoteLength = 1000*60 / this.tempo;
+        var numQuarterNotes = msSinceLastNote / normalQuarterNoteLength;
+        var roundedQuarterLength = Math.round(4 * numQuarterNotes) / 4;
+        if (roundedQuarterLength >= 4) {
+            roundedQuarterLength = 4;
+        } else if (roundedQuarterLength >= 3) {
+            roundedQuarterLength = 3;
+        } else if (roundedQuarterLength > 2) {
+            roundedQuarterLength = 2;
+        } else if (roundedQuarterLength == 1.25) {
+            roundedQuarterLength = 1;
+        } else if (roundedQuarterLength == 0.75) {
+            roundedQuarterLength = 0.5;
+        } else if (roundedQuarterLength == 0) {
+            roundedQuarterLength = 0.125;
+        }
+        lastElement.duration.quarterLength = roundedQuarterLength;
+    };
+    
+    /* ----------- callbacks --------- */
+    
+    
+	jazzMidi.sendToMIDIjs = function(midiEvent) {
 	    midiEvent.sendToMIDIjs();
 	};
 
     jazzMidi.callBacks = {
         raw : function (t, a, b, c) { return new jazzMidi.Event(t, a, b, c); },
-        general : jazzMidi.defaultGeneralCallback,
+        general : jazzMidi.sendToMIDIjs,
+        sendOutChord : function (newChord) { },
     };
 
 	jazzMidi.midiInArrived = function (t, a, b, c) {
 	    var eventObject = jazzMidi.callBacks.raw(t, a, b, c);
-	    return jazzMidi.callBacks.general(eventObject);
+	    if (jazzMidi.callBacks.general instanceof Array) {
+	        jazzMidi.callBacks.general.forEach( function(el, index, array) { 
+	            el(eventObject);  
+	        });
+	    } else {
+	        return jazzMidi.callBacks.general(eventObject);
+	    }
 	};
 	
 	jazzMidi.createPlugin = function (appendElement, override) {
@@ -46,6 +160,9 @@ define(['music21/jazzMidi'], function(require) {
 	    obj.style.width = '0px'; 
 	    obj.style.height = '0px';
 	    appendElement.appendChild(obj);
+
+        this.clearOldChords();
+
 	    if (obj.isJazz) {
 	        jazzMidi._storedPlugin = obj;
 	        return obj;

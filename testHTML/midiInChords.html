@@ -1,0 +1,71 @@
+<html>
+    <head>
+        <title>MIDI In/Jazz Test for Music21j</title>
+        <!-- for MSIE 10 on Windows 8 -->
+        <meta http-equiv="X-UA-Compatible" content="requiresActiveX=true"/>
+        <script data-main="../src/music21.js" src="../ext/require/require.js"></script>
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+
+		<script>
+		var s = ""; // will become Stream object soon...
+		function startChirp() {
+		    require(['music21'], function() { music21.jazzMidi.chirp() });
+		}
+        function stopChirp() {
+            require(['music21'], function() { music21.jazzMidi.stopChirp() } );
+        }
+
+		
+        function tempoChange(amount) {
+            music21.jazzMidi.tempo += amount;
+            if (music21.jazzMidi.tempo < 20) {
+                music21.jazzMidi.tempo = 20;
+            }
+            require(['jquery'], function () {
+                $('#tempoId')[0].textContent = music21.jazzMidi.tempo.toString();
+            });
+        }
+        
+        function appendElement(appendObject) {
+            if (s.elements.length > 7) {
+                s.elements = s.elements.slice(1)
+            }
+            if (s.elements.length > 0) {
+                var lastNote = s.elements[s.elements.length - 1];
+            }
+            s.append(appendObject);
+            var canv = s.replaceLastCanvas();
+        }
+		
+		
+		require(['music21'], function () { 
+		    s = new music21.stream.Stream();
+		    var n = music21.note.Note();
+		    tempoChange(0);
+		    var Jazz = music21.jazzMidi.createPlugin();
+		    music21.jazzMidi.createSelector($("#putMidiSelectHere"), Jazz);
+		    music21.jazzMidi.callBacks.general = [music21.jazzMidi.makeChords, 
+		                                          music21.jazzMidi.sendToMIDIjs];
+		    music21.jazzMidi.callBacks.sendOutChord = appendElement;
+		});
+		
+		
+		</script>
+    </head>
+    <body>
+	<div>
+	MIDI Input: <div id="putMidiSelectHere" />
+	</div>
+	<div>
+        <canvas />
+    </div>
+    <button onClick="startChirp()">start metronome</button>
+    <button onClick="stopChirp()">stop metronome</button>
+    
+    Tempo = <span id='tempoId'></span>
+    <button onClick="tempoChange(5)">Up</button>
+    <button onClick="tempoChange(-5)">Down</button>
+    
+
+</body>
+</html>
