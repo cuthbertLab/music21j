@@ -207,7 +207,7 @@ define("m21theory/tests/firstSpecies", ["m21theory/section"], function () {
 			var tnCF = music21.tinyNotation.TinyNotation(thisCf);
 			
 			
-			$.each(tnCF.elements, function(j, el) { 
+			$.each(tnCF.flat.elements, function(j, el) { 
 				var mStudent = new music21.stream.Measure();
 				if (j != 0) {
 					mStudent.renderOptions.showMeasureNumber = true;
