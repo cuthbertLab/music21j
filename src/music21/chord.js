@@ -16,9 +16,14 @@ define(['music21/note'], function(require) {
 		}
 		music21.note.NotRest.call(this);
 		this.classes.push('Chord');
+		this.isChord = true; // for speed
+        this.isNote = false; // for speed
+        this.isRest = false; // for speed
+		
 	    this._noteArray = [];
 		
-		this.addNoteFromArray = function (noteObj, index, fullArray ) {
+		this.add = function (noteObj) {
+		    // takes in either a note or a pitch
 			if (typeof(noteObj) == 'string') {	
 				noteObj = new music21.note.Note(noteObj);
 			} else if (noteObj.inClass('Pitch')) {
@@ -174,8 +179,13 @@ define(['music21/note'], function(require) {
 
 		
 	    Object.defineProperties(this, {
+	        'length' : {
+                enumerable: true,
+	            get: function () { return this._noteArray.length; }
+	        },
 	    	'pitches': {
-	    		get: function () {
+	    	    enumerable: true,
+	    	    get: function () {
 	    			var tempPitches = [];
 	    			for (var i = 0; i < this._noteArray.length; i++) {
 	    				tempPitches.push(this._noteArray[i].pitch);
@@ -225,7 +235,7 @@ define(['music21/note'], function(require) {
 		    return vfn;
 	    };
 		
-		noteArray.forEach( this.addNoteFromArray, this );
+		noteArray.forEach( this.add, this );
 
 	};
 
