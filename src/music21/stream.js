@@ -365,7 +365,8 @@ define(['music21/base','music21/renderOptions','music21/clef', 'jquery'], functi
 			}
 			//console.log('streamLength: ' + streamLength);
 			var stave = new Vex.Flow.Stave(left, top, width);
-	        if (vfro.showMeasureNumber) {
+	        vfro.vexflowRenderStafflines(stave);
+			if (vfro.showMeasureNumber) {
 	        	stave.setMeasure(vfro.measureIndex + 1);
 	        }
 			if (vfro.displayClef) {
