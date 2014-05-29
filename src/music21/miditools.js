@@ -126,7 +126,11 @@ define(['jquery', 'music21/note', 'music21/chord'], function(require) {
         appendObject.stemDirection = 'noStem';
         miditools.quantizeLastNote();
         miditools.lastElement = appendObject;
-        music21.jazzMidi.callBacks.sendOutChord(appendObject);
+        if (music21.jazzMidi.callBacks.sendOutChord !== undefined) {            
+            music21.jazzMidi.callBacks.sendOutChord(appendObject);
+        } else {
+            return appendObject;
+        }
     };
 
     miditools.quantizeLastNote = function (lastElement) {

@@ -13,7 +13,7 @@
 
 define(['music21/miditools'], function(require) {
 	var jazzMidi = {};
-	jazzMidi._storedPlugin = undefined;
+	jazzMidi.storedPlugin = undefined;
 	jazzMidi.selectedInterface = undefined; // not the same as "" etc. uses last selected interface by default.
     
     /* ----------- callbacks --------- */
@@ -36,8 +36,8 @@ define(['music21/miditools'], function(require) {
 	};
 	
 	jazzMidi.createPlugin = function (appendElement, override) {
-	    if ((jazzMidi._storedPlugin) && (override != true)) { 
-	        return jazzMidi._storedPlugin;
+	    if ((jazzMidi.storedPlugin) && (override != true)) { 
+	        return jazzMidi.storedPlugin;
 	    }
 	    if (typeof(appendElement) == 'undefined') {
 	    	appendElement = $('body')[0];
@@ -54,7 +54,7 @@ define(['music21/miditools'], function(require) {
 
         music21.miditools.clearOldChords();
 	    if (obj.isJazz) {
-	        jazzMidi._storedPlugin = obj;
+	        jazzMidi.storedPlugin = obj;
 	        return obj;
 	    } else {
 		    appendElement.removeChild(obj);
