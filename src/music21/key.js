@@ -62,11 +62,11 @@ define(['music21/base', 'music21/pitch', 'music21/interval', 'music21/scale'], f
 			}
 			return undefined;
 		};
-		this.transposePitchFromC = function(pitch) {
+		this.transposePitchFromC = function(p) {
 			var transInterval = undefined;
 			var transTimes = undefined;
 			if (this.sharps == 0) {
-				return new music21.pitch.Pitch(pitch.nameWithOctave);
+				return new music21.pitch.Pitch(p.nameWithOctave);
 			} else if (this.sharps < 0) {
 				transTimes = Math.abs(this.sharps);
 				transInterval = new music21.interval.Interval("P4");
@@ -74,7 +74,7 @@ define(['music21/base', 'music21/pitch', 'music21/interval', 'music21/scale'], f
 				transTimes = this.sharps;
 				transInterval = new music21.interval.Interval("P5");
 			}
-			var newPitch = pitch;
+			var newPitch = p;
 			for (var i = 0; i < transTimes; i++) {
 				newPitch = transInterval.transposePitch(newPitch);
 				if ((i % 2) == 1) {

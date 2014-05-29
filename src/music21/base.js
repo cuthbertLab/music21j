@@ -28,7 +28,6 @@ define(['music21/duration'], function(require) {
 		// this.sites, this.activeSites, this.offset -- not yet...
 		// beat, measureNumber, etc.
 		// lots to do...
-		this.inClass = music21._inClass;
 		
 		Object.defineProperties(this, {
             'priority': {
@@ -48,6 +47,18 @@ define(['music21/duration'], function(require) {
             },
 		});
 	};
+	base.Music21Object.prototype.isClassOrSubclass = function (testClass) {
+        if (testClass instanceof Array == false) {
+            testClass = [testClass];
+        }
+        for (var i = 0; i < testClass.length; i++) {
+            if ($.inArray(testClass[i], this.classes) != -1) {
+                return true;
+            }   
+        }
+        return false;
+    };
+
 	
 	
 	// end of define

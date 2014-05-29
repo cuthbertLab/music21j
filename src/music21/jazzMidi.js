@@ -16,12 +16,12 @@ define(['music21/jazzMidi'], function(require) {
 	jazzMidi._storedPlugin = undefined;
 	jazzMidi.selectedInterface = undefined; // not the same as "" etc. uses last selected interface by default.
 	
-	jazzMidi.tempo = 60;
     jazzMidi.maxDelay = 100; // in ms
     jazzMidi.heldChordTime = 0;
     jazzMidi.heldChordNotes = undefined;
     jazzMidi.timeOfLastNote = Date.now(); // in ms
     
+    jazzMidi.tempo = 60;
     jazzMidi.numBeatsPerMeasure = 4;
     jazzMidi.beat = jazzMidi.numBeatsPerMeasure;
     jazzMidi.chirpTimeout = undefined;
