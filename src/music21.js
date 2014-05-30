@@ -112,12 +112,6 @@ if ((Object.defineProperties === undefined) && warnBanner) {
                 console.log('could not load VexFlow');
             }
             if (music21.MIDI) {
-//                if (music21.scriptConfig.soundfontUrl === undefined) {
-//                    soundfontUrl = 'http://web.mit.edu/music21/music21j/src/ext/midijs/soundfont/';
-//                } else {
-//                    soundfontUrl = music21.scriptConfig.soundfontUrl;
-//                }
-//
                 if ((music21.scriptConfig.loadSoundfont === undefined) ||
                         (music21.scriptConfig.loadSoundfont != false)) {
                    music21.MIDI.loadSoundfont('acoustic_grand_piano', function() {});

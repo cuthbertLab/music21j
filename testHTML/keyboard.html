@@ -1,0 +1,26 @@
+<html>
+    <head>
+        <title>Piano Keyboard!</title>
+        <!-- for MSIE 10 on Windows 8 -->
+        <meta http-equiv="X-UA-Compatible" content="requiresActiveX=true"/>
+        <script data-main="../src/music21.js" src="../ext/require/require.js"></script>
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        <script>
+        var k = ""; // will become keyboard.Keyboard object        
+        
+        require(['music21'], function () { 
+            k = new music21.keyboard.Keyboard();
+            //k.scaleFactor = 1.2;
+            //k.whiteKeyWidth = 23;
+            var kd = document.getElementById('keyboardDiv');
+            k.appendKeyboard(kd, 6, 57);
+        });
+        
+        
+        </script>
+    </head>
+    <body>
+    <div id="keyboardDiv"></div>
+</body>
+</html>
+        
