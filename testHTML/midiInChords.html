@@ -24,7 +24,8 @@
 		
 		require(['music21'], function () { 
 		    s = new music21.stream.Stream();
-		    //s.renderOptions.staffLines = 1;
+		    s.clef = new music21.clef.PercussionClef();
+		    s.renderOptions.staffLines = 1;
 		    metro = new music21.tempo.Metronome();
 		    metro.addDiv($("#metronomeDiv"));
             
