@@ -64,7 +64,7 @@ define(['music21/base', 'music21/pitch', 'loadMIDI', 'jquery'], function(require
                     stroke: strokeColor,
                     'stroke-width': 3,
                     fill: 'none',
-                    cx: x + this.width/2,
+                    cx: cx,
                     cy: this.height - 10,
                     'class': 'keyboardkeyannotation',
                     r: this.width/4,
