@@ -82,7 +82,7 @@ define(['music21/chord', 'music21/key', 'music21/pitch', 'music21/interval'], fu
 	    	var chordPitches = [this.root];
 			var lastPitch = this.root;
 			for (var j = 0; j < chordSpacing.length; j++) {
-	            console.log('got them', lastPitch);
+	            //console.log('got them', lastPitch);
 				var thisTransStr = chordSpacing[j];
 				var thisTrans = new music21.interval.Interval(thisTransStr);
 				var nextPitch = thisTrans.transposePitch(lastPitch);
