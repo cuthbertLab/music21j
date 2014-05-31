@@ -59,7 +59,7 @@ define(['music21/base', 'music21/pitch', 'loadMIDI', 'jquery'], function(require
             }
             var x = parseInt(this.svgObj.getAttribute('x'));
             var cx = x + (this.width)/2;
-            console.log('cx', cx);
+            //console.log('cx', cx);
             keyattrs = {
                     stroke: strokeColor,
                     'stroke-width': 3,
@@ -148,6 +148,7 @@ define(['music21/base', 'music21/pitch', 'loadMIDI', 'jquery'], function(require
        this._defaultWhiteKeyWidth = 23;
        this._defaultBlackKeyWidth = 13;
        this.scaleFactor = 1;
+       this.height = 120; // does nothing right now...
        this.keyObjects = {};
        this.svgObj = undefined;
        
