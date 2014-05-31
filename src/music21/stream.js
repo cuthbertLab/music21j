@@ -503,6 +503,10 @@ define(['music21/base','music21/renderOptions','music21/clef', 'jquery'], functi
 	        var playNext = function (elements) {
 	            if (currentNote < lastNote && !thisStream._stopPlaying) {
 	                var el = elements[currentNote];
+	                var nextNote = undefined;
+	                if (currentNote < lastNote + 1) {
+	                    nextNote = elements[currentNote + 1];
+	                }
 	                var milliseconds = 60 * 1000 / tempo;
 	                if (el.duration !== undefined) {
     	                    
@@ -511,12 +515,24 @@ define(['music21/base','music21/renderOptions','music21/clef', 'jquery'], functi
     	                if (el.isClassOrSubclass('Note')) { // Note, not rest
     				 	    var midNum = el.pitch.midi;
     				 	    music21.MIDI.noteOn(0, midNum, 100, 0);
+    				 	    var stopTime = milliseconds/1000;
+    				 	    if (nextNote !== undefined && nextNote.isClassOrSubclass('Note')) {
+    				 	        if (nextNote.pitch.midi != el.pitch.midi) {
+    				 	            stopTime += 60 * .25 / tempo; // legato -- play 16th note longer
+    				 	        }
+    				 	    } else if (nextNote === undefined) {
+    				 	        // let last note ring an extra beat...
+    				 	        stopTime += 60 * 1 / tempo;
+    				 	    }
+    				 	    //console.log(stopTime);
+    				 	    music21.MIDI.noteOff(0, midNum, stopTime);
     				    } else if (el.isClassOrSubclass('Chord')) {
     					    for (var j = 0; j < el._noteArray.length; j++) {
     					 	    var midNum = el._noteArray[j].pitch.midi;
     					 	   music21.MIDI.noteOn(0, midNum, 100, 0);					   
+                               music21.MIDI.noteOff(0, midNum, milliseconds/1000);                     
     					    }
-    				    }
+    				    } // rest -- do nothing -- milliseconds takes care of it...
 	                }
 	                currentNote += 1;
 	            	setTimeout( function () { playNext(elements); }, milliseconds);
