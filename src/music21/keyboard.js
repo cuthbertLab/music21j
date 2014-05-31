@@ -25,8 +25,10 @@ define(['music21/base', 'music21/pitch', 'loadMIDI', 'jquery'], function(require
         this.classes = ['Key']; // name conflict with key.Key
         this.callbacks = [];
         this.scaleFactor = 1;
+        this.parent = undefined;
         this.id = 0;
-        this.svgObj = undefined;
+        this.pitchObj = undefined;
+        this.svgObj = undefined;        
         
         this.makeKey = function (startX) {
             keyattrs = {
@@ -45,7 +47,79 @@ define(['music21/base', 'music21/pitch', 'loadMIDI', 'jquery'], function(require
             this.svgObj = keyDOM;
             return keyDOM;
         };
-        
+        this.addCircle = function (strokeColor) {
+            if ((this.svgObj === undefined) ||
+                (this.parent === undefined) ||
+                (this.parent.svgObj === undefined)
+                    ) {
+                return;
+            }
+            if (strokeColor === undefined) {
+                strokeColor = 'red';
+            }
+            var x = parseInt(this.svgObj.getAttribute('x'));
+            var cx = x + (this.width)/2;
+            console.log('cx', cx);
+            keyattrs = {
+                    stroke: strokeColor,
+                    'stroke-width': 3,
+                    fill: 'none',
+                    cx: x + this.width/2,
+                    cy: this.height - 10,
+                    'class': 'keyboardkeyannotation',
+                    r: this.width/4,
+                };
+            
+            var circleDom = music21.keyboard.makeSVGright('circle', keyattrs);
+            this.parent.svgObj.appendChild(circleDom);
+            //console.log(circleDom);
+            return circleDom;
+        };
+        this.addNoteName = function (labelOctaves) {
+            if ((this.svgObj === undefined) ||
+                    (this.parent === undefined) ||
+                    (this.parent.svgObj === undefined)
+                        ) {
+                    return;
+                }
+            if ((this.id == 0) && (this.pitchObj === undefined)) {
+                return
+            } else if (this.pitchObj === undefined) {
+                this.pitchObj = new music21.pitch.Pitch();
+                this.pitchObj.ps = this.id;
+            }
+            if ((this.pitchObj.accidental !== undefined) && 
+                    (this.pitchObj.accidental.alter != 0)    ){
+                    return;
+                }
+            var x = parseInt(this.svgObj.getAttribute('x'));
+            var idStr = this.pitchObj.name;
+            var fontSize = 14;
+            if (labelOctaves == true) {
+                idStr = this.pitchObj.nameWithOctave;
+                fontSize = 12;
+                x -= 2;
+            }
+            
+            var textfill = 'white';
+            if (this.keyClass == 'whitekey') {
+                textfill = 'black';
+            }
+            textattrs = {
+                    fill: textfill,
+                    x: x + this.width/2 - 5,
+                    y: this.height - 20,
+                    'class': 'keyboardkeyname',
+                    'font-size': fontSize,
+                };
+            
+            var textDom = music21.keyboard.makeSVGright('text', textattrs);
+            var textNode = document.createTextNode(idStr);
+            textDom.appendChild(textNode);
+            this.parent.svgObj.appendChild(textDom);
+
+        };
+
     };
     keyboard.WhiteKey = function () {
         keyboard.Key.call(this);
@@ -75,6 +149,7 @@ define(['music21/base', 'music21/pitch', 'loadMIDI', 'jquery'], function(require
        this._defaultBlackKeyWidth = 13;
        this.scaleFactor = 1;
        this.keyObjects = {};
+       this.svgObj = undefined;
        
        this.appendKeyboard = function(where, dnnStart, dnnEnd) {
            if (where === undefined) {
@@ -140,6 +215,7 @@ define(['music21/base', 'music21/pitch', 'loadMIDI', 'jquery'], function(require
                movingPitch.diatonicNoteNum = dnnStart + wki;
                var wk = new music21.keyboard.WhiteKey();
                wk.id = movingPitch.midi;
+               wk.parent = this;
                this.keyObjects[movingPitch.midi] = wk;
                wk.scaleFactor = this.scaleFactor;
                wk.width = this.whiteKeyWidth;
@@ -157,6 +233,7 @@ define(['music21/base', 'music21/pitch', 'loadMIDI', 'jquery'], function(require
                    var bk = new music21.keyboard.BlackKey();
                    bk.id = movingPitch.midi + 1;
                    this.keyObjects[movingPitch.midi + 1] = bk;
+                   bk.parent = this;
 
                    bk.scaleFactor = this.scaleFactor;
                    bk.width = this._defaultBlackKeyWidth * this.whiteKeyWidth/this._defaultWhiteKeyWidth;
@@ -174,7 +251,17 @@ define(['music21/base', 'music21/pitch', 'loadMIDI', 'jquery'], function(require
            for (var bki = 0; bki < blackKeys.length; bki++) {
                svgDOM.appendChild(blackKeys[bki]);
            }
+           this.svgObj = svgDOM;
            return svgDOM;
+       };
+       this.markMiddleC = function (strokeColor) {
+           return this.keyObjects[60].addCircle('red');
+       };
+       this.markNoteNames = function (labelOctaves) {
+           for (var midi in this.keyObjects) {
+               var keyObj = this.keyObjects[midi];
+               keyObj.addNoteName(labelOctaves);
+           }
        };
     };
     keyboard.makeSVGright = function (tag, attrs) {
@@ -185,7 +272,6 @@ define(['music21/base', 'music21/pitch', 'loadMIDI', 'jquery'], function(require
             el.setAttribute(k, attrs[k]);
         return el;
     };
-
     
     // end of define
     if (typeof(music21) != "undefined") {
