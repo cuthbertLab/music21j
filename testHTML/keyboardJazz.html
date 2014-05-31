@@ -1,0 +1,67 @@
+<html>
+    <head>
+        <title>Piano Keyboard!</title>
+        <!-- for MSIE 10 on Windows 8 -->
+        <meta http-equiv="X-UA-Compatible" content="requiresActiveX=true"/>
+        <script data-main="../src/music21.js" src="../ext/require/require.js"></script>
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        <script>
+        var k = ""; // will become keyboard.Keyboard object        
+        
+        require(['music21'], function () { 
+            function keyboardHighlight(e) {
+                if (e.noteOn) {
+                    var midiNote = e.midiNote;
+                    if (k.keyObjects[midiNote] !== undefined) {
+                        var keyObj = k.keyObjects[midiNote];
+                        var svgObj = keyObj.svgObj;
+                        var intensityRGB = "";
+                        var normalizedVelocity = (e.velocity + 25)/127;
+                        if (normalizedVelocity > 1) {
+                            normalizedVelocity = 1.0;
+                        }
+
+                        if (keyObj.keyClass == 'whitekey') {
+                            var intensity = normalizedVelocity.toString();
+                            intensityRGB = 'rgba(255, 255, 0, ' + intensity + ')';
+                        } else {
+                            var intensity = (Math.floor(normalizedVelocity * 255)).toString();
+                            intensityRGB = 'rgb(' + intensity + ',' + intensity + ',0)';
+                            //console.log(intensityRGB);
+
+                        }
+                        svgObj.setAttribute('style', 'fill:' + intensityRGB + ';stroke:black');
+                    }
+                } else if (e.noteOff) {
+                    var midiNote = e.midiNote;
+                    if (k.keyObjects[midiNote] !== undefined) {
+                        var keyObj = k.keyObjects[midiNote];
+                        var svgObj = keyObj.svgObj;
+                        svgObj.setAttribute('style', keyObj.keyStyle);
+                    }
+                }
+            };
+            
+            
+            var Jazz = music21.jazzMidi.createPlugin();
+            music21.jazzMidi.createSelector($("#putMidiSelectHere"), Jazz);
+            music21.jazzMidi.callBacks.general = [keyboardHighlight, 
+                                                  music21.miditools.sendToMIDIjs,
+                                                  ];
+            
+            k = new music21.keyboard.Keyboard();
+            var kd = document.getElementById('keyboardDiv');
+            k.appendKeyboard(kd, 6, 57);
+            //k.appendKeyboard(kd, 18, 39); // 37key keyboard
+        });
+        
+        
+        </script>
+    </head>
+    <body>
+    <div id="keyboardDiv"></div>
+    <div id="putMidiSelectHere"></div>
+
+</body>
+</html>
+        
