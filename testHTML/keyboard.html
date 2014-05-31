@@ -10,10 +10,9 @@
         
         require(['music21'], function () { 
             k = new music21.keyboard.Keyboard();
-            //k.scaleFactor = 1.2;
-            //k.whiteKeyWidth = 23;
             var kd = document.getElementById('keyboardDiv');
             k.appendKeyboard(kd, 6, 57);
+            //k.appendKeyboard(kd, 18, 39); // 37key keyboard
         });
         
         
