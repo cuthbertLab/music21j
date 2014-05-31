@@ -6,31 +6,34 @@
  * Based on music21 (=music21p), Copyright (c) 2006–14, Michael Scott Cuthbert and cuthbertLab
  * 
  */
+
+// Minimum usage:
+
+// var kd = document.getElementById('keyboardDiv');
+// k = new music21.keyboard.Keyboard();
+// k.appendKeyboard(kd, 6, 57); // 88 key keyboard
+
+// configurable:
+// k.scaleFactor = 1.2;  // default 1
+// k.whiteKeyWidth = 40; // default 23
+
+
 define(['music21/base', 'music21/pitch', 'loadMIDI', 'jquery'], function(require) {
     var keyboard = {};
     
     keyboard.Key = function () {
         this.classes = ['Key']; // name conflict with key.Key
         this.callbacks = [];
-    };
-    keyboard.WhiteKey = function () {
-        keyboard.Key.call(this);
-        this.classes.push('WhiteKey');
-        this.width = 23;
-        this.height = 120;
         this.scaleFactor = 1;
         this.id = 0;
         this.svgObj = undefined;
-
+        
         this.makeKey = function (startX) {
-            if (startX === undefined) {
-                startX = 0;
-            }
             keyattrs = {
-                    style: 'fill:#fffff6;stroke:black',
+                    style: this.keyStyle,
                     x: startX,
                     y: 0,
-                    'class': 'keyboardkey whiteKey',
+                    'class': 'keyboardkey ' + this.keyClass,
                     'id': this.id,
                     width: this.width * this.scaleFactor,
                     height: this.height * this.scaleFactor,
@@ -42,8 +45,17 @@ define(['music21/base', 'music21/pitch', 'loadMIDI', 'jquery'], function(require
             this.svgObj = keyDOM;
             return keyDOM;
         };
+        
     };
-    keyboard.WhiteKey.prototype = new keyboard.WhiteKey();
+    keyboard.WhiteKey = function () {
+        keyboard.Key.call(this);
+        this.classes.push('WhiteKey');
+        this.width = 23;
+        this.height = 120;
+        this.keyStyle = 'fill:#fffff6;stroke:black';
+        this.keyClass = 'whitekey';
+    };
+    keyboard.WhiteKey.prototype = new keyboard.Key();
     keyboard.WhiteKey.prototype.constructor = keyboard.WhiteKey;
 
     keyboard.BlackKey = function () {
@@ -51,42 +63,18 @@ define(['music21/base', 'music21/pitch', 'loadMIDI', 'jquery'], function(require
         this.classes.push('BlackKey');
         this.width = 13;
         this.height = 80;
-        this.scaleFactor = 1;
-        this.id = 0;
-
-        this.svgObj = undefined;
-        this.makeKey = function (startX) {
-            if (startX === undefined) {
-                startX = 14.33333;
-            }
-            keyattrs = {
-                    style: 'fill:black;stroke:black',
-                    x: startX,
-                    y: 0,
-                    'class': 'keyboardkey blackkey',
-                    'id': this.id,
-                    width: this.width * this.scaleFactor,
-                    height: this.height * this.scaleFactor,
-                };
-            var keyDOM = music21.keyboard.makeSVGright('rect', keyattrs);
-            for (var x in this.callbacks) {
-                keyDOM.addEventListener(x, this.callbacks[x], false);
-            }
-            this.svgObj = keyDOM;
-            return keyDOM;
-        };
+        this.keyStyle = 'fill:black;stroke:black';
+        this.keyClass = 'blackkey';
     };
-    keyboard.BlackKey.prototype = new keyboard.BlackKey();
+    keyboard.BlackKey.prototype = new keyboard.Key();
     keyboard.BlackKey.prototype.constructor = keyboard.BlackKey;
     
     keyboard.Keyboard = function () {
-       this.copyrightNotice =  'Copyright (c)  2005 Lauri Kaila. GNU Free Documentation License; https://en.wikipedia.org/wiki/File:PianoKeyboard.svg';
        this.whiteKeyWidth = 23;
        this._defaultWhiteKeyWidth = 23;
        this._defaultBlackKeyWidth = 13;
        this.scaleFactor = 1;
        this.keyObjects = {};
-       
        
        this.appendKeyboard = function(where, dnnStart, dnnEnd) {
            if (where === undefined) {
@@ -96,14 +84,6 @@ define(['music21/base', 'music21/pitch', 'loadMIDI', 'jquery'], function(require
            }
            svgDOM = this.createSVG(dnnStart, dnnEnd);           
            where.appendChild(svgDOM);
-//           var svgDoc = svgDOM.contentDocument;
-//           var keyDomObjects = svgDoc.getElementsByClass('keyboardkey');
-//           for (var i = 0; i < keyDomObjects.length; i++) {
-//              var keyDom = keyDomObjects[i];
-//              console.log(keyDom);
-//              //keyboardCallback.clickhandler(this)
-//              keyDom.addEventListener("click",function(){console.log('hello world!');},false);
-//           }
        };
        this.callbacks = {
                click: this.clickhandler,
@@ -114,8 +94,12 @@ define(['music21/base', 'music21/pitch', 'loadMIDI', 'jquery'], function(require
            if (thisKeyObject === undefined) {
                return; // not on keyboard;
            }
-           var storedStyle = keyRect.getAttribute("style");
-           keyRect.setAttribute("style", "fill:red;stroke:black");
+           var storedStyle = thisKeyObject.keyStyle;
+           var fillColor = '#c0c000';
+           if (thisKeyObject.keyClass == 'whitekey'){
+               fillColor = 'yellow';    
+           }
+           keyRect.setAttribute("style", "fill:" + fillColor + ";stroke:black");
            music21.MIDI.loadSoundfont('acoustic_grand_piano', function() {
                music21.MIDI.noteOn(0, id, 100, 0);
                music21.MIDI.noteOff(0, id, 500);
