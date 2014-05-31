@@ -6,7 +6,7 @@
  * Based on music21 (=music21p), Copyright (c) 2006–14, Michael Scott Cuthbert and cuthbertLab
  * 
  */
-define([], function(require) {
+define(['m21theory/misc'], function(require) {
 	var bank = {};
 	/* Test Bank */
 
@@ -19,7 +19,8 @@ define([], function(require) {
 		this.title = "";
 		this.instructions = "";
 		this.testBankSelector = "#testBank";	
-
+		this.addKeyboard = true;
+		
 		// test defaults...
 		this.profEmail = 'cuthbert';
 		this.testResponseURL = "http://ciconia.mit.edu/m21j/testSectionResponse2.cgi";
@@ -40,6 +41,9 @@ define([], function(require) {
 
 			if (this.addStudentName) {
 				m21theory.userData.fillNameDiv();
+			}
+			if (this.addKeyboard) {
+			    m21theory.misc.addKeyboard(testBank);
 			}
 			for (var i = 0; i < this.allTests.length; i ++) {
 				var thisTest = this.allTests[i];
