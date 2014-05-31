@@ -3,7 +3,7 @@ music21j
 JavaScript port of music21 -- Toolkit for Computational Musicology
 
 Copyright (c) 2013-14 Michael Scott Cuthbert and cuthbertLab.
-Released under either the BSD (2-clause) or GNU LGPL license according to your choice. See LICENSE.
+Released under either the BSD (3-clause) or GNU LGPL license according to your choice. See LICENSE.
 
 Extremely pre-alpha.  Everything will change here.  
 
