@@ -1,0 +1,60 @@
+<html>
+    <head>
+        <title>Follow along!</title>
+        <!-- for MSIE 10 on Windows 8 -->
+        <meta http-equiv="X-UA-Compatible" content="requiresActiveX=true"/>
+        <script data-main="../src/music21.js" src="../ext/require/require.js"></script>
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        <script>
+        var k = ""; // will become keyboard.Keyboard object        
+        
+        require(['music21'], function () { 
+            var offsetToPixels = function(s) {
+                var totalDuration = 0.0;
+                var ns = s.flat.notes;
+                var allNotes = [];
+                for (var i = 0; i < ns.length; i++) {
+                    var n = ns.elements[i];
+                    var info = {};
+                    info.element = n;
+                    info.offset = totalDuration;
+                    info.x = n.x;
+                    allNotes.push(info);
+                    totalDuration += n.duration.quarterLength;
+                }
+                return allNotes;            
+            };
+            var drawLineAtOffset = function(offsetToPixelMap) {
+                var foundNote = undefined;
+                for (var i = 0; i < offsetToPixelMap.length; i++) {
+                    thisMap = offsetToPixelMap[i];
+                }
+            };
+
+            s = music21.tinyNotation.TinyNotation("4/4 c2 d#4 e8 f g2 B c1");
+	        
+            //var divObj = document.getElementById('putCanvasHere');
+            var c = s.appendNewCanvas( $(".canvasDiv") );
+	        var bNote = s.elements[1].elements[1];
+	
+	        var an = offsetToPixels(s);
+	        console.log(an);
+	
+        });
+        
+</script>
+<style>
+.canvasDiv { background-color: yellow }
+</style>
+</head>
+<body>
+Hey there
+
+<div id="putCanvasHere" class="canvasDiv"> new div
+</div>
+
+Bye! <br/>
+
+
+</body>
+</html>
