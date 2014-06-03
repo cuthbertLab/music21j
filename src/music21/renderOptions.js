@@ -28,6 +28,7 @@ define([], function(require) {
 			rightBarline: undefined,
 			staffLines: 5,
 			staffConnectors: ['single', 'brace'],
+			staffPadding: 60,
 			events: {
 				'click': 'play',
 				'dblclick': undefined,
