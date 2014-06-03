@@ -28,6 +28,11 @@ define(['music21/base', 'music21/pitch', 'music21/interval', 'music21/scale'], f
               get: function () { return this._sharps; },
               set: function (s) { this._alteredPitchesCache = [] ; this._sharps = s; }
             },
+            'width' : {
+                enumerable: true,
+                configurable: true,
+                get: function () { return 5 * Math.abs(this.sharps) ; },                
+            }
         });
 		
 		this.majorName = function () {
@@ -198,6 +203,8 @@ define(['music21/base', 'music21/pitch', 'music21/interval', 'music21/scale'], f
 	        equal (s[2].nameWithOctave, "A4", "test harmonic minor scale");
 	        equal (s[5].nameWithOctave, "D5");
 	        equal (s[6].nameWithOctave, "E#5");
+	        
+	        equal(k.width, 15, 'checking width is 5 * abs(sharps)');
 	    });
 
 	};

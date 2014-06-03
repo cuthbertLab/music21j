@@ -23,8 +23,6 @@ define("m21theory/tests/noteIdentification", ["m21theory/section"], function () 
 			var s = new music21.stream.Stream();
 			s.tempo = 80;
 			s.autoBeam = true;
-			// s.vexflowStaffWidth = 250;
-			//s.vexflowStaffPadding = 200;
 			s.clef = new music21.clef.Clef( m21theory.random.choice(this.allowableClefs) );
 			s.timeSignature = '4/4';
 			var minDiatonicNoteNum = s.clef.firstLine - 1 - (2 * this.allowableLedgerLines);

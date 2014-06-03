@@ -23,7 +23,7 @@
 		
 		
 		require(['music21'], function () { 
-		    s = new music21.stream.Stream();
+		    s = new music21.stream.Measure();
 		    s.clef = new music21.clef.TrebleClef();
 		    s.renderOptions.staffLines = 5;
 		    metro = new music21.tempo.Metronome();

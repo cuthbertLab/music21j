@@ -249,27 +249,23 @@ define(['music21/base','music21/renderOptions','music21/clef', 'jquery'], functi
 	    		//console.log("Overridden staff width: " + this.vexflowStaffWidth);
 	    		return this.vexflowStaffWidth;
 	    	}
-	    	if (this.isClassOrSubclass('Score')) {
-	    		var tl = this.elements[0].estimateStaffLength(); // get from first part... 
-	    		//console.log('total Length: ' + tl);
-	    		return tl;
-	    	} else if (this.hasSubStreams()) { // part
+	    	if (this.hasSubStreams()) { // part
 	    		var totalLength = 0;
 	    		for (var i = 0; i < this.length; i++) {
 	    			var m = this.elements[i];
-	    			totalLength += m.estimateStaffLength() + m.vexflowStaffPadding;
+	    			totalLength += m.estimateStaffLength() + m.renderOptions.staffPadding;
 	    			if ((i != 0) && (m.renderOptions.startNewSystem == true)) {
 	    				break;
 	    			}
 	    		}
 	    		return totalLength;
 	    	} else {
-	    		var vfro = this.renderOptions;
+	    		var rendOp = this.renderOptions;
 		    	var totalLength = 30 * this.length;
-				totalLength += vfro.displayClef ? 20 : 0;
-				totalLength += (vfro.displayKeySignature && this.keySignature) ? 5 * Math.abs(this.keySignature.sharps) : 0;
-				totalLength += vfro.displayTimeSignature ? 30 : 0; 
-				//totalLength += this.vexflowStaffPadding;
+				totalLength += rendOp.displayClef ? 20 : 0;
+				totalLength += (rendOp.displayKeySignature && this.keySignature) ? this.keySignature.width : 0;
+				totalLength += rendOp.displayTimeSignature ? 30 : 0; 
+				//totalLength += rendOp.staffPadding;
 				return totalLength;
 	    	}
 	    };
@@ -318,8 +314,6 @@ define(['music21/base','music21/renderOptions','music21/clef', 'jquery'], functi
 	    
 	    this.activeFormatter = undefined;
 	    
-	    this.vexflowStaffPadding = 60;
-
 	    this.renderVexflowOnCanvas = function (canvas, renderer) {
 	    	if (renderer == undefined) {
 	    		renderer = new Vex.Flow.Renderer(canvas, Vex.Flow.Renderer.Backends.CANVAS);
@@ -349,41 +343,41 @@ define(['music21/base','music21/renderOptions','music21/clef', 'jquery'], functi
 	    	}
 	    	var ctx = renderer.getContext();
 
-			var vfro = this.renderOptions;
+			var rendOp = this.renderOptions;
 			// measure level...
-			var width = vfro.width;
+			var width = rendOp.width;
 			if (width == undefined) {
-				width = this.estimateStaffLength() + this.vexflowStaffPadding;
+				width = this.estimateStaffLength() + rendOp.staffPadding;
 			}
-			var top = vfro.top;
+			var top = rendOp.top;
 			if (top == undefined) {
 				top = 0;
 			}
-			var left = vfro.left;
+			var left = rendOp.left;
 			if (left == undefined) {
 				left = 10;
 			}
 			//console.log('streamLength: ' + streamLength);
 			var stave = new Vex.Flow.Stave(left, top, width);
-	        vfro.vexflowRenderStafflines(stave);
-			if (vfro.showMeasureNumber) {
-	        	stave.setMeasure(vfro.measureIndex + 1);
+	        rendOp.vexflowRenderStafflines(stave);
+			if (rendOp.showMeasureNumber) {
+	        	stave.setMeasure(rendOp.measureIndex + 1);
 	        }
-			if (vfro.displayClef) {
+			if (rendOp.displayClef) {
 				stave.addClef(this.clef.name);
 			}
-			if ((this.keySignature != undefined) && (vfro.displayKeySignature)) {
+			if ((this.keySignature != undefined) && (rendOp.displayKeySignature)) {
 				stave.addKeySignature(this.keySignature.vexflow());
 			}
 			
-	        if ((this.timeSignature != undefined) && (vfro.displayTimeSignature)) {
+	        if ((this.timeSignature != undefined) && (rendOp.displayTimeSignature)) {
 				stave.addTimeSignature(
 				        this.timeSignature.numerator.toString() 
 				        + "/" 
 				        + this.timeSignature.denominator.toString()); // TODO: convertToVexflow...
 			}
-	        if (this.renderOptions.rightBarline != undefined) {
-	        	var bl = this.renderOptions.rightBarline;
+	        if (rendOp.rightBarline != undefined) {
+	        	var bl = rendOp.rightBarline;
 	        	var barlineMap = {
 	        			'single': 'SINGLE',
 	        			'double': "DOUBLE",
@@ -595,7 +589,8 @@ define(['music21/base','music21/renderOptions','music21/clef', 'jquery'], functi
 			if (width != undefined) {
 				newCanvas.attr('width', width);
 			} else {
-				newCanvas.attr('width', this.estimateStaffLength() + this.vexflowStaffPadding + 0);
+			    var computedWidth = this.estimateStaffLength() + this.renderOptions.staffPadding + 0;
+				newCanvas.attr('width', computedWidth);
 			}
 			if (height != undefined) {
 				newCanvas.attr('height', height);		
@@ -1094,11 +1089,11 @@ define(['music21/base','music21/renderOptions','music21/clef', 'jquery'], functi
 			var gotMeasure = undefined;
 			for (var i = 0; i < this.length; i++) {
 				var m = this.elements[i];
-				var vfro = m.renderOptions;
-				var left = vfro.left;
-				var right = left + vfro.width;
-				var top = vfro.top;
-				var bottom = top + vfro.height;
+				var rendOp = m.renderOptions;
+				var left = rendOp.left;
+				var right = left + rendOp.width;
+				var top = rendOp.top;
+				var bottom = top + rendOp.height;
 				if (music21.debug) {
 					console.log("Searching for X:" + Math.round(scaledX) + 
 							" Y:" + Math.round(scaledY) + " in M " + i + 
@@ -1109,7 +1104,7 @@ define(['music21/base','music21/renderOptions','music21/clef', 'jquery'], functi
 					if (systemIndex == undefined) {
 						gotMeasure = m;
 						break;
-					} else if (vfro.systemIndex == systemIndex) {
+					} else if (rendOp.systemIndex == systemIndex) {
 						gotMeasure = m;
 						break;
 					}
@@ -1122,28 +1117,28 @@ define(['music21/base','music21/renderOptions','music21/clef', 'jquery'], functi
 		this.setSubstreamRenderOptions = function () {
 			var currentMeasureIndex = 0; /* 0 indexed for now */
 			var currentMeasureLeft = 20;
-			var vfro = this.renderOptions;
+			var rendOp = this.renderOptions;
 			for (var i = 0; i < this.length; i++) {
 				var el = this.elements[i];
 				if (el.isClassOrSubclass('Measure')) {
-					var elvfro = el.renderOptions;
-					elvfro.measureIndex = currentMeasureIndex;
-					elvfro.top = vfro.top;
-					elvfro.partIndex = vfro.partIndex;
-					elvfro.left = currentMeasureLeft;
+					var elRendOp = el.renderOptions;
+					elRendOp.measureIndex = currentMeasureIndex;
+					elRendOp.top = rendOp.top;
+					elRendOp.partIndex = rendOp.partIndex;
+					elRendOp.left = currentMeasureLeft;
 					
 					if (currentMeasureIndex == 0) {
-						elvfro.displayClef = true;
-						elvfro.displayKeySignature = true;
-						elvfro.displayTimeSignature = true;
+						elRendOp.displayClef = true;
+						elRendOp.displayKeySignature = true;
+						elRendOp.displayTimeSignature = true;
 					} else {
-						elvfro.displayClef = false;
-						elvfro.displayKeySignature = false;
-						elvfro.displayTimeSignature = false;					
+						elRendOp.displayClef = false;
+						elRendOp.displayKeySignature = false;
+						elRendOp.displayTimeSignature = false;					
 					}
-					elvfro.width = el.estimateStaffLength() + el.vexflowStaffPadding;
-					elvfro.height = el.estimateStreamHeight();
-					currentMeasureLeft += elvfro.width;
+					elRendOp.width = el.estimateStaffLength() + elRendOp.staffPadding;
+					elRendOp.height = el.estimateStreamHeight();
+					currentMeasureLeft += elRendOp.width;
 					currentMeasureIndex++;
 				}
 			}
@@ -1155,14 +1150,35 @@ define(['music21/base','music21/renderOptions','music21/clef', 'jquery'], functi
 			for (var i = 0; i < this.length; i++) {
 				var el = this.elements[i];
 				if (el.isClassOrSubclass('Measure')) {
-					var elvfro = el.renderOptions;
-					measureWidths[elvfro.measureIndex] = elvfro.width;
+					var elRendOp = el.renderOptions;
+					measureWidths[elRendOp.measureIndex] = elRendOp.width;
 				}
 			}
 			/* console.log(measureWidths);
 			 * 
 			 */
 			return measureWidths;
+		};
+		this.estimateStaffLength = function () {
+	        if (this.vexflowStaffWidth != undefined) {
+	            //console.log("Overridden staff width: " + this.vexflowStaffWidth);
+	            return this.vexflowStaffWidth;
+	        }
+	        if (this.hasSubStreams()) { // part with Measures underneath
+	            var totalLength = 0;
+	            for (var i = 0; i < this.length; i++) {
+	                var m = this.elements[i];
+	                if ((i != 0) && (m.renderOptions.startNewSystem == true)) {
+	                    break;
+	                }
+                    totalLength += m.estimateStaffLength() + m.renderOptions.staffPadding;
+	            }
+	            return totalLength;
+	        };		    
+	        // no measures found in part... treat as measure
+	        var tempM = new music21.stream.Measure();
+	        tempM.elements = this.elements;
+	        return tempM.estimateStaffLength();
 		};
 		
 		this.fixSystemInformation = function (systemHeight) {
@@ -1422,12 +1438,30 @@ define(['music21/base','music21/renderOptions','music21/clef', 'jquery'], functi
 				for (var j = 0; j < this.length; j++) {
 					var part = this.elements[j];
 					var measure = part.elements[i];
-					var vfro = measure.renderOptions;
-					vfro.width = measureNewWidth;
-					vfro.left = currentLeft;
+					var rendOp = measure.renderOptions;
+					rendOp.width = measureNewWidth;
+					rendOp.left = currentLeft;
 				}
 				currentLeft += measureNewWidth;
 			}
+		};
+		this.estimateStaffLength = function () {
+		    // override
+		    if (this.vexflowStaffWidth != undefined) {
+                //console.log("Overridden staff width: " + this.vexflowStaffWidth);
+                return this.vexflowStaffWidth;
+            }
+		    for (var i = 0; i < this.length; i++) {
+		        var p = this.elements[i];
+		        if (p.isClassOrSubclass('Part')) {
+		            return p.estimateStaffLength();
+		        }
+		    }
+		    // no parts found in score... use part...
+		    console.log('no parts found in score');
+		    var tempPart = new music21.stream.Part();
+		    tempPart.elements = this.elements;
+		    return tempPart.estimateStaffLength();            
 		};
 		
 		this.addStaffConnectors = function (renderer) {
@@ -1469,11 +1503,10 @@ define(['music21/base','music21/renderOptions','music21/clef', 'jquery'], functi
 	 * Logic for copying events from one jQuery object to another.
 	 *
 	 * @private 
-	 * @name jQuery.event.copy
+	 * @name music21.stream.jQueryEventCopy
 	 * @param jQuery|String|DOM Element jQuery object to copy events from. Only uses the first matched element.
 	 * @param jQuery|String|DOM Element jQuery object to copy events to. Copies to all matched elements.
 	 * @type undefined
-	 * @cat Plugins/copyEvents
 	 * @author Brandon Aaron (brandon.aaron@gmail.com || http://brandonaaron.net)
 	 * @author Yannick Albert (mail@yckart.com || http://yckart.com)
 	 */
