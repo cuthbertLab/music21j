@@ -71,14 +71,10 @@ makeRound = function () {
 
 	var numParts = 3;
 	var fullRepetitions = 2;
-	var pEditor = new music21.stream.Part();
-
-	pEditor.timeSignature = '4/4';
-	pEditor.clef = new music21.clef.Clef('treble')
 	
 	var notes = ['C4', 'F4', 'G4', 'C5'];
 	var scoreOut = new music21.stream.Score();
-	scoreOut.timeSignature = '4/4';
+	scoreOut.timeSignature = new music21.meter.TimeSignature('4/4');
 	scoreOut.clef = new music21.clef.Clef('treble');
 	scoreOut.numParts = numParts;
 	scoreOut.fullRepetitions = fullRepetitions;
@@ -99,6 +95,10 @@ makeRound = function () {
 		scoreOut.append(pOut);
 	}
 
+    pEditor = new music21.stream.Part();
+	pEditor.timeSignature = new music21.meter.TimeSignature('4/4');
+	pEditor.clef = new music21.clef.Clef('treble')
+
 	
 	for (var i = 0; i < notes.length * numParts; i++) {
 		var m = new music21.stream.Measure();
@@ -111,6 +111,8 @@ makeRound = function () {
 		pEditor.append(m);
 	}
 	pEditor.autoBeam = false;
+    console.log(pEditor);
+	
 	var s2 = new music21.stream.Score();
 	s2.renderOptions.events['click'] = s2.canvasChangerFunction;
 	s2.renderOptions.maxSystemWidth = 800;
@@ -118,6 +120,7 @@ makeRound = function () {
 	s2.autoBeam = false;
 	s2.append(pEditor);
 	s2.appendNewCanvas($("#testBank"));
+	
 	//pEditor.renderOptions.events['click'] = pEditor.canvasChangerFunction;
 	//pEditor.changedCallbackFunction = function () { fillScoreOut(pEditor, scoreOut) };
 	//pEditor.appendNewCanvas($("#testBank"));
