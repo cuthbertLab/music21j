@@ -47,17 +47,6 @@
          var d = s.editableAccidentalCanvas({ height: '400px', width: 'auto'});
          //console.log('d width' + d.width());
          $("#testBank").append(d);
-
-         var ctp = m21theory.tests.get('firstSpecies');
-         ctp.totalQs = 1;
-         
-         var testBank = new m21theory.bank.TestBank();
-         testBank.testId = "inclass10";
-         testBank.title = "Counterpoint";
-         testBank.instructions = "Hello there!  Species Time!";
-             
-         testBank.append(ctp);
-         testBank.render();
          
          $("#effectMe").fadeOut(5000);
 
