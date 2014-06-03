@@ -216,7 +216,7 @@ define(['music21/base','music21/renderOptions','music21/clef', 'jquery'], functi
 	        for (var i = 0; i < this.length; i++) {
 	        	var thisEl = this.elements[i];
 	        	if (thisEl.isClassOrSubclass('GeneralNote') && (thisEl.duration !== undefined)) {
-		        	var tn = thisEl.vexflowNote(this.clef.name);
+		        	var tn = thisEl.vexflowNote(this.clef);
 		        	notes.push(tn);
 	        	}
 	        }
