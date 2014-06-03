@@ -16,8 +16,10 @@ var allStream;
 
 require(['music21'], function () {
 	renderThemes();
+	allStreamScore = new music21.stream.Score();
 	allStream = new music21.stream.Part();
-	var newCanvas = allStream.createPlayableCanvas();
+	allStreamScore.append(allStream);
+	var newCanvas = allStreamScore.createPlayableCanvas();
 	$('#dropDiv canvas').replaceWith(newCanvas[0]);	
 
 });
@@ -30,7 +32,9 @@ function renderThemes ()  {
     var themeCanvases = [];
     for (var i = 0; i < themes.length; i++) {
         var thisTheme = themes[i];
-        var myStream = music21.tinyNotation.TinyNotation(thisTheme);
+        var myTNStream = music21.tinyNotation.TinyNotation(thisTheme);
+        var myStream = new music21.stream.Measure();
+        myStream.elements = myTNStream.elements;
         myStream.timeSignature = '4/4';
         var nc = myStream.createPlayableCanvas();
         $('#themeDiv').append(nc);
@@ -59,21 +63,24 @@ function renderThemes ()  {
 
 function handleThemeDrop(event, ui) {
     var containedStream = ui.draggable.data('stream');
-    allStream.append(containedStream);
-    var newCanvas = allStream.createPlayableCanvas();
+    var containedStreamCopy = new music21.stream.Measure();
+    containedStreamCopy.elements = containedStream.elements;
+    allStream.append(containedStreamCopy);
+    allStreamScore.resetRenderOptionsRecursive();
+    var newCanvas = allStreamScore.createPlayableCanvas();
 	$('#dropDiv canvas').replaceWith(newCanvas[0]);
 	// alert(allStream.hi);
 }
 
 function clearScore() {
 	allStream._elements = [];
-	var newCanvas = allStream.createPlayableCanvas();
+	var newCanvas = allStreamScore.createPlayableCanvas();
 	$('#dropDiv canvas').replaceWith(newCanvas[0]);
 }
 
 function undoAdd() {
 	allStream._elements = allStream._elements.slice(0, allStream._elements.length - 1);
-	var newCanvas = allStream.createPlayableCanvas();
+	var newCanvas = allStreamScore.createPlayableCanvas();
 	$('#dropDiv canvas').replaceWith(newCanvas[0]);	
 }
 

@@ -1168,10 +1168,12 @@ define(['music21/base','music21/renderOptions','music21/clef', 'jquery'], functi
 	            var totalLength = 0;
 	            for (var i = 0; i < this.length; i++) {
 	                var m = this.elements[i];
+	                // this looks wrong, but actually seems to be right. moving it to
+	                // after the break breaks things.
+                    totalLength += m.estimateStaffLength() + m.renderOptions.staffPadding;
 	                if ((i != 0) && (m.renderOptions.startNewSystem == true)) {
 	                    break;
 	                }
-                    totalLength += m.estimateStaffLength() + m.renderOptions.staffPadding;
 	            }
 	            return totalLength;
 	        };		    
