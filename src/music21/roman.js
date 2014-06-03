@@ -151,8 +151,7 @@ define(['music21/chord', 'music21/key', 'music21/pitch', 'music21/interval'], fu
 	roman.tests = function () {
 	    test ( "music21.roman.RomanNumeral" , function() {
 	        var t1 = "IV";
-            console.log(t1, "Roman");
-	        var rn1 = new music21.roman.RomanNumeral(t1, "F");
+            var rn1 = new music21.roman.RomanNumeral(t1, "F");
 	        equal (rn1.scaleDegree, 4, 'test scale dgree of F IV');
 	        var scale = rn1.scale;
 	        equal (scale[0].name, "F", 'test scale is F');

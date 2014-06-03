@@ -55,7 +55,7 @@ define(function(require) {
                   enumerable: true,
                   configurable: true,
                   get: function () { 
-                      m = this.modifier;
+                      var m = this.modifier;
                       if (m == "") { return "n"; }
                       else if (m == "#") { return "#"; }
                       else if (m == '-') { return "b"; }
@@ -108,7 +108,10 @@ define(function(require) {
 	};
 	
 	
-	
+	pitch.nameToMidi = {'C': 0, 'D': 2, 'E': 4, 'F': 5, 'G': 7, 'A': 9, 'B': 11};
+	pitch.nameToSteps = {'C': 0, 'D': 1, 'E': 2, 'F': 3, 'G': 4, 'A': 5, 'B': 6};
+	pitch.stepsToName = ['C','D','E','F','G','A','B'];
+	pitch.midiToName = ['C','C#','D','E-','E','F','F#','G','A-','A','B-','B'];
 	
 	pitch.Pitch = function (pn) {
 	    if (pn == undefined) {
@@ -195,14 +198,12 @@ define(function(require) {
                 enumerable: true,
                 configurable: true,
 	    		get: function () { 
-			    	var nameToSteps = {'C': 0, 'D': 1, 'E': 2, 'F': 3, 'G': 4, 'A': 5, 'B': 6};
-	       			return (this.octave * 7) + nameToSteps[this.step] + 1;
+	       			return (this.octave * 7) + pitch.nameToSteps[this.step] + 1;
 	   			},
 	    		set: function (newDNN) {
-	   				var stepsToName = ['C','D','E','F','G','A','B'];
 	   				newDNN = newDNN - 1; // makes math easier
 	   				this.octave = Math.floor(newDNN / 7);
-	   				this.step = stepsToName[newDNN % 7];
+	   				this.step = pitch.stepsToName[newDNN % 7];
 	   			}
 	   		},    		
 	    	'midi': { 
@@ -216,16 +217,14 @@ define(function(require) {
                 enumerable: true,
                 configurable: true,
 	    		get: function () {
-					var nameToMidi = {'C': 0, 'D': 2, 'E': 4, 'F': 5, 'G': 7, 'A': 9, 'B': 11};
 					var accidentalAlter = 0;
 					if (this.accidental != undefined) {
 						accidentalAlter = parseInt(this.accidental.alter);
 					}
-					return (this.octave + 1) * 12 + nameToMidi[this.step] + accidentalAlter;
+					return (this.octave + 1) * 12 + pitch.nameToMidi[this.step] + accidentalAlter;
 				},
 	    		set: function (ps) {
-	    			var midiToName = ['C','C#','D','E-','E','F','F#','G','A-','A','B-','B'];
-	    			this.name = midiToName[ps % 12];
+	    			this.name = pitch.midiToName[ps % 12];
 	    			this.octave = Math.floor(ps / 12) - 1;
 	    		}
 	    	}
@@ -238,29 +237,18 @@ define(function(require) {
 	        this.name = pn;	        
 	    }
 	    	
-	    this.vexflowName = function (clefName) {
-	    	//alert(this.octave + " " + clefName);
-		    var bassToTrebleMapping = {'E': 'C', 'F': 'D', 'G': 'E', 'A': 'F', 'B': 'G', 'C': 'A', 'D': 'B'};
-	    	var accidentalType = 'n';
-	    	if (this.accidental != undefined) {
-	          	accidentalType = this.accidental.vexflowModifier;
+	    this.vexflowName = function (clefObj) {
+	        // returns a vexflow Key name for this pitch.
+	    	var tempPitch = this;
+	    	if (clefObj !== undefined) {
+	    	    tempPitch = clefObj.convertPitchToTreble(this);
 	    	}
-	    	
-	    	
-	    	if (clefName == 'treble' || clefName == undefined) {
-	            var outName = this.step + accidentalType + '/' + this.octave; 
-	            return outName;
-	        } else if (clefName == 'bass') {
-	        	var tempPn = bassToTrebleMapping[this.step];
-	            var tempPitch = new music21.pitch.Pitch(tempPn);
-	            tempPitch.octave = this.octave;
-	            if (this.step == 'C' || this.step == 'D') {
-	                tempPitch.octave += 1;
-	            } else {
-	                tempPitch.octave += 2;
-	            }
-	            return tempPitch.step + accidentalType + '/' + tempPitch.octave;
-	        }
+            var accidentalType = 'n';
+            if (this.accidental != undefined) {
+                accidentalType = this.accidental.vexflowModifier;
+            }
+            var outName = tempPitch.step + accidentalType + '/' + tempPitch.octave;
+            return outName;
 	    };
 	};
 	pitch.tests = function () {
@@ -275,6 +263,9 @@ define(function(require) {
 	        equal ( p.name, "D#", "Pitch Name set to D#");
 	        equal ( p.step, "D",  "Pitch Step set to D");
 	        equal ( p.octave, 5, "Pitch octave set to 5");
+	        var c = new music21.clef.AltoClef();
+	        var vfn = p.vexflowName(c);
+	        equal ( vfn, 'C#/6', 'Vexflow name set');
 	    });
   
 	};

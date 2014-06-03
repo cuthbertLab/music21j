@@ -8,35 +8,42 @@
  * Based on music21 (=music21p), Copyright (c) 2006–14, Michael Scott Cuthbert and cuthbertLab
  * 
  */
-define(['music21/base',], function(require) {
+define(['music21/base','music21/pitch'], function(require) {
 	var clef = {};
 	/*  music21.Clef
 	must be defined before Stream since Stream subclasses call new music21.Clef...
 	 */
 
+	clef.firstLines = {
+            'treble': 31, 
+            'soprano': 29,
+            'mezzo-soprano': 27,
+            'alto': 25,
+            'tenor': 23,
+            'bass': 19,
+            'percussion': 31,
+            };
 	clef.Clef = function (name) {
 		music21.base.Music21Object.call(this);
 		this.classes.push('Clef');
-	    var firstLines = {
-	            'treble': 31, 
-	            'soprano': 29,
-	            'mezzo-soprano': 27,
-	            'alto': 25,
-	            'tenor': 23,
-	            'bass': 19,
-	            'percussion': 31,
-	            };
 	    if (name != undefined) {
 	        name = name.toLowerCase();
 	        this.name = name;
-			this.firstLine = firstLines[name];
+			this.firstLine = clef.firstLines[name];
+			this.firstLineTrebleOffset = clef.firstLines['treble'] - this.firstLine;
 	    } else {
 	    	this.name = undefined;
-	    	this.firstLine = firstLines['treble'];
+	    	this.firstLine = clef.firstLines['treble'];
+	    	this.firstLineTrebleOffset = 0;
 	    }
 	    
-	    this.setStemDirection = function (note) {
-	        if (note.stemDirection != undefined) {
+	    this.setStemDirection = function (note, override) {
+	        // set the stem direction of a note.
+	        // does nothing to already set stemDirection unless override is true
+	        if (override === undefined) {
+	            override = false;
+	        }
+	        if (note.stemDirection != undefined && override != true) {
 	        	return;
 	        }
 	        if (note.pitch != undefined) {
@@ -48,6 +55,28 @@ define(['music21/base',], function(require) {
 	                }
 	            }
 	        }
+	    };
+	    this.convertPitchToTreble = function (pitch) {
+	        // returns a new pitch object if the clef name is not Treble
+	        // designed so it would look the same as it would in treble clef.
+	        // for instance, bass-clef 2nd-space C# becomes treble clef 2nd-space A#
+	        // used for Vex.Flow which requires all pitches to be input as if they
+	        // are in treble clef. Run before setStemDirection...
+	        //
+	        // in case of treble clef or percussion clef, returns the same pitch object to save time.
+	        if (this.name == 'treble' || this.name == 'percussion') {
+	            return pitch;
+	        }
+	        if (this.firstLine == undefined) {
+	            console.log('no first line defined for clef', this.name, this);
+	            return pitch; // error
+	        }
+	        var firstLineDifference = this.firstLineTrebleOffset;
+	        var tempPitch = new music21.pitch.Pitch(pitch.step);
+	        tempPitch.octave = pitch.octave;
+	        tempPitch.diatonicNoteNum += firstLineDifference;
+	        tempPitch.accidental = pitch.accidental;
+	        return tempPitch;
 	    };
 	};
 	
@@ -148,6 +177,18 @@ define(['music21/base',], function(require) {
         test ( "music21.clef.Clef" , function() {
             var c1 = new music21.clef.Clef();            
             equal (c1.isClassOrSubclass('Clef'), true, 'clef is a Clef');
+            var ac = new music21.clef.AltoClef();
+            equal (ac.firstLine, 25, 'first line set');
+            var n = new music21.note.Note('C#4');
+            ac.setStemDirection(n, true);
+            equal (n.stemDirection, 'down', 'stem direction set');
+            n.pitch.diatonicNoteNum -= 1;
+            ac.setStemDirection(n, true);
+            equal (n.stemDirection, 'up', 'stem direction set');
+            n.pitch.diatonicNoteNum += 1;
+            var p2 = ac.convertPitchToTreble(n.pitch);
+            equal (p2.nameWithOctave, 'B#4', 'converted to treble');
+
         });
     };
     
