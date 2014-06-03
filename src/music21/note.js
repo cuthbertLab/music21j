@@ -149,12 +149,7 @@ define(['music21/base', 'music21/pitch'], function(require) {
         
         /* TODO: transpose, fullName */
         
-	    this.vexflowNote = function (clefName) {
-	    	if (music21.debug) {
-	        	console.log("Pitch name for clef " + 
-	        				clefName + " ( " + this.pitch.name + " ) : " + 
-	        				this.pitch.vexflowName(clefName));
-			}
+	    this.vexflowNote = function (clefObj) {
 	    	if (this.duration === undefined) {
 	    	    //console.log(this);
 	    	    return undefined;
@@ -163,7 +158,8 @@ define(['music21/base', 'music21/pitch'], function(require) {
 	    	if (vfd === undefined) {
 	    	    return undefined;
 	    	}
-	        var vfn = new Vex.Flow.StaveNote({keys: [this.pitch.vexflowName(clefName)], 
+	    	var vexflowKey = this.pitch.vexflowName(clefObj);
+	    	var vfn = new Vex.Flow.StaveNote({keys: [vexflowKey], 
 										  duration: vfd});
 	        this.vexflowAccidentalsAndDisplay(vfn); // clean up stuff...
 	        if (this.pitch.accidental != undefined) {
