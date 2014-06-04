@@ -604,6 +604,7 @@ define(['music21/base','music21/renderOptions','music21/clef', 'jquery'], functi
 					//console.log('computed Height: ' + computedHeight);
 				}
 				newCanvas.attr('height', computedHeight );
+				// TODO: CUT HEIGHT!
 				newCanvas.css('height', Math.floor(computedHeight * .7).toString() + "px");
 			}
 			return newCanvas;

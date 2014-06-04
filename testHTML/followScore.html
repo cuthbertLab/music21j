@@ -9,52 +9,156 @@
         var k = ""; // will become keyboard.Keyboard object        
         
         require(['music21'], function () { 
-            var offsetToPixels = function(s) {
+            
+            var offsetToPixelMaps = function(s, c) {
                 var totalDuration = 0.0;
                 var ns = s.flat.notes;
                 var allNotes = [];
+                var pixelScaling = s.getPixelScaling(c);
                 for (var i = 0; i < ns.length; i++) {
                     var n = ns.elements[i];
                     var info = {};
                     info.element = n;
                     info.offset = totalDuration;
-                    info.x = n.x;
+                    info.x = n.x * pixelScaling;
                     allNotes.push(info);
                     totalDuration += n.duration.quarterLength;
                 }
                 return allNotes;            
             };
-            var drawLineAtOffset = function(offsetToPixelMap) {
-                var foundNote = undefined;
+            var getXAtOffset = function(offset, offsetToPixelMap) {
+                var prevNoteMap = undefined;
+                var nextNoteMap = undefined;
                 for (var i = 0; i < offsetToPixelMap.length; i++) {
                     thisMap = offsetToPixelMap[i];
+                    if (thisMap.offset <= offset) {
+                        prevNoteMap = thisMap;
+                    } 
+                    if (thisMap.offset >= offset ) {
+                        nextNoteMap = thisMap;
+                        break;
+                    }
                 }
-            };
-
-            s = music21.tinyNotation.TinyNotation("4/4 c2 d#4 e8 f g2 B c1");
-	        
+                if (prevNoteMap === undefined && nextNoteMap === undefined) {
+                    return offsetToPixelMap[offsetToPixelMap.length - 1].x;   
+                } else if (prevNoteMap === undefined) {
+                    prevNoteMap = nextNoteMap;
+                } else if (nextNoteMap === undefined) {
+                    nextNoteMap = prevNoteMap;
+                }
+                var offsetFromPrev = offset - prevNoteMap.offset;
+                var offsetDistance = nextNoteMap.offset - prevNoteMap.offset;
+                var pixelDistance = nextNoteMap.x - prevNoteMap.x;
+                var offsetToPixelScale = 0;
+                if (offsetDistance != 0) {
+                    offsetToPixelScale = pixelDistance/offsetDistance;                    
+                } else {
+                    offsetToPixelScale = 0;   
+                }
+                var pixelsFromPrev = offsetFromPrev * offsetToPixelScale;
+                var offsetX = prevNoteMap.x + pixelsFromPrev;
+                return offsetX;
+            };            
+            
+            s = music21.tinyNotation.TinyNotation("4/4 c2 d#4 e8 f g2 B c1 c'1 b4 a g f e8 f e d c4 B c1");
+            //s1 = music21.tinyNotation.TinyNotation("4/4 E2 F#4 G8 A G2 E E1 A1");// B4 c B A G8 A G F E4 D C1");
+            // s = new music21.stream.Score();
+            //s.append(s2);
+            //s.append(s1);
+            
             //var divObj = document.getElementById('putCanvasHere');
-            var c = s.appendNewCanvas( $(".canvasDiv") );
-	        var bNote = s.elements[1].elements[1];
+            var c = s.appendNewCanvas( $("#can"), {} );
+            var h = $(c).css('height');
+            h = h.substring(0, h.length - 2);
+            console.log(h);
+            $(c).css('height', h / 0.7 );
 	
-	        var an = offsetToPixels(s);
-	        console.log(an);
-	
+	        //$.each(s.flat.notes.elements, function (i, n) {console.log(n.x)})
+	        function scrollScoreStart(s, c) {
+	            var tempo = s.tempo;
+	            console.log('tempo' , tempo);
+	            var currentTime = 0.0;
+	            var pm = offsetToPixelMaps(s);
+	            var maxX = pm[pm.length - 1].x;
+	            var svgDOM = music21.common.makeSVGright('svg', {
+	                'height': c.height.toString() +'px',
+	                'width': c.width.toString() + 'px',
+	                'style': 'position:absolute; top: 0px; left: 0px;',
+	            });
+	            var startX = pm[0].x;
+	            var barDOM = music21.common.makeSVGright('rect', {
+	                width: 10, 
+	                height: c.height - 6, 
+	                x: startX, 
+	                y: 3,
+	                style: 'fill: rgba(255, 255, 100, .5);stroke:white',    
+	            } );
+	            svgDOM.appendChild(barDOM);
+	            $('body').append( $("<br/>") );
+	            
+	            document.getElementById('can').appendChild(svgDOM);
+	            lastX = 0;
+	            lastNoteIndex = -1;
+	            
+	            scrollInfo = {
+	                    pm: pm, 
+	                    currentTime: currentTime,
+	                    tempo: tempo,
+	                    maxX: maxX,
+	                    barDOM: barDOM,
+	                    lastX: lastX,
+	                    lastNoteIndex: lastNoteIndex,
+	            };
+	            scrollScore(scrollInfo);	            
+	        };
+	        function scrollScore(i) {
+	            var offset = i.currentTime * i.tempo/60;
+                var pm = i.pm;
+	            var x = getXAtOffset(offset, pm);
+	            x = Math.floor(x);
+	            if (x != i.lastX) {
+	                i.barDOM.setAttribute('x', x);
+	                i.lastX = x;    
+	            }
+	            for (var j = 0; j < pm.length; j++) {
+	                var pmOff = pm[j].offset
+	                if (Math.abs(offset - pmOff) > .01) {
+	                    continue;
+	                } else if (j == lastNoteIndex) {
+	                    continue;
+	                } 
+	                var el = pm[j].element
+                    var midNum = el.pitch.midi;
+                    music21.MIDI.noteOn(0, midNum, 100, 0);
+                    music21.MIDI.noteOff(0, midNum, el.duration.quarterLength * 60/i.tempo);
+                    lastNoteIndex = j;
+	                
+	            }
+	            //console.log(x, offset);
+	            //console.log(barDOM.setAttribute);
+                var advanceTime = 0.05;
+	            i.currentTime += advanceTime;
+	            if (x < i.maxX) {
+	                setTimeout( function () {scrollScore(i)}, advanceTime * 1000);	                
+	            } else {
+	                i.barDOM.setAttribute('style', 'display:none');
+	            }
+	        };
+	        //console.log(c.height, c.width);
+            
+	        music21.MIDI.loadSoundfont('acoustic_grand_piano', function() { 
+	            scrollScoreStart(s, c);
+            });
         });
+        
         
 </script>
 <style>
-.canvasDiv { background-color: yellow }
+.canvasDiv { background-color: #ffffee }
 </style>
 </head>
 <body>
-Hey there
-
-<div id="putCanvasHere" class="canvasDiv"> new div
-</div>
-
-Bye! <br/>
-
-
+<h1>Score with scrollbar</h1>
+<div id='can' style='position:relative'></div>
 </body>
 </html>
