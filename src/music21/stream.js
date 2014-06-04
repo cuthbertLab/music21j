@@ -81,7 +81,7 @@ define(['music21/base','music21/renderOptions','music21/clef', 'jquery'], functi
 	    	'notes': {
                 configurable: true,
                 enumerable: true,
-                get: function () { return this.getElementsByClass('Note'); },
+                get: function () { return this.getElementsByClass(['Note','Chord']); },
 	    	},
 			'tempo': {
                 configurable: true,
@@ -691,9 +691,9 @@ define(['music21/base','music21/renderOptions','music21/clef', 'jquery'], functi
                 return offsetX;
             };            
 
-            var tempo = s.tempo;
+            var tempo = this.tempo;
             //console.log('tempo' , tempo);
-            var pm = offsetToPixelMaps(s);
+            var pm = offsetToPixelMaps(this);
             var maxX = pm[pm.length - 1].x;
             var svgDOM = music21.common.makeSVGright('svg', {
                 'height': c.height.toString() +'px',
@@ -738,17 +738,27 @@ define(['music21/base','music21/renderOptions','music21/clef', 'jquery'], functi
                     i.lastX = x;    
                 }
                 for (var j = 0; j < pm.length; j++) {
-                    var pmOff = pm[j].offset
+                    var pmOff = pm[j].offset;
                     if (j <= lastNoteIndex) {
                         continue;
                     } else if (Math.abs(offset - pmOff) > .1) {
                         continue;
                     }
                     var el = pm[j].element;
-                    if (el != undefined) {
-                        var midNum = el.pitch.midi;
-                        music21.MIDI.noteOn(0, midNum, 100, 0);
-                        music21.MIDI.noteOff(0, midNum, el.duration.quarterLength * 60/i.tempo);                        
+                    if (el !== undefined) {
+                        var offTime = el.duration.quarterLength * 60/i.tempo;
+                        if (el.pitch !== undefined) {
+                            var midNum = el.pitch.midi;
+                            music21.MIDI.noteOn(0, midNum, 100, 0);
+                            music21.MIDI.noteOff(0, midNum, offTime);                                                    
+                        } else if (el.pitches !== undefined) {
+                            for (var pitchIndex = 0; pitchIndex < el.pitches.length; pitchIndex++) {
+                                var p = el.pitches[pitchIndex];
+                                var midNum = p.midi;
+                                music21.MIDI.noteOn(0, midNum, 100, 0);
+                                music21.MIDI.noteOff(0, midNum, offTime);
+                            }
+                        }
                     }
                     lastNoteIndex = j;
                     

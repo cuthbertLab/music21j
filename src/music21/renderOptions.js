@@ -32,6 +32,7 @@ define([], function(require) {
 			events: {
 				'click': 'play',
 				'dblclick': undefined,
+				// resize
 					},
 			startNewSystem: false,
 			startNewPage: false,
