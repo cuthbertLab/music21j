@@ -10,18 +10,18 @@
         
         require(['music21'], function () { 
           
-            var s = music21.tinyNotation.TinyNotation("4/4 c2 d#4 e8 f g4 B c c16 d32 e f g a b c'1");// b4 a g f e8 f e d c4 B c1");
-            s.tempo = 90;
-            var m = s.elements[0];
+            var s2 = music21.tinyNotation.TinyNotation("4/4 c2 d#4 e8 f g4 r8 B c4 d16 e f32 g a b c'1");// b4 a g f e8 f e d c4 B c1");
+            var m = s2.elements[0];
             m.elements.pop();
             var c = new music21.chord.Chord(["F4", "A-4", "C5"]);
             c.duration.type = 'eighth';
             m.append(c);
             
-            //s1 = music21.tinyNotation.TinyNotation("4/4 E2 F#4 G8 A G2 E E1 A1");// B4 c B A G8 A G F E4 D C1");
-            // s = new music21.stream.Score();
-            //s.append(s2);
-            //s.append(s1);
+            var s1 = music21.tinyNotation.TinyNotation("4/4 E2 F#4 G8 A G2 E E1");// B4 c B A G8 A G F E4 D C1");
+            s = new music21.stream.Score();
+            s.append(s2);
+            s.append(s1);
+            s.tempo = 90;
             
             music21.MIDI.loadSoundfont('acoustic_grand_piano', function() { 
                 s.renderScrollableCanvas($("#can"))

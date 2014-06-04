@@ -11,11 +11,11 @@
 		var metro = ""; // will become Metronome object soon...
 
         function appendElement(appendObject) {
-            if (s.elements.length > 7) {
+            if (s.length > 7) {
                 s.elements = s.elements.slice(1)
             }
-            if (s.elements.length > 0) {
-                var lastNote = s.elements[s.elements.length - 1];
+            if (s.length > 0) {
+                var lastNote = s.elements[s.length - 1];
             }
             s.append(appendObject);
             var canv = s.replaceLastCanvas();

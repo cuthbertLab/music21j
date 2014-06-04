@@ -86,7 +86,7 @@ define("m21theory/tests/scaleEar", ["m21theory/section"], function () {
                         thisDirection = -1;
                     }
                 }
-                var tempPitch = s.elements[whichNote - 1].pitch;
+                var tempPitch = s.get(whichNote - 1).pitch;
                 //console.log(whichNote + " " + tempPitch.name + " ");
                 if (tempPitch.accidental == undefined) {
                     tempPitch.accidental = new music21.pitch.Accidental(thisDirection);

@@ -110,7 +110,7 @@ define("m21theory/tests/scaleMajorMinorWritten", ["m21theory/section"], function
 			}
 			if (this.hide367) {
 				for (var j = 0; j < remEls.length; j++) {
-					removedNotes.push( s.elements[remEls[j]] );
+					removedNotes.push( s.get(remEls[j]) );
 					s.elements[remEls[j]] = new music21.note.Rest();
 				}
 			}

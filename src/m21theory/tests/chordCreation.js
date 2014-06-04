@@ -169,7 +169,7 @@ define("m21theory/tests/chordCreation", ["m21theory/section"], function () {
 			var storedAnswer = s.storedAnswer.pitches;
 			var givenAnswer = [];
 			for (var i = 0; i < s.length; i++) {
-				givenAnswer.push(s.elements[i].pitch);
+				givenAnswer.push(s.get(i).pitch);
 			}
 			if (m21theory.debug) {
 				var answerStr = "";

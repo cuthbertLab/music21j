@@ -51,8 +51,9 @@ define("m21theory/tests/noteIdentification", ["m21theory/section"], function () 
 			// last answer is always an earlier note with same accidental
 			var foundPitch = undefined;
 			for (var j = 0; j < 7; j++) {
-				if (s.elements[j].pitch.accidental.alter != 0) {
-					foundPitch = s.elements[j].pitch;
+				var p = s.get(j).pitch;
+			    if (p.accidental.alter != 0) {
+					foundPitch = p;
 					break;
 				}
 			}

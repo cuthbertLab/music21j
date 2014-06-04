@@ -36,7 +36,7 @@ define("m21theory/tests/firstSpecies", ["m21theory/section"], function () {
 				var n = foundNote;
 				var part = n.parent.parent;
 				var score = part.parent;
-				if (part == score.elements[1]) {
+				if (part == score.get(1)) {
 					this.testHandler.showAlert(
 							"No...you can't alter the given line.  That'd be too easy. :-)", 'alert');
 					return;
@@ -75,8 +75,8 @@ define("m21theory/tests/firstSpecies", ["m21theory/section"], function () {
 			if (existingAlerts.length > 0) {
 				$(existingAlerts[0]).remove();
 			}
-			var studentLine = this.elements[0].flat.elements;
-			var cf = this.elements[1].flat.elements;
+			var studentLine = this.get(0).flat.elements;
+			var cf = this.get(1).flat.elements;
 			var totalUnanswered = 0;
 			var niceNames = {
 					1: "unison or octave",
@@ -92,7 +92,8 @@ define("m21theory/tests/firstSpecies", ["m21theory/section"], function () {
 			var prevInt = undefined;
 			var prevPrevInt = undefined;
 			var unansweredNumbers = [];
-			for (var i = 0; i < this.elements[0].length; i++) {
+			var studentPartObj = this.get(0);
+			for (var i = 0; i < studentPartObj.length; i++) {
 				var measureNumber = i + 1;
 				var studentNote = studentLine[i];
 				var cfNote = cf[i];
