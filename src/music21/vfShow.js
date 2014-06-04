@@ -12,6 +12,8 @@ define(['vexflow'], function(require) {
         this._vfRenderer = undefined;
         this._ctx = undefined;
         this.beamGroups = [];
+        this.measureStackVoices = []; // an Array of Array of vexflow voices
+        this.measureStackStreams = []; // an Array of Array of Streams (usually Measures);
         //this.measureFormatters = [];
         
         Object.defineProperties(this, {
@@ -76,39 +78,50 @@ define(['vexflow'], function(require) {
             }  
             // requires organization Score -> Part -> Measure -> elements...
             if (isScorelike) {
-                this.renderScorelike(s);
+                this.prepareScorelike(s);
             } else if (isPartlike) {
-                this.renderPartlike(s);
+                this.preparePartlike(s);
             } else {
-                this.renderFlat(s);
+                this.prepareFlat(s);
             }
+            this.formatMeasureStacks();
+            this.drawMeasureStacks();
             this.drawBeamGroups();
         };
 
-        this.renderScorelike = function (s) {
-            //console.log('renderScorelike called');
+        this.prepareScorelike = function (s) {
+            //console.log('prepareScorelike called');
             for (var i = 0; i < s.length; i++) {
                 var subStream = s.get(i);
-                this.renderPartlike(subStream);
+                this.preparePartlike(subStream);
             }
             this.addStaffConnectors(s);                
         };
         
-        this.renderPartlike = function (p) {
-            //console.log('renderPartlike called');
+        this.preparePartlike = function (p) {
+            //console.log('preparePartlike called');
             for (var i = 0; i < p.length; i++) {
                 var subStream = p.get(i);
                 if (i == p.length - 1) {
                     subStream.renderOptions.rightBarline = 'end';
                 }                
-                this.renderFlat(subStream);
-            }                
+                voice = this.prepareFlat(subStream);
+                if (this.measureStackVoices[i] === undefined) {
+                    // firstPart
+                    this.measureStackVoices[i] = [];
+                    this.measureStackStreams[i] = [];
+                }
+                this.measureStackVoices[i].push(voice);
+                this.measureStackStreams[i].push(subStream);
+            }    
         };
-        this.renderFlat = function (m) {
+        this.prepareFlat = function (m) {
             m.makeAccidentals();
             var stave = this.renderStave(m);
             m.activeVFStave = stave;
-            this.renderNotes(m, stave);
+            var voice = this.getVoice(m, stave);
+            //this.renderNotes(m, stave);
+            return voice;
         };
         
         this.renderStave = function (m) {   
@@ -134,6 +147,30 @@ define(['vexflow'], function(require) {
             voice.addTickables(notes);
             return voice;
         };
+        
+        this.drawMeasureStacks = function () {
+            var ctx = this.ctx;
+            for (var i = 0; i < this.measureStackVoices.length; i++) {
+                var voices = this.measureStackVoices[i];
+                for (var j = 0; j < voices.length; j++ ) {
+                    var v = voices[j];
+                    v.draw(ctx);
+                }
+            }
+        };
+        this.formatMeasureStacks = function () {
+            for (var i = 0; i < this.measureStackVoices.length; i++) {
+                var voices = this.measureStackVoices[i];
+                var measures = this.measureStackStreams[i];
+                var autoBeam = measures[0].autoBeam;
+                var formatter = this.formatVoiceGroup(voices, autoBeam);
+                for (var j = 0; j < measures.length; j++ ) {
+                    var m = measures[j];
+                    var v = voices[j];
+                    this.applyFormatterInformationToNotes(v.stave, m, formatter);
+                }
+            }
+        };
         this.formatVoiceGroup = function (voices, autoBeam) {
             // formats a group of voices to use the same formatter; returns the formatter
             // if autoBeam is true then it will apply beams for each voice and put them in
@@ -147,6 +184,8 @@ define(['vexflow'], function(require) {
             formatter.formatToStave(voices, stave);
             if (autoBeam) {
                 for (var i = 0; i < voices.length; i++) {
+                    // find beam groups -- n.b. this wipes out stem direction and
+                    //      screws up middle line stems -- worth it for now.
                     var voice = voices[i];
                     var beamGroups = Vex.Flow.Beam.applyAndGetBeams(voice);
                     this.beamGroups.push.apply(this.beamGroups, beamGroups);                    
@@ -156,15 +195,13 @@ define(['vexflow'], function(require) {
         };
         this.renderNotes = function (m, stave) {
             // add notes...
-            var ctx = this.ctx;
             var voice = this.getVoice(m, stave);
-            // find beam groups -- n.b. this wipes out stem direction and
-            //      screws up middle line stems -- worth it for now.
                 
             var formatter = this.formatVoiceGroup([voice], m.autoBeam); 
-            this.activeFormatter = formatter;
-            this.applyFormatterInformationToNotes(stave, m);
-            voice.draw(ctx, stave);
+            var ctx = this.ctx;
+            voice.draw(ctx);
+
+            this.applyFormatterInformationToNotes(stave, m, formatter);
 
             //console.log(stave.start_x + " -- stave startx");
             //console.log(stave.glyph_start_x + " -- stave glyph startx");
@@ -178,13 +215,12 @@ define(['vexflow'], function(require) {
                  this.beamGroups[i].setContext(ctx).draw();
             }
         };
-        this.applyFormatterInformationToNotes = function (stave, s) {
+        this.applyFormatterInformationToNotes = function (stave, s, formatter) {
             // mad props to our friend Vladimir Viro for figuring this out!
             // visit http://peachnote.com/
             if (s === undefined) {
                 s = this.stream;
             }
-            var formatter = this.activeFormatter;
             var noteOffsetLeft = 0;
             //var staveHeight = 80;
             if (stave != undefined) {
@@ -340,9 +376,6 @@ define(['vexflow'], function(require) {
         this.addStaffConnectors = function (s) {
             if (s === undefined) {
                 s = this.stream;
-            }
-            if (!(s.isClassOrSubclass('Score'))) {
-                return;
             }
             var numParts = s.length;
             if (numParts < 2) {
