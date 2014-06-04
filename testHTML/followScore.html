@@ -86,6 +86,7 @@
                 svgDOM.appendChild(barDOM);
                 $('body').append( $("<br/>") );
                 
+                // TODO: generalize...
                 document.getElementById('can').appendChild(svgDOM);
                 lastX = 0;
                 lastNoteIndex = -1;
@@ -98,6 +99,7 @@
                         barDOM: barDOM,
                         lastX: lastX,
                         lastNoteIndex: lastNoteIndex,
+                        svgDOM: svgDOM,
                 };
                 scrollScore(scrollInfo);                
             };
@@ -134,10 +136,13 @@
                     setTimeout( function () {scrollScore(i)}, advanceTime * 1000);                  
                 } else {
                     i.barDOM.setAttribute('style', 'display:none');
+                    // TODO: generalize...
+                    document.getElementById('can').removeChild(i.svgDOM);
+                    
                 }
             };
             
-            s = music21.tinyNotation.TinyNotation("4/4 c2 d#4 e8 f g4 B c c16 d32 e f g a b c'1 b4 a g f e8 f e d c4 B c1");
+            s = music21.tinyNotation.TinyNotation("4/4 c2 d#4 e8 f g4 B c c16 d32 e f g a b c'1");// b4 a g f e8 f e d c4 B c1");
             s.tempo = 90;
             //s1 = music21.tinyNotation.TinyNotation("4/4 E2 F#4 G8 A G2 E E1 A1");// B4 c B A G8 A G F E4 D C1");
             // s = new music21.stream.Score();
