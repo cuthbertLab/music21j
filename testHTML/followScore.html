@@ -24,6 +24,11 @@
                     allNotes.push(info);
                     totalDuration += n.duration.quarterLength;
                 }
+                allNotes.push( {element: undefined,
+                    offset: ns.elements[ns.length -1].duration.quarterLength + totalDuration,
+                    x: ns.elements[ns.length -1].x + 12,
+          
+                    });
                 return allNotes;            
             };
             var getXAtOffset = function(offset, offsetToPixelMap) {
@@ -61,7 +66,7 @@
             };            
             function scrollScoreStart(s, c) {
                 var tempo = s.tempo;
-                console.log('tempo' , tempo);
+                //console.log('tempo' , tempo);
                 var currentTime = 0.0;
                 var pm = offsetToPixelMaps(s);
                 var maxX = pm[pm.length - 1].x;
@@ -114,9 +119,11 @@
                         continue;
                     }
                     var el = pm[j].element
-                    var midNum = el.pitch.midi;
-                    music21.MIDI.noteOn(0, midNum, 100, 0);
-                    music21.MIDI.noteOff(0, midNum, el.duration.quarterLength * 60/i.tempo);
+                    if (el != undefined) {
+                        var midNum = el.pitch.midi;
+                        music21.MIDI.noteOn(0, midNum, 100, 0);
+                        music21.MIDI.noteOff(0, midNum, el.duration.quarterLength * 60/i.tempo);                        
+                    }
                     lastNoteIndex = j;
                     
                 }
@@ -138,7 +145,7 @@
             //s.append(s1);
             
             music21.MIDI.loadSoundfont('acoustic_grand_piano', function() { 
-                   console.log('hi');
+                   //console.log('hi');
             });
             s.renderOptions.events.click = function () {
                 music21.MIDI.loadSoundfont('acoustic_grand_piano', function() { 
@@ -149,7 +156,7 @@
             var c = s.appendNewCanvas( $("#can"), {} );
             var h = $(c).css('height');
             h = h.substring(0, h.length - 2);
-            console.log(h);
+            //console.log(h);
             $(c).css('height', h / 0.7 );
 	
 	        //$.each(s.flat.notes.elements, function (i, n) {console.log(n.x)})
