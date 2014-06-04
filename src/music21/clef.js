@@ -147,7 +147,7 @@ define(['music21/base','music21/pitch'], function(require) {
         var totalNotes = 0;
         var totalPitch = 0.0;
         for (var i = 0; i < stFlat.length; i++) {
-            var el = stFlat.elements[i];
+            var el = stFlat.get(i);
             if (el.pitch != undefined) {
                 totalNotes += 1;
                 totalPitch += el.pitch.diatonicNoteNum;

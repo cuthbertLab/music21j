@@ -19,6 +19,7 @@ define(['music21/duration'], function(require) {
 		this.classes = ['Music21Object'];
 		this.classSortOrder = 20; // default;
 		this._priority = 0; // default;
+		this.offset = null; // default -- simple version of m21.
 		this.parent = undefined;
 		this.isStream = false;
 		// this.isSpanner = false; // add when supported,
