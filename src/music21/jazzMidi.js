@@ -132,7 +132,7 @@ define(['music21/miditools'], function(require) {
         me.sendToMIDIjs();
         if (me.noteOn) {
             var m21n = me.music21Note();
-            if (s.elements.length > 7) {
+            if (s.length > 7) {
                 s.elements = s.elements.slice(1)
             }
             s.append(m21n);

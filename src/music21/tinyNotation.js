@@ -98,7 +98,7 @@ define(['music21/base','music21/pitch','music21/note', 'music21/meter'], functio
 			lastDuration = noteObj.duration.quarterLength;
 			m.append(noteObj);
 		}
-		if (p._elements.length > 0) {
+		if (p.length > 0) {
             p.append(m);
             var thisClef = music21.clef.bestClef(p);
             p.clef = thisClef;
