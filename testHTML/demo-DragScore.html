@@ -73,13 +73,13 @@ function handleThemeDrop(event, ui) {
 }
 
 function clearScore() {
-	allStream._elements = [];
+	allStream.elements = [];
 	var newCanvas = allStreamScore.createPlayableCanvas();
 	$('#dropDiv canvas').replaceWith(newCanvas[0]);
 }
 
 function undoAdd() {
-	allStream._elements = allStream._elements.slice(0, allStream._elements.length - 1);
+	allStream.elements = allStream._elements.slice(0, allStream.length - 1);
 	var newCanvas = allStreamScore.createPlayableCanvas();
 	$('#dropDiv canvas').replaceWith(newCanvas[0]);	
 }
