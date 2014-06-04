@@ -64,14 +64,21 @@ define(['music21/base','music21/renderOptions','music21/clef', 'jquery'], functi
 	        			var tempEls = [];
 	        			for (var i = 0; i < this.length; i++) {
 	        				var el = this.get(i);
+	        				//console.log(i, this.length);
 	        				if (el.elements !== undefined) {
-	                            var tempArray = el.flat.elements;	        				    
-	                            tempEls.push.apply(tempEls, tempArray);
+	                            var offsetShift = el.offset;
+	                            //console.log('offsetShift', offsetShift, el.classes[el.classes.length -1]);
+	                            var elFlat = el.flat;
+	                            for (var j = 0; j < elFlat.length; j++) {
+	                                // offset should NOT be null because already in Stream
+	                                elFlat.get(j).offset += offsetShift;
+	                            }
+	                            tempEls.push.apply(tempEls, elFlat._elements);
 	        				} else {
 	        				    tempEls.push(el);
 	        				}	        				
 	        			}
-	                    var newSt = new stream.Stream(); // TODO: take Stream class Part, etc.
+	                    var newSt = music21.common.copyStream(this);
 	                    newSt.elements = tempEls;
 	        			return newSt;
 	    			} else {
@@ -212,29 +219,30 @@ define(['music21/base','music21/renderOptions','music21/clef', 'jquery'], functi
 					return this._elements;
 				},
 				set: function(newElements) {
-				    this._elements = newElements;
+//				    this._elements = newElements;
 //				    
-//				    var highestOffsetSoFar = 0.0;
-//				    this._elements = [];
-//				    this._elementOffsets = [];
-//				    var tempInsert = [];
-//				    for (var i = 0; i < newElements.length; i++) {
-//				        var thisEl = newElements[i];
-//				        var thisElOffset = thisEl.offset;
-//				        if (thisElOffset == null || thisElOffset == highestOffsetSoFar) {
-//				            // append
-//				            this._elements.push(thisEl);
-//				            thisEl.offset = highestOffsetSoFar;
-//				            this._elementOffsets.push(highestOffsetSoFar);
-//				            highestOffsetSoFar += thisEl.duration.quarterLength;
-//				        } else { // append -- slow
-//				            tempInsert.push(thisEl);
-//				        }
-//				    }
-//				    for (var i = 0; i < tempInsert.length; i++ ) {
-//				        var thisEl = tempInsert[i];
-//				        this.insert(thisEl.offset, thisEl);
-//				    }
+				    var highestOffsetSoFar = 0.0;
+				    this._elements = [];
+				    this._elementOffsets = [];
+				    var tempInsert = [];
+				    for (var i = 0; i < newElements.length; i++) {
+				        var thisEl = newElements[i];
+				        var thisElOffset = thisEl.offset;
+				        if (thisElOffset == null || thisElOffset == highestOffsetSoFar) {
+				            // append
+				            this._elements.push(thisEl);
+				            thisEl.offset = highestOffsetSoFar;
+				            this._elementOffsets.push(highestOffsetSoFar);
+				            highestOffsetSoFar += thisEl.duration.quarterLength;
+				        } else { // append -- slow
+				            tempInsert.push(thisEl);
+				        }
+				    }
+				    //console.warn('end', highestOffsetSoFar, tempInsert);
+				    for (var i = 0; i < tempInsert.length; i++ ) {
+				        var thisEl = tempInsert[i];
+				        this.insert(thisEl.offset, thisEl);
+				    }
 				}
 			}
 	    });
@@ -670,17 +678,19 @@ define(['music21/base','music21/renderOptions','music21/clef', 'jquery'], functi
         };
         this.scrollScoreStart = function (c, event) {
             var offsetToPixelMaps = function(s, c) {
-                var totalDuration = 0.0;
                 var ns = s.flat.notesAndRests;
                 var allMaps = [];
                 var pixelScaling = s.getPixelScaling(c);
                 for (var i = 0; i < ns.length; i++) {
                     var n = ns.get(i);
+                    var currentOffset = n.offset;
                     var foundPreviousMap = false; // multi parts...
                     for (var j = allMaps.length - 1; j >= 0; j = j - 1) {
                         // find the last map with this offset. searches backwards for speed.
                         var oldMap = allMaps[j];
-                        if (oldMap.offset == totalDuration) {
+                        if (oldMap.offset == currentOffset) {
+                            //console.log('found element at offset', currentOffset, 'existing el', 
+                            //        oldMap.elements[0].nameWithOctave, 'new el', n.nameWithOctave);
                             oldMap.elements.push(n);
                             foundPreviousMap = true;
                         }
@@ -688,15 +698,14 @@ define(['music21/base','music21/renderOptions','music21/clef', 'jquery'], functi
                     if (foundPreviousMap == false) {
                         var map = {};
                         map.elements = [n];
-                        map.offset = totalDuration;
+                        map.offset = currentOffset;
                         map.x = n.x * pixelScaling;
                         allMaps.push(map);
-                        totalDuration += n.duration.quarterLength;                        
                     }
                 }
                 allMaps.push( {
                     elements: [undefined],
-                    offset: ns.get(-1).duration.quarterLength + totalDuration,
+                    offset: ns.get(-1).duration.quarterLength + ns.get(-1).offset,
                     x: ns.get(-1).x + 12, // hack -- assume 12 pixels wide final note
                 });
                 return allMaps;            
@@ -782,6 +791,7 @@ define(['music21/base','music21/renderOptions','music21/clef', 'jquery'], functi
                     i.barDOM.setAttribute('x', x);
                     i.lastX = x;    
                 }
+                // pm is a pixelMap not a Stream
                 for (var j = 0; j < pm.length; j++) {
                     var pmOff = pm[j].offset;
                     if (j <= lastNoteIndex) {
@@ -1851,7 +1861,7 @@ define(['music21/base','music21/renderOptions','music21/clef', 'jquery'], functi
             s.append( new music21.note.Note("D#5"));
             equal (s.duration.quarterLength, 3.0, "overridden duration -- remains");
         });
-        test( "music21.stream.Stream.append", function () {
+        test( "music21.stream.Stream.insert and offsets", function () {
             var s = new music21.stream.Stream();
             s.append( new music21.note.Note("C#5"));
             var n3 = new music21.note.Note("E5");
@@ -1861,6 +1871,27 @@ define(['music21/base','music21/renderOptions','music21/clef', 'jquery'], functi
             equal (s.get(0).name, 'C#');
             equal (s.get(1).name, 'D#');
             equal (s.get(2).name, 'E');
+            equal (s.get(0).offset, 0.0);
+            equal (s.get(1).offset, 1.0);
+            equal (s.get(2).offset, 2.0);
+            var p = new music21.stream.Part();
+            var m1 = new music21.stream.Measure();
+            var n1 = new music21.note.Note("C#");
+            n1.duration.type = 'whole';
+            m1.append(n1);
+            var m2 = new music21.stream.Measure();
+            var n2 = new music21.note.Note("D#");
+            n2.duration.type = 'whole';
+            m2.append(n2);
+            p.append(m1);
+            p.append(m2);
+            equal (p.get(0).get(0).offset, 0.0);
+            var pf = p.flat;
+            equal (pf.get(1).offset, 4.0);
+            var pf2 = p.flat; // repeated calls do not change
+            equal (pf2.get(1).offset, 4.0, 'repeated calls do not change offset');
+            var pf3 = pf2.flat;
+            equal (pf3.get(1).offset, 4.0, '.flat.flat does not change offset');
             
         });
 	    
