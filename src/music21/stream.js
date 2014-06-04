@@ -693,7 +693,6 @@ define(['music21/base','music21/renderOptions','music21/clef', 'jquery'], functi
 
             var tempo = s.tempo;
             //console.log('tempo' , tempo);
-            var currentTime = 0.0;
             var pm = offsetToPixelMaps(s);
             var maxX = pm[pm.length - 1].x;
             var svgDOM = music21.common.makeSVGright('svg', {
@@ -745,7 +744,7 @@ define(['music21/base','music21/renderOptions','music21/clef', 'jquery'], functi
                     } else if (Math.abs(offset - pmOff) > .1) {
                         continue;
                     }
-                    var el = pm[j].element
+                    var el = pm[j].element;
                     if (el != undefined) {
                         var midNum = el.pitch.midi;
                         music21.MIDI.noteOn(0, midNum, 100, 0);
@@ -758,7 +757,7 @@ define(['music21/base','music21/renderOptions','music21/clef', 'jquery'], functi
                 //console.log(barDOM.setAttribute);
                 var advanceTime = 0.05;
                 if (x < i.maxX) {
-                    setTimeout( function () {scrollScore(i)}, advanceTime * 1000);                  
+                    setTimeout( function () { scrollScore(i); }, advanceTime * 1000);                  
                 } else {
                     i.barDOM.setAttribute('style', 'display:none');
                     // TODO: generalize...
