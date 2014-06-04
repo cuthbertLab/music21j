@@ -18,7 +18,7 @@
 // k.whiteKeyWidth = 40; // default 23
 
 
-define(['music21/base', 'music21/pitch', 'loadMIDI', 'jquery'], function(require) {
+define(['music21/base', 'music21/pitch', 'music21/common', 'loadMIDI', 'jquery'], function(require) {
     var keyboard = {};
     
     keyboard.Key = function () {
@@ -40,7 +40,7 @@ define(['music21/base', 'music21/pitch', 'loadMIDI', 'jquery'], function(require
                     width: this.width * this.scaleFactor,
                     height: this.height * this.scaleFactor,
                 };
-            var keyDOM = music21.keyboard.makeSVGright('rect', keyattrs);
+            var keyDOM = music21.common.makeSVGright('rect', keyattrs);
             for (var x in this.callbacks) {
                 keyDOM.addEventListener(x, this.callbacks[x], false);
             }
@@ -70,7 +70,7 @@ define(['music21/base', 'music21/pitch', 'loadMIDI', 'jquery'], function(require
                     r: this.width/4,
                 };
             
-            var circleDom = music21.keyboard.makeSVGright('circle', keyattrs);
+            var circleDom = music21.common.makeSVGright('circle', keyattrs);
             this.parent.svgObj.appendChild(circleDom);
             //console.log(circleDom);
             return circleDom;
@@ -113,7 +113,7 @@ define(['music21/base', 'music21/pitch', 'loadMIDI', 'jquery'], function(require
                     'font-size': fontSize,
                 };
             
-            var textDom = music21.keyboard.makeSVGright('text', textattrs);
+            var textDom = music21.common.makeSVGright('text', textattrs);
             var textNode = document.createTextNode(idStr);
             textDom.appendChild(textNode);
             this.parent.svgObj.appendChild(textDom);
@@ -203,7 +203,7 @@ define(['music21/base', 'music21/pitch', 'loadMIDI', 'jquery'], function(require
            var height = 120 * this.scaleFactor;
            var heightString = height.toString() + 'px';
            
-           var svgDOM = music21.keyboard.makeSVGright('svg', {
+           var svgDOM = music21.common.makeSVGright('svg', {
                'xml:space': 'preserve',
                'height': heightString,
                'width': totalWidth.toString() + 'px',
@@ -264,14 +264,6 @@ define(['music21/base', 'music21/pitch', 'loadMIDI', 'jquery'], function(require
                keyObj.addNoteName(labelOctaves);
            }
        };
-    };
-    keyboard.makeSVGright = function (tag, attrs) {
-        // see http://stackoverflow.com/questions/3642035/jquerys-append-not-working-with-svg-element
-        // normal JQuery does not work.
-        var el = document.createElementNS('http://www.w3.org/2000/svg', tag);
-        for (var k in attrs)
-            el.setAttribute(k, attrs[k]);
-        return el;
     };
     
     // end of define
