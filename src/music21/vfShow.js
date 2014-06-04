@@ -1,7 +1,7 @@
 define(['vexflow'], function(require) {
     var vfShow = {}; 
     
-    vfShow.Renderer = function (s, where, canvas) {
+    vfShow.Renderer = function (s, canvas, where) {
         this.stream = s;
         this.streamType = s.classes[-1];
 
@@ -57,11 +57,11 @@ define(['vexflow'], function(require) {
                             subStream.renderOptions.rightBarline = 'end';
                         }
                     }
-                    this.renderVexflowOnCanvas(canvas, subStream);
+                    this.renderVexflowOnCanvas(subStream);
                 }
             } else {
                 s.makeAccidentals();
-                var stave = this.renderVexflowNotesOnCanvas(canvas, s);
+                var stave = this.renderVexflowNotesOnCanvas(s);
                 s.activeVFStave = stave;
             }
             if (s.isClassOrSubclass('Score')) {
@@ -69,7 +69,7 @@ define(['vexflow'], function(require) {
             }
         };
         
-        this.renderVexflowNotesOnCanvas = function (canvas, s) {     
+        this.renderVexflowNotesOnCanvas = function (s) {     
             var renderer = this.vfRenderer;
             if (s === undefined) {
                 s = this.stream;
@@ -97,7 +97,7 @@ define(['vexflow'], function(require) {
                 stave.setMeasure(rendOp.measureIndex + 1);
             }
             if (rendOp.displayClef) {
-                stave.addClef(this.clef.name);
+                stave.addClef(s.clef.name);
             }
             if ((s.keySignature != undefined) && (rendOp.displayKeySignature)) {
                 stave.addKeySignature(s.keySignature.vexflow());
