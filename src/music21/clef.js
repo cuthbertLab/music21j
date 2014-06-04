@@ -143,6 +143,7 @@ define(['music21/base','music21/pitch'], function(require) {
 
     
     clef.bestClef = function(st) {
+        //console.log('calling flat on stream: ', st.elements.length, st.classes[st.classes.length - 1]);
         var stFlat = st.flat;
         var totalNotes = 0;
         var totalPitch = 0.0;
