@@ -536,46 +536,19 @@ define(['music21/base','music21/renderOptions','music21/clef', 'jquery'], functi
 	    };
 	    
 	    this.stopPlayStream = function () {
+	        // turns off all currently playing MIDI notes (on any stream) and stops playback.
 	    	this._stopPlaying = true;
 	    	for (var i = 0; i < 127; i++) {
 	    	    music21.MIDI.noteOff(0, midNum, 0);
 	    	}
 		};
 	    
-		// reflow
+		/** ----------------------------------------------------------------------
+		 * 
+		 *  Canvas routines -- to be factored out eventually.
+		 * 
+		 */
 		
-		this.windowReflowStart = function (jCanvas) {
-		    // set up a bunch of windowReflow bindings that affect the canvas.
-		    var callingStream = this;
-		    var jCanvasNow = jCanvas;
-		    $(window).bind('resizeEnd', function() {
-		        //do something, window hasn't changed size in 500ms
-		        var jCanvasParent = jCanvasNow.parent();
-		        var newWidth = jCanvasParent.width();
-		        var canvasWidth = newWidth;
-		        //console.log(canvasWidth);
-		        //console.log('resizeEnd triggered', newWidth);
-		        callingStream.resetRenderOptionsRecursive();
-		        callingStream.maxSystemWidth = canvasWidth - 40;
-		        jCanvasNow.remove();
-		        var canvasObj = callingStream.appendNewCanvas(jCanvasParent);
-		        jCanvasNow = $(canvasObj);
-		    });
-		    $(window).resize( function() {
-		        if (this.resizeTO) {
-		            clearTimeout(this.resizeTO);
-		        }
-		        this.resizeTO = setTimeout(function() {
-		            $(this).trigger('resizeEnd');
-		        }, 200);
-		    });
-		    setTimeout(function() {
-                $(this).trigger('resizeEnd');
-            }, 1000);
-		};
-		
-	    // Canvas Routines ... 
-	    
 		this.createNewCanvas = function (scaleInfo, width, height) {
 	    	if (this.hasSubStreams() ) { 
 	    		this.setSubstreamRenderOptions();
@@ -605,7 +578,7 @@ define(['music21/base','music21/renderOptions','music21/clef', 'jquery'], functi
 				}
 				newCanvas.attr('height', computedHeight );
 				// TODO: CUT HEIGHT!
-				newCanvas.css('height', Math.floor(computedHeight * .7).toString() + "px");
+				newCanvas.css('height', Math.floor(computedHeight * 0.7).toString() + "px");
 			}
 			return newCanvas;
 		};
@@ -642,26 +615,188 @@ define(['music21/base','music21/renderOptions','music21/clef', 'jquery'], functi
 	        $(bodyElement + " " + 'canvas').replaceWith(canvasBlock);
 			return canvasBlock[0];
 		};
-		
-		this.setRenderInteraction = function (canvas) {
+        this.renderScrollableCanvas = function (where) {
+            var $where = where;
+            if (where === undefined) {
+                $where = $(document.body);
+            } else if (where.jquery === undefined) {
+                $where = $(where);
+            }
+            var $innerDiv = $("<div>").css('position', 'absolute');
+            var storedThis = this; // not sure if necessary
+            var c = undefined;            
+            this.renderOptions.events.click = function () {
+                storedThis.scrollScoreStart(c);
+            };
+            // remove 0.7 when height is normalized...
+            c = this.appendNewCanvas( $innerDiv, {} );
+            var h = $(c).css('height');
+            h = h.substring(0, h.length - 2);
+            $(c).css('height', h / 0.7 );
+            $where.append( $innerDiv );
+        };
+        this.scrollScoreStart = function (c) {
+            var offsetToPixelMaps = function(s, c) {
+                var totalDuration = 0.0;
+                var ns = s.flat.notes;
+                var allMaps = [];
+                var pixelScaling = s.getPixelScaling(c);
+                for (var i = 0; i < ns.length; i++) {
+                    var n = ns.elements[i];
+                    var map = {};
+                    map.element = n;
+                    map.offset = totalDuration;
+                    map.x = n.x * pixelScaling;
+                    allMaps.push(map);
+                    totalDuration += n.duration.quarterLength;
+                }
+                allMaps.push( {
+                    element: undefined,
+                    offset: ns.elements[ns.length -1].duration.quarterLength + totalDuration,
+                    x: ns.elements[ns.length -1].x + 12, // hack -- assume 12 pixels wide final note
+                });
+                return allMaps;            
+            };
+            var getXAtOffset = function(offset, offsetToPixelMap) {
+                var prevNoteMap = undefined;
+                var nextNoteMap = undefined;
+                for (var i = 0; i < offsetToPixelMap.length; i++) {
+                    thisMap = offsetToPixelMap[i];
+                    if (thisMap.offset <= offset) {
+                        prevNoteMap = thisMap;
+                    } 
+                    if (thisMap.offset >= offset ) {
+                        nextNoteMap = thisMap;
+                        break;
+                    }
+                }
+                if (prevNoteMap === undefined && nextNoteMap === undefined) {
+                    return offsetToPixelMap[offsetToPixelMap.length - 1].x;   
+                } else if (prevNoteMap === undefined) {
+                    prevNoteMap = nextNoteMap;
+                } else if (nextNoteMap === undefined) {
+                    nextNoteMap = prevNoteMap;
+                }
+                var offsetFromPrev = offset - prevNoteMap.offset;
+                var offsetDistance = nextNoteMap.offset - prevNoteMap.offset;
+                var pixelDistance = nextNoteMap.x - prevNoteMap.x;
+                var offsetToPixelScale = 0;
+                if (offsetDistance != 0) {
+                    offsetToPixelScale = pixelDistance/offsetDistance;                    
+                } else {
+                    offsetToPixelScale = 0;   
+                }
+                var pixelsFromPrev = offsetFromPrev * offsetToPixelScale;
+                var offsetX = prevNoteMap.x + pixelsFromPrev;
+                return offsetX;
+            };            
+
+            var tempo = s.tempo;
+            //console.log('tempo' , tempo);
+            var currentTime = 0.0;
+            var pm = offsetToPixelMaps(s);
+            var maxX = pm[pm.length - 1].x;
+            var svgDOM = music21.common.makeSVGright('svg', {
+                'height': c.height.toString() +'px',
+                'width': c.width.toString() + 'px',
+                'style': 'position:absolute; top: 0px; left: 0px;',
+            });
+            var startX = pm[0].x;
+            var barDOM = music21.common.makeSVGright('rect', {
+                width: 10, 
+                height: c.height - 6, 
+                x: startX, 
+                y: 3,
+                style: 'fill: rgba(255, 255, 100, .5);stroke:white',    
+            } );
+            svgDOM.appendChild(barDOM);
+      
+            // TODO: generalize...
+            var parent = $(c).parent()[0];
+            parent.appendChild(svgDOM);
+            lastX = 0;
+            lastNoteIndex = -1;
+            
+            scrollInfo = {
+                    pm: pm, 
+                    startTime: new Date().getTime(),
+                    tempo: tempo,
+                    maxX: maxX,
+                    barDOM: barDOM,
+                    lastX: lastX,
+                    lastNoteIndex: lastNoteIndex,
+                    svgDOM: svgDOM,
+                    canvasParent: parent,
+            };
+            var scrollScore = function (i) {
+                var timeSinceStartInMS = new Date().getTime() - i.startTime;
+                var offset = timeSinceStartInMS/1000 * i.tempo/60;
+                var pm = i.pm;
+                var x = getXAtOffset(offset, pm);
+                x = Math.floor(x);
+                if (x > i.lastX) {
+                    i.barDOM.setAttribute('x', x);
+                    i.lastX = x;    
+                }
+                for (var j = 0; j < pm.length; j++) {
+                    var pmOff = pm[j].offset
+                    if (j <= lastNoteIndex) {
+                        continue;
+                    } else if (Math.abs(offset - pmOff) > .1) {
+                        continue;
+                    }
+                    var el = pm[j].element
+                    if (el != undefined) {
+                        var midNum = el.pitch.midi;
+                        music21.MIDI.noteOn(0, midNum, 100, 0);
+                        music21.MIDI.noteOff(0, midNum, el.duration.quarterLength * 60/i.tempo);                        
+                    }
+                    lastNoteIndex = j;
+                    
+                }
+                //console.log(x, offset);
+                //console.log(barDOM.setAttribute);
+                var advanceTime = 0.05;
+                if (x < i.maxX) {
+                    setTimeout( function () {scrollScore(i)}, advanceTime * 1000);                  
+                } else {
+                    i.barDOM.setAttribute('style', 'display:none');
+                    // TODO: generalize...
+                    i.canvasParent.removeChild(i.svgDOM);
+                    
+                }
+            };
+
+            scrollScore(scrollInfo);                
+        };
+
+        this.setRenderInteraction = function (canvas) {
 			/*
 			 * Set the type of interaction on the canvas based on 
 			 *    Stream.renderOptions.events['click']
 			 *    Stream.renderOptions.events['dblclick']
+             *    Stream.renderOptions.events['resize']
 			 *    
 			 * Currently the only options available for each are:
 			 *    'play' (string)
+			 *    'reflow' (string; only on event['resize'])
 			 *    customFunction
 			 */
-			var jCanvas = $(canvas);
-			
+		    var $canvas = canvas;
+		    if (canvas === undefined) {
+		        return;
+		    } else if (canvas.jquery === undefined) {
+		        $canvas = $(canvas);
+		    }
+		    // assumes that canvas has a .storedStream function?
+		    
 			$.each(this.renderOptions.events, $.proxy(function (eventType, eventFunction) {
 				if (typeof(eventFunction) == 'string' && eventFunction == 'play') {
-					jCanvas.on(eventType, function () { this.storedStream.playStream(); });
+					$canvas.on(eventType, function () { this.storedStream.playStream(); });
 				} else if (typeof(eventFunction) == 'string' && eventType == 'resize' && eventFunction == 'reflow') {
-				    this.windowReflowStart(jCanvas);
+				    this.windowReflowStart($canvas);
 				} else if (eventFunction != undefined) {
-					jCanvas.on(eventType, eventFunction);
+					$canvas.on(eventType, eventFunction);
 				}
 			}, this ) );
 		};
@@ -924,6 +1059,37 @@ define(['music21/base','music21/renderOptions','music21/clef', 'jquery'], functi
 			buttonDiv.append( $("<button>&#9724</button>").click( function () { stopStream(this); } ));
 			return buttonDiv;		
 		};
+        // reflow
+        
+        this.windowReflowStart = function (jCanvas) {
+            // set up a bunch of windowReflow bindings that affect the canvas.
+            var callingStream = this;
+            var jCanvasNow = jCanvas;
+            $(window).bind('resizeEnd', function() {
+                //do something, window hasn't changed size in 500ms
+                var jCanvasParent = jCanvasNow.parent();
+                var newWidth = jCanvasParent.width();
+                var canvasWidth = newWidth;
+                //console.log(canvasWidth);
+                //console.log('resizeEnd triggered', newWidth);
+                callingStream.resetRenderOptionsRecursive();
+                callingStream.maxSystemWidth = canvasWidth - 40;
+                jCanvasNow.remove();
+                var canvasObj = callingStream.appendNewCanvas(jCanvasParent);
+                jCanvasNow = $(canvasObj);
+            });
+            $(window).resize( function() {
+                if (this.resizeTO) {
+                    clearTimeout(this.resizeTO);
+                }
+                this.resizeTO = setTimeout(function() {
+                    $(this).trigger('resizeEnd');
+                }, 200);
+            });
+            setTimeout(function() {
+                $(this).trigger('resizeEnd');
+            }, 1000);
+        };
 
 	};
 
