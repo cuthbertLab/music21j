@@ -360,11 +360,13 @@ define(['music21/base','music21/renderOptions','music21/clef', 'jquery'], functi
 	    	var hasSubStreams = this.hasSubStreams();
 	    	if (hasSubStreams) {
 	    		for (var i = 0; i < this.length; i++) {
-	    			var m = this.get(i);
-	    			if (i == this.length - 1) {
-	    				m.renderOptions.rightBarline = 'end';
+	    			var subStream = this.get(i);
+	    			if ('Measure' in subStream.classes) {
+                        if (i == this.length - 1) {
+                            subStream.renderOptions.rightBarline = 'end';
+                        }
 	    			}
-	    			m.renderVexflowOnCanvas(canvas, renderer);
+                    subStream.renderVexflowOnCanvas(canvas, renderer);
 	    		}
 	    	} else {
 	    		this.makeAccidentals();
@@ -616,7 +618,7 @@ define(['music21/base','music21/renderOptions','music21/clef', 'jquery'], functi
 					//console.log('computed Height: ' + computedHeight);
 				}
 				newCanvas.attr('height', computedHeight );
-				// TODO: CUT HEIGHT!
+				// TODO: CUT HEIGHT! -- use VexFlow ctx.scale(0.7, 0.7);
 				newCanvas.css('height', Math.floor(computedHeight * 0.7).toString() + "px");
 			}
 			return newCanvas;

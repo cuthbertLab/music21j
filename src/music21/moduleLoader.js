@@ -59,6 +59,7 @@ define(['music21/pitch',
         'music21/expressions',
         'music21/tempo',
         'music21/keyboard',
+        'music21/vfShow',
         ], 
         function(require) {
 			return music21;
