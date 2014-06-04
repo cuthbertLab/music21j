@@ -8,7 +8,7 @@
  * Based on music21 (=music21p), Copyright (c) 2006–14, Michael Scott Cuthbert and cuthbertLab
  * 
  */
-define(['music21/base','music21/renderOptions','music21/clef', 'jquery'], function(require) {   
+define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow', 'jquery'], function(require) {   
     var stream = {};
 	
 	stream.Stream = function () {
@@ -350,175 +350,11 @@ define(['music21/base','music21/renderOptions','music21/clef', 'jquery'], functi
 	    		}
 	    	}
 	    };
-	    
-	    this.activeFormatter = undefined;
-	    
-	    this.renderVexflowOnCanvas = function (canvas, renderer) {
-	    	if (renderer == undefined) {
-	    		renderer = new Vex.Flow.Renderer(canvas, Vex.Flow.Renderer.Backends.CANVAS);
-	    	}
-	    	var hasSubStreams = this.hasSubStreams();
-	    	if (hasSubStreams) {
-	    		for (var i = 0; i < this.length; i++) {
-	    			var subStream = this.get(i);
-	    			if ('Measure' in subStream.classes) {
-                        if (i == this.length - 1) {
-                            subStream.renderOptions.rightBarline = 'end';
-                        }
-	    			}
-                    subStream.renderVexflowOnCanvas(canvas, renderer);
-	    		}
-	    	} else {
-	    		this.makeAccidentals();
-	    		var stave = this.renderVexflowNotesOnCanvas(canvas, renderer);
-	    		this.activeVFStave = stave;
-	    	}
-	    	if (this.isClassOrSubclass('Score')) {
-	    		this.addStaffConnectors(renderer);
-	    	}
-		};
-		
-	    this.renderVexflowNotesOnCanvas = function (canvas, renderer) { 	
-	    	if (renderer == undefined) {
-	    		renderer = new Vex.Flow.Renderer(canvas, Vex.Flow.Renderer.Backends.CANVAS);
-	    	}
-	    	var ctx = renderer.getContext();
+       this.renderVexflowOnCanvas = function (canvas) {
+           vfr = new music21.vfShow.Renderer(this, canvas);
+           vfr.renderVexflowOnCanvas();
+       };
 
-			var rendOp = this.renderOptions;
-			// measure level...
-			var width = rendOp.width;
-			if (width == undefined) {
-				width = this.estimateStaffLength() + rendOp.staffPadding;
-			}
-			var top = rendOp.top;
-			if (top == undefined) {
-				top = 0;
-			}
-			var left = rendOp.left;
-			if (left == undefined) {
-				left = 10;
-			}
-			//console.log('streamLength: ' + streamLength);
-			var stave = new Vex.Flow.Stave(left, top, width);
-	        rendOp.vexflowRenderStafflines(stave);
-			if (rendOp.showMeasureNumber) {
-	        	stave.setMeasure(rendOp.measureIndex + 1);
-	        }
-			if (rendOp.displayClef) {
-				stave.addClef(this.clef.name);
-			}
-			if ((this.keySignature != undefined) && (rendOp.displayKeySignature)) {
-				stave.addKeySignature(this.keySignature.vexflow());
-			}
-			
-	        if ((this.timeSignature != undefined) && (rendOp.displayTimeSignature)) {
-				stave.addTimeSignature(
-				        this.timeSignature.numerator.toString() 
-				        + "/" 
-				        + this.timeSignature.denominator.toString()); // TODO: convertToVexflow...
-			}
-	        if (rendOp.rightBarline != undefined) {
-	        	var bl = rendOp.rightBarline;
-	        	var barlineMap = {
-	        			'single': 'SINGLE',
-	        			'double': "DOUBLE",
-	        			'end': 'END',
-	        			};
-	        	var vxBL = barlineMap[bl];
-	        	if (vxBL != undefined) {
-	        		stave.setEndBarType(Vex.Flow.Barline.type[vxBL]);
-	        	}
-	        }
-	        
-	        stave.setContext(ctx);
-			stave.draw();
-
-			// add notes...
-	        var notes = this.vexflowNotes();
-	        var voice = this.vexflowVoice();
-
-			voice.addTickables(notes);
-			
-			// find beam groups -- n.b. this wipes out stem direction and
-			//      screws up middle line stems -- worth it for now.
-			var beamGroups = [];
-			if (this.autoBeam) {
-				beamGroups = Vex.Flow.Beam.applyAndGetBeams(voice);
-			} 
-				
-			var formatter = new Vex.Flow.Formatter();
-			if (music21.debug) {
-				console.log("Voice: ticksUsed: " + voice.ticksUsed + " totalTicks: " + voice.totalTicks);
-			}
-			//Vex.Flow.Formatter.FormatAndDraw(ctx, stave, notes);
-			formatter.joinVoices([voice]);
-			formatter.formatToStave([voice], stave);
-			//formatter.format([voice], this.estimateStaffLength() );
-
-			voice.draw(ctx, stave);
-
-			// draw beams
-			for(var i = 0; i < beamGroups.length; i++){
-				 beamGroups[i].setContext(ctx).draw();
-			}
-			
-			this.activeFormatter = formatter;
-			this.applyFormatterInformationToNotes(stave);
-			//console.log(stave.start_x + " -- stave startx");
-			//console.log(stave.glyph_start_x + " -- stave glyph startx");
-			return stave;
-	    };
-	    this.applyFormatterInformationToNotes = function (stave) {
-	        // mad props to our friend Vladimir Viro for figuring this out!
-	        // visit http://peachnote.com/
-	        
-	        var formatter = this.activeFormatter;
-	        var noteOffsetLeft = 0;
-	        //var staveHeight = 80;
-	        if (stave != undefined) {
-	        	noteOffsetLeft = stave.start_x + stave.glyph_start_x;
-	        	if (music21.debug) {
-	        		console.log("noteOffsetLeft: " + noteOffsetLeft + " ; stave.start_x: " + stave.start_x);
-	            	console.log("Bottom y: " + stave.getBottomY() );	        			
-	        	}
-	        	//staveHeight = stave.height;
-	        }
-	        
-			var nextTicks = 0;
-			for (var i = 0; i < this.length; i ++ ) {
-				var el = this.get(i);
-				if (el.isClassOrSubclass('GeneralNote')) {
-					var vfn = el.activeVexflowNote;
-					if (vfn === undefined) {
-					    continue;
-					}
-					var nTicks = parseInt(vfn.ticks);
-					var formatterNote = formatter.tContexts.map[String(nextTicks)];				   
-					nextTicks += nTicks;
-				    el.x = vfn.getAbsoluteX();
-				    //console.log(i + " " + el.x + " " + formatterNote.x + " " + noteOffsetLeft);
-				    if (formatterNote === undefined) {
-				        continue;
-				    }
-				    
-				    el.width = formatterNote.width;		    
-				    if (el.pitch != undefined) { // note only...
-				    	el.y = stave.getBottomY() - (this.clef.firstLine - el.pitch.diatonicNoteNum) * stave.options.spacing_between_lines_px;
-				    	//console.log('Note DNN: ' + el.pitch.diatonicNoteNum + " ; y: " + el.y);
-				    }
-			    }
-			}
-			if (music21.debug) {
-		        for (var i = 0; i < this.length; i ++ ) {
-		            var n = this.get(i);
-		            if (n.pitch != undefined) {
-		            	console.log(n.pitch.diatonicNoteNum + " " + n.x + " " + (n.x + n.width));
-		            }
-		        }
-			}
-			this.storedVexflowStave = stave;
-	    };
-	    
 	    /* MIDI related routines... */
 	    
 	    this.playStream = function (startNote) {
@@ -1790,7 +1626,7 @@ define(['music21/base','music21/renderOptions','music21/clef', 'jquery'], functi
 					'bracket': Vex.Flow.StaveConnector.type.BRACKET, 
 			};
 			var firstPart = this.get(0);
-			var lastPart = this.get(numParts - 1);
+			var lastPart = this.get(-1);
 			var numMeasures = firstPart.length;
 			for (var mIndex = 0; mIndex < numMeasures; mIndex++) {
 				var thisPartMeasure = firstPart.get(mIndex);
