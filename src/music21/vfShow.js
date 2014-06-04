@@ -11,6 +11,7 @@ define(['vexflow'], function(require) {
         this.activeFormatter = undefined;
         this._vfRenderer = undefined;
         this._ctx = undefined;
+        this.beamGroups = [];
         //this.measureFormatters = [];
         
         Object.defineProperties(this, {
@@ -81,6 +82,7 @@ define(['vexflow'], function(require) {
             } else {
                 this.renderFlat(s);
             }
+            this.drawBeamGroups();
         };
 
         this.renderScorelike = function (s) {
@@ -104,11 +106,12 @@ define(['vexflow'], function(require) {
         };
         this.renderFlat = function (m) {
             m.makeAccidentals();
-            var stave = this.renderNotes(m);
+            var stave = this.renderStave(m);
             m.activeVFStave = stave;
+            this.renderNotes(m, stave);
         };
         
-        this.renderNotes = function (m) {   
+        this.renderStave = function (m) {   
             //console.log('renderNotes called on ', m);
             if (m === undefined) {
                 m = this.stream;
@@ -120,39 +123,60 @@ define(['vexflow'], function(require) {
             this.setClefEtc(m, stave);
             stave.setContext(ctx);
             stave.draw();
-
-            // add notes...
+            return stave;
+        };
+        
+        this.getVoice = function (m, stave) {
+            // gets a group of notes as a voice, but completely unformatted and not drawn.
             var notes = this.vexflowNotes(m, stave);
             var voice = this.vexflowVoice(m);
+            voice.setStave(stave);
             voice.addTickables(notes);
+            return voice;
+        };
+        this.formatVoiceGroup = function (voices, autoBeam) {
+            // formats a group of voices to use the same formatter; returns the formatter
+            // if autoBeam is true then it will apply beams for each voice and put them in
+            // this.beamGroups;
+            var formatter = new Vex.Flow.Formatter();
+            if (voices.length == 0) {
+                return formatter;
+            }
+            var stave = voices[0].stave; // all staves should be same length, so does not matter;
+            formatter.joinVoices(voices);
+            formatter.formatToStave(voices, stave);
+            if (autoBeam) {
+                for (var i = 0; i < voices.length; i++) {
+                    var voice = voices[i];
+                    var beamGroups = Vex.Flow.Beam.applyAndGetBeams(voice);
+                    this.beamGroups.push.apply(this.beamGroups, beamGroups);                    
+                }
+            }
+            return formatter;
+        };
+        this.renderNotes = function (m, stave) {
+            // add notes...
+            var ctx = this.ctx;
+            var voice = this.getVoice(m, stave);
             // find beam groups -- n.b. this wipes out stem direction and
             //      screws up middle line stems -- worth it for now.
-            var beamGroups = [];
-            if (m.autoBeam) {
-                beamGroups = Vex.Flow.Beam.applyAndGetBeams(voice);
-            } 
                 
-            var formatter = new Vex.Flow.Formatter();
-            if (music21.debug) {
-                console.log("Voice: ticksUsed: " + voice.ticksUsed + " totalTicks: " + voice.totalTicks);
-            }
-            //Vex.Flow.Formatter.FormatAndDraw(ctx, stave, notes);
-            formatter.joinVoices([voice]);
-            formatter.formatToStave([voice], stave);
-            //formatter.format([voice], this.estimateStaffLength() );
-
-            voice.draw(ctx, stave);
-
-            // draw beams
-            for(var i = 0; i < beamGroups.length; i++){
-                 beamGroups[i].setContext(ctx).draw();
-            }
-            
+            var formatter = this.formatVoiceGroup([voice], m.autoBeam); 
             this.activeFormatter = formatter;
             this.applyFormatterInformationToNotes(stave, m);
+            voice.draw(ctx, stave);
+
             //console.log(stave.start_x + " -- stave startx");
             //console.log(stave.glyph_start_x + " -- stave glyph startx");
             return stave;
+        };
+        this.drawBeamGroups = function () {
+            var ctx = this.ctx;
+            // draw beams
+            
+            for(var i = 0; i < this.beamGroups.length; i++){
+                 this.beamGroups[i].setContext(ctx).draw();
+            }
         };
         this.applyFormatterInformationToNotes = function (stave, s) {
             // mad props to our friend Vladimir Viro for figuring this out!
@@ -295,8 +319,14 @@ define(['vexflow'], function(require) {
             var vfv = new Vex.Flow.Voice({ num_beats: numSixteenths,
                                         beat_value: beatValue,
                                         resolution: Vex.Flow.RESOLUTION });
-            //alert(numSixteenths + " " + beatValue);
-            //console.log('voice created');
+            // from vexflow/src/voice.js
+            //
+            // Modes allow the addition of ticks in three different ways:
+            //
+            // STRICT: This is the default. Ticks must fill the voice.
+            // SOFT:   Ticks can be added without restrictions.
+            // FULL:   Ticks do not need to fill the voice, but can't exceed the maximum
+            //         tick length.
             vfv.setMode(Vex.Flow.Voice.Mode.SOFT);
             return vfv;
         };
@@ -335,7 +365,7 @@ define(['vexflow'], function(require) {
                         var scTypeM21 = s.renderOptions.staffConnectors[i];
                         var scTypeVF = this.staffConnectorsMap[scTypeM21];
                         sc.setType(scTypeVF);
-                        sc.setContext(this.ctx)
+                        sc.setContext(this.ctx);
                         sc.draw();
                     }
                 }
