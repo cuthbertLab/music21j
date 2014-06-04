@@ -59,13 +59,92 @@
                 var offsetX = prevNoteMap.x + pixelsFromPrev;
                 return offsetX;
             };            
+            function scrollScoreStart(s, c) {
+                var tempo = s.tempo;
+                console.log('tempo' , tempo);
+                var currentTime = 0.0;
+                var pm = offsetToPixelMaps(s);
+                var maxX = pm[pm.length - 1].x;
+                var svgDOM = music21.common.makeSVGright('svg', {
+                    'height': c.height.toString() +'px',
+                    'width': c.width.toString() + 'px',
+                    'style': 'position:absolute; top: 0px; left: 0px;',
+                });
+                var startX = pm[0].x;
+                var barDOM = music21.common.makeSVGright('rect', {
+                    width: 10, 
+                    height: c.height - 6, 
+                    x: startX, 
+                    y: 3,
+                    style: 'fill: rgba(255, 255, 100, .5);stroke:white',    
+                } );
+                svgDOM.appendChild(barDOM);
+                $('body').append( $("<br/>") );
+                
+                document.getElementById('can').appendChild(svgDOM);
+                lastX = 0;
+                lastNoteIndex = -1;
+                
+                scrollInfo = {
+                        pm: pm, 
+                        startTime: new Date().getTime(),
+                        tempo: tempo,
+                        maxX: maxX,
+                        barDOM: barDOM,
+                        lastX: lastX,
+                        lastNoteIndex: lastNoteIndex,
+                };
+                scrollScore(scrollInfo);                
+            };
+            function scrollScore(i) {
+                var timeSinceStartInMS = new Date().getTime() - i.startTime;
+                var offset = timeSinceStartInMS/1000 * i.tempo/60;
+                var pm = i.pm;
+                var x = getXAtOffset(offset, pm);
+                x = Math.floor(x);
+                if (x > i.lastX) {
+                    i.barDOM.setAttribute('x', x);
+                    i.lastX = x;    
+                }
+                for (var j = 0; j < pm.length; j++) {
+                    var pmOff = pm[j].offset
+                    if (j <= lastNoteIndex) {
+                        continue;
+                    } else if (Math.abs(offset - pmOff) > .1) {
+                        continue;
+                    }
+                    var el = pm[j].element
+                    var midNum = el.pitch.midi;
+                    music21.MIDI.noteOn(0, midNum, 100, 0);
+                    music21.MIDI.noteOff(0, midNum, el.duration.quarterLength * 60/i.tempo);
+                    lastNoteIndex = j;
+                    
+                }
+                //console.log(x, offset);
+                //console.log(barDOM.setAttribute);
+                var advanceTime = 0.05;
+                if (x < i.maxX) {
+                    setTimeout( function () {scrollScore(i)}, advanceTime * 1000);                  
+                } else {
+                    i.barDOM.setAttribute('style', 'display:none');
+                }
+            };
             
-            s = music21.tinyNotation.TinyNotation("4/4 c2 d#4 e8 f g2 B c1 c'1 b4 a g f e8 f e d c4 B c1");
+            s = music21.tinyNotation.TinyNotation("4/4 c2 d#4 e8 f g4 B c c16 d32 e f g a b c'1 b4 a g f e8 f e d c4 B c1");
+            s.tempo = 90;
             //s1 = music21.tinyNotation.TinyNotation("4/4 E2 F#4 G8 A G2 E E1 A1");// B4 c B A G8 A G F E4 D C1");
             // s = new music21.stream.Score();
             //s.append(s2);
             //s.append(s1);
             
+            music21.MIDI.loadSoundfont('acoustic_grand_piano', function() { 
+                   console.log('hi');
+            });
+            s.renderOptions.events.click = function () {
+                music21.MIDI.loadSoundfont('acoustic_grand_piano', function() { 
+                    scrollScoreStart(s, c);
+                });
+            }
             //var divObj = document.getElementById('putCanvasHere');
             var c = s.appendNewCanvas( $("#can"), {} );
             var h = $(c).css('height');
@@ -74,81 +153,7 @@
             $(c).css('height', h / 0.7 );
 	
 	        //$.each(s.flat.notes.elements, function (i, n) {console.log(n.x)})
-	        function scrollScoreStart(s, c) {
-	            var tempo = s.tempo;
-	            console.log('tempo' , tempo);
-	            var currentTime = 0.0;
-	            var pm = offsetToPixelMaps(s);
-	            var maxX = pm[pm.length - 1].x;
-	            var svgDOM = music21.common.makeSVGright('svg', {
-	                'height': c.height.toString() +'px',
-	                'width': c.width.toString() + 'px',
-	                'style': 'position:absolute; top: 0px; left: 0px;',
-	            });
-	            var startX = pm[0].x;
-	            var barDOM = music21.common.makeSVGright('rect', {
-	                width: 10, 
-	                height: c.height - 6, 
-	                x: startX, 
-	                y: 3,
-	                style: 'fill: rgba(255, 255, 100, .5);stroke:white',    
-	            } );
-	            svgDOM.appendChild(barDOM);
-	            $('body').append( $("<br/>") );
-	            
-	            document.getElementById('can').appendChild(svgDOM);
-	            lastX = 0;
-	            lastNoteIndex = -1;
-	            
-	            scrollInfo = {
-	                    pm: pm, 
-	                    currentTime: currentTime,
-	                    tempo: tempo,
-	                    maxX: maxX,
-	                    barDOM: barDOM,
-	                    lastX: lastX,
-	                    lastNoteIndex: lastNoteIndex,
-	            };
-	            scrollScore(scrollInfo);	            
-	        };
-	        function scrollScore(i) {
-	            var offset = i.currentTime * i.tempo/60;
-                var pm = i.pm;
-	            var x = getXAtOffset(offset, pm);
-	            x = Math.floor(x);
-	            if (x != i.lastX) {
-	                i.barDOM.setAttribute('x', x);
-	                i.lastX = x;    
-	            }
-	            for (var j = 0; j < pm.length; j++) {
-	                var pmOff = pm[j].offset
-	                if (Math.abs(offset - pmOff) > .01) {
-	                    continue;
-	                } else if (j == lastNoteIndex) {
-	                    continue;
-	                } 
-	                var el = pm[j].element
-                    var midNum = el.pitch.midi;
-                    music21.MIDI.noteOn(0, midNum, 100, 0);
-                    music21.MIDI.noteOff(0, midNum, el.duration.quarterLength * 60/i.tempo);
-                    lastNoteIndex = j;
-	                
-	            }
-	            //console.log(x, offset);
-	            //console.log(barDOM.setAttribute);
-                var advanceTime = 0.05;
-	            i.currentTime += advanceTime;
-	            if (x < i.maxX) {
-	                setTimeout( function () {scrollScore(i)}, advanceTime * 1000);	                
-	            } else {
-	                i.barDOM.setAttribute('style', 'display:none');
-	            }
-	        };
 	        //console.log(c.height, c.width);
-            
-	        music21.MIDI.loadSoundfont('acoustic_grand_piano', function() { 
-	            scrollScoreStart(s, c);
-            });
         });
         
         
@@ -158,7 +163,7 @@
 </style>
 </head>
 <body>
-<h1>Score with scrollbar</h1>
+<h1>Click, watch, and listen</h1>
 <div id='can' style='position:relative'></div>
 </body>
 </html>
