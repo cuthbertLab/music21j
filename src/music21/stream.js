@@ -43,14 +43,18 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
                     if (this._duration !== undefined) {
                         return this._duration;
                     }
-                    var totalQL = 0.0;
+                    var highestTime = 0.0;
                     for (var i = 0; i < this.length; i++) {
                         var el = this.get(i);
+                        var endTime = el.offset;
                         if (el.duration !== undefined) {
-                            totalQL += el.duration.quarterLength;                            
+                            endTime += el.duration.quarterLength;                            
                         } 
+                        if (endTime > highestTime) {
+                            highestTime = endTime;
+                        }
                     }
-                    return new music21.duration.Duration(totalQL);
+                    return new music21.duration.Duration(highestTime);
                 },
                 set: function(newDuration) {
                     this._duration = newDuration;
@@ -250,38 +254,7 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
 	    
 	    /*  VexFlow functionality */
 	    
-	    this.vexflowNotes = function () {
-	        var notes = [];
-	        for (var i = 0; i < this.length; i++) {
-	        	var thisEl = this.get(i);
-	        	if (thisEl.isClassOrSubclass('GeneralNote') && (thisEl.duration !== undefined)) {
-		        	var tn = thisEl.vexflowNote(this.clef);
-		        	notes.push(tn);
-	        	}
-	        }
-	        //alert(notes.length);
-	        return notes;
-	    };
-	    this.vexflowVoice = function () {
-	        var totalLength = this.duration.quarterLength;
-	        var numSixteenths = totalLength / 0.25;
-	        var beatValue = 16;
-	        if (numSixteenths % 8 == 0) { beatValue = 2; numSixteenths = numSixteenths / 8; }
-	        else if (numSixteenths % 4 == 0) { beatValue = 4; numSixteenths = numSixteenths / 4; }
-	        else if (numSixteenths % 2 == 0) { beatValue = 8; numSixteenths = numSixteenths / 2; }
-	        //console.log('creating voice');
-	        if (music21.debug) {
-	        	console.log("New voice, num_beats: " + numSixteenths.toString() + " beat_value: " + beatValue.toString());
-	        }
-	        var vfv = new Vex.Flow.Voice({ num_beats: numSixteenths,
-	                                    beat_value: beatValue,
-	                                    resolution: Vex.Flow.RESOLUTION });
-			//alert(numSixteenths + " " + beatValue);
-	        //console.log('voice created');
-	        vfv.setMode(Vex.Flow.Voice.Mode.SOFT);
-			return vfv;
-	    };
-	    
+   
 	    this.vexflowStaffWidth = undefined;
 	    this.estimateStaffLength = function () {
 	    	if (this.vexflowStaffWidth != undefined) {
@@ -352,14 +325,13 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
 	    };
        this.renderVexflowOnCanvas = function (canvas) {
            vfr = new music21.vfShow.Renderer(this, canvas);
-           vfr.renderVexflowOnCanvas();
+           vfr.render();
        };
 
 	    /* MIDI related routines... */
 	    
 	    this.playStream = function (startNote) {
 	    	/*
-	    	 * Play the Stream.  Does not currently do noteOff
 	    	 */
 	        var currentNote = 0;
 	        if (startNote !== undefined) {
@@ -1511,7 +1483,6 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
 		};
 
 		this.findPartForClick = function(canvas, e) {
-			
 			var _ = this.getUnscaledXYforCanvas(canvas, e);
 			var y = _[0];
 			var x = _[1];
@@ -1520,7 +1491,6 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
 			var scaledY = y * scalingFunction;
 			var partNum = Math.floor(scaledY / this.partSpacing);
 			var scaledYinPart = scaledY - partNum * this.partSpacing;
-			
 
 			var systemIndex = undefined;
 			if (partNum >= this.length) {
@@ -1614,36 +1584,6 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
 		    return tempPart.estimateStaffLength();            
 		};
 		
-		this.addStaffConnectors = function (renderer) {
-			var numParts = this.length;
-			if (numParts < 2) {
-				return;
-			}
-			staffConnectorsMap = {
-					'brace': Vex.Flow.StaveConnector.type.BRACE, 
-					'single': Vex.Flow.StaveConnector.type.SINGLE, 
-					'double': Vex.Flow.StaveConnector.type.DOUBLE, 
-					'bracket': Vex.Flow.StaveConnector.type.BRACKET, 
-			};
-			var firstPart = this.get(0);
-			var lastPart = this.get(-1);
-			var numMeasures = firstPart.length;
-			for (var mIndex = 0; mIndex < numMeasures; mIndex++) {
-				var thisPartMeasure = firstPart.get(mIndex);
-				if (thisPartMeasure.renderOptions.startNewSystem) {
-					var topVFStaff = thisPartMeasure.activeVFStave;
-					var bottomVFStaff = lastPart.get(mIndex).activeVFStave;
-					/* TODO: warning if no staves... */;
-					for (var i = 0; i < this.renderOptions.staffConnectors.length; i++) {
-						var sc = new Vex.Flow.StaveConnector(topVFStaff, bottomVFStaff);
-						var scTypeM21 = this.renderOptions.staffConnectors[i];
-						var scTypeVF = staffConnectorsMap[scTypeM21];
-						sc.setType(scTypeVF);
-						sc.setContext(renderer.getContext()).draw();
-					}
-				}
-			}
-		};
 	};
 
 	stream.Score.prototype = new stream.Stream();
@@ -1698,7 +1638,35 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
             s.duration = new music21.duration.Duration(3.0);
             s.append( new music21.note.Note("D#5"));
             equal (s.duration.quarterLength, 3.0, "overridden duration -- remains");
+            
+            var sc = new music21.stream.Score();
+            var p1 = new music21.stream.Part();
+            var p2 = new music21.stream.Part();
+            var m1 = new music21.stream.Measure();
+            var m2 = new music21.stream.Measure();
+            var n11 = new music21.note.Note();
+            var n12 = new music21.note.Note();
+            n12.duration.type = 'half';
+            var n13 = new music21.note.Note();
+            n13.duration.type = 'eighth'; // incomplete measure
+            m1.append(n11);
+            m1.append(n12);
+            m1.append(n13);
+            var n21 = new music21.note.Note();
+            n21.duration.type = 'whole';
+            m2.append(n21);
+            p1.append(m1);
+            p2.append(m2);
+            sc.insert(0, p1);
+            sc.insert(0, p2);
+            equal (sc.duration.quarterLength, 4.0, 'duration of streams with nested parts');
+            equal (sc.flat.duration.quarterLength, 4.0, 'duration of flat stream with overlapping notes');
+            n21.duration.type = 'half';
+            equal (sc.duration.quarterLength, 3.5, 'new duration with nested parts');
+            equal (sc.flat.duration.quarterLength, 3.5, 'new duration of flat stream');       
         });
+       
+       
         test( "music21.stream.Stream.insert and offsets", function () {
             var s = new music21.stream.Stream();
             s.append( new music21.note.Note("C#5"));
