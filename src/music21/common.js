@@ -45,6 +45,43 @@ define([], function(require) {
         return ret;
     };
     
+    common.ordinalAbbreviation = function (value, plural) {
+        var post = "";
+        var valueHundreths = value % 100;
+        if (valueHundreths == 11 || valueHundreths == 12 || valueHundreths == 13) {
+            post = 'th';
+        } else {
+            var valueMod = value % 10;
+            if (valueMod == 1) {
+                post = 'st';
+            } else if (valueMod == 2) {
+                post = 'nd';
+            } else if (valueMod == 3) {
+                post = 'rd';
+            } else {
+                post = 'th';
+            }
+        }
+        if (post != 'st' && plural) {
+            post += 's';            
+        }
+        return post;
+    };
+    
+    common.rationalize = function (ql, epsilon, maxDenominator) {
+        epsilon = epsilon || 0.001;
+        maxDenominator = maxDenominator || 50;
+        
+        for (var i = 2; i < maxDenominator; i++) {
+            if (Math.abs(ql * i - Math.round(ql * i)) < epsilon) {
+                var numerator = Math.round(ql * i);
+                var denominator = i;
+                return {'numerator': numerator, 'denominator': denominator};
+            }
+        }
+        return undefined;
+    };
+    
     // end of define
     if (typeof(music21) != "undefined") {
         music21.common = common;
