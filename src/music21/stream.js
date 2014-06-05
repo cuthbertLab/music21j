@@ -324,7 +324,7 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
 	    	}
 	    };
        this.renderVexflowOnCanvas = function (canvas) {
-           vfr = new music21.vfShow.Renderer(this, canvas);
+           var vfr = new music21.vfShow.Renderer(this, canvas);
            vfr.render();
        };
 
@@ -346,6 +346,15 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
 	        var playNext = function (elements) {
 	            if (currentNote < lastNote && !thisStream._stopPlaying) {
 	                var el = elements[currentNote];
+	                var volume = 60;
+	                if (el.articulations !== undefined) {
+	                    el.articulations.forEach( function (a) { 
+	                       volume *= a.dynamicShift;
+	                       //console.log(volume);
+	                       if (volume > 127) { volume = 127; }
+	                    });
+	                }
+	                volume = Math.floor(volume);
 	                var nextNote = undefined;
 	                if (currentNote < lastNote + 1) {
 	                    nextNote = elements[currentNote + 1];
@@ -358,7 +367,7 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
     	                if (el.isClassOrSubclass('Note')) { // Note, not rest
     				 	    var midNum = el.pitch.midi;    				 	    
     				 	    if (el.tie === undefined || el.tie.type == 'start') {
-                                music21.MIDI.noteOn(0, midNum, 100, 0);    				 	        
+                                music21.MIDI.noteOn(0, midNum, volume, 0);    				 	        
     				 	    } // else { console.log ('not going to play ', el.nameWithOctave) }
     				 	    var stopTime = milliseconds/1000;
     				 	    if (nextNote !== undefined && nextNote.isClassOrSubclass('Note')) {
@@ -379,7 +388,7 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
     				        // TODO: Tied Chords.
     					    for (var j = 0; j < el._noteArray.length; j++) {
     					 	    var midNum = el._noteArray[j].pitch.midi;
-    					 	   music21.MIDI.noteOn(0, midNum, 100, 0);					   
+    					 	   music21.MIDI.noteOn(0, midNum, volume, 0);					   
                                music21.MIDI.noteOff(0, midNum, milliseconds/1000);                     
     					    }
     				    } // rest -- do nothing -- milliseconds takes care of it...
@@ -458,7 +467,7 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
 	        if (bodyElement == undefined) {
 	            bodyElement = 'body';
 	        }
-	        canvasBlock = this.createCanvas(scaleInfo, width, height);
+	        var canvasBlock = this.createCanvas(scaleInfo, width, height);
 	        $(bodyElement).append(canvasBlock);
 			return canvasBlock[0];
 	    };
@@ -1128,7 +1137,7 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
         }
         var lastOctavelessStepDict = $.extend({}, extendableStepList); // probably unnecessary, but safe...
         for (var i = 0; i < this.length; i++) {
-            el = this.get(i);
+            var el = this.get(i);
             if (el.pitch != undefined) {
                 var p = el.pitch;
                 var lastStepDict = lastOctaveStepList[p.octave];
@@ -1780,7 +1789,24 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
             c = s.getElementsByClass('GeneralNote');            
             equal (c.length, 3, 'got multiple subclasses');
         });  
-	
+        test( "music21.stream.Stream appendNewCanvas ", function() { 
+            var n = new music21.note.Note("G3");
+            var s = new music21.stream.Measure();
+            s.append(n);
+            s.appendNewCanvas(document.body);
+            equal (s.length, 1, 'ensure that should have one note');
+            var n1 = new music21.note.Note("G3");
+            var s1 = new music21.stream.Measure();
+            s1.append(n1);
+            var n2 = new music21.note.Note("G3");
+            s1.append(n2);
+            var n3 = new music21.note.Note("G3");
+            s1.append(n3);
+            var n4 = new music21.note.Note("G3");
+            s1.append(n4);
+            var div1 = s1.editableAccidentalCanvas();
+            $(document.body).append(div1);
+        });
 	};
 	
 	// end of define

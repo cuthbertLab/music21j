@@ -6,6 +6,8 @@ define([], function() {
        this.placement = 'above';
        this.vexflowModifier = undefined;
        this.setPosition = undefined;
+       this.dynamicShift = 1.0;
+       
        this.vexflow = function () {
            var vfa = new Vex.Flow.Articulation(this.vexflowModifier);
            if (this.setPosition) {
@@ -43,6 +45,7 @@ define([], function() {
        articulations.DynamicArticulation.call(this);
        this.name = 'accent';
        this.vexflowModifier = "a>";
+       this.dynamicShift = 1.5;
    };
    articulations.Accent.prototype = new articulations.DynamicArticulation();
    articulations.Accent.prototype.constructor = articulations.Accent;
@@ -51,6 +54,7 @@ define([], function() {
        articulations.Accent.call(this);
        this.name = 'strong accent';
        this.vexflowModifier = "a^";
+       this.dynamicShift = 2.0;
    };
    articulations.StrongAccent.prototype = new articulations.Accent();
    articulations.StrongAccent.prototype.constructor = articulations.StrongAccent;
