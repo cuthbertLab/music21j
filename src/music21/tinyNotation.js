@@ -35,6 +35,7 @@ define(['music21/base','music21/pitch','music21/note', 'music21/meter'], functio
 		var m = new music21.stream.Measure();
 		var currentTSBarDuration = 4.0;		
 		var lastDuration = 1.0;
+		var storedDict = {};
 		var tnre = tinyNotation.regularExpressions; // faster typing
 		for (var i = 0; i < tokens.length; i++ ) {
 		    // check at first so that a full measure but not over full
@@ -75,7 +76,18 @@ define(['music21/base','music21/pitch','music21/note', 'music21/meter'], functio
 			if (noteObj == undefined) {
 				continue;
 			}
-			
+			if (tnre.TIE.exec(token)) {
+			    noteObj.tie = new music21.tie.Tie('start');
+			    if (storedDict['lastNoteTied']) {
+			        noteObj.tie.type = 'continue';
+			    }
+			    storedDict['lastNoteTied'] = true;
+			} else {
+			    if (storedDict['lastNoteTied']) {
+                    noteObj.tie = new music21.tie.Tie('stop');
+                    storedDict['lastNoteTied'] = false;
+                }
+			}
 			if (tnre.SHARP.exec(token)) {
 				noteObj.pitch.accidental = new music21.pitch.Accidental('sharp');
 			} else if (tnre.FLAT.exec(token)) {
