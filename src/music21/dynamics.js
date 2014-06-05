@@ -10,7 +10,11 @@
  * 
  */
 define(['music21/base'], function(require) {
-	var dynamics = {};
+	//
+    // N.B. Firefox completely ignores dyanmics on playback!
+
+    
+    var dynamics = {};
 	dynamics.shortNames = ['pppppp', 'ppppp', 'pppp', 'ppp', 'pp', 'p', 'mp', 'mf', 'f', 'fp', 'sf', 'ff', 'fff', 'ffff', 'fffff', 'ffffff'];
 	dynamics.longNames = {'ppp': ['pianississimo'],
             'pp': ['pianissimo'],

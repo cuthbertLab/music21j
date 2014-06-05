@@ -508,6 +508,9 @@ define(['vexflow'], function(require) {
                     var formatterNote = formatter.tContexts.map[String(nextTicks)];                
                     nextTicks += nTicks;
                     el.x = vfn.getAbsoluteX();
+                    // these are a bit hacky...
+                    el.systemIndex = s.renderOptions.systemIndex;
+                    
                     //console.log(i + " " + el.x + " " + formatterNote.x + " " + noteOffsetLeft);
                     if (formatterNote === undefined) {
                         continue;
