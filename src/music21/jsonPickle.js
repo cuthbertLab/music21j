@@ -55,6 +55,7 @@ define(function(require) {
 
         this.knownUnparseables = ['music21.spanner.Line',
                                   'music21.instrument.Instrument',
+                                  'music21.layout.StaffGroup',
                                   'music21.layout.StaffLayout',
                                   'music21.layout.SystemLayout',
                                   'music21.layout.PageLayout',

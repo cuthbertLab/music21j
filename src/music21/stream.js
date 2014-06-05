@@ -356,12 +356,18 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
     	                var ql = el.duration.quarterLength;
     	                milliseconds = 60 * ql * 1000 / tempo;
     	                if (el.isClassOrSubclass('Note')) { // Note, not rest
-    				 	    var midNum = el.pitch.midi;
-    				 	    music21.MIDI.noteOn(0, midNum, 100, 0);
+    				 	    var midNum = el.pitch.midi;    				 	    
+    				 	    if (el.tie === undefined || el.tie.type == 'start') {
+                                music21.MIDI.noteOn(0, midNum, 100, 0);    				 	        
+    				 	    } // else { console.log ('not going to play ', el.nameWithOctave) }
     				 	    var stopTime = milliseconds/1000;
     				 	    if (nextNote !== undefined && nextNote.isClassOrSubclass('Note')) {
     				 	        if (nextNote.pitch.midi != el.pitch.midi) {
     				 	            stopTime += 60 * .25 / tempo; // legato -- play 16th note longer
+    				 	        } else if (el.tie != undefined && (el.tie.type == 'start' || el.tie.type =='continue')) {
+    				 	            stopTime += 60 * nextNote.duration.quarterLength / tempo;
+    				 	            // this does not take into account 3 or more notes tied.
+    				 	            // TODO: look ahead at next nexts, etc.
     				 	        }
     				 	    } else if (nextNote === undefined) {
     				 	        // let last note ring an extra beat...
@@ -370,6 +376,7 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
     				 	    //console.log(stopTime);
     				 	    music21.MIDI.noteOff(0, midNum, stopTime);
     				    } else if (el.isClassOrSubclass('Chord')) {
+    				        // TODO: Tied Chords.
     					    for (var j = 0; j < el._noteArray.length; j++) {
     					 	    var midNum = el._noteArray[j].pitch.midi;
     					 	   music21.MIDI.noteOn(0, midNum, 100, 0);					   
@@ -612,12 +619,23 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
                     var elList = pm[j].elements;
                     for (var elIndex = 0; elIndex < elList.length; elIndex++) {
                         var el = elList[elIndex];
+                        var elNext = undefined;
+                        if (elIndex < elList.length - 1) {
+                            elNext = elList[elIndex + 1];
+                        }
                         if (el !== undefined) {
                             var offTime = el.duration.quarterLength * 60/i.tempo;
+                            
+                            if (elNext !== undefined && elNext.tie !== undefined && elNext.tie !== 'start') {
+                                // don't adjust stop time -- it just won't work with this set up.
+                                // need to get the total time via a stripTies() type call...
+                            }
                             if (el.pitch !== undefined) {
                                 var midNum = el.pitch.midi;
-                                music21.MIDI.noteOn(0, midNum, 100, 0);
-                                music21.MIDI.noteOff(0, midNum, offTime);                                                    
+                                if (el.tie === undefined || el.tie.type == 'start') {
+                                    music21.MIDI.noteOn(0, midNum, 100, 0);
+                                    music21.MIDI.noteOff(0, midNum, offTime);                                                    
+                                } // else { console.log ('not going to play ', el.nameWithOctave) }
                             } else if (el.pitches !== undefined) {
                                 for (var pitchIndex = 0; pitchIndex < el.pitches.length; pitchIndex++) {
                                     var p = el.pitches[pitchIndex];
