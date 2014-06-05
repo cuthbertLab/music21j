@@ -14,6 +14,8 @@ define(['vexflow'], function(require) {
         this.beamGroups = [];
         this.measureStackVoices = []; // an Array of Array of vexflow voices
         this.measureStackStreams = []; // an Array of Array of Streams (usually Measures);
+        this.ties = [];
+        this.systemBreakOffsets = [];
         //this.measureFormatters = [];
         
         Object.defineProperties(this, {
@@ -85,6 +87,7 @@ define(['vexflow'], function(require) {
                 this.prepareFlat(s);
             }
             this.formatMeasureStacks();
+            this.drawTies();
             this.drawMeasureStacks();
             this.drawBeamGroups();
         };
@@ -100,8 +103,12 @@ define(['vexflow'], function(require) {
         
         this.preparePartlike = function (p) {
             //console.log('preparePartlike called');
+            this.systemBreakOffsets = [];
             for (var i = 0; i < p.length; i++) {
                 var subStream = p.get(i);
+                if (subStream.renderOptions.startNewSystem) {
+                    this.systemBreakOffsets.push(subStream.offset);
+                }
                 if (i == p.length - 1) {
                     subStream.renderOptions.rightBarline = 'end';
                 }                
@@ -113,8 +120,54 @@ define(['vexflow'], function(require) {
                 }
                 this.measureStackVoices[i].push(voice);
                 this.measureStackStreams[i].push(subStream);
-            }    
+            }
+            this.prepareTies(p);
         };
+        
+        this.prepareTies = function (p) {
+            // currently only works on a part...
+            var pf = p.flat.notesAndRests;
+            //console.log('newSystemsAt', this.systemBreakOffsets);
+            for (var i = 0; i < pf.length - 1; i++) {
+                var thisNote = pf.get(i);
+                if (thisNote.tie === undefined || thisNote.tie.type == 'stop') {
+                    continue;
+                }
+                var nextNote = pf.get(i+1);
+                var onSameSystem = true;
+                for (var sbI = 0; sbI < this.systemBreakOffsets.length; sbI++ ) {
+                    var thisSystemBreak = this.systemBreakOffsets[sbI];
+                    if (thisNote.offset < thisSystemBreak && nextNote.offset >= thisSystemBreak) {
+                        onSameSystem = false;
+                        break;
+                    }
+                }
+                if (onSameSystem) {
+                    var vfTie = new Vex.Flow.StaveTie({
+                        first_note: thisNote.vfn,
+                        last_note: nextNote.vfn,
+                        first_indices: [0],
+                        last_indices: [0],
+                    });
+                    this.ties.push(vfTie);                   
+                } else {
+                    //console.log('got me a tie across systemBreaks!');
+                    var vfTie1 = new Vex.Flow.StaveTie({
+                        first_note: thisNote.vfn,
+                        first_indices: [0],                        
+                    });
+                    this.ties.push(vfTie1);
+                    var vfTie2 = new Vex.Flow.StaveTie({
+                        last_note: nextNote.vfn,
+                        first_indices: [0],                        
+                    });
+                    this.ties.push(vfTie2);
+                }
+                
+            }
+            
+        };
+        
         this.prepareFlat = function (m) {
             m.makeAccidentals();
             var stave = this.renderStave(m);
@@ -139,15 +192,7 @@ define(['vexflow'], function(require) {
             return stave;
         };
         
-        this.getVoice = function (m, stave) {
-            // gets a group of notes as a voice, but completely unformatted and not drawn.
-            var notes = this.vexflowNotes(m, stave);
-            var voice = this.vexflowVoice(m);
-            voice.setStave(stave);
-            voice.addTickables(notes);
-            return voice;
-        };
-        
+
         this.drawMeasureStacks = function () {
             var ctx = this.ctx;
             for (var i = 0; i < this.measureStackVoices.length; i++) {
@@ -158,6 +203,26 @@ define(['vexflow'], function(require) {
                 }
             }
         };
+        
+        this.drawTies = function () {
+            var ctx = this.ctx;
+            for (var i = 0; i < this.ties.length; i++) {
+                this.ties[i].setContext(ctx).draw();
+            }
+        };
+        
+        
+        this.getVoice = function (m, stave) {
+            // gets a group of notes as a voice, but completely unformatted and not drawn.
+            var notes = this.vexflowNotes(m, stave);
+            var voice = this.vexflowVoice(m);
+            voice.setStave(stave);
+            voice.addTickables(notes);
+            return voice;
+        };
+        
+        
+        
         this.formatMeasureStacks = function () {
             for (var i = 0; i < this.measureStackVoices.length; i++) {
                 var voices = this.measureStackVoices[i];
@@ -179,6 +244,17 @@ define(['vexflow'], function(require) {
             if (voices.length == 0) {
                 return formatter;
             }
+            var maxGlyphStart = 0; // find the stave with the farthest start point -- diff key sig, etc.
+            for (var i = 0; i < voices.length; i++) { 
+                if (voices[i].stave.start_x > maxGlyphStart) {
+                    maxGlyphStart = voices[i].stave.start_x;
+                }
+            }
+            for (var i = 0; i < voices.length; i++) { 
+                voices[i].stave.start_x = maxGlyphStart; // corrected!
+            }
+            // TODO: should do the same for end_x -- for key sig changes, etc...
+            
             var stave = voices[0].stave; // all staves should be same length, so does not matter;
             formatter.joinVoices(voices);
             formatter.formatToStave(voices, stave);
@@ -215,58 +291,7 @@ define(['vexflow'], function(require) {
                  this.beamGroups[i].setContext(ctx).draw();
             }
         };
-        this.applyFormatterInformationToNotes = function (stave, s, formatter) {
-            // mad props to our friend Vladimir Viro for figuring this out!
-            // visit http://peachnote.com/
-            if (s === undefined) {
-                s = this.stream;
-            }
-            var noteOffsetLeft = 0;
-            //var staveHeight = 80;
-            if (stave != undefined) {
-                noteOffsetLeft = stave.start_x + stave.glyph_start_x;
-                if (music21.debug) {
-                    console.log("noteOffsetLeft: " + noteOffsetLeft + " ; stave.start_x: " + stave.start_x);
-                    console.log("Bottom y: " + stave.getBottomY() );                        
-                }
-                //staveHeight = stave.height;
-            }
-            
-            var nextTicks = 0;
-            for (var i = 0; i < s.length; i ++ ) {
-                var el = s.get(i);
-                if (el.isClassOrSubclass('GeneralNote')) {
-                    var vfn = el.activeVexflowNote;
-                    if (vfn === undefined) {
-                        continue;
-                    }
-                    var nTicks = parseInt(vfn.ticks);
-                    var formatterNote = formatter.tContexts.map[String(nextTicks)];                
-                    nextTicks += nTicks;
-                    el.x = vfn.getAbsoluteX();
-                    //console.log(i + " " + el.x + " " + formatterNote.x + " " + noteOffsetLeft);
-                    if (formatterNote === undefined) {
-                        continue;
-                    }
-                    
-                    el.width = formatterNote.width;         
-                    if (el.pitch != undefined) { // note only...
-                        el.y = stave.getBottomY() - (s.clef.firstLine - el.pitch.diatonicNoteNum) * stave.options.spacing_between_lines_px;
-                        //console.log('Note DNN: ' + el.pitch.diatonicNoteNum + " ; y: " + el.y);
-                    }
-                }
-            }
-            if (music21.debug) {
-                for (var i = 0; i < s.length; i ++ ) {
-                    var n = s.get(i);
-                    if (n.pitch != undefined) {
-                        console.log(n.pitch.diatonicNoteNum + " " + n.x + " " + (n.x + n.width));
-                    }
-                }
-            }
-            s.storedVexflowStave = stave;
-        };
-        
+
         this.newStave = function (s) {
             if (s === undefined) {
                 s = this.stream;
@@ -332,11 +357,12 @@ define(['vexflow'], function(require) {
             for (var i = 0; i < s.length; i++) {
                 var thisEl = s.get(i);
                 if (thisEl.isClassOrSubclass('GeneralNote') && (thisEl.duration !== undefined)) {
-                    var tn = thisEl.vexflowNote(s.clef);
+                    var vfn = thisEl.vexflowNote(s.clef);
                     if (stave !== undefined) {
-                        tn.setStave(stave);
+                        vfn.setStave(stave);
                     }
-                    notes.push(tn);
+                    notes.push(vfn);
+                    thisEl.vfn = vfn; // may be overwritten very soon, but not needed for long
                 }
             }
             return notes;
@@ -404,6 +430,63 @@ define(['vexflow'], function(require) {
                 }
             }
         };
+
+        /**
+         *  For later retrieval of notes from, say, a clicked score.
+         */
+        
+        this.applyFormatterInformationToNotes = function (stave, s, formatter) {
+            // mad props to our friend Vladimir Viro for figuring this out!
+            // visit http://peachnote.com/
+            if (s === undefined) {
+                s = this.stream;
+            }
+            var noteOffsetLeft = 0;
+            //var staveHeight = 80;
+            if (stave != undefined) {
+                noteOffsetLeft = stave.start_x + stave.glyph_start_x;
+                if (music21.debug) {
+                    console.log("noteOffsetLeft: " + noteOffsetLeft + " ; stave.start_x: " + stave.start_x);
+                    console.log("Bottom y: " + stave.getBottomY() );                        
+                }
+                //staveHeight = stave.height;
+            }
+            
+            var nextTicks = 0;
+            for (var i = 0; i < s.length; i ++ ) {
+                var el = s.get(i);
+                if (el.isClassOrSubclass('GeneralNote')) {
+                    var vfn = el.activeVexflowNote;
+                    if (vfn === undefined) {
+                        continue;
+                    }
+                    var nTicks = parseInt(vfn.ticks);
+                    var formatterNote = formatter.tContexts.map[String(nextTicks)];                
+                    nextTicks += nTicks;
+                    el.x = vfn.getAbsoluteX();
+                    //console.log(i + " " + el.x + " " + formatterNote.x + " " + noteOffsetLeft);
+                    if (formatterNote === undefined) {
+                        continue;
+                    }
+                    
+                    el.width = formatterNote.width;         
+                    if (el.pitch != undefined) { // note only...
+                        el.y = stave.getBottomY() - (s.clef.firstLine - el.pitch.diatonicNoteNum) * stave.options.spacing_between_lines_px;
+                        //console.log('Note DNN: ' + el.pitch.diatonicNoteNum + " ; y: " + el.y);
+                    }
+                }
+            }
+            if (music21.debug) {
+                for (var i = 0; i < s.length; i ++ ) {
+                    var n = s.get(i);
+                    if (n.pitch != undefined) {
+                        console.log(n.pitch.diatonicNoteNum + " " + n.x + " " + (n.x + n.width));
+                    }
+                }
+            }
+            s.storedVexflowStave = stave;
+        };
+        
     };
     
     // end of define
