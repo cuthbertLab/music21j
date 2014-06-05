@@ -339,60 +339,21 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
 	        }
 	        var flatEls = this.flat.elements;
 	        var lastNote = flatEls.length;
-	        var tempo = this.tempo;
+            var tempo = this.tempo;
 	        this._stopPlaying = false;
 	        var thisStream = this;
 	        
 	        var playNext = function (elements) {
 	            if (currentNote < lastNote && !thisStream._stopPlaying) {
 	                var el = elements[currentNote];
-	                var volume = 60;
-	                if (el.articulations !== undefined) {
-	                    el.articulations.forEach( function (a) { 
-	                       volume *= a.dynamicShift;
-	                       //console.log(volume);
-	                       if (volume > 127) { volume = 127; }
-	                    });
-	                }
-	                volume = Math.floor(volume);
-	                var nextNote = undefined;
-	                if (currentNote < lastNote + 1) {
-	                    nextNote = elements[currentNote + 1];
-	                }
-	                var milliseconds = 60 * 1000 / tempo;
-	                if (el.duration !== undefined) {
-    	                    
-    	                var ql = el.duration.quarterLength;
-    	                milliseconds = 60 * ql * 1000 / tempo;
-    	                if (el.isClassOrSubclass('Note')) { // Note, not rest
-    				 	    var midNum = el.pitch.midi;    				 	    
-    				 	    if (el.tie === undefined || el.tie.type == 'start') {
-                                music21.MIDI.noteOn(0, midNum, volume, 0);    				 	        
-    				 	    } // else { console.log ('not going to play ', el.nameWithOctave) }
-    				 	    var stopTime = milliseconds/1000;
-    				 	    if (nextNote !== undefined && nextNote.isClassOrSubclass('Note')) {
-    				 	        if (nextNote.pitch.midi != el.pitch.midi) {
-    				 	            stopTime += 60 * .25 / tempo; // legato -- play 16th note longer
-    				 	        } else if (el.tie != undefined && (el.tie.type == 'start' || el.tie.type =='continue')) {
-    				 	            stopTime += 60 * nextNote.duration.quarterLength / tempo;
-    				 	            // this does not take into account 3 or more notes tied.
-    				 	            // TODO: look ahead at next nexts, etc.
-    				 	        }
-    				 	    } else if (nextNote === undefined) {
-    				 	        // let last note ring an extra beat...
-    				 	        stopTime += 60 * 1 / tempo;
-    				 	    }
-    				 	    //console.log(stopTime);
-    				 	    music21.MIDI.noteOff(0, midNum, stopTime);
-    				    } else if (el.isClassOrSubclass('Chord')) {
-    				        // TODO: Tied Chords.
-    					    for (var j = 0; j < el._noteArray.length; j++) {
-    					 	    var midNum = el._noteArray[j].pitch.midi;
-    					 	   music21.MIDI.noteOn(0, midNum, volume, 0);					   
-                               music21.MIDI.noteOff(0, midNum, milliseconds/1000);                     
-    					    }
-    				    } // rest -- do nothing -- milliseconds takes care of it...
-	                }
+                    var nextNote = undefined;
+                    if (currentNote < lastNote + 1) {
+                        nextNote = elements[currentNote + 1];
+                    }
+                    var milliseconds = 0;
+                    if (el.playMidi !== undefined) {
+                        milliseconds = el.playMidi(tempo, nextNote);                        
+                    }
 	                currentNote += 1;
 	            	setTimeout( function () { playNext(elements); }, milliseconds);
 	            }
@@ -510,11 +471,12 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
                 for (var i = 0; i < ns.length; i++) {
                     var n = ns.get(i);
                     var currentOffset = n.offset;
-                    var foundPreviousMap = false; // multi parts...
+                    var foundPreviousMap = false; // multi parts scores require keeping track of maps
                     for (var j = allMaps.length - 1; j >= 0; j = j - 1) {
                         // find the last map with this offset. searches backwards for speed.
                         var oldMap = allMaps[j];
                         if (oldMap.offset == currentOffset) {
+                            // found an existing map for this location -- just add element, not all info.
                             //console.log('found element at offset', currentOffset, 'existing el', 
                             //        oldMap.elements[0].nameWithOctave, 'new el', n.nameWithOctave);
                             oldMap.elements.push(n);
@@ -526,21 +488,31 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
                         map.elements = [n];
                         map.offset = currentOffset;
                         map.x = n.x * pixelScaling;
+                        map.systemIndex = n.systemIndex;
+                        lastSystemIndex = map.systemIndex;
                         allMaps.push(map);
                     }
                 }
+                var finalStave =  ns.get(-1).activeVexflowNote.stave;                    
+                var finalX = finalStave.x + finalStave.width;
+
                 allMaps.push( {
                     elements: [undefined],
                     offset: ns.get(-1).duration.quarterLength + ns.get(-1).offset,
-                    x: ns.get(-1).x + 12, // hack -- assume 12 pixels wide final note
+                    x: finalX,
+                    systemIndex: lastSystemIndex,
                 });
                 return allMaps;            
             };
-            var getXAtOffset = function(offset, offsetToPixelMap) {
+            var getPixelMapsAtOffset = function(offset, offsetToPixelMaps) {
+                // returns an array of two pixel maps: the previous/current one and the
+                // next/current one (i.e., if the offset is exactly the offset of a pixel map
+                // the prevNoteMap and nextNoteMap will be the same; similarly if the offset is
+                // beyond the end of the score)
                 var prevNoteMap = undefined;
                 var nextNoteMap = undefined;
-                for (var i = 0; i < offsetToPixelMap.length; i++) {
-                    thisMap = offsetToPixelMap[i];
+                for (var i = 0; i < offsetToPixelMaps.length; i++) {
+                    thisMap = offsetToPixelMaps[i];
                     if (thisMap.offset <= offset) {
                         prevNoteMap = thisMap;
                     } 
@@ -550,15 +522,29 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
                     }
                 }
                 if (prevNoteMap === undefined && nextNoteMap === undefined) {
-                    return offsetToPixelMap[offsetToPixelMap.length - 1].x;   
+                    var lastNoteMap = offsetToPixelMap[offsetToPixelMap.length - 1];
+                    prevNoteMap = lastNoteMap;
+                    nextNoteMap = lastNoteMap;
                 } else if (prevNoteMap === undefined) {
                     prevNoteMap = nextNoteMap;
                 } else if (nextNoteMap === undefined) {
                     nextNoteMap = prevNoteMap;
                 }
+                return [prevNoteMap, nextNoteMap];
+            };
+
+            var getXAtOffset = function(offset, offsetToPixelMaps) {
+                // returns the proper 
+                var twoNoteMaps = getPixelMapsAtOffset(offset, offsetToPixelMaps);
+                var prevNoteMap = twoNoteMaps[0];
+                var nextNoteMap = twoNoteMaps[1];
                 var offsetFromPrev = offset - prevNoteMap.offset;
                 var offsetDistance = nextNoteMap.offset - prevNoteMap.offset;
-                var pixelDistance = nextNoteMap.x - prevNoteMap.x;
+                var pixelDistance = nextNoteMap.x - prevNoteMap.x;       
+                if (nextNoteMap.systemIndex != prevNoteMap.systemIndex) {
+                    var stave = prevNoteMap.elements[0].activeVexflowNote.stave;                    
+                    pixelDistance = stave.x + stave.width - prevNoteMap.x;
+                } 
                 var offsetToPixelScale = 0;
                 if (offsetDistance != 0) {
                     offsetToPixelScale = pixelDistance/offsetDistance;                    
@@ -569,20 +555,27 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
                 var offsetX = prevNoteMap.x + pixelsFromPrev;
                 return offsetX;
             };            
+            var getSystemIndexAtOffset = function(offset, offsetToPixelMaps) {
+                var twoNoteMaps = getPixelMapsAtOffset(offset, offsetToPixelMaps);
+                var prevNoteMap = twoNoteMaps[0];
+                return prevNoteMap.systemIndex;
+            };
 
             var tempo = this.tempo;
             //console.log('tempo' , tempo);
             var pm = offsetToPixelMaps(this);
             var maxX = pm[pm.length - 1].x;
+            var maxSystemIndex = pm[pm.length -1].systemIndex;
             var svgDOM = music21.common.makeSVGright('svg', {
                 'height': c.height.toString() +'px',
                 'width': c.width.toString() + 'px',
                 'style': 'position:absolute; top: 0px; left: 0px;',
             });
             var startX = pm[0].x;
+            var eachSystemHeight = c.height / (maxSystemIndex + 1);
             var barDOM = music21.common.makeSVGright('rect', {
                 width: 10, 
-                height: c.height - 6, 
+                height: eachSystemHeight - 6, 
                 x: startX, 
                 y: 3,
                 style: 'fill: rgba(255, 255, 20, .5);stroke:white',    
@@ -592,17 +585,20 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
             // TODO: generalize...
             var parent = $(c).parent()[0];
             parent.appendChild(svgDOM);
-            lastX = 0;
-            lastNoteIndex = -1;
             scrollInfo = {
-                    pm: pm, 
+                    pm: pm,
+                    systemIndex: 0,
+                    eachSystemHeight: eachSystemHeight,
                     startTime: new Date().getTime(),
                     tempo: tempo,
                     maxX: maxX,
+                    maxSystemIndex: maxSystemIndex,
                     barDOM: barDOM,
-                    lastX: lastX,
-                    lastNoteIndex: lastNoteIndex,
+                    lastX: 0,
+                    lastNoteIndex: -1,
+                    lastSystemIndex: 0,
                     svgDOM: svgDOM,
+                    canvas: c,
                     canvasParent: parent,
                     storedStream: this,
                     lastTimeout: undefined, // setTimeout
@@ -611,8 +607,18 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
                 var timeSinceStartInMS = new Date().getTime() - i.startTime;
                 var offset = timeSinceStartInMS/1000 * i.tempo/60;
                 var pm = i.pm;
+                var systemIndex = getSystemIndexAtOffset(offset, pm);
+                
+                if (systemIndex > i.lastSystemIndex) {
+                    i.lastX = -100;
+                    i.lastSystemIndex = systemIndex;
+                    i.barDOM.setAttribute('y', systemIndex * i.eachSystemHeight);
+                }
                 var x = getXAtOffset(offset, pm);
                 x = Math.floor(x);
+                
+                //console.log(x);
+                
                 if (x > i.lastX) {
                     i.barDOM.setAttribute('x', x);
                     i.lastX = x;    
@@ -620,7 +626,7 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
                 // pm is a pixelMap not a Stream
                 for (var j = 0; j < pm.length; j++) {
                     var pmOff = pm[j].offset;
-                    if (j <= lastNoteIndex) {
+                    if (j <= i.lastNoteIndex) {
                         continue;
                     } else if (Math.abs(offset - pmOff) > .1) {
                         continue;
@@ -628,41 +634,18 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
                     var elList = pm[j].elements;
                     for (var elIndex = 0; elIndex < elList.length; elIndex++) {
                         var el = elList[elIndex];
-                        var elNext = undefined;
-                        if (elIndex < elList.length - 1) {
-                            elNext = elList[elIndex + 1];
-                        }
-                        if (el !== undefined) {
-                            var offTime = el.duration.quarterLength * 60/i.tempo;
-                            
-                            if (elNext !== undefined && elNext.tie !== undefined && elNext.tie !== 'start') {
-                                // don't adjust stop time -- it just won't work with this set up.
-                                // need to get the total time via a stripTies() type call...
-                            }
-                            if (el.pitch !== undefined) {
-                                var midNum = el.pitch.midi;
-                                if (el.tie === undefined || el.tie.type == 'start') {
-                                    music21.MIDI.noteOn(0, midNum, 100, 0);
-                                    music21.MIDI.noteOff(0, midNum, offTime);                                                    
-                                } // else { console.log ('not going to play ', el.nameWithOctave) }
-                            } else if (el.pitches !== undefined) {
-                                for (var pitchIndex = 0; pitchIndex < el.pitches.length; pitchIndex++) {
-                                    var p = el.pitches[pitchIndex];
-                                    var midNum = p.midi;
-                                    music21.MIDI.noteOn(0, midNum, 100, 0);
-                                    music21.MIDI.noteOff(0, midNum, offTime);
-                                }
-                            }
+                        if (el !== undefined && el.playMidi !== undefined) {
+                            el.playMidi(i.tempo);
                         }
                     }
-                    lastNoteIndex = j;
+                    i.lastNoteIndex = j;
                     
                 }
                 //console.log(x, offset);
                 //console.log(barDOM.setAttribute);
                 var advanceTime = 0.05;
                 var newTimeout = undefined;
-                if (x < i.maxX) {
+                if (x < i.maxX || systemIndex < i.maxSystemIndex ) {
                     newTimeout = setTimeout( function () { scrollScore(i); }, advanceTime * 1000);                  
                     i.lastTimeout = newTimeout;
                 } else {

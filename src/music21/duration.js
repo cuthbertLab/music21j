@@ -134,16 +134,21 @@ define(['music21/common'], function(require) {
                 unTupletedQl = unTupletedQl * 2;
                 var tupletRatio = ql/unTupletedQl;
                 var ratioRat = music21.common.rationalize(tupletRatio);
+                if (ratioRat === undefined) {
+                    console.log("cannot find ratio! ", tupletRatio, ql, unTupletedQl);
+                }
                 var t = new duration.Tuplet(ratioRat.denominator, ratioRat.numerator, new duration.Duration(unTupletedQl));
-                this.appendTuplet(t);
+                this.appendTuplet(t, true); // skipUpdateQl
                 //console.log(ratioRat, ql, unTupletedQl);
             }
         };
 	    
-	    this.appendTuplet = function (newTuplet) {
+	    this.appendTuplet = function (newTuplet, skipUpdateQl) {
             newTuplet.frozen = true;
             this._tuplets.push(newTuplet);
-            this.updateQlFromFeatures();
+            if (skipUpdateQl != true) {
+                this.updateQlFromFeatures();                
+            }
 	    };
 
 	    if (typeof(ql) == 'string') {
