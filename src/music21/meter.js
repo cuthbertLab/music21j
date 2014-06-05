@@ -29,6 +29,16 @@ define(['music21/base', 'music21/duration'], function(require) {
                 get: function () { return this._denominator; },
                 set: function (s) { this._denominator = s; }
               },
+            'ratioString' : {
+                enumerable: true,
+                configurable: true,
+                get: function () { return this.numerator.toString + '/' + this.denominator.toString(); },
+                set: function (meterString) {
+                    var meterList = meterString.split('/');
+                    this.numerator = parseInt(meterList[0]);
+                    this.denominator = parseInt(meterList[1]);
+                },
+            },
             'barDuration' : {
                 enumerable: true,
                 configurable: true,
@@ -42,9 +52,7 @@ define(['music21/base', 'music21/duration'], function(require) {
         
         
         if (typeof(meterString) == 'string') {
-            var meterList = meterString.split('/');
-            this.numerator = parseInt(meterList[0]);
-            this.denominator = parseInt(meterList[1]);
+            this.ratioString = meterString;
         }
     };
     meter.TimeSignature.prototype = new music21.base.Music21Object();
