@@ -16,6 +16,7 @@ define(['vexflow'], function(require) {
         this.measureStackStreams = []; // an Array of Array of Streams (usually Measures);
         this.ties = [];
         this.systemBreakOffsets = [];
+        this.vfTuplets = [];
         //this.measureFormatters = [];
         
         Object.defineProperties(this, {
@@ -36,6 +37,7 @@ define(['vexflow'], function(require) {
                      return this._ctx;
                   } else {
                       this._ctx = this.vfRenderer.getContext();
+                      //this._ctx.scale(0.7, 0.7);
                       return this._ctx;
                   }
               },
@@ -84,12 +86,13 @@ define(['vexflow'], function(require) {
             } else if (isPartlike) {
                 this.preparePartlike(s);
             } else {
-                this.prepareFlat(s);
+                this.prepareArrivedFlat(s);
             }
             this.formatMeasureStacks();
             this.drawTies();
             this.drawMeasureStacks();
             this.drawBeamGroups();
+            this.drawTuplets();
         };
 
         this.prepareScorelike = function (s) {
@@ -122,58 +125,18 @@ define(['vexflow'], function(require) {
                 this.measureStackStreams[i].push(subStream);
             }
             this.prepareTies(p);
+        };        
+        this.prepareArrivedFlat = function (m) {
+            var voice = this.prepareFlat(m);
+            this.measureStackVoices[0] = [voice];
+            this.measureStackStreams[0] = [m];
+            this.prepareTies(m);
         };
-        
-        this.prepareTies = function (p) {
-            // currently only works on a part...
-            var pf = p.flat.notesAndRests;
-            //console.log('newSystemsAt', this.systemBreakOffsets);
-            for (var i = 0; i < pf.length - 1; i++) {
-                var thisNote = pf.get(i);
-                if (thisNote.tie === undefined || thisNote.tie.type == 'stop') {
-                    continue;
-                }
-                var nextNote = pf.get(i+1);
-                var onSameSystem = true;
-                for (var sbI = 0; sbI < this.systemBreakOffsets.length; sbI++ ) {
-                    var thisSystemBreak = this.systemBreakOffsets[sbI];
-                    if (thisNote.offset < thisSystemBreak && nextNote.offset >= thisSystemBreak) {
-                        onSameSystem = false;
-                        break;
-                    }
-                }
-                if (onSameSystem) {
-                    var vfTie = new Vex.Flow.StaveTie({
-                        first_note: thisNote.vfn,
-                        last_note: nextNote.vfn,
-                        first_indices: [0],
-                        last_indices: [0],
-                    });
-                    this.ties.push(vfTie);                   
-                } else {
-                    //console.log('got me a tie across systemBreaks!');
-                    var vfTie1 = new Vex.Flow.StaveTie({
-                        first_note: thisNote.vfn,
-                        first_indices: [0],                        
-                    });
-                    this.ties.push(vfTie1);
-                    var vfTie2 = new Vex.Flow.StaveTie({
-                        last_note: nextNote.vfn,
-                        first_indices: [0],                        
-                    });
-                    this.ties.push(vfTie2);
-                }
-                
-            }
-            
-        };
-        
-        this.prepareFlat = function (m) {
-            m.makeAccidentals();
-            var stave = this.renderStave(m);
-            m.activeVFStave = stave;
-            var voice = this.getVoice(m, stave);
-            //this.renderNotes(m, stave);
+        this.prepareFlat = function (s) {
+            s.makeAccidentals();
+            var stave = this.renderStave(s);
+            s.activeVFStave = stave;
+            var voice = this.getVoice(s, stave);
             return voice;
         };
         
@@ -203,12 +166,60 @@ define(['vexflow'], function(require) {
                 }
             }
         };
-        
+        this.drawTuplets = function () {
+            var ctx = this.ctx;
+            this.vfTuplets.forEach( function(vft) { 
+                vft.setContext(ctx).draw();
+            });
+        };
         this.drawTies = function () {
             var ctx = this.ctx;
             for (var i = 0; i < this.ties.length; i++) {
                 this.ties[i].setContext(ctx).draw();
             }
+        };
+        this.prepareTies = function (p) {
+            var pf = p.flat.notesAndRests;
+            //console.log('newSystemsAt', this.systemBreakOffsets);
+            for (var i = 0; i < pf.length - 1; i++) {
+                var thisNote = pf.get(i);
+                if (thisNote.tie === undefined || thisNote.tie.type == 'stop') {
+                    continue;
+                }
+                var nextNote = pf.get(i+1);
+                var onSameSystem = true;
+                // this.systemBreakOffsets.length will be 0 for a flat score
+                for (var sbI = 0; sbI < this.systemBreakOffsets.length; sbI++ ) {
+                    var thisSystemBreak = this.systemBreakOffsets[sbI];
+                    if (thisNote.offset < thisSystemBreak && nextNote.offset >= thisSystemBreak) {
+                        onSameSystem = false;
+                        break;
+                    }
+                }
+                if (onSameSystem) {
+                    var vfTie = new Vex.Flow.StaveTie({
+                        first_note: thisNote.activeVexflowNote,
+                        last_note: nextNote.activeVexflowNote,
+                        first_indices: [0],
+                        last_indices: [0],
+                    });
+                    this.ties.push(vfTie);                   
+                } else {
+                    //console.log('got me a tie across systemBreaks!');
+                    var vfTie1 = new Vex.Flow.StaveTie({
+                        first_note: thisNote.activeVexflowNote,
+                        first_indices: [0],                        
+                    });
+                    this.ties.push(vfTie1);
+                    var vfTie2 = new Vex.Flow.StaveTie({
+                        last_note: nextNote.activeVexflowNote,
+                        first_indices: [0],                        
+                    });
+                    this.ties.push(vfTie2);
+                }
+                
+            }
+            
         };
         
         
@@ -224,6 +235,7 @@ define(['vexflow'], function(require) {
         
         
         this.formatMeasureStacks = function () {
+            // adds formats the voices, then adds the formatter information to every note in a voice...
             for (var i = 0; i < this.measureStackVoices.length; i++) {
                 var voices = this.measureStackVoices[i];
                 var measures = this.measureStackStreams[i];
@@ -353,17 +365,49 @@ define(['vexflow'], function(require) {
             rendOp.vexflowRenderStafflines(stave);                
         };
         this.vexflowNotes = function (s, stave) {
+            // runs on a flat stream, returns a list of voices...
             var notes = [];
+            var vfTuplets = [];
+            var activeTuplet = undefined;
+            var activeTupletLength = 0.0;
+            var activeTupletVexflowNotes = [];
+
             for (var i = 0; i < s.length; i++) {
                 var thisEl = s.get(i);
                 if (thisEl.isClassOrSubclass('GeneralNote') && (thisEl.duration !== undefined)) {
                     var vfn = thisEl.vexflowNote(s.clef);
+                    // sets thisEl.activeVexflowNote -- may be overwritten but not so fast...
                     if (stave !== undefined) {
                         vfn.setStave(stave);
                     }
                     notes.push(vfn);
-                    thisEl.vfn = vfn; // may be overwritten very soon, but not needed for long
+                    
+                    // account for tuplets...
+                    if (thisEl.duration.tuplets.length > 0) {
+                        // only support one tuplet -- like vexflow
+                        var m21Tuplet = thisEl.duration.tuplets[0];
+                        if (activeTuplet === undefined) {
+                            activeTuplet = m21Tuplet;
+                        }
+                        activeTupletVexflowNotes.push(vfn);
+                        activeTupletLength += thisEl.duration.quarterLength;
+                        //console.log(activeTupletLength, activeTuplet.totalTupletLength());
+                        if (activeTupletLength >= activeTuplet.totalTupletLength()) {
+                            var vfTuplet = new Vex.Flow.Tuplet(activeTupletVexflowNotes);
+                            vfTuplets.push(vfTuplet);
+                            activeTupletLength = 0.0;
+                            activeTuplet = undefined;
+                            activeTupletVexflowNotes = [];
+                        }
+                    }
+                
                 }
+            }
+            if (activeTuplet !== undefined) {
+                console.warn('incomplete tuplet found in stream: ', s);
+            }
+            if (vfTuplets.length > 0) {
+                this.vfTuplets.push.apply(this.vfTuplets, vfTuplets);
             }
             return notes;
         };
