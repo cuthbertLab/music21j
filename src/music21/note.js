@@ -90,6 +90,53 @@ define(['music21/base', 'music21/pitch'], function(require) {
 				//vfn.render_options.stem_height = 0;
 			}
 		};
+		
+		this.playMidi = function (tempo, nextElement) {
+		    // returns the number of milliseconds to the next element in
+		    // case that can't be determined otherwise.
+            var volume = 60;
+            if (this.articulations !== undefined) {
+                this.articulations.forEach( function (a) { 
+                   volume *= a.dynamicShift;
+                   //console.log(volume);
+                   if (volume > 127) { volume = 127; }
+                });
+            }
+            volume = Math.floor(volume);
+            var milliseconds = 60 * 1000 / tempo;
+            var ql = this.duration.quarterLength;
+            milliseconds = 60 * ql * 1000 / tempo;
+            if (this.isClassOrSubclass('Note')) { // Note, not rest
+                var midNum = this.pitch.midi;                         
+                var stopTime = milliseconds/1000;
+                if (nextElement !== undefined && nextElement.isClassOrSubclass('Note')) {
+                    if (nextElement.pitch.midi != this.pitch.midi) {
+                        stopTime += 60 * .25 / tempo; // legato -- play 16th note longer
+                    } else if (this.tie != undefined && (this.tie.type == 'start' || this.tie.type =='continue')) {
+                        stopTime += 60 * nextElement.duration.quarterLength / tempo;
+                        // this does not take into account 3 or more notes tied.
+                        // TODO: look ahead at next nexts, etc.
+                    }
+                } else if (nextElement === undefined) {
+                    // let last note ring an extra beat...
+                    stopTime += 60 * 1 / tempo;
+                }
+                //console.log(stopTime);
+                if (this.tie === undefined || this.tie.type == 'start') {
+                    music21.MIDI.noteOn(0, midNum, volume, 0);                              
+                    music21.MIDI.noteOff(0, midNum, stopTime);
+                } // else { console.log ('not going to play ', el.nameWithOctave) }
+            } else if (this.isClassOrSubclass('Chord')) {
+                // TODO: Tied Chords.
+                for (var j = 0; j < this._noteArray.length; j++) {
+                    var midNum = this._noteArray[j].pitch.midi;
+                    music21.MIDI.noteOn(0, midNum, volume, 0);                      
+                    music21.MIDI.noteOff(0, midNum, milliseconds/1000);                     
+                }
+            } // it's a note.Rest -- do nothing -- milliseconds takes care of it...
+		    
+		    return milliseconds;   
+		};
 	};
 
 	note.GeneralNote.prototype = new music21.base.Music21Object();
