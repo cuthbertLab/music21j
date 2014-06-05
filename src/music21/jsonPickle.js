@@ -15,6 +15,9 @@ define(function(require) {
         this.streamJsonObj = undefined;
         this.debug = false;
         this.currentPart = undefined;
+        this.lastClef = undefined;
+        this.lastKeySignature = undefined;
+        this.lastTimeSignature = undefined;
         
         this.run = function (jsonString) {
             var jsonObject = this.toJSjson(jsonString);
@@ -43,6 +46,7 @@ define(function(require) {
         };
         this.representsStream = function (m21Json) {
             // crude will not get custom subclasses including TinyNotation:
+            // returns bool
             var objectRef = m21Json['py/object'];
             if (objectRef == null) {
                 return false;
@@ -161,9 +165,14 @@ define(function(require) {
             }
             if (this.representsStream(m21Json)) {
                 var storeTup = m21Json['_storedElementOffsetTuples'];
+                m21Obj._clef = this.lastClef;
+                m21Obj._keySignature = this.lastKeySignature;
+                m21Obj._timeSignature = this.lastTimeSignature;
+                    
                 processElements:
                 for (var i = 0; i < storeTup.length; i++ ) {
                     var storedElement = storeTup[i]['py/tuple'][0];
+                    storedElement.offset = storeTup[i]['py/tuple'][1];
                     if (this.debug) {
                         console.log(" recursing into element:", storedElement);
                     }
@@ -181,23 +190,37 @@ define(function(require) {
                         var streamPart = this.currentPart;
                         if (streamPart == undefined) {
                             streamPart = m21Obj; // possibly a Stream constructed from .measures()
+                            this.lastClef = undefined;
+                            this.lastKeySignature = undefined;
+                            this.lastTimeSignature = undefined;
                         }
                         if (thisClass == "TimeSignature") {
                             //console.log("Got timeSignature", streamPart, newM21pObj, storedElement);
                             newM21pObj._numerator = storedElement.displaySequence._numerator;
                             newM21pObj._denominator = storedElement.displaySequence._denominator;
-                            
-                            streamPart.timeSignature = newM21pObj;
+                            m21Obj._timeSignature = newM21pObj;
+                            this.lastTimeSignature = newM21pObj;
+                            if (streamPart !== undefined && streamPart.timeSignature === undefined) {
+                                streamPart.timeSignature = newM21pObj;                                
+                            }
                             continue processElements;
                         } else if (thisClass == "Clef") {
-                            streamPart.clef = newM21pObj;
+                            m21Obj._clef = newM21pObj;
+                            this.lastClef = newM21pObj;
+                            if (streamPart !== undefined && streamPart.clef === undefined) {
+                                streamPart.clef = newM21pObj;                                
+                            }
                             continue processElements;
                         } else if (thisClass == "KeySignature") {
-                            streamPart.keySignature = newM21pObj;
+                            this.lastKeySignature = newM21pObj;
+                            m21Obj._keySignature = newM21pObj;
+                            if (streamPart !== undefined && streamPart.keySignature === undefined) {
+                                streamPart.keySignature = newM21pObj;                                
+                            }
                             continue processElements;
                         }
                     } // not one of the three special elements...                    
-                    
+                    // append to stream... TODO: insert!
                     m21Obj.append(newM21pObj);
                     
                 }

@@ -1256,6 +1256,10 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
 			var currentMeasureIndex = 0; /* 0 indexed for now */
 			var currentMeasureLeft = 20;
 			var rendOp = this.renderOptions;
+			var lastTimeSignature = undefined;
+			var lastKeySignature = undefined;
+			var lastClef = undefined;
+			
 			for (var i = 0; i < this.length; i++) {
 				var el = this.get(i);
 				if (el.isClassOrSubclass('Measure')) {
@@ -1266,13 +1270,37 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
 					elRendOp.left = currentMeasureLeft;
 					
 					if (currentMeasureIndex == 0) {
-						elRendOp.displayClef = true;
+					    lastClef = el._clef;
+					    lastTimeSignature = el._timeSignature;
+					    lastKeySignature = el._keySignature;
+					    
+					    elRendOp.displayClef = true;
 						elRendOp.displayKeySignature = true;
 						elRendOp.displayTimeSignature = true;
 					} else {
-						elRendOp.displayClef = false;
-						elRendOp.displayKeySignature = false;
-						elRendOp.displayTimeSignature = false;					
+					    if (el._clef !== undefined && lastClef !== undefined && el._clef.name != lastClef.name) {
+					        console.log('changing clefs for ', elRendOp.measureIndex, ' from ', lastClef.name, ' to ', el._clef.name);
+					        lastClef = el._clef;
+					        elRendOp.displayClef = true;
+					    } else {
+	                        elRendOp.displayClef = false;					        
+					    }
+					    
+					    if (el._keySignature !== undefined && lastKeySignature !== undefined && 
+					            el._keySignature.sharps != lastKeySignature.sharps) {
+					        lastKeySignature = el._keySignature;
+					        elRendOp.displayKeySignature = true;
+					    } else {
+	                        elRendOp.displayKeySignature = false;					        
+					    }
+					    
+					    if (el._timeSignature !== undefined && lastTimeSignature !== undefined && 
+					            el._timeSignature.ratioString != lastTimeSignature.ratioString) {
+					        lastTimeSignature = el._timeSignature;
+					        elRendOp.displayTimeSignature = true;
+					    } else {
+	                        elRendOp.displayTimeSignature = false;	        
+					    }
 					}
 					elRendOp.width = el.estimateStaffLength() + elRendOp.staffPadding;
 					elRendOp.height = el.estimateStreamHeight();
