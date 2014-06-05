@@ -122,6 +122,7 @@ define("m21theory/tests/chordCreation", ["m21theory/section"], function () {
 			
 			var chordPitches = chordRN.pitches;
 			
+			
 			var s = new music21.stream.Measure();
 			for (var j =0; j < chordPitches.length; j++ ) {
 				var gPitch = new music21.note.Note("G2");
