@@ -16,19 +16,37 @@ if ( typeof define === "function" && define.amd) {
         MIDI.soundfontUrl = 'http://web.mit.edu/music21/music21j/src/ext/midijs/soundfont/';
         MIDI.loadedSoundfonts = {};
         var tempload = function(soundfont, callback) {
+            // method to load soundfonts while waiting for other processes that need them
+            // to load first.  will be bound to the MIDI object as music21.MIDI.loadSoundfont()
             var callwrapper = function () {
                 consolelog('soundfont loaded about to execute callback.');
-                callback();
+                consolelog('first playing two notes very softly -- seems to flush the buffer.');
+                var isFirefox = typeof InstallTrigger !== 'undefined';   // Firefox 1.0+
+                if (isFirefox == false) {  // Firefox ignores sound volume! so don't play!
+                    music21.MIDI.noteOn(0, 40, 1, 0);     // if no notes have been played before then
+                    music21.MIDI.noteOff(0, 40, 1, 0.1);  // the second note to be played is always
+                    music21.MIDI.noteOn(0, 41, 1, 0.2);   // very clipped (on Safari at least)
+                    music21.MIDI.noteOff(0, 41, 1, 0.3);  // this helps a lot.
+                    music21.MIDI.noteOn(0, 39, 1, 0.3);   // chrome needs three?
+                    music21.MIDI.noteOff(0, 39, 1, 0.4);                      
+                }
+                if (callback !== undefined) {
+                    callback();
+                }
                 music21.MIDI.loadedSoundfonts[soundfont] = true;                
             };
             if (music21.MIDI.loadedSoundfonts[soundfont] == true) {
-                callback();
+                if (callback !== undefined) {
+                    callback();
+                }
             } else if (music21.MIDI.loadedSoundfonts[soundfont] == 'loading'){
                 var waitThenCall = undefined;
                 waitThenCall = function() {
                     if (music21.MIDI.loadedSoundfonts[soundfont] == true) {
                         consolelog('other process has finished loading; calling callback');
-                        callback();
+                        if (callback !== undefined) {
+                            callback();
+                        }
                     } else {
                         consolelog('waiting for other process load');
                         setTimeout(waitThenCall, 100);

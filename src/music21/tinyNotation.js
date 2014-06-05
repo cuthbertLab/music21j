@@ -26,7 +26,11 @@ define(['music21/base','music21/pitch','music21/note', 'music21/meter'], functio
             ID_EL   : /\=([A-Za-z0-9]*)/,
             LYRIC   : /\_(.*)/,
             DOT     : /\.+/,
-            TIMESIG : /(\d+)\/(\d+)/
+            TIMESIG : /(\d+)\/(\d+)/,
+            
+            TRIP    : /trip\{/,
+            QUAD    : /quad\{/,
+            ENDBRAC : /\}$/,
 		  };
 
 	tinyNotation.TinyNotation = function (textIn) {
@@ -34,8 +38,13 @@ define(['music21/base','music21/pitch','music21/note', 'music21/meter'], functio
 		var p = new music21.stream.Part();
 		var m = new music21.stream.Measure();
 		var currentTSBarDuration = 4.0;		
-		var lastDuration = 1.0;
-		var storedDict = {};
+		var lastDurationQL = 1.0;
+		var storedDict = {
+		        lastNoteTied: false,
+		        inTrip: false,
+		        inQuad: false,
+		        endTupletAfterNote: false,
+		};
 		var tnre = tinyNotation.regularExpressions; // faster typing
 		for (var i = 0; i < tokens.length; i++ ) {
 		    // check at first so that a full measure but not over full
@@ -48,6 +57,20 @@ define(['music21/base','music21/pitch','music21/note', 'music21/meter'], functio
 		    var token = tokens[i];
 			var noteObj = undefined;
 			var MATCH;
+			if (MATCH = tnre.TRIP.exec(token)) {
+			    token = token.slice(5); // cut...
+			    storedDict.inTrip = true;
+			}
+            if (MATCH = tnre.QUAD.exec(token)) {
+                token = token.slice(5); // cut...
+                storedDict.inQuad = true;
+            }
+            if (MATCH = tnre.ENDBRAC.exec(token)) {
+                token = token.slice(0,-1); // cut...
+                storedDict.endTupletAfterNote = true;
+            }
+
+			
 			if (MATCH = tnre.TIMESIG.exec(token)) {
                 var ts = new music21.meter.TimeSignature();
 				ts.numerator = MATCH[1];
@@ -57,19 +80,19 @@ define(['music21/base','music21/pitch','music21/note', 'music21/meter'], functio
 				//console.log(currentTSBarDuration);
 				continue;
 			} else if (tnre.REST.exec(token)) {
-				noteObj = new music21.note.Rest(lastDuration);
+				noteObj = new music21.note.Rest(lastDurationQL);
 			} else if (MATCH = tnre.OCTAVE2.exec(token)) {
-				noteObj = new music21.note.Note(MATCH[1], lastDuration);
+				noteObj = new music21.note.Note(MATCH[1], lastDurationQL);
 				noteObj.pitch.octave = 4 - MATCH[0].length;
 			} else if (MATCH = tnre.OCTAVE3.exec(token)) {
-				noteObj = new music21.note.Note(MATCH[1], lastDuration);
+				noteObj = new music21.note.Note(MATCH[1], lastDurationQL);
 				noteObj.pitch.octave = 3;
 			} else if (MATCH = tnre.OCTAVE5.exec(token)) {
 				// must match octave 5 before 4
-				noteObj = new music21.note.Note(MATCH[1].toUpperCase(), lastDuration);
+				noteObj = new music21.note.Note(MATCH[1].toUpperCase(), lastDurationQL);
 				noteObj.pitch.octave = 3 + MATCH[0].length;
 			} else if (MATCH = tnre.OCTAVE4.exec(token)) {
-				noteObj = new music21.note.Note(MATCH[1].toUpperCase(), lastDuration);
+				noteObj = new music21.note.Note(MATCH[1].toUpperCase(), lastDurationQL);
 				noteObj.pitch.octave = 4;
 			}
 			
@@ -107,7 +130,22 @@ define(['music21/base','music21/pitch','music21/note', 'music21/meter'], functio
 				var multiplier = 1 + (1 - Math.pow(.5, numDots));
 				noteObj.duration.quarterLength = multiplier * noteObj.duration.quarterLength;
 			}
-			lastDuration = noteObj.duration.quarterLength;
+            lastDurationQL = noteObj.duration.quarterLength;
+            // do before appending tuplets
+            
+			if (storedDict.inTrip) {
+			    //console.log(noteObj.duration.quarterLength);
+			    noteObj.duration.appendTuplet( new music21.duration.Tuplet(3, 2, noteObj.duration.quarterLength) );
+			}
+            if (storedDict.inQuad) {
+                noteObj.duration.appendTuplet( new music21.duration.Tuplet(4, 3, noteObj.duration.quarterLength) );
+            }
+			if (storedDict.endTupletAfterNote) {
+			    storedDict.inTrip = false;
+			    storedDict.inQuad = false;
+			    storedDict.endTupletAfterNote = false;
+                
+			}
 			m.append(noteObj);
 		}
 		if (p.length > 0) {
