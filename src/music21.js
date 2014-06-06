@@ -101,7 +101,7 @@ if ((Object.defineProperties === undefined) && warnBanner) {
     }
     if ( typeof define === "function" && define.amd) {
         define( "music21", m21modules, 
-        		function (midi, vexflow) { 
+        		function (midi, vexflow, $) { 
             music21.scriptConfig = m21conf;
             if (midi) {
                 music21.MIDI = midi;
