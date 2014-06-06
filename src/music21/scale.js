@@ -8,24 +8,25 @@
  * Based on music21 (=music21p), Copyright (c) 2006–14, Michael Scott Cuthbert and cuthbertLab
  * 
  */
-define(['music21/pitch', 'music21/interval'], function(require) {
+define(['music21/pitch', 'music21/interval'], 
+        function(pitch, interval) {
 	var scale = {};
 
 	scale.SimpleDiatonicScale = function(tonic, scaleSteps) {
 		if (tonic == undefined) {
-			tonic = new music21.pitch.Pitch("C4");
-		} else if ( ! (tonic instanceof music21.pitch.Pitch) ) {
+			tonic = new pitch.Pitch("C4");
+		} else if ( ! (tonic instanceof pitch.Pitch) ) {
 			throw("Cannot make a scale not from a music21.pitch.Pitch object: " + tonic);
 		}
 		if (scaleSteps == undefined) {
 			scaleSteps = ['M','M','m','M','M','M','m'];		
 		}
-		var gi = new music21.interval.GenericInterval(2);
+		var gi = new interval.GenericInterval(2);
 		var pitches = [tonic];
 		var lastPitch = tonic;
 		for (var i = 0; i < scaleSteps.length; i++ ) {
-			var di = new music21.interval.DiatonicInterval(scaleSteps[i], gi);
-			var ii = new music21.interval.Interval(di);
+			var di = new interval.DiatonicInterval(scaleSteps[i], gi);
+			var ii = new interval.Interval(di);
 			var newPitch = ii.transposePitch(lastPitch);
 			if (music21.debug) {
 				console.log('ScaleSimpleMajor -- adding pitch: ' + newPitch.name);

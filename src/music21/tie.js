@@ -1,4 +1,4 @@
-define([], function(require) {
+define([], function() {
     var tie = {};
     
     tie.Tie = function (type) {

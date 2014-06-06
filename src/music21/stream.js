@@ -9,8 +9,8 @@
  * 
  */
 define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow', 'music21/duration', 
-        'music21/common', 'jquery', 'music21/meter', 'music21/pitch'], 
-        function(base, renderOptions, clef, vfShow, duration, common, $) {   
+        'music21/common', 'music21/meter', 'music21/pitch', 'jquery'], 
+        function(base, renderOptions, clef, vfShow, duration, common, meter, pitch, $) {   
     var stream = {};
 	
 	stream.Stream = function () {

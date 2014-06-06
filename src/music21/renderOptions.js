@@ -9,7 +9,7 @@
  * 
  */
 
-define([], function(require) {
+define([], function() {
 	var renderOptions = {};
 	renderOptions.RenderOptions = function() {
 		return {
