@@ -7,11 +7,11 @@
  * Based on music21 (=music21p), Copyright (c) 2006–14, Michael Scott Cuthbert and cuthbertLab
  * 
  */
-define(['music21/base', 'music21/duration'], function(require) {
+define(['music21/base', 'music21/duration'], function(base, duration) {
     var meter = {};
     
     meter.TimeSignature = function (meterString) {
-        music21.base.Music21Object.call(this);
+        base.Music21Object.call(this);
         this.classes.push('TimeSignature');
         this._numerator = 4;
         this._denominator = 4;
@@ -44,7 +44,7 @@ define(['music21/base', 'music21/duration'], function(require) {
                 configurable: true,
                 get: function () {
                     var ql = 4.0 * this._numerator / this._denominator;
-                    return new music21.duration.Duration(ql);
+                    return new duration.Duration(ql);
                 }
             },
         });
@@ -55,7 +55,7 @@ define(['music21/base', 'music21/duration'], function(require) {
             this.ratioString = meterString;
         }
     };
-    meter.TimeSignature.prototype = new music21.base.Music21Object();
+    meter.TimeSignature.prototype = new base.Music21Object();
     meter.TimeSignature.prototype.constructor = meter.TimeSignature;
     
     // end of define

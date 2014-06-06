@@ -6,7 +6,8 @@
  * Based on music21 (=music21p), Copyright (c) 2006–14, Michael Scott Cuthbert and cuthbertLab
  * 
  */
-define(['music21/base','music21/pitch','music21/note', 'music21/meter'], function(require) {
+define(['music21/base', 'music21/clef', 'music21/duration', 'music21/pitch','music21/note', 'music21/meter', 'music21/stream', 'music21/tie'], 
+        function(base, clef, duration, pitch, note, meter, stream, tie) {
 	var tinyNotation = {};
 	tinyNotation.regularExpressions = {  
 			REST    : /r/,
@@ -35,8 +36,8 @@ define(['music21/base','music21/pitch','music21/note', 'music21/meter'], functio
 
 	tinyNotation.TinyNotation = function (textIn) {
 		var tokens = textIn.split(" ");
-		var p = new music21.stream.Part();
-		var m = new music21.stream.Measure();
+		var p = new stream.Part();
+		var m = new stream.Measure();
 		var currentTSBarDuration = 4.0;		
 		var lastDurationQL = 1.0;
 		var storedDict = {
@@ -51,7 +52,7 @@ define(['music21/base','music21/pitch','music21/note', 'music21/meter'], functio
 		    // gets returned as a stream.Measure object.
             if (m.duration.quarterLength >= currentTSBarDuration) {
                 p.append(m);
-                m = new music21.stream.Measure();
+                m = new stream.Measure();
             }
 
 		    var token = tokens[i];
@@ -72,7 +73,7 @@ define(['music21/base','music21/pitch','music21/note', 'music21/meter'], functio
 
 			
 			if (MATCH = tnre.TIMESIG.exec(token)) {
-                var ts = new music21.meter.TimeSignature();
+                var ts = new meter.TimeSignature();
 				ts.numerator = MATCH[1];
 				ts.denominator = MATCH[2];
 				m.timeSignature = ts;
@@ -80,19 +81,19 @@ define(['music21/base','music21/pitch','music21/note', 'music21/meter'], functio
 				//console.log(currentTSBarDuration);
 				continue;
 			} else if (tnre.REST.exec(token)) {
-				noteObj = new music21.note.Rest(lastDurationQL);
+				noteObj = new note.Rest(lastDurationQL);
 			} else if (MATCH = tnre.OCTAVE2.exec(token)) {
-				noteObj = new music21.note.Note(MATCH[1], lastDurationQL);
+				noteObj = new note.Note(MATCH[1], lastDurationQL);
 				noteObj.pitch.octave = 4 - MATCH[0].length;
 			} else if (MATCH = tnre.OCTAVE3.exec(token)) {
-				noteObj = new music21.note.Note(MATCH[1], lastDurationQL);
+				noteObj = new note.Note(MATCH[1], lastDurationQL);
 				noteObj.pitch.octave = 3;
 			} else if (MATCH = tnre.OCTAVE5.exec(token)) {
 				// must match octave 5 before 4
-				noteObj = new music21.note.Note(MATCH[1].toUpperCase(), lastDurationQL);
+				noteObj = new note.Note(MATCH[1].toUpperCase(), lastDurationQL);
 				noteObj.pitch.octave = 3 + MATCH[0].length;
 			} else if (MATCH = tnre.OCTAVE4.exec(token)) {
-				noteObj = new music21.note.Note(MATCH[1].toUpperCase(), lastDurationQL);
+				noteObj = new note.Note(MATCH[1].toUpperCase(), lastDurationQL);
 				noteObj.pitch.octave = 4;
 			}
 			
@@ -100,23 +101,23 @@ define(['music21/base','music21/pitch','music21/note', 'music21/meter'], functio
 				continue;
 			}
 			if (tnre.TIE.exec(token)) {
-			    noteObj.tie = new music21.tie.Tie('start');
+			    noteObj.tie = new tie.Tie('start');
 			    if (storedDict['lastNoteTied']) {
 			        noteObj.tie.type = 'continue';
 			    }
 			    storedDict['lastNoteTied'] = true;
 			} else {
 			    if (storedDict['lastNoteTied']) {
-                    noteObj.tie = new music21.tie.Tie('stop');
+                    noteObj.tie = new tie.Tie('stop');
                     storedDict['lastNoteTied'] = false;
                 }
 			}
 			if (tnre.SHARP.exec(token)) {
-				noteObj.pitch.accidental = new music21.pitch.Accidental('sharp');
+				noteObj.pitch.accidental = new pitch.Accidental('sharp');
 			} else if (tnre.FLAT.exec(token)) {
-				noteObj.pitch.accidental = new music21.pitch.Accidental('flat');
+				noteObj.pitch.accidental = new pitch.Accidental('flat');
             } else if (tnre.NAT.exec(token)) {
-                noteObj.pitch.accidental = new music21.pitch.Accidental('natural');
+                noteObj.pitch.accidental = new pitch.Accidental('natural');
                 noteObj.pitch.accidental.displayType = "always";
             }
 			
@@ -135,10 +136,10 @@ define(['music21/base','music21/pitch','music21/note', 'music21/meter'], functio
             
 			if (storedDict.inTrip) {
 			    //console.log(noteObj.duration.quarterLength);
-			    noteObj.duration.appendTuplet( new music21.duration.Tuplet(3, 2, noteObj.duration.quarterLength) );
+			    noteObj.duration.appendTuplet( new duration.Tuplet(3, 2, noteObj.duration.quarterLength) );
 			}
             if (storedDict.inQuad) {
-                noteObj.duration.appendTuplet( new music21.duration.Tuplet(4, 3, noteObj.duration.quarterLength) );
+                noteObj.duration.appendTuplet( new duration.Tuplet(4, 3, noteObj.duration.quarterLength) );
             }
 			if (storedDict.endTupletAfterNote) {
 			    storedDict.inTrip = false;
@@ -150,11 +151,11 @@ define(['music21/base','music21/pitch','music21/note', 'music21/meter'], functio
 		}
 		if (p.length > 0) {
             p.append(m);
-            var thisClef = music21.clef.bestClef(p);
+            var thisClef = clef.bestClef(p);
             p.clef = thisClef;
 	        return p; // return measure object if one measure or less		    
 		} else {
-            m.clef = music21.clef.bestClef(m);
+            m.clef = clef.bestClef(m);
 		    return m;
 		}
 	};

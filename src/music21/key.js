@@ -7,11 +7,12 @@
  * Based on music21 (=music21p), Copyright (c) 2006–14, Michael Scott Cuthbert and cuthbertLab
  * 
  */
-define(['music21/base', 'music21/pitch', 'music21/interval', 'music21/scale'], function(require) {
+define(['music21/base', 'music21/pitch', 'music21/interval', 'music21/scale'], 
+        function(base, pitch, interval, scale) {
 	var key = {};
 
 	key.KeySignature = function(sharps) {
-		music21.base.Music21Object.call(this);
+		base.Music21Object.call(this);
 		this.classes.push('KeySignature');
 		this._sharps = sharps || 0; // if undefined
 		this.mode = 'major';
@@ -62,7 +63,7 @@ define(['music21/base', 'music21/pitch', 'music21/interval', 'music21/scale'], f
 						return undefined;
 					}
 					// make a new accidental;
-					return new music21.pitch.Accidental(aps[i].accidental.alter);
+					return new pitch.Accidental(aps[i].accidental.alter);
 				}
 			}
 			return undefined;
@@ -71,13 +72,13 @@ define(['music21/base', 'music21/pitch', 'music21/interval', 'music21/scale'], f
 			var transInterval = undefined;
 			var transTimes = undefined;
 			if (this.sharps == 0) {
-				return new music21.pitch.Pitch(p.nameWithOctave);
+				return new pitch.Pitch(p.nameWithOctave);
 			} else if (this.sharps < 0) {
 				transTimes = Math.abs(this.sharps);
-				transInterval = new music21.interval.Interval("P4");
+				transInterval = new interval.Interval("P4");
 			} else {
 				transTimes = this.sharps;
-				transInterval = new music21.interval.Interval("P5");
+				transInterval = new interval.Interval("P5");
 			}
 			var newPitch = p;
 			for (var i = 0; i < transTimes; i++) {
@@ -101,9 +102,9 @@ define(['music21/base', 'music21/pitch', 'music21/interval', 'music21/scale'], f
 	    				transStr = "P4";
 	    				startPitch = "F";
 	    			}
-					var transInterval = new music21.interval.Interval(transStr);
+					var transInterval = new interval.Interval(transStr);
 					var post = [];
-					var pKeep = new music21.pitch.Pitch(startPitch);
+					var pKeep = new pitch.Pitch(startPitch);
 					for (var i = 0; i < Math.abs(this.sharps); i++) {
 						pKeep = transInterval.transposePitch(pKeep);
 						pKeep.octave = 4;
@@ -116,7 +117,7 @@ define(['music21/base', 'music21/pitch', 'music21/interval', 'music21/scale'], f
 	    });
 	};
 
-	key.KeySignature.prototype = new music21.base.Music21Object();
+	key.KeySignature.prototype = new base.Music21Object();
 	key.KeySignature.prototype.constructor = key.KeySignature;
 
 	key.Key = function (keyName, mode) {
@@ -153,11 +154,11 @@ define(['music21/base', 'music21/pitch', 'music21/interval', 'music21/scale'], f
 			if (scaleType == undefined) {
 				scaleType = this.mode;
 			}
-			var pitchObj = new music21.pitch.Pitch(this.tonic);
+			var pitchObj = new pitch.Pitch(this.tonic);
 			if (scaleType == 'major') {
-				return music21.scale.ScaleSimpleMajor(pitchObj);
+				return scale.ScaleSimpleMajor(pitchObj);
 			} else {
-				return music21.scale.ScaleSimpleMinor(pitchObj, scaleType);
+				return scale.ScaleSimpleMinor(pitchObj, scaleType);
 			}
 		};
 	};
