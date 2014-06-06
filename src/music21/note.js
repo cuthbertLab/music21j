@@ -8,8 +8,13 @@
  */
 
 
-define(['music21/base', 'music21/pitch'], function(require) {
-
+define(['music21/base', 'music21/pitch'], 
+        /**
+         * Module for note classes
+         * 
+         * @exports music21.note
+         */  
+        function(base, pitch) {
 	var note = {};
 
 	note.noteheadTypeNames = [
@@ -53,8 +58,15 @@ define(['music21/base', 'music21/pitch'], function(require) {
 	
 	/* Notes and rests etc... */
 
+	/**
+	 * Superclass for all Note values
+	 * 
+	 * @constructor
+	 * @memberof music21
+	 * @param {number} ql - quarterLength of the note
+	 */
 	note.GeneralNote = function (ql) {
-		music21.base.Music21Object.call(this);
+		base.Music21Object.call(this);
 		this.classes.push('GeneralNote');
 		this.isChord = false;
         if (ql != undefined) {
@@ -139,7 +151,7 @@ define(['music21/base', 'music21/pitch'], function(require) {
 		};
 	};
 
-	note.GeneralNote.prototype = new music21.base.Music21Object();
+	note.GeneralNote.prototype = new base.Music21Object();
 	note.GeneralNote.prototype.constructor = note.GeneralNote;
 
 	note.NotRest = function (ql) {
@@ -168,7 +180,7 @@ define(['music21/base', 'music21/pitch'], function(require) {
 		this.classes.push('Note');
 		this.isNote = true; // for speed
 		this.isRest = false; // for speed
-	    this.pitch = new music21.pitch.Pitch(nn);
+	    this.pitch = new pitch.Pitch(nn);
         Object.defineProperties(this, {
             'name': {
                 get: function() {return this.pitch.name;},
@@ -187,7 +199,7 @@ define(['music21/base', 'music21/pitch'], function(require) {
             },
             // no Frequency
             'octave': {
-                get: function() {return this.pitch.octave;},
+                get: function() {return this.octave;},
                 set: function(nn) { this.pitch.octave = nn;},
                 enumerable: true,
             },
@@ -277,7 +289,7 @@ define(['music21/base', 'music21/pitch'], function(require) {
 	
 	note.tests = function () {
 	    test( "music21.note.Note", function() {
-	        var n = new music21.note.Note("D#5");
+	        var n = new note.Note("D#5");
 	        equal ( n.pitch.name, "D#", "Pitch Name set to D#");
 	        equal ( n.pitch.step, "D",  "Pitch Step set to D");
 	        equal ( n.pitch.octave, 5, "Pitch octave set to 5");

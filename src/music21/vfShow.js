@@ -1,4 +1,4 @@
-define(['vexflow'], function(require) {
+define(['vexflow'], function(Vex) {
     var vfShow = {}; 
     
     vfShow.Renderer = function (s, canvas, where) {
@@ -360,9 +360,35 @@ define(['vexflow'], function(require) {
             }
            
         };
-        this.setStafflines = function(s, stave) {
+        this.setStafflines = function(s, vexflowStave) {
             var rendOp = s.renderOptions;
-            rendOp.vexflowRenderStafflines(stave);                
+            if (rendOp.staffLines != 5) {
+                if (rendOp.staffLines == 0) {
+                    vexflowStave.setNumLines(0);
+                } else if (rendOp.staffLines == 1) {
+                    // Vex.Flow.Stave.setNumLines hides all but the top line.
+                    // this is better
+                    vexflowStave.options.line_config = [{visible: false},
+                                                 {visible: false},
+                                                 {visible: true}, // show middle
+                                                 {visible: false},
+                                                 {visible: false},];
+                } else if (rendOp.staffLines == 2) {
+                    vexflowStave.options.line_config = [{visible: false},
+                                                 {visible: false},
+                                                 {visible: true}, // show middle
+                                                 {visible: true},
+                                                 {visible: false},];
+                } else if (rendOp.staffLines == 3) {
+                    vexflowStave.options.line_config = [{visible: false},
+                                                 {visible: true},
+                                                 {visible: true}, // show middle
+                                                 {visible: true},
+                                                 {visible: false},];
+                } else {
+                    vexflowStave.setNumLines(rendOp.staffLines);                 
+                }
+            }
         };
         this.vexflowNotes = function (s, stave) {
             // runs on a flat stream, returns a list of voices...
