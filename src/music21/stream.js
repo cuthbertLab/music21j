@@ -8,11 +8,13 @@
  * Based on music21 (=music21p), Copyright (c) 2006–14, Michael Scott Cuthbert and cuthbertLab
  * 
  */
-define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow', 'jquery'], function(require) {   
+define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow', 'music21/duration', 
+        'music21/common', 'jquery', 'music21/meter', 'music21/pitch'], 
+        function(base, renderOptions, clef, vfShow, duration, common, $) {   
     var stream = {};
 	
 	stream.Stream = function () {
-		music21.base.Music21Object.call(this);
+		base.Music21Object.call(this);
 		this.classes.push('Stream');
 		this._duration = undefined;
 		
@@ -26,7 +28,7 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
 	    
 	    this.autoBeam = true;
 	    this.activeVFStave = undefined;
-	    this.renderOptions = new music21.renderOptions.RenderOptions();
+	    this.renderOptions = new renderOptions.RenderOptions();
 	    this._tempo = undefined;
 
         this.staffLines = 5;
@@ -54,7 +56,7 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
                             highestTime = endTime;
                         }
                     }
-                    return new music21.duration.Duration(highestTime);
+                    return new duration.Duration(highestTime);
                 },
                 set: function(newDuration) {
                     this._duration = newDuration;
@@ -82,7 +84,7 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
 	        				    tempEls.push(el);
 	        				}	        				
 	        			}
-	                    var newSt = music21.common.copyStream(this);
+	                    var newSt = common.copyStream(this);
 	                    newSt.elements = tempEls;
 	        			return newSt;
 	    			} else {
@@ -122,7 +124,7 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
                 enumerable: true,
 				get: function () {
 					if (this._clef == undefined && this.parent == undefined) {
-						return new music21.clef.Clef('treble');
+						return new clef.Clef('treble');
 					} else if (this._clef == undefined) {
 						return this.parent.clef;
 					} else {
@@ -159,7 +161,7 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
 				},
 				set: function (newTimeSignature) {
 					if (typeof(newTimeSignature) == 'string') {
-					    newTimeSignature = new music21.meter.TimeSignature(newTimeSignature);
+					    newTimeSignature = new meter.TimeSignature(newTimeSignature);
 					}
 				    this._timeSignature = newTimeSignature;
 				}
@@ -315,7 +317,7 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
 	    	/* does nothing for standard streams ... */
 	    };
 	    this.resetRenderOptionsRecursive = function () {
-	    	this.renderOptions = new music21.renderOptions.RenderOptions();
+	    	this.renderOptions = new renderOptions.RenderOptions();
 	    	for (var i = 0; i < this.length; i++) {
 	    		var el = this.get(i);
 	    		if (el.isClassOrSubclass('Stream')) {
@@ -324,7 +326,7 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
 	    	}
 	    };
        this.renderVexflowOnCanvas = function (canvas) {
-           var vfr = new music21.vfShow.Renderer(this, canvas);
+           var vfr = new vfShow.Renderer(this, canvas);
            vfr.render();
        };
 
@@ -566,14 +568,14 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
             var pm = offsetToPixelMaps(this);
             var maxX = pm[pm.length - 1].x;
             var maxSystemIndex = pm[pm.length -1].systemIndex;
-            var svgDOM = music21.common.makeSVGright('svg', {
+            var svgDOM = common.makeSVGright('svg', {
                 'height': c.height.toString() +'px',
                 'width': c.width.toString() + 'px',
                 'style': 'position:absolute; top: 0px; left: 0px;',
             });
             var startX = pm[0].x;
             var eachSystemHeight = c.height / (maxSystemIndex + 1);
-            var barDOM = music21.common.makeSVGright('rect', {
+            var barDOM = common.makeSVGright('rect', {
                 width: 10, 
                 height: eachSystemHeight - 6, 
                 x: startX, 
@@ -873,7 +875,7 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
 		this.noteChanged = function (clickedDiatonicNoteNum, foundNote, canvas) {
 			if (foundNote != undefined) {
 				var n = foundNote;
-				p = new music21.pitch.Pitch("C");
+				p = new pitch.Pitch("C");
 				p.diatonicNoteNum = clickedDiatonicNoteNum;
 				p.accidental = n.pitch.accidental;
 				n.pitch = p;
@@ -932,7 +934,7 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
 				var s = siblingCanvas[0].storedStream;
 				if (s.activeNote != undefined) {
 					n = s.activeNote;
-					n.pitch.accidental = new music21.pitch.Accidental(alter);
+					n.pitch.accidental = new pitch.Accidental(alter);
 					/* console.log(n.pitch.name); */
 					s.redrawCanvas(siblingCanvas[0]);
 					if (s.changedCallbackFunction != undefined) {
@@ -1003,7 +1005,7 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
 
 	};
 
-	stream.Stream.prototype = new music21.base.Music21Object();
+	stream.Stream.prototype = new base.Music21Object();
 	stream.Stream.prototype.constructor = stream.Stream;
 
 	stream.Stream.prototype.append = function (el) {
@@ -1147,7 +1149,7 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
             (lastOctavelessStepDict[p.step] != newAlter)
              ) {
             if (p.accidental === undefined) {
-                p.accidental = new music21.pitch.Accidental('natural');
+                p.accidental = new pitch.Accidental('natural');
             }
             p.accidental.displayStatus = true;
             //console.log("setting displayStatus to true");
@@ -1336,7 +1338,7 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
 	            return totalLength;
 	        };		    
 	        // no measures found in part... treat as measure
-	        var tempM = new music21.stream.Measure();
+	        var tempM = new stream.Measure();
 	        tempM.elements = this.elements;
 	        return tempM.estimateStaffLength();
 		};
@@ -1617,7 +1619,7 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
 		    }
 		    // no parts found in score... use part...
 		    console.log('no parts found in score');
-		    var tempPart = new music21.stream.Part();
+		    var tempPart = new stream.Part();
 		    tempPart.elements = this.elements;
 		    return tempPart.estimateStaffLength();            
 		};

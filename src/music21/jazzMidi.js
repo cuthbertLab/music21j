@@ -11,7 +11,7 @@
  * 
  */
 
-define(['music21/miditools'], function(require) {
+define(['music21/miditools'], function(miditools) {
 	var jazzMidi = {};
 	jazzMidi.storedPlugin = undefined;
 	jazzMidi.selectedInterface = undefined; // not the same as "" etc. uses last selected interface by default.
@@ -19,8 +19,8 @@ define(['music21/miditools'], function(require) {
     /* ----------- callbacks --------- */
 
     jazzMidi.callBacks = {
-        raw : function (t, a, b, c) { return new music21.miditools.Event(t, a, b, c); },
-        general : music21.miditools.sendToMIDIjs,
+        raw : function (t, a, b, c) { return new miditools.Event(t, a, b, c); },
+        general : miditools.sendToMIDIjs,
         sendOutChord : function (newChord) { },
     };
 
@@ -52,7 +52,7 @@ define(['music21/miditools'], function(require) {
 	    obj.style.height = '0px';
 	    appendElement.appendChild(obj);
 
-        music21.miditools.clearOldChords();
+        miditools.clearOldChords();
 	    if (obj.isJazz) {
 	        jazzMidi.storedPlugin = obj;
 	        return obj;

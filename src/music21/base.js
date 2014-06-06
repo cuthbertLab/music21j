@@ -10,7 +10,7 @@
  */
 
 
-define(['music21/duration'], function(require) {
+define(['music21/duration'], function(duration) {
 	var base = {};
 
 	/*   main class   from base.py   */
@@ -24,7 +24,7 @@ define(['music21/duration'], function(require) {
 		this.isStream = false;
 		// this.isSpanner = false; // add when supported,
 		// this.isVariant = false; // add when supported, if ever...
-		this._duration = new music21.duration.Duration();
+		this._duration = new duration.Duration();
 		this.groups = []; // custom object in m21p
 		// this.sites, this.activeSites, this.offset -- not yet...
 		// beat, measureNumber, etc.

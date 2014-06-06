@@ -9,7 +9,7 @@
  * Based on music21 (=music21p), Copyright (c) 2006–14, Michael Scott Cuthbert and cuthbertLab
  * 
  */
-define(['music21/base'], function(require) {
+define(['music21/base'], function(base) {
 	//
     // N.B. Firefox completely ignores dyanmics on playback!
 
@@ -53,7 +53,7 @@ define(['music21/base'], function(require) {
                     };    
 	
 	dynamics.Dynamic = function (value) {
-        music21.base.Music21Object.call(this);
+        base.Music21Object.call(this);
 	    this.classes.push('Dynamic');
 	    this._value = undefined;
 	    this._volumeScalar = undefined;
@@ -138,7 +138,7 @@ define(['music21/base'], function(require) {
 	    this.value = value;
 	};
 	
-	dynamics.Dynamic.prototype = new music21.base.Music21Object();
+	dynamics.Dynamic.prototype = new base.Music21Object();
 	dynamics.Dynamic.prototype.constructor = dynamics.Dynamic;
 	
 	
