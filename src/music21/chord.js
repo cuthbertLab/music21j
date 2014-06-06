@@ -8,13 +8,22 @@
  */
 
 
-define(['music21/note'], function(require) {
-	var chord = {};
+define(['music21/note', 'vexflow'], 
+        /**
+         * @exports music21/chord
+         */
+        function(note, Vex) {
+    var chord = {};
+	
+	/**
+	 * @constructor
+	 * @param {Array<string|note.Note>} noteArray
+	 */
 	chord.Chord = function (noteArray) {
 		if (typeof(noteArray) == 'undefined') {
 			noteArray = [];
 		}
-		music21.note.NotRest.call(this);
+		note.NotRest.call(this);
 		this.classes.push('Chord');
 		this.isChord = true; // for speed
         this.isNote = false; // for speed
@@ -22,13 +31,18 @@ define(['music21/note'], function(require) {
 		
 	    this._noteArray = [];
 		
+	    /**
+	     * Adds a note to the chord, sorting the noteArray
+	     * 
+	     * @param {note.Note} noteObj
+	     */
 		this.add = function (noteObj) {
 		    // takes in either a note or a pitch
 			if (typeof(noteObj) == 'string') {	
-				noteObj = new music21.note.Note(noteObj);
+				noteObj = new note.Note(noteObj);
 			} else if (noteObj.isClassOrSubclass('Pitch')) {
 				var pitchObj = noteObj;
-				var noteObj2 = new music21.note.Note();
+				var noteObj2 = new note.Note();
 				noteObj2.pitch = pitchObj;
 				noteObj = noteObj2;
 			}
@@ -36,6 +50,10 @@ define(['music21/note'], function(require) {
 			// inefficient because sorts after each add, but safe and #(p) is small
 	        this._noteArray.sort( function(a,b) { return a.pitch.ps - b.pitch.ps; }); 
 		};
+		/**
+		 * Removes any pitches that appear more than once.
+		 * @returns {chord.Chord}
+		 */
 		this.removeDuplicatePitches = function () {
 			var stepsFound = [];
 			var nonDuplicatingPitches = [];
@@ -51,6 +69,10 @@ define(['music21/note'], function(require) {
 			return closedChord;
 		};
 		
+		/**
+		 * 
+		 * @returns {pitch.Pitch}
+		 */
 		this.root = function () {
 			var closedChord = this.removeDuplicatePitches();
 			/* var chordBass = closedChord.bass(); */
@@ -89,6 +111,12 @@ define(['music21/note'], function(require) {
 				
 			}
 		};
+		/**
+		 * 
+		 * @param {number} chordStep
+		 * @param {pitch.Pitch} testRoot
+		 * @returns {pitch.Pitch}
+		 */
 		this.getChordStep = function (chordStep, testRoot) {
 			if (testRoot == undefined) {
 				testRoot = this.root();
@@ -110,6 +138,13 @@ define(['music21/note'], function(require) {
 			}
 			return undefined;
 		};
+        /**
+         * 
+         * @param {number} chordStep
+         * @param {pitch.Pitch} testRoot
+         * @returns {number}
+         */
+
 		this.semitonesFromChordStep = function (chordStep, testRoot) {
 			if (testRoot == undefined) {
 				testRoot = this.root();
@@ -123,6 +158,11 @@ define(['music21/note'], function(require) {
 				return semitones;
 			}
 		};
+        /**
+         * 
+         * @returns {pitch.Pitch}
+         */
+
 		this.bass = function () {
 			var lowest = undefined;
 			var pitches = this.pitches;
@@ -138,10 +178,18 @@ define(['music21/note'], function(require) {
 			}
 			return lowest;
 		};
+		/**
+		 * 
+		 * @returns {number}
+		 */
 		this.cardinality = function() {
 			var uniqueChord = this.removeDuplicatePitches();
 			return uniqueChord.pitches.length;
 		};
+		/**
+		 * 
+		 * @returns {Boolean}
+		 */
 		this.isMajorTriad = function() {
 			if (this.cardinality() != 3) {
 				return false;
@@ -154,6 +202,10 @@ define(['music21/note'], function(require) {
 				return false;
 			}
 		};
+		/**
+		 * 
+		 * @returns {Boolean}
+		 */
 		this.isMinorTriad = function() {
 			if (this.cardinality() != 3) {
 				return false;
@@ -166,6 +218,12 @@ define(['music21/note'], function(require) {
 				return false;
 			}
 		};
+		/**
+		 * Unlike music21 version, cannot set the inversion, yet
+		 * TODO: add.
+		 * 
+		 * @returns {number}
+		 */
 		this.inversion = function() {
 			var bass = this.bass();
 			var root = this.root();
@@ -183,7 +241,7 @@ define(['music21/note'], function(require) {
 	    Object.defineProperties(this, {
 	        'length' : {
                 enumerable: true,
-	            get: function () { return this._noteArray.length; }
+	            get: /** returns {number} */ function () { return this._noteArray.length; }
 	        },
 	    	'pitches': {
 	    	    enumerable: true,
@@ -199,9 +257,9 @@ define(['music21/note'], function(require) {
 	    			for (var i = 0; i < tempPitches.length; i++ ) {
 	    				var addNote;
 	    				if (typeof(tempPitches[i]) == 'string') {
-	    					addNote = new music21.note.Note(tempPitches[i]);
+	    					addNote = new note.Note(tempPitches[i]);
 	    				} else if (tempPitches[i].isClassOrSubclass('Pitch')) {
-	    					addNote = new music21.note.Note();
+	    					addNote = new note.Note();
 	    					addNote.pitch = tempPitches[i];
 	    				} else if (tempPitches[i].isClassOrSubclass('Note')) {
 	    					addNote = tempPitches[i];
@@ -216,6 +274,11 @@ define(['music21/note'], function(require) {
 	    	}
 	    
 	    });	
+	    /**
+	     * 
+	     * @param {string} clefName
+	     * @returns {Vex.Flow.StaveNote}
+	     */
 	    this.vexflowNote = function (clefName) {
 	        var pitchKeys = [];
 	        for (var i = 0; i < this._noteArray.length; i++) {
@@ -238,10 +301,9 @@ define(['music21/note'], function(require) {
 		    return vfn;
 	    };
 		noteArray.forEach( this.add, this );
-
 	};
 
-	chord.Chord.prototype = new music21.note.NotRest();
+	chord.Chord.prototype = new note.NotRest();
 	chord.Chord.prototype.constructor = chord.Chord;
 
 	chord.chordDefinitions = {

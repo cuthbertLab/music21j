@@ -1,4 +1,4 @@
-define([], function(require) {
+define([], function() {
     var common = {};    
     
     common.makeSVGright = function (tag, attrs) {
@@ -38,7 +38,7 @@ define([], function(require) {
             } else {
                 if (!(key in memo)) {
                     //console.log(key, ret[key]);
-                    ret[key] = music21.common.copyStream(obj[key], memo);                    
+                    ret[key] = common.copyStream(obj[key], memo);                    
                 }
             }
         }
