@@ -1,6 +1,7 @@
-define("m21theory/tests/scaleMajorMinorWritten", ["m21theory/section"], function () {
+define("m21theory/tests/scaleMajorMinorWritten", ["m21theory/section", "m21theory/random"], 
+        function (section, random) {
 	var ThisTest = function () {
-		m21theory.section.Generic.call(this);
+		section.Generic.call(this);
 		this.assignmentId = 'scaleMajorMinor';
 		this.totalQs = 16;
 		this.practiceQs = 4;
@@ -40,15 +41,15 @@ define("m21theory/tests/scaleMajorMinorWritten", ["m21theory/section"], function
 		this.renderOneQ = function (i) {
 			var s = new music21.stream.Stream();
 			s.tempo = 60;
-			s.clef = new music21.clef.Clef( m21theory.random.choice(this.allowableClefs) );
-			var direction = m21theory.random.choice(this.allowableDirections);
+			s.clef = new music21.clef.Clef( random.choice(this.allowableClefs) );
+			var direction = random.choice(this.allowableDirections);
 			var allowable;
 			if (direction == 'ascending') {
 				allowable = this.allowableScales; 
 			} else {
 				allowable = this.allowableScalesDescending; 
 			}
-			var scaleType = m21theory.random.choice(allowable);
+			var scaleType = random.choice(allowable);
 			
 			if (i < this.practiceQs) {
 				direction = 'ascending';
@@ -61,7 +62,7 @@ define("m21theory/tests/scaleMajorMinorWritten", ["m21theory/section"], function
 			}
 			var keySignatureSharps = undefined;
 			while (keySignatureSharps == undefined) {
-				keySignatureSharps = m21theory.random.randint(this.minSharps, this.maxSharps);
+				keySignatureSharps = random.randint(this.minSharps, this.maxSharps);
 				for (var j = 0; j < this.usedKeySignatures.length; j++) {
 					if (this.usedKeySignatures[j] == keySignatureSharps) {
 						keySignatureSharps = undefined;
@@ -167,7 +168,7 @@ define("m21theory/tests/scaleMajorMinorWritten", ["m21theory/section"], function
 
 	};
 
-	ThisTest.prototype = new m21theory.section.Generic();
+	ThisTest.prototype = new section.Generic();
 	ThisTest.prototype.constructor = ThisTest;
 	return ThisTest;
 });

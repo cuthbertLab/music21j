@@ -1,9 +1,10 @@
-define("m21theory/tests/firstSpecies", ["m21theory/section"], function () {
+define("m21theory/tests/firstSpecies", ["m21theory/section", "m21theory/random"], 
+        function (section, random) {
 	var ThisTest = function () {
 		/*
 		 * First species counterpoint in a tonal context.
 		 */		
-		m21theory.section.Generic.call(this);
+		section.Generic.call(this);
 		this.assignmentId = 'firstSpeciesTest';
 		this.totalQs = 1;
 		this.practiceQs = 0;
@@ -199,8 +200,8 @@ define("m21theory/tests/firstSpecies", ["m21theory/section"], function () {
 		};
 		
 		this.renderOneQ = function (i) {
-			var thisSharps = m21theory.random.randint(this.minSharps, this.maxSharps);
-			var thisCf = m21theory.random.choice(this.cfs);
+			var thisSharps = random.randint(this.minSharps, this.maxSharps);
+			var thisCf = random.choice(this.cfs);
 			var s = new music21.stream.Score();
 			var ks = new music21.key.KeySignature(thisSharps);
 			var pStudent = new music21.stream.Part();
@@ -250,7 +251,7 @@ define("m21theory/tests/firstSpecies", ["m21theory/section"], function () {
 
 
 	};
-	ThisTest.prototype = new m21theory.section.Generic();
+	ThisTest.prototype = new section.Generic();
 	ThisTest.prototype.constructor = ThisTest;
 	return ThisTest;
 });

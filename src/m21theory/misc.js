@@ -6,7 +6,7 @@
  * Based on music21 (=music21p), Copyright (c) 2006–14, Michael Scott Cuthbert and cuthbertLab
  * 
  */
-define(['music21','loadMIDI', 'jquery'], function(require) {
+define(['music21','loadMIDI', 'jquery'], function(music21, MIDI, $) {
 	var misc = {};
 	misc.playMotto = function (MIDI) {
 	    //return;

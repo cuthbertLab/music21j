@@ -1,6 +1,7 @@
-define("m21theory/tests/chordIdentification", ["m21theory/section"], function () {
+define("m21theory/tests/chordIdentification", ["m21theory/section", "m21theory/random"], 
+        function (section, random) {
 	var ThisTest = function () {
-		m21theory.section.Generic.call(this);
+		section.Generic.call(this);
 		this.assignmentId = 'chordIdentificationTest';
 		this.totalQs = 15;
 		this.practiceQs = 0;
@@ -10,7 +11,7 @@ define("m21theory/tests/chordIdentification", ["m21theory/section"], function ()
 			"<b>Double click</b> on the chord to listen to it, then drag it to the appropriate space." +
 			"</p>";
 		this.subtype = 'majorMinor';
-	    this.chords = m21theory.random.shuffle(["C3 E3 G3", "C2 E-3 G3", "C2 G3 E4", "C3 G#3 E4",
+	    this.chords = random.shuffle(["C3 E3 G3", "C2 E-3 G3", "C2 G3 E4", "C3 G#3 E4",
 	                                           "F#2 C#3 A3", "B2 F3 D#4", "G2 D3 B-3",
 	                                           "E-2 G2 B-2", "E2 B2 G3", "A2 C3 E3", "A2 E3 C#4",
 	                                           "E3 F3 G3 A3 B3", "C3 E3 G3 C4 E4", "B-2 D-3 F4",
@@ -103,7 +104,7 @@ define("m21theory/tests/chordIdentification", ["m21theory/section"], function ()
 		
 	};
 
-	ThisTest.prototype = new m21theory.section.Generic();
+	ThisTest.prototype = new section.Generic();
 	ThisTest.prototype.constructor = ThisTest;
 	return ThisTest;
 });

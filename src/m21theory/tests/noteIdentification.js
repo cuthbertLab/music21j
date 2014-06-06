@@ -1,6 +1,7 @@
-define("m21theory/tests/noteIdentification", ["m21theory/section"], function () {
+define("m21theory/tests/noteIdentification", ["m21theory/section", "m21theory/random"], 
+        function (section, random) {
 	var ThisTest = function () {
-		m21theory.section.Generic.call(this);
+		section.Generic.call(this);
 		this.assignmentId = 'noteIdentificationTest';
 		this.totalQs = 6;
 		this.practiceQs = 1;
@@ -23,7 +24,7 @@ define("m21theory/tests/noteIdentification", ["m21theory/section"], function () 
 			var s = new music21.stream.Stream();
 			s.tempo = 80;
 			s.autoBeam = true;
-			s.clef = new music21.clef.Clef( m21theory.random.choice(this.allowableClefs) );
+			s.clef = new music21.clef.Clef( random.choice(this.allowableClefs) );
 			s.timeSignature = '4/4';
 			var minDiatonicNoteNum = s.clef.firstLine - 1 - (2 * this.allowableLedgerLines);
 			var maxDiatonicNoteNum = s.clef.firstLine + 9 + (2 * this.allowableLedgerLines);
@@ -31,11 +32,11 @@ define("m21theory/tests/noteIdentification", ["m21theory/section"], function () 
 			for (var j = 0; j < 7; j++) {
 				var n;
 				do {
-					var chosenDiatonicNoteNum = m21theory.random.randint(minDiatonicNoteNum,
+					var chosenDiatonicNoteNum = random.randint(minDiatonicNoteNum,
 																	maxDiatonicNoteNum);
 					var p = new music21.pitch.Pitch("C");
 					p.diatonicNoteNum = chosenDiatonicNoteNum;
-					var newAlter = m21theory.random.choice(this.allowableAccidentals);
+					var newAlter = random.choice(this.allowableAccidentals);
 					p.accidental = new music21.pitch.Accidental( newAlter );
 
 					n = new	music21.note.Note("C");
@@ -59,11 +60,11 @@ define("m21theory/tests/noteIdentification", ["m21theory/section"], function () 
 			}
 			if (foundPitch == undefined) {
 				// default
-				var chosenDiatonicNoteNum = m21theory.random.randint(minDiatonicNoteNum,
+				var chosenDiatonicNoteNum = random.randint(minDiatonicNoteNum,
 																maxDiatonicNoteNum);
 				foundPitch = new music21.pitch.Pitch("C");
 				foundPitch.diatonicNoteNum = chosenDiatonicNoteNum;
-				var newAlter = m21theory.random.choice(this.allowableAccidentals);
+				var newAlter = random.choice(this.allowableAccidentals);
 				foundPitch.accidental = new music21.pitch.Accidental( newAlter );
 			}
 			var n = new music21.note.Note("C");
@@ -99,7 +100,7 @@ define("m21theory/tests/noteIdentification", ["m21theory/section"], function () 
 
 	};
 
-	ThisTest.prototype = new m21theory.section.Generic();
+	ThisTest.prototype = new section.Generic();
 	ThisTest.prototype.constructor = ThisTest;
 	return ThisTest;
 });

@@ -1,6 +1,7 @@
-define("m21theory/tests/chordCreation", ["m21theory/section"], function () {
+define("m21theory/tests/chordCreation", ["m21theory/section", "m21theory/random"], 
+        function (section, random) {
 	var ThisTest = function () {
-		m21theory.section.Generic.call(this);
+		section.Generic.call(this);
 		this.assignmentId = 'chordCreationTest';
 		this.totalQs = 9;
 		this.practiceQs = 0;
@@ -59,7 +60,7 @@ define("m21theory/tests/chordCreation", ["m21theory/section"], function () {
 			}
 			var keySignatureSharps = undefined;
 			while (keySignatureSharps == undefined) {
-				keySignatureSharps = m21theory.random.randint(this.minSharps, this.maxSharps);
+				keySignatureSharps = random.randint(this.minSharps, this.maxSharps);
 				for (var j = 0; j < this.usedKeySignatures.length; j++) {
 					if (this.usedKeySignatures[j] == keySignatureSharps) {
 						keySignatureSharps = undefined;
@@ -67,7 +68,7 @@ define("m21theory/tests/chordCreation", ["m21theory/section"], function () {
 				}
 			}
 			this.usedKeySignatures.push(keySignatureSharps);
-			var mode = m21theory.random.choice(this.modeChoices);
+			var mode = random.choice(this.modeChoices);
 			
 			var ks = new music21.key.KeySignature(keySignatureSharps);
 			var tonic;
@@ -78,13 +79,13 @@ define("m21theory/tests/chordCreation", ["m21theory/section"], function () {
 			}
 			var key = new music21.key.Key(tonic, mode);
 			var modalChoices = this.chordChoicesMode[mode];
-			var chordRNstr = m21theory.random.choice(modalChoices);
-			var displayType = m21theory.random.choice(this.displayChoices);
+			var chordRNstr = random.choice(modalChoices);
+			var displayType = random.choice(this.displayChoices);
 
 			var chordRN = new music21.roman.RomanNumeral(chordRNstr, key);	
 			var inversionName = "";
 			if (this.inversionChoices != undefined) {
-				var thisInversion = m21theory.random.choice(this.inversionChoices);
+				var thisInversion = random.choice(this.inversionChoices);
 				if (thisInversion != 0) {
 					if (thisInversion == 1) {
 						chordRN.pitches[0].octave += 1;
@@ -242,7 +243,7 @@ define("m21theory/tests/chordCreation", ["m21theory/section"], function () {
 
 	};
 
-	ThisTest.prototype = new m21theory.section.Generic();
+	ThisTest.prototype = new section.Generic();
 	ThisTest.prototype.constructor = ThisTest;
 	return ThisTest;
 });

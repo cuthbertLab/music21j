@@ -7,7 +7,7 @@
  * 
  */
 
-define([], function(require) {
+define(['jquery'], function($) {
 	// Student Name Routines 
 	// calling m21theory.fillNameDiv() will 
 	// append a name box to a div called "#studentNameDiv"

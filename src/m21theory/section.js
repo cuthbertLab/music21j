@@ -6,7 +6,8 @@
  * Based on music21 (=music21p), Copyright (c) 2006–14, Michael Scott Cuthbert and cuthbertLab
  * 
  */
-define(['m21theory/random'], function(require) {
+define(['m21theory/random', 'm21theory/userData'], 
+        function(random, userData) {
 	var section = {};
 
 
@@ -410,7 +411,7 @@ define(['m21theory/random'], function(require) {
 			if (m21theory.debug) {
 				console.log(textComments);
 			}
-			if (m21theory.userData.studentName.last == "") {
+			if (userData.studentName.last == "") {
 				alert("You are submitting without a last name! you will not get credit; fill form and submit again...");
 				return false;
 			}
@@ -428,8 +429,8 @@ define(['m21theory/random'], function(require) {
 				type: "GET",
 				url: this.testResponseURL,
 				data: { comments: textComments,
-						first: m21theory.userData.studentName.first,
-						last: m21theory.userData.studentName.last,
+						first: userData.studentName.first,
+						last: userData.studentName.last,
 						totalTime: totalTime,
 						testId: testId,
 						assignmentId: this.assignmentId,

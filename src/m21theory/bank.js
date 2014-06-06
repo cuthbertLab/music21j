@@ -6,7 +6,7 @@
  * Based on music21 (=music21p), Copyright (c) 2006–14, Michael Scott Cuthbert and cuthbertLab
  * 
  */
-define(['m21theory/misc'], function(require) {
+define(['m21theory/misc', 'm21theory/userData'], function(misc, userData) {
 	var bank = {};
 	/* Test Bank */
 
@@ -43,7 +43,7 @@ define(['m21theory/misc'], function(require) {
 				m21theory.userData.fillNameDiv();
 			}
 			if (this.addKeyboard) {
-			    m21theory.misc.addKeyboard(testBank);
+			    misc.addKeyboard(testBank);
 			}
 			for (var i = 0; i < this.allTests.length; i ++) {
 				var thisTest = this.allTests[i];

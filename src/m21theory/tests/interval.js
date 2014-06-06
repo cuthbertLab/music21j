@@ -1,6 +1,7 @@
-define("m21theory/tests/interval", ["m21theory/section"], function () {
+define("m21theory/tests/interval", ["m21theory/section", "m21theory/random"], 
+        function (section, random) {
 	var ThisTest = function () {
-		m21theory.section.Generic.call(this);
+		section.Generic.call(this);
 		
 		this.assignmentId = 'interval';
 		
@@ -42,7 +43,7 @@ define("m21theory/tests/interval", ["m21theory/section"], function () {
 		this.getRandomInterval = function () {
 			var randomGeneric = undefined;		
 			do {
-				randomGeneric = m21theory.random.randint(this.minInterval, this.maxInterval);
+				randomGeneric = random.randint(this.minInterval, this.maxInterval);
 			} while (randomGeneric == 0 || randomGeneric == -1);
 
 			if (this.skipP1) {
@@ -55,9 +56,9 @@ define("m21theory/tests/interval", ["m21theory/section"], function () {
 			var diatonicSpecifier = undefined;
 
 			if (genericInterval.perfectable == false) {
-				diatonicSpecifier = m21theory.random.choice(this.allowableImperfectSpecifiers);
+				diatonicSpecifier = random.choice(this.allowableImperfectSpecifiers);
 			} else {
-				diatonicSpecifier = m21theory.random.choice(this.allowablePerfectSpecifiers);		
+				diatonicSpecifier = random.choice(this.allowablePerfectSpecifiers);		
 			}
 			if (diatonicSpecifier == 'd' && randomGeneric == 1) {
 				diatonicSpecifier = 'A';
@@ -75,8 +76,8 @@ define("m21theory/tests/interval", ["m21theory/section"], function () {
 			var fullInterval = this.getRandomInterval();
 			var noteNames = this.noteNames;
 			var accidentals = this.accidentals;
-			var noteName = m21theory.random.choice(noteNames);
-			var accName = m21theory.random.choice(accidentals);
+			var noteName = random.choice(noteNames);
+			var accName = random.choice(accidentals);
 			var n1 = new music21.note.Note(noteName + accName);
 			var p2 = fullInterval.transposePitch(n1.pitch);
 			var n2 = new music21.note.Note("C");
@@ -154,7 +155,7 @@ define("m21theory/tests/interval", ["m21theory/section"], function () {
 				fullInterval = _[2];
 		
 			var s = new music21.stream.Stream();
-			if (m21theory.random.randint(0,1)) {
+			if (random.randint(0,1)) {
 				s.clef = new music21.clef.Clef('treble');
 			} else {
 				s.clef = new music21.clef.Clef('bass');
@@ -197,7 +198,7 @@ define("m21theory/tests/interval", ["m21theory/section"], function () {
 		};
 	};
 
-	ThisTest.prototype = new m21theory.section.Generic();
+	ThisTest.prototype = new section.Generic();
 	ThisTest.prototype.constructor = ThisTest;
 	return ThisTest;
 });

@@ -1,4 +1,5 @@
-define("m21theory/tests/keySignature", ["m21theory/section"], function () {
+define("m21theory/tests/keySignature", ["m21theory/section", "m21theory/random"], 
+        function (section, random) {
 	var ThisTest = function () {
 		m21theory.section.Generic.call(this);
 		this.assignmentId = 'keySignatures';
