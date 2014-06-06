@@ -7,7 +7,7 @@
  * 
  */
 
-define(['music21/pitch'], function(require) {
+define(['music21/pitch'], function(pitch) {
 	var interval = {};
 
 	interval.IntervalDirections = {
@@ -354,7 +354,7 @@ define(['music21/pitch'], function(require) {
 				useImplicitOctave = true;
 			}
 			var pps = p.ps;
-			newPitch = new music21.pitch.Pitch();
+			newPitch = new pitch.Pitch();
 			newPitch.ps = pps + this.semitones;
 			if (useImplicitOctave) {
 				newPitch.octave = undefined;
@@ -437,7 +437,7 @@ define(['music21/pitch'], function(require) {
 			}
 			*/
 			
-			var pitch2 = new music21.pitch.Pitch();
+			var pitch2 = new pitch.Pitch();
 			pitch2.step = p.step;
 			pitch2.octave = p.octave;
 			// no accidental yet...
@@ -454,7 +454,7 @@ define(['music21/pitch'], function(require) {
 			// step and octave are right now, but not necessarily accidental
 			var halfStepsToFix = this.chromatic.semitones - parseInt(pitch2.ps - p.ps);
 			if (halfStepsToFix != 0) {
-				pitch2.accidental = new music21.pitch.Accidental(halfStepsToFix);
+				pitch2.accidental = new pitch.Accidental(halfStepsToFix);
 			}
 			if (music21.debug) {
 				console.log('Interval.transposePitch -- distance to move' + distanceToMove);

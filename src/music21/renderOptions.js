@@ -20,6 +20,7 @@ define([], function(require) {
 			left: undefined,
 			width: undefined,
 			height: undefined,
+			scaleFactor: {x: 1, y: 1},
 			systemIndex: 0,
 			partIndex: 0,
 			measureIndex: 0,
@@ -37,35 +38,6 @@ define([], function(require) {
 			startNewSystem: false,
 			startNewPage: false,
 			showMeasureNumber: undefined,
-			vexflowRenderStafflines: function(vexflowStave) {
-			    if (this.staffLines != 5) {
-	                if (this.staffLines == 0) {
-	                    vexflowStave.setNumLines(0);
-	                } else if (this.staffLines == 1) {
-	                    // Vex.Flow.Stave.setNumLines hides all but the top line.
-	                    // this is better
-	                    vexflowStave.options.line_config = [{visible: false},
-	                                                 {visible: false},
-	                                                 {visible: true}, // show middle
-	                                                 {visible: false},
-	                                                 {visible: false},];
-	                } else if (this.staffLines == 2) {
-	                    vexflowStave.options.line_config = [{visible: false},
-	                                                 {visible: false},
-	                                                 {visible: true}, // show middle
-	                                                 {visible: true},
-	                                                 {visible: false},];
-	                } else if (this.staffLines == 3) {
-	                    vexflowStave.options.line_config = [{visible: false},
-	                                                 {visible: true},
-	                                                 {visible: true}, // show middle
-	                                                 {visible: true},
-	                                                 {visible: false},];
-	                } else {
-	                    vexflowStave.setNumLines(vfro.staffLines);                 
-	                }
-	            }
-			},
 		};
 	};
 

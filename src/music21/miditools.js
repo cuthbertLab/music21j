@@ -9,11 +9,22 @@
  * Copyright (c) 2014, Michael Scott Cuthbert and cuthbertLab
  * Based on music21 (=music21p), Copyright (c) 2006–14, Michael Scott Cuthbert and cuthbertLab
  * 
+ * @author Michael Scott Cuthbert
  */
 
-define(['jquery', 'music21/note', 'music21/chord'], function(require) {
-    var miditools = {};
-
+define(['jquery', 'music21/note', 'music21/chord'], function($, note, chord) {
+    /**
+     * @exports music21/miditools
+     */
+    miditools = {};
+    /**
+     * @memberof music21
+     * @constructor
+     * @param {number} t - timing information
+     * @param {number} a - midi data 1 ( a >> 4 = midiCommand )
+     * @param {number} b - midi data 2
+     * @param {number} c - midi data 3
+     */
     miditools.Event = function (t, a, b, c) {
         this.timing = t;
         this.data1 = a; 
@@ -46,13 +57,16 @@ define(['jquery', 'music21/note', 'music21/chord'], function(require) {
                 console.warn('could not playback note because no MIDIout defined');
             };
         };
+        /**
+         * 
+         * @returns {note.Note}
+         */
         this.music21Note = function () {
-            var m21n = new music21.note.Note();
+            var m21n = new note.Note();
             m21n.pitch.ps = this.midiNote;
             return m21n;
         };
     };
-    
     
     miditools.maxDelay = 100; // in ms
     miditools.heldChordTime = 0;
@@ -83,6 +97,12 @@ define(['jquery', 'music21/note', 'music21/chord'], function(require) {
     });
     
     /* --------- chords ------------- */
+    /**
+     *  Clears chords that are older than miditools.heldChordTime
+     *  
+     *  Runs a setTimeout on itself.
+     *  Calls miditools.sendOutChord
+     */
     miditools.clearOldChords = function () {
         // clear out notes that may be a chord...
         var nowInMs = Date.now(); // in ms
@@ -97,6 +117,14 @@ define(['jquery', 'music21/note', 'music21/chord'], function(require) {
         }
         setTimeout(miditools.clearOldChords, miditools.maxDelay);
     };
+    /**
+     *  Take a series of jEvent noteOn objects and convert them to a single Chord object
+     *  so long as they are all sounded within miditools.maxDelay milliseconds of each other.
+     *  this method stores notes in miditools.heldChordNotes (Array).
+     *
+     *  @param {miditools.Event} jEvent 
+     *  @returns undefined
+     */
     miditools.makeChords = function (jEvent) { // jEvent is a miditools.Event object
         if (jEvent.noteOn) {
             var m21n = jEvent.music21Note();
@@ -115,11 +143,20 @@ define(['jquery', 'music21/note', 'music21/chord'], function(require) {
     };
 
     miditools.lastElement = undefined;
+    
+    /**
+     * 
+     * @param {Array<note.Note>} chordNoteList - a list of notes
+     * @returns {note.GeneralNote} - (probably a music21.chord.Chord but maybe a music21.note.Note object)
+     * 
+     * 
+     */
+    
     miditools.sendOutChord = function (chordNoteList) {
         var appendObject = undefined;
         if (chordNoteList.length > 1) {
             //console.log(chordNoteList[0].name, chordNoteList[1].name);
-            appendObject = new music21.chord.Chord(chordNoteList);
+            appendObject = new chord.Chord(chordNoteList);
         } else {
             appendObject = chordNoteList[0]; // note object
         }
@@ -133,6 +170,9 @@ define(['jquery', 'music21/note', 'music21/chord'], function(require) {
         }
     };
 
+    /**
+     * @param {note.GeneralNote} lastElement - note to be quantized
+     */
     miditools.quantizeLastNote = function (lastElement) {
         if (lastElement === undefined) {
             lastElement = this.lastElement;
@@ -164,7 +204,10 @@ define(['jquery', 'music21/note', 'music21/chord'], function(require) {
     };
     
     /* ----------- callbacks --------- */
-    
+    /**
+     * @param {miditools.Event} midiEvent - event to send out.
+     * @returns undefined
+     */
     
     miditools.sendToMIDIjs = function(midiEvent) {
         midiEvent.sendToMIDIjs();

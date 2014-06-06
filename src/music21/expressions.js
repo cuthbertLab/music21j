@@ -1,11 +1,11 @@
-define(['music21/base'], function() {
+define(['music21/base'], function(base) {
    //
    // expressions can be note attached or floating...
     
    var expressions = {};
 
    expressions.Expression = function() {
-       music21.base.Music21Object.call(this);
+       base.Music21Object.call(this);
        this.classes.push('Expression');
        this.vexflowModifier = "";
        this.setPosition = undefined;
@@ -18,7 +18,7 @@ define(['music21/base'], function() {
            return vfe;
        };
    };
-   expressions.Expression.prototype = new music21.base.Music21Object();
+   expressions.Expression.prototype = new base.Music21Object();
    expressions.Expression.prototype.constructor = expressions.Expression;
    
    

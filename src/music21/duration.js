@@ -7,7 +7,7 @@
  * 
  */
 
-define(['music21/common'], function(require) {
+define(['music21/common'], function(common) {
 
 	var duration = {};
 	
@@ -133,7 +133,7 @@ define(['music21/common'], function(require) {
                 this._type = Music21DurationArray[typeNumber]; // increase type: eighth to quarter etc.
                 unTupletedQl = unTupletedQl * 2;
                 var tupletRatio = ql/unTupletedQl;
-                var ratioRat = music21.common.rationalize(tupletRatio);
+                var ratioRat = common.rationalize(tupletRatio);
                 if (ratioRat === undefined) {
                     console.log("cannot find ratio! ", tupletRatio, ql, unTupletedQl);
                 }
@@ -216,7 +216,7 @@ define(['music21/common'], function(require) {
 	               } else if (numActual == 6 && numNormal == 4) {
 	                   return 'Sextuplet';
 	               }
-	               ordStr = music21.common.ordinalAbbreviation(numNormal, true); // plural
+	               ordStr = common.ordinalAbbreviation(numNormal, true); // plural
 	               return 'Tuplet of ' + numActual.toString() + '/' + numNormal.toString() + ordStr;
 	           },
 	       },
