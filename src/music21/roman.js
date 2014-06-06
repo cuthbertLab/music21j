@@ -7,7 +7,8 @@
  * 
  */
 
-define(['music21/chord', 'music21/key', 'music21/pitch', 'music21/interval'], function(require) {
+define(['music21/chord', 'music21/key', 'music21/pitch', 'music21/interval'], 
+        function(chord, key, pitch, interval) {
 	var roman = {};
 
 	roman.romanToNumber = [undefined, 'i','ii','iii','iv','v','vi','vii'];
@@ -27,7 +28,7 @@ define(['music21/chord', 'music21/key', 'music21/pitch', 'music21/interval'], fu
 		this.figure = figure;
 		this._scale = undefined;
 		this._key = undefined;
-		music21.chord.Chord.call(this);
+		chord.Chord.call(this);
 		this.classes.push('RomanNumeral');
 		
 	    Object.defineProperties(this, {
@@ -47,9 +48,9 @@ define(['music21/chord', 'music21/key', 'music21/pitch', 'music21/interval'], fu
 	    	   get: function () { return this._key; },
 	    	   set: function(keyStr) {
 	    	       if (typeof(keyStr) == 'string') {
-	    	            this._key = new music21.key.Key(keyStr);
+	    	            this._key = new key.Key(keyStr);
 	    	        } else if (typeof(keyStr) == 'undefined') {
-	    	            this._key = new music21.key.Key('C');
+	    	            this._key = new key.Key('C');
 	    	        } else {
 	    	            this._key = keyStr;
 	    	        }
@@ -61,7 +62,7 @@ define(['music21/chord', 'music21/key', 'music21/pitch', 'music21/interval'], fu
 	    			if (this.scaleDegree < 7) {
 	    				return [undefined, 'Tonic', 'Supertonic','Mediant','Subdominant','Dominant','Submediant'][this.scaleDegree];
 	    			} else {
-	    				var tonicPitch = new music21.pitch.Pitch(this.key.tonic);
+	    				var tonicPitch = new pitch.Pitch(this.key.tonic);
 	    				var diffRootToTonic = (tonicPitch.ps - this.root.ps) % 12;
 	    				if (diffRootToTonic < 0) {
 	    					diffRootToTonic += 12;
@@ -78,13 +79,13 @@ define(['music21/chord', 'music21/key', 'music21/pitch', 'music21/interval'], fu
 
 	    this.updatePitches = function () {
 	    	var impliedQuality = this.impliedQuality;
-	    	var chordSpacing = music21.chord.chordDefinitions[impliedQuality];
+	    	var chordSpacing = chord.chordDefinitions[impliedQuality];
 	    	var chordPitches = [this.root];
 			var lastPitch = this.root;
 			for (var j = 0; j < chordSpacing.length; j++) {
 	            //console.log('got them', lastPitch);
 				var thisTransStr = chordSpacing[j];
-				var thisTrans = new music21.interval.Interval(thisTransStr);
+				var thisTrans = new interval.Interval(thisTransStr);
 				var nextPitch = thisTrans.transposePitch(lastPitch);
 				chordPitches.push(nextPitch);
 				lastPitch = nextPitch;
@@ -123,7 +124,7 @@ define(['music21/chord', 'music21/key', 'music21/pitch', 'music21/interval'], fu
 		
 		if (this.key.mode == 'minor' && (this.scaleDegree == 6 || this.scaleDegree == 7)) {
 			if (['minor','diminished','half-diminished'].indexOf(impliedQuality) != -1) {
-				var raiseTone = new music21.interval.Interval('A1');
+				var raiseTone = new interval.Interval('A1');
 				this.root = raiseTone.transposePitch(this.root);
 				if (music21.debug) {
 					console.log('raised root because minor/dim on scaleDegree 6 or 7');
@@ -145,7 +146,7 @@ define(['music21/chord', 'music21/key', 'music21/pitch', 'music21/interval'], fu
 		this.updatePitches();	
 	};
 
-	roman.RomanNumeral.prototype = new music21.chord.Chord();
+	roman.RomanNumeral.prototype = new chord.Chord();
 	roman.RomanNumeral.prototype.constructor = roman.RomanNumeral;
 	
 	roman.tests = function () {
