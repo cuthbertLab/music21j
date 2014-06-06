@@ -8,7 +8,7 @@
  */
 
 /* a Music21Object in m21p; the overhead is too high here to follow ... */
-define(['music21/base', 'loadMIDI'], function(require) {
+define(['music21/base', 'loadMIDI'], function(base, MIDI) {
     var tempo = {};
 
     tempo.defaultTempoValues = {

@@ -18,7 +18,8 @@
 // k.whiteKeyWidth = 40; // default 23
 
 
-define(['music21/base', 'music21/pitch', 'music21/common', 'loadMIDI', 'jquery'], function(require) {
+define(['music21/base', 'music21/pitch', 'music21/common', 'loadMIDI', 'jquery'], 
+        function(base, pitch, common, MIDI, $) {
     var keyboard = {};
     
     keyboard.Key = function () {
@@ -40,7 +41,7 @@ define(['music21/base', 'music21/pitch', 'music21/common', 'loadMIDI', 'jquery']
                     width: this.width * this.scaleFactor,
                     height: this.height * this.scaleFactor,
                 };
-            var keyDOM = music21.common.makeSVGright('rect', keyattrs);
+            var keyDOM = common.makeSVGright('rect', keyattrs);
             for (var x in this.callbacks) {
                 keyDOM.addEventListener(x, this.callbacks[x], false);
             }
@@ -70,7 +71,7 @@ define(['music21/base', 'music21/pitch', 'music21/common', 'loadMIDI', 'jquery']
                     r: this.width/4,
                 };
             
-            var circleDom = music21.common.makeSVGright('circle', keyattrs);
+            var circleDom = common.makeSVGright('circle', keyattrs);
             this.parent.svgObj.appendChild(circleDom);
             //console.log(circleDom);
             return circleDom;
@@ -85,7 +86,7 @@ define(['music21/base', 'music21/pitch', 'music21/common', 'loadMIDI', 'jquery']
             if ((this.id == 0) && (this.pitchObj === undefined)) {
                 return
             } else if (this.pitchObj === undefined) {
-                this.pitchObj = new music21.pitch.Pitch();
+                this.pitchObj = new pitch.Pitch();
                 this.pitchObj.ps = this.id;
             }
             if ((this.pitchObj.accidental !== undefined) && 
@@ -113,7 +114,7 @@ define(['music21/base', 'music21/pitch', 'music21/common', 'loadMIDI', 'jquery']
                     'font-size': fontSize,
                 };
             
-            var textDom = music21.common.makeSVGright('text', textattrs);
+            var textDom = common.makeSVGright('text', textattrs);
             var textNode = document.createTextNode(idStr);
             textDom.appendChild(textNode);
             this.parent.svgObj.appendChild(textDom);
@@ -176,9 +177,9 @@ define(['music21/base', 'music21/pitch', 'music21/common', 'loadMIDI', 'jquery']
                fillColor = 'yellow';    
            }
            keyRect.setAttribute("style", "fill:" + fillColor + ";stroke:black");
-           music21.MIDI.loadSoundfont('acoustic_grand_piano', function() {
-               music21.MIDI.noteOn(0, id, 100, 0);
-               music21.MIDI.noteOff(0, id, 500);
+           MIDI.loadSoundfont('acoustic_grand_piano', function() {
+               MIDI.noteOn(0, id, 100, 0);
+               MIDI.noteOff(0, id, 500);
            });
            setTimeout(function() { 
                keyRect.setAttribute("style", storedStyle);
@@ -203,18 +204,18 @@ define(['music21/base', 'music21/pitch', 'music21/common', 'loadMIDI', 'jquery']
            var height = 120 * this.scaleFactor;
            var heightString = height.toString() + 'px';
            
-           var svgDOM = music21.common.makeSVGright('svg', {
+           var svgDOM = common.makeSVGright('svg', {
                'xml:space': 'preserve',
                'height': heightString,
                'width': totalWidth.toString() + 'px',
            });
-           var movingPitch = new music21.pitch.Pitch("C4");
+           var movingPitch = new pitch.Pitch("C4");
            var blackKeys = [];
            var thisKeyboardObject = this;
            
            for (var wki = 0; wki < keyboardDiatonicLength; wki++) {
                movingPitch.diatonicNoteNum = dnnStart + wki;
-               var wk = new music21.keyboard.WhiteKey();
+               var wk = new keyboard.WhiteKey();
                wk.id = movingPitch.midi;
                wk.parent = this;
                this.keyObjects[movingPitch.midi] = wk;
@@ -231,7 +232,7 @@ define(['music21/base', 'music21/pitch', 'music21/common', 'loadMIDI', 'jquery']
                    (currentIndex == 4) ||
                    (currentIndex == 5)
                    ) && ( wki != keyboardDiatonicLength - 1)) {
-                   var bk = new music21.keyboard.BlackKey();
+                   var bk = new keyboard.BlackKey();
                    bk.id = movingPitch.midi + 1;
                    this.keyObjects[movingPitch.midi + 1] = bk;
                    bk.parent = this;
