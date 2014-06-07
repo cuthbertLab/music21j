@@ -15,6 +15,7 @@ define(['music21/base', 'music21/duration'], function(base, duration) {
         this.classes.push('TimeSignature');
         this._numerator = 4;
         this._denominator = 4;
+        this.beatGroups = [];
         
         Object.defineProperties(this, {
             'numerator' : {
@@ -55,6 +56,58 @@ define(['music21/base', 'music21/duration'], function(base, duration) {
     };
     meter.TimeSignature.prototype = new base.Music21Object();
     meter.TimeSignature.prototype.constructor = meter.TimeSignature;
+    
+    meter.TimeSignature.prototype.computeBeatGroups = function () {
+        var tempBeatGroups = [];
+        var numBeats = this.numerator;
+        var beatValue = this.denominator;
+        if (beatValue < 8 && numBeats >= 5) {
+            var beatsToEighthNoteRatio = 8/beatValue; // hopefully Int -- right Brian Ferneyhough?
+            beatValue = 8;
+            numBeats = numBeats * beatsToEighthNoteRatio;
+        }
+        
+        if (beatValue >= 8) {
+            while (numBeats >= 5) {
+                tempBeatGroups.push([3, beatValue]);
+                numBeats -= 3;
+            }
+            if (numBeats == 4) {
+                tempBeatGroups.push([2, beatValue]);
+                tempBeatGroups.push([2, beatValue]);
+            } else if (numBeats > 0) {
+                tempBeatGroups.push([numBeats, beatValue]);
+            }
+        } else if (beatValue == 2) {
+            tempBeatGroups.push([1, 2]);
+        } else if (beatValue <= 1) {
+            tempBeatGroups.push([1, 1]);
+        } else { // 4/4, 2/4, 3/4, standard stuff                
+            tempBeatGroups.push([2, 8]);
+        }
+        return tempBeatGroups;
+    };
+    meter.TimeSignature.prototype.vexflowBeatGroups = function (Vex) {
+        var tempBeatGroups;
+        if (this.beatGroups.length > 0) {
+            tempBeatGroups = this.beatGroups;
+        } else {
+            tempBeatGroups = this.computeBeatGroups();
+        }
+        //console.log(tempBeatGroups);
+        var vfBeatGroups = [];
+        for (var i = 0; i < tempBeatGroups.length; i++ ) {
+            var bg = tempBeatGroups[i];
+            vfBeatGroups.push( new Vex.Flow.Fraction(bg[0], bg[1]));
+        }
+        return vfBeatGroups;
+
+//          if (numBeats % 3 == 0 && beatValue < 4) {
+//              // 6/8, 3/8, 9/8, etc.
+//              numBeats = numBeats / 3;
+//              beatValue = beatValue / 3;
+//          }            
+    };
     
     // end of define
     if (typeof(music21) != "undefined") {

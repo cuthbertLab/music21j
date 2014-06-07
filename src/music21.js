@@ -74,6 +74,7 @@ if ((Object.defineProperties === undefined) && warnBanner) {
     		'jquery-ui': 'ext/jqueryPlugins/jqueryUI/jquery-ui.min',
     		'vexflow': 'ext/vexflow/vexflow-min',
     		'es6-shim': 'ext/es6-shim',
+    		'vexflowMods': 'ext/vexflowMods',
     	},
     	shim: {
     		'jquery-ui': {
@@ -87,7 +88,7 @@ if ((Object.defineProperties === undefined) && warnBanner) {
     	}
     });
     var m21modules = ['loadMIDI',
-                      'vexflow',
+                      'vexflowMods',
                       'jquery',
                       'jquery-ui',
                       'music21/moduleLoader', ];
