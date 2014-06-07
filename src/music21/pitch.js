@@ -7,12 +7,12 @@
  * 
  */
 
-define([], 
+define(['music21/prebase'], 
         /**
          * pitch module
          * @exports music21/pitch
          */
-        function() {
+        function(prebase) {
     var pitch = {};
 	
 	/*  pitch based objects; from pitch.py */
@@ -29,7 +29,8 @@ define([],
          * @var {string} vexflowModifier
          * @var {Array} classes
          */
-	    this.classes = ['Accidental'];
+	    prebase.ProtoM21Object.call(this);
+	    this.classes.push('Accidental');
 		this._name = "";
 		this._alter = 0.0;
 		this._modifier = "";
@@ -131,6 +132,8 @@ define([],
 		};
 		this.set(accName);
 	};
+    pitch.Accidental.prototype = new prebase.ProtoM21Object();
+    pitch.Accidental.prototype.constructor = pitch.Accidental;
 	
 	
 	pitch.nameToMidi = {'C': 0, 'D': 2, 'E': 4, 'F': 5, 'G': 7, 'A': 9, 'B': 11};
@@ -144,6 +147,8 @@ define([],
 	 * @property {number} pitch.Pitch.diatonicNoteNum - diatonic number of the pitch, where 29 = C4
 	 */
 	pitch.Pitch = function (pn) {
+	    prebase.ProtoM21Object.call(this);
+	    this.classes.push('Pitch');
 	    if (pn == undefined) {
 	    	pn = "C";
 	    }
@@ -159,10 +164,6 @@ define([],
 	     * @type {pitch.Accidental|undefined}
 	     */
 	    this._accidental = undefined;
-	    /**
-	     * @type {Array<string>}
-	     */
-		this.classes = ['Pitch'];
 		/**
 		 * 
 		 * @param {Array<string>|string} testClass
@@ -307,6 +308,11 @@ define([],
             return outName;
 	    };
 	};
+    pitch.Pitch.prototype = new prebase.ProtoM21Object();
+    pitch.Pitch.prototype.constructor = pitch.Pitch;
+
+	
+	
 	pitch.tests = function () {
 	    test( "music21.pitch.Accidental", function () {
 	        var a = new music21.pitch.Accidental("-");
