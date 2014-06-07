@@ -253,7 +253,47 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
 			}
 	    });
 	    
-	    
+        /* MIDI related routines... */
+        
+        this.playStream = function (startNote) {
+            /*
+             */
+            var currentNote = 0;
+            if (startNote !== undefined) {
+                currentNote = startNote;
+            }
+            var flatEls = this.flat.elements;
+            var lastNote = flatEls.length;
+            var tempo = this.tempo;
+            this._stopPlaying = false;
+            var thisStream = this;
+            
+            var playNext = function (elements) {
+                if (currentNote < lastNote && !thisStream._stopPlaying) {
+                    var el = elements[currentNote];
+                    var nextNote = undefined;
+                    if (currentNote < lastNote + 1) {
+                        nextNote = elements[currentNote + 1];
+                    }
+                    var milliseconds = 0;
+                    if (el.playMidi !== undefined) {
+                        milliseconds = el.playMidi(tempo, nextNote);                        
+                    }
+                    currentNote += 1;
+                    setTimeout( function () { playNext(elements); }, milliseconds);
+                }
+            };
+            playNext(flatEls);
+        };
+        
+        this.stopPlayStream = function () {
+            // turns off all currently playing MIDI notes (on any stream) and stops playback.
+            this._stopPlaying = true;
+            for (var i = 0; i < 127; i++) {
+                music21.MIDI.noteOff(0, midNum, 0);
+            }
+        };
+        	    
 	    /*  VexFlow functionality */
 	    
    
@@ -328,49 +368,11 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
        this.renderVexflowOnCanvas = function (canvas) {
            var vfr = new vfShow.Renderer(this, canvas);
            vfr.render();
+           canvas.storedStream = this;
+           this.setRenderInteraction(canvas);
        };
 
-	    /* MIDI related routines... */
-	    
-	    this.playStream = function (startNote) {
-	    	/*
-	    	 */
-	        var currentNote = 0;
-	        if (startNote !== undefined) {
-	        	currentNote = startNote;
-	        }
-	        var flatEls = this.flat.elements;
-	        var lastNote = flatEls.length;
-            var tempo = this.tempo;
-	        this._stopPlaying = false;
-	        var thisStream = this;
-	        
-	        var playNext = function (elements) {
-	            if (currentNote < lastNote && !thisStream._stopPlaying) {
-	                var el = elements[currentNote];
-                    var nextNote = undefined;
-                    if (currentNote < lastNote + 1) {
-                        nextNote = elements[currentNote + 1];
-                    }
-                    var milliseconds = 0;
-                    if (el.playMidi !== undefined) {
-                        milliseconds = el.playMidi(tempo, nextNote);                        
-                    }
-	                currentNote += 1;
-	            	setTimeout( function () { playNext(elements); }, milliseconds);
-	            }
-	        };
-	        playNext(flatEls);
-	    };
-	    
-	    this.stopPlayStream = function () {
-	        // turns off all currently playing MIDI notes (on any stream) and stops playback.
-	    	this._stopPlaying = true;
-	    	for (var i = 0; i < 127; i++) {
-	    	    music21.MIDI.noteOff(0, midNum, 0);
-	    	}
-		};
-	    
+
 		/** ----------------------------------------------------------------------
 		 * 
 		 *  Canvas routines -- to be factored out eventually.
@@ -416,16 +418,9 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
 	    };
 	    this.createCanvas = function(scaleInfo, width, height) {
 			var newCanvas = this.createNewCanvas(scaleInfo, width, height);
-	        this.drawCanvas(newCanvas[0]);
+	        this.renderVexflowOnCanvas(newCanvas[0]);
 	        return newCanvas;    
 	    };
-	    
-	    this.drawCanvas = function (canvas) {
-	    	this.renderVexflowOnCanvas(canvas);
-	        canvas.storedStream = this;
-	        this.setRenderInteraction(canvas);    
-	    };    
-	    
 	    this.appendNewCanvas = function (bodyElement, scaleInfo, width, height) {
 	        if (bodyElement == undefined) {
 	            bodyElement = 'body';
@@ -435,12 +430,13 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
 			return canvasBlock[0];
 	    };
 	    
-	    this.replaceLastCanvas = function (bodyElement, scaleInfo) {
-	        if (bodyElement == undefined) {
-	            bodyElement = 'body';
+	    this.replaceCanvas = function (where, scaleInfo) {
+	        // if called with no where, replaces all the canvases on the page...
+	        if (where == undefined) {
+	            where = 'body';
 	        }
 	        canvasBlock = this.createCanvas(scaleInfo);
-	        $(bodyElement + " " + 'canvas').replaceWith(canvasBlock);
+	        $(where + " " + 'canvas').replaceWith(canvasBlock);
 			return canvasBlock[0];
 		};
         this.renderScrollableCanvas = function (where) {
@@ -896,7 +892,7 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
 												   width: canvas.style.width },
 												canvas.width,
 												canvas.height );
-			this.drawCanvas(newCanv[0]);
+			this.renderVexflowOnCanvas(newCanv[0]);
 			$(canvas).replaceWith( newCanv );		
 			stream.jQueryEventCopy($.event, $(canvas), newCanv); /* copy events -- using custom extension... */
 		};

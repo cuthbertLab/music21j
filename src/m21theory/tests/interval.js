@@ -177,7 +177,7 @@ define("m21theory/tests/interval", ["m21theory/section", "m21theory/random"],
 			s.append(n1);
 			s.append(n2);
 			s.autoBeam = false;
-			var nc = s.createPlayableCanvas();
+			var nc = s.createCanvas();
 			var niceDiv = $("<div style='width: 180px; float: left; padding-bottom: 20px'></div>");
 			niceDiv.append(nc);
 			if (i < this.practiceQs) {

@@ -78,7 +78,7 @@ define("m21theory/tests/noteIdentification", ["m21theory/section", "m21theory/ra
 			s.makeAccidentals();
 			var streamAnswer = answerList.join(' ');
 			s.renderOptions.events['click'] = undefined;
-			var nc = s.createPlayableCanvas({'height': '100px', 'width': 'auto'}, 400);
+			var nc = s.createCanvas({'height': '100px', 'width': 'auto'}, 400);
 			var niceDiv = $("<div style='width: 420px; float: left; padding-bottom: 20px'></div>");
 			niceDiv.append(nc);
 									

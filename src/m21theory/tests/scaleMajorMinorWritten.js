@@ -116,7 +116,7 @@ define("m21theory/tests/scaleMajorMinorWritten", ["m21theory/section", "m21theor
 				}
 			}
 			
-			var nc = s.createPlayableCanvas({'height': '100px', 'width': 'auto'}, 320);
+			var nc = s.createCanvas({'height': '100px', 'width': 'auto'}, 320);
 			if (this.hide367) {
 				for (j = 0; j < remEls.length; j++) {
 					s.elements[remEls[j]] = removedNotes[j];

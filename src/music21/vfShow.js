@@ -253,6 +253,8 @@ define(['vexflow'], function(Vex) {
             // if autoBeam is true then it will apply beams for each voice and put them in
             // this.beamGroups;
             var formatter = new Vex.Flow.Formatter();
+            //var minLength = formatter.preCalculateMinTotalWidth([voices]);
+            //console.log(minLength);
             if (voices.length == 0) {
                 return formatter;
             }

@@ -60,7 +60,7 @@ define("m21theory/tests/scaleEar", ["m21theory/section", "m21theory/random"],
                 s.append(n);
             }
             s.autoBeam = false;
-            var nc = s.createPlayableCanvas({'height': '100px', 'width': 'auto'}, 320);
+            var nc = s.createCanvas({'height': '100px', 'width': 'auto'}, 320);
             var niceDiv = $("<div style='width: 330px; float: left; padding-bottom: 20px'></div>");
             niceDiv.append(nc);
             

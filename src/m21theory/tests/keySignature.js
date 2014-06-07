@@ -1,7 +1,7 @@
 define("m21theory/tests/keySignature", ["m21theory/section", "m21theory/random"], 
         function (section, random) {
 	var ThisTest = function () {
-		m21theory.section.Generic.call(this);
+		section.Generic.call(this);
 		this.assignmentId = 'keySignatures';
 		this.totalQs = 16;
 		this.minSharps = -6;
@@ -19,7 +19,7 @@ define("m21theory/tests/keySignature", ["m21theory/section", "m21theory/random"]
 
 		this.renderOneQ = function (i) {
 			var s = new music21.stream.Stream();
-			if (m21theory.random.randint(0,1)) {
+			if (random.randint(0,1)) {
 				s.clef = new music21.clef.Clef('treble');
 			} else {
 				s.clef = new music21.clef.Clef('bass');
@@ -30,7 +30,7 @@ define("m21theory/tests/keySignature", ["m21theory/section", "m21theory/random"]
 			}
 			var keySignatureSharps = undefined;
 			while (keySignatureSharps == undefined) {
-				keySignatureSharps = m21theory.random.randint(this.minSharps, this.maxSharps);
+				keySignatureSharps = random.randint(this.minSharps, this.maxSharps);
 				for (var j = 0; j < this.usedKeySignatures.length; j++) {
 					if (this.usedKeySignatures[j] == keySignatureSharps) {
 						keySignatureSharps = undefined;
@@ -48,7 +48,7 @@ define("m21theory/tests/keySignature", ["m21theory/section", "m21theory/random"]
 				tonicName = ks.majorName();
 			}
 			tonicName = tonicName.replace(/\-/g, "b");
-			var nc = s.createPlayableCanvas();
+			var nc = s.createCanvas();
 			var niceDiv = $("<div style='width: 180px; float: left; padding-bottom: 20px'></div>");
 			niceDiv.append(nc);
 			if (i < this.practiceQs) {
@@ -68,7 +68,7 @@ define("m21theory/tests/keySignature", ["m21theory/section", "m21theory/random"]
 		};
 	};
 
-	ThisTest.prototype = new m21theory.section.Generic();
+	ThisTest.prototype = new section.Generic();
 	ThisTest.prototype.constructor = ThisTest;
 	return ThisTest;
 });

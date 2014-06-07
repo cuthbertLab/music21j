@@ -52,7 +52,7 @@ define("m21theory/tests/chordIdentification", ["m21theory/section", "m21theory/r
 	        
 	        myStream.renderOptions.events['dblclick'] = 'play';
 	        myStream.renderOptions.events['click'] = undefined;
-	        var nc = myStream.createPlayableCanvas();
+	        var nc = myStream.createCanvas();
 	        nc.attr('class','draggableCanvas');
 	        nc.draggable( {
 			  containment: 'body',

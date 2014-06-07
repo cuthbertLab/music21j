@@ -40,7 +40,7 @@ define(['m21theory/misc', 'm21theory/userData'], function(misc, userData) {
 			}
 
 			if (this.addStudentName) {
-				m21theory.userData.fillNameDiv();
+				userData.fillNameDiv();
 			}
 			if (this.addKeyboard) {
 			    misc.addKeyboard(testBank);
