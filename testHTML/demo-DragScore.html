@@ -40,12 +40,13 @@ function renderThemes ()  {
         myStream.timeSignature = '4/4';
         var nc = myStream.createPlayableCanvas();
         $('#themeDiv').append(nc);
+        // here is where we create something!
         nc.draggable( {
 		  containment: 'body',
 		  stack: '#themeDiv canvas',
 		  cursor: 'move',
 		  revert: true} ).data('stream', myStream);
-		nc[0].ondblclick = nc[0].onclick;
+		nc[0].ondblclick = nc[0].onclick;  // not working right now...
 		nc[0].onclick = undefined;
         themeCanvases.push(nc[0]);
         r.removeFormatterInformation(myStream, true); // recursive.
@@ -83,7 +84,7 @@ function clearScore() {
 }
 
 function undoAdd() {
-	allStream.elements = allStream._elements.slice(0, allStream.length - 1);
+	allStream.elements = allStream.elements.slice(0, allStream.length - 1);
 	var newCanvas = allStreamScore.createPlayableCanvas();
 	$('#dropDiv canvas').replaceWith(newCanvas[0]);	
 }

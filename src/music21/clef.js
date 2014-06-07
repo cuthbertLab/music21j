@@ -37,31 +37,12 @@ define(['music21/base','music21/pitch'], function(base, pitch) {
 	    	this.firstLineTrebleOffset = 0;
 	    }
 	    
-	    this.setStemDirection = function (note, override) {
-	        // set the stem direction of a note.
-	        // does nothing to already set stemDirection unless override is true
-	        if (override === undefined) {
-	            override = false;
-	        }
-	        if (note.stemDirection != undefined && override != true) {
-	        	return;
-	        }
-	        if (note.pitch != undefined) {
-	            if (note.pitch.diatonicNoteNum != undefined) {
-	                if (note.pitch.diatonicNoteNum < this.firstLine + 4) {
-	                    note.stemDirection = 'up';
-	                } else {
-	                    note.stemDirection = 'down';
-	                }
-	            }
-	        }
-	    };
 	    this.convertPitchToTreble = function (p) {
 	        // returns a new pitch object if the clef name is not Treble
 	        // designed so it would look the same as it would in treble clef.
 	        // for instance, bass-clef 2nd-space C# becomes treble clef 2nd-space A#
 	        // used for Vex.Flow which requires all pitches to be input as if they
-	        // are in treble clef. Run before setStemDirection...
+	        // are in treble clef.
 	        //
 	        // in case of treble clef or percussion clef, returns the same pitch object to save time.
 	        if (this.name == 'treble' || this.name == 'percussion') {
@@ -181,10 +162,10 @@ define(['music21/base','music21/pitch'], function(base, pitch) {
             var ac = new music21.clef.AltoClef();
             equal (ac.firstLine, 25, 'first line set');
             var n = new music21.note.Note('C#4');
-            ac.setStemDirection(n, true);
+            n.setStemDirectionFromClef(ac);
             equal (n.stemDirection, 'down', 'stem direction set');
             n.pitch.diatonicNoteNum -= 1;
-            ac.setStemDirection(n, true);
+            n.setStemDirectionFromClef(ac);
             equal (n.stemDirection, 'up', 'stem direction set');
             n.pitch.diatonicNoteNum += 1;
             var p2 = ac.convertPitchToTreble(n.pitch);

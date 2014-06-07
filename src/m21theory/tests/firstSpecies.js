@@ -52,7 +52,7 @@ define("m21theory/tests/firstSpecies", ["m21theory/section", "m21theory/random"]
 				p.accidental = stepAccidental;
 				n.pitch = p;
 				n.stemDirection = undefined;
-				this.clef.setStemDirection(n);
+				//this.clef.setStemDirection(n);
 				this.activeNote = n;
 				this.activeCanvas = canvas;
 				this.redrawCanvas(canvas);
