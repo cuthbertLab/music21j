@@ -41,78 +41,6 @@ define(['music21/base', 'music21/pitch', 'music21/interval', 'music21/scale'],
             }
         });
 		
-        /**
-         * Return the name of the major key with this many sharps
-         * 
-         * @returns {(string|undefined)}
-         */
-		this.majorName = function () {
-			if (this.sharps >= 0) {
-				return this.sharpMapping[this.sharps];
-			} else {
-				return this.flatMapping[Math.abs(this.sharps)];
-			}
-		};
-        /**
-         * Return the name of the minor key with this many sharps
-         * @returns {(string|undefined)}
-         */
-		this.minorName = function() {
-			var tempSharps = this.sharps + 3;
-			if (tempSharps >= 0) {
-				return this.sharpMapping[tempSharps];
-			} else {
-				return this.flatMapping[Math.abs(tempSharps)];
-			}
-		};
-		
-		/**
-		 * 
-		 * @returns {string}
-		 */
-		this.vexflow = function() {
-			var tempName = this.majorName();
-			return tempName.replace(/\-/g, "b");
-		};
-		/**
-		 * 
-		 * @param {int} step
-		 * @returns {(pitch.Accidental|undefined)}
-		 */
-		this.accidentalByStep = function(step) {
-			var aps = this.alteredPitches;
-			for (var i = 0; i < aps.length; i++) {
-				if (aps[i].step == step) {
-					if (aps[i].accidental == undefined) {
-						return undefined;
-					}
-					// make a new accidental;
-					return new pitch.Accidental(aps[i].accidental.alter);
-				}
-			}
-			return undefined;
-		};
-		this.transposePitchFromC = function(p) {
-			var transInterval = undefined;
-			var transTimes = undefined;
-			if (this.sharps == 0) {
-				return new pitch.Pitch(p.nameWithOctave);
-			} else if (this.sharps < 0) {
-				transTimes = Math.abs(this.sharps);
-				transInterval = new interval.Interval("P4");
-			} else {
-				transTimes = this.sharps;
-				transInterval = new interval.Interval("P5");
-			}
-			var newPitch = p;
-			for (var i = 0; i < transTimes; i++) {
-				newPitch = transInterval.transposePitch(newPitch);
-				if ((i % 2) == 1) {
-					newPitch.octave = newPitch.octave - 1;
-				}
-			} 
-			return newPitch;
-		};
 		
 	    Object.defineProperties(this, {
 	    	'alteredPitches': {
@@ -140,9 +68,83 @@ define(['music21/base', 'music21/pitch', 'music21/interval', 'music21/scale'],
 	    	}
 	    });
 	};
-
-	key.KeySignature.prototype = new base.Music21Object();
+	
+    key.KeySignature.prototype = new base.Music21Object();
 	key.KeySignature.prototype.constructor = key.KeySignature;
+
+	
+    /**
+     * Return the name of the major key with this many sharps
+     * 
+     * @returns {(string|undefined)}
+     */
+    key.KeySignature.prototype.majorName = function () {
+        if (this.sharps >= 0) {
+            return this.sharpMapping[this.sharps];
+        } else {
+            return this.flatMapping[Math.abs(this.sharps)];
+        }
+    };
+    /**
+     * Return the name of the minor key with this many sharps
+     * @returns {(string|undefined)}
+     */
+    key.KeySignature.prototype.minorName = function() {
+        var tempSharps = this.sharps + 3;
+        if (tempSharps >= 0) {
+            return this.sharpMapping[tempSharps];
+        } else {
+            return this.flatMapping[Math.abs(tempSharps)];
+        }
+    };
+    
+    /**
+     * 
+     * @returns {string}
+     */
+    key.KeySignature.prototype.vexflow = function() {
+        var tempName = this.majorName();
+        return tempName.replace(/\-/g, "b");
+    };
+    /**
+     * 
+     * @param {int} step
+     * @returns {(pitch.Accidental|undefined)}
+     */
+    key.KeySignature.prototype.accidentalByStep = function(step) {
+        var aps = this.alteredPitches;
+        for (var i = 0; i < aps.length; i++) {
+            if (aps[i].step == step) {
+                if (aps[i].accidental == undefined) {
+                    return undefined;
+                }
+                // make a new accidental;
+                return new pitch.Accidental(aps[i].accidental.alter);
+            }
+        }
+        return undefined;
+    };
+    key.KeySignature.prototype.transposePitchFromC = function(p) {
+        var transInterval = undefined;
+        var transTimes = undefined;
+        if (this.sharps == 0) {
+            return new pitch.Pitch(p.nameWithOctave);
+        } else if (this.sharps < 0) {
+            transTimes = Math.abs(this.sharps);
+            transInterval = new interval.Interval("P4");
+        } else {
+            transTimes = this.sharps;
+            transInterval = new interval.Interval("P5");
+        }
+        var newPitch = p;
+        for (var i = 0; i < transTimes; i++) {
+            newPitch = transInterval.transposePitch(newPitch);
+            if ((i % 2) == 1) {
+                newPitch.octave = newPitch.octave - 1;
+            }
+        } 
+        return newPitch;
+    };
 
 	key.Key = function (keyName, mode) {
 		if (keyName == undefined) {
@@ -174,21 +176,21 @@ define(['music21/base', 'music21/pitch', 'music21/interval', 'music21/scale'],
 		this.tonic = keyName;
 		this.mode = mode;
 		
-		this.getScale = function (scaleType) {
-			if (scaleType == undefined) {
-				scaleType = this.mode;
-			}
-			var pitchObj = new pitch.Pitch(this.tonic);
-			if (scaleType == 'major') {
-				return scale.ScaleSimpleMajor(pitchObj);
-			} else {
-				return scale.ScaleSimpleMinor(pitchObj, scaleType);
-			}
-		};
 	};
 
 	key.Key.prototype = new key.KeySignature();
 	key.Key.prototype.constructor = key.Key;
+    key.Key.prototype.getScale = function (scaleType) {
+        if (scaleType == undefined) {
+            scaleType = this.mode;
+        }
+        var pitchObj = new pitch.Pitch(this.tonic);
+        if (scaleType == 'major') {
+            return scale.ScaleSimpleMajor(pitchObj);
+        } else {
+            return scale.ScaleSimpleMinor(pitchObj, scaleType);
+        }
+    };
 
 	key.tests = function () {
 

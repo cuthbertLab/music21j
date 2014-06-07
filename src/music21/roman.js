@@ -77,21 +77,6 @@ define(['music21/chord', 'music21/key', 'music21/pitch', 'music21/interval'],
 	    	}
 	    });		
 
-	    this.updatePitches = function () {
-	    	var impliedQuality = this.impliedQuality;
-	    	var chordSpacing = chord.chordDefinitions[impliedQuality];
-	    	var chordPitches = [this.root];
-			var lastPitch = this.root;
-			for (var j = 0; j < chordSpacing.length; j++) {
-	            //console.log('got them', lastPitch);
-				var thisTransStr = chordSpacing[j];
-				var thisTrans = new interval.Interval(thisTransStr);
-				var nextPitch = thisTrans.transposePitch(lastPitch);
-				chordPitches.push(nextPitch);
-				lastPitch = nextPitch;
-			}
-			this.pitches = chordPitches;
-	    };
 	    
 		this.key = keyStr;
 		var currentFigure = figure;
@@ -148,6 +133,21 @@ define(['music21/chord', 'music21/key', 'music21/pitch', 'music21/interval'],
 
 	roman.RomanNumeral.prototype = new chord.Chord();
 	roman.RomanNumeral.prototype.constructor = roman.RomanNumeral;
+    roman.RomanNumeral.prototype.updatePitches = function () {
+        var impliedQuality = this.impliedQuality;
+        var chordSpacing = chord.chordDefinitions[impliedQuality];
+        var chordPitches = [this.root];
+        var lastPitch = this.root;
+        for (var j = 0; j < chordSpacing.length; j++) {
+            //console.log('got them', lastPitch);
+            var thisTransStr = chordSpacing[j];
+            var thisTrans = new interval.Interval(thisTransStr);
+            var nextPitch = thisTrans.transposePitch(lastPitch);
+            chordPitches.push(nextPitch);
+            lastPitch = nextPitch;
+        }
+        this.pitches = chordPitches;
+    };
 	
 	roman.tests = function () {
 	    test ( "music21.roman.RomanNumeral" , function() {
