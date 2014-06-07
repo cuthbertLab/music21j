@@ -16,7 +16,9 @@
 		            s.elements = s.elements.slice(1)
 		        }
 		        s.append(m21n);
-		        var canv = s.replaceLastCanvas();
+	            var $canvasDiv = $("#canvasDiv");
+	            $canvasDiv.clear();
+	            var canv = s.appendNewCanvas($canvasDiv);
 		    }
 		}
 		require(['music21'], function () { 
@@ -33,7 +35,7 @@
 	<div>
 	MIDI Input: <div id="putMidiSelectHere" />
 	</div>
-	<div>
+	<div id="canvasDiv">
         <canvas />
     </div>
 </body>

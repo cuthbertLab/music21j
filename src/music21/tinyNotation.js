@@ -180,14 +180,11 @@ define(['music21/base', 'music21/clef', 'music21/duration', 'music21/pitch','mus
 			}
 			if (thisTNContents) {
 				var st = tinyNotation.TinyNotation(thisTNContents);
-				var newCanvas;
 				if (thisTNJQ.hasClass('noPlayback')) {
                     st.renderOptions.events['click'] = undefined;
-                    newCanvas = st.createCanvas();
-				} else {
-                    newCanvas = st.createPlayableCanvas();
-				}
-
+				} 
+                var newCanvas = st.createCanvas();
+				
 				thisTNJQ.attr("tinyNotationContents", thisTNContents);
 				thisTNJQ.empty();
 				thisTNJQ.append(newCanvas);

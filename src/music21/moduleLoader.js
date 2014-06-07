@@ -62,7 +62,7 @@ define(['music21/pitch',
         'music21/vfShow',
         'music21/tie',
         ], 
-        function(require) {
+        function() {
 			return music21;
 		}
 ); // end define

@@ -11,12 +11,26 @@ define([], function() {
         return el;
     };
 
-    common.copyStream = function (obj, memo) {
+    common.copyStream = function (obj, deep, memo) {
         if(obj == null || typeof(obj) !== 'object'){
             return obj;
         }
         if (memo === undefined) {
-            memo = {};
+            memo = new Map();
+        }
+        var newDepth = memo.get('depth');
+        if (newDepth === undefined) {
+            newDepth = 1;
+        }
+        newDepth += 1;
+        if (newDepth > 100) {
+            console.log('im out of here');
+            return undefined;
+        }
+        memo.set('depth', newDepth);
+        if (memo.get(obj) !== undefined) {
+            console.log('returning obj: ' + obj + ' from memo');
+            return memo.get(obj);
         }
         //make sure the returned object has the same prototype as the original
         var ret = Object.create(obj.constructor.prototype);
@@ -26,8 +40,10 @@ define([], function() {
             }
             if (key == 'parent') {
                 ret[key] = obj[key];
-            } else if (key == '_elements' || key == '_elementOffsets') {
+            } else if (deep != true && (key == '_elements' || key == '_elementOffsets')) {
                 ret[key] = obj[key].slice(); // shallow copy...
+            } else if (key == 'activeVexflowNote' || key == 'storedVexflowstave') {
+                // do nothing -- do not copy vexflowNotes -- permanent recursion
             } else if (
                     Object.getOwnPropertyDescriptor(obj, key).get !== undefined ||
                     Object.getOwnPropertyDescriptor(obj, key).set !== undefined
@@ -36,12 +52,11 @@ define([], function() {
             } else if (typeof(obj[key]) == 'function') {
                 // do nothing -- events might not be copied.
             } else {
-                if (!(key in memo)) {
-                    //console.log(key, ret[key]);
-                    ret[key] = common.copyStream(obj[key], memo);                    
-                }
+                console.log(key, obj, ret);
+                ret[key] = common.copyStream(obj[key], deep, memo);                 
             }
         }
+        memo.set(obj, ret);
         return ret;
     };
     
