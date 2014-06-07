@@ -240,7 +240,7 @@ define(function(require) {
             var jpc = new music21.jsonPickle.Converter();
             var thisObj = jpc.pyObjToJsObj('music21.note.Note');
             var tc = thisObj.classes;
-            equal (tc.toString(), "Music21Object,GeneralNote,NotRest,Note");            
+            equal (tc.toString(), "ProtoM21Object,Music21Object,GeneralNote,NotRest,Note");            
         });
     };
    
