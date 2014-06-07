@@ -330,6 +330,7 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
         try {
             if ((el.isClassOrSubclass !== undefined) && el.isClassOrSubclass('NotRest')) {
                 // set stem direction on output
+                // this.clef.setStemDirection(el);         
             }
             for (var i = 0; i < this._elements.length; i++) {
                 var testOffset = this._elementOffsets[i];

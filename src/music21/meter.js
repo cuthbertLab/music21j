@@ -49,8 +49,6 @@ define(['music21/base', 'music21/duration'], function(base, duration) {
             },
         });
 
-        
-        
         if (typeof(meterString) == 'string') {
             this.ratioString = meterString;
         }
