@@ -24,7 +24,8 @@ require(['music21'], function (music21) {
     $b.append("<div>clone and change step from C to E</div>");
     
     var y = s.clone(true);
-    y._elements[0].pitch.step = 'E';
+    y.get(0).pitch.step = 'E';
+    y.get(0).stemDirection = undefined;
     y.appendNewCanvas();
     $b.append("<div>s (original) unchanged?</div>");
     s.appendNewCanvas();
@@ -41,6 +42,7 @@ require(['music21'], function (music21) {
     s3.append(s.clone(true));
     var sScrewy = s.clone(true);
     sScrewy.get(1).pitch.step = 'A';
+    sScrewy.get(1).stemDirection = undefined;
     s3.append(sScrewy);
     s3.append(s.clone(true));
     s3.appendNewCanvas();    
@@ -54,6 +56,7 @@ require(['music21'], function (music21) {
     var s3SecondFlat = s3Second.flat;
     for (var i = 0; i < s3SecondFlat.length; i++) {
         var n = s3SecondFlat.get(i);
+        n.stemDirection = undefined;
         n.pitch.diatonicNoteNum = 22 + (29 - n.pitch.diatonicNoteNum); 
     }
     
