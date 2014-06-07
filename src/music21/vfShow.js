@@ -506,7 +506,18 @@ define(['vexflow'], function(Vex) {
         /**
          *  For later retrieval of notes from, say, a clicked score.
          */
-        
+        this.removeFormatterInformation = function(s, recursive) {
+            s.storedVexflowStave = undefined;
+            for (var i = 0; i < s.length; i ++ ) {
+                var el = s.get(i);
+                el.x = undefined;
+                el.systemIndex = undefined;
+                el.activeVexflowNote = undefined;
+                if (recursive && el.isClassOrSubclass('Stream')) {
+                    this.removeFormatterInformation(el, recursive);
+                }
+            }
+        };
         this.applyFormatterInformationToNotes = function (stave, s, formatter) {
             // mad props to our friend Vladimir Viro for figuring this out!
             // visit http://peachnote.com/

@@ -11,54 +11,31 @@ define([], function() {
         return el;
     };
 
-    common.copyStream = function (obj, deep, memo) {
-        if(obj == null || typeof(obj) !== 'object'){
-            return obj;
+
+    
+    common.mergeObjectProperties = function MergeRecursive(obj1, obj2) {
+      // http://stackoverflow.com/questions/171251/how-can-i-merge-properties-of-two-javascript-objects-dynamically
+      for (var p in obj2) {
+        try {
+          // Property in destination object set; update its value.
+          if ( obj2[p].constructor==Object ) {
+            obj1[p] = MergeRecursive(obj1[p], obj2[p]);
+
+          } else {
+            obj1[p] = obj2[p];
+
+          }
+
+        } catch(e) {
+          // Property in destination object not set; create it and set its value.
+          obj1[p] = obj2[p];
+
         }
-        if (memo === undefined) {
-            memo = new Map();
-        }
-        var newDepth = memo.get('depth');
-        if (newDepth === undefined) {
-            newDepth = 1;
-        }
-        newDepth += 1;
-        if (newDepth > 100) {
-            console.log('im out of here');
-            return undefined;
-        }
-        memo.set('depth', newDepth);
-        if (memo.get(obj) !== undefined) {
-            console.log('returning obj: ' + obj + ' from memo');
-            return memo.get(obj);
-        }
-        //make sure the returned object has the same prototype as the original
-        var ret = Object.create(obj.constructor.prototype);
-        for(var key in obj){
-            if (obj.hasOwnProperty(key) == false) {
-                continue;
-            }
-            if (key == 'parent') {
-                ret[key] = obj[key];
-            } else if (deep != true && (key == '_elements' || key == '_elementOffsets')) {
-                ret[key] = obj[key].slice(); // shallow copy...
-            } else if (key == 'activeVexflowNote' || key == 'storedVexflowstave') {
-                // do nothing -- do not copy vexflowNotes -- permanent recursion
-            } else if (
-                    Object.getOwnPropertyDescriptor(obj, key).get !== undefined ||
-                    Object.getOwnPropertyDescriptor(obj, key).set !== undefined
-                    ) {
-                // do nothing
-            } else if (typeof(obj[key]) == 'function') {
-                // do nothing -- events might not be copied.
-            } else {
-                console.log(key, obj, ret);
-                ret[key] = common.copyStream(obj[key], deep, memo);                 
-            }
-        }
-        memo.set(obj, ret);
-        return ret;
+      }
+
+      return obj1;
     };
+    
     
     common.ordinalAbbreviation = function (value, plural) {
         var post = "";
