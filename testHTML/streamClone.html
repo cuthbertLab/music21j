@@ -1,0 +1,73 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns = "http://www.w3.org/1999/xhtml">
+<head>
+ <title>stream.clone()</title>
+ <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+ <!-- midi.js package -->
+  <script data-main="../src/music21.js" src="../ext/require/require.js"></script>
+
+ <link rel="stylesheet" href="http://web.mit.edu/music21/doc/_static/m21.css" type="text/css" />
+ <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Source+Code+Pro|Open+Sans:300italic,400italic,700italic,400,300,700" type="text/css" />
+
+</head>
+<body>
+<script type="text/javascript">
+
+var allStream;
+
+require(['music21'], function (music21) {
+    var $b = $('body');
+    $b.append("<div>s = one measure tinyNotation</div>");
+    
+    var s = music21.tinyNotation.TinyNotation('3/4 C4 D2');
+    s.appendNewCanvas();
+    $b.append("<div>clone and change step from C to E</div>");
+    
+    var y = s.clone(true);
+    y._elements[0].pitch.step = 'E';
+    y.appendNewCanvas();
+    $b.append("<div>s (original) unchanged?</div>");
+    s.appendNewCanvas();
+    
+    $b.append("<div><h1>three measure tiny notation Part</h1></div>");
+    var s2 = music21.tinyNotation.TinyNotation('3/4 b2. a2. g2.');
+    s2.appendNewCanvas();
+    $b.append("<div>cloned right?</div>");
+    var y2 = s2.clone(true);
+    y2.appendNewCanvas();
+    
+    $b.append("<div>s3 = three measure tiny notation Part (s.clone(), s.clone([D=A]), s.clone())</div>");
+    var s3 = new music21.stream.Part();
+    s3.append(s.clone(true));
+    var sScrewy = s.clone(true);
+    sScrewy.get(1).pitch.step = 'A';
+    s3.append(sScrewy);
+    s3.append(s.clone(true));
+    s3.appendNewCanvas();    
+
+    $b.append("<h1>Score</h1><div>s4 = three parts (s3.clone(), s3.clone()-inverted, s3.clone()</div>");
+
+    var s4 = new music21.stream.Score();
+    s4.insert(0, s3.clone(true));
+    
+    var s3Second = s3.clone(true);
+    var s3SecondFlat = s3Second.flat;
+    for (var i = 0; i < s3SecondFlat.length; i++) {
+        var n = s3SecondFlat.get(i);
+        n.pitch.diatonicNoteNum = 22 + (29 - n.pitch.diatonicNoteNum); 
+    }
+    
+    s4.insert(0, s3Second);
+    s4.insert(0, s3.clone(true));
+    s4.appendNewCanvas();
+    
+    $b.append("<div>is s3Second parent s4? " + (s3Second.parent === s4).toString() + "</div>");
+
+    $b.append("<div>s3 unchanged?</div>");
+    s3.appendNewCanvas();    
+    
+});
+</script>
+<h1>Stream.clone() tests...</h1>
+</body>
+</html>

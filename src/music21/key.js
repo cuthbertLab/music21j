@@ -43,6 +43,7 @@ define(['music21/base', 'music21/pitch', 'music21/interval', 'music21/scale'],
 		
         /**
          * Return the name of the major key with this many sharps
+         * 
          * @returns {(string|undefined)}
          */
 		this.majorName = function () {
