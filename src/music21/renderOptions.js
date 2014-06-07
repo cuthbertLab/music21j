@@ -20,6 +20,7 @@ define([], function() {
 			left: undefined,
 			width: undefined,
 			height: undefined,
+			overriddenWidth: undefined,
 			scaleFactor: {x: 1, y: 1},
 			systemIndex: 0,
 			partIndex: 0,

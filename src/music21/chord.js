@@ -279,14 +279,16 @@ define(['music21/note', 'vexflow'],
 	     * @param {string} clefName
 	     * @returns {Vex.Flow.StaveNote}
 	     */
-	    this.vexflowNote = function (clefName) {
+	    this.vexflowNote = function (options) {
+	        var clef = options.clef;
+	        
 	        var pitchKeys = [];
 	        for (var i = 0; i < this._noteArray.length; i++) {
-	        	pitchKeys.push(this._noteArray[i].pitch.vexflowName(clefName));	
+	        	pitchKeys.push(this._noteArray[i].pitch.vexflowName(clef));	
 	        }
 	        var vfn = new Vex.Flow.StaveNote({keys: pitchKeys, 
 										  duration: this.duration.vexflowDuration});
-	        this.vexflowAccidentalsAndDisplay(vfn); // clean up stuff...
+	        this.vexflowAccidentalsAndDisplay(vfn, options); // clean up stuff...
 	        for (var i = 0; i < this._noteArray.length; i++) {
 	        	var tn = this._noteArray[i];
 		        if (tn.pitch.accidental != undefined) {
@@ -306,6 +308,29 @@ define(['music21/note', 'vexflow'],
 	chord.Chord.prototype = new note.NotRest();
 	chord.Chord.prototype.constructor = chord.Chord;
 
+	chord.Chord.prototype.setStemDirectionFromClef = function (clef) {
+        if (clef === undefined) {
+            return this;
+        } else {
+            var midLine = clef.firstLine + 4;
+            console.log(midLine, 'midLine');
+            var maxDNNfromCenter = 0;
+            var pA = this.pitches;
+            for (var i = 0; i < this.pitches.length; i++) {
+                var p = pA[i];
+                var DNNfromCenter = p.diatonicNoteNum - midLine;
+                // >= not > so that the highest pitch wins the tie and thus stem down.
+                if (Math.abs(DNNfromCenter) >= Math.abs(maxDNNfromCenter)) {
+                    maxDNNfromCenter = DNNfromCenter;
+                } 
+            }
+            if (maxDNNfromCenter >= 0) { this.stemDirection = 'down'; }
+            else { this.stemDirection = 'up'; }            
+            return this;
+        }
+    };
+
+	
 	chord.chordDefinitions = {
 			'major': ['M3', 'm3'],
 			'minor': ['m3', 'M3'],
