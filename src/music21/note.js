@@ -96,16 +96,36 @@ define(['music21/base', 'music21/pitch', 'vexflow'],
          * Sets the vexflow accidentals (if any), the dots, and the stem direction
          * @param {Vex.Flow.StaveNote} vfn - a Vex.Flow note
          */
-		this.vexflowAccidentalsAndDisplay = function (vfn) {
+		this.vexflowAccidentalsAndDisplay = function (vfn, options) {
 	        if (this.duration.dots == 1) {
 	            vfn.addDotToAll();
+	        }
+	        if (this.stemDirection === undefined && options.clef != undefined) {
+	            this.setStemDirectionFromClef(options.clef);
 	        }
 	        vfn.setStemDirection(this.stemDirection == 'down' ? 
 									Vex.Flow.StaveNote.STEM_DOWN : 
 									Vex.Flow.StaveNote.STEM_UP);
-			if (this.stemDirection == 'noStem') {
+	        if (this.stemDirection == 'noStem') {
 				vfn.hasStem = function() { return false; }; // need to override... 
 				//vfn.render_options.stem_height = 0;
+			} else {
+			    // correct VexFlow stem length for notes far from the center line;
+			    var staveDNNSpacing = 5;
+			    if (options.stave) {
+			        staveDNNSpacing = Math.floor(options.stave.options.spacing_between_lines_px / 2);
+	            }
+			    if (options.clef && this.pitch !== undefined) {
+			        var midLine = options.clef.firstLine + 4;
+			        //console.log(midLine);
+			        var absDNNfromCenter = Math.abs(this.pitch.diatonicNoteNum - midLine);
+			        var absOverOctave = absDNNfromCenter - 7;
+			        //console.log(absOverOctave);
+			        if (absOverOctave > 0) {
+			            vfn.stem.stem_extension = absOverOctave * staveDNNSpacing;			            
+                        //console.log(absOverOctave, vfn.stem, vfn.stem.stem_extension);
+			        }
+			    }
 			}
 		};
 		
@@ -168,6 +188,10 @@ define(['music21/base', 'music21/pitch', 'vexflow'],
 	note.GeneralNote.prototype = new base.Music21Object();
 	note.GeneralNote.prototype.constructor = note.GeneralNote;
 	
+	note.GeneralNote.prototype.setStemDirectionFromClef = function (clef) {
+	    return undefined;
+	};
+	
 	/**
 	 * @class NotRest
 	 * @memberof music21
@@ -188,10 +212,10 @@ define(['music21/base', 'music21/pitch', 'vexflow'],
 	};
 
 	/* TODO: check stemDirection, notehead, noteheadFill, noteheadParentheses */
-	
-	
 	note.NotRest.prototype = new note.GeneralNote();
 	note.NotRest.prototype.constructor = note.NotRest;
+	
+
 
 	/* ------- Note ----------- */
     /**
@@ -234,8 +258,10 @@ define(['music21/base', 'music21/pitch', 'vexflow'],
         
         /* TODO: transpose, fullName */
         
-	    this.vexflowNote = function (clefObj) {
-	    	if (this.duration === undefined) {
+	    this.vexflowNote = function (options) {
+            var clef = options.clef;
+            
+	        if (this.duration === undefined) {
 	    	    //console.log(this);
 	    	    return undefined;
 	    	}
@@ -243,10 +269,10 @@ define(['music21/base', 'music21/pitch', 'vexflow'],
 	    	if (vfd === undefined) {
 	    	    return undefined;
 	    	}
-	    	var vexflowKey = this.pitch.vexflowName(clefObj);
+	    	var vexflowKey = this.pitch.vexflowName(clef);
 	    	var vfn = new Vex.Flow.StaveNote({keys: [vexflowKey], 
 										  duration: vfd});
-	        this.vexflowAccidentalsAndDisplay(vfn); // clean up stuff...
+	        this.vexflowAccidentalsAndDisplay(vfn, options); // clean up stuff...
 	        if (this.pitch.accidental != undefined) {
 				if (this.pitch.accidental.vexflowModifier != 'n' && this.pitch.accidental.displayStatus != false) {
 					vfn.addAccidental(0, new Vex.Flow.Accidental(this.pitch.accidental.vexflowModifier));
@@ -279,6 +305,19 @@ define(['music21/base', 'music21/pitch', 'vexflow'],
 
 	note.Note.prototype = new note.NotRest();
 	note.Note.prototype.constructor = note.Note;
+
+    note.Note.prototype.setStemDirectionFromClef = function (clef) {
+        if (clef === undefined) {
+            return this;
+        } else {
+            var midLine = clef.firstLine + 4;
+            var DNNfromCenter = this.pitch.diatonicNoteNum - midLine;
+            //console.log(DNNfromCenter, this.pitch.nameWithOctave);
+            if (DNNfromCenter >= 0) { this.stemDirection = 'down'; }
+            else { this.stemDirection = 'up'; }            
+            return this;
+        }
+    };
 
     /* ------ TODO: Unpitched ------ */
 	

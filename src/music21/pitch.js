@@ -298,7 +298,11 @@ define(['music21/prebase'],
 	        // returns a vexflow Key name for this pitch.
 	    	var tempPitch = this;
 	    	if (clefObj !== undefined) {
-	    	    tempPitch = clefObj.convertPitchToTreble(this);
+	    	    try {
+	                tempPitch = clefObj.convertPitchToTreble(this);	    	        
+	    	    } catch (e) {
+	    	        console.log(e, clefObj);
+	    	    }
 	    	}
             var accidentalType = 'n';
             if (this.accidental != undefined) {
