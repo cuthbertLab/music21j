@@ -74,8 +74,8 @@ define(['music21/base', 'music21/clef', 'music21/duration', 'music21/pitch','mus
 			
 			if (MATCH = tnre.TIMESIG.exec(token)) {
                 var ts = new meter.TimeSignature();
-				ts.numerator = MATCH[1];
-				ts.denominator = MATCH[2];
+				ts.numerator = parseInt(MATCH[1]);
+				ts.denominator = parseInt(MATCH[2]);
 				m.timeSignature = ts;
 				currentTSBarDuration = ts.barDuration.quarterLength;
 				//console.log(currentTSBarDuration);
