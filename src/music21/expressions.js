@@ -10,17 +10,17 @@ define(['music21/base'], function(base) {
        this.vexflowModifier = "";
        this.setPosition = undefined;
        
-       this.vexflow = function () {
-           var vfe =  new Vex.Flow.Articulation(this.vexflowModifier);
-           if (this.setPosition) {
-               vfe.setPosition(this.setPosition);
-           }
-           return vfe;
-       };
    };
    expressions.Expression.prototype = new base.Music21Object();
    expressions.Expression.prototype.constructor = expressions.Expression;
    
+   expressions.Expression.prototype.vexflow = function () {
+       var vfe =  new Vex.Flow.Articulation(this.vexflowModifier);
+       if (this.setPosition) {
+           vfe.setPosition(this.setPosition);
+       }
+       return vfe;
+   };
    
    expressions.Fermata = function(){
        expressions.Expression.call(this);

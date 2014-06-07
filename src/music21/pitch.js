@@ -36,22 +36,6 @@ define(['music21/prebase'],
 		this._modifier = "";
 		this.displayType = "normal"; // "normal", "always" supported currently
 		this.displayStatus = undefined; // true, false, undefined
-		/**
-		 * 
-		 * @param {Array<string>|string} testClass - a class to test
-		 * @returns {Boolean}
-		 */
-		this.isClassOrSubclass = function (testClass) {
-		    if (testClass instanceof Array == false) {
-		        testClass = [testClass];
-		    }
-		    for (var i = 0; i < testClass.length; i++) {
-		        if ($.inArray(testClass[i], this.classes) != -1) {
-		            return true;
-		        }   
-		    }
-		    return false;
-		};
         Object.defineProperties(this, {
             /**
              * @memberof module:music21/pitch~pitch.Pitch
@@ -92,48 +76,48 @@ define(['music21/prebase'],
               
         });		
 		
-		/**
-		 * 
-		 * @param {number|string} accName
-		 */
-		this.set = function (accName) {
-			if ((accName != undefined) && (accName.toLowerCase != undefined)) {
-		    	accName = accName.toLowerCase();
-		    }
-		    if (accName == 'natural' || accName == 'n' || accName == 0 || accName == undefined) {
-		        this._name = 'natural';
-		        this._alter = 0.0;
-		        this._modifier = "";
-		    } else if (accName == 'sharp' || accName == '#' || accName == 1) {
-		        this._name = 'sharp';
-		        this._alter = 1.0;
-		        this._modifier = "#";
-		    } else if (accName == 'flat' || accName == '-' || accName == -1) {
-		        this._name = 'flat';
-		        this._alter = -1.0;
-		        this._modifier = "-";
-		    } else if (accName == 'double-flat' || accName == '--' || accName == -2) {
-		        this._name = 'double-flat';
-		        this._alter = -2.0;
-		        this._modifier = "--";
-		    } else if (accName == 'double-sharp' || accName == '##' || accName == 2) {
-		        this._name = 'double-sharp';
-		        this._alter = 2.0;
-		        this._modifier = "##";
-		    } else if (accName == 'triple-flat' || accName == '---' || accName == -3) {
-		        this._name = 'triple-flat';
-		        this._alter = -3.0;
-		        this._modifier = "---";
-		    } else if (accName == 'triple-sharp' || accName == '###' || accName == 3) {
-		        this._name = 'triple-sharp';
-		        this._alter = 3.0;
-		        this._modifier = "###";
-		    }
-		};
 		this.set(accName);
 	};
     pitch.Accidental.prototype = new prebase.ProtoM21Object();
     pitch.Accidental.prototype.constructor = pitch.Accidental;
+    /**
+     * 
+     * @param {number|string} accName
+     */
+    pitch.Accidental.prototype.set = function (accName) {
+        if ((accName != undefined) && (accName.toLowerCase != undefined)) {
+            accName = accName.toLowerCase();
+        }
+        if (accName == 'natural' || accName == 'n' || accName == 0 || accName == undefined) {
+            this._name = 'natural';
+            this._alter = 0.0;
+            this._modifier = "";
+        } else if (accName == 'sharp' || accName == '#' || accName == 1) {
+            this._name = 'sharp';
+            this._alter = 1.0;
+            this._modifier = "#";
+        } else if (accName == 'flat' || accName == '-' || accName == -1) {
+            this._name = 'flat';
+            this._alter = -1.0;
+            this._modifier = "-";
+        } else if (accName == 'double-flat' || accName == '--' || accName == -2) {
+            this._name = 'double-flat';
+            this._alter = -2.0;
+            this._modifier = "--";
+        } else if (accName == 'double-sharp' || accName == '##' || accName == 2) {
+            this._name = 'double-sharp';
+            this._alter = 2.0;
+            this._modifier = "##";
+        } else if (accName == 'triple-flat' || accName == '---' || accName == -3) {
+            this._name = 'triple-flat';
+            this._alter = -3.0;
+            this._modifier = "---";
+        } else if (accName == 'triple-sharp' || accName == '###' || accName == 3) {
+            this._name = 'triple-sharp';
+            this._alter = 3.0;
+            this._modifier = "###";
+        }
+    };
 	
 	
 	pitch.nameToMidi = {'C': 0, 'D': 2, 'E': 4, 'F': 5, 'G': 7, 'A': 9, 'B': 11};
@@ -164,22 +148,6 @@ define(['music21/prebase'],
 	     * @type {pitch.Accidental|undefined}
 	     */
 	    this._accidental = undefined;
-		/**
-		 * 
-		 * @param {Array<string>|string} testClass
-		 * @returns {Boolean}
-		 */
-		this.isClassOrSubclass = function (testClass) {
-		    if (testClass instanceof Array == false) {
-		        testClass = [testClass];
-		    }
-		    for (var i = 0; i < testClass.length; i++) {
-		        if ($.inArray(testClass[i], this.classes) != -1) {
-		            return true;
-		        }   
-		    }
-		    return false;
-		};
 	    
 	    Object.defineProperties(this, {
 	    	'step' : {
@@ -287,34 +255,33 @@ define(['music21/prebase'],
 	        this.nameWithOctave = pn;
 	    } else {
 	        this.name = pn;	        
-	    }
-	    
-	    /**
-	     * 
-	     * @param {clef.Clef} clefObj
-	     * @returns {String}
-	     */
-	    this.vexflowName = function (clefObj) {
-	        // returns a vexflow Key name for this pitch.
-	    	var tempPitch = this;
-	    	if (clefObj !== undefined) {
-	    	    try {
-	                tempPitch = clefObj.convertPitchToTreble(this);	    	        
-	    	    } catch (e) {
-	    	        console.log(e, clefObj);
-	    	    }
-	    	}
-            var accidentalType = 'n';
-            if (this.accidental != undefined) {
-                accidentalType = this.accidental.vexflowModifier;
-            }
-            var outName = tempPitch.step + accidentalType + '/' + tempPitch.octave;
-            return outName;
-	    };
+	    }	    
 	};
     pitch.Pitch.prototype = new prebase.ProtoM21Object();
     pitch.Pitch.prototype.constructor = pitch.Pitch;
 
+    /**
+     * 
+     * @param {clef.Clef} clefObj
+     * @returns {String}
+     */
+    pitch.Pitch.prototype.vexflowName = function (clefObj) {
+        // returns a vexflow Key name for this pitch.
+        var tempPitch = this;
+        if (clefObj !== undefined) {
+            try {
+                tempPitch = clefObj.convertPitchToTreble(this);                 
+            } catch (e) {
+                console.log(e, clefObj);
+            }
+        }
+        var accidentalType = 'n';
+        if (this.accidental != undefined) {
+            accidentalType = this.accidental.vexflowModifier;
+        }
+        var outName = tempPitch.step + accidentalType + '/' + tempPitch.octave;
+        return outName;
+    };
 	
 	
 	pitch.tests = function () {

@@ -92,98 +92,6 @@ define(['music21/base', 'music21/pitch', 'vexflow'],
             
         });
         
-        /**
-         * Sets the vexflow accidentals (if any), the dots, and the stem direction
-         * @param {Vex.Flow.StaveNote} vfn - a Vex.Flow note
-         */
-		this.vexflowAccidentalsAndDisplay = function (vfn, options) {
-	        if (this.duration.dots == 1) {
-	            vfn.addDotToAll();
-	        }
-	        if (this.stemDirection === undefined && options.clef != undefined) {
-	            this.setStemDirectionFromClef(options.clef);
-	        }
-	        vfn.setStemDirection(this.stemDirection == 'down' ? 
-									Vex.Flow.StaveNote.STEM_DOWN : 
-									Vex.Flow.StaveNote.STEM_UP);
-	        if (this.stemDirection == 'noStem') {
-				vfn.hasStem = function() { return false; }; // need to override... 
-				//vfn.render_options.stem_height = 0;
-			} else {
-			    // correct VexFlow stem length for notes far from the center line;
-			    var staveDNNSpacing = 5;
-			    if (options.stave) {
-			        staveDNNSpacing = Math.floor(options.stave.options.spacing_between_lines_px / 2);
-	            }
-			    if (options.clef && this.pitch !== undefined) {
-			        var midLine = options.clef.firstLine + 4;
-			        //console.log(midLine);
-			        var absDNNfromCenter = Math.abs(this.pitch.diatonicNoteNum - midLine);
-			        var absOverOctave = absDNNfromCenter - 7;
-			        //console.log(absOverOctave);
-			        if (absOverOctave > 0) {
-			            vfn.stem.stem_extension = absOverOctave * staveDNNSpacing;			            
-                        //console.log(absOverOctave, vfn.stem, vfn.stem.stem_extension);
-			        }
-			    }
-			}
-		};
-		
-		/**
-		 * Play the current element as a MIDI note.
-		 * 
-		 * @name playMidi
-		 * @memberof GeneralNote
-		 * @param {number} tempo - tempo in bpm
-		 * @param {(base.Music21Object|undefined)} nextElement - for ties...
-		 * @returns {Number} - delay time in milliseconds until the next element (may be ignored)
-		 */
-		this.playMidi = function (tempo, nextElement) {
-		    // returns the number of milliseconds to the next element in
-		    // case that can't be determined otherwise.
-            var volume = 60;
-            if (this.articulations !== undefined) {
-                this.articulations.forEach( function (a) { 
-                   volume *= a.dynamicShift;
-                   //console.log(volume);
-                   if (volume > 127) { volume = 127; }
-                });
-            }
-            volume = Math.floor(volume);
-            var milliseconds = 60 * 1000 / tempo;
-            var ql = this.duration.quarterLength;
-            milliseconds = 60 * ql * 1000 / tempo;
-            if (this.isClassOrSubclass('Note')) { // Note, not rest
-                var midNum = this.pitch.midi;                         
-                var stopTime = milliseconds/1000;
-                if (nextElement !== undefined && nextElement.isClassOrSubclass('Note')) {
-                    if (nextElement.pitch.midi != this.pitch.midi) {
-                        stopTime += 60 * .25 / tempo; // legato -- play 16th note longer
-                    } else if (this.tie != undefined && (this.tie.type == 'start' || this.tie.type =='continue')) {
-                        stopTime += 60 * nextElement.duration.quarterLength / tempo;
-                        // this does not take into account 3 or more notes tied.
-                        // TODO: look ahead at next nexts, etc.
-                    }
-                } else if (nextElement === undefined) {
-                    // let last note ring an extra beat...
-                    stopTime += 60 * 1 / tempo;
-                }
-                //console.log(stopTime);
-                if (this.tie === undefined || this.tie.type == 'start') {
-                    music21.MIDI.noteOn(0, midNum, volume, 0);                              
-                    music21.MIDI.noteOff(0, midNum, stopTime);
-                } // else { console.log ('not going to play ', el.nameWithOctave) }
-            } else if (this.isClassOrSubclass('Chord')) {
-                // TODO: Tied Chords.
-                for (var j = 0; j < this._noteArray.length; j++) {
-                    var midNum = this._noteArray[j].pitch.midi;
-                    music21.MIDI.noteOn(0, midNum, volume, 0);                      
-                    music21.MIDI.noteOff(0, midNum, milliseconds/1000);                     
-                }
-            } // it's a note.Rest -- do nothing -- milliseconds takes care of it...
-		    
-		    return milliseconds;   
-		};
 	};
 	note.GeneralNote.prototype = new base.Music21Object();
 	note.GeneralNote.prototype.constructor = note.GeneralNote;
@@ -191,7 +99,98 @@ define(['music21/base', 'music21/pitch', 'vexflow'],
 	note.GeneralNote.prototype.setStemDirectionFromClef = function (clef) {
 	    return undefined;
 	};
-	
+    /**
+     * Sets the vexflow accidentals (if any), the dots, and the stem direction
+     * @param {Vex.Flow.StaveNote} vfn - a Vex.Flow note
+     */
+    note.GeneralNote.prototype.vexflowAccidentalsAndDisplay = function (vfn, options) {
+        if (this.duration.dots == 1) {
+            vfn.addDotToAll();
+        }
+        if (this.stemDirection === undefined && options.clef != undefined) {
+            this.setStemDirectionFromClef(options.clef);
+        }
+        vfn.setStemDirection(this.stemDirection == 'down' ? 
+                                Vex.Flow.StaveNote.STEM_DOWN : 
+                                Vex.Flow.StaveNote.STEM_UP);
+        if (this.stemDirection == 'noStem') {
+            vfn.hasStem = function() { return false; }; // need to override... 
+            //vfn.render_options.stem_height = 0;
+        } else {
+            // correct VexFlow stem length for notes far from the center line;
+            var staveDNNSpacing = 5;
+            if (options.stave) {
+                staveDNNSpacing = Math.floor(options.stave.options.spacing_between_lines_px / 2);
+            }
+            if (options.clef && this.pitch !== undefined) {
+                var midLine = options.clef.firstLine + 4;
+                //console.log(midLine);
+                var absDNNfromCenter = Math.abs(this.pitch.diatonicNoteNum - midLine);
+                var absOverOctave = absDNNfromCenter - 7;
+                //console.log(absOverOctave);
+                if (absOverOctave > 0) {
+                    vfn.stem.stem_extension = absOverOctave * staveDNNSpacing;                      
+                    //console.log(absOverOctave, vfn.stem, vfn.stem.stem_extension);
+                }
+            }
+        }
+    };
+    
+    /**
+     * Play the current element as a MIDI note.
+     * 
+     * @name playMidi
+     * @memberof GeneralNote
+     * @param {number} tempo - tempo in bpm
+     * @param {(base.Music21Object|undefined)} nextElement - for ties...
+     * @returns {Number} - delay time in milliseconds until the next element (may be ignored)
+     */
+    note.GeneralNote.prototype.playMidi = function (tempo, nextElement) {
+        // returns the number of milliseconds to the next element in
+        // case that can't be determined otherwise.
+        var volume = 60;
+        if (this.articulations !== undefined) {
+            this.articulations.forEach( function (a) { 
+               volume *= a.dynamicShift;
+               //console.log(volume);
+               if (volume > 127) { volume = 127; }
+            });
+        }
+        volume = Math.floor(volume);
+        var milliseconds = 60 * 1000 / tempo;
+        var ql = this.duration.quarterLength;
+        milliseconds = 60 * ql * 1000 / tempo;
+        if (this.isClassOrSubclass('Note')) { // Note, not rest
+            var midNum = this.pitch.midi;                         
+            var stopTime = milliseconds/1000;
+            if (nextElement !== undefined && nextElement.isClassOrSubclass('Note')) {
+                if (nextElement.pitch.midi != this.pitch.midi) {
+                    stopTime += 60 * .25 / tempo; // legato -- play 16th note longer
+                } else if (this.tie != undefined && (this.tie.type == 'start' || this.tie.type =='continue')) {
+                    stopTime += 60 * nextElement.duration.quarterLength / tempo;
+                    // this does not take into account 3 or more notes tied.
+                    // TODO: look ahead at next nexts, etc.
+                }
+            } else if (nextElement === undefined) {
+                // let last note ring an extra beat...
+                stopTime += 60 * 1 / tempo;
+            }
+            //console.log(stopTime);
+            if (this.tie === undefined || this.tie.type == 'start') {
+                music21.MIDI.noteOn(0, midNum, volume, 0);                              
+                music21.MIDI.noteOff(0, midNum, stopTime);
+            } // else { console.log ('not going to play ', el.nameWithOctave) }
+        } else if (this.isClassOrSubclass('Chord')) {
+            // TODO: Tied Chords.
+            for (var j = 0; j < this._noteArray.length; j++) {
+                var midNum = this._noteArray[j].pitch.midi;
+                music21.MIDI.noteOn(0, midNum, volume, 0);                      
+                music21.MIDI.noteOff(0, midNum, milliseconds/1000);                     
+            }
+        } // it's a note.Rest -- do nothing -- milliseconds takes care of it...
+        
+        return milliseconds;   
+    };	
 	/**
 	 * @class NotRest
 	 * @memberof music21
@@ -258,49 +257,6 @@ define(['music21/base', 'music21/pitch', 'vexflow'],
         
         /* TODO: transpose, fullName */
         
-	    this.vexflowNote = function (options) {
-            var clef = options.clef;
-            
-	        if (this.duration === undefined) {
-	    	    //console.log(this);
-	    	    return undefined;
-	    	}
-	    	var vfd = this.duration.vexflowDuration;
-	    	if (vfd === undefined) {
-	    	    return undefined;
-	    	}
-	    	var vexflowKey = this.pitch.vexflowName(clef);
-	    	var vfn = new Vex.Flow.StaveNote({keys: [vexflowKey], 
-										  duration: vfd});
-	        this.vexflowAccidentalsAndDisplay(vfn, options); // clean up stuff...
-	        if (this.pitch.accidental != undefined) {
-				if (this.pitch.accidental.vexflowModifier != 'n' && this.pitch.accidental.displayStatus != false) {
-					vfn.addAccidental(0, new Vex.Flow.Accidental(this.pitch.accidental.vexflowModifier));
-				} else if (this.pitch.accidental.displayType == 'always' || this.pitch.accidental.displayStatus == true) {
-					vfn.addAccidental(0, new Vex.Flow.Accidental(this.pitch.accidental.vexflowModifier));			
-				}
-			}
-	        
-	        if (this.articulations[0] != undefined) {
-	            for (var i = 0; i < this.articulations.length; i++ ) {
-	                var art = this.articulations[i];
-	                vfn.addArticulation(0, art.vexflow()); // 0 refers to the first pitch (for chords etc.)...
-	            }
-	        }
-            if (this.expressions[0] != undefined) {
-                for (var i = 0; i < this.expressions.length; i++ ) {
-                    var exp = this.expressions[i];
-                    vfn.addArticulation(0, exp.vexflow()); // 0 refers to the first pitch (for chords etc.)...
-                }
-            }
-	        
-	        if (this.noteheadColor) {
-	            vfn.setKeyStyle(0, {fillStyle: this.noteheadColor});
-	        }
-
-	        this.activeVexflowNote = vfn;
-		    return vfn;
-	    };
 	};
 
 	note.Note.prototype = new note.NotRest();
@@ -317,6 +273,49 @@ define(['music21/base', 'music21/pitch', 'vexflow'],
             else { this.stemDirection = 'up'; }            
             return this;
         }
+    };
+    note.Note.prototype.vexflowNote = function (options) {
+        var clef = options.clef;
+        
+        if (this.duration === undefined) {
+            //console.log(this);
+            return undefined;
+        }
+        var vfd = this.duration.vexflowDuration;
+        if (vfd === undefined) {
+            return undefined;
+        }
+        var vexflowKey = this.pitch.vexflowName(clef);
+        var vfn = new Vex.Flow.StaveNote({keys: [vexflowKey], 
+                                      duration: vfd});
+        this.vexflowAccidentalsAndDisplay(vfn, options); // clean up stuff...
+        if (this.pitch.accidental != undefined) {
+            if (this.pitch.accidental.vexflowModifier != 'n' && this.pitch.accidental.displayStatus != false) {
+                vfn.addAccidental(0, new Vex.Flow.Accidental(this.pitch.accidental.vexflowModifier));
+            } else if (this.pitch.accidental.displayType == 'always' || this.pitch.accidental.displayStatus == true) {
+                vfn.addAccidental(0, new Vex.Flow.Accidental(this.pitch.accidental.vexflowModifier));           
+            }
+        }
+        
+        if (this.articulations[0] != undefined) {
+            for (var i = 0; i < this.articulations.length; i++ ) {
+                var art = this.articulations[i];
+                vfn.addArticulation(0, art.vexflow()); // 0 refers to the first pitch (for chords etc.)...
+            }
+        }
+        if (this.expressions[0] != undefined) {
+            for (var i = 0; i < this.expressions.length; i++ ) {
+                var exp = this.expressions[i];
+                vfn.addArticulation(0, exp.vexflow()); // 0 refers to the first pitch (for chords etc.)...
+            }
+        }
+        
+        if (this.noteheadColor) {
+            vfn.setKeyStyle(0, {fillStyle: this.noteheadColor});
+        }
+
+        this.activeVexflowNote = vfn;
+        return vfn;
     };
 
     /* ------ TODO: Unpitched ------ */
@@ -336,24 +335,24 @@ define(['music21/base', 'music21/pitch', 'vexflow'],
         this.isNote = false; // for speed
         this.isRest = true; // for speed		
 		this.name = 'rest'; // for note compatibility
-	    this.vexflowNote = function () {
-	    	var keyLine = 'b/4';
-	    	if (this.duration.type == 'whole') {
-	    		keyLine = 'd/5';
-	    	}
-	        var vfn = new Vex.Flow.StaveNote({keys: [keyLine], 
-											duration: this.duration.vexflowDuration + 'r'});
-	        if (this.duration.dots == 1) {
-	            vfn.addDotToAll();
-	        }
-			this.activeVexflowNote = vfn;
-		    return vfn;
-	    };
+	    
 	};
 
 	note.Rest.prototype = new note.GeneralNote();
 	note.Rest.prototype.constructor = note.Rest;
-
+	note.Rest.prototype.vexflowNote = function () {
+        var keyLine = 'b/4';
+        if (this.duration.type == 'whole') {
+            keyLine = 'd/5';
+        }
+        var vfn = new Vex.Flow.StaveNote({keys: [keyLine], 
+                                        duration: this.duration.vexflowDuration + 'r'});
+        if (this.duration.dots == 1) {
+            vfn.addDotToAll();
+        }
+        this.activeVexflowNote = vfn;
+        return vfn;
+    };
     /* ------ SpacerRest ------ */
 	
 	

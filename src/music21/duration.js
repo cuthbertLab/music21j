@@ -23,26 +23,7 @@ define(['music21/common', 'music21/prebase'],
 		this._durationNumber = undefined;
 		this._type = 'quarter';
 		this._tuplets = [];
-		
-	    this._findDots = function (ql) {
-	        if (ql == 0) { return 0; } // zero length stream probably;
-	        var typeNumber = $.inArray(this._type, Music21DurationArray);
-            var powerOfTwo = Math.pow(2, 3 - typeNumber);
-	    	// alert(undottedQL * 1.5 + " " + ql)
-            //console.log('find dots called on ql: ', ql, typeNumber, powerOfTwo);
-            for (var dotsNum = 0; dotsNum <= 4; dotsNum++) {
-                var dotMultiplier = (Math.pow(2, dotsNum)-1.0)/(Math.pow(2, dotsNum));
-                var durationMultiplier = 1 + dotMultiplier;
-                if (Math.abs( (powerOfTwo * durationMultiplier) - ql) < 0.0001) {
-                    return dotsNum;
-                }
-            }
-            if (music21.debug) {
-                console.log('no dots available for ql; probably a tuplet', ql);
-            }
-            return 0;
-	    };
-	
+			
 	    Object.defineProperties(this, {
 	    	'dots': { 
 	    		get: function () { 
@@ -95,52 +76,6 @@ define(['music21/common', 'music21/prebase'],
 			}
 		});
 		
-	    this.updateQlFromFeatures = function () {
-	        var typeNumber = $.inArray(this._type, Music21DurationArray); // must be set property
-            var undottedQuarterLength = Math.pow(2, 3 - typeNumber);
-            var dottedMultiplier = 1 + ( (Math.pow(2, this._dots) - 1) / Math.pow(2, this._dots) );
-            var unTupletedQl = undottedQuarterLength * dottedMultiplier;
-            var tupletCorrectedQl = unTupletedQl;
-            this._tuplets.forEach( function(tuplet) {
-                tupletCorrectedQl *= tuplet.tupletMultiplier();
-            });
-            this._quarterLength = tupletCorrectedQl;
-	    };
-	    
-        this.updateFeaturesFromQl = function () {
-            var ql = this._quarterLength;
-            var powerOfTwo = Math.floor(Math.log(ql+.00001)/Math.log(2));
-            var typeNumber = 3 - powerOfTwo;
-            this._type = Music21DurationArray[typeNumber];
-            //alert(this._findDots);
-            this._dots = this._findDots(ql);
-
-            var undottedQuarterLength = Math.pow(2, 3 - typeNumber);
-            var dottedMultiplier = 1 + ( (Math.pow(2, this._dots) - 1) / Math.pow(2, this._dots) );
-            var unTupletedQl = undottedQuarterLength * dottedMultiplier;
-            if (unTupletedQl != ql && ql != 0) {
-                typeNumber -= 1;
-                this._type = Music21DurationArray[typeNumber]; // increase type: eighth to quarter etc.
-                unTupletedQl = unTupletedQl * 2;
-                var tupletRatio = ql/unTupletedQl;
-                var ratioRat = common.rationalize(tupletRatio);
-                if (ratioRat === undefined) {
-                    // probably a Stream with a length that is inexpressable;
-                } else {
-                    var t = new duration.Tuplet(ratioRat.denominator, ratioRat.numerator, new duration.Duration(unTupletedQl));
-                    this.appendTuplet(t, true); // skipUpdateQl                    
-                }
-                //console.log(ratioRat, ql, unTupletedQl);
-            }
-        };
-	    
-	    this.appendTuplet = function (newTuplet, skipUpdateQl) {
-            newTuplet.frozen = true;
-            this._tuplets.push(newTuplet);
-            if (skipUpdateQl != true) {
-                this.updateQlFromFeatures();                
-            }
-	    };
 
 	    if (typeof(ql) == 'string') {
 	    	this.type = ql;
@@ -151,7 +86,76 @@ define(['music21/common', 'music21/prebase'],
 	};
     duration.Duration.prototype = new prebase.ProtoM21Object();
     duration.Duration.prototype.constructor = duration.Duration;
+    duration.Duration.prototype._findDots = function (ql) {
+        if (ql == 0) { return 0; } // zero length stream probably;
+        var typeNumber = $.inArray(this._type, Music21DurationArray);
+        var powerOfTwo = Math.pow(2, 3 - typeNumber);
+        // alert(undottedQL * 1.5 + " " + ql)
+        //console.log('find dots called on ql: ', ql, typeNumber, powerOfTwo);
+        for (var dotsNum = 0; dotsNum <= 4; dotsNum++) {
+            var dotMultiplier = (Math.pow(2, dotsNum)-1.0)/(Math.pow(2, dotsNum));
+            var durationMultiplier = 1 + dotMultiplier;
+            if (Math.abs( (powerOfTwo * durationMultiplier) - ql) < 0.0001) {
+                return dotsNum;
+            }
+        }
+        if (music21.debug) {
+            console.log('no dots available for ql; probably a tuplet', ql);
+        }
+        return 0;
+    };
+    duration.Duration.prototype.updateQlFromFeatures = function () {
+        var typeNumber = $.inArray(this._type, Music21DurationArray); // must be set property
+        var undottedQuarterLength = Math.pow(2, 3 - typeNumber);
+        var dottedMultiplier = 1 + ( (Math.pow(2, this._dots) - 1) / Math.pow(2, this._dots) );
+        var unTupletedQl = undottedQuarterLength * dottedMultiplier;
+        var tupletCorrectedQl = unTupletedQl;
+        this._tuplets.forEach( function(tuplet) {
+            tupletCorrectedQl *= tuplet.tupletMultiplier();
+        });
+        this._quarterLength = tupletCorrectedQl;
+    };
+    
+    duration.Duration.prototype.updateFeaturesFromQl = function () {
+        var ql = this._quarterLength;
+        var powerOfTwo = Math.floor(Math.log(ql+.00001)/Math.log(2));
+        var typeNumber = 3 - powerOfTwo;
+        this._type = Music21DurationArray[typeNumber];
+        //alert(this._findDots);
+        this._dots = this._findDots(ql);
 
+        var undottedQuarterLength = Math.pow(2, 3 - typeNumber);
+        var dottedMultiplier = 1 + ( (Math.pow(2, this._dots) - 1) / Math.pow(2, this._dots) );
+        var unTupletedQl = undottedQuarterLength * dottedMultiplier;
+        if (unTupletedQl != ql && ql != 0) {
+            typeNumber -= 1;
+            this._type = Music21DurationArray[typeNumber]; // increase type: eighth to quarter etc.
+            unTupletedQl = unTupletedQl * 2;
+            var tupletRatio = ql/unTupletedQl;
+            var ratioRat = common.rationalize(tupletRatio);
+            if (ratioRat === undefined) {
+                // probably a Stream with a length that is inexpressable;
+            } else {
+                var t = new duration.Tuplet(ratioRat.denominator, ratioRat.numerator, new duration.Duration(unTupletedQl));
+                this.appendTuplet(t, true); // skipUpdateQl                    
+            }
+            //console.log(ratioRat, ql, unTupletedQl);
+        }
+    };
+    
+    duration.Duration.prototype.appendTuplet = function (newTuplet, skipUpdateQl) {
+        newTuplet.frozen = true;
+        this._tuplets.push(newTuplet);
+        if (skipUpdateQl != true) {
+            this.updateQlFromFeatures();                
+        }
+    };
+
+    
+    /**
+     * Tuplet
+     * @constructor
+     */
 	duration.Tuplet = function (numberNotesActual, numberNotesNormal, 
 	        durationActual, durationNormal) {
 	    prebase.ProtoM21Object.call(this);
@@ -171,30 +175,6 @@ define(['music21/common', 'music21/prebase'],
 	    this.tupletActualShow = 'number'; // 'number', 'type', or 'none'
 	    this.tupletNormalShow = undefined; // for ratios
 	    
-	    this.setDurationType = function (type) {
-	        if (self.frozen == true) {
-	            throw ("A frozen tuplet (or one attached to a duration) is immutable");    
-	        }
-	        this.durationActual = new duration.Duration(type);
-	        this.durationNormal = this.durationActual;
-	        return this.durationActual;
-	    };
-	    
-	    this.setRatio = function (actual, normal) {
-	        if (self.frozen == true) {
-                throw ("A frozen tuplet (or one attached to a duration) is immutable");    
-            }
-	        this.numberNotesActual = actual || 3;
-	        this.numberNotesNormal = normal || 2;
-	    };
-	    this.totalTupletLength = function () {
-	        return this.numberNotesNormal * this.durationNormal.quarterLength;
-	    };
-	    this.tupletMultiplier = function () {
-	        var lengthActual = this.durationActual.quarterLength;
-	        return (this.totalTupletLength() / (
-	                this.numberNotesActual * lengthActual));
-	    };
 	    Object.defineProperties(this, {
 	       'fullName': {
 	           enumerable: true,
@@ -220,6 +200,31 @@ define(['music21/common', 'music21/prebase'],
 	};
     duration.Tuplet.prototype = new prebase.ProtoM21Object();
     duration.Tuplet.prototype.constructor = duration.Tuplet;
+
+    duration.Tuplet.prototype.setDurationType = function (type) {
+        if (self.frozen == true) {
+            throw ("A frozen tuplet (or one attached to a duration) is immutable");    
+        }
+        this.durationActual = new duration.Duration(type);
+        this.durationNormal = this.durationActual;
+        return this.durationActual;
+    };
+    
+    duration.Tuplet.prototype.setRatio = function (actual, normal) {
+        if (self.frozen == true) {
+            throw ("A frozen tuplet (or one attached to a duration) is immutable");    
+        }
+        this.numberNotesActual = actual || 3;
+        this.numberNotesNormal = normal || 2;
+    };
+    duration.Tuplet.prototype.totalTupletLength = function () {
+        return this.numberNotesNormal * this.durationNormal.quarterLength;
+    };
+    duration.Tuplet.prototype.tupletMultiplier = function () {
+        var lengthActual = this.durationActual.quarterLength;
+        return (this.totalTupletLength() / (
+                this.numberNotesActual * lengthActual));
+    };
 
 	duration.tests = function () {
 	    test( "music21.duration.Duration", function () {

@@ -7,7 +7,8 @@
  * 
  */
 
-define(['music21/pitch'], function(pitch) {
+define(['music21/prebase', 'music21/pitch'], 
+        function(prebase, pitch) {
 	var interval = {};
 
 	interval.IntervalDirections = {
@@ -25,9 +26,12 @@ define(['music21/pitch'], function(pitch) {
 							 'Ninth', 'Tenth', 'Eleventh', 'Twelfth',
 							 'Thirteenth', 'Fourteenth', 'Double Octave'];
 							 
-
+	/**
+	 * @constructor
+	 */
 	interval.GenericInterval = function (gi) {
-		this.classes = ['GenericInterval'];
+	    prebase.ProtoM21Object.call(this);
+		this.classes.push('GenericInterval');
 		if (gi == undefined) {
 			gi = 1;
 		}
@@ -112,24 +116,25 @@ define(['music21/pitch'], function(pitch) {
 			this.mod7 = this.mod7inversion;  // see chord.semitonesFromChordStep for usage...
 		} else {
 			this.mod7 = this.simpleDirected;
-		}
-		
-		this.complement = function () {
-			return new interval.GenericInterval(this.mod7inversion);
-		};
-		
-		this.reverse = function () {
-			if (this.undirected == 1) {
-				return new interval.GenericInterval(1);
-			} else {
-				return new interval.GenericInterval(this.undirected * (-1 * this.direction));
-			}
-		};
-		
-		this.getDiatonic = function (specifier) {
-			return new interval.DiatonicInterval(specifier, this);
-		};	
+		}		
 	};
+    interval.GenericInterval.prototype = new prebase.ProtoM21Object();
+    interval.GenericInterval.prototype.constructor = interval.GenericInterval;
+    interval.GenericInterval.prototype.complement = function () {
+        return new interval.GenericInterval(this.mod7inversion);
+    };
+    
+    interval.GenericInterval.prototype.reverse = function () {
+        if (this.undirected == 1) {
+            return new interval.GenericInterval(1);
+        } else {
+            return new interval.GenericInterval(this.undirected * (-1 * this.direction));
+        }
+    };
+    
+    interval.GenericInterval.prototype.getDiatonic = function (specifier) {
+        return new interval.DiatonicInterval(specifier, this);
+    };  
 
 	interval.IntervalSpecifiersEnum = { 
 		PERFECT:    1,
@@ -205,10 +210,12 @@ define(['music21/pitch'], function(pitch) {
 	}; // offset from major
 
 
-
-
+	/**
+	 * @constructor
+	 */
 	interval.DiatonicInterval = function (specifier, generic) {
-		this.classes = ['DiatonicInterval'];
+        prebase.ProtoM21Object.call(this);
+	    this.classes.push('DiatonicInterval');
 
 		if (specifier == undefined) {
 			specifier = "P";
@@ -274,39 +281,46 @@ define(['music21/pitch'], function(pitch) {
 		// TODO: property cents
 		
 		
-		this.getChromatic = function () {
-			var octaveOffset = Math.floor(Math.abs(this.generic.staffDistance)/7);
-			var semitonesStart = interval.IntervalSemitonesGeneric[this.generic.simpleUndirected];
-			var specName = interval.IntervalPrefixSpecs[this.specifier];
-			
-			var semitonesAdjust = 0;
-			if (this.generic.perfectable) {
-				semitonesAdjust = interval.IntervalAdjustPerfect[specName];
-			} else {
-				semitonesAdjust = interval.IntervalAdjustImperf[specName];
-			}
-
-			var semitones = (octaveOffset * 12) + semitonesStart + semitonesAdjust;
-			
-
-			// direction should be same as original
-			
-			if (this.generic.direction == interval.IntervalDirections.DESCENDING) {
-				semitones *= -1;	
-			}
-			if (music21.debug) {
-				console.log('DiatonicInterval.getChromatic -- octaveOffset: ' + octaveOffset);
-				console.log('DiatonicInterval.getChromatic -- semitonesStart: ' + semitonesStart);
-				console.log('DiatonicInterval.getChromatic -- specName: ' + specName);
-				console.log('DiatonicInterval.getChromatic -- semitonesAdjust: ' + semitonesAdjust);
-				console.log('DiatonicInterval.getChromatic -- semitones: ' + semitones);
-			}
-			return new interval.ChromaticInterval(semitones);
-		};
 	};
+    interval.DiatonicInterval.prototype = new prebase.ProtoM21Object();
+    interval.DiatonicInterval.prototype.constructor = interval.DiatonicInterval;
 
-	interval.ChromaticInterval = function (value) {
-		this.classes = ['ChromaticInterval'];
+    interval.DiatonicInterval.prototype.getChromatic = function () {
+        var octaveOffset = Math.floor(Math.abs(this.generic.staffDistance)/7);
+        var semitonesStart = interval.IntervalSemitonesGeneric[this.generic.simpleUndirected];
+        var specName = interval.IntervalPrefixSpecs[this.specifier];
+        
+        var semitonesAdjust = 0;
+        if (this.generic.perfectable) {
+            semitonesAdjust = interval.IntervalAdjustPerfect[specName];
+        } else {
+            semitonesAdjust = interval.IntervalAdjustImperf[specName];
+        }
+
+        var semitones = (octaveOffset * 12) + semitonesStart + semitonesAdjust;
+        
+
+        // direction should be same as original
+        
+        if (this.generic.direction == interval.IntervalDirections.DESCENDING) {
+            semitones *= -1;    
+        }
+        if (music21.debug) {
+            console.log('DiatonicInterval.getChromatic -- octaveOffset: ' + octaveOffset);
+            console.log('DiatonicInterval.getChromatic -- semitonesStart: ' + semitonesStart);
+            console.log('DiatonicInterval.getChromatic -- specName: ' + specName);
+            console.log('DiatonicInterval.getChromatic -- semitonesAdjust: ' + semitonesAdjust);
+            console.log('DiatonicInterval.getChromatic -- semitones: ' + semitones);
+        }
+        return new interval.ChromaticInterval(semitones);
+    };
+
+    /**
+     * @constructor
+     */
+    interval.ChromaticInterval = function (value) {
+        prebase.ProtoM21Object.call(this);
+        this.classes.push('ChromaticInterval');
 		
 		this.semitones = value;
 		this.cents = Math.round(value * 100.0, 5);
@@ -340,29 +354,35 @@ define(['music21/pitch'], function(pitch) {
 			this.isChromaticStep = false;
 		}
 		
-		this.reverse = function () {
-			return new interval.ChromaticInterval(this.undirected * (-1 * this.direction));
-		};
-		
-		// TODO: this.getDiatonic()
-		
-		// N.B. -- transposePitch will not work until changing ps changes name, etc.
-		this.transposePitch = function (p) {
-			var useImplicitOctave = false;
-			if (p.octave == undefined) {
-				// not yet implemented in m21j
-				useImplicitOctave = true;
-			}
-			var pps = p.ps;
-			newPitch = new pitch.Pitch();
-			newPitch.ps = pps + this.semitones;
-			if (useImplicitOctave) {
-				newPitch.octave = undefined;
-			}
-			return newPitch;
-		};
 	};
+    interval.ChromaticInterval.prototype = new prebase.ProtoM21Object();
+    interval.ChromaticInterval.prototype.constructor = interval.ChromaticInterval;
 
+    interval.ChromaticInterval.prototype.reverse = function () {
+        return new interval.ChromaticInterval(this.undirected * (-1 * this.direction));
+    };
+    
+    // TODO: this.getDiatonic()
+    
+    // N.B. -- transposePitch will not work until changing ps changes name, etc.
+    //  -- should work now. :-)
+    interval.ChromaticInterval.prototype.transposePitch = function (p) {
+        var useImplicitOctave = false;
+        if (p.octave == undefined) {
+            // not yet implemented in m21j
+            useImplicitOctave = true;
+        }
+        var pps = p.ps;
+        newPitch = new pitch.Pitch();
+        newPitch.ps = pps + this.semitones;
+        if (useImplicitOctave) {
+            newPitch.octave = undefined;
+        }
+        return newPitch;
+    };
+
+    
+    
 	interval.IntervalStepNames = ['C','D','E','F','G','A','B'];
 
 	interval.IntervalConvertDiatonicNumberToStep = function (dn) {
@@ -381,8 +401,13 @@ define(['music21/pitch'], function(pitch) {
 		return [stepName, octave];
 	};
 
+	
+	/**
+	 * This is the main, powerful Interval class.
+	 */
 	interval.Interval = function () {
-		this.classes = ['Interval'];
+        prebase.ProtoM21Object.call(this);
+        this.classes.push('Interval');
 
 		// todo: allow full range of ways of specifying as in m21p
 		if (arguments.length == 1) {
@@ -405,70 +430,70 @@ define(['music21/pitch'], function(pitch) {
 		} else if (arguments.length == 2) {
 			this.diatonic = arguments[0];
 			this.chromatic = arguments[1];
-		}
-		
-		this.reinit = function () {
-			this.direction = this.chromatic.direction;
-			this.specifier = this.diatonic.specifier;
-			this.diatonicType = this.diatonic.specifier;
-			// this.specificName = this.diatonic.specificName;
-			this.generic = this.diatonic.generic;
-			this.name = this.diatonic.name;
-			// other names...
-			this.isDiatonicStep = this.diatonic.isDiatonicStep;
-			
-			this.isChromaticStep = this.chromatic.isChromaticStep;
-			this.semitones = this.chromatic.semitones;
-			
-			this.isStep = (this.isChromaticStep || this.isDiatonicStep);
-		};
-
-		// todo methods: isConsonant();
-		// todo properties: complement, intervalClass, cents
-		// todo general: microtones
-
-		this.transposePitch = function (p) {
-			// todo: reverse, clearAccidentalDisplay, maxAccidental;
-			
-			/*
-			var useImplicitOctave = false;
-			if (p.octave == undefined) {
-				useImplicitOctave = true;
-			}
-			*/
-			
-			var pitch2 = new pitch.Pitch();
-			pitch2.step = p.step;
-			pitch2.octave = p.octave;
-			// no accidental yet...
-
-			var oldDiatonicNum = p.diatonicNoteNum;
-			
-			var distanceToMove = this.diatonic.generic.staffDistance;
-
-			// if not reverse...
-			var newDiatonicNumber = oldDiatonicNum + distanceToMove;
-			var newInfo = interval.IntervalConvertDiatonicNumberToStep(newDiatonicNumber);
-			pitch2.step = newInfo[0];
-			pitch2.octave = newInfo[1];
-			// step and octave are right now, but not necessarily accidental
-			var halfStepsToFix = this.chromatic.semitones - parseInt(pitch2.ps - p.ps);
-			if (halfStepsToFix != 0) {
-				pitch2.accidental = new pitch.Accidental(halfStepsToFix);
-			}
-			if (music21.debug) {
-				console.log('Interval.transposePitch -- distance to move' + distanceToMove);
-				console.log('Interval.transposePitch -- old diatonic num' + oldDiatonicNum);
-				console.log("Interval.transposePitch -- new step " + pitch2.step);
-				console.log("Interval.transposePitch -- new diatonic number " + newDiatonicNumber);
-				console.log("Interval.transposePitch -- new octave " + pitch2.octave);
-				console.log("Interval.transposePitch -- fixing halfsteps for " + halfStepsToFix);
-			}
-			return pitch2;
-		};
-
+		}		
 		this.reinit();
 	};
+    interval.Interval.prototype = new prebase.ProtoM21Object();
+    interval.Interval.prototype.constructor = interval.Interval;
+    
+    interval.Interval.prototype.reinit = function () {
+        this.direction = this.chromatic.direction;
+        this.specifier = this.diatonic.specifier;
+        this.diatonicType = this.diatonic.specifier;
+        // this.specificName = this.diatonic.specificName;
+        this.generic = this.diatonic.generic;
+        this.name = this.diatonic.name;
+        // other names...
+        this.isDiatonicStep = this.diatonic.isDiatonicStep;
+        
+        this.isChromaticStep = this.chromatic.isChromaticStep;
+        this.semitones = this.chromatic.semitones;
+        
+        this.isStep = (this.isChromaticStep || this.isDiatonicStep);
+    };
+
+    // todo methods: isConsonant();
+    // todo properties: complement, intervalClass, cents
+    // todo general: microtones
+    interval.Interval.prototype.transposePitch = function (p) {
+        // todo: reverse, clearAccidentalDisplay, maxAccidental;
+        
+        /*
+        var useImplicitOctave = false;
+        if (p.octave == undefined) {
+            useImplicitOctave = true;
+        }
+        */
+        
+        var pitch2 = new pitch.Pitch();
+        pitch2.step = p.step;
+        pitch2.octave = p.octave;
+        // no accidental yet...
+
+        var oldDiatonicNum = p.diatonicNoteNum;
+        
+        var distanceToMove = this.diatonic.generic.staffDistance;
+
+        // if not reverse...
+        var newDiatonicNumber = oldDiatonicNum + distanceToMove;
+        var newInfo = interval.IntervalConvertDiatonicNumberToStep(newDiatonicNumber);
+        pitch2.step = newInfo[0];
+        pitch2.octave = newInfo[1];
+        // step and octave are right now, but not necessarily accidental
+        var halfStepsToFix = this.chromatic.semitones - parseInt(pitch2.ps - p.ps);
+        if (halfStepsToFix != 0) {
+            pitch2.accidental = new pitch.Accidental(halfStepsToFix);
+        }
+        if (music21.debug) {
+            console.log('Interval.transposePitch -- distance to move' + distanceToMove);
+            console.log('Interval.transposePitch -- old diatonic num' + oldDiatonicNum);
+            console.log("Interval.transposePitch -- new step " + pitch2.step);
+            console.log("Interval.transposePitch -- new diatonic number " + newDiatonicNumber);
+            console.log("Interval.transposePitch -- new octave " + pitch2.octave);
+            console.log("Interval.transposePitch -- fixing halfsteps for " + halfStepsToFix);
+        }
+        return pitch2;
+    };
 
 	// end of define
 	if (typeof(music21) != "undefined") {
