@@ -63,8 +63,7 @@ function renderThemes ()  {
 
 function handleThemeDrop(event, ui) {
     var containedStream = ui.draggable.data('stream');
-    var containedStreamCopy = new music21.stream.Measure();
-    containedStreamCopy.elements = containedStream.elements;
+    var containedStreamCopy = music21.common.copyStream(containedStream, true); // deep copy
     allStream.append(containedStreamCopy);
     allStreamScore.resetRenderOptionsRecursive();
     var newCanvas = allStreamScore.createPlayableCanvas();

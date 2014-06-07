@@ -51,7 +51,7 @@ function renderIt() {
        var newNote = new music21.note.Note(noteName, noteValue);
        newStream.append(newNote);
     }
-    newStream.replaceLastCanvas();
+    newStream.replaceCanvas();
 }
 
 require(['music21'], drawMe);

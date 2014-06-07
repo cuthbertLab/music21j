@@ -136,7 +136,9 @@ define(['music21/miditools'], function(miditools) {
                 s.elements = s.elements.slice(1)
             }
             s.append(m21n);
-            var canv = s.replaceLastCanvas();
+            var $canvasDiv = $("#canvasDiv");
+            $canvasDiv.empty();
+            var canv = s.appendNewCanvas($canvasDiv);
         }
     }
     
@@ -154,7 +156,7 @@ define(['music21/miditools'], function(miditools) {
 <div>
 MIDI Input: <div id="putMidiSelectHere" />
 </div>
-<div>
+<div id="canvasDiv">
     <canvas />
 </div>
 </body>

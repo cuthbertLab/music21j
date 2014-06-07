@@ -10,7 +10,12 @@
 define(['music21/base', 'music21/pitch', 'music21/interval', 'music21/scale'], 
         function(base, pitch, interval, scale) {
 	var key = {};
-
+	/**
+	 * Represents a key signature
+	 * 
+	 * @constructor
+	 * @param (int) sharps - the number of sharps (negative for flats)
+	 */
 	key.KeySignature = function(sharps) {
 		base.Music21Object.call(this);
 		this.classes.push('KeySignature');
@@ -18,9 +23,9 @@ define(['music21/base', 'music21/pitch', 'music21/interval', 'music21/scale'],
 		this.mode = 'major';
 		this._alteredPitchesCache = undefined;
 		
-		// 9 flats/sharps enough for now...
-		this.flatMapping = ['C','F','B-','E-','A-','D-','G-','C-','F-','B--'];
-		this.sharpMapping = ['C','G','D','A','E','B','F#','C#','G#','D#'];
+		// 12 flats/sharps enough for now...
+		this.flatMapping = ['C','F','B-','E-','A-','D-','G-','C-','F-','B--','E--','A--','D--'];
+		this.sharpMapping = ['C','G','D','A','E','B','F#','C#','G#','D#','A#','E#','B#'];
 
         Object.defineProperties(this, {
             'sharps' : {
@@ -36,6 +41,10 @@ define(['music21/base', 'music21/pitch', 'music21/interval', 'music21/scale'],
             }
         });
 		
+        /**
+         * Return the name of the major key with this many sharps
+         * @returns {(string|undefined)}
+         */
 		this.majorName = function () {
 			if (this.sharps >= 0) {
 				return this.sharpMapping[this.sharps];
@@ -43,6 +52,10 @@ define(['music21/base', 'music21/pitch', 'music21/interval', 'music21/scale'],
 				return this.flatMapping[Math.abs(this.sharps)];
 			}
 		};
+        /**
+         * Return the name of the minor key with this many sharps
+         * @returns {(string|undefined)}
+         */
 		this.minorName = function() {
 			var tempSharps = this.sharps + 3;
 			if (tempSharps >= 0) {
@@ -51,10 +64,20 @@ define(['music21/base', 'music21/pitch', 'music21/interval', 'music21/scale'],
 				return this.flatMapping[Math.abs(tempSharps)];
 			}
 		};
+		
+		/**
+		 * 
+		 * @returns {string}
+		 */
 		this.vexflow = function() {
 			var tempName = this.majorName();
 			return tempName.replace(/\-/g, "b");
 		};
+		/**
+		 * 
+		 * @param {int} step
+		 * @returns {(pitch.Accidental|undefined)}
+		 */
 		this.accidentalByStep = function(step) {
 			var aps = this.alteredPitches;
 			for (var i = 0; i < aps.length; i++) {
@@ -209,7 +232,6 @@ define(['music21/base', 'music21/pitch', 'music21/interval', 'music21/scale'],
 	    });
 
 	};
-	
 	// end of define
 	if (typeof(music21) != "undefined") {
 		music21.key = key;
