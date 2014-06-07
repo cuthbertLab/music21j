@@ -84,7 +84,7 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
 	        				    tempEls.push(el);
 	        				}	        				
 	        			}
-	                    var newSt = common.copyStream(this);
+	                    var newSt = this.clone(false);
 	                    newSt.elements = tempEls;
 	        			return newSt;
 	    			} else {
@@ -253,6 +253,8 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
 			}
 	    });
 	    
+	    /* MISC */
+	    
         /* MIDI related routines... */
         
         this.playStream = function (startNote) {
@@ -298,31 +300,6 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
 	    
    
 	    this.vexflowStaffWidth = undefined;
-	    this.estimateStaffLength = function () {
-	    	if (this.vexflowStaffWidth != undefined) {
-	    		//console.log("Overridden staff width: " + this.vexflowStaffWidth);
-	    		return this.vexflowStaffWidth;
-	    	}
-	    	if (this.hasSubStreams()) { // part
-	    		var totalLength = 0;
-	    		for (var i = 0; i < this.length; i++) {
-	    			var m = this.get(i);
-	    			totalLength += m.estimateStaffLength() + m.renderOptions.staffPadding;
-	    			if ((i != 0) && (m.renderOptions.startNewSystem == true)) {
-	    				break;
-	    			}
-	    		}
-	    		return totalLength;
-	    	} else {
-	    		var rendOp = this.renderOptions;
-		    	var totalLength = 30 * this.length;
-				totalLength += rendOp.displayClef ? 20 : 0;
-				totalLength += (rendOp.displayKeySignature && this.keySignature) ? this.keySignature.width : 0;
-				totalLength += rendOp.displayTimeSignature ? 30 : 0; 
-				//totalLength += rendOp.staffPadding;
-				return totalLength;
-	    	}
-	    };
 
 	    this.estimateStreamHeight = function (ignoreSystems) {
 	    	var staffHeight = 120;
@@ -353,18 +330,6 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
 	    	}
 	    };
 
-	    this.setSubstreamRenderOptions = function () {
-	    	/* does nothing for standard streams ... */
-	    };
-	    this.resetRenderOptionsRecursive = function () {
-	    	this.renderOptions = new renderOptions.RenderOptions();
-	    	for (var i = 0; i < this.length; i++) {
-	    		var el = this.get(i);
-	    		if (el.isClassOrSubclass('Stream')) {
-	    			el.resetRenderOptionsRecursive();
-	    		}
-	    	}
-	    };
        this.renderVexflowOnCanvas = function (canvas) {
            var vfr = new vfShow.Renderer(this, canvas);
            vfr.render();
@@ -1159,7 +1124,100 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
         lastStepDict[p.step] = newAlter;
         lastOctavelessStepDict[p.step] = newAlter;
     };	
-	
+    /* override protoM21Object.clone() */
+    stream.Stream.prototype.clone = function(deep) {
+        var ret = Object.create(this.constructor.prototype);
+        for(var key in ret){ 
+            // not that we ONLY copy the keys in Ret -- it's easier that way.
+            // maybe we should do (var key in this) -- but DANGEROUS...
+            if (this.hasOwnProperty(key) == false) {
+                continue;
+            }
+            if (key == 'parent') {
+                ret[key] = this[key];
+            } else if (key == 'renderOptions') {
+                ret[key] = common.mergeObjectProperties({}, this[key]);
+            } else if (deep != true && (key == '_elements' || key == '_elementOffsets')) {
+                ret[key] = this[key].slice(); // shallow copy...
+            } else if (deep && (key == '_elements' || key == '_elementOffsets')) {
+                if (key == '_elements') {
+                    //console.log('got elements for deepcopy');
+                    ret['_elements'] = [];
+                    ret['_elementOffsets'] = [];
+                    for (var j = 0; j < this['_elements'].length; j++ ) {
+                        ret['_elementOffsets'][j] = this['_elementOffsets'][j];
+                        var el = this['_elements'][j];
+                        //console.log('cloning el: ', el.name);
+                        var elCopy = el.clone(deep);
+                        elCopy.parent = ret;
+                        ret['_elements'][j] = elCopy;
+                    }
+                }
+            
+            } else if (key == 'activeVexflowNote' || key == 'storedVexflowstave') {
+                // do nothing -- do not copy vexflowNotes -- permanent recursion
+            } else if (
+                    Object.getOwnPropertyDescriptor(this, key).get !== undefined ||
+                    Object.getOwnPropertyDescriptor(this, key).set !== undefined
+                    ) {
+                // do nothing
+            } else if (typeof(this[key]) == 'function') {
+                // do nothing -- events might not be copied.
+            } else if (this[key] != null && this[key].isMusic21Object == true) {
+                //console.log('cloning...', key);
+                ret[key] = this[key].clone(deep);
+            } else {
+                ret[key] = this[key];
+            }
+        }
+        return ret;  
+    };
+
+    stream.Stream.prototype.setSubstreamRenderOptions = function () {
+        /* does nothing for standard streams ... */
+    };
+    stream.Stream.prototype.resetRenderOptionsRecursive = function () {
+        this.renderOptions = new renderOptions.RenderOptions();
+        for (var i = 0; i < this.length; i++) {
+            var el = this.get(i);
+            if (el.isClassOrSubclass('Stream')) {
+                el.resetRenderOptionsRecursive();
+            }
+        }
+    };
+    stream.Stream.prototype.estimateStaffLength = function () {
+        if (this.vexflowStaffWidth != undefined) {
+            //console.log("Overridden staff width: " + this.vexflowStaffWidth);
+            return this.vexflowStaffWidth;
+        }
+        if (this.hasSubStreams()) { // part
+            var totalLength = 0;
+            for (var i = 0; i < this.length; i++) {
+                var m = this.get(i);
+                totalLength += m.estimateStaffLength() + m.renderOptions.staffPadding;
+                if ((i != 0) && (m.renderOptions.startNewSystem == true)) {
+                    break;
+                }
+            }
+            return totalLength;
+        } else {
+            var rendOp = this.renderOptions;
+            var totalLength = 30 * this.length;
+            totalLength += rendOp.displayClef ? 20 : 0;
+            totalLength += (rendOp.displayKeySignature && this.keySignature) ? this.keySignature.width : 0;
+            totalLength += rendOp.displayTimeSignature ? 30 : 0; 
+            //totalLength += rendOp.staffPadding;
+            return totalLength;
+        }
+    };
+
+
+    
+    /**
+     * container for a Measure ... does not YET handle Voices
+     * 
+     * @constructor
+     */
 	
 	stream.Measure = function () { 
 		stream.Stream.call(this);
@@ -1169,6 +1227,13 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
 	stream.Measure.prototype = new stream.Stream();
 	stream.Measure.prototype.constructor = stream.Measure;
 
+	/**
+	 * Part -- specialized to handle Measures inside it
+	 * 
+	 * @constructor
+	 */
+	
+	
 	stream.Part = function () {
 		stream.Stream.call(this);
 		this.classes.push('Part');
@@ -1242,79 +1307,7 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
 				return gotMeasure.noteElementFromScaledX(scaledX, allowablePixels);
 			}
 		};
-		this.setSubstreamRenderOptions = function () {
-			var currentMeasureIndex = 0; /* 0 indexed for now */
-			var currentMeasureLeft = 20;
-			var rendOp = this.renderOptions;
-			var lastTimeSignature = undefined;
-			var lastKeySignature = undefined;
-			var lastClef = undefined;
-			
-			for (var i = 0; i < this.length; i++) {
-				var el = this.get(i);
-				if (el.isClassOrSubclass('Measure')) {
-					var elRendOp = el.renderOptions;
-					elRendOp.measureIndex = currentMeasureIndex;
-					elRendOp.top = rendOp.top;
-					elRendOp.partIndex = rendOp.partIndex;
-					elRendOp.left = currentMeasureLeft;
-					
-					if (currentMeasureIndex == 0) {
-					    lastClef = el._clef;
-					    lastTimeSignature = el._timeSignature;
-					    lastKeySignature = el._keySignature;
-					    
-					    elRendOp.displayClef = true;
-						elRendOp.displayKeySignature = true;
-						elRendOp.displayTimeSignature = true;
-					} else {
-					    if (el._clef !== undefined && lastClef !== undefined && el._clef.name != lastClef.name) {
-					        console.log('changing clefs for ', elRendOp.measureIndex, ' from ', lastClef.name, ' to ', el._clef.name);
-					        lastClef = el._clef;
-					        elRendOp.displayClef = true;
-					    } else {
-	                        elRendOp.displayClef = false;					        
-					    }
-					    
-					    if (el._keySignature !== undefined && lastKeySignature !== undefined && 
-					            el._keySignature.sharps != lastKeySignature.sharps) {
-					        lastKeySignature = el._keySignature;
-					        elRendOp.displayKeySignature = true;
-					    } else {
-	                        elRendOp.displayKeySignature = false;					        
-					    }
-					    
-					    if (el._timeSignature !== undefined && lastTimeSignature !== undefined && 
-					            el._timeSignature.ratioString != lastTimeSignature.ratioString) {
-					        lastTimeSignature = el._timeSignature;
-					        elRendOp.displayTimeSignature = true;
-					    } else {
-	                        elRendOp.displayTimeSignature = false;	        
-					    }
-					}
-					elRendOp.width = el.estimateStaffLength() + elRendOp.staffPadding;
-					elRendOp.height = el.estimateStreamHeight();
-					currentMeasureLeft += elRendOp.width;
-					currentMeasureIndex++;
-				}
-			}
-		};
 		
-		this.getMeasureWidths = function () {
-			/* call after setSubstreamRenderOptions */
-			var measureWidths = [];
-			for (var i = 0; i < this.length; i++) {
-				var el = this.get(i);
-				if (el.isClassOrSubclass('Measure')) {
-					var elRendOp = el.renderOptions;
-					measureWidths[elRendOp.measureIndex] = elRendOp.width;
-				}
-			}
-			/* console.log(measureWidths);
-			 * 
-			 */
-			return measureWidths;
-		};
 		this.estimateStaffLength = function () {
 	        if (this.vexflowStaffWidth != undefined) {
 	            //console.log("Overridden staff width: " + this.vexflowStaffWidth);
@@ -1339,111 +1332,191 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
 	        return tempM.estimateStaffLength();
 		};
 		
-		this.fixSystemInformation = function (systemHeight) {
-			/*
-			 * Divide a part up into systems and fix the measure
-			 * widths so that they are all even.
-			 * 
-			 * Note that this is done on the part level even though
-			 * the measure widths need to be consistent across parts.
-			 * 
-			 * This is possible because the system is deterministic and
-			 * will come to the same result for each part.  Opportunity
-			 * for making more efficient through this...
-			 */
-			/* 
-			 * console.log('system height: ' + systemHeight);
-			 */
-			if (systemHeight == undefined) {
-				systemHeight = this.systemHeight; /* part.show() called... */
-			} else {
-				if (music21.debug) {
-					console.log ('overridden systemHeight: ' + systemHeight);
-				}
-			}
-			var measureWidths = this.getMeasureWidths();
-			var maxSystemWidth = this.maxSystemWidth; /* of course fix! */
-			var systemCurrentWidths = [];
-			var systemBreakIndexes = [];
-			var lastSystemBreak = 0; /* needed to ensure each line has at least one measure */
-			var startLeft = 20; /* TODO: make it obtained elsewhere */
-			var currentLeft = startLeft;
-			for (var i = 0; i < measureWidths.length; i++) {
-				var currentRight = currentLeft + measureWidths[i];
-				/* console.log("left: " + currentLeft + " ; right: " + currentRight + " ; m: " + i); */
-				if ((currentRight > maxSystemWidth) && (lastSystemBreak != i)) {
-					systemBreakIndexes.push(i-1);
-					systemCurrentWidths.push(currentLeft);
-					//console.log('setting new width at ' + currentLeft);
-					currentLeft = startLeft + measureWidths[i];
-					lastSystemBreak = i;
-				} else {
-					currentLeft = currentRight;
-				}
-			}
-			//console.log(systemCurrentWidths);
-			//console.log(systemBreakIndexes);
-
-			var currentSystemIndex = 0;
-			var leftSubtract = 0;
-			for (var i = 0; i < this.length; i++) {
-				var m = this.get(i);
-				if (i == 0) {
-					m.renderOptions.startNewSystem = true;
-				}
-				var currentLeft = m.renderOptions.left;
-
-				if ($.inArray(i - 1, systemBreakIndexes) != -1) {
-					/* first measure of new System */
-					leftSubtract = currentLeft - 20;
-					m.renderOptions.displayClef = true;
-					m.renderOptions.displayKeySignature = true;
-					m.renderOptions.startNewSystem = true;
-					currentSystemIndex++;
-				} else if (i != 0) {
-					m.renderOptions.startNewSystem = false;
-					m.renderOptions.displayClef = false;
-					m.renderOptions.displayKeySignature = false;
-				}
-				m.renderOptions.systemIndex = currentSystemIndex;
-				var currentSystemMultiplier;
-				if (currentSystemIndex >= systemCurrentWidths.length) {
-					/* last system... non-justified */;
-					currentSystemMultiplier = 1;
-				} else {
-					var currentSystemWidth = systemCurrentWidths[currentSystemIndex];
-					currentSystemMultiplier = maxSystemWidth / currentSystemWidth;
-					//console.log('systemMultiplier: ' + currentSystemMultiplier + ' max: ' + maxSystemWidth + ' current: ' + currentSystemWidth);
-				}
-				/* might make a small gap? fix? */
-				var newLeft = currentLeft - leftSubtract;
-				//console.log('M: ' + i + ' ; old left: ' + currentLeft + ' ; new Left: ' + newLeft);
-				m.renderOptions.left = Math.floor(newLeft * currentSystemMultiplier);
-				m.renderOptions.width = Math.floor(m.renderOptions.width * currentSystemMultiplier);
-				var newTop = m.renderOptions.top + (currentSystemIndex * systemHeight);
-				//console.log('M: ' + i + '; New top: ' + newTop + " ; old Top: " + m.renderOptions.top);
-				m.renderOptions.top = newTop;
-			}
-			
-			return systemCurrentWidths;
-		};
-		this.numSystems = function () {
-			var numSystems = 0;
-			for (var i = 0; i < this.length; i++) {
-				if (this.get(i).renderOptions.startNewSystem) {
-					numSystems++;
-				}
-			}
-			if (numSystems == 0) {
-				numSystems = 1;
-			}
-			return numSystems;
-		};
 	};
 
 	stream.Part.prototype = new stream.Stream();
 	stream.Part.prototype.constructor = stream.Part;
+	stream.Part.prototype.numSystems = function () {
+        var numSystems = 0;
+        for (var i = 0; i < this.length; i++) {
+            if (this.get(i).renderOptions.startNewSystem) {
+                numSystems++;
+            }
+        }
+        if (numSystems == 0) {
+            numSystems = 1;
+        }
+        return numSystems;
+    };
 
+    stream.Part.prototype.getMeasureWidths = function () {
+        /* call after setSubstreamRenderOptions */
+        var measureWidths = [];
+        for (var i = 0; i < this.length; i++) {
+            var el = this.get(i);
+            if (el.isClassOrSubclass('Measure')) {
+                var elRendOp = el.renderOptions;
+                measureWidths[elRendOp.measureIndex] = elRendOp.width;
+            }
+        }
+        /* console.log(measureWidths);
+         * 
+         */
+        return measureWidths;
+    };
+
+    stream.Part.prototype.fixSystemInformation = function (systemHeight) {
+        /*
+         * Divide a part up into systems and fix the measure
+         * widths so that they are all even.
+         * 
+         * Note that this is done on the part level even though
+         * the measure widths need to be consistent across parts.
+         * 
+         * This is possible because the system is deterministic and
+         * will come to the same result for each part.  Opportunity
+         * for making more efficient through this...
+         */
+        /* 
+         * console.log('system height: ' + systemHeight);
+         */
+        if (systemHeight == undefined) {
+            systemHeight = this.systemHeight; /* part.show() called... */
+        } else {
+            if (music21.debug) {
+                console.log ('overridden systemHeight: ' + systemHeight);
+            }
+        }
+        var measureWidths = this.getMeasureWidths();
+        var maxSystemWidth = this.maxSystemWidth; /* of course fix! */
+        var systemCurrentWidths = [];
+        var systemBreakIndexes = [];
+        var lastSystemBreak = 0; /* needed to ensure each line has at least one measure */
+        var startLeft = 20; /* TODO: make it obtained elsewhere */
+        var currentLeft = startLeft;
+        for (var i = 0; i < measureWidths.length; i++) {
+            var currentRight = currentLeft + measureWidths[i];
+            /* console.log("left: " + currentLeft + " ; right: " + currentRight + " ; m: " + i); */
+            if ((currentRight > maxSystemWidth) && (lastSystemBreak != i)) {
+                systemBreakIndexes.push(i-1);
+                systemCurrentWidths.push(currentLeft);
+                //console.log('setting new width at ' + currentLeft);
+                currentLeft = startLeft + measureWidths[i];
+                lastSystemBreak = i;
+            } else {
+                currentLeft = currentRight;
+            }
+        }
+        //console.log(systemCurrentWidths);
+        //console.log(systemBreakIndexes);
+
+        var currentSystemIndex = 0;
+        var leftSubtract = 0;
+        for (var i = 0; i < this.length; i++) {
+            var m = this.get(i);
+            if (i == 0) {
+                m.renderOptions.startNewSystem = true;
+            }
+            var currentLeft = m.renderOptions.left;
+
+            if ($.inArray(i - 1, systemBreakIndexes) != -1) {
+                /* first measure of new System */
+                leftSubtract = currentLeft - 20;
+                m.renderOptions.displayClef = true;
+                m.renderOptions.displayKeySignature = true;
+                m.renderOptions.startNewSystem = true;
+                currentSystemIndex++;
+            } else if (i != 0) {
+                m.renderOptions.startNewSystem = false;
+                m.renderOptions.displayClef = false;
+                m.renderOptions.displayKeySignature = false;
+            }
+            m.renderOptions.systemIndex = currentSystemIndex;
+            var currentSystemMultiplier;
+            if (currentSystemIndex >= systemCurrentWidths.length) {
+                /* last system... non-justified */;
+                currentSystemMultiplier = 1;
+            } else {
+                var currentSystemWidth = systemCurrentWidths[currentSystemIndex];
+                currentSystemMultiplier = maxSystemWidth / currentSystemWidth;
+                //console.log('systemMultiplier: ' + currentSystemMultiplier + ' max: ' + maxSystemWidth + ' current: ' + currentSystemWidth);
+            }
+            /* might make a small gap? fix? */
+            var newLeft = currentLeft - leftSubtract;
+            //console.log('M: ' + i + ' ; old left: ' + currentLeft + ' ; new Left: ' + newLeft);
+            m.renderOptions.left = Math.floor(newLeft * currentSystemMultiplier);
+            m.renderOptions.width = Math.floor(m.renderOptions.width * currentSystemMultiplier);
+            var newTop = m.renderOptions.top + (currentSystemIndex * systemHeight);
+            //console.log('M: ' + i + '; New top: ' + newTop + " ; old Top: " + m.renderOptions.top);
+            m.renderOptions.top = newTop;
+        }
+        
+        return systemCurrentWidths;
+    };
+    stream.Part.prototype.setSubstreamRenderOptions = function () {
+        var currentMeasureIndex = 0; /* 0 indexed for now */
+        var currentMeasureLeft = 20;
+        var rendOp = this.renderOptions;
+        var lastTimeSignature = undefined;
+        var lastKeySignature = undefined;
+        var lastClef = undefined;
+        
+        for (var i = 0; i < this.length; i++) {
+            var el = this.get(i);
+            if (el.isClassOrSubclass('Measure')) {
+                var elRendOp = el.renderOptions;
+                elRendOp.measureIndex = currentMeasureIndex;
+                elRendOp.top = rendOp.top;
+                elRendOp.partIndex = rendOp.partIndex;
+                elRendOp.left = currentMeasureLeft;
+                
+                if (currentMeasureIndex == 0) {
+                    lastClef = el._clef;
+                    lastTimeSignature = el._timeSignature;
+                    lastKeySignature = el._keySignature;
+                    
+                    elRendOp.displayClef = true;
+                    elRendOp.displayKeySignature = true;
+                    elRendOp.displayTimeSignature = true;
+                } else {
+                    if (el._clef !== undefined && lastClef !== undefined && el._clef.name != lastClef.name) {
+                        console.log('changing clefs for ', elRendOp.measureIndex, ' from ', lastClef.name, ' to ', el._clef.name);
+                        lastClef = el._clef;
+                        elRendOp.displayClef = true;
+                    } else {
+                        elRendOp.displayClef = false;                           
+                    }
+                    
+                    if (el._keySignature !== undefined && lastKeySignature !== undefined && 
+                            el._keySignature.sharps != lastKeySignature.sharps) {
+                        lastKeySignature = el._keySignature;
+                        elRendOp.displayKeySignature = true;
+                    } else {
+                        elRendOp.displayKeySignature = false;                           
+                    }
+                    
+                    if (el._timeSignature !== undefined && lastTimeSignature !== undefined && 
+                            el._timeSignature.ratioString != lastTimeSignature.ratioString) {
+                        lastTimeSignature = el._timeSignature;
+                        elRendOp.displayTimeSignature = true;
+                    } else {
+                        elRendOp.displayTimeSignature = false;          
+                    }
+                }
+                elRendOp.width = el.estimateStaffLength() + elRendOp.staffPadding;
+                elRendOp.height = el.estimateStreamHeight();
+                currentMeasureLeft += elRendOp.width;
+                currentMeasureIndex++;
+            }
+        }
+    };
+
+	
+    /**
+     * Scores with multiple parts
+     * 
+     * @constructor
+     */
 	stream.Score = function () {
 		stream.Stream.call(this);
 		this.classes.push('Score');
@@ -1467,32 +1540,6 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
 	    		}
 	    	}
 	    };
-		this.setSubstreamRenderOptions = function () {
-			var currentPartNumber = 0;
-			var currentPartTop = 0;
-			var partSpacing = this.partSpacing;
-			for (var i = 0; i < this.length; i++) {
-				var el = this.get(i);
-				
-				if (el.isClassOrSubclass('Part')) {
-					el.renderOptions.partIndex = currentPartNumber;
-					el.renderOptions.top = currentPartTop;
-					el.setSubstreamRenderOptions();
-					currentPartTop += partSpacing;
-					currentPartNumber++;
-				}
-			}
-			this.evenPartMeasureSpacing();
-			var ignoreNumSystems = true;
-			var currentScoreHeight = this.estimateStreamHeight(ignoreNumSystems);
-			for (var i = 0; i < this.length; i++) {
-				var el = this.get(i);	
-				if (el.isClassOrSubclass('Part')) {
-					el.fixSystemInformation(currentScoreHeight);
-				}
-			}
-			this.renderOptions.height =  this.estimateStreamHeight();
-		};
 		this.getMaxMeasureWidths = function () {
 			/*  call after setSubstreamRenderOptions
 			 *  gets the maximum measure width for each measure
@@ -1601,29 +1648,56 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
 				currentLeft += measureNewWidth;
 			}
 		};
-		this.estimateStaffLength = function () {
-		    // override
-		    if (this.vexflowStaffWidth != undefined) {
-                //console.log("Overridden staff width: " + this.vexflowStaffWidth);
-                return this.vexflowStaffWidth;
-            }
-		    for (var i = 0; i < this.length; i++) {
-		        var p = this.get(i);
-		        if (p.isClassOrSubclass('Part')) {
-		            return p.estimateStaffLength();
-		        }
-		    }
-		    // no parts found in score... use part...
-		    console.log('no parts found in score');
-		    var tempPart = new stream.Part();
-		    tempPart.elements = this.elements;
-		    return tempPart.estimateStaffLength();            
-		};
 		
 	};
 
 	stream.Score.prototype = new stream.Stream();
 	stream.Score.prototype.constructor = stream.Score;
+
+    stream.Score.prototype.setSubstreamRenderOptions = function () {
+        var currentPartNumber = 0;
+        var currentPartTop = 0;
+        var partSpacing = this.partSpacing;
+        for (var i = 0; i < this.length; i++) {
+            var el = this.get(i);
+            
+            if (el.isClassOrSubclass('Part')) {
+                el.renderOptions.partIndex = currentPartNumber;
+                el.renderOptions.top = currentPartTop;
+                el.setSubstreamRenderOptions();
+                currentPartTop += partSpacing;
+                currentPartNumber++;
+            }
+        }
+        this.evenPartMeasureSpacing();
+        var ignoreNumSystems = true;
+        var currentScoreHeight = this.estimateStreamHeight(ignoreNumSystems);
+        for (var i = 0; i < this.length; i++) {
+            var el = this.get(i);   
+            if (el.isClassOrSubclass('Part')) {
+                el.fixSystemInformation(currentScoreHeight);
+            }
+        }
+        this.renderOptions.height =  this.estimateStreamHeight();
+    };
+    stream.Score.prototype.estimateStaffLength = function () {
+        // override
+        if (this.vexflowStaffWidth != undefined) {
+            //console.log("Overridden staff width: " + this.vexflowStaffWidth);
+            return this.vexflowStaffWidth;
+        }
+        for (var i = 0; i < this.length; i++) {
+            var p = this.get(i);
+            if (p.isClassOrSubclass('Part')) {
+                return p.estimateStaffLength();
+            }
+        }
+        // no parts found in score... use part...
+        console.log('no parts found in score');
+        var tempPart = new stream.Part();
+        tempPart.elements = this.elements;
+        return tempPart.estimateStaffLength();            
+    };
 
 	/**
 	 * Logic for copying events from one jQuery object to another.

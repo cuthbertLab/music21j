@@ -10,26 +10,26 @@
  */
 
 
-define(['music21/duration'], 
+define(['music21/prebase', 'music21/duration'], 
         /**
          * module for Music21Objects
          * @exports music21/base
          */
-        function(duration) {
+        function(prebase, duration) {
 	var base = {};
-
-	/*   main class   from base.py   */
 
 	/**
 	 * @class Music21Object
 	 * @constructor
 	 */
 	base.Music21Object = function () {
-		this.classes = ['Music21Object'];
+        prebase.ProtoM21Object.call(this);
+        this.classes.push('Music21Object');
 		this.classSortOrder = 20; // default;
 		this._priority = 0; // default;
 		this.offset = null; // default -- simple version of m21.
 		this.parent = undefined;
+		this.isMusic21Object = true;
 		this.isStream = false;
 		// this.isSpanner = false; // add when supported,
 		// this.isVariant = false; // add when supported, if ever...
@@ -39,6 +39,7 @@ define(['music21/duration'],
 		// this.sites, this.activeSites, this.offset -- not yet...
 		// beat, measureNumber, etc.
 		// lots to do...
+		
 		
 		Object.defineProperties(this, {
             'priority': {
@@ -57,24 +58,14 @@ define(['music21/duration'],
                 }
             },
 		});
-	};
-	/**
-	 * 
-	 * @param {(string|string[])} testClass
-	 * @returns {Boolean}
-	 */
-	base.Music21Object.prototype.isClassOrSubclass = function (testClass) {
-        if (testClass instanceof Array == false) {
-            testClass = [testClass];
-        }
-        for (var i = 0; i < testClass.length; i++) {
-            if ($.inArray(testClass[i], this.classes) != -1) {
-                return true;
-            }   
-        }
-        return false;
-    };
+        // define how to .clone() difficult objects..
+        this._cloneCallbacks.parent = function (p, ret, obj) {
+            ret[p] = undefined;
+        };
 
+	};
+    base.Music21Object.prototype = new prebase.ProtoM21Object();
+    base.Music21Object.prototype.constructor = base.Music21Object;
 	
 	
 	// end of define

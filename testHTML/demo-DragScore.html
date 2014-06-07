@@ -30,6 +30,8 @@ function renderThemes ()  {
     				"c4 c e8 f g4", "c'4. e'8 c'4 g", "d'#4 f b8 f4.",
     				"c4. e8 c4. g8", "c8 c e e g g c'4", "c4. g8 c'4 e'"];
     var themeCanvases = [];
+    r = new music21.vfShow.Renderer() // should be static method;
+
     for (var i = 0; i < themes.length; i++) {
         var thisTheme = themes[i];
         var myTNStream = music21.tinyNotation.TinyNotation(thisTheme);
@@ -46,6 +48,8 @@ function renderThemes ()  {
 		nc[0].ondblclick = nc[0].onclick;
 		nc[0].onclick = undefined;
         themeCanvases.push(nc[0]);
+        r.removeFormatterInformation(myStream, true); // recursive.
+
         if (i % 5 == 4) {
             $('#themeDiv').append($('<br/>'));
             // alert(nc);
@@ -63,7 +67,8 @@ function renderThemes ()  {
 
 function handleThemeDrop(event, ui) {
     var containedStream = ui.draggable.data('stream');
-    var containedStreamCopy = music21.common.copyStream(containedStream, true); // deep copy
+    var containedStreamCopy = containedStream.clone(true);
+    
     allStream.append(containedStreamCopy);
     allStreamScore.resetRenderOptionsRecursive();
     var newCanvas = allStreamScore.createPlayableCanvas();

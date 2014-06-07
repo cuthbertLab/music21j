@@ -40,6 +40,7 @@ music21.debug = false;
 define(['music21/pitch', 
         'music21/duration', 
         'music21/common',
+        'music21/prebase',
         'music21/base', 
         'music21/note', 
         'music21/meter',

@@ -7,7 +7,8 @@
  * 
  */
 
-define(['music21/common'], function(common) {
+define(['music21/common', 'music21/prebase'], 
+        function(common, prebase) {
 
 	var duration = {};
 	
@@ -15,25 +16,14 @@ define(['music21/common'], function(common) {
 	var VexflowDurationArray = [undefined, 'w', 'h', 'q', '8', '16', '32', undefined, undefined];
 	
 	duration.Duration = function (ql) {
-	    this.classes = ['Duration'];
+	    prebase.ProtoM21Object.call(this, ql);
+	    this.classes.push('Duration');
 	    this._quarterLength = 1.0;
 	    this._dots = 0;
 		this._durationNumber = undefined;
 		this._type = 'quarter';
 		this._tuplets = [];
-	
-		this.isClassOrSubclass = function (testClass) {
-		    if (testClass instanceof Array == false) {
-		        testClass = [testClass];
-		    }
-		    for (var i = 0; i < testClass.length; i++) {
-		        if ($.inArray(testClass[i], this.classes) != -1) {
-		            return true;
-		        }   
-		    }
-		    return false;
-		};
-	
+		
 	    this._findDots = function (ql) {
 	        if (ql == 0) { return 0; } // zero length stream probably;
 	        var typeNumber = $.inArray(this._type, Music21DurationArray);
@@ -159,9 +149,13 @@ define(['music21/common'], function(common) {
 	    }
 	    //alert(ql + " " + this.type + " " + this.dots);
 	};
-	
+    duration.Duration.prototype = new prebase.ProtoM21Object();
+    duration.Duration.prototype.constructor = duration.Duration;
+
 	duration.Tuplet = function (numberNotesActual, numberNotesNormal, 
 	        durationActual, durationNormal) {
+	    prebase.ProtoM21Object.call(this);
+	    this.classes.push('Tuplet');
 	    this.numberNotesActual = numberNotesActual || 3;
 	    this.numberNotesNormal = numberNotesNormal || 2;
 	    this.durationActual = durationActual || new duration.Duration(0.5);
@@ -224,6 +218,8 @@ define(['music21/common'], function(common) {
 	    });
 	    
 	};
+    duration.Tuplet.prototype = new prebase.ProtoM21Object();
+    duration.Tuplet.prototype.constructor = duration.Tuplet;
 
 	duration.tests = function () {
 	    test( "music21.duration.Duration", function () {
