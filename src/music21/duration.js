@@ -135,10 +135,11 @@ define(['music21/common'], function(common) {
                 var tupletRatio = ql/unTupletedQl;
                 var ratioRat = common.rationalize(tupletRatio);
                 if (ratioRat === undefined) {
-                    console.log("cannot find ratio! ", tupletRatio, ql, unTupletedQl);
+                    // probably a Stream with a length that is inexpressable;
+                } else {
+                    var t = new duration.Tuplet(ratioRat.denominator, ratioRat.numerator, new duration.Duration(unTupletedQl));
+                    this.appendTuplet(t, true); // skipUpdateQl                    
                 }
-                var t = new duration.Tuplet(ratioRat.denominator, ratioRat.numerator, new duration.Duration(unTupletedQl));
-                this.appendTuplet(t, true); // skipUpdateQl
                 //console.log(ratioRat, ql, unTupletedQl);
             }
         };

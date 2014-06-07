@@ -8,13 +8,13 @@
  */
 
 
-define(['music21/base', 'music21/pitch'], 
+define(['music21/base', 'music21/pitch', 'vexflow'], 
         /**
          * Module for note classes
          * 
-         * @exports music21.note
+         * @exports music21/note
          */  
-        function(base, pitch) {
+        function(base, pitch, Vex) {
 	var note = {};
 
 	note.noteheadTypeNames = [
@@ -61,9 +61,11 @@ define(['music21/base', 'music21/pitch'],
 	/**
 	 * Superclass for all Note values
 	 * 
+	 * @class GeneralNote
 	 * @constructor
 	 * @memberof music21
-	 * @param {number} ql - quarterLength of the note
+	 * @extends base.Music21Object
+	 * @param {(number|undefined=1)} ql - quarterLength of the note
 	 */
 	note.GeneralNote = function (ql) {
 		base.Music21Object.call(this);
@@ -90,6 +92,10 @@ define(['music21/base', 'music21/pitch'],
             
         });
         
+        /**
+         * Sets the vexflow accidentals (if any), the dots, and the stem direction
+         * @param {Vex.Flow.StaveNote} vfn - a Vex.Flow note
+         */
 		this.vexflowAccidentalsAndDisplay = function (vfn) {
 	        if (this.duration.dots == 1) {
 	            vfn.addDotToAll();
@@ -103,6 +109,15 @@ define(['music21/base', 'music21/pitch'],
 			}
 		};
 		
+		/**
+		 * Play the current element as a MIDI note.
+		 * 
+		 * @name playMidi
+		 * @memberof GeneralNote
+		 * @param {number} tempo - tempo in bpm
+		 * @param {(base.Music21Object|undefined)} nextElement - for ties...
+		 * @returns {Number} - delay time in milliseconds until the next element (may be ignored)
+		 */
 		this.playMidi = function (tempo, nextElement) {
 		    // returns the number of milliseconds to the next element in
 		    // case that can't be determined otherwise.
@@ -150,10 +165,15 @@ define(['music21/base', 'music21/pitch'],
 		    return milliseconds;   
 		};
 	};
-
 	note.GeneralNote.prototype = new base.Music21Object();
 	note.GeneralNote.prototype.constructor = note.GeneralNote;
-
+	
+	/**
+	 * @class NotRest
+	 * @memberof music21
+	 * @extends note.GeneralNote
+	 * @param {number} ql - length in quarter notes
+	 */
 	note.NotRest = function (ql) {
 		note.GeneralNote.call(this, ql);
 		this.classes.push('NotRest');
@@ -174,7 +194,13 @@ define(['music21/base', 'music21/pitch'],
 	note.NotRest.prototype.constructor = note.NotRest;
 
 	/* ------- Note ----------- */
-
+    /**
+     * @class Note
+     * @memberof music21
+     * @extends NotRest
+     * @param {(string|undefined)} nn - pitch name
+     * @param {(number|undefined)} ql - length in quarter notes
+     */
 	note.Note = function (nn, ql) {
 		note.NotRest.call(this, ql);
 		this.classes.push('Note');
@@ -259,13 +285,18 @@ define(['music21/base', 'music21/pitch'],
 	
 	/* ------ Rest ------ */
 
+	/**
+	 * @class Rest
+	 * @constructor
+	 * @extends GeneralNote
+	 * @param {number} ql - quarter length
+	 */
 	note.Rest = function (ql) {
 		note.GeneralNote.call(this, ql);
 		this.classes.push('Rest');
         this.isNote = false; // for speed
         this.isRest = true; // for speed		
 		this.name = 'rest'; // for note compatibility
-	    
 	    this.vexflowNote = function () {
 	    	var keyLine = 'b/4';
 	    	if (this.duration.type == 'whole') {

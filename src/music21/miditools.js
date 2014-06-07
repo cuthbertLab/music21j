@@ -147,18 +147,19 @@ define(['jquery', 'music21/note', 'music21/chord'], function($, note, chord) {
     /**
      * 
      * @param {Array<note.Note>} chordNoteList - a list of notes
-     * @returns {note.GeneralNote} - (probably a music21.chord.Chord but maybe a music21.note.Note object)
+     * @returns {(note.Note|chord.Chord|undefined)} - (probably a music21.chord.Chord but maybe a music21.note.Note object)
      * 
      * 
      */
-    
     miditools.sendOutChord = function (chordNoteList) {
         var appendObject = undefined;
         if (chordNoteList.length > 1) {
             //console.log(chordNoteList[0].name, chordNoteList[1].name);
             appendObject = new chord.Chord(chordNoteList);
-        } else {
+        } else if (chordNoteList.length == 1) {
             appendObject = chordNoteList[0]; // note object
+        } else {
+            return undefined;
         }
         appendObject.stemDirection = 'noStem';
         miditools.quantizeLastNote();
@@ -200,6 +201,7 @@ define(['jquery', 'music21/note', 'music21/chord'], function($, note, chord) {
         } else if (roundedQuarterLength == 0) {
             roundedQuarterLength = 0.125;
         }
+        //console.log(roundedQuarterLength);
         lastElement.duration.quarterLength = roundedQuarterLength;
     };
     

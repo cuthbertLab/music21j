@@ -72,7 +72,8 @@ if ((Object.defineProperties === undefined) && warnBanner) {
     	paths: {
     		'jquery': 'ext/jquery/jquery-2.1.1.min',
     		'jquery-ui': 'ext/jqueryPlugins/jqueryUI/jquery-ui.min',
-    		'vexflow': 'ext/vexflow/vexflow-min'
+    		'vexflow': 'ext/vexflow/vexflow-min',
+    		'es6-shim': 'ext/es6-shim',
     	},
     	shim: {
     		'jquery-ui': {
@@ -82,8 +83,7 @@ if ((Object.defineProperties === undefined) && warnBanner) {
             'vexflow': {
                 deps: [ 'jquery' ],
                 exports: 'Vex'
-            }
-
+            },
     	}
     });
     var m21modules = ['loadMIDI',

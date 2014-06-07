@@ -10,11 +10,20 @@
  */
 
 
-define(['music21/duration'], function(duration) {
+define(['music21/duration'], 
+        /**
+         * module for Music21Objects
+         * @exports music21/base
+         */
+        function(duration) {
 	var base = {};
 
 	/*   main class   from base.py   */
 
+	/**
+	 * @class Music21Object
+	 * @constructor
+	 */
 	base.Music21Object = function () {
 		this.classes = ['Music21Object'];
 		this.classSortOrder = 20; // default;
@@ -24,6 +33,7 @@ define(['music21/duration'], function(duration) {
 		this.isStream = false;
 		// this.isSpanner = false; // add when supported,
 		// this.isVariant = false; // add when supported, if ever...
+
 		this._duration = new duration.Duration();
 		this.groups = []; // custom object in m21p
 		// this.sites, this.activeSites, this.offset -- not yet...
@@ -48,6 +58,11 @@ define(['music21/duration'], function(duration) {
             },
 		});
 	};
+	/**
+	 * 
+	 * @param {(string|string[])} testClass
+	 * @returns {Boolean}
+	 */
 	base.Music21Object.prototype.isClassOrSubclass = function (testClass) {
         if (testClass instanceof Array == false) {
             testClass = [testClass];
