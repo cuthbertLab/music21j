@@ -40,34 +40,32 @@ define(['jquery', 'music21/note', 'music21/chord'], function($, note, chord) {
             this.midiNote = this.data2;
             this.velocity = this.data3;
         }
-        
-        this.noteInfo = function () {
+    };
+    miditools.Event.prototype.noteInfo = function () {
+        if (this.noteOn) {
+            console.log('Note on: ' + this.midiNote + " ; Velocity: " + this.velocity);
+        }
+    };
+    miditools.Event.prototype.sendToMIDIjs = function () {
+        if (music21.MIDI !== undefined) {
             if (this.noteOn) {
-                console.log('Note on: ' + this.midiNote + " ; Velocity: " + this.velocity);
+                music21.MIDI.noteOn(0, this.midiNote, this.velocity, 0);
+            } else if (this.noteOff) {
+                music21.MIDI.noteOff(0, this.midiNote, 0);      
             }
-        };
-        this.sendToMIDIjs = function () {
-            if (music21.MIDI !== undefined) {
-                if (this.noteOn) {
-                    music21.MIDI.noteOn(0, this.midiNote, this.velocity, 0);
-                } else if (this.noteOff) {
-                    music21.MIDI.noteOff(0, this.midiNote, 0);      
-                }
-            } else {
-                console.warn('could not playback note because no MIDIout defined');
-            };
-        };
-        /**
-         * 
-         * @returns {note.Note}
-         */
-        this.music21Note = function () {
-            var m21n = new note.Note();
-            m21n.pitch.ps = this.midiNote;
-            return m21n;
+        } else {
+            console.warn('could not playback note because no MIDIout defined');
         };
     };
-    
+    /**
+     * 
+     * @returns {note.Note}
+     */
+    miditools.Event.prototype.music21Note = function () {
+        var m21n = new note.Note();
+        m21n.pitch.ps = this.midiNote;
+        return m21n;
+    };    
     miditools.maxDelay = 100; // in ms
     miditools.heldChordTime = 0;
     miditools.heldChordNotes = undefined;

@@ -35,35 +35,33 @@ define(['music21/base','music21/pitch'], function(base, pitch) {
 	    	this.name = undefined;
 	    	this.firstLine = clef.firstLines['treble'];
 	    	this.firstLineTrebleOffset = 0;
-	    }
-	    
-	    this.convertPitchToTreble = function (p) {
-	        // returns a new pitch object if the clef name is not Treble
-	        // designed so it would look the same as it would in treble clef.
-	        // for instance, bass-clef 2nd-space C# becomes treble clef 2nd-space A#
-	        // used for Vex.Flow which requires all pitches to be input as if they
-	        // are in treble clef.
-	        //
-	        // in case of treble clef or percussion clef, returns the same pitch object to save time.
-	        if (this.name == 'treble' || this.name == 'percussion') {
-	            return p;
-	        }
-	        if (this.firstLine == undefined) {
-	            console.log('no first line defined for clef', this.name, this);
-	            return p; // error
-	        }
-	        var firstLineDifference = this.firstLineTrebleOffset;
-	        var tempPitch = new pitch.Pitch(p.step);
-	        tempPitch.octave = p.octave;
-	        tempPitch.diatonicNoteNum += firstLineDifference;
-	        tempPitch.accidental = p.accidental;
-	        return tempPitch;
-	    };
+	    }	    
 	};
-	
-	
+
 	clef.Clef.prototype = new base.Music21Object();
 	clef.Clef.prototype.constructor = clef.Clef;
+    clef.Clef.prototype.convertPitchToTreble = function (p) {
+        // returns a new pitch object if the clef name is not Treble
+        // designed so it would look the same as it would in treble clef.
+        // for instance, bass-clef 2nd-space C# becomes treble clef 2nd-space A#
+        // used for Vex.Flow which requires all pitches to be input as if they
+        // are in treble clef.
+        //
+        // in case of treble clef or percussion clef, returns the same pitch object to save time.
+        if (this.name == 'treble' || this.name == 'percussion') {
+            return p;
+        }
+        if (this.firstLine == undefined) {
+            console.log('no first line defined for clef', this.name, this);
+            return p; // error
+        }
+        var firstLineDifference = this.firstLineTrebleOffset;
+        var tempPitch = new pitch.Pitch(p.step);
+        tempPitch.octave = p.octave;
+        tempPitch.diatonicNoteNum += firstLineDifference;
+        tempPitch.accidental = p.accidental;
+        return tempPitch;
+    };
 
 	clef.TrebleClef = function () {
         clef.Clef.call(this, 'treble');
@@ -159,6 +157,7 @@ define(['music21/base','music21/pitch'], function(base, pitch) {
         test ( "music21.clef.Clef" , function() {
             var c1 = new music21.clef.Clef();            
             equal (c1.isClassOrSubclass('Clef'), true, 'clef is a Clef');
+            
             var ac = new music21.clef.AltoClef();
             equal (ac.firstLine, 25, 'first line set');
             var n = new music21.note.Note('C#4');

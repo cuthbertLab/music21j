@@ -1,48 +1,62 @@
-define([], function() {
+define(['music21/prebase'], 
+        function(prebase) {
    var articulations = {};
 
    articulations.Articulation = function(){
+       prebase.ProtoM21Object.call(this);
+       this.classes.push('Articulation');
        this.name = undefined;
        this.placement = 'above';
        this.vexflowModifier = undefined;
        this.setPosition = undefined;
        this.dynamicShift = 1.0;
-       
-       this.vexflow = function () {
-           var vfa = new Vex.Flow.Articulation(this.vexflowModifier);
-           if (this.setPosition) {
-               vfa.setPosition(this.setPosition);
-           }
-           return vfa;
-       };
+   };
+   articulations.Articulation.prototype = new prebase.ProtoM21Object();
+   articulations.Articulation.prototype.constructor = articulations.Articulation;
+   
+   articulations.Articulation.prototype.vexflow = function () {
+       var vfa = new Vex.Flow.Articulation(this.vexflowModifier);
+       if (this.setPosition) {
+           vfa.setPosition(this.setPosition);
+       }
+       return vfa;
    };
    
    articulations.LengthArticulation = function(){
        articulations.Articulation.call(this);
+       this.classes.push('LengthArticulation');
    };
    articulations.LengthArticulation.prototype = new articulations.Articulation();
    articulations.LengthArticulation.prototype.constructor = articulations.LengthArticulation;
    
    articulations.DynamicArticulation = function(){
        articulations.Articulation.call(this);
+       this.classes.push('DynamicArticulation');
+
    };
    articulations.DynamicArticulation.prototype = new articulations.Articulation();
    articulations.DynamicArticulation.prototype.constructor = articulations.DynamicArticulation;
    
    articulations.PitchArticulation = function(){
        articulations.Articulation.call(this);
+       this.classes.push('PitchArticulation');
+
    };
    articulations.PitchArticulation.prototype = new articulations.Articulation();
    articulations.PitchArticulation.prototype.constructor = articulations.PitchArticulation;
    
    articulations.TimbreArticulation = function(){
        articulations.Articulation.call(this);
+       this.classes.push('TimbreArticulation');
+
    };
    articulations.TimbreArticulation.prototype = new articulations.Articulation();
    articulations.TimbreArticulation.prototype.constructor = articulations.TimbreArticulation;
    
    articulations.Accent = function(){
        articulations.DynamicArticulation.call(this);
+       this.classes.push('Accent');
+
        this.name = 'accent';
        this.vexflowModifier = "a>";
        this.dynamicShift = 1.5;
@@ -52,6 +66,7 @@ define([], function() {
    
    articulations.StrongAccent = function(){
        articulations.Accent.call(this);
+       this.classes.push('StrongAccent');
        this.name = 'strong accent';
        this.vexflowModifier = "a^";
        this.dynamicShift = 2.0;
@@ -61,6 +76,7 @@ define([], function() {
    
    articulations.Staccato = function(){
        articulations.LengthArticulation.call(this);
+       this.classes.push('Staccato');       
        this.name = 'staccato';
        this.vexflowModifier = "a.";
    };
@@ -69,6 +85,7 @@ define([], function() {
    
    articulations.Staccatissimo = function(){
        articulations.Staccato.call(this);
+       this.classes.push('Staccatissimo');
        this.name = 'staccatissimo';
        this.vexflowModifier = "av";
    };
@@ -77,6 +94,8 @@ define([], function() {
    
    articulations.Tenuto = function(){
        articulations.LengthArticulation.call(this);
+       this.classes.push('Tenuto');
+
        this.name = 'tenuto';
        this.vexflowModifier = "a-";
    };
