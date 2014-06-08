@@ -417,12 +417,15 @@ define(['vexflowMods'], function(Vex) {
                     }
                     activeTupletVexflowNotes.push(vfn);
                     activeTupletLength += thisEl.duration.quarterLength;
-                    //console.log(activeTupletLength, activeTuplet.totalTupletLength());
-                    if (activeTupletLength >= activeTuplet.totalTupletLength()) {
+                    console.log(activeTupletLength, activeTuplet.totalTupletLength());
+                    if (activeTupletLength >= activeTuplet.totalTupletLength() ||
+                            Math.abs(activeTupletLength - activeTuplet.totalTupletLength()) < 0.001) {
                         //console.log(activeTupletVexflowNotes);
-                        
+                        var options = {num_notes: activeTuplet.numberNotesActual, 
+                                       beats_occupied: activeTuplet.numberNotesNormal};
+                        //console.log('options', options);
                         var vfTuplet = new Vex.Flow.Tuplet(activeTupletVexflowNotes, 
-                                {beats_occupied: activeTuplet.numberNotesNormal});
+                                options);
                         if (activeTuplet.tupletNormalShow == 'ratio') {
                             vfTuplet.setRatioed(true);
                         }
