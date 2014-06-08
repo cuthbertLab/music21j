@@ -35,8 +35,8 @@ define("m21theory/tests/firstSpecies", ["m21theory/section", "m21theory/random"]
 		this.noteChanged = function (clickedDiatonicNoteNum, foundNote, canvas) {
 			if (foundNote != undefined) {
 				var n = foundNote;
-				var part = n.parent.parent;
-				var score = part.parent;
+				var part = n.activeSite.activeSite;
+				var score = part.activeSite;
 				if (part == score.get(1)) {
 					this.testHandler.showAlert(
 							"No...you can't alter the given line.  That'd be too easy. :-)", 'alert');
@@ -125,13 +125,13 @@ define("m21theory/tests/firstSpecies", ["m21theory/section", "m21theory/random"]
 								" fixing it."
 						);
 						var newS = new music21.stream.Stream();
-						var oldCFNoteParent = cfNote.parent; 
-						var oldStudentNoteParent = studentNote.parent;
+						var oldCFNoteactiveSite = cfNote.activeSite; 
+						var oldStudentNoteactiveSite = studentNote.activeSite;
 						newS.append(cfNote);
 						newS.append(studentNote);
 						newS.playStream();
-						cfNote.parent = oldCFNoteParent; 
-						studentNote.parent = oldStudentNoteParent;
+						cfNote.activeSite = oldCFNoteactiveSite; 
+						studentNote.activeSite = oldStudentNoteactiveSite;
 						return;
 					}
 				}
