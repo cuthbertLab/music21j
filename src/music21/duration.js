@@ -173,7 +173,7 @@ define(['music21/common', 'music21/prebase'],
 	    this.bracket = true;
 	    this.placement = 'above';
 	    this.tupletActualShow = 'number'; // 'number', 'type', or 'none'
-	    this.tupletNormalShow = undefined; // for ratios
+	    this.tupletNormalShow = undefined; // undefined, 'ratio' for ratios, 'type' for ratioed notes (does not work)
 	    
 	    Object.defineProperties(this, {
 	       'fullName': {
@@ -281,7 +281,7 @@ define(['music21/common', 'music21/prebase'],
             }
             s.appendNewCanvas();
             
-            var s2 = new music21.stream.Stream();
+            var s2 = new music21.stream.Measure();
             s2.timeSignature = new music21.meter.TimeSignature('3/2');
             var na1 = new music21.note.Note('F4');
             var na2 = new music21.note.Note('E4');
@@ -291,14 +291,34 @@ define(['music21/common', 'music21/prebase'],
                 var n1 = new music21.note.Note('F4');
                 n1.pitch.diatonicNoteNum += i;
                 n1.duration.quarterLength = 2/5;
+                n1.duration.tuplets[0].tupletNormalShow = 'ratio';
                 if (i % 5 == 0) {
                     n1.articulations.push( new music21.articulations.Accent() );
                 }
                 s2.append(n1);
             }
-            s2.appendNewCanvas();
-
+            var s3 = new music21.stream.Measure();
+            s3.timeSignature = new music21.meter.TimeSignature('3/2');
+            s3.append( new music21.note.Note("B5", 6.0));
+            var p = new music21.stream.Part();
+            p.append(s2);
+            p.append(s3);
+            
+            var m4 = new music21.stream.Measure();
+            m4.timeSignature = new music21.meter.TimeSignature('3/2');
+            m4.append( new music21.note.Note("B3", 6.0));
+            var m5 = new music21.stream.Measure();
+            m5.timeSignature = new music21.meter.TimeSignature('3/2');
+            m5.append( new music21.note.Note("B3", 6.0));
+            var p2 = new music21.stream.Part();
+            p2.append(m4);
+            p2.append(m5);
 	    
+            var sc = new music21.stream.Score();
+            sc.insert(0, p);
+            sc.insert(0, p2);
+            sc.appendNewCanvas();
+            
 	    });
 	};
 	
