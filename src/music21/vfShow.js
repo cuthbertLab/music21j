@@ -114,7 +114,7 @@ define(['vexflowMods'], function(Vex) {
             if (i == p.length - 1) {
                 subStream.renderOptions.rightBarline = 'end';
             }                
-            voice = this.prepareFlat(subStream);
+            var voice = this.prepareFlat(subStream);
             if (this.stacks[i] === undefined) {
                 this.stacks[i] = { 
                         voices: [],
@@ -227,6 +227,7 @@ define(['vexflowMods'], function(Vex) {
         var voice = this.vexflowVoice(m);
         voice.setStave(stave);
         voice.addTickables(notes);
+        //console.log(voice.ticksUsed.value(), voice.totalTicks.value());
         return voice;
     };
     
@@ -418,7 +419,14 @@ define(['vexflowMods'], function(Vex) {
                     activeTupletLength += thisEl.duration.quarterLength;
                     //console.log(activeTupletLength, activeTuplet.totalTupletLength());
                     if (activeTupletLength >= activeTuplet.totalTupletLength()) {
-                        var vfTuplet = new Vex.Flow.Tuplet(activeTupletVexflowNotes);
+                        //console.log(activeTupletVexflowNotes);
+                        
+                        var vfTuplet = new Vex.Flow.Tuplet(activeTupletVexflowNotes, 
+                                {beats_occupied: activeTuplet.numberNotesNormal});
+                        if (activeTuplet.tupletNormalShow == 'ratio') {
+                            vfTuplet.setRatioed(true);
+                        }
+                        //console.log(vfn.tickMultiplier);
                         vfTuplets.push(vfTuplet);
                         activeTupletLength = 0.0;
                         activeTuplet = undefined;
@@ -451,6 +459,10 @@ define(['vexflowMods'], function(Vex) {
         vfv = new Vex.Flow.Voice({ num_beats: numSixteenths,
                                     beat_value: beatValue,
                                     resolution: Vex.Flow.RESOLUTION });
+        // fix Vex.Flow bug where small floating point differences (16834 vs. 16833.999999999998) cause errors.
+        vfv.getTotalTicks = function () { return new Vex.Flow.Fraction(Math.round(this.totalTicks.value()), 1); };
+        vfv.getTicksUsed = function () { return new Vex.Flow.Fraction(Math.round(this.ticksUsed.value()), 1); };
+        //console.log('voice item getTotalTicks', vfv.getTotalTicks);
         
         // from vexflow/src/voice.js
         //

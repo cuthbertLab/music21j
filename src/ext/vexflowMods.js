@@ -30,7 +30,8 @@ define(['vexflow'], function(Vex) {
 
         function getTotalTicks(vf_notes){
           return vf_notes.reduce(function(memo,note){
-            return note.getTicks().clone().add(memo);
+//              console.log(note.getTicks());
+              return note.getTicks().clone().add(memo);
           }, new Vex.Flow.Fraction(0, 1));
         }
 
@@ -59,7 +60,7 @@ define(['vexflow'], function(Vex) {
 
             // Double the amount of ticks in a group, if it's an unbeamable tuplet
             if (parseInt(unprocessedNote.duration, 10) < 8 && unprocessedNote.tuplet) {
-              ticksPerGroup *= 2;
+                ticksPerGroup *= 2;
             }
 
             // If the note that was just added overflows the group tick total
