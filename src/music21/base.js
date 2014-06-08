@@ -28,7 +28,7 @@ define(['music21/prebase', 'music21/duration'],
 		this.classSortOrder = 20; // default;
 		this._priority = 0; // default;
 		this.offset = null; // default -- simple version of m21.
-		this.parent = undefined;
+		this.activeSite = undefined;
 		this.isMusic21Object = true;
 		this.isStream = false;
 		// this.isSpanner = false; // add when supported,
@@ -59,7 +59,7 @@ define(['music21/prebase', 'music21/duration'],
             },
 		});
         // define how to .clone() difficult objects..
-        this._cloneCallbacks.parent = function (p, ret, obj) {
+        this._cloneCallbacks.activeSite = function (p, ret, obj) {
             ret[p] = undefined;
         };
 

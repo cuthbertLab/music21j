@@ -64,7 +64,7 @@ require(['music21'], function (music21) {
     s4.insert(0, s3.clone(true));
     s4.appendNewCanvas();
     
-    $b.append("<div>is s3Second parent s4? " + (s3Second.parent === s4).toString() + "</div>");
+    $b.append("<div>is s3Second activeSite s4? " + (s3Second.activeSite === s4).toString() + "</div>");
 
     $b.append("<div>s3 unchanged?</div>");
     s3.appendNewCanvas();    
