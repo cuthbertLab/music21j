@@ -54,7 +54,14 @@ define(['music21/prebase', 'music21/duration'],
                     return this._duration;
                 },
                 set: function(newDuration) {
-                    this._duration = newDuration;
+                    if (typeof(newDuration) == 'object') {
+                        this._duration = newDuration;     
+                        // common errors below...
+                    } else if (typeof(newDuration) == 'number') {
+                        this._duration.quarterLength = newDuration;
+                    } else if (typeof(newDuration) == 'string') {
+                        this._duration.type = newDuration;
+                    }
                 }
             },
 		});

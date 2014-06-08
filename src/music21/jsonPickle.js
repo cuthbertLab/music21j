@@ -69,8 +69,6 @@ define(function(require) {
                               'music21.bar.Barline', // Soon...
                               'music21.tempo.MetronomeMark', // should be possible
                               'music21.metadata.Metadata', // Soon...
-                              'music21.beam.Beams', // Soon
-                              'music21.beam.Beam', // Soon
                               ];
     jsonPickle.Converter.prototype.pyObjToJsObj = function (pyObjString) {
         if (pyObjString.indexOf('music21.') === 0) {
