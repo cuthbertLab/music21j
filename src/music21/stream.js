@@ -1659,7 +1659,7 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
             if (el.isClassOrSubclass('Part')) {
                 var measureWidths = el.getMeasureWidths();
                 for (var j = 0; j < measureWidths.length; j++) {
-                    thisMeasureWidth = measureWidths[j];
+                    var thisMeasureWidth = measureWidths[j];
                     if (measureStacks[j] == undefined) {
                         measureStacks[j] = [];
                         maxMeasureWidth[j] = thisMeasureWidth;
