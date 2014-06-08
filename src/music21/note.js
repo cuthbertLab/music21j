@@ -8,13 +8,13 @@
  */
 
 
-define(['music21/base', 'music21/pitch', 'vexflow'], 
+define(['music21/base', 'music21/pitch', 'music21/beam', 'vexflow'], 
         /**
          * Module for note classes
          * 
          * @exports music21/note
          */  
-        function(base, pitch, Vex) {
+        function(base, pitch, beam, Vex) {
 	var note = {};
 
 	note.noteheadTypeNames = [
@@ -109,7 +109,7 @@ define(['music21/base', 'music21/pitch', 'vexflow'],
                 vfn.addDotToAll();                
             }
         }
-        if (this.stemDirection === undefined && options.clef != undefined) {
+        if (this.stemDirection === undefined && options.clef !== undefined) {
             this.setStemDirectionFromClef(options.clef);
         }
         vfn.setStemDirection(this.stemDirection == 'down' ? 
@@ -124,7 +124,7 @@ define(['music21/base', 'music21/pitch', 'vexflow'],
             if (options.stave) {
                 staveDNNSpacing = Math.floor(options.stave.options.spacing_between_lines_px / 2);
             }
-            if (options.clef && this.pitch !== undefined) {
+            if (options.clef !== undefined && this.pitch !== undefined) {
                 var midLine = options.clef.firstLine + 4;
                 //console.log(midLine);
                 var absDNNfromCenter = Math.abs(this.pitch.diatonicNoteNum - midLine);
@@ -207,7 +207,7 @@ define(['music21/base', 'music21/pitch', 'vexflow'],
         this.noteheadColor = undefined;
 	    this.noteheadParenthesis = false;
 	    this.volume = undefined; // not a real object yet.
-	    this.beams = undefined; // no support yet.
+	    this.beams = new beam.Beams();
 	    /* TODO: this.duration.linkage -- need durationUnits */
 	    this.stemDirection = undefined; // ['up','down','noStem', undefined] -- 'double' not supported
 	};

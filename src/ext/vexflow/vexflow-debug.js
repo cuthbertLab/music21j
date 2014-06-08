@@ -26,8 +26,8 @@
  *
  * This library makes use of Simon Tatham's awesome font - Gonville.
  *
- * Build ID: 0xFE@85701a42c4d78cfe84c23933ab837ca8e0e72178
- * Build date: 2014-06-08 13:13:50 -0400
+ * Build ID: 0xFE@2f56cdf4b763770d8bc36048c28497e0595a6aa2
+ * Build date: 2014-06-08 15:36:51 -0400
  */
 // [VexFlow](http://vexflow.com) - Copyright (c) Mohit Muthanna 2010.
 //
@@ -5104,15 +5104,11 @@ Vex.Flow.Beam = (function() {
           }
 
         }
-        /*
-          // This causes too many zero-slope beams.
-
-          var cost = this.render_options.slope_cost * Math.abs(slope) +
-            Math.abs(total_stem_extension);
-        */
-
-        // Pick a beam that minimizes stem extension.
-        var cost = Math.abs(total_stem_extension);
+        
+        // This causes too many zero-slope beams.
+        // so, by default this.render_options.slope_cost = 0
+        var cost = this.render_options.slope_cost * Math.abs(slope) +
+            Math.abs(total_stem_extension);     
 
         // update state when a more ideal slope is found
         if (cost < min_cost) {

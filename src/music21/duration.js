@@ -11,9 +11,28 @@ define(['music21/common', 'music21/prebase'],
         function(common, prebase) {
 
 	var duration = {};
-	
-	var Music21DurationArray = ['breve','whole','half','quarter','eighth','16th','32nd','64th','128th'];
-	var VexflowDurationArray = [undefined, 'w', 'h', 'q', '8', '16', '32', undefined, undefined];
+
+	duration.typeFromNumDict = {
+	        1: 'whole',
+	        2: 'half',
+	        4: 'quarter',
+	        8: 'eighth',
+	        16: '16th',
+	        32: '32nd',
+	        64: '64th',
+	        128: '128th',
+	        256: '256th',
+	        512: '512th',
+	        1024: '1024th',
+	        0: 'zero',
+	        '0.5': 'breve',
+	        '0.25': 'longa',
+	        '0.125': 'maxima',
+	        '0.0625': 'duplex-maxima',
+	};
+	duration.quarterTypeIndex = 6; // where is quarter in this?
+	duration.ordinalTypeFromNum = ['duplex-maxima','maxima','longa','breve','whole','half','quarter','eighth','16th','32nd','64th','128th', '256th', '512th', '1024th'];
+	duration.vexflowDurationArray = [undefined, undefined, undefined, undefined, 'w', 'h', 'q', '8', '16', '32', undefined, undefined, undefined, undefined, undefined];
 	
 	duration.Duration = function (ql) {
 	    prebase.ProtoM21Object.call(this, ql);
@@ -29,7 +48,7 @@ define(['music21/common', 'music21/prebase'],
             var newTuplets = [];
             for (var i = 0; i < obj[tupletKey].length; i++) {
                 var newTuplet = obj[tupletKey][i].clone();
-                console.log('cloning tuplets', obj[tupletKey][i], newTuplet);
+                //console.log('cloning tuplets', obj[tupletKey][i], newTuplet);
                 newTuplets.push(newTuplet);
             }
             ret[tupletKey] = newTuplets;
@@ -61,7 +80,7 @@ define(['music21/common', 'music21/prebase'],
 					return this._type;
 				},
 				set: function (typeIn) {
-					var typeNumber = $.inArray(typeIn, Music21DurationArray);
+					var typeNumber = $.inArray(typeIn, duration.ordinalTypeFromNum);
 					if (typeNumber == -1) {
 						console.log('invalid type ' + typeIn);
                         throw('invalid type ' + typeIn);
@@ -76,8 +95,8 @@ define(['music21/common', 'music21/prebase'],
 			},
 			'vexflowDuration': {
 				get: function() {
-		            var typeNumber = $.inArray(this.type, Music21DurationArray);
-					var vd = VexflowDurationArray[typeNumber];
+		            var typeNumber = $.inArray(this.type, duration.ordinalTypeFromNum);
+					var vd = duration.vexflowDurationArray[typeNumber];
 					if (this.dots > 0) {
 					    for (var i = 0; i < this.dots; i++) {
 	                        vd += "d"; // vexflow does not handle double dots .. or does it???					        
@@ -100,8 +119,8 @@ define(['music21/common', 'music21/prebase'],
     duration.Duration.prototype.constructor = duration.Duration;
     duration.Duration.prototype._findDots = function (ql) {
         if (ql == 0) { return 0; } // zero length stream probably;
-        var typeNumber = $.inArray(this._type, Music21DurationArray);
-        var powerOfTwo = Math.pow(2, 3 - typeNumber);
+        var typeNumber = $.inArray(this._type, duration.ordinalTypeFromNum);
+        var powerOfTwo = Math.pow(2, duration.quarterTypeIndex - typeNumber);
         // alert(undottedQL * 1.5 + " " + ql)
         //console.log('find dots called on ql: ', ql, typeNumber, powerOfTwo);
         for (var dotsNum = 0; dotsNum <= 4; dotsNum++) {
@@ -117,8 +136,8 @@ define(['music21/common', 'music21/prebase'],
         return 0;
     };
     duration.Duration.prototype.updateQlFromFeatures = function () {
-        var typeNumber = $.inArray(this._type, Music21DurationArray); // must be set property
-        var undottedQuarterLength = Math.pow(2, 3 - typeNumber);
+        var typeNumber = $.inArray(this._type, duration.ordinalTypeFromNum); // must be set property
+        var undottedQuarterLength = Math.pow(2, duration.quarterTypeIndex - typeNumber);
         var dottedMultiplier = 1 + ( (Math.pow(2, this._dots) - 1) / Math.pow(2, this._dots) );
         var unTupletedQl = undottedQuarterLength * dottedMultiplier;
         var tupletCorrectedQl = unTupletedQl;
@@ -131,17 +150,17 @@ define(['music21/common', 'music21/prebase'],
     duration.Duration.prototype.updateFeaturesFromQl = function () {
         var ql = this._quarterLength;
         var powerOfTwo = Math.floor(Math.log(ql+.00001)/Math.log(2));
-        var typeNumber = 3 - powerOfTwo;
-        this._type = Music21DurationArray[typeNumber];
+        var typeNumber = duration.quarterTypeIndex - powerOfTwo;
+        this._type = duration.ordinalTypeFromNum[typeNumber];
         //alert(this._findDots);
         this._dots = this._findDots(ql);
 
-        var undottedQuarterLength = Math.pow(2, 3 - typeNumber);
+        var undottedQuarterLength = Math.pow(2, duration.quarterTypeIndex - typeNumber);
         var dottedMultiplier = 1 + ( (Math.pow(2, this._dots) - 1) / Math.pow(2, this._dots) );
         var unTupletedQl = undottedQuarterLength * dottedMultiplier;
         if (unTupletedQl != ql && ql != 0) {
             typeNumber -= 1;
-            this._type = Music21DurationArray[typeNumber]; // increase type: eighth to quarter etc.
+            this._type = duration.ordinalTypeFromNum[typeNumber]; // increase type: eighth to quarter etc.
             unTupletedQl = unTupletedQl * 2;
             var tupletRatio = ql/unTupletedQl;
             var ratioRat = common.rationalize(tupletRatio);
