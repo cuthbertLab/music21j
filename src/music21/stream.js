@@ -107,8 +107,8 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
                 configurable: true,
                 enumerable: true,
 				get: function () {
-					if (this._tempo == undefined && this.parent != undefined) {
-						return this.parent.tempo;
+					if (this._tempo == undefined && this.activeSite != undefined) {
+						return this.activeSite.tempo;
 					} else if (this._tempo == undefined) {
 						return 150;
 					} else {
@@ -123,10 +123,10 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
                 configurable: true,
                 enumerable: true,
 				get: function () {
-					if (this._clef == undefined && this.parent == undefined) {
+					if (this._clef == undefined && this.activeSite == undefined) {
 						return new clef.Clef('treble');
 					} else if (this._clef == undefined) {
-						return this.parent.clef;
+						return this.activeSite.clef;
 					} else {
 						return this._clef;
 					}
@@ -139,8 +139,8 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
                 configurable: true,
                 enumerable: true,
 				get: function () {
-					if (this._keySignature == undefined && this.parent != undefined) {
-						return this.parent.keySignature;
+					if (this._keySignature == undefined && this.activeSite != undefined) {
+						return this.activeSite.keySignature;
 					} else {
 						return this._keySignature;
 					}
@@ -153,8 +153,8 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
                 configurable: true,
                 enumerable: true,
 				get: function () {
-					if (this._timeSignature == undefined && this.parent != undefined) {
-						return this.parent.timeSignature;
+					if (this._timeSignature == undefined && this.activeSite != undefined) {
+						return this.activeSite.timeSignature;
 					} else {
 						return this._timeSignature;
 					}
@@ -170,8 +170,8 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
                 configurable: true,
                 enumerable: true,
 				get: function () {
-					if (this.renderOptions.maxSystemWidth == undefined && this.parent != undefined) {
-						return this.parent.maxSystemWidth;
+					if (this.renderOptions.maxSystemWidth == undefined && this.activeSite != undefined) {
+						return this.activeSite.maxSystemWidth;
 					} else if (this.renderOptions.maxSystemWidth != undefined) {
 						return this.renderOptions.maxSystemWidth;
 					} else {
@@ -267,7 +267,7 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
             if (this.hasOwnProperty(key) == false) {
                 continue;
             }
-            if (key == 'parent') {
+            if (key == 'activeSite') {
                 ret[key] = this[key];
             } else if (key == 'renderOptions') {
                 ret[key] = common.mergeObjectProperties({}, this[key]);
@@ -283,7 +283,7 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
                         var el = this['_elements'][j];
                         //console.log('cloning el: ', el.name);
                         var elCopy = el.clone(deep);
-                        elCopy.parent = ret;
+                        elCopy.activeSite = ret;
                         ret['_elements'][j] = elCopy;
                     }
                 }
@@ -320,7 +320,7 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
             this._elementOffsets.push(elOffset);
             this._elements.push(el);
             el.offset = elOffset;
-            el.parent = this; // would prefer weakref, but does not exist in JS.
+            el.activeSite = this; // would prefer weakref, but does not exist in JS.
         } catch (err) {
             console.error("Cannot append element ", el, " to stream ", this, " : ", err);
         }
@@ -340,7 +340,7 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
                     this._elementOffsets.splice(i, 0, offset);
                     this._elements.splice(i, 0, el);
                     el.offset = offset;
-                    el.parent = this;
+                    el.activeSite = this;
                     return;
                 }
             }
@@ -348,7 +348,7 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
             this._elementOffsets.push(offset);
             this._elements.push(el);
             el.offset = offset;
-            el.parent = this; // would prefer weakref, but does not exist in JS.
+            el.activeSite = this; // would prefer weakref, but does not exist in JS.
         } catch (err) {
             console.error("Cannot insert element ", el, " to stream ", this, " : ", err);
         }
@@ -858,7 +858,7 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
         };
         this.savedRenderOptionClick = this.renderOptions.events.click;
         this.renderOptions.events.click = function (e) { scrollInfo.storedStream.scrollScoreStop(e, scrollInfo); };
-        this.setRenderInteraction(parent);
+        this.setRenderInteraction(i.canvasParent);
         scrollScore(scrollInfo); 
         if (event !== undefined) {
             event.stopPropagation();
@@ -872,7 +872,7 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
         if (i.lastTimeout !== undefined) {
             clearTimeout(i.lastTimeout);
         }
-        this.setRenderInteraction(parent);
+        this.setRenderInteraction(i.canvasParent);
         if (event !== undefined) {
             event.stopPropagation();
         }
