@@ -785,9 +785,8 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
         } );
         svgDOM.appendChild(barDOM);
   
-        // TODO: generalize...
-        var parent = $(c).parent()[0];
-        parent.appendChild(svgDOM);
+        var canvasParent = $(c).parent()[0];
+        canvasParent.appendChild(svgDOM);
         scrollInfo = {
                 pm: pm,
                 systemIndex: 0,
@@ -802,7 +801,7 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
                 lastSystemIndex: 0,
                 svgDOM: svgDOM,
                 canvas: c,
-                canvasParent: parent,
+                canvasParent: canvasParent,
                 storedStream: this,
                 lastTimeout: undefined, // setTimeout
         };
@@ -858,7 +857,7 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
         };
         this.savedRenderOptionClick = this.renderOptions.events.click;
         this.renderOptions.events.click = function (e) { scrollInfo.storedStream.scrollScoreStop(e, scrollInfo); };
-        this.setRenderInteraction(i.canvasParent);
+        this.setRenderInteraction(canvasParent);
         scrollScore(scrollInfo); 
         if (event !== undefined) {
             event.stopPropagation();

@@ -77,7 +77,7 @@ define(['music21/note', 'vexflow'],
             return this;
         } else {
             var midLine = clef.firstLine + 4;
-            console.log(midLine, 'midLine');
+            //console.log(midLine, 'midLine');
             var maxDNNfromCenter = 0;
             var pA = this.pitches;
             for (var i = 0; i < this.pitches.length; i++) {
