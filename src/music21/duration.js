@@ -23,7 +23,17 @@ define(['music21/common', 'music21/prebase'],
 		this._durationNumber = undefined;
 		this._type = 'quarter';
 		this._tuplets = [];
-			
+		
+        this._cloneCallbacks._tuplets = function (tupletKey, ret, obj) {
+            // make sure that tuplets clone properly
+            var newTuplets = [];
+            for (var i = 0; i < obj[tupletKey].length; i++) {
+                var newTuplet = obj[tupletKey][i].clone();
+                console.log('cloning tuplets', obj[tupletKey][i], newTuplet);
+                newTuplets.push(newTuplet);
+            }
+            ret[tupletKey] = newTuplets;
+        };
 	    Object.defineProperties(this, {
 	    	'dots': { 
 	    		get: function () { 
@@ -68,8 +78,10 @@ define(['music21/common', 'music21/prebase'],
 				get: function() {
 		            var typeNumber = $.inArray(this.type, Music21DurationArray);
 					var vd = VexflowDurationArray[typeNumber];
-					if (this.dots == 1) {
-						vd += "d"; // vexflow does not handle double dots
+					if (this.dots > 0) {
+					    for (var i = 0; i < this.dots; i++) {
+	                        vd += "d"; // vexflow does not handle double dots .. or does it???					        
+					    }
 					}
 					return vd;
 				}
@@ -280,6 +292,7 @@ define(['music21/common', 'music21/prebase'],
                 s.append(n1);
             }
             s.appendNewCanvas();
+            ok(true, 'quarter note triplets displayed');
             
             var s2 = new music21.stream.Measure();
             s2.timeSignature = new music21.meter.TimeSignature('3/2');
@@ -318,7 +331,29 @@ define(['music21/common', 'music21/prebase'],
             sc.insert(0, p);
             sc.insert(0, p2);
             sc.appendNewCanvas();
+            ok(true, '5:4 tuplets in 3/2 with multiple parts');
             
+            
+            var m6 = new music21.stream.Measure();
+            m6.renderOptions.staffLines = 1;
+            m6.timeSignature = new music21.meter.TimeSignature('2/4');
+            var n6 = new music21.note.Note('B4');
+            n6.duration.quarterLength = 2/3;
+            n6.duration.tuplets[0].durationNormal.type = 'eighth';
+            n6.duration.tuplets[0].tupletNormalShow = 'ratio';
+            
+            var n7 = new music21.note.Note('B4');
+            n7.duration.quarterLength = 1/3;
+            n7.duration.tuplets[0].tupletNormalShow = 'ratio';
+
+            m6.append(n6);
+            m6.append(n7);
+            m6.append(n7.clone());
+            var n6clone = n6.clone();
+            m6.append(n6clone);
+            m6.appendNewCanvas();
+            ok(true, 'tuplets beginning with different type than original');
+            equal(n6.duration.tuplets[0] !== n6clone.duration.tuplets[0], true, 'tuplet should not be the same object after clone');
 	    });
 	};
 	
