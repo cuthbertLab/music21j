@@ -148,7 +148,8 @@ define(['vexflow'], function(Vex) {
             }
           });
 
-          if (lineSum > 0)
+          // MSC -- lineSum > 0  ==>  lineSum >= 0 -- beamed eighth notes B4 should be down...
+          if (lineSum >= 0)
             return -1;
           return 1;
         }
