@@ -1096,7 +1096,7 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
                                             canvas.height );
         this.renderVexflowOnCanvas(newCanv[0]);
         $(canvas).replaceWith( newCanv );       
-        stream.jQueryEventCopy($.event, $(canvas), newCanv); /* copy events -- using custom extension... */
+        common.jQueryEventCopy($.event, $(canvas), newCanv); /* copy events -- using custom extension... */
     };
     
     stream.Stream.prototype.editableAccidentalCanvas = function (scaleInfo, width, height) {
@@ -1686,30 +1686,7 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
             currentLeft += measureNewWidth;
         }
     };    
-	/**
-	 * Logic for copying events from one jQuery object to another.
-	 *
-	 * @private 
-	 * @name music21.stream.jQueryEventCopy
-	 * @param jQuery|String|DOM Element jQuery object to copy events from. Only uses the first matched element.
-	 * @param jQuery|String|DOM Element jQuery object to copy events to. Copies to all matched elements.
-	 * @type undefined
-	 * @author Brandon Aaron (brandon.aaron@gmail.com || http://brandonaaron.net)
-	 * @author Yannick Albert (mail@yckart.com || http://yckart.com)
-	 */
-	stream.jQueryEventCopy = function  (eventObj, from, to) {
-        from = from.jquery ? from : jQuery(from);
-        to = to.jquery ? to : jQuery(to);
-    
-        var events = from[0].events || jQuery.data(from[0], "events") || jQuery._data(from[0], "events");
-        if (!from.length || !to.length || !events) return;
-    
-        return to.each(function () {
-            for (var type in events)
-                for (var handler in events[type])
-                    jQuery.event.add(eventObj, type, events[type][handler], events[type][handler].data);
-        });
-    };
+
 	
 	
 	stream.tests = function () {
