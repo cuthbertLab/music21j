@@ -104,8 +104,10 @@ define(['music21/base', 'music21/pitch', 'vexflow'],
      * @param {Vex.Flow.StaveNote} vfn - a Vex.Flow note
      */
     note.GeneralNote.prototype.vexflowAccidentalsAndDisplay = function (vfn, options) {
-        if (this.duration.dots == 1) {
-            vfn.addDotToAll();
+        if (this.duration.dots > 0) {
+            for (var i = 0; i < this.duration.dots; i++) {
+                vfn.addDotToAll();                
+            }
         }
         if (this.stemDirection === undefined && options.clef != undefined) {
             this.setStemDirectionFromClef(options.clef);
@@ -347,8 +349,10 @@ define(['music21/base', 'music21/pitch', 'vexflow'],
         }
         var vfn = new Vex.Flow.StaveNote({keys: [keyLine], 
                                         duration: this.duration.vexflowDuration + 'r'});
-        if (this.duration.dots == 1) {
-            vfn.addDotToAll();
+        if (this.duration.dots > 0) {
+            for (var i = 0; i < this.duration.dots; i++) {
+                vfn.addDotToAll();                
+            }
         }
         this.activeVexflowNote = vfn;
         return vfn;
