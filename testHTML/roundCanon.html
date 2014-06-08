@@ -38,7 +38,7 @@ fillScoreOut = function (editor, scoreOut) {
 			// clear old score...
 			var m = p.elements[j];
 			for (k = 0; k < m.length; k++) {
-				m.elements[k].parent = undefined;
+				m.elements[k].activeSite = undefined;
 			}
 			m.elements = [];
 			
