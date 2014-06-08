@@ -64,8 +64,32 @@ define([], function() {
           }
         }
         return obj1;
-      };
-
+    };
+    /**
+     * Logic for copying events from one jQuery object to another.
+     *
+     * @private 
+     * @name music21.common.jQueryEventCopy
+     * @param jQuery|String|DOM Element jQuery object to copy events from. Only uses the first matched element.
+     * @param jQuery|String|DOM Element jQuery object to copy events to. Copies to all matched elements.
+     * @type undefined
+     * @author Brandon Aaron (brandon.aaron@gmail.com || http://brandonaaron.net)
+     * @author Yannick Albert (mail@yckart.com || http://yckart.com)
+     */
+    common.jQueryEventCopy = function  (eventObj, from, to) {
+        from = from.jquery ? from : jQuery(from);
+        to = to.jquery ? to : jQuery(to);
+    
+        var events = from[0].events || jQuery.data(from[0], "events") || jQuery._data(from[0], "events");
+        if (!from.length || !to.length || !events) return;
+    
+        return to.each(function () {
+            for (var type in events)
+                for (var handler in events[type])
+                    jQuery.event.add(eventObj, type, events[type][handler], events[type][handler].data);
+        });
+    };
+    
     // end of define
     if (typeof(music21) != "undefined") {
         music21.common = common;

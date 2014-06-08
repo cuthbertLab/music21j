@@ -16,6 +16,8 @@ define(['music21/base','music21/pitch'], function(base, pitch) {
 
 	clef.firstLines = {
             'treble': 31, 
+            'treble_8vb': 24,
+            'treble_8va': 38,
             'soprano': 29,
             'mezzo-soprano': 27,
             'alto': 25,
@@ -72,11 +74,21 @@ define(['music21/base','music21/pitch'], function(base, pitch) {
 
     clef.Treble8vbClef = function () {
         // temporary Vex.Flow hack -- no 8vb setting; use Bass instead.
-        clef.Clef.call(this, 'bass');
+        // Fixed in cuthbert Vex.Flow -- pull #235
+        clef.Clef.call(this, 'treble_8vb');
         this.classes.push('Treble8vbClef');
     };
     clef.Treble8vbClef.prototype = new clef.Clef();
     clef.Treble8vbClef.prototype.constructor = clef.Treble8vbClef;
+
+    clef.Treble8vaClef = function () {
+        // temporary Vex.Flow hack -- no 8vb setting; use Bass instead.
+        // Fixed in cuthbert Vex.Flow -- pull #235
+        clef.Clef.call(this, 'treble_8va');
+        this.classes.push('Treble8vaClef');
+    };
+    clef.Treble8vaClef.prototype = new clef.Clef();
+    clef.Treble8vaClef.prototype.constructor = clef.Treble8vaClef;
 
     clef.BassClef = function () {
         clef.Clef.call(this, 'bass');
