@@ -71,7 +71,7 @@ function handleThemeDrop(event, ui) {
     var containedStreamCopy = containedStream.clone(true);
     
     allStream.append(containedStreamCopy);
-    allStreamScore.resetRenderOptionsRecursive();
+    allStreamScore.resetRenderOptions(true); // recursive
     var newCanvas = allStreamScore.createPlayableCanvas();
 	$('#dropDiv canvas').replaceWith(newCanvas[0]);
 	// alert(allStream.hi);
