@@ -658,15 +658,22 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
                 storedThis.scrollScoreStart(c, event);
             };
         }(this); // create new function with this stream as storedThis
-        // remove 0.7 when height is normalized...
         c = this.appendNewCanvas( $innerDiv, {} );
+
+        // remove 0.7 when height is normalized...
         var h = $(c).css('height');
         h = h.substring(0, h.length - 2);
         $(c).css('height', h / 0.7 );
+        
         this.setRenderInteraction( $innerDiv );
         $where.append( $innerDiv );
     };
     stream.Stream.prototype.scrollScoreStart = function (c, event) {
+        /**
+         * @param {stream.Stream} s 
+         * @param jQuery|String|DOM Element c - Canvas object
+         * @returns {Array<object>} - an array of Pixelmap objects.
+         */
         var offsetToPixelMaps = function(s, c) {
             var ns = s.flat.notesAndRests;
             var allMaps = [];
@@ -707,11 +714,16 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
             });
             return allMaps;            
         };
+        /**
+         *  returns an array of two pixel maps: the previous/current one and the
+            next/current one (i.e., if the offset is exactly the offset of a pixel map
+            the prevNoteMap and nextNoteMap will be the same; similarly if the offset is
+            beyond the end of the score)
+         * @param {number} offset
+         * @param {Array<object>} offsetToPixelMaps
+         * @returns {Array<object>}
+         */
         var getPixelMapsAtOffset = function(offset, offsetToPixelMaps) {
-            // returns an array of two pixel maps: the previous/current one and the
-            // next/current one (i.e., if the offset is exactly the offset of a pixel map
-            // the prevNoteMap and nextNoteMap will be the same; similarly if the offset is
-            // beyond the end of the score)
             var prevNoteMap = undefined;
             var nextNoteMap = undefined;
             for (var i = 0; i < offsetToPixelMaps.length; i++) {
@@ -735,6 +747,13 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
             }
             return [prevNoteMap, nextNoteMap];
         };
+        /**
+         * Uses the stored offsetToPixelMaps to get the pixel X for the offset.
+         * 
+         * @param {number} offset
+         * @param {Array<object>} offsetToPixelMaps
+         * @returns {number}
+         */
 
         var getXAtOffset = function(offset, offsetToPixelMaps) {
             // returns the proper 
@@ -758,6 +777,13 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
             var offsetX = prevNoteMap.x + pixelsFromPrev;
             return offsetX;
         };            
+        /**
+         * Uses the stored offsetToPixelMaps to get the systemIndex active at the current time.
+         * 
+         * @param {number} offset
+         * @param {Array<object>} offsetToPixelMaps
+         * @returns {number}
+         */
         var getSystemIndexAtOffset = function(offset, offsetToPixelMaps) {
             var twoNoteMaps = getPixelMapsAtOffset(offset, offsetToPixelMaps);
             var prevNoteMap = twoNoteMaps[0];
@@ -947,7 +973,7 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
         var totalLines = (storedVFStave.options.num_lines - 1) + linesAboveStaff + storedVFStave.options.space_below_staff_ln;
         /* var firstLineOffset = ( (storedVFStave.options.num_lines - 1) + linesAboveStaff) * lineSpacing; 
            var actualVFStaffOnlyHeight = (storedVFStave.height - (linesAboveStaff * lineSpacing)); */
-        var pixelScaling = totalLines * lineSpacing/canvasHeight;       
+        var pixelScaling = (totalLines * lineSpacing)/canvasHeight;       
         if (music21.debug) {
             console.log('canvasHeight: ' + canvasHeight + " totalLines*lineSpacing: " + totalLines*lineSpacing + " staveHeight: " + storedVFStave.height);
         }

@@ -220,8 +220,15 @@ define(function(require) {
                         continue processElements;
                     }
                 } // not one of the three special elements...                    
-                // append to stream... TODO: insert!
-                m21Obj.append(newM21pObj);
+                
+                if (newM21pObj.isClassOrSubclass===undefined) {
+                    console.log('not a m21 object -- should not happen: ', newM21pObj);
+                } else if (newM21pObj.isClassOrSubclass('Part')) {
+                    m21Obj.insert(newM21pObj.offset, newM21pObj);
+                } else {
+                 // append to stream... TODO: insert! when insert is fast enough...
+                    m21Obj.append(newM21pObj);                    
+                }
                 
             }
         }
