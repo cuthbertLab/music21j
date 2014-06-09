@@ -324,6 +324,8 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
         } catch (err) {
             console.error("Cannot append element ", el, " to stream ", this, " : ", err);
         }
+        return this;
+
     };
 
     stream.Stream.prototype.insert = function (offset, el) {
@@ -352,6 +354,7 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
         } catch (err) {
             console.error("Cannot insert element ", el, " to stream ", this, " : ", err);
         }
+        return this;
     };
     stream.Stream.prototype.get = function(index) {
         // substitute for Python stream __getitem__; supports -1 indexing, etc.
@@ -435,8 +438,10 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
                 }
             }
         }
+        return this;
     };
 
+    // returns pitch
     stream.Stream.prototype.makeAccidentalForOnePitch = function (p, lastStepDict, lastOctavelessStepDict) {
         var newAlter;
         if (p.accidental == undefined) {
@@ -462,19 +467,29 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
         }
         lastStepDict[p.step] = newAlter;
         lastOctavelessStepDict[p.step] = newAlter;
+        return p;
     };	
 
     stream.Stream.prototype.setSubstreamRenderOptions = function () {
         /* does nothing for standard streams ... */
+        return this;
     };
-    stream.Stream.prototype.resetRenderOptionsRecursive = function () {
+    stream.Stream.prototype.resetRenderOptions = function (recursive, preserveEvents) {
+        var oldEvents = this.renderOptions.events;
         this.renderOptions = new renderOptions.RenderOptions();
-        for (var i = 0; i < this.length; i++) {
-            var el = this.get(i);
-            if (el.isClassOrSubclass('Stream')) {
-                el.resetRenderOptionsRecursive();
-            }
+        if (preserveEvents) {
+            this.renderOptions.events = oldEvents;
         }
+        
+        if (recursive) {
+            for (var i = 0; i < this.length; i++) {
+                var el = this.get(i);
+                if (el.isClassOrSubclass('Stream')) {
+                    el.resetRenderOptions(recursive, preserveEvents);
+                }
+            }            
+        }
+        return this;
     };
     /*  VexFlow functionality */
     stream.Stream.prototype.renderVexflowOnCanvas = function (canvas) {
@@ -937,6 +952,8 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
                 $canvas.on(eventType, eventFunction);
             }
         }, this ) );
+        return this;
+
     };
     stream.Stream.prototype.recursiveGetStoredVexflowStave = function () {
         /*
@@ -1114,7 +1131,7 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
     };
     
     stream.Stream.prototype.redrawCanvas = function (canvas) {
-        //this.resetRenderOptionsRecursive();
+        //this.resetRenderOptions(true, true); // recursive, preserveEvents
         //this.setSubstreamRenderOptions();
         var newCanv = this.createNewCanvas( { height: canvas.style.height,
                                                width: canvas.style.width },
@@ -1123,6 +1140,7 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
         this.renderVexflowOnCanvas(newCanv[0]);
         $(canvas).replaceWith( newCanv );       
         common.jQueryEventCopy($.event, $(canvas), newCanv); /* copy events -- using custom extension... */
+        return this;
     };
     
     stream.Stream.prototype.editableAccidentalCanvas = function (scaleInfo, width, height) {
@@ -1208,7 +1226,9 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
             var canvasWidth = newWidth;
             //console.log(canvasWidth);
             //console.log('resizeEnd triggered', newWidth);
-            callingStream.resetRenderOptionsRecursive();
+            console.log(callingStream.renderOptions.events.click);
+            callingStream.resetRenderOptions(true, true); // recursive, preserveEvents
+            console.log(callingStream.renderOptions.events.click);
             callingStream.maxSystemWidth = canvasWidth - 40;
             jCanvasNow.remove();
             var canvasObj = callingStream.appendNewCanvas(jCanvasParent);
@@ -1225,6 +1245,7 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
         setTimeout(function() {
             $(this).trigger('resizeEnd');
         }, 1000);
+        return this;
     };
             
     
@@ -1453,6 +1474,8 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
                 currentMeasureIndex++;
             }
         }
+        return this;
+
     };
     stream.Part.prototype.canvasChangerFunction = function (e) {
         /* N.B. -- not to be called on a stream -- "this" refers to the CANVAS
@@ -1564,6 +1587,8 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
             }
         }
         this.renderOptions.height =  this.estimateStreamHeight();
+        return this;
+
     };
     stream.Score.prototype.estimateStaffLength = function () {
         // override
@@ -1592,6 +1617,8 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
                 el.playStream();
             }
         }
+        return this;
+
     };
     stream.Score.prototype.stopStream = function () {
         for (var i = 0; i < this.length; i++) {
@@ -1600,6 +1627,8 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
                 el._stopPlaying = true;
             }
         }
+        return this;
+
     };
     /*
      * Canvas routines
@@ -1711,6 +1740,7 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
             }
             currentLeft += measureNewWidth;
         }
+        return this;
     };    
 
 	
