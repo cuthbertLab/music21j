@@ -153,9 +153,9 @@ define(['music21/base', 'music21/pitch', 'music21/beam', 'vexflow'],
         var volume = 60;
         if (this.articulations !== undefined) {
             this.articulations.forEach( function (a) { 
-               volume *= a.dynamicShift;
-               //console.log(volume);
+               volume *= a.dynamicScale;
                if (volume > 127) { volume = 127; }
+               else if (isNaN(volume)) { volume = 60; }
             });
         }
         volume = Math.floor(volume);
@@ -179,7 +179,8 @@ define(['music21/base', 'music21/pitch', 'music21/beam', 'vexflow'],
             }
             //console.log(stopTime);
             if (this.tie === undefined || this.tie.type == 'start') {
-                music21.MIDI.noteOn(0, midNum, volume, 0);                              
+            	//console.log(volume);
+            	music21.MIDI.noteOn(0, midNum, volume, 0);                              
                 music21.MIDI.noteOff(0, midNum, stopTime);
             } // else { console.log ('not going to play ', el.nameWithOctave) }
         } else if (this.isClassOrSubclass('Chord')) {
