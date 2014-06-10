@@ -22,7 +22,6 @@ require(['music21','q-unit'], function () {
             testSuite();
         }
     }
-    
     QUnit.load();
     QUnit.start();
 
