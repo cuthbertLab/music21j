@@ -9,7 +9,8 @@ define(['music21/prebase'],
        this.placement = 'above';
        this.vexflowModifier = undefined;
        this.setPosition = undefined;
-       this.dynamicShift = 1.0;
+       this.dynamicScale = 1.0;
+       this.lengthScale = 1.0;
    };
    articulations.Articulation.prototype = new prebase.ProtoM21Object();
    articulations.Articulation.prototype.constructor = articulations.Articulation;
@@ -59,7 +60,7 @@ define(['music21/prebase'],
 
        this.name = 'accent';
        this.vexflowModifier = "a>";
-       this.dynamicShift = 1.5;
+       this.dynamicScale = 1.5;
    };
    articulations.Accent.prototype = new articulations.DynamicArticulation();
    articulations.Accent.prototype.constructor = articulations.Accent;
@@ -69,7 +70,7 @@ define(['music21/prebase'],
        this.classes.push('StrongAccent');
        this.name = 'strong accent';
        this.vexflowModifier = "a^";
-       this.dynamicShift = 2.0;
+       this.dynamicScale = 2.0;
    };
    articulations.StrongAccent.prototype = new articulations.Accent();
    articulations.StrongAccent.prototype.constructor = articulations.StrongAccent;
@@ -92,6 +93,29 @@ define(['music21/prebase'],
    articulations.Staccatissimo.prototype = new articulations.Staccato();
    articulations.Staccatissimo.prototype.constructor = articulations.Staccatissimo;
    
+   articulations.Spiccato = function(){
+	   articulations.Staccato.call(this);
+       this.classes.push('Spiccato');
+       this.name = 'spiccato';
+       this.vexflowModifier = undefined;
+
+   };
+   articulations.Spiccato.prototype = new articulations.Staccato();
+   articulations.Spiccato.prototype.constructor = articulations.Spiccato;
+   
+   articulations.Marcato = function(){
+	   articulations.LengthArticulation.call(this);
+	   articulations.DynamicArticulation.call(this);
+	   this.classes.push('Marcato');
+	   this.name = 'marcato';
+	   this.vexflowModifier = "a^";
+	   this.dynamicScale = 1.7;
+	   
+   };
+   articulations.Marcato.prototype = new articulations.LengthArticulation();
+   articulations.Marcato.prototype.constructor = articulations.Marcato;
+   
+  
    articulations.Tenuto = function(){
        articulations.LengthArticulation.call(this);
        this.classes.push('Tenuto');
@@ -115,6 +139,23 @@ define(['music21/prebase'],
                n.articulations.push(ten);
                equal (n.articulations[0].name, 'accent', 'accent in array');
                equal (n.articulations[1].name, 'tenuto', 'tenuto in array');
+       });
+       
+       test ("music21.articulations.Articulation display", function() {
+    	   var marc = new music21.articulations.Marcato();
+    	   equal (marc.name, 'marcato', 'matching names for marcato');
+    	   var n = new music21.note.Note("D#5");
+    	   n.articulations.push(marc);
+    	   var nBoring = new music21.note.Note("D#5");
+
+    	   var measure = new music21.stream.Measure();
+    	   measure.append(n);
+    	   measure.append(nBoring);
+    	   measure.append(nBoring.clone());
+    	   measure.append(n.clone());
+ 
+    	   measure.appendNewCanvas();
+    	   ok(true, "something worked");
        });
    };
    // end of define

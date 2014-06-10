@@ -7,8 +7,8 @@
  * 
  */
 
-define(['music21/common', 'music21/prebase'], 
-        function(common, prebase) {
+define(['music21/common', 'music21/prebase', 'jquery'], 
+        function(common, prebase, $) {
 
 	var duration = {};
 
