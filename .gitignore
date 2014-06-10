@@ -4,6 +4,9 @@
 .*~
 *~
 
+# vim
+*.swp
+
 #Eclipse
 .settings
 
