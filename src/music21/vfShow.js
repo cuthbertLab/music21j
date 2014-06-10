@@ -222,6 +222,10 @@ define(['vexflowMods'], function(Vex) {
     
     
     vfShow.Renderer.prototype.getVoice = function (m, stave) {
+        if (m === undefined) {
+            m = this.stream;
+        }
+        
         // gets a group of notes as a voice, but completely unformatted and not drawn.
         var notes = this.vexflowNotes(m, stave);
         var voice = this.vexflowVoice(m);
@@ -390,6 +394,9 @@ define(['vexflowMods'], function(Vex) {
         }
     };
     vfShow.Renderer.prototype.vexflowNotes = function (s, stave) {
+        if (s === undefined) {
+            s = this.stream;
+        }
         // runs on a flat stream, returns a list of voices...
         var notes = [];
         var vfTuplets = [];
