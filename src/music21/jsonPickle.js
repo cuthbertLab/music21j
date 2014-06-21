@@ -5,6 +5,12 @@
  * Copyright (c) 2013-14, Michael Scott Cuthbert and cuthbertLab
  * Based on music21 (=music21p), Copyright (c) 2006–14, Michael Scott Cuthbert and cuthbertLab
  * 
+ * usage:
+ * 
+ * jpc = new music21.jsonPickle.Converter();
+ * s = jpc.run(stringRepresentingM21JsonPickle);
+ * 
+ * 
  */
 
 define(function(require) {
