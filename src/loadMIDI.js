@@ -21,8 +21,12 @@ if ( typeof define === "function" && define.amd) {
             var callwrapper = function () {
                 consolelog('soundfont loaded about to execute callback.');
                 consolelog('first playing two notes very softly -- seems to flush the buffer.');
+                
                 var isFirefox = typeof InstallTrigger !== 'undefined';   // Firefox 1.0+
-                if (isFirefox == false) {  // Firefox ignores sound volume! so don't play!
+                var isAudioTag = (music21.MIDI.technology == 'HTML Audio Tag');
+                
+                if ((isFirefox == false) && (isAudioTag == false)) {  
+                         // Firefox ignores sound volume! so don't play! as does IE and others using HTML audio tag.
                     music21.MIDI.noteOn(0, 40, 1, 0);     // if no notes have been played before then
                     music21.MIDI.noteOff(0, 40, 1, 0.1);  // the second note to be played is always
                     music21.MIDI.noteOn(0, 41, 1, 0.2);   // very clipped (on Safari at least)
