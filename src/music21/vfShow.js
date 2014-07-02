@@ -409,6 +409,9 @@ define(['vexflowMods'], function(Vex) {
             var thisEl = s.get(i);
             if (thisEl.isClassOrSubclass('GeneralNote') && (thisEl.duration !== undefined)) {
                 var vfn = thisEl.vexflowNote(options);
+                if (vfn === undefined) {
+                    console.error('Cannot create a vexflowNote from: ', thisEl);
+                }
                 // sets thisEl.activeVexflowNote -- may be overwritten but not so fast...
                 if (stave !== undefined) {
                     vfn.setStave(stave);
