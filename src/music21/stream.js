@@ -1225,10 +1225,10 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
             var newWidth = jCanvasParent.width();
             var canvasWidth = newWidth;
             //console.log(canvasWidth);
-            //console.log('resizeEnd triggered', newWidth);
-            console.log(callingStream.renderOptions.events.click);
+            console.log('resizeEnd triggered', newWidth);
+            //console.log(callingStream.renderOptions.events.click);
             callingStream.resetRenderOptions(true, true); // recursive, preserveEvents
-            console.log(callingStream.renderOptions.events.click);
+            //console.log(callingStream.renderOptions.events.click);
             callingStream.maxSystemWidth = canvasWidth - 40;
             jCanvasNow.remove();
             var canvasObj = callingStream.appendNewCanvas(jCanvasParent);
@@ -1243,7 +1243,12 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
             }, 200);
         });
         setTimeout(function() {
-            $(this).trigger('resizeEnd');
+            var $window = $(window);
+            var doResize = $window.data('triggerResizeOnCreateCanvas');
+            if (doResize === undefined || doResize === true) {
+                $(this).trigger('resizeEnd');
+                $window.data('triggerResizeOnCreateCanvas', false);
+            }
         }, 1000);
         return this;
     };
