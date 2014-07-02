@@ -24,6 +24,7 @@ define(function(require) {
         this.lastClef = undefined;
         this.lastKeySignature = undefined;
         this.lastTimeSignature = undefined;
+        this.allPyObjs = [];
     };
     
     jsonPickle.Converter.prototype.run = function (jsonString) {
@@ -121,13 +122,25 @@ define(function(require) {
                 newList.push(newEntry);
             }
             return newList;
+        } else if (tv == 'object' && value['py/object'] == 'fractions.Fraction') {
+            var floatValue = value['_numerator'] / value['_denominator'];
+            console.log('found fraction: ', floatValue, typeof(floatValue));
+            return floatValue;
         } else if (tv == 'object') {
             var newObj = undefined;
             if (value['py/object'] !== undefined) {
                 var cls = value['py/object'];
-                newObj = this.pyObjToJsObj(cls);
+                newObj = this.pyObjToJsObj(cls);                    
                 if (cls == 'music21.duration.Duration') {
-                    newObj.quarterLength = value['_qtrLength']; // short circuit great complexity...
+                    if (value['_qtrLength']['py/object'] === undefined) {
+                        newObj.quarterLength = value['_qtrLength'];
+                        //console.log('got non-tuplet qtrLength', newObj.quarterLength, typeof(newObj.quarterLength));
+                        // short circuit great complexity... 
+                    } else {
+                        // but still catch Fractions
+                        newObj.quarterLength = value['_qtrLength']['_numerator']/value['_qtrLength']['_denominator'];
+                        //console.log('got tuplet qtrLength', newObj.quarterLength, typeof(newObj.quarterLength));
+                    }
                     return newObj;
                 }
                 if (cls == 'music21.articulations.Fermata') {
