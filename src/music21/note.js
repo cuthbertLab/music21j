@@ -251,7 +251,7 @@ define(['music21/base', 'music21/pitch', 'music21/beam', 'vexflow'],
             },
             // no Frequency
             'octave': {
-                get: function() {return this.octave;},
+                get: function() {return this.pitch.octave;},
                 set: function(nn) { this.pitch.octave = nn;},
                 enumerable: true,
             },
