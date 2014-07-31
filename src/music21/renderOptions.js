@@ -21,7 +21,7 @@ define([], function() {
 			width: undefined,
 			height: undefined,
 			overriddenWidth: undefined,
-			scaleFactor: {x: 1, y: 1},
+			scaleFactor: {x: 0.7, y: 0.7},
 			systemIndex: 0,
 			partIndex: 0,
 			measureIndex: 0,

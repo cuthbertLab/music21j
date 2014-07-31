@@ -1,6 +1,6 @@
 <html>
     <head>
-        <title>Follow along!</title>
+        <title>XY Location!</title>
         <!-- for MSIE 10 on Windows 8 -->
         <meta http-equiv="X-UA-Compatible" content="requiresActiveX=true"/>
         <script data-main="../src/music21.js" src="../ext/require/require.js"></script>
@@ -15,7 +15,6 @@
             m.elements.pop();
             var c = new music21.chord.Chord(["F4", "A-4", "C5"]);
             c.duration.type = 'eighth';
-            c.lyric = 'hi-';
             m.append(c);
             
             var s2 = music21.tinyNotation.TinyNotation("4/4 E2 F#4 G8 r trip{G8 F A} G4 E2~ E1 B4 c B A G8 A G F E4 D C1");
@@ -25,20 +24,41 @@
             s.tempo = 90;
             
             music21.MIDI.loadSoundfont('acoustic_grand_piano', function() { 
-                s.renderScrollableCanvas($("#can"))
+                var $can = $("#can");
+                //s.renderScrollableCanvas($can);
+                $can.append(s1.get(0).editableAccidentalCanvas());
+                
                 console.log('soundfont loaded');
+                console.log(s.estimateStreamHeight());
+                $can.mousemove( function (e) {
+                    var allCanvas = $(this).find("canvas");
+                    if (allCanvas.length > 0) {
+                        var $cThis = $(allCanvas[0]);
+                        var offset = $cThis.offset()
+                        $("#xLoc").val(e.pageX);
+                        $("#yLoc").val(e.pageY);
+                        $("#xOff").val(e.pageX - offset.left);
+                        $("#yOff").val(e.pageY - offset.top);
+                    }
+                });
             });
-
         });
         
         
 </script>
 <style>
-.canvasDiv { background-color: #ffffee }
+#can { background-color: #ffffaa }
+canvas { background-color: #aaffff }
 </style>
 </head>
 <body>
-<h1>Click, watch, and listen</h1>
 <div id='can'></div>
+<div>
+X: <input type="text" name="xLoc" id="xLoc" value="0"/>
+Y: <input type="text" name="yLoc" id="yLoc" value="0"/>
+X-left: <input type="text" name="xOff" id="xOff" value="0"/>
+Y-top: <input type="text" name="yOff" id="yOff" value="0"/>
+
+</div>
 </body>
 </html>
