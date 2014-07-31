@@ -33,7 +33,7 @@ define(['music21/base', 'music21/duration'], function(base, duration) {
             'ratioString' : {
                 enumerable: true,
                 configurable: true,
-                get: function () { return this.numerator.toString + '/' + this.denominator.toString(); },
+                get: function () { return this.numerator.toString() + '/' + this.denominator.toString(); },
                 set: function (meterString) {
                     var meterList = meterString.split('/');
                     this.numerator = parseInt(meterList[0]);
