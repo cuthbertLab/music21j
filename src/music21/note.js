@@ -76,22 +76,39 @@ define(['music21/prebase', 'music21/base', 'music21/pitch', 'music21/beam', 'vex
                 set: function(n) { this._number = n; },
                 enumerable: true,
                 // a property just to match m21p
-            },            
+            },
+            'rawText': {
+                get: function() {
+                    if (this.syllabic == 'begin') {
+                        return this.text + '-';
+                    } else if (this.syllabic == 'middle') {
+                        return '-' + this.text + '-';
+                    } else if (this.syllabic == 'end') {
+                        return '-' + this.text;
+                    } else {
+                        return this.text;
+                    }
+                },
+                set: function(t) {
+                    this.setTextAndSyllabic(t, false);
+                },
+                enumerable: true,
+            }
         });
 	};
     note.Lyric.prototype = new prebase.ProtoM21Object();
     note.Lyric.prototype.constructor = note.Lyric;
 
     note.Lyric.prototype.setTextAndSyllabic = function (rawText, applyRaw) {
-        if (!applyRaw && (rawText.indexOf('-') == 0) && rawText.slice(-1) == '-') {
+        if (!applyRaw && (rawText.indexOf('-') == 0) && (rawText.slice(-1) == '-')) {
             this.text = rawText.slice(1,-1);
             this.syllabic = 'middle';
         } else if (!applyRaw && (rawText.indexOf('-') == 0)) {
             this.text = rawText.slice(1);
-            this.syllabic = 'begin';
-        } else if (!applyRaw && (rawText.slice(-1))) {
-            this.text = rawText.slice(0, -1);
             this.syllabic = 'end';
+        } else if (!applyRaw && (rawText.slice(-1) == '-')) {
+            this.text = rawText.slice(0, -1);
+            this.syllabic = 'begin';
         } else {
             this.text = rawText;
             if (this.syllabic === undefined) {
