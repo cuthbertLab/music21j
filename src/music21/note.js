@@ -8,13 +8,13 @@
  */
 
 
-define(['music21/base', 'music21/pitch', 'music21/beam', 'vexflow'], 
+define(['music21/prebase', 'music21/base', 'music21/pitch', 'music21/beam', 'vexflow'], 
         /**
          * Module for note classes
          * 
          * @exports music21/note
          */  
-        function(base, pitch, beam, Vex) {
+        function(prebase, base, pitch, beam, Vex) {
 	var note = {};
 
 	note.noteheadTypeNames = [
@@ -55,7 +55,51 @@ define(['music21/base', 'music21/pitch', 'music21/beam', 'vexflow'],
 	                           ];
 
 	/* TODO: convert Lyric */
-	
+	note.Lyric = function(text, number, syllabic, applyRaw, identifier) {
+	    prebase.ProtoM21Object.call(this);
+	    this.classes.push('Lyric');
+	    this.text = text || undefined;
+	    this._number = number || 1;
+	    this.syllabic = syllabic || undefined;
+	    this.applyRaw = applyRaw || false;
+        this.setTextAndSyllabic(this.text, this.applyRaw);
+	    this._identifier = identifier || undefined;
+	    
+        Object.defineProperties(this, {
+            'identifier': {
+                get: function() {return this._identifier || this._number;},
+                set: function(i) { this._identifier = i;},
+                enumerable: true,
+            },
+            'number': { 
+                get: function() { return this._number; },
+                set: function(n) { this._number = n; },
+                enumerable: true,
+                // a property just to match m21p
+            },            
+        });
+	};
+    note.Lyric.prototype = new prebase.ProtoM21Object();
+    note.Lyric.prototype.constructor = note.Lyric;
+
+    note.Lyric.prototype.setTextAndSyllabic = function (rawText, applyRaw) {
+        if (!applyRaw && (rawText.indexOf('-') == 0) && rawText.slice(-1) == '-') {
+            this.text = rawText.slice(1,-1);
+            this.syllabic = 'middle';
+        } else if (!applyRaw && (rawText.indexOf('-') == 0)) {
+            this.text = rawText.slice(1);
+            this.syllabic = 'begin';
+        } else if (!applyRaw && (rawText.slice(-1))) {
+            this.text = rawText.slice(0, -1);
+            this.syllabic = 'end';
+        } else {
+            this.text = rawText;
+            if (this.syllabic === undefined) {
+                this.syllabic = 'single';
+            }
+        }
+    };
+    
 	/* Notes and rests etc... */
 
 	/**
@@ -78,9 +122,10 @@ define(['music21/base', 'music21/pitch', 'music21/beam', 'vexflow'],
 	    this.activeVexflowNote = undefined;
         this.expressions = [];
         this.articulations = [];
+        this.lyrics = [];
         this.tie = undefined;
         
-        /* TODO: editoral objects, color, lyric, addLyric, insertLyric, hasLyrics */
+        /* TODO: editorial objects, color, addLyric, insertLyric, hasLyrics */
 		/* Later: augmentOrDiminish, getGrace, */
         
         Object.defineProperties(this, {
@@ -89,12 +134,51 @@ define(['music21/base', 'music21/pitch', 'music21/beam', 'vexflow'],
                 set: function(ql) { this.duration.quarterLength = ql;},
                 enumerable: true,
             },
+            'lyric': {
+                get: function() {
+                    if (this.lyrics.length > 0) {
+                        return this.lyrics[0].text;                        
+                    } else {
+                        return undefined;
+                    }
+                },
+                set: function(value) {
+                    this.lyrics = [];
+                    if (value !== undefined && value !== false) {
+                        this.lyrics.push( new note.Lyric(value) );
+                    }
+                },
+                enumerable: true,
+            },
             
         });
         
 	};
 	note.GeneralNote.prototype = new base.Music21Object();
 	note.GeneralNote.prototype.constructor = note.GeneralNote;
+	
+	note.GeneralNote.prototype.addLyric = function(text,
+	        lyricNumber, applyRaw, lyricIdentifier) {
+	    applyRaw = applyRaw || false;
+	    if (lyricNumber === undefined) {
+	        maxLyrics = this.lyrics.length + 1;
+	        this.lyrics.push( new note.Lyric(text,
+	            maxLyrics, undefined, applyRaw, lyricIdentifier));
+	    } else {
+	        foundLyric = false;
+	        for (var i = 0; i < self.lyrics.length; i++) {
+	            thisLyric = self.lyrics[i];
+	            if (thisLyric.number == lyricNumber) {
+	                thisLyric.text = text;
+	                foundLyric = true;
+	                break;
+	            }
+	        }
+	        if (foundLyric  === false) {
+	            this.lyrics.push( new note.Lyric(text, lyricNumber, undefined, applyRaw, lyricIdentifier));
+	        }
+	    }
+	};
 	
 	note.GeneralNote.prototype.setStemDirectionFromClef = function (clef) {
 	    return undefined;

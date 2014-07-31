@@ -76,6 +76,7 @@ if ((Object.defineProperties === undefined) && warnBanner) {
     		'es6-shim': 'ext/es6-shim',
     		'vexflowMods': 'ext/vexflowMods',
     	},
+    	waitSeconds: 40,
     	shim: {
     		'jquery-ui': {
     			deps: [ 'jquery' ],
