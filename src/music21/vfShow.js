@@ -1,6 +1,19 @@
 define(['vexflowMods'], function(Vex) {
     var vfShow = {}; 
     vfShow.Renderer = function (s, canvas, where) {
+        /**
+         * Renderer is a function that takes a stream, an
+         * optional existing canvas element and a DOM
+         * element where the canvas element should be placed
+         * and renders the stream as Vexflow on the
+         * canvas element, placing it then in the where
+         * DOM.
+         * 
+         * "s" can be any type of Stream.
+         * 
+         * "canvas" and "where" can be either a DOM
+         * element or a jQuery object.
+         */
         this.stream = s;
         //this.streamType = s.classes[-1];
 
@@ -40,7 +53,6 @@ define(['vexflowMods'], function(Vex) {
                           this._ctx.scale(this.stream.renderOptions.scaleFactor.x,
                                   this.stream.renderOptions.scaleFactor.y);                          
                       }
-                      //this._ctx.scale(0.7, 0.7);
                       return this._ctx;
                   }
               },
@@ -68,6 +80,12 @@ define(['vexflowMods'], function(Vex) {
     };
         
     vfShow.Renderer.prototype.render = function (s) {
+        /**
+         * main function to render a Stream.
+         * 
+         * if s is undefined, uses the stored Stream from
+         * the constructor object.
+         */
         if (s === undefined) {
             s = this.stream;                
         }
@@ -99,6 +117,11 @@ define(['vexflowMods'], function(Vex) {
     };
 
     vfShow.Renderer.prototype.prepareScorelike = function (s) {
+        /**
+         * Prepares a scorelike stream (i.e., one with parts or
+         * Streams that should be rendered vertically like parts)
+         * for rendering and adds Staff Connectors
+         */
         //console.log('prepareScorelike called');
         for (var i = 0; i < s.length; i++) {
             var subStream = s.get(i);
@@ -108,6 +131,13 @@ define(['vexflowMods'], function(Vex) {
     };
     
     vfShow.Renderer.prototype.preparePartlike = function (p) {
+        /**
+         * Prepares a Partlike stream (that is one with Measures
+         * or substreams that should be considered like Measures)
+         * for rendering.
+         * 
+         * Assumes that measures are flat. TODO: allow voices.
+         */
         //console.log('preparePartlike called');
         this.systemBreakOffsets = [];
         for (var i = 0; i < p.length; i++) {
@@ -131,11 +161,20 @@ define(['vexflowMods'], function(Vex) {
         this.prepareTies(p);
     };        
     vfShow.Renderer.prototype.prepareArrivedFlat = function (m) {
+        /**
+         * Prepares a score that arrived flat... sets up
+         * stacks and ties after calling prepareFlat
+         */
         var voice = this.prepareFlat(m);
         this.stacks[0] = {voices: [voice], streams: [m] };
         this.prepareTies(m);
     };
     vfShow.Renderer.prototype.prepareFlat = function (s) {
+        /**
+         * Prepares a flat score -- makes accidentals,
+         * associates a Vex.Flow.Stave with the stream and
+         * returns a vexflow Voice object
+         */
         s.makeAccidentals();
         var stave = this.renderStave(s);
         s.activeVFStave = stave;
