@@ -36,6 +36,10 @@ define(['vexflowMods'], function(Vex) {
                      return this._ctx;
                   } else {
                       this._ctx = this.vfRenderer.getContext();
+                      if (this.stream && this.stream.renderOptions) {
+                          this._ctx.scale(this.stream.renderOptions.scaleFactor.x,
+                                  this.stream.renderOptions.scaleFactor.y);                          
+                      }
                       //this._ctx.scale(0.7, 0.7);
                       return this._ctx;
                   }

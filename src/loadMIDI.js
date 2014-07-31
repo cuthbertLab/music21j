@@ -27,12 +27,12 @@ if ( typeof define === "function" && define.amd) {
                 
                 if ((isFirefox == false) && (isAudioTag == false)) {  
                          // Firefox ignores sound volume! so don't play! as does IE and others using HTML audio tag.
-                    music21.MIDI.noteOn(0, 40, 1, 0);     // if no notes have been played before then
-                    music21.MIDI.noteOff(0, 40, 1, 0.1);  // the second note to be played is always
-                    music21.MIDI.noteOn(0, 41, 1, 0.2);   // very clipped (on Safari at least)
-                    music21.MIDI.noteOff(0, 41, 1, 0.3);  // this helps a lot.
-                    music21.MIDI.noteOn(0, 39, 1, 0.3);   // chrome needs three?
-                    music21.MIDI.noteOff(0, 39, 1, 0.4);                      
+                    music21.MIDI.noteOn(0, 36, 1, 0);     // if no notes have been played before then
+                    music21.MIDI.noteOff(0, 36, 1, 0.1);  // the second note to be played is always
+                    music21.MIDI.noteOn(0, 48, 1, 0.2);   // very clipped (on Safari at least)
+                    music21.MIDI.noteOff(0, 48, 1, 0.3);  // this helps a lot.
+                    music21.MIDI.noteOn(0, 60, 1, 0.3);   // chrome needs three?
+                    music21.MIDI.noteOff(0, 60, 1, 0.4);                      
                 }
                 if (callback !== undefined) {
                     callback();
