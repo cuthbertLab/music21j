@@ -6,8 +6,8 @@
  * Based on music21 (=music21p), Copyright (c) 2006–14, Michael Scott Cuthbert and cuthbertLab
  * 
  */
-define(['music21/base', 'music21/clef', 'music21/duration', 'music21/pitch','music21/note', 'music21/meter', 'music21/stream', 'music21/tie'], 
-        function(base, clef, duration, pitch, note, meter, stream, tie) {
+define(['music21/base', 'music21/clef', 'music21/duration', 'music21/pitch','music21/note', 'music21/meter', 'music21/stream', 'music21/tie', 'music21/chord'], 
+        function(base, clef, duration, pitch, note, meter, stream, tie, chord) {
 	var tinyNotation = {};
 	tinyNotation.regularExpressions = {  
 			REST    : /r/,
@@ -32,6 +32,9 @@ define(['music21/base', 'music21/clef', 'music21/duration', 'music21/pitch','mus
             TRIP    : /trip\{/,
             QUAD    : /quad\{/,
             ENDBRAC : /\}$/,
+
+            CHORD: /^</,
+            ENDCHORD: />/,
 		  };
 
 	tinyNotation.TinyNotation = function (textIn) {
@@ -58,6 +61,11 @@ define(['music21/base', 'music21/clef', 'music21/duration', 'music21/pitch','mus
 		    var token = tokens[i];
 			var noteObj = undefined;
 			var MATCH;
+			if (MATCH = tnre.CHORD.exec(token)) {
+				token = token.slice(1);
+				storedDict.inChord = true;
+				storedDict.chordNotes = [];
+			}
 			if (MATCH = tnre.TRIP.exec(token)) {
 			    token = token.slice(5); // cut...
 			    storedDict.inTrip = true;
@@ -147,7 +155,21 @@ define(['music21/base', 'music21/clef', 'music21/duration', 'music21/pitch','mus
 			    storedDict.endTupletAfterNote = false;
                 
 			}
-			m.append(noteObj);
+
+			if (storedDict.inChord) {
+				storedDict.chordNotes.push(noteObj.nameWithOctave);
+				noteObj = undefined;
+			}
+			if (tnre.ENDCHORD.exec(token)) {
+				noteObj = new chord.Chord(storedDict.chordNotes);
+				noteObj.duration.quarterLength = lastDurationQL;
+				storedDict.inChord = false;
+				storedDict.chordNotes = undefined;
+			}
+
+			if (noteObj) {
+				m.append(noteObj);
+			}
 		}
 		if (p.length > 0) {
             p.append(m);
