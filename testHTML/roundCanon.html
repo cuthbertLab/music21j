@@ -6,18 +6,6 @@
  <script data-main="../src/m21theory.js" src="../ext/require/require.js"></script>
  <link rel="stylesheet" href="../css/m21.css" type="text/css" />
 
-<style>
-.lightInput { border: 1px gray dotted;
-			  background-color: #ffffcc;
-			  opacity: .7;
-			   }
-.unanswered { background-color: #ffffbb; 
-			  opacity: .7;
-}
-.correct    { background-color: #bbffbb; }
-.incorrect  { background-color: #ffbbbb; }
-</style>
-
 </head>
 <body>
 <script type="text/javascript">
@@ -61,7 +49,7 @@ fillScoreOut = function (editor, scoreOut) {
 			}		
 		}
 	}
-	$($('canvas')[1]).attr('height', '3000').css('width','500px').css('height', 'auto');
+	//$($('canvas')[1]).attr('height', '3000').attr('width', '700');
 	scoreOut.redrawCanvas($('canvas')[1]);
 };
 
@@ -113,9 +101,10 @@ makeRound = function () {
 	pEditor.autoBeam = false;
     console.log(pEditor);
 	
+    // editable canvas...
 	var s2 = new music21.stream.Score();
 	s2.renderOptions.events['click'] = s2.canvasChangerFunction;
-	s2.renderOptions.maxSystemWidth = 800;
+	//s2.renderOptions.maxSystemWidth = 800;
 	s2.changedCallbackFunction = function () { fillScoreOut(s2.elements[0], scoreOut) };
 	s2.autoBeam = false;
 	s2.append(pEditor);
@@ -139,7 +128,7 @@ makeRound = function () {
 <div class="document">
   <div class="documentwrapper">
 	<div class="bodywrapper">
-	  <div class="body" id="testBank">
+	  <div class="body" id="testBank" style="border: 1px black solid">
 	  </div>
 	</div>
   </div>
