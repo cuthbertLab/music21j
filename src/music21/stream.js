@@ -170,16 +170,16 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
                 configurable: true,
                 enumerable: true,
 				get: function () {
+				    baseMaxSystemWidth = 750;
 					if (this.renderOptions.maxSystemWidth == undefined && this.activeSite != undefined) {
-						return this.activeSite.maxSystemWidth;
+					    baseMaxSystemWidth = this.activeSite.maxSystemWidth;
 					} else if (this.renderOptions.maxSystemWidth != undefined) {
-						return this.renderOptions.maxSystemWidth;
-					} else {
-						return 750;
+					    baseMaxSystemWidth = this.renderOptions.maxSystemWidth;
 					}
+					return baseMaxSystemWidth / this.renderOptions.scaleFactor.x;
 				},
 				set: function (newSW) {
-					this.renderOptions.maxSystemWidth = newSW;
+					this.renderOptions.maxSystemWidth = newSW * this.renderOptions.scaleFactor.x;
 				}
 			},
 			'parts': {
@@ -500,7 +500,7 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
     };    
     
     stream.Stream.prototype.estimateStreamHeight = function (ignoreSystems) {
-        var staffHeight = 120;
+        var staffHeight = 120 * this.renderOptions.scaleFactor.y;
         var systemPadding = 30;
         if (this.isClassOrSubclass('Score')) {
             var numParts = this.length;
@@ -714,6 +714,7 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
                     var map = {};
                     map.elements = [n];
                     map.offset = currentOffset;
+                    map.pixelScaling = pixelScaling; // easier to store this for all...
                     map.x = n.x * pixelScaling;
                     map.systemIndex = n.systemIndex;
                     lastSystemIndex = map.systemIndex;
@@ -721,7 +722,7 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
                 }
             }
             var finalStave =  ns.get(-1).activeVexflowNote.stave;                    
-            var finalX = finalStave.x + finalStave.width;
+            var finalX = (finalStave.x + finalStave.width) * pixelScaling;
 
             allMaps.push( {
                 elements: [undefined],
@@ -777,12 +778,13 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
             var twoNoteMaps = getPixelMapsAtOffset(offset, offsetToPixelMaps);
             var prevNoteMap = twoNoteMaps[0];
             var nextNoteMap = twoNoteMaps[1];
+            var pixelScaling = prevNoteMap.pixelScaling; // could get from either
             var offsetFromPrev = offset - prevNoteMap.offset;
             var offsetDistance = nextNoteMap.offset - prevNoteMap.offset;
             var pixelDistance = nextNoteMap.x - prevNoteMap.x;       
             if (nextNoteMap.systemIndex != prevNoteMap.systemIndex) {
                 var stave = prevNoteMap.elements[0].activeVexflowNote.stave;                    
-                pixelDistance = stave.x + stave.width - prevNoteMap.x;
+                pixelDistance = (stave.x + stave.width) * pixelScaling - prevNoteMap.x;
             } 
             var offsetToPixelScale = 0;
             if (offsetDistance != 0) {
@@ -809,7 +811,7 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
 
         var tempo = this.tempo;
         //console.log('tempo' , tempo);
-        var pm = offsetToPixelMaps(this);
+        var pm = offsetToPixelMaps(this, c);
         var maxX = pm[pm.length - 1].x;
         var maxSystemIndex = pm[pm.length -1].systemIndex;
         var svgDOM = common.makeSVGright('svg', {
@@ -818,7 +820,7 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
             'style': 'position:absolute; top: 0px; left: 0px;',
         });
         var startX = pm[0].x;
-        var eachSystemHeight = c.height / (maxSystemIndex + 1);
+        var eachSystemHeight = this.renderOptions.scaleFactor.y * c.height / (maxSystemIndex + 1);
         var barDOM = common.makeSVGright('rect', {
             width: 10, 
             height: eachSystemHeight - 6, 
@@ -978,10 +980,24 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
         }
         return storedVFStave;
     };
-    
+
+    /**
+     * Returns the scale factor between the canvas Y position and
+     * the internal vexflow pixel scaling.  Small staves have < 1
+     * scaling.
+     * 
+     * TODO: move to vfShow.
+     * 
+     * @param canvas
+     * @returns {Number} -- pixelScaling ratio
+     */
     stream.Stream.prototype.getPixelScaling = function (canvas) {
+        // this seems like the best...
+        return this.renderOptions.scaleFactor.y;
+        
         if (canvas == undefined) {
-            return 1;
+            console.log("No canvas defined; getPixelScaling returning simple factor");
+            return this.renderOptions.scaleFactor.y;
         }
         var canvasHeight = $(canvas).height();
         //var css = parseFloat(jCanvas.css('height'));
@@ -1155,10 +1171,10 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
         d.append(buttonDiv);
         d.append( $("<br clear='all'/>") );
         this.renderOptions.events['click'] = this.canvasChangerFunction;
-        var can = this.appendNewCanvas(d, scaleInfo, width, height);
-        if (scaleInfo == undefined) {
-            $(can).css('height', '140px');
-        }
+        this.appendNewCanvas(d, scaleInfo, width, height); // var can =
+        //if (scaleInfo == undefined) {
+        //    $(can).css('height', '140px');
+        //}
         return d;
     };
 
@@ -1666,7 +1682,7 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
         return maxMeasureWidths;
     };
 
-    stream.Score.prototype.findPartForClick = function(canvas, e) {
+    stream.Score.prototype.findClickedNote = function(canvas, e) {
         /**
          * Returns a list of [clickedDiatonicNoteNum, foundNote] for a
          * click event, taking into account that the note will be in different
@@ -1706,7 +1722,7 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
         
         */
         var ss = this.storedStream;
-        var _ = ss.findPartForClick(this, e),
+        var _ = ss.findClickedNote(this, e),
              clickedDiatonicNoteNum = _[0],
              foundNote = _[1];
         return ss.noteChanged(clickedDiatonicNoteNum, foundNote, this);

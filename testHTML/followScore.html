@@ -10,7 +10,7 @@
         
         require(['music21'], function () { 
           
-            var s1 = music21.tinyNotation.TinyNotation("4/4 c2 d#4 e8 f g4 r8 B c4~ c16 d32 e f g a b c'1 b4 a g f e8 f e d c4 B c1");
+            var s1 = music21.tinyNotation.TinyNotation("4/4 c2 d#4 e8 f g4 r8 B c4~ c16 d32 e f g a b c'1 b4 a g f e8 f e d c4 B c1 d2 c2 B2 c2 d1 c1");
             var m = s1.elements[0];
             m.elements.pop();
             var c = new music21.chord.Chord(["F4", "A-4", "C5"]);
@@ -18,7 +18,7 @@
             c.lyric = 'hi-';
             m.append(c);
             
-            var s2 = music21.tinyNotation.TinyNotation("4/4 E2 F#4 G8 r trip{G8 F A} G4 E2~ E1 B4 c B A G8 A G F E4 D C1");
+            var s2 = music21.tinyNotation.TinyNotation("4/4 E2 F#4 G8 r trip{G8 F A} G4 E2~ E1 B4 c B A G8 A G F E4 D C1 BB2 C2 D2 C2 BB1 C1");
             s = new music21.stream.Score();
             s.insert(0, s1);
             s.insert(0, s2);
