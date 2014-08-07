@@ -354,7 +354,7 @@ define(['vexflowMods'], function(Vex) {
      * Return a new Vex.Flow.Stave object, which represents
      * a single MEASURE of notation in m21j
      * 
-     * @param {Music21.stream.Stream} s
+     * @param {music21.stream.Stream} s
      * @returns {Vex.Flow.Stave}
      */
     vfShow.Renderer.prototype.newStave = function (s) {
@@ -367,7 +367,7 @@ define(['vexflowMods'], function(Vex) {
         if (width == undefined) {
             width = s.estimateStaffLength() + rendOp.staffPadding;
         }
-        var top = rendOp.top;
+        var top = rendOp.top * rendOp.scaleFactor.y;
         if (top == undefined) {
             top = 0;
         }
@@ -387,7 +387,11 @@ define(['vexflowMods'], function(Vex) {
             stave.setMeasure(rendOp.measureIndex + 1);
         }
         if (rendOp.displayClef) {
-            stave.addClef(s.clef.name);
+            var ottava = undefined;
+            var size = 'default';
+            if (s.clef.octaveShift == 1) { ottava = '8va'; }
+            else if (s.clef.octaveShift == -1) { ottava = '8vb'; }
+            stave.addClef(s.clef.name, size, ottava);
         }
         if ((s.keySignature != undefined) && (rendOp.displayKeySignature)) {
             stave.addKeySignature(s.keySignature.vexflow());
