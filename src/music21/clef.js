@@ -13,11 +13,9 @@ define(['music21/base','music21/pitch'], function(base, pitch) {
 	/*  music21.Clef
 	must be defined before Stream since Stream subclasses call new music21.Clef...
 	 */
-
+	// TODO: Fix to newest Vexflow format...
 	clef.firstLines = {
             'treble': 31, 
-            'treble_8vb': 24,
-            'treble_8va': 38,
             'soprano': 29,
             'mezzo-soprano': 27,
             'alto': 25,
@@ -25,7 +23,7 @@ define(['music21/base','music21/pitch'], function(base, pitch) {
             'bass': 19,
             'percussion': 31,
             };
-	clef.Clef = function (name) {
+	clef.Clef = function (name, octaveShift) {
 		base.Music21Object.call(this);
 		this.classes.push('Clef');
 	    if (name != undefined) {
@@ -37,7 +35,14 @@ define(['music21/base','music21/pitch'], function(base, pitch) {
 	    	this.name = undefined;
 	    	this.firstLine = clef.firstLines['treble'];
 	    	this.firstLineTrebleOffset = 0;
-	    }	    
+	    }
+	    if (octaveShift === undefined) {
+	        this.octaveShift = 0;
+	    } else {
+	        this.octaveShift = octaveShift;
+	        this.firstLine = this.firstLine + (7 * octaveShift);
+	        this.firstLineTrebleOffset = this.firstLineTrebleOffset - (7 * octaveShift);
+	    }
 	};
 
 	clef.Clef.prototype = new base.Music21Object();
@@ -48,11 +53,6 @@ define(['music21/base','music21/pitch'], function(base, pitch) {
         // for instance, bass-clef 2nd-space C# becomes treble clef 2nd-space A#
         // used for Vex.Flow which requires all pitches to be input as if they
         // are in treble clef.
-        //
-        // in case of treble clef or percussion clef, returns the same pitch object to save time.
-        if (this.name == 'treble' || this.name == 'percussion') {
-            return p;
-        }
         if (this.firstLine == undefined) {
             console.log('no first line defined for clef', this.name, this);
             return p; // error
@@ -75,16 +75,15 @@ define(['music21/base','music21/pitch'], function(base, pitch) {
     clef.Treble8vbClef = function () {
         // temporary Vex.Flow hack -- no 8vb setting; use Bass instead.
         // Fixed in cuthbert Vex.Flow -- pull #235
-        clef.Clef.call(this, 'treble_8vb');
+        clef.Clef.call(this, 'treble', -1);
         this.classes.push('Treble8vbClef');
     };
     clef.Treble8vbClef.prototype = new clef.Clef();
     clef.Treble8vbClef.prototype.constructor = clef.Treble8vbClef;
 
     clef.Treble8vaClef = function () {
-        // temporary Vex.Flow hack -- no 8vb setting; use Bass instead.
         // Fixed in cuthbert Vex.Flow -- pull #235
-        clef.Clef.call(this, 'treble_8va');
+        clef.Clef.call(this, 'treble', 1);
         this.classes.push('Treble8vaClef');
     };
     clef.Treble8vaClef.prototype = new clef.Clef();
@@ -182,6 +181,19 @@ define(['music21/base','music21/pitch'], function(base, pitch) {
             var p2 = ac.convertPitchToTreble(n.pitch);
             equal (p2.nameWithOctave, 'B#4', 'converted to treble');
 
+        });
+        test ( "music21.clef.Clef 8va" , function() {
+            var ac = new music21.clef.Treble8vaClef();
+            equal (ac.firstLine, 38, 'first line set');
+            var n = new music21.note.Note('C#5');
+            n.setStemDirectionFromClef(ac);
+            equal (n.stemDirection, 'up', 'stem direction set');
+            var p2 = ac.convertPitchToTreble(n.pitch);
+            equal (p2.nameWithOctave, 'C#4', 'converted to treble');
+            var s = new music21.stream.Stream();
+            s.clef = ac;
+            s.append(n);
+            s.appendNewCanvas($("body"));
         });
     };
     

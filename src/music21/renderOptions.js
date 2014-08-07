@@ -16,16 +16,23 @@ define([], function() {
 			displayClef: true,
 			displayTimeSignature: true,
 			displayKeySignature: true,
+			
+			scaleFactor: {x: 0.7, y: 0.7},
+            
 			top: 0,
 			left: undefined,
 			width: undefined,
+            overriddenWidth: undefined,
 			height: undefined,
-			overriddenWidth: undefined,
-			scaleFactor: {x: 0.7, y: 0.7},
+			naiveHeight: 120,
+			
 			systemIndex: 0,
 			partIndex: 0,
 			measureIndex: 0,
+			
 			systemMeasureIndex: 0,
+			systemPadding: 100,
+			
 			maxSystemWidth: undefined,
 			rightBarline: undefined,
 			staffLines: 5,

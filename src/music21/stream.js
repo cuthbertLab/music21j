@@ -500,8 +500,8 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
     };    
     
     stream.Stream.prototype.estimateStreamHeight = function (ignoreSystems) {
-        var staffHeight = 120 * this.renderOptions.scaleFactor.y;
-        var systemPadding = 30;
+        var staffHeight = this.renderOptions.naiveHeight;
+        var systemPadding = this.renderOptions.systemPadding;
         if (this.isClassOrSubclass('Score')) {
             var numParts = this.length;
             var numSystems = this.numSystems();
@@ -522,7 +522,7 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
                 "] - 1) * systemPadding [" + systemPadding + "]."
                 );
             }
-            return numSystems * staffHeight + (numSystems - 1) * systemPadding;
+            return (numSystems * staffHeight) + ((numSystems - 1) * systemPadding);
         } else {
             return staffHeight;
         }
@@ -599,17 +599,13 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
      * 
      */
     
-    stream.Stream.prototype.createNewCanvas = function (scaleInfo, width, height) {
+    stream.Stream.prototype.createNewCanvas = function (width, height) {
         if (this.hasSubStreams() ) { 
             this.setSubstreamRenderOptions();
         }
 
         var newCanvas = undefined;
-        if (scaleInfo == undefined) {
-            newCanvas = $('<canvas/>');
-        } else {            
-            newCanvas = $('<canvas/>', scaleInfo);
-        }
+        newCanvas = $('<canvas/>'); //.css('border', '1px red solid');
             
         if (width != undefined) {
             newCanvas.attr('width', width);
@@ -634,30 +630,38 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
         }
         return newCanvas;
     };
-    stream.Stream.prototype.createPlayableCanvas = function (scaleInfo, width, height) {
+    stream.Stream.prototype.createPlayableCanvas = function (width, height) {
         this.renderOptions.events['click'] = 'play';
         return this.createCanvas();
     };
-    stream.Stream.prototype.createCanvas = function(scaleInfo, width, height) {
-        var newCanvas = this.createNewCanvas(scaleInfo, width, height);
+    stream.Stream.prototype.createCanvas = function(width, height) {
+        var newCanvas = this.createNewCanvas(width, height);
         this.renderVexflowOnCanvas(newCanvas[0]);
         return newCanvas;    
     };
-    stream.Stream.prototype.appendNewCanvas = function (bodyElement, scaleInfo, width, height) {
+    stream.Stream.prototype.appendNewCanvas = function (bodyElement, width, height) {
         if (bodyElement == undefined) {
             bodyElement = 'body';
-        }
-        var canvasBlock = this.createCanvas(scaleInfo, width, height);
+        };
+//        if (width === undefined && this.renderOptions.maxSystemWidth === undefined) {
+//            var $bodyElement = bodyElement;
+//            if (bodyElement.jquery === undefined) {
+//                $bodyElement = $(bodyElement);
+//            }
+//            width = $bodyElement.width();
+//        };
+//        
+        var canvasBlock = this.createCanvas(width, height);
         $(bodyElement).append(canvasBlock);
         return canvasBlock[0];
     };
     
-    stream.Stream.prototype.replaceCanvas = function (where, scaleInfo) {
+    stream.Stream.prototype.replaceCanvas = function (where) {
         // if called with no where, replaces all the canvases on the page...
         if (where == undefined) {
             where = 'body';
         }
-        canvasBlock = this.createCanvas(scaleInfo);
+        canvasBlock = this.createCanvas();
         $(where + " " + 'canvas').replaceWith(canvasBlock);
         return canvasBlock[0];
     };
@@ -675,7 +679,7 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
                 storedThis.scrollScoreStart(c, event);
             };
         }(this); // create new function with this stream as storedThis
-        c = this.appendNewCanvas( $innerDiv, {} );
+        c = this.appendNewCanvas( $innerDiv );
 
         // remove 0.7 when height is normalized...
         //var h = $(c).css('height');
@@ -794,7 +798,7 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
             }
             var pixelsFromPrev = offsetFromPrev * offsetToPixelScale;
             var offsetX = prevNoteMap.x + pixelsFromPrev;
-            return offsetX;
+            return offsetX / pixelScaling;
         };            
         /**
          * Uses the stored offsetToPixelMaps to get the systemIndex active at the current time.
@@ -823,11 +827,13 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
         var eachSystemHeight = this.renderOptions.scaleFactor.y * c.height / (maxSystemIndex + 1);
         var barDOM = common.makeSVGright('rect', {
             width: 10, 
-            height: eachSystemHeight - 6, 
+            height: eachSystemHeight - 6,  // small fudge for separation
             x: startX, 
             y: 3,
             style: 'fill: rgba(255, 255, 20, .5);stroke:white',    
         } );
+        barDOM.setAttribute("transform", "scale(" + this.renderOptions.scaleFactor.y  + ")");
+        
         svgDOM.appendChild(barDOM);
   
         var canvasParent = $(c).parent()[0];
@@ -995,25 +1001,25 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
         // this seems like the best...
         return this.renderOptions.scaleFactor.y;
         
-        if (canvas == undefined) {
-            console.log("No canvas defined; getPixelScaling returning simple factor");
-            return this.renderOptions.scaleFactor.y;
-        }
-        var canvasHeight = $(canvas).height();
-        //var css = parseFloat(jCanvas.css('height'));
-        
-        var storedVFStave = this.recursiveGetStoredVexflowStave();
-        var lineSpacing = storedVFStave.options.spacing_between_lines_px;
-        var linesAboveStaff = storedVFStave.options.space_above_staff_ln;
-        var totalLines = (storedVFStave.options.num_lines - 1) + linesAboveStaff + storedVFStave.options.space_below_staff_ln;
-        /* var firstLineOffset = ( (storedVFStave.options.num_lines - 1) + linesAboveStaff) * lineSpacing; 
-           var actualVFStaffOnlyHeight = (storedVFStave.height - (linesAboveStaff * lineSpacing)); */
-        var pixelScaling = (totalLines * lineSpacing)/canvasHeight; 
-        pixelScaling = pixelScaling/this.renderOptions.scaleFactor.y;
-        if (music21.debug) {
-            console.log('canvasHeight: ' + canvasHeight + " totalLines*lineSpacing: " + totalLines*lineSpacing + " staveHeight: " + storedVFStave.height);
-        }
-        return pixelScaling;
+//        if (canvas == undefined) {
+//            console.log("No canvas defined; getPixelScaling returning simple factor");
+//            return this.renderOptions.scaleFactor.y;
+//        }
+//        var canvasHeight = $(canvas).height();
+//        //var css = parseFloat(jCanvas.css('height'));
+//        
+//        var storedVFStave = this.recursiveGetStoredVexflowStave();
+//        var lineSpacing = storedVFStave.options.spacing_between_lines_px;
+//        var linesAboveStaff = storedVFStave.options.space_above_staff_ln;
+//        var totalLines = (storedVFStave.options.num_lines - 1) + linesAboveStaff + storedVFStave.options.space_below_staff_ln;
+//        /* var firstLineOffset = ( (storedVFStave.options.num_lines - 1) + linesAboveStaff) * lineSpacing; 
+//           var actualVFStaffOnlyHeight = (storedVFStave.height - (linesAboveStaff * lineSpacing)); */
+//        var pixelScaling = (totalLines * lineSpacing)/canvasHeight; 
+//        pixelScaling = pixelScaling/this.renderOptions.scaleFactor.y;
+//        if (music21.debug) {
+//            console.log('canvasHeight: ' + canvasHeight + " totalLines*lineSpacing: " + totalLines*lineSpacing + " staveHeight: " + storedVFStave.height);
+//        }
+//        return pixelScaling;
     };
     stream.Stream.prototype.getUnscaledXYforCanvas = function (canvas, e) {
         /*
@@ -1152,9 +1158,7 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
     stream.Stream.prototype.redrawCanvas = function (canvas) {
         //this.resetRenderOptions(true, true); // recursive, preserveEvents
         //this.setSubstreamRenderOptions();
-        var newCanv = this.createNewCanvas( { height: canvas.style.height,
-                                               width: canvas.style.width },
-                                            canvas.width,
+        var newCanv = this.createNewCanvas( canvas.width,
                                             canvas.height );
         this.renderVexflowOnCanvas(newCanv[0]);
         $(canvas).replaceWith( newCanv );       
@@ -1162,7 +1166,7 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
         return this;
     };
     
-    stream.Stream.prototype.editableAccidentalCanvas = function (scaleInfo, width, height) {
+    stream.Stream.prototype.editableAccidentalCanvas = function (width, height) {
         /*
          * Create an editable canvas with an accidental selection bar.
          */
@@ -1171,10 +1175,7 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
         d.append(buttonDiv);
         d.append( $("<br clear='all'/>") );
         this.renderOptions.events['click'] = this.canvasChangerFunction;
-        this.appendNewCanvas(d, scaleInfo, width, height); // var can =
-        //if (scaleInfo == undefined) {
-        //    $(can).css('height', '140px');
-        //}
+        this.appendNewCanvas(d, width, height); // var can =
         return d;
     };
 
@@ -1297,7 +1298,7 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
 	stream.Part = function () {
 		stream.Stream.call(this);
 		this.classes.push('Part');
-		this.systemHeight = 120;		
+		this.systemHeight = this.renderOptions.naiveHeight;
 	};
 
 	stream.Part.prototype = new stream.Stream();
@@ -1376,6 +1377,7 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
                 console.log ('overridden systemHeight: ' + systemHeight);
             }
         }
+        var systemPadding = this.renderOptions.systemPadding;
         var measureWidths = this.getMeasureWidths();
         var maxSystemWidth = this.maxSystemWidth; /* of course fix! */
         var systemCurrentWidths = [];
@@ -1435,7 +1437,7 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
             //console.log('M: ' + i + ' ; old left: ' + currentLeft + ' ; new Left: ' + newLeft);
             m.renderOptions.left = Math.floor(newLeft * currentSystemMultiplier);
             m.renderOptions.width = Math.floor(m.renderOptions.width * currentSystemMultiplier);
-            var newTop = m.renderOptions.top + (currentSystemIndex * systemHeight);
+            var newTop = m.renderOptions.top + (currentSystemIndex * (systemHeight + systemPadding));
             //console.log('M: ' + i + '; New top: ' + newTop + " ; old Top: " + m.renderOptions.top);
             m.renderOptions.top = newTop;
         }
@@ -1521,7 +1523,8 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
         var x = _[0];
         var y = _[1];
         
-        var scalingFunction = this.estimateStreamHeight()/$(canvas).height();
+        var scalingFunction = 1.0 / this.renderOptions.scaleFunction.y; //this.estimateStreamHeight()/$(canvas).height();
+        //music21.debug = true;
         if (music21.debug) {
             console.log('Scaling function: ' + scalingFunction + ', i.e. this.estimateStreamHeight(): ' + 
                     this.estimateStreamHeight() + " / $(canvas).height(): " + $(canvas).height());
@@ -1580,7 +1583,7 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
 		stream.Stream.call(this);
 		this.classes.push('Score');
 		this.measureWidths = [];
-		this.partSpacing = 120;		
+		this.partSpacing = this.renderOptions.naiveHeight;		
 	};
 
 	stream.Score.prototype = new stream.Stream();
@@ -1693,7 +1696,7 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
         var x = _[0];
         var y = _[1];
         
-        var scalingFunction = this.estimateStreamHeight()/$(canvas).height();
+        var scalingFunction = 1.0/this.renderOptions.scaleFactor.y; //this.estimateStreamHeight()/$(canvas).height();
         var scaledY = y * scalingFunction;
         var partNum = Math.floor(scaledY / this.partSpacing);
         var scaledYinPart = scaledY - partNum * this.partSpacing;
@@ -1868,7 +1871,7 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
 	        var n =  new music21.note.Note("F5");
 	        n.duration.type = 'half';
 	        s.append(n);
-	        var c = s.createNewCanvas({}, 100, 50);
+	        var c = s.createNewCanvas(100, 50);
 	        equal (c.attr('width'), 100, 'stored width matches');
 	        equal (c.attr('height'), 50, 'stored height matches');
 	    });  
