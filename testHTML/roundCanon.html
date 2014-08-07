@@ -16,17 +16,20 @@ require(['m21theory'], function() {
 });
 
 fillScoreOut = function (editor, scoreOut) {
-	var sectionLength = scoreOut.repetitionLength;
-	for (var i = 0; i < scoreOut.numParts; i++) {		
-		var p = scoreOut.elements[i];
-		var startMusic = i * sectionLength;
+  music21.debug = true;
+  var sectionLength = scoreOut.repetitionLength;
+	for (var pNum = 0; pNum < scoreOut.numParts; pNum++) {		
+		var p = scoreOut.elements[pNum];
+		var startMusic = pNum * sectionLength;
 		var endMusic = startMusic + sectionLength * (scoreOut.numParts - 1 + scoreOut.fullRepetitions);
-		//console.log ("i: " + i + " start: " + startMusic + " end: " + endMusic);
+		
+		console.log ("pNum: " + pNum + " start: " + startMusic + " end: " + endMusic);
 		for (var j = 0; j < scoreOut.totalMeasures; j++) {
 			// clear old score...
-			var m = p.elements[j];
+			var m = p._elements[j];
+			
 			for (k = 0; k < m.length; k++) {
-				m.elements[k].activeSite = undefined;
+				m._elements[k].activeSite = undefined;
 			}
 			m.elements = [];
 			
@@ -39,7 +42,7 @@ fillScoreOut = function (editor, scoreOut) {
 			} else {
 				var copyMeasure = editor.elements[(j - startMusic) % editor.length];
 				for (var l = 0; l < copyMeasure.length; l++) {
-					var copyNote = copyMeasure.elements[l];
+					var copyNote = copyMeasure.get(l);
 					var n = new music21.note.Note();
 					n.pitch.name = copyNote.pitch.name;
 					n.pitch.octave = copyNote.pitch.octave;
@@ -51,6 +54,7 @@ fillScoreOut = function (editor, scoreOut) {
 	}
 	//$($('canvas')[1]).attr('height', '3000').attr('width', '700');
 	scoreOut.redrawCanvas($('canvas')[1]);
+	music21.debug = false;
 };
 
 
@@ -104,7 +108,8 @@ makeRound = function () {
     // editable canvas...
 	var s2 = new music21.stream.Score();
 	s2.renderOptions.events['click'] = s2.canvasChangerFunction;
-	//s2.renderOptions.maxSystemWidth = 800;
+	//console.log($("#testBank").width());
+	s2.maxSystemWidth = $("#testBank").width();
 	s2.changedCallbackFunction = function () { fillScoreOut(s2.elements[0], scoreOut) };
 	s2.autoBeam = false;
 	s2.append(pEditor);
@@ -115,6 +120,8 @@ makeRound = function () {
 	//pEditor.appendNewCanvas($("#testBank"));
 	$("#testBank").append($("<br clear='all'/>"))
 	$("#testBank").append($("<div>Your score will appear here. Click it to play!</div>"))
+
+    scoreOut.maxSystemWidth = $("#testBank").width();
 
 	scoreOut.appendNewCanvas($("#testBank"));
 	$("#testBank").append($("<br clear='all'/>"))
