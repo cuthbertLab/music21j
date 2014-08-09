@@ -170,7 +170,7 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
                 configurable: true,
                 enumerable: true,
 				get: function () {
-				    baseMaxSystemWidth = 750;
+				    var baseMaxSystemWidth = 750;
 					if (this.renderOptions.maxSystemWidth == undefined && this.activeSite != undefined) {
 					    baseMaxSystemWidth = this.activeSite.maxSystemWidth;
 					} else if (this.renderOptions.maxSystemWidth != undefined) {
@@ -189,7 +189,7 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
 					var parts = [];
 					for (var i = 0; i < this.length; i++) {
 					    var el = this.get(i);
-						if (el.inClass('Part')) {
+						if (el.isClassOrSubclass('Part')) {
 							parts.push(el);
 						}
 					}
@@ -205,7 +205,7 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
 					var measures = [];
 					for (var i = 0; i < this.length; i++) {
 						var el = this.get(i);
-					    if (el.inClass('Measure')) {
+					    if (el.isClassOrSubclass('Measure')) {
 							measures.push(el);
 						}
 					}
@@ -501,7 +501,7 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
     
     stream.Stream.prototype.estimateStreamHeight = function (ignoreSystems) {
         var staffHeight = this.renderOptions.naiveHeight;
-        var systemPadding = this.renderOptions.systemPadding;
+        var systemPadding = this.systemPadding;
         if (this.isClassOrSubclass('Score')) {
             var numParts = this.length;
             var numSystems = this.numSystems();
@@ -624,7 +624,7 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
                 computedHeight = this.renderOptions.height;
                 //console.log('computed Height: ' + computedHeight);
             }
-            newCanvas.attr('height', computedHeight );
+            newCanvas.attr('height', computedHeight * this.renderOptions.scaleFactor.y );
             // TODO: CUT HEIGHT! -- use VexFlow ctx.scale(0.7, 0.7);
             // newCanvas.css('height', Math.floor(computedHeight * 0.7).toString() + "px");
         }
@@ -1052,6 +1052,9 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
         /*
          * return a list of [scaledX, scaledY] for
          * a canvas element
+         * 
+         * xScaled refers to 1/scaleFactor.x -- for instance, scaleFactor.x = 0.7 (default)
+         * gives 1.42857...
          */
         var _ = this.getUnscaledXYforCanvas(canvas, e);
         var xPx = _[0];
@@ -1066,8 +1069,13 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
         /*
          * Given a Y position find the note at that position.
          * searches this.storedVexflowStave
+         * 
+         * Y position must be offset from the start of the stave...
          */
         var storedVFStave = this.recursiveGetStoredVexflowStave();
+        //for (var i = -10; i < 10; i++) {
+        //    console.log("line: " + i + " y: " + storedVFStave.getYForLine(i));
+        //}
         var lineSpacing = storedVFStave.options.spacing_between_lines_px;
         var linesAboveStaff = storedVFStave.options.space_above_staff_ln;
 
@@ -1076,13 +1084,12 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
         var clickedDiatonicNoteNum = this.clef.firstLine + Math.round(notesAboveFirstLine);
         return clickedDiatonicNoteNum;
     };
-    stream.Stream.prototype.noteElementFromScaledX = function (xPxScaled, allowablePixels, y) {
+    stream.Stream.prototype.noteElementFromScaledX = function (xPxScaled, allowablePixels, unused_systemIndex) {
         /*
          * Return the note at pixel X (or within allowablePixels [default 10])
          * of the note.
          * 
-         * y element is optional and used to discover which part or system
-         * we are on. NOT USED YET
+         * systemIndex element is not used on bare Stream
          */
         var foundNote = undefined;
         if (allowablePixels == undefined) {
@@ -1115,7 +1122,7 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
             y = _[1];
         }
         var clickedDiatonicNoteNum = this.diatonicNoteNumFromScaledY(y);
-        var foundNote = this.noteElementFromScaledX(x, undefined, y);
+        var foundNote = this.noteElementFromScaledX(x);
         return [clickedDiatonicNoteNum, foundNote];
     };
     
@@ -1377,7 +1384,7 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
                 console.log ('overridden systemHeight: ' + systemHeight);
             }
         }
-        var systemPadding = this.renderOptions.systemPadding;
+        var systemPadding = this.renderOptions.systemPadding || this.renderOptions.naiveSystemPadding;
         var measureWidths = this.getMeasureWidths();
         var maxSystemWidth = this.maxSystemWidth; /* of course fix! */
         var systemCurrentWidths = [];
@@ -1444,6 +1451,7 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
         
         return systemCurrentWidths;
     };
+    
     stream.Part.prototype.setSubstreamRenderOptions = function () {
         var currentMeasureIndex = 0; /* 0 indexed for now */
         var currentMeasureLeft = 20;
@@ -1512,13 +1520,13 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
             overrides Stream().canvasChangerFunction
         */
         var ss = this.storedStream;
-        var _ = ss.findSystemForClick(this, e),
+        var _ = ss.findNoteForClick(this, e),
              clickedDiatonicNoteNum = _[0],
              foundNote = _[1];
         return ss.noteChanged(clickedDiatonicNoteNum, foundNote, this);
     };
 
-    stream.Part.prototype.findSystemForClick = function(canvas, e) {
+    stream.Part.prototype.findNoteForClick = function(canvas, e) {
         var _ = this.getUnscaledXYforCanvas(canvas, e);
         var x = _[0];
         var y = _[1];
@@ -1530,15 +1538,17 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
                     this.estimateStreamHeight() + " / $(canvas).height(): " + $(canvas).height());
         }
         var scaledY = y * scalingFunction;
-        var systemIndex = Math.floor(scaledY / this.systemHeight);
-        var clickedDiatonicNoteNum = this.diatonicNoteNumFromScaledY(scaledY);
+        var systemPadding = this.renderOptions.systemPadding || this.renderOptions.naiveSystemPadding;
+        var systemIndex = Math.floor(scaledY / (this.systemHeight + systemPadding));
+        var scaledYRelativeToSystem = scaledY - systemIndex * (this.systemHeight + systemPadding);
+        var clickedDiatonicNoteNum = this.diatonicNoteNumFromScaledY(scaledYRelativeToSystem);
         
         var scaledX = x * scalingFunction;
-        var foundNote = this.noteElementFromScaledX(scaledX, undefined, scaledY, systemIndex);
+        var foundNote = this.noteElementFromScaledX(scaledX, undefined, systemIndex);
         return [clickedDiatonicNoteNum, foundNote];
     };
     
-    stream.Part.prototype.noteElementFromScaledX = function (scaledX, allowablePixels, scaledY, systemIndex) {
+    stream.Part.prototype.noteElementFromScaledX = function (scaledX, allowablePixels, systemIndex) {
         /*
          * Override the noteElementFromScaledX for Stream
          * to take into account sub measures...
@@ -1554,7 +1564,7 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
             var bottom = top + rendOp.height;
             if (music21.debug) {
                 console.log("Searching for X:" + Math.round(scaledX) + 
-                        " Y:" + Math.round(scaledY) + " in M " + i + 
+                        " in M " + i + 
                         " with boundaries L:" + left + " R:" + right +
                         " T: " + top + " B: " + bottom);
             }
@@ -1584,6 +1594,25 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
 		this.classes.push('Score');
 		this.measureWidths = [];
 		this.partSpacing = this.renderOptions.naiveHeight;		
+
+		Object.defineProperties(this, {
+		   'systemPadding': {
+		       enumerable: true,
+		       configurable: true,
+		       get: function () {
+		           var numParts = this.parts.length;
+		           var systemPadding = this.renderOptions.systemPadding;
+		           if (systemPadding === undefined) {
+		               if (numParts == 1) {
+		                   systemPadding = this.renderOptions.naiveSystemPadding; // fix to 0
+		               } else {
+		                   systemPadding = this.renderOptions.naiveSystemPadding;
+		               }
+		           }
+		           return systemPadding;
+		       },
+		   } 
+		});
 	};
 
 	stream.Score.prototype = new stream.Stream();
@@ -1635,6 +1664,7 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
         tempPart.elements = this.elements;
         return tempPart.estimateStaffLength();            
     };
+    
     /* MIDI override */
     stream.Score.prototype.playStream = function () {
         // play multiple parts in parallel...
@@ -1685,35 +1715,88 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
         return maxMeasureWidths;
     };
 
-    stream.Score.prototype.findClickedNote = function(canvas, e) {
+    stream.Score.prototype.findNoteForClick = function(canvas, e) {
         /**
          * Returns a list of [clickedDiatonicNoteNum, foundNote] for a
          * click event, taking into account that the note will be in different
-         * Part objects (and different Systems) given the height.
+         * Part objects (and different Systems) given the height and possibly different Systems.
          * 
          */
         var _ = this.getUnscaledXYforCanvas(canvas, e);
         var x = _[0];
         var y = _[1];
         
-        var scalingFunction = 1.0/this.renderOptions.scaleFactor.y; //this.estimateStreamHeight()/$(canvas).height();
+        // newer -- less fancy...
+        var scalingFunction = 1.0/this.renderOptions.scaleFactor.y; 
         var scaledY = y * scalingFunction;
-        var partNum = Math.floor(scaledY / this.partSpacing);
-        var scaledYinPart = scaledY - partNum * this.partSpacing;
-
-        var systemIndex = undefined;
-        if (partNum >= this.length) {
-            systemIndex = Math.floor(partNum/this.length);
-            partNum = partNum % this.length;
-        }
-        if (music21.debug) {
-            console.log(y + " scaled = " + scaledY + " part Num: " + partNum + " scaledYinPart: " + scaledYinPart + " systemIndex: " + systemIndex);
-        }
-        var rightPart = this.get(partNum);
+        var numParts = this.length; // faster than this.parts.length
+        var systemHeight = numParts * this.partSpacing + this.systemPadding;
+        var systemIndex = Math.floor(scaledY / systemHeight);
+        var scaledYFromSystemTop = scaledY - systemIndex * systemHeight;
+        var partIndex = Math.floor(scaledYFromSystemTop / this.partSpacing);
+        var scaledYinPart = scaledYFromSystemTop - partIndex * this.partSpacing;
+        console.log('systemIndex: ' + systemIndex + " partIndex: " + partIndex);
+        var rightPart = this.get(partIndex);
         var clickedDiatonicNoteNum = rightPart.diatonicNoteNumFromScaledY(scaledYinPart);
         
+//        // old...
+//        var scalingFunction = this.estimateStreamHeight()/$(canvas).height();
+//        var scaledY = y * scalingFunction;
+//        var partNum = Math.floor(scaledY / this.partSpacing);
+//        var scaledYinPart = scaledY - partNum * this.partSpacing;
+//
+//        var systemIndex = undefined;
+//        if (partNum >= this.length) {
+//            systemIndex = Math.floor(partNum/this.length);
+//            partNum = partNum % this.length;
+//        }
+//        if (music21.debug) {
+//            console.log(y + " scaled = " + scaledY + " part Num: " + partNum + " scaledYinPart: " + scaledYinPart + " systemIndex: " + systemIndex);
+//        }
+//        var rightPart = this.get(partNum);
+//        var clickedDiatonicNoteNum = rightPart.diatonicNoteNumFromScaledY(scaledYinPart);
+
+        
+//        // new
+//        var scalingFunction = 1.0/this.renderOptions.scaleFactor.y; //this.estimateStreamHeight()/$(canvas).height();
+//        var scaledY = y * scalingFunction;
+//        var partNum = 0;
+//        var partTop = 0;
+//        var systemIndex = 0;
+//        var continueIt = true;
+//        var catchFail = 20;
+//        //console.log(this.renderOptions.systemPadding);
+//        while (continueIt) {
+//            partTop += this.partSpacing;
+//            if (scaledY < partTop - (this.partSpacing / 4)) { // give some leeway for above staff...
+//                partTop -= this.partSpacing;
+//                continueIt = false;
+//            } else {
+//                partNum += 1;
+//                if (partNum >= this.length) {
+//                    systemIndex += 1;
+//                    partNum = 0;
+//                    //partTop += this.renderOptions.systemPadding;
+//                }
+//            }
+//            catchFail += -1;
+//            if (catchFail < 0) {
+//                console.log("Failed to find part!");
+//                continueIt = false;
+//            }
+//        }        
+//        var scaledYinPart = scaledY - partTop;
+//        music21.debug = true;
+//        if (music21.debug) {
+//            console.log("y: " + parseInt(y) + " scaledY = " + parseInt(scaledY) + " part Num: " + 
+//                    partNum + " scaledYinPart: " + parseInt(scaledYinPart) + 
+//                    " part top: " + parseInt(partTop) + " systemIndex: " + systemIndex);
+//        }
+//        music21.debug = false;
+//        var clickedDiatonicNoteNum = rightPart.diatonicNoteNumFromScaledY(scaledYinPart);
+//        
         var scaledX = x * scalingFunction;
-        var foundNote = rightPart.noteElementFromScaledX(scaledX, undefined, scaledYinPart, systemIndex);
+        var foundNote = rightPart.noteElementFromScaledX(scaledX, undefined, systemIndex);
         return [clickedDiatonicNoteNum, foundNote];
     };
     
@@ -1725,7 +1808,7 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
         
         */
         var ss = this.storedStream;
-        var _ = ss.findClickedNote(this, e),
+        var _ = ss.findNoteForClick(this, e),
              clickedDiatonicNoteNum = _[0],
              foundNote = _[1];
         return ss.noteChanged(clickedDiatonicNoteNum, foundNote, this);
