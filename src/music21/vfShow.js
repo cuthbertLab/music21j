@@ -383,7 +383,9 @@ define(['vexflowMods'], function(Vex) {
             left = 10;
         }
         //console.log('streamLength: ' + streamLength);
-        console.log('creating new stave: left:' + left + ' top: ' + top + ' width: ' + width);
+        if (music21.debug) {
+            console.log('creating new stave: left:' + left + ' top: ' + top + ' width: ' + width);            
+        }
         var stave = new Vex.Flow.Stave(left, top, width);
         return stave;
     };
