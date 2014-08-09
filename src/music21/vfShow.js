@@ -182,6 +182,13 @@ define(['vexflowMods'], function(Vex) {
         return voice;
     };
     
+    
+    /**
+     * Render a measure as a stave
+     * 
+     * @param {music21.stream.Measure} m
+     * @returns {Vex.Flow.Stave} stave
+     */
     vfShow.Renderer.prototype.renderStave = function (m) {   
         if (m === undefined) {
             m = this.stream;
@@ -367,7 +374,7 @@ define(['vexflowMods'], function(Vex) {
         if (width == undefined) {
             width = s.estimateStaffLength() + rendOp.staffPadding;
         }
-        var top = rendOp.top * rendOp.scaleFactor.y;
+        var top = rendOp.top;// * rendOp.scaleFactor.y;
         if (top == undefined) {
             top = 0;
         }
@@ -376,6 +383,7 @@ define(['vexflowMods'], function(Vex) {
             left = 10;
         }
         //console.log('streamLength: ' + streamLength);
+        console.log('creating new stave: left:' + left + ' top: ' + top + ' width: ' + width);
         var stave = new Vex.Flow.Stave(left, top, width);
         return stave;
     };
@@ -635,7 +643,8 @@ define(['vexflowMods'], function(Vex) {
                 
                 el.width = formatterNote.width;         
                 if (el.pitch != undefined) { // note only...
-                    el.y = stave.getBottomY() - (s.clef.firstLine - el.pitch.diatonicNoteNum) * stave.options.spacing_between_lines_px;
+                    el.y = (stave.getBottomY() - (s.clef.firstLine - el.pitch.diatonicNoteNum) * 
+                            stave.options.spacing_between_lines_px);
                     //console.log('Note DNN: ' + el.pitch.diatonicNoteNum + " ; y: " + el.y);
                 }
             }

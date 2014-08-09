@@ -31,7 +31,8 @@ define([], function() {
 			measureIndex: 0,
 			
 			systemMeasureIndex: 0,
-			systemPadding: 100,
+			systemPadding: undefined,
+			naiveSystemPadding: 40,
 			
 			maxSystemWidth: undefined,
 			rightBarline: undefined,
