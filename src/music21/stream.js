@@ -1111,7 +1111,7 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
         return foundNote;
     };
     
-    stream.Stream.prototype.canvasClickedNotes = function (canvas, e, x, y) {
+    stream.Stream.prototype.findNoteForClick = function (canvas, e, x, y) {
         /*
          * Return a list of [diatonicNoteNum, closestXNote]
          * for an event (e) called on the canvas (canvas)
@@ -1135,7 +1135,7 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
         
         */
         var ss = this.storedStream;
-        var _ = ss.canvasClickedNotes(this, e),
+        var _ = ss.findNoteForClick(this, e),
              clickedDiatonicNoteNum = _[0],
              foundNote = _[1];
         if (foundNote == undefined) {
@@ -1511,27 +1511,13 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
         return this;
 
     };
-    stream.Part.prototype.canvasChangerFunction = function (e) {
-        /* N.B. -- not to be called on a stream -- "this" refers to the CANVAS
-        
-            var can = s.appendNewCanvas();
-            $(can).on('click', s.canvasChangerFunction);
-        
-            overrides Stream().canvasChangerFunction
-        */
-        var ss = this.storedStream;
-        var _ = ss.findNoteForClick(this, e),
-             clickedDiatonicNoteNum = _[0],
-             foundNote = _[1];
-        return ss.noteChanged(clickedDiatonicNoteNum, foundNote, this);
-    };
 
     stream.Part.prototype.findNoteForClick = function(canvas, e) {
         var _ = this.getUnscaledXYforCanvas(canvas, e);
         var x = _[0];
         var y = _[1];
         
-        var scalingFunction = 1.0 / this.renderOptions.scaleFunction.y; //this.estimateStreamHeight()/$(canvas).height();
+        var scalingFunction = 1.0 / this.renderOptions.scaleFactor.y; //this.estimateStreamHeight()/$(canvas).height();
         //music21.debug = true;
         if (music21.debug) {
             console.log('Scaling function: ' + scalingFunction + ', i.e. this.estimateStreamHeight(): ' + 
@@ -1800,20 +1786,6 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
         return [clickedDiatonicNoteNum, foundNote];
     };
     
-    stream.Score.prototype.canvasChangerFunction = function (e) {
-        /* N.B. -- not to be called on a stream -- "this" refers to the CANVAS
-        
-            var can = s.appendNewCanvas();
-            $(can).on('click', s.canvasChangerFunction);
-        
-        */
-        var ss = this.storedStream;
-        var _ = ss.findNoteForClick(this, e),
-             clickedDiatonicNoteNum = _[0],
-             foundNote = _[1];
-        return ss.noteChanged(clickedDiatonicNoteNum, foundNote, this);
-    };
-
     stream.Score.prototype.numSystems = function () {
         return this.get(0).numSystems();
     };
@@ -1995,7 +1967,11 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
             s1.append(n3);
             var n4 = new music21.note.Note("G3");
             s1.append(n4);
-            var div1 = s1.editableAccidentalCanvas();
+            var p = new music21.stream.Part();
+            p.insert(0, s1);
+            var sc = new music21.stream.Score();
+            sc.insert(0, p);
+            var div1 = p.editableAccidentalCanvas();
             $(document.body).append(div1);
         });
 	};
