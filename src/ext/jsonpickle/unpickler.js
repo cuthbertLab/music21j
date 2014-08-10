@@ -23,6 +23,8 @@ define(function(require) {
         };
         unpickler.merge(params, options);
         
+        // define -- restore; post_restore. Note that if the object has sub objects
+        //   in restore, then they must be restored just to keep the object count valid.
         var use_handlers = {
           'fractions.Fraction': {
               restore: function(obj) {
@@ -91,6 +93,7 @@ define(function(require) {
         var has_tag = unpickler.has_tag;
         var tags = unpickler.tags;
         var restore = undefined;
+        
         if (has_tag(obj, tags.ID)) {
             restore = this._restore_id.bind(this);
         } else if (has_tag(obj, tags.REF)) {
@@ -101,12 +104,12 @@ define(function(require) {
             // backwards compat. not supported
         } else if (has_tag(obj, tags.OBJECT)) {
             restore = this._restore_object.bind(this);
-        } else if (unpickler.is_list(obj)) {
-            restore = this._restore_list.bind(this);
         } else if (has_tag(obj, tags.TUPLE)) {
             restore = this._restore_tuple.bind(this);            
         } else if (has_tag(obj, tags.SET)) {
             restore = this._restore_set.bind(this);
+        } else if (unpickler.is_list(obj)) {
+            restore = this._restore_list.bind(this);
         } else if (unpickler.is_dictionary(obj)) {
             restore = this._restore_dict.bind(this);
         } else {
@@ -131,7 +134,7 @@ define(function(require) {
     unpickler.Unpickler.prototype._restore_object = function (obj) {
         var class_name = obj[unpickler.tags.OBJECT];
         var handler = this.handlers[class_name];
-        if (handler !== undefined) {
+        if (handler !== undefined && handler.restore !== undefined) {
             var instance = handler.restore(obj);
             return this._mkref(instance);
         } else {
@@ -139,7 +142,12 @@ define(function(require) {
             if (cls === undefined) {
                 return this._mkref(obj);
             }
-            return this._restore_object_instance(obj, cls);
+            var instance = this._restore_object_instance(obj, cls);
+            if (handler !== undefined && handler.post_restore !== undefined) {
+                return handler.post_restore(instance);
+            } else {                
+                return instance;
+            }
         }
     };
     unpickler.Unpickler.prototype._loadfactory = function (obj) {
@@ -223,7 +231,8 @@ define(function(require) {
         var children = [];
         for (var i = 0; i < obj.length; i++) {
             var v = obj[i];
-            children.push(this._restore(v));
+            var rest = this._restore(v);
+            children.push(rest);
         }
         parent.push.apply(parent, children);
         return parent;
@@ -231,16 +240,18 @@ define(function(require) {
     unpickler.Unpickler.prototype._restore_tuple = function (obj) {
         // JS having no difference between list, tuple, set -- returns Array
         var children = [];
-        for (var v in obj[unpickler.tags.TUPLE]) {
-            children.push(this._restore(v));
+        var tupleContents = obj[unpickler.tags.TUPLE]; 
+        for (var i = 0; i < tupleContents.length; i++) {
+            children.push(this._restore(tupleContents[i]));
         }
         return children;
     };
     unpickler.Unpickler.prototype._restore_set = function (obj) {
         // JS having no difference between list, tuple, set -- returns Array
         var children = [];
-        for (var v in obj[unpickler.tags.SET]) {
-            children.push(this._restore(v));
+        var setContents = obj[unpickler.tags.SET]; 
+        for (var i = 0; i < setContents.length; i++) {
+            children.push(this._restore(setContents[i]));
         }
         return children;
     };
@@ -259,7 +270,6 @@ define(function(require) {
             var v = obj[k];
             
             this._namestack.push(k);
-            k = restore_key(k);
             data[k] = this._restore(v);
             // no setattr checks...
             this._namestack.pop();
