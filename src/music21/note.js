@@ -100,6 +100,10 @@ define(['music21/prebase', 'music21/base', 'music21/pitch', 'music21/beam', 'vex
     note.Lyric.prototype.constructor = note.Lyric;
 
     note.Lyric.prototype.setTextAndSyllabic = function (rawText, applyRaw) {
+        if (rawText === undefined) {
+            this.text = undefined;
+            return undefined;
+        }
         if (!applyRaw && (rawText.indexOf('-') == 0) && (rawText.slice(-1) == '-')) {
             this.text = rawText.slice(1,-1);
             this.syllabic = 'middle';
