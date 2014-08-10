@@ -698,7 +698,7 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
         var offsetToPixelMaps = function(s, c) {
             var ns = s.flat.notesAndRests;
             var allMaps = [];
-            var pixelScaling = s.getPixelScaling(c);
+            var pixelScaling = s.renderOptions.scaleFactor.x;
             for (var i = 0; i < ns.length; i++) {
                 var n = ns.get(i);
                 var currentOffset = n.offset;
@@ -1868,10 +1868,6 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
             s1.append(n3);
             var n4 = new music21.note.Note("G3");
             s1.append(n4);
-            var p = new music21.stream.Part();
-            p.insert(0, s1);
-            var sc = new music21.stream.Score();
-            sc.insert(0, p);
             var div1 = s1.editableAccidentalCanvas();
             $(document.body).append(div1);
         });
