@@ -9,6 +9,9 @@
 
 #Eclipse
 .settings
+.project
+.pydevproject
+
 
 # OSX
 .DS_Store

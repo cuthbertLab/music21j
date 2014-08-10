@@ -1,4 +1,5 @@
 // future -- rewrite of Score and Part to Page, System, SystemPart
+//     not currently used
 
 define(['music21/base','music21/renderOptions','music21/stream',  
         'music21/common', 'jquery'], 
@@ -38,7 +39,7 @@ define(['music21/base','music21/renderOptions','music21/stream',
         currentSystemNumber = 1;
         currentSystem.measureStart = 1;
         
-        var currentStaves = [];
+        //var currentStaves = [];
         var staffMaker = function (staffHolder, numParts, measureStart) {
             for (var pNum = 0; pNum < numParts; pNum++) {
                 var staff = new music21.layout.Staff();
@@ -55,7 +56,7 @@ define(['music21/base','music21/renderOptions','music21/stream',
         var startLeft = 20; /* TODO: make it obtained elsewhere */
         var currentLeft = startLeft;
         var currentSystemTop = 0;
-        var partTopOffsets = [];
+        //var partTopOffsets = [];
         var ignoreSystemsInCalculatingScoreHeight = true;
         var systemHeight = score.estimateStreamHeight(ignoreSystemsInCalculatingScoreHeight);        
         
@@ -242,8 +243,6 @@ define(['music21/base','music21/renderOptions','music21/stream',
     };
     layout.Staff.prototype = new stream.Part();
     layout.Staff.prototype.constructor = layout.Staff;
-    
-    
     
     // end of define
     if (typeof(music21) != "undefined") {

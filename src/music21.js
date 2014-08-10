@@ -34,6 +34,9 @@ this module would not be possible.
 // must be defined before loading, jQuery, etc. because needed to see if warnBanner is defined
 if (typeof(music21) === "undefined") var music21 = {};
 
+// place a JSON obj into the <script> tag for require...
+// <script data-main='music21' src='require.js' m21conf='{"loadSoundfont": false}'>
+
 var getM21attribute = function (attrName) {
     var scripts = document.getElementsByTagName('script');
     for (var i = 0; i < scripts.length; i++) {
@@ -75,6 +78,7 @@ if ((Object.defineProperties === undefined) && warnBanner) {
     		'vexflow': 'ext/vexflow/vexflow-min',
     		'es6-shim': 'ext/es6-shim',
     		'vexflowMods': 'ext/vexflowMods',
+    		'unpickler': 'ext/jsonpickle/unpickler',
     	},
     	waitSeconds: 40,
     	shim: {
@@ -91,6 +95,7 @@ if ((Object.defineProperties === undefined) && warnBanner) {
     var m21modules = ['loadMIDI',
                       'vexflowMods',
                       'jquery',
+                      'unpickler',
                       'jquery-ui',
                       'music21/moduleLoader', ];
     if (m21conf.noLoad !== undefined) {
@@ -103,7 +108,10 @@ if ((Object.defineProperties === undefined) && warnBanner) {
     }
     if ( typeof define === "function" && define.amd) {
         define( "music21", m21modules, 
-        		function (midi, vexflow, $) { 
+        		function (midi, vexflow, $, unpick) { 
+            //temp global...
+            unpickler = unpick;
+            
             music21.scriptConfig = m21conf;
             if (midi) {
                 music21.MIDI = midi;
@@ -117,6 +125,8 @@ if ((Object.defineProperties === undefined) && warnBanner) {
                 if ((music21.scriptConfig.loadSoundfont === undefined) ||
                         (music21.scriptConfig.loadSoundfont != false)) {
                    music21.MIDI.loadSoundfont('acoustic_grand_piano', function() {});
+                } else {
+                    console.log('skipping loading sound font');
                 }
             }
             if ((music21.scriptConfig.renderHTML === undefined) ||
