@@ -1,0 +1,23 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns = "http://www.w3.org/1999/xhtml">
+<head>
+ <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+  <script data-main="../../music21" src="../../../ext/require/require.js" m21conf='{"loadSoundfont": false}'></script>
+
+</head>
+<body>
+<script type="text/javascript">
+  require(['music21'], function (music21) {
+      Thing = function (x) {
+          this.x = x;
+      }
+      var json = '[[5, 6, 7], {"py/id": 1}, {"hi": 8, "bye": {"py/id": 1}}]';
+      json = '[[5, 6, 7], {"py/id": 1}, {"hi": 8, "bye": {"py/id": 1}}, {"py/object": "__main__.Thing", "x": {"py/id": 1}}]';
+      json = '{"_mutable": true, "_activeSite": null, "xPosition": null, "_priority": 0, "_elements": [{"lyrics": [], "_notehead": "normal", "_volume": null, "_activeSite": null, "xPosition": null, "_priority": 0, "pitch": {"py/object": "music21.pitch.Pitch", "_octave": 4, "groups": {"py/object": "music21.base.Groups", "py/seq": []}, "_overridden_freq440": null, "_step": "C", "_microtone": {"py/object": "music21.pitch.Microtone", "_harmonicShift": 1, "_centShift": 0}, "_accidental": {"py/object": "music21.pitch.Accidental", "_modifier": "#", "_alter": 1.0, "displayLocation": "normal", "_displayType": "normal", "displaySize": "full", "_name": "sharp", "_displayStatus": null, "displayStyle": "normal"}, "classes": ["Pitch", "object"], "fundamental": null, "defaultOctave": 4, "implicitAccidental": false}, "expressions": [], "id": 4343274000, "_duration": {"py/object": "music21.duration.Duration", "_componentsNeedUpdating": false, "_cachedIsLinked": true, "_qtrLength": 1.0, "_components": [{"py/object": "music21.duration.DurationUnit", "_type": "quarter", "_componentsNeedUpdating": false, "_qtrLength": 1.0, "_tuplets": {"py/tuple": []}, "_link": true, "_typeNeedsUpdating": false, "_quarterLengthNeedsUpdating": false, "_dots": [0]}], "_typeNeedsUpdating": false, "_quarterLengthNeedsUpdating": false, "linkage": "tie"}, "py/object": "music21.note.Note", "_noteheadParenthesis": false, "sites": {"py/object": "music21.sites.Sites", "siteDict": {"4343176336": {"py/object": "music21.sites.SiteRef", "siteWeakref": {"py/id": 4}, "globalSiteIndex": 84, "classString": "Stream", "_offset": 0.0, "siteIndex": 1, "isDead": false}, "None": {"py/object": "music21.sites.SiteRef", "siteWeakref": null, "globalSiteIndex": 82, "classString": null, "_offset": 0.0, "siteIndex": 0, "isDead": false}}, "_siteIndex": 2, "_lastOffset": null, "_lastID": -1, "containedById": 4343274000, "_locationKeys": [null, 4343176336]}, "_editorial": null, "tie": null, "_noteheadFill": "default", "beams": {"py/object": "music21.beam.Beams", "feathered": false, "beamsList": []}, "_classes": null, "groups": {"py/object": "music21.base.Groups", "py/seq": []}, "_fullyQualifiedClasses": null, "articulations": [], "_activeSiteId": 4343176336, "hideObjectOnPrint": false, "_stemDirection": "unspecified", "_idLastDeepCopyOf": null}], "definesExplicitPageBreaks": false, "_cache": {"HighestTime": 1.0}, "id": 4343176336, "_duration": null, "py/object": "music21.stream.Stream", "streamStatus": {"py/object": "music21.stream.streamStatus.StreamStatus", "_enharmonics": null, "_dirty": null, "_concertPitch": null, "_accidentals": null, "_ties": null, "_rests": null, "_ornaments": null, "_client": {"py/id": 4}, "_beams": null, "_measures": null}, "sites": {"py/object": "music21.sites.Sites", "siteDict": {"None": {"py/object": "music21.sites.SiteRef", "siteWeakref": null, "globalSiteIndex": 83, "classString": null, "_offset": 0.0, "siteIndex": 0, "isDead": false}}, "_siteIndex": 1, "_lastOffset": null, "_lastID": -1, "containedById": 4343176336, "_locationKeys": [null]}, "py/seq": [{"py/id": 3}], "isFlat": true, "autoSort": true, "_unlinkedDuration": null, "_atSoundingPitch": "unknown", "_classes": ["Stream", "Music21Object", "object"], "groups": {"py/object": "music21.base.Groups", "py/seq": []}, "_fullyQualifiedClasses": null, "isSorted": true, "hideObjectOnPrint": false, "_activeSiteId": null, "flattenedRepresentationOf": null, "_endElements": [], "_derivation": null, "definesExplicitSystemBreaks": false, "_idLastDeepCopyOf": null}';
+      json = '{"py/object": "fractions.Fraction", "_denominator": 3, "_numerator": 1}';
+      o = unpickler.decode(json);
+      console.log(o);
+  });
+</script>
+</body>
+</html>

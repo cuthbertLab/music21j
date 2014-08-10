@@ -154,6 +154,15 @@ define(['music21/base', 'music21/pitch', 'music21/common', 'loadMIDI', 'jquery']
        this.svgObj = undefined;
        
        this.appendKeyboard = function(where, dnnStart, dnnEnd) {
+           if (typeof dnnStart == 'string') {
+               var tempP = new music21.pitch.Pitch(dnnStart);
+               dnnStart = tempP.diatonicNoteNum;
+           }
+           if (typeof dnnEnd == 'string') {
+               var tempP = new music21.pitch.Pitch(dnnEnd);
+               dnnEnd = tempP.diatonicNoteNum;
+           }
+
            if (where === undefined) {
                where = document.body;
            } else if (where.jquery !== undefined) {
