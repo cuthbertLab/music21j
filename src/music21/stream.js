@@ -240,6 +240,9 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
 				            this._elements.push(thisEl);
 				            thisEl.offset = highestOffsetSoFar;
 				            this._elementOffsets.push(highestOffsetSoFar);
+				            if (thisEl.duration === undefined) {
+				                console.error("No duration for ", thisEl, " in ", this);
+				            }
 				            highestOffsetSoFar += thisEl.duration.quarterLength;
 				        } else { // append -- slow
 				            tempInsert.push(thisEl);
