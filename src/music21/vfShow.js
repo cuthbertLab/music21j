@@ -340,13 +340,15 @@ define(['vexflowMods', 'music21/common'], function(Vex, common) {
             return formatter;
         }
         var maxGlyphStart = 0; // find the stave with the farthest start point -- diff key sig, etc.
-        for (var i = 0; i < voices.length; i++) { 
-            if (voices[i].stave.start_x > maxGlyphStart) {
+        for (var i = 0; i < voices.length; i++) {             
+            if (voices[i].stave !== undefined && voices[i].stave.start_x > maxGlyphStart) {
                 maxGlyphStart = voices[i].stave.start_x;
             }
         }
         for (var i = 0; i < voices.length; i++) { 
-            voices[i].stave.start_x = maxGlyphStart; // corrected!
+            if (voices[i].stave !== undefined) {
+                voices[i].stave.start_x = maxGlyphStart; // corrected!                
+            }
         }
         // TODO: should do the same for end_x -- for key sig changes, etc...
         
