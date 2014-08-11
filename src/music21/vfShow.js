@@ -163,10 +163,9 @@ define(['vexflowMods', 'music21/common'], function(Vex, common) {
      * stacks and ties after calling prepareFlat
      */
     vfShow.Renderer.prototype.prepareArrivedFlat = function (m) {
-        this.stacks[0] = {voices: [], streams: [] };
-        var voice = this.prepareMeasure(m, this.stacks[0]);
-        this.stacks[0].voices.push(voice);
-        this.stacks[0].streams.push(m);
+        var stack = {voices: [], streams: [] };
+        this.prepareMeasure(m, stack);
+        this.stacks[0] = stack;
         this.prepareTies(m);
     };
     /**
@@ -341,14 +340,13 @@ define(['vexflowMods', 'music21/common'], function(Vex, common) {
         }
         var maxGlyphStart = 0; // find the stave with the farthest start point -- diff key sig, etc.
         for (var i = 0; i < voices.length; i++) {             
-            if (voices[i].stave !== undefined && voices[i].stave.start_x > maxGlyphStart) {
+            console.log(voices[i], i);
+            if (voices[i].stave.start_x > maxGlyphStart) {
                 maxGlyphStart = voices[i].stave.start_x;
             }
         }
         for (var i = 0; i < voices.length; i++) { 
-            if (voices[i].stave !== undefined) {
-                voices[i].stave.start_x = maxGlyphStart; // corrected!                
-            }
+            voices[i].stave.start_x = maxGlyphStart; // corrected!
         }
         // TODO: should do the same for end_x -- for key sig changes, etc...
         
