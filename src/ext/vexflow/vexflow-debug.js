@@ -26,8 +26,8 @@
  *
  * This library makes use of Simon Tatham's awesome font - Gonville.
  *
- * Build ID: 0xFE@6c74348a02a693908c28c2b37b1041460f019b37
- * Build date: 2014-08-07 12:42:25 -0400
+ * Build ID: 0xFE@6301fa6c1c2ea9aa7fa8d0322d9cd52fcc22b0fc
+ * Build date: 2014-08-10 21:25:32 -0400
  */
 // [VexFlow](http://vexflow.com) - Copyright (c) Mohit Muthanna 2010.
 //
@@ -392,20 +392,44 @@ Vex.Flow.Fraction = (function() {
     },
 
 
-    // Simplifies both sides and checks if they are equal
+    // Simplifies both sides and checks if they are equal.
     equals: function(compare) {
       var a = Vex.Flow.Fraction.__compareA.copy(compare).simplify();
       var b = Vex.Flow.Fraction.__compareB.copy(this).simplify();
 
       return (a.numerator === b.numerator) && (a.denominator === b.denominator);
     },
+    
+    // Greater than operator.
+    greaterThan: function(compare) {
+      var a = Vex.Flow.Fraction.__compareB.copy(this);
+      a.subtract(compare);
+      return (a.numerator > 0);
+    },
+    
+    // Greater than or equals operator.
+    greaterThanEquals: function(compare) {
+      var a = Vex.Flow.Fraction.__compareB.copy(this);
+      a.subtract(compare);
+      return (a.numerator >= 0);
+    },
 
-    // Creates a new copy with this current values
+    // Less than operator.
+    lessThan: function(compare) {
+      return !(this.greaterThanEquals(compare));  
+    },
+
+    // Less than or equals operator.
+    lessThanEquals: function(compare) {
+      return !(this.greaterThan(compare));  
+    },
+
+    // Creates a new copy with this current values.
     clone: function() {
       return new Vex.Flow.Fraction(this.numerator, this.denominator);
     },
 
-    // Copies value of another Fraction into itself
+    // Copies value of another Fraction into itself.
     copy: function(copy) {
       return this.set(copy.numerator, copy.denominator);
     },
@@ -1907,6 +1931,17 @@ Vex.Flow.Stave = (function() {
       this.resetLines();
       return this;
     },
+    // Space above and below staff lines is measured in staff lines.
+    getSpaceAboveStaffLines: function() { return this.options.space_above_staff_ln; },
+    setSpaceAboveStaffLines: function(space) { 
+      this.options.space_above_staff_ln = space;
+      return this;
+    },
+    getSpaceBelowStaffLines: function() { return this.options.space_below_staff_ln; },
+    setSpaceBelowStaffLines: function(space) { 
+      this.options.space_below_staff_ln = space;
+      return this;
+    },
     setY: function(y) { this.y = y; return this; },
 
     setWidth: function(width) {
@@ -2010,6 +2045,10 @@ Vex.Flow.Stave = (function() {
 
     getSpacingBetweenLines: function() {
       return this.options.spacing_between_lines_px;
+    },
+    setSpacingBetweenLines: function(px) {
+      this.options.spacing_between_lines_px = parseInt(px);
+      return this;      
     },
 
     getBoundingBox: function() {
@@ -2652,13 +2691,13 @@ Vex.Flow.TickContext = (function() {
 
         var ticks = tickable.getTicks();
 
-        if (ticks.value() > this.maxTicks.value()) {
+        if (ticks.greaterThan(this.maxTicks)) {
           this.maxTicks = ticks.clone();
         }
 
         if (this.minTicks == null) {
           this.minTicks = ticks.clone();
-        } else if (ticks.value() < this.minTicks.value()) {
+        } else if (ticks.lessThan(this.minTicks)) {
           this.minTicks = ticks.clone();
         }
       }
@@ -3338,10 +3377,12 @@ Vex.Flow.NoteHead = (function() {
           line_y -= 5;
         else if (line > 6 &&  floor - line == -0.5)
           line_y += 5;
-        ctx.fillRect(
-          head_x - this.render_options.stroke_px, line_y,
-          (this.getGlyph().head_width) +
-          (this.render_options.stroke_px * 2), 1);
+        if (this.note_type != 'r') {
+          ctx.fillRect(
+            head_x - this.render_options.stroke_px, line_y,
+            (this.getGlyph().head_width) +
+            (this.render_options.stroke_px * 2), 1);    
+        }        
       }
 
       if (this.note_type == "s") {
@@ -4307,6 +4348,7 @@ Vex.Flow.StaveNote = (function() {
 
     // Draw the ledger lines between the stave and the highest/lowest keys
     drawLedgerLines: function(){
+      if (this.isRest()) { return; }
       if (!this.context) throw new Vex.RERR("NoCanvasContext",
           "Can't draw without a canvas context.");
       var ctx = this.context;
@@ -4314,8 +4356,8 @@ Vex.Flow.StaveNote = (function() {
       var bounds = this.getNoteHeadBounds();
       var highest_line = bounds.highest_line;
       var lowest_line = bounds.lowest_line;
-      var head_x = this.note_heads[0].getAbsoluteX();
-
+      var head_x = this.note_heads[0].getAbsoluteX();      
+      
       var that = this;
       function stroke(y) {
         if (that.use_default_head_x === true)  {
@@ -5280,19 +5322,19 @@ Vex.Flow.Beam = (function() {
           }
 
         }
-        
+
         var last_note = this.notes[this.notes.length - 1];
-        var first_last_slope = ((last_note.getStemExtents().topY - first_y_px) / 
+        var first_last_slope = ((last_note.getStemExtents().topY - first_y_px) /
                 (last_note.getStemX() - first_x_px));
         // most engraving books suggest aiming for a slope about half the angle of the
         // difference between the first and last notes' stem length;
-        var ideal_slope = first_last_slope / 2; 
+        var ideal_slope = first_last_slope / 2;
         var distance_from_ideal = Math.abs(ideal_slope - slope);
 
         // This tries to align most beams to something closer to the ideal_slope, but
         // doesn't go crazy. To disable, set this.render_options.slope_cost = 0
         var cost = this.render_options.slope_cost * distance_from_ideal +
-            Math.abs(total_stem_extension);     
+            Math.abs(total_stem_extension);
 
         // update state when a more ideal slope is found
         if (cost < min_cost) {
@@ -5544,7 +5586,7 @@ Vex.Flow.Beam = (function() {
   };
 
   // ## Static Methods
-  // 
+  //
   // Gets the default beam groups for a provided time signature.
   // Attempts to guess if the time signature is not found in table.
   // Currently this is fairly naive.
@@ -5600,7 +5642,7 @@ Vex.Flow.Beam = (function() {
 
   // A helper function to automatically build basic beams for a voice. For more
   // complex auto-beaming use `Beam.generateBeams()`.
-  // 
+  //
   // Parameters:
   // * `voice` - The voice to generate the beams for
   // * `stem_direction` - A stem direction to apply to the entire voice
@@ -5612,9 +5654,9 @@ Vex.Flow.Beam = (function() {
     });
   };
 
-  // A helper function to autimatically build beams for a voice with 
+  // A helper function to autimatically build beams for a voice with
   // configuration options.
-  // 
+  //
   // Example configuration object:
   //
   // ```
@@ -5626,7 +5668,7 @@ Vex.Flow.Beam = (function() {
   //   show_stemlets: false
   // };
   // ```
-  // 
+  //
   // Parameters:
   // * `notes` - An array of notes to create the beams for
   // * `config` - The configuration object
@@ -5636,7 +5678,7 @@ Vex.Flow.Beam = (function() {
   //    * `beam_middle_only` - Set to `true` to only beam rests in the middle of the beat
   //    * `show_stemlets` - Set to `true` to draw stemlets for rests
   //    * `maintain_stem_directions` - Set to `true` to not apply new stem directions
-  // 
+  //
   Beam.generateBeams = function(notes, config) {
 
     if (!config) config = {};
@@ -5685,19 +5727,19 @@ Vex.Flow.Beam = (function() {
         }
 
         currentGroup.push(unprocessedNote);
-        var ticksPerGroup = tickGroups[currentTickGroup].value();
-        var totalTicks = getTotalTicks(currentGroup).value();
+        var ticksPerGroup = tickGroups[currentTickGroup].clone();
+        var totalTicks = getTotalTicks(currentGroup);
 
         // Double the amount of ticks in a group, if it's an unbeamable tuplet
         var unbeamable = false;
         if (Vex.Flow.durationToInteger(unprocessedNote.duration) < 8
             && unprocessedNote.tuplet) {
-          ticksPerGroup *= 2;
+          ticksPerGroup.numerator *= 2;
           unbeamable = true;
         }
 
         // If the note that was just added overflows the group tick total
-        if (totalTicks > ticksPerGroup) {
+        if (totalTicks.greaterThan(ticksPerGroup)) {
           // If the overflow note can be beamed, start the next group
           // with it. Unbeamable notes leave the group overflowed.
           if (!unbeamable) {
@@ -5706,7 +5748,7 @@ Vex.Flow.Beam = (function() {
           noteGroups.push(currentGroup);
           currentGroup = nextGroup;
           nextTickGroup();
-        } else if (totalTicks == ticksPerGroup) {
+        } else if (totalTicks.equals(ticksPerGroup)) {
           noteGroups.push(currentGroup);
           currentGroup = nextGroup;
           nextTickGroup();
@@ -5890,8 +5932,8 @@ Vex.Flow.Beam = (function() {
 // [VexFlow](http://vexflow.com) - Copyright (c) Mohit Muthanna 2010.
 //
 // ## Description
-// 
-// This file implements the main Voice class. It's mainly a container 
+//
+// This file implements the main Voice class. It's mainly a container
 // object to group `Tickables` for formatting.
 Vex.Flow.Voice = (function() {
   function Voice(time) {
@@ -6028,34 +6070,34 @@ Vex.Flow.Voice = (function() {
       if (!tickable.shouldIgnoreTicks()) {
         var ticks = tickable.getTicks();
 
-        // Update the total ticks for this line
+        // Update the total ticks for this line.
         this.ticksUsed.add(ticks);
 
         if ((this.mode == Vex.Flow.Voice.Mode.STRICT ||
              this.mode == Vex.Flow.Voice.Mode.FULL) &&
-             this.ticksUsed.value() > this.totalTicks.value()) {
+             this.ticksUsed.greaterThan(this.totalTicks)) {
           this.totalTicks.subtract(ticks);
           throw new Vex.RERR("BadArgument", "Too many ticks.");
         }
 
-        // Track the smallest tickable for formatting
-        if (ticks.value() < this.smallestTickCount.value()) {
+        // Track the smallest tickable for formatting.
+        if (ticks.lessThan(this.smallestTickCount)) {
           this.smallestTickCount = ticks.clone();
         }
 
         this.resolutionMultiplier = this.ticksUsed.denominator;
 
-        // Expand total ticks using denominator from ticks used
+        // Expand total ticks using denominator from ticks used.
         this.totalTicks.add(0, this.ticksUsed.denominator);
       }
 
-      // Add the tickable to the line
+      // Add the tickable to the line.
       this.tickables.push(tickable);
       tickable.setVoice(this);
       return this;
     },
 
-    // Add an array of tickables to the voice
+    // Add an array of tickables to the voice.
     addTickables: function(tickables) {
       for (var i = 0; i < tickables.length; ++i) {
         this.addTickable(tickables[i]);
@@ -6064,7 +6106,7 @@ Vex.Flow.Voice = (function() {
       return this;
     },
 
-    // Preformats the voice by applying the voice's stave to each note
+    // Preformats the voice by applying the voice's stave to each note.
     preFormat: function(){
       if (this.preFormatted) return;
 
@@ -7252,19 +7294,19 @@ Vex.Flow.Accidental = (function(){
 
     // Sort the tickables in each voice by their tick position in the voice
     voices.forEach(function(voice) {
-      var tickPosition = 0;
+      var tickPosition = new Vex.Flow.Fraction(0, 1);
       var notes = voice.getTickables();
       notes.forEach(function(note) {
-        var notesAtPosition = tickNoteMap[tickPosition];
+        var notesAtPosition = tickNoteMap[tickPosition.value()];
 
         if (!notesAtPosition) {
-          tickPositions.push(tickPosition);
-          tickNoteMap[tickPosition] = [note];
+          tickPositions.push(tickPosition.value());
+          tickNoteMap[tickPosition.value()] = [note];
         } else {
           notesAtPosition.push(note);
         }
 
-        tickPosition += note.getTicks().value();
+        tickPosition.add(note.getTicks());
       });
     });
     
@@ -7487,9 +7529,9 @@ Vex.Flow.Formatter = (function() {
     var voice;
     for (i = 0; i < voices.length; ++i) {
       voice = voices[i];
-      if (voice.getTotalTicks().value() != totalTicks.value()) {
+      if (!(voice.getTotalTicks().equals(totalTicks))) {
         throw new Vex.RERR("TickMismatch",
-            "Voices should have same time signature.");
+            "Voices should have same total note duration in ticks.");
       }
 
       if (voice.getMode() == Vex.Flow.Voice.Mode.STRICT && !voice.isComplete())
