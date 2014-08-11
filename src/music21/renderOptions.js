@@ -34,6 +34,8 @@ define([], function() {
 			systemPadding: undefined,
 			naiveSystemPadding: 40,
 			
+			stemDirection: undefined,
+			
 			maxSystemWidth: undefined,
 			rightBarline: undefined,
 			staffLines: 5,

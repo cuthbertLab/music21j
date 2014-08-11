@@ -535,7 +535,17 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
             //console.log("Overridden staff width: " + this.renderOptions.overriddenWidth);
             return this.renderOptions.overriddenWidth;
         }
-        if (this.hasSubStreams()) { // part
+        if (this.hasVoices()) {
+            var maxLength = 0;
+            for (var i = 0; i < this.length; i++) {
+                var v = this.get(i);
+                var thisLength = v.estimateStaffLength() + v.renderOptions.staffPadding;
+                if (thisLength > maxLength) {
+                    maxLength = thisLength;
+                }
+            }
+            return maxLength;
+        } else if (this.hasSubStreams()) { // part
             var totalLength = 0;
             for (var i = 0; i < this.length; i++) {
                 var m = this.get(i);
@@ -1247,7 +1257,30 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
         }, 1000);
         return this;
     };
-            
+    stream.Stream.prototype.hasVoices = function () {
+        for (var i = 0; i < this.length; i++) {
+            var el = this.get(i);
+            if (el.isClassOrSubclass('Voice')) {
+                return true;
+            }
+        }
+        return false;
+    };
+
+    /**
+     * container for a Voice ... does not work yet
+     * 
+     * @constructor
+     */
+    
+    stream.Voice = function () { 
+        stream.Stream.call(this);
+        this.classes.push('Voice');
+    };
+
+    stream.Voice.prototype = new stream.Stream();
+    stream.Voice.prototype.constructor = stream.Voice;
+
     
     /**
      * container for a Measure ... does not YET handle Voices
@@ -1263,6 +1296,7 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
 	stream.Measure.prototype = new stream.Stream();
 	stream.Measure.prototype.constructor = stream.Measure;
 
+	
 	/**
 	 * Part -- specialized to handle Measures inside it
 	 * 

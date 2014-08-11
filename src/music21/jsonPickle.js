@@ -129,6 +129,7 @@ define(['unpickler'], function (unpickler) {
             'music21.stream.Score': { post_restore: converterHandler.streamPostRestore },
             'music21.stream.Stream': { post_restore: converterHandler.streamPostRestore },
             'music21.stream.Measure': { post_restore: converterHandler.streamPostRestore },           
+            'music21.stream.Voice': { post_restore: converterHandler.streamPostRestore },           
         };
         this.currentPart = undefined;
         this.lastClef = undefined;
