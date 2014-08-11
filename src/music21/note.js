@@ -462,7 +462,7 @@ define(['music21/prebase', 'music21/base', 'music21/pitch', 'music21/beam', 'vex
                 ls += 2;
             }
             p.diatonicNoteNum += ls;
-            keyLine = p.vexflowName("treble");            
+            keyLine = p.vexflowName(undefined);            
         }
 
         var vfn = new Vex.Flow.StaveNote({keys: [keyLine], 
