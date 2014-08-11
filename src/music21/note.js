@@ -214,7 +214,9 @@ define(['music21/prebase', 'music21/base', 'music21/pitch', 'music21/beam', 'vex
                 vfn.addDotToAll();                
             }
         }
-        if (this.stemDirection === undefined && options.clef !== undefined) {
+        if (this.activeSite !== undefined && this.activeSite.renderOptions.stemDirection !== undefined) {
+            this.stemDirection = this.activeSite.renderOptions.stemDirection;
+        } else if (this.stemDirection === undefined && options.clef !== undefined) {
             this.setStemDirectionFromClef(options.clef);
         }
         vfn.setStemDirection(this.stemDirection == 'down' ? 
@@ -443,7 +445,7 @@ define(['music21/prebase', 'music21/base', 'music21/pitch', 'music21/beam', 'vex
         this.isNote = false; // for speed
         this.isRest = true; // for speed		
 		this.name = 'rest'; // for note compatibility
-	    
+		this.lineShift = undefined;
 	};
 
 	note.Rest.prototype = new note.GeneralNote();
@@ -453,6 +455,16 @@ define(['music21/prebase', 'music21/base', 'music21/pitch', 'music21/beam', 'vex
         if (this.duration.type == 'whole') {
             keyLine = 'd/5';
         }
+        if (this.lineShift !== undefined) {
+            var p = new music21.pitch.Pitch('B4');
+            var ls = this.lineShift;
+            if (this.duration.type == 'whole') {
+                ls += 2;
+            }
+            p.diatonicNoteNum += ls;
+            keyLine = p.vexflowName("treble");            
+        }
+
         var vfn = new Vex.Flow.StaveNote({keys: [keyLine], 
                                         duration: this.duration.vexflowDuration + 'r'});
         if (this.duration.dots > 0) {

@@ -1,6 +1,16 @@
 define([], function() {
     var common = {};    
     
+    common.merge = function (destination, source) {
+        //concept borrowed from Vex.Flow.Merge, though source can be undefined;
+        if (source !== undefined) {
+            for (var property in source) {
+                destination[property] = source[property];
+            }            
+        }
+        return destination;
+    };
+    
     common.makeSVGright = function (tag, attrs) {
         // see http://stackoverflow.com/questions/3642035/jquerys-append-not-working-with-svg-element
         // normal JQuery does not work.
