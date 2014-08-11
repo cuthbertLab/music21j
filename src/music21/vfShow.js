@@ -1,4 +1,4 @@
-define(['vexflowMods'], function(Vex) {
+define(['vexflowMods', 'music21/common'], function(Vex, common) {
     var vfShow = {}; 
     /**
      * Renderer is a function that takes a stream, an
@@ -148,15 +148,13 @@ define(['vexflowMods'], function(Vex) {
             if (i == p.length - 1) {
                 subStream.renderOptions.rightBarline = 'end';
             }                
-            var voice = this.prepareFlat(subStream);
             if (this.stacks[i] === undefined) {
                 this.stacks[i] = { 
                         voices: [],
                         streams: [],
                 };
             }
-            this.stacks[i].voices.push(voice);
-            this.stacks[i].streams.push(subStream);
+            this.prepareMeasure(subStream, this.stacks[i]);
         }
         this.prepareTies(p);
     };        
@@ -165,23 +163,47 @@ define(['vexflowMods'], function(Vex) {
      * stacks and ties after calling prepareFlat
      */
     vfShow.Renderer.prototype.prepareArrivedFlat = function (m) {
-        var voice = this.prepareFlat(m);
-        this.stacks[0] = {voices: [voice], streams: [m] };
+        this.stacks[0] = {voices: [], streams: [] };
+        var voice = this.prepareMeasure(m, this.stacks[0]);
+        this.stacks[0].voices.push(voice);
+        this.stacks[0].streams.push(m);
         this.prepareTies(m);
     };
     /**
-     * Prepares a flat score -- makes accidentals,
+     * Prepares a measure (w/ or w/o voices) or generic Stream -- makes accidentals,
      * associates a Vex.Flow.Stave with the stream and
      * returns a vexflow Voice object
      */
-    vfShow.Renderer.prototype.prepareFlat = function (s) {
+    vfShow.Renderer.prototype.prepareMeasure = function (s, stack) {
+        // TODO: don't assume that all elements are Voices;
+        if (s.hasVoices == undefined || s.hasVoices() == false) {
+            this.prepareFlat(s, stack);
+        } else {
+            var stave = undefined;
+            var rendOp = s.renderOptions; // get render options from Measure;
+            for (var voiceIndex = 0; voiceIndex < s.length; voiceIndex++) {
+                var voiceStream = s.get(voiceIndex);
+                stave = this.prepareFlat(voiceStream, stack, stave, rendOp);
+            }            
+        }
+        return stack;
+    };
+
+    vfShow.Renderer.prototype.prepareFlat = function (s, stack, optionalStave, optional_renderOp) {
         s.makeAccidentals();
-        var stave = this.renderStave(s);
+        var stave = undefined;
+        if (optionalStave !== undefined) {
+            stave = optionalStave;
+        } else {
+            stave = this.renderStave(s, optional_renderOp);
+        }       
         s.activeVFStave = stave;
         var voice = this.getVoice(s, stave);
-        return voice;
+        stack.voices.push(voice);
+        stack.streams.push(s);
+        return stave;
     };
-    
+
     
     /**
      * Render a measure as a stave
@@ -189,15 +211,15 @@ define(['vexflowMods'], function(Vex) {
      * @param {music21.stream.Measure} m
      * @returns {Vex.Flow.Stave} stave
      */
-    vfShow.Renderer.prototype.renderStave = function (m) {   
+    vfShow.Renderer.prototype.renderStave = function (m, optional_rendOp) {   
         if (m === undefined) {
             m = this.stream;
         }
         var ctx = this.ctx;
         // stave will be passed in from Measure when we have Voices 
-        var stave = this.newStave(m);
+        var stave = this.newStave(m, optional_rendOp);
 
-        this.setClefEtc(m, stave);
+        this.setClefEtc(m, stave, optional_rendOp);
         stave.setContext(ctx);
         stave.draw();
         return stave;
@@ -364,11 +386,13 @@ define(['vexflowMods'], function(Vex) {
      * @param {music21.stream.Stream} s
      * @returns {Vex.Flow.Stave}
      */
-    vfShow.Renderer.prototype.newStave = function (s) {
+    vfShow.Renderer.prototype.newStave = function (s, rendOp) {
         if (s === undefined) {
             s = this.stream;
         }
-        var rendOp = s.renderOptions;
+        if (rendOp === undefined) {
+            rendOp = s.renderOptions;                
+        }
         // measure level...
         var width = rendOp.width;
         if (width == undefined) {
@@ -390,8 +414,10 @@ define(['vexflowMods'], function(Vex) {
         return stave;
     };
     
-    vfShow.Renderer.prototype.setClefEtc = function (s, stave) {
-        var rendOp = s.renderOptions;
+    vfShow.Renderer.prototype.setClefEtc = function (s, stave, rendOp) {
+        if (rendOp === undefined) {
+            rendOp = s.renderOptions;
+        } 
         this.setStafflines(s, stave);
         if (rendOp.showMeasureNumber) {
             stave.setMeasure(rendOp.measureIndex + 1);
