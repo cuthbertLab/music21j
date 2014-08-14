@@ -9,8 +9,9 @@
  * 
  */
 define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow', 'music21/duration', 
-        'music21/common', 'music21/meter', 'music21/pitch', 'jquery'], 
-        function(base, renderOptions, clef, vfShow, duration, common, meter, pitch, $) {   
+        'music21/common', 'music21/meter', 'music21/pitch', 'music21/streamInteraction', 'jquery'], 
+        function(base, renderOptions, clef, vfShow, duration, 
+                 common, meter, pitch, streamInteraction, $) {   
     var stream = {};
 	
 	stream.Stream = function () {
@@ -719,227 +720,15 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
         this.setRenderInteraction( $innerDiv );
         $where.append( $innerDiv );
     };
+    
     stream.Stream.prototype.scrollScoreStart = function (c, event) {
-        /**
-         * @param {stream.Stream} s 
-         * @param jQuery|String|DOM Element c - Canvas object
-         * @returns {Array<object>} - an array of Pixelmap objects.
-         */
-        var offsetToPixelMaps = function(s, c) {
-            var ns = s.flat.notesAndRests;
-            var allMaps = [];
-            var pixelScaling = s.renderOptions.scaleFactor.x;
-            for (var i = 0; i < ns.length; i++) {
-                var n = ns.get(i);
-                var currentOffset = n.offset;
-                var foundPreviousMap = false; // multi parts scores require keeping track of maps
-                for (var j = allMaps.length - 1; j >= 0; j = j - 1) {
-                    // find the last map with this offset. searches backwards for speed.
-                    var oldMap = allMaps[j];
-                    if (oldMap.offset == currentOffset) {
-                        // found an existing map for this location -- just add element, not all info.
-                        //console.log('found element at offset', currentOffset, 'existing el', 
-                        //        oldMap.elements[0].nameWithOctave, 'new el', n.nameWithOctave);
-                        oldMap.elements.push(n);
-                        foundPreviousMap = true;
-                    }
-                }
-                if (foundPreviousMap == false) {
-                    var map = {};
-                    map.elements = [n];
-                    map.offset = currentOffset;
-                    map.pixelScaling = pixelScaling; // easier to store this for all...
-                    map.x = n.x * pixelScaling;
-                    map.systemIndex = n.systemIndex;
-                    lastSystemIndex = map.systemIndex;
-                    allMaps.push(map);
-                }
-            }
-            var finalStave =  ns.get(-1).activeVexflowNote.stave;                    
-            var finalX = (finalStave.x + finalStave.width) * pixelScaling;
-
-            allMaps.push( {
-                elements: [undefined],
-                offset: ns.get(-1).duration.quarterLength + ns.get(-1).offset,
-                x: finalX,
-                systemIndex: lastSystemIndex,
-            });
-            return allMaps;            
-        };
-        /**
-         *  returns an array of two pixel maps: the previous/current one and the
-            next/current one (i.e., if the offset is exactly the offset of a pixel map
-            the prevNoteMap and nextNoteMap will be the same; similarly if the offset is
-            beyond the end of the score)
-         * @param {number} offset
-         * @param {Array<object>} offsetToPixelMaps
-         * @returns {Array<object>}
-         */
-        var getPixelMapsAtOffset = function(offset, offsetToPixelMaps) {
-            var prevNoteMap = undefined;
-            var nextNoteMap = undefined;
-            for (var i = 0; i < offsetToPixelMaps.length; i++) {
-                thisMap = offsetToPixelMaps[i];
-                if (thisMap.offset <= offset) {
-                    prevNoteMap = thisMap;
-                } 
-                if (thisMap.offset >= offset ) {
-                    nextNoteMap = thisMap;
-                    break;
-                }
-            }
-            if (prevNoteMap === undefined && nextNoteMap === undefined) {
-                var lastNoteMap = offsetToPixelMap[offsetToPixelMap.length - 1];
-                prevNoteMap = lastNoteMap;
-                nextNoteMap = lastNoteMap;
-            } else if (prevNoteMap === undefined) {
-                prevNoteMap = nextNoteMap;
-            } else if (nextNoteMap === undefined) {
-                nextNoteMap = prevNoteMap;
-            }
-            return [prevNoteMap, nextNoteMap];
-        };
-        /**
-         * Uses the stored offsetToPixelMaps to get the pixel X for the offset.
-         * 
-         * @param {number} offset
-         * @param {Array<object>} offsetToPixelMaps
-         * @returns {number}
-         */
-
-        var getXAtOffset = function(offset, offsetToPixelMaps) {
-            // returns the proper 
-            var twoNoteMaps = getPixelMapsAtOffset(offset, offsetToPixelMaps);
-            var prevNoteMap = twoNoteMaps[0];
-            var nextNoteMap = twoNoteMaps[1];
-            var pixelScaling = prevNoteMap.pixelScaling; // could get from either
-            var offsetFromPrev = offset - prevNoteMap.offset;
-            var offsetDistance = nextNoteMap.offset - prevNoteMap.offset;
-            var pixelDistance = nextNoteMap.x - prevNoteMap.x;       
-            if (nextNoteMap.systemIndex != prevNoteMap.systemIndex) {
-                var stave = prevNoteMap.elements[0].activeVexflowNote.stave;                    
-                pixelDistance = (stave.x + stave.width) * pixelScaling - prevNoteMap.x;
-            } 
-            var offsetToPixelScale = 0;
-            if (offsetDistance != 0) {
-                offsetToPixelScale = pixelDistance/offsetDistance;                    
-            } else {
-                offsetToPixelScale = 0;   
-            }
-            var pixelsFromPrev = offsetFromPrev * offsetToPixelScale;
-            var offsetX = prevNoteMap.x + pixelsFromPrev;
-            return offsetX / pixelScaling;
-        };            
-        /**
-         * Uses the stored offsetToPixelMaps to get the systemIndex active at the current time.
-         * 
-         * @param {number} offset
-         * @param {Array<object>} offsetToPixelMaps
-         * @returns {number}
-         */
-        var getSystemIndexAtOffset = function(offset, offsetToPixelMaps) {
-            var twoNoteMaps = getPixelMapsAtOffset(offset, offsetToPixelMaps);
-            var prevNoteMap = twoNoteMaps[0];
-            return prevNoteMap.systemIndex;
-        };
-
-        var tempo = this.tempo;
-        //console.log('tempo' , tempo);
-        var pm = offsetToPixelMaps(this, c);
-        var maxX = pm[pm.length - 1].x;
-        var maxSystemIndex = pm[pm.length -1].systemIndex;
-        var svgDOM = common.makeSVGright('svg', {
-            'height': c.height.toString() +'px',
-            'width': c.width.toString() + 'px',
-            'style': 'position:absolute; top: 0px; left: 0px;',
-        });
-        var startX = pm[0].x;
-        var eachSystemHeight = this.renderOptions.scaleFactor.y * c.height / (maxSystemIndex + 1);
-        var barDOM = common.makeSVGright('rect', {
-            width: 10, 
-            height: eachSystemHeight - 6,  // small fudge for separation
-            x: startX, 
-            y: 3,
-            style: 'fill: rgba(255, 255, 20, .5);stroke:white',    
-        } );
-        barDOM.setAttribute("transform", "scale(" + this.renderOptions.scaleFactor.y  + ")");
+        var scrollPlayer = new streamInteraction.ScrollPlayer(this, c);
+        scrollPlayer.createScrollBar();
         
-        svgDOM.appendChild(barDOM);
-  
-        var canvasParent = $(c).parent()[0];
-        canvasParent.appendChild(svgDOM);
-        scrollInfo = {
-                pm: pm,
-                systemIndex: 0,
-                eachSystemHeight: eachSystemHeight,
-                startTime: new Date().getTime(),
-                tempo: tempo,
-                maxX: maxX,
-                maxSystemIndex: maxSystemIndex,
-                barDOM: barDOM,
-                lastX: 0,
-                lastNoteIndex: -1,
-                lastSystemIndex: 0,
-                svgDOM: svgDOM,
-                canvas: c,
-                canvasParent: canvasParent,
-                storedStream: this,
-                lastTimeout: undefined, // setTimeout
-        };
-        var scrollScore = function (i) {
-            var timeSinceStartInMS = new Date().getTime() - i.startTime;
-            var offset = timeSinceStartInMS/1000 * i.tempo/60;
-            var pm = i.pm;
-            var systemIndex = getSystemIndexAtOffset(offset, pm);
-            
-            if (systemIndex > i.lastSystemIndex) {
-                i.lastX = -100;
-                i.lastSystemIndex = systemIndex;
-                i.barDOM.setAttribute('y', systemIndex * i.eachSystemHeight);
-            }
-            var x = getXAtOffset(offset, pm);
-            x = Math.floor(x);
-            
-            //console.log(x);
-            
-            if (x > i.lastX) {
-                i.barDOM.setAttribute('x', x);
-                i.lastX = x;    
-            }
-            // pm is a pixelMap not a Stream
-            for (var j = 0; j < pm.length; j++) {
-                var pmOff = pm[j].offset;
-                if (j <= i.lastNoteIndex) {
-                    continue;
-                } else if (Math.abs(offset - pmOff) > .1) {
-                    continue;
-                }
-                var elList = pm[j].elements;
-                for (var elIndex = 0; elIndex < elList.length; elIndex++) {
-                    var el = elList[elIndex];
-                    if (el !== undefined && el.playMidi !== undefined) {
-                        el.playMidi(i.tempo);
-                    }
-                }
-                i.lastNoteIndex = j;
-                
-            }
-            //console.log(x, offset);
-            //console.log(barDOM.setAttribute);
-            var advanceTime = 0.05;
-            var newTimeout = undefined;
-            if (x < i.maxX || systemIndex < i.maxSystemIndex ) {
-                newTimeout = setTimeout( function () { scrollScore(i); }, advanceTime * 1000);                  
-                i.lastTimeout = newTimeout;
-            } else {
-                var fauxEvent = undefined;
-                i.storedStream.scrollScoreStop(fauxEvent, i);
-            }
-        };
         this.savedRenderOptionClick = this.renderOptions.events.click;
-        this.renderOptions.events.click = function (e) { scrollInfo.storedStream.scrollScoreStop(e, scrollInfo); };
-        this.setRenderInteraction(canvasParent);
-        scrollScore(scrollInfo); 
+        this.renderOptions.events.click = function (e) { scrollPlayer.stream.scrollScoreStop(e, scrollPlayer); };
+        this.setRenderInteraction(scrollPlayer.canvasParent);
+        scrollPlayer.scrollScore(); 
         if (event !== undefined) {
             event.stopPropagation();
         }
