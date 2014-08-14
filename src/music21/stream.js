@@ -389,6 +389,23 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
         }
         return hasSubStreams;
     };
+    
+    /**
+     * Returns true if any note in the stream has lyrics.
+     * 
+     * @returns {Boolean}
+     */
+    stream.Stream.prototype.hasLyrics = function () {
+        for (var i = 0; i < this.length; i++) {
+            var el = this.elements[i];
+            if (el.lyric !== undefined) {
+                return true;
+            }
+        }        
+        return false;
+    };
+    
+    
     stream.Stream.prototype.getElementsByClass = function (classList) {
         var tempEls = [];
         for (var i = 0; i < this.length; i++ ) {

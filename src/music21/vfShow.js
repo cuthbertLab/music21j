@@ -1,5 +1,18 @@
 define(['vexflowMods', 'music21/common'], function(Vex, common) {
     var vfShow = {}; 
+    
+    vfShow.RenderStack = function () {
+        this.voices = [];
+        this.streams = [];
+        this.textVoices = [];
+    };
+    vfShow.RenderStack.prototype.allTickables = function () {
+        var t = [];
+        t.push.apply(t, this.voices);
+        t.push.apply(t, this.textVoices);
+        return t;
+    };
+    
     /**
      * Renderer is a function that takes a stream, an
      * optional existing canvas element and a DOM
@@ -149,10 +162,7 @@ define(['vexflowMods', 'music21/common'], function(Vex, common) {
                 subStream.renderOptions.rightBarline = 'end';
             }                
             if (this.stacks[i] === undefined) {
-                this.stacks[i] = { 
-                        voices: [],
-                        streams: [],
-                };
+                this.stacks[i] = new vfShow.RenderStack();
             }
             this.prepareMeasure(subStream, this.stacks[i]);
         }
@@ -163,7 +173,7 @@ define(['vexflowMods', 'music21/common'], function(Vex, common) {
      * stacks and ties after calling prepareFlat
      */
     vfShow.Renderer.prototype.prepareArrivedFlat = function (m) {
-        var stack = {voices: [], streams: [] };
+        var stack = new vfShow.RenderStack();
         this.prepareMeasure(m, stack);
         this.stacks[0] = stack;
         this.prepareTies(m);
@@ -200,6 +210,11 @@ define(['vexflowMods', 'music21/common'], function(Vex, common) {
         var voice = this.getVoice(s, stave);
         stack.voices.push(voice);
         stack.streams.push(s);
+        
+        if (s.hasLyrics()) {
+            stack.textVoices.push( this.getLyricVoice(s, stave) );
+        }
+        
         return stave;
     };
 
@@ -228,7 +243,7 @@ define(['vexflowMods', 'music21/common'], function(Vex, common) {
     vfShow.Renderer.prototype.drawMeasureStacks = function () {
         var ctx = this.ctx;
         for (var i = 0; i < this.stacks.length; i++) {
-            var voices = this.stacks[i].voices;
+            var voices = this.stacks[i].allTickables();
             for (var j = 0; j < voices.length; j++ ) {
                 var v = voices[j];
                 v.draw(ctx);
@@ -291,21 +306,39 @@ define(['vexflowMods', 'music21/common'], function(Vex, common) {
         
     };
     
-    
-    vfShow.Renderer.prototype.getVoice = function (m, stave) {
-        if (m === undefined) {
-            m = this.stream;
+    /**
+     * 
+     * @param {music21.stream.Stream} s -- usually a Measure or Voice
+     * @param {Vex.Flow.Stave} stave
+     * @returns {Vex.Flow.Voice}
+     */    
+    vfShow.Renderer.prototype.getVoice = function (s, stave) {
+        if (s === undefined) {
+            s = this.stream;
         }
         
         // gets a group of notes as a voice, but completely unformatted and not drawn.
-        var notes = this.vexflowNotes(m, stave);
-        var voice = this.vexflowVoice(m);
+        var notes = this.vexflowNotes(s, stave);
+        var voice = this.vexflowVoice(s);
         voice.setStave(stave);
         voice.addTickables(notes);
         //console.log(voice.ticksUsed.value(), voice.totalTicks.value());
         return voice;
     };
-    
+
+    /**
+     * 
+     * @param {music21.stream.Stream} s -- usually a Measure or Voice
+     * @param {Vex.Flow.Stave} stave
+     * @returns {Vex.Flow.Voice}
+     */    
+    vfShow.Renderer.prototype.getLyricVoice = function (s, stave) {
+        var textVoice = this.vexflowVoice(s);
+        var lyrics = this.vexflowLyrics(s, stave);
+        textVoice.setStave(stave);
+        textVoice.addTickables(lyrics);
+        return textVoice;
+    };
     
     
     vfShow.Renderer.prototype.formatMeasureStacks = function () {
@@ -326,6 +359,7 @@ define(['vexflowMods', 'music21/common'], function(Vex, common) {
         // formats a group of voices to use the same formatter; returns the formatter
         // if autoBeam is true then it will apply beams for each voice and put them in
         // this.beamGroups;
+        var allTickables = stack.allTickables();
         var voices = stack.voices;
         var measures = stack.streams;
         if (autoBeam === undefined) {
@@ -339,27 +373,27 @@ define(['vexflowMods', 'music21/common'], function(Vex, common) {
             return formatter;
         }
         var maxGlyphStart = 0; // find the stave with the farthest start point -- diff key sig, etc.
-        for (var i = 0; i < voices.length; i++) {             
-            //console.log(voices[i], i);
-            if (voices[i].stave.start_x > maxGlyphStart) {
-                maxGlyphStart = voices[i].stave.start_x;
+        for (var i = 0; i < allTickables.length; i++) {             
+            //console.log(voices[i], voices[i].stave, i);
+            if (allTickables[i].stave.start_x > maxGlyphStart) {
+                maxGlyphStart = allTickables[i].stave.start_x;
             }
         }
-        for (var i = 0; i < voices.length; i++) { 
-            voices[i].stave.start_x = maxGlyphStart; // corrected!
+        for (var i = 0; i < allTickables.length; i++) {             
+            allTickables[i].stave.start_x = maxGlyphStart; // corrected!
         }
         // TODO: should do the same for end_x -- for key sig changes, etc...
         
         var stave = voices[0].stave; // all staves should be same length, so does not matter;
-        formatter.joinVoices(voices);
-        formatter.formatToStave(voices, stave);
+        formatter.joinVoices(allTickables);
+        formatter.formatToStave(allTickables, stave);
         if (autoBeam) {
             for (var i = 0; i < voices.length; i++) {
                 // find beam groups -- n.b. this wipes out stem direction and
                 //      screws up middle line stems -- worth it for now.
                 var voice = voices[i];
                 var beatGroups = [new Vex.Flow.Fraction(2, 8)];
-                if (measures[i].timeSignature !== undefined) {
+                if (measures[i] !== undefined && measures[i].timeSignature !== undefined) {
                     beatGroups = measures[i].timeSignature.vexflowBeatGroups(Vex);
                     //console.log(beatGroups);
                 }
@@ -547,6 +581,40 @@ define(['vexflowMods', 'music21/common'], function(Vex, common) {
         }
         return notes;
     };
+    
+    
+    vfShow.Renderer.prototype.vexflowLyrics = function (s, stave) {
+        if (s === undefined) {
+            s = this.stream;
+        }
+        var font = { 
+            family: "Serif",
+            size: 12,
+            weight: "",
+        };
+        // runs on a flat, gapless, no-overlap stream, returns a list of TextNote objects...
+        var lyricsObjects = [];
+        for (var i = 0; i < s.length; i++) {
+            var el = s.get(i);
+            var text = el.lyric;
+            var d = el.duration.vexflowDuration;
+            if (text == undefined) {
+                text = "";
+            }
+            var t1 = new Vex.Flow.TextNote({
+                text: text,
+                font: font,
+                duration: d,
+            })
+            .setLine(11)
+            .setStave(stave)        
+            .setJustification(Vex.Flow.TextNote.Justification.LEFT);
+            lyricsObjects.push(t1);
+            
+        }
+        return lyricsObjects;
+    };
+    
     vfShow.Renderer.prototype.vexflowVoice = function (s) {
         var vfv;
         var totalLength = s.duration.quarterLength;
@@ -562,10 +630,6 @@ define(['vexflowMods', 'music21/common'], function(Vex, common) {
         vfv = new Vex.Flow.Voice({ num_beats: numSixteenths,
                                     beat_value: beatValue,
                                     resolution: Vex.Flow.RESOLUTION });
-        // fix Vex.Flow bug where small floating point differences (16834 vs. 16833.999999999998) cause errors.
-        vfv.getTotalTicks = function () { return new Vex.Flow.Fraction(Math.round(this.totalTicks.value()), 1); };
-        vfv.getTicksUsed = function () { return new Vex.Flow.Fraction(Math.round(this.ticksUsed.value()), 1); };
-        //console.log('voice item getTotalTicks', vfv.getTotalTicks);
         
         // from vexflow/src/voice.js
         //
