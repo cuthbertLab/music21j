@@ -285,11 +285,12 @@ define(['music21/prebase', 'music21/base', 'music21/pitch', 'music21/beam', 'vex
                 stopTime += 60 * 1 / tempo;
             }
             //console.log(stopTime);
+            //console.log(this.tie);
             if (this.tie === undefined || this.tie.type == 'start') {
             	//console.log(volume);
             	music21.MIDI.noteOn(0, midNum, volume, 0);                              
                 music21.MIDI.noteOff(0, midNum, stopTime);
-            } // else { console.log ('not going to play ', el.nameWithOctave) }
+            }// else { console.log ('not going to play ', this.nameWithOctave); }
         } else if (this.isClassOrSubclass('Chord')) {
             // TODO: Tied Chords.
             for (var j = 0; j < this._noteArray.length; j++) {
