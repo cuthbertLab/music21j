@@ -16,6 +16,7 @@ define(['music21/common','music21/stream', 'jquery'], function(common, stream, $
         this.previousSystemIndex = 0;
         this.eachSystemHeight = 120;
         this.timingMS = 50;
+        this.savedRenderOptionClick = undefined;
         
         this.scrollScore = (function () {
             var timeSinceStartInMS = new Date().getTime() - this.startTime;
@@ -64,7 +65,7 @@ define(['music21/common','music21/stream', 'jquery'], function(common, stream, $
                 this.lastTimeout = newTimeout;
             } else {
                 var fauxEvent = undefined;
-                this.stream.scrollScoreStop(fauxEvent, this);
+                this.stopPlaying(fauxEvent);
             }
         }).bind(this);
     };
@@ -96,6 +97,28 @@ define(['music21/common','music21/stream', 'jquery'], function(common, stream, $
         this.eachSystemHeight = eachSystemHeight;
         return barDOM;
     };
+    streamInteraction.ScrollPlayer.prototype.startPlaying = function () {
+        this.createScrollBar();
+        
+        this.savedRenderOptionClick = this.stream.renderOptions.events.click;
+        this.stream.renderOptions.events.click = (function (e) { this.stopPlaying(e); }).bind(this);
+        this.stream.setRenderInteraction(this.canvasParent);
+        this.scrollScore(); 
+    };
+    streamInteraction.ScrollPlayer.prototype.stopPlaying = function (event) {
+        this.stream.renderOptions.events.click = this.savedRenderOptionClick;
+        this.barDOM.setAttribute('style', 'display:none');
+        // TODO: generalize...
+        this.canvasParent.removeChild(this.svgDOM);
+        if (this.lastTimeout !== undefined) {
+            clearTimeout(this.lastTimeout);
+        }
+        this.stream.setRenderInteraction(this.canvasParent);
+        if (event !== undefined) {
+            event.stopPropagation();
+        }
+    };
+    
 
     /**
      * a PixelMapper is an object that knows how to map offsets to pixels on a flat Stream.
@@ -139,8 +162,6 @@ define(['music21/common','music21/stream', 'jquery'], function(common, stream, $
             var n = ns.get(i);
             this.addNoteToMap(n);
         }
-        console.log(this.maxX);
-        
         // prepare final map.
         var finalStave =  ns.get(-1).activeVexflowNote.stave;                    
         var finalX = (finalStave.x + finalStave.width);
@@ -151,7 +172,6 @@ define(['music21/common','music21/stream', 'jquery'], function(common, stream, $
         lastMap.x = finalX;
         lastMap.systemIndex = this.allMaps[this.allMaps.length - 1].systemIndex;
         this.allMaps.push(lastMap);
-        console.log(this.maxX, finalX);
         return this.allMaps;            
     };     
     
@@ -260,20 +280,13 @@ define(['music21/common','music21/stream', 'jquery'], function(common, stream, $
      * A PixelMap maps one offset to one x location.
      */
     streamInteraction.PixelMap = function (mapper, offset) {
-        this.mapper = mapper; // should be a Weakref...
+        this.pixelScaling = mapper.pixelScaling; // should be a Weakref...
         this.elements = [];
         this.offset = offset; // important
         this._x = undefined;
         this._systemIndex = undefined;
         
         Object.defineProperties(this, {
-            'pixelScaling': {
-               enumerable: true,
-               configurable: false,
-               get: function () { 
-                   return this.mapper.pixelScaling; 
-               },
-            },
             'x': {
                enumerable: true,
                configurable: true,
