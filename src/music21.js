@@ -80,7 +80,6 @@ if ((Object.defineProperties === undefined) && warnBanner) {
     		'vexflowMods': 'ext/vexflowMods',
     		'unpickler': 'ext/jsonpickle/unpickler',
     	},
-    	waitSeconds: 1,
     	shim: {
     		'jquery-ui': {
     			deps: [ 'jquery' ],

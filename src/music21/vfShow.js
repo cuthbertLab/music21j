@@ -584,6 +584,15 @@ define(['vexflowMods', 'music21/common'], function(Vex, common) {
     
     
     vfShow.Renderer.prototype.vexflowLyrics = function (s, stave) {
+        var getTextNote = function (text, font, d) {
+            var t1 = new Vex.Flow.TextNote({
+                text: text,
+                font: font,
+                duration: d,
+            }).setLine(11).setStave(stave).setJustification(Vex.Flow.TextNote.Justification.LEFT);
+            return t1;
+        };
+        
         if (s === undefined) {
             s = this.stream;
         }
@@ -596,20 +605,26 @@ define(['vexflowMods', 'music21/common'], function(Vex, common) {
         var lyricsObjects = [];
         for (var i = 0; i < s.length; i++) {
             var el = s.get(i);
-            var text = el.lyric;
+            var lyricsArray = el.lyrics;
+            var text = undefined;
             var d = el.duration.vexflowDuration;
-            if (text == undefined) {
+            var addConnector = false;
+            if (lyricsArray.length == 0) {
                 text = "";
+            } else {
+                text = lyricsArray[0].text;
+                if (lyricsArray[0].syllabic == 'middle' || lyricsArray[0].syllabic == 'begin') {
+                    addConnector = " " + lyricsArray[0].lyricConnector;
+                    var tempQl = el.duration.quarterLength / 2.0;
+                    d = new music21.duration.Duration(tempQl).vexflowDuration;
+                }
             }
-            var t1 = new Vex.Flow.TextNote({
-                text: text,
-                font: font,
-                duration: d,
-            })
-            .setLine(11)
-            .setStave(stave)        
-            .setJustification(Vex.Flow.TextNote.Justification.LEFT);
+            var t1 = getTextNote(text, font, d);            
             lyricsObjects.push(t1);
+            if (addConnector != false) {
+                var connector = getTextNote(addConnector, font, d);
+                lyricsObjects.push(connector);                
+            }
             
         }
         return lyricsObjects;
