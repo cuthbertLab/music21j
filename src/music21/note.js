@@ -54,10 +54,10 @@ define(['music21/prebase', 'music21/base', 'music21/pitch', 'music21/beam', 'vex
 	                           'up',
 	                           ];
 
-	/* TODO: convert Lyric */
 	note.Lyric = function(text, number, syllabic, applyRaw, identifier) {
 	    prebase.ProtoM21Object.call(this);
 	    this.classes.push('Lyric');
+        this.lyricConnector = "-"; // override to place something else between two notes...
 	    this.text = text || undefined;
 	    this._number = number || 1;
 	    this.syllabic = syllabic || undefined;
@@ -80,11 +80,11 @@ define(['music21/prebase', 'music21/base', 'music21/pitch', 'music21/beam', 'vex
             'rawText': {
                 get: function() {
                     if (this.syllabic == 'begin') {
-                        return this.text + '-';
+                        return this.text + this.lyricConnector;
                     } else if (this.syllabic == 'middle') {
-                        return '-' + this.text + '-';
+                        return this.lyricConnector + this.text + this.lyricConnector;
                     } else if (this.syllabic == 'end') {
-                        return '-' + this.text;
+                        return this.lyricConnector + this.text;
                     } else {
                         return this.text;
                     }
@@ -104,13 +104,13 @@ define(['music21/prebase', 'music21/base', 'music21/pitch', 'music21/beam', 'vex
             this.text = undefined;
             return undefined;
         }
-        if (!applyRaw && (rawText.indexOf('-') == 0) && (rawText.slice(-1) == '-')) {
+        if (!applyRaw && (rawText.indexOf(this.lyricConnector) == 0) && (rawText.slice(-1) == this.lyricConnector)) {
             this.text = rawText.slice(1,-1);
             this.syllabic = 'middle';
-        } else if (!applyRaw && (rawText.indexOf('-') == 0)) {
+        } else if (!applyRaw && (rawText.indexOf(this.lyricConnector) == 0)) {
             this.text = rawText.slice(1);
             this.syllabic = 'end';
-        } else if (!applyRaw && (rawText.slice(-1) == '-')) {
+        } else if (!applyRaw && (rawText.slice(-1) == this.lyricConnector)) {
             this.text = rawText.slice(0, -1);
             this.syllabic = 'begin';
         } else {
