@@ -1,4 +1,14 @@
 @font-face {
+    font-family: "BravuraTextM21j";
+    src: url("fonts/BravuraText.eot");
+    src: url("fonts/BravuraText.svg") format("svg"),
+         url("fonts/BravuraText.woff") format("woff");
+    font-weight: 200;
+    font-style: normal;
+}
+
+
+@font-face {
   font-family: 'Open Sans';
   font-style: normal;
   font-weight: 300;

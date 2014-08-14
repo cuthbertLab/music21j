@@ -217,7 +217,7 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
                 configurable: true,
                 enumerable: true,
 				get: function() {
-					return this.elements.length;
+					return this._elements.length;
 				}
 			},
 			'elements': {
@@ -360,11 +360,24 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
         }
         return this;
     };
-    stream.Stream.prototype.get = function(index) {
+    
+    stream.Stream.prototype.pop = function () {
+        //remove last element;
+        if (this.length > 0) {
+            var el = this.get(-1);
+            this._elementOffsets.pop();
+            this._elements.pop();
+            return el;            
+        } else {
+            return undefined;
+        }
+    };
+    
+    stream.Stream.prototype.get = function (index) {
         // substitute for Python stream __getitem__; supports -1 indexing, etc.
         if (index === undefined) { 
             return undefined;
-        } else if (Math.abs(index) >= this._elements.length) {
+        } else if (Math.abs(index) > this._elements.length) {
             return undefined;
         } else if (index == this._elements.length) {
             return undefined;
@@ -378,6 +391,7 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
             return el;
         }  
     };
+    /*  --- ############# END ELEMENT FUNCTIONS ########## --- */
     
     stream.Stream.prototype.hasSubStreams = function () {
         var hasSubStreams = false;
@@ -711,12 +725,6 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
             };
         }(this); // create new function with this stream as storedThis
         c = this.appendNewCanvas( $innerDiv );
-
-        // remove 0.7 when height is normalized...
-        //var h = $(c).css('height');
-        //h = h.substring(0, h.length - 2);
-        //$(c).css('height', h / 0.7 );
-        
         this.setRenderInteraction( $innerDiv );
         $where.append( $innerDiv );
     };
