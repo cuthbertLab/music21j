@@ -67,8 +67,9 @@ define(['music21/prebase',
         'music21/streamInteraction',
         'music21/tempo',
         'music21/tie',
-        'music21/tinyNotation', 
+        'music21/tinyNotation',
         'music21/vfShow',
+        'music21/widgets',
         ], 
         function() {
 			return music21;
