@@ -15,7 +15,7 @@
             m.elements.pop();
             var c = new music21.chord.Chord(["F4", "A-4", "C5"]);
             c.duration.type = 'eighth';
-            c.lyric = 'hi-';
+            c.lyric = 'hi!';
             m.append(c);
             var mQuarters = s1.get(3);
             var voice1 = new music21.stream.Voice();
@@ -40,7 +40,7 @@
             voice2.append(lastNote);
             mQuarters.insert(0, voice2);
             
-            var s2 = music21.tinyNotation.TinyNotation("4/4 E2 F#4 G8 r trip{G8 F A} G4 E2~ E1 B4 c B A G8 A G F E4 D C1 BB2 C2 D2 C2 BB1 C1");
+            var s2 = music21.tinyNotation.TinyNotation("4/4 E2 F#4 G8 r trip{G8 F A} G4 E2~ E1 B4 c B A G16 A8. G8 F E4 D C1 BB2 C2 D2 C2 BB1 C1");
             var tm = s2.get(-6);
             var lyrics = ['Wel-', '-come', 'to', 'this', 'ly-','-ric!'];
             for (var i = 0; i < lyrics.length; i++) {
