@@ -723,29 +723,10 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
     
     stream.Stream.prototype.scrollScoreStart = function (c, event) {
         var scrollPlayer = new streamInteraction.ScrollPlayer(this, c);
-        scrollPlayer.createScrollBar();
-        
-        this.savedRenderOptionClick = this.renderOptions.events.click;
-        this.renderOptions.events.click = function (e) { scrollPlayer.stream.scrollScoreStop(e, scrollPlayer); };
-        this.setRenderInteraction(scrollPlayer.canvasParent);
-        scrollPlayer.scrollScore(); 
+        scrollPlayer.startPlaying();
         if (event !== undefined) {
             event.stopPropagation();
         }
-    };
-    stream.Stream.prototype.scrollScoreStop = function(event, i) {
-        this.renderOptions.events.click = this.savedRenderOptionClick;
-        i.barDOM.setAttribute('style', 'display:none');
-        // TODO: generalize...
-        i.canvasParent.removeChild(i.svgDOM);
-        if (i.lastTimeout !== undefined) {
-            clearTimeout(i.lastTimeout);
-        }
-        this.setRenderInteraction(i.canvasParent);
-        if (event !== undefined) {
-            event.stopPropagation();
-        }
-        //console.log('should stop', this, i);
     };
     
     stream.Stream.prototype.setRenderInteraction = function (canvasOrDiv) {
