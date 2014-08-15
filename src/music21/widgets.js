@@ -35,6 +35,10 @@ define(['music21/common'], function(common) {
             'default': function (t) {
                 var newN = new music21.note.Note('B4');
                 newN.stemDirection = 'up';
+                if (t.indexOf('rest_') == 0) {
+                    newN = new music21.note.Rest();
+                    t = t.slice('rest_'.length);
+                }
                 newN.duration.type = t;
                 if (this.tieActive) {
                     newN.tie = new music21.tie.Tie('stop');
@@ -95,6 +99,10 @@ define(['music21/common'], function(common) {
             'default': function (t) {
                 var newN = new music21.note.Note('B4');
                 newN.stemDirection = 'up';
+                if (t.indexOf('rest_') == 0) {
+                    newN = new music21.note.Rest();
+                    t = t.slice('rest_'.length);
+                }
                 newN.duration.type = t;
                 if (this.tieActive) {
                     newN.tie = new music21.tie.Tie('stop');
@@ -114,26 +122,30 @@ define(['music21/common'], function(common) {
     };
     
     widgets.RhythmChooser.prototype.valueMappings = {
-        whole: '&#xE1D2;',
-        half: '&#xE1D3;',
-        quarter: '&#xE1D5;',
-        eighth: '&#xE1D7;',
-        '16th': '&#xE1D9;',
-        '32nd': '&#xE1DB;', // BUG in Bravura Text
+        whole: '&#xEB9B;&#xE1D2;',
+        half: '&#xEB9B;&#xE1D3;',
+        quarter: '&#xEB9B;&#xE1D5;',
+        eighth: '&#xEB9B;&#xE1D7;',
+        '16th': '&#xEB9B;&#xE1D9;',
+        '32nd': '&#xEB9B;&#xE1DB;', // BUG in Bravura Text
         addMeasure: '<span style="position: relative; top: -20px">&#xE031</span>',
-        dot: '&middot;',
+        dot: '&#xEB9B;&#xE1E7;',
         undo: '&#x232B;',
         tie: '<span style="position: relative; top: -20px;">&#xE1FD</span>',
+        rest_whole: '&#xE4F4;',
+        rest_half: '&#xE4F5;',
+        rest_quarter: '&#xE4E5;',
+        rest_eighth: '&#xE4E6;',
+        rest_16th: '&#xE4E7;',
+        rest_32nd: '&#xE4E8;',
     };
     widgets.RhythmChooser.prototype.styles = {
-        'undo': 'font-family: serif; font-size: 30pt; top: -22px',
+        'undo': 'font-family: serif; font-size: 30pt; top: -2px;',
     };
             
     widgets.RhythmChooser.prototype.addDiv = function (where) {
         var $where = where;
-        if (where === undefined) {
-            $where = $(document.body);
-        } else if (where.jquery === undefined) {
+        if (where !== undefined && where.jquery === undefined) {
             $where = $(where);
         }
         var $outer = $('<div class="rhythmButtonDiv" style="font-size: 40pt; width: 100%; text-align: center;"/>');
@@ -147,7 +159,9 @@ define(['music21/common'], function(common) {
             $inner.click( (function(value) { this.handleButton(value); }).bind(this, value) );
             $outer.append($inner);
         }
-        $where.append($outer);
+        if (where !== undefined) {
+            $where.append($outer);            
+        }
         return $outer;
     };
     widgets.RhythmChooser.prototype.handleButton = function (t) {

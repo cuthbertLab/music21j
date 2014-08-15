@@ -706,8 +706,21 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
         if (where == undefined) {
             where = 'body';
         }
+        var $where = undefined;
+        if (where.jquery === undefined) {
+            $where = $(where);
+        } else {
+            $where = where;
+            where = $where[0];
+        }
+        var $oldCanvas = undefined;
+        if ($where.prop('tagName') == 'CANVAS') {
+            $oldCanvas = $where;
+        } else {
+            $oldCanvas = $where.children('canvas');
+        }
         canvasBlock = this.createCanvas();
-        $(where + " " + 'canvas').replaceWith(canvasBlock);
+        $oldCanvas.replaceWith(canvasBlock);
         return canvasBlock[0];
     };
     stream.Stream.prototype.renderScrollableCanvas = function (where) {

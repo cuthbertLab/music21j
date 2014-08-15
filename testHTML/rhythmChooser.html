@@ -22,8 +22,12 @@
             s.appendNewCanvas("#candiv");
             
             var rc = new music21.widgets.RhythmChooser(s, "#candiv");
+            for (var i = 0; i < rc.values.length - 2; i++) {
+                rc.values[i] = "rest_" + rc.values[i];
+            }
             rc.values.push('addMeasure');
             rc.values.push('tie');
+            
             rc.autoAddMeasure = false;
             rc.addDiv("#hi");            
         });
