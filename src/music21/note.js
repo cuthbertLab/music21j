@@ -139,7 +139,7 @@ define(['music21/prebase', 'music21/base', 'music21/pitch', 'music21/beam', 'vex
         if (ql != undefined) {
             this.duration.quarterLength = ql;
         }
-
+        this.volume = 60;
 	    this.activeVexflowNote = undefined;
         this.expressions = [];
         this.articulations = [];
@@ -257,7 +257,8 @@ define(['music21/prebase', 'music21/base', 'music21/pitch', 'music21/beam', 'vex
     note.GeneralNote.prototype.playMidi = function (tempo, nextElement) {
         // returns the number of milliseconds to the next element in
         // case that can't be determined otherwise.
-        var volume = 60;
+        var volume = this.volume;
+        if (volume === undefined) { volume = 60; }
         if (this.articulations !== undefined) {
             this.articulations.forEach( function (a) { 
                volume *= a.dynamicScale;
@@ -454,7 +455,9 @@ define(['music21/prebase', 'music21/base', 'music21/pitch', 'music21/beam', 'vex
 	note.Rest.prototype.vexflowNote = function () {
         var keyLine = 'b/4';
         if (this.duration.type == 'whole') {
-            keyLine = 'd/5';
+            if (this.activeSite !== undefined && this.activeSite.renderOptions.staffLines != 1) {
+                keyLine = 'd/5';                
+            }
         }
         if (this.lineShift !== undefined) {
             var p = new music21.pitch.Pitch('B4');
