@@ -585,6 +585,7 @@ define(['vexflowMods', 'music21/common'], function(Vex, common) {
     
     vfShow.Renderer.prototype.vexflowLyrics = function (s, stave) {
         var getTextNote = function (text, font, d) {
+            //console.log(text, font, d);
             var t1 = new Vex.Flow.TextNote({
                 text: text,
                 font: font,
@@ -613,6 +614,9 @@ define(['vexflowMods', 'music21/common'], function(Vex, common) {
                 text = "";
             } else {
                 text = lyricsArray[0].text;
+                if (text === undefined) { 
+                    text = "";
+                }
                 if (lyricsArray[0].syllabic == 'middle' || lyricsArray[0].syllabic == 'begin') {
                     addConnector = " " + lyricsArray[0].lyricConnector;
                     var tempQl = el.duration.quarterLength / 2.0;
