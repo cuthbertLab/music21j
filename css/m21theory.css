@@ -430,5 +430,8 @@ div.viewcode-block:target {
 .unanswered { background-color: #ffffbb; 
               opacity: .7;
 }
+.answered { background-color: #ffff77; 
+              opacity: .7;
+}
 .correct    { background-color: #bbffbb; }
 .incorrect  { background-color: #ffbbbb; }
