@@ -638,7 +638,7 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
         // turns off all currently playing MIDI notes (on any stream) and stops playback.
         this._stopPlaying = true;
         for (var i = 0; i < 127; i++) {
-            music21.MIDI.noteOff(0, midNum, 0);
+            music21.MIDI.noteOff(0, i, 0);
         }
     };
     /** ----------------------------------------------------------------------
@@ -724,7 +724,7 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
         }
         canvasBlock = this.createCanvas();
         $oldCanvas.replaceWith(canvasBlock);
-        return canvasBlock[0];
+        return canvasBlock;
     };
     stream.Stream.prototype.renderScrollableCanvas = function (where) {
         var $where = where;
@@ -1013,22 +1013,10 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
 
     };
     stream.Stream.prototype.getPlayToolbar = function () {
-        var playStreamButton = function (clickedButton) {
-            var playToolbar = $(clickedButton).parent();
-            var siblingCanvas = playToolbar.parent().find("canvas");
-            var s = siblingCanvas[0].storedStream;
-            s.playStream();
-        };
-        var stopStreamButton = function (clickedButton) {
-            var playToolbar = $(clickedButton).parent();
-            var siblingCanvas = playToolbar.parent().find("canvas");
-            var s = siblingCanvas[0].storedStream;
-            s.stopStream();
-        };
         var buttonDiv = $("<div/>").attr('class','playToolbar vexflowToolbar').css('position','absolute').css('top','10px');
         buttonDiv.append( $("<span/>").css('margin-left', '50px'));
-        buttonDiv.append( $("<button>&#9658</button>").click( function () { playStreamButton(this); } ));
-        buttonDiv.append( $("<button>&#9724</button>").click( function () { stopStreamButton(this); } ));
+        buttonDiv.append( $("<button>&#9658</button>").click( (function () { this.playStream(); } ).bind(this) ) );
+        buttonDiv.append( $("<button>&#9724</button>").click( (function () { this.stopPlayStream(); } ).bind(this) ) );
         return buttonDiv;       
     };
     // reflow
@@ -1475,11 +1463,11 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
         return this;
 
     };
-    stream.Score.prototype.stopStream = function () {
+    stream.Score.prototype.stopPlayStream = function () {
         for (var i = 0; i < this.length; i++) {
             var el = this.get(i);
             if (el.isClassOrSubclass('Part')) {
-                el._stopPlaying = true;
+                el.stopPlayStream();
             }
         }
         return this;
