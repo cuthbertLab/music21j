@@ -528,6 +528,9 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
     };
     /*  VexFlow functionality */
     stream.Stream.prototype.renderVexflowOnCanvas = function (canvas) {
+        if (canvas.jquery) {
+            canvas = canvas[0];
+        }
         var vfr = new vfShow.Renderer(this, canvas);
         vfr.render();
         canvas.storedStream = this;
@@ -677,12 +680,12 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
     };
     stream.Stream.prototype.createPlayableCanvas = function (width, height) {
         this.renderOptions.events['click'] = 'play';
-        return this.createCanvas();
+        return this.createCanvas(width, height);
     };
     stream.Stream.prototype.createCanvas = function(width, height) {
-        var newCanvas = this.createNewCanvas(width, height);
-        this.renderVexflowOnCanvas(newCanvas[0]);
-        return newCanvas;    
+        var $newCanvas = this.createNewCanvas(width, height);
+        this.renderVexflowOnCanvas($newCanvas);
+        return $newCanvas;    
     };
     stream.Stream.prototype.appendNewCanvas = function (bodyElement, width, height) {
         if (bodyElement == undefined) {
@@ -772,11 +775,12 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
         }
         // TODO: assumes that canvas has a .storedStream function? can this be done by setting
         // a variable var storedStream = this; and thus get rid of the assumption?
+        playFunc = (function () { this.playStream(); }).bind(this);
         
         $.each(this.renderOptions.events, $.proxy(function (eventType, eventFunction) {
             $canvas.off(eventType);
             if (typeof(eventFunction) == 'string' && eventFunction == 'play') {
-                $canvas.on(eventType, function () { this.storedStream.playStream(); });
+                $canvas.on(eventType, playFunc);
             } else if (typeof(eventFunction) == 'string' && eventType == 'resize' && eventFunction == 'reflow') {
                 this.windowReflowStart($canvas);
             } else if (eventFunction != undefined) {
@@ -951,11 +955,12 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
     stream.Stream.prototype.redrawCanvas = function (canvas) {
         //this.resetRenderOptions(true, true); // recursive, preserveEvents
         //this.setSubstreamRenderOptions();
-        var newCanv = this.createNewCanvas( canvas.width,
+        var $canvas = $(canvas); // works even if canvas is already $jquery
+        var $newCanv = this.createNewCanvas( canvas.width,
                                             canvas.height );
-        this.renderVexflowOnCanvas(newCanv[0]);
-        $(canvas).replaceWith( newCanv );       
-        common.jQueryEventCopy($.event, $(canvas), newCanv); /* copy events -- using custom extension... */
+        this.renderVexflowOnCanvas($newCanv);
+        $canvas.replaceWith( $newCanv );
+        common.jQueryEventCopy($.event, $canvas, $newCanv); /* copy events -- using custom extension... */
         return this;
     };
     
