@@ -2,7 +2,7 @@
  * Modified from sphinxdoc.css of the sphinxdoc theme.
 */
 @import url("m21.css");
-@import url("basic.css");
+/* @import url("basic.css"); */
 
 /* -- page layout ----------------------------------------------------------- */
 
@@ -83,53 +83,25 @@ div.related ul li a:hover {
     border-radius: 2px;
     }
 
-div.sphinxsidebarwrapper {
-    padding: 0;
-    -ms-word-break: break-all;
-    word-break: break-all;
-    /* Non standard for webkit
-     word-break: break-word;
-    */
-    -webkit-hyphens: auto;
-    -moz-hyphens: auto;
-    hyphens: auto;
-    }
-
-div.sphinxsidebar {
-    margin: 0;
-    padding: 0.5em 15px 15px 0;
-    width: 210px;
+div.sidebar {    
+    width: 220px;
     float: right;
+    margin-top: 300px;
     font-size: 0.9em;
     text-align: left;
     }
-
-div.sphinxsidebar h3, div.sphinxsidebar h4 {
-    margin: 1em 0 0.5em 0;
-    font-size: 1em;
-    padding: 0.7em;
-    background-color: #eeeff1;
-    }
-
-div.sphinxsidebar h3 a {
-    color: #2E3436;
-    }
-
-div.sphinxsidebar ul {
-    padding-left: 1.5em;
-    margin-top: 7px;
-    padding: 0;
-    line-height: 150%;
-    color: #586e75;
-    }
-
-div.sphinxsidebar ul ul {
-    margin-left: 20px;
-    }
-
-div.sphinxsidebar input {
-    border: 1px solid #eee8d5;
-    }
+div.sidebarContent {
+    padding: 15px 15px 15px 15px;
+	border: 1px solid #ddb;
+    background-color: #ffe;
+	width: 180px;
+}
+.sidebarTitle {
+    color: black;
+    text-align: center;
+    width: 100%;
+	font-weight: bold;
+}
 
 div.footer {
     background-color: #93a1a1;
@@ -300,138 +272,14 @@ pre a {
     text-decoration: underline;
     }
 
-td.linenos pre {
-    padding: 0.5em 0;
-    }
-
-div.quotebar {
-    background-color: #f8f8f8;
-    max-width: 250px;
-    float: right;
-    padding: 2px 7px;
-    border: 1px solid #ccc;
-    }
-
-div.topic {
-    background-color: #f8f8f8;
-    }
-
-table.docutils {
-    border-collapse: collapse;
-    margin: 0 -0.5em 0 -0.5em;
-    }
-
-table.docutils tr {
-    } 
-
-table.docutils td, table.docutils th {
-    /*padding: 0.2em 0.5em 0.2em 0.5em;*/
-    border-bottom: 1px dotted #eee;
-    padding-top: 0.2em;
-    padding-bottom: 0.2em;
-    }
-
-table.docutils td div p {
-    margin: 0;
-    }
-
-div.admonition {
-    font-size: 0.9em;
-    margin: 1em 0 1em 0;
-    border: 1px solid #eee;
-    background-color: #f7f7f7;
-    padding: 0;
-    -moz-box-shadow: 0px 8px 6px -8px #93a1a1;
-    -webkit-box-shadow: 0px 8px 6px -8px #93a1a1;
-    box-shadow: 0px 8px 6px -8px #93a1a1;
-    }
-
-div.admonition p {
-    margin: 0.5em 1em 0.5em 1em;
-    padding: 0.2em;
-    }
-
-div.admonition pre {
-    margin: 0.4em 1em 0.4em 1em;
-    }
-
-div.admonition p.admonition-title
-{
-    margin: 0;
-    padding: 0.2em 0 0.2em 0.6em;
-    color: white;
-    border-bottom: 1px solid #eee8d5;
-    font-weight: bold;
-    background-color: #268bd2;
-    }
-
-div.warning p.admonition-title,
-div.important p.admonition-title {
-    background-color: #cb4b16;
-    }
-
-div.hint p.admonition-title,
-div.tip p.admonition-title {
-    background-color: #859900;
-    }
-
-div.caution p.admonition-title,
-div.attention p.admonition-title,
-div.danger p.admonition-title,
-div.error p.admonition-title {
-    background-color: #dc322f;
-    }
-
-div.admonition ul, div.admonition ol {
-    margin: 0.1em 0.5em 0.5em 3em;
-    padding: 0;
-    }
-
-div.versioninfo {
-    margin: 1em 0 0 0;
-    border: 1px solid #eee;
-    background-color: #DDEAF0;
-    padding: 8px;
-    line-height: 1.3em;
-    font-size: 0.9em;
-    }
-
-div.viewcode-block:target {
-    background-color: #f4debf;
-    border-top: 1px solid #eee;
-    border-bottom: 1px solid #eee;
-    }
-
-.highlight-python.ipython-result {
-    margin-top: -10px;
-    padding-top: 0px;
-    }
-
-.highlight-python.ipython-result pre {
-    background-color: #FFFFf0;
-    /*border: 1px dashed #aaa;*/
-    color: #304030;
-    font-family: 'Source Code Pro', monospace;
-    font-style: normal;
-    font-size: 0.9em;
-    letter-spacing: 0.015em;
-    line-height: 120%;
-    padding: 0.7em;
-    white-space: pre-wrap;
-    white-space: -moz-pre-wrap;
-    white-space: -pre-wrap;
-    white-space: -o-pre-wrap;
-    word-wrap: break-word;
-    }
-
 .lightInput { border: 1px gray dotted;
               background-color: #ffffcc;
                }
 .unanswered { background-color: #ffffbb; 
-              opacity: .7;
+
 }
-.answered { background-color: #ffff77; 
-              opacity: .7;
+.answered { background-color: #eeeedd; 
+
 }
 .correct    { background-color: #bbffbb; }
 .incorrect  { background-color: #ffbbbb; }

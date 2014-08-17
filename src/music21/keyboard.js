@@ -153,7 +153,9 @@ define(['music21/base', 'music21/pitch', 'music21/common', 'loadMIDI', 'jquery']
        this.keyObjects = {};
        this.svgObj = undefined;
        
-       this.appendKeyboard = function(where, dnnStart, dnnEnd) {
+       
+       // params { hideable: true } 
+       this.appendKeyboard = function(where, dnnStart, dnnEnd, params) {           
            if (typeof dnnStart == 'string') {
                var tempP = new music21.pitch.Pitch(dnnStart);
                dnnStart = tempP.diatonicNoteNum;
@@ -168,8 +170,64 @@ define(['music21/base', 'music21/pitch', 'music21/common', 'loadMIDI', 'jquery']
            } else if (where.jquery !== undefined) {
                where = where[0];
            }
-           svgDOM = this.createSVG(dnnStart, dnnEnd);           
-           where.appendChild(svgDOM);
+           svgDOM = this.createSVG(dnnStart, dnnEnd);
+           
+           // make it so the keyboard can be shown or hidden...
+           if (params && params.hideable) {
+               var $container = $("<div class='keyboardHideableContainer'/>");
+               var bInside = $("<div class='keyboardToggleInside'>↥</div>").css({
+                   display: 'inline-block',
+                   'padding-top': '40px',
+                   'font-size': '40px'
+               });               
+               var b = $("<div/>").css({
+                   display: 'inline-block',
+                   'vertical-align': 'top',
+                   background: 'white',
+               });
+               b.append(bInside);
+               b.data('defaultDisplay', $container.find('.keyboardSVG').css('display'));
+               b.data('state', 'down');
+               b.click( function () { 
+                   var $t = $(this);
+                   var state = $t.data('state'); 
+                   var $parent = $t.parent();
+                   var $k = $parent.find('.keyboardSVG');
+                   var $bInside = $t.find('.keyboardToggleInside');
+                   var $explain = $parent.find('.keyboardExplain');
+                   if (state == 'up') {
+                       $bInside.text('↥');
+                       $bInside.css('padding-top', '40px');
+                       $explain.css('display', 'none');
+                       var dd = $t.data('defaultDisplay');
+                       if (dd === undefined) { 
+                           dd = 'inline';
+                       }                       
+                       $k.css('display', dd);
+                       $t.data('state', 'down');
+                   } else {
+                       $k.css('display', 'none');
+                       $explain.css('display', 'inline-block');
+                       $bInside.text('↧');
+                       $bInside.css('padding-top', '10px');
+                       $t.data('state', 'up');
+                   }
+               });
+               var $explain = $("<div class='keyboardExplain'>Show keyboard</div>")
+               .css({
+                   'display': 'none',
+                   'background-color': 'white',
+                   'padding': '10px 10px 10px 10px',
+                   'font-size': '12pt',
+                       });
+               b.append($explain);
+               $container.append(b);
+               $container[0].appendChild(svgDOM);
+               $(where).append($container);
+
+           } else {
+               where.appendChild(svgDOM);               
+           }
        };
        this.callbacks = {
                click: this.clickhandler,
@@ -217,6 +275,7 @@ define(['music21/base', 'music21/pitch', 'music21/common', 'loadMIDI', 'jquery']
                'xml:space': 'preserve',
                'height': heightString,
                'width': totalWidth.toString() + 'px',
+               'class': 'keyboardSVG',
            });
            var movingPitch = new pitch.Pitch("C4");
            var blackKeys = [];
