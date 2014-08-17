@@ -53,7 +53,7 @@ define(['music21/common'], function(common) {
                 if (this.stream.length > 0) {
                     var lastMeasure = this.stream.get(-1);
                     lastMeasure.pop();
-                    if (lastMeasure.length == 0) {
+                    if (lastMeasure.length == 0 && this.stream.length > 1) {
                         this.stream.pop();
                     }
                 } else { return ; }
