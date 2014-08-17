@@ -148,7 +148,7 @@ define(['music21/common'], function(common) {
         if (where !== undefined && where.jquery === undefined) {
             $where = $(where);
         }
-        var $outer = $('<div class="rhythmButtonDiv" style="font-size: 40pt; width: 100%; text-align: center;"/>');
+        var $outer = $('<div class="rhythmButtonDiv" style="font-size: 40pt; width: 100%; text-align: center; cursor: pointer;"/>');
         for (var i = 0; i < this.values.length; i++) {
             var value = this.values[i];
             var entity = this.valueMappings[value];

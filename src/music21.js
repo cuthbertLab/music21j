@@ -74,13 +74,18 @@ if ((Object.defineProperties === undefined) && warnBanner) {
     require.config({
     	paths: {
     		'jquery': 'ext/jquery/jquery-2.1.1.min',
+    		'attrchange': 'ext/jqueryPlugins/attrchange',
     		'jquery-ui': 'ext/jqueryPlugins/jqueryUI/jquery-ui.min',
     		'vexflow': 'ext/vexflow/vexflow-min',
     		'es6-shim': 'ext/es6-shim',
     		'vexflowMods': 'ext/vexflowMods',
-    		'unpickler': 'ext/jsonpickle/unpickler',
+    		'unpickler': 'ext/jsonpickle/unpickler',    		
     	},
     	shim: {
+    	    'attrchange': {
+    	        deps: [ 'jquery' ],
+    	        exports: 'jQuery.attrchange',
+    	    },
     		'jquery-ui': {
     			deps: [ 'jquery' ],
     			exports: 'jQuery.ui'
@@ -96,6 +101,7 @@ if ((Object.defineProperties === undefined) && warnBanner) {
                       'jquery',
                       'unpickler',
                       'jquery-ui',
+                      'attrchange',
                       'music21/moduleLoader', ];
     if (m21conf.noLoad !== undefined) {
         m21conf.noLoad.forEach(function(val, i, noLoad) {
