@@ -656,6 +656,9 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
         newCanvas = $('<canvas/>'); //.css('border', '1px red solid');
             
         if (width != undefined) {
+            if (typeof width == 'string') {
+                width = common.stripPx(width);
+            }
             newCanvas.attr('width', width);
         } else {
             var computedWidth = this.estimateStaffLength() + this.renderOptions.staffPadding + 0;
@@ -673,8 +676,6 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
                 //console.log('computed Height: ' + computedHeight);
             }
             newCanvas.attr('height', computedHeight * this.renderOptions.scaleFactor.y );
-            // TODO: CUT HEIGHT! -- use VexFlow ctx.scale(0.7, 0.7);
-            // newCanvas.css('height', Math.floor(computedHeight * 0.7).toString() + "px");
         }
         return newCanvas;
     };
@@ -704,7 +705,7 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
         return canvasBlock[0];
     };
     
-    stream.Stream.prototype.replaceCanvas = function (where) {
+    stream.Stream.prototype.replaceCanvas = function (where, preserveCanvasSize) {
         // if called with no where, replaces all the canvases on the page...
         if (where == undefined) {
             where = 'body';
@@ -722,7 +723,20 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
         } else {
             $oldCanvas = $where.children('canvas');
         }
-        canvasBlock = this.createCanvas();
+        // TODO: Max Width!
+        if ($oldCanvas === undefined) {
+            throw ("No canvas defined for replaceCanvas!");
+        }
+        
+        var canvasBlock;
+        if (preserveCanvasSize) {
+            var width = $oldCanvas.width();
+            var height = $oldCanvas.height();
+            canvasBlock = this.createCanvas(width, height);
+        } else {
+            canvasBlock = this.createCanvas();            
+        }        
+        
         $oldCanvas.replaceWith(canvasBlock);
         return canvasBlock;
     };
@@ -1282,7 +1296,8 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
                     elRendOp.displayTimeSignature = true;
                 } else {
                     if (el._clef !== undefined && lastClef !== undefined && el._clef.name != lastClef.name) {
-                        console.log('changing clefs for ', elRendOp.measureIndex, ' from ', lastClef.name, ' to ', el._clef.name);
+                        console.log('changing clefs for ', elRendOp.measureIndex, ' from ', 
+                                lastClef.name, ' to ', el._clef.name);
                         lastClef = el._clef;
                         elRendOp.displayClef = true;
                     } else {
@@ -1310,7 +1325,7 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
                 currentMeasureLeft += elRendOp.width;
                 currentMeasureIndex++;
             }
-        }
+        }        
         return this;
 
     };
@@ -1518,7 +1533,7 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
         var scaledYFromSystemTop = y - systemIndex * systemHeight;
         var partIndex = Math.floor(scaledYFromSystemTop / this.partSpacing);
         var scaledYinPart = scaledYFromSystemTop - partIndex * this.partSpacing;
-        console.log('systemIndex: ' + systemIndex + " partIndex: " + partIndex);
+        //console.log('systemIndex: ' + systemIndex + " partIndex: " + partIndex);
         var rightPart = this.get(partIndex);
         var clickedDiatonicNoteNum = rightPart.diatonicNoteNumFromScaledY(scaledYinPart);
         

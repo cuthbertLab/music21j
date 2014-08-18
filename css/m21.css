@@ -3,13 +3,14 @@
 .btButton {
       font-family: BravuraTextM21j; 
       font-size: 40pt;
-      position:relative; 
-      width: 50px;
-      height: 70px;
-      padding-top: 40px;
+      position:relative;       
+      width: 100px;
+      height: 100px;
+      padding-top: 10px;
       padding-left: 20px;
       padding-right: 20px;
-      border: 1px black dashed;
+      padding-bottom: 10px;
+      border: 2px black dashed;
       background-color: #ffff99;
       text-align: center;
       display: inline-block;
