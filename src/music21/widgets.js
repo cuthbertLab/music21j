@@ -148,14 +148,15 @@ define(['music21/common'], function(common) {
         if (where !== undefined && where.jquery === undefined) {
             $where = $(where);
         }
-        var $outer = $('<div class="rhythmButtonDiv" style="font-size: 40pt; width: 100%; text-align: center; cursor: pointer;"/>');
+        var $outer = $('<div class="rhythmButtonDiv"/>');
         for (var i = 0; i < this.values.length; i++) {
             var value = this.values[i];
             var entity = this.valueMappings[value];
-            var $inner = $('<div class="btButton" m21Type="' + value + '">' + entity + '</div>');
+            var $inner = $('<button class="btButton" m21Type="' + value + '">' + entity + '</button>');
             if (this.styles[value] !== undefined) {
                 $inner.attr('style', this.styles[value]);
             }
+            
             $inner.click( (function(value) { this.handleButton(value); }).bind(this, value) );
             $outer.append($inner);
         }
@@ -172,7 +173,13 @@ define(['music21/common'], function(common) {
         var bh = bhs[t];
         if (bh === undefined) { bh = bhs['default']; }
         bh.apply(this, [t]);
-        this.stream.replaceCanvas(this.canvasDiv);
+        var s = this.stream;
+        
+        // redraw score if Part is part of score...
+        if (s.isClassOrSubclass('Part') && s.activeSite !== undefined) {
+            s = s.activeSite;
+        }
+        s.replaceCanvas(this.canvasDiv);
     };            
     
     // end of define

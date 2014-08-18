@@ -75,6 +75,17 @@ define([], function() {
         }
         return obj1;
     };
+    
+    common.stripPx = function (str) {
+        if (typeof str == 'string') {
+            var pxIndex = str.indexOf('px');
+            str = str.slice(0, pxIndex);
+            return parseInt(str);
+        } else {
+            return str;
+        }
+    };
+    
     /**
      * Logic for copying events from one jQuery object to another.
      *
