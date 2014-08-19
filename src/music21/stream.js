@@ -25,9 +25,9 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
 	    this.displayClef = undefined;
 	    
 	    this._keySignature =  undefined; // a music21.key.KeySignature object
-	    this._timeSignature = undefined; // temp hack -- a string...
+	    this._timeSignature = undefined; // a music21.meter.TimeSignature object
 	    
-	    this.autoBeam = true;
+	    this._autoBeam = undefined;
 	    this.activeVFStave = undefined;
 	    this.renderOptions = new renderOptions.RenderOptions();
 	    this._tempo = undefined;
@@ -167,6 +167,22 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
 				    this._timeSignature = newTimeSignature;
 				}
 			},
+            'autoBeam': {
+                configurable: true,
+                enumerable: true,
+                get: function () {
+                    if (this._autoBeam === undefined && this.activeSite != undefined) {
+                        return this.activeSite.autoBeam;
+                    } else if (this._autoBeam !== undefined) {
+                        return this._autoBeam;
+                    } else {
+                        return true; // default...
+                    }
+                },
+                set: function (ab) {
+                    this._autoBeam = ab;
+                }
+            },
 			'maxSystemWidth': {
                 configurable: true,
                 enumerable: true,
