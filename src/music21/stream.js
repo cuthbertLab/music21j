@@ -603,9 +603,11 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
 
     /* MIDI related routines... */
     
-    stream.Stream.prototype.playStream = function (startNote) {
+    stream.Stream.prototype.playStream = function (params) {
         /*
          */
+        if (params === undefined) { params = {}; }
+        var startNote = params.startNote;
         var currentNote = 0;
         if (startNote !== undefined) {
             currentNote = startNote;
@@ -616,7 +618,7 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
         this._stopPlaying = false;
         var thisStream = this;
         
-        var playNext = function (elements) {
+        var playNext = function (elements, params) {
             if (currentNote < lastNote && !thisStream._stopPlaying) {
                 var el = elements[currentNote];
                 var nextNote = undefined;
@@ -628,10 +630,14 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
                     milliseconds = el.playMidi(tempo, nextNote);                        
                 }
                 currentNote += 1;
-                setTimeout( function () { playNext(elements); }, milliseconds);
+                setTimeout( function () { playNext(elements, params); }, milliseconds);
+            } else {
+                if (params && params.done) {
+                    params.done.call();
+                }
             }
         };
-        playNext(flatEls);
+        playNext(flatEls, params);
     };
     
     stream.Stream.prototype.stopPlayStream = function () {
@@ -1340,7 +1346,10 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
             console.log('this.estimateStreamHeight(): ' + 
                     this.estimateStreamHeight() + " / $(canvas).height(): " + $(canvas).height());
         }
-        var systemPadding = this.renderOptions.systemPadding || this.renderOptions.naiveSystemPadding;
+        var systemPadding = this.renderOptions.systemPadding;
+        if (systemPadding === undefined) {
+            systemPadding =  this.renderOptions.naiveSystemPadding;
+        }
         var systemIndex = Math.floor(y / (this.systemHeight + systemPadding));
         var scaledYRelativeToSystem = y - systemIndex * (this.systemHeight + systemPadding);
         var clickedDiatonicNoteNum = this.diatonicNoteNumFromScaledY(scaledYRelativeToSystem);
@@ -1467,12 +1476,12 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
     };
     
     /* MIDI override */
-    stream.Score.prototype.playStream = function () {
+    stream.Score.prototype.playStream = function (params) {
         // play multiple parts in parallel...
         for (var i = 0; i < this.length; i++) {
             var el = this.get(i);
             if (el.isClassOrSubclass('Part')) {
-                el.playStream();
+                el.playStream(params);
             }
         }
         return this;
