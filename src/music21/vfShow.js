@@ -1,4 +1,4 @@
-define(['vexflowMods', 'music21/common'], function(Vex, common) {
+define(['vexflow', 'music21/common'], function(Vex, common) {
     var vfShow = {}; 
     
     vfShow.RenderStack = function () {
