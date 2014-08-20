@@ -710,10 +710,15 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
         this.renderVexflowOnCanvas($newCanvas);
         return $newCanvas;    
     };
-    stream.Stream.prototype.appendNewCanvas = function (bodyElement, width, height) {
-        if (bodyElement == undefined) {
-            bodyElement = 'body';
+    stream.Stream.prototype.appendNewCanvas = function (appendElement, width, height) {
+        if (appendElement == undefined) {
+            appendElement = 'body';
         };
+        var $appendElement = appendElement;
+        if (appendElement.jquery === undefined) {
+            $appendElement = $(appendElement);
+        }
+        
 //        if (width === undefined && this.renderOptions.maxSystemWidth === undefined) {
 //            var $bodyElement = bodyElement;
 //            if (bodyElement.jquery === undefined) {
@@ -723,7 +728,7 @@ define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow',
 //        };
 //        
         var canvasBlock = this.createCanvas(width, height);
-        $(bodyElement).append(canvasBlock);
+        $appendElement.append(canvasBlock);
         return canvasBlock[0];
     };
     

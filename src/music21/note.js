@@ -219,6 +219,9 @@ define(['music21/prebase', 'music21/base', 'music21/pitch', 'music21/beam', 'vex
         } else if (this.stemDirection === undefined && options.clef !== undefined) {
             this.setStemDirectionFromClef(options.clef);
         }
+        if (music21.debug) {
+            console.log(this.stemDirection);
+        }
         vfn.setStemDirection(this.stemDirection == 'down' ? 
                                 Vex.Flow.StaveNote.STEM_DOWN : 
                                 Vex.Flow.StaveNote.STEM_UP);
