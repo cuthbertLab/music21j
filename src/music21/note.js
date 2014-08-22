@@ -260,6 +260,9 @@ define(['music21/prebase', 'music21/base', 'music21/pitch', 'music21/beam', 'vex
     note.GeneralNote.prototype.playMidi = function (tempo, nextElement) {
         // returns the number of milliseconds to the next element in
         // case that can't be determined otherwise.
+        if (tempo === undefined) {
+            tempo = 120;
+        }
         var volume = this.volume;
         if (volume === undefined) { volume = 60; }
         if (this.articulations !== undefined) {
