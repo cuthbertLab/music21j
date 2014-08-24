@@ -13,7 +13,9 @@
  * 
  */
 
-define(['unpickler'], function (unpickler) {
+define(['jsonpickle'], function (jp) {
+    var unpickler = jp.unpickler;
+    
     var jsonPickle = {};
     jsonPickle.Converter = function () {
         this.debug = true;
@@ -139,7 +141,6 @@ define(['unpickler'], function (unpickler) {
     };
     jsonPickle.Converter.prototype.run = function (jss) {
         var outStruct = unpickler.decode(jss, this.handlers);
-        console.log(outStruct.stream);
         return outStruct.stream;
     };
     if (typeof music21 !== undefined) {

@@ -71,7 +71,7 @@ define(['music21/common'], function() {
         return false;
     };
     
-    if (music21 !== undefined) {
+    if (typeof music21 != "undefined") {
         music21.prebase = prebase;
     }
     return prebase;
