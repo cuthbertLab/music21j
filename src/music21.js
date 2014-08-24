@@ -79,8 +79,13 @@ if ((Object.defineProperties === undefined) && warnBanner) {
     		'vexflow': 'ext/vexflow/vexflow-min',
     		'es6-shim': 'ext/es6-shim',
     		//'vexflowMods': 'ext/vexflowMods',
-    		'unpickler': 'ext/jsonpickle/unpickler',    		
     	},
+    	packages: [
+    	  { name: 'jsonpickle',
+    	    location: 'ext/jsonpickle',
+    	    main: 'main',    	      
+    	  },          	           
+    	],    	
     	shim: {
     	    'attrchange': {
     	        deps: [ 'jquery' ],
@@ -99,7 +104,7 @@ if ((Object.defineProperties === undefined) && warnBanner) {
     var m21modules = ['loadMIDI',
                       'vexflow',
                       'jquery',
-                      'unpickler',
+                      'jsonpickle',
                       'jquery-ui',
                       'attrchange',
                       'music21/moduleLoader', ];
@@ -113,9 +118,7 @@ if ((Object.defineProperties === undefined) && warnBanner) {
     }
     if ( typeof define === "function" && define.amd) {
         define( "music21", m21modules, 
-        		function (midi, vexflow, $, unpick) { 
-            //temp global...
-            unpickler = unpick;
+        		function (midi, vexflow, $, jsonpickle) { 
             
             music21.scriptConfig = m21conf;
             if (midi) {

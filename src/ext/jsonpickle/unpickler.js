@@ -11,30 +11,24 @@
  * 
  */
 
-define(function(require) {
+define(['./util', './handlers', './tags'], function(util, handlers, tags) {    
     var unpickler = {};
     
-    unpickler.decode = function (string, handlers, options) {
+    unpickler.decode = function (string, user_handlers, options) {
         var params = {
           keys: false,
           safe: false,
           reset: true,
           backend: JSON,          
         };
-        unpickler.merge(params, options);
+                
+        util.merge(params, options);                
+
+        var use_handlers = {};
+        util.merge(use_handlers, handlers); // don't screw up default handlers...
+        util.merge(use_handlers, user_handlers);
         
-        // define -- restore; post_restore. Note that if the object has sub objects
-        //   in restore, then they must be restored just to keep the object count valid.
-        var use_handlers = {
-          'fractions.Fraction': {
-              restore: function(obj) {
-                  return obj._numerator / obj._denominator;
-              }
-          },   
-        };
-        unpickler.merge(use_handlers, handlers);
-        
-        // backend does not do anything -- there for
+        // backend does not do anything -- it is there for
         // compat with py-JSON-Pickle        
         if (params.context === undefined) {
             var unpickler_options = {
@@ -53,7 +47,7 @@ define(function(require) {
             keys: false,
             safe: false,
         };
-        unpickler.merge(params, options);
+        util.merge(params, options);
         this.keys = params.keys;
         this.safe = params.safe;
         
@@ -91,7 +85,6 @@ define(function(require) {
     
     unpickler.Unpickler.prototype._restore = function (obj) {
         var has_tag = unpickler.has_tag;
-        var tags = unpickler.tags;
         var restore = undefined;
         
         if (has_tag(obj, tags.ID)) {
@@ -108,9 +101,9 @@ define(function(require) {
             restore = this._restore_tuple.bind(this);            
         } else if (has_tag(obj, tags.SET)) {
             restore = this._restore_set.bind(this);
-        } else if (unpickler.is_list(obj)) {
+        } else if (util.is_list(obj)) {
             restore = this._restore_list.bind(this);
-        } else if (unpickler.is_dictionary(obj)) {
+        } else if (util.is_dictionary(obj)) {
             restore = this._restore_dict.bind(this);
         } else {
             restore = function (obj) { return obj; };
@@ -119,11 +112,11 @@ define(function(require) {
     };
     
     unpickler.Unpickler.prototype._restore_id = function (obj) {
-        return this._objs[obj[unpickler.tags.ID]];
+        return this._objs[obj[tags.ID]];
     };
 
     unpickler.Unpickler.prototype._restore_type = function (obj) {
-        var typeref = unpickler.loadclass(obj[unpickler.tags.TYPE]);
+        var typeref = unpickler.loadclass(obj[tags.TYPE]);
         if (typeref === undefined) {
             return obj;
         } else {
@@ -132,17 +125,20 @@ define(function(require) {
     };
     
     unpickler.Unpickler.prototype._restore_object = function (obj) {
-        var class_name = obj[unpickler.tags.OBJECT];
+        var class_name = obj[tags.OBJECT];
         var handler = this.handlers[class_name];
         if (handler !== undefined && handler.restore !== undefined) {
             var instance = handler.restore(obj);
+            instance[tags.PY_CLASS] = class_name;
             return this._mkref(instance);
         } else {
             var cls = unpickler.loadclass(class_name);
             if (cls === undefined) {
+                obj[tags.PY_CLASS] = class_name;
                 return this._mkref(obj);
             }
             var instance = this._restore_object_instance(obj, cls);
+            instance[tags.PY_CLASS] = class_name;
             if (handler !== undefined && handler.post_restore !== undefined) {
                 return handler.post_restore(instance);
             } else {                
@@ -185,7 +181,7 @@ define(function(require) {
         keys.sort();
         for (var i = 0; i < keys.length; i++) {
             var k = keys[i];
-            if (unpickler.reserved.indexOf(k) != -1) {
+            if (tags.RESERVED.indexOf(k) != -1) {
                 continue;
             }
             var v = obj[k];
@@ -199,15 +195,15 @@ define(function(require) {
             instance[k] = value;
             this._namestack.pop();
         }
-        if (has_tag(obj, unpickler.tags.SEQ)) {
+        if (has_tag(obj, tags.SEQ)) {
             if (instance.push !== undefined) {
-                for (var v in obj[unpickler.tags.SEQ]) {
+                for (var v in obj[tags.SEQ]) {
                     instance.push(this._restore(v));
                 }
             } // no .add ...            
         }
         
-        if (has_tag(obj, unpickler.tags.STATE)) {
+        if (has_tag(obj, tags.STATE)) {
             instance = this._restore_state(obj, instance);
         }
         return instance;
@@ -217,10 +213,10 @@ define(function(require) {
     unpickler.Unpickler.prototype._restore_state = function (obj, instance) {
         // only if the JS object implements __setstate__
         if (instance.__setstate__ !== undefined) {
-            var state = this._restore(obj[unpickler.tags.STATE]);
+            var state = this._restore(obj[tags.STATE]);
             instance.__setstate__(state);
         } else {
-            instance = this._restore(obj[unpickler.tags.STATE]);
+            instance = this._restore(obj[tags.STATE]);
         }
         return instance;
     };
@@ -240,7 +236,7 @@ define(function(require) {
     unpickler.Unpickler.prototype._restore_tuple = function (obj) {
         // JS having no difference between list, tuple, set -- returns Array
         var children = [];
-        var tupleContents = obj[unpickler.tags.TUPLE]; 
+        var tupleContents = obj[tags.TUPLE]; 
         for (var i = 0; i < tupleContents.length; i++) {
             children.push(this._restore(tupleContents[i]));
         }
@@ -249,7 +245,7 @@ define(function(require) {
     unpickler.Unpickler.prototype._restore_set = function (obj) {
         // JS having no difference between list, tuple, set -- returns Array
         var children = [];
-        var setContents = obj[unpickler.tags.SET]; 
+        var setContents = obj[tags.SET]; 
         for (var i = 0; i < setContents.length; i++) {
             children.push(this._restore(setContents[i]));
         }
@@ -257,7 +253,7 @@ define(function(require) {
     };
     unpickler.Unpickler.prototype._restore_dict = function (obj) {
         var data = {};
-        var restore_key = this._restore_key_fn();
+        //var restore_key = this._restore_key_fn();
         var keys = [];
         for (var k in obj) {
             if (obj.hasOwnProperty(k)) {
@@ -280,8 +276,8 @@ define(function(require) {
     unpickler.Unpickler.prototype._restore_key_fn = function () {
         if (this.keys) {
             return function (key) {
-                if (key.indexOf(unpickler.tags.JSON_KEY) == 0) {
-                    key = unpickler.decode(key.slice(unpickler.tags.JSON_KEY.length),
+                if (key.indexOf(tags.JSON_KEY) == 0) {
+                    key = unpickler.decode(key.slice(tags.JSON_KEY.length),
                             this.handlers,
                             {context: this, keys: this.keys, reset: false}
                     );
@@ -303,7 +299,6 @@ define(function(require) {
     
     
     unpickler.getargs = function (obj) {
-        var tags = unpickler.tags;
         var seq_list = obj[tags.SEQ];
         var obj_dict = obj[tags.OBJECT];
         if (seq_list === undefined || obj_dict === undefined) {
@@ -347,41 +342,6 @@ define(function(require) {
         }
     };
     
-    unpickler.tags = {
-        ID: 'py/id',
-        OBJECT: 'py/object',
-        TYPE: 'py/type',
-        REPR: 'py/repr',
-        REF: 'py/ref',
-        TUPLE: 'py/tuple',
-        SET: 'py/set',
-        SEQ: 'py/seq',
-        STATE: 'py/state',
-        JSON_KEY: 'json://',
-    };
-    unpickler.reserved = [unpickler.tags.ID, unpickler.tags.OBJECT, 
-                          unpickler.tags.TYPE, unpickler.tags.REPR, 
-                          unpickler.tags.REF, unpickler.tags.TUPLE, 
-                          unpickler.tags.SET, unpickler.tags.SEQ, 
-                          unpickler.tags.STATE, unpickler.tags.JSON_KEY];
-    
-    
-    unpickler.is_list = function (obj) {
-        return (obj instanceof Array);
-    };
-    unpickler.is_dictionary = function (obj) {
-        return ((typeof obj == 'object') && (obj !== null));
-    };
-    // move to utils -- from Vex.Flow.Merge
-    unpickler.merge = function(destination, source) {
-        if (source !== undefined) {
-            for (var property in source) {
-                destination[property] = source[property];
-            }            
-        }
-        return destination;
-    };
-
     // http://stackoverflow.com/questions/1606797/use-of-apply-with-new-operator-is-this-possible
     unpickler.construct = function (constructor, args) {
         function F() {
@@ -391,5 +351,8 @@ define(function(require) {
         return new F();
     };
     
+    if (jsonpickle !== undefined) {
+        jsonpickle.unpickler = unpickler;
+    }    
     return unpickler;    
 });
