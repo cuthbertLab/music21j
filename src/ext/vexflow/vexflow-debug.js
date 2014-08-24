@@ -26,8 +26,8 @@
  *
  * This library makes use of Simon Tatham's awesome font - Gonville.
  *
- * Build ID: 0xFE@812e99df65f67ae2e7f55333b8363ef89f55c758
- * Build date: 2014-08-20 17:19:16 -0400
+ * Build ID: 0xFE@f2cd0658d08072f81477bc4abc9e0fb718dbab46
+ * Build date: 2014-08-24 03:41:00 -0400
  */
 // [VexFlow](http://vexflow.com) - Copyright (c) Mohit Muthanna 2010.
 //
@@ -295,12 +295,14 @@ Vex.Flow.Fraction = (function() {
       } else {
         if (param1 !== undefined) {
           otherNumerator = param1;
+          if (otherNumerator != Math.round(otherNumerator)) throw new Vex.RERR("Numerator must be an int");
         } else {
           otherNumerator = 0;
         }
 
         if (param2 !== undefined) {
           otherDenominator = param2;
+          if (otherDenominator != Math.round(otherDenominator)) throw new Vex.RERR("Denominator must be an int");
         } else {
           otherDenominator = 1;
         }
@@ -324,12 +326,14 @@ Vex.Flow.Fraction = (function() {
       } else {
         if (param1 !== undefined) {
           otherNumerator = param1;
+          if (otherNumerator != Math.round(otherNumerator)) throw new Vex.RERR("Numerator must be an int");
         } else {
           otherNumerator = 0;
         }
 
         if (param2 !== undefined) {
           otherDenominator = param2;
+          if (otherDenominator != Math.round(otherDenominator)) throw new Vex.RERR("Denominator must be an int");
         } else {
           otherDenominator = 1;
         }
@@ -353,12 +357,14 @@ Vex.Flow.Fraction = (function() {
       } else {
         if (param1 !== undefined) {
           otherNumerator = param1;
+          if (otherNumerator != Math.round(otherNumerator)) throw new Vex.RERR("Numerator must be an int");
         } else {
           otherNumerator = 1;
         }
 
         if (param2 !== undefined) {
           otherDenominator = param2;
+          if (otherDenominator != Math.round(otherDenominator)) throw new Vex.RERR("Denominator must be an int");
         } else {
           otherDenominator = 1;
         }
@@ -377,12 +383,14 @@ Vex.Flow.Fraction = (function() {
       } else {
         if (param1 !== undefined) {
           otherNumerator = param1;
+          if (otherNumerator != Math.round(otherNumerator)) throw new Vex.RERR("Numerator must be an int");
         } else {
           otherNumerator = 1;
         }
 
         if (param2 !== undefined) {
           otherDenominator = param2;
+          if (otherDenominator != Math.round(otherDenominator)) throw new Vex.RERR("Denominator must be an int");
         } else {
           otherDenominator = 1;
         }

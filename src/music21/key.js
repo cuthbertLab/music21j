@@ -7,7 +7,7 @@
  * Based on music21 (=music21p), Copyright (c) 2006–14, Michael Scott Cuthbert and cuthbertLab
  * 
  */
-define(['music21/base', 'music21/pitch', 'music21/interval', 'music21/scale'], 
+define(['./base', './pitch', './interval', './scale'], 
         function(base, pitch, interval, scale) {
 	var key = {};
 	/**

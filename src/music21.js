@@ -82,7 +82,7 @@ if ((Object.defineProperties === undefined) && warnBanner) {
     	},
     	packages: [
     	  { name: 'jsonpickle',
-    	    location: 'ext/jsonpickle',
+    	    location: './ext/jsonpickle',
     	    main: 'main',    	      
     	  },          	           
     	],    	
@@ -101,13 +101,13 @@ if ((Object.defineProperties === undefined) && warnBanner) {
             },
     	}
     });
-    var m21modules = ['loadMIDI',
+    var m21modules = ['./loadMIDI',
                       'vexflow',
                       'jquery',
                       'jsonpickle',
                       'jquery-ui',
                       'attrchange',
-                      'music21/moduleLoader', ];
+                      './music21/moduleLoader', ];
     if (m21conf.noLoad !== undefined) {
         m21conf.noLoad.forEach(function(val, i, noLoad) {
             var mi = m21modules.indexOf(val);

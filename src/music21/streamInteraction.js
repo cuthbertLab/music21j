@@ -1,4 +1,4 @@
-define(['music21/common','music21/stream', 'jquery'], function(common, stream, $) { 
+define(['./common','./stream', 'jquery'], function(common, stream, $) { 
     var streamInteraction = {};
     
     streamInteraction.ScrollPlayer = function (s, c) {

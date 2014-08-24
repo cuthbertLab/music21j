@@ -1,4 +1,4 @@
-define(['vexflow', 'music21/common'], function(Vex, common) {
+define(['vexflow', './common'], function(Vex, common) {
     var vfShow = {}; 
     
     vfShow.RenderStack = function () {
@@ -321,8 +321,8 @@ define(['vexflow', 'music21/common'], function(Vex, common) {
         var notes = this.vexflowNotes(s, stave);
         var voice = this.vexflowVoice(s);
         voice.setStave(stave);
+        
         voice.addTickables(notes);
-        //console.log(voice.ticksUsed.value(), voice.totalTicks.value());
         return voice;
     };
 
@@ -563,7 +563,7 @@ define(['vexflow', 'music21/common'], function(Vex, common) {
                         if (activeTuplet.tupletNormalShow == 'ratio') {
                             vfTuplet.setRatioed(true);
                         }
-                        //console.log(vfn.tickMultiplier);
+                        
                         vfTuplets.push(vfTuplet);
                         activeTupletLength = 0.0;
                         activeTuplet = undefined;
@@ -637,11 +637,14 @@ define(['vexflow', 'music21/common'], function(Vex, common) {
     vfShow.Renderer.prototype.vexflowVoice = function (s) {
         var vfv;
         var totalLength = s.duration.quarterLength;
-        var numSixteenths = totalLength / 0.25;
+        
+        // TODO: BIG FIX: assumes not 7/32, 15/256, etc...
+        var numSixteenths = Math.round(totalLength / 0.25);
+        
         var beatValue = 16;
         if (numSixteenths % 8 == 0) { beatValue = 2; numSixteenths = numSixteenths / 8; }
         else if (numSixteenths % 4 == 0) { beatValue = 4; numSixteenths = numSixteenths / 4; }
-        else if (numSixteenths % 2 == 0) { beatValue = 8; numSixteenths = numSixteenths / 2; }
+        else if (numSixteenths % 2 == 0) { beatValue = 8; numSixteenths = numSixteenths / 2; }        
         //console.log('creating voice');
         if (music21.debug) {
             console.log("New voice, num_beats: " + numSixteenths.toString() + " beat_value: " + beatValue.toString());

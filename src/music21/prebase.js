@@ -3,7 +3,7 @@
  *  Stream.elements should inherit
  */
 
-define(['music21/common'], function() {
+define(['./common'], function() {
     var prebase = {};
     /*   class for pseudo m21 objects to inherit from */
     prebase.ProtoM21Object = function () {

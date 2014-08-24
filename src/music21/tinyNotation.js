@@ -6,7 +6,7 @@
  * Based on music21 (=music21p), Copyright (c) 2006–14, Michael Scott Cuthbert and cuthbertLab
  * 
  */
-define(['music21/base', 'music21/clef', 'music21/duration', 'music21/pitch','music21/note', 'music21/meter', 'music21/stream', 'music21/tie'], 
+define(['./base', './clef', './duration', './pitch','./note', './meter', './stream', './tie'], 
         function(base, clef, duration, pitch, note, meter, stream, tie) {
 	var tinyNotation = {};
 	tinyNotation.regularExpressions = {  

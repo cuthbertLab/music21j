@@ -8,7 +8,7 @@
  */
 
 
-define(['music21/prebase', 'music21/base', 'music21/pitch', 'music21/beam', 'vexflow'], 
+define(['./prebase', './base', './pitch', './beam', 'vexflow'], 
         /**
          * Module for note classes
          * 

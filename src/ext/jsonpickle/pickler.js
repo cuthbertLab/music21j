@@ -140,7 +140,7 @@ define(['./util', './handlers', './tags'], function(util, handlers, tags) {
         }
         if (util.is_list(obj)) {
             if (this._mkref(obj)) {
-                return this.list_recurse;
+                return this._list_recurse;
             } else {
                 this._push();
                 return this._getref;
@@ -148,7 +148,7 @@ define(['./util', './handlers', './tags'], function(util, handlers, tags) {
         }
         if (util.is_tuple(obj)) {
             if (this.unpicklable == false) {
-                return this.list_recurse;
+                return this._list_recurse;
             } else {
                 return function (obj) {
                     var obj_wrap = {};
@@ -158,7 +158,7 @@ define(['./util', './handlers', './tags'], function(util, handlers, tags) {
         }
         if (util.is_set(obj)) {
             if (this.unpicklable == false) {
-                return this.list_recurse;
+                return this._list_recurse;
             } else {
                 return function (obj) {
                     var obj_wrap = {};
@@ -176,6 +176,7 @@ define(['./util', './handlers', './tags'], function(util, handlers, tags) {
         if (util.is_object(obj)) {
             return this._ref_obj_instance;
         }
+        console.log('no flattener for ', obj, ' of type ', typeof obj);
         return undefined;
     };
 
