@@ -1,4 +1,4 @@
-define(['music21/common'], function(common) {
+define(['./common'], function(common) {
     var widgets = {};
     widgets.RhythmChooser = function (s, c) {
         this.stream = s;

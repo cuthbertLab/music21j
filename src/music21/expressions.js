@@ -1,4 +1,4 @@
-define(['music21/base'], function(base) {
+define(['./base'], function(base) {
    //
    // expressions can be note attached or floating...
     

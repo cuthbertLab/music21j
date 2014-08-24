@@ -16,7 +16,7 @@ define(function () {
                           tags.REF, tags.TUPLE, 
                           tags.SET, tags.SEQ, 
                           tags.STATE, tags.JSON_KEY];
-    tags.PY_CLASS = '_jsonpickle_class_name';
+    tags.PY_CLASS = '_py_class';
     
     if (typeof jsonpickle != 'undefined') {
         jsonpickle.tags = tags;

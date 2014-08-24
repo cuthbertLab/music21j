@@ -11,7 +11,7 @@
  * 
  */
 
-define(['music21/miditools'], function(miditools) {
+define(['./miditools'], function(miditools) {
 	var jazzMidi = {};
 	jazzMidi.storedPlugin = undefined;
 	jazzMidi.selectedInterface = undefined; // not the same as "" etc. uses last selected interface by default.

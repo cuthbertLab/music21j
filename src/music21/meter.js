@@ -7,7 +7,7 @@
  * Based on music21 (=music21p), Copyright (c) 2006–14, Michael Scott Cuthbert and cuthbertLab
  * 
  */
-define(['music21/base', 'music21/duration'], function(base, duration) {
+define(['./base', './duration'], function(base, duration) {
     var meter = {};
     
     meter.TimeSignature = function (meterString) {

@@ -18,7 +18,7 @@
 // k.whiteKeyWidth = 40; // default 23
 
 
-define(['music21/base', 'music21/pitch', 'music21/common', 'loadMIDI', 'jquery'], 
+define(['./base', './pitch', './common', 'loadMIDI', 'jquery'], 
         function(base, pitch, common, MIDI, $) {
     var keyboard = {};
     

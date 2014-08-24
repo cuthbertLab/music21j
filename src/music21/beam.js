@@ -8,7 +8,7 @@
  */
 
 
-define(['music21/prebase', 'music21/duration'],
+define(['./prebase', './duration'],
         
         /**
          * @exports music21/beam

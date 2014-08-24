@@ -8,7 +8,7 @@
  */
 
 
-define(['music21/note', 'vexflow'], 
+define(['./note', 'vexflow'], 
         /**
          * @exports music21/chord
          */

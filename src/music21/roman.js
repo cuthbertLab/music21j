@@ -7,7 +7,7 @@
  * 
  */
 
-define(['music21/chord', 'music21/key', 'music21/pitch', 'music21/interval'], 
+define(['./chord', './key', './pitch', './interval'], 
         function(chord, key, pitch, interval) {
 	var roman = {};
 

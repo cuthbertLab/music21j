@@ -7,7 +7,7 @@
  * 
  */
 
-define(['music21/prebase', 'music21/pitch'], 
+define(['./prebase', './pitch'], 
         function(prebase, pitch) {
 	var interval = {};
 

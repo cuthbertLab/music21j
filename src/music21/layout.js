@@ -1,8 +1,8 @@
 // future -- rewrite of Score and Part to Page, System, SystemPart
 //     not currently used
 
-define(['music21/base','music21/renderOptions','music21/stream',  
-        'music21/common', 'jquery'], 
+define(['./base','./renderOptions','./stream',  
+        './common', 'jquery'], 
         function(base, renderOptions, stream, common, $) {   
     var layout = {};
     layout.makeLayoutFromScore = function (score, containerWidth) {

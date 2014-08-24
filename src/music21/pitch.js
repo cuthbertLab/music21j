@@ -7,7 +7,7 @@
  * 
  */
 
-define(['music21/prebase'], 
+define(['./prebase'], 
         /**
          * pitch module
          * @exports music21/pitch
