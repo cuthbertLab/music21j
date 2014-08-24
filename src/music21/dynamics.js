@@ -9,7 +9,7 @@
  * Based on music21 (=music21p), Copyright (c) 2006–14, Michael Scott Cuthbert and cuthbertLab
  * 
  */
-define(['music21/base'], function(base) {
+define(['./base'], function(base) {
 	//
     // N.B. Firefox completely ignores dyanmics on playback!
 

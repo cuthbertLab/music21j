@@ -10,7 +10,7 @@
  */
 
 
-define(['music21/prebase', 'music21/duration'], 
+define(['./prebase', './duration'], 
         /**
          * module for Music21Objects
          * @exports music21/base

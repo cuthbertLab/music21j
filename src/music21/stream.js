@@ -8,8 +8,8 @@
  * Based on music21 (=music21p), Copyright (c) 2006–14, Michael Scott Cuthbert and cuthbertLab
  * 
  */
-define(['music21/base','music21/renderOptions','music21/clef', 'music21/vfShow', 'music21/duration', 
-        'music21/common', 'music21/meter', 'music21/pitch', 'music21/streamInteraction', 'jquery'], 
+define(['./base','./renderOptions','./clef', './vfShow', './duration', 
+        './common', './meter', './pitch', './streamInteraction', 'jquery'], 
         function(base, renderOptions, clef, vfShow, duration, 
                  common, meter, pitch, streamInteraction, $) {   
     var stream = {};

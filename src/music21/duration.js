@@ -7,7 +7,7 @@
  * 
  */
 
-define(['music21/common', 'music21/prebase', 'jquery'], 
+define(['./common', './prebase', 'jquery'], 
         function(common, prebase, $) {
 
 	var duration = {};
@@ -313,6 +313,29 @@ define(['music21/common', 'music21/prebase', 'jquery'],
             s.appendNewCanvas();
             ok(true, 'quarter note triplets displayed');
             
+            
+            var m6 = new music21.stream.Measure();
+            m6.renderOptions.staffLines = 1;
+            m6.timeSignature = new music21.meter.TimeSignature('2/4');
+            var n6 = new music21.note.Note('B4');
+            n6.duration.quarterLength = 2/3;
+            n6.duration.tuplets[0].durationNormal.type = 'eighth';
+            n6.duration.tuplets[0].tupletNormalShow = 'ratio';
+            
+            var n7 = new music21.note.Note('B4');
+            n7.duration.quarterLength = 1/3;
+            n7.duration.tuplets[0].tupletNormalShow = 'ratio';
+
+            m6.append(n6);
+            m6.append(n7);
+            m6.append(n7.clone());
+            var n6clone = n6.clone();
+            m6.append(n6clone);
+            m6.appendNewCanvas();
+            ok(true, 'tuplets beginning with different type than original');
+            equal(n6.duration.tuplets[0] !== n6clone.duration.tuplets[0], true, 'tuplet should not be the same object after clone');
+	    });
+        test( "music21.duration.Tuplet multiple parts", function () { 
             var s2 = new music21.stream.Measure();
             s2.timeSignature = new music21.meter.TimeSignature('3/2');
             var na1 = new music21.note.Note('F4');
@@ -345,35 +368,13 @@ define(['music21/common', 'music21/prebase', 'jquery'],
             var p2 = new music21.stream.Part();
             p2.append(m4);
             p2.append(m5);
-	    
+        
             var sc = new music21.stream.Score();
             sc.insert(0, p);
             sc.insert(0, p2);
             sc.appendNewCanvas();
-            ok(true, '5:4 tuplets in 3/2 with multiple parts');
-            
-            
-            var m6 = new music21.stream.Measure();
-            m6.renderOptions.staffLines = 1;
-            m6.timeSignature = new music21.meter.TimeSignature('2/4');
-            var n6 = new music21.note.Note('B4');
-            n6.duration.quarterLength = 2/3;
-            n6.duration.tuplets[0].durationNormal.type = 'eighth';
-            n6.duration.tuplets[0].tupletNormalShow = 'ratio';
-            
-            var n7 = new music21.note.Note('B4');
-            n7.duration.quarterLength = 1/3;
-            n7.duration.tuplets[0].tupletNormalShow = 'ratio';
-
-            m6.append(n6);
-            m6.append(n7);
-            m6.append(n7.clone());
-            var n6clone = n6.clone();
-            m6.append(n6clone);
-            m6.appendNewCanvas();
-            ok(true, 'tuplets beginning with different type than original');
-            equal(n6.duration.tuplets[0] !== n6clone.duration.tuplets[0], true, 'tuplet should not be the same object after clone');
-	    });
+            ok(true, '5:4 tuplets in 3/2 with multiple parts');            
+        });
 	};
 	
 	// end of define

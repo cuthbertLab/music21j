@@ -8,7 +8,7 @@
  * Based on music21 (=music21p), Copyright (c) 2006–14, Michael Scott Cuthbert and cuthbertLab
  * 
  */
-define(['music21/pitch', 'music21/interval'], 
+define(['./pitch', './interval'], 
         function(pitch, interval) {
 	var scale = {};
 

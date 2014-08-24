@@ -12,7 +12,7 @@
  * @author Michael Scott Cuthbert
  */
 
-define(['jquery', 'music21/note', 'music21/chord'], function($, note, chord) {
+define(['jquery', './note', './chord'], function($, note, chord) {
     /**
      * @exports music21/miditools
      */

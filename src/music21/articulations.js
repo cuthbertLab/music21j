@@ -1,4 +1,4 @@
-define(['music21/prebase'], 
+define(['./prebase'], 
         function(prebase) {
    var articulations = {};
 
