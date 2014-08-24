@@ -1,14 +1,21 @@
 /**
  * music21j -- Javascript reimplementation of Core music21p features.  
- * music21/jsonPickle -- Conversion from music21p jsonpickle streams
+ * music21/fromPython -- Conversion from music21p jsonpickle streams
  *
  * Copyright (c) 2013-14, Michael Scott Cuthbert and cuthbertLab
  * Based on music21 (=music21p), Copyright (c) 2006–14, Michael Scott Cuthbert and cuthbertLab
  * 
  * usage:
  * 
- * jpc = new music21.jsonPickle.Converter();
- * s = jpc.run(stringRepresentingM21JsonPickle);
+ * in python:
+ * 
+ * s = corpus.parse('bwv66.6')
+ * stringRepresentingM21JsonPickle = s.freezeStream('jsonpickle')
+ * 
+ * in js:
+ * 
+ * pyConv = new music21.fromPython.Converter();
+ * s = pyConv.run(stringRepresentingM21JsonPickle);
  * 
  * 
  */
@@ -16,8 +23,8 @@
 define(['jsonpickle'], function (jp) {
     var unpickler = jp.unpickler;
     
-    var jsonPickle = {};
-    jsonPickle.Converter = function () {
+    var fromPython = {};
+    fromPython.Converter = function () {
         this.debug = true;
         this.knownUnparsables = [
             'music21.spanner.Line',
@@ -139,12 +146,13 @@ define(['jsonpickle'], function (jp) {
         this.lastTimeSignature = undefined;
 
     };
-    jsonPickle.Converter.prototype.run = function (jss) {
+    fromPython.Converter.prototype.run = function (jss) {
         var outStruct = unpickler.decode(jss, this.handlers);
         return outStruct.stream;
     };
     if (typeof music21 !== undefined) {
-        music21.jsonPickle = jsonPickle;
+        music21.fromPython = fromPython;
+        music21.jsonPickle = fromPython;  // TODO: Remove after Jan 1, 2015 -- old interface...
     }
-    return jsonPickle;
+    return fromPython;
 });
