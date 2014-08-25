@@ -9,7 +9,7 @@
         var k = ""; // will become keyboard.Keyboard object        
         
         require(['music21'], function () { 
-          
+            console.log(music21.common.urlParam('seed'));
             var s1 = music21.tinyNotation.TinyNotation("4/4 c2 d#4 e8 f g4 r8 B c4~ c16 d32 e f g a b c'1 b4 a g f e8 f e d c4 B c1 d2 c2 B2 c2 d1 c1");
             var m = s1.get(0);
             m.elements.pop();
