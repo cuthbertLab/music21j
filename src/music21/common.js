@@ -76,6 +76,7 @@ define([], function() {
         return obj1;
     };
     
+    /* from "400px" to 400 */
     common.stripPx = function (str) {
         if (typeof str == 'string') {
             var pxIndex = str.indexOf('px');
@@ -85,6 +86,14 @@ define([], function() {
             return str;
         }
     };
+    
+    common.urlParam = function (name) {
+            name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+            var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+                results = regex.exec(location.search);
+            return results == null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+    };
+    
     
     /**
      * Logic for copying events from one jQuery object to another.
