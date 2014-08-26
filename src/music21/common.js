@@ -119,7 +119,39 @@ define([], function() {
                     jQuery.event.add(eventObj, type, events[type][handler], events[type][handler].data);
         });
     };
-    
+//    common.walk = function (obj, callback, callList, seen, numSeen) {
+//        if (depth == undefined) {
+//            depth = 0;
+//        }
+//        if (depth > 20) {
+//            throw "max depth reached";
+//        }
+//        if (callList === undefined) {
+//            callList = [];
+//        }
+//        if (seen === undefined) {
+//            seen = new Set();
+//        }
+//        var next, item;
+//        for (item in obj) {
+//            if (obj.hasOwnProperty(item)) {
+//                next = obj[item];
+//                var nextCallList = []
+//                nextCallList.push.apply(callList);
+//                nextCallList.push(item);
+//                if (callback !== undefined) {
+//                    callback.call(this, item, next, nextCallList);
+//                }
+//                if (typeof next =='object' && next != null) {
+//                    if (seen.has(next) == false) {
+//                        seen.add(next);
+//                        common.walk(next, callback, nextCallList, seen, depth+1);
+//                    }
+//                }
+//            }
+//        }
+//    };
+
     // end of define
     if (typeof(music21) != "undefined") {
         music21.common = common;
