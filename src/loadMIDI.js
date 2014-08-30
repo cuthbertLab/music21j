@@ -1,8 +1,8 @@
 if ( typeof define === "function" && define.amd) {
     require.config({
-        paths: {'MIDI': 'ext/midijs/build/MIDI',
-            'Base64': 'ext/midijs/inc/Base64',             
-          'base64binary': 'ext/midijs/inc/base64binary',
+        paths: {'MIDI':         'ext/midijs/build/MIDI',
+                'Base64':       'ext/midijs/inc/Base64',             
+                'base64binary': 'ext/midijs/inc/base64binary',
         },
     });
     var DEBUG = false;
@@ -90,71 +90,3 @@ if ( typeof define === "function" && define.amd) {
         
     });
 }
-
-//                    '../ext/require/order!MIDI/LoadPlugin',
-//                    '../ext/require/order!MIDI/Plugin',
-//                    '../ext/require/order!MIDI/Player',
-//                    '../ext/require/order!Window/DOMLoader.XMLHttp',
-//                    '../ext/require/order!Window/DOMLoader.script',                        
-//                    '../ext/require/order!Base64',
-//                    '../ext/require/order!base64binary',
-//                    'jquery'], 
-//                   function(audiodetect, loadplugin, plugin, player) {
-
-
-//if ( typeof define === "function" && define.amd) {
-//    require.config({
-//        paths: {
-//            'MIDI/AudioDetect': 'ext/midijs/js/MIDI/AudioDetect',
-//            'MIDI/LoadPlugin': 'ext/midijs/js/MIDI/LoadPlugin',
-//            'MIDI/Plugin': 'ext/midijs/js/MIDI/Plugin',
-//            'MIDI/Player': 'ext/midijs/js/MIDI/Player',
-//            'Window/DOMLoader.XMLHttp': 'ext/midijs/js/Window/DOMLoader.XMLHttp',
-//            'Window/DOMLoader.script': 'ext/midijs/js/Window/DOMLoader.script',            
-//            'Base64': 'ext/midijs/inc/Base64',            
-//            'base64binary': 'ext/midijs/inc/base64binary',
-//        },
-//        shim: {
-//            'MIDI/AudioDetect': { exports: 'audiodetect' },
-//            'MIDI/LoadPlugin': { exports: 'loadplugin' },
-//            'MIDI/Plugin': { exports: 'plugin' },
-//            'MIDI/Player': { exports: 'player' }
-//        }
-//    });
-//    
-//    define(['../ext/require/order!MIDI/AudioDetect',
-//            '../ext/require/order!MIDI/LoadPlugin',
-//            '../ext/require/order!MIDI/Plugin',
-//            '../ext/require/order!MIDI/Player',
-//            '../ext/require/order!Window/DOMLoader.XMLHttp',
-//            '../ext/require/order!Window/DOMLoader.script',                        
-//            '../ext/require/order!Base64',
-//            '../ext/require/order!base64binary',
-//            'jquery'], 
-//           function(audiodetect, loadplugin, plugin, player) {
-//                console.log(audiodetect);
-//                console.log(loadplugin);
-//                console.log(plugin);
-//                console.log(player);
-//                var midi = {};
-//                for(var x in audiodetect) {
-//                    midi[x] = audiodetect[x];
-//                }
-//                for(var x in plugin) {
-//                    midi[x] = plugin[x];
-//                }
-//                for(var x in loadplugin) {
-//                    midi[x] = loadplugin[x];
-//                }
-//                for(var x in player) {
-//                    midi[x] = player[x];
-//                }
-//                console.log("MIDI:");
-//                console.log(midi);
-//                
-//                $(document).ready( function() {
-//	                    midi.audioDetect(function(){return true;} );
-//	            });
-//				return midi;
-//	});
-//}
