@@ -132,7 +132,8 @@ if ((Object.defineProperties === undefined) && warnBanner) {
             if (music21.MIDI) {
                 if ((music21.scriptConfig.loadSoundfont === undefined) ||
                         (music21.scriptConfig.loadSoundfont != false)) {
-                   music21.MIDI.loadSoundfont('acoustic_grand_piano', function() {});
+//                   music21.MIDI.loadSoundfont('clarinet');
+                   music21.MIDI.loadSoundfont('acoustic_grand_piano');
                 } else {
                     console.log('skipping loading sound font');
                 }

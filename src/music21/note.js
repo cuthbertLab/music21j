@@ -171,6 +171,22 @@ define(['./prebase', './base', './pitch', './beam', 'vexflow'],
                 },
                 enumerable: true,
             },
+            'midiVolume': {
+                enumerable: true,
+                get: function() {
+                    var volume = this.volume;
+                    if (volume === undefined) { volume = 60; }
+                    if (this.articulations !== undefined) {
+                        this.articulations.forEach( function (a) { 
+                           volume *= a.dynamicScale;
+                           if (volume > 127) { volume = 127; }
+                           else if (isNaN(volume)) { volume = 60; }
+                        });
+                    }
+                    volume = Math.floor(volume);
+                    return volume; 
+                }
+            }
             
         });
         
@@ -257,22 +273,23 @@ define(['./prebase', './base', './pitch', './beam', 'vexflow'],
      * @param {(base.Music21Object|undefined)} nextElement - for ties...
      * @returns {Number} - delay time in milliseconds until the next element (may be ignored)
      */
-    note.GeneralNote.prototype.playMidi = function (tempo, nextElement) {
+    note.GeneralNote.prototype.playMidi = function (tempo, nextElement, options) {
         // returns the number of milliseconds to the next element in
         // case that can't be determined otherwise.
         if (tempo === undefined) {
             tempo = 120;
         }
-        var volume = this.volume;
-        if (volume === undefined) { volume = 60; }
-        if (this.articulations !== undefined) {
-            this.articulations.forEach( function (a) { 
-               volume *= a.dynamicScale;
-               if (volume > 127) { volume = 127; }
-               else if (isNaN(volume)) { volume = 60; }
-            });
+        if (options === undefined) {
+            options = { instrument: this.activeSite.instrument };
         }
-        volume = Math.floor(volume);
+        
+        var volume = this.midiVolume;
+        var channel = 0;
+        if (options !== undefined && options.instrument !== undefined) {
+            channel = options.instrument.midiChannel;
+        } 
+        
+        
         var milliseconds = 60 * 1000 / tempo;
         var ql = this.duration.quarterLength;
         milliseconds = 60 * ql * 1000 / tempo;
@@ -295,15 +312,15 @@ define(['./prebase', './base', './pitch', './beam', 'vexflow'],
             //console.log(this.tie);
             if (this.tie === undefined || this.tie.type == 'start') {
             	//console.log(volume);
-            	music21.MIDI.noteOn(0, midNum, volume, 0);                              
-                music21.MIDI.noteOff(0, midNum, stopTime);
+            	music21.MIDI.noteOn(channel, midNum, volume, 0);                              
+                music21.MIDI.noteOff(channel, midNum, stopTime);
             }// else { console.log ('not going to play ', this.nameWithOctave); }
         } else if (this.isClassOrSubclass('Chord')) {
             // TODO: Tied Chords.
             for (var j = 0; j < this._noteArray.length; j++) {
                 var midNum = this._noteArray[j].pitch.midi;
-                music21.MIDI.noteOn(0, midNum, volume, 0);                      
-                music21.MIDI.noteOff(0, midNum, milliseconds/1000);                     
+                music21.MIDI.noteOn(channel, midNum, volume, 0);                      
+                music21.MIDI.noteOff(channel, midNum, milliseconds/1000);                     
             }
         } // it's a note.Rest -- do nothing -- milliseconds takes care of it...
         

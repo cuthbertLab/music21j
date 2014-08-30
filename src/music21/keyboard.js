@@ -244,9 +244,9 @@ define(['./base', './pitch', './common', 'loadMIDI', 'jquery'],
                fillColor = 'yellow';    
            }
            keyRect.setAttribute("style", "fill:" + fillColor + ";stroke:black");
-           MIDI.loadSoundfont('acoustic_grand_piano', function() {
-               MIDI.noteOn(0, id, 100, 0);
-               MIDI.noteOff(0, id, 500);
+           MIDI.loadSoundfont('acoustic_grand_piano', function(i) {
+               MIDI.noteOn(i.channel, id, 100, 0);
+               MIDI.noteOff(i.channel, id, 500);
            });
            setTimeout(function() { 
                keyRect.setAttribute("style", storedStyle);

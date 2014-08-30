@@ -1,12 +1,25 @@
 define([], function() {
     var common = {};    
     
-    common.merge = function (destination, source) {
+    common.merge = function MergeRecursive(destination, source) {
         //concept borrowed from Vex.Flow.Merge, though source can be undefined;
-        if (source !== undefined) {
-            for (var property in source) {
-                destination[property] = source[property];
-            }            
+        // http://stackoverflow.com/questions/171251/how-can-i-merge-properties-of-two-javascript-objects-dynamically
+        // recursive parts used in .clone()
+        if (source === undefined || source === null) {
+            return destination;
+        }
+        for (var p in source) {
+          try {
+            // Property in destination object set; update its value.
+            if ( source[p].constructor == Object ) {
+                destination[p] = MergeRecursive(destination[p], source[p]);
+            } else {
+                destination[p] = source[p];
+            }
+          } catch(e) {
+            // Property in destination object not set; create it and set its value.
+              destination[p] = source[p];
+          }
         }
         return destination;
     };
@@ -56,24 +69,6 @@ define([], function() {
             }
         }
         return undefined;
-    };
-    // used in .clone()
-    common.mergeObjectProperties = function MergeRecursive(obj1, obj2) {
-        // http://stackoverflow.com/questions/171251/how-can-i-merge-properties-of-two-javascript-objects-dynamically
-        for (var p in obj2) {
-          try {
-            // Property in destination object set; update its value.
-            if ( obj2[p].constructor==Object ) {
-              obj1[p] = MergeRecursive(obj1[p], obj2[p]);
-            } else {
-              obj1[p] = obj2[p];
-            }
-          } catch(e) {
-            // Property in destination object not set; create it and set its value.
-            obj1[p] = obj2[p];
-          }
-        }
-        return obj1;
     };
     
     /* from "400px" to 400 */

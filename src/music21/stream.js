@@ -26,6 +26,7 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
 	    
 	    this._keySignature =  undefined; // a music21.key.KeySignature object
 	    this._timeSignature = undefined; // a music21.meter.TimeSignature object
+	    this._instrument = undefined;
 	    
 	    this._autoBeam = undefined;
 	    this.activeVFStave = undefined;
@@ -120,6 +121,23 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
 					this._tempo = newTempo;
 				}
 			},
+            'instrument': {
+                configurable: true,
+                enumerable: true,
+                get: function () {
+                    if (this._instrument == undefined && this.activeSite != undefined) {
+                        return this.activeSite.instrument;
+                    } else {
+                        return this._instrument;
+                    }
+                },
+                set: function (newInstrument) {
+                    if (typeof newInstrument == 'string') {
+                        newInstrument = new music21.instrument.Instrument(newInstrument);
+                    }
+                    this._instrument = newInstrument;
+                }
+            },
 			'clef': {
                 configurable: true,
                 enumerable: true,
@@ -290,7 +308,7 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
             if (key == 'activeSite') {
                 ret[key] = this[key];
             } else if (key == 'renderOptions') {
-                ret[key] = common.mergeObjectProperties({}, this[key]);
+                ret[key] = common.merge({}, this[key]);
             } else if (deep != true && (key == '_elements' || key == '_elementOffsets')) {
                 ret[key] = this[key].slice(); // shallow copy...
             } else if (deep && (key == '_elements' || key == '_elementOffsets')) {
@@ -619,10 +637,14 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
 
     /* MIDI related routines... */
     
-    stream.Stream.prototype.playStream = function (params) {
+    stream.Stream.prototype.playStream = function (options) {
         /*
          */
-        if (params === undefined) { params = {}; }
+        var params = {
+            instrument: this.instrument,
+            tempo: this.tempo
+        };
+        common.merge(params, options);
         var startNote = params.startNote;
         var currentNote = 0;
         if (startNote !== undefined) {
@@ -630,7 +652,6 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
         }
         var flatEls = this.flat.elements;
         var lastNote = flatEls.length;
-        var tempo = this.tempo;
         this._stopPlaying = false;
         var thisStream = this;
         
@@ -643,7 +664,7 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
                 }
                 var milliseconds = 0;
                 if (el.playMidi !== undefined) {
-                    milliseconds = el.playMidi(tempo, nextNote);                        
+                    milliseconds = el.playMidi(params.tempo, nextNote, params);                        
                 }
                 currentNote += 1;
                 setTimeout( function () { playNext(elements, params); }, milliseconds);
