@@ -15,6 +15,8 @@ define(['./common'], function() {
 
     prebase.ProtoM21Object.prototype.clone = function () {
         var ret = new this.constructor();
+        
+        // todo: do Arrays work?
         for(var key in this){ // not that we ONLY copy the keys in Ret -- it's easier that way.
             if (this.hasOwnProperty(key) == false) {
                 continue;
@@ -41,7 +43,7 @@ define(['./common'], function() {
             } else {
                 try {
                     ret[key] = this[key];
-                    //music21.common.mergeObjectProperties(ret[key], this[key]); // necessary?
+                    //music21.common.merge(ret[key], this[key]); // not really necessary? 
                 } catch (e) {
                     if (e instanceof TypeError) {
                         console.log("typeError:", e, key);

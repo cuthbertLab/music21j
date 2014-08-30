@@ -12,7 +12,7 @@ if ( typeof define === "function" && define.amd) {
         }
     };
     var MIDI = {music21defined: true};
-    define(['MIDI','Base64','base64binary','jquery'], function() {
+    define(['music21/instrument', 'MIDI','Base64','base64binary','jquery'], function(instrument) {
         var tempSoundfontUrl = require.toUrl('ext/midijs/soundfont/');
         if (location.protocol != 'http:') {
             tempSoundfontUrl = 'http://web.mit.edu/music21/music21j/src/ext/midijs/soundfont/';
@@ -31,24 +31,30 @@ if ( typeof define === "function" && define.amd) {
                 
                 var isFirefox = typeof InstallTrigger !== 'undefined';   // Firefox 1.0+
                 var isAudioTag = (music21.MIDI.technology == 'HTML Audio Tag');
-                
-                if ((isFirefox == false) && (isAudioTag == false)) {  
-                         // Firefox ignores sound volume! so don't play! as does IE and others using HTML audio tag.
-                    music21.MIDI.noteOn(0, 36, 1, 0);     // if no notes have been played before then
-                    music21.MIDI.noteOff(0, 36, 1, 0.1);  // the second note to be played is always
-                    music21.MIDI.noteOn(0, 48, 1, 0.2);   // very clipped (on Safari at least)
-                    music21.MIDI.noteOff(0, 48, 1, 0.3);  // this helps a lot.
-                    music21.MIDI.noteOn(0, 60, 1, 0.3);   // chrome needs three?
-                    music21.MIDI.noteOff(0, 60, 1, 0.4);                      
+                var instrumentObj = instrument.find(soundfont);
+                if (instrumentObj != undefined) {
+                    music21.MIDI.programChange(instrumentObj.midiChannel, instrumentObj.midiProgram);
+                    console.log('loaded on ', instrumentObj.midiChannel, instrumentObj.midiProgram);
+                    if ((isFirefox == false) && (isAudioTag == false)) {  
+                        var c = instrumentObj.midiChannel;
+                             // Firefox ignores sound volume! so don't play! as does IE and others using HTML audio tag.
+                        music21.MIDI.noteOn(c, 36, 1, 0);     // if no notes have been played before then
+                        music21.MIDI.noteOff(c, 36, 1, 0.1);  // the second note to be played is always
+                        music21.MIDI.noteOn(c, 48, 1, 0.2);   // very clipped (on Safari at least)
+                        music21.MIDI.noteOff(c, 48, 1, 0.3);  // this helps a lot.
+                        music21.MIDI.noteOn(c, 60, 1, 0.3);   // chrome needs three?
+                        music21.MIDI.noteOff(c, 60, 1, 0.4);                      
+                    }
                 }
                 if (callback !== undefined) {
-                    callback();
+                    callback(instrumentObj);
                 }
                 music21.MIDI.loadedSoundfonts[soundfont] = true;                
             };
             if (music21.MIDI.loadedSoundfonts[soundfont] == true) {
                 if (callback !== undefined) {
-                    callback();
+                    var instrumentObj = instrument.find(soundfont);
+                    callback(instrumentObj);
                 }
             } else if (music21.MIDI.loadedSoundfonts[soundfont] == 'loading'){
                 var waitThenCall = undefined;
@@ -56,7 +62,8 @@ if ( typeof define === "function" && define.amd) {
                     if (music21.MIDI.loadedSoundfonts[soundfont] == true) {
                         consolelog('other process has finished loading; calling callback');
                         if (callback !== undefined) {
-                            callback();
+                            var instrumentObj = instrument.find(soundfont);
+                            callback(instrumentObj);
                         }
                     } else {
                         consolelog('waiting for other process load');
