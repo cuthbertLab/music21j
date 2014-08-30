@@ -1,0 +1,94 @@
+<html>
+    <head>
+        <title>MIDI In Chords for Music21j</title>
+        <!-- for MSIE 10 on Windows 8 -->
+        <meta http-equiv="X-UA-Compatible" content="requiresActiveX=true"/>
+        <script data-main="../src/music21.js" src="../ext/require/require.js"></script>
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+
+		<script>
+		var s = ""; // will become Stream object soon...
+		var metro = ""; // will become Metronome object soon...
+            function keyboardHighlight(e) {
+                if (e.noteOn) {
+                    var midiNote = e.midiNote;
+                    if (k.keyObjects[midiNote] !== undefined) {
+                        var keyObj = k.keyObjects[midiNote];
+                        var svgObj = keyObj.svgObj;
+                        var intensityRGB = "";
+                        var normalizedVelocity = (e.velocity + 25)/127;
+                        if (normalizedVelocity > 1) {
+                            normalizedVelocity = 1.0;
+                        }
+
+                        if (keyObj.keyClass == 'whitekey') {
+                            var intensity = normalizedVelocity.toString();
+                            intensityRGB = 'rgba(255, 255, 0, ' + intensity + ')';
+                        } else {
+                            var intensity = (Math.floor(normalizedVelocity * 255)).toString();
+                            intensityRGB = 'rgb(' + intensity + ',' + intensity + ',0)';
+                            //console.log(intensityRGB);
+
+                        }
+                        svgObj.setAttribute('style', 'fill:' + intensityRGB + ';stroke:black');
+                    }
+                } else if (e.noteOff) {
+                    var midiNote = e.midiNote;
+                    if (k.keyObjects[midiNote] !== undefined) {
+                        var keyObj = k.keyObjects[midiNote];
+                        var svgObj = keyObj.svgObj;
+                        svgObj.setAttribute('style', keyObj.keyStyle);
+                    }
+                }
+            };
+        function appendElement(appendObject) {
+            if (s.length > 7) {
+                s.elements = s.elements.slice(1)
+            }
+            if (s.length > 0) {
+                var lastNote = s.elements[s.length - 1];
+            }
+            s.append(appendObject);
+            var $canvasDiv = $("#canvasDiv");
+            $canvasDiv.empty();
+            var canv = s.appendNewCanvas($canvasDiv);
+        }
+		
+		
+		require(['music21'], function () { 
+		    s = new music21.stream.Measure();
+		    s.clef = new music21.clef.TrebleClef();
+		    s.renderOptions.staffLines = 5;
+		    metro = new music21.tempo.Metronome();
+		    metro.addDiv($("#metronomeDiv"));
+            
+		    music21.miditools.metronome = metro;
+
+            var Jazz = music21.jazzMidi.createPlugin();
+		    music21.jazzMidi.createSelector($("#putMidiSelectHere"), Jazz);
+		    music21.jazzMidi.callBacks.general = [music21.miditools.makeChords, 
+		                                          music21.miditools.sendToMIDIjs,
+keyboardHighlight];
+		    music21.jazzMidi.callBacks.sendOutChord = appendElement;
+            k = new music21.keyboard.Keyboard();
+            var kd = document.getElementById('keyboardDiv');
+            //k.appendKeyboard(kd, 6, 57);
+            k.appendKeyboard(kd, 18, 39); // 37key keyboard
+		});
+		
+		
+		</script>
+    </head>
+    <body>
+	<div>
+	MIDI Input: <div id="putMidiSelectHere" />
+	</div>
+	<h2>Chord and Duration rendering and Metronome Demo.</h2>
+<div id='keyboardDiv'></div>
+    <div><i>Requires MIDI keyboard and Jazz Plugin to work.</i></div>
+	<div id="canvasDiv">
+        <canvas />
+    </div>
+    <div id="metronomeDiv"></div>
+</body>
+</html>
