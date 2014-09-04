@@ -14,12 +14,12 @@ if ( typeof define === "function" && define.amd) {
     var MIDI = {music21defined: true};
     define(['music21/instrument', 'MIDI','Base64','base64binary','jquery'], function(instrument) {
         var tempSoundfontUrl = require.toUrl('ext/midijs/soundfont/');
-        if (location.protocol != 'http:') {
-            tempSoundfontUrl = 'http://web.mit.edu/music21/music21j/src/ext/midijs/soundfont/';
-            if (DEBUG) {
-                console.log('non http protocol found: ' + location.protocol + ', using canonical');
-            }
-        }
+//        if (location.protocol != 'http:') {
+//            tempSoundfontUrl = 'http://web.mit.edu/music21/music21j/src/ext/midijs/soundfont/';
+//            if (DEBUG) {
+//                console.log('non http protocol found: ' + location.protocol + ', using canonical');
+//            }
+//        }
         MIDI.soundfontUrl = tempSoundfontUrl;
         MIDI.loadedSoundfonts = {};
         var tempload = function(soundfont, callback) {
