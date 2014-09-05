@@ -70,6 +70,9 @@ define(['./miditools'], function(miditools) {
 	    if (typeof(midiSelectDiv) == 'undefined') {
 	        midiSelectDiv = $("body");
         }
+	    if (midiSelectDiv.jquery == undefined) {
+	        midiSelectDiv = $(midiSelectDiv);
+	    }
 	    
 	    var newOption = $("<select>").attr('id','midiInSelect');
 		newOption.change( function () { 

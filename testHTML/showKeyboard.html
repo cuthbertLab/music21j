@@ -15,6 +15,13 @@
             if (s.length > 0) {
                 s.elements = s.elements.slice(1)
             }
+            if (music21.miditools.transposeOctave >= 1 && s.clef.name == 'bass') {
+                s.clef = new music21.clef.TrebleClef();
+            }
+            if (music21.miditools.transposeOctave < 0 && s.clef.name == 'treble') {
+                s.clef = new music21.clef.BassClef();
+            }
+
             appendObject.stemDirection = undefined;
             appendObject.duration.type = "whole";
             appendObject.duration.dots = 0;
@@ -37,42 +44,30 @@
             
 		    music21.miditools.metronome = metro;
             k = new music21.keyboard.Keyboard();
+            k.showNames = true;
+            
             k.scaleFactor = 2.0;
-            //k.appendKeyboard(kd, 6, 57);
-            var startNumber = 22;
-            var keyboardLength = 14;
+            k.startPitch = 22;
+            k.endPitch = k.startPitch + 14;
+            var $kd = $('#keyboardDiv');
+            k.appendKeyboard($kd); // 25key keyboard
             
             var octaveUp = function () {
                 music21.miditools.transposeOctave += 1;
-                if (music21.miditools.transposeOctave >= 1) {
-                    s.clef = new music21.clef.TrebleClef();
-                }
-                startNumber += 7; 
-                keyboardChanged();
+                k._startDNN += 7; 
+                k._endDNN += 7;
+                k.redrawSVG();
                 
             };
             var octaveDown = function () {
                 music21.miditools.transposeOctave -= 1;
-                if (music21.miditools.transposeOctave < 0) {
-                    s.clef = new music21.clef.BassClef();
-                }
-                startNumber -= 7;
-                keyboardChanged();
+                k._startDNN -= 7;
+                k._endDNN -= 7;
+                k.redrawSVG();
             }
 
-            var showNames = true;
-            var showOctaves = false;
             var playSound = true;
-            var markC = true;
             
-            var keyboardChanged = function () {
-                var $kd = $('#keyboardDiv');
-                k.appendKeyboard($kd, startNumber, startNumber + keyboardLength); // 25key keyboard
-                if (markC) k.markMiddleC();                
-                if (showNames) k.markNoteNames(showOctaves);                
-            }
-            
-            keyboardChanged();
             $("#octaveDown").bind('click', octaveDown);
             $("#octaveUp").bind('click', octaveUp);
                         
@@ -87,9 +82,9 @@
 		    music21.jazzMidi.callBacks.general = midiCallbacksPlay;
 		    music21.jazzMidi.callBacks.sendOutChord = appendElement;
 		    
-            $('#markC').bind('click', function () { markC = this.checked; keyboardChanged() })
-            $('#showNames').bind('click', function () { showNames = this.checked; keyboardChanged() })
-            $('#showOctaves').bind('click', function () { showOctaves = this.checked; keyboardChanged() })
+            $('#markC').bind('click', function () { k.markC = this.checked; k.redrawSVG() })
+            $('#showNames').bind('click', function () { k.showNames = this.checked; k.redrawSVG() })
+            $('#showOctaves').bind('click', function () { k.showOctaves = this.checked; k.redrawSVG() })
             $('#playSound').bind('click', function() {
                 if (this.checked) {
                     music21.jazzMidi.callBacks.general = midiCallbacksPlay;

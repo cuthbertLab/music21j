@@ -72,8 +72,10 @@ keyboardHighlight];
 		    music21.jazzMidi.callBacks.sendOutChord = appendElement;
             k = new music21.keyboard.Keyboard();
             var kd = document.getElementById('keyboardDiv');
-            //k.appendKeyboard(kd, 6, 57);
-            k.appendKeyboard(kd, 18, 39); // 37key keyboard
+            k.startPitch = 18; // 6
+            k.endPitch = 39; // 57
+            
+            k.appendKeyboard(kd); // 37key keyboard
 		});
 		
 		

@@ -11,10 +11,11 @@
         require(['music21'], function () { 
             k = new music21.keyboard.Keyboard();
             var kd = document.getElementById('keyboardDiv');
-            //k.appendKeyboard(kd, 6, 57);
+            k.startPitch = 18;
+            k.endPitch = 39;
+            k.markC = true;
             
-            k.appendKeyboard(kd, 18, 39); // 37key keyboard
-            k.markMiddleC();
+            k.appendKeyboard(kd); // 37key keyboard
             //k.markNoteNames(true);
         });
         

@@ -51,8 +51,9 @@
             
             k = new music21.keyboard.Keyboard();
             var kd = document.getElementById('keyboardDiv');
-            k.appendKeyboard(kd, 6, 57);
-            //k.appendKeyboard(kd, 18, 39); // 37key keyboard
+            k.startPitch = 6;
+            k.endPitch = 57;
+            k.appendKeyboard(kd);
         });
         
         
