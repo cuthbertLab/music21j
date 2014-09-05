@@ -29,7 +29,8 @@ define(['./base', './pitch', './common', 'loadMIDI', 'jquery'],
         this.parent = undefined;
         this.id = 0;
         this.pitchObj = undefined;
-        this.svgObj = undefined;        
+        this.svgObj = undefined;       
+        this.noteNameSvgObj = undefined;
         
         this.makeKey = function (startX) {
             keyattrs = {
@@ -81,8 +82,8 @@ define(['./base', './pitch', './common', 'loadMIDI', 'jquery'],
                     (this.parent === undefined) ||
                     (this.parent.svgObj === undefined)
                         ) {
-                    return;
-                }
+                return;
+            }
             if ((this.id == 0) && (this.pitchObj === undefined)) {
                 return
             } else if (this.pitchObj === undefined) {
@@ -118,10 +119,25 @@ define(['./base', './pitch', './common', 'loadMIDI', 'jquery'],
             var textDom = common.makeSVGright('text', textattrs);
             var textNode = document.createTextNode(idStr);
             textDom.appendChild(textNode);
+            this.noteNameSvgObj = textDom; // store for removing...
             this.parent.svgObj.appendChild(textDom);
-
         };
-
+        this.removeNoteName = function (labelOctaves) {
+            if ((this.svgObj === undefined) ||
+                    (this.parent === undefined) ||
+                    (this.parent.svgObj === undefined)
+                        ) {
+                return;
+            }
+            if (this.noteNameSvgObj === undefined) {
+                return;
+            }
+            if (this.noteNameSvgObj.parentNode == this.parent.svgObj) {
+                this.parent.svgObj.removeChild(this.noteNameSvgObj);                
+            }
+            this.noteNameSvgObj = undefined;
+        };
+        
     };
     keyboard.WhiteKey = function () {
         keyboard.Key.call(this);
@@ -171,67 +187,53 @@ define(['./base', './pitch', './common', 'loadMIDI', 'jquery'],
            } else if (where.jquery !== undefined) {
                where = where[0];
            }
+           if (this.svgObj !== undefined) { // replacing;
+               this.keyObjects = {};
+               where.removeChild(this.svgObj);
+           }
+
            svgDOM = this.createSVG(dnnStart, dnnEnd);
            
-           // make it so the keyboard can be shown or hidden...
            if (params && params.hideable) {
-               var $container = $("<div class='keyboardHideableContainer'/>");
-               var bInside = $("<div class='keyboardToggleInside'>↥</div>").css({
-                   display: 'inline-block',
-                   'padding-top': '40px',
-                   'font-size': '40px'
-               });               
-               var b = $("<div/>").css({
-                   display: 'inline-block',
-                   'vertical-align': 'top',
-                   background: 'white',
-               });
-               b.append(bInside);
-               b.data('defaultDisplay', $container.find('.keyboardSVG').css('display'));
-               b.data('state', 'down');
-               b.click( function () { 
-                   var $t = $(this);
-                   var state = $t.data('state'); 
-                   var $parent = $t.parent();
-                   var $k = $parent.find('.keyboardSVG');
-                   var $bInside = $t.find('.keyboardToggleInside');
-                   var $explain = $parent.find('.keyboardExplain');
-                   if (state == 'up') {
-                       $bInside.text('↥');
-                       $bInside.css('padding-top', '40px');
-                       $explain.css('display', 'none');
-                       var dd = $t.data('defaultDisplay');
-                       if (dd === undefined) { 
-                           dd = 'inline';
-                       }                       
-                       $k.css('display', dd);
-                       $t.data('state', 'down');
-                   } else {
-                       $k.css('display', 'none');
-                       $explain.css('display', 'inline-block');
-                       $bInside.text('↧');
-                       $bInside.css('padding-top', '10px');
-                       $t.data('state', 'up');
-                   }
-               });
-               var $explain = $("<div class='keyboardExplain'>Show keyboard</div>")
+               // make it so the keyboard can be shown or hidden...
+               this.appendHideableKeyboard(where, svgDOM);
+           } else {
+               where.appendChild(svgDOM); // svg must use appendChild, not append.
+           }
+       };
+       
+       this.appendHideableKeyboard = function (where, keyboardSVG) {
+           var $container = $("<div class='keyboardHideableContainer'/>");
+           var bInside = $("<div class='keyboardToggleInside'>↥</div>").css({
+               display: 'inline-block',
+               'padding-top': '40px',
+               'font-size': '40px'
+           });               
+           var b = $("<div/>").css({
+               display: 'inline-block',
+               'vertical-align': 'top',
+               background: 'white',
+           });
+           b.append(bInside);
+           b.data('defaultDisplay', $container.find('.keyboardSVG').css('display'));
+           b.data('state', 'down');
+           b.click( keyboard.triggerToggleShow );
+           var $explain = $("<div class='keyboardExplain'>Show keyboard</div>")
                .css({
                    'display': 'none',
                    'background-color': 'white',
                    'padding': '10px 10px 10px 10px',
                    'font-size': '12pt',
-                       });
-               b.append($explain);
-               $container.append(b);
-               $container[0].appendChild(svgDOM);
-               $(where).append($container);
-
-           } else {
-               where.appendChild(svgDOM);               
-           }
+                   });
+           b.append($explain);
+           $container.append(b);
+           $container[0].appendChild(keyboardSVG); // svg must use appendChild, not append.
+           $(where).append($container);
+           return $container;
        };
+       
        this.callbacks = {
-               click: this.clickhandler,
+           click: this.clickhandler,
        };
        this.clickhandler = function (keyRect) {
            // to-do : integrate with jazzHighlight...
@@ -247,8 +249,8 @@ define(['./base', './pitch', './common', 'loadMIDI', 'jquery'],
            }
            keyRect.setAttribute("style", "fill:" + fillColor + ";stroke:black");
            MIDI.loadSoundfont('acoustic_grand_piano', function(i) {
-               MIDI.noteOn(i.channel, id, 100, 0);
-               MIDI.noteOff(i.channel, id, 500);
+               MIDI.noteOn(i.midiChannel, id, 100, 0);
+               MIDI.noteOff(i.midiChannel, id, 500);
            });
            setTimeout(function() { 
                keyRect.setAttribute("style", storedStyle);
@@ -327,16 +329,56 @@ define(['./base', './pitch', './common', 'loadMIDI', 'jquery'],
            return svgDOM;
        };
        this.markMiddleC = function (strokeColor) {
-           return this.keyObjects[60].addCircle('red');
+           var midC = this.keyObjects[60];
+           if (midC !== undefined) {
+               midC.addCircle('red');               
+           }
        };
        this.markNoteNames = function (labelOctaves) {
+           this.removeNoteNames(); // in case...
            for (var midi in this.keyObjects) {
                var keyObj = this.keyObjects[midi];
                keyObj.addNoteName(labelOctaves);
            }
        };
+       this.removeNoteNames = function () {
+           for (var midi in this.keyObjects) {
+               var keyObj = this.keyObjects[midi];
+               keyObj.removeNoteName();
+           }
+       };
     };
     
+    /**
+     * triggerToggleShow -- event for keyboard is shown or hidden.
+     */
+    keyboard.triggerToggleShow = function (e) {  
+        // this refers to the object clicked
+        // e -- event is not used.
+        var $t = $(this);
+        var state = $t.data('state'); 
+        var $parent = $t.parent();
+        var $k = $parent.find('.keyboardSVG');
+        var $bInside = $t.find('.keyboardToggleInside');
+        var $explain = $parent.find('.keyboardExplain');
+        if (state == 'up') {
+            $bInside.text('↥');
+            $bInside.css('padding-top', '40px');
+            $explain.css('display', 'none');
+            var dd = $t.data('defaultDisplay');
+            if (dd === undefined) { 
+                dd = 'inline';
+            }                       
+            $k.css('display', dd);
+            $t.data('state', 'down');
+        } else {
+            $k.css('display', 'none');
+            $explain.css('display', 'inline-block');
+            $bInside.text('↧');
+            $bInside.css('padding-top', '10px');
+            $t.data('state', 'up');
+        }
+    };
     keyboard.jazzHighlight = function (e) {
         // e is a miditools.event object -- call with this = keyboard.Keyboard object via bind...
         if (e === undefined) {

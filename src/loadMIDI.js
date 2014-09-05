@@ -34,7 +34,9 @@ if ( typeof define === "function" && define.amd) {
                 var instrumentObj = instrument.find(soundfont);
                 if (instrumentObj != undefined) {
                     music21.MIDI.programChange(instrumentObj.midiChannel, instrumentObj.midiProgram);
-                    console.log('loaded on ', instrumentObj.midiChannel, instrumentObj.midiProgram);
+                    if (DEBUG) {
+                        console.log(soundfont + ' (' + instrumentObj.midiProgram + ') loaded on ', instrumentObj.midiChannel);
+                    }
                     if ((isFirefox == false) && (isAudioTag == false)) {  
                         var c = instrumentObj.midiChannel;
                              // Firefox ignores sound volume! so don't play! as does IE and others using HTML audio tag.
