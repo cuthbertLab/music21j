@@ -1,6 +1,6 @@
 <html>
     <head>
-        <title>MIDI In Chords for Music21j</title>
+        <title>Music21j -- 21M.051 keyboard</title>
         <!-- for MSIE 10 on Windows 8 -->
         <meta http-equiv="X-UA-Compatible" content="requiresActiveX=true"/>
         <script data-main="../src/music21.js" src="../ext/require/require.js"></script>
@@ -38,35 +38,87 @@
 		    music21.miditools.metronome = metro;
             k = new music21.keyboard.Keyboard();
             k.scaleFactor = 2.0;
-            var kd = document.getElementById('keyboardDiv');
             //k.appendKeyboard(kd, 6, 57);
-            k.appendKeyboard(kd, 18, 39); // 37key keyboard
-            k.markMiddleC();
-            k.markNoteNames();
+            var startNumber = 22;
+            var keyboardLength = 14;
             
+            var octaveUp = function () {
+                music21.miditools.transposeOctave += 1;
+                if (music21.miditools.transposeOctave >= 1) {
+                    s.clef = new music21.clef.TrebleClef();
+                }
+                startNumber += 7; 
+                keyboardChanged();
+                
+            };
+            var octaveDown = function () {
+                music21.miditools.transposeOctave -= 1;
+                if (music21.miditools.transposeOctave < 0) {
+                    s.clef = new music21.clef.BassClef();
+                }
+                startNumber -= 7;
+                keyboardChanged();
+            }
+
+            var showNames = true;
+            var showOctaves = false;
+            var playSound = true;
+            var markC = true;
+            
+            var keyboardChanged = function () {
+                var $kd = $('#keyboardDiv');
+                k.appendKeyboard($kd, startNumber, startNumber + keyboardLength); // 25key keyboard
+                if (markC) k.markMiddleC();                
+                if (showNames) k.markNoteNames(showOctaves);                
+            }
+            
+            keyboardChanged();
+            $("#octaveDown").bind('click', octaveDown);
+            $("#octaveUp").bind('click', octaveUp);
+                        
             var midiCallbacksPlay = [music21.miditools.makeChords, 
                                      music21.miditools.sendToMIDIjs,
                                      music21.keyboard.jazzHighlight.bind(k)];
-            var midiCallBacksNoPlay = [music21.miditools.makeChords, 
+            var midiCallbacksNoPlay = [music21.miditools.makeChords, 
                                        music21.keyboard.jazzHighlight.bind(k)];
 
             var Jazz = music21.jazzMidi.createPlugin();
 		    music21.jazzMidi.createSelector($("#putMidiSelectHere"), Jazz);
-		    music21.jazzMidi.callBacks.general = [music21.miditools.makeChords, 
-                                                  music21.miditools.sendToMIDIjs,
-                                                  music21.keyboard.jazzHighlight.bind(k)];
+		    music21.jazzMidi.callBacks.general = midiCallbacksPlay;
 		    music21.jazzMidi.callBacks.sendOutChord = appendElement;
+		    
+            $('#markC').bind('click', function () { markC = this.checked; keyboardChanged() })
+            $('#showNames').bind('click', function () { showNames = this.checked; keyboardChanged() })
+            $('#showOctaves').bind('click', function () { showOctaves = this.checked; keyboardChanged() })
+            $('#playSound').bind('click', function() {
+                if (this.checked) {
+                    music21.jazzMidi.callBacks.general = midiCallbacksPlay;
+                } else {
+                    music21.jazzMidi.callBacks.general = midiCallbacksNoPlay;
+                }
+            });
+
 		});
 		
 		
 		</script>
     </head>
     <body>
-	<div>
-	MIDI Input: <span id="putMidiSelectHere" /> 
+	<div style='text-align: center; font-size: 8pt'>
+	Show note names: <input type='checkbox' checked id='showNames'/> &middot; 
+	Show octaves: <input type='checkbox' id='showOctaves'/> &middot; 
+	Play sound: <input type='checkbox' checked id='playSound'/> &middot; 
+    Mark middle C: <input type='checkbox' checked id='markC'/> &middot; 
+	MIDI Input: <span id="putMidiSelectHere" />
 	</div>
-<div id='keyboardDiv' style='text-align: center'></div>
-<div id="canvasDiv" style='width: 100%; border: 1px black solid'>
+	<div>&nbsp;</div>
+	<div style='text-align: center'>
+	<div style='display:inline-block;'><button style='font-size: 30px' id='octaveDown'>&lt;&lt;</button></div>
+    <div style='display:inline-block; vertical-align: middle' id='keyboardDiv'></div>	
+    <div style='display:inline-block;'><button style='font-size: 30px' id='octaveUp'>&gt;&gt;</button></div>
+	</div>
+	<div>&nbsp;</div>
+<div id="canvasDiv" style='text-align: center'>
         <canvas />
 </div>
 </body>
