@@ -170,54 +170,68 @@ define(['./base', './pitch', './common', 'loadMIDI', 'jquery'],
        this.keyObjects = {};
        this.svgObj = undefined;
        
+       this.markC = true;
+       this.showNames = false;
+       this.showOctaves = false;
        
+       this.startPitch = "C3";
+       this.endPitch = "C5";
+       this._startDNN = undefined;
+       this._endDNN = undefined;       
+       
+       this.hideable = false;
+       this.scrollable = false;
+              
        // params { hideable: true } 
-       this.appendKeyboard = function(where, dnnStart, dnnEnd, params) {           
-           if (typeof dnnStart == 'string') {
-               var tempP = new music21.pitch.Pitch(dnnStart);
-               dnnStart = tempP.diatonicNoteNum;
+       
+       this.redrawSVG = function () {
+           if (this.svgObj === undefined) {
+               return;
            }
-           if (typeof dnnEnd == 'string') {
-               var tempP = new music21.pitch.Pitch(dnnEnd);
-               dnnEnd = tempP.diatonicNoteNum;
-           }
-
+           var oldSVG = this.svgObj;
+           var svgParent = oldSVG.parentNode;
+           this.keyObjects = {};
+           var svgDOM = this.createSVG();
+           svgParent.replaceChild(svgDOM, oldSVG);
+       };
+       
+       this.appendKeyboard = function(where) {           
            if (where === undefined) {
                where = document.body;
            } else if (where.jquery !== undefined) {
                where = where[0];
            }
-           if (this.svgObj !== undefined) { // replacing;
-               this.keyObjects = {};
-               where.removeChild(this.svgObj);
-           }
 
-           svgDOM = this.createSVG(dnnStart, dnnEnd);
+           svgDOM = this.createSVG();
            
-           if (params && params.hideable) {
+           if (this.scrollable) {
+               svgDOM = this.wrapScrollable(svgDOM);
+           }
+           
+           if (this.hideable) {
                // make it so the keyboard can be shown or hidden...
                this.appendHideableKeyboard(where, svgDOM);
            } else {
                where.appendChild(svgDOM); // svg must use appendChild, not append.
-           }
+           }           
        };
        
        this.appendHideableKeyboard = function (where, keyboardSVG) {
            var $container = $("<div class='keyboardHideableContainer'/>");
-           var bInside = $("<div class='keyboardToggleInside'>↥</div>").css({
+           var $bInside = $("<div class='keyboardToggleInside'>↥</div>").css({
                display: 'inline-block',
                'padding-top': '40px',
                'font-size': '40px'
            });               
-           var b = $("<div/>").css({
+           var $b = $("<div class='keyboardToggleOutside'/>").css({
                display: 'inline-block',
                'vertical-align': 'top',
                background: 'white',
            });
-           b.append(bInside);
-           b.data('defaultDisplay', $container.find('.keyboardSVG').css('display'));
-           b.data('state', 'down');
-           b.click( keyboard.triggerToggleShow );
+           $b.append($bInside);
+           $b.data('defaultDisplay', $container.find('.keyboardSVG').css('display'));
+           $b.data('state', 'down');
+           $b.click( keyboard.triggerToggleShow );
            var $explain = $("<div class='keyboardExplain'>Show keyboard</div>")
                .css({
                    'display': 'none',
@@ -225,13 +239,37 @@ define(['./base', './pitch', './common', 'loadMIDI', 'jquery'],
                    'padding': '10px 10px 10px 10px',
                    'font-size': '12pt',
                    });
-           b.append($explain);
-           $container.append(b);
+           $b.append($explain);
+           $container.append($b);
            $container[0].appendChild(keyboardSVG); // svg must use appendChild, not append.
            $(where).append($container);
            return $container;
        };
-       
+       this.wrapScrollable = function (svgDOM) {
+           var $wrapper = $("<div id='keyboardScrollableWrapper'></div>");
+           var $bDown = $("<button class='keyboardOctaveDown'>&lt;&lt;</button>").css({
+               'font-size': Math.floor(this.scaleFactor * 15).toString() + 'px',
+           }).bind('click', function () {
+               music21.miditools.transposeOctave -= 1;
+               this._startDNN -= 7; 
+               this._endDNN -= 7;
+               this.redrawSVG();
+           });
+           var $bUp = $("<button class='keyboardOctaveUp'>&gt;&gt;</button>").css({
+               'font-size': Math.floor(this.scaleFactor * 15).toString() + 'px',
+           }).bind('click', function () {
+               music21.miditools.transposeOctave += 1;
+               this._startDNN += 7; 
+               this._endDNN += 7;
+               this.redrawSVG();
+           });
+           var $kWrapper = $("<div style='display:inline-block; vertical-align: middle' class='keyboardScrollableInnerDiv'></div>");
+           $kWrapper[0].appendChild(svgDOM);
+           $wrapper.append($bDown);
+           $wrapper.append($kWrapper);
+           $wrapper.append($bUp);
+           return $wrapper;
+       };
        this.callbacks = {
            click: this.clickhandler,
        };
@@ -259,18 +297,30 @@ define(['./base', './pitch', './common', 'loadMIDI', 'jquery'],
        
        //   more accurate offsets from http://www.mathpages.com/home/kmath043.htm
        this.sharpOffsets = {0: 14.3333, 1: 18.6666, 3: 13.25, 4: 16.25, 5: 19.75};
-       this.createSVG = function (dnnStart, dnnEnd) {
-           // dnn = pitch.diatonicNoteNum;
-           // dnnEnd = final key note. I.e., the last note to be included, not the first note not included.
+       this.createSVG = function () {
+           // DNN = pitch.diatonicNoteNum;
+           // this._endDNN = final key note. I.e., the last note to be included, not the first note not included.
            // 6, 57 gives a standard 88-key keyboard;
-           if (dnnStart === undefined) {
-               dnnStart = 29; // middle C
+           if (this._startDNN === undefined) {
+               if (typeof this.startPitch == 'string') {
+                   var tempP = new music21.pitch.Pitch(this.startPitch);
+                   this._startDNN = tempP.diatonicNoteNum;
+               }  else {
+                   this._startDNN = this.startPitch;
+               }               
            }
-           if (dnnEnd === undefined) {
-               dnnEnd = dnnStart + 8;
+           
+           if (this._endDNN === undefined) {
+               if (typeof this.endPitch == 'string') {
+                   var tempP = new music21.pitch.Pitch(this.endPitch);
+                   this._endDNN = tempP.diatonicNoteNum;
+               } else {
+                   this._endDNN = this.endPitch;
+               }   
            }
-           var currentIndex = (dnnStart - 1) % 7; // C = 0
-           var keyboardDiatonicLength = 1 + dnnEnd - dnnStart;
+           
+           var currentIndex = (this._startDNN - 1) % 7; // C = 0
+           var keyboardDiatonicLength = 1 + this._endDNN - this._startDNN;
            var totalWidth = this.whiteKeyWidth * this.scaleFactor * keyboardDiatonicLength;
            var height = 120 * this.scaleFactor;
            var heightString = height.toString() + 'px';
@@ -286,7 +336,7 @@ define(['./base', './pitch', './common', 'loadMIDI', 'jquery'],
            var thisKeyboardObject = this;
            
            for (var wki = 0; wki < keyboardDiatonicLength; wki++) {
-               movingPitch.diatonicNoteNum = dnnStart + wki;
+               movingPitch.diatonicNoteNum = this._startDNN + wki;
                var wk = new keyboard.WhiteKey();
                wk.id = movingPitch.midi;
                wk.parent = this;
@@ -304,6 +354,7 @@ define(['./base', './pitch', './common', 'loadMIDI', 'jquery'],
                    (currentIndex == 4) ||
                    (currentIndex == 5)
                    ) && ( wki != keyboardDiatonicLength - 1)) {
+                   // create but do not append blackkey to the right of whitekey
                    var bk = new keyboard.BlackKey();
                    bk.id = movingPitch.midi + 1;
                    this.keyObjects[movingPitch.midi + 1] = bk;
@@ -325,7 +376,11 @@ define(['./base', './pitch', './common', 'loadMIDI', 'jquery'],
            for (var bki = 0; bki < blackKeys.length; bki++) {
                svgDOM.appendChild(blackKeys[bki]);
            }
+                                
            this.svgObj = svgDOM;
+           if (this.markC) { this.markMiddleC();}      
+           if (this.showNames) { this.markNoteNames(this.showOctaves);}
+
            return svgDOM;
        };
        this.markMiddleC = function (strokeColor) {
