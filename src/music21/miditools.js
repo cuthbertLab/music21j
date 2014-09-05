@@ -17,6 +17,8 @@ define(['jquery', './note', './chord'], function($, note, chord) {
      * @exports music21/miditools
      */
     miditools = {};
+    
+    miditools.transposeOctave = 0;
     /**
      * @memberof music21
      * @constructor
@@ -37,7 +39,7 @@ define(['jquery', './note', './chord'], function($, note, chord) {
         
         this.midiNote = undefined;
         if (this.noteOn || this.noteOff) {
-            this.midiNote = this.data2;
+            this.midiNote = this.data2 + 12 * miditools.transposeOctave;
             this.velocity = this.data3;
         }
     };
