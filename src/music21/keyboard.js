@@ -349,7 +349,6 @@ define(['./base', './pitch', './common', 'loadMIDI', 'jquery'],
            }
        };
        this.wrapScrollable = function (svgDOM) {
-           console.log(svgDOM);
            var $wrapper = $("<div class='keyboardScrollableWrapper'></div>").css({
                display: "inline-block"
            });
