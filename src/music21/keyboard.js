@@ -59,16 +59,16 @@ define(['./base', './pitch', './common', 'loadMIDI', 'jquery'],
                 strokeColor = 'red';
             }
             var x = parseInt(this.svgObj.getAttribute('x'));
-            var cx = x + (this.width)/2;
+            var cx = x + this.parent.scaleFactor * (this.width)/2;
             //console.log('cx', cx);
             keyattrs = {
                     stroke: strokeColor,
                     'stroke-width': 3,
                     fill: 'none',
                     cx: cx,
-                    cy: this.height - 10,
+                    cy: (this.height - 10) * this.parent.scaleFactor,
                     'class': 'keyboardkeyannotation',
-                    r: this.width/4,
+                    r: this.width * this.parent.scaleFactor/4,
                 };
             
             var circleDom = common.makeSVGright('circle', keyattrs);
@@ -101,6 +101,7 @@ define(['./base', './pitch', './common', 'loadMIDI', 'jquery'],
                 fontSize = 12;
                 x -= 2;
             }
+            fontSize = Math.floor(fontSize * parent.scaleFactor);
             
             var textfill = 'white';
             if (this.keyClass == 'whitekey') {
@@ -108,8 +109,8 @@ define(['./base', './pitch', './common', 'loadMIDI', 'jquery'],
             }
             textattrs = {
                     fill: textfill,
-                    x: x + this.width/2 - 5,
-                    y: this.height - 20,
+                    x: x + this.parent.scaleFactor * (this.width/2 - 5),
+                    y: this.parent.scaleFactor * (this.height - 20),
                     'class': 'keyboardkeyname',
                     'font-size': fontSize,
                 };
@@ -233,6 +234,7 @@ define(['./base', './pitch', './common', 'loadMIDI', 'jquery'],
                click: this.clickhandler,
        };
        this.clickhandler = function (keyRect) {
+           // to-do : integrate with jazzHighlight...
            var id = keyRect.id;
            var thisKeyObject = this.keyObjects[id];
            if (thisKeyObject === undefined) {
@@ -334,6 +336,43 @@ define(['./base', './pitch', './common', 'loadMIDI', 'jquery'],
            }
        };
     };
+    
+    keyboard.jazzHighlight = function (e) {
+        // e is a miditools.event object -- call with this = keyboard.Keyboard object via bind...
+        if (e === undefined) {
+            return;
+        }
+        if (e.noteOn) {
+            var midiNote = e.midiNote;
+            if (this.keyObjects[midiNote] !== undefined) {
+                var keyObj = this.keyObjects[midiNote];
+                var svgObj = keyObj.svgObj;
+                var intensityRGB = "";
+                var normalizedVelocity = (e.velocity + 25)/127;
+                if (normalizedVelocity > 1) {
+                    normalizedVelocity = 1.0;
+                }
+
+                if (keyObj.keyClass == 'whitekey') {
+                    var intensity = normalizedVelocity.toString();
+                    intensityRGB = 'rgba(255, 255, 0, ' + intensity + ')';
+                } else {
+                    var intensity = (Math.floor(normalizedVelocity * 255)).toString();
+                    intensityRGB = 'rgb(' + intensity + ',' + intensity + ',0)';
+                    //console.log(intensityRGB);
+
+                }
+                svgObj.setAttribute('style', 'fill:' + intensityRGB + ';stroke:black');
+            }
+        } else if (e.noteOff) {
+            var midiNote = e.midiNote;
+            if (this.keyObjects[midiNote] !== undefined) {
+                var keyObj = this.keyObjects[midiNote];
+                var svgObj = keyObj.svgObj;
+                svgObj.setAttribute('style', keyObj.keyStyle);
+            }
+        }
+    }; // call this with a bind(keyboard.Keyboard object)...
     
     // end of define
     if (typeof(music21) != "undefined") {

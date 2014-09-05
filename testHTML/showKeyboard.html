@@ -1,0 +1,73 @@
+<html>
+    <head>
+        <title>MIDI In Chords for Music21j</title>
+        <!-- for MSIE 10 on Windows 8 -->
+        <meta http-equiv="X-UA-Compatible" content="requiresActiveX=true"/>
+        <script data-main="../src/music21.js" src="../ext/require/require.js"></script>
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+
+		<script>
+		var s = ""; // will become Stream object soon...
+		var p = "";
+		var metro = ""; // will become Metronome object soon...
+        function appendElement(appendObject) {
+		    appendObject = appendObject.clone();
+            if (s.length > 0) {
+                s.elements = s.elements.slice(1)
+            }
+            appendObject.stemDirection = undefined;
+            appendObject.duration.type = "whole";
+            appendObject.duration.dots = 0;
+            s.append(appendObject);
+            var $canvasDiv = $("#canvasDiv");
+            $canvasDiv.empty();
+            var canv = p.appendNewCanvas($canvasDiv);
+        }
+		
+		
+		require(['music21'], function () { 	
+		    p = new music21.stream.Part();
+		    //p.renderOptions.width = 500;
+		    s = new music21.stream.Measure();
+		    p.insert(0, s);
+		    s.clef = new music21.clef.TrebleClef();
+		    p.renderOptions.scaleFactor = {x: 1.5, y: 1.5};
+		    metro = new music21.tempo.Metronome();
+		    // metro.addDiv($("#metronomeDiv"));
+            
+		    music21.miditools.metronome = metro;
+            k = new music21.keyboard.Keyboard();
+            k.scaleFactor = 2.0;
+            var kd = document.getElementById('keyboardDiv');
+            //k.appendKeyboard(kd, 6, 57);
+            k.appendKeyboard(kd, 18, 39); // 37key keyboard
+            k.markMiddleC();
+            k.markNoteNames();
+            
+            var midiCallbacksPlay = [music21.miditools.makeChords, 
+                                     music21.miditools.sendToMIDIjs,
+                                     music21.keyboard.jazzHighlight.bind(k)];
+            var midiCallBacksNoPlay = [music21.miditools.makeChords, 
+                                       music21.keyboard.jazzHighlight.bind(k)];
+
+            var Jazz = music21.jazzMidi.createPlugin();
+		    music21.jazzMidi.createSelector($("#putMidiSelectHere"), Jazz);
+		    music21.jazzMidi.callBacks.general = [music21.miditools.makeChords, 
+                                                  music21.miditools.sendToMIDIjs,
+                                                  music21.keyboard.jazzHighlight.bind(k)];
+		    music21.jazzMidi.callBacks.sendOutChord = appendElement;
+		});
+		
+		
+		</script>
+    </head>
+    <body>
+	<div>
+	MIDI Input: <span id="putMidiSelectHere" /> 
+	</div>
+<div id='keyboardDiv' style='text-align: center'></div>
+<div id="canvasDiv" style='width: 100%; border: 1px black solid'>
+        <canvas />
+</div>
+</body>
+</html>
