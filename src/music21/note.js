@@ -8,13 +8,13 @@
  */
 
 
-define(['./prebase', './base', './pitch', './beam', 'vexflow'], 
+define(['./prebase', './base', './pitch', './beam', './common', 'vexflow'], 
         /**
          * Module for note classes
          * 
          * @exports music21/note
          */  
-        function(prebase, base, pitch, beam, Vex) {
+        function(prebase, base, pitch, beam, common, Vex) {
 	var note = {};
 
 	note.noteheadTypeNames = [
@@ -280,7 +280,11 @@ define(['./prebase', './base', './pitch', './beam', 'vexflow'],
             tempo = 120;
         }
         if (options === undefined) {
-            options = { instrument: this.activeSite.instrument };
+            var inst = undefined;
+            if (this.activeSite !== undefined) {
+                inst = this.activeSite.instrument;
+            }
+            options = { instrument: inst };
         }
         
         var volume = this.midiVolume;
@@ -410,7 +414,11 @@ define(['./prebase', './base', './pitch', './beam', 'vexflow'],
         }
     };
     note.Note.prototype.vexflowNote = function (options) {
-        var clef = options.clef;
+        var params = {
+                
+        };
+        common.merge(params, options);
+        var clef = params.clef;
         
         if (this.duration === undefined) {
             //console.log(this);
@@ -423,7 +431,7 @@ define(['./prebase', './base', './pitch', './beam', 'vexflow'],
         var vexflowKey = this.pitch.vexflowName(clef);
         var vfn = new Vex.Flow.StaveNote({keys: [vexflowKey], 
                                       duration: vfd});
-        this.vexflowAccidentalsAndDisplay(vfn, options); // clean up stuff...
+        this.vexflowAccidentalsAndDisplay(vfn, params); // clean up stuff...
         if (this.pitch.accidental != undefined) {
             if (this.pitch.accidental.vexflowModifier != 'n' && this.pitch.accidental.displayStatus != false) {
                 vfn.addAccidental(0, new Vex.Flow.Accidental(this.pitch.accidental.vexflowModifier));
