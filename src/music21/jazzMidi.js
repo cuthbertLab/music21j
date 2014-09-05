@@ -20,7 +20,8 @@ define(['./miditools'], function(miditools) {
 
     jazzMidi.callBacks = {
         raw : function (t, a, b, c) { return new miditools.Event(t, a, b, c); },
-        general : miditools.sendToMIDIjs,
+        general : [miditools.sendToMIDIjs,
+                   miditools.quantizeLastNote],        
         sendOutChord : function (newChord) { },
     };
 
@@ -30,7 +31,7 @@ define(['./miditools'], function(miditools) {
 	        jazzMidi.callBacks.general.forEach( function(el, index, array) { 
 	            el(eventObject);  
 	        });
-	    } else {
+	    } else if (jazzMidi.callBacks.general !== undefined) {
 	        return jazzMidi.callBacks.general(eventObject);
 	    }
 	};
