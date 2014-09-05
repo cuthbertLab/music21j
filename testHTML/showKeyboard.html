@@ -49,27 +49,12 @@
             k.scaleFactor = 2.0;
             k.startPitch = 22;
             k.endPitch = k.startPitch + 14;
+            k.scrollable = true;
+            
             var $kd = $('#keyboardDiv');
             k.appendKeyboard($kd); // 25key keyboard
             
-            var octaveUp = function () {
-                music21.miditools.transposeOctave += 1;
-                k._startDNN += 7; 
-                k._endDNN += 7;
-                k.redrawSVG();
-                
-            };
-            var octaveDown = function () {
-                music21.miditools.transposeOctave -= 1;
-                k._startDNN -= 7;
-                k._endDNN -= 7;
-                k.redrawSVG();
-            }
-
             var playSound = true;
-            
-            $("#octaveDown").bind('click', octaveDown);
-            $("#octaveUp").bind('click', octaveUp);
                         
             var midiCallbacksPlay = [music21.miditools.makeChords, 
                                      music21.miditools.sendToMIDIjs,
@@ -107,11 +92,7 @@
 	MIDI Input: <span id="putMidiSelectHere" />
 	</div>
 	<div>&nbsp;</div>
-	<div style='text-align: center'>
-	<div style='display:inline-block;'><button style='font-size: 30px' id='octaveDown'>&lt;&lt;</button></div>
-    <div style='display:inline-block; vertical-align: middle' id='keyboardDiv'></div>	
-    <div style='display:inline-block;'><button style='font-size: 30px' id='octaveUp'>&gt;&gt;</button></div>
-	</div>
+	<div style='text-align: center' id='keyboardDiv'></div>
 	<div>&nbsp;</div>
 <div id="canvasDiv" style='text-align: center'>
         <canvas />

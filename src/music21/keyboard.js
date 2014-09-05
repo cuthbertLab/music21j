@@ -205,7 +205,7 @@ define(['./base', './pitch', './common', 'loadMIDI', 'jquery'],
            svgDOM = this.createSVG();
            
            if (this.scrollable) {
-               svgDOM = this.wrapScrollable(svgDOM);
+               svgDOM = this.wrapScrollable(svgDOM)[0];
            }
            
            if (this.hideable) {
@@ -216,60 +216,6 @@ define(['./base', './pitch', './common', 'loadMIDI', 'jquery'],
            }           
        };
        
-       this.appendHideableKeyboard = function (where, keyboardSVG) {
-           var $container = $("<div class='keyboardHideableContainer'/>");
-           var $bInside = $("<div class='keyboardToggleInside'>↥</div>").css({
-               display: 'inline-block',
-               'padding-top': '40px',
-               'font-size': '40px'
-           });               
-           var $b = $("<div class='keyboardToggleOutside'/>").css({
-               display: 'inline-block',
-               'vertical-align': 'top',
-               background: 'white',
-           });
-           $b.append($bInside);
-           $b.data('defaultDisplay', $container.find('.keyboardSVG').css('display'));
-           $b.data('state', 'down');
-           $b.click( keyboard.triggerToggleShow );
-           var $explain = $("<div class='keyboardExplain'>Show keyboard</div>")
-               .css({
-                   'display': 'none',
-                   'background-color': 'white',
-                   'padding': '10px 10px 10px 10px',
-                   'font-size': '12pt',
-                   });
-           $b.append($explain);
-           $container.append($b);
-           $container[0].appendChild(keyboardSVG); // svg must use appendChild, not append.
-           $(where).append($container);
-           return $container;
-       };
-       this.wrapScrollable = function (svgDOM) {
-           var $wrapper = $("<div id='keyboardScrollableWrapper'></div>");
-           var $bDown = $("<button class='keyboardOctaveDown'>&lt;&lt;</button>").css({
-               'font-size': Math.floor(this.scaleFactor * 15).toString() + 'px',
-           }).bind('click', function () {
-               music21.miditools.transposeOctave -= 1;
-               this._startDNN -= 7; 
-               this._endDNN -= 7;
-               this.redrawSVG();
-           });
-           var $bUp = $("<button class='keyboardOctaveUp'>&gt;&gt;</button>").css({
-               'font-size': Math.floor(this.scaleFactor * 15).toString() + 'px',
-           }).bind('click', function () {
-               music21.miditools.transposeOctave += 1;
-               this._startDNN += 7; 
-               this._endDNN += 7;
-               this.redrawSVG();
-           });
-           var $kWrapper = $("<div style='display:inline-block; vertical-align: middle' class='keyboardScrollableInnerDiv'></div>");
-           $kWrapper[0].appendChild(svgDOM);
-           $wrapper.append($bDown);
-           $wrapper.append($kWrapper);
-           $wrapper.append($bUp);
-           return $wrapper;
-       };
        this.callbacks = {
            click: this.clickhandler,
        };
@@ -402,7 +348,66 @@ define(['./base', './pitch', './common', 'loadMIDI', 'jquery'],
                keyObj.removeNoteName();
            }
        };
+       this.wrapScrollable = function (svgDOM) {
+           console.log(svgDOM);
+           var $wrapper = $("<div class='keyboardScrollableWrapper'></div>").css({
+               display: "inline-block"
+           });
+           var $bDown = $("<button class='keyboardOctaveDown'>&lt;&lt;</button>").css({
+               'font-size': Math.floor(this.scaleFactor * 15).toString() + 'px',
+           }).bind('click', (function () {
+               music21.miditools.transposeOctave -= 1;
+               this._startDNN -= 7; 
+               this._endDNN -= 7;
+               this.redrawSVG();
+           }).bind(this));
+           var $bUp = $("<button class='keyboardOctaveUp'>&gt;&gt;</button>").css({
+               'font-size': Math.floor(this.scaleFactor * 15).toString() + 'px',
+           }).bind('click', (function () {
+               music21.miditools.transposeOctave += 1;
+               this._startDNN += 7; 
+               this._endDNN += 7;
+               this.redrawSVG();
+           }).bind(this));
+           var $kWrapper = $("<div style='display:inline-block; vertical-align: middle' class='keyboardScrollableInnerDiv'></div>");
+           $kWrapper[0].appendChild(svgDOM);
+           $wrapper.append($bDown);
+           $wrapper.append($kWrapper);
+           $wrapper.append($bUp);
+           return $wrapper;
+       };
+
+       this.appendHideableKeyboard = function (where, keyboardSVG) {
+           var $container = $("<div class='keyboardHideableContainer'/>");
+           var $bInside = $("<div class='keyboardToggleInside'>↥</div>").css({
+               display: 'inline-block',
+               'padding-top': '40px',
+               'font-size': '40px'
+           });               
+           var $b = $("<div class='keyboardToggleOutside'/>").css({
+               display: 'inline-block',
+               'vertical-align': 'top',
+               background: 'white',
+           });
+           $b.append($bInside);
+           $b.data('defaultDisplay', $container.find('.keyboardSVG').css('display'));
+           $b.data('state', 'down');
+           $b.click( keyboard.triggerToggleShow );
+           var $explain = $("<div class='keyboardExplain'>Show keyboard</div>")
+               .css({
+                   'display': 'none',
+                   'background-color': 'white',
+                   'padding': '10px 10px 10px 10px',
+                   'font-size': '12pt',
+                   });
+           $b.append($explain);
+           $container.append($b);
+           $container[0].appendChild(keyboardSVG); // svg must use appendChild, not append.
+           $(where).append($container);
+           return $container;
+       };
     };
+
     
     /**
      * triggerToggleShow -- event for keyboard is shown or hidden.
@@ -413,7 +418,10 @@ define(['./base', './pitch', './common', 'loadMIDI', 'jquery'],
         var $t = $(this);
         var state = $t.data('state'); 
         var $parent = $t.parent();
-        var $k = $parent.find('.keyboardSVG');
+        var $k = $parent.find('.keyboardScrollableWrapper');
+        if ($k.length == 0) { // not scrollable
+            $k = $parent.find('.keyboardSVG');            
+        }
         var $bInside = $t.find('.keyboardToggleInside');
         var $explain = $parent.find('.keyboardExplain');
         if (state == 'up') {
