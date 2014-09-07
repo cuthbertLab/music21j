@@ -1,43 +1,27 @@
-<html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns = "http://www.w3.org/1999/xhtml">
     <head>
         <title>MIDI In/Jazz Test for Music21j</title>
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
         <!-- for MSIE 10 on Windows 8 -->
         <meta http-equiv="X-UA-Compatible" content="requiresActiveX=true"/>
         <script data-main="../src/music21.js" src="../ext/require/require.js"></script>
         <link rel="stylesheet" href="../css/m21.css" type="text/css" />
-        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
 
 		<script>
-		var s = "";
-		function displayStream(me) {
-		    me.sendToMIDIjs();
-		    if (me.noteOn) {
-		        var m21n = me.music21Note();
-		        if (s.length > 7) {
-		            s.elements = s.elements.slice(1)
-		        }
-		        s.append(m21n);
-	            var $canvasDiv = $("#canvasDiv");
-	            $canvasDiv.clear();
-	            var canv = s.appendNewCanvas($canvasDiv);
-		    }
-		}
 		require(['music21'], function () { 
-		    s = new music21.stream.Stream();
-		    var Jazz = music21.jazzMidi.createPlugin();
+		    music21.jazzMidi.createPlugin();
 		    music21.jazzMidi.createSelector($("#putMidiSelectHere"));
-		    music21.jazzMidi.callBacks.general = displayStream;
-		});
-		
-		
+		    music21.jazzMidi.callBacks.general = music21.miditools.sendToMIDIjs;
+		});			
 		</script>
     </head>
     <body>
-	<div>
-	MIDI Input: <div id="putMidiSelectHere" />
-	</div>
-	<div id="canvasDiv">
-        <canvas />
-    </div>
-</body>
+		<div>
+		MIDI Input: <div id="putMidiSelectHere" />
+		</div>
+		<div id="canvasDiv">
+	        <canvas />
+	    </div>
+    </body>
 </html>
