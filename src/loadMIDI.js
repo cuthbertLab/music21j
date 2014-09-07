@@ -21,14 +21,16 @@ if ( typeof define === "function" && define.amd) {
 //            }
 //        }
         MIDI.soundfontUrl = tempSoundfontUrl;
-        MIDI.loadedSoundfonts = {};
+        MIDI.loadedSoundfonts = {};        
+        
         var tempload = function(soundfont, callback) {
             // method to load soundfonts while waiting for other processes that need them
             // to load first.  will be bound to the MIDI object as music21.MIDI.loadSoundfont()
             var callwrapper = function () {
                 consolelog('soundfont loaded about to execute callback.');
                 consolelog('first playing two notes very softly -- seems to flush the buffer.');
-                
+                $(".loadingSoundfont").remove();
+
                 var isFirefox = typeof InstallTrigger !== 'undefined';   // Firefox 1.0+
                 var isAudioTag = (music21.MIDI.technology == 'HTML Audio Tag');
                 var instrumentObj = instrument.find(soundfont);
@@ -78,6 +80,8 @@ if ( typeof define === "function" && define.amd) {
                 consolelog('waiting for document ready');
                 $(document).ready( function() {
                     consolelog('document ready, waiting to load soundfont');
+                    $(document.body).append($("<div class='loadingSoundfont'><b>Loading MIDI Instrument</b>: " +
+                            "audio will begin when this message disappears.</div>"));                            
                     music21.MIDI.loadPlugin({
                         soundfontUrl: music21.MIDI.soundfontUrl,
                         instrument: soundfont,
