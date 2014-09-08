@@ -146,7 +146,47 @@ define([], function() {
 //            }
 //        }
 //    };
+    common.setWindowFocusWatcher = function (callback) {
+        var hidden = "hidden";
 
+        // Standards:
+        if (hidden in document) {
+            document.addEventListener("visibilitychange", windowFocusChanged);                
+        } else if ((hidden = "mozHidden") in document) {
+            document.addEventListener("mozvisibilitychange", windowFocusChanged);                
+        } else if ((hidden = "webkitHidden") in document) {
+            document.addEventListener("webkitvisibilitychange", windowFocusChanged);                
+        } else if ((hidden = "msHidden") in document) {
+            document.addEventListener("msvisibilitychange", windowFocusChanged);                
+        } else if ('onfocusin' in document) {
+            // IE 9 and lower:
+            document.onfocusin = document.onfocusout = windowFocusChanged;
+        } 
+        
+        // Also catch window... -- get two calls for a tab shift, but one for window losing focus
+        window.onpageshow = window.onpagehide = window.onfocus = window.onblur = windowFocusChanged;                
+        
+        
+        function windowFocusChanged (evt) {
+            var v = 'visible', h = 'hidden',
+                evtMap = { 
+                    focus:v, focusin:v, pageshow:v, blur:h, focusout:h, pagehide:h, 
+                };
+
+            evt = evt || window.event;
+            var callbackState = "";
+            if (evt.type in evtMap) {
+                callbackState = evtMap[evt.type];                
+            } else {
+                callbackState = this[hidden] ? "hidden" : "visible";                
+            }
+            callback(callbackState);
+        }
+        // set the initial state
+        var initialState = ((document.visibilityState == "visible") ? "focus" : "blur");
+        var initialStateEvent = { 'type': initialState };
+        windowFocusChanged(initialStateEvent); 
+    };
     // end of define
     if (typeof(music21) != "undefined") {
         music21.common = common;
