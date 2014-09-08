@@ -146,6 +146,15 @@ define([], function() {
 //            }
 //        }
 //    };
+    
+    /**
+     * runs a callback with either "visible" or "hidden" as the argument anytime the
+     * window or document state changes.
+     * 
+     * Depending on the browser, may be called multiple times with the same argument
+     * for a single event.  For instance, Safari calls once on losing focus completely
+     * but twice for a tab change.
+     */
     common.setWindowFocusWatcher = function (callback) {
         var hidden = "hidden";
 
