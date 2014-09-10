@@ -256,9 +256,9 @@ define(['./prebase', './base', './pitch', './beam', './common', 'vexflow'],
                 var absDNNfromCenter = Math.abs(this.pitch.diatonicNoteNum - midLine);
                 var absOverOctave = absDNNfromCenter - 7;
                 //console.log(absOverOctave);
-                if (absOverOctave > 0) {
-                    vfn.stem.stem_extension = absOverOctave * staveDNNSpacing;                      
-                    //console.log(absOverOctave, vfn.stem, vfn.stem.stem_extension);
+                if (absOverOctave > 0 && vfn.getStemLength !== undefined) {
+                    var stemHeight = (absOverOctave * staveDNNSpacing) + vfn.getStemLength();
+                    vfn.setStemLength(stemHeight);                      
                 }
             }
         }
