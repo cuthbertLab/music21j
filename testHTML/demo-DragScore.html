@@ -17,7 +17,9 @@ var allStream;
 require(['music21'], function () {
 	renderThemes();
 	allStreamScore = new music21.stream.Score();
+	allStreamScore.renderOptions.overriddenWidth = 600;
 	allStream = new music21.stream.Part();
+    allStream.renderOptions.overriddenWidth = 600;
 	allStreamScore.append(allStream);
 	var newCanvas = allStreamScore.createPlayableCanvas();
 	$('#dropDiv canvas').replaceWith(newCanvas[0]);	
@@ -51,7 +53,7 @@ function renderThemes ()  {
         themeCanvases.push(nc[0]);
         r.removeFormatterInformation(myStream, true); // recursive.
 
-        if (i % 5 == 4) {
+        if (i % 4 == 3) {
             $('#themeDiv').append($('<br/>'));
             // alert(nc);
 		}
@@ -72,6 +74,11 @@ function handleThemeDrop(event, ui) {
     
     allStream.append(containedStreamCopy);
     allStreamScore.resetRenderOptions(true); // recursive
+    for (var i = 0; i < allStream.length; i++) {
+        if ((i % 4) == 3) {
+            allStream.get(i).renderOptions.rightBarline = 'double';            
+        } 
+    }
     var newCanvas = allStreamScore.createPlayableCanvas();
 	$('#dropDiv canvas').replaceWith(newCanvas[0]);
 	// alert(allStream.hi);
@@ -90,16 +97,17 @@ function undoAdd() {
 }
 
 </script>
-<h1>Double Click me to play!</h1>
+<h1>Click me to play!</h1>
 <div id="dragContent">
 	<div id="themeDiv"></div>
 	<div id="dropDiv" height="800" width="1200">
-		<h1>Drop here! then single click to play</h1>
+		<h1>Create an 8-measure piece by dropping fragments here! <br/>Go for a smooth pattern. Then click here to play your score.</h1>
 		<button onclick="clearScore()">Clear</button> ... <button onclick="undoAdd()">Undo</button><br></br>
 		<div style="text-align: left">
 			<canvas id="#dropCanvas" width=1000></canvas>
 		</div>
 	</div>
 </div>
+<h2>If you've done that well, hit clear and try to create a 16-measure piece with these fragments.</h2>
 </body>
 </html>
