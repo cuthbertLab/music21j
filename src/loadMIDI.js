@@ -5,12 +5,14 @@ if ( typeof define === "function" && define.amd) {
                 'base64binary': 'ext/midijs/inc/base64binary',
         },
     });
+    
     var DEBUG = false;
     var consolelog = function(msg) {
         if (DEBUG) {
             console.log(msg);
         }
     };
+    
     var MIDI = {music21defined: true};
     define(['music21/instrument', 'MIDI','Base64','base64binary','jquery'], function(instrument) {
         var tempSoundfontUrl = require.toUrl('ext/midijs/soundfont/');
