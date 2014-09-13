@@ -73,7 +73,7 @@ if ((Object.defineProperties === undefined) && warnBanner) {
     }
     require.config({
     	paths: {
-    		'jquery': 'ext/jquery/jquery-2.1.1.min',
+            'jquery': 'ext/jquery/jquery-2.1.1.min',
     		'attrchange': 'ext/jqueryPlugins/attrchange',
     		'jquery-ui': 'ext/jqueryPlugins/jqueryUI/jquery-ui.min',
     		'vexflow': 'ext/vexflow/vexflow-min',
