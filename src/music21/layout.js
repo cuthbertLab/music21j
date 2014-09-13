@@ -164,7 +164,7 @@ define(['./base','./renderOptions','./stream',
             'systems': {
                 configurable: true,
                 enumerable: true,
-                get: function () { return this.getElementsByClass('System'); },
+                get: function () { return this.getElementsByClass('System'); }
             },
             'width': {
                 configurable: true,
@@ -175,8 +175,8 @@ define(['./base','./renderOptions','./stream',
                     } else if (this.activeSite) {
                         return this.activeSite.width;
                     }
-                },
-            },
+                }
+            }
         });
     };
     layout.Page.prototype = new stream.Score();
