@@ -278,6 +278,9 @@ define(['./common','./stream', 'jquery'], function(common, stream, $) {
     
     /**
      * A PixelMap maps one offset to one x location.
+     * 
+     * The offset does NOT have to be the offset of an element. Offsets are generally
+     * measured from the start of the flat stream.
      */
     streamInteraction.PixelMap = function (mapper, offset) {
         this.pixelScaling = mapper.pixelScaling; // should be a Weakref...
@@ -322,6 +325,12 @@ define(['./common','./stream', 'jquery'], function(common, stream, $) {
              
         });
     };
+    
+    streamInteraction.CursorSelect = function (s) {
+        this.stream = s;
+        this.activeElementHierarchy = [undefined];        
+    };
+    
     
     // end of define
     if (typeof(music21) != "undefined") {
