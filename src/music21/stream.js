@@ -769,11 +769,17 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
         if ($where.prop('tagName') == 'CANVAS') {
             $oldCanvas = $where;
         } else {
-            $oldCanvas = $where.children('canvas');
+            $oldCanvas = $where.find('canvas');
         }
         // TODO: Max Width!
-        if ($oldCanvas === undefined) {
+        if ($oldCanvas.length == 0) {
             throw ("No canvas defined for replaceCanvas!");
+        } else if ($oldCanvas.length > 1) {
+            // change last canvas...
+            // replacing each with canvasBlock doesn't work
+            // anyhow, it just resizes the canvas but doesn't
+            // draw.
+            $oldCanvas = $($oldCanvas[$oldCanvas.length -1]);
         }
         
         var canvasBlock;
