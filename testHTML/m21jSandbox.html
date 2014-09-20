@@ -3,99 +3,61 @@
 <head>
   <meta http-equiv="content-type" content="text/html; charset=utf-8" />
   <title>Music21j Sandbox</title>
-  <link href='http://fonts.googleapis.com/css?family=OFL+Sorts+Mill+Goudy+TT|Yanone+Kaffeesatz|Tangerine' rel='stylesheet' type='text/css'>
   <script data-main="../src/music21.js" src="../ext/require/require.js"></script>
-
   <style type="text/css">
     canvas {
       background: #eed;
       padding: 10px;
       border: 10px solid #ddc;
     }
-
     div.egcode {
       font-family: Courier;
       font-size: 12px;
     }
-  </style>
+    .editor {
+      background: #cfc;
+      border: 10px solid #afa;
+      font-family: Courier;
+      font-size: 14px;
+    }
+    div.editor-error .text {
+      background: #faa;
+      border: 5px solid #f88;
+      font-family: Courier;
+      font-size: 14px;
+      padding: 3px;
+      display: none;
+    }
+    </style>
 
   <script>
-  canvas = undefined;
-  bach = undefined;
+  mainCanvas = undefined;
+  var timeout;
+  var msg = "";
 
   window.onload = function () {
 	  require(['music21'], function() { 
-    canvas = $("div.sandbox div.sandbox canvas")[0];
+	     mainCanvas = $("#mainCanvas")[0];         
+         msg = $('div.editor-error .text');
+         live_code();
 
-	var allJSON = '{"parts": [[[{"octave": 5, "pitchName": "C#", "quarterLength": 0.5}, {"octave": 4, "pitchName": "B", "quarterLength": 0.5}], [{"octave": 4, "pitchName": "A", "quarterLength": 1.0}, {"octave": 4, "pitchName": "B", "quarterLength": 1.0}, {"octave": 5, "pitchName": "C#", "quarterLength": 1.0}, {"octave": 5, "pitchName": "E", "quarterLength": 1.0}], [{"octave": 5, "pitchName": "C#", "quarterLength": 1.0}, {"octave": 4, "pitchName": "B", "quarterLength": 1.0}, {"octave": 4, "pitchName": "A", "quarterLength": 1.0}, {"octave": 5, "pitchName": "C#", "quarterLength": 1.0}], [{"octave": 4, "pitchName": "A", "quarterLength": 0.5}, {"octave": 4, "pitchName": "B", "quarterLength": 0.5}, {"octave": 4, "pitchName": "G#", "quarterLength": 1.0}, {"octave": 4, "pitchName": "F#", "quarterLength": 1.0}, {"octave": 4, "pitchName": "A", "quarterLength": 1.0}], [{"octave": 4, "pitchName": "B", "quarterLength": 1.0}, {"octave": 4, "pitchName": "B", "quarterLength": 1.0}, {"octave": 4, "pitchName": "F#", "quarterLength": 1.0}, {"octave": 4, "pitchName": "E", "quarterLength": 1.0}], [{"octave": 4, "pitchName": "A", "quarterLength": 1.0}, {"octave": 4, "pitchName": "B", "quarterLength": 1.0}, {"octave": 5, "pitchName": "C#", "quarterLength": 1.0}, {"octave": 5, "pitchName": "C#", "quarterLength": 1.0}], [{"octave": 4, "pitchName": "A", "quarterLength": 1.0}, {"octave": 4, "pitchName": "B", "quarterLength": 1.0}, {"octave": 5, "pitchName": "C#", "quarterLength": 1.0}, {"octave": 4, "pitchName": "A", "quarterLength": 1.0}], [{"octave": 4, "pitchName": "G#", "quarterLength": 1.0}, {"octave": 4, "pitchName": "F#", "quarterLength": 1.0}, {"octave": 4, "pitchName": "G#", "quarterLength": 2.0}], [{"octave": 4, "pitchName": "F#", "quarterLength": 2.0}, {"octave": 4, "pitchName": "F#", "quarterLength": 1.0}, {"octave": 4, "pitchName": "F#", "quarterLength": 1.0}], [{"octave": 4, "pitchName": "F#", "quarterLength": 1.0}, {"octave": 4, "pitchName": "F#", "quarterLength": 0.5}, {"octave": 4, "pitchName": "E#", "quarterLength": 0.5}, {"octave": 4, "pitchName": "F#", "quarterLength": 1.0}]], [[{"octave": 4, "pitchName": "E", "quarterLength": 1.0}], [{"octave": 4, "pitchName": "F#", "quarterLength": 1.0}, {"octave": 4, "pitchName": "E", "quarterLength": 1.0}, {"octave": 4, "pitchName": "E", "quarterLength": 1.0}, {"octave": 4, "pitchName": "E", "quarterLength": 1.0}], [{"octave": 4, "pitchName": "E", "quarterLength": 0.5}, {"octave": 4, "pitchName": "A", "quarterLength": 0.5}, {"octave": 4, "pitchName": "G#", "quarterLength": 1.0}, {"octave": 4, "pitchName": "E", "quarterLength": 1.0}, {"octave": 4, "pitchName": "G#", "quarterLength": 1.0}], [{"octave": 4, "pitchName": "F#", "quarterLength": 0.5}, {"octave": 4, "pitchName": "G#", "quarterLength": 0.5}, {"octave": 4, "pitchName": "E#", "quarterLength": 1.0}, {"octave": 4, "pitchName": "C#", "quarterLength": 1.0}, {"octave": 4, "pitchName": "F#", "quarterLength": 1.0}], [{"octave": 4, "pitchName": "F#", "quarterLength": 1.0}, {"octave": 4, "pitchName": "E", "quarterLength": 1.0}, {"octave": 4, "pitchName": "D#", "quarterLength": 1.0}, {"octave": 4, "pitchName": "C#", "quarterLength": 1.0}], [{"octave": 4, "pitchName": "C#", "quarterLength": 0.5}, {"octave": 4, "pitchName": "F#", "quarterLength": 0.5}, {"octave": 4, "pitchName": "E", "quarterLength": 1.0}, {"octave": 4, "pitchName": "E", "quarterLength": 1.0}, {"octave": 4, "pitchName": "A", "quarterLength": 1.0}], [{"octave": 4, "pitchName": "F#", "quarterLength": 1.0}, {"octave": 4, "pitchName": "F#", "quarterLength": 1.0}, {"octave": 4, "pitchName": "G#", "quarterLength": 1.0}, {"octave": 4, "pitchName": "F#", "quarterLength": 1.0}], [{"octave": 4, "pitchName": "F#", "quarterLength": 0.5}, {"octave": 4, "pitchName": "E#", "quarterLength": 0.5}, {"octave": 4, "pitchName": "F#", "quarterLength": 0.5}, {"octave": 3, "pitchName": "F#", "quarterLength": 0.5}, {"octave": 4, "pitchName": "C#", "quarterLength": 2.0}], [{"octave": 4, "pitchName": "C#", "quarterLength": 0.5}, {"octave": 4, "pitchName": "D", "quarterLength": 0.5}, {"octave": 4, "pitchName": "E", "quarterLength": 2.0}, {"octave": 4, "pitchName": "D", "quarterLength": 0.5}, {"octave": 4, "pitchName": "C#", "quarterLength": 0.5}], [{"octave": 3, "pitchName": "B", "quarterLength": 0.5}, {"octave": 4, "pitchName": "C#", "quarterLength": 0.5}, {"octave": 4, "pitchName": "D", "quarterLength": 1.0}, {"octave": 4, "pitchName": "C#", "quarterLength": 1.0}]], [[{"octave": 3, "pitchName": "A", "quarterLength": 0.5}, {"octave": 3, "pitchName": "B", "quarterLength": 0.5}], [{"octave": 4, "pitchName": "C#", "quarterLength": 1.0}, {"octave": 3, "pitchName": "B", "quarterLength": 1.0}, {"octave": 3, "pitchName": "A", "quarterLength": 1.0}, {"octave": 3, "pitchName": "B", "quarterLength": 1.0}], [{"octave": 3, "pitchName": "A", "quarterLength": 0.5}, {"octave": 4, "pitchName": "E", "quarterLength": 0.5}, {"octave": 4, "pitchName": "E", "quarterLength": 0.5}, {"octave": 4, "pitchName": "D", "quarterLength": 0.5}, {"octave": 4, "pitchName": "C#", "quarterLength": 1.0}, {"octave": 4, "pitchName": "C#", "quarterLength": 1.0}], [{"octave": 4, "pitchName": "C#", "quarterLength": 0.5}, {"octave": 4, "pitchName": "D", "quarterLength": 0.5}, {"octave": 4, "pitchName": "C#", "quarterLength": 0.5}, {"octave": 3, "pitchName": "B", "quarterLength": 0.5}, {"octave": 3, "pitchName": "A", "quarterLength": 1.0}, {"octave": 4, "pitchName": "C#", "quarterLength": 1.0}], [{"octave": 3, "pitchName": "B", "quarterLength": 1.0}, {"octave": 3, "pitchName": "B", "quarterLength": 1.0}, {"octave": 3, "pitchName": "B", "quarterLength": 0.5}, {"octave": 3, "pitchName": "A", "quarterLength": 0.5}, {"octave": 3, "pitchName": "G#", "quarterLength": 1.0}], [{"octave": 3, "pitchName": "F#", "quarterLength": 0.5}, {"octave": 4, "pitchName": "D", "quarterLength": 0.5}, {"octave": 4, "pitchName": "C#", "quarterLength": 0.5}, {"octave": 3, "pitchName": "B", "quarterLength": 0.5}, {"octave": 3, "pitchName": "A", "quarterLength": 1.0}, {"octave": 4, "pitchName": "E", "quarterLength": 1.0}], [{"octave": 4, "pitchName": "D", "quarterLength": 1.0}, {"octave": 4, "pitchName": "D", "quarterLength": 1.0}, {"octave": 4, "pitchName": "C#", "quarterLength": 1.0}, {"octave": 4, "pitchName": "C#", "quarterLength": 1.0}], [{"octave": 4, "pitchName": "D", "quarterLength": 0.5}, {"octave": 4, "pitchName": "C#", "quarterLength": 0.5}, {"octave": 4, "pitchName": "C#", "quarterLength": 0.5}, {"octave": 3, "pitchName": "B", "quarterLength": 0.5}, {"octave": 3, "pitchName": "E#", "quarterLength": 2.0}], [{"octave": 3, "pitchName": "F#", "quarterLength": 1.0}, {"octave": 4, "pitchName": "C#", "quarterLength": 2.0}, {"octave": 3, "pitchName": "B", "quarterLength": 0.5}, {"octave": 3, "pitchName": "A#", "quarterLength": 0.5}], [{"octave": 3, "pitchName": "B", "quarterLength": 1.0}, {"octave": 3, "pitchName": "B", "quarterLength": 1.0}, {"octave": 3, "pitchName": "A#", "quarterLength": 1.0}]], [[{"octave": 3, "pitchName": "A", "quarterLength": 0.5}, {"octave": 3, "pitchName": "G#", "quarterLength": 0.5}], [{"octave": 3, "pitchName": "F#", "quarterLength": 1.0}, {"octave": 3, "pitchName": "G#", "quarterLength": 1.0}, {"octave": 3, "pitchName": "A", "quarterLength": 1.0}, {"octave": 3, "pitchName": "G#", "quarterLength": 1.0}], [{"octave": 3, "pitchName": "A", "quarterLength": 0.5}, {"octave": 3, "pitchName": "C#", "quarterLength": 0.5}, {"octave": 3, "pitchName": "E", "quarterLength": 1.0}, {"octave": 2, "pitchName": "A", "quarterLength": 1.0}, {"octave": 3, "pitchName": "E#", "quarterLength": 1.0}], [{"octave": 3, "pitchName": "F#", "quarterLength": 0.5}, {"octave": 2, "pitchName": "B", "quarterLength": 0.5}, {"octave": 3, "pitchName": "C#", "quarterLength": 1.0}, {"octave": 2, "pitchName": "F#", "quarterLength": 1.0}, {"octave": 3, "pitchName": "F#", "quarterLength": 1.0}], [{"octave": 3, "pitchName": "G#", "quarterLength": 0.5}, {"octave": 3, "pitchName": "F#", "quarterLength": 0.5}, {"octave": 3, "pitchName": "G#", "quarterLength": 0.5}, {"octave": 3, "pitchName": "A", "quarterLength": 0.5}, {"octave": 3, "pitchName": "B", "quarterLength": 0.5}, {"octave": 2, "pitchName": "B", "quarterLength": 0.5}, {"octave": 3, "pitchName": "C#", "quarterLength": 1.0}], [{"octave": 3, "pitchName": "F#", "quarterLength": 1.0}, {"octave": 3, "pitchName": "G#", "quarterLength": 1.0}, {"octave": 3, "pitchName": "A", "quarterLength": 1.0}, {"octave": 3, "pitchName": "A", "quarterLength": 1.0}], [{"octave": 4, "pitchName": "D", "quarterLength": 1.0}, {"octave": 3, "pitchName": "B", "quarterLength": 1.0}, {"octave": 3, "pitchName": "E#", "quarterLength": 1.0}, {"octave": 3, "pitchName": "F#", "quarterLength": 1.0}], [{"octave": 2, "pitchName": "B", "quarterLength": 0.5}, {"octave": 3, "pitchName": "C#", "quarterLength": 0.5}, {"octave": 3, "pitchName": "D", "quarterLength": 1.0}, {"octave": 3, "pitchName": "C#", "quarterLength": 2.0}], [{"octave": 2, "pitchName": "A#", "quarterLength": 2.0}, {"octave": 2, "pitchName": "B", "quarterLength": 1.0}, {"octave": 3, "pitchName": "C#", "quarterLength": 1.0}], [{"octave": 3, "pitchName": "D", "quarterLength": 1.0}, {"octave": 2, "pitchName": "B", "quarterLength": 1.0}, {"octave": 3, "pitchName": "F#", "quarterLength": 1.0}]]]}';
-	var jsonObj = JSON.parse(allJSON);
-	s = new music21.stream.Score();
-	s.tempo = 60;
-	s.timeSignature = '4/4';
-	s.keySignature = new music21.key.KeySignature(3);
-	for (var i = 0; i < jsonObj['parts'].length; i++) {
-		var part = new music21.stream.Part();
-		if (i < 2) {
-			part.clef = new music21.clef.Clef('treble');
-		} else {
-			part.clef = new music21.clef.Clef('bass');
-		}
-		//console.log('got part');
-		var jsonPart = jsonObj['parts'][i];
-		for (var m = 0; m < jsonPart.length; m++) {
-			//console.log('got measure');
-			var measure = new music21.stream.Measure();
-			var jsonMeasure = jsonPart[m];
-			for (var nI = 0; nI < jsonMeasure.length; nI++) {
-				var n = new music21.note.Note();
-				var noteDict = jsonMeasure[nI];
-				//console.log(noteDict);
-				n.pitch.name = noteDict['pitchName'];
-				n.pitch.octave = noteDict['octave'];
-				n.duration.quarterLength = noteDict['quarterLength']
-				measure.append(n);
-			}
-			part.append(measure)
-		}
-		s.append(part);
-	}
-	bach = s;
-    live_code();
+         $('#sandbox').on('blur keyup paste', function() {
+           if (timeout) clearTimeout(timeout);
+           timeout = setTimeout(live_code, 200);
+         });
 	  });
   };
-  /* Take raw javascript code, and return moderately useful HTML */
-    function prettify_code(code) {
-      var lines = code.split(/\r\n|\n|\r/);
-      var new_lines = [];
-      for (var j = 0; j < lines.length; ++j) {
-        code = lines[j];
-        code = code.replace(/\s/g, "&nbsp;");
-        code = code.replace(/>/g, "&gt;");
-        code = code.replace(/</g, "&lt;");
-        new_lines.push(code);
+  function live_code() {
+      var code = $("#sandbox").val();
+
+      try {
+        eval(code);
+        msg.html('').hide();
+      } catch (e) {
+        msg.html(e.toString()).show();
       }
 
-      pretty_code = "<div class='egcode'>" + new_lines.join("<br/>") + "</div>";
-      return pretty_code;
-    }
-
-    /*
-       Find all the javascript examples and copy their source code
-       into the associated <code> blocks.
-    */
-    require(['music21'], function() {
-	    $(function() {
-	      $("div.description").each(function(index, sel) {
-	        codes = $(sel).find("code.example");
-	        codes.each(function(i, s) {
-	          var example = $(s).attr("example");
-	          var code = $($(sel).find(
-	            "div.example." + example + " script")[0]).html();
-	          $(s).html(prettify_code(code));
-	         })
-	      })
-	    })
-    });
+  }
   </script>
 </head>
 
@@ -104,14 +66,10 @@
     <h1>Music21j Sandbox</h1>
     <div class="main">
       <b>A live editor for experimenting with Music21j and Vexflow, based on the Vexflow Sandbox</b>
-    </div>pre-pre-pre-alpha by <a href="http://0xfe.blogspot.com">0xfe</a>.
+    </div>
   </div>
 
   <div class="content">
-
-
-    <h2>Have some fun!</h2>
-
     <div class="description sandbox">
       <p/>
       <div class="editor-error"><span class="text"></span></div>
@@ -126,53 +84,7 @@ s.append(n);
 s.replaceCanvas();
 </textarea>
         <p/>
-        <canvas width=625 height=460></canvas>
-
-        <style>
-        .editor {
-          background: #cfc;
-          border: 10px solid #afa;
-          font-family: Courier;
-          font-size: 14px;
-        }
-
-
-        div.editor-error .text {
-          background: #faa;
-          border: 5px solid #f88;
-          font-family: Courier;
-          font-size: 14px;
-          padding: 3px;
-          display: none;
-        }
-
-        </style>
-        <script>
-
-        var timeout;
-        var msg = "";
-        require(['music21'], function() {
-            msg = $('div.editor-error .text');
-	        
-	        $('#sandbox').on('blur keyup paste', function() {
-	          if (timeout) clearTimeout(timeout);
-	          timeout = setTimeout(live_code, 200);
-	        });
-        });
-        function live_code() {
-            var code = $("#sandbox").val();
-
-            try {
-              eval(code);
-              msg.html('').hide();
-            } catch (e) {
-              msg.html(e.toString()).show();
-            }
-
-          }
-
-
-        </script>
+        <canvas width="625" height="360" id='mainCanvas'></canvas>
         <p/>
       </div>
 
