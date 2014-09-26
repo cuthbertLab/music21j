@@ -368,7 +368,11 @@ define(['./prebase', './base', './pitch', './beam', './common', 'vexflow'],
 		this.classes.push('Note');
 		this.isNote = true; // for speed
 		this.isRest = false; // for speed
-	    this.pitch = new pitch.Pitch(nn);
+		if (nn !== undefined && nn.isClassOrSubclass !== undefined && nn.isClassOrSubclass('Pitch') == true) {
+		    this.pitch = nn;
+		} else {
+	        this.pitch = new pitch.Pitch(nn);		    
+		}
         Object.defineProperties(this, {
             'name': {
                 get: function() {return this.pitch.name;},
