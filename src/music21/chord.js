@@ -140,7 +140,7 @@ define(['./note', 'vexflow'],
         /* var chordBass = closedChord.bass(); */
         var closedPitches = closedChord.pitches;
         if (closedPitches.length == 0) {
-            throw "No notes in Chord!";
+            throw("No notes in Chord!");
         } else if (closedPitches.length == 1) {
             return this.pitches[0];
         }
@@ -169,9 +169,9 @@ define(['./note', 'vexflow'],
                 indexOfPitchesWithPerfectlyStackedThirds.push(i);
                 return closedChord.pitches[i]; // should do more, but fine...
                 // should test rootedness function, etc. 13ths. etc.
-            }
-            
+            }            
         }
+        return closedChord.pitches[0]; // fallback, just return the bass...
     };
     /**
      * 
@@ -181,7 +181,7 @@ define(['./note', 'vexflow'],
      */
 
     chord.Chord.prototype.semitonesFromChordStep = function (chordStep, testRoot) {
-        if (testRoot == undefined) {
+        if (testRoot === undefined) {
             testRoot = this.root();
         }
         var tempChordStep = this.getChordStep(chordStep, testRoot);
