@@ -488,18 +488,18 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
             extendableStepList[stepName] = stepAlter;
         }
         var lastOctaveStepList = [];
-        for (var i =0; i < 10; i++) {
+        for (var i = 0; i < 10; i++) {
             var lastStepDict = $.extend({}, extendableStepList);
             lastOctaveStepList.push(lastStepDict);
         }
         var lastOctavelessStepDict = $.extend({}, extendableStepList); // probably unnecessary, but safe...
         for (var i = 0; i < this.length; i++) {
             var el = this.get(i);
-            if (el.pitch != undefined) {
+            if (el.pitch != undefined) { // note
                 var p = el.pitch;
-                var lastStepDict = lastOctaveStepList[p.octave];
+                var lastStepDict = lastOctaveStepList[p.octave];                
                 this.makeAccidentalForOnePitch(p, lastStepDict, lastOctavelessStepDict);
-            } else if (el._noteArray != undefined) {
+            } else if (el._noteArray != undefined) { // chord
                 for (var j = 0; j < el._noteArray.length; j++) {
                     var p = el._noteArray[j].pitch;
                     var lastStepDict = lastOctaveStepList[p.octave];
