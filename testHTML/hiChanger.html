@@ -1,0 +1,21 @@
+<html>
+<head>
+ <title>Hi</title>
+ <script data-main="../src/music21" 
+         src="../ext/require/require.js"></script>
+</head>
+<body>
+<script>
+require(['music21'], function () {
+    var ch = new music21.chord.Chord(["C#", "E", "F#5"]);
+    ch.duration.type="whole";
+    ch.duration.dots = 1;
+    s = new music21.stream.Stream();
+    s.append(ch);
+    setTimeout(10000, function() {
+        s.playStream();        
+    })
+} );
+</script>
+</body>
+</html>
