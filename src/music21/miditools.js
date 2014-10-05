@@ -12,11 +12,12 @@
  * @author Michael Scott Cuthbert
  */
 
-define(['jquery', './note', './chord'], function($, note, chord) {
+define(['jquery', './note', './chord'], 
+        function($, note, chord) {
     /**
      * @exports music21/miditools
-     */
-    miditools = {};
+     */    
+    var miditools = {};
     
     miditools.transposeOctave = 0;
     /**
