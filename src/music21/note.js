@@ -130,7 +130,7 @@ define(['./prebase', './base', './pitch', './beam', './common', 'vexflow'],
 	 * @constructor
 	 * @memberof music21
 	 * @extends base.Music21Object
-	 * @param {(number|undefined=1)} ql - quarterLength of the note
+	 * @param {(number|undefined)} ql - quarterLength of the note (default 1)
 	 */
 	note.GeneralNote = function (ql) {
 		base.Music21Object.call(this);
@@ -356,8 +356,11 @@ define(['./prebase', './base', './pitch', './beam', './common', 'vexflow'],
 
 
 	/* ------- Note ----------- */
-    /**
+	/**
+     * A note object...
+     * 
      * @class Note
+     * @constructor
      * @memberof music21
      * @extends NotRest
      * @param {(string|undefined)} nn - pitch name

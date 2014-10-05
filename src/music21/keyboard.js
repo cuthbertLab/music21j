@@ -441,6 +441,10 @@ define(['./base', './pitch', './common', 'loadMIDI', 'jquery'],
             $t.data('state', 'up');
         }
     };
+    
+    /**
+     * [better demo...]
+     */
     keyboard.jazzHighlight = function (e) {
         // e is a miditools.event object -- call with this = keyboard.Keyboard object via bind...
         if (e === undefined) {
