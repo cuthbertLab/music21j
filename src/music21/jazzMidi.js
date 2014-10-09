@@ -27,6 +27,8 @@ define(['./miditools'], function(miditools) {
 
 	jazzMidi.midiInArrived = function (t, a, b, c) {
 	    var eventObject = jazzMidi.callBacks.raw(t, a, b, c);
+
+	    // todo: raw, general, sendOutChord should all be able to be Arrays or single function
 	    if (jazzMidi.callBacks.general instanceof Array) {
 	        jazzMidi.callBacks.general.forEach( function(el, index, array) { 
 	            el(eventObject);  
