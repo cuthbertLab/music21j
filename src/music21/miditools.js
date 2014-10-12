@@ -12,11 +12,11 @@
  * @author Michael Scott Cuthbert
  */
 
-define(['jquery', './note', './chord'],         
+define(['jquery', './note', './chord', 'MIDI', 'Base64', 'base64binary'],         
        /**
          * @exports music21/miditools
          */
-        function($, note, chord) {
+        function($, note, chord, MIDI) {
     /** @namespace music21.miditools 
      *  @memberof music21 
      */
@@ -56,11 +56,11 @@ define(['jquery', './note', './chord'],
      * @returns {undefined}
      */
     miditools.Event.prototype.sendToMIDIjs = function () {
-        if (music21.MIDI !== undefined) {
+        if (MIDI !== undefined) {
             if (this.noteOn) {
-                music21.MIDI.noteOn(0, this.midiNote, this.velocity, 0);
+                MIDI.noteOn(0, this.midiNote, this.velocity, 0);
             } else if (this.noteOff) {
-                music21.MIDI.noteOff(0, this.midiNote, 0);      
+                MIDI.noteOff(0, this.midiNote, 0);      
             }
         } else {
             console.warn('could not playback note because no MIDIout defined');
@@ -252,6 +252,93 @@ define(['jquery', './note', './chord'],
     miditools.sendToMIDIjs = function(midiEvent) {
         midiEvent.sendToMIDIjs();
     };
+    
+    /* ------------ MIDI.js ----------- */
+    miditools.loadedSoundfonts = {};
+
+    miditools.postLoadCallback = function (soundfont, callback) {
+        // this should be bound to MIDI
+        
+        if (music21.debug) {
+            console.log('soundfont loaded about to execute callback.');
+            console.log('first playing two notes very softly -- seems to flush the buffer.');            
+        }
+        $(".loadingSoundfont").remove();
+
+        var isFirefox = typeof InstallTrigger !== 'undefined';   // Firefox 1.0+
+        var isAudioTag = (MIDI.technology == 'HTML Audio Tag');
+        var instrumentObj = music21.instrument.find(soundfont);
+        if (instrumentObj != undefined) {
+            MIDI.programChange(instrumentObj.midiChannel, instrumentObj.midiProgram);
+            if (music21.debug) {
+                console.log(soundfont + ' (' + instrumentObj.midiProgram + ') loaded on ', instrumentObj.midiChannel);
+            }
+            if ((isFirefox == false) && (isAudioTag == false)) {  
+                var c = instrumentObj.midiChannel;
+                     // Firefox ignores sound volume! so don't play! as does IE and others using HTML audio tag.
+                MIDI.noteOn(c, 36, 1, 0);     // if no notes have been played before then
+                MIDI.noteOff(c, 36, 1, 0.1);  // the second note to be played is always
+                MIDI.noteOn(c, 48, 1, 0.2);   // very clipped (on Safari at least)
+                MIDI.noteOff(c, 48, 1, 0.3);  // this helps a lot.
+                MIDI.noteOn(c, 60, 1, 0.3);   // chrome needs three?
+                MIDI.noteOff(c, 60, 1, 0.4);                      
+            }
+        }
+        if (callback !== undefined) {
+            callback(instrumentObj);
+        }
+        miditools.loadedSoundfonts[soundfont] = true;                
+    };
+
+    
+    // method to load soundfonts while waiting for other processes that need them
+    // to load first.  will be available as music21.miditools.loadSoundfont()
+    miditools.loadSoundfont = function(soundfont, callback) {
+        
+        if (miditools.loadedSoundfonts[soundfont] == true) {
+            if (callback !== undefined) {
+                var instrumentObj = music21.instrument.find(soundfont);
+                callback(instrumentObj);
+            }
+        } else if (miditools.loadedSoundfonts[soundfont] == 'loading'){
+            var waitThenCall = undefined;
+            waitThenCall = function() {
+                if (miditools.loadedSoundfonts[soundfont] == true) {
+                    if (music21.debug) {
+                        console.log('other process has finished loading; calling callback');
+                    }
+                    if (callback !== undefined) {
+                        var instrumentObj = music21.instrument.find(soundfont);
+                        callback(instrumentObj);
+                    }
+                } else {
+                    if (music21.debug) {
+                        console.log('waiting for other process load');                        
+                    }
+                    setTimeout(waitThenCall, 100);
+                }
+            };
+            waitThenCall();
+        } else {
+            miditools.loadedSoundfonts[soundfont] = "loading";
+            if (music21.debug) {                
+                console.log('waiting for document ready');
+            }
+            $(document).ready( function() {
+                if (music21.debug) {
+                    console.log('document ready, waiting to load soundfont');                    
+                }
+                $(document.body).append($("<div class='loadingSoundfont'><b>Loading MIDI Instrument</b>: " +
+                        "audio will begin when this message disappears.</div>"));                            
+                MIDI.loadPlugin({
+                    soundfontUrl: music21.soundfontUrl,
+                    instrument: soundfont,
+                    callback: miditools.postLoadCallback.bind(MIDI, soundfont, callback),
+                });
+            });
+        }
+    };
+
 
     // end of define
     if (typeof(music21) != "undefined") {

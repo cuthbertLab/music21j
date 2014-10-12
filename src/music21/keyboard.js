@@ -18,8 +18,8 @@
 // k.whiteKeyWidth = 40; // default 23
 
 
-define(['./base', './pitch', './common', 'loadMIDI', 'jquery'], 
-        function(base, pitch, common, MIDI, $) {
+define(['./base', './pitch', './common', './miditools', 'jquery', 'MIDI'], 
+        function(base, pitch, common, miditools, $, MIDI) {
     var keyboard = {};
     
     keyboard.Key = function () {
@@ -232,7 +232,7 @@ define(['./base', './pitch', './common', 'loadMIDI', 'jquery'],
                fillColor = 'yellow';    
            }
            keyRect.setAttribute("style", "fill:" + fillColor + ";stroke:black");
-           MIDI.loadSoundfont('acoustic_grand_piano', function(i) {
+           miditools.loadSoundfont('acoustic_grand_piano', function(i) {
                MIDI.noteOn(i.midiChannel, id, 100, 0);
                MIDI.noteOff(i.midiChannel, id, 500);
            });

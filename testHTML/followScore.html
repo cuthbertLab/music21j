@@ -52,7 +52,7 @@
             s.insert(0, s2);
             s.tempo = 90;
             
-            lsf = music21.MIDI.loadSoundfont;
+            lsf = music21.miditools.loadSoundfont;
             
             lsf('clarinet', function(i) { 
                 s1.instrument = i;
