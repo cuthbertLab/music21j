@@ -32,14 +32,12 @@ if (typeof(music21) === "undefined") {
 }
 console.log('hi before: ' + require.toUrl('hi'));
 console.log('./hi before: ' + require.toUrl('./hi'));
-console.log('loadMIDI before: ' + require.toUrl('loadMIDI'));
 
 require.config({
     context: 'music21',
 });
 console.log('hi context: ' + require.toUrl('hi'));
 console.log('./hi context: ' + require.toUrl('./hi'));
-console.log('loadMIDI context: ' + require.toUrl('loadMIDI'));
 
 
 //must be defined before loading, jQuery, etc. because needed to see if warnBanner is defined
@@ -106,6 +104,7 @@ if (typeof m21srcPath === 'undefined') {
 music21.m21srcPath = m21srcPath;
 console.log('m21srcPath', m21srcPath);
 console.log('m21srcPath non simplified', require.toUrl('music21'));
+music21.soundfontUrl = require.toUrl('music21') + '/../ext/midijs/soundfont/';
 
 var m21requireConfig = {
     paths: {
@@ -113,7 +112,6 @@ var m21requireConfig = {
         'attrchange': pathSimplify(m21srcPath + '/ext/jqueryPlugins/attrchange'),
         'jquery-ui': pathSimplify(m21srcPath + '/ext/jqueryPlugins/jqueryUI/jquery-ui.min'),
         'vexflow': pathSimplify(m21srcPath + '/ext/vexflow/vexflow-min'),
-        'loadMIDI': pathSimplify(m21srcPath + '/loadMIDI'),
         'MIDI':         pathSimplify(m21srcPath + '/ext/midijs/build/MIDI'),
         'Base64':       pathSimplify(m21srcPath + '/ext/midijs/inc/Base64'),             
         'base64binary': pathSimplify(m21srcPath + '/ext/midijs/inc/base64binary'),
@@ -127,6 +125,10 @@ var m21requireConfig = {
       },     
     ],      
     shim: {
+        'MIDI': {
+            deps: [ 'Base64', 'base64binary'],
+            exports: 'MIDI',
+        },
         'attrchange': {
             deps: [ 'jquery' ],
             exports: 'jQuery.attrchange',
@@ -141,11 +143,10 @@ var m21requireConfig = {
         },
     }
 };
-console.log('loadMIDI after: ', m21requireConfig.paths.loadMIDI);
 console.log('jsonpickle in music21: ', m21requireConfig.packages[0].location);
 
 
-var m21modules = ['loadMIDI',
+var m21modules = ['MIDI',
                   'vexflow',
                   'jquery',
                   'jsonpickle',
@@ -192,7 +193,7 @@ if ((Object.defineProperties === undefined) && warnBanner) {
                     if (music21.MIDI) {
                         if ((music21.scriptConfig.loadSoundfont === undefined) ||
                                 (music21.scriptConfig.loadSoundfont != false)) {
-                           music21.MIDI.loadSoundfont('acoustic_grand_piano');
+                           music21.miditools.loadSoundfont('acoustic_grand_piano');
                         } else {
                             console.log('skipping loading sound font');
                         }

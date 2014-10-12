@@ -23,7 +23,7 @@
             s.insert(0, s2);
             s.tempo = 90;
             
-            music21.MIDI.loadSoundfont('acoustic_grand_piano', function() { 
+            music21.miditools.loadSoundfont('acoustic_grand_piano', function() { 
                 var $can = $("#can");
                 //s.renderScrollableCanvas($can);
                 $can.append(s1.get(0).editableAccidentalCanvas());
