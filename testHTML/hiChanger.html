@@ -14,10 +14,7 @@ require(['music21'], function () {
     
     s = new music21.stream.Measure();
     s.append(ch);
-
-    setTimeout(function() {
-        s.playStream();
-    }, 1000);
+    s.appendNewCanvas();
 } );
 </script>
 </body>
