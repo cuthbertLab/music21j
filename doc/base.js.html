@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: music21/base.js</title>
+    
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+    
+    <h1 class="page-title">Source: music21/base.js</h1>
+    
+    
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source"><code>/**
+ * music21j -- Javascript reimplementation of Core music21p features.  
+ * music21/base -- objects in base in music21p routines
+ *
+ * does not load the other modules, music21/moduleLoader.js does that.
+ *
+ * Copyright (c) 2013-14, Michael Scott Cuthbert and cuthbertLab
+ * Based on music21 (=music21p), Copyright (c) 2006–14, Michael Scott Cuthbert and cuthbertLab
+ * 
+ */
+
+
+define(['./prebase', './duration'], 
+        /**
+         * module for Music21Objects, see {@link music21.base}
+         * @exports music21/base
+         */
+        function(prebase, duration) {
+    /**
+     * Module for Music21Objects.  Does not load other modules, see {@link music21.moduleLoader}
+     * for this functionality.
+     * 
+     * @namespace music21.base
+     * @memberof music21
+     */
+    var base = {};
+
+	/**
+	 * @class Music21Object
+	 * @memberof music21.base
+     * @extends music21.prebase.ProtoM21Object
+	 */
+	base.Music21Object = function () {
+        prebase.ProtoM21Object.call(this);
+        this.classes.push('Music21Object');
+		this.classSortOrder = 20; // default;
+		this._priority = 0; // default;
+		this.offset = null; // default -- simple version of m21.
+		this.activeSite = undefined;
+		this.isMusic21Object = true;
+		this.isStream = false;
+		// this.isSpanner = false; // add when supported,
+		// this.isVariant = false; // add when supported, if ever...
+
+		this._duration = new duration.Duration();
+		this.groups = []; // custom object in m21p
+		// this.sites, this.activeSites, this.offset -- not yet...
+		// beat, measureNumber, etc.
+		// lots to do...
+		
+		
+		Object.defineProperties(this, {
+            'priority': {
+                configurable: true,
+                enumerable: true,
+                get: function () { return this._priority; },
+                set: function (p) { this._priority = p; }
+            },
+		    'duration': {
+                configurable: true,
+                get: function () {
+                    return this._duration;
+                },
+                set: function(newDuration) {
+                    if (typeof(newDuration) == 'object') {
+                        this._duration = newDuration;     
+                        // common errors below...
+                    } else if (typeof(newDuration) == 'number') {
+                        this._duration.quarterLength = newDuration;
+                    } else if (typeof(newDuration) == 'string') {
+                        this._duration.type = newDuration;
+                    }
+                }
+            },
+		});
+        // define how to .clone() difficult objects..
+        this._cloneCallbacks.activeSite = function (p, ret, obj) {
+            ret[p] = undefined;
+        };
+
+	};
+    base.Music21Object.prototype = new prebase.ProtoM21Object();
+    base.Music21Object.prototype.constructor = base.Music21Object;
+	
+	
+	// end of define
+	if (typeof(music21) != "undefined") {
+		music21.base = base;
+	}
+	
+	return base;
+});</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Index</a></h2><h3>Modules</h3><ul><li><a href="base.html">music21/base</a></li><li><a href="beam.html">music21/beam</a></li><li><a href="chord.html">music21/chord</a></li><li><a href="meter.html">music21/meter</a></li><li><a href="miditools_.html">music21/miditools</a></li><li><a href="note.html">music21/note</a></li><li><a href="pitch.html">music21/pitch</a></li><li><a href="prebase.html">music21/prebase</a></li></ul><h3>Classes</h3><ul><li><a href="duration.Tuplet.html">Tuplet</a></li><li><a href="interval.ChromaticInterval.html">ChromaticInterval</a></li><li><a href="interval.DiatonicInterval.html">DiatonicInterval</a></li><li><a href="interval.GenericInterval.html">GenericInterval</a></li><li><a href="key.KeySignature.html">KeySignature</a></li><li><a href="chord-chord.Chord.html">Chord</a></li><li><a href="note-note.Rest.html">Rest</a></li><li><a href="pitch-pitch.Pitch.html">Pitch</a></li><li><a href="music21.base.Music21Object.html">Music21Object</a></li><li><a href="music21.meter.TimeSignature.html">TimeSignature</a></li><li><a href="music21.miditools.Event.html">Event</a></li><li><a href="music21.note.GeneralNote.html">GeneralNote</a></li><li><a href="music21.note.Lyric.html">Lyric</a></li><li><a href="music21.note.Note.html">Note</a></li><li><a href="music21.note.NotRest.html">NotRest</a></li><li><a href="music21.pitch.Accidental.html">Accidental</a></li><li><a href="music21.prebase.ProtoM21Object.html">ProtoM21Object</a></li><li><a href="stream.Measure.html">Measure</a></li><li><a href="stream.Part.html">Part</a></li><li><a href="stream.Score.html">Score</a></li><li><a href="stream.Voice.html">Voice</a></li><li><a href="streamInteraction.PixelMapper.html">PixelMapper</a></li><li><a href="vfShow.Renderer.html">Renderer</a></li></ul><h3>Namespaces</h3><ul><li><a href="music21.html">music21</a></li><li><a href="music21.base.html">base</a></li><li><a href="music21.meter.html">meter</a></li><li><a href="music21.miditools.html">miditools</a></li><li><a href="music21.note.html">note</a></li><li><a href="music21.prebase.html">prebase</a></li></ul><h3>Global</h3><ul><li><a href="global.html#vexflowModifier">vexflowModifier</a></li></ul>
+</nav>
+
+<br clear="both">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Thu Oct 02 2014 23:40:47 GMT-0400 (EDT)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

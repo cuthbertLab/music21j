@@ -1139,9 +1139,8 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
     /**
      * container for a Voice ... does not work yet
      * 
-     * @constructor
-     */
-    
+     * @constructor stream.Voice
+     */ 
     stream.Voice = function () { 
         stream.Stream.call(this);
         this.classes.push('Voice');
@@ -1154,9 +1153,8 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
     /**
      * container for a Measure ... does not YET handle Voices
      * 
-     * @constructor
+     * @constructor stream.Measure
      */
-	
 	stream.Measure = function () { 
 		stream.Stream.call(this);
 		this.classes.push('Measure');
@@ -1169,10 +1167,8 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
 	/**
 	 * Part -- specialized to handle Measures inside it
 	 * 
-	 * @constructor
+	 * @constructor stream.Part
 	 */
-	
-	
 	stream.Part = function () {
 		stream.Stream.call(this);
 		this.classes.push('Part');
@@ -1445,7 +1441,7 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
     /**
      * Scores with multiple parts
      * 
-     * @constructor
+     * @constructor stream.Score
      */
 	stream.Score = function () {
 		stream.Stream.call(this);

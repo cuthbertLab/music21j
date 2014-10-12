@@ -15,7 +15,10 @@ define(['./prebase', './base', './pitch', './beam', './common', 'vexflow'],
          * @exports music21/note
          */  
         function(prebase, base, pitch, beam, common, Vex) {
-	var note = {};
+    /**
+     * @namespace music21.note
+     */
+    var note = {};
 
 	note.noteheadTypeNames = [
           'arrow down',
@@ -54,6 +57,13 @@ define(['./prebase', './base', './pitch', './beam', './common', 'vexflow'],
 	                           'up',
 	                           ];
 
+    /**
+     * Class for a single Lyric attached to a GeneralNote
+     * 
+     * @class Lyric
+     * @memberOf music21.note
+     * @extends music21.prebase.ProtoM21Object
+     */  
 	note.Lyric = function(text, number, syllabic, applyRaw, identifier) {
 	    prebase.ProtoM21Object.call(this);
 	    this.classes.push('Lyric');
@@ -127,11 +137,10 @@ define(['./prebase', './base', './pitch', './beam', './common', 'vexflow'],
 	 * Superclass for all Note values
 	 * 
 	 * @class GeneralNote
-	 * @constructor
-	 * @memberof music21
-	 * @extends base.Music21Object
-	 * @param {(number|undefined)} ql - quarterLength of the note (default 1)
-	 */
+	 * @memberof music21.note
+	 * @extends music21.base.Music21Object
+     * @param {(number|undefined)} ql - quarterLength of the note (default 1)
+  	 */
 	note.GeneralNote = function (ql) {
 		base.Music21Object.call(this);
 		this.classes.push('GeneralNote');
@@ -332,8 +341,8 @@ define(['./prebase', './base', './pitch', './beam', './common', 'vexflow'],
     };	
 	/**
 	 * @class NotRest
-	 * @memberof music21
-	 * @extends note.GeneralNote
+	 * @memberof music21.note
+	 * @extends music21.note.GeneralNote
 	 * @param {number} ql - length in quarter notes
 	 */
 	note.NotRest = function (ql) {
@@ -356,13 +365,10 @@ define(['./prebase', './base', './pitch', './beam', './common', 'vexflow'],
 
 
 	/* ------- Note ----------- */
-	/**
-     * A note object...
-     * 
+    /**
      * @class Note
-     * @constructor
-     * @memberof music21
-     * @extends NotRest
+     * @memberof music21.note
+     * @extends music21.note.NotRest
      * @param {(string|undefined)} nn - pitch name
      * @param {(number|undefined)} ql - length in quarter notes
      */

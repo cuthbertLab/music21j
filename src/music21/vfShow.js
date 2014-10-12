@@ -25,6 +25,8 @@ define(['vexflow', './common'], function(Vex, common) {
      * 
      * "canvas" and "where" can be either a DOM
      * element or a jQuery object.
+     * 
+     * @constructor vfShow.Renderer
      */
     vfShow.Renderer = function (s, canvas, where) {
         this.stream = s;
@@ -93,6 +95,8 @@ define(['vexflow', './common'], function(Vex, common) {
     };
         
     /**
+     * @memberof vfShow.Renderer
+     * 
      * main function to render a Stream.
      * 
      * if s is undefined, uses the stored Stream from
@@ -130,6 +134,8 @@ define(['vexflow', './common'], function(Vex, common) {
     };
 
     /**
+     * @memberof vfShow.Renderer
+     * 
      * Prepares a scorelike stream (i.e., one with parts or
      * Streams that should be rendered vertically like parts)
      * for rendering and adds Staff Connectors
@@ -144,6 +150,8 @@ define(['vexflow', './common'], function(Vex, common) {
     };
     
     /**
+     * @memberof vfShow.Renderer
+     * 
      * Prepares a Partlike stream (that is one with Measures
      * or substreams that should be considered like Measures)
      * for rendering.
@@ -169,6 +177,9 @@ define(['vexflow', './common'], function(Vex, common) {
         this.prepareTies(p);
     };        
     /**
+     * 
+     * @memberof vfShow.Renderer
+     * 
      * Prepares a score that arrived flat... sets up
      * stacks and ties after calling prepareFlat
      */
@@ -179,6 +190,8 @@ define(['vexflow', './common'], function(Vex, common) {
         this.prepareTies(m);
     };
     /**
+     * @memberof vfShow.Renderer
+     *
      * Prepares a measure (w/ or w/o voices) or generic Stream -- makes accidentals,
      * associates a Vex.Flow.Stave with the stream and
      * returns a vexflow Voice object
@@ -222,6 +235,7 @@ define(['vexflow', './common'], function(Vex, common) {
     /**
      * Render a measure as a stave
      * 
+     * @memberof vfShow.Renderer
      * @param {music21.stream.Measure} m
      * @returns {Vex.Flow.Stave} stave
      */
@@ -308,6 +322,7 @@ define(['vexflow', './common'], function(Vex, common) {
     
     /**
      * 
+     * @memberof vfShow.Renderer
      * @param {music21.stream.Stream} s -- usually a Measure or Voice
      * @param {Vex.Flow.Stave} stave
      * @returns {Vex.Flow.Voice}
@@ -328,6 +343,7 @@ define(['vexflow', './common'], function(Vex, common) {
 
     /**
      * 
+     * @memberof vfShow.Renderer
      * @param {music21.stream.Stream} s -- usually a Measure or Voice
      * @param {Vex.Flow.Stave} stave
      * @returns {Vex.Flow.Voice}
@@ -417,6 +433,7 @@ define(['vexflow', './common'], function(Vex, common) {
      * Return a new Vex.Flow.Stave object, which represents
      * a single MEASURE of notation in m21j
      * 
+     * @memberof vfShow.Renderer
      * @param {music21.stream.Stream} s
      * @returns {Vex.Flow.Stave}
      */

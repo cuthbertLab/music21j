@@ -1,0 +1,37 @@
+{
+  "name": "music21j",
+  "version": "0.3.0",
+  "description": "Toolkit for computer-aided musicology, Javascript version",
+  "main": "src/music21",
+  "files": [
+    "src/*.js",
+    "src/music21/*.js"
+  ],
+  "devDependencies": {
+    "jsdoc": "~3.3.0-alpha4",
+    "grunt-shell": "~0.6.4",
+    "grunt": "~0.4.5",
+    "grunt-jsdoc": "~0.5.7"
+  },
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/cuthbertLab/music21j.git"
+  },
+  "keywords": [
+    "music",
+    "music",
+    "theory",
+    "musicology"
+  ],
+  "author": "Michael Scott Cuthbert and cuthbertLab",
+  "license": "BSD-3-Clause",
+  "bugs": {
+    "url": "https://github.com/cuthbertLab/music21j/issues"
+  }
+}

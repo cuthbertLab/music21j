@@ -17,7 +17,8 @@ define(['./miditools'], function(miditools) {
 	jazzMidi.selectedInterface = undefined; // not the same as "" etc. uses last selected interface by default.
     
     /* ----------- callbacks --------- */
-
+	// todo: all callbacks (incl. raw, sendOutChord) should be able to be a function or an array of functions
+	
     jazzMidi.callBacks = {
         raw : function (t, a, b, c) { return new miditools.Event(t, a, b, c); },
         general : [miditools.sendToMIDIjs,
@@ -27,8 +28,6 @@ define(['./miditools'], function(miditools) {
 
 	jazzMidi.midiInArrived = function (t, a, b, c) {
 	    var eventObject = jazzMidi.callBacks.raw(t, a, b, c);
-
-	    // todo: raw, general, sendOutChord should all be able to be Arrays or single function
 	    if (jazzMidi.callBacks.general instanceof Array) {
 	        jazzMidi.callBacks.general.forEach( function(el, index, array) { 
 	            el(eventObject);  

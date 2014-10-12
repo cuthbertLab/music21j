@@ -1,11 +1,4 @@
-if ( typeof define === "function" && define.amd) {
-    require.config({
-        paths: {'MIDI':         'ext/midijs/build/MIDI',
-                'Base64':       'ext/midijs/inc/Base64',             
-                'base64binary': 'ext/midijs/inc/base64binary',
-        },
-    });
-    
+if ( typeof define === "function" && define.amd) {    
     var DEBUG = false;
     var consolelog = function(msg) {
         if (DEBUG) {
@@ -14,8 +7,8 @@ if ( typeof define === "function" && define.amd) {
     };
     
     var MIDI = {music21defined: true};
-    define(['music21/instrument', 'MIDI','Base64','base64binary','jquery'], function(instrument) {
-        var tempSoundfontUrl = require.toUrl('ext/midijs/soundfont/');
+    define(['MIDI','Base64','base64binary','jquery'], function() {
+        var tempSoundfontUrl = require.toUrl('music21') + '/../ext/midijs/soundfont/';
 //        if (location.protocol != 'http:') {
 //            tempSoundfontUrl = 'http://web.mit.edu/music21/music21j/src/ext/midijs/soundfont/';
 //            if (DEBUG) {
@@ -35,7 +28,7 @@ if ( typeof define === "function" && define.amd) {
 
                 var isFirefox = typeof InstallTrigger !== 'undefined';   // Firefox 1.0+
                 var isAudioTag = (music21.MIDI.technology == 'HTML Audio Tag');
-                var instrumentObj = instrument.find(soundfont);
+                var instrumentObj = music21.instrument.find(soundfont);
                 if (instrumentObj != undefined) {
                     music21.MIDI.programChange(instrumentObj.midiChannel, instrumentObj.midiProgram);
                     if (DEBUG) {
@@ -59,7 +52,7 @@ if ( typeof define === "function" && define.amd) {
             };
             if (music21.MIDI.loadedSoundfonts[soundfont] == true) {
                 if (callback !== undefined) {
-                    var instrumentObj = instrument.find(soundfont);
+                    var instrumentObj = music21.instrument.find(soundfont);
                     callback(instrumentObj);
                 }
             } else if (music21.MIDI.loadedSoundfonts[soundfont] == 'loading'){
@@ -68,7 +61,7 @@ if ( typeof define === "function" && define.amd) {
                     if (music21.MIDI.loadedSoundfonts[soundfont] == true) {
                         consolelog('other process has finished loading; calling callback');
                         if (callback !== undefined) {
-                            var instrumentObj = instrument.find(soundfont);
+                            var instrumentObj = music21.instrument.find(soundfont);
                             callback(instrumentObj);
                         }
                     } else {
