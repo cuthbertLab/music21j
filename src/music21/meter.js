@@ -7,9 +7,22 @@
  * Based on music21 (=music21p), Copyright (c) 2006–14, Michael Scott Cuthbert and cuthbertLab
  * 
  */
-define(['./base', './duration'], function(base, duration) {
+define(['./base', './duration'], 
+        /**
+         * @exports music21/meter
+         */
+        function(base, duration) {
+    /** @namespace music21.meter 
+     *  @memberof music21 
+     */
     var meter = {};
     
+    
+    /**
+     * @class TimeSignature
+     * @param {String} meterString - a string ("4/4", "3/8" etc.) to initialize the TimeSignature.
+     * @memberof music21.meter 
+     */
     meter.TimeSignature = function (meterString) {
         base.Music21Object.call(this);
         this.classes.push('TimeSignature');
@@ -56,7 +69,12 @@ define(['./base', './duration'], function(base, duration) {
     };
     meter.TimeSignature.prototype = new base.Music21Object();
     meter.TimeSignature.prototype.constructor = meter.TimeSignature;
-    
+    /**
+     * Compute the Beat Group according to this time signature.
+     * 
+     * @memberof music21.meter.TimeSignature
+     * @returns {Array<Int>} for a list of numerator and denominators, find a list of beam groups.
+     */   
     meter.TimeSignature.prototype.computeBeatGroups = function () {
         var tempBeatGroups = [];
         var numBeats = this.numerator;

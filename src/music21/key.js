@@ -11,10 +11,10 @@ define(['./base', './pitch', './interval', './scale'],
         function(base, pitch, interval, scale) {
 	var key = {};
 	/**
-	 * Represents a key signature
+	 * @description Represents a key signature
+	 * @constructor key.KeySignature
+	 * @param {Int} sharps -- the number of sharps (negative for flats)
 	 * 
-	 * @constructor
-	 * @param (int) sharps - the number of sharps (negative for flats)
 	 */
 	key.KeySignature = function(sharps) {
 		base.Music21Object.call(this);

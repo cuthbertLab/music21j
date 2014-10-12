@@ -121,7 +121,9 @@ define(['./common','./stream', 'jquery'], function(common, stream, $) {
     
 
     /**
-     * a PixelMapper is an object that knows how to map offsets to pixels on a flat Stream.
+     * 
+     * @constructor streamInteraction.PixelMapper
+     * @description a PixelMapper is an object that knows how to map offsets to pixels on a flat Stream.
      */
     streamInteraction.PixelMapper = function (s) {
         this.allMaps = [];
