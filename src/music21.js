@@ -113,7 +113,6 @@ var m21requireConfig = {
         'attrchange': pathSimplify(m21srcPath + '/ext/jqueryPlugins/attrchange'),
         'jquery-ui': pathSimplify(m21srcPath + '/ext/jqueryPlugins/jqueryUI/jquery-ui.min'),
         'vexflow': pathSimplify(m21srcPath + '/ext/vexflow/vexflow-min'),
-        'loadMIDI': pathSimplify(m21srcPath + '/loadMIDI'),
         'MIDI':         pathSimplify(m21srcPath + '/ext/midijs/build/MIDI'),
         'Base64':       pathSimplify(m21srcPath + '/ext/midijs/inc/Base64'),             
         'base64binary': pathSimplify(m21srcPath + '/ext/midijs/inc/base64binary'),
