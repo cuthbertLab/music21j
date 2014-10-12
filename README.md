@@ -25,3 +25,8 @@ To use, place in a html page like:
 ```
 See the Python version of music21 at http://web.mit.edu/music21/ for documentation. Only a small
 part of the functionality there exists in music21j, but more is being added daily.
+
+To test the music21j files, cd to the git/music21j directory and run "python start_python_server.py"
+to run a small webserver at http://localhost:8000/ . You will find examples in the testHTML directory
+and tests in the tests/ directory.
+
