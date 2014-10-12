@@ -7,14 +7,17 @@
 <body>
 <script>
 require(['music21'], function () {
+    
     var ch = new music21.chord.Chord(["C#", "E", "F#5"]);
     ch.duration.type="whole";
     ch.duration.dots = 1;
-    s = new music21.stream.Stream();
+    
+    s = new music21.stream.Measure();
     s.append(ch);
-    setTimeout(10000, function() {
+
+    setTimeout(function() {
         s.playStream();
-    })
+    }, 1000);
 } );
 </script>
 </body>
