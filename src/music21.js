@@ -113,6 +113,7 @@ var m21requireConfig = {
         'attrchange': pathSimplify(m21srcPath + '/ext/jqueryPlugins/attrchange'),
         'jquery-ui': pathSimplify(m21srcPath + '/ext/jqueryPlugins/jqueryUI/jquery-ui.min'),
         'vexflow': pathSimplify(m21srcPath + '/ext/vexflow/vexflow-min'),
+        'loadMIDI': pathSimplify(m21srcPath + '/loadMIDI'),
         'MIDI':         pathSimplify(m21srcPath + '/ext/midijs/build/MIDI'),
         'Base64':       pathSimplify(m21srcPath + '/ext/midijs/inc/Base64'),             
         'base64binary': pathSimplify(m21srcPath + '/ext/midijs/inc/base64binary'),
@@ -144,7 +145,7 @@ console.log('loadMIDI after: ', m21requireConfig.paths.loadMIDI);
 console.log('jsonpickle in music21: ', m21requireConfig.packages[0].location);
 
 
-var m21modules = ['./loadMIDI',
+var m21modules = ['loadMIDI',
                   'vexflow',
                   'jquery',
                   'jsonpickle',
