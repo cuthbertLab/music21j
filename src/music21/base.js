@@ -12,15 +12,23 @@
 
 define(['./prebase', './duration'], 
         /**
-         * module for Music21Objects
+         * module for Music21Objects, see {@link music21.base}
          * @exports music21/base
          */
         function(prebase, duration) {
-	var base = {};
+    /**
+     * Module for Music21Objects.  Does not load other modules, see {@link music21.moduleLoader}
+     * for this functionality.
+     * 
+     * @namespace music21.base
+     * @memberof music21
+     */
+    var base = {};
 
 	/**
 	 * @class Music21Object
-	 * @constructor
+	 * @memberof music21.base
+     * @extends music21.prebase.ProtoM21Object
 	 */
 	base.Music21Object = function () {
         prebase.ProtoM21Object.call(this);

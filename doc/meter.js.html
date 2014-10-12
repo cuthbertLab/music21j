@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: music21/meter.js</title>
+    
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+    
+    <h1 class="page-title">Source: music21/meter.js</h1>
+    
+    
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source"><code>/**
+ * music21j -- Javascript reimplementation of Core music21p features.  
+ * music21/meter -- TimeSignature objects
+ * 
+ *
+ * Copyright (c) 2013-14, Michael Scott Cuthbert and cuthbertLab
+ * Based on music21 (=music21p), Copyright (c) 2006–14, Michael Scott Cuthbert and cuthbertLab
+ * 
+ */
+define(['./base', './duration'], 
+        /**
+         * @exports music21/meter
+         */
+        function(base, duration) {
+    /** @namespace music21.meter 
+     *  @memberof music21 
+     */
+    var meter = {};
+    
+    
+    /**
+     * @class TimeSignature
+     * @param {String} meterString - a string ("4/4", "3/8" etc.) to initialize the TimeSignature.
+     * @memberof music21.meter 
+     */
+    meter.TimeSignature = function (meterString) {
+        base.Music21Object.call(this);
+        this.classes.push('TimeSignature');
+        this._numerator = 4;
+        this._denominator = 4;
+        this.beatGroups = [];
+        
+        Object.defineProperties(this, {
+            'numerator' : {
+              enumerable: true,
+              configurable: true,
+              get: function () { return this._numerator; },
+              set: function (s) { this._numerator = s; }
+            },
+            'denominator' : {
+                enumerable: true,
+                configurable: true,
+                get: function () { return this._denominator; },
+                set: function (s) { this._denominator = s; }
+              },
+            'ratioString' : {
+                enumerable: true,
+                configurable: true,
+                get: function () { return this.numerator.toString() + '/' + this.denominator.toString(); },
+                set: function (meterString) {
+                    var meterList = meterString.split('/');
+                    this.numerator = parseInt(meterList[0]);
+                    this.denominator = parseInt(meterList[1]);
+                },
+            },
+            'barDuration' : {
+                enumerable: true,
+                configurable: true,
+                get: function () {
+                    var ql = 4.0 * this._numerator / this._denominator;
+                    return new duration.Duration(ql);
+                }
+            },
+        });
+
+        if (typeof(meterString) == 'string') {
+            this.ratioString = meterString;
+        }
+    };
+    meter.TimeSignature.prototype = new base.Music21Object();
+    meter.TimeSignature.prototype.constructor = meter.TimeSignature;
+    /**
+     * Compute the Beat Group according to this time signature.
+     * 
+     * @memberof music21.meter.TimeSignature
+     * @returns {Array&lt;Int>} for a list of numerator and denominators, find a list of beam groups.
+     */   
+    meter.TimeSignature.prototype.computeBeatGroups = function () {
+        var tempBeatGroups = [];
+        var numBeats = this.numerator;
+        var beatValue = this.denominator;
+        if (beatValue &lt; 8 && numBeats >= 5) {
+            var beatsToEighthNoteRatio = 8/beatValue; // hopefully Int -- right Brian Ferneyhough?
+            beatValue = 8;
+            numBeats = numBeats * beatsToEighthNoteRatio;
+        }
+        
+        if (beatValue >= 8) {
+            while (numBeats >= 5) {
+                tempBeatGroups.push([3, beatValue]);
+                numBeats -= 3;
+            }
+            if (numBeats == 4) {
+                tempBeatGroups.push([2, beatValue]);
+                tempBeatGroups.push([2, beatValue]);
+            } else if (numBeats > 0) {
+                tempBeatGroups.push([numBeats, beatValue]);
+            }
+        } else if (beatValue == 2) {
+            tempBeatGroups.push([1, 2]);
+        } else if (beatValue &lt;= 1) {
+            tempBeatGroups.push([1, 1]);
+        } else { // 4/4, 2/4, 3/4, standard stuff                
+            tempBeatGroups.push([2, 8]);
+        }
+        return tempBeatGroups;
+    };
+    meter.TimeSignature.prototype.vexflowBeatGroups = function (Vex) {
+        var tempBeatGroups;
+        if (this.beatGroups.length > 0) {
+            tempBeatGroups = this.beatGroups;
+        } else {
+            tempBeatGroups = this.computeBeatGroups();
+        }
+        //console.log(tempBeatGroups);
+        var vfBeatGroups = [];
+        for (var i = 0; i &lt; tempBeatGroups.length; i++ ) {
+            var bg = tempBeatGroups[i];
+            vfBeatGroups.push( new Vex.Flow.Fraction(bg[0], bg[1]));
+        }
+        return vfBeatGroups;
+
+//          if (numBeats % 3 == 0 && beatValue &lt; 4) {
+//              // 6/8, 3/8, 9/8, etc.
+//              numBeats = numBeats / 3;
+//              beatValue = beatValue / 3;
+//          }            
+    };
+    
+    // end of define
+    if (typeof(music21) != "undefined") {
+        music21.meter = meter;
+    }       
+    return meter;
+});
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Index</a></h2><h3>Modules</h3><ul><li><a href="base.html">music21/base</a></li><li><a href="beam.html">music21/beam</a></li><li><a href="chord.html">music21/chord</a></li><li><a href="meter.html">music21/meter</a></li><li><a href="miditools_.html">music21/miditools</a></li><li><a href="note.html">music21/note</a></li><li><a href="pitch.html">music21/pitch</a></li><li><a href="prebase.html">music21/prebase</a></li></ul><h3>Classes</h3><ul><li><a href="duration.Tuplet.html">Tuplet</a></li><li><a href="interval.ChromaticInterval.html">ChromaticInterval</a></li><li><a href="interval.DiatonicInterval.html">DiatonicInterval</a></li><li><a href="interval.GenericInterval.html">GenericInterval</a></li><li><a href="key.KeySignature.html">KeySignature</a></li><li><a href="chord-chord.Chord.html">Chord</a></li><li><a href="note-note.Rest.html">Rest</a></li><li><a href="pitch-pitch.Pitch.html">Pitch</a></li><li><a href="music21.base.Music21Object.html">Music21Object</a></li><li><a href="music21.meter.TimeSignature.html">TimeSignature</a></li><li><a href="music21.miditools.Event.html">Event</a></li><li><a href="music21.note.GeneralNote.html">GeneralNote</a></li><li><a href="music21.note.Lyric.html">Lyric</a></li><li><a href="music21.note.Note.html">Note</a></li><li><a href="music21.note.NotRest.html">NotRest</a></li><li><a href="music21.pitch.Accidental.html">Accidental</a></li><li><a href="music21.prebase.ProtoM21Object.html">ProtoM21Object</a></li><li><a href="stream.Measure.html">Measure</a></li><li><a href="stream.Part.html">Part</a></li><li><a href="stream.Score.html">Score</a></li><li><a href="stream.Voice.html">Voice</a></li><li><a href="streamInteraction.PixelMapper.html">PixelMapper</a></li><li><a href="vfShow.Renderer.html">Renderer</a></li></ul><h3>Namespaces</h3><ul><li><a href="music21.html">music21</a></li><li><a href="music21.base.html">base</a></li><li><a href="music21.meter.html">meter</a></li><li><a href="music21.miditools.html">miditools</a></li><li><a href="music21.note.html">note</a></li><li><a href="music21.prebase.html">prebase</a></li></ul><h3>Global</h3><ul><li><a href="global.html#vexflowModifier">vexflowModifier</a></li></ul>
+</nav>
+
+<br clear="both">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Thu Oct 02 2014 23:40:47 GMT-0400 (EDT)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

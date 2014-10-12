@@ -1,11 +1,22 @@
-/**
- *  things that all music21-created objects, not just objects that can live in
- *  Stream.elements should inherit
- */
-
-define(['./common'], function() {
+define(['./common'],
+        /**
+         * module for things that all music21-created objects, not just objects that can live in
+         * Stream.elements should inherit
+         *
+         * @exports music21/prebase
+         */
+        function(common) {
+    /**
+     * @namespace music21.prebase
+     * @memberof music21
+     */
     var prebase = {};
-    /*   class for pseudo m21 objects to inherit from */
+    /**
+     * Class for pseudo-m21 objects to inherit from
+     * 
+     * @class ProtoM21Object
+     * @memberof music21.prebase
+     */
     prebase.ProtoM21Object = function () {
         this.classes = ['ProtoM21Object'];
         this.isProtoM21Object = true;

@@ -37,6 +37,13 @@ music21.PYTHON_COMPAT_VERSION = [1, 9, 2]; // Python version built to match
 
 music21.debug = false;
 
+
+require.config({
+    context: 'moduleLoader',
+});
+
+//console.log("loaded module loader...");
+
 // order below doesn't matter, but good to give a sense
 // of what will be needed by almost everyone, and then
 // alphabetical
@@ -73,6 +80,8 @@ define(['./prebase',
         './widgets',
         ], 
         function() {
+            //console.log("loaded submodules...");
+
 			return music21;
 		}
 ); // end define

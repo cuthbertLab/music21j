@@ -185,7 +185,7 @@ define(['./common', './prebase', 'jquery'],
     
     /**
      * Tuplet
-     * @constructor
+     * @constructor duration.Tuplet
      */
 	duration.Tuplet = function (numberNotesActual, numberNotesNormal, 
 	        durationActual, durationNormal) {

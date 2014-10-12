@@ -27,7 +27,7 @@ define(['./prebase', './pitch'],
 							 'Thirteenth', 'Fourteenth', 'Double Octave'];
 							 
 	/**
-	 * @constructor
+	 * @constructor interval.GenericInterval
 	 */
 	interval.GenericInterval = function (gi) {
 	    prebase.ProtoM21Object.call(this);
@@ -211,7 +211,7 @@ define(['./prebase', './pitch'],
 
 
 	/**
-	 * @constructor
+     * @constructor interval.DiatonicInterval
 	 */
 	interval.DiatonicInterval = function (specifier, generic) {
         prebase.ProtoM21Object.call(this);
@@ -316,7 +316,7 @@ define(['./prebase', './pitch'],
     };
 
     /**
-     * @constructor
+     * @constructor interval.ChromaticInterval
      */
     interval.ChromaticInterval = function (value) {
         prebase.ProtoM21Object.call(this);

@@ -12,19 +12,22 @@
  * @author Michael Scott Cuthbert
  */
 
-define(['jquery', './note', './chord'], 
+define(['jquery', './note', './chord'],         
+       /**
+         * @exports music21/miditools
+         */
         function($, note, chord) {
-    /**
-     * @exports music21/miditools
-     */    
+    /** @namespace music21.miditools 
+     *  @memberof music21 
+     */
     var miditools = {};
     
     miditools.transposeOctave = 0;
     /**
-     * @memberof music21
-     * @constructor
+     * @class Event 
+     * @memberof music21.miditools
      * @param {number} t - timing information
-     * @param {number} a - midi data 1 ( a >> 4 = midiCommand )
+     * @param {number} a - midi data 1 (N.B. a >> 4 = midiCommand )
      * @param {number} b - midi data 2
      * @param {number} c - midi data 3
      */
@@ -42,13 +45,16 @@ define(['jquery', './note', './chord'],
         if (this.noteOn || this.noteOff) {
             this.midiNote = this.data2 + 12 * miditools.transposeOctave;
             this.velocity = this.data3;
-        }
+        }        
     };
-    miditools.Event.prototype.noteInfo = function () {
-        if (this.noteOn) {
-            console.log('Note on: ' + this.midiNote + " ; Velocity: " + this.velocity);
-        }
-    };
+
+    /**
+     * Calls {@link music21.MIDI.noteOn} or {@link music21.MIDI.noteOff} for the Note
+     * represented by the event (if appropriate)
+     * 
+     * @memberof music21.miditools.Event
+     * @returns {undefined}
+     */
     miditools.Event.prototype.sendToMIDIjs = function () {
         if (music21.MIDI !== undefined) {
             if (this.noteOn) {
@@ -61,20 +67,43 @@ define(['jquery', './note', './chord'],
         };
     };
     /**
+     * Makes a {@link music21.note.Note} object from the event's midiNote number.
      * 
-     * @returns {note.Note}
+     * @memberof music21.miditools.Event
+     * @returns {note.Note} - the {@link music21.note.Note} object represented by Event.midiNote
      */
     miditools.Event.prototype.music21Note = function () {
         var m21n = new note.Note();
         m21n.pitch.ps = this.midiNote;
         return m21n;
-    };    
+    }; 
+    
+    /**
+     * How long to wait in milliseconds before deciding that a note belongs to another chord. Default 100ms
+     * 
+     * @memberof music21.miditools
+     * @type {number}
+     */
     miditools.maxDelay = 100; // in ms
     miditools.heldChordTime = 0;
     miditools.heldChordNotes = undefined;
+
+    /**
+     * When, in MS since Jan 1, 1970, was the last {@link music21.note.Note} played.
+     * Defaults to the time that the module was loaded.
+     * 
+     * @memberof music21.miditools
+     * @type {number}
+     */   
     miditools.timeOfLastNote = Date.now(); // in ms
     
     miditools._baseTempo = 60;
+    /**
+     * Assign (or quiery) a Metronome object to run all timing information.
+     * 
+     * @memberof music21.miditools
+     * @type {music21.tempo.Metronome}
+     */   
     miditools.metronome = undefined;
     
     Object.defineProperties(miditools, {
@@ -103,6 +132,8 @@ define(['jquery', './note', './chord'],
      *  
      *  Runs a setTimeout on itself.
      *  Calls miditools.sendOutChord
+     *  
+     *  @memberof music21.miditools
      */
     miditools.clearOldChords = function () {
         // clear out notes that may be a chord...
@@ -122,8 +153,9 @@ define(['jquery', './note', './chord'],
      *  Take a series of jEvent noteOn objects and convert them to a single Chord object
      *  so long as they are all sounded within miditools.maxDelay milliseconds of each other.
      *  this method stores notes in miditools.heldChordNotes (Array).
-     *
-     *  @param {miditools.Event} jEvent 
+     *  
+     *  @param {music21.miditools.Event} jEvent 
+     *  @memberof music21.miditools
      *  @returns undefined
      */
     miditools.makeChords = function (jEvent) { // jEvent is a miditools.Event object
@@ -146,11 +178,13 @@ define(['jquery', './note', './chord'],
     miditools.lastElement = undefined;
     
     /**
+     * Take the list of Notes and makes a chord out of it, if appropriate and call 
+     * {@link music21.jazzMidi.callBacks.sendOutChord} callback with the Chord or Note as a parameter.
      * 
-     * @param {Array<note.Note>} chordNoteList - a list of notes
-     * @returns {(note.Note|chord.Chord|undefined)} - (probably a music21.chord.Chord but maybe a music21.note.Note object)
-     * 
-     * 
+     * @memberof music21.miditools
+     * @param {Array<music21.note.Note>} chordNoteList - an Array of {@link music21.note.Note} objects
+     * @returns {(music21.note.Note|music21.    chord.Chord|undefined)} A {@link music21.chord.Chord} object, 
+     * most likely, but maybe a {@link music21.note.Note} object)
      */
     miditools.sendOutChord = function (chordNoteList) {
         var appendObject = undefined;
@@ -173,7 +207,11 @@ define(['jquery', './note', './chord'],
     };
 
     /**
-     * @param {note.GeneralNote} lastElement - note to be quantized
+     * 
+     * @memberof music21.miditools
+     * @param {note.GeneralNote} lastElement - A {@link music21.note.Note} to be quantized
+     * @returns {note.GeneralNote} The same {@link music21.note.Note} object passed in with 
+     * duration quantized
      */
     miditools.quantizeLastNote = function (lastElement) {
         if (lastElement === undefined) {
@@ -202,8 +240,8 @@ define(['jquery', './note', './chord'],
         } else if (roundedQuarterLength == 0) {
             roundedQuarterLength = 0.125;
         }
-        //console.log(roundedQuarterLength);
         lastElement.duration.quarterLength = roundedQuarterLength;
+        return lastElement;
     };
     
     /* ----------- callbacks --------- */
@@ -211,7 +249,6 @@ define(['jquery', './note', './chord'],
      * @param {miditools.Event} midiEvent - event to send out.
      * @returns undefined
      */
-    
     miditools.sendToMIDIjs = function(midiEvent) {
         midiEvent.sendToMIDIjs();
     };
