@@ -843,7 +843,7 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
         }
         // TODO: assumes that canvas has a .storedStream function? can this be done by setting
         // a variable var storedStream = this; and thus get rid of the assumption?
-        playFunc = (function () { this.playStream(); }).bind(this);
+        var playFunc = (function () { this.playStream(); }).bind(this);
         
         $.each(this.renderOptions.events, $.proxy(function (eventType, eventFunction) {
             $canvas.off(eventType);
