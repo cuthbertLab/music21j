@@ -180,7 +180,11 @@ define(['./chord', './key', './pitch', './interval'],
             fullChordName = "";
             connector = '';
             suffix = ' triad';
-        } else {
+        } else if (displayType == 'bassName') {
+            fullChordName = this.bass().name;
+            connector = ' in ';
+            suffix = '';            
+        } else { // submediant, etc...
             fullChordName = this.degreeName;
             if (this.numbers != undefined) {
                 fullChordName += " " + this.numbers.toString();
