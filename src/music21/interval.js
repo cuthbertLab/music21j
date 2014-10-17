@@ -150,7 +150,9 @@ define(['./prebase', './pitch'],
         var newInfo = interval.IntervalConvertDiatonicNumberToStep(newDiatonicNumber);
         pitch2.step = newInfo[0];
         pitch2.octave = newInfo[1];
-        pitch2.accidental = new music21.pitch.Accidental(p.accidental.name);
+        if (p.accidental !== undefined) {
+            pitch2.accidental = new music21.pitch.Accidental(p.accidental.name);            
+        }
         return pitch2;
     };
     
