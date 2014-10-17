@@ -143,7 +143,7 @@ define(['./prebase', './pitch'],
         
         var oldDiatonicNum = p.diatonicNoteNum;
         
-        var distanceToMove = this.diatonic.generic.staffDistance;
+        var distanceToMove = this.staffDistance;
 
         // if not reverse...
         var newDiatonicNumber = oldDiatonicNum + distanceToMove;
