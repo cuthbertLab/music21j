@@ -181,7 +181,7 @@ define(['./chord', './key', './pitch', './interval'],
             connector = '';
             suffix = ' triad';
         } else if (displayType == 'bassName') {
-            fullChordName = this.bass().name;
+            fullChordName = this.bass().name.replace(/\-/, 'b');
             connector = ' in ';
             suffix = '';            
         } else { // submediant, etc...
