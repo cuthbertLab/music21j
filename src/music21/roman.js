@@ -148,6 +148,51 @@ define(['./chord', './key', './pitch', './interval'],
         }
         this.pitches = chordPitches;
     };
+    
+    roman.RomanNumeral.prototype.asString = function (displayType, inversion) {
+        var keyObj = this.key;
+        var tonic = keyObj.tonic;
+        var mode = keyObj.mode;
+        
+        if (inversion === undefined) {
+            inversion = 0;
+        }
+        var inversionName = "";
+        if (inversion == 1) {
+            if (displayType == 'roman') {
+                inversionName = '6';
+            } else {
+                inversionName = ' (first inversion)';
+            }
+        } else if (inversion == 2) {
+            if (displayType == 'roman') {
+                inversionName = '64';
+            } else {
+                inversionName = ' (second inversion)';
+            }
+        }
+        var fullChordName;
+        var connector = ' in ';
+        var suffix = '';
+        if (displayType == 'roman') {
+            fullChordName = this.figure;
+        } else if (displayType == 'nameOnly') { // use only with only choice being TONIC
+            fullChordName = "";
+            connector = '';
+            suffix = ' triad';
+        } else {
+            fullChordName = this.degreeName;
+            if (this.numbers != undefined) {
+                fullChordName += " " + this.numbers.toString();
+            }
+        }
+        var tonicDisplay = tonic.replace(/\-/, 'b');
+        if (mode == 'minor') {
+            tonicDisplay = tonicDisplay.toLowerCase();
+        }
+        var chordStr = fullChordName + inversionName + connector + tonicDisplay + " " + mode + suffix;
+        return chordStr;
+    };
 	
 	roman.tests = function () {
 	    test ( "music21.roman.RomanNumeral" , function() {
