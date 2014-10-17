@@ -58,7 +58,7 @@ define(['./prebase', './pitch'],
 		var tempSteps = this.undirected % 7;
 		var tempOctaves = parseInt(this.undirected / 7);
 		if (tempSteps == 0) {
-			tempOctaves += 1;
+			tempOctaves -= 1;
 			tempSteps = 7;
 		}
 		this.simpleUndirected = tempSteps;
@@ -225,7 +225,11 @@ define(['./prebase', './pitch'],
 		}
 		
 		this.name = "";
-		this.specifier = interval.IntervalPrefixSpecs.indexOf(specifier); // todo: convertSpecifier();
+		if (typeof specifier == 'number') {
+		    this.specifier = specifier;
+		} else {
+	        this.specifier = interval.IntervalPrefixSpecs.indexOf(specifier); // todo: convertSpecifier();		    
+		}
 		this.generic = generic;
 		
 		if ((generic.undirected != 1) || (specifier == interval.IntervalSpecifiersEnum.PERFECT)) {
@@ -428,10 +432,28 @@ define(['./prebase', './pitch'],
 				console.error('cant parse string arguments to Interval yet');
 			}
 		} else if (arguments.length == 2) {
-			this.diatonic = arguments[0];
-			this.chromatic = arguments[1];
-		}		
+		    if (arguments[0].pitch === undefined && arguments[0].diatonicNoteNum === undefined) {
+	            this.diatonic = arguments[0];
+	            this.chromatic = arguments[1];
+	        } else {
+	            var n1 = arguments[0];
+	            var n2 = arguments[1];
+	            var gInt = interval.notesToGeneric(n1, n2);
+	            var cInt = interval.notesToChromatic(n1, n2);
+	            
+	            this.diatonic = interval.intervalsToDiatonic(gInt, cInt);
+	            this.chromatic = cInt;
+	        }
+		}  
 		this.reinit();
+		Object.defineProperties(this, {
+		    'complement': {
+		        enumerable: true,
+		        get: function () {
+		            return new interval.Interval(this.diatonic.mod7inversion);
+		        }
+		    }
+		});
 	};
     interval.Interval.prototype = new prebase.ProtoM21Object();
     interval.Interval.prototype.constructor = interval.Interval;
@@ -440,20 +462,42 @@ define(['./prebase', './pitch'],
         this.direction = this.chromatic.direction;
         this.specifier = this.diatonic.specifier;
         this.diatonicType = this.diatonic.specifier;
-        // this.specificName = this.diatonic.specificName;
+        //this.specificName = this.diatonic.specificName;
         this.generic = this.diatonic.generic;
+        
         this.name = this.diatonic.name;
+        this.niceName = this.diatonic.niceName;
+        this.simpleName = this.diatonic.simpleName;
+        this.simpleNiceName = this.diatonic.simpleNiceName;
+        this.semiSimpleName = this.diatonic.semiSimpleName;
+        this.semiSimpleNiceName = this.diatonic.semiSimpleNiceName;
+        
+        this.directedName = this.diatonic.directedName;
+        this.directedNiceName = this.diatonic.directedNiceName;
+        this.directedSimpleName = this.diatonic.directedSimpleName;
+        this.directedSimpleNiceName = this.diatonic.directedSimpleNiceName;
+        
         // other names...
         this.isDiatonicStep = this.diatonic.isDiatonicStep;
         
         this.isChromaticStep = this.chromatic.isChromaticStep;
         this.semitones = this.chromatic.semitones;
-        
+        this.intervalClass = this.chromatic.intervalClass;
+        this.cents = this.chromatic.cents;
         this.isStep = (this.isChromaticStep || this.isDiatonicStep);
     };
 
-    // todo methods: isConsonant();
-    // todo properties: complement, intervalClass, cents
+    
+    interval.Interval.prototype.isConsonant = function () {
+        var sn = this.simpleName;
+        if (sn == 'P5' || sn == 'm3' || sn == 'M3' || 
+                sn == 'm6' || sn == 'M6' || sn == 'P1') {
+            return true;
+        } else {
+            return false;
+        }
+    };
+
     // todo general: microtones
     interval.Interval.prototype.transposePitch = function (p) {
         // todo: reverse, clearAccidentalDisplay, maxAccidental;
@@ -495,6 +539,76 @@ define(['./prebase', './pitch'],
         return pitch2;
     };
 
+    /**
+     * Convert two notes or pitches to a GenericInterval;
+     */
+    interval.notesToGeneric = function (n1, n2) {
+        var p1 = n1;
+        if (n1.pitch !== undefined) {
+            p1 = n1.pitch;
+        }
+        var p2 = n2;
+        if (n2.pitch !== undefined) {
+            p2 = n2.pitch;
+        }
+        var staffDist = p2.diatonicNoteNum - p1.diatonicNoteNum;
+        var genDist = interval.convertStaffDistanceToInterval(staffDist);
+        return new interval.GenericInterval(genDist);
+    };
+    
+    interval.convertStaffDistanceToInterval = function(staffDist) {
+        if (staffDist == 0) {
+            return 1;
+        } else if (staffDist > 0) {
+            return staffDist + 1;
+        } else {
+            return staffDist - 1;
+        }
+    };
+    
+    interval.notesToChromatic = function (n1, n2) {
+        var p1 = n1;
+        if (n1.pitch !== undefined) {
+            p1 = n1.pitch;
+        }
+        var p2 = n2;
+        if (n2.pitch !== undefined) {
+            p2 = n2.pitch;
+        }
+        return new interval.ChromaticInterval(p2.ps - p1.ps);
+    };
+    
+    interval.intervalsToDiatonic = function(gInt, cInt) {
+        var specifier = interval._getSpecifierFromGenericChromatic(gInt, cInt);
+        // todo -- convert specifier...
+        return new interval.DiatonicInterval(specifier, gInt);
+    };
+    
+    interval._getSpecifierFromGenericChromatic = function(gInt, cInt) {        
+        var noteVals = [undefined, 0, 2, 4, 5, 7, 9, 11];
+        var normalSemis = noteVals[gInt.simpleUndirected] + 12 * gInt.undirectedOctaves;
+        var theseSemis = 0;
+        if (    gInt.direction != cInt.direction && 
+                gInt.direction != interval.IntervalDirections.OBLIQUE && 
+                cInt.direction != interval.IntervalDirections.OBLIQUE) {
+            // intervals like d2 and dd2 etc. (the last test doesn't matter, since -1*0 == 0, but in theory it should be there)
+            theseSemis = -1 * cInt.undirected;            
+        } else if (gInt.undirected == 1) {
+            theseSemis = cInt.directed; // matters for unison            
+        } else {
+            // all normal intervals
+            theseSemis  = cInt.undirected;          
+        }
+        var semisRounded = Math.round(theseSemis);
+        var specifier = "";
+        if (gInt.perfectable) {
+            specifier = interval.IntervalPerfSpecifiers[interval.IntervalPerfOffset + semisRounded - normalSemis];
+        } else {
+            specifier = interval.IntervalSpecifiers[interval.IntervalMajOffset + semisRounded - normalSemis];
+        }
+        return specifier;
+    };
+    
 	// end of define
 	if (typeof(music21) != "undefined") {
 		music21.interval = interval;
