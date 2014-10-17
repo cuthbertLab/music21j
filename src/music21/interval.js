@@ -136,6 +136,24 @@ define(['./prebase', './pitch'],
         return new interval.DiatonicInterval(specifier, this);
     };  
 
+    interval.GenericInterval.prototype.transposePitch = function (p) {
+        var pitch2 = new pitch.Pitch();
+        pitch2.step = p.step;
+        pitch2.octave = p.octave;
+        
+        var oldDiatonicNum = p.diatonicNoteNum;
+        
+        var distanceToMove = this.diatonic.generic.staffDistance;
+
+        // if not reverse...
+        var newDiatonicNumber = oldDiatonicNum + distanceToMove;
+        var newInfo = interval.IntervalConvertDiatonicNumberToStep(newDiatonicNumber);
+        pitch2.step = newInfo[0];
+        pitch2.octave = newInfo[1];
+        pitch2.accidental = new music21.pitch.Accidental(p.accidental.name);
+        return pitch2;
+    };
+    
 	interval.IntervalSpecifiersEnum = { 
 		PERFECT:    1,
 		MAJOR:      2,
@@ -508,21 +526,8 @@ define(['./prebase', './pitch'],
             useImplicitOctave = true;
         }
         */
-        
-        var pitch2 = new pitch.Pitch();
-        pitch2.step = p.step;
-        pitch2.octave = p.octave;
-        // no accidental yet...
-
-        var oldDiatonicNum = p.diatonicNoteNum;
-        
-        var distanceToMove = this.diatonic.generic.staffDistance;
-
-        // if not reverse...
-        var newDiatonicNumber = oldDiatonicNum + distanceToMove;
-        var newInfo = interval.IntervalConvertDiatonicNumberToStep(newDiatonicNumber);
-        pitch2.step = newInfo[0];
-        pitch2.octave = newInfo[1];
+        var pitch2 = this.diatonic.generic.transposePitch(p);
+        pitch2.accidental = undefined;
         // step and octave are right now, but not necessarily accidental
         var halfStepsToFix = this.chromatic.semitones - parseInt(pitch2.ps - p.ps);
         if (halfStepsToFix != 0) {
