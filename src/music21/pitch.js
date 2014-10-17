@@ -176,7 +176,7 @@ define(['./prebase'],
               configurable: true,
               get: function () { return this._accidental; },
               set: function (a) { 
-                  if (typeof(a) != 'object' && a === undefined) {
+                  if (typeof(a) != 'object' && a !== undefined) {
                       a = new music21.pitch.Accidental(a);
                   }
                   this._accidental = a; 
