@@ -197,17 +197,28 @@ connect.webaudio = function(filetype, instruments, conf) {
 	// works awesome! safari, chrome and firefox support.
 	var queue = createQueue({
 		items: instruments,
-		getNext: function(instrumentId) {
-			DOMLoader.sendRequest({
-				url: MIDI.soundfontUrl + instrumentId + "-" + filetype + ".js",
-				onprogress: getPercent,
-				onload: function(response) {
-					addSoundfont(response.responseText);
-					if (MIDI.loader) MIDI.loader.update(null, "Downloading...", 100);
-					queue.getNext();
-				}
-			});
-		},
+        getNext: function(instrumentId) {
+            if (USE_XHR) {
+                DOMLoader.sendRequest({
+                    url: MIDI.soundfontUrl + instrumentId + "-" + filetype + ".js",
+                    onprogress: getPercent,
+                    onload: function (response) {
+                        addSoundfont(response.responseText);
+                        if (MIDI.loader) MIDI.loader.update(null, "Downloading", 100);
+                        queue.getNext();
+                    }
+                });
+            } else {
+                DOMLoader.script.add({
+                    src: MIDI.soundfontUrl + instrumentId + "-" + filetype + ".js",
+                    verify: "MIDI.Soundfont." + instrumentId,
+                    callback: function() {
+                        if (MIDI.loader) MIDI.loader.update(null, "Downloading...", 100);
+                        queue.getNext();
+                    }
+                });
+            }
+        },
 		onComplete: function() {
 			MIDI.WebAudio.connect(conf);
 		}
