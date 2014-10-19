@@ -17,7 +17,7 @@ To use, place in a html page like:
        var n = new music21.note.Note("F#");
        var s = new music21.stream.Stream();
        s.append(n);
-       s.createNewCanvas();
+       s.appendNewCanvas();
    });
    </script>
 </head>
