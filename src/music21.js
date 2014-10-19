@@ -47,12 +47,13 @@ console.log('./hi context: ' + require.toUrl('./hi'));
 
 var pathSimplify = function (path) {
     var pPrefix = "";
-    var protoSpace = path.match(/:\d+\/\//);
-    if (protoSpace !== null) { // for cross site requests...
-        var start = path.indexOf(protoSpace[0]);
-        var splitPoint = start + protoSpace[0].length;
-        pPrefix = path.slice(0, splitPoint);
-        path = path.slice(start + protoSpace[0].length);
+    if (path.indexOf('//') == 0) {
+        pPrefix = '//'; //cdn loading;
+        path = path.slice(2);
+    } else if (path.indexOf('://') != -1) { // for cross site requests...
+        var protoSpace = path.indexOf('://');
+        pPrefix = path.slice(0, protoSpace + 3);
+        path = path.slice(protoSpace + 3);
         console.log('cross-site split', pPrefix, path);
     }
     var ps = path.split('/');

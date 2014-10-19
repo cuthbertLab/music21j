@@ -10,8 +10,9 @@ Extremely pre-alpha.  Everything will change here.
 To use, place in a html page like:
 
 ```html
+<html>
 <head>
-   <script data-main="src/music21" src="ext/require/require.js">
+   <script data-main="src/music21" src="ext/require/require.js"></script>
    <script>
    require(['music21'], function () {
        var n = new music21.note.Note("F#");
@@ -21,7 +22,8 @@ To use, place in a html page like:
    });
    </script>
 </head>
-<body />
+<body></body>
+</html>
 ```
 See the Python version of music21 at http://web.mit.edu/music21/ for documentation. Only a small
 part of the functionality there exists in music21j, but more is being added daily.
