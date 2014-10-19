@@ -86,6 +86,8 @@ if (typeof (MIDI.Soundfont) === "undefined") MIDI.Soundfont = {};
 
 (function() { "use strict";
 
+//Turn on to get "onprogress" event. XHR will not work from file://
+var USE_XHR = false; 
 var USE_JAZZMIDI = false; // Turn on to support JazzMIDI Plugin
 
 MIDI.loadPlugin = function(conf) {
@@ -162,17 +164,28 @@ connect.audiotag = function(filetype, instruments, conf) {
 	// works ok, kinda like a drunken tuna fish, across the board.
 	var queue = createQueue({
 		items: instruments,
-		getNext: function(instrumentId) {
-			DOMLoader.sendRequest({
-				url: MIDI.soundfontUrl + instrumentId + "-" + filetype + ".js",
-				onprogress: getPercent,
-				onload: function (response) {
-					addSoundfont(response.responseText);
-					if (MIDI.loader) MIDI.loader.update(null, "Downloading", 100);
-					queue.getNext();
-				}
-			});
-		},
+        getNext: function(instrumentId) {
+            if (USE_XHR) {
+                DOMLoader.sendRequest({
+                    url: MIDI.soundfontUrl + instrumentId + "-" + filetype + ".js",
+                    onprogress: getPercent,
+                    onload: function (response) {
+                        MIDI.Soundfont[instrumentId] = JSON.parse(response.responseText);
+                        if (MIDI.loader) MIDI.loader.update(null, "Downloading", 100);
+                        queue.getNext();
+                    }
+                });
+            } else {
+                DOMLoader.script.add({
+                    src: MIDI.soundfontUrl + instrumentId + "-" + filetype + ".js",
+                    verify: "MIDI.Soundfont." + instrumentId,
+                    callback: function() {
+                        if (MIDI.loader) MIDI.loader.update(null, "Downloading...", 100);
+                        queue.getNext();
+                    }
+                });
+            }
+        },
 		onComplete: function() {
 			MIDI.AudioTag.connect(conf);
 		}
