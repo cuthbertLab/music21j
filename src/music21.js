@@ -50,6 +50,7 @@ var pathSimplify = function (path) {
     if (path.indexOf('//') == 0) {
         pPrefix = '//'; //cdn loading;
         path = path.slice(2);
+        console.log('cdn load: ', pPrefix, " into ", path);
     } else if (path.indexOf('://') != -1) { // for cross site requests...
         var protoSpace = path.indexOf('://');
         pPrefix = path.slice(0, protoSpace + 3);
