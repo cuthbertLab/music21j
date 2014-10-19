@@ -46,9 +46,17 @@ console.log('./hi context: ' + require.toUrl('./hi'));
 // <script data-main='music21' src='require.js' m21conf='{"loadSoundfont": false}'>
 
 var pathSimplify = function (path) {
-    ps = path.split('/');
-    addSlash = (path.slice(path.length - 1, path.length) == '/') ? true : false;
-    pout = [];
+    var pPrefix = "";
+    var protoSpace = path.match(/:\d+\/\//);
+    if (protoSpace !== null) { // for cross site requests...
+        var start = path.indexOf(protoSpace[0]);
+        var splitPoint = start + protoSpace[0].length;
+        pPrefix = path.slice(0, splitPoint);
+        path = path.slice(start + protoSpace[0].length);
+    }
+    var ps = path.split('/');
+    var addSlash = (path.slice(path.length - 1, path.length) == '/') ? true : false;
+    var pout = [];
     for (var i = 0; i < ps.length; i++) {
        var el = ps[i];
        if (el == '..') {
@@ -67,10 +75,11 @@ var pathSimplify = function (path) {
            pout.push(el);
        }
     }
-    pnew = pout.join('/');
+    var pnew = pout.join('/');
     if (addSlash) {
         pnew += '/';
     }
+    pnew = pPrefix + pnew;
     return pnew;
  };
 
