@@ -53,6 +53,7 @@ var pathSimplify = function (path) {
         var splitPoint = start + protoSpace[0].length;
         pPrefix = path.slice(0, splitPoint);
         path = path.slice(start + protoSpace[0].length);
+        console.log('cross-site split', pPrefix, path);
     }
     var ps = path.split('/');
     var addSlash = (path.slice(path.length - 1, path.length) == '/') ? true : false;
