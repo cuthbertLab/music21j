@@ -67,7 +67,8 @@ using the python server above).
 ```html
 <html>
 <head>
-   <script data-main="/src/music21" src="/ext/require/require.js"> </script>
+   <script data-main="/src/music21" src="/ext/require/require.js"> 
+   </script>
    <script>
    require(['music21'], function () {
        // your code goes here.  For instance...

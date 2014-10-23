@@ -140,10 +140,6 @@
 						</li>
 						
 						<li>
-							<a href="pitch-pitch.Pitch.html">music21/pitch~pitch.Pitch</a>
-						</li>
-						
-						<li>
 							<a href="music21.base.Music21Object.html">music21.base.Music21Object</a>
 						</li>
 						
@@ -184,6 +180,10 @@
 						</li>
 						
 						<li>
+							<a href="music21.pitch.Pitch.html">music21.pitch.Pitch</a>
+						</li>
+						
+						<li>
 							<a href="music21.prebase.ProtoM21Object.html">music21.prebase.ProtoM21Object</a>
 						</li>
 						
@@ -209,20 +209,6 @@
 						
 						<li>
 							<a href="vfShow.Renderer.html">vfShow.Renderer</a>
-						</li>
-						
-
-					</ul>
-				</li>
-				
-				<li class="dropdown">
-					<a href="global.html" class="dropdown-toggle" data-toggle="dropdown">Global<b
-						class="caret"></b></a>
-
-					<ul class="dropdown-menu ">
-						
-						<li>
-							<a href="global.html#modifier">modifier</a>
 						</li>
 						
 
@@ -355,7 +341,7 @@
 		<ul class="dummy">
 			<li>
 				<a href="pitch.js.html">music21/pitch.js</a>,
-				 <a href="pitch.js.html#sunlight-1-line-26">line 26</a>
+				 <a href="pitch.js.html#sunlight-1-line-28">line 28</a>
 			</li>
 		</ul>
 	</dd>
@@ -402,7 +388,449 @@
     
 
     
+        <h3 class="subsection-title">Members</h3>
 
+        <dl>
+            
+<dt class="name" id="alter">
+    <h4><span class="type-signature"></span>alter<span class="type-signature"> :number</span></h4>
+
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        <p>Return or set the alteration amount (-1.0 = flat; 1.0 = sharp; etc.)</p>
+<p>When set, updates name and modifier.</p>
+    </div>
+    
+
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">number</span>
+
+
+            </li>
+        </ul>
+    
+
+    
+<dl class="details">
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="pitch.js.html">music21/pitch.js</a>,
+				 <a href="pitch.js.html#sunlight-1-line-102">line 102</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+</dd>
+
+        
+            
+<dt class="name" id="modifier">
+    <h4><span class="type-signature"></span>modifier<span class="type-signature"> :string</span></h4>
+
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        <p>Return or set the modifier ('-', '#', '')</p>
+<p>When set, updates alter and name.</p>
+    </div>
+    
+
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">string</span>
+
+
+            </li>
+        </ul>
+    
+
+    
+<dl class="details">
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="pitch.js.html">music21/pitch.js</a>,
+				 <a href="pitch.js.html#sunlight-1-line-116">line 116</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+</dd>
+
+        
+            
+<dt class="name" id="name">
+    <h4><span class="type-signature"></span>name<span class="type-signature"> :string</span></h4>
+
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        <p>Return or set the name of the accidental ('flat', 'sharp', 'natural', etc.);</p>
+<p>When set, updates alter and modifier.</p>
+    </div>
+    
+
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">string</span>
+
+
+            </li>
+        </ul>
+    
+
+    
+<dl class="details">
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="pitch.js.html">music21/pitch.js</a>,
+				 <a href="pitch.js.html#sunlight-1-line-88">line 88</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+</dd>
+
+        
+            
+<dt class="name" id="vexflowModifier">
+    <h4><span class="type-signature">&lt;readonly> </span>vexflowModifier<span class="type-signature"> :string</span></h4>
+
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        <p>Returns the modifier for vexflow ('b', '#', 'n')</p>
+    </div>
+    
+
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">string</span>
+
+
+            </li>
+        </ul>
+    
+
+    
+<dl class="details">
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="pitch.js.html">music21/pitch.js</a>,
+				 <a href="pitch.js.html#sunlight-1-line-130">line 130</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+</dd>
+
+        </dl>
+    
+
+    
+        <h3 class="subsection-title">Methods</h3>
+
+        <dl>
+            
+<dt>
+    <h4 class="name" id="set"><span class="type-signature">&lt;static> </span>pitch.Accidental#set<span class="signature">(accName)</span><span class="type-signature"> &rarr; {undefined}</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        <p>Sets a parameter of the accidental and updates name, alter, and modifier to suit.</p>
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+
+		<th>Type</th>
+
+		
+
+		
+
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+
+	<tbody>
+	
+
+        <tr>
+            
+                <td class="name"><code>accName</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+|
+
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>the name, number, or modifier to set</p></td>
+        </tr>
+
+	
+	</tbody>
+</table>
+
+    
+    
+    
+<dl class="details">
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="pitch.js.html">music21/pitch.js</a>,
+				 <a href="pitch.js.html#sunlight-1-line-53">line 53</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    <h5>Returns:</h5>
+    
+            
+
+
+<dl>
+	<dt>
+		Type
+	</dt>
+	<dd>
+		
+<span class="param-type">undefined</span>
+
+
+	</dd>
+</dl>
+
+
+        
+    
+    
+</dd>
+
+        </dl>
     
 
     

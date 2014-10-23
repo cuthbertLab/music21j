@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 	<meta charset="utf-8">
-	<title>Music21j Class: KeySignature</title>
+	<title>Music21j Class: Pitch</title>
 
 	<!--[if lt IE 9]>
 	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -228,12 +228,14 @@
 					
 
 
-	<h1 class="page-title">Class: KeySignature</h1>
+	<h1 class="page-title">Class: Pitch</h1>
 <section>
 
 <header>
     <h2>
-    KeySignature
+        <span class="ancestors"><a href="music21.html">music21</a><a href="music21.pitch.html">.pitch</a>.</span>
+    
+    Pitch
     </h2>
     
 </header>
@@ -245,16 +247,12 @@
     
         
 <dt>
-    <h4 class="name" id="KeySignature"><span class="type-signature"></span>new KeySignature<span class="signature">(sharps)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="Pitch"><span class="type-signature"></span>new Pitch<span class="signature">(pn)</span><span class="type-signature"></span></h4>
     
     
 </dt>
 <dd>
     
-    
-    <div class="description">
-        <p>Represents a key signature</p>
-    </div>
     
 
     
@@ -287,13 +285,13 @@
 
         <tr>
             
-                <td class="name"><code>sharps</code></td>
+                <td class="name"><code>pn</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">Int</span>
+<span class="param-type">string</span>
 
 
             
@@ -303,9 +301,7 @@
 
             
 
-            <td class="description last"><ul>
-<li>the number of sharps (negative for flats)</li>
-</ul></td>
+            <td class="description last"><p>name of the pitch, with or without octave.</p></td>
         </tr>
 
 	
@@ -316,6 +312,222 @@
     
     
 <dl class="details">
+	
+
+	<h5 class="subsection-title">Properties:</h5>
+
+	<dl>
+
+<table class="props table table-striped">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+
+		<th>Type</th>
+
+		
+
+		
+
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+
+	<tbody>
+	
+
+        <tr>
+            
+                <td class="name"><code>accidental</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="music21.pitch.Accidental.html">music21.pitch.Accidental</a></span>
+|
+
+<span class="param-type">undefined</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>link to an accidental</p></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>diatonicNoteNum</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>diatonic number of the pitch, where 29 = C4; updates other properties.</p></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>midi</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>midi number of the pitch (C4 = 60); readonly. See <code>music21.pitch.Pitch#ps</code> for setable version.</p></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>name</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>letter name of pitch + accidental modifier; e.g., B-flat = 'B-'; changes automatically w/ step and accidental</p></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>nameWithOctave</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>letter name of pitch + accidental modifier + octave; changes automatically w/ step, accidental, and octave</p></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>octave</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>number for the octave, where middle C = C4, and octaves change between B and C; default 4</p></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>ps</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>pitch space number, like midi number but floating point and w/ no restriction on range. C4 = 60.0</p></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>step</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>letter name for the pitch (C-G, A, B), without accidental; default 'C'</p></td>
+        </tr>
+
+	
+	</tbody>
+</table>
+</dl>
+
 	
 
 	
@@ -341,8 +553,8 @@
 	<dd class="tag-source">
 		<ul class="dummy">
 			<li>
-				<a href="key.js.html">music21/key.js</a>,
-				 <a href="key.js.html#sunlight-1-line-13">line 13</a>
+				<a href="pitch.js.html">music21/pitch.js</a>,
+				 <a href="pitch.js.html#sunlight-1-line-160">line 160</a>
 			</li>
 		</ul>
 	</dd>
@@ -372,6 +584,12 @@
     
     </div>
 
+    
+        <h3 class="subsection-title">Extends</h3>
+
+        <ul>
+            <li><a href="music21.prebase.ProtoM21Object.html">music21.prebase.ProtoM21Object</a></li>
+        </ul>
     
 
     

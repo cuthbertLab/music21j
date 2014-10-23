@@ -9,8 +9,10 @@
 
 define(['./common', './prebase', 'jquery'],
         /**
-         * Duration module
+         * Duration module. See {@link music21.duration}
          * 
+         * @requires music21/common
+         * @requires music21/prebase
          * @exports music21/duration
          */
         function(common, prebase, $) {
@@ -20,12 +22,15 @@ define(['./common', './prebase', 'jquery'],
      * the {@link music21.duration.Duration} class.
      * 
      * @namespace music21.duration 
-     * @memberof music21 
+     * @memberof music21
      */
 	var duration = {};
 
 	/**
 	 * Object mapping int to name, as in `{1: 'whole'}` etc.
+	 * 
+	 * @memberof music21.duration
+	 * @type {object}
 	 */
 	duration.typeFromNumDict = {
 	        1: 'whole',
@@ -45,7 +50,7 @@ define(['./common', './prebase', 'jquery'],
 	        '0.125': 'maxima',
 	        '0.0625': 'duplex-maxima',
 	};
-	duration.quarterTypeIndex = 6; // where is quarter in this?
+	duration.quarterTypeIndex = 6; // where is quarter in the following array.
 	duration.ordinalTypeFromNum = ['duplex-maxima','maxima','longa','breve','whole','half','quarter','eighth','16th','32nd','64th','128th', '256th', '512th', '1024th'];
 	duration.vexflowDurationArray = [undefined, undefined, undefined, undefined, 'w', 'h', 'q', '8', '16', '32', undefined, undefined, undefined, undefined, undefined];
 	
@@ -244,7 +249,7 @@ define(['./common', './prebase', 'jquery'],
         });
         this._quarterLength = tupletCorrectedQl;
     };
-    
+
     duration.Duration.prototype.updateFeaturesFromQl = function () {
         var ql = this._quarterLength;
         var powerOfTwo = Math.floor(Math.log(ql+.00001)/Math.log(2));
@@ -272,6 +277,13 @@ define(['./common', './prebase', 'jquery'],
         }
     };
     
+    /**
+     * Add a tuplet to music21j
+     * 
+     * @memberof music21.duration.Duration
+     * @param {music21.duration.Tuplet} newTuplet - tuplet to add to `.tuplets`
+     * @param {boolean} [skipUpdateQl=false] - update the quarterLength afterwards?
+     */
     duration.Duration.prototype.appendTuplet = function (newTuplet, skipUpdateQl) {
         newTuplet.frozen = true;
         this._tuplets.push(newTuplet);
@@ -335,6 +347,13 @@ define(['./common', './prebase', 'jquery'],
 	    this.tupletNormalShow = undefined; // undefined, 'ratio' for ratios, 'type' for ratioed notes (does not work)
 	    
 	    Object.defineProperties(this, {
+            /**
+             * A nice name for the tuplet.
+             * 
+             * @type String
+             * @instance
+             * @memberof music21.duration.Tuplet
+             */
 	       'fullName': {
 	           enumerable: true,
 	           configurable: true,
@@ -360,6 +379,13 @@ define(['./common', './prebase', 'jquery'],
     duration.Tuplet.prototype = new prebase.ProtoM21Object();
     duration.Tuplet.prototype.constructor = duration.Tuplet;
 
+    /**
+     * Set both durationActual and durationNormal for the tuplet.
+     * 
+     * @memberof music21.duration.Tuplet
+     * @param {string} type - a duration type, such as `half`, `quarter`
+     * @returns {music21.duration.Duration} A converted {@link music21.duration.Duration} matching `type` 
+     */    
     duration.Tuplet.prototype.setDurationType = function (type) {
         if (self.frozen == true) {
             throw ("A frozen tuplet (or one attached to a duration) is immutable");    
@@ -368,7 +394,14 @@ define(['./common', './prebase', 'jquery'],
         this.durationNormal = this.durationActual;
         return this.durationActual;
     };
-    
+    /**
+     * Sets the tuplet ratio.
+     * 
+     * @memberof music21.duration.Tuplet
+     * @param {Number} actual - number of notes in actual (e.g., 3)
+     * @param {Number} normal - number of notes in normal (e.g., 2)
+     * @returns {undefined}
+     */
     duration.Tuplet.prototype.setRatio = function (actual, normal) {
         if (self.frozen == true) {
             throw ("A frozen tuplet (or one attached to a duration) is immutable");    
@@ -376,9 +409,24 @@ define(['./common', './prebase', 'jquery'],
         this.numberNotesActual = actual || 3;
         this.numberNotesNormal = normal || 2;
     };
+    
+    /**
+     * Get the quarterLength corresponding to the total length that
+     * the completed tuplet (i.e., 3 notes in a triplet) would occupy.
+     * 
+     * @memberof music21.duration.Tuplet
+     * @returns {Number} A quarter length.
+     */
     duration.Tuplet.prototype.totalTupletLength = function () {
         return this.numberNotesNormal * this.durationNormal.quarterLength;
     };
+    /**
+     * The amount by which each quarter length is multiplied to get
+     * the tuplet. For instance, in a normal triplet, this is 0.666
+     * 
+     * @memberof music21.duration.Tuplet
+     * @returns {Number} A float of the multiplier
+     */
     duration.Tuplet.prototype.tupletMultiplier = function () {
         var lengthActual = this.durationActual.quarterLength;
         return (this.totalTupletLength() / (
