@@ -1,43 +1,46 @@
 /**
- * music21j -- Javascript reimplementation of Core music21 features.  
- * See http://web.mit.edu/music21/ for more details.
- * 
- * Copyright (c) 2013-14, Michael Scott Cuthbert and cuthbertLab
- * Based on music21, Copyright (c) 2006-14, Michael Scott Cuthbert and cuthbertLab
- *
  * If you are a programmer, this is probably not the script you are looking for.  
  * The guts of music21j begin at src/music21/moduleLoader.js
- *
- * 
- * The plan is to implement all core music21 features as Javascript and to expose
- * more sophisticated features via server-side connections to remote servers running the
- * python music21 (music21p).
- * Requires a (mostly) ECMAScript 5 compatible browser w/ SVG/Canvas. IE 9+ or any recent 
- * version of Firefox, Safari (5+), Chrome, etc. will do. To disable the warning, 
- * set an attribute in the <script> tag that calls requirejs, warnBanner="no".
- * 
- * All interfaces are alpha and may change radically from day to day and release to release.
- * Do not use this in production code yet. 
- * 
- * See src/moduleLoader.js for version and version history.
- * 
- * music21j acknowledges VexFlow, MIDI.js, jUnit, jQuery for their great efforts without which 
- * this module would not be possible.
  * 
  * @exports music21
  */
 if (typeof(music21) === "undefined") {
-    /** @namespace */
+    /**
+     * **music21j**: Javascript reimplementation of Core music21 features.  
+     * 
+     * See http://web.mit.edu/music21/ for more details.
+     * 
+     * Copyright (c) 2013-14, Michael Scott Cuthbert and cuthbertLab
+     * 
+     * Based on music21, Copyright (c) 2006-14, Michael Scott Cuthbert and cuthbertLab
+     * The plan is to implement all core music21 features as Javascript and to expose
+     * more sophisticated features via server-side connections to remote servers running the
+     * python music21 (music21p).
+     * 
+     * Requires a (mostly) ECMAScript 5 compatible browser w/ SVG/Canvas. IE 9+ or any recent 
+     * version of Firefox, Safari (5+), Chrome, etc. will do. To disable the warning, 
+     * set an attribute in the &lt;script&gt; tag that calls requirejs, warnBanner="no".
+     * 
+     * All interfaces are alpha and may change radically from day to day and release to release.
+     * Do not use this in production code yet. 
+     * 
+     * See src/moduleLoader.js for version and version history.
+     * 
+     * music21j acknowledges VexFlow, MIDI.js, jUnit, jQuery for their great efforts without which 
+     * this module would not be possible.
+     *  
+     * @namespace 
+     */
     music21 = {};
 }
-console.log('hi before: ' + require.toUrl('hi'));
-console.log('./hi before: ' + require.toUrl('./hi'));
+//console.log('hi before: ' + require.toUrl('hi'));
+//console.log('./hi before: ' + require.toUrl('./hi'));
 
 require.config({
     context: 'music21',
 });
-console.log('hi context: ' + require.toUrl('hi'));
-console.log('./hi context: ' + require.toUrl('./hi'));
+//console.log('hi context: ' + require.toUrl('hi'));
+//console.log('./hi context: ' + require.toUrl('./hi'));
 
 
 //must be defined before loading, jQuery, etc. because needed to see if warnBanner is defined
@@ -114,8 +117,8 @@ if (typeof m21srcPath === 'undefined') {
     }
 }
 music21.m21srcPath = m21srcPath;
-console.log('m21srcPath', m21srcPath);
-console.log('m21srcPath non simplified', require.toUrl('music21'));
+//console.log('m21srcPath', m21srcPath);
+//console.log('m21srcPath non simplified', require.toUrl('music21'));
 music21.soundfontUrl = require.toUrl('music21') + '/../ext/midijs/soundfont/';
 
 var m21requireConfig = {
@@ -155,7 +158,7 @@ var m21requireConfig = {
         },
     }
 };
-console.log('jsonpickle in music21: ', m21requireConfig.packages[0].location);
+//console.log('jsonpickle in music21: ', m21requireConfig.packages[0].location);
 
 
 var m21modules = ['MIDI',
