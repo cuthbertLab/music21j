@@ -3,6 +3,7 @@ define(['./common'],
          * module for things that all music21-created objects, not just objects that can live in
          * Stream.elements should inherit
          *
+         * @requires music21/common
          * @exports music21/prebase
          */
         function(common) {
@@ -20,31 +21,13 @@ define(['./common'],
      * 
      * @class ProtoM21Object
      * @memberof music21.prebase
+     * @property {Array<string>} classes - An Array of strings of classes that the object belongs to (default ['ProtoM21Object'])
+     * @property {Boolean} isProtoM21Object - Does this object descend from {@link music21.prebase.ProtoM21Object}: obviously true.
+     * @property {Boolean} isMusic21Object - Does this object descend from {@link music21.base.Music21Object}; default false.
      */
     prebase.ProtoM21Object = function () {
-        /**
-         * An Array of strings of classes that the object belongs to
-         * 
-         * @name music21.prebase.ProtoM21Object.classes
-         * @type {Array<String>}
-         * @default ['ProtoM21Object']
-         */
         this.classes = ['ProtoM21Object'];
-        /**
-         * Does this object descend from {@link music21.prebase.ProtoM21Object} -- obviously true.
-         * 
-         * @name music21.prebase.ProtoM21Object.isProtoM21Object
-         * @type {Boolean}
-         * @default true
-         */
         this.isProtoM21Object = true;
-        /**
-         * Does this object descend from {@link music21.base.Music21Object} -- default false.
-         * 
-         * @name music21.prebase.ProtoM21Object.isMusic21Object
-         * @type {Boolean}
-         * @default false
-         */
         this.isMusic21Object = false;    
         this._cloneCallbacks = {};
     };
@@ -54,8 +37,18 @@ define(['./common'],
      * 
      * Works similarly to Python's copy.deepcopy().
      * 
+     * Every ProtoM21Object has a `._cloneCallbacks` object which maps `{attribute: callbackFunction}`
+     * to handle custom clone cases.  See, for instance, {@link music21.base.Music21Object} which
+     * uses a custom callback to NOT clone the `.activeSite` attribute.
+     * 
      * @returns {object}
      * @memberof music21.prebase.ProtoM21Object
+     * @example
+     * var n1 = new music21.note.Note("C#");
+     * n1.duration.quarterLength = 4;
+     * var n2 = n1.clone();
+     * n2.duration.quarterLength == 4; // true
+     * n2 === n1; // false
      */
     prebase.ProtoM21Object.prototype.clone = function () {
         var ret = new this.constructor();
@@ -104,8 +97,13 @@ define(['./common'],
      * Check to see if an object is of this class or subclass.
      * 
      * @memberof music21.prebase.ProtoM21Object
-     * @param {(string|string[])} testClass
+     * @param {(string|string[])} testClass - a class or Array of classes to test
      * @returns {Boolean}
+     * @example
+     * var n = new music21.note.Note();
+     * n.isClassOrSubclass('Note'); // true
+     * n.isClassOrSubclass('Music21Object'); // true
+     * n.isClassOrSubclass(['Duration', 'NotRest']); // true // NotRest
      */
     prebase.ProtoM21Object.prototype.isClassOrSubclass = function (testClass) {
         if (testClass instanceof Array == false) {

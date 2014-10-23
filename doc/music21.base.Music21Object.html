@@ -140,10 +140,6 @@
 						</li>
 						
 						<li>
-							<a href="pitch-pitch.Pitch.html">music21/pitch~pitch.Pitch</a>
-						</li>
-						
-						<li>
 							<a href="music21.base.Music21Object.html">music21.base.Music21Object</a>
 						</li>
 						
@@ -184,6 +180,10 @@
 						</li>
 						
 						<li>
+							<a href="music21.pitch.Pitch.html">music21.pitch.Pitch</a>
+						</li>
+						
+						<li>
 							<a href="music21.prebase.ProtoM21Object.html">music21.prebase.ProtoM21Object</a>
 						</li>
 						
@@ -209,20 +209,6 @@
 						
 						<li>
 							<a href="vfShow.Renderer.html">vfShow.Renderer</a>
-						</li>
-						
-
-					</ul>
-				</li>
-				
-				<li class="dropdown">
-					<a href="global.html" class="dropdown-toggle" data-toggle="dropdown">Global<b
-						class="caret"></b></a>
-
-					<ul class="dropdown-menu ">
-						
-						<li>
-							<a href="global.html#modifier">modifier</a>
 						</li>
 						
 
@@ -283,6 +269,222 @@
 <dl class="details">
 	
 
+	<h5 class="subsection-title">Properties:</h5>
+
+	<dl>
+
+<table class="props table table-striped">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+
+		<th>Type</th>
+
+		
+
+		
+
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+
+	<tbody>
+	
+
+        <tr>
+            
+                <td class="name"><code>activeSite</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>hardlink to a <code>music21.stream.Stream</code> containing the element.</p></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>classSortOrder</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Default sort order for this class (default 20; override in other classes). Lower numbered objects will sort before other objects in the staff if priority and offset are the same.</p></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>duration</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="music21.duration.Duration.html">music21.duration.Duration</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>the duration (object) for the element. (can be set with a quarterLength also)</p></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>groups</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>An Array of strings representing group (equivalent to css classes) to assign to the object. (default [])</p></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>isMusic21Object</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>true</p></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>isStream</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>false</p></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>offset</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+|
+
+<span class="param-type">null</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>offset from the beginning of the stream (in quarterLength)</p></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>priority</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The priority (lower = earlier or more left) for elements at the same offset. (default 0)</p></td>
+        </tr>
+
+	
+	</tbody>
+</table>
+</dl>
+
+	
+
 	
 
 	
@@ -307,7 +509,7 @@
 		<ul class="dummy">
 			<li>
 				<a href="base.js.html">music21/base.js</a>,
-				 <a href="base.js.html#sunlight-1-line-28">line 28</a>
+				 <a href="base.js.html#sunlight-1-line-31">line 31</a>
 			</li>
 		</ul>
 	</dd>
