@@ -1,7 +1,7 @@
 define(['./common'],
         /**
          * module for things that all music21-created objects, not just objects that can live in
-         * Stream.elements should inherit
+         * Stream.elements should inherit. See the {@link music21.prebase} namespace.
          *
          * @requires music21/common
          * @exports music21/prebase
