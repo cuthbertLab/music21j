@@ -10,14 +10,23 @@
 
 define(['./prebase', './base', './pitch', './beam', './common', 'vexflow'], 
         /**
-         * Module for note classes
+         * Module for note classes. See the namespace {@link music21.note}
          * 
+         * @requires music21/common
+         * @requires music21/prebase
+         * @requires music21/base
+         * @requires music21/pitch
+         * @requires music21/beam
          * @exports music21/note
          */  
         function(prebase, base, pitch, beam, common, Vex) {
     /**
+     * Namespace for notes (single pitch) or rests, and some things like Lyrics that go on notes.
+     * 
      * @namespace music21.note
      * @memberof music21
+     * @property {Array} noteheadTypeNames - an Array of allowable notehead names.
+     * @property {Array} stemDirectionNames - an Array of allowable stemDirection names.
      */
     var note = {};
 
@@ -59,11 +68,23 @@ define(['./prebase', './base', './pitch', './beam', './common', 'vexflow'],
 	                           ];
 
     /**
-     * Class for a single Lyric attached to a GeneralNote
+     * Class for a single Lyric attached to a {@link music21.note.GeneralNote}
      * 
      * @class Lyric
      * @memberOf music21.note
      * @extends music21.prebase.ProtoM21Object
+     * @param {string} text - the text of the lyric
+     * @param {number} number - the lyric number (default 1)
+     * @param {string} syllabic - placement of the syllable ('begin', 'middle', 'end', 'single'); undefined = interpret from text
+     * @param {boolean} applyRaw - true = display the text exactly as it is or, false (default) = use "-" etc. to determine syllabic
+     * @param {string} identifier - identifier for the lyric.
+     * @property {string} lyricConnector - what to place between two lyrics that are syllabic, default "-"
+     * @property {string} text - the text of the lyric syllable.
+     * @property {string} syllabic - see above
+     * @property {boolean} applyRaw - see above
+     * @property {string} identifier - see above; gets .number if undefined
+     * @property {number} number - see above
+     * @property {string} rawText - text + any connectors
      */  
 	note.Lyric = function(text, number, syllabic, applyRaw, identifier) {
 	    prebase.ProtoM21Object.call(this);
@@ -141,6 +162,17 @@ define(['./prebase', './base', './pitch', './beam', './common', 'vexflow'],
 	 * @memberof music21.note
 	 * @extends music21.base.Music21Object
      * @param {(number|undefined)} ql - quarterLength of the note (default 1)
+     * @property {boolean} isChord - is this a chord; false
+     * @property {number} quarterLength - shortcut to `.duration.quarterLength`
+     * @property {object} activeVexflowNote - most recent Vex.Flow.StaveNote object to be made from this note (could change); default, undefined
+     * @property {Array<music21.expressions.Expression>} expressions - array of attached expressions
+     * @property {Array<music21.articulations.Articulation>} articulations - array of attached articulations
+     * @property {string} lyric - the text of the first {@link music21.note.Lyric} object; can also set one.
+     * @property {Array<music21.note.Lyric>} lyrics - array of attached lyrics
+     * @property {number} volume - how loud is this note, 0-127 (default 60), before articulations
+     * @property {number} midiVolume - how loud is this note, taking into account articulations
+     * @property {music21.note.Tie|undefined} tie - a tie object
+     * 
   	 */
 	note.GeneralNote = function (ql) {
 		base.Music21Object.call(this);
@@ -232,6 +264,8 @@ define(['./prebase', './base', './pitch', './beam', './common', 'vexflow'],
 	};
     /**
      * Sets the vexflow accidentals (if any), the dots, and the stem direction
+     * 
+     * @memberof music21.note.GeneralNote
      * @param {Vex.Flow.StaveNote} vfn - a Vex.Flow note
      */
     note.GeneralNote.prototype.vexflowAccidentalsAndDisplay = function (vfn, options) {
@@ -277,10 +311,10 @@ define(['./prebase', './base', './pitch', './beam', './common', 'vexflow'],
     /**
      * Play the current element as a MIDI note.
      * 
-     * @name playMidi
-     * @memberof GeneralNote
-     * @param {number} tempo - tempo in bpm
-     * @param {(base.Music21Object|undefined)} nextElement - for ties...
+     * @memberof music21.note.GeneralNote
+     * @param {number} tempo - tempo in bpm (default 120)
+     * @param {(base.Music21Object|undefined)} nextElement - for determining the length to play in case of tied notes, etc.
+     * @param {object} options - other options (currently just `{instrument: {@link music21.instrument.Instrument} }`)
      * @returns {Number} - delay time in milliseconds until the next element (may be ignored)
      */
     note.GeneralNote.prototype.playMidi = function (tempo, nextElement, options) {
@@ -482,8 +516,8 @@ define(['./prebase', './base', './pitch', './beam', './common', 'vexflow'],
 
 	/**
 	 * @class Rest
-	 * @constructor
-	 * @extends GeneralNote
+	 * @memberof music21.note
+	 * @extends music21.note.GeneralNote
 	 * @param {number} ql - quarter length
 	 */
 	note.Rest = function (ql) {
