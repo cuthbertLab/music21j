@@ -444,6 +444,11 @@ define(['./base', './pitch', './common', './miditools', 'jquery', 'MIDI'],
     
     /**
      * [better demo...]
+     * 
+     *  for instance:
+     *       var midiCallbacksPlay = [music21.miditools.makeChords, 
+     *                                music21.miditools.sendToMIDIjs,
+     *                                music21.keyboard.jazzHighlight.bind(k)];
      */
     keyboard.jazzHighlight = function (e) {
         // e is a miditools.event object -- call with this = keyboard.Keyboard object via bind...

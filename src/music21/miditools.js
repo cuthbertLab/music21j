@@ -14,14 +14,24 @@
 
 define(['jquery', './note', './chord', 'MIDI', 'Base64', 'base64binary'],         
        /**
-         * @exports music21/miditools
-         */
+        * @exports music21/miditools
+        */
         function($, note, chord, MIDI) {
-    /** @namespace music21.miditools 
-     *  @memberof music21 
+    /** 
+     * Module that holds **music21** tools for connecting with MIDI.js and somewhat with the
+     * events from the Jazz plugin (or to come soon, the WebMIDI protocol).
+     * 
+     * @namespace music21.miditools 
+     * @memberof music21 
      */
     var miditools = {};
     
+    /**
+     * Number of octaves to transpose all incoming midi signals
+     * 
+     * @type {number}
+     * @default 0
+     */
     miditools.transposeOctave = 0;
     /**
      * @class Event 
@@ -49,8 +59,8 @@ define(['jquery', './note', './chord', 'MIDI', 'Base64', 'base64binary'],
     };
 
     /**
-     * Calls {@link music21.MIDI.noteOn} or {@link music21.MIDI.noteOff} for the Note
-     * represented by the event (if appropriate)
+     * Calls MIDI.noteOn or MIDI.noteOff for the note
+     * represented by the Event (if appropriate)
      * 
      * @memberof music21.miditools.Event
      * @returns {undefined}
@@ -70,7 +80,7 @@ define(['jquery', './note', './chord', 'MIDI', 'Base64', 'base64binary'],
      * Makes a {@link music21.note.Note} object from the event's midiNote number.
      * 
      * @memberof music21.miditools.Event
-     * @returns {note.Note} - the {@link music21.note.Note} object represented by Event.midiNote
+     * @returns {music21.note.Note} - the {@link music21.note.Note} object represented by Event.midiNote
      */
     miditools.Event.prototype.music21Note = function () {
         var m21n = new note.Note();
@@ -85,7 +95,19 @@ define(['jquery', './note', './chord', 'MIDI', 'Base64', 'base64binary'],
      * @type {number}
      */
     miditools.maxDelay = 100; // in ms
+    /**
+     * At what time (in ms since Epoch) the chord started.
+     * 
+     * @memberof music21.miditools
+     * @type {number}
+     */
     miditools.heldChordTime = 0;
+    /**
+     * An Array (or undefined) of currently held chords that have not been sent out yet.
+     * 
+     * @memberof music21.miditools
+     * @type {Array|undefined}
+     */
     miditools.heldChordNotes = undefined;
 
     /**
@@ -99,7 +121,7 @@ define(['jquery', './note', './chord', 'MIDI', 'Base64', 'base64binary'],
     
     miditools._baseTempo = 60;
     /**
-     * Assign (or quiery) a Metronome object to run all timing information.
+     * Assign (or query) a Metronome object to run all timing information.
      * 
      * @memberof music21.miditools
      * @type {music21.tempo.Metronome}
@@ -175,6 +197,15 @@ define(['jquery', './note', './chord', 'MIDI', 'Base64', 'base64binary'],
         }
     };
 
+    /**
+     * The last Note or Chord to be sent out from miditools.  This is an important semi-global
+     * attribute, since the last element may need to be quantized by quantizeLastNote() to
+     * determine its length, since the note may need to be placed into a staff before its total
+     * length can be determined.
+     *  
+     * @memberof music21.miditools
+     * @type {music21.chord.Chord|music21.note.Note|undefined}
+     */    
     miditools.lastElement = undefined;
     
     /**
@@ -183,7 +214,7 @@ define(['jquery', './note', './chord', 'MIDI', 'Base64', 'base64binary'],
      * 
      * @memberof music21.miditools
      * @param {Array<music21.note.Note>} chordNoteList - an Array of {@link music21.note.Note} objects
-     * @returns {(music21.note.Note|music21.    chord.Chord|undefined)} A {@link music21.chord.Chord} object, 
+     * @returns {(music21.note.Note|music21.chord.Chord|undefined)} A {@link music21.chord.Chord} object, 
      * most likely, but maybe a {@link music21.note.Note} object)
      */
     miditools.sendOutChord = function (chordNoteList) {
@@ -207,10 +238,11 @@ define(['jquery', './note', './chord', 'MIDI', 'Base64', 'base64binary'],
     };
 
     /**
+     * Quantizes the lastElement (passed in) or music21.miditools.lastElement.
      * 
      * @memberof music21.miditools
-     * @param {note.GeneralNote} lastElement - A {@link music21.note.Note} to be quantized
-     * @returns {note.GeneralNote} The same {@link music21.note.Note} object passed in with 
+     * @param {music21.note.GeneralNote} lastElement - A {@link music21.note.Note} to be quantized
+     * @returns {music21.note.GeneralNote} The same {@link music21.note.Note} object passed in with 
      * duration quantized
      */
     miditools.quantizeLastNote = function (lastElement) {
@@ -246,7 +278,10 @@ define(['jquery', './note', './chord', 'MIDI', 'Base64', 'base64binary'],
     
     /* ----------- callbacks --------- */
     /**
-     * @param {miditools.Event} midiEvent - event to send out.
+     * Callback to midiEvent.sendToMIDIjs.
+     * 
+     * @memberof music21.miditools
+     * @param {music21.miditools.Event} midiEvent - event to send out.
      * @returns undefined
      */
     miditools.sendToMIDIjs = function(midiEvent) {
@@ -254,11 +289,25 @@ define(['jquery', './note', './chord', 'MIDI', 'Base64', 'base64binary'],
     };
     
     /* ------------ MIDI.js ----------- */
+    
+    /**
+     * a mapping of soundfont text names to true, false, or "loading".
+     * 
+     * @memberof music21.miditools
+     * @type {object}
+     */
     miditools.loadedSoundfonts = {};
 
+    /**
+     * Called after a soundfont has been loaded. The callback is better to be specified elsewhere
+     * rather than overriding this important method.
+     * 
+     * @memberof music21.miditools
+     * @param {String} soundfont The name of the soundfont that was just loaded
+     * @param {function} callback A function to be called after the soundfont is loaded.
+     */
     miditools.postLoadCallback = function (soundfont, callback) {
         // this should be bound to MIDI
-        
         if (music21.debug) {
             console.log('soundfont loaded about to execute callback.');
             console.log('first playing two notes very softly -- seems to flush the buffer.');            
@@ -291,10 +340,24 @@ define(['jquery', './note', './chord', 'MIDI', 'Base64', 'base64binary'],
     };
 
     
-    // method to load soundfonts while waiting for other processes that need them
-    // to load first.  will be available as music21.miditools.loadSoundfont()
-    miditools.loadSoundfont = function(soundfont, callback) {
-        
+    
+    /**
+     * method to load soundfonts while waiting for other processes that need them
+     * to load first.    
+     * 
+     * @memberof music21.miditools
+     * @param {String} soundfont The name of the soundfont that was just loaded
+     * @param {function} callback A function to be called after the soundfont is loaded.
+     * @example
+     * s = new music21.stream.Stream();
+     * music21.miditools.loadSoundfont(
+     *     'clarinet', 
+     *     function(i) { 
+     *         console.log('instrument object', i, 'loaded');
+     *         s.instrument = i;
+     * });
+     */
+    miditools.loadSoundfont = function(soundfont, callback) {        
         if (miditools.loadedSoundfonts[soundfont] == true) {
             if (callback !== undefined) {
                 var instrumentObj = music21.instrument.find(soundfont);

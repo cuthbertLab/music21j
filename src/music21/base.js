@@ -26,6 +26,8 @@ define(['./prebase', './duration'],
     var base = {};
 
 	/**
+     * Base class for any object that can be placed in a {@link music21.stream.Stream}.
+	 * 
 	 * @class Music21Object
 	 * @memberof music21.base
      * @extends music21.prebase.ProtoM21Object
@@ -33,6 +35,7 @@ define(['./prebase', './duration'],
 	base.Music21Object = function () {
         prebase.ProtoM21Object.call(this);
         this.classes.push('Music21Object');
+        
 		this.classSortOrder = 20; // default;
 		this._priority = 0; // default;
 		this.offset = null; // default -- simple version of m21.

@@ -13,6 +13,12 @@ define(['./prebase'],
          * @exports music21/pitch
          */
         function(prebase) {
+    /** 
+     * Pitch related objects and methods
+     * 
+     * @namespace music21.pitch 
+     * @memberof music21 
+     */
     var pitch = {};
 	
 	/*  pitch based objects; from pitch.py */
@@ -29,7 +35,6 @@ define(['./prebase'],
          * @var {string} name
          * @var {number} alter
          * @var {string} modifier
-         * @var {string} vexflowModifier
          */
 	    prebase.ProtoM21Object.call(this);
 	    this.classes.push('Accidental');
@@ -82,7 +87,7 @@ define(['./prebase'],
     };
     Object.defineProperties(pitch.Accidental.prototype, {
         /**
-         * @memberof module:music21/pitch~pitch.Pitch
+         * @memberof module:music21/pitch~pitch.Accidental
          */
         'name' : {
           enumerable: true,

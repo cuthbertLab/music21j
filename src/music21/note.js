@@ -17,6 +17,7 @@ define(['./prebase', './base', './pitch', './beam', './common', 'vexflow'],
         function(prebase, base, pitch, beam, common, Vex) {
     /**
      * @namespace music21.note
+     * @memberof music21
      */
     var note = {};
 

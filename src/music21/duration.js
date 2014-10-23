@@ -7,11 +7,26 @@
  * 
  */
 
-define(['./common', './prebase', 'jquery'], 
+define(['./common', './prebase', 'jquery'],
+        /**
+         * Duration module
+         * 
+         * @exports music21/duration
+         */
         function(common, prebase, $) {
-
+    /** 
+     * Module that holds **music21** classes and
+     * tools for dealing with durations, especially
+     * the {@link music21.duration.Duration} class.
+     * 
+     * @namespace music21.duration 
+     * @memberof music21 
+     */
 	var duration = {};
 
+	/**
+	 * Object mapping int to name, as in `{1: 'whole'}` etc.
+	 */
 	duration.typeFromNumDict = {
 	        1: 'whole',
 	        2: 'half',
@@ -34,6 +49,15 @@ define(['./common', './prebase', 'jquery'],
 	duration.ordinalTypeFromNum = ['duplex-maxima','maxima','longa','breve','whole','half','quarter','eighth','16th','32nd','64th','128th', '256th', '512th', '1024th'];
 	duration.vexflowDurationArray = [undefined, undefined, undefined, undefined, 'w', 'h', 'q', '8', '16', '32', undefined, undefined, undefined, undefined, undefined];
 	
+	/**
+	 * Duration object; found as the `.duration` attribute on {@link music21.base.Music21Object} instances
+	 * such as {@link music21.note.Note}
+	 * 
+	 * @class Duration
+	 * @memberof music21.duration
+	 * @extends music21.prebase.ProtoM21Object
+	 * @param {(number|undefined)} ql - quarterLength (default 1.0)
+	 */
 	duration.Duration = function (ql) {
 	    prebase.ProtoM21Object.call(this, ql);
 	    this.classes.push('Duration');
@@ -54,7 +78,22 @@ define(['./common', './prebase', 'jquery'],
             ret[tupletKey] = newTuplets;
         };
 	    Object.defineProperties(this, {
-	    	'dots': { 
+	    	/**
+	    	 * Read or sets the number of dots on the duration.
+	    	 * 
+	    	 * Updates the quarterLength
+	    	 * 
+	    	 * @type Number
+	    	 * @instance
+	    	 * @default 0
+	    	 * @memberof music21.duration.Duration
+	    	 * @example
+	    	 * var d = new music21.duration.Duration(2);
+	    	 * d.dots == 0; // true
+	    	 * d.dots = 1; 
+	    	 * d.quarterLength == 3; // true;
+	    	 */
+	        'dots': { 
 	    		get: function () { 
 			       		return this._dots;
 	    			},
@@ -63,6 +102,22 @@ define(['./common', './prebase', 'jquery'],
                     this.updateQlFromFeatures();
 	    		}
 	    	},
+            /**
+             * Read or sets the quarterLength of the Duration
+             * 
+             * Updates the type, dots, tuplets(?)
+             * 
+             * @type Number
+             * @instance
+             * @default 1.0
+             * @memberof music21.duration.Duration
+             * @example
+             * var d = new music21.duration.Duration(2);
+             * d.quarterLength == 2.0; // true;
+             * d.quarterLength = 1.75;
+             * d.dots == 2; // true
+             * d.type == 'quarter'; // true
+             */
 	    	'quarterLength': {
 				get: function () {
 					return this._quarterLength;
@@ -75,6 +130,24 @@ define(['./common', './prebase', 'jquery'],
 					this.updateFeaturesFromQl();
 				}
 			},
+	         /**
+             * Read or sets the type of the duration.
+             * 
+             * Updates the quarterLength
+             * 
+             * @type String
+             * @instance
+             * @default 'quarter'
+             * @memberof music21.duration.Duration
+             * @example
+             * var d = new music21.duration.Duration(2);
+             * d.type == 'half; // true
+             * d.type = 'breve';
+             * d.quarterLength == 8.0; // true
+             * d.dots = 1;
+             * d.type = 'quarter'; // will not change dots
+             * d.quarterLength == 1.5; // true
+             */
 			'type': {
 				get: function () {
 					return this._type;
@@ -89,17 +162,42 @@ define(['./common', './prebase', 'jquery'],
 					this.updateQlFromFeatures();
 				}
 			},
+            /**
+             * Reads the tuplet Array for the duration.
+             * 
+             * The tuplet array should be considered Read Only.
+             * Use {@link music21.duration.Duration#appendTuplet} to
+             * add a tuplet (no way to remove yet)
+             * 
+             * @type Array<music21.duration.Tuplet>
+             * @instance
+             * @default []
+             * @memberof music21.duration.Duration
+             */
 			'tuplets' : {
 			    enumerable: true,
 			    get: function () { return this._tuplets; }
 			},
+            /**
+             * Read-only: the duration expressed for VexFlow
+             * 
+             * @type String
+             * @instance
+             * @default 'd'
+             * @memberof music21.duration.Duration
+             * @example
+             * var d = new music21.duration.Duration(2);
+             * d.vexflowDuration == 'h'; // true;
+             * d.dots = 2;
+             * d.vexflowDuration == 'hdd'; // true;
+             */
 			'vexflowDuration': {
 				get: function() {
 		            var typeNumber = $.inArray(this.type, duration.ordinalTypeFromNum);
 					var vd = duration.vexflowDurationArray[typeNumber];
 					if (this.dots > 0) {
 					    for (var i = 0; i < this.dots; i++) {
-	                        vd += "d"; // vexflow does not handle double dots .. or does it???					        
+	                        vd += "d"; // vexflow does not handle double dots .. or does it???
 					    }
 					}
 					return vd;
@@ -184,8 +282,15 @@ define(['./common', './prebase', 'jquery'],
 
     
     /**
-     * Tuplet
-     * @constructor duration.Tuplet
+     * Represents a Tuplet; found in {@link music21.duration.Duration#tuplets}
+     * 
+     * @class Tuplet
+     * @memberof music21.duration
+     * @extends music21.prebase.ProtoM21Object
+     * @param {number} numberNotesActual - numerator of the tuplet, default 3
+     * @param {number} numberNotesNormal - denominator of the tuplet, default 2
+     * @param {(music21.duration.Duration|number)} durationActual - duration or quarterLength of duration type, default music21.duration.Duration(0.5)
+     * @param {(music21.duration.Duration|number)} durationNormal - unused; see music21p for description
      */
 	duration.Tuplet = function (numberNotesActual, numberNotesNormal, 
 	        durationActual, durationNormal) {
@@ -201,9 +306,32 @@ define(['./common', './prebase', 'jquery'],
 	    
 	    this.frozen = false;
 	    this.type = undefined;
+
+	    /**
+	     * Show a bracket above the tuplet
+	     * 
+	     * @memberof music21.duration.Tuplet#
+	     * @member {Boolean} bracket
+	     * @default true
+	     */
 	    this.bracket = true;
+        /**
+         * Bracket placement. Options are `above` or `below`.
+         * 
+         * @memberof music21.duration.Tuplet#
+         * @member {String} placement
+         * @default 'above'
+         */
 	    this.placement = 'above';
-	    this.tupletActualShow = 'number'; // 'number', 'type', or 'none'
+
+	    /**
+         * What to show above the Tuplet. Options are `number`, `type`, or (string) `none`.
+         * 
+         * @memberof music21.duration.Tuplet#
+         * @member {String} tupletActualShow
+         * @default 'number'
+         */
+        this.tupletActualShow = 'number';
 	    this.tupletNormalShow = undefined; // undefined, 'ratio' for ratios, 'type' for ratioed notes (does not work)
 	    
 	    Object.defineProperties(this, {
