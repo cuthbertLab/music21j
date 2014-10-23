@@ -136,10 +136,6 @@
 						</li>
 						
 						<li>
-							<a href="note-note.Rest.html">music21/note~note.Rest</a>
-						</li>
-						
-						<li>
 							<a href="music21.base.Music21Object.html">music21.base.Music21Object</a>
 						</li>
 						
@@ -173,6 +169,10 @@
 						
 						<li>
 							<a href="music21.note.NotRest.html">music21.note.NotRest</a>
+						</li>
+						
+						<li>
+							<a href="music21.note.Rest.html">music21.note.Rest</a>
 						</li>
 						
 						<li>
@@ -247,7 +247,7 @@
     
         
 <dt>
-    <h4 class="name" id="Lyric"><span class="type-signature"></span>new Lyric<span class="signature">()</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="Lyric"><span class="type-signature"></span>new Lyric<span class="signature">(text, number, syllabic, applyRaw, identifier)</span><span class="type-signature"></span></h4>
     
     
 </dt>
@@ -255,7 +255,7 @@
     
     
     <div class="description">
-        <p>Class for a single Lyric attached to a GeneralNote</p>
+        <p>Class for a single Lyric attached to a <a href="music21.note.GeneralNote.html"><code>music21.note.GeneralNote</code></a></p>
     </div>
     
 
@@ -264,9 +264,340 @@
     
     
     
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+
+		<th>Type</th>
+
+		
+
+		
+
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+
+	<tbody>
+	
+
+        <tr>
+            
+                <td class="name"><code>text</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>the text of the lyric</p></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>number</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>the lyric number (default 1)</p></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>syllabic</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>placement of the syllable ('begin', 'middle', 'end', 'single'); undefined = interpret from text</p></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>applyRaw</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>true = display the text exactly as it is or, false (default) = use &quot;-&quot; etc. to determine syllabic</p></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>identifier</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>identifier for the lyric.</p></td>
+        </tr>
+
+	
+	</tbody>
+</table>
+
+    
     
     
 <dl class="details">
+	
+
+	<h5 class="subsection-title">Properties:</h5>
+
+	<dl>
+
+<table class="props table table-striped">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+
+		<th>Type</th>
+
+		
+
+		
+
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+
+	<tbody>
+	
+
+        <tr>
+            
+                <td class="name"><code>lyricConnector</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>what to place between two lyrics that are syllabic, default &quot;-&quot;</p></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>text</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>the text of the lyric syllable.</p></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>syllabic</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>see above</p></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>applyRaw</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>see above</p></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>identifier</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>see above; gets .number if undefined</p></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>number</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>see above</p></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>rawText</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>text + any connectors</p></td>
+        </tr>
+
+	
+	</tbody>
+</table>
+</dl>
+
 	
 
 	
@@ -293,7 +624,7 @@
 		<ul class="dummy">
 			<li>
 				<a href="note.js.html">music21/note.js</a>,
-				 <a href="note.js.html#sunlight-1-line-61">line 61</a>
+				 <a href="note.js.html#sunlight-1-line-70">line 70</a>
 			</li>
 		</ul>
 	</dd>

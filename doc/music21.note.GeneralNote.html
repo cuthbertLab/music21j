@@ -136,10 +136,6 @@
 						</li>
 						
 						<li>
-							<a href="note-note.Rest.html">music21/note~note.Rest</a>
-						</li>
-						
-						<li>
 							<a href="music21.base.Music21Object.html">music21.base.Music21Object</a>
 						</li>
 						
@@ -173,6 +169,10 @@
 						
 						<li>
 							<a href="music21.note.NotRest.html">music21.note.NotRest</a>
+						</li>
+						
+						<li>
+							<a href="music21.note.Rest.html">music21.note.Rest</a>
 						</li>
 						
 						<li>
@@ -321,6 +321,268 @@
 <dl class="details">
 	
 
+	<h5 class="subsection-title">Properties:</h5>
+
+	<dl>
+
+<table class="props table table-striped">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+
+		<th>Type</th>
+
+		
+
+		
+
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+
+	<tbody>
+	
+
+        <tr>
+            
+                <td class="name"><code>isChord</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>is this a chord; false</p></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>quarterLength</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>shortcut to <code>.duration.quarterLength</code></p></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>activeVexflowNote</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>most recent Vex.Flow.StaveNote object to be made from this note (could change); default, undefined</p></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>expressions</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;music21.expressions.Expression></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>array of attached expressions</p></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>articulations</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;music21.articulations.Articulation></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>array of attached articulations</p></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>lyric</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>the text of the first <a href="music21.note.Lyric.html"><code>music21.note.Lyric</code></a> object; can also set one.</p></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>lyrics</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;<a href="music21.note.Lyric.html">music21.note.Lyric</a>></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>array of attached lyrics</p></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>volume</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>how loud is this note, 0-127 (default 60), before articulations</p></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>midiVolume</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>how loud is this note, taking into account articulations</p></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>tie</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">music21.note.Tie</span>
+|
+
+<span class="param-type">undefined</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>a tie object</p></td>
+        </tr>
+
+	
+	</tbody>
+</table>
+</dl>
+
+	
+
 	
 
 	
@@ -345,7 +607,7 @@
 		<ul class="dummy">
 			<li>
 				<a href="note.js.html">music21/note.js</a>,
-				 <a href="note.js.html#sunlight-1-line-137">line 137</a>
+				 <a href="note.js.html#sunlight-1-line-158">line 158</a>
 			</li>
 		</ul>
 	</dd>
@@ -393,6 +655,334 @@
 
     
 
+    
+        <h3 class="subsection-title">Methods</h3>
+
+        <dl>
+            
+<dt>
+    <h4 class="name" id="playMidi"><span class="type-signature">&lt;static> </span>note.GeneralNote#playMidi<span class="signature">(tempo, nextElement, options)</span><span class="type-signature"> &rarr; {Number}</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        <p>Play the current element as a MIDI note.</p>
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+
+		<th>Type</th>
+
+		
+
+		
+
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+
+	<tbody>
+	
+
+        <tr>
+            
+                <td class="name"><code>tempo</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>tempo in bpm (default 120)</p></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>nextElement</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">base.Music21Object</span>
+|
+
+<span class="param-type">undefined</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>for determining the length to play in case of tied notes, etc.</p></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>options</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>other options (currently just <code>{instrument: <code>music21.instrument.Instrument</code> }</code>)</p></td>
+        </tr>
+
+	
+	</tbody>
+</table>
+
+    
+    
+    
+<dl class="details">
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="note.js.html">music21/note.js</a>,
+				 <a href="note.js.html#sunlight-1-line-320">line 320</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+    <ul>
+<li>delay time in milliseconds until the next element (may be ignored)</li>
+</ul>
+</div>
+
+
+
+<dl>
+	<dt>
+		Type
+	</dt>
+	<dd>
+		
+<span class="param-type">Number</span>
+
+
+	</dd>
+</dl>
+
+
+        
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="vexflowAccidentalsAndDisplay"><span class="type-signature">&lt;static> </span>note.GeneralNote#vexflowAccidentalsAndDisplay<span class="signature">(vfn)</span><span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        <p>Sets the vexflow accidentals (if any), the dots, and the stem direction</p>
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+
+		<th>Type</th>
+
+		
+
+		
+
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+
+	<tbody>
+	
+
+        <tr>
+            
+                <td class="name"><code>vfn</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Vex.Flow.StaveNote</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>a Vex.Flow note</p></td>
+        </tr>
+
+	
+	</tbody>
+</table>
+
+    
+    
+    
+<dl class="details">
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="note.js.html">music21/note.js</a>,
+				 <a href="note.js.html#sunlight-1-line-271">line 271</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+        </dl>
     
 
     

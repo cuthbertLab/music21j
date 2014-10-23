@@ -14,6 +14,8 @@
 
 define(['jquery', './note', './chord', 'MIDI', 'Base64', 'base64binary'],         
        /**
+        * A collection of tools for midi. See the namespace {@link music21.miditools}
+        * 
         * @exports music21/miditools
         */
         function($, note, chord, MIDI) {
