@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>Music21j Source: music21/layout.js</title>
+
+	<!--[if lt IE 9]>
+	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+	<link type="text/css" rel="stylesheet" href="styles/sunlight.default.css">
+
+	<link type="text/css" rel="stylesheet" href="styles/site.spruce.css">
+
+</head>
+
+<body>
+<div class="container-fluid">
+	<div class="navbar navbar-fixed-top navbar-inverse">
+		<div class="navbar-inner">
+			<a class="brand" href="index.html">Music21j</a>
+			<ul class="nav">
+				
+				<li class="dropdown">
+					<a href="namespaces.list.html" class="dropdown-toggle" data-toggle="dropdown">Namespaces<b
+						class="caret"></b></a>
+
+					<ul class="dropdown-menu ">
+						
+						<li>
+							<a href="music21.html">music21</a>
+						</li>
+						
+						<li>
+							<a href="music21.base.html">music21.base</a>
+						</li>
+						
+						<li>
+							<a href="music21.duration.html">music21.duration</a>
+						</li>
+						
+						<li>
+							<a href="music21.meter.html">music21.meter</a>
+						</li>
+						
+						<li>
+							<a href="music21.miditools.html">music21.miditools</a>
+						</li>
+						
+						<li>
+							<a href="music21.note.html">music21.note</a>
+						</li>
+						
+						<li>
+							<a href="music21.pitch.html">music21.pitch</a>
+						</li>
+						
+						<li>
+							<a href="music21.prebase.html">music21.prebase</a>
+						</li>
+						
+
+					</ul>
+				</li>
+				
+				<li class="dropdown">
+					<a href="modules.list.html" class="dropdown-toggle" data-toggle="dropdown">Modules<b
+						class="caret"></b></a>
+
+					<ul class="dropdown-menu ">
+						
+						<li>
+							<a href="base.html">music21/base</a>
+						</li>
+						
+						<li>
+							<a href="beam.html">music21/beam</a>
+						</li>
+						
+						<li>
+							<a href="chord.html">music21/chord</a>
+						</li>
+						
+						<li>
+							<a href="duration.html">music21/duration</a>
+						</li>
+						
+						<li>
+							<a href="meter.html">music21/meter</a>
+						</li>
+						
+						<li>
+							<a href="miditools.html">music21/miditools</a>
+						</li>
+						
+						<li>
+							<a href="note.html">music21/note</a>
+						</li>
+						
+						<li>
+							<a href="pitch.html">music21/pitch</a>
+						</li>
+						
+						<li>
+							<a href="prebase.html">music21/prebase</a>
+						</li>
+						
+
+					</ul>
+				</li>
+				
+				<li class="dropdown">
+					<a href="classes.list.html" class="dropdown-toggle" data-toggle="dropdown">Classes<b
+						class="caret"></b></a>
+
+					<ul class="dropdown-menu ">
+						
+						<li>
+							<a href="interval.ChromaticInterval.html">interval.ChromaticInterval</a>
+						</li>
+						
+						<li>
+							<a href="interval.DiatonicInterval.html">interval.DiatonicInterval</a>
+						</li>
+						
+						<li>
+							<a href="interval.GenericInterval.html">interval.GenericInterval</a>
+						</li>
+						
+						<li>
+							<a href="key.KeySignature.html">key.KeySignature</a>
+						</li>
+						
+						<li>
+							<a href="chord-chord.Chord.html">music21/chord~chord.Chord</a>
+						</li>
+						
+						<li>
+							<a href="note-note.Rest.html">music21/note~note.Rest</a>
+						</li>
+						
+						<li>
+							<a href="pitch-pitch.Pitch.html">music21/pitch~pitch.Pitch</a>
+						</li>
+						
+						<li>
+							<a href="music21.base.Music21Object.html">music21.base.Music21Object</a>
+						</li>
+						
+						<li>
+							<a href="music21.duration.Duration.html">music21.duration.Duration</a>
+						</li>
+						
+						<li>
+							<a href="music21.duration.Tuplet.html">music21.duration.Tuplet</a>
+						</li>
+						
+						<li>
+							<a href="music21.meter.TimeSignature.html">music21.meter.TimeSignature</a>
+						</li>
+						
+						<li>
+							<a href="music21.miditools.Event.html">music21.miditools.Event</a>
+						</li>
+						
+						<li>
+							<a href="music21.note.GeneralNote.html">music21.note.GeneralNote</a>
+						</li>
+						
+						<li>
+							<a href="music21.note.Lyric.html">music21.note.Lyric</a>
+						</li>
+						
+						<li>
+							<a href="music21.note.Note.html">music21.note.Note</a>
+						</li>
+						
+						<li>
+							<a href="music21.note.NotRest.html">music21.note.NotRest</a>
+						</li>
+						
+						<li>
+							<a href="music21.pitch.Accidental.html">music21.pitch.Accidental</a>
+						</li>
+						
+						<li>
+							<a href="music21.prebase.ProtoM21Object.html">music21.prebase.ProtoM21Object</a>
+						</li>
+						
+						<li>
+							<a href="stream.Measure.html">stream.Measure</a>
+						</li>
+						
+						<li>
+							<a href="stream.Part.html">stream.Part</a>
+						</li>
+						
+						<li>
+							<a href="stream.Score.html">stream.Score</a>
+						</li>
+						
+						<li>
+							<a href="stream.Voice.html">stream.Voice</a>
+						</li>
+						
+						<li>
+							<a href="streamInteraction.PixelMapper.html">streamInteraction.PixelMapper</a>
+						</li>
+						
+						<li>
+							<a href="vfShow.Renderer.html">vfShow.Renderer</a>
+						</li>
+						
+
+					</ul>
+				</li>
+				
+				<li class="dropdown">
+					<a href="global.html" class="dropdown-toggle" data-toggle="dropdown">Global<b
+						class="caret"></b></a>
+
+					<ul class="dropdown-menu ">
+						
+						<li>
+							<a href="global.html#modifier">modifier</a>
+						</li>
+						
+
+					</ul>
+				</li>
+				
+			</ul>
+		</div>
+	</div>
+
+	<div class="row-fluid">
+
+		
+			<div class="span12">
+				
+				<div id="main">
+					
+
+
+		<h1 class="page-title">Source: music21/layout.js</h1>
+    
+<section>
+	<article>
+		<pre
+			class="sunlight-highlight-javascript linenums">// future -- rewrite of Score and Part to Page, System, SystemPart
+//     not currently used
+
+define(['./base','./renderOptions','./stream',  
+        './common', 'jquery'], 
+        function(base, renderOptions, stream, common, $) {   
+    var layout = {};
+    layout.makeLayoutFromScore = function (score, containerWidth) {
+        /*
+         * Divide a part up into systems and fix the measure
+         * widths so that they are all even.
+         * 
+         * Note that this is done on the part level even though
+         * the measure widths need to be consistent across parts.
+         * 
+         * This is possible because the system is deterministic and
+         * will come to the same result for each part.  Opportunity
+         * for making more efficient through this...
+         */
+        //var systemHeight = score.systemHeight; /* part.show() called... */
+        //var systemPadding = score.systemPadding;
+        var parts = score.parts;
+        //console.log(parts);
+        var numParts = parts.length;
+        var partZero = parts[0];
+        var numMeasures = partZero.length;
+        
+        var measureWidths = partZero.getMeasureWidths();
+        var maxSystemWidth = containerWidth || score.maxSystemWidth; /* of course fix! */
+        
+        var layoutScore = new music21.layout.LayoutScore();
+        var currentPage = new music21.layout.Page(); // to-do multiple pages...
+        currentPage.measureStart = 1;
+        currentPage.measureEnd = numMeasures;
+        
+        layoutScore.insert(0, currentPage);
+        
+        var currentSystem = new music21.layout.System();
+        currentSystemNumber = 1;
+        currentSystem.measureStart = 1;
+        
+        //var currentStaves = [];
+        var staffMaker = function (staffHolder, numParts, measureStart) {
+            for (var pNum = 0; pNum &lt; numParts; pNum++) {
+                var staff = new music21.layout.Staff();
+                staff.measureStart = measureStart;
+                staff.staffNumber = pNum + 1;
+                staffHolder.push( staff );
+            }            
+        };
+        staffMaker(currentStaves, numParts, 1);
+        
+        var systemCurrentWidths = [];
+        var systemBreakIndexes = [];
+        var lastSystemBreak = 0; /* needed to ensure each line has at least one measure */
+        var startLeft = 20; /* TODO: make it obtained elsewhere */
+        var currentLeft = startLeft;
+        var currentSystemTop = 0;
+        //var partTopOffsets = [];
+        var ignoreSystemsInCalculatingScoreHeight = true;
+        var systemHeight = score.estimateStreamHeight(ignoreSystemsInCalculatingScoreHeight);        
+        
+        for (var i = 0; i &lt; measureWidths.length; i++) {
+            var currentRight = currentLeft + measureWidths[i];
+            /* console.log("left: " + currentLeft + " ; right: " + currentRight + " ; m: " + i); */
+            if ((currentRight > maxSystemWidth) && (lastSystemBreak != i)) {
+                // new system...
+                for (var j = 0; j &lt; currentStaves.length; j++) {
+                    currentStaves.measureEnd = i;
+                    currentSystem.insert(0, currentStaves[j]);                    
+                }
+                currentStaves = [];
+                staffMaker(currentStaves, numParts, i + 1);
+                currentSystemTop += systemHeight; 
+                currentSystem.measureEnd = i;
+                currentPage.insert(0, currentSystem);
+                currentSystemNumber += 1;
+                currentSystem = new music21.layout.System();
+                currentSystem.measureStart = i + 1;
+                currentSystem.systemNumber = currentSystemNumber;
+                
+                systemBreakIndexes.push(i-1);
+                systemCurrentWidths.push(currentLeft);
+                console.log('setting new width at ' + currentLeft + ' measure ' + i);
+                currentLeft = startLeft + measureWidths[i];
+                lastSystemBreak = i;
+            } else {
+                currentLeft = currentRight;
+            }
+            for (var pNum = 0; pNum &lt; currentStaves.length; pNum ++) {
+                currentStaves[pNum].append(parts[pNum].get(i));
+            }            
+        }
+        for (var j = 0; j &lt; currentStaves.length; j++) {
+            currentStaves.measureEnd = measureWidths.length - 1;
+            currentSystem.insert(0, currentStaves[j]);            
+        }
+        currentPage.insert(0, currentSystem);
+        return layoutScore;    
+    };
+
+    layout.LayoutScore = function () {
+        stream.Score.call(this);
+        this.classes.push('LayoutScore');
+        this.scoreLayout = undefined;
+        this.measureStart = undefined;
+        this.measureEnd = undefined;
+        this._width = undefined;
+        this.height = undefined;
+        this.top = 0;
+        this.left = 0;
+        Object.defineProperties(this, {
+            'pages': {
+                configurable: true,
+                enumerable: true,
+                get: function () { return this.getElementsByClass('Page'); },
+            },
+            'width': {
+                configurable: true,
+                enumerable: true,
+                get: function () { 
+                    if (this._width) {
+                        return this._width;
+                    } else if (this.activeSite) {
+                        return this.activeSite.width;
+                    }
+                },
+            },
+        });
+        
+    };
+    layout.LayoutScore.prototype = new stream.Score();
+    layout.LayoutScore.prototype.constructor = layout.LayoutScore;
+    
+    /**
+     * return a tuple of (top, bottom) for a staff, specified by a given pageId,
+     * systemId, and staffId in PIXELS.
+
+     * @param pageId
+     * @param systemId
+     * @param staffId
+     * @param units -- "pixels" or "tenths" (not supported)
+     */
+    
+    layout.LayoutScore.prototype.getPositionForStaff = function(pageId, systemId, staffId, units) {
+        units = units || "pixels";
+        
+    };
+    
+    
+    /**
+     * All music must currently be on page 1.
+     */
+    layout.Page = function () {
+        stream.Score.call(this);
+        this.classes.push('Page');
+        this.pageNumber = 1;
+        this.measureStart = undefined;
+        this.measureEnd = undefined;
+        this.systemStart = undefined;
+        this.systemEnd = undefined;
+        this.pageLayout = undefined;
+        Object.defineProperties(this, {
+            'systems': {
+                configurable: true,
+                enumerable: true,
+                get: function () { return this.getElementsByClass('System'); }
+            },
+            'width': {
+                configurable: true,
+                enumerable: true,
+                get: function () { 
+                    if (this._width) {
+                        return this._width;
+                    } else if (this.activeSite) {
+                        return this.activeSite.width;
+                    }
+                }
+            }
+        });
+    };
+    layout.Page.prototype = new stream.Score();
+    layout.Page.prototype.constructor = layout.Page;
+
+    layout.System = function () {
+        stream.Score.call(this);
+        this.classes.push('System');
+        this.systemNumber = 1;
+        this.systemLayout = undefined;
+        this.measureStart = undefined;
+        this.measureEnd = undefined;
+        this._width = undefined;
+        this.height = undefined;
+        this.top = undefined;
+        this.left = undefined;
+        Object.defineProperties(this, {
+            'staves': {
+                configurable: true,
+                enumerable: true,
+                get: function () { return this.getElementsByClass('Staff'); },
+            },
+            'width': {
+                configurable: true,
+                enumerable: true,
+                get: function () { 
+                    if (this._width) {
+                        return this._width;
+                    } else if (this.activeSite) {
+                        return this.activeSite.width;
+                    }
+                },
+            },
+        });
+
+    };
+    layout.System.prototype = new stream.Score();
+    layout.System.prototype.constructor = layout.System;
+    
+    layout.Staff = function () {
+        stream.Part.call(this);
+        this.classes.push('Staff');
+        this.staffNumber = 1;
+        this.optimized = 0;
+        this.top = undefined;
+        this.left = undefined;
+        this._width = undefined;
+        this.height = undefined;
+        this.inheritedHeight = undefined;
+        this.staffLayout = undefined;
+        Object.defineProperties(this, {
+            'width': {
+                configurable: true,
+                enumerable: true,
+                get: function () { 
+                    if (this._width) {
+                        return this._width;
+                    } else if (this.activeSite) {
+                        return this.activeSite.width;
+                    }
+                },
+            },
+        });
+    };
+    layout.Staff.prototype = new stream.Part();
+    layout.Staff.prototype.constructor = layout.Staff;
+    
+    // end of define
+    if (typeof(music21) != "undefined") {
+        music21.layout = layout;
+    }       
+    return layout;
+});
+</pre>
+	</article>
+</section>
+
+
+
+
+
+				</div>
+
+				<div class="clearfix"></div>
+				<footer>
+					
+					
+		<span class="copyright">
+		Music21j, Copyright © 2013-2014 Michael Scott Cuthbert and cuthbertLab.
+		</span>
+					<br />
+					
+		<span class="jsdoc-message">
+		Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a>
+		on Thu Oct 23rd 2014 using the <a
+			href="https://github.com/terryweiss/docstrap">DocStrap template</a>.
+		</span>
+				</footer>
+			</div>
+
+			
+			<br clear="both">
+		</div>
+
+	</div>
+	<!--<script src="scripts/sunlight.js"></script>-->
+	<script src="scripts/docstrap.lib.js"></script>
+	<script src="scripts/bootstrap-dropdown.js"></script>
+	<script src="scripts/toc.js"></script>
+
+	<script>
+		$( function () {
+			$( "[id*='$']" ).each( function () {
+				var $this = $( this );
+
+				$this.attr( "id", $this.attr( "id" ).replace( "$", "__" ) );
+			} );
+
+			$( "#toc" ).toc( {
+				anchorName  : function ( i, heading, prefix ) {
+					return $( heading ).attr( "id" ) || ( prefix + i );
+				},
+				selectors   : "h1,h2,h3,h4",
+				showAndHide : false,
+				scrollTo    : "100px"
+			} );
+
+			$( "#toc>ul" ).addClass( "nav nav-pills nav-stacked" );
+			$( "#main span[id^='toc']" ).addClass( "toc-shim" );
+			$( '.dropdown-toggle' ).dropdown();
+//			$( ".tutorial-section pre, .readme-section pre" ).addClass( "sunlight-highlight-javascript" ).addClass( "linenums" );
+
+			$( ".tutorial-section pre, .readme-section pre" ).each( function () {
+				var $this = $( this );
+
+				var example = $this.find( "code" );
+				exampleText = example.html();
+				var lang = /{@lang (.*?)}/.exec( exampleText );
+				if ( lang && lang[1] ) {
+					exampleText = exampleText.replace( lang[0], "" );
+					example.html( exampleText );
+					lang = lang[1];
+				} else {
+					lang = "javascript";
+				}
+
+				if ( lang ) {
+
+					$this
+						.addClass( "sunlight-highlight-" + lang )
+						.addClass( "linenums" )
+						.html( example.html() );
+
+				}
+			} );
+
+			Sunlight.highlightAll( {
+				lineNumbers : true,
+				showMenu : true,
+				enableDoclinks : true
+			} );
+		} );
+	 </script>
+
+
+
+	<!--Navigation and Symbol Display-->
+	
+
+
+	<!--Google Analytics-->
+	
+
+</body>
+</html>
