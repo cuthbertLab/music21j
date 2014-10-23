@@ -194,10 +194,10 @@ define(['./note', 'vexflow'],
         }
     };
     /**
+     * Gets the lowest note (based on .ps not name) in the chord.
      * 
-     * @returns {pitch.Pitch}
+     * @returns {pitch.Pitch} bass pitch
      */
-
     chord.Chord.prototype.bass = function () {
         var lowest = undefined;
         var pitches = this.pitches;
@@ -214,7 +214,10 @@ define(['./note', 'vexflow'],
         return lowest;
     };
     /**
+     * Counts the number of non-duplicate pitch MIDI Numbers in the chord.
      * 
+     * Call after "closedPosition()" to get Forte style cardinality.
+     *  
      * @returns {number}
      */
     chord.Chord.prototype.cardinality = function() {
