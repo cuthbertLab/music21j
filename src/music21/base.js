@@ -13,6 +13,9 @@
 define(['./prebase', './duration'], 
         /**
          * module for Music21Objects, see {@link music21.base}
+         * 
+         * @requires music21/duration
+         * @requires music21/prebase
          * @exports music21/base
          */
         function(prebase, duration) {
@@ -31,11 +34,18 @@ define(['./prebase', './duration'],
 	 * @class Music21Object
 	 * @memberof music21.base
      * @extends music21.prebase.ProtoM21Object
+     * @property {object} activeSite - hardlink to a {@link music21.stream.Stream} containing the element.
+     * @property {number} classSortOrder - Default sort order for this class (default 20; override in other classes). Lower numbered objects will sort before other objects in the staff if priority and offset are the same.
+     * @property {music21.duration.Duration} duration - the duration (object) for the element. (can be set with a quarterLength also)
+     * @property {Array} groups - An Array of strings representing group (equivalent to css classes) to assign to the object. (default [])
+     * @property {boolean} isMusic21Object - true
+     * @property {boolean} isStream - false
+     * @property {number|null} offset - offset from the beginning of the stream (in quarterLength)
+     * @property {number} priority - The priority (lower = earlier or more left) for elements at the same offset. (default 0)
 	 */
 	base.Music21Object = function () {
         prebase.ProtoM21Object.call(this);
         this.classes.push('Music21Object');
-        
 		this.classSortOrder = 20; // default;
 		this._priority = 0; // default;
 		this.offset = null; // default -- simple version of m21.
@@ -50,8 +60,7 @@ define(['./prebase', './duration'],
 		// this.sites, this.activeSites, this.offset -- not yet...
 		// beat, measureNumber, etc.
 		// lots to do...
-		
-		
+				
 		Object.defineProperties(this, {
             'priority': {
                 configurable: true,

@@ -140,10 +140,6 @@
 						</li>
 						
 						<li>
-							<a href="pitch-pitch.Pitch.html">music21/pitch~pitch.Pitch</a>
-						</li>
-						
-						<li>
 							<a href="music21.base.Music21Object.html">music21.base.Music21Object</a>
 						</li>
 						
@@ -184,6 +180,10 @@
 						</li>
 						
 						<li>
+							<a href="music21.pitch.Pitch.html">music21.pitch.Pitch</a>
+						</li>
+						
+						<li>
 							<a href="music21.prebase.ProtoM21Object.html">music21.prebase.ProtoM21Object</a>
 						</li>
 						
@@ -209,20 +209,6 @@
 						
 						<li>
 							<a href="vfShow.Renderer.html">vfShow.Renderer</a>
-						</li>
-						
-
-					</ul>
-				</li>
-				
-				<li class="dropdown">
-					<a href="global.html" class="dropdown-toggle" data-toggle="dropdown">Global<b
-						class="caret"></b></a>
-
-					<ul class="dropdown-menu ">
-						
-						<li>
-							<a href="global.html#modifier">modifier</a>
 						</li>
 						
 
@@ -258,7 +244,8 @@
 
 define(['./prebase'], 
         /**
-         * pitch module
+         * pitch module.  See {@link music21.pitch} namespace
+         * 
          * @exports music21/pitch
          */
         function(prebase) {
@@ -267,24 +254,19 @@ define(['./prebase'],
      * 
      * @namespace music21.pitch 
      * @memberof music21 
+     * @requires music21/prebase
      */
     var pitch = {};
 	
 	/*  pitch based objects; from pitch.py */
 
 	/**
-	 * @namespace Accidental
+	 * @class Accidental
 	 * @memberof music21.pitch
-	 * @constructor music21.pitch.Accidental
 	 * @param {string|number} accName - an accidental name
 	 * @extends music21.prebase.ProtoM21Object
 	 */
 	pitch.Accidental = function (accName) {
-        /**
-         * @var {string} name
-         * @var {number} alter
-         * @var {string} modifier
-         */
 	    prebase.ProtoM21Object.call(this);
 	    this.classes.push('Accidental');
 		this._name = "";
@@ -297,8 +279,11 @@ define(['./prebase'],
     pitch.Accidental.prototype = new prebase.ProtoM21Object();
     pitch.Accidental.prototype.constructor = pitch.Accidental;
     /**
+     * Sets a parameter of the accidental and updates name, alter, and modifier to suit.
      * 
-     * @param {number|string} accName
+     * @memberof music21.pitch.Accidental
+     * @param {number|string} accName - the name, number, or modifier to set
+     * @returns {undefined}
      */
     pitch.Accidental.prototype.set = function (accName) {
         if ((accName != undefined) && (accName.toLowerCase != undefined)) {
@@ -336,7 +321,12 @@ define(['./prebase'],
     };
     Object.defineProperties(pitch.Accidental.prototype, {
         /**
-         * @memberof module:music21/pitch~pitch.Accidental
+         * Return or set the name of the accidental ('flat', 'sharp', 'natural', etc.);
+         * 
+         * When set, updates alter and modifier.
+         * 
+         * @memberof music21.pitch.Accidental#
+         * @var {string} name
          */
         'name' : {
           enumerable: true,
@@ -344,18 +334,41 @@ define(['./prebase'],
           get: function () { return this._name; },
           set: function (n) { this.set(n); },
         },
+        /**
+         * Return or set the alteration amount (-1.0 = flat; 1.0 = sharp; etc.)
+         * 
+         * When set, updates name and modifier.
+         * 
+         * @memberof music21.pitch.Accidental#
+         * @var {number} alter
+         */
         'alter' : {
             enumerable: true,
             configurable: true,
             get: function () { return this._alter; },
             set: function (n) { this.set(n); },
         },
+        /**
+         * Return or set the modifier ('-', '#', '')
+         * 
+         * When set, updates alter and name.
+
+         * @memberof music21.pitch.Accidental#
+         * @var {string} modifier
+         */
         'modifier' : {
               enumerable: true,
               configurable: true,
               get: function () { return this._modifier; },
               set: function (n) { this.set(n); },
         },
+        /**
+         * Returns the modifier for vexflow ('b', '#', 'n')
+         * 
+         * @memberof music21.pitch.Accidental#
+         * @var {string} vexflowModifier
+         * @readonly
+         */
         'vexflowModifier' : {
               enumerable: true,
               configurable: true,
@@ -379,10 +392,19 @@ define(['./prebase'],
 	pitch.stepsToName = ['C','D','E','F','G','A','B'];
 	pitch.midiToName = ['C','C#','D','E-','E','F','F#','G','A-','A','B-','B'];
 	
-	/**
-	 * @constructor
+    /**
+     * @class Pitch
+     * @memberof music21.pitch
 	 * @param {string} pn - name of the pitch, with or without octave.
-	 * @property {number} pitch.Pitch.diatonicNoteNum - diatonic number of the pitch, where 29 = C4
+     * @extends music21.prebase.ProtoM21Object
+     * @property {music21.pitch.Accidental|undefined} accidental - link to an accidental
+     * @property {number} diatonicNoteNum - diatonic number of the pitch, where 29 = C4; updates other properties.
+     * @property {number} midi - midi number of the pitch (C4 = 60); readonly. See {@link music21.pitch.Pitch#ps} for setable version.
+     * @property {string} name - letter name of pitch + accidental modifier; e.g., B-flat = 'B-'; changes automatically w/ step and accidental
+     * @property {string} nameWithOctave - letter name of pitch + accidental modifier + octave; changes automatically w/ step, accidental, and octave
+     * @property {number} octave - number for the octave, where middle C = C4, and octaves change between B and C; default 4
+     * @property {number} ps - pitch space number, like midi number but floating point and w/ no restriction on range. C4 = 60.0
+     * @property {string} step - letter name for the pitch (C-G, A, B), without accidental; default 'C'
 	 */
 	pitch.Pitch = function (pn) {
 	    prebase.ProtoM21Object.call(this);
@@ -390,17 +412,8 @@ define(['./prebase'],
 	    if (pn == undefined) {
 	    	pn = "C";
 	    }
-	    /**
-	     * @type {string}
-	     */
 	    this._step = 'C';
-	    /**
-	     * @type {int}
-	     */
 	    this._octave = 4;
-	    /**
-	     * @type {pitch.Accidental|undefined}
-	     */
 	    this._accidental = undefined;
 	    
 	    /* pn can be a nameWithOctave */
@@ -473,11 +486,6 @@ define(['./prebase'],
                 }
             },
         },
-        /**
-         * @type Int
-         * @instance
-         * @memberof module:music21/pitch~pitch.Pitch
-         */
         'diatonicNoteNum': { 
             enumerable: true,
             configurable: true,
@@ -494,7 +502,7 @@ define(['./prebase'],
             enumerable: true,
             configurable: true,
             get: function () { 
-                return this.ps;
+                return Math.floor(this.ps);
             }
         },
         'ps': {
@@ -515,9 +523,11 @@ define(['./prebase'],
     });
 
     /**
+     * Returns the vexflow name for the pitch in the given clef.
      * 
-     * @param {clef.Clef} clefObj
-     * @returns {String}
+     * @memberof music21.pitch.Pitch#
+     * @param {clef.Clef} clefObj - the active {@link music21.clef.Clef} object 
+     * @returns {String} - representation in vexflow
      */
     pitch.Pitch.prototype.vexflowName = function (clefObj) {
         // returns a vexflow Key name for this pitch.
