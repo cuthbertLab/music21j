@@ -247,12 +247,24 @@
     
         
 <dt>
-    <h4 class="name" id="Note"><span class="type-signature"></span>new Note<span class="signature">(nn, ql)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="Note"><span class="type-signature"></span>new Note<span class="signature">(<span class="optional">nn</span>, <span class="optional">ql</span>)</span><span class="type-signature"></span></h4>
     
     
 </dt>
 <dd>
     
+    
+    <div class="description">
+        <p>A very, very important class! music21.note.Note objects combine a <a href="music21.pitch.Pitch.html"><code>music21.pitch.Pitch</code></a>
+object to describe pitch (highness/lowness) with a <a href="music21.duration.Duration.html"><code>music21.duration.Duration</code></a> object
+that defines length, with additional features for drawing the Note, playing it back, etc.</p>
+<p>Together with <code>music21.stream.Stream</code> one of the two most important
+classes in <code>music21</code>.</p>
+<p>See <a href="music21.note.NotRest.html"><code>music21.note.NotRest</code></a>, <a href="music21.note.GeneralNote.html"><code>music21.note.GeneralNote</code></a>, <a href="music21.base.Music21Object.html"><code>music21.base.Music21Object</code></a>
+and <a href="music21.prebase.ProtoM21Object.html"><code>music21.prebase.ProtoM21Object</code></a> (or in general, the <strong>extends</strong> list below) for other
+things you can do with a <code>Note</code> object.</p>
+<p>Missing from music21p: <code>microtone, pitchClass, pitchClassString, transpose(), fullName</code>.</p>
+    </div>
     
 
     
@@ -273,7 +285,11 @@
 		<th>Type</th>
 
 		
+		<th>Argument</th>
+		
 
+		
+		<th>Default</th>
 		
 
 		<th class="last">Description</th>
@@ -294,6 +310,9 @@
 <span class="param-type">string</span>
 |
 
+<span class="param-type"><a href="music21.pitch.Pitch.html">music21.pitch.Pitch</a></span>
+|
+
 <span class="param-type">undefined</span>
 
 
@@ -301,10 +320,26 @@
             </td>
 
             
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
 
+                
+
+                
+                </td>
             
 
-            <td class="description last"><p>pitch name</p></td>
+            
+                <td class="default">
+                
+                    'C4'
+                
+                </td>
+            
+
+            <td class="description last"><p>pitch name (&quot;C&quot;, &quot;D#&quot;, &quot;E-&quot;) w/ or w/o octave (&quot;C#4&quot;), or a pitch.Pitch object</p></td>
         </tr>
 
 	
@@ -327,7 +362,23 @@
             </td>
 
             
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
 
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    1.0
+                
+                </td>
             
 
             <td class="description last"><p>length in quarter notes</p></td>
@@ -341,6 +392,278 @@
     
     
 <dl class="details">
+	
+
+	<h5 class="subsection-title">Properties:</h5>
+
+	<dl>
+
+<table class="props table table-striped">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+
+		<th>Type</th>
+
+		
+		<th>Argument</th>
+		
+
+		
+		<th>Default</th>
+		
+
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+
+	<tbody>
+	
+
+        <tr>
+            
+                <td class="name"><code>isNote</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Boolean</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    true
+                
+                </td>
+            
+
+            <td class="description last"><p>is it a Note? Yes!</p></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>isRest</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Boolean</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    false
+                
+                </td>
+            
+
+            <td class="description last"><p>is it a Rest? No!</p></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>pitch</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="music21.pitch.Pitch.html">music21.pitch.Pitch</a></span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><p>the <a href="music21.pitch.Pitch.html"><code>music21.pitch.Pitch</code></a> associated with the Note.</p></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>name</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><p>shortcut to <code>.pitch.name</code></p></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>nameWithOctave</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><p>shortcut to <code>.pitch.nameWithOctave</code></p></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>step</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><p>shortcut to <code>.pitch.step</code></p></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>octave</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><p>shortcut to <code>.pitch.octave</code></p></td>
+        </tr>
+
+	
+	</tbody>
+</table>
+</dl>
+
 	
 
 	
@@ -367,7 +690,7 @@
 		<ul class="dummy">
 			<li>
 				<a href="note.js.html">music21/note.js</a>,
-				 <a href="note.js.html#sunlight-1-line-403">line 403</a>
+				 <a href="note.js.html#sunlight-1-line-425">line 425</a>
 			</li>
 		</ul>
 	</dd>
@@ -416,6 +739,334 @@
     
 
     
+        <h3 class="subsection-title">Methods</h3>
+
+        <dl>
+            
+<dt>
+    <h4 class="name" id="setStemDirectionFromClef"><span class="type-signature">&lt;static> </span>note.Note#setStemDirectionFromClef<span class="signature">(<span class="optional">clef</span>)</span><span class="type-signature"> &rarr; {<a href="music21.note.Note.html">music21.note.Note</a>}</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        <p>Change stem direction according to clef.</p>
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+
+		<th>Type</th>
+
+		
+		<th>Argument</th>
+		
+
+		
+
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+
+	<tbody>
+	
+
+        <tr>
+            
+                <td class="name"><code>clef</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">music21.clef.Clef</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>clef to set the stem direction of.</p></td>
+        </tr>
+
+	
+	</tbody>
+</table>
+
+    
+    
+    
+<dl class="details">
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="note.js.html">music21/note.js</a>,
+				 <a href="note.js.html#sunlight-1-line-500">line 500</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+    <p>Original object, for chaining methods</p>
+</div>
+
+
+
+<dl>
+	<dt>
+		Type
+	</dt>
+	<dd>
+		
+<span class="param-type"><a href="music21.note.Note.html">music21.note.Note</a></span>
+
+
+	</dd>
+</dl>
+
+
+        
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="vexflowNote"><span class="type-signature">&lt;static> </span>note.Note#vexflowNote<span class="signature">(<span class="optional">options</span>)</span><span class="type-signature"> &rarr; {Vex.Flow.StaveNote}</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        <p>Returns a <code>Vex.Flow.StaveNote</code> that approximates this note.</p>
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+
+		<th>Type</th>
+
+		
+		<th>Argument</th>
+		
+
+		
+		<th>Default</th>
+		
+
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+
+	<tbody>
+	
+
+        <tr>
+            
+                <td class="name"><code>options</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    {}
+                
+                </td>
+            
+
+            <td class="description last"><p><code>{clef: <code>music21.clef.Clef</code> }</code> clef to set the stem direction of.</p></td>
+        </tr>
+
+	
+	</tbody>
+</table>
+
+    
+    
+    
+<dl class="details">
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="note.js.html">music21/note.js</a>,
+				 <a href="note.js.html#sunlight-1-line-519">line 519</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    <h5>Returns:</h5>
+    
+            
+
+
+<dl>
+	<dt>
+		Type
+	</dt>
+	<dd>
+		
+<span class="param-type">Vex.Flow.StaveNote</span>
+
+
+	</dd>
+</dl>
+
+
+        
+    
+    
+</dd>
+
+        </dl>
+    
 
     
 
@@ -440,7 +1091,7 @@
 					
 		<span class="jsdoc-message">
 		Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a>
-		on Thu Oct 23rd 2014 using the <a
+		on Sat Oct 25th 2014 using the <a
 			href="https://github.com/terryweiss/docstrap">DocStrap template</a>.
 		</span>
 				</footer>

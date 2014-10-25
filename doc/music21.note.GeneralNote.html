@@ -247,7 +247,7 @@
     
         
 <dt>
-    <h4 class="name" id="GeneralNote"><span class="type-signature"></span>new GeneralNote<span class="signature">(ql)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="GeneralNote"><span class="type-signature"></span>new GeneralNote<span class="signature">(<span class="optional">ql</span>)</span><span class="type-signature"></span></h4>
     
     
 </dt>
@@ -277,7 +277,11 @@
 		<th>Type</th>
 
 		
+		<th>Argument</th>
+		
 
+		
+		<th>Default</th>
 		
 
 		<th class="last">Description</th>
@@ -305,10 +309,26 @@
             </td>
 
             
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
 
+                
+
+                
+                </td>
             
 
-            <td class="description last"><p>quarterLength of the note (default 1)</p></td>
+            
+                <td class="default">
+                
+                    1.0
+                
+                </td>
+            
+
+            <td class="description last"><p>quarterLength of the note</p></td>
         </tr>
 
 	
@@ -335,7 +355,11 @@
 		<th>Type</th>
 
 		
+		<th>Argument</th>
+		
 
+		
+		<th>Default</th>
 		
 
 		<th class="last">Description</th>
@@ -360,10 +384,24 @@
             </td>
 
             
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
 
+                
+                </td>
             
 
-            <td class="description last"><p>is this a chord; false</p></td>
+            
+                <td class="default">
+                
+                    false
+                
+                </td>
+            
+
+            <td class="description last"><p>is this a chord</p></td>
         </tr>
 
 	
@@ -383,7 +421,17 @@
             </td>
 
             
+                <td class="attributes">
+                
 
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
             
 
             <td class="description last"><p>shortcut to <code>.duration.quarterLength</code></p></td>
@@ -406,7 +454,17 @@
             </td>
 
             
+                <td class="attributes">
+                
 
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
             
 
             <td class="description last"><p>most recent Vex.Flow.StaveNote object to be made from this note (could change); default, undefined</p></td>
@@ -429,7 +487,17 @@
             </td>
 
             
+                <td class="attributes">
+                
 
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
             
 
             <td class="description last"><p>array of attached expressions</p></td>
@@ -452,7 +520,17 @@
             </td>
 
             
+                <td class="attributes">
+                
 
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
             
 
             <td class="description last"><p>array of attached articulations</p></td>
@@ -475,7 +553,17 @@
             </td>
 
             
+                <td class="attributes">
+                
 
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
             
 
             <td class="description last"><p>the text of the first <a href="music21.note.Lyric.html"><code>music21.note.Lyric</code></a> object; can also set one.</p></td>
@@ -498,7 +586,17 @@
             </td>
 
             
+                <td class="attributes">
+                
 
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
             
 
             <td class="description last"><p>array of attached lyrics</p></td>
@@ -521,10 +619,24 @@
             </td>
 
             
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
 
+                
+                </td>
             
 
-            <td class="description last"><p>how loud is this note, 0-127 (default 60), before articulations</p></td>
+            
+                <td class="default">
+                
+                    60
+                
+                </td>
+            
+
+            <td class="description last"><p>how loud is this note, 0-127, before articulations</p></td>
         </tr>
 
 	
@@ -544,7 +656,17 @@
             </td>
 
             
+                <td class="attributes">
+                
 
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
             
 
             <td class="description last"><p>how loud is this note, taking into account articulations</p></td>
@@ -570,7 +692,21 @@
             </td>
 
             
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
 
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    undefined
+                
+                </td>
             
 
             <td class="description last"><p>a tie object</p></td>
@@ -661,7 +797,261 @@
         <dl>
             
 <dt>
-    <h4 class="name" id="playMidi"><span class="type-signature">&lt;static> </span>note.GeneralNote#playMidi<span class="signature">(tempo, nextElement, options)</span><span class="type-signature"> &rarr; {Number}</span></h4>
+    <h4 class="name" id="addLyric"><span class="type-signature">&lt;static> </span>note.GeneralNote#addLyric<span class="signature">(text, <span class="optional">lyricNumber</span>, <span class="optional">applyRaw</span>, <span class="optional">lyricIdentifier</span>)</span><span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        <p>Add a <a href="music21.note.Lyric.html"><code>music21.note.Lyric</code></a> object to the Note</p>
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+
+		<th>Type</th>
+
+		
+		<th>Argument</th>
+		
+
+		
+		<th>Default</th>
+		
+
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+
+	<tbody>
+	
+
+        <tr>
+            
+                <td class="name"><code>text</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><p>text to be added</p></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>lyricNumber</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><p>integer specifying lyric (defaults to the current <code>.lyrics.length</code> + 1)</p></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>applyRaw</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    false
+                
+                </td>
+            
+
+            <td class="description last"><p>if <code>true</code>, do not parse the text for cluses about syllable placement.</p></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>lyricIdentifier</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><p>an optional identifier</p></td>
+        </tr>
+
+	
+	</tbody>
+</table>
+
+    
+    
+    
+<dl class="details">
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="note.js.html">music21/note.js</a>,
+				 <a href="note.js.html#sunlight-1-line-247">line 247</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="playMidi"><span class="type-signature">&lt;static> </span>note.GeneralNote#playMidi<span class="signature">(<span class="optional">tempo</span>, <span class="optional">nextElement</span>, <span class="optional">options</span>)</span><span class="type-signature"> &rarr; {Number}</span></h4>
     
     
 </dt>
@@ -691,7 +1081,11 @@
 		<th>Type</th>
 
 		
+		<th>Argument</th>
+		
 
+		
+		<th>Default</th>
 		
 
 		<th class="last">Description</th>
@@ -716,10 +1110,26 @@
             </td>
 
             
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
 
+                
+
+                
+                </td>
             
 
-            <td class="description last"><p>tempo in bpm (default 120)</p></td>
+            
+                <td class="default">
+                
+                    120
+                
+                </td>
+            
+
+            <td class="description last"><p>tempo in bpm</p></td>
         </tr>
 
 	
@@ -733,16 +1143,27 @@
             
                 
 <span class="param-type">base.Music21Object</span>
-|
-
-<span class="param-type">undefined</span>
 
 
             
             </td>
 
             
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
 
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
             
 
             <td class="description last"><p>for determining the length to play in case of tied notes, etc.</p></td>
@@ -765,7 +1186,21 @@
             </td>
 
             
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
 
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
             
 
             <td class="description last"><p>other options (currently just <code>{instrument: <code>music21.instrument.Instrument</code> }</code>)</p></td>
@@ -805,7 +1240,7 @@
 		<ul class="dummy">
 			<li>
 				<a href="note.js.html">music21/note.js</a>,
-				 <a href="note.js.html#sunlight-1-line-320">line 320</a>
+				 <a href="note.js.html#sunlight-1-line-334">line 334</a>
 			</li>
 		</ul>
 	</dd>
@@ -846,6 +1281,162 @@
 	<dd>
 		
 <span class="param-type">Number</span>
+
+
+	</dd>
+</dl>
+
+
+        
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="setStemDirectionFromClef"><span class="type-signature">&lt;static> </span>note.GeneralNote#setStemDirectionFromClef<span class="signature">(<span class="optional">clef</span>)</span><span class="type-signature"> &rarr; {undefined}</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        <p>Change stem direction according to clef. Does nothing for GeneralNote; overridden in subclasses.</p>
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+
+		<th>Type</th>
+
+		
+		<th>Argument</th>
+		
+
+		
+
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+
+	<tbody>
+	
+
+        <tr>
+            
+                <td class="name"><code>clef</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">music21.clef.Clef</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>clef to set the stem direction of.</p></td>
+        </tr>
+
+	
+	</tbody>
+</table>
+
+    
+    
+    
+<dl class="details">
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="note.js.html">music21/note.js</a>,
+				 <a href="note.js.html#sunlight-1-line-276">line 276</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    <h5>Returns:</h5>
+    
+            
+
+
+<dl>
+	<dt>
+		Type
+	</dt>
+	<dd>
+		
+<span class="param-type">undefined</span>
 
 
 	</dd>
@@ -955,7 +1546,7 @@
 		<ul class="dummy">
 			<li>
 				<a href="note.js.html">music21/note.js</a>,
-				 <a href="note.js.html#sunlight-1-line-271">line 271</a>
+				 <a href="note.js.html#sunlight-1-line-285">line 285</a>
 			</li>
 		</ul>
 	</dd>
@@ -1008,7 +1599,7 @@
 					
 		<span class="jsdoc-message">
 		Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a>
-		on Thu Oct 23rd 2014 using the <a
+		on Sat Oct 25th 2014 using the <a
 			href="https://github.com/terryweiss/docstrap">DocStrap template</a>.
 		</span>
 				</footer>
