@@ -74,11 +74,11 @@ define(['./prebase', './base', './pitch', './beam', './common', 'vexflow'],
      * @memberOf music21.note
      * @extends music21.prebase.ProtoM21Object
      * @param {string} text - the text of the lyric
-     * @param {number} number - the lyric number (default 1)
-     * @param {string} syllabic - placement of the syllable ('begin', 'middle', 'end', 'single'); undefined = interpret from text
-     * @param {boolean} applyRaw - true = display the text exactly as it is or, false (default) = use "-" etc. to determine syllabic
-     * @param {string} identifier - identifier for the lyric.
-     * @property {string} lyricConnector - what to place between two lyrics that are syllabic, default "-"
+     * @param {number} number=1 - the lyric number
+     * @param {string} syllabic=undefined - placement of the syllable ('begin', 'middle', 'end', 'single'); undefined = interpret from text
+     * @param {boolean} applyRaw=false - true = display the text exactly as it is or, false = use "-" etc. to determine syllabic
+     * @param {string} identifier=undefined - identifier for the lyric.
+     * @property {string} lyricConnector='-' - what to place between two lyrics that are syllabic.
      * @property {string} text - the text of the lyric syllable.
      * @property {string} syllabic - see above
      * @property {boolean} applyRaw - see above
@@ -161,18 +161,17 @@ define(['./prebase', './base', './pitch', './beam', './common', 'vexflow'],
 	 * @class GeneralNote
 	 * @memberof music21.note
 	 * @extends music21.base.Music21Object
-     * @param {(number|undefined)} ql - quarterLength of the note (default 1)
-     * @property {boolean} isChord - is this a chord; false
+     * @param {(number|undefined)} [ql=1.0] - quarterLength of the note
+     * @property {boolean} [isChord=false] - is this a chord
      * @property {number} quarterLength - shortcut to `.duration.quarterLength`
      * @property {object} activeVexflowNote - most recent Vex.Flow.StaveNote object to be made from this note (could change); default, undefined
      * @property {Array<music21.expressions.Expression>} expressions - array of attached expressions
      * @property {Array<music21.articulations.Articulation>} articulations - array of attached articulations
      * @property {string} lyric - the text of the first {@link music21.note.Lyric} object; can also set one.
      * @property {Array<music21.note.Lyric>} lyrics - array of attached lyrics
-     * @property {number} volume - how loud is this note, 0-127 (default 60), before articulations
+     * @property {number} [volume=60] - how loud is this note, 0-127, before articulations
      * @property {number} midiVolume - how loud is this note, taking into account articulations
-     * @property {music21.note.Tie|undefined} tie - a tie object
-     * 
+     * @property {music21.note.Tie|undefined} [tie=undefined] - a tie object
   	 */
 	note.GeneralNote = function (ql) {
 		base.Music21Object.call(this);
@@ -236,6 +235,15 @@ define(['./prebase', './base', './pitch', './beam', './common', 'vexflow'],
 	note.GeneralNote.prototype = new base.Music21Object();
 	note.GeneralNote.prototype.constructor = note.GeneralNote;
 	
+	/**
+	 * Add a {@link music21.note.Lyric} object to the Note
+	 * 
+     * @memberof music21.note.GeneralNote
+	 * @param {string} text - text to be added
+	 * @param {number} [lyricNumber] - integer specifying lyric (defaults to the current `.lyrics.length` + 1)
+	 * @param {boolean} [applyRaw=false] - if `true`, do not parse the text for cluses about syllable placement.
+	 * @param {string} [lyricIdentifier] - an optional identifier
+	 */
 	note.GeneralNote.prototype.addLyric = function(text,
 	        lyricNumber, applyRaw, lyricIdentifier) {
 	    applyRaw = applyRaw || false;
@@ -258,7 +266,13 @@ define(['./prebase', './base', './pitch', './beam', './common', 'vexflow'],
 	        }
 	    }
 	};
-	
+	/**
+	 * Change stem direction according to clef. Does nothing for GeneralNote; overridden in subclasses.
+	 * 
+     * @memberof music21.note.GeneralNote
+	 * @param {music21.clef.Clef} [clef] - clef to set the stem direction of.
+	 * @returns {undefined}
+	 */
 	note.GeneralNote.prototype.setStemDirectionFromClef = function (clef) {
 	    return undefined;
 	};
@@ -312,9 +326,9 @@ define(['./prebase', './base', './pitch', './beam', './common', 'vexflow'],
      * Play the current element as a MIDI note.
      * 
      * @memberof music21.note.GeneralNote
-     * @param {number} tempo - tempo in bpm (default 120)
-     * @param {(base.Music21Object|undefined)} nextElement - for determining the length to play in case of tied notes, etc.
-     * @param {object} options - other options (currently just `{instrument: {@link music21.instrument.Instrument} }`)
+     * @param {number} [tempo=120] - tempo in bpm
+     * @param {(base.Music21Object)} [nextElement] - for determining the length to play in case of tied notes, etc.
+     * @param {object} [options] - other options (currently just `{instrument: {@link music21.instrument.Instrument} }`)
      * @returns {Number} - delay time in milliseconds until the next element (may be ignored)
      */
     note.GeneralNote.prototype.playMidi = function (tempo, nextElement, options) {
@@ -375,10 +389,18 @@ define(['./prebase', './base', './pitch', './beam', './common', 'vexflow'],
         return milliseconds;   
     };	
 	/**
+	 * Specifies that a GeneralNote is not a rest (Unpitched, Note, Chord).
+	 * 
 	 * @class NotRest
 	 * @memberof music21.note
 	 * @extends music21.note.GeneralNote
-	 * @param {number} ql - length in quarter notes
+	 * @param {number} [ql=1.0] - length in quarter notes
+     * @property {music21.beam.Beams} beams - a link to a beam object
+     * @property {string} [notehead='normal'] - notehead type
+     * @property {string} [noteheadFill='default'] - notehead fill
+     * @property {string|undefined} [noteheadColor=undefined] - notehead color
+     * @property {boolean} [noteheadParenthesis=false] - put a parenthesis around the notehead?
+     * @property {string|undefined} [stemDirection=undefined] - One of ['up','down','noStem', undefined] -- 'double' not supported
 	 */
 	note.NotRest = function (ql) {
 		note.GeneralNote.call(this, ql);
@@ -390,7 +412,7 @@ define(['./prebase', './base', './pitch', './beam', './common', 'vexflow'],
 	    this.volume = undefined; // not a real object yet.
 	    this.beams = new beam.Beams();
 	    /* TODO: this.duration.linkage -- need durationUnits */
-	    this.stemDirection = undefined; // ['up','down','noStem', undefined] -- 'double' not supported
+	    this.stemDirection = undefined;
 	};
 
 	/* TODO: check stemDirection, notehead, noteheadFill, noteheadParentheses */
@@ -401,11 +423,31 @@ define(['./prebase', './base', './pitch', './beam', './common', 'vexflow'],
 
 	/* ------- Note ----------- */
     /**
+     * A very, very important class! music21.note.Note objects combine a {@link music21.pitch.Pitch}
+     * object to describe pitch (highness/lowness) with a {@link music21.duration.Duration} object
+     * that defines length, with additional features for drawing the Note, playing it back, etc.
+     * 
+     * Together with {@link music21.stream.Stream} one of the two most important
+     * classes in `music21`.
+     * 
+     * See {@link music21.note.NotRest}, {@link music21.note.GeneralNote}, {@link music21.base.Music21Object}
+     * and {@link music21.prebase.ProtoM21Object} (or in general, the **extends** list below) for other
+     * things you can do with a `Note` object.
+     * 
+     * Missing from music21p: `microtone, pitchClass, pitchClassString, transpose(), fullName`.
+     * 
      * @class Note
      * @memberof music21.note
      * @extends music21.note.NotRest
-     * @param {(string|undefined)} nn - pitch name
-     * @param {(number|undefined)} ql - length in quarter notes
+     * @param {(string|music21.pitch.Pitch|undefined)} [nn='C4'] - pitch name ("C", "D#", "E-") w/ or w/o octave ("C#4"), or a pitch.Pitch object
+     * @param {(number|undefined)} [ql=1.0] - length in quarter notes
+     * @property {Boolean} [isNote=true] - is it a Note? Yes!
+     * @property {Boolean} [isRest=false] - is it a Rest? No!
+     * @property {music21.pitch.Pitch} pitch - the {@link music21.pitch.Pitch} associated with the Note.
+     * @property {string} name - shortcut to `.pitch.name`
+     * @property {string} nameWithOctave - shortcut to `.pitch.nameWithOctave`
+     * @property {string} step - shortcut to `.pitch.step`
+     * @property {number} octave - shortcut to `.pitch.octave`
      */
 	note.Note = function (nn, ql) {
 		note.NotRest.call(this, ql);
@@ -439,16 +481,22 @@ define(['./prebase', './base', './pitch', './beam', './common', 'vexflow'],
                 set: function(nn) { this.pitch.octave = nn;},
                 enumerable: true,
             },
-            // no microtone, pitchclass, pitchClassString
         });
         
-        /* TODO: transpose, fullName */
+        /* TODO: transpose, fullName, microtone, pitchclass, pitchClassString */
         
 	};
 
 	note.Note.prototype = new note.NotRest();
 	note.Note.prototype.constructor = note.Note;
 
+    /**
+     * Change stem direction according to clef.
+     * 
+     * @memberof music21.note.Note
+     * @param {music21.clef.Clef} [clef] - clef to set the stem direction of.
+     * @returns {music21.note.Note} Original object, for chaining methods
+     */
     note.Note.prototype.setStemDirectionFromClef = function (clef) {
         if (clef === undefined) {
             return this;
@@ -461,6 +509,13 @@ define(['./prebase', './base', './pitch', './beam', './common', 'vexflow'],
             return this;
         }
     };
+    /**
+     * Returns a `Vex.Flow.StaveNote` that approximates this note.
+     * 
+     * @memberof music21.note.Note
+     * @param {object} [options={}] - `{clef: {@link music21.clef.Clef} }` clef to set the stem direction of.
+     * @returns {Vex.Flow.StaveNote}
+     */
     note.Note.prototype.vexflowNote = function (options) {
         var params = {
                 
@@ -515,10 +570,16 @@ define(['./prebase', './base', './pitch', './beam', './common', 'vexflow'],
 	/* ------ Rest ------ */
 
 	/**
+	 * Represents a musical rest.
+	 * 
 	 * @class Rest
 	 * @memberof music21.note
 	 * @extends music21.note.GeneralNote
-	 * @param {number} ql - quarter length
+	 * @param {number} [ql=1.0] - length in number of quarterNotes
+	 * @property {Boolean} [isNote=false]
+	 * @property {Boolean} [isRest=true]
+	 * @property {string} [name='rest']
+	 * @property {number} [lineShift=undefined] - number of lines to shift up or down from default
 	 */
 	note.Rest = function (ql) {
 		note.GeneralNote.call(this, ql);
@@ -531,6 +592,14 @@ define(['./prebase', './base', './pitch', './beam', './common', 'vexflow'],
 
 	note.Rest.prototype = new note.GeneralNote();
 	note.Rest.prototype.constructor = note.Rest;
+	
+    /**
+     * Returns a `Vex.Flow.StaveNote` that approximates this rest.
+     * Corrects for bug in VexFlow that renders a whole rest too low.
+     * 
+     * @memberof music21.note.Rest
+     * @returns {Vex.Flow.StaveNote}
+     */
 	note.Rest.prototype.vexflowNote = function () {
         var keyLine = 'b/4';
         if (this.duration.type == 'whole') {

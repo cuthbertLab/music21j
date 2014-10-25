@@ -352,11 +352,11 @@ define(['./common', './prebase', 'jquery'],
              * 
              * @type String
              * @instance
+             * @readonly
              * @memberof music21.duration.Tuplet
              */
 	       'fullName': {
 	           enumerable: true,
-	           configurable: true,
 	           get: function () {
 	               // actual is what is presented to viewer
 	               var numActual = this.numberNotesActual;
