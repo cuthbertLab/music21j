@@ -36,7 +36,19 @@
 						</li>
 						
 						<li>
+							<a href="music21.beam.html">music21.beam</a>
+						</li>
+						
+						<li>
+							<a href="music21.chord.html">music21.chord</a>
+						</li>
+						
+						<li>
 							<a href="music21.duration.html">music21.duration</a>
+						</li>
+						
+						<li>
+							<a href="music21.key.html">music21.key</a>
 						</li>
 						
 						<li>
@@ -86,6 +98,10 @@
 						</li>
 						
 						<li>
+							<a href="key.html">music21/key</a>
+						</li>
+						
+						<li>
 							<a href="meter.html">music21/meter</a>
 						</li>
 						
@@ -128,15 +144,19 @@
 						</li>
 						
 						<li>
-							<a href="key.KeySignature.html">key.KeySignature</a>
-						</li>
-						
-						<li>
-							<a href="chord-chord.Chord.html">music21/chord~chord.Chord</a>
-						</li>
-						
-						<li>
 							<a href="music21.base.Music21Object.html">music21.base.Music21Object</a>
+						</li>
+						
+						<li>
+							<a href="music21.beam.Beam.html">music21.beam.Beam</a>
+						</li>
+						
+						<li>
+							<a href="music21.beam.Beams.html">music21.beam.Beams</a>
+						</li>
+						
+						<li>
+							<a href="music21.chord.Chord.html">music21.chord.Chord</a>
 						</li>
 						
 						<li>
@@ -145,6 +165,14 @@
 						
 						<li>
 							<a href="music21.duration.Tuplet.html">music21.duration.Tuplet</a>
+						</li>
+						
+						<li>
+							<a href="music21.key.Key.html">music21.key.Key</a>
+						</li>
+						
+						<li>
+							<a href="music21.key.KeySignature.html">music21.key.KeySignature</a>
 						</li>
 						
 						<li>
@@ -243,13 +271,31 @@
  * 
  */
 define(['./base', './pitch', './interval', './scale'], 
+        /**
+         * key and keysignature module. See {@link music21.key} namespace for details
+         * 
+         * @exports music21/key
+         */
         function(base, pitch, interval, scale) {
+    /**
+     * Key and KeySignature related objects and methods
+     * 
+     * @namespace music21.key
+     * @memberof music21
+     * @requires music21/base
+     * @requires music21/pitch
+     * @requires music21/interval
+     * @requires music21/scale
+     */
 	var key = {};
 	/**
+	 * @class KeySignature
+	 * @memberof music21.key
 	 * @description Represents a key signature
-	 * @constructor key.KeySignature
-	 * @param {Int} sharps -- the number of sharps (negative for flats)
-	 * 
+	 * @param {Int} [sharps=0] -- the number of sharps (negative for flats)
+     * @property {Int} [sharps=0] -- number of sharps (negative for flats)
+     * @property {String} [mode='major'] -- mode represented by the KeySignature (see Key for more sophisticated uses)
+     * @extends music21.base.Music21Object
 	 */
 	key.KeySignature = function(sharps) {
 		base.Music21Object.call(this);
@@ -269,15 +315,34 @@ define(['./base', './pitch', './interval', './scale'],
               get: function () { return this._sharps; },
               set: function (s) { this._alteredPitchesCache = [] ; this._sharps = s; }
             },
+            /**
+             * Gives the width in pixels necessary to represent the key signature.
+             * 
+             * @memberof music21.key.KeySignature#
+             * @var {number} width
+             * @readonly
+             */
             'width' : {
                 enumerable: true,
                 configurable: true,
                 get: function () { return 5 * Math.abs(this.sharps) ; },                
-            }
-        });
-		
-		
-	    Object.defineProperties(this, {
+            },
+            /**
+             * An Array of Altered Pitches in KeySignature order (i.e., for flats, Bb, Eb, etc.)
+             * 
+             * @memberof music21.key.KeySignature#
+             * @var {Array&lt;music21.pitch.Pitch>} alteredPitches
+             * @readonly
+             * @example
+             * var ks = new music21.key.KeySignature(3)
+             * var ap = ks.alteredPitches
+             * var apName = [];
+             * for (var i = 0; i &lt; ap.length; i++) {
+             *     apName.push(ap[i].name);
+             * }
+             * apName
+             * // ["F#", "C#", "G#"]
+             */
 	    	'alteredPitches': {
 	    		get: function () {
 	    			if (this._alteredPitchesCache != undefined) {
@@ -311,7 +376,12 @@ define(['./base', './pitch', './interval', './scale'],
     /**
      * Return the name of the major key with this many sharps
      * 
-     * @returns {(string|undefined)}
+     * @memberof music21.key.KeySignature
+     * @returns {(string|undefined)} name of key
+     * @example
+     * var ks = new music21.key.KeySignature(-3)
+     * ks.majorName()
+     * // "E-"
      */
     key.KeySignature.prototype.majorName = function () {
         if (this.sharps >= 0) {
@@ -322,6 +392,7 @@ define(['./base', './pitch', './interval', './scale'],
     };
     /**
      * Return the name of the minor key with this many sharps
+     * @memberof music21.key.KeySignature
      * @returns {(string|undefined)}
      */
     key.KeySignature.prototype.minorName = function() {
@@ -334,7 +405,12 @@ define(['./base', './pitch', './interval', './scale'],
     };
     
     /**
+     * returns the vexflow name (just the `majorName()` with "b" for "-") for
+     * the key signature.  Does not create the object.
      * 
+     * Deprecated.
+     * 
+     * @memberof music21.key.KeySignature
      * @returns {string}
      */
     key.KeySignature.prototype.vexflow = function() {
@@ -342,9 +418,11 @@ define(['./base', './pitch', './interval', './scale'],
         return tempName.replace(/\-/g, "b");
     };
     /**
+     * Returns the accidental associated with a step in this key, or undefined if none.
      * 
-     * @param {int} step
-     * @returns {(pitch.Accidental|undefined)}
+     * @memberof music21.key.KeySignature
+     * @param {string} step - a valid step name such as "C","D", etc., but not "C#" etc.
+     * @returns {(music21.pitch.Accidental|undefined)}
      */
     key.KeySignature.prototype.accidentalByStep = function(step) {
         var aps = this.alteredPitches;
@@ -359,6 +437,23 @@ define(['./base', './pitch', './interval', './scale'],
         }
         return undefined;
     };
+    /**
+     * Takes a pitch in C major and transposes it so that it has
+     * the same step position in the current key signature.
+     * 
+     * @memberof music21.key.KeySignature
+     * @returns {music21.pitch.Pitch}
+     * @example
+     * var ks = new music21.key.KeySignature(-3)
+     * var p1 = new music21.pitch.Pitch('B')
+     * var p2 = ks.transposePitchFromC(p1)
+     * p2.name
+     * // "D"
+     * var p3 = new music21.pitch.Pitch('G-')
+     * var p4 = ks.transposePitchFromC(p3)
+     * p4.name
+     * // "B--"
+     */
     key.KeySignature.prototype.transposePitchFromC = function(p) {
         var transInterval = undefined;
         var transTimes = undefined;
@@ -381,6 +476,17 @@ define(['./base', './pitch', './interval', './scale'],
         return newPitch;
     };
 
+    /**
+     * Create a Key object. Like a KeySignature but with ideas about Tonic, Dominant, etc.
+     * 
+     * TODO: allow keyName to be a {@link music21.pitch.Pitch}
+     * 
+     * @class Key
+     * @memberof music21.key
+     * @extends music21.key.KeySignature
+     * @param {string} keyName -- a pitch name representing the key (w/ "-" for flat)
+     * @param {string} [mode] -- if not given then the CASE of the keyName will be used ("C" => "major", "c" => "minor")
+     */
 	key.Key = function (keyName, mode) {
 		if (keyName == undefined) {
 			keyName = 'C';
@@ -415,6 +521,15 @@ define(['./base', './pitch', './interval', './scale'],
 
 	key.Key.prototype = new key.KeySignature();
 	key.Key.prototype.constructor = key.Key;
+	
+	/**
+	 * returns a {@link music21.scale.ScaleSimpleMajor} or {@link music21.scale.ScaleSimpleMinor}
+	 * object from the pitch object.
+	 * 
+	 * @memberof music21.key.Key
+	 * @param {string|undefined} [scaleType=this.mode] - the type of scale, or the mode.
+	 * @returns {object} A music21.scale.Scale subclass.
+	 */
     key.Key.prototype.getScale = function (scaleType) {
         if (scaleType == undefined) {
             scaleType = this.mode;

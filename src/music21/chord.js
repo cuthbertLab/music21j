@@ -10,14 +10,33 @@
 
 define(['./note', 'vexflow'], 
         /**
+         * chord Module. See {@link music21.chord} namespace for more details
+         * 
          * @exports music21/chord
          */
         function(note, Vex) {
+    /**
+     * Chord related objects (esp. {@link music21.chord.Chord}) and methods.
+     * 
+     * @namespace music21.chord
+     * @memberof music21
+     * @requires music21/note
+     */
     var chord = {};
 	
 	/**
-	 * @constructor
-	 * @param {Array<string|note.Note>} noteArray
+     * Chord related objects (esp. {@link music21.chord.Chord}) and methods.
+	 * 
+	 * @class Chord
+	 * @memberof music21.chord
+	 * @param {Array<string|music21.note.Note|music21.pitch.Pitch>} [noteArray] - an Array of strings
+	 * (see {@link music21.pitch.Pitch} for valid formats), note.Note, or pitch.Pitch objects.
+     * @extends music21.note.NotRest
+     * @property {number} length - the number of pitches in the Chord (readonly)
+     * @property {Array<music21.pitch.Pitch>} pitches - an Array of Pitch objects in the chord. (Consider the Array read only and pass in a new Array to change)
+     * @property {Boolean} [isChord=true]
+     * @property {Boolean} [isNote=false]
+     * @property {Boolean} [isRest=false]
 	 */
 	chord.Chord = function (noteArray) {
 		if (typeof(noteArray) == 'undefined') {
@@ -33,7 +52,7 @@ define(['./note', 'vexflow'],
 	    Object.defineProperties(this, {
 	        'length' : {
                 enumerable: true,
-	            get: /** returns {number} */ function () { return this._noteArray.length; }
+	            get: function () { return this._noteArray.length; }
 	        },
 	    	'pitches': {
 	    	    enumerable: true,
@@ -96,7 +115,9 @@ define(['./note', 'vexflow'],
     /**
      * Adds a note to the chord, sorting the noteArray
      * 
-     * @param {note.Note} noteObj
+     * @memberof music21.chord.Chord
+     * @param {music21.note.Note|music21.pitch.Pitch} noteObj - the Note or Pitch to be added.
+     * @returns {music21.chord.Chord} the original chord.
      */
     chord.Chord.prototype.add = function (noteObj) {
         // takes in either a note or a pitch
@@ -111,10 +132,13 @@ define(['./note', 'vexflow'],
         this._noteArray.push(noteObj);
         // inefficient because sorts after each add, but safe and #(p) is small
         this._noteArray.sort( function(a,b) { return a.pitch.ps - b.pitch.ps; }); 
+        return this;
     };
     /**
-     * Removes any pitches that appear more than once.
-     * @returns {chord.Chord}
+     * Removes any pitches that appear more than once and returns a new Chord.
+     * 
+     * @memberof music21.chord.Chord
+     * @returns {music21.chord.Chord} A new Chord object with duplicate pitches removed.
      */
     chord.Chord.prototype.removeDuplicatePitches = function () {
         var stepsFound = [];
@@ -132,8 +156,10 @@ define(['./note', 'vexflow'],
     };
     
     /**
+     * Finds the Root of the chord.
      * 
-     * @returns {pitch.Pitch}
+     * @memberof music21.chord.Chord
+     * @returns {music21.pitch.Pitch} the root of the chord.
      */
     chord.Chord.prototype.root = function () {
         var closedChord = this.removeDuplicatePitches();
@@ -174,12 +200,16 @@ define(['./note', 'vexflow'],
         return closedChord.pitches[0]; // fallback, just return the bass...
     };
     /**
+     * Returns the number of semitones above the root that a given chordstep is.
      * 
-     * @param {number} chordStep
-     * @param {pitch.Pitch} testRoot
-     * @returns {number}
+     * For instance, in a G dominant 7th chord (G, B, D, F), would
+     * return 4 for chordStep=3, since the third of the chord (B) is four semitones above G.
+     * 
+     * @memberof music21.chord.Chord
+     * @param {number} chordStep - the step to find, e.g., 1, 2, 3, etc.
+     * @param {music21.pitch.Pitch} [testRoot] - the pitch to temporarily consider the root.
+     * @returns {number} Number of semitones above the root for this chord step.
      */
-
     chord.Chord.prototype.semitonesFromChordStep = function (chordStep, testRoot) {
         if (testRoot === undefined) {
             testRoot = this.root();
@@ -196,7 +226,8 @@ define(['./note', 'vexflow'],
     /**
      * Gets the lowest note (based on .ps not name) in the chord.
      * 
-     * @returns {pitch.Pitch} bass pitch
+     * @memberof music21.chord.Chord
+     * @returns {music21.pitch.Pitch} bass pitch
      */
     chord.Chord.prototype.bass = function () {
         var lowest = undefined;
@@ -216,8 +247,9 @@ define(['./note', 'vexflow'],
     /**
      * Counts the number of non-duplicate pitch MIDI Numbers in the chord.
      * 
-     * Call after "closedPosition()" to get Forte style cardinality.
+     * Call after "closedPosition()" to get Forte style cardinality disregarding octave.
      *  
+     * @memberof music21.chord.Chord
      * @returns {number}
      */
     chord.Chord.prototype.cardinality = function() {
@@ -226,6 +258,7 @@ define(['./note', 'vexflow'],
     };
     /**
      * 
+     * @memberof music21.chord.Chord
      * @returns {Boolean}
      */
     chord.Chord.prototype.isMajorTriad = function() {
@@ -242,6 +275,7 @@ define(['./note', 'vexflow'],
     };
     /**
      * 
+     * @memberof music21.chord.Chord
      * @returns {Boolean}
      */
     chord.Chord.prototype.isMinorTriad = function() {
@@ -257,9 +291,13 @@ define(['./note', 'vexflow'],
         }
     };
     /**
-     * Unlike music21 version, cannot set the inversion, yet
+     * Returns the inversion of the chord as a number (root-position = 0)
+     * 
+     * Unlike music21 version, cannot set the inversion, yet.
+     *
      * TODO: add.
      * 
+     * @memberof music21.chord.Chord
      * @returns {number}
      */
     chord.Chord.prototype.inversion = function() {
@@ -277,8 +315,8 @@ define(['./note', 'vexflow'],
 
     
     /**
-     * 
-     * @param {string} clefName
+     * @memberof music21.chord.Chord
+     * @param {object} options - a dictionary of options `{clef: {@music21.clef.Clef} }` is especially important 
      * @returns {Vex.Flow.StaveNote}
      */
     chord.Chord.prototype.vexflowNote = function (options) {
@@ -305,10 +343,16 @@ define(['./note', 'vexflow'],
         return vfn;
     };
     /**
+     * Returns the Pitch object that is a Generic interval (2, 3, 4, etc., but not 9, 10, etc.) above
+     * the `.root()`
      * 
+     * In case there is more that one note with that designation (e.g., `[A-C-C#-E].getChordStep(3)`)
+     * the first one in `.pitches` is returned.
+     * 
+     * @memberof music21.chord.Chord
      * @param {number} chordStep
-     * @param {pitch.Pitch} testRoot
-     * @returns {pitch.Pitch}
+     * @param {music21.pitch.Pitch} [testRoot] - the Pitch to use as a temporary root
+     * @returns {music21.pitch.Pitch}
      */
     chord.Chord.prototype.getChordStep = function (chordStep, testRoot) {
         if (testRoot == undefined) {
@@ -332,7 +376,6 @@ define(['./note', 'vexflow'],
         return undefined;
     };
 
-	
 	chord.chordDefinitions = {
 			'major': ['M3', 'm3'],
 			'minor': ['m3', 'M3'],
