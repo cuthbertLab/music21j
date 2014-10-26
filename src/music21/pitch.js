@@ -22,9 +22,6 @@ define(['./prebase'],
      * @requires music21/prebase
      */
     var pitch = {};
-	
-	/*  pitch based objects; from pitch.py */
-
 	/**
 	 * @class Accidental
 	 * @memberof music21.pitch
@@ -158,9 +155,22 @@ define(['./prebase'],
 	pitch.midiToName = ['C','C#','D','E-','E','F','F#','G','A-','A','B-','B'];
 	
     /**
+     * Pitch objects are found in {@link music21.note.Note} objects, and many other places.
+     * 
+     * They do not have a {@link music21.duration.Duration} associated with them, so they
+     * cannot be placed inside {@link music21.stream.Stream} objects.
+     * 
+     * Valid pitch name formats are 
+     * - "C", "D', etc. ("B" = American B; "H" is not allowed)
+     * - "C#", "C-" (C-flat; do not use "b" for flat), "C##", "C###", "C--" etc.
+     * - Octave may be specified after the name + accidental: "C#4" etc.
+     * - Octave can be arbitrarily high ("C10") but only as low as "C0" because "C-1" would be interpreted as C-flat octave 1; shift octave later for very low notes.
+     * - If octave is not specified, the system will usually use octave 4, but might adjust according to context. If you do not like this behavior, give an octave always.
+     * - Microtones are not supported in music21j (they are in music21p)
+     * 
      * @class Pitch
      * @memberof music21.pitch
-	 * @param {string} pn - name of the pitch, with or without octave.
+	 * @param {string} pn - name of the pitch, with or without octave, see above.
      * @extends music21.prebase.ProtoM21Object
      * @property {music21.pitch.Accidental|undefined} accidental - link to an accidental
      * @property {number} diatonicNoteNum - diatonic number of the pitch, where 29 = C4; updates other properties.

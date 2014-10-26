@@ -9,19 +9,33 @@
  */
 define(['./base', './duration'], 
         /**
+         * meter module. See {@link music21.meter} namespace for details.
+         * 
          * @exports music21/meter
          */
         function(base, duration) {
-    /** @namespace music21.meter 
-     *  @memberof music21 
+    /** 
+     * Meter and TimeSignature Classes (esp. {@link music21.meter.TimeSignature} ) and methods.
+     * 
+     * @namespace music21.meter 
+     * @memberof music21 
+     * @requires music21/base
+     * @requires music21/duration
      */
     var meter = {};
     
     
     /**
+     * A MUCH simpler version of the music21p TimeSignature object.
+     * 
      * @class TimeSignature
-     * @param {String} meterString - a string ("4/4", "3/8" etc.) to initialize the TimeSignature.
      * @memberof music21.meter 
+     * @param {string} meterString - a string ("4/4", "3/8" etc.) to initialize the TimeSignature.
+     * @property {Int} [numerator=4]
+     * @property {Int} [denominator=4]
+     * @property {Array<Array<Int>>} beatGroups - groupings of beats; inner arrays are numerator, denominator
+     * @property {string} ratioString - a string like "4/4"
+     * @property {music21.duration.Duration} barDuration - a Duration object representing the expressed total length of the TimeSignature.
      */
     meter.TimeSignature = function (meterString) {
         base.Music21Object.call(this);
@@ -73,8 +87,8 @@ define(['./base', './duration'],
      * Compute the Beat Group according to this time signature.
      * 
      * @memberof music21.meter.TimeSignature
-     * @returns {Array<Int>} for a list of numerator and denominators, find a list of beam groups.
-     */   
+     * @returns {Array<Array<Int>>} a list of numerator and denominators, find a list of beam groups.
+     */
     meter.TimeSignature.prototype.computeBeatGroups = function () {
         var tempBeatGroups = [];
         var numBeats = this.numerator;
@@ -105,6 +119,13 @@ define(['./base', './duration'],
         }
         return tempBeatGroups;
     };
+    /**
+     * Compute the Beat Group according to this time signature for VexFlow.
+     * 
+     * @memberof music21.meter.TimeSignature
+     * @param {Vex} Vex - a reference to the Vex object
+     * @returns {Array<Vex.Flow.Fraction>} a list of numerator and denominator groups, for VexFlow
+     */    
     meter.TimeSignature.prototype.vexflowBeatGroups = function (Vex) {
         var tempBeatGroups;
         if (this.beatGroups.length > 0) {

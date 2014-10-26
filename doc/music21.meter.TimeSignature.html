@@ -36,7 +36,19 @@
 						</li>
 						
 						<li>
+							<a href="music21.beam.html">music21.beam</a>
+						</li>
+						
+						<li>
+							<a href="music21.chord.html">music21.chord</a>
+						</li>
+						
+						<li>
 							<a href="music21.duration.html">music21.duration</a>
+						</li>
+						
+						<li>
+							<a href="music21.key.html">music21.key</a>
 						</li>
 						
 						<li>
@@ -86,6 +98,10 @@
 						</li>
 						
 						<li>
+							<a href="key.html">music21/key</a>
+						</li>
+						
+						<li>
 							<a href="meter.html">music21/meter</a>
 						</li>
 						
@@ -128,15 +144,19 @@
 						</li>
 						
 						<li>
-							<a href="key.KeySignature.html">key.KeySignature</a>
-						</li>
-						
-						<li>
-							<a href="chord-chord.Chord.html">music21/chord~chord.Chord</a>
-						</li>
-						
-						<li>
 							<a href="music21.base.Music21Object.html">music21.base.Music21Object</a>
+						</li>
+						
+						<li>
+							<a href="music21.beam.Beam.html">music21.beam.Beam</a>
+						</li>
+						
+						<li>
+							<a href="music21.beam.Beams.html">music21.beam.Beams</a>
+						</li>
+						
+						<li>
+							<a href="music21.chord.Chord.html">music21.chord.Chord</a>
 						</li>
 						
 						<li>
@@ -145,6 +165,14 @@
 						
 						<li>
 							<a href="music21.duration.Tuplet.html">music21.duration.Tuplet</a>
+						</li>
+						
+						<li>
+							<a href="music21.key.Key.html">music21.key.Key</a>
+						</li>
+						
+						<li>
+							<a href="music21.key.KeySignature.html">music21.key.KeySignature</a>
 						</li>
 						
 						<li>
@@ -254,6 +282,10 @@
 <dd>
     
     
+    <div class="description">
+        <p>A MUCH simpler version of the music21p TimeSignature object.</p>
+    </div>
+    
 
     
     
@@ -291,7 +323,7 @@
             <td class="type">
             
                 
-<span class="param-type">String</span>
+<span class="param-type">string</span>
 
 
             
@@ -312,6 +344,212 @@
     
     
 <dl class="details">
+	
+
+	<h5 class="subsection-title">Properties:</h5>
+
+	<dl>
+
+<table class="props table table-striped">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+
+		<th>Type</th>
+
+		
+		<th>Argument</th>
+		
+
+		
+		<th>Default</th>
+		
+
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+
+	<tbody>
+	
+
+        <tr>
+            
+                <td class="name"><code>numerator</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Int</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    4
+                
+                </td>
+            
+
+            <td class="description last"></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>denominator</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Int</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    4
+                
+                </td>
+            
+
+            <td class="description last"></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>beatGroups</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;Array.&lt;Int>></span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><p>groupings of beats; inner arrays are numerator, denominator</p></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>ratioString</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><p>a string like &quot;4/4&quot;</p></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>barDuration</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="music21.duration.Duration.html">music21.duration.Duration</a></span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><p>a Duration object representing the expressed total length of the TimeSignature.</p></td>
+        </tr>
+
+	
+	</tbody>
+</table>
+</dl>
+
 	
 
 	
@@ -338,7 +576,7 @@
 		<ul class="dummy">
 			<li>
 				<a href="meter.js.html">music21/meter.js</a>,
-				 <a href="meter.js.html#sunlight-1-line-21">line 21</a>
+				 <a href="meter.js.html#sunlight-1-line-28">line 28</a>
 			</li>
 		</ul>
 	</dd>
@@ -386,7 +624,7 @@
         <dl>
             
 <dt>
-    <h4 class="name" id="computeBeatGroups"><span class="type-signature">&lt;static> </span>meter.TimeSignature#computeBeatGroups<span class="signature">()</span><span class="type-signature"> &rarr; {Array.&lt;Int>}</span></h4>
+    <h4 class="name" id="computeBeatGroups"><span class="type-signature">&lt;static> </span>meter.TimeSignature#computeBeatGroups<span class="signature">()</span><span class="type-signature"> &rarr; {Array.&lt;Array.&lt;Int>>}</span></h4>
     
     
 </dt>
@@ -432,7 +670,7 @@
 		<ul class="dummy">
 			<li>
 				<a href="meter.js.html">music21/meter.js</a>,
-				 <a href="meter.js.html#sunlight-1-line-78">line 78</a>
+				 <a href="meter.js.html#sunlight-1-line-92">line 92</a>
 			</li>
 		</ul>
 	</dd>
@@ -459,7 +697,7 @@
     
             
 <div class="param-desc">
-    <p>for a list of numerator and denominators, find a list of beam groups.</p>
+    <p>a list of numerator and denominators, find a list of beam groups.</p>
 </div>
 
 
@@ -470,7 +708,155 @@
 	</dt>
 	<dd>
 		
-<span class="param-type">Array.&lt;Int></span>
+<span class="param-type">Array.&lt;Array.&lt;Int>></span>
+
+
+	</dd>
+</dl>
+
+
+        
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="vexflowBeatGroups"><span class="type-signature">&lt;static> </span>meter.TimeSignature#vexflowBeatGroups<span class="signature">(Vex)</span><span class="type-signature"> &rarr; {Array.&lt;Vex.Flow.Fraction>}</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        <p>Compute the Beat Group according to this time signature for VexFlow.</p>
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+
+		<th>Type</th>
+
+		
+
+		
+
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+
+	<tbody>
+	
+
+        <tr>
+            
+                <td class="name"><code>Vex</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Vex</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>a reference to the Vex object</p></td>
+        </tr>
+
+	
+	</tbody>
+</table>
+
+    
+    
+    
+<dl class="details">
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="meter.js.html">music21/meter.js</a>,
+				 <a href="meter.js.html#sunlight-1-line-129">line 129</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+    <p>a list of numerator and denominator groups, for VexFlow</p>
+</div>
+
+
+
+<dl>
+	<dt>
+		Type
+	</dt>
+	<dd>
+		
+<span class="param-type">Array.&lt;Vex.Flow.Fraction></span>
 
 
 	</dd>
