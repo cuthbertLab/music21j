@@ -86,7 +86,7 @@ using the python server above).
 
 Version
 --------
-0.3 alpha
+0.4 alpha
 
 
 License
