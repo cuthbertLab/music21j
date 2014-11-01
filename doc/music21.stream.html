@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 	<meta charset="utf-8">
-	<title>Music21j Class: DiatonicInterval</title>
+	<title>Music21j Namespace: stream</title>
 
 	<!--[if lt IE 9]>
 	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -48,6 +48,10 @@
 						</li>
 						
 						<li>
+							<a href="music21.interval.html">music21.interval</a>
+						</li>
+						
+						<li>
 							<a href="music21.key.html">music21.key</a>
 						</li>
 						
@@ -69,6 +73,18 @@
 						
 						<li>
 							<a href="music21.prebase.html">music21.prebase</a>
+						</li>
+						
+						<li>
+							<a href="music21.stream.html">music21.stream</a>
+						</li>
+						
+						<li>
+							<a href="music21.streamInteraction.html">music21.streamInteraction</a>
+						</li>
+						
+						<li>
+							<a href="music21.vfShow.html">music21.vfShow</a>
 						</li>
 						
 
@@ -98,6 +114,10 @@
 						</li>
 						
 						<li>
+							<a href="interval.html">music21/interval</a>
+						</li>
+						
+						<li>
 							<a href="key.html">music21/key</a>
 						</li>
 						
@@ -121,6 +141,18 @@
 							<a href="prebase.html">music21/prebase</a>
 						</li>
 						
+						<li>
+							<a href="stream.html">music21/stream</a>
+						</li>
+						
+						<li>
+							<a href="streamInteraction.html">music21/streamInteraction</a>
+						</li>
+						
+						<li>
+							<a href="vfShow.html">music21/vfShow</a>
+						</li>
+						
 
 					</ul>
 				</li>
@@ -130,18 +162,6 @@
 						class="caret"></b></a>
 
 					<ul class="dropdown-menu ">
-						
-						<li>
-							<a href="interval.ChromaticInterval.html">interval.ChromaticInterval</a>
-						</li>
-						
-						<li>
-							<a href="interval.DiatonicInterval.html">interval.DiatonicInterval</a>
-						</li>
-						
-						<li>
-							<a href="interval.GenericInterval.html">interval.GenericInterval</a>
-						</li>
 						
 						<li>
 							<a href="music21.base.Music21Object.html">music21.base.Music21Object</a>
@@ -165,6 +185,22 @@
 						
 						<li>
 							<a href="music21.duration.Tuplet.html">music21.duration.Tuplet</a>
+						</li>
+						
+						<li>
+							<a href="music21.interval.ChromaticInterval.html">music21.interval.ChromaticInterval</a>
+						</li>
+						
+						<li>
+							<a href="music21.interval.DiatonicInterval.html">music21.interval.DiatonicInterval</a>
+						</li>
+						
+						<li>
+							<a href="music21.interval.GenericInterval.html">music21.interval.GenericInterval</a>
+						</li>
+						
+						<li>
+							<a href="music21.interval.Interval.html">music21.interval.Interval</a>
 						</li>
 						
 						<li>
@@ -216,27 +252,43 @@
 						</li>
 						
 						<li>
-							<a href="stream.Measure.html">stream.Measure</a>
+							<a href="music21.stream.Measure.html">music21.stream.Measure</a>
 						</li>
 						
 						<li>
-							<a href="stream.Part.html">stream.Part</a>
+							<a href="music21.stream.Part.html">music21.stream.Part</a>
 						</li>
 						
 						<li>
-							<a href="stream.Score.html">stream.Score</a>
+							<a href="music21.stream.Score.html">music21.stream.Score</a>
 						</li>
 						
 						<li>
-							<a href="stream.Voice.html">stream.Voice</a>
+							<a href="music21.stream.Stream.html">music21.stream.Stream</a>
 						</li>
 						
 						<li>
-							<a href="streamInteraction.PixelMapper.html">streamInteraction.PixelMapper</a>
+							<a href="music21.stream.Voice.html">music21.stream.Voice</a>
 						</li>
 						
 						<li>
-							<a href="vfShow.Renderer.html">vfShow.Renderer</a>
+							<a href="music21.streamInteraction.PixelMap.html">music21.streamInteraction.PixelMap</a>
+						</li>
+						
+						<li>
+							<a href="music21.streamInteraction.PixelMapper.html">music21.streamInteraction.PixelMapper</a>
+						</li>
+						
+						<li>
+							<a href="music21.streamInteraction.ScrollPlayer.html">music21.streamInteraction.ScrollPlayer</a>
+						</li>
+						
+						<li>
+							<a href="music21.vfShow.Renderer.html">music21.vfShow.Renderer</a>
+						</li>
+						
+						<li>
+							<a href="music21.vfShow.RenderStack.html">music21.vfShow.RenderStack</a>
 						</li>
 						
 
@@ -256,12 +308,14 @@
 					
 
 
-	<h1 class="page-title">Class: DiatonicInterval</h1>
+	<h1 class="page-title">Namespace: stream</h1>
 <section>
 
 <header>
     <h2>
-    DiatonicInterval
+        <span class="ancestors"><a href="music21.html">music21</a>.</span>
+    
+    stream
     </h2>
     
 </header>
@@ -272,22 +326,14 @@
 
     
         
-<dt>
-    <h4 class="name" id="DiatonicInterval"><span class="type-signature"></span>new DiatonicInterval<span class="signature">()</span><span class="type-signature"></span></h4>
-    
-    
-</dt>
-<dd>
-    
-    
+            <div class="description"><p>Streams are powerful music21 objects that hold Music21Object collections,
+such as <a href="music21.note.Note.html"><code>music21.note.Note</code></a> or <a href="music21.chord.Chord.html"><code>music21.chord.Chord</code></a> objects.</p>
+<p>Understanding the <a href="music21.stream.Stream.html"><code>music21.stream.Stream</code></a> object is of fundamental
+importance for using music21.  Definitely read the music21(python) tutorial
+on using Streams before proceeding</p></div>
+        
 
-    
-    
-    
-    
-    
-    
-    
+        
 <dl class="details">
 	
 
@@ -314,8 +360,8 @@
 	<dd class="tag-source">
 		<ul class="dummy">
 			<li>
-				<a href="interval.js.html">music21/interval.js</a>,
-				 <a href="interval.js.html#sunlight-1-line-233">line 233</a>
+				<a href="stream.js.html">music21/stream.js</a>,
+				 <a href="stream.js.html#sunlight-1-line-19">line 19</a>
 			</li>
 		</ul>
 	</dd>
@@ -328,20 +374,8 @@
 	
 </dl>
 
-    
-    
 
-    
-
-    
-    
-    
-    
-    
-    
-    
-</dd>
-
+        
     
     </div>
 
@@ -350,7 +384,50 @@
     
 
     
+        <h3 class="subsection-title">Requires</h3>
 
+        <ul>
+            <li><a href="base.html">module:music21/base</a></li>
+        
+            <li>module:music21/renderOptions</li>
+        
+            <li>module:music21/clef</li>
+        
+            <li><a href="vfShow.html">module:music21/vfShow</a></li>
+        
+            <li><a href="duration.html">module:music21/duration</a></li>
+        
+            <li>module:music21/common</li>
+        
+            <li><a href="meter.html">module:music21/meter</a></li>
+        
+            <li><a href="pitch.html">module:music21/pitch</a></li>
+        
+            <li><a href="streamInteraction.html">module:music21/streamInteraction</a></li>
+        
+            <li>module:jquery</li>
+        </ul>
+    
+
+    
+        <h3 class="subsection-title">Classes</h3>
+
+        <dl>
+            <dt><a href="music21.stream.Measure.html">Measure</a></dt>
+            <dd></dd>
+        
+            <dt><a href="music21.stream.Part.html">Part</a></dt>
+            <dd></dd>
+        
+            <dt><a href="music21.stream.Score.html">Score</a></dt>
+            <dd></dd>
+        
+            <dt><a href="music21.stream.Stream.html">Stream</a></dt>
+            <dd></dd>
+        
+            <dt><a href="music21.stream.Voice.html">Voice</a></dt>
+            <dd></dd>
+        </dl>
     
 
     
@@ -382,7 +459,7 @@
 					
 		<span class="jsdoc-message">
 		Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a>
-		on Sat Oct 25th 2014 using the <a
+		on Sat Nov 1st 2014 using the <a
 			href="https://github.com/terryweiss/docstrap">DocStrap template</a>.
 		</span>
 				</footer>

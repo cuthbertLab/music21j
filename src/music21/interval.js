@@ -7,27 +7,118 @@
  * 
  */
 
-define(['./prebase', './pitch'], 
+define(['./prebase', './pitch'],
+        /**
+         * interval module. See {@link music21.interval} for namespace
+         * 
+         * @exports music21/interval
+         */
         function(prebase, pitch) {
+    /**
+     * Interval related objects
+     * 
+     * @namespace music21.interval
+     * @memberof music21
+     * @requires music21/prebase
+     * @requires music21/pitch
+     */
 	var interval = {};
 
+	/**
+	 * Interval Directions as an Object/map
+	 * 
+	 * @memberof music21.interval
+	 * @example
+	 * if (music21.interval.IntervalDirections.OBLIQUE >
+	 *     music21.interval.IntervalDirections.ASCENDING ) {
+	 *    console.log(music21.interval.IntervalDirections.DESCENDING);    
+	 * }
+	 * 
+	 */
 	interval.IntervalDirections = {
 		DESCENDING: -1,
 		OBLIQUE: 0,
 		ASCENDING: 1
 	};
 
-	// N.B. a dict in music21p -- the indexes here let IntervalDirections call them + 1
+	/**
+	 * N.B. a dict in music21p -- the indexes here let IntervalDirections call them + 1
+	 * 
+	 * @memberof music21.interval
+	 * @example
+	 * console.log(music21.interval.IntervalDirectionTerms[music21l.interval.IntervalDirections.OBLIQUE + 1])
+	 * // "Oblique" 
+	 */
 	interval.IntervalDirectionTerms = ['Descending', 'Oblique','Ascending'];
 
-
+	/**
+	 * ordinals for music terms...
+	 * 
+	 * @memberof music21.interval
+	 * @example
+	 * for (var i = 1; // N.B. 0 = undefined
+	 *      i < music21.interval.MusicOrdinals.length;
+	 *      i++) {
+	 *     console.log(i, music21.interval.MusicOrdinals[i]);
+	 * }
+	 * // 1, Unison
+	 * // 2, Second
+	 * // 3, Third
+	 * // ...
+	 * // 8, Octave
+	 * // ...
+	 * // 15, Double Octave
+	 */
 	interval.MusicOrdinals = [undefined, 'Unison', 'Second', 'Third', 'Fourth',
 							 'Fifth', 'Sixth', 'Seventh', 'Octave',
 							 'Ninth', 'Tenth', 'Eleventh', 'Twelfth',
 							 'Thirteenth', 'Fourteenth', 'Double Octave'];
 							 
 	/**
-	 * @constructor interval.GenericInterval
+	 * Represents an interval such as unison, second, etc.
+	 * 
+	 * Properties are demonstrated below.
+	 * 
+	 * @class GenericInterval
+	 * @memberof music21.interval
+	 * @param {Int} [gi=1] - generic interval (1 or higher, or -2 or lower)
+	 * @example
+	 * var gi = new music21.interval.GenericInterval(-14)
+	 * gi.value
+	 * // -14
+	 * gi.directed
+	 * // -14
+	 * gi.undirected
+	 * // 14
+	 * gi.direction == music21.interval.IntervalDirections.DESCENDING
+	 * // true
+	 * gi.isSkip
+	 * // true
+	 * gi.isStep
+	 * // false
+	 * gi.isDiatonicStep
+	 * // false  // augmented unisons are not diatonicSteps but can't tell yet..
+	 * gi.isUnison
+	 * // false
+	 * gi.simpleUndirected
+	 * // 7
+	 * gi.undirectedOctaves
+	 * // 1
+	 * gi.semiSimpleUndirected
+	 * // 7  -- semiSimple distinguishes between 8 and 1; that's all
+	 * gi.perfectable
+	 * // false
+	 * gi.niceName
+	 * // "Fourteenth"
+	 * gi.directedNiceName
+	 * // "Descending Fourteenth"
+	 * gi.simpleNiceName
+	 * // "Seventh"
+	 * gi.staffDistance
+	 * // -13
+	 * gi.mod7inversion
+	 * // 2  // sevenths invert to seconds
+	 * 
 	 */
 	interval.GenericInterval = function (gi) {
 	    prebase.ProtoM21Object.call(this);
@@ -120,10 +211,23 @@ define(['./prebase', './pitch'],
 	};
     interval.GenericInterval.prototype = new prebase.ProtoM21Object();
     interval.GenericInterval.prototype.constructor = interval.GenericInterval;
+    
+    /**
+     * Returns a new GenericInterval which is the mod7inversion; 3rds (and 10ths etc.) to 6ths, etc.
+     * 
+     * @memberof music21.interval.GenericInterval
+     * @returns {music21.interval.GenericInterval}
+     */
     interval.GenericInterval.prototype.complement = function () {
         return new interval.GenericInterval(this.mod7inversion);
     };
     
+    /**
+     * Returns a new GenericInterval which has the opposite direction (descending becomes ascending, etc.)
+     * 
+     * @memberof music21.interval.GenericInterval
+     * @returns {music21.interval.GenericInterval}
+     */
     interval.GenericInterval.prototype.reverse = function () {
         if (this.undirected == 1) {
             return new interval.GenericInterval(1);
@@ -131,11 +235,24 @@ define(['./prebase', './pitch'],
             return new interval.GenericInterval(this.undirected * (-1 * this.direction));
         }
     };
-    
+    /**
+     * Given a specifier, return a new DiatonicInterval with this generic.
+     * 
+     * @memberof music21.interval.GenericInterval
+     * @param {string|Int} specifier - a specifier such as "P","m","M","A","dd" etc.
+     * @returns {music21.interval.DiatonicInterval}
+     */
     interval.GenericInterval.prototype.getDiatonic = function (specifier) {
         return new interval.DiatonicInterval(specifier, this);
     };  
 
+    /**
+     * Transpose a pitch by this generic interval, maintaining accidentals
+     * 
+     * @memberof music21.interval.GenericInterval
+     * @param {music21.pitch.Pitch} p
+     * @returns {music21.pitch.Pitch}
+     */
     interval.GenericInterval.prototype.transposePitch = function (p) {
         var pitch2 = new pitch.Pitch();
         pitch2.step = p.step;
@@ -231,7 +348,26 @@ define(['./prebase', './pitch'],
 
 
 	/**
-     * @constructor interval.DiatonicInterval
+	 * Represents a Diatonic interval.  See example for usage.
+	 * 
+     * @class DiatonicInterval
+     * @memberof music21.interval
+     * @param {string|Int|undefined} [specifier='P'] - a specifier such as "P", "d", "m", "M" etc.
+     * @param {music21.interval.GenericInterval|Int} [generic=1] - a `GenericInterval` object or a number to be converted to one
+     * @example
+     * var di = new music21.interval.DiatonicInterval("M", 10);
+     * di.generic.isClassOrSubclass('GenericInterval');
+     * // true
+     * di.specifier;
+     * // 'M'
+     * di.name;
+     * // 'M10'
+     * di.direction == music21.interval.IntervalDirections.ASCENDING;
+     * // true
+     * di.niceName
+     * // "Major Tenth"
+     * 
+     * // See music21p for more possibilities.
 	 */
 	interval.DiatonicInterval = function (specifier, generic) {
         prebase.ProtoM21Object.call(this);
@@ -241,7 +377,9 @@ define(['./prebase', './pitch'],
 			specifier = "P";
 		}
 		if (generic == undefined) {
-			generic = new interval.GenericInterval();
+			generic = new interval.GenericInterval(1);
+		} else if (typeof generic == 'number') {
+		    generic = new interval.GenericInterval(generic);
 		}
 		
 		this.name = "";
@@ -276,9 +414,6 @@ define(['./prebase', './pitch'],
 		this.directedSemiSimpleName = interval.IntervalPrefixSpecs[this.specifier] + generic.semiSimpleDirected.toString();
 		this.directedSemiSimpleNiceName = diatonicDirectionNiceName + " " + this.semiSimpleNameName;
 		this.specificName = interval.IntervalNiceSpecNames[this.specifier];
-
-		
-
 		this.perfectable = generic.perfectable;
 		this.isDiatonicStep = generic.isDiatonicStep;
 		this.isStep = generic.isStep;
@@ -309,6 +444,12 @@ define(['./prebase', './pitch'],
     interval.DiatonicInterval.prototype = new prebase.ProtoM21Object();
     interval.DiatonicInterval.prototype.constructor = interval.DiatonicInterval;
 
+    /**
+     * Returns a ChromaticInterval object of the same size.
+     * 
+     * @memberof music21.interval.DiatonicInterval
+     * @returns {music21.interval.ChromaticInterval}
+     */
     interval.DiatonicInterval.prototype.getChromatic = function () {
         var octaveOffset = Math.floor(Math.abs(this.generic.staffDistance)/7);
         var semitonesStart = interval.IntervalSemitonesGeneric[this.generic.simpleUndirected];
@@ -340,7 +481,15 @@ define(['./prebase', './pitch'],
     };
 
     /**
-     * @constructor interval.ChromaticInterval
+     * @class ChromaticInterval
+     * @memberof music21.interval
+     * @param {number} value - number of semitones (positive or negative)
+     * @property {number} cents
+     * @property {number} value
+     * @property {number} undirected - absolute value of value
+     * @property {number} mod12 - reduction to one octave
+     * @property {number} intervalClass - reduction to within a tritone (11 = 1, etc.)
+     * 
      */
     interval.ChromaticInterval = function (value) {
         prebase.ProtoM21Object.call(this);
@@ -388,8 +537,13 @@ define(['./prebase', './pitch'],
     
     // TODO: this.getDiatonic()
     
-    // N.B. -- transposePitch will not work until changing ps changes name, etc.
-    //  -- should work now. :-)
+    /**
+     * Transposes pitches but does not maintain accidentals, etc.
+     * 
+     * @memberof music21.interval.ChromaticInterval
+     * @property {music21.pitch.Pitch} p - pitch to transpose
+     * @returns {music21.pitch.Pitch}
+     */
     interval.ChromaticInterval.prototype.transposePitch = function (p) {
         var useImplicitOctave = false;
         if (p.octave == undefined) {
@@ -409,6 +563,12 @@ define(['./prebase', './pitch'],
     
 	interval.IntervalStepNames = ['C','D','E','F','G','A','B'];
 
+	/**
+	 * @function music21.interval.IntervalConvertDiatonicNumberToStep
+	 * @memberof music21.interval
+	 * @param {Int} dn - diatonic number, where 29 = C4, C#4 etc.
+	 * @returns {Array} two element array of {string} stepName and {Int} octave
+	 */
 	interval.IntervalConvertDiatonicNumberToStep = function (dn) {
 		var stepNumber = undefined;
 		var octave = undefined;
@@ -428,6 +588,23 @@ define(['./prebase', './pitch'],
 	
 	/**
 	 * This is the main, powerful Interval class.
+	 * 
+	 * Instantiate with either a string ("M3") or two {@link music21.pitch.Pitch} or two {@link music21.note.Note}
+	 * 
+	 * See music21p instructions for usage.
+	 * 
+	 * @class Interval
+	 * @memberof music21.interval
+	 * @example
+	 * var n1 = new music21.note.Note("C4");
+	 * var n2 = new music21.note.Note("F#5");
+	 * var iv = new music21.interval.Interval(n1, n2);
+	 * iv.isConsonant();
+	 * // false
+	 * iv.semitones;
+	 * // 18
+	 * iv.niceName
+	 * // "Augmented Eleventh"
 	 */
 	interval.Interval = function () {
         prebase.ProtoM21Object.call(this);
@@ -507,7 +684,10 @@ define(['./prebase', './pitch'],
         this.isStep = (this.isChromaticStep || this.isDiatonicStep);
     };
 
-    
+    /**
+     * @memberof music21.interval.Interval
+     * @returns {Boolean}
+     */
     interval.Interval.prototype.isConsonant = function () {
         var sn = this.simpleName;
         if (sn == 'P5' || sn == 'm3' || sn == 'M3' || 
@@ -519,6 +699,11 @@ define(['./prebase', './pitch'],
     };
 
     // todo general: microtones
+    /**
+     * @memberof music21.interval.Interval
+     * @param {music21.pitch.Pitch} p - pitch to transpose
+     * @returns {music21.pitch.Pitch}
+     */
     interval.Interval.prototype.transposePitch = function (p) {
         // todo: reverse, clearAccidentalDisplay, maxAccidental;
         

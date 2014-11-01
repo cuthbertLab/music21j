@@ -116,7 +116,7 @@ define(['./note', 'vexflow'],
      * Adds a note to the chord, sorting the noteArray
      * 
      * @memberof music21.chord.Chord
-     * @param {music21.note.Note|music21.pitch.Pitch} noteObj - the Note or Pitch to be added.
+     * @param {string|music21.note.Note|music21.pitch.Pitch} noteObj - the Note or Pitch to be added or a string defining a pitch.
      * @returns {music21.chord.Chord} the original chord.
      */
     chord.Chord.prototype.add = function (noteObj) {
@@ -135,7 +135,7 @@ define(['./note', 'vexflow'],
         return this;
     };
     /**
-     * Removes any pitches that appear more than once and returns a new Chord.
+     * Removes any pitches that appear more than once (in any octave), removing the higher ones, and returns a new Chord.
      * 
      * @memberof music21.chord.Chord
      * @returns {music21.chord.Chord} A new Chord object with duplicate pitches removed.
@@ -208,7 +208,7 @@ define(['./note', 'vexflow'],
      * @memberof music21.chord.Chord
      * @param {number} chordStep - the step to find, e.g., 1, 2, 3, etc.
      * @param {music21.pitch.Pitch} [testRoot] - the pitch to temporarily consider the root.
-     * @returns {number} Number of semitones above the root for this chord step.
+     * @returns {number|undefined} Number of semitones above the root for this chord step or undefined if no pitch matches that chord step.
      */
     chord.Chord.prototype.semitonesFromChordStep = function (chordStep, testRoot) {
         if (testRoot === undefined) {
@@ -350,9 +350,9 @@ define(['./note', 'vexflow'],
      * the first one in `.pitches` is returned.
      * 
      * @memberof music21.chord.Chord
-     * @param {number} chordStep
+     * @param {Int} chordStep a positive integer representing the chord step
      * @param {music21.pitch.Pitch} [testRoot] - the Pitch to use as a temporary root
-     * @returns {music21.pitch.Pitch}
+     * @returns {music21.pitch.Pitch|undefined}
      */
     chord.Chord.prototype.getChordStep = function (chordStep, testRoot) {
         if (testRoot == undefined) {
