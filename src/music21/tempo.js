@@ -8,9 +8,34 @@
  */
 
 /* a Music21Object in m21p; the overhead is too high here to follow ... */
-define(['./prebase', './base', 'MIDI'], function(prebase, base, MIDI) {
+define(['./prebase', './base', 'MIDI'], 
+        /**
+         * tempo module, see {@link music21.tempo}
+         * 
+         * @exports music21/tempo
+         */
+        function(prebase, base, MIDI) {
+    /**
+     * tempo namespace
+     * 
+     * @namespace music21.tempo
+     * @memberof music21
+     * @requires music21/prebase
+     * @requires music21/base
+     * @requires MIDI
+     * @property {number} [baseTempo=60] - basic tempo
+     */
     var tempo = {};
 
+    /**
+     * Object mapping names to tempo values
+     * 
+     * @name music21.tempo.defaultTempoValues
+     * @memberof music21.tempo
+     * @example
+     * music21.tempo.defaultTempoValues.grave
+     * // 40
+     */
     tempo.defaultTempoValues = {
             'larghissimo': 16, 
             'largamente': 32, 
@@ -48,15 +73,28 @@ define(['./prebase', './base', 'MIDI'], function(prebase, base, MIDI) {
     tempo.baseTempo = 60;
    
     /* --------- metronome ---------- */
+    /**
+     * 
+     * @class Metronome
+     * @memberof music21.tempo
+     * @extends music21.prebase.ProtoM21Object
+     * @param {number} [tempo=music21.tempo.baseTempo] - the tempo of the metronome to start
+     * @property {number} tempo
+     * @property {Int} [numBeatsPerMeasure=4]
+     * @property {number} [minTempo=10]
+     * @property {number} [maxTempo=600]
+     * @property {Int} beat - current beat number
+     * @property {Int} chirpTimeout - an index of a timeout object for chirping
+     */
     tempo.Metronome = function (tempo) {
         prebase.ProtoM21Object.call(this);
         this.classes.push('Metronome');
+        this._tempo = 60; // overridden by music21.tempo.baseTempo;
         if (tempo === undefined) {
             this.tempo = music21.tempo.baseTempo;
         } else {
             this.tempo = tempo;
         }
-        this._tempo = 60; // overridden by music21.tempo.baseTempo;
         this.numBeatsPerMeasure = 4;
         this.minTempo = 10;
         this.maxTempo = 600;
@@ -82,6 +120,12 @@ define(['./prebase', './base', 'MIDI'], function(prebase, base, MIDI) {
     
     tempo.Metronome.prototype = new prebase.ProtoM21Object();
     tempo.Metronome.prototype.constructor = tempo.Metronome;
+    
+    /**
+     * Play a note (a higher one on the downbeat) and start the metronome chirping.
+     * 
+     * @memberof music21.tempo.Metronome
+     */
     tempo.Metronome.prototype.chirp = function () {
         this.beat += 1;
         if (this.beat > this.numBeatsPerMeasure) {
@@ -96,6 +140,13 @@ define(['./prebase', './base', 'MIDI'], function(prebase, base, MIDI) {
         this.chirpTimeout = setTimeout(function () { that.chirp(); }, 
                 1000*60/this.tempo);
     };
+
+    
+    /**
+     * Stop the metronome from chirping.
+     * 
+     * @memberof music21.tempo.Metronome
+     */
     tempo.Metronome.prototype.stopChirp = function () {
         if (this.chirpTimeout != undefined) {
             clearTimeout(this.chirpTimeout);
@@ -104,6 +155,19 @@ define(['./prebase', './base', 'MIDI'], function(prebase, base, MIDI) {
     };
     tempo.Metronome.prototype.tempoRanges =     [0, 40, 60, 72, 120, 144, 240, 999];
     tempo.Metronome.prototype.tempoIncreases = [0, 1,  2,  3,  4,   6,   8,  15, 100];
+
+    
+    /**
+     * Increase the metronome tempo one "click".
+     * 
+     * Value changes depending on the current tempo.  Uses standard metronome guidelines.
+     * 
+     * To change the tempo, just set this.tempo = n
+     * 
+     * @memberof music21.tempo.Metronome
+     * @param {Int} n - number of clicks to the right
+     * @returns {number} new tempo
+     */
     tempo.Metronome.prototype.increaseSpeed = function(n) {
         // increase by one metronome 'click' for every n
         if (n === undefined) { n = 1; }
@@ -121,9 +185,19 @@ define(['./prebase', './base', 'MIDI'], function(prebase, base, MIDI) {
             //console.log(t);
             this.tempo = t;
         }
+        return this.tempo;
     };
+    
+    /**
+     * Decrease the metronome tempo one "click"
+     * 
+     * To change the tempo, just set this.tempo = n
+     * 
+     * @memberof music21.tempo.Metronome
+     * @param {Int} n - number of clicks to the left
+     * @returns {number} new tempo
+     */   
     tempo.Metronome.prototype.decreaseSpeed = function(n) {
-        // increase by one metronome 'click' for every n
         if (n === undefined) { n = 1; }
         for (var i = 0; i < n; i ++ ) {
             t = this.tempo;
@@ -141,6 +215,14 @@ define(['./prebase', './base', 'MIDI'], function(prebase, base, MIDI) {
             this.tempo = t;
         }
     };
+    
+    /**
+     * add a Metronome interface onto the DOM at where
+     * 
+     * @memberof music21.tempo.Metronome
+     * @param {JQueryDOMObject|DOMObject} [where='body']
+     * @returns {JQueryDOMObject} - a div holding the metronome.
+     */
     tempo.Metronome.prototype.addDiv = function(where) {
         var jWhere = undefined;
         if (where.jquery !== undefined) {
@@ -172,6 +254,7 @@ define(['./prebase', './base', 'MIDI'], function(prebase, base, MIDI) {
         newDiv.append(b3);
         newDiv.append(b4);
         jWhere.append(newDiv);
+        return newDiv;
     };
     
     // end of define

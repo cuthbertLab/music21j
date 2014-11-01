@@ -9,11 +9,24 @@
  * Based on music21 (=music21p), Copyright (c) 2006–14, Michael Scott Cuthbert and cuthbertLab
  * 
  */
-define(['./base'], function(base) {
-	//
-    // N.B. Firefox completely ignores dyanmics on playback!
-
-    
+define(['./base'], 
+        /**
+         * dynamics Module. See {@link music21.dynamics} for namespace
+         * 
+         * @exports music21/dynamics
+         */
+        function(base) {
+    /**
+     * Dynamics related objects.
+     * 
+     * N.B. Firefox completely ignores dyanmics on playback!
+     * 
+     * Currently do not export to Vexflow.  :-(
+     * 
+     * @namespace music21.dynamics
+     * @memberof music21
+     * @requires music21/base
+     */
     var dynamics = {};
 	dynamics.shortNames = ['pppppp', 'ppppp', 'pppp', 'ppp', 'pp', 'p', 'mp', 'mf', 'f', 'fp', 'sf', 'ff', 'fff', 'ffff', 'fffff', 'ffffff'];
 	dynamics.longNames = {'ppp': ['pianississimo'],
@@ -52,6 +65,18 @@ define(['./base'], function(base) {
                      'ffff': [.95]
                     };    
 	
+	/**
+	 * A representation of a dynamic.
+	 * 
+	 * @class Dynamic
+	 * @memberof music21.dynamics
+	 * @extends music21.base.Music21Object
+	 * @param {number|string} value - either a number between 0 and 1 or a dynamic mark such as "ff" or "mp"
+	 * @property {string|undefined} value - a name such as "pp" etc.
+	 * @property {string|undefined} longName - a longer name such as "pianissimo"
+	 * @property {string|undefined} englishName - a name such as "very soft"
+	 * @property {number} volumeScalar - a number between 0 and 1.
+	 */
 	dynamics.Dynamic = function (value) {
         base.Music21Object.call(this);
 	    this.classes.push('Dynamic');
