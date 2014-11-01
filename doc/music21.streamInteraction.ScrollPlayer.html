@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 	<meta charset="utf-8">
-	<title>Music21j Class: NotRest</title>
+	<title>Music21j Class: ScrollPlayer</title>
 
 	<!--[if lt IE 9]>
 	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -308,14 +308,14 @@
 					
 
 
-	<h1 class="page-title">Class: NotRest</h1>
+	<h1 class="page-title">Class: ScrollPlayer</h1>
 <section>
 
 <header>
     <h2>
-        <span class="ancestors"><a href="music21.html">music21</a><a href="music21.note.html">.note</a>.</span>
+        <span class="ancestors"><a href="music21.html">music21</a><a href="music21.streamInteraction.html">.streamInteraction</a>.</span>
     
-    NotRest
+    ScrollPlayer
     </h2>
     
 </header>
@@ -327,7 +327,7 @@
     
         
 <dt>
-    <h4 class="name" id="NotRest"><span class="type-signature"></span>new NotRest<span class="signature">(<span class="optional">ql</span>)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="ScrollPlayer"><span class="type-signature"></span>new ScrollPlayer<span class="signature">(s, c)</span><span class="type-signature"></span></h4>
     
     
 </dt>
@@ -335,7 +335,7 @@
     
     
     <div class="description">
-        <p>Specifies that a GeneralNote is not a rest (Unpitched, Note, Chord).</p>
+        <p>Object for adding scrolling while playing.</p>
     </div>
     
 
@@ -357,11 +357,7 @@
 		<th>Type</th>
 
 		
-		<th>Argument</th>
-		
 
-		
-		<th>Default</th>
 		
 
 		<th class="last">Description</th>
@@ -373,39 +369,50 @@
 
         <tr>
             
-                <td class="name"><code>ql</code></td>
+                <td class="name"><code>s</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">number</span>
+<span class="param-type"><a href="music21.stream.Stream.html">music21.stream.Stream</a></span>
 
 
             
             </td>
 
             
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
 
-                
+            
 
+            <td class="description last"><ul>
+<li>Stream</li>
+</ul></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>c</code></td>
+            
+
+            <td class="type">
+            
                 
-                </td>
+<span class="param-type">canvas</span>
+
+
+            
+            </td>
+
             
 
             
-                <td class="default">
-                
-                    1.0
-                
-                </td>
-            
 
-            <td class="description last"><p>length in quarter notes</p></td>
+            <td class="description last"><ul>
+<li>canvas</li>
+</ul></td>
         </tr>
 
 	
@@ -448,13 +455,13 @@
 
         <tr>
             
-                <td class="name"><code>beams</code></td>
+                <td class="name"><code>pixelMapper</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type"><a href="music21.beam.Beams.html">music21.beam.Beams</a></span>
+<span class="param-type"><a href="music21.streamInteraction.PixelMapper.html">music21.streamInteraction.PixelMapper</a></span>
 
 
             
@@ -474,20 +481,20 @@
                 </td>
             
 
-            <td class="description last"><p>a link to a beam object</p></td>
+            <td class="description last"><p>an object that can map current pixel to notes and vice versa.</p></td>
         </tr>
 
 	
 
         <tr>
             
-                <td class="name"><code>notehead</code></td>
+                <td class="name"><code>tempo</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">string</span>
+<span class="param-type">number</span>
 
 
             
@@ -506,25 +513,256 @@
             
                 <td class="default">
                 
-                    'normal'
+                    s.tempo
                 
                 </td>
             
 
-            <td class="description last"><p>notehead type</p></td>
+            <td class="description last"></td>
         </tr>
 
 	
 
         <tr>
             
-                <td class="name"><code>noteheadFill</code></td>
+                <td class="name"><code>lastX</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">string</span>
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><p>last X value</p></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>lastNoteIndex</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Int</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><p>index of last note played</p></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>barDOM</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">SVGDOMObject</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><p>DOM object representing the scrolling bar</p></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>svgDOM</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">SVGDOMObject</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><p>DOM object holding the scrolling bar (overlaid on top of canvas)</p></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>canvasParent</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">DOMObject</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><p>the parent DOM object for <code>this.canvas</code></p></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>lastTimeout</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Int</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><p>a numerical reference to a timeout object created by <code>setTimeout</code></p></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>startTime</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><p>the time in ms when the scrolling started</p></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>previousSystemIndex</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Int</span>
 
 
             
@@ -543,28 +781,25 @@
             
                 <td class="default">
                 
-                    'default'
+                    0
                 
                 </td>
             
 
-            <td class="description last"><p>notehead fill</p></td>
+            <td class="description last"><p>the last systemIndex being scrolled</p></td>
         </tr>
 
 	
 
         <tr>
             
-                <td class="name"><code>noteheadColor</code></td>
+                <td class="name"><code>eachSystemHeight</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">string</span>
-|
-
-<span class="param-type">undefined</span>
+<span class="param-type">number</span>
 
 
             
@@ -583,25 +818,25 @@
             
                 <td class="default">
                 
-                    undefined
+                    120
                 
                 </td>
             
 
-            <td class="description last"><p>notehead color</p></td>
+            <td class="description last"><p>currently all systems need to have the same height.</p></td>
         </tr>
 
 	
 
         <tr>
             
-                <td class="name"><code>noteheadParenthesis</code></td>
+                <td class="name"><code>timingMS</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">boolean</span>
+<span class="param-type">Int</span>
 
 
             
@@ -620,28 +855,25 @@
             
                 <td class="default">
                 
-                    false
+                    50
                 
                 </td>
             
 
-            <td class="description last"><p>put a parenthesis around the notehead?</p></td>
+            <td class="description last"><p>amount of time between polls to scroll</p></td>
         </tr>
 
 	
 
         <tr>
             
-                <td class="name"><code>stemDirection</code></td>
+                <td class="name"><code>savedRenderOptionClick</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">string</span>
-|
-
-<span class="param-type">undefined</span>
+<span class="param-type">function</span>
 
 
             
@@ -649,8 +881,6 @@
 
             
                 <td class="attributes">
-                
-                    &lt;optional><br>
                 
 
                 
@@ -660,12 +890,10 @@
             
                 <td class="default">
                 
-                    undefined
-                
                 </td>
             
 
-            <td class="description last"><p>One of ['up','down','noStem', undefined] -- 'double' not supported</p></td>
+            <td class="description last"><p>starting ScrollPlayer overrides the <code>'click'</code> event for the stream, switching it to Stop. this saves it for restoring later.</p></td>
         </tr>
 
 	
@@ -698,8 +926,8 @@
 	<dd class="tag-source">
 		<ul class="dummy">
 			<li>
-				<a href="note.js.html">music21/note.js</a>,
-				 <a href="note.js.html#sunlight-1-line-391">line 391</a>
+				<a href="streamInteraction.js.html">music21/streamInteraction.js</a>,
+				 <a href="streamInteraction.js.html#sunlight-1-line-18">line 18</a>
 			</li>
 		</ul>
 	</dd>
@@ -730,12 +958,6 @@
     </div>
 
     
-        <h3 class="subsection-title">Extends</h3>
-
-        <ul>
-            <li><a href="music21.note.GeneralNote.html">music21.note.GeneralNote</a></li>
-        </ul>
-    
 
     
 
@@ -747,6 +969,408 @@
 
     
 
+    
+        <h3 class="subsection-title">Methods</h3>
+
+        <dl>
+            
+<dt>
+    <h4 class="name" id="createScrollBar"><span class="type-signature">&lt;static> </span>streamInteraction.ScrollPlayer#createScrollBar<span class="signature">()</span><span class="type-signature"> &rarr; {SVGDOMObject}</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        <p>Create the scrollbar (barDOM), the svg to place it in (svgDOM)
+and append it over the stream.</p>
+<p>Sets as a consequence:
+- this.barDOM
+- this.svgDOM
+- this.eachSystemHeight
+- this.canvasParent</p>
+    </div>
+    
+
+    
+    
+    
+    
+    
+    
+    
+<dl class="details">
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="streamInteraction.js.html">music21/streamInteraction.js</a>,
+				 <a href="streamInteraction.js.html#sunlight-1-line-130">line 130</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+    <p>scroll bar</p>
+</div>
+
+
+
+<dl>
+	<dt>
+		Type
+	</dt>
+	<dd>
+		
+<span class="param-type">SVGDOMObject</span>
+
+
+	</dd>
+</dl>
+
+
+        
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="scrollScore"><span class="type-signature">&lt;static> </span>streamInteraction.ScrollPlayer#scrollScore<span class="signature">()</span><span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        <p>function, bound to <code>this</code> to scroll the barDOM.</p>
+<p>calls itself until a stop click is received or the piece ends.</p>
+    </div>
+    
+
+    
+    
+    
+    
+    
+    
+    
+<dl class="details">
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="streamInteraction.js.html">music21/streamInteraction.js</a>,
+				 <a href="streamInteraction.js.html#sunlight-1-line-57">line 57</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="startPlaying"><span class="type-signature">&lt;static> </span>streamInteraction.ScrollPlayer#startPlaying<span class="signature">()</span><span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        <p>start playing! Create a scroll bar and start scrolling</p>
+<p>(set this to an event on stream, or something...)</p>
+<p>currently called from <code>music21.stream.Stream#scrollScoreStart</code> via
+<code>music21.stream.Stream#renderScrollableCanvas</code>. Will change.</p>
+    </div>
+    
+
+    
+    
+    
+    
+    
+    
+    
+<dl class="details">
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="streamInteraction.js.html">music21/streamInteraction.js</a>,
+				 <a href="streamInteraction.js.html#sunlight-1-line-168">line 168</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="stopPlaying"><span class="type-signature">&lt;static> </span>streamInteraction.ScrollPlayer#stopPlaying<span class="signature">(<span class="optional">event</span>)</span><span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        <p>Called when the ScrollPlayer should stop playing</p>
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+
+		<th>Type</th>
+
+		
+		<th>Argument</th>
+		
+
+		
+
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+
+	<tbody>
+	
+
+        <tr>
+            
+                <td class="name"><code>event</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">DOMEvent</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+	
+	</tbody>
+</table>
+
+    
+    
+    
+<dl class="details">
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="streamInteraction.js.html">music21/streamInteraction.js</a>,
+				 <a href="streamInteraction.js.html#sunlight-1-line-183">line 183</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+        </dl>
     
 
     

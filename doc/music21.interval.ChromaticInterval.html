@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 	<meta charset="utf-8">
-	<title>Music21j Class: Music21Object</title>
+	<title>Music21j Class: ChromaticInterval</title>
 
 	<!--[if lt IE 9]>
 	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -308,14 +308,14 @@
 					
 
 
-	<h1 class="page-title">Class: Music21Object</h1>
+	<h1 class="page-title">Class: ChromaticInterval</h1>
 <section>
 
 <header>
     <h2>
-        <span class="ancestors"><a href="music21.html">music21</a><a href="music21.base.html">.base</a>.</span>
+        <span class="ancestors"><a href="music21.html">music21</a><a href="music21.interval.html">.interval</a>.</span>
     
-    Music21Object
+    ChromaticInterval
     </h2>
     
 </header>
@@ -327,7 +327,290 @@
     
         
 <dt>
-    <h4 class="name" id="Music21Object"><span class="type-signature"></span>new Music21Object<span class="signature">()</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="ChromaticInterval"><span class="type-signature"></span>new ChromaticInterval<span class="signature">(value)</span><span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+
+		<th>Type</th>
+
+		
+
+		
+
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+
+	<tbody>
+	
+
+        <tr>
+            
+                <td class="name"><code>value</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>number of semitones (positive or negative)</p></td>
+        </tr>
+
+	
+	</tbody>
+</table>
+
+    
+    
+    
+<dl class="details">
+	
+
+	<h5 class="subsection-title">Properties:</h5>
+
+	<dl>
+
+<table class="props table table-striped">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+
+		<th>Type</th>
+
+		
+
+		
+
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+
+	<tbody>
+	
+
+        <tr>
+            
+                <td class="name"><code>cents</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>value</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>undirected</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>absolute value of value</p></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>mod12</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>reduction to one octave</p></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>intervalClass</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>reduction to within a tritone (11 = 1, etc.)</p></td>
+        </tr>
+
+	
+	</tbody>
+</table>
+</dl>
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="interval.js.html">music21/interval.js</a>,
+				 <a href="interval.js.html#sunlight-1-line-483">line 483</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+    
+    </div>
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+        <h3 class="subsection-title">Methods</h3>
+
+        <dl>
+            
+<dt>
+    <h4 class="name" id="transposePitch"><span class="type-signature">&lt;static> </span>interval.ChromaticInterval#transposePitch<span class="signature">()</span><span class="type-signature"> &rarr; {<a href="music21.pitch.Pitch.html">music21.pitch.Pitch</a>}</span></h4>
     
     
 </dt>
@@ -335,7 +618,7 @@
     
     
     <div class="description">
-        <p>Base class for any object that can be placed in a <a href="music21.stream.Stream.html"><code>music21.stream.Stream</code></a>.</p>
+        <p>Transposes pitches but does not maintain accidentals, etc.</p>
     </div>
     
 
@@ -375,13 +658,13 @@
 
         <tr>
             
-                <td class="name"><code>activeSite</code></td>
+                <td class="name"><code>p</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">object</span>
+<span class="param-type"><a href="music21.pitch.Pitch.html">music21.pitch.Pitch</a></span>
 
 
             
@@ -391,171 +674,7 @@
 
             
 
-            <td class="description last"><p>hardlink to a <a href="music21.stream.Stream.html"><code>music21.stream.Stream</code></a> containing the element.</p></td>
-        </tr>
-
-	
-
-        <tr>
-            
-                <td class="name"><code>classSortOrder</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">number</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>Default sort order for this class (default 20; override in other classes). Lower numbered objects will sort before other objects in the staff if priority and offset are the same.</p></td>
-        </tr>
-
-	
-
-        <tr>
-            
-                <td class="name"><code>duration</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type"><a href="music21.duration.Duration.html">music21.duration.Duration</a></span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>the duration (object) for the element. (can be set with a quarterLength also)</p></td>
-        </tr>
-
-	
-
-        <tr>
-            
-                <td class="name"><code>groups</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Array</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>An Array of strings representing group (equivalent to css classes) to assign to the object. (default [])</p></td>
-        </tr>
-
-	
-
-        <tr>
-            
-                <td class="name"><code>isMusic21Object</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">boolean</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>true</p></td>
-        </tr>
-
-	
-
-        <tr>
-            
-                <td class="name"><code>isStream</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">boolean</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>false</p></td>
-        </tr>
-
-	
-
-        <tr>
-            
-                <td class="name"><code>offset</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">number</span>
-|
-
-<span class="param-type">null</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>offset from the beginning of the stream (in quarterLength)</p></td>
-        </tr>
-
-	
-
-        <tr>
-            
-                <td class="name"><code>priority</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">number</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>The priority (lower = earlier or more left) for elements at the same offset. (default 0)</p></td>
+            <td class="description last"><p>pitch to transpose</p></td>
         </tr>
 
 	
@@ -588,8 +707,8 @@
 	<dd class="tag-source">
 		<ul class="dummy">
 			<li>
-				<a href="base.js.html">music21/base.js</a>,
-				 <a href="base.js.html#sunlight-1-line-31">line 31</a>
+				<a href="interval.js.html">music21/interval.js</a>,
+				 <a href="interval.js.html#sunlight-1-line-547">line 547</a>
 			</li>
 		</ul>
 	</dd>
@@ -612,31 +731,30 @@
     
     
     
+    <h5>Returns:</h5>
+    
+            
+
+
+<dl>
+	<dt>
+		Type
+	</dt>
+	<dd>
+		
+<span class="param-type"><a href="music21.pitch.Pitch.html">music21.pitch.Pitch</a></span>
+
+
+	</dd>
+</dl>
+
+
+        
     
     
 </dd>
 
-    
-    </div>
-
-    
-        <h3 class="subsection-title">Extends</h3>
-
-        <ul>
-            <li><a href="music21.prebase.ProtoM21Object.html">music21.prebase.ProtoM21Object</a></li>
-        </ul>
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
+        </dl>
     
 
     

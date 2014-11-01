@@ -48,6 +48,10 @@
 						</li>
 						
 						<li>
+							<a href="music21.interval.html">music21.interval</a>
+						</li>
+						
+						<li>
 							<a href="music21.key.html">music21.key</a>
 						</li>
 						
@@ -69,6 +73,18 @@
 						
 						<li>
 							<a href="music21.prebase.html">music21.prebase</a>
+						</li>
+						
+						<li>
+							<a href="music21.stream.html">music21.stream</a>
+						</li>
+						
+						<li>
+							<a href="music21.streamInteraction.html">music21.streamInteraction</a>
+						</li>
+						
+						<li>
+							<a href="music21.vfShow.html">music21.vfShow</a>
 						</li>
 						
 
@@ -98,6 +114,10 @@
 						</li>
 						
 						<li>
+							<a href="interval.html">music21/interval</a>
+						</li>
+						
+						<li>
 							<a href="key.html">music21/key</a>
 						</li>
 						
@@ -121,6 +141,18 @@
 							<a href="prebase.html">music21/prebase</a>
 						</li>
 						
+						<li>
+							<a href="stream.html">music21/stream</a>
+						</li>
+						
+						<li>
+							<a href="streamInteraction.html">music21/streamInteraction</a>
+						</li>
+						
+						<li>
+							<a href="vfShow.html">music21/vfShow</a>
+						</li>
+						
 
 					</ul>
 				</li>
@@ -130,18 +162,6 @@
 						class="caret"></b></a>
 
 					<ul class="dropdown-menu ">
-						
-						<li>
-							<a href="interval.ChromaticInterval.html">interval.ChromaticInterval</a>
-						</li>
-						
-						<li>
-							<a href="interval.DiatonicInterval.html">interval.DiatonicInterval</a>
-						</li>
-						
-						<li>
-							<a href="interval.GenericInterval.html">interval.GenericInterval</a>
-						</li>
 						
 						<li>
 							<a href="music21.base.Music21Object.html">music21.base.Music21Object</a>
@@ -165,6 +185,22 @@
 						
 						<li>
 							<a href="music21.duration.Tuplet.html">music21.duration.Tuplet</a>
+						</li>
+						
+						<li>
+							<a href="music21.interval.ChromaticInterval.html">music21.interval.ChromaticInterval</a>
+						</li>
+						
+						<li>
+							<a href="music21.interval.DiatonicInterval.html">music21.interval.DiatonicInterval</a>
+						</li>
+						
+						<li>
+							<a href="music21.interval.GenericInterval.html">music21.interval.GenericInterval</a>
+						</li>
+						
+						<li>
+							<a href="music21.interval.Interval.html">music21.interval.Interval</a>
 						</li>
 						
 						<li>
@@ -216,27 +252,43 @@
 						</li>
 						
 						<li>
-							<a href="stream.Measure.html">stream.Measure</a>
+							<a href="music21.stream.Measure.html">music21.stream.Measure</a>
 						</li>
 						
 						<li>
-							<a href="stream.Part.html">stream.Part</a>
+							<a href="music21.stream.Part.html">music21.stream.Part</a>
 						</li>
 						
 						<li>
-							<a href="stream.Score.html">stream.Score</a>
+							<a href="music21.stream.Score.html">music21.stream.Score</a>
 						</li>
 						
 						<li>
-							<a href="stream.Voice.html">stream.Voice</a>
+							<a href="music21.stream.Stream.html">music21.stream.Stream</a>
 						</li>
 						
 						<li>
-							<a href="streamInteraction.PixelMapper.html">streamInteraction.PixelMapper</a>
+							<a href="music21.stream.Voice.html">music21.stream.Voice</a>
 						</li>
 						
 						<li>
-							<a href="vfShow.Renderer.html">vfShow.Renderer</a>
+							<a href="music21.streamInteraction.PixelMap.html">music21.streamInteraction.PixelMap</a>
+						</li>
+						
+						<li>
+							<a href="music21.streamInteraction.PixelMapper.html">music21.streamInteraction.PixelMapper</a>
+						</li>
+						
+						<li>
+							<a href="music21.streamInteraction.ScrollPlayer.html">music21.streamInteraction.ScrollPlayer</a>
+						</li>
+						
+						<li>
+							<a href="music21.vfShow.Renderer.html">music21.vfShow.Renderer</a>
+						</li>
+						
+						<li>
+							<a href="music21.vfShow.RenderStack.html">music21.vfShow.RenderStack</a>
 						</li>
 						
 
@@ -695,6 +747,9 @@
             <td class="type">
             
                 
+<span class="param-type">string</span>
+|
+
 <span class="param-type"><a href="music21.note.Note.html">music21.note.Note</a></span>
 |
 
@@ -708,7 +763,7 @@
 
             
 
-            <td class="description last"><p>the Note or Pitch to be added.</p></td>
+            <td class="description last"><p>the Note or Pitch to be added or a string defining a pitch.</p></td>
         </tr>
 
 	
@@ -993,7 +1048,7 @@
         
             
 <dt>
-    <h4 class="name" id="getChordStep"><span class="type-signature">&lt;static> </span>chord.Chord#getChordStep<span class="signature">(chordStep, <span class="optional">testRoot</span>)</span><span class="type-signature"> &rarr; {<a href="music21.pitch.Pitch.html">music21.pitch.Pitch</a>}</span></h4>
+    <h4 class="name" id="getChordStep"><span class="type-signature">&lt;static> </span>chord.Chord#getChordStep<span class="signature">(chordStep, <span class="optional">testRoot</span>)</span><span class="type-signature"> &rarr; {<a href="music21.pitch.Pitch.html">music21.pitch.Pitch</a>|undefined}</span></h4>
     
     
 </dt>
@@ -1046,7 +1101,7 @@ the first one in <code>.pitches</code> is returned.</p>
             <td class="type">
             
                 
-<span class="param-type">number</span>
+<span class="param-type">Int</span>
 
 
             
@@ -1064,7 +1119,7 @@ the first one in <code>.pitches</code> is returned.</p>
 
             
 
-            <td class="description last"></td>
+            <td class="description last"><p>a positive integer representing the chord step</p></td>
         </tr>
 
 	
@@ -1169,6 +1224,9 @@ the first one in <code>.pitches</code> is returned.</p>
 	<dd>
 		
 <span class="param-type"><a href="music21.pitch.Pitch.html">music21.pitch.Pitch</a></span>
+|
+
+<span class="param-type">undefined</span>
 
 
 	</dd>
@@ -1470,7 +1528,7 @@ the first one in <code>.pitches</code> is returned.</p>
     
     
     <div class="description">
-        <p>Removes any pitches that appear more than once and returns a new Chord.</p>
+        <p>Removes any pitches that appear more than once (in any octave), removing the higher ones, and returns a new Chord.</p>
     </div>
     
 
@@ -1660,7 +1718,7 @@ the first one in <code>.pitches</code> is returned.</p>
         
             
 <dt>
-    <h4 class="name" id="semitonesFromChordStep"><span class="type-signature">&lt;static> </span>chord.Chord#semitonesFromChordStep<span class="signature">(chordStep, <span class="optional">testRoot</span>)</span><span class="type-signature"> &rarr; {number}</span></h4>
+    <h4 class="name" id="semitonesFromChordStep"><span class="type-signature">&lt;static> </span>chord.Chord#semitonesFromChordStep<span class="signature">(chordStep, <span class="optional">testRoot</span>)</span><span class="type-signature"> &rarr; {number|undefined}</span></h4>
     
     
 </dt>
@@ -1827,7 +1885,7 @@ return 4 for chordStep=3, since the third of the chord (B) is four semitones abo
     
             
 <div class="param-desc">
-    <p>Number of semitones above the root for this chord step.</p>
+    <p>Number of semitones above the root for this chord step or undefined if no pitch matches that chord step.</p>
 </div>
 
 
@@ -1839,6 +1897,9 @@ return 4 for chordStep=3, since the third of the chord (B) is four semitones abo
 	<dd>
 		
 <span class="param-type">number</span>
+|
+
+<span class="param-type">undefined</span>
 
 
 	</dd>
@@ -2016,7 +2077,7 @@ return 4 for chordStep=3, since the third of the chord (B) is four semitones abo
 					
 		<span class="jsdoc-message">
 		Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a>
-		on Sat Oct 25th 2014 using the <a
+		on Sat Nov 1st 2014 using the <a
 			href="https://github.com/terryweiss/docstrap">DocStrap template</a>.
 		</span>
 				</footer>

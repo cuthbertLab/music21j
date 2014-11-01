@@ -1,11 +1,43 @@
-define(['vexflow', './common'], function(Vex, common) {
+define(['vexflow', './common'], 
+    /**
+     * for rendering vexflow. Will eventually go to music21/converter/vexflow
+     * 
+     * See {@link music21.vfShow} namespace for details
+     * 
+     * @exports music21/vfShow
+     */
+        function(Vex, common) {
+    /**
+     * Vexflow display related objects and methods.
+     * 
+     * @namespace music21.vfShow
+     * @memberof music21
+     * @requires music21/common
+     * @requires vexflow
+     */
     var vfShow = {}; 
     
+    /**
+     * Represents a stack of objects that need to be rendered together.
+     * 
+     * An intermediary state for showing created by {@link music21.vfShow.Renderer}.
+     * 
+     * @class RenderStack
+     * @memberof music21.vfShow
+     * @property {Array<Vex.Flow.Voice>} voices - Vex.Flow.Voice objects
+     * @property {Array<music21.stream.Stream>} streams - {@link music21.stream.Stream} objects associated with the voices
+     * @property {Array} textVoices - Vex.Flow.Voice objects for the text.
+     */
     vfShow.RenderStack = function () {
         this.voices = [];
         this.streams = [];
         this.textVoices = [];
     };
+
+    /**
+     * @memberof music21.vfShow.RenderStack
+     * @returns {Array} this.voices and this.textVoices as one array
+     */
     vfShow.RenderStack.prototype.allTickables = function () {
         var t = [];
         t.push.apply(t, this.voices);
@@ -26,7 +58,22 @@ define(['vexflow', './common'], function(Vex, common) {
      * "canvas" and "where" can be either a DOM
      * element or a jQuery object.
      * 
-     * @constructor vfShow.Renderer
+     * @class Renderer
+     * @memberof music21.vfShow
+     * @param {music21.stream.Stream} s - main stream to render
+     * @param {canvas} [canvas] - existing canvas element
+     * @param {DOMObject|jQueryDOMObject} [where=document.body] - where to render the stream
+     * @property {Vex.Flow.Renderer} vfRenderer - a Vex.Flow.Renderer to use (will create if not existing)
+     * @property {Vex.Flow.Context} ctx - a Vex.Flow.Context (Canvas or Raphael [not yet]) to use.
+     * @property {canvas} canvas - canvas element
+     * @property {jQueryDOMObject} $canvas - jQuery canvas element
+     * @property {jQueryDOMObject} $where - jQuery element to render onto
+     * @property {Vex.Flow.Formatter} activeFormatter - formatter
+     * @property {Array<Vex.Flow.Beam>} beamGroups - beamGroups
+     * @property {Array<Vex.Flow.StaveTie>} ties - ties
+     * @property {Array<number>} systemBreakOffsets - where to break the systems
+     * @property {Array<Vex.Flow.Tuplet>} vfTuplets - tuplets represented in Vexflow
+     * @property {Array<music21.vfShow.RenderStack>} stacks - array of RenderStack objects
      */
     vfShow.Renderer = function (s, canvas, where) {
         this.stream = s;
@@ -39,7 +86,7 @@ define(['vexflow', './common'], function(Vex, common) {
         this._vfRenderer = undefined;
         this._ctx = undefined;
         this.beamGroups = [];
-        this.stacks = []; // an Array of dictionaries: {voices: [Array of Vex.Flow.Voice objects],
+        this.stacks = []; // an Array of RenderStacks: {voices: [Array of Vex.Flow.Voice objects],
                           //                            streams: [Array of Streams, usually Measures]}
         this.ties = [];
         this.systemBreakOffsets = [];
@@ -95,12 +142,14 @@ define(['vexflow', './common'], function(Vex, common) {
     };
         
     /**
-     * @memberof vfShow.Renderer
      * 
      * main function to render a Stream.
      * 
      * if s is undefined, uses the stored Stream from
      * the constructor object.
+     * 
+     * @memberof music21.vfShow.Renderer
+     * @param {music21.stream.Stream} [s=this.stream]
      */
     vfShow.Renderer.prototype.render = function (s) {
         if (s === undefined) {
@@ -134,11 +183,12 @@ define(['vexflow', './common'], function(Vex, common) {
     };
 
     /**
-     * @memberof vfShow.Renderer
-     * 
      * Prepares a scorelike stream (i.e., one with parts or
      * Streams that should be rendered vertically like parts)
      * for rendering and adds Staff Connectors
+     * 
+     * @memberof music21.vfShow.Renderer
+     * @param {music21.stream.Score} s - prepare a stream of parts (i.e., Score)
      */
     vfShow.Renderer.prototype.prepareScorelike = function (s) {
         //console.log('prepareScorelike called');
@@ -150,13 +200,13 @@ define(['vexflow', './common'], function(Vex, common) {
     };
     
     /**
-     * @memberof vfShow.Renderer
      * 
      * Prepares a Partlike stream (that is one with Measures
      * or substreams that should be considered like Measures)
      * for rendering.
      * 
-     * Assumes that measures are flat. TODO: allow voices.
+     * @memberof music21.vfShow.Renderer
+     * @param {music21.stream.Part} p
      */
     vfShow.Renderer.prototype.preparePartlike = function (p) {
         //console.log('preparePartlike called');
@@ -178,10 +228,11 @@ define(['vexflow', './common'], function(Vex, common) {
     };        
     /**
      * 
-     * @memberof vfShow.Renderer
-     * 
      * Prepares a score that arrived flat... sets up
      * stacks and ties after calling prepareFlat
+     *
+     * @memberof music21.vfShow.Renderer
+     * @param {music21.stream.Stream} m - a flat stream (maybe a measure or voice)
      */
     vfShow.Renderer.prototype.prepareArrivedFlat = function (m) {
         var stack = new vfShow.RenderStack();
@@ -190,27 +241,40 @@ define(['vexflow', './common'], function(Vex, common) {
         this.prepareTies(m);
     };
     /**
-     * @memberof vfShow.Renderer
      *
      * Prepares a measure (w/ or w/o voices) or generic Stream -- makes accidentals,
      * associates a Vex.Flow.Stave with the stream and
      * returns a vexflow Voice object
+     *
+     * @memberof music21.vfShow.Renderer
+     * @param {music21.stream.Measure} m - a measure object (w or w/o voices)
+     * @param {music21.vfShow.RenderStack} stack - a RenderStack object to prepare into.
      */
-    vfShow.Renderer.prototype.prepareMeasure = function (s, stack) {
-        // TODO: don't assume that all elements are Voices;
-        if (s.hasVoices == undefined || s.hasVoices() == false) {
-            this.prepareFlat(s, stack);
+    vfShow.Renderer.prototype.prepareMeasure = function (m, stack) {
+        if (m.hasVoices == undefined || m.hasVoices() == false) {
+            this.prepareFlat(m, stack);
         } else {
+            // TODO: don't assume that all elements are Voices;
             var stave = undefined;
-            var rendOp = s.renderOptions; // get render options from Measure;
-            for (var voiceIndex = 0; voiceIndex < s.length; voiceIndex++) {
-                var voiceStream = s.get(voiceIndex);
+            var rendOp = m.renderOptions; // get render options from Measure;
+            for (var voiceIndex = 0; voiceIndex < m.length; voiceIndex++) {
+                var voiceStream = m.get(voiceIndex);
                 stave = this.prepareFlat(voiceStream, stack, stave, rendOp);
             }            
         }
         return stack;
     };
 
+    /**
+    * Main internal routine to prepare a flat stream
+    *
+    * @memberof music21.vfShow.Renderer
+    * @param {music21.stream.Stream} s - a flat stream object
+    * @param {music21.vfShow.RenderStack} stack - a RenderStack object to prepare into.
+    * @param {Vex.Flow.Stave} [optionalStave] - an optional existing stave.
+    * @param {object} [optional_renderOp] - render options. Passed to {@link music21.vfShow.Renderer#renderStave}
+    * @returns {Vex.Flow.Stave} staff to return too (also changes the `stack` parameter and runs `makeAccidentals` on s)
+    */
     vfShow.Renderer.prototype.prepareFlat = function (s, stack, optionalStave, optional_renderOp) {
         s.makeAccidentals();
         var stave = undefined;
@@ -233,10 +297,13 @@ define(['vexflow', './common'], function(Vex, common) {
 
     
     /**
-     * Render a measure as a stave
+     * Render the Vex.Flow.Stave from a flat stream and draws it.
      * 
-     * @memberof vfShow.Renderer
-     * @param {music21.stream.Measure} m
+     * Just draws the stave, not the notes, etc.
+     * 
+     * @memberof music21.vfShow.Renderer
+     * @param {music21.stream.Stream} [m=this.stream] - a flat stream
+     * @param {object} [optional_rendOp] - render options, passed to {@link music21.vfShow.Renderer#newStave} and {@link music21.vfShow.Renderer#setClefEtc}
      * @returns {Vex.Flow.Stave} stave
      */
     vfShow.Renderer.prototype.renderStave = function (m, optional_rendOp) {   
@@ -254,6 +321,11 @@ define(['vexflow', './common'], function(Vex, common) {
     };
     
 
+    /**
+     * Draws the Voices (music and text) from `this.stacks`
+     * 
+     * @memberof music21.vfShow.Renderer
+     */
     vfShow.Renderer.prototype.drawMeasureStacks = function () {
         var ctx = this.ctx;
         for (var i = 0; i < this.stacks.length; i++) {
@@ -264,18 +336,37 @@ define(['vexflow', './common'], function(Vex, common) {
             }
         }
     };
+    
+    /**
+     * draws the tuplets.
+     * 
+     * @memberof music21.vfShow.Renderer
+     */
     vfShow.Renderer.prototype.drawTuplets = function () {
         var ctx = this.ctx;
         this.vfTuplets.forEach( function(vft) { 
             vft.setContext(ctx).draw();
         });
     };
+    /**
+     * draws the ties
+     * 
+     * @memberof music21.vfShow.Renderer
+     */
     vfShow.Renderer.prototype.drawTies = function () {
         var ctx = this.ctx;
         for (var i = 0; i < this.ties.length; i++) {
             this.ties[i].setContext(ctx).draw();
         }
     };
+    
+    /**
+     * Finds all tied notes and creates the proper Vex.Flow.StaveTie objects in
+     * `this.ties`.
+     * 
+     * @memberof music21.vfShow.Renderer
+     * @param {music21.stream.Part} p - a Part or similar object
+     */
     vfShow.Renderer.prototype.prepareTies = function (p) {
         var pf = p.flat.notesAndRests;
         //console.log('newSystemsAt', this.systemBreakOffsets);
@@ -321,10 +412,13 @@ define(['vexflow', './common'], function(Vex, common) {
     };
     
     /**
+     * Returns a Vex.Flow.Voice object with all the tickables (i.e., Notes, Voices, etc.)
      * 
-     * @memberof vfShow.Renderer
-     * @param {music21.stream.Stream} s -- usually a Measure or Voice
-     * @param {Vex.Flow.Stave} stave
+     * Does not draw it...
+     * 
+     * @memberof music21.vfShow.Renderer
+     * @param {music21.stream.Stream} [s=this.stream] -- usually a Measure or Voice
+     * @param {Vex.Flow.Stave} stave - not optional (would never fly in Python...)
      * @returns {Vex.Flow.Voice}
      */    
     vfShow.Renderer.prototype.getVoice = function (s, stave) {
@@ -342,8 +436,9 @@ define(['vexflow', './common'], function(Vex, common) {
     };
 
     /**
+     * Returns a Vex.Flow.Voice with the lyrics set to render in the proper place.
      * 
-     * @memberof vfShow.Renderer
+     * @memberof music21.vfShow.Renderer
      * @param {music21.stream.Stream} s -- usually a Measure or Voice
      * @param {Vex.Flow.Stave} stave
      * @returns {Vex.Flow.Voice}
@@ -356,7 +451,11 @@ define(['vexflow', './common'], function(Vex, common) {
         return textVoice;
     };
     
-    
+    /**
+     * Aligns all of `this.stacks` (after they've been prepared) so they align properly.
+     * 
+     * @memberof music21.vfShow.Renderer
+     */
     vfShow.Renderer.prototype.formatMeasureStacks = function () {
         // adds formats the voices, then adds the formatter information to every note in a voice...
         for (var i = 0; i < this.stacks.length; i++) {
@@ -371,6 +470,15 @@ define(['vexflow', './common'], function(Vex, common) {
             }
         }
     };
+    
+    /**
+     * Formats a single voice group from a stack.
+     * 
+     * @memberof music21.vfShow.Renderer
+     * @param {music21.vfShow.RenderStack} stack
+     * @param {Boolean} [autoBeam=measures[0].autoBeam]
+     * @returns {Vex.Flow.Formatter}
+     */
     vfShow.Renderer.prototype.formatVoiceGroup = function (stack, autoBeam) {
         // formats a group of voices to use the same formatter; returns the formatter
         // if autoBeam is true then it will apply beams for each voice and put them in
@@ -420,6 +528,11 @@ define(['vexflow', './common'], function(Vex, common) {
         return formatter;
     };
 
+    /**
+     * Draws the beam groups.
+     * 
+     * @memberof music21.vfShow.Renderer
+     */
     vfShow.Renderer.prototype.drawBeamGroups = function () {
         var ctx = this.ctx;
         // draw beams
@@ -433,7 +546,7 @@ define(['vexflow', './common'], function(Vex, common) {
      * Return a new Vex.Flow.Stave object, which represents
      * a single MEASURE of notation in m21j
      * 
-     * @memberof vfShow.Renderer
+     * @memberof music21.vfShow.Renderer
      * @param {music21.stream.Stream} s
      * @returns {Vex.Flow.Stave}
      */
@@ -465,6 +578,14 @@ define(['vexflow', './common'], function(Vex, common) {
         return stave;
     };
     
+    /**
+     * Sets the number of stafflines, puts the clef on the Stave, adds keySignature, timeSignature, and rightBarline
+     * 
+     * @memberof music21.vfShow.Renderer
+     * @param {music21.stream.Stream} s
+     * @param {Vex.Flow.Stave} stave
+     * @param {object} [rendOp=s.renderOptions] - a {@link music21.renderOptions.RenderOptions} object that might have `{showMeasureNumber: boolean, rightBarLine: string<{'single', 'double', 'end'}>}`
+     */
     vfShow.Renderer.prototype.setClefEtc = function (s, stave, rendOp) {
         if (rendOp === undefined) {
             rendOp = s.renderOptions;
@@ -504,6 +625,18 @@ define(['vexflow', './common'], function(Vex, common) {
         }
        
     };
+    
+    /**
+     * Sets the number of stafflines properly for the Stave object.
+     * 
+     * This method does not just set Vex.Flow.Stave#setNumLines() except
+     * if the number of lines is 0 or >=4, because the default in VexFlow is
+     * to show the bottom(top?), not middle, lines and that looks bad.
+     * 
+     * @memberof music21.vfShow.Renderer
+     * @param {music21.stream.Stream} s - stream to get the `.staffLines` from `s.renderOptions` from -- should allow for overriding.
+     * @param {Vex.Flow.Stave} vexflowStave - stave to set the staff lines for.
+     */
     vfShow.Renderer.prototype.setStafflines = function(s, vexflowStave) {
         var rendOp = s.renderOptions;
         if (rendOp.staffLines != 5) {
@@ -534,6 +667,17 @@ define(['vexflow', './common'], function(Vex, common) {
             }
         }
     };
+    /**
+     * 
+     * Gets the Vex.Flow.StaveNote objects from a Stream.
+     * 
+     * Also changes `this.vfTuplets`.
+     * 
+     * @memberof music21.vfShow.Renderer
+     * @param {music21.stream.Stream} [s=this.stream] - flat stream to find notes in
+     * @param {Vex.Flow.Stave} stave
+     * @returns {Array<Vex.Flow.StaveNote>} notes to return
+     */
     vfShow.Renderer.prototype.vexflowNotes = function (s, stave) {
         if (s === undefined) {
             s = this.stream;
@@ -599,7 +743,14 @@ define(['vexflow', './common'], function(Vex, common) {
         return notes;
     };
     
-    
+    /**
+     * Gets an Array of `Vex.Flow.TextNote` objects from any lyrics found in s
+     * 
+     * @memberof music21.vfShow.Renderer
+     * @param {music21.stream.Stream} s - flat stream to search.
+     * @param {Vex.Flow.Stave} stave
+     * @returns {Array<Vex.Flow.TextNote>}
+     */
     vfShow.Renderer.prototype.vexflowLyrics = function (s, stave) {
         var getTextNote = function (text, font, d) {
             //console.log(text, font, d);
@@ -650,23 +801,34 @@ define(['vexflow', './common'], function(Vex, common) {
         }
         return lyricsObjects;
     };
-    
+    /**
+     * Creates a Vex.Flow.Voice of the appropriate length given a Stream.
+     * 
+     * @memberof music21.vfShow.Renderer
+     * @param {music21.stream.Stream} s
+     * @returns {Vex.Flow.Voice}
+     */
     vfShow.Renderer.prototype.vexflowVoice = function (s) {
         var vfv;
         var totalLength = s.duration.quarterLength;
         
-        // TODO: BIG FIX: assumes not 7/32, 15/256, etc...
-        var numSixteenths = Math.round(totalLength / 0.25);
+        var num1024 = Math.round(totalLength / (1/256));
+        var beatValue = 1024;
         
-        var beatValue = 16;
-        if (numSixteenths % 8 == 0) { beatValue = 2; numSixteenths = numSixteenths / 8; }
-        else if (numSixteenths % 4 == 0) { beatValue = 4; numSixteenths = numSixteenths / 4; }
-        else if (numSixteenths % 2 == 0) { beatValue = 8; numSixteenths = numSixteenths / 2; }        
+        if      (num1024 % 512 == 0)  { beatValue = 2; num1024 = num1024 / 512; }
+        else if (num1024 % 256 == 0)  { beatValue = 4; num1024 = num1024 / 256; }
+        else if (num1024 % 128 == 0)  { beatValue = 8; num1024 = num1024 / 128; }
+        else if (num1024 % 64 == 0)  { beatValue = 16; num1024 = num1024 / 64; }
+        else if (num1024 % 32 == 0)  { beatValue = 32; num1024 = num1024 / 32; }
+        else if (num1024 % 16 == 0)  { beatValue = 64; num1024 = num1024 / 16; }
+        else if (num1024 % 8 == 0)  { beatValue = 128; num1024 = num1024 / 8; }
+        else if (num1024 % 4 == 0)  { beatValue = 256; num1024 = num1024 / 4; }
+        else if (num1024 % 2 == 0)  { beatValue = 512; num1024 = num1024 / 2; }        
         //console.log('creating voice');
         if (music21.debug) {
-            console.log("New voice, num_beats: " + numSixteenths.toString() + " beat_value: " + beatValue.toString());
+            console.log("New voice, num_beats: " + num1024.toString() + " beat_value: " + beatValue.toString());
         }
-        vfv = new Vex.Flow.Voice({ num_beats: numSixteenths,
+        vfv = new Vex.Flow.Voice({ num_beats: num1024,
                                     beat_value: beatValue,
                                     resolution: Vex.Flow.RESOLUTION });
         
@@ -688,6 +850,12 @@ define(['vexflow', './common'], function(Vex, common) {
             'bracket': Vex.Flow.StaveConnector.type.BRACKET, 
     };
     
+    /**
+     * If a stream has parts (NOT CHECKED HERE) create and draw an appropriate Vex.Flow.StaveConnector
+     * 
+     * @memberof music21.vfShow.Renderer
+     * @param {music21.stream.Score} s
+     */
     vfShow.Renderer.prototype.addStaffConnectors = function (s) {
         if (s === undefined) {
             s = this.stream;
@@ -721,13 +889,23 @@ define(['vexflow', './common'], function(Vex, common) {
     };
 
     /**
-     *  For later retrieval of notes from, say, a clicked score.
+     * The process of putting a Stream onto a canvas affects each of the
+     * elements in the Stream by adding pieces of information to
+     * each {@link music21.base.Music21Object} -- see `applyFormatterInformationToNotes`
+     * 
+     * You might want to remove this information; this routine does that.
+     * 
+     * @memberof music21.vfShow.Renderer
+     * @param {music21.stream.Stream} s - can have parts, measures, etc.
+     * @param {boolean} [recursive=false]
      */
     vfShow.Renderer.prototype.removeFormatterInformation = function(s, recursive) {
         s.storedVexflowStave = undefined;
         for (var i = 0; i < s.length; i ++ ) {
             var el = s.get(i);
             el.x = undefined;
+            el.y = undefined;
+            el.width = undefined;
             el.systemIndex = undefined;
             el.activeVexflowNote = undefined;
             if (recursive && el.isClassOrSubclass('Stream')) {
@@ -735,9 +913,26 @@ define(['vexflow', './common'], function(Vex, common) {
             }
         }
     };
+    
+    /**
+     * Adds the following pieces of information to each Note
+     * 
+     * - el.x -- x location in pixels
+     * - el.y -- y location in pixels
+     * - el.width - width of element in pixels.
+     * - el.systemIndex -- which system is it on
+     * - el.activeVexflowNote - which Vex.Flow.StaveNote is it connected with.
+     *
+     * mad props to our friend Vladimir Viro for figuring this out! Visit http://peachnote.com/
+     *
+     * Also sets s.storedVexflowStave to stave.
+     *
+     * @memberof music21.vfShow.Renderer
+     * @param {Vex.Flow.Stave} stave
+     * @param {music21.stream.Stream} [s=this.stream]
+     * @param {Vex.Flow.Formatter} formatter
+     */
     vfShow.Renderer.prototype.applyFormatterInformationToNotes = function (stave, s, formatter) {
-        // mad props to our friend Vladimir Viro for figuring this out!
-        // visit http://peachnote.com/
         if (s === undefined) {
             s = this.stream;
         }
