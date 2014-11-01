@@ -103,6 +103,8 @@ var getM21attribute = function (attrName) {
     }
 };
 var warnBanner = (getM21attribute('warnBanner') != 'no' ) ? true : false;
+
+// get scriptConfig
 if (typeof m21conf === 'undefined') {
     m21conf = {};
     var m21browserAttribute = getM21attribute('m21conf');
@@ -110,6 +112,9 @@ if (typeof m21conf === 'undefined') {
         m21conf = JSON.parse(m21browserAttribute);
     }
 }
+
+
+
 if (typeof m21srcPath === 'undefined') {
     if (typeof require !== 'undefined') {
         m21srcPath = pathSimplify(require.toUrl('music21') + '/..');

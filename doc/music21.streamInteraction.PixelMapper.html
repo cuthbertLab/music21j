@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 	<meta charset="utf-8">
-	<title>Music21j Class: GeneralNote</title>
+	<title>Music21j Class: PixelMapper</title>
 
 	<!--[if lt IE 9]>
 	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -308,14 +308,14 @@
 					
 
 
-	<h1 class="page-title">Class: GeneralNote</h1>
+	<h1 class="page-title">Class: PixelMapper</h1>
 <section>
 
 <header>
     <h2>
-        <span class="ancestors"><a href="music21.html">music21</a><a href="music21.note.html">.note</a>.</span>
+        <span class="ancestors"><a href="music21.html">music21</a><a href="music21.streamInteraction.html">.streamInteraction</a>.</span>
     
-    GeneralNote
+    PixelMapper
     </h2>
     
 </header>
@@ -327,7 +327,7 @@
     
         
 <dt>
-    <h4 class="name" id="GeneralNote"><span class="type-signature"></span>new GeneralNote<span class="signature">(<span class="optional">ql</span>)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="PixelMapper"><span class="type-signature"></span>new PixelMapper<span class="signature">(s)</span><span class="type-signature"></span></h4>
     
     
 </dt>
@@ -335,7 +335,8 @@
     
     
     <div class="description">
-        <p>Superclass for all Note values</p>
+        <p>A <code>PixelMapper</code> is an object that knows how to map offsets to pixels on a flat Stream.</p>
+<p>Helper for ScrollPlayer and soon other places...</p>
     </div>
     
 
@@ -357,11 +358,7 @@
 		<th>Type</th>
 
 		
-		<th>Argument</th>
-		
 
-		
-		<th>Default</th>
 		
 
 		<th class="last">Description</th>
@@ -373,42 +370,23 @@
 
         <tr>
             
-                <td class="name"><code>ql</code></td>
+                <td class="name"><code>s</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">number</span>
-|
-
-<span class="param-type">undefined</span>
+<span class="param-type"><a href="music21.stream.Stream.html">music21.stream.Stream</a></span>
 
 
             
             </td>
 
             
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
 
             
-                <td class="default">
-                
-                    1.0
-                
-                </td>
-            
 
-            <td class="description last"><p>quarterLength of the note</p></td>
+            <td class="description last"><p>stream object</p></td>
         </tr>
 
 	
@@ -435,11 +413,7 @@
 		<th>Type</th>
 
 		
-		<th>Argument</th>
-		
 
-		
-		<th>Default</th>
 		
 
 		<th class="last">Description</th>
@@ -451,44 +425,76 @@
 
         <tr>
             
-                <td class="name"><code>isChord</code></td>
+                <td class="name"><code>allMaps</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">boolean</span>
+<span class="param-type">Array.&lt;<a href="music21.streamInteraction.PixelMap.html">music21.streamInteraction.PixelMap</a>></span>
 
 
             
             </td>
 
             
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-                </td>
-            
 
             
-                <td class="default">
-                
-                    false
-                
-                </td>
-            
 
-            <td class="description last"><p>is this a chord</p></td>
+            <td class="description last"><p>a <code>PixelMap</code> object for each offset in the Stream and one additional one for the end of the Stream.</p></td>
         </tr>
 
 	
 
         <tr>
             
-                <td class="name"><code>quarterLength</code></td>
+                <td class="name"><code>s</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="music21.stream.Stream.html">music21.stream.Stream</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>stream object</p></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>notesAndRests</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="music21.stream.Stream.html">music21.stream.Stream</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p><code>this.stream.flat.notesAndRests</code></p></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>pixelScaling</code></td>
             
 
             <td class="type">
@@ -501,192 +507,17 @@
             </td>
 
             
-                <td class="attributes">
-                
-
-                
-                </td>
-            
 
             
-                <td class="default">
-                
-                </td>
-            
 
-            <td class="description last"><p>shortcut to <code>.duration.quarterLength</code></p></td>
+            <td class="description last"><p><code>this.stream.renderOptions.scaleFactor.x</code></p></td>
         </tr>
 
 	
 
         <tr>
             
-                <td class="name"><code>activeVexflowNote</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">object</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                </td>
-            
-
-            <td class="description last"><p>most recent Vex.Flow.StaveNote object to be made from this note (could change); default, undefined</p></td>
-        </tr>
-
-	
-
-        <tr>
-            
-                <td class="name"><code>expressions</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Array.&lt;music21.expressions.Expression></span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                </td>
-            
-
-            <td class="description last"><p>array of attached expressions</p></td>
-        </tr>
-
-	
-
-        <tr>
-            
-                <td class="name"><code>articulations</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Array.&lt;music21.articulations.Articulation></span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                </td>
-            
-
-            <td class="description last"><p>array of attached articulations</p></td>
-        </tr>
-
-	
-
-        <tr>
-            
-                <td class="name"><code>lyric</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                </td>
-            
-
-            <td class="description last"><p>the text of the first <a href="music21.note.Lyric.html"><code>music21.note.Lyric</code></a> object; can also set one.</p></td>
-        </tr>
-
-	
-
-        <tr>
-            
-                <td class="name"><code>lyrics</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Array.&lt;<a href="music21.note.Lyric.html">music21.note.Lyric</a>></span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                </td>
-            
-
-            <td class="description last"><p>array of attached lyrics</p></td>
-        </tr>
-
-	
-
-        <tr>
-            
-                <td class="name"><code>volume</code></td>
+                <td class="name"><code>startX</code></td>
             
 
             <td class="type">
@@ -699,31 +530,17 @@
             </td>
 
             
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-                </td>
-            
 
             
-                <td class="default">
-                
-                    60
-                
-                </td>
-            
 
-            <td class="description last"><p>how loud is this note, 0-127, before articulations</p></td>
+            <td class="description last"><p>(readonly) starting x</p></td>
         </tr>
 
 	
 
         <tr>
             
-                <td class="name"><code>midiVolume</code></td>
+                <td class="name"><code>maxX</code></td>
             
 
             <td class="type">
@@ -736,60 +553,33 @@
             </td>
 
             
-                <td class="attributes">
-                
-
-                
-                </td>
-            
 
             
-                <td class="default">
-                
-                </td>
-            
 
-            <td class="description last"><p>how loud is this note, taking into account articulations</p></td>
+            <td class="description last"><p>(readonly) ending x</p></td>
         </tr>
 
 	
 
         <tr>
             
-                <td class="name"><code>tie</code></td>
+                <td class="name"><code>maxSystemIndex</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">music21.note.Tie</span>
-|
-
-<span class="param-type">undefined</span>
+<span class="param-type">Int</span>
 
 
             
             </td>
 
             
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-                </td>
-            
 
             
-                <td class="default">
-                
-                    undefined
-                
-                </td>
-            
 
-            <td class="description last"><p>a tie object</p></td>
+            <td class="description last"><p>the index of the last system.</p></td>
         </tr>
 
 	
@@ -822,8 +612,8 @@
 	<dd class="tag-source">
 		<ul class="dummy">
 			<li>
-				<a href="note.js.html">music21/note.js</a>,
-				 <a href="note.js.html#sunlight-1-line-158">line 158</a>
+				<a href="streamInteraction.js.html">music21/streamInteraction.js</a>,
+				 <a href="streamInteraction.js.html#sunlight-1-line-198">line 198</a>
 			</li>
 		</ul>
 	</dd>
@@ -853,12 +643,6 @@
     
     </div>
 
-    
-        <h3 class="subsection-title">Extends</h3>
-
-        <ul>
-            <li><a href="music21.base.Music21Object.html">music21.base.Music21Object</a></li>
-        </ul>
     
 
     
@@ -877,7 +661,7 @@
         <dl>
             
 <dt>
-    <h4 class="name" id="addLyric"><span class="type-signature">&lt;static> </span>note.GeneralNote#addLyric<span class="signature">(text, <span class="optional">lyricNumber</span>, <span class="optional">applyRaw</span>, <span class="optional">lyricIdentifier</span>)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="addNoteToMap"><span class="type-signature">&lt;static> </span>streamInteraction.PixelMapper#addNoteToMap<span class="signature">(n)</span><span class="type-signature"> &rarr; {<a href="music21.streamInteraction.PixelMap.html">music21.streamInteraction.PixelMap</a>}</span></h4>
     
     
 </dt>
@@ -885,7 +669,9 @@
     
     
     <div class="description">
-        <p>Add a <a href="music21.note.Lyric.html"><code>music21.note.Lyric</code></a> object to the Note</p>
+        <p>Adds a <a href="music21.base.Music21Object.html"><code>music21.base.Music21Object</code></a>, usually a <a href="music21.note.Note.html"><code>music21.note.Note</code></a> object,
+to the maps for the PixelMapper if a <a href="music21.streamInteraction.PixelMap.html"><code>music21.streamInteraction.PixelMap</code></a> object
+already exists at that location, or creates a new <code>PixelMap</code> if one does not exist.</p>
     </div>
     
 
@@ -907,11 +693,7 @@
 		<th>Type</th>
 
 		
-		<th>Argument</th>
-		
 
-		
-		<th>Default</th>
 		
 
 		<th class="last">Description</th>
@@ -923,148 +705,23 @@
 
         <tr>
             
-                <td class="name"><code>text</code></td>
+                <td class="name"><code>n</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">string</span>
+<span class="param-type"><a href="music21.base.Music21Object.html">music21.base.Music21Object</a></span>
 
 
             
             </td>
 
             
-                <td class="attributes">
-                
-
-                
-
-                
-                </td>
-            
 
             
-                <td class="default">
-                
-                </td>
-            
 
-            <td class="description last"><p>text to be added</p></td>
-        </tr>
-
-	
-
-        <tr>
-            
-                <td class="name"><code>lyricNumber</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">number</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                </td>
-            
-
-            <td class="description last"><p>integer specifying lyric (defaults to the current <code>.lyrics.length</code> + 1)</p></td>
-        </tr>
-
-	
-
-        <tr>
-            
-                <td class="name"><code>applyRaw</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">boolean</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                    false
-                
-                </td>
-            
-
-            <td class="description last"><p>if <code>true</code>, do not parse the text for cluses about syllable placement.</p></td>
-        </tr>
-
-	
-
-        <tr>
-            
-                <td class="name"><code>lyricIdentifier</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                </td>
-            
-
-            <td class="description last"><p>an optional identifier</p></td>
+            <td class="description last"><p>note or other object</p></td>
         </tr>
 
 	
@@ -1100,227 +757,8 @@
 	<dd class="tag-source">
 		<ul class="dummy">
 			<li>
-				<a href="note.js.html">music21/note.js</a>,
-				 <a href="note.js.html#sunlight-1-line-247">line 247</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-    
-    
-
-    
-
-    
-    
-    
-    
-    
-    
-    
-</dd>
-
-        
-            
-<dt>
-    <h4 class="name" id="playMidi"><span class="type-signature">&lt;static> </span>note.GeneralNote#playMidi<span class="signature">(<span class="optional">tempo</span>, <span class="optional">nextElement</span>, <span class="optional">options</span>)</span><span class="type-signature"> &rarr; {Number}</span></h4>
-    
-    
-</dt>
-<dd>
-    
-    
-    <div class="description">
-        <p>Play the current element as a MIDI note.</p>
-    </div>
-    
-
-    
-    
-    
-    
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params table table-striped">
-    <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-
-		<th>Type</th>
-
-		
-		<th>Argument</th>
-		
-
-		
-		<th>Default</th>
-		
-
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-
-	<tbody>
-	
-
-        <tr>
-            
-                <td class="name"><code>tempo</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">number</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                    120
-                
-                </td>
-            
-
-            <td class="description last"><p>tempo in bpm</p></td>
-        </tr>
-
-	
-
-        <tr>
-            
-                <td class="name"><code>nextElement</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">base.Music21Object</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                </td>
-            
-
-            <td class="description last"><p>for determining the length to play in case of tied notes, etc.</p></td>
-        </tr>
-
-	
-
-        <tr>
-            
-                <td class="name"><code>options</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">object</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                </td>
-            
-
-            <td class="description last"><p>other options (currently just <code>{instrument: <code>music21.instrument.Instrument</code> }</code>)</p></td>
-        </tr>
-
-	
-	</tbody>
-</table>
-
-    
-    
-    
-<dl class="details">
-	
-
-	
-
-	
-
-	
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-	<dt class="tag-source">Source:</dt>
-	<dd class="tag-source">
-		<ul class="dummy">
-			<li>
-				<a href="note.js.html">music21/note.js</a>,
-				 <a href="note.js.html#sunlight-1-line-334">line 334</a>
+				<a href="streamInteraction.js.html">music21/streamInteraction.js</a>,
+				 <a href="streamInteraction.js.html#sunlight-1-line-282">line 282</a>
 			</li>
 		</ul>
 	</dd>
@@ -1347,9 +785,7 @@
     
             
 <div class="param-desc">
-    <ul>
-<li>delay time in milliseconds until the next element (may be ignored)</li>
-</ul>
+    <p>PixelMap added to.</p>
 </div>
 
 
@@ -1360,7 +796,7 @@
 	</dt>
 	<dd>
 		
-<span class="param-type">Number</span>
+<span class="param-type"><a href="music21.streamInteraction.PixelMap.html">music21.streamInteraction.PixelMap</a></span>
 
 
 	</dd>
@@ -1375,7 +811,7 @@
         
             
 <dt>
-    <h4 class="name" id="setStemDirectionFromClef"><span class="type-signature">&lt;static> </span>note.GeneralNote#setStemDirectionFromClef<span class="signature">(<span class="optional">clef</span>)</span><span class="type-signature"> &rarr; {undefined}</span></h4>
+    <h4 class="name" id="findMapForExactOffset"><span class="type-signature">&lt;static> </span>streamInteraction.PixelMapper#findMapForExactOffset<span class="signature">(o)</span><span class="type-signature"> &rarr; {<a href="music21.streamInteraction.PixelMap.html">music21.streamInteraction.PixelMap</a>|undefined}</span></h4>
     
     
 </dt>
@@ -1383,7 +819,7 @@
     
     
     <div class="description">
-        <p>Change stem direction according to clef. Does nothing for GeneralNote; overridden in subclasses.</p>
+        <p>Finds a <code>PixelMap</code> object if one matches this exact offset. Otherwise returns undefined</p>
     </div>
     
 
@@ -1405,8 +841,6 @@
 		<th>Type</th>
 
 		
-		<th>Argument</th>
-		
 
 		
 
@@ -1419,33 +853,23 @@
 
         <tr>
             
-                <td class="name"><code>clef</code></td>
+                <td class="name"><code>o</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">music21.clef.Clef</span>
+<span class="param-type">number</span>
 
 
             
             </td>
 
             
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
 
             
 
-            <td class="description last"><p>clef to set the stem direction of.</p></td>
+            <td class="description last"><p>offset</p></td>
         </tr>
 
 	
@@ -1481,8 +905,8 @@
 	<dd class="tag-source">
 		<ul class="dummy">
 			<li>
-				<a href="note.js.html">music21/note.js</a>,
-				 <a href="note.js.html#sunlight-1-line-276">line 276</a>
+				<a href="streamInteraction.js.html">music21/streamInteraction.js</a>,
+				 <a href="streamInteraction.js.html#sunlight-1-line-302">line 302</a>
 			</li>
 		</ul>
 	</dd>
@@ -1516,6 +940,9 @@
 	</dt>
 	<dd>
 		
+<span class="param-type"><a href="music21.streamInteraction.PixelMap.html">music21.streamInteraction.PixelMap</a></span>
+|
+
 <span class="param-type">undefined</span>
 
 
@@ -1531,7 +958,7 @@
         
             
 <dt>
-    <h4 class="name" id="vexflowAccidentalsAndDisplay"><span class="type-signature">&lt;static> </span>note.GeneralNote#vexflowAccidentalsAndDisplay<span class="signature">(vfn)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="getPixelMapsAroundOffset"><span class="type-signature">&lt;static> </span>streamInteraction.PixelMapper#getPixelMapsAroundOffset<span class="signature">(offset)</span><span class="type-signature"> &rarr; {Array.&lt;(<a href="music21.streamInteraction.PixelMap.html">music21.streamInteraction.PixelMap</a>|undefined)>}</span></h4>
     
     
 </dt>
@@ -1539,7 +966,10 @@
     
     
     <div class="description">
-        <p>Sets the vexflow accidentals (if any), the dots, and the stem direction</p>
+        <p>returns an array of two pixel maps: the previous/current one and the
+        next/current one (i.e., if the offset is exactly the offset of a pixel map
+        the prevNoteMap and nextNoteMap will be the same; similarly if the offset is
+        beyond the end of the score)</p>
     </div>
     
 
@@ -1573,13 +1003,13 @@
 
         <tr>
             
-                <td class="name"><code>vfn</code></td>
+                <td class="name"><code>offset</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">Vex.Flow.StaveNote</span>
+<span class="param-type">number</span>
 
 
             
@@ -1589,7 +1019,7 @@
 
             
 
-            <td class="description last"><p>a Vex.Flow note</p></td>
+            <td class="description last"></td>
         </tr>
 
 	
@@ -1625,8 +1055,8 @@
 	<dd class="tag-source">
 		<ul class="dummy">
 			<li>
-				<a href="note.js.html">music21/note.js</a>,
-				 <a href="note.js.html#sunlight-1-line-285">line 285</a>
+				<a href="streamInteraction.js.html">music21/streamInteraction.js</a>,
+				 <a href="streamInteraction.js.html#sunlight-1-line-337">line 337</a>
 			</li>
 		</ul>
 	</dd>
@@ -1649,6 +1079,471 @@
     
     
     
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+    <p>returns two PixelMaps; or either (but not both) can be undefined</p>
+</div>
+
+
+
+<dl>
+	<dt>
+		Type
+	</dt>
+	<dd>
+		
+<span class="param-type">Array.&lt;(<a href="music21.streamInteraction.PixelMap.html">music21.streamInteraction.PixelMap</a>|undefined)></span>
+
+
+	</dd>
+</dl>
+
+
+        
+    
+    
+        <h5>Example</h5>
+        
+    <pre class="sunlight-highlight-javascript">var s = new music21.tinyNotation.TinyNotation(&#x27;3&#x2F;4 c4 d8 e f4 g4 a4 b4&#x27;);
+var can = s.appendNewCanvas();
+var pm = new music21.streamInteraction.PixelMapper(s);
+var pmaps = pm.getPixelMapsAropundOffset(1.25);
+var prev = pmaps[0];
+var next = pmaps[1];
+prev.offset
+&#x2F;&#x2F; 1
+next.offset
+&#x2F;&#x2F; 1.5
+prev.x
+&#x2F;&#x2F; 97...
+next.x
+&#x2F;&#x2F; 123...</pre>
+
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="getSystemIndexAtOffset"><span class="type-signature">&lt;static> </span>streamInteraction.PixelMapper#getSystemIndexAtOffset<span class="signature">(offset)</span><span class="type-signature"> &rarr; {number}</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        <p>Uses the stored offsetToPixelMaps to get the systemIndex active at the current time.</p>
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+
+		<th>Type</th>
+
+		
+
+		
+
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+
+	<tbody>
+	
+
+        <tr>
+            
+                <td class="name"><code>offset</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+	
+	</tbody>
+</table>
+
+    
+    
+    
+<dl class="details">
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="streamInteraction.js.html">music21/streamInteraction.js</a>,
+				 <a href="streamInteraction.js.html#sunlight-1-line-408">line 408</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+    <p>systemIndex of the offset</p>
+</div>
+
+
+
+<dl>
+	<dt>
+		Type
+	</dt>
+	<dd>
+		
+<span class="param-type">number</span>
+
+
+	</dd>
+</dl>
+
+
+        
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="getXAtOffset"><span class="type-signature">&lt;static> </span>streamInteraction.PixelMapper#getXAtOffset<span class="signature">(offset, offsetToPixelMaps)</span><span class="type-signature"> &rarr; {number}</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        <p>Uses the stored offsetToPixelMaps to get the pixel X for the offset.</p>
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+
+		<th>Type</th>
+
+		
+
+		
+
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+
+	<tbody>
+	
+
+        <tr>
+            
+                <td class="name"><code>offset</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>offsetToPixelMaps</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;<a href="music21.streamInteraction.PixelMap.html">music21.streamInteraction.PixelMap</a>></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+	
+	</tbody>
+</table>
+
+    
+    
+    
+<dl class="details">
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="streamInteraction.js.html">music21/streamInteraction.js</a>,
+				 <a href="streamInteraction.js.html#sunlight-1-line-377">line 377</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    <h5>Returns:</h5>
+    
+            
+
+
+<dl>
+	<dt>
+		Type
+	</dt>
+	<dd>
+		
+<span class="param-type">number</span>
+
+
+	</dd>
+</dl>
+
+
+        
+    
+    
+        <h5>Example</h5>
+        
+    <pre class="sunlight-highlight-javascript">var s = new music21.tinyNotation.TinyNotation(&#x27;3&#x2F;4 c4 d8 e f4 g4 a4 b4&#x27;);
+var can = s.appendNewCanvas();
+var pm = new music21.streamInteraction.PixelMapper(s);
+pm.getXAtOffset(0.0); &#x2F;&#x2F; exact placement of a note
+&#x2F;&#x2F; 89.94...
+pm.getXAtOffset(0.5); &#x2F;&#x2F; between two notes
+&#x2F;&#x2F; 138.63...</pre>
+
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="processStream"><span class="type-signature">&lt;static> </span>streamInteraction.PixelMapper#processStream<span class="signature">()</span><span class="type-signature"> &rarr; {Array.&lt;<a href="music21.streamInteraction.PixelMap.html">music21.streamInteraction.PixelMap</a>>}</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        <p>Creates <code>PixelMap</code> objects for every note in the stream, and an extra
+one mapping the end of the final offset.</p>
+    </div>
+    
+
+    
+    
+    
+    
+    
+    
+    
+<dl class="details">
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="streamInteraction.js.html">music21/streamInteraction.js</a>,
+				 <a href="streamInteraction.js.html#sunlight-1-line-254">line 254</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    <h5>Returns:</h5>
+    
+            
+
+
+<dl>
+	<dt>
+		Type
+	</dt>
+	<dd>
+		
+<span class="param-type">Array.&lt;<a href="music21.streamInteraction.PixelMap.html">music21.streamInteraction.PixelMap</a>></span>
+
+
+	</dd>
+</dl>
+
+
+        
     
     
 </dd>

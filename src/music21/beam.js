@@ -218,9 +218,9 @@ define(['./prebase', './duration'],
             throw('invalid beam type');
         }
         for (var i = 0; i < this.length; i++ ) {
-            var beam = this.beamsList[i];
-            beam.type = type;
-            beam.direction = direction;
+            var b = this.beamsList[i];
+            b.type = type;
+            b.direction = direction;
         }
         return this;
     };

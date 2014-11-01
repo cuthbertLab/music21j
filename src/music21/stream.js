@@ -10,10 +10,65 @@
  */
 define(['./base','./renderOptions','./clef', './vfShow', './duration', 
         './common', './meter', './pitch', './streamInteraction', 'jquery'], 
+        /**
+         * powerful stream module, See {@link music21.stream} namespace
+         * @exports music21/stream
+         */
         function(base, renderOptions, clef, vfShow, duration, 
                  common, meter, pitch, streamInteraction, $) {   
+    /**
+     * Streams are powerful music21 objects that hold Music21Object collections,
+     * such as {@link music21.note.Note} or {@link music21.chord.Chord} objects.
+     * 
+     * Understanding the {@link music21.stream.Stream} object is of fundamental
+     * importance for using music21.  Definitely read the music21(python) tutorial
+     * on using Streams before proceeding
+     * 
+     * @namespace music21.stream
+     * @memberof music21
+     * @requires music21/base
+     * @requires music21/renderOptions
+     * @requires music21/clef
+     * @requires music21/vfShow
+     * @requires music21/duration
+     * @requires music21/common
+     * @requires music21/meter
+     * @requires music21/pitch
+     * @requires music21/streamInteraction
+     * @requires jquery
+     */
     var stream = {};
 	
+    /**
+     * A generic Stream class -- a holder for other music21 objects
+     * Will be subclassed into {@link music21.stream.Score},
+     * {@link music21.stream.Part},
+     * {@link music21.stream.Measure},
+     * {@link music21.stream.Voice}, but most functions will be found here.
+     * 
+     * @class Stream
+     * @memberof music21.stream
+     * @extends music21.base.Music21Object
+     * 
+     * @property {Array<music21.base.Music21Object>} elements - the elements in the stream. DO NOT MODIFY individual components (consider it like a Python tuple)
+     * @property {Int} length - (readonly) the number of elements in the stream.
+     * @property {music21.duration.Duration} duration - the total duration of the stream's elements
+     * @property {music21.clef.Clef} clef - the clef for the Stream (if there is one; if there are multiple, then the first clef)
+     * @property {music21.meter.TimeSignature} timeSignature - the first TimeSignature of the Stream
+     * @property {music21.key.KeySignature} keySignature - the first KeySignature for the Stream
+     * @property {music21.renderOptions.RenderOptions} renderOptions - an object specifying how to render the stream
+     * @property {music21.stream.Stream} flat - (readonly) a flattened representation of the Stream
+     * @property {music21.stream.Stream} notes - (readonly) the stream with only {@link music21.note.Note} and {@link music21.chord.Chord} objects included
+     * @property {music21.stream.Stream} notesAndRests - (readonly) like notes but also with {@link music21.note.Rest} objects included
+     * @property {music21.stream.Stream} parts - (readonly) a filter on the Stream to just get the parts (NON-recursive)
+     * @property {music21.stream.Stream} measures - (readonly) a filter on the Stream to just get the measures (NON-recursive)
+     * @property {number} tempo - tempo in beats per minute (will become more sophisticated later, but for now the whole stream has one tempo
+     * @property {music21.instrument.Instrument|undefined} instrument - an instrument object associated with the stream (can be set with a string also, but will return an `Instrument` object)
+     * @property {Boolean} autoBeam - whether the notes should be beamed automatically or not (will be moved to `renderOptions` soon)
+     * @property {Int} [staffLines=5] - number of staff lines
+     * @property {function|undefined} changedCallbackFunction - function to call when the Stream changes through a standard interface
+     * @property {number} maxSystemWidth - confusing... should be in renderOptions
+     */
 	stream.Stream = function () {
 		base.Music21Object.call(this);
 		this.classes.push('Stream');
@@ -345,6 +400,13 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
         return ret;  
     };
 	
+    /**
+     * Add an element to the end of the stream, setting its `.offset` accordingly
+     * 
+     * @memberof music21.stream.Stream
+     * @param {music21.base.Music21Object} el - element to append
+     * @returns {this}
+     */
 	stream.Stream.prototype.append = function (el) {
         try {
             if ((el.isClassOrSubclass !== undefined) && el.isClassOrSubclass('NotRest')) {
@@ -366,6 +428,14 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
 
     };
 
+    /**
+     * Add an element to the specified place in the stream, setting its `.offset` accordingly
+     * 
+     * @memberof music21.stream.Stream
+     * @param {number} offset - offset to place.
+     * @param {music21.base.Music21Object} el - element to append
+     * @returns {this}
+     */
     stream.Stream.prototype.insert = function (offset, el) {
         try {
             if ((el.isClassOrSubclass !== undefined) && el.isClassOrSubclass('NotRest')) {
@@ -395,6 +465,12 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
         return this;
     };
     
+    /**
+     * Remove and return the last element in the stream, or return undefined if the stream is empty
+     * 
+     * @memberof music21.stream.Stream
+     * @returns {music21.base.Music21Object|undefined} last element in the stream
+     */
     stream.Stream.prototype.pop = function () {
         //remove last element;
         if (this.length > 0) {
@@ -407,6 +483,14 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
         }
     };
     
+    /**
+     * Get the `index`th element from the Stream.  Equivalent to the
+     * music21p format of s[index].  Can use negative indexing to get from the end.
+     * 
+     * @memberof music21.stream.Stream
+     * @param {Int} index - can be -1, -2, to index from the end, like python
+     * @returns {music21.base.Music21Object|undefined}
+     */
     stream.Stream.prototype.get = function (index) {
         // substitute for Python stream __getitem__; supports -1 indexing, etc.
         if (index === undefined) { 
@@ -427,6 +511,12 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
     };
     /*  --- ############# END ELEMENT FUNCTIONS ########## --- */
     
+    /**
+     * Returns Boolean about whether this stream contains any other streams.
+     * 
+     * @memberof music21.stream.Stream
+     * @returns {Boolean}
+     */
     stream.Stream.prototype.hasSubStreams = function () {
         var hasSubStreams = false;
         for (var i = 0; i < this.length; i++) {
@@ -440,8 +530,9 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
     };
     
     /**
-     * Returns true if any note in the stream has lyrics.
+     * Returns true if any note in the stream has lyrics, otherwise false
      * 
+     * @memberof music21.stream.Stream
      * @returns {Boolean}
      */
     stream.Stream.prototype.hasLyrics = function () {
@@ -454,7 +545,14 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
         return false;
     };
     
-    
+    /**
+     * Find all elements with a certain class; if an Array is given, then any
+     * matching class will work.
+     * 
+     * @memberof music21.stream.Stream
+     * @param {Array<string>|string} classList - a list of classes to find
+     * @returns {music21.stream.Stream}
+     */
     stream.Stream.prototype.getElementsByClass = function (classList) {
         var tempEls = [];
         for (var i = 0; i < this.length; i++ ) {
@@ -470,7 +568,16 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
         newSt.elements = tempEls;
         return newSt;           
     };
-    
+    /**
+     * Sets Pitch.accidental.displayStatus for every element with a
+     * pitch or pitches in the stream. If a natural needs to be displayed
+     * and the Pitch does not have an accidental object yet, adds one.
+     * 
+     * Called automatically before appendCanvas routines are called.
+     * 
+     * @memberof music21.stream.Stream
+     * @returns {music21.stream.Stream} this
+     */
     stream.Stream.prototype.makeAccidentals = function () {
         // cheap version of music21p method
         var extendableStepList = {};
@@ -498,12 +605,12 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
             if (el.pitch != undefined) { // note
                 var p = el.pitch;
                 var lastStepDict = lastOctaveStepList[p.octave];                
-                this.makeAccidentalForOnePitch(p, lastStepDict, lastOctavelessStepDict);
+                this._makeAccidentalForOnePitch(p, lastStepDict, lastOctavelessStepDict);
             } else if (el._noteArray != undefined) { // chord
                 for (var j = 0; j < el._noteArray.length; j++) {
                     var p = el._noteArray[j].pitch;
                     var lastStepDict = lastOctaveStepList[p.octave];
-                    this.makeAccidentalForOnePitch(p, lastStepDict, lastOctavelessStepDict);
+                    this._makeAccidentalForOnePitch(p, lastStepDict, lastOctavelessStepDict);
                 }
             }
         }
@@ -511,7 +618,7 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
     };
 
     // returns pitch
-    stream.Stream.prototype.makeAccidentalForOnePitch = function (p, lastStepDict, lastOctavelessStepDict) {
+    stream.Stream.prototype._makeAccidentalForOnePitch = function (p, lastStepDict, lastOctavelessStepDict) {
         var newAlter;
         if (p.accidental == undefined) {
             newAlter = 0;
@@ -539,10 +646,27 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
         return p;
     };	
 
+    /**
+     * Sets the render options for any substreams (such as placing them
+     * in systems, etc.) DOES NOTHING for music21.stream.Stream, but is
+     * overridden in subclasses.
+     * 
+     * @memberof music21.stream.Stream
+     * @returns {music21.stream.Stream} this
+     */
     stream.Stream.prototype.setSubstreamRenderOptions = function () {
         /* does nothing for standard streams ... */
         return this;
     };
+    /**
+     * Resets all the RenderOptions back to defaults. Can run recursively
+     * and can also preserve the `RenderOptions.events` object.
+     * 
+     * @memberof music21.stream.Stream
+     * @param {Boolean} [recursive=false]
+     * @param {Boolean} [preserveEvents=false]
+     * @returns {music21.stream.Stream} this
+     */
     stream.Stream.prototype.resetRenderOptions = function (recursive, preserveEvents) {
         var oldEvents = this.renderOptions.events;
         this.renderOptions = new renderOptions.RenderOptions();
@@ -560,7 +684,24 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
         }
         return this;
     };
-    /*  VexFlow functionality */
+    
+    
+    //**********  VexFlow functionality
+    
+    /**
+     * Uses {@link music21.vfShow.Renderer} to render Vexflow onto an
+     * existing canvas object.
+     * 
+     * Sets canvas.storedStream to this
+     * 
+     * Runs `this.setRenderInteraction` on the canvas.
+     * 
+     * Will be moved to vfShow eventually when converter objects are enabled...maybe.
+     * 
+     * @memberof music21.stream.Stream
+     * @param {DOMObject|JQueryDOMObject} canvas - a canvas object
+     * @returns {music21.stream.Stream} this
+     */
     stream.Stream.prototype.renderVexflowOnCanvas = function (canvas) {
         if (canvas.jquery) {
             canvas = canvas[0];
@@ -569,8 +710,18 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
         vfr.render();
         canvas.storedStream = this;
         this.setRenderInteraction(canvas);
+        return this;
     };    
-    
+
+    /**
+     * Estimate the stream height for the Stream.
+     * 
+     * If there are systems they will be incorporated into the height unless `ignoreSystems` is `true`.
+     * 
+     * @memberof music21.stream.Stream
+     * @param {Boolean} [ignoreSystems=false]
+     * @returns {number} height in pixels
+     */
     stream.Stream.prototype.estimateStreamHeight = function (ignoreSystems) {
         var staffHeight = this.renderOptions.naiveHeight;
         var systemPadding = this.systemPadding;
@@ -599,6 +750,13 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
             return staffHeight;
         }
     };    
+    
+    /**
+     * Estimates the length of the Stream in pixels.
+     * 
+     * @memberof music21.stream.Stream
+     * @returns {number} length in pixels
+     */
     stream.Stream.prototype.estimateStaffLength = function () {
         if (this.renderOptions.overriddenWidth != undefined) {
             //console.log("Overridden staff width: " + this.renderOptions.overriddenWidth);
@@ -635,11 +793,23 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
         }
     };
 
-    /* MIDI related routines... */
-    
+    //****** MIDI related routines...
+
+    /**
+     * Plays the Stream through the MIDI/sound playback (for now, only MIDI.js is supported)
+     * 
+     * `options` can be an object containing:
+     * - instrument: {@link music21.instrument.Instrument} object (default, `this.instrument`)
+     * - tempo: number (default, `this.tempo`)
+     * 
+     * Does not have functionality for stopping etc., will be removed eventually
+     * and replaced with something better in {@link music21.streamInteraction}
+     * 
+     * @memberof music21.stream.Stream
+     * @param {object} [options] - object of playback options
+     * @returns {music21.stream.Stream} this
+     */
     stream.Stream.prototype.playStream = function (options) {
-        /*
-         */
         var params = {
             instrument: this.instrument,
             tempo: this.tempo
@@ -675,21 +845,41 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
             }
         };
         playNext(flatEls, params);
+        return this;
     };
     
+    /**
+     * Stops a stream from playing if it currently is.
+     * 
+     * @memberof music21.stream.Stream
+     * @returns {musci21.stream.Stream} this
+     */
     stream.Stream.prototype.stopPlayStream = function () {
         // turns off all currently playing MIDI notes (on any stream) and stops playback.
         this._stopPlaying = true;
         for (var i = 0; i < 127; i++) {
             music21.MIDI.noteOff(0, i, 0);
         }
+        return this;
     };
-    /** ----------------------------------------------------------------------
+    /* ----------------------------------------------------------------------
      * 
      *  Canvas routines -- to be factored out eventually.
      * 
      */
-    
+
+    /**
+     * Creates and returns a new `&lt;canvas&gt;` object.
+     * 
+     * Calls setSubstreamRenderOptions() first.
+     * 
+     * Does not render on canvas.
+     * 
+     * @memberof music21.stream.Stream
+     * @param {number|string|undefined} width - will use `this.estimateStaffLength()` + `this.renderOptions.staffPadding` if not given
+     * @param {number|string|undefined} height - if undefined will use `this.renderOptions.height`. If still undefined, will use `this.estimateStreamHeight()`
+     * @returns {JQueryDOMObject} canvas in jquery.
+     */
     stream.Stream.prototype.createNewCanvas = function (width, height) {
         if (this.hasSubStreams() ) { 
             this.setSubstreamRenderOptions();
@@ -722,15 +912,45 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
         }
         return newCanvas;
     };
+    
+    /**
+     * Creates a rendered, playable canvas where clicking plays it.
+     * 
+     * Called from appendNewCanvas() etc.
+     * 
+     * @memberof music21.stream.Stream
+     * @param {number|string|undefined} width
+     * @param {number|string|undefined} height
+     * @returns {JQueryDOMObject} canvas
+     */
     stream.Stream.prototype.createPlayableCanvas = function (width, height) {
         this.renderOptions.events['click'] = 'play';
         return this.createCanvas(width, height);
     };
+
+    /**
+     * Creates a new canvas and renders vexflow on it
+     * 
+     * @memberof music21.stream.Stream
+     * @param {number|string|undefined} [width]
+     * @param {number|string|undefined} [height]
+     * @returns {JQueryDOMObject} canvas
+     */
     stream.Stream.prototype.createCanvas = function(width, height) {
         var $newCanvas = this.createNewCanvas(width, height);
         this.renderVexflowOnCanvas($newCanvas);
         return $newCanvas;    
     };
+    /**
+     * Creates a new canvas, renders vexflow on it, and appends it to the DOM.
+     * 
+     * @memberof music21.stream.Stream
+     * @param {JQueryDOMObject|DOMObject} [appendElement=document.body] - where to place the canvas
+     * @param {number|string} [width]
+     * @param {number|string} [height]
+     * @returns {DOMObject} canvas (not the jQueryDOMObject -- this is a difference with other routines and should be fixed. TODO: FIX)
+     * 
+     */
     stream.Stream.prototype.appendNewCanvas = function (appendElement, width, height) {
         if (appendElement == undefined) {
             appendElement = 'body';
@@ -753,6 +973,16 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
         return canvasBlock[0];
     };
     
+    /**
+     * Replaces a particular Canvas with a new rendering of one.
+     * 
+     * Note that if 'where' is empty, will replace all canvases on the page.
+     * 
+     * @memberof music21.stream.Stream
+     * @param {JQueryDOMObject|DOMObject} [where] - the canvas to replace or a container holding the canvas(es) to replace.
+     * @param {Boolean} [preserveCanvasSize=false]
+     * @returns {JQueryDOMObject} the canvas
+     */
     stream.Stream.prototype.replaceCanvas = function (where, preserveCanvasSize) {
         // if called with no where, replaces all the canvases on the page...
         if (where == undefined) {
@@ -794,6 +1024,16 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
         $oldCanvas.replaceWith(canvasBlock);
         return canvasBlock;
     };
+
+    /**
+     * Renders a canvas which has a scrollbar when clicked.
+     * 
+     * (this is a dumb way of doing this.  Expect it to disappear...)
+     * 
+     * @memberof music21.stream.Stream
+     * @param {JQueryDOMObject|DOMObject} [where]
+     * @returns {JQueryDOMObject}
+     */
     stream.Stream.prototype.renderScrollableCanvas = function (where) {
         var $where = where;
         if (where === undefined) {
@@ -811,30 +1051,46 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
         c = this.appendNewCanvas( $innerDiv );
         this.setRenderInteraction( $innerDiv );
         $where.append( $innerDiv );
+        return c;
     };
     
+    /**
+     * Sets up a {@link music21.streamInteraction.ScrollPlayer} for this
+     * canvas.
+     * 
+     * @memberof music21.stream.Stream
+     * @param {DOMObject} c - canvas
+     * @param {Event} [event] - the event that caused the scrolling to start
+     * (needed because `event.stopPropagation()` is called)
+     * @returns {music21.stream.Stream} this
+     */
     stream.Stream.prototype.scrollScoreStart = function (c, event) {
         var scrollPlayer = new streamInteraction.ScrollPlayer(this, c);
         scrollPlayer.startPlaying();
         if (event !== undefined) {
             event.stopPropagation();
         }
+        return this;
     };
+
     
+    /**
+     * Set the type of interaction on the canvas based on 
+     *    - Stream.renderOptions.events['click']
+     *    - Stream.renderOptions.events['dblclick']
+     *    - Stream.renderOptions.events['resize']
+     *    
+     * Currently the only options available for each are:
+     *    - 'play' (string)
+     *    - 'reflow' (string; only on event['resize'])
+     *    - customFunction (will receive event as a first variable; should set up a way to
+     *                    find the original stream; var s = this; var f = function () { s...}
+     *                   )
+     * @memberof music21.stream.Stream
+     * @param {DOMObject} canvasOrDiv - canvas or the Div surrounding it.
+     * @returns {music21.stream.Stream} this
+     */
     stream.Stream.prototype.setRenderInteraction = function (canvasOrDiv) {
-        /*
-         * Set the type of interaction on the canvas based on 
-         *    Stream.renderOptions.events['click']
-         *    Stream.renderOptions.events['dblclick']
-         *    Stream.renderOptions.events['resize']
-         *    
-         * Currently the only options available for each are:
-         *    'play' (string)
-         *    'reflow' (string; only on event['resize'])
-         *    customFunction (will receive event as a first variable; should set up a way to
-         *                    find the original stream; var s = this; var f = function () { s...}
-         *                   )
-         */
         var $canvas = canvasOrDiv;
         if (canvasOrDiv === undefined) {
             return;
@@ -856,12 +1112,16 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
             }
         }, this ) );
         return this;
-
     };
+    
+    /**
+     * 
+     * Recursively search downward for the closest storedVexflowStave...
+     *
+     * @memberof music21.stream.Stream
+     * @returns {Vex.Flow.Stave|undefined}
+     */
     stream.Stream.prototype.recursiveGetStoredVexflowStave = function () {
-        /*
-         * Recursively search downward for the closest storedVexflowStave...
-         */
         var storedVFStave = this.storedVexflowStave;
         if (storedVFStave == undefined) {
             if (!this.hasSubStreams()) {
@@ -880,11 +1140,16 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
         return storedVFStave;
     };
 
+    /**
+     * Given a mouse click, or other event with .pageX and .pageY,
+     * find the x and y for the canvas.
+     * 
+     * @memberof music21.stream.Stream
+     * @param {DOMObject} canvas
+     * @param {Event} e
+     * @returns {Array<number>} two-elements, [x, y] in pixels.
+     */
     stream.Stream.prototype.getUnscaledXYforCanvas = function (canvas, e) {
-        /*
-         * return a list of [X, Y] for
-         * a canvas element
-         */
         var offset = null;
         if (canvas == undefined) {
             offset = {left: 0, top: 0};
@@ -907,14 +1172,19 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
         return [xPx, yPx];
     };
     
+    /**
+     * return a list of [scaledX, scaledY] for
+     * a canvas element.
+     * 
+     * xScaled refers to 1/scaleFactor.x -- for instance, scaleFactor.x = 0.7 (default)
+     * x of 1 gives 1.42857...
+     * 
+     * @memberof music21.stream.Stream
+     * @param {DOMObject} canvas
+     * @param {Event} e
+     * @returns {Array<number>} [scaledX, scaledY]
+     */
     stream.Stream.prototype.getScaledXYforCanvas = function (canvas, e) {
-        /*
-         * return a list of [scaledX, scaledY] for
-         * a canvas element
-         * 
-         * xScaled refers to 1/scaleFactor.x -- for instance, scaleFactor.x = 0.7 (default)
-         * x of 1 gives 1.42857...
-         */
         var _ = this.getUnscaledXYforCanvas(canvas, e);
         var xPx = _[0];
         var yPx = _[1];
@@ -924,13 +1194,19 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
         var xPxScaled = xPx / pixelScaling.x;
         return [xPxScaled, yPxScaled];
     };
+    /**
+     * 
+     * Given a Y position find the diatonicNoteNum that a note at that position would have.
+     * 
+     * searches this.storedVexflowStave
+     * 
+     * Y position must be offset from the start of the stave...
+     *
+     * @memberof music21.stream.Stream
+     * @param {number} yPxScaled
+     * @returns {Int}
+     */
     stream.Stream.prototype.diatonicNoteNumFromScaledY = function (yPxScaled) {
-        /*
-         * Given a Y position find the note at that position.
-         * searches this.storedVexflowStave
-         * 
-         * Y position must be offset from the start of the stave...
-         */
         var storedVFStave = this.recursiveGetStoredVexflowStave();
         //for (var i = -10; i < 10; i++) {
         //    console.log("line: " + i + " y: " + storedVFStave.getYForLine(i));
@@ -943,13 +1219,21 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
         var clickedDiatonicNoteNum = this.clef.firstLine + Math.round(notesAboveFirstLine);
         return clickedDiatonicNoteNum;
     };
+    
+    /**
+     * 
+     * Return the note at pixel X (or within allowablePixels [default 10])
+     * of the note.
+     * 
+     * systemIndex element is not used on bare Stream
+
+     * @memberof music21.stream.Stream
+     * @param {number} xPxScaled
+     * @param {number} [allowablePixels=10]
+     * @param {number} [unused_systemIndex]
+     * @returns {music21.base.Music21Object|undefined}
+     */
     stream.Stream.prototype.noteElementFromScaledX = function (xPxScaled, allowablePixels, unused_systemIndex) {
-        /*
-         * Return the note at pixel X (or within allowablePixels [default 10])
-         * of the note.
-         * 
-         * systemIndex element is not used on bare Stream
-         */
         var foundNote = undefined;
         if (allowablePixels == undefined) {
             allowablePixels = 10;   
@@ -970,11 +1254,19 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
         return foundNote;
     };
     
+    /**
+     * 
+     * Return a list of [diatonicNoteNum, closestXNote]
+     * for an event (e) called on the canvas (canvas)
+     *
+     * @memberof music21.stream.Stream
+     * @param {DOMObject} canvas
+     * @param {Event} e
+     * @param {number} x
+     * @param {number} y
+     * @returns {Array} [diatonicNoteNum, closestXNote]
+     */
     stream.Stream.prototype.findNoteForClick = function (canvas, e, x, y) {
-        /*
-         * Return a list of [diatonicNoteNum, closestXNote]
-         * for an event (e) called on the canvas (canvas)
-         */
         if (x == undefined || y == undefined) {
             var _ = this.getScaledXYforCanvas(canvas, e);
             x = _[0];
@@ -984,42 +1276,69 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
         var foundNote = this.noteElementFromScaledX(x);
         return [clickedDiatonicNoteNum, foundNote];
     };
-        
+      
+    /**
+     * A function to be called when a canvas is clicked, etc. that
+     * will change the stream in some way. (For instance in an
+     * editable canvas mode).
+     * 
+     * This is a mess and will be changed soon...
+     * "this" refers to the CANVAS
+     *
+     *      var can = s.appendNewCanvas();
+     *      $(can).on('click', s.canvasChangerFunction);
+     * 
+     * written before I knew about `.bind()`
+     * 
+     * @memberof music21.stream.Stream
+     * @param {Event} e
+     * @returns {music21.base.Music21Object|undefined} - returns whatever changedCallbackFunction does.
+     */
     stream.Stream.prototype.canvasChangerFunction = function (e) {
-        /* N.B. -- not to be called on a stream -- "this" refers to the CANVAS
-        
-            var can = s.appendNewCanvas();
-            $(can).on('click', s.canvasChangerFunction);
-        
-        */
         var ss = this.storedStream;
         var _ = ss.findNoteForClick(this, e),
              clickedDiatonicNoteNum = _[0],
              foundNote = _[1];
-        if (foundNote == undefined) {
+        if (foundNote === undefined) {
             if (music21.debug) {
                 console.log('No note found');               
             }
+            return undefined;
         }
         return ss.noteChanged(clickedDiatonicNoteNum, foundNote, this);
     };
-
+    /**
+     * Change the pitch of a note given that it has been clicked and then
+     * call changedCallbackFunction
+     * 
+     * To be removed...
+     * 
+     * @memberof music21.stream.Stream
+     * @param {Int} clickedDiatonicNoteNum
+     * @param {music21.base.Music21Object} foundNote
+     * @param {DOMObject} canvas
+     * @returns {any} output of changedCallbackFunction
+     */
     stream.Stream.prototype.noteChanged = function (clickedDiatonicNoteNum, foundNote, canvas) {
-        if (foundNote != undefined) {
-            var n = foundNote;
-            p = new pitch.Pitch("C");
-            p.diatonicNoteNum = clickedDiatonicNoteNum;
-            p.accidental = n.pitch.accidental;
-            n.pitch = p;
-            n.stemDirection = undefined;
-            this.activeNote = n;
-            this.redrawCanvas(canvas);
-            if (this.changedCallbackFunction != undefined) {
-                this.changedCallbackFunction({foundNote: n, canvas: canvas});
-            }
+        var n = foundNote;
+        p = new pitch.Pitch("C");
+        p.diatonicNoteNum = clickedDiatonicNoteNum;
+        p.accidental = n.pitch.accidental;
+        n.pitch = p;
+        n.stemDirection = undefined;
+        this.activeNote = n;
+        this.redrawCanvas(canvas);
+        if (this.changedCallbackFunction != undefined) {
+            return this.changedCallbackFunction({foundNote: n, canvas: canvas});
         }
     };
-    
+    /**
+     * Redraws a canvas, keeping the events of the previous canvas.
+     * 
+     * @memberof music21.stream.Stream
+     * @param {DOMObject} canvas
+     * @returns {music21.stream.Stream} this
+     */
     stream.Stream.prototype.redrawCanvas = function (canvas) {
         //this.resetRenderOptions(true, true); // recursive, preserveEvents
         //this.setSubstreamRenderOptions();
@@ -1032,6 +1351,15 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
         return this;
     };
     
+    /**
+     * Renders a stream on a canvas with the ability to edit it and
+     * a toolbar that allows the accidentals to be edited.
+     * 
+     * @memberof music21.stream.Stream
+     * @param {number} [width]
+     * @param {number} [height]
+     * @returns {DOMObject} &lt;div&gt; tag around the canvas.
+     */
     stream.Stream.prototype.editableAccidentalCanvas = function (width, height) {
         /*
          * Create an editable canvas with an accidental selection bar.
@@ -1050,6 +1378,11 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
      * Canvas toolbars...
      */
     
+    /**
+     * 
+     * @memberof music21.stream.Stream
+     * @returns {DOMObject} the accidental toolbar.
+     */
     stream.Stream.prototype.getAccidentalToolbar = function () {
         
         var addAccidental = function (clickedButton, alter) {
@@ -1080,6 +1413,11 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
         return buttonDiv;
 
     };
+    /**
+     * 
+     * @memberof music21.stream.Stream
+     * @returns {DOMObject} a play toolbar
+     */
     stream.Stream.prototype.getPlayToolbar = function () {
         var buttonDiv = $("<div/>").attr('class','playToolbar vexflowToolbar').css('position','absolute').css('top','10px');
         buttonDiv.append( $("<span/>").css('margin-left', '50px'));
@@ -1089,6 +1427,15 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
     };
     // reflow
     
+    /**
+     * Begins a series of bound events to the window that makes it
+     * so that on resizing the stream is redrawn and reflowed to the 
+     * new size.
+     * 
+     * @memberof music21.stream.Stream
+     * @param {JQueryDOMObject} jCanvas
+     * @returns {music21.stream.Stream} this
+     */
     stream.Stream.prototype.windowReflowStart = function (jCanvas) {
         // set up a bunch of windowReflow bindings that affect the canvas.
         var callingStream = this;
@@ -1126,6 +1473,12 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
         }, 1000);
         return this;
     };
+    /**
+     * Does this stream have a {@link music21.stream.Voice} inside it?
+     * 
+     * @memberof music21.stream.Stream
+     * @returns {Boolean}
+     */
     stream.Stream.prototype.hasVoices = function () {
         for (var i = 0; i < this.length; i++) {
             var el = this.get(i);
@@ -1137,9 +1490,10 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
     };
 
     /**
-     * container for a Voice ... does not work yet
      * 
-     * @constructor stream.Voice
+     * @class Voice
+     * @memberof music21.stream
+     * @extends music21.stream.Stream
      */ 
     stream.Voice = function () { 
         stream.Stream.call(this);
@@ -1151,9 +1505,9 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
 
     
     /**
-     * container for a Measure ... does not YET handle Voices
-     * 
-     * @constructor stream.Measure
+     * @class Measure
+     * @memberof music21.stream
+     * @extends music21.stream.Stream
      */
 	stream.Measure = function () { 
 		stream.Stream.call(this);
@@ -1167,7 +1521,9 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
 	/**
 	 * Part -- specialized to handle Measures inside it
 	 * 
-	 * @constructor stream.Part
+	 * @class Part
+     * @memberof music21.stream 
+     * @extends music21.stream.Stream
 	 */
 	stream.Part = function () {
 		stream.Stream.call(this);
@@ -1177,6 +1533,14 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
 
 	stream.Part.prototype = new stream.Stream();
 	stream.Part.prototype.constructor = stream.Part;
+	/**
+	 * How many systems does this Part have? 
+	 * 
+	 * Does not change any reflow information, so by default it's always 1.
+	 * 
+     * @memberof music21.stream.Part
+	 * @returns {Number}
+	 */
 	stream.Part.prototype.numSystems = function () {
         var numSystems = 0;
         for (var i = 0; i < this.length; i++) {
@@ -1190,6 +1554,12 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
         return numSystems;
     };
 
+    /**
+     * Find the width of every measure in the Part.
+     * 
+     * @memberof music21.stream.Part
+     * @returns {Array<number>}
+     */
     stream.Part.prototype.getMeasureWidths = function () {
         /* call after setSubstreamRenderOptions */
         var measureWidths = [];
@@ -1205,6 +1575,12 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
          */
         return measureWidths;
     };
+    /**
+     * Overrides the default music21.stream.Stream#estimateStaffLength
+     * 
+     * @memberof music21.stream.Part
+     * @returns {number}
+     */
     stream.Part.prototype.estimateStaffLength = function () {
         if (this.renderOptions.overriddenWidth != undefined) {
             //console.log("Overridden staff width: " + this.renderOptions.overriddenWidth);
@@ -1228,19 +1604,22 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
         tempM.elements = this.elements;
         return tempM.estimateStaffLength();
     };
-
+    /**
+     * Divide a part up into systems and fix the measure
+     * widths so that they are all even.
+     * 
+     * Note that this is done on the part level even though
+     * the measure widths need to be consistent across parts.
+     * 
+     * This is possible because the system is deterministic and
+     * will come to the same result for each part.  Opportunity
+     * for making more efficient through this...
+     * 
+     * @memberof music21.stream.Part
+     * @param systemHeight
+     * @returns {Array}
+     */
     stream.Part.prototype.fixSystemInformation = function (systemHeight) {
-        /*
-         * Divide a part up into systems and fix the measure
-         * widths so that they are all even.
-         * 
-         * Note that this is done on the part level even though
-         * the measure widths need to be consistent across parts.
-         * 
-         * This is possible because the system is deterministic and
-         * will come to the same result for each part.  Opportunity
-         * for making more efficient through this...
-         */
         /* 
          * console.log('system height: ' + systemHeight);
          */
@@ -1318,7 +1697,13 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
         
         return systemCurrentWidths;
     };
-    
+    /**
+     * overrides music21.stream.Stream#setSubstreamRenderOptions
+     * 
+     * figures out the `.left` and `.top` attributes for all contained measures
+     * 
+     * @memberof music21.stream.Part
+     */    
     stream.Part.prototype.setSubstreamRenderOptions = function () {
         var currentMeasureIndex = 0; /* 0 indexed for now */
         var currentMeasureLeft = 20;
@@ -1379,7 +1764,15 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
         return this;
 
     };
-
+    /**
+     * Overrides the default music21.stream.Stream#findNoteForClick
+     * by taking into account systems
+     * 
+     * @memberof music21.stream.Part
+     * @param {DOMObject} canvas
+     * @param {Event} e
+     * @returns {Array} [clickedDiatonicNoteNum, foundNote]
+     */
     stream.Part.prototype.findNoteForClick = function(canvas, e) {
         var _ = this.getScaledXYforCanvas(canvas, e);
         var x = _[0];
@@ -1401,13 +1794,18 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
         var foundNote = this.noteElementFromScaledX(x, undefined, systemIndex);
         return [clickedDiatonicNoteNum, foundNote];
     };
-    
+
+    /**
+     * Override the noteElementFromScaledX for Stream
+     * to take into account sub measures...
+     * 
+     * @memberof music21.stream.Part
+     * @param {number} scaledX
+     * @param {number} allowablePixels
+     * @param {Int} systemIndex
+     * @returns {music21.base.Music21Object|undefined}
+     */
     stream.Part.prototype.noteElementFromScaledX = function (scaledX, allowablePixels, systemIndex) {
-        /*
-         * Override the noteElementFromScaledX for Stream
-         * to take into account sub measures...
-         * 
-         */
         var gotMeasure = undefined;
         for (var i = 0; i < this.length; i++) {
             var m = this.get(i);
@@ -1441,7 +1839,9 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
     /**
      * Scores with multiple parts
      * 
-     * @constructor stream.Score
+     * @class Score
+     * @memberof music21.stream
+     * @extends music21.stream.Stream
      */
 	stream.Score = function () {
 		stream.Stream.call(this);
@@ -1471,7 +1871,14 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
 
 	stream.Score.prototype = new stream.Stream();
 	stream.Score.prototype.constructor = stream.Score;
-
+    /**
+     * overrides music21.stream.Stream#setSubstreamRenderOptions
+     * 
+     * figures out the `.left` and `.top` attributes for all contained parts
+     * 
+     * @memberof music21.stream.Score
+     * @returns {music21.stream.Score} this
+     */    
     stream.Score.prototype.setSubstreamRenderOptions = function () {
         var currentPartNumber = 0;
         var currentPartTop = 0;
@@ -1500,6 +1907,12 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
         return this;
 
     };
+    /**
+     * Overrides the default music21.stream.Stream#estimateStaffLength
+     * 
+     * @memberof music21.stream.Score
+     * @returns {number}
+     */
     stream.Score.prototype.estimateStaffLength = function () {
         // override
         if (this.renderOptions.overriddenWidth != undefined) {
@@ -1520,6 +1933,17 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
     };
     
     /* MIDI override */
+    /**
+     * Overrides the default music21.stream.Stream#playStream
+     * 
+     * Works crappily -- just starts *n* midi players.
+     * 
+     * Render scrollable score works better...
+     * 
+     * @memberof music21.stream.Score
+     * @param {object} params -- passed to each part
+     * @returns {music21.stream.Score} this
+     */
     stream.Score.prototype.playStream = function (params) {
         // play multiple parts in parallel...
         for (var i = 0; i < this.length; i++) {
@@ -1531,6 +1955,12 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
         return this;
 
     };
+    /**
+     * Overrides the default music21.stream.Stream#stopPlayScore()
+     * 
+     * @memberof music21.stream.Score
+     * @returns {music21.stream.Score} this
+     */
     stream.Score.prototype.stopPlayStream = function () {
         for (var i = 0; i < this.length; i++) {
             var el = this.get(i);
@@ -1539,17 +1969,23 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
             }
         }
         return this;
-
     };
     /*
      * Canvas routines
      */
+    /**
+     * call after setSubstreamRenderOptions
+     * gets the maximum measure width for each measure
+     * by getting the maximum for each measure of
+     * Part.getMeasureWidths();
+     * 
+     * Does this work? I found a bug in this and fixed it that should have
+     * broken it!
+     * 
+     * @memberof music21.stream.Score
+     * @returns {Array<number>}
+     */
     stream.Score.prototype.getMaxMeasureWidths = function () {
-        /*  call after setSubstreamRenderOptions
-         *  gets the maximum measure width for each measure
-         *  by getting the maximum for each measure of
-         *  Part.getMeasureWidths();
-         */
         var maxMeasureWidths = [];
         var measureWidthsArrayOfArrays = [];
         for (var i = 0; i < this.length; i++) {
@@ -1563,12 +1999,18 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
                     maxFound = measureWidthsArrayOfArrays[j][i];
                 }
             }
-            maxMeasureWidths.append(maxFound);
+            maxMeasureWidths.push(maxFound);
         }
         //console.log(measureWidths);
         return maxMeasureWidths;
     };
 
+    /**
+     * @memberof music21.stream.Score
+     * @param {DOMObject} canvas
+     * @param {Event} e
+     * @returns {Array} [diatonicNoteNum, m21Element]
+     */
     stream.Score.prototype.findNoteForClick = function(canvas, e) {
         /**
          * Returns a list of [clickedDiatonicNoteNum, foundNote] for a
@@ -1594,10 +2036,22 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
         return [clickedDiatonicNoteNum, foundNote];
     };
     
+    /**
+     * How many systems are there? Calls numSystems() on the first part.
+     * 
+     * @memberof music21.stream.Score
+     * @returns {Int}
+     */
     stream.Score.prototype.numSystems = function () {
         return this.get(0).numSystems();
     };
     
+    /**
+     * Fixes the part measure spacing for all parts.
+     * 
+     * @memberof music21.stream.Score
+     * @returns {music21.stream.Score} this
+     */
     stream.Score.prototype.evenPartMeasureSpacing = function () {
         var measureStacks = [];
         var currentPartNumber = 0;

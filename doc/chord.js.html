@@ -48,6 +48,10 @@
 						</li>
 						
 						<li>
+							<a href="music21.interval.html">music21.interval</a>
+						</li>
+						
+						<li>
 							<a href="music21.key.html">music21.key</a>
 						</li>
 						
@@ -69,6 +73,18 @@
 						
 						<li>
 							<a href="music21.prebase.html">music21.prebase</a>
+						</li>
+						
+						<li>
+							<a href="music21.stream.html">music21.stream</a>
+						</li>
+						
+						<li>
+							<a href="music21.streamInteraction.html">music21.streamInteraction</a>
+						</li>
+						
+						<li>
+							<a href="music21.vfShow.html">music21.vfShow</a>
 						</li>
 						
 
@@ -98,6 +114,10 @@
 						</li>
 						
 						<li>
+							<a href="interval.html">music21/interval</a>
+						</li>
+						
+						<li>
 							<a href="key.html">music21/key</a>
 						</li>
 						
@@ -121,6 +141,18 @@
 							<a href="prebase.html">music21/prebase</a>
 						</li>
 						
+						<li>
+							<a href="stream.html">music21/stream</a>
+						</li>
+						
+						<li>
+							<a href="streamInteraction.html">music21/streamInteraction</a>
+						</li>
+						
+						<li>
+							<a href="vfShow.html">music21/vfShow</a>
+						</li>
+						
 
 					</ul>
 				</li>
@@ -130,18 +162,6 @@
 						class="caret"></b></a>
 
 					<ul class="dropdown-menu ">
-						
-						<li>
-							<a href="interval.ChromaticInterval.html">interval.ChromaticInterval</a>
-						</li>
-						
-						<li>
-							<a href="interval.DiatonicInterval.html">interval.DiatonicInterval</a>
-						</li>
-						
-						<li>
-							<a href="interval.GenericInterval.html">interval.GenericInterval</a>
-						</li>
 						
 						<li>
 							<a href="music21.base.Music21Object.html">music21.base.Music21Object</a>
@@ -165,6 +185,22 @@
 						
 						<li>
 							<a href="music21.duration.Tuplet.html">music21.duration.Tuplet</a>
+						</li>
+						
+						<li>
+							<a href="music21.interval.ChromaticInterval.html">music21.interval.ChromaticInterval</a>
+						</li>
+						
+						<li>
+							<a href="music21.interval.DiatonicInterval.html">music21.interval.DiatonicInterval</a>
+						</li>
+						
+						<li>
+							<a href="music21.interval.GenericInterval.html">music21.interval.GenericInterval</a>
+						</li>
+						
+						<li>
+							<a href="music21.interval.Interval.html">music21.interval.Interval</a>
 						</li>
 						
 						<li>
@@ -216,27 +252,43 @@
 						</li>
 						
 						<li>
-							<a href="stream.Measure.html">stream.Measure</a>
+							<a href="music21.stream.Measure.html">music21.stream.Measure</a>
 						</li>
 						
 						<li>
-							<a href="stream.Part.html">stream.Part</a>
+							<a href="music21.stream.Part.html">music21.stream.Part</a>
 						</li>
 						
 						<li>
-							<a href="stream.Score.html">stream.Score</a>
+							<a href="music21.stream.Score.html">music21.stream.Score</a>
 						</li>
 						
 						<li>
-							<a href="stream.Voice.html">stream.Voice</a>
+							<a href="music21.stream.Stream.html">music21.stream.Stream</a>
 						</li>
 						
 						<li>
-							<a href="streamInteraction.PixelMapper.html">streamInteraction.PixelMapper</a>
+							<a href="music21.stream.Voice.html">music21.stream.Voice</a>
 						</li>
 						
 						<li>
-							<a href="vfShow.Renderer.html">vfShow.Renderer</a>
+							<a href="music21.streamInteraction.PixelMap.html">music21.streamInteraction.PixelMap</a>
+						</li>
+						
+						<li>
+							<a href="music21.streamInteraction.PixelMapper.html">music21.streamInteraction.PixelMapper</a>
+						</li>
+						
+						<li>
+							<a href="music21.streamInteraction.ScrollPlayer.html">music21.streamInteraction.ScrollPlayer</a>
+						</li>
+						
+						<li>
+							<a href="music21.vfShow.Renderer.html">music21.vfShow.Renderer</a>
+						</li>
+						
+						<li>
+							<a href="music21.vfShow.RenderStack.html">music21.vfShow.RenderStack</a>
 						</li>
 						
 
@@ -379,7 +431,7 @@ define(['./note', 'vexflow'],
      * Adds a note to the chord, sorting the noteArray
      * 
      * @memberof music21.chord.Chord
-     * @param {music21.note.Note|music21.pitch.Pitch} noteObj - the Note or Pitch to be added.
+     * @param {string|music21.note.Note|music21.pitch.Pitch} noteObj - the Note or Pitch to be added or a string defining a pitch.
      * @returns {music21.chord.Chord} the original chord.
      */
     chord.Chord.prototype.add = function (noteObj) {
@@ -398,7 +450,7 @@ define(['./note', 'vexflow'],
         return this;
     };
     /**
-     * Removes any pitches that appear more than once and returns a new Chord.
+     * Removes any pitches that appear more than once (in any octave), removing the higher ones, and returns a new Chord.
      * 
      * @memberof music21.chord.Chord
      * @returns {music21.chord.Chord} A new Chord object with duplicate pitches removed.
@@ -471,7 +523,7 @@ define(['./note', 'vexflow'],
      * @memberof music21.chord.Chord
      * @param {number} chordStep - the step to find, e.g., 1, 2, 3, etc.
      * @param {music21.pitch.Pitch} [testRoot] - the pitch to temporarily consider the root.
-     * @returns {number} Number of semitones above the root for this chord step.
+     * @returns {number|undefined} Number of semitones above the root for this chord step or undefined if no pitch matches that chord step.
      */
     chord.Chord.prototype.semitonesFromChordStep = function (chordStep, testRoot) {
         if (testRoot === undefined) {
@@ -613,9 +665,9 @@ define(['./note', 'vexflow'],
      * the first one in `.pitches` is returned.
      * 
      * @memberof music21.chord.Chord
-     * @param {number} chordStep
+     * @param {Int} chordStep a positive integer representing the chord step
      * @param {music21.pitch.Pitch} [testRoot] - the Pitch to use as a temporary root
-     * @returns {music21.pitch.Pitch}
+     * @returns {music21.pitch.Pitch|undefined}
      */
     chord.Chord.prototype.getChordStep = function (chordStep, testRoot) {
         if (testRoot == undefined) {
@@ -677,7 +729,7 @@ define(['./note', 'vexflow'],
 					
 		<span class="jsdoc-message">
 		Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a>
-		on Sat Oct 25th 2014 using the <a
+		on Sat Nov 1st 2014 using the <a
 			href="https://github.com/terryweiss/docstrap">DocStrap template</a>.
 		</span>
 				</footer>

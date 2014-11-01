@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 	<meta charset="utf-8">
-	<title>Music21j Class: Music21Object</title>
+	<title>Music21j Namespace: interval</title>
 
 	<!--[if lt IE 9]>
 	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -308,14 +308,14 @@
 					
 
 
-	<h1 class="page-title">Class: Music21Object</h1>
+	<h1 class="page-title">Namespace: interval</h1>
 <section>
 
 <header>
     <h2>
-        <span class="ancestors"><a href="music21.html">music21</a><a href="music21.base.html">.base</a>.</span>
+        <span class="ancestors"><a href="music21.html">music21</a>.</span>
     
-    Music21Object
+    interval
     </h2>
     
 </header>
@@ -326,243 +326,11 @@
 
     
         
-<dt>
-    <h4 class="name" id="Music21Object"><span class="type-signature"></span>new Music21Object<span class="signature">()</span><span class="type-signature"></span></h4>
-    
-    
-</dt>
-<dd>
-    
-    
-    <div class="description">
-        <p>Base class for any object that can be placed in a <a href="music21.stream.Stream.html"><code>music21.stream.Stream</code></a>.</p>
-    </div>
-    
+            <div class="description"><p>Interval related objects</p></div>
+        
 
-    
-    
-    
-    
-    
-    
-    
+        
 <dl class="details">
-	
-
-	<h5 class="subsection-title">Properties:</h5>
-
-	<dl>
-
-<table class="props table table-striped">
-    <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-
-		<th>Type</th>
-
-		
-
-		
-
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-
-	<tbody>
-	
-
-        <tr>
-            
-                <td class="name"><code>activeSite</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">object</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>hardlink to a <a href="music21.stream.Stream.html"><code>music21.stream.Stream</code></a> containing the element.</p></td>
-        </tr>
-
-	
-
-        <tr>
-            
-                <td class="name"><code>classSortOrder</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">number</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>Default sort order for this class (default 20; override in other classes). Lower numbered objects will sort before other objects in the staff if priority and offset are the same.</p></td>
-        </tr>
-
-	
-
-        <tr>
-            
-                <td class="name"><code>duration</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type"><a href="music21.duration.Duration.html">music21.duration.Duration</a></span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>the duration (object) for the element. (can be set with a quarterLength also)</p></td>
-        </tr>
-
-	
-
-        <tr>
-            
-                <td class="name"><code>groups</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Array</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>An Array of strings representing group (equivalent to css classes) to assign to the object. (default [])</p></td>
-        </tr>
-
-	
-
-        <tr>
-            
-                <td class="name"><code>isMusic21Object</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">boolean</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>true</p></td>
-        </tr>
-
-	
-
-        <tr>
-            
-                <td class="name"><code>isStream</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">boolean</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>false</p></td>
-        </tr>
-
-	
-
-        <tr>
-            
-                <td class="name"><code>offset</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">number</span>
-|
-
-<span class="param-type">null</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>offset from the beginning of the stream (in quarterLength)</p></td>
-        </tr>
-
-	
-
-        <tr>
-            
-                <td class="name"><code>priority</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">number</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>The priority (lower = earlier or more left) for elements at the same offset. (default 0)</p></td>
-        </tr>
-
-	
-	</tbody>
-</table>
-</dl>
-
 	
 
 	
@@ -588,8 +356,379 @@
 	<dd class="tag-source">
 		<ul class="dummy">
 			<li>
-				<a href="base.js.html">music21/base.js</a>,
-				 <a href="base.js.html#sunlight-1-line-31">line 31</a>
+				<a href="interval.js.html">music21/interval.js</a>,
+				 <a href="interval.js.html#sunlight-1-line-17">line 17</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+        
+    
+    </div>
+
+    
+
+    
+
+    
+        <h3 class="subsection-title">Requires</h3>
+
+        <ul>
+            <li><a href="prebase.html">module:music21/prebase</a></li>
+        
+            <li><a href="pitch.html">module:music21/pitch</a></li>
+        </ul>
+    
+
+    
+        <h3 class="subsection-title">Classes</h3>
+
+        <dl>
+            <dt><a href="music21.interval.ChromaticInterval.html">ChromaticInterval</a></dt>
+            <dd></dd>
+        
+            <dt><a href="music21.interval.DiatonicInterval.html">DiatonicInterval</a></dt>
+            <dd></dd>
+        
+            <dt><a href="music21.interval.GenericInterval.html">GenericInterval</a></dt>
+            <dd></dd>
+        
+            <dt><a href="music21.interval.Interval.html">Interval</a></dt>
+            <dd></dd>
+        </dl>
+    
+
+    
+
+    
+        <h3 class="subsection-title">Members</h3>
+
+        <dl>
+            
+<dt class="name" id="interval.IntervalDirections">
+    <h4><span class="type-signature">&lt;static> </span>interval.IntervalDirections<span class="type-signature"></span></h4>
+
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        <p>Interval Directions as an Object/map</p>
+    </div>
+    
+
+    
+
+    
+<dl class="details">
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="interval.js.html">music21/interval.js</a>,
+				 <a href="interval.js.html#sunlight-1-line-38">line 38</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+        <h5>Example</h5>
+        
+    <pre class="sunlight-highlight-javascript">if (music21.interval.IntervalDirections.OBLIQUE &gt;
+    music21.interval.IntervalDirections.ASCENDING ) {
+   console.log(music21.interval.IntervalDirections.DESCENDING);    
+}</pre>
+
+
+    
+</dd>
+
+        
+            
+<dt class="name" id="interval.IntervalDirectionTerms">
+    <h4><span class="type-signature">&lt;static> </span>interval.IntervalDirectionTerms<span class="type-signature"></span></h4>
+
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        <p>N.B. a dict in music21p -- the indexes here let IntervalDirections call them + 1</p>
+    </div>
+    
+
+    
+
+    
+<dl class="details">
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="interval.js.html">music21/interval.js</a>,
+				 <a href="interval.js.html#sunlight-1-line-52">line 52</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+        <h5>Example</h5>
+        
+    <pre class="sunlight-highlight-javascript">console.log(music21.interval.IntervalDirectionTerms[music21l.interval.IntervalDirections.OBLIQUE + 1])
+&#x2F;&#x2F; &quot;Oblique&quot; </pre>
+
+
+    
+</dd>
+
+        
+            
+<dt class="name" id="interval.MusicOrdinals">
+    <h4><span class="type-signature">&lt;static> </span>interval.MusicOrdinals<span class="type-signature"></span></h4>
+
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        <p>ordinals for music terms...</p>
+    </div>
+    
+
+    
+
+    
+<dl class="details">
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="interval.js.html">music21/interval.js</a>,
+				 <a href="interval.js.html#sunlight-1-line-72">line 72</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+        <h5>Example</h5>
+        
+    <pre class="sunlight-highlight-javascript">for (var i = 1; &#x2F;&#x2F; N.B. 0 = undefined
+     i &lt; music21.interval.MusicOrdinals.length;
+     i++) {
+    console.log(i, music21.interval.MusicOrdinals[i]);
+}
+&#x2F;&#x2F; 1, Unison
+&#x2F;&#x2F; 2, Second
+&#x2F;&#x2F; 3, Third
+&#x2F;&#x2F; ...
+&#x2F;&#x2F; 8, Octave
+&#x2F;&#x2F; ...
+&#x2F;&#x2F; 15, Double Octave</pre>
+
+
+    
+</dd>
+
+        </dl>
+    
+
+    
+        <h3 class="subsection-title">Methods</h3>
+
+        <dl>
+            
+<dt>
+    <h4 class="name" id="IntervalConvertDiatonicNumberToStep"><span class="type-signature">&lt;static> </span>IntervalConvertDiatonicNumberToStep<span class="signature">(dn)</span><span class="type-signature"> &rarr; {Array}</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+
+		<th>Type</th>
+
+		
+
+		
+
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+
+	<tbody>
+	
+
+        <tr>
+            
+                <td class="name"><code>dn</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Int</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>diatonic number, where 29 = C4, C#4 etc.</p></td>
+        </tr>
+
+	
+	</tbody>
+</table>
+
+    
+    
+    
+<dl class="details">
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="interval.js.html">music21/interval.js</a>,
+				 <a href="interval.js.html#sunlight-1-line-566">line 566</a>
 			</li>
 		</ul>
 	</dd>
@@ -612,31 +751,34 @@
     
     
     
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+    <p>two element array of {string} stepName and {Int} octave</p>
+</div>
+
+
+
+<dl>
+	<dt>
+		Type
+	</dt>
+	<dd>
+		
+<span class="param-type">Array</span>
+
+
+	</dd>
+</dl>
+
+
+        
     
     
 </dd>
 
-    
-    </div>
-
-    
-        <h3 class="subsection-title">Extends</h3>
-
-        <ul>
-            <li><a href="music21.prebase.ProtoM21Object.html">music21.prebase.ProtoM21Object</a></li>
-        </ul>
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
+        </dl>
     
 
     
