@@ -1,7 +1,30 @@
 define(['./prebase'], 
+        /**
+         * articulations module. See {@link music21.articulations} namespace
+         * 
+         * @exports music21/articulations
+         */
         function(prebase) {
+   /**
+    * @namespace music21.articulations
+    * @memberof music21
+    * @requires music21/prebase
+    */
    var articulations = {};
 
+   /**
+    * Represents a single articulation, usually in the `.articulations` Array
+    * on a {@link music21.note.Note} or something like that.
+    * 
+    * @class Articulation
+    * @memberof music21.articulations
+    * @extends music21.prebase.ProtoM21Object
+    * @property {string} name
+    * @property {string} [placement='above']
+    * @property {string} vexflowModifier - the string code to get this accidental in Vexflow
+    * @property {number} [dynamicScale=1.0] - multiplier for the dynamic of a note that this is attached to
+    * @property {number} [lengthScale=1.0] - multiplier for the length of a note that this is attached to.
+    */
    articulations.Articulation = function(){
        prebase.ProtoM21Object.call(this);
        this.classes.push('Articulation');
@@ -14,7 +37,13 @@ define(['./prebase'],
    };
    articulations.Articulation.prototype = new prebase.ProtoM21Object();
    articulations.Articulation.prototype.constructor = articulations.Articulation;
-   
+
+   /**
+    * Generates a Vex.Flow.Articulation for this articulation.
+    * 
+    * @memberof music21.articulations.Articulation
+    * @returns {Vex.Flow.Articulation}
+    */
    articulations.Articulation.prototype.vexflow = function () {
        var vfa = new Vex.Flow.Articulation(this.vexflowModifier);
        if (this.setPosition) {
@@ -23,6 +52,13 @@ define(['./prebase'],
        return vfa;
    };
    
+   /**
+    * base class for articulations that change the length of a note...
+    * 
+    * @class LengthArticulation
+    * @memberof music21.articulations
+    * @extends music21.articulations.Articulation
+    */
    articulations.LengthArticulation = function(){
        articulations.Articulation.call(this);
        this.classes.push('LengthArticulation');
@@ -30,6 +66,13 @@ define(['./prebase'],
    articulations.LengthArticulation.prototype = new articulations.Articulation();
    articulations.LengthArticulation.prototype.constructor = articulations.LengthArticulation;
    
+   /**
+    * base class for articulations that change the dynamic of a note...
+    * 
+    * @class DynamicArticulation
+    * @memberof music21.articulations
+    * @extends music21.articulations.Articulation
+    */
    articulations.DynamicArticulation = function(){
        articulations.Articulation.call(this);
        this.classes.push('DynamicArticulation');
@@ -38,6 +81,13 @@ define(['./prebase'],
    articulations.DynamicArticulation.prototype = new articulations.Articulation();
    articulations.DynamicArticulation.prototype.constructor = articulations.DynamicArticulation;
    
+   /**
+    * base class for articulations that change the pitch of a note...
+    * 
+    * @class PitchArticulation
+    * @memberof music21.articulations
+    * @extends music21.articulations.Articulation
+    */
    articulations.PitchArticulation = function(){
        articulations.Articulation.call(this);
        this.classes.push('PitchArticulation');
@@ -46,6 +96,13 @@ define(['./prebase'],
    articulations.PitchArticulation.prototype = new articulations.Articulation();
    articulations.PitchArticulation.prototype.constructor = articulations.PitchArticulation;
    
+   /**
+    * base class for articulations that change the timbre of a note...
+    * 
+    * @class TimbreArticulation
+    * @memberof music21.articulations
+    * @extends music21.articulations.Articulation
+    */
    articulations.TimbreArticulation = function(){
        articulations.Articulation.call(this);
        this.classes.push('TimbreArticulation');
@@ -54,6 +111,13 @@ define(['./prebase'],
    articulations.TimbreArticulation.prototype = new articulations.Articulation();
    articulations.TimbreArticulation.prototype.constructor = articulations.TimbreArticulation;
    
+   /**
+    * 50% louder than usual
+    * 
+    * @class Accent
+    * @memberof music21.articulations
+    * @extends music21.articulations.DynamicArticulation
+    */
    articulations.Accent = function(){
        articulations.DynamicArticulation.call(this);
        this.classes.push('Accent');
@@ -65,6 +129,13 @@ define(['./prebase'],
    articulations.Accent.prototype = new articulations.DynamicArticulation();
    articulations.Accent.prototype.constructor = articulations.Accent;
    
+   /**
+    * 100% louder than usual
+    * 
+    * @class StrongAccent
+    * @memberof music21.articulations
+    * @extends music21.articulations.Accent
+    */
    articulations.StrongAccent = function(){
        articulations.Accent.call(this);
        this.classes.push('StrongAccent');
@@ -75,6 +146,13 @@ define(['./prebase'],
    articulations.StrongAccent.prototype = new articulations.Accent();
    articulations.StrongAccent.prototype.constructor = articulations.StrongAccent;
    
+   /**
+    * no playback for now.
+    * 
+    * @class Staccato
+    * @memberof music21.articulations
+    * @extends music21.articulations.LengthArticulation
+    */
    articulations.Staccato = function(){
        articulations.LengthArticulation.call(this);
        this.classes.push('Staccato');       
@@ -84,6 +162,13 @@ define(['./prebase'],
    articulations.Staccato.prototype = new articulations.LengthArticulation();
    articulations.Staccato.prototype.constructor = articulations.Staccato;
    
+   /**
+    * no playback for now.
+    * 
+    * @class Staccatissimo
+    * @memberof music21.articulations
+    * @extends music21.articulations.Staccato
+    */
    articulations.Staccatissimo = function(){
        articulations.Staccato.call(this);
        this.classes.push('Staccatissimo');
@@ -93,6 +178,13 @@ define(['./prebase'],
    articulations.Staccatissimo.prototype = new articulations.Staccato();
    articulations.Staccatissimo.prototype.constructor = articulations.Staccatissimo;
    
+   /**
+    * no playback or display for now.
+    * 
+    * @class Spiccato
+    * @memberof music21.articulations
+    * @extends music21.articulations.Staccato
+    */
    articulations.Spiccato = function(){
 	   articulations.Staccato.call(this);
        this.classes.push('Spiccato');
@@ -103,6 +195,12 @@ define(['./prebase'],
    articulations.Spiccato.prototype = new articulations.Staccato();
    articulations.Spiccato.prototype.constructor = articulations.Spiccato;
    
+   /**
+    * @class Marcato
+    * @memberof music21.articulations
+    * @extends music21.articulations.LengthArticulation
+    * @extends music21.articulations.DynamicArticulation
+    */
    articulations.Marcato = function(){
 	   articulations.LengthArticulation.call(this);
 	   articulations.DynamicArticulation.call(this);
@@ -115,7 +213,11 @@ define(['./prebase'],
    articulations.Marcato.prototype = new articulations.LengthArticulation();
    articulations.Marcato.prototype.constructor = articulations.Marcato;
    
-  
+   /**
+    * @class Tenuto
+    * @memberof music21.articulations
+    * @extends music21.articulations.LengthArticulation
+    */
    articulations.Tenuto = function(){
        articulations.LengthArticulation.call(this);
        this.classes.push('Tenuto');

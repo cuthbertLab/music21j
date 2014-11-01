@@ -8,7 +8,21 @@
  * Based on music21 (=music21p), Copyright (c) 2006–14, Michael Scott Cuthbert and cuthbertLab
  * 
  */
-define(['./base','./pitch'], function(base, pitch) {
+define(['./base','./pitch'], 
+        /**
+         * Clef module, see {@link music21.clef} for namespace
+         * 
+         * @exports music21/clef
+         */
+        function(base, pitch) {
+    /**
+     * Clef related objects and properties
+     * 
+     * @namespace music21.clef
+     * @memberof music21
+     * @requires music21/base
+     * @requires music21/pitch
+     */
 	var clef = {};
 	/*  music21.Clef
 	must be defined before Stream since Stream subclasses call new music21.Clef...
@@ -23,6 +37,20 @@ define(['./base','./pitch'], function(base, pitch) {
             'bass': 19,
             'percussion': 31,
             };
+	/**
+	 * Clefname can be one of 
+	 * "treble", "bass", "soprano", "mezzo-soprano", "alto", "tenor", "percussion"
+	 * 
+	 * @class Clef
+	 * @memberof music21.clef
+	 * @extends music21.base.Music21Object
+	 * @param {string} name - clef name 
+	 * @param {Int} [octaveShift=0] - ottava
+	 * @property {string|undefined} name
+	 * @property {Int} firstLine - diatonicNoteNum (C4 = 29) for the lowest line (in a five-line staff)
+	 * @property {Int} firstLineTrebleOffset - difference between the first line of this staff and the first line in treble clef
+	 * @property {Int} octaveShift
+	 */
 	clef.Clef = function (name, octaveShift) {
 		base.Music21Object.call(this);
 		this.classes.push('Clef');
@@ -47,12 +75,19 @@ define(['./base','./pitch'], function(base, pitch) {
 
 	clef.Clef.prototype = new base.Music21Object();
 	clef.Clef.prototype.constructor = clef.Clef;
+	
+	/**
+     * returns a new pitch object if the clef name is not Treble
+     * designed so it would look the same as it would in treble clef.
+     * for instance, bass-clef 2nd-space C# becomes treble clef 2nd-space A#
+     * used for Vex.Flow which requires all pitches to be input as if they
+     * are in treble clef.
+	 * 
+	 * @memberof music21.clef.Clef
+	 * @param {music21.pitch.Pitch} p
+	 * @returns {music21.pitch.Pitch} new pitch
+	 */
     clef.Clef.prototype.convertPitchToTreble = function (p) {
-        // returns a new pitch object if the clef name is not Treble
-        // designed so it would look the same as it would in treble clef.
-        // for instance, bass-clef 2nd-space C# becomes treble clef 2nd-space A#
-        // used for Vex.Flow which requires all pitches to be input as if they
-        // are in treble clef.
         if (this.firstLine == undefined) {
             console.log('no first line defined for clef', this.name, this);
             return p; // error
@@ -65,22 +100,41 @@ define(['./base','./pitch'], function(base, pitch) {
         return tempPitch;
     };
 
-	clef.TrebleClef = function () {
+    /**
+     * A TrebleClef (same as new music21.clef.Clef('treble')
+     * 
+     * @class TrebleClef
+     * @memberof music21.clef
+     * @extends music21.clef.Clef
+     */
+    clef.TrebleClef = function () {
         clef.Clef.call(this, 'treble');
         this.classes.push('TrebleClef');
 	};
     clef.TrebleClef.prototype = new clef.Clef();
     clef.TrebleClef.prototype.constructor = clef.TrebleClef;
 
+    /**
+     * A TrebleClef down an octave (same as new music21.clef.Clef('treble', -1)
+     * 
+     * @class Treble8vbClef
+     * @memberof music21.clef
+     * @extends music21.clef.Clef
+     */
     clef.Treble8vbClef = function () {
-        // temporary Vex.Flow hack -- no 8vb setting; use Bass instead.
-        // Fixed in cuthbert Vex.Flow -- pull #235
         clef.Clef.call(this, 'treble', -1);
         this.classes.push('Treble8vbClef');
     };
     clef.Treble8vbClef.prototype = new clef.Clef();
     clef.Treble8vbClef.prototype.constructor = clef.Treble8vbClef;
 
+    /**
+     * A TrebleClef up an octave (same as new music21.clef.Clef('treble', 1)
+     * 
+     * @class Treble8vaClef
+     * @memberof music21.clef
+     * @extends music21.clef.Clef
+     */
     clef.Treble8vaClef = function () {
         // Fixed in cuthbert Vex.Flow -- pull #235
         clef.Clef.call(this, 'treble', 1);
@@ -89,6 +143,13 @@ define(['./base','./pitch'], function(base, pitch) {
     clef.Treble8vaClef.prototype = new clef.Clef();
     clef.Treble8vaClef.prototype.constructor = clef.Treble8vaClef;
 
+    /**
+     * A BassClef (same as new music21.clef.Clef('bass')
+     * 
+     * @class BassClef
+     * @memberof music21.clef
+     * @extends music21.clef.Clef
+     */
     clef.BassClef = function () {
         clef.Clef.call(this, 'bass');
         this.classes.push('BassClef');
@@ -96,6 +157,13 @@ define(['./base','./pitch'], function(base, pitch) {
     clef.BassClef.prototype = new clef.Clef();
     clef.BassClef.prototype.constructor = clef.BassClef;
 
+    /**
+     * An AltoClef (same as new music21.clef.Clef('alto')
+     * 
+     * @class AltoClef
+     * @memberof music21.clef
+     * @extends music21.clef.Clef
+     */
     clef.AltoClef = function () {
         clef.Clef.call(this, 'alto');
         this.classes.push('AltoClef');
@@ -103,6 +171,13 @@ define(['./base','./pitch'], function(base, pitch) {
     clef.AltoClef.prototype = new clef.Clef();
     clef.AltoClef.prototype.constructor = clef.AltoClef;
 
+    /**
+     * A Tenor Clef (same as new music21.clef.Clef('tenor')
+     * 
+     * @class TenorClef
+     * @memberof music21.clef
+     * @extends music21.clef.Clef
+     */
     clef.TenorClef = function () {
         clef.Clef.call(this, 'tenor');
         this.classes.push('TenorClef');
@@ -110,6 +185,13 @@ define(['./base','./pitch'], function(base, pitch) {
     clef.TenorClef.prototype = new clef.Clef();
     clef.TenorClef.prototype.constructor = clef.TenorClef;
 
+    /**
+     * A Soprano Clef (same as new music21.clef.Clef('soprano')
+     * 
+     * @class SopranoClef
+     * @memberof music21.clef
+     * @extends music21.clef.Clef
+     */
     clef.SopranoClef = function () {
         clef.Clef.call(this, 'soprano');
         this.classes.push('SopranoClef');
@@ -117,6 +199,13 @@ define(['./base','./pitch'], function(base, pitch) {
     clef.SopranoClef.prototype = new clef.Clef();
     clef.SopranoClef.prototype.constructor = clef.SopranoClef;
     
+    /**
+     * A Mezzo-Soprano Clef (same as new music21.clef.Clef('mezzo-soprano')
+     * 
+     * @class MezzoSopranoClef
+     * @memberof music21.clef
+     * @extends music21.clef.Clef
+     */
     clef.MezzoSopranoClef = function () {
         clef.Clef.call(this, 'mezzo-soprano');
         this.classes.push('MezzoSopranoClef');
@@ -124,6 +213,15 @@ define(['./base','./pitch'], function(base, pitch) {
     clef.MezzoSopranoClef.prototype = new clef.Clef();
     clef.MezzoSopranoClef.prototype.constructor = clef.MezzoSopranoClef;
 
+    /**
+     * A Percussion Clef (same as new music21.clef.Clef('percussion')
+     * 
+     * First line is treated as if it's treble clef. Not available as "bestClef"
+     * 
+     * @class PercussionClef
+     * @memberof music21.clef
+     * @extends music21.clef.Clef
+     */
     clef.PercussionClef = function () {
         clef.Clef.call(this, 'percussion');
         this.classes.push('PercussionClef');
@@ -131,7 +229,15 @@ define(['./base','./pitch'], function(base, pitch) {
     clef.PercussionClef.prototype = new clef.Clef();
     clef.PercussionClef.prototype.constructor = clef.PercussionClef;
 
-    
+    /**
+     * Looks at the pitches in a Stream and returns the best clef
+     * of Treble and Bass
+     * 
+     * @function music21.clef.bestClef
+     * @memberof music21.clef
+     * @param {music21.stream.Stream} st
+     * @returns {music21.clef.Clef}
+     */
     clef.bestClef = function(st) {
         //console.log('calling flat on stream: ', st.elements.length, st.classes[st.classes.length - 1]);
         var stFlat = st.flat;
