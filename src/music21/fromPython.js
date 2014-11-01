@@ -20,7 +20,9 @@
  * 
  */
 
-define(['jsonpickle'], function (jp) {
+define(['jsonpickle'], 
+        
+        function (jp) {
     var unpickler = jp.unpickler;
     
     var fromPython = {};
@@ -152,7 +154,7 @@ define(['jsonpickle'], function (jp) {
     };
     if (typeof music21 !== undefined) {
         music21.fromPython = fromPython;
-        music21.jsonPickle = fromPython;  // TODO: Remove after Jan 1, 2015 -- old interface...
+        music21.jsonPickle = fromPython;  // TODO: Remove after Jan 1, 2015 -- old interface... keep for old versions of music21p that might use it...
     }
     return fromPython;
 });

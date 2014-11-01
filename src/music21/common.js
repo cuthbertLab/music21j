@@ -1,10 +1,30 @@
-define([], function() {
+define([], 
+        /**
+         * common functions
+         * 
+         * @exports music21/common
+         */        
+        function() {
+    /**
+     * functions that are useful everywhere...
+     * 
+     * @namespace music21.common
+     * @memberof music21
+     */
     var common = {};    
-    
+
+    /**
+     * concept borrowed from Vex.Flow.Merge, though here the source can be undefined;
+     * http://stackoverflow.com/questions/171251/how-can-i-merge-properties-of-two-javascript-objects-dynamically
+     * recursive parts used in .clone()
+     * 
+     * @function music21.common.merge
+     * @param {object} destination - object to have attributes placed into
+     * @param {object} source - object to take attributes from.
+     * @memberof music21.common
+     * @returns {object} destination
+     */
     common.merge = function MergeRecursive(destination, source) {
-        //concept borrowed from Vex.Flow.Merge, though source can be undefined;
-        // http://stackoverflow.com/questions/171251/how-can-i-merge-properties-of-two-javascript-objects-dynamically
-        // recursive parts used in .clone()
         if (source === undefined || source === null) {
             return destination;
         }
@@ -24,9 +44,25 @@ define([], function() {
         return destination;
     };
     
+    /**
+     * Creates a DOMObject of an SVG figure using the correct `document.createElementNS` call.
+     * 
+     * @function music21.common.makeSVGright
+     * @param {string} [tag='svg'] - a tag, such as 'rect', 'circle', 'text', or 'svg'
+     * @param {object} [attrs] - attributes to pass to the tag.
+     * @memberof music21.common
+     * @returns {DOMObject}
+     */
     common.makeSVGright = function (tag, attrs) {
         // see http://stackoverflow.com/questions/3642035/jquerys-append-not-working-with-svg-element
         // normal JQuery does not work.
+        if (tag === undefined) {
+            tag = 'svg';
+        }
+        if (attrs === undefined) {
+            attrs = {};
+        }
+        
         var el = document.createElementNS('http://www.w3.org/2000/svg', tag);
         for (var k in attrs) {
             el.setAttribute(k, attrs[k]);            
@@ -34,6 +70,15 @@ define([], function() {
         return el;
     };    
     
+    /**
+     * Take a number such as 32 and return a string such as "nd" 
+     * (for "32nd") etc.
+     * 
+     * @function music21.common.ordinalAbbreviation
+     * @param {Int} value
+     * @param {Boolean} [plural=false] - make plural (note that "21st" plural is "21st")
+     * @return {string}
+     */
     common.ordinalAbbreviation = function (value, plural) {
         var post = "";
         var valueHundreths = value % 100;
@@ -57,6 +102,15 @@ define([], function() {
         return post;
     };
     
+    /**
+     * Find a rational number approximation of this floating point.
+     * 
+     * @function music21.common.rationalize
+     * @param {number} ql - number to rationalize
+     * @param {number} [epsilon=0.001] - how close to get
+     * @param {Int} [maxDenominator=50] - maximum denominator
+     * @returns {object|undefined} {'numerator: numerator, 'denominator': denominator}
+     */
     common.rationalize = function (ql, epsilon, maxDenominator) {
         epsilon = epsilon || 0.001;
         maxDenominator = maxDenominator || 50;
@@ -71,7 +125,16 @@ define([], function() {
         return undefined;
     };
     
-    /* from "400px" to 400 */
+    /**
+     * Change something that could be a string or number and might
+     * end with "px" to a number.
+     * 
+     * "400px" -> 400
+     * 
+     * @function music21.common.stripPx
+     * @param {Int|string} str -- string that might have 'px' at the end or not
+     * @returns {Int} a number to use
+     */
     common.stripPx = function (str) {
         if (typeof str == 'string') {
             var pxIndex = str.indexOf('px');
@@ -82,6 +145,13 @@ define([], function() {
         }
     };
     
+    /**
+     * Find name in the query string (?name=value) and return value.
+     * 
+     * @function music21.common.urlParam
+     * @param {string} name - url parameter to find
+     * @returns {string} may be "" if empty.
+     */
     common.urlParam = function (name) {
             name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
             var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
@@ -91,13 +161,12 @@ define([], function() {
     
     
     /**
-     * Logic for copying events from one jQuery object to another.
+     * Copies an event from one jQuery object to another.
      *
-     * @private 
-     * @name music21.common.jQueryEventCopy
-     * @param jQuery|String|DOM Element jQuery object to copy events from. Only uses the first matched element.
-     * @param jQuery|String|DOM Element jQuery object to copy events to. Copies to all matched elements.
-     * @type undefined
+     * @function music21.common.jQueryEventCopy
+     * @param {Event} eventObj - Event to copy from "from" to "to"
+     * @param {jQuery|string|DOMObject} from - jQuery object to copy events from. Only uses the first matched element.
+     * @param {jQuery|string|DOMObject} to - jQuery object to copy events to. Copies to all matched elements.
      * @author Brandon Aaron (brandon.aaron@gmail.com || http://brandonaaron.net)
      * @author Yannick Albert (mail@yckart.com || http://yckart.com)
      */
@@ -154,6 +223,9 @@ define([], function() {
      * Depending on the browser, may be called multiple times with the same argument
      * for a single event.  For instance, Safari calls once on losing focus completely
      * but twice for a tab change.
+     * 
+     * @function music21.common.setWindowFocusWatcher
+     * @param {function} callback
      */
     common.setWindowFocusWatcher = function (callback) {
         var hidden = "hidden";
