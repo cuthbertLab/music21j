@@ -3,6 +3,10 @@
 
 define(['./base','./renderOptions','./stream',  
         './common', 'jquery'], 
+        /**
+         * Does not work yet, so not documented
+         * 
+         */
         function(base, renderOptions, stream, common, $) {   
     var layout = {};
     layout.makeLayoutFromScore = function (score, containerWidth) {

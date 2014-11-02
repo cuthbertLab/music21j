@@ -1,5 +1,34 @@
-define(['./common'], function(common) {
+define(['./common'], 
+        /**
+         * Widgets module -- random widgets.  See {@link music21.widgets}
+         * 
+         * @exports music21/widgets
+         */
+        function(common) {
+    /**
+     * Widgets module -- random widgets to make streams etc. work better
+     * 
+     * To be added to
+     * 
+     * @namespace music21.widgets
+     * @memberof music21
+     * @requires music21/common
+     */
     var widgets = {};
+    /**
+     * A set of DOM Objects for choosing rhythms
+     * 
+     * @class RhythmChooser
+     * @memberof music21.widgets
+     * @param {music21.stream.Stream} s - to append to, etc.
+     * @param {DOMObject} c - canvas
+     * @property {Array<string>} values - an array of rhythmic values and editing functions. Default: ['whole', 'half','quarter','eighth','16th','dot','undo']
+     * @property {Boolean} measureMode - whether to use measures when editing
+     * @property {Boolean} tieActive - is a tie active?
+     * @property {Boolean} autoAddMeasure - add a measure when one is full? default: true
+     * @property {music21.stream.Stream} stream
+     * @property {DOMObject} [canvasDiv]
+     */
     widgets.RhythmChooser = function (s, c) {
         this.stream = s;
         this.canvasDiv = c;
@@ -11,6 +40,18 @@ define(['./common'], function(common) {
         }
         this.tieActive = false;
         this.autoAddMeasure = true;
+        /**
+         * An object mapping a value type to a function when it is clicked
+         * 
+         * the 'default' value handles all types not otherwise given.
+         * 
+         * Each function is passed the type that was clicked. Probably only
+         * useful for 'default'
+         * 
+         * @name buttonHandlers
+         * @type {object}
+         * @memberof music21.widgets.RhythmChooser#
+         */
         this.buttonHandlers = {
             'undo': function (t) {
                 if (this.stream.length > 0) {
@@ -48,6 +89,19 @@ define(['./common'], function(common) {
                 return newN;
             },
         };
+        /**
+         * An object mapping a value type to a function when it is clicked if the
+         * RhythmChooser is in measureMode
+         * 
+         * the 'default' value handles all types not otherwise given.
+         * 
+         * Each function is passed the type that was clicked. Probably only
+         * useful for 'default'
+         * 
+         * @name measureButtonHandlers
+         * @type {object}
+         * @memberof music21.widgets.RhythmChooser#
+         */
         this.measureButtonHandlers = {
             'undo': function (t) {
                 if (this.stream.length > 0) {
@@ -121,6 +175,14 @@ define(['./common'], function(common) {
         };
     };
     
+    /**
+     * A mapping of a type to a string of HTML entities to display in
+     * BravuraText
+     * 
+     * @name valueMappings
+     * @type {object}
+     * @memberof music21.widgets.RhythmChooser
+     */
     widgets.RhythmChooser.prototype.valueMappings = {
         whole: '&#xEB9B;&#xE1D2;',
         half: '&#xEB9B;&#xE1D3;',
@@ -139,10 +201,23 @@ define(['./common'], function(common) {
         rest_16th: '&#xE4E7;',
         rest_32nd: '&#xE4E8;',
     };
+    /**
+     * A mapping of a type to a css style
+     * 
+     * @name styles
+     * @type {object}
+     * @memberof music21.widgets.RhythmChooser
+     */
     widgets.RhythmChooser.prototype.styles = {
         'undo': 'font-family: serif; font-size: 30pt; top: -2px;',
     };
             
+    /**
+     * adds a RhythmChooser widget somewhere.
+     * 
+     * @memberof music21.widgets.RhythmChooser
+     * @param {DOMObject|JQueryDOMObject} where
+     */
     widgets.RhythmChooser.prototype.addDiv = function (where) {
         var $where = where;
         if (where !== undefined && where.jquery === undefined) {
@@ -165,6 +240,13 @@ define(['./common'], function(common) {
         }
         return $outer;
     };
+    
+    /**
+     * A button has been pressed! Call the appropriate handler and update the stream's canvas (if any)
+     * 
+     * @memberof music21.widgets.RhythmChooser
+     * @param {string} t - type of button pressed.
+     */
     widgets.RhythmChooser.prototype.handleButton = function (t) {
         var bhs = this.buttonHandlers;
         if (this.measureMode) {
@@ -179,7 +261,9 @@ define(['./common'], function(common) {
         if (s.isClassOrSubclass('Part') && s.activeSite !== undefined) {
             s = s.activeSite;
         }
-        s.replaceCanvas(this.canvasDiv);
+        if (this.canvasDiv !== undefined) {
+            s.replaceCanvas(this.canvasDiv);            
+        }
     };            
     
     // end of define

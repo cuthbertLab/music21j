@@ -21,11 +21,34 @@
  */
 
 define(['jsonpickle'], 
-        
+        /**
+         * fromPython module -- see {@link music21.fromPython}
+         */
         function (jp) {
     var unpickler = jp.unpickler;
     
+    /**
+     * Converter for taking a Python-encoded jsonpickle music21p stream
+     * and loading it into music21j
+     * 
+     * Very very alpha.  See music21(p).vexflow modules to see how it works.
+     * 
+     * Requires Cuthbert's jsonpickle.js port (included in music21j)
+     * 
+     * @namespace music21.fromPython
+     * @extends music21
+     * @requires jsonpickle
+     */
     var fromPython = {};
+    
+    /**
+     * 
+     * @class Converter
+     * @memberof music21.fromPython
+     * @property {boolean} debug
+     * @property {Array<string>} knownUnparsables - list of classes that cannot be parsed
+     * @property {object} handlers - object mapping string names of classes to a set of function calls to perform when restoring or post-restoring. (too complicated to explain; read the code)
+     */
     fromPython.Converter = function () {
         this.debug = true;
         this.knownUnparsables = [
@@ -43,6 +66,14 @@ define(['jsonpickle'],
         
         
         var converterHandler = this;
+        /**
+         * Fixes up some references that cannot be unpacked from jsonpickle.
+         * 
+         * @method music21.fromPython.Converter#streamPostRestore
+         * @memberof music21.fromPython.Converter
+         * @param {music21.stream.Stream} s - stream after unpacking from jsonpickle
+         * @returns {music21.stream.Stream}
+         */
         this.streamPostRestore = function (s) {
             var ch = converterHandler;
             var st = s._storedElementOffsetTuples;
@@ -148,6 +179,15 @@ define(['jsonpickle'],
         this.lastTimeSignature = undefined;
 
     };
+    
+    /**
+     * Run the main decoder
+     * 
+     * @method music21.fromPython.Converter#run
+     * @memberof music21.fromPython.Converter
+     * @param {string} jss - stream encoded as JSON
+     * @returns {music21.stream.Stream}
+     */
     fromPython.Converter.prototype.run = function (jss) {
         var outStruct = unpickler.decode(jss, this.handlers);
         return outStruct.stream;
