@@ -7,8 +7,31 @@
  * 
  */
 define(['./base', './clef', './duration', './pitch','./note', './meter', './stream', './tie'], 
+        /**
+         * TinyNotation module, see {@link music21.tinyNotation} namespace
+         * 
+         * @exports music21/tinyNotation
+         */        
         function(base, clef, duration, pitch, note, meter, stream, tie) {
-	var tinyNotation = {};
+	/**
+	 * @namespace music21.tinyNotation
+	 * @memberof music21
+	 * @requires music21/base
+     * @requires music21/clef
+     * @requires music21/duration
+     * @requires music21/pitch
+     * @requires music21/note
+     * @requires music21/meter
+     * @requires music21/stream
+     * @requires music21/tie
+	 */    
+    var tinyNotation = {};
+    
+    /**
+     * Regular expressions object
+     * 
+     * @memberof music21.tinyNotation
+     */
 	tinyNotation.regularExpressions = {  
 			REST    : /r/,
             OCTAVE2 : /([A-G])[A-G]+/,
@@ -33,7 +56,23 @@ define(['./base', './clef', './duration', './pitch','./note', './meter', './stre
             QUAD    : /quad\{/,
             ENDBRAC : /\}$/,
 		  };
-
+	/**
+	 * Function, not class.
+	 * 
+	 * Converts a TinyNotation String into a music21 Stream
+	 * 
+	 * See music21p for examples of what can go into tinynotation. It's an
+	 * adaptation of Lilypond format, by design Extremely simple!
+	 * 
+     * @memberof music21.tinyNotation
+     * @param {string} textIn - a valid tinyNotation string
+     * @returns {music21.stream.Part|music21.stream.Measure} - a Stream or Part object (if multiple measures)
+     * @example
+     * var t = "3/4 c4 B8 c d4 e2.";
+     * var p = music21.tinyNotation.TinyNotation(t);
+     * p.duration.quarterLength;
+     * // 6.0
+	 */
 	tinyNotation.TinyNotation = function (textIn) {
 		var tokens = textIn.split(" ");
 		var p = new stream.Part();
@@ -161,6 +200,14 @@ define(['./base', './clef', './duration', './pitch','./note', './meter', './stre
 	};
 
 	// render notation divs in HTML
+	/**
+	 * Render all the TinyNotation classes in the DOM as notation
+	 * 
+	 * Called automatically when music21 is loaded.
+	 * 
+	 * @memberof music21.tinyNotation
+	 * @param {string} classTypes - a JQuery selector to find elements to replace.
+	 */
 	tinyNotation.RenderNotationDivs = function (classTypes) {
 		if (classTypes == undefined) {
 			classTypes = '.music21.tinyNotation';

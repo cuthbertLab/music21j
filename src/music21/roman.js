@@ -8,23 +8,63 @@
  */
 
 define(['./chord', './key', './pitch', './interval'], 
+        /**
+         * Roman numeral module. See {@link music21.roman} namespace
+         * 
+         * @exports music21/roman
+         */
         function(chord, key, pitch, interval) {
-	var roman = {};
+    /**
+     * music21.roman -- namespace for dealing with RomanNumeral analysis.
+     * 
+     * @namespace music21.roman
+     * @memberof music21
+     * @requires music21/chord
+     * @requires music21/key
+     * @requires music21/pitch
+     * @requires music21/interval
+     */
+    var roman = {};
 
+    /**
+     * maps an index number to a roman numeral in lowercase 
+     * 
+     * @memberof music21.roman
+     * @example
+     * music21.roman.romanToNumber[4]
+     * // 'iv'
+     */
 	roman.romanToNumber = [undefined, 'i','ii','iii','iv','v','vi','vii'];
 
+	/**
+	 * Represents a RomanNumeral.  By default, capital Roman Numerals are
+	 * major chords; lowercase are minor.
+	 * 
+	 * see music21p's roman module for better instructions.
+	 * 
+     * current limitations:
+     * 
+     * no inversions
+     * no numeric figures except 7
+     * no d7 = dominant 7
+     * no frontAlterationAccidentals
+     * no secondary dominants
+     * no Aug6th chords
+	 * 
+	 * @class RomanNumeral
+	 * @memberof music21.roman
+	 * @extends music21.chord.Chord
+	 * @param {string} figure - the roman numeral as a string, e.g., 'IV', 'viio', 'V7'
+	 * @param {string|music21.key.Key} [keyStr='C']
+	 * @property {Array<music21.pitch.Pitch>} scale - (readonly) returns the scale associated with the roman numeral
+	 * @property {music21.key.Key} key - the key associated with the RomanNumeral (not allowed to be undefined yet)
+	 * @property {string} figure - the figure as passed in
+	 * @property {string} degreeName - the name associated with the scale degree, such as "mediant" etc., scale 7 will be "leading tone" or "subtonic" appropriately
+	 * @property {Int} scaleDegree
+	 * @property {string} impliedQuality - "major", "minor", "diminished", "augmented"
+	 * @property {Array<music21.pitch.Pitch>} pitches - RomanNumerals are Chord objects, so .pitches will work for them also.
+	 */
 	roman.RomanNumeral = function (figure, keyStr) {
-		/*
-		 * current limitations:
-		 * 
-		 * no inversions
-		 * no numeric figures except 7
-		 * no d7 = dominant 7
-		 * no frontAlterationAccidentals
-		 * no secondary dominants
-		 * no Aug6th chords
-		 * 
-		 */
 		this.figure = figure;
 		this._scale = undefined;
 		this._key = undefined;
@@ -133,6 +173,12 @@ define(['./chord', './key', './pitch', './interval'],
 
 	roman.RomanNumeral.prototype = new chord.Chord();
 	roman.RomanNumeral.prototype.constructor = roman.RomanNumeral;
+	
+	/**
+	 * Update the .pitches array.  Called at instantiation, but not automatically afterwards.
+	 * 
+	 * @memberof music21.roman.RomanNumeral
+	 */
     roman.RomanNumeral.prototype.updatePitches = function () {
         var impliedQuality = this.impliedQuality;
         var chordSpacing = chord.chordDefinitions[impliedQuality];
@@ -149,6 +195,17 @@ define(['./chord', './key', './pitch', './interval'],
         this.pitches = chordPitches;
     };
     
+    /**
+     * Gives a string display.  Note that since inversion is not yet supported
+     * it needs to be given separately.
+     * 
+     * Inverting 7th chords does not work.
+     * 
+     * @memberof music21.roman.RomanNumeral
+     * @param {string} displayType - ['roman', 'bassOnly', 'nameOnly', other]
+     * @param {Int} [inversion=0]
+     * @returns {String}
+     */
     roman.RomanNumeral.prototype.asString = function (displayType, inversion) {
         var keyObj = this.key;
         var tonic = keyObj.tonic;
