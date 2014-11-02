@@ -18,20 +18,65 @@
 // k.whiteKeyWidth = 40; // default 23
 
 
-define(['./base', './pitch', './common', './miditools', 'jquery', 'MIDI'], 
+define(['./base', './pitch', './common', './miditools', 'jquery', 'MIDI'],
+        /**
+         * Keyboard module, see {@link music21.keyboard} namespace
+         * 
+         * @exports music21/keyboard
+         */
         function(base, pitch, common, miditools, $, MIDI) {
+    /**
+     * keyboard namespace -- tools for creating an onscreen keyboard and interacting with it.
+     * 
+     * @namespace music21.keyboard
+     * @memberof music21
+     * @requires music21/base
+     * @requires music21/pitch
+     * @requires music21/common
+     * @requires music21/miditools
+     * @requires jquery
+     * @requires MIDI
+     */
     var keyboard = {};
-    
+    /**
+     * Represents a single Key
+     * 
+     * @class Key
+     * @memberof music21.keyboard
+     * @property {Array<function>} callbacks - called when key is clicked/selected
+     * @property {number} [scaleFactor=1]
+     * @property {music21.keyboard.Keyboard|undefined} parent
+     * @property {Int} id - midinumber associated with the key.
+     * @property {music21.pitch.Pitch|undefined} pitchObj
+     * @property {DOMObject|undefined} svgObj - SVG representing the drawing of the key
+     * @property {DOMObject|undefined} noteNameSvgObj - SVG representing the note name drawn on the key
+     * @property {string} keyStyle='' - css style information for the key
+     * @property {string} keyClass='' - css class information for the key ("keyboardkey" + this is the class)
+     * @property {number} width - width of key
+     * @property {number} height - height of key
+     */
     keyboard.Key = function () {
         this.classes = ['Key']; // name conflict with key.Key
         this.callbacks = [];
         this.scaleFactor = 1;
         this.parent = undefined;
         this.id = 0;
+        this.width = 23;
+        this.height = 120;
         this.pitchObj = undefined;
         this.svgObj = undefined;       
         this.noteNameSvgObj = undefined;
+        this.keyStyle = '';
+        this.keyClass = '';
         
+        /**
+         * Gets an SVG object for the key
+         * 
+         * @method music21.keyboard.Key#makeKey
+         * @memberof music21.keyboard.Key
+         * @param {number} startX - X position in pixels from left of keyboard to draw key at
+         * @returns {DOMObject} a SVG rectangle for the key
+         */
         this.makeKey = function (startX) {
             keyattrs = {
                     style: this.keyStyle,
@@ -49,6 +94,13 @@ define(['./base', './pitch', './common', './miditools', 'jquery', 'MIDI'],
             this.svgObj = keyDOM;
             return keyDOM;
         };
+        /**
+         * Adds a circle (red) on the key (to mark middle C etc.)
+         * 
+         * @method music21.keyboard.Key#addCircle
+         * @param {string} [strokeColor='red']
+         * @returns {DOMObject}
+         */        
         this.addCircle = function (strokeColor) {
             if ((this.svgObj === undefined) ||
                 (this.parent === undefined) ||
@@ -77,6 +129,13 @@ define(['./base', './pitch', './common', './miditools', 'jquery', 'MIDI'],
             //console.log(circleDom);
             return circleDom;
         };
+        /**
+         * Adds the note name on the key 
+         * 
+         * @method music21.keyboard.Key#addNoteName
+         * @param {Boolean} [labelOctaves=false] - use octave numbers too?
+         * @returns {DOMObject}
+         */        
         this.addNoteName = function (labelOctaves) {
             if ((this.svgObj === undefined) ||
                     (this.parent === undefined) ||
@@ -122,7 +181,13 @@ define(['./base', './pitch', './common', './miditools', 'jquery', 'MIDI'],
             this.noteNameSvgObj = textDom; // store for removing...
             this.parent.svgObj.appendChild(textDom);
         };
-        this.removeNoteName = function (labelOctaves) {
+        /**
+         * Removes the note name from the key (if exists)
+         * 
+         * @method music21.keyboard.Key#removeNoteName
+         * @returns {undefined}
+         */        
+        this.removeNoteName = function () {
             if ((this.svgObj === undefined) ||
                     (this.parent === undefined) ||
                     (this.parent.svgObj === undefined)
@@ -139,6 +204,14 @@ define(['./base', './pitch', './common', './miditools', 'jquery', 'MIDI'],
         };
         
     };
+    
+    /**
+     * Defaults for a WhiteKey (width, height, keyStyle, keyClass)
+     * 
+     * @class WhiteKey
+     * @memberof music21.keyboard
+     * @extends music21.keyboard.Key
+     */
     keyboard.WhiteKey = function () {
         keyboard.Key.call(this);
         this.classes.push('WhiteKey');
@@ -150,6 +223,13 @@ define(['./base', './pitch', './common', './miditools', 'jquery', 'MIDI'],
     keyboard.WhiteKey.prototype = new keyboard.Key();
     keyboard.WhiteKey.prototype.constructor = keyboard.WhiteKey;
 
+    /**
+     * Defaults for a BlackKey (width, height, keyStyle, keyClass)
+     * 
+     * @class BlackKey
+     * @memberof music21.keyboard
+     * @extends music21.keyboard.Key
+     */
     keyboard.BlackKey = function () {
         keyboard.Key.call(this);
         this.classes.push('BlackKey');
@@ -161,6 +241,23 @@ define(['./base', './pitch', './common', './miditools', 'jquery', 'MIDI'],
     keyboard.BlackKey.prototype = new keyboard.Key();
     keyboard.BlackKey.prototype.constructor = keyboard.BlackKey;
     
+    /**
+     * A Class representing a whole Keyboard full of keys.
+     * 
+     * @class Keyboard
+     * @memberof music21.keyboard
+     * @property {number} whiteKeyWidth - default 23
+     * @property {number} scaleFactor - default 1
+     * @property {object} keyObjects - a mapping of id to {@link music21.keyboard.Key} objects
+     * @property {DOMObject} svgObj - the SVG object of the keyboard
+     * @property {Boolean} markC - default true
+     * @property {Boolean} showNames - default false
+     * @property {Boolean} showOctaves - default false
+     * @property {string} startPitch - default "C3"
+     * @property {string} endPitch - default "C5"
+     * @property {Boolean} hideable - default false -- add a way to hide and show keyboard
+     * @property {Boolean} scrollable - default false -- add scroll bars to change octave
+     */
     keyboard.Keyboard = function () {
        this.whiteKeyWidth = 23;
        this._defaultWhiteKeyWidth = 23;
@@ -182,8 +279,12 @@ define(['./base', './pitch', './common', './miditools', 'jquery', 'MIDI'],
        this.hideable = false;
        this.scrollable = false;
               
-       // params { hideable: true } 
-       
+       /**
+        * Redraws the SVG associated with this Keyboard
+        * 
+        * @method music21.keyboard.Keyboard#redrawSVG
+        * @returns {DOMObject} new svgDOM
+        */
        this.redrawSVG = function () {
            if (this.svgObj === undefined) {
                return;
@@ -193,8 +294,16 @@ define(['./base', './pitch', './common', './miditools', 'jquery', 'MIDI'],
            this.keyObjects = {};
            var svgDOM = this.createSVG();
            svgParent.replaceChild(svgDOM, oldSVG);
+           return svgDOM;
        };
        
+       /**
+        * Appends a keyboard to the `where` parameter
+        * 
+        * @method music21.keyboard.Keyboard#appendKeyboard
+        * @param {JQueryDOMObject|DOMObject} [where] 
+        * @returns {music21.keyboard.Keyboard} this
+        */
        this.appendKeyboard = function(where) {           
            if (where === undefined) {
                where = document.body;
@@ -213,12 +322,30 @@ define(['./base', './pitch', './common', './miditools', 'jquery', 'MIDI'],
                this.appendHideableKeyboard(where, svgDOM);
            } else {
                where.appendChild(svgDOM); // svg must use appendChild, not append.
-           }           
+           }
+           return this;
        };
        
+       /**
+        * An object of callbacks on events.
+        * 
+        * default:
+        * 
+        * - click: this.clickhandler
+        * 
+        * @name callbacks
+        * @type {object}
+        * @memberof music21.keyboard.Keyboard#
+        */
        this.callbacks = {
            click: this.clickhandler,
        };
+       /**
+        * Handle a click on a given SVG object
+        * 
+        * @method music21.keyboard.Keyboard#clickhandler
+        * @param {DOMObject} keyRect - the dom object with the keyboard.
+        */
        this.clickhandler = function (keyRect) {
            // to-do : integrate with jazzHighlight...
            var id = keyRect.id;
@@ -243,6 +370,12 @@ define(['./base', './pitch', './common', './miditools', 'jquery', 'MIDI'],
        
        //   more accurate offsets from http://www.mathpages.com/home/kmath043.htm
        this.sharpOffsets = {0: 14.3333, 1: 18.6666, 3: 13.25, 4: 16.25, 5: 19.75};
+       /**
+        * Draws the SVG associated with this Keyboard
+        * 
+        * @method music21.keyboard.Keyboard#createSVG
+        * @returns {DOMObject} new svgDOM
+        */
        this.createSVG = function () {
            // DNN = pitch.diatonicNoteNum;
            // this._endDNN = final key note. I.e., the last note to be included, not the first note not included.
@@ -329,12 +462,25 @@ define(['./base', './pitch', './common', './miditools', 'jquery', 'MIDI'],
 
            return svgDOM;
        };
+       
+       /**
+        * Puts a circle on middle c.
+        * 
+        * @method music21.keyboard.Keyboard#markMiddleC
+        * @param {string} [strokeColor='red']
+        */
        this.markMiddleC = function (strokeColor) {
            var midC = this.keyObjects[60];
            if (midC !== undefined) {
                midC.addCircle('red');               
            }
        };
+       /**
+        * Puts note names on every white key.
+        * 
+        * @method music21.keyboard.Keyboard#markNoteNames
+        * @param {Boolean} [labelOctaves=false]
+        */
        this.markNoteNames = function (labelOctaves) {
            this.removeNoteNames(); // in case...
            for (var midi in this.keyObjects) {
@@ -342,12 +488,30 @@ define(['./base', './pitch', './common', './miditools', 'jquery', 'MIDI'],
                keyObj.addNoteName(labelOctaves);
            }
        };
+
+       /**
+        * Remove note names on the keys, if they exist
+        * 
+        * @method music21.keyboard.Keyboard#removeNoteNames
+        */
        this.removeNoteNames = function () {
            for (var midi in this.keyObjects) {
                var keyObj = this.keyObjects[midi];
                keyObj.removeNoteName();
            }
        };
+       
+       
+       /**
+        * Wraps the SVG object inside a scrollable set of buttons
+        * 
+        * Do not call this directly, just use createSVG after changing the
+        * scrollable property on the keyboard to True.
+        * 
+        * @method music21.keyboard.Keyboard#wrapScrollable
+        * @param {DOMObject} svgDOM
+        * @returns {JQueryDOMObject} 
+        */
        this.wrapScrollable = function (svgDOM) {
            var $wrapper = $("<div class='keyboardScrollableWrapper'></div>").css({
                display: "inline-block"
@@ -376,6 +540,16 @@ define(['./base', './pitch', './common', './miditools', 'jquery', 'MIDI'],
            return $wrapper;
        };
 
+       /**
+        * Puts a hideable keyboard inside a Div with the proper controls.
+        * 
+        * Do not call this directly, just use createSVG after changing the
+        * hideable property on the keyboard to True.
+        * 
+        * @method music21.keyboard.Keyboard#appendHideableKeyboard
+        * @param {DOMObject} where
+        * @param {DOMObject} keyboardSVG
+        */
        this.appendHideableKeyboard = function (where, keyboardSVG) {
            var $container = $("<div class='keyboardHideableContainer'/>");
            var $bInside = $("<div class='keyboardToggleInside'>↥</div>").css({
@@ -410,9 +584,12 @@ define(['./base', './pitch', './common', './miditools', 'jquery', 'MIDI'],
     
     /**
      * triggerToggleShow -- event for keyboard is shown or hidden.
+     * 
+     * @function music21.keyboard.triggerToggleShow
+     * @param {Event} e
      */
     keyboard.triggerToggleShow = function (e) {  
-        // this refers to the object clicked
+        // "this" refers to the object clicked
         // e -- event is not used.
         var $t = $(this);
         var state = $t.data('state'); 
@@ -443,12 +620,14 @@ define(['./base', './pitch', './common', './miditools', 'jquery', 'MIDI'],
     };
     
     /**
-     * [better demo...]
+     * highlight the keyboard stored in "this" appropriately
      * 
-     *  for instance:
-     *       var midiCallbacksPlay = [music21.miditools.makeChords, 
-     *                                music21.miditools.sendToMIDIjs,
-     *                                music21.keyboard.jazzHighlight.bind(k)];
+     * @function music21.keyboard.jazzHighlight
+     * @param {Event} e
+     * @example
+     * var midiCallbacksPlay = [music21.miditools.makeChords, 
+     *                          music21.miditools.sendToMIDIjs,
+     *                          music21.keyboard.jazzHighlight.bind(k)];
      */
     keyboard.jazzHighlight = function (e) {
         // e is a miditools.event object -- call with this = keyboard.Keyboard object via bind...

@@ -9,8 +9,29 @@
  * 
  */
 
-define([], function() {
-	var renderOptions = {};
+define([], 
+        /**
+         * renderOptions module, see {@link music21.renderOptions}
+         * 
+         * @exports music21/renderOptions
+         */
+        function() {
+    /**
+     * Options for rendering a stream
+     * 
+     * @namespace music21.renderOptions
+     * @memberof music21
+     */
+    var renderOptions = {};
+    
+    /**
+     * An object that contains information on rendering the current stream
+     * 
+     * Found on every Stream as `.renderOptions`
+     * 
+     * @class RenderOptions
+     * @memberof music21.renderOptions
+     */
 	renderOptions.RenderOptions = function() {
 		return {
 			displayClef: true,

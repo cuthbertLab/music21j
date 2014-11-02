@@ -79,6 +79,11 @@ define(['./prebase',
         './vfShow',
         './widgets',
         ], 
+        /**
+         * Module loader module -- place modules to be loaded here.
+         * 
+         * @exports music21/moduleLoader
+         */
         function() {
             //console.log("loaded submodules...");
 
