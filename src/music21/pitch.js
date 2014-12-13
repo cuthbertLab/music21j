@@ -173,7 +173,7 @@ define(['./prebase'],
 	 * @param {string} pn - name of the pitch, with or without octave, see above.
      * @extends music21.prebase.ProtoM21Object
      * @property {music21.pitch.Accidental|undefined} accidental - link to an accidental
-     * @property {number} diatonicNoteNum - diatonic number of the pitch, where 29 = C4; updates other properties.
+     * @property {number} diatonicNoteNum - diatonic number of the pitch, where 29 = C4, C#4, C-4, etc.; 30 = D-4, D4, D#4, etc. updates other properties.
      * @property {number} midi - midi number of the pitch (C4 = 60); readonly. See {@link music21.pitch.Pitch#ps} for setable version.
      * @property {string} name - letter name of pitch + accidental modifier; e.g., B-flat = 'B-'; changes automatically w/ step and accidental
      * @property {string} nameWithOctave - letter name of pitch + accidental modifier + octave; changes automatically w/ step, accidental, and octave
