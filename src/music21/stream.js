@@ -346,6 +346,32 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
 				}
 			}
 	    });
+	    
+	    /**
+	     * A function bound to the current stream that
+	     * will changes the stream. Used in editableAccidentalCanvas, among other places.
+	     * 
+	     *      var can = s.appendNewCanvas();
+	     *      $(can).on('click', s.canvasChangerFunction);
+	     * 
+	     * @memberof music21.stream.Stream
+	     * @param {Event} e
+	     * @returns {music21.base.Music21Object|undefined} - returns whatever changedCallbackFunction does.
+	     */
+	    this.canvasChangerFunction = (function (e) {
+	        var canvasElement = e.currentTarget;
+	        var _ = this.findNoteForClick(canvasElement, e),
+	             clickedDiatonicNoteNum = _[0],
+	             foundNote = _[1];
+	        if (foundNote === undefined) {
+	            if (music21.debug) {
+	                console.log('No note found');           
+	            }
+	            return undefined;
+	        }
+	        return this.noteChanged(clickedDiatonicNoteNum, foundNote, canvasElement);
+	    }).bind(this);
+
 	};
 
 	stream.Stream.prototype = new base.Music21Object();
@@ -766,9 +792,11 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
             var maxLength = 0;
             for (var i = 0; i < this.length; i++) {
                 var v = this.get(i);
-                var thisLength = v.estimateStaffLength() + v.renderOptions.staffPadding;
-                if (thisLength > maxLength) {
-                    maxLength = thisLength;
+                if (v.isClassOrSubclass('Stream')) {
+                    var thisLength = v.estimateStaffLength() + v.renderOptions.staffPadding;
+                    if (thisLength > maxLength) {
+                        maxLength = thisLength;
+                    }                    
                 }
             }
             return maxLength;
@@ -776,9 +804,11 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
             var totalLength = 0;
             for (var i = 0; i < this.length; i++) {
                 var m = this.get(i);
-                totalLength += m.estimateStaffLength() + m.renderOptions.staffPadding;
-                if ((i != 0) && (m.renderOptions.startNewSystem == true)) {
-                    break;
+                if (m.isClassOrSubclass('Stream')) {
+                    totalLength += m.estimateStaffLength() + m.renderOptions.staffPadding;
+                    if ((i != 0) && (m.renderOptions.startNewSystem == true)) {
+                        break;
+                    }
                 }
             }
             return totalLength;
@@ -1032,7 +1062,7 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
      * 
      * @memberof music21.stream.Stream
      * @param {JQueryDOMObject|DOMObject} [where]
-     * @returns {JQueryDOMObject}
+     * @returns {DOMObject} canvas
      */
     stream.Stream.prototype.renderScrollableCanvas = function (where) {
         var $where = where;
@@ -1062,7 +1092,7 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
      * @param {DOMObject} c - canvas
      * @param {Event} [event] - the event that caused the scrolling to start
      * (needed because `event.stopPropagation()` is called)
-     * @returns {music21.stream.Stream} this
+     * @returns {music21.streamInteraction.ScrollPlayer}
      */
     stream.Stream.prototype.scrollScoreStart = function (c, event) {
         var scrollPlayer = new streamInteraction.ScrollPlayer(this, c);
@@ -1070,7 +1100,7 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
         if (event !== undefined) {
             event.stopPropagation();
         }
-        return this;
+        return scrollPlayer;
     };
 
     
@@ -1255,6 +1285,10 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
     };
     
     /**
+     * Given an event object, and an x and y location, returns a two-element array
+     * of the pitch.Pitch.diatonicNoteNum that was clicked (i.e., if C4 was clicked this
+     * will return 29; if D4 was clicked this will return 30) and the closest note in the
+     * stream that was clicked.
      * 
      * Return a list of [diatonicNoteNum, closestXNote]
      * for an event (e) called on the canvas (canvas)
@@ -1277,36 +1311,6 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
         return [clickedDiatonicNoteNum, foundNote];
     };
       
-    /**
-     * A function to be called when a canvas is clicked, etc. that
-     * will change the stream in some way. (For instance in an
-     * editable canvas mode).
-     * 
-     * This is a mess and will be changed soon...
-     * "this" refers to the CANVAS
-     *
-     *      var can = s.appendNewCanvas();
-     *      $(can).on('click', s.canvasChangerFunction);
-     * 
-     * written before I knew about `.bind()`
-     * 
-     * @memberof music21.stream.Stream
-     * @param {Event} e
-     * @returns {music21.base.Music21Object|undefined} - returns whatever changedCallbackFunction does.
-     */
-    stream.Stream.prototype.canvasChangerFunction = function (e) {
-        var ss = this.storedStream;
-        var _ = ss.findNoteForClick(this, e),
-             clickedDiatonicNoteNum = _[0],
-             foundNote = _[1];
-        if (foundNote === undefined) {
-            if (music21.debug) {
-                console.log('No note found');               
-            }
-            return undefined;
-        }
-        return ss.noteChanged(clickedDiatonicNoteNum, foundNote, this);
-    };
     /**
      * Change the pitch of a note given that it has been clicked and then
      * call changedCallbackFunction

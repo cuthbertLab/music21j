@@ -33,6 +33,13 @@ define(['./base', './pitch', './interval', './scale'],
      * @property {Int} [sharps=0] -- number of sharps (negative for flats)
      * @property {String} [mode='major'] -- mode represented by the KeySignature (see Key for more sophisticated uses)
      * @extends music21.base.Music21Object
+     * @example
+     * var ks = new music21.key.KeySignature(-3); //E-flat major or c minor
+     * var s = new music21.stream.Stream();
+     * s.keySignature = ks;
+     * var n = new music21.note.Note('A-'); // A-flat
+     * s.append(n);
+     * s.appendNewCanvas();
 	 */
 	key.KeySignature = function(sharps) {
 		base.Music21Object.call(this);

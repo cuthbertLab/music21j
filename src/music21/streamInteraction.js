@@ -69,7 +69,7 @@ define(['./common','./stream', 'jquery'],
             var systemIndex = pm.getSystemIndexAtOffset(offset);
             
             if (systemIndex > this.previousSystemIndex) {
-                this.lastX = -100;
+                this.lastX = -100; // arbitrary negative...
                 this.previousSystemIndex = systemIndex;
                 this.barDOM.setAttribute('y', systemIndex * this.eachSystemHeight);
             }
