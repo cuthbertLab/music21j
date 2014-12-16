@@ -12,6 +12,7 @@
             
             var s1 = music21.tinyNotation.TinyNotation("4/4 c2 d#4 e8 f g4 r8 B c4~ c16 d32 e f g a b c'1 b4 a g f e8 f e d c4 B c1 d2 c2 B2 c2 d1 c1");
             var m = s1.get(0);
+            m.get(0).stemDirection = 'down';
             m.elements.pop();
             var c = new music21.chord.Chord(["F4", "A-4", "C5"]);
             c.duration.type = 'eighth';
@@ -19,6 +20,7 @@
             m.append(c);
             var mQuarters = s1.get(3);
             var voice1 = new music21.stream.Voice();
+            voice1.autoBeam = false; // needed to not lose stemDirection
             voice1.renderOptions.stemDirection = 'up';
             for (var i = 0; i < 4; i++) {
                 voice1.append( mQuarters.get(i) );
