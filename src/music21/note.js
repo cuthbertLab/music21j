@@ -288,6 +288,7 @@ define(['./prebase', './base', './pitch', './beam', './common', 'vexflow'],
                 vfn.addDotToAll();                
             }
         }
+        
         if (this.activeSite !== undefined && this.activeSite.renderOptions.stemDirection !== undefined) {
             this.stemDirection = this.activeSite.renderOptions.stemDirection;
         } else if (this.stemDirection === undefined && options.clef !== undefined) {
@@ -532,8 +533,10 @@ define(['./prebase', './base', './pitch', './beam', './common', 'vexflow'],
             return undefined;
         }
         var vexflowKey = this.pitch.vexflowName(clef);
-        var vfn = new Vex.Flow.StaveNote({keys: [vexflowKey], 
-                                      duration: vfd});
+        var vfn = new Vex.Flow.StaveNote({
+            keys: [vexflowKey], 
+            duration: vfd,
+        });
         this.vexflowAccidentalsAndDisplay(vfn, params); // clean up stuff...
         if (this.pitch.accidental != undefined) {
             if (this.pitch.accidental.vexflowModifier != 'n' && this.pitch.accidental.displayStatus != false) {

@@ -94,6 +94,16 @@ define(['./prebase', './duration'],
     base.Music21Object.prototype = new prebase.ProtoM21Object();
     base.Music21Object.prototype.constructor = base.Music21Object;
 	
+    base.Music21Object.prototype.getOffsetBySite = function(site) {
+        if (site === undefined) {
+            return this.offset;
+        }
+        for (var i = 0; i < site.length; i++) {
+            if (site._elements[i] === this) {
+                return site._elementOffsets[i];
+            }
+        }
+    };
 	
 	// end of define
 	if (typeof(music21) != "undefined") {

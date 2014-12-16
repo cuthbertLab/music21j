@@ -513,12 +513,11 @@ define(['vexflow', './common'],
         formatter.formatToStave(allTickables, stave);
         if (autoBeam) {
             for (var i = 0; i < voices.length; i++) {
-                // find beam groups -- n.b. this wipes out stem direction and
-                //      screws up middle line stems -- worth it for now.
+                // find beam groups -- n.b. this wipes out stemDirection. worth it usually...
                 var voice = voices[i];
-                var beatGroups = [new Vex.Flow.Fraction(2, 8)];
+                var beatGroups = [new Vex.Flow.Fraction(2, 8)]; // default beam groups
                 if (measures[i] !== undefined && measures[i].timeSignature !== undefined) {
-                    beatGroups = measures[i].timeSignature.vexflowBeatGroups(Vex);
+                    beatGroups = measures[i].timeSignature.vexflowBeatGroups(Vex); // TODO: getContextByClass...
                     //console.log(beatGroups);
                 }
                 var beamGroups = Vex.Flow.Beam.applyAndGetBeams(voice, undefined, beatGroups);

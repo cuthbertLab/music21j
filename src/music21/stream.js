@@ -309,6 +309,34 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
 					return this._elements.length;
 				}
 			},
+			'offsetMap': {
+                configurable: true,
+                enumerable: true,
+                get: function() {
+                    var offsetMap = [];
+                    var groups = [];
+                    if (this.hasVoices()) {
+                        $.each(srcObj.getElementsByClass('Voice').elements, function(i, v) { 
+                            groups.push([v.flat, i]); 
+                        });
+                    } else {
+                        groups = [ [this, undefined] ];
+                    }
+                    for (var i = 0; i < groups.length; i++) {
+                        var group = groups[i][0];
+                        var voiceIndex = groups[i][1];
+                        for (var j = 0; j < group.length; j++) {
+                            var e = group.get(j);
+                            var dur = e.duration.quarterLength;
+                            var offset = e.offset; // TODO: getOffsetBySite(group)
+                            var endTime = offset + dur;
+                            var thisOffsetMap = new stream.OffsetMap(e, offset, endTime, voiceIndex);
+                            offsetMap.push(thisOffsetMap);
+                        }
+                    }
+                    return offsetMap;
+                }			    
+			},
 			'elements': {
                 configurable: true,
                 enumerable: true,
@@ -553,6 +581,133 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
             }
         }
         return hasSubStreams;
+    };
+    /**
+     * Takes a stream and places all of its elements into
+     * measures (:class:`~music21.stream.Measure` objects)
+     * based on the :class:`~music21.meter.TimeSignature` objects
+     * placed within
+     * the stream. If no TimeSignatures are found in the
+     * stream, a default of 4/4 is used.
+
+     * If `options.inPlace` is true, the original Stream is modified and lost
+     * if `options.inPlace` is False, this returns a modified deep copy.
+
+     * @memberof music21.stream.Stream
+     * @param {object} options
+     * @returns {music21.stream.Stream}
+     */
+    stream.Stream.prototype.makeMeasures = function (options) {
+        var params = {
+            meterStream: undefined,
+            refStreamOrTimeRange: undefined,
+            searchContext: false,
+            innerBarline: undefined,
+            finalBarline: 'final',
+            bestClef: false,
+            inPlace: false,
+        };
+        common.merge(params, options);
+        if (this.hasVoices() ) {
+            voiceCount = srcObj.getElementsByClass('Voice').length;
+        } else {
+            voiceCount = 0;
+        }
+        // meterStream
+        var meterStream = this.getElementsByClass('TimeSignature');
+        if (meterStream.length == 0) {
+            meterStream.append(this.timeSignature);
+        }
+        // getContextByClass('Clef')
+        var clefObj = this.clef;
+        var offsetMap = this.offsetMap;
+        var oMax = 0;
+        for (var i = 0; i < offsetMap.length; i++) {
+            if (offsetMap[i].endTime > oMax) {
+                oMax = offsetMap[i].endTime;
+            }
+        }
+        //console.log('oMax: ', oMax);
+        var post = new this.constructor();
+        // derivation
+        var o = 0.0
+        var measureCount = 0;
+        var lastTimeSignature = undefined;
+        while (true) {
+            var m = new stream.Measure();
+            m.number = measureCount + 1;
+            // var thisTimeSignature = meterStream.getElementAtOrBefore(o);
+            var thisTimeSignature = this.timeSignature;
+            if (measureCount == 0) {
+                // simplified...
+            }
+            m.clef = clefObj;
+            m.timeSignature = thisTimeSignature.clone();
+            
+            for (var i = 0; i < voiceCount; i++) {
+                var v = new stream.Voice();
+                v.id = voiceIndex;
+                m.insert(0, v);
+            }
+            post.insert(o, m);
+            o += thisTimeSignature.barDuration.quarterLength;
+            if (o >= oMax) {
+                break;
+            } else {
+                measureCount += 1;
+            }
+        }
+        
+        for (var i = 0; i < offsetMap.length; i++) {
+            var ob = offsetMap[i];
+            var e = ob.element;
+            var start = ob.offset;
+            var end = ob.endTime;
+            var voiceIndex = ob.voiceIndex;
+            
+            // if e.isSpanner;
+            
+            var match = false;
+            var lastTimeSignature = undefined;
+            for (var j = 0; j < post.length; j++) {
+                var m = post.get(j); // nothing but measures...
+                if (m.timeSignature !== undefined) {
+                    lastTimeSignature = m.timeSignature;
+                }
+                var mStart = m.getOffsetBySite(post);
+                var mEnd = mStart + lastTimeSignature.barDuration.quarterLength;
+                if (start >= mStart && start < mEnd) {
+                    match = true;
+                    break;
+                }
+            }
+            // if not match, raise Exception;
+            var oNew = start - mStart;
+            if (m.clef === e) {
+                continue;
+            }
+            if (oNew == 0 && e.isClassOrSubclass('TimeSignature')) {
+                continue;
+            }
+            var insertStream = m;
+            if (voiceIndex !== undefined) {
+                insertStream = m.getElementsByClass('Voice').get(voiceIndex)                
+            }
+            insertStream.insert(oNew, e);
+        }
+        // set barlines, etc.
+        if (params.inPlace !== true) {
+            return post;
+        } else {
+            this.elements = [];
+            // endElements
+            // elementsChanged;
+            for (var i = 0; i < post.length; i ++) {
+                var e = post.get(i);
+                this.insert(e.offset, e);
+            }
+            return this; // javascript style;
+        }
     };
     
     /**
@@ -1157,12 +1312,13 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
             if (!this.hasSubStreams()) {
                 return undefined;
             } else {
-                storedVFStave = this.get(0).storedVexflowStave;
+                var subStreams = this.getElementsByClass('Stream');
+                storedVFStave = subStreams.get(0).storedVexflowStave;
                 if (storedVFStave == undefined) {
-                    // bad programming ... should support continuous recurse
+                    // TODO: bad programming ... should support continuous recurse
                     // but good enough for now...
-                    if (this.get(0).hasSubStreams()) {
-                        storedVFStave = this.get(0).get(0).storedVexflowStave;
+                    if (subStreams.get(0).hasSubStreams()) {
+                        storedVFStave = subStreams.get(0).get(0).storedVexflowStave;
                     }
                 }
             }
@@ -1516,6 +1672,7 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
 	stream.Measure = function () { 
 		stream.Stream.call(this);
 		this.classes.push('Measure');
+		this.number = 0; // measure number
 	};
 
 	stream.Measure.prototype = new stream.Stream();
@@ -1547,8 +1704,9 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
 	 */
 	stream.Part.prototype.numSystems = function () {
         var numSystems = 0;
-        for (var i = 0; i < this.length; i++) {
-            if (this.get(i).renderOptions.startNewSystem) {
+        var subStreams = this.getElementsByClass('Stream');
+        for (var i = 0; i < subStreams.length; i++) {
+            if (subStreams.get(i).renderOptions.startNewSystem) {
                 numSystems++;
             }
         }
@@ -1592,8 +1750,9 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
         }
         if (this.hasSubStreams()) { // part with Measures underneath
             var totalLength = 0;
-            for (var i = 0; i < this.length; i++) {
-                var m = this.get(i);
+            var subStreams = this.getElementsByClass('Measure');
+            for (var i = 0; i < subStreams.length; i++) {
+                var m = subStreams.get(i);
                 // this looks wrong, but actually seems to be right. moving it to
                 // after the break breaks things.
                 totalLength += m.estimateStaffLength() + m.renderOptions.staffPadding;
@@ -1662,6 +1821,9 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
         var leftSubtract = 0;
         for (var i = 0; i < this.length; i++) {
             var m = this.get(i);
+            if (m.renderOptions === undefined) {
+                continue;
+            }
             if (i == 0) {
                 m.renderOptions.startNewSystem = true;
             }
@@ -1812,6 +1974,7 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
     stream.Part.prototype.noteElementFromScaledX = function (scaledX, allowablePixels, systemIndex) {
         var gotMeasure = undefined;
         for (var i = 0; i < this.length; i++) {
+            // TODO: if not measure, do not crash...
             var m = this.get(i);
             var rendOp = m.renderOptions;
             var left = rendOp.left;
@@ -1992,6 +2155,7 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
     stream.Score.prototype.getMaxMeasureWidths = function () {
         var maxMeasureWidths = [];
         var measureWidthsArrayOfArrays = [];
+        // TODO: Do not crash on not partlike...
         for (var i = 0; i < this.length; i++) {
             var el = this.get(i);
             measureWidthsArrayOfArrays.push(el.getMeasureWidths());
@@ -2047,7 +2211,7 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
      * @returns {Int}
      */
     stream.Score.prototype.numSystems = function () {
-        return this.get(0).numSystems();
+        return this.getElementsByClass('Part').get(0).numSystems();
     };
     
     /**
@@ -2096,7 +2260,15 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
         return this;
     };    
 
-	
+    // small Class.
+    stream.OffsetMap = function (element, offset, endTime, voiceIndex) {
+        this.element = element;
+        this.offset = offset;
+        this.endTime = endTime;
+        this.voiceIndex = voiceIndex;
+    };
+
+    // Tests...
 	
 	stream.tests = function () {
 	    test( "music21.stream.Stream", function() {
@@ -2217,6 +2389,25 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
             c = s.getElementsByClass('GeneralNote');            
             equal (c.length, 3, 'got multiple subclasses');
         });  
+        test( "music21.stream.OffsetMap" , function() {
+            var n = new music21.note.Note("G3");
+            var o = new music21.note.Note("A3");            
+            var s = new music21.stream.Measure();
+            s.insert(0, n);
+            s.insert(0.5, o);
+            var om = s.offsetMap;
+            equal (om.length, 2, 'offsetMap should have length 2');
+            var omn = om[0];
+            var omo = om[1];
+            equal (omn.element, n, 'omn element should be n');
+            equal (omn.offset, 0.0, 'omn offset should be 0');
+            equal (omn.endTime, 1.0, 'omn endTime should be 1.0');
+            equal (omn.voiceIndex, undefined, 'omn voiceIndex should be undefined');
+            equal (omo.element, o, 'omo element should be o');
+            equal (omo.offset, 0.5, 'omo offset should be 0.5');
+            equal (omo.endTime, 1.5, 'omo endTime should be 1.5');
+                        
+        });
         test( "music21.stream.Stream appendNewCanvas ", function() { 
             var n = new music21.note.Note("G3");
             var s = new music21.stream.Measure();
@@ -2236,6 +2427,8 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
             $(document.body).append(div1);
         });
 	};
+	
+	
 	
 	// end of define
 	if (typeof(music21) != "undefined") {
