@@ -35,6 +35,7 @@ define(['./miditools','jquery'],
      * @property {string} selectedInterface - the currently connected interface (note that we can only use one right now)
      */
     var jazzMidi = {};
+    jazzMidi.downloadUrl = 'http://jazz-soft.net/doc/Jazz-Plugin/Plugin.html';
 	jazzMidi.storedPlugin = undefined;
 	jazzMidi.selectedInterface = undefined; // not the same as "" etc. uses last selected interface by default.
     
@@ -118,7 +119,7 @@ define(['./miditools','jquery'],
 	        return obj;
 	    } else {
 		    appendElement.removeChild(obj);
-		    console.error("Cannot use jazz plugin; install at http://jazz-soft.net/doc/Jazz-Plugin/Plugin.html");
+		    console.error("Cannot use jazz plugin; install at " + jazzMidi.downloadUrl);
 		    return undefined;
 	    }
 	};
