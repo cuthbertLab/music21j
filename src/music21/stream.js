@@ -1541,9 +1541,19 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
     /**
      * 
      * @memberof music21.stream.Stream
+     * @param {Int} minAccidental - alter of the min accidental (default -1)
+     * @param {Int} maxAccidental - alter of the max accidental (default 1)
      * @returns {DOMObject} the accidental toolbar.
      */
-    stream.Stream.prototype.getAccidentalToolbar = function () {
+    stream.Stream.prototype.getAccidentalToolbar = function (minAccidental, maxAccidental) {
+        if (minAccidental === undefined) {
+            minAccidental = -1;
+        }
+        if (maxAccidental === undefined) {
+            maxAccidental = 1;
+        }
+        minAccidental = Math.round(minAccidental);
+        maxAccidental = Math.round(maxAccidental);        
         
         var addAccidental = function (clickedButton, alter) {
             /*
@@ -1567,9 +1577,15 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
         
         var buttonDiv = $("<div/>").attr('class','buttonToolbar vexflowToolbar').css('position','absolute').css('top','10px');
         buttonDiv.append( $("<span/>").css('margin-left', '50px'));
-        buttonDiv.append( $("<button>♭</button>").click( function () { addAccidental(this, -1); } ));
-        buttonDiv.append( $("<button>♮</button>").click( function () { addAccidental(this, 0); } ));
-        buttonDiv.append( $("<button>♯</button>").click( function () { addAccidental(this, 1); } ));
+        for (var i = minAccidental; i <= maxAccidental; i++) {
+            var acc = new music21.pitch.Accidental(i);
+            buttonDiv.append( $("<button>" + acc.unicodeModifier + "</button>")
+                                .data('alter', i)
+                                .click( function () { addAccidental(this, $(this).data('alter')); } )
+//                                .css('font-family', 'Bravura')
+//                                .css('font-size', '40px')
+            );            
+        }
         return buttonDiv;
 
     };

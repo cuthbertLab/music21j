@@ -199,7 +199,6 @@ if ((Object.defineProperties === undefined) && warnBanner) {
 
 } else {
     if ( typeof define === "function" && define.amd) {
-            console.log('inside require'); 
             require.config(m21requireConfig);
             //console.log(require.nameToUrl('jquery'));
             define( m21modules, 

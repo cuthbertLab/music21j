@@ -35,7 +35,7 @@ define(['./miditools','jquery'],
      * @property {string} selectedInterface - the currently connected interface (note that we can only use one right now)
      */
     var jazzMidi = {};
-    jazzMidi.downloadUrl = 'http://jazz-soft.net/doc/Jazz-Plugin/Plugin.html';
+    jazzMidi.downloadUrl = 'http://jazz-soft.net/download/Jazz-Plugin/';
 	jazzMidi.storedPlugin = undefined;
 	jazzMidi.selectedInterface = undefined; // not the same as "" etc. uses last selected interface by default.
     
