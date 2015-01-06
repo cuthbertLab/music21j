@@ -52,6 +52,7 @@ define(['./prebase',
         './common',
         
         './articulations',
+        './audioSearch',
         './beam',
         './chord', 
         './clef',

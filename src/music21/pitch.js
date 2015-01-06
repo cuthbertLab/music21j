@@ -34,6 +34,7 @@ define(['./prebase'],
 		this._name = "";
 		this._alter = 0.0;
 		this._modifier = "";
+		this._unicodeModifier = "";
 		this.displayType = "normal"; // "normal", "always" supported currently
 		this.displayStatus = undefined; // true, false, undefined
 		this.set(accName);
@@ -55,30 +56,37 @@ define(['./prebase'],
             this._name = 'natural';
             this._alter = 0.0;
             this._modifier = "";
+            this._unicodeModifier = '♮';
         } else if (accName == 'sharp' || accName == '#' || accName == 1) {
             this._name = 'sharp';
             this._alter = 1.0;
             this._modifier = "#";
+            this._unicodeModifier = '♯';
         } else if (accName == 'flat' || accName == '-' || accName == -1) {
             this._name = 'flat';
             this._alter = -1.0;
             this._modifier = "-";
+            this._unicodeModifier = '♭';
         } else if (accName == 'double-flat' || accName == '--' || accName == -2) {
             this._name = 'double-flat';
             this._alter = -2.0;
             this._modifier = "--";
+            this._unicodeModifier = '&#x1d12b;';
         } else if (accName == 'double-sharp' || accName == '##' || accName == 2) {
             this._name = 'double-sharp';
             this._alter = 2.0;
             this._modifier = "##";
+            this._unicodeModifier = '&#x1d12a;';
         } else if (accName == 'triple-flat' || accName == '---' || accName == -3) {
             this._name = 'triple-flat';
             this._alter = -3.0;
             this._modifier = "---";
+            this._unicodeModifier = '♭&#x1d12b;';
         } else if (accName == 'triple-sharp' || accName == '###' || accName == 3) {
             this._name = 'triple-sharp';
             this._alter = 3.0;
             this._modifier = "###";
+            this._unicodeModifier = '&#x1d12a;';
         }
     };
     Object.defineProperties(pitch.Accidental.prototype, {
@@ -133,7 +141,7 @@ define(['./prebase'],
          */
         'vexflowModifier' : {
               enumerable: true,
-              configurable: true,
+              configurable: false,
               get: function () { 
                   var m = this.modifier;
                   if (m == "") { return "n"; }
@@ -144,6 +152,21 @@ define(['./prebase'],
                   else if (m == "###") { return "###"; }
                   else if (m == '---') { return "bbb"; }
                   else { throw ("Vexflow does not support: " + m); }
+              },
+        },
+        /**
+         * Returns the modifier in unicode or
+         * for double and triple accidentals, as a hex escape
+         * 
+         * @memberof music21.pitch.Accidental#
+         * @var {string} unicodeModifier
+         * @readonly
+         */
+        'unicodeModifier' : {
+              enumerable: true,
+              configurable: false,
+              get: function () { 
+                  return this._unicodeModifier;
               },
         }
           
@@ -192,7 +215,12 @@ define(['./prebase'],
 	    this._accidental = undefined;
 	    
 	    /* pn can be a nameWithOctave */
-	    if (pn.match(/\d+/)) {
+	    if (typeof pn == "number") {
+	        if (pn < 12) {
+	            pn += 60; // pitchClass
+	        }
+	        this.ps = pn;
+	    } else if (pn.match(/\d+/)) {
 	        this.nameWithOctave = pn;
 	    } else {
 	        this.name = pn;	        
@@ -223,7 +251,7 @@ define(['./prebase'],
                   }
                   this._accidental = a; 
               }
-            },          
+            },
         'name': {
             enumerable: true,
             configurable: true,
@@ -272,7 +300,14 @@ define(['./prebase'],
                 this.octave = Math.floor(newDNN / 7);
                 this.step = pitch.stepsToName[newDNN % 7];
             }
-        },          
+        },       
+        'frequency': {
+            enumerable: true,
+            configurable: true,
+            get: function () { 
+                return 440 * Math.pow(2,(this.ps - 69)/12);
+            }            
+        },
         'midi': { 
             enumerable: true,
             configurable: true,

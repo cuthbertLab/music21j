@@ -43,6 +43,37 @@ define([],
         }
         return destination;
     };
+
+    /**
+     * 
+     * Returns the statistical mode (most commonly appearing element)
+     * in a.
+     * 
+     * In case of tie, returns the first element to reach the maximum
+     * number of occurrences.
+     * 
+     * @function music21.common.statisticalMode
+     * @param {Array} a - an array to analyze
+     * @returns {object} element with the highest frequency in a
+     */
+    common.statisticalMode = function(a) {
+        if (a.length == 0) { return null }
+        var modeMap = {};
+        var maxEl = a[0];
+        var maxCount = 1;
+        for (var i = 0; i < a.length; i++) {
+            var el = a[i];
+            if (modeMap[el] == null) {
+                modeMap[el] = 0;               
+            }
+            modeMap[el]++;
+            if (modeMap[el] > maxCount) {
+                maxEl = el;
+                maxCount = modeMap[el];
+            }
+        }
+        return maxEl;
+    }
     
     /**
      * Creates a DOMObject of an SVG figure using the correct `document.createElementNS` call.
@@ -224,10 +255,10 @@ define([],
      * for a single event.  For instance, Safari calls once on losing focus completely
      * but twice for a tab change.
      * 
-     * @function music21.common.setWindowFocusWatcher
+     * @function music21.common.setWindowVisibilityWatcher
      * @param {function} callback
      */
-    common.setWindowFocusWatcher = function (callback) {
+    common.setWindowVisibilityWatcher = function (callback) {
         var hidden = "hidden";
 
         // Standards:
@@ -261,7 +292,7 @@ define([],
             } else {
                 callbackState = this[hidden] ? "hidden" : "visible";                
             }
-            callback(callbackState);
+            callback(callbackState, evt);
         }
         // set the initial state
         var initialState = ((document.visibilityState == "visible") ? "focus" : "blur");
