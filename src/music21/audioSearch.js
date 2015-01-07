@@ -93,8 +93,10 @@ define(['./pitch', './common'],
                audioSearch.audioContext.sampleRate,
                audioSearch.minFrequency,
                audioSearch.maxFrequency);
-       audioSearch.sampleCallback(frequencyDetected);
-       audioSearch.animationFrameCallbackId = window.requestAnimationFrame(audioSearch.animateLoop);
+       var retValue = audioSearch.sampleCallback(frequencyDetected);
+       if (retValue != -1) {
+           audioSearch.animationFrameCallbackId = window.requestAnimationFrame(audioSearch.animateLoop);           
+       }
    };
    
    audioSearch.pitchSmoothingSize = 40;
@@ -150,7 +152,7 @@ define(['./pitch', './common'],
        var _ = audioSearch.smoothPitchExtraction(frequency),
            midiNum = _[0],
            centsOff = _[1];
-       console.log(midiNum, centsOff);
+       //console.log(midiNum, centsOff);
    };
 
    // from Chris Wilson. Replace with Jordi's
