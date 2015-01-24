@@ -45,9 +45,14 @@ class MykeCGIHTTPServer(CGIHTTPServer.CGIHTTPRequestHandler):
 server = BaseHTTPServer.HTTPServer
 handler = MykeCGIHTTPServer
 
-port = 8000
-server_address = ("", port)
 #handler.cgi_directories.append("/server/cgi-bin/")
+import sys
+if len(sys.argv) > 1:
+    port = int(sys.argv[1])
+else:
+    port = 8000
+
+server_address = ("", port)
 
 httpd = server(server_address, handler)
 print("Beginning HTTP/CGI server at " + str(port));
