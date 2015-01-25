@@ -220,7 +220,7 @@ if ((Object.defineProperties === undefined) && warnBanner) {
                     if ((music21.scriptConfig.renderHTML === undefined) ||
                             (music21.scriptConfig.renderHTML != false)) {
                         $(document).ready(function() {
-                            music21.tinyNotation.RenderNotationDivs();
+                            music21.tinyNotation.renderNotationDivs();
                         });
                     }
                     //console.log('end inside of require...');
