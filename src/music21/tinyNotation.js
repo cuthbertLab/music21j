@@ -208,19 +208,29 @@ define(['./base', './clef', './duration', './pitch','./note', './meter', './stre
 	 * @memberof music21.tinyNotation
 	 * @param {string} classTypes - a JQuery selector to find elements to replace.
 	 */
-	tinyNotation.RenderNotationDivs = function (classTypes) {
+	tinyNotation.renderNotationDivs = function (classTypes, selector) {
 		if (classTypes == undefined) {
 			classTypes = '.music21.tinyNotation';
 		}
-		var allRender = $(classTypes);
+		var allRender = [];
+		if (selector == undefined) {
+		    allRender = $(classTypes);
+		} else {
+		    if (selector.jquery == undefined) {
+		        selector = $(selector);
+		    }
+		    allRender = selector.find(classTypes);
+		}
 		for (var i = 0 ; i < allRender.length ; i ++) {
 			var thisTN = allRender[i];
 			var thisTNJQ = $(thisTN);
-			var thisTNContents = undefined;
-			if (thisTN.textContent != undefined) {
-			    thisTNContents = thisTN.textContent;
-			    thisTNContents = thisTNContents.replace(/s+/g, ' '); // no line-breaks, etc.
-			}
+            var thisTNContents = undefined;
+            if (thisTNJQ.attr("tinynotationcontents") !== undefined) {
+                thisTNContents = thisTNJQ.attr("tinynotationcontents");
+            } else if (thisTN.textContent != undefined) {
+                thisTNContents = thisTN.textContent;
+                thisTNContents = thisTNContents.replace(/s+/g, ' '); // no line-breaks, etc.
+            }
 			
 			if ((String.prototype.trim != undefined) && (thisTNContents != undefined)) {
 				thisTNContents = thisTNContents.trim(); // remove leading, trailing whitespace
@@ -232,8 +242,9 @@ define(['./base', './clef', './duration', './pitch','./note', './meter', './stre
 				} 
                 var newCanvas = st.createCanvas();
 				
-				thisTNJQ.attr("tinyNotationContents", thisTNContents);
+				thisTNJQ.attr("tinynotationcontents", thisTNContents);
 				thisTNJQ.empty();
+				thisTNJQ.data("stream", st);
 				thisTNJQ.append(newCanvas);
 				//console.log(thisTNContents);		
 			}
