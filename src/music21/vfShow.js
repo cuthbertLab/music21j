@@ -251,11 +251,11 @@ define(['vexflow', './common'],
      * @param {music21.vfShow.RenderStack} stack - a RenderStack object to prepare into.
      */
     vfShow.Renderer.prototype.prepareMeasure = function (m, stack) {
-        if (m.hasVoices == undefined || m.hasVoices() == false) {
+        if (m.hasVoices === undefined || m.hasVoices() === false) {
             this.prepareFlat(m, stack);
         } else {
             // TODO: don't assume that all elements are Voices;
-            var stave = undefined;
+            var stave;
             var rendOp = m.renderOptions; // get render options from Measure;
             for (var voiceIndex = 0; voiceIndex < m.length; voiceIndex++) {
                 var voiceStream = m.get(voiceIndex);
@@ -277,7 +277,7 @@ define(['vexflow', './common'],
     */
     vfShow.Renderer.prototype.prepareFlat = function (s, stack, optionalStave, optional_renderOp) {
         s.makeAccidentals();
-        var stave = undefined;
+        var stave;
         if (optionalStave !== undefined) {
             stave = optionalStave;
         } else {
@@ -493,7 +493,7 @@ define(['vexflow', './common'],
         var formatter = new Vex.Flow.Formatter();
         //var minLength = formatter.preCalculateMinTotalWidth([voices]);
         //console.log(minLength);
-        if (voices.length == 0) {
+        if (voices.length === 0) {
             return formatter;
         }
         var maxGlyphStart = 0; // find the stave with the farthest start point -- diff key sig, etc.
@@ -512,7 +512,7 @@ define(['vexflow', './common'],
         formatter.joinVoices(allTickables);
         formatter.formatToStave(allTickables, stave);
         if (autoBeam) {
-            for (var i = 0; i < voices.length; i++) {
+            for (i = 0; i < voices.length; i++) {
                 // find beam groups -- n.b. this wipes out stemDirection. worth it usually...
                 var voice = voices[i];
                 var beatGroups = [new Vex.Flow.Fraction(2, 8)]; // default beam groups
@@ -558,15 +558,15 @@ define(['vexflow', './common'],
         }
         // measure level...
         var width = rendOp.width;
-        if (width == undefined) {
+        if (width === undefined) {
             width = s.estimateStaffLength() + rendOp.staffPadding;
         }
         var top = rendOp.top;// * rendOp.scaleFactor.y;
-        if (top == undefined) {
+        if (top === undefined) {
             top = 0;
         }
         var left = rendOp.left;
-        if (left == undefined) {
+        if (left === undefined) {
             left = 10;
         }
         //console.log('streamLength: ' + streamLength);
@@ -594,23 +594,22 @@ define(['vexflow', './common'],
             stave.setMeasure(rendOp.measureIndex + 1);
         }
         if (rendOp.displayClef) {
-            var ottava = undefined;
+            var ottava;
             var size = 'default';
             if (s.clef.octaveShift == 1) { ottava = '8va'; }
             else if (s.clef.octaveShift == -1) { ottava = '8vb'; }
             stave.addClef(s.clef.name, size, ottava);
         }
-        if ((s.keySignature != undefined) && (rendOp.displayKeySignature)) {
+        if ((s.keySignature !== undefined) && (rendOp.displayKeySignature)) {
             stave.addKeySignature(s.keySignature.vexflow());
         }
         
-        if ((s.timeSignature != undefined) && (rendOp.displayTimeSignature)) {
+        if ((s.timeSignature !== undefined) && (rendOp.displayTimeSignature)) {
             stave.addTimeSignature(
-                    s.timeSignature.numerator.toString() 
-                    + "/" 
-                    + s.timeSignature.denominator.toString()); // TODO: convertToVexflow...
+                    s.timeSignature.numerator.toString() + "/" + 
+                      s.timeSignature.denominator.toString()); // TODO: convertToVexflow...
         }
-        if (rendOp.rightBarline != undefined) {
+        if (rendOp.rightBarline !== undefined) {
             var bl = rendOp.rightBarline;
             var barlineMap = {
                     'single': 'SINGLE',
@@ -618,7 +617,7 @@ define(['vexflow', './common'],
                     'end': 'END',
                     };
             var vxBL = barlineMap[bl];
-            if (vxBL != undefined) {
+            if (vxBL !== undefined) {
                 stave.setEndBarType(Vex.Flow.Barline.type[vxBL]);
             }
         }
@@ -639,7 +638,7 @@ define(['vexflow', './common'],
     vfShow.Renderer.prototype.setStafflines = function(s, vexflowStave) {
         var rendOp = s.renderOptions;
         if (rendOp.staffLines != 5) {
-            if (rendOp.staffLines == 0) {
+            if (rendOp.staffLines === 0) {
                 vexflowStave.setNumLines(0);
             } else if (rendOp.staffLines == 1) {
                 // Vex.Flow.Stave.setNumLines hides all but the top line.
@@ -684,7 +683,7 @@ define(['vexflow', './common'],
         // runs on a flat stream, returns a list of voices...
         var notes = [];
         var vfTuplets = [];
-        var activeTuplet = undefined;
+        var activeTuplet;
         var activeTupletLength = 0.0;
         var activeTupletVexflowNotes = [];
 
@@ -774,10 +773,10 @@ define(['vexflow', './common'],
         for (var i = 0; i < s.length; i++) {
             var el = s.get(i);
             var lyricsArray = el.lyrics;
-            var text = undefined;
+            var text;
             var d = el.duration.vexflowDuration;
             var addConnector = false;
-            if (lyricsArray.length == 0) {
+            if (lyricsArray.length === 0) {
                 text = "";
             } else {
                 text = lyricsArray[0].text;
@@ -792,7 +791,7 @@ define(['vexflow', './common'],
             }
             var t1 = getTextNote(text, font, d);            
             lyricsObjects.push(t1);
-            if (addConnector != false) {
+            if (addConnector !== false) {
                 var connector = getTextNote(addConnector, font, d);
                 lyricsObjects.push(connector);                
             }
@@ -814,15 +813,15 @@ define(['vexflow', './common'],
         var num1024 = Math.round(totalLength / (1/256));
         var beatValue = 1024;
         
-        if      (num1024 % 512 == 0)  { beatValue = 2; num1024 = num1024 / 512; }
-        else if (num1024 % 256 == 0)  { beatValue = 4; num1024 = num1024 / 256; }
-        else if (num1024 % 128 == 0)  { beatValue = 8; num1024 = num1024 / 128; }
-        else if (num1024 % 64 == 0)  { beatValue = 16; num1024 = num1024 / 64; }
-        else if (num1024 % 32 == 0)  { beatValue = 32; num1024 = num1024 / 32; }
-        else if (num1024 % 16 == 0)  { beatValue = 64; num1024 = num1024 / 16; }
-        else if (num1024 % 8 == 0)  { beatValue = 128; num1024 = num1024 / 8; }
-        else if (num1024 % 4 == 0)  { beatValue = 256; num1024 = num1024 / 4; }
-        else if (num1024 % 2 == 0)  { beatValue = 512; num1024 = num1024 / 2; }        
+        if      (num1024 % 512 === 0)  { beatValue = 2; num1024 = num1024 / 512; }
+        else if (num1024 % 256 === 0)  { beatValue = 4; num1024 = num1024 / 256; }
+        else if (num1024 % 128 === 0)  { beatValue = 8; num1024 = num1024 / 128; }
+        else if (num1024 % 64 === 0)  { beatValue = 16; num1024 = num1024 / 64; }
+        else if (num1024 % 32 === 0)  { beatValue = 32; num1024 = num1024 / 32; }
+        else if (num1024 % 16 === 0)  { beatValue = 64; num1024 = num1024 / 16; }
+        else if (num1024 % 8 === 0)  { beatValue = 128; num1024 = num1024 / 8; }
+        else if (num1024 % 4 === 0)  { beatValue = 256; num1024 = num1024 / 4; }
+        else if (num1024 % 2 === 0)  { beatValue = 512; num1024 = num1024 / 2; }        
         //console.log('creating voice');
         if (music21.debug) {
             console.log("New voice, num_beats: " + num1024.toString() + " beat_value: " + beatValue.toString());
@@ -874,7 +873,7 @@ define(['vexflow', './common'],
             if (thisPartMeasure.renderOptions.startNewSystem) {
                 var topVFStaff = thisPartMeasure.activeVFStave;
                 var bottomVFStaff = lastPartMeasure.activeVFStave;
-                /* TODO: warning if no staves... */;
+                /* TODO: warning if no staves... */
                 for (var i = 0; i < s.renderOptions.staffConnectors.length; i++) {
                     var sc = new Vex.Flow.StaveConnector(topVFStaff, bottomVFStaff);
                     var scTypeM21 = s.renderOptions.staffConnectors[i];
@@ -937,7 +936,7 @@ define(['vexflow', './common'],
         }
         var noteOffsetLeft = 0;
         //var staveHeight = 80;
-        if (stave != undefined) {
+        if (stave !== undefined) {
             noteOffsetLeft = stave.start_x + stave.glyph_start_x;
             if (music21.debug) {
                 console.log("noteOffsetLeft: " + noteOffsetLeft + " ; stave.start_x: " + stave.start_x);
@@ -967,7 +966,7 @@ define(['vexflow', './common'],
                 }
                 
                 el.width = formatterNote.width;         
-                if (el.pitch != undefined) { // note only...
+                if (el.pitch !== undefined) { // note only...
                     el.y = (stave.getBottomY() - (s.clef.firstLine - el.pitch.diatonicNoteNum) * 
                             stave.options.spacing_between_lines_px);
                     //console.log('Note DNN: ' + el.pitch.diatonicNoteNum + " ; y: " + el.y);
@@ -975,9 +974,9 @@ define(['vexflow', './common'],
             }
         }
         if (music21.debug) {
-            for (var i = 0; i < s.length; i ++ ) {
+            for (i = 0; i < s.length; i ++ ) {
                 var n = s.get(i);
-                if (n.pitch != undefined) {
+                if (n.pitch !== undefined) {
                     console.log(n.pitch.diatonicNoteNum + " " + n.x + " " + (n.x + n.width));
                 }
             }

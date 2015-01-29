@@ -3,7 +3,7 @@
  * music21/tinyNotation -- TinyNotation implementation
  *
  * Copyright (c) 2013-14, Michael Scott Cuthbert and cuthbertLab
- * Based on music21 (=music21p), Copyright (c) 2006–14, Michael Scott Cuthbert and cuthbertLab
+ * Based on music21 (music21p), Copyright (c) 2006–14, Michael Scott Cuthbert and cuthbertLab
  * 
  */
 define(['./base', './clef', './duration', './pitch','./note', './meter', './stream', './tie'], 
@@ -95,23 +95,26 @@ define(['./base', './clef', './duration', './pitch','./note', './meter', './stre
             }
 
 		    var token = tokens[i];
-			var noteObj = undefined;
+			var noteObj;
 			var MATCH;
-			if (MATCH = tnre.TRIP.exec(token)) {
+			MATCH = tnre.TRIP.exec(token);
+			if (MATCH) {
 			    token = token.slice(5); // cut...
 			    storedDict.inTrip = true;
 			}
-            if (MATCH = tnre.QUAD.exec(token)) {
+			MATCH = tnre.QUAD.exec(token);
+            if (MATCH) {
                 token = token.slice(5); // cut...
                 storedDict.inQuad = true;
             }
-            if (MATCH = tnre.ENDBRAC.exec(token)) {
+            MATCH = tnre.ENDBRAC.exec(token);
+            if (MATCH) {
                 token = token.slice(0,-1); // cut...
                 storedDict.endTupletAfterNote = true;
             }
 
-			
-			if (MATCH = tnre.TIMESIG.exec(token)) {
+			MATCH = tnre.TIMESIG.exec(token)
+			if (MATCH) {
                 var ts = new meter.TimeSignature();
 				ts.numerator = parseInt(MATCH[1]);
 				ts.denominator = parseInt(MATCH[2]);
@@ -121,34 +124,38 @@ define(['./base', './clef', './duration', './pitch','./note', './meter', './stre
 				continue;
 			} else if (tnre.REST.exec(token)) {
 				noteObj = new note.Rest(lastDurationQL);
-			} else if (MATCH = tnre.OCTAVE2.exec(token)) {
-				noteObj = new note.Note(MATCH[1], lastDurationQL);
+			} else if (tnre.OCTAVE2.exec(token)) {
+			    MATCH = tnre.OCTAVE2.exec(token);
+			    noteObj = new note.Note(MATCH[1], lastDurationQL);
 				noteObj.pitch.octave = 4 - MATCH[0].length;
-			} else if (MATCH = tnre.OCTAVE3.exec(token)) {
+			} else if (tnre.OCTAVE3.exec(token)) {
+			    MATCH = tnre.OCTAVE3.exec(token);
 				noteObj = new note.Note(MATCH[1], lastDurationQL);
 				noteObj.pitch.octave = 3;
-			} else if (MATCH = tnre.OCTAVE5.exec(token)) {
+			} else if (tnre.OCTAVE5.exec(token)) {
 				// must match octave 5 before 4
-				noteObj = new note.Note(MATCH[1].toUpperCase(), lastDurationQL);
+			    MATCH = tnre.OCTAVE5.exec(token);
+			    noteObj = new note.Note(MATCH[1].toUpperCase(), lastDurationQL);
 				noteObj.pitch.octave = 3 + MATCH[0].length;
-			} else if (MATCH = tnre.OCTAVE4.exec(token)) {
+			} else if (tnre.OCTAVE4.exec(token)) {
+			    MATCH = tnre.OCTAVE4.exec(token);
 				noteObj = new note.Note(MATCH[1].toUpperCase(), lastDurationQL);
 				noteObj.pitch.octave = 4;
 			}
 			
-			if (noteObj == undefined) {
+			if (noteObj === undefined) {
 				continue;
 			}
 			if (tnre.TIE.exec(token)) {
 			    noteObj.tie = new tie.Tie('start');
-			    if (storedDict['lastNoteTied']) {
+			    if (storedDict.lastNoteTied) {
 			        noteObj.tie.type = 'continue';
 			    }
-			    storedDict['lastNoteTied'] = true;
+			    storedDict.lastNoteTied = true;
 			} else {
-			    if (storedDict['lastNoteTied']) {
+			    if (storedDict.lastNoteTied) {
                     noteObj.tie = new tie.Tie('stop');
-                    storedDict['lastNoteTied'] = false;
+                    storedDict.lastNoteTied = false;
                 }
 			}
 			if (tnre.SHARP.exec(token)) {
@@ -159,13 +166,13 @@ define(['./base', './clef', './duration', './pitch','./note', './meter', './stre
                 noteObj.pitch.accidental = new pitch.Accidental('natural');
                 noteObj.pitch.accidental.displayType = "always";
             }
-			
-			if (MATCH = tnre.TYPE.exec(token)) {
+			MATCH = tnre.TYPE.exec(token);
+			if (MATCH) {
 				var durationType = parseInt(MATCH[0]);
 				noteObj.duration.quarterLength = 4.0 / durationType;
 			}
-			
-			if (MATCH = tnre.DOT.exec(token)) {
+			MATCH = tnre.DOT.exec(token);
+			if (MATCH) {
 				var numDots = MATCH[0].length;
 				var multiplier = 1 + (1 - Math.pow(.5, numDots));
 				noteObj.duration.quarterLength = multiplier * noteObj.duration.quarterLength;
@@ -209,14 +216,14 @@ define(['./base', './clef', './duration', './pitch','./note', './meter', './stre
 	 * @param {string} classTypes - a JQuery selector to find elements to replace.
 	 */
 	tinyNotation.renderNotationDivs = function (classTypes, selector) {
-		if (classTypes == undefined) {
+		if (classTypes === undefined) {
 			classTypes = '.music21.tinyNotation';
 		}
 		var allRender = [];
-		if (selector == undefined) {
+		if (selector === undefined) {
 		    allRender = $(classTypes);
 		} else {
-		    if (selector.jquery == undefined) {
+		    if (selector.jquery === undefined) {
 		        selector = $(selector);
 		    }
 		    allRender = selector.find(classTypes);
@@ -224,21 +231,21 @@ define(['./base', './clef', './duration', './pitch','./note', './meter', './stre
 		for (var i = 0 ; i < allRender.length ; i ++) {
 			var thisTN = allRender[i];
 			var thisTNJQ = $(thisTN);
-            var thisTNContents = undefined;
+            var thisTNContents;
             if (thisTNJQ.attr("tinynotationcontents") !== undefined) {
                 thisTNContents = thisTNJQ.attr("tinynotationcontents");
-            } else if (thisTN.textContent != undefined) {
+            } else if (thisTN.textContent !== undefined) {
                 thisTNContents = thisTN.textContent;
                 thisTNContents = thisTNContents.replace(/s+/g, ' '); // no line-breaks, etc.
             }
 			
-			if ((String.prototype.trim != undefined) && (thisTNContents != undefined)) {
+			if ((String.prototype.trim !== undefined) && (thisTNContents !== undefined)) {
 				thisTNContents = thisTNContents.trim(); // remove leading, trailing whitespace
 			}
 			if (thisTNContents) {
 				var st = tinyNotation.TinyNotation(thisTNContents);
 				if (thisTNJQ.hasClass('noPlayback')) {
-                    st.renderOptions.events['click'] = undefined;
+                    st.renderOptions.events.click = undefined;
 				} 
                 var newCanvas = st.createCanvas();
 				

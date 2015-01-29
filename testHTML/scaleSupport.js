@@ -15,14 +15,15 @@ require(['music21'], function() {
 			this.n2 = n2;
 			this.size = n2.pitch.ps - n1.pitch.ps;
 			this.generic = function() {
+			    var genericInterval;
 				if(this.n2.pitch.diatonicNoteNum > this.n1.pitch.diatonicNoteNum) {
-					var genericInterval = this.n2.pitch.diatonicNoteNum - this.n1.pitch.diatonicNoteNum + 1;
+					genericInterval = this.n2.pitch.diatonicNoteNum - this.n1.pitch.diatonicNoteNum + 1;
 				}
 				else if(this.n1.pitch.diatonicNoteNum > this.n2.pitch.diatonicNoteNum) {
-					var genericInterval = this.n2.pitch.diatonicNoteNum - this.n1.pitch.diatonicNoteNum - 1;
+					genericInterval = this.n2.pitch.diatonicNoteNum - this.n1.pitch.diatonicNoteNum - 1;
 				}
 				else if(this.n1.pitch.diatonicNoteNum === this.n2.pitch.diatonicNoteNum) {
-					var genericInterval = 1;
+					genericInterval = 1;
 				}
 				return genericInterval;
 			};
@@ -50,9 +51,7 @@ require(['music21'], function() {
 				s.append(n);
 				s.replaceCanvas();
 			}
-
-		};
-		
+		}
 	};
 	var playStream = function() {
 		s.playStream();

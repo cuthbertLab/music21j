@@ -5,7 +5,7 @@
  * Does not implement the full features of music21p Streams by a long shot...
  *
  * Copyright (c) 2013-14, Michael Scott Cuthbert and cuthbertLab
- * Based on music21 (=music21p), Copyright (c) 2006–14, Michael Scott Cuthbert and cuthbertLab
+ * Based on music21 (music21p), Copyright (c) 2006–14, Michael Scott Cuthbert and cuthbertLab
  * 
  */
 define(['./base','./renderOptions','./clef', './vfShow', './duration', 
@@ -164,9 +164,9 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
                 configurable: true,
                 enumerable: true,
 				get: function () {
-					if (this._tempo == undefined && this.activeSite != undefined) {
+					if (this._tempo === undefined && this.activeSite !== undefined) {
 						return this.activeSite.tempo;
-					} else if (this._tempo == undefined) {
+					} else if (this._tempo === undefined) {
 						return 150;
 					} else {
 						return this._tempo;
@@ -180,7 +180,7 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
                 configurable: true,
                 enumerable: true,
                 get: function () {
-                    if (this._instrument == undefined && this.activeSite != undefined) {
+                    if (this._instrument === undefined && this.activeSite !== undefined) {
                         return this.activeSite.instrument;
                     } else {
                         return this._instrument;
@@ -197,9 +197,9 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
                 configurable: true,
                 enumerable: true,
 				get: function () {
-					if (this._clef == undefined && this.activeSite == undefined) {
+					if (this._clef === undefined && this.activeSite === undefined) {
 						return new clef.Clef('treble');
-					} else if (this._clef == undefined) {
+					} else if (this._clef === undefined) {
 						return this.activeSite.clef;
 					} else {
 						return this._clef;
@@ -213,7 +213,7 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
                 configurable: true,
                 enumerable: true,
 				get: function () {
-					if (this._keySignature == undefined && this.activeSite != undefined) {
+					if (this._keySignature === undefined && this.activeSite !== undefined) {
 						return this.activeSite.keySignature;
 					} else {
 						return this._keySignature;
@@ -227,7 +227,7 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
                 configurable: true,
                 enumerable: true,
 				get: function () {
-					if (this._timeSignature == undefined && this.activeSite != undefined) {
+					if (this._timeSignature === undefined && this.activeSite !== undefined) {
 						return this.activeSite.timeSignature;
 					} else {
 						return this._timeSignature;
@@ -244,7 +244,7 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
                 configurable: true,
                 enumerable: true,
                 get: function () {
-                    if (this._autoBeam === undefined && this.activeSite != undefined) {
+                    if (this._autoBeam === undefined && this.activeSite !== undefined) {
                         return this.activeSite.autoBeam;
                     } else if (this._autoBeam !== undefined) {
                         return this._autoBeam;
@@ -261,9 +261,9 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
                 enumerable: true,
 				get: function () {
 				    var baseMaxSystemWidth = 750;
-					if (this.renderOptions.maxSystemWidth == undefined && this.activeSite != undefined) {
+					if (this.renderOptions.maxSystemWidth === undefined && this.activeSite !== undefined) {
 					    baseMaxSystemWidth = this.activeSite.maxSystemWidth;
-					} else if (this.renderOptions.maxSystemWidth != undefined) {
+					} else if (this.renderOptions.maxSystemWidth !== undefined) {
 					    baseMaxSystemWidth = this.renderOptions.maxSystemWidth;
 					}
 					return baseMaxSystemWidth / this.renderOptions.scaleFactor.x;
@@ -350,10 +350,12 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
 				    this._elements = [];
 				    this._elementOffsets = [];
 				    var tempInsert = [];
-				    for (var i = 0; i < newElements.length; i++) {
-				        var thisEl = newElements[i];
+				    var i;
+				    var thisEl;
+				    for (i = 0; i < newElements.length; i++) {
+				        thisEl = newElements[i];
 				        var thisElOffset = thisEl.offset;
-				        if (thisElOffset == null || thisElOffset == highestOffsetSoFar) {
+				        if (thisElOffset === null || thisElOffset == highestOffsetSoFar) {
 				            // append
 				            this._elements.push(thisEl);
 				            thisEl.offset = highestOffsetSoFar;
@@ -367,8 +369,8 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
 				        }
 				    }
 				    //console.warn('end', highestOffsetSoFar, tempInsert);
-				    for (var i = 0; i < tempInsert.length; i++ ) {
-				        var thisEl = tempInsert[i];
+				    for (i = 0; i < tempInsert.length; i++ ) {
+				        thisEl = tempInsert[i];
 				        this.insert(thisEl.offset, thisEl);
 				    }
 				}
@@ -411,27 +413,27 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
         for(var key in ret){ 
             // not that we ONLY copy the keys in Ret -- it's easier that way.
             // maybe we should do (var key in this) -- but DANGEROUS...
-            if (this.hasOwnProperty(key) == false) {
+            if (this.hasOwnProperty(key) === false) {
                 continue;
             }
             if (key == 'activeSite') {
                 ret[key] = this[key];
             } else if (key == 'renderOptions') {
                 ret[key] = common.merge({}, this[key]);
-            } else if (deep != true && (key == '_elements' || key == '_elementOffsets')) {
+            } else if (deep !== true && (key == '_elements' || key == '_elementOffsets')) {
                 ret[key] = this[key].slice(); // shallow copy...
             } else if (deep && (key == '_elements' || key == '_elementOffsets')) {
                 if (key == '_elements') {
                     //console.log('got elements for deepcopy');
-                    ret['_elements'] = [];
-                    ret['_elementOffsets'] = [];
-                    for (var j = 0; j < this['_elements'].length; j++ ) {
-                        ret['_elementOffsets'][j] = this['_elementOffsets'][j];
-                        var el = this['_elements'][j];
+                    ret._elements = [];
+                    ret._elementOffsets = [];
+                    for (var j = 0; j < this._elements.length; j++ ) {
+                        ret._elementOffsets[j] = this._elementOffsets[j];
+                        var el = this._elements[j];
                         //console.log('cloning el: ', el.name);
                         var elCopy = el.clone(deep);
                         elCopy.activeSite = ret;
-                        ret['_elements'][j] = elCopy;
+                        ret._elements[j] = elCopy;
                     }
                 }
             
@@ -444,7 +446,7 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
                 // do nothing
             } else if (typeof(this[key]) == 'function') {
                 // do nothing -- events might not be copied.
-            } else if (this[key] != null && this[key].isMusic21Object == true) {
+            } else if (this[key] !== null && this[key].isMusic21Object === true) {
                 //console.log('cloning...', key);
                 ret[key] = this[key].clone(deep);
             } else {
@@ -615,7 +617,7 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
         }
         // meterStream
         var meterStream = this.getElementsByClass('TimeSignature');
-        if (meterStream.length == 0) {
+        if (meterStream.length === 0) {
             meterStream.append(this.timeSignature);
         }
         // getContextByClass('Clef')
@@ -632,13 +634,15 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
         // derivation
         var o = 0.0
         var measureCount = 0;
-        var lastTimeSignature = undefined;
+        var lastTimeSignature;
+        var m;
+        var mStart;
         while (true) {
-            var m = new stream.Measure();
+            m = new stream.Measure();
             m.number = measureCount + 1;
             // var thisTimeSignature = meterStream.getElementAtOrBefore(o);
             var thisTimeSignature = this.timeSignature;
-            if (measureCount == 0) {
+            if (measureCount === 0) {
                 // simplified...
             }
             m.clef = clefObj;
@@ -668,13 +672,13 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
             // if e.isSpanner;
             
             var match = false;
-            var lastTimeSignature = undefined;
+            lastTimeSignature = undefined;
             for (var j = 0; j < post.length; j++) {
-                var m = post.get(j); // nothing but measures...
+                m = post.get(j); // nothing but measures...
                 if (m.timeSignature !== undefined) {
                     lastTimeSignature = m.timeSignature;
                 }
-                var mStart = m.getOffsetBySite(post);
+                mStart = m.getOffsetBySite(post);
                 var mEnd = mStart + lastTimeSignature.barDuration.quarterLength;
                 if (start >= mStart && start < mEnd) {
                     match = true;
@@ -686,12 +690,12 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
             if (m.clef === e) {
                 continue;
             }
-            if (oNew == 0 && e.isClassOrSubclass('TimeSignature')) {
+            if (oNew === 0 && e.isClassOrSubclass('TimeSignature')) {
                 continue;
             }
             var insertStream = m;
             if (voiceIndex !== undefined) {
-                insertStream = m.getElementsByClass('Voice').get(voiceIndex)                
+                insertStream = m.getElementsByClass('Voice').get(voiceIndex);               
             }
             insertStream.insert(oNew, e);
         }
@@ -702,8 +706,8 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
             this.elements = [];
             // endElements
             // elementsChanged;
-            for (var i = 0; i < post.length; i ++) {
-                var e = post.get(i);
+            for (i = 0; i < post.length; i ++) {
+                e = post.get(i);
                 this.insert(e.offset, e);
             }
             return this; // javascript style;
@@ -766,9 +770,9 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
         for (var i = 0; i < stepNames.length; i++) {
             var stepName = stepNames[i];
             var stepAlter = 0;
-            if (this.keySignature != undefined) {
+            if (this.keySignature !== undefined) {
                 var tempAccidental = this.keySignature.accidentalByStep(stepName);
-                if (tempAccidental != undefined) {
+                if (tempAccidental !== undefined) {
                     stepAlter = tempAccidental.alter;
                     //console.log(stepAlter + " " + stepName);
                 }
@@ -783,11 +787,11 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
         var lastOctavelessStepDict = $.extend({}, extendableStepList); // probably unnecessary, but safe...
         for (var i = 0; i < this.length; i++) {
             var el = this.get(i);
-            if (el.pitch != undefined) { // note
+            if (el.pitch !== undefined) { // note
                 var p = el.pitch;
                 var lastStepDict = lastOctaveStepList[p.octave];                
                 this._makeAccidentalForOnePitch(p, lastStepDict, lastOctavelessStepDict);
-            } else if (el._noteArray != undefined) { // chord
+            } else if (el._noteArray !== undefined) { // chord
                 for (var j = 0; j < el._noteArray.length; j++) {
                     var p = el._noteArray[j].pitch;
                     var lastStepDict = lastOctaveStepList[p.octave];
@@ -801,7 +805,7 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
     // returns pitch
     stream.Stream.prototype._makeAccidentalForOnePitch = function (p, lastStepDict, lastOctavelessStepDict) {
         var newAlter;
-        if (p.accidental == undefined) {
+        if (p.accidental === undefined) {
             newAlter = 0;
         } else {
             newAlter = p.accidental.alter;
@@ -909,7 +913,7 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
         if (this.isClassOrSubclass('Score')) {
             var numParts = this.length;
             var numSystems = this.numSystems();
-            if (numSystems == undefined || ignoreSystems) {
+            if (numSystems === undefined || ignoreSystems) {
                 numSystems = 1;
             }
             var scoreHeight = (numSystems * staffHeight * numParts) + ((numSystems - 1) * systemPadding);
@@ -939,7 +943,7 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
      * @returns {number} length in pixels
      */
     stream.Stream.prototype.estimateStaffLength = function () {
-        if (this.renderOptions.overriddenWidth != undefined) {
+        if (this.renderOptions.overriddenWidth !== undefined) {
             //console.log("Overridden staff width: " + this.renderOptions.overriddenWidth);
             return this.renderOptions.overriddenWidth;
         }
@@ -961,7 +965,7 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
                 var m = this.get(i);
                 if (m.isClassOrSubclass('Stream')) {
                     totalLength += m.estimateStaffLength() + m.renderOptions.staffPadding;
-                    if ((i != 0) && (m.renderOptions.startNewSystem == true)) {
+                    if ((i !== 0) && (m.renderOptions.startNewSystem === true)) {
                         break;
                     }
                 }
@@ -1013,7 +1017,7 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
         var playNext = function (elements, params) {
             if (currentNote < lastNote && !thisStream._stopPlaying) {
                 var el = elements[currentNote];
-                var nextNote = undefined;
+                var nextNote;
                 if (currentNote < lastNote + 1) {
                     nextNote = elements[currentNote + 1];
                 }
@@ -1070,10 +1074,9 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
             this.setSubstreamRenderOptions();
         }
 
-        var newCanvas = undefined;
-        newCanvas = $('<canvas/>'); //.css('border', '1px red solid');
+        var newCanvas = $('<canvas/>'); //.css('border', '1px red solid');
             
-        if (width != undefined) {
+        if (width !== undefined) {
             if (typeof width == 'string') {
                 width = common.stripPx(width);
             }
@@ -1082,11 +1085,11 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
             var computedWidth = this.estimateStaffLength() + this.renderOptions.staffPadding + 0;
             newCanvas.attr('width', computedWidth);
         }
-        if (height != undefined) {
+        if (height !== undefined) {
             newCanvas.attr('height', height);       
         } else {
             var computedHeight;
-            if (this.renderOptions.height == undefined) {
+            if (this.renderOptions.height === undefined) {
                 computedHeight = this.estimateStreamHeight();
                 //console.log('computed Height estim: ' + computedHeight);
             } else {
@@ -1109,7 +1112,7 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
      * @returns {JQueryDOMObject} canvas
      */
     stream.Stream.prototype.createPlayableCanvas = function (width, height) {
-        this.renderOptions.events['click'] = 'play';
+        this.renderOptions.events.click = 'play';
         return this.createCanvas(width, height);
     };
 
@@ -1137,7 +1140,7 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
      * 
      */
     stream.Stream.prototype.appendNewCanvas = function (appendElement, width, height) {
-        if (appendElement == undefined) {
+        if (appendElement === undefined) {
             appendElement = 'body';
         };
         var $appendElement = appendElement;
@@ -1170,24 +1173,24 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
      */
     stream.Stream.prototype.replaceCanvas = function (where, preserveCanvasSize) {
         // if called with no where, replaces all the canvases on the page...
-        if (where == undefined) {
+        if (where === undefined) {
             where = 'body';
         }
-        var $where = undefined;
+        var $where;
         if (where.jquery === undefined) {
             $where = $(where);
         } else {
             $where = where;
             where = $where[0];
         }
-        var $oldCanvas = undefined;
+        var $oldCanvas;
         if ($where.prop('tagName') == 'CANVAS') {
             $oldCanvas = $where;
         } else {
             $oldCanvas = $where.find('canvas');
         }
         // TODO: Max Width!
-        if ($oldCanvas.length == 0) {
+        if ($oldCanvas.length === 0) {
             throw ("No canvas defined for replaceCanvas!");
         } else if ($oldCanvas.length > 1) {
             // change last canvas...
@@ -1227,7 +1230,7 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
             $where = $(where);
         }
         var $innerDiv = $("<div>").css('position', 'absolute');
-        var c = undefined;            
+        var c;            
         this.renderOptions.events.click = function(storedThis) { 
             return function (event) {
                 storedThis.scrollScoreStart(c, event);
@@ -1261,13 +1264,13 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
     
     /**
      * Set the type of interaction on the canvas based on 
-     *    - Stream.renderOptions.events['click']
-     *    - Stream.renderOptions.events['dblclick']
-     *    - Stream.renderOptions.events['resize']
+     *    - Stream.renderOptions.events.click
+     *    - Stream.renderOptions.events.dblclick
+     *    - Stream.renderOptions.events.resize
      *    
      * Currently the only options available for each are:
      *    - 'play' (string)
-     *    - 'reflow' (string; only on event['resize'])
+     *    - 'reflow' (string; only on event.resize)
      *    - customFunction (will receive event as a first variable; should set up a way to
      *                    find the original stream; var s = this; var f = function () { s...}
      *                   )
@@ -1292,7 +1295,7 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
                 $canvas.on(eventType, playFunc);
             } else if (typeof(eventFunction) == 'string' && eventType == 'resize' && eventFunction == 'reflow') {
                 this.windowReflowStart($canvas);
-            } else if (eventFunction != undefined) {
+            } else if (eventFunction !== undefined) {
                 $canvas.on(eventType, eventFunction);
             }
         }, this ) );
@@ -1308,13 +1311,13 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
      */
     stream.Stream.prototype.recursiveGetStoredVexflowStave = function () {
         var storedVFStave = this.storedVexflowStave;
-        if (storedVFStave == undefined) {
+        if (storedVFStave === undefined) {
             if (!this.hasSubStreams()) {
                 return undefined;
             } else {
                 var subStreams = this.getElementsByClass('Stream');
                 storedVFStave = subStreams.get(0).storedVexflowStave;
-                if (storedVFStave == undefined) {
+                if (storedVFStave === undefined) {
                     // TODO: bad programming ... should support continuous recurse
                     // but good enough for now...
                     if (subStreams.get(0).hasSubStreams()) {
@@ -1337,7 +1340,7 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
      */
     stream.Stream.prototype.getUnscaledXYforCanvas = function (canvas, e) {
         var offset = null;
-        if (canvas == undefined) {
+        if (canvas === undefined) {
             offset = {left: 0, top: 0};
         } else {
             offset = $(canvas).offset();            
@@ -1346,7 +1349,7 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
          * mouse event handler code from: http://diveintohtml5.org/canvas.html
          */
         var xClick, yClick;
-        if (e.pageX != undefined && e.pageY != undefined) {
+        if (e.pageX !== undefined && e.pageY !== undefined) {
             xClick = e.pageX;
             yClick = e.pageY;
         } else { 
@@ -1420,8 +1423,8 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
      * @returns {music21.base.Music21Object|undefined}
      */
     stream.Stream.prototype.noteElementFromScaledX = function (xPxScaled, allowablePixels, unused_systemIndex) {
-        var foundNote = undefined;
-        if (allowablePixels == undefined) {
+        var foundNote;
+        if (allowablePixels === undefined) {
             allowablePixels = 10;   
         }
 
@@ -1457,7 +1460,7 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
      * @returns {Array} [diatonicNoteNum, closestXNote]
      */
     stream.Stream.prototype.findNoteForClick = function (canvas, e, x, y) {
-        if (x == undefined || y == undefined) {
+        if (x === undefined || y === undefined) {
             var _ = this.getScaledXYforCanvas(canvas, e);
             x = _[0];
             y = _[1];
@@ -1488,7 +1491,7 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
         n.stemDirection = undefined;
         this.activeNote = n;
         this.redrawCanvas(canvas);
-        if (this.changedCallbackFunction != undefined) {
+        if (this.changedCallbackFunction !== undefined) {
             return this.changedCallbackFunction({foundNote: n, canvas: canvas});
         }
     };
@@ -1528,7 +1531,7 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
         var buttonDiv = this.getAccidentalToolbar();
         d.append(buttonDiv);
         d.append( $("<br clear='all'/>") );
-        this.renderOptions.events['click'] = this.canvasChangerFunction;
+        this.renderOptions.events.click = this.canvasChangerFunction;
         this.appendNewCanvas(d, width, height); // var can =
         return d;
     };
@@ -1563,12 +1566,12 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
             var accidentalToolbar = $(clickedButton).parent();
             var siblingCanvas = accidentalToolbar.parent().find("canvas");
             var s = siblingCanvas[0].storedStream;
-            if (s.activeNote != undefined) {
+            if (s.activeNote !== undefined) {
                 n = s.activeNote;
                 n.pitch.accidental = new pitch.Accidental(alter);
                 /* console.log(n.pitch.name); */
                 s.redrawCanvas(siblingCanvas[0]);
-                if (s.changedCallbackFunction != undefined) {
+                if (s.changedCallbackFunction !== undefined) {
                     s.changedCallbackFunction({canvas: siblingCanvas[0]});
                 }
             }
@@ -1726,7 +1729,7 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
                 numSystems++;
             }
         }
-        if (numSystems == 0) {
+        if (numSystems === 0) {
             numSystems = 1;
         }
         return numSystems;
@@ -1760,7 +1763,7 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
      * @returns {number}
      */
     stream.Part.prototype.estimateStaffLength = function () {
-        if (this.renderOptions.overriddenWidth != undefined) {
+        if (this.renderOptions.overriddenWidth !== undefined) {
             //console.log("Overridden staff width: " + this.renderOptions.overriddenWidth);
             return this.renderOptions.overriddenWidth;
         }
@@ -1772,7 +1775,7 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
                 // this looks wrong, but actually seems to be right. moving it to
                 // after the break breaks things.
                 totalLength += m.estimateStaffLength() + m.renderOptions.staffPadding;
-                if ((i != 0) && (m.renderOptions.startNewSystem == true)) {
+                if ((i !== 0) && (m.renderOptions.startNewSystem === true)) {
                     break;
                 }
             }
@@ -1802,7 +1805,7 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
         /* 
          * console.log('system height: ' + systemHeight);
          */
-        if (systemHeight == undefined) {
+        if (systemHeight === undefined) {
             systemHeight = this.systemHeight; /* part.show() called... */
         } else {
             if (music21.debug) {
@@ -1840,7 +1843,7 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
             if (m.renderOptions === undefined) {
                 continue;
             }
-            if (i == 0) {
+            if (i === 0) {
                 m.renderOptions.startNewSystem = true;
             }
             var currentLeft = m.renderOptions.left;
@@ -1852,7 +1855,7 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
                 m.renderOptions.displayKeySignature = true;
                 m.renderOptions.startNewSystem = true;
                 currentSystemIndex++;
-            } else if (i != 0) {
+            } else if (i !== 0) {
                 m.renderOptions.startNewSystem = false;
                 m.renderOptions.displayClef = false;
                 m.renderOptions.displayKeySignature = false;
@@ -1890,9 +1893,9 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
         var currentMeasureIndex = 0; /* 0 indexed for now */
         var currentMeasureLeft = 20;
         var rendOp = this.renderOptions;
-        var lastTimeSignature = undefined;
-        var lastKeySignature = undefined;
-        var lastClef = undefined;
+        var lastTimeSignature;
+        var lastKeySignature;
+        var lastClef;
         
         for (var i = 0; i < this.length; i++) {
             var el = this.get(i);
@@ -1903,7 +1906,7 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
                 elRendOp.partIndex = rendOp.partIndex;
                 elRendOp.left = currentMeasureLeft;
                 
-                if (currentMeasureIndex == 0) {
+                if (currentMeasureIndex === 0) {
                     lastClef = el._clef;
                     lastTimeSignature = el._timeSignature;
                     lastKeySignature = el._keySignature;
@@ -1988,7 +1991,7 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
      * @returns {music21.base.Music21Object|undefined}
      */
     stream.Part.prototype.noteElementFromScaledX = function (scaledX, allowablePixels, systemIndex) {
-        var gotMeasure = undefined;
+        var gotMeasure;
         for (var i = 0; i < this.length; i++) {
             // TODO: if not measure, do not crash...
             var m = this.get(i);
@@ -2004,7 +2007,7 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
                         " T: " + top + " B: " + bottom);
             }
             if (scaledX >= left && scaledX <= right ){
-                if (systemIndex == undefined) {
+                if (systemIndex === undefined) {
                     gotMeasure = m;
                     break;
                 } else if (rendOp.systemIndex == systemIndex) {
@@ -2098,7 +2101,7 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
      */
     stream.Score.prototype.estimateStaffLength = function () {
         // override
-        if (this.renderOptions.overriddenWidth != undefined) {
+        if (this.renderOptions.overriddenWidth !== undefined) {
             //console.log("Overridden staff width: " + this.renderOptions.overriddenWidth);
             return this.renderOptions.overriddenWidth;
         }
@@ -2247,7 +2250,7 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
                 var measureWidths = el.getMeasureWidths();
                 for (var j = 0; j < measureWidths.length; j++) {
                     var thisMeasureWidth = measureWidths[j];
-                    if (measureStacks[j] == undefined) {
+                    if (measureStacks[j] === undefined) {
                         measureStacks[j] = [];
                         maxMeasureWidth[j] = thisMeasureWidth;
                     } else {
