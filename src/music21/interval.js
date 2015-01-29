@@ -3,7 +3,7 @@
  * music21/interval -- Interval routines
  *
  * Copyright (c) 2013-14, Michael Scott Cuthbert and cuthbertLab
- * Based on music21 (=music21p), Copyright (c) 2006–14, Michael Scott Cuthbert and cuthbertLab
+ * Based on music21 (=music21p), Copyright (c) 2006-14, Michael Scott Cuthbert and cuthbertLab
  * 
  */
 
