@@ -3,7 +3,7 @@
  * music21/duration -- duration routines
  *
  * Copyright (c) 2013-14, Michael Scott Cuthbert and cuthbertLab
- * Based on music21, Copyright (c) 2006–14, Michael Scott Cuthbert and cuthbertLab
+ * Based on music21, Copyright (c) 2006-14, Michael Scott Cuthbert and cuthbertLab
  * 
  */
 
@@ -94,7 +94,7 @@ define(['./common', './prebase', 'jquery'],
 	    	 * @memberof music21.duration.Duration
 	    	 * @example
 	    	 * var d = new music21.duration.Duration(2);
-	    	 * d.dots == 0; // true
+	    	 * d.dots === 0; // true
 	    	 * d.dots = 1; 
 	    	 * d.quarterLength == 3; // true;
 	    	 */
@@ -221,15 +221,15 @@ define(['./common', './prebase', 'jquery'],
     duration.Duration.prototype = new prebase.ProtoM21Object();
     duration.Duration.prototype.constructor = duration.Duration;
     duration.Duration.prototype._findDots = function (ql) {
-        if (ql == 0) { return 0; } // zero length stream probably;
+        if (ql === 0) { return 0; } // zero length stream probably;
         var typeNumber = $.inArray(this._type, duration.ordinalTypeFromNum);
         var powerOfTwo = Math.pow(2, duration.quarterTypeIndex - typeNumber);
         // alert(undottedQL * 1.5 + " " + ql)
         //console.log('find dots called on ql: ', ql, typeNumber, powerOfTwo);
         for (var dotsNum = 0; dotsNum <= 4; dotsNum++) {
-            var dotMultiplier = (Math.pow(2, dotsNum)-1.0)/(Math.pow(2, dotsNum));
+            var dotMultiplier = (Math.pow(2, dotsNum) - 1.0)/(Math.pow(2, dotsNum));
             var durationMultiplier = 1 + dotMultiplier;
-            if (Math.abs( (powerOfTwo * durationMultiplier) - ql) < 0.0001) {
+            if (Math.abs((powerOfTwo * durationMultiplier) - ql) < 0.0001) {
                 return dotsNum;
             }
         }
@@ -241,7 +241,7 @@ define(['./common', './prebase', 'jquery'],
     duration.Duration.prototype.updateQlFromFeatures = function () {
         var typeNumber = $.inArray(this._type, duration.ordinalTypeFromNum); // must be set property
         var undottedQuarterLength = Math.pow(2, duration.quarterTypeIndex - typeNumber);
-        var dottedMultiplier = 1 + ( (Math.pow(2, this._dots) - 1) / Math.pow(2, this._dots) );
+        var dottedMultiplier = 1 + ((Math.pow(2, this._dots) - 1) / Math.pow(2, this._dots));
         var unTupletedQl = undottedQuarterLength * dottedMultiplier;
         var tupletCorrectedQl = unTupletedQl;
         this._tuplets.forEach( function(tuplet) {
@@ -252,7 +252,7 @@ define(['./common', './prebase', 'jquery'],
 
     duration.Duration.prototype.updateFeaturesFromQl = function () {
         var ql = this._quarterLength;
-        var powerOfTwo = Math.floor(Math.log(ql+.00001)/Math.log(2));
+        var powerOfTwo = Math.floor(Math.log(ql + 0.00001)/Math.log(2));
         var typeNumber = duration.quarterTypeIndex - powerOfTwo;
         this._type = duration.ordinalTypeFromNum[typeNumber];
         //alert(this._findDots);
@@ -287,7 +287,7 @@ define(['./common', './prebase', 'jquery'],
     duration.Duration.prototype.appendTuplet = function (newTuplet, skipUpdateQl) {
         newTuplet.frozen = true;
         this._tuplets.push(newTuplet);
-        if (skipUpdateQl != true) {
+        if (skipUpdateQl !== true) {
             this.updateQlFromFeatures();                
         }
     };
@@ -387,7 +387,7 @@ define(['./common', './prebase', 'jquery'],
      * @returns {music21.duration.Duration} A converted {@link music21.duration.Duration} matching `type` 
      */    
     duration.Tuplet.prototype.setDurationType = function (type) {
-        if (self.frozen == true) {
+        if (self.frozen === true) {
             throw ("A frozen tuplet (or one attached to a duration) is immutable");    
         }
         this.durationActual = new duration.Duration(type);
@@ -403,7 +403,7 @@ define(['./common', './prebase', 'jquery'],
      * @returns {undefined}
      */
     duration.Tuplet.prototype.setRatio = function (actual, normal) {
-        if (self.frozen == true) {
+        if (self.frozen === true) {
             throw ("A frozen tuplet (or one attached to a duration) is immutable");    
         }
         this.numberNotesActual = actual || 3;
@@ -481,7 +481,7 @@ define(['./common', './prebase', 'jquery'],
             for (var i = 0; i < 6; i++) {
                 var n1 = new music21.note.Note('C4');
                 n1.duration.quarterLength = 2/3;
-                if (i % 3 == 0) {
+                if (i % 3 === 0) {
                     n1.articulations.push( new music21.articulations.Accent() );
                 }
                 s.append(n1);
@@ -523,7 +523,7 @@ define(['./common', './prebase', 'jquery'],
                 n1.pitch.diatonicNoteNum += i;
                 n1.duration.quarterLength = 2/5;
                 n1.duration.tuplets[0].tupletNormalShow = 'ratio';
-                if (i % 5 == 0) {
+                if (i % 5 === 0) {
                     n1.articulations.push( new music21.articulations.Accent() );
                 }
                 s2.append(n1);
