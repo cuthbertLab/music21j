@@ -1,0 +1,5 @@
+{
+  "undef": false,
+  "unused": false,
+  "predef": [ "music21", "m21conf" ]
+}
