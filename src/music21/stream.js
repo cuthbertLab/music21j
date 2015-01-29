@@ -446,7 +446,7 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
                 // do nothing
             } else if (typeof(this[key]) == 'function') {
                 // do nothing -- events might not be copied.
-            } else if (this[key] !== null && this[key].isMusic21Object === true) {
+            } else if (this[key] !== null && this[key] !== undefined && this[key].isMusic21Object === true) {
                 //console.log('cloning...', key);
                 ret[key] = this[key].clone(deep);
             } else {
