@@ -717,7 +717,7 @@ define(['./prebase', './pitch'],
         pitch2.accidental = undefined;
         // step and octave are right now, but not necessarily accidental
         var halfStepsToFix = this.chromatic.semitones - parseInt(pitch2.ps - p.ps);
-        if (halfStepsToFix != 0) {
+        if (halfStepsToFix !== 0) {
             pitch2.accidental = new pitch.Accidental(halfStepsToFix);
         }
         if (music21.debug) {
