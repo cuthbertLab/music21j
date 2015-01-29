@@ -50,24 +50,24 @@ require.config({
 
 var pathSimplify = function (path) {
     var pPrefix = "";
-    if (path.indexOf('//') == 0) {
+    if (path.indexOf('//') === 0) {
         pPrefix = '//'; //cdn loading;
         path = path.slice(2);
         console.log('cdn load: ', pPrefix, " into ", path);
-    } else if (path.indexOf('://') != -1) { // for cross site requests...
+    } else if (path.indexOf('://') !== -1) { // for cross site requests...
         var protoSpace = path.indexOf('://');
         pPrefix = path.slice(0, protoSpace + 3);
         path = path.slice(protoSpace + 3);
         console.log('cross-site split', pPrefix, path);
     }
     var ps = path.split('/');
-    var addSlash = (path.slice(path.length - 1, path.length) == '/') ? true : false;
+    var addSlash = (path.slice(path.length - 1, path.length) === '/') ? true : false;
     var pout = [];
     for (var i = 0; i < ps.length; i++) {
        var el = ps[i];
-       if (el == '..') {
+       if (el === '..') {
            if (pout.length > 0) {
-               if (pout[pout.length - 1] != '..') {
+               if (pout[pout.length - 1] !== '..') {
                    pout.pop();                          
                } else {
                    pout.push('..');
@@ -75,8 +75,8 @@ var pathSimplify = function (path) {
            } else {
                pout.push('..');
            }
-       } else if (el == '') { 
-          // pass
+       //} else if (el == '') { 
+       //   // pass
        } else {
            pout.push(el);
        }
@@ -102,13 +102,13 @@ var getM21attribute = function (attrName) {
         }
     }
 };
-var warnBanner = (getM21attribute('warnBanner') != 'no' ) ? true : false;
+var warnBanner = (getM21attribute('warnBanner') !== 'no' ) ? true : false;
 
 // get scriptConfig
 if (typeof m21conf === 'undefined') {
     m21conf = {};
     var m21browserAttribute = getM21attribute('m21conf');
-    if (m21browserAttribute != null) {
+    if (m21browserAttribute !== null) {
         m21conf = JSON.parse(m21browserAttribute);
     }
 }
@@ -178,7 +178,7 @@ var m21modules = ['MIDI',
 if (m21conf.noLoad !== undefined) {
     m21conf.noLoad.forEach(function(val, i, noLoad) {
         var mi = m21modules.indexOf(val);
-        if (mi != -1) {
+        if (mi !== -1) {
             m21modules.splice(mi, 1);
         }
     });
@@ -191,7 +191,7 @@ if ((Object.defineProperties === undefined) && warnBanner) {
     var textInside = document.createTextNode('Unfortunately, IE9, Safari 4 or 5 (Leopard/Snow Leopard), and other out-of-date browsers do not work with music21j. Please upgrade your browser w/ the link above.');
     newDiv.appendChild(textInside);
     document.body.appendChild(newDiv);
-    var $buoop  = {test: false, reminder: 0};
+    var $buoop  = {test: false, reminder: 0}; // used by update.js...
     var e = document.createElement("script");
     e.setAttribute("type", "text/javascript"); 
     e.setAttribute("src", "http://browser-update.org/update.js"); 
@@ -211,7 +211,7 @@ if ((Object.defineProperties === undefined) && warnBanner) {
                     else { console.log('could not load VexFlow'); }
                     if (music21.MIDI) {
                         if ((music21.scriptConfig.loadSoundfont === undefined) ||
-                                (music21.scriptConfig.loadSoundfont != false)) {
+                                (music21.scriptConfig.loadSoundfont !== false)) {
                            music21.miditools.loadSoundfont('acoustic_grand_piano');
                         } else {
                             console.log('skipping loading sound font');
