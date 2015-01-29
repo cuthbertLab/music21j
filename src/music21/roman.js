@@ -202,7 +202,7 @@ define(['./chord', './key', './pitch', './interval'],
      * Inverting 7th chords does not work.
      * 
      * @memberof music21.roman.RomanNumeral
-     * @param {string} displayType - ['roman', 'bassOnly', 'nameOnly', other]
+     * @param {string} displayType - ['roman', 'bassName', 'nameOnly', other]
      * @param {Int} [inversion=0]
      * @returns {String}
      */
@@ -241,7 +241,7 @@ define(['./chord', './key', './pitch', './interval'],
             fullChordName = this.bass().name.replace(/\-/, 'b');
             connector = ' in ';
             suffix = '';            
-        } else { // submediant, etc...
+        } else { // "default" submediant, etc...
             fullChordName = this.degreeName;
             if (this.numbers != undefined) {
                 fullChordName += " " + this.numbers.toString();
