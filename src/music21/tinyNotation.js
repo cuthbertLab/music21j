@@ -74,6 +74,7 @@ define(['./base', './clef', './duration', './pitch','./note', './meter', './stre
      * // 6.0
 	 */
 	tinyNotation.TinyNotation = function (textIn) {
+	    textIn = textIn.trim();
 		var tokens = textIn.split(" ");
 		var p = new stream.Part();
 		var m = new stream.Measure();
