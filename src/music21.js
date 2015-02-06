@@ -108,8 +108,12 @@ var warnBanner = (getM21attribute('warnBanner') !== 'no' ) ? true : false;
 if (typeof m21conf === 'undefined') {
     m21conf = {};
     var m21browserAttribute = getM21attribute('m21conf');
-    if (m21browserAttribute !== null) {
-        m21conf = JSON.parse(m21browserAttribute);
+    if (m21browserAttribute !== null && m21browserAttribute !== undefined) {
+        try {
+            m21conf = JSON.parse(m21browserAttribute);
+        } catch (e) {
+            console.log('Unable to JSON parse ' + m21browserAttribute.toString() + ' into m21conf');
+        }
     }
 }
 
@@ -124,7 +128,7 @@ if (typeof m21srcPath === 'undefined') {
 music21.m21srcPath = m21srcPath;
 //console.log('m21srcPath', m21srcPath);
 //console.log('m21srcPath non simplified', require.toUrl('music21'));
-music21.soundfontUrl = require.toUrl('music21') + '/../ext/midijs/soundfont/';
+music21.soundfontUrl = require.toUrl('music21').replace(/\?bust=\w*/, '') + '/../ext/midijs/soundfont/';
 
 var m21requireConfig = {
     paths: {
