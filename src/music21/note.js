@@ -90,12 +90,12 @@ define(['./prebase', './base', './pitch', './beam', './common', 'vexflow'],
 	    prebase.ProtoM21Object.call(this);
 	    this.classes.push('Lyric');
         this.lyricConnector = "-"; // override to place something else between two notes...
-	    this.text = text || undefined;
+	    this.text = text;
 	    this._number = number || 1;
-	    this.syllabic = syllabic || undefined;
+	    this.syllabic = syllabic;
 	    this.applyRaw = applyRaw || false;
         this.setTextAndSyllabic(this.text, this.applyRaw);
-	    this._identifier = identifier || undefined;
+	    this._identifier = identifier;
 	    
         Object.defineProperties(this, {
             'identifier': {
