@@ -139,7 +139,7 @@ var m21requireConfig = {
         'MIDI':         pathSimplify(m21srcPath + '/ext/midijs/build/MIDI'),
         'Base64':       pathSimplify(m21srcPath + '/ext/midijs/inc/Base64'),             
         'base64binary': pathSimplify(m21srcPath + '/ext/midijs/inc/base64binary'),
-        //'es6-shim': './ext/es6-shim',
+        'es6-shim': pathSimplify(m21srcPath + '/ext/es6-shim'),
         //'vexflowMods': 'ext/vexflowMods',
     },
     packages: [
@@ -176,6 +176,7 @@ var m21modules = ['MIDI',
                   'jsonpickle',
                   'jquery-ui',
                   'attrchange',
+                  'es6-shim',
                   './music21/moduleLoader',                  
                   ];
 //BUG: will this work if multiple files are listed in noLoad???
