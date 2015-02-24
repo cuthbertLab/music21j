@@ -45,13 +45,13 @@ define(['./base','./pitch'],
 	 * @memberof music21.clef
 	 * @extends music21.base.Music21Object
 	 * @param {string} name - clef name 
-	 * @param {Int} [octaveShift=0] - ottava
+	 * @param {Int} [octaveChange=0] - ottava
 	 * @property {string|undefined} name
 	 * @property {Int} firstLine - diatonicNoteNum (C4 = 29) for the lowest line (in a five-line staff)
 	 * @property {Int} firstLineTrebleOffset - difference between the first line of this staff and the first line in treble clef
-	 * @property {Int} octaveShift
+	 * @property {Int} octaveChange
 	 */
-	clef.Clef = function (name, octaveShift) {
+	clef.Clef = function (name, octaveChange) {
 		base.Music21Object.call(this);
 		this.classes.push('Clef');
 	    if (name != undefined) {
@@ -64,12 +64,12 @@ define(['./base','./pitch'],
 	    	this.firstLine = clef.firstLines['treble'];
 	    	this.firstLineTrebleOffset = 0;
 	    }
-	    if (octaveShift === undefined) {
-	        this.octaveShift = 0;
+	    if (octaveChange === undefined) {
+	        this.octaveChange = 0;
 	    } else {
-	        this.octaveShift = octaveShift;
-	        this.firstLine = this.firstLine + (7 * octaveShift);
-	        this.firstLineTrebleOffset = this.firstLineTrebleOffset - (7 * octaveShift);
+	        this.octaveChange = octaveChange;
+	        this.firstLine = this.firstLine + (7 * octaveChange);
+	        this.firstLineTrebleOffset = this.firstLineTrebleOffset - (7 * octaveChange);
 	    }
 	};
 
