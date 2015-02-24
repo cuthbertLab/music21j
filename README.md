@@ -1,7 +1,9 @@
 Music21j
 =========
 
-Copyright &copy;2013-14, Michael Scott Cuthbert and cuthbertLab, some rights reserved.
+**Music21j: An Interactive Framework for Musical Analysis**
+
+Copyright &copy;2013-15, Michael Scott Cuthbert and cuthbertLab, some rights reserved.
 
 **Music21j** is a Javascript reinterpretation of the [Music21 Python] package, 
 a toolkit for computer-aided musicology, now with intuitive HTML/Javascript
@@ -20,7 +22,7 @@ point we're focusing on documenting usage; developer docs will come
 later.
 
 Music21j requires your users to have a relatively recent web browser. Safari 6+,
-Chrome since 2013, or Firefox since 2013 all work great. Internet Explorer 9+
+Chrome since 2013, or Firefox since 2013 all work great. Internet Explorer 10+
 works well too, though timing of playback can be a bit off. There is basic
 support for IE 8 also.  Safari 5 and below and IE 7 and older are not
 supported.

@@ -596,8 +596,8 @@ define(['vexflow', './common'],
         if (rendOp.displayClef) {
             var ottava;
             var size = 'default';
-            if (s.clef.octaveShift == 1) { ottava = '8va'; }
-            else if (s.clef.octaveShift == -1) { ottava = '8vb'; }
+            if (s.clef.octaveChange == 1) { ottava = '8va'; }
+            else if (s.clef.octaveChange == -1) { ottava = '8vb'; }
             stave.addClef(s.clef.name, size, ottava);
         }
         if ((s.keySignature !== undefined) && (rendOp.displayKeySignature)) {

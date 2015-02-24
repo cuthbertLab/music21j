@@ -87,7 +87,7 @@ define(['./base', './duration'],
      * Compute the Beat Group according to this time signature.
      * 
      * @memberof music21.meter.TimeSignature
-     * @returns {Array<Array<Int>>} a list of numerator and denominators, find a list of beam groups.
+     * @returns {Array<Array<Int>>} a list of numerator and denominators, find a list of beat groups.
      */
     meter.TimeSignature.prototype.computeBeatGroups = function () {
         var tempBeatGroups = [];
@@ -120,7 +120,7 @@ define(['./base', './duration'],
         return tempBeatGroups;
     };
     /**
-     * Compute the Beat Group according to this time signature for VexFlow.
+     * Compute the Beat Group according to this time signature for VexFlow. For beaming.
      * 
      * @memberof music21.meter.TimeSignature
      * @param {Vex} Vex - a reference to the Vex object
@@ -147,6 +147,20 @@ define(['./base', './duration'],
 //              beatValue = beatValue / 3;
 //          }            
     };
+    
+//    meter.MeterTerminal = function(slashNotation, weight) {
+//        this._duration = undefined;
+//        this._numerator = 0;
+//        this._denominator = 1;
+//        this._weight = None;
+//        this._overriddenDuration = None;
+//        
+//        if (weight === undefined) {
+//            weight = 1;
+//        }
+//        
+//        
+//    };
     
     // end of define
     if (typeof(music21) != "undefined") {

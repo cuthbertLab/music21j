@@ -10,9 +10,9 @@ if (typeof(music21) === "undefined") {
      * 
      * See http://web.mit.edu/music21/ for more details.
      * 
-     * Copyright (c) 2013-14, Michael Scott Cuthbert and cuthbertLab
+     * Copyright (c) 2013-15, Michael Scott Cuthbert and cuthbertLab
      * 
-     * Based on music21, Copyright (c) 2006-14, Michael Scott Cuthbert and cuthbertLab
+     * Based on music21, Copyright (c) 2006-15, Michael Scott Cuthbert and cuthbertLab
      * The plan is to implement all core music21 features as Javascript and to expose
      * more sophisticated features via server-side connections to remote servers running the
      * python music21 (music21p).
@@ -31,7 +31,7 @@ if (typeof(music21) === "undefined") {
      *  
      * @namespace 
      */
-    music21 = {VERSION: 0.4};
+    music21 = {VERSION: 0.5};
 }
 //console.log('hi before: ' + require.toUrl('hi'));
 //console.log('./hi before: ' + require.toUrl('./hi'));
