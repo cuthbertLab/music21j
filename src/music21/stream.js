@@ -1009,7 +1009,9 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
     stream.Stream.prototype.playStream = function (options) {
         var params = {
             instrument: this.instrument,
-            tempo: this.tempo
+            tempo: this.tempo,
+            done: undefined,            
+            startNote: undefined
         };
         common.merge(params, options);
         var startNote = params.startNote;
