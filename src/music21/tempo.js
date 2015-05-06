@@ -225,7 +225,7 @@ define(['./prebase', './base', 'MIDI'],
      */
     tempo.Metronome.prototype.addDiv = function(where) {
         var jWhere = undefined;
-        if (where.jquery !== undefined) {
+        if (where !== undefined && where.jquery !== undefined) {
             jWhere = where;
         } else if (where !== undefined) {
             jWhere = $(where);
