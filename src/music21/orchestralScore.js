@@ -20,7 +20,7 @@ define(['./prebase', 'jquery'],
 	 * @property {number} notesFilledCount
 	 * @property {music21.stream.Score} score
 	 * @property {music21.stream.Measure} pianoMeasure - the corresponding measure
-	 * @property {array} partList list of parts in the score
+	 * @property [SplitPart] partList list of parts in the score
 	 */
 	orchestralScore.OrchestralScore = function(pianoMeasure){
 		prebase.ProtoM21Object.call(this);
@@ -30,6 +30,7 @@ define(['./prebase', 'jquery'],
         this.score = new music21.stream.Score();
 		this.pianoMeasure = pianoMeasure;
         this.partList = [];
+        this.instrumentNameList = [];
 	};
 	orchestralScore.OrchestralScore.prototype = new prebase.ProtoM21Object();
 	orchestralScore.OrchestralScore.prototype.constructor = orchestralScore.OrchestralScore;
