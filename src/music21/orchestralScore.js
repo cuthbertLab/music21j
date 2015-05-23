@@ -17,20 +17,21 @@ define(['./prebase', 'jquery'],
 	 * @class OrchestralScore
 	 * @memberof music21.orchestralScore
 	 * @extends music21.prebase.ProtoM21Object
-	 * @property {number} notesFilledCount
+         * @property {Array [music21.stream.Part]} -stored parts
+         * @property {Array [String]} instrument names corresponding to parts
+	 * @property {number} maxPartLength
 	 * @property {music21.stream.Score} score
 	 * @property {music21.stream.Measure} pianoMeasure - the corresponding measure
-	 * @property [SplitPart] partList list of parts in the score
 	 */
 	orchestralScore.OrchestralScore = function(pianoMeasure){
 		prebase.ProtoM21Object.call(this);
 		this.classes.push('OrchestralScore');
 		this.name = "undefined";
-		this.notesFilledCount = 0;
+                this.instrumentNames = []
+                this.parts = []
+		this.maxPartLength = 0;
         this.score = new music21.stream.Score();
 		this.pianoMeasure = pianoMeasure;
-        this.partList = [];
-        this.instrumentNameList = [];
 	};
 	orchestralScore.OrchestralScore.prototype = new prebase.ProtoM21Object();
 	orchestralScore.OrchestralScore.prototype.constructor = orchestralScore.OrchestralScore;
@@ -46,16 +47,16 @@ define(['./prebase', 'jquery'],
 //	return OrchestralScore;
 //	};
 	/**
-	 * Returns the splitPart object with a given name
+	 * Returns the part with a given name
 	 * 
 	 * @param {string } selectedInstrument - name of instrument corresponding to that split part
-	 * @returns {splitPart} splitPath - the split part with the name called 
+	 * @returns {music21.stream.Part} part - the split part with the name called 
 	 */
-	orchestralScore.OrchestralScore.prototype.getSplitPart = function(selectedInstrument) {
-		for (var i = 0; i < this.partList.length; i++ ) {
-			var splitPart = this.partList[i];
-			if (splitPart.instrument == selectedInstrument) {
-				return splitPart;
+	orchestralScore.OrchestralScore.prototype.getPartIndex = function(selectedInstrument) {
+		for (var i = 0; i < this.instrumentNames.length; i++ ) {
+			var name = this.instrumentNames[i]
+			if (name == selectedInstrument) {
+				return i;
 			}
 		}
 	};
@@ -71,8 +72,8 @@ define(['./prebase', 'jquery'],
 //	r = new music21.note.Rest()
 //	r.duration.quarterLength
 //	newSplitPart.p.get(0).append(r);
-//	while (newSplitPart.p.get(0).elements.length > OrchestralScore.notesFilledCount) {
-//	OrchestralScore.notesFilledCount++;
+//	while (newSplitPart.p.get(0).elements.length > OrchestralScore.maxPartLength) {
+//	OrchestralScore.maxPartLength++;
 //	}
 //	return splitPartWithRests;
 //	}
@@ -85,9 +86,8 @@ define(['./prebase', 'jquery'],
 	 * @param {music21.stream.Part} p - the part initialized
 	 */
 
-	orchestralScore.OrchestralScore.prototype.makeSplittedPart = function (instrument, p) {
-		console.log(instrument);
-		for (var i = 0; i < this.notesFilledCount; i++) {
+	orchestralScore.OrchestralScore.prototype.makeSplittedPart = function (instrumentStr, p) {
+		for (var i = 0; i < this.maxPartLength; i++) {
 			var r = new music21.note.Rest();
             if ( typeof(this.pianoMeasure) == "undefined"){
                 console.log("no piano measure in OS")
@@ -97,10 +97,12 @@ define(['./prebase', 'jquery'],
 			r.duration.quarterLength = correspondingPianoNote.duration.quarterLength;
 			p.get(0).append(r);
 		}
-		var newSplitPart = new music21.orchestralScore.SplitPart(instrument, p);
-        newSplitPart.pianoMeasure = this.pianoMeasure;
-		this.partList.push(newSplitPart);
-		this.score.insert(0,newSplitPart.p);
+        music21.miditools.loadSoundfont(instrumentStr, function(i) { 
+            p.instrument = i;            
+        });            
+		this.parts.push(p);
+        this.instrumentNames.push(instrumentStr);
+		this.score.insert(0,p);
 	};
         /** 
          * Returns the name of instruments selected from check boxes
@@ -126,7 +128,7 @@ define(['./prebase', 'jquery'],
 	orchestralScore.OrchestralScore.prototype.clickFunction = function (e) {
         console.log("click event");
         console.log(this);
-        var storedScore = this.pianoMeasure;
+        var storedScore = this.pianoMeasure
         var canvasElement = e.currentTarget;
 		var _ = storedScore.findNoteForClick(canvasElement, e);
 		//var dNN = _[0];
@@ -153,13 +155,14 @@ define(['./prebase', 'jquery'],
 		var selectedInstruments =this.getSelectedInstruments();
 		for (var i in selectedInstruments) {
 			instrumentName = selectedInstruments[i];
-			if (typeof(this.getSplitPart(instrumentName))=="undefined" ) {
+			if (true) {
+                                //if (typeof(this.getPart(instrumentName))=="undefined" ) {
 				var p = new music21.stream.Part();
 				var newMeasure = new music21.stream.Measure();
 				p.append(newMeasure);			
 				this.makeSplittedPart(instrumentName, p);
 			} else {
-				var p = this.getSplitPart(instrumentName).p;
+				var p = parts[this.getPartIndex(instrumentName)];
 			}
 		}
 		var $canvasDiv = $("<div class = 'canvasHolder' id = 'canvasDiv' align = 'left' > </div>");
@@ -178,6 +181,52 @@ define(['./prebase', 'jquery'],
 		var currentScore = this.score;
 		currentScore.appendNewCanvas($specifiedCanvas);
 
+	};
+	
+	orchestralScore.OrchestralScore.prototype.checkIfFilledToNotePlace = function(p, notePlace) {
+	    if ( (p.get(0).elements.length-1 < notePlace) &&  (notePlace < this.maxPartLength)) {
+	       return false; 
+        } else {
+           return true;
+        }
+	    
+	};
+	/**
+	 * Takes in a chord and where it goes in the part, then places the note where it belonds, adding rests in between the last and first note if none exists
+	 * @param {music21.chord.Chord} c - The chord selected by the mouse
+	 * @param {number} noteIndex - The index of where the note is the piano score
+         * @param {number} partIndex - part number in this.parts[]
+	 * 
+	 */
+	orchestralScore.OrchestralScore.prototype.addNoteToPart = function (c, noteIndex, partIndex) {	
+        if ( typeof(this.pianoMeasure) == "undefined"){
+                       console.log("no piano measure")
+                       console.log(this);
+        }
+        var p = this.parts[partIndex];
+        for (var notePlace = 0; notePlace < noteIndex; notePlace++) {
+			if (!this.checkIfFilledToNotePlace(p, notePlace)) {
+				var r = new music21.note.Rest();				
+				var correspondingPianoNote = this.pianoMeasure.elements[notePlace];
+				r.duration.quarterLength = correspondingPianoNote.duration.quarterLength;
+				this.parts[partIndex].get(0).append(r);
+				console.log("fills in missing rests");
+			}
+			if (typeof(p.get(0).get(notePlace)) == "undefined") {
+				var r = new music21.note.Rest();
+				if (typeof(orchestralScore.OrchestralScore) == "undefined") {
+					console.log("No orchestral score was created yet");
+					return;
+				}
+				var correspondingPianoNote = this.pianoMeasure.elements[notePlace];
+				r.duration.quarterLength = correspondingPianoNote.duration.quarterLength;
+				p.get(0).append(r); 
+			}
+		}
+		p.get(0).elements[noteIndex] = c;
+		if (p.get(0).length > this.maxPartLength) {
+			this.maxPartLength = p.get(0).length;
+		}
 	};
 
 
@@ -227,75 +276,13 @@ define(['./prebase', 'jquery'],
 		var selectedInstruments = this.getSelectedInstruments();
 		for (var i = 0; i < selectedInstruments.length; i++) {
 			var instrument = selectedInstruments[i];
-			partToAppendTo = this.getSplitPart(instrument);
-			partToAppendTo.addNoteToPart(c, noteIndex);
+			var partNumberToAppendTo = this.getPartIndex(instrument);
+			this.addNoteToPart(c, noteIndex, partNumberToAppendTo);
 
 		}
 
 	}
 
-
-
-
-	/**
-	 * Object that holds the name of a part, and the part itself
-	 * 
-	 * @param {string} instrument - the name of the instrument that corresponds to that SplitPart
-	 * @param {music21.stream.Part} - the music21 part for the SplitPart
-	 */
-	orchestralScore.SplitPart = function(instrument, p) {
-		if (instrument === undefined) {
-			instrument = 'piano';
-		} 
-		if (p  === undefined) {
-			p = new music21.stream.Part();
-			var m = new music21.stream.Measure();
-			p.append(m);
-		} 
-
-		this.instrument = instrument;
-		this.p = p;
-	};
-
-	orchestralScore.SplitPart.prototype = new prebase.ProtoM21Object();
-	orchestralScore.SplitPart.prototype.constructor = orchestralScore.SplitPart;
-
-	/**
-	 * Takes in a chord and where it goes in the part, then places the note where it belonds, adding rests in between the last and first note if none exists
-	 * @param {music21.chord.Chord} c - The chord selected by the mouse
-	 * @param {number} noteIndex - The index of where the note is the piano score
-	 * 
-	 */
-	orchestralScore.SplitPart.prototype.addNoteToPart = function (c, noteIndex) {	
-                if ( typeof(this.pianoMeasure) == "undefined"){
-                       console.log("no piano measure")
-                       console.log(this);
-                        }
-		for (var notePlace = 0; notePlace < noteIndex; notePlace++){
-                       var p = this.p; 
-			if (this.p.get(0).elements.length-1 < notePlace &&  notePlace < orchestralScore.OrchestralScore.notesFilledCount ){
-				var r = new music21.note.Rest();				
-				var correspondingPianoNote = orchestralScore.OrchestralScore.pianoMeasure.elements[notePlace];
-				r.duration.quarterLength = correspondingPianoNote.duration.quarterLength;
-				this.p.get(0).elements[notePlace] = r;
-				console.log("fills in missing rests");
-			}
-			if (typeof(this.p.get(0).elements[notePlace]) == "undefined") {
-				var r = new music21.note.Rest();
-				if (typeof(orchestralScore.OrchestralScore) == "undefined") {
-					console.log("No orchestral score was created yet");
-					return;
-				}
-				var correspondingPianoNote = this.pianoMeasure.elements[notePlace];
-				r.duration.quarterLength = correspondingPianoNote.duration.quarterLength;
-				this.p.get(0).elements[notePlace] = r;
-			}
-		}
-		this.p.get(0).elements[noteIndex] = c;
-		if (this.p.get(0).elements.length > orchestralScore.OrchestralScore.notesFilledCount) {
-			orchestralScore.OrchestralScore.notesFilledCount++;
-		}
-	};
 
 	/**
 	 * Creates chords for a demonstration and appends them to a canvas.
@@ -355,6 +342,7 @@ define(['./prebase', 'jquery'],
 	return orchestralScore;
 
 });
+
 
 
 
