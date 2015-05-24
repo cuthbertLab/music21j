@@ -31,9 +31,9 @@ if (typeof (music21) == "undefined") {
 	music21 = {};
 }
 
-music21.VERSION = [0, 2, 0];
+music21.VERSION = [0, 6, 0];
 music21.VERSION_STR = music21.VERSION.join(", ");
-music21.PYTHON_COMPAT_VERSION = [1, 9, 2]; // Python version built to match
+music21.PYTHON_COMPAT_VERSION = [2, 0, 4]; // Python version built to match
 
 music21.debug = false;
 
