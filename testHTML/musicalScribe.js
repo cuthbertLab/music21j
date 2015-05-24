@@ -197,11 +197,10 @@ require(['music21'], function () {
     
     k.appendKeyboard(kd); // 37key keyboard
 
-    var Jazz = music21.jazzMidi.createPlugin();
-    music21.jazzMidi.createSelector($("#putMidiSelectHere"), Jazz);
-    music21.jazzMidi.callBacks.general = [music21.miditools.makeChords, 
+    music21.webmidi.createSelector($("#putMidiSelectHere"));
+    music21.webmidi.callBacks.general = [music21.miditools.makeChords, 
                                           music21.miditools.sendToMIDIjs,
                                           music21.keyboard.jazzHighlight.bind(k)];
-    music21.jazzMidi.callBacks.sendOutChord = appendElement;
+    music21.webmidi.callBacks.sendOutChord = appendElement;
 });
 		

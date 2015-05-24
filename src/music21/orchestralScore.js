@@ -326,9 +326,9 @@ define(['./prebase', 'jquery'],
 
 		$('#playSound').bind('click', function() {
 			if (this.checked) {
-				music21.jazzMidi.callBacks.general = midiCallbacksPlay;
+				music21.webmidi.callBacks.general = midiCallbacksPlay;
 			} else {
-				music21.jazzMidi.callBacks.general = midiCallbacksNoPlay;
+				music21.webmidi.callBacks.general = midiCallbacksNoPlay;
 			}
 		});
 		return mixedMeasure;

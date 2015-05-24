@@ -57,12 +57,11 @@
 	            lastRestStream = t;
 			    lastNoteStream = b;
 	
-	            var Jazz = music21.jazzMidi.createPlugin();
-			    music21.jazzMidi.createSelector($("#putMidiSelectHere"), Jazz);
-			    music21.jazzMidi.callBacks.general = [music21.miditools.makeChords, 
-			                                          music21.miditools.sendToMIDIjs,
-			                                          music21.keyboard.jazzHighlight.bind(k)];
-			    music21.jazzMidi.callBacks.sendOutChord = appendElement;
+	            music21.webmidi.createSelector($("#putMidiSelectHere"));
+	            music21.webmidi.callBacks.general = [music21.miditools.makeChords, 
+	                                                  music21.miditools.sendToMIDIjs,
+	                                                  music21.keyboard.jazzHighlight.bind(k)];
+	            music21.webmidi.callBacks.sendOutChord = appendElement;
 			    
 	            $('#markC').bind('click', function () { k.markC = this.checked; k.redrawSVG() })
 	            $('#showNames').bind('click', function () { k.showNames = this.checked; k.redrawSVG() })
@@ -70,9 +69,9 @@
 	
 	            $('#playSound').bind('click', function() {
 	                if (this.checked) {
-	                    music21.jazzMidi.callBacks.general = midiCallbacksPlay;
+	                    music21.webmidi.callBacks.general = midiCallbacksPlay;
 	                } else {
-	                    music21.jazzMidi.callBacks.general = midiCallbacksNoPlay;
+	                    music21.webmidi.callBacks.general = midiCallbacksNoPlay;
 	                }
 	            });
 	
