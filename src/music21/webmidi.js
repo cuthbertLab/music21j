@@ -11,7 +11,7 @@
  * 
  */
 
-define(['./miditools','jquery'], 
+define(['./miditools','./common','jquery'], 
         /**
          * webmidi -- for connecting with external midi devices
          * 
@@ -21,7 +21,7 @@ define(['./miditools','jquery'],
          * 
          * @exports music21/webmidi
          */
-        function(miditools) {
+        function(miditools, common, $) {
     /**
      * webmidi -- for connecting with external midi devices
      * 
@@ -159,9 +159,13 @@ define(['./miditools','jquery'],
      * 
      * @function music21.webmidi.createJazzSelector
      * @param {JQueryDOMObject|DOMObject} [midiSelectDiv=document.body] - object to append the select to
+     * @param {object} [options] - see createSelector for details
      * @returns {DOMObject|undefined} DOM object containing the select tag, or undefined if Jazz cannot be loaded.
      */
-    webmidi.createJazzSelector = function ($newSelect) {
+    webmidi.createJazzSelector = function ($newSelect, options) {
+        params = {};
+        common.merge(params, options);
+        
         var Jazz = webmidi.createPlugin();
         if (Jazz === undefined) {
             return undefined;
@@ -198,9 +202,19 @@ define(['./miditools','jquery'],
             $newSelect.val(midiOptions[0]);
             allAppendOptions[0].attr("selected", true);
             webmidi.selectedJazzInterface = Jazz.MidiInOpen(midiOptions[0], webmidi.jazzMidiInArrived);
+            anySelected = true;
         } else {
             noneAppendOption.attr("selected", true);
         }
+        if (params.onsuccess !== undefined) {
+            params.onsuccess();
+        }
+        if (anySelected === true && params.oninputsuccess !== undefined) {
+            params.oninputsuccess();
+        } else if (anySelected === false && params.oninputempty !== undefined) {
+            params.oninputempty();
+        }
+        
     };    
     
 	/**
@@ -212,7 +226,7 @@ define(['./miditools','jquery'],
         if (selectedInput == webmidi.selectedInputPort) {
             return;
         } 
-        var storedStateChange = webmidi.access.onstatechange;
+        var storedStateChange = webmidi.access.onstatechange; // port.close() fires onstatechange, so turn off for a moment.
         webmidi.access.onstatechange = function () {}
         if (music21.debug) {
             console.log("current input changed to: " + selectedInput);
@@ -220,33 +234,39 @@ define(['./miditools','jquery'],
         webmidi.selectedInputPort = selectedInput;
             
         webmidi.access.inputs.forEach( function (port) {
-            console.log(port.name + " _____");
             if (port.name == selectedInput) {
-                console.log("active");
                 port.onmidimessage = webmidi.midiInArrived;
             } else {
-                console.log("inactive");
                 port.close();
             }
-            console.log("Hiiii");
         });	    
         webmidi.access.onstatechange = storedStateChange;
-        console.log("Byeee!");
         return false;
 	};
 	
 	/**
 	 * Creates a &lt;select&gt; object for selecting among the MIDI choices in Jazz
+	 *
+	 * The options object has several parameters:
+	 * 
+	 * {bool} autoupdate -- should this auto update?
+	 * {function} onsuccess -- function to call on all successful port queries
+	 * {function} oninputsuccess -- function to call if successful and at least one input device is found
+	 * {function} oninputempty -- function to call if successful but no input devices are found.
+	 * {bool} existingMidiSelect -- is there already a select tag for MIDI?
 	 * 
 	 * @function music21.webmidi.createSelector
 	 * @param {JQueryDOMObject|DOMObject} [$midiSelectDiv=$('body')] - object to append the select to
-	 * @param {bool} [autoupdate] - should this auto update?
+	 * @param {object} [options] - see above.
 	 * @returns {DOMObject|undefined} DOM object containing the select tag, or undefined if Jazz cannot be loaded.
 	 */
-	webmidi.createSelector = function ($midiSelectDiv, autoUpdate) {
-	    if (autoUpdate === undefined) {
-	        autoUpdate = true;
-	    }
+	webmidi.createSelector = function ($midiSelectDiv, options) {
+	    var params = {
+	            autoUpdate: true,
+	            existingMidiSelect: false
+	    };
+	    common.merge(params, options);
+	    
 	    if (typeof($midiSelectDiv) == 'undefined') {
 	        $midiSelectDiv = $("body");
         }
@@ -255,10 +275,9 @@ define(['./miditools','jquery'],
 	    }
 	    var $newSelect;
 	    var foundMidiSelects = $midiSelectDiv.find('select#midiInSelect'); 
-	    var existingMidiSelect = false;
 	    if (foundMidiSelects.length > 0) {
 	        $newSelect = foundMidiSelects[0];
-	        existingMidiSelect = true;
+	        params.existingMidiSelect = true;
 	    } else {
 	        $newSelect = $("<select>").attr('id','midiInSelect');	        
 	        $midiSelectDiv.append($newSelect);
@@ -266,18 +285,27 @@ define(['./miditools','jquery'],
         webmidi.$select = $newSelect;
 	    
 	    if (navigator.requestMIDIAccess === undefined) {
-	        webmidi.createJazzSelector($newSelect, existingMidiSelect);
+	        webmidi.createJazzSelector($newSelect, params);
 	    } else {
-	        if (existingMidiSelect !== true) {
+	        if (params.existingMidiSelect !== true) {
 	            $newSelect.change( webmidi.selectionChanged );          
 	        }
 	        navigator.requestMIDIAccess().then(function(access) {
 	            webmidi.access = access;
 	            webmidi.populateSelect();
-	            if (autoUpdate) {
+	            if (params.autoUpdate) {
 	                access.onstatechange = webmidi.populateSelect;
 	            }
 	            webmidi.$select.change();
+	            if (params.onsuccess !== undefined) {
+	                params.onsuccess();
+	            }
+	            if (webmidi.selectedInputPort !== "None" && params.oninputsuccess !== undefined) {
+	                params.oninputsuccess();
+	            } else if (webmidi.selectedInputPort === "None" && params.oninputempty !== undefined) {
+	                params.oninputempty();
+	            }
+
 	        }, function (e) {
 	            $midiSelectDiv.html(e.message);
 	        });

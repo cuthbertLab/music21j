@@ -14,7 +14,12 @@
             k.startPitch = 6;
             k.endPitch = 57;
             k.appendKeyboard(kd);
-            music21.webmidi.createSelector($("#putMidiSelectHere"));
+            var options = {
+               onsuccess: function () { console.log(this) },
+               oninputsuccess: function () { console.log("found one!") },
+               oninputempty: function () { console.log("nope") }
+            };
+            music21.webmidi.createSelector($("#putMidiSelectHere"), options);
             music21.webmidi.callBacks.general = [music21.keyboard.jazzHighlight.bind(k), 
                                                   music21.miditools.sendToMIDIjs,
                                                   ];
