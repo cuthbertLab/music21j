@@ -1,10 +1,8 @@
 /**
  * music21j -- Javascript reimplementation of Core music21p features.  
- * music21/webMidi -- webmidi or wrapper around the Jazz Plugin
+ * music21/webmidi -- webmidi or wrapper around the Jazz Plugin
  * 
- * Uses Chris Wilson's WebMIDI/Jazz Polyfill
- * 
- * Uses the cross-platform, cross-browser plugin from 
+ * For non webmidi --  Uses the cross-platform, cross-browser plugin from 
  * http://jazz-soft.net/doc/Jazz-Plugin/Plugin.html
  * P.S. by the standards of divinity of most major religions, Sema Kachalo is a god.
  *
@@ -76,7 +74,7 @@ define(['./miditools','jquery'],
      * 
      * See the MIDI spec for information on parameters
      * 
-     * @memberof music21.jazzMidi
+     * @memberof music21.webmidi
      * @param {byte} t - timing information
      * @param {byte} a - data 1 
      * @param {byte} b - data 2
@@ -121,9 +119,9 @@ define(['./miditools','jquery'],
      * proper classid (`CLSID:1ACE1618-1C7D-4561-AEE1-34842AA85E90`) to
      * load the Jazz plugin.
      * 
-     * It will return the plugin if it can or undefined if it cannot. Caches it in jazzMidi.storedPlugin.
+     * It will return the plugin if it can or undefined if it cannot. Caches it in webmidi.storedPlugin.
      * 
-     * @function music21.jazzMidi.createPlugin
+     * @function music21.webmidi.createPlugin
      * @param {DOMObject} [appendElement=document.body] - where to place this hidden object (does not really matter)
      * @param {Boolean} [override=false] - if this method has been called successfully before return the storedPlugin unless override is true.  
      * @returns {Jazz|undefined} Jazz MIDI plugin object
@@ -172,7 +170,7 @@ define(['./miditools','jquery'],
         $newSelect.change( function () { 
             var selectedInput = $("#midiInSelect option:selected").text();
             if (selectedInput != "None selected") {
-                webmidi.selectedJazzInterface = Jazz.MidiInOpen(selectedInput, jazzMidi.jazzMidiInArrived);                
+                webmidi.selectedJazzInterface = Jazz.MidiInOpen(selectedInput, webmidi.jazzMidiInArrived);                
             } else {
                 Jazz.MidiInClose();
             }

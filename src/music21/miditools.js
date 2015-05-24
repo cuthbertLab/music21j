@@ -1,11 +1,7 @@
 /**
  * music21j -- Javascript reimplementation of Core music21p features.  
- * music21/jazzMidi -- wrapper around the Jazz Plugin
+ * music21/miditools -- A collection of tools for midi. See the namespace {@link music21.miditools}
  * 
- * Uses the cross-platform, cross-browser plugin from 
- * http://jazz-soft.net/doc/Jazz-Plugin/Plugin.html
- * P.S. by the standards of divinity of most major religions, Sema Kachalo is a god.
- *
  * Copyright (c) 2014, Michael Scott Cuthbert and cuthbertLab
  * Based on music21 (=music21p), Copyright (c) 2006–14, Michael Scott Cuthbert and cuthbertLab
  * 
@@ -21,7 +17,7 @@ define(['jquery', './note', './chord', 'MIDI', 'Base64', 'base64binary'],
         function($, note, chord, MIDI) {
     /** 
      * Module that holds **music21** tools for connecting with MIDI.js and somewhat with the
-     * events from the Jazz plugin (or to come soon, the WebMIDI protocol).
+     * events from the Jazz plugin or the WebMIDI protocol.
      * 
      * @namespace music21.miditools 
      * @memberof music21 
@@ -212,7 +208,7 @@ define(['jquery', './note', './chord', 'MIDI', 'Base64', 'base64binary'],
     
     /**
      * Take the list of Notes and makes a chord out of it, if appropriate and call 
-     * {@link music21.jazzMidi.callBacks.sendOutChord} callback with the Chord or Note as a parameter.
+     * {@link music21.webmidi.callBacks.sendOutChord} callback with the Chord or Note as a parameter.
      * 
      * @memberof music21.miditools
      * @param {Array<music21.note.Note>} chordNoteList - an Array of {@link music21.note.Note} objects
@@ -232,8 +228,8 @@ define(['jquery', './note', './chord', 'MIDI', 'Base64', 'base64binary'],
         appendObject.stemDirection = 'noStem';
         miditools.quantizeLastNote();
         miditools.lastElement = appendObject;
-        if (music21.jazzMidi.callBacks.sendOutChord !== undefined) {            
-            music21.jazzMidi.callBacks.sendOutChord(appendObject);
+        if (music21.webmidi.callBacks.sendOutChord !== undefined) {            
+            music21.webmidi.callBacks.sendOutChord(appendObject);
         } else {
             return appendObject;
         }

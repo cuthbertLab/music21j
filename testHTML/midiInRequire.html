@@ -10,9 +10,8 @@
 
 		<script>
 		require(['music21'], function () { 
-		    music21.jazzMidi.createPlugin();
-		    music21.jazzMidi.createSelector($("#putMidiSelectHere"));
-		    music21.jazzMidi.callBacks.general = music21.miditools.sendToMIDIjs;
+		    music21.webmidi.createSelector($("#putMidiSelectHere"));
+		    music21.webmidi.callBacks.general = music21.miditools.sendToMIDIjs;
 		});			
 		</script>
     </head>
