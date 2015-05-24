@@ -282,6 +282,7 @@ define(['./miditools','jquery'],
 	            $midiSelectDiv.html(e.message);
 	        });
 	    }
+	    return $newSelect;
 	};
 
     webmidi.populateSelect = function() {
