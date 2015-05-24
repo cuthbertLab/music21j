@@ -143,7 +143,6 @@ define(['./miditools','./common','jquery'],
         obj.style.height = '0px';
         appendElement.appendChild(obj);
 
-        miditools.clearOldChords();
         if (obj.isJazz) {
             webmidi.storedPlugin = obj;
             return obj;
@@ -310,6 +309,7 @@ define(['./miditools','./common','jquery'],
 	            $midiSelectDiv.html(e.message);
 	        });
 	    }
+        miditools.clearOldChords(); // starts the chord checking process.
 	    return $newSelect;
 	};
 
