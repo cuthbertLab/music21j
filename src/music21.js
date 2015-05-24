@@ -136,9 +136,11 @@ var m21requireConfig = {
         'attrchange': pathSimplify(m21srcPath + '/ext/jqueryPlugins/attrchange'),
         'jquery-ui': pathSimplify(m21srcPath + '/ext/jqueryPlugins/jqueryUI/jquery-ui.min'),
         'vexflow': pathSimplify(m21srcPath + '/ext/vexflow/vexflow-min'),
+        'webmidiapi': pathSimplify(m21srcPath + '/ext/WebMIDIAPI'),
         'MIDI':         pathSimplify(m21srcPath + '/ext/midijs/build/MIDI'),
-        'Base64':       pathSimplify(m21srcPath + '/ext/midijs/inc/Base64'),             
-        'base64binary': pathSimplify(m21srcPath + '/ext/midijs/inc/base64binary'),
+        'Base64':       pathSimplify(m21srcPath + '/ext/midijs/inc/shim/Base64'),             
+        'base64binary': pathSimplify(m21srcPath + '/ext/midijs/inc/shim/Base64binary'),
+        'webaudioShim': pathSimplify(m21srcPath + '/ext/midijs/inc/shim/WebAudioAPI'),
         'es6-shim': pathSimplify(m21srcPath + '/ext/es6-shim'),
         //'vexflowMods': 'ext/vexflowMods',
     },
@@ -149,8 +151,12 @@ var m21requireConfig = {
       },     
     ],      
     shim: {
+        'webmidiapi': {
+            deps: ['es6-shim'],
+            exports: 'window',            
+        },
         'MIDI': {
-            deps: [ 'Base64', 'base64binary'],
+            deps: [ 'Base64', 'base64binary', 'webaudioShim'],
             exports: 'MIDI',
         },
         'attrchange': {
@@ -177,6 +183,7 @@ var m21modules = ['MIDI',
                   'jquery-ui',
                   'attrchange',
                   'es6-shim',
+                  //'webmidiapi',
                   './music21/moduleLoader',                  
                   ];
 //BUG: will this work if multiple files are listed in noLoad???
