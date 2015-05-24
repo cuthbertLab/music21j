@@ -9,51 +9,16 @@
         var k = ""; // will become keyboard.Keyboard object        
         
         require(['music21'], function () { 
-            function keyboardHighlight(e) {
-                if (e.noteOn) {
-                    var midiNote = e.midiNote;
-                    if (k.keyObjects[midiNote] !== undefined) {
-                        var keyObj = k.keyObjects[midiNote];
-                        var svgObj = keyObj.svgObj;
-                        var intensityRGB = "";
-                        var normalizedVelocity = (e.velocity + 25)/127;
-                        if (normalizedVelocity > 1) {
-                            normalizedVelocity = 1.0;
-                        }
-
-                        if (keyObj.keyClass == 'whitekey') {
-                            var intensity = normalizedVelocity.toString();
-                            intensityRGB = 'rgba(255, 255, 0, ' + intensity + ')';
-                        } else {
-                            var intensity = (Math.floor(normalizedVelocity * 255)).toString();
-                            intensityRGB = 'rgb(' + intensity + ',' + intensity + ',0)';
-                            //console.log(intensityRGB);
-
-                        }
-                        svgObj.setAttribute('style', 'fill:' + intensityRGB + ';stroke:black');
-                    }
-                } else if (e.noteOff) {
-                    var midiNote = e.midiNote;
-                    if (k.keyObjects[midiNote] !== undefined) {
-                        var keyObj = k.keyObjects[midiNote];
-                        var svgObj = keyObj.svgObj;
-                        svgObj.setAttribute('style', keyObj.keyStyle);
-                    }
-                }
-            };
-            
-            
-            var Jazz = music21.jazzMidi.createPlugin();
-            music21.jazzMidi.createSelector($("#putMidiSelectHere"), Jazz);
-            music21.jazzMidi.callBacks.general = [keyboardHighlight, 
-                                                  music21.miditools.sendToMIDIjs,
-                                                  ];
-            
             k = new music21.keyboard.Keyboard();
             var kd = document.getElementById('keyboardDiv');
             k.startPitch = 6;
             k.endPitch = 57;
             k.appendKeyboard(kd);
+            music21.webmidi.createSelector($("#putMidiSelectHere"));
+            music21.webmidi.callBacks.general = [music21.keyboard.jazzHighlight.bind(k), 
+                                                  music21.miditools.sendToMIDIjs,
+                                                  ];
+            
         });
         
         

@@ -398,7 +398,7 @@ define(['jquery', './note', './chord', 'MIDI', 'Base64', 'base64binary'],
                 MIDI.loadPlugin({
                     soundfontUrl: music21.soundfontUrl,
                     instrument: soundfont,
-                    callback: miditools.postLoadCallback.bind(MIDI, soundfont, callback),
+                    onsuccess: miditools.postLoadCallback.bind(MIDI, soundfont, callback),
                 });
             });
         }
