@@ -83,23 +83,28 @@ define(['./prebase', './base', 'MIDI'],
      * @property {Int} [numBeatsPerMeasure=4]
      * @property {number} [minTempo=10]
      * @property {number} [maxTempo=600]
+     * @property {bool} [flash=false] - flash the tempo
+     * @property {bool} [silent=false] - play silently
      * @property {Int} beat - current beat number
      * @property {Int} chirpTimeout - an index of a timeout object for chirping
      */
-    tempo.Metronome = function (tempo) {
+    tempo.Metronome = function (tempoInt) {
         prebase.ProtoM21Object.call(this);
         this.classes.push('Metronome');
         this._tempo = 60; // overridden by music21.tempo.baseTempo;
-        if (tempo === undefined) {
-            this.tempo = music21.tempo.baseTempo;
+        if (tempoInt === undefined) {
+            this.tempo = tempo.baseTempo;
         } else {
-            this.tempo = tempo;
+            this.tempo = tempoInt;
         }
         this.numBeatsPerMeasure = 4;
         this.minTempo = 10;
         this.maxTempo = 600;
         this.beat = this.numBeatsPerMeasure;
         this.chirpTimeout = undefined;
+        this.silent = false;
+        this.flash = false;
+        
         Object.defineProperties(this, {
            'tempo': {
              enumerable: true,
@@ -113,6 +118,12 @@ define(['./prebase', './base', 'MIDI'],
                  }
              }
            },
+           'beatLength': {
+               enumerable: true,
+               get: function() {
+                   return 60.0/this.tempo;
+               }
+           }
                
         });
 
@@ -121,20 +132,37 @@ define(['./prebase', './base', 'MIDI'],
     tempo.Metronome.prototype = new prebase.ProtoM21Object();
     tempo.Metronome.prototype.constructor = tempo.Metronome;
     
+    tempo.Metronome.prototype._silentFlash = function(flashColor) {
+        this.$metronomeDiv.find('.metroFlash').css('background-color', flashColor).fadeOut(this.beatLength*1000*1/4, function() {
+            $(this).css('background-color', '#ffffff').fadeIn(1);
+        });
+    }
+
+    
     /**
      * Play a note (a higher one on the downbeat) and start the metronome chirping.
      * 
      * @memberof music21.tempo.Metronome
-     */
+     */    
     tempo.Metronome.prototype.chirp = function () {
         this.beat += 1;
         if (this.beat > this.numBeatsPerMeasure) {
             this.beat = 1;
-            music21.MIDI.noteOn(0, 96, 100, 0);
-            music21.MIDI.noteOff(0, 96, .1);
+            if (this.silent != true) {
+                music21.MIDI.noteOn(0, 96, 100, 0);
+                music21.MIDI.noteOff(0, 96, .1);                
+            }
+            if (this.flash == true) {
+                this._silentFlash('#0000f0');
+            }
         } else {
-            music21.MIDI.noteOn(0, 84, 70, 0);
-            music21.MIDI.noteOff(0, 84, .1);
+            if (this.silent != true) {
+                music21.MIDI.noteOn(0, 84, 70, 0);
+                music21.MIDI.noteOff(0, 84, .1);
+            }
+            if (this.flash == true) {
+                this._silentFlash('#ff0000');
+            }
         }
         var that = this;
         this.chirpTimeout = setTimeout(function () { that.chirp(); }, 
@@ -253,7 +281,12 @@ define(['./prebase', './base', 'MIDI'],
         b4.on('click', function() { metroThis.decreaseSpeed(); $(this).prevAll('.tempoHolder').html(metroThis.tempo.toString()); });
         newDiv.append(b3);
         newDiv.append(b4);
+        var $flash = $('<span class="metroFlash">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>')
+        $flash.css('margin-left', '40px').css('height','40px');
+        newDiv.append($flash);
+        
         jWhere.append(newDiv);
+        this.$metronomeDiv = newDiv;
         return newDiv;
     };
     
