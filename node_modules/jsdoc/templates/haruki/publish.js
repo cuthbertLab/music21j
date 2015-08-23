@@ -17,7 +17,7 @@ function graft(parentNode, childNodes, parentLongname, parentName) {
             len;
 
         if (element.kind === 'namespace') {
-            if (! parentNode.namespaces) {
+            if (!parentNode.namespaces) {
                 parentNode.namespaces = [];
             }
 
@@ -33,7 +33,7 @@ function graft(parentNode, childNodes, parentLongname, parentName) {
             graft(thisNamespace, childNodes, element.longname, element.name);
         }
         else if (element.kind === 'mixin') {
-            if (! parentNode.mixins) {
+            if (!parentNode.mixins) {
                 parentNode.mixins = [];
             }
 
@@ -49,7 +49,7 @@ function graft(parentNode, childNodes, parentLongname, parentName) {
             graft(thisMixin, childNodes, element.longname, element.name);
         }
         else if (element.kind === 'function') {
-            if (! parentNode.functions) {
+            if (!parentNode.functions) {
                 parentNode.functions = [];
             }
 
@@ -91,7 +91,7 @@ function graft(parentNode, childNodes, parentLongname, parentName) {
             }
         }
         else if (element.kind === 'member') {
-            if (! parentNode.properties) {
+            if (!parentNode.properties) {
                 parentNode.properties = [];
             }
             parentNode.properties.push({
@@ -104,7 +104,7 @@ function graft(parentNode, childNodes, parentLongname, parentName) {
         }
 
         else if (element.kind === 'event') {
-            if (! parentNode.events) {
+            if (!parentNode.events) {
                 parentNode.events = [];
             }
 
@@ -146,7 +146,7 @@ function graft(parentNode, childNodes, parentLongname, parentName) {
             }
         }
         else if (element.kind === 'class') {
-            if (! parentNode.classes) {
+            if (!parentNode.classes) {
                 parentNode.classes = [];
             }
 
@@ -197,7 +197,6 @@ function graft(parentNode, childNodes, parentLongname, parentName) {
     @param {object} opts
  */
 exports.publish = function(data, opts) {
-
     var root = {},
         docs;
 
@@ -212,11 +211,10 @@ exports.publish = function(data, opts) {
             console.log( xml('jsdoc', root) );
         }
         else {
-            global.dump(root);
+            console.log( require('jsdoc/util/dumper').dump(root) );
         }
     }
     else {
         console.log('This template only supports output to the console. Use the option "-d console" when you run JSDoc.');
     }
-
 };

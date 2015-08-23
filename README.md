@@ -128,3 +128,18 @@ the Seaver Institute and the National Endowment for the Humanities.
 [jQuery]:http://jquery.com
 [qUnit]:http://qunitjs.com
 [jsdoc]:http://usejsdoc.org
+
+
+Dev Notes
+----------------
+Before building, every once in a while run (in the music21j directory)
+
+   npm-check-updates
+   
+and if it looks like something to update, run
+
+   npm-check-updates --upgradeAll
+   npm update
+
+
+   

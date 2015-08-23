@@ -8,10 +8,10 @@
     "src/music21/*.js"
   ],
   "devDependencies": {
-    "jsdoc": "~3.3.0-alpha4",
-    "grunt-shell": "~0.6.4",
+    "jsdoc": "~3.3.2",
+    "grunt-shell": "~1.1.2",
     "grunt": "~0.4.5",
-    "grunt-jsdoc": "~0.5.7"
+    "grunt-jsdoc": "~0.6.8"
   },
   "directories": {
     "test": "tests"
