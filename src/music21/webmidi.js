@@ -69,8 +69,9 @@ define(['./miditools','./common','jquery'],
     };
 
     /**
-     * Calls the 'raw' and 'general callbacks when a raw midi event (four bytes)
-     * arrives.
+     * Called by Jazz MIDI plugin when an event arrives.
+     * 
+     * Shim to convert the data into WebMIDI API format and then call the WebMIDI API midiInArrived
      * 
      * See the MIDI spec for information on parameters
      * 
@@ -91,10 +92,15 @@ define(['./miditools','./common','jquery'],
     
     
     /**
+     * Called directly when a MIDI event arrives from the WebMIDI API, or via a Shim (jazzMidiInArrived)
+     * when MIDI information comes from JazzMIDI
+     * 
      * Calls the 'raw' and 'general callbacks when a raw midi event (four bytes)
      * arrives.
      * 
      * See the MIDI spec for information on parameters
+     * 
+     * midiMessageEvent should be an object with two keys: timeStamp (int) and data (array of three int values)
      * 
      * @memberof music21.webmidi
      * @param {MidiMessageEvent} midiMessageEvent - midi Information

@@ -31,7 +31,7 @@ if (typeof(music21) === "undefined") {
      *  
      * @namespace 
      */
-    music21 = {VERSION: 0.6};
+    music21 = {VERSION: 0.7}; // update in README.md also
 }
 //console.log('hi before: ' + require.toUrl('hi'));
 //console.log('./hi before: ' + require.toUrl('./hi'));
@@ -128,7 +128,7 @@ if (typeof m21srcPath === 'undefined') {
 music21.m21srcPath = m21srcPath;
 //console.log('m21srcPath', m21srcPath);
 //console.log('m21srcPath non simplified', require.toUrl('music21'));
-music21.soundfontUrl = require.toUrl('music21').replace(/\?bust=\w*/, '') + '/../ext/midijs/soundfont/';
+music21.soundfontUrl = require.toUrl('music21').replace(/\?bust=\w*/, '') + '/../ext/soundfonts/FluidR3_GM/';
 
 var m21requireConfig = {
     paths: {
@@ -136,12 +136,13 @@ var m21requireConfig = {
         'attrchange': pathSimplify(m21srcPath + '/ext/jqueryPlugins/attrchange'),
         'jquery-ui': pathSimplify(m21srcPath + '/ext/jqueryPlugins/jqueryUI/jquery-ui.min'),
         'vexflow': pathSimplify(m21srcPath + '/ext/vexflow/vexflow-min'),
-        'webmidiapi': pathSimplify(m21srcPath + '/ext/WebMIDIAPI'),
         'MIDI':         pathSimplify(m21srcPath + '/ext/midijs/build/MIDI'),
-        'Base64':       pathSimplify(m21srcPath + '/ext/midijs/inc/shim/Base64'),             
-        'base64binary': pathSimplify(m21srcPath + '/ext/midijs/inc/shim/Base64binary'),
-        'webaudioShim': pathSimplify(m21srcPath + '/ext/midijs/inc/shim/WebAudioAPI'),
-        'es6-shim': pathSimplify(m21srcPath + '/ext/es6-shim'),
+        // browser shims
+        'webMidiApiShim': pathSimplify(m21srcPath + '/ext/midijs/inc/shim/WebMIDIAPI'), //not currently loaded/used?
+        'base64Shim':   pathSimplify(m21srcPath + '/ext/midijs/inc/shim/Base64'), //IE9; drop after support is gone   
+        'base64BinaryShim': pathSimplify(m21srcPath + '/ext/midijs/inc/shim/Base64binary'), //IE9; drop after support is gone
+        'webAudioShim': pathSimplify(m21srcPath + '/ext/midijs/inc/shim/WebAudioAPI'), // Safari prefixed to <= 9; IE <= Edge
+        'es6Shim': pathSimplify(m21srcPath + '/ext/es6-shim'),
         //'vexflowMods': 'ext/vexflowMods',
     },
     packages: [
@@ -151,12 +152,12 @@ var m21requireConfig = {
       },     
     ],      
     shim: {
-        'webmidiapi': {
-            deps: ['es6-shim'],
+        'webMidiApiShim': {
+            deps: ['es6Shim'],
             exports: 'window',            
         },
         'MIDI': {
-            deps: [ 'Base64', 'base64binary', 'webaudioShim'],
+            deps: [ 'base64Shim', 'base64BinaryShim', 'webAudioShim'],
             exports: 'MIDI',
         },
         'attrchange': {
