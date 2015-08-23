@@ -2,3 +2,11 @@
 	path = src/ext/jsonpickle
 	url = https://github.com/cuthbertLab/jsonpickleJS.git
 	branch = master
+[submodule "src/ext/midijs"]
+	path = src/ext/midijs
+	url = https://github.com/mscuthbert/MIDI.js.git
+	branch = master
+[submodule "src/ext/soundfonts"]
+	path = src/ext/soundfonts
+	url = https://github.com/cuthbertLab/midi-js-soundfonts.git
+	branch = master
