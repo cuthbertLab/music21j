@@ -8,7 +8,7 @@
  * @author Michael Scott Cuthbert
  */
 
-define(['jquery', './note', './chord', 'MIDI', 'Base64', 'base64binary'],         
+define(['jquery', './note', './chord', 'MIDI'],         
        /**
         * A collection of tools for midi. See the namespace {@link music21.miditools}
         * 

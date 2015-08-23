@@ -183,7 +183,7 @@ var m21modules = ['MIDI',
                   'jsonpickle',
                   'jquery-ui',
                   'attrchange',
-                  'es6-shim',
+                  'es6Shim',
                   //'webmidiapi',
                   './music21/moduleLoader',                  
                   ];
