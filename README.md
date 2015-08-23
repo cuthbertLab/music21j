@@ -21,11 +21,12 @@ tab above will give introductions to some of the features of music21j. At this
 point we're focusing on documenting usage; developer docs will come 
 later.
 
-Music21j requires your users to have a relatively recent web browser. Safari 6+,
-Chrome since 2013, or Firefox since 2013 all work great. Internet Explorer 10+
-works well too, though timing of playback can be a bit off. There is basic
-support for IE 8 also.  Safari 5 and below and IE 7 and older are not
-supported.
+Music21j requires your users to have a relatively recent web browser. Safari 8+,
+Chrome since 2014 (v.32+), or Firefox since 2014 (v. 26+) all work great. Internet Explorer 10+
+works well too, though timing of playback can be a bit off. Currently these
+browsers also work, but support will be dropped at any time that they lack a feature
+useful for the project: IE 9, Safari 6 and 7, Chrome 2013 (v.24-31), and Firefox 2013 (v.17-26).  
+Safari 5 and below and IE 8 and older are not supported.
 
 Documentation
 -------------
@@ -88,7 +89,7 @@ using the python server above).
 
 Version
 --------
-0.4 alpha
+0.7 alpha
 
 
 License
@@ -107,7 +108,7 @@ Thanks to the following packages (among others) for making music21j possible:
 
 * [Vexflow] - music notation in HTML5
 * [MIDI.js] - audio processing of MIDI
-* [Jazzsoft] - plug-in for accessing MIDI in the browser.
+* [Jazzsoft] - plug-in for accessing MIDI in the browser in the absence of WebMIDI Api.
 * [require.js] - method for loading multiple modules in the browser and managing dependencies.
 * [jQuery] - easy manipulation of HTML DOM.
 * [qUnit] - testing framework
