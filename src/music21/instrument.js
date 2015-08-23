@@ -25,7 +25,7 @@ define(['./base'],
    var instrument = {};
    
    /**
-    * Represents an instrument.  instrumentNames are found in the ext/soundfont directory
+    * Represents an instrument.  instrumentNames are found in the ext/soundfonts directory
     * 
     * See {@link music21.miditools} and esp. `loadSoundfont` for a way of loading soundfonts into
     * instruments.

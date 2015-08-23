@@ -17,8 +17,8 @@ define(['./prebase', 'jquery'],
 	 * @class OrchestralScore
 	 * @memberof music21.orchestralScore
 	 * @extends music21.prebase.ProtoM21Object
-         * @property {Array [music21.stream.Part]} -stored parts
-         * @property {Array [String]} instrument names corresponding to parts
+         * @property {Array<music21.stream.Part>} -- stored parts
+         * @property {Array<String>} instrument names corresponding to parts
 	 * @property {number} maxPartLength
 	 * @property {music21.stream.Score} score
 	 * @property {music21.stream.Measure} pianoMeasure - the corresponding measure

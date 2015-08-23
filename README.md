@@ -134,12 +134,24 @@ Dev Notes
 ----------------
 Before building, every once in a while run (in the music21j directory)
 
-   npm-check-updates
+```
+npm-check-updates
+```
    
 and if it looks like something to update, run
 
-   npm-check-updates --upgradeAll
-   npm update
+```
+npm-check-updates --upgradeAll
+npm update
+```
+
+Build documentation with:
+
+```
+grunt jsdoc
+```
+
+The template is specified in jsdoc-template/jsdoc.conf.json
 
 
    

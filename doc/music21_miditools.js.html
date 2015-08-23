@@ -1,0 +1,1118 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>Music21j Source: music21/miditools.js</title>
+
+	<!--[if lt IE 9]>
+	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+	<link type="text/css" rel="stylesheet" href="styles/sunlight.default.css">
+
+	<link type="text/css" rel="stylesheet" href="styles/site.spruce.css">
+
+</head>
+
+<body>
+<div class="container-fluid">
+	<div class="navbar navbar-fixed-top navbar-inverse">
+		<div class="navbar-inner">
+			<a class="brand" href="index.html">Music21j</a>
+			<ul class="nav">
+				
+				<li class="dropdown">
+					<a href="namespaces.list.html" class="dropdown-toggle" data-toggle="dropdown">Namespaces<b
+						class="caret"></b></a>
+
+					<ul class="dropdown-menu ">
+						
+						<li>
+							<a href="music21.html">music21</a>
+						</li>
+						
+						<li>
+							<a href="music21.articulations.html">music21.articulations</a>
+						</li>
+						
+						<li>
+							<a href="music21.audioSearch.html">music21.audioSearch</a>
+						</li>
+						
+						<li>
+							<a href="music21.base.html">music21.base</a>
+						</li>
+						
+						<li>
+							<a href="music21.beam.html">music21.beam</a>
+						</li>
+						
+						<li>
+							<a href="music21.chord.html">music21.chord</a>
+						</li>
+						
+						<li>
+							<a href="music21.clef.html">music21.clef</a>
+						</li>
+						
+						<li>
+							<a href="music21.common.html">music21.common</a>
+						</li>
+						
+						<li>
+							<a href="music21.duration.html">music21.duration</a>
+						</li>
+						
+						<li>
+							<a href="music21.dynamics.html">music21.dynamics</a>
+						</li>
+						
+						<li>
+							<a href="music21.expressions.html">music21.expressions</a>
+						</li>
+						
+						<li>
+							<a href="music21.fromPython.html">music21.fromPython</a>
+						</li>
+						
+						<li>
+							<a href="music21.instrument.html">music21.instrument</a>
+						</li>
+						
+						<li>
+							<a href="music21.interval.html">music21.interval</a>
+						</li>
+						
+						<li>
+							<a href="music21.key.html">music21.key</a>
+						</li>
+						
+						<li>
+							<a href="music21.keyboard.html">music21.keyboard</a>
+						</li>
+						
+						<li>
+							<a href="music21.meter.html">music21.meter</a>
+						</li>
+						
+						<li>
+							<a href="music21.miditools.html">music21.miditools</a>
+						</li>
+						
+						<li>
+							<a href="music21.note.html">music21.note</a>
+						</li>
+						
+						<li>
+							<a href="music21.orchestralScore.html">music21.orchestralScore</a>
+						</li>
+						
+						<li>
+							<a href="music21.pitch.html">music21.pitch</a>
+						</li>
+						
+						<li>
+							<a href="music21.prebase.html">music21.prebase</a>
+						</li>
+						
+						<li>
+							<a href="music21.renderOptions.html">music21.renderOptions</a>
+						</li>
+						
+						<li>
+							<a href="music21.roman.html">music21.roman</a>
+						</li>
+						
+						<li>
+							<a href="music21.scale.html">music21.scale</a>
+						</li>
+						
+						<li>
+							<a href="music21.stream.html">music21.stream</a>
+						</li>
+						
+						<li>
+							<a href="music21.streamInteraction.html">music21.streamInteraction</a>
+						</li>
+						
+						<li>
+							<a href="music21.tempo.html">music21.tempo</a>
+						</li>
+						
+						<li>
+							<a href="music21.tie.html">music21.tie</a>
+						</li>
+						
+						<li>
+							<a href="music21.tinyNotation.html">music21.tinyNotation</a>
+						</li>
+						
+						<li>
+							<a href="music21.vfShow.html">music21.vfShow</a>
+						</li>
+						
+						<li>
+							<a href="music21.webmidi.html">music21.webmidi</a>
+						</li>
+						
+						<li>
+							<a href="music21.widgets.html">music21.widgets</a>
+						</li>
+						
+
+					</ul>
+				</li>
+				
+				<li class="dropdown">
+					<a href="modules.list.html" class="dropdown-toggle" data-toggle="dropdown">Modules<b
+						class="caret"></b></a>
+
+					<ul class="dropdown-menu ">
+						
+						<li>
+							<a href="module-music21_articulations.html">music21/articulations</a>
+						</li>
+						
+						<li>
+							<a href="module-music21_audioSearch.html">music21/audioSearch</a>
+						</li>
+						
+						<li>
+							<a href="module-music21_base.html">music21/base</a>
+						</li>
+						
+						<li>
+							<a href="module-music21_beam.html">music21/beam</a>
+						</li>
+						
+						<li>
+							<a href="module-music21_chord.html">music21/chord</a>
+						</li>
+						
+						<li>
+							<a href="module-music21_clef.html">music21/clef</a>
+						</li>
+						
+						<li>
+							<a href="module-music21_common.html">music21/common</a>
+						</li>
+						
+						<li>
+							<a href="module-music21_duration.html">music21/duration</a>
+						</li>
+						
+						<li>
+							<a href="module-music21_dynamics.html">music21/dynamics</a>
+						</li>
+						
+						<li>
+							<a href="module-music21_expressions.html">music21/expressions</a>
+						</li>
+						
+						<li>
+							<a href="module-music21_instrument.html">music21/instrument</a>
+						</li>
+						
+						<li>
+							<a href="module-music21_interval.html">music21/interval</a>
+						</li>
+						
+						<li>
+							<a href="module-music21_key.html">music21/key</a>
+						</li>
+						
+						<li>
+							<a href="module-music21_keyboard.html">music21/keyboard</a>
+						</li>
+						
+						<li>
+							<a href="module-music21_meter.html">music21/meter</a>
+						</li>
+						
+						<li>
+							<a href="module-music21_miditools.html">music21/miditools</a>
+						</li>
+						
+						<li>
+							<a href="module-music21_moduleLoader.html">music21/moduleLoader</a>
+						</li>
+						
+						<li>
+							<a href="module-music21_note.html">music21/note</a>
+						</li>
+						
+						<li>
+							<a href="module-music21_orchestralScore.html">music21/orchestralScore</a>
+						</li>
+						
+						<li>
+							<a href="module-music21_pitch.html">music21/pitch</a>
+						</li>
+						
+						<li>
+							<a href="module-music21_prebase.html">music21/prebase</a>
+						</li>
+						
+						<li>
+							<a href="module-music21_renderOptions.html">music21/renderOptions</a>
+						</li>
+						
+						<li>
+							<a href="module-music21_roman.html">music21/roman</a>
+						</li>
+						
+						<li>
+							<a href="module-music21_scale.html">music21/scale</a>
+						</li>
+						
+						<li>
+							<a href="module-music21_stream.html">music21/stream</a>
+						</li>
+						
+						<li>
+							<a href="module-music21_streamInteraction.html">music21/streamInteraction</a>
+						</li>
+						
+						<li>
+							<a href="module-music21_tempo.html">music21/tempo</a>
+						</li>
+						
+						<li>
+							<a href="module-music21_tie.html">music21/tie</a>
+						</li>
+						
+						<li>
+							<a href="module-music21_tinyNotation.html">music21/tinyNotation</a>
+						</li>
+						
+						<li>
+							<a href="module-music21_vfShow.html">music21/vfShow</a>
+						</li>
+						
+						<li>
+							<a href="module-music21_webmidi.html">music21/webmidi</a>
+						</li>
+						
+						<li>
+							<a href="module-music21_widgets.html">music21/widgets</a>
+						</li>
+						
+
+					</ul>
+				</li>
+				
+				<li class="dropdown">
+					<a href="classes.list.html" class="dropdown-toggle" data-toggle="dropdown">Classes<b
+						class="caret"></b></a>
+
+					<ul class="dropdown-menu ">
+						
+						<li>
+							<a href="music21.articulations.Accent.html">music21.articulations.Accent</a>
+						</li>
+						
+						<li>
+							<a href="music21.articulations.Articulation.html">music21.articulations.Articulation</a>
+						</li>
+						
+						<li>
+							<a href="music21.articulations.DynamicArticulation.html">music21.articulations.DynamicArticulation</a>
+						</li>
+						
+						<li>
+							<a href="music21.articulations.LengthArticulation.html">music21.articulations.LengthArticulation</a>
+						</li>
+						
+						<li>
+							<a href="music21.articulations.Marcato.html">music21.articulations.Marcato</a>
+						</li>
+						
+						<li>
+							<a href="music21.articulations.PitchArticulation.html">music21.articulations.PitchArticulation</a>
+						</li>
+						
+						<li>
+							<a href="music21.articulations.Spiccato.html">music21.articulations.Spiccato</a>
+						</li>
+						
+						<li>
+							<a href="music21.articulations.Staccatissimo.html">music21.articulations.Staccatissimo</a>
+						</li>
+						
+						<li>
+							<a href="music21.articulations.Staccato.html">music21.articulations.Staccato</a>
+						</li>
+						
+						<li>
+							<a href="music21.articulations.StrongAccent.html">music21.articulations.StrongAccent</a>
+						</li>
+						
+						<li>
+							<a href="music21.articulations.Tenuto.html">music21.articulations.Tenuto</a>
+						</li>
+						
+						<li>
+							<a href="music21.articulations.TimbreArticulation.html">music21.articulations.TimbreArticulation</a>
+						</li>
+						
+						<li>
+							<a href="music21.base.Music21Object.html">music21.base.Music21Object</a>
+						</li>
+						
+						<li>
+							<a href="music21.beam.Beam.html">music21.beam.Beam</a>
+						</li>
+						
+						<li>
+							<a href="music21.beam.Beams.html">music21.beam.Beams</a>
+						</li>
+						
+						<li>
+							<a href="music21.chord.Chord.html">music21.chord.Chord</a>
+						</li>
+						
+						<li>
+							<a href="music21.clef.AltoClef.html">music21.clef.AltoClef</a>
+						</li>
+						
+						<li>
+							<a href="music21.clef.BassClef.html">music21.clef.BassClef</a>
+						</li>
+						
+						<li>
+							<a href="music21.clef.Clef.html">music21.clef.Clef</a>
+						</li>
+						
+						<li>
+							<a href="music21.clef.MezzoSopranoClef.html">music21.clef.MezzoSopranoClef</a>
+						</li>
+						
+						<li>
+							<a href="music21.clef.PercussionClef.html">music21.clef.PercussionClef</a>
+						</li>
+						
+						<li>
+							<a href="music21.clef.SopranoClef.html">music21.clef.SopranoClef</a>
+						</li>
+						
+						<li>
+							<a href="music21.clef.TenorClef.html">music21.clef.TenorClef</a>
+						</li>
+						
+						<li>
+							<a href="music21.clef.Treble8vaClef.html">music21.clef.Treble8vaClef</a>
+						</li>
+						
+						<li>
+							<a href="music21.clef.Treble8vbClef.html">music21.clef.Treble8vbClef</a>
+						</li>
+						
+						<li>
+							<a href="music21.clef.TrebleClef.html">music21.clef.TrebleClef</a>
+						</li>
+						
+						<li>
+							<a href="music21.duration.Duration.html">music21.duration.Duration</a>
+						</li>
+						
+						<li>
+							<a href="music21.duration.Tuplet.html">music21.duration.Tuplet</a>
+						</li>
+						
+						<li>
+							<a href="music21.dynamics.Dynamic.html">music21.dynamics.Dynamic</a>
+						</li>
+						
+						<li>
+							<a href="music21.expressions.Expression.html">music21.expressions.Expression</a>
+						</li>
+						
+						<li>
+							<a href="music21.expressions.Fermata.html">music21.expressions.Fermata</a>
+						</li>
+						
+						<li>
+							<a href="music21.fromPython.Converter.html">music21.fromPython.Converter</a>
+						</li>
+						
+						<li>
+							<a href="music21.instrument.Instrument.html">music21.instrument.Instrument</a>
+						</li>
+						
+						<li>
+							<a href="music21.interval.ChromaticInterval.html">music21.interval.ChromaticInterval</a>
+						</li>
+						
+						<li>
+							<a href="music21.interval.DiatonicInterval.html">music21.interval.DiatonicInterval</a>
+						</li>
+						
+						<li>
+							<a href="music21.interval.GenericInterval.html">music21.interval.GenericInterval</a>
+						</li>
+						
+						<li>
+							<a href="music21.interval.Interval.html">music21.interval.Interval</a>
+						</li>
+						
+						<li>
+							<a href="music21.key.Key.html">music21.key.Key</a>
+						</li>
+						
+						<li>
+							<a href="music21.key.KeySignature.html">music21.key.KeySignature</a>
+						</li>
+						
+						<li>
+							<a href="music21.keyboard.BlackKey.html">music21.keyboard.BlackKey</a>
+						</li>
+						
+						<li>
+							<a href="music21.keyboard.Key.html">music21.keyboard.Key</a>
+						</li>
+						
+						<li>
+							<a href="music21.keyboard.Keyboard.html">music21.keyboard.Keyboard</a>
+						</li>
+						
+						<li>
+							<a href="music21.keyboard.WhiteKey.html">music21.keyboard.WhiteKey</a>
+						</li>
+						
+						<li>
+							<a href="music21.meter.TimeSignature.html">music21.meter.TimeSignature</a>
+						</li>
+						
+						<li>
+							<a href="music21.miditools.Event.html">music21.miditools.Event</a>
+						</li>
+						
+						<li>
+							<a href="music21.note.GeneralNote.html">music21.note.GeneralNote</a>
+						</li>
+						
+						<li>
+							<a href="music21.note.Lyric.html">music21.note.Lyric</a>
+						</li>
+						
+						<li>
+							<a href="music21.note.Note.html">music21.note.Note</a>
+						</li>
+						
+						<li>
+							<a href="music21.note.NotRest.html">music21.note.NotRest</a>
+						</li>
+						
+						<li>
+							<a href="music21.note.Rest.html">music21.note.Rest</a>
+						</li>
+						
+						<li>
+							<a href="music21.orchestralScore.OrchestralScore.html">music21.orchestralScore.OrchestralScore</a>
+						</li>
+						
+						<li>
+							<a href="music21.pitch.Accidental.html">music21.pitch.Accidental</a>
+						</li>
+						
+						<li>
+							<a href="music21.pitch.Pitch.html">music21.pitch.Pitch</a>
+						</li>
+						
+						<li>
+							<a href="music21.prebase.ProtoM21Object.html">music21.prebase.ProtoM21Object</a>
+						</li>
+						
+						<li>
+							<a href="music21.renderOptions.RenderOptions.html">music21.renderOptions.RenderOptions</a>
+						</li>
+						
+						<li>
+							<a href="music21.roman.RomanNumeral.html">music21.roman.RomanNumeral</a>
+						</li>
+						
+						<li>
+							<a href="music21.stream.Measure.html">music21.stream.Measure</a>
+						</li>
+						
+						<li>
+							<a href="music21.stream.Part.html">music21.stream.Part</a>
+						</li>
+						
+						<li>
+							<a href="music21.stream.Score.html">music21.stream.Score</a>
+						</li>
+						
+						<li>
+							<a href="music21.stream.Stream.html">music21.stream.Stream</a>
+						</li>
+						
+						<li>
+							<a href="music21.stream.Voice.html">music21.stream.Voice</a>
+						</li>
+						
+						<li>
+							<a href="music21.streamInteraction.PixelMap.html">music21.streamInteraction.PixelMap</a>
+						</li>
+						
+						<li>
+							<a href="music21.streamInteraction.PixelMapper.html">music21.streamInteraction.PixelMapper</a>
+						</li>
+						
+						<li>
+							<a href="music21.streamInteraction.ScrollPlayer.html">music21.streamInteraction.ScrollPlayer</a>
+						</li>
+						
+						<li>
+							<a href="music21.tempo.Metronome.html">music21.tempo.Metronome</a>
+						</li>
+						
+						<li>
+							<a href="music21.tie.Tie.html">music21.tie.Tie</a>
+						</li>
+						
+						<li>
+							<a href="music21.vfShow.Renderer.html">music21.vfShow.Renderer</a>
+						</li>
+						
+						<li>
+							<a href="music21.vfShow.RenderStack.html">music21.vfShow.RenderStack</a>
+						</li>
+						
+						<li>
+							<a href="music21.widgets.RhythmChooser.html">music21.widgets.RhythmChooser</a>
+						</li>
+						
+
+					</ul>
+				</li>
+				
+			</ul>
+		</div>
+	</div>
+
+	<div class="row-fluid">
+
+		
+			<div class="span12">
+				
+				<div id="main">
+					
+
+
+		<h1 class="page-title">Source: music21/miditools.js</h1>
+    
+<section>
+	<article>
+		<pre
+			class="sunlight-highlight-javascript linenums">/**
+ * music21j -- Javascript reimplementation of Core music21p features.  
+ * music21/miditools -- A collection of tools for midi. See the namespace {@link music21.miditools}
+ * 
+ * Copyright (c) 2014, Michael Scott Cuthbert and cuthbertLab
+ * Based on music21 (=music21p), Copyright (c) 2006–14, Michael Scott Cuthbert and cuthbertLab
+ * 
+ * @author Michael Scott Cuthbert
+ */
+
+define(['jquery', './note', './chord', 'MIDI', 'Base64', 'base64binary'],         
+       /**
+        * A collection of tools for midi. See the namespace {@link music21.miditools}
+        * 
+        * @exports music21/miditools
+        */
+        function($, note, chord, MIDI) {
+    /** 
+     * Module that holds **music21** tools for connecting with MIDI.js and somewhat with the
+     * events from the Jazz plugin or the WebMIDI protocol.
+     * 
+     * @namespace music21.miditools 
+     * @memberof music21 
+     */
+    var miditools = {};
+    
+    /**
+     * Number of octaves to transpose all incoming midi signals
+     * 
+     * @type {number}
+     * @default 0
+     */
+    miditools.transposeOctave = 0;
+    /**
+     * @class Event 
+     * @memberof music21.miditools
+     * @param {number} t - timing information
+     * @param {number} a - midi data 1 (N.B. a >> 4 = midiCommand )
+     * @param {number} b - midi data 2
+     * @param {number} c - midi data 3
+     */
+    miditools.Event = function (t, a, b, c) {
+        this.timing = t;
+        this.data1 = a; 
+        this.data2 = b; 
+        this.data3 = c; 
+        this.midiCommand = (a >> 4);
+        
+        this.noteOff = (this.midiCommand == 8);
+        this.noteOn = (this.midiCommand == 9);
+        
+        this.midiNote = undefined;
+        if (this.noteOn || this.noteOff) {
+            this.midiNote = this.data2 + 12 * miditools.transposeOctave;
+            this.velocity = this.data3;
+        }        
+    };
+
+    /**
+     * Calls MIDI.noteOn or MIDI.noteOff for the note
+     * represented by the Event (if appropriate)
+     * 
+     * @memberof music21.miditools.Event
+     * @returns {undefined}
+     */
+    miditools.Event.prototype.sendToMIDIjs = function () {
+        if (MIDI !== undefined) {
+            if (this.noteOn) {
+                MIDI.noteOn(0, this.midiNote, this.velocity, 0);
+            } else if (this.noteOff) {
+                MIDI.noteOff(0, this.midiNote, 0);      
+            }
+        } else {
+            console.warn('could not playback note because no MIDIout defined');
+        };
+    };
+    /**
+     * Makes a {@link music21.note.Note} object from the event's midiNote number.
+     * 
+     * @memberof music21.miditools.Event
+     * @returns {music21.note.Note} - the {@link music21.note.Note} object represented by Event.midiNote
+     */
+    miditools.Event.prototype.music21Note = function () {
+        var m21n = new note.Note();
+        m21n.pitch.ps = this.midiNote;
+        return m21n;
+    }; 
+    
+    /**
+     * How long to wait in milliseconds before deciding that a note belongs to another chord. Default 100ms
+     * 
+     * @memberof music21.miditools
+     * @type {number}
+     */
+    miditools.maxDelay = 100; // in ms
+    /**
+     * At what time (in ms since Epoch) the chord started.
+     * 
+     * @memberof music21.miditools
+     * @type {number}
+     */
+    miditools.heldChordTime = 0;
+    /**
+     * An Array (or undefined) of currently held chords that have not been sent out yet.
+     * 
+     * @memberof music21.miditools
+     * @type {Array|undefined}
+     */
+    miditools.heldChordNotes = undefined;
+
+    /**
+     * When, in MS since Jan 1, 1970, was the last {@link music21.note.Note} played.
+     * Defaults to the time that the module was loaded.
+     * 
+     * @memberof music21.miditools
+     * @type {number}
+     */   
+    miditools.timeOfLastNote = Date.now(); // in ms
+    
+    miditools._baseTempo = 60;
+    /**
+     * Assign (or query) a Metronome object to run all timing information.
+     * 
+     * @memberof music21.miditools
+     * @type {music21.tempo.Metronome}
+     */   
+    miditools.metronome = undefined;
+    
+    Object.defineProperties(miditools, {
+       'tempo': {
+           enumerable: true,
+           get: function() {
+               if (this.metronome === undefined) {
+                   return this._baseTempo;
+               } else {
+                   return this.metronome.tempo;
+               }
+           },
+           set: function(t) {
+               if (this.metronome === undefined) {
+                   this._baseTempo = t;
+               } else {
+                   this.metronome.tempo = t;
+               }
+           }
+       },
+    });
+    
+    /* --------- chords ------------- */
+    /**
+     *  Clears chords that are older than miditools.heldChordTime
+     *  
+     *  Runs a setTimeout on itself.
+     *  Calls miditools.sendOutChord
+     *  
+     *  @memberof music21.miditools
+     */
+    miditools.clearOldChords = function () {
+        // clear out notes that may be a chord...
+        var nowInMs = Date.now(); // in ms
+        if ((miditools.heldChordTime + 
+                miditools.maxDelay) &lt; nowInMs) {
+            miditools.heldChordTime = nowInMs;
+            if (miditools.heldChordNotes !== undefined) {
+                //console.log('to send out chords');
+                miditools.sendOutChord(miditools.heldChordNotes);
+                miditools.heldChordNotes = undefined;
+            }           
+        }
+        setTimeout(miditools.clearOldChords, miditools.maxDelay);
+    };
+    /**
+     *  Take a series of jEvent noteOn objects and convert them to a single Chord object
+     *  so long as they are all sounded within miditools.maxDelay milliseconds of each other.
+     *  this method stores notes in miditools.heldChordNotes (Array).
+     *  
+     *  @param {music21.miditools.Event} jEvent 
+     *  @memberof music21.miditools
+     *  @returns undefined
+     */
+    miditools.makeChords = function (jEvent) { // jEvent is a miditools.Event object
+        if (jEvent.noteOn) {
+            var m21n = jEvent.music21Note();
+            if (miditools.heldChordNotes === undefined) {
+                miditools.heldChordNotes = [m21n];
+            } else {
+                for (var i = 0; i &lt; miditools.heldChordNotes.length; i++) {
+                    var foundNote = miditools.heldChordNotes[i];
+                    if (foundNote.pitch.ps == m21n.pitch.ps) {
+                        return;  // no duplicates
+                    }
+                }
+                miditools.heldChordNotes.push(m21n);
+            }
+        }
+    };
+
+    /**
+     * The last Note or Chord to be sent out from miditools.  This is an important semi-global
+     * attribute, since the last element may need to be quantized by quantizeLastNote() to
+     * determine its length, since the note may need to be placed into a staff before its total
+     * length can be determined.
+     *  
+     * @memberof music21.miditools
+     * @type {music21.chord.Chord|music21.note.Note|undefined}
+     */    
+    miditools.lastElement = undefined;
+    
+    /**
+     * Take the list of Notes and makes a chord out of it, if appropriate and call 
+     * {@link music21.webmidi.callBacks.sendOutChord} callback with the Chord or Note as a parameter.
+     * 
+     * @memberof music21.miditools
+     * @param {Array&lt;music21.note.Note>} chordNoteList - an Array of {@link music21.note.Note} objects
+     * @returns {(music21.note.Note|music21.chord.Chord|undefined)} A {@link music21.chord.Chord} object, 
+     * most likely, but maybe a {@link music21.note.Note} object)
+     */
+    miditools.sendOutChord = function (chordNoteList) {
+        var appendObject = undefined;
+        if (chordNoteList.length > 1) {
+            //console.log(chordNoteList[0].name, chordNoteList[1].name);
+            appendObject = new chord.Chord(chordNoteList);
+        } else if (chordNoteList.length == 1) {
+            appendObject = chordNoteList[0]; // note object
+        } else {
+            return undefined;
+        }
+        appendObject.stemDirection = 'noStem';
+        miditools.quantizeLastNote();
+        miditools.lastElement = appendObject;
+        if (music21.webmidi.callBacks.sendOutChord !== undefined) {            
+            music21.webmidi.callBacks.sendOutChord(appendObject);
+        } else {
+            return appendObject;
+        }
+    };
+
+    /**
+     * Quantizes the lastElement (passed in) or music21.miditools.lastElement.
+     * 
+     * @memberof music21.miditools
+     * @param {music21.note.GeneralNote} lastElement - A {@link music21.note.Note} to be quantized
+     * @returns {music21.note.GeneralNote} The same {@link music21.note.Note} object passed in with 
+     * duration quantized
+     */
+    miditools.quantizeLastNote = function (lastElement) {
+        if (lastElement === undefined) {
+            lastElement = this.lastElement;
+            if (lastElement === undefined) {
+                return;
+            }
+        }
+        lastElement.stemDirection = undefined;
+        var nowInMS = Date.now();
+        var msSinceLastNote = nowInMS - this.timeOfLastNote;
+        this.timeOfLastNote = nowInMS;
+        var normalQuarterNoteLength = 1000*60 / this.tempo;
+        var numQuarterNotes = msSinceLastNote / normalQuarterNoteLength;
+        var roundedQuarterLength = Math.round(4 * numQuarterNotes) / 4;
+        if (roundedQuarterLength >= 4) {
+            roundedQuarterLength = 4;
+        } else if (roundedQuarterLength >= 3) {
+            roundedQuarterLength = 3;
+        } else if (roundedQuarterLength > 2) {
+            roundedQuarterLength = 2;
+        } else if (roundedQuarterLength == 1.25) {
+            roundedQuarterLength = 1;
+        } else if (roundedQuarterLength == 0.75) {
+            roundedQuarterLength = 0.5;
+        } else if (roundedQuarterLength == 0) {
+            roundedQuarterLength = 0.125;
+        }
+        lastElement.duration.quarterLength = roundedQuarterLength;
+        return lastElement;
+    };
+    
+    /* ----------- callbacks --------- */
+    /**
+     * Callback to midiEvent.sendToMIDIjs.
+     * 
+     * @memberof music21.miditools
+     * @param {music21.miditools.Event} midiEvent - event to send out.
+     * @returns undefined
+     */
+    miditools.sendToMIDIjs = function(midiEvent) {
+        midiEvent.sendToMIDIjs();
+    };
+    
+    /* ------------ MIDI.js ----------- */
+    
+    /**
+     * a mapping of soundfont text names to true, false, or "loading".
+     * 
+     * @memberof music21.miditools
+     * @type {object}
+     */
+    miditools.loadedSoundfonts = {};
+
+    /**
+     * Called after a soundfont has been loaded. The callback is better to be specified elsewhere
+     * rather than overriding this important method.
+     * 
+     * @memberof music21.miditools
+     * @param {String} soundfont The name of the soundfont that was just loaded
+     * @param {function} callback A function to be called after the soundfont is loaded.
+     */
+    miditools.postLoadCallback = function (soundfont, callback) {
+        // this should be bound to MIDI
+        if (music21.debug) {
+            console.log('soundfont loaded about to execute callback.');
+            console.log('first playing two notes very softly -- seems to flush the buffer.');            
+        }
+        $(".loadingSoundfont").remove();
+
+        var isFirefox = typeof InstallTrigger !== 'undefined';   // Firefox 1.0+
+        var isAudioTag = (MIDI.technology == 'HTML Audio Tag');
+        var instrumentObj = music21.instrument.find(soundfont);
+        if (instrumentObj != undefined) {
+            MIDI.programChange(instrumentObj.midiChannel, instrumentObj.midiProgram);
+            if (music21.debug) {
+                console.log(soundfont + ' (' + instrumentObj.midiProgram + ') loaded on ', instrumentObj.midiChannel);
+            }
+            if ((isFirefox == false) &amp;&amp; (isAudioTag == false)) {  
+                var c = instrumentObj.midiChannel;
+                     // Firefox ignores sound volume! so don't play! as does IE and others using HTML audio tag.
+                MIDI.noteOn(c, 36, 1, 0);     // if no notes have been played before then
+                MIDI.noteOff(c, 36, 1, 0.1);  // the second note to be played is always
+                MIDI.noteOn(c, 48, 1, 0.2);   // very clipped (on Safari at least)
+                MIDI.noteOff(c, 48, 1, 0.3);  // this helps a lot.
+                MIDI.noteOn(c, 60, 1, 0.3);   // chrome needs three?
+                MIDI.noteOff(c, 60, 1, 0.4);                      
+            }
+        }
+        if (callback !== undefined) {
+            callback(instrumentObj);
+        }
+        miditools.loadedSoundfonts[soundfont] = true;                
+    };
+
+    
+    
+    /**
+     * method to load soundfonts while waiting for other processes that need them
+     * to load first.    
+     * 
+     * @memberof music21.miditools
+     * @param {String} soundfont The name of the soundfont that was just loaded
+     * @param {function} callback A function to be called after the soundfont is loaded.
+     * @example
+     * s = new music21.stream.Stream();
+     * music21.miditools.loadSoundfont(
+     *     'clarinet', 
+     *     function(i) { 
+     *         console.log('instrument object', i, 'loaded');
+     *         s.instrument = i;
+     * });
+     */
+    miditools.loadSoundfont = function(soundfont, callback) {        
+        if (miditools.loadedSoundfonts[soundfont] == true) {
+            if (callback !== undefined) {
+                var instrumentObj = music21.instrument.find(soundfont);
+                callback(instrumentObj);
+            }
+        } else if (miditools.loadedSoundfonts[soundfont] == 'loading'){
+            var waitThenCall = undefined;
+            waitThenCall = function() {
+                if (miditools.loadedSoundfonts[soundfont] == true) {
+                    if (music21.debug) {
+                        console.log('other process has finished loading; calling callback');
+                    }
+                    if (callback !== undefined) {
+                        var instrumentObj = music21.instrument.find(soundfont);
+                        callback(instrumentObj);
+                    }
+                } else {
+                    if (music21.debug) {
+                        console.log('waiting for other process load');                        
+                    }
+                    setTimeout(waitThenCall, 100);
+                }
+            };
+            waitThenCall();
+        } else {
+            miditools.loadedSoundfonts[soundfont] = "loading";
+            if (music21.debug) {                
+                console.log('waiting for document ready');
+            }
+            $(document).ready( function() {
+                if (music21.debug) {
+                    console.log('document ready, waiting to load soundfont');                    
+                }
+                $(document.body).append($("&lt;div class='loadingSoundfont'>&lt;b>Loading MIDI Instrument&lt;/b>: " +
+                        "audio will begin when this message disappears.&lt;/div>"));                            
+                MIDI.loadPlugin({
+                    soundfontUrl: music21.soundfontUrl,
+                    instrument: soundfont,
+                    onsuccess: miditools.postLoadCallback.bind(MIDI, soundfont, callback),
+                });
+            });
+        }
+    };
+
+
+    // end of define
+    if (typeof(music21) != "undefined") {
+        music21.miditools = miditools;
+    }       
+    return miditools;
+});
+</pre>
+	</article>
+</section>
+
+
+
+
+
+				</div>
+
+				<div class="clearfix"></div>
+				<footer>
+					
+					
+		<span class="copyright">
+		Music21j, Copyright © 2013-2015 Michael Scott Cuthbert and cuthbertLab.
+		</span>
+					<br />
+					
+		<span class="jsdoc-message">
+		Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.2</a>
+		on Sun Aug 23rd 2015 using the <a
+			href="https://github.com/terryweiss/docstrap">DocStrap template</a>.
+		</span>
+				</footer>
+			</div>
+
+			
+			<br clear="both">
+		</div>
+
+	</div>
+	<!--<script src="scripts/sunlight.js"></script>-->
+	<script src="scripts/docstrap.lib.js"></script>
+	<script src="scripts/bootstrap-dropdown.js"></script>
+	<script src="scripts/toc.js"></script>
+
+	<script>
+		$( function () {
+			$( "[id*='$']" ).each( function () {
+				var $this = $( this );
+
+				$this.attr( "id", $this.attr( "id" ).replace( "$", "__" ) );
+			} );
+
+			$( "#toc" ).toc( {
+				anchorName  : function ( i, heading, prefix ) {
+					return $( heading ).attr( "id" ) || ( prefix + i );
+				},
+				selectors   : "h1,h2,h3,h4",
+				showAndHide : false,
+				scrollTo    : "100px"
+			} );
+
+			$( "#toc>ul" ).addClass( "nav nav-pills nav-stacked" );
+			$( "#main span[id^='toc']" ).addClass( "toc-shim" );
+			$( '.dropdown-toggle' ).dropdown();
+//			$( ".tutorial-section pre, .readme-section pre" ).addClass( "sunlight-highlight-javascript" ).addClass( "linenums" );
+
+			$( ".tutorial-section pre, .readme-section pre" ).each( function () {
+				var $this = $( this );
+
+				var example = $this.find( "code" );
+				exampleText = example.html();
+				var lang = /{@lang (.*?)}/.exec( exampleText );
+				if ( lang && lang[1] ) {
+					exampleText = exampleText.replace( lang[0], "" );
+					example.html( exampleText );
+					lang = lang[1];
+				} else {
+					lang = "javascript";
+				}
+
+				if ( lang ) {
+
+					$this
+						.addClass( "sunlight-highlight-" + lang )
+						.addClass( "linenums" )
+						.html( example.html() );
+
+				}
+			} );
+
+			Sunlight.highlightAll( {
+				lineNumbers : true,
+				showMenu : true,
+				enableDoclinks : true
+			} );
+		} );
+	 </script>
+
+
+
+	<!--Navigation and Symbol Display-->
+	
+
+
+	<!--Google Analytics-->
+	
+
+</body>
+</html>

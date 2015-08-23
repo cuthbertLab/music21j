@@ -1,0 +1,988 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>Music21j Source: music21/audioSearch.js</title>
+
+	<!--[if lt IE 9]>
+	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+	<link type="text/css" rel="stylesheet" href="styles/sunlight.default.css">
+
+	<link type="text/css" rel="stylesheet" href="styles/site.spruce.css">
+
+</head>
+
+<body>
+<div class="container-fluid">
+	<div class="navbar navbar-fixed-top navbar-inverse">
+		<div class="navbar-inner">
+			<a class="brand" href="index.html">Music21j</a>
+			<ul class="nav">
+				
+				<li class="dropdown">
+					<a href="namespaces.list.html" class="dropdown-toggle" data-toggle="dropdown">Namespaces<b
+						class="caret"></b></a>
+
+					<ul class="dropdown-menu ">
+						
+						<li>
+							<a href="music21.html">music21</a>
+						</li>
+						
+						<li>
+							<a href="music21.articulations.html">music21.articulations</a>
+						</li>
+						
+						<li>
+							<a href="music21.audioSearch.html">music21.audioSearch</a>
+						</li>
+						
+						<li>
+							<a href="music21.base.html">music21.base</a>
+						</li>
+						
+						<li>
+							<a href="music21.beam.html">music21.beam</a>
+						</li>
+						
+						<li>
+							<a href="music21.chord.html">music21.chord</a>
+						</li>
+						
+						<li>
+							<a href="music21.clef.html">music21.clef</a>
+						</li>
+						
+						<li>
+							<a href="music21.common.html">music21.common</a>
+						</li>
+						
+						<li>
+							<a href="music21.duration.html">music21.duration</a>
+						</li>
+						
+						<li>
+							<a href="music21.dynamics.html">music21.dynamics</a>
+						</li>
+						
+						<li>
+							<a href="music21.expressions.html">music21.expressions</a>
+						</li>
+						
+						<li>
+							<a href="music21.fromPython.html">music21.fromPython</a>
+						</li>
+						
+						<li>
+							<a href="music21.instrument.html">music21.instrument</a>
+						</li>
+						
+						<li>
+							<a href="music21.interval.html">music21.interval</a>
+						</li>
+						
+						<li>
+							<a href="music21.key.html">music21.key</a>
+						</li>
+						
+						<li>
+							<a href="music21.keyboard.html">music21.keyboard</a>
+						</li>
+						
+						<li>
+							<a href="music21.meter.html">music21.meter</a>
+						</li>
+						
+						<li>
+							<a href="music21.miditools.html">music21.miditools</a>
+						</li>
+						
+						<li>
+							<a href="music21.note.html">music21.note</a>
+						</li>
+						
+						<li>
+							<a href="music21.orchestralScore.html">music21.orchestralScore</a>
+						</li>
+						
+						<li>
+							<a href="music21.pitch.html">music21.pitch</a>
+						</li>
+						
+						<li>
+							<a href="music21.prebase.html">music21.prebase</a>
+						</li>
+						
+						<li>
+							<a href="music21.renderOptions.html">music21.renderOptions</a>
+						</li>
+						
+						<li>
+							<a href="music21.roman.html">music21.roman</a>
+						</li>
+						
+						<li>
+							<a href="music21.scale.html">music21.scale</a>
+						</li>
+						
+						<li>
+							<a href="music21.stream.html">music21.stream</a>
+						</li>
+						
+						<li>
+							<a href="music21.streamInteraction.html">music21.streamInteraction</a>
+						</li>
+						
+						<li>
+							<a href="music21.tempo.html">music21.tempo</a>
+						</li>
+						
+						<li>
+							<a href="music21.tie.html">music21.tie</a>
+						</li>
+						
+						<li>
+							<a href="music21.tinyNotation.html">music21.tinyNotation</a>
+						</li>
+						
+						<li>
+							<a href="music21.vfShow.html">music21.vfShow</a>
+						</li>
+						
+						<li>
+							<a href="music21.webmidi.html">music21.webmidi</a>
+						</li>
+						
+						<li>
+							<a href="music21.widgets.html">music21.widgets</a>
+						</li>
+						
+
+					</ul>
+				</li>
+				
+				<li class="dropdown">
+					<a href="modules.list.html" class="dropdown-toggle" data-toggle="dropdown">Modules<b
+						class="caret"></b></a>
+
+					<ul class="dropdown-menu ">
+						
+						<li>
+							<a href="module-music21_articulations.html">music21/articulations</a>
+						</li>
+						
+						<li>
+							<a href="module-music21_audioSearch.html">music21/audioSearch</a>
+						</li>
+						
+						<li>
+							<a href="module-music21_base.html">music21/base</a>
+						</li>
+						
+						<li>
+							<a href="module-music21_beam.html">music21/beam</a>
+						</li>
+						
+						<li>
+							<a href="module-music21_chord.html">music21/chord</a>
+						</li>
+						
+						<li>
+							<a href="module-music21_clef.html">music21/clef</a>
+						</li>
+						
+						<li>
+							<a href="module-music21_common.html">music21/common</a>
+						</li>
+						
+						<li>
+							<a href="module-music21_duration.html">music21/duration</a>
+						</li>
+						
+						<li>
+							<a href="module-music21_dynamics.html">music21/dynamics</a>
+						</li>
+						
+						<li>
+							<a href="module-music21_expressions.html">music21/expressions</a>
+						</li>
+						
+						<li>
+							<a href="module-music21_instrument.html">music21/instrument</a>
+						</li>
+						
+						<li>
+							<a href="module-music21_interval.html">music21/interval</a>
+						</li>
+						
+						<li>
+							<a href="module-music21_key.html">music21/key</a>
+						</li>
+						
+						<li>
+							<a href="module-music21_keyboard.html">music21/keyboard</a>
+						</li>
+						
+						<li>
+							<a href="module-music21_meter.html">music21/meter</a>
+						</li>
+						
+						<li>
+							<a href="module-music21_miditools.html">music21/miditools</a>
+						</li>
+						
+						<li>
+							<a href="module-music21_moduleLoader.html">music21/moduleLoader</a>
+						</li>
+						
+						<li>
+							<a href="module-music21_note.html">music21/note</a>
+						</li>
+						
+						<li>
+							<a href="module-music21_orchestralScore.html">music21/orchestralScore</a>
+						</li>
+						
+						<li>
+							<a href="module-music21_pitch.html">music21/pitch</a>
+						</li>
+						
+						<li>
+							<a href="module-music21_prebase.html">music21/prebase</a>
+						</li>
+						
+						<li>
+							<a href="module-music21_renderOptions.html">music21/renderOptions</a>
+						</li>
+						
+						<li>
+							<a href="module-music21_roman.html">music21/roman</a>
+						</li>
+						
+						<li>
+							<a href="module-music21_scale.html">music21/scale</a>
+						</li>
+						
+						<li>
+							<a href="module-music21_stream.html">music21/stream</a>
+						</li>
+						
+						<li>
+							<a href="module-music21_streamInteraction.html">music21/streamInteraction</a>
+						</li>
+						
+						<li>
+							<a href="module-music21_tempo.html">music21/tempo</a>
+						</li>
+						
+						<li>
+							<a href="module-music21_tie.html">music21/tie</a>
+						</li>
+						
+						<li>
+							<a href="module-music21_tinyNotation.html">music21/tinyNotation</a>
+						</li>
+						
+						<li>
+							<a href="module-music21_vfShow.html">music21/vfShow</a>
+						</li>
+						
+						<li>
+							<a href="module-music21_webmidi.html">music21/webmidi</a>
+						</li>
+						
+						<li>
+							<a href="module-music21_widgets.html">music21/widgets</a>
+						</li>
+						
+
+					</ul>
+				</li>
+				
+				<li class="dropdown">
+					<a href="classes.list.html" class="dropdown-toggle" data-toggle="dropdown">Classes<b
+						class="caret"></b></a>
+
+					<ul class="dropdown-menu ">
+						
+						<li>
+							<a href="music21.articulations.Accent.html">music21.articulations.Accent</a>
+						</li>
+						
+						<li>
+							<a href="music21.articulations.Articulation.html">music21.articulations.Articulation</a>
+						</li>
+						
+						<li>
+							<a href="music21.articulations.DynamicArticulation.html">music21.articulations.DynamicArticulation</a>
+						</li>
+						
+						<li>
+							<a href="music21.articulations.LengthArticulation.html">music21.articulations.LengthArticulation</a>
+						</li>
+						
+						<li>
+							<a href="music21.articulations.Marcato.html">music21.articulations.Marcato</a>
+						</li>
+						
+						<li>
+							<a href="music21.articulations.PitchArticulation.html">music21.articulations.PitchArticulation</a>
+						</li>
+						
+						<li>
+							<a href="music21.articulations.Spiccato.html">music21.articulations.Spiccato</a>
+						</li>
+						
+						<li>
+							<a href="music21.articulations.Staccatissimo.html">music21.articulations.Staccatissimo</a>
+						</li>
+						
+						<li>
+							<a href="music21.articulations.Staccato.html">music21.articulations.Staccato</a>
+						</li>
+						
+						<li>
+							<a href="music21.articulations.StrongAccent.html">music21.articulations.StrongAccent</a>
+						</li>
+						
+						<li>
+							<a href="music21.articulations.Tenuto.html">music21.articulations.Tenuto</a>
+						</li>
+						
+						<li>
+							<a href="music21.articulations.TimbreArticulation.html">music21.articulations.TimbreArticulation</a>
+						</li>
+						
+						<li>
+							<a href="music21.base.Music21Object.html">music21.base.Music21Object</a>
+						</li>
+						
+						<li>
+							<a href="music21.beam.Beam.html">music21.beam.Beam</a>
+						</li>
+						
+						<li>
+							<a href="music21.beam.Beams.html">music21.beam.Beams</a>
+						</li>
+						
+						<li>
+							<a href="music21.chord.Chord.html">music21.chord.Chord</a>
+						</li>
+						
+						<li>
+							<a href="music21.clef.AltoClef.html">music21.clef.AltoClef</a>
+						</li>
+						
+						<li>
+							<a href="music21.clef.BassClef.html">music21.clef.BassClef</a>
+						</li>
+						
+						<li>
+							<a href="music21.clef.Clef.html">music21.clef.Clef</a>
+						</li>
+						
+						<li>
+							<a href="music21.clef.MezzoSopranoClef.html">music21.clef.MezzoSopranoClef</a>
+						</li>
+						
+						<li>
+							<a href="music21.clef.PercussionClef.html">music21.clef.PercussionClef</a>
+						</li>
+						
+						<li>
+							<a href="music21.clef.SopranoClef.html">music21.clef.SopranoClef</a>
+						</li>
+						
+						<li>
+							<a href="music21.clef.TenorClef.html">music21.clef.TenorClef</a>
+						</li>
+						
+						<li>
+							<a href="music21.clef.Treble8vaClef.html">music21.clef.Treble8vaClef</a>
+						</li>
+						
+						<li>
+							<a href="music21.clef.Treble8vbClef.html">music21.clef.Treble8vbClef</a>
+						</li>
+						
+						<li>
+							<a href="music21.clef.TrebleClef.html">music21.clef.TrebleClef</a>
+						</li>
+						
+						<li>
+							<a href="music21.duration.Duration.html">music21.duration.Duration</a>
+						</li>
+						
+						<li>
+							<a href="music21.duration.Tuplet.html">music21.duration.Tuplet</a>
+						</li>
+						
+						<li>
+							<a href="music21.dynamics.Dynamic.html">music21.dynamics.Dynamic</a>
+						</li>
+						
+						<li>
+							<a href="music21.expressions.Expression.html">music21.expressions.Expression</a>
+						</li>
+						
+						<li>
+							<a href="music21.expressions.Fermata.html">music21.expressions.Fermata</a>
+						</li>
+						
+						<li>
+							<a href="music21.fromPython.Converter.html">music21.fromPython.Converter</a>
+						</li>
+						
+						<li>
+							<a href="music21.instrument.Instrument.html">music21.instrument.Instrument</a>
+						</li>
+						
+						<li>
+							<a href="music21.interval.ChromaticInterval.html">music21.interval.ChromaticInterval</a>
+						</li>
+						
+						<li>
+							<a href="music21.interval.DiatonicInterval.html">music21.interval.DiatonicInterval</a>
+						</li>
+						
+						<li>
+							<a href="music21.interval.GenericInterval.html">music21.interval.GenericInterval</a>
+						</li>
+						
+						<li>
+							<a href="music21.interval.Interval.html">music21.interval.Interval</a>
+						</li>
+						
+						<li>
+							<a href="music21.key.Key.html">music21.key.Key</a>
+						</li>
+						
+						<li>
+							<a href="music21.key.KeySignature.html">music21.key.KeySignature</a>
+						</li>
+						
+						<li>
+							<a href="music21.keyboard.BlackKey.html">music21.keyboard.BlackKey</a>
+						</li>
+						
+						<li>
+							<a href="music21.keyboard.Key.html">music21.keyboard.Key</a>
+						</li>
+						
+						<li>
+							<a href="music21.keyboard.Keyboard.html">music21.keyboard.Keyboard</a>
+						</li>
+						
+						<li>
+							<a href="music21.keyboard.WhiteKey.html">music21.keyboard.WhiteKey</a>
+						</li>
+						
+						<li>
+							<a href="music21.meter.TimeSignature.html">music21.meter.TimeSignature</a>
+						</li>
+						
+						<li>
+							<a href="music21.miditools.Event.html">music21.miditools.Event</a>
+						</li>
+						
+						<li>
+							<a href="music21.note.GeneralNote.html">music21.note.GeneralNote</a>
+						</li>
+						
+						<li>
+							<a href="music21.note.Lyric.html">music21.note.Lyric</a>
+						</li>
+						
+						<li>
+							<a href="music21.note.Note.html">music21.note.Note</a>
+						</li>
+						
+						<li>
+							<a href="music21.note.NotRest.html">music21.note.NotRest</a>
+						</li>
+						
+						<li>
+							<a href="music21.note.Rest.html">music21.note.Rest</a>
+						</li>
+						
+						<li>
+							<a href="music21.orchestralScore.OrchestralScore.html">music21.orchestralScore.OrchestralScore</a>
+						</li>
+						
+						<li>
+							<a href="music21.pitch.Accidental.html">music21.pitch.Accidental</a>
+						</li>
+						
+						<li>
+							<a href="music21.pitch.Pitch.html">music21.pitch.Pitch</a>
+						</li>
+						
+						<li>
+							<a href="music21.prebase.ProtoM21Object.html">music21.prebase.ProtoM21Object</a>
+						</li>
+						
+						<li>
+							<a href="music21.renderOptions.RenderOptions.html">music21.renderOptions.RenderOptions</a>
+						</li>
+						
+						<li>
+							<a href="music21.roman.RomanNumeral.html">music21.roman.RomanNumeral</a>
+						</li>
+						
+						<li>
+							<a href="music21.stream.Measure.html">music21.stream.Measure</a>
+						</li>
+						
+						<li>
+							<a href="music21.stream.Part.html">music21.stream.Part</a>
+						</li>
+						
+						<li>
+							<a href="music21.stream.Score.html">music21.stream.Score</a>
+						</li>
+						
+						<li>
+							<a href="music21.stream.Stream.html">music21.stream.Stream</a>
+						</li>
+						
+						<li>
+							<a href="music21.stream.Voice.html">music21.stream.Voice</a>
+						</li>
+						
+						<li>
+							<a href="music21.streamInteraction.PixelMap.html">music21.streamInteraction.PixelMap</a>
+						</li>
+						
+						<li>
+							<a href="music21.streamInteraction.PixelMapper.html">music21.streamInteraction.PixelMapper</a>
+						</li>
+						
+						<li>
+							<a href="music21.streamInteraction.ScrollPlayer.html">music21.streamInteraction.ScrollPlayer</a>
+						</li>
+						
+						<li>
+							<a href="music21.tempo.Metronome.html">music21.tempo.Metronome</a>
+						</li>
+						
+						<li>
+							<a href="music21.tie.Tie.html">music21.tie.Tie</a>
+						</li>
+						
+						<li>
+							<a href="music21.vfShow.Renderer.html">music21.vfShow.Renderer</a>
+						</li>
+						
+						<li>
+							<a href="music21.vfShow.RenderStack.html">music21.vfShow.RenderStack</a>
+						</li>
+						
+						<li>
+							<a href="music21.widgets.RhythmChooser.html">music21.widgets.RhythmChooser</a>
+						</li>
+						
+
+					</ul>
+				</li>
+				
+			</ul>
+		</div>
+	</div>
+
+	<div class="row-fluid">
+
+		
+			<div class="span12">
+				
+				<div id="main">
+					
+
+
+		<h1 class="page-title">Source: music21/audioSearch.js</h1>
+    
+<section>
+	<article>
+		<pre
+			class="sunlight-highlight-javascript linenums">define(['./pitch', './common'], 
+        /**
+         * audioSearch module. See {@link music21.audioSearch} namespace
+         * 
+         * @exports music21/audioSearch
+         */
+        function(pitch, common) {
+    /**
+     * @namespace music21.audioSearch
+     * @memberof music21
+     * @requires music21/pitch
+     * @requires music21/common
+     */
+   var audioSearch = {};
+   // functions based on the prototype created by Chris Wilson's MIT License version
+   // and on Jordi Bartolome Guillen's audioSearch module for music21
+   audioSearch.fftSize = 2048;
+   
+   audioSearch.AudioContextCaller = window.AudioContext || window.webkitAudioContext;
+   audioSearch._audioContext = null;
+   audioSearch.animationFrameCallbackId = null;
+   
+   Object.defineProperties(audioSearch, 
+           {'audioContext': {
+                   'get': function() {
+                       if (audioSearch._audioContext !== null) {
+                           return audioSearch._audioContext;
+                       } else {
+                           audioSearch._audioContext = new audioSearch.AudioContextCaller();
+                           return audioSearch._audioContext;
+                       }
+                   },
+                   'set': function(ac) {
+                       audioSearch._audioContext = ac;
+                   }
+               } });
+   
+   
+   /**
+    * 
+    * @function music21.audioSearch.getUserMedia
+    * @memberof music21.audioSearch
+    * @param {object} dictionary - dictionary to fill
+    * @param {function} callback - callback on success
+    * @param {function} error - callback on error
+    */
+   audioSearch.getUserMedia = function(dictionary, callback, error) {
+       if (error === undefined) {
+           error = function() { alert("getUserMedia either not defined (Safari, IE) or denied."); }
+       }
+       if (callback === undefined) {
+           callback = function (mediaStream) { audioSearch.userMediaStarted(mediaStream) }
+       }
+       var n = navigator;
+       // need to polyfill navigator, or binding problems are hard...
+       n.getUserMedia = n.getUserMedia || n.webkitGetUserMedia || n.mozGetUserMedia || n.msGetUserMedia;
+       
+       if (n.getUserMedia === undefined) {
+           error();
+       }
+       if (dictionary === undefined) {
+           dictionary = {
+               "audio": {
+                   "mandatory": {
+                   },
+                   "optional": []
+               },
+           };
+       }
+       n.getUserMedia(dictionary, callback, error);
+   };
+   
+   audioSearch.sampleBuffer = null;
+   audioSearch.currentAnalyser = null;
+   
+   audioSearch.userMediaStarted = function(audioStream) {
+       audioSearch.sampleBuffer = new Float32Array( audioSearch.fftSize / 2 );
+       var mediaStreamSource = audioSearch.audioContext.createMediaStreamSource(audioStream);
+       var analyser = audioSearch.audioContext.createAnalyser();
+       analyser.fftSize = audioSearch.fftSize;
+       mediaStreamSource.connect(analyser);
+       audioSearch.currentAnalyser = analyser;
+       audioSearch.animateLoop();
+   };
+   
+   audioSearch.minFrequency = 55;
+   audioSearch.maxFrequency = 1050;
+   audioSearch.animateLoop = function(time) {
+       audioSearch.currentAnalyser.getFloatTimeDomainData(audioSearch.sampleBuffer);
+       // returns best frequency or -1
+       var frequencyDetected = audioSearch.autoCorrelate(
+               audioSearch.sampleBuffer, 
+               audioSearch.audioContext.sampleRate,
+               audioSearch.minFrequency,
+               audioSearch.maxFrequency);
+       var retValue = audioSearch.sampleCallback(frequencyDetected);
+       if (retValue != -1) {
+           audioSearch.animationFrameCallbackId = window.requestAnimationFrame(audioSearch.animateLoop);           
+       }
+   };
+   
+   audioSearch.pitchSmoothingSize = 40;
+   audioSearch.lastPitchClassesDetected = [];
+   audioSearch.lastPitchesDetected = [];
+   audioSearch.lastCentsDeviationsDetected = [];
+   
+   audioSearch.smoothPitchExtraction = function(frequency) {
+       if (frequency == -1) {
+           audioSearch.lastPitchClassesDetected.shift();
+           audioSearch.lastPitchesDetected.shift();            
+           audioSearch.lastCentsDeviationsDetected.shift();           
+       } else {
+           var _ = audioSearch.midiNumDiffFromFrequency(frequency),
+               midiNum = _[0],
+               centsOff = _[1];
+           if (audioSearch.lastPitchClassesDetected.length > audioSearch.pitchSmoothingSize) {
+               audioSearch.lastPitchClassesDetected.shift();
+               audioSearch.lastPitchesDetected.shift();            
+               audioSearch.lastCentsDeviationsDetected.shift();
+           }
+           audioSearch.lastPitchClassesDetected.push(midiNum % 12);
+           audioSearch.lastPitchesDetected.push(midiNum);  
+           audioSearch.lastCentsDeviationsDetected.push(centsOff);           
+       }       
+       var mostCommonPitchClass = common.statisticalMode(audioSearch.lastPitchClassesDetected);
+       if (mostCommonPitchClass === null) {
+           return [-1, 0];
+       }
+       var pitchesMatchingClass = [];
+       var centsMatchingClass = [];
+       for (var i = 0; i &lt; audioSearch.lastPitchClassesDetected.length; i++) {
+           if (audioSearch.lastPitchClassesDetected[i] == mostCommonPitchClass) {
+               pitchesMatchingClass.push(audioSearch.lastPitchesDetected[i]);
+               centsMatchingClass.push(audioSearch.lastCentsDeviationsDetected[i]);
+           }
+       }
+       var mostCommonPitch = common.statisticalMode(pitchesMatchingClass);
+
+       // find cents difference; weighing more recent samples more...
+       var totalSamplePoints = 0;
+       var totalSample = 0;
+       for (var j = 0; j &lt; centsMatchingClass.length; j++) {
+           var weight = (Math.pow(j, 2) + 1);
+           totalSample += weight * centsMatchingClass[j];
+           totalSamplePoints += weight;
+       }
+       var centsOff = Math.floor(totalSample / totalSamplePoints);
+       return [mostCommonPitch, centsOff];
+   };
+      
+   audioSearch.sampleCallback = function(frequency) {
+       var _ = audioSearch.smoothPitchExtraction(frequency),
+           midiNum = _[0],
+           centsOff = _[1];
+       //console.log(midiNum, centsOff);
+   };
+
+   // from Chris Wilson. Replace with Jordi's
+   audioSearch.autoCorrelate = function(buf, sampleRate, minFrequency, maxFrequency) {
+       var SIZE = buf.length;
+       var MAX_SAMPLES = Math.floor(SIZE/2);
+       if (minFrequency === undefined) {
+           minFrequency = 0;
+       }
+       if (maxFrequency === undefined) {
+           maxFrequency = sampleRate;
+       }
+
+       var best_offset = -1;
+       var best_correlation = 0;
+       var rms = 0;
+       var foundGoodCorrelation = false;
+       var correlations = new Array(MAX_SAMPLES);
+
+       for (var i=0;i&lt;SIZE;i++) {
+           var val = buf[i];
+           rms += val*val;
+       }
+       rms = Math.sqrt(rms/SIZE);
+       if (rms&lt;0.01) // not enough signal
+           return -1;
+
+       var lastCorrelation=1;
+       for (var offset = 0; offset &lt; MAX_SAMPLES; offset++) {
+           var correlation = 0;
+           var offsetFrequency = sampleRate/offset;
+           if (offsetFrequency &lt; minFrequency) {
+               break;
+           }
+           if (offsetFrequency > maxFrequency) {
+               continue;
+           }
+
+           for (var i=0; i&lt;MAX_SAMPLES; i++) {
+               correlation += Math.abs((buf[i])-(buf[i+offset]));
+           }
+           correlation = 1 - (correlation/MAX_SAMPLES);
+           correlations[offset] = correlation; // store it, for the tweaking we need to do below.
+           if ((correlation>0.9) &amp;&amp; (correlation > lastCorrelation)) {
+               foundGoodCorrelation = true;
+               if (correlation > best_correlation) {
+                   best_correlation = correlation;
+                   best_offset = offset;
+               }
+           } else if (foundGoodCorrelation) {
+               // short-circuit - we found a good correlation, then a bad one, so we'd just be seeing copies from here.
+               // Now we need to tweak the offset - by interpolating between the values to the left and right of the
+               // best offset, and shifting it a bit.  This is complex, and HACKY in this code (happy to take PRs!) -
+               // we need to do a curve fit on correlations[] around best_offset in order to better determine precise
+               // (anti-aliased) offset.
+
+               // we know best_offset >=1, 
+               // since foundGoodCorrelation cannot go to true until the second pass (offset=1), and 
+               // we can't drop into this clause until the following pass (else if).
+               var shift = (correlations[best_offset+1] - correlations[best_offset-1])/correlations[best_offset];  
+               return sampleRate/(best_offset+(8*shift));
+           }
+           lastCorrelation = correlation;
+       }
+       if (best_correlation > 0.01) {
+           // console.log("f = " + sampleRate/best_offset + "Hz (rms: " + rms + " confidence: " + best_correlation + ")")
+           return sampleRate/best_offset;
+       }
+       return -1;
+   //  var best_frequency = sampleRate/best_offset;
+   }
+   
+   /**
+    * 
+    * @function midiNumDiffFromFrequency
+    * @param {Number} frequency 
+    * @returns {Array&lt;Int>} [miniNumber, centsOff]
+    */
+   audioSearch.midiNumDiffFromFrequency = function(frequency) {
+       var midiNumFloat = (12 * (Math.log( frequency / 440 )/Math.log(2))) + 69;
+       var midiNum = Math.round(midiNumFloat);
+       var centsOff = Math.round(100 * (midiNumFloat - midiNum));
+       return [midiNum, centsOff];
+   }
+
+   // http://paulirish.com/2011/requestanimationframe-for-smart-animating/
+   // http://my.opera.com/emoller/blog/2011/12/20/requestanimationframe-for-smart-er-animating
+ 
+   // requestAnimationFrame polyfill by Erik Möller
+   // fixes from Paul Irish and Tino Zijdel
+ 
+   var rqaPolyFill = function() {
+       var lastTime = 0;
+       var vendors = ['ms', 'moz', 'webkit', 'o'];
+       for (var x = 0; x &lt; vendors.length &amp;&amp; !window.requestAnimationFrame; ++x) {
+          window.requestAnimationFrame = window[vendors[x]+'RequestAnimationFrame'];
+          window.cancelAnimationFrame = window[vendors[x]+'CancelAnimationFrame']
+                                       || window[vendors[x]+'CancelRequestAnimationFrame'];
+       }
+     
+       if (!window.requestAnimationFrame)
+            window.requestAnimationFrame = function(callback, element) {
+                var currTime = new Date().getTime();
+                var timeToCall = Math.max(0, 16 - (currTime - lastTime));
+                var id = window.setTimeout(function() { callback(currTime + timeToCall); },
+                  timeToCall);
+                lastTime = currTime + timeToCall;
+                return id;
+            };
+     
+       if (!window.cancelAnimationFrame)
+            window.cancelAnimationFrame = function(id) {
+                clearTimeout(id);
+            };
+    };
+    rqaPolyFill();
+   
+   // end of define
+   if (typeof(music21) != "undefined") {
+       music21.audioSearch = audioSearch;
+   }       
+   return audioSearch;
+    
+});
+</pre>
+	</article>
+</section>
+
+
+
+
+
+				</div>
+
+				<div class="clearfix"></div>
+				<footer>
+					
+					
+		<span class="copyright">
+		Music21j, Copyright © 2013-2015 Michael Scott Cuthbert and cuthbertLab.
+		</span>
+					<br />
+					
+		<span class="jsdoc-message">
+		Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.2</a>
+		on Sun Aug 23rd 2015 using the <a
+			href="https://github.com/terryweiss/docstrap">DocStrap template</a>.
+		</span>
+				</footer>
+			</div>
+
+			
+			<br clear="both">
+		</div>
+
+	</div>
+	<!--<script src="scripts/sunlight.js"></script>-->
+	<script src="scripts/docstrap.lib.js"></script>
+	<script src="scripts/bootstrap-dropdown.js"></script>
+	<script src="scripts/toc.js"></script>
+
+	<script>
+		$( function () {
+			$( "[id*='$']" ).each( function () {
+				var $this = $( this );
+
+				$this.attr( "id", $this.attr( "id" ).replace( "$", "__" ) );
+			} );
+
+			$( "#toc" ).toc( {
+				anchorName  : function ( i, heading, prefix ) {
+					return $( heading ).attr( "id" ) || ( prefix + i );
+				},
+				selectors   : "h1,h2,h3,h4",
+				showAndHide : false,
+				scrollTo    : "100px"
+			} );
+
+			$( "#toc>ul" ).addClass( "nav nav-pills nav-stacked" );
+			$( "#main span[id^='toc']" ).addClass( "toc-shim" );
+			$( '.dropdown-toggle' ).dropdown();
+//			$( ".tutorial-section pre, .readme-section pre" ).addClass( "sunlight-highlight-javascript" ).addClass( "linenums" );
+
+			$( ".tutorial-section pre, .readme-section pre" ).each( function () {
+				var $this = $( this );
+
+				var example = $this.find( "code" );
+				exampleText = example.html();
+				var lang = /{@lang (.*?)}/.exec( exampleText );
+				if ( lang && lang[1] ) {
+					exampleText = exampleText.replace( lang[0], "" );
+					example.html( exampleText );
+					lang = lang[1];
+				} else {
+					lang = "javascript";
+				}
+
+				if ( lang ) {
+
+					$this
+						.addClass( "sunlight-highlight-" + lang )
+						.addClass( "linenums" )
+						.html( example.html() );
+
+				}
+			} );
+
+			Sunlight.highlightAll( {
+				lineNumbers : true,
+				showMenu : true,
+				enableDoclinks : true
+			} );
+		} );
+	 </script>
+
+
+
+	<!--Navigation and Symbol Display-->
+	
+
+
+	<!--Google Analytics-->
+	
+
+</body>
+</html>

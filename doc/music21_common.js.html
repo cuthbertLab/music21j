@@ -1,0 +1,1017 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>Music21j Source: music21/common.js</title>
+
+	<!--[if lt IE 9]>
+	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+	<link type="text/css" rel="stylesheet" href="styles/sunlight.default.css">
+
+	<link type="text/css" rel="stylesheet" href="styles/site.spruce.css">
+
+</head>
+
+<body>
+<div class="container-fluid">
+	<div class="navbar navbar-fixed-top navbar-inverse">
+		<div class="navbar-inner">
+			<a class="brand" href="index.html">Music21j</a>
+			<ul class="nav">
+				
+				<li class="dropdown">
+					<a href="namespaces.list.html" class="dropdown-toggle" data-toggle="dropdown">Namespaces<b
+						class="caret"></b></a>
+
+					<ul class="dropdown-menu ">
+						
+						<li>
+							<a href="music21.html">music21</a>
+						</li>
+						
+						<li>
+							<a href="music21.articulations.html">music21.articulations</a>
+						</li>
+						
+						<li>
+							<a href="music21.audioSearch.html">music21.audioSearch</a>
+						</li>
+						
+						<li>
+							<a href="music21.base.html">music21.base</a>
+						</li>
+						
+						<li>
+							<a href="music21.beam.html">music21.beam</a>
+						</li>
+						
+						<li>
+							<a href="music21.chord.html">music21.chord</a>
+						</li>
+						
+						<li>
+							<a href="music21.clef.html">music21.clef</a>
+						</li>
+						
+						<li>
+							<a href="music21.common.html">music21.common</a>
+						</li>
+						
+						<li>
+							<a href="music21.duration.html">music21.duration</a>
+						</li>
+						
+						<li>
+							<a href="music21.dynamics.html">music21.dynamics</a>
+						</li>
+						
+						<li>
+							<a href="music21.expressions.html">music21.expressions</a>
+						</li>
+						
+						<li>
+							<a href="music21.fromPython.html">music21.fromPython</a>
+						</li>
+						
+						<li>
+							<a href="music21.instrument.html">music21.instrument</a>
+						</li>
+						
+						<li>
+							<a href="music21.interval.html">music21.interval</a>
+						</li>
+						
+						<li>
+							<a href="music21.key.html">music21.key</a>
+						</li>
+						
+						<li>
+							<a href="music21.keyboard.html">music21.keyboard</a>
+						</li>
+						
+						<li>
+							<a href="music21.meter.html">music21.meter</a>
+						</li>
+						
+						<li>
+							<a href="music21.miditools.html">music21.miditools</a>
+						</li>
+						
+						<li>
+							<a href="music21.note.html">music21.note</a>
+						</li>
+						
+						<li>
+							<a href="music21.orchestralScore.html">music21.orchestralScore</a>
+						</li>
+						
+						<li>
+							<a href="music21.pitch.html">music21.pitch</a>
+						</li>
+						
+						<li>
+							<a href="music21.prebase.html">music21.prebase</a>
+						</li>
+						
+						<li>
+							<a href="music21.renderOptions.html">music21.renderOptions</a>
+						</li>
+						
+						<li>
+							<a href="music21.roman.html">music21.roman</a>
+						</li>
+						
+						<li>
+							<a href="music21.scale.html">music21.scale</a>
+						</li>
+						
+						<li>
+							<a href="music21.stream.html">music21.stream</a>
+						</li>
+						
+						<li>
+							<a href="music21.streamInteraction.html">music21.streamInteraction</a>
+						</li>
+						
+						<li>
+							<a href="music21.tempo.html">music21.tempo</a>
+						</li>
+						
+						<li>
+							<a href="music21.tie.html">music21.tie</a>
+						</li>
+						
+						<li>
+							<a href="music21.tinyNotation.html">music21.tinyNotation</a>
+						</li>
+						
+						<li>
+							<a href="music21.vfShow.html">music21.vfShow</a>
+						</li>
+						
+						<li>
+							<a href="music21.webmidi.html">music21.webmidi</a>
+						</li>
+						
+						<li>
+							<a href="music21.widgets.html">music21.widgets</a>
+						</li>
+						
+
+					</ul>
+				</li>
+				
+				<li class="dropdown">
+					<a href="modules.list.html" class="dropdown-toggle" data-toggle="dropdown">Modules<b
+						class="caret"></b></a>
+
+					<ul class="dropdown-menu ">
+						
+						<li>
+							<a href="module-music21_articulations.html">music21/articulations</a>
+						</li>
+						
+						<li>
+							<a href="module-music21_audioSearch.html">music21/audioSearch</a>
+						</li>
+						
+						<li>
+							<a href="module-music21_base.html">music21/base</a>
+						</li>
+						
+						<li>
+							<a href="module-music21_beam.html">music21/beam</a>
+						</li>
+						
+						<li>
+							<a href="module-music21_chord.html">music21/chord</a>
+						</li>
+						
+						<li>
+							<a href="module-music21_clef.html">music21/clef</a>
+						</li>
+						
+						<li>
+							<a href="module-music21_common.html">music21/common</a>
+						</li>
+						
+						<li>
+							<a href="module-music21_duration.html">music21/duration</a>
+						</li>
+						
+						<li>
+							<a href="module-music21_dynamics.html">music21/dynamics</a>
+						</li>
+						
+						<li>
+							<a href="module-music21_expressions.html">music21/expressions</a>
+						</li>
+						
+						<li>
+							<a href="module-music21_instrument.html">music21/instrument</a>
+						</li>
+						
+						<li>
+							<a href="module-music21_interval.html">music21/interval</a>
+						</li>
+						
+						<li>
+							<a href="module-music21_key.html">music21/key</a>
+						</li>
+						
+						<li>
+							<a href="module-music21_keyboard.html">music21/keyboard</a>
+						</li>
+						
+						<li>
+							<a href="module-music21_meter.html">music21/meter</a>
+						</li>
+						
+						<li>
+							<a href="module-music21_miditools.html">music21/miditools</a>
+						</li>
+						
+						<li>
+							<a href="module-music21_moduleLoader.html">music21/moduleLoader</a>
+						</li>
+						
+						<li>
+							<a href="module-music21_note.html">music21/note</a>
+						</li>
+						
+						<li>
+							<a href="module-music21_orchestralScore.html">music21/orchestralScore</a>
+						</li>
+						
+						<li>
+							<a href="module-music21_pitch.html">music21/pitch</a>
+						</li>
+						
+						<li>
+							<a href="module-music21_prebase.html">music21/prebase</a>
+						</li>
+						
+						<li>
+							<a href="module-music21_renderOptions.html">music21/renderOptions</a>
+						</li>
+						
+						<li>
+							<a href="module-music21_roman.html">music21/roman</a>
+						</li>
+						
+						<li>
+							<a href="module-music21_scale.html">music21/scale</a>
+						</li>
+						
+						<li>
+							<a href="module-music21_stream.html">music21/stream</a>
+						</li>
+						
+						<li>
+							<a href="module-music21_streamInteraction.html">music21/streamInteraction</a>
+						</li>
+						
+						<li>
+							<a href="module-music21_tempo.html">music21/tempo</a>
+						</li>
+						
+						<li>
+							<a href="module-music21_tie.html">music21/tie</a>
+						</li>
+						
+						<li>
+							<a href="module-music21_tinyNotation.html">music21/tinyNotation</a>
+						</li>
+						
+						<li>
+							<a href="module-music21_vfShow.html">music21/vfShow</a>
+						</li>
+						
+						<li>
+							<a href="module-music21_webmidi.html">music21/webmidi</a>
+						</li>
+						
+						<li>
+							<a href="module-music21_widgets.html">music21/widgets</a>
+						</li>
+						
+
+					</ul>
+				</li>
+				
+				<li class="dropdown">
+					<a href="classes.list.html" class="dropdown-toggle" data-toggle="dropdown">Classes<b
+						class="caret"></b></a>
+
+					<ul class="dropdown-menu ">
+						
+						<li>
+							<a href="music21.articulations.Accent.html">music21.articulations.Accent</a>
+						</li>
+						
+						<li>
+							<a href="music21.articulations.Articulation.html">music21.articulations.Articulation</a>
+						</li>
+						
+						<li>
+							<a href="music21.articulations.DynamicArticulation.html">music21.articulations.DynamicArticulation</a>
+						</li>
+						
+						<li>
+							<a href="music21.articulations.LengthArticulation.html">music21.articulations.LengthArticulation</a>
+						</li>
+						
+						<li>
+							<a href="music21.articulations.Marcato.html">music21.articulations.Marcato</a>
+						</li>
+						
+						<li>
+							<a href="music21.articulations.PitchArticulation.html">music21.articulations.PitchArticulation</a>
+						</li>
+						
+						<li>
+							<a href="music21.articulations.Spiccato.html">music21.articulations.Spiccato</a>
+						</li>
+						
+						<li>
+							<a href="music21.articulations.Staccatissimo.html">music21.articulations.Staccatissimo</a>
+						</li>
+						
+						<li>
+							<a href="music21.articulations.Staccato.html">music21.articulations.Staccato</a>
+						</li>
+						
+						<li>
+							<a href="music21.articulations.StrongAccent.html">music21.articulations.StrongAccent</a>
+						</li>
+						
+						<li>
+							<a href="music21.articulations.Tenuto.html">music21.articulations.Tenuto</a>
+						</li>
+						
+						<li>
+							<a href="music21.articulations.TimbreArticulation.html">music21.articulations.TimbreArticulation</a>
+						</li>
+						
+						<li>
+							<a href="music21.base.Music21Object.html">music21.base.Music21Object</a>
+						</li>
+						
+						<li>
+							<a href="music21.beam.Beam.html">music21.beam.Beam</a>
+						</li>
+						
+						<li>
+							<a href="music21.beam.Beams.html">music21.beam.Beams</a>
+						</li>
+						
+						<li>
+							<a href="music21.chord.Chord.html">music21.chord.Chord</a>
+						</li>
+						
+						<li>
+							<a href="music21.clef.AltoClef.html">music21.clef.AltoClef</a>
+						</li>
+						
+						<li>
+							<a href="music21.clef.BassClef.html">music21.clef.BassClef</a>
+						</li>
+						
+						<li>
+							<a href="music21.clef.Clef.html">music21.clef.Clef</a>
+						</li>
+						
+						<li>
+							<a href="music21.clef.MezzoSopranoClef.html">music21.clef.MezzoSopranoClef</a>
+						</li>
+						
+						<li>
+							<a href="music21.clef.PercussionClef.html">music21.clef.PercussionClef</a>
+						</li>
+						
+						<li>
+							<a href="music21.clef.SopranoClef.html">music21.clef.SopranoClef</a>
+						</li>
+						
+						<li>
+							<a href="music21.clef.TenorClef.html">music21.clef.TenorClef</a>
+						</li>
+						
+						<li>
+							<a href="music21.clef.Treble8vaClef.html">music21.clef.Treble8vaClef</a>
+						</li>
+						
+						<li>
+							<a href="music21.clef.Treble8vbClef.html">music21.clef.Treble8vbClef</a>
+						</li>
+						
+						<li>
+							<a href="music21.clef.TrebleClef.html">music21.clef.TrebleClef</a>
+						</li>
+						
+						<li>
+							<a href="music21.duration.Duration.html">music21.duration.Duration</a>
+						</li>
+						
+						<li>
+							<a href="music21.duration.Tuplet.html">music21.duration.Tuplet</a>
+						</li>
+						
+						<li>
+							<a href="music21.dynamics.Dynamic.html">music21.dynamics.Dynamic</a>
+						</li>
+						
+						<li>
+							<a href="music21.expressions.Expression.html">music21.expressions.Expression</a>
+						</li>
+						
+						<li>
+							<a href="music21.expressions.Fermata.html">music21.expressions.Fermata</a>
+						</li>
+						
+						<li>
+							<a href="music21.fromPython.Converter.html">music21.fromPython.Converter</a>
+						</li>
+						
+						<li>
+							<a href="music21.instrument.Instrument.html">music21.instrument.Instrument</a>
+						</li>
+						
+						<li>
+							<a href="music21.interval.ChromaticInterval.html">music21.interval.ChromaticInterval</a>
+						</li>
+						
+						<li>
+							<a href="music21.interval.DiatonicInterval.html">music21.interval.DiatonicInterval</a>
+						</li>
+						
+						<li>
+							<a href="music21.interval.GenericInterval.html">music21.interval.GenericInterval</a>
+						</li>
+						
+						<li>
+							<a href="music21.interval.Interval.html">music21.interval.Interval</a>
+						</li>
+						
+						<li>
+							<a href="music21.key.Key.html">music21.key.Key</a>
+						</li>
+						
+						<li>
+							<a href="music21.key.KeySignature.html">music21.key.KeySignature</a>
+						</li>
+						
+						<li>
+							<a href="music21.keyboard.BlackKey.html">music21.keyboard.BlackKey</a>
+						</li>
+						
+						<li>
+							<a href="music21.keyboard.Key.html">music21.keyboard.Key</a>
+						</li>
+						
+						<li>
+							<a href="music21.keyboard.Keyboard.html">music21.keyboard.Keyboard</a>
+						</li>
+						
+						<li>
+							<a href="music21.keyboard.WhiteKey.html">music21.keyboard.WhiteKey</a>
+						</li>
+						
+						<li>
+							<a href="music21.meter.TimeSignature.html">music21.meter.TimeSignature</a>
+						</li>
+						
+						<li>
+							<a href="music21.miditools.Event.html">music21.miditools.Event</a>
+						</li>
+						
+						<li>
+							<a href="music21.note.GeneralNote.html">music21.note.GeneralNote</a>
+						</li>
+						
+						<li>
+							<a href="music21.note.Lyric.html">music21.note.Lyric</a>
+						</li>
+						
+						<li>
+							<a href="music21.note.Note.html">music21.note.Note</a>
+						</li>
+						
+						<li>
+							<a href="music21.note.NotRest.html">music21.note.NotRest</a>
+						</li>
+						
+						<li>
+							<a href="music21.note.Rest.html">music21.note.Rest</a>
+						</li>
+						
+						<li>
+							<a href="music21.orchestralScore.OrchestralScore.html">music21.orchestralScore.OrchestralScore</a>
+						</li>
+						
+						<li>
+							<a href="music21.pitch.Accidental.html">music21.pitch.Accidental</a>
+						</li>
+						
+						<li>
+							<a href="music21.pitch.Pitch.html">music21.pitch.Pitch</a>
+						</li>
+						
+						<li>
+							<a href="music21.prebase.ProtoM21Object.html">music21.prebase.ProtoM21Object</a>
+						</li>
+						
+						<li>
+							<a href="music21.renderOptions.RenderOptions.html">music21.renderOptions.RenderOptions</a>
+						</li>
+						
+						<li>
+							<a href="music21.roman.RomanNumeral.html">music21.roman.RomanNumeral</a>
+						</li>
+						
+						<li>
+							<a href="music21.stream.Measure.html">music21.stream.Measure</a>
+						</li>
+						
+						<li>
+							<a href="music21.stream.Part.html">music21.stream.Part</a>
+						</li>
+						
+						<li>
+							<a href="music21.stream.Score.html">music21.stream.Score</a>
+						</li>
+						
+						<li>
+							<a href="music21.stream.Stream.html">music21.stream.Stream</a>
+						</li>
+						
+						<li>
+							<a href="music21.stream.Voice.html">music21.stream.Voice</a>
+						</li>
+						
+						<li>
+							<a href="music21.streamInteraction.PixelMap.html">music21.streamInteraction.PixelMap</a>
+						</li>
+						
+						<li>
+							<a href="music21.streamInteraction.PixelMapper.html">music21.streamInteraction.PixelMapper</a>
+						</li>
+						
+						<li>
+							<a href="music21.streamInteraction.ScrollPlayer.html">music21.streamInteraction.ScrollPlayer</a>
+						</li>
+						
+						<li>
+							<a href="music21.tempo.Metronome.html">music21.tempo.Metronome</a>
+						</li>
+						
+						<li>
+							<a href="music21.tie.Tie.html">music21.tie.Tie</a>
+						</li>
+						
+						<li>
+							<a href="music21.vfShow.Renderer.html">music21.vfShow.Renderer</a>
+						</li>
+						
+						<li>
+							<a href="music21.vfShow.RenderStack.html">music21.vfShow.RenderStack</a>
+						</li>
+						
+						<li>
+							<a href="music21.widgets.RhythmChooser.html">music21.widgets.RhythmChooser</a>
+						</li>
+						
+
+					</ul>
+				</li>
+				
+			</ul>
+		</div>
+	</div>
+
+	<div class="row-fluid">
+
+		
+			<div class="span12">
+				
+				<div id="main">
+					
+
+
+		<h1 class="page-title">Source: music21/common.js</h1>
+    
+<section>
+	<article>
+		<pre
+			class="sunlight-highlight-javascript linenums">define([], 
+        /**
+         * common functions
+         * 
+         * @exports music21/common
+         */        
+        function() {
+    /**
+     * functions that are useful everywhere...
+     * 
+     * @namespace music21.common
+     * @memberof music21
+     */
+    var common = {};    
+
+    /**
+     * concept borrowed from Vex.Flow.Merge, though here the source can be undefined;
+     * http://stackoverflow.com/questions/171251/how-can-i-merge-properties-of-two-javascript-objects-dynamically
+     * recursive parts used in .clone()
+     * 
+     * @function music21.common.merge
+     * @param {object} destination - object to have attributes placed into
+     * @param {object} source - object to take attributes from.
+     * @memberof music21.common
+     * @returns {object} destination
+     */
+    common.merge = function MergeRecursive(destination, source) {
+        if (source === undefined || source === null) {
+            return destination;
+        }
+        for (var p in source) {
+          try {
+            // Property in destination object set; update its value.
+            if ( source[p].constructor == Object ) {
+                destination[p] = MergeRecursive(destination[p], source[p]);
+            } else {
+                destination[p] = source[p];
+            }
+          } catch(e) {
+            // Property in destination object not set; create it and set its value.
+              destination[p] = source[p];
+          }
+        }
+        return destination;
+    };
+
+    /**
+     * 
+     * Returns the statistical mode (most commonly appearing element)
+     * in a.
+     * 
+     * In case of tie, returns the first element to reach the maximum
+     * number of occurrences.
+     * 
+     * @function music21.common.statisticalMode
+     * @param {Array} a - an array to analyze
+     * @returns {object} element with the highest frequency in a
+     */
+    common.statisticalMode = function(a) {
+        if (a.length == 0) { return null }
+        var modeMap = {};
+        var maxEl = a[0];
+        var maxCount = 1;
+        for (var i = 0; i &lt; a.length; i++) {
+            var el = a[i];
+            if (modeMap[el] == null) {
+                modeMap[el] = 0;               
+            }
+            modeMap[el]++;
+            if (modeMap[el] > maxCount) {
+                maxEl = el;
+                maxCount = modeMap[el];
+            }
+        }
+        return maxEl;
+    }
+    
+    /**
+     * Creates a DOMObject of an SVG figure using the correct `document.createElementNS` call.
+     * 
+     * @function music21.common.makeSVGright
+     * @param {string} [tag='svg'] - a tag, such as 'rect', 'circle', 'text', or 'svg'
+     * @param {object} [attrs] - attributes to pass to the tag.
+     * @memberof music21.common
+     * @returns {DOMObject}
+     */
+    common.makeSVGright = function (tag, attrs) {
+        // see http://stackoverflow.com/questions/3642035/jquerys-append-not-working-with-svg-element
+        // normal JQuery does not work.
+        if (tag === undefined) {
+            tag = 'svg';
+        }
+        if (attrs === undefined) {
+            attrs = {};
+        }
+        
+        var el = document.createElementNS('http://www.w3.org/2000/svg', tag);
+        for (var k in attrs) {
+            el.setAttribute(k, attrs[k]);            
+        }
+        return el;
+    };    
+    
+    /**
+     * Take a number such as 32 and return a string such as "nd" 
+     * (for "32nd") etc.
+     * 
+     * @function music21.common.ordinalAbbreviation
+     * @param {Int} value
+     * @param {Boolean} [plural=false] - make plural (note that "21st" plural is "21st")
+     * @return {string}
+     */
+    common.ordinalAbbreviation = function (value, plural) {
+        var post = "";
+        var valueHundreths = value % 100;
+        if (valueHundreths == 11 || valueHundreths == 12 || valueHundreths == 13) {
+            post = 'th';
+        } else {
+            var valueMod = value % 10;
+            if (valueMod == 1) {
+                post = 'st';
+            } else if (valueMod == 2) {
+                post = 'nd';
+            } else if (valueMod == 3) {
+                post = 'rd';
+            } else {
+                post = 'th';
+            }
+        }
+        if (post != 'st' &amp;&amp; plural) {
+            post += 's';            
+        }
+        return post;
+    };
+    
+    /**
+     * Find a rational number approximation of this floating point.
+     * 
+     * @function music21.common.rationalize
+     * @param {number} ql - number to rationalize
+     * @param {number} [epsilon=0.001] - how close to get
+     * @param {Int} [maxDenominator=50] - maximum denominator
+     * @returns {object|undefined} {'numerator: numerator, 'denominator': denominator}
+     */
+    common.rationalize = function (ql, epsilon, maxDenominator) {
+        epsilon = epsilon || 0.001;
+        maxDenominator = maxDenominator || 50;
+        
+        for (var i = 2; i &lt; maxDenominator; i++) {
+            if (Math.abs(ql * i - Math.round(ql * i)) &lt; epsilon) {
+                var numerator = Math.round(ql * i);
+                var denominator = i;
+                return {'numerator': numerator, 'denominator': denominator};
+            }
+        }
+        return undefined;
+    };
+    
+    /**
+     * Change something that could be a string or number and might
+     * end with "px" to a number.
+     * 
+     * "400px" -> 400
+     * 
+     * @function music21.common.stripPx
+     * @param {Int|string} str -- string that might have 'px' at the end or not
+     * @returns {Int} a number to use
+     */
+    common.stripPx = function (str) {
+        if (typeof str == 'string') {
+            var pxIndex = str.indexOf('px');
+            str = str.slice(0, pxIndex);
+            return parseInt(str);
+        } else {
+            return str;
+        }
+    };
+    
+    /**
+     * Find name in the query string (?name=value) and return value.
+     * 
+     * @function music21.common.urlParam
+     * @param {string} name - url parameter to find
+     * @returns {string} may be "" if empty.
+     */
+    common.urlParam = function (name) {
+            name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+            var regex = new RegExp("[\\?&amp;]" + name + "=([^&amp;#]*)"),
+                results = regex.exec(location.search);
+            return results == null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+    };
+    
+    
+    /**
+     * Copies an event from one jQuery object to another.
+     *
+     * @function music21.common.jQueryEventCopy
+     * @param {Event} eventObj - Event to copy from "from" to "to"
+     * @param {jQuery|string|DOMObject} from - jQuery object to copy events from. Only uses the first matched element.
+     * @param {jQuery|string|DOMObject} to - jQuery object to copy events to. Copies to all matched elements.
+     * @author Brandon Aaron (brandon.aaron@gmail.com || http://brandonaaron.net)
+     * @author Yannick Albert (mail@yckart.com || http://yckart.com)
+     */
+    common.jQueryEventCopy = function  (eventObj, from, to) {
+        from = from.jquery ? from : jQuery(from);
+        to = to.jquery ? to : jQuery(to);
+    
+        var events = from[0].events || jQuery.data(from[0], "events") || jQuery._data(from[0], "events");
+        if (!from.length || !to.length || !events) return;
+    
+        return to.each(function () {
+            for (var type in events)
+                for (var handler in events[type])
+                    jQuery.event.add(eventObj, type, events[type][handler], events[type][handler].data);
+        });
+    };
+//    common.walk = function (obj, callback, callList, seen, numSeen) {
+//        if (depth == undefined) {
+//            depth = 0;
+//        }
+//        if (depth > 20) {
+//            throw "max depth reached";
+//        }
+//        if (callList === undefined) {
+//            callList = [];
+//        }
+//        if (seen === undefined) {
+//            seen = new Set();
+//        }
+//        var next, item;
+//        for (item in obj) {
+//            if (obj.hasOwnProperty(item)) {
+//                next = obj[item];
+//                var nextCallList = []
+//                nextCallList.push.apply(callList);
+//                nextCallList.push(item);
+//                if (callback !== undefined) {
+//                    callback.call(this, item, next, nextCallList);
+//                }
+//                if (typeof next =='object' &amp;&amp; next != null) {
+//                    if (seen.has(next) == false) {
+//                        seen.add(next);
+//                        common.walk(next, callback, nextCallList, seen, depth+1);
+//                    }
+//                }
+//            }
+//        }
+//    };
+    
+    /**
+     * runs a callback with either "visible" or "hidden" as the argument anytime the
+     * window or document state changes.
+     * 
+     * Depending on the browser, may be called multiple times with the same argument
+     * for a single event.  For instance, Safari calls once on losing focus completely
+     * but twice for a tab change.
+     * 
+     * @function music21.common.setWindowVisibilityWatcher
+     * @param {function} callback
+     */
+    common.setWindowVisibilityWatcher = function (callback) {
+        var hidden = "hidden";
+
+        // Standards:
+        if (hidden in document) {
+            document.addEventListener("visibilitychange", windowFocusChanged);                
+        } else if ((hidden = "mozHidden") in document) {
+            document.addEventListener("mozvisibilitychange", windowFocusChanged);                
+        } else if ((hidden = "webkitHidden") in document) {
+            document.addEventListener("webkitvisibilitychange", windowFocusChanged);                
+        } else if ((hidden = "msHidden") in document) {
+            document.addEventListener("msvisibilitychange", windowFocusChanged);                
+        } else if ('onfocusin' in document) {
+            // IE 9 and lower:
+            document.onfocusin = document.onfocusout = windowFocusChanged;
+        } 
+        
+        // Also catch window... -- get two calls for a tab shift, but one for window losing focus
+        window.onpageshow = window.onpagehide = window.onfocus = window.onblur = windowFocusChanged;                
+        
+        
+        function windowFocusChanged (evt) {
+            var v = 'visible', h = 'hidden',
+                evtMap = { 
+                    focus:v, focusin:v, pageshow:v, blur:h, focusout:h, pagehide:h, 
+                };
+
+            evt = evt || window.event;
+            var callbackState = "";
+            if (evt.type in evtMap) {
+                callbackState = evtMap[evt.type];                
+            } else {
+                callbackState = this[hidden] ? "hidden" : "visible";                
+            }
+            callback(callbackState, evt);
+        }
+        // set the initial state
+        var initialState = ((document.visibilityState == "visible") ? "focus" : "blur");
+        var initialStateEvent = { 'type': initialState };
+        windowFocusChanged(initialStateEvent); 
+    };
+    // end of define
+    if (typeof(music21) != "undefined") {
+        music21.common = common;
+    }       
+    return common;
+});
+
+</pre>
+	</article>
+</section>
+
+
+
+
+
+				</div>
+
+				<div class="clearfix"></div>
+				<footer>
+					
+					
+		<span class="copyright">
+		Music21j, Copyright © 2013-2015 Michael Scott Cuthbert and cuthbertLab.
+		</span>
+					<br />
+					
+		<span class="jsdoc-message">
+		Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.2</a>
+		on Sun Aug 23rd 2015 using the <a
+			href="https://github.com/terryweiss/docstrap">DocStrap template</a>.
+		</span>
+				</footer>
+			</div>
+
+			
+			<br clear="both">
+		</div>
+
+	</div>
+	<!--<script src="scripts/sunlight.js"></script>-->
+	<script src="scripts/docstrap.lib.js"></script>
+	<script src="scripts/bootstrap-dropdown.js"></script>
+	<script src="scripts/toc.js"></script>
+
+	<script>
+		$( function () {
+			$( "[id*='$']" ).each( function () {
+				var $this = $( this );
+
+				$this.attr( "id", $this.attr( "id" ).replace( "$", "__" ) );
+			} );
+
+			$( "#toc" ).toc( {
+				anchorName  : function ( i, heading, prefix ) {
+					return $( heading ).attr( "id" ) || ( prefix + i );
+				},
+				selectors   : "h1,h2,h3,h4",
+				showAndHide : false,
+				scrollTo    : "100px"
+			} );
+
+			$( "#toc>ul" ).addClass( "nav nav-pills nav-stacked" );
+			$( "#main span[id^='toc']" ).addClass( "toc-shim" );
+			$( '.dropdown-toggle' ).dropdown();
+//			$( ".tutorial-section pre, .readme-section pre" ).addClass( "sunlight-highlight-javascript" ).addClass( "linenums" );
+
+			$( ".tutorial-section pre, .readme-section pre" ).each( function () {
+				var $this = $( this );
+
+				var example = $this.find( "code" );
+				exampleText = example.html();
+				var lang = /{@lang (.*?)}/.exec( exampleText );
+				if ( lang && lang[1] ) {
+					exampleText = exampleText.replace( lang[0], "" );
+					example.html( exampleText );
+					lang = lang[1];
+				} else {
+					lang = "javascript";
+				}
+
+				if ( lang ) {
+
+					$this
+						.addClass( "sunlight-highlight-" + lang )
+						.addClass( "linenums" )
+						.html( example.html() );
+
+				}
+			} );
+
+			Sunlight.highlightAll( {
+				lineNumbers : true,
+				showMenu : true,
+				enableDoclinks : true
+			} );
+		} );
+	 </script>
+
+
+
+	<!--Navigation and Symbol Display-->
+	
+
+
+	<!--Google Analytics-->
+	
+
+</body>
+</html>
