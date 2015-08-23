@@ -1,0 +1,4 @@
+[submodule "src/ext/jsonpickle"]
+	path = src/ext/jsonpickle
+	url = https://github.com/cuthbertLab/jsonpickleJS.git
+	branch = master
