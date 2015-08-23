@@ -1,0 +1,28 @@
+{
+	"tags"      : {
+		"allowUnknownTags" : true
+	},
+	"plugins"   : ["plugins/markdown"],
+
+	"templates" : {
+		"cleverLinks"           : true,
+		"monospaceLinks"        : false,
+		"dateFormat"            : "ddd MMM Do YYYY",
+		"outputSourceFiles"     : true,
+		"outputSourcePath"      : true,
+		"systemName"            : "Music21j",
+		"footer"                : "",
+		"copyright"             : "Music21j, Copyright © 2013-2014 Michael Scott Cuthbert and cuthbertLab.",
+		"navType"               : "vertical",
+		"theme"                 : "spruce",
+		"linenums"              : true,
+		"collapseSymbols"       : false,
+		"inverseNav"            : true,
+		"highlightTutorialCode" : true,
+		"protocol": "fred://"
+	},
+	"markdown"  : {
+		"parser"   : "gfm",
+		"hardwrap" : true
+	}
+}

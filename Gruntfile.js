@@ -16,8 +16,8 @@ module.exports = function(grunt) {
 		        src: ['src/*.js', 'src/music21/*.js', 'README.md'], 
 		        options: {
 		            destination: 'doc',
-		            template : "node_modules/grunt-jsdoc/node_modules/ink-docstrap/template",
-		            configure : "node_modules/grunt-jsdoc/node_modules/ink-docstrap/template/jsdoc.conf.json",
+		            template : "jsdoc-template",
+		            configure : "jsdoc-template/jsdoc.conf.json",
 		        },
 		    },
 	    }
