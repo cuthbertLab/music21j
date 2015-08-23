@@ -98,7 +98,7 @@ define(['./miditools','./common','jquery'],
      * Calls the 'raw' and 'general callbacks when a raw midi event (four bytes)
      * arrives.
      * 
-     * See the MIDI spec for information on parameters
+     * See the MIDI spec for information on the contents of the three parameters.
      * 
      * midiMessageEvent should be an object with two keys: timeStamp (int) and data (array of three int values)
      * 
