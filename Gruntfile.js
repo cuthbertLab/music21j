@@ -25,8 +25,10 @@ module.exports = function(grunt) {
 
     // Load the plugin that provides the "uglify" task.
     grunt.loadNpmTasks('grunt-contrib-uglify');
+
+    // Plugin for the jsdoc task
     grunt.loadNpmTasks('grunt-jsdoc');
     // Default task(s).
-    grunt.registerTask('default', ['uglify']);
+    grunt.registerTask('default', ['jsdoc']);
 
 };

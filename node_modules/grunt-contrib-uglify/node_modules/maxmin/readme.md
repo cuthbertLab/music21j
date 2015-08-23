@@ -34,23 +34,23 @@ console.log(maxmin(max, min, true));
 #### max
 
 *Required*  
-Type: `string`, `buffer`  
+Type: `string`, `buffer`, `number`
 
-Original string.
+Original string or its size in bytes.
 
 #### min
 
 *Required*  
-Type: `string`, `buffer`  
+Type: `string`, `buffer`, `number`
 
-Minified string.
+Minified string or its size in bytes.
 
 #### useGzip
 
 Type: `boolean`  
 Default: `false`
 
-Show gzipped size of `min`. Pretty slow.
+Show gzipped size of `min`. Pretty slow. Not shown when `min` is a `number`.
 
 
 ## License

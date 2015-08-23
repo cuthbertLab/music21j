@@ -24,7 +24,6 @@ __Famous projects, using pako:__
   [Tedit](https://chrome.google.com/webstore/detail/tedit-development-environ/ooekdijbnbbjdfjocaiflnjgoohnblgf)
   by [@creatronix](https://github.com/creationix)
 
- 
 
 __Benchmarks:__
 
@@ -101,7 +100,7 @@ var compressed = new Uint8Array();
 //... fill data to uncompress here
 try {
   var result = pako.inflate(compressed);
-catch (err) {
+} catch (err) {
   console.log(err);
 }
 
