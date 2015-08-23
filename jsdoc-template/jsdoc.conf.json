@@ -12,14 +12,14 @@
 		"outputSourcePath"      : true,
 		"systemName"            : "Music21j",
 		"footer"                : "",
-		"copyright"             : "Music21j, Copyright © 2013-2014 Michael Scott Cuthbert and cuthbertLab.",
+		"copyright"             : "Music21j, Copyright © 2013-2015 Michael Scott Cuthbert and cuthbertLab.",
 		"navType"               : "vertical",
 		"theme"                 : "spruce",
 		"linenums"              : true,
 		"collapseSymbols"       : false,
 		"inverseNav"            : true,
 		"highlightTutorialCode" : true,
-		"protocol": "fred://"
+		"protocol": "html://"
 	},
 	"markdown"  : {
 		"parser"   : "gfm",
