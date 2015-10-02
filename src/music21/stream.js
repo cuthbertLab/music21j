@@ -1414,8 +1414,8 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
         var linesAboveStaff = storedVFStave.options.space_above_staff_ln;
 
         var notesFromTop = yPxScaled * 2 / lineSpacing;
-        var notesAboveFirstLine = ((storedVFStave.options.num_lines - 1 + linesAboveStaff) * 2 ) - notesFromTop;
-        var clickedDiatonicNoteNum = this.clef.firstLine + Math.round(notesAboveFirstLine);
+        var notesAboveLowestLine = ((storedVFStave.options.num_lines - 1 + linesAboveStaff) * 2 ) - notesFromTop;
+        var clickedDiatonicNoteNum = this.clef.firstLine + Math.round(notesAboveLowestLine);
         return clickedDiatonicNoteNum;
     };
     

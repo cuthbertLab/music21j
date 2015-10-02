@@ -967,7 +967,7 @@ define(['vexflow', './common'],
                 
                 el.width = formatterNote.width;         
                 if (el.pitch !== undefined) { // note only...
-                    el.y = (stave.getBottomY() - (s.clef.firstLine - el.pitch.diatonicNoteNum) * 
+                    el.y = (stave.getBottomY() - (s.clef.lowestLine - el.pitch.diatonicNoteNum) * 
                             stave.options.spacing_between_lines_px);
                     //console.log('Note DNN: ' + el.pitch.diatonicNoteNum + " ; y: " + el.y);
                 }

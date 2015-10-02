@@ -95,7 +95,7 @@ define(['./note', 'vexflow'],
         if (clef === undefined) {
             return this;
         } else {
-            var midLine = clef.firstLine + 4;
+            var midLine = clef.lowestLine + 4;
             //console.log(midLine, 'midLine');
             var maxDNNfromCenter = 0;
             var pA = this.pitches;

@@ -28,7 +28,7 @@ define(['./base','./pitch'],
 	must be defined before Stream since Stream subclasses call new music21.Clef...
 	 */
 	// TODO: Fix to newest Vexflow format...
-	clef.firstLines = {
+	clef.lowestLines = {
             'treble': 31, 
             'soprano': 29,
             'mezzo-soprano': 27,
@@ -47,8 +47,8 @@ define(['./base','./pitch'],
 	 * @param {string} name - clef name 
 	 * @param {Int} [octaveChange=0] - ottava
 	 * @property {string|undefined} name
-	 * @property {Int} firstLine - diatonicNoteNum (C4 = 29) for the lowest line (in a five-line staff)
-	 * @property {Int} firstLineTrebleOffset - difference between the first line of this staff and the first line in treble clef
+	 * @property {Int} lowestLine - diatonicNoteNum (C4 = 29) for the lowest line (in a five-line staff)
+	 * @property {Int} lowestLineTrebleOffset - difference between the first line of this staff and the first line in treble clef
 	 * @property {Int} octaveChange
 	 */
 	clef.Clef = function (name, octaveChange) {
@@ -57,19 +57,19 @@ define(['./base','./pitch'],
 	    if (name != undefined) {
 	        name = name.toLowerCase();
 	        this.name = name;
-			this.firstLine = clef.firstLines[name];
-			this.firstLineTrebleOffset = clef.firstLines['treble'] - this.firstLine;
+			this.lowestLine = clef.lowestLines[name];
+			this.lowestLineTrebleOffset = clef.lowestLines['treble'] - this.lowestLine;
 	    } else {
 	    	this.name = undefined;
-	    	this.firstLine = clef.firstLines['treble'];
-	    	this.firstLineTrebleOffset = 0;
+	    	this.lowestLine = clef.lowestLines['treble'];
+	    	this.lowestLineTrebleOffset = 0;
 	    }
 	    if (octaveChange === undefined) {
 	        this.octaveChange = 0;
 	    } else {
 	        this.octaveChange = octaveChange;
-	        this.firstLine = this.firstLine + (7 * octaveChange);
-	        this.firstLineTrebleOffset = this.firstLineTrebleOffset - (7 * octaveChange);
+	        this.lowestLine = this.lowestLine + (7 * octaveChange);
+	        this.lowestLineTrebleOffset = this.lowestLineTrebleOffset - (7 * octaveChange);
 	    }
 	};
 
@@ -88,14 +88,14 @@ define(['./base','./pitch'],
 	 * @returns {music21.pitch.Pitch} new pitch
 	 */
     clef.Clef.prototype.convertPitchToTreble = function (p) {
-        if (this.firstLine == undefined) {
+        if (this.lowestLine == undefined) {
             console.log('no first line defined for clef', this.name, this);
             return p; // error
         }
-        var firstLineDifference = this.firstLineTrebleOffset;
+        var lowestLineDifference = this.lowestLineTrebleOffset;
         var tempPitch = new pitch.Pitch(p.step);
         tempPitch.octave = p.octave;
-        tempPitch.diatonicNoteNum += firstLineDifference;
+        tempPitch.diatonicNoteNum += lowestLineDifference;
         tempPitch.accidental = p.accidental;
         return tempPitch;
     };
@@ -276,7 +276,7 @@ define(['./base','./pitch'],
             equal (c1.isClassOrSubclass('Clef'), true, 'clef is a Clef');
             
             var ac = new music21.clef.AltoClef();
-            equal (ac.firstLine, 25, 'first line set');
+            equal (ac.lowestLine, 25, 'first line set');
             var n = new music21.note.Note('C#4');
             n.setStemDirectionFromClef(ac);
             equal (n.stemDirection, 'down', 'stem direction set');
@@ -290,7 +290,7 @@ define(['./base','./pitch'],
         });
         test ( "music21.clef.Clef 8va" , function() {
             var ac = new music21.clef.Treble8vaClef();
-            equal (ac.firstLine, 38, 'first line set');
+            equal (ac.lowestLine, 38, 'first line set');
             var n = new music21.note.Note('C#5');
             n.setStemDirectionFromClef(ac);
             equal (n.stemDirection, 'up', 'stem direction set');

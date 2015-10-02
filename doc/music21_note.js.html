@@ -917,7 +917,7 @@ define(['./prebase', './base', './pitch', './beam', './common', 'vexflow'],
                 staveDNNSpacing = Math.floor(options.stave.options.spacing_between_lines_px / 2);
             }
             if (options.clef !== undefined &amp;&amp; this.pitch !== undefined) {
-                var midLine = options.clef.firstLine + 4;
+                var midLine = options.clef.lowestLine + 4;
                 //console.log(midLine);
                 var absDNNfromCenter = Math.abs(this.pitch.diatonicNoteNum - midLine);
                 var absOverOctave = absDNNfromCenter - 7;
@@ -1110,7 +1110,7 @@ define(['./prebase', './base', './pitch', './beam', './common', 'vexflow'],
         if (clef === undefined) {
             return this;
         } else {
-            var midLine = clef.firstLine + 4;
+            var midLine = clef.lowestLine + 4;
             var DNNfromCenter = this.pitch.diatonicNoteNum - midLine;
             //console.log(DNNfromCenter, this.pitch.nameWithOctave);
             if (DNNfromCenter >= 0) { this.stemDirection = 'down'; }
