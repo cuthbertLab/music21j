@@ -121,22 +121,29 @@ if (typeof m21conf === 'undefined') {
 
 if (typeof m21srcPath === 'undefined') {
     if (typeof require !== 'undefined') {
-        m21srcPath = pathSimplify(require.toUrl('music21') + '/..');
+        m21srcPath = pathSimplify(require.toUrl('music21').replace(/\?bust=\w*/, '') + '/..');
         //console.log('m21srcPath: ' + m21srcPath);
     }
 }
+
+music21.m21basePath = pathSimplify(m21srcPath + '/..');
 music21.m21srcPath = m21srcPath;
 //console.log('m21srcPath', m21srcPath);
 //console.log('m21srcPath non simplified', require.toUrl('music21'));
-music21.soundfontUrl = require.toUrl('music21').replace(/\?bust=\w*/, '') + '/../ext/soundfonts/FluidR3_GM/';
+music21.soundfontUrl = music21.m21srcPath + '/ext/soundfonts/FluidR3_GM/';
 
 var m21requireConfig = {
     paths: {
-        'jquery': pathSimplify(m21srcPath + '/ext/jquery/jquery-2.1.1.min'),
+        'jquery':     pathSimplify(m21srcPath + '/ext/jquery/jquery-2.1.1.min'),
         'attrchange': pathSimplify(m21srcPath + '/ext/jqueryPlugins/attrchange'),
-        'jquery-ui': pathSimplify(m21srcPath + '/ext/jqueryPlugins/jqueryUI/jquery-ui.min'),
-        'vexflow': pathSimplify(m21srcPath + '/ext/vexflow/vexflow-min'),
-        'MIDI':         pathSimplify(m21srcPath + '/ext/midijs/build/MIDI'),
+        'jquery-ui':  pathSimplify(m21srcPath + '/ext/jqueryPlugins/jqueryUI/jquery-ui.min'),
+        'vexflow':    pathSimplify(m21srcPath + '/ext/vexflow/vexflow-min'),
+        'MIDI':       pathSimplify(m21srcPath + '/ext/midijs/build/MIDI'),
+        'jasmidMidifile':   pathSimplify(m21srcPath + '/ext/midijs/inc/jasmid/midifile'),
+        'jasmidReplayer':   pathSimplify(m21srcPath + '/ext/midijs/inc/jasmid/replayer'),
+        'jasmidStream':     pathSimplify(m21srcPath + '/ext/midijs/inc/jasmid/stream'),
+        'eventjs':          pathSimplify(m21srcPath + '/ext/midijs/examples/inc/event'),     
+        
         // browser shims
         'webMidiApiShim': pathSimplify(m21srcPath + '/ext/midijs/inc/shim/WebMIDIAPI'), //not currently loaded/used?
         'base64Shim':   pathSimplify(m21srcPath + '/ext/midijs/inc/shim/Base64'), //IE9; drop after support is gone   
@@ -152,12 +159,16 @@ var m21requireConfig = {
       },     
     ],      
     shim: {
+        'eventjs': {
+            exports: 'eventjs',
+        },        
         'webMidiApiShim': {
             deps: ['es6Shim'],
             exports: 'window',            
         },
         'MIDI': {
-            deps: [ 'base64Shim', 'base64BinaryShim', 'webAudioShim'],
+            deps: ['base64Shim', 'base64BinaryShim', 'webAudioShim', 
+                   'jasmidMidifile', 'jasmidReplayer', 'jasmidStream', 'eventjs'],
             exports: 'MIDI',
         },
         'attrchange': {
