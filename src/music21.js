@@ -142,6 +142,7 @@ var m21requireConfig = {
         'jasmidMidifile':   pathSimplify(m21srcPath + '/ext/midijs/inc/jasmid/midifile'),
         'jasmidReplayer':   pathSimplify(m21srcPath + '/ext/midijs/inc/jasmid/replayer'),
         'jasmidStream':     pathSimplify(m21srcPath + '/ext/midijs/inc/jasmid/stream'),
+        // a very nice event handler from Mudcu.be that handles drags 
         'eventjs':          pathSimplify(m21srcPath + '/ext/midijs/examples/inc/event'),     
         
         // browser shims
