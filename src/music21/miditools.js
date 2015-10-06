@@ -399,7 +399,147 @@ define(['jquery', './note', './chord', 'MIDI'],
             });
         }
     };
+    
+    /**
+     * MidiPlayer -- embedded midi player.
+     */
+    miditools.MidiPlayer = function() {
+        this.player = music21.MIDI.Player;
+        this.speed = 1.0;
+        this.$playDiv = undefined;        
+    };
 
+    miditools.MidiPlayer.prototype.addPlayer = function(where) {
+        var $where = where
+        if (where === undefined) {
+            where = document.body;
+        }
+        if (where.jquery === undefined) {
+            $where = $(where);
+        }
+        var $playDiv = $('<div class="midiPlayer">');
+        var $controls = $('<div class="positionControls">');
+        var $playPause = $('<input type="image" src="' + music21.m21basePath + '/css/pause.png" align="absmiddle" value="pause" class="playPause">');
+        var $stop = $('<input type="image" src="' + music21.m21basePath + '/css/stop.png" align="absmiddle" value="stop" class="stopButton">');
+
+        $playPause.on('click', this.pausePlayStop.bind(this));
+        $stop.on('click', this.stopButton.bind(this));
+        $controls.append($playPause);
+        $controls.append($stop);
+        $playDiv.append($controls);
+        
+        var $time = $('<div class="timeControls">');
+        var $timePlayed = $('<span class="timePlayed">0:00</span>');
+        var $capsule = $('<span class="capsule"><span class="cursor"></span></span>');
+        var $timeRemaining = $('<span class="timeRemaining">-0:00</span>');
+        $time.append($timePlayed);
+        $time.append($capsule);
+        $time.append($timeRemaining);
+        $playDiv.append($time);
+        
+        $where.append($playDiv);
+        this.$playDiv = $playDiv;
+        return $playDiv;
+    }
+    miditools.MidiPlayer.prototype.stopButton = function() {
+        this.pausePlayStop(true);
+    }
+    
+    miditools.MidiPlayer.prototype.pausePlayStop = function(stop) {
+       var d = this.$playDiv.find(".playPause");
+       console.log(this.player);
+       if (stop) {
+           this.player.stop();
+           d.src = music21.m21basePath + "/css/play.png";
+       } else if (this.player.playing) {
+           d.src = music21.m21basePath + "/css/play.png";
+           this.player.pause(true);
+       } else {
+           d.src = music21.m21basePath + "/css/pause.png";
+           this.player.resume();
+       }
+    };
+   
+    
+    miditools.MidiPlayer.prototype.base64Load = function(b64data) {
+        var player = this.player;
+        player.timeWarp = this.speed;
+        
+        var m21midiplayer = this;
+        miditools.loadSoundfont('acoustic_grand_piano', function() {
+            player.loadFile(b64data, function() {   // success
+                m21midiplayer.fileLoaded();
+            }, 
+            undefined,  // loading
+            function(e) {  // failure
+                console.log(e) 
+            });
+        })
+    };
+    
+    miditools.MidiPlayer.prototype.songFinished = function() {
+        this.player.stop()
+    };
+    
+    miditools.MidiPlayer.prototype.fileLoaded = function() {
+        this.player.start();
+        this.updatePlaying();
+    };
+
+    miditools.MidiPlayer.prototype.updatePlaying = function() {
+        var self = this;
+        var player = this.player;
+        if (this.$playDiv === undefined) {
+            return;
+        }
+        var $d = this.$playDiv;
+        // update the timestamp
+        var timePlayed = $d.find(".timePlayed")[0];
+        var timeRemaining = $d.find(".timeRemaining")[0];
+        var timeCursor = $d.find(".cursor")[0];
+        var $capsule = $d.find(".capsule");
+
+        console.log(timePlayed);
+        //
+        eventjs.add($capsule[0], "drag", function(event, self) {
+            eventjs.cancel(event);
+            player.currentTime = (self.x) / 420 * player.endTime;
+            if (player.currentTime < 0) {
+                player.currentTime = 0;
+            }
+            if (player.currentTime > player.endTime) {
+                player.currentTime = player.endTime;
+            }
+            if (self.state === "down") {
+                player.pause(true);
+            } else if (self.state === "up") {
+                player.resume();
+            }
+        });
+        //
+        function timeFormatting(n) {
+            var minutes = n / 60 >> 0;
+            var seconds = String(n - (minutes * 60) >> 0);
+            if (seconds.length == 1) seconds = "0" + seconds;
+            return minutes + ":" + seconds;
+        };
+        
+        player.setAnimation(function(data) {
+            var percent = data.now / data.end;
+            var now = data.now >> 0; // where we are now
+            var end = data.end >> 0; // end of song
+            if (now === end) { // go to next song
+                self.songFinished();
+            }
+            // display the information to the user
+            timeCursor.style.width = (percent * 100) + "%";
+            timePlayed.innerHTML = timeFormatting(now);
+            timeRemaining.innerHTML = "-" + timeFormatting(end - now);
+        });
+    };
+    
+    
+    
 
     // end of define
     if (typeof(music21) != "undefined") {
