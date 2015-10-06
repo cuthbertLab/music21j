@@ -442,16 +442,17 @@ define(['jquery', './note', './chord', 'MIDI'],
         return $playDiv;
     }
     miditools.MidiPlayer.prototype.stopButton = function() {
-        this.pausePlayStop(true);
+        this.pausePlayStop("yes");
     }
     
     miditools.MidiPlayer.prototype.pausePlayStop = function(stop) {
-       var d = this.$playDiv.find(".playPause");
+       var d = this.$playDiv.find(".playPause")[0];
        console.log(this.player);
-       if (stop) {
+       if (stop == "yes") {
            this.player.stop();
            d.src = music21.m21basePath + "/css/play.png";
        } else if (this.player.playing) {
+           console.log("Stopping!");
            d.src = music21.m21basePath + "/css/play.png";
            this.player.pause(true);
        } else {
