@@ -455,7 +455,7 @@ define(['jquery', './note', './chord', 'MIDI'],
         if (stop == "yes") {
             this.player.stop();
             d.src = music21.m21basePath + "/css/play.png";
-        } else if (this.player.playing) {
+        } else if (this.player.playing || stop == 'pause') {
             d.src = music21.m21basePath + "/css/play.png";
             this.player.pause(true);
         } else {
@@ -486,10 +486,14 @@ define(['jquery', './note', './chord', 'MIDI'],
     };
     
     miditools.MidiPlayer.prototype.fileLoaded = function() {
+        this.updatePlaying();
+    };
+    miditools.MidiPlayer.prototype.startAndUpdate = function() {
         this.player.start();
         this.updatePlaying();
     };
-
+    
+    
     miditools.MidiPlayer.prototype.updatePlaying = function() {
         var self = this;
         var player = this.player;
@@ -514,9 +518,9 @@ define(['jquery', './note', './chord', 'MIDI'],
                 player.currentTime = player.endTime;
             }
             if (self.state === "down") {
-                player.pause(true);
+                this.pausePlayStop('pause');
             } else if (self.state === "up") {
-                player.resume();
+                this.pausePlayStop('play');
             }
         }).bind(this));
         //
