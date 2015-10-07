@@ -482,7 +482,7 @@ define(['jquery', './note', './chord', 'MIDI'],
     };
     
     miditools.MidiPlayer.prototype.songFinished = function() {
-        this.playPauseStop("yes");
+        this.pausePlayStop("yes");
     };
     
     miditools.MidiPlayer.prototype.fileLoaded = function() {
