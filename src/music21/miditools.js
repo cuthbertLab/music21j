@@ -419,7 +419,7 @@ define(['jquery', './note', './chord', 'MIDI'],
         }
         var $playDiv = $('<div class="midiPlayer">');
         var $controls = $('<div class="positionControls">');
-        var $playPause = $('<input type="image" src="' + music21.m21basePath + '/css/pause.png" align="absmiddle" value="pause" class="playPause">');
+        var $playPause = $('<input type="image" src="' + music21.m21basePath + '/css/play.png" align="absmiddle" value="play" class="playPause">');
         var $stop = $('<input type="image" src="' + music21.m21basePath + '/css/stop.png" align="absmiddle" value="stop" class="stopButton">');
 
         $playPause.on('click', this.pausePlayStop.bind(this));
