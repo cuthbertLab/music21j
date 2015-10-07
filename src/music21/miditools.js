@@ -446,19 +446,22 @@ define(['jquery', './note', './chord', 'MIDI'],
     }
     
     miditools.MidiPlayer.prototype.pausePlayStop = function(stop) {
-       var d = this.$playDiv.find(".playPause")[0];
-       console.log(this.player);
-       if (stop == "yes") {
-           this.player.stop();
-           d.src = music21.m21basePath + "/css/play.png";
-       } else if (this.player.playing) {
-           console.log("Stopping!");
-           d.src = music21.m21basePath + "/css/play.png";
-           this.player.pause(true);
-       } else {
-           d.src = music21.m21basePath + "/css/pause.png";
-           this.player.resume();
-       }
+        var d = undefined;
+        if (this.$playDiv === undefined) {
+            d = {src: 'doesnt matter'}
+        } else {
+            d = this.$playDiv.find(".playPause")[0];            
+        }
+        if (stop == "yes") {
+            this.player.stop();
+            d.src = music21.m21basePath + "/css/play.png";
+        } else if (this.player.playing) {
+            d.src = music21.m21basePath + "/css/play.png";
+            this.player.pause(true);
+        } else {
+            d.src = music21.m21basePath + "/css/pause.png";
+            this.player.resume();
+        }
     };
    
     
@@ -479,7 +482,7 @@ define(['jquery', './note', './chord', 'MIDI'],
     };
     
     miditools.MidiPlayer.prototype.songFinished = function() {
-        this.player.stop()
+        this.playPauseStop("yes");
     };
     
     miditools.MidiPlayer.prototype.fileLoaded = function() {
@@ -499,11 +502,10 @@ define(['jquery', './note', './chord', 'MIDI'],
         var timeRemaining = $d.find(".timeRemaining")[0];
         var timeCursor = $d.find(".cursor")[0];
         var $capsule = $d.find(".capsule");
-
-        console.log(timePlayed);
         //
-        eventjs.add($capsule[0], "drag", function(event, self) {
+        eventjs.add($capsule[0], "drag", (function(event, self) {
             eventjs.cancel(event);
+            var player = this.player;
             player.currentTime = (self.x) / 420 * player.endTime;
             if (player.currentTime < 0) {
                 player.currentTime = 0;
@@ -516,7 +518,7 @@ define(['jquery', './note', './chord', 'MIDI'],
             } else if (self.state === "up") {
                 player.resume();
             }
-        });
+        }).bind(this));
         //
         function timeFormatting(n) {
             var minutes = n / 60 >> 0;
