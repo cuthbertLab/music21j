@@ -404,7 +404,7 @@ define(['jquery', './note', './chord', 'MIDI'],
      * MidiPlayer -- embedded midi player.
      */
     miditools.MidiPlayer = function() {
-        this.player = music21.MIDI.Player;
+        this.player = new music21.MIDI.Players.PlayInstance();
         this.speed = 1.0;
         this.$playDiv = undefined;        
     };
