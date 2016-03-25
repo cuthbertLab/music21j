@@ -671,7 +671,7 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
             var end = ob.endTime;
             var voiceIndex = ob.voiceIndex;
             
-            // if e.isSpanner;
+            // if 'Spanner' in e.classes;
             
             var match = false;
             lastTimeSignature = undefined;

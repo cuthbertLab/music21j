@@ -1,43 +1,52 @@
 <html>
     <head>
-        <title>Music21j -- 21M.051 keyboard</title>
+        <title>music21j -- keyboard test</title>
         <!-- for MSIE 10 on Windows 8 -->
         <meta http-equiv="X-UA-Compatible" content="requiresActiveX=true"/>
         <script data-main="../src/music21.js" src="../ext/require/require.js"></script>
         <meta http-equiv="content-type" content="text/html; charset=utf-8" />
 
 		<script>
-		var s = ""; // will become Stream object soon...
-		var p = "";
+		var m = ""; // will become Measure object soon...
+		var p = ""; // will become Part object soon...
+		var p1 = ""; // will become lower Part object soon...
+		var sc = ""; // will beceom Score object soon.
+		
 		var metro = ""; // will become Metronome object soon...
-        function appendElement(appendObject) {
-		    appendObject = appendObject.clone();
-            if (s.length > 0) {
-                s.elements = s.elements.slice(1)
-            }
-            if (music21.miditools.transposeOctave >= 1 && s.clef.name == 'bass') {
-                s.clef = new music21.clef.TrebleClef();
-            }
-            if (music21.miditools.transposeOctave < 0 && s.clef.name == 'treble') {
-                s.clef = new music21.clef.BassClef();
-            }
 
+		function appendElement(appendObject) {
+		    appendObject = appendObject.clone();
+            if (m.length > 0) {
+                m.elements = m.elements.slice(1)
+            }
+            if (music21.miditools.transposeOctave >= 1 && m.clef.name == 'bass') {
+                m.clef = new music21.clef.TrebleClef();
+            }
+            if (music21.miditools.transposeOctave < 0 && m.clef.name == 'treble') {
+                m.clef = new music21.clef.BassClef();
+            }
+            
             appendObject.stemDirection = undefined;
             appendObject.duration.type = "whole";
             appendObject.duration.dots = 0;
-            s.append(appendObject);
+            m.append(appendObject);
             var $canvasDiv = $("#canvasDiv");
             $canvasDiv.empty();
             var canv = p.appendNewCanvas($canvasDiv);
         }
 		
+		function appendElementGrandStaff(appendChord) {
+		    console.log('using GrandStaff Append!');
+		    appendElement(appendChord);
+		}
+		
 		
 		require(['music21'], function () { 	
 		    p = new music21.stream.Part();
 		    //p.renderOptions.width = 500;
-		    s = new music21.stream.Measure();
-		    p.insert(0, s);
-		    s.clef = new music21.clef.TrebleClef();
+		    m = new music21.stream.Measure();
+		    p.insert(0, m);
+		    m.clef = new music21.clef.TrebleClef();
 		    p.renderOptions.scaleFactor = {x: 1.5, y: 1.5};
 		    metro = new music21.tempo.Metronome();
 		    // metro.addDiv($("#metronomeDiv"));
@@ -64,7 +73,7 @@
                                        music21.keyboard.jazzHighlight.bind(k)];
 
             music21.webmidi.createSelector($("#putMidiSelectHere"));
-            music21.webmidi.callBacks.general = [midiCallbacksPlay];
+            music21.webmidi.callBacks.general = midiCallbacksPlay;
             music21.webmidi.callBacks.sendOutChord = appendElement;
 		    
             $('#markC').bind('click', function () { k.markC = this.checked; k.redrawSVG() })
@@ -77,7 +86,18 @@
                     music21.webmidi.callBacks.general = midiCallbacksNoPlay;
                 }
             });
-
+            $('input[type=radio][name=staffNumberSelector]').change(function() {
+                if (this.value == 'singleStaff') {
+                    music21.webmidi.callBacks.sendOutChord = appendElement;
+                }
+                else if (this.value == 'grandStaff') {
+                    music21.webmidi.callBacks.sendOutChord = appendElementGrandStaff;
+                } else {
+                    console.log("What value is this? " + this.value);
+                }
+            });
+            
+            
 		});
 		
 		
@@ -88,14 +108,18 @@
 	Show note names: <input type='checkbox' checked id='showNames'/> &middot; 
 	Show octaves: <input type='checkbox' id='showOctaves'/> &middot; 
 	Play sound: <input type='checkbox' checked id='playSound'/> &middot; 
-    Mark middle C: <input type='checkbox' checked id='markC'/> &middot; 
-	MIDI Input: <span id="putMidiSelectHere" />
+    Mark middle C: <input type='checkbox' checked id='markC'/> &middot;
+    <span id="staffSelect">
+        <input type="radio" name="staffNumberSelector" value="singleStaff">Single Staff
+        <input type="radio" checked name="staffNumberSelector" value="grandStaff">Grand Staff        
+    </span> &middot;
+	MIDI Input: <span id="putMidiSelectHere"></span>
 	</div>
 	<div>&nbsp;</div>
 	<div style='text-align: center' id='keyboardDiv'></div>
 	<div>&nbsp;</div>
-<div id="canvasDiv" style='text-align: center'>
-        <canvas />
-</div>
+    <div id="canvasDiv" style='text-align: center'>
+        <canvas></canvas>
+    </div>
 </body>
 </html>

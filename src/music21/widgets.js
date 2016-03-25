@@ -266,6 +266,7 @@ define(['./common'],
         }
     };            
     
+        
     // end of define
     if (typeof(music21) != "undefined") {
         music21.widgets = widgets;

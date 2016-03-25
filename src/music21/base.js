@@ -52,8 +52,6 @@ define(['./prebase', './duration'],
 		this.activeSite = undefined;
 		this.isMusic21Object = true;
 		this.isStream = false;
-		// this.isSpanner = false; // add when supported,
-		// this.isVariant = false; // add when supported, if ever...
 
 		this._duration = new duration.Duration();
 		this.groups = []; // custom object in m21p

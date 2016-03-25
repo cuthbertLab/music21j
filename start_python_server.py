@@ -8,15 +8,22 @@ so call
     python server/start_python_server.py
     
 '''
-import BaseHTTPServer
-import CGIHTTPServer
-import cgitb;
 
+try:
+    from BaseHTTPServer import HTTPServer
+    from CGIHTTPServer import CGIHTTPRequestHandler
+    from CGIHTTPServer import _url_collapse_path
+except ImportError: # python 3
+    from http.server import HTTPServer
+    from http.server import CGIHTTPRequestHandler
+    from http.server import _url_collapse_path
+    
+import cgitb;
 cgitb.enable()  # Error reporting
 
-from CGIHTTPServer import _url_collapse_path
 
-class MykeCGIHTTPServer(CGIHTTPServer.CGIHTTPRequestHandler):
+
+class MykeCGIHTTPServer(CGIHTTPRequestHandler):
     
     def is_cgi(self):
         """Test whether self.path corresponds to a CGI script.
@@ -42,7 +49,7 @@ class MykeCGIHTTPServer(CGIHTTPServer.CGIHTTPRequestHandler):
         return False
 
 
-server = BaseHTTPServer.HTTPServer
+server = HTTPServer
 handler = MykeCGIHTTPServer
 
 #handler.cgi_directories.append("/server/cgi-bin/")

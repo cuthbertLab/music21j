@@ -46,7 +46,7 @@ define(['./pitch', './common'],
     */
    audioSearch.getUserMedia = function(dictionary, callback, error) {
        if (error === undefined) {
-           error = function() { alert("getUserMedia either not defined (Safari, IE) or denied."); }
+           error = function() { alert("navigator.getUserMedia either not defined (Safari, IE) or denied."); }
        }
        if (callback === undefined) {
            callback = function (mediaStream) { audioSearch.userMediaStarted(mediaStream) }
