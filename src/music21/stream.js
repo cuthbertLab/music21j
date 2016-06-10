@@ -309,34 +309,6 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
 					return this._elements.length;
 				}
 			},
-			'offsetMap': {
-                configurable: true,
-                enumerable: true,
-                get: function() {
-                    var offsetMap = [];
-                    var groups = [];
-                    if (this.hasVoices()) {
-                        $.each(srcObj.getElementsByClass('Voice').elements, function(i, v) { 
-                            groups.push([v.flat, i]); 
-                        });
-                    } else {
-                        groups = [ [this, undefined] ];
-                    }
-                    for (var i = 0; i < groups.length; i++) {
-                        var group = groups[i][0];
-                        var voiceIndex = groups[i][1];
-                        for (var j = 0; j < group.length; j++) {
-                            var e = group.get(j);
-                            var dur = e.duration.quarterLength;
-                            var offset = e.offset; // TODO: getOffsetBySite(group)
-                            var endTime = offset + dur;
-                            var thisOffsetMap = new stream.OffsetMap(e, offset, endTime, voiceIndex);
-                            offsetMap.push(thisOffsetMap);
-                        }
-                    }
-                    return offsetMap;
-                }			    
-			},
 			'elements': {
                 configurable: true,
                 enumerable: true,
@@ -623,7 +595,7 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
         }
         // getContextByClass('Clef')
         var clefObj = this.clef;
-        var offsetMap = this.offsetMap;
+        var offsetMap = this.offsetMap();
         var oMax = 0;
         var i;
         for (i = 0; i < offsetMap.length; i++) {
@@ -731,6 +703,38 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
         }        
         return false;
     };
+    
+    /**
+     * Returns a list of OffsetMap objects
+     * 
+     * @memberof music21.stream.Stream
+     * @returns [music21.stream.OffsetMap]
+     */
+    stream.Stream.prototype.offsetMap = function() {
+        var offsetMap = [];
+        var groups = [];
+        if (this.hasVoices()) {
+            $.each(srcObj.getElementsByClass('Voice').elements, function(i, v) { 
+                groups.push([v.flat, i]); 
+            });
+        } else {
+            groups = [ [this, undefined] ];
+        }
+        for (var i = 0; i < groups.length; i++) {
+            var group = groups[i][0];
+            var voiceIndex = groups[i][1];
+            for (var j = 0; j < group.length; j++) {
+                var e = group.get(j);
+                var dur = e.duration.quarterLength;
+                var offset = e.offset; // TODO: getOffsetBySite(group)
+                var endTime = offset + dur;
+                var thisOffsetMap = new stream.OffsetMap(e, offset, endTime, voiceIndex);
+                offsetMap.push(thisOffsetMap);
+            }
+        }
+        return offsetMap;
+    }               
+    
     
     /**
      * Find all elements with a certain class; if an Array is given, then any
@@ -1415,7 +1419,7 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
 
         var notesFromTop = yPxScaled * 2 / lineSpacing;
         var notesAboveLowestLine = ((storedVFStave.options.num_lines - 1 + linesAboveStaff) * 2 ) - notesFromTop;
-        var clickedDiatonicNoteNum = this.clef.firstLine + Math.round(notesAboveLowestLine);
+        var clickedDiatonicNoteNum = this.clef.lowestLine + Math.round(notesAboveLowestLine);
         return clickedDiatonicNoteNum;
     };
     
@@ -2293,7 +2297,7 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
         return this;
     };    
 
-    // small Class.
+    // small Class; a namedtuple in music21p
     stream.OffsetMap = function (element, offset, endTime, voiceIndex) {
         this.element = element;
         this.offset = offset;
@@ -2422,13 +2426,13 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
             c = s.getElementsByClass('GeneralNote');            
             equal (c.length, 3, 'got multiple subclasses');
         });  
-        test( "music21.stream.OffsetMap" , function() {
+        test( "music21.stream.offsetMap" , function() {
             var n = new music21.note.Note("G3");
             var o = new music21.note.Note("A3");            
             var s = new music21.stream.Measure();
             s.insert(0, n);
             s.insert(0.5, o);
-            var om = s.offsetMap;
+            var om = s.offsetMap();
             equal (om.length, 2, 'offsetMap should have length 2');
             var omn = om[0];
             var omo = om[1];
