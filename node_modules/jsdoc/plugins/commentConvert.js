@@ -5,7 +5,7 @@
  */
 'use strict';
 
-/*eslint spaced-line-comment: 0 */
+/* eslint spaced-comment: 0 */
 
 exports.handlers = {
     ///
@@ -17,7 +17,7 @@ exports.handlers = {
     beforeParse: function(e) {
         e.source = e.source.replace(/(\n[ \t]*\/\/\/[^\n]*)+/g, function($) {
             var replacement = '\n/**' + $.replace(/^[ \t]*\/\/\//mg, '').replace(/(\n$|$)/, '*/$1');
-            return  replacement;
+            return replacement;
         });
     }
 };

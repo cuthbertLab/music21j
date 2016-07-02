@@ -488,6 +488,10 @@
 						</li>
 						
 						<li>
+							<a href="music21.miditools.MidiPlayer.html">music21.miditools.MidiPlayer</a>
+						</li>
+						
+						<li>
 							<a href="music21.note.GeneralNote.html">music21.note.GeneralNote</a>
 						</li>
 						
@@ -587,6 +591,24 @@
 					</ul>
 				</li>
 				
+				<li class="dropdown">
+					<a href="global.html" class="dropdown-toggle" data-toggle="dropdown">Global<b
+						class="caret"></b></a>
+
+					<ul class="dropdown-menu ">
+						
+						<li>
+							<a href="global.html#getM21attribute">getM21attribute</a>
+						</li>
+						
+						<li>
+							<a href="global.html#warnBanner">warnBanner</a>
+						</li>
+						
+
+					</ul>
+				</li>
+				
 			</ul>
 		</div>
 	</div>
@@ -627,11 +649,7 @@
     
     
     <div class="description">
-        <p>A generic Stream class -- a holder for other music21 objects
-Will be subclassed into <a href="music21.stream.Score.html"><code>music21.stream.Score</code></a>,
-<a href="music21.stream.Part.html"><code>music21.stream.Part</code></a>,
-<a href="music21.stream.Measure.html"><code>music21.stream.Measure</code></a>,
-<a href="music21.stream.Voice.html"><code>music21.stream.Voice</code></a>, but most functions will be found here.</p>
+        <p>A generic Stream class -- a holder for other music21 objects<br>Will be subclassed into <a href="music21.stream.Score.html"><code>music21.stream.Score</code></a>,<br><a href="music21.stream.Part.html"><code>music21.stream.Part</code></a>,<br><a href="music21.stream.Measure.html"><code>music21.stream.Measure</code></a>,<br><a href="music21.stream.Voice.html"><code>music21.stream.Voice</code></a>, but most functions will be found here.</p>
     </div>
     
 
@@ -1365,8 +1383,7 @@ Will be subclassed into <a href="music21.stream.Score.html"><code>music21.stream
 <dd>
     
     <div class="description">
-        <p>A function bound to the current stream that
-will changes the stream. Used in editableAccidentalCanvas, among other places.</p>
+        <p>A function bound to the current stream that<br>will changes the stream. Used in editableAccidentalCanvas, among other places.</p>
 <pre class="prettyprint source"><code> var can = s.appendNewCanvas();
  $(can).on('click', s.canvasChangerFunction);</code></pre>
     </div>
@@ -1402,7 +1419,7 @@ will changes the stream. Used in editableAccidentalCanvas, among other places.</
 		<ul class="dummy">
 			<li>
 				<a href="music21_stream.js.html">music21/stream.js</a>,
-				 <a href="music21_stream.js.html#sunlight-1-line-391">line 391</a>
+				 <a href="music21_stream.js.html#sunlight-1-line-363">line 363</a>
 			</li>
 		</ul>
 	</dd>
@@ -1523,7 +1540,7 @@ will changes the stream. Used in editableAccidentalCanvas, among other places.</
 		<ul class="dummy">
 			<li>
 				<a href="music21_stream.js.html">music21/stream.js</a>,
-				 <a href="music21_stream.js.html#sunlight-1-line-466">line 466</a>
+				 <a href="music21_stream.js.html#sunlight-1-line-438">line 438</a>
 			</li>
 		</ul>
 	</dd>
@@ -1770,7 +1787,7 @@ will changes the stream. Used in editableAccidentalCanvas, among other places.</
 		<ul class="dummy">
 			<li>
 				<a href="music21_stream.js.html">music21/stream.js</a>,
-				 <a href="music21_stream.js.html#sunlight-1-line-1152">line 1152</a>
+				 <a href="music21_stream.js.html#sunlight-1-line-1156">line 1156</a>
 			</li>
 		</ul>
 	</dd>
@@ -1975,7 +1992,7 @@ will changes the stream. Used in editableAccidentalCanvas, among other places.</
 		<ul class="dummy">
 			<li>
 				<a href="music21_stream.js.html">music21/stream.js</a>,
-				 <a href="music21_stream.js.html#sunlight-1-line-1137">line 1137</a>
+				 <a href="music21_stream.js.html#sunlight-1-line-1141">line 1141</a>
 			</li>
 		</ul>
 	</dd>
@@ -2160,7 +2177,7 @@ will changes the stream. Used in editableAccidentalCanvas, among other places.</
 		<ul class="dummy">
 			<li>
 				<a href="music21_stream.js.html">music21/stream.js</a>,
-				 <a href="music21_stream.js.html#sunlight-1-line-1082">line 1082</a>
+				 <a href="music21_stream.js.html#sunlight-1-line-1086">line 1086</a>
 			</li>
 		</ul>
 	</dd>
@@ -2344,7 +2361,7 @@ will changes the stream. Used in editableAccidentalCanvas, among other places.</
 		<ul class="dummy">
 			<li>
 				<a href="music21_stream.js.html">music21/stream.js</a>,
-				 <a href="music21_stream.js.html#sunlight-1-line-1124">line 1124</a>
+				 <a href="music21_stream.js.html#sunlight-1-line-1128">line 1128</a>
 			</li>
 		</ul>
 	</dd>
@@ -2494,7 +2511,7 @@ will changes the stream. Used in editableAccidentalCanvas, among other places.</
 		<ul class="dummy">
 			<li>
 				<a href="music21_stream.js.html">music21/stream.js</a>,
-				 <a href="music21_stream.js.html#sunlight-1-line-1408">line 1408</a>
+				 <a href="music21_stream.js.html#sunlight-1-line-1412">line 1412</a>
 			</li>
 		</ul>
 	</dd>
@@ -2551,8 +2568,7 @@ will changes the stream. Used in editableAccidentalCanvas, among other places.</
     
     
     <div class="description">
-        <p>Renders a stream on a canvas with the ability to edit it and
-a toolbar that allows the accidentals to be edited.</p>
+        <p>Renders a stream on a canvas with the ability to edit it and<br>a toolbar that allows the accidentals to be edited.</p>
     </div>
     
 
@@ -2684,7 +2700,7 @@ a toolbar that allows the accidentals to be edited.</p>
 		<ul class="dummy">
 			<li>
 				<a href="music21_stream.js.html">music21/stream.js</a>,
-				 <a href="music21_stream.js.html#sunlight-1-line-1536">line 1536</a>
+				 <a href="music21_stream.js.html#sunlight-1-line-1540">line 1540</a>
 			</li>
 		</ul>
 	</dd>
@@ -2783,7 +2799,7 @@ a toolbar that allows the accidentals to be edited.</p>
 		<ul class="dummy">
 			<li>
 				<a href="music21_stream.js.html">music21/stream.js</a>,
-				 <a href="music21_stream.js.html#sunlight-1-line-951">line 951</a>
+				 <a href="music21_stream.js.html#sunlight-1-line-955">line 955</a>
 			</li>
 		</ul>
 	</dd>
@@ -2952,7 +2968,7 @@ a toolbar that allows the accidentals to be edited.</p>
 		<ul class="dummy">
 			<li>
 				<a href="music21_stream.js.html">music21/stream.js</a>,
-				 <a href="music21_stream.js.html#sunlight-1-line-915">line 915</a>
+				 <a href="music21_stream.js.html#sunlight-1-line-919">line 919</a>
 			</li>
 		</ul>
 	</dd>
@@ -3013,12 +3029,8 @@ a toolbar that allows the accidentals to be edited.</p>
     
     
     <div class="description">
-        <p>Given an event object, and an x and y location, returns a two-element array
-of the pitch.Pitch.diatonicNoteNum that was clicked (i.e., if C4 was clicked this
-will return 29; if D4 was clicked this will return 30) and the closest note in the
-stream that was clicked.</p>
-<p>Return a list of [diatonicNoteNum, closestXNote]
-for an event (e) called on the canvas (canvas)</p>
+        <p>Given an event object, and an x and y location, returns a two-element array<br>of the pitch.Pitch.diatonicNoteNum that was clicked (i.e., if C4 was clicked this<br>will return 29; if D4 was clicked this will return 30) and the closest note in the<br>stream that was clicked.</p>
+<p>Return a list of [diatonicNoteNum, closestXNote]<br>for an event (e) called on the canvas (canvas)</p>
     </div>
     
 
@@ -3174,7 +3186,7 @@ for an event (e) called on the canvas (canvas)</p>
 		<ul class="dummy">
 			<li>
 				<a href="music21_stream.js.html">music21/stream.js</a>,
-				 <a href="music21_stream.js.html#sunlight-1-line-1472">line 1472</a>
+				 <a href="music21_stream.js.html#sunlight-1-line-1476">line 1476</a>
 			</li>
 		</ul>
 	</dd>
@@ -3235,8 +3247,7 @@ for an event (e) called on the canvas (canvas)</p>
     
     
     <div class="description">
-        <p>Get the <code>index</code>th element from the Stream.  Equivalent to the
-music21p format of s[index].  Can use negative indexing to get from the end.</p>
+        <p>Get the <code>index</code>th element from the Stream.  Equivalent to the<br>music21p format of s[index].  Can use negative indexing to get from the end.</p>
     </div>
     
 
@@ -3323,7 +3334,7 @@ music21p format of s[index].  Can use negative indexing to get from the end.</p>
 		<ul class="dummy">
 			<li>
 				<a href="music21_stream.js.html">music21/stream.js</a>,
-				 <a href="music21_stream.js.html#sunlight-1-line-550">line 550</a>
+				 <a href="music21_stream.js.html#sunlight-1-line-522">line 522</a>
 			</li>
 		</ul>
 	</dd>
@@ -3489,7 +3500,7 @@ music21p format of s[index].  Can use negative indexing to get from the end.</p>
 		<ul class="dummy">
 			<li>
 				<a href="music21_stream.js.html">music21/stream.js</a>,
-				 <a href="music21_stream.js.html#sunlight-1-line-1561">line 1561</a>
+				 <a href="music21_stream.js.html#sunlight-1-line-1565">line 1565</a>
 			</li>
 		</ul>
 	</dd>
@@ -3550,8 +3561,7 @@ music21p format of s[index].  Can use negative indexing to get from the end.</p>
     
     
     <div class="description">
-        <p>Find all elements with a certain class; if an Array is given, then any
-matching class will work.</p>
+        <p>Find all elements with a certain class; if an Array is given, then any<br>matching class will work.</p>
     </div>
     
 
@@ -3641,7 +3651,7 @@ matching class will work.</p>
 		<ul class="dummy">
 			<li>
 				<a href="music21_stream.js.html">music21/stream.js</a>,
-				 <a href="music21_stream.js.html#sunlight-1-line-743">line 743</a>
+				 <a href="music21_stream.js.html#sunlight-1-line-747">line 747</a>
 			</li>
 		</ul>
 	</dd>
@@ -3732,7 +3742,7 @@ matching class will work.</p>
 		<ul class="dummy">
 			<li>
 				<a href="music21_stream.js.html">music21/stream.js</a>,
-				 <a href="music21_stream.js.html#sunlight-1-line-1611">line 1611</a>
+				 <a href="music21_stream.js.html#sunlight-1-line-1615">line 1615</a>
 			</li>
 		</ul>
 	</dd>
@@ -3793,10 +3803,8 @@ matching class will work.</p>
     
     
     <div class="description">
-        <p>return a list of [scaledX, scaledY] for
-a canvas element.</p>
-<p>xScaled refers to 1/scaleFactor.x -- for instance, scaleFactor.x = 0.7 (default)
-x of 1 gives 1.42857...</p>
+        <p>return a list of [scaledX, scaledY] for<br>a canvas element.</p>
+<p>xScaled refers to 1/scaleFactor.x -- for instance, scaleFactor.x = 0.7 (default)<br>x of 1 gives 1.42857...</p>
     </div>
     
 
@@ -3906,7 +3914,7 @@ x of 1 gives 1.42857...</p>
 		<ul class="dummy">
 			<li>
 				<a href="music21_stream.js.html">music21/stream.js</a>,
-				 <a href="music21_stream.js.html#sunlight-1-line-1386">line 1386</a>
+				 <a href="music21_stream.js.html#sunlight-1-line-1390">line 1390</a>
 			</li>
 		</ul>
 	</dd>
@@ -3967,8 +3975,7 @@ x of 1 gives 1.42857...</p>
     
     
     <div class="description">
-        <p>Given a mouse click, or other event with .pageX and .pageY,
-find the x and y for the canvas.</p>
+        <p>Given a mouse click, or other event with .pageX and .pageY,<br>find the x and y for the canvas.</p>
     </div>
     
 
@@ -4078,7 +4085,7 @@ find the x and y for the canvas.</p>
 		<ul class="dummy">
 			<li>
 				<a href="music21_stream.js.html">music21/stream.js</a>,
-				 <a href="music21_stream.js.html#sunlight-1-line-1351">line 1351</a>
+				 <a href="music21_stream.js.html#sunlight-1-line-1355">line 1355</a>
 			</li>
 		</ul>
 	</dd>
@@ -4177,7 +4184,7 @@ find the x and y for the canvas.</p>
 		<ul class="dummy">
 			<li>
 				<a href="music21_stream.js.html">music21/stream.js</a>,
-				 <a href="music21_stream.js.html#sunlight-1-line-725">line 725</a>
+				 <a href="music21_stream.js.html#sunlight-1-line-697">line 697</a>
 			</li>
 		</ul>
 	</dd>
@@ -4272,7 +4279,7 @@ find the x and y for the canvas.</p>
 		<ul class="dummy">
 			<li>
 				<a href="music21_stream.js.html">music21/stream.js</a>,
-				 <a href="music21_stream.js.html#sunlight-1-line-577">line 577</a>
+				 <a href="music21_stream.js.html#sunlight-1-line-549">line 549</a>
 			</li>
 		</ul>
 	</dd>
@@ -4367,7 +4374,7 @@ find the x and y for the canvas.</p>
 		<ul class="dummy">
 			<li>
 				<a href="music21_stream.js.html">music21/stream.js</a>,
-				 <a href="music21_stream.js.html#sunlight-1-line-1672">line 1672</a>
+				 <a href="music21_stream.js.html#sunlight-1-line-1676">line 1676</a>
 			</li>
 		</ul>
 	</dd>
@@ -4534,7 +4541,7 @@ find the x and y for the canvas.</p>
 		<ul class="dummy">
 			<li>
 				<a href="music21_stream.js.html">music21/stream.js</a>,
-				 <a href="music21_stream.js.html#sunlight-1-line-495">line 495</a>
+				 <a href="music21_stream.js.html#sunlight-1-line-467">line 467</a>
 			</li>
 		</ul>
 	</dd>
@@ -4591,9 +4598,7 @@ find the x and y for the canvas.</p>
     
     
     <div class="description">
-        <p>Sets Pitch.accidental.displayStatus for every element with a
-pitch or pitches in the stream. If a natural needs to be displayed
-and the Pitch does not have an accidental object yet, adds one.</p>
+        <p>Sets Pitch.accidental.displayStatus for every element with a<br>pitch or pitches in the stream. If a natural needs to be displayed<br>and the Pitch does not have an accidental object yet, adds one.</p>
 <p>Called automatically before appendCanvas routines are called.</p>
     </div>
     
@@ -4632,7 +4637,7 @@ and the Pitch does not have an accidental object yet, adds one.</p>
 		<ul class="dummy">
 			<li>
 				<a href="music21_stream.js.html">music21/stream.js</a>,
-				 <a href="music21_stream.js.html#sunlight-1-line-768">line 768</a>
+				 <a href="music21_stream.js.html#sunlight-1-line-772">line 772</a>
 			</li>
 		</ul>
 	</dd>
@@ -4693,14 +4698,7 @@ and the Pitch does not have an accidental object yet, adds one.</p>
     
     
     <div class="description">
-        <p>Takes a stream and places all of its elements into
-measures (:class:<code>~music21.stream.Measure</code> objects)
-based on the :class:<code>~music21.meter.TimeSignature</code> objects
-placed within
-the stream. If no TimeSignatures are found in the
-stream, a default of 4/4 is used.
-If <code>options.inPlace</code> is true, the original Stream is modified and lost
-if <code>options.inPlace</code> is False, this returns a modified deep copy.</p>
+        <p>Takes a stream and places all of its elements into<br>measures (:class:<code>~music21.stream.Measure</code> objects)<br>based on the :class:<code>~music21.meter.TimeSignature</code> objects<br>placed within<br>the stream. If no TimeSignatures are found in the<br>stream, a default of 4/4 is used.<br>If <code>options.inPlace</code> is true, the original Stream is modified and lost<br>if <code>options.inPlace</code> is False, this returns a modified deep copy.</p>
     </div>
     
 
@@ -4787,7 +4785,7 @@ if <code>options.inPlace</code> is False, this returns a modified deep copy.</p>
 		<ul class="dummy">
 			<li>
 				<a href="music21_stream.js.html">music21/stream.js</a>,
-				 <a href="music21_stream.js.html#sunlight-1-line-603">line 603</a>
+				 <a href="music21_stream.js.html#sunlight-1-line-575">line 575</a>
 			</li>
 		</ul>
 	</dd>
@@ -4844,8 +4842,7 @@ if <code>options.inPlace</code> is False, this returns a modified deep copy.</p>
     
     
     <div class="description">
-        <p>Change the pitch of a note given that it has been clicked and then
-call changedCallbackFunction</p>
+        <p>Change the pitch of a note given that it has been clicked and then<br>call changedCallbackFunction</p>
 <p>To be removed...</p>
     </div>
     
@@ -4979,7 +4976,7 @@ call changedCallbackFunction</p>
 		<ul class="dummy">
 			<li>
 				<a href="music21_stream.js.html">music21/stream.js</a>,
-				 <a href="music21_stream.js.html#sunlight-1-line-1495">line 1495</a>
+				 <a href="music21_stream.js.html#sunlight-1-line-1499">line 1499</a>
 			</li>
 		</ul>
 	</dd>
@@ -5040,8 +5037,7 @@ call changedCallbackFunction</p>
     
     
     <div class="description">
-        <p>Return the note at pixel X (or within allowablePixels [default 10])
-of the note.</p>
+        <p>Return the note at pixel X (or within allowablePixels [default 10])<br>of the note.</p>
 <p>systemIndex element is not used on bare Stream</p>
     </div>
     
@@ -5221,7 +5217,7 @@ of the note.</p>
 		<ul class="dummy">
 			<li>
 				<a href="music21_stream.js.html">music21/stream.js</a>,
-				 <a href="music21_stream.js.html#sunlight-1-line-1435">line 1435</a>
+				 <a href="music21_stream.js.html#sunlight-1-line-1439">line 1439</a>
 			</li>
 		</ul>
 	</dd>
@@ -5273,6 +5269,93 @@ of the note.</p>
         
             
 <dt>
+    <h4 class="name" id="offsetMap"><span class="type-signature">&lt;static> </span>stream.Stream#offsetMap<span class="signature">()</span><span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        <p>Returns a list of OffsetMap objects</p>
+    </div>
+    
+
+    
+    
+    
+    
+    
+    
+    
+<dl class="details">
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="music21_stream.js.html">music21/stream.js</a>,
+				 <a href="music21_stream.js.html#sunlight-1-line-713">line 713</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+    <p>[music21.stream.OffsetMap]</p>
+</div>
+
+
+
+
+        
+    
+    
+</dd>
+
+        
+            
+<dt>
     <h4 class="name" id="playStream"><span class="type-signature">&lt;static> </span>stream.Stream#playStream<span class="signature">(<span class="optional">options</span>)</span><span class="type-signature"> &rarr; {<a href="music21.stream.Stream.html">music21.stream.Stream</a>}</span></h4>
     
     
@@ -5287,8 +5370,7 @@ of the note.</p>
 <li>instrument: <a href="music21.instrument.Instrument.html"><code>music21.instrument.Instrument</code></a> object (default, <code>this.instrument</code>)</li>
 <li>tempo: number (default, <code>this.tempo</code>)</li>
 </ul>
-<p>Does not have functionality for stopping etc., will be removed eventually
-and replaced with something better in <a href="music21.streamInteraction.html"><code>music21.streamInteraction</code></a></p>
+<p>Does not have functionality for stopping etc., will be removed eventually<br>and replaced with something better in <a href="music21.streamInteraction.html"><code>music21.streamInteraction</code></a></p>
     </div>
     
 
@@ -5387,7 +5469,7 @@ and replaced with something better in <a href="music21.streamInteraction.html"><
 		<ul class="dummy">
 			<li>
 				<a href="music21_stream.js.html">music21/stream.js</a>,
-				 <a href="music21_stream.js.html#sunlight-1-line-1009">line 1009</a>
+				 <a href="music21_stream.js.html#sunlight-1-line-1013">line 1013</a>
 			</li>
 		</ul>
 	</dd>
@@ -5486,7 +5568,7 @@ and replaced with something better in <a href="music21.streamInteraction.html"><
 		<ul class="dummy">
 			<li>
 				<a href="music21_stream.js.html">music21/stream.js</a>,
-				 <a href="music21_stream.js.html#sunlight-1-line-530">line 530</a>
+				 <a href="music21_stream.js.html#sunlight-1-line-502">line 502</a>
 			</li>
 		</ul>
 	</dd>
@@ -5588,7 +5670,7 @@ and replaced with something better in <a href="music21.streamInteraction.html"><
 		<ul class="dummy">
 			<li>
 				<a href="music21_stream.js.html">music21/stream.js</a>,
-				 <a href="music21_stream.js.html#sunlight-1-line-1322">line 1322</a>
+				 <a href="music21_stream.js.html#sunlight-1-line-1326">line 1326</a>
 			</li>
 		</ul>
 	</dd>
@@ -5735,7 +5817,7 @@ and replaced with something better in <a href="music21.streamInteraction.html"><
 		<ul class="dummy">
 			<li>
 				<a href="music21_stream.js.html">music21/stream.js</a>,
-				 <a href="music21_stream.js.html#sunlight-1-line-1515">line 1515</a>
+				 <a href="music21_stream.js.html#sunlight-1-line-1519">line 1519</a>
 			</li>
 		</ul>
 	</dd>
@@ -5899,7 +5981,7 @@ and replaced with something better in <a href="music21.streamInteraction.html"><
 		<ul class="dummy">
 			<li>
 				<a href="music21_stream.js.html">music21/stream.js</a>,
-				 <a href="music21_stream.js.html#sunlight-1-line-1235">line 1235</a>
+				 <a href="music21_stream.js.html#sunlight-1-line-1239">line 1239</a>
 			</li>
 		</ul>
 	</dd>
@@ -5960,8 +6042,7 @@ and replaced with something better in <a href="music21.streamInteraction.html"><
     
     
     <div class="description">
-        <p>Uses <a href="music21.vfShow.Renderer.html"><code>music21.vfShow.Renderer</code></a> to render Vexflow onto an
-existing canvas object.</p>
+        <p>Uses <a href="music21.vfShow.Renderer.html"><code>music21.vfShow.Renderer</code></a> to render Vexflow onto an<br>existing canvas object.</p>
 <p>Sets canvas.storedStream to this</p>
 <p>Runs <code>this.setRenderInteraction</code> on the canvas.</p>
 <p>Will be moved to vfShow eventually when converter objects are enabled...maybe.</p>
@@ -6054,7 +6135,7 @@ existing canvas object.</p>
 		<ul class="dummy">
 			<li>
 				<a href="music21_stream.js.html">music21/stream.js</a>,
-				 <a href="music21_stream.js.html#sunlight-1-line-895">line 895</a>
+				 <a href="music21_stream.js.html#sunlight-1-line-899">line 899</a>
 			</li>
 		</ul>
 	</dd>
@@ -6263,7 +6344,7 @@ existing canvas object.</p>
 		<ul class="dummy">
 			<li>
 				<a href="music21_stream.js.html">music21/stream.js</a>,
-				 <a href="music21_stream.js.html#sunlight-1-line-1184">line 1184</a>
+				 <a href="music21_stream.js.html#sunlight-1-line-1188">line 1188</a>
 			</li>
 		</ul>
 	</dd>
@@ -6324,8 +6405,7 @@ existing canvas object.</p>
     
     
     <div class="description">
-        <p>Resets all the RenderOptions back to defaults. Can run recursively
-and can also preserve the <code>RenderOptions.events</code> object.</p>
+        <p>Resets all the RenderOptions back to defaults. Can run recursively<br>and can also preserve the <code>RenderOptions.events</code> object.</p>
     </div>
     
 
@@ -6471,7 +6551,7 @@ and can also preserve the <code>RenderOptions.events</code> object.</p>
 		<ul class="dummy">
 			<li>
 				<a href="music21_stream.js.html">music21/stream.js</a>,
-				 <a href="music21_stream.js.html#sunlight-1-line-860">line 860</a>
+				 <a href="music21_stream.js.html#sunlight-1-line-864">line 864</a>
 			</li>
 		</ul>
 	</dd>
@@ -6532,8 +6612,7 @@ and can also preserve the <code>RenderOptions.events</code> object.</p>
     
     
     <div class="description">
-        <p>Sets up a <a href="music21.streamInteraction.ScrollPlayer.html"><code>music21.streamInteraction.ScrollPlayer</code></a> for this
-canvas.</p>
+        <p>Sets up a <a href="music21.streamInteraction.ScrollPlayer.html"><code>music21.streamInteraction.ScrollPlayer</code></a> for this<br>canvas.</p>
     </div>
     
 
@@ -6626,8 +6705,7 @@ canvas.</p>
 
             
 
-            <td class="description last"><p>the event that caused the scrolling to start
-(needed because <code>event.stopPropagation()</code> is called)</p></td>
+            <td class="description last"><p>the event that caused the scrolling to start<br>(needed because <code>event.stopPropagation()</code> is called)</p></td>
         </tr>
 
 	
@@ -6664,7 +6742,7 @@ canvas.</p>
 		<ul class="dummy">
 			<li>
 				<a href="music21_stream.js.html">music21/stream.js</a>,
-				 <a href="music21_stream.js.html#sunlight-1-line-1265">line 1265</a>
+				 <a href="music21_stream.js.html#sunlight-1-line-1269">line 1269</a>
 			</li>
 		</ul>
 	</dd>
@@ -6820,7 +6898,7 @@ canvas.</p>
 		<ul class="dummy">
 			<li>
 				<a href="music21_stream.js.html">music21/stream.js</a>,
-				 <a href="music21_stream.js.html#sunlight-1-line-1291">line 1291</a>
+				 <a href="music21_stream.js.html#sunlight-1-line-1295">line 1295</a>
 			</li>
 		</ul>
 	</dd>
@@ -6881,9 +6959,7 @@ canvas.</p>
     
     
     <div class="description">
-        <p>Sets the render options for any substreams (such as placing them
-in systems, etc.) DOES NOTHING for music21.stream.Stream, but is
-overridden in subclasses.</p>
+        <p>Sets the render options for any substreams (such as placing them<br>in systems, etc.) DOES NOTHING for music21.stream.Stream, but is<br>overridden in subclasses.</p>
     </div>
     
 
@@ -6921,7 +6997,7 @@ overridden in subclasses.</p>
 		<ul class="dummy">
 			<li>
 				<a href="music21_stream.js.html">music21/stream.js</a>,
-				 <a href="music21_stream.js.html#sunlight-1-line-847">line 847</a>
+				 <a href="music21_stream.js.html#sunlight-1-line-851">line 851</a>
 			</li>
 		</ul>
 	</dd>
@@ -7020,7 +7096,7 @@ overridden in subclasses.</p>
 		<ul class="dummy">
 			<li>
 				<a href="music21_stream.js.html">music21/stream.js</a>,
-				 <a href="music21_stream.js.html#sunlight-1-line-1056">line 1056</a>
+				 <a href="music21_stream.js.html#sunlight-1-line-1060">line 1060</a>
 			</li>
 		</ul>
 	</dd>
@@ -7081,9 +7157,7 @@ overridden in subclasses.</p>
     
     
     <div class="description">
-        <p>Begins a series of bound events to the window that makes it
-so that on resizing the stream is redrawn and reflowed to the 
-new size.</p>
+        <p>Begins a series of bound events to the window that makes it<br>so that on resizing the stream is redrawn and reflowed to the<br>new size.</p>
     </div>
     
 
@@ -7170,7 +7244,7 @@ new size.</p>
 		<ul class="dummy">
 			<li>
 				<a href="music21_stream.js.html">music21/stream.js</a>,
-				 <a href="music21_stream.js.html#sunlight-1-line-1629">line 1629</a>
+				 <a href="music21_stream.js.html#sunlight-1-line-1633">line 1633</a>
 			</li>
 		</ul>
 	</dd>
@@ -7240,13 +7314,13 @@ new size.</p>
 					
 					
 		<span class="copyright">
-		Music21j, Copyright © 2013-2015 Michael Scott Cuthbert and cuthbertLab.
+		Music21j, Copyright © 2013-2016 Michael Scott Cuthbert and cuthbertLab.
 		</span>
 					<br />
 					
 		<span class="jsdoc-message">
-		Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.2</a>
-		on Sun Aug 23rd 2015 using the <a
+		Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a>
+		on Sat Jul 2nd 2016 using the <a
 			href="https://github.com/terryweiss/docstrap">DocStrap template</a>.
 		</span>
 				</footer>

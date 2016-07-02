@@ -488,6 +488,10 @@
 						</li>
 						
 						<li>
+							<a href="music21.miditools.MidiPlayer.html">music21.miditools.MidiPlayer</a>
+						</li>
+						
+						<li>
 							<a href="music21.note.GeneralNote.html">music21.note.GeneralNote</a>
 						</li>
 						
@@ -581,6 +585,24 @@
 						
 						<li>
 							<a href="music21.widgets.RhythmChooser.html">music21.widgets.RhythmChooser</a>
+						</li>
+						
+
+					</ul>
+				</li>
+				
+				<li class="dropdown">
+					<a href="global.html" class="dropdown-toggle" data-toggle="dropdown">Global<b
+						class="caret"></b></a>
+
+					<ul class="dropdown-menu ">
+						
+						<li>
+							<a href="global.html#getM21attribute">getM21attribute</a>
+						</li>
+						
+						<li>
+							<a href="global.html#warnBanner">warnBanner</a>
 						</li>
 						
 
@@ -916,34 +938,6 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
 					return this._elements.length;
 				}
 			},
-			'offsetMap': {
-                configurable: true,
-                enumerable: true,
-                get: function() {
-                    var offsetMap = [];
-                    var groups = [];
-                    if (this.hasVoices()) {
-                        $.each(srcObj.getElementsByClass('Voice').elements, function(i, v) { 
-                            groups.push([v.flat, i]); 
-                        });
-                    } else {
-                        groups = [ [this, undefined] ];
-                    }
-                    for (var i = 0; i &lt; groups.length; i++) {
-                        var group = groups[i][0];
-                        var voiceIndex = groups[i][1];
-                        for (var j = 0; j &lt; group.length; j++) {
-                            var e = group.get(j);
-                            var dur = e.duration.quarterLength;
-                            var offset = e.offset; // TODO: getOffsetBySite(group)
-                            var endTime = offset + dur;
-                            var thisOffsetMap = new stream.OffsetMap(e, offset, endTime, voiceIndex);
-                            offsetMap.push(thisOffsetMap);
-                        }
-                    }
-                    return offsetMap;
-                }			    
-			},
 			'elements': {
                 configurable: true,
                 enumerable: true,
@@ -1230,7 +1224,7 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
         }
         // getContextByClass('Clef')
         var clefObj = this.clef;
-        var offsetMap = this.offsetMap;
+        var offsetMap = this.offsetMap();
         var oMax = 0;
         var i;
         for (i = 0; i &lt; offsetMap.length; i++) {
@@ -1278,7 +1272,7 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
             var end = ob.endTime;
             var voiceIndex = ob.voiceIndex;
             
-            // if e.isSpanner;
+            // if 'Spanner' in e.classes;
             
             var match = false;
             lastTimeSignature = undefined;
@@ -1338,6 +1332,38 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
         }        
         return false;
     };
+    
+    /**
+     * Returns a list of OffsetMap objects
+     * 
+     * @memberof music21.stream.Stream
+     * @returns [music21.stream.OffsetMap]
+     */
+    stream.Stream.prototype.offsetMap = function() {
+        var offsetMap = [];
+        var groups = [];
+        if (this.hasVoices()) {
+            $.each(srcObj.getElementsByClass('Voice').elements, function(i, v) { 
+                groups.push([v.flat, i]); 
+            });
+        } else {
+            groups = [ [this, undefined] ];
+        }
+        for (var i = 0; i &lt; groups.length; i++) {
+            var group = groups[i][0];
+            var voiceIndex = groups[i][1];
+            for (var j = 0; j &lt; group.length; j++) {
+                var e = group.get(j);
+                var dur = e.duration.quarterLength;
+                var offset = e.offset; // TODO: getOffsetBySite(group)
+                var endTime = offset + dur;
+                var thisOffsetMap = new stream.OffsetMap(e, offset, endTime, voiceIndex);
+                offsetMap.push(thisOffsetMap);
+            }
+        }
+        return offsetMap;
+    }               
+    
     
     /**
      * Find all elements with a certain class; if an Array is given, then any
@@ -2021,8 +2047,8 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
         var linesAboveStaff = storedVFStave.options.space_above_staff_ln;
 
         var notesFromTop = yPxScaled * 2 / lineSpacing;
-        var notesAboveFirstLine = ((storedVFStave.options.num_lines - 1 + linesAboveStaff) * 2 ) - notesFromTop;
-        var clickedDiatonicNoteNum = this.clef.firstLine + Math.round(notesAboveFirstLine);
+        var notesAboveLowestLine = ((storedVFStave.options.num_lines - 1 + linesAboveStaff) * 2 ) - notesFromTop;
+        var clickedDiatonicNoteNum = this.clef.lowestLine + Math.round(notesAboveLowestLine);
         return clickedDiatonicNoteNum;
     };
     
@@ -2900,7 +2926,7 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
         return this;
     };    
 
-    // small Class.
+    // small Class; a namedtuple in music21p
     stream.OffsetMap = function (element, offset, endTime, voiceIndex) {
         this.element = element;
         this.offset = offset;
@@ -3029,13 +3055,13 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
             c = s.getElementsByClass('GeneralNote');            
             equal (c.length, 3, 'got multiple subclasses');
         });  
-        test( "music21.stream.OffsetMap" , function() {
+        test( "music21.stream.offsetMap" , function() {
             var n = new music21.note.Note("G3");
             var o = new music21.note.Note("A3");            
             var s = new music21.stream.Measure();
             s.insert(0, n);
             s.insert(0.5, o);
-            var om = s.offsetMap;
+            var om = s.offsetMap();
             equal (om.length, 2, 'offsetMap should have length 2');
             var omn = om[0];
             var omo = om[1];
@@ -3090,13 +3116,13 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
 					
 					
 		<span class="copyright">
-		Music21j, Copyright © 2013-2015 Michael Scott Cuthbert and cuthbertLab.
+		Music21j, Copyright © 2013-2016 Michael Scott Cuthbert and cuthbertLab.
 		</span>
 					<br />
 					
 		<span class="jsdoc-message">
-		Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.2</a>
-		on Sun Aug 23rd 2015 using the <a
+		Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a>
+		on Sat Jul 2nd 2016 using the <a
 			href="https://github.com/terryweiss/docstrap">DocStrap template</a>.
 		</span>
 				</footer>

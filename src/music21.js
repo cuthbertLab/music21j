@@ -12,15 +12,15 @@ if (typeof(music21) === "undefined") {
      * 
      * See http://web.mit.edu/music21/ for more details.
      * 
-     * Copyright (c) 2013-15, Michael Scott Cuthbert and cuthbertLab
+     * Copyright (c) 2013-16, Michael Scott Cuthbert and cuthbertLab
      * 
-     * Based on music21, Copyright (c) 2006-15, Michael Scott Cuthbert and cuthbertLab
+     * Based on music21, Copyright (c) 2006-16, Michael Scott Cuthbert and cuthbertLab
      * The plan is to implement all core music21 features as Javascript and to expose
      * more sophisticated features via server-side connections to remote servers running the
      * python music21 (music21p).
      * 
-     * Requires a (mostly) ECMAScript 5 compatible browser w/ SVG/Canvas. IE 9+ or any recent 
-     * version of Firefox, Safari (5+), Chrome, etc. will do. To disable the warning, 
+     * Requires an ECMAScript 5 compatible browser w/ SVG and Canvas. IE 11 or any recent 
+     * version of Firefox, Safari, Edge,  Chrome, etc. will do. To disable the warning, 
      * set an attribute in the &lt;script&gt; tag that calls requirejs, warnBanner="no".
      * 
      * All interfaces are alpha and may change radically from day to day and release to release.
@@ -33,7 +33,7 @@ if (typeof(music21) === "undefined") {
      *  
      * @namespace 
      */
-    music21 = {VERSION: 0.7}; // update in README.md also
+    music21 = {VERSION: 0.8}; // update in README.md also
 }
 //console.log('hi before: ' + require.toUrl('hi'));
 //console.log('./hi before: ' + require.toUrl('./hi'));

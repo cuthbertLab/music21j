@@ -488,6 +488,10 @@
 						</li>
 						
 						<li>
+							<a href="music21.miditools.MidiPlayer.html">music21.miditools.MidiPlayer</a>
+						</li>
+						
+						<li>
 							<a href="music21.note.GeneralNote.html">music21.note.GeneralNote</a>
 						</li>
 						
@@ -587,6 +591,24 @@
 					</ul>
 				</li>
 				
+				<li class="dropdown">
+					<a href="global.html" class="dropdown-toggle" data-toggle="dropdown">Global<b
+						class="caret"></b></a>
+
+					<ul class="dropdown-menu ">
+						
+						<li>
+							<a href="global.html#getM21attribute">getM21attribute</a>
+						</li>
+						
+						<li>
+							<a href="global.html#warnBanner">warnBanner</a>
+						</li>
+						
+
+					</ul>
+				</li>
+				
 			</ul>
 		</div>
 	</div>
@@ -618,8 +640,7 @@
 
     
         
-            <div class="description"><p>Module that holds <strong>music21</strong> tools for connecting with MIDI.js and somewhat with the
-events from the Jazz plugin or the WebMIDI protocol.</p></div>
+            <div class="description"><p>Module that holds <strong>music21</strong> tools for connecting with MIDI.js and somewhat with the<br>events from the Jazz plugin or the WebMIDI protocol.</p></div>
         
 
         
@@ -679,6 +700,9 @@ events from the Jazz plugin or the WebMIDI protocol.</p></div>
 
         <dl>
             <dt><a href="music21.miditools.Event.html">Event</a></dt>
+            <dd></dd>
+        
+            <dt><a href="music21.miditools.MidiPlayer.html">MidiPlayer</a></dt>
             <dd></dd>
         </dl>
     
@@ -843,10 +867,7 @@ events from the Jazz plugin or the WebMIDI protocol.</p></div>
 <dd>
     
     <div class="description">
-        <p>The last Note or Chord to be sent out from miditools.  This is an important semi-global
-attribute, since the last element may need to be quantized by quantizeLastNote() to
-determine its length, since the note may need to be placed into a staff before its total
-length can be determined.</p>
+        <p>The last Note or Chord to be sent out from miditools.  This is an important semi-global<br>attribute, since the last element may need to be quantized by quantizeLastNote() to<br>determine its length, since the note may need to be placed into a staff before its total<br>length can be determined.</p>
     </div>
     
 
@@ -1136,8 +1157,7 @@ length can be determined.</p>
 <dd>
     
     <div class="description">
-        <p>When, in MS since Jan 1, 1970, was the last <a href="music21.note.Note.html"><code>music21.note.Note</code></a> played.
-Defaults to the time that the module was loaded.</p>
+        <p>When, in MS since Jan 1, 1970, was the last <a href="music21.note.Note.html"><code>music21.note.Note</code></a> played.<br>Defaults to the time that the module was loaded.</p>
     </div>
     
 
@@ -1216,8 +1236,7 @@ Defaults to the time that the module was loaded.</p>
     
     <div class="description">
         <p>Clears chords that are older than miditools.heldChordTime</p>
-<p> Runs a setTimeout on itself.
- Calls miditools.sendOutChord</p>
+<p> Runs a setTimeout on itself.<br> Calls miditools.sendOutChord</p>
     </div>
     
 
@@ -1293,8 +1312,7 @@ Defaults to the time that the module was loaded.</p>
     
     
     <div class="description">
-        <p>method to load soundfonts while waiting for other processes that need them
-to load first.</p>
+        <p>method to load soundfonts while waiting for other processes that need them<br>to load first.</p>
     </div>
     
 
@@ -1454,9 +1472,7 @@ music21.miditools.loadSoundfont(
     
     
     <div class="description">
-        <p>Take a series of jEvent noteOn objects and convert them to a single Chord object
- so long as they are all sounded within miditools.maxDelay milliseconds of each other.
- this method stores notes in miditools.heldChordNotes (Array).</p>
+        <p>Take a series of jEvent noteOn objects and convert them to a single Chord object<br> so long as they are all sounded within miditools.maxDelay milliseconds of each other.<br> this method stores notes in miditools.heldChordNotes (Array).</p>
     </div>
     
 
@@ -1592,8 +1608,7 @@ music21.miditools.loadSoundfont(
     
     
     <div class="description">
-        <p>Called after a soundfont has been loaded. The callback is better to be specified elsewhere
-rather than overriding this important method.</p>
+        <p>Called after a soundfont has been loaded. The callback is better to be specified elsewhere<br>rather than overriding this important method.</p>
     </div>
     
 
@@ -1855,8 +1870,7 @@ rather than overriding this important method.</p>
     
             
 <div class="param-desc">
-    <p>The same <a href="music21.note.Note.html"><code>music21.note.Note</code></a> object passed in with 
-duration quantized</p>
+    <p>The same <a href="music21.note.Note.html"><code>music21.note.Note</code></a> object passed in with<br>duration quantized</p>
 </div>
 
 
@@ -1890,8 +1904,7 @@ duration quantized</p>
     
     
     <div class="description">
-        <p>Take the list of Notes and makes a chord out of it, if appropriate and call 
-<code>music21.webmidi.callBacks.sendOutChord</code> callback with the Chord or Note as a parameter.</p>
+        <p>Take the list of Notes and makes a chord out of it, if appropriate and call<br><code>music21.webmidi.callBacks.sendOutChord</code> callback with the Chord or Note as a parameter.</p>
     </div>
     
 
@@ -2005,8 +2018,7 @@ duration quantized</p>
     
             
 <div class="param-desc">
-    <p>A <a href="music21.chord.Chord.html"><code>music21.chord.Chord</code></a> object, 
-most likely, but maybe a <a href="music21.note.Note.html"><code>music21.note.Note</code></a> object)</p>
+    <p>A <a href="music21.chord.Chord.html"><code>music21.chord.Chord</code></a> object,<br>most likely, but maybe a <a href="music21.note.Note.html"><code>music21.note.Note</code></a> object)</p>
 </div>
 
 
@@ -2191,13 +2203,13 @@ most likely, but maybe a <a href="music21.note.Note.html"><code>music21.note.Not
 					
 					
 		<span class="copyright">
-		Music21j, Copyright © 2013-2015 Michael Scott Cuthbert and cuthbertLab.
+		Music21j, Copyright © 2013-2016 Michael Scott Cuthbert and cuthbertLab.
 		</span>
 					<br />
 					
 		<span class="jsdoc-message">
-		Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.2</a>
-		on Sun Aug 23rd 2015 using the <a
+		Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a>
+		on Sat Jul 2nd 2016 using the <a
 			href="https://github.com/terryweiss/docstrap">DocStrap template</a>.
 		</span>
 				</footer>

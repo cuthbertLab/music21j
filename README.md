@@ -3,14 +3,14 @@ Music21j
 
 **Music21j: An Interactive Framework for Musical Analysis**
 
-Copyright &copy;2013-15, Michael Scott Cuthbert and cuthbertLab, some rights reserved.
+Copyright &copy;2013-16, Michael Scott Cuthbert and cuthbertLab, some rights reserved.
 
 **Music21j** is a Javascript reinterpretation of the [Music21 Python] package, 
 a toolkit for computer-aided musicology, now with intuitive HTML/Javascript
 interfaces. Some of the things music21j offers are:
 
   - The ability to visualize and hear changes in Streams quickly (using [Vexflow] and [MIDI.js])
-  - Connections (via [JazzSoft] plugin) to MIDI devices. 
+  - Connections (via Web Midi or [JazzSoft] plugin) to MIDI devices. 
   - A framework for easily making music theory exercises and interfaces to exploring scores.
   - A repository of modules such as metronomes, keyboards, and automatic transcribers.
 
@@ -21,12 +21,11 @@ tab above will give introductions to some of the features of music21j. At this
 point we're focusing on documenting usage; developer docs will come 
 later.
 
-Music21j requires your users to have a relatively recent web browser. Safari 8+,
-Chrome since 2014 (v.32+), or Firefox since 2014 (v. 26+) all work great. Internet Explorer 10+
-works well too, though timing of playback can be a bit off. Currently these
-browsers also work, but support will be dropped at any time that they lack a feature
-useful for the project: IE 9, Safari 6 and 7, Chrome 2013 (v.24-31), and Firefox 2013 (v.17-26).  
-Safari 5 and below and IE 8 and older are not supported.
+Music21j requires your users to have a relatively recent web browser -- at most one major
+version behind. 
+Safari 8+, Chrome since 2015 (v.32+), or Firefox since 2014 (v. 26+).  Internet Explorer 11+
+works well too, though timing of playback can be a bit off.  Edge works better, except
+there is no support for MIDI devices.
 
 Documentation
 -------------
