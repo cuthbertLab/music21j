@@ -84,7 +84,7 @@ define(['jsonpickle'],
             for (var i = 0; i < st.length; i++ ) {
                 var el = st[i][0];
                 el.offset = st[i][1];
-                var classList = el._classes;
+                var classList = el.classes;
                 if (classList === undefined) {
                     console.warn("M21object without classes: ", el);
                     classList = [];
@@ -165,6 +165,12 @@ define(['jsonpickle'],
                     converterHandler.lastTimeSignature = undefined;
                     converterHandler.streamPostRestore(p);
                     return p;
+                }
+            },
+            'music21.chord.Chord': {
+                post_restore: function (c) {
+                    c._noteArray = c._notes.slice();
+                    return c;
                 }
             },
             // TODO: all inherit somehow, through _classes or better, prototype...
