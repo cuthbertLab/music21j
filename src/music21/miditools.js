@@ -415,9 +415,8 @@ define(['jquery', './note', './chord', 'MIDI'],
     };
 
     /**
-     * 
      * @param where
-     * @returns
+     * @returns DOMElement
      */
     miditools.MidiPlayer.prototype.addPlayer = function(where) {
         var $where = where;

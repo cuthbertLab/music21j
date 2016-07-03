@@ -4,21 +4,23 @@
  * 
  * @exports music21
  */
+// Not strict mode
+
 if (typeof(music21) === "undefined") {
     /**
      * **music21j**: Javascript reimplementation of Core music21 features.  
      * 
      * See http://web.mit.edu/music21/ for more details.
      * 
-     * Copyright (c) 2013-15, Michael Scott Cuthbert and cuthbertLab
+     * Copyright (c) 2013-16, Michael Scott Cuthbert and cuthbertLab
      * 
-     * Based on music21, Copyright (c) 2006-15, Michael Scott Cuthbert and cuthbertLab
+     * Based on music21, Copyright (c) 2006-16, Michael Scott Cuthbert and cuthbertLab
      * The plan is to implement all core music21 features as Javascript and to expose
      * more sophisticated features via server-side connections to remote servers running the
      * python music21 (music21p).
      * 
-     * Requires a (mostly) ECMAScript 5 compatible browser w/ SVG/Canvas. IE 9+ or any recent 
-     * version of Firefox, Safari (5+), Chrome, etc. will do. To disable the warning, 
+     * Requires an ECMAScript 5 compatible browser w/ SVG and Canvas. IE 11 or any recent 
+     * version of Firefox, Safari, Edge,  Chrome, etc. will do. To disable the warning, 
      * set an attribute in the &lt;script&gt; tag that calls requirejs, warnBanner="no".
      * 
      * All interfaces are alpha and may change radically from day to day and release to release.
@@ -31,7 +33,7 @@ if (typeof(music21) === "undefined") {
      *  
      * @namespace 
      */
-    music21 = {VERSION: 0.7}; // update in README.md also
+    music21 = {VERSION: 0.8}; // update in README.md also
 }
 //console.log('hi before: ' + require.toUrl('hi'));
 //console.log('./hi before: ' + require.toUrl('./hi'));
@@ -89,7 +91,16 @@ var pathSimplify = function (path) {
     return pnew;
  };
 
-
+/**
+ * Get an attribute from the script tag that invokes music21 via its data-main 
+ * attribute.
+ * 
+ * E.g. if you invoked music21 with:
+ *     <script src="require.js" data-main="src/music21" quiet="2" hi="hello"></script>
+ * 
+ * then "getM21attribute('quiet')" would return "2".
+ * 
+ */
 var getM21attribute = function (attrName) {
     var scripts = document.getElementsByTagName('script');
     for (var i = 0; i < scripts.length; i++) {
@@ -102,6 +113,10 @@ var getM21attribute = function (attrName) {
         }
     }
 };
+
+/**
+ *  Should we warn about obsolete web browsers? default Yes.
+ */
 var warnBanner = (getM21attribute('warnBanner') !== 'no' ) ? true : false;
 
 // get scriptConfig
@@ -144,13 +159,17 @@ var m21requireConfig = {
         'jasmidStream':     pathSimplify(m21srcPath + '/ext/midijs/inc/jasmid/stream'),
         // a very nice event handler from Mudcu.be that handles drags 
         'eventjs':          pathSimplify(m21srcPath + '/ext/midijs/examples/inc/event'),     
+        // read binary data in base64.  In "shim" but is not a shim.
+        'base64Binary': pathSimplify(m21srcPath + '/ext/midijs/inc/shim/Base64binary'),
         
         // browser shims
         'webMidiApiShim': pathSimplify(m21srcPath + '/ext/midijs/inc/shim/WebMIDIAPI'), //not currently loaded/used?
-        'base64Shim':   pathSimplify(m21srcPath + '/ext/midijs/inc/shim/Base64'), //IE9; drop after support is gone   
-        'base64BinaryShim': pathSimplify(m21srcPath + '/ext/midijs/inc/shim/Base64binary'), //IE9; drop after support is gone
         'webAudioShim': pathSimplify(m21srcPath + '/ext/midijs/inc/shim/WebAudioAPI'), // Safari prefixed to <= 9; IE <= Edge
         'es6Shim': pathSimplify(m21srcPath + '/ext/es6-shim'),
+        
+        // formerly used Shims (IE9)
+        //'base64Shim':   pathSimplify(m21srcPath + '/ext/midijs/inc/shim/Base64'),
+        
         //'vexflowMods': 'ext/vexflowMods',
     },
     packages: [
@@ -168,7 +187,8 @@ var m21requireConfig = {
             exports: 'window',            
         },
         'MIDI': {
-            deps: ['base64Shim', 'base64BinaryShim', 'webAudioShim', 
+            deps: [ //'base64Shim',  // Bye-bye IE9!
+                    'base64Binary', 'webAudioShim', 
                    'jasmidMidifile', 'jasmidReplayer', 'jasmidStream', 'eventjs'],
             exports: 'MIDI',
         },

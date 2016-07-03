@@ -488,6 +488,10 @@
 						</li>
 						
 						<li>
+							<a href="music21.miditools.MidiPlayer.html">music21.miditools.MidiPlayer</a>
+						</li>
+						
+						<li>
 							<a href="music21.note.GeneralNote.html">music21.note.GeneralNote</a>
 						</li>
 						
@@ -587,6 +591,24 @@
 					</ul>
 				</li>
 				
+				<li class="dropdown">
+					<a href="global.html" class="dropdown-toggle" data-toggle="dropdown">Global<b
+						class="caret"></b></a>
+
+					<ul class="dropdown-menu ">
+						
+						<li>
+							<a href="global.html#getM21attribute">getM21attribute</a>
+						</li>
+						
+						<li>
+							<a href="global.html#warnBanner">warnBanner</a>
+						</li>
+						
+
+					</ul>
+				</li>
+				
 			</ul>
 		</div>
 	</div>
@@ -615,7 +637,7 @@
  * @author Michael Scott Cuthbert
  */
 
-define(['jquery', './note', './chord', 'MIDI', 'Base64', 'base64binary'],         
+define(['jquery', './note', './chord', 'MIDI'],         
        /**
         * A collection of tools for midi. See the namespace {@link music21.miditools}
         * 
@@ -679,7 +701,7 @@ define(['jquery', './note', './chord', 'MIDI', 'Base64', 'base64binary'],
             }
         } else {
             console.warn('could not playback note because no MIDIout defined');
-        };
+        }
     };
     /**
      * Makes a {@link music21.note.Note} object from the event's midiNote number.
@@ -823,7 +845,7 @@ define(['jquery', './note', './chord', 'MIDI', 'Base64', 'base64binary'],
      * most likely, but maybe a {@link music21.note.Note} object)
      */
     miditools.sendOutChord = function (chordNoteList) {
-        var appendObject = undefined;
+        var appendObject;
         if (chordNoteList.length > 1) {
             //console.log(chordNoteList[0].name, chordNoteList[1].name);
             appendObject = new chord.Chord(chordNoteList);
@@ -874,7 +896,7 @@ define(['jquery', './note', './chord', 'MIDI', 'Base64', 'base64binary'],
             roundedQuarterLength = 1;
         } else if (roundedQuarterLength == 0.75) {
             roundedQuarterLength = 0.5;
-        } else if (roundedQuarterLength == 0) {
+        } else if (roundedQuarterLength === 0) {
             roundedQuarterLength = 0.125;
         }
         lastElement.duration.quarterLength = roundedQuarterLength;
@@ -922,12 +944,12 @@ define(['jquery', './note', './chord', 'MIDI', 'Base64', 'base64binary'],
         var isFirefox = typeof InstallTrigger !== 'undefined';   // Firefox 1.0+
         var isAudioTag = (MIDI.technology == 'HTML Audio Tag');
         var instrumentObj = music21.instrument.find(soundfont);
-        if (instrumentObj != undefined) {
+        if (instrumentObj !== undefined) {
             MIDI.programChange(instrumentObj.midiChannel, instrumentObj.midiProgram);
             if (music21.debug) {
                 console.log(soundfont + ' (' + instrumentObj.midiProgram + ') loaded on ', instrumentObj.midiChannel);
             }
-            if ((isFirefox == false) &amp;&amp; (isAudioTag == false)) {  
+            if ((isFirefox === false) &amp;&amp; (isAudioTag === false)) {  
                 var c = instrumentObj.midiChannel;
                      // Firefox ignores sound volume! so don't play! as does IE and others using HTML audio tag.
                 MIDI.noteOn(c, 36, 1, 0);     // if no notes have been played before then
@@ -963,15 +985,15 @@ define(['jquery', './note', './chord', 'MIDI', 'Base64', 'base64binary'],
      * });
      */
     miditools.loadSoundfont = function(soundfont, callback) {        
-        if (miditools.loadedSoundfonts[soundfont] == true) {
+        if (miditools.loadedSoundfonts[soundfont] === true) {
             if (callback !== undefined) {
                 var instrumentObj = music21.instrument.find(soundfont);
                 callback(instrumentObj);
             }
         } else if (miditools.loadedSoundfonts[soundfont] == 'loading'){
-            var waitThenCall = undefined;
+            var waitThenCall;
             waitThenCall = function() {
-                if (miditools.loadedSoundfonts[soundfont] == true) {
+                if (miditools.loadedSoundfonts[soundfont] === true) {
                     if (music21.debug) {
                         console.log('other process has finished loading; calling callback');
                     }
@@ -1006,7 +1028,165 @@ define(['jquery', './note', './chord', 'MIDI', 'Base64', 'base64binary'],
             });
         }
     };
+    
+    /**
+     * MidiPlayer -- embedded midi player.
+     * 
+     * @class MidiPlayer
+     * @memberOf music21.miditools
+     * @property {number} speed - playback speed scaling (1=default).
+     * @property {JQueryDOMObject|undefined} $playDiv - div holding the player, 
+     */
+    miditools.MidiPlayer = function() {
+        this.player = new music21.MIDI.Players.PlayInstance();
+        this.speed = 1.0;
+        this.$playDiv = undefined;        
+    };
 
+    /**
+     * @param where
+     * @returns DOMElement
+     */
+    miditools.MidiPlayer.prototype.addPlayer = function(where) {
+        var $where = where;
+        if (where === undefined) {
+            where = document.body;
+        }
+        if (where.jquery === undefined) {
+            $where = $(where);
+        }
+        var $playDiv = $('&lt;div class="midiPlayer">');
+        var $controls = $('&lt;div class="positionControls">');
+        var $playPause = $('&lt;input type="image" src="' + music21.m21basePath + '/css/play.png" align="absmiddle" value="play" class="playPause">');
+        var $stop = $('&lt;input type="image" src="' + music21.m21basePath + '/css/stop.png" align="absmiddle" value="stop" class="stopButton">');
+
+        $playPause.on('click', this.pausePlayStop.bind(this));
+        $stop.on('click', this.stopButton.bind(this));
+        $controls.append($playPause);
+        $controls.append($stop);
+        $playDiv.append($controls);
+        
+        var $time = $('&lt;div class="timeControls">');
+        var $timePlayed = $('&lt;span class="timePlayed">0:00&lt;/span>');
+        var $capsule = $('&lt;span class="capsule">&lt;span class="cursor">&lt;/span>&lt;/span>');
+        var $timeRemaining = $('&lt;span class="timeRemaining">-0:00&lt;/span>');
+        $time.append($timePlayed);
+        $time.append($capsule);
+        $time.append($timeRemaining);
+        $playDiv.append($time);
+        
+        $where.append($playDiv);
+        this.$playDiv = $playDiv;
+        return $playDiv;
+    };
+    
+    miditools.MidiPlayer.prototype.stopButton = function() {
+        this.pausePlayStop("yes");
+    };
+    
+    miditools.MidiPlayer.prototype.pausePlayStop = function(stop) {
+        var d = undefined;
+        if (this.$playDiv === undefined) {
+            d = {src: 'doesnt matter'}
+        } else {
+            d = this.$playDiv.find(".playPause")[0];            
+        }
+        if (stop == "yes") {
+            this.player.stop();
+            d.src = music21.m21basePath + "/css/play.png";
+        } else if (this.player.playing || stop == 'pause') {
+            d.src = music21.m21basePath + "/css/play.png";
+            this.player.pause(true);
+        } else {
+            d.src = music21.m21basePath + "/css/pause.png";
+            this.player.resume();
+        }
+    };
+   
+    
+    miditools.MidiPlayer.prototype.base64Load = function(b64data) {
+        var player = this.player;
+        player.timeWarp = this.speed;
+        
+        var m21midiplayer = this;
+        miditools.loadSoundfont('acoustic_grand_piano', function() {
+            player.loadFile(b64data, function() {   // success
+                m21midiplayer.fileLoaded();
+            }, 
+            undefined,  // loading
+            function(e) {  // failure
+                console.log(e); 
+            });
+        });
+    };
+    
+    miditools.MidiPlayer.prototype.songFinished = function() {
+        this.pausePlayStop("yes");
+    };
+    
+    miditools.MidiPlayer.prototype.fileLoaded = function() {
+        this.updatePlaying();
+    };
+    
+    miditools.MidiPlayer.prototype.startAndUpdate = function() {
+        this.player.start();
+        this.updatePlaying();
+    };
+    
+    
+    miditools.MidiPlayer.prototype.updatePlaying = function() {
+        var self = this;
+        var player = this.player;
+        if (this.$playDiv === undefined) {
+            return;
+        }
+        var $d = this.$playDiv;
+        // update the timestamp
+        var timePlayed = $d.find(".timePlayed")[0];
+        var timeRemaining = $d.find(".timeRemaining")[0];
+        var timeCursor = $d.find(".cursor")[0];
+        var $capsule = $d.find(".capsule");
+        //
+        eventjs.add($capsule[0], "drag", (function(event, self) {
+            eventjs.cancel(event);
+            var player = this.player;
+            player.currentTime = (self.x) / 420 * player.endTime;
+            if (player.currentTime &lt; 0) {
+                player.currentTime = 0;
+            }
+            if (player.currentTime > player.endTime) {
+                player.currentTime = player.endTime;
+            }
+            if (self.state === "down") {
+                this.pausePlayStop('pause');
+            } else if (self.state === "up") {
+                this.pausePlayStop('play');
+            }
+        }).bind(this));
+        //
+        function timeFormatting(n) {
+            var minutes = n / 60 >> 0;
+            var seconds = String(n - (minutes * 60) >> 0);
+            if (seconds.length == 1) seconds = "0" + seconds;
+            return minutes + ":" + seconds;
+        }
+        
+        player.setAnimation(function(data) {
+            var percent = data.now / data.end;
+            var now = data.now >> 0; // where we are now
+            var end = data.end >> 0; // end of song
+            if (now === end) { // go to next song
+                self.songFinished();
+            }
+            // display the information to the user
+            timeCursor.style.width = (percent * 100) + "%";
+            timePlayed.innerHTML = timeFormatting(now);
+            timeRemaining.innerHTML = "-" + timeFormatting(end - now);
+        });
+    };
+    
+    
+    
 
     // end of define
     if (typeof(music21) != "undefined") {
@@ -1029,13 +1209,13 @@ define(['jquery', './note', './chord', 'MIDI', 'Base64', 'base64binary'],
 					
 					
 		<span class="copyright">
-		Music21j, Copyright © 2013-2015 Michael Scott Cuthbert and cuthbertLab.
+		Music21j, Copyright © 2013-2016 Michael Scott Cuthbert and cuthbertLab.
 		</span>
 					<br />
 					
 		<span class="jsdoc-message">
-		Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.2</a>
-		on Sun Aug 23rd 2015 using the <a
+		Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a>
+		on Sat Jul 2nd 2016 using the <a
 			href="https://github.com/terryweiss/docstrap">DocStrap template</a>.
 		</span>
 				</footer>

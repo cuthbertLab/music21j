@@ -1,86 +1,11 @@
 #!/usr/bin/env node
-/*global arguments, require: true */
+/* global arguments, require: true */
+/* eslint strict: [2, "function"] */
 /**
  * @project jsdoc
  * @author Michael Mathews <micmath@gmail.com>
  * @license See LICENSE.md file included in this distribution.
  */
-
-/**
- * Data representing the environment in which this app is running.
- *
- * @namespace
- * @name env
- */
-global.env = {
-    /**
-     * Running start and finish times.
-     *
-     * @memberof env
-     */
-    run: {
-        start: new Date(),
-        finish: null
-    },
-
-    /**
-     * The command-line arguments passed into JSDoc.
-     *
-     * @type Array
-     * @memberof env
-     */
-    args: [],
-
-    /**
-     * The parsed JSON data from the configuration file.
-     *
-     * @type Object
-     * @memberof env
-     */
-    conf: {},
-
-    /**
-     * The absolute path to the base directory of the JSDoc application.
-     *
-     * @private
-     * @type string
-     * @memberof env
-     */
-    dirname: '.',
-
-    /**
-     * The user's working directory at the time that JSDoc was started.
-     *
-     * @private
-     * @type string
-     * @memberof env
-     */
-    pwd: null,
-
-    /**
-     * The command-line options, parsed into a key/value hash.
-     *
-     * @type Object
-     * @memberof env
-     * @example if (global.env.opts.help) { console.log('Helpful message.'); }
-    */
-    opts: {},
-
-    /**
-     * The source files that JSDoc will parse.
-     * @type Array
-     * @memberof env
-     */
-    sourceFiles: [],
-
-    /**
-     * The JSDoc version number and revision date.
-     *
-     * @type Object
-     * @memberof env
-     */
-    version: {}
-};
 
 // initialize the environment for the current JavaScript VM
 (function(args) {
@@ -110,42 +35,36 @@ global.env = {
 })( Array.prototype.slice.call(arguments, 0) );
 
 /**
+ * Data about the environment in which JSDoc is running, including the configuration settings that
+ * were used to run JSDoc.
+ *
+ * @deprecated As of JSDoc 3.4.0. Use `require('jsdoc/env')` to access the `env` object. The global
+ * `env` object will be removed in a future release.
+ * @namespace
+ * @name env
+ */
+global.env = (function() {
+    'use strict';
+    return require('./lib/jsdoc/env');
+})();
+
+/**
  * Data that must be shared across the entire application.
  *
+ * @deprecated As of JSDoc 3.4.0. Avoid using the `app` object. The global `app` object and the
+ * `jsdoc/app` module will be removed in a future release.
  * @namespace
  * @name app
  */
-global.app = {
-    jsdoc: {
-        name: require('./lib/jsdoc/name'),
-        parser: null,
-        scanner: new (require('./lib/jsdoc/src/scanner').Scanner)()
-    }
-};
-
-/**
- * Recursively print an object's properties to stdout. This method is safe to use with objects that
- * contain circular references. In addition, on Mozilla Rhino, this method is safe to use with
- * native Java objects.
- *
- * @global
- * @name dump
- * @private
- * @param {Object} obj - Object(s) to print to stdout.
- */
-global.dump = function() {
+global.app = (function() {
     'use strict';
-
-    var _dump = require('./lib/jsdoc/util/dumper').dump;
-
-    for (var i = 0, l = arguments.length; i < l; i++) {
-        console.log( _dump(arguments[i]) );
-    }
-};
+    return require('./lib/jsdoc/app');
+})();
 
 (function() {
     'use strict';
 
+    var env = global.env;
     var logger = require('./lib/jsdoc/util/logger');
     var runtime = require('./lib/jsdoc/util/runtime');
     var cli = require('./cli');
@@ -158,27 +77,28 @@ global.dump = function() {
     cli.setVersionInfo()
         .loadConfig();
 
-    if (!global.env.opts.test) {
+    if (!env.opts.test) {
         cli.configureLogger();
     }
 
     cli.logStart();
 
-    // On Rhino, we use a try/catch block so we can log the Java exception (if available)
-    if ( runtime.isRhino() ) {
-        try {
-            cli.runCommand(cb);
-        }
-        catch(e) {
-            if (e.rhinoException) {
-                logger.fatal( e.rhinoException.printStackTrace() );
-            } else {
-                console.trace(e);
-                cli.exit(1);
-            }
-        }
+    if (env.opts.debug) {
+        /**
+         * Recursively print an object's properties to stdout. This method is safe to use with
+         * objects that contain circular references.
+         *
+         * This method is available only when JSDoc is run with the `--debug` option.
+         *
+         * @global
+         * @name dump
+         * @private
+         * @param {...*} obj - Object(s) to print to stdout.
+         */
+        global.dump = function() {
+            console.log(require('./lib/jsdoc/util/dumper').dump(arguments));
+        };
     }
-    else {
-        cli.runCommand(cb);
-    }
+
+    cli.runCommand(cb);
 })();

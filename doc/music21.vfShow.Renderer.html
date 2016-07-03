@@ -488,6 +488,10 @@
 						</li>
 						
 						<li>
+							<a href="music21.miditools.MidiPlayer.html">music21.miditools.MidiPlayer</a>
+						</li>
+						
+						<li>
 							<a href="music21.note.GeneralNote.html">music21.note.GeneralNote</a>
 						</li>
 						
@@ -587,6 +591,24 @@
 					</ul>
 				</li>
 				
+				<li class="dropdown">
+					<a href="global.html" class="dropdown-toggle" data-toggle="dropdown">Global<b
+						class="caret"></b></a>
+
+					<ul class="dropdown-menu ">
+						
+						<li>
+							<a href="global.html#getM21attribute">getM21attribute</a>
+						</li>
+						
+						<li>
+							<a href="global.html#warnBanner">warnBanner</a>
+						</li>
+						
+
+					</ul>
+				</li>
+				
 			</ul>
 		</div>
 	</div>
@@ -627,15 +649,9 @@
     
     
     <div class="description">
-        <p>Renderer is a function that takes a stream, an
-optional existing canvas element and a DOM
-element where the canvas element should be placed
-and renders the stream as Vexflow on the
-canvas element, placing it then in the where
-DOM.</p>
+        <p>Renderer is a function that takes a stream, an<br>optional existing canvas element and a DOM<br>element where the canvas element should be placed<br>and renders the stream as Vexflow on the<br>canvas element, placing it then in the where<br>DOM.</p>
 <p>&quot;s&quot; can be any type of Stream.</p>
-<p>&quot;canvas&quot; and &quot;where&quot; can be either a DOM
-element or a jQuery object.</p>
+<p>&quot;canvas&quot; and &quot;where&quot; can be either a DOM<br>element or a jQuery object.</p>
     </div>
     
 
@@ -2454,8 +2470,7 @@ element or a jQuery object.</p>
     
     
     <div class="description">
-        <p>Return a new Vex.Flow.Stave object, which represents
-a single MEASURE of notation in m21j</p>
+        <p>Return a new Vex.Flow.Stave object, which represents<br>a single MEASURE of notation in m21j</p>
     </div>
     
 
@@ -2599,8 +2614,7 @@ a single MEASURE of notation in m21j</p>
     
     
     <div class="description">
-        <p>Prepares a score that arrived flat... sets up
-stacks and ties after calling prepareFlat</p>
+        <p>Prepares a score that arrived flat... sets up<br>stacks and ties after calling prepareFlat</p>
     </div>
     
 
@@ -2980,9 +2994,7 @@ stacks and ties after calling prepareFlat</p>
     
     
     <div class="description">
-        <p>Prepares a measure (w/ or w/o voices) or generic Stream -- makes accidentals,
-associates a Vex.Flow.Stave with the stream and
-returns a vexflow Voice object</p>
+        <p>Prepares a measure (w/ or w/o voices) or generic Stream -- makes accidentals,<br>associates a Vex.Flow.Stave with the stream and<br>returns a vexflow Voice object</p>
     </div>
     
 
@@ -3130,9 +3142,7 @@ returns a vexflow Voice object</p>
     
     
     <div class="description">
-        <p>Prepares a Partlike stream (that is one with Measures
-or substreams that should be considered like Measures)
-for rendering.</p>
+        <p>Prepares a Partlike stream (that is one with Measures<br>or substreams that should be considered like Measures)<br>for rendering.</p>
     </div>
     
 
@@ -3257,9 +3267,7 @@ for rendering.</p>
     
     
     <div class="description">
-        <p>Prepares a scorelike stream (i.e., one with parts or
-Streams that should be rendered vertically like parts)
-for rendering and adds Staff Connectors</p>
+        <p>Prepares a scorelike stream (i.e., one with parts or<br>Streams that should be rendered vertically like parts)<br>for rendering and adds Staff Connectors</p>
     </div>
     
 
@@ -3384,8 +3392,7 @@ for rendering and adds Staff Connectors</p>
     
     
     <div class="description">
-        <p>Finds all tied notes and creates the proper Vex.Flow.StaveTie objects in
-<code>this.ties</code>.</p>
+        <p>Finds all tied notes and creates the proper Vex.Flow.StaveTie objects in<br><code>this.ties</code>.</p>
     </div>
     
 
@@ -3510,9 +3517,7 @@ for rendering and adds Staff Connectors</p>
     
     
     <div class="description">
-        <p>The process of putting a Stream onto a canvas affects each of the
-elements in the Stream by adding pieces of information to
-each <a href="music21.base.Music21Object.html"><code>music21.base.Music21Object</code></a> -- see <code>applyFormatterInformationToNotes</code></p>
+        <p>The process of putting a Stream onto a canvas affects each of the<br>elements in the Stream by adding pieces of information to<br>each <a href="music21.base.Music21Object.html"><code>music21.base.Music21Object</code></a> -- see <code>applyFormatterInformationToNotes</code></p>
 <p>You might want to remove this information; this routine does that.</p>
     </div>
     
@@ -3694,8 +3699,7 @@ each <a href="music21.base.Music21Object.html"><code>music21.base.Music21Object<
     
     <div class="description">
         <p>main function to render a Stream.</p>
-<p>if s is undefined, uses the stored Stream from
-the constructor object.</p>
+<p>if s is undefined, uses the stored Stream from<br>the constructor object.</p>
     </div>
     
 
@@ -4262,9 +4266,7 @@ the constructor object.</p>
     
     <div class="description">
         <p>Sets the number of stafflines properly for the Stave object.</p>
-<p>This method does not just set Vex.Flow.Stave#setNumLines() except
-if the number of lines is 0 or &gt;=4, because the default in VexFlow is
-to show the bottom(top?), not middle, lines and that looks bad.</p>
+<p>This method does not just set Vex.Flow.Stave#setNumLines() except<br>if the number of lines is 0 or &gt;=4, because the default in VexFlow is<br>to show the bottom(top?), not middle, lines and that looks bad.</p>
     </div>
     
 
@@ -4936,13 +4938,13 @@ to show the bottom(top?), not middle, lines and that looks bad.</p>
 					
 					
 		<span class="copyright">
-		Music21j, Copyright © 2013-2015 Michael Scott Cuthbert and cuthbertLab.
+		Music21j, Copyright © 2013-2016 Michael Scott Cuthbert and cuthbertLab.
 		</span>
 					<br />
 					
 		<span class="jsdoc-message">
-		Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.2</a>
-		on Sun Aug 23rd 2015 using the <a
+		Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a>
+		on Sat Jul 2nd 2016 using the <a
 			href="https://github.com/terryweiss/docstrap">DocStrap template</a>.
 		</span>
 				</footer>
