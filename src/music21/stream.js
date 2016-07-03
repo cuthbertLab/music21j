@@ -800,9 +800,9 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
                 p = el.pitch;
                 lastStepDict = lastOctaveStepList[p.octave];                
                 this._makeAccidentalForOnePitch(p, lastStepDict, lastOctavelessStepDict);
-            } else if (el._noteArray !== undefined) { // chord
-                for (var j = 0; j < el._noteArray.length; j++) {
-                    p = el._noteArray[j].pitch;
+            } else if (el._notes !== undefined) { // chord
+                for (var j = 0; j < el._notes.length; j++) {
+                    p = el._notes[j].pitch;
                     lastStepDict = lastOctaveStepList[p.octave];
                     this._makeAccidentalForOnePitch(p, lastStepDict, lastOctavelessStepDict);
                 }

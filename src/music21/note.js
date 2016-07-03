@@ -381,8 +381,8 @@ define(['./prebase', './base', './pitch', './beam', './common', 'vexflow'],
             }// else { console.log ('not going to play ', this.nameWithOctave); }
         } else if (this.isClassOrSubclass('Chord')) {
             // TODO: Tied Chords.
-            for (var j = 0; j < this._noteArray.length; j++) {
-                midNum = this._noteArray[j].pitch.midi;
+            for (var j = 0; j < this._notes.length; j++) {
+                midNum = this._notes[j].pitch.midi;
                 music21.MIDI.noteOn(channel, midNum, volume, 0);                      
                 music21.MIDI.noteOff(channel, midNum, milliseconds/1000);                     
             }

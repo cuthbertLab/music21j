@@ -84,7 +84,7 @@ define(['jsonpickle'],
             for (var i = 0; i < st.length; i++ ) {
                 var el = st[i][0];
                 el.offset = st[i][1];
-                var classList = el._classes;
+                var classList = el.classes;
                 if (classList === undefined) {
                     console.warn("M21object without classes: ", el);
                     classList = [];
@@ -194,7 +194,6 @@ define(['jsonpickle'],
     };
     if (typeof music21 !== undefined) {
         music21.fromPython = fromPython;
-        music21.jsonPickle = fromPython;  // TODO: Remove after Jan 1, 2015 -- old interface... keep for old versions of music21p that might use it...
     }
     return fromPython;
 });
