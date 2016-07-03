@@ -4,6 +4,8 @@
 
 module.exports = function(grunt) {        
     var path = require('path');
+    var babel = require('rollup-plugin-babel');
+    
     var BANNER = '/**\n' +
                  '  * music21j <%= pkg.version %> built on ' + 
                  '  * <%= grunt.template.today("yyyy-mm-dd") %>.\n' +
@@ -22,6 +24,17 @@ module.exports = function(grunt) {
     // Project configuration.
     grunt.initConfig({
 	    pkg: grunt.file.readJSON('package.json'),
+//	    concat: {
+//	        options: {
+//	            banner: BANNER,
+//	            sourceMap: true
+//	        },
+////	        tests: {
+////	            src: TEST_SOURCES,
+////	            dest: TARGET_TESTS
+////	        }
+//	    },
+	    
 	    rollup: {
 	        options: {
 	            banner: BANNER,
@@ -64,7 +77,7 @@ module.exports = function(grunt) {
 		        },
 		    },
 	    },
-	    quint: {
+	    qunit: {
 	      files: ['tests/index.html']
 	    },
 
@@ -82,7 +95,8 @@ module.exports = function(grunt) {
 	});
 
     grunt.loadNpmTasks('grunt-rollup');
-    grunt.loadNpmTasks('grunt-contrib-concat');
+    //grunt.loadNpmTasks('grunt-contrib-concat');
+    
     // Load the plugin that provides the "uglify" task.
     grunt.loadNpmTasks('grunt-contrib-uglify');
 
@@ -93,8 +107,8 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-jsdoc');
 
     // Default task(s).
-    grunt.registerTask('default', ['rollup', 'concat', 'uglyfy', 'jsdoc']);
-    grunt.registerTask('test', 'Run qunit tests', ['rollup', 'concat', 'quint']);
+    grunt.registerTask('default', ['rollup', 'uglify', 'jsdoc']);
+    //grunt.registerTask('test', 'Run qunit tests', ['rollup', 'qunit']);
     grunt.registerTask('publish', 'Raise the version and publish', function () { 
         grunt.task.run('bump');
     });
