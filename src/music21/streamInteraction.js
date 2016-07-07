@@ -130,9 +130,7 @@ define(['./common','./stream', 'jquery'],
     streamInteraction.ScrollPlayer.prototype.createScrollBar = function () {
         var canvas = this.canvas;
         var svgDOM = common.makeSVGright('svg', {
-            'height': canvas.height.toString() +'px',
-            'width': canvas.width.toString() + 'px',
-            'style': 'position:absolute; top: 0px; left: 0px;',
+            'style': 'position:absolute; top: 0px; left: 0px; height: ' + canvas.height.toString() + 'px; width: ' + canvas.width.toString() + 'px',
         });
         var scaleY = this.stream.renderOptions.scaleFactor.y;        
         var eachSystemHeight = canvas.height / (scaleY * (this.pixelMapper.maxSystemIndex + 1));
