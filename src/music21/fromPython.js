@@ -87,6 +87,7 @@ define(['jsonpickle'],
                 var classList = el.classes;
                 if (classList === undefined) {
                     console.warn("M21object without classes: ", el);
+                    console.warn("Javascript classes are: ", el._py_class)
                     classList = [];
                 }
                 var streamPart = ch.currentPart;
@@ -194,6 +195,9 @@ define(['jsonpickle'],
     };
     if (typeof music21 !== undefined) {
         music21.fromPython = fromPython;
+        // TODO: Remove after Jan 1, 2017 -- old interface... 
+        //       keep for old versions of music21p that might use it...
+        music21.jsonPickle = fromPython;  
     }
     return fromPython;
 });
