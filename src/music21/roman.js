@@ -100,7 +100,13 @@ define(['./chord', './key', './pitch', './interval'],
                 enumerable: true,
 	    		get: function () {
 	    			if (this.scaleDegree < 7) {
-	    				return [undefined, 'Tonic', 'Supertonic','Mediant','Subdominant','Dominant','Submediant'][this.scaleDegree];
+	    				return [undefined, 
+	    				        'Tonic', 
+	    				        'Supertonic', 
+	    				        'Mediant', 
+	    				        'Subdominant', 
+	    				        'Dominant', 
+	    				        'Submediant'][this.scaleDegree];
 	    			} else {
 	    				var tonicPitch = new pitch.Pitch(this.key.tonic);
 	    				var diffRootToTonic = (tonicPitch.ps - this.root.ps) % 12;

@@ -1,14 +1,14 @@
-define(['./prebase'], 
+define(['./prebase', 'vexflow'], 
         /**
          * articulations module. See {@link music21.articulations} namespace
          * 
          * @exports music21/articulations
          */
-        function(prebase) {
+        function(prebase, Vex) {
    /**
     * @namespace music21.articulations
     * @memberof music21
-    * @requires music21/prebase
+    * @requires music21/prebase, Vexflow
     */
    var articulations = {};
 
