@@ -1243,7 +1243,7 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
         } else if (where.jquery === undefined) {
             $where = $(where);
         }
-        var $innerDiv = $("<div>").css('position', 'absolute');
+        var $innerDiv = $("<div>").css('position', 'relative');
         var c;            
         this.renderOptions.events.click = function(storedThis) { 
             return function (event) {
