@@ -25,13 +25,23 @@ define(['./base', './pitch', './interval', './scale'],
      * @requires music21/scale
      */
 	var key = {};
+	
+	key.modeSharpsAlter = {
+	        'major': 0,
+            'minor': -3,
+            'dorian': -2,
+            'phrygian': -4,
+            'lydian': 1,
+            'mixolydian': -1,
+            'locrian': -5,
+     }
+	
 	/**
 	 * @class KeySignature
 	 * @memberof music21.key
 	 * @description Represents a key signature
 	 * @param {Int} [sharps=0] -- the number of sharps (negative for flats)
      * @property {Int} [sharps=0] -- number of sharps (negative for flats)
-     * @property {String} [mode='major'] -- mode represented by the KeySignature (see Key for more sophisticated uses)
      * @extends music21.base.Music21Object
      * @example
      * var ks = new music21.key.KeySignature(-3); //E-flat major or c minor
@@ -45,7 +55,6 @@ define(['./base', './pitch', './interval', './scale'],
 		base.Music21Object.call(this);
 		this.classes.push('KeySignature');
 		this._sharps = sharps || 0; // if undefined
-		this.mode = 'major';
 		this._alteredPitchesCache = undefined;
 		
 		// 12 flats/sharps enough for now...
@@ -249,10 +258,7 @@ define(['./base', './pitch', './interval', './scale'],
 		if (sharpsIndex == -1) {
 			throw("Cannot find the key for " + keyName );
 		}
-		var modeShift = 0;
-		if (mode == 'minor') {
-			modeShift = -3;
-		}
+		var modeShift = key.modeSharpsAlter[mode] || 0;
 		var sharps = sharpsIndex + modeShift - 11;
 		if (music21.debug) {
 			console.log("Found sharps " + sharps + " for key: " + keyName);
@@ -309,8 +315,12 @@ define(['./base', './pitch', './interval', './scale'],
 	            var k = new music21.key.Key(givenKeyName, givenMode);
 	            var foundSharps = k.sharps;
 	            var foundMode = k.mode;
-	            equal (foundSharps, expectedSharps, "Test sharps: " + givenKeyName + " (mode: " + givenMode + ") ");
-	            equal (foundMode, expectedMode, "Test mode: " + givenKeyName + " (mode: " + givenMode + ") ");
+	            equal (foundSharps, 
+	                    expectedSharps, 
+	                    "Test sharps: " + givenKeyName + " (mode: " + givenMode + ") ");
+	            equal (foundMode, 
+	                    expectedMode, 
+	                    "Test mode: " + givenKeyName + " (mode: " + givenMode + ") ");
 	        }
 
 	        var k = new music21.key.Key("f#");
