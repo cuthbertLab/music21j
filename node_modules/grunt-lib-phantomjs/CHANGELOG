@@ -1,0 +1,53 @@
+v1.1.0:
+  date: 2016-05-12
+  changes:
+    - Add onResourceError event handler
+    - Add onResourceTimeout event handler
+v1.0.2:
+  date: 2016-04-14
+  changes:
+    - Update dependencies.
+    - Add API docs to `README`
+    - Fix EBUSY error on Windows when deleting temp file
+    - Set a default value to `options.killTimeout`
+v1.0.1:
+  date: 2016-02-12
+  changes:
+    - switched package names to phantomjs-prebuilt in deps.
+v1.0.0:
+  date: 2016-01-26
+  changes:
+    - Update to PhantomJS ^2.1.2
+v0.7.1:
+  date: 2015-07-10
+  changes:
+    - Handle code 'null' in spawn code
+v0.7.0:
+  date: 2015-02-20
+  changes:
+    - Bump `phantomjs` dependency.
+    - Add a handler for `phantom.onError`.
+    - Check for a pid rather than connected property of process before killing it.
+v0.6.0:
+  date: 2014-03-28
+  changes:
+    - Allow "spawn" to be called without options.
+    - Kill spawned phantomjs process on cleanup() in case something is keeping it open.
+    - Added option for screenshots.
+v0.5.0:
+  date: 2014-01-17
+  changes:
+    - /41 /49 merged
+v0.4.0:
+  date: 2013-09-02
+  changes:
+    - removed phantom.exit on failures after first load /24 /18
+    - return full request object for debugging /34
+v0.3.0:
+  date: 2013-04-03
+  changes:
+    - bumped phantomjs to 1.9.0-1
+v0.1.0:
+  date: 2012-10-05
+  changes:
+    - Work in progress.
