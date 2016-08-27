@@ -6,10 +6,10 @@
  */
 
 (function (global, factory) {
-  typeof exports === 'object' && typeof module !== 'undefined' ? factory(require('jquery'), require('vexflow'), require('jsonpickle'), require('MIDI')) :
-  typeof define === 'function' && define.amd ? define(['jquery', 'vexflow', 'jsonpickle', 'MIDI'], factory) :
-  (factory(global.$,global.Vex,global.jsonpickle,global.MIDI));
-}(this, (function (jquery,vexflow,jsonpickle,MIDI) { 'use strict';
+  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('jquery'), require('vexflow'), require('jsonpickle'), require('MIDI')) :
+  typeof define === 'function' && define.amd ? define(['exports', 'jquery', 'vexflow', 'jsonpickle', 'MIDI'], factory) :
+  (factory((global.music21 = global.music21 || {}),global.$,global.Vex,global.jsonpickle,global.MIDI));
+}(this, (function (exports,jquery,vexflow,jsonpickle,MIDI) { 'use strict';
 
   /**
    * common functions
@@ -3873,6 +3873,166 @@
    * 
    * 
    */
+  var jp = jsonpickle.jsonpickle;
+  /**
+   * fromPython module -- see {@link music21.fromPython}
+   */
+  var unpickler = jp.unpickler;
+
+  /**
+   * Converter for taking a Python-encoded jsonpickle music21p stream
+   * and loading it into music21j
+   * 
+   * Very very alpha.  See music21(p).vexflow modules to see how it works.
+   * 
+   * Requires Cuthbert's jsonpickle.js port (included in music21j)
+   * 
+   * @namespace music21.fromPython
+   * @extends music21
+   * @requires jsonpickle
+   */
+  var fromPython = {};
+
+  /**
+   * 
+   * @class Converter
+   * @memberof music21.fromPython
+   * @property {boolean} debug
+   * @property {Array<string>} knownUnparsables - list of classes that cannot be parsed
+   * @property {object} handlers - object mapping string names of classes to a set of function calls to perform when restoring or post-restoring. (too complicated to explain; read the code)
+   */
+  fromPython.Converter = function () {
+      this.debug = true;
+      this.knownUnparsables = ['music21.spanner.Line', 'music21.instrument.Instrument', 'music21.layout.StaffGroup', 'music21.layout.StaffLayout', 'music21.layout.SystemLayout', 'music21.layout.PageLayout', 'music21.expressions.TextExpression', 'music21.bar.Barline', // Soon...
+      'music21.tempo.MetronomeMark', // should be possible
+      'music21.metadata.Metadata'];
+
+      var converterHandler = this;
+      /**
+       * Fixes up some references that cannot be unpacked from jsonpickle.
+       * 
+       * @method music21.fromPython.Converter#streamPostRestore
+       * @memberof music21.fromPython.Converter
+       * @param {music21.stream.Stream} s - stream after unpacking from jsonpickle
+       * @returns {music21.stream.Stream}
+       */
+      this.streamPostRestore = function (s) {
+          var ch = converterHandler;
+          var st = s._storedElementOffsetTuples;
+
+          s._clef = ch.lastClef;
+          s._keySignature = ch.lastKeySignature;
+          s._timeSignature = ch.lastTimeSignature;
+          for (var i = 0; i < st.length; i++) {
+              var el = st[i][0];
+              el.offset = st[i][1];
+              var classList = el.classes;
+              if (classList === undefined) {
+                  console.warn("M21object without classes: ", el);
+                  console.warn("Javascript classes are: ", el._py_class);
+                  classList = [];
+              }
+              var streamPart = ch.currentPart;
+              if (streamPart == undefined) {
+                  streamPart = s; // possibly a Stream constructed from .measures()
+              }
+
+              var appendEl = true;
+              var insertAtStart = false;
+
+              for (var j = 0; j < classList.length; j++) {
+                  var thisClass = classList[j];
+                  for (var kn = 0; kn < ch.knownUnparsables.length; kn++) {
+                      var unparsable = ch.knownUnparsables[kn];
+                      if (unparsable.indexOf(thisClass) != -1) {
+                          appendEl = false;
+                      }
+                  }
+                  if (thisClass == "TimeSignature") {
+                      //console.log("Got timeSignature", streamPart, newM21pObj, storedElement);
+                      s._timeSignature = el;
+                      ch.lastTimeSignature = el;
+                      if (streamPart !== undefined && streamPart.timeSignature === undefined) {
+                          streamPart.timeSignature = el;
+                      }
+                      appendEl = false;
+                  } else if (thisClass == "Clef") {
+                      s._clef = el;
+                      ch.lastClef = el;
+                      if (streamPart !== undefined && streamPart.clef === undefined) {
+                          streamPart.clef = el;
+                      }
+                      appendEl = false;
+                  } else if (thisClass == "KeySignature") {
+                      s._keySignature = el;
+                      this.lastKeySignature = el;
+                      if (streamPart !== undefined && streamPart.keySignature === undefined) {
+                          streamPart.keySignature = el;
+                      }
+                      appendEl = false;
+                  } else if (thisClass == 'Part') {
+                      appendEl = false;
+                      insertAtStart = true;
+                  }
+              }
+
+              if (appendEl) {
+                  s.append(el); // all but clef, ts, ks
+              } else if (insertAtStart) {
+                  s.insert(0, el); // Part
+              }
+          }
+          return s;
+      };
+
+      this.handlers = {
+          'music21.duration.Duration': {
+              post_restore: function (d) {
+                  d.quarterLength = d._qtrLength;
+                  return d;
+              }
+          },
+          'music21.meter.TimeSignature': {
+              post_restore: function (ts) {
+                  ts._numerator = ts.displaySequence._numerator;
+                  ts._denominator = ts.displaySequence._denominator;
+                  return ts;
+              }
+          },
+          'music21.stream.Part': {
+              post_restore: function (p) {
+                  converterHandler.currentPart = p;
+                  converterHandler.lastClef = undefined;
+                  converterHandler.lastKeySignature = undefined;
+                  converterHandler.lastTimeSignature = undefined;
+                  converterHandler.streamPostRestore(p);
+                  return p;
+              }
+          },
+          // TODO: all inherit somehow, through _classes or better, prototype...
+          'music21.stream.Score': { post_restore: converterHandler.streamPostRestore },
+          'music21.stream.Stream': { post_restore: converterHandler.streamPostRestore },
+          'music21.stream.Measure': { post_restore: converterHandler.streamPostRestore },
+          'music21.stream.Voice': { post_restore: converterHandler.streamPostRestore }
+      };
+      this.currentPart = undefined;
+      this.lastClef = undefined;
+      this.lastKeySignature = undefined;
+      this.lastTimeSignature = undefined;
+  };
+
+  /**
+   * Run the main decoder
+   * 
+   * @method music21.fromPython.Converter#run
+   * @memberof music21.fromPython.Converter
+   * @param {string} jss - stream encoded as JSON
+   * @returns {music21.stream.Stream}
+   */
+  fromPython.Converter.prototype.run = function (jss) {
+      var outStruct = unpickler.decode(jss, this.handlers);
+      return outStruct.stream;
+  };
 
   /**
    * music21j -- Javascript reimplementation of Core music21p features.  
@@ -11505,6 +11665,247 @@
    * Based on music21 (=music21p), Copyright (c) 2006–14, Michael Scott Cuthbert and cuthbertLab
    * 
    */
+  /**
+   * TinyNotation module, see {@link music21.tinyNotation} namespace
+   * 
+   * @exports music21/tinyNotation
+   */
+  /**
+   * @namespace music21.tinyNotation
+   * @memberof music21
+   * @requires music21/base
+      * @requires music21/clef
+      * @requires music21/duration
+      * @requires music21/pitch
+      * @requires music21/note
+      * @requires music21/meter
+      * @requires music21/stream
+      * @requires music21/tie
+   */
+  var tinyNotation = {};
+
+  /**
+   * Regular expressions object
+   * 
+   * @memberof music21.tinyNotation
+   */
+  tinyNotation.regularExpressions = {
+  	REST: /r/,
+  	OCTAVE2: /([A-G])[A-G]+/,
+  	OCTAVE3: /([A-G])/,
+  	OCTAVE5: /([a-g])(\'+)/,
+  	OCTAVE4: /([a-g])/,
+  	EDSHARP: /\((\#+)\)/,
+  	EDFLAT: /\((\-+)\)/,
+  	EDNAT: /\(n\)/,
+  	SHARP: /^[A-Ga-g]+\'*(\#+)/, // simple notation finds 
+  	FLAT: /^[A-Ga-g]+\'*(\-+)/, // double sharps too
+  	NAT: /^[A-Ga-g]+\'*n/, // explicit naturals
+  	TYPE: /(\d+)/,
+  	TIE: /.\~/, // not preceding ties
+  	PRECTIE: /\~/, // front ties
+  	ID_EL: /\=([A-Za-z0-9]*)/,
+  	LYRIC: /\_(.*)/,
+  	DOT: /\.+/,
+  	TIMESIG: /(\d+)\/(\d+)/,
+
+  	TRIP: /trip\{/,
+  	QUAD: /quad\{/,
+  	ENDBRAC: /\}$/
+  };
+  /**
+   * Function, not class.
+   * 
+   * Converts a TinyNotation String into a music21 Stream
+   * 
+   * See music21p for examples of what can go into tinynotation. It's an
+   * adaptation of Lilypond format, by design Extremely simple!
+   * 
+      * @memberof music21.tinyNotation
+      * @param {string} textIn - a valid tinyNotation string
+      * @returns {music21.stream.Part|music21.stream.Measure} - a Stream or Part object (if multiple measures)
+      * @example
+      * var t = "3/4 c4 B8 c d4 e2.";
+      * var p = music21.tinyNotation.TinyNotation(t);
+      * p.duration.quarterLength;
+      * // 6.0
+   */
+  tinyNotation.TinyNotation = function (textIn) {
+  	textIn = textIn.trim();
+  	var tokens = textIn.split(" ");
+  	var p = new stream.Part();
+  	var m = new stream.Measure();
+  	var currentTSBarDuration = 4.0;
+  	var lastDurationQL = 1.0;
+  	var storedDict = {
+  		lastNoteTied: false,
+  		inTrip: false,
+  		inQuad: false,
+  		endTupletAfterNote: false
+  	};
+  	var tnre = tinyNotation.regularExpressions; // faster typing
+  	for (var i = 0; i < tokens.length; i++) {
+  		// check at first so that a full measure but not over full
+  		// gets returned as a stream.Measure object.
+  		if (m.duration.quarterLength >= currentTSBarDuration) {
+  			p.append(m);
+  			m = new stream.Measure();
+  		}
+
+  		var token = tokens[i];
+  		var noteObj = undefined;
+  		var MATCH;
+  		if (MATCH = tnre.TRIP.exec(token)) {
+  			token = token.slice(5); // cut...
+  			storedDict.inTrip = true;
+  		}
+  		if (MATCH = tnre.QUAD.exec(token)) {
+  			token = token.slice(5); // cut...
+  			storedDict.inQuad = true;
+  		}
+  		if (MATCH = tnre.ENDBRAC.exec(token)) {
+  			token = token.slice(0, -1); // cut...
+  			storedDict.endTupletAfterNote = true;
+  		}
+
+  		if (MATCH = tnre.TIMESIG.exec(token)) {
+  			var ts = new meter.TimeSignature();
+  			ts.numerator = parseInt(MATCH[1]);
+  			ts.denominator = parseInt(MATCH[2]);
+  			m.timeSignature = ts;
+  			currentTSBarDuration = ts.barDuration.quarterLength;
+  			//console.log(currentTSBarDuration);
+  			continue;
+  		} else if (tnre.REST.exec(token)) {
+  			noteObj = new note.Rest(lastDurationQL);
+  		} else if (MATCH = tnre.OCTAVE2.exec(token)) {
+  			noteObj = new note.Note(MATCH[1], lastDurationQL);
+  			noteObj.pitch.octave = 4 - MATCH[0].length;
+  		} else if (MATCH = tnre.OCTAVE3.exec(token)) {
+  			noteObj = new note.Note(MATCH[1], lastDurationQL);
+  			noteObj.pitch.octave = 3;
+  		} else if (MATCH = tnre.OCTAVE5.exec(token)) {
+  			// must match octave 5 before 4
+  			noteObj = new note.Note(MATCH[1].toUpperCase(), lastDurationQL);
+  			noteObj.pitch.octave = 3 + MATCH[0].length;
+  		} else if (MATCH = tnre.OCTAVE4.exec(token)) {
+  			noteObj = new note.Note(MATCH[1].toUpperCase(), lastDurationQL);
+  			noteObj.pitch.octave = 4;
+  		}
+
+  		if (noteObj == undefined) {
+  			continue;
+  		}
+  		if (tnre.TIE.exec(token)) {
+  			noteObj.tie = new tie.Tie('start');
+  			if (storedDict['lastNoteTied']) {
+  				noteObj.tie.type = 'continue';
+  			}
+  			storedDict['lastNoteTied'] = true;
+  		} else {
+  			if (storedDict['lastNoteTied']) {
+  				noteObj.tie = new tie.Tie('stop');
+  				storedDict['lastNoteTied'] = false;
+  			}
+  		}
+  		if (tnre.SHARP.exec(token)) {
+  			noteObj.pitch.accidental = new pitch.Accidental('sharp');
+  		} else if (tnre.FLAT.exec(token)) {
+  			noteObj.pitch.accidental = new pitch.Accidental('flat');
+  		} else if (tnre.NAT.exec(token)) {
+  			noteObj.pitch.accidental = new pitch.Accidental('natural');
+  			noteObj.pitch.accidental.displayType = "always";
+  		}
+
+  		if (MATCH = tnre.TYPE.exec(token)) {
+  			var durationType = parseInt(MATCH[0]);
+  			noteObj.duration.quarterLength = 4.0 / durationType;
+  		}
+
+  		if (MATCH = tnre.DOT.exec(token)) {
+  			var numDots = MATCH[0].length;
+  			var multiplier = 1 + (1 - Math.pow(.5, numDots));
+  			noteObj.duration.quarterLength = multiplier * noteObj.duration.quarterLength;
+  		}
+  		lastDurationQL = noteObj.duration.quarterLength;
+  		// do before appending tuplets
+
+  		if (storedDict.inTrip) {
+  			//console.log(noteObj.duration.quarterLength);
+  			noteObj.duration.appendTuplet(new duration.Tuplet(3, 2, noteObj.duration.quarterLength));
+  		}
+  		if (storedDict.inQuad) {
+  			noteObj.duration.appendTuplet(new duration.Tuplet(4, 3, noteObj.duration.quarterLength));
+  		}
+  		if (storedDict.endTupletAfterNote) {
+  			storedDict.inTrip = false;
+  			storedDict.inQuad = false;
+  			storedDict.endTupletAfterNote = false;
+  		}
+  		m.append(noteObj);
+  	}
+  	if (p.length > 0) {
+  		p.append(m);
+  		var thisClef = clef.bestClef(p);
+  		p.clef = thisClef;
+  		return p; // return measure object if one measure or less		    
+  	} else {
+  		m.clef = clef.bestClef(m);
+  		return m;
+  	}
+  };
+
+  // render notation divs in HTML
+  /**
+   * Render all the TinyNotation classes in the DOM as notation
+   * 
+   * Called automatically when music21 is loaded.
+   * 
+   * @memberof music21.tinyNotation
+   * @param {string} classTypes - a JQuery selector to find elements to replace.
+   */
+  tinyNotation.renderNotationDivs = function (classTypes, selector) {
+  	if (classTypes == undefined) {
+  		classTypes = '.music21.tinyNotation';
+  	}
+  	var allRender = [];
+  	if (selector == undefined) {
+  		allRender = $(classTypes);
+  	} else {
+  		if (selector.jquery == undefined) {
+  			selector = $(selector);
+  		}
+  		allRender = selector.find(classTypes);
+  	}
+  	for (var i = 0; i < allRender.length; i++) {
+  		var thisTN = allRender[i];
+  		var thisTNJQ = $(thisTN);
+  		var thisTNContents = undefined;
+  		if (thisTNJQ.attr("tinynotationcontents") !== undefined) {
+  			thisTNContents = thisTNJQ.attr("tinynotationcontents");
+  		} else if (thisTN.textContent != undefined) {
+  			thisTNContents = thisTN.textContent;
+  			thisTNContents = thisTNContents.replace(/s+/g, ' '); // no line-breaks, etc.
+  		}
+
+  		if (String.prototype.trim != undefined && thisTNContents != undefined) {
+  			thisTNContents = thisTNContents.trim(); // remove leading, trailing whitespace
+  		}
+  		if (thisTNContents) {
+  			var st = tinyNotation.TinyNotation(thisTNContents);
+  			if (thisTNJQ.hasClass('noPlayback')) {
+  				st.renderOptions.events['click'] = undefined;
+  			}
+  			var newCanvas = st.createCanvas();
+
+  			thisTNJQ.attr("tinynotationcontents", thisTNContents);
+  			thisTNJQ.empty();
+  			thisTNJQ.data("stream", st);
+  			thisTNJQ.append(newCanvas);
+  			//console.log(thisTNContents);		
+  		}
+  	}
+  };
 
   /**
    * music21j -- Javascript reimplementation of Core music21p features.  
@@ -11518,11 +11919,696 @@
    * Based on music21 (=music21p), Copyright (c) 2006–15, Michael Scott Cuthbert and cuthbertLab
    * 
    */
+  /**
+   * webmidi -- for connecting with external midi devices
+   * 
+   * Uses either the webmidi API or the Jazz plugin
+   * 
+   * See {@link music21.webmidi}
+   * 
+   * @exports music21/webmidi
+   */
+  /**
+   * webmidi -- for connecting with external midi devices
+   * 
+   * Uses either the webmidi API or the Jazz plugin
+   * 
+   * @namespace music21.webmidi
+   * @memberof music21
+   * @requires music21/miditools
+   * @requires jquery
+   * @property {JazzObject|undefined} storedPlugin - reference to the Jazz object from the plugin; cached from `createPlugin`.
+   * @property {string} selectedJazzInterface - the currently connected interface (note that we can only use one right now)
+   */
+  var webmidi = {};
+  webmidi.selectedOutputPort = undefined;
+  webmidi.selectedInputPort = undefined;
+
+  webmidi.access = undefined;
+  webmidi.$selectDiv = undefined;
+
+  webmidi.jazzDownloadUrl = 'http://jazz-soft.net/download/Jazz-Plugin/';
+  webmidi.storedPlugin = undefined;
+  webmidi.selectedJazzInterface = undefined; // not the same as "" etc. uses last selected interface by default.
+
+  /* ----------- callbacks --------- */
+  // todo: all callbacks (incl. raw, sendOutChord) should be able to be a function or an array of functions
+  /**
+   * callBacks is an object with three keys:
+   * 
+   * - raw: function (t, a, b,c) to call when any midievent arrives. Default: `function (t, a, b, c) { return new miditools.Event(t, a, b, c); }`
+   * - general: function ( miditools.Event() ) to call when an Event object has been created. Default: `[miditools.sendToMIDIjs, miditools.quantizeLastNote]`
+   * - sendOutChord: function (array_of_note.Note_objects) to call when a sufficient time has passed to build a chord from input. Default: empty function.
+      *
+      * At present, only "general" can take an Array of event listening functions, but I hope to change that for sendOutChord also.
+      *
+      * "general" is usually the callback list to play around with.
+      *
+   * @memberof music21.webmidi
+   */
+  webmidi.callBacks = {
+      raw: function (t, a, b, c) {
+          return new miditools.Event(t, a, b, c);
+      },
+      general: [miditools.sendToMIDIjs, miditools.quantizeLastNote],
+      sendOutChord: function (arrayOfNotes) {}
+  };
+
+  /**
+   * Called by Jazz MIDI plugin when an event arrives.
+   * 
+   * Shim to convert the data into WebMIDI API format and then call the WebMIDI API midiInArrived
+   * 
+   * See the MIDI spec for information on parameters
+   * 
+   * @memberof music21.webmidi
+   * @param {byte} t - timing information
+   * @param {byte} a - data 1 
+   * @param {byte} b - data 2
+   * @param {byte} c - data 3 
+   */
+  webmidi.jazzMidiInArrived = function (t, a, b, c) {
+      var webmidiEvent = {
+          timestamp: t,
+          data: [a, b, c]
+      };
+      return webmidi.midiInArrived(webmidiEvent);
+  };
+
+  /**
+   * Called directly when a MIDI event arrives from the WebMIDI API, or via a Shim (jazzMidiInArrived)
+   * when MIDI information comes from JazzMIDI
+   * 
+   * Calls the 'raw' and 'general callbacks when a raw midi event (four bytes)
+   * arrives.
+   * 
+   * See the MIDI spec for information on the contents of the three parameters.
+   * 
+   * midiMessageEvent should be an object with two keys: timeStamp (int) and data (array of three int values)
+   * 
+   * @memberof music21.webmidi
+   * @param {MidiMessageEvent} midiMessageEvent - midi Information
+   */
+  webmidi.midiInArrived = function (midiMessageEvent) {
+      t = midiMessageEvent.timeStamp;
+      a = midiMessageEvent.data[0];
+      b = midiMessageEvent.data[1];
+      c = midiMessageEvent.data[2];
+      var eventObject = webmidi.callBacks.raw(t, a, b, c);
+      if (webmidi.callBacks.general instanceof Array) {
+          webmidi.callBacks.general.forEach(function (el, index, array) {
+              el(eventObject);
+          });
+      } else if (webmidi.callBacks.general !== undefined) {
+          return webmidi.callBacks.general(eventObject);
+      }
+  };
+
+  /**
+   * Create a hidden tiny, &lt;object&gt; tag in the DOM with the
+   * proper classid (`CLSID:1ACE1618-1C7D-4561-AEE1-34842AA85E90`) to
+   * load the Jazz plugin.
+   * 
+   * It will return the plugin if it can or undefined if it cannot. Caches it in webmidi.storedPlugin.
+   * 
+   * @function music21.webmidi.createPlugin
+   * @param {DOMObject} [appendElement=document.body] - where to place this hidden object (does not really matter)
+   * @param {Boolean} [override=false] - if this method has been called successfully before return the storedPlugin unless override is true.  
+   * @returns {Jazz|undefined} Jazz MIDI plugin object
+   */
+  webmidi.createPlugin = function (appendElement, override) {
+      if (webmidi.storedPlugin && override != true) {
+          return webmidi.storedPlugin;
+      }
+      if (typeof appendElement == 'undefined') {
+          appendElement = jquery.$('body')[0];
+      }
+      var obj = document.createElement('object');
+      obj.classid = "CLSID:1ACE1618-1C7D-4561-AEE1-34842AA85E90";
+      if (!obj.isJazz) {
+          obj.type = "audio/x-jazz";
+      }
+      obj.style.visibility = 'hidden';
+      obj.style.width = '0px';
+      obj.style.height = '0px';
+      appendElement.appendChild(obj);
+
+      if (obj.isJazz) {
+          webmidi.storedPlugin = obj;
+          return obj;
+      } else {
+          appendElement.removeChild(obj);
+          console.error("Cannot use jazz plugin; install at " + webmidi.jazzDownloadUrl);
+          return undefined;
+      }
+  };
+
+  /**
+   * Creates a &lt;select&gt; object for selecting among the MIDI choices in Jazz
+   * 
+   * @function music21.webmidi.createJazzSelector
+   * @param {JQueryDOMObject|DOMObject} [midiSelectDiv=document.body] - object to append the select to
+   * @param {object} [options] - see createSelector for details
+   * @returns {DOMObject|undefined} DOM object containing the select tag, or undefined if Jazz cannot be loaded.
+   */
+  webmidi.createJazzSelector = function ($newSelect, options) {
+      params = {};
+      common.merge(params, options);
+
+      var Jazz = webmidi.createPlugin();
+      if (Jazz === undefined) {
+          return undefined;
+      }
+
+      $newSelect.change(function () {
+          var selectedInput = jquery.$("#midiInSelect option:selected").text();
+          if (selectedInput != "None selected") {
+              webmidi.selectedJazzInterface = Jazz.MidiInOpen(selectedInput, webmidi.jazzMidiInArrived);
+          } else {
+              Jazz.MidiInClose();
+          }
+          if (music21.debug) {
+              console.log("current input changed to: " + webmidi.selectedInterface);
+          }
+      });
+      var midiOptions = Jazz.MidiInList();
+      var noneAppendOption = jquery.$("<option value='None'>None selected</option>");
+      $newSelect.append(noneAppendOption);
+
+      var anySelected = false;
+      var allAppendOptions = [];
+      for (var i = 0; i < midiOptions.length; i++) {
+          var $appendOption = jquery.$("<option value='" + midiOptions[i] + "'>" + midiOptions[i] + "</option>");
+          if (midiOptions[i] == webmidi.selectedJazzInterface) {
+              $appendOption.attr("selected", true);
+              anySelected = true;
+          }
+          allAppendOptions.push($appendOption);
+          //console.log(appendOption);
+          $newSelect.append($appendOption);
+      }
+      if (anySelected == false && midiOptions.length > 0) {
+          $newSelect.val(midiOptions[0]);
+          allAppendOptions[0].attr("selected", true);
+          webmidi.selectedJazzInterface = Jazz.MidiInOpen(midiOptions[0], webmidi.jazzMidiInArrived);
+          anySelected = true;
+      } else {
+          noneAppendOption.attr("selected", true);
+      }
+      if (params.onsuccess !== undefined) {
+          params.onsuccess();
+      }
+      if (anySelected === true && params.oninputsuccess !== undefined) {
+          params.oninputsuccess();
+      } else if (anySelected === false && params.oninputempty !== undefined) {
+          params.oninputempty();
+      }
+  };
+
+  /**
+   * Function to be called if the webmidi-api selection changes. (not jazz)
+   * 
+   */
+  webmidi.selectionChanged = function () {
+      var selectedInput = webmidi.$select.val();
+      if (selectedInput == webmidi.selectedInputPort) {
+          return;
+      }
+      var storedStateChange = webmidi.access.onstatechange; // port.close() fires onstatechange, so turn off for a moment.
+      webmidi.access.onstatechange = function () {};
+      if (music21.debug) {
+          console.log("current input changed to: " + selectedInput);
+      }
+      webmidi.selectedInputPort = selectedInput;
+
+      webmidi.access.inputs.forEach(function (port) {
+          if (port.name == selectedInput) {
+              port.onmidimessage = webmidi.midiInArrived;
+          } else {
+              port.close();
+          }
+      });
+      webmidi.access.onstatechange = storedStateChange;
+      return false;
+  };
+
+  /**
+   * Creates a &lt;select&gt; object for selecting among the MIDI choices in Jazz
+   *
+   * The options object has several parameters:
+   * 
+   * {bool} autoupdate -- should this auto update?
+   * {function} onsuccess -- function to call on all successful port queries
+   * {function} oninputsuccess -- function to call if successful and at least one input device is found
+   * {function} oninputempty -- function to call if successful but no input devices are found.
+   * {bool} existingMidiSelect -- is there already a select tag for MIDI?
+   * 
+   * @function music21.webmidi.createSelector
+   * @param {JQueryDOMObject|DOMObject} [$midiSelectDiv=$('body')] - object to append the select to
+   * @param {object} [options] - see above.
+   * @returns {DOMObject|undefined} DOM object containing the select tag, or undefined if Jazz cannot be loaded.
+   */
+  webmidi.createSelector = function ($midiSelectDiv, options) {
+      var params = {
+          autoUpdate: true,
+          existingMidiSelect: false
+      };
+      common.merge(params, options);
+
+      if (typeof $midiSelectDiv == 'undefined') {
+          $midiSelectDiv = jquery.$("body");
+      }
+      if ($midiSelectDiv.jquery == undefined) {
+          $midiSelectDiv = jquery.$($midiSelectDiv);
+      }
+      var $newSelect;
+      var foundMidiSelects = $midiSelectDiv.find('select#midiInSelect');
+      if (foundMidiSelects.length > 0) {
+          $newSelect = foundMidiSelects[0];
+          params.existingMidiSelect = true;
+      } else {
+          $newSelect = jquery.$("<select>").attr('id', 'midiInSelect');
+          $midiSelectDiv.append($newSelect);
+      }
+      webmidi.$select = $newSelect;
+
+      if (navigator.requestMIDIAccess === undefined) {
+          webmidi.createJazzSelector($newSelect, params);
+      } else {
+          if (params.existingMidiSelect !== true) {
+              $newSelect.change(webmidi.selectionChanged);
+          }
+          navigator.requestMIDIAccess().then(function (access) {
+              webmidi.access = access;
+              webmidi.populateSelect();
+              if (params.autoUpdate) {
+                  access.onstatechange = webmidi.populateSelect;
+              }
+              webmidi.$select.change();
+              if (params.onsuccess !== undefined) {
+                  params.onsuccess();
+              }
+              if (webmidi.selectedInputPort !== "None" && params.oninputsuccess !== undefined) {
+                  params.oninputsuccess();
+              } else if (webmidi.selectedInputPort === "None" && params.oninputempty !== undefined) {
+                  params.oninputempty();
+              }
+          }, function (e) {
+              $midiSelectDiv.html(e.message);
+          });
+      }
+      miditools.clearOldChords(); // starts the chord checking process.
+      return $newSelect;
+  };
+
+  webmidi.populateSelect = function () {
+      var inputs = webmidi.access.inputs;
+      webmidi.$select.empty();
+
+      var $noneAppendOption = jquery.$("<option value='None'>None selected</option>");
+      webmidi.$select.append($noneAppendOption);
+
+      var allAppendOptions = [];
+      var midiOptions = [];
+      var i = 0;
+      inputs.forEach(function (port) {
+          var $appendOption = jquery.$("<option value='" + port.name + "'>" + port.name + "</option>");
+          allAppendOptions.push($appendOption);
+          midiOptions.push(port.name);
+          //console.log(appendOption);
+          webmidi.$select.append($appendOption);
+          i++;
+      });
+      if (allAppendOptions.length > 0) {
+          webmidi.$select.val(midiOptions[0]);
+          allAppendOptions[0].attr("selected", true);
+      } else {
+          $noneAppendOption.attr("selected", true);
+      }
+      webmidi.$select.change();
+  };
+
+  /**
+   * Example smallest usage of the webmidi toolkit.  see testHTML/midiInRequire.html 
+   
+  <html>
+  <head>
+      <title>MIDI In/Jazz Test for Music21j</title>
+      <!-- for MSIE 10 on Windows 8 -->
+      <meta http-equiv="X-UA-Compatible" content="requiresActiveX=true"/>
+      <script data-main="../src/music21.js" src="../ext/require/require.js"></script>
+      <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+
+      <script>
+      var s = "";
+      function displayStream(me) {
+          me.sendToMIDIjs();
+          if (me.noteOn) {
+              var m21n = me.music21Note();
+              if (s.length > 7) {
+                  s.elements = s.elements.slice(1)
+              }
+              s.append(m21n);
+              var $canvasDiv = $("#canvasDiv");
+              $canvasDiv.empty();
+              var canv = s.appendNewCanvas($canvasDiv);
+          }
+      }
+      
+      require(['music21'], function () { 
+          s = new music21.stream.Stream();
+          music21.webmidi.createSelector($("#putMidiSelectHere"));
+          music21.webmidi.callBacks.general = displayStream;
+      });
+      
+      
+      </script>
+  </head>
+  <body>
+  <div>
+  MIDI Input: <div id="putMidiSelectHere" />
+  </div>
+  <div id="canvasDiv">
+      <canvas />
+  </div>
+  </body>
+  </html>
+  **/
+
+  /**
+   * Widgets module -- random widgets.  See {@link music21.widgets}
+   * 
+   * @exports music21/widgets
+   */
+  /**
+   * Widgets module -- random widgets to make streams etc. work better
+   * 
+   * To be added to
+   * 
+   * @namespace music21.widgets
+   * @memberof music21
+   * @requires music21/common
+   */
+  var widgets = {};
+  /**
+   * A set of DOM Objects for choosing rhythms
+   * 
+   * @class RhythmChooser
+   * @memberof music21.widgets
+   * @param {music21.stream.Stream} s - to append to, etc.
+   * @param {DOMObject} c - canvas
+   * @property {Array<string>} values - an array of rhythmic values and editing functions. Default: ['whole', 'half','quarter','eighth','16th','dot','undo']
+   * @property {Boolean} measureMode - whether to use measures when editing
+   * @property {Boolean} tieActive - is a tie active?
+   * @property {Boolean} autoAddMeasure - add a measure when one is full? default: true
+   * @property {music21.stream.Stream} stream
+   * @property {DOMObject} [canvasDiv]
+   */
+  widgets.RhythmChooser = function (s, c) {
+      this.stream = s;
+      this.canvasDiv = c;
+      this.values = ['whole', 'half', 'quarter', 'eighth', '16th', 'dot', 'undo'];
+      if (this.stream.hasSubStreams()) {
+          this.measureMode = true;
+      } else {
+          this.measureMode = false;
+      }
+      this.tieActive = false;
+      this.autoAddMeasure = true;
+      /**
+       * An object mapping a value type to a function when it is clicked
+       * 
+       * the 'default' value handles all types not otherwise given.
+       * 
+       * Each function is passed the type that was clicked. Probably only
+       * useful for 'default'
+       * 
+       * @name buttonHandlers
+       * @type {object}
+       * @memberof music21.widgets.RhythmChooser#
+       */
+      this.buttonHandlers = {
+          'undo': function (t) {
+              if (this.stream.length > 0) {
+                  return this.stream.pop();
+              } else {
+                  return;
+              }
+          },
+          'dot': function (t) {
+              if (this.stream.length > 0) {
+                  var el = this.stream.pop();
+                  el.duration.dots += 1;
+                  this.stream.append(el);
+                  return el;
+              } else {
+                  return;
+              }
+          },
+          'tie': function (t) {
+              if (this.stream.length > 0) {
+                  var el = this.stream.get(-1);
+                  el.tie = new music21.tie.Tie('start');
+                  this.tieActive = true;
+              }
+          },
+          'default': function (t) {
+              var newN = new music21.note.Note('B4');
+              newN.stemDirection = 'up';
+              if (t.indexOf('rest_') == 0) {
+                  newN = new music21.note.Rest();
+                  t = t.slice('rest_'.length);
+              }
+              newN.duration.type = t;
+              if (this.tieActive) {
+                  newN.tie = new music21.tie.Tie('stop');
+                  this.tieActive = false;
+              }
+              this.stream.append(newN);
+              return newN;
+          }
+      };
+      /**
+       * An object mapping a value type to a function when it is clicked if the
+       * RhythmChooser is in measureMode
+       * 
+       * the 'default' value handles all types not otherwise given.
+       * 
+       * Each function is passed the type that was clicked. Probably only
+       * useful for 'default'
+       * 
+       * @name measureButtonHandlers
+       * @type {object}
+       * @memberof music21.widgets.RhythmChooser#
+       */
+      this.measureButtonHandlers = {
+          'undo': function (t) {
+              if (this.stream.length > 0) {
+                  var lastMeasure = this.stream.get(-1);
+                  lastMeasure.pop();
+                  if (lastMeasure.length == 0 && this.stream.length > 1) {
+                      this.stream.pop();
+                  }
+              } else {
+                  return;
+              }
+          },
+          'dot': function (t) {
+              if (this.stream.length > 0) {
+                  var lastMeasure = this.stream.get(-1);
+                  var el = lastMeasure.pop();
+                  el.duration.dots += 1;
+                  lastMeasure.append(el);
+                  return el;
+              } else {
+                  return;
+              }
+          },
+          'addMeasure': function (t) {
+              var lastMeasure = this.stream.get(-1);
+              var m = new music21.stream.Measure();
+              m.renderOptions.staffLines = lastMeasure.renderOptions.staffLines;
+              m.renderOptions.measureIndex = lastMeasure.renderOptions.measureIndex + 1;
+              m.renderOptions.rightBarline = "end";
+              lastMeasure.renderOptions.rightBarline = "single";
+              m.autoBeam = lastMeasure.autoBeam;
+              this.stream.append(m);
+          },
+          'tie': function (t) {
+              var lastMeasure = this.stream.get(-1);
+              var el = undefined;
+              if (lastMeasure.length > 0) {
+                  el = lastMeasure.get(-1);
+              } else {
+                  var previousMeasure = this.stream.get(-2);
+                  if (previousMeasure) {
+                      el = previousMeasure.get(-1);
+                  }
+              }
+              if (el !== undefined) {
+                  var tieType = 'start';
+                  if (el.tie !== undefined) {
+                      tieType = 'continue';
+                  }
+                  el.tie = new music21.tie.Tie(tieType);
+                  this.tieActive = true;
+              }
+          },
+          'default': function (t) {
+              var newN = new music21.note.Note('B4');
+              newN.stemDirection = 'up';
+              if (t.indexOf('rest_') == 0) {
+                  newN = new music21.note.Rest();
+                  t = t.slice('rest_'.length);
+              }
+              newN.duration.type = t;
+              if (this.tieActive) {
+                  newN.tie = new music21.tie.Tie('stop');
+                  this.tieActive = false;
+              }
+              var lastMeasure = this.stream.get(-1);
+              if (this.autoAddMeasure && lastMeasure.duration.quarterLength >= this.stream.timeSignature.barDuration.quarterLength) {
+                  this.measureButtonHandlers['addMeasure'].apply(this, [t]);
+                  lastMeasure = this.stream.get(-1);
+              }
+              lastMeasure.append(newN);
+              return newN;
+          }
+      };
+  };
+
+  /**
+   * A mapping of a type to a string of HTML entities to display in
+   * BravuraText
+   * 
+   * @name valueMappings
+   * @type {object}
+   * @memberof music21.widgets.RhythmChooser
+   */
+  widgets.RhythmChooser.prototype.valueMappings = {
+      whole: '&#xEB9B;&#xE1D2;',
+      half: '&#xEB9B;&#xE1D3;',
+      quarter: '&#xEB9B;&#xE1D5;',
+      eighth: '&#xEB9B;&#xE1D7;',
+      '16th': '&#xEB9B;&#xE1D9;',
+      '32nd': '&#xEB9B;&#xE1DB;', // BUG in Bravura Text
+      addMeasure: '<span style="position: relative; top: -20px">&#xE031</span>',
+      dot: '&#xEB9B;&#xE1E7;',
+      undo: '&#x232B;',
+      tie: '<span style="position: relative; top: -20px;">&#xE1FD</span>',
+      rest_whole: '&#xE4F4;',
+      rest_half: '&#xE4F5;',
+      rest_quarter: '&#xE4E5;',
+      rest_eighth: '&#xE4E6;',
+      rest_16th: '&#xE4E7;',
+      rest_32nd: '&#xE4E8;'
+  };
+  /**
+   * A mapping of a type to a css style
+   * 
+   * @name styles
+   * @type {object}
+   * @memberof music21.widgets.RhythmChooser
+   */
+  widgets.RhythmChooser.prototype.styles = {
+      'undo': 'font-family: serif; font-size: 30pt; top: -2px;'
+  };
+
+  /**
+   * adds a RhythmChooser widget somewhere.
+   * 
+   * @memberof music21.widgets.RhythmChooser
+   * @param {DOMObject|JQueryDOMObject} where
+   */
+  widgets.RhythmChooser.prototype.addDiv = function (where) {
+      var $where = where;
+      if (where !== undefined && where.jquery === undefined) {
+          $where = $(where);
+      }
+      var $outer = $('<div class="rhythmButtonDiv"/>');
+      for (var i = 0; i < this.values.length; i++) {
+          var value = this.values[i];
+          var entity = this.valueMappings[value];
+          var $inner = $('<button class="btButton" m21Type="' + value + '">' + entity + '</button>');
+          if (this.styles[value] !== undefined) {
+              $inner.attr('style', this.styles[value]);
+          }
+
+          $inner.click(function (value) {
+              this.handleButton(value);
+          }.bind(this, value));
+          $outer.append($inner);
+      }
+      if (where !== undefined) {
+          $where.append($outer);
+      }
+      return $outer;
+  };
+
+  /**
+   * A button has been pressed! Call the appropriate handler and update the stream's canvas (if any)
+   * 
+   * @memberof music21.widgets.RhythmChooser
+   * @param {string} t - type of button pressed.
+   */
+  widgets.RhythmChooser.prototype.handleButton = function (t) {
+      var bhs = this.buttonHandlers;
+      if (this.measureMode) {
+          bhs = this.measureButtonHandlers;
+      }
+      var bh = bhs[t];
+      if (bh === undefined) {
+          bh = bhs['default'];
+      }
+      bh.apply(this, [t]);
+      var s = this.stream;
+
+      // redraw score if Part is part of score...
+      if (s.isClassOrSubclass('Part') && s.activeSite !== undefined) {
+          s = s.activeSite;
+      }
+      if (this.canvasDiv !== undefined) {
+          s.replaceCanvas(this.canvasDiv);
+      }
+  };
 
   // order below doesn't matter, but good to give a sense
   // of what will be needed by almost everyone, and then
   // alphabetical
   //import { orchestralScore } from './music21/orchestralScore';
+  var m21 = {};
+  m21.common = common;
+  m21.prebase = prebase;
+  m21.base = base;
+
+  m21.articulations = articulations;
+  m21.audioSearch = audioSearch;
+  m21.beam = beam;
+  m21.chord = chord;
+  m21.clef = clef;
+  m21.duration = duration;
+  m21.expressions = expressions;
+  m21.fromPython = fromPython;
+  m21.instrument = instrument;
+  m21.interval = interval;
+  m21.key = key;
+  m21.keyboard = keyboard;
+  m21.layout = layout;
+  m21.meter = meter;
+  m21.miditools = miditools;
+  m21.note = note;
+  //m21.orchestralScore = orchestralScore;
+  m21.pitch = pitch;
+  m21.renderOptions = renderOptions;
+  m21.roman = roman;
+  m21.stream = stream;
+  m21.streamInteraction = streamInteraction;
+  m21.tempo = tempo;
+  m21.tie = tie;
+  m21.tinyNotation = tinyNotation;
+  m21.vfShow = vfShow;
+  m21.webmidi = webmidi;
+  m21.widgets = widgets;
 
   /**
    * If you are a programmer, this is probably not the script you are looking for.  
@@ -11532,7 +12618,7 @@
    */
   // Not strict mode
 
-  if (typeof music21 === "undefined") {
+  if (typeof exports.music21 === "undefined") {
       /**
        * **music21j**: Javascript reimplementation of Core music21 features.  
        * 
@@ -11559,7 +12645,7 @@
        *  
        * @namespace 
        */
-      music21 = { VERSION: 0.8 }; // update in README.md also
+      exports.music21 = { VERSION: 0.8 }; // update in README.md also
   }
   //console.log('hi before: ' + require.toUrl('hi'));
   //console.log('./hi before: ' + require.toUrl('./hi'));
@@ -11666,11 +12752,11 @@
       }
   }
 
-  music21.m21basePath = pathSimplify(m21srcPath + '/..');
-  music21.m21srcPath = m21srcPath;
+  exports.music21.m21basePath = pathSimplify(m21srcPath + '/..');
+  exports.music21.m21srcPath = m21srcPath;
   //console.log('m21srcPath', m21srcPath);
   //console.log('m21srcPath non simplified', require.toUrl('music21'));
-  music21.soundfontUrl = music21.m21srcPath + '/ext/soundfonts/FluidR3_GM/';
+  exports.music21.soundfontUrl = exports.music21.m21srcPath + '/ext/soundfonts/FluidR3_GM/';
 
   var m21requireConfig = {
       paths: {
@@ -11758,33 +12844,36 @@
           define(m21modules, function (midi, vexflow, $, jsonpickle) {
               // BUG, what if midi is in noLoad?     
               //console.log('inside of require...');
-              music21.scriptConfig = m21conf;
+              exports.music21.scriptConfig = m21conf;
               //console.log(music21.chord);
               if (midi) {
-                  music21.MIDI = midi;
+                  exports.music21.MIDI = midi;
               }
               if (vexflow) {
-                  music21.Vex = vexflow;
+                  exports.music21.Vex = vexflow;
               } else {
                   console.log('could not load VexFlow');
               }
-              if (music21.MIDI) {
-                  if (music21.scriptConfig.loadSoundfont === undefined || music21.scriptConfig.loadSoundfont !== false) {
-                      music21.miditools.loadSoundfont('acoustic_grand_piano');
+              if (exports.music21.MIDI) {
+                  if (exports.music21.scriptConfig.loadSoundfont === undefined || exports.music21.scriptConfig.loadSoundfont !== false) {
+                      exports.music21.miditools.loadSoundfont('acoustic_grand_piano');
                   } else {
                       console.log('skipping loading sound font');
                   }
               }
-              if (music21.scriptConfig.renderHTML === undefined || music21.scriptConfig.renderHTML !== false) {
+              if (exports.music21.scriptConfig.renderHTML === undefined || exports.music21.scriptConfig.renderHTML !== false) {
                   $(document).ready(function () {
-                      music21.tinyNotation.renderNotationDivs();
+                      exports.music21.tinyNotation.renderNotationDivs();
                   });
               }
               //console.log('end inside of require...');
-              return music21;
+              return exports.music21;
           });
       }
   }
+  exports.music21 = m21;
+
+  Object.defineProperty(exports, '__esModule', { value: true });
 
 })));
 //# sourceMappingURL=music21.debug.js.map
