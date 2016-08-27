@@ -7,13 +7,16 @@
  * Based on music21 (=music21p), Copyright (c) 2006–14, Michael Scott Cuthbert and cuthbertLab
  * 
  */
-define(['./base', './pitch', './interval', './scale'], 
+import { base } from './base';
+import { interval } from './interval';
+import { pitch } from './pitch';
+import { scale } from './scale';
+
         /**
          * key and keysignature module. See {@link music21.key} namespace for details
          * 
          * @exports music21/key
          */
-        function(base, pitch, interval, scale) {
     /**
      * Key and KeySignature related objects and methods
      * 
@@ -24,7 +27,7 @@ define(['./base', './pitch', './interval', './scale'],
      * @requires music21/interval
      * @requires music21/scale
      */
-	var key = {};
+export var key = {};
 	
 	key.modeSharpsAlter = {
 	        'major': 0,
@@ -339,9 +342,3 @@ define(['./base', './pitch', './interval', './scale'],
 	    });
 
 	};
-	// end of define
-	if (typeof(music21) != "undefined") {
-		music21.key = key;
-	}		
-	return key;
-});

@@ -1,16 +1,18 @@
-define(['./prebase', 'jquery'],
+import { prebase } from './prebase';
+import { $ } from 'jquery';
+
 		/**
 		 * orchestralScore module. See {@link music21.protopainting} namespace
+		 * alpha.
 		 * 
 		 * @exports music21/orchestralScore
 		 */
-		function(prebase, $) {
 	/**
 	 * @namespace music21.orchestralScore
 	 * @memberof music21
 	 * @requires music21/prebase
 	 */
-	var orchestralScore = {};
+export	var orchestralScore = {};
 	/**
 	 * Represents an orchestral score, 
 	 * 
@@ -333,18 +335,6 @@ define(['./prebase', 'jquery'],
 		});
 		return mixedMeasure;
 	};
-
-
-//	end of define
-	if (typeof(music21) != "undefined") {
-		music21.orchestralScore = orchestralScore;
-	}       
-	return orchestralScore;
-
-});
-
-
-
 
 
 

@@ -9,20 +9,18 @@
  * 
  */
 
-define([], 
         /**
          * renderOptions module, see {@link music21.renderOptions}
          * 
          * @exports music21/renderOptions
          */
-        function() {
     /**
      * Options for rendering a stream
      * 
      * @namespace music21.renderOptions
      * @memberof music21
      */
-    var renderOptions = {};
+export    var renderOptions = {};
     
     /**
      * An object that contains information on rendering the current stream
@@ -73,9 +71,3 @@ define([],
 		};
 	};
 
-	// end of define
-	if (typeof(music21) != "undefined") {
-		music21.renderOptions = renderOptions;
-	}		
-	return renderOptions;
-});

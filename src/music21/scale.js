@@ -8,13 +8,14 @@
  * Based on music21 (=music21p), Copyright (c) 2006–14, Michael Scott Cuthbert and cuthbertLab
  * 
  */
-define(['./pitch', './interval'], 
+import { pitch } from './pitch';
+import { interval } from './interval';
+
         /**
          * Scale module. See {@link music21.scale} namespace
          * 
          * @exports music21/scale
          */
-        function(pitch, interval) {
     /**
      * Scale namespace.  Right now only supports very simple scales.
      * 
@@ -23,7 +24,7 @@ define(['./pitch', './interval'],
      * @requires music21/pitch
      * @requires music21/interval
      */
-	var scale = {};
+export	var scale = {};
 
 	/**
 	 * Function, not class
@@ -95,9 +96,3 @@ define(['./pitch', './interval'],
 		return new scale.SimpleDiatonicScale(tonic, scaleSteps);
 	};
 
-	// end of define
-	if (typeof(music21) != "undefined") {
-		music21.scale = scale;
-	}		
-	return scale;
-});

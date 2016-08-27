@@ -1,61 +1,110 @@
 // Gruntfile for music21j 
 // Copyright Michael Scott Cuthbert (cuthbert@mit.edu), BSD License
+const path = require('path');
 
-
-module.exports = function(grunt) {        
-    var path = require('path');
-    var babel = require('rollup-plugin-babel');
+module.exports = (grunt) => {
+    const babel = require('rollup-plugin-babel');
     
-    var BANNER = '/**\n' +
+    const BANNER = '/**\n' +
                  '  * music21j <%= pkg.version %> built on ' + 
                  '  * <%= grunt.template.today("yyyy-mm-dd") %>.\n' +
-                 ' * Copyright (c) 2016 Michael Scott Cuthbert and cuthbertLab\n' +
+                 ' * Copyright (c) 2013-2016 Michael Scott Cuthbert and cuthbertLab\n' +
                  ' *\n' +
                  ' * http://github.com/cuthbertLab/music21j\n' +
                  ' */\n';
-    var BASE_DIR = __dirname;
-    var BUILD_DIR = path.join(BASE_DIR, 'build');
-    var DOC_DIR = path.join(BASE_DIR, 'doc');
+    const BASE_DIR = __dirname;
+    const BUILD_DIR = path.join(BASE_DIR, 'build');
+    const DOC_DIR = path.join(BASE_DIR, 'doc');
     
-    var MODULE_ENTRY = path.join(BASE_DIR, 'src/music21.js');
-    var TARGET_RAW = path.join(BUILD_DIR, 'music21.debug.js');
-    var TARGET_MIN = path.join(BUILD_DIR, 'music21.min.js');
+    const MODULE_ENTRY = path.join(BASE_DIR, 'src/music21.js');
+    const TARGET_RAW = path.join(BUILD_DIR, 'music21.debug.js');
+    const TARGET_MIN = path.join(BUILD_DIR, 'music21.min.js');
     
+    const SOURCES = ['src/music21.js', 'src/music21/*.js']
+
+//    function webpackConfig(target, preset) {
+//        return {
+//          entry: MODULE_ENTRY,
+//          output: {
+//            path: '/',
+//            filename: target,
+//            library: 'Music21',
+//            libraryTarget: 'umd',
+//          },
+//          externals: {
+//            'jquery': 'JQuery', 
+//            'midi': 'MIDI',
+//            'vexflow': 'Vex'
+//          },
+//          devtool: 'source-map',
+//          module: {
+//            loaders: [
+//              {
+//                test: /\.js?$/,
+//                exclude: /(node_modules|bower_components|soundfont|soundfonts|midijs|ext|src\/ext)/,
+//                loader: 'babel',
+//                query: {
+//                  presets: [preset],
+//                  'plugins': ['add-module-exports', 'transform-object-assign'],
+//                },
+//              },
+//            ],
+//          },
+//        };
+//      }
+//    
+//    const webpackCommon = webpackConfig(TARGET_RAW, 'es2015');
+    //console.log(webpackCommon);
     // Project configuration.
     grunt.initConfig({
 	    pkg: grunt.file.readJSON('package.json'),
-//	    concat: {
-//	        options: {
-//	            banner: BANNER,
-//	            sourceMap: true
-//	        },
+	    concat: {
+	        options: {
+	            banner: BANNER,
+	            sourceMap: true
+	        },
 ////	        tests: {
 ////	            src: TEST_SOURCES,
 ////	            dest: TARGET_TESTS
 ////	        }
-//	    },
-	    
-	    rollup: {
-	        options: {
-	            banner: BANNER,
-	            format: 'umd',
-	            moduleName: 'music21',
-	            sourceMap: true,
-	            sourceMapFile: TARGET_RAW,
-	            plugins: function() {
-	                return [
-	                  babel({
-	                    exclude: './node_modules/**'
-	                  })
-	                ];
-	              }
-	        },   
+	    },
+        rollup: {
+            options: {
+                banner: BANNER,
+                format: 'umd',
+                moduleName: 'music21',
+                sourceMap: true,
+                sourceMapFile: TARGET_RAW,
+                plugins: function() {
+                    return [
+                      babel({
+                        exclude: './node_modules/**'
+                      })
+                    ];
+                  },
+                globals: {
+                    vexflow: 'Vex',
+                    jquery: '$',
+                    jsonpickle: 'jsonpickle',
+                    MIDI: 'MIDI',
+                    
+                }
+            },   
             files: {
                 src: MODULE_ENTRY,
                 dest: TARGET_RAW
             }
-	    },
-	    
+        },
+//        webpack: {
+//            build: webpackCommon,
+//            watch: Object.assign({}, webpackCommon, {
+//              watch: true,
+//              keepalive: true,
+//              failOnError: false,
+//              watchDelay: 0,
+//            }),
+//        },
+//	    
 	    	    
 	    uglify: {
 	        options: {
@@ -67,21 +116,22 @@ module.exports = function(grunt) {
 	            dest: TARGET_MIN
 	        }
 	    },
-	    jsdoc : {
-		    dist : {
-		        src: ['src/*.js', 'src/music21/*.js', 'README.md'], 
-		        options: {
-		            destination: DOC_DIR,
-		            template : "jsdoc-template",
-		            configure : "jsdoc-template/jsdoc.conf.json",
-		        },
-		    },
-	    },
+	    
+//	    jsdoc : {
+//		    dist : {
+//		        src: ['src/*.js', 'src/music21/*.js', 'README.md'], 
+//		        options: {
+//		            destination: DOC_DIR,
+//		            template : "jsdoc-template",
+//		            configure : "jsdoc-template/jsdoc.conf.json",
+//		        },
+//		    },
+//	    },
 	    qunit: {
 	      files: ['tests/index.html']
 	    },
-
-	    // raise the versiono number
+	    
+	    // raise the version number
 	    bump: {
 	        options: {
 	          files: ['package.json'], // 'component.json'],
@@ -91,23 +141,25 @@ module.exports = function(grunt) {
 	          push: false
 	        }
 	    },
-
+	    
 	});
 
     grunt.loadNpmTasks('grunt-rollup');
-    //grunt.loadNpmTasks('grunt-contrib-concat');
-    
+    grunt.loadNpmTasks('grunt-contrib-concat');
+       
     // Load the plugin that provides the "uglify" task.
     grunt.loadNpmTasks('grunt-contrib-uglify');
-
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-contrib-qunit');
     
     // Plugin for the jsdoc task
-    grunt.loadNpmTasks('grunt-jsdoc');
+    //grunt.loadNpmTasks('grunt-jsdoc');
+    grunt.loadNpmTasks('grunt-bump');
+//    grunt.loadNpmTasks('grunt-webpack');
 
     // Default task(s).
-    grunt.registerTask('default', ['rollup', 'uglify', 'jsdoc']);
+    grunt.registerTask('default', ['rollup', 'uglify:build']); //, 'jsdoc']); 
+    //grunt.registerTask('default', ['webpack:build', 'concat', 'uglify:build']); //, 'jsdoc']);
     //grunt.registerTask('test', 'Run qunit tests', ['rollup', 'qunit']);
     grunt.registerTask('publish', 'Raise the version and publish', function () { 
         grunt.task.run('bump');

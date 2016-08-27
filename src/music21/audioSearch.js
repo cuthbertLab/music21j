@@ -1,17 +1,17 @@
-define(['./pitch', './common'], 
+import { pitch } from './pitch';
+import { common } from './common';
         /**
          * audioSearch module. See {@link music21.audioSearch} namespace
          * 
          * @exports music21/audioSearch
          */
-        function(pitch, common) {
     /**
      * @namespace music21.audioSearch
      * @memberof music21
      * @requires music21/pitch
      * @requires music21/common
      */
-   var audioSearch = {};
+export   var audioSearch = {};
    // functions based on the prototype created by Chris Wilson's MIT License version
    // and on Jordi Bartolome Guillen's audioSearch module for music21
    audioSearch.fftSize = 2048;
@@ -270,10 +270,3 @@ define(['./pitch', './common'],
     };
     rqaPolyFill();
    
-   // end of define
-   if (typeof(music21) != "undefined") {
-       music21.audioSearch = audioSearch;
-   }       
-   return audioSearch;
-    
-});

@@ -6,13 +6,20 @@
  * Based on music21 (=music21p), Copyright (c) 2006–14, Michael Scott Cuthbert and cuthbertLab
  * 
  */
-define(['./base', './clef', './duration', './pitch','./note', './meter', './stream', './tie'], 
+import { base } from './base';
+import { clef } from './clef';
+import { duration } from './duration';
+import { pitch } from './pitch';
+import { note } from './note';
+import { meter } from './meter';
+import { stream } from './stream';
+import { tie } from './tie';
+
         /**
          * TinyNotation module, see {@link music21.tinyNotation} namespace
          * 
          * @exports music21/tinyNotation
          */        
-        function(base, clef, duration, pitch, note, meter, stream, tie) {
 	/**
 	 * @namespace music21.tinyNotation
 	 * @memberof music21
@@ -25,7 +32,7 @@ define(['./base', './clef', './duration', './pitch','./note', './meter', './stre
      * @requires music21/stream
      * @requires music21/tie
 	 */    
-    var tinyNotation = {};
+export    var tinyNotation = {};
     
     /**
      * Regular expressions object
@@ -252,11 +259,3 @@ define(['./base', './clef', './duration', './pitch','./note', './meter', './stre
 		}
 	};
 
-	
-	
-	// end of define
-	if (typeof(music21) != "undefined") {
-		music21.tinyNotation = tinyNotation;
-	}		
-	return tinyNotation;
-});

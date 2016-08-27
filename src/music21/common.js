@@ -1,17 +1,15 @@
-define([], 
         /**
          * common functions
          * 
          * @exports music21/common
          */        
-        function() {
     /**
      * functions that are useful everywhere...
      * 
      * @namespace music21.common
      * @memberof music21
      */
-    var common = {};    
+export var common = {};    
 
     /**
      * concept borrowed from Vex.Flow.Merge, though here the source can be undefined;
@@ -299,10 +297,3 @@ define([],
         var initialStateEvent = { 'type': initialState };
         windowFocusChanged(initialStateEvent); 
     };
-    // end of define
-    if (typeof(music21) != "undefined") {
-        music21.common = common;
-    }       
-    return common;
-});
-

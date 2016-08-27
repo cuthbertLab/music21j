@@ -1,10 +1,9 @@
-define(['./base'], 
+import { base } from './base';
         /**
          * Expressions module.  See {@link music21.expressions}
          * 
          * @exports music21/expressions
          */
-        function(base) {
    /**
     * Expressions can be note attached (`music21.note.Note.expressions[]`) or floating...
     * 
@@ -12,7 +11,7 @@ define(['./base'],
     * @memberof music21
     * @requires music21/expressions
     */ 
-   var expressions = {};
+export   var expressions = {};
 
    /**
     * Expressions can be note attached (`music21.note.Note.expressions[]`) or floating...
@@ -66,9 +65,3 @@ define(['./base'],
    };
    expressions.Fermata.prototype = new expressions.Expression();
    expressions.Fermata.prototype.constructor = expressions.Fermata;
-   // end of define
-   if (typeof(music21) != "undefined") {
-       music21.expressions = expressions;
-   }       
-   return expressions;
-});

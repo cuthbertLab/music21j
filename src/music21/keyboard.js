@@ -17,14 +17,19 @@
 // k.scaleFactor = 1.2;  // default 1
 // k.whiteKeyWidth = 40; // default 23
 
+import { base } from './base';
+import { common } from './common';
+import { pitch } from './pitch';
+import { miditools } from './miditools';
+import { $ } from 'jquery';
+import { MIDI } from 'MIDI';
 
-define(['./base', './pitch', './common', './miditools', 'jquery', 'MIDI'],
+
         /**
          * Keyboard module, see {@link music21.keyboard} namespace
          * 
          * @exports music21/keyboard
          */
-        function(base, pitch, common, miditools, $, MIDI) {
     /**
      * keyboard namespace -- tools for creating an onscreen keyboard and interacting with it.
      * 
@@ -37,7 +42,7 @@ define(['./base', './pitch', './common', './miditools', 'jquery', 'MIDI'],
      * @requires jquery
      * @requires MIDI
      */
-    var keyboard = {};
+export var keyboard = {};
     /**
      * Represents a single Key
      * 
@@ -666,10 +671,3 @@ define(['./base', './pitch', './common', './miditools', 'jquery', 'MIDI'],
         }
     }; // call this with a bind(keyboard.Keyboard object)...
     
-    // end of define
-    if (typeof(music21) != "undefined") {
-        music21.keyboard = keyboard;
-    }       
-    return keyboard;
-
-});

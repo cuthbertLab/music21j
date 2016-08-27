@@ -1,4 +1,4 @@
-define(['./common'],
+import { common } from './common';
         /**
          * module for things that all music21-created objects, not just objects that can live in
          * Stream.elements should inherit. See the {@link music21.prebase} namespace.
@@ -6,7 +6,6 @@ define(['./common'],
          * @requires music21/common
          * @exports music21/prebase
          */
-        function(common) {
     /**
      * module for things that all music21-created objects, not just objects that can live in
      * Stream.elements should inherit
@@ -14,7 +13,7 @@ define(['./common'],
      * @namespace music21.prebase
      * @memberof music21
      */
-    var prebase = {};
+export var prebase = {};
     /**
      * Class for pseudo-m21 objects to inherit from. The most important attributes that nearly
      * everything in music21 should inherit from are given below.
@@ -117,8 +116,3 @@ define(['./common'],
         return false;
     };
     
-    if (typeof music21 != "undefined") {
-        music21.prebase = prebase;
-    }
-    return prebase;
-});

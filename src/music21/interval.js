@@ -6,14 +6,14 @@
  * Based on music21 (=music21p), Copyright (c) 2006-14, Michael Scott Cuthbert and cuthbertLab
  * 
  */
+import { prebase } from './prebase';
+import { pitch } from './pitch';
 
-define(['./prebase', './pitch'],
         /**
          * interval module. See {@link music21.interval} for namespace
          * 
          * @exports music21/interval
          */
-        function(prebase, pitch) {
     /**
      * Interval related objects
      * 
@@ -22,7 +22,7 @@ define(['./prebase', './pitch'],
      * @requires music21/prebase
      * @requires music21/pitch
      */
-	var interval = {};
+export	var interval = {};
 
 	/**
 	 * Interval Directions as an Object/map
@@ -801,9 +801,3 @@ define(['./prebase', './pitch'],
         return specifier;
     };
     
-	// end of define
-	if (typeof(music21) != "undefined") {
-		music21.interval = interval;
-	}		
-	return interval;
-});

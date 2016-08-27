@@ -1,10 +1,12 @@
-define(['./common','./stream', 'jquery'], 
+import { $ } from 'jquery';
+import { common } from './common';
+import { stream } from './stream';
+
         /**
          * module with tools for working with Streams. See {@link music21.streamInteraction} namespace.
          * 
          * @exports music21/streamInteraction
          */        
-        function(common, stream, $) { 
     /**
      * Objects that work with Streams to provide interactions
      * 
@@ -13,7 +15,7 @@ define(['./common','./stream', 'jquery'],
      * @requires music21/common
      * @requires music21/stream
      */
-    var streamInteraction = {};
+export    var streamInteraction = {};
     
     /**
      * Object for adding scrolling while playing.
@@ -494,10 +496,3 @@ define(['./common','./stream', 'jquery'],
         this.activeElementHierarchy = [undefined];        
     };
     
-    
-    // end of define
-    if (typeof(music21) != "undefined") {
-        music21.streamInteraction = streamInteraction;
-    }       
-    return streamInteraction;
-});

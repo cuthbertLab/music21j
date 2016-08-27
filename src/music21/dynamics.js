@@ -9,13 +9,13 @@
  * Based on music21 (=music21p), Copyright (c) 2006–14, Michael Scott Cuthbert and cuthbertLab
  * 
  */
-define(['./base'], 
+import { base } from './base';
+
         /**
          * dynamics Module. See {@link music21.dynamics} for namespace
          * 
          * @exports music21/dynamics
          */
-        function(base) {
     /**
      * Dynamics related objects.
      * 
@@ -27,7 +27,7 @@ define(['./base'],
      * @memberof music21
      * @requires music21/base
      */
-    var dynamics = {};
+export    var dynamics = {};
 	dynamics.shortNames = ['pppppp', 'ppppp', 'pppp', 'ppp', 'pp', 'p', 'mp', 'mf', 'f', 'fp', 'sf', 'ff', 'fff', 'ffff', 'fffff', 'ffffff'];
 	dynamics.longNames = {'ppp': ['pianississimo'],
             'pp': ['pianissimo'],
@@ -190,9 +190,3 @@ define(['./base'],
 	    });    
 	};
 	                
-	// end of define
-	if (typeof(music21) != "undefined") {
-		music21.dynamics = dynamics;
-	}		
-	return dynamics;
-});

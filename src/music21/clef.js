@@ -8,13 +8,14 @@
  * Based on music21 (=music21p), Copyright (c) 2006–14, Michael Scott Cuthbert and cuthbertLab
  * 
  */
-define(['./base','./pitch'], 
+import { base } from './base';
+import { pitch } from './pitch';
+
         /**
          * Clef module, see {@link music21.clef} for namespace
          * 
          * @exports music21/clef
          */
-        function(base, pitch) {
     /**
      * Clef related objects and properties
      * 
@@ -23,7 +24,7 @@ define(['./base','./pitch'],
      * @requires music21/base
      * @requires music21/pitch
      */
-	var clef = {};
+export	var clef = {};
 	/*  music21.Clef
 	must be defined before Stream since Stream subclasses call new music21.Clef...
 	 */
@@ -303,9 +304,3 @@ define(['./base','./pitch'],
         });
     };
     
-	// end of define
-	if (typeof(music21) != "undefined") {
-		music21.clef = clef;
-	}		
-	return clef;
-});

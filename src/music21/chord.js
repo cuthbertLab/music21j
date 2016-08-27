@@ -6,15 +6,14 @@
  * Based on music21 (=music21p), Copyright (c) 2006–14, Michael Scott Cuthbert and cuthbertLab
  * 
  */
+import { note } from './note';
+import { Vex } from 'vexflow';
 
-
-define(['./note', 'vexflow'], 
         /**
          * chord Module. See {@link music21.chord} namespace for more details
          * 
          * @exports music21/chord
          */
-        function(note, Vex) {
     /**
      * Chord related objects (esp. {@link music21.chord.Chord}) and methods.
      * 
@@ -22,7 +21,7 @@ define(['./note', 'vexflow'],
      * @memberof music21
      * @requires music21/note
      */
-    var chord = {};
+export    var chord = {};
 	
 	/**
      * Chord related objects (esp. {@link music21.chord.Chord}) and methods.
@@ -388,9 +387,3 @@ define(['./note', 'vexflow'],
 			'half-diminished-seventh': ['m3','m3','M3'],
 	};
 	
-	// end of define
-	if (typeof(music21) != "undefined") {
-		music21.chord = chord;
-	}		
-	return chord;
-});

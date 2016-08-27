@@ -1,10 +1,10 @@
-define(['./prebase'], 
+import { prebase } from './prebase';
+
         /**
          * Simple tie module {@link music21.tie} namespace
          * 
          * @exports music21/tie
          */
-        function(prebase) {
     /**
      * Tie namespace, just has the {@link music21.tie.Tie} object
      * 
@@ -12,7 +12,7 @@ define(['./prebase'],
      * @memberof music21
      * @requires music21/prebase
      */
-    var tie = {};
+export    var tie = {};
 
     /**
      * Tie class. Found in {@link music21.note.GeneralNote} `.tie`.
@@ -33,10 +33,5 @@ define(['./prebase'],
     };
     tie.Tie.prototype = new prebase.ProtoM21Object();
     tie.Tie.prototype.constructor = tie.Tie;
-    // end of define
-    if (typeof(music21) != "undefined") {
-        music21.tie = tie;
-    }       
-    return tie;
-});
 
+    

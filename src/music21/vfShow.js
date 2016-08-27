@@ -1,4 +1,6 @@
-define(['vexflow', './common'], 
+import { common } from './common';
+import { Vex } from 'vexflow';
+
     /**
      * for rendering vexflow. Will eventually go to music21/converter/vexflow
      * 
@@ -6,7 +8,6 @@ define(['vexflow', './common'],
      * 
      * @exports music21/vfShow
      */
-        function(Vex, common) {
     /**
      * Vexflow display related objects and methods.
      * 
@@ -15,7 +16,7 @@ define(['vexflow', './common'],
      * @requires music21/common
      * @requires vexflow
      */
-    var vfShow = {}; 
+export    var vfShow = {}; 
     
     /**
      * Represents a stack of objects that need to be rendered together.
@@ -983,10 +984,3 @@ define(['vexflow', './common'],
         }
         s.storedVexflowStave = stave;
     };
-
-    // end of define
-    if (typeof(music21) != "undefined") {
-        music21.vfShow = vfShow;
-    }       
-    return vfShow;
-});

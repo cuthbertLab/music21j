@@ -6,15 +6,16 @@
  * Based on music21, Copyright (c) 2006–14, Michael Scott Cuthbert and cuthbertLab
  * 
  */
+import { MIDI } from 'MIDI';
+import { prebase } from './prebase';
+import { base } from './base';
 
 /* a Music21Object in m21p; the overhead is too high here to follow ... */
-define(['./prebase', './base', 'MIDI'], 
         /**
          * tempo module, see {@link music21.tempo}
          * 
          * @exports music21/tempo
          */
-        function(prebase, base, MIDI) {
     /**
      * tempo namespace
      * 
@@ -25,7 +26,7 @@ define(['./prebase', './base', 'MIDI'],
      * @requires MIDI
      * @property {number} [baseTempo=60] - basic tempo
      */
-    var tempo = {};
+export    var tempo = {};
 
     /**
      * Object mapping names to tempo values
@@ -290,9 +291,3 @@ define(['./prebase', './base', 'MIDI'],
         return newDiv;
     };
     
-    // end of define
-    if (typeof(music21) != "undefined") {
-        music21.tempo = tempo;
-    }
-    return tempo;   
-});

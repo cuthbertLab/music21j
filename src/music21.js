@@ -273,3 +273,5 @@ if ((Object.defineProperties === undefined) && warnBanner) {
                 });         
     }
 }
+import { m21 } from './loadModules'; 
+export var music21 = m21;

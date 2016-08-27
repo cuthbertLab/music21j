@@ -1,14 +1,15 @@
 // future -- rewrite of Score and Part to Page, System, SystemPart
 //     not currently used
-
-define(['./base','./renderOptions','./stream',  
-        './common', 'jquery'], 
+import { base } from './base';
+import { renderOptions } from './renderOptions';
+import { stream } from './stream';
+import { common } from './common';
+import { $ } from 'jquery';
         /**
          * Does not work yet, so not documented
          * 
          */
-        function(base, renderOptions, stream, common, $) {   
-    var layout = {};
+export    var layout = {};
     layout.makeLayoutFromScore = function (score, containerWidth) {
         /*
          * Divide a part up into systems and fix the measure
@@ -248,9 +249,3 @@ define(['./base','./renderOptions','./stream',
     layout.Staff.prototype = new stream.Part();
     layout.Staff.prototype.constructor = layout.Staff;
     
-    // end of define
-    if (typeof(music21) != "undefined") {
-        music21.layout = layout;
-    }       
-    return layout;
-});

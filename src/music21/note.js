@@ -6,9 +6,14 @@
  * Based on music21 (music21p), Copyright (c) 2006–14, Michael Scott Cuthbert and cuthbertLab
  * 
  */
+import { Vex } from 'vexflow';
 
+import { prebase } from './prebase';
+import { base } from './base';
+import { pitch } from './pitch';
+import { beam } from './beam';
+import { common } from './common';
 
-define(['./prebase', './base', './pitch', './beam', './common', 'vexflow'], 
         /**
          * Module for note classes. See the namespace {@link music21.note}
          * 
@@ -19,7 +24,6 @@ define(['./prebase', './base', './pitch', './beam', './common', 'vexflow'],
          * @requires music21/beam
          * @exports music21/note
          */  
-        function(prebase, base, pitch, beam, common, Vex) {
     /**
      * Namespace for notes (single pitch) or rests, and some things like Lyrics that go on notes.
      * 
@@ -28,7 +32,7 @@ define(['./prebase', './base', './pitch', './beam', './common', 'vexflow'],
      * @property {Array} noteheadTypeNames - an Array of allowable notehead names.
      * @property {Array} stemDirectionNames - an Array of allowable stemDirection names.
      */
-    var note = {};
+export var note = {};
 
 	note.noteheadTypeNames = [
           'arrow down',
@@ -643,9 +647,3 @@ define(['./prebase', './base', './pitch', './beam', './common', 'vexflow'],
 	    });
 	};
 	
-	// end of define
-	if (typeof(music21) != "undefined") {
-		music21.note = note;
-	}	
-	return note;
-});

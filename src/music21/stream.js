@@ -8,14 +8,22 @@
  * Based on music21 (=music21p), Copyright (c) 2006-14, Michael Scott Cuthbert and cuthbertLab
  * 
  */
-define(['./base','./renderOptions','./clef', './vfShow', './duration', 
-        './common', './meter', './pitch', './streamInteraction', 'jquery'], 
+import { $ } from 'jquery';
+
+import { base } from './base';
+import { renderOptions } from './renderOptions';
+import { clef } from './clef';
+import { vfShow } from './vfShow';
+import { duration } from './duration';
+import { common } from './common';
+import { meter } from './meter';
+import { pitch } from './pitch';
+import { streamInteraction } from './streamInteraction';
+
         /**
          * powerful stream module, See {@link music21.stream} namespace
          * @exports music21/stream
          */
-        function(base, renderOptions, clef, vfShow, duration, 
-                 common, meter, pitch, streamInteraction, $) {   
     /**
      * Streams are powerful music21 objects that hold Music21Object collections,
      * such as {@link music21.note.Note} or {@link music21.chord.Chord} objects.
@@ -37,7 +45,7 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
      * @requires music21/streamInteraction
      * @requires jquery
      */
-    var stream = {};
+export var stream = {};
 	
     /**
      * A generic Stream class -- a holder for other music21 objects
@@ -2465,11 +2473,3 @@ define(['./base','./renderOptions','./clef', './vfShow', './duration',
         });
 	};
 	
-	
-	
-	// end of define
-	if (typeof(music21) != "undefined") {
-		music21.stream = stream;
-	}		
-	return stream;
-});

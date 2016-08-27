@@ -6,15 +6,14 @@
  * Based on music21 (=music21p), Copyright (c) 2006–14, Michael Scott Cuthbert and cuthbertLab
  * 
  */
+import { prebase } from './prebase';
+import { duration } from './duration';
 
-
-define(['./prebase', './duration'],        
         /**
          * Module holding beam materials. See {@link music21.beam} namespace.
          * 
          * @exports music21/beam
          */
-        function(prebase, duration) {
     /**
      * {@link music21.beam.Beam} and {music21.beam.Beams} objects
      * 
@@ -23,7 +22,7 @@ define(['./prebase', './duration'],
      * @requires music21/prebase
      * @requires music21/duration
      */
-    var beam = {};
+export    var beam = {};
     
     beam.validBeamTypes = {
         'start': true,
@@ -271,9 +270,3 @@ define(['./prebase', './duration'],
             equal(b.beamsList[1].direction, 'right');            
         });
     };
-    // end of define
-    if (typeof(music21) != "undefined") {
-        music21.beam = beam;
-    }       
-    return beam;
- });

@@ -7,14 +7,16 @@
  * 
  * @author Michael Scott Cuthbert
  */
+import { $ } from 'jquery';
+import { MIDI } from 'MIDI';
+import { note } from './note';
+import { chord } from './chord';
 
-define(['jquery', './note', './chord', 'MIDI'],         
        /**
         * A collection of tools for midi. See the namespace {@link music21.miditools}
         * 
         * @exports music21/miditools
         */
-        function($, note, chord, MIDI) {
     /** 
      * Module that holds **music21** tools for connecting with MIDI.js and somewhat with the
      * events from the Jazz plugin or the WebMIDI protocol.
@@ -22,7 +24,7 @@ define(['jquery', './note', './chord', 'MIDI'],
      * @namespace music21.miditools 
      * @memberof music21 
      */
-    var miditools = {};
+export    var miditools = {};
     
     /**
      * Number of octaves to transpose all incoming midi signals
@@ -556,12 +558,3 @@ define(['jquery', './note', './chord', 'MIDI'],
         });
     };
     
-    
-    
-
-    // end of define
-    if (typeof(music21) != "undefined") {
-        music21.miditools = miditools;
-    }       
-    return miditools;
-});

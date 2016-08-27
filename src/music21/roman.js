@@ -6,14 +6,16 @@
  * Based on music21 (=music21p), Copyright (c) 2006–14, Michael Scott Cuthbert and cuthbertLab
  * 
  */
+import { chord } from './chord';
+import { key } from './key';
+import { pitch } from './pitch';
+import { interval } from './interval';
 
-define(['./chord', './key', './pitch', './interval'], 
         /**
          * Roman numeral module. See {@link music21.roman} namespace
          * 
          * @exports music21/roman
          */
-        function(chord, key, pitch, interval) {
     /**
      * music21.roman -- namespace for dealing with RomanNumeral analysis.
      * 
@@ -24,7 +26,7 @@ define(['./chord', './key', './pitch', './interval'],
      * @requires music21/pitch
      * @requires music21/interval
      */
-    var roman = {};
+export    var roman = {};
 
     /**
      * maps an index number to a roman numeral in lowercase 
@@ -323,10 +325,3 @@ define(['./chord', './key', './pitch', './interval'],
 	        equal (rn1.degreeName, 'Subdominant', 'test is Subdominant');   
 	    });  
 	};
-	
-	// end of define
-	if (typeof(music21) != "undefined") {
-		music21.roman = roman;
-	}		
-	return roman;
-});

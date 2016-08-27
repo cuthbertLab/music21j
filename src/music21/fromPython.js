@@ -19,13 +19,13 @@
  * 
  * 
  */
+import { jsonpickle } from 'jsonpickle';
 
-define(['jsonpickle'], 
+var jp = jsonpickle;
         /**
          * fromPython module -- see {@link music21.fromPython}
          */
-        function (jp) {
-    var unpickler = jp.unpickler;
+var unpickler = jp.unpickler;
     
     /**
      * Converter for taking a Python-encoded jsonpickle music21p stream
@@ -39,7 +39,7 @@ define(['jsonpickle'],
      * @extends music21
      * @requires jsonpickle
      */
-    var fromPython = {};
+export    var fromPython = {};
     
     /**
      * 
@@ -193,11 +193,3 @@ define(['jsonpickle'],
         var outStruct = unpickler.decode(jss, this.handlers);
         return outStruct.stream;
     };
-    if (typeof music21 !== undefined) {
-        music21.fromPython = fromPython;
-        // TODO: Remove after Jan 1, 2017 -- old interface... 
-        //       keep for old versions of music21p that might use it...
-        music21.jsonPickle = fromPython;  
-    }
-    return fromPython;
-});

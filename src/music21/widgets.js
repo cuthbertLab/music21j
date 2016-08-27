@@ -1,10 +1,10 @@
-define(['./common'], 
+import { common } from './common';
+
         /**
          * Widgets module -- random widgets.  See {@link music21.widgets}
          * 
          * @exports music21/widgets
          */
-        function(common) {
     /**
      * Widgets module -- random widgets to make streams etc. work better
      * 
@@ -14,7 +14,7 @@ define(['./common'],
      * @memberof music21
      * @requires music21/common
      */
-    var widgets = {};
+export    var widgets = {};
     /**
      * A set of DOM Objects for choosing rhythms
      * 
@@ -267,9 +267,3 @@ define(['./common'],
     };            
     
         
-    // end of define
-    if (typeof(music21) != "undefined") {
-        music21.widgets = widgets;
-    }       
-    return widgets;
-});

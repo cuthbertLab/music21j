@@ -10,8 +10,10 @@
  * Based on music21 (=music21p), Copyright (c) 2006–15, Michael Scott Cuthbert and cuthbertLab
  * 
  */
+import { $ } from 'jquery';
+import { common } from './common';
+import { miditools } from './miditools';
 
-define(['./miditools','./common','jquery'], 
         /**
          * webmidi -- for connecting with external midi devices
          * 
@@ -21,7 +23,6 @@ define(['./miditools','./common','jquery'],
          * 
          * @exports music21/webmidi
          */
-        function(miditools, common, $) {
     /**
      * webmidi -- for connecting with external midi devices
      * 
@@ -34,7 +35,7 @@ define(['./miditools','./common','jquery'],
      * @property {JazzObject|undefined} storedPlugin - reference to the Jazz object from the plugin; cached from `createPlugin`.
      * @property {string} selectedJazzInterface - the currently connected interface (note that we can only use one right now)
      */
-    var webmidi = {};
+export    var webmidi = {};
     webmidi.selectedOutputPort = undefined;
     webmidi.selectedInputPort = undefined;
     
@@ -346,14 +347,6 @@ define(['./miditools','./common','jquery'],
         webmidi.$select.change();
     };
 	
-	
-	
-	// end of define
-	if (typeof(music21) != "undefined") {
-		music21.webmidi = webmidi;
-	}		
-	return webmidi;
-});
 
 /**
  * Example smallest usage of the webmidi toolkit.  see testHTML/midiInRequire.html 

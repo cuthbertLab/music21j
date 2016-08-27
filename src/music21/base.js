@@ -8,9 +8,9 @@
  * Based on music21 (=music21p), Copyright (c) 2006–14, Michael Scott Cuthbert and cuthbertLab
  * 
  */
+import { duration } from './duration';
+import { prebase } from './prebase';
 
-
-define(['./prebase', './duration'], 
         /**
          * module for Music21Objects, see {@link music21.base}
          * 
@@ -18,7 +18,6 @@ define(['./prebase', './duration'],
          * @requires music21/prebase
          * @exports music21/base
          */
-        function(prebase, duration) {
     /**
      * Module for Music21Objects.  Does not load other modules, see {@link music21.moduleLoader}
      * for this functionality.
@@ -26,7 +25,7 @@ define(['./prebase', './duration'],
      * @namespace music21.base
      * @memberof music21
      */
-    var base = {};
+export var base = {};
 
 	/**
      * Base class for any object that can be placed in a {@link music21.stream.Stream}.
@@ -113,10 +112,3 @@ define(['./prebase', './duration'],
         }
     };
 	
-	// end of define
-	if (typeof(music21) != "undefined") {
-		music21.base = base;
-	}
-	
-	return base;
-});

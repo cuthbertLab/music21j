@@ -6,14 +6,13 @@
  * Based on music21 (=music21p), Copyright (c) 2006–14, Michael Scott Cuthbert and cuthbertLab
  * 
  */
+import { base } from './base';
 
-define(['./base'], 
         /**
          * Instrument module, see {@link music21.instrument}
          * 
          * @exports music21/instrument
          */
-        function(base) { 
    
    /**
     * Looking for the {@link music21.instrument.Instrument} object? :-)
@@ -22,7 +21,7 @@ define(['./base'],
     * @memberof music21
     * @requires music21/base
     */
-   var instrument = {};
+export   var instrument = {};
    
    /**
     * Represents an instrument.  instrumentNames are found in the ext/soundfonts directory
@@ -168,10 +167,3 @@ define(['./base'],
        }
    };
    
-    // end of define
-    if (typeof(music21) != "undefined") {
-        music21.instrument = instrument;
-    }        
-    return instrument;
-                    
-});

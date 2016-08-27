@@ -7,13 +7,15 @@
  * Based on music21 (=music21p), Copyright (c) 2006–14, Michael Scott Cuthbert and cuthbertLab
  * 
  */
-define(['./base', './duration'], 
+import { base } from './base';
+import { duration } from './duration';
+
         /**
          * meter module. See {@link music21.meter} namespace for details.
          * 
          * @exports music21/meter
          */
-        function(base, duration) {
+        
     /** 
      * Meter and TimeSignature Classes (esp. {@link music21.meter.TimeSignature} ) and methods.
      * 
@@ -22,7 +24,7 @@ define(['./base', './duration'],
      * @requires music21/base
      * @requires music21/duration
      */
-    var meter = {};
+export var meter = {};
     
     
     /**
@@ -162,9 +164,3 @@ define(['./base', './duration'],
 //        
 //    };
     
-    // end of define
-    if (typeof(music21) != "undefined") {
-        music21.meter = meter;
-    }       
-    return meter;
-});

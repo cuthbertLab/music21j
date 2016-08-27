@@ -6,14 +6,12 @@
  * Based on music21, Copyright (c) 2006–14, Michael Scott Cuthbert and cuthbertLab
  * 
  */
-
-define(['./prebase'], 
+import { prebase } from './prebase';
         /**
          * pitch module.  See {@link music21.pitch} namespace
          * 
          * @exports music21/pitch
          */
-        function(prebase) {
     /** 
      * Pitch related objects and methods
      * 
@@ -21,7 +19,7 @@ define(['./prebase'],
      * @memberof music21 
      * @requires music21/prebase
      */
-    var pitch = {};
+export    var pitch = {};
 	/**
 	 * @class Accidental
 	 * @memberof music21.pitch
@@ -376,13 +374,3 @@ define(['./prebase'],
 	    });
   
 	};
-	
-	// end of define
-	if (typeof(music21) != "undefined") {
-		music21.pitch = pitch;
-	}
-	return pitch;	
-});
-
-
-

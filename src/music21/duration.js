@@ -6,8 +6,9 @@
  * Based on music21, Copyright (c) 2006-14, Michael Scott Cuthbert and cuthbertLab
  * 
  */
-
-define(['./common', './prebase', 'jquery'],
+import { common } from './common';
+import { prebase } from './prebase';
+import { $ } from 'jquery';
         /**
          * Duration module. See {@link music21.duration}
          * 
@@ -15,7 +16,6 @@ define(['./common', './prebase', 'jquery'],
          * @requires music21/prebase
          * @exports music21/duration
          */
-        function(common, prebase, $) {
     /** 
      * Module that holds **music21** classes and
      * tools for dealing with durations, especially
@@ -24,7 +24,7 @@ define(['./common', './prebase', 'jquery'],
      * @namespace music21.duration 
      * @memberof music21
      */
-	var duration = {};
+export var duration = {};
 
 	/**
 	 * Object mapping int to name, as in `{1: 'whole'}` etc.
@@ -553,9 +553,3 @@ define(['./common', './prebase', 'jquery'],
         });
 	};
 	
-	// end of define
-	if (typeof(music21) != "undefined") {
-		music21.duration = duration;
-	}
-	return duration;	
-});
