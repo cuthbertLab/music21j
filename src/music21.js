@@ -1,6 +1,6 @@
 /**
  * If you are a programmer, this is probably not the script you are looking for.  
- * The guts of music21j begin at src/music21/moduleLoader.js
+ * The guts of music21j begin at src/loadModules.js
  * 
  * @exports music21
  */
