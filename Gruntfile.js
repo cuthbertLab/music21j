@@ -138,7 +138,22 @@ module.exports = (grunt) => {
 	    qunit: {
 	      files: ['tests/index.html']
 	    },
-	    
+	     watch: {
+	         scripts: {
+	           files: ['src/*', 'src/music21/*', 'Gruntfile.js'],
+	           tasks: ['rollup'],
+	           options: {
+	             interrupt: true
+	           }
+	         },
+//	         tests: {
+//	           files: ['tests/*'],
+//	           tasks: ['concat:tests'],
+//	           options: {
+//	             interrupt: true
+//	           }
+//	         }
+	       },	    
 	    // raise the version number
 	    bump: {
 	        options: {

@@ -269,12 +269,13 @@ export var stream = {};
                 enumerable: true,
 				get: function () {
 				    var baseMaxSystemWidth = 750;
-					if (this.renderOptions.maxSystemWidth === undefined && this.activeSite !== undefined) {
+					if (this.renderOptions.maxSystemWidth === undefined 
+					        && this.activeSite !== undefined) {
 					    baseMaxSystemWidth = this.activeSite.maxSystemWidth;
 					} else if (this.renderOptions.maxSystemWidth !== undefined) {
 					    baseMaxSystemWidth = this.renderOptions.maxSystemWidth;
 					}
-					return baseMaxSystemWidth / this.renderOptions.scaleFactor.x;
+					return (baseMaxSystemWidth / this.renderOptions.scaleFactor.x);
 				},
 				set: function (newSW) {
 					this.renderOptions.maxSystemWidth = newSW * this.renderOptions.scaleFactor.x;

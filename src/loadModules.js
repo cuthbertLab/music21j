@@ -1,6 +1,6 @@
 // order below doesn't matter, but good to give a sense
 // of what will be needed by almost everyone, and then
-// alphabetical
+// alphabetical 
 import { common } from './music21/common';
 import { prebase } from './music21/prebase';
 import { base } from './music21/base';
@@ -13,7 +13,7 @@ import { clef } from './music21/clef';
 import { duration } from './music21/duration';
 import { dynamics } from './music21/dynamics';
 import { expressions } from './music21/expressions';
-//import { fromPython } from './music21/fromPython';
+import { fromPython } from './music21/fromPython';
 import { instrument } from './music21/instrument';
 import { interval } from './music21/interval';
 import { key } from './music21/key';
@@ -35,36 +35,36 @@ import { vfShow } from './music21/vfShow';
 import { webmidi } from './music21/webmidi';
 import { widgets } from './music21/widgets';
 
-export var m21 = {}
-m21.common = common;
-m21.prebase = prebase;
-m21.base = base;
+export var music21 = {}
+music21.common = common;
+music21.prebase = prebase;
+music21.base = base;
 
-m21.articulations = articulations;
-m21.audioSearch = audioSearch;
-m21.beam = beam;
-m21.chord = chord;
-m21.clef = clef;
-m21.duration = duration;
-m21.expressions = expressions;
-//m21.fromPython = fromPython;
-m21.instrument = instrument;
-m21.interval = interval;
-m21.key = key;
-m21.keyboard = keyboard;
-m21.layout = layout;
-m21.meter = meter;
-m21.miditools = miditools;
-m21.note = note;
-//m21.orchestralScore = orchestralScore;
-m21.pitch = pitch;
-m21.renderOptions = renderOptions;
-m21.roman = roman;
-m21.stream = stream;
-m21.streamInteraction = streamInteraction;
-m21.tempo = tempo;
-m21.tie = tie;
-m21.tinyNotation = tinyNotation;
-m21.vfShow = vfShow;
-m21.webmidi = webmidi;
-m21.widgets = widgets;
+music21.articulations = articulations;
+music21.audioSearch = audioSearch;
+music21.beam = beam;
+music21.chord = chord;
+music21.clef = clef;
+music21.duration = duration;
+music21.expressions = expressions;
+music21.fromPython = fromPython;
+music21.instrument = instrument;
+music21.interval = interval;
+music21.key = key;
+music21.keyboard = keyboard;
+music21.layout = layout;
+music21.meter = meter;
+music21.miditools = miditools;
+music21.note = note;
+//music21.orchestralScore = orchestralScore;
+music21.pitch = pitch;
+music21.renderOptions = renderOptions;
+music21.roman = roman;
+music21.stream = stream;
+music21.streamInteraction = streamInteraction;
+music21.tempo = tempo;
+music21.tie = tie;
+music21.tinyNotation = tinyNotation;
+music21.vfShow = vfShow;
+music21.webmidi = webmidi;
+music21.widgets = widgets;

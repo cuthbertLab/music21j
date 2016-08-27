@@ -256,8 +256,7 @@ if ((Object.defineProperties === undefined) && warnBanner) {
             define( m21modules, 
                 function (m21, midi, vexflow, $, jsonpickle) {  // BUG, what if midi is in noLoad?     
                     //console.log('inside of require...');
-                    console.log(midi);
-                    music21 = m21.m21;
+                    music21 = m21.music21;
                     music21.soundfontUrl = m21basis.soundfontUrl;
                     music21.m21basePath = m21basis.m21basePath;
                     music21.m21srcPath = m21basis.m21srcPath;

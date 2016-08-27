@@ -17,6 +17,7 @@
             var c = new music21.chord.Chord(["F4", "A-4", "C5"]);
             c.duration.type = 'eighth';
             c.lyric = 'hi!';
+            c.articulations.push(new music21.articulations.Staccato());
             m.append(c);
             var mQuarters = s1.get(3);
             var voice1 = new music21.stream.Voice();

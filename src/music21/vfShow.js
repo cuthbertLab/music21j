@@ -716,7 +716,7 @@ export var vfShow = {};
                             Math.abs(activeTupletLength - activeTuplet.totalTupletLength()) < 0.001) {
                         //console.log(activeTupletVexflowNotes);
                         var tupletOptions = {num_notes: activeTuplet.numberNotesActual, 
-                                       beats_occupied: activeTuplet.numberNotesNormal};
+                                             notes_occupied: activeTuplet.numberNotesNormal};
                         //console.log('tupletOptions', tupletOptions);
                         var vfTuplet = new Vex.Flow.Tuplet(activeTupletVexflowNotes, 
                                 tupletOptions);
@@ -843,13 +843,13 @@ export var vfShow = {};
         return vfv;
     };
     vfShow.Renderer.prototype.staffConnectorsMap = function (connectorType ) {
-        map = {
+        var connectorMap = {
                 'brace': Vex.Flow.StaveConnector.type.BRACE, 
                 'single': Vex.Flow.StaveConnector.type.SINGLE, 
                 'double': Vex.Flow.StaveConnector.type.DOUBLE, 
                 'bracket': Vex.Flow.StaveConnector.type.BRACKET,
         };
-        return map[connectorType];
+        return connectorMap[connectorType];
     };
     
     /**

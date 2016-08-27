@@ -340,7 +340,7 @@ export    var streamInteraction = {};
         var prevNoteMap = undefined;
         var nextNoteMap = undefined;
         for (var i = 0; i < this.allMaps.length; i++) {
-            thisMap = this.allMaps[i];
+            var thisMap = this.allMaps[i];
             if (thisMap.offset <= offset) {
                 prevNoteMap = thisMap;
             } 
