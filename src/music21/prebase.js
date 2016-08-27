@@ -109,7 +109,7 @@ export var prebase = {};
             testClass = [testClass];
         }
         for (var i = 0; i < testClass.length; i++) {
-            if ($.inArray(testClass[i], this.classes) != -1) {
+            if (this.classes.indexOf(testClass[i]) != -1) {
                 return true;
             }   
         }

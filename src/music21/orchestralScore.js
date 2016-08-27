@@ -1,5 +1,5 @@
+import * as $ from 'jquery';
 import { prebase } from './prebase';
-import { $ } from 'jquery';
 
 		/**
 		 * orchestralScore module. See {@link music21.protopainting} namespace

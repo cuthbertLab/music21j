@@ -6,10 +6,10 @@
  */
 
 (function (global, factory) {
-  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('jquery'), require('vexflow'), require('jsonpickle'), require('MIDI')) :
-  typeof define === 'function' && define.amd ? define(['exports', 'jquery', 'vexflow', 'jsonpickle', 'MIDI'], factory) :
-  (factory((global.music21 = global.music21 || {}),global.$,global.Vex,global.jsonpickle,global.MIDI));
-}(this, (function (exports,jquery,vexflow,jsonpickle,MIDI) { 'use strict';
+  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('jquery'), require('vexflow'), require('MIDI')) :
+  typeof define === 'function' && define.amd ? define(['exports', 'jquery', 'vexflow', 'MIDI'], factory) :
+  (factory((global.music21 = global.music21 || {}),global.$,global.Vex,global.MIDI));
+}(this, (function (exports,$$1,Vex$1,MIDI) { 'use strict';
 
   /**
    * common functions
@@ -418,7 +418,7 @@
           testClass = [testClass];
       }
       for (var i = 0; i < testClass.length; i++) {
-          if ($.inArray(testClass[i], this.classes) != -1) {
+          if (this.classes.indexOf(testClass[i]) != -1) {
               return true;
           }
       }
@@ -582,7 +582,7 @@
                   return this._type;
               },
               set: function (typeIn) {
-                  var typeNumber = jquery.$.inArray(typeIn, duration.ordinalTypeFromNum);
+                  var typeNumber = duration.ordinalTypeFromNum.indexOf(typeIn);
                   if (typeNumber == -1) {
                       console.log('invalid type ' + typeIn);
                       throw 'invalid type ' + typeIn;
@@ -624,7 +624,7 @@
            */
           'vexflowDuration': {
               get: function () {
-                  var typeNumber = jquery.$.inArray(this.type, duration.ordinalTypeFromNum);
+                  var typeNumber = duration.ordinalTypeFromNum.indexOf(this.type);
                   var vd = duration.vexflowDurationArray[typeNumber];
                   if (this.dots > 0) {
                       for (var i = 0; i < this.dots; i++) {
@@ -645,11 +645,12 @@
   };
   duration.Duration.prototype = new prebase.ProtoM21Object();
   duration.Duration.prototype.constructor = duration.Duration;
+
   duration.Duration.prototype._findDots = function (ql) {
       if (ql === 0) {
           return 0;
       } // zero length stream probably;
-      var typeNumber = jquery.$.inArray(this._type, duration.ordinalTypeFromNum);
+      var typeNumber = duration.ordinalTypeFromNum.indexOf(this._type);
       var powerOfTwo = Math.pow(2, duration.quarterTypeIndex - typeNumber);
       // alert(undottedQL * 1.5 + " " + ql)
       //console.log('find dots called on ql: ', ql, typeNumber, powerOfTwo);
@@ -666,7 +667,7 @@
       return 0;
   };
   duration.Duration.prototype.updateQlFromFeatures = function () {
-      var typeNumber = jquery.$.inArray(this._type, duration.ordinalTypeFromNum); // must be set property
+      var typeNumber = duration.ordinalTypeFromNum.indexOf(this._type); // must be set property
       var undottedQuarterLength = Math.pow(2, duration.quarterTypeIndex - typeNumber);
       var dottedMultiplier = 1 + (Math.pow(2, this._dots) - 1) / Math.pow(2, this._dots);
       var unTupletedQl = undottedQuarterLength * dottedMultiplier;
@@ -1134,7 +1135,7 @@
   * @returns {Vex.Flow.Articulation}
   */
   articulations.Articulation.prototype.vexflow = function () {
-      var vfa = new vexflow.Vex.Flow.Articulation(this.vexflowModifier);
+      var vfa = new Vex$1.Flow.Articulation(this.vexflowModifier);
       if (this.setPosition) {
           vfa.setPosition(this.setPosition);
       }
@@ -2555,7 +2556,7 @@
       if (music21.debug) {
           console.log(this.stemDirection);
       }
-      vfn.setStemDirection(this.stemDirection == 'down' ? vexflow.Vex.Flow.StaveNote.STEM_DOWN : vexflow.Vex.Flow.StaveNote.STEM_UP);
+      vfn.setStemDirection(this.stemDirection == 'down' ? Vex$1.Flow.StaveNote.STEM_DOWN : Vex$1.Flow.StaveNote.STEM_UP);
       if (this.stemDirection == 'noStem') {
           vfn.hasStem = function () {
               return false;
@@ -2806,16 +2807,16 @@
           return undefined;
       }
       var vexflowKey = this.pitch.vexflowName(clef);
-      var vfn = new vexflow.Vex.Flow.StaveNote({
+      var vfn = new Vex$1.Flow.StaveNote({
           keys: [vexflowKey],
           duration: vfd
       });
       this.vexflowAccidentalsAndDisplay(vfn, params); // clean up stuff...
       if (this.pitch.accidental !== undefined) {
           if (this.pitch.accidental.vexflowModifier != 'n' && this.pitch.accidental.displayStatus !== false) {
-              vfn.addAccidental(0, new vexflow.Vex.Flow.Accidental(this.pitch.accidental.vexflowModifier));
+              vfn.addAccidental(0, new Vex$1.Flow.Accidental(this.pitch.accidental.vexflowModifier));
           } else if (this.pitch.accidental.displayType == 'always' || this.pitch.accidental.displayStatus === true) {
-              vfn.addAccidental(0, new vexflow.Vex.Flow.Accidental(this.pitch.accidental.vexflowModifier));
+              vfn.addAccidental(0, new Vex$1.Flow.Accidental(this.pitch.accidental.vexflowModifier));
           }
       }
 
@@ -2892,7 +2893,7 @@
           keyLine = p.vexflowName(undefined);
       }
 
-      var vfn = new vexflow.Vex.Flow.StaveNote({ keys: [keyLine],
+      var vfn = new Vex$1.Flow.StaveNote({ keys: [keyLine],
           duration: this.duration.vexflowDuration + 'r' });
       if (this.duration.dots > 0) {
           for (var i = 0; i < this.duration.dots; i++) {
@@ -3064,7 +3065,7 @@
       var pitches = this.pitches;
       for (var i = 0; i < pitches.length; i++) {
           var p = pitches[i];
-          if ($.inArray(p.step, stepsFound) == -1) {
+          if (stepsFound.indexOf(p.step) == -1) {
               stepsFound.push(p.step);
               nonDuplicatingPitches.push(p);
           }
@@ -3245,16 +3246,16 @@
       for (var i = 0; i < this._notes.length; i++) {
           pitchKeys.push(this._notes[i].pitch.vexflowName(clef));
       }
-      var vfn = new vexflow.Vex.Flow.StaveNote({ keys: pitchKeys,
+      var vfn = new Vex$1.Flow.StaveNote({ keys: pitchKeys,
           duration: this.duration.vexflowDuration });
       this.vexflowAccidentalsAndDisplay(vfn, options); // clean up stuff...
       for (var i = 0; i < this._notes.length; i++) {
           var tn = this._notes[i];
           if (tn.pitch.accidental != undefined) {
               if (tn.pitch.accidental.vexflowModifier != 'n' && tn.pitch.accidental.displayStatus != false) {
-                  vfn.addAccidental(i, new vexflow.Vex.Flow.Accidental(tn.pitch.accidental.vexflowModifier));
+                  vfn.addAccidental(i, new Vex$1.Flow.Accidental(tn.pitch.accidental.vexflowModifier));
               } else if (tn.pitch.accidental.displayType == 'always' || tn.pitch.accidental.displayStatus == true) {
-                  vfn.addAccidental(i, new vexflow.Vex.Flow.Accidental(tn.pitch.accidental.vexflowModifier));
+                  vfn.addAccidental(i, new Vex$1.Flow.Accidental(tn.pitch.accidental.vexflowModifier));
               }
           }
       }
@@ -3851,188 +3852,6 @@
   };
   expressions.Fermata.prototype = new expressions.Expression();
   expressions.Fermata.prototype.constructor = expressions.Fermata;
-
-  /**
-   * music21j -- Javascript reimplementation of Core music21p features.  
-   * music21/fromPython -- Conversion from music21p jsonpickle streams
-   *
-   * Copyright (c) 2013-14, Michael Scott Cuthbert and cuthbertLab
-   * Based on music21 (=music21p), Copyright (c) 2006–14, Michael Scott Cuthbert and cuthbertLab
-   * 
-   * usage:
-   * 
-   * in python:
-   * 
-   * s = corpus.parse('bwv66.6')
-   * stringRepresentingM21JsonPickle = s.freezeStream('jsonpickle')
-   * 
-   * in js:
-   * 
-   * pyConv = new music21.fromPython.Converter();
-   * s = pyConv.run(stringRepresentingM21JsonPickle);
-   * 
-   * 
-   */
-  var jp = jsonpickle.jsonpickle;
-  /**
-   * fromPython module -- see {@link music21.fromPython}
-   */
-  var unpickler = jp.unpickler;
-
-  /**
-   * Converter for taking a Python-encoded jsonpickle music21p stream
-   * and loading it into music21j
-   * 
-   * Very very alpha.  See music21(p).vexflow modules to see how it works.
-   * 
-   * Requires Cuthbert's jsonpickle.js port (included in music21j)
-   * 
-   * @namespace music21.fromPython
-   * @extends music21
-   * @requires jsonpickle
-   */
-  var fromPython = {};
-
-  /**
-   * 
-   * @class Converter
-   * @memberof music21.fromPython
-   * @property {boolean} debug
-   * @property {Array<string>} knownUnparsables - list of classes that cannot be parsed
-   * @property {object} handlers - object mapping string names of classes to a set of function calls to perform when restoring or post-restoring. (too complicated to explain; read the code)
-   */
-  fromPython.Converter = function () {
-      this.debug = true;
-      this.knownUnparsables = ['music21.spanner.Line', 'music21.instrument.Instrument', 'music21.layout.StaffGroup', 'music21.layout.StaffLayout', 'music21.layout.SystemLayout', 'music21.layout.PageLayout', 'music21.expressions.TextExpression', 'music21.bar.Barline', // Soon...
-      'music21.tempo.MetronomeMark', // should be possible
-      'music21.metadata.Metadata'];
-
-      var converterHandler = this;
-      /**
-       * Fixes up some references that cannot be unpacked from jsonpickle.
-       * 
-       * @method music21.fromPython.Converter#streamPostRestore
-       * @memberof music21.fromPython.Converter
-       * @param {music21.stream.Stream} s - stream after unpacking from jsonpickle
-       * @returns {music21.stream.Stream}
-       */
-      this.streamPostRestore = function (s) {
-          var ch = converterHandler;
-          var st = s._storedElementOffsetTuples;
-
-          s._clef = ch.lastClef;
-          s._keySignature = ch.lastKeySignature;
-          s._timeSignature = ch.lastTimeSignature;
-          for (var i = 0; i < st.length; i++) {
-              var el = st[i][0];
-              el.offset = st[i][1];
-              var classList = el.classes;
-              if (classList === undefined) {
-                  console.warn("M21object without classes: ", el);
-                  console.warn("Javascript classes are: ", el._py_class);
-                  classList = [];
-              }
-              var streamPart = ch.currentPart;
-              if (streamPart == undefined) {
-                  streamPart = s; // possibly a Stream constructed from .measures()
-              }
-
-              var appendEl = true;
-              var insertAtStart = false;
-
-              for (var j = 0; j < classList.length; j++) {
-                  var thisClass = classList[j];
-                  for (var kn = 0; kn < ch.knownUnparsables.length; kn++) {
-                      var unparsable = ch.knownUnparsables[kn];
-                      if (unparsable.indexOf(thisClass) != -1) {
-                          appendEl = false;
-                      }
-                  }
-                  if (thisClass == "TimeSignature") {
-                      //console.log("Got timeSignature", streamPart, newM21pObj, storedElement);
-                      s._timeSignature = el;
-                      ch.lastTimeSignature = el;
-                      if (streamPart !== undefined && streamPart.timeSignature === undefined) {
-                          streamPart.timeSignature = el;
-                      }
-                      appendEl = false;
-                  } else if (thisClass == "Clef") {
-                      s._clef = el;
-                      ch.lastClef = el;
-                      if (streamPart !== undefined && streamPart.clef === undefined) {
-                          streamPart.clef = el;
-                      }
-                      appendEl = false;
-                  } else if (thisClass == "KeySignature") {
-                      s._keySignature = el;
-                      this.lastKeySignature = el;
-                      if (streamPart !== undefined && streamPart.keySignature === undefined) {
-                          streamPart.keySignature = el;
-                      }
-                      appendEl = false;
-                  } else if (thisClass == 'Part') {
-                      appendEl = false;
-                      insertAtStart = true;
-                  }
-              }
-
-              if (appendEl) {
-                  s.append(el); // all but clef, ts, ks
-              } else if (insertAtStart) {
-                  s.insert(0, el); // Part
-              }
-          }
-          return s;
-      };
-
-      this.handlers = {
-          'music21.duration.Duration': {
-              post_restore: function (d) {
-                  d.quarterLength = d._qtrLength;
-                  return d;
-              }
-          },
-          'music21.meter.TimeSignature': {
-              post_restore: function (ts) {
-                  ts._numerator = ts.displaySequence._numerator;
-                  ts._denominator = ts.displaySequence._denominator;
-                  return ts;
-              }
-          },
-          'music21.stream.Part': {
-              post_restore: function (p) {
-                  converterHandler.currentPart = p;
-                  converterHandler.lastClef = undefined;
-                  converterHandler.lastKeySignature = undefined;
-                  converterHandler.lastTimeSignature = undefined;
-                  converterHandler.streamPostRestore(p);
-                  return p;
-              }
-          },
-          // TODO: all inherit somehow, through _classes or better, prototype...
-          'music21.stream.Score': { post_restore: converterHandler.streamPostRestore },
-          'music21.stream.Stream': { post_restore: converterHandler.streamPostRestore },
-          'music21.stream.Measure': { post_restore: converterHandler.streamPostRestore },
-          'music21.stream.Voice': { post_restore: converterHandler.streamPostRestore }
-      };
-      this.currentPart = undefined;
-      this.lastClef = undefined;
-      this.lastKeySignature = undefined;
-      this.lastTimeSignature = undefined;
-  };
-
-  /**
-   * Run the main decoder
-   * 
-   * @method music21.fromPython.Converter#run
-   * @memberof music21.fromPython.Converter
-   * @param {string} jss - stream encoded as JSON
-   * @returns {music21.stream.Stream}
-   */
-  fromPython.Converter.prototype.run = function (jss) {
-      var outStruct = unpickler.decode(jss, this.handlers);
-      return outStruct.stream;
-  };
 
   /**
    * music21j -- Javascript reimplementation of Core music21p features.  
@@ -5459,11 +5278,11 @@
    * @returns {undefined}
    */
   miditools.Event.prototype.sendToMIDIjs = function () {
-      if (MIDI.MIDI !== undefined) {
+      if (MIDI !== undefined) {
           if (this.noteOn) {
-              MIDI.MIDI.noteOn(0, this.midiNote, this.velocity, 0);
+              MIDI.noteOn(0, this.midiNote, this.velocity, 0);
           } else if (this.noteOff) {
-              MIDI.MIDI.noteOff(0, this.midiNote, 0);
+              MIDI.noteOff(0, this.midiNote, 0);
           }
       } else {
           console.warn('could not playback note because no MIDIout defined');
@@ -5705,25 +5524,25 @@
           console.log('soundfont loaded about to execute callback.');
           console.log('first playing two notes very softly -- seems to flush the buffer.');
       }
-      jquery.$(".loadingSoundfont").remove();
+      $$1(".loadingSoundfont").remove();
 
       var isFirefox = typeof InstallTrigger !== 'undefined'; // Firefox 1.0+
-      var isAudioTag = MIDI.MIDI.technology == 'HTML Audio Tag';
+      var isAudioTag = MIDI.technology == 'HTML Audio Tag';
       var instrumentObj = music21.instrument.find(soundfont);
       if (instrumentObj !== undefined) {
-          MIDI.MIDI.programChange(instrumentObj.midiChannel, instrumentObj.midiProgram);
+          MIDI.programChange(instrumentObj.midiChannel, instrumentObj.midiProgram);
           if (music21.debug) {
               console.log(soundfont + ' (' + instrumentObj.midiProgram + ') loaded on ', instrumentObj.midiChannel);
           }
           if (isFirefox === false && isAudioTag === false) {
               var c = instrumentObj.midiChannel;
               // Firefox ignores sound volume! so don't play! as does IE and others using HTML audio tag.
-              MIDI.MIDI.noteOn(c, 36, 1, 0); // if no notes have been played before then
-              MIDI.MIDI.noteOff(c, 36, 1, 0.1); // the second note to be played is always
-              MIDI.MIDI.noteOn(c, 48, 1, 0.2); // very clipped (on Safari at least)
-              MIDI.MIDI.noteOff(c, 48, 1, 0.3); // this helps a lot.
-              MIDI.MIDI.noteOn(c, 60, 1, 0.3); // chrome needs three?
-              MIDI.MIDI.noteOff(c, 60, 1, 0.4);
+              MIDI.noteOn(c, 36, 1, 0); // if no notes have been played before then
+              MIDI.noteOff(c, 36, 1, 0.1); // the second note to be played is always
+              MIDI.noteOn(c, 48, 1, 0.2); // very clipped (on Safari at least)
+              MIDI.noteOff(c, 48, 1, 0.3); // this helps a lot.
+              MIDI.noteOn(c, 60, 1, 0.3); // chrome needs three?
+              MIDI.noteOff(c, 60, 1, 0.4);
           }
       }
       if (callback !== undefined) {
@@ -5778,15 +5597,15 @@
           if (music21.debug) {
               console.log('waiting for document ready');
           }
-          jquery.$(document).ready(function () {
+          $$1(document).ready(function () {
               if (music21.debug) {
                   console.log('document ready, waiting to load soundfont');
               }
-              jquery.$(document.body).append(jquery.$("<div class='loadingSoundfont'><b>Loading MIDI Instrument</b>: " + "audio will begin when this message disappears.</div>"));
-              MIDI.MIDI.loadPlugin({
+              $$1(document.body).append($$1("<div class='loadingSoundfont'><b>Loading MIDI Instrument</b>: " + "audio will begin when this message disappears.</div>"));
+              MIDI.loadPlugin({
                   soundfontUrl: music21.soundfontUrl,
                   instrument: soundfont,
-                  onsuccess: miditools.postLoadCallback.bind(MIDI.MIDI, soundfont, callback)
+                  onsuccess: miditools.postLoadCallback.bind(MIDI, soundfont, callback)
               });
           });
       }
@@ -5816,12 +5635,12 @@
           where = document.body;
       }
       if (where.jquery === undefined) {
-          $where = jquery.$(where);
+          $where = $$1(where);
       }
-      var $playDiv = jquery.$('<div class="midiPlayer">');
-      var $controls = jquery.$('<div class="positionControls">');
-      var $playPause = jquery.$('<input type="image" src="' + music21.m21basePath + '/css/play.png" align="absmiddle" value="play" class="playPause">');
-      var $stop = jquery.$('<input type="image" src="' + music21.m21basePath + '/css/stop.png" align="absmiddle" value="stop" class="stopButton">');
+      var $playDiv = $$1('<div class="midiPlayer">');
+      var $controls = $$1('<div class="positionControls">');
+      var $playPause = $$1('<input type="image" src="' + music21.m21basePath + '/css/play.png" align="absmiddle" value="play" class="playPause">');
+      var $stop = $$1('<input type="image" src="' + music21.m21basePath + '/css/stop.png" align="absmiddle" value="stop" class="stopButton">');
 
       $playPause.on('click', this.pausePlayStop.bind(this));
       $stop.on('click', this.stopButton.bind(this));
@@ -5829,10 +5648,10 @@
       $controls.append($stop);
       $playDiv.append($controls);
 
-      var $time = jquery.$('<div class="timeControls">');
-      var $timePlayed = jquery.$('<span class="timePlayed">0:00</span>');
-      var $capsule = jquery.$('<span class="capsule"><span class="cursor"></span></span>');
-      var $timeRemaining = jquery.$('<span class="timeRemaining">-0:00</span>');
+      var $time = $$1('<div class="timeControls">');
+      var $timePlayed = $$1('<span class="timePlayed">0:00</span>');
+      var $capsule = $$1('<span class="capsule"><span class="cursor"></span></span>');
+      var $timeRemaining = $$1('<span class="timeRemaining">-0:00</span>');
       $time.append($timePlayed);
       $time.append($capsule);
       $time.append($timeRemaining);
@@ -5966,7 +5785,6 @@
   // configurable:
   // k.scaleFactor = 1.2;  // default 1
   // k.whiteKeyWidth = 40; // default 23
-
   /**
    * Keyboard module, see {@link music21.keyboard} namespace
    * 
@@ -6296,8 +6114,8 @@
           }
           keyRect.setAttribute("style", "fill:" + fillColor + ";stroke:black");
           miditools.loadSoundfont('acoustic_grand_piano', function (i) {
-              MIDI.MIDI.noteOn(i.midiChannel, id, 100, 0);
-              MIDI.MIDI.noteOff(i.midiChannel, id, 500);
+              MIDI.noteOn(i.midiChannel, id, 100, 0);
+              MIDI.noteOff(i.midiChannel, id, 500);
           });
           setTimeout(function () {
               keyRect.setAttribute("style", storedStyle);
@@ -6451,10 +6269,10 @@
        * @returns {JQueryDOMObject} 
        */
       this.wrapScrollable = function (svgDOM) {
-          var $wrapper = jquery.$("<div class='keyboardScrollableWrapper'></div>").css({
+          var $wrapper = $$1("<div class='keyboardScrollableWrapper'></div>").css({
               display: "inline-block"
           });
-          var $bDown = jquery.$("<button class='keyboardOctaveDown'>&lt;&lt;</button>").css({
+          var $bDown = $$1("<button class='keyboardOctaveDown'>&lt;&lt;</button>").css({
               'font-size': Math.floor(this.scaleFactor * 15).toString() + 'px'
           }).bind('click', function () {
               music21.miditools.transposeOctave -= 1;
@@ -6462,7 +6280,7 @@
               this._endDNN -= 7;
               this.redrawSVG();
           }.bind(this));
-          var $bUp = jquery.$("<button class='keyboardOctaveUp'>&gt;&gt;</button>").css({
+          var $bUp = $$1("<button class='keyboardOctaveUp'>&gt;&gt;</button>").css({
               'font-size': Math.floor(this.scaleFactor * 15).toString() + 'px'
           }).bind('click', function () {
               music21.miditools.transposeOctave += 1;
@@ -6470,7 +6288,7 @@
               this._endDNN += 7;
               this.redrawSVG();
           }.bind(this));
-          var $kWrapper = jquery.$("<div style='display:inline-block; vertical-align: middle' class='keyboardScrollableInnerDiv'></div>");
+          var $kWrapper = $$1("<div style='display:inline-block; vertical-align: middle' class='keyboardScrollableInnerDiv'></div>");
           $kWrapper[0].appendChild(svgDOM);
           $wrapper.append($bDown);
           $wrapper.append($kWrapper);
@@ -6489,13 +6307,13 @@
        * @param {DOMObject} keyboardSVG
        */
       this.appendHideableKeyboard = function (where, keyboardSVG) {
-          var $container = jquery.$("<div class='keyboardHideableContainer'/>");
-          var $bInside = jquery.$("<div class='keyboardToggleInside'>↥</div>").css({
+          var $container = $$1("<div class='keyboardHideableContainer'/>");
+          var $bInside = $$1("<div class='keyboardToggleInside'>↥</div>").css({
               display: 'inline-block',
               'padding-top': '40px',
               'font-size': '40px'
           });
-          var $b = jquery.$("<div class='keyboardToggleOutside'/>").css({
+          var $b = $$1("<div class='keyboardToggleOutside'/>").css({
               display: 'inline-block',
               'vertical-align': 'top',
               background: 'white'
@@ -6504,7 +6322,7 @@
           $b.data('defaultDisplay', $container.find('.keyboardSVG').css('display'));
           $b.data('state', 'down');
           $b.click(keyboard.triggerToggleShow);
-          var $explain = jquery.$("<div class='keyboardExplain'>Show keyboard</div>").css({
+          var $explain = $$1("<div class='keyboardExplain'>Show keyboard</div>").css({
               'display': 'none',
               'background-color': 'white',
               'padding': '10px 10px 10px 10px',
@@ -6513,7 +6331,7 @@
           $b.append($explain);
           $container.append($b);
           $container[0].appendChild(keyboardSVG); // svg must use appendChild, not append.
-          jquery.$(where).append($container);
+          $$1(where).append($container);
           return $container;
       };
   };
@@ -6527,7 +6345,7 @@
   keyboard.triggerToggleShow = function (e) {
       // "this" refers to the object clicked
       // e -- event is not used.
-      var $t = jquery.$(this);
+      var $t = $$1(this);
       var state = $t.data('state');
       var $parent = $t.parent();
       var $k = $parent.find('.keyboardScrollableWrapper');
@@ -6773,7 +6591,7 @@
                   if (this._vfRenderer !== undefined) {
                       return this._vfRenderer;
                   } else {
-                      this._vfRenderer = new vexflow.Vex.Flow.Renderer(this.canvas, vexflow.Vex.Flow.Renderer.Backends.CANVAS);
+                      this._vfRenderer = new Vex$1.Flow.Renderer(this.canvas, Vex$1.Flow.Renderer.Backends.CANVAS);
                       return this._vfRenderer;
                   }
               },
@@ -7060,7 +6878,7 @@
               }
           }
           if (onSameSystem) {
-              var vfTie = new vexflow.Vex.Flow.StaveTie({
+              var vfTie = new Vex$1.Flow.StaveTie({
                   first_note: thisNote.activeVexflowNote,
                   last_note: nextNote.activeVexflowNote,
                   first_indices: [0],
@@ -7069,12 +6887,12 @@
               this.ties.push(vfTie);
           } else {
               //console.log('got me a tie across systemBreaks!');
-              var vfTie1 = new vexflow.Vex.Flow.StaveTie({
+              var vfTie1 = new Vex$1.Flow.StaveTie({
                   first_note: thisNote.activeVexflowNote,
                   first_indices: [0]
               });
               this.ties.push(vfTie1);
-              var vfTie2 = new vexflow.Vex.Flow.StaveTie({
+              var vfTie2 = new Vex$1.Flow.StaveTie({
                   last_note: nextNote.activeVexflowNote,
                   first_indices: [0]
               });
@@ -7162,7 +6980,7 @@
           autoBeam = measures[0].autoBeam;
       }
 
-      var formatter = new vexflow.Vex.Flow.Formatter();
+      var formatter = new Vex$1.Flow.Formatter();
       //var minLength = formatter.preCalculateMinTotalWidth([voices]);
       //console.log(minLength);
       if (voices.length === 0) {
@@ -7187,12 +7005,12 @@
           for (i = 0; i < voices.length; i++) {
               // find beam groups -- n.b. this wipes out stemDirection. worth it usually...
               var voice = voices[i];
-              var beatGroups = [new vexflow.Vex.Flow.Fraction(2, 8)]; // default beam groups
+              var beatGroups = [new Vex$1.Flow.Fraction(2, 8)]; // default beam groups
               if (measures[i] !== undefined && measures[i].timeSignature !== undefined) {
-                  beatGroups = measures[i].timeSignature.vexflowBeatGroups(vexflow.Vex); // TODO: getContextByClass...
+                  beatGroups = measures[i].timeSignature.vexflowBeatGroups(Vex$1); // TODO: getContextByClass...
                   //console.log(beatGroups);
               }
-              var beamGroups = vexflow.Vex.Flow.Beam.applyAndGetBeams(voice, undefined, beatGroups);
+              var beamGroups = Vex$1.Flow.Beam.applyAndGetBeams(voice, undefined, beatGroups);
               this.beamGroups.push.apply(this.beamGroups, beamGroups);
           }
       }
@@ -7245,7 +7063,7 @@
       if (music21.debug) {
           console.log('creating new stave: left:' + left + ' top: ' + top + ' width: ' + width);
       }
-      var stave = new vexflow.Vex.Flow.Stave(left, top, width);
+      var stave = new Vex$1.Flow.Stave(left, top, width);
       return stave;
   };
 
@@ -7291,7 +7109,7 @@
           };
           var vxBL = barlineMap[bl];
           if (vxBL !== undefined) {
-              stave.setEndBarType(vexflow.Vex.Flow.Barline.type[vxBL]);
+              stave.setEndBarType(Vex$1.Flow.Barline.type[vxBL]);
           }
       }
   };
@@ -7379,7 +7197,7 @@
                       var tupletOptions = { num_notes: activeTuplet.numberNotesActual,
                           beats_occupied: activeTuplet.numberNotesNormal };
                       //console.log('tupletOptions', tupletOptions);
-                      var vfTuplet = new vexflow.Vex.Flow.Tuplet(activeTupletVexflowNotes, tupletOptions);
+                      var vfTuplet = new Vex$1.Flow.Tuplet(activeTupletVexflowNotes, tupletOptions);
                       if (activeTuplet.tupletNormalShow == 'ratio') {
                           vfTuplet.setRatioed(true);
                       }
@@ -7412,11 +7230,11 @@
   vfShow.Renderer.prototype.vexflowLyrics = function (s, stave) {
       var getTextNote = function (text, font, d) {
           //console.log(text, font, d);
-          var t1 = new vexflow.Vex.Flow.TextNote({
+          var t1 = new Vex$1.Flow.TextNote({
               text: text,
               font: font,
               duration: d
-          }).setLine(11).setStave(stave).setJustification(vexflow.Vex.Flow.TextNote.Justification.LEFT);
+          }).setLine(11).setStave(stave).setJustification(Vex$1.Flow.TextNote.Justification.LEFT);
           return t1;
       };
 
@@ -7495,9 +7313,9 @@
       if (music21.debug) {
           console.log("New voice, num_beats: " + num1024.toString() + " beat_value: " + beatValue.toString());
       }
-      vfv = new vexflow.Vex.Flow.Voice({ num_beats: num1024,
+      vfv = new Vex$1.Flow.Voice({ num_beats: num1024,
           beat_value: beatValue,
-          resolution: vexflow.Vex.Flow.RESOLUTION });
+          resolution: Vex$1.Flow.RESOLUTION });
 
       // from vexflow/src/voice.js
       //
@@ -7507,14 +7325,17 @@
       // SOFT:   Ticks can be added without restrictions.
       // FULL:   Ticks do not need to fill the voice, but can't exceed the maximum
       //         tick length.
-      vfv.setMode(vexflow.Vex.Flow.Voice.Mode.SOFT);
+      vfv.setMode(Vex$1.Flow.Voice.Mode.SOFT);
       return vfv;
   };
-  vfShow.Renderer.prototype.staffConnectorsMap = {
-      'brace': vexflow.Vex.Flow.StaveConnector.type.BRACE,
-      'single': vexflow.Vex.Flow.StaveConnector.type.SINGLE,
-      'double': vexflow.Vex.Flow.StaveConnector.type.DOUBLE,
-      'bracket': vexflow.Vex.Flow.StaveConnector.type.BRACKET
+  vfShow.Renderer.prototype.staffConnectorsMap = function (connectorType) {
+      map = {
+          'brace': Vex$1.Flow.StaveConnector.type.BRACE,
+          'single': Vex$1.Flow.StaveConnector.type.SINGLE,
+          'double': Vex$1.Flow.StaveConnector.type.DOUBLE,
+          'bracket': Vex$1.Flow.StaveConnector.type.BRACKET
+      };
+      return map[connectorType];
   };
 
   /**
@@ -7544,9 +7365,9 @@
               var bottomVFStaff = lastPartMeasure.activeVFStave;
               /* TODO: warning if no staves... */
               for (var i = 0; i < s.renderOptions.staffConnectors.length; i++) {
-                  var sc = new vexflow.Vex.Flow.StaveConnector(topVFStaff, bottomVFStaff);
+                  var sc = new Vex$1.Flow.StaveConnector(topVFStaff, bottomVFStaff);
                   var scTypeM21 = s.renderOptions.staffConnectors[i];
-                  var scTypeVF = this.staffConnectorsMap[scTypeM21];
+                  var scTypeVF = this.staffConnectorsMap(scTypeM21);
                   sc.setType(scTypeVF);
                   sc.setContext(this.ctx);
                   sc.draw();
@@ -7970,7 +7791,7 @@
       barDOM.setAttribute("transform", "scale(" + scaleY + ")");
       svgDOM.appendChild(barDOM);
 
-      var canvasParent = jquery.$(canvas).parent()[0];
+      var canvasParent = $$1(canvas).parent()[0];
       canvasParent.appendChild(svgDOM);
       this.barDOM = barDOM;
       this.svgDOM = svgDOM;
@@ -9028,7 +8849,7 @@
       var offsetMap = [];
       var groups = [];
       if (this.hasVoices()) {
-          jquery.$.each(srcObj.getElementsByClass('Voice').elements, function (i, v) {
+          $$1.each(srcObj.getElementsByClass('Voice').elements, function (i, v) {
               groups.push([v.flat, i]);
           });
       } else {
@@ -9103,10 +8924,10 @@
       var lastStepDict;
       var p;
       for (i = 0; i < 10; i++) {
-          lastStepDict = jquery.$.extend({}, extendableStepList);
+          lastStepDict = $$1.extend({}, extendableStepList);
           lastOctaveStepList.push(lastStepDict);
       }
-      var lastOctavelessStepDict = jquery.$.extend({}, extendableStepList); // probably unnecessary, but safe...
+      var lastOctavelessStepDict = $$1.extend({}, extendableStepList); // probably unnecessary, but safe...
       for (var i = 0; i < this.length; i++) {
           var el = this.get(i);
           if (el.pitch !== undefined) {
@@ -9399,7 +9220,7 @@
           this.setSubstreamRenderOptions();
       }
 
-      var newCanvas = jquery.$('<canvas/>'); //.css('border', '1px red solid');
+      var newCanvas = $$1('<canvas/>'); //.css('border', '1px red solid');
 
       if (width !== undefined) {
           if (typeof width == 'string') {
@@ -9470,7 +9291,7 @@
       }
       var $appendElement = appendElement;
       if (appendElement.jquery === undefined) {
-          $appendElement = jquery.$(appendElement);
+          $appendElement = $$1(appendElement);
       }
 
       //        if (width === undefined && this.renderOptions.maxSystemWidth === undefined) {
@@ -9503,7 +9324,7 @@
       }
       var $where;
       if (where.jquery === undefined) {
-          $where = jquery.$(where);
+          $where = $$1(where);
       } else {
           $where = where;
           where = $where[0];
@@ -9522,7 +9343,7 @@
           // replacing each with canvasBlock doesn't work
           // anyhow, it just resizes the canvas but doesn't
           // draw.
-          $oldCanvas = jquery.$($oldCanvas[$oldCanvas.length - 1]);
+          $oldCanvas = $$1($oldCanvas[$oldCanvas.length - 1]);
       }
 
       var canvasBlock;
@@ -9550,11 +9371,11 @@
   stream.Stream.prototype.renderScrollableCanvas = function (where) {
       var $where = where;
       if (where === undefined) {
-          $where = jquery.$(document.body);
+          $where = $$1(document.body);
       } else if (where.jquery === undefined) {
-          $where = jquery.$(where);
+          $where = $$1(where);
       }
-      var $innerDiv = jquery.$("<div>").css('position', 'absolute');
+      var $innerDiv = $$1("<div>").css('position', 'absolute');
       var c;
       this.renderOptions.events.click = function (storedThis) {
           return function (event) {
@@ -9607,7 +9428,7 @@
       if (canvasOrDiv === undefined) {
           return;
       } else if (canvasOrDiv.jquery === undefined) {
-          $canvas = jquery.$(canvasOrDiv);
+          $canvas = $$1(canvasOrDiv);
       }
       // TODO: assumes that canvas has a .storedStream function? can this be done by setting
       // a variable var storedStream = this; and thus get rid of the assumption?
@@ -9615,7 +9436,7 @@
           this.playStream();
       }.bind(this);
 
-      jquery.$.each(this.renderOptions.events, jquery.$.proxy(function (eventType, eventFunction) {
+      $$1.each(this.renderOptions.events, $$1.proxy(function (eventType, eventFunction) {
           $canvas.off(eventType);
           if (typeof eventFunction == 'string' && eventFunction == 'play') {
               $canvas.on(eventType, playFunc);
@@ -9669,7 +9490,7 @@
       if (canvas === undefined) {
           offset = { left: 0, top: 0 };
       } else {
-          offset = jquery.$(canvas).offset();
+          offset = $$1(canvas).offset();
       }
       /*
        * mouse event handler code from: http://diveintohtml5.org/canvas.html
@@ -9829,11 +9650,11 @@
   stream.Stream.prototype.redrawCanvas = function (canvas) {
       //this.resetRenderOptions(true, true); // recursive, preserveEvents
       //this.setSubstreamRenderOptions();
-      var $canvas = jquery.$(canvas); // works even if canvas is already $jquery
+      var $canvas = $$1(canvas); // works even if canvas is already $jquery
       var $newCanv = this.createNewCanvas(canvas.width, canvas.height);
       this.renderVexflowOnCanvas($newCanv);
       $canvas.replaceWith($newCanv);
-      common.jQueryEventCopy(jquery.$.event, $canvas, $newCanv); /* copy events -- using custom extension... */
+      common.jQueryEventCopy($$1.event, $canvas, $newCanv); /* copy events -- using custom extension... */
       return this;
   };
 
@@ -9850,10 +9671,10 @@
       /*
        * Create an editable canvas with an accidental selection bar.
        */
-      var d = jquery.$("<div/>").css('text-align', 'left').css('position', 'relative');
+      var d = $$1("<div/>").css('text-align', 'left').css('position', 'relative');
       var buttonDiv = this.getAccidentalToolbar();
       d.append(buttonDiv);
-      d.append(jquery.$("<br clear='all'/>"));
+      d.append($$1("<br clear='all'/>"));
       this.renderOptions.events.click = this.canvasChangerFunction;
       this.appendNewCanvas(d, width, height); // var can =
       return d;
@@ -9885,7 +9706,7 @@
            * To be called on a button...
            *   this will usually refer to a window Object
            */
-          var accidentalToolbar = jquery.$(clickedButton).parent();
+          var accidentalToolbar = $$1(clickedButton).parent();
           var siblingCanvas = accidentalToolbar.parent().find("canvas");
           var s = siblingCanvas[0].storedStream;
           if (s.activeNote !== undefined) {
@@ -9899,14 +9720,14 @@
           }
       };
 
-      var buttonDiv = jquery.$("<div/>").attr('class', 'buttonToolbar vexflowToolbar').css('position', 'absolute').css('top', '10px');
-      buttonDiv.append(jquery.$("<span/>").css('margin-left', '50px'));
+      var buttonDiv = $$1("<div/>").attr('class', 'buttonToolbar vexflowToolbar').css('position', 'absolute').css('top', '10px');
+      buttonDiv.append($$1("<span/>").css('margin-left', '50px'));
       var clickFunc = function () {
-          addAccidental(this, jquery.$(this).data('alter'));
+          addAccidental(this, $$1(this).data('alter'));
       };
       for (var i = minAccidental; i <= maxAccidental; i++) {
           var acc = new music21.pitch.Accidental(i);
-          buttonDiv.append(jquery.$("<button>" + acc.unicodeModifier + "</button>").data('alter', i).click(clickFunc)
+          buttonDiv.append($$1("<button>" + acc.unicodeModifier + "</button>").data('alter', i).click(clickFunc)
           //                                .css('font-family', 'Bravura')
           //                                .css('font-size', '40px')
           );
@@ -9919,12 +9740,12 @@
    * @returns {DOMObject} a play toolbar
    */
   stream.Stream.prototype.getPlayToolbar = function () {
-      var buttonDiv = jquery.$("<div/>").attr('class', 'playToolbar vexflowToolbar').css('position', 'absolute').css('top', '10px');
-      buttonDiv.append(jquery.$("<span/>").css('margin-left', '50px'));
-      buttonDiv.append(jquery.$("<button>&#9658</button>").click(function () {
+      var buttonDiv = $$1("<div/>").attr('class', 'playToolbar vexflowToolbar').css('position', 'absolute').css('top', '10px');
+      buttonDiv.append($$1("<span/>").css('margin-left', '50px'));
+      buttonDiv.append($$1("<button>&#9658</button>").click(function () {
           this.playStream();
       }.bind(this)));
-      buttonDiv.append(jquery.$("<button>&#9724</button>").click(function () {
+      buttonDiv.append($$1("<button>&#9724</button>").click(function () {
           this.stopPlayStream();
       }.bind(this)));
       return buttonDiv;
@@ -9944,7 +9765,7 @@
       // set up a bunch of windowReflow bindings that affect the canvas.
       var callingStream = this;
       var jCanvasNow = jCanvas;
-      jquery.$(window).bind('resizeEnd', function () {
+      $$1(window).bind('resizeEnd', function () {
           //do something, window hasn't changed size in 500ms
           var jCanvasParent = jCanvasNow.parent();
           var newWidth = jCanvasParent.width();
@@ -9957,21 +9778,21 @@
           callingStream.maxSystemWidth = canvasWidth - 40;
           jCanvasNow.remove();
           var canvasObj = callingStream.appendNewCanvas(jCanvasParent);
-          jCanvasNow = jquery.$(canvasObj);
+          jCanvasNow = $$1(canvasObj);
       });
-      jquery.$(window).resize(function () {
+      $$1(window).resize(function () {
           if (this.resizeTO) {
               clearTimeout(this.resizeTO);
           }
           this.resizeTO = setTimeout(function () {
-              jquery.$(this).trigger('resizeEnd');
+              $$1(this).trigger('resizeEnd');
           }, 200);
       });
       setTimeout(function () {
-          var $window = jquery.$(window);
+          var $window = $$1(window);
           var doResize = $window.data('triggerResizeOnCreateCanvas');
           if (doResize === undefined || doResize === true) {
-              jquery.$(this).trigger('resizeEnd');
+              $$1(this).trigger('resizeEnd');
               $window.data('triggerResizeOnCreateCanvas', false);
           }
       }, 1000);
@@ -10173,7 +9994,7 @@
           }
           currentLeft = m.renderOptions.left;
 
-          if (jquery.$.inArray(i - 1, systemBreakIndexes) != -1) {
+          if (systemBreakIndexes.indexOf(i - 1) != -1) {
               /* first measure of new System */
               leftSubtract = currentLeft - 20;
               m.renderOptions.displayClef = true;
@@ -10286,7 +10107,7 @@
 
       //music21.debug = true;
       if (music21.debug) {
-          console.log('this.estimateStreamHeight(): ' + this.estimateStreamHeight() + " / $(canvas).height(): " + jquery.$(canvas).height());
+          console.log('this.estimateStreamHeight(): ' + this.estimateStreamHeight() + " / $(canvas).height(): " + $$1(canvas).height());
       }
       var systemPadding = this.renderOptions.systemPadding;
       if (systemPadding === undefined) {
@@ -10756,7 +10577,7 @@
           var n4 = new music21.note.Note("G3");
           s1.append(n4);
           var div1 = s1.editableAccidentalCanvas();
-          jquery.$(document.body).append(div1);
+          $$1(document.body).append(div1);
       });
   };
 
@@ -12041,7 +11862,7 @@
           return webmidi.storedPlugin;
       }
       if (typeof appendElement == 'undefined') {
-          appendElement = jquery.$('body')[0];
+          appendElement = $$1('body')[0];
       }
       var obj = document.createElement('object');
       obj.classid = "CLSID:1ACE1618-1C7D-4561-AEE1-34842AA85E90";
@@ -12081,7 +11902,7 @@
       }
 
       $newSelect.change(function () {
-          var selectedInput = jquery.$("#midiInSelect option:selected").text();
+          var selectedInput = $$1("#midiInSelect option:selected").text();
           if (selectedInput != "None selected") {
               webmidi.selectedJazzInterface = Jazz.MidiInOpen(selectedInput, webmidi.jazzMidiInArrived);
           } else {
@@ -12092,13 +11913,13 @@
           }
       });
       var midiOptions = Jazz.MidiInList();
-      var noneAppendOption = jquery.$("<option value='None'>None selected</option>");
+      var noneAppendOption = $$1("<option value='None'>None selected</option>");
       $newSelect.append(noneAppendOption);
 
       var anySelected = false;
       var allAppendOptions = [];
       for (var i = 0; i < midiOptions.length; i++) {
-          var $appendOption = jquery.$("<option value='" + midiOptions[i] + "'>" + midiOptions[i] + "</option>");
+          var $appendOption = $$1("<option value='" + midiOptions[i] + "'>" + midiOptions[i] + "</option>");
           if (midiOptions[i] == webmidi.selectedJazzInterface) {
               $appendOption.attr("selected", true);
               anySelected = true;
@@ -12176,10 +11997,10 @@
       common.merge(params, options);
 
       if (typeof $midiSelectDiv == 'undefined') {
-          $midiSelectDiv = jquery.$("body");
+          $midiSelectDiv = $$1("body");
       }
       if ($midiSelectDiv.jquery == undefined) {
-          $midiSelectDiv = jquery.$($midiSelectDiv);
+          $midiSelectDiv = $$1($midiSelectDiv);
       }
       var $newSelect;
       var foundMidiSelects = $midiSelectDiv.find('select#midiInSelect');
@@ -12187,7 +12008,7 @@
           $newSelect = foundMidiSelects[0];
           params.existingMidiSelect = true;
       } else {
-          $newSelect = jquery.$("<select>").attr('id', 'midiInSelect');
+          $newSelect = $$1("<select>").attr('id', 'midiInSelect');
           $midiSelectDiv.append($newSelect);
       }
       webmidi.$select = $newSelect;
@@ -12225,14 +12046,14 @@
       var inputs = webmidi.access.inputs;
       webmidi.$select.empty();
 
-      var $noneAppendOption = jquery.$("<option value='None'>None selected</option>");
+      var $noneAppendOption = $$1("<option value='None'>None selected</option>");
       webmidi.$select.append($noneAppendOption);
 
       var allAppendOptions = [];
       var midiOptions = [];
       var i = 0;
       inputs.forEach(function (port) {
-          var $appendOption = jquery.$("<option value='" + port.name + "'>" + port.name + "</option>");
+          var $appendOption = $$1("<option value='" + port.name + "'>" + port.name + "</option>");
           allAppendOptions.push($appendOption);
           midiOptions.push(port.name);
           //console.log(appendOption);
@@ -12575,6 +12396,7 @@
   // order below doesn't matter, but good to give a sense
   // of what will be needed by almost everyone, and then
   // alphabetical
+  //import { fromPython } from './music21/fromPython';
   //import { orchestralScore } from './music21/orchestralScore';
   var m21 = {};
   m21.common = common;
@@ -12588,7 +12410,7 @@
   m21.clef = clef;
   m21.duration = duration;
   m21.expressions = expressions;
-  m21.fromPython = fromPython;
+  //m21.fromPython = fromPython;
   m21.instrument = instrument;
   m21.interval = interval;
   m21.key = key;
@@ -12610,268 +12432,7 @@
   m21.webmidi = webmidi;
   m21.widgets = widgets;
 
-  /**
-   * If you are a programmer, this is probably not the script you are looking for.  
-   * The guts of music21j begin at src/music21/moduleLoader.js
-   * 
-   * @exports music21
-   */
-  // Not strict mode
-
-  if (typeof exports.music21 === "undefined") {
-      /**
-       * **music21j**: Javascript reimplementation of Core music21 features.  
-       * 
-       * See http://web.mit.edu/music21/ for more details.
-       * 
-       * Copyright (c) 2013-16, Michael Scott Cuthbert and cuthbertLab
-       * 
-       * Based on music21, Copyright (c) 2006-16, Michael Scott Cuthbert and cuthbertLab
-       * The plan is to implement all core music21 features as Javascript and to expose
-       * more sophisticated features via server-side connections to remote servers running the
-       * python music21 (music21p).
-       * 
-       * Requires an ECMAScript 5 compatible browser w/ SVG and Canvas. IE 11 or any recent 
-       * version of Firefox, Safari, Edge,  Chrome, etc. will do. To disable the warning, 
-       * set an attribute in the &lt;script&gt; tag that calls requirejs, warnBanner="no".
-       * 
-       * All interfaces are alpha and may change radically from day to day and release to release.
-       * Do not use this in production code yet. 
-       * 
-       * See src/moduleLoader.js for version and version history.
-       * 
-       * music21j acknowledges VexFlow, MIDI.js, jUnit, jQuery for their great efforts without which 
-       * this module would not be possible.
-       *  
-       * @namespace 
-       */
-      exports.music21 = { VERSION: 0.8 }; // update in README.md also
-  }
-  //console.log('hi before: ' + require.toUrl('hi'));
-  //console.log('./hi before: ' + require.toUrl('./hi'));
-
-  require.config({
-      context: 'music21'
-  });
-  //console.log('hi context: ' + require.toUrl('hi'));
-  //console.log('./hi context: ' + require.toUrl('./hi'));
-
-
-  //must be defined before loading, jQuery, etc. because needed to see if warnBanner is defined
-
-  // place a JSON obj into the <script> tag for require...
-  // <script data-main='music21' src='require.js' m21conf='{"loadSoundfont": false}'>
-
-  var pathSimplify = function (path) {
-      var pPrefix = "";
-      if (path.indexOf('//') === 0) {
-          pPrefix = '//'; //cdn loading;
-          path = path.slice(2);
-          console.log('cdn load: ', pPrefix, " into ", path);
-      } else if (path.indexOf('://') !== -1) {
-          // for cross site requests...
-          var protoSpace = path.indexOf('://');
-          pPrefix = path.slice(0, protoSpace + 3);
-          path = path.slice(protoSpace + 3);
-          console.log('cross-site split', pPrefix, path);
-      }
-      var ps = path.split('/');
-      var addSlash = path.slice(path.length - 1, path.length) === '/' ? true : false;
-      var pout = [];
-      for (var i = 0; i < ps.length; i++) {
-          var el = ps[i];
-          if (el === '..') {
-              if (pout.length > 0) {
-                  if (pout[pout.length - 1] !== '..') {
-                      pout.pop();
-                  } else {
-                      pout.push('..');
-                  }
-              } else {
-                  pout.push('..');
-              }
-              //} else if (el == '') { 
-              //   // pass
-          } else {
-              pout.push(el);
-          }
-      }
-      var pnew = pout.join('/');
-      if (addSlash) {
-          pnew += '/';
-      }
-      pnew = pPrefix + pnew;
-      return pnew;
-  };
-
-  /**
-   * Get an attribute from the script tag that invokes music21 via its data-main 
-   * attribute.
-   * 
-   * E.g. if you invoked music21 with:
-   *     <script src="require.js" data-main="src/music21" quiet="2" hi="hello"></script>
-   * 
-   * then "getM21attribute('quiet')" would return "2".
-   * 
-   */
-  var getM21attribute = function (attrName) {
-      var scripts = document.getElementsByTagName('script');
-      for (var i = 0; i < scripts.length; i++) {
-          var s = scripts[i];
-          var dataMain = s.getAttribute('data-main');
-          if (dataMain && (/music21/.test(dataMain) || /m21/.test(dataMain))) {
-              var m21Attribute = s.getAttribute(attrName);
-              //console.log(m21Attribute);
-              return m21Attribute;
-          }
-      }
-  };
-
-  /**
-   *  Should we warn about obsolete web browsers? default Yes.
-   */
-  var warnBanner = getM21attribute('warnBanner') !== 'no' ? true : false;
-
-  // get scriptConfig
-  if (typeof m21conf === 'undefined') {
-      m21conf = {};
-      var m21browserAttribute = getM21attribute('m21conf');
-      if (m21browserAttribute !== null && m21browserAttribute !== undefined) {
-          try {
-              m21conf = JSON.parse(m21browserAttribute);
-          } catch (e) {
-              console.log('Unable to JSON parse ' + m21browserAttribute.toString() + ' into m21conf');
-          }
-      }
-  }
-
-  if (typeof m21srcPath === 'undefined') {
-      if (typeof require !== 'undefined') {
-          m21srcPath = pathSimplify(require.toUrl('music21').replace(/\?bust=\w*/, '') + '/..');
-          //console.log('m21srcPath: ' + m21srcPath);
-      }
-  }
-
-  exports.music21.m21basePath = pathSimplify(m21srcPath + '/..');
-  exports.music21.m21srcPath = m21srcPath;
-  //console.log('m21srcPath', m21srcPath);
-  //console.log('m21srcPath non simplified', require.toUrl('music21'));
-  exports.music21.soundfontUrl = exports.music21.m21srcPath + '/ext/soundfonts/FluidR3_GM/';
-
-  var m21requireConfig = {
-      paths: {
-          'jquery': pathSimplify(m21srcPath + '/ext/jquery/jquery-2.1.1.min'),
-          'attrchange': pathSimplify(m21srcPath + '/ext/jqueryPlugins/attrchange'),
-          'jquery-ui': pathSimplify(m21srcPath + '/ext/jqueryPlugins/jqueryUI/jquery-ui.min'),
-          'vexflow': pathSimplify(m21srcPath + '/ext/vexflow/vexflow-min'),
-          'MIDI': pathSimplify(m21srcPath + '/ext/midijs/build/MIDI'),
-          'jasmidMidifile': pathSimplify(m21srcPath + '/ext/midijs/inc/jasmid/midifile'),
-          'jasmidReplayer': pathSimplify(m21srcPath + '/ext/midijs/inc/jasmid/replayer'),
-          'jasmidStream': pathSimplify(m21srcPath + '/ext/midijs/inc/jasmid/stream'),
-          // a very nice event handler from Mudcu.be that handles drags 
-          'eventjs': pathSimplify(m21srcPath + '/ext/midijs/examples/inc/event'),
-          // read binary data in base64.  In "shim" but is not a shim.
-          'base64Binary': pathSimplify(m21srcPath + '/ext/midijs/inc/shim/Base64binary'),
-
-          // browser shims
-          'webMidiApiShim': pathSimplify(m21srcPath + '/ext/midijs/inc/shim/WebMIDIAPI'), //not currently loaded/used?
-          'webAudioShim': pathSimplify(m21srcPath + '/ext/midijs/inc/shim/WebAudioAPI'), // Safari prefixed to <= 9; IE <= Edge
-          'es6Shim': pathSimplify(m21srcPath + '/ext/es6-shim')
-
-      },
-      packages: [{ name: 'jsonpickle',
-          location: pathSimplify(m21srcPath + '/ext/jsonpickle'),
-          main: 'main'
-      }],
-      shim: {
-          'eventjs': {
-              exports: 'eventjs'
-          },
-          'webMidiApiShim': {
-              deps: ['es6Shim'],
-              exports: 'window'
-          },
-          'MIDI': {
-              deps: [//'base64Shim',  // Bye-bye IE9!
-              'base64Binary', 'webAudioShim', 'jasmidMidifile', 'jasmidReplayer', 'jasmidStream', 'eventjs'],
-              exports: 'MIDI'
-          },
-          'attrchange': {
-              deps: ['jquery'],
-              exports: 'jQuery.attrchange'
-          },
-          'jquery-ui': {
-              deps: ['jquery'],
-              exports: 'jQuery.ui'
-          },
-          'vexflow': {
-              deps: ['jquery'],
-              exports: 'Vex'
-          }
-      }
-  };
-  //console.log('jsonpickle in music21: ', m21requireConfig.packages[0].location);
-
-
-  var m21modules = ['MIDI', 'vexflow', 'jquery', 'jsonpickle', 'jquery-ui', 'attrchange', 'es6Shim',
-  //'webmidiapi',
-  './music21/moduleLoader'];
-  //BUG: will this work if multiple files are listed in noLoad???
-  if (m21conf.noLoad !== undefined) {
-      m21conf.noLoad.forEach(function (val, i, noLoad) {
-          var mi = m21modules.indexOf(val);
-          if (mi !== -1) {
-              m21modules.splice(mi, 1);
-          }
-      });
-  }
-
-  if (Object.defineProperties === undefined && warnBanner) {
-      var newDiv = document.createElement("div");
-      newDiv.setAttribute('style', 'font-size: 40px; padding: 40px 20px 40px 20px; margin-top: 20px; line-height: 50px; width: 500px; height: 400px; color: #ffffff; background-color: #900000;');
-      var textInside = document.createTextNode('Unfortunately, IE9, Safari 4 or 5 (Leopard/Snow Leopard), and other out-of-date browsers do not work with music21j. Please upgrade your browser w/ the link above.');
-      newDiv.appendChild(textInside);
-      document.body.appendChild(newDiv);
-      var $buoop = { test: false, reminder: 0 }; // used by update.js...
-      var e = document.createElement("script");
-      e.setAttribute("type", "text/javascript");
-      e.setAttribute("src", "http://browser-update.org/update.js");
-      document.body.appendChild(e);
-  } else {
-      if (typeof define === "function" && define.amd) {
-          require.config(m21requireConfig);
-          //console.log(require.nameToUrl('jquery'));
-          define(m21modules, function (midi, vexflow, $, jsonpickle) {
-              // BUG, what if midi is in noLoad?     
-              //console.log('inside of require...');
-              exports.music21.scriptConfig = m21conf;
-              //console.log(music21.chord);
-              if (midi) {
-                  exports.music21.MIDI = midi;
-              }
-              if (vexflow) {
-                  exports.music21.Vex = vexflow;
-              } else {
-                  console.log('could not load VexFlow');
-              }
-              if (exports.music21.MIDI) {
-                  if (exports.music21.scriptConfig.loadSoundfont === undefined || exports.music21.scriptConfig.loadSoundfont !== false) {
-                      exports.music21.miditools.loadSoundfont('acoustic_grand_piano');
-                  } else {
-                      console.log('skipping loading sound font');
-                  }
-              }
-              if (exports.music21.scriptConfig.renderHTML === undefined || exports.music21.scriptConfig.renderHTML !== false) {
-                  $(document).ready(function () {
-                      exports.music21.tinyNotation.renderNotationDivs();
-                  });
-              }
-              //console.log('end inside of require...');
-              return exports.music21;
-          });
-      }
-  }
-  exports.music21 = m21;
+  exports.m21 = m21;
 
   Object.defineProperty(exports, '__esModule', { value: true });
 

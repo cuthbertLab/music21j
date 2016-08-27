@@ -1,4 +1,4 @@
-import { Vex } from 'vexflow';
+import * as Vex from 'vexflow';
 import { prebase } from './prebase';
 
 /**

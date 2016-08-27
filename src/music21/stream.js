@@ -8,7 +8,7 @@
  * Based on music21 (=music21p), Copyright (c) 2006-14, Michael Scott Cuthbert and cuthbertLab
  * 
  */
-import { $ } from 'jquery';
+import * as $ from 'jquery';
 
 import { base } from './base';
 import { renderOptions } from './renderOptions';
@@ -1872,7 +1872,7 @@ export var stream = {};
             }
             currentLeft = m.renderOptions.left;
 
-            if ($.inArray(i - 1, systemBreakIndexes) != -1) {
+            if (systemBreakIndexes.indexOf(i - 1) != -1) {
                 /* first measure of new System */
                 leftSubtract = currentLeft - 20;
                 m.renderOptions.displayClef = true;

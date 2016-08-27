@@ -10,7 +10,7 @@
  * Based on music21 (=music21p), Copyright (c) 2006–15, Michael Scott Cuthbert and cuthbertLab
  * 
  */
-import { $ } from 'jquery';
+import * as $ from 'jquery';
 import { common } from './common';
 import { miditools } from './miditools';
 

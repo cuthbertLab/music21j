@@ -6,7 +6,7 @@
  */
 // Not strict mode
 
-if (typeof(music21) === "undefined") {
+if (typeof(m21basis) === "undefined") {
     /**
      * **music21j**: Javascript reimplementation of Core music21 features.  
      * 
@@ -33,7 +33,7 @@ if (typeof(music21) === "undefined") {
      *  
      * @namespace 
      */
-    music21 = {VERSION: 0.8}; // update in README.md also
+    m21basis = {VERSION: 0.8}; // update in README.md also
 }
 //console.log('hi before: ' + require.toUrl('hi'));
 //console.log('./hi before: ' + require.toUrl('./hi'));
@@ -141,11 +141,11 @@ if (typeof m21srcPath === 'undefined') {
     }
 }
 
-music21.m21basePath = pathSimplify(m21srcPath + '/..');
-music21.m21srcPath = m21srcPath;
+m21basis.m21basePath = pathSimplify(m21srcPath + '/..');
+m21basis.m21srcPath = m21srcPath;
 //console.log('m21srcPath', m21srcPath);
 //console.log('m21srcPath non simplified', require.toUrl('music21'));
-music21.soundfontUrl = music21.m21srcPath + '/ext/soundfonts/FluidR3_GM/';
+m21basis.soundfontUrl = m21basis.m21srcPath + '/ext/soundfonts/FluidR3_GM/';
 
 var m21requireConfig = {
     paths: {
@@ -166,6 +166,8 @@ var m21requireConfig = {
         'webMidiApiShim': pathSimplify(m21srcPath + '/ext/midijs/inc/shim/WebMIDIAPI'), //not currently loaded/used?
         'webAudioShim': pathSimplify(m21srcPath + '/ext/midijs/inc/shim/WebAudioAPI'), // Safari prefixed to <= 9; IE <= Edge
         'es6Shim': pathSimplify(m21srcPath + '/ext/es6-shim'),
+        
+        'm21': pathSimplify(m21srcPath + '/../build/music21.debug'),
         
         // formerly used Shims (IE9)
         //'base64Shim':   pathSimplify(m21srcPath + '/ext/midijs/inc/shim/Base64'),
@@ -204,12 +206,17 @@ var m21requireConfig = {
             deps: [ 'jquery' ],
             exports: 'Vex'
         },
+        'm21': {
+            deps: ['jquery', 'MIDI', 'vexflow', 'jsonpickle'],
+            exports: 'm21'            
+        }
     }
 };
 //console.log('jsonpickle in music21: ', m21requireConfig.packages[0].location);
 
 
-var m21modules = ['MIDI',
+var m21modules = ['m21',
+                  'MIDI',
                   'vexflow',
                   'jquery',
                   'jsonpickle',
@@ -217,7 +224,7 @@ var m21modules = ['MIDI',
                   'attrchange',
                   'es6Shim',
                   //'webmidiapi',
-                  './music21/moduleLoader',                  
+                                    
                   ];
 //BUG: will this work if multiple files are listed in noLoad???
 if (m21conf.noLoad !== undefined) {
@@ -247,8 +254,15 @@ if ((Object.defineProperties === undefined) && warnBanner) {
             require.config(m21requireConfig);
             //console.log(require.nameToUrl('jquery'));
             define( m21modules, 
-                function (midi, vexflow, $, jsonpickle) {  // BUG, what if midi is in noLoad?     
+                function (m21, midi, vexflow, $, jsonpickle) {  // BUG, what if midi is in noLoad?     
                     //console.log('inside of require...');
+                    console.log(midi);
+                    music21 = m21.m21;
+                    music21.soundfontUrl = m21basis.soundfontUrl;
+                    music21.m21basePath = m21basis.m21basePath;
+                    music21.m21srcPath = m21basis.m21srcPath;
+                    music21.VERSION = m21basis.VERSION;
+                    
                     music21.scriptConfig = m21conf;
                     //console.log(music21.chord);
                     if (midi) {  music21.MIDI = midi; }
@@ -273,5 +287,3 @@ if ((Object.defineProperties === undefined) && warnBanner) {
                 });         
     }
 }
-import { m21 } from './loadModules'; 
-export var music21 = m21;

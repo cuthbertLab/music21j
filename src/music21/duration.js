@@ -6,9 +6,9 @@
  * Based on music21, Copyright (c) 2006-14, Michael Scott Cuthbert and cuthbertLab
  * 
  */
+import * as $ from 'jquery';
 import { common } from './common';
 import { prebase } from './prebase';
-import { $ } from 'jquery';
         /**
          * Duration module. See {@link music21.duration}
          * 
@@ -158,7 +158,7 @@ export var duration = {};
 					return this._type;
 				},
 				set: function (typeIn) {
-					var typeNumber = $.inArray(typeIn, duration.ordinalTypeFromNum);
+					var typeNumber = duration.ordinalTypeFromNum.indexOf(typeIn);
 					if (typeNumber == -1) {
 						console.log('invalid type ' + typeIn);
                         throw('invalid type ' + typeIn);
@@ -198,7 +198,7 @@ export var duration = {};
              */
 			'vexflowDuration': {
 				get: function() {
-		            var typeNumber = $.inArray(this.type, duration.ordinalTypeFromNum);
+		            var typeNumber = duration.ordinalTypeFromNum.indexOf(this.type);
 					var vd = duration.vexflowDurationArray[typeNumber];
 					if (this.dots > 0) {
 					    for (var i = 0; i < this.dots; i++) {
@@ -220,9 +220,10 @@ export var duration = {};
 	};
     duration.Duration.prototype = new prebase.ProtoM21Object();
     duration.Duration.prototype.constructor = duration.Duration;
+    
     duration.Duration.prototype._findDots = function (ql) {
         if (ql === 0) { return 0; } // zero length stream probably;
-        var typeNumber = $.inArray(this._type, duration.ordinalTypeFromNum);
+        var typeNumber = duration.ordinalTypeFromNum.indexOf(this._type);
         var powerOfTwo = Math.pow(2, duration.quarterTypeIndex - typeNumber);
         // alert(undottedQL * 1.5 + " " + ql)
         //console.log('find dots called on ql: ', ql, typeNumber, powerOfTwo);
@@ -239,7 +240,7 @@ export var duration = {};
         return 0;
     };
     duration.Duration.prototype.updateQlFromFeatures = function () {
-        var typeNumber = $.inArray(this._type, duration.ordinalTypeFromNum); // must be set property
+        var typeNumber = duration.ordinalTypeFromNum.indexOf(this._type); // must be set property
         var undottedQuarterLength = Math.pow(2, duration.quarterTypeIndex - typeNumber);
         var dottedMultiplier = 1 + ((Math.pow(2, this._dots) - 1) / Math.pow(2, this._dots));
         var unTupletedQl = undottedQuarterLength * dottedMultiplier;

@@ -16,11 +16,11 @@ module.exports = (grunt) => {
     const BUILD_DIR = path.join(BASE_DIR, 'build');
     const DOC_DIR = path.join(BASE_DIR, 'doc');
     
-    const MODULE_ENTRY = path.join(BASE_DIR, 'src/music21.js');
+    const MODULE_ENTRY = path.join(BASE_DIR, 'src/loadModules.js');
     const TARGET_RAW = path.join(BUILD_DIR, 'music21.debug.js');
     const TARGET_MIN = path.join(BUILD_DIR, 'music21.min.js');
     
-    const SOURCES = ['src/music21.js', 'src/music21/*.js']
+    const SOURCES = ['src/loadModules.js', 'src/music21/*.js']
 
 //    function webpackConfig(target, preset) {
 //        return {
@@ -86,9 +86,17 @@ module.exports = (grunt) => {
                     vexflow: 'Vex',
                     jquery: '$',
                     jsonpickle: 'jsonpickle',
-                    MIDI: 'MIDI',
-                    
-                }
+                    MIDI: 'MIDI',   
+                },
+                external: [
+                           'jquery',
+                           'jsonpickle',
+                           'MIDI',
+                           'vexflow',
+                           ],                
+                paths: {
+                    vexflow: './src/ext/vexflow/vexflow-min.js',
+                },
             },   
             files: {
                 src: MODULE_ENTRY,

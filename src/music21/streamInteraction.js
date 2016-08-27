@@ -1,4 +1,4 @@
-import { $ } from 'jquery';
+import * as $ from 'jquery';
 import { common } from './common';
 import { stream } from './stream';
 

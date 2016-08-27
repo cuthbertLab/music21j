@@ -19,7 +19,7 @@
  * 
  * 
  */
-import { jsonpickle } from 'jsonpickle';
+import 'jsonpickle';
 
 var jp = jsonpickle;
         /**

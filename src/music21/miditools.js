@@ -7,8 +7,8 @@
  * 
  * @author Michael Scott Cuthbert
  */
-import { $ } from 'jquery';
-import { MIDI } from 'MIDI';
+import * as $ from 'jquery';
+import * as MIDI from 'MIDI';
 import { note } from './note';
 import { chord } from './chord';
 

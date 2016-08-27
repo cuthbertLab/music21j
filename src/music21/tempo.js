@@ -6,7 +6,7 @@
  * Based on music21, Copyright (c) 2006–14, Michael Scott Cuthbert and cuthbertLab
  * 
  */
-import { MIDI } from 'MIDI';
+import * as MIDI from 'MIDI';
 import { prebase } from './prebase';
 import { base } from './base';
 

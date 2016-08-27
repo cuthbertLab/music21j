@@ -6,8 +6,8 @@
  * Based on music21 (=music21p), Copyright (c) 2006–14, Michael Scott Cuthbert and cuthbertLab
  * 
  */
+import * as Vex from 'vexflow';
 import { note } from './note';
-import { Vex } from 'vexflow';
 
         /**
          * chord Module. See {@link music21.chord} namespace for more details
@@ -145,7 +145,7 @@ export    var chord = {};
         var pitches = this.pitches;
         for (var i = 0; i < pitches.length; i++) {
             var p = pitches[i];
-            if ($.inArray(p.step, stepsFound) == -1) {
+            if (stepsFound.indexOf(p.step) == -1) {
                 stepsFound.push(p.step);
                 nonDuplicatingPitches.push(p);
             }

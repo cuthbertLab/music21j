@@ -1,5 +1,5 @@
+import * as Vex from 'vexflow';
 import { common } from './common';
-import { Vex } from 'vexflow';
 
     /**
      * for rendering vexflow. Will eventually go to music21/converter/vexflow
@@ -16,7 +16,7 @@ import { Vex } from 'vexflow';
      * @requires music21/common
      * @requires vexflow
      */
-export    var vfShow = {}; 
+export var vfShow = {}; 
     
     /**
      * Represents a stack of objects that need to be rendered together.
@@ -842,11 +842,14 @@ export    var vfShow = {};
         vfv.setMode(Vex.Flow.Voice.Mode.SOFT);
         return vfv;
     };
-    vfShow.Renderer.prototype.staffConnectorsMap = {
-            'brace': Vex.Flow.StaveConnector.type.BRACE, 
-            'single': Vex.Flow.StaveConnector.type.SINGLE, 
-            'double': Vex.Flow.StaveConnector.type.DOUBLE, 
-            'bracket': Vex.Flow.StaveConnector.type.BRACKET, 
+    vfShow.Renderer.prototype.staffConnectorsMap = function (connectorType ) {
+        map = {
+                'brace': Vex.Flow.StaveConnector.type.BRACE, 
+                'single': Vex.Flow.StaveConnector.type.SINGLE, 
+                'double': Vex.Flow.StaveConnector.type.DOUBLE, 
+                'bracket': Vex.Flow.StaveConnector.type.BRACKET,
+        };
+        return map[connectorType];
     };
     
     /**
@@ -878,7 +881,7 @@ export    var vfShow = {};
                 for (var i = 0; i < s.renderOptions.staffConnectors.length; i++) {
                     var sc = new Vex.Flow.StaveConnector(topVFStaff, bottomVFStaff);
                     var scTypeM21 = s.renderOptions.staffConnectors[i];
-                    var scTypeVF = this.staffConnectorsMap[scTypeM21];
+                    var scTypeVF = this.staffConnectorsMap(scTypeM21);
                     sc.setType(scTypeVF);
                     sc.setContext(this.ctx);
                     sc.draw();

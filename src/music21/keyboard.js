@@ -16,13 +16,13 @@
 // configurable:
 // k.scaleFactor = 1.2;  // default 1
 // k.whiteKeyWidth = 40; // default 23
+import * as $ from 'jquery';
+import * as MIDI from 'MIDI';
 
 import { base } from './base';
 import { common } from './common';
 import { pitch } from './pitch';
 import { miditools } from './miditools';
-import { $ } from 'jquery';
-import { MIDI } from 'MIDI';
 
 
         /**

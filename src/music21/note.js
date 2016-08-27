@@ -6,7 +6,7 @@
  * Based on music21 (music21p), Copyright (c) 2006–14, Michael Scott Cuthbert and cuthbertLab
  * 
  */
-import { Vex } from 'vexflow';
+import * as Vex from 'vexflow';
 
 import { prebase } from './prebase';
 import { base } from './base';
