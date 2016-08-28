@@ -3,7 +3,7 @@ import { prebase } from './prebase';
 
 /**
  * articulations module. See {@link music21.articulations} namespace
- * 
+ *
  * @exports articulations
  */
 
@@ -12,12 +12,12 @@ import { prebase } from './prebase';
  * @memberof music21
  * @requires music21/prebase, Vexflow
  */
-export var articulations = {};
+export const articulations = {};
 
 /**
  * Represents a single articulation, usually in the `.articulations` Array
  * on a {@link music21.note.Note} or something like that.
- * 
+ *
  * @class Articulation
  * @memberof music21.articulations
  * @extends music21.prebase.ProtoM21Object
@@ -36,27 +36,27 @@ export class Articulation extends prebase.ProtoM21Object {
         this.vexflowModifier = undefined;
         this.setPosition = undefined;
         this.dynamicScale = 1.0;
-        this.lengthScale = 1.0;        
+        this.lengthScale = 1.0;
     }
-    
+
     /**
     * Generates a Vex.Flow.Articulation for this articulation.
-    * 
+    *
     * @memberof music21.articulations.Articulation
     * @returns {Vex.Flow.Articulation}
     */
     vexflow() {
-        var vfa = new Vex.Flow.Articulation(this.vexflowModifier);
+        const vfa = new Vex.Flow.Articulation(this.vexflowModifier);
         if (this.setPosition) {
             vfa.setPosition(this.setPosition);
         }
-        return vfa;        
+        return vfa;
     }
 }
 articulations.Articulation = Articulation;
 /**
 * base class for articulations that change the length of a note...
-* 
+*
 * @class LengthArticulation
 * @memberof music21.articulations
 * @extends music21.articulations.Articulation
@@ -71,7 +71,7 @@ articulations.LengthArticulation = LengthArticulation;
 
 /**
 * base class for articulations that change the dynamic of a note...
-* 
+*
 * @class DynamicArticulation
 * @memberof music21.articulations
 * @extends music21.articulations.Articulation
@@ -86,7 +86,7 @@ articulations.DynamicArticulation = DynamicArticulation;
 
 /**
 * base class for articulations that change the pitch of a note...
-* 
+*
 * @class PitchArticulation
 * @memberof music21.articulations
 * @extends music21.articulations.Articulation
@@ -101,7 +101,7 @@ articulations.PitchArticulation = PitchArticulation;
 
 /**
 * base class for articulations that change the timbre of a note...
-* 
+*
 * @class TimbreArticulation
 * @memberof music21.articulations
 * @extends music21.articulations.Articulation
@@ -114,10 +114,10 @@ export class TimbreArticulation extends Articulation {
 }
 articulations.TimbreArticulation = TimbreArticulation;
 
-   
+
 /**
 * 50% louder than usual
-* 
+*
 * @class Accent
 * @memberof music21.articulations
 * @extends music21.articulations.DynamicArticulation
@@ -127,15 +127,15 @@ export class Accent extends DynamicArticulation {
         super();
         this.classes.push('Accent');
         this.name = 'accent';
-        this.vexflowModifier = "a>";
-        this.dynamicScale = 1.5;        
+        this.vexflowModifier = 'a>';
+        this.dynamicScale = 1.5;
     }
 }
 articulations.Accent = Accent;
 
 /**
 * 100% louder than usual
-* 
+*
 * @class StrongAccent
 * @memberof music21.articulations
 * @extends music21.articulations.Accent
@@ -145,15 +145,15 @@ export class StrongAccent extends Accent {
         super();
         this.classes.push('StrongAccent');
         this.name = 'strong accent';
-        this.vexflowModifier = "a^";
-        this.dynamicScale = 2.0;        
+        this.vexflowModifier = 'a^';
+        this.dynamicScale = 2.0;
     }
 }
 articulations.StrongAccent = StrongAccent;
 
 /**
 * no playback for now.
-* 
+*
 * @class Staccato
 * @memberof music21.articulations
 * @extends music21.articulations.LengthArticulation
@@ -161,16 +161,16 @@ articulations.StrongAccent = StrongAccent;
 export class Staccato extends LengthArticulation {
     constructor() {
         super();
-        this.classes.push('Staccato');       
+        this.classes.push('Staccato');
         this.name = 'staccato';
-        this.vexflowModifier = "a.";
+        this.vexflowModifier = 'a.';
     }
 }
 articulations.Staccato = Staccato;
 
 /**
 * no playback for now.
-* 
+*
 * @class Staccatissimo
 * @memberof music21.articulations
 * @extends music21.articulations.Staccato
@@ -178,16 +178,16 @@ articulations.Staccato = Staccato;
 export class Staccatissimo extends Staccato {
     constructor() {
         super();
-        this.classes.push('Staccatissimo');       
+        this.classes.push('Staccatissimo');
         this.name = 'staccatissimo';
-        this.vexflowModifier = "av";
+        this.vexflowModifier = 'av';
     }
 }
 articulations.Staccatissimo = Staccatissimo;
 
 /**
 * no playback or display for now.
-* 
+*
 * @class Spiccato
 * @memberof music21.articulations
 * @extends music21.articulations.Staccato
@@ -195,7 +195,7 @@ articulations.Staccatissimo = Staccatissimo;
 export class Spiccato extends Staccato {
     constructor() {
         super();
-        this.classes.push('Spiccato');       
+        this.classes.push('Spiccato');
         this.name = 'spiccato';
         this.vexflowModifier = undefined;
     }
@@ -214,8 +214,8 @@ export class Marcato extends DynamicArticulation {
         LengthArticulation.call(this);
         this.classes.push('Marcato');
         this.name = 'marcato';
-        this.vexflowModifier = "a^";
-        this.dynamicScale = 1.7;     
+        this.vexflowModifier = 'a^';
+        this.dynamicScale = 1.7;
     }
 }
 articulations.Marcato = Marcato;
@@ -230,38 +230,38 @@ export class Tenuto extends LengthArticulation {
         super();
         this.classes.push('Tenuto');
         this.name = 'tenuto';
-        this.vexflowModifier = "a-";
+        this.vexflowModifier = 'a-';
     }
 }
 articulations.Tenuto = Tenuto;
 
-   
-articulations.tests = function () {
-   test( "music21.articulations.Articulation", function() {
-       var acc = new music21.articulations.Accent();
-       equal (acc.name, 'accent', 'matching names for accent');
-       var ten = new music21.articulations.Tenuto();
-       equal (ten.name, 'tenuto', 'matching names for tenuto');
-       var n = new music21.note.Note("C");
-       n.articulations.push(acc);
-       n.articulations.push(ten);
-       equal (n.articulations[0].name, 'accent', 'accent in array');
-       equal (n.articulations[1].name, 'tenuto', 'tenuto in array');
-   });
-   
-   test ("music21.articulations.Articulation display", function() {
-	   var marc = new music21.articulations.Marcato();
-	   equal (marc.name, 'marcato', 'matching names for marcato');
-	   var n = new music21.note.Note("D#5");
-	   n.articulations.push(marc);
-	   var nBoring = new music21.note.Note("D#5");
 
-	   var measure = new music21.stream.Measure();
-	   measure.append(n);
-	   measure.append(nBoring);
-	   measure.append(nBoring.clone());
-	   measure.append(n.clone()); 
-	   measure.appendNewCanvas();
-	   ok(true, "something worked");
-   });
+articulations.tests = function() {
+    test('music21.articulations.Articulation', function() {
+        const acc = new music21.articulations.Accent();
+        equal(acc.name, 'accent', 'matching names for accent');
+        const ten = new music21.articulations.Tenuto();
+        equal(ten.name, 'tenuto', 'matching names for tenuto');
+        const n = new music21.note.Note('C');
+        n.articulations.push(acc);
+        n.articulations.push(ten);
+        equal(n.articulations[0].name, 'accent', 'accent in array');
+        equal(n.articulations[1].name, 'tenuto', 'tenuto in array');
+    });
+
+    test('music21.articulations.Articulation display', function() {
+	                                                                   const marc = new music21.articulations.Marcato();
+	                                                                                  equal(marc.name, 'marcato', 'matching names for marcato');
+	                                                                   const n = new music21.note.Note('D#5');
+	                                                                                  n.articulations.push(marc);
+	                                                                   const nBoring = new music21.note.Note('D#5');
+
+	                                                                   const measure = new music21.stream.Measure();
+	                                                                                  measure.append(n);
+	                                                                                  measure.append(nBoring);
+	                                                                                  measure.append(nBoring.clone());
+	                                                                                  measure.append(n.clone());
+	                                                                                  measure.appendNewCanvas();
+	                                                                                  ok(true, 'something worked');
+    });
 };
