@@ -1,93 +1,96 @@
 import { pitch } from './pitch';
 import { common } from './common';
-        /**
-         * audioSearch module. See {@link music21.audioSearch} namespace
-         * 
-         * @exports music21/audioSearch
-         */
-    /**
-     * @namespace music21.audioSearch
-     * @memberof music21
-     * @requires music21/pitch
-     * @requires music21/common
-     */
-export   var audioSearch = {};
-   // functions based on the prototype created by Chris Wilson's MIT License version
-   // and on Jordi Bartolome Guillen's audioSearch module for music21
-   audioSearch.fftSize = 2048;
+/**
+ * audioSearch module. See {@link music21.audioSearch} namespace
+ * 
+ * @exports music21/audioSearch
+ */
+/**
+ * @namespace music21.audioSearch
+ * @memberof music21
+ * @requires music21/pitch
+ * @requires music21/common
+ */
+
+export var audioSearch = {};
+// functions based on the prototype created by Chris Wilson's MIT License version
+// and on Jordi Bartolome Guillen's audioSearch module for music21
+
+audioSearch.fftSize = 2048;
    
-   audioSearch.AudioContextCaller = window.AudioContext || window.webkitAudioContext;
-   audioSearch._audioContext = null;
-   audioSearch.animationFrameCallbackId = null;
+audioSearch.AudioContextCaller = window.AudioContext || window.webkitAudioContext;
+audioSearch._audioContext = null;
+audioSearch.animationFrameCallbackId = null;
    
-   Object.defineProperties(audioSearch, 
-           {'audioContext': {
-                   'get': function() {
-                       if (audioSearch._audioContext !== null) {
-                           return audioSearch._audioContext;
-                       } else {
+Object.defineProperties(audioSearch, 
+    {'audioContext': {
+        'get': () => {
+            if (audioSearch._audioContext !== null) {
+                return audioSearch._audioContext;
+            } else {
                            audioSearch._audioContext = new audioSearch.AudioContextCaller();
                            return audioSearch._audioContext;
                        }
                    },
-                   'set': function(ac) {
+         'set': (ac) => {
                        audioSearch._audioContext = ac;
                    }
-               } });
+                      } 
+     });
    
+    
+/**
+ * 
+ * @function music21.audioSearch.getUserMedia
+ * @memberof music21.audioSearch
+ * @param {object} dictionary - dictionary to fill
+ * @param {function} callback - callback on success
+ * @param {function} error - callback on error
+ */
+audioSearch.getUserMedia = function(dictionary, callback, error) {
+   if (error === undefined) {
+       error = function() { alert("navigator.getUserMedia either not defined (Safari, IE) or denied."); }
+   }
+   if (callback === undefined) {
+       callback = function (mediaStream) { audioSearch.userMediaStarted(mediaStream) }
+   }
+   var n = navigator;
+   // need to polyfill navigator, or binding problems are hard...
+   n.getUserMedia = n.getUserMedia || n.webkitGetUserMedia || n.mozGetUserMedia || n.msGetUserMedia;
    
-   /**
-    * 
-    * @function music21.audioSearch.getUserMedia
-    * @memberof music21.audioSearch
-    * @param {object} dictionary - dictionary to fill
-    * @param {function} callback - callback on success
-    * @param {function} error - callback on error
-    */
-   audioSearch.getUserMedia = function(dictionary, callback, error) {
-       if (error === undefined) {
-           error = function() { alert("navigator.getUserMedia either not defined (Safari, IE) or denied."); }
-       }
-       if (callback === undefined) {
-           callback = function (mediaStream) { audioSearch.userMediaStarted(mediaStream) }
-       }
-       var n = navigator;
-       // need to polyfill navigator, or binding problems are hard...
-       n.getUserMedia = n.getUserMedia || n.webkitGetUserMedia || n.mozGetUserMedia || n.msGetUserMedia;
-       
-       if (n.getUserMedia === undefined) {
-           error();
-       }
-       if (dictionary === undefined) {
-           dictionary = {
-               "audio": {
-                   "mandatory": {
-                   },
-                   "optional": []
+   if (n.getUserMedia === undefined) {
+       error();
+   }
+   if (dictionary === undefined) {
+       dictionary = {
+           "audio": {
+               "mandatory": {
+               },
+               "optional": []
                },
            };
-       }
-       n.getUserMedia(dictionary, callback, error);
-   };
+   }
+   n.getUserMedia(dictionary, callback, error);
+};
    
-   audioSearch.sampleBuffer = null;
-   audioSearch.currentAnalyser = null;
+audioSearch.sampleBuffer = null;
+audioSearch.currentAnalyser = null;
    
-   audioSearch.userMediaStarted = function(audioStream) {
-       audioSearch.sampleBuffer = new Float32Array( audioSearch.fftSize / 2 );
-       var mediaStreamSource = audioSearch.audioContext.createMediaStreamSource(audioStream);
-       var analyser = audioSearch.audioContext.createAnalyser();
-       analyser.fftSize = audioSearch.fftSize;
-       mediaStreamSource.connect(analyser);
-       audioSearch.currentAnalyser = analyser;
-       audioSearch.animateLoop();
-   };
+audioSearch.userMediaStarted = function(audioStream) {
+   audioSearch.sampleBuffer = new Float32Array( audioSearch.fftSize / 2 );
+   var mediaStreamSource = audioSearch.audioContext.createMediaStreamSource(audioStream);
+   var analyser = audioSearch.audioContext.createAnalyser();
+   analyser.fftSize = audioSearch.fftSize;
+   mediaStreamSource.connect(analyser);
+   audioSearch.currentAnalyser = analyser;
+   audioSearch.animateLoop();
+};
    
-   audioSearch.minFrequency = 55;
-   audioSearch.maxFrequency = 1050;
-   audioSearch.animateLoop = function(time) {
-       audioSearch.currentAnalyser.getFloatTimeDomainData(audioSearch.sampleBuffer);
-       // returns best frequency or -1
+audioSearch.minFrequency = 55;
+audioSearch.maxFrequency = 1050;
+audioSearch.animateLoop = function(time) {
+    audioSearch.currentAnalyser.getFloatTimeDomainData(audioSearch.sampleBuffer);
+    // returns best frequency or -1
        var frequencyDetected = audioSearch.autoCorrelate(
                audioSearch.sampleBuffer, 
                audioSearch.audioContext.sampleRate,

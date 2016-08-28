@@ -135,6 +135,12 @@ module.exports = (grunt) => {
 //		        },
 //		    },
 //	    },
+	    eslint: {
+	        target: SOURCES,
+	        options: {
+	          configFile: '.eslintrc.json',
+	        },
+	    },
 	    qunit: {
 	      files: ['tests/index.html']
 	    },
@@ -178,10 +184,11 @@ module.exports = (grunt) => {
     // Plugin for the jsdoc task
     //grunt.loadNpmTasks('grunt-jsdoc');
     grunt.loadNpmTasks('grunt-bump');
+    grunt.loadNpmTasks('grunt-eslint');
 //    grunt.loadNpmTasks('grunt-webpack');
 
     // Default task(s).
-    grunt.registerTask('default', ['rollup', 'uglify:build']); //, 'jsdoc']); 
+    grunt.registerTask('default', ['rollup', 'uglify:build']); //, 'eslint', ... 'jsdoc']); 
     //grunt.registerTask('default', ['webpack:build', 'concat', 'uglify:build']); //, 'jsdoc']);
     //grunt.registerTask('test', 'Run qunit tests', ['rollup', 'qunit']);
     grunt.registerTask('publish', 'Raise the version and publish', function () { 
