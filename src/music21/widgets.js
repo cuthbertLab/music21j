@@ -34,7 +34,7 @@ export const widgets = {};
  * @property {music21.stream.Stream} stream
  * @property {DOMObject} [canvasDiv]
  */
-widgets.RhythmChooser = function(s, c) {
+widgets.RhythmChooser = function RhythmChooser(s, c) {
     this.stream = s;
     this.canvasDiv = c;
     this.values = ['whole', 'half', 'quarter', 'eighth', '16th', 'dot', 'undo'];
@@ -58,12 +58,12 @@ widgets.RhythmChooser = function(s, c) {
      * @memberof music21.widgets.RhythmChooser#
      */
     this.buttonHandlers = {
-        'undo': function(t) {
+        'undo': function buttonHandlers_undo(t) {
             if (this.stream.length > 0) {
                 return this.stream.pop();
             } else { return undefined; }
         },
-        'dot': function(t) {
+        'dot': function buttonHandlers_dot(t) {
             if (this.stream.length > 0) {
                 const el = this.stream.pop();
                 el.duration.dots += 1;
@@ -71,14 +71,14 @@ widgets.RhythmChooser = function(s, c) {
                 return el;
             } else { return undefined; }
         },
-        'tie': function(t) {
+        'tie': function buttonHandlers_tie(t) {
             if (this.stream.length > 0) {
                 const el = this.stream.get(-1);
                 el.tie = new tie.Tie('start');
                 this.tieActive = true;
             }
         },
-        'default': function(t) {
+        'default': function buttonHandlers_default(t) {
             let newN = new note.Note('B4');
             newN.stemDirection = 'up';
             if (t.indexOf('rest_') === 0) {
@@ -108,7 +108,7 @@ widgets.RhythmChooser = function(s, c) {
      * @memberof music21.widgets.RhythmChooser#
      */
     this.measureButtonHandlers = {
-        'undo': function(t) {
+        'undo': function measureButtonHandlers_undo(t) {
             if (this.stream.length > 0) {
                 const lastMeasure = this.stream.get(-1);
                 const retValue = lastMeasure.pop();
@@ -120,7 +120,7 @@ widgets.RhythmChooser = function(s, c) {
                 return undefined;
             }
         },
-        'dot': function(t) {
+        'dot': function measureButtonHandlers_dot(t) {
             if (this.stream.length > 0) {
                 const lastMeasure = this.stream.get(-1);
                 const el = lastMeasure.pop();
@@ -129,7 +129,7 @@ widgets.RhythmChooser = function(s, c) {
                 return el;
             } else { return undefined; }
         },
-        'addMeasure': function(t) {
+        'addMeasure': function measureButtonHandlers_addMeasure(t) {
             const lastMeasure = this.stream.get(-1);
             const m = new stream.Measure();
             m.renderOptions.staffLines = lastMeasure.renderOptions.staffLines;
@@ -139,7 +139,7 @@ widgets.RhythmChooser = function(s, c) {
             m.autoBeam = lastMeasure.autoBeam;
             this.stream.append(m);
         },
-        'tie': function(t) {
+        'tie': function measureButtonHandlers_tie(t) {
             const lastMeasure = this.stream.get(-1);
             let el;
             if (lastMeasure.length > 0) {
@@ -157,7 +157,7 @@ widgets.RhythmChooser = function(s, c) {
                 this.tieActive = true;
             }
         },
-        'default': function(t) {
+        'default': function measureButtonHandlers_default(t) {
             let newN = new note.Note('B4');
             newN.stemDirection = 'up';
             if (t.indexOf('rest_') === 0) {
@@ -225,7 +225,7 @@ widgets.RhythmChooser.prototype.styles = {
  * @memberof music21.widgets.RhythmChooser
  * @param {DOMObject|JQueryDOMObject} where
  */
-widgets.RhythmChooser.prototype.addDiv = function(where) {
+widgets.RhythmChooser.prototype.addDiv = function addDiv(where) {
     let $where = where;
     if (where !== undefined && where.jquery === undefined) {
         $where = $(where);
@@ -234,12 +234,15 @@ widgets.RhythmChooser.prototype.addDiv = function(where) {
     for (let i = 0; i < this.values.length; i++) {
         const value = this.values[i];
         const entity = this.valueMappings[value];
-        const $inner = $('<button class="btButton" m21Type="' + value + '">' + entity + '</button>');
+        const $inner = $('<button class="btButton" m21Type="' + value + '">'
+                + entity + '</button>');
         if (this.styles[value] !== undefined) {
             $inner.attr('style', this.styles[value]);
         }
 
-        $inner.click((function(value) { this.handleButton(value); }).bind(this, value));
+        $inner.click((function rhythmButtonDiv_click(value) {
+            this.handleButton(value);
+        }).bind(this, value));
         $outer.append($inner);
     }
     if (where !== undefined) {
@@ -254,7 +257,7 @@ widgets.RhythmChooser.prototype.addDiv = function(where) {
  * @memberof music21.widgets.RhythmChooser
  * @param {string} t - type of button pressed.
  */
-widgets.RhythmChooser.prototype.handleButton = function(t) {
+widgets.RhythmChooser.prototype.handleButton = function handleButton(t) {
     let bhs = this.buttonHandlers;
     if (this.measureMode) {
         bhs = this.measureButtonHandlers;

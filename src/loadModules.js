@@ -1,6 +1,7 @@
 // order below doesn't matter, but good to give a sense
 // of what will be needed by almost everyone, and then
 // alphabetical 
+import { debug } from './music21/debug';
 import { common } from './music21/common';
 import { prebase } from './music21/prebase';
 import { base } from './music21/base';
@@ -37,6 +38,7 @@ import { widgets } from './music21/widgets';
 
 export var music21 = {}
 music21.common = common;
+music21.debug = debug;
 music21.prebase = prebase;
 music21.base = base;
 

@@ -11,6 +11,7 @@
  *
  */
 import * as $ from 'jquery';
+import { debug } from './debug';
 import { common } from './common';
 import { miditools } from './miditools';
 
@@ -63,7 +64,7 @@ webmidi.selectedJazzInterface = undefined; // not the same as "" etc. uses last 
  * @memberof music21.webmidi
  */
 webmidi.callBacks = {
-    raw: (t, a, b, c) => { return new miditools.Event(t, a, b, c); },
+    raw: (t, a, b, c) => new miditools.Event(t, a, b, c),
     general: [miditools.sendToMIDIjs,
                miditools.quantizeLastNote],
     sendOutChord: (arrayOfNotes) => { },
@@ -82,7 +83,7 @@ webmidi.callBacks = {
  * @param {byte} b - data 2
  * @param {byte} c - data 3
  */
-webmidi.jazzMidiInArrived = function(t, a, b, c) {
+webmidi.jazzMidiInArrived = function jazzMidiInArrived(t, a, b, c) {
     const webmidiEvent = {
         timestamp: t,
         data: [a, b, c],
@@ -105,18 +106,20 @@ webmidi.jazzMidiInArrived = function(t, a, b, c) {
  * @memberof music21.webmidi
  * @param {MidiMessageEvent} midiMessageEvent - midi Information
  */
-webmidi.midiInArrived = function(midiMessageEvent) {
-    t = midiMessageEvent.timeStamp;
-    a = midiMessageEvent.data[0];
-    b = midiMessageEvent.data[1];
-    c = midiMessageEvent.data[2];
+webmidi.midiInArrived = function midiInArrived(midiMessageEvent) {
+    const t = midiMessageEvent.timeStamp;
+    const a = midiMessageEvent.data[0];
+    const b = midiMessageEvent.data[1];
+    const c = midiMessageEvent.data[2];
     const eventObject = webmidi.callBacks.raw(t, a, b, c);
     if (webmidi.callBacks.general instanceof Array) {
-        webmidi.callBacks.general.forEach(function(el, index, array) {
+        return webmidi.callBacks.general.forEach((el, index, array) => {
             el(eventObject);
         });
     } else if (webmidi.callBacks.general !== undefined) {
         return webmidi.callBacks.general(eventObject);
+    } else {
+        return undefined;
     }
 };
 
@@ -132,11 +135,11 @@ webmidi.midiInArrived = function(midiMessageEvent) {
  * @param {Boolean} [override=false] - if this method has been called successfully before return the storedPlugin unless override is true.
  * @returns {Jazz|undefined} Jazz MIDI plugin object
  */
-webmidi.createPlugin = function(appendElement, override) {
-    if ((webmidi.storedPlugin) && (override != true)) {
+webmidi.createPlugin = function createPlugin(appendElement, override) {
+    if ((webmidi.storedPlugin) && (override !== true)) {
         return webmidi.storedPlugin;
     }
-    if (typeof (appendElement) == 'undefined') {
+    if (typeof (appendElement) === 'undefined') {
         appendElement = $('body')[0];
     }
     const obj = document.createElement('object');
@@ -167,8 +170,8 @@ webmidi.createPlugin = function(appendElement, override) {
  * @param {object} [options] - see createSelector for details
  * @returns {DOMObject|undefined} DOM object containing the select tag, or undefined if Jazz cannot be loaded.
  */
-webmidi.createJazzSelector = function($newSelect, options) {
-    params = {};
+webmidi.createJazzSelector = function createJazzSelector($newSelect, options) {
+    const params = {};
     common.merge(params, options);
 
     const Jazz = webmidi.createPlugin();
@@ -176,14 +179,14 @@ webmidi.createJazzSelector = function($newSelect, options) {
         return undefined;
     }
 
-    $newSelect.change(function() {
+    $newSelect.change(() => {
         const selectedInput = $('#midiInSelect option:selected').text();
-        if (selectedInput != 'None selected') {
+        if (selectedInput !== 'None selected') {
             webmidi.selectedJazzInterface = Jazz.MidiInOpen(selectedInput, webmidi.jazzMidiInArrived);
         } else {
             Jazz.MidiInClose();
         }
-        if (music21.debug) {
+        if (debug) {
             console.log('current input changed to: ' + webmidi.selectedInterface);
         }
     });
@@ -195,7 +198,7 @@ webmidi.createJazzSelector = function($newSelect, options) {
     const allAppendOptions = [];
     for (let i = 0; i < midiOptions.length; i++) {
         const $appendOption = $("<option value='" + midiOptions[i] + "'>" + midiOptions[i] + '</option>');
-        if (midiOptions[i] == webmidi.selectedJazzInterface) {
+        if (midiOptions[i] === webmidi.selectedJazzInterface) {
             $appendOption.attr('selected', true);
             anySelected = true;
         }
@@ -203,7 +206,7 @@ webmidi.createJazzSelector = function($newSelect, options) {
         // console.log(appendOption);
         $newSelect.append($appendOption);
     }
-    if (anySelected == false && midiOptions.length > 0) {
+    if (anySelected === false && midiOptions.length > 0) {
         $newSelect.val(midiOptions[0]);
         allAppendOptions[0].attr('selected', true);
         webmidi.selectedJazzInterface = Jazz.MidiInOpen(midiOptions[0], webmidi.jazzMidiInArrived);
@@ -219,26 +222,27 @@ webmidi.createJazzSelector = function($newSelect, options) {
     } else if (anySelected === false && params.oninputempty !== undefined) {
         params.oninputempty();
     }
+    return $newSelect;
 };
 
 /**
  * Function to be called if the webmidi-api selection changes. (not jazz)
  *
  */
-webmidi.selectionChanged = function() {
+webmidi.selectionChanged = function selectionChanged() {
     const selectedInput = webmidi.$select.val();
-    if (selectedInput == webmidi.selectedInputPort) {
-        return;
+    if (selectedInput === webmidi.selectedInputPort) {
+        return false;
     }
     const storedStateChange = webmidi.access.onstatechange; // port.close() fires onstatechange, so turn off for a moment.
-    webmidi.access.onstatechange = function() {};
-    if (music21.debug) {
+    webmidi.access.onstatechange = () => {};
+    if (debug) {
         console.log('current input changed to: ' + selectedInput);
     }
     webmidi.selectedInputPort = selectedInput;
 
-    webmidi.access.inputs.forEach(function(port) {
-        if (port.name == selectedInput) {
+    webmidi.access.inputs.forEach((port) => {
+        if (port.name === selectedInput) {
             port.onmidimessage = webmidi.midiInArrived;
         } else {
             port.close();
@@ -264,17 +268,17 @@ webmidi.selectionChanged = function() {
  * @param {object} [options] - see above.
  * @returns {DOMObject|undefined} DOM object containing the select tag, or undefined if Jazz cannot be loaded.
  */
-webmidi.createSelector = function($midiSelectDiv, options) {
+webmidi.createSelector = function createSelector($midiSelectDiv, options) {
     const params = {
         autoUpdate: true,
         existingMidiSelect: false,
     };
     common.merge(params, options);
 
-    if (typeof ($midiSelectDiv) == 'undefined') {
+    if (typeof ($midiSelectDiv) === 'undefined') {
         $midiSelectDiv = $('body');
     }
-    if ($midiSelectDiv.jquery == undefined) {
+    if ($midiSelectDiv.jquery === undefined) {
         $midiSelectDiv = $($midiSelectDiv);
     }
     let $newSelect;
@@ -294,7 +298,7 @@ webmidi.createSelector = function($midiSelectDiv, options) {
         if (params.existingMidiSelect !== true) {
             $newSelect.change(webmidi.selectionChanged);
         }
-        navigator.requestMIDIAccess().then(function(access) {
+        navigator.requestMIDIAccess().then((access) => {
             webmidi.access = access;
             webmidi.populateSelect();
             if (params.autoUpdate) {
@@ -309,7 +313,7 @@ webmidi.createSelector = function($midiSelectDiv, options) {
             } else if (webmidi.selectedInputPort === 'None' && params.oninputempty !== undefined) {
                 params.oninputempty();
             }
-        }, function(e) {
+        }, (e) => {
             $midiSelectDiv.html(e.message);
         });
     }
@@ -317,7 +321,7 @@ webmidi.createSelector = function($midiSelectDiv, options) {
     return $newSelect;
 };
 
-webmidi.populateSelect = function() {
+webmidi.populateSelect = function populateSelect() {
     const inputs = webmidi.access.inputs;
     webmidi.$select.empty();
 
@@ -327,7 +331,7 @@ webmidi.populateSelect = function() {
     const allAppendOptions = [];
     const midiOptions = [];
     let i = 0;
-    inputs.forEach(function(port) {
+    inputs.forEach((port) => {
         const $appendOption = $("<option value='" + port.name + "'>" + port.name + '</option>');
         allAppendOptions.push($appendOption);
         midiOptions.push(port.name);
