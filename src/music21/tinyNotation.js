@@ -40,29 +40,29 @@ export const tinyNotation = {};
  * @memberof music21.tinyNotation
  */
 tinyNotation.regularExpressions = {
-		                                        REST: /r/,
-    OCTAVE2: /([A-G])[A-G]+/,
-    OCTAVE3: /([A-G])/,
-    OCTAVE5: /([a-g])(\'+)/,
-    OCTAVE4: /([a-g])/,
-    EDSHARP: /\((\#+)\)/,
-    EDFLAT: /\((\-+)\)/,
-    EDNAT: /\(n\)/,
-    SHARP: /^[A-Ga-g]+\'*(\#+)/,  // simple notation finds
-    FLAT: /^[A-Ga-g]+\'*(\-+)/,  // double sharps too
-    NAT: /^[A-Ga-g]+\'*n/,  // explicit naturals
-    TYPE: /(\d+)/,
-    TIE: /.\~/, // not preceding ties
-    PRECTIE: /\~/,  // front ties
-    ID_EL: /\=([A-Za-z0-9]*)/,
-    LYRIC: /\_(.*)/,
-    DOT: /\.+/,
-    TIMESIG: /(\d+)\/(\d+)/,
+        REST: /r/,
+        OCTAVE2: /([A-G])[A-G]+/,
+        OCTAVE3: /([A-G])/,
+        OCTAVE5: /([a-g])(\'+)/,
+        OCTAVE4: /([a-g])/,
+        EDSHARP: /\((\#+)\)/,
+        EDFLAT: /\((\-+)\)/,
+        EDNAT: /\(n\)/,
+        SHARP: /^[A-Ga-g]+\'*(\#+)/,  // simple notation finds
+        FLAT: /^[A-Ga-g]+\'*(\-+)/,  // double sharps too
+        NAT: /^[A-Ga-g]+\'*n/,  // explicit naturals
+        TYPE: /(\d+)/,
+        TIE: /.\~/, // not preceding ties
+        PRECTIE: /\~/,  // front ties
+        ID_EL: /\=([A-Za-z0-9]*)/,
+        LYRIC: /\_(.*)/,
+        DOT: /\.+/,
+        TIMESIG: /(\d+)\/(\d+)/,
 
-    TRIP: /trip\{/,
-    QUAD: /quad\{/,
-    ENDBRAC: /\}$/,
-	  };
+        TRIP: /trip\{/,
+        QUAD: /quad\{/,
+        ENDBRAC: /\}$/,
+};
 /**
  * Function, not class.
  *
@@ -82,131 +82,131 @@ tinyNotation.regularExpressions = {
  */
 tinyNotation.TinyNotation = function(textIn) {
     textIn = textIn.trim();
-	                                const tokens = textIn.split(' ');
-	                                const p = new stream.Part();
-	                                    let m = new stream.Measure();
-	                                    let currentTSBarDuration = 4.0;
-	                                    let lastDurationQL = 1.0;
-	                                const storedDict = {
-	                                                lastNoteTied: false,
-	                                                inTrip: false,
-	                                                inQuad: false,
-	                                                endTupletAfterNote: false,
-	};
-	                                const tnre = tinyNotation.regularExpressions; // faster typing
-	                                        for (let i = 0; i < tokens.length; i++) {
-	    // check at first so that a full measure but not over full
-	    // gets returned as a stream.Measure object.
-    if (m.duration.quarterLength >= currentTSBarDuration) {
-        p.append(m);
-        m = new stream.Measure();
-    }
+    const tokens = textIn.split(' ');
+    const p = new stream.Part();
+    let m = new stream.Measure();
+    let currentTSBarDuration = 4.0;
+    let lastDurationQL = 1.0;
+    const storedDict = {
+            lastNoteTied: false,
+            inTrip: false,
+            inQuad: false,
+            endTupletAfterNote: false,
+    };
+    const tnre = tinyNotation.regularExpressions; // faster typing
+    for (let i = 0; i < tokens.length; i++) {
+        // check at first so that a full measure but not over full
+        // gets returned as a stream.Measure object.
+        if (m.duration.quarterLength >= currentTSBarDuration) {
+            p.append(m);
+            m = new stream.Measure();
+        }
 
-	                                        let token = tokens[i];
-		                                    let noteObj = undefined;
-		                                    let MATCH;
-		                                        if (MATCH = tnre.TRIP.exec(token)) {
-		                                            token = token.slice(5); // cut...
-		                                            storedDict.inTrip = true;
-		}
-    if (MATCH = tnre.QUAD.exec(token)) {
-        token = token.slice(5); // cut...
-        storedDict.inQuad = true;
-    }
-    if (MATCH = tnre.ENDBRAC.exec(token)) {
-        token = token.slice(0, -1); // cut...
-        storedDict.endTupletAfterNote = true;
-    }
+        let token = tokens[i];
+        let noteObj = undefined;
+        let MATCH;
+        if (MATCH = tnre.TRIP.exec(token)) {
+            token = token.slice(5); // cut...
+            storedDict.inTrip = true;
+        }
+        if (MATCH = tnre.QUAD.exec(token)) {
+            token = token.slice(5); // cut...
+            storedDict.inQuad = true;
+        }
+        if (MATCH = tnre.ENDBRAC.exec(token)) {
+            token = token.slice(0, -1); // cut...
+            storedDict.endTupletAfterNote = true;
+        }
 
 
-		                                        if (MATCH = tnre.TIMESIG.exec(token)) {
-    const ts = new meter.TimeSignature();
-			                                        ts.numerator = parseInt(MATCH[1]);
-			                                        ts.denominator = parseInt(MATCH[2]);
-			                                        m.timeSignature = ts;
-			                                        currentTSBarDuration = ts.barDuration.quarterLength;
-			// console.log(currentTSBarDuration);
-			                                        continue;
-		} else if (tnre.REST.exec(token)) {
-			                                        noteObj = new note.Rest(lastDurationQL);
-		} else if (MATCH = tnre.OCTAVE2.exec(token)) {
-			                                        noteObj = new note.Note(MATCH[1], lastDurationQL);
-			                                        noteObj.pitch.octave = 4 - MATCH[0].length;
-		} else if (MATCH = tnre.OCTAVE3.exec(token)) {
-			                                        noteObj = new note.Note(MATCH[1], lastDurationQL);
-			                                        noteObj.pitch.octave = 3;
-		} else if (MATCH = tnre.OCTAVE5.exec(token)) {
-			// must match octave 5 before 4
-			                                        noteObj = new note.Note(MATCH[1].toUpperCase(), lastDurationQL);
-			                                        noteObj.pitch.octave = 3 + MATCH[0].length;
-		} else if (MATCH = tnre.OCTAVE4.exec(token)) {
-			                                        noteObj = new note.Note(MATCH[1].toUpperCase(), lastDurationQL);
-			                                        noteObj.pitch.octave = 4;
-		}
+        if (MATCH = tnre.TIMESIG.exec(token)) {
+            const ts = new meter.TimeSignature();
+            ts.numerator = parseInt(MATCH[1]);
+            ts.denominator = parseInt(MATCH[2]);
+            m.timeSignature = ts;
+            currentTSBarDuration = ts.barDuration.quarterLength;
+            // console.log(currentTSBarDuration);
+            continue;
+        } else if (tnre.REST.exec(token)) {
+            noteObj = new note.Rest(lastDurationQL);
+        } else if (MATCH = tnre.OCTAVE2.exec(token)) {
+            noteObj = new note.Note(MATCH[1], lastDurationQL);
+            noteObj.pitch.octave = 4 - MATCH[0].length;
+        } else if (MATCH = tnre.OCTAVE3.exec(token)) {
+            noteObj = new note.Note(MATCH[1], lastDurationQL);
+            noteObj.pitch.octave = 3;
+        } else if (MATCH = tnre.OCTAVE5.exec(token)) {
+            // must match octave 5 before 4
+            noteObj = new note.Note(MATCH[1].toUpperCase(), lastDurationQL);
+            noteObj.pitch.octave = 3 + MATCH[0].length;
+        } else if (MATCH = tnre.OCTAVE4.exec(token)) {
+            noteObj = new note.Note(MATCH[1].toUpperCase(), lastDurationQL);
+            noteObj.pitch.octave = 4;
+        }
 
-		                                        if (noteObj == undefined) {
-			                                        continue;
-		}
-		                                        if (tnre.TIE.exec(token)) {
-		                                            noteObj.tie = new tie.Tie('start');
-		                                            if (storedDict['lastNoteTied']) {
-		                                                noteObj.tie.type = 'continue';
-		    }
-		                                            storedDict['lastNoteTied'] = true;
-		} else {
-		                                            if (storedDict['lastNoteTied']) {
-    noteObj.tie = new tie.Tie('stop');
-    storedDict['lastNoteTied'] = false;
-}
-		}
-		                                        if (tnre.SHARP.exec(token)) {
-			                                        noteObj.pitch.accidental = new pitch.Accidental('sharp');
-		} else if (tnre.FLAT.exec(token)) {
-			                                        noteObj.pitch.accidental = new pitch.Accidental('flat');
-} else if (tnre.NAT.exec(token)) {
-    noteObj.pitch.accidental = new pitch.Accidental('natural');
-    noteObj.pitch.accidental.displayType = 'always';
-}
+        if (noteObj == undefined) {
+            continue;
+        }
+        if (tnre.TIE.exec(token)) {
+            noteObj.tie = new tie.Tie('start');
+            if (storedDict['lastNoteTied']) {
+                noteObj.tie.type = 'continue';
+            }
+            storedDict['lastNoteTied'] = true;
+        } else {
+            if (storedDict['lastNoteTied']) {
+                noteObj.tie = new tie.Tie('stop');
+                storedDict['lastNoteTied'] = false;
+            }
+        }
+        if (tnre.SHARP.exec(token)) {
+            noteObj.pitch.accidental = new pitch.Accidental('sharp');
+        } else if (tnre.FLAT.exec(token)) {
+            noteObj.pitch.accidental = new pitch.Accidental('flat');
+        } else if (tnre.NAT.exec(token)) {
+            noteObj.pitch.accidental = new pitch.Accidental('natural');
+            noteObj.pitch.accidental.displayType = 'always';
+        }
 
-		                                        if (MATCH = tnre.TYPE.exec(token)) {
-			                                const durationType = parseInt(MATCH[0]);
-			                                        noteObj.duration.quarterLength = 4.0 / durationType;
-		}
+        if (MATCH = tnre.TYPE.exec(token)) {
+            const durationType = parseInt(MATCH[0]);
+            noteObj.duration.quarterLength = 4.0 / durationType;
+        }
 
-		                                        if (MATCH = tnre.DOT.exec(token)) {
-			                                const numDots = MATCH[0].length;
-			                                const multiplier = 1 + (1 - Math.pow(.5, numDots));
-			                                        noteObj.duration.quarterLength = multiplier * noteObj.duration.quarterLength;
-		}
-    lastDurationQL = noteObj.duration.quarterLength;
+        if (MATCH = tnre.DOT.exec(token)) {
+            const numDots = MATCH[0].length;
+            const multiplier = 1 + (1 - Math.pow(.5, numDots));
+            noteObj.duration.quarterLength = multiplier * noteObj.duration.quarterLength;
+        }
+        lastDurationQL = noteObj.duration.quarterLength;
         // do before appending tuplets
 
-		                                        if (storedDict.inTrip) {
-		    // console.log(noteObj.duration.quarterLength);
-		                                            noteObj.duration.appendTuplet(new duration.Tuplet(3, 2, noteObj.duration.quarterLength));
-		}
-    if (storedDict.inQuad) {
-        noteObj.duration.appendTuplet(new duration.Tuplet(4, 3, noteObj.duration.quarterLength));
+        if (storedDict.inTrip) {
+            // console.log(noteObj.duration.quarterLength);
+            noteObj.duration.appendTuplet(new duration.Tuplet(3, 2, noteObj.duration.quarterLength));
+        }
+        if (storedDict.inQuad) {
+            noteObj.duration.appendTuplet(new duration.Tuplet(4, 3, noteObj.duration.quarterLength));
+        }
+        if (storedDict.endTupletAfterNote) {
+            storedDict.inTrip = false;
+            storedDict.inQuad = false;
+            storedDict.endTupletAfterNote = false;
+        }
+        m.append(noteObj);
     }
-		                                        if (storedDict.endTupletAfterNote) {
-		                                            storedDict.inTrip = false;
-		                                            storedDict.inQuad = false;
-		                                            storedDict.endTupletAfterNote = false;
-		}
-		                                        m.append(noteObj);
-	}
-	                                        if (p.length > 0) {
-    p.append(m);
-    const thisClef = clef.bestClef(p);
-    p.clef = thisClef;
-    return p; // return measure object if one measure or less
-	} else {
-    m.clef = clef.bestClef(m);
-	                                            return m;
-	}
+    if (p.length > 0) {
+        p.append(m);
+        const thisClef = clef.bestClef(p);
+        p.clef = thisClef;
+        return p; // return measure object if one measure or less
+    } else {
+        m.clef = clef.bestClef(m);
+        return m;
+    }
 };
 
-// render notation divs in HTML
+//render notation divs in HTML
 /**
  * Render all the TinyNotation classes in the DOM as notation
  *
@@ -216,45 +216,45 @@ tinyNotation.TinyNotation = function(textIn) {
  * @param {string} classTypes - a JQuery selector to find elements to replace.
  */
 tinyNotation.renderNotationDivs = function(classTypes, selector) {
-	                                        if (classTypes == undefined) {
-		                                        classTypes = '.music21.tinyNotation';
-	}
-	                                    let allRender = [];
-	                                        if (selector == undefined) {
-	                                            allRender = $(classTypes);
-	} else {
-	                                            if (selector.jquery == undefined) {
-	                                                selector = $(selector);
-	    }
-	                                            allRender = selector.find(classTypes);
-	}
-	                                        for (let i = 0; i < allRender.length; i++) {
-		                                const thisTN = allRender[i];
-		                                const thisTNJQ = $(thisTN);
-    let thisTNContents = undefined;
-    if (thisTNJQ.attr('tinynotationcontents') !== undefined) {
-        thisTNContents = thisTNJQ.attr('tinynotationcontents');
-    } else if (thisTN.textContent != undefined) {
-        thisTNContents = thisTN.textContent;
-        thisTNContents = thisTNContents.replace(/s+/g, ' '); // no line-breaks, etc.
+    if (classTypes == undefined) {
+        classTypes = '.music21.tinyNotation';
     }
+    let allRender = [];
+    if (selector == undefined) {
+        allRender = $(classTypes);
+    } else {
+        if (selector.jquery == undefined) {
+            selector = $(selector);
+        }
+        allRender = selector.find(classTypes);
+    }
+    for (let i = 0; i < allRender.length; i++) {
+        const thisTN = allRender[i];
+        const thisTNJQ = $(thisTN);
+        let thisTNContents = undefined;
+        if (thisTNJQ.attr('tinynotationcontents') !== undefined) {
+            thisTNContents = thisTNJQ.attr('tinynotationcontents');
+        } else if (thisTN.textContent != undefined) {
+            thisTNContents = thisTN.textContent;
+            thisTNContents = thisTNContents.replace(/s+/g, ' '); // no line-breaks, etc.
+        }
 
-		                                        if ((String.prototype.trim != undefined) && (thisTNContents != undefined)) {
-			                                        thisTNContents = thisTNContents.trim(); // remove leading, trailing whitespace
-		}
-		                                        if (thisTNContents) {
-			                                const st = tinyNotation.TinyNotation(thisTNContents);
-			                                        if (thisTNJQ.hasClass('noPlayback')) {
-    st.renderOptions.events['click'] = undefined;
-			}
-    const newCanvas = st.createCanvas();
+        if ((String.prototype.trim != undefined) && (thisTNContents != undefined)) {
+            thisTNContents = thisTNContents.trim(); // remove leading, trailing whitespace
+        }
+        if (thisTNContents) {
+            const st = tinyNotation.TinyNotation(thisTNContents);
+            if (thisTNJQ.hasClass('noPlayback')) {
+                st.renderOptions.events['click'] = undefined;
+            }
+            const newCanvas = st.createCanvas();
 
-			                                        thisTNJQ.attr('tinynotationcontents', thisTNContents);
-			                                        thisTNJQ.empty();
-			                                        thisTNJQ.data('stream', st);
-			                                        thisTNJQ.append(newCanvas);
-			// console.log(thisTNContents);
-		}
-	}
+            thisTNJQ.attr('tinynotationcontents', thisTNContents);
+            thisTNJQ.empty();
+            thisTNJQ.data('stream', st);
+            thisTNJQ.append(newCanvas);
+            // console.log(thisTNContents);
+        }
+    }
 };
 

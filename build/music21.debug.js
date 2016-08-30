@@ -1,5 +1,5 @@
 /**
-  * music21j 0.8.0 built on   * 2016-08-28.
+  * music21j 0.8.0 built on   * 2016-08-29.
  * Copyright (c) 2013-2016 Michael Scott Cuthbert and cuthbertLab
  *
  * http://github.com/cuthbertLab/music21j
@@ -10,6 +10,8 @@
   typeof define === 'function' && define.amd ? define(['exports', 'jquery', 'vexflow', 'jsonpickle', 'MIDI'], factory) :
   (factory((global.music21 = global.music21 || {}),global.$,global.Vex,global.jsonpickle,global.MIDI));
 }(this, (function (exports,$$1,Vex$1,jsonpickle$1,MIDI) { 'use strict';
+
+  var debug = true;
 
   /**
    * common functions
@@ -366,6 +368,54 @@
     }
 
     return call && (typeof call === "object" || typeof call === "function") ? call : self;
+  };
+
+  var slicedToArray = function () {
+    function sliceIterator(arr, i) {
+      var _arr = [];
+      var _n = true;
+      var _d = false;
+      var _e = undefined;
+
+      try {
+        for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) {
+          _arr.push(_s.value);
+
+          if (i && _arr.length === i) break;
+        }
+      } catch (err) {
+        _d = true;
+        _e = err;
+      } finally {
+        try {
+          if (!_n && _i["return"]) _i["return"]();
+        } finally {
+          if (_d) throw _e;
+        }
+      }
+
+      return _arr;
+    }
+
+    return function (arr, i) {
+      if (Array.isArray(arr)) {
+        return arr;
+      } else if (Symbol.iterator in Object(arr)) {
+        return sliceIterator(arr, i);
+      } else {
+        throw new TypeError("Invalid attempt to destructure non-iterable instance");
+      }
+    };
+  }();
+
+  var toConsumableArray = function (arr) {
+    if (Array.isArray(arr)) {
+      for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) arr2[i] = arr[i];
+
+      return arr2;
+    } else {
+      return Array.from(arr);
+    }
   };
 
   /**
@@ -5155,8 +5205,8 @@
    *
    * Does not implement the full range of scales from music21p
    *
-   * Copyright (c) 2013-14, Michael Scott Cuthbert and cuthbertLab
-   * Based on music21 (=music21p), Copyright (c) 2006–14, Michael Scott Cuthbert and cuthbertLab
+   * Copyright (c) 2013-16, Michael Scott Cuthbert and cuthbertLab
+   * Based on music21 (=music21p), Copyright (c) 2006–16, Michael Scott Cuthbert and cuthbertLab
    *
    */
   /**
@@ -5182,41 +5232,41 @@
    * @param {Array<string>} scaleSteps - an array of diatonic prefixes, generally 'M' (major) or 'm' (minor) describing the seconds.
    * @returns {Array<music21.pitch.Pitch>} an octave of scale objects.
    */
-  scale.SimpleDiatonicScale = function (tonic, scaleSteps) {
-  	if (tonic == undefined) {
-  		tonic = new pitch.Pitch('C4');
-  	} else if (!(tonic instanceof pitch.Pitch)) {
-  		throw 'Cannot make a scale not from a music21.pitch.Pitch object: ' + tonic;
-  	}
-  	if (scaleSteps == undefined) {
-  		scaleSteps = ['M', 'M', 'm', 'M', 'M', 'M', 'm'];
-  	}
-  	var gi = new interval.GenericInterval(2);
-  	var pitches = [tonic];
-  	var lastPitch = tonic;
-  	for (var i = 0; i < scaleSteps.length; i++) {
-  		var di = new interval.DiatonicInterval(scaleSteps[i], gi);
-  		var ii = new interval.Interval(di);
-  		var newPitch = ii.transposePitch(lastPitch);
-  		if (music21.debug) {
-  			console.log('ScaleSimpleMajor -- adding pitch: ' + newPitch.name);
-  		}
-  		pitches.push(newPitch);
-  		lastPitch = newPitch;
-  	}
-  	return pitches;
+  scale.SimpleDiatonicScale = function SimpleDiatonicScale(tonic, scaleSteps) {
+      if (tonic === undefined) {
+          tonic = new pitch.Pitch('C4');
+      } else if (!(tonic instanceof pitch.Pitch)) {
+          throw 'Cannot make a scale not from a music21.pitch.Pitch object: ' + tonic;
+      }
+      if (scaleSteps === undefined) {
+          scaleSteps = ['M', 'M', 'm', 'M', 'M', 'M', 'm'];
+      }
+      var gi = new interval.GenericInterval(2);
+      var pitches = [tonic];
+      var lastPitch = tonic;
+      for (var i = 0; i < scaleSteps.length; i++) {
+          var di = new interval.DiatonicInterval(scaleSteps[i], gi);
+          var ii = new interval.Interval(di);
+          var newPitch = ii.transposePitch(lastPitch);
+          if (debug) {
+              console.log('ScaleSimpleMajor -- adding pitch: ' + newPitch.name);
+          }
+          pitches.push(newPitch);
+          lastPitch = newPitch;
+      }
+      return pitches;
   };
 
   /**
    * One octave of a major scale
    *
    * @function music21.scale.ScaleSimpleMajor
-      * @param {music21.pitch.Pitch} tonic
-      * @returns {Array<music21.pitch.Pitch>} an octave of scale objects.
+   * @param {music21.pitch.Pitch} tonic
+   * @returns {Array<music21.pitch.Pitch>} an octave of scale objects.
    */
-  scale.ScaleSimpleMajor = function (tonic) {
-  	var scaleSteps = ['M', 'M', 'm', 'M', 'M', 'M', 'm'];
-  	return new scale.SimpleDiatonicScale(tonic, scaleSteps);
+  scale.ScaleSimpleMajor = function ScaleSimpleMajor(tonic) {
+      var scaleSteps = ['M', 'M', 'm', 'M', 'M', 'M', 'm'];
+      return new scale.SimpleDiatonicScale(tonic, scaleSteps);
   };
 
   /**
@@ -5227,20 +5277,20 @@
    * @param {string} [minorType='natural] - 'harmonic', 'harmonic-minor', 'melodic', 'melodic-minor', 'melodic-minor-ascending', 'melodic-ascending' or other (=natural/melodic-descending)
    * @returns {Array<music21.pitch.Pitch>} an octave of scale objects.
    */
-  scale.ScaleSimpleMinor = function (tonic, minorType) {
-  	var scaleSteps = ['M', 'm', 'M', 'M', 'm', 'M', 'M'];
-  	if (typeof minorType == 'string') {
-  		// "harmonic minor" -> "harmonic-minor"
-  		minorType = minorType.replace(/\s/g, '-');
-  	}
-  	if (minorType == 'harmonic' || minorType == 'harmonic-minor') {
-  		scaleSteps[5] = 'A';
-  		scaleSteps[6] = 'm';
-  	} else if (minorType == 'melodic' || minorType == 'melodic-ascending' || minorType == 'melodic-minor' || minorType == 'melodic-minor-ascending') {
-  		scaleSteps[4] = 'M';
-  		scaleSteps[6] = 'm';
-  	}
-  	return new scale.SimpleDiatonicScale(tonic, scaleSteps);
+  scale.ScaleSimpleMinor = function ScaleSimpleMinor(tonic, minorType) {
+      var scaleSteps = ['M', 'm', 'M', 'M', 'm', 'M', 'M'];
+      if (typeof minorType === 'string') {
+          // "harmonic minor" -> "harmonic-minor"
+          minorType = minorType.replace(/\s/g, '-');
+      }
+      if (minorType === 'harmonic' || minorType === 'harmonic-minor') {
+          scaleSteps[5] = 'A';
+          scaleSteps[6] = 'm';
+      } else if (minorType === 'melodic' || minorType === 'melodic-ascending' || minorType === 'melodic-minor' || minorType === 'melodic-minor-ascending') {
+          scaleSteps[4] = 'M';
+          scaleSteps[6] = 'm';
+      }
+      return new scale.SimpleDiatonicScale(tonic, scaleSteps);
   };
 
   /**
@@ -6853,988 +6903,6 @@
   };
 
   /**
-   * for rendering vexflow. Will eventually go to music21/converter/vexflow
-   *
-   * See {@link music21.vfShow} namespace for details
-   *
-   * @exports music21/vfShow
-   */
-  /**
-   * Vexflow display related objects and methods.
-   *
-   * @namespace music21.vfShow
-   * @memberof music21
-   * @requires music21/common
-   * @requires vexflow
-   */
-  var vfShow = {};
-
-  /**
-   * Represents a stack of objects that need to be rendered together.
-   *
-   * An intermediary state for showing created by {@link music21.vfShow.Renderer}.
-   *
-   * @class RenderStack
-   * @memberof music21.vfShow
-   * @property {Array<Vex.Flow.Voice>} voices - Vex.Flow.Voice objects
-   * @property {Array<music21.stream.Stream>} streams - {@link music21.stream.Stream} objects associated with the voices
-   * @property {Array} textVoices - Vex.Flow.Voice objects for the text.
-   */
-  vfShow.RenderStack = function () {
-      this.voices = [];
-      this.streams = [];
-      this.textVoices = [];
-  };
-
-  /**
-   * @memberof music21.vfShow.RenderStack
-   * @returns {Array} this.voices and this.textVoices as one array
-   */
-  vfShow.RenderStack.prototype.allTickables = function () {
-      var t = [];
-      t.push.apply(t, this.voices);
-      t.push.apply(t, this.textVoices);
-      return t;
-  };
-
-  /**
-   * Renderer is a function that takes a stream, an
-   * optional existing canvas element and a DOM
-   * element where the canvas element should be placed
-   * and renders the stream as Vexflow on the
-   * canvas element, placing it then in the where
-   * DOM.
-   *
-   * "s" can be any type of Stream.
-   *
-   * "canvas" and "where" can be either a DOM
-   * element or a jQuery object.
-   *
-   * @class Renderer
-   * @memberof music21.vfShow
-   * @param {music21.stream.Stream} s - main stream to render
-   * @param {canvas} [canvas] - existing canvas element
-   * @param {DOMObject|jQueryDOMObject} [where=document.body] - where to render the stream
-   * @property {Vex.Flow.Renderer} vfRenderer - a Vex.Flow.Renderer to use (will create if not existing)
-   * @property {Vex.Flow.Context} ctx - a Vex.Flow.Context (Canvas or Raphael [not yet]) to use.
-   * @property {canvas} canvas - canvas element
-   * @property {jQueryDOMObject} $canvas - jQuery canvas element
-   * @property {jQueryDOMObject} $where - jQuery element to render onto
-   * @property {Vex.Flow.Formatter} activeFormatter - formatter
-   * @property {Array<Vex.Flow.Beam>} beamGroups - beamGroups
-   * @property {Array<Vex.Flow.StaveTie>} ties - ties
-   * @property {Array<number>} systemBreakOffsets - where to break the systems
-   * @property {Array<Vex.Flow.Tuplet>} vfTuplets - tuplets represented in Vexflow
-   * @property {Array<music21.vfShow.RenderStack>} stacks - array of RenderStack objects
-   */
-  vfShow.Renderer = function (s, canvas, where) {
-      this.stream = s;
-      // this.streamType = s.classes[-1];
-
-      this.canvas = undefined;
-      this.$canvas = undefined;
-      this.$where = undefined;
-      this.activeFormatter = undefined;
-      this._vfRenderer = undefined;
-      this._ctx = undefined;
-      this.beamGroups = [];
-      this.stacks = []; // an Array of RenderStacks: {voices: [Array of Vex.Flow.Voice objects],
-      //                            streams: [Array of Streams, usually Measures]}
-      this.ties = [];
-      this.systemBreakOffsets = [];
-      this.vfTuplets = [];
-      // this.measureFormatters = [];
-
-      Object.defineProperties(this, {
-          'vfRenderer': {
-              get: function get() {
-                  if (this._vfRenderer !== undefined) {
-                      return this._vfRenderer;
-                  } else {
-                      this._vfRenderer = new Vex$1.Flow.Renderer(this.canvas, Vex$1.Flow.Renderer.Backends.CANVAS);
-                      return this._vfRenderer;
-                  }
-              },
-              set: function set(vfr) {
-                  this._vfRenderer = vfr;
-              }
-          },
-          'ctx': {
-              get: function get() {
-                  if (this._ctx !== undefined) {
-                      return this._ctx;
-                  } else {
-                      this._ctx = this.vfRenderer.getContext();
-                      if (this.stream && this.stream.renderOptions) {
-                          this._ctx.scale(this.stream.renderOptions.scaleFactor.x, this.stream.renderOptions.scaleFactor.y);
-                      }
-                      return this._ctx;
-                  }
-              },
-              set: function set(ctx) {
-                  this._ctx = ctx;
-              }
-          }
-      });
-
-      if (where !== undefined) {
-          if (where.jquery !== undefined) {
-              this.$where = where;
-          } else {
-              this.$where = $(where);
-          }
-      }
-      if (canvas !== undefined) {
-          if (canvas.jquery !== undefined) {
-              this.$canvas = canvas;
-              this.canvas = canvas[0];
-          } else {
-              this.canvas = canvas;
-              this.$canvas = $(canvas);
-          }
-      }
-  };
-
-  /**
-   *
-   * main function to render a Stream.
-   *
-   * if s is undefined, uses the stored Stream from
-   * the constructor object.
-   *
-   * @memberof music21.vfShow.Renderer
-   * @param {music21.stream.Stream} [s=this.stream]
-   */
-  vfShow.Renderer.prototype.render = function (s) {
-      if (s === undefined) {
-          s = this.stream;
-      }
-
-      var isScorelike = false;
-      var isPartlike = false;
-      var hasSubStreams = s.hasSubStreams();
-
-      if (s.isClassOrSubclass('Score')) {
-          isScorelike = true;
-      } else if (hasSubStreams && s.get(0).hasSubStreams()) {
-          isScorelike = true;
-      } else if (hasSubStreams) {
-          isPartlike = true;
-      }
-      // requires organization Score -> Part -> Measure -> elements...
-      if (isScorelike) {
-          this.prepareScorelike(s);
-      } else if (isPartlike) {
-          this.preparePartlike(s);
-      } else {
-          this.prepareArrivedFlat(s);
-      }
-      this.formatMeasureStacks();
-      this.drawTies();
-      this.drawMeasureStacks();
-      this.drawBeamGroups();
-      this.drawTuplets();
-  };
-
-  /**
-   * Prepares a scorelike stream (i.e., one with parts or
-   * Streams that should be rendered vertically like parts)
-   * for rendering and adds Staff Connectors
-   *
-   * @memberof music21.vfShow.Renderer
-   * @param {music21.stream.Score} s - prepare a stream of parts (i.e., Score)
-   */
-  vfShow.Renderer.prototype.prepareScorelike = function (s) {
-      // console.log('prepareScorelike called');
-      for (var i = 0; i < s.length; i++) {
-          var subStream = s.get(i);
-          this.preparePartlike(subStream);
-      }
-      this.addStaffConnectors(s);
-  };
-
-  /**
-   *
-   * Prepares a Partlike stream (that is one with Measures
-   * or substreams that should be considered like Measures)
-   * for rendering.
-   *
-   * @memberof music21.vfShow.Renderer
-   * @param {music21.stream.Part} p
-   */
-  vfShow.Renderer.prototype.preparePartlike = function (p) {
-      // console.log('preparePartlike called');
-      this.systemBreakOffsets = [];
-      for (var i = 0; i < p.length; i++) {
-          var subStream = p.get(i);
-          if (subStream.renderOptions.startNewSystem) {
-              this.systemBreakOffsets.push(subStream.offset);
-          }
-          if (i == p.length - 1) {
-              subStream.renderOptions.rightBarline = 'end';
-          }
-          if (this.stacks[i] === undefined) {
-              this.stacks[i] = new vfShow.RenderStack();
-          }
-          this.prepareMeasure(subStream, this.stacks[i]);
-      }
-      this.prepareTies(p);
-  };
-  /**
-   *
-   * Prepares a score that arrived flat... sets up
-   * stacks and ties after calling prepareFlat
-   *
-   * @memberof music21.vfShow.Renderer
-   * @param {music21.stream.Stream} m - a flat stream (maybe a measure or voice)
-   */
-  vfShow.Renderer.prototype.prepareArrivedFlat = function (m) {
-      var stack = new vfShow.RenderStack();
-      this.prepareMeasure(m, stack);
-      this.stacks[0] = stack;
-      this.prepareTies(m);
-  };
-  /**
-   *
-   * Prepares a measure (w/ or w/o voices) or generic Stream -- makes accidentals,
-   * associates a Vex.Flow.Stave with the stream and
-   * returns a vexflow Voice object
-   *
-   * @memberof music21.vfShow.Renderer
-   * @param {music21.stream.Measure} m - a measure object (w or w/o voices)
-   * @param {music21.vfShow.RenderStack} stack - a RenderStack object to prepare into.
-   */
-  vfShow.Renderer.prototype.prepareMeasure = function (m, stack) {
-      if (m.hasVoices === undefined || m.hasVoices() === false) {
-          this.prepareFlat(m, stack);
-      } else {
-          // TODO: don't assume that all elements are Voices;
-          var stave = void 0;
-          var rendOp = m.renderOptions; // get render options from Measure;
-          for (var voiceIndex = 0; voiceIndex < m.length; voiceIndex++) {
-              var voiceStream = m.get(voiceIndex);
-              stave = this.prepareFlat(voiceStream, stack, stave, rendOp);
-          }
-      }
-      return stack;
-  };
-
-  /**
-  * Main internal routine to prepare a flat stream
-  *
-  * @memberof music21.vfShow.Renderer
-  * @param {music21.stream.Stream} s - a flat stream object
-  * @param {music21.vfShow.RenderStack} stack - a RenderStack object to prepare into.
-  * @param {Vex.Flow.Stave} [optionalStave] - an optional existing stave.
-  * @param {object} [optional_renderOp] - render options. Passed to {@link music21.vfShow.Renderer#renderStave}
-  * @returns {Vex.Flow.Stave} staff to return too (also changes the `stack` parameter and runs `makeAccidentals` on s)
-  */
-  vfShow.Renderer.prototype.prepareFlat = function (s, stack, optionalStave, optional_renderOp) {
-      s.makeAccidentals();
-      var stave = void 0;
-      if (optionalStave !== undefined) {
-          stave = optionalStave;
-      } else {
-          stave = this.renderStave(s, optional_renderOp);
-      }
-      s.activeVFStave = stave;
-      var voice = this.getVoice(s, stave);
-      stack.voices.push(voice);
-      stack.streams.push(s);
-
-      if (s.hasLyrics()) {
-          stack.textVoices.push(this.getLyricVoice(s, stave));
-      }
-
-      return stave;
-  };
-
-  /**
-   * Render the Vex.Flow.Stave from a flat stream and draws it.
-   *
-   * Just draws the stave, not the notes, etc.
-   *
-   * @memberof music21.vfShow.Renderer
-   * @param {music21.stream.Stream} [m=this.stream] - a flat stream
-   * @param {object} [optional_rendOp] - render options, passed to {@link music21.vfShow.Renderer#newStave} and {@link music21.vfShow.Renderer#setClefEtc}
-   * @returns {Vex.Flow.Stave} stave
-   */
-  vfShow.Renderer.prototype.renderStave = function (m, optional_rendOp) {
-      if (m === undefined) {
-          m = this.stream;
-      }
-      var ctx = this.ctx;
-      // stave will be passed in from Measure when we have Voices
-      var stave = this.newStave(m, optional_rendOp);
-
-      this.setClefEtc(m, stave, optional_rendOp);
-      stave.setContext(ctx);
-      stave.draw();
-      return stave;
-  };
-
-  /**
-   * Draws the Voices (music and text) from `this.stacks`
-   *
-   * @memberof music21.vfShow.Renderer
-   */
-  vfShow.Renderer.prototype.drawMeasureStacks = function () {
-      var ctx = this.ctx;
-      for (var i = 0; i < this.stacks.length; i++) {
-          var voices = this.stacks[i].allTickables();
-          for (var j = 0; j < voices.length; j++) {
-              var v = voices[j];
-              v.draw(ctx);
-          }
-      }
-  };
-
-  /**
-   * draws the tuplets.
-   *
-   * @memberof music21.vfShow.Renderer
-   */
-  vfShow.Renderer.prototype.drawTuplets = function () {
-      var ctx = this.ctx;
-      this.vfTuplets.forEach(function (vft) {
-          vft.setContext(ctx).draw();
-      });
-  };
-  /**
-   * draws the ties
-   *
-   * @memberof music21.vfShow.Renderer
-   */
-  vfShow.Renderer.prototype.drawTies = function () {
-      var ctx = this.ctx;
-      for (var i = 0; i < this.ties.length; i++) {
-          this.ties[i].setContext(ctx).draw();
-      }
-  };
-
-  /**
-   * Finds all tied notes and creates the proper Vex.Flow.StaveTie objects in
-   * `this.ties`.
-   *
-   * @memberof music21.vfShow.Renderer
-   * @param {music21.stream.Part} p - a Part or similar object
-   */
-  vfShow.Renderer.prototype.prepareTies = function (p) {
-      var pf = p.flat.notesAndRests;
-      // console.log('newSystemsAt', this.systemBreakOffsets);
-      for (var i = 0; i < pf.length - 1; i++) {
-          var thisNote = pf.get(i);
-          if (thisNote.tie === undefined || thisNote.tie.type == 'stop') {
-              continue;
-          }
-          var nextNote = pf.get(i + 1);
-          var onSameSystem = true;
-          // this.systemBreakOffsets.length will be 0 for a flat score
-          for (var sbI = 0; sbI < this.systemBreakOffsets.length; sbI++) {
-              var thisSystemBreak = this.systemBreakOffsets[sbI];
-              if (thisNote.offset < thisSystemBreak && nextNote.offset >= thisSystemBreak) {
-                  onSameSystem = false;
-                  break;
-              }
-          }
-          if (onSameSystem) {
-              var vfTie = new Vex$1.Flow.StaveTie({
-                  first_note: thisNote.activeVexflowNote,
-                  last_note: nextNote.activeVexflowNote,
-                  first_indices: [0],
-                  last_indices: [0]
-              });
-              this.ties.push(vfTie);
-          } else {
-              // console.log('got me a tie across systemBreaks!');
-              var vfTie1 = new Vex$1.Flow.StaveTie({
-                  first_note: thisNote.activeVexflowNote,
-                  first_indices: [0]
-              });
-              this.ties.push(vfTie1);
-              var vfTie2 = new Vex$1.Flow.StaveTie({
-                  last_note: nextNote.activeVexflowNote,
-                  first_indices: [0]
-              });
-              this.ties.push(vfTie2);
-          }
-      }
-  };
-
-  /**
-   * Returns a Vex.Flow.Voice object with all the tickables (i.e., Notes, Voices, etc.)
-   *
-   * Does not draw it...
-   *
-   * @memberof music21.vfShow.Renderer
-   * @param {music21.stream.Stream} [s=this.stream] -- usually a Measure or Voice
-   * @param {Vex.Flow.Stave} stave - not optional (would never fly in Python...)
-   * @returns {Vex.Flow.Voice}
-   */
-  vfShow.Renderer.prototype.getVoice = function (s, stave) {
-      if (s === undefined) {
-          s = this.stream;
-      }
-
-      // gets a group of notes as a voice, but completely unformatted and not drawn.
-      var notes = this.vexflowNotes(s, stave);
-      var voice = this.vexflowVoice(s);
-      voice.setStave(stave);
-
-      voice.addTickables(notes);
-      return voice;
-  };
-
-  /**
-   * Returns a Vex.Flow.Voice with the lyrics set to render in the proper place.
-   *
-   * @memberof music21.vfShow.Renderer
-   * @param {music21.stream.Stream} s -- usually a Measure or Voice
-   * @param {Vex.Flow.Stave} stave
-   * @returns {Vex.Flow.Voice}
-   */
-  vfShow.Renderer.prototype.getLyricVoice = function (s, stave) {
-      var textVoice = this.vexflowVoice(s);
-      var lyrics = this.vexflowLyrics(s, stave);
-      textVoice.setStave(stave);
-      textVoice.addTickables(lyrics);
-      return textVoice;
-  };
-
-  /**
-   * Aligns all of `this.stacks` (after they've been prepared) so they align properly.
-   *
-   * @memberof music21.vfShow.Renderer
-   */
-  vfShow.Renderer.prototype.formatMeasureStacks = function () {
-      // adds formats the voices, then adds the formatter information to every note in a voice...
-      for (var i = 0; i < this.stacks.length; i++) {
-          var stack = this.stacks[i];
-          var voices = stack.voices;
-          var measures = stack.streams;
-          var formatter = this.formatVoiceGroup(stack);
-          for (var j = 0; j < measures.length; j++) {
-              var m = measures[j];
-              var v = voices[j];
-              this.applyFormatterInformationToNotes(v.stave, m, formatter);
-          }
-      }
-  };
-
-  /**
-   * Formats a single voice group from a stack.
-   *
-   * @memberof music21.vfShow.Renderer
-   * @param {music21.vfShow.RenderStack} stack
-   * @param {Boolean} [autoBeam=measures[0].autoBeam]
-   * @returns {Vex.Flow.Formatter}
-   */
-  vfShow.Renderer.prototype.formatVoiceGroup = function (stack, autoBeam) {
-      // formats a group of voices to use the same formatter; returns the formatter
-      // if autoBeam is true then it will apply beams for each voice and put them in
-      // this.beamGroups;
-      var allTickables = stack.allTickables();
-      var voices = stack.voices;
-      var measures = stack.streams;
-      if (autoBeam === undefined) {
-          autoBeam = measures[0].autoBeam;
-      }
-
-      var formatter = new Vex$1.Flow.Formatter();
-      // var minLength = formatter.preCalculateMinTotalWidth([voices]);
-      // console.log(minLength);
-      if (voices.length === 0) {
-          return formatter;
-      }
-      var maxGlyphStart = 0; // find the stave with the farthest start point -- diff key sig, etc.
-      for (var i = 0; i < allTickables.length; i++) {
-          // console.log(voices[i], voices[i].stave, i);
-          if (allTickables[i].stave.start_x > maxGlyphStart) {
-              maxGlyphStart = allTickables[i].stave.start_x;
-          }
-      }
-      for (var i = 0; i < allTickables.length; i++) {
-          allTickables[i].stave.start_x = maxGlyphStart; // corrected!
-      }
-      // TODO: should do the same for end_x -- for key sig changes, etc...
-
-      var stave = voices[0].stave; // all staves should be same length, so does not matter;
-      formatter.joinVoices(allTickables);
-      formatter.formatToStave(allTickables, stave);
-      if (autoBeam) {
-          for (i = 0; i < voices.length; i++) {
-              // find beam groups -- n.b. this wipes out stemDirection. worth it usually...
-              var voice = voices[i];
-              var beatGroups = [new Vex$1.Flow.Fraction(2, 8)]; // default beam groups
-              if (measures[i] !== undefined && measures[i].timeSignature !== undefined) {
-                  beatGroups = measures[i].timeSignature.vexflowBeatGroups(Vex$1); // TODO: getContextByClass...
-                  // console.log(beatGroups);
-              }
-              var beamGroups = Vex$1.Flow.Beam.applyAndGetBeams(voice, undefined, beatGroups);
-              this.beamGroups.push.apply(this.beamGroups, beamGroups);
-          }
-      }
-      return formatter;
-  };
-
-  /**
-   * Draws the beam groups.
-   *
-   * @memberof music21.vfShow.Renderer
-   */
-  vfShow.Renderer.prototype.drawBeamGroups = function () {
-      var ctx = this.ctx;
-      // draw beams
-
-      for (var i = 0; i < this.beamGroups.length; i++) {
-          this.beamGroups[i].setContext(ctx).draw();
-      }
-  };
-
-  /**
-   * Return a new Vex.Flow.Stave object, which represents
-   * a single MEASURE of notation in m21j
-   *
-   * @memberof music21.vfShow.Renderer
-   * @param {music21.stream.Stream} s
-   * @returns {Vex.Flow.Stave}
-   */
-  vfShow.Renderer.prototype.newStave = function (s, rendOp) {
-      if (s === undefined) {
-          s = this.stream;
-      }
-      if (rendOp === undefined) {
-          rendOp = s.renderOptions;
-      }
-      // measure level...
-      var width = rendOp.width;
-      if (width === undefined) {
-          width = s.estimateStaffLength() + rendOp.staffPadding;
-      }
-      var top = rendOp.top; // * rendOp.scaleFactor.y;
-      if (top === undefined) {
-          top = 0;
-      }
-      var left = rendOp.left;
-      if (left === undefined) {
-          left = 10;
-      }
-      // console.log('streamLength: ' + streamLength);
-      if (music21.debug) {
-          console.log('creating new stave: left:' + left + ' top: ' + top + ' width: ' + width);
-      }
-      var stave = new Vex$1.Flow.Stave(left, top, width);
-      return stave;
-  };
-
-  /**
-   * Sets the number of stafflines, puts the clef on the Stave, adds keySignature, timeSignature, and rightBarline
-   *
-   * @memberof music21.vfShow.Renderer
-   * @param {music21.stream.Stream} s
-   * @param {Vex.Flow.Stave} stave
-   * @param {object} [rendOp=s.renderOptions] - a {@link music21.renderOptions.RenderOptions} object that might have `{showMeasureNumber: boolean, rightBarLine: string<{'single', 'double', 'end'}>}`
-   */
-  vfShow.Renderer.prototype.setClefEtc = function (s, stave, rendOp) {
-      if (rendOp === undefined) {
-          rendOp = s.renderOptions;
-      }
-      this.setStafflines(s, stave);
-      if (rendOp.showMeasureNumber) {
-          stave.setMeasure(rendOp.measureIndex + 1);
-      }
-      if (rendOp.displayClef) {
-          var ottava = void 0;
-          var size = 'default';
-          if (s.clef.octaveChange == 1) {
-              ottava = '8va';
-          } else if (s.clef.octaveChange == -1) {
-              ottava = '8vb';
-          }
-          stave.addClef(s.clef.name, size, ottava);
-      }
-      if (s.keySignature !== undefined && rendOp.displayKeySignature) {
-          stave.addKeySignature(s.keySignature.vexflow());
-      }
-
-      if (s.timeSignature !== undefined && rendOp.displayTimeSignature) {
-          stave.addTimeSignature(s.timeSignature.numerator.toString() + '/' + s.timeSignature.denominator.toString()); // TODO: convertToVexflow...
-      }
-      if (rendOp.rightBarline !== undefined) {
-          var bl = rendOp.rightBarline;
-          var barlineMap = {
-              'single': 'SINGLE',
-              'double': 'DOUBLE',
-              'end': 'END'
-          };
-          var vxBL = barlineMap[bl];
-          if (vxBL !== undefined) {
-              stave.setEndBarType(Vex$1.Flow.Barline.type[vxBL]);
-          }
-      }
-  };
-
-  /**
-   * Sets the number of stafflines properly for the Stave object.
-   *
-   * This method does not just set Vex.Flow.Stave#setNumLines() except
-   * if the number of lines is 0 or >=4, because the default in VexFlow is
-   * to show the bottom(top?), not middle, lines and that looks bad.
-   *
-   * @memberof music21.vfShow.Renderer
-   * @param {music21.stream.Stream} s - stream to get the `.staffLines` from `s.renderOptions` from -- should allow for overriding.
-   * @param {Vex.Flow.Stave} vexflowStave - stave to set the staff lines for.
-   */
-  vfShow.Renderer.prototype.setStafflines = function (s, vexflowStave) {
-      var rendOp = s.renderOptions;
-      if (rendOp.staffLines != 5) {
-          if (rendOp.staffLines === 0) {
-              vexflowStave.setNumLines(0);
-          } else if (rendOp.staffLines == 1) {
-              // Vex.Flow.Stave.setNumLines hides all but the top line.
-              // this is better
-              vexflowStave.options.line_config = [{ visible: false }, { visible: false }, { visible: true }, // show middle
-              { visible: false }, { visible: false }];
-          } else if (rendOp.staffLines == 2) {
-              vexflowStave.options.line_config = [{ visible: false }, { visible: false }, { visible: true }, // show middle
-              { visible: true }, { visible: false }];
-          } else if (rendOp.staffLines == 3) {
-              vexflowStave.options.line_config = [{ visible: false }, { visible: true }, { visible: true }, // show middle
-              { visible: true }, { visible: false }];
-          } else {
-              vexflowStave.setNumLines(rendOp.staffLines);
-          }
-      }
-  };
-  /**
-   *
-   * Gets the Vex.Flow.StaveNote objects from a Stream.
-   *
-   * Also changes `this.vfTuplets`.
-   *
-   * @memberof music21.vfShow.Renderer
-   * @param {music21.stream.Stream} [s=this.stream] - flat stream to find notes in
-   * @param {Vex.Flow.Stave} stave
-   * @returns {Array<Vex.Flow.StaveNote>} notes to return
-   */
-  vfShow.Renderer.prototype.vexflowNotes = function (s, stave) {
-      if (s === undefined) {
-          s = this.stream;
-      }
-      // runs on a flat stream, returns a list of voices...
-      var notes = [];
-      var vfTuplets = [];
-      var activeTuplet = void 0;
-      var activeTupletLength = 0.0;
-      var activeTupletVexflowNotes = [];
-
-      var options = { clef: s.clef, stave: stave };
-      for (var i = 0; i < s.length; i++) {
-          var thisEl = s.get(i);
-          if (thisEl.isClassOrSubclass('GeneralNote') && thisEl.duration !== undefined) {
-              var vfn = thisEl.vexflowNote(options);
-              if (vfn === undefined) {
-                  console.error('Cannot create a vexflowNote from: ', thisEl);
-              }
-              // sets thisEl.activeVexflowNote -- may be overwritten but not so fast...
-              if (stave !== undefined) {
-                  vfn.setStave(stave);
-              }
-              notes.push(vfn);
-
-              // account for tuplets...
-              if (thisEl.duration.tuplets.length > 0) {
-                  // only support one tuplet -- like vexflow
-                  var m21Tuplet = thisEl.duration.tuplets[0];
-                  if (activeTuplet === undefined) {
-                      activeTuplet = m21Tuplet;
-                  }
-                  activeTupletVexflowNotes.push(vfn);
-                  activeTupletLength += thisEl.duration.quarterLength;
-                  // console.log(activeTupletLength, activeTuplet.totalTupletLength());
-                  if (activeTupletLength >= activeTuplet.totalTupletLength() || Math.abs(activeTupletLength - activeTuplet.totalTupletLength()) < 0.001) {
-                      // console.log(activeTupletVexflowNotes);
-                      var tupletOptions = { num_notes: activeTuplet.numberNotesActual,
-                          notes_occupied: activeTuplet.numberNotesNormal };
-                      // console.log('tupletOptions', tupletOptions);
-                      var vfTuplet = new Vex$1.Flow.Tuplet(activeTupletVexflowNotes, tupletOptions);
-                      if (activeTuplet.tupletNormalShow == 'ratio') {
-                          vfTuplet.setRatioed(true);
-                      }
-
-                      vfTuplets.push(vfTuplet);
-                      activeTupletLength = 0.0;
-                      activeTuplet = undefined;
-                      activeTupletVexflowNotes = [];
-                  }
-              }
-          }
-      }
-      if (activeTuplet !== undefined) {
-          console.warn('incomplete tuplet found in stream: ', s);
-      }
-      if (vfTuplets.length > 0) {
-          this.vfTuplets.push.apply(this.vfTuplets, vfTuplets);
-      }
-      return notes;
-  };
-
-  /**
-   * Gets an Array of `Vex.Flow.TextNote` objects from any lyrics found in s
-   *
-   * @memberof music21.vfShow.Renderer
-   * @param {music21.stream.Stream} s - flat stream to search.
-   * @param {Vex.Flow.Stave} stave
-   * @returns {Array<Vex.Flow.TextNote>}
-   */
-  vfShow.Renderer.prototype.vexflowLyrics = function (s, stave) {
-      var getTextNote = function getTextNote(text, font, d) {
-          // console.log(text, font, d);
-          var t1 = new Vex$1.Flow.TextNote({
-              text: text,
-              font: font,
-              duration: d
-          }).setLine(11).setStave(stave).setJustification(Vex$1.Flow.TextNote.Justification.LEFT);
-          return t1;
-      };
-
-      if (s === undefined) {
-          s = this.stream;
-      }
-      var font = {
-          family: 'Serif',
-          size: 12,
-          weight: ''
-      };
-      // runs on a flat, gapless, no-overlap stream, returns a list of TextNote objects...
-      var lyricsObjects = [];
-      for (var i = 0; i < s.length; i++) {
-          var el = s.get(i);
-          var lyricsArray = el.lyrics;
-          var text = void 0;
-          var d = el.duration.vexflowDuration;
-          var addConnector = false;
-          if (lyricsArray.length === 0) {
-              text = '';
-          } else {
-              text = lyricsArray[0].text;
-              if (text === undefined) {
-                  text = '';
-              }
-              if (lyricsArray[0].syllabic == 'middle' || lyricsArray[0].syllabic == 'begin') {
-                  addConnector = ' ' + lyricsArray[0].lyricConnector;
-                  var tempQl = el.duration.quarterLength / 2.0;
-                  d = new music21.duration.Duration(tempQl).vexflowDuration;
-              }
-          }
-          var t1 = getTextNote(text, font, d);
-          lyricsObjects.push(t1);
-          if (addConnector !== false) {
-              var connector = getTextNote(addConnector, font, d);
-              lyricsObjects.push(connector);
-          }
-      }
-      return lyricsObjects;
-  };
-  /**
-   * Creates a Vex.Flow.Voice of the appropriate length given a Stream.
-   *
-   * @memberof music21.vfShow.Renderer
-   * @param {music21.stream.Stream} s
-   * @returns {Vex.Flow.Voice}
-   */
-  vfShow.Renderer.prototype.vexflowVoice = function (s) {
-      var vfv = void 0;
-      var totalLength = s.duration.quarterLength;
-
-      var num1024 = Math.round(totalLength / (1 / 256));
-      var beatValue = 1024;
-
-      if (num1024 % 512 === 0) {
-          beatValue = 2;num1024 = num1024 / 512;
-      } else if (num1024 % 256 === 0) {
-          beatValue = 4;num1024 = num1024 / 256;
-      } else if (num1024 % 128 === 0) {
-          beatValue = 8;num1024 = num1024 / 128;
-      } else if (num1024 % 64 === 0) {
-          beatValue = 16;num1024 = num1024 / 64;
-      } else if (num1024 % 32 === 0) {
-          beatValue = 32;num1024 = num1024 / 32;
-      } else if (num1024 % 16 === 0) {
-          beatValue = 64;num1024 = num1024 / 16;
-      } else if (num1024 % 8 === 0) {
-          beatValue = 128;num1024 = num1024 / 8;
-      } else if (num1024 % 4 === 0) {
-          beatValue = 256;num1024 = num1024 / 4;
-      } else if (num1024 % 2 === 0) {
-          beatValue = 512;num1024 = num1024 / 2;
-      }
-      // console.log('creating voice');
-      if (music21.debug) {
-          console.log('New voice, num_beats: ' + num1024.toString() + ' beat_value: ' + beatValue.toString());
-      }
-      vfv = new Vex$1.Flow.Voice({ num_beats: num1024,
-          beat_value: beatValue,
-          resolution: Vex$1.Flow.RESOLUTION });
-
-      // from vexflow/src/voice.js
-      //
-      // Modes allow the addition of ticks in three different ways:
-      //
-      // STRICT: This is the default. Ticks must fill the voice.
-      // SOFT:   Ticks can be added without restrictions.
-      // FULL:   Ticks do not need to fill the voice, but can't exceed the maximum
-      //         tick length.
-      vfv.setMode(Vex$1.Flow.Voice.Mode.SOFT);
-      return vfv;
-  };
-  vfShow.Renderer.prototype.staffConnectorsMap = function (connectorType) {
-      var connectorMap = {
-          'brace': Vex$1.Flow.StaveConnector.type.BRACE,
-          'single': Vex$1.Flow.StaveConnector.type.SINGLE,
-          'double': Vex$1.Flow.StaveConnector.type.DOUBLE,
-          'bracket': Vex$1.Flow.StaveConnector.type.BRACKET
-      };
-      return connectorMap[connectorType];
-  };
-
-  /**
-   * If a stream has parts (NOT CHECKED HERE) create and draw an appropriate Vex.Flow.StaveConnector
-   *
-   * @memberof music21.vfShow.Renderer
-   * @param {music21.stream.Score} s
-   */
-  vfShow.Renderer.prototype.addStaffConnectors = function (s) {
-      if (s === undefined) {
-          s = this.stream;
-      }
-      var numParts = s.length;
-      if (numParts < 2) {
-          return;
-      }
-
-      var firstPart = s.get(0);
-      var lastPart = s.get(-1);
-      var numMeasures = firstPart.length;
-      for (var mIndex = 0; mIndex < numMeasures; mIndex++) {
-          var thisPartMeasure = firstPart.get(mIndex);
-          var lastPartMeasure = lastPart.get(mIndex); // only needed once per system but
-          // good for symmetry.
-          if (thisPartMeasure.renderOptions.startNewSystem) {
-              var topVFStaff = thisPartMeasure.activeVFStave;
-              var bottomVFStaff = lastPartMeasure.activeVFStave;
-              /* TODO: warning if no staves... */
-              for (var i = 0; i < s.renderOptions.staffConnectors.length; i++) {
-                  var sc = new Vex$1.Flow.StaveConnector(topVFStaff, bottomVFStaff);
-                  var scTypeM21 = s.renderOptions.staffConnectors[i];
-                  var scTypeVF = this.staffConnectorsMap(scTypeM21);
-                  sc.setType(scTypeVF);
-                  sc.setContext(this.ctx);
-                  sc.draw();
-              }
-          }
-      }
-  };
-
-  /**
-   * The process of putting a Stream onto a canvas affects each of the
-   * elements in the Stream by adding pieces of information to
-   * each {@link music21.base.Music21Object} -- see `applyFormatterInformationToNotes`
-   *
-   * You might want to remove this information; this routine does that.
-   *
-   * @memberof music21.vfShow.Renderer
-   * @param {music21.stream.Stream} s - can have parts, measures, etc.
-   * @param {boolean} [recursive=false]
-   */
-  vfShow.Renderer.prototype.removeFormatterInformation = function (s, recursive) {
-      s.storedVexflowStave = undefined;
-      for (var i = 0; i < s.length; i++) {
-          var el = s.get(i);
-          el.x = undefined;
-          el.y = undefined;
-          el.width = undefined;
-          el.systemIndex = undefined;
-          el.activeVexflowNote = undefined;
-          if (recursive && el.isClassOrSubclass('Stream')) {
-              this.removeFormatterInformation(el, recursive);
-          }
-      }
-  };
-
-  /**
-   * Adds the following pieces of information to each Note
-   *
-   * - el.x -- x location in pixels
-   * - el.y -- y location in pixels
-   * - el.width - width of element in pixels.
-   * - el.systemIndex -- which system is it on
-   * - el.activeVexflowNote - which Vex.Flow.StaveNote is it connected with.
-   *
-   * mad props to our friend Vladimir Viro for figuring this out! Visit http://peachnote.com/
-   *
-   * Also sets s.storedVexflowStave to stave.
-   *
-   * @memberof music21.vfShow.Renderer
-   * @param {Vex.Flow.Stave} stave
-   * @param {music21.stream.Stream} [s=this.stream]
-   * @param {Vex.Flow.Formatter} formatter
-   */
-  vfShow.Renderer.prototype.applyFormatterInformationToNotes = function (stave, s, formatter) {
-      if (s === undefined) {
-          s = this.stream;
-      }
-      var noteOffsetLeft = 0;
-      // var staveHeight = 80;
-      if (stave !== undefined) {
-          noteOffsetLeft = stave.start_x + stave.glyph_start_x;
-          if (music21.debug) {
-              console.log('noteOffsetLeft: ' + noteOffsetLeft + ' ; stave.start_x: ' + stave.start_x);
-              console.log('Bottom y: ' + stave.getBottomY());
-          }
-          // staveHeight = stave.height;
-      }
-
-      var nextTicks = 0;
-      for (var i = 0; i < s.length; i++) {
-          var el = s.get(i);
-          if (el.isClassOrSubclass('GeneralNote')) {
-              var vfn = el.activeVexflowNote;
-              if (vfn === undefined) {
-                  continue;
-              }
-              var nTicks = parseInt(vfn.ticks);
-              var formatterNote = formatter.tContexts.map[String(nextTicks)];
-              nextTicks += nTicks;
-              el.x = vfn.getAbsoluteX();
-              // these are a bit hacky...
-              el.systemIndex = s.renderOptions.systemIndex;
-
-              // console.log(i + " " + el.x + " " + formatterNote.x + " " + noteOffsetLeft);
-              if (formatterNote === undefined) {
-                  continue;
-              }
-
-              el.width = formatterNote.width;
-              if (el.pitch !== undefined) {
-                  // note only...
-                  el.y = stave.getBottomY() - (s.clef.lowestLine - el.pitch.diatonicNoteNum) * stave.options.spacing_between_lines_px;
-                  // console.log('Note DNN: ' + el.pitch.diatonicNoteNum + " ; y: " + el.y);
-              }
-          }
-      }
-      if (music21.debug) {
-          for (i = 0; i < s.length; i++) {
-              var n = s.get(i);
-              if (n.pitch !== undefined) {
-                  console.log(n.pitch.diatonicNoteNum + ' ' + n.x + ' ' + (n.x + n.width));
-              }
-          }
-      }
-      s.storedVexflowStave = stave;
-  };
-
-  /**
    * music21j -- Javascript reimplementation of Core music21p features.
    * music21/meter -- TimeSignature objects
    *
@@ -8043,7 +7111,7 @@
    * @property {Int} [timingMS=50] - amount of time between polls to scroll
    * @property {function} savedRenderOptionClick - starting ScrollPlayer overrides the `'click'` event for the stream, switching it to Stop. this saves it for restoring later.
    */
-  streamInteraction.ScrollPlayer = function (s, c) {
+  streamInteraction.ScrollPlayer = function ScrollPlayer(s, c) {
       this.pixelMapper = new streamInteraction.PixelMapper(s);
       this.stream = s;
       this.canvas = c;
@@ -8068,7 +7136,7 @@
        * @method streamInteraction.ScrollPlayer#scrollScore
        * @memberof music21.streamInteraction.ScrollPlayer
        */
-      this.scrollScore = function () {
+      this.scrollScore = function scrollScore() {
           var timeSinceStartInMS = new Date().getTime() - this.startTime;
           var offset = timeSinceStartInMS / 1000 * this.tempo / 60;
           var pm = this.pixelMapper;
@@ -8093,7 +7161,7 @@
               var pmOff = pm.allMaps[j].offset;
               if (j <= this.lastNoteIndex) {
                   continue;
-              } else if (Math.abs(offset - pmOff) > .1) {
+              } else if (Math.abs(offset - pmOff) > 0.1) {
                   continue;
               }
               var elList = pm.allMaps[j].elements;
@@ -8107,7 +7175,7 @@
           }
           // console.log(x, offset);
           // console.log(barDOM.setAttribute);
-          var newTimeout = undefined;
+          var newTimeout = void 0;
           if (x < pm.maxX || systemIndex < pm.maxSystemIndex) {
               // console.log(x, pm.maxX);
               newTimeout = setTimeout(this.scrollScore, this.timingMS);
@@ -8132,7 +7200,7 @@
    * @memberof music21.streamInteraction.ScrollPlayer
    * @returns {SVGDOMObject} scroll bar
    */
-  streamInteraction.ScrollPlayer.prototype.createScrollBar = function () {
+  streamInteraction.ScrollPlayer.prototype.createScrollBar = function createScrollBar() {
       var canvas = this.canvas;
       var svgDOM = common.makeSVGright('svg', {
           'height': canvas.height.toString() + 'px',
@@ -8170,11 +7238,11 @@
    *
    * @memberof music21.streamInteraction.ScrollPlayer
    */
-  streamInteraction.ScrollPlayer.prototype.startPlaying = function () {
+  streamInteraction.ScrollPlayer.prototype.startPlaying = function startPlaying() {
       this.createScrollBar();
 
       this.savedRenderOptionClick = this.stream.renderOptions.events.click;
-      this.stream.renderOptions.events.click = function (e) {
+      this.stream.renderOptions.events.click = function startPlayingClick(e) {
           this.stopPlaying(e);
       }.bind(this);
       this.stream.setRenderInteraction(this.canvasParent);
@@ -8187,7 +7255,7 @@
    * @memberof music21.streamInteraction.ScrollPlayer
    * @param {DOMEvent} [event]
    */
-  streamInteraction.ScrollPlayer.prototype.stopPlaying = function (event) {
+  streamInteraction.ScrollPlayer.prototype.stopPlaying = function stopPlaying(event) {
       this.stream.renderOptions.events.click = this.savedRenderOptionClick;
       this.barDOM.setAttribute('style', 'display:none');
       // TODO: generalize...
@@ -8217,7 +7285,7 @@
    * @property {number} maxX - (readonly) ending x
    * @property {Int} maxSystemIndex - the index of the last system.
    */
-  streamInteraction.PixelMapper = function (s) {
+  streamInteraction.PixelMapper = function PixelMapper(s) {
       this.allMaps = [];
       this.stream = s;
       this.notesAndRests = this.stream.flat.notesAndRests;
@@ -8257,7 +7325,7 @@
    * @memberof music21.streamInteraction.PixelMapper
    * @returns {Array<music21.streamInteraction.PixelMap>}
    */
-  streamInteraction.PixelMapper.prototype.processStream = function () {
+  streamInteraction.PixelMapper.prototype.processStream = function processStream() {
       var ns = this.notesAndRests;
       for (var i = 0; i < ns.length; i++) {
           var n = ns.get(i);
@@ -8285,17 +7353,17 @@
    * @param {music21.base.Music21Object} n - note or other object
    * @returns {music21.streamInteraction.PixelMap} PixelMap added to.
    */
-  streamInteraction.PixelMapper.prototype.addNoteToMap = function (n) {
+  streamInteraction.PixelMapper.prototype.addNoteToMap = function addNoteToMap(n) {
       var currentOffset = n.offset;
       var properMap = this.findMapForExactOffset(currentOffset);
       if (properMap !== undefined) {
           properMap.elements.push(n);
           return properMap;
       } else {
-          var map = new streamInteraction.PixelMap(this, currentOffset);
-          map.elements = [n];
-          this.allMaps.push(map);
-          return map;
+          var pmap = new streamInteraction.PixelMap(this, currentOffset);
+          pmap.elements = [n];
+          this.allMaps.push(pmap);
+          return pmap;
       }
   };
   /**
@@ -8305,10 +7373,10 @@
    * @param {number} o offset
    * @returns {music21.streamInteraction.PixelMap|undefined}
    */
-  streamInteraction.PixelMapper.prototype.findMapForExactOffset = function (o) {
-      for (var j = this.allMaps.length - 1; j >= 0; j = j - 1) {
+  streamInteraction.PixelMapper.prototype.findMapForExactOffset = function findMapForExactOffset(o) {
+      for (var j = this.allMaps.length - 1; j >= 0; j -= 1) {
           // find the last map with this offset. searches backwards for speed.
-          if (this.allMaps[j].offset == o) {
+          if (this.allMaps[j].offset === o) {
               return this.allMaps[j];
           }
       }
@@ -8317,10 +7385,11 @@
 
   /**
    *  returns an array of two pixel maps: the previous/current one and the
-      next/current one (i.e., if the offset is exactly the offset of a pixel map
-      the prevNoteMap and nextNoteMap will be the same; similarly if the offset is
-      beyond the end of the score)
-    * @memberof music21.streamInteraction.PixelMapper
+          next/current one (i.e., if the offset is exactly the offset of a pixel map
+          the prevNoteMap and nextNoteMap will be the same; similarly if the offset is
+          beyond the end of the score)
+
+   * @memberof music21.streamInteraction.PixelMapper
    * @param {number} offset
    * @returns {Array<music21.streamInteraction.PixelMap|undefined>} returns two PixelMaps; or either (but not both) can be undefined
    * @example
@@ -8339,9 +7408,9 @@
    * next.x
    * // 123...
    */
-  streamInteraction.PixelMapper.prototype.getPixelMapsAroundOffset = function (offset) {
-      var prevNoteMap = undefined;
-      var nextNoteMap = undefined;
+  streamInteraction.PixelMapper.prototype.getPixelMapsAroundOffset = function getPixelMapsAroundOffset(offset) {
+      var prevNoteMap = void 0;
+      var nextNoteMap = void 0;
       for (var i = 0; i < this.allMaps.length; i++) {
           var thisMap = this.allMaps[i];
           if (thisMap.offset <= offset) {
@@ -8379,7 +7448,7 @@
    * pm.getXAtOffset(0.5); // between two notes
    * // 138.63...
    */
-  streamInteraction.PixelMapper.prototype.getXAtOffset = function (offset) {
+  streamInteraction.PixelMapper.prototype.getXAtOffset = function getXAtOffset(offset) {
       // returns the proper
       var twoNoteMaps = this.getPixelMapsAroundOffset(offset);
       var prevNoteMap = twoNoteMaps[0];
@@ -8388,12 +7457,12 @@
       var offsetFromPrev = offset - prevNoteMap.offset;
       var offsetDistance = nextNoteMap.offset - prevNoteMap.offset;
       var pixelDistance = nextNoteMap.x - prevNoteMap.x;
-      if (nextNoteMap.systemIndex != prevNoteMap.systemIndex) {
+      if (nextNoteMap.systemIndex !== prevNoteMap.systemIndex) {
           var stave = prevNoteMap.elements[0].activeVexflowNote.stave;
           pixelDistance = (stave.x + stave.width) * pixelScaling - prevNoteMap.x;
       }
       var offsetToPixelScale = 0;
-      if (offsetDistance != 0) {
+      if (offsetDistance !== 0) {
           offsetToPixelScale = pixelDistance / offsetDistance;
       } else {
           offsetToPixelScale = 0;
@@ -8410,7 +7479,7 @@
    * @param {number} offset
    * @returns {number} systemIndex of the offset
    */
-  streamInteraction.PixelMapper.prototype.getSystemIndexAtOffset = function (offset) {
+  streamInteraction.PixelMapper.prototype.getSystemIndexAtOffset = function getSystemIndexAtOffset(offset) {
       var twoNoteMaps = this.getPixelMapsAroundOffset(offset);
       var prevNoteMap = twoNoteMaps[0];
       return prevNoteMap.systemIndex;
@@ -8446,7 +7515,7 @@
    * pmapA.systemIndex
    * // 0
    */
-  streamInteraction.PixelMap = function (mapper, offset) {
+  streamInteraction.PixelMap = function PixelMap(mapper, offset) {
       this.pixelScaling = mapper.pixelScaling; // should be a Weakref...
       this.elements = [];
       this.offset = offset; // important
@@ -8460,12 +7529,10 @@
               get: function get() {
                   if (this._x !== undefined) {
                       return this._x;
+                  } else if (this.elements.length === 0) {
+                      return 0; // error!
                   } else {
-                      if (this.elements.length == 0) {
-                          return 0; // error!
-                      } else {
-                          return this.elements[0].x * this.pixelScaling;
-                      }
+                      return this.elements[0].x * this.pixelScaling;
                   }
               },
               set: function set(x) {
@@ -8478,12 +7545,10 @@
               get: function get() {
                   if (this._systemIndex !== undefined) {
                       return this._systemIndex;
+                  } else if (this.elements.length === 0) {
+                      return 0; // error!
                   } else {
-                      if (this.elements.length == 0) {
-                          return 0; // error!
-                      } else {
-                          return this.elements[0].systemIndex;
-                      }
+                      return this.elements[0].systemIndex;
                   }
               },
               set: function set(systemIndex) {
@@ -8495,9 +7560,1004 @@
   };
 
   /*  NOT DONE YET */
-  streamInteraction.CursorSelect = function (s) {
+  streamInteraction.CursorSelect = function CursorSelect(s) {
       this.stream = s;
       this.activeElementHierarchy = [undefined];
+  };
+
+  /**
+   * for rendering vexflow. Will eventually go to music21/converter/vexflow
+   *
+   * See {@link music21.vfShow} namespace for details
+   *
+   * @exports music21/vfShow
+   */
+  /**
+   * Vexflow display related objects and methods.
+   *
+   * @namespace music21.vfShow
+   * @memberof music21
+   * @requires music21/common
+   * @requires vexflow
+   */
+  var vfShow = {};
+
+  /**
+   * Represents a stack of objects that need to be rendered together.
+   *
+   * An intermediary state for showing created by {@link music21.vfShow.Renderer}.
+   *
+   * @class RenderStack
+   * @memberof music21.vfShow
+   * @property {Array<Vex.Flow.Voice>} voices - Vex.Flow.Voice objects
+   * @property {Array<music21.stream.Stream>} streams - {@link music21.stream.Stream} objects associated with the voices
+   * @property {Array} textVoices - Vex.Flow.Voice objects for the text.
+   */
+  vfShow.RenderStack = function RenderStack() {
+      this.voices = [];
+      this.streams = [];
+      this.textVoices = [];
+  };
+
+  /**
+   * @memberof music21.vfShow.RenderStack
+   * @returns {Array} this.voices and this.textVoices as one array
+   */
+  vfShow.RenderStack.prototype.allTickables = function allTickables() {
+      var t = [];
+      t.push.apply(t, toConsumableArray(this.voices));
+      t.push.apply(t, toConsumableArray(this.textVoices));
+      return t;
+  };
+
+  /**
+   * Renderer is a function that takes a stream, an
+   * optional existing canvas element and a DOM
+   * element where the canvas element should be placed
+   * and renders the stream as Vexflow on the
+   * canvas element, placing it then in the where
+   * DOM.
+   *
+   * "s" can be any type of Stream.
+   *
+   * "canvas" and "where" can be either a DOM
+   * element or a jQuery object.
+   *
+   * @class Renderer
+   * @memberof music21.vfShow
+   * @param {music21.stream.Stream} s - main stream to render
+   * @param {canvas} [canvas] - existing canvas element
+   * @param {DOMObject|jQueryDOMObject} [where=document.body] - where to render the stream
+   * @property {Vex.Flow.Renderer} vfRenderer - a Vex.Flow.Renderer to use (will create if not existing)
+   * @property {Vex.Flow.Context} ctx - a Vex.Flow.Context (Canvas or Raphael [not yet]) to use.
+   * @property {canvas} canvas - canvas element
+   * @property {jQueryDOMObject} $canvas - jQuery canvas element
+   * @property {jQueryDOMObject} $where - jQuery element to render onto
+   * @property {Vex.Flow.Formatter} activeFormatter - formatter
+   * @property {Array<Vex.Flow.Beam>} beamGroups - beamGroups
+   * @property {Array<Vex.Flow.StaveTie>} ties - ties
+   * @property {Array<number>} systemBreakOffsets - where to break the systems
+   * @property {Array<Vex.Flow.Tuplet>} vfTuplets - tuplets represented in Vexflow
+   * @property {Array<music21.vfShow.RenderStack>} stacks - array of RenderStack objects
+   */
+  vfShow.Renderer = function Renderer(s, canvas, where) {
+      this.stream = s;
+      // this.streamType = s.classes[-1];
+
+      this.canvas = undefined;
+      this.$canvas = undefined;
+      this.$where = undefined;
+      this.activeFormatter = undefined;
+      this._vfRenderer = undefined;
+      this._ctx = undefined;
+      this.beamGroups = [];
+      this.stacks = []; // an Array of RenderStacks: {voices: [Array of Vex.Flow.Voice objects],
+      //                            streams: [Array of Streams, usually Measures]}
+      this.ties = [];
+      this.systemBreakOffsets = [];
+      this.vfTuplets = [];
+      // this.measureFormatters = [];
+
+      Object.defineProperties(this, {
+          'vfRenderer': {
+              get: function get() {
+                  if (this._vfRenderer !== undefined) {
+                      return this._vfRenderer;
+                  } else {
+                      this._vfRenderer = new Vex$1.Flow.Renderer(this.canvas, Vex$1.Flow.Renderer.Backends.CANVAS);
+                      return this._vfRenderer;
+                  }
+              },
+              set: function set(vfr) {
+                  this._vfRenderer = vfr;
+              }
+          },
+          'ctx': {
+              get: function get() {
+                  if (this._ctx !== undefined) {
+                      return this._ctx;
+                  } else {
+                      this._ctx = this.vfRenderer.getContext();
+                      if (this.stream && this.stream.renderOptions) {
+                          this._ctx.scale(this.stream.renderOptions.scaleFactor.x, this.stream.renderOptions.scaleFactor.y);
+                      }
+                      return this._ctx;
+                  }
+              },
+              set: function set(ctx) {
+                  this._ctx = ctx;
+              }
+          }
+      });
+
+      if (where !== undefined) {
+          if (where.jquery !== undefined) {
+              this.$where = where;
+          } else {
+              this.$where = $$1(where);
+          }
+      }
+      if (canvas !== undefined) {
+          if (canvas.jquery !== undefined) {
+              this.$canvas = canvas;
+              this.canvas = canvas[0];
+          } else {
+              this.canvas = canvas;
+              this.$canvas = $$1(canvas);
+          }
+      }
+  };
+
+  /**
+   *
+   * main function to render a Stream.
+   *
+   * if s is undefined, uses the stored Stream from
+   * the constructor object.
+   *
+   * @memberof music21.vfShow.Renderer
+   * @param {music21.stream.Stream} [s=this.stream]
+   */
+  vfShow.Renderer.prototype.render = function render(s) {
+      if (s === undefined) {
+          s = this.stream;
+      }
+
+      var isScorelike = false;
+      var isPartlike = false;
+      var hasSubStreams = s.hasSubStreams();
+
+      if (s.isClassOrSubclass('Score')) {
+          isScorelike = true;
+      } else if (hasSubStreams && s.get(0).hasSubStreams()) {
+          isScorelike = true;
+      } else if (hasSubStreams) {
+          isPartlike = true;
+      }
+      // requires organization Score -> Part -> Measure -> elements...
+      if (isScorelike) {
+          this.prepareScorelike(s);
+      } else if (isPartlike) {
+          this.preparePartlike(s);
+      } else {
+          this.prepareArrivedFlat(s);
+      }
+      this.formatMeasureStacks();
+      this.drawTies();
+      this.drawMeasureStacks();
+      this.drawBeamGroups();
+      this.drawTuplets();
+  };
+
+  /**
+   * Prepares a scorelike stream (i.e., one with parts or
+   * Streams that should be rendered vertically like parts)
+   * for rendering and adds Staff Connectors
+   *
+   * @memberof music21.vfShow.Renderer
+   * @param {music21.stream.Score} s - prepare a stream of parts (i.e., Score)
+   */
+  vfShow.Renderer.prototype.prepareScorelike = function prepareScorelike(s) {
+      // console.log('prepareScorelike called');
+      for (var i = 0; i < s.length; i++) {
+          var subStream = s.get(i);
+          this.preparePartlike(subStream);
+      }
+      this.addStaffConnectors(s);
+  };
+
+  /**
+   *
+   * Prepares a Partlike stream (that is one with Measures
+   * or substreams that should be considered like Measures)
+   * for rendering.
+   *
+   * @memberof music21.vfShow.Renderer
+   * @param {music21.stream.Part} p
+   */
+  vfShow.Renderer.prototype.preparePartlike = function preparePartlike(p) {
+      // console.log('preparePartlike called');
+      this.systemBreakOffsets = [];
+      for (var i = 0; i < p.length; i++) {
+          var subStream = p.get(i);
+          if (subStream.renderOptions.startNewSystem) {
+              this.systemBreakOffsets.push(subStream.offset);
+          }
+          if (i === p.length - 1) {
+              subStream.renderOptions.rightBarline = 'end';
+          }
+          if (this.stacks[i] === undefined) {
+              this.stacks[i] = new vfShow.RenderStack();
+          }
+          this.prepareMeasure(subStream, this.stacks[i]);
+      }
+      this.prepareTies(p);
+  };
+  /**
+   *
+   * Prepares a score that arrived flat... sets up
+   * stacks and ties after calling prepareFlat
+   *
+   * @memberof music21.vfShow.Renderer
+   * @param {music21.stream.Stream} m - a flat stream (maybe a measure or voice)
+   */
+  vfShow.Renderer.prototype.prepareArrivedFlat = function prepareArrivedFlat(m) {
+      var stack = new vfShow.RenderStack();
+      this.prepareMeasure(m, stack);
+      this.stacks[0] = stack;
+      this.prepareTies(m);
+  };
+  /**
+   *
+   * Prepares a measure (w/ or w/o voices) or generic Stream -- makes accidentals,
+   * associates a Vex.Flow.Stave with the stream and
+   * returns a vexflow Voice object
+   *
+   * @memberof music21.vfShow.Renderer
+   * @param {music21.stream.Measure} m - a measure object (w or w/o voices)
+   * @param {music21.vfShow.RenderStack} stack - a RenderStack object to prepare into.
+   */
+  vfShow.Renderer.prototype.prepareMeasure = function prepareMeasure(m, stack) {
+      if (m.hasVoices === undefined || m.hasVoices() === false) {
+          this.prepareFlat(m, stack);
+      } else {
+          // TODO: don't assume that all elements are Voices;
+          var stave = void 0;
+          var rendOp = m.renderOptions; // get render options from Measure;
+          for (var voiceIndex = 0; voiceIndex < m.length; voiceIndex++) {
+              var voiceStream = m.get(voiceIndex);
+              stave = this.prepareFlat(voiceStream, stack, stave, rendOp);
+          }
+      }
+      return stack;
+  };
+
+  /**
+   * Main internal routine to prepare a flat stream
+   *
+   * @memberof music21.vfShow.Renderer
+   * @param {music21.stream.Stream} s - a flat stream object
+   * @param {music21.vfShow.RenderStack} stack - a RenderStack object to prepare into.
+   * @param {Vex.Flow.Stave} [optionalStave] - an optional existing stave.
+   * @param {object} [optional_renderOp] - render options. Passed to {@link music21.vfShow.Renderer#renderStave}
+   * @returns {Vex.Flow.Stave} staff to return too (also changes the `stack` parameter and runs `makeAccidentals` on s)
+   */
+  vfShow.Renderer.prototype.prepareFlat = function prepareFlat(s, stack, optionalStave, optional_renderOp) {
+      s.makeAccidentals();
+      var stave = void 0;
+      if (optionalStave !== undefined) {
+          stave = optionalStave;
+      } else {
+          stave = this.renderStave(s, optional_renderOp);
+      }
+      s.activeVFStave = stave;
+      var voice = this.getVoice(s, stave);
+      stack.voices.push(voice);
+      stack.streams.push(s);
+
+      if (s.hasLyrics()) {
+          stack.textVoices.push(this.getLyricVoice(s, stave));
+      }
+
+      return stave;
+  };
+
+  /**
+   * Render the Vex.Flow.Stave from a flat stream and draws it.
+   *
+   * Just draws the stave, not the notes, etc.
+   *
+   * @memberof music21.vfShow.Renderer
+   * @param {music21.stream.Stream} [m=this.stream] - a flat stream
+   * @param {object} [optional_rendOp] - render options, passed to {@link music21.vfShow.Renderer#newStave} and {@link music21.vfShow.Renderer#setClefEtc}
+   * @returns {Vex.Flow.Stave} stave
+   */
+  vfShow.Renderer.prototype.renderStave = function renderStave(m, optional_rendOp) {
+      if (m === undefined) {
+          m = this.stream;
+      }
+      var ctx = this.ctx;
+      // stave will be passed in from Measure when we have Voices
+      var stave = this.newStave(m, optional_rendOp);
+
+      this.setClefEtc(m, stave, optional_rendOp);
+      stave.setContext(ctx);
+      stave.draw();
+      return stave;
+  };
+
+  /**
+   * Draws the Voices (music and text) from `this.stacks`
+   *
+   * @memberof music21.vfShow.Renderer
+   */
+  vfShow.Renderer.prototype.drawMeasureStacks = function drawMeasureStacks() {
+      var ctx = this.ctx;
+      for (var i = 0; i < this.stacks.length; i++) {
+          var voices = this.stacks[i].allTickables();
+          for (var j = 0; j < voices.length; j++) {
+              var v = voices[j];
+              v.draw(ctx);
+          }
+      }
+  };
+
+  /**
+   * draws the tuplets.
+   *
+   * @memberof music21.vfShow.Renderer
+   */
+  vfShow.Renderer.prototype.drawTuplets = function drawTuplets() {
+      var ctx = this.ctx;
+      this.vfTuplets.forEach(function (vft) {
+          vft.setContext(ctx).draw();
+      });
+  };
+  /**
+   * draws the ties
+   *
+   * @memberof music21.vfShow.Renderer
+   */
+  vfShow.Renderer.prototype.drawTies = function drawTies() {
+      var ctx = this.ctx;
+      for (var i = 0; i < this.ties.length; i++) {
+          this.ties[i].setContext(ctx).draw();
+      }
+  };
+
+  /**
+   * Finds all tied notes and creates the proper Vex.Flow.StaveTie objects in
+   * `this.ties`.
+   *
+   * @memberof music21.vfShow.Renderer
+   * @param {music21.stream.Part} p - a Part or similar object
+   */
+  vfShow.Renderer.prototype.prepareTies = function prepareTies(p) {
+      var pf = p.flat.notesAndRests;
+      // console.log('newSystemsAt', this.systemBreakOffsets);
+      for (var i = 0; i < pf.length - 1; i++) {
+          var thisNote = pf.get(i);
+          if (thisNote.tie === undefined || thisNote.tie.type === 'stop') {
+              continue;
+          }
+          var nextNote = pf.get(i + 1);
+          var onSameSystem = true;
+          // this.systemBreakOffsets.length will be 0 for a flat score
+          for (var sbI = 0; sbI < this.systemBreakOffsets.length; sbI++) {
+              var thisSystemBreak = this.systemBreakOffsets[sbI];
+              if (thisNote.offset < thisSystemBreak && nextNote.offset >= thisSystemBreak) {
+                  onSameSystem = false;
+                  break;
+              }
+          }
+          if (onSameSystem) {
+              var vfTie = new Vex$1.Flow.StaveTie({
+                  first_note: thisNote.activeVexflowNote,
+                  last_note: nextNote.activeVexflowNote,
+                  first_indices: [0],
+                  last_indices: [0]
+              });
+              this.ties.push(vfTie);
+          } else {
+              // console.log('got me a tie across systemBreaks!');
+              var vfTie1 = new Vex$1.Flow.StaveTie({
+                  first_note: thisNote.activeVexflowNote,
+                  first_indices: [0]
+              });
+              this.ties.push(vfTie1);
+              var vfTie2 = new Vex$1.Flow.StaveTie({
+                  last_note: nextNote.activeVexflowNote,
+                  first_indices: [0]
+              });
+              this.ties.push(vfTie2);
+          }
+      }
+  };
+
+  /**
+   * Returns a Vex.Flow.Voice object with all the tickables (i.e., Notes, Voices, etc.)
+   *
+   * Does not draw it...
+   *
+   * @memberof music21.vfShow.Renderer
+   * @param {music21.stream.Stream} [s=this.stream] -- usually a Measure or Voice
+   * @param {Vex.Flow.Stave} stave - not optional (would never fly in Python...)
+   * @returns {Vex.Flow.Voice}
+   */
+  vfShow.Renderer.prototype.getVoice = function getVoice(s, stave) {
+      if (s === undefined) {
+          s = this.stream;
+      }
+
+      // gets a group of notes as a voice, but completely unformatted and not drawn.
+      var notes = this.vexflowNotes(s, stave);
+      var voice = this.vexflowVoice(s);
+      voice.setStave(stave);
+
+      voice.addTickables(notes);
+      return voice;
+  };
+
+  /**
+   * Returns a Vex.Flow.Voice with the lyrics set to render in the proper place.
+   *
+   * @memberof music21.vfShow.Renderer
+   * @param {music21.stream.Stream} s -- usually a Measure or Voice
+   * @param {Vex.Flow.Stave} stave
+   * @returns {Vex.Flow.Voice}
+   */
+  vfShow.Renderer.prototype.getLyricVoice = function getLyricVoice(s, stave) {
+      var textVoice = this.vexflowVoice(s);
+      var lyrics = this.vexflowLyrics(s, stave);
+      textVoice.setStave(stave);
+      textVoice.addTickables(lyrics);
+      return textVoice;
+  };
+
+  /**
+   * Aligns all of `this.stacks` (after they've been prepared) so they align properly.
+   *
+   * @memberof music21.vfShow.Renderer
+   */
+  vfShow.Renderer.prototype.formatMeasureStacks = function formatMeasureStacks() {
+      // adds formats the voices, then adds the formatter information to every note in a voice...
+      for (var i = 0; i < this.stacks.length; i++) {
+          var stack = this.stacks[i];
+          var voices = stack.voices;
+          var measures = stack.streams;
+          var formatter = this.formatVoiceGroup(stack);
+          for (var j = 0; j < measures.length; j++) {
+              var m = measures[j];
+              var v = voices[j];
+              this.applyFormatterInformationToNotes(v.stave, m, formatter);
+          }
+      }
+  };
+
+  /**
+   * Formats a single voice group from a stack.
+   *
+   * @memberof music21.vfShow.Renderer
+   * @param {music21.vfShow.RenderStack} stack
+   * @param {Boolean} [autoBeam=measures[0].autoBeam]
+   * @returns {Vex.Flow.Formatter}
+   */
+  vfShow.Renderer.prototype.formatVoiceGroup = function formatVoiceGroup(stack, autoBeam) {
+      // formats a group of voices to use the same formatter; returns the formatter
+      // if autoBeam is true then it will apply beams for each voice and put them in
+      // this.beamGroups;
+      var allTickables = stack.allTickables();
+      var voices = stack.voices;
+      var measures = stack.streams;
+      if (autoBeam === undefined) {
+          autoBeam = measures[0].autoBeam;
+      }
+
+      var formatter = new Vex$1.Flow.Formatter();
+      // var minLength = formatter.preCalculateMinTotalWidth([voices]);
+      // console.log(minLength);
+      if (voices.length === 0) {
+          return formatter;
+      }
+      var maxGlyphStart = 0; // find the stave with the farthest start point -- diff key sig, etc.
+      for (var i = 0; i < allTickables.length; i++) {
+          // console.log(voices[i], voices[i].stave, i);
+          if (allTickables[i].stave.start_x > maxGlyphStart) {
+              maxGlyphStart = allTickables[i].stave.start_x;
+          }
+      }
+      for (var _i = 0; _i < allTickables.length; _i++) {
+          allTickables[_i].stave.start_x = maxGlyphStart; // corrected!
+      }
+      // TODO: should do the same for end_x -- for key sig changes, etc...
+
+      var stave = voices[0].stave; // all staves should be same length, so does not matter;
+      formatter.joinVoices(allTickables);
+      formatter.formatToStave(allTickables, stave);
+      if (autoBeam) {
+          for (var _i2 = 0; _i2 < voices.length; _i2++) {
+              var _beamGroups;
+
+              // find beam groups -- n.b. this wipes out stemDirection. worth it usually...
+              var voice = voices[_i2];
+              var beatGroups = [new Vex$1.Flow.Fraction(2, 8)]; // default beam groups
+              if (measures[_i2] !== undefined && measures[_i2].timeSignature !== undefined) {
+                  beatGroups = measures[_i2].timeSignature.vexflowBeatGroups(Vex$1); // TODO: getContextByClass...
+                  // console.log(beatGroups);
+              }
+              var beamGroups = Vex$1.Flow.Beam.applyAndGetBeams(voice, undefined, beatGroups);
+              (_beamGroups = this.beamGroups).push.apply(_beamGroups, toConsumableArray(beamGroups));
+          }
+      }
+      return formatter;
+  };
+
+  /**
+   * Draws the beam groups.
+   *
+   * @memberof music21.vfShow.Renderer
+   */
+  vfShow.Renderer.prototype.drawBeamGroups = function drawBeamGroups() {
+      var ctx = this.ctx;
+      // draw beams
+
+      for (var i = 0; i < this.beamGroups.length; i++) {
+          this.beamGroups[i].setContext(ctx).draw();
+      }
+  };
+
+  /**
+   * Return a new Vex.Flow.Stave object, which represents
+   * a single MEASURE of notation in m21j
+   *
+   * @memberof music21.vfShow.Renderer
+   * @param {music21.stream.Stream} s
+   * @returns {Vex.Flow.Stave}
+   */
+  vfShow.Renderer.prototype.newStave = function newStave(s, rendOp) {
+      if (s === undefined) {
+          s = this.stream;
+      }
+      if (rendOp === undefined) {
+          rendOp = s.renderOptions;
+      }
+      // measure level...
+      var width = rendOp.width;
+      if (width === undefined) {
+          width = s.estimateStaffLength() + rendOp.staffPadding;
+      }
+      var top = rendOp.top; // * rendOp.scaleFactor.y;
+      if (top === undefined) {
+          top = 0;
+      }
+      var left = rendOp.left;
+      if (left === undefined) {
+          left = 10;
+      }
+      // console.log('streamLength: ' + streamLength);
+      if (debug) {
+          console.log('creating new stave: left:' + left + ' top: ' + top + ' width: ' + width);
+      }
+      var stave = new Vex$1.Flow.Stave(left, top, width);
+      return stave;
+  };
+
+  /**
+   * Sets the number of stafflines, puts the clef on the Stave, adds keySignature, timeSignature, and rightBarline
+   *
+   * @memberof music21.vfShow.Renderer
+   * @param {music21.stream.Stream} s
+   * @param {Vex.Flow.Stave} stave
+   * @param {object} [rendOp=s.renderOptions] - a {@link music21.renderOptions.RenderOptions} object that might have `{showMeasureNumber: boolean, rightBarLine: string<{'single', 'double', 'end'}>}`
+   */
+  vfShow.Renderer.prototype.setClefEtc = function setClefEtc(s, stave, rendOp) {
+      if (rendOp === undefined) {
+          rendOp = s.renderOptions;
+      }
+      this.setStafflines(s, stave);
+      if (rendOp.showMeasureNumber) {
+          stave.setMeasure(rendOp.measureIndex + 1);
+      }
+      if (rendOp.displayClef) {
+          var ottava = void 0;
+          var size = 'default';
+          if (s.clef.octaveChange === 1) {
+              ottava = '8va';
+          } else if (s.clef.octaveChange === -1) {
+              ottava = '8vb';
+          }
+          stave.addClef(s.clef.name, size, ottava);
+      }
+      if (s.keySignature !== undefined && rendOp.displayKeySignature) {
+          stave.addKeySignature(s.keySignature.vexflow());
+      }
+
+      if (s.timeSignature !== undefined && rendOp.displayTimeSignature) {
+          stave.addTimeSignature(s.timeSignature.numerator.toString() + '/' + s.timeSignature.denominator.toString()); // TODO: convertToVexflow...
+      }
+      if (rendOp.rightBarline !== undefined) {
+          var bl = rendOp.rightBarline;
+          var barlineMap = {
+              'single': 'SINGLE',
+              'double': 'DOUBLE',
+              'end': 'END'
+          };
+          var vxBL = barlineMap[bl];
+          if (vxBL !== undefined) {
+              stave.setEndBarType(Vex$1.Flow.Barline.type[vxBL]);
+          }
+      }
+  };
+
+  /**
+   * Sets the number of stafflines properly for the Stave object.
+   *
+   * This method does not just set Vex.Flow.Stave#setNumLines() except
+   * if the number of lines is 0 or >=4, because the default in VexFlow is
+   * to show the bottom(top?), not middle, lines and that looks bad.
+   *
+   * @memberof music21.vfShow.Renderer
+   * @param {music21.stream.Stream} s - stream to get the `.staffLines` from `s.renderOptions` from -- should allow for overriding.
+   * @param {Vex.Flow.Stave} vexflowStave - stave to set the staff lines for.
+   */
+  vfShow.Renderer.prototype.setStafflines = function setStafflines(s, vexflowStave) {
+      var rendOp = s.renderOptions;
+      if (rendOp.staffLines !== 5) {
+          if (rendOp.staffLines === 0) {
+              vexflowStave.setNumLines(0);
+          } else if (rendOp.staffLines === 1) {
+              // Vex.Flow.Stave.setNumLines hides all but the top line.
+              // this is better
+              vexflowStave.options.line_config = [{ visible: false }, { visible: false }, { visible: true }, // show middle
+              { visible: false }, { visible: false }];
+          } else if (rendOp.staffLines === 2) {
+              vexflowStave.options.line_config = [{ visible: false }, { visible: false }, { visible: true }, // show middle
+              { visible: true }, { visible: false }];
+          } else if (rendOp.staffLines === 3) {
+              vexflowStave.options.line_config = [{ visible: false }, { visible: true }, { visible: true }, // show middle
+              { visible: true }, { visible: false }];
+          } else {
+              vexflowStave.setNumLines(rendOp.staffLines);
+          }
+      }
+  };
+  /**
+   *
+   * Gets the Vex.Flow.StaveNote objects from a Stream.
+   *
+   * Also changes `this.vfTuplets`.
+   *
+   * @memberof music21.vfShow.Renderer
+   * @param {music21.stream.Stream} [s=this.stream] - flat stream to find notes in
+   * @param {Vex.Flow.Stave} stave
+   * @returns {Array<Vex.Flow.StaveNote>} notes to return
+   */
+  vfShow.Renderer.prototype.vexflowNotes = function vexflowNotes(s, stave) {
+      if (s === undefined) {
+          s = this.stream;
+      }
+      // runs on a flat stream, returns a list of voices...
+      var notes = [];
+      var vfTuplets = [];
+      var activeTuplet = void 0;
+      var activeTupletLength = 0.0;
+      var activeTupletVexflowNotes = [];
+
+      var options = { clef: s.clef, stave: stave };
+      for (var i = 0; i < s.length; i++) {
+          var thisEl = s.get(i);
+          if (thisEl.isClassOrSubclass('GeneralNote') && thisEl.duration !== undefined) {
+              var vfn = thisEl.vexflowNote(options);
+              if (vfn === undefined) {
+                  console.error('Cannot create a vexflowNote from: ', thisEl);
+              }
+              // sets thisEl.activeVexflowNote -- may be overwritten but not so fast...
+              if (stave !== undefined) {
+                  vfn.setStave(stave);
+              }
+              notes.push(vfn);
+
+              // account for tuplets...
+              if (thisEl.duration.tuplets.length > 0) {
+                  // only support one tuplet -- like vexflow
+                  var m21Tuplet = thisEl.duration.tuplets[0];
+                  if (activeTuplet === undefined) {
+                      activeTuplet = m21Tuplet;
+                  }
+                  activeTupletVexflowNotes.push(vfn);
+                  activeTupletLength += thisEl.duration.quarterLength;
+                  // console.log(activeTupletLength, activeTuplet.totalTupletLength());
+                  if (activeTupletLength >= activeTuplet.totalTupletLength() || Math.abs(activeTupletLength - activeTuplet.totalTupletLength()) < 0.001) {
+                      // console.log(activeTupletVexflowNotes);
+                      var tupletOptions = { num_notes: activeTuplet.numberNotesActual,
+                          notes_occupied: activeTuplet.numberNotesNormal };
+                      // console.log('tupletOptions', tupletOptions);
+                      var vfTuplet = new Vex$1.Flow.Tuplet(activeTupletVexflowNotes, tupletOptions);
+                      if (activeTuplet.tupletNormalShow === 'ratio') {
+                          vfTuplet.setRatioed(true);
+                      }
+
+                      vfTuplets.push(vfTuplet);
+                      activeTupletLength = 0.0;
+                      activeTuplet = undefined;
+                      activeTupletVexflowNotes = [];
+                  }
+              }
+          }
+      }
+      if (activeTuplet !== undefined) {
+          console.warn('incomplete tuplet found in stream: ', s);
+      }
+      if (vfTuplets.length > 0) {
+          var _vfTuplets;
+
+          (_vfTuplets = this.vfTuplets).push.apply(_vfTuplets, vfTuplets);
+      }
+      return notes;
+  };
+
+  /**
+   * Gets an Array of `Vex.Flow.TextNote` objects from any lyrics found in s
+   *
+   * @memberof music21.vfShow.Renderer
+   * @param {music21.stream.Stream} s - flat stream to search.
+   * @param {Vex.Flow.Stave} stave
+   * @returns {Array<Vex.Flow.TextNote>}
+   */
+  vfShow.Renderer.prototype.vexflowLyrics = function vexflowLyrics(s, stave) {
+      var getTextNote = function getTextNote(text, font, d) {
+          // console.log(text, font, d);
+          var t1 = new Vex$1.Flow.TextNote({
+              text: text,
+              font: font,
+              duration: d
+          }).setLine(11).setStave(stave).setJustification(Vex$1.Flow.TextNote.Justification.LEFT);
+          return t1;
+      };
+
+      if (s === undefined) {
+          s = this.stream;
+      }
+      var font = {
+          family: 'Serif',
+          size: 12,
+          weight: ''
+      };
+      // runs on a flat, gapless, no-overlap stream, returns a list of TextNote objects...
+      var lyricsObjects = [];
+      for (var i = 0; i < s.length; i++) {
+          var el = s.get(i);
+          var lyricsArray = el.lyrics;
+          var text = void 0;
+          var d = el.duration.vexflowDuration;
+          var addConnector = false;
+          if (lyricsArray.length === 0) {
+              text = '';
+          } else {
+              text = lyricsArray[0].text;
+              if (text === undefined) {
+                  text = '';
+              }
+              if (lyricsArray[0].syllabic === 'middle' || lyricsArray[0].syllabic === 'begin') {
+                  addConnector = ' ' + lyricsArray[0].lyricConnector;
+                  var tempQl = el.duration.quarterLength / 2.0;
+                  d = new duration.Duration(tempQl).vexflowDuration;
+              }
+          }
+          var t1 = getTextNote(text, font, d);
+          lyricsObjects.push(t1);
+          if (addConnector !== false) {
+              var connector = getTextNote(addConnector, font, d);
+              lyricsObjects.push(connector);
+          }
+      }
+      return lyricsObjects;
+  };
+  /**
+   * Creates a Vex.Flow.Voice of the appropriate length given a Stream.
+   *
+   * @memberof music21.vfShow.Renderer
+   * @param {music21.stream.Stream} s
+   * @returns {Vex.Flow.Voice}
+   */
+  vfShow.Renderer.prototype.vexflowVoice = function vexflowVoice(s) {
+      var totalLength = s.duration.quarterLength;
+
+      var num1024 = Math.round(totalLength / (1 / 256));
+      var beatValue = 1024;
+
+      if (num1024 % 512 === 0) {
+          beatValue = 2;
+          num1024 /= 512;
+      } else if (num1024 % 256 === 0) {
+          beatValue = 4;
+          num1024 /= 256;
+      } else if (num1024 % 128 === 0) {
+          beatValue = 8;
+          num1024 /= 128;
+      } else if (num1024 % 64 === 0) {
+          beatValue = 16;
+          num1024 /= 64;
+      } else if (num1024 % 32 === 0) {
+          beatValue = 32;
+          num1024 /= 32;
+      } else if (num1024 % 16 === 0) {
+          beatValue = 64;
+          num1024 /= 16;
+      } else if (num1024 % 8 === 0) {
+          beatValue = 128;
+          num1024 /= 8;
+      } else if (num1024 % 4 === 0) {
+          beatValue = 256;
+          num1024 /= 4;
+      } else if (num1024 % 2 === 0) {
+          beatValue = 512;
+          num1024 /= 2;
+      }
+      // console.log('creating voice');
+      if (debug) {
+          console.log('New voice, num_beats: ' + num1024.toString() + ' beat_value: ' + beatValue.toString());
+      }
+      var vfv = new Vex$1.Flow.Voice({ num_beats: num1024,
+          beat_value: beatValue,
+          resolution: Vex$1.Flow.RESOLUTION });
+
+      // from vexflow/src/voice.js
+      //
+      // Modes allow the addition of ticks in three different ways:
+      //
+      // STRICT: This is the default. Ticks must fill the voice.
+      // SOFT:   Ticks can be added without restrictions.
+      // FULL:   Ticks do not need to fill the voice, but can't exceed the maximum
+      //         tick length.
+      vfv.setMode(Vex$1.Flow.Voice.Mode.SOFT);
+      return vfv;
+  };
+
+  vfShow.Renderer.prototype.staffConnectorsMap = function staffConnectorsMap(connectorType) {
+      var connectorMap = {
+          'brace': Vex$1.Flow.StaveConnector.type.BRACE,
+          'single': Vex$1.Flow.StaveConnector.type.SINGLE,
+          'double': Vex$1.Flow.StaveConnector.type.DOUBLE,
+          'bracket': Vex$1.Flow.StaveConnector.type.BRACKET
+      };
+      return connectorMap[connectorType];
+  };
+
+  /**
+   * If a stream has parts (NOT CHECKED HERE) create and draw an appropriate Vex.Flow.StaveConnector
+   *
+   * @memberof music21.vfShow.Renderer
+   * @param {music21.stream.Score} s
+   */
+  vfShow.Renderer.prototype.addStaffConnectors = function addStaffConnectors(s) {
+      if (s === undefined) {
+          s = this.stream;
+      }
+      var numParts = s.length;
+      if (numParts < 2) {
+          return;
+      }
+
+      var firstPart = s.get(0);
+      var lastPart = s.get(-1);
+      var numMeasures = firstPart.length;
+      for (var mIndex = 0; mIndex < numMeasures; mIndex++) {
+          var thisPartMeasure = firstPart.get(mIndex);
+          var lastPartMeasure = lastPart.get(mIndex); // only needed once per system but
+          // good for symmetry.
+          if (thisPartMeasure.renderOptions.startNewSystem) {
+              var topVFStaff = thisPartMeasure.activeVFStave;
+              var bottomVFStaff = lastPartMeasure.activeVFStave;
+              /* TODO: warning if no staves... */
+              for (var i = 0; i < s.renderOptions.staffConnectors.length; i++) {
+                  var sc = new Vex$1.Flow.StaveConnector(topVFStaff, bottomVFStaff);
+                  var scTypeM21 = s.renderOptions.staffConnectors[i];
+                  var scTypeVF = this.staffConnectorsMap(scTypeM21);
+                  sc.setType(scTypeVF);
+                  sc.setContext(this.ctx);
+                  sc.draw();
+              }
+          }
+      }
+  };
+
+  /**
+   * The process of putting a Stream onto a canvas affects each of the
+   * elements in the Stream by adding pieces of information to
+   * each {@link music21.base.Music21Object} -- see `applyFormatterInformationToNotes`
+   *
+   * You might want to remove this information; this routine does that.
+   *
+   * @memberof music21.vfShow.Renderer
+   * @param {music21.stream.Stream} s - can have parts, measures, etc.
+   * @param {boolean} [recursive=false]
+   */
+  vfShow.Renderer.prototype.removeFormatterInformation = function removeFormatterInformation(s, recursive) {
+      s.storedVexflowStave = undefined;
+      for (var i = 0; i < s.length; i++) {
+          var el = s.get(i);
+          el.x = undefined;
+          el.y = undefined;
+          el.width = undefined;
+          el.systemIndex = undefined;
+          el.activeVexflowNote = undefined;
+          if (recursive && el.isClassOrSubclass('Stream')) {
+              this.removeFormatterInformation(el, recursive);
+          }
+      }
+  };
+
+  /**
+   * Adds the following pieces of information to each Note
+   *
+   * - el.x -- x location in pixels
+   * - el.y -- y location in pixels
+   * - el.width - width of element in pixels.
+   * - el.systemIndex -- which system is it on
+   * - el.activeVexflowNote - which Vex.Flow.StaveNote is it connected with.
+   *
+   * mad props to our friend Vladimir Viro for figuring this out! Visit http://peachnote.com/
+   *
+   * Also sets s.storedVexflowStave to stave.
+   *
+   * @memberof music21.vfShow.Renderer
+   * @param {Vex.Flow.Stave} stave
+   * @param {music21.stream.Stream} [s=this.stream]
+   * @param {Vex.Flow.Formatter} formatter
+   */
+  vfShow.Renderer.prototype.applyFormatterInformationToNotes = function applyFormatterInformationToNotes(stave, s, formatter) {
+      if (s === undefined) {
+          s = this.stream;
+      }
+      var noteOffsetLeft = 0;
+      // var staveHeight = 80;
+      if (stave !== undefined) {
+          noteOffsetLeft = stave.start_x + stave.glyph_start_x;
+          if (debug) {
+              console.log('noteOffsetLeft: ' + noteOffsetLeft + ' ; stave.start_x: ' + stave.start_x);
+              console.log('Bottom y: ' + stave.getBottomY());
+          }
+          // staveHeight = stave.height;
+      }
+
+      var nextTicks = 0;
+      for (var i = 0; i < s.length; i++) {
+          var el = s.get(i);
+          if (el.isClassOrSubclass('GeneralNote')) {
+              var vfn = el.activeVexflowNote;
+              if (vfn === undefined) {
+                  continue;
+              }
+              var nTicks = parseInt(vfn.ticks);
+              var formatterNote = formatter.tContexts.map[String(nextTicks)];
+              nextTicks += nTicks;
+              el.x = vfn.getAbsoluteX();
+              // these are a bit hacky...
+              el.systemIndex = s.renderOptions.systemIndex;
+
+              // console.log(i + " " + el.x + " " + formatterNote.x + " " + noteOffsetLeft);
+              if (formatterNote === undefined) {
+                  continue;
+              }
+
+              el.width = formatterNote.width;
+              if (el.pitch !== undefined) {
+                  // note only...
+                  el.y = stave.getBottomY() - (s.clef.lowestLine - el.pitch.diatonicNoteNum) * stave.options.spacing_between_lines_px;
+                  // console.log('Note DNN: ' + el.pitch.diatonicNoteNum + " ; y: " + el.y);
+              }
+          }
+      }
+      if (debug) {
+          for (var _i3 = 0; _i3 < s.length; _i3++) {
+              var n = s.get(_i3);
+              if (n.pitch !== undefined) {
+                  console.log(n.pitch.diatonicNoteNum + ' ' + n.x + ' ' + (n.x + n.width));
+              }
+          }
+      }
+      s.storedVexflowStave = stave;
   };
 
   /**
@@ -8567,7 +8627,7 @@
    * @property {function|undefined} changedCallbackFunction - function to call when the Stream changes through a standard interface
    * @property {number} maxSystemWidth - confusing... should be in renderOptions
    */
-  stream.Stream = function () {
+  stream.Stream = function Stream() {
       base.Music21Object.call(this);
       this.classes.push('Stream');
       this._duration = undefined;
@@ -8634,7 +8694,7 @@
                                   // offset should NOT be null because already in Stream
                                   elFlat.get(j).offset += offsetShift;
                               }
-                              tempEls.push.apply(tempEls, elFlat._elements);
+                              tempEls.push.apply(tempEls, toConsumableArray(elFlat._elements));
                           } else {
                               tempEls.push(el);
                           }
@@ -8689,8 +8749,8 @@
                   }
               },
               set: function set(newInstrument) {
-                  if (typeof newInstrument == 'string') {
-                      newInstrument = new music21.instrument.Instrument(newInstrument);
+                  if (typeof newInstrument === 'string') {
+                      newInstrument = new instrument.Instrument(newInstrument);
                   }
                   this._instrument = newInstrument;
               }
@@ -8736,7 +8796,7 @@
                   }
               },
               set: function set(newTimeSignature) {
-                  if (typeof newTimeSignature == 'string') {
+                  if (typeof newTimeSignature === 'string') {
                       newTimeSignature = new meter.TimeSignature(newTimeSignature);
                   }
                   this._timeSignature = newTimeSignature;
@@ -8818,8 +8878,8 @@
                   return this._elements;
               },
               set: function set(newElements) {
-                  //				    this._elements = newElements;
-                  //
+                  //              this._elements = newElements;
+
                   var highestOffsetSoFar = 0.0;
                   this._elements = [];
                   this._elementOffsets = [];
@@ -8829,7 +8889,7 @@
                   for (i = 0; i < newElements.length; i++) {
                       thisEl = newElements[i];
                       var thisElOffset = thisEl.offset;
-                      if (thisElOffset === null || thisElOffset == highestOffsetSoFar) {
+                      if (thisElOffset === null || thisElOffset === highestOffsetSoFar) {
                           // append
                           this._elements.push(thisEl);
                           thisEl.offset = highestOffsetSoFar;
@@ -8863,13 +8923,18 @@
        * @param {Event} e
        * @returns {music21.base.Music21Object|undefined} - returns whatever changedCallbackFunction does.
        */
-      this.canvasChangerFunction = function (e) {
+      this.canvasChangerFunction = function Stream_canvasChangerFunction(e) {
           var canvasElement = e.currentTarget;
-          var _ = this.findNoteForClick(canvasElement, e),
-              clickedDiatonicNoteNum = _[0],
-              foundNote = _[1];
+
+          var _findNoteForClick = this.findNoteForClick(canvasElement, e);
+
+          var _findNoteForClick2 = slicedToArray(_findNoteForClick, 2);
+
+          var clickedDiatonicNoteNum = _findNoteForClick2[0];
+          var foundNote = _findNoteForClick2[1];
+
           if (foundNote === undefined) {
-              if (music21.debug) {
+              if (debug) {
                   console.log('No note found');
               }
               return undefined;
@@ -8882,7 +8947,7 @@
   stream.Stream.prototype.constructor = stream.Stream;
 
   /* override protoM21Object.clone() */
-  stream.Stream.prototype.clone = function (deep) {
+  stream.Stream.prototype.clone = function clone(deep) {
       var ret = Object.create(this.constructor.prototype);
       for (var key in ret) {
           // not that we ONLY copy the keys in Ret -- it's easier that way.
@@ -8890,14 +8955,14 @@
           if (this.hasOwnProperty(key) === false) {
               continue;
           }
-          if (key == 'activeSite') {
+          if (key === 'activeSite') {
               ret[key] = this[key];
-          } else if (key == 'renderOptions') {
+          } else if (key === 'renderOptions') {
               ret[key] = common.merge({}, this[key]);
-          } else if (deep !== true && (key == '_elements' || key == '_elementOffsets')) {
+          } else if (deep !== true && (key === '_elements' || key === '_elementOffsets')) {
               ret[key] = this[key].slice(); // shallow copy...
-          } else if (deep && (key == '_elements' || key == '_elementOffsets')) {
-              if (key == '_elements') {
+          } else if (deep && (key === '_elements' || key === '_elementOffsets')) {
+              if (key === '_elements') {
                   // console.log('got elements for deepcopy');
                   ret._elements = [];
                   ret._elementOffsets = [];
@@ -8910,11 +8975,11 @@
                       ret._elements[j] = elCopy;
                   }
               }
-          } else if (key == 'activeVexflowNote' || key == 'storedVexflowstave') {
+          } else if (key === 'activeVexflowNote' || key === 'storedVexflowstave') {
               // do nothing -- do not copy vexflowNotes -- permanent recursion
           } else if (Object.getOwnPropertyDescriptor(this, key).get !== undefined || Object.getOwnPropertyDescriptor(this, key).set !== undefined) {
               // do nothing
-          } else if (typeof this[key] == 'function') {
+          } else if (typeof this[key] === 'function') {
               // do nothing -- events might not be copied.
           } else if (this[key] !== null && this[key] !== undefined && this[key].isMusic21Object === true) {
               // console.log('cloning...', key);
@@ -8933,7 +8998,7 @@
    * @param {music21.base.Music21Object} el - element to append
    * @returns {this}
    */
-  stream.Stream.prototype.append = function (el) {
+  stream.Stream.prototype.append = function append(el) {
       try {
           if (el.isClassOrSubclass !== undefined && el.isClassOrSubclass('NotRest')) {
               // set stem direction on output...;
@@ -8961,7 +9026,7 @@
    * @param {music21.base.Music21Object} el - element to append
    * @returns {this}
    */
-  stream.Stream.prototype.insert = function (offset, el) {
+  stream.Stream.prototype.insert = function insert(offset, el) {
       try {
           if (el.isClassOrSubclass !== undefined && el.isClassOrSubclass('NotRest')) {
               // set stem direction on output
@@ -8976,7 +9041,7 @@
                   this._elements.splice(i, 0, el);
                   el.offset = offset;
                   el.activeSite = this;
-                  return;
+                  return this;
               }
           }
           // no element found. insert at end;
@@ -8996,7 +9061,7 @@
    * @memberof music21.stream.Stream
    * @returns {music21.base.Music21Object|undefined} last element in the stream
    */
-  stream.Stream.prototype.pop = function () {
+  stream.Stream.prototype.pop = function pop() {
       // remove last element;
       if (this.length > 0) {
           var el = this.get(-1);
@@ -9016,14 +9081,14 @@
    * @param {Int} index - can be -1, -2, to index from the end, like python
    * @returns {music21.base.Music21Object|undefined}
    */
-  stream.Stream.prototype.get = function (index) {
+  stream.Stream.prototype.get = function get(index) {
       // substitute for Python stream __getitem__; supports -1 indexing, etc.
       var el = void 0;
       if (index === undefined) {
           return undefined;
       } else if (Math.abs(index) > this._elements.length) {
           return undefined;
-      } else if (index == this._elements.length) {
+      } else if (index === this._elements.length) {
           return undefined;
       } else if (index < 0) {
           el = this._elements[this._elements.length + index];
@@ -9043,7 +9108,7 @@
    * @memberof music21.stream.Stream
    * @returns {Boolean}
    */
-  stream.Stream.prototype.hasSubStreams = function () {
+  stream.Stream.prototype.hasSubStreams = function Stream_hasSubStreams() {
       var hasSubStreams = false;
       for (var i = 0; i < this.length; i++) {
           var el = this.elements[i];
@@ -9061,13 +9126,15 @@
    * placed within
    * the stream. If no TimeSignatures are found in the
    * stream, a default of 4/4 is used.
-    * If `options.inPlace` is true, the original Stream is modified and lost
+
+   * If `options.inPlace` is true, the original Stream is modified and lost
    * if `options.inPlace` is False, this returns a modified deep copy.
-    * @memberof music21.stream.Stream
+
+   * @memberof music21.stream.Stream
    * @param {object} options
    * @returns {music21.stream.Stream}
    */
-  stream.Stream.prototype.makeMeasures = function (options) {
+  stream.Stream.prototype.makeMeasures = function makeMeasures(options) {
       var params = {
           meterStream: undefined,
           refStreamOrTimeRange: undefined,
@@ -9078,8 +9145,9 @@
           inPlace: false
       };
       common.merge(params, options);
+      var voiceCount = void 0;
       if (this.hasVoices()) {
-          voiceCount = srcObj.getElementsByClass('Voice').length;
+          voiceCount = this.getElementsByClass('Voice').length;
       } else {
           voiceCount = 0;
       }
@@ -9092,8 +9160,7 @@
       var clefObj = this.clef;
       var offsetMap = this.offsetMap();
       var oMax = 0;
-      var i = void 0;
-      for (i = 0; i < offsetMap.length; i++) {
+      for (var i = 0; i < offsetMap.length; i++) {
           if (offsetMap[i].endTime > oMax) {
               oMax = offsetMap[i].endTime;
           }
@@ -9117,7 +9184,7 @@
           m.clef = clefObj;
           m.timeSignature = thisTimeSignature.clone();
 
-          for (i = 0; i < voiceCount; i++) {
+          for (var voiceIndex = 0; voiceIndex < voiceCount; voiceIndex++) {
               var v = new stream.Voice();
               v.id = voiceIndex;
               m.insert(0, v);
@@ -9130,17 +9197,13 @@
               measureCount += 1;
           }
       }
-      var e = void 0;
-      for (i = 0; i < offsetMap.length; i++) {
-          var ob = offsetMap[i];
-          e = ob.element;
+      for (var _i = 0; _i < offsetMap.length; _i++) {
+          var ob = offsetMap[_i];
+          var e = ob.element;
           var start = ob.offset;
-          var end = ob.endTime;
-          var voiceIndex = ob.voiceIndex;
+          var _voiceIndex = ob.voiceIndex;
 
           // if 'Spanner' in e.classes;
-
-          var match = false;
           lastTimeSignature = undefined;
           for (var j = 0; j < post.length; j++) {
               m = post.get(j); // nothing but measures...
@@ -9150,7 +9213,6 @@
               mStart = m.getOffsetBySite(post);
               var mEnd = mStart + lastTimeSignature.barDuration.quarterLength;
               if (start >= mStart && start < mEnd) {
-                  match = true;
                   break;
               }
           }
@@ -9163,8 +9225,8 @@
               continue;
           }
           var insertStream = m;
-          if (voiceIndex !== undefined) {
-              insertStream = m.getElementsByClass('Voice').get(voiceIndex);
+          if (_voiceIndex !== undefined) {
+              insertStream = m.getElementsByClass('Voice').get(_voiceIndex);
           }
           insertStream.insert(oNew, e);
       }
@@ -9175,9 +9237,9 @@
           this.elements = [];
           // endElements
           // elementsChanged;
-          for (i = 0; i < post.length; i++) {
-              e = post.get(i);
-              this.insert(e.offset, e);
+          for (var _i2 = 0; _i2 < post.length; _i2++) {
+              var _e = post.get(_i2);
+              this.insert(_e.offset, _e);
           }
           return this; // javascript style;
       }
@@ -9189,7 +9251,7 @@
    * @memberof music21.stream.Stream
    * @returns {Boolean}
    */
-  stream.Stream.prototype.hasLyrics = function () {
+  stream.Stream.prototype.hasLyrics = function hasLyrics() {
       for (var i = 0; i < this.length; i++) {
           var el = this.elements[i];
           if (el.lyric !== undefined) {
@@ -9205,11 +9267,11 @@
    * @memberof music21.stream.Stream
    * @returns [music21.stream.OffsetMap]
    */
-  stream.Stream.prototype.offsetMap = function () {
+  stream.Stream.prototype.offsetMap = function Stream_offsetMap() {
       var offsetMap = [];
       var groups = [];
       if (this.hasVoices()) {
-          $$1.each(srcObj.getElementsByClass('Voice').elements, function (i, v) {
+          $$1.each(this.getElementsByClass('Voice').elements, function (i, v) {
               groups.push([v.flat, i]);
           });
       } else {
@@ -9238,7 +9300,7 @@
    * @param {Array<string>|string} classList - a list of classes to find
    * @returns {music21.stream.Stream}
    */
-  stream.Stream.prototype.getElementsByClass = function (classList) {
+  stream.Stream.prototype.getElementsByClass = function getElementsByClass(classList) {
       var tempEls = [];
       for (var i = 0; i < this.length; i++) {
           var thisEl = this.get(i);
@@ -9263,12 +9325,11 @@
    * @memberof music21.stream.Stream
    * @returns {music21.stream.Stream} this
    */
-  stream.Stream.prototype.makeAccidentals = function () {
+  stream.Stream.prototype.makeAccidentals = function makeAccidentals() {
       // cheap version of music21p method
       var extendableStepList = {};
       var stepNames = ['C', 'D', 'E', 'F', 'G', 'A', 'B'];
-      var i;
-      for (i = 0; i < stepNames.length; i++) {
+      for (var i = 0; i < stepNames.length; i++) {
           var stepName = stepNames[i];
           var stepAlter = 0;
           if (this.keySignature !== undefined) {
@@ -9283,13 +9344,13 @@
       var lastOctaveStepList = [];
       var lastStepDict = void 0;
       var p = void 0;
-      for (i = 0; i < 10; i++) {
+      for (var _i3 = 0; _i3 < 10; _i3++) {
           lastStepDict = $$1.extend({}, extendableStepList);
           lastOctaveStepList.push(lastStepDict);
       }
       var lastOctavelessStepDict = $$1.extend({}, extendableStepList); // probably unnecessary, but safe...
-      for (var i = 0; i < this.length; i++) {
-          var el = this.get(i);
+      for (var _i4 = 0; _i4 < this.length; _i4++) {
+          var el = this.get(_i4);
           if (el.pitch !== undefined) {
               // note
               p = el.pitch;
@@ -9308,7 +9369,7 @@
   };
 
   // returns pitch
-  stream.Stream.prototype._makeAccidentalForOnePitch = function (p, lastStepDict, lastOctavelessStepDict) {
+  stream.Stream.prototype._makeAccidentalForOnePitch = function _makeAccidentalForOnePitch(p, lastStepDict, lastOctavelessStepDict) {
       var newAlter = void 0;
       if (p.accidental === undefined) {
           newAlter = 0;
@@ -9316,13 +9377,13 @@
           newAlter = p.accidental.alter;
       }
       // console.log(p.name + " " + lastStepDict[p.step].toString());
-      if (lastStepDict[p.step] != newAlter || lastOctavelessStepDict[p.step] != newAlter) {
+      if (lastStepDict[p.step] !== newAlter || lastOctavelessStepDict[p.step] !== newAlter) {
           if (p.accidental === undefined) {
               p.accidental = new pitch.Accidental('natural');
           }
           p.accidental.displayStatus = true;
           // console.log("setting displayStatus to true");
-      } else if (lastStepDict[p.step] == newAlter && lastOctavelessStepDict[p.step] == newAlter) {
+      } else if (lastStepDict[p.step] === newAlter && lastOctavelessStepDict[p.step] === newAlter) {
           if (p.accidental !== undefined) {
               p.accidental.displayStatus = false;
           }
@@ -9341,7 +9402,7 @@
    * @memberof music21.stream.Stream
    * @returns {music21.stream.Stream} this
    */
-  stream.Stream.prototype.setSubstreamRenderOptions = function () {
+  stream.Stream.prototype.setSubstreamRenderOptions = function setSubstreamRenderOptions() {
       /* does nothing for standard streams ... */
       return this;
   };
@@ -9354,7 +9415,7 @@
    * @param {Boolean} [preserveEvents=false]
    * @returns {music21.stream.Stream} this
    */
-  stream.Stream.prototype.resetRenderOptions = function (recursive, preserveEvents) {
+  stream.Stream.prototype.resetRenderOptions = function resetRenderOptions(recursive, preserveEvents) {
       var oldEvents = this.renderOptions.events;
       this.renderOptions = new renderOptions.RenderOptions();
       if (preserveEvents) {
@@ -9388,7 +9449,7 @@
    * @param {DOMObject|JQueryDOMObject} canvas - a canvas object
    * @returns {music21.stream.Stream} this
    */
-  stream.Stream.prototype.renderVexflowOnCanvas = function (canvas) {
+  stream.Stream.prototype.renderVexflowOnCanvas = function renderVexflowOnCanvas(canvas) {
       if (canvas.jquery) {
           canvas = canvas[0];
       }
@@ -9408,7 +9469,7 @@
    * @param {Boolean} [ignoreSystems=false]
    * @returns {number} height in pixels
    */
-  stream.Stream.prototype.estimateStreamHeight = function (ignoreSystems) {
+  stream.Stream.prototype.estimateStreamHeight = function estimateStreamHeight(ignoreSystems) {
       var staffHeight = this.renderOptions.naiveHeight;
       var systemPadding = this.systemPadding;
       var numSystems = void 0;
@@ -9426,7 +9487,7 @@
           if (!ignoreSystems) {
               numSystems = this.numSystems();
           }
-          if (music21.debug) {
+          if (debug) {
               console.log('estimateStreamHeight for Part: numSystems [' + numSystems + '] * staffHeight [' + staffHeight + '] + (numSystems [' + numSystems + '] - 1) * systemPadding [' + systemPadding + '].');
           }
           return numSystems * staffHeight + (numSystems - 1) * systemPadding;
@@ -9441,7 +9502,7 @@
    * @memberof music21.stream.Stream
    * @returns {number} length in pixels
    */
-  stream.Stream.prototype.estimateStaffLength = function () {
+  stream.Stream.prototype.estimateStaffLength = function estimateStaffLength() {
       var i = void 0;
       var totalLength = void 0;
       if (this.renderOptions.overriddenWidth !== undefined) {
@@ -9500,7 +9561,7 @@
    * @param {object} [options] - object of playback options
    * @returns {music21.stream.Stream} this
    */
-  stream.Stream.prototype.playStream = function (options) {
+  stream.Stream.prototype.playStream = function playStream(options) {
       var params = {
           instrument: this.instrument,
           tempo: this.tempo,
@@ -9533,10 +9594,8 @@
               setTimeout(function () {
                   playNext(elements, params);
               }, milliseconds);
-          } else {
-              if (params && params.done) {
-                  params.done.call();
-              }
+          } else if (params && params.done) {
+              params.done.call();
           }
       };
       playNext(flatEls, params);
@@ -9549,11 +9608,11 @@
    * @memberof music21.stream.Stream
    * @returns {musci21.stream.Stream} this
    */
-  stream.Stream.prototype.stopPlayStream = function () {
+  stream.Stream.prototype.stopPlayStream = function stopPlayStream() {
       // turns off all currently playing MIDI notes (on any stream) and stops playback.
       this._stopPlaying = true;
       for (var i = 0; i < 127; i++) {
-          music21.MIDI.noteOff(0, i, 0);
+          MIDI.noteOff(0, i, 0);
       }
       return this;
   };
@@ -9575,7 +9634,7 @@
    * @param {number|string|undefined} height - if undefined will use `this.renderOptions.height`. If still undefined, will use `this.estimateStreamHeight()`
    * @returns {JQueryDOMObject} canvas in jquery.
    */
-  stream.Stream.prototype.createNewCanvas = function (width, height) {
+  stream.Stream.prototype.createNewCanvas = function createNewCanvas(width, height) {
       if (this.hasSubStreams()) {
           this.setSubstreamRenderOptions();
       }
@@ -9583,7 +9642,7 @@
       var newCanvas = $$1('<canvas/>'); // .css('border', '1px red solid');
 
       if (width !== undefined) {
-          if (typeof width == 'string') {
+          if (typeof width === 'string') {
               width = common.stripPx(width);
           }
           newCanvas.attr('width', width);
@@ -9617,7 +9676,7 @@
    * @param {number|string|undefined} height
    * @returns {JQueryDOMObject} canvas
    */
-  stream.Stream.prototype.createPlayableCanvas = function (width, height) {
+  stream.Stream.prototype.createPlayableCanvas = function createPlayableCanvas(width, height) {
       this.renderOptions.events.click = 'play';
       return this.createCanvas(width, height);
   };
@@ -9630,7 +9689,7 @@
    * @param {number|string|undefined} [height]
    * @returns {JQueryDOMObject} canvas
    */
-  stream.Stream.prototype.createCanvas = function (width, height) {
+  stream.Stream.prototype.createCanvas = function createCanvas(width, height) {
       var $newCanvas = this.createNewCanvas(width, height);
       this.renderVexflowOnCanvas($newCanvas);
       return $newCanvas;
@@ -9645,7 +9704,7 @@
    * @returns {DOMObject} canvas (not the jQueryDOMObject -- this is a difference with other routines and should be fixed. TODO: FIX)
    *
    */
-  stream.Stream.prototype.appendNewCanvas = function (appendElement, width, height) {
+  stream.Stream.prototype.appendNewCanvas = function appendNewCanvas(appendElement, width, height) {
       if (appendElement === undefined) {
           appendElement = 'body';
       }
@@ -9654,14 +9713,14 @@
           $appendElement = $$1(appendElement);
       }
 
-      //        if (width === undefined && this.renderOptions.maxSystemWidth === undefined) {
-      //            var $bodyElement = bodyElement;
-      //            if (bodyElement.jquery === undefined) {
-      //                $bodyElement = $(bodyElement);
-      //            }
-      //            width = $bodyElement.width();
-      //        };
-      //
+      //  if (width === undefined && this.renderOptions.maxSystemWidth === undefined) {
+      //  var $bodyElement = bodyElement;
+      //  if (bodyElement.jquery === undefined) {
+      //  $bodyElement = $(bodyElement);
+      //  }
+      //  width = $bodyElement.width();
+      //  };
+
       var canvasBlock = this.createCanvas(width, height);
       $appendElement.append(canvasBlock);
       return canvasBlock[0];
@@ -9677,7 +9736,7 @@
    * @param {Boolean} [preserveCanvasSize=false]
    * @returns {JQueryDOMObject} the canvas
    */
-  stream.Stream.prototype.replaceCanvas = function (where, preserveCanvasSize) {
+  stream.Stream.prototype.replaceCanvas = function replaceCanvas(where, preserveCanvasSize) {
       // if called with no where, replaces all the canvases on the page...
       if (where === undefined) {
           where = 'body';
@@ -9690,7 +9749,7 @@
           where = $where[0];
       }
       var $oldCanvas = void 0;
-      if ($where.prop('tagName') == 'CANVAS') {
+      if ($where.prop('tagName') === 'CANVAS') {
           $oldCanvas = $where;
       } else {
           $oldCanvas = $where.find('canvas');
@@ -9728,7 +9787,7 @@
    * @param {JQueryDOMObject|DOMObject} [where]
    * @returns {DOMObject} canvas
    */
-  stream.Stream.prototype.renderScrollableCanvas = function (where) {
+  stream.Stream.prototype.renderScrollableCanvas = function renderScrollableCanvas(where) {
       var $where = where;
       if (where === undefined) {
           $where = $$1(document.body);
@@ -9737,8 +9796,8 @@
       }
       var $innerDiv = $$1('<div>').css('position', 'absolute');
       var c = void 0;
-      this.renderOptions.events.click = function (storedThis) {
-          return function (event) {
+      this.renderOptions.events.click = function renderOptionsOuterEventClick(storedThis) {
+          return function renderOptionsInnerEventClick(event) {
               storedThis.scrollScoreStart(c, event);
           };
       }(this); // create new function with this stream as storedThis
@@ -9758,7 +9817,7 @@
    * (needed because `event.stopPropagation()` is called)
    * @returns {music21.streamInteraction.ScrollPlayer}
    */
-  stream.Stream.prototype.scrollScoreStart = function (c, event) {
+  stream.Stream.prototype.scrollScoreStart = function scrollScoreStart(c, event) {
       var scrollPlayer = new streamInteraction.ScrollPlayer(this, c);
       scrollPlayer.startPlaying();
       if (event !== undefined) {
@@ -9783,24 +9842,24 @@
    * @param {DOMObject} canvasOrDiv - canvas or the Div surrounding it.
    * @returns {music21.stream.Stream} this
    */
-  stream.Stream.prototype.setRenderInteraction = function (canvasOrDiv) {
+  stream.Stream.prototype.setRenderInteraction = function setRenderInteraction(canvasOrDiv) {
       var $canvas = canvasOrDiv;
       if (canvasOrDiv === undefined) {
-          return;
+          return this;
       } else if (canvasOrDiv.jquery === undefined) {
           $canvas = $$1(canvasOrDiv);
       }
       // TODO: assumes that canvas has a .storedStream function? can this be done by setting
       // a variable var storedStream = this; and thus get rid of the assumption?
-      var playFunc = function () {
+      var playFunc = function playStreamBound() {
           this.playStream();
       }.bind(this);
 
-      $$1.each(this.renderOptions.events, $$1.proxy(function (eventType, eventFunction) {
+      $$1.each(this.renderOptions.events, $$1.proxy(function setRenderInteractionProxy(eventType, eventFunction) {
           $canvas.off(eventType);
-          if (typeof eventFunction == 'string' && eventFunction == 'play') {
+          if (typeof eventFunction === 'string' && eventFunction === 'play') {
               $canvas.on(eventType, playFunc);
-          } else if (typeof eventFunction == 'string' && eventType == 'resize' && eventFunction == 'reflow') {
+          } else if (typeof eventFunction === 'string' && eventType === 'resize' && eventFunction === 'reflow') {
               this.windowReflowStart($canvas);
           } else if (eventFunction !== undefined) {
               $canvas.on(eventType, eventFunction);
@@ -9816,7 +9875,7 @@
    * @memberof music21.stream.Stream
    * @returns {Vex.Flow.Stave|undefined}
    */
-  stream.Stream.prototype.recursiveGetStoredVexflowStave = function () {
+  stream.Stream.prototype.recursiveGetStoredVexflowStave = function recursiveGetStoredVexflowStave() {
       var storedVFStave = this.storedVexflowStave;
       if (storedVFStave === undefined) {
           if (!this.hasSubStreams()) {
@@ -9845,7 +9904,7 @@
    * @param {Event} e
    * @returns {Array<number>} two-elements, [x, y] in pixels.
    */
-  stream.Stream.prototype.getUnscaledXYforCanvas = function (canvas, e) {
+  stream.Stream.prototype.getUnscaledXYforCanvas = function getUnscaledXYforCanvas(canvas, e) {
       var offset = null;
       if (canvas === undefined) {
           offset = { left: 0, top: 0 };
@@ -9855,8 +9914,8 @@
       /*
        * mouse event handler code from: http://diveintohtml5.org/canvas.html
        */
-      var xClick = void 0,
-          yClick = void 0;
+      var xClick = void 0;
+      var yClick = void 0;
       if (e.pageX !== undefined && e.pageY !== undefined) {
           xClick = e.pageX;
           yClick = e.pageY;
@@ -9881,10 +9940,14 @@
    * @param {Event} e
    * @returns {Array<number>} [scaledX, scaledY]
    */
-  stream.Stream.prototype.getScaledXYforCanvas = function (canvas, e) {
-      var _ = this.getUnscaledXYforCanvas(canvas, e);
-      var xPx = _[0];
-      var yPx = _[1];
+  stream.Stream.prototype.getScaledXYforCanvas = function getScaledXYforCanvas(canvas, e) {
+      var _getUnscaledXYforCanv = this.getUnscaledXYforCanvas(canvas, e);
+
+      var _getUnscaledXYforCanv2 = slicedToArray(_getUnscaledXYforCanv, 2);
+
+      var xPx = _getUnscaledXYforCanv2[0];
+      var yPx = _getUnscaledXYforCanv2[1];
+
       var pixelScaling = this.renderOptions.scaleFactor;
 
       var yPxScaled = yPx / pixelScaling.y;
@@ -9903,7 +9966,7 @@
    * @param {number} yPxScaled
    * @returns {Int}
    */
-  stream.Stream.prototype.diatonicNoteNumFromScaledY = function (yPxScaled) {
+  stream.Stream.prototype.diatonicNoteNumFromScaledY = function diatonicNoteNumFromScaledY(yPxScaled) {
       var storedVFStave = this.recursiveGetStoredVexflowStave();
       // for (var i = -10; i < 10; i++) {
       //    console.log("line: " + i + " y: " + storedVFStave.getYForLine(i));
@@ -9923,25 +9986,26 @@
    * of the note.
    *
    * systemIndex element is not used on bare Stream
-    * @memberof music21.stream.Stream
+
+   * @memberof music21.stream.Stream
    * @param {number} xPxScaled
    * @param {number} [allowablePixels=10]
    * @param {number} [unused_systemIndex]
    * @returns {music21.base.Music21Object|undefined}
    */
-  stream.Stream.prototype.noteElementFromScaledX = function (xPxScaled, allowablePixels, unused_systemIndex) {
+  stream.Stream.prototype.noteElementFromScaledX = function noteElementFromScaledX(xPxScaled, allowablePixels, unused_systemIndex) {
       var foundNote = void 0;
       if (allowablePixels === undefined) {
           allowablePixels = 10;
       }
 
       for (var i = 0; i < this.length; i++) {
-          var _n = this.get(i);
+          var n = this.get(i);
           /* should also
            * compensate for accidentals...
            */
-          if (xPxScaled > _n.x - allowablePixels && xPxScaled < _n.x + _n.width + allowablePixels) {
-              foundNote = _n;
+          if (xPxScaled > n.x - allowablePixels && xPxScaled < n.x + n.width + allowablePixels) {
+              foundNote = n;
               break; /* O(n); can be made O(log n) */
           }
       }
@@ -9965,11 +10029,14 @@
    * @param {number} y
    * @returns {Array} [diatonicNoteNum, closestXNote]
    */
-  stream.Stream.prototype.findNoteForClick = function (canvas, e, x, y) {
+  stream.Stream.prototype.findNoteForClick = function findNoteForClick(canvas, e, x, y) {
       if (x === undefined || y === undefined) {
-          var _ = this.getScaledXYforCanvas(canvas, e);
-          x = _[0];
-          y = _[1];
+          var _getScaledXYforCanvas = this.getScaledXYforCanvas(canvas, e);
+
+          var _getScaledXYforCanvas2 = slicedToArray(_getScaledXYforCanvas, 2);
+
+          x = _getScaledXYforCanvas2[0];
+          y = _getScaledXYforCanvas2[1];
       }
       var clickedDiatonicNoteNum = this.diatonicNoteNumFromScaledY(y);
       var foundNote = this.noteElementFromScaledX(x);
@@ -9988,9 +10055,9 @@
    * @param {DOMObject} canvas
    * @returns {any} output of changedCallbackFunction
    */
-  stream.Stream.prototype.noteChanged = function (clickedDiatonicNoteNum, foundNote, canvas) {
+  stream.Stream.prototype.noteChanged = function noteChanged(clickedDiatonicNoteNum, foundNote, canvas) {
       var n = foundNote;
-      p = new pitch.Pitch('C');
+      var p = new pitch.Pitch('C');
       p.diatonicNoteNum = clickedDiatonicNoteNum;
       p.accidental = n.pitch.accidental;
       n.pitch = p;
@@ -9999,6 +10066,8 @@
       this.redrawCanvas(canvas);
       if (this.changedCallbackFunction !== undefined) {
           return this.changedCallbackFunction({ foundNote: n, canvas: canvas });
+      } else {
+          return undefined;
       }
   };
   /**
@@ -10008,7 +10077,7 @@
    * @param {DOMObject} canvas
    * @returns {music21.stream.Stream} this
    */
-  stream.Stream.prototype.redrawCanvas = function (canvas) {
+  stream.Stream.prototype.redrawCanvas = function redrawCanvas(canvas) {
       // this.resetRenderOptions(true, true); // recursive, preserveEvents
       // this.setSubstreamRenderOptions();
       var $canvas = $$1(canvas); // works even if canvas is already $jquery
@@ -10028,7 +10097,7 @@
    * @param {number} [height]
    * @returns {DOMObject} &lt;div&gt; tag around the canvas.
    */
-  stream.Stream.prototype.editableAccidentalCanvas = function (width, height) {
+  stream.Stream.prototype.editableAccidentalCanvas = function editableAccidentalCanvas(width, height) {
       /*
        * Create an editable canvas with an accidental selection bar.
        */
@@ -10052,7 +10121,7 @@
    * @param {Int} maxAccidental - alter of the max accidental (default 1)
    * @returns {DOMObject} the accidental toolbar.
    */
-  stream.Stream.prototype.getAccidentalToolbar = function (minAccidental, maxAccidental) {
+  stream.Stream.prototype.getAccidentalToolbar = function getAccidentalToolbar(minAccidental, maxAccidental) {
       if (minAccidental === undefined) {
           minAccidental = -1;
       }
@@ -10062,7 +10131,7 @@
       minAccidental = Math.round(minAccidental);
       maxAccidental = Math.round(maxAccidental);
 
-      var addAccidental = function addAccidental(clickedButton, alter) {
+      var addAccidental = function addAccidentalClicked(clickedButton, alter) {
           /*
            * To be called on a button...
            *   this will usually refer to a window Object
@@ -10071,7 +10140,7 @@
           var siblingCanvas = accidentalToolbar.parent().find('canvas');
           var s = siblingCanvas[0].storedStream;
           if (s.activeNote !== undefined) {
-              n = s.activeNote;
+              var n = s.activeNote;
               n.pitch.accidental = new pitch.Accidental(alter);
               /* console.log(n.pitch.name); */
               s.redrawCanvas(siblingCanvas[0]);
@@ -10083,14 +10152,14 @@
 
       var buttonDiv = $$1('<div/>').attr('class', 'buttonToolbar vexflowToolbar').css('position', 'absolute').css('top', '10px');
       buttonDiv.append($$1('<span/>').css('margin-left', '50px'));
-      var clickFunc = function clickFunc() {
+      var clickFunc = function addAccidentalClickFunc() {
           addAccidental(this, $$1(this).data('alter'));
       };
       for (var i = minAccidental; i <= maxAccidental; i++) {
-          var acc = new music21.pitch.Accidental(i);
+          var acc = new pitch.Accidental(i);
           buttonDiv.append($$1('<button>' + acc.unicodeModifier + '</button>').data('alter', i).click(clickFunc)
-          //                                .css('font-family', 'Bravura')
-          //                                .css('font-size', '40px')
+          //              .css('font-family', 'Bravura')
+          //              .css('font-size', '40px')
           );
       }
       return buttonDiv;
@@ -10100,7 +10169,7 @@
    * @memberof music21.stream.Stream
    * @returns {DOMObject} a play toolbar
    */
-  stream.Stream.prototype.getPlayToolbar = function () {
+  stream.Stream.prototype.getPlayToolbar = function getPlayToolbar() {
       var buttonDiv = $$1('<div/>').attr('class', 'playToolbar vexflowToolbar').css('position', 'absolute').css('top', '10px');
       buttonDiv.append($$1('<span/>').css('margin-left', '50px'));
       buttonDiv.append($$1('<button>&#9658</button>').click(function () {
@@ -10122,7 +10191,7 @@
    * @param {JQueryDOMObject} jCanvas
    * @returns {music21.stream.Stream} this
    */
-  stream.Stream.prototype.windowReflowStart = function (jCanvas) {
+  stream.Stream.prototype.windowReflowStart = function windowReflowStart(jCanvas) {
       // set up a bunch of windowReflow bindings that affect the canvas.
       var callingStream = this;
       var jCanvasNow = jCanvas;
@@ -10141,7 +10210,7 @@
           var canvasObj = callingStream.appendNewCanvas(jCanvasParent);
           jCanvasNow = $$1(canvasObj);
       });
-      $$1(window).resize(function () {
+      $$1(window).resize(function resizeCanvasTo() {
           if (this.resizeTO) {
               clearTimeout(this.resizeTO);
           }
@@ -10149,7 +10218,7 @@
               $$1(this).trigger('resizeEnd');
           }, 200);
       });
-      setTimeout(function () {
+      setTimeout(function triggerResizeOnCreateCanvas() {
           var $window = $$1(window);
           var doResize = $window.data('triggerResizeOnCreateCanvas');
           if (doResize === undefined || doResize === true) {
@@ -10165,7 +10234,7 @@
    * @memberof music21.stream.Stream
    * @returns {Boolean}
    */
-  stream.Stream.prototype.hasVoices = function () {
+  stream.Stream.prototype.hasVoices = function hasVoices() {
       for (var i = 0; i < this.length; i++) {
           var el = this.get(i);
           if (el.isClassOrSubclass('Voice')) {
@@ -10181,7 +10250,7 @@
    * @memberof music21.stream
    * @extends music21.stream.Stream
    */
-  stream.Voice = function () {
+  stream.Voice = function Voice() {
       stream.Stream.call(this);
       this.classes.push('Voice');
   };
@@ -10194,7 +10263,7 @@
    * @memberof music21.stream
    * @extends music21.stream.Stream
    */
-  stream.Measure = function () {
+  stream.Measure = function Measure() {
       stream.Stream.call(this);
       this.classes.push('Measure');
       this.number = 0; // measure number
@@ -10207,10 +10276,10 @@
    * Part -- specialized to handle Measures inside it
    *
    * @class Part
-      * @memberof music21.stream
-      * @extends music21.stream.Stream
+   * @memberof music21.stream
+   * @extends music21.stream.Stream
    */
-  stream.Part = function () {
+  stream.Part = function Part() {
       stream.Stream.call(this);
       this.classes.push('Part');
       this.systemHeight = this.renderOptions.naiveHeight;
@@ -10223,10 +10292,10 @@
    *
    * Does not change any reflow information, so by default it's always 1.
    *
-      * @memberof music21.stream.Part
+   * @memberof music21.stream.Part
    * @returns {Number}
    */
-  stream.Part.prototype.numSystems = function () {
+  stream.Part.prototype.numSystems = function Part_numSystems() {
       var numSystems = 0;
       var subStreams = this.getElementsByClass('Stream');
       for (var i = 0; i < subStreams.length; i++) {
@@ -10246,7 +10315,7 @@
    * @memberof music21.stream.Part
    * @returns {Array<number>}
    */
-  stream.Part.prototype.getMeasureWidths = function () {
+  stream.Part.prototype.getMeasureWidths = function getMeasureWidths() {
       /* call after setSubstreamRenderOptions */
       var measureWidths = [];
       for (var i = 0; i < this.length; i++) {
@@ -10267,7 +10336,7 @@
    * @memberof music21.stream.Part
    * @returns {number}
    */
-  stream.Part.prototype.estimateStaffLength = function () {
+  stream.Part.prototype.estimateStaffLength = function estimateStaffLength() {
       if (this.renderOptions.overriddenWidth !== undefined) {
           // console.log("Overridden staff width: " + this.renderOptions.overriddenWidth);
           return this.renderOptions.overriddenWidth;
@@ -10307,16 +10376,14 @@
    * @param systemHeight
    * @returns {Array}
    */
-  stream.Part.prototype.fixSystemInformation = function (systemHeight) {
+  stream.Part.prototype.fixSystemInformation = function fixSystemInformation(systemHeight) {
       /*
        * console.log('system height: ' + systemHeight);
        */
       if (systemHeight === undefined) {
           systemHeight = this.systemHeight; /* part.show() called... */
-      } else {
-          if (music21.debug) {
-              console.log('overridden systemHeight: ' + systemHeight);
-          }
+      } else if (debug) {
+          console.log('overridden systemHeight: ' + systemHeight);
       }
       var systemPadding = this.renderOptions.systemPadding || this.renderOptions.naiveSystemPadding;
       var measureWidths = this.getMeasureWidths();
@@ -10330,7 +10397,7 @@
       for (i = 0; i < measureWidths.length; i++) {
           var currentRight = currentLeft + measureWidths[i];
           /* console.log("left: " + currentLeft + " ; right: " + currentRight + " ; m: " + i); */
-          if (currentRight > maxSystemWidth && lastSystemBreak != i) {
+          if (currentRight > maxSystemWidth && lastSystemBreak !== i) {
               systemBreakIndexes.push(i - 1);
               systemCurrentWidths.push(currentLeft);
               // console.log('setting new width at ' + currentLeft);
@@ -10355,7 +10422,7 @@
           }
           currentLeft = m.renderOptions.left;
 
-          if (systemBreakIndexes.indexOf(i - 1) != -1) {
+          if (systemBreakIndexes.indexOf(i - 1) !== -1) {
               /* first measure of new System */
               leftSubtract = currentLeft - 20;
               m.renderOptions.displayClef = true;
@@ -10396,7 +10463,7 @@
    *
    * @memberof music21.stream.Part
    */
-  stream.Part.prototype.setSubstreamRenderOptions = function () {
+  stream.Part.prototype.setSubstreamRenderOptions = function setSubstreamRenderOptions() {
       var currentMeasureIndex = 0; /* 0 indexed for now */
       var currentMeasureLeft = 20;
       var rendOp = this.renderOptions;
@@ -10422,7 +10489,7 @@
                   elRendOp.displayKeySignature = true;
                   elRendOp.displayTimeSignature = true;
               } else {
-                  if (el._clef !== undefined && lastClef !== undefined && el._clef.name != lastClef.name) {
+                  if (el._clef !== undefined && lastClef !== undefined && el._clef.name !== lastClef.name) {
                       console.log('changing clefs for ', elRendOp.measureIndex, ' from ', lastClef.name, ' to ', el._clef.name);
                       lastClef = el._clef;
                       elRendOp.displayClef = true;
@@ -10430,14 +10497,14 @@
                       elRendOp.displayClef = false;
                   }
 
-                  if (el._keySignature !== undefined && lastKeySignature !== undefined && el._keySignature.sharps != lastKeySignature.sharps) {
+                  if (el._keySignature !== undefined && lastKeySignature !== undefined && el._keySignature.sharps !== lastKeySignature.sharps) {
                       lastKeySignature = el._keySignature;
                       elRendOp.displayKeySignature = true;
                   } else {
                       elRendOp.displayKeySignature = false;
                   }
 
-                  if (el._timeSignature !== undefined && lastTimeSignature !== undefined && el._timeSignature.ratioString != lastTimeSignature.ratioString) {
+                  if (el._timeSignature !== undefined && lastTimeSignature !== undefined && el._timeSignature.ratioString !== lastTimeSignature.ratioString) {
                       lastTimeSignature = el._timeSignature;
                       elRendOp.displayTimeSignature = true;
                   } else {
@@ -10461,13 +10528,17 @@
    * @param {Event} e
    * @returns {Array} [clickedDiatonicNoteNum, foundNote]
    */
-  stream.Part.prototype.findNoteForClick = function (canvas, e) {
-      var _ = this.getScaledXYforCanvas(canvas, e);
-      var x = _[0];
-      var y = _[1];
+  stream.Part.prototype.findNoteForClick = function findNoteForClick(canvas, e) {
+      var _getScaledXYforCanvas3 = this.getScaledXYforCanvas(canvas, e);
 
-      // music21.debug = true;
-      if (music21.debug) {
+      var _getScaledXYforCanvas4 = slicedToArray(_getScaledXYforCanvas3, 2);
+
+      var x = _getScaledXYforCanvas4[0];
+      var y = _getScaledXYforCanvas4[1];
+
+      // debug = true;
+
+      if (debug) {
           console.log('this.estimateStreamHeight(): ' + this.estimateStreamHeight() + ' / $(canvas).height(): ' + $$1(canvas).height());
       }
       var systemPadding = this.renderOptions.systemPadding;
@@ -10492,7 +10563,7 @@
    * @param {Int} systemIndex
    * @returns {music21.base.Music21Object|undefined}
    */
-  stream.Part.prototype.noteElementFromScaledX = function (scaledX, allowablePixels, systemIndex) {
+  stream.Part.prototype.noteElementFromScaledX = function noteElementFromScaledX(scaledX, allowablePixels, systemIndex) {
       var gotMeasure = void 0;
       for (var i = 0; i < this.length; i++) {
           // TODO: if not measure, do not crash...
@@ -10502,14 +10573,14 @@
           var right = left + rendOp.width;
           var top = rendOp.top;
           var bottom = top + rendOp.height;
-          if (music21.debug) {
+          if (debug) {
               console.log('Searching for X:' + Math.round(scaledX) + ' in M ' + i + ' with boundaries L:' + left + ' R:' + right + ' T: ' + top + ' B: ' + bottom);
           }
           if (scaledX >= left && scaledX <= right) {
               if (systemIndex === undefined) {
                   gotMeasure = m;
                   break;
-              } else if (rendOp.systemIndex == systemIndex) {
+              } else if (rendOp.systemIndex === systemIndex) {
                   gotMeasure = m;
                   break;
               }
@@ -10517,6 +10588,8 @@
       }
       if (gotMeasure) {
           return gotMeasure.noteElementFromScaledX(scaledX, allowablePixels);
+      } else {
+          return undefined;
       }
   };
 
@@ -10527,7 +10600,7 @@
    * @memberof music21.stream
    * @extends music21.stream.Stream
    */
-  stream.Score = function () {
+  stream.Score = function Score() {
       stream.Stream.call(this);
       this.classes.push('Score');
       this.measureWidths = [];
@@ -10541,7 +10614,7 @@
                   var numParts = this.parts.length;
                   var systemPadding = this.renderOptions.systemPadding;
                   if (systemPadding === undefined) {
-                      if (numParts == 1) {
+                      if (numParts === 1) {
                           systemPadding = this.renderOptions.naiveSystemPadding; // fix to 0
                       } else {
                           systemPadding = this.renderOptions.naiveSystemPadding;
@@ -10563,14 +10636,12 @@
    * @memberof music21.stream.Score
    * @returns {music21.stream.Score} this
    */
-  stream.Score.prototype.setSubstreamRenderOptions = function () {
+  stream.Score.prototype.setSubstreamRenderOptions = function setSubstreamRenderOptions() {
       var currentPartNumber = 0;
       var currentPartTop = 0;
       var partSpacing = this.partSpacing;
-      var i = void 0,
-          el = void 0;
-      for (i = 0; i < this.length; i++) {
-          el = this.get(i);
+      for (var i = 0; i < this.length; i++) {
+          var el = this.get(i);
 
           if (el.isClassOrSubclass('Part')) {
               el.renderOptions.partIndex = currentPartNumber;
@@ -10583,10 +10654,10 @@
       this.evenPartMeasureSpacing();
       var ignoreNumSystems = true;
       var currentScoreHeight = this.estimateStreamHeight(ignoreNumSystems);
-      for (i = 0; i < this.length; i++) {
-          el = this.get(i);
-          if (el.isClassOrSubclass('Part')) {
-              el.fixSystemInformation(currentScoreHeight);
+      for (var _i5 = 0; _i5 < this.length; _i5++) {
+          var _el = this.get(_i5);
+          if (_el.isClassOrSubclass('Part')) {
+              _el.fixSystemInformation(currentScoreHeight);
           }
       }
       this.renderOptions.height = this.estimateStreamHeight();
@@ -10598,16 +10669,16 @@
    * @memberof music21.stream.Score
    * @returns {number}
    */
-  stream.Score.prototype.estimateStaffLength = function () {
+  stream.Score.prototype.estimateStaffLength = function estimateStaffLength() {
       // override
       if (this.renderOptions.overriddenWidth !== undefined) {
           // console.log("Overridden staff width: " + this.renderOptions.overriddenWidth);
           return this.renderOptions.overriddenWidth;
       }
       for (var i = 0; i < this.length; i++) {
-          var _p = this.get(i);
-          if (_p.isClassOrSubclass('Part')) {
-              return _p.estimateStaffLength();
+          var p = this.get(i);
+          if (p.isClassOrSubclass('Part')) {
+              return p.estimateStaffLength();
           }
       }
       // no parts found in score... use part...
@@ -10629,7 +10700,7 @@
    * @param {object} params -- passed to each part
    * @returns {music21.stream.Score} this
    */
-  stream.Score.prototype.playStream = function (params) {
+  stream.Score.prototype.playStream = function playStream(params) {
       // play multiple parts in parallel...
       for (var i = 0; i < this.length; i++) {
           var el = this.get(i);
@@ -10645,7 +10716,7 @@
    * @memberof music21.stream.Score
    * @returns {music21.stream.Score} this
    */
-  stream.Score.prototype.stopPlayStream = function () {
+  stream.Score.prototype.stopPlayStream = function stopPlayStream() {
       for (var i = 0; i < this.length; i++) {
           var el = this.get(i);
           if (el.isClassOrSubclass('Part')) {
@@ -10669,7 +10740,7 @@
    * @memberof music21.stream.Score
    * @returns {Array<number>}
    */
-  stream.Score.prototype.getMaxMeasureWidths = function () {
+  stream.Score.prototype.getMaxMeasureWidths = function getMaxMeasureWidths() {
       var maxMeasureWidths = [];
       var measureWidthsArrayOfArrays = [];
       var i = void 0;
@@ -10697,16 +10768,20 @@
    * @param {Event} e
    * @returns {Array} [diatonicNoteNum, m21Element]
    */
-  stream.Score.prototype.findNoteForClick = function (canvas, e) {
+  stream.Score.prototype.findNoteForClick = function findNoteForClick(canvas, e) {
       /**
        * Returns a list of [clickedDiatonicNoteNum, foundNote] for a
        * click event, taking into account that the note will be in different
        * Part objects (and different Systems) given the height and possibly different Systems.
        *
        */
-      var _ = this.getScaledXYforCanvas(canvas, e);
-      var x = _[0];
-      var y = _[1];
+      var _getScaledXYforCanvas5 = this.getScaledXYforCanvas(canvas, e);
+
+      var _getScaledXYforCanvas6 = slicedToArray(_getScaledXYforCanvas5, 2);
+
+      var x = _getScaledXYforCanvas6[0];
+      var y = _getScaledXYforCanvas6[1];
+
 
       var numParts = this.parts.length;
       var systemHeight = numParts * this.partSpacing + this.systemPadding;
@@ -10728,7 +10803,7 @@
    * @memberof music21.stream.Score
    * @returns {Int}
    */
-  stream.Score.prototype.numSystems = function () {
+  stream.Score.prototype.numSystems = function Score_numSystems() {
       return this.getElementsByClass('Part').get(0).numSystems();
   };
 
@@ -10738,12 +10813,12 @@
    * @memberof music21.stream.Score
    * @returns {music21.stream.Score} this
    */
-  stream.Score.prototype.evenPartMeasureSpacing = function () {
+  stream.Score.prototype.evenPartMeasureSpacing = function evenPartMeasureSpacing() {
       var measureStacks = [];
       var currentPartNumber = 0;
       var maxMeasureWidth = [];
-      var i = void 0,
-          j = void 0;
+      var i = void 0;
+      var j = void 0;
       for (i = 0; i < this.length; i++) {
           var el = this.get(i);
           if (el.isClassOrSubclass('Part')) {
@@ -10753,10 +10828,8 @@
                   if (measureStacks[j] === undefined) {
                       measureStacks[j] = [];
                       maxMeasureWidth[j] = thisMeasureWidth;
-                  } else {
-                      if (thisMeasureWidth > maxMeasureWidth[j]) {
-                          maxMeasureWidth[j] = thisMeasureWidth;
-                      }
+                  } else if (thisMeasureWidth > maxMeasureWidth[j]) {
+                      maxMeasureWidth[j] = thisMeasureWidth;
                   }
                   measureStacks[j][currentPartNumber] = thisMeasureWidth;
               }
@@ -10780,7 +10853,7 @@
   };
 
   // small Class; a namedtuple in music21p
-  stream.OffsetMap = function (element, offset, endTime, voiceIndex) {
+  stream.OffsetMap = function OffsetMap(element, offset, endTime, voiceIndex) {
       this.element = element;
       this.offset = offset;
       this.endTime = endTime;
@@ -10789,44 +10862,44 @@
 
   // Tests...
 
-  stream.tests = function () {
+  stream.tests = function streamTests() {
       test('music21.stream.Stream', function () {
-          var s = new music21.stream.Stream();
-          s.append(new music21.note.Note('C#5'));
-          s.append(new music21.note.Note('D#5'));
-          var n = new music21.note.Note('F5');
+          var s = new stream.Stream();
+          s.append(new note.Note('C#5'));
+          s.append(new note.Note('D#5'));
+          var n = new note.Note('F5');
           n.duration.type = 'half';
           s.append(n);
           equal(s.length, 3, 'Simple stream length');
       });
 
       test('music21.stream.Stream.duration', function () {
-          var s = new music21.stream.Stream();
+          var s = new stream.Stream();
           equal(s.duration.quarterLength, 0, 'EmptyString QuarterLength');
-          s.append(new music21.note.Note('C#5'));
+          s.append(new note.Note('C#5'));
           equal(s.duration.quarterLength, 1.0, '1 quarter QuarterLength');
-          var n = new music21.note.Note('F5');
+          var n = new note.Note('F5');
           n.duration.type = 'half';
           s.append(n);
           equal(s.duration.quarterLength, 3.0, '3 quarter QuarterLength');
-          s.duration = new music21.duration.Duration(3.0);
-          s.append(new music21.note.Note('D#5'));
+          s.duration = new duration.Duration(3.0);
+          s.append(new note.Note('D#5'));
           equal(s.duration.quarterLength, 3.0, 'overridden duration -- remains');
 
-          var sc = new music21.stream.Score();
-          var p1 = new music21.stream.Part();
-          var p2 = new music21.stream.Part();
-          var m1 = new music21.stream.Measure();
-          var m2 = new music21.stream.Measure();
-          var n11 = new music21.note.Note();
-          var n12 = new music21.note.Note();
+          var sc = new stream.Score();
+          var p1 = new stream.Part();
+          var p2 = new stream.Part();
+          var m1 = new stream.Measure();
+          var m2 = new stream.Measure();
+          var n11 = new note.Note();
+          var n12 = new note.Note();
           n12.duration.type = 'half';
-          var n13 = new music21.note.Note();
+          var n13 = new note.Note();
           n13.duration.type = 'eighth'; // incomplete measure
           m1.append(n11);
           m1.append(n12);
           m1.append(n13);
-          var n21 = new music21.note.Note();
+          var n21 = new note.Note();
           n21.duration.type = 'whole';
           m2.append(n21);
           p1.append(m1);
@@ -10841,11 +10914,11 @@
       });
 
       test('music21.stream.Stream.insert and offsets', function () {
-          var s = new music21.stream.Stream();
-          s.append(new music21.note.Note('C#5'));
-          var n3 = new music21.note.Note('E5');
+          var s = new stream.Stream();
+          s.append(new note.Note('C#5'));
+          var n3 = new note.Note('E5');
           s.insert(2.0, n3);
-          var n2 = new music21.note.Note('D#5');
+          var n2 = new note.Note('D#5');
           s.insert(1.0, n2);
           equal(s.get(0).name, 'C#');
           equal(s.get(1).name, 'D#');
@@ -10853,13 +10926,13 @@
           equal(s.get(0).offset, 0.0);
           equal(s.get(1).offset, 1.0);
           equal(s.get(2).offset, 2.0);
-          var p = new music21.stream.Part();
-          var m1 = new music21.stream.Measure();
-          var n1 = new music21.note.Note('C#');
+          var p = new stream.Part();
+          var m1 = new stream.Measure();
+          var n1 = new note.Note('C#');
           n1.duration.type = 'whole';
           m1.append(n1);
-          var m2 = new music21.stream.Measure();
-          n2 = new music21.note.Note('D#');
+          var m2 = new stream.Measure();
+          n2 = new note.Note('D#');
           n2.duration.type = 'whole';
           m2.append(n2);
           p.append(m1);
@@ -10874,10 +10947,10 @@
       });
 
       test('music21.stream.Stream.canvas', function () {
-          var s = new music21.stream.Stream();
-          s.append(new music21.note.Note('C#5'));
-          s.append(new music21.note.Note('D#5'));
-          var n = new music21.note.Note('F5');
+          var s = new stream.Stream();
+          s.append(new note.Note('C#5'));
+          s.append(new note.Note('D#5'));
+          var n = new note.Note('F5');
           n.duration.type = 'half';
           s.append(n);
           var c = s.createNewCanvas(100, 50);
@@ -10886,11 +10959,11 @@
       });
 
       test('music21.stream.Stream.getElementsByClass', function () {
-          var s = new music21.stream.Stream();
-          var n1 = new music21.note.Note('C#5');
-          var n2 = new music21.note.Note('D#5');
-          var r = new music21.note.Rest();
-          var tc = new music21.clef.TrebleClef();
+          var s = new stream.Stream();
+          var n1 = new note.Note('C#5');
+          var n2 = new note.Note('D#5');
+          var r = new note.Rest();
+          var tc = new clef.TrebleClef();
           s.append(tc);
           s.append(n1);
           s.append(r);
@@ -10907,9 +10980,9 @@
           equal(c.length, 3, 'got multiple subclasses');
       });
       test('music21.stream.offsetMap', function () {
-          var n = new music21.note.Note('G3');
-          var o = new music21.note.Note('A3');
-          var s = new music21.stream.Measure();
+          var n = new note.Note('G3');
+          var o = new note.Note('A3');
+          var s = new stream.Measure();
           s.insert(0, n);
           s.insert(0.5, o);
           var om = s.offsetMap();
@@ -10925,19 +10998,19 @@
           equal(omo.endTime, 1.5, 'omo endTime should be 1.5');
       });
       test('music21.stream.Stream appendNewCanvas ', function () {
-          var n = new music21.note.Note('G3');
-          var s = new music21.stream.Measure();
+          var n = new note.Note('G3');
+          var s = new stream.Measure();
           s.append(n);
           s.appendNewCanvas(document.body);
           equal(s.length, 1, 'ensure that should have one note');
-          var n1 = new music21.note.Note('G3');
-          var s1 = new music21.stream.Measure();
+          var n1 = new note.Note('G3');
+          var s1 = new stream.Measure();
           s1.append(n1);
-          var n2 = new music21.note.Note('G3');
+          var n2 = new note.Note('G3');
           s1.append(n2);
-          var n3 = new music21.note.Note('G3');
+          var n3 = new note.Note('G3');
           s1.append(n3);
-          var n4 = new music21.note.Note('G3');
+          var n4 = new note.Note('G3');
           s1.append(n4);
           var div1 = s1.editableAccidentalCanvas();
           $$1(document.body).append(div1);
@@ -11595,7 +11668,7 @@
    * @property {Int} beat - current beat number
    * @property {Int} chirpTimeout - an index of a timeout object for chirping
    */
-  tempo.Metronome = function (tempoInt) {
+  tempo.Metronome = function Metronome(tempoInt) {
       prebase.ProtoM21Object.call(this);
       this.classes.push('Metronome');
       this._tempo = 60; // overridden by music21.tempo.baseTempo;
@@ -11640,9 +11713,9 @@
   tempo.Metronome.prototype = new prebase.ProtoM21Object();
   tempo.Metronome.prototype.constructor = tempo.Metronome;
 
-  tempo.Metronome.prototype._silentFlash = function (flashColor) {
-      this.$metronomeDiv.find('.metroFlash').css('background-color', flashColor).fadeOut(this.beatLength * 1000 * 1 / 4, function () {
-          $(this).css('background-color', '#ffffff').fadeIn(1);
+  tempo.Metronome.prototype._silentFlash = function _sildentFlash(flashColor) {
+      this.$metronomeDiv.find('.metroFlash').css('background-color', flashColor).fadeOut(this.beatLength * 1000 * 1 / 4, function silentFadeOut() {
+          $$1(this).css('background-color', '#ffffff').fadeIn(1);
       });
   };
 
@@ -11651,23 +11724,23 @@
    *
    * @memberof music21.tempo.Metronome
    */
-  tempo.Metronome.prototype.chirp = function () {
+  tempo.Metronome.prototype.chirp = function chirp() {
       this.beat += 1;
       if (this.beat > this.numBeatsPerMeasure) {
           this.beat = 1;
-          if (this.silent != true) {
-              music21.MIDI.noteOn(0, 96, 100, 0);
-              music21.MIDI.noteOff(0, 96, .1);
+          if (this.silent !== true) {
+              MIDI.noteOn(0, 96, 100, 0);
+              MIDI.noteOff(0, 96, 0.1);
           }
-          if (this.flash == true) {
+          if (this.flash === true) {
               this._silentFlash('#0000f0');
           }
       } else {
-          if (this.silent != true) {
-              music21.MIDI.noteOn(0, 84, 70, 0);
-              music21.MIDI.noteOff(0, 84, .1);
+          if (this.silent !== true) {
+              MIDI.noteOn(0, 84, 70, 0);
+              MIDI.noteOff(0, 84, 0.1);
           }
-          if (this.flash == true) {
+          if (this.flash === true) {
               this._silentFlash('#ff0000');
           }
       }
@@ -11682,8 +11755,8 @@
    *
    * @memberof music21.tempo.Metronome
    */
-  tempo.Metronome.prototype.stopChirp = function () {
-      if (this.chirpTimeout != undefined) {
+  tempo.Metronome.prototype.stopChirp = function stopChirp() {
+      if (this.chirpTimeout !== undefined) {
           clearTimeout(this.chirpTimeout);
           this.chirpTimeout = undefined;
       }
@@ -11702,13 +11775,13 @@
    * @param {Int} n - number of clicks to the right
    * @returns {number} new tempo
    */
-  tempo.Metronome.prototype.increaseSpeed = function (n) {
+  tempo.Metronome.prototype.increaseSpeed = function increaseSpeed(n) {
       // increase by one metronome 'click' for every n
       if (n === undefined) {
           n = 1;
       }
       for (var i = 0; i < n; i++) {
-          t = this.tempo;
+          var t = this.tempo;
           for (var tr = 0; tr < this.tempoRanges.length; tr++) {
               var tempoExtreme = this.tempoRanges[tr];
               var tempoIncrease = this.tempoIncreases[tr];
@@ -11733,13 +11806,13 @@
    * @param {Int} n - number of clicks to the left
    * @returns {number} new tempo
    */
-  tempo.Metronome.prototype.decreaseSpeed = function (n) {
+  tempo.Metronome.prototype.decreaseSpeed = function decreaseSpeed(n) {
       if (n === undefined) {
           n = 1;
       }
       for (var i = 0; i < n; i++) {
-          t = this.tempo;
-          trL = this.tempoRanges.length;
+          var t = this.tempo;
+          var trL = this.tempoRanges.length;
           for (var tr = 1; tr <= trL; tr++) {
               var tempoExtreme = this.tempoRanges[trL - tr];
               var tempoIncrease = this.tempoIncreases[trL - tr + 1];
@@ -11761,44 +11834,46 @@
    * @param {JQueryDOMObject|DOMObject} [where='body']
    * @returns {JQueryDOMObject} - a div holding the metronome.
    */
-  tempo.Metronome.prototype.addDiv = function (where) {
-      var jWhere = undefined;
+  tempo.Metronome.prototype.addDiv = function addDiv(where) {
+      var jWhere = void 0;
       if (where !== undefined && where.jquery !== undefined) {
           jWhere = where;
       } else if (where !== undefined) {
-          jWhere = $(where);
+          jWhere = $$1(where);
       } else {
-          jWhere = $('body');
+          jWhere = $$1('body');
       }
       var metroThis = this;
-      var tempoHolder = $('<span class="tempoHolder">' + this.tempo.toString() + '</span>').css({
+      var tempoHolder = $$1('<span class="tempoHolder">' + this.tempo.toString() + '</span>').css({
           'font-size': '24px',
           'padding-left': '10px',
           'padding-right': '10px'
       });
-      var newDiv = $('<div class="metronomeRendered"></div>');
+      var newDiv = $$1('<div class="metronomeRendered"></div>');
       newDiv.append(tempoHolder);
-      var b1 = $('<button>start</button>');
+      var b1 = $$1('<button>start</button>');
       b1.on('click', function () {
           metroThis.chirp();
       });
-      var b2 = $('<button>stop</button>');
+      var b2 = $$1('<button>stop</button>');
       b2.on('click', function () {
           metroThis.stopChirp();
       });
       newDiv.prepend(b2);
       newDiv.prepend(b1);
-      var b3 = $('<button>up</button>');
-      b3.on('click', function () {
-          metroThis.increaseSpeed();$(this).prevAll('.tempoHolder').html(metroThis.tempo.toString());
+      var b3 = $$1('<button>up</button>');
+      b3.on('click', function increaseSpeedButton() {
+          metroThis.increaseSpeed();
+          $$1(this).prevAll('.tempoHolder').html(metroThis.tempo.toString());
       });
-      var b4 = $('<button>down</button>');
-      b4.on('click', function () {
-          metroThis.decreaseSpeed();$(this).prevAll('.tempoHolder').html(metroThis.tempo.toString());
+      var b4 = $$1('<button>down</button>');
+      b4.on('click', function decreaseSpeedButton() {
+          metroThis.decreaseSpeed();
+          $$1(this).prevAll('.tempoHolder').html(metroThis.tempo.toString());
       });
       newDiv.append(b3);
       newDiv.append(b4);
-      var $flash = $('<span class="metroFlash">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>');
+      var $flash = $$1('<span class="metroFlash">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>');
       $flash.css('margin-left', '40px').css('height', '40px');
       newDiv.append($flash);
 
@@ -11820,7 +11895,7 @@
    * @memberof music21
    * @requires music21/prebase
    */
-  var _tie = {};
+  var tie = {};
 
   /**
    * Tie class. Found in {@link music21.note.GeneralNote} `.tie`.
@@ -11849,7 +11924,7 @@
 
     return Tie;
   }(prebase.ProtoM21Object);
-  _tie.Tie = Tie;
+  tie.Tie = Tie;
 
   /**
    * music21j -- Javascript reimplementation of Core music21p features.
@@ -11884,28 +11959,28 @@
    * @memberof music21.tinyNotation
    */
   tinyNotation.regularExpressions = {
-  	REST: /r/,
-  	OCTAVE2: /([A-G])[A-G]+/,
-  	OCTAVE3: /([A-G])/,
-  	OCTAVE5: /([a-g])(\'+)/,
-  	OCTAVE4: /([a-g])/,
-  	EDSHARP: /\((\#+)\)/,
-  	EDFLAT: /\((\-+)\)/,
-  	EDNAT: /\(n\)/,
-  	SHARP: /^[A-Ga-g]+\'*(\#+)/, // simple notation finds
-  	FLAT: /^[A-Ga-g]+\'*(\-+)/, // double sharps too
-  	NAT: /^[A-Ga-g]+\'*n/, // explicit naturals
-  	TYPE: /(\d+)/,
-  	TIE: /.\~/, // not preceding ties
-  	PRECTIE: /\~/, // front ties
-  	ID_EL: /\=([A-Za-z0-9]*)/,
-  	LYRIC: /\_(.*)/,
-  	DOT: /\.+/,
-  	TIMESIG: /(\d+)\/(\d+)/,
+      REST: /r/,
+      OCTAVE2: /([A-G])[A-G]+/,
+      OCTAVE3: /([A-G])/,
+      OCTAVE5: /([a-g])(\'+)/,
+      OCTAVE4: /([a-g])/,
+      EDSHARP: /\((\#+)\)/,
+      EDFLAT: /\((\-+)\)/,
+      EDNAT: /\(n\)/,
+      SHARP: /^[A-Ga-g]+\'*(\#+)/, // simple notation finds
+      FLAT: /^[A-Ga-g]+\'*(\-+)/, // double sharps too
+      NAT: /^[A-Ga-g]+\'*n/, // explicit naturals
+      TYPE: /(\d+)/,
+      TIE: /.\~/, // not preceding ties
+      PRECTIE: /\~/, // front ties
+      ID_EL: /\=([A-Za-z0-9]*)/,
+      LYRIC: /\_(.*)/,
+      DOT: /\.+/,
+      TIMESIG: /(\d+)\/(\d+)/,
 
-  	TRIP: /trip\{/,
-  	QUAD: /quad\{/,
-  	ENDBRAC: /\}$/
+      TRIP: /trip\{/,
+      QUAD: /quad\{/,
+      ENDBRAC: /\}$/
   };
   /**
    * Function, not class.
@@ -11925,131 +12000,131 @@
    * // 6.0
    */
   tinyNotation.TinyNotation = function (textIn) {
-  	textIn = textIn.trim();
-  	var tokens = textIn.split(' ');
-  	var p = new stream.Part();
-  	var m = new stream.Measure();
-  	var currentTSBarDuration = 4.0;
-  	var lastDurationQL = 1.0;
-  	var storedDict = {
-  		lastNoteTied: false,
-  		inTrip: false,
-  		inQuad: false,
-  		endTupletAfterNote: false
-  	};
-  	var tnre = tinyNotation.regularExpressions; // faster typing
-  	for (var i = 0; i < tokens.length; i++) {
-  		// check at first so that a full measure but not over full
-  		// gets returned as a stream.Measure object.
-  		if (m.duration.quarterLength >= currentTSBarDuration) {
-  			p.append(m);
-  			m = new stream.Measure();
-  		}
+      textIn = textIn.trim();
+      var tokens = textIn.split(' ');
+      var p = new stream.Part();
+      var m = new stream.Measure();
+      var currentTSBarDuration = 4.0;
+      var lastDurationQL = 1.0;
+      var storedDict = {
+          lastNoteTied: false,
+          inTrip: false,
+          inQuad: false,
+          endTupletAfterNote: false
+      };
+      var tnre = tinyNotation.regularExpressions; // faster typing
+      for (var i = 0; i < tokens.length; i++) {
+          // check at first so that a full measure but not over full
+          // gets returned as a stream.Measure object.
+          if (m.duration.quarterLength >= currentTSBarDuration) {
+              p.append(m);
+              m = new stream.Measure();
+          }
 
-  		var token = tokens[i];
-  		var noteObj = undefined;
-  		var MATCH = void 0;
-  		if (MATCH = tnre.TRIP.exec(token)) {
-  			token = token.slice(5); // cut...
-  			storedDict.inTrip = true;
-  		}
-  		if (MATCH = tnre.QUAD.exec(token)) {
-  			token = token.slice(5); // cut...
-  			storedDict.inQuad = true;
-  		}
-  		if (MATCH = tnre.ENDBRAC.exec(token)) {
-  			token = token.slice(0, -1); // cut...
-  			storedDict.endTupletAfterNote = true;
-  		}
+          var token = tokens[i];
+          var noteObj = undefined;
+          var MATCH = void 0;
+          if (MATCH = tnre.TRIP.exec(token)) {
+              token = token.slice(5); // cut...
+              storedDict.inTrip = true;
+          }
+          if (MATCH = tnre.QUAD.exec(token)) {
+              token = token.slice(5); // cut...
+              storedDict.inQuad = true;
+          }
+          if (MATCH = tnre.ENDBRAC.exec(token)) {
+              token = token.slice(0, -1); // cut...
+              storedDict.endTupletAfterNote = true;
+          }
 
-  		if (MATCH = tnre.TIMESIG.exec(token)) {
-  			var ts = new meter.TimeSignature();
-  			ts.numerator = parseInt(MATCH[1]);
-  			ts.denominator = parseInt(MATCH[2]);
-  			m.timeSignature = ts;
-  			currentTSBarDuration = ts.barDuration.quarterLength;
-  			// console.log(currentTSBarDuration);
-  			continue;
-  		} else if (tnre.REST.exec(token)) {
-  			noteObj = new note.Rest(lastDurationQL);
-  		} else if (MATCH = tnre.OCTAVE2.exec(token)) {
-  			noteObj = new note.Note(MATCH[1], lastDurationQL);
-  			noteObj.pitch.octave = 4 - MATCH[0].length;
-  		} else if (MATCH = tnre.OCTAVE3.exec(token)) {
-  			noteObj = new note.Note(MATCH[1], lastDurationQL);
-  			noteObj.pitch.octave = 3;
-  		} else if (MATCH = tnre.OCTAVE5.exec(token)) {
-  			// must match octave 5 before 4
-  			noteObj = new note.Note(MATCH[1].toUpperCase(), lastDurationQL);
-  			noteObj.pitch.octave = 3 + MATCH[0].length;
-  		} else if (MATCH = tnre.OCTAVE4.exec(token)) {
-  			noteObj = new note.Note(MATCH[1].toUpperCase(), lastDurationQL);
-  			noteObj.pitch.octave = 4;
-  		}
+          if (MATCH = tnre.TIMESIG.exec(token)) {
+              var ts = new meter.TimeSignature();
+              ts.numerator = parseInt(MATCH[1]);
+              ts.denominator = parseInt(MATCH[2]);
+              m.timeSignature = ts;
+              currentTSBarDuration = ts.barDuration.quarterLength;
+              // console.log(currentTSBarDuration);
+              continue;
+          } else if (tnre.REST.exec(token)) {
+              noteObj = new note.Rest(lastDurationQL);
+          } else if (MATCH = tnre.OCTAVE2.exec(token)) {
+              noteObj = new note.Note(MATCH[1], lastDurationQL);
+              noteObj.pitch.octave = 4 - MATCH[0].length;
+          } else if (MATCH = tnre.OCTAVE3.exec(token)) {
+              noteObj = new note.Note(MATCH[1], lastDurationQL);
+              noteObj.pitch.octave = 3;
+          } else if (MATCH = tnre.OCTAVE5.exec(token)) {
+              // must match octave 5 before 4
+              noteObj = new note.Note(MATCH[1].toUpperCase(), lastDurationQL);
+              noteObj.pitch.octave = 3 + MATCH[0].length;
+          } else if (MATCH = tnre.OCTAVE4.exec(token)) {
+              noteObj = new note.Note(MATCH[1].toUpperCase(), lastDurationQL);
+              noteObj.pitch.octave = 4;
+          }
 
-  		if (noteObj == undefined) {
-  			continue;
-  		}
-  		if (tnre.TIE.exec(token)) {
-  			noteObj.tie = new _tie.Tie('start');
-  			if (storedDict['lastNoteTied']) {
-  				noteObj.tie.type = 'continue';
-  			}
-  			storedDict['lastNoteTied'] = true;
-  		} else {
-  			if (storedDict['lastNoteTied']) {
-  				noteObj.tie = new _tie.Tie('stop');
-  				storedDict['lastNoteTied'] = false;
-  			}
-  		}
-  		if (tnre.SHARP.exec(token)) {
-  			noteObj.pitch.accidental = new pitch.Accidental('sharp');
-  		} else if (tnre.FLAT.exec(token)) {
-  			noteObj.pitch.accidental = new pitch.Accidental('flat');
-  		} else if (tnre.NAT.exec(token)) {
-  			noteObj.pitch.accidental = new pitch.Accidental('natural');
-  			noteObj.pitch.accidental.displayType = 'always';
-  		}
+          if (noteObj == undefined) {
+              continue;
+          }
+          if (tnre.TIE.exec(token)) {
+              noteObj.tie = new tie.Tie('start');
+              if (storedDict['lastNoteTied']) {
+                  noteObj.tie.type = 'continue';
+              }
+              storedDict['lastNoteTied'] = true;
+          } else {
+              if (storedDict['lastNoteTied']) {
+                  noteObj.tie = new tie.Tie('stop');
+                  storedDict['lastNoteTied'] = false;
+              }
+          }
+          if (tnre.SHARP.exec(token)) {
+              noteObj.pitch.accidental = new pitch.Accidental('sharp');
+          } else if (tnre.FLAT.exec(token)) {
+              noteObj.pitch.accidental = new pitch.Accidental('flat');
+          } else if (tnre.NAT.exec(token)) {
+              noteObj.pitch.accidental = new pitch.Accidental('natural');
+              noteObj.pitch.accidental.displayType = 'always';
+          }
 
-  		if (MATCH = tnre.TYPE.exec(token)) {
-  			var durationType = parseInt(MATCH[0]);
-  			noteObj.duration.quarterLength = 4.0 / durationType;
-  		}
+          if (MATCH = tnre.TYPE.exec(token)) {
+              var durationType = parseInt(MATCH[0]);
+              noteObj.duration.quarterLength = 4.0 / durationType;
+          }
 
-  		if (MATCH = tnre.DOT.exec(token)) {
-  			var numDots = MATCH[0].length;
-  			var multiplier = 1 + (1 - Math.pow(.5, numDots));
-  			noteObj.duration.quarterLength = multiplier * noteObj.duration.quarterLength;
-  		}
-  		lastDurationQL = noteObj.duration.quarterLength;
-  		// do before appending tuplets
+          if (MATCH = tnre.DOT.exec(token)) {
+              var numDots = MATCH[0].length;
+              var multiplier = 1 + (1 - Math.pow(.5, numDots));
+              noteObj.duration.quarterLength = multiplier * noteObj.duration.quarterLength;
+          }
+          lastDurationQL = noteObj.duration.quarterLength;
+          // do before appending tuplets
 
-  		if (storedDict.inTrip) {
-  			// console.log(noteObj.duration.quarterLength);
-  			noteObj.duration.appendTuplet(new duration.Tuplet(3, 2, noteObj.duration.quarterLength));
-  		}
-  		if (storedDict.inQuad) {
-  			noteObj.duration.appendTuplet(new duration.Tuplet(4, 3, noteObj.duration.quarterLength));
-  		}
-  		if (storedDict.endTupletAfterNote) {
-  			storedDict.inTrip = false;
-  			storedDict.inQuad = false;
-  			storedDict.endTupletAfterNote = false;
-  		}
-  		m.append(noteObj);
-  	}
-  	if (p.length > 0) {
-  		p.append(m);
-  		var thisClef = clef.bestClef(p);
-  		p.clef = thisClef;
-  		return p; // return measure object if one measure or less
-  	} else {
-  		m.clef = clef.bestClef(m);
-  		return m;
-  	}
+          if (storedDict.inTrip) {
+              // console.log(noteObj.duration.quarterLength);
+              noteObj.duration.appendTuplet(new duration.Tuplet(3, 2, noteObj.duration.quarterLength));
+          }
+          if (storedDict.inQuad) {
+              noteObj.duration.appendTuplet(new duration.Tuplet(4, 3, noteObj.duration.quarterLength));
+          }
+          if (storedDict.endTupletAfterNote) {
+              storedDict.inTrip = false;
+              storedDict.inQuad = false;
+              storedDict.endTupletAfterNote = false;
+          }
+          m.append(noteObj);
+      }
+      if (p.length > 0) {
+          p.append(m);
+          var thisClef = clef.bestClef(p);
+          p.clef = thisClef;
+          return p; // return measure object if one measure or less
+      } else {
+          m.clef = clef.bestClef(m);
+          return m;
+      }
   };
 
-  // render notation divs in HTML
+  //render notation divs in HTML
   /**
    * Render all the TinyNotation classes in the DOM as notation
    *
@@ -12059,46 +12134,46 @@
    * @param {string} classTypes - a JQuery selector to find elements to replace.
    */
   tinyNotation.renderNotationDivs = function (classTypes, selector) {
-  	if (classTypes == undefined) {
-  		classTypes = '.music21.tinyNotation';
-  	}
-  	var allRender = [];
-  	if (selector == undefined) {
-  		allRender = $(classTypes);
-  	} else {
-  		if (selector.jquery == undefined) {
-  			selector = $(selector);
-  		}
-  		allRender = selector.find(classTypes);
-  	}
-  	for (var i = 0; i < allRender.length; i++) {
-  		var thisTN = allRender[i];
-  		var thisTNJQ = $(thisTN);
-  		var thisTNContents = undefined;
-  		if (thisTNJQ.attr('tinynotationcontents') !== undefined) {
-  			thisTNContents = thisTNJQ.attr('tinynotationcontents');
-  		} else if (thisTN.textContent != undefined) {
-  			thisTNContents = thisTN.textContent;
-  			thisTNContents = thisTNContents.replace(/s+/g, ' '); // no line-breaks, etc.
-  		}
+      if (classTypes == undefined) {
+          classTypes = '.music21.tinyNotation';
+      }
+      var allRender = [];
+      if (selector == undefined) {
+          allRender = $(classTypes);
+      } else {
+          if (selector.jquery == undefined) {
+              selector = $(selector);
+          }
+          allRender = selector.find(classTypes);
+      }
+      for (var i = 0; i < allRender.length; i++) {
+          var thisTN = allRender[i];
+          var thisTNJQ = $(thisTN);
+          var thisTNContents = undefined;
+          if (thisTNJQ.attr('tinynotationcontents') !== undefined) {
+              thisTNContents = thisTNJQ.attr('tinynotationcontents');
+          } else if (thisTN.textContent != undefined) {
+              thisTNContents = thisTN.textContent;
+              thisTNContents = thisTNContents.replace(/s+/g, ' '); // no line-breaks, etc.
+          }
 
-  		if (String.prototype.trim != undefined && thisTNContents != undefined) {
-  			thisTNContents = thisTNContents.trim(); // remove leading, trailing whitespace
-  		}
-  		if (thisTNContents) {
-  			var st = tinyNotation.TinyNotation(thisTNContents);
-  			if (thisTNJQ.hasClass('noPlayback')) {
-  				st.renderOptions.events['click'] = undefined;
-  			}
-  			var newCanvas = st.createCanvas();
+          if (String.prototype.trim != undefined && thisTNContents != undefined) {
+              thisTNContents = thisTNContents.trim(); // remove leading, trailing whitespace
+          }
+          if (thisTNContents) {
+              var st = tinyNotation.TinyNotation(thisTNContents);
+              if (thisTNJQ.hasClass('noPlayback')) {
+                  st.renderOptions.events['click'] = undefined;
+              }
+              var newCanvas = st.createCanvas();
 
-  			thisTNJQ.attr('tinynotationcontents', thisTNContents);
-  			thisTNJQ.empty();
-  			thisTNJQ.data('stream', st);
-  			thisTNJQ.append(newCanvas);
-  			// console.log(thisTNContents);
-  		}
-  	}
+              thisTNJQ.attr('tinynotationcontents', thisTNContents);
+              thisTNJQ.empty();
+              thisTNJQ.data('stream', st);
+              thisTNJQ.append(newCanvas);
+              // console.log(thisTNContents);
+          }
+      }
   };
 
   /**
@@ -12147,7 +12222,7 @@
   webmidi.selectedJazzInterface = undefined; // not the same as "" etc. uses last selected interface by default.
 
   /* ----------- callbacks --------- */
-  // todo: all callbacks (incl. raw, sendOutChord) should be able to be a function or an array of functions
+  //todo: all callbacks (incl. raw, sendOutChord) should be able to be a function or an array of functions
   /**
    * callBacks is an object with three keys:
    *
@@ -12182,7 +12257,7 @@
    * @param {byte} b - data 2
    * @param {byte} c - data 3
    */
-  webmidi.jazzMidiInArrived = function (t, a, b, c) {
+  webmidi.jazzMidiInArrived = function jazzMidiInArrived(t, a, b, c) {
       var webmidiEvent = {
           timestamp: t,
           data: [a, b, c]
@@ -12204,18 +12279,20 @@
    * @memberof music21.webmidi
    * @param {MidiMessageEvent} midiMessageEvent - midi Information
    */
-  webmidi.midiInArrived = function (midiMessageEvent) {
-      t = midiMessageEvent.timeStamp;
-      a = midiMessageEvent.data[0];
-      b = midiMessageEvent.data[1];
-      c = midiMessageEvent.data[2];
+  webmidi.midiInArrived = function midiInArrived(midiMessageEvent) {
+      var t = midiMessageEvent.timeStamp;
+      var a = midiMessageEvent.data[0];
+      var b = midiMessageEvent.data[1];
+      var c = midiMessageEvent.data[2];
       var eventObject = webmidi.callBacks.raw(t, a, b, c);
       if (webmidi.callBacks.general instanceof Array) {
-          webmidi.callBacks.general.forEach(function (el, index, array) {
+          return webmidi.callBacks.general.forEach(function (el, index, array) {
               el(eventObject);
           });
       } else if (webmidi.callBacks.general !== undefined) {
           return webmidi.callBacks.general(eventObject);
+      } else {
+          return undefined;
       }
   };
 
@@ -12231,11 +12308,11 @@
    * @param {Boolean} [override=false] - if this method has been called successfully before return the storedPlugin unless override is true.
    * @returns {Jazz|undefined} Jazz MIDI plugin object
    */
-  webmidi.createPlugin = function (appendElement, override) {
-      if (webmidi.storedPlugin && override != true) {
+  webmidi.createPlugin = function createPlugin(appendElement, override) {
+      if (webmidi.storedPlugin && override !== true) {
           return webmidi.storedPlugin;
       }
-      if (typeof appendElement == 'undefined') {
+      if (typeof appendElement === 'undefined') {
           appendElement = $$1('body')[0];
       }
       var obj = document.createElement('object');
@@ -12266,8 +12343,8 @@
    * @param {object} [options] - see createSelector for details
    * @returns {DOMObject|undefined} DOM object containing the select tag, or undefined if Jazz cannot be loaded.
    */
-  webmidi.createJazzSelector = function ($newSelect, options) {
-      params = {};
+  webmidi.createJazzSelector = function createJazzSelector($newSelect, options) {
+      var params = {};
       common.merge(params, options);
 
       var Jazz = webmidi.createPlugin();
@@ -12277,12 +12354,12 @@
 
       $newSelect.change(function () {
           var selectedInput = $$1('#midiInSelect option:selected').text();
-          if (selectedInput != 'None selected') {
+          if (selectedInput !== 'None selected') {
               webmidi.selectedJazzInterface = Jazz.MidiInOpen(selectedInput, webmidi.jazzMidiInArrived);
           } else {
               Jazz.MidiInClose();
           }
-          if (music21.debug) {
+          if (debug) {
               console.log('current input changed to: ' + webmidi.selectedInterface);
           }
       });
@@ -12294,7 +12371,7 @@
       var allAppendOptions = [];
       for (var i = 0; i < midiOptions.length; i++) {
           var $appendOption = $$1("<option value='" + midiOptions[i] + "'>" + midiOptions[i] + '</option>');
-          if (midiOptions[i] == webmidi.selectedJazzInterface) {
+          if (midiOptions[i] === webmidi.selectedJazzInterface) {
               $appendOption.attr('selected', true);
               anySelected = true;
           }
@@ -12302,7 +12379,7 @@
           // console.log(appendOption);
           $newSelect.append($appendOption);
       }
-      if (anySelected == false && midiOptions.length > 0) {
+      if (anySelected === false && midiOptions.length > 0) {
           $newSelect.val(midiOptions[0]);
           allAppendOptions[0].attr('selected', true);
           webmidi.selectedJazzInterface = Jazz.MidiInOpen(midiOptions[0], webmidi.jazzMidiInArrived);
@@ -12318,26 +12395,27 @@
       } else if (anySelected === false && params.oninputempty !== undefined) {
           params.oninputempty();
       }
+      return $newSelect;
   };
 
   /**
    * Function to be called if the webmidi-api selection changes. (not jazz)
    *
    */
-  webmidi.selectionChanged = function () {
+  webmidi.selectionChanged = function selectionChanged() {
       var selectedInput = webmidi.$select.val();
-      if (selectedInput == webmidi.selectedInputPort) {
-          return;
+      if (selectedInput === webmidi.selectedInputPort) {
+          return false;
       }
       var storedStateChange = webmidi.access.onstatechange; // port.close() fires onstatechange, so turn off for a moment.
       webmidi.access.onstatechange = function () {};
-      if (music21.debug) {
+      if (debug) {
           console.log('current input changed to: ' + selectedInput);
       }
       webmidi.selectedInputPort = selectedInput;
 
       webmidi.access.inputs.forEach(function (port) {
-          if (port.name == selectedInput) {
+          if (port.name === selectedInput) {
               port.onmidimessage = webmidi.midiInArrived;
           } else {
               port.close();
@@ -12363,17 +12441,17 @@
    * @param {object} [options] - see above.
    * @returns {DOMObject|undefined} DOM object containing the select tag, or undefined if Jazz cannot be loaded.
    */
-  webmidi.createSelector = function ($midiSelectDiv, options) {
+  webmidi.createSelector = function createSelector($midiSelectDiv, options) {
       var params = {
           autoUpdate: true,
           existingMidiSelect: false
       };
       common.merge(params, options);
 
-      if (typeof $midiSelectDiv == 'undefined') {
+      if (typeof $midiSelectDiv === 'undefined') {
           $midiSelectDiv = $$1('body');
       }
-      if ($midiSelectDiv.jquery == undefined) {
+      if ($midiSelectDiv.jquery === undefined) {
           $midiSelectDiv = $$1($midiSelectDiv);
       }
       var $newSelect = void 0;
@@ -12416,7 +12494,7 @@
       return $newSelect;
   };
 
-  webmidi.populateSelect = function () {
+  webmidi.populateSelect = function populateSelect() {
       var inputs = webmidi.access.inputs;
       webmidi.$select.empty();
 
@@ -12488,7 +12566,7 @@
   </div>
   </body>
   </html>
-  **/
+   **/
 
   /**
    * Widgets module -- random widgets.  See {@link music21.widgets}
@@ -12520,7 +12598,7 @@
    * @property {music21.stream.Stream} stream
    * @property {DOMObject} [canvasDiv]
    */
-  widgets.RhythmChooser = function (s, c) {
+  widgets.RhythmChooser = function RhythmChooser(s, c) {
       this.stream = s;
       this.canvasDiv = c;
       this.values = ['whole', 'half', 'quarter', 'eighth', '16th', 'dot', 'undo'];
@@ -12544,14 +12622,14 @@
        * @memberof music21.widgets.RhythmChooser#
        */
       this.buttonHandlers = {
-          'undo': function undo(t) {
+          'undo': function buttonHandlers_undo(t) {
               if (this.stream.length > 0) {
                   return this.stream.pop();
               } else {
                   return undefined;
               }
           },
-          'dot': function dot(t) {
+          'dot': function buttonHandlers_dot(t) {
               if (this.stream.length > 0) {
                   var el = this.stream.pop();
                   el.duration.dots += 1;
@@ -12561,14 +12639,14 @@
                   return undefined;
               }
           },
-          'tie': function tie(t) {
+          'tie': function buttonHandlers_tie(t) {
               if (this.stream.length > 0) {
                   var el = this.stream.get(-1);
-                  el.tie = new _tie.Tie('start');
+                  el.tie = new tie.Tie('start');
                   this.tieActive = true;
               }
           },
-          'default': function _default(t) {
+          'default': function buttonHandlers_default(t) {
               var newN = new note.Note('B4');
               newN.stemDirection = 'up';
               if (t.indexOf('rest_') === 0) {
@@ -12577,7 +12655,7 @@
               }
               newN.duration.type = t;
               if (this.tieActive) {
-                  newN.tie = new _tie.Tie('stop');
+                  newN.tie = new tie.Tie('stop');
                   this.tieActive = false;
               }
               this.stream.append(newN);
@@ -12598,7 +12676,7 @@
        * @memberof music21.widgets.RhythmChooser#
        */
       this.measureButtonHandlers = {
-          'undo': function undo(t) {
+          'undo': function measureButtonHandlers_undo(t) {
               if (this.stream.length > 0) {
                   var lastMeasure = this.stream.get(-1);
                   var retValue = lastMeasure.pop();
@@ -12610,7 +12688,7 @@
                   return undefined;
               }
           },
-          'dot': function dot(t) {
+          'dot': function measureButtonHandlers_dot(t) {
               if (this.stream.length > 0) {
                   var lastMeasure = this.stream.get(-1);
                   var el = lastMeasure.pop();
@@ -12621,7 +12699,7 @@
                   return undefined;
               }
           },
-          'addMeasure': function addMeasure(t) {
+          'addMeasure': function measureButtonHandlers_addMeasure(t) {
               var lastMeasure = this.stream.get(-1);
               var m = new stream.Measure();
               m.renderOptions.staffLines = lastMeasure.renderOptions.staffLines;
@@ -12631,7 +12709,7 @@
               m.autoBeam = lastMeasure.autoBeam;
               this.stream.append(m);
           },
-          'tie': function tie(t) {
+          'tie': function measureButtonHandlers_tie(t) {
               var lastMeasure = this.stream.get(-1);
               var el = void 0;
               if (lastMeasure.length > 0) {
@@ -12647,11 +12725,11 @@
                   if (el.tie !== undefined) {
                       tieType = 'continue';
                   }
-                  el.tie = new _tie.Tie(tieType);
+                  el.tie = new tie.Tie(tieType);
                   this.tieActive = true;
               }
           },
-          'default': function _default(t) {
+          'default': function measureButtonHandlers_default(t) {
               var newN = new note.Note('B4');
               newN.stemDirection = 'up';
               if (t.indexOf('rest_') === 0) {
@@ -12660,7 +12738,7 @@
               }
               newN.duration.type = t;
               if (this.tieActive) {
-                  newN.tie = new _tie.Tie('stop');
+                  newN.tie = new tie.Tie('stop');
                   this.tieActive = false;
               }
               var lastMeasure = this.stream.get(-1);
@@ -12717,7 +12795,7 @@
    * @memberof music21.widgets.RhythmChooser
    * @param {DOMObject|JQueryDOMObject} where
    */
-  widgets.RhythmChooser.prototype.addDiv = function (where) {
+  widgets.RhythmChooser.prototype.addDiv = function addDiv(where) {
       var $where = where;
       if (where !== undefined && where.jquery === undefined) {
           $where = $$1(where);
@@ -12731,7 +12809,7 @@
               $inner.attr('style', this.styles[value]);
           }
 
-          $inner.click(function (value) {
+          $inner.click(function rhythmButtonDiv_click(value) {
               this.handleButton(value);
           }.bind(this, value));
           $outer.append($inner);
@@ -12748,7 +12826,7 @@
    * @memberof music21.widgets.RhythmChooser
    * @param {string} t - type of button pressed.
    */
-  widgets.RhythmChooser.prototype.handleButton = function (t) {
+  widgets.RhythmChooser.prototype.handleButton = function handleButton(t) {
       var bhs = this.buttonHandlers;
       if (this.measureMode) {
           bhs = this.measureButtonHandlers;
@@ -12775,6 +12853,7 @@
   //import { orchestralScore } from './music21/orchestralScore';
   var music21$1 = {};
   music21$1.common = common;
+  music21$1.debug = debug;
   music21$1.prebase = prebase;
   music21$1.base = base;
 
@@ -12801,7 +12880,7 @@
   music21$1.stream = stream;
   music21$1.streamInteraction = streamInteraction;
   music21$1.tempo = tempo;
-  music21$1.tie = _tie;
+  music21$1.tie = tie;
   music21$1.tinyNotation = tinyNotation;
   music21$1.vfShow = vfShow;
   music21$1.webmidi = webmidi;

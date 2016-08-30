@@ -49,7 +49,7 @@ webmidi.storedPlugin = undefined;
 webmidi.selectedJazzInterface = undefined; // not the same as "" etc. uses last selected interface by default.
 
 /* ----------- callbacks --------- */
-// todo: all callbacks (incl. raw, sendOutChord) should be able to be a function or an array of functions
+//todo: all callbacks (incl. raw, sendOutChord) should be able to be a function or an array of functions
 /**
  * callBacks is an object with three keys:
  *
@@ -64,10 +64,10 @@ webmidi.selectedJazzInterface = undefined; // not the same as "" etc. uses last 
  * @memberof music21.webmidi
  */
 webmidi.callBacks = {
-    raw: (t, a, b, c) => new miditools.Event(t, a, b, c),
-    general: [miditools.sendToMIDIjs,
-               miditools.quantizeLastNote],
-    sendOutChord: (arrayOfNotes) => { },
+        raw: (t, a, b, c) => new miditools.Event(t, a, b, c),
+        general: [miditools.sendToMIDIjs,
+                  miditools.quantizeLastNote],
+                  sendOutChord: (arrayOfNotes) => { },
 };
 
 /**
@@ -85,8 +85,8 @@ webmidi.callBacks = {
  */
 webmidi.jazzMidiInArrived = function jazzMidiInArrived(t, a, b, c) {
     const webmidiEvent = {
-        timestamp: t,
-        data: [a, b, c],
+            timestamp: t,
+            data: [a, b, c],
     };
     return webmidi.midiInArrived(webmidiEvent);
 };
@@ -270,8 +270,8 @@ webmidi.selectionChanged = function selectionChanged() {
  */
 webmidi.createSelector = function createSelector($midiSelectDiv, options) {
     const params = {
-        autoUpdate: true,
-        existingMidiSelect: false,
+            autoUpdate: true,
+            existingMidiSelect: false,
     };
     common.merge(params, options);
 
@@ -394,4 +394,4 @@ MIDI Input: <div id="putMidiSelectHere" />
 </div>
 </body>
 </html>
-**/
+ **/
