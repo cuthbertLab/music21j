@@ -6,8 +6,8 @@
  * http://jazz-soft.net/doc/Jazz-Plugin/Plugin.html
  * P.S. by the standards of divinity of most major religions, Sema Kachalo is a god.
  *
- * Copyright (c) 2014-15, Michael Scott Cuthbert and cuthbertLab
- * Based on music21 (=music21p), Copyright (c) 2006–15, Michael Scott Cuthbert and cuthbertLab
+ * Copyright (c) 2014-16, Michael Scott Cuthbert and cuthbertLab
+ * Based on music21 (=music21p), Copyright (c) 2006–16, Michael Scott Cuthbert and cuthbertLab
  *
  */
 import * as $ from 'jquery';

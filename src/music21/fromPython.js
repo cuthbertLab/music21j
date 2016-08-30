@@ -2,8 +2,8 @@
  * music21j -- Javascript reimplementation of Core music21p features.
  * music21/fromPython -- Conversion from music21p jsonpickle streams
  *
- * Copyright (c) 2013-14, Michael Scott Cuthbert and cuthbertLab
- * Based on music21 (=music21p), Copyright (c) 2006–14, Michael Scott Cuthbert and cuthbertLab
+ * Copyright (c) 2013-16, Michael Scott Cuthbert and cuthbertLab
+ * Based on music21 (=music21p), Copyright (c) 2006–16, Michael Scott Cuthbert and cuthbertLab
  *
  * usage:
  *

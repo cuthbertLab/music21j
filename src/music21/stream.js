@@ -4,8 +4,8 @@
  *
  * Does not implement the full features of music21p Streams by a long shot...
  *
- * Copyright (c) 2013-14, Michael Scott Cuthbert and cuthbertLab
- * Based on music21 (=music21p), Copyright (c) 2006-14, Michael Scott Cuthbert and cuthbertLab
+ * Copyright (c) 2013-16, Michael Scott Cuthbert and cuthbertLab
+ * Based on music21 (=music21p), Copyright (c) 2006-16, Michael Scott Cuthbert and cuthbertLab
  *
  */
 import * as $ from 'jquery';
