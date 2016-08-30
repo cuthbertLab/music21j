@@ -48,28 +48,6 @@ webmidi.jazzDownloadUrl = 'http://jazz-soft.net/download/Jazz-Plugin/';
 webmidi.storedPlugin = undefined;
 webmidi.selectedJazzInterface = undefined; // not the same as "" etc. uses last selected interface by default.
 
-/* ----------- callbacks --------- */
-//todo: all callbacks (incl. raw, sendOutChord) should be able to be a function or an array of functions
-/**
- * callBacks is an object with three keys:
- *
- * - raw: function (t, a, b,c) to call when any midievent arrives. Default: `function (t, a, b, c) { return new miditools.Event(t, a, b, c); }`
- * - general: function ( miditools.Event() ) to call when an Event object has been created. Default: `[miditools.sendToMIDIjs, miditools.quantizeLastNote]`
- * - sendOutChord: function (array_of_note.Note_objects) to call when a sufficient time has passed to build a chord from input. Default: empty function.
- *
- * At present, only "general" can take an Array of event listening functions, but I hope to change that for sendOutChord also.
- *
- * "general" is usually the callback list to play around with.
- *
- * @memberof music21.webmidi
- */
-webmidi.callBacks = {
-        raw: (t, a, b, c) => new miditools.Event(t, a, b, c),
-        general: [miditools.sendToMIDIjs,
-                  miditools.quantizeLastNote],
-                  sendOutChord: (arrayOfNotes) => { },
-};
-
 /**
  * Called by Jazz MIDI plugin when an event arrives.
  *
@@ -111,13 +89,13 @@ webmidi.midiInArrived = function midiInArrived(midiMessageEvent) {
     const a = midiMessageEvent.data[0];
     const b = midiMessageEvent.data[1];
     const c = midiMessageEvent.data[2];
-    const eventObject = webmidi.callBacks.raw(t, a, b, c);
-    if (webmidi.callBacks.general instanceof Array) {
-        return webmidi.callBacks.general.forEach((el, index, array) => {
+    const eventObject = miditools.callBacks.raw(t, a, b, c);
+    if (miditools.callBacks.general instanceof Array) {
+        return miditools.callBacks.general.forEach((el, index, array) => {
             el(eventObject);
         });
-    } else if (webmidi.callBacks.general !== undefined) {
-        return webmidi.callBacks.general(eventObject);
+    } else if (miditools.callBacks.general !== undefined) {
+        return miditools.callBacks.general(eventObject);
     } else {
         return undefined;
     }
@@ -348,6 +326,8 @@ webmidi.populateSelect = function populateSelect() {
     webmidi.$select.change();
 };
 
+// this allows for the deprecated webmidi.callBacks to still work for now.
+webmidi.callBacks = miditools.callBacks;
 
 /**
  * Example smallest usage of the webmidi toolkit.  see testHTML/midiInRequire.html
@@ -379,7 +359,7 @@ webmidi.populateSelect = function populateSelect() {
     require(['music21'], function () {
         s = new music21.stream.Stream();
         music21.webmidi.createSelector($("#putMidiSelectHere"));
-        music21.webmidi.callBacks.general = displayStream;
+        music21.miditools.callBacks.general = displayStream;
     });
 
 

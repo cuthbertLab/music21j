@@ -1,9 +1,7 @@
-import { common } from './common';
 /**
  * module for things that all music21-created objects, not just objects that can live in
  * Stream.elements should inherit. See the {@link music21.prebase} namespace.
  *
- * @requires music21/common
  * @exports music21/prebase
  */
 /**
@@ -24,7 +22,7 @@ export const prebase = {};
  * @property {Boolean} isProtoM21Object - Does this object descend from {@link music21.prebase.ProtoM21Object}: obviously true.
  * @property {Boolean} isMusic21Object - Does this object descend from {@link music21.base.Music21Object}; default false.
  */
-prebase.ProtoM21Object = function() {
+prebase.ProtoM21Object = function ProtoM21Object() {
     this.classes = ['ProtoM21Object'];
     this.isProtoM21Object = true;
     this.isMusic21Object = false;
@@ -49,12 +47,12 @@ prebase.ProtoM21Object = function() {
  * n2.duration.quarterLength == 4; // true
  * n2 === n1; // false
  */
-prebase.ProtoM21Object.prototype.clone = function() {
+prebase.ProtoM21Object.prototype.clone = function clone() {
     const ret = new this.constructor();
 
     // todo: do Arrays work?
     for (const key in this) { // not that we ONLY copy the keys in Ret -- it's easier that way.
-        if (this.hasOwnProperty(key) == false) {
+        if ({}.hasOwnProperty.call(this, key) === false) {
             continue;
         }
         if (key in this._cloneCallbacks) {
@@ -66,13 +64,13 @@ prebase.ProtoM21Object.prototype.clone = function() {
                 this._cloneCallbacks[key](key, ret, this);
             }
         } else if (
-                Object.getOwnPropertyDescriptor(this, key).get !== undefined ||
-                Object.getOwnPropertyDescriptor(this, key).set !== undefined
+                Object.getOwnPropertyDescriptor(this, key).get !== undefined
+                || Object.getOwnPropertyDescriptor(this, key).set !== undefined
         ) {
             // do nothing
-        } else if (typeof (this[key]) == 'function') {
+        } else if (typeof (this[key]) === 'function') {
             // do nothing -- events might not be copied.
-        } else if (typeof (this[key]) == 'object' && this[key] !== null &&
+        } else if (typeof (this[key]) === 'object' && this[key] !== null &&
                 this[key].isProtoM21Object) {
             // console.log('cloning ', key);
             ret[key] = this[key].clone();
@@ -104,12 +102,12 @@ prebase.ProtoM21Object.prototype.clone = function() {
  * n.isClassOrSubclass('Music21Object'); // true
  * n.isClassOrSubclass(['Duration', 'NotRest']); // true // NotRest
  */
-prebase.ProtoM21Object.prototype.isClassOrSubclass = function(testClass) {
-    if (testClass instanceof Array == false) {
+prebase.ProtoM21Object.prototype.isClassOrSubclass = function isClassOrSubclass(testClass) {
+    if (testClass instanceof Array === false) {
         testClass = [testClass];
     }
     for (let i = 0; i < testClass.length; i++) {
-        if (this.classes.indexOf(testClass[i]) != -1) {
+        if (this.classes.indexOf(testClass[i]) !== -1) {
             return true;
         }
     }

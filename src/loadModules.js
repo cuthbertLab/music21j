@@ -23,7 +23,6 @@ import { layout } from './music21/layout';
 import { meter } from './music21/meter';
 import { miditools } from './music21/miditools';
 import { note } from './music21/note';
-//import { orchestralScore } from './music21/orchestralScore';
 import { pitch } from './music21/pitch';
 import { renderOptions } from './music21/renderOptions';
 import { roman } from './music21/roman';
@@ -35,6 +34,8 @@ import { tinyNotation } from './music21/tinyNotation';
 import { vfShow } from './music21/vfShow';
 import { webmidi } from './music21/webmidi';
 import { widgets } from './music21/widgets';
+
+
 
 export var music21 = {}
 music21.common = common;
@@ -58,7 +59,6 @@ music21.layout = layout;
 music21.meter = meter;
 music21.miditools = miditools;
 music21.note = note;
-//music21.orchestralScore = orchestralScore;
 music21.pitch = pitch;
 music21.renderOptions = renderOptions;
 music21.roman = roman;

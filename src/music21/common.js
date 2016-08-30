@@ -1,27 +1,27 @@
-        /**
-         * common functions
-         *
-         * @exports music21/common
-         */
-    /**
-     * functions that are useful everywhere...
-     *
-     * @namespace music21.common
-     * @memberof music21
-     */
+/**
+ * common functions
+ *
+ * @exports music21/common
+ */
+/**
+ * functions that are useful everywhere...
+ *
+ * @namespace music21.common
+ * @memberof music21
+ */
 export const common = {};
 
-    /**
-     * concept borrowed from Vex.Flow.Merge, though here the source can be undefined;
-     * http://stackoverflow.com/questions/171251/how-can-i-merge-properties-of-two-javascript-objects-dynamically
-     * recursive parts used in .clone()
-     *
-     * @function music21.common.merge
-     * @param {object} destination - object to have attributes placed into
-     * @param {object} source - object to take attributes from.
-     * @memberof music21.common
-     * @returns {object} destination
-     */
+/**
+ * concept borrowed from Vex.Flow.Merge, though here the source can be undefined;
+ * http://stackoverflow.com/questions/171251/how-can-i-merge-properties-of-two-javascript-objects-dynamically
+ * recursive parts used in .clone()
+ *
+ * @function music21.common.merge
+ * @param {object} destination - object to have attributes placed into
+ * @param {object} source - object to take attributes from.
+ * @memberof music21.common
+ * @returns {object} destination
+ */
 common.merge = function MergeRecursive(destination, source) {
     if (source === undefined || source === null) {
         return destination;
@@ -42,18 +42,30 @@ common.merge = function MergeRecursive(destination, source) {
     return destination;
 };
 
-    /**
-     *
-     * Returns the statistical mode (most commonly appearing element)
-     * in a.
-     *
-     * In case of tie, returns the first element to reach the maximum
-     * number of occurrences.
-     *
-     * @function music21.common.statisticalMode
-     * @param {Array} a - an array to analyze
-     * @returns {object} element with the highest frequency in a
-     */
+common.mixin = function common_mixin(OtherParent, thisClassOrObject) {
+    let proto = OtherParent.prototype;
+    console.log(thisClassOrObject);
+    console.log(thisClassOrObject.__proto__);
+    do {
+        for (const key of Object.keys(proto)) {
+            if (!(key in thisClassOrObject.__proto__)) {
+                thisClassOrObject.__proto__[key] = proto[key];  
+            }
+        }
+    } while (proto = Object.getPrototypeOf(proto))
+};
+/**
+ *
+ * Returns the statistical mode (most commonly appearing element)
+ * in a.
+ *
+ * In case of tie, returns the first element to reach the maximum
+ * number of occurrences.
+ *
+ * @function music21.common.statisticalMode
+ * @param {Array} a - an array to analyze
+ * @returns {object} element with the highest frequency in a
+ */
 common.statisticalMode = function(a) {
     if (a.length == 0) { return null; }
     const modeMap = {};
@@ -73,18 +85,18 @@ common.statisticalMode = function(a) {
     return maxEl;
 };
 
-    /**
-     * Creates a DOMObject of an SVG figure using the correct `document.createElementNS` call.
-     *
-     * @function music21.common.makeSVGright
-     * @param {string} [tag='svg'] - a tag, such as 'rect', 'circle', 'text', or 'svg'
-     * @param {object} [attrs] - attributes to pass to the tag.
-     * @memberof music21.common
-     * @returns {DOMObject}
-     */
+/**
+ * Creates a DOMObject of an SVG figure using the correct `document.createElementNS` call.
+ *
+ * @function music21.common.makeSVGright
+ * @param {string} [tag='svg'] - a tag, such as 'rect', 'circle', 'text', or 'svg'
+ * @param {object} [attrs] - attributes to pass to the tag.
+ * @memberof music21.common
+ * @returns {DOMObject}
+ */
 common.makeSVGright = function(tag, attrs) {
-        // see http://stackoverflow.com/questions/3642035/jquerys-append-not-working-with-svg-element
-        // normal JQuery does not work.
+    // see http://stackoverflow.com/questions/3642035/jquerys-append-not-working-with-svg-element
+    // normal JQuery does not work.
     if (tag === undefined) {
         tag = 'svg';
     }
@@ -99,15 +111,15 @@ common.makeSVGright = function(tag, attrs) {
     return el;
 };
 
-    /**
-     * Take a number such as 32 and return a string such as "nd"
-     * (for "32nd") etc.
-     *
-     * @function music21.common.ordinalAbbreviation
-     * @param {Int} value
-     * @param {Boolean} [plural=false] - make plural (note that "21st" plural is "21st")
-     * @return {string}
-     */
+/**
+ * Take a number such as 32 and return a string such as "nd"
+ * (for "32nd") etc.
+ *
+ * @function music21.common.ordinalAbbreviation
+ * @param {Int} value
+ * @param {Boolean} [plural=false] - make plural (note that "21st" plural is "21st")
+ * @return {string}
+ */
 common.ordinalAbbreviation = function(value, plural) {
     let post = '';
     const valueHundreths = value % 100;
@@ -131,15 +143,15 @@ common.ordinalAbbreviation = function(value, plural) {
     return post;
 };
 
-    /**
-     * Find a rational number approximation of this floating point.
-     *
-     * @function music21.common.rationalize
-     * @param {number} ql - number to rationalize
-     * @param {number} [epsilon=0.001] - how close to get
-     * @param {Int} [maxDenominator=50] - maximum denominator
-     * @returns {object|undefined} {'numerator: numerator, 'denominator': denominator}
-     */
+/**
+ * Find a rational number approximation of this floating point.
+ *
+ * @function music21.common.rationalize
+ * @param {number} ql - number to rationalize
+ * @param {number} [epsilon=0.001] - how close to get
+ * @param {Int} [maxDenominator=50] - maximum denominator
+ * @returns {object|undefined} {'numerator: numerator, 'denominator': denominator}
+ */
 common.rationalize = function(ql, epsilon, maxDenominator) {
     epsilon = epsilon || 0.001;
     maxDenominator = maxDenominator || 50;
@@ -154,16 +166,16 @@ common.rationalize = function(ql, epsilon, maxDenominator) {
     return undefined;
 };
 
-    /**
-     * Change something that could be a string or number and might
-     * end with "px" to a number.
-     *
-     * "400px" -> 400
-     *
-     * @function music21.common.stripPx
-     * @param {Int|string} str -- string that might have 'px' at the end or not
-     * @returns {Int} a number to use
-     */
+/**
+ * Change something that could be a string or number and might
+ * end with "px" to a number.
+ *
+ * "400px" -> 400
+ *
+ * @function music21.common.stripPx
+ * @param {Int|string} str -- string that might have 'px' at the end or not
+ * @returns {Int} a number to use
+ */
 common.stripPx = function(str) {
     if (typeof str == 'string') {
         const pxIndex = str.indexOf('px');
@@ -174,31 +186,31 @@ common.stripPx = function(str) {
     }
 };
 
-    /**
-     * Find name in the query string (?name=value) and return value.
-     *
-     * @function music21.common.urlParam
-     * @param {string} name - url parameter to find
-     * @returns {string} may be "" if empty.
-     */
+/**
+ * Find name in the query string (?name=value) and return value.
+ *
+ * @function music21.common.urlParam
+ * @param {string} name - url parameter to find
+ * @returns {string} may be "" if empty.
+ */
 common.urlParam = function(name) {
     name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
     let regex = new RegExp('[\\?&]' + name + '=([^&#]*)'),
-        results = regex.exec(location.search);
+    results = regex.exec(location.search);
     return results == null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
 };
 
 
-    /**
-     * Copies an event from one jQuery object to another.
-     *
-     * @function music21.common.jQueryEventCopy
-     * @param {Event} eventObj - Event to copy from "from" to "to"
-     * @param {jQuery|string|DOMObject} from - jQuery object to copy events from. Only uses the first matched element.
-     * @param {jQuery|string|DOMObject} to - jQuery object to copy events to. Copies to all matched elements.
-     * @author Brandon Aaron (brandon.aaron@gmail.com || http://brandonaaron.net)
-     * @author Yannick Albert (mail@yckart.com || http://yckart.com)
-     */
+/**
+ * Copies an event from one jQuery object to another.
+ *
+ * @function music21.common.jQueryEventCopy
+ * @param {Event} eventObj - Event to copy from "from" to "to"
+ * @param {jQuery|string|DOMObject} from - jQuery object to copy events from. Only uses the first matched element.
+ * @param {jQuery|string|DOMObject} to - jQuery object to copy events to. Copies to all matched elements.
+ * @author Brandon Aaron (brandon.aaron@gmail.com || http://brandonaaron.net)
+ * @author Yannick Albert (mail@yckart.com || http://yckart.com)
+ */
 common.jQueryEventCopy = function(eventObj, from, to) {
     from = from.jquery ? from : jQuery(from);
     to = to.jquery ? to : jQuery(to);
@@ -212,54 +224,54 @@ common.jQueryEventCopy = function(eventObj, from, to) {
                 jQuery.event.add(eventObj, type, events[type][handler], events[type][handler].data);
     });
 };
-//    common.walk = function (obj, callback, callList, seen, numSeen) {
-//        if (depth == undefined) {
-//            depth = 0;
-//        }
-//        if (depth > 20) {
-//            throw "max depth reached";
-//        }
-//        if (callList === undefined) {
-//            callList = [];
-//        }
-//        if (seen === undefined) {
-//            seen = new Set();
-//        }
-//        var next, item;
-//        for (item in obj) {
-//            if (obj.hasOwnProperty(item)) {
-//                next = obj[item];
-//                var nextCallList = []
-//                nextCallList.push.apply(callList);
-//                nextCallList.push(item);
-//                if (callback !== undefined) {
-//                    callback.call(this, item, next, nextCallList);
-//                }
-//                if (typeof next =='object' && next != null) {
-//                    if (seen.has(next) == false) {
-//                        seen.add(next);
-//                        common.walk(next, callback, nextCallList, seen, depth+1);
-//                    }
-//                }
-//            }
-//        }
-//    };
+//common.walk = function (obj, callback, callList, seen, numSeen) {
+//if (depth == undefined) {
+//depth = 0;
+//}
+//if (depth > 20) {
+//throw "max depth reached";
+//}
+//if (callList === undefined) {
+//callList = [];
+//}
+//if (seen === undefined) {
+//seen = new Set();
+//}
+//var next, item;
+//for (item in obj) {
+//if (obj.hasOwnProperty(item)) {
+//next = obj[item];
+//var nextCallList = []
+//nextCallList.push.apply(callList);
+//nextCallList.push(item);
+//if (callback !== undefined) {
+//callback.call(this, item, next, nextCallList);
+//}
+//if (typeof next =='object' && next != null) {
+//if (seen.has(next) == false) {
+//seen.add(next);
+//common.walk(next, callback, nextCallList, seen, depth+1);
+//}
+//}
+//}
+//}
+//};
 
-    /**
-     * runs a callback with either "visible" or "hidden" as the argument anytime the
-     * window or document state changes.
-     *
-     * Depending on the browser, may be called multiple times with the same argument
-     * for a single event.  For instance, Safari calls once on losing focus completely
-     * but twice for a tab change.
-     *
-     * @function music21.common.setWindowVisibilityWatcher
-     * @param {function} callback
-     */
+/**
+ * runs a callback with either "visible" or "hidden" as the argument anytime the
+ * window or document state changes.
+ *
+ * Depending on the browser, may be called multiple times with the same argument
+ * for a single event.  For instance, Safari calls once on losing focus completely
+ * but twice for a tab change.
+ *
+ * @function music21.common.setWindowVisibilityWatcher
+ * @param {function} callback
+ */
 common.setWindowVisibilityWatcher = function(callback) {
     let hidden = 'hidden';
 
-        // Standards:
+    // Standards:
     if (hidden in document) {
         document.addEventListener('visibilitychange', windowFocusChanged);
     } else if ((hidden = 'mozHidden') in document) {
@@ -269,19 +281,19 @@ common.setWindowVisibilityWatcher = function(callback) {
     } else if ((hidden = 'msHidden') in document) {
         document.addEventListener('msvisibilitychange', windowFocusChanged);
     } else if ('onfocusin' in document) {
-            // IE 9 and lower:
+        // IE 9 and lower:
         document.onfocusin = document.onfocusout = windowFocusChanged;
     }
 
-        // Also catch window... -- get two calls for a tab shift, but one for window losing focus
+    // Also catch window... -- get two calls for a tab shift, but one for window losing focus
     window.onpageshow = window.onpagehide = window.onfocus = window.onblur = windowFocusChanged;
 
 
     function windowFocusChanged(evt) {
         let v = 'visible', h = 'hidden',
-            evtMap = {
+        evtMap = {
                 focus: v, focusin: v, pageshow: v, blur: h, focusout: h, pagehide: h,
-            };
+        };
 
         evt = evt || window.event;
         let callbackState = '';
@@ -292,7 +304,7 @@ common.setWindowVisibilityWatcher = function(callback) {
         }
         callback(callbackState, evt);
     }
-        // set the initial state
+    // set the initial state
     const initialState = ((document.visibilityState == 'visible') ? 'focus' : 'blur');
     const initialStateEvent = { 'type': initialState };
     windowFocusChanged(initialStateEvent);

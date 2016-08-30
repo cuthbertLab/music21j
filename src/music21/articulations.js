@@ -1,10 +1,10 @@
 import * as Vex from 'vexflow';
+import { common } from './common';
 import { prebase } from './prebase';
 
 /**
  * articulations module. See {@link music21.articulations} namespace
  *
- * @exports articulations
  */
 
 /**
@@ -40,11 +40,11 @@ export class Articulation extends prebase.ProtoM21Object {
     }
 
     /**
-    * Generates a Vex.Flow.Articulation for this articulation.
-    *
-    * @memberof music21.articulations.Articulation
-    * @returns {Vex.Flow.Articulation}
-    */
+     * Generates a Vex.Flow.Articulation for this articulation.
+     *
+     * @memberof music21.articulations.Articulation
+     * @returns {Vex.Flow.Articulation}
+     */
     vexflow() {
         const vfa = new Vex.Flow.Articulation(this.vexflowModifier);
         if (this.setPosition) {
@@ -55,12 +55,12 @@ export class Articulation extends prebase.ProtoM21Object {
 }
 articulations.Articulation = Articulation;
 /**
-* base class for articulations that change the length of a note...
-*
-* @class LengthArticulation
-* @memberof music21.articulations
-* @extends music21.articulations.Articulation
-*/
+ * base class for articulations that change the length of a note...
+ *
+ * @class LengthArticulation
+ * @memberof music21.articulations
+ * @extends music21.articulations.Articulation
+ */
 export class LengthArticulation extends Articulation {
     constructor() {
         super();
@@ -70,12 +70,12 @@ export class LengthArticulation extends Articulation {
 articulations.LengthArticulation = LengthArticulation;
 
 /**
-* base class for articulations that change the dynamic of a note...
-*
-* @class DynamicArticulation
-* @memberof music21.articulations
-* @extends music21.articulations.Articulation
-*/
+ * base class for articulations that change the dynamic of a note...
+ *
+ * @class DynamicArticulation
+ * @memberof music21.articulations
+ * @extends music21.articulations.Articulation
+ */
 export class DynamicArticulation extends Articulation {
     constructor() {
         super();
@@ -85,12 +85,12 @@ export class DynamicArticulation extends Articulation {
 articulations.DynamicArticulation = DynamicArticulation;
 
 /**
-* base class for articulations that change the pitch of a note...
-*
-* @class PitchArticulation
-* @memberof music21.articulations
-* @extends music21.articulations.Articulation
-*/
+ * base class for articulations that change the pitch of a note...
+ *
+ * @class PitchArticulation
+ * @memberof music21.articulations
+ * @extends music21.articulations.Articulation
+ */
 export class PitchArticulation extends Articulation {
     constructor() {
         super();
@@ -100,12 +100,12 @@ export class PitchArticulation extends Articulation {
 articulations.PitchArticulation = PitchArticulation;
 
 /**
-* base class for articulations that change the timbre of a note...
-*
-* @class TimbreArticulation
-* @memberof music21.articulations
-* @extends music21.articulations.Articulation
-*/
+ * base class for articulations that change the timbre of a note...
+ *
+ * @class TimbreArticulation
+ * @memberof music21.articulations
+ * @extends music21.articulations.Articulation
+ */
 export class TimbreArticulation extends Articulation {
     constructor() {
         super();
@@ -116,12 +116,12 @@ articulations.TimbreArticulation = TimbreArticulation;
 
 
 /**
-* 50% louder than usual
-*
-* @class Accent
-* @memberof music21.articulations
-* @extends music21.articulations.DynamicArticulation
-*/
+ * 50% louder than usual
+ *
+ * @class Accent
+ * @memberof music21.articulations
+ * @extends music21.articulations.DynamicArticulation
+ */
 export class Accent extends DynamicArticulation {
     constructor() {
         super();
@@ -134,12 +134,12 @@ export class Accent extends DynamicArticulation {
 articulations.Accent = Accent;
 
 /**
-* 100% louder than usual
-*
-* @class StrongAccent
-* @memberof music21.articulations
-* @extends music21.articulations.Accent
-*/
+ * 100% louder than usual
+ *
+ * @class StrongAccent
+ * @memberof music21.articulations
+ * @extends music21.articulations.Accent
+ */
 export class StrongAccent extends Accent {
     constructor() {
         super();
@@ -152,12 +152,12 @@ export class StrongAccent extends Accent {
 articulations.StrongAccent = StrongAccent;
 
 /**
-* no playback for now.
-*
-* @class Staccato
-* @memberof music21.articulations
-* @extends music21.articulations.LengthArticulation
-*/
+ * no playback for now.
+ *
+ * @class Staccato
+ * @memberof music21.articulations
+ * @extends music21.articulations.LengthArticulation
+ */
 export class Staccato extends LengthArticulation {
     constructor() {
         super();
@@ -169,12 +169,12 @@ export class Staccato extends LengthArticulation {
 articulations.Staccato = Staccato;
 
 /**
-* no playback for now.
-*
-* @class Staccatissimo
-* @memberof music21.articulations
-* @extends music21.articulations.Staccato
-*/
+ * no playback for now.
+ *
+ * @class Staccatissimo
+ * @memberof music21.articulations
+ * @extends music21.articulations.Staccato
+ */
 export class Staccatissimo extends Staccato {
     constructor() {
         super();
@@ -186,12 +186,12 @@ export class Staccatissimo extends Staccato {
 articulations.Staccatissimo = Staccatissimo;
 
 /**
-* no playback or display for now.
-*
-* @class Spiccato
-* @memberof music21.articulations
-* @extends music21.articulations.Staccato
-*/
+ * no playback or display for now.
+ *
+ * @class Spiccato
+ * @memberof music21.articulations
+ * @extends music21.articulations.Staccato
+ */
 export class Spiccato extends Staccato {
     constructor() {
         super();
@@ -203,15 +203,15 @@ export class Spiccato extends Staccato {
 articulations.Spiccato = Spiccato;
 
 /**
-* @class Marcato
-* @memberof music21.articulations
-* @extends music21.articulations.DynamicArticulation
-* @extends music21.articulations.LengthArticulation
-*/
+ * @class Marcato
+ * @memberof music21.articulations
+ * @extends music21.articulations.DynamicArticulation
+ * @extends music21.articulations.LengthArticulation
+ */
 export class Marcato extends DynamicArticulation {
     constructor() {
         super();
-        LengthArticulation.call(this);
+        common.mixin(LengthArticulation, this);
         this.classes.push('Marcato');
         this.name = 'marcato';
         this.vexflowModifier = 'a^';
@@ -221,10 +221,10 @@ export class Marcato extends DynamicArticulation {
 articulations.Marcato = Marcato;
 
 /**
-* @class Tenuto
-* @memberof music21.articulations
-* @extends music21.articulations.LengthArticulation
-*/
+ * @class Tenuto
+ * @memberof music21.articulations
+ * @extends music21.articulations.LengthArticulation
+ */
 export class Tenuto extends LengthArticulation {
     constructor() {
         super();
@@ -236,8 +236,8 @@ export class Tenuto extends LengthArticulation {
 articulations.Tenuto = Tenuto;
 
 
-articulations.tests = function() {
-    test('music21.articulations.Articulation', function() {
+articulations.tests = () => {
+    test('music21.articulations.Articulation', () => {
         const acc = new music21.articulations.Accent();
         equal(acc.name, 'accent', 'matching names for accent');
         const ten = new music21.articulations.Tenuto();
@@ -249,19 +249,20 @@ articulations.tests = function() {
         equal(n.articulations[1].name, 'tenuto', 'tenuto in array');
     });
 
-    test('music21.articulations.Articulation display', function() {
-	                                                                   const marc = new music21.articulations.Marcato();
-	                                                                                  equal(marc.name, 'marcato', 'matching names for marcato');
-	                                                                   const n = new music21.note.Note('D#5');
-	                                                                                  n.articulations.push(marc);
-	                                                                   const nBoring = new music21.note.Note('D#5');
+    test('music21.articulations.Articulation display', () => {
+        // Marcato is a pseudo multiple inheritance
+        const marc = new music21.articulations.Marcato();
+        equal(marc.name, 'marcato', 'matching names for marcato');
+        const n = new music21.note.Note('D#5');
+        n.articulations.push(marc);
+        const nBoring = new music21.note.Note('D#5');
 
-	                                                                   const measure = new music21.stream.Measure();
-	                                                                                  measure.append(n);
-	                                                                                  measure.append(nBoring);
-	                                                                                  measure.append(nBoring.clone());
-	                                                                                  measure.append(n.clone());
-	                                                                                  measure.appendNewCanvas();
-	                                                                                  ok(true, 'something worked');
+        const measure = new music21.stream.Measure();
+        measure.append(n);
+        measure.append(nBoring);
+        measure.append(nBoring.clone());
+        measure.append(n.clone());
+        measure.appendNewCanvas();
+        ok(true, 'something worked');
     });
 };

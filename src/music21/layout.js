@@ -1,31 +1,31 @@
 // future -- rewrite of Score and Part to Page, System, SystemPart
-//     not currently used
-import * as $ from 'jquery';
-import { base } from './base';
-import { renderOptions } from './renderOptions';
+// not currently used
+// import * as $ from 'jquery';
+// import { base } from './base';
+// import { renderOptions } from './renderOptions';
 import { stream } from './stream';
-import { common } from './common';
-        /**
-         * Does not work yet, so not documented
-         *
-         */
-export    const layout = {};
-layout.makeLayoutFromScore = function(score, containerWidth) {
-        /*
-         * Divide a part up into systems and fix the measure
-         * widths so that they are all even.
-         *
-         * Note that this is done on the part level even though
-         * the measure widths need to be consistent across parts.
-         *
-         * This is possible because the system is deterministic and
-         * will come to the same result for each part.  Opportunity
-         * for making more efficient through this...
-         */
-        // var systemHeight = score.systemHeight; /* part.show() called... */
-        // var systemPadding = score.systemPadding;
+// import { common } from './common';
+/**
+ * Does not work yet, so not documented
+ *
+ */
+export const layout = {};
+layout.makeLayoutFromScore = function makeLayoutFromScore(score, containerWidth) {
+    /*
+     * Divide a part up into systems and fix the measure
+     * widths so that they are all even.
+     *
+     * Note that this is done on the part level even though
+     * the measure widths need to be consistent across parts.
+     *
+     * This is possible because the system is deterministic and
+     * will come to the same result for each part.  Opportunity
+     * for making more efficient through this...
+     */
+    // var systemHeight = score.systemHeight; /* part.show() called... */
+    // var systemPadding = score.systemPadding;
     const parts = score.parts;
-        // console.log(parts);
+    // console.log(parts);
     const numParts = parts.length;
     const partZero = parts[0];
     const numMeasures = partZero.length;
@@ -33,21 +33,22 @@ layout.makeLayoutFromScore = function(score, containerWidth) {
     const measureWidths = partZero.getMeasureWidths();
     const maxSystemWidth = containerWidth || score.maxSystemWidth; /* of course fix! */
 
-    const layoutScore = new music21.layout.LayoutScore();
-    const currentPage = new music21.layout.Page(); // to-do multiple pages...
+    const layoutScore = new layout.LayoutScore();
+    const currentPage = new layout.Page(); // to-do multiple pages...
     currentPage.measureStart = 1;
     currentPage.measureEnd = numMeasures;
 
     layoutScore.insert(0, currentPage);
 
-    let currentSystem = new music21.layout.System();
-    currentSystemNumber = 1;
+    let currentSystem = new layout.System();
+    let currentSystemNumber = 1;
     currentSystem.measureStart = 1;
+    let currentStaves;
 
-        // var currentStaves = [];
-    const staffMaker = function(staffHolder, numParts, measureStart) {
+    // var currentStaves = [];
+    const staffMaker = (staffHolder, numParts, measureStart) => {
         for (let pNum = 0; pNum < numParts; pNum++) {
-            const staff = new music21.layout.Staff();
+            const staff = new layout.Staff();
             staff.measureStart = measureStart;
             staff.staffNumber = pNum + 1;
             staffHolder.push(staff);
@@ -60,27 +61,27 @@ layout.makeLayoutFromScore = function(score, containerWidth) {
     let lastSystemBreak = 0; /* needed to ensure each line has at least one measure */
     const startLeft = 20; /* TODO: make it obtained elsewhere */
     let currentLeft = startLeft;
-    let currentSystemTop = 0;
-        // var partTopOffsets = [];
-    const ignoreSystemsInCalculatingScoreHeight = true;
-    const systemHeight = score.estimateStreamHeight(ignoreSystemsInCalculatingScoreHeight);
+    // let currentSystemTop = 0;
+    // var partTopOffsets = [];
+    // const ignoreSystemsInCalculatingScoreHeight = true;
+    // const systemHeight = score.estimateStreamHeight(ignoreSystemsInCalculatingScoreHeight);
 
     for (let i = 0; i < measureWidths.length; i++) {
         const currentRight = currentLeft + measureWidths[i];
-            /* console.log("left: " + currentLeft + " ; right: " + currentRight + " ; m: " + i); */
-        if ((currentRight > maxSystemWidth) && (lastSystemBreak != i)) {
-                // new system...
-            for (var j = 0; j < currentStaves.length; j++) {
+        /* console.log("left: " + currentLeft + " ; right: " + currentRight + " ; m: " + i); */
+        if ((currentRight > maxSystemWidth) && (lastSystemBreak !== i)) {
+            // new system...
+            for (let j = 0; j < currentStaves.length; j++) {
                 currentStaves.measureEnd = i;
                 currentSystem.insert(0, currentStaves[j]);
             }
             currentStaves = [];
             staffMaker(currentStaves, numParts, i + 1);
-            currentSystemTop += systemHeight;
+            // currentSystemTop += systemHeight;
             currentSystem.measureEnd = i;
             currentPage.insert(0, currentSystem);
             currentSystemNumber += 1;
-            currentSystem = new music21.layout.System();
+            currentSystem = new layout.System();
             currentSystem.measureStart = i + 1;
             currentSystem.systemNumber = currentSystemNumber;
 
@@ -96,7 +97,7 @@ layout.makeLayoutFromScore = function(score, containerWidth) {
             currentStaves[pNum].append(parts[pNum].get(i));
         }
     }
-    for (var j = 0; j < currentStaves.length; j++) {
+    for (let j = 0; j < currentStaves.length; j++) {
         currentStaves.measureEnd = measureWidths.length - 1;
         currentSystem.insert(0, currentStaves[j]);
     }
@@ -104,7 +105,7 @@ layout.makeLayoutFromScore = function(score, containerWidth) {
     return layoutScore;
 };
 
-layout.LayoutScore = function() {
+layout.LayoutScore = function LayoutScore() {
     stream.Score.call(this);
     this.classes.push('LayoutScore');
     this.scoreLayout = undefined;
@@ -128,6 +129,8 @@ layout.LayoutScore = function() {
                     return this._width;
                 } else if (this.activeSite) {
                     return this.activeSite.width;
+                } else {
+                    return undefined;
                 }
             },
         },
@@ -136,25 +139,25 @@ layout.LayoutScore = function() {
 layout.LayoutScore.prototype = new stream.Score();
 layout.LayoutScore.prototype.constructor = layout.LayoutScore;
 
-    /**
-     * return a tuple of (top, bottom) for a staff, specified by a given pageId,
-     * systemId, and staffId in PIXELS.
+/**
+ * return a tuple of (top, bottom) for a staff, specified by a given pageId,
+ * systemId, and staffId in PIXELS.
 
-     * @param pageId
-     * @param systemId
-     * @param staffId
-     * @param units -- "pixels" or "tenths" (not supported)
-     */
+ * @param pageId
+ * @param systemId
+ * @param staffId
+ * @param units -- "pixels" or "tenths" (not supported)
+ */
 
-layout.LayoutScore.prototype.getPositionForStaff = function(pageId, systemId, staffId, units) {
+layout.LayoutScore.prototype.getPositionForStaff = (pageId, systemId, staffId, units) => {
     units = units || 'pixels';
 };
 
 
-    /**
-     * All music must currently be on page 1.
-     */
-layout.Page = function() {
+/**
+ * All music must currently be on page 1.
+ */
+layout.Page = function Page() {
     stream.Score.call(this);
     this.classes.push('Page');
     this.pageNumber = 1;
@@ -177,6 +180,8 @@ layout.Page = function() {
                     return this._width;
                 } else if (this.activeSite) {
                     return this.activeSite.width;
+                } else {
+                    return undefined;
                 }
             },
         },
@@ -185,7 +190,7 @@ layout.Page = function() {
 layout.Page.prototype = new stream.Score();
 layout.Page.prototype.constructor = layout.Page;
 
-layout.System = function() {
+layout.System = function System() {
     stream.Score.call(this);
     this.classes.push('System');
     this.systemNumber = 1;
@@ -210,6 +215,8 @@ layout.System = function() {
                     return this._width;
                 } else if (this.activeSite) {
                     return this.activeSite.width;
+                } else {
+                    return undefined;
                 }
             },
         },
@@ -218,7 +225,7 @@ layout.System = function() {
 layout.System.prototype = new stream.Score();
 layout.System.prototype.constructor = layout.System;
 
-layout.Staff = function() {
+layout.Staff = function Staff() {
     stream.Part.call(this);
     this.classes.push('Staff');
     this.staffNumber = 1;
@@ -238,6 +245,8 @@ layout.Staff = function() {
                     return this._width;
                 } else if (this.activeSite) {
                     return this.activeSite.width;
+                } else {
+                    return undefined;
                 }
             },
         },

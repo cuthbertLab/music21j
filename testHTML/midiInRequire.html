@@ -11,7 +11,7 @@
 		<script>
 		require(['music21'], function () { 
 		    music21.webmidi.createSelector($("#putMidiSelectHere"));
-		    music21.webmidi.callBacks.general = music21.miditools.sendToMIDIjs;
+		    music21.miditools.callBacks.general = music21.miditools.sendToMIDIjs;
 		});			
 		</script>
     </head>

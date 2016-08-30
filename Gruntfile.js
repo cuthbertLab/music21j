@@ -83,12 +83,14 @@ module.exports = (grunt) => {
                     ];
                   },
                 globals: {
-                    vexflow: 'Vex',
+                    eventjs: 'eventjs',
                     jquery: '$',
                     jsonpickle: 'jsonpickle',
                     MIDI: 'MIDI',   
+                    vexflow: 'Vex',
                 },
                 external: [
+                           'eventjs',
                            'jquery',
                            'jsonpickle',
                            'MIDI',

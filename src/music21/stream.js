@@ -395,7 +395,7 @@ stream.Stream.prototype.clone = function clone(deep) {
     for (const key in ret) {
         // not that we ONLY copy the keys in Ret -- it's easier that way.
         // maybe we should do (var key in this) -- but DANGEROUS...
-        if (this.hasOwnProperty(key) === false) {
+        if ({}.hasOwnProperty.call(this, key) === false) {
             continue;
         }
         if (key === 'activeSite') {

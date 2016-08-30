@@ -34,9 +34,9 @@
 		    music21.miditools.metronome = metro;
 
 		    music21.webmidi.createSelector($("#putMidiSelectHere"));
-		    music21.webmidi.callBacks.general = [music21.miditools.makeChords, 
+		    music21.miditools.callBacks.general = [music21.miditools.makeChords, 
 		                                          music21.miditools.sendToMIDIjs];
-		    music21.webmidi.callBacks.sendOutChord = appendElement;
+		    music21.miditools.callBacks.sendOutChord = appendElement;
 		});
 		
 		

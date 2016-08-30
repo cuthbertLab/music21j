@@ -58,10 +58,10 @@
 			    lastNoteStream = b;
 	
 	            music21.webmidi.createSelector($("#putMidiSelectHere"));
-	            music21.webmidi.callBacks.general = [music21.miditools.makeChords, 
+	            music21.miditools.callBacks.general = [music21.miditools.makeChords, 
 	                                                  music21.miditools.sendToMIDIjs,
 	                                                  music21.keyboard.jazzHighlight.bind(k)];
-	            music21.webmidi.callBacks.sendOutChord = appendElement;
+	            music21.miditools.callBacks.sendOutChord = appendElement;
 			    
 	            $('#markC').bind('click', function () { k.markC = this.checked; k.redrawSVG() })
 	            $('#showNames').bind('click', function () { k.showNames = this.checked; k.redrawSVG() })
@@ -69,9 +69,9 @@
 	
 	            $('#playSound').bind('click', function() {
 	                if (this.checked) {
-	                    music21.webmidi.callBacks.general = midiCallbacksPlay;
+	                    music21.miditools.callBacks.general = midiCallbacksPlay;
 	                } else {
-	                    music21.webmidi.callBacks.general = midiCallbacksNoPlay;
+	                    music21.miditools.callBacks.general = midiCallbacksNoPlay;
 	                }
 	            });
 	
