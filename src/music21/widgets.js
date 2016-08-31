@@ -34,247 +34,248 @@ export const widgets = {};
  * @property {music21.stream.Stream} stream
  * @property {DOMObject} [canvasDiv]
  */
-widgets.RhythmChooser = function RhythmChooser(s, c) {
-    this.stream = s;
-    this.canvasDiv = c;
-    this.values = ['whole', 'half', 'quarter', 'eighth', '16th', 'dot', 'undo'];
-    if (this.stream.hasSubStreams()) {
-        this.measureMode = true;
-    } else {
-        this.measureMode = false;
-    }
-    this.tieActive = false;
-    this.autoAddMeasure = true;
-    /**
-     * An object mapping a value type to a function when it is clicked
-     *
-     * the 'default' value handles all types not otherwise given.
-     *
-     * Each function is passed the type that was clicked. Probably only
-     * useful for 'default'
-     *
-     * @name buttonHandlers
-     * @type {object}
-     * @memberof music21.widgets.RhythmChooser#
-     */
-    this.buttonHandlers = {
-        'undo': function buttonHandlers_undo(t) {
-            if (this.stream.length > 0) {
-                return this.stream.pop();
-            } else { return undefined; }
-        },
-        'dot': function buttonHandlers_dot(t) {
-            if (this.stream.length > 0) {
-                const el = this.stream.pop();
-                el.duration.dots += 1;
-                this.stream.append(el);
-                return el;
-            } else { return undefined; }
-        },
-        'tie': function buttonHandlers_tie(t) {
-            if (this.stream.length > 0) {
-                const el = this.stream.get(-1);
-                el.tie = new tie.Tie('start');
-                this.tieActive = true;
-            }
-        },
-        'default': function buttonHandlers_default(t) {
-            let newN = new note.Note('B4');
-            newN.stemDirection = 'up';
-            if (t.indexOf('rest_') === 0) {
-                newN = new note.Rest();
-                t = t.slice('rest_'.length);
-            }
-            newN.duration.type = t;
-            if (this.tieActive) {
-                newN.tie = new tie.Tie('stop');
-                this.tieActive = false;
-            }
-            this.stream.append(newN);
-            return newN;
-        },
-    };
-    /**
-     * An object mapping a value type to a function when it is clicked if the
-     * RhythmChooser is in measureMode
-     *
-     * the 'default' value handles all types not otherwise given.
-     *
-     * Each function is passed the type that was clicked. Probably only
-     * useful for 'default'
-     *
-     * @name measureButtonHandlers
-     * @type {object}
-     * @memberof music21.widgets.RhythmChooser#
-     */
-    this.measureButtonHandlers = {
-        'undo': function measureButtonHandlers_undo(t) {
-            if (this.stream.length > 0) {
-                const lastMeasure = this.stream.get(-1);
-                const retValue = lastMeasure.pop();
-                if (lastMeasure.length === 0 && this.stream.length > 1) {
-                    this.stream.pop();
-                }
-                return retValue;
-            } else {
-                return undefined;
-            }
-        },
-        'dot': function measureButtonHandlers_dot(t) {
-            if (this.stream.length > 0) {
-                const lastMeasure = this.stream.get(-1);
-                const el = lastMeasure.pop();
-                el.duration.dots += 1;
-                lastMeasure.append(el);
-                return el;
-            } else { return undefined; }
-        },
-        'addMeasure': function measureButtonHandlers_addMeasure(t) {
-            const lastMeasure = this.stream.get(-1);
-            const m = new stream.Measure();
-            m.renderOptions.staffLines = lastMeasure.renderOptions.staffLines;
-            m.renderOptions.measureIndex = lastMeasure.renderOptions.measureIndex + 1;
-            m.renderOptions.rightBarline = 'end';
-            lastMeasure.renderOptions.rightBarline = 'single';
-            m.autoBeam = lastMeasure.autoBeam;
-            this.stream.append(m);
-        },
-        'tie': function measureButtonHandlers_tie(t) {
-            const lastMeasure = this.stream.get(-1);
-            let el;
-            if (lastMeasure.length > 0) {
-                el = lastMeasure.get(-1);
-            } else {
-                const previousMeasure = this.stream.get(-2);
-                if (previousMeasure) {
-                    el = previousMeasure.get(-1);
-                }
-            }
-            if (el !== undefined) {
-                let tieType = 'start';
-                if (el.tie !== undefined) { tieType = 'continue'; }
-                el.tie = new tie.Tie(tieType);
-                this.tieActive = true;
-            }
-        },
-        'default': function measureButtonHandlers_default(t) {
-            let newN = new note.Note('B4');
-            newN.stemDirection = 'up';
-            if (t.indexOf('rest_') === 0) {
-                newN = new note.Rest();
-                t = t.slice('rest_'.length);
-            }
-            newN.duration.type = t;
-            if (this.tieActive) {
-                newN.tie = new tie.Tie('stop');
-                this.tieActive = false;
-            }
-            let lastMeasure = this.stream.get(-1);
-            if (this.autoAddMeasure &&
-                    lastMeasure.duration.quarterLength >=
-                        this.stream.timeSignature.barDuration.quarterLength) {
-                this.measureButtonHandlers.addMeasure.apply(this, [t]);
-                lastMeasure = this.stream.get(-1);
-            }
-            lastMeasure.append(newN);
-            return newN;
-        },
-    };
-};
-
-/**
- * A mapping of a type to a string of HTML entities to display in
- * BravuraText
- *
- * @name valueMappings
- * @type {object}
- * @memberof music21.widgets.RhythmChooser
- */
-widgets.RhythmChooser.prototype.valueMappings = {
-    whole: '&#xEB9B;&#xE1D2;',
-    half: '&#xEB9B;&#xE1D3;',
-    quarter: '&#xEB9B;&#xE1D5;',
-    eighth: '&#xEB9B;&#xE1D7;',
-    '16th': '&#xEB9B;&#xE1D9;',
-    '32nd': '&#xEB9B;&#xE1DB;', // BUG in Bravura Text
-    addMeasure: '<span style="position: relative; top: -20px">&#xE031</span>',
-    dot: '&#xEB9B;&#xE1E7;',
-    undo: '&#x232B;',
-    tie: '<span style="position: relative; top: -20px;">&#xE1FD</span>',
-    rest_whole: '&#xE4F4;',
-    rest_half: '&#xE4F5;',
-    rest_quarter: '&#xE4E5;',
-    rest_eighth: '&#xE4E6;',
-    rest_16th: '&#xE4E7;',
-    rest_32nd: '&#xE4E8;',
-};
-/**
- * A mapping of a type to a css style
- *
- * @name styles
- * @type {object}
- * @memberof music21.widgets.RhythmChooser
- */
-widgets.RhythmChooser.prototype.styles = {
-    'undo': 'font-family: serif; font-size: 30pt; top: -2px;',
-};
-
-/**
- * adds a RhythmChooser widget somewhere.
- *
- * @memberof music21.widgets.RhythmChooser
- * @param {DOMObject|JQueryDOMObject} where
- */
-widgets.RhythmChooser.prototype.addDiv = function addDiv(where) {
-    let $where = where;
-    if (where !== undefined && where.jquery === undefined) {
-        $where = $(where);
-    }
-    const $outer = $('<div class="rhythmButtonDiv"/>');
-    for (let i = 0; i < this.values.length; i++) {
-        const value = this.values[i];
-        const entity = this.valueMappings[value];
-        const $inner = $('<button class="btButton" m21Type="' + value + '">'
-                + entity + '</button>');
-        if (this.styles[value] !== undefined) {
-            $inner.attr('style', this.styles[value]);
+export class RhythmChooser {
+    constructor(s, c) {
+        this.stream = s;
+        this.canvasDiv = c;
+        this.values = ['whole', 'half', 'quarter', 'eighth', '16th', 'dot', 'undo'];
+        if (this.stream.hasSubStreams()) {
+            this.measureMode = true;
+        } else {
+            this.measureMode = false;
         }
+        this.tieActive = false;
+        this.autoAddMeasure = true;
+        /**
+         * A mapping of a type to a string of HTML entities to display in
+         * BravuraText
+         *
+         * @name valueMappings
+         * @type {object}
+         * @memberof music21.widgets.RhythmChooser
+         */
+        this.valueMappings = {
+            whole: '&#xEB9B;&#xE1D2;',
+            half: '&#xEB9B;&#xE1D3;',
+            quarter: '&#xEB9B;&#xE1D5;',
+            eighth: '&#xEB9B;&#xE1D7;',
+            '16th': '&#xEB9B;&#xE1D9;',
+            '32nd': '&#xEB9B;&#xE1DB;', // BUG in Bravura Text
+            addMeasure: '<span style="position: relative; top: -20px">&#xE031</span>',
+            dot: '&#xEB9B;&#xE1E7;',
+            undo: '&#x232B;',
+            tie: '<span style="position: relative; top: -20px;">&#xE1FD</span>',
+            rest_whole: '&#xE4F4;',
+            rest_half: '&#xE4F5;',
+            rest_quarter: '&#xE4E5;',
+            rest_eighth: '&#xE4E6;',
+            rest_16th: '&#xE4E7;',
+            rest_32nd: '&#xE4E8;',
+        };
+        /**
+         * A mapping of a type to a css style
+         *
+         * @name styles
+         * @type {object}
+         * @memberof music21.widgets.RhythmChooser
+         */
+        this.styles = {
+            'undo': 'font-family: serif; font-size: 30pt; top: -2px;',
+        };
+        /**
+         * An object mapping a value type to a function when it is clicked
+         *
+         * the 'default' value handles all types not otherwise given.
+         *
+         * Each function is passed the type that was clicked. Probably only
+         * useful for 'default'
+         *
+         * @name buttonHandlers
+         * @type {object}
+         * @memberof music21.widgets.RhythmChooser#
+         */
+        this.buttonHandlers = {
+            'undo': (unused_t) => {
+                if (this.stream.length > 0) {
+                    return this.stream.pop();
+                } else {
+                    return undefined;
+                }
+            },
+            'dot': (unused_t) => {
+                if (this.stream.length > 0) {
+                    const el = this.stream.pop();
+                    el.duration.dots += 1;
+                    this.stream.append(el);
+                    return el;
+                } else { return undefined; }
+            },
+            'tie': (unused_t) => {
+                if (this.stream.length > 0) {
+                    const el = this.stream.get(-1);
+                    el.tie = new tie.Tie('start');
+                    this.tieActive = true;
+                }
+            },
+            'default': (t) => {
+                let newN = new note.Note('B4');
+                newN.stemDirection = 'up';
+                if (t.indexOf('rest_') === 0) {
+                    newN = new note.Rest();
+                    t = t.slice('rest_'.length);
+                }
+                newN.duration.type = t;
+                if (this.tieActive) {
+                    newN.tie = new tie.Tie('stop');
+                    this.tieActive = false;
+                }
+                this.stream.append(newN);
+                return newN;
+            },
+        };
+        /**
+         * An object mapping a value type to a function when it is clicked if the
+         * RhythmChooser is in measureMode
+         *
+         * the 'default' value handles all types not otherwise given.
+         *
+         * Each function is passed the type that was clicked. Probably only
+         * useful for 'default'
+         *
+         * @name measureButtonHandlers
+         * @type {object}
+         * @memberof music21.widgets.RhythmChooser#
+         */
+        this.measureButtonHandlers = {
+            'undo': (unused_t) => {
+                if (this.stream.length > 0) {
+                    const lastMeasure = this.stream.get(-1);
+                    const retValue = lastMeasure.pop();
+                    if (lastMeasure.length === 0 && this.stream.length > 1) {
+                        this.stream.pop();
+                    }
+                    return retValue;
+                } else {
+                    return undefined;
+                }
+            },
+            'dot': (unused_t) => {
+                if (this.stream.length > 0) {
+                    const lastMeasure = this.stream.get(-1);
+                    const el = lastMeasure.pop();
+                    el.duration.dots += 1;
+                    lastMeasure.append(el);
+                    return el;
+                } else { return undefined; }
+            },
+            'addMeasure': (unused_t) => {
+                const lastMeasure = this.stream.get(-1);
+                const m = new stream.Measure();
+                m.renderOptions.staffLines = lastMeasure.renderOptions.staffLines;
+                m.renderOptions.measureIndex = lastMeasure.renderOptions.measureIndex + 1;
+                m.renderOptions.rightBarline = 'end';
+                lastMeasure.renderOptions.rightBarline = 'single';
+                m.autoBeam = lastMeasure.autoBeam;
+                this.stream.append(m);
+            },
+            'tie': (unused_t) => {
+                const lastMeasure = this.stream.get(-1);
+                let el;
+                if (lastMeasure.length > 0) {
+                    el = lastMeasure.get(-1);
+                } else {
+                    const previousMeasure = this.stream.get(-2);
+                    if (previousMeasure) {
+                        el = previousMeasure.get(-1);
+                    }
+                }
+                if (el !== undefined) {
+                    let tieType = 'start';
+                    if (el.tie !== undefined) { tieType = 'continue'; }
+                    el.tie = new tie.Tie(tieType);
+                    this.tieActive = true;
+                }
+            },
+            'default': (t) => {
+                let newN = new note.Note('B4');
+                newN.stemDirection = 'up';
+                if (t.indexOf('rest_') === 0) {
+                    newN = new note.Rest();
+                    t = t.slice('rest_'.length);
+                }
+                newN.duration.type = t;
+                if (this.tieActive) {
+                    newN.tie = new tie.Tie('stop');
+                    this.tieActive = false;
+                }
+                let lastMeasure = this.stream.get(-1);
+                if (this.autoAddMeasure &&
+                        lastMeasure.duration.quarterLength >=
+                            this.stream.timeSignature.barDuration.quarterLength) {
+                    this.measureButtonHandlers.addMeasure.apply(this, [t]);
+                    lastMeasure = this.stream.get(-1);
+                }
+                lastMeasure.append(newN);
+                return newN;
+            },
+        };
+    }
+    /**
+     * adds a RhythmChooser widget somewhere.
+     *
+     * @memberof music21.widgets.RhythmChooser
+     * @param {DOMObject|JQueryDOMObject} where
+     */
+    addDiv(where) {
+        let $where = where;
+        if (where !== undefined && where.jquery === undefined) {
+            $where = $(where);
+        }
+        const $outer = $('<div class="rhythmButtonDiv"/>');
+        for (let i = 0; i < this.values.length; i++) {
+            const value = this.values[i];
+            const entity = this.valueMappings[value];
+            const $inner = $('<button class="btButton" m21Type="' + value + '">'
+                    + entity + '</button>');
+            if (this.styles[value] !== undefined) {
+                $inner.attr('style', this.styles[value]);
+            }
 
-        $inner.click((function rhythmButtonDiv_click(value) {
-            this.handleButton(value);
-        }).bind(this, value));
-        $outer.append($inner);
+            $inner.click((function rhythmButtonDiv_click(value) {
+                this.handleButton(value);
+            }).bind(this, value));
+            $outer.append($inner);
+        }
+        if (where !== undefined) {
+            $where.append($outer);
+        }
+        return $outer;
     }
-    if (where !== undefined) {
-        $where.append($outer);
-    }
-    return $outer;
-};
+    /**
+     * A button has been pressed! Call the appropriate handler and update the stream's canvas (if any)
+     *
+     * @memberof music21.widgets.RhythmChooser
+     * @param {string} t - type of button pressed.
+     */
+    handleButton(t) {
+        let bhs = this.buttonHandlers;
+        if (this.measureMode) {
+            bhs = this.measureButtonHandlers;
+        }
+        let bh = bhs[t];
+        if (bh === undefined) {
+            bh = bhs['default'];
+        }
+        bh.apply(this, [t]);
+        let s = this.stream;
 
-/**
- * A button has been pressed! Call the appropriate handler and update the stream's canvas (if any)
- *
- * @memberof music21.widgets.RhythmChooser
- * @param {string} t - type of button pressed.
- */
-widgets.RhythmChooser.prototype.handleButton = function handleButton(t) {
-    let bhs = this.buttonHandlers;
-    if (this.measureMode) {
-        bhs = this.measureButtonHandlers;
+        // redraw score if Part is part of score...
+        if (s.isClassOrSubclass('Part') && s.activeSite !== undefined) {
+            s = s.activeSite;
+        }
+        if (this.canvasDiv !== undefined) {
+            s.replaceCanvas(this.canvasDiv);
+        }
     }
-    let bh = bhs[t];
-    if (bh === undefined) {
-        bh = bhs['default'];
-    }
-    bh.apply(this, [t]);
-    let s = this.stream;
-
-    // redraw score if Part is part of score...
-    if (s.isClassOrSubclass('Part') && s.activeSite !== undefined) {
-        s = s.activeSite;
-    }
-    if (this.canvasDiv !== undefined) {
-        s.replaceCanvas(this.canvasDiv);
-    }
-};
-
+}
+widgets.RhythmChooser = RhythmChooser;

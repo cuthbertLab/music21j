@@ -90,219 +90,210 @@ tempo.baseTempo = 60;
  * @property {Int} beat - current beat number
  * @property {Int} chirpTimeout - an index of a timeout object for chirping
  */
-tempo.Metronome = function Metronome(tempoInt) {
-    prebase.ProtoM21Object.call(this);
-    this.classes.push('Metronome');
-    this._tempo = 60; // overridden by music21.tempo.baseTempo;
-    if (tempoInt === undefined) {
-        this.tempo = tempo.baseTempo;
-    } else {
-        this.tempo = tempoInt;
-    }
-    this.numBeatsPerMeasure = 4;
-    this.minTempo = 10;
-    this.maxTempo = 600;
-    this.beat = this.numBeatsPerMeasure;
-    this.chirpTimeout = undefined;
-    this.silent = false;
-    this.flash = false;
-
-    Object.defineProperties(this, {
-        'tempo': {
-            enumerable: true,
-            get() { return this._tempo; },
-            set(t) {
-                this._tempo = t;
-                if (this._tempo > this.maxTempo) {
-                    this._tempo = this.maxTempo;
-                } else if (this._tempo < this.minTempo) {
-                    this._tempo = this.minTempo;
-                }
-            },
-        },
-        'beatLength': {
-            enumerable: true,
-            get() {
-                return 60.0 / this.tempo;
-            },
-        },
-
-    });
-};
-
-tempo.Metronome.prototype = new prebase.ProtoM21Object();
-tempo.Metronome.prototype.constructor = tempo.Metronome;
-
-tempo.Metronome.prototype._silentFlash = function _sildentFlash(flashColor) {
-    this.$metronomeDiv.find('.metroFlash').css('background-color', flashColor).fadeOut(
-            this.beatLength * 1000 * 1 / 4, function silentFadeOut() {
-                $(this).css('background-color', '#ffffff').fadeIn(1);
-            });
-};
-
-
-/**
- * Play a note (a higher one on the downbeat) and start the metronome chirping.
- *
- * @memberof music21.tempo.Metronome
- */
-tempo.Metronome.prototype.chirp = function chirp() {
-    this.beat += 1;
-    if (this.beat > this.numBeatsPerMeasure) {
-        this.beat = 1;
-        if (this.silent !== true) {
-            MIDI.noteOn(0, 96, 100, 0);
-            MIDI.noteOff(0, 96, 0.1);
+export class Metronome extends prebase.ProtoM21Object {
+    constructor(tempoInt) {
+        super();
+        this.classes.push('Metronome');
+        this._tempo = 60; // overridden by music21.tempo.baseTempo;
+        if (tempoInt === undefined) {
+            this.tempo = tempo.baseTempo;
+        } else {
+            this.tempo = tempoInt;
         }
-        if (this.flash === true) {
-            this._silentFlash('#0000f0');
-        }
-    } else {
-        if (this.silent !== true) {
-            MIDI.noteOn(0, 84, 70, 0);
-            MIDI.noteOff(0, 84, 0.1);
-        }
-        if (this.flash === true) {
-            this._silentFlash('#ff0000');
-        }
-    }
-    const that = this;
-    this.chirpTimeout = setTimeout(() => { that.chirp(); },
-            1000 * 60 / this.tempo);
-};
-
-
-/**
- * Stop the metronome from chirping.
- *
- * @memberof music21.tempo.Metronome
- */
-tempo.Metronome.prototype.stopChirp = function stopChirp() {
-    if (this.chirpTimeout !== undefined) {
-        clearTimeout(this.chirpTimeout);
+        this.numBeatsPerMeasure = 4;
+        this.minTempo = 10;
+        this.maxTempo = 600;
+        this.beat = this.numBeatsPerMeasure;
         this.chirpTimeout = undefined;
+        this.silent = false;
+        this.flash = false;
+        this.tempoRanges =     [0, 40, 60, 72, 120, 144, 240, 999];
+        this.tempoIncreases = [0, 1,  2,  3,  4,   6,   8,  15, 100];
     }
-};
-tempo.Metronome.prototype.tempoRanges =     [0, 40, 60, 72, 120, 144, 240, 999];
-tempo.Metronome.prototype.tempoIncreases = [0, 1,  2,  3,  4,   6,   8,  15, 100];
+    get tempo() {
+        return this._tempo;
+    }
+    set tempo(t) {
+        this._tempo = t;
+        if (this._tempo > this.maxTempo) {
+            this._tempo = this.maxTempo;
+        } else if (this._tempo < this.minTempo) {
+            this._tempo = this.minTempo;
+        }
+    }
+    get beatLength() {
+        return 60.0 / this.tempo;
+    }
+    _silentFlash(flashColor) {
+        this.$metronomeDiv.find('.metroFlash').css('background-color', flashColor).fadeOut(
+                this.beatLength * 1000 * 1 / 4, function silentFadeOut() {
+                    $(this).css('background-color', '#ffffff').fadeIn(1);
+                });
+    }
 
 
-/**
- * Increase the metronome tempo one "click".
- *
- * Value changes depending on the current tempo.  Uses standard metronome guidelines.
- *
- * To change the tempo, just set this.tempo = n
- *
- * @memberof music21.tempo.Metronome
- * @param {Int} n - number of clicks to the right
- * @returns {number} new tempo
- */
-tempo.Metronome.prototype.increaseSpeed = function increaseSpeed(n) {
-    // increase by one metronome 'click' for every n
-    if (n === undefined) {
-        n = 1;
-    }
-    for (let i = 0; i < n; i++) {
-        let t = this.tempo;
-        for (let tr = 0; tr < this.tempoRanges.length; tr++) {
-            const tempoExtreme = this.tempoRanges[tr];
-            const tempoIncrease = this.tempoIncreases[tr];
-            if (t < tempoExtreme) {
-                t += tempoIncrease;
-                t = tempoIncrease * Math.round(t / tempoIncrease);
-                break;
+    /**
+     * Play a note (a higher one on the downbeat) and start the metronome chirping.
+     *
+     * @memberof music21.tempo.Metronome
+     */
+    chirp() {
+        this.beat += 1;
+        if (this.beat > this.numBeatsPerMeasure) {
+            this.beat = 1;
+            if (this.silent !== true) {
+                MIDI.noteOn(0, 96, 100, 0);
+                MIDI.noteOff(0, 96, 0.1);
+            }
+            if (this.flash === true) {
+                this._silentFlash('#0000f0');
+            }
+        } else {
+            if (this.silent !== true) {
+                MIDI.noteOn(0, 84, 70, 0);
+                MIDI.noteOff(0, 84, 0.1);
+            }
+            if (this.flash === true) {
+                this._silentFlash('#ff0000');
             }
         }
-        // console.log(t);
-        this.tempo = t;
+        const that = this;
+        this.chirpTimeout = setTimeout(() => { that.chirp(); },
+                1000 * 60 / this.tempo);
     }
-    return this.tempo;
-};
 
-/**
- * Decrease the metronome tempo one "click"
- *
- * To change the tempo, just set this.tempo = n
- *
- * @memberof music21.tempo.Metronome
- * @param {Int} n - number of clicks to the left
- * @returns {number} new tempo
- */
-tempo.Metronome.prototype.decreaseSpeed = function decreaseSpeed(n) {
-    if (n === undefined) {
-        n = 1;
-    }
-    for (let i = 0; i < n; i++) {
-        let t = this.tempo;
-        const trL = this.tempoRanges.length;
-        for (let tr = 1; tr <= trL; tr++) {
-            const tempoExtreme = this.tempoRanges[trL - tr];
-            const tempoIncrease = this.tempoIncreases[trL - tr + 1];
-            if (t > tempoExtreme) {
-                t -= tempoIncrease;
-                t = tempoIncrease * Math.floor(t / tempoIncrease);
-                break;
-            }
+
+    /**
+     * Stop the metronome from chirping.
+     *
+     * @memberof music21.tempo.Metronome
+     */
+    stopChirp() {
+        if (this.chirpTimeout !== undefined) {
+            clearTimeout(this.chirpTimeout);
+            this.chirpTimeout = undefined;
         }
-        // console.log(t);
-        this.tempo = t;
     }
-};
 
-/**
- * add a Metronome interface onto the DOM at where
- *
- * @memberof music21.tempo.Metronome
- * @param {JQueryDOMObject|DOMObject} [where='body']
- * @returns {JQueryDOMObject} - a div holding the metronome.
- */
-tempo.Metronome.prototype.addDiv = function addDiv(where) {
-    let jWhere;
-    if (where !== undefined && where.jquery !== undefined) {
-        jWhere = where;
-    } else if (where !== undefined) {
-        jWhere = $(where);
-    } else {
-        jWhere = $('body');
+    /**
+     * Increase the metronome tempo one "click".
+     *
+     * Value changes depending on the current tempo.  Uses standard metronome guidelines.
+     *
+     * To change the tempo, just set this.tempo = n
+     *
+     * @memberof music21.tempo.Metronome
+     * @param {Int} n - number of clicks to the right
+     * @returns {number} new tempo
+     */
+    increaseSpeed(n) {
+        // increase by one metronome 'click' for every n
+        if (n === undefined) {
+            n = 1;
+        }
+        for (let i = 0; i < n; i++) {
+            let t = this.tempo;
+            for (let tr = 0; tr < this.tempoRanges.length; tr++) {
+                const tempoExtreme = this.tempoRanges[tr];
+                const tempoIncrease = this.tempoIncreases[tr];
+                if (t < tempoExtreme) {
+                    t += tempoIncrease;
+                    t = tempoIncrease * Math.round(t / tempoIncrease);
+                    break;
+                }
+            }
+            // console.log(t);
+            this.tempo = t;
+        }
+        return this.tempo;
     }
-    const metroThis = this;
-    const tempoHolder = $('<span class="tempoHolder">' + this.tempo.toString() +
-    '</span>').css({
-        'font-size': '24px',
-        'padding-left': '10px',
-        'padding-right': '10px',
-    });
-    const newDiv = $('<div class="metronomeRendered"></div>');
-    newDiv.append(tempoHolder);
-    const b1 = $('<button>start</button>');
-    b1.on('click', () => {
-        metroThis.chirp();
-    });
-    const b2 = $('<button>stop</button>');
-    b2.on('click', () => {
-        metroThis.stopChirp();
-    });
-    newDiv.prepend(b2);
-    newDiv.prepend(b1);
-    const b3 = $('<button>up</button>');
-    b3.on('click', function increaseSpeedButton() {
-        metroThis.increaseSpeed();
-        $(this).prevAll('.tempoHolder').html(metroThis.tempo.toString());
-    });
-    const b4 = $('<button>down</button>');
-    b4.on('click', function decreaseSpeedButton() {
-        metroThis.decreaseSpeed();
-        $(this).prevAll('.tempoHolder').html(metroThis.tempo.toString());
-    });
-    newDiv.append(b3);
-    newDiv.append(b4);
-    const $flash = $('<span class="metroFlash">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>');
-    $flash.css('margin-left', '40px').css('height', '40px');
-    newDiv.append($flash);
 
-    jWhere.append(newDiv);
-    this.$metronomeDiv = newDiv;
-    return newDiv;
-};
+    /**
+     * Decrease the metronome tempo one "click"
+     *
+     * To change the tempo, just set this.tempo = n
+     *
+     * @memberof music21.tempo.Metronome
+     * @param {Int} n - number of clicks to the left
+     * @returns {number} new tempo
+     */
+    decreaseSpeed(n) {
+        if (n === undefined) {
+            n = 1;
+        }
+        for (let i = 0; i < n; i++) {
+            let t = this.tempo;
+            const trL = this.tempoRanges.length;
+            for (let tr = 1; tr <= trL; tr++) {
+                const tempoExtreme = this.tempoRanges[trL - tr];
+                const tempoIncrease = this.tempoIncreases[trL - tr + 1];
+                if (t > tempoExtreme) {
+                    t -= tempoIncrease;
+                    t = tempoIncrease * Math.floor(t / tempoIncrease);
+                    break;
+                }
+            }
+            // console.log(t);
+            this.tempo = t;
+        }
+    }
+
+    /**
+     * add a Metronome interface onto the DOM at where
+     *
+     * @memberof music21.tempo.Metronome
+     * @param {JQueryDOMObject|DOMObject} [where='body']
+     * @returns {JQueryDOMObject} - a div holding the metronome.
+     */
+    addDiv(where) {
+        let jWhere;
+        if (where !== undefined && where.jquery !== undefined) {
+            jWhere = where;
+        } else if (where !== undefined) {
+            jWhere = $(where);
+        } else {
+            jWhere = $('body');
+        }
+        const metroThis = this;
+        const tempoHolder = $('<span class="tempoHolder">' + this.tempo.toString() + '</span>');
+        tempoHolder.css({
+            'font-size': '24px',
+            'padding-left': '10px',
+            'padding-right': '10px',
+        });
+        const newDiv = $('<div class="metronomeRendered"></div>');
+        newDiv.append(tempoHolder);
+
+        const b1 = $('<button>start</button>');
+        b1.on('click', () => { metroThis.chirp(); });
+        const b2 = $('<button>stop</button>');
+        b2.on('click', () => { metroThis.stopChirp(); });
+        newDiv.prepend(b2);
+        newDiv.prepend(b1);
+        const b3 = $('<button>up</button>');
+        b3.on('click', function increaseSpeedButton() {
+            metroThis.increaseSpeed();
+            $(this).prevAll('.tempoHolder').html(metroThis.tempo.toString());
+        });
+        const b4 = $('<button>down</button>');
+        b4.on('click', function decreaseSpeedButton() {
+            metroThis.decreaseSpeed();
+            $(this).prevAll('.tempoHolder').html(metroThis.tempo.toString());
+        });
+        newDiv.append(b3);
+        newDiv.append(b4);
+        const $flash = $('<span class="metroFlash">' +
+                '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>');
+        $flash.css('margin-left', '40px');
+        $flash.css('height', '40px');
+
+        newDiv.append($flash);
+
+        jWhere.append(newDiv);
+
+        this.$metronomeDiv = newDiv;
+        return newDiv;
+    }
+}
+tempo.Metronome = Metronome;
 
