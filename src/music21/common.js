@@ -9,6 +9,8 @@
  * @namespace music21.common
  * @memberof music21
  */
+import * as $ from 'jquery';
+
 export const common = {};
 
 /**
@@ -22,15 +24,18 @@ export const common = {};
  * @memberof music21.common
  * @returns {object} destination
  */
-common.merge = function MergeRecursive(destination, source) {
+common.merge = function mergeRecursive(destination, source) {
     if (source === undefined || source === null) {
         return destination;
     }
     for (const p in source) {
+        if (!({}.hasOwnProperty.call(source, p))) {
+            continue;
+        }
         try {
             // Property in destination object set; update its value.
-            if (source[p].constructor == Object) {
-                destination[p] = MergeRecursive(destination[p], source[p]);
+            if (source[p].constructor === Object) {
+                destination[p] = mergeRecursive(destination[p], source[p]);
             } else {
                 destination[p] = source[p];
             }
@@ -43,16 +48,17 @@ common.merge = function MergeRecursive(destination, source) {
 };
 
 common.mixin = function common_mixin(OtherParent, thisClassOrObject) {
-    let proto = OtherParent.prototype;
-    console.log(thisClassOrObject);
-    console.log(thisClassOrObject.__proto__);
-    do {
+    let proto = Object.getPrototypeOf(OtherParent);
+    const classProto = Object.getPrototypeOf(thisClassOrObject);
+
+    while (proto) {
         for (const key of Object.keys(proto)) {
-            if (!(key in thisClassOrObject.__proto__)) {
-                thisClassOrObject.__proto__[key] = proto[key];  
+            if (!(key in classProto)) {
+                classProto[key] = proto[key];
             }
         }
-    } while (proto = Object.getPrototypeOf(proto))
+        proto = Object.getPrototypeOf(proto);
+    }
 };
 /**
  *
@@ -66,8 +72,10 @@ common.mixin = function common_mixin(OtherParent, thisClassOrObject) {
  * @param {Array} a - an array to analyze
  * @returns {object} element with the highest frequency in a
  */
-common.statisticalMode = function(a) {
-    if (a.length == 0) { return null; }
+common.statisticalMode = function statisticalMode(a) {
+    if (a.length === 0) {
+        return null;
+    }
     const modeMap = {};
     let maxEl = a[0];
     let maxCount = 1;
@@ -94,7 +102,7 @@ common.statisticalMode = function(a) {
  * @memberof music21.common
  * @returns {DOMObject}
  */
-common.makeSVGright = function(tag, attrs) {
+common.makeSVGright = function makeSVGright(tag, attrs) {
     // see http://stackoverflow.com/questions/3642035/jquerys-append-not-working-with-svg-element
     // normal JQuery does not work.
     if (tag === undefined) {
@@ -106,6 +114,9 @@ common.makeSVGright = function(tag, attrs) {
 
     const el = document.createElementNS('http://www.w3.org/2000/svg', tag);
     for (const k in attrs) {
+        if (!({}.hasOwnProperty.call(attrs, k))) {
+            continue;
+        }
         el.setAttribute(k, attrs[k]);
     }
     return el;
@@ -120,24 +131,24 @@ common.makeSVGright = function(tag, attrs) {
  * @param {Boolean} [plural=false] - make plural (note that "21st" plural is "21st")
  * @return {string}
  */
-common.ordinalAbbreviation = function(value, plural) {
+common.ordinalAbbreviation = function ordinalAbbreviation(value, plural) {
     let post = '';
     const valueHundreths = value % 100;
-    if (valueHundreths == 11 || valueHundreths == 12 || valueHundreths == 13) {
+    if (valueHundreths === 11 || valueHundreths === 12 || valueHundreths === 13) {
         post = 'th';
     } else {
         const valueMod = value % 10;
-        if (valueMod == 1) {
+        if (valueMod === 1) {
             post = 'st';
-        } else if (valueMod == 2) {
+        } else if (valueMod === 2) {
             post = 'nd';
-        } else if (valueMod == 3) {
+        } else if (valueMod === 3) {
             post = 'rd';
         } else {
             post = 'th';
         }
     }
-    if (post != 'st' && plural) {
+    if (post !== 'st' && plural) {
         post += 's';
     }
     return post;
@@ -152,7 +163,7 @@ common.ordinalAbbreviation = function(value, plural) {
  * @param {Int} [maxDenominator=50] - maximum denominator
  * @returns {object|undefined} {'numerator: numerator, 'denominator': denominator}
  */
-common.rationalize = function(ql, epsilon, maxDenominator) {
+common.rationalize = function rationalize(ql, epsilon, maxDenominator) {
     epsilon = epsilon || 0.001;
     maxDenominator = maxDenominator || 50;
 
@@ -176,8 +187,8 @@ common.rationalize = function(ql, epsilon, maxDenominator) {
  * @param {Int|string} str -- string that might have 'px' at the end or not
  * @returns {Int} a number to use
  */
-common.stripPx = function(str) {
-    if (typeof str == 'string') {
+common.stripPx = function stripPx(str) {
+    if (typeof str === 'string') {
         const pxIndex = str.indexOf('px');
         str = str.slice(0, pxIndex);
         return parseInt(str);
@@ -193,10 +204,10 @@ common.stripPx = function(str) {
  * @param {string} name - url parameter to find
  * @returns {string} may be "" if empty.
  */
-common.urlParam = function(name) {
+common.urlParam = function urlParam(name) {
     name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
-    let regex = new RegExp('[\\?&]' + name + '=([^&#]*)'),
-    results = regex.exec(location.search);
+    const regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+    const results = regex.exec(location.search);
     return results == null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
 };
 
@@ -211,51 +222,60 @@ common.urlParam = function(name) {
  * @author Brandon Aaron (brandon.aaron@gmail.com || http://brandonaaron.net)
  * @author Yannick Albert (mail@yckart.com || http://yckart.com)
  */
-common.jQueryEventCopy = function(eventObj, from, to) {
-    from = from.jquery ? from : jQuery(from);
-    to = to.jquery ? to : jQuery(to);
+common.jQueryEventCopy = function jQueryEventCopy(eventObj, from, to) {
+    from = from.jquery ? from : $(from);
+    to = to.jquery ? to : $(to);
 
-    const events = from[0].events || jQuery.data(from[0], 'events') || jQuery._data(from[0], 'events');
-    if (!from.length || !to.length || !events) return;
-
-    return to.each(function() {
-        for (const type in events)
-            for (const handler in events[type])
-                jQuery.event.add(eventObj, type, events[type][handler], events[type][handler].data);
+    const events = from[0].events || $.data(from[0], 'events') || $._data(from[0], 'events');
+    if (!from.length || !to.length || !events) {
+        return undefined;
+    }
+    return to.each(() => {
+        for (const type in events) {
+            if (!({}.hasOwnProperty.call(events, type))) {
+                continue;
+            }
+            for (const handler in events[type]) {
+                if (!({}.hasOwnProperty.call(events[type], handler))) {
+                    continue;
+                }
+                $.event.add(eventObj, type, events[type][handler], events[type][handler].data);
+            }
+        }
     });
 };
-//common.walk = function (obj, callback, callList, seen, numSeen) {
-//if (depth == undefined) {
-//depth = 0;
-//}
-//if (depth > 20) {
-//throw "max depth reached";
-//}
-//if (callList === undefined) {
-//callList = [];
-//}
-//if (seen === undefined) {
-//seen = new Set();
-//}
-//var next, item;
-//for (item in obj) {
-//if (obj.hasOwnProperty(item)) {
-//next = obj[item];
-//var nextCallList = []
-//nextCallList.push.apply(callList);
-//nextCallList.push(item);
-//if (callback !== undefined) {
-//callback.call(this, item, next, nextCallList);
-//}
-//if (typeof next =='object' && next != null) {
-//if (seen.has(next) == false) {
-//seen.add(next);
-//common.walk(next, callback, nextCallList, seen, depth+1);
-//}
-//}
-//}
-//}
-//};
+// common.walk = function (obj, callback, callList, seen, numSeen) {
+// if (depth == undefined) {
+// depth = 0;
+// }
+// if (depth > 20) {
+// throw "max depth reached";
+// }
+// if (callList === undefined) {
+// callList = [];
+// }
+// if (seen === undefined) {
+// seen = new Set();
+// }
+// var next, item;
+// for (item in obj) {
+// if (obj.hasOwnProperty(item)) {
+// next = obj[item];
+// var nextCallList = []
+// nextCallList.push.apply(callList);
+// nextCallList.push(item);
+// if (callback !== undefined) {
+// callback.call(this, item, next, nextCallList);
+// }
+// if (typeof next =='object' && next != null) {
+// if (seen.has(next) == false) {
+// seen.add(next);
+// common.walk(next, callback, nextCallList, seen, depth+1);
+// }
+// }
+// }
+// }
+// };
 
 /**
  * runs a callback with either "visible" or "hidden" as the argument anytime the
@@ -274,11 +294,14 @@ common.setWindowVisibilityWatcher = function(callback) {
     // Standards:
     if (hidden in document) {
         document.addEventListener('visibilitychange', windowFocusChanged);
-    } else if ((hidden = 'mozHidden') in document) {
+    } else if ('mozHidden' in document) {
+        hidden = 'mozHidden';
         document.addEventListener('mozvisibilitychange', windowFocusChanged);
-    } else if ((hidden = 'webkitHidden') in document) {
+    } else if ('webkitHidden' in document) {
+        hidden = 'webkitHidden';
         document.addEventListener('webkitvisibilitychange', windowFocusChanged);
-    } else if ((hidden = 'msHidden') in document) {
+    } else if ('msHidden' in document) {
+        hidden = 'msHidden';
         document.addEventListener('msvisibilitychange', windowFocusChanged);
     } else if ('onfocusin' in document) {
         // IE 9 and lower:
@@ -290,9 +313,10 @@ common.setWindowVisibilityWatcher = function(callback) {
 
 
     function windowFocusChanged(evt) {
-        let v = 'visible', h = 'hidden',
-        evtMap = {
-                focus: v, focusin: v, pageshow: v, blur: h, focusout: h, pagehide: h,
+        const v = 'visible';
+        const h = 'hidden';
+        const evtMap = {
+            focus: v, focusin: v, pageshow: v, blur: h, focusout: h, pagehide: h,
         };
 
         evt = evt || window.event;
@@ -305,7 +329,7 @@ common.setWindowVisibilityWatcher = function(callback) {
         callback(callbackState, evt);
     }
     // set the initial state
-    const initialState = ((document.visibilityState == 'visible') ? 'focus' : 'blur');
+    const initialState = ((document.visibilityState === 'visible') ? 'focus' : 'blur');
     const initialStateEvent = { 'type': initialState };
     windowFocusChanged(initialStateEvent);
 };

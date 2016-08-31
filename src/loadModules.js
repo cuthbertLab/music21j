@@ -1,12 +1,12 @@
 // order below doesn't matter, but good to give a sense
 // of what will be needed by almost everyone, and then
-// alphabetical 
+// alphabetical.
 import { debug } from './music21/debug';
 import { common } from './music21/common';
 import { prebase } from './music21/prebase';
 import { base } from './music21/base';
 
-import { articulations } from './music21/articulations'; 
+import { articulations } from './music21/articulations';
 import { audioSearch } from './music21/audioSearch';
 import { beam } from './music21/beam';
 import { chord } from './music21/chord';
@@ -35,9 +35,8 @@ import { vfShow } from './music21/vfShow';
 import { webmidi } from './music21/webmidi';
 import { widgets } from './music21/widgets';
 
+export const music21 = {};
 
-
-export var music21 = {}
 music21.common = common;
 music21.debug = debug;
 music21.prebase = prebase;
@@ -48,6 +47,7 @@ music21.audioSearch = audioSearch;
 music21.beam = beam;
 music21.chord = chord;
 music21.clef = clef;
+music21.dynamics = dynamics;
 music21.duration = duration;
 music21.expressions = expressions;
 music21.fromPython = fromPython;

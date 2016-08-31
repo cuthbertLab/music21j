@@ -242,7 +242,8 @@ miditools.sendOutChord = function sendOutChord(chordNoteList) {
 };
 
 /* ----------- callbacks --------- */
-//todo: all callbacks (incl. raw, sendOutChord) should be able to be a function or an array of functions
+// TODO: all callbacks (incl. raw, sendOutChord) should be able to be a function or an array of functions
+
 /**
 * callBacks is an object with three keys:
 *
@@ -257,10 +258,10 @@ miditools.sendOutChord = function sendOutChord(chordNoteList) {
 * @memberof music21.miditools
 */
 miditools.callBacks = {
-  raw: (t, a, b, c) => new miditools.Event(t, a, b, c),
-  general: [miditools.sendToMIDIjs,
-            miditools.quantizeLastNote],
-  sendOutChord: (arrayOfNotes) => { },
+    raw: (t, a, b, c) => new miditools.Event(t, a, b, c),
+    general: [miditools.sendToMIDIjs,
+              miditools.quantizeLastNote],
+    sendOutChord: (arrayOfNotes) => { },
 };
 
 /**

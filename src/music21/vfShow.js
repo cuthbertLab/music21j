@@ -615,9 +615,9 @@ vfShow.Renderer.prototype.setClefEtc = function setClefEtc(s, stave, rendOp) {
     if (rendOp.rightBarline !== undefined) {
         const bl = rendOp.rightBarline;
         const barlineMap = {
-                'single': 'SINGLE',
-                'double': 'DOUBLE',
-                'end': 'END',
+            'single': 'SINGLE',
+            'double': 'DOUBLE',
+            'end': 'END',
         };
         const vxBL = barlineMap[bl];
         if (vxBL !== undefined) {
@@ -768,9 +768,9 @@ vfShow.Renderer.prototype.vexflowLyrics = function vexflowLyrics(s, stave) {
         s = this.stream;
     }
     const font = {
-            family: 'Serif',
-            size: 12,
-            weight: '',
+        family: 'Serif',
+        size: 12,
+        weight: '',
     };
     // runs on a flat, gapless, no-overlap stream, returns a list of TextNote objects...
     const lyricsObjects = [];
@@ -865,10 +865,10 @@ vfShow.Renderer.prototype.vexflowVoice = function vexflowVoice(s) {
 
 vfShow.Renderer.prototype.staffConnectorsMap = function staffConnectorsMap(connectorType) {
     const connectorMap = {
-            'brace': Vex.Flow.StaveConnector.type.BRACE,
-            'single': Vex.Flow.StaveConnector.type.SINGLE,
-            'double': Vex.Flow.StaveConnector.type.DOUBLE,
-            'bracket': Vex.Flow.StaveConnector.type.BRACKET,
+        'brace': Vex.Flow.StaveConnector.type.BRACE,
+        'single': Vex.Flow.StaveConnector.type.SINGLE,
+        'double': Vex.Flow.StaveConnector.type.DOUBLE,
+        'bracket': Vex.Flow.StaveConnector.type.BRACKET,
     };
     return connectorMap[connectorType];
 };

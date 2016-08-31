@@ -1,5 +1,5 @@
 /**
-  * music21j 0.8.0 built on   * 2016-08-30.
+  * music21j 0.8.0 built on   * 2016-08-31.
  * Copyright (c) 2013-2016 Michael Scott Cuthbert and cuthbertLab
  *
  * http://github.com/cuthbertLab/music21j
@@ -9,7 +9,7 @@
   typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('jquery'), require('vexflow'), require('MIDI'), require('jsonpickle'), require('eventjs')) :
   typeof define === 'function' && define.amd ? define(['exports', 'jquery', 'vexflow', 'MIDI', 'jsonpickle', 'eventjs'], factory) :
   (factory((global.music21 = global.music21 || {}),global.$,global.Vex,global.MIDI,global.jsonpickle,global.eventjs));
-}(this, (function (exports,$$1,Vex$1,MIDI,jsonpickle,eventjs) { 'use strict';
+}(this, (function (exports,$$1,Vex,MIDI,jsonpickle,eventjs) { 'use strict';
 
   var debug = true;
 
@@ -37,15 +37,18 @@
    * @memberof music21.common
    * @returns {object} destination
    */
-  common.merge = function MergeRecursive(destination, source) {
+  common.merge = function mergeRecursive(destination, source) {
       if (source === undefined || source === null) {
           return destination;
       }
       for (var p in source) {
+          if (!{}.hasOwnProperty.call(source, p)) {
+              continue;
+          }
           try {
               // Property in destination object set; update its value.
-              if (source[p].constructor == Object) {
-                  destination[p] = MergeRecursive(destination[p], source[p]);
+              if (source[p].constructor === Object) {
+                  destination[p] = mergeRecursive(destination[p], source[p]);
               } else {
                   destination[p] = source[p];
               }
@@ -58,10 +61,10 @@
   };
 
   common.mixin = function common_mixin(OtherParent, thisClassOrObject) {
-      var proto = OtherParent.prototype;
-      console.log(thisClassOrObject);
-      console.log(thisClassOrObject.__proto__);
-      do {
+      var proto = Object.getPrototypeOf(OtherParent);
+      var classProto = Object.getPrototypeOf(thisClassOrObject);
+
+      while (proto) {
           var _iteratorNormalCompletion = true;
           var _didIteratorError = false;
           var _iteratorError = undefined;
@@ -70,8 +73,8 @@
               for (var _iterator = Object.keys(proto)[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
                   var key = _step.value;
 
-                  if (!(key in thisClassOrObject.__proto__)) {
-                      thisClassOrObject.__proto__[key] = proto[key];
+                  if (!(key in classProto)) {
+                      classProto[key] = proto[key];
                   }
               }
           } catch (err) {
@@ -88,7 +91,9 @@
                   }
               }
           }
-      } while (proto = Object.getPrototypeOf(proto));
+
+          proto = Object.getPrototypeOf(proto);
+      }
   };
   /**
    *
@@ -102,8 +107,8 @@
    * @param {Array} a - an array to analyze
    * @returns {object} element with the highest frequency in a
    */
-  common.statisticalMode = function (a) {
-      if (a.length == 0) {
+  common.statisticalMode = function statisticalMode(a) {
+      if (a.length === 0) {
           return null;
       }
       var modeMap = {};
@@ -132,7 +137,7 @@
    * @memberof music21.common
    * @returns {DOMObject}
    */
-  common.makeSVGright = function (tag, attrs) {
+  common.makeSVGright = function makeSVGright(tag, attrs) {
       // see http://stackoverflow.com/questions/3642035/jquerys-append-not-working-with-svg-element
       // normal JQuery does not work.
       if (tag === undefined) {
@@ -144,6 +149,9 @@
 
       var el = document.createElementNS('http://www.w3.org/2000/svg', tag);
       for (var k in attrs) {
+          if (!{}.hasOwnProperty.call(attrs, k)) {
+              continue;
+          }
           el.setAttribute(k, attrs[k]);
       }
       return el;
@@ -158,24 +166,24 @@
    * @param {Boolean} [plural=false] - make plural (note that "21st" plural is "21st")
    * @return {string}
    */
-  common.ordinalAbbreviation = function (value, plural) {
+  common.ordinalAbbreviation = function ordinalAbbreviation(value, plural) {
       var post = '';
       var valueHundreths = value % 100;
-      if (valueHundreths == 11 || valueHundreths == 12 || valueHundreths == 13) {
+      if (valueHundreths === 11 || valueHundreths === 12 || valueHundreths === 13) {
           post = 'th';
       } else {
           var valueMod = value % 10;
-          if (valueMod == 1) {
+          if (valueMod === 1) {
               post = 'st';
-          } else if (valueMod == 2) {
+          } else if (valueMod === 2) {
               post = 'nd';
-          } else if (valueMod == 3) {
+          } else if (valueMod === 3) {
               post = 'rd';
           } else {
               post = 'th';
           }
       }
-      if (post != 'st' && plural) {
+      if (post !== 'st' && plural) {
           post += 's';
       }
       return post;
@@ -190,7 +198,7 @@
    * @param {Int} [maxDenominator=50] - maximum denominator
    * @returns {object|undefined} {'numerator: numerator, 'denominator': denominator}
    */
-  common.rationalize = function (ql, epsilon, maxDenominator) {
+  common.rationalize = function rationalize(ql, epsilon, maxDenominator) {
       epsilon = epsilon || 0.001;
       maxDenominator = maxDenominator || 50;
 
@@ -214,8 +222,8 @@
    * @param {Int|string} str -- string that might have 'px' at the end or not
    * @returns {Int} a number to use
    */
-  common.stripPx = function (str) {
-      if (typeof str == 'string') {
+  common.stripPx = function stripPx(str) {
+      if (typeof str === 'string') {
           var pxIndex = str.indexOf('px');
           str = str.slice(0, pxIndex);
           return parseInt(str);
@@ -231,10 +239,10 @@
    * @param {string} name - url parameter to find
    * @returns {string} may be "" if empty.
    */
-  common.urlParam = function (name) {
+  common.urlParam = function urlParam(name) {
       name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
-      var regex = new RegExp('[\\?&]' + name + '=([^&#]*)'),
-          results = regex.exec(location.search);
+      var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+      var results = regex.exec(location.search);
       return results == null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
   };
 
@@ -248,53 +256,60 @@
    * @author Brandon Aaron (brandon.aaron@gmail.com || http://brandonaaron.net)
    * @author Yannick Albert (mail@yckart.com || http://yckart.com)
    */
-  common.jQueryEventCopy = function (eventObj, from, to) {
-      from = from.jquery ? from : jQuery(from);
-      to = to.jquery ? to : jQuery(to);
+  common.jQueryEventCopy = function jQueryEventCopy(eventObj, from, to) {
+      from = from.jquery ? from : $$1(from);
+      to = to.jquery ? to : $$1(to);
 
-      var events = from[0].events || jQuery.data(from[0], 'events') || jQuery._data(from[0], 'events');
-      if (!from.length || !to.length || !events) return;
-
+      var events = from[0].events || $$1.data(from[0], 'events') || $$1._data(from[0], 'events');
+      if (!from.length || !to.length || !events) {
+          return undefined;
+      }
       return to.each(function () {
           for (var type in events) {
+              if (!{}.hasOwnProperty.call(events, type)) {
+                  continue;
+              }
               for (var handler in events[type]) {
-                  jQuery.event.add(eventObj, type, events[type][handler], events[type][handler].data);
+                  if (!{}.hasOwnProperty.call(events[type], handler)) {
+                      continue;
+                  }
+                  $$1.event.add(eventObj, type, events[type][handler], events[type][handler].data);
               }
           }
       });
   };
-  //common.walk = function (obj, callback, callList, seen, numSeen) {
-  //if (depth == undefined) {
-  //depth = 0;
-  //}
-  //if (depth > 20) {
-  //throw "max depth reached";
-  //}
-  //if (callList === undefined) {
-  //callList = [];
-  //}
-  //if (seen === undefined) {
-  //seen = new Set();
-  //}
-  //var next, item;
-  //for (item in obj) {
-  //if (obj.hasOwnProperty(item)) {
-  //next = obj[item];
-  //var nextCallList = []
-  //nextCallList.push.apply(callList);
-  //nextCallList.push(item);
-  //if (callback !== undefined) {
-  //callback.call(this, item, next, nextCallList);
-  //}
-  //if (typeof next =='object' && next != null) {
-  //if (seen.has(next) == false) {
-  //seen.add(next);
-  //common.walk(next, callback, nextCallList, seen, depth+1);
-  //}
-  //}
-  //}
-  //}
-  //};
+  // common.walk = function (obj, callback, callList, seen, numSeen) {
+  // if (depth == undefined) {
+  // depth = 0;
+  // }
+  // if (depth > 20) {
+  // throw "max depth reached";
+  // }
+  // if (callList === undefined) {
+  // callList = [];
+  // }
+  // if (seen === undefined) {
+  // seen = new Set();
+  // }
+  // var next, item;
+  // for (item in obj) {
+  // if (obj.hasOwnProperty(item)) {
+  // next = obj[item];
+  // var nextCallList = []
+  // nextCallList.push.apply(callList);
+  // nextCallList.push(item);
+  // if (callback !== undefined) {
+  // callback.call(this, item, next, nextCallList);
+  // }
+  // if (typeof next =='object' && next != null) {
+  // if (seen.has(next) == false) {
+  // seen.add(next);
+  // common.walk(next, callback, nextCallList, seen, depth+1);
+  // }
+  // }
+  // }
+  // }
+  // };
 
   /**
    * runs a callback with either "visible" or "hidden" as the argument anytime the
@@ -313,11 +328,14 @@
       // Standards:
       if (hidden in document) {
           document.addEventListener('visibilitychange', windowFocusChanged);
-      } else if ((hidden = 'mozHidden') in document) {
+      } else if ('mozHidden' in document) {
+          hidden = 'mozHidden';
           document.addEventListener('mozvisibilitychange', windowFocusChanged);
-      } else if ((hidden = 'webkitHidden') in document) {
+      } else if ('webkitHidden' in document) {
+          hidden = 'webkitHidden';
           document.addEventListener('webkitvisibilitychange', windowFocusChanged);
-      } else if ((hidden = 'msHidden') in document) {
+      } else if ('msHidden' in document) {
+          hidden = 'msHidden';
           document.addEventListener('msvisibilitychange', windowFocusChanged);
       } else if ('onfocusin' in document) {
           // IE 9 and lower:
@@ -328,9 +346,9 @@
       window.onpageshow = window.onpagehide = window.onfocus = window.onblur = windowFocusChanged;
 
       function windowFocusChanged(evt) {
-          var v = 'visible',
-              h = 'hidden',
-              evtMap = {
+          var v = 'visible';
+          var h = 'hidden';
+          var evtMap = {
               focus: v, focusin: v, pageshow: v, blur: h, focusout: h, pagehide: h
           };
 
@@ -344,7 +362,7 @@
           callback(callbackState, evt);
       }
       // set the initial state
-      var initialState = document.visibilityState == 'visible' ? 'focus' : 'blur';
+      var initialState = document.visibilityState === 'visible' ? 'focus' : 'blur';
       var initialStateEvent = { 'type': initialState };
       windowFocusChanged(initialStateEvent);
   };
@@ -475,95 +493,108 @@
    * @property {Boolean} isProtoM21Object - Does this object descend from {@link music21.prebase.ProtoM21Object}: obviously true.
    * @property {Boolean} isMusic21Object - Does this object descend from {@link music21.base.Music21Object}; default false.
    */
-  prebase.ProtoM21Object = function ProtoM21Object() {
-      this.classes = ['ProtoM21Object'];
-      this.isProtoM21Object = true;
-      this.isMusic21Object = false;
-      this._cloneCallbacks = {};
-  };
+  var ProtoM21Object = function () {
+      function ProtoM21Object() {
+          classCallCheck(this, ProtoM21Object);
 
-  /**
-   * Makes (as much as possible) a complete duplicate copy of the object called with .clone()
-   *
-   * Works similarly to Python's copy.deepcopy().
-   *
-   * Every ProtoM21Object has a `._cloneCallbacks` object which maps `{attribute: callbackFunction}`
-   * to handle custom clone cases.  See, for instance, {@link music21.base.Music21Object} which
-   * uses a custom callback to NOT clone the `.activeSite` attribute.
-   *
-   * @returns {object}
-   * @memberof music21.prebase.ProtoM21Object
-   * @example
-   * var n1 = new music21.note.Note("C#");
-   * n1.duration.quarterLength = 4;
-   * var n2 = n1.clone();
-   * n2.duration.quarterLength == 4; // true
-   * n2 === n1; // false
-   */
-  prebase.ProtoM21Object.prototype.clone = function clone() {
-      var ret = new this.constructor();
+          this.classes = ['ProtoM21Object'];
+          this.isProtoM21Object = true;
+          this.isMusic21Object = false;
+          this._cloneCallbacks = {};
+      }
+      /**
+       * Makes (as much as possible) a complete duplicate copy of the object called with .clone()
+       *
+       * Works similarly to Python's copy.deepcopy().
+       *
+       * Every ProtoM21Object has a `._cloneCallbacks` object which maps `{attribute: callbackFunction}`
+       * to handle custom clone cases.  See, for instance, {@link music21.base.Music21Object} which
+       * uses a custom callback to NOT clone the `.activeSite` attribute.
+       *
+       * @returns {object}
+       * @memberof music21.prebase.ProtoM21Object
+       * @example
+       * var n1 = new music21.note.Note("C#");
+       * n1.duration.quarterLength = 4;
+       * var n2 = n1.clone();
+       * n2.duration.quarterLength == 4; // true
+       * n2 === n1; // false
+       */
 
-      // todo: do Arrays work?
-      for (var key in this) {
-          // not that we ONLY copy the keys in Ret -- it's easier that way.
-          if ({}.hasOwnProperty.call(this, key) === false) {
-              continue;
-          }
-          if (key in this._cloneCallbacks) {
-              if (this._cloneCallbacks[key] === true) {
-                  ret[key] = this[key];
-              } else if (this._cloneCallbacks[key] === false) {
-                  ret[key] = undefined;
-              } else {
-                  // call the cloneCallbacks function
-                  this._cloneCallbacks[key](key, ret, this);
-              }
-          } else if (Object.getOwnPropertyDescriptor(this, key).get !== undefined || Object.getOwnPropertyDescriptor(this, key).set !== undefined) {
-              // do nothing
-          } else if (typeof this[key] === 'function') {
-              // do nothing -- events might not be copied.
-          } else if (_typeof(this[key]) === 'object' && this[key] !== null && this[key].isProtoM21Object) {
-              // console.log('cloning ', key);
-              ret[key] = this[key].clone();
-          } else {
-              try {
-                  ret[key] = this[key];
-                  // music21.common.merge(ret[key], this[key]); // not really necessary?
-              } catch (e) {
-                  if (e instanceof TypeError) {
-                      console.log('typeError:', e, key);
+
+      createClass(ProtoM21Object, [{
+          key: 'clone',
+          value: function clone() {
+              var ret = new this.constructor();
+
+              // todo: do Arrays work?
+              for (var key in this) {
+                  // not that we ONLY copy the keys in Ret -- it's easier that way.
+                  if ({}.hasOwnProperty.call(this, key) === false) {
+                      continue;
+                  }
+                  if (key in this._cloneCallbacks) {
+                      if (this._cloneCallbacks[key] === true) {
+                          ret[key] = this[key];
+                      } else if (this._cloneCallbacks[key] === false) {
+                          ret[key] = undefined;
+                      } else {
+                          // call the cloneCallbacks function
+                          this._cloneCallbacks[key](key, ret, this);
+                      }
+                  } else if (Object.getOwnPropertyDescriptor(this, key).get !== undefined || Object.getOwnPropertyDescriptor(this, key).set !== undefined) {
                       // do nothing
+                  } else if (typeof this[key] === 'function') {
+                      // do nothing -- events might not be copied.
+                  } else if (_typeof(this[key]) === 'object' && this[key] !== null && this[key].isProtoM21Object) {
+                      // console.log('cloning ', key);
+                      ret[key] = this[key].clone();
                   } else {
-                      throw e;
+                      try {
+                          ret[key] = this[key];
+                          // music21.common.merge(ret[key], this[key]); // not really necessary?
+                      } catch (e) {
+                          if (e instanceof TypeError) {
+                              console.log('typeError:', e, key);
+                              // do nothing
+                          } else {
+                              throw e;
+                          }
+                      }
                   }
               }
+              return ret;
           }
-      }
-      return ret;
-  };
-  /**
-   * Check to see if an object is of this class or subclass.
-   *
-   * @memberof music21.prebase.ProtoM21Object
-   * @param {(string|string[])} testClass - a class or Array of classes to test
-   * @returns {Boolean}
-   * @example
-   * var n = new music21.note.Note();
-   * n.isClassOrSubclass('Note'); // true
-   * n.isClassOrSubclass('Music21Object'); // true
-   * n.isClassOrSubclass(['Duration', 'NotRest']); // true // NotRest
-   */
-  prebase.ProtoM21Object.prototype.isClassOrSubclass = function isClassOrSubclass(testClass) {
-      if (testClass instanceof Array === false) {
-          testClass = [testClass];
-      }
-      for (var i = 0; i < testClass.length; i++) {
-          if (this.classes.indexOf(testClass[i]) !== -1) {
-              return true;
+          /**
+           * Check to see if an object is of this class or subclass.
+           *
+           * @memberof music21.prebase.ProtoM21Object
+           * @param {(string|string[])} testClass - a class or Array of classes to test
+           * @returns {Boolean}
+           * @example
+           * var n = new music21.note.Note();
+           * n.isClassOrSubclass('Note'); // true
+           * n.isClassOrSubclass('Music21Object'); // true
+           * n.isClassOrSubclass(['Duration', 'NotRest']); // true // NotRest
+           */
+
+      }, {
+          key: 'isClassOrSubclass',
+          value: function isClassOrSubclass(testClass) {
+              if (testClass instanceof Array === false) {
+                  testClass = [testClass];
+              }
+              for (var i = 0; i < testClass.length; i++) {
+                  if (this.classes.indexOf(testClass[i]) !== -1) {
+                      return true;
+                  }
+              }
+              return false;
           }
-      }
-      return false;
-  };
+      }]);
+      return ProtoM21Object;
+  }();
+  prebase.ProtoM21Object = ProtoM21Object;
 
   /**
    * music21j -- Javascript reimplementation of Core music21 features.
@@ -627,50 +658,146 @@
    * @extends music21.prebase.ProtoM21Object
    * @param {(number|undefined)} ql - quarterLength (default 1.0)
    */
-  duration.Duration = function (ql) {
-      prebase.ProtoM21Object.call(this, ql);
-      this.classes.push('Duration');
-      this._quarterLength = 1.0;
-      this._dots = 0;
-      this._durationNumber = undefined;
-      this._type = 'quarter';
-      this._tuplets = [];
+  var Duration = function (_prebase$ProtoM21Obje) {
+      inherits(Duration, _prebase$ProtoM21Obje);
 
-      this._cloneCallbacks._tuplets = function (tupletKey, ret, obj) {
-          // make sure that tuplets clone properly
-          var newTuplets = [];
-          for (var i = 0; i < obj[tupletKey].length; i++) {
-              var newTuplet = obj[tupletKey][i].clone();
-              // console.log('cloning tuplets', obj[tupletKey][i], newTuplet);
-              newTuplets.push(newTuplet);
+      function Duration(ql) {
+          classCallCheck(this, Duration);
+
+          var _this = possibleConstructorReturn(this, (Duration.__proto__ || Object.getPrototypeOf(Duration)).call(this));
+
+          _this.classes.push('Duration');
+          _this._quarterLength = 1.0;
+          _this._dots = 0;
+          _this._durationNumber = undefined;
+          _this._type = 'quarter';
+          _this._tuplets = [];
+          if (typeof ql === 'string') {
+              _this.type = ql;
+          } else {
+              _this.quarterLength = ql;
           }
-          ret[tupletKey] = newTuplets;
-      };
-      Object.defineProperties(this, {
+          _this._cloneCallbacks._tuplets = _this.cloneCallbacksTupletFunction;
+          return _this;
+      }
+      /**
+       * Read or sets the number of dots on the duration.
+       *
+       * Updates the quarterLength
+       *
+       * @type Number
+       * @instance
+       * @default 0
+       * @memberof music21.duration.Duration
+       * @example
+       * var d = new music21.duration.Duration(2);
+       * d.dots === 0; // true
+       * d.dots = 1;
+       * d.quarterLength == 3; // true;
+       */
+
+
+      createClass(Duration, [{
+          key: 'cloneCallbacksTupletFunction',
+          value: function cloneCallbacksTupletFunction(tupletKey, ret, obj) {
+              // make sure that tuplets clone properly
+              var newTuplets = [];
+              for (var i = 0; i < obj[tupletKey].length; i++) {
+                  var newTuplet = obj[tupletKey][i].clone();
+                  // console.log('cloning tuplets', obj[tupletKey][i], newTuplet);
+                  newTuplets.push(newTuplet);
+              }
+              ret[tupletKey] = newTuplets;
+          }
+      }, {
+          key: '_findDots',
+          value: function _findDots(ql) {
+              if (ql === 0) {
+                  return 0;
+              } // zero length stream probably;
+              var typeNumber = duration.ordinalTypeFromNum.indexOf(this._type);
+              var powerOfTwo = Math.pow(2, duration.quarterTypeIndex - typeNumber);
+              // alert(undottedQL * 1.5 + " " + ql)
+              // console.log('find dots called on ql: ', ql, typeNumber, powerOfTwo);
+              for (var dotsNum = 0; dotsNum <= 4; dotsNum++) {
+                  var dotMultiplier = (Math.pow(2, dotsNum) - 1.0) / Math.pow(2, dotsNum);
+                  var durationMultiplier = 1 + dotMultiplier;
+                  if (Math.abs(powerOfTwo * durationMultiplier - ql) < 0.0001) {
+                      return dotsNum;
+                  }
+              }
+              if (debug) {
+                  console.log('no dots available for ql; probably a tuplet', ql);
+              }
+              return 0;
+          }
+      }, {
+          key: 'updateQlFromFeatures',
+          value: function updateQlFromFeatures() {
+              var typeNumber = duration.ordinalTypeFromNum.indexOf(this._type); // must be set property
+              var undottedQuarterLength = Math.pow(2, duration.quarterTypeIndex - typeNumber);
+              var dottedMultiplier = 1 + (Math.pow(2, this._dots) - 1) / Math.pow(2, this._dots);
+              var unTupletedQl = undottedQuarterLength * dottedMultiplier;
+              var tupletCorrectedQl = unTupletedQl;
+              this._tuplets.forEach(function (tuplet) {
+                  tupletCorrectedQl *= tuplet.tupletMultiplier();
+              });
+              this._quarterLength = tupletCorrectedQl;
+          }
+      }, {
+          key: 'updateFeaturesFromQl',
+          value: function updateFeaturesFromQl() {
+              var ql = this._quarterLength;
+              var powerOfTwo = Math.floor(Math.log(ql + 0.00001) / Math.log(2));
+              var typeNumber = duration.quarterTypeIndex - powerOfTwo;
+              this._type = duration.ordinalTypeFromNum[typeNumber];
+              // console.log(this._findDots);
+              this._dots = this._findDots(ql);
+
+              var undottedQuarterLength = Math.pow(2, duration.quarterTypeIndex - typeNumber);
+              var dottedMultiplier = 1 + (Math.pow(2, this._dots) - 1) / Math.pow(2, this._dots);
+              var unTupletedQl = undottedQuarterLength * dottedMultiplier;
+              if (unTupletedQl !== ql && ql !== 0) {
+                  typeNumber -= 1;
+                  this._type = duration.ordinalTypeFromNum[typeNumber]; // increase type: eighth to quarter etc.
+                  unTupletedQl *= 2;
+                  var tupletRatio = ql / unTupletedQl;
+                  var ratioRat = common.rationalize(tupletRatio);
+                  if (ratioRat === undefined) {
+                      // probably a Stream with a length that is inexpressable;
+                  } else {
+                      var t = new duration.Tuplet(ratioRat.denominator, ratioRat.numerator, new duration.Duration(unTupletedQl));
+                      this.appendTuplet(t, true); // skipUpdateQl
+                  }
+                  // console.log(ratioRat, ql, unTupletedQl);
+              }
+          }
           /**
-           * Read or sets the number of dots on the duration.
+           * Add a tuplet to music21j
            *
-           * Updates the quarterLength
-           *
-           * @type Number
-           * @instance
-           * @default 0
            * @memberof music21.duration.Duration
-           * @example
-           * var d = new music21.duration.Duration(2);
-           * d.dots === 0; // true
-           * d.dots = 1;
-           * d.quarterLength == 3; // true;
+           * @param {music21.duration.Tuplet} newTuplet - tuplet to add to `.tuplets`
+           * @param {boolean} [skipUpdateQl=false] - update the quarterLength afterwards?
            */
-          'dots': {
-              get: function get() {
-                  return this._dots;
-              },
-              set: function set(numDots) {
-                  this._dots = numDots;
+
+      }, {
+          key: 'appendTuplet',
+          value: function appendTuplet(newTuplet, skipUpdateQl) {
+              newTuplet.frozen = true;
+              this._tuplets.push(newTuplet);
+              if (skipUpdateQl !== true) {
                   this.updateQlFromFeatures();
               }
+          }
+      }, {
+          key: 'dots',
+          get: function get() {
+              return this._dots;
           },
+          set: function set(numDots) {
+              this._dots = numDots;
+              this.updateQlFromFeatures();
+          }
           /**
            * Read or sets the quarterLength of the Duration
            *
@@ -687,18 +814,19 @@
            * d.dots == 2; // true
            * d.type == 'quarter'; // true
            */
-          'quarterLength': {
-              get: function get() {
-                  return this._quarterLength;
-              },
-              set: function set(ql) {
-                  if (ql === undefined) {
-                      ql = 1.0;
-                  }
-                  this._quarterLength = ql;
-                  this.updateFeaturesFromQl();
-              }
+
+      }, {
+          key: 'quarterLength',
+          get: function get() {
+              return this._quarterLength;
           },
+          set: function set(ql) {
+              if (ql === undefined) {
+                  ql = 1.0;
+              }
+              this._quarterLength = ql;
+              this.updateFeaturesFromQl();
+          }
           /**
            * Read or sets the type of the duration.
            *
@@ -717,20 +845,21 @@
            * d.type = 'quarter'; // will not change dots
            * d.quarterLength == 1.5; // true
            */
-          'type': {
-              get: function get() {
-                  return this._type;
-              },
-              set: function set(typeIn) {
-                  var typeNumber = duration.ordinalTypeFromNum.indexOf(typeIn);
-                  if (typeNumber == -1) {
-                      console.log('invalid type ' + typeIn);
-                      throw 'invalid type ' + typeIn;
-                  }
-                  this._type = typeIn;
-                  this.updateQlFromFeatures();
-              }
+
+      }, {
+          key: 'type',
+          get: function get() {
+              return this._type;
           },
+          set: function set(typeIn) {
+              var typeNumber = duration.ordinalTypeFromNum.indexOf(typeIn);
+              if (typeNumber === -1) {
+                  console.log('invalid type ' + typeIn);
+                  throw 'invalid type ' + typeIn;
+              }
+              this._type = typeIn;
+              this.updateQlFromFeatures();
+          }
           /**
            * Reads the tuplet Array for the duration.
            *
@@ -743,12 +872,12 @@
            * @default []
            * @memberof music21.duration.Duration
            */
-          'tuplets': {
-              enumerable: true,
-              get: function get() {
-                  return this._tuplets;
-              }
-          },
+
+      }, {
+          key: 'tuplets',
+          get: function get() {
+              return this._tuplets;
+          }
           /**
            * Read-only: the duration expressed for VexFlow
            *
@@ -762,103 +891,24 @@
            * d.dots = 2;
            * d.vexflowDuration == 'hdd'; // true;
            */
-          'vexflowDuration': {
-              get: function get() {
-                  var typeNumber = duration.ordinalTypeFromNum.indexOf(this.type);
-                  var vd = duration.vexflowDurationArray[typeNumber];
-                  if (this.dots > 0) {
-                      for (var i = 0; i < this.dots; i++) {
-                          vd += 'd'; // vexflow does not handle double dots .. or does it???
-                      }
+
+      }, {
+          key: 'vexflowDuration',
+          get: function get() {
+              var typeNumber = duration.ordinalTypeFromNum.indexOf(this.type);
+              var vd = duration.vexflowDurationArray[typeNumber];
+              if (this.dots > 0) {
+                  for (var i = 0; i < this.dots; i++) {
+                      vd += 'd'; // vexflow does not handle double dots .. or does it???
                   }
-                  return vd;
               }
+              return vd;
           }
-      });
+      }]);
+      return Duration;
+  }(prebase.ProtoM21Object);
 
-      if (typeof ql == 'string') {
-          this.type = ql;
-      } else {
-          this.quarterLength = ql;
-      }
-      // alert(ql + " " + this.type + " " + this.dots);
-  };
-  duration.Duration.prototype = new prebase.ProtoM21Object();
-  duration.Duration.prototype.constructor = duration.Duration;
-
-  duration.Duration.prototype._findDots = function (ql) {
-      if (ql === 0) {
-          return 0;
-      } // zero length stream probably;
-      var typeNumber = duration.ordinalTypeFromNum.indexOf(this._type);
-      var powerOfTwo = Math.pow(2, duration.quarterTypeIndex - typeNumber);
-      // alert(undottedQL * 1.5 + " " + ql)
-      // console.log('find dots called on ql: ', ql, typeNumber, powerOfTwo);
-      for (var dotsNum = 0; dotsNum <= 4; dotsNum++) {
-          var dotMultiplier = (Math.pow(2, dotsNum) - 1.0) / Math.pow(2, dotsNum);
-          var durationMultiplier = 1 + dotMultiplier;
-          if (Math.abs(powerOfTwo * durationMultiplier - ql) < 0.0001) {
-              return dotsNum;
-          }
-      }
-      if (music21.debug) {
-          console.log('no dots available for ql; probably a tuplet', ql);
-      }
-      return 0;
-  };
-  duration.Duration.prototype.updateQlFromFeatures = function () {
-      var typeNumber = duration.ordinalTypeFromNum.indexOf(this._type); // must be set property
-      var undottedQuarterLength = Math.pow(2, duration.quarterTypeIndex - typeNumber);
-      var dottedMultiplier = 1 + (Math.pow(2, this._dots) - 1) / Math.pow(2, this._dots);
-      var unTupletedQl = undottedQuarterLength * dottedMultiplier;
-      var tupletCorrectedQl = unTupletedQl;
-      this._tuplets.forEach(function (tuplet) {
-          tupletCorrectedQl *= tuplet.tupletMultiplier();
-      });
-      this._quarterLength = tupletCorrectedQl;
-  };
-
-  duration.Duration.prototype.updateFeaturesFromQl = function () {
-      var ql = this._quarterLength;
-      var powerOfTwo = Math.floor(Math.log(ql + 0.00001) / Math.log(2));
-      var typeNumber = duration.quarterTypeIndex - powerOfTwo;
-      this._type = duration.ordinalTypeFromNum[typeNumber];
-      // alert(this._findDots);
-      this._dots = this._findDots(ql);
-
-      var undottedQuarterLength = Math.pow(2, duration.quarterTypeIndex - typeNumber);
-      var dottedMultiplier = 1 + (Math.pow(2, this._dots) - 1) / Math.pow(2, this._dots);
-      var unTupletedQl = undottedQuarterLength * dottedMultiplier;
-      if (unTupletedQl != ql && ql != 0) {
-          typeNumber -= 1;
-          this._type = duration.ordinalTypeFromNum[typeNumber]; // increase type: eighth to quarter etc.
-          unTupletedQl = unTupletedQl * 2;
-          var tupletRatio = ql / unTupletedQl;
-          var ratioRat = common.rationalize(tupletRatio);
-          if (ratioRat === undefined) {
-              // probably a Stream with a length that is inexpressable;
-          } else {
-              var t = new duration.Tuplet(ratioRat.denominator, ratioRat.numerator, new duration.Duration(unTupletedQl));
-              this.appendTuplet(t, true); // skipUpdateQl
-          }
-          // console.log(ratioRat, ql, unTupletedQl);
-      }
-  };
-
-  /**
-   * Add a tuplet to music21j
-   *
-   * @memberof music21.duration.Duration
-   * @param {music21.duration.Tuplet} newTuplet - tuplet to add to `.tuplets`
-   * @param {boolean} [skipUpdateQl=false] - update the quarterLength afterwards?
-   */
-  duration.Duration.prototype.appendTuplet = function (newTuplet, skipUpdateQl) {
-      newTuplet.frozen = true;
-      this._tuplets.push(newTuplet);
-      if (skipUpdateQl !== true) {
-          this.updateQlFromFeatures();
-      }
-  };
+  duration.Duration = Duration;
 
   /**
    * Represents a Tuplet; found in {@link music21.duration.Duration#tuplets}
@@ -871,131 +921,147 @@
    * @param {(music21.duration.Duration|number)} durationActual - duration or quarterLength of duration type, default music21.duration.Duration(0.5)
    * @param {(music21.duration.Duration|number)} durationNormal - unused; see music21p for description
    */
-  duration.Tuplet = function (numberNotesActual, numberNotesNormal, durationActual, durationNormal) {
-      prebase.ProtoM21Object.call(this);
-      this.classes.push('Tuplet');
-      this.numberNotesActual = numberNotesActual || 3;
-      this.numberNotesNormal = numberNotesNormal || 2;
-      this.durationActual = durationActual || new duration.Duration(0.5);
-      if (typeof this.durationActual == 'number') {
-          this.durationActual = new duration.Duration(this.durationActual);
-      }
-      this.durationNormal = durationNormal || this.durationActual;
+  var Tuplet = function (_prebase$ProtoM21Obje2) {
+      inherits(Tuplet, _prebase$ProtoM21Obje2);
 
-      this.frozen = false;
-      this.type = undefined;
+      function Tuplet(numberNotesActual, numberNotesNormal, durationActual, durationNormal) {
+          classCallCheck(this, Tuplet);
 
-      /**
-       * Show a bracket above the tuplet
-       *
-       * @memberof music21.duration.Tuplet#
-       * @member {Boolean} bracket
-       * @default true
-       */
-      this.bracket = true;
-      /**
-       * Bracket placement. Options are `above` or `below`.
-       *
-       * @memberof music21.duration.Tuplet#
-       * @member {String} placement
-       * @default 'above'
-       */
-      this.placement = 'above';
+          var _this2 = possibleConstructorReturn(this, (Tuplet.__proto__ || Object.getPrototypeOf(Tuplet)).call(this));
 
-      /**
-       * What to show above the Tuplet. Options are `number`, `type`, or (string) `none`.
-       *
-       * @memberof music21.duration.Tuplet#
-       * @member {String} tupletActualShow
-       * @default 'number'
-       */
-      this.tupletActualShow = 'number';
-      this.tupletNormalShow = undefined; // undefined, 'ratio' for ratios, 'type' for ratioed notes (does not work)
-
-      Object.defineProperties(this, {
-          /**
-           * A nice name for the tuplet.
-           *
-           * @type String
-           * @instance
-           * @readonly
-           * @memberof music21.duration.Tuplet
-           */
-          'fullName': {
-              enumerable: true,
-              get: function get() {
-                  // actual is what is presented to viewer
-                  var numActual = this.numberNotesActual;
-                  var numNormal = this.numberNotesNormal;
-
-                  if (numActual == 3 && numNormal == 2) {
-                      return 'Triplet';
-                  } else if (numActual == 5 && (numNormal == 4 || numNormal == 2)) {
-                      return 'Quintuplet';
-                  } else if (numActual == 6 && numNormal == 4) {
-                      return 'Sextuplet';
-                  }
-                  ordStr = common.ordinalAbbreviation(numNormal, true); // plural
-                  return 'Tuplet of ' + numActual.toString() + '/' + numNormal.toString() + ordStr;
-              }
+          _this2.classes.push('Tuplet');
+          _this2.numberNotesActual = numberNotesActual || 3;
+          _this2.numberNotesNormal = numberNotesNormal || 2;
+          _this2.durationActual = durationActual || new duration.Duration(0.5);
+          if (typeof _this2.durationActual === 'number') {
+              _this2.durationActual = new duration.Duration(_this2.durationActual);
           }
-      });
-  };
-  duration.Tuplet.prototype = new prebase.ProtoM21Object();
-  duration.Tuplet.prototype.constructor = duration.Tuplet;
+          _this2.durationNormal = durationNormal || _this2.durationActual;
 
-  /**
-   * Set both durationActual and durationNormal for the tuplet.
-   *
-   * @memberof music21.duration.Tuplet
-   * @param {string} type - a duration type, such as `half`, `quarter`
-   * @returns {music21.duration.Duration} A converted {@link music21.duration.Duration} matching `type`
-   */
-  duration.Tuplet.prototype.setDurationType = function (type) {
-      if (self.frozen === true) {
-          throw 'A frozen tuplet (or one attached to a duration) is immutable';
-      }
-      this.durationActual = new duration.Duration(type);
-      this.durationNormal = this.durationActual;
-      return this.durationActual;
-  };
-  /**
-   * Sets the tuplet ratio.
-   *
-   * @memberof music21.duration.Tuplet
-   * @param {Number} actual - number of notes in actual (e.g., 3)
-   * @param {Number} normal - number of notes in normal (e.g., 2)
-   * @returns {undefined}
-   */
-  duration.Tuplet.prototype.setRatio = function (actual, normal) {
-      if (self.frozen === true) {
-          throw 'A frozen tuplet (or one attached to a duration) is immutable';
-      }
-      this.numberNotesActual = actual || 3;
-      this.numberNotesNormal = normal || 2;
-  };
+          _this2.frozen = false;
+          _this2.type = undefined;
+          /**
+           * Show a bracket above the tuplet
+           *
+           * @memberof music21.duration.Tuplet#
+           * @member {Boolean} bracket
+           * @default true
+           */
+          _this2.bracket = true;
+          /**
+           * Bracket placement. Options are `above` or `below`.
+           *
+           * @memberof music21.duration.Tuplet#
+           * @member {String} placement
+           * @default 'above'
+           */
+          _this2.placement = 'above';
 
-  /**
-   * Get the quarterLength corresponding to the total length that
-   * the completed tuplet (i.e., 3 notes in a triplet) would occupy.
-   *
-   * @memberof music21.duration.Tuplet
-   * @returns {Number} A quarter length.
-   */
-  duration.Tuplet.prototype.totalTupletLength = function () {
-      return this.numberNotesNormal * this.durationNormal.quarterLength;
-  };
-  /**
-   * The amount by which each quarter length is multiplied to get
-   * the tuplet. For instance, in a normal triplet, this is 0.666
-   *
-   * @memberof music21.duration.Tuplet
-   * @returns {Number} A float of the multiplier
-   */
-  duration.Tuplet.prototype.tupletMultiplier = function () {
-      var lengthActual = this.durationActual.quarterLength;
-      return this.totalTupletLength() / (this.numberNotesActual * lengthActual);
-  };
+          /**
+           * What to show above the Tuplet. Options are `number`, `type`, or (string) `none`.
+           *
+           * @memberof music21.duration.Tuplet#
+           * @member {String} tupletActualShow
+           * @default 'number'
+           */
+          _this2.tupletActualShow = 'number';
+          _this2.tupletNormalShow = undefined; // undefined, 'ratio' for ratios, 'type' for ratioed notes (does not work)
+          return _this2;
+      }
+      /**
+       * A nice name for the tuplet.
+       *
+       * @type String
+       * @instance
+       * @readonly
+       * @memberof music21.duration.Tuplet
+       */
+
+
+      createClass(Tuplet, [{
+          key: 'setDurationType',
+
+          /**
+           * Set both durationActual and durationNormal for the tuplet.
+           *
+           * @memberof music21.duration.Tuplet
+           * @param {string} type - a duration type, such as `half`, `quarter`
+           * @returns {music21.duration.Duration} A converted {@link music21.duration.Duration} matching `type`
+           */
+          value: function setDurationType(type) {
+              if (self.frozen === true) {
+                  throw 'A frozen tuplet (or one attached to a duration) is immutable';
+              }
+              this.durationActual = new duration.Duration(type);
+              this.durationNormal = this.durationActual;
+              return this.durationActual;
+          }
+          /**
+           * Sets the tuplet ratio.
+           *
+           * @memberof music21.duration.Tuplet
+           * @param {Number} actual - number of notes in actual (e.g., 3)
+           * @param {Number} normal - number of notes in normal (e.g., 2)
+           * @returns {undefined}
+           */
+
+      }, {
+          key: 'setRatio',
+          value: function setRatio(actual, normal) {
+              if (self.frozen === true) {
+                  throw 'A frozen tuplet (or one attached to a duration) is immutable';
+              }
+              this.numberNotesActual = actual || 3;
+              this.numberNotesNormal = normal || 2;
+          }
+          /**
+           * Get the quarterLength corresponding to the total length that
+           * the completed tuplet (i.e., 3 notes in a triplet) would occupy.
+           *
+           * @memberof music21.duration.Tuplet
+           * @returns {Number} A quarter length.
+           */
+
+      }, {
+          key: 'totalTupletLength',
+          value: function totalTupletLength() {
+              return this.numberNotesNormal * this.durationNormal.quarterLength;
+          }
+          /**
+           * The amount by which each quarter length is multiplied to get
+           * the tuplet. For instance, in a normal triplet, this is 0.666
+           *
+           * @memberof music21.duration.Tuplet
+           * @returns {Number} A float of the multiplier
+           */
+
+      }, {
+          key: 'tupletMultiplier',
+          value: function tupletMultiplier() {
+              var lengthActual = this.durationActual.quarterLength;
+              return this.totalTupletLength() / (this.numberNotesActual * lengthActual);
+          }
+      }, {
+          key: 'fullName',
+          get: function get() {
+              // actual is what is presented to viewer
+              var numActual = this.numberNotesActual;
+              var numNormal = this.numberNotesNormal;
+
+              if (numActual === 3 && numNormal === 2) {
+                  return 'Triplet';
+              } else if (numActual === 5 && (numNormal === 4 || numNormal === 2)) {
+                  return 'Quintuplet';
+              } else if (numActual === 6 && numNormal === 4) {
+                  return 'Sextuplet';
+              }
+              var ordStr = common.ordinalAbbreviation(numNormal, true); // plural
+              return 'Tuplet of ' + numActual.toString() + '/' + numNormal.toString() + ordStr;
+          }
+      }]);
+      return Tuplet;
+  }(prebase.ProtoM21Object);
+  duration.Tuplet = Tuplet;
 
   duration.tests = function () {
       test('music21.duration.Duration', function () {
@@ -1121,8 +1187,8 @@
    *
    * does not load the other modules, music21/moduleLoader.js does that.
    *
-   * Copyright (c) 2013-14, Michael Scott Cuthbert and cuthbertLab
-   * Based on music21 (=music21p), Copyright (c) 2006–14, Michael Scott Cuthbert and cuthbertLab
+   * Copyright (c) 2013-16, Michael Scott Cuthbert and cuthbertLab
+   * Based on music21 (=music21p), Copyright (c) 2006–16, Michael Scott Cuthbert and cuthbertLab
    *
    */
   /**
@@ -1298,7 +1364,7 @@
       createClass(Articulation, [{
           key: 'vexflow',
           value: function vexflow() {
-              var vfa = new Vex$1.Flow.Articulation(this.vexflowModifier);
+              var vfa = new Vex.Flow.Articulation(this.vexflowModifier);
               if (this.setPosition) {
                   vfa.setPosition(this.setPosition);
               }
@@ -1604,6 +1670,588 @@
           measure.append(n.clone());
           measure.appendNewCanvas();
           ok(true, 'something worked');
+      });
+  };
+
+  /**
+   * audioSearch module. See {@link music21.audioSearch} namespace
+   *
+   * @exports music21/audioSearch
+   */
+  /**
+   * @namespace music21.audioSearch
+   * @memberof music21
+   * @requires music21/pitch
+   * @requires music21/common
+   */
+
+  var audioSearch = {};
+  // functions based on the prototype created by Chris Wilson's MIT License version
+  // and on Jordi Bartolome Guillen's audioSearch module for music21
+
+  audioSearch.fftSize = 2048;
+
+  audioSearch.AudioContextCaller = window.AudioContext || window.webkitAudioContext;
+  audioSearch._audioContext = null;
+  audioSearch.animationFrameCallbackId = null;
+
+  Object.defineProperties(audioSearch, { 'audioContext': {
+          'get': function get() {
+              if (audioSearch._audioContext !== null) {
+                  return audioSearch._audioContext;
+              } else {
+                  audioSearch._audioContext = new audioSearch.AudioContextCaller();
+                  return audioSearch._audioContext;
+              }
+          },
+          'set': function set(ac) {
+              audioSearch._audioContext = ac;
+          }
+      }
+  });
+
+  /**
+   *
+   * @function music21.audioSearch.getUserMedia
+   * @memberof music21.audioSearch
+   * @param {object} dictionary - dictionary to fill
+   * @param {function} callback - callback on success
+   * @param {function} error - callback on error
+   */
+  audioSearch.getUserMedia = function getUserMedia(dictionary, callback, error) {
+      if (error === undefined) {
+          /* eslint no-alert: "off"*/
+          error = function error() {
+              alert('navigator.getUserMedia either not defined (Safari, IE) or denied.');
+          };
+      }
+      if (callback === undefined) {
+          callback = function callback(mediaStream) {
+              audioSearch.userMediaStarted(mediaStream);
+          };
+      }
+      var n = navigator;
+      // need to polyfill navigator, or binding problems are hard...
+      n.getUserMedia = n.getUserMedia || n.webkitGetUserMedia || n.mozGetUserMedia || n.msGetUserMedia;
+
+      if (n.getUserMedia === undefined) {
+          error();
+      }
+      if (dictionary === undefined) {
+          dictionary = {
+              'audio': {
+                  'mandatory': {},
+                  'optional': []
+              }
+          };
+      }
+      n.getUserMedia(dictionary, callback, error);
+  };
+
+  audioSearch.sampleBuffer = null;
+  audioSearch.currentAnalyser = null;
+
+  audioSearch.userMediaStarted = function userMediaStarted(audioStream) {
+      audioSearch.sampleBuffer = new Float32Array(audioSearch.fftSize / 2);
+      var mediaStreamSource = audioSearch.audioContext.createMediaStreamSource(audioStream);
+      var analyser = audioSearch.audioContext.createAnalyser();
+      analyser.fftSize = audioSearch.fftSize;
+      mediaStreamSource.connect(analyser);
+      audioSearch.currentAnalyser = analyser;
+      audioSearch.animateLoop();
+  };
+
+  audioSearch.minFrequency = 55;
+  audioSearch.maxFrequency = 1050;
+  audioSearch.animateLoop = function animateLoop(time) {
+      audioSearch.currentAnalyser.getFloatTimeDomainData(audioSearch.sampleBuffer);
+      // returns best frequency or -1
+      var frequencyDetected = audioSearch.autoCorrelate(audioSearch.sampleBuffer, audioSearch.audioContext.sampleRate, audioSearch.minFrequency, audioSearch.maxFrequency);
+      var retValue = audioSearch.sampleCallback(frequencyDetected);
+      if (retValue !== -1) {
+          audioSearch.animationFrameCallbackId = window.requestAnimationFrame(audioSearch.animateLoop);
+      }
+  };
+
+  audioSearch.pitchSmoothingSize = 40;
+  audioSearch.lastPitchClassesDetected = [];
+  audioSearch.lastPitchesDetected = [];
+  audioSearch.lastCentsDeviationsDetected = [];
+
+  audioSearch.smoothPitchExtraction = function smoothPitchExtraction(frequency) {
+      if (frequency === -1) {
+          audioSearch.lastPitchClassesDetected.shift();
+          audioSearch.lastPitchesDetected.shift();
+          audioSearch.lastCentsDeviationsDetected.shift();
+      } else {
+          var _audioSearch$midiNumD = audioSearch.midiNumDiffFromFrequency(frequency);
+
+          var _audioSearch$midiNumD2 = slicedToArray(_audioSearch$midiNumD, 2);
+
+          var midiNum = _audioSearch$midiNumD2[0];
+          var _centsOff = _audioSearch$midiNumD2[1];
+
+          if (audioSearch.lastPitchClassesDetected.length > audioSearch.pitchSmoothingSize) {
+              audioSearch.lastPitchClassesDetected.shift();
+              audioSearch.lastPitchesDetected.shift();
+              audioSearch.lastCentsDeviationsDetected.shift();
+          }
+          audioSearch.lastPitchClassesDetected.push(midiNum % 12);
+          audioSearch.lastPitchesDetected.push(midiNum);
+          audioSearch.lastCentsDeviationsDetected.push(_centsOff);
+      }
+      var mostCommonPitchClass = common.statisticalMode(audioSearch.lastPitchClassesDetected);
+      if (mostCommonPitchClass === null) {
+          return [-1, 0];
+      }
+      var pitchesMatchingClass = [];
+      var centsMatchingClass = [];
+      for (var i = 0; i < audioSearch.lastPitchClassesDetected.length; i++) {
+          if (audioSearch.lastPitchClassesDetected[i] === mostCommonPitchClass) {
+              pitchesMatchingClass.push(audioSearch.lastPitchesDetected[i]);
+              centsMatchingClass.push(audioSearch.lastCentsDeviationsDetected[i]);
+          }
+      }
+      var mostCommonPitch = common.statisticalMode(pitchesMatchingClass);
+
+      // find cents difference; weighing more recent samples more...
+      var totalSamplePoints = 0;
+      var totalSample = 0;
+      for (var j = 0; j < centsMatchingClass.length; j++) {
+          var weight = Math.pow(j, 2) + 1;
+          totalSample += weight * centsMatchingClass[j];
+          totalSamplePoints += weight;
+      }
+      var centsOff = Math.floor(totalSample / totalSamplePoints);
+      return [mostCommonPitch, centsOff];
+  };
+
+  audioSearch.sampleCallback = function sampleCallback(frequency) {
+      var _audioSearch$smoothPi = audioSearch.smoothPitchExtraction(frequency);
+
+      var _audioSearch$smoothPi2 = slicedToArray(_audioSearch$smoothPi, 2);
+
+      var unused_midiNum = _audioSearch$smoothPi2[0];
+      var unused_centsOff = _audioSearch$smoothPi2[1];
+  };
+
+  // from Chris Wilson. Replace with Jordi's
+  audioSearch.autoCorrelate = function autoCorrelate(buf, sampleRate, minFrequency, maxFrequency) {
+      var SIZE = buf.length;
+      var MAX_SAMPLES = Math.floor(SIZE / 2);
+      if (minFrequency === undefined) {
+          minFrequency = 0;
+      }
+      if (maxFrequency === undefined) {
+          maxFrequency = sampleRate;
+      }
+
+      var best_offset = -1;
+      var best_correlation = 0;
+      var rms = 0;
+      var foundGoodCorrelation = false;
+      var correlations = new Array(MAX_SAMPLES);
+
+      for (var i = 0; i < SIZE; i++) {
+          var val = buf[i];
+          rms += val * val;
+      }
+      rms = Math.sqrt(rms / SIZE);
+      if (rms < 0.01) {
+          return -1;
+      } // not enough signal
+
+      var lastCorrelation = 1;
+      for (var offset = 0; offset < MAX_SAMPLES; offset++) {
+          var correlation = 0;
+          var offsetFrequency = sampleRate / offset;
+          if (offsetFrequency < minFrequency) {
+              break;
+          }
+          if (offsetFrequency > maxFrequency) {
+              continue;
+          }
+
+          for (var _i = 0; _i < MAX_SAMPLES; _i++) {
+              correlation += Math.abs(buf[_i] - buf[_i + offset]);
+          }
+          correlation = 1 - correlation / MAX_SAMPLES;
+          correlations[offset] = correlation; // store it, for the tweaking we need to do below.
+          if (correlation > 0.9 && correlation > lastCorrelation) {
+              foundGoodCorrelation = true;
+              if (correlation > best_correlation) {
+                  best_correlation = correlation;
+                  best_offset = offset;
+              }
+          } else if (foundGoodCorrelation) {
+              // short-circuit - we found a good correlation, then a bad one, so we'd just be seeing copies from here.
+              // Now we need to tweak the offset - by interpolating between the values to the left and right of the
+              // best offset, and shifting it a bit.  This is complex, and HACKY in this code (happy to take PRs!) -
+              // we need to do a curve fit on correlations[] around best_offset in order to better determine precise
+              // (anti-aliased) offset.
+
+              // we know best_offset >=1,
+              // since foundGoodCorrelation cannot go to true until the second pass (offset=1), and
+              // we can't drop into this clause until the following pass (else if).
+              var shift = (correlations[best_offset + 1] - correlations[best_offset - 1]) / correlations[best_offset];
+              return sampleRate / (best_offset + 8 * shift);
+          }
+          lastCorrelation = correlation;
+      }
+      if (best_correlation > 0.01) {
+          // console.log("f = " + sampleRate/best_offset + "Hz (rms: " + rms + " confidence: " + best_correlation + ")")
+          return sampleRate / best_offset;
+      }
+      return -1;
+      //  var best_frequency = sampleRate/best_offset;
+  };
+
+  /**
+   *
+   * @function midiNumDiffFromFrequency
+   * @param {Number} frequency
+   * @returns {Array<Int>} [miniNumber, centsOff]
+   */
+  audioSearch.midiNumDiffFromFrequency = function midiNumDiffFromFrequency(frequency) {
+      var midiNumFloat = 12 * (Math.log(frequency / 440) / Math.log(2)) + 69;
+      var midiNum = Math.round(midiNumFloat);
+      var centsOff = Math.round(100 * (midiNumFloat - midiNum));
+      return [midiNum, centsOff];
+  };
+
+  // http://paulirish.com/2011/requestanimationframe-for-smart-animating/
+  // http://my.opera.com/emoller/blog/2011/12/20/requestanimationframe-for-smart-er-animating
+
+  // requestAnimationFrame polyfill by Erik Möller
+  // fixes from Paul Irish and Tino Zijdel
+
+  function requestAnimationFramePolyFill() {
+      var lastTime = 0;
+      var vendors = ['ms', 'moz', 'webkit', 'o'];
+      for (var x = 0; x < vendors.length && !window.requestAnimationFrame; ++x) {
+          window.requestAnimationFrame = window[vendors[x] + 'RequestAnimationFrame'];
+          window.cancelAnimationFrame = window[vendors[x] + 'CancelAnimationFrame'] || window[vendors[x] + 'CancelRequestAnimationFrame'];
+      }
+
+      if (!window.requestAnimationFrame) {
+          window.requestAnimationFrame = function (callback, element) {
+              var currTime = new Date().getTime();
+              var timeToCall = Math.max(0, 16 - (currTime - lastTime));
+              var timeoutId = window.setTimeout(function () {
+                  return callback(currTime + timeToCall);
+              }, timeToCall);
+              lastTime = currTime + timeToCall;
+              return timeoutId;
+          };
+      }
+
+      if (!window.cancelAnimationFrame) {
+          window.cancelAnimationFrame = function (id) {
+              clearTimeout(id);
+          };
+      }
+  }
+  requestAnimationFramePolyFill();
+
+  /**
+   * music21j -- Javascript reimplementation of Core music21p features.
+   * music21/beam -- Beams and Beam class
+   *
+   * Copyright (c) 2013-16, Michael Scott Cuthbert and cuthbertLab
+   * Based on music21 (=music21p), Copyright (c) 2006–16, Michael Scott Cuthbert and cuthbertLab
+   *
+   */
+  /**
+   * Module holding beam materials. See {@link music21.beam} namespace.
+   *
+   * @exports music21/beam
+   */
+  /**
+   * {@link music21.beam.Beam} and {music21.beam.Beams} objects
+   *
+   * @namespace music21.beam
+   * @memberof music21
+   * @requires music21/prebase
+   * @requires music21/duration
+   */
+  var beam = {};
+
+  beam.validBeamTypes = {
+      'start': true,
+      'stop': true,
+      'continue': true,
+      'partial': true
+  };
+
+  /**
+   * Object representing a single beam (e.g., a 16th note that is beamed needs two)
+   *
+   * @class Beam
+   * @memberof music21.beam
+   * @extends music21.prebase.ProtoM21Object
+   * @param {string} type - "start", "stop", "continue", "partial"
+   * @param {string} direction - only needed for partial beams: "left" or "right"
+   * @property {Int|undefined} number - which beam line does this refer to; 8th = 1, 16th = 2, etc.
+   * @property {number|undefined} independentAngle - the angle of this beam if it is different than others (feathered beams)
+   */
+  var Beam = function (_prebase$ProtoM21Obje) {
+      inherits(Beam, _prebase$ProtoM21Obje);
+
+      function Beam(type, direction) {
+          classCallCheck(this, Beam);
+
+          var _this = possibleConstructorReturn(this, (Beam.__proto__ || Object.getPrototypeOf(Beam)).call(this));
+
+          _this.classes.push('Beam');
+          _this.type = type;
+          _this.direction = direction;
+          _this.independentAngle = undefined;
+          _this.number = undefined;
+          return _this;
+      }
+
+      return Beam;
+  }(prebase.ProtoM21Object);
+  beam.Beam = Beam;
+  /**
+   * Object representing a collection of Beams
+   *
+   * @class Beams
+   * @memberof music21.beam
+   * @extends music21.prebase.ProtoM21Object
+   * @property {Array<music21.beam.Beam>} beamsList - a list of Beam objects
+   * @property {Boolean} [feathered=false] - is this a feathered beam.
+   * @property {Int} length - length of beamsList
+   */
+  var Beams = function (_prebase$ProtoM21Obje2) {
+      inherits(Beams, _prebase$ProtoM21Obje2);
+
+      function Beams() {
+          classCallCheck(this, Beams);
+
+          var _this2 = possibleConstructorReturn(this, (Beams.__proto__ || Object.getPrototypeOf(Beams)).call(this));
+
+          _this2.classes.push('Beams');
+          _this2.beamsList = [];
+          _this2.feathered = false;
+          return _this2;
+      }
+
+      createClass(Beams, [{
+          key: 'append',
+
+          /**
+           * Append a new {@link music21.beam.Beam} object to this Beams, automatically creating the Beam
+           *   object and incrementing the number count.
+           *
+           * @memberof music21.beam.Beams
+           * @param {string} type - the type (passed to {@link music21.beam.Beam})
+           * @param {string} [direction=undefined] - the direction if type is "partial"
+           * @returns {music21.beam.Beam} newly appended object
+           */
+          value: function append(type, direction) {
+              var obj = new beam.Beam(type, direction);
+              obj.number = this.beamsList.length + 1;
+              this.beamsList.push(obj);
+              return obj;
+          }
+          /**
+           * A quick way of setting the beams list for a particular duration, for
+                  instance, fill("16th") will clear the current list of beams in the
+                  Beams object and add two beams.  fill(2) will do the same (though note
+                  that that is an int, not a string).
+            * It does not do anything to the direction that the beams are going in,
+                  or by default.  Either set type here or call setAll() on the Beams
+                  object afterwards.
+            * Both "eighth" and "8th" work.  Adding more than six beams (i.e. things
+                  like 512th notes) raises an error.
+            * @memberof music21.beam.Beams
+           * @param {string|Int} level - either a string like "eighth" or a number like 1 (="eighth")
+           * @param {string} type - type to fill all beams to.
+           * @returns {this}
+           */
+
+      }, {
+          key: 'fill',
+          value: function fill(level, type) {
+              this.beamsList = [];
+              var count = 1;
+              if (level === 1 || level === '8th' || level === duration.typeFromNumDict[8]) {
+                  count = 1;
+              } else if (level === 2 || level === duration.typeFromNumDict[16]) {
+                  count = 2;
+              } else if (level === 3 || level === duration.typeFromNumDict[32]) {
+                  count = 3;
+              } else if (level === 4 || level === duration.typeFromNumDict[64]) {
+                  count = 4;
+              } else if (level === 5 || level === duration.typeFromNumDict[128]) {
+                  count = 5;
+              } else if (level === 6 || level === duration.typeFromNumDict[256]) {
+                  count = 6;
+              } else {
+                  throw 'cannot fill beams for level ' + level;
+              }
+              for (var i = 1; i <= count; i++) {
+                  var obj = new beam.Beam();
+                  obj.number = i;
+                  this.beamsList.push(obj);
+              }
+              if (type !== undefined) {
+                  this.setAll(type);
+              }
+              return this;
+          }
+          /**
+           * Get the beam with the given number or throw an exception.
+           *
+           * @memberof music21.beam.Beams
+           * @param {Int} number - the beam number to retrieve (usually one less than the position in `.beamsList`)
+           * @returns {music21.beam.Beam|undefined}
+           */
+
+      }, {
+          key: 'getByNumber',
+          value: function getByNumber(number) {
+              if (!(number in this.getNumbers())) {
+                  throw 'beam number error';
+              }
+              for (var i = 0; i < this.length; i++) {
+                  if (this.beamsList[i].number === number) {
+                      return this.beamsList[i];
+                  }
+              }
+              return undefined;
+          }
+          /**
+           * Get an Array of all the numbers for the beams
+           *
+           * @memberof music21.beam.Beams
+           * @returns {Array<Int>} all the numbers
+           */
+
+      }, {
+          key: 'getNumbers',
+          value: function getNumbers() {
+              var numbers = [];
+              for (var i = 0; i < this.length; i++) {
+                  numbers.push(this.beamsList[i].number);
+              }
+              return numbers;
+          }
+          /**
+           * Returns the type + "-" + direction (if direction is defined)
+           * for the beam with the given number.
+           *
+           * @param {Int} number
+           * @returns {music21.beam.Beam|undefined}
+           */
+
+      }, {
+          key: 'getTypeByNumber',
+          value: function getTypeByNumber(number) {
+              var beamObj = this.getByNumber(number);
+              if (beamObj.direction === undefined) {
+                  return beamObj.type;
+              } else {
+                  var x = beamObj.type + '-' + beamObj.direction;
+                  return x;
+              }
+          }
+          /**
+           * Get an Array of all the types for the beams
+           *
+           * @memberof music21.beam.Beams
+           * @returns {Array<string>} all the types
+           */
+
+      }, {
+          key: 'getTypes',
+          value: function getTypes() {
+              var types = [];
+              for (var i = 0; i < this.length; i++) {
+                  types.push(this.beamsList[i].type);
+              }
+              return types;
+          }
+          /**
+           * Set all the {@link music21.beam.Beam} objects to a given type/direction
+           *
+           * @memberof music21.beam.Beams
+           * @param {string} type - beam type
+           * @param {string} [direction] - beam direction
+           * @returns {this}
+           */
+
+      }, {
+          key: 'setAll',
+          value: function setAll(type, direction) {
+              if (beam.validBeamTypes[type] === undefined) {
+                  throw 'invalid beam type';
+              }
+              for (var i = 0; i < this.length; i++) {
+                  var b = this.beamsList[i];
+                  b.type = type;
+                  b.direction = direction;
+              }
+              return this;
+          }
+          /**
+           * Set the {@link music21.beam.Beam} object specified by `number` to a given type/direction
+           *
+           * @memberof music21.beam.Beams
+           * @param {Int} number
+           * @param {string} type
+           * @param {string} [direction]
+           * @returns {this}
+           */
+
+      }, {
+          key: 'setByNumber',
+          value: function setByNumber(number, type, direction) {
+              if (direction === undefined) {
+                  var splitit = type.split('-');
+                  type = splitit[0];
+                  direction = splitit[1]; // can be undefined...
+              }
+              if (beam.validBeamTypes[type] === undefined) {
+                  throw 'invalid beam type';
+              }
+              for (var i = 0; i < this.length; i++) {
+                  if (this.beamsList[i].number === number) {
+                      this.beamsList[i].type = type;
+                      this.beamsList[i].direction = direction;
+                  }
+              }
+              return this;
+          }
+      }, {
+          key: 'length',
+          get: function get() {
+              return this.beamsList.length;
+          }
+      }]);
+      return Beams;
+  }(prebase.ProtoM21Object);
+  beam.Beams = Beams;
+
+  beam.tests = function () {
+      test('music21.beam.Beams', function () {
+          var a = new music21.beam.Beams();
+          a.fill('16th');
+          a.setAll('start');
+          equal(a.getTypes()[0], 'start');
+          equal(a.getTypes()[1], 'start');
+
+          var b = new music21.beam.Beams();
+          b.fill('16th');
+          b.setAll('start');
+          b.setByNumber(1, 'continue');
+          equal(b.beamsList[0].type, 'continue');
+          b.setByNumber(2, 'stop');
+          equal(b.beamsList[1].type, 'stop');
+          b.setByNumber(2, 'partial-right');
+          equal(b.beamsList[1].type, 'partial');
+          equal(b.beamsList[1].direction, 'right');
       });
   };
 
@@ -2020,545 +2668,6 @@
   };
 
   /**
-   * audioSearch module. See {@link music21.audioSearch} namespace
-   *
-   * @exports music21/audioSearch
-   */
-  /**
-   * @namespace music21.audioSearch
-   * @memberof music21
-   * @requires music21/pitch
-   * @requires music21/common
-   */
-
-  var audioSearch = {};
-  //functions based on the prototype created by Chris Wilson's MIT License version
-  //and on Jordi Bartolome Guillen's audioSearch module for music21
-
-  audioSearch.fftSize = 2048;
-
-  audioSearch.AudioContextCaller = window.AudioContext || window.webkitAudioContext;
-  audioSearch._audioContext = null;
-  audioSearch.animationFrameCallbackId = null;
-
-  Object.defineProperties(audioSearch, { 'audioContext': {
-          'get': function get() {
-              if (audioSearch._audioContext !== null) {
-                  return audioSearch._audioContext;
-              } else {
-                  audioSearch._audioContext = new audioSearch.AudioContextCaller();
-                  return audioSearch._audioContext;
-              }
-          },
-          'set': function set(ac) {
-              audioSearch._audioContext = ac;
-          }
-      }
-  });
-
-  /**
-   *
-   * @function music21.audioSearch.getUserMedia
-   * @memberof music21.audioSearch
-   * @param {object} dictionary - dictionary to fill
-   * @param {function} callback - callback on success
-   * @param {function} error - callback on error
-   */
-  audioSearch.getUserMedia = function (dictionary, callback, error) {
-      if (error === undefined) {
-          error = function error() {
-              alert('navigator.getUserMedia either not defined (Safari, IE) or denied.');
-          };
-      }
-      if (callback === undefined) {
-          callback = function callback(mediaStream) {
-              audioSearch.userMediaStarted(mediaStream);
-          };
-      }
-      var n = navigator;
-      // need to polyfill navigator, or binding problems are hard...
-      n.getUserMedia = n.getUserMedia || n.webkitGetUserMedia || n.mozGetUserMedia || n.msGetUserMedia;
-
-      if (n.getUserMedia === undefined) {
-          error();
-      }
-      if (dictionary === undefined) {
-          dictionary = {
-              'audio': {
-                  'mandatory': {},
-                  'optional': []
-              }
-          };
-      }
-      n.getUserMedia(dictionary, callback, error);
-  };
-
-  audioSearch.sampleBuffer = null;
-  audioSearch.currentAnalyser = null;
-
-  audioSearch.userMediaStarted = function (audioStream) {
-      audioSearch.sampleBuffer = new Float32Array(audioSearch.fftSize / 2);
-      var mediaStreamSource = audioSearch.audioContext.createMediaStreamSource(audioStream);
-      var analyser = audioSearch.audioContext.createAnalyser();
-      analyser.fftSize = audioSearch.fftSize;
-      mediaStreamSource.connect(analyser);
-      audioSearch.currentAnalyser = analyser;
-      audioSearch.animateLoop();
-  };
-
-  audioSearch.minFrequency = 55;
-  audioSearch.maxFrequency = 1050;
-  audioSearch.animateLoop = function (time) {
-      audioSearch.currentAnalyser.getFloatTimeDomainData(audioSearch.sampleBuffer);
-      // returns best frequency or -1
-      var frequencyDetected = audioSearch.autoCorrelate(audioSearch.sampleBuffer, audioSearch.audioContext.sampleRate, audioSearch.minFrequency, audioSearch.maxFrequency);
-      var retValue = audioSearch.sampleCallback(frequencyDetected);
-      if (retValue != -1) {
-          audioSearch.animationFrameCallbackId = window.requestAnimationFrame(audioSearch.animateLoop);
-      }
-  };
-
-  audioSearch.pitchSmoothingSize = 40;
-  audioSearch.lastPitchClassesDetected = [];
-  audioSearch.lastPitchesDetected = [];
-  audioSearch.lastCentsDeviationsDetected = [];
-
-  audioSearch.smoothPitchExtraction = function (frequency) {
-      if (frequency == -1) {
-          audioSearch.lastPitchClassesDetected.shift();
-          audioSearch.lastPitchesDetected.shift();
-          audioSearch.lastCentsDeviationsDetected.shift();
-      } else {
-          var _ = audioSearch.midiNumDiffFromFrequency(frequency),
-              midiNum = _[0],
-              centsOff = _[1];
-          if (audioSearch.lastPitchClassesDetected.length > audioSearch.pitchSmoothingSize) {
-              audioSearch.lastPitchClassesDetected.shift();
-              audioSearch.lastPitchesDetected.shift();
-              audioSearch.lastCentsDeviationsDetected.shift();
-          }
-          audioSearch.lastPitchClassesDetected.push(midiNum % 12);
-          audioSearch.lastPitchesDetected.push(midiNum);
-          audioSearch.lastCentsDeviationsDetected.push(centsOff);
-      }
-      var mostCommonPitchClass = common.statisticalMode(audioSearch.lastPitchClassesDetected);
-      if (mostCommonPitchClass === null) {
-          return [-1, 0];
-      }
-      var pitchesMatchingClass = [];
-      var centsMatchingClass = [];
-      for (var i = 0; i < audioSearch.lastPitchClassesDetected.length; i++) {
-          if (audioSearch.lastPitchClassesDetected[i] == mostCommonPitchClass) {
-              pitchesMatchingClass.push(audioSearch.lastPitchesDetected[i]);
-              centsMatchingClass.push(audioSearch.lastCentsDeviationsDetected[i]);
-          }
-      }
-      var mostCommonPitch = common.statisticalMode(pitchesMatchingClass);
-
-      // find cents difference; weighing more recent samples more...
-      var totalSamplePoints = 0;
-      var totalSample = 0;
-      for (var j = 0; j < centsMatchingClass.length; j++) {
-          var weight = Math.pow(j, 2) + 1;
-          totalSample += weight * centsMatchingClass[j];
-          totalSamplePoints += weight;
-      }
-      var centsOff = Math.floor(totalSample / totalSamplePoints);
-      return [mostCommonPitch, centsOff];
-  };
-
-  audioSearch.sampleCallback = function (frequency) {
-      var _ = audioSearch.smoothPitchExtraction(frequency),
-          midiNum = _[0],
-          centsOff = _[1];
-      // console.log(midiNum, centsOff);
-  };
-
-  //from Chris Wilson. Replace with Jordi's
-  audioSearch.autoCorrelate = function (buf, sampleRate, minFrequency, maxFrequency) {
-      var SIZE = buf.length;
-      var MAX_SAMPLES = Math.floor(SIZE / 2);
-      if (minFrequency === undefined) {
-          minFrequency = 0;
-      }
-      if (maxFrequency === undefined) {
-          maxFrequency = sampleRate;
-      }
-
-      var best_offset = -1;
-      var best_correlation = 0;
-      var rms = 0;
-      var foundGoodCorrelation = false;
-      var correlations = new Array(MAX_SAMPLES);
-
-      for (var i = 0; i < SIZE; i++) {
-          var val = buf[i];
-          rms += val * val;
-      }
-      rms = Math.sqrt(rms / SIZE);
-      if (rms < 0.01) // not enough signal
-          return -1;
-
-      var lastCorrelation = 1;
-      for (var offset = 0; offset < MAX_SAMPLES; offset++) {
-          var correlation = 0;
-          var offsetFrequency = sampleRate / offset;
-          if (offsetFrequency < minFrequency) {
-              break;
-          }
-          if (offsetFrequency > maxFrequency) {
-              continue;
-          }
-
-          for (var i = 0; i < MAX_SAMPLES; i++) {
-              correlation += Math.abs(buf[i] - buf[i + offset]);
-          }
-          correlation = 1 - correlation / MAX_SAMPLES;
-          correlations[offset] = correlation; // store it, for the tweaking we need to do below.
-          if (correlation > 0.9 && correlation > lastCorrelation) {
-              foundGoodCorrelation = true;
-              if (correlation > best_correlation) {
-                  best_correlation = correlation;
-                  best_offset = offset;
-              }
-          } else if (foundGoodCorrelation) {
-              // short-circuit - we found a good correlation, then a bad one, so we'd just be seeing copies from here.
-              // Now we need to tweak the offset - by interpolating between the values to the left and right of the
-              // best offset, and shifting it a bit.  This is complex, and HACKY in this code (happy to take PRs!) -
-              // we need to do a curve fit on correlations[] around best_offset in order to better determine precise
-              // (anti-aliased) offset.
-
-              // we know best_offset >=1,
-              // since foundGoodCorrelation cannot go to true until the second pass (offset=1), and
-              // we can't drop into this clause until the following pass (else if).
-              var shift = (correlations[best_offset + 1] - correlations[best_offset - 1]) / correlations[best_offset];
-              return sampleRate / (best_offset + 8 * shift);
-          }
-          lastCorrelation = correlation;
-      }
-      if (best_correlation > 0.01) {
-          // console.log("f = " + sampleRate/best_offset + "Hz (rms: " + rms + " confidence: " + best_correlation + ")")
-          return sampleRate / best_offset;
-      }
-      return -1;
-      //  var best_frequency = sampleRate/best_offset;
-  };
-
-  /**
-   *
-   * @function midiNumDiffFromFrequency
-   * @param {Number} frequency
-   * @returns {Array<Int>} [miniNumber, centsOff]
-   */
-  audioSearch.midiNumDiffFromFrequency = function (frequency) {
-      var midiNumFloat = 12 * (Math.log(frequency / 440) / Math.log(2)) + 69;
-      var midiNum = Math.round(midiNumFloat);
-      var centsOff = Math.round(100 * (midiNumFloat - midiNum));
-      return [midiNum, centsOff];
-  };
-
-  //http://paulirish.com/2011/requestanimationframe-for-smart-animating/
-  //http://my.opera.com/emoller/blog/2011/12/20/requestanimationframe-for-smart-er-animating
-
-  //requestAnimationFrame polyfill by Erik Möller
-  //fixes from Paul Irish and Tino Zijdel
-
-  var rqaPolyFill = function rqaPolyFill() {
-      var lastTime = 0;
-      var vendors = ['ms', 'moz', 'webkit', 'o'];
-      for (var x = 0; x < vendors.length && !window.requestAnimationFrame; ++x) {
-          window.requestAnimationFrame = window[vendors[x] + 'RequestAnimationFrame'];
-          window.cancelAnimationFrame = window[vendors[x] + 'CancelAnimationFrame'] || window[vendors[x] + 'CancelRequestAnimationFrame'];
-      }
-
-      if (!window.requestAnimationFrame) window.requestAnimationFrame = function (callback, element) {
-          var currTime = new Date().getTime();
-          var timeToCall = Math.max(0, 16 - (currTime - lastTime));
-          var id = window.setTimeout(function () {
-              callback(currTime + timeToCall);
-          }, timeToCall);
-          lastTime = currTime + timeToCall;
-          return id;
-      };
-
-      if (!window.cancelAnimationFrame) window.cancelAnimationFrame = function (id) {
-          clearTimeout(id);
-      };
-  };
-  rqaPolyFill();
-
-  /**
-   * music21j -- Javascript reimplementation of Core music21p features.
-   * music21/beam -- Beams and Beam class
-   *
-   * Copyright (c) 2013-14, Michael Scott Cuthbert and cuthbertLab
-   * Based on music21 (=music21p), Copyright (c) 2006–14, Michael Scott Cuthbert and cuthbertLab
-   *
-   */
-  /**
-   * Module holding beam materials. See {@link music21.beam} namespace.
-   *
-   * @exports music21/beam
-   */
-  /**
-   * {@link music21.beam.Beam} and {music21.beam.Beams} objects
-   *
-   * @namespace music21.beam
-   * @memberof music21
-   * @requires music21/prebase
-   * @requires music21/duration
-   */
-  var beam = {};
-
-  beam.validBeamTypes = {
-      'start': true,
-      'stop': true,
-      'continue': true,
-      'partial': true
-  };
-
-  /**
-   * Object representing a single beam (e.g., a 16th note that is beamed needs two)
-   *
-   * @class Beam
-   * @memberof music21.beam
-   * @extends music21.prebase.ProtoM21Object
-   * @param {string} type - "start", "stop", "continue", "partial"
-   * @param {string} direction - only needed for partial beams: "left" or "right"
-   * @property {Int|undefined} number - which beam line does this refer to; 8th = 1, 16th = 2, etc.
-   * @property {number|undefined} independentAngle - the angle of this beam if it is different than others (feathered beams)
-   */
-  beam.Beam = function (type, direction) {
-      prebase.ProtoM21Object.call(this);
-      this.classes.push('Beam');
-      this.type = type;
-      this.direction = direction;
-      this.independentAngle = undefined;
-      this.number = undefined;
-  };
-  beam.Beam.prototype = new prebase.ProtoM21Object();
-  beam.Beam.prototype.constructor = beam.Beam;
-
-  /**
-   * Object representing a collection of Beams
-   *
-   * @class Beams
-   * @memberof music21.beam
-   * @extends music21.prebase.ProtoM21Object
-   * @property {Array<music21.beam.Beam>} beamsList - a list of Beam objects
-   * @property {Boolean} [feathered=false] - is this a feathered beam.
-   * @property {Int} length - length of beamsList
-   */
-  beam.Beams = function () {
-      prebase.ProtoM21Object.call(this);
-      this.classes.push('Beams');
-      this.beamsList = [];
-      this.feathered = false;
-  };
-  beam.Beams.prototype = new prebase.ProtoM21Object();
-  beam.Beams.prototype.constructor = beam.Beams;
-  Object.defineProperties(beam.Beams.prototype, {
-      'length': {
-          enumerable: true,
-          'get': function get() {
-              return this.beamsList.length;
-          }
-      }
-  });
-
-  /**
-   * Append a new {@link music21.beam.Beam} object to this Beams, automatically creating the Beam
-   *   object and incrementing the number count.
-   *
-   * @memberof music21.beam.Beams
-   * @param {string} type - the type (passed to {@link music21.beam.Beam})
-   * @param {string} [direction=undefined] - the direction if type is "partial"
-   * @returns {music21.beam.Beam} newly appended object
-   */
-  beam.Beams.prototype.append = function (type, direction) {
-      var obj = new beam.Beam(type, direction);
-      obj.number = this.beamsList.length + 1;
-      this.beamsList.push(obj);
-      return obj;
-  };
-  /**
-   * A quick way of setting the beams list for a particular duration, for
-          instance, fill("16th") will clear the current list of beams in the
-          Beams object and add two beams.  fill(2) will do the same (though note
-          that that is an int, not a string).
-
-   * It does not do anything to the direction that the beams are going in,
-          or by default.  Either set type here or call setAll() on the Beams
-          object afterwards.
-
-   * Both "eighth" and "8th" work.  Adding more than six beams (i.e. things
-          like 512th notes) raises an error.
-
-   * @memberof music21.beam.Beams
-   * @param {string|Int} level - either a string like "eighth" or a number like 1 (="eighth")
-   * @param {string} type - type to fill all beams to.
-   * @returns {this}
-   */
-  beam.Beams.prototype.fill = function (level, type) {
-      this.beamsList = [];
-      var count = 1;
-      if (level == 1 || level == '8th' || level == duration.typeFromNumDict[8]) {
-          count = 1;
-      } else if (level == 2 || level == duration.typeFromNumDict[16]) {
-          count = 2;
-      } else if (level == 3 || level == duration.typeFromNumDict[32]) {
-          count = 3;
-      } else if (level == 4 || level == duration.typeFromNumDict[64]) {
-          count = 4;
-      } else if (level == 5 || level == duration.typeFromNumDict[128]) {
-          count = 5;
-      } else if (level == 6 || level == duration.typeFromNumDict[256]) {
-          count = 6;
-      } else {
-          throw 'cannot fill beams for level ' + level;
-      }
-      for (var i = 1; i <= count; i++) {
-          var obj = new beam.Beam();
-          obj.number = i;
-          this.beamsList.push(obj);
-      }
-      if (type !== undefined) {
-          this.setAll(type);
-      }
-      return this;
-  };
-
-  /**
-   * Get the beam with the given number or throw an exception.
-   *
-   * @memberof music21.beam.Beams
-   * @param {Int} number - the beam number to retrieve (usually one less than the position in `.beamsList`)
-   * @returns {music21.beam.Beam}
-   */
-  beam.Beams.prototype.getByNumber = function (number) {
-      if (!(number in this.getNumbers())) {
-          throw 'beam number error';
-      }
-      for (var i = 0; i < this.length; i++) {
-          if (this.beamsList[i].number == number) {
-              return this.beamsList[i];
-          }
-      }
-  };
-
-  /**
-   * Get an Array of all the numbers for the beams
-   *
-   * @memberof music21.beam.Beams
-   * @returns {Array<Int>} all the numbers
-   */
-  beam.Beams.prototype.getNumbers = function () {
-      var numbers = [];
-      for (var i = 0; i < this.length; i++) {
-          numbers.push(this.beamsList[i].number);
-      }
-      return numbers;
-  };
-
-  /**
-   * Returns the type + "-" + direction (if direction is defined)
-   * for the beam with the given number.
-   *
-   * @param {Int} number
-   * @returns {music21.beam.Beam|undefined}
-   */
-  beam.Beams.prototype.getTypeByNumber = function (number) {
-      var beamObj = this.getByNumber(number);
-      if (beamObj.direction === undefined) {
-          return beamObj.type;
-      } else {
-          var x = beamObj.type + '-' + beamObj.direction;
-          return x;
-      }
-  };
-
-  /**
-   * Get an Array of all the types for the beams
-   *
-   * @memberof music21.beam.Beams
-   * @returns {Array<string>} all the types
-   */
-  beam.Beams.prototype.getTypes = function () {
-      var types = [];
-      for (var i = 0; i < this.length; i++) {
-          types.push(this.beamsList[i].type);
-      }
-      return types;
-  };
-
-  /**
-   * Set all the {@link music21.beam.Beam} objects to a given type/direction
-   *
-   * @memberof music21.beam.Beams
-   * @param {string} type - beam type
-   * @param {string} [direction] - beam direction
-   * @returns {this}
-   */
-  beam.Beams.prototype.setAll = function (type, direction) {
-      if (beam.validBeamTypes[type] === undefined) {
-          throw 'invalid beam type';
-      }
-      for (var i = 0; i < this.length; i++) {
-          var b = this.beamsList[i];
-          b.type = type;
-          b.direction = direction;
-      }
-      return this;
-  };
-  /**
-   * Set the {@link music21.beam.Beam} object specified by `number` to a given type/direction
-   *
-   * @memberof music21.beam.Beams
-   * @param {Int} number
-   * @param {string} type
-   * @param {string} [direction]
-   * @returns {this}
-   */
-  beam.Beams.prototype.setByNumber = function (number, type, direction) {
-      if (direction === undefined) {
-          var splitit = type.split('-');
-          type = splitit[0];
-          direction = splitit[1];
-      }
-      if (beam.validBeamTypes[type] === undefined) {
-          throw 'invalid beam type';
-      }
-      for (var i = 0; i < this.length; i++) {
-          if (this.beamsList[i].number == number) {
-              this.beamsList[i].type = type;
-              this.beamsList[i].direction = direction;
-          }
-      }
-      return this;
-  };
-
-  beam.tests = function () {
-      test('music21.beam.Beams', function () {
-          var a = new music21.beam.Beams();
-          a.fill('16th');
-          a.setAll('start');
-          equal(a.getTypes()[0], 'start');
-          equal(a.getTypes()[1], 'start');
-
-          var b = new music21.beam.Beams();
-          b.fill('16th');
-          b.setAll('start');
-          b.setByNumber(1, 'continue');
-          equal(b.beamsList[0].type, 'continue');
-          b.setByNumber(2, 'stop');
-          equal(b.beamsList[1].type, 'stop');
-          b.setByNumber(2, 'partial-right');
-          equal(b.beamsList[1].type, 'partial');
-          equal(b.beamsList[1].direction, 'right');
-      });
-  };
-
-  /**
    * music21j -- Javascript reimplementation of Core music21p features.
    * music21/note -- Note, Rest, NotRest, GeneralNote
    *
@@ -2807,7 +2916,7 @@
               if (debug) {
                   console.log(this.stemDirection);
               }
-              vfn.setStemDirection(this.stemDirection === 'down' ? Vex$1.Flow.StaveNote.STEM_DOWN : Vex$1.Flow.StaveNote.STEM_UP);
+              vfn.setStemDirection(this.stemDirection === 'down' ? Vex.Flow.StaveNote.STEM_DOWN : Vex.Flow.StaveNote.STEM_UP);
               if (this.stemDirection === 'noStem') {
                   vfn.hasStem = function () {
                       return false;
@@ -3076,16 +3185,16 @@
                   return undefined;
               }
               var vexflowKey = this.pitch.vexflowName(clef);
-              var vfn = new Vex$1.Flow.StaveNote({
+              var vfn = new Vex.Flow.StaveNote({
                   keys: [vexflowKey],
                   duration: vfd
               });
               this.vexflowAccidentalsAndDisplay(vfn, params); // clean up stuff...
               if (this.pitch.accidental !== undefined) {
                   if (this.pitch.accidental.vexflowModifier !== 'n' && this.pitch.accidental.displayStatus !== false) {
-                      vfn.addAccidental(0, new Vex$1.Flow.Accidental(this.pitch.accidental.vexflowModifier));
+                      vfn.addAccidental(0, new Vex.Flow.Accidental(this.pitch.accidental.vexflowModifier));
                   } else if (this.pitch.accidental.displayType === 'always' || this.pitch.accidental.displayStatus === true) {
-                      vfn.addAccidental(0, new Vex$1.Flow.Accidental(this.pitch.accidental.vexflowModifier));
+                      vfn.addAccidental(0, new Vex.Flow.Accidental(this.pitch.accidental.vexflowModifier));
                   }
               }
 
@@ -3205,7 +3314,7 @@
                   keyLine = p.vexflowName(undefined);
               }
 
-              var vfn = new Vex$1.Flow.StaveNote({ keys: [keyLine],
+              var vfn = new Vex.Flow.StaveNote({ keys: [keyLine],
                   duration: this.duration.vexflowDuration + 'r' });
               if (this.duration.dots > 0) {
                   for (var i = 0; i < this.duration.dots; i++) {
@@ -3267,351 +3376,384 @@
    * @property {Boolean} [isNote=false]
    * @property {Boolean} [isRest=false]
    */
-  chord.Chord = function (notes) {
-      if (typeof notes == 'undefined') {
-          notes = [];
-      }
-      note.NotRest.call(this);
-      this.classes.push('Chord');
-      this.isChord = true; // for speed
-      this.isNote = false; // for speed
-      this.isRest = false; // for speed
+  var Chord = function (_note$NotRest) {
+      inherits(Chord, _note$NotRest);
 
-      this._notes = [];
-      Object.defineProperties(this, {
-          'length': {
-              enumerable: true,
-              get: function get() {
-                  return this._notes.length;
-              }
-          },
-          'pitches': {
-              enumerable: true,
-              get: function get() {
-                  var tempPitches = [];
-                  for (var i = 0; i < this._notes.length; i++) {
-                      tempPitches.push(this._notes[i].pitch);
-                  }
-                  return tempPitches;
-              },
-              set: function set(tempPitches) {
-                  this._notes = [];
-                  for (var i = 0; i < tempPitches.length; i++) {
-                      var addNote = void 0;
-                      if (typeof tempPitches[i] == 'string') {
-                          addNote = new note.Note(tempPitches[i]);
-                      } else if (tempPitches[i].isClassOrSubclass('Pitch')) {
-                          addNote = new note.Note();
-                          addNote.pitch = tempPitches[i];
-                      } else if (tempPitches[i].isClassOrSubclass('Note')) {
-                          addNote = tempPitches[i];
-                      } else {
-                          console.warn('bad pitch', tempPitches[i]);
-                          throw 'Cannot add pitch from ' + tempPitches[i];
-                      }
-                      this._notes.push(addNote);
-                  }
-                  return this._notes;
-              }
+      function Chord(notes) {
+          classCallCheck(this, Chord);
+
+          var _this = possibleConstructorReturn(this, (Chord.__proto__ || Object.getPrototypeOf(Chord)).call(this));
+
+          if (typeof notes === 'undefined') {
+              notes = [];
           }
+          _this.classes.push('Chord');
+          _this.isChord = true; // for speed
+          _this.isNote = false; // for speed
+          _this.isRest = false; // for speed
 
-      });
-      notes.forEach(this.add, this);
-  };
+          _this._notes = [];
+          notes.forEach(_this.add, _this);
+          return _this;
+      }
 
-  chord.Chord.prototype = new note.NotRest();
-  chord.Chord.prototype.constructor = chord.Chord;
-
-  chord.Chord.prototype.setStemDirectionFromClef = function (clef) {
-      if (clef === undefined) {
-          return this;
-      } else {
-          var midLine = clef.lowestLine + 4;
-          // console.log(midLine, 'midLine');
-          var maxDNNfromCenter = 0;
-          var pA = this.pitches;
-          for (var i = 0; i < this.pitches.length; i++) {
-              var p = pA[i];
-              var DNNfromCenter = p.diatonicNoteNum - midLine;
-              // >= not > so that the highest pitch wins the tie and thus stem down.
-              if (Math.abs(DNNfromCenter) >= Math.abs(maxDNNfromCenter)) {
-                  maxDNNfromCenter = DNNfromCenter;
-              }
-          }
-          if (maxDNNfromCenter >= 0) {
-              this.stemDirection = 'down';
-          } else {
-              this.stemDirection = 'up';
-          }
-          return this;
-      }
-  };
-  /**
-   * Adds a note to the chord, sorting the note array
-   *
-   * @memberof music21.chord.Chord
-   * @param {string|music21.note.Note|music21.pitch.Pitch} noteObj - the Note or Pitch to be added or a string defining a pitch.
-   * @returns {music21.chord.Chord} the original chord.
-   */
-  chord.Chord.prototype.add = function (noteObj) {
-      // takes in either a note or a pitch
-      if (typeof noteObj == 'string') {
-          noteObj = new note.Note(noteObj);
-      } else if (noteObj.isClassOrSubclass('Pitch')) {
-          var pitchObj = noteObj;
-          var noteObj2 = new note.Note();
-          noteObj2.pitch = pitchObj;
-          noteObj = noteObj2;
-      }
-      this._notes.push(noteObj);
-      // inefficient because sorts after each add, but safe and #(p) is small
-      this._notes.sort(function (a, b) {
-          return a.pitch.ps - b.pitch.ps;
-      });
-      return this;
-  };
-  /**
-   * Removes any pitches that appear more than once (in any octave), removing the higher ones, and returns a new Chord.
-   *
-   * @memberof music21.chord.Chord
-   * @returns {music21.chord.Chord} A new Chord object with duplicate pitches removed.
-   */
-  chord.Chord.prototype.removeDuplicatePitches = function () {
-      var stepsFound = [];
-      var nonDuplicatingPitches = [];
-      var pitches = this.pitches;
-      for (var i = 0; i < pitches.length; i++) {
-          var p = pitches[i];
-          if (stepsFound.indexOf(p.step) == -1) {
-              stepsFound.push(p.step);
-              nonDuplicatingPitches.push(p);
-          }
-      }
-      var closedChord = new chord.Chord(nonDuplicatingPitches);
-      return closedChord;
-  };
-
-  /**
-   * Finds the Root of the chord.
-   *
-   * @memberof music21.chord.Chord
-   * @returns {music21.pitch.Pitch} the root of the chord.
-   */
-  chord.Chord.prototype.root = function () {
-      var closedChord = this.removeDuplicatePitches();
-      /* var chordBass = closedChord.bass(); */
-      var closedPitches = closedChord.pitches;
-      if (closedPitches.length == 0) {
-          throw 'No notes in Chord!';
-      } else if (closedPitches.length == 1) {
-          return this.pitches[0];
-      }
-      var indexOfPitchesWithPerfectlyStackedThirds = [];
-      var testSteps = [3, 5, 7, 2, 4, 6];
-      for (var i = 0; i < closedPitches.length; i++) {
-          var p = closedPitches[i];
-          var currentListOfThirds = [];
-          for (var tsIndex = 0; tsIndex < testSteps.length; tsIndex++) {
-              var chordStepPitch = closedChord.getChordStep(testSteps[tsIndex], p);
-              if (chordStepPitch != undefined) {
-                  // console.log(p.name + " " + testSteps[tsIndex].toString() + " " + chordStepPitch.name);
-                  currentListOfThirds.push(true);
+      createClass(Chord, [{
+          key: 'setStemDirectionFromClef',
+          value: function setStemDirectionFromClef(clef) {
+              if (clef === undefined) {
+                  return this;
               } else {
-                  currentListOfThirds.push(false);
+                  var midLine = clef.lowestLine + 4;
+                  // console.log(midLine, 'midLine');
+                  var maxDNNfromCenter = 0;
+                  var pA = this.pitches;
+                  for (var i = 0; i < this.pitches.length; i++) {
+                      var p = pA[i];
+                      var DNNfromCenter = p.diatonicNoteNum - midLine;
+                      // >= not > so that the highest pitch wins the tie and thus stem down.
+                      if (Math.abs(DNNfromCenter) >= Math.abs(maxDNNfromCenter)) {
+                          maxDNNfromCenter = DNNfromCenter;
+                      }
+                  }
+                  if (maxDNNfromCenter >= 0) {
+                      this.stemDirection = 'down';
+                  } else {
+                      this.stemDirection = 'up';
+                  }
+                  return this;
               }
           }
-          // console.log(currentListOfThirds);
-          hasFalse = false;
-          for (var j = 0; j < closedPitches.length - 1; j++) {
-              if (currentListOfThirds[j] == false) {
-                  hasFalse = true;
-              }
-          }
-          if (hasFalse == false) {
-              indexOfPitchesWithPerfectlyStackedThirds.push(i);
-              return closedChord.pitches[i]; // should do more, but fine...
-              // should test rootedness function, etc. 13ths. etc.
-          }
-      }
-      return closedChord.pitches[0]; // fallback, just return the bass...
-  };
-  /**
-   * Returns the number of semitones above the root that a given chordstep is.
-   *
-   * For instance, in a G dominant 7th chord (G, B, D, F), would
-   * return 4 for chordStep=3, since the third of the chord (B) is four semitones above G.
-   *
-   * @memberof music21.chord.Chord
-   * @param {number} chordStep - the step to find, e.g., 1, 2, 3, etc.
-   * @param {music21.pitch.Pitch} [testRoot] - the pitch to temporarily consider the root.
-   * @returns {number|undefined} Number of semitones above the root for this chord step or undefined if no pitch matches that chord step.
-   */
-  chord.Chord.prototype.semitonesFromChordStep = function (chordStep, testRoot) {
-      if (testRoot === undefined) {
-          testRoot = this.root();
-      }
-      var tempChordStep = this.getChordStep(chordStep, testRoot);
-      if (tempChordStep == undefined) {
-          return undefined;
-      } else {
-          var semitones = (tempChordStep.ps - testRoot.ps) % 12;
-          if (semitones < 0) {
-              semitones += 12;
-          }
-          return semitones;
-      }
-  };
-  /**
-   * Gets the lowest note (based on .ps not name) in the chord.
-   *
-   * @memberof music21.chord.Chord
-   * @returns {music21.pitch.Pitch} bass pitch
-   */
-  chord.Chord.prototype.bass = function () {
-      var lowest = undefined;
-      var pitches = this.pitches;
-      for (var i = 0; i < pitches.length; i++) {
-          var p = pitches[i];
-          if (lowest == undefined) {
-              lowest = p;
-          } else {
-              if (p.ps < lowest.ps) {
-                  lowest = p;
-              }
-          }
-      }
-      return lowest;
-  };
-  /**
-   * Counts the number of non-duplicate pitch MIDI Numbers in the chord.
-   *
-   * Call after "closedPosition()" to get Forte style cardinality disregarding octave.
-   *
-   * @memberof music21.chord.Chord
-   * @returns {number}
-   */
-  chord.Chord.prototype.cardinality = function () {
-      var uniqueChord = this.removeDuplicatePitches();
-      return uniqueChord.pitches.length;
-  };
-  /**
-   *
-   * @memberof music21.chord.Chord
-   * @returns {Boolean}
-   */
-  chord.Chord.prototype.isMajorTriad = function () {
-      if (this.cardinality() != 3) {
-          return false;
-      }
-      var thirdST = this.semitonesFromChordStep(3);
-      var fifthST = this.semitonesFromChordStep(5);
-      if (thirdST == 4 && fifthST == 7) {
-          return true;
-      } else {
-          return false;
-      }
-  };
-  /**
-   *
-   * @memberof music21.chord.Chord
-   * @returns {Boolean}
-   */
-  chord.Chord.prototype.isMinorTriad = function () {
-      if (this.cardinality() != 3) {
-          return false;
-      }
-      var thirdST = this.semitonesFromChordStep(3);
-      var fifthST = this.semitonesFromChordStep(5);
-      if (thirdST == 3 && fifthST == 7) {
-          return true;
-      } else {
-          return false;
-      }
-  };
-  /**
-   * Returns the inversion of the chord as a number (root-position = 0)
-   *
-   * Unlike music21 version, cannot set the inversion, yet.
-   *
-   * TODO: add.
-   *
-   * @memberof music21.chord.Chord
-   * @returns {number}
-   */
-  chord.Chord.prototype.inversion = function () {
-      var bass = this.bass();
-      var root = this.root();
-      var chordStepsToInversions = [1, 6, 4, 2, 7, 5, 3];
-      for (var i = 0; i < chordStepsToInversions.length; i++) {
-          var testNote = this.getChordStep(chordStepsToInversions[i], bass);
-          if (testNote != undefined && testNote.name == root.name) {
-              return i;
-          }
-      }
-      return undefined;
-  };
+          /**
+           * Adds a note to the chord, sorting the note array
+           *
+           * @memberof music21.chord.Chord
+           * @param {string|music21.note.Note|music21.pitch.Pitch} noteObj - the Note or Pitch to be added or a string defining a pitch.
+           * @returns {music21.chord.Chord} the original chord.
+           */
 
-  /**
-   * @memberof music21.chord.Chord
-   * @param {object} options - a dictionary of options `{clef: {@music21.clef.Clef} }` is especially important
-   * @returns {Vex.Flow.StaveNote}
-   */
-  chord.Chord.prototype.vexflowNote = function (options) {
-      var clef = options.clef;
+      }, {
+          key: 'add',
+          value: function add(noteObj) {
+              // takes in either a note or a pitch
+              if (typeof noteObj === 'string') {
+                  noteObj = new note.Note(noteObj);
+              } else if (noteObj.isClassOrSubclass('Pitch')) {
+                  var pitchObj = noteObj;
+                  var noteObj2 = new note.Note();
+                  noteObj2.pitch = pitchObj;
+                  noteObj = noteObj2;
+              }
+              this._notes.push(noteObj);
+              // inefficient because sorts after each add, but safe and #(p) is small
+              this._notes.sort(function (a, b) {
+                  return a.pitch.ps - b.pitch.ps;
+              });
+              return this;
+          }
+          /**
+           * Removes any pitches that appear more than once (in any octave), removing the higher ones, and returns a new Chord.
+           *
+           * @memberof music21.chord.Chord
+           * @returns {music21.chord.Chord} A new Chord object with duplicate pitches removed.
+           */
 
-      var pitchKeys = [];
-      for (var i = 0; i < this._notes.length; i++) {
-          pitchKeys.push(this._notes[i].pitch.vexflowName(clef));
-      }
-      var vfn = new Vex$1.Flow.StaveNote({ keys: pitchKeys,
-          duration: this.duration.vexflowDuration });
-      this.vexflowAccidentalsAndDisplay(vfn, options); // clean up stuff...
-      for (var i = 0; i < this._notes.length; i++) {
-          var tn = this._notes[i];
-          if (tn.pitch.accidental != undefined) {
-              if (tn.pitch.accidental.vexflowModifier != 'n' && tn.pitch.accidental.displayStatus != false) {
-                  vfn.addAccidental(i, new Vex$1.Flow.Accidental(tn.pitch.accidental.vexflowModifier));
-              } else if (tn.pitch.accidental.displayType == 'always' || tn.pitch.accidental.displayStatus == true) {
-                  vfn.addAccidental(i, new Vex$1.Flow.Accidental(tn.pitch.accidental.vexflowModifier));
+      }, {
+          key: 'removeDuplicatePitches',
+          value: function removeDuplicatePitches() {
+              var stepsFound = [];
+              var nonDuplicatingPitches = [];
+              var pitches = this.pitches;
+              for (var i = 0; i < pitches.length; i++) {
+                  var p = pitches[i];
+                  if (stepsFound.indexOf(p.step) === -1) {
+                      stepsFound.push(p.step);
+                      nonDuplicatingPitches.push(p);
+                  }
+              }
+              var closedChord = new chord.Chord(nonDuplicatingPitches);
+              return closedChord;
+          }
+          /**
+           * Finds the Root of the chord.
+           *
+           * @memberof music21.chord.Chord
+           * @returns {music21.pitch.Pitch} the root of the chord.
+           */
+
+      }, {
+          key: 'root',
+          value: function root() {
+              var closedChord = this.removeDuplicatePitches();
+              /* var chordBass = closedChord.bass(); */
+              var closedPitches = closedChord.pitches;
+              if (closedPitches.length === 0) {
+                  throw 'No notes in Chord!';
+              } else if (closedPitches.length === 1) {
+                  return this.pitches[0];
+              }
+              var indexOfPitchesWithPerfectlyStackedThirds = [];
+              var testSteps = [3, 5, 7, 2, 4, 6];
+              for (var i = 0; i < closedPitches.length; i++) {
+                  var p = closedPitches[i];
+                  var currentListOfThirds = [];
+                  for (var tsIndex = 0; tsIndex < testSteps.length; tsIndex++) {
+                      var chordStepPitch = closedChord.getChordStep(testSteps[tsIndex], p);
+                      if (chordStepPitch !== undefined) {
+                          // console.log(p.name + " " + testSteps[tsIndex].toString() + " " + chordStepPitch.name);
+                          currentListOfThirds.push(true);
+                      } else {
+                          currentListOfThirds.push(false);
+                      }
+                  }
+                  // console.log(currentListOfThirds);
+                  var hasFalse = false;
+                  for (var j = 0; j < closedPitches.length - 1; j++) {
+                      if (currentListOfThirds[j] === false) {
+                          hasFalse = true;
+                      }
+                  }
+                  if (hasFalse === false) {
+                      indexOfPitchesWithPerfectlyStackedThirds.push(i);
+                      return closedChord.pitches[i]; // should do more, but fine...
+                      // should test rootedness function, etc. 13ths. etc.
+                  }
+              }
+              return closedChord.pitches[0]; // fallback, just return the bass...
+          }
+          /**
+           * Returns the number of semitones above the root that a given chordstep is.
+           *
+           * For instance, in a G dominant 7th chord (G, B, D, F), would
+           * return 4 for chordStep=3, since the third of the chord (B) is four semitones above G.
+           *
+           * @memberof music21.chord.Chord
+           * @param {number} chordStep - the step to find, e.g., 1, 2, 3, etc.
+           * @param {music21.pitch.Pitch} [testRoot] - the pitch to temporarily consider the root.
+           * @returns {number|undefined} Number of semitones above the root for this chord step or undefined if no pitch matches that chord step.
+           */
+
+      }, {
+          key: 'semitonesFromChordStep',
+          value: function semitonesFromChordStep(chordStep, testRoot) {
+              if (testRoot === undefined) {
+                  testRoot = this.root();
+              }
+              var tempChordStep = this.getChordStep(chordStep, testRoot);
+              if (tempChordStep === undefined) {
+                  return undefined;
+              } else {
+                  var semitones = (tempChordStep.ps - testRoot.ps) % 12;
+                  if (semitones < 0) {
+                      semitones += 12;
+                  }
+                  return semitones;
               }
           }
-      }
-      this.activeVexflowNote = vfn;
-      return vfn;
-  };
-  /**
-   * Returns the Pitch object that is a Generic interval (2, 3, 4, etc., but not 9, 10, etc.) above
-   * the `.root()`
-   *
-   * In case there is more that one note with that designation (e.g., `[A-C-C#-E].getChordStep(3)`)
-   * the first one in `.pitches` is returned.
-   *
-   * @memberof music21.chord.Chord
-   * @param {Int} chordStep a positive integer representing the chord step
-   * @param {music21.pitch.Pitch} [testRoot] - the Pitch to use as a temporary root
-   * @returns {music21.pitch.Pitch|undefined}
-   */
-  chord.Chord.prototype.getChordStep = function (chordStep, testRoot) {
-      if (testRoot == undefined) {
-          testRoot = this.root();
-      }
-      if (chordStep >= 8) {
-          chordStep = chordStep % 7;
-      }
-      var thisPitches = this.pitches;
-      var testRootDNN = testRoot.diatonicNoteNum;
-      for (var i = 0; i < thisPitches.length; i++) {
-          var thisPitch = thisPitches[i];
-          var thisInterval = (thisPitch.diatonicNoteNum - testRootDNN + 1) % 7; // fast cludge
-          if (thisInterval <= 0) {
-              thisInterval = thisInterval + 7;
+          /**
+           * Gets the lowest note (based on .ps not name) in the chord.
+           *
+           * @memberof music21.chord.Chord
+           * @returns {music21.pitch.Pitch} bass pitch
+           */
+
+      }, {
+          key: 'bass',
+          value: function bass() {
+              var lowest = void 0;
+              var pitches = this.pitches;
+              for (var i = 0; i < pitches.length; i++) {
+                  var p = pitches[i];
+                  if (lowest === undefined) {
+                      lowest = p;
+                  } else if (p.ps < lowest.ps) {
+                      lowest = p;
+                  }
+              }
+              return lowest;
           }
-          if (thisInterval == chordStep) {
-              return thisPitch;
+          /**
+           * Counts the number of non-duplicate pitch MIDI Numbers in the chord.
+           *
+           * Call after "closedPosition()" to get Forte style cardinality disregarding octave.
+           *
+           * @memberof music21.chord.Chord
+           * @returns {number}
+           */
+
+      }, {
+          key: 'cardinality',
+          value: function cardinality() {
+              var uniqueChord = this.removeDuplicatePitches();
+              return uniqueChord.pitches.length;
           }
-      }
-      return undefined;
-  };
+          /**
+          *
+          * @memberof music21.chord.Chord
+          * @returns {Boolean}
+          */
+
+      }, {
+          key: 'isMajorTriad',
+          value: function isMajorTriad() {
+              if (this.cardinality() !== 3) {
+                  return false;
+              }
+              var thirdST = this.semitonesFromChordStep(3);
+              var fifthST = this.semitonesFromChordStep(5);
+              if (thirdST === 4 && fifthST === 7) {
+                  return true;
+              } else {
+                  return false;
+              }
+          }
+          /**
+          *
+          * @memberof music21.chord.Chord
+          * @returns {Boolean}
+          */
+
+      }, {
+          key: 'isMinorTriad',
+          value: function isMinorTriad() {
+              if (this.cardinality() !== 3) {
+                  return false;
+              }
+              var thirdST = this.semitonesFromChordStep(3);
+              var fifthST = this.semitonesFromChordStep(5);
+              if (thirdST === 3 && fifthST === 7) {
+                  return true;
+              } else {
+                  return false;
+              }
+          }
+          /**
+           * Returns the inversion of the chord as a number (root-position = 0)
+           *
+           * Unlike music21 version, cannot set the inversion, yet.
+           *
+           * TODO: add.
+           *
+           * @memberof music21.chord.Chord
+           * @returns {number}
+           */
+
+      }, {
+          key: 'inversion',
+          value: function inversion() {
+              var bass = this.bass();
+              var root = this.root();
+              var chordStepsToInversions = [1, 6, 4, 2, 7, 5, 3];
+              for (var i = 0; i < chordStepsToInversions.length; i++) {
+                  var testNote = this.getChordStep(chordStepsToInversions[i], bass);
+                  if (testNote !== undefined && testNote.name === root.name) {
+                      return i;
+                  }
+              }
+              return undefined;
+          }
+          /**
+           * @memberof music21.chord.Chord
+           * @param {object} options - a dictionary of options `{clef: {@music21.clef.Clef} }` is especially important
+           * @returns {Vex.Flow.StaveNote}
+           */
+
+      }, {
+          key: 'vexflowNote',
+          value: function vexflowNote(options) {
+              var clef = options.clef;
+
+              var pitchKeys = [];
+              for (var i = 0; i < this._notes.length; i++) {
+                  pitchKeys.push(this._notes[i].pitch.vexflowName(clef));
+              }
+              var vfn = new Vex.Flow.StaveNote({ keys: pitchKeys,
+                  duration: this.duration.vexflowDuration });
+              this.vexflowAccidentalsAndDisplay(vfn, options); // clean up stuff...
+              for (var _i = 0; _i < this._notes.length; _i++) {
+                  var tn = this._notes[_i];
+                  if (tn.pitch.accidental !== undefined) {
+                      if (tn.pitch.accidental.vexflowModifier !== 'n' && tn.pitch.accidental.displayStatus !== false) {
+                          vfn.addAccidental(_i, new Vex.Flow.Accidental(tn.pitch.accidental.vexflowModifier));
+                      } else if (tn.pitch.accidental.displayType === 'always' || tn.pitch.accidental.displayStatus === true) {
+                          vfn.addAccidental(_i, new Vex.Flow.Accidental(tn.pitch.accidental.vexflowModifier));
+                      }
+                  }
+              }
+              this.activeVexflowNote = vfn;
+              return vfn;
+          }
+          /**
+           * Returns the Pitch object that is a Generic interval (2, 3, 4, etc., but not 9, 10, etc.) above
+           * the `.root()`
+           *
+           * In case there is more that one note with that designation (e.g., `[A-C-C#-E].getChordStep(3)`)
+           * the first one in `.pitches` is returned.
+           *
+           * @memberof music21.chord.Chord
+           * @param {Int} chordStep a positive integer representing the chord step
+           * @param {music21.pitch.Pitch} [testRoot] - the Pitch to use as a temporary root
+           * @returns {music21.pitch.Pitch|undefined}
+           */
+
+      }, {
+          key: 'getChordStep',
+          value: function getChordStep(chordStep, testRoot) {
+              if (testRoot === undefined) {
+                  testRoot = this.root();
+              }
+              if (chordStep >= 8) {
+                  chordStep %= 7;
+              }
+              var thisPitches = this.pitches;
+              var testRootDNN = testRoot.diatonicNoteNum;
+              for (var i = 0; i < thisPitches.length; i++) {
+                  var thisPitch = thisPitches[i];
+                  var thisInterval = (thisPitch.diatonicNoteNum - testRootDNN + 1) % 7; // fast cludge
+                  if (thisInterval <= 0) {
+                      thisInterval += 7;
+                  }
+                  if (thisInterval === chordStep) {
+                      return thisPitch;
+                  }
+              }
+              return undefined;
+          }
+      }, {
+          key: 'length',
+          get: function get() {
+              return this._notes.length;
+          }
+      }, {
+          key: 'pitches',
+          get: function get() {
+              var tempPitches = [];
+              for (var i = 0; i < this._notes.length; i++) {
+                  tempPitches.push(this._notes[i].pitch);
+              }
+              return tempPitches;
+          },
+          set: function set(tempPitches) {
+              this._notes = [];
+              for (var i = 0; i < tempPitches.length; i++) {
+                  var addNote = void 0;
+                  if (typeof tempPitches[i] === 'string') {
+                      addNote = new note.Note(tempPitches[i]);
+                  } else if (tempPitches[i].isClassOrSubclass('Pitch')) {
+                      addNote = new note.Note();
+                      addNote.pitch = tempPitches[i];
+                  } else if (tempPitches[i].isClassOrSubclass('Note')) {
+                      addNote = tempPitches[i];
+                  } else {
+                      console.warn('bad pitch', tempPitches[i]);
+                      throw 'Cannot add pitch from ' + tempPitches[i];
+                  }
+                  this._notes.push(addNote);
+              }
+          }
+      }]);
+      return Chord;
+  }(note.NotRest);
+  chord.Chord = Chord;
 
   chord.chordDefinitions = {
       'major': ['M3', 'm3'],
@@ -3676,54 +3818,66 @@
    * @property {Int} lowestLineTrebleOffset - difference between the first line of this staff and the first line in treble clef
    * @property {Int} octaveChange
    */
-  clef.Clef = function (name, octaveChange) {
-      base.Music21Object.call(this);
-      this.classes.push('Clef');
-      if (name != undefined) {
-          name = name.toLowerCase();
-          this.name = name;
-          this.lowestLine = clef.lowestLines[name];
-          this.lowestLineTrebleOffset = clef.lowestLines['treble'] - this.lowestLine;
-      } else {
-          this.name = undefined;
-          this.lowestLine = clef.lowestLines['treble'];
-          this.lowestLineTrebleOffset = 0;
-      }
-      if (octaveChange === undefined) {
-          this.octaveChange = 0;
-      } else {
-          this.octaveChange = octaveChange;
-          this.lowestLine = this.lowestLine + 7 * octaveChange;
-          this.lowestLineTrebleOffset = this.lowestLineTrebleOffset - 7 * octaveChange;
-      }
-  };
+  var Clef = function (_base$Music21Object) {
+      inherits(Clef, _base$Music21Object);
 
-  clef.Clef.prototype = new base.Music21Object();
-  clef.Clef.prototype.constructor = clef.Clef;
+      function Clef(name, octaveChange) {
+          classCallCheck(this, Clef);
 
-  /**
-   * returns a new pitch object if the clef name is not Treble
-   * designed so it would look the same as it would in treble clef.
-   * for instance, bass-clef 2nd-space C# becomes treble clef 2nd-space A#
-   * used for Vex.Flow which requires all pitches to be input as if they
-   * are in treble clef.
-   *
-   * @memberof music21.clef.Clef
-   * @param {music21.pitch.Pitch} p
-   * @returns {music21.pitch.Pitch} new pitch
-   */
-  clef.Clef.prototype.convertPitchToTreble = function (p) {
-      if (this.lowestLine == undefined) {
-          console.log('no first line defined for clef', this.name, this);
-          return p; // error
+          var _this = possibleConstructorReturn(this, (Clef.__proto__ || Object.getPrototypeOf(Clef)).call(this));
+
+          _this.classes.push('Clef');
+          if (name !== undefined) {
+              name = name.toLowerCase();
+              _this.name = name;
+              _this.lowestLine = clef.lowestLines[name];
+              _this.lowestLineTrebleOffset = clef.lowestLines.treble - _this.lowestLine;
+          } else {
+              _this.name = undefined;
+              _this.lowestLine = clef.lowestLines.treble;
+              _this.lowestLineTrebleOffset = 0;
+          }
+          if (octaveChange === undefined) {
+              _this.octaveChange = 0;
+          } else {
+              _this.octaveChange = octaveChange;
+              _this.lowestLine += 7 * octaveChange;
+              _this.lowestLineTrebleOffset -= 7 * octaveChange;
+          }
+          return _this;
       }
-      var lowestLineDifference = this.lowestLineTrebleOffset;
-      var tempPitch = new pitch.Pitch(p.step);
-      tempPitch.octave = p.octave;
-      tempPitch.diatonicNoteNum += lowestLineDifference;
-      tempPitch.accidental = p.accidental;
-      return tempPitch;
-  };
+      /**
+       * returns a new pitch object if the clef name is not Treble
+       * designed so it would look the same as it would in treble clef.
+       * for instance, bass-clef 2nd-space C# becomes treble clef 2nd-space A#
+       * used for Vex.Flow which requires all pitches to be input as if they
+       * are in treble clef.
+       *
+       * @memberof music21.clef.Clef
+       * @param {music21.pitch.Pitch} p
+       * @returns {music21.pitch.Pitch} new pitch
+       */
+
+
+      createClass(Clef, [{
+          key: 'convertPitchToTreble',
+          value: function convertPitchToTreble(p) {
+              if (this.lowestLine === undefined) {
+                  console.log('no first line defined for clef', this.name, this);
+                  return p; // error
+              }
+              var lowestLineDifference = this.lowestLineTrebleOffset;
+              var tempPitch = new pitch.Pitch(p.step);
+              tempPitch.octave = p.octave;
+              tempPitch.diatonicNoteNum += lowestLineDifference;
+              tempPitch.accidental = p.accidental;
+              return tempPitch;
+          }
+      }]);
+      return Clef;
+  }(base.Music21Object);
+
+  clef.Clef = Clef;
 
   /**
    * A TrebleClef (same as new music21.clef.Clef('treble')
@@ -3732,26 +3886,45 @@
    * @memberof music21.clef
    * @extends music21.clef.Clef
    */
-  clef.TrebleClef = function () {
-      clef.Clef.call(this, 'treble');
-      this.classes.push('TrebleClef');
-  };
-  clef.TrebleClef.prototype = new clef.Clef();
-  clef.TrebleClef.prototype.constructor = clef.TrebleClef;
+  var TrebleClef = function (_Clef) {
+      inherits(TrebleClef, _Clef);
 
+      function TrebleClef() {
+          classCallCheck(this, TrebleClef);
+
+          var _this2 = possibleConstructorReturn(this, (TrebleClef.__proto__ || Object.getPrototypeOf(TrebleClef)).call(this, 'treble'));
+
+          _this2.classes.push('TrebleClef');
+          return _this2;
+      }
+
+      return TrebleClef;
+  }(Clef);
+  clef.TrebleClef = TrebleClef;
   /**
    * A TrebleClef down an octave (same as new music21.clef.Clef('treble', -1)
+   *
+   * Unlike music21p, currently not a subclass of TrebleClef.
    *
    * @class Treble8vbClef
    * @memberof music21.clef
    * @extends music21.clef.Clef
    */
-  clef.Treble8vbClef = function () {
-      clef.Clef.call(this, 'treble', -1);
-      this.classes.push('Treble8vbClef');
-  };
-  clef.Treble8vbClef.prototype = new clef.Clef();
-  clef.Treble8vbClef.prototype.constructor = clef.Treble8vbClef;
+  var Treble8vbClef = function (_Clef2) {
+      inherits(Treble8vbClef, _Clef2);
+
+      function Treble8vbClef() {
+          classCallCheck(this, Treble8vbClef);
+
+          var _this3 = possibleConstructorReturn(this, (Treble8vbClef.__proto__ || Object.getPrototypeOf(Treble8vbClef)).call(this, 'treble', -1));
+
+          _this3.classes.push('Treble8vbClef');
+          return _this3;
+      }
+
+      return Treble8vbClef;
+  }(Clef);
+  clef.Treble8vbClef = Treble8vbClef;
 
   /**
    * A TrebleClef up an octave (same as new music21.clef.Clef('treble', 1)
@@ -3760,13 +3933,21 @@
    * @memberof music21.clef
    * @extends music21.clef.Clef
    */
-  clef.Treble8vaClef = function () {
-      // Fixed in cuthbert Vex.Flow -- pull #235
-      clef.Clef.call(this, 'treble', 1);
-      this.classes.push('Treble8vaClef');
-  };
-  clef.Treble8vaClef.prototype = new clef.Clef();
-  clef.Treble8vaClef.prototype.constructor = clef.Treble8vaClef;
+  var Treble8vaClef = function (_Clef3) {
+      inherits(Treble8vaClef, _Clef3);
+
+      function Treble8vaClef() {
+          classCallCheck(this, Treble8vaClef);
+
+          var _this4 = possibleConstructorReturn(this, (Treble8vaClef.__proto__ || Object.getPrototypeOf(Treble8vaClef)).call(this, 'treble', 1));
+
+          _this4.classes.push('Treble8vaClef');
+          return _this4;
+      }
+
+      return Treble8vaClef;
+  }(Clef);
+  clef.Treble8vaClef = Treble8vaClef;
 
   /**
    * A BassClef (same as new music21.clef.Clef('bass')
@@ -3775,12 +3956,21 @@
    * @memberof music21.clef
    * @extends music21.clef.Clef
    */
-  clef.BassClef = function () {
-      clef.Clef.call(this, 'bass');
-      this.classes.push('BassClef');
-  };
-  clef.BassClef.prototype = new clef.Clef();
-  clef.BassClef.prototype.constructor = clef.BassClef;
+  var BassClef = function (_Clef4) {
+      inherits(BassClef, _Clef4);
+
+      function BassClef() {
+          classCallCheck(this, BassClef);
+
+          var _this5 = possibleConstructorReturn(this, (BassClef.__proto__ || Object.getPrototypeOf(BassClef)).call(this, 'bass'));
+
+          _this5.classes.push('BassClef');
+          return _this5;
+      }
+
+      return BassClef;
+  }(Clef);
+  clef.BassClef = BassClef;
 
   /**
    * An AltoClef (same as new music21.clef.Clef('alto')
@@ -3789,12 +3979,21 @@
    * @memberof music21.clef
    * @extends music21.clef.Clef
    */
-  clef.AltoClef = function () {
-      clef.Clef.call(this, 'alto');
-      this.classes.push('AltoClef');
-  };
-  clef.AltoClef.prototype = new clef.Clef();
-  clef.AltoClef.prototype.constructor = clef.AltoClef;
+  var AltoClef = function (_Clef5) {
+      inherits(AltoClef, _Clef5);
+
+      function AltoClef() {
+          classCallCheck(this, AltoClef);
+
+          var _this6 = possibleConstructorReturn(this, (AltoClef.__proto__ || Object.getPrototypeOf(AltoClef)).call(this, 'alto'));
+
+          _this6.classes.push('AltoClef');
+          return _this6;
+      }
+
+      return AltoClef;
+  }(Clef);
+  clef.AltoClef = AltoClef;
 
   /**
    * A Tenor Clef (same as new music21.clef.Clef('tenor')
@@ -3803,13 +4002,21 @@
    * @memberof music21.clef
    * @extends music21.clef.Clef
    */
-  clef.TenorClef = function () {
-      clef.Clef.call(this, 'tenor');
-      this.classes.push('TenorClef');
-  };
-  clef.TenorClef.prototype = new clef.Clef();
-  clef.TenorClef.prototype.constructor = clef.TenorClef;
+  var TenorClef = function (_Clef6) {
+      inherits(TenorClef, _Clef6);
 
+      function TenorClef() {
+          classCallCheck(this, TenorClef);
+
+          var _this7 = possibleConstructorReturn(this, (TenorClef.__proto__ || Object.getPrototypeOf(TenorClef)).call(this, 'tenor'));
+
+          _this7.classes.push('TenorClef');
+          return _this7;
+      }
+
+      return TenorClef;
+  }(Clef);
+  clef.TenorClef = TenorClef;
   /**
    * A Soprano Clef (same as new music21.clef.Clef('soprano')
    *
@@ -3817,12 +4024,21 @@
    * @memberof music21.clef
    * @extends music21.clef.Clef
    */
-  clef.SopranoClef = function () {
-      clef.Clef.call(this, 'soprano');
-      this.classes.push('SopranoClef');
-  };
-  clef.SopranoClef.prototype = new clef.Clef();
-  clef.SopranoClef.prototype.constructor = clef.SopranoClef;
+  var SopranoClef = function (_Clef7) {
+      inherits(SopranoClef, _Clef7);
+
+      function SopranoClef() {
+          classCallCheck(this, SopranoClef);
+
+          var _this8 = possibleConstructorReturn(this, (SopranoClef.__proto__ || Object.getPrototypeOf(SopranoClef)).call(this, 'soprano'));
+
+          _this8.classes.push('SopranoClef');
+          return _this8;
+      }
+
+      return SopranoClef;
+  }(Clef);
+  clef.SopranoClef = SopranoClef;
 
   /**
    * A Mezzo-Soprano Clef (same as new music21.clef.Clef('mezzo-soprano')
@@ -3831,12 +4047,21 @@
    * @memberof music21.clef
    * @extends music21.clef.Clef
    */
-  clef.MezzoSopranoClef = function () {
-      clef.Clef.call(this, 'mezzo-soprano');
-      this.classes.push('MezzoSopranoClef');
-  };
-  clef.MezzoSopranoClef.prototype = new clef.Clef();
-  clef.MezzoSopranoClef.prototype.constructor = clef.MezzoSopranoClef;
+  var MezzoSopranoClef = function (_Clef8) {
+      inherits(MezzoSopranoClef, _Clef8);
+
+      function MezzoSopranoClef() {
+          classCallCheck(this, MezzoSopranoClef);
+
+          var _this9 = possibleConstructorReturn(this, (MezzoSopranoClef.__proto__ || Object.getPrototypeOf(MezzoSopranoClef)).call(this, 'mezzo-soprano'));
+
+          _this9.classes.push('MezzoSopranoClef');
+          return _this9;
+      }
+
+      return MezzoSopranoClef;
+  }(Clef);
+  clef.MezzoSopranoClef = MezzoSopranoClef;
 
   /**
    * A Percussion Clef (same as new music21.clef.Clef('percussion')
@@ -3847,12 +4072,21 @@
    * @memberof music21.clef
    * @extends music21.clef.Clef
    */
-  clef.PercussionClef = function () {
-      clef.Clef.call(this, 'percussion');
-      this.classes.push('PercussionClef');
-  };
-  clef.PercussionClef.prototype = new clef.Clef();
-  clef.PercussionClef.prototype.constructor = clef.PercussionClef;
+  var PercussionClef = function (_Clef9) {
+      inherits(PercussionClef, _Clef9);
+
+      function PercussionClef() {
+          classCallCheck(this, PercussionClef);
+
+          var _this10 = possibleConstructorReturn(this, (PercussionClef.__proto__ || Object.getPrototypeOf(PercussionClef)).call(this, 'percussion'));
+
+          _this10.classes.push('PercussionClef');
+          return _this10;
+      }
+
+      return PercussionClef;
+  }(Clef);
+  clef.PercussionClef = PercussionClef;
 
   /**
    * Looks at the pitches in a Stream and returns the best clef
@@ -3863,17 +4097,17 @@
    * @param {music21.stream.Stream} st
    * @returns {music21.clef.Clef}
    */
-  clef.bestClef = function (st) {
+  clef.bestClef = function bestClef(st) {
       // console.log('calling flat on stream: ', st.elements.length, st.classes[st.classes.length - 1]);
       var stFlat = st.flat;
       var totalNotes = 0;
       var totalPitch = 0.0;
       for (var i = 0; i < stFlat.length; i++) {
           var el = stFlat.get(i);
-          if (el.pitch != undefined) {
+          if (el.pitch !== undefined) {
               totalNotes += 1;
               totalPitch += el.pitch.diatonicNoteNum;
-          } else if (el.pitches != undefined) {
+          } else if (el.pitches !== undefined) {
               for (var j = 0; j < el.pitches.length; j++) {
                   totalNotes += 1;
                   totalPitch += el.pitches[j].diatonicNoteNum;
@@ -3881,7 +4115,7 @@
           }
       }
       var averageHeight = void 0;
-      if (totalNotes == 0) {
+      if (totalNotes === 0) {
           averageHeight = 29;
       } else {
           averageHeight = totalPitch / totalNotes;
@@ -3977,20 +4211,21 @@
       'ff': ['very loud'],
       'fff': ['extremely loud']
   };
-  dynamics.dynamicStrToScalar = { 'None': [.5], // default value
-      'n': [0],
+  dynamics.dynamicStrToScalar = {
+      'None': [0.5], // default value
+      'n': [0.0],
       'pppp': [0.1],
-      'ppp': [.15],
-      'pp': [.25],
-      'p': [.35],
-      'mp': [.45],
-      'mf': [.55],
-      'f': [.7],
-      'fp': [.75],
-      'sf': [.85],
-      'ff': [.85],
-      'fff': [.9],
-      'ffff': [.95]
+      'ppp': [0.15],
+      'pp': [0.25],
+      'p': [0.35],
+      'mp': [0.45],
+      'mf': [0.55],
+      'f': [0.7],
+      'fp': [0.75],
+      'sf': [0.85],
+      'ff': [0.85],
+      'fff': [0.9],
+      'ffff': [0.95]
   };
 
   /**
@@ -4005,98 +4240,105 @@
    * @property {string|undefined} englishName - a name such as "very soft"
    * @property {number} volumeScalar - a number between 0 and 1.
    */
-  dynamics.Dynamic = function (value) {
-      base.Music21Object.call(this);
-      this.classes.push('Dynamic');
-      this._value = undefined;
-      this._volumeScalar = undefined;
-      this.longName = undefined;
-      this.englishName = undefined;
-      Object.defineProperties(this, {
-          'value': {
-              get: function get() {
-                  return this._value;
-              },
-              set: function set(value) {
-                  if (typeof value !== 'string') {
-                      // assume number
-                      this._volumeScalar = value;
-                      if (value <= 0) {
-                          this._value = 'n';
-                      } else if (value < .11) {
-                          this._value = 'pppp';
-                      } else if (value < .16) {
-                          this._value = 'ppp';
-                      } else if (value < .26) {
-                          this._value = 'pp';
-                      } else if (value < .36) {
-                          this._value = 'p';
-                      } else if (value < .5) {
-                          this._value = 'mp';
-                      } else if (value < .65) {
-                          this._value = 'mf';
-                      } else if (value < .8) {
-                          this._value = 'f';
-                      } else if (value < .9) {
-                          this._value = 'ff';
-                      } else {
-                          this._value = 'fff';
-                      }
-                  } else {
-                      this._value = value;
-                      this._volumeScalar = undefined;
-                  }
-                  if (this._value in dynamics.longNames) {
-                      this.longName = dynamics.longNames[this._value][0];
-                  } else {
-                      this.longName = undefined;
-                  }
-                  if (this._value in dynamics.englishNames) {
-                      this.englishName = dynamics.englishNames[this._value][0];
-                  } else {
-                      this.englishName = undefined;
-                  }
-              }
+  var Dynamic = function (_base$Music21Object) {
+      inherits(Dynamic, _base$Music21Object);
+
+      function Dynamic(value) {
+          classCallCheck(this, Dynamic);
+
+          var _this = possibleConstructorReturn(this, (Dynamic.__proto__ || Object.getPrototypeOf(Dynamic)).call(this));
+
+          _this.classes.push('Dynamic');
+          _this._value = undefined;
+          _this._volumeScalar = undefined;
+          _this.longName = undefined;
+          _this.englishName = undefined;
+          _this.value = value;
+          return _this;
+      }
+
+      createClass(Dynamic, [{
+          key: 'value',
+          get: function get() {
+              return this._value;
           },
-          'volumeScalar': {
-              get: function get() {
-                  if (this._volumeScalar !== undefined) {
-                      return this._volumeScalar;
+          set: function set(value) {
+              if (typeof value !== 'string') {
+                  // assume number
+                  this._volumeScalar = value;
+                  if (value <= 0) {
+                      this._value = 'n';
+                  } else if (value < 0.11) {
+                      this._value = 'pppp';
+                  } else if (value < 0.16) {
+                      this._value = 'ppp';
+                  } else if (value < 0.26) {
+                      this._value = 'pp';
+                  } else if (value < 0.36) {
+                      this._value = 'p';
+                  } else if (value < 0.5) {
+                      this._value = 'mp';
+                  } else if (value < 0.65) {
+                      this._value = 'mf';
+                  } else if (value < 0.8) {
+                      this._value = 'f';
+                  } else if (value < 0.9) {
+                      this._value = 'ff';
                   } else {
-                      if (this._value in dynamics.dynamicStrToScalar) {
-                          return dynamics.dynamicStrToScalar[this._value][0];
-                      }
+                      this._value = 'fff';
                   }
-              },
-              set: function set(value) {
-                  if (typeof value === 'number' && value <= 1 && value >= 0) {
-                      this._volumeScalar = value;
-                  }
+              } else {
+                  this._value = value;
+                  this._volumeScalar = undefined;
+              }
+              if (this._value in dynamics.longNames) {
+                  this.longName = dynamics.longNames[this._value][0];
+              } else {
+                  this.longName = undefined;
+              }
+              if (this._value in dynamics.englishNames) {
+                  this.englishName = dynamics.englishNames[this._value][0];
+              } else {
+                  this.englishName = undefined;
               }
           }
-      });
-      this.value = value;
-  };
-
-  dynamics.Dynamic.prototype = new base.Music21Object();
-  dynamics.Dynamic.prototype.constructor = dynamics.Dynamic;
+      }, {
+          key: 'volumeScalar',
+          get: function get() {
+              if (this._volumeScalar !== undefined) {
+                  return this._volumeScalar;
+              } else if (this._value in dynamics.dynamicStrToScalar) {
+                  return dynamics.dynamicStrToScalar[this._value][0];
+              } else {
+                  return undefined;
+              }
+          },
+          set: function set(value) {
+              if (typeof value === 'number' && value <= 1 && value >= 0) {
+                  this._volumeScalar = value;
+              }
+          }
+      }]);
+      return Dynamic;
+  }(base.Music21Object);
+  dynamics.Dynamic = Dynamic;
 
   dynamics.tests = function () {
       test('music21.dynamics.Dynamic', function () {
-          var dynamic = new music21.dynamics.Dynamic('pp');
+          var dynamic = new dynamics.Dynamic('pp');
           equal(dynamic.value, 'pp', 'matching dynamic');
-          dynamic = new music21.dynamics.Dynamic(.98);
+          dynamic = new dynamics.Dynamic(0.98);
           equal(dynamic.value, 'fff', 'number conversion successful');
-          equal(dynamic.volumeScalar, .98, 'correct volume');
+          equal(dynamic.volumeScalar, 0.98, 'correct volume');
           equal(dynamic.longName, 'fortississimo', 'matching long name');
           equal(dynamic.englishName, 'extremely loud', 'matching english names');
-          dynamic = new music21.dynamics.Dynamic('other');
+          dynamic = new dynamics.Dynamic('other');
           equal(dynamic.value, 'other', 'record non standard dynamic');
           equal(dynamic.longName, undefined, 'no long name for non standard dynamic');
           equal(dynamic.englishName, undefined, 'no english name for non standard dynamic');
-          dynamic.value = .18;
+          dynamic.value = 0.18;
           equal(dynamic.value, 'pp', 'change in dynamic');
-          equal(dynamic.volumeScalar, .18, 'change in volume');
+          equal(dynamic.volumeScalar, 0.18, 'change in volume');
           dynamic.value = 'other';
           equal(dynamic.value, 'other', 'change to non standard');
           equal(dynamic.longName, undefined, 'change to non standard dynamic');
@@ -4128,31 +4370,44 @@
    * @property {string} vexflowModifier
    * @property {Int} setPosition
    */
-  expressions.Expression = function () {
-    base.Music21Object.call(this);
-    this.classes.push('Expression');
-    this.name = 'expression';
-    this.vexflowModifier = '';
-    this.setPosition = undefined;
-  };
-  expressions.Expression.prototype = new base.Music21Object();
-  expressions.Expression.prototype.constructor = expressions.Expression;
+  var Expression = function (_base$Music21Object) {
+      inherits(Expression, _base$Music21Object);
 
-  /**
-   * Renders this Expression as a Vex.Flow.Articulation
-   *
-   * (this is not right for all cases)
-   *
-   * @memberof music21.expressions.Expression
-   * @returns {Vex.Flow.Articulation}
-   */
-  expressions.Expression.prototype.vexflow = function () {
-    var vfe = new Vex.Flow.Articulation(this.vexflowModifier);
-    if (this.setPosition) {
-      vfe.setPosition(this.setPosition);
-    }
-    return vfe;
-  };
+      function Expression() {
+          classCallCheck(this, Expression);
+
+          var _this = possibleConstructorReturn(this, (Expression.__proto__ || Object.getPrototypeOf(Expression)).call(this));
+
+          _this.classes.push('Expression');
+          _this.name = 'expression';
+          _this.vexflowModifier = '';
+          _this.setPosition = undefined;
+          return _this;
+      }
+      /**
+       * Renders this Expression as a Vex.Flow.Articulation
+       *
+       * (this is not right for all cases)
+       *
+       * @memberof music21.expressions.Expression
+       * @returns {Vex.Flow.Articulation}
+       */
+
+
+      createClass(Expression, [{
+          key: 'vexflow',
+          value: function vexflow() {
+              var vfe = new Vex.Flow.Articulation(this.vexflowModifier);
+              if (this.setPosition) {
+                  vfe.setPosition(this.setPosition);
+              }
+              return vfe;
+          }
+      }]);
+      return Expression;
+  }(base.Music21Object);
+  expressions.Expression = Expression;
+
   /**
    * A fermata...
    *
@@ -4160,15 +4415,24 @@
    * @memberof music21.expressions
    * @extends music21.expressions.Expression
    */
-  expressions.Fermata = function () {
-    expressions.Expression.call(this);
-    this.classes.push('Fermata');
-    this.name = 'fermata';
-    this.vexflowModifier = 'a@a';
-    this.setPosition = 3;
-  };
-  expressions.Fermata.prototype = new expressions.Expression();
-  expressions.Fermata.prototype.constructor = expressions.Fermata;
+  var Fermata = function (_Expression) {
+      inherits(Fermata, _Expression);
+
+      function Fermata() {
+          classCallCheck(this, Fermata);
+
+          var _this2 = possibleConstructorReturn(this, (Fermata.__proto__ || Object.getPrototypeOf(Fermata)).call(this));
+
+          _this2.classes.push('Fermata');
+          _this2.name = 'fermata';
+          _this2.vexflowModifier = 'a@a';
+          _this2.setPosition = 3;
+          return _this2;
+      }
+
+      return Fermata;
+  }(Expression);
+  expressions.Fermata = Fermata;
 
   /**
    * music21j -- Javascript reimplementation of Core music21p features.
@@ -4400,90 +4664,88 @@
    * @property {string|undefined} oggSoundfont - url of oggSoundfont for this instrument
    * @property {string|undefined} mp3Soundfont - url of mp3Soundfont for this instrument
    */
-  instrument.Instrument = function Instrument_constructor(instrumentName) {
-      base.Music21Object.call(this);
-      this.classSortOrder = -25;
 
-      this.partId = undefined;
-      this.partName = undefined;
-      this.partAbbreviation = undefined;
+  var Instrument = function (_base$Music21Object) {
+      inherits(Instrument, _base$Music21Object);
 
-      this.instrumentId = undefined;
-      this.instrumentName = undefined;
-      this.instrumentAbbreviation = undefined;
-      this.midiProgram = undefined;
-      this._midiChannel = undefined;
+      function Instrument(instrumentName) {
+          classCallCheck(this, Instrument);
 
-      this.lowestNote = undefined;
-      this.highestNote = undefined;
+          var _this = possibleConstructorReturn(this, (Instrument.__proto__ || Object.getPrototypeOf(Instrument)).call(this));
 
-      this.transpostion = undefined;
+          _this.classSortOrder = -25;
 
-      this.inGMPercMap = false;
-      this.soundfontFn = undefined;
+          _this.partId = undefined;
+          _this.partName = undefined;
+          _this.partAbbreviation = undefined;
 
-      if (instrumentName !== undefined) {
-          instrument.find(instrumentName);
-      }
-      return this;
-  };
-  instrument.Instrument.prototype = new base.Music21Object();
-  instrument.Instrument.prototype.constructor = instrument.Instrument;
+          _this.instrumentId = undefined;
+          _this.instrumentName = undefined;
+          _this.instrumentAbbreviation = undefined;
+          _this.midiProgram = undefined;
+          _this._midiChannel = undefined;
 
-  instrument.Instrument.usedChannels = []; // differs from m21p -- stored midiProgram numbers
-  instrument.Instrument.maxMidi = 16;
+          _this.lowestNote = undefined;
+          _this.highestNote = undefined;
 
-  /**
-   * Assign an instrument to an unused midi channel.
-   *
-   * Will use the global list of used channels (`music21.instrument.Instrument.usedChannels`)
-   * if not given.  Assigns up to `music21.instrument.Instrument.maxMidi` channels (16)
-   * Skips 10 unless this.inGMPercMap is true
-   *
-   * @memberof music21.instrument.Instrument
-   * @param {Array<Int>} [usedChannels]
-   * @returns {Number}
-   */
-  instrument.Instrument.prototype.autoAssignMidiChannel = function autoAssignMidiChannel(usedChannels) {
-      if (usedChannels === undefined) {
-          usedChannels = instrument.Instrument.usedChannels;
-      }
-      var startChannel = 0;
-      if (this.inGMPercMap) {
-          startChannel = 10;
-      }
-      for (var ch = startChannel; ch < instrument.Instrument.maxMidi; ch++) {
-          if (ch % 16 === 10 && this.inGMPercMap !== true) {
-              continue; // skip 10 / percussion.
+          _this.transpostion = undefined;
+
+          _this.inGMPercMap = false;
+          _this.soundfontFn = undefined;
+
+          if (instrumentName !== undefined) {
+              instrument.find(instrumentName);
           }
-          if (usedChannels[ch] === undefined || usedChannels[ch] === this.midiProgram) {
-              usedChannels[ch] = this.midiProgram;
-              this.midiChannel = ch;
-              return ch;
-          }
+          return _this;
       }
-      // TODO: no channels! throw exception!
-      return undefined;
-  };
+      /**
+       * Assign an instrument to an unused midi channel.
+       *
+       * Will use the global list of used channels (`music21.instrument.Instrument.usedChannels`)
+       * if not given.  Assigns up to `music21.instrument.maxMidi` channels (16)
+       * Skips 10 unless this.inGMPercMap is true
+       *
+       * @memberof music21.instrument.Instrument
+       * @param {Array<Int>} [usedChannels]
+       * @returns {Number}
+       */
 
-  Object.defineProperties(instrument.Instrument.prototype, {
-      'oggSoundfont': {
-          enumerable: true,
-          configurable: true,
+
+      createClass(Instrument, [{
+          key: 'autoAssignMidiChannel',
+          value: function autoAssignMidiChannel(usedChannels) {
+              if (usedChannels === undefined) {
+                  usedChannels = instrument.usedChannels;
+              }
+              var startChannel = 0;
+              if (this.inGMPercMap) {
+                  startChannel = 10;
+              }
+              for (var ch = startChannel; ch < instrument.maxMidi; ch++) {
+                  if (ch % 16 === 10 && this.inGMPercMap !== true) {
+                      continue; // skip 10 / percussion.
+                  }
+                  if (usedChannels[ch] === undefined || usedChannels[ch] === this.midiProgram) {
+                      usedChannels[ch] = this.midiProgram;
+                      this.midiChannel = ch;
+                      return ch;
+                  }
+              }
+              // TODO: no channels! throw exception!
+              return undefined;
+          }
+      }, {
+          key: 'oggSounfont',
           get: function get() {
               return this.soundfontFn + '-ogg.js';
           }
-      },
-      'mp3Soundfont': {
-          enumerable: true,
-          configurable: true,
+      }, {
+          key: 'mp3Soundfont',
           get: function get() {
               return this.soundfontFn + '-mp3.js';
           }
-      },
-      'midiChannel': {
-          enumerable: true,
-          configurable: true,
+      }, {
+          key: 'midiChannel',
           get: function get() {
               if (this._midiChannel === undefined) {
                   this.autoAssignMidiChannel();
@@ -4493,9 +4755,14 @@
           set: function set(ch) {
               this._midiChannel = ch;
           }
-      }
+      }]);
+      return Instrument;
+  }(base.Music21Object);
 
-  });
+  instrument.Instrument = Instrument;
+
+  instrument.usedChannels = []; // differs from m21p -- stored midiProgram numbers
+  instrument.maxMidi = 16;
 
   instrument.info = [{ 'fn': 'acoustic_grand_piano', 'name': 'Acoustic Grand Piano', 'midiNumber': 0 }, { 'fn': 'bright_acoustic_piano', 'name': 'Bright Acoustic Piano', 'midiNumber': 1 }, { 'fn': 'electric_grand_piano', 'name': 'Electric Grand Piano', 'midiNumber': 2 }, { 'fn': 'honkytonk_piano', 'name': 'Honky-tonk Piano', 'midiNumber': 3 }, { 'fn': 'electric_piano_1', 'name': 'Electric Piano 1', 'midiNumber': 4 }, { 'fn': 'electric_piano_2', 'name': 'Electric Piano 2', 'midiNumber': 5 }, { 'fn': 'harpsichord', 'name': 'Harpsichord', 'midiNumber': 6 }, { 'fn': 'clavinet', 'name': 'Clavinet', 'midiNumber': 7 }, { 'fn': 'celesta', 'name': 'Celesta', 'midiNumber': 8 }, { 'fn': 'glockenspiel', 'name': 'Glockenspiel', 'midiNumber': 9 }, { 'fn': 'music_box', 'name': 'Music Box', 'midiNumber': 10 }, { 'fn': 'vibraphone', 'name': 'Vibraphone', 'midiNumber': 11 }, { 'fn': 'marimba', 'name': 'Marimba', 'midiNumber': 12 }, { 'fn': 'xylophone', 'name': 'Xylophone', 'midiNumber': 13 }, { 'fn': 'tubular_bells', 'name': 'Tubular Bells', 'midiNumber': 14 }, { 'fn': 'dulcimer', 'name': 'Dulcimer', 'midiNumber': 15 }, { 'fn': 'drawbar_organ', 'name': 'Drawbar Organ', 'midiNumber': 16 }, { 'fn': 'percussive_organ', 'name': 'Percussive Organ', 'midiNumber': 17 }, { 'fn': 'rock_organ', 'name': 'Rock Organ', 'midiNumber': 18 }, { 'fn': 'church_organ', 'name': 'Church Organ', 'midiNumber': 19 }, { 'fn': 'reed_organ', 'name': 'Reed Organ', 'midiNumber': 20 }, { 'fn': 'accordion', 'name': 'Accordion', 'midiNumber': 21 }, { 'fn': 'harmonica', 'name': 'Harmonica', 'midiNumber': 22 }, { 'fn': 'tango_accordion', 'name': 'Tango Accordion', 'midiNumber': 23 }, { 'fn': 'acoustic_guitar_nylon', 'name': 'Acoustic Guitar (nylon)', 'midiNumber': 24 }, { 'fn': 'acoustic_guitar_steel', 'name': 'Acoustic Guitar (steel)', 'midiNumber': 25 }, { 'fn': 'electric_guitar_jazz', 'name': 'Electric Guitar (jazz)', 'midiNumber': 26 }, { 'fn': 'electric_guitar_clean', 'name': 'Electric Guitar (clean)', 'midiNumber': 27 }, { 'fn': 'electric_guitar_muted', 'name': 'Electric Guitar (muted)', 'midiNumber': 28 }, { 'fn': 'overdriven_guitar', 'name': 'Overdriven Guitar', 'midiNumber': 29 }, { 'fn': 'distortion_guitar', 'name': 'Distortion Guitar', 'midiNumber': 30 }, { 'fn': 'guitar_harmonics', 'name': 'Guitar Harmonics', 'midiNumber': 31 }, { 'fn': 'acoustic_bass', 'name': 'Acoustic Bass', 'midiNumber': 32 }, { 'fn': 'electric_bass_finger', 'name': 'Electric Bass (finger)', 'midiNumber': 33 }, { 'fn': 'electric_bass_pick', 'name': 'Electric Bass (pick)', 'midiNumber': 34 }, { 'fn': 'fretless_bass', 'name': 'Fretless Bass', 'midiNumber': 35 }, { 'fn': 'slap_bass_1', 'name': 'Slap Bass 1', 'midiNumber': 36 }, { 'fn': 'slap_bass_2', 'name': 'Slap Bass 2', 'midiNumber': 37 }, { 'fn': 'synth_bass_1', 'name': 'Synth Bass 1', 'midiNumber': 38 }, { 'fn': 'synth_bass_2', 'name': 'Synth Bass 2', 'midiNumber': 39 }, { 'fn': 'violin', 'name': 'Violin', 'midiNumber': 40 }, { 'fn': 'viola', 'name': 'Viola', 'midiNumber': 41 }, { 'fn': 'cello', 'name': 'Cello', 'midiNumber': 42 }, { 'fn': 'contrabass', 'name': 'Contrabass', 'midiNumber': 43 }, { 'fn': 'tremolo_strings', 'name': 'Tremolo Strings', 'midiNumber': 44 }, { 'fn': 'pizzicato_strings', 'name': 'Pizzicato Strings', 'midiNumber': 45 }, { 'fn': 'orchestral_harp', 'name': 'Orchestral Harp', 'midiNumber': 46 }, { 'fn': 'timpani', 'name': 'Timpani', 'midiNumber': 47 }, { 'fn': 'string_ensemble_1', 'name': 'String Ensemble 1', 'midiNumber': 48 }, { 'fn': 'string_ensemble_2', 'name': 'String Ensemble 2', 'midiNumber': 49 }, { 'fn': 'synth_strings_1', 'name': 'Synth Strings 1', 'midiNumber': 50 }, { 'fn': 'synth_strings_2', 'name': 'Synth Strings 2', 'midiNumber': 51 }, { 'fn': 'choir_aahs', 'name': 'Choir Aahs', 'midiNumber': 52 }, { 'fn': 'voice_oohs', 'name': 'Voice Oohs', 'midiNumber': 53 }, { 'fn': 'synth_choir', 'name': 'Synth Choir', 'midiNumber': 54 }, { 'fn': 'orchestra_hit', 'name': 'Orchestra Hit', 'midiNumber': 55 }, { 'fn': 'trumpet', 'name': 'Trumpet', 'midiNumber': 56 }, { 'fn': 'trombone', 'name': 'Trombone', 'midiNumber': 57 }, { 'fn': 'tuba', 'name': 'Tuba', 'midiNumber': 58 }, { 'fn': 'muted_trumpet', 'name': 'Muted Trumpet', 'midiNumber': 59 }, { 'fn': 'french_horn', 'name': 'French Horn', 'midiNumber': 60 }, { 'fn': 'brass_section', 'name': 'Brass Section', 'midiNumber': 61 }, { 'fn': 'synth_brass_1', 'name': 'Synth Brass 1', 'midiNumber': 62 }, { 'fn': 'synth_brass_2', 'name': 'Synth Brass 2', 'midiNumber': 63 }, { 'fn': 'soprano_sax', 'name': 'Soprano Sax', 'midiNumber': 64 }, { 'fn': 'alto_sax', 'name': 'Alto Sax', 'midiNumber': 65 }, { 'fn': 'tenor_sax', 'name': 'Tenor Sax', 'midiNumber': 66 }, { 'fn': 'baritone_sax', 'name': 'Baritone Sax', 'midiNumber': 67 }, { 'fn': 'oboe', 'name': 'Oboe', 'midiNumber': 68 }, { 'fn': 'english_horn', 'name': 'English Horn', 'midiNumber': 69 }, { 'fn': 'bassoon', 'name': 'Bassoon', 'midiNumber': 70 }, { 'fn': 'clarinet', 'name': 'Clarinet', 'midiNumber': 71 }, { 'fn': 'piccolo', 'name': 'Piccolo', 'midiNumber': 72 }, { 'fn': 'flute', 'name': 'Flute', 'midiNumber': 73 }, { 'fn': 'recorder', 'name': 'Recorder', 'midiNumber': 74 }, { 'fn': 'pan_flute', 'name': 'Pan Flute', 'midiNumber': 75 }, { 'fn': 'blown_bottle', 'name': 'Blown bottle', 'midiNumber': 76 }, { 'fn': 'shakuhachi', 'name': 'Shakuhachi', 'midiNumber': 77 }, { 'fn': 'whistle', 'name': 'Whistle', 'midiNumber': 78 }, { 'fn': 'ocarina', 'name': 'Ocarina', 'midiNumber': 79 }, { 'fn': 'lead_1_square', 'name': 'Lead 1 (square)', 'midiNumber': 80 }, { 'fn': 'lead_2_sawtooth', 'name': 'Lead 2 (sawtooth)', 'midiNumber': 81 }, { 'fn': 'lead_3_calliope', 'name': 'Lead 3 (calliope)', 'midiNumber': 82 }, { 'fn': 'lead_4_chiff', 'name': 'Lead 4 chiff', 'midiNumber': 83 }, { 'fn': 'lead_5_charang', 'name': 'Lead 5 (charang)', 'midiNumber': 84 }, { 'fn': 'lead_6_voice', 'name': 'Lead 6 (voice)', 'midiNumber': 85 }, { 'fn': 'lead_7_fifths', 'name': 'Lead 7 (fifths)', 'midiNumber': 86 }, { 'fn': 'lead_8_bass__lead', 'name': 'Lead 8 (bass + lead)', 'midiNumber': 87 }, { 'fn': 'pad_1_new_age', 'name': 'Pad 1 (new age)', 'midiNumber': 88 }, { 'fn': 'pad_2_warm', 'name': 'Pad 2 (warm)', 'midiNumber': 89 }, { 'fn': 'pad_3_polysynth', 'name': 'Pad 3 (polysynth)', 'midiNumber': 90 }, { 'fn': 'pad_4_choir', 'name': 'Pad 4 (choir)', 'midiNumber': 91 }, { 'fn': 'pad_5_bowed', 'name': 'Pad 5 (bowed)', 'midiNumber': 92 }, { 'fn': 'pad_6_metallic', 'name': 'Pad 6 (metallic)', 'midiNumber': 93 }, { 'fn': 'pad_7_halo', 'name': 'Pad 7 (halo)', 'midiNumber': 94 }, { 'fn': 'pad_8_sweep', 'name': 'Pad 8 (sweep)', 'midiNumber': 95 }, { 'fn': 'fx_1_rain', 'name': 'FX 1 (rain)', 'midiNumber': 96 }, { 'fn': 'fx_2_soundtrack', 'name': 'FX 2 (soundtrack)', 'midiNumber': 97 }, { 'fn': 'fx_3_crystal', 'name': 'FX 3 (crystal)', 'midiNumber': 98 }, { 'fn': 'fx_4_atmosphere', 'name': 'FX 4 (atmosphere)', 'midiNumber': 99 }, { 'fn': 'fx_5_brightness', 'name': 'FX 5 (brightness)', 'midiNumber': 100 }, { 'fn': 'fx_6_goblins', 'name': 'FX 6 (goblins)', 'midiNumber': 101 }, { 'fn': 'fx_7_echoes', 'name': 'FX 7 (echoes)', 'midiNumber': 102 }, { 'fn': 'fx_8_scifi', 'name': 'FX 8 (sci-fi)', 'midiNumber': 103 }, { 'fn': 'sitar', 'name': 'Sitar', 'midiNumber': 104 }, { 'fn': 'banjo', 'name': 'Banjo', 'midiNumber': 105 }, { 'fn': 'shamisen', 'name': 'Shamisen', 'midiNumber': 106 }, { 'fn': 'koto', 'name': 'Koto', 'midiNumber': 107 }, { 'fn': 'kalimba', 'name': 'Kalimba', 'midiNumber': 108 }, { 'fn': 'bagpipe', 'name': 'Bagpipe', 'midiNumber': 109 }, { 'fn': 'fiddle', 'name': 'Fiddle', 'midiNumber': 110 }, { 'fn': 'shanai', 'name': 'Shanai', 'midiNumber': 111 }, { 'fn': 'tinkle_bell', 'name': 'Tinkle Bell', 'midiNumber': 112 }, { 'fn': 'agogo', 'name': 'Agogo', 'midiNumber': 113 }, { 'fn': 'steel_drums', 'name': 'Steel Drums', 'midiNumber': 114 }, { 'fn': 'woodblock', 'name': 'Woodblock', 'midiNumber': 115 }, { 'fn': 'taiko_drum', 'name': 'Taiko Drum', 'midiNumber': 116 }, { 'fn': 'melodic_tom', 'name': 'Melodic Tom', 'midiNumber': 117 }, { 'fn': 'synth_drum', 'name': 'Synth Drum', 'midiNumber': 118 }, { 'fn': 'reverse_cymbal', 'name': 'Reverse Cymbal', 'midiNumber': 119 }, { 'fn': 'guitar_fret_noise', 'name': 'Guitar Fret Noise', 'midiNumber': 120 }, { 'fn': 'breath_noise', 'name': 'Breath Noise', 'midiNumber': 121 }, { 'fn': 'seashore', 'name': 'Seashore', 'midiNumber': 122 }, { 'fn': 'bird_tweet', 'name': 'Bird Tweet', 'midiNumber': 123 }, { 'fn': 'telephone_ring', 'name': 'Telephone Ring', 'midiNumber': 124 }, { 'fn': 'helicopter', 'name': 'Helicopter', 'midiNumber': 125 }, { 'fn': 'applause', 'name': 'Applause', 'midiNumber': 126 }, { 'fn': 'gunshot', 'name': 'Gunshot', 'midiNumber': 127 }];
 
@@ -5708,7 +5975,8 @@
           }
       }]);
       return Key;
-  }(KeySignature());
+  }(KeySignature);
+  key.Key = Key;
 
   key.tests = function () {
       test('music21.key.Key', function () {
@@ -5992,7 +6260,8 @@
   };
 
   /* ----------- callbacks --------- */
-  //todo: all callbacks (incl. raw, sendOutChord) should be able to be a function or an array of functions
+  // TODO: all callbacks (incl. raw, sendOutChord) should be able to be a function or an array of functions
+
   /**
   * callBacks is an object with three keys:
   *
@@ -7183,7 +7452,7 @@
               var vfBeatGroups = [];
               for (var i = 0; i < tempBeatGroups.length; i++) {
                   var bg = tempBeatGroups[i];
-                  vfBeatGroups.push(new Vex$1.Flow.Fraction(bg[0], bg[1]));
+                  vfBeatGroups.push(new Vex.Flow.Fraction(bg[0], bg[1]));
               }
               return vfBeatGroups;
 
@@ -7892,7 +8161,7 @@
                   if (this._vfRenderer !== undefined) {
                       return this._vfRenderer;
                   } else {
-                      this._vfRenderer = new Vex$1.Flow.Renderer(this.canvas, Vex$1.Flow.Renderer.Backends.CANVAS);
+                      this._vfRenderer = new Vex.Flow.Renderer(this.canvas, Vex.Flow.Renderer.Backends.CANVAS);
                       return this._vfRenderer;
                   }
               },
@@ -8179,7 +8448,7 @@
               }
           }
           if (onSameSystem) {
-              var vfTie = new Vex$1.Flow.StaveTie({
+              var vfTie = new Vex.Flow.StaveTie({
                   first_note: thisNote.activeVexflowNote,
                   last_note: nextNote.activeVexflowNote,
                   first_indices: [0],
@@ -8188,12 +8457,12 @@
               this.ties.push(vfTie);
           } else {
               // console.log('got me a tie across systemBreaks!');
-              var vfTie1 = new Vex$1.Flow.StaveTie({
+              var vfTie1 = new Vex.Flow.StaveTie({
                   first_note: thisNote.activeVexflowNote,
                   first_indices: [0]
               });
               this.ties.push(vfTie1);
-              var vfTie2 = new Vex$1.Flow.StaveTie({
+              var vfTie2 = new Vex.Flow.StaveTie({
                   last_note: nextNote.activeVexflowNote,
                   first_indices: [0]
               });
@@ -8281,7 +8550,7 @@
           autoBeam = measures[0].autoBeam;
       }
 
-      var formatter = new Vex$1.Flow.Formatter();
+      var formatter = new Vex.Flow.Formatter();
       // var minLength = formatter.preCalculateMinTotalWidth([voices]);
       // console.log(minLength);
       if (voices.length === 0) {
@@ -8308,12 +8577,12 @@
 
               // find beam groups -- n.b. this wipes out stemDirection. worth it usually...
               var voice = voices[_i2];
-              var beatGroups = [new Vex$1.Flow.Fraction(2, 8)]; // default beam groups
+              var beatGroups = [new Vex.Flow.Fraction(2, 8)]; // default beam groups
               if (measures[_i2] !== undefined && measures[_i2].timeSignature !== undefined) {
-                  beatGroups = measures[_i2].timeSignature.vexflowBeatGroups(Vex$1); // TODO: getContextByClass...
+                  beatGroups = measures[_i2].timeSignature.vexflowBeatGroups(Vex); // TODO: getContextByClass...
                   // console.log(beatGroups);
               }
-              var beamGroups = Vex$1.Flow.Beam.applyAndGetBeams(voice, undefined, beatGroups);
+              var beamGroups = Vex.Flow.Beam.applyAndGetBeams(voice, undefined, beatGroups);
               (_beamGroups = this.beamGroups).push.apply(_beamGroups, toConsumableArray(beamGroups));
           }
       }
@@ -8366,7 +8635,7 @@
       if (debug) {
           console.log('creating new stave: left:' + left + ' top: ' + top + ' width: ' + width);
       }
-      var stave = new Vex$1.Flow.Stave(left, top, width);
+      var stave = new Vex.Flow.Stave(left, top, width);
       return stave;
   };
 
@@ -8412,7 +8681,7 @@
           };
           var vxBL = barlineMap[bl];
           if (vxBL !== undefined) {
-              stave.setEndBarType(Vex$1.Flow.Barline.type[vxBL]);
+              stave.setEndBarType(Vex.Flow.Barline.type[vxBL]);
           }
       }
   };
@@ -8500,7 +8769,7 @@
                       var tupletOptions = { num_notes: activeTuplet.numberNotesActual,
                           notes_occupied: activeTuplet.numberNotesNormal };
                       // console.log('tupletOptions', tupletOptions);
-                      var vfTuplet = new Vex$1.Flow.Tuplet(activeTupletVexflowNotes, tupletOptions);
+                      var vfTuplet = new Vex.Flow.Tuplet(activeTupletVexflowNotes, tupletOptions);
                       if (activeTuplet.tupletNormalShow === 'ratio') {
                           vfTuplet.setRatioed(true);
                       }
@@ -8535,11 +8804,11 @@
   vfShow.Renderer.prototype.vexflowLyrics = function vexflowLyrics(s, stave) {
       var getTextNote = function getTextNote(text, font, d) {
           // console.log(text, font, d);
-          var t1 = new Vex$1.Flow.TextNote({
+          var t1 = new Vex.Flow.TextNote({
               text: text,
               font: font,
               duration: d
-          }).setLine(11).setStave(stave).setJustification(Vex$1.Flow.TextNote.Justification.LEFT);
+          }).setLine(11).setStave(stave).setJustification(Vex.Flow.TextNote.Justification.LEFT);
           return t1;
       };
 
@@ -8626,9 +8895,9 @@
       if (debug) {
           console.log('New voice, num_beats: ' + num1024.toString() + ' beat_value: ' + beatValue.toString());
       }
-      var vfv = new Vex$1.Flow.Voice({ num_beats: num1024,
+      var vfv = new Vex.Flow.Voice({ num_beats: num1024,
           beat_value: beatValue,
-          resolution: Vex$1.Flow.RESOLUTION });
+          resolution: Vex.Flow.RESOLUTION });
 
       // from vexflow/src/voice.js
       //
@@ -8638,16 +8907,16 @@
       // SOFT:   Ticks can be added without restrictions.
       // FULL:   Ticks do not need to fill the voice, but can't exceed the maximum
       //         tick length.
-      vfv.setMode(Vex$1.Flow.Voice.Mode.SOFT);
+      vfv.setMode(Vex.Flow.Voice.Mode.SOFT);
       return vfv;
   };
 
   vfShow.Renderer.prototype.staffConnectorsMap = function staffConnectorsMap(connectorType) {
       var connectorMap = {
-          'brace': Vex$1.Flow.StaveConnector.type.BRACE,
-          'single': Vex$1.Flow.StaveConnector.type.SINGLE,
-          'double': Vex$1.Flow.StaveConnector.type.DOUBLE,
-          'bracket': Vex$1.Flow.StaveConnector.type.BRACKET
+          'brace': Vex.Flow.StaveConnector.type.BRACE,
+          'single': Vex.Flow.StaveConnector.type.SINGLE,
+          'double': Vex.Flow.StaveConnector.type.DOUBLE,
+          'bracket': Vex.Flow.StaveConnector.type.BRACKET
       };
       return connectorMap[connectorType];
   };
@@ -8679,7 +8948,7 @@
               var bottomVFStaff = lastPartMeasure.activeVFStave;
               /* TODO: warning if no staves... */
               for (var i = 0; i < s.renderOptions.staffConnectors.length; i++) {
-                  var sc = new Vex$1.Flow.StaveConnector(topVFStaff, bottomVFStaff);
+                  var sc = new Vex.Flow.StaveConnector(topVFStaff, bottomVFStaff);
                   var scTypeM21 = s.renderOptions.staffConnectors[i];
                   var scTypeVF = this.staffConnectorsMap(scTypeM21);
                   sc.setType(scTypeVF);
@@ -10398,14 +10667,20 @@
    * @returns {DOMObject} a play toolbar
    */
   stream.Stream.prototype.getPlayToolbar = function getPlayToolbar() {
+      var _this = this;
+
       var buttonDiv = $$1('<div/>').attr('class', 'playToolbar vexflowToolbar').css('position', 'absolute').css('top', '10px');
       buttonDiv.append($$1('<span/>').css('margin-left', '50px'));
-      buttonDiv.append($$1('<button>&#9658</button>').click(function () {
-          this.playStream();
-      }.bind(this)));
-      buttonDiv.append($$1('<button>&#9724</button>').click(function () {
-          this.stopPlayStream();
-      }.bind(this)));
+      var bPlay = $$1('<button>&#9658</button>');
+      bPlay.click(function () {
+          _this.playStream();
+      });
+      buttonDiv.append(bPlay);
+      var bStop = $$1('<button>&#9724</button>');
+      bStop.click(function () {
+          _this.stopPlayStream();
+      });
+      buttonDiv.append(bStop);
       return buttonDiv;
   };
   // reflow
@@ -10442,7 +10717,7 @@
           if (this.resizeTO) {
               clearTimeout(this.resizeTO);
           }
-          this.resizeTO = setTimeout(function () {
+          this.resizeTO = setTimeout(function resizeToTimeout() {
               $$1(this).trigger('resizeEnd');
           }, 200);
       });
@@ -12204,19 +12479,19 @@
       REST: /r/,
       OCTAVE2: /([A-G])[A-G]+/,
       OCTAVE3: /([A-G])/,
-      OCTAVE5: /([a-g])(\'+)/,
+      OCTAVE5: /([a-g])('+)/,
       OCTAVE4: /([a-g])/,
-      EDSHARP: /\((\#+)\)/,
+      EDSHARP: /\((#+)\)/,
       EDFLAT: /\((\-+)\)/,
       EDNAT: /\(n\)/,
-      SHARP: /^[A-Ga-g]+\'*(\#+)/, // simple notation finds
-      FLAT: /^[A-Ga-g]+\'*(\-+)/, // double sharps too
-      NAT: /^[A-Ga-g]+\'*n/, // explicit naturals
+      SHARP: /^[A-Ga-g]+'*(#+)/, // simple notation finds
+      FLAT: /^[A-Ga-g]+'*(\-+)/, // double sharps too
+      NAT: /^[A-Ga-g]+'*n/, // explicit naturals
       TYPE: /(\d+)/,
-      TIE: /.\~/, // not preceding ties
-      PRECTIE: /\~/, // front ties
-      ID_EL: /\=([A-Za-z0-9]*)/,
-      LYRIC: /\_(.*)/,
+      TIE: /.~/, // not preceding ties
+      PRECTIE: /~/, // front ties
+      ID_EL: /=([A-Za-z0-9]*)/,
+      LYRIC: /_(.*)/,
       DOT: /\.+/,
       TIMESIG: /(\d+)\/(\d+)/,
 
@@ -12241,7 +12516,7 @@
    * p.duration.quarterLength;
    * // 6.0
    */
-  tinyNotation.TinyNotation = function (textIn) {
+  tinyNotation.TinyNotation = function TinyNotation(textIn) {
       textIn = textIn.trim();
       var tokens = textIn.split(' ');
       var p = new stream.Part();
@@ -12264,60 +12539,62 @@
           }
 
           var token = tokens[i];
-          var noteObj = undefined;
-          var MATCH = void 0;
-          if (MATCH = tnre.TRIP.exec(token)) {
+          var noteObj = void 0;
+          if (tnre.TRIP.exec(token)) {
               token = token.slice(5); // cut...
               storedDict.inTrip = true;
           }
-          if (MATCH = tnre.QUAD.exec(token)) {
+          if (tnre.QUAD.exec(token)) {
               token = token.slice(5); // cut...
               storedDict.inQuad = true;
           }
-          if (MATCH = tnre.ENDBRAC.exec(token)) {
+          if (tnre.ENDBRAC.exec(token)) {
               token = token.slice(0, -1); // cut...
               storedDict.endTupletAfterNote = true;
           }
 
-          if (MATCH = tnre.TIMESIG.exec(token)) {
+          if (tnre.TIMESIG.exec(token)) {
+              var _MATCH = tnre.TIMESIG.exec(token);
               var ts = new meter.TimeSignature();
-              ts.numerator = parseInt(MATCH[1]);
-              ts.denominator = parseInt(MATCH[2]);
+              ts.numerator = parseInt(_MATCH[1]);
+              ts.denominator = parseInt(_MATCH[2]);
               m.timeSignature = ts;
               currentTSBarDuration = ts.barDuration.quarterLength;
               // console.log(currentTSBarDuration);
               continue;
           } else if (tnre.REST.exec(token)) {
               noteObj = new note.Rest(lastDurationQL);
-          } else if (MATCH = tnre.OCTAVE2.exec(token)) {
-              noteObj = new note.Note(MATCH[1], lastDurationQL);
-              noteObj.pitch.octave = 4 - MATCH[0].length;
-          } else if (MATCH = tnre.OCTAVE3.exec(token)) {
-              noteObj = new note.Note(MATCH[1], lastDurationQL);
+          } else if (tnre.OCTAVE2.exec(token)) {
+              var _MATCH2 = tnre.OCTAVE2.exec(token);
+              noteObj = new note.Note(_MATCH2[1], lastDurationQL);
+              noteObj.pitch.octave = 4 - _MATCH2[0].length;
+          } else if (tnre.OCTAVE3.exec(token)) {
+              var _MATCH3 = tnre.OCTAVE3.exec(token);
+              noteObj = new note.Note(_MATCH3[1], lastDurationQL);
               noteObj.pitch.octave = 3;
-          } else if (MATCH = tnre.OCTAVE5.exec(token)) {
+          } else if (tnre.OCTAVE5.exec(token)) {
               // must match octave 5 before 4
-              noteObj = new note.Note(MATCH[1].toUpperCase(), lastDurationQL);
-              noteObj.pitch.octave = 3 + MATCH[0].length;
-          } else if (MATCH = tnre.OCTAVE4.exec(token)) {
-              noteObj = new note.Note(MATCH[1].toUpperCase(), lastDurationQL);
+              var _MATCH4 = tnre.OCTAVE5.exec(token);
+              noteObj = new note.Note(_MATCH4[1].toUpperCase(), lastDurationQL);
+              noteObj.pitch.octave = 3 + _MATCH4[0].length;
+          } else if (tnre.OCTAVE4.exec(token)) {
+              var _MATCH5 = tnre.OCTAVE4.exec(token);
+              noteObj = new note.Note(_MATCH5[1].toUpperCase(), lastDurationQL);
               noteObj.pitch.octave = 4;
           }
 
-          if (noteObj == undefined) {
+          if (noteObj === undefined) {
               continue;
           }
           if (tnre.TIE.exec(token)) {
               noteObj.tie = new tie.Tie('start');
-              if (storedDict['lastNoteTied']) {
+              if (storedDict.lastNoteTied) {
                   noteObj.tie.type = 'continue';
               }
-              storedDict['lastNoteTied'] = true;
-          } else {
-              if (storedDict['lastNoteTied']) {
-                  noteObj.tie = new tie.Tie('stop');
-                  storedDict['lastNoteTied'] = false;
-              }
+              storedDict.lastNoteTied = true;
+          } else if (storedDict.lastNoteTied) {
+              noteObj.tie = new tie.Tie('stop');
+              storedDict.lastNoteTied = false;
           }
           if (tnre.SHARP.exec(token)) {
               noteObj.pitch.accidental = new pitch.Accidental('sharp');
@@ -12327,16 +12604,16 @@
               noteObj.pitch.accidental = new pitch.Accidental('natural');
               noteObj.pitch.accidental.displayType = 'always';
           }
-
-          if (MATCH = tnre.TYPE.exec(token)) {
+          var MATCH = tnre.TYPE.exec(token);
+          if (MATCH) {
               var durationType = parseInt(MATCH[0]);
               noteObj.duration.quarterLength = 4.0 / durationType;
           }
-
-          if (MATCH = tnre.DOT.exec(token)) {
+          MATCH = tnre.DOT.exec(token);
+          if (MATCH) {
               var numDots = MATCH[0].length;
-              var multiplier = 1 + (1 - Math.pow(.5, numDots));
-              noteObj.duration.quarterLength = multiplier * noteObj.duration.quarterLength;
+              var multiplier = 1 + (1 - Math.pow(0.5, numDots));
+              noteObj.duration.quarterLength *= multiplier;
           }
           lastDurationQL = noteObj.duration.quarterLength;
           // do before appending tuplets
@@ -12366,7 +12643,7 @@
       }
   };
 
-  //render notation divs in HTML
+  // render notation divs in HTML
   /**
    * Render all the TinyNotation classes in the DOM as notation
    *
@@ -12375,37 +12652,37 @@
    * @memberof music21.tinyNotation
    * @param {string} classTypes - a JQuery selector to find elements to replace.
    */
-  tinyNotation.renderNotationDivs = function (classTypes, selector) {
-      if (classTypes == undefined) {
+  tinyNotation.renderNotationDivs = function renderNotationDivs(classTypes, selector) {
+      if (classTypes === undefined) {
           classTypes = '.music21.tinyNotation';
       }
       var allRender = [];
-      if (selector == undefined) {
-          allRender = $(classTypes);
+      if (selector === undefined) {
+          allRender = $$1(classTypes);
       } else {
-          if (selector.jquery == undefined) {
-              selector = $(selector);
+          if (selector.jquery === undefined) {
+              selector = $$1(selector);
           }
           allRender = selector.find(classTypes);
       }
       for (var i = 0; i < allRender.length; i++) {
           var thisTN = allRender[i];
-          var thisTNJQ = $(thisTN);
-          var thisTNContents = undefined;
+          var thisTNJQ = $$1(thisTN);
+          var thisTNContents = void 0;
           if (thisTNJQ.attr('tinynotationcontents') !== undefined) {
               thisTNContents = thisTNJQ.attr('tinynotationcontents');
-          } else if (thisTN.textContent != undefined) {
+          } else if (thisTN.textContent !== undefined) {
               thisTNContents = thisTN.textContent;
               thisTNContents = thisTNContents.replace(/s+/g, ' '); // no line-breaks, etc.
           }
 
-          if (String.prototype.trim != undefined && thisTNContents != undefined) {
+          if (String.prototype.trim !== undefined && thisTNContents !== undefined) {
               thisTNContents = thisTNContents.trim(); // remove leading, trailing whitespace
           }
           if (thisTNContents) {
               var st = tinyNotation.TinyNotation(thisTNContents);
               if (thisTNJQ.hasClass('noPlayback')) {
-                  st.renderOptions.events['click'] = undefined;
+                  st.renderOptions.events.click = undefined;
               }
               var newCanvas = st.createCanvas();
 
@@ -13071,8 +13348,9 @@
 
   // order below doesn't matter, but good to give a sense
   // of what will be needed by almost everyone, and then
-  // alphabetical 
+  // alphabetical.
   var music21$1 = {};
+
   music21$1.common = common;
   music21$1.debug = debug;
   music21$1.prebase = prebase;
@@ -13083,6 +13361,7 @@
   music21$1.beam = beam;
   music21$1.chord = chord;
   music21$1.clef = clef;
+  music21$1.dynamics = dynamics;
   music21$1.duration = duration;
   music21$1.expressions = expressions;
   music21$1.fromPython = fromPython;

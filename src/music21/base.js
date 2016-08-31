@@ -4,8 +4,8 @@
  *
  * does not load the other modules, music21/moduleLoader.js does that.
  *
- * Copyright (c) 2013-14, Michael Scott Cuthbert and cuthbertLab
- * Based on music21 (=music21p), Copyright (c) 2006–14, Michael Scott Cuthbert and cuthbertLab
+ * Copyright (c) 2013-16, Michael Scott Cuthbert and cuthbertLab
+ * Based on music21 (=music21p), Copyright (c) 2006–16, Michael Scott Cuthbert and cuthbertLab
  *
  */
 import { duration } from './duration';

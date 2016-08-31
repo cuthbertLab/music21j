@@ -63,8 +63,8 @@ webmidi.selectedJazzInterface = undefined; // not the same as "" etc. uses last 
  */
 webmidi.jazzMidiInArrived = function jazzMidiInArrived(t, a, b, c) {
     const webmidiEvent = {
-            timestamp: t,
-            data: [a, b, c],
+        timestamp: t,
+        data: [a, b, c],
     };
     return webmidi.midiInArrived(webmidiEvent);
 };
@@ -248,8 +248,8 @@ webmidi.selectionChanged = function selectionChanged() {
  */
 webmidi.createSelector = function createSelector($midiSelectDiv, options) {
     const params = {
-            autoUpdate: true,
-            existingMidiSelect: false,
+        autoUpdate: true,
+        existingMidiSelect: false,
     };
     common.merge(params, options);
 

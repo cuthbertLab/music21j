@@ -1,4 +1,3 @@
-import { pitch } from './pitch';
 import { common } from './common';
 /**
  * audioSearch module. See {@link music21.audioSearch} namespace
@@ -13,8 +12,8 @@ import { common } from './common';
  */
 
 export const audioSearch = {};
-//functions based on the prototype created by Chris Wilson's MIT License version
-//and on Jordi Bartolome Guillen's audioSearch module for music21
+// functions based on the prototype created by Chris Wilson's MIT License version
+// and on Jordi Bartolome Guillen's audioSearch module for music21
 
 audioSearch.fftSize = 2048;
 
@@ -47,12 +46,13 @@ Object.defineProperties(audioSearch,
  * @param {function} callback - callback on success
  * @param {function} error - callback on error
  */
-audioSearch.getUserMedia = function(dictionary, callback, error) {
+audioSearch.getUserMedia = function getUserMedia(dictionary, callback, error) {
     if (error === undefined) {
-        error = function() { alert('navigator.getUserMedia either not defined (Safari, IE) or denied.'); };
+        /* eslint no-alert: "off"*/
+        error = () => { alert('navigator.getUserMedia either not defined (Safari, IE) or denied.'); };
     }
     if (callback === undefined) {
-        callback = function(mediaStream) { audioSearch.userMediaStarted(mediaStream); };
+        callback = (mediaStream) => { audioSearch.userMediaStarted(mediaStream); };
     }
     const n = navigator;
     // need to polyfill navigator, or binding problems are hard...
@@ -63,11 +63,11 @@ audioSearch.getUserMedia = function(dictionary, callback, error) {
     }
     if (dictionary === undefined) {
         dictionary = {
-                'audio': {
-                    'mandatory': {
-                    },
-                    'optional': [],
+            'audio': {
+                'mandatory': {
                 },
+                'optional': [],
+            },
         };
     }
     n.getUserMedia(dictionary, callback, error);
@@ -76,7 +76,7 @@ audioSearch.getUserMedia = function(dictionary, callback, error) {
 audioSearch.sampleBuffer = null;
 audioSearch.currentAnalyser = null;
 
-audioSearch.userMediaStarted = function(audioStream) {
+audioSearch.userMediaStarted = function userMediaStarted(audioStream) {
     audioSearch.sampleBuffer = new Float32Array(audioSearch.fftSize / 2);
     const mediaStreamSource = audioSearch.audioContext.createMediaStreamSource(audioStream);
     const analyser = audioSearch.audioContext.createAnalyser();
@@ -88,7 +88,7 @@ audioSearch.userMediaStarted = function(audioStream) {
 
 audioSearch.minFrequency = 55;
 audioSearch.maxFrequency = 1050;
-audioSearch.animateLoop = function(time) {
+audioSearch.animateLoop = function animateLoop(time) {
     audioSearch.currentAnalyser.getFloatTimeDomainData(audioSearch.sampleBuffer);
     // returns best frequency or -1
     const frequencyDetected = audioSearch.autoCorrelate(
@@ -97,7 +97,7 @@ audioSearch.animateLoop = function(time) {
             audioSearch.minFrequency,
             audioSearch.maxFrequency);
     const retValue = audioSearch.sampleCallback(frequencyDetected);
-    if (retValue != -1) {
+    if (retValue !== -1) {
         audioSearch.animationFrameCallbackId = window.requestAnimationFrame(audioSearch.animateLoop);
     }
 };
@@ -107,15 +107,13 @@ audioSearch.lastPitchClassesDetected = [];
 audioSearch.lastPitchesDetected = [];
 audioSearch.lastCentsDeviationsDetected = [];
 
-audioSearch.smoothPitchExtraction = function(frequency) {
-    if (frequency == -1) {
+audioSearch.smoothPitchExtraction = function smoothPitchExtraction(frequency) {
+    if (frequency === -1) {
         audioSearch.lastPitchClassesDetected.shift();
         audioSearch.lastPitchesDetected.shift();
         audioSearch.lastCentsDeviationsDetected.shift();
     } else {
-        var _ = audioSearch.midiNumDiffFromFrequency(frequency),
-        midiNum = _[0],
-        centsOff = _[1];
+        const [midiNum, centsOff] = audioSearch.midiNumDiffFromFrequency(frequency);
         if (audioSearch.lastPitchClassesDetected.length > audioSearch.pitchSmoothingSize) {
             audioSearch.lastPitchClassesDetected.shift();
             audioSearch.lastPitchesDetected.shift();
@@ -132,7 +130,7 @@ audioSearch.smoothPitchExtraction = function(frequency) {
     const pitchesMatchingClass = [];
     const centsMatchingClass = [];
     for (let i = 0; i < audioSearch.lastPitchClassesDetected.length; i++) {
-        if (audioSearch.lastPitchClassesDetected[i] == mostCommonPitchClass) {
+        if (audioSearch.lastPitchClassesDetected[i] === mostCommonPitchClass) {
             pitchesMatchingClass.push(audioSearch.lastPitchesDetected[i]);
             centsMatchingClass.push(audioSearch.lastCentsDeviationsDetected[i]);
         }
@@ -147,19 +145,16 @@ audioSearch.smoothPitchExtraction = function(frequency) {
         totalSample += weight * centsMatchingClass[j];
         totalSamplePoints += weight;
     }
-    var centsOff = Math.floor(totalSample / totalSamplePoints);
+    const centsOff = Math.floor(totalSample / totalSamplePoints);
     return [mostCommonPitch, centsOff];
 };
 
-audioSearch.sampleCallback = function(frequency) {
-    let _ = audioSearch.smoothPitchExtraction(frequency),
-    midiNum = _[0],
-    centsOff = _[1];
-    // console.log(midiNum, centsOff);
+audioSearch.sampleCallback = function sampleCallback(frequency) {
+    const [unused_midiNum, unused_centsOff] = audioSearch.smoothPitchExtraction(frequency);
 };
 
-//from Chris Wilson. Replace with Jordi's
-audioSearch.autoCorrelate = function(buf, sampleRate, minFrequency, maxFrequency) {
+// from Chris Wilson. Replace with Jordi's
+audioSearch.autoCorrelate = function autoCorrelate(buf, sampleRate, minFrequency, maxFrequency) {
     const SIZE = buf.length;
     const MAX_SAMPLES = Math.floor(SIZE / 2);
     if (minFrequency === undefined) {
@@ -175,13 +170,14 @@ audioSearch.autoCorrelate = function(buf, sampleRate, minFrequency, maxFrequency
     let foundGoodCorrelation = false;
     const correlations = new Array(MAX_SAMPLES);
 
-    for (var i = 0; i < SIZE; i++) {
+    for (let i = 0; i < SIZE; i++) {
         const val = buf[i];
         rms += val * val;
     }
     rms = Math.sqrt(rms / SIZE);
-    if (rms < 0.01) // not enough signal
+    if (rms < 0.01) {
         return -1;
+    } // not enough signal
 
     let lastCorrelation = 1;
     for (let offset = 0; offset < MAX_SAMPLES; offset++) {
@@ -194,7 +190,7 @@ audioSearch.autoCorrelate = function(buf, sampleRate, minFrequency, maxFrequency
             continue;
         }
 
-        for (var i = 0; i < MAX_SAMPLES; i++) {
+        for (let i = 0; i < MAX_SAMPLES; i++) {
             correlation += Math.abs((buf[i]) - (buf[i + offset]));
         }
         correlation = 1 - (correlation / MAX_SAMPLES);
@@ -234,20 +230,20 @@ audioSearch.autoCorrelate = function(buf, sampleRate, minFrequency, maxFrequency
  * @param {Number} frequency
  * @returns {Array<Int>} [miniNumber, centsOff]
  */
-audioSearch.midiNumDiffFromFrequency = function(frequency) {
+audioSearch.midiNumDiffFromFrequency = function midiNumDiffFromFrequency(frequency) {
     const midiNumFloat = (12 * (Math.log(frequency / 440) / Math.log(2))) + 69;
     const midiNum = Math.round(midiNumFloat);
     const centsOff = Math.round(100 * (midiNumFloat - midiNum));
     return [midiNum, centsOff];
 };
 
-//http://paulirish.com/2011/requestanimationframe-for-smart-animating/
-//http://my.opera.com/emoller/blog/2011/12/20/requestanimationframe-for-smart-er-animating
+// http://paulirish.com/2011/requestanimationframe-for-smart-animating/
+// http://my.opera.com/emoller/blog/2011/12/20/requestanimationframe-for-smart-er-animating
 
-//requestAnimationFrame polyfill by Erik Möller
-//fixes from Paul Irish and Tino Zijdel
+// requestAnimationFrame polyfill by Erik Möller
+// fixes from Paul Irish and Tino Zijdel
 
-const rqaPolyFill = function() {
+function requestAnimationFramePolyFill() {
     let lastTime = 0;
     const vendors = ['ms', 'moz', 'webkit', 'o'];
     for (let x = 0; x < vendors.length && !window.requestAnimationFrame; ++x) {
@@ -256,20 +252,21 @@ const rqaPolyFill = function() {
         || window[vendors[x] + 'CancelRequestAnimationFrame'];
     }
 
-    if (!window.requestAnimationFrame)
-        window.requestAnimationFrame = function(callback, element) {
-        const currTime = new Date().getTime();
-        const timeToCall = Math.max(0, 16 - (currTime - lastTime));
-        const id = window.setTimeout(function() { callback(currTime + timeToCall); },
-                timeToCall);
-        lastTime = currTime + timeToCall;
-        return id;
-    };
+    if (!window.requestAnimationFrame) {
+        window.requestAnimationFrame = (callback, element) => {
+            const currTime = new Date().getTime();
+            const timeToCall = Math.max(0, 16 - (currTime - lastTime));
+            const timeoutId = window.setTimeout(() => callback(currTime + timeToCall), timeToCall);
+            lastTime = currTime + timeToCall;
+            return timeoutId;
+        };
+    }
 
-    if (!window.cancelAnimationFrame)
-        window.cancelAnimationFrame = function(id) {
-        clearTimeout(id);
-    };
-};
-rqaPolyFill();
+    if (!window.cancelAnimationFrame) {
+        window.cancelAnimationFrame = (id) => {
+            clearTimeout(id);
+        };
+    }
+}
+requestAnimationFramePolyFill();
 

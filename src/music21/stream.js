@@ -1614,12 +1614,12 @@ stream.Stream.prototype.getAccidentalToolbar = function getAccidentalToolbar(min
 stream.Stream.prototype.getPlayToolbar = function getPlayToolbar() {
     const buttonDiv = $('<div/>').attr('class', 'playToolbar vexflowToolbar').css('position', 'absolute').css('top', '10px');
     buttonDiv.append($('<span/>').css('margin-left', '50px'));
-    buttonDiv.append($('<button>&#9658</button>').click(
-            (function() { this.playStream(); }).bind(this)
-            ));
-    buttonDiv.append($('<button>&#9724</button>').click(
-            (function() { this.stopPlayStream(); }).bind(this)
-            ));
+    const bPlay = $('<button>&#9658</button>');
+    bPlay.click(() => { this.playStream(); });
+    buttonDiv.append(bPlay);
+    const bStop = $('<button>&#9724</button>');
+    bStop.click(() => { this.stopPlayStream(); });
+    buttonDiv.append(bStop);
     return buttonDiv;
 };
 // reflow
@@ -1656,7 +1656,7 @@ stream.Stream.prototype.windowReflowStart = function windowReflowStart(jCanvas) 
         if (this.resizeTO) {
             clearTimeout(this.resizeTO);
         }
-        this.resizeTO = setTimeout(function() {
+        this.resizeTO = setTimeout(function resizeToTimeout() {
             $(this).trigger('resizeEnd');
         }, 200);
     });

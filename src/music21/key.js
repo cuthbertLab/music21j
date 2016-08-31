@@ -236,7 +236,7 @@ key.KeySignature = KeySignature;
  * @param {string} keyName -- a pitch name representing the key (w/ "-" for flat)
  * @param {string} [mode] -- if not given then the CASE of the keyName will be used ("C" => "major", "c" => "minor")
  */
-export class Key extends KeySignature() {
+export class Key extends KeySignature {
     constructor(keyName, mode) {
         if (keyName === undefined) {
             keyName = 'C';
@@ -284,6 +284,7 @@ export class Key extends KeySignature() {
         }
     }
 }
+key.Key = Key;
 
 key.tests = () => {
     test('music21.key.Key', () => {

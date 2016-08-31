@@ -58,41 +58,41 @@ widgets.RhythmChooser = function RhythmChooser(s, c) {
      * @memberof music21.widgets.RhythmChooser#
      */
     this.buttonHandlers = {
-            'undo': function buttonHandlers_undo(t) {
-                if (this.stream.length > 0) {
-                    return this.stream.pop();
-                } else { return undefined; }
-            },
-            'dot': function buttonHandlers_dot(t) {
-                if (this.stream.length > 0) {
-                    const el = this.stream.pop();
-                    el.duration.dots += 1;
-                    this.stream.append(el);
-                    return el;
-                } else { return undefined; }
-            },
-            'tie': function buttonHandlers_tie(t) {
-                if (this.stream.length > 0) {
-                    const el = this.stream.get(-1);
-                    el.tie = new tie.Tie('start');
-                    this.tieActive = true;
-                }
-            },
-            'default': function buttonHandlers_default(t) {
-                let newN = new note.Note('B4');
-                newN.stemDirection = 'up';
-                if (t.indexOf('rest_') === 0) {
-                    newN = new note.Rest();
-                    t = t.slice('rest_'.length);
-                }
-                newN.duration.type = t;
-                if (this.tieActive) {
-                    newN.tie = new tie.Tie('stop');
-                    this.tieActive = false;
-                }
-                this.stream.append(newN);
-                return newN;
-            },
+        'undo': function buttonHandlers_undo(t) {
+            if (this.stream.length > 0) {
+                return this.stream.pop();
+            } else { return undefined; }
+        },
+        'dot': function buttonHandlers_dot(t) {
+            if (this.stream.length > 0) {
+                const el = this.stream.pop();
+                el.duration.dots += 1;
+                this.stream.append(el);
+                return el;
+            } else { return undefined; }
+        },
+        'tie': function buttonHandlers_tie(t) {
+            if (this.stream.length > 0) {
+                const el = this.stream.get(-1);
+                el.tie = new tie.Tie('start');
+                this.tieActive = true;
+            }
+        },
+        'default': function buttonHandlers_default(t) {
+            let newN = new note.Note('B4');
+            newN.stemDirection = 'up';
+            if (t.indexOf('rest_') === 0) {
+                newN = new note.Rest();
+                t = t.slice('rest_'.length);
+            }
+            newN.duration.type = t;
+            if (this.tieActive) {
+                newN.tie = new tie.Tie('stop');
+                this.tieActive = false;
+            }
+            this.stream.append(newN);
+            return newN;
+        },
     };
     /**
      * An object mapping a value type to a function when it is clicked if the
@@ -108,77 +108,77 @@ widgets.RhythmChooser = function RhythmChooser(s, c) {
      * @memberof music21.widgets.RhythmChooser#
      */
     this.measureButtonHandlers = {
-            'undo': function measureButtonHandlers_undo(t) {
-                if (this.stream.length > 0) {
-                    const lastMeasure = this.stream.get(-1);
-                    const retValue = lastMeasure.pop();
-                    if (lastMeasure.length === 0 && this.stream.length > 1) {
-                        this.stream.pop();
-                    }
-                    return retValue;
-                } else {
-                    return undefined;
-                }
-            },
-            'dot': function measureButtonHandlers_dot(t) {
-                if (this.stream.length > 0) {
-                    const lastMeasure = this.stream.get(-1);
-                    const el = lastMeasure.pop();
-                    el.duration.dots += 1;
-                    lastMeasure.append(el);
-                    return el;
-                } else { return undefined; }
-            },
-            'addMeasure': function measureButtonHandlers_addMeasure(t) {
+        'undo': function measureButtonHandlers_undo(t) {
+            if (this.stream.length > 0) {
                 const lastMeasure = this.stream.get(-1);
-                const m = new stream.Measure();
-                m.renderOptions.staffLines = lastMeasure.renderOptions.staffLines;
-                m.renderOptions.measureIndex = lastMeasure.renderOptions.measureIndex + 1;
-                m.renderOptions.rightBarline = 'end';
-                lastMeasure.renderOptions.rightBarline = 'single';
-                m.autoBeam = lastMeasure.autoBeam;
-                this.stream.append(m);
-            },
-            'tie': function measureButtonHandlers_tie(t) {
+                const retValue = lastMeasure.pop();
+                if (lastMeasure.length === 0 && this.stream.length > 1) {
+                    this.stream.pop();
+                }
+                return retValue;
+            } else {
+                return undefined;
+            }
+        },
+        'dot': function measureButtonHandlers_dot(t) {
+            if (this.stream.length > 0) {
                 const lastMeasure = this.stream.get(-1);
-                let el;
-                if (lastMeasure.length > 0) {
-                    el = lastMeasure.get(-1);
-                } else {
-                    const previousMeasure = this.stream.get(-2);
-                    if (previousMeasure) {
-                        el = previousMeasure.get(-1);
-                    }
+                const el = lastMeasure.pop();
+                el.duration.dots += 1;
+                lastMeasure.append(el);
+                return el;
+            } else { return undefined; }
+        },
+        'addMeasure': function measureButtonHandlers_addMeasure(t) {
+            const lastMeasure = this.stream.get(-1);
+            const m = new stream.Measure();
+            m.renderOptions.staffLines = lastMeasure.renderOptions.staffLines;
+            m.renderOptions.measureIndex = lastMeasure.renderOptions.measureIndex + 1;
+            m.renderOptions.rightBarline = 'end';
+            lastMeasure.renderOptions.rightBarline = 'single';
+            m.autoBeam = lastMeasure.autoBeam;
+            this.stream.append(m);
+        },
+        'tie': function measureButtonHandlers_tie(t) {
+            const lastMeasure = this.stream.get(-1);
+            let el;
+            if (lastMeasure.length > 0) {
+                el = lastMeasure.get(-1);
+            } else {
+                const previousMeasure = this.stream.get(-2);
+                if (previousMeasure) {
+                    el = previousMeasure.get(-1);
                 }
-                if (el !== undefined) {
-                    let tieType = 'start';
-                    if (el.tie !== undefined) { tieType = 'continue'; }
-                    el.tie = new tie.Tie(tieType);
-                    this.tieActive = true;
-                }
-            },
-            'default': function measureButtonHandlers_default(t) {
-                let newN = new note.Note('B4');
-                newN.stemDirection = 'up';
-                if (t.indexOf('rest_') === 0) {
-                    newN = new note.Rest();
-                    t = t.slice('rest_'.length);
-                }
-                newN.duration.type = t;
-                if (this.tieActive) {
-                    newN.tie = new tie.Tie('stop');
-                    this.tieActive = false;
-                }
-                let lastMeasure = this.stream.get(-1);
-                if (this.autoAddMeasure &&
-                        lastMeasure.duration.quarterLength >=
-                            this.stream.timeSignature.barDuration.quarterLength) {
-                    this.measureButtonHandlers.addMeasure.apply(this, [t]);
-                    lastMeasure = this.stream.get(-1);
-                }
-                lastMeasure.append(newN);
-                return newN;
-            },
+            }
+            if (el !== undefined) {
+                let tieType = 'start';
+                if (el.tie !== undefined) { tieType = 'continue'; }
+                el.tie = new tie.Tie(tieType);
+                this.tieActive = true;
+            }
+        },
+        'default': function measureButtonHandlers_default(t) {
+            let newN = new note.Note('B4');
+            newN.stemDirection = 'up';
+            if (t.indexOf('rest_') === 0) {
+                newN = new note.Rest();
+                t = t.slice('rest_'.length);
+            }
+            newN.duration.type = t;
+            if (this.tieActive) {
+                newN.tie = new tie.Tie('stop');
+                this.tieActive = false;
+            }
+            let lastMeasure = this.stream.get(-1);
+            if (this.autoAddMeasure &&
+                    lastMeasure.duration.quarterLength >=
+                        this.stream.timeSignature.barDuration.quarterLength) {
+                this.measureButtonHandlers.addMeasure.apply(this, [t]);
+                lastMeasure = this.stream.get(-1);
+            }
+            lastMeasure.append(newN);
+            return newN;
+        },
     };
 };
 
@@ -191,22 +191,22 @@ widgets.RhythmChooser = function RhythmChooser(s, c) {
  * @memberof music21.widgets.RhythmChooser
  */
 widgets.RhythmChooser.prototype.valueMappings = {
-        whole: '&#xEB9B;&#xE1D2;',
-        half: '&#xEB9B;&#xE1D3;',
-        quarter: '&#xEB9B;&#xE1D5;',
-        eighth: '&#xEB9B;&#xE1D7;',
-        '16th': '&#xEB9B;&#xE1D9;',
-        '32nd': '&#xEB9B;&#xE1DB;', // BUG in Bravura Text
-        addMeasure: '<span style="position: relative; top: -20px">&#xE031</span>',
-        dot: '&#xEB9B;&#xE1E7;',
-        undo: '&#x232B;',
-        tie: '<span style="position: relative; top: -20px;">&#xE1FD</span>',
-        rest_whole: '&#xE4F4;',
-        rest_half: '&#xE4F5;',
-        rest_quarter: '&#xE4E5;',
-        rest_eighth: '&#xE4E6;',
-        rest_16th: '&#xE4E7;',
-        rest_32nd: '&#xE4E8;',
+    whole: '&#xEB9B;&#xE1D2;',
+    half: '&#xEB9B;&#xE1D3;',
+    quarter: '&#xEB9B;&#xE1D5;',
+    eighth: '&#xEB9B;&#xE1D7;',
+    '16th': '&#xEB9B;&#xE1D9;',
+    '32nd': '&#xEB9B;&#xE1DB;', // BUG in Bravura Text
+    addMeasure: '<span style="position: relative; top: -20px">&#xE031</span>',
+    dot: '&#xEB9B;&#xE1E7;',
+    undo: '&#x232B;',
+    tie: '<span style="position: relative; top: -20px;">&#xE1FD</span>',
+    rest_whole: '&#xE4F4;',
+    rest_half: '&#xE4F5;',
+    rest_quarter: '&#xE4E5;',
+    rest_eighth: '&#xE4E6;',
+    rest_16th: '&#xE4E7;',
+    rest_32nd: '&#xE4E8;',
 };
 /**
  * A mapping of a type to a css style
@@ -216,7 +216,7 @@ widgets.RhythmChooser.prototype.valueMappings = {
  * @memberof music21.widgets.RhythmChooser
  */
 widgets.RhythmChooser.prototype.styles = {
-        'undo': 'font-family: serif; font-size: 30pt; top: -2px;',
+    'undo': 'font-family: serif; font-size: 30pt; top: -2px;',
 };
 
 /**

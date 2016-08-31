@@ -24,19 +24,19 @@ import { pitch } from './pitch';
  * @requires music21/base
  * @requires music21/pitch
  */
-export	const clef = {};
+export const clef = {};
 /*  music21.Clef
 	must be defined before Stream since Stream subclasses call new music21.Clef...
  */
 // TODO: Fix to newest Vexflow format...
 clef.lowestLines = {
-        'treble': 31,
-        'soprano': 29,
-        'mezzo-soprano': 27,
-        'alto': 25,
-        'tenor': 23,
-        'bass': 19,
-        'percussion': 31,
+    'treble': 31,
+    'soprano': 29,
+    'mezzo-soprano': 27,
+    'alto': 25,
+    'tenor': 23,
+    'bass': 19,
+    'percussion': 31,
 };
 /**
  * Clefname can be one of
@@ -52,54 +52,54 @@ clef.lowestLines = {
  * @property {Int} lowestLineTrebleOffset - difference between the first line of this staff and the first line in treble clef
  * @property {Int} octaveChange
  */
-clef.Clef = function(name, octaveChange) {
-    base.Music21Object.call(this);
-    this.classes.push('Clef');
-    if (name != undefined) {
-        name = name.toLowerCase();
-        this.name = name;
-        this.lowestLine = clef.lowestLines[name];
-        this.lowestLineTrebleOffset = clef.lowestLines['treble'] - this.lowestLine;
-    } else {
-        this.name = undefined;
-        this.lowestLine = clef.lowestLines['treble'];
-        this.lowestLineTrebleOffset = 0;
+export class Clef extends base.Music21Object {
+    constructor(name, octaveChange) {
+        super();
+        this.classes.push('Clef');
+        if (name !== undefined) {
+            name = name.toLowerCase();
+            this.name = name;
+            this.lowestLine = clef.lowestLines[name];
+            this.lowestLineTrebleOffset = clef.lowestLines.treble - this.lowestLine;
+        } else {
+            this.name = undefined;
+            this.lowestLine = clef.lowestLines.treble;
+            this.lowestLineTrebleOffset = 0;
+        }
+        if (octaveChange === undefined) {
+            this.octaveChange = 0;
+        } else {
+            this.octaveChange = octaveChange;
+            this.lowestLine += (7 * octaveChange);
+            this.lowestLineTrebleOffset -= 7 * octaveChange;
+        }
     }
-    if (octaveChange === undefined) {
-        this.octaveChange = 0;
-    } else {
-        this.octaveChange = octaveChange;
-        this.lowestLine = this.lowestLine + (7 * octaveChange);
-        this.lowestLineTrebleOffset = this.lowestLineTrebleOffset - (7 * octaveChange);
+    /**
+     * returns a new pitch object if the clef name is not Treble
+     * designed so it would look the same as it would in treble clef.
+     * for instance, bass-clef 2nd-space C# becomes treble clef 2nd-space A#
+     * used for Vex.Flow which requires all pitches to be input as if they
+     * are in treble clef.
+     *
+     * @memberof music21.clef.Clef
+     * @param {music21.pitch.Pitch} p
+     * @returns {music21.pitch.Pitch} new pitch
+     */
+    convertPitchToTreble(p) {
+        if (this.lowestLine === undefined) {
+            console.log('no first line defined for clef', this.name, this);
+            return p; // error
+        }
+        const lowestLineDifference = this.lowestLineTrebleOffset;
+        const tempPitch = new pitch.Pitch(p.step);
+        tempPitch.octave = p.octave;
+        tempPitch.diatonicNoteNum += lowestLineDifference;
+        tempPitch.accidental = p.accidental;
+        return tempPitch;
     }
-};
+}
 
-clef.Clef.prototype = new base.Music21Object();
-clef.Clef.prototype.constructor = clef.Clef;
-
-/**
- * returns a new pitch object if the clef name is not Treble
- * designed so it would look the same as it would in treble clef.
- * for instance, bass-clef 2nd-space C# becomes treble clef 2nd-space A#
- * used for Vex.Flow which requires all pitches to be input as if they
- * are in treble clef.
- *
- * @memberof music21.clef.Clef
- * @param {music21.pitch.Pitch} p
- * @returns {music21.pitch.Pitch} new pitch
- */
-clef.Clef.prototype.convertPitchToTreble = function(p) {
-    if (this.lowestLine == undefined) {
-        console.log('no first line defined for clef', this.name, this);
-        return p; // error
-    }
-    const lowestLineDifference = this.lowestLineTrebleOffset;
-    const tempPitch = new pitch.Pitch(p.step);
-    tempPitch.octave = p.octave;
-    tempPitch.diatonicNoteNum += lowestLineDifference;
-    tempPitch.accidental = p.accidental;
-    return tempPitch;
-};
+clef.Clef = Clef;
 
 /**
  * A TrebleClef (same as new music21.clef.Clef('treble')
@@ -108,26 +108,29 @@ clef.Clef.prototype.convertPitchToTreble = function(p) {
  * @memberof music21.clef
  * @extends music21.clef.Clef
  */
-clef.TrebleClef = function() {
-    clef.Clef.call(this, 'treble');
-    this.classes.push('TrebleClef');
-};
-clef.TrebleClef.prototype = new clef.Clef();
-clef.TrebleClef.prototype.constructor = clef.TrebleClef;
-
+export class TrebleClef extends Clef {
+    constructor() {
+        super('treble');
+        this.classes.push('TrebleClef');
+    }
+}
+clef.TrebleClef = TrebleClef;
 /**
  * A TrebleClef down an octave (same as new music21.clef.Clef('treble', -1)
+ *
+ * Unlike music21p, currently not a subclass of TrebleClef.
  *
  * @class Treble8vbClef
  * @memberof music21.clef
  * @extends music21.clef.Clef
  */
-clef.Treble8vbClef = function() {
-    clef.Clef.call(this, 'treble', -1);
-    this.classes.push('Treble8vbClef');
-};
-clef.Treble8vbClef.prototype = new clef.Clef();
-clef.Treble8vbClef.prototype.constructor = clef.Treble8vbClef;
+export class Treble8vbClef extends Clef {
+    constructor() {
+        super('treble', -1);
+        this.classes.push('Treble8vbClef');
+    }
+}
+clef.Treble8vbClef = Treble8vbClef;
 
 /**
  * A TrebleClef up an octave (same as new music21.clef.Clef('treble', 1)
@@ -136,13 +139,13 @@ clef.Treble8vbClef.prototype.constructor = clef.Treble8vbClef;
  * @memberof music21.clef
  * @extends music21.clef.Clef
  */
-clef.Treble8vaClef = function() {
-    // Fixed in cuthbert Vex.Flow -- pull #235
-    clef.Clef.call(this, 'treble', 1);
-    this.classes.push('Treble8vaClef');
-};
-clef.Treble8vaClef.prototype = new clef.Clef();
-clef.Treble8vaClef.prototype.constructor = clef.Treble8vaClef;
+export class Treble8vaClef extends Clef {
+    constructor() {
+        super('treble', 1);
+        this.classes.push('Treble8vaClef');
+    }
+}
+clef.Treble8vaClef = Treble8vaClef;
 
 /**
  * A BassClef (same as new music21.clef.Clef('bass')
@@ -151,12 +154,13 @@ clef.Treble8vaClef.prototype.constructor = clef.Treble8vaClef;
  * @memberof music21.clef
  * @extends music21.clef.Clef
  */
-clef.BassClef = function() {
-    clef.Clef.call(this, 'bass');
-    this.classes.push('BassClef');
-};
-clef.BassClef.prototype = new clef.Clef();
-clef.BassClef.prototype.constructor = clef.BassClef;
+export class BassClef extends Clef {
+    constructor() {
+        super('bass');
+        this.classes.push('BassClef');
+    }
+}
+clef.BassClef = BassClef;
 
 /**
  * An AltoClef (same as new music21.clef.Clef('alto')
@@ -165,12 +169,13 @@ clef.BassClef.prototype.constructor = clef.BassClef;
  * @memberof music21.clef
  * @extends music21.clef.Clef
  */
-clef.AltoClef = function() {
-    clef.Clef.call(this, 'alto');
-    this.classes.push('AltoClef');
-};
-clef.AltoClef.prototype = new clef.Clef();
-clef.AltoClef.prototype.constructor = clef.AltoClef;
+export class AltoClef extends Clef {
+    constructor() {
+        super('alto');
+        this.classes.push('AltoClef');
+    }
+}
+clef.AltoClef = AltoClef;
 
 /**
  * A Tenor Clef (same as new music21.clef.Clef('tenor')
@@ -179,13 +184,13 @@ clef.AltoClef.prototype.constructor = clef.AltoClef;
  * @memberof music21.clef
  * @extends music21.clef.Clef
  */
-clef.TenorClef = function() {
-    clef.Clef.call(this, 'tenor');
-    this.classes.push('TenorClef');
-};
-clef.TenorClef.prototype = new clef.Clef();
-clef.TenorClef.prototype.constructor = clef.TenorClef;
-
+export class TenorClef extends Clef {
+    constructor() {
+        super('tenor');
+        this.classes.push('TenorClef');
+    }
+}
+clef.TenorClef = TenorClef;
 /**
  * A Soprano Clef (same as new music21.clef.Clef('soprano')
  *
@@ -193,12 +198,14 @@ clef.TenorClef.prototype.constructor = clef.TenorClef;
  * @memberof music21.clef
  * @extends music21.clef.Clef
  */
-clef.SopranoClef = function() {
-    clef.Clef.call(this, 'soprano');
-    this.classes.push('SopranoClef');
-};
-clef.SopranoClef.prototype = new clef.Clef();
-clef.SopranoClef.prototype.constructor = clef.SopranoClef;
+export class SopranoClef extends Clef {
+    constructor() {
+        super('soprano');
+        this.classes.push('SopranoClef');
+    }
+}
+clef.SopranoClef = SopranoClef;
+
 
 /**
  * A Mezzo-Soprano Clef (same as new music21.clef.Clef('mezzo-soprano')
@@ -207,12 +214,13 @@ clef.SopranoClef.prototype.constructor = clef.SopranoClef;
  * @memberof music21.clef
  * @extends music21.clef.Clef
  */
-clef.MezzoSopranoClef = function() {
-    clef.Clef.call(this, 'mezzo-soprano');
-    this.classes.push('MezzoSopranoClef');
-};
-clef.MezzoSopranoClef.prototype = new clef.Clef();
-clef.MezzoSopranoClef.prototype.constructor = clef.MezzoSopranoClef;
+export class MezzoSopranoClef extends Clef {
+    constructor() {
+        super('mezzo-soprano');
+        this.classes.push('MezzoSopranoClef');
+    }
+}
+clef.MezzoSopranoClef = MezzoSopranoClef;
 
 /**
  * A Percussion Clef (same as new music21.clef.Clef('percussion')
@@ -223,12 +231,13 @@ clef.MezzoSopranoClef.prototype.constructor = clef.MezzoSopranoClef;
  * @memberof music21.clef
  * @extends music21.clef.Clef
  */
-clef.PercussionClef = function() {
-    clef.Clef.call(this, 'percussion');
-    this.classes.push('PercussionClef');
-};
-clef.PercussionClef.prototype = new clef.Clef();
-clef.PercussionClef.prototype.constructor = clef.PercussionClef;
+export class PercussionClef extends Clef {
+    constructor() {
+        super('percussion');
+        this.classes.push('PercussionClef');
+    }
+}
+clef.PercussionClef = PercussionClef;
 
 /**
  * Looks at the pitches in a Stream and returns the best clef
@@ -239,17 +248,17 @@ clef.PercussionClef.prototype.constructor = clef.PercussionClef;
  * @param {music21.stream.Stream} st
  * @returns {music21.clef.Clef}
  */
-clef.bestClef = function(st) {
+clef.bestClef = function bestClef(st) {
     // console.log('calling flat on stream: ', st.elements.length, st.classes[st.classes.length - 1]);
     const stFlat = st.flat;
     let totalNotes = 0;
     let totalPitch = 0.0;
     for (let i = 0; i < stFlat.length; i++) {
         const el = stFlat.get(i);
-        if (el.pitch != undefined) {
+        if (el.pitch !== undefined) {
             totalNotes += 1;
             totalPitch += el.pitch.diatonicNoteNum;
-        } else if (el.pitches != undefined) {
+        } else if (el.pitches !== undefined) {
             for (let j = 0; j < el.pitches.length; j++) {
                 totalNotes += 1;
                 totalPitch += el.pitches[j].diatonicNoteNum;
@@ -257,7 +266,7 @@ clef.bestClef = function(st) {
         }
     }
     let averageHeight;
-    if (totalNotes == 0) {
+    if (totalNotes === 0) {
         averageHeight = 29;
     } else {
         averageHeight = totalPitch / totalNotes;
@@ -271,8 +280,8 @@ clef.bestClef = function(st) {
 };
 
 // tests
-clef.tests = function() {
-    test('music21.clef.Clef', function() {
+clef.tests = () => {
+    test('music21.clef.Clef', () => {
         const c1 = new music21.clef.Clef();
         equal(c1.isClassOrSubclass('Clef'), true, 'clef is a Clef');
 
@@ -288,7 +297,7 @@ clef.tests = function() {
         const p2 = ac.convertPitchToTreble(n.pitch);
         equal(p2.nameWithOctave, 'B#4', 'converted to treble');
     });
-    test('music21.clef.Clef 8va', function() {
+    test('music21.clef.Clef 8va', () => {
         const ac = new music21.clef.Treble8vaClef();
         equal(ac.lowestLine, 38, 'first line set');
         const n = new music21.note.Note('C#5');

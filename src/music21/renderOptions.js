@@ -20,7 +20,7 @@
  * @namespace music21.renderOptions
  * @memberof music21
  */
-export    const renderOptions = {};
+export const renderOptions = {};
 
 /**
  * An object that contains information on rendering the current stream
