@@ -9,99 +9,99 @@
 import * as Vex from 'vexflow';
 import { note } from './note';
 
-        /**
-         * chord Module. See {@link music21.chord} namespace for more details
-         *
-         * @exports music21/chord
-         */
-    /**
-     * Chord related objects (esp. {@link music21.chord.Chord}) and methods.
-     *
-     * @namespace music21.chord
-     * @memberof music21
-     * @requires music21/note
-     */
+/**
+ * chord Module. See {@link music21.chord} namespace for more details
+ *
+ * @exports music21/chord
+ */
+/**
+ * Chord related objects (esp. {@link music21.chord.Chord}) and methods.
+ *
+ * @namespace music21.chord
+ * @memberof music21
+ * @requires music21/note
+ */
 export    const chord = {};
 
-	/**
-     * Chord related objects (esp. {@link music21.chord.Chord}) and methods.
-	 *
-	 * @class Chord
-	 * @memberof music21.chord
-	 * @param {Array<string|music21.note.Note|music21.pitch.Pitch>} [notes] - an Array of strings
-	 * (see {@link music21.pitch.Pitch} for valid formats), note.Note, or pitch.Pitch objects.
-     * @extends music21.note.NotRest
-     * @property {number} length - the number of pitches in the Chord (readonly)
-     * @property {Array<music21.pitch.Pitch>} pitches - an Array of Pitch objects in the chord. (Consider the Array read only and pass in a new Array to change)
-     * @property {Boolean} [isChord=true]
-     * @property {Boolean} [isNote=false]
-     * @property {Boolean} [isRest=false]
-	 */
-	chord.Chord = function(notes) {
-		                                        if (typeof (notes) == 'undefined') {
-			                                        notes = [];
-		}
-		                                        note.NotRest.call(this);
-		                                        this.classes.push('Chord');
-		                                        this.isChord = true; // for speed
+/**
+ * Chord related objects (esp. {@link music21.chord.Chord}) and methods.
+ *
+ * @class Chord
+ * @memberof music21.chord
+ * @param {Array<string|music21.note.Note|music21.pitch.Pitch>} [notes] - an Array of strings
+ * (see {@link music21.pitch.Pitch} for valid formats), note.Note, or pitch.Pitch objects.
+ * @extends music21.note.NotRest
+ * @property {number} length - the number of pitches in the Chord (readonly)
+ * @property {Array<music21.pitch.Pitch>} pitches - an Array of Pitch objects in the chord. (Consider the Array read only and pass in a new Array to change)
+ * @property {Boolean} [isChord=true]
+ * @property {Boolean} [isNote=false]
+ * @property {Boolean} [isRest=false]
+ */
+chord.Chord = function(notes) {
+    if (typeof (notes) == 'undefined') {
+        notes = [];
+    }
+    note.NotRest.call(this);
+    this.classes.push('Chord');
+    this.isChord = true; // for speed
     this.isNote = false; // for speed
     this.isRest = false; // for speed
 
-	                                            this._notes = [];
-	                                            Object.defineProperties(this, {
-	                                                'length': {
-    enumerable: true,
-	                                                    get() { return this._notes.length; },
-	        },
-	    	                                        'pitches': {
-	    	                                            enumerable: true,
-	    	                                            get() {
-	    			                                const tempPitches = [];
-	    			                                        for (let i = 0; i < this._notes.length; i++) {
-	    				                                        tempPitches.push(this._notes[i].pitch);
-	    			}
-	    			                                        return tempPitches;
-	    		},
-	    		                                        set(tempPitches) {
-	    			                                        this._notes = [];
-	    			                                        for (let i = 0; i < tempPitches.length; i++) {
-	    				                                    let addNote;
-	    				                                        if (typeof (tempPitches[i]) == 'string') {
-	    					                                        addNote = new note.Note(tempPitches[i]);
-	    				} else if (tempPitches[i].isClassOrSubclass('Pitch')) {
-	    					                                        addNote = new note.Note();
-	    					                                        addNote.pitch = tempPitches[i];
-	    				} else if (tempPitches[i].isClassOrSubclass('Note')) {
-	    					                                        addNote = tempPitches[i];
-	    				} else {
-	    				                                            console.warn('bad pitch', tempPitches[i]);
-	    					                                        throw ('Cannot add pitch from ' + tempPitches[i]);
-	    				}
-	    				                                        this._notes.push(addNote);
-	    			}
-	    			                                        return this._notes;
-	    		},
-	    	},
+    this._notes = [];
+    Object.defineProperties(this, {
+        'length': {
+            enumerable: true,
+            get() { return this._notes.length; },
+        },
+        'pitches': {
+            enumerable: true,
+            get() {
+                const tempPitches = [];
+                for (let i = 0; i < this._notes.length; i++) {
+                    tempPitches.push(this._notes[i].pitch);
+                }
+                return tempPitches;
+            },
+            set(tempPitches) {
+                this._notes = [];
+                for (let i = 0; i < tempPitches.length; i++) {
+                    let addNote;
+                    if (typeof (tempPitches[i]) == 'string') {
+                        addNote = new note.Note(tempPitches[i]);
+                    } else if (tempPitches[i].isClassOrSubclass('Pitch')) {
+                        addNote = new note.Note();
+                        addNote.pitch = tempPitches[i];
+                    } else if (tempPitches[i].isClassOrSubclass('Note')) {
+                        addNote = tempPitches[i];
+                    } else {
+                        console.warn('bad pitch', tempPitches[i]);
+                        throw ('Cannot add pitch from ' + tempPitches[i]);
+                    }
+                    this._notes.push(addNote);
+                }
+                return this._notes;
+            },
+        },
 
-	    });
-		                                        notes.forEach(this.add, this);
-	};
+    });
+    notes.forEach(this.add, this);
+};
 
-	chord.Chord.prototype = new note.NotRest();
-	chord.Chord.prototype.constructor = chord.Chord;
+chord.Chord.prototype = new note.NotRest();
+chord.Chord.prototype.constructor = chord.Chord;
 
-	chord.Chord.prototype.setStemDirectionFromClef = function(clef) {
+chord.Chord.prototype.setStemDirectionFromClef = function(clef) {
     if (clef === undefined) {
         return this;
     } else {
         const midLine = clef.lowestLine + 4;
-            // console.log(midLine, 'midLine');
+        // console.log(midLine, 'midLine');
         let maxDNNfromCenter = 0;
         const pA = this.pitches;
         for (let i = 0; i < this.pitches.length; i++) {
             const p = pA[i];
             const DNNfromCenter = p.diatonicNoteNum - midLine;
-                // >= not > so that the highest pitch wins the tie and thus stem down.
+            // >= not > so that the highest pitch wins the tie and thus stem down.
             if (Math.abs(DNNfromCenter) >= Math.abs(maxDNNfromCenter)) {
                 maxDNNfromCenter = DNNfromCenter;
             }
@@ -111,15 +111,15 @@ export    const chord = {};
         return this;
     }
 };
-    /**
-     * Adds a note to the chord, sorting the note array
-     *
-     * @memberof music21.chord.Chord
-     * @param {string|music21.note.Note|music21.pitch.Pitch} noteObj - the Note or Pitch to be added or a string defining a pitch.
-     * @returns {music21.chord.Chord} the original chord.
-     */
+/**
+ * Adds a note to the chord, sorting the note array
+ *
+ * @memberof music21.chord.Chord
+ * @param {string|music21.note.Note|music21.pitch.Pitch} noteObj - the Note or Pitch to be added or a string defining a pitch.
+ * @returns {music21.chord.Chord} the original chord.
+ */
 chord.Chord.prototype.add = function(noteObj) {
-        // takes in either a note or a pitch
+    // takes in either a note or a pitch
     if (typeof (noteObj) == 'string') {
         noteObj = new note.Note(noteObj);
     } else if (noteObj.isClassOrSubclass('Pitch')) {
@@ -129,16 +129,16 @@ chord.Chord.prototype.add = function(noteObj) {
         noteObj = noteObj2;
     }
     this._notes.push(noteObj);
-        // inefficient because sorts after each add, but safe and #(p) is small
+    // inefficient because sorts after each add, but safe and #(p) is small
     this._notes.sort(function(a, b) { return a.pitch.ps - b.pitch.ps; });
     return this;
 };
-    /**
-     * Removes any pitches that appear more than once (in any octave), removing the higher ones, and returns a new Chord.
-     *
-     * @memberof music21.chord.Chord
-     * @returns {music21.chord.Chord} A new Chord object with duplicate pitches removed.
-     */
+/**
+ * Removes any pitches that appear more than once (in any octave), removing the higher ones, and returns a new Chord.
+ *
+ * @memberof music21.chord.Chord
+ * @returns {music21.chord.Chord} A new Chord object with duplicate pitches removed.
+ */
 chord.Chord.prototype.removeDuplicatePitches = function() {
     const stepsFound = [];
     const nonDuplicatingPitches = [];
@@ -154,15 +154,15 @@ chord.Chord.prototype.removeDuplicatePitches = function() {
     return closedChord;
 };
 
-    /**
-     * Finds the Root of the chord.
-     *
-     * @memberof music21.chord.Chord
-     * @returns {music21.pitch.Pitch} the root of the chord.
-     */
+/**
+ * Finds the Root of the chord.
+ *
+ * @memberof music21.chord.Chord
+ * @returns {music21.pitch.Pitch} the root of the chord.
+ */
 chord.Chord.prototype.root = function() {
     const closedChord = this.removeDuplicatePitches();
-        /* var chordBass = closedChord.bass(); */
+    /* var chordBass = closedChord.bass(); */
     const closedPitches = closedChord.pitches;
     if (closedPitches.length == 0) {
         throw ('No notes in Chord!');
@@ -177,13 +177,13 @@ chord.Chord.prototype.root = function() {
         for (let tsIndex = 0; tsIndex < testSteps.length; tsIndex++) {
             const chordStepPitch = closedChord.getChordStep(testSteps[tsIndex], p);
             if (chordStepPitch != undefined) {
-                    // console.log(p.name + " " + testSteps[tsIndex].toString() + " " + chordStepPitch.name);
+                // console.log(p.name + " " + testSteps[tsIndex].toString() + " " + chordStepPitch.name);
                 currentListOfThirds.push(true);
             } else {
                 currentListOfThirds.push(false);
             }
         }
-            // console.log(currentListOfThirds);
+        // console.log(currentListOfThirds);
         hasFalse = false;
         for (let j = 0; j < closedPitches.length - 1; j++) {
             if (currentListOfThirds[j] == false) {
@@ -193,22 +193,22 @@ chord.Chord.prototype.root = function() {
         if (hasFalse == false) {
             indexOfPitchesWithPerfectlyStackedThirds.push(i);
             return closedChord.pitches[i]; // should do more, but fine...
-                // should test rootedness function, etc. 13ths. etc.
+            // should test rootedness function, etc. 13ths. etc.
         }
     }
     return closedChord.pitches[0]; // fallback, just return the bass...
 };
-    /**
-     * Returns the number of semitones above the root that a given chordstep is.
-     *
-     * For instance, in a G dominant 7th chord (G, B, D, F), would
-     * return 4 for chordStep=3, since the third of the chord (B) is four semitones above G.
-     *
-     * @memberof music21.chord.Chord
-     * @param {number} chordStep - the step to find, e.g., 1, 2, 3, etc.
-     * @param {music21.pitch.Pitch} [testRoot] - the pitch to temporarily consider the root.
-     * @returns {number|undefined} Number of semitones above the root for this chord step or undefined if no pitch matches that chord step.
-     */
+/**
+ * Returns the number of semitones above the root that a given chordstep is.
+ *
+ * For instance, in a G dominant 7th chord (G, B, D, F), would
+ * return 4 for chordStep=3, since the third of the chord (B) is four semitones above G.
+ *
+ * @memberof music21.chord.Chord
+ * @param {number} chordStep - the step to find, e.g., 1, 2, 3, etc.
+ * @param {music21.pitch.Pitch} [testRoot] - the pitch to temporarily consider the root.
+ * @returns {number|undefined} Number of semitones above the root for this chord step or undefined if no pitch matches that chord step.
+ */
 chord.Chord.prototype.semitonesFromChordStep = function(chordStep, testRoot) {
     if (testRoot === undefined) {
         testRoot = this.root();
@@ -222,12 +222,12 @@ chord.Chord.prototype.semitonesFromChordStep = function(chordStep, testRoot) {
         return semitones;
     }
 };
-    /**
-     * Gets the lowest note (based on .ps not name) in the chord.
-     *
-     * @memberof music21.chord.Chord
-     * @returns {music21.pitch.Pitch} bass pitch
-     */
+/**
+ * Gets the lowest note (based on .ps not name) in the chord.
+ *
+ * @memberof music21.chord.Chord
+ * @returns {music21.pitch.Pitch} bass pitch
+ */
 chord.Chord.prototype.bass = function() {
     let lowest = undefined;
     const pitches = this.pitches;
@@ -243,23 +243,23 @@ chord.Chord.prototype.bass = function() {
     }
     return lowest;
 };
-    /**
-     * Counts the number of non-duplicate pitch MIDI Numbers in the chord.
-     *
-     * Call after "closedPosition()" to get Forte style cardinality disregarding octave.
-     *
-     * @memberof music21.chord.Chord
-     * @returns {number}
-     */
+/**
+ * Counts the number of non-duplicate pitch MIDI Numbers in the chord.
+ *
+ * Call after "closedPosition()" to get Forte style cardinality disregarding octave.
+ *
+ * @memberof music21.chord.Chord
+ * @returns {number}
+ */
 chord.Chord.prototype.cardinality = function() {
     const uniqueChord = this.removeDuplicatePitches();
     return uniqueChord.pitches.length;
 };
-    /**
-     *
-     * @memberof music21.chord.Chord
-     * @returns {Boolean}
-     */
+/**
+ *
+ * @memberof music21.chord.Chord
+ * @returns {Boolean}
+ */
 chord.Chord.prototype.isMajorTriad = function() {
     if (this.cardinality() != 3) {
         return false;
@@ -272,11 +272,11 @@ chord.Chord.prototype.isMajorTriad = function() {
         return false;
     }
 };
-    /**
-     *
-     * @memberof music21.chord.Chord
-     * @returns {Boolean}
-     */
+/**
+ *
+ * @memberof music21.chord.Chord
+ * @returns {Boolean}
+ */
 chord.Chord.prototype.isMinorTriad = function() {
     if (this.cardinality() != 3) {
         return false;
@@ -289,16 +289,16 @@ chord.Chord.prototype.isMinorTriad = function() {
         return false;
     }
 };
-    /**
-     * Returns the inversion of the chord as a number (root-position = 0)
-     *
-     * Unlike music21 version, cannot set the inversion, yet.
-     *
-     * TODO: add.
-     *
-     * @memberof music21.chord.Chord
-     * @returns {number}
-     */
+/**
+ * Returns the inversion of the chord as a number (root-position = 0)
+ *
+ * Unlike music21 version, cannot set the inversion, yet.
+ *
+ * TODO: add.
+ *
+ * @memberof music21.chord.Chord
+ * @returns {number}
+ */
 chord.Chord.prototype.inversion = function() {
     const bass = this.bass();
     const root = this.root();
@@ -313,11 +313,11 @@ chord.Chord.prototype.inversion = function() {
 };
 
 
-    /**
-     * @memberof music21.chord.Chord
-     * @param {object} options - a dictionary of options `{clef: {@music21.clef.Clef} }` is especially important
-     * @returns {Vex.Flow.StaveNote}
-     */
+/**
+ * @memberof music21.chord.Chord
+ * @param {object} options - a dictionary of options `{clef: {@music21.clef.Clef} }` is especially important
+ * @returns {Vex.Flow.StaveNote}
+ */
 chord.Chord.prototype.vexflowNote = function(options) {
     const clef = options.clef;
 
@@ -326,7 +326,7 @@ chord.Chord.prototype.vexflowNote = function(options) {
         pitchKeys.push(this._notes[i].pitch.vexflowName(clef));
     }
     const vfn = new Vex.Flow.StaveNote({ keys: pitchKeys,
-                                      duration: this.duration.vexflowDuration });
+        duration: this.duration.vexflowDuration });
     this.vexflowAccidentalsAndDisplay(vfn, options); // clean up stuff...
     for (var i = 0; i < this._notes.length; i++) {
         const tn = this._notes[i];
@@ -341,18 +341,18 @@ chord.Chord.prototype.vexflowNote = function(options) {
     this.activeVexflowNote = vfn;
     return vfn;
 };
-    /**
-     * Returns the Pitch object that is a Generic interval (2, 3, 4, etc., but not 9, 10, etc.) above
-     * the `.root()`
-     *
-     * In case there is more that one note with that designation (e.g., `[A-C-C#-E].getChordStep(3)`)
-     * the first one in `.pitches` is returned.
-     *
-     * @memberof music21.chord.Chord
-     * @param {Int} chordStep a positive integer representing the chord step
-     * @param {music21.pitch.Pitch} [testRoot] - the Pitch to use as a temporary root
-     * @returns {music21.pitch.Pitch|undefined}
-     */
+/**
+ * Returns the Pitch object that is a Generic interval (2, 3, 4, etc., but not 9, 10, etc.) above
+ * the `.root()`
+ *
+ * In case there is more that one note with that designation (e.g., `[A-C-C#-E].getChordStep(3)`)
+ * the first one in `.pitches` is returned.
+ *
+ * @memberof music21.chord.Chord
+ * @param {Int} chordStep a positive integer representing the chord step
+ * @param {music21.pitch.Pitch} [testRoot] - the Pitch to use as a temporary root
+ * @returns {music21.pitch.Pitch|undefined}
+ */
 chord.Chord.prototype.getChordStep = function(chordStep, testRoot) {
     if (testRoot == undefined) {
         testRoot = this.root();
@@ -375,15 +375,15 @@ chord.Chord.prototype.getChordStep = function(chordStep, testRoot) {
     return undefined;
 };
 
-	chord.chordDefinitions = {
-			                                        'major': ['M3', 'm3'],
-			                                        'minor': ['m3', 'M3'],
-			                                        'diminished': ['m3', 'm3'],
-			                                        'augmented': ['M3', 'M3'],
-			                                        'major-seventh': ['M3', 'm3', 'M3'],
-			                                        'dominant-seventh': ['M3', 'm3', 'm3'],
-			                                        'minor-seventh': ['m3', 'M3', 'm3'],
-			                                        'diminished-seventh': ['m3', 'm3', 'm3'],
-			                                        'half-diminished-seventh': ['m3', 'm3', 'M3'],
-	};
+chord.chordDefinitions = {
+        'major': ['M3', 'm3'],
+        'minor': ['m3', 'M3'],
+        'diminished': ['m3', 'm3'],
+        'augmented': ['M3', 'M3'],
+        'major-seventh': ['M3', 'm3', 'M3'],
+        'dominant-seventh': ['M3', 'm3', 'm3'],
+        'minor-seventh': ['m3', 'M3', 'm3'],
+        'diminished-seventh': ['m3', 'm3', 'm3'],
+        'half-diminished-seventh': ['m3', 'm3', 'M3'],
+};
 

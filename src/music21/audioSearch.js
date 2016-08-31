@@ -158,7 +158,7 @@ audioSearch.sampleCallback = function(frequency) {
     // console.log(midiNum, centsOff);
 };
 
-// from Chris Wilson. Replace with Jordi's
+//from Chris Wilson. Replace with Jordi's
 audioSearch.autoCorrelate = function(buf, sampleRate, minFrequency, maxFrequency) {
     const SIZE = buf.length;
     const MAX_SAMPLES = Math.floor(SIZE / 2);
@@ -241,11 +241,11 @@ audioSearch.midiNumDiffFromFrequency = function(frequency) {
     return [midiNum, centsOff];
 };
 
-// http://paulirish.com/2011/requestanimationframe-for-smart-animating/
-// http://my.opera.com/emoller/blog/2011/12/20/requestanimationframe-for-smart-er-animating
+//http://paulirish.com/2011/requestanimationframe-for-smart-animating/
+//http://my.opera.com/emoller/blog/2011/12/20/requestanimationframe-for-smart-er-animating
 
-// requestAnimationFrame polyfill by Erik Möller
-// fixes from Paul Irish and Tino Zijdel
+//requestAnimationFrame polyfill by Erik Möller
+//fixes from Paul Irish and Tino Zijdel
 
 const rqaPolyFill = function() {
     let lastTime = 0;

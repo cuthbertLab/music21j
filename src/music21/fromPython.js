@@ -19,37 +19,37 @@
  *
  *
  */
-import 'jsonpickle';
+import * as jsonpickle from 'jsonpickle';
 
 const jp = jsonpickle;
-        /**
-         * fromPython module -- see {@link music21.fromPython}
-         */
+/**
+ * fromPython module -- see {@link music21.fromPython}
+ */
 const unpickler = jp.unpickler;
 
-    /**
-     * Converter for taking a Python-encoded jsonpickle music21p stream
-     * and loading it into music21j
-     *
-     * Very very alpha.  See music21(p).vexflow modules to see how it works.
-     *
-     * Requires Cuthbert's jsonpickle.js port (included in music21j)
-     *
-     * @namespace music21.fromPython
-     * @extends music21
-     * @requires jsonpickle
-     */
+/**
+ * Converter for taking a Python-encoded jsonpickle music21p stream
+ * and loading it into music21j
+ *
+ * Very very alpha.  See music21(p).vexflow modules to see how it works.
+ *
+ * Requires Cuthbert's jsonpickle.js port (included in music21j)
+ *
+ * @namespace music21.fromPython
+ * @extends music21
+ * @requires jsonpickle
+ */
 export    const fromPython = {};
 
-    /**
-     *
-     * @class Converter
-     * @memberof music21.fromPython
-     * @property {boolean} debug
-     * @property {Array<string>} knownUnparsables - list of classes that cannot be parsed
-     * @property {object} handlers - object mapping string names of classes to a set of function calls to perform when restoring or post-restoring. (too complicated to explain; read the code)
-     */
-fromPython.Converter = function() {
+/**
+ *
+ * @class Converter
+ * @memberof music21.fromPython
+ * @property {boolean} debug
+ * @property {Array<string>} knownUnparsables - list of classes that cannot be parsed
+ * @property {object} handlers - object mapping string names of classes to a set of function calls to perform when restoring or post-restoring. (too complicated to explain; read the code)
+ */
+fromPython.Converter = function fromPython_Converter() {
     this.debug = true;
     this.knownUnparsables = [
         'music21.spanner.Line',
@@ -66,15 +66,15 @@ fromPython.Converter = function() {
 
 
     const converterHandler = this;
-        /**
-         * Fixes up some references that cannot be unpacked from jsonpickle.
-         *
-         * @method music21.fromPython.Converter#streamPostRestore
-         * @memberof music21.fromPython.Converter
-         * @param {music21.stream.Stream} s - stream after unpacking from jsonpickle
-         * @returns {music21.stream.Stream}
-         */
-    this.streamPostRestore = function(s) {
+    /**
+     * Fixes up some references that cannot be unpacked from jsonpickle.
+     *
+     * @method music21.fromPython.Converter#streamPostRestore
+     * @memberof music21.fromPython.Converter
+     * @param {music21.stream.Stream} s - stream after unpacking from jsonpickle
+     * @returns {music21.stream.Stream}
+     */
+    this.streamPostRestore = function streamPostRestore(s) {
         const ch = converterHandler;
         const st = s._storedElementOffsetTuples;
 
@@ -91,7 +91,7 @@ fromPython.Converter = function() {
                 classList = [];
             }
             let streamPart = ch.currentPart;
-            if (streamPart == undefined) {
+            if (streamPart === undefined) {
                 streamPart = s; // possibly a Stream constructed from .measures()
             }
 
@@ -102,33 +102,33 @@ fromPython.Converter = function() {
                 const thisClass = classList[j];
                 for (let kn = 0; kn < ch.knownUnparsables.length; kn++) {
                     const unparsable = ch.knownUnparsables[kn];
-                    if (unparsable.indexOf(thisClass) != -1) {
+                    if (unparsable.indexOf(thisClass) !== -1) {
                         appendEl = false;
                     }
                 }
-                if (thisClass == 'TimeSignature') {
-                        // console.log("Got timeSignature", streamPart, newM21pObj, storedElement);
+                if (thisClass === 'TimeSignature') {
+                    // console.log("Got timeSignature", streamPart, newM21pObj, storedElement);
                     s._timeSignature = el;
                     ch.lastTimeSignature = el;
                     if (streamPart !== undefined && streamPart.timeSignature === undefined) {
                         streamPart.timeSignature = el;
                     }
                     appendEl = false;
-                } else if (thisClass == 'Clef') {
+                } else if (thisClass === 'Clef') {
                     s._clef = el;
                     ch.lastClef = el;
                     if (streamPart !== undefined && streamPart.clef === undefined) {
                         streamPart.clef = el;
                     }
                     appendEl = false;
-                } else if (thisClass == 'KeySignature') {
+                } else if (thisClass === 'KeySignature') {
                     s._keySignature = el;
                     this.lastKeySignature = el;
                     if (streamPart !== undefined && streamPart.keySignature === undefined) {
                         streamPart.keySignature = el;
                     }
                     appendEl = false;
-                } else if (thisClass == 'Part') {
+                } else if (thisClass === 'Part') {
                     appendEl = false;
                     insertAtStart = true;
                 }
@@ -180,15 +180,15 @@ fromPython.Converter = function() {
     this.lastTimeSignature = undefined;
 };
 
-    /**
-     * Run the main decoder
-     *
-     * @method music21.fromPython.Converter#run
-     * @memberof music21.fromPython.Converter
-     * @param {string} jss - stream encoded as JSON
-     * @returns {music21.stream.Stream}
-     */
-fromPython.Converter.prototype.run = function(jss) {
+/**
+ * Run the main decoder
+ *
+ * @method music21.fromPython.Converter#run
+ * @memberof music21.fromPython.Converter
+ * @param {string} jss - stream encoded as JSON
+ * @returns {music21.stream.Stream}
+ */
+fromPython.Converter.prototype.run = function fromPythonConverterRun(jss) {
     const outStruct = unpickler.decode(jss, this.handlers);
     return outStruct.stream;
 };
