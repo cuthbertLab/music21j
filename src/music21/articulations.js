@@ -1,268 +1,236 @@
-define(['./prebase', 'vexflow'], 
-        /**
-         * articulations module. See {@link music21.articulations} namespace
-         * 
-         * @exports music21/articulations
-         */
-        function(prebase, Vex) {
-   /**
-    * @namespace music21.articulations
-    * @memberof music21
-    * @requires music21/prebase, Vexflow
-    */
-   var articulations = {};
+import * as Vex from 'vexflow';
+import { common } from './common';
+import { prebase } from './prebase';
 
-   /**
-    * Represents a single articulation, usually in the `.articulations` Array
-    * on a {@link music21.note.Note} or something like that.
-    * 
-    * @class Articulation
-    * @memberof music21.articulations
-    * @extends music21.prebase.ProtoM21Object
-    * @property {string} name
-    * @property {string} [placement='above']
-    * @property {string} vexflowModifier - the string code to get this accidental in Vexflow
-    * @property {number} [dynamicScale=1.0] - multiplier for the dynamic of a note that this is attached to
-    * @property {number} [lengthScale=1.0] - multiplier for the length of a note that this is attached to.
-    */
-   articulations.Articulation = function(){
-       prebase.ProtoM21Object.call(this);
-       this.classes.push('Articulation');
-       this.name = undefined;
-       this.placement = 'above';
-       this.vexflowModifier = undefined;
-       this.setPosition = undefined;
-       this.dynamicScale = 1.0;
-       this.lengthScale = 1.0;
-   };
-   articulations.Articulation.prototype = new prebase.ProtoM21Object();
-   articulations.Articulation.prototype.constructor = articulations.Articulation;
+/**
+ * articulations module. See {@link music21.articulations} namespace
+ *
+ */
 
-   /**
-    * Generates a Vex.Flow.Articulation for this articulation.
-    * 
-    * @memberof music21.articulations.Articulation
-    * @returns {Vex.Flow.Articulation}
-    */
-   articulations.Articulation.prototype.vexflow = function () {
-       var vfa = new Vex.Flow.Articulation(this.vexflowModifier);
-       if (this.setPosition) {
-           vfa.setPosition(this.setPosition);
-       }
-       return vfa;
-   };
-   
-   /**
-    * base class for articulations that change the length of a note...
-    * 
-    * @class LengthArticulation
-    * @memberof music21.articulations
-    * @extends music21.articulations.Articulation
-    */
-   articulations.LengthArticulation = function(){
-       articulations.Articulation.call(this);
-       this.classes.push('LengthArticulation');
-   };
-   articulations.LengthArticulation.prototype = new articulations.Articulation();
-   articulations.LengthArticulation.prototype.constructor = articulations.LengthArticulation;
-   
-   /**
-    * base class for articulations that change the dynamic of a note...
-    * 
-    * @class DynamicArticulation
-    * @memberof music21.articulations
-    * @extends music21.articulations.Articulation
-    */
-   articulations.DynamicArticulation = function(){
-       articulations.Articulation.call(this);
-       this.classes.push('DynamicArticulation');
+/**
+ * @namespace music21.articulations
+ * @memberof music21
+ * @requires music21/prebase, Vexflow
+ */
+export const articulations = {};
 
-   };
-   articulations.DynamicArticulation.prototype = new articulations.Articulation();
-   articulations.DynamicArticulation.prototype.constructor = articulations.DynamicArticulation;
-   
-   /**
-    * base class for articulations that change the pitch of a note...
-    * 
-    * @class PitchArticulation
-    * @memberof music21.articulations
-    * @extends music21.articulations.Articulation
-    */
-   articulations.PitchArticulation = function(){
-       articulations.Articulation.call(this);
-       this.classes.push('PitchArticulation');
+/**
+ * Represents a single articulation, usually in the `.articulations` Array
+ * on a {@link music21.note.Note} or something like that.
+ *
+ * @class Articulation
+ * @memberof music21.articulations
+ * @extends music21.prebase.ProtoM21Object
+ * @property {string} name
+ * @property {string} [placement='above']
+ * @property {string} vexflowModifier - the string code to get this accidental in Vexflow
+ * @property {number} [dynamicScale=1.0] - multiplier for the dynamic of a note that this is attached to
+ * @property {number} [lengthScale=1.0] - multiplier for the length of a note that this is attached to.
+ */
+export class Articulation extends prebase.ProtoM21Object {
+    constructor() {
+        super();
+        this.classes.push('Articulation');
+        this.name = undefined;
+        this.placement = 'above';
+        this.vexflowModifier = undefined;
+        this.setPosition = undefined;
+        this.dynamicScale = 1.0;
+        this.lengthScale = 1.0;
+    }
 
-   };
-   articulations.PitchArticulation.prototype = new articulations.Articulation();
-   articulations.PitchArticulation.prototype.constructor = articulations.PitchArticulation;
-   
-   /**
-    * base class for articulations that change the timbre of a note...
-    * 
-    * @class TimbreArticulation
-    * @memberof music21.articulations
-    * @extends music21.articulations.Articulation
-    */
-   articulations.TimbreArticulation = function(){
-       articulations.Articulation.call(this);
-       this.classes.push('TimbreArticulation');
+    /**
+     * Generates a Vex.Flow.Articulation for this articulation.
+     *
+     * @memberof music21.articulations.Articulation
+     * @returns {Vex.Flow.Articulation}
+     */
+    vexflow() {
+        const vfa = new Vex.Flow.Articulation(this.vexflowModifier);
+        if (this.setPosition) {
+            vfa.setPosition(this.setPosition);
+        }
+        return vfa;
+    }
+}
+articulations.Articulation = Articulation;
+/**
+ * base class for articulations that change the length of a note...
+ *
+ * @class LengthArticulation
+ * @memberof music21.articulations
+ * @extends music21.articulations.Articulation
+ */
+export class LengthArticulation extends Articulation {
+    constructor() {
+        super();
+        this.classes.push('LengthArticulation');
+    }
+}
+articulations.LengthArticulation = LengthArticulation;
 
-   };
-   articulations.TimbreArticulation.prototype = new articulations.Articulation();
-   articulations.TimbreArticulation.prototype.constructor = articulations.TimbreArticulation;
-   
-   /**
-    * 50% louder than usual
-    * 
-    * @class Accent
-    * @memberof music21.articulations
-    * @extends music21.articulations.DynamicArticulation
-    */
-   articulations.Accent = function(){
-       articulations.DynamicArticulation.call(this);
-       this.classes.push('Accent');
+/**
+ * base class for articulations that change the dynamic of a note...
+ *
+ * @class DynamicArticulation
+ * @memberof music21.articulations
+ * @extends music21.articulations.Articulation
+ */
+export class DynamicArticulation extends Articulation {
+    constructor() {
+        super();
+        this.classes.push('DynamicArticulation');
+    }
+}
+articulations.DynamicArticulation = DynamicArticulation;
 
-       this.name = 'accent';
-       this.vexflowModifier = "a>";
-       this.dynamicScale = 1.5;
-   };
-   articulations.Accent.prototype = new articulations.DynamicArticulation();
-   articulations.Accent.prototype.constructor = articulations.Accent;
-   
-   /**
-    * 100% louder than usual
-    * 
-    * @class StrongAccent
-    * @memberof music21.articulations
-    * @extends music21.articulations.Accent
-    */
-   articulations.StrongAccent = function(){
-       articulations.Accent.call(this);
-       this.classes.push('StrongAccent');
-       this.name = 'strong accent';
-       this.vexflowModifier = "a^";
-       this.dynamicScale = 2.0;
-   };
-   articulations.StrongAccent.prototype = new articulations.Accent();
-   articulations.StrongAccent.prototype.constructor = articulations.StrongAccent;
-   
-   /**
-    * no playback for now.
-    * 
-    * @class Staccato
-    * @memberof music21.articulations
-    * @extends music21.articulations.LengthArticulation
-    */
-   articulations.Staccato = function(){
-       articulations.LengthArticulation.call(this);
-       this.classes.push('Staccato');       
-       this.name = 'staccato';
-       this.vexflowModifier = "a.";
-   };
-   articulations.Staccato.prototype = new articulations.LengthArticulation();
-   articulations.Staccato.prototype.constructor = articulations.Staccato;
-   
-   /**
-    * no playback for now.
-    * 
-    * @class Staccatissimo
-    * @memberof music21.articulations
-    * @extends music21.articulations.Staccato
-    */
-   articulations.Staccatissimo = function(){
-       articulations.Staccato.call(this);
-       this.classes.push('Staccatissimo');
-       this.name = 'staccatissimo';
-       this.vexflowModifier = "av";
-   };
-   articulations.Staccatissimo.prototype = new articulations.Staccato();
-   articulations.Staccatissimo.prototype.constructor = articulations.Staccatissimo;
-   
-   /**
-    * no playback or display for now.
-    * 
-    * @class Spiccato
-    * @memberof music21.articulations
-    * @extends music21.articulations.Staccato
-    */
-   articulations.Spiccato = function(){
-	   articulations.Staccato.call(this);
-       this.classes.push('Spiccato');
-       this.name = 'spiccato';
-       this.vexflowModifier = undefined;
+/**
+ * base class for articulations that change the pitch of a note...
+ *
+ * @class PitchArticulation
+ * @memberof music21.articulations
+ * @extends music21.articulations.Articulation
+ */
+export class PitchArticulation extends Articulation {
+    constructor() {
+        super();
+        this.classes.push('PitchArticulation');
+    }
+}
+articulations.PitchArticulation = PitchArticulation;
 
-   };
-   articulations.Spiccato.prototype = new articulations.Staccato();
-   articulations.Spiccato.prototype.constructor = articulations.Spiccato;
-   
-   /**
-    * @class Marcato
-    * @memberof music21.articulations
-    * @extends music21.articulations.LengthArticulation
-    * @extends music21.articulations.DynamicArticulation
-    */
-   articulations.Marcato = function(){
-	   articulations.LengthArticulation.call(this);
-	   articulations.DynamicArticulation.call(this);
-	   this.classes.push('Marcato');
-	   this.name = 'marcato';
-	   this.vexflowModifier = "a^";
-	   this.dynamicScale = 1.7;
-	   
-   };
-   articulations.Marcato.prototype = new articulations.LengthArticulation();
-   articulations.Marcato.prototype.constructor = articulations.Marcato;
-   
-   /**
-    * @class Tenuto
-    * @memberof music21.articulations
-    * @extends music21.articulations.LengthArticulation
-    */
-   articulations.Tenuto = function(){
-       articulations.LengthArticulation.call(this);
-       this.classes.push('Tenuto');
-
-       this.name = 'tenuto';
-       this.vexflowModifier = "a-";
-   };
-   articulations.Tenuto.prototype = new articulations.LengthArticulation();
-   articulations.Tenuto.prototype.constructor = articulations.Tenuto;
+/**
+ * base class for articulations that change the timbre of a note...
+ *
+ * @class TimbreArticulation
+ * @memberof music21.articulations
+ * @extends music21.articulations.Articulation
+ */
+export class TimbreArticulation extends Articulation {
+    constructor() {
+        super();
+        this.classes.push('TimbreArticulation');
+    }
+}
+articulations.TimbreArticulation = TimbreArticulation;
 
 
-   
-   articulations.tests = function () {
-       test( "music21.articulations.Articulation", function() {
-               var acc = new music21.articulations.Accent();
-               equal (acc.name, 'accent', 'matching names for accent');
-               var ten = new music21.articulations.Tenuto();
-               equal (ten.name, 'tenuto', 'matching names for tenuto');
-               var n = new music21.note.Note("C");
-               n.articulations.push(acc);
-               n.articulations.push(ten);
-               equal (n.articulations[0].name, 'accent', 'accent in array');
-               equal (n.articulations[1].name, 'tenuto', 'tenuto in array');
-       });
-       
-       test ("music21.articulations.Articulation display", function() {
-    	   var marc = new music21.articulations.Marcato();
-    	   equal (marc.name, 'marcato', 'matching names for marcato');
-    	   var n = new music21.note.Note("D#5");
-    	   n.articulations.push(marc);
-    	   var nBoring = new music21.note.Note("D#5");
+/**
+ * 50% louder than usual
+ *
+ * @class Accent
+ * @memberof music21.articulations
+ * @extends music21.articulations.DynamicArticulation
+ */
+export class Accent extends DynamicArticulation {
+    constructor() {
+        super();
+        this.classes.push('Accent');
+        this.name = 'accent';
+        this.vexflowModifier = 'a>';
+        this.dynamicScale = 1.5;
+    }
+}
+articulations.Accent = Accent;
 
-    	   var measure = new music21.stream.Measure();
-    	   measure.append(n);
-    	   measure.append(nBoring);
-    	   measure.append(nBoring.clone());
-    	   measure.append(n.clone());
- 
-    	   measure.appendNewCanvas();
-    	   ok(true, "something worked");
-       });
-   };
-   // end of define
-   if (typeof(music21) != "undefined") {
-       music21.articulations = articulations;
-   }       
-   return articulations;
-});
+/**
+ * 100% louder than usual
+ *
+ * @class StrongAccent
+ * @memberof music21.articulations
+ * @extends music21.articulations.Accent
+ */
+export class StrongAccent extends Accent {
+    constructor() {
+        super();
+        this.classes.push('StrongAccent');
+        this.name = 'strong accent';
+        this.vexflowModifier = 'a^';
+        this.dynamicScale = 2.0;
+    }
+}
+articulations.StrongAccent = StrongAccent;
+
+/**
+ * no playback for now.
+ *
+ * @class Staccato
+ * @memberof music21.articulations
+ * @extends music21.articulations.LengthArticulation
+ */
+export class Staccato extends LengthArticulation {
+    constructor() {
+        super();
+        this.classes.push('Staccato');
+        this.name = 'staccato';
+        this.vexflowModifier = 'a.';
+    }
+}
+articulations.Staccato = Staccato;
+
+/**
+ * no playback for now.
+ *
+ * @class Staccatissimo
+ * @memberof music21.articulations
+ * @extends music21.articulations.Staccato
+ */
+export class Staccatissimo extends Staccato {
+    constructor() {
+        super();
+        this.classes.push('Staccatissimo');
+        this.name = 'staccatissimo';
+        this.vexflowModifier = 'av';
+    }
+}
+articulations.Staccatissimo = Staccatissimo;
+
+/**
+ * no playback or display for now.
+ *
+ * @class Spiccato
+ * @memberof music21.articulations
+ * @extends music21.articulations.Staccato
+ */
+export class Spiccato extends Staccato {
+    constructor() {
+        super();
+        this.classes.push('Spiccato');
+        this.name = 'spiccato';
+        this.vexflowModifier = undefined;
+    }
+}
+articulations.Spiccato = Spiccato;
+
+/**
+ * @class Marcato
+ * @memberof music21.articulations
+ * @extends music21.articulations.DynamicArticulation
+ * @extends music21.articulations.LengthArticulation
+ */
+export class Marcato extends DynamicArticulation {
+    constructor() {
+        super();
+        common.mixin(LengthArticulation, this);
+        this.classes.push('Marcato');
+        this.name = 'marcato';
+        this.vexflowModifier = 'a^';
+        this.dynamicScale = 1.7;
+    }
+}
+articulations.Marcato = Marcato;
+
+/**
+ * @class Tenuto
+ * @memberof music21.articulations
+ * @extends music21.articulations.LengthArticulation
+ */
+export class Tenuto extends LengthArticulation {
+    constructor() {
+        super();
+        this.classes.push('Tenuto');
+        this.name = 'tenuto';
+        this.vexflowModifier = 'a-';
+    }
+}
+articulations.Tenuto = Tenuto;

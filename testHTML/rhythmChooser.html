@@ -30,12 +30,21 @@
             
             rc.autoAddMeasure = false;
             rc.addDiv("#hi");            
+
+            var rc = new music21.widgets.RhythmChooser(s, "#candiv");
+            rc.values.push('addMeasure');
+            rc.values.push('tie');
+            
+            rc.autoAddMeasure = false;
+            rc.addDiv("#bye");            
+
         });
         </script>
      </head>
      <body>
      <div id="hi"></div>
      <div id="candiv">
+     <div id="bye"></div>
      </div>
      
      </body>

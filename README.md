@@ -50,6 +50,7 @@ If you have `git` installed, you can use (on Mac/Unix):
 % cd ~/git
 % git clone https://github.com/cuthbertLab/music21j.git
 % cd music21j
+% npm install
 ```
 
 The files in music21j are best viewed by running your own
@@ -58,6 +59,7 @@ included a small script to start you up:
 
 ```sh
 % cd ~/git/music21j
+% grunt
 % python start_python_server.py
 ```
 
@@ -88,7 +90,7 @@ using the python server above).
 
 Version
 --------
-0.7 alpha
+0.9 alpha
 
 
 License
