@@ -104,10 +104,6 @@
 						</li>
 						
 						<li>
-							<a href="music21.orchestralScore.html">music21.orchestralScore</a>
-						</li>
-						
-						<li>
 							<a href="music21.pitch.html">music21.pitch</a>
 						</li>
 						
@@ -164,148 +160,14 @@
 				</li>
 				
 				<li class="dropdown">
-					<a href="modules.list.html" class="dropdown-toggle" data-toggle="dropdown">Modules<b
-						class="caret"></b></a>
-
-					<ul class="dropdown-menu ">
-						
-						<li>
-							<a href="module-music21_articulations.html">music21/articulations</a>
-						</li>
-						
-						<li>
-							<a href="module-music21_audioSearch.html">music21/audioSearch</a>
-						</li>
-						
-						<li>
-							<a href="module-music21_base.html">music21/base</a>
-						</li>
-						
-						<li>
-							<a href="module-music21_beam.html">music21/beam</a>
-						</li>
-						
-						<li>
-							<a href="module-music21_chord.html">music21/chord</a>
-						</li>
-						
-						<li>
-							<a href="module-music21_clef.html">music21/clef</a>
-						</li>
-						
-						<li>
-							<a href="module-music21_common.html">music21/common</a>
-						</li>
-						
-						<li>
-							<a href="module-music21_duration.html">music21/duration</a>
-						</li>
-						
-						<li>
-							<a href="module-music21_dynamics.html">music21/dynamics</a>
-						</li>
-						
-						<li>
-							<a href="module-music21_expressions.html">music21/expressions</a>
-						</li>
-						
-						<li>
-							<a href="module-music21_instrument.html">music21/instrument</a>
-						</li>
-						
-						<li>
-							<a href="module-music21_interval.html">music21/interval</a>
-						</li>
-						
-						<li>
-							<a href="module-music21_key.html">music21/key</a>
-						</li>
-						
-						<li>
-							<a href="module-music21_keyboard.html">music21/keyboard</a>
-						</li>
-						
-						<li>
-							<a href="module-music21_meter.html">music21/meter</a>
-						</li>
-						
-						<li>
-							<a href="module-music21_miditools.html">music21/miditools</a>
-						</li>
-						
-						<li>
-							<a href="module-music21_moduleLoader.html">music21/moduleLoader</a>
-						</li>
-						
-						<li>
-							<a href="module-music21_note.html">music21/note</a>
-						</li>
-						
-						<li>
-							<a href="module-music21_orchestralScore.html">music21/orchestralScore</a>
-						</li>
-						
-						<li>
-							<a href="module-music21_pitch.html">music21/pitch</a>
-						</li>
-						
-						<li>
-							<a href="module-music21_prebase.html">music21/prebase</a>
-						</li>
-						
-						<li>
-							<a href="module-music21_renderOptions.html">music21/renderOptions</a>
-						</li>
-						
-						<li>
-							<a href="module-music21_roman.html">music21/roman</a>
-						</li>
-						
-						<li>
-							<a href="module-music21_scale.html">music21/scale</a>
-						</li>
-						
-						<li>
-							<a href="module-music21_stream.html">music21/stream</a>
-						</li>
-						
-						<li>
-							<a href="module-music21_streamInteraction.html">music21/streamInteraction</a>
-						</li>
-						
-						<li>
-							<a href="module-music21_tempo.html">music21/tempo</a>
-						</li>
-						
-						<li>
-							<a href="module-music21_tie.html">music21/tie</a>
-						</li>
-						
-						<li>
-							<a href="module-music21_tinyNotation.html">music21/tinyNotation</a>
-						</li>
-						
-						<li>
-							<a href="module-music21_vfShow.html">music21/vfShow</a>
-						</li>
-						
-						<li>
-							<a href="module-music21_webmidi.html">music21/webmidi</a>
-						</li>
-						
-						<li>
-							<a href="module-music21_widgets.html">music21/widgets</a>
-						</li>
-						
-
-					</ul>
-				</li>
-				
-				<li class="dropdown">
 					<a href="classes.list.html" class="dropdown-toggle" data-toggle="dropdown">Classes<b
 						class="caret"></b></a>
 
 					<ul class="dropdown-menu ">
+						
+						<li>
+							<a href="-_.html"></a>
+						</li>
 						
 						<li>
 							<a href="music21.articulations.Accent.html">music21.articulations.Accent</a>
@@ -512,10 +374,6 @@
 						</li>
 						
 						<li>
-							<a href="music21.orchestralScore.OrchestralScore.html">music21.orchestralScore.OrchestralScore</a>
-						</li>
-						
-						<li>
 							<a href="music21.pitch.Accidental.html">music21.pitch.Accidental</a>
 						</li>
 						
@@ -602,6 +460,18 @@
 						</li>
 						
 						<li>
+							<a href="global.html#layout">layout</a>
+						</li>
+						
+						<li>
+							<a href="global.html#midiNumDiffFromFrequency">midiNumDiffFromFrequency</a>
+						</li>
+						
+						<li>
+							<a href="global.html#unpickler">unpickler</a>
+						</li>
+						
+						<li>
 							<a href="global.html#warnBanner">warnBanner</a>
 						</li>
 						
@@ -627,49 +497,46 @@
 <section>
 	<article>
 		<pre
-			class="sunlight-highlight-javascript linenums">define(['./common'],
-        /**
-         * module for things that all music21-created objects, not just objects that can live in
-         * Stream.elements should inherit. See the {@link music21.prebase} namespace.
-         *
-         * @requires music21/common
-         * @exports music21/prebase
-         */
-        function(common) {
-    /**
-     * module for things that all music21-created objects, not just objects that can live in
-     * Stream.elements should inherit
-     * 
-     * @namespace music21.prebase
-     * @memberof music21
-     */
-    var prebase = {};
-    /**
-     * Class for pseudo-m21 objects to inherit from. The most important attributes that nearly
-     * everything in music21 should inherit from are given below.
-     * 
-     * @class ProtoM21Object
-     * @memberof music21.prebase
-     * @property {Array&lt;string>} classes - An Array of strings of classes that the object belongs to (default ['ProtoM21Object'])
-     * @property {Boolean} isProtoM21Object - Does this object descend from {@link music21.prebase.ProtoM21Object}: obviously true.
-     * @property {Boolean} isMusic21Object - Does this object descend from {@link music21.base.Music21Object}; default false.
-     */
-    prebase.ProtoM21Object = function () {
+			class="sunlight-highlight-javascript linenums">/**
+ * module for things that all music21-created objects, not just objects that can live in
+ * Stream.elements should inherit. See the {@link music21.prebase} namespace.
+ *
+ * @exports music21/prebase
+ */
+/**
+ * module for things that all music21-created objects, not just objects that can live in
+ * Stream.elements should inherit
+ *
+ * @namespace music21.prebase
+ * @memberof music21
+ */
+export const prebase = {};
+/**
+ * Class for pseudo-m21 objects to inherit from. The most important attributes that nearly
+ * everything in music21 should inherit from are given below.
+ *
+ * @class ProtoM21Object
+ * @memberof music21.prebase
+ * @property {Array&lt;string>} classes - An Array of strings of classes that the object belongs to (default ['ProtoM21Object'])
+ * @property {Boolean} isProtoM21Object - Does this object descend from {@link music21.prebase.ProtoM21Object}: obviously true.
+ * @property {Boolean} isMusic21Object - Does this object descend from {@link music21.base.Music21Object}; default false.
+ */
+export class ProtoM21Object {
+    constructor() {
         this.classes = ['ProtoM21Object'];
         this.isProtoM21Object = true;
-        this.isMusic21Object = false;    
+        this.isMusic21Object = false;
         this._cloneCallbacks = {};
-    };
-
+    }
     /**
      * Makes (as much as possible) a complete duplicate copy of the object called with .clone()
-     * 
+     *
      * Works similarly to Python's copy.deepcopy().
-     * 
+     *
      * Every ProtoM21Object has a `._cloneCallbacks` object which maps `{attribute: callbackFunction}`
      * to handle custom clone cases.  See, for instance, {@link music21.base.Music21Object} which
      * uses a custom callback to NOT clone the `.activeSite` attribute.
-     * 
+     *
      * @returns {object}
      * @memberof music21.prebase.ProtoM21Object
      * @example
@@ -679,12 +546,12 @@
      * n2.duration.quarterLength == 4; // true
      * n2 === n1; // false
      */
-    prebase.ProtoM21Object.prototype.clone = function () {
-        var ret = new this.constructor();
-        
+    clone() {
+        const ret = new this.constructor();
+
         // todo: do Arrays work?
-        for(var key in this){ // not that we ONLY copy the keys in Ret -- it's easier that way.
-            if (this.hasOwnProperty(key) == false) {
+        for (const key in this) { // not that we ONLY copy the keys in Ret -- it's easier that way.
+            if ({}.hasOwnProperty.call(this, key) === false) {
                 continue;
             }
             if (key in this._cloneCallbacks) {
@@ -696,35 +563,35 @@
                     this._cloneCallbacks[key](key, ret, this);
                 }
             } else if (
-                    Object.getOwnPropertyDescriptor(this, key).get !== undefined ||
-                    Object.getOwnPropertyDescriptor(this, key).set !== undefined
-                    ) {
+                    Object.getOwnPropertyDescriptor(this, key).get !== undefined
+                    || Object.getOwnPropertyDescriptor(this, key).set !== undefined
+            ) {
                 // do nothing
-            } else if (typeof(this[key]) == 'function') {
+            } else if (typeof (this[key]) === 'function') {
                 // do nothing -- events might not be copied.
-            } else if (typeof(this[key]) == 'object' &amp;&amp; this[key] !== null &amp;&amp;
+            } else if (typeof (this[key]) === 'object' &amp;&amp; this[key] !== null &amp;&amp;
                     this[key].isProtoM21Object) {
-                //console.log('cloning ', key);
+                // console.log('cloning ', key);
                 ret[key] = this[key].clone();
             } else {
                 try {
                     ret[key] = this[key];
-                    //music21.common.merge(ret[key], this[key]); // not really necessary? 
+                    // music21.common.merge(ret[key], this[key]); // not really necessary?
                 } catch (e) {
                     if (e instanceof TypeError) {
-                        console.log("typeError:", e, key);
+                        console.log('typeError:', e, key);
                         // do nothing
                     } else {
-                        throw(e);
+                        throw (e);
                     }
                 }
             }
         }
         return ret;
-    };
+    }
     /**
      * Check to see if an object is of this class or subclass.
-     * 
+     *
      * @memberof music21.prebase.ProtoM21Object
      * @param {(string|string[])} testClass - a class or Array of classes to test
      * @returns {Boolean}
@@ -734,23 +601,21 @@
      * n.isClassOrSubclass('Music21Object'); // true
      * n.isClassOrSubclass(['Duration', 'NotRest']); // true // NotRest
      */
-    prebase.ProtoM21Object.prototype.isClassOrSubclass = function (testClass) {
-        if (testClass instanceof Array == false) {
+    isClassOrSubclass(testClass) {
+        if (testClass instanceof Array === false) {
             testClass = [testClass];
         }
-        for (var i = 0; i &lt; testClass.length; i++) {
-            if ($.inArray(testClass[i], this.classes) != -1) {
+        for (let i = 0; i &lt; testClass.length; i++) {
+            if (this.classes.indexOf(testClass[i]) !== -1) {
                 return true;
-            }   
+            }
         }
         return false;
-    };
-    
-    if (typeof music21 != "undefined") {
-        music21.prebase = prebase;
     }
-    return prebase;
-});</pre>
+}
+prebase.ProtoM21Object = ProtoM21Object;
+
+</pre>
 	</article>
 </section>
 
@@ -771,7 +636,7 @@
 					
 		<span class="jsdoc-message">
 		Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a>
-		on Wed Jul 13th 2016 using the <a
+		on Fri Sep 2nd 2016 using the <a
 			href="https://github.com/terryweiss/docstrap">DocStrap template</a>.
 		</span>
 				</footer>

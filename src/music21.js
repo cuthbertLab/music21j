@@ -31,9 +31,9 @@ if (typeof(m21basis) === "undefined") {
      * music21j acknowledges VexFlow, MIDI.js in particular for their great efforts without which 
      * this module would not be possible.
      *  
-     * @namespace 
+     * @namespace music21
      */
-    m21basis = {VERSION: 0.8}; // update in README.md also
+    m21basis = {VERSION: 0.9}; // update in README.md also
 }
 //console.log('hi before: ' + require.toUrl('hi'));
 //console.log('./hi before: ' + require.toUrl('./hi'));

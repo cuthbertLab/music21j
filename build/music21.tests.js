@@ -1,5 +1,5 @@
 /**
- * music21j 0.8.0 built on  * 2016-09-02.
+ * music21j 0.9 built on  * 2016-09-02.
  * Copyright (c) 2013-2016 Michael Scott Cuthbert and cuthbertLab
  * BSD License, see LICENSE
  *

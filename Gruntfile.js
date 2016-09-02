@@ -141,16 +141,16 @@ module.exports = (grunt) => {
             }
         },
 
-//      jsdoc : {
-//      dist : {
-//      src: ['src/*.js', 'src/music21/*.js', 'README.md'], 
-//      options: {
-//      destination: DOC_DIR,
-//      template : "jsdoc-template",
-//      configure : "jsdoc-template/jsdoc.conf.json",
-//      },
-//      },
-//      },
+        jsdoc: {
+            dist: {
+                src: ['src/*.js', 'src/music21/*.js', 'README.md'], 
+                options: {
+                    destination: DOC_DIR,
+                    template : "jsdoc-template",
+                    configure : "jsdoc-template/jsdoc.conf.json",
+                },
+            },
+        },
         eslint: {
             target: SOURCES,
             options: {
@@ -198,13 +198,13 @@ module.exports = (grunt) => {
     grunt.loadNpmTasks('grunt-contrib-qunit');
 
     // Plugin for the jsdoc task
-    //grunt.loadNpmTasks('grunt-jsdoc');
+    grunt.loadNpmTasks('grunt-jsdoc');
     grunt.loadNpmTasks('grunt-bump');
     grunt.loadNpmTasks('grunt-eslint');
 //  grunt.loadNpmTasks('grunt-webpack');
 
     // Default task(s).
-    grunt.registerTask('default', ['rollup:files', 'uglify:build']); //, 'eslint']); //, , ... 'jsdoc']); 
+    grunt.registerTask('default', ['rollup:files', 'uglify:build', 'eslint', 'jsdoc']); //, , ... 'jsdoc']); 
     //grunt.registerTask('default', ['webpack:build', 'concat', 'uglify:build']); //, 'jsdoc']);
     grunt.registerTask('test', 'Run qunit tests', ['rollup:tests', 'qunit']);
     grunt.registerTask('publish', 'Raise the version and publish', function () { 
