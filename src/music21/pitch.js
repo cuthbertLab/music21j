@@ -326,19 +326,19 @@ pitch.Pitch = Pitch;
 
 
 pitch.tests = () => {
-    test('music21.pitch.Accidental', () => {
+    QUnit.test('music21.pitch.Accidental', (assert) => {
         const a = new music21.pitch.Accidental('-');
-        equal(a.alter, -1.0, 'flat alter passed');
-        equal(a.name, 'flat', 'flat name passed');
+        assert.equal(a.alter, -1.0, 'flat alter passed');
+        assert.equal(a.name, 'flat', 'flat name passed');
     });
 
-    test('music21.pitch.Pitch', () => {
+    QUnit.test('music21.pitch.Pitch', (assert) => {
         const p = new music21.pitch.Pitch('D#5');
-        equal(p.name, 'D#', 'Pitch Name set to D#');
-        equal(p.step, 'D',  'Pitch Step set to D');
-        equal(p.octave, 5, 'Pitch octave set to 5');
+        assert.equal(p.name, 'D#', 'Pitch Name set to D#');
+        assert.equal(p.step, 'D',  'Pitch Step set to D');
+        assert.equal(p.octave, 5, 'Pitch octave set to 5');
         const c = new music21.clef.AltoClef();
         const vfn = p.vexflowName(c);
-        equal(vfn, 'C#/6', 'Vexflow name set');
+        assert.equal(vfn, 'C#/6', 'Vexflow name set');
     });
 };

@@ -289,7 +289,7 @@ export class Key extends KeySignature {
 key.Key = Key;
 
 key.tests = () => {
-    test('music21.key.Key', () => {
+    QUnit.test('music21.key.Key', (assert) => {
         const testSharps = [
                             // sharps, mode, given name, given mode
                             [0, 'minor', 'a'],
@@ -310,26 +310,26 @@ key.tests = () => {
             const k = new key.Key(givenKeyName, givenMode);
             const foundSharps = k.sharps;
             const foundMode = k.mode;
-            equal(foundSharps,
+            assert.equal(foundSharps,
                     expectedSharps,
                     'Test sharps: ' + givenKeyName + ' (mode: ' + givenMode + ') ');
-            equal(foundMode,
+            assert.equal(foundMode,
                     expectedMode,
                     'Test mode: ' + givenKeyName + ' (mode: ' + givenMode + ') ');
         }
 
         const k = new key.Key('f#');
         let s = k.getScale();
-        equal(s[2].nameWithOctave, 'A4', 'test minor scale');
-        equal(s[6].nameWithOctave, 'E5');
+        assert.equal(s[2].nameWithOctave, 'A4', 'test minor scale');
+        assert.equal(s[6].nameWithOctave, 'E5');
         s = k.getScale('major');
-        equal(s[2].nameWithOctave, 'A#4', 'test major scale');
-        equal(s[6].nameWithOctave, 'E#5');
+        assert.equal(s[2].nameWithOctave, 'A#4', 'test major scale');
+        assert.equal(s[6].nameWithOctave, 'E#5');
         s = k.getScale('harmonic minor');
-        equal(s[2].nameWithOctave, 'A4', 'test harmonic minor scale');
-        equal(s[5].nameWithOctave, 'D5');
-        equal(s[6].nameWithOctave, 'E#5');
+        assert.equal(s[2].nameWithOctave, 'A4', 'test harmonic minor scale');
+        assert.equal(s[5].nameWithOctave, 'D5');
+        assert.equal(s[6].nameWithOctave, 'E#5');
 
-        equal(k.width, 15, 'checking width is 5 * abs(sharps)');
+        assert.equal(k.width, 15, 'checking width is 5 * abs(sharps)');
     });
 };

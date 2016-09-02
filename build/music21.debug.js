@@ -165,7 +165,7 @@
       StreamException: StreamException
   });
 
-  var debug = true;
+  var debug = false;
 
   /**
    * common functions
@@ -214,38 +214,24 @@
       return destination;
   };
 
+  /**
+   * Mix in another class into this class -- a form of multiple inheritance.
+   * See articulations.Marcato for an example.
+   * 
+   */
   common.mixin = function common_mixin(OtherParent, thisClassOrObject) {
       var proto = Object.getPrototypeOf(OtherParent);
       var classProto = Object.getPrototypeOf(thisClassOrObject);
 
       while (proto) {
-          var _iteratorNormalCompletion = true;
-          var _didIteratorError = false;
-          var _iteratorError = undefined;
-
-          try {
-              for (var _iterator = Object.keys(proto)[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-                  var key = _step.value;
-
-                  if (!(key in classProto)) {
-                      classProto[key] = proto[key];
-                  }
+          for (var key in Object.keys(proto)) {
+              if (!{}.hasOwnProperty.call(proto, key)) {
+                  continue;
               }
-          } catch (err) {
-              _didIteratorError = true;
-              _iteratorError = err;
-          } finally {
-              try {
-                  if (!_iteratorNormalCompletion && _iterator.return) {
-                      _iterator.return();
-                  }
-              } finally {
-                  if (_didIteratorError) {
-                      throw _iteratorError;
-                  }
+              if (!(key in classProto)) {
+                  classProto[key] = proto[key];
               }
           }
-
           proto = Object.getPrototypeOf(proto);
       }
   };
@@ -1116,46 +1102,47 @@
   duration.Tuplet = Tuplet;
 
   duration.tests = function () {
-      test('music21.duration.Duration', function () {
+      QUnit.test('music21.duration.Duration', function (assert) {
           var d = new music21.duration.Duration(1.0);
-          equal(d.type, 'quarter', 'got quarter note from 1.0');
-          equal(d.dots, 0, 'got no dots');
-          equal(d.quarterLength, 1.0, 'got 1.0 from 1.0');
-          equal(d.vexflowDuration, 'q', 'vexflow q');
+          assert.equal(d.type, 'quarter', 'got quarter note from 1.0');
+          assert.equal(d.dots, 0, 'got no dots');
+          assert.equal(d.quarterLength, 1.0, 'got 1.0 from 1.0');
+          assert.equal(d.vexflowDuration, 'q', 'vexflow q');
           d.type = 'half';
-          equal(d.type, 'half', 'got half note from half');
-          equal(d.dots, 0, 'got no dots');
-          equal(d.quarterLength, 2.0, 'got 2.0 from half');
-          equal(d.vexflowDuration, 'h', 'vexflow h');
+          assert.equal(d.type, 'half', 'got half note from half');
+          assert.equal(d.dots, 0, 'got no dots');
+          assert.equal(d.quarterLength, 2.0, 'got 2.0 from half');
+          assert.equal(d.vexflowDuration, 'h', 'vexflow h');
           d.quarterLength = 6.0;
-          equal(d.type, 'whole');
-          equal(d.dots, 1, 'got one dot from 6.0');
-          equal(d.quarterLength, 6.0, 'got 6.0');
-          equal(d.vexflowDuration, 'wd', 'vexflow duration wd');
+          assert.equal(d.type, 'whole');
+          assert.equal(d.dots, 1, 'got one dot from 6.0');
+          assert.equal(d.quarterLength, 6.0, 'got 6.0');
+          assert.equal(d.vexflowDuration, 'wd', 'vexflow duration wd');
+
           d.quarterLength = 7.75;
-          equal(d.type, 'whole');
-          equal(d.dots, 4, 'got four dots from 7.75');
+          assert.equal(d.type, 'whole');
+          assert.equal(d.dots, 4, 'got four dots from 7.75');
       });
 
-      test('music21.duration.Tuplet', function () {
+      QUnit.test('music21.duration.Tuplet', function (assert) {
           var d = new music21.duration.Duration(0.5);
           var t = new music21.duration.Tuplet(5, 4);
-          equal(t.tupletMultiplier(), 0.8, 'tuplet multiplier');
+          assert.equal(t.tupletMultiplier(), 0.8, 'tuplet multiplier');
           d.appendTuplet(t);
-          equal(t.frozen, true, 'tuplet is frozen');
-          equal(d._tuplets[0], t, 'tuplet appended');
-          equal(d.quarterLength, 0.4, 'quarterLength Updated');
+          assert.equal(t.frozen, true, 'tuplet is frozen');
+          assert.equal(d._tuplets[0], t, 'tuplet appended');
+          assert.equal(d.quarterLength, 0.4, 'quarterLength Updated');
 
           var d2 = new music21.duration.Duration(1 / 3);
-          equal(d2.type, 'eighth', 'got eighth note from 1/3');
-          equal(d2.dots, 0, 'got no dots');
-          equal(d2.quarterLength, 1 / 3, 'got 1/3 from 1/3');
+          assert.equal(d2.type, 'eighth', 'got eighth note from 1/3');
+          assert.equal(d2.dots, 0, 'got no dots');
+          assert.equal(d2.quarterLength, 1 / 3, 'got 1/3 from 1/3');
           var t2 = d2.tuplets[0];
-          equal(t2.numberNotesActual, 3, '3/2 tuplet');
-          equal(t2.numberNotesNormal, 2, '3/2 tuplet');
-          equal(t2.durationActual.quarterLength, 0.5);
-          equal(t2.tupletMultiplier(), 2 / 3, '2/3 tuplet multiplier');
-          equal(t2.totalTupletLength(), 1.0, 'total tuplet == 1.0');
+          assert.equal(t2.numberNotesActual, 3, '3/2 tuplet');
+          assert.equal(t2.numberNotesNormal, 2, '3/2 tuplet');
+          assert.equal(t2.durationActual.quarterLength, 0.5);
+          assert.equal(t2.tupletMultiplier(), 2 / 3, '2/3 tuplet multiplier');
+          assert.equal(t2.totalTupletLength(), 1.0, 'total tuplet == 1.0');
 
           var s = new music21.stream.Stream();
           s.timeSignature = new music21.meter.TimeSignature('2/2');
@@ -1168,7 +1155,7 @@
               s.append(n1);
           }
           s.appendNewCanvas();
-          ok(true, 'quarter note triplets displayed');
+          assert.ok(true, 'quarter note triplets displayed');
 
           var m6 = new music21.stream.Measure();
           m6.renderOptions.staffLines = 1;
@@ -1188,10 +1175,10 @@
           var n6clone = n6.clone();
           m6.append(n6clone);
           m6.appendNewCanvas();
-          ok(true, 'tuplets beginning with different type than original');
-          equal(n6.duration.tuplets[0] !== n6clone.duration.tuplets[0], true, 'tuplet should not be the same object after clone');
+          assert.ok(true, 'tuplets beginning with different type than original');
+          assert.equal(n6.duration.tuplets[0] !== n6clone.duration.tuplets[0], true, 'tuplet should not be the same object after clone');
       });
-      test('music21.duration.Tuplet multiple parts', function () {
+      QUnit.test('music21.duration.Tuplet multiple parts', function (assert) {
           var s2 = new music21.stream.Measure();
           s2.timeSignature = new music21.meter.TimeSignature('3/2');
           var na1 = new music21.note.Note('F4');
@@ -1229,7 +1216,7 @@
           sc.insert(0, p);
           sc.insert(0, p2);
           sc.appendNewCanvas();
-          ok(true, '5:4 tuplets in 3/2 with multiple parts');
+          assert.ok(true, '5:4 tuplets in 3/2 with multiple parts');
       });
   };
 
@@ -1695,22 +1682,22 @@
   articulations.Tenuto = Tenuto;
 
   articulations.tests = function () {
-      test('music21.articulations.Articulation', function () {
+      QUnit.test('music21.articulations.Articulation', function (assert) {
           var acc = new music21.articulations.Accent();
-          equal(acc.name, 'accent', 'matching names for accent');
+          assert.equal(acc.name, 'accent', 'matching names for accent');
           var ten = new music21.articulations.Tenuto();
-          equal(ten.name, 'tenuto', 'matching names for tenuto');
+          assert.equal(ten.name, 'tenuto', 'matching names for tenuto');
           var n = new music21.note.Note('C');
           n.articulations.push(acc);
           n.articulations.push(ten);
-          equal(n.articulations[0].name, 'accent', 'accent in array');
-          equal(n.articulations[1].name, 'tenuto', 'tenuto in array');
+          assert.equal(n.articulations[0].name, 'accent', 'accent in array');
+          assert.equal(n.articulations[1].name, 'tenuto', 'tenuto in array');
       });
 
-      test('music21.articulations.Articulation display', function () {
+      QUnit.test('music21.articulations.Articulation display', function (assert) {
           // Marcato is a pseudo multiple inheritance
           var marc = new music21.articulations.Marcato();
-          equal(marc.name, 'marcato', 'matching names for marcato');
+          assert.equal(marc.name, 'marcato', 'matching names for marcato');
           var n = new music21.note.Note('D#5');
           n.articulations.push(marc);
           var nBoring = new music21.note.Note('D#5');
@@ -1721,7 +1708,7 @@
           measure.append(nBoring.clone());
           measure.append(n.clone());
           measure.appendNewCanvas();
-          ok(true, 'something worked');
+          assert.ok(true, 'something worked');
       });
   };
 
@@ -2287,23 +2274,23 @@
   beam.Beams = Beams;
 
   beam.tests = function () {
-      test('music21.beam.Beams', function () {
+      QUnit.test('music21.beam.Beams', function (assert) {
           var a = new music21.beam.Beams();
           a.fill('16th');
           a.setAll('start');
-          equal(a.getTypes()[0], 'start');
-          equal(a.getTypes()[1], 'start');
+          assert.equal(a.getTypes()[0], 'start');
+          assert.equal(a.getTypes()[1], 'start');
 
           var b = new music21.beam.Beams();
           b.fill('16th');
           b.setAll('start');
           b.setByNumber(1, 'continue');
-          equal(b.beamsList[0].type, 'continue');
+          assert.equal(b.beamsList[0].type, 'continue');
           b.setByNumber(2, 'stop');
-          equal(b.beamsList[1].type, 'stop');
+          assert.equal(b.beamsList[1].type, 'stop');
           b.setByNumber(2, 'partial-right');
-          equal(b.beamsList[1].type, 'partial');
-          equal(b.beamsList[1].direction, 'right');
+          assert.equal(b.beamsList[1].type, 'partial');
+          assert.equal(b.beamsList[1].direction, 'right');
       });
   };
 
@@ -2694,20 +2681,20 @@
   pitch.Pitch = Pitch;
 
   pitch.tests = function () {
-      test('music21.pitch.Accidental', function () {
+      QUnit.test('music21.pitch.Accidental', function (assert) {
           var a = new music21.pitch.Accidental('-');
-          equal(a.alter, -1.0, 'flat alter passed');
-          equal(a.name, 'flat', 'flat name passed');
+          assert.equal(a.alter, -1.0, 'flat alter passed');
+          assert.equal(a.name, 'flat', 'flat name passed');
       });
 
-      test('music21.pitch.Pitch', function () {
+      QUnit.test('music21.pitch.Pitch', function (assert) {
           var p = new music21.pitch.Pitch('D#5');
-          equal(p.name, 'D#', 'Pitch Name set to D#');
-          equal(p.step, 'D', 'Pitch Step set to D');
-          equal(p.octave, 5, 'Pitch octave set to 5');
+          assert.equal(p.name, 'D#', 'Pitch Name set to D#');
+          assert.equal(p.step, 'D', 'Pitch Step set to D');
+          assert.equal(p.octave, 5, 'Pitch octave set to 5');
           var c = new music21.clef.AltoClef();
           var vfn = p.vexflowName(c);
-          equal(vfn, 'C#/6', 'Vexflow name set');
+          assert.equal(vfn, 'C#/6', 'Vexflow name set');
       });
   };
 
@@ -3375,11 +3362,12 @@
   /* ------ SpacerRest ------ */
 
   note.tests = function () {
-      test('music21.note.Note', function () {
+      QUnit.test('music21.note.Note', function (assert) {
           var n = new note.Note('D#5');
-          equal(n.pitch.name, 'D#', 'Pitch Name set to D#');
-          equal(n.pitch.step, 'D', 'Pitch Step set to D');
-          equal(n.pitch.octave, 5, 'Pitch octave set to 5');
+
+          assert.equal(n.pitch.name, 'D#', 'Pitch Name set to D#');
+          assert.equal(n.pitch.step, 'D', 'Pitch Step set to D');
+          assert.equal(n.pitch.octave, 5, 'Pitch octave set to 5');
       });
   };
 
@@ -4174,30 +4162,30 @@
 
   // tests
   clef.tests = function () {
-      test('music21.clef.Clef', function () {
+      QUnit.test('music21.clef.Clef', function (assert) {
           var c1 = new music21.clef.Clef();
-          equal(c1.isClassOrSubclass('Clef'), true, 'clef is a Clef');
+          assert.equal(c1.isClassOrSubclass('Clef'), true, 'clef is a Clef');
 
           var ac = new music21.clef.AltoClef();
-          equal(ac.lowestLine, 25, 'first line set');
+          assert.equal(ac.lowestLine, 25, 'first line set');
           var n = new music21.note.Note('C#4');
           n.setStemDirectionFromClef(ac);
-          equal(n.stemDirection, 'down', 'stem direction set');
+          assert.equal(n.stemDirection, 'down', 'stem direction set');
           n.pitch.diatonicNoteNum -= 1;
           n.setStemDirectionFromClef(ac);
-          equal(n.stemDirection, 'up', 'stem direction set');
+          assert.equal(n.stemDirection, 'up', 'stem direction set');
           n.pitch.diatonicNoteNum += 1;
           var p2 = ac.convertPitchToTreble(n.pitch);
-          equal(p2.nameWithOctave, 'B#4', 'converted to treble');
+          assert.equal(p2.nameWithOctave, 'B#4', 'converted to treble');
       });
-      test('music21.clef.Clef 8va', function () {
+      QUnit.test('music21.clef.Clef 8va', function (assert) {
           var ac = new music21.clef.Treble8vaClef();
-          equal(ac.lowestLine, 38, 'first line set');
+          assert.equal(ac.lowestLine, 38, 'first line set');
           var n = new music21.note.Note('C#5');
           n.setStemDirectionFromClef(ac);
-          equal(n.stemDirection, 'up', 'stem direction set');
+          assert.equal(n.stemDirection, 'up', 'stem direction set');
           var p2 = ac.convertPitchToTreble(n.pitch);
-          equal(p2.nameWithOctave, 'C#4', 'converted to treble');
+          assert.equal(p2.nameWithOctave, 'C#4', 'converted to treble');
           var s = new music21.stream.Stream();
           s.clef = ac;
           s.append(n);
@@ -4367,25 +4355,29 @@
   dynamics.Dynamic = Dynamic;
 
   dynamics.tests = function () {
-      test('music21.dynamics.Dynamic', function () {
+      QUnit.test('music21.dynamics.Dynamic', function (assert) {
           var dynamic = new dynamics.Dynamic('pp');
-          equal(dynamic.value, 'pp', 'matching dynamic');
+          assert.equal(dynamic.value, 'pp', 'matching dynamic');
+
           dynamic = new dynamics.Dynamic(0.98);
-          equal(dynamic.value, 'fff', 'number conversion successful');
-          equal(dynamic.volumeScalar, 0.98, 'correct volume');
-          equal(dynamic.longName, 'fortississimo', 'matching long name');
-          equal(dynamic.englishName, 'extremely loud', 'matching english names');
+          assert.equal(dynamic.value, 'fff', 'number conversion successful');
+          assert.equal(dynamic.volumeScalar, 0.98, 'correct volume');
+          assert.equal(dynamic.longName, 'fortississimo', 'matching long name');
+          assert.equal(dynamic.englishName, 'extremely loud', 'matching english names');
+
           dynamic = new dynamics.Dynamic('other');
-          equal(dynamic.value, 'other', 'record non standard dynamic');
-          equal(dynamic.longName, undefined, 'no long name for non standard dynamic');
-          equal(dynamic.englishName, undefined, 'no english name for non standard dynamic');
+          assert.equal(dynamic.value, 'other', 'record non standard dynamic');
+          assert.equal(dynamic.longName, undefined, 'no long name for non standard dynamic');
+          assert.equal(dynamic.englishName, undefined, 'no english name for non standard dynamic');
+
           dynamic.value = 0.18;
-          equal(dynamic.value, 'pp', 'change in dynamic');
-          equal(dynamic.volumeScalar, 0.18, 'change in volume');
+          assert.equal(dynamic.value, 'pp', 'change in dynamic');
+          assert.equal(dynamic.volumeScalar, 0.18, 'change in volume');
+
           dynamic.value = 'other';
-          equal(dynamic.value, 'other', 'change to non standard');
-          equal(dynamic.longName, undefined, 'change to non standard dynamic');
-          equal(dynamic.englishName, undefined, 'change to non standard dynamic');
+          assert.equal(dynamic.value, 'other', 'change to non standard');
+          assert.equal(dynamic.longName, undefined, 'change to non standard dynamic');
+          assert.equal(dynamic.englishName, undefined, 'change to non standard dynamic');
       });
   };
 
@@ -6106,7 +6098,7 @@
   key.Key = Key;
 
   key.tests = function () {
-      test('music21.key.Key', function () {
+      QUnit.test('music21.key.Key', function (assert) {
           var testSharps = [
           // sharps, mode, given name, given mode
           [0, 'minor', 'a'], [0, 'major', 'C'], [0, 'major'], [6, 'major', 'F#'], [3, 'minor', 'f#'], [6, 'major', 'f#', 'major'], [-2, 'major', 'B-'], [-5, 'minor', 'b-']];
@@ -6119,23 +6111,23 @@
               var _k = new key.Key(givenKeyName, givenMode);
               var foundSharps = _k.sharps;
               var foundMode = _k.mode;
-              equal(foundSharps, expectedSharps, 'Test sharps: ' + givenKeyName + ' (mode: ' + givenMode + ') ');
-              equal(foundMode, expectedMode, 'Test mode: ' + givenKeyName + ' (mode: ' + givenMode + ') ');
+              assert.equal(foundSharps, expectedSharps, 'Test sharps: ' + givenKeyName + ' (mode: ' + givenMode + ') ');
+              assert.equal(foundMode, expectedMode, 'Test mode: ' + givenKeyName + ' (mode: ' + givenMode + ') ');
           }
 
           var k = new key.Key('f#');
           var s = k.getScale();
-          equal(s[2].nameWithOctave, 'A4', 'test minor scale');
-          equal(s[6].nameWithOctave, 'E5');
+          assert.equal(s[2].nameWithOctave, 'A4', 'test minor scale');
+          assert.equal(s[6].nameWithOctave, 'E5');
           s = k.getScale('major');
-          equal(s[2].nameWithOctave, 'A#4', 'test major scale');
-          equal(s[6].nameWithOctave, 'E#5');
+          assert.equal(s[2].nameWithOctave, 'A#4', 'test major scale');
+          assert.equal(s[6].nameWithOctave, 'E#5');
           s = k.getScale('harmonic minor');
-          equal(s[2].nameWithOctave, 'A4', 'test harmonic minor scale');
-          equal(s[5].nameWithOctave, 'D5');
-          equal(s[6].nameWithOctave, 'E#5');
+          assert.equal(s[2].nameWithOctave, 'A4', 'test harmonic minor scale');
+          assert.equal(s[5].nameWithOctave, 'D5');
+          assert.equal(s[6].nameWithOctave, 'E#5');
 
-          equal(k.width, 15, 'checking width is 5 * abs(sharps)');
+          assert.equal(k.width, 15, 'checking width is 5 * abs(sharps)');
       });
   };
 
@@ -11785,29 +11777,32 @@
 
   // Tests...
 
-  stream.tests = function streamTests() {
-      test('music21.stream.Stream', function () {
+  stream.tests = function () {
+      QUnit.test('music21.stream.Stream', function (assert) {
           var s = new stream.Stream();
           s.append(new note.Note('C#5'));
           s.append(new note.Note('D#5'));
           var n = new note.Note('F5');
           n.duration.type = 'half';
           s.append(n);
-          equal(s.length, 3, 'Simple stream length');
+          assert.equal(s.length, 3, 'Simple stream length');
       });
 
-      test('music21.stream.Stream.duration', function () {
+      QUnit.test('music21.stream.Stream.duration', function (assert) {
           var s = new stream.Stream();
-          equal(s.duration.quarterLength, 0, 'EmptyString QuarterLength');
+          assert.equal(s.duration.quarterLength, 0, 'EmptyString QuarterLength');
+
           s.append(new note.Note('C#5'));
-          equal(s.duration.quarterLength, 1.0, '1 quarter QuarterLength');
+          assert.equal(s.duration.quarterLength, 1.0, '1 quarter QuarterLength');
+
           var n = new note.Note('F5');
           n.duration.type = 'half';
           s.append(n);
-          equal(s.duration.quarterLength, 3.0, '3 quarter QuarterLength');
+          assert.equal(s.duration.quarterLength, 3.0, '3 quarter QuarterLength');
+
           s.duration = new duration.Duration(3.0);
           s.append(new note.Note('D#5'));
-          equal(s.duration.quarterLength, 3.0, 'overridden duration -- remains');
+          assert.equal(s.duration.quarterLength, 3.0, 'overridden duration -- remains');
 
           var sc = new stream.Score();
           var p1 = new stream.Part();
@@ -11829,26 +11824,26 @@
           p2.append(m2);
           sc.insert(0, p1);
           sc.insert(0, p2);
-          equal(sc.duration.quarterLength, 4.0, 'duration of streams with nested parts');
-          equal(sc.flat.duration.quarterLength, 4.0, 'duration of flat stream with overlapping notes');
+          assert.equal(sc.duration.quarterLength, 4.0, 'duration of streams with nested parts');
+          assert.equal(sc.flat.duration.quarterLength, 4.0, 'duration of flat stream with overlapping notes');
           n21.duration.type = 'half';
-          equal(sc.duration.quarterLength, 3.5, 'new duration with nested parts');
-          equal(sc.flat.duration.quarterLength, 3.5, 'new duration of flat stream');
+          assert.equal(sc.duration.quarterLength, 3.5, 'new duration with nested parts');
+          assert.equal(sc.flat.duration.quarterLength, 3.5, 'new duration of flat stream');
       });
 
-      test('music21.stream.Stream.insert and offsets', function () {
+      QUnit.test('music21.stream.Stream.insert and offsets', function (assert) {
           var s = new stream.Stream();
           s.append(new note.Note('C#5'));
           var n3 = new note.Note('E5');
           s.insert(2.0, n3);
           var n2 = new note.Note('D#5');
           s.insert(1.0, n2);
-          equal(s.get(0).name, 'C#');
-          equal(s.get(1).name, 'D#');
-          equal(s.get(2).name, 'E');
-          equal(s.get(0).offset, 0.0);
-          equal(s.get(1).offset, 1.0);
-          equal(s.get(2).offset, 2.0);
+          assert.equal(s.get(0).name, 'C#');
+          assert.equal(s.get(1).name, 'D#');
+          assert.equal(s.get(2).name, 'E');
+          assert.equal(s.get(0).offset, 0.0);
+          assert.equal(s.get(1).offset, 1.0);
+          assert.equal(s.get(2).offset, 2.0);
           var p = new stream.Part();
           var m1 = new stream.Measure();
           var n1 = new note.Note('C#');
@@ -11860,16 +11855,16 @@
           m2.append(n2);
           p.append(m1);
           p.append(m2);
-          equal(p.get(0).get(0).offset, 0.0);
+          assert.equal(p.get(0).get(0).offset, 0.0);
           var pf = p.flat;
-          equal(pf.get(1).offset, 4.0);
+          assert.equal(pf.get(1).offset, 4.0);
           var pf2 = p.flat; // repeated calls do not change
-          equal(pf2.get(1).offset, 4.0, 'repeated calls do not change offset');
+          assert.equal(pf2.get(1).offset, 4.0, 'repeated calls do not change offset');
           var pf3 = pf2.flat;
-          equal(pf3.get(1).offset, 4.0, '.flat.flat does not change offset');
+          assert.equal(pf3.get(1).offset, 4.0, '.flat.flat does not change offset');
       });
 
-      test('music21.stream.Stream.canvas', function () {
+      QUnit.test('music21.stream.Stream.canvas', function (assert) {
           var s = new stream.Stream();
           s.append(new note.Note('C#5'));
           s.append(new note.Note('D#5'));
@@ -11877,11 +11872,11 @@
           n.duration.type = 'half';
           s.append(n);
           var c = s.createNewCanvas(100, 50);
-          equal(c.attr('width'), 100, 'stored width matches');
-          equal(c.attr('height'), 50, 'stored height matches');
+          assert.equal(c.attr('width'), 100, 'stored width matches');
+          assert.equal(c.attr('height'), 50, 'stored height matches');
       });
 
-      test('music21.stream.Stream.getElementsByClass', function () {
+      QUnit.test('music21.stream.Stream.getElementsByClass', function (assert) {
           var s = new stream.Stream();
           var n1 = new note.Note('C#5');
           var n2 = new note.Note('D#5');
@@ -11892,40 +11887,40 @@
           s.append(r);
           s.append(n2);
           var c = s.getElementsByClass('Note');
-          equal(c.length, 2, 'got two notes');
-          equal(c.get(0), n1, 'n1 first');
-          equal(c.get(1), n2, 'n2 second');
+          assert.equal(c.length, 2, 'got two notes');
+          assert.equal(c.get(0), n1, 'n1 first');
+          assert.equal(c.get(1), n2, 'n2 second');
           c = s.getElementsByClass('Clef');
-          equal(c.length, 1, 'got clef from subclass');
+          assert.equal(c.length, 1, 'got clef from subclass');
           c = s.getElementsByClass(['Note', 'TrebleClef']);
-          equal(c.length, 3, 'got multiple classes');
+          assert.equal(c.length, 3, 'got multiple classes');
           c = s.getElementsByClass('GeneralNote');
-          equal(c.length, 3, 'got multiple subclasses');
+          assert.equal(c.length, 3, 'got multiple subclasses');
       });
-      test('music21.stream.offsetMap', function () {
+      QUnit.test('music21.stream.offsetMap', function (assert) {
           var n = new note.Note('G3');
           var o = new note.Note('A3');
           var s = new stream.Measure();
           s.insert(0, n);
           s.insert(0.5, o);
           var om = s.offsetMap();
-          equal(om.length, 2, 'offsetMap should have length 2');
+          assert.equal(om.length, 2, 'offsetMap should have length 2');
           var omn = om[0];
           var omo = om[1];
-          equal(omn.element, n, 'omn element should be n');
-          equal(omn.offset, 0.0, 'omn offset should be 0');
-          equal(omn.endTime, 1.0, 'omn endTime should be 1.0');
-          equal(omn.voiceIndex, undefined, 'omn voiceIndex should be undefined');
-          equal(omo.element, o, 'omo element should be o');
-          equal(omo.offset, 0.5, 'omo offset should be 0.5');
-          equal(omo.endTime, 1.5, 'omo endTime should be 1.5');
+          assert.equal(omn.element, n, 'omn element should be n');
+          assert.equal(omn.offset, 0.0, 'omn offset should be 0');
+          assert.equal(omn.endTime, 1.0, 'omn endTime should be 1.0');
+          assert.equal(omn.voiceIndex, undefined, 'omn voiceIndex should be undefined');
+          assert.equal(omo.element, o, 'omo element should be o');
+          assert.equal(omo.offset, 0.5, 'omo offset should be 0.5');
+          assert.equal(omo.endTime, 1.5, 'omo endTime should be 1.5');
       });
-      test('music21.stream.Stream appendNewCanvas ', function () {
+      QUnit.test('music21.stream.Stream appendNewCanvas ', function (assert) {
           var n = new note.Note('G3');
           var s = new stream.Measure();
           s.append(n);
           s.appendNewCanvas(document.body);
-          equal(s.length, 1, 'ensure that should have one note');
+          assert.equal(s.length, 1, 'ensure that should have one note');
           var n1 = new note.Note('G3');
           var s1 = new stream.Measure();
           s1.append(n1);
@@ -12486,64 +12481,64 @@
   roman.RomanNumeral = RomanNumeral;
 
   roman.tests = function () {
-      test('music21.roman.RomanNumeral', function () {
+      QUnit.test('music21.roman.RomanNumeral', function (assert) {
           var t1 = 'IV';
           var rn1 = new roman.RomanNumeral(t1, 'F');
-          equal(rn1.scaleDegree, 4, 'test scale dgree of F IV');
+          assert.equal(rn1.scaleDegree, 4, 'test scale dgree of F IV');
           var scale = rn1.scale;
-          equal(scale[0].name, 'F', 'test scale is F');
-          equal(rn1.root.name, 'B-', 'test root of F IV');
-          equal(rn1.impliedQuality, 'major', 'test quality is major');
-          equal(rn1.pitches[0].name, 'B-', 'test pitches[0] == B-');
-          equal(rn1.pitches[1].name, 'D', 'test pitches[1] == D');
-          equal(rn1.pitches[2].name, 'F', 'test pitches[2] == F');
-          equal(rn1.degreeName, 'Subdominant', 'test is Subdominant');
+          assert.equal(scale[0].name, 'F', 'test scale is F');
+          assert.equal(rn1.root.name, 'B-', 'test root of F IV');
+          assert.equal(rn1.impliedQuality, 'major', 'test quality is major');
+          assert.equal(rn1.pitches[0].name, 'B-', 'test pitches[0] == B-');
+          assert.equal(rn1.pitches[1].name, 'D', 'test pitches[1] == D');
+          assert.equal(rn1.pitches[2].name, 'F', 'test pitches[2] == F');
+          assert.equal(rn1.degreeName, 'Subdominant', 'test is Subdominant');
 
           var t2 = 'viio7';
           rn1 = new roman.RomanNumeral(t2, 'a');
-          equal(rn1.scaleDegree, 7, 'test scale dgree of A viio7');
-          equal(rn1.root.name, 'G#', 'test root name == G#');
-          equal(rn1.impliedQuality, 'diminished-seventh', 'implied quality');
-          equal(rn1.pitches[0].name, 'G#', 'test pitches[0] == G#');
-          equal(rn1.pitches[1].name, 'B', 'test pitches[1] == B');
-          equal(rn1.pitches[2].name, 'D', 'test pitches[2] == D');
-          equal(rn1.pitches[3].name, 'F', 'test pitches[3] == F');
-          equal(rn1.degreeName, 'Leading-tone', 'test is Leading-tone');
+          assert.equal(rn1.scaleDegree, 7, 'test scale dgree of A viio7');
+          assert.equal(rn1.root.name, 'G#', 'test root name == G#');
+          assert.equal(rn1.impliedQuality, 'diminished-seventh', 'implied quality');
+          assert.equal(rn1.pitches[0].name, 'G#', 'test pitches[0] == G#');
+          assert.equal(rn1.pitches[1].name, 'B', 'test pitches[1] == B');
+          assert.equal(rn1.pitches[2].name, 'D', 'test pitches[2] == D');
+          assert.equal(rn1.pitches[3].name, 'F', 'test pitches[3] == F');
+          assert.equal(rn1.degreeName, 'Leading-tone', 'test is Leading-tone');
 
           t2 = 'V7';
           rn1 = new roman.RomanNumeral(t2, 'a');
-          equal(rn1.scaleDegree, 5, 'test scale dgree of a V7');
-          equal(rn1.root.name, 'E', 'root name is E');
-          equal(rn1.impliedQuality, 'dominant-seventh', 'implied quality dominant-seventh');
-          equal(rn1.pitches[0].name, 'E', 'test pitches[0] == E');
-          equal(rn1.pitches[1].name, 'G#', 'test pitches[1] == G#');
-          equal(rn1.pitches[2].name, 'B', 'test pitches[2] == B');
-          equal(rn1.pitches[3].name, 'D', 'test pitches[3] == D');
-          equal(rn1.degreeName, 'Dominant', 'test is Dominant');
+          assert.equal(rn1.scaleDegree, 5, 'test scale dgree of a V7');
+          assert.equal(rn1.root.name, 'E', 'root name is E');
+          assert.equal(rn1.impliedQuality, 'dominant-seventh', 'implied quality dominant-seventh');
+          assert.equal(rn1.pitches[0].name, 'E', 'test pitches[0] == E');
+          assert.equal(rn1.pitches[1].name, 'G#', 'test pitches[1] == G#');
+          assert.equal(rn1.pitches[2].name, 'B', 'test pitches[2] == B');
+          assert.equal(rn1.pitches[3].name, 'D', 'test pitches[3] == D');
+          assert.equal(rn1.degreeName, 'Dominant', 'test is Dominant');
 
           t2 = 'VII';
           rn1 = new roman.RomanNumeral(t2, 'f#');
-          equal(rn1.scaleDegree, 7, 'test scale dgree of a VII');
-          equal(rn1.root.name, 'E', 'root name is E');
-          equal(rn1.impliedQuality, 'major', 'implied quality major');
-          equal(rn1.pitches[0].name, 'E', 'test pitches[0] == E');
-          equal(rn1.pitches[1].name, 'G#', 'test pitches[1] == G#');
-          equal(rn1.pitches[2].name, 'B', 'test pitches[2] == B');
-          equal(rn1.degreeName, 'Subtonic', 'test is Subtonic');
+          assert.equal(rn1.scaleDegree, 7, 'test scale dgree of a VII');
+          assert.equal(rn1.root.name, 'E', 'root name is E');
+          assert.equal(rn1.impliedQuality, 'major', 'implied quality major');
+          assert.equal(rn1.pitches[0].name, 'E', 'test pitches[0] == E');
+          assert.equal(rn1.pitches[1].name, 'G#', 'test pitches[1] == G#');
+          assert.equal(rn1.pitches[2].name, 'B', 'test pitches[2] == B');
+          assert.equal(rn1.degreeName, 'Subtonic', 'test is Subtonic');
       });
 
-      test('music21.roman.RomanNumeral - inversions', function () {
+      QUnit.test('music21.roman.RomanNumeral - inversions', function (assert) {
           var t1 = 'IV';
           var rn1 = new roman.RomanNumeral(t1, 'F');
-          equal(rn1.scaleDegree, 4, 'test scale dgree of F IV');
+          assert.equal(rn1.scaleDegree, 4, 'test scale dgree of F IV');
           var scale = rn1.scale;
-          equal(scale[0].name, 'F', 'test scale is F');
-          equal(rn1.root.name, 'B-', 'test root of F IV');
-          equal(rn1.impliedQuality, 'major', 'test quality is major');
-          equal(rn1.pitches[0].name, 'B-', 'test pitches[0] == B-');
-          equal(rn1.pitches[1].name, 'D', 'test pitches[1] == D');
-          equal(rn1.pitches[2].name, 'F', 'test pitches[2] == F');
-          equal(rn1.degreeName, 'Subdominant', 'test is Subdominant');
+          assert.equal(scale[0].name, 'F', 'test scale is F');
+          assert.equal(rn1.root.name, 'B-', 'test root of F IV');
+          assert.equal(rn1.impliedQuality, 'major', 'test quality is major');
+          assert.equal(rn1.pitches[0].name, 'B-', 'test pitches[0] == B-');
+          assert.equal(rn1.pitches[1].name, 'D', 'test pitches[1] == D');
+          assert.equal(rn1.pitches[2].name, 'F', 'test pitches[2] == F');
+          assert.equal(rn1.degreeName, 'Subdominant', 'test is Subdominant');
       });
   };
 
@@ -13883,6 +13878,8 @@
   music21$1.vfShow = vfShow;
   music21$1.webmidi = webmidi;
   music21$1.widgets = widgets;
+
+  //export default music21;
 
   exports.music21 = music21$1;
 

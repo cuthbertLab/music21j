@@ -144,7 +144,7 @@ module.exports = (grunt) => {
 	        },
 	    },
 	    qunit: {
-	      files: ['tests/index.html']
+	      files: ['tests/gruntTest.html']
 	    },
 	     watch: {
 	         scripts: {
@@ -192,7 +192,7 @@ module.exports = (grunt) => {
     // Default task(s).
     grunt.registerTask('default', ['rollup', 'uglify:build']); //, 'eslint', ... 'jsdoc']); 
     //grunt.registerTask('default', ['webpack:build', 'concat', 'uglify:build']); //, 'jsdoc']);
-    //grunt.registerTask('test', 'Run qunit tests', ['rollup', 'qunit']);
+    grunt.registerTask('test', 'Run qunit tests', ['rollup', 'qunit']);
     grunt.registerTask('publish', 'Raise the version and publish', function () { 
         grunt.task.run('bump');
     });

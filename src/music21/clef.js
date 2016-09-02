@@ -281,30 +281,30 @@ clef.bestClef = function bestClef(st) {
 
 // tests
 clef.tests = () => {
-    test('music21.clef.Clef', () => {
+    QUnit.test('music21.clef.Clef', (assert) => {
         const c1 = new music21.clef.Clef();
-        equal(c1.isClassOrSubclass('Clef'), true, 'clef is a Clef');
+        assert.equal(c1.isClassOrSubclass('Clef'), true, 'clef is a Clef');
 
         const ac = new music21.clef.AltoClef();
-        equal(ac.lowestLine, 25, 'first line set');
+        assert.equal(ac.lowestLine, 25, 'first line set');
         const n = new music21.note.Note('C#4');
         n.setStemDirectionFromClef(ac);
-        equal(n.stemDirection, 'down', 'stem direction set');
+        assert.equal(n.stemDirection, 'down', 'stem direction set');
         n.pitch.diatonicNoteNum -= 1;
         n.setStemDirectionFromClef(ac);
-        equal(n.stemDirection, 'up', 'stem direction set');
+        assert.equal(n.stemDirection, 'up', 'stem direction set');
         n.pitch.diatonicNoteNum += 1;
         const p2 = ac.convertPitchToTreble(n.pitch);
-        equal(p2.nameWithOctave, 'B#4', 'converted to treble');
+        assert.equal(p2.nameWithOctave, 'B#4', 'converted to treble');
     });
-    test('music21.clef.Clef 8va', () => {
+    QUnit.test('music21.clef.Clef 8va', (assert) => {
         const ac = new music21.clef.Treble8vaClef();
-        equal(ac.lowestLine, 38, 'first line set');
+        assert.equal(ac.lowestLine, 38, 'first line set');
         const n = new music21.note.Note('C#5');
         n.setStemDirectionFromClef(ac);
-        equal(n.stemDirection, 'up', 'stem direction set');
+        assert.equal(n.stemDirection, 'up', 'stem direction set');
         const p2 = ac.convertPitchToTreble(n.pitch);
-        equal(p2.nameWithOctave, 'C#4', 'converted to treble');
+        assert.equal(p2.nameWithOctave, 'C#4', 'converted to treble');
         const s = new music21.stream.Stream();
         s.clef = ac;
         s.append(n);

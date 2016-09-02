@@ -72,3 +72,5 @@ music21.tinyNotation = tinyNotation;
 music21.vfShow = vfShow;
 music21.webmidi = webmidi;
 music21.widgets = widgets;
+
+//export default music21;

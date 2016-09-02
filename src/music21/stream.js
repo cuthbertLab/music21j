@@ -2240,29 +2240,32 @@ stream.OffsetMap = OffsetMap;
 
 // Tests...
 
-stream.tests = function streamTests() {
-    test('music21.stream.Stream', () => {
+stream.tests = () => {
+    QUnit.test('music21.stream.Stream', (assert) => {
         const s = new stream.Stream();
         s.append(new note.Note('C#5'));
         s.append(new note.Note('D#5'));
         const n = new note.Note('F5');
         n.duration.type = 'half';
         s.append(n);
-        equal(s.length, 3, 'Simple stream length');
+        assert.equal(s.length, 3, 'Simple stream length');
     });
 
-    test('music21.stream.Stream.duration', () => {
+    QUnit.test('music21.stream.Stream.duration', (assert) => {
         const s = new stream.Stream();
-        equal(s.duration.quarterLength, 0, 'EmptyString QuarterLength');
+        assert.equal(s.duration.quarterLength, 0, 'EmptyString QuarterLength');
+        
         s.append(new note.Note('C#5'));
-        equal(s.duration.quarterLength, 1.0, '1 quarter QuarterLength');
+        assert.equal(s.duration.quarterLength, 1.0, '1 quarter QuarterLength');
+        
         const n =  new note.Note('F5');
         n.duration.type = 'half';
         s.append(n);
-        equal(s.duration.quarterLength, 3.0, '3 quarter QuarterLength');
+        assert.equal(s.duration.quarterLength, 3.0, '3 quarter QuarterLength');
+        
         s.duration = new duration.Duration(3.0);
         s.append(new note.Note('D#5'));
-        equal(s.duration.quarterLength, 3.0, 'overridden duration -- remains');
+        assert.equal(s.duration.quarterLength, 3.0, 'overridden duration -- remains');
 
         const sc = new stream.Score();
         const p1 = new stream.Part();
@@ -2284,27 +2287,27 @@ stream.tests = function streamTests() {
         p2.append(m2);
         sc.insert(0, p1);
         sc.insert(0, p2);
-        equal(sc.duration.quarterLength, 4.0, 'duration of streams with nested parts');
-        equal(sc.flat.duration.quarterLength, 4.0, 'duration of flat stream with overlapping notes');
+        assert.equal(sc.duration.quarterLength, 4.0, 'duration of streams with nested parts');
+        assert.equal(sc.flat.duration.quarterLength, 4.0, 'duration of flat stream with overlapping notes');
         n21.duration.type = 'half';
-        equal(sc.duration.quarterLength, 3.5, 'new duration with nested parts');
-        equal(sc.flat.duration.quarterLength, 3.5, 'new duration of flat stream');
+        assert.equal(sc.duration.quarterLength, 3.5, 'new duration with nested parts');
+        assert.equal(sc.flat.duration.quarterLength, 3.5, 'new duration of flat stream');
     });
 
 
-    test('music21.stream.Stream.insert and offsets', () => {
+    QUnit.test('music21.stream.Stream.insert and offsets', (assert) => {
         const s = new stream.Stream();
         s.append(new note.Note('C#5'));
         const n3 = new note.Note('E5');
         s.insert(2.0, n3);
         let n2 = new note.Note('D#5');
         s.insert(1.0, n2);
-        equal(s.get(0).name, 'C#');
-        equal(s.get(1).name, 'D#');
-        equal(s.get(2).name, 'E');
-        equal(s.get(0).offset, 0.0);
-        equal(s.get(1).offset, 1.0);
-        equal(s.get(2).offset, 2.0);
+        assert.equal(s.get(0).name, 'C#');
+        assert.equal(s.get(1).name, 'D#');
+        assert.equal(s.get(2).name, 'E');
+        assert.equal(s.get(0).offset, 0.0);
+        assert.equal(s.get(1).offset, 1.0);
+        assert.equal(s.get(2).offset, 2.0);
         const p = new stream.Part();
         const m1 = new stream.Measure();
         const n1 = new note.Note('C#');
@@ -2316,16 +2319,16 @@ stream.tests = function streamTests() {
         m2.append(n2);
         p.append(m1);
         p.append(m2);
-        equal(p.get(0).get(0).offset, 0.0);
+        assert.equal(p.get(0).get(0).offset, 0.0);
         const pf = p.flat;
-        equal(pf.get(1).offset, 4.0);
+        assert.equal(pf.get(1).offset, 4.0);
         const pf2 = p.flat; // repeated calls do not change
-        equal(pf2.get(1).offset, 4.0, 'repeated calls do not change offset');
+        assert.equal(pf2.get(1).offset, 4.0, 'repeated calls do not change offset');
         const pf3 = pf2.flat;
-        equal(pf3.get(1).offset, 4.0, '.flat.flat does not change offset');
+        assert.equal(pf3.get(1).offset, 4.0, '.flat.flat does not change offset');
     });
 
-    test('music21.stream.Stream.canvas', () => {
+    QUnit.test('music21.stream.Stream.canvas', (assert) => {
         const s = new stream.Stream();
         s.append(new note.Note('C#5'));
         s.append(new note.Note('D#5'));
@@ -2333,11 +2336,11 @@ stream.tests = function streamTests() {
         n.duration.type = 'half';
         s.append(n);
         const c = s.createNewCanvas(100, 50);
-        equal(c.attr('width'), 100, 'stored width matches');
-        equal(c.attr('height'), 50, 'stored height matches');
+        assert.equal(c.attr('width'), 100, 'stored width matches');
+        assert.equal(c.attr('height'), 50, 'stored height matches');
     });
 
-    test('music21.stream.Stream.getElementsByClass', () => {
+    QUnit.test('music21.stream.Stream.getElementsByClass', (assert) => {
         const s = new stream.Stream();
         const n1 = new note.Note('C#5');
         const n2 = new note.Note('D#5');
@@ -2348,40 +2351,40 @@ stream.tests = function streamTests() {
         s.append(r);
         s.append(n2);
         let c = s.getElementsByClass('Note');
-        equal(c.length, 2, 'got two notes');
-        equal(c.get(0), n1, 'n1 first');
-        equal(c.get(1), n2, 'n2 second');
+        assert.equal(c.length, 2, 'got two notes');
+        assert.equal(c.get(0), n1, 'n1 first');
+        assert.equal(c.get(1), n2, 'n2 second');
         c = s.getElementsByClass('Clef');
-        equal(c.length, 1, 'got clef from subclass');
+        assert.equal(c.length, 1, 'got clef from subclass');
         c = s.getElementsByClass(['Note', 'TrebleClef']);
-        equal(c.length, 3, 'got multiple classes');
+        assert.equal(c.length, 3, 'got multiple classes');
         c = s.getElementsByClass('GeneralNote');
-        equal(c.length, 3, 'got multiple subclasses');
+        assert.equal(c.length, 3, 'got multiple subclasses');
     });
-    test('music21.stream.offsetMap', () => {
+    QUnit.test('music21.stream.offsetMap', (assert) => {
         const n = new note.Note('G3');
         const o = new note.Note('A3');
         const s = new stream.Measure();
         s.insert(0, n);
         s.insert(0.5, o);
         const om = s.offsetMap();
-        equal(om.length, 2, 'offsetMap should have length 2');
+        assert.equal(om.length, 2, 'offsetMap should have length 2');
         const omn = om[0];
         const omo = om[1];
-        equal(omn.element, n, 'omn element should be n');
-        equal(omn.offset, 0.0, 'omn offset should be 0');
-        equal(omn.endTime, 1.0, 'omn endTime should be 1.0');
-        equal(omn.voiceIndex, undefined, 'omn voiceIndex should be undefined');
-        equal(omo.element, o, 'omo element should be o');
-        equal(omo.offset, 0.5, 'omo offset should be 0.5');
-        equal(omo.endTime, 1.5, 'omo endTime should be 1.5');
+        assert.equal(omn.element, n, 'omn element should be n');
+        assert.equal(omn.offset, 0.0, 'omn offset should be 0');
+        assert.equal(omn.endTime, 1.0, 'omn endTime should be 1.0');
+        assert.equal(omn.voiceIndex, undefined, 'omn voiceIndex should be undefined');
+        assert.equal(omo.element, o, 'omo element should be o');
+        assert.equal(omo.offset, 0.5, 'omo offset should be 0.5');
+        assert.equal(omo.endTime, 1.5, 'omo endTime should be 1.5');
     });
-    test('music21.stream.Stream appendNewCanvas ', () => {
+    QUnit.test('music21.stream.Stream appendNewCanvas ', (assert) => {
         const n = new note.Note('G3');
         const s = new stream.Measure();
         s.append(n);
         s.appendNewCanvas(document.body);
-        equal(s.length, 1, 'ensure that should have one note');
+        assert.equal(s.length, 1, 'ensure that should have one note');
         const n1 = new note.Note('G3');
         const s1 = new stream.Measure();
         s1.append(n1);
@@ -2393,6 +2396,7 @@ stream.tests = function streamTests() {
         s1.append(n4);
         const div1 = s1.editableAccidentalCanvas();
         $(document.body).append(div1);
+        
     });
 };
 

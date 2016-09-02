@@ -152,25 +152,29 @@ export class Dynamic extends base.Music21Object {
 dynamics.Dynamic = Dynamic;
 
 dynamics.tests = () => {
-    test('music21.dynamics.Dynamic', () => {
+    QUnit.test('music21.dynamics.Dynamic', (assert) => {
         let dynamic = new dynamics.Dynamic('pp');
-        equal(dynamic.value, 'pp', 'matching dynamic');
+        assert.equal(dynamic.value, 'pp', 'matching dynamic');
+        
         dynamic = new dynamics.Dynamic(0.98);
-        equal(dynamic.value, 'fff', 'number conversion successful');
-        equal(dynamic.volumeScalar, 0.98, 'correct volume');
-        equal(dynamic.longName, 'fortississimo', 'matching long name');
-        equal(dynamic.englishName, 'extremely loud', 'matching english names');
+        assert.equal(dynamic.value, 'fff', 'number conversion successful');
+        assert.equal(dynamic.volumeScalar, 0.98, 'correct volume');
+        assert.equal(dynamic.longName, 'fortississimo', 'matching long name');
+        assert.equal(dynamic.englishName, 'extremely loud', 'matching english names');
+        
         dynamic = new dynamics.Dynamic('other');
-        equal(dynamic.value, 'other', 'record non standard dynamic');
-        equal(dynamic.longName, undefined, 'no long name for non standard dynamic');
-        equal(dynamic.englishName, undefined, 'no english name for non standard dynamic');
+        assert.equal(dynamic.value, 'other', 'record non standard dynamic');
+        assert.equal(dynamic.longName, undefined, 'no long name for non standard dynamic');
+        assert.equal(dynamic.englishName, undefined, 'no english name for non standard dynamic');
+        
         dynamic.value = 0.18;
-        equal(dynamic.value, 'pp', 'change in dynamic');
-        equal(dynamic.volumeScalar, 0.18, 'change in volume');
+        assert.equal(dynamic.value, 'pp', 'change in dynamic');
+        assert.equal(dynamic.volumeScalar, 0.18, 'change in volume');
+        
         dynamic.value = 'other';
-        equal(dynamic.value, 'other', 'change to non standard');
-        equal(dynamic.longName, undefined, 'change to non standard dynamic');
-        equal(dynamic.englishName, undefined, 'change to non standard dynamic');
+        assert.equal(dynamic.value, 'other', 'change to non standard');
+        assert.equal(dynamic.longName, undefined, 'change to non standard dynamic');
+        assert.equal(dynamic.englishName, undefined, 'change to non standard dynamic');
     });
 };
 

@@ -28,7 +28,7 @@ if (typeof(m21basis) === "undefined") {
      * 
      * See src/moduleLoader.js for version and version history.
      * 
-     * music21j acknowledges VexFlow, MIDI.js, jUnit, jQuery for their great efforts without which 
+     * music21j acknowledges VexFlow, MIDI.js in particular for their great efforts without which 
      * this module would not be possible.
      *  
      * @namespace 
@@ -168,18 +168,13 @@ var m21requireConfig = {
         'es6Shim': pathSimplify(m21srcPath + '/ext/es6-shim'),
         
         'm21': pathSimplify(m21srcPath + '/../build/music21.debug'),
+        'jsonpickle': pathSimplify(m21srcPath + '/ext/jsonpickle/build/jsonpickle.debug'),
         
         // formerly used Shims (IE9)
         //'base64Shim':   pathSimplify(m21srcPath + '/ext/midijs/inc/shim/Base64'),
         
         //'vexflowMods': 'ext/vexflowMods',
     },
-    packages: [
-      { name: 'jsonpickle',
-        location: pathSimplify(m21srcPath + '/ext/jsonpickle'),
-        main: 'main',             
-      },     
-    ],      
     shim: {
         'eventjs': {
             exports: 'eventjs',

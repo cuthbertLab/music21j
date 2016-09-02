@@ -417,46 +417,47 @@ export class Tuplet extends prebase.ProtoM21Object {
 duration.Tuplet = Tuplet;
 
 duration.tests = () => {
-    test('music21.duration.Duration', () => {
+    QUnit.test('music21.duration.Duration', (assert) => {
         const d = new music21.duration.Duration(1.0);
-        equal(d.type, 'quarter', 'got quarter note from 1.0');
-        equal(d.dots, 0, 'got no dots');
-        equal(d.quarterLength, 1.0, 'got 1.0 from 1.0');
-        equal(d.vexflowDuration, 'q', 'vexflow q');
+        assert.equal(d.type, 'quarter', 'got quarter note from 1.0');
+        assert.equal(d.dots, 0, 'got no dots');
+        assert.equal(d.quarterLength, 1.0, 'got 1.0 from 1.0');
+        assert.equal(d.vexflowDuration, 'q', 'vexflow q');
         d.type = 'half';
-        equal(d.type, 'half', 'got half note from half');
-        equal(d.dots, 0, 'got no dots');
-        equal(d.quarterLength, 2.0, 'got 2.0 from half');
-        equal(d.vexflowDuration, 'h', 'vexflow h');
+        assert.equal(d.type, 'half', 'got half note from half');
+        assert.equal(d.dots, 0, 'got no dots');
+        assert.equal(d.quarterLength, 2.0, 'got 2.0 from half');
+        assert.equal(d.vexflowDuration, 'h', 'vexflow h');
         d.quarterLength = 6.0;
-        equal(d.type, 'whole');
-        equal(d.dots, 1, 'got one dot from 6.0');
-        equal(d.quarterLength, 6.0, 'got 6.0');
-        equal(d.vexflowDuration, 'wd', 'vexflow duration wd');
+        assert.equal(d.type, 'whole');
+        assert.equal(d.dots, 1, 'got one dot from 6.0');
+        assert.equal(d.quarterLength, 6.0, 'got 6.0');
+        assert.equal(d.vexflowDuration, 'wd', 'vexflow duration wd');
+        
         d.quarterLength = 7.75;
-        equal(d.type, 'whole');
-        equal(d.dots, 4, 'got four dots from 7.75');
+        assert.equal(d.type, 'whole');
+        assert.equal(d.dots, 4, 'got four dots from 7.75');
     });
 
-    test('music21.duration.Tuplet', () => {
+    QUnit.test('music21.duration.Tuplet', (assert) => {
         const d = new music21.duration.Duration(0.5);
         const t = new music21.duration.Tuplet(5, 4);
-        equal(t.tupletMultiplier(), 0.8, 'tuplet multiplier');
+        assert.equal(t.tupletMultiplier(), 0.8, 'tuplet multiplier');
         d.appendTuplet(t);
-        equal(t.frozen, true, 'tuplet is frozen');
-        equal(d._tuplets[0], t, 'tuplet appended');
-        equal(d.quarterLength, 0.4, 'quarterLength Updated');
+        assert.equal(t.frozen, true, 'tuplet is frozen');
+        assert.equal(d._tuplets[0], t, 'tuplet appended');
+        assert.equal(d.quarterLength, 0.4, 'quarterLength Updated');
 
         const d2 = new music21.duration.Duration(1 / 3);
-        equal(d2.type, 'eighth', 'got eighth note from 1/3');
-        equal(d2.dots, 0, 'got no dots');
-        equal(d2.quarterLength, 1 / 3, 'got 1/3 from 1/3');
+        assert.equal(d2.type, 'eighth', 'got eighth note from 1/3');
+        assert.equal(d2.dots, 0, 'got no dots');
+        assert.equal(d2.quarterLength, 1 / 3, 'got 1/3 from 1/3');
         const t2 = d2.tuplets[0];
-        equal(t2.numberNotesActual, 3, '3/2 tuplet');
-        equal(t2.numberNotesNormal, 2, '3/2 tuplet');
-        equal(t2.durationActual.quarterLength, 0.5);
-        equal(t2.tupletMultiplier(), 2 / 3, '2/3 tuplet multiplier');
-        equal(t2.totalTupletLength(), 1.0, 'total tuplet == 1.0');
+        assert.equal(t2.numberNotesActual, 3, '3/2 tuplet');
+        assert.equal(t2.numberNotesNormal, 2, '3/2 tuplet');
+        assert.equal(t2.durationActual.quarterLength, 0.5);
+        assert.equal(t2.tupletMultiplier(), 2 / 3, '2/3 tuplet multiplier');
+        assert.equal(t2.totalTupletLength(), 1.0, 'total tuplet == 1.0');
 
         const s = new music21.stream.Stream();
         s.timeSignature = new music21.meter.TimeSignature('2/2');
@@ -469,7 +470,7 @@ duration.tests = () => {
             s.append(n1);
         }
         s.appendNewCanvas();
-        ok(true, 'quarter note triplets displayed');
+        assert.ok(true, 'quarter note triplets displayed');
 
         const m6 = new music21.stream.Measure();
         m6.renderOptions.staffLines = 1;
@@ -489,10 +490,10 @@ duration.tests = () => {
         const n6clone = n6.clone();
         m6.append(n6clone);
         m6.appendNewCanvas();
-        ok(true, 'tuplets beginning with different type than original');
-        equal(n6.duration.tuplets[0] !== n6clone.duration.tuplets[0], true, 'tuplet should not be the same object after clone');
+        assert.ok(true, 'tuplets beginning with different type than original');
+        assert.equal(n6.duration.tuplets[0] !== n6clone.duration.tuplets[0], true, 'tuplet should not be the same object after clone');
     });
-    test('music21.duration.Tuplet multiple parts', () => {
+    QUnit.test('music21.duration.Tuplet multiple parts', (assert) => {
         const s2 = new music21.stream.Measure();
         s2.timeSignature = new music21.meter.TimeSignature('3/2');
         const na1 = new music21.note.Note('F4');
@@ -530,7 +531,7 @@ duration.tests = () => {
         sc.insert(0, p);
         sc.insert(0, p2);
         sc.appendNewCanvas();
-        ok(true, '5:4 tuplets in 3/2 with multiple parts');
+        assert.ok(true, '5:4 tuplets in 3/2 with multiple parts');
     });
 };
 

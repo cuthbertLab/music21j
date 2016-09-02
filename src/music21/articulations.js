@@ -237,22 +237,22 @@ articulations.Tenuto = Tenuto;
 
 
 articulations.tests = () => {
-    test('music21.articulations.Articulation', () => {
+    QUnit.test('music21.articulations.Articulation', (assert) => {
         const acc = new music21.articulations.Accent();
-        equal(acc.name, 'accent', 'matching names for accent');
+        assert.equal(acc.name, 'accent', 'matching names for accent');
         const ten = new music21.articulations.Tenuto();
-        equal(ten.name, 'tenuto', 'matching names for tenuto');
+        assert.equal(ten.name, 'tenuto', 'matching names for tenuto');
         const n = new music21.note.Note('C');
         n.articulations.push(acc);
         n.articulations.push(ten);
-        equal(n.articulations[0].name, 'accent', 'accent in array');
-        equal(n.articulations[1].name, 'tenuto', 'tenuto in array');
+        assert.equal(n.articulations[0].name, 'accent', 'accent in array');
+        assert.equal(n.articulations[1].name, 'tenuto', 'tenuto in array');
     });
 
-    test('music21.articulations.Articulation display', () => {
+    QUnit.test('music21.articulations.Articulation display', (assert) => {
         // Marcato is a pseudo multiple inheritance
         const marc = new music21.articulations.Marcato();
-        equal(marc.name, 'marcato', 'matching names for marcato');
+        assert.equal(marc.name, 'marcato', 'matching names for marcato');
         const n = new music21.note.Note('D#5');
         n.articulations.push(marc);
         const nBoring = new music21.note.Note('D#5');
@@ -263,6 +263,6 @@ articulations.tests = () => {
         measure.append(nBoring.clone());
         measure.append(n.clone());
         measure.appendNewCanvas();
-        ok(true, 'something worked');
+        assert.ok(true, 'something worked');
     });
 };

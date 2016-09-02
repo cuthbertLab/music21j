@@ -47,12 +47,20 @@ common.merge = function mergeRecursive(destination, source) {
     return destination;
 };
 
+/**
+ * Mix in another class into this class -- a form of multiple inheritance.
+ * See articulations.Marcato for an example.
+ * 
+ */
 common.mixin = function common_mixin(OtherParent, thisClassOrObject) {
     let proto = Object.getPrototypeOf(OtherParent);
     const classProto = Object.getPrototypeOf(thisClassOrObject);
 
     while (proto) {
-        for (const key of Object.keys(proto)) {
+        for (const key in Object.keys(proto)) {
+            if (!({}.hasOwnProperty.call(proto, key))) {
+                continue;
+            }
             if (!(key in classProto)) {
                 classProto[key] = proto[key];
             }
