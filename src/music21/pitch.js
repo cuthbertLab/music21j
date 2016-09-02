@@ -252,7 +252,7 @@ export class Pitch extends prebase.ProtoM21Object {
     set name(nn) {
         this.step = nn.slice(0, 1).toUpperCase();
         const tempAccidental = nn.slice(1);
-        if (tempAccidental !== undefined) {
+        if (tempAccidental) { // not the empty string
             this.accidental = tempAccidental; // converts automatically
         } else {
             this.accidental = undefined;

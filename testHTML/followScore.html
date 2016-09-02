@@ -26,6 +26,7 @@
             for (var i = 0; i < 4; i++) {
                 voice1.append( mQuarters.get(i) );
             }
+            mQuarters.get(3).pitch.accidental = 'natural';
             mQuarters.get(3).pitch.accidental.displayType = 'always';
             mQuarters.elements = [];
             mQuarters.insert(0, voice1);

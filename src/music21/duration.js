@@ -369,7 +369,7 @@ export class Tuplet extends prebase.ProtoM21Object {
      * @returns {music21.duration.Duration} A converted {@link music21.duration.Duration} matching `type`
      */
     setDurationType(type) {
-        if (self.frozen === true) {
+        if (this.frozen === true) {
             throw new Music21Exception('A frozen tuplet (or one attached to a duration) is immutable');
         }
         this.durationActual = new duration.Duration(type);
@@ -385,7 +385,7 @@ export class Tuplet extends prebase.ProtoM21Object {
      * @returns {undefined}
      */
     setRatio(actual, normal) {
-        if (self.frozen === true) {
+        if (this.frozen === true) {
             throw new Music21Exception('A frozen tuplet (or one attached to a duration) is immutable');
         }
         this.numberNotesActual = actual || 3;

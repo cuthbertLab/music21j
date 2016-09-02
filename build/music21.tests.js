@@ -1035,7 +1035,7 @@
            * @returns {music21.duration.Duration} A converted {@link music21.duration.Duration} matching `type`
            */
           value: function setDurationType(type) {
-              if (self.frozen === true) {
+              if (this.frozen === true) {
                   throw new Music21Exception('A frozen tuplet (or one attached to a duration) is immutable');
               }
               this.durationActual = new duration.Duration(type);
@@ -1054,7 +1054,7 @@
       }, {
           key: 'setRatio',
           value: function setRatio(actual, normal) {
-              if (self.frozen === true) {
+              if (this.frozen === true) {
                   throw new Music21Exception('A frozen tuplet (or one attached to a duration) is immutable');
               }
               this.numberNotesActual = actual || 3;
@@ -1611,7 +1611,7 @@
    *
    * @function music21.audioSearch.getUserMedia
    * @memberof music21.audioSearch
-   * @param {object} dictionary - dictionary to fill
+   * @param {object} dictionary - optional dictionary to fill
    * @param {function} callback - callback on success
    * @param {function} error - callback on error
    */
@@ -2458,7 +2458,8 @@
           set: function set(nn) {
               this.step = nn.slice(0, 1).toUpperCase();
               var tempAccidental = nn.slice(1);
-              if (tempAccidental !== undefined) {
+              if (tempAccidental) {
+                  // not the empty string
                   this.accidental = tempAccidental; // converts automatically
               } else {
                   this.accidental = undefined;
@@ -2715,8 +2716,8 @@
                   this.lyrics.push(newLyric);
               } else {
                   var foundLyric = false;
-                  for (var i = 0; i < self.lyrics.length; i++) {
-                      var thisLyric = self.lyrics[i];
+                  for (var i = 0; i < this.lyrics.length; i++) {
+                      var thisLyric = this.lyrics[i];
                       if (thisLyric.number === lyricNumber) {
                           thisLyric.text = text;
                           foundLyric = true;
@@ -4303,16 +4304,16 @@
               },
               // TODO: all inherit somehow, through _classes or better, prototype...
               'music21.stream.Score': {
-                  post_restore: this.streamPostRestore
+                  post_restore: this.streamPostRestore.bind(this)
               },
               'music21.stream.Stream': {
-                  post_restore: this.streamPostRestore
+                  post_restore: this.streamPostRestore.bind(this)
               },
               'music21.stream.Measure': {
-                  post_restore: this.streamPostRestore
+                  post_restore: this.streamPostRestore.bind(this)
               },
               'music21.stream.Voice': {
-                  post_restore: this.streamPostRestore
+                  post_restore: this.streamPostRestore.bind(this)
               }
           };
           this.currentPart = undefined;
@@ -12427,7 +12428,7 @@
               if (!['start', 'stop', 'continue', undefined].includes(t)) {
                   throw new Music21Exception('Tie type must be one of "start", "stop", "continue"');
               }
-              self._type = t;
+              this._type = t;
           }
       }]);
       return Tie;
@@ -13119,7 +13120,7 @@
               eighth: '&#xEB9B;&#xE1D7;',
               '16th': '&#xEB9B;&#xE1D9;',
               '32nd': '&#xEB9B;&#xE1DB;', // BUG in Bravura Text
-              addMeasure: '<span style="position: relative; top: -20px">&#xE031</span>',
+              addMeasure: '&#xE031',
               dot: '&#xEB9B;&#xE1E7;',
               undo: '&#x232B;',
               tie: '<span style="position: relative; top: -20px;">&#xE1FD</span>',
@@ -13138,7 +13139,7 @@
            * @memberof music21.widgets.RhythmChooser
            */
           this.styles = {
-              'undo': 'font-family: serif; font-size: 30pt; top: -2px;'
+              'undo': 'font-family: serif; font-size: 30pt; top: -7px;'
           };
           /**
            * An object mapping a value type to a function when it is clicked

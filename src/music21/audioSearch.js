@@ -1,4 +1,6 @@
+
 import { common } from './common';
+
 /**
  * audioSearch module. See {@link music21.audioSearch} namespace
  *
@@ -42,7 +44,7 @@ Object.defineProperties(audioSearch,
  *
  * @function music21.audioSearch.getUserMedia
  * @memberof music21.audioSearch
- * @param {object} dictionary - dictionary to fill
+ * @param {object} dictionary - optional dictionary to fill
  * @param {function} callback - callback on success
  * @param {function} error - callback on error
  */

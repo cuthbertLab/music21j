@@ -61,7 +61,7 @@ export class RhythmChooser {
             eighth: '&#xEB9B;&#xE1D7;',
             '16th': '&#xEB9B;&#xE1D9;',
             '32nd': '&#xEB9B;&#xE1DB;', // BUG in Bravura Text
-            addMeasure: '<span style="position: relative; top: -20px">&#xE031</span>',
+            addMeasure: '&#xE031',
             dot: '&#xEB9B;&#xE1E7;',
             undo: '&#x232B;',
             tie: '<span style="position: relative; top: -20px;">&#xE1FD</span>',
@@ -80,7 +80,7 @@ export class RhythmChooser {
          * @memberof music21.widgets.RhythmChooser
          */
         this.styles = {
-            'undo': 'font-family: serif; font-size: 30pt; top: -2px;',
+            'undo': 'font-family: serif; font-size: 30pt; top: -7px;',
         };
         /**
          * An object mapping a value type to a function when it is clicked

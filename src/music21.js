@@ -4,7 +4,7 @@
  * 
  * @exports music21
  */
-// Not strict mode
+//Not strict mode
 
 if (typeof(m21basis) === "undefined") {
     /**
@@ -47,8 +47,8 @@ require.config({
 
 //must be defined before loading, jQuery, etc. because needed to see if warnBanner is defined
 
-// place a JSON obj into the <script> tag for require...
-// <script data-main='music21' src='require.js' m21conf='{"loadSoundfont": false}'>
+//place a JSON obj into the <script> tag for require...
+//<script data-main='music21' src='require.js' m21conf='{"loadSoundfont": false}'>
 
 var pathSimplify = function (path) {
     var pPrefix = "";
@@ -66,22 +66,22 @@ var pathSimplify = function (path) {
     var addSlash = (path.slice(path.length - 1, path.length) === '/') ? true : false;
     var pout = [];
     for (var i = 0; i < ps.length; i++) {
-       var el = ps[i];
-       if (el === '..') {
-           if (pout.length > 0) {
-               if (pout[pout.length - 1] !== '..') {
-                   pout.pop();                          
-               } else {
-                   pout.push('..');
-               }               
-           } else {
-               pout.push('..');
-           }
-       //} else if (el == '') { 
-       //   // pass
-       } else {
-           pout.push(el);
-       }
+        var el = ps[i];
+        if (el === '..') {
+            if (pout.length > 0) {
+                if (pout[pout.length - 1] !== '..') {
+                    pout.pop();                          
+                } else {
+                    pout.push('..');
+                }               
+            } else {
+                pout.push('..');
+            }
+            //} else if (el == '') { 
+            //   // pass
+        } else {
+            pout.push(el);
+        }
     }
     var pnew = pout.join('/');
     if (addSlash) {
@@ -89,7 +89,7 @@ var pathSimplify = function (path) {
     }
     pnew = pPrefix + pnew;
     return pnew;
- };
+};
 
 /**
  * Get an attribute from the script tag that invokes music21 via its data-main 
@@ -107,9 +107,9 @@ var getM21attribute = function (attrName) {
         var s = scripts[i];
         var dataMain = s.getAttribute('data-main');
         if (dataMain && ((/music21/.test(dataMain)) || (/m21/.test(dataMain)))) {
-           var m21Attribute = s.getAttribute(attrName);
-           //console.log(m21Attribute);
-           return m21Attribute;
+            var m21Attribute = s.getAttribute(attrName);
+            //console.log(m21Attribute);
+            return m21Attribute;
         }
     }
 };
@@ -119,7 +119,7 @@ var getM21attribute = function (attrName) {
  */
 var warnBanner = (getM21attribute('warnBanner') !== 'no' ) ? true : false;
 
-// get scriptConfig
+//get scriptConfig
 if (typeof m21conf === 'undefined') {
     m21conf = {};
     var m21browserAttribute = getM21attribute('m21conf');
@@ -147,64 +147,64 @@ m21basis.m21srcPath = m21srcPath;
 //console.log('m21srcPath non simplified', require.toUrl('music21'));
 
 var m21requireConfig = {
-    paths: {
-        'jquery':     pathSimplify(m21srcPath + '/ext/jquery/jquery-2.1.1.min'),
-        'attrchange': pathSimplify(m21srcPath + '/ext/jqueryPlugins/attrchange'),
-        'jquery-ui':  pathSimplify(m21srcPath + '/ext/jqueryPlugins/jqueryUI/jquery-ui.min'),
-        'vexflow':    pathSimplify(m21srcPath + '/ext/vexflow/vexflow-min'),
-        'MIDI':       pathSimplify(m21srcPath + '/ext/midijs/build/MIDI'),
-        'jasmidMidifile':   pathSimplify(m21srcPath + '/ext/midijs/inc/jasmid/midifile'),
-        'jasmidReplayer':   pathSimplify(m21srcPath + '/ext/midijs/inc/jasmid/replayer'),
-        'jasmidStream':     pathSimplify(m21srcPath + '/ext/midijs/inc/jasmid/stream'),
-        // a very nice event handler from Mudcu.be that handles drags 
-        'eventjs':          pathSimplify(m21srcPath + '/ext/midijs/examples/inc/event'),     
-        // read binary data in base64.  In "shim" but is not a shim.
-        'base64Binary': pathSimplify(m21srcPath + '/ext/midijs/inc/shim/Base64binary'),
-        
-        // browser shims
-        'webMidiApiShim': pathSimplify(m21srcPath + '/ext/midijs/inc/shim/WebMIDIAPI'), //not currently loaded/used?
-        'webAudioShim': pathSimplify(m21srcPath + '/ext/midijs/inc/shim/WebAudioAPI'), // Safari prefixed to <= 9; IE <= Edge
-        'es6Shim': pathSimplify(m21srcPath + '/ext/es6-shim'),
-        
-        'm21': pathSimplify(m21srcPath + '/../build/music21.debug'),
-        'jsonpickle': pathSimplify(m21srcPath + '/ext/jsonpickle/build/jsonpickle.debug'),
-        
-        // formerly used Shims (IE9)
-        //'base64Shim':   pathSimplify(m21srcPath + '/ext/midijs/inc/shim/Base64'),
-        
-        //'vexflowMods': 'ext/vexflowMods',
-    },
-    shim: {
-        'eventjs': {
-            exports: 'eventjs',
-        },        
-        'webMidiApiShim': {
-            deps: ['es6Shim'],
-            exports: 'window',            
+        paths: {
+            'jquery':     pathSimplify(m21srcPath + '/ext/jquery/jquery-2.1.1.min'),
+            'attrchange': pathSimplify(m21srcPath + '/ext/jqueryPlugins/attrchange'),
+            'jquery-ui':  pathSimplify(m21srcPath + '/ext/jqueryPlugins/jqueryUI/jquery-ui.min'),
+            'vexflow':    pathSimplify(m21srcPath + '/ext/vexflow/vexflow-min'),
+            'MIDI':       pathSimplify(m21srcPath + '/ext/midijs/build/MIDI'),
+            'jasmidMidifile':   pathSimplify(m21srcPath + '/ext/midijs/inc/jasmid/midifile'),
+            'jasmidReplayer':   pathSimplify(m21srcPath + '/ext/midijs/inc/jasmid/replayer'),
+            'jasmidStream':     pathSimplify(m21srcPath + '/ext/midijs/inc/jasmid/stream'),
+            // a very nice event handler from Mudcu.be that handles drags 
+            'eventjs':          pathSimplify(m21srcPath + '/ext/midijs/examples/inc/event'),     
+            // read binary data in base64.  In "shim" but is not a shim.
+            'base64Binary': pathSimplify(m21srcPath + '/ext/midijs/inc/shim/Base64binary'),
+
+            // browser shims
+            'webMidiApiShim': pathSimplify(m21srcPath + '/ext/midijs/inc/shim/WebMIDIAPI'), //not currently loaded/used?
+            'webAudioShim': pathSimplify(m21srcPath + '/ext/midijs/inc/shim/WebAudioAPI'), // Safari prefixed to <= 9; IE <= Edge
+            'es6Shim': pathSimplify(m21srcPath + '/ext/es6-shim'),
+
+            'm21': pathSimplify(m21srcPath + '/../build/music21.debug'),
+            'jsonpickle': pathSimplify(m21srcPath + '/ext/jsonpickle/build/jsonpickle.debug'),
+
+            // formerly used Shims (IE9)
+            //'base64Shim':   pathSimplify(m21srcPath + '/ext/midijs/inc/shim/Base64'),
+
+            //'vexflowMods': 'ext/vexflowMods',
         },
-        'MIDI': {
-            deps: [ //'base64Shim',  // Bye-bye IE9!
-                    'base64Binary', 'webAudioShim', 
-                   'jasmidMidifile', 'jasmidReplayer', 'jasmidStream', 'eventjs'],
-            exports: 'MIDI',
-        },
-        'attrchange': {
-            deps: [ 'jquery' ],
-            exports: 'jQuery.attrchange',
-        },
-        'jquery-ui': {
-            deps: [ 'jquery' ],
-            exports: 'jQuery.ui'
-        },
-        'vexflow': {
-            deps: [ 'jquery' ],
-            exports: 'Vex'
-        },
-        'm21': {
-            deps: ['jquery', 'MIDI', 'vexflow', 'jsonpickle'],
-            exports: 'm21'            
+        shim: {
+            'eventjs': {
+                exports: 'eventjs',
+            },        
+            'webMidiApiShim': {
+                deps: ['es6Shim'],
+                exports: 'window',            
+            },
+            'MIDI': {
+                deps: [ //'base64Shim',  // Bye-bye IE9!
+                        'base64Binary', 'webAudioShim', 
+                        'jasmidMidifile', 'jasmidReplayer', 'jasmidStream', 'eventjs'],
+                        exports: 'MIDI',
+            },
+            'attrchange': {
+                deps: [ 'jquery' ],
+                exports: 'jQuery.attrchange',
+            },
+            'jquery-ui': {
+                deps: [ 'jquery' ],
+                exports: 'jQuery.ui'
+            },
+            'vexflow': {
+                deps: [ 'jquery' ],
+                exports: 'Vex'
+            },
+            'm21': {
+                deps: ['jquery', 'MIDI', 'vexflow', 'jsonpickle'],
+                exports: 'm21'            
+            }
         }
-    }
 };
 //console.log('jsonpickle in music21: ', m21requireConfig.packages[0].location);
 
@@ -218,7 +218,7 @@ var m21modules = ['m21',
                   'attrchange',
                   'es6Shim',
                   //'webmidiapi',
-                                    
+
                   ];
 //BUG: will this work if multiple files are listed in noLoad???
 if (m21conf.noLoad !== undefined) {
@@ -247,40 +247,40 @@ if ((Object.defineProperties === undefined) && warnBanner) {
 
 } else {
     if ( typeof define === "function" && define.amd) {
-            require.config(m21requireConfig);
-            //console.log(require.nameToUrl('jquery'));
-            define( m21modules, 
+        require.config(m21requireConfig);
+        //console.log(require.nameToUrl('jquery'));
+        define( m21modules, 
                 function (m21, midi, vexflow, $, jsonpickle) {  // BUG, what if midi is in noLoad?     
-                    //console.log('inside of require...');
-                    music21 = m21;
-                    for (let u in m21.common.urls) {
-                        m21.common.urls[u] = m21basis.m21basePath + m21.common.urls[u];
-                    }
-                    music21.m21basePath = m21basis.m21basePath;
-                    music21.m21srcPath = m21basis.m21srcPath;
-                    music21.VERSION = m21basis.VERSION;
-                    
-                    music21.scriptConfig = m21conf;
-                    //console.log(music21.chord);
-                    if (midi) {  music21.MIDI = midi; }
-                    if (vexflow) { music21.Vex = vexflow; } 
-                    else { console.log('could not load VexFlow'); }
-                    if (music21.MIDI) {
-                        if ((music21.scriptConfig.loadSoundfont === undefined) ||
-                                (music21.scriptConfig.loadSoundfont !== false)) {
-                           music21.miditools.loadSoundfont('acoustic_grand_piano');
-                        } else {
-                            console.log('skipping loading sound font');
-                        }
-                    }
-                    if ((music21.scriptConfig.renderHTML === undefined) ||
-                            (music21.scriptConfig.renderHTML !== false)) {
-                        $(document).ready(function() {
-                            music21.tinyNotation.renderNotationDivs();
-                        });
-                    }
-                    //console.log('end inside of require...');
-                    return music21;
-                });         
+            //console.log('inside of require...');
+            music21 = m21;
+            for (var u in m21.common.urls) {
+                m21.common.urls[u] = m21basis.m21basePath + m21.common.urls[u];
+            }
+            music21.m21basePath = m21basis.m21basePath;
+            music21.m21srcPath = m21basis.m21srcPath;
+            music21.VERSION = m21basis.VERSION;
+
+            music21.scriptConfig = m21conf;
+            //console.log(music21.chord);
+            if (midi) {  music21.MIDI = midi; }
+            if (vexflow) { music21.Vex = vexflow; } 
+            else { console.log('could not load VexFlow'); }
+            if (music21.MIDI) {
+                if ((music21.scriptConfig.loadSoundfont === undefined) ||
+                        (music21.scriptConfig.loadSoundfont !== false)) {
+                    music21.miditools.loadSoundfont('acoustic_grand_piano');
+                } else {
+                    console.log('skipping loading sound font');
+                }
+            }
+            if ((music21.scriptConfig.renderHTML === undefined) ||
+                    (music21.scriptConfig.renderHTML !== false)) {
+                $(document).ready(function() {
+                    music21.tinyNotation.renderNotationDivs();
+                });
+            }
+            //console.log('end inside of require...');
+            return music21;
+        });         
     }
 }

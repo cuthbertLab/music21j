@@ -246,8 +246,8 @@ export class GeneralNote extends base.Music21Object {
             this.lyrics.push(newLyric);
         } else {
             let foundLyric = false;
-            for (let i = 0; i < self.lyrics.length; i++) {
-                const thisLyric = self.lyrics[i];
+            for (let i = 0; i < this.lyrics.length; i++) {
+                const thisLyric = this.lyrics[i];
                 if (thisLyric.number === lyricNumber) {
                     thisLyric.text = text;
                     foundLyric = true;

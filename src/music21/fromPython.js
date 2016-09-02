@@ -89,16 +89,16 @@ export class Converter {
             },
                 // TODO: all inherit somehow, through _classes or better, prototype...
             'music21.stream.Score': {
-                post_restore: this.streamPostRestore,
+                post_restore: this.streamPostRestore.bind(this),
             },
             'music21.stream.Stream': {
-                post_restore: this.streamPostRestore,
+                post_restore: this.streamPostRestore.bind(this),
             },
             'music21.stream.Measure': {
-                post_restore: this.streamPostRestore,
+                post_restore: this.streamPostRestore.bind(this),
             },
             'music21.stream.Voice': {
-                post_restore: this.streamPostRestore,
+                post_restore: this.streamPostRestore.bind(this),
             },
         };
         this.currentPart = undefined;
