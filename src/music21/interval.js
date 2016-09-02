@@ -37,9 +37,9 @@ export	const interval = {};
  *
  */
 interval.IntervalDirections = {
-        DESCENDING: -1,
-        OBLIQUE: 0,
-        ASCENDING: 1,
+    DESCENDING: -1,
+    OBLIQUE: 0,
+    ASCENDING: 1,
 };
 
 /**
@@ -71,11 +71,11 @@ interval.IntervalDirectionTerms = ['Descending', 'Oblique', 'Ascending'];
  * // 15, Double Octave
  */
 interval.MusicOrdinals = [
-                          undefined, 'Unison', 'Second', 'Third', 'Fourth',
-                          'Fifth', 'Sixth', 'Seventh', 'Octave',
-                          'Ninth', 'Tenth', 'Eleventh', 'Twelfth',
-                          'Thirteenth', 'Fourteenth', 'Double Octave'
-                          ];
+    undefined, 'Unison', 'Second', 'Third', 'Fourth',
+    'Fifth', 'Sixth', 'Seventh', 'Octave',
+    'Ninth', 'Tenth', 'Eleventh', 'Twelfth',
+    'Thirteenth', 'Fourteenth', 'Double Octave',
+];
 
 /**
  * Represents an interval such as unison, second, etc.
@@ -224,7 +224,6 @@ export class GenericInterval extends prebase.ProtoM21Object {
         } else {
             this.mod7 = this.simpleDirected;
         }
-
     }
 
     /**
@@ -235,7 +234,7 @@ export class GenericInterval extends prebase.ProtoM21Object {
      */
     complement() {
         return new interval.GenericInterval(this.mod7inversion);
-    };
+    }
 
     /**
      * Returns a new GenericInterval which has the opposite direction (descending becomes ascending, etc.)
@@ -249,7 +248,7 @@ export class GenericInterval extends prebase.ProtoM21Object {
         } else {
             return new interval.GenericInterval(this.undirected * (-1 * this.direction));
         }
-    };
+    }
     /**
      * Given a specifier, return a new DiatonicInterval with this generic.
      *
@@ -291,75 +290,75 @@ export class GenericInterval extends prebase.ProtoM21Object {
 interval.GenericInterval = GenericInterval;
 
 interval.IntervalSpecifiersEnum = {
-        PERFECT: 1,
-        MAJOR: 2,
-        MINOR: 3,
-        AUGMENTED: 4,
-        DIMINISHED: 5,
-        DBLAUG: 6,
-        DBLDIM: 7,
-        TRPAUG: 8,
-        TRPDIM: 9,
-        QUADAUG: 10,
-        QUADDIM: 11,
+    PERFECT: 1,
+    MAJOR: 2,
+    MINOR: 3,
+    AUGMENTED: 4,
+    DIMINISHED: 5,
+    DBLAUG: 6,
+    DBLDIM: 7,
+    TRPAUG: 8,
+    TRPDIM: 9,
+    QUADAUG: 10,
+    QUADDIM: 11,
 };
 
 interval.IntervalNiceSpecNames = [
-                                  'ERROR', 'Perfect', 'Major', 'Minor',
-                                  'Augmented', 'Diminished', 'Doubly-Augmented', 'Doubly-Diminished',
-                                  'Triply-Augmented', 'Triply-Diminished', 'Quadruply-Augmented', 'Quadruply-Diminished',
-                                  ];
+    'ERROR', 'Perfect', 'Major', 'Minor',
+    'Augmented', 'Diminished', 'Doubly-Augmented', 'Doubly-Diminished',
+    'Triply-Augmented', 'Triply-Diminished', 'Quadruply-Augmented', 'Quadruply-Diminished',
+];
 interval.IntervalPrefixSpecs = [
-                                undefined, 'P', 'M', 'm', 'A', 'd', 'AA', 'dd', 'AAA', 'ddd', 'AAAA', 'dddd',
-                                ];
+    undefined, 'P', 'M', 'm', 'A', 'd', 'AA', 'dd', 'AAA', 'ddd', 'AAAA', 'dddd',
+];
 
 
 interval.IntervalOrderedPerfSpecs = [
-                                     'dddd', 'ddd', 'dd', 'd', 'P', 'A', 'AA', 'AAA', 'AAAA',
-                                     ];
+    'dddd', 'ddd', 'dd', 'd', 'P', 'A', 'AA', 'AAA', 'AAAA',
+];
 
 interval.IntervalPerfSpecifiers = [
-                                   interval.IntervalSpecifiersEnum.QUADDMIN,
-                                   interval.IntervalSpecifiersEnum.TRPDIM,
-                                   interval.IntervalSpecifiersEnum.DBLDIM,
-                                   interval.IntervalSpecifiersEnum.DIMINISHED,
-                                   interval.IntervalSpecifiersEnum.PERFECT,
-                                   interval.IntervalSpecifiersEnum.AUGMENTED,
-                                   interval.IntervalSpecifiersEnum.DBLAUG,
-                                   interval.IntervalSpecifiersEnum.TRPAUG,
-                                   interval.IntervalSpecifiersEnum.QUADAUG,
-                                   ];
+    interval.IntervalSpecifiersEnum.QUADDMIN,
+    interval.IntervalSpecifiersEnum.TRPDIM,
+    interval.IntervalSpecifiersEnum.DBLDIM,
+    interval.IntervalSpecifiersEnum.DIMINISHED,
+    interval.IntervalSpecifiersEnum.PERFECT,
+    interval.IntervalSpecifiersEnum.AUGMENTED,
+    interval.IntervalSpecifiersEnum.DBLAUG,
+    interval.IntervalSpecifiersEnum.TRPAUG,
+    interval.IntervalSpecifiersEnum.QUADAUG,
+];
 interval.IntervalPerfOffset = 4;
 
 interval.IntervalOrderedImperfSpecs = [
-                                       'dddd', 'ddd', 'dd', 'd', 'm', 'M', 'A', 'AA', 'AAA', 'AAAA',
-                                       ];
+    'dddd', 'ddd', 'dd', 'd', 'm', 'M', 'A', 'AA', 'AAA', 'AAAA',
+];
 
 interval.IntervalSpecifiers = [
-                               interval.IntervalSpecifiersEnum.QUADDMIN,
-                               interval.IntervalSpecifiersEnum.TRPDIM,
-                               interval.IntervalSpecifiersEnum.DBLDIM,
-                               interval.IntervalSpecifiersEnum.DIMINISHED,
-                               interval.IntervalSpecifiersEnum.MINOR,
-                               interval.IntervalSpecifiersEnum.MAJOR,
-                               interval.IntervalSpecifiersEnum.AUGMENTED,
-                               interval.IntervalSpecifiersEnum.DBLAUG,
-                               interval.IntervalSpecifiersEnum.TRPAUG,
-                               interval.IntervalSpecifiersEnum.QUADAUG,
-                               ];
+    interval.IntervalSpecifiersEnum.QUADDMIN,
+    interval.IntervalSpecifiersEnum.TRPDIM,
+    interval.IntervalSpecifiersEnum.DBLDIM,
+    interval.IntervalSpecifiersEnum.DIMINISHED,
+    interval.IntervalSpecifiersEnum.MINOR,
+    interval.IntervalSpecifiersEnum.MAJOR,
+    interval.IntervalSpecifiersEnum.AUGMENTED,
+    interval.IntervalSpecifiersEnum.DBLAUG,
+    interval.IntervalSpecifiersEnum.TRPAUG,
+    interval.IntervalSpecifiersEnum.QUADAUG,
+];
 interval.IntervalMajOffset = 5;
 
 interval.IntervalSemitonesGeneric = {
-        1: 0, 2: 2, 3: 4, 4: 5, 5: 7, 6: 9, 7: 11,
+    1: 0, 2: 2, 3: 4, 4: 5, 5: 7, 6: 9, 7: 11,
 };
 interval.IntervalAdjustPerfect = {
-        'P': 0, 'A': 1, 'AA': 2, 'AAA': 3, 'AAAA': 4,
-        'd': -1, 'dd': -2, 'ddd': -3, 'dddd': -4,
+    'P': 0, 'A': 1, 'AA': 2, 'AAA': 3, 'AAAA': 4,
+    'd': -1, 'dd': -2, 'ddd': -3, 'dddd': -4,
 }; // offset from Perfect
 
 interval.IntervalAdjustImperf = {
-        'M': 0, 'm': -1, 'A': 1, 'AA': 2, 'AAA': 3, 'AAAA': 4,
-        'd': -2, 'dd': -3, 'ddd': -4, 'dddd': -5,
+    'M': 0, 'm': -1, 'A': 1, 'AA': 2, 'AAA': 3, 'AAAA': 4,
+    'd': -2, 'dd': -3, 'ddd': -4, 'dddd': -5,
 }; // offset from major
 
 
@@ -543,7 +542,7 @@ export class ChromaticInterval extends prebase.ProtoM21Object {
     }
     reverse() {
         return new interval.ChromaticInterval(this.undirected * (-1 * this.direction));
-    };
+    }
 
 //  TODO: this.getDiatonic()
 
@@ -620,7 +619,7 @@ interval.IntervalConvertDiatonicNumberToStep = function IntervalConvertDiatonicN
 export class Interval extends prebase.ProtoM21Object {
 
     constructor(...restArgs) {
-        super()
+        super();
         this.classes.push('Interval');
 
         // todo: allow full range of ways of specifying as in m21p
@@ -701,7 +700,7 @@ export class Interval extends prebase.ProtoM21Object {
         } else {
             return false;
         }
-    };
+    }
 
 //  todo general: microtones
     /**

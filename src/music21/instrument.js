@@ -106,7 +106,7 @@ class Instrument extends base.Music21Object {
         }
         // TODO: no channels! throw exception!
         return undefined;
-    }    
+    }
     get oggSounfont() {
         return this.soundfontFn + '-ogg.js';
     }
@@ -117,10 +117,10 @@ class Instrument extends base.Music21Object {
         if (this._midiChannel === undefined) {
             this.autoAssignMidiChannel();
         }
-        return this._midiChannel;        
+        return this._midiChannel;
     }
     set midiChannel(ch) {
-        this._midiChannel = ch;        
+        this._midiChannel = ch;
     }
 }
 instrument.Instrument = Instrument;

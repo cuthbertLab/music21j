@@ -73,4 +73,4 @@ export class RenderOptions {
         common.merge(this, defaultOptions);
     }
 }
-renderOptions.RenderOptions = RenderOptions
+renderOptions.RenderOptions = RenderOptions;

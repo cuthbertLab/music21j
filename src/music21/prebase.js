@@ -27,7 +27,7 @@ export class ProtoM21Object {
         this.classes = ['ProtoM21Object'];
         this.isProtoM21Object = true;
         this.isMusic21Object = false;
-        this._cloneCallbacks = {};        
+        this._cloneCallbacks = {};
     }
     /**
      * Makes (as much as possible) a complete duplicate copy of the object called with .clone()
@@ -115,5 +115,4 @@ export class ProtoM21Object {
     }
 }
 prebase.ProtoM21Object = ProtoM21Object;
-
 

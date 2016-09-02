@@ -7,10 +7,10 @@
  */
 
 (function (global, factory) {
-  typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory(require('jquery'), require('vexflow'), require('MIDI'), require('jsonpickle'), require('eventjs')) :
-  typeof define === 'function' && define.amd ? define(['jquery', 'vexflow', 'MIDI', 'jsonpickle', 'eventjs'], factory) :
-  (global.music21 = factory(global.$,global.Vex,global.MIDI,global.jsonpickle,global.eventjs));
-}(this, (function ($,Vex,MIDI,jsonpickle,eventjs) { 'use strict';
+  typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory(require('qunit'), require('jquery'), require('vexflow'), require('MIDI'), require('jsonpickle'), require('eventjs')) :
+  typeof define === 'function' && define.amd ? define(['qunit', 'jquery', 'vexflow', 'MIDI', 'jsonpickle', 'eventjs'], factory) :
+  (global.music21 = factory(global.QUnit,global.$,global.Vex,global.MIDI,global.jsonpickle,global.eventjs));
+}(this, (function (QUnit,$$1,Vex,MIDI,jsonpickle,eventjs) { 'use strict';
 
   var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) {
     return typeof obj;
@@ -398,10 +398,10 @@
    * @author Yannick Albert (mail@yckart.com || http://yckart.com)
    */
   common.jQueryEventCopy = function jQueryEventCopy(eventObj, from, to) {
-      from = from.jquery ? from : $(from);
-      to = to.jquery ? to : $(to);
+      from = from.jquery ? from : $$1(from);
+      to = to.jquery ? to : $$1(to);
 
-      var events = from[0].events || $.data(from[0], 'events') || $._data(from[0], 'events');
+      var events = from[0].events || $$1.data(from[0], 'events') || $$1._data(from[0], 'events');
       if (!from.length || !to.length || !events) {
           return undefined;
       }
@@ -414,7 +414,7 @@
                   if (!{}.hasOwnProperty.call(events[type], handler)) {
                       continue;
                   }
-                  $.event.add(eventObj, type, events[type][handler], events[type][handler].data);
+                  $$1.event.add(eventObj, type, events[type][handler], events[type][handler].data);
               }
           }
       });
@@ -6191,7 +6191,7 @@
           console.log('soundfont loaded about to execute callback.');
           console.log('first playing two notes very softly -- seems to flush the buffer.');
       }
-      $('.loadingSoundfont').remove();
+      $$1('.loadingSoundfont').remove();
 
       var isFirefox = typeof InstallTrigger !== 'undefined'; // Firefox 1.0+
       var isAudioTag = MIDI.technology === 'HTML Audio Tag';
@@ -6265,11 +6265,11 @@
           if (debug) {
               console.log('waiting for document ready');
           }
-          $(document).ready(function () {
+          $$1(document).ready(function () {
               if (debug) {
                   console.log('document ready, waiting to load soundfont');
               }
-              $(document.body).append($("<div class='loadingSoundfont'><b>Loading MIDI Instrument</b>: " + 'audio will begin when this message disappears.</div>'));
+              $$1(document.body).append($$1("<div class='loadingSoundfont'><b>Loading MIDI Instrument</b>: " + 'audio will begin when this message disappears.</div>'));
               MIDI.loadPlugin({
                   soundfontUrl: common.urls.soundfontUrl,
                   instrument: soundfont,
@@ -6310,12 +6310,12 @@
                   where = document.body;
               }
               if (where.jquery === undefined) {
-                  $where = $(where);
+                  $where = $$1(where);
               }
-              var $playDiv = $('<div class="midiPlayer">');
-              var $controls = $('<div class="positionControls">');
-              var $playPause = $('<input type="image" src="' + this.playPng() + '" align="absmiddle" value="play" class="playPause">');
-              var $stop = $('<input type="image" src="' + this.stopPng() + '" align="absmiddle" value="stop" class="stopButton">');
+              var $playDiv = $$1('<div class="midiPlayer">');
+              var $controls = $$1('<div class="positionControls">');
+              var $playPause = $$1('<input type="image" src="' + this.playPng() + '" align="absmiddle" value="play" class="playPause">');
+              var $stop = $$1('<input type="image" src="' + this.stopPng() + '" align="absmiddle" value="stop" class="stopButton">');
 
               $playPause.on('click', this.pausePlayStop.bind(this));
               $stop.on('click', this.stopButton.bind(this));
@@ -6323,10 +6323,10 @@
               $controls.append($stop);
               $playDiv.append($controls);
 
-              var $time = $('<div class="timeControls">');
-              var $timePlayed = $('<span class="timePlayed">0:00</span>');
-              var $capsule = $('<span class="capsule"><span class="cursor"></span></span>');
-              var $timeRemaining = $('<span class="timeRemaining">-0:00</span>');
+              var $time = $$1('<div class="timeControls">');
+              var $timePlayed = $$1('<span class="timePlayed">0:00</span>');
+              var $capsule = $$1('<span class="capsule"><span class="cursor"></span></span>');
+              var $timeRemaining = $$1('<span class="timeRemaining">-0:00</span>');
               $time.append($timePlayed);
               $time.append($capsule);
               $time.append($timeRemaining);
@@ -7045,10 +7045,10 @@
           value: function wrapScrollable(svgDOM) {
               var _this3 = this;
 
-              var $wrapper = $("<div class='keyboardScrollableWrapper'></div>").css({
+              var $wrapper = $$1("<div class='keyboardScrollableWrapper'></div>").css({
                   display: 'inline-block'
               });
-              var $bDown = $("<button class='keyboardOctaveDown'>&lt;&lt;</button>").css({
+              var $bDown = $$1("<button class='keyboardOctaveDown'>&lt;&lt;</button>").css({
                   'font-size': Math.floor(this.scaleFactor * 15).toString() + 'px'
               }).bind('click', function () {
                   miditools.transposeOctave -= 1;
@@ -7056,7 +7056,7 @@
                   _this3._endDNN -= 7;
                   _this3.redrawSVG();
               });
-              var $bUp = $("<button class='keyboardOctaveUp'>&gt;&gt;</button>").css({
+              var $bUp = $$1("<button class='keyboardOctaveUp'>&gt;&gt;</button>").css({
                   'font-size': Math.floor(this.scaleFactor * 15).toString() + 'px'
               }).bind('click', function () {
                   miditools.transposeOctave += 1;
@@ -7064,7 +7064,7 @@
                   _this3._endDNN += 7;
                   _this3.redrawSVG();
               });
-              var $kWrapper = $("<div style='display:inline-block; vertical-align: middle' class='keyboardScrollableInnerDiv'></div>");
+              var $kWrapper = $$1("<div style='display:inline-block; vertical-align: middle' class='keyboardScrollableInnerDiv'></div>");
               $kWrapper[0].appendChild(svgDOM);
               $wrapper.append($bDown);
               $wrapper.append($kWrapper);
@@ -7085,13 +7085,13 @@
       }, {
           key: 'appendHideableKeyboard',
           value: function appendHideableKeyboard(where, keyboardSVG) {
-              var $container = $("<div class='keyboardHideableContainer'/>");
-              var $bInside = $("<div class='keyboardToggleInside'>↥</div>").css({
+              var $container = $$1("<div class='keyboardHideableContainer'/>");
+              var $bInside = $$1("<div class='keyboardToggleInside'>↥</div>").css({
                   display: 'inline-block',
                   'padding-top': '40px',
                   'font-size': '40px'
               });
-              var $b = $("<div class='keyboardToggleOutside'/>").css({
+              var $b = $$1("<div class='keyboardToggleOutside'/>").css({
                   display: 'inline-block',
                   'vertical-align': 'top',
                   background: 'white'
@@ -7100,7 +7100,7 @@
               $b.data('defaultDisplay', $container.find('.keyboardSVG').css('display'));
               $b.data('state', 'down');
               $b.click(keyboard.triggerToggleShow);
-              var $explain = $("<div class='keyboardExplain'>Show keyboard</div>").css({
+              var $explain = $$1("<div class='keyboardExplain'>Show keyboard</div>").css({
                   'display': 'none',
                   'background-color': 'white',
                   'padding': '10px 10px 10px 10px',
@@ -7109,7 +7109,7 @@
               $b.append($explain);
               $container.append($b);
               $container[0].appendChild(keyboardSVG); // svg must use appendChild, not append.
-              $(where).append($container);
+              $$1(where).append($container);
               return $container;
           }
       }]);
@@ -7125,7 +7125,7 @@
   keyboard.triggerToggleShow = function triggerToggleShow(e) {
       // "this" refers to the object clicked
       // e -- event is not used.
-      var $t = $(this);
+      var $t = $$1(this);
       var state = $t.data('state');
       var $parent = $t.parent();
       var $k = $parent.find('.keyboardScrollableWrapper');
@@ -7591,7 +7591,7 @@
               barDOM.setAttribute('transform', 'scale(' + scaleY + ')');
               svgDOM.appendChild(barDOM);
 
-              var canvasParent = $(canvas).parent()[0];
+              var canvasParent = $$1(canvas).parent()[0];
               canvasParent.appendChild(svgDOM);
               this.barDOM = barDOM;
               this.svgDOM = svgDOM;
@@ -8074,7 +8074,7 @@
               if (where.jquery !== undefined) {
                   this.$where = where;
               } else {
-                  this.$where = $(where);
+                  this.$where = $$1(where);
               }
           }
           if (canvas !== undefined) {
@@ -8083,7 +8083,7 @@
                   this.canvas = canvas[0];
               } else {
                   this.canvas = canvas;
-                  this.$canvas = $(canvas);
+                  this.$canvas = $$1(canvas);
               }
           }
       }
@@ -9514,7 +9514,7 @@
               var offsetMap = [];
               var groups = [];
               if (this.hasVoices()) {
-                  $.each(this.getElementsByClass('Voice').elements, function (i, v) {
+                  $$1.each(this.getElementsByClass('Voice').elements, function (i, v) {
                       groups.push([v.flat, i]);
                   });
               } else {
@@ -9594,10 +9594,10 @@
               var lastStepDict = void 0;
               var p = void 0;
               for (var _i3 = 0; _i3 < 10; _i3++) {
-                  lastStepDict = $.extend({}, extendableStepList);
+                  lastStepDict = $$1.extend({}, extendableStepList);
                   lastOctaveStepList.push(lastStepDict);
               }
-              var lastOctavelessStepDict = $.extend({}, extendableStepList); // probably unnecessary, but safe...
+              var lastOctavelessStepDict = $$1.extend({}, extendableStepList); // probably unnecessary, but safe...
               for (var _i4 = 0; _i4 < this.length; _i4++) {
                   var el = this.get(_i4);
                   if (el.pitch !== undefined) {
@@ -9915,7 +9915,7 @@
                   this.setSubstreamRenderOptions();
               }
 
-              var newCanvas = $('<canvas/>'); // .css('border', '1px red solid');
+              var newCanvas = $$1('<canvas/>'); // .css('border', '1px red solid');
 
               if (width !== undefined) {
                   if (typeof width === 'string') {
@@ -9995,7 +9995,7 @@
               }
               var $appendElement = appendElement;
               if (appendElement.jquery === undefined) {
-                  $appendElement = $(appendElement);
+                  $appendElement = $$1(appendElement);
               }
 
               //      if (width === undefined && this.renderOptions.maxSystemWidth === undefined) {
@@ -10031,7 +10031,7 @@
               }
               var $where = void 0;
               if (where.jquery === undefined) {
-                  $where = $(where);
+                  $where = $$1(where);
               } else {
                   $where = where;
                   where = $where[0];
@@ -10050,7 +10050,7 @@
                   // replacing each with canvasBlock doesn't work
                   // anyhow, it just resizes the canvas but doesn't
                   // draw.
-                  $oldCanvas = $($oldCanvas[$oldCanvas.length - 1]);
+                  $oldCanvas = $$1($oldCanvas[$oldCanvas.length - 1]);
               }
 
               var canvasBlock = void 0;
@@ -10081,11 +10081,11 @@
           value: function renderScrollableCanvas(where) {
               var $where = where;
               if (where === undefined) {
-                  $where = $(document.body);
+                  $where = $$1(document.body);
               } else if (where.jquery === undefined) {
-                  $where = $(where);
+                  $where = $$1(where);
               }
-              var $innerDiv = $('<div>').css('position', 'absolute');
+              var $innerDiv = $$1('<div>').css('position', 'absolute');
               var c = void 0;
               this.renderOptions.events.click = function renderOptionsOuterEventClick(storedThis) {
                   return function renderOptionsInnerEventClick(event) {
@@ -10144,7 +10144,7 @@
               if (canvasOrDiv === undefined) {
                   return this;
               } else if (canvasOrDiv.jquery === undefined) {
-                  $canvas = $(canvasOrDiv);
+                  $canvas = $$1(canvasOrDiv);
               }
               // TODO: assumes that canvas has a .storedStream function? can this be done by setting
               // a variable var storedStream = this; and thus get rid of the assumption?
@@ -10152,7 +10152,7 @@
                   this.playStream();
               }.bind(this);
 
-              $.each(this.renderOptions.events, $.proxy(function setRenderInteractionProxy(eventType, eventFunction) {
+              $$1.each(this.renderOptions.events, $$1.proxy(function setRenderInteractionProxy(eventType, eventFunction) {
                   $canvas.off(eventType);
                   if (typeof eventFunction === 'string' && eventFunction === 'play') {
                       $canvas.on(eventType, playFunc);
@@ -10212,7 +10212,7 @@
               if (canvas === undefined) {
                   offset = { left: 0, top: 0 };
               } else {
-                  offset = $(canvas).offset();
+                  offset = $$1(canvas).offset();
               }
               /*
                * mouse event handler code from: http://diveintohtml5.org/canvas.html
@@ -10400,11 +10400,11 @@
           value: function redrawCanvas(canvas) {
               // this.resetRenderOptions(true, true); // recursive, preserveEvents
               // this.setSubstreamRenderOptions();
-              var $canvas = $(canvas); // works even if canvas is already $jquery
+              var $canvas = $$1(canvas); // works even if canvas is already $jquery
               var $newCanv = this.createNewCanvas(canvas.width, canvas.height);
               this.renderVexflowOnCanvas($newCanv);
               $canvas.replaceWith($newCanv);
-              common.jQueryEventCopy($.event, $canvas, $newCanv); /* copy events -- using custom extension... */
+              common.jQueryEventCopy($$1.event, $canvas, $newCanv); /* copy events -- using custom extension... */
               return this;
           }
 
@@ -10424,10 +10424,10 @@
               /*
                * Create an editable canvas with an accidental selection bar.
                */
-              var d = $('<div/>').css('text-align', 'left').css('position', 'relative');
+              var d = $$1('<div/>').css('text-align', 'left').css('position', 'relative');
               var buttonDiv = this.getAccidentalToolbar();
               d.append(buttonDiv);
-              d.append($("<br clear='all'/>"));
+              d.append($$1("<br clear='all'/>"));
               this.renderOptions.events.click = this.canvasChangerFunction;
               this.appendNewCanvas(d, width, height); // var can =
               return d;
@@ -10462,7 +10462,7 @@
                    * To be called on a button...
                    *   this will usually refer to a window Object
                    */
-                  var accidentalToolbar = $(clickedButton).parent();
+                  var accidentalToolbar = $$1(clickedButton).parent();
                   var siblingCanvas = accidentalToolbar.parent().find('canvas');
                   var s = siblingCanvas[0].storedStream;
                   if (s.activeNote !== undefined) {
@@ -10476,14 +10476,14 @@
                   }
               };
 
-              var buttonDiv = $('<div/>').attr('class', 'buttonToolbar vexflowToolbar').css('position', 'absolute').css('top', '10px');
-              buttonDiv.append($('<span/>').css('margin-left', '50px'));
+              var buttonDiv = $$1('<div/>').attr('class', 'buttonToolbar vexflowToolbar').css('position', 'absolute').css('top', '10px');
+              buttonDiv.append($$1('<span/>').css('margin-left', '50px'));
               var clickFunc = function addAccidentalClickFunc() {
-                  addAccidental(this, $(this).data('alter'));
+                  addAccidental(this, $$1(this).data('alter'));
               };
               for (var i = minAccidental; i <= maxAccidental; i++) {
                   var acc = new pitch.Accidental(i);
-                  buttonDiv.append($('<button>' + acc.unicodeModifier + '</button>').data('alter', i).click(clickFunc)
+                  buttonDiv.append($$1('<button>' + acc.unicodeModifier + '</button>').data('alter', i).click(clickFunc)
                   //                  .css('font-family', 'Bravura')
                   //                  .css('font-size', '40px')
                   );
@@ -10501,14 +10501,14 @@
           value: function getPlayToolbar() {
               var _this2 = this;
 
-              var buttonDiv = $('<div/>').attr('class', 'playToolbar vexflowToolbar').css('position', 'absolute').css('top', '10px');
-              buttonDiv.append($('<span/>').css('margin-left', '50px'));
-              var bPlay = $('<button>&#9658</button>');
+              var buttonDiv = $$1('<div/>').attr('class', 'playToolbar vexflowToolbar').css('position', 'absolute').css('top', '10px');
+              buttonDiv.append($$1('<span/>').css('margin-left', '50px'));
+              var bPlay = $$1('<button>&#9658</button>');
               bPlay.click(function () {
                   _this2.playStream();
               });
               buttonDiv.append(bPlay);
-              var bStop = $('<button>&#9724</button>');
+              var bStop = $$1('<button>&#9724</button>');
               bStop.click(function () {
                   _this2.stopPlayStream();
               });
@@ -10533,7 +10533,7 @@
               // set up a bunch of windowReflow bindings that affect the canvas.
               var callingStream = this;
               var jCanvasNow = jCanvas;
-              $(window).bind('resizeEnd', function () {
+              $$1(window).bind('resizeEnd', function () {
                   // do something, window hasn't changed size in 500ms
                   var jCanvasParent = jCanvasNow.parent();
                   var newWidth = jCanvasParent.width();
@@ -10546,21 +10546,21 @@
                   callingStream.maxSystemWidth = canvasWidth - 40;
                   jCanvasNow.remove();
                   var canvasObj = callingStream.appendNewCanvas(jCanvasParent);
-                  jCanvasNow = $(canvasObj);
+                  jCanvasNow = $$1(canvasObj);
               });
-              $(window).resize(function resizeCanvasTo() {
+              $$1(window).resize(function resizeCanvasTo() {
                   if (this.resizeTO) {
                       clearTimeout(this.resizeTO);
                   }
                   this.resizeTO = setTimeout(function resizeToTimeout() {
-                      $(this).trigger('resizeEnd');
+                      $$1(this).trigger('resizeEnd');
                   }, 200);
               });
               setTimeout(function triggerResizeOnCreateCanvas() {
-                  var $window = $(window);
+                  var $window = $$1(window);
                   var doResize = $window.data('triggerResizeOnCreateCanvas');
                   if (doResize === undefined || doResize === true) {
-                      $(this).trigger('resizeEnd');
+                      $$1(this).trigger('resizeEnd');
                       $window.data('triggerResizeOnCreateCanvas', false);
                   }
               }, 1000);
@@ -11149,7 +11149,7 @@
               // debug = true;
 
               if (debug) {
-                  console.log('this.estimateStreamHeight(): ' + this.estimateStreamHeight() + ' / $(canvas).height(): ' + $(canvas).height());
+                  console.log('this.estimateStreamHeight(): ' + this.estimateStreamHeight() + ' / $(canvas).height(): ' + $$1(canvas).height());
               }
               var systemPadding = this.renderOptions.systemPadding;
               if (systemPadding === undefined) {
@@ -12170,7 +12170,7 @@
           key: '_silentFlash',
           value: function _silentFlash(flashColor) {
               this.$metronomeDiv.find('.metroFlash').css('background-color', flashColor).fadeOut(this.beatLength * 1000 * 1 / 4, function silentFadeOut() {
-                  $(this).css('background-color', '#ffffff').fadeIn(1);
+                  $$1(this).css('background-color', '#ffffff').fadeIn(1);
               });
           }
 
@@ -12307,43 +12307,43 @@
               if (where !== undefined && where.jquery !== undefined) {
                   jWhere = where;
               } else if (where !== undefined) {
-                  jWhere = $(where);
+                  jWhere = $$1(where);
               } else {
-                  jWhere = $('body');
+                  jWhere = $$1('body');
               }
               var metroThis = this;
-              var tempoHolder = $('<span class="tempoHolder">' + this.tempo.toString() + '</span>');
+              var tempoHolder = $$1('<span class="tempoHolder">' + this.tempo.toString() + '</span>');
               tempoHolder.css({
                   'font-size': '24px',
                   'padding-left': '10px',
                   'padding-right': '10px'
               });
-              var newDiv = $('<div class="metronomeRendered"></div>');
+              var newDiv = $$1('<div class="metronomeRendered"></div>');
               newDiv.append(tempoHolder);
 
-              var b1 = $('<button>start</button>');
+              var b1 = $$1('<button>start</button>');
               b1.on('click', function () {
                   metroThis.chirp();
               });
-              var b2 = $('<button>stop</button>');
+              var b2 = $$1('<button>stop</button>');
               b2.on('click', function () {
                   metroThis.stopChirp();
               });
               newDiv.prepend(b2);
               newDiv.prepend(b1);
-              var b3 = $('<button>up</button>');
+              var b3 = $$1('<button>up</button>');
               b3.on('click', function increaseSpeedButton() {
                   metroThis.increaseSpeed();
-                  $(this).prevAll('.tempoHolder').html(metroThis.tempo.toString());
+                  $$1(this).prevAll('.tempoHolder').html(metroThis.tempo.toString());
               });
-              var b4 = $('<button>down</button>');
+              var b4 = $$1('<button>down</button>');
               b4.on('click', function decreaseSpeedButton() {
                   metroThis.decreaseSpeed();
-                  $(this).prevAll('.tempoHolder').html(metroThis.tempo.toString());
+                  $$1(this).prevAll('.tempoHolder').html(metroThis.tempo.toString());
               });
               newDiv.append(b3);
               newDiv.append(b4);
-              var $flash = $('<span class="metroFlash">' + '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>');
+              var $flash = $$1('<span class="metroFlash">' + '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>');
               $flash.css('margin-left', '40px');
               $flash.css('height', '40px');
 
@@ -12649,16 +12649,16 @@
       }
       var allRender = [];
       if (selector === undefined) {
-          allRender = $(classTypes);
+          allRender = $$1(classTypes);
       } else {
           if (selector.jquery === undefined) {
-              selector = $(selector);
+              selector = $$1(selector);
           }
           allRender = selector.find(classTypes);
       }
       for (var i = 0; i < allRender.length; i++) {
           var thisTN = allRender[i];
-          var thisTNJQ = $(thisTN);
+          var thisTNJQ = $$1(thisTN);
           var thisTNContents = void 0;
           if (thisTNJQ.attr('tinynotationcontents') !== undefined) {
               thisTNContents = thisTNJQ.attr('tinynotationcontents');
@@ -12800,7 +12800,7 @@
           return webmidi.storedPlugin;
       }
       if (typeof appendElement === 'undefined') {
-          appendElement = $('body')[0];
+          appendElement = $$1('body')[0];
       }
       var obj = document.createElement('object');
       obj.classid = 'CLSID:1ACE1618-1C7D-4561-AEE1-34842AA85E90';
@@ -12840,7 +12840,7 @@
       }
 
       $newSelect.change(function () {
-          var selectedInput = $('#midiInSelect option:selected').text();
+          var selectedInput = $$1('#midiInSelect option:selected').text();
           if (selectedInput !== 'None selected') {
               webmidi.selectedJazzInterface = Jazz.MidiInOpen(selectedInput, webmidi.jazzMidiInArrived);
           } else {
@@ -12851,13 +12851,13 @@
           }
       });
       var midiOptions = Jazz.MidiInList();
-      var noneAppendOption = $("<option value='None'>None selected</option>");
+      var noneAppendOption = $$1("<option value='None'>None selected</option>");
       $newSelect.append(noneAppendOption);
 
       var anySelected = false;
       var allAppendOptions = [];
       for (var i = 0; i < midiOptions.length; i++) {
-          var $appendOption = $("<option value='" + midiOptions[i] + "'>" + midiOptions[i] + '</option>');
+          var $appendOption = $$1("<option value='" + midiOptions[i] + "'>" + midiOptions[i] + '</option>');
           if (midiOptions[i] === webmidi.selectedJazzInterface) {
               $appendOption.attr('selected', true);
               anySelected = true;
@@ -12936,10 +12936,10 @@
       common.merge(params, options);
 
       if (typeof $midiSelectDiv === 'undefined') {
-          $midiSelectDiv = $('body');
+          $midiSelectDiv = $$1('body');
       }
       if ($midiSelectDiv.jquery === undefined) {
-          $midiSelectDiv = $($midiSelectDiv);
+          $midiSelectDiv = $$1($midiSelectDiv);
       }
       var $newSelect = void 0;
       var foundMidiSelects = $midiSelectDiv.find('select#midiInSelect');
@@ -12947,7 +12947,7 @@
           $newSelect = foundMidiSelects[0];
           params.existingMidiSelect = true;
       } else {
-          $newSelect = $('<select>').attr('id', 'midiInSelect');
+          $newSelect = $$1('<select>').attr('id', 'midiInSelect');
           $midiSelectDiv.append($newSelect);
       }
       webmidi.$select = $newSelect;
@@ -12985,14 +12985,14 @@
       var inputs = webmidi.access.inputs;
       webmidi.$select.empty();
 
-      var $noneAppendOption = $("<option value='None'>None selected</option>");
+      var $noneAppendOption = $$1("<option value='None'>None selected</option>");
       webmidi.$select.append($noneAppendOption);
 
       var allAppendOptions = [];
       var midiOptions = [];
       var i = 0;
       inputs.forEach(function (port) {
-          var $appendOption = $("<option value='" + port.name + "'>" + port.name + '</option>');
+          var $appendOption = $$1("<option value='" + port.name + "'>" + port.name + '</option>');
           allAppendOptions.push($appendOption);
           midiOptions.push(port.name);
           // console.log(appendOption);
@@ -13295,13 +13295,13 @@
           value: function addDiv(where) {
               var $where = where;
               if (where !== undefined && where.jquery === undefined) {
-                  $where = $(where);
+                  $where = $$1(where);
               }
-              var $outer = $('<div class="rhythmButtonDiv"/>');
+              var $outer = $$1('<div class="rhythmButtonDiv"/>');
               for (var i = 0; i < this.values.length; i++) {
                   var value = this.values[i];
                   var entity = this.valueMappings[value];
-                  var $inner = $('<button class="btButton" m21Type="' + value + '">' + entity + '</button>');
+                  var $inner = $$1('<button class="btButton" m21Type="' + value + '">' + entity + '</button>');
                   if (this.styles[value] !== undefined) {
                       $inner.attr('style', this.styles[value]);
                   }
@@ -13390,7 +13390,535 @@
   music21.webmidi = webmidi;
   music21.widgets = widgets;
 
-  return music21;
+  function tests() {
+      QUnit.test('music21.articulations.Articulation', function (assert) {
+          var acc = new music21.articulations.Accent();
+          assert.equal(acc.name, 'accent', 'matching names for accent');
+          var ten = new music21.articulations.Tenuto();
+          assert.equal(ten.name, 'tenuto', 'matching names for tenuto');
+          var n = new music21.note.Note('C');
+          n.articulations.push(acc);
+          n.articulations.push(ten);
+          assert.equal(n.articulations[0].name, 'accent', 'accent in array');
+          assert.equal(n.articulations[1].name, 'tenuto', 'tenuto in array');
+      });
+
+      QUnit.test('music21.articulations.Articulation display', function (assert) {
+          // Marcato is a pseudo multiple inheritance
+          var marc = new music21.articulations.Marcato();
+          assert.equal(marc.name, 'marcato', 'matching names for marcato');
+          var n = new music21.note.Note('D#5');
+          n.articulations.push(marc);
+          var nBoring = new music21.note.Note('D#5');
+
+          var measure = new music21.stream.Measure();
+          measure.append(n);
+          measure.append(nBoring);
+          measure.append(nBoring.clone());
+          measure.append(n.clone());
+          measure.appendNewCanvas();
+          assert.ok(true, 'something worked');
+      });
+  }
+
+  function tests$1() {
+          QUnit.test('music21.beam.Beams', function (assert) {
+                  var a = new music21.beam.Beams();
+                  a.fill('16th');
+                  a.setAll('start');
+                  assert.equal(a.getTypes()[0], 'start');
+                  assert.equal(a.getTypes()[1], 'start');
+
+                  var b = new music21.beam.Beams();
+                  b.fill('16th');
+                  b.setAll('start');
+                  b.setByNumber(1, 'continue');
+                  assert.equal(b.beamsList[0].type, 'continue');
+                  b.setByNumber(2, 'stop');
+                  assert.equal(b.beamsList[1].type, 'stop');
+                  b.setByNumber(2, 'partial-right');
+                  assert.equal(b.beamsList[1].type, 'partial');
+                  assert.equal(b.beamsList[1].direction, 'right');
+          });
+  }
+
+  function tests$2() {
+      QUnit.test('music21.clef.Clef', function (assert) {
+          var c1 = new music21.clef.Clef();
+          assert.equal(c1.isClassOrSubclass('Clef'), true, 'clef is a Clef');
+
+          var ac = new music21.clef.AltoClef();
+          assert.equal(ac.lowestLine, 25, 'first line set');
+          var n = new music21.note.Note('C#4');
+          n.setStemDirectionFromClef(ac);
+          assert.equal(n.stemDirection, 'down', 'stem direction set');
+          n.pitch.diatonicNoteNum -= 1;
+          n.setStemDirectionFromClef(ac);
+          assert.equal(n.stemDirection, 'up', 'stem direction set');
+          n.pitch.diatonicNoteNum += 1;
+          var p2 = ac.convertPitchToTreble(n.pitch);
+          assert.equal(p2.nameWithOctave, 'B#4', 'converted to treble');
+      });
+      QUnit.test('music21.clef.Clef 8va', function (assert) {
+          var ac = new music21.clef.Treble8vaClef();
+          assert.equal(ac.lowestLine, 38, 'first line set');
+          var n = new music21.note.Note('C#5');
+          n.setStemDirectionFromClef(ac);
+          assert.equal(n.stemDirection, 'up', 'stem direction set');
+          var p2 = ac.convertPitchToTreble(n.pitch);
+          assert.equal(p2.nameWithOctave, 'C#4', 'converted to treble');
+          var s = new music21.stream.Stream();
+          s.clef = ac;
+          s.append(n);
+          s.appendNewCanvas($('body'));
+      });
+  }
+
+  function tests$3() {
+      QUnit.test('music21.duration.Duration', function (assert) {
+          var d = new music21.duration.Duration(1.0);
+          assert.equal(d.type, 'quarter', 'got quarter note from 1.0');
+          assert.equal(d.dots, 0, 'got no dots');
+          assert.equal(d.quarterLength, 1.0, 'got 1.0 from 1.0');
+          assert.equal(d.vexflowDuration, 'q', 'vexflow q');
+          d.type = 'half';
+          assert.equal(d.type, 'half', 'got half note from half');
+          assert.equal(d.dots, 0, 'got no dots');
+          assert.equal(d.quarterLength, 2.0, 'got 2.0 from half');
+          assert.equal(d.vexflowDuration, 'h', 'vexflow h');
+          d.quarterLength = 6.0;
+          assert.equal(d.type, 'whole');
+          assert.equal(d.dots, 1, 'got one dot from 6.0');
+          assert.equal(d.quarterLength, 6.0, 'got 6.0');
+          assert.equal(d.vexflowDuration, 'wd', 'vexflow duration wd');
+
+          d.quarterLength = 7.75;
+          assert.equal(d.type, 'whole');
+          assert.equal(d.dots, 4, 'got four dots from 7.75');
+      });
+
+      QUnit.test('music21.duration.Tuplet', function (assert) {
+          var d = new music21.duration.Duration(0.5);
+          var t = new music21.duration.Tuplet(5, 4);
+          assert.equal(t.tupletMultiplier(), 0.8, 'tuplet multiplier');
+          d.appendTuplet(t);
+          assert.equal(t.frozen, true, 'tuplet is frozen');
+          assert.equal(d._tuplets[0], t, 'tuplet appended');
+          assert.equal(d.quarterLength, 0.4, 'quarterLength Updated');
+
+          var d2 = new music21.duration.Duration(1 / 3);
+          assert.equal(d2.type, 'eighth', 'got eighth note from 1/3');
+          assert.equal(d2.dots, 0, 'got no dots');
+          assert.equal(d2.quarterLength, 1 / 3, 'got 1/3 from 1/3');
+          var t2 = d2.tuplets[0];
+          assert.equal(t2.numberNotesActual, 3, '3/2 tuplet');
+          assert.equal(t2.numberNotesNormal, 2, '3/2 tuplet');
+          assert.equal(t2.durationActual.quarterLength, 0.5);
+          assert.equal(t2.tupletMultiplier(), 2 / 3, '2/3 tuplet multiplier');
+          assert.equal(t2.totalTupletLength(), 1.0, 'total tuplet == 1.0');
+
+          var s = new music21.stream.Stream();
+          s.timeSignature = new music21.meter.TimeSignature('2/2');
+          for (var i = 0; i < 6; i++) {
+              var n1 = new music21.note.Note('C4');
+              n1.duration.quarterLength = 2 / 3;
+              if (i % 3 === 0) {
+                  n1.articulations.push(new music21.articulations.Accent());
+              }
+              s.append(n1);
+          }
+          s.appendNewCanvas();
+          assert.ok(true, 'quarter note triplets displayed');
+
+          var m6 = new music21.stream.Measure();
+          m6.renderOptions.staffLines = 1;
+          m6.timeSignature = new music21.meter.TimeSignature('2/4');
+          var n6 = new music21.note.Note('B4');
+          n6.duration.quarterLength = 2 / 3;
+          n6.duration.tuplets[0].durationNormal.type = 'eighth';
+          n6.duration.tuplets[0].tupletNormalShow = 'ratio';
+
+          var n7 = new music21.note.Note('B4');
+          n7.duration.quarterLength = 1 / 3;
+          n7.duration.tuplets[0].tupletNormalShow = 'ratio';
+
+          m6.append(n6);
+          m6.append(n7);
+          m6.append(n7.clone());
+          var n6clone = n6.clone();
+          m6.append(n6clone);
+          m6.appendNewCanvas();
+          assert.ok(true, 'tuplets beginning with different type than original');
+          assert.equal(n6.duration.tuplets[0] !== n6clone.duration.tuplets[0], true, 'tuplet should not be the same object after clone');
+      });
+      QUnit.test('music21.duration.Tuplet multiple parts', function (assert) {
+          var s2 = new music21.stream.Measure();
+          s2.timeSignature = new music21.meter.TimeSignature('3/2');
+          var na1 = new music21.note.Note('F4');
+          var na2 = new music21.note.Note('E4');
+          s2.append(na1);
+          s2.append(na2);
+          for (var i = 0; i < 10; i++) {
+              var n1 = new music21.note.Note('F4');
+              n1.pitch.diatonicNoteNum += i;
+              n1.duration.quarterLength = 2 / 5;
+              n1.duration.tuplets[0].tupletNormalShow = 'ratio';
+              if (i % 5 === 0) {
+                  n1.articulations.push(new music21.articulations.Accent());
+              }
+              s2.append(n1);
+          }
+          var s3 = new music21.stream.Measure();
+          s3.timeSignature = new music21.meter.TimeSignature('3/2');
+          s3.append(new music21.note.Note('B5', 6.0));
+          var p = new music21.stream.Part();
+          p.append(s2);
+          p.append(s3);
+
+          var m4 = new music21.stream.Measure();
+          m4.timeSignature = new music21.meter.TimeSignature('3/2');
+          m4.append(new music21.note.Note('B3', 6.0));
+          var m5 = new music21.stream.Measure();
+          m5.timeSignature = new music21.meter.TimeSignature('3/2');
+          m5.append(new music21.note.Note('B3', 6.0));
+          var p2 = new music21.stream.Part();
+          p2.append(m4);
+          p2.append(m5);
+
+          var sc = new music21.stream.Score();
+          sc.insert(0, p);
+          sc.insert(0, p2);
+          sc.appendNewCanvas();
+          assert.ok(true, '5:4 tuplets in 3/2 with multiple parts');
+      });
+  }
+
+  function tests$4() {
+      QUnit.test('music21.dynamics.Dynamic', function (assert) {
+          var dynamic = new music21.dynamics.Dynamic('pp');
+          assert.equal(dynamic.value, 'pp', 'matching dynamic');
+
+          dynamic = new music21.dynamics.Dynamic(0.98);
+          assert.equal(dynamic.value, 'fff', 'number conversion successful');
+          assert.equal(dynamic.volumeScalar, 0.98, 'correct volume');
+          assert.equal(dynamic.longName, 'fortississimo', 'matching long name');
+          assert.equal(dynamic.englishName, 'extremely loud', 'matching english names');
+
+          dynamic = new music21.dynamics.Dynamic('other');
+          assert.equal(dynamic.value, 'other', 'record non standard dynamic');
+          assert.equal(dynamic.longName, undefined, 'no long name for non standard dynamic');
+          assert.equal(dynamic.englishName, undefined, 'no english name for non standard dynamic');
+
+          dynamic.value = 0.18;
+          assert.equal(dynamic.value, 'pp', 'change in dynamic');
+          assert.equal(dynamic.volumeScalar, 0.18, 'change in volume');
+
+          dynamic.value = 'other';
+          assert.equal(dynamic.value, 'other', 'change to non standard');
+          assert.equal(dynamic.longName, undefined, 'change to non standard dynamic');
+          assert.equal(dynamic.englishName, undefined, 'change to non standard dynamic');
+      });
+  }
+
+  function tests$5() {
+      QUnit.test('music21.key.Key', function (assert) {
+          var testSharps = [
+          // sharps, mode, given name, given mode
+          [0, 'minor', 'a'], [0, 'major', 'C'], [0, 'major'], [6, 'major', 'F#'], [3, 'minor', 'f#'], [6, 'major', 'f#', 'major'], [-2, 'major', 'B-'], [-5, 'minor', 'b-']];
+          for (var i = 0; i < testSharps.length; i++) {
+              var thisTest = testSharps[i];
+              var expectedSharps = thisTest[0];
+              var expectedMode = thisTest[1];
+              var givenKeyName = thisTest[2];
+              var givenMode = thisTest[3];
+              var _k = new music21.key.Key(givenKeyName, givenMode);
+              var foundSharps = _k.sharps;
+              var foundMode = _k.mode;
+              assert.equal(foundSharps, expectedSharps, 'Test sharps: ' + givenKeyName + ' (mode: ' + givenMode + ') ');
+              assert.equal(foundMode, expectedMode, 'Test mode: ' + givenKeyName + ' (mode: ' + givenMode + ') ');
+          }
+
+          var k = new music21.key.Key('f#');
+          var s = k.getScale();
+          assert.equal(s[2].nameWithOctave, 'A4', 'test minor scale');
+          assert.equal(s[6].nameWithOctave, 'E5');
+          s = k.getScale('major');
+          assert.equal(s[2].nameWithOctave, 'A#4', 'test major scale');
+          assert.equal(s[6].nameWithOctave, 'E#5');
+          s = k.getScale('harmonic minor');
+          assert.equal(s[2].nameWithOctave, 'A4', 'test harmonic minor scale');
+          assert.equal(s[5].nameWithOctave, 'D5');
+          assert.equal(s[6].nameWithOctave, 'E#5');
+
+          assert.equal(k.width, 15, 'checking width is 5 * abs(sharps)');
+      });
+  }
+
+  function tests$6() {
+      QUnit.test('music21.note.Note', function (assert) {
+          var n = new music21.note.Note('D#5');
+
+          assert.equal(n.pitch.name, 'D#', 'Pitch Name set to D#');
+          assert.equal(n.pitch.step, 'D', 'Pitch Step set to D');
+          assert.equal(n.pitch.octave, 5, 'Pitch octave set to 5');
+      });
+  }
+
+  function tests$7() {
+      QUnit.test('music21.pitch.Accidental', function (assert) {
+          var a = new music21.pitch.Accidental('-');
+          assert.equal(a.alter, -1.0, 'flat alter passed');
+          assert.equal(a.name, 'flat', 'flat name passed');
+      });
+
+      QUnit.test('music21.pitch.Pitch', function (assert) {
+          var p = new music21.pitch.Pitch('D#5');
+          assert.equal(p.name, 'D#', 'Pitch Name set to D#');
+          assert.equal(p.step, 'D', 'Pitch Step set to D');
+          assert.equal(p.octave, 5, 'Pitch octave set to 5');
+          var c = new music21.clef.AltoClef();
+          var vfn = p.vexflowName(c);
+          assert.equal(vfn, 'C#/6', 'Vexflow name set');
+      });
+  }
+
+  function tests$8() {
+      QUnit.test('music21.roman.RomanNumeral', function (assert) {
+          var t1 = 'IV';
+          var rn1 = new music21.roman.RomanNumeral(t1, 'F');
+          assert.equal(rn1.scaleDegree, 4, 'test scale dgree of F IV');
+          var scale = rn1.scale;
+          assert.equal(scale[0].name, 'F', 'test scale is F');
+          assert.equal(rn1.root.name, 'B-', 'test root of F IV');
+          assert.equal(rn1.impliedQuality, 'major', 'test quality is major');
+          assert.equal(rn1.pitches[0].name, 'B-', 'test pitches[0] == B-');
+          assert.equal(rn1.pitches[1].name, 'D', 'test pitches[1] == D');
+          assert.equal(rn1.pitches[2].name, 'F', 'test pitches[2] == F');
+          assert.equal(rn1.degreeName, 'Subdominant', 'test is Subdominant');
+
+          var t2 = 'viio7';
+          rn1 = new music21.roman.RomanNumeral(t2, 'a');
+          assert.equal(rn1.scaleDegree, 7, 'test scale dgree of A viio7');
+          assert.equal(rn1.root.name, 'G#', 'test root name == G#');
+          assert.equal(rn1.impliedQuality, 'diminished-seventh', 'implied quality');
+          assert.equal(rn1.pitches[0].name, 'G#', 'test pitches[0] == G#');
+          assert.equal(rn1.pitches[1].name, 'B', 'test pitches[1] == B');
+          assert.equal(rn1.pitches[2].name, 'D', 'test pitches[2] == D');
+          assert.equal(rn1.pitches[3].name, 'F', 'test pitches[3] == F');
+          assert.equal(rn1.degreeName, 'Leading-tone', 'test is Leading-tone');
+
+          t2 = 'V7';
+          rn1 = new music21.roman.RomanNumeral(t2, 'a');
+          assert.equal(rn1.scaleDegree, 5, 'test scale dgree of a V7');
+          assert.equal(rn1.root.name, 'E', 'root name is E');
+          assert.equal(rn1.impliedQuality, 'dominant-seventh', 'implied quality dominant-seventh');
+          assert.equal(rn1.pitches[0].name, 'E', 'test pitches[0] == E');
+          assert.equal(rn1.pitches[1].name, 'G#', 'test pitches[1] == G#');
+          assert.equal(rn1.pitches[2].name, 'B', 'test pitches[2] == B');
+          assert.equal(rn1.pitches[3].name, 'D', 'test pitches[3] == D');
+          assert.equal(rn1.degreeName, 'Dominant', 'test is Dominant');
+
+          t2 = 'VII';
+          rn1 = new music21.roman.RomanNumeral(t2, 'f#');
+          assert.equal(rn1.scaleDegree, 7, 'test scale dgree of a VII');
+          assert.equal(rn1.root.name, 'E', 'root name is E');
+          assert.equal(rn1.impliedQuality, 'major', 'implied quality major');
+          assert.equal(rn1.pitches[0].name, 'E', 'test pitches[0] == E');
+          assert.equal(rn1.pitches[1].name, 'G#', 'test pitches[1] == G#');
+          assert.equal(rn1.pitches[2].name, 'B', 'test pitches[2] == B');
+          assert.equal(rn1.degreeName, 'Subtonic', 'test is Subtonic');
+      });
+
+      QUnit.test('music21.roman.RomanNumeral - inversions', function (assert) {
+          var t1 = 'IV';
+          var rn1 = new music21.roman.RomanNumeral(t1, 'F');
+          assert.equal(rn1.scaleDegree, 4, 'test scale dgree of F IV');
+          var scale = rn1.scale;
+          assert.equal(scale[0].name, 'F', 'test scale is F');
+          assert.equal(rn1.root.name, 'B-', 'test root of F IV');
+          assert.equal(rn1.impliedQuality, 'major', 'test quality is major');
+          assert.equal(rn1.pitches[0].name, 'B-', 'test pitches[0] == B-');
+          assert.equal(rn1.pitches[1].name, 'D', 'test pitches[1] == D');
+          assert.equal(rn1.pitches[2].name, 'F', 'test pitches[2] == F');
+          assert.equal(rn1.degreeName, 'Subdominant', 'test is Subdominant');
+      });
+  }
+
+  function tests$9() {
+      QUnit.test('music21.stream.Stream', function (assert) {
+          var s = new music21.stream.Stream();
+          s.append(new music21.note.Note('C#5'));
+          s.append(new music21.note.Note('D#5'));
+          var n = new music21.note.Note('F5');
+          n.duration.type = 'half';
+          s.append(n);
+          assert.equal(s.length, 3, 'Simple stream length');
+      });
+
+      QUnit.test('music21.stream.Stream.duration', function (assert) {
+          var s = new music21.stream.Stream();
+          assert.equal(s.duration.quarterLength, 0, 'EmptyString QuarterLength');
+
+          s.append(new music21.note.Note('C#5'));
+          assert.equal(s.duration.quarterLength, 1.0, '1 quarter QuarterLength');
+
+          var n = new music21.note.Note('F5');
+          n.duration.type = 'half';
+          s.append(n);
+          assert.equal(s.duration.quarterLength, 3.0, '3 quarter QuarterLength');
+
+          s.duration = new music21.duration.Duration(3.0);
+          s.append(new music21.note.Note('D#5'));
+          assert.equal(s.duration.quarterLength, 3.0, 'overridden duration -- remains');
+
+          var sc = new music21.stream.Score();
+          var p1 = new music21.stream.Part();
+          var p2 = new music21.stream.Part();
+          var m1 = new music21.stream.Measure();
+          var m2 = new music21.stream.Measure();
+          var n11 = new music21.note.Note();
+          var n12 = new music21.note.Note();
+          n12.duration.type = 'half';
+          var n13 = new music21.note.Note();
+          n13.duration.type = 'eighth'; // incomplete measure
+          m1.append(n11);
+          m1.append(n12);
+          m1.append(n13);
+          var n21 = new music21.note.Note();
+          n21.duration.type = 'whole';
+          m2.append(n21);
+          p1.append(m1);
+          p2.append(m2);
+          sc.insert(0, p1);
+          sc.insert(0, p2);
+          assert.equal(sc.duration.quarterLength, 4.0, 'duration of streams with nested parts');
+          assert.equal(sc.flat.duration.quarterLength, 4.0, 'duration of flat stream with overlapping notes');
+          n21.duration.type = 'half';
+          assert.equal(sc.duration.quarterLength, 3.5, 'new music21.duration with nested parts');
+          assert.equal(sc.flat.duration.quarterLength, 3.5, 'new music21.duration of flat stream');
+      });
+
+      QUnit.test('music21.stream.Stream.insert and offsets', function (assert) {
+          var s = new music21.stream.Stream();
+          s.append(new music21.note.Note('C#5'));
+          var n3 = new music21.note.Note('E5');
+          s.insert(2.0, n3);
+          var n2 = new music21.note.Note('D#5');
+          s.insert(1.0, n2);
+          assert.equal(s.get(0).name, 'C#');
+          assert.equal(s.get(1).name, 'D#');
+          assert.equal(s.get(2).name, 'E');
+          assert.equal(s.get(0).offset, 0.0);
+          assert.equal(s.get(1).offset, 1.0);
+          assert.equal(s.get(2).offset, 2.0);
+          var p = new music21.stream.Part();
+          var m1 = new music21.stream.Measure();
+          var n1 = new music21.note.Note('C#');
+          n1.duration.type = 'whole';
+          m1.append(n1);
+          var m2 = new music21.stream.Measure();
+          n2 = new music21.note.Note('D#');
+          n2.duration.type = 'whole';
+          m2.append(n2);
+          p.append(m1);
+          p.append(m2);
+          assert.equal(p.get(0).get(0).offset, 0.0);
+          var pf = p.flat;
+          assert.equal(pf.get(1).offset, 4.0);
+          var pf2 = p.flat; // repeated calls do not change
+          assert.equal(pf2.get(1).offset, 4.0, 'repeated calls do not change offset');
+          var pf3 = pf2.flat;
+          assert.equal(pf3.get(1).offset, 4.0, '.flat.flat does not change offset');
+      });
+
+      QUnit.test('music21.stream.Stream.canvas', function (assert) {
+          var s = new music21.stream.Stream();
+          s.append(new music21.note.Note('C#5'));
+          s.append(new music21.note.Note('D#5'));
+          var n = new music21.note.Note('F5');
+          n.duration.type = 'half';
+          s.append(n);
+          var c = s.createNewCanvas(100, 50);
+          assert.equal(c.attr('width'), 100, 'stored width matches');
+          assert.equal(c.attr('height'), 50, 'stored height matches');
+      });
+
+      QUnit.test('music21.stream.Stream.getElementsByClass', function (assert) {
+          var s = new music21.stream.Stream();
+          var n1 = new music21.note.Note('C#5');
+          var n2 = new music21.note.Note('D#5');
+          var r = new music21.note.Rest();
+          var tc = new music21.clef.TrebleClef();
+          s.append(tc);
+          s.append(n1);
+          s.append(r);
+          s.append(n2);
+          var c = s.getElementsByClass('Note');
+          assert.equal(c.length, 2, 'got two notes');
+          assert.equal(c.get(0), n1, 'n1 first');
+          assert.equal(c.get(1), n2, 'n2 second');
+          c = s.getElementsByClass('Clef');
+          assert.equal(c.length, 1, 'got clef from subclass');
+          c = s.getElementsByClass(['Note', 'TrebleClef']);
+          assert.equal(c.length, 3, 'got multiple classes');
+          c = s.getElementsByClass('GeneralNote');
+          assert.equal(c.length, 3, 'got multiple subclasses');
+      });
+      QUnit.test('music21.stream.offsetMap', function (assert) {
+          var n = new music21.note.Note('G3');
+          var o = new music21.note.Note('A3');
+          var s = new music21.stream.Measure();
+          s.insert(0, n);
+          s.insert(0.5, o);
+          var om = s.offsetMap();
+          assert.equal(om.length, 2, 'offsetMap should have length 2');
+          var omn = om[0];
+          var omo = om[1];
+          assert.equal(omn.element, n, 'omn element should be n');
+          assert.equal(omn.offset, 0.0, 'omn offset should be 0');
+          assert.equal(omn.endTime, 1.0, 'omn endTime should be 1.0');
+          assert.equal(omn.voiceIndex, undefined, 'omn voiceIndex should be undefined');
+          assert.equal(omo.element, o, 'omo element should be o');
+          assert.equal(omo.offset, 0.5, 'omo offset should be 0.5');
+          assert.equal(omo.endTime, 1.5, 'omo endTime should be 1.5');
+      });
+      QUnit.test('music21.stream.Stream appendNewCanvas ', function (assert) {
+          var n = new music21.note.Note('G3');
+          var s = new music21.stream.Measure();
+          s.append(n);
+          s.appendNewCanvas(document.body);
+          assert.equal(s.length, 1, 'ensure that should have one note');
+          var n1 = new music21.note.Note('G3');
+          var s1 = new music21.stream.Measure();
+          s1.append(n1);
+          var n2 = new music21.note.Note('G3');
+          s1.append(n2);
+          var n3 = new music21.note.Note('G3');
+          s1.append(n3);
+          var n4 = new music21.note.Note('G3');
+          s1.append(n4);
+          var div1 = s1.editableAccidentalCanvas();
+          $(document.body).append(div1);
+      });
+  };
+
+  var allTests = {
+          articulations: tests,
+          beam: tests$1,
+          clef: tests$2,
+          duration: tests$3,
+          dynamics: tests$4,
+          key: tests$5,
+          note: tests$6,
+          pitch: tests$7,
+          roman: tests$8,
+          stream: tests$9
+  };
+  if ((typeof window === 'undefined' ? 'undefined' : _typeof(window)) !== undefined) {
+          window.allTests = allTests;
+  }
+
+  return allTests;
 
 })));
-//# sourceMappingURL=music21.debug.js.map
+//# sourceMappingURL=music21.tests.js.map

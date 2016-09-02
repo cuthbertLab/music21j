@@ -117,8 +117,8 @@ export class LayoutScore extends stream.Score {
         this.top = 0;
         this.left = 0;
     }
-    get pages() { 
-        return this.getElementsByClass('Page'); 
+    get pages() {
+        return this.getElementsByClass('Page');
     }
     get width() {
         if (this._width) {
@@ -132,13 +132,13 @@ export class LayoutScore extends stream.Score {
     /**
      * return a tuple of (top, bottom) for a staff, specified by a given pageId,
      * systemId, and staffId in PIXELS.
-    
+
      * @param pageId
      * @param systemId
      * @param staffId
      * @param units -- "pixels" or "tenths" (not supported)
      */
-    
+
     getPositionForStaff(pageId, systemId, staffId, units) {
         units = units || 'pixels';
     }
@@ -188,8 +188,8 @@ export class System extends stream.Score {
         this.top = undefined;
         this.left = undefined;
     }
-    get staves() { 
-        return this.getElementsByClass('Staff'); 
+    get staves() {
+        return this.getElementsByClass('Staff');
     }
     get width() {
         if (this._width) {

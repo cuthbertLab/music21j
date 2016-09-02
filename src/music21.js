@@ -145,7 +145,6 @@ m21basis.m21basePath = pathSimplify(m21srcPath + '/..');
 m21basis.m21srcPath = m21srcPath;
 //console.log('m21srcPath', m21srcPath);
 //console.log('m21srcPath non simplified', require.toUrl('music21'));
-m21basis.soundfontUrl = m21basis.m21srcPath + '/ext/soundfonts/FluidR3_GM/';
 
 var m21requireConfig = {
     paths: {
@@ -253,8 +252,10 @@ if ((Object.defineProperties === undefined) && warnBanner) {
             define( m21modules, 
                 function (m21, midi, vexflow, $, jsonpickle) {  // BUG, what if midi is in noLoad?     
                     //console.log('inside of require...');
-                    music21 = m21.music21;
-                    music21.soundfontUrl = m21basis.soundfontUrl;
+                    music21 = m21;
+                    for (let u in m21.common.urls) {
+                        m21.common.urls[u] = m21basis.m21basePath + m21.common.urls[u];
+                    }
                     music21.m21basePath = m21basis.m21basePath;
                     music21.m21srcPath = m21basis.m21srcPath;
                     music21.VERSION = m21basis.VERSION;

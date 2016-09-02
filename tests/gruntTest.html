@@ -10,19 +10,18 @@
   <script src="../src/ext/midijs/build/MIDI.js"></script>
   <script src="../src/ext/vexflow/vexflow-debug.js"></script>
   <script src="../build/music21.debug.js" charset="utf-8"></script>
+  <script src="../build/music21.tests.js" charset="utf-8"></script>
   <script>
-  music21 = music21.music21;
   QUnit.start();
   QUnit.test( "hello test", function(assert) {
       assert.equal(1, 1, "Passed!" );
   });    
-  for (var module in music21) {
-      if (typeof(music21[module].tests) == 'function') {
-          var testSuite = music21[module].tests;
+  for (var testModule in allTests) {
+      if (typeof(allTests[testModule]) == 'function') {
+          var testSuite = allTests[testModule];
           testSuite();
-      }
+      }        
   }
-
   </script>
 </head>
 

@@ -10,7 +10,9 @@
 import * as $ from 'jquery';
 import * as eventjs from 'eventjs'; // drag handler...
 import * as MIDI from 'MIDI';
+
 import { chord } from './chord';
+import { common } from './common';
 import { debug } from './debug';
 import { instrument } from './instrument';
 import { note } from './note';
@@ -419,7 +421,7 @@ miditools.loadSoundfont = function loadSoundfont(soundfont, callback) {
             $(document.body).append($("<div class='loadingSoundfont'><b>Loading MIDI Instrument</b>: " +
                                       'audio will begin when this message disappears.</div>'));
             MIDI.loadPlugin({
-                soundfontUrl: music21.soundfontUrl,
+                soundfontUrl: common.urls.soundfontUrl,
                 instrument: soundfont,
                 onsuccess: miditools.postLoadCallback.bind(MIDI, soundfont, callback),
             });
@@ -428,7 +430,8 @@ miditools.loadSoundfont = function loadSoundfont(soundfont, callback) {
 };
 
 /**
- * MidiPlayer -- embedded midi player.
+ * MidiPlayer -- an embedded midi player including the ability to create a
+ * playback device.
  *
  * @class MidiPlayer
  * @memberOf music21.miditools
@@ -437,9 +440,9 @@ miditools.loadSoundfont = function loadSoundfont(soundfont, callback) {
  */
 export class MidiPlayer {
     constructor() {
-        this.player = new music21.MIDI.Players.PlayInstance();
+        this.player = new MIDI.Players.PlayInstance();
         this.speed = 1.0;
-        this.$playDiv = undefined;        
+        this.$playDiv = undefined;
     }
     /**
      * @param where
@@ -455,8 +458,10 @@ export class MidiPlayer {
         }
         const $playDiv = $('<div class="midiPlayer">');
         const $controls = $('<div class="positionControls">');
-        const $playPause = $('<input type="image" src="' + music21.m21basePath + '/css/play.png" align="absmiddle" value="play" class="playPause">');
-        const $stop = $('<input type="image" src="' + music21.m21basePath + '/css/stop.png" align="absmiddle" value="stop" class="stopButton">');
+        const $playPause = $('<input type="image" src="' + this.playPng() +
+                '" align="absmiddle" value="play" class="playPause">');
+        const $stop = $('<input type="image" src="' + this.stopPng() +
+                '" align="absmiddle" value="stop" class="stopButton">');
 
         $playPause.on('click', this.pausePlayStop.bind(this));
         $stop.on('click', this.stopButton.bind(this));
@@ -476,11 +481,21 @@ export class MidiPlayer {
         $where.append($playDiv);
         this.$playDiv = $playDiv;
         return $playDiv;
-    };
+    }
 
     stopButton() {
         this.pausePlayStop('yes');
-    };
+    }
+
+    playPng() {
+        return common.urls.midiPlayer + '/play.png';
+    }
+    pausePng() {
+        return common.urls.midiPlayer + '/pause.png';
+    }
+    stopPng() {
+        return common.urls.midiPlayer + '/stop.png';
+    }
 
     pausePlayStop(stop) {
         let d;
@@ -491,15 +506,15 @@ export class MidiPlayer {
         }
         if (stop === 'yes') {
             this.player.stop();
-            d.src = music21.m21basePath + '/css/play.png';
+            d.src = this.playPng();
         } else if (this.player.playing || stop === 'pause') {
-            d.src = music21.m21basePath + '/css/play.png';
+            d.src = this.playPng();
             this.player.pause(true);
         } else {
-            d.src = music21.m21basePath + '/css/pause.png';
+            d.src = this.pausePng();
             this.player.resume();
         }
-    };
+    }
 
 
     base64Load(b64data) {
@@ -516,20 +531,20 @@ export class MidiPlayer {
                 console.log(e);
             });
         });
-    };
+    }
 
     songFinished() {
         this.pausePlayStop('yes');
-    };
+    }
 
     fileLoaded() {
         this.updatePlaying();
-    };
+    }
 
     startAndUpdate() {
         this.player.start();
         this.updatePlaying();
-    };
+    }
 
 
     updatePlaying() {

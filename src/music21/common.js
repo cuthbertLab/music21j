@@ -50,7 +50,7 @@ common.merge = function mergeRecursive(destination, source) {
 /**
  * Mix in another class into this class -- a form of multiple inheritance.
  * See articulations.Marcato for an example.
- * 
+ *
  */
 common.mixin = function common_mixin(OtherParent, thisClassOrObject) {
     let proto = Object.getPrototypeOf(OtherParent);
@@ -296,7 +296,7 @@ common.jQueryEventCopy = function jQueryEventCopy(eventObj, from, to) {
  * @function music21.common.setWindowVisibilityWatcher
  * @param {function} callback
  */
-common.setWindowVisibilityWatcher = function(callback) {
+common.setWindowVisibilityWatcher = function setWindowVisibilityWatcher(callback) {
     let hidden = 'hidden';
 
     // Standards:
@@ -340,4 +340,11 @@ common.setWindowVisibilityWatcher = function(callback) {
     const initialState = ((document.visibilityState === 'visible') ? 'focus' : 'blur');
     const initialStateEvent = { 'type': initialState };
     windowFocusChanged(initialStateEvent);
+};
+
+common.urls = {
+    css: '/css',
+    webResources: '/webResources',
+    midiPlayer: '/webResources/midiPlayer',
+    soundfontUrl: '/src/ext/soundfonts/FluidR3_GM/',
 };

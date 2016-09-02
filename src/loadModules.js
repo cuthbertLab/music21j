@@ -36,7 +36,7 @@ import { vfShow } from './music21/vfShow';
 import { webmidi } from './music21/webmidi';
 import { widgets } from './music21/widgets';
 
-export const music21 = {};
+const music21 = {};
 
 music21.common = common;
 music21.debug = debug;
@@ -73,4 +73,4 @@ music21.vfShow = vfShow;
 music21.webmidi = webmidi;
 music21.widgets = widgets;
 
-//export default music21;
+export default music21;

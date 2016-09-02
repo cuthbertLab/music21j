@@ -2,6 +2,7 @@ require.config({
     paths: {
         'music21': '../src/music21',
         'qunit': '../tests/qUnit/qunit-2.0.1',
+        'm21Tests': '../build/music21.tests',
     },
     baseUrl: '../src',
     shim: {
@@ -15,12 +16,13 @@ require.config({
      }
 });
 
-require(['music21','qunit'], function (music21, QUnit) {
-    for (var module in music21) {
-        if (typeof(music21[module].tests) == 'function') {
-            var testSuite = music21[module].tests;
+require(['music21','qunit', 'm21Tests'], 
+        function (music21, QUnit, m21Tests) {
+    for (var testModule in m21Tests) {
+        if (typeof(m21Tests[testModule]) == 'function') {
+            var testSuite = m21Tests[testModule];
             testSuite();
-        }
+        }        
     }
     QUnit.load();
     QUnit.start();

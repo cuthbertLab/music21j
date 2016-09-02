@@ -41,7 +41,7 @@ scale.SimpleDiatonicScale = function SimpleDiatonicScale(tonic, scaleSteps) {
     if (tonic === undefined) {
         tonic = new pitch.Pitch('C4');
     } else if (!(tonic instanceof pitch.Pitch)) {
-        throw new Music21Exception('Cannot make a scale not from ' + 
+        throw new Music21Exception('Cannot make a scale not from ' +
                 'a music21.pitch.Pitch object: ' + tonic);
     }
     if (scaleSteps === undefined) {
