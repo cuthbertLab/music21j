@@ -435,152 +435,154 @@ miditools.loadSoundfont = function loadSoundfont(soundfont, callback) {
  * @property {number} speed - playback speed scaling (1=default).
  * @property {JQueryDOMObject|undefined} $playDiv - div holding the player,
  */
-miditools.MidiPlayer = function MidiPlayer() {
-    this.player = new music21.MIDI.Players.PlayInstance();
-    this.speed = 1.0;
-    this.$playDiv = undefined;
-};
-
-/**
- * @param where
- * @returns DOMElement
- */
-miditools.MidiPlayer.prototype.addPlayer = function addPlayer(where) {
-    let $where = where;
-    if (where === undefined) {
-        where = document.body;
+export class MidiPlayer {
+    constructor() {
+        this.player = new music21.MIDI.Players.PlayInstance();
+        this.speed = 1.0;
+        this.$playDiv = undefined;        
     }
-    if (where.jquery === undefined) {
-        $where = $(where);
-    }
-    const $playDiv = $('<div class="midiPlayer">');
-    const $controls = $('<div class="positionControls">');
-    const $playPause = $('<input type="image" src="' + music21.m21basePath + '/css/play.png" align="absmiddle" value="play" class="playPause">');
-    const $stop = $('<input type="image" src="' + music21.m21basePath + '/css/stop.png" align="absmiddle" value="stop" class="stopButton">');
+    /**
+     * @param where
+     * @returns DOMElement
+     */
+    addPlayer(where) {
+        let $where = where;
+        if (where === undefined) {
+            where = document.body;
+        }
+        if (where.jquery === undefined) {
+            $where = $(where);
+        }
+        const $playDiv = $('<div class="midiPlayer">');
+        const $controls = $('<div class="positionControls">');
+        const $playPause = $('<input type="image" src="' + music21.m21basePath + '/css/play.png" align="absmiddle" value="play" class="playPause">');
+        const $stop = $('<input type="image" src="' + music21.m21basePath + '/css/stop.png" align="absmiddle" value="stop" class="stopButton">');
 
-    $playPause.on('click', this.pausePlayStop.bind(this));
-    $stop.on('click', this.stopButton.bind(this));
-    $controls.append($playPause);
-    $controls.append($stop);
-    $playDiv.append($controls);
+        $playPause.on('click', this.pausePlayStop.bind(this));
+        $stop.on('click', this.stopButton.bind(this));
+        $controls.append($playPause);
+        $controls.append($stop);
+        $playDiv.append($controls);
 
-    const $time = $('<div class="timeControls">');
-    const $timePlayed = $('<span class="timePlayed">0:00</span>');
-    const $capsule = $('<span class="capsule"><span class="cursor"></span></span>');
-    const $timeRemaining = $('<span class="timeRemaining">-0:00</span>');
-    $time.append($timePlayed);
-    $time.append($capsule);
-    $time.append($timeRemaining);
-    $playDiv.append($time);
+        const $time = $('<div class="timeControls">');
+        const $timePlayed = $('<span class="timePlayed">0:00</span>');
+        const $capsule = $('<span class="capsule"><span class="cursor"></span></span>');
+        const $timeRemaining = $('<span class="timeRemaining">-0:00</span>');
+        $time.append($timePlayed);
+        $time.append($capsule);
+        $time.append($timeRemaining);
+        $playDiv.append($time);
 
-    $where.append($playDiv);
-    this.$playDiv = $playDiv;
-    return $playDiv;
-};
+        $where.append($playDiv);
+        this.$playDiv = $playDiv;
+        return $playDiv;
+    };
 
-miditools.MidiPlayer.prototype.stopButton = function stopButton() {
-    this.pausePlayStop('yes');
-};
+    stopButton() {
+        this.pausePlayStop('yes');
+    };
 
-miditools.MidiPlayer.prototype.pausePlayStop = function pausePlayStop(stop) {
-    let d;
-    if (this.$playDiv === undefined) {
-        d = { src: 'doesnt matter' };
-    } else {
-        d = this.$playDiv.find('.playPause')[0];
-    }
-    if (stop === 'yes') {
-        this.player.stop();
-        d.src = music21.m21basePath + '/css/play.png';
-    } else if (this.player.playing || stop === 'pause') {
-        d.src = music21.m21basePath + '/css/play.png';
-        this.player.pause(true);
-    } else {
-        d.src = music21.m21basePath + '/css/pause.png';
-        this.player.resume();
-    }
-};
-
-
-miditools.MidiPlayer.prototype.base64Load = function base64Load(b64data) {
-    const player = this.player;
-    player.timeWarp = this.speed;
-
-    const m21midiplayer = this;
-    miditools.loadSoundfont('acoustic_grand_piano', () => {
-        player.loadFile(b64data, () => {   // success
-            m21midiplayer.fileLoaded();
-        },
-        undefined,  // loading
-        (e) => {  // failure
-            console.log(e);
-        });
-    });
-};
-
-miditools.MidiPlayer.prototype.songFinished = function songFinished() {
-    this.pausePlayStop('yes');
-};
-
-miditools.MidiPlayer.prototype.fileLoaded = function fileLoaded() {
-    this.updatePlaying();
-};
-
-miditools.MidiPlayer.prototype.startAndUpdate = function startAndUpdate() {
-    this.player.start();
-    this.updatePlaying();
-};
+    pausePlayStop(stop) {
+        let d;
+        if (this.$playDiv === undefined) {
+            d = { src: 'doesnt matter' };
+        } else {
+            d = this.$playDiv.find('.playPause')[0];
+        }
+        if (stop === 'yes') {
+            this.player.stop();
+            d.src = music21.m21basePath + '/css/play.png';
+        } else if (this.player.playing || stop === 'pause') {
+            d.src = music21.m21basePath + '/css/play.png';
+            this.player.pause(true);
+        } else {
+            d.src = music21.m21basePath + '/css/pause.png';
+            this.player.resume();
+        }
+    };
 
 
-miditools.MidiPlayer.prototype.updatePlaying = function updatePlaying() {
-    const self = this;
-    const player = this.player;
-    if (this.$playDiv === undefined) {
-        return;
-    }
-    const $d = this.$playDiv;
-    // update the timestamp
-    const timePlayed = $d.find('.timePlayed')[0];
-    const timeRemaining = $d.find('.timeRemaining')[0];
-    const timeCursor = $d.find('.cursor')[0];
-    const $capsule = $d.find('.capsule');
-    //
-    eventjs.add($capsule[0], 'drag', (event, self) => {
-        eventjs.cancel(event);
+    base64Load(b64data) {
         const player = this.player;
-        player.currentTime = (self.x) / 420 * player.endTime;
-        if (player.currentTime < 0) {
-            player.currentTime = 0;
-        }
-        if (player.currentTime > player.endTime) {
-            player.currentTime = player.endTime;
-        }
-        if (self.state === 'down') {
-            this.pausePlayStop('pause');
-        } else if (self.state === 'up') {
-            this.pausePlayStop('play');
-        }
-    });
-    //
-    function timeFormatting(n) {
-        const minutes = n / 60 >> 0;
-        let seconds = String(n - (minutes * 60) >> 0);
-        if (seconds.length === 1) {
-            seconds = '0' + seconds;
-        }
-        return minutes + ':' + seconds;
-    }
+        player.timeWarp = this.speed;
 
-    player.setAnimation((data) => {
-        const percent = data.now / data.end;
-        const now = data.now >> 0; // where we are now
-        const end = data.end >> 0; // end of song
-        if (now === end) { // go to next song
-            self.songFinished();
+        const m21midiplayer = this;
+        miditools.loadSoundfont('acoustic_grand_piano', () => {
+            player.loadFile(b64data, () => {   // success
+                m21midiplayer.fileLoaded();
+            },
+            undefined,  // loading
+            (e) => {  // failure
+                console.log(e);
+            });
+        });
+    };
+
+    songFinished() {
+        this.pausePlayStop('yes');
+    };
+
+    fileLoaded() {
+        this.updatePlaying();
+    };
+
+    startAndUpdate() {
+        this.player.start();
+        this.updatePlaying();
+    };
+
+
+    updatePlaying() {
+        const self = this;
+        const player = this.player;
+        if (this.$playDiv === undefined) {
+            return;
         }
-        // display the information to the user
-        timeCursor.style.width = (percent * 100) + '%';
-        timePlayed.innerHTML = timeFormatting(now);
-        timeRemaining.innerHTML = '-' + timeFormatting(end - now);
-    });
-};
+        const $d = this.$playDiv;
+        // update the timestamp
+        const timePlayed = $d.find('.timePlayed')[0];
+        const timeRemaining = $d.find('.timeRemaining')[0];
+        const timeCursor = $d.find('.cursor')[0];
+        const $capsule = $d.find('.capsule');
+        //
+        eventjs.add($capsule[0], 'drag', (event, self) => {
+            eventjs.cancel(event);
+            const player = this.player;
+            player.currentTime = (self.x) / 420 * player.endTime;
+            if (player.currentTime < 0) {
+                player.currentTime = 0;
+            }
+            if (player.currentTime > player.endTime) {
+                player.currentTime = player.endTime;
+            }
+            if (self.state === 'down') {
+                this.pausePlayStop('pause');
+            } else if (self.state === 'up') {
+                this.pausePlayStop('play');
+            }
+        });
+        //
+        function timeFormatting(n) {
+            const minutes = n / 60 >> 0;
+            let seconds = String(n - (minutes * 60) >> 0);
+            if (seconds.length === 1) {
+                seconds = '0' + seconds;
+            }
+            return minutes + ':' + seconds;
+        }
+
+        player.setAnimation((data) => {
+            const percent = data.now / data.end;
+            const now = data.now >> 0; // where we are now
+            const end = data.end >> 0; // end of song
+            if (now === end) { // go to next song
+                self.songFinished();
+            }
+            // display the information to the user
+            timeCursor.style.width = (percent * 100) + '%';
+            timePlayed.innerHTML = timeFormatting(now);
+            timeRemaining.innerHTML = '-' + timeFormatting(end - now);
+        });
+    }
+}
+miditools.MidiPlayer = MidiPlayer;

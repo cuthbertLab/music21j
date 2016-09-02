@@ -1,56 +1,55 @@
 <html>
-    <head>
-        <title>MIDI In Chords for Music21j</title>
-        <!-- for MSIE 10 on Windows 8 -->
-        <meta http-equiv="X-UA-Compatible" content="requiresActiveX=true"/>
-        <script data-main="../src/music21.js" src="../ext/require/require.js"></script>
-        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<head>
+<title>MIDI In Chords for Music21j</title>
+<!-- for MSIE 10 on Windows 8 -->
+<meta http-equiv="X-UA-Compatible" content="requiresActiveX=true" />
+<script data-main="../src/music21.js" src="../ext/require/require.js"></script>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 
-		<script>
-		var s = ""; // will become Stream object soon...
-		var metro = ""; // will become Metronome object soon...
+<script>
+    var s = ""; // will become Stream object soon...
+    var metro = ""; // will become Metronome object soon...
 
-        function appendElement(appendObject) {
-            if (s.length > 7) {
-                s.elements = s.elements.slice(1)
-            }
-            if (s.length > 0) {
-                var lastNote = s.elements[s.length - 1];
-            }
-            s.append(appendObject);
-            var $canvasDiv = $("#canvasDiv");
-            $canvasDiv.empty();
-            var canv = s.appendNewCanvas($canvasDiv);
+    function appendElement(appendObject) {
+        if (s.length > 7) {
+            s.elements = s.elements.slice(1)
         }
-		
-		
-		require(['music21'], function () { 
-		    s = new music21.stream.Measure();
-		    s.clef = new music21.clef.TrebleClef();
-		    s.renderOptions.staffLines = 5;
-		    metro = new music21.tempo.Metronome();
-		    metro.addDiv($("#metronomeDiv"));
-            
-		    music21.miditools.metronome = metro;
+        if (s.length > 0) {
+            var lastNote = s.elements[s.length - 1];
+        }
+        s.append(appendObject);
+        var $canvasDiv = $("#canvasDiv");
+        $canvasDiv.empty();
+        var canv = s.appendNewCanvas($canvasDiv);
+    }
 
-		    music21.webmidi.createSelector($("#putMidiSelectHere"));
-		    music21.miditools.callBacks.general = [music21.miditools.makeChords, 
-		                                          music21.miditools.sendToMIDIjs];
-		    music21.miditools.callBacks.sendOutChord = appendElement;
-		});
-		
-		
-		</script>
-    </head>
-    <body>
+    require([ 'music21' ], function() {
+        s = new music21.stream.Measure();
+        s.clef = new music21.clef.TrebleClef();
+        s.renderOptions.staffLines = 5;
+        metro = new music21.tempo.Metronome();
+        metro.addDiv($("#metronomeDiv"));
+
+        music21.miditools.metronome = metro;
+
+        music21.webmidi.createSelector($("#putMidiSelectHere"));
+        music21.miditools.callBacks.general = [ music21.miditools.makeChords, music21.miditools.sendToMIDIjs ];
+        music21.miditools.callBacks.sendOutChord = appendElement;
+    });
+</script>
+</head>
+<body>
 	<div>
-	MIDI Input: <div id="putMidiSelectHere" />
+		MIDI Input:
+		<div id="putMidiSelectHere"></div>
 	</div>
 	<h2>Chord and Duration rendering and Metronome Demo.</h2>
-    <div><i>Requires MIDI keyboard and Jazz Plugin to work.</i></div>
+	<div>
+		<i>Requires MIDI keyboard and Jazz Plugin to work.</i>
+	</div>
 	<div id="canvasDiv">
-        <canvas />
-    </div>
-    <div id="metronomeDiv"></div>
+		<canvas></canvas>
+	</div>
+	<div id="metronomeDiv"></div>
 </body>
 </html>

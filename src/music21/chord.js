@@ -7,6 +7,7 @@
  *
  */
 import * as Vex from 'vexflow';
+import { Music21Exception } from './exceptions21';
 import { note } from './note';
 
 /**
@@ -74,7 +75,7 @@ export class Chord extends note.NotRest {
                 addNote = tempPitches[i];
             } else {
                 console.warn('bad pitch', tempPitches[i]);
-                throw ('Cannot add pitch from ' + tempPitches[i]);
+                throw new Music21Exception('Cannot add pitch from ' + tempPitches[i]);
             }
             this._notes.push(addNote);
         }
@@ -156,7 +157,7 @@ export class Chord extends note.NotRest {
         /* var chordBass = closedChord.bass(); */
         const closedPitches = closedChord.pitches;
         if (closedPitches.length === 0) {
-            throw ('No notes in Chord!');
+            throw new Music21Exception('No notes in Chord!');
         } else if (closedPitches.length === 1) {
             return this.pitches[0];
         }

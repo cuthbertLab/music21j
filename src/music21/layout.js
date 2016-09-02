@@ -43,9 +43,8 @@ layout.makeLayoutFromScore = function makeLayoutFromScore(score, containerWidth)
     let currentSystem = new layout.System();
     let currentSystemNumber = 1;
     currentSystem.measureStart = 1;
-    let currentStaves;
+    let currentStaves = [];
 
-    // var currentStaves = [];
     const staffMaker = (staffHolder, numParts, measureStart) => {
         for (let pNum = 0; pNum < numParts; pNum++) {
             const staff = new layout.Staff();
@@ -105,153 +104,127 @@ layout.makeLayoutFromScore = function makeLayoutFromScore(score, containerWidth)
     return layoutScore;
 };
 
-layout.LayoutScore = function LayoutScore() {
-    stream.Score.call(this);
-    this.classes.push('LayoutScore');
-    this.scoreLayout = undefined;
-    this.measureStart = undefined;
-    this.measureEnd = undefined;
-    this._width = undefined;
-    this.height = undefined;
-    this.top = 0;
-    this.left = 0;
-    Object.defineProperties(this, {
-        'pages': {
-            configurable: true,
-            enumerable: true,
-            get() { return this.getElementsByClass('Page'); },
-        },
-        'width': {
-            configurable: true,
-            enumerable: true,
-            get() {
-                if (this._width) {
-                    return this._width;
-                } else if (this.activeSite) {
-                    return this.activeSite.width;
-                } else {
-                    return undefined;
-                }
-            },
-        },
-    });
-};
-layout.LayoutScore.prototype = new stream.Score();
-layout.LayoutScore.prototype.constructor = layout.LayoutScore;
 
-/**
- * return a tuple of (top, bottom) for a staff, specified by a given pageId,
- * systemId, and staffId in PIXELS.
-
- * @param pageId
- * @param systemId
- * @param staffId
- * @param units -- "pixels" or "tenths" (not supported)
- */
-
-layout.LayoutScore.prototype.getPositionForStaff = (pageId, systemId, staffId, units) => {
-    units = units || 'pixels';
-};
+export class LayoutScore extends stream.Score {
+    constructor() {
+        super();
+        this.classes.push('LayoutScore');
+        this.scoreLayout = undefined;
+        this.measureStart = undefined;
+        this.measureEnd = undefined;
+        this._width = undefined;
+        this.height = undefined;
+        this.top = 0;
+        this.left = 0;
+    }
+    get pages() { 
+        return this.getElementsByClass('Page'); 
+    }
+    get width() {
+        if (this._width) {
+            return this._width;
+        } else if (this.activeSite) {
+            return this.activeSite.width;
+        } else {
+            return undefined;
+        }
+    }
+    /**
+     * return a tuple of (top, bottom) for a staff, specified by a given pageId,
+     * systemId, and staffId in PIXELS.
+    
+     * @param pageId
+     * @param systemId
+     * @param staffId
+     * @param units -- "pixels" or "tenths" (not supported)
+     */
+    
+    getPositionForStaff(pageId, systemId, staffId, units) {
+        units = units || 'pixels';
+    }
+}
+layout.LayoutScore = LayoutScore;
 
 
 /**
  * All music must currently be on page 1.
  */
-layout.Page = function Page() {
-    stream.Score.call(this);
-    this.classes.push('Page');
-    this.pageNumber = 1;
-    this.measureStart = undefined;
-    this.measureEnd = undefined;
-    this.systemStart = undefined;
-    this.systemEnd = undefined;
-    this.pageLayout = undefined;
-    Object.defineProperties(this, {
-        'systems': {
-            configurable: true,
-            enumerable: true,
-            get() { return this.getElementsByClass('System'); },
-        },
-        'width': {
-            configurable: true,
-            enumerable: true,
-            get() {
-                if (this._width) {
-                    return this._width;
-                } else if (this.activeSite) {
-                    return this.activeSite.width;
-                } else {
-                    return undefined;
-                }
-            },
-        },
-    });
-};
-layout.Page.prototype = new stream.Score();
-layout.Page.prototype.constructor = layout.Page;
+export class Page extends stream.Score {
+    constructor() {
+        super();
+        this.classes.push('Page');
+        this.pageNumber = 1;
+        this.measureStart = undefined;
+        this.measureEnd = undefined;
+        this.systemStart = undefined;
+        this.systemEnd = undefined;
+        this.pageLayout = undefined;
+    }
+    get systems() {
+        return this.getElementsByClass('System');
+    }
+    get width() {
+        if (this._width) {
+            return this._width;
+        } else if (this.activeSite) {
+            return this.activeSite.width;
+        } else {
+            return undefined;
+        }
+    }
+}
+layout.Page = Page;
 
-layout.System = function System() {
-    stream.Score.call(this);
-    this.classes.push('System');
-    this.systemNumber = 1;
-    this.systemLayout = undefined;
-    this.measureStart = undefined;
-    this.measureEnd = undefined;
-    this._width = undefined;
-    this.height = undefined;
-    this.top = undefined;
-    this.left = undefined;
-    Object.defineProperties(this, {
-        'staves': {
-            configurable: true,
-            enumerable: true,
-            get() { return this.getElementsByClass('Staff'); },
-        },
-        'width': {
-            configurable: true,
-            enumerable: true,
-            get() {
-                if (this._width) {
-                    return this._width;
-                } else if (this.activeSite) {
-                    return this.activeSite.width;
-                } else {
-                    return undefined;
-                }
-            },
-        },
-    });
-};
-layout.System.prototype = new stream.Score();
-layout.System.prototype.constructor = layout.System;
+export class System extends stream.Score {
+    constructor() {
+        super();
+        this.classes.push('System');
+        this.systemNumber = 1;
+        this.systemLayout = undefined;
+        this.measureStart = undefined;
+        this.measureEnd = undefined;
+        this._width = undefined;
+        this.height = undefined;
+        this.top = undefined;
+        this.left = undefined;
+    }
+    get staves() { 
+        return this.getElementsByClass('Staff'); 
+    }
+    get width() {
+        if (this._width) {
+            return this._width;
+        } else if (this.activeSite) {
+            return this.activeSite.width;
+        } else {
+            return undefined;
+        }
+    }
+}
+layout.System = System;
 
-layout.Staff = function Staff() {
-    stream.Part.call(this);
-    this.classes.push('Staff');
-    this.staffNumber = 1;
-    this.optimized = 0;
-    this.top = undefined;
-    this.left = undefined;
-    this._width = undefined;
-    this.height = undefined;
-    this.inheritedHeight = undefined;
-    this.staffLayout = undefined;
-    Object.defineProperties(this, {
-        'width': {
-            configurable: true,
-            enumerable: true,
-            get() {
-                if (this._width) {
-                    return this._width;
-                } else if (this.activeSite) {
-                    return this.activeSite.width;
-                } else {
-                    return undefined;
-                }
-            },
-        },
-    });
-};
-layout.Staff.prototype = new stream.Part();
-layout.Staff.prototype.constructor = layout.Staff;
+export class Staff extends stream.Part {
+    constructor() {
+        super();
+        this.classes.push('Staff');
+        this.staffNumber = 1;
+        this.optimized = 0;
+        this.top = undefined;
+        this.left = undefined;
+        this._width = undefined;
+        this.height = undefined;
+        this.inheritedHeight = undefined;
+        this.staffLayout = undefined;
+    }
+    get width() {
+        if (this._width) {
+            return this._width;
+        } else if (this.activeSite) {
+            return this.activeSite.width;
+        } else {
+            return undefined;
+        }
+    }
+}
 
+layout.Staff = Staff;

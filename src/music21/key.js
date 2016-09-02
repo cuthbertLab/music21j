@@ -6,6 +6,8 @@
  * Based on music21 (=music21p), Copyright (c) 2006–16, Michael Scott Cuthbert and cuthbertLab
  *
  */
+import { Music21Exception } from './exceptions21';
+
 import { base } from './base';
 import { debug } from './debug';
 import { interval } from './interval';
@@ -253,7 +255,7 @@ export class Key extends KeySignature {
         const sharpsArray = 'A-- E-- B-- F- C- G- D- A- E- B- F C G D A E B F# C# G# D# A# E# B#'.split(' ');
         const sharpsIndex = sharpsArray.indexOf(keyName.toUpperCase());
         if (sharpsIndex === -1) {
-            throw ('Cannot find the key for ' + keyName);
+            throw new Music21Exception('Cannot find the key for ' + keyName);
         }
         const modeShift = key.modeSharpsAlter[mode] || 0;
         const sharps = sharpsIndex + modeShift - 11;

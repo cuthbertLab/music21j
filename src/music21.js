@@ -237,6 +237,8 @@ if (m21conf.noLoad !== undefined) {
 }
 
 
+music21 = {}; // global
+
 if ((Object.defineProperties === undefined) && warnBanner) {
     var newDiv = document.createElement("div");
     newDiv.setAttribute('style', 'font-size: 40px; padding: 40px 20px 40px 20px; margin-top: 20px; line-height: 50px; width: 500px; height: 400px; color: #ffffff; background-color: #900000;');

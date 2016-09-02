@@ -6,6 +6,8 @@
  * Based on music21, Copyright (c) 2006–16, Michael Scott Cuthbert and cuthbertLab
  *
  */
+import { Music21Exception } from './exceptions21';
+
 import { prebase } from './prebase';
 /**
  * pitch module.  See {@link music21.pitch} namespace
@@ -154,7 +156,7 @@ export class Accidental extends prebase.ProtoM21Object {
         } else if (m === '---') {
             return 'bbb';
         } else {
-            throw ('Vexflow does not support: ' + m);
+            throw new Music21Exception('Vexflow does not support: ' + m);
         }
     }
     /**
@@ -204,159 +206,123 @@ pitch.midiToName = ['C', 'C#', 'D', 'E-', 'E', 'F', 'F#', 'G', 'A-', 'A', 'B-', 
  * @property {number} ps - pitch space number, like midi number but floating point and w/ no restriction on range. C4 = 60.0
  * @property {string} step - letter name for the pitch (C-G, A, B), without accidental; default 'C'
  */
-pitch.Pitch = function Pitch(pn) {
-    prebase.ProtoM21Object.call(this);
-    this.classes.push('Pitch');
-    if (pn === undefined) {
-        pn = 'C';
-    }
-    this._step = 'C';
-    this._octave = 4;
-    this._accidental = undefined;
-
-    /* pn can be a nameWithOctave */
-    if (typeof pn === 'number') {
-        if (pn < 12) {
-            pn += 60; // pitchClass
+export class Pitch extends prebase.ProtoM21Object {
+    constructor(pn) {
+        super();
+        this.classes.push('Pitch');
+        if (pn === undefined) {
+            pn = 'C';
         }
-        this.ps = pn;
-    } else if (pn.match(/\d+/)) {
-        this.nameWithOctave = pn;
-    } else {
-        this.name = pn;
+        this._step = 'C';
+        this._octave = 4;
+        this._accidental = undefined;
+
+        /* pn can be a nameWithOctave */
+        if (typeof pn === 'number') {
+            if (pn < 12) {
+                pn += 60; // pitchClass
+            }
+            this.ps = pn;
+        } else if (pn.match(/\d+/)) {
+            this.nameWithOctave = pn;
+        } else {
+            this.name = pn;
+        }        
     }
-};
-pitch.Pitch.prototype = new prebase.ProtoM21Object();
-pitch.Pitch.prototype.constructor = pitch.Pitch;
 
-Object.defineProperties(pitch.Pitch.prototype, {
-    'step': {
-        enumerable: true,
-        configurable: true,
-        get() { return this._step; },
-        set(s) { this._step = s; },
-    },
-    'octave': {
-        enumerable: true,
-        configurable: true,
-        get() { return this._octave; },
-        set(o) { this._octave = o; },
-    },
-    'accidental': {
-        enumerable: true,
-        configurable: true,
-        get() { return this._accidental; },
-        set(a) {
-            if (typeof (a) !== 'object' && a !== undefined) {
-                a = new pitch.Accidental(a);
-            }
-            this._accidental = a;
-        },
-    },
-    'name': {
-        enumerable: true,
-        configurable: true,
-        get() {
-            if (this.accidental === undefined) {
-                return this.step;
-            } else {
-                return this.step + this.accidental.modifier;
-            }
-        },
-        set(nn) {
-            this.step = nn.slice(0, 1).toUpperCase();
-            const tempAccidental = nn.slice(1);
-            if (tempAccidental !== undefined) {
-                this.accidental = tempAccidental; // converts automatically
-            } else {
-                this.accidental = undefined;
-            }
-        },
-    },
-    'nameWithOctave': {
-        enumerable: true,
-        configurable: true,
-        get() {
-            return this.name + this.octave.toString();
-        },
-        set(pn) {
-            const storedOctave = pn.match(/\d+/);
-            if (storedOctave !== undefined) {
-                pn = pn.replace(/\d+/, '');
-                this.octave = parseInt(storedOctave);
-                this.name = pn;
-            } else {
-                this.name = pn;
-            }
-        },
-    },
-    'diatonicNoteNum': {
-        enumerable: true,
-        configurable: true,
-        get() {
-            return (this.octave * 7) + pitch.nameToSteps[this.step] + 1;
-        },
-        set(newDNN) {
-            newDNN -= 1; // makes math easier
-            this.octave = Math.floor(newDNN / 7);
-            this.step = pitch.stepsToName[newDNN % 7];
-        },
-    },
-    'frequency': {
-        enumerable: true,
-        configurable: true,
-        get() {
-            return 440 * Math.pow(2, (this.ps - 69) / 12);
-        },
-    },
-    'midi': {
-        enumerable: true,
-        configurable: true,
-        get() {
-            return Math.floor(this.ps);
-        },
-    },
-    'ps': {
-        enumerable: true,
-        configurable: true,
-        get() {
-            let accidentalAlter = 0;
-            if (this.accidental !== undefined) {
-                accidentalAlter = parseInt(this.accidental.alter);
-            }
-            return (this.octave + 1) * 12 + pitch.nameToMidi[this.step] + accidentalAlter;
-        },
-        set(ps) {
-            this.name = pitch.midiToName[ps % 12];
-            this.octave = Math.floor(ps / 12) - 1;
-        },
-    },
-});
 
-/**
- * Returns the vexflow name for the pitch in the given clef.
- *
- * @memberof music21.pitch.Pitch#
- * @param {clef.Clef} clefObj - the active {@link music21.clef.Clef} object
- * @returns {String} - representation in vexflow
- */
-pitch.Pitch.prototype.vexflowName = function vexflowName(clefObj) {
-    // returns a vexflow Key name for this pitch.
-    let tempPitch = this;
-    if (clefObj !== undefined) {
-        try {
-            tempPitch = clefObj.convertPitchToTreble(this);
-        } catch (e) {
-            console.log(e, clefObj);
+    get step() { return this._step; }
+    set step(s) { this._step = s; }
+    get octave() { return this._octave; }
+    set octave(o) { this._octave = o; }
+    get accidental() { return this._accidental; }
+    set accidental(a) {
+        if (typeof (a) !== 'object' && a !== undefined) {
+            a = new pitch.Accidental(a);
+        }
+        this._accidental = a;
+    }
+    get name() {
+        if (this.accidental === undefined) {
+            return this.step;
+        } else {
+            return this.step + this.accidental.modifier;
         }
     }
-    let accidentalType = 'n';
-    if (this.accidental !== undefined) {
-        accidentalType = this.accidental.vexflowModifier;
+    set name(nn) {
+        this.step = nn.slice(0, 1).toUpperCase();
+        const tempAccidental = nn.slice(1);
+        if (tempAccidental !== undefined) {
+            this.accidental = tempAccidental; // converts automatically
+        } else {
+            this.accidental = undefined;
+        }
     }
-    const outName = tempPitch.step + accidentalType + '/' + tempPitch.octave;
-    return outName;
-};
+    get nameWithOctave() {
+        return this.name + this.octave.toString();
+    }
+    set nameWithOctave(pn) {
+        const storedOctave = pn.match(/\d+/);
+        if (storedOctave !== undefined) {
+            pn = pn.replace(/\d+/, '');
+            this.octave = parseInt(storedOctave);
+            this.name = pn;
+        } else {
+            this.name = pn;
+        }
+    }
+    get diatonicNoteNum() {
+        return (this.octave * 7) + pitch.nameToSteps[this.step] + 1;
+    }
+    set diatonicNoteNum(newDNN) {
+        newDNN -= 1; // makes math easier
+        this.octave = Math.floor(newDNN / 7);
+        this.step = pitch.stepsToName[newDNN % 7];
+    }
+    get frequency() {
+        return 440 * Math.pow(2, (this.ps - 69) / 12);
+    }
+    get midi() {
+        return Math.floor(this.ps);
+    }
+    get ps() {
+        let accidentalAlter = 0;
+        if (this.accidental !== undefined) {
+            accidentalAlter = parseInt(this.accidental.alter);
+        }
+        return (this.octave + 1) * 12 + pitch.nameToMidi[this.step] + accidentalAlter;
+    }
+    set ps(ps) {
+        this.name = pitch.midiToName[ps % 12];
+        this.octave = Math.floor(ps / 12) - 1;
+    }
+
+    /**
+     * Returns the vexflow name for the pitch in the given clef.
+     *
+     * @memberof music21.pitch.Pitch#
+     * @param {clef.Clef} clefObj - the active {@link music21.clef.Clef} object
+     * @returns {String} - representation in vexflow
+     */
+    vexflowName(clefObj) {
+        // returns a vexflow Key name for this pitch.
+        let tempPitch = this;
+        if (clefObj !== undefined) {
+            try {
+                tempPitch = clefObj.convertPitchToTreble(this);
+            } catch (e) {
+                console.log(e, clefObj);
+            }
+        }
+        let accidentalType = 'n';
+        if (this.accidental !== undefined) {
+            accidentalType = this.accidental.vexflowModifier;
+        }
+        const outName = tempPitch.step + accidentalType + '/' + tempPitch.octave;
+        return outName;
+    }
+}
+pitch.Pitch = Pitch;
 
 
 pitch.tests = () => {

@@ -6,6 +6,8 @@
  * Based on music21 (=music21p), Copyright (c) 2006–16, Michael Scott Cuthbert and cuthbertLab
  *
  */
+import { Music21Exception } from './exceptions21';
+
 import { chord } from './chord';
 import { debug } from './debug';
 import { key } from './key';
@@ -67,204 +69,192 @@ roman.romanToNumber = [undefined, 'i', 'ii', 'iii', 'iv', 'v', 'vi', 'vii'];
  * @property {string} impliedQuality - "major", "minor", "diminished", "augmented"
  * @property {Array<music21.pitch.Pitch>} pitches - RomanNumerals are Chord objects, so .pitches will work for them also.
  */
-roman.RomanNumeral = function RomanNumeral(figure, keyStr) {
-    this.figure = figure;
-    this._scale = undefined;
-    this._key = undefined;
-    chord.Chord.call(this);
-    this.classes.push('RomanNumeral');
+export class RomanNumeral extends chord.Chord {
+    constructor(figure, keyStr) {
+        super();
+        this.classes.push('RomanNumeral');
+        this.figure = figure;
+        this._scale = undefined;
+        this._key = undefined;
+        this.key = keyStr;
+        let currentFigure = figure;
 
-    Object.defineProperties(this, {
-        'scale': {
-            enumerable: true,
-            get() {
-                if (this._scale !== undefined) {
-                    return this._scale;
-                } else {
-                    this._scale = this.key.getScale();
-                    return this._scale;
-                }
-            },
-        },
-        'key': {
-            enumerable: true,
-            get() { return this._key; },
-            set(keyStr) {
-                if (typeof (keyStr) === 'string') {
-                    this._key = new key.Key(keyStr);
-                } else if (typeof (keyStr) === 'undefined') {
-                    this._key = new key.Key('C');
-                } else {
-                    this._key = keyStr;
-                }
-            },
-        },
-        'degreeName': {
-            enumerable: true,
-            get() {
-                if (this.scaleDegree < 7) {
-                    return [undefined,
-                            'Tonic',
-                            'Supertonic',
-                            'Mediant',
-                            'Subdominant',
-                            'Dominant',
-                            'Submediant'][this.scaleDegree];
-                } else {
-                    const tonicPitch = new pitch.Pitch(this.key.tonic);
-                    let diffRootToTonic = (tonicPitch.ps - this.root.ps) % 12;
-                    if (diffRootToTonic < 0) {
-                        diffRootToTonic += 12;
-                    }
-                    if (diffRootToTonic === 1) {
-                        return 'Leading-tone';
-                    } else {
-                        return 'Subtonic';
-                    }
-                }
-            },
-        },
-    });
+        let impliedQuality = 'major';
+        const lowercase = currentFigure.toLowerCase();
+        if (currentFigure.match('/o')) {
+            impliedQuality = 'half-diminished';
+            currentFigure = currentFigure.replace('/o', '');
+        } else if (currentFigure.match('o')) {
+            impliedQuality = 'diminished';
+            currentFigure = currentFigure.replace('o', '');
+        } else if (currentFigure === lowercase) {
+            impliedQuality = 'minor';
+        }
 
+        const numbersArr = currentFigure.match(/\d+/);
+        this.numbers = undefined;
+        if (numbersArr != null) {
+            currentFigure = currentFigure.replace(/\d+/, '');
+            this.numbers = parseInt(numbersArr[0]);
+        }
 
-    this.key = keyStr;
-    let currentFigure = figure;
+        const scaleDegree = roman.romanToNumber.indexOf(currentFigure.toLowerCase());
+        if (scaleDegree === -1) {
+            throw new Music21Exception('Cannot make a romanNumeral from ' + currentFigure);
+        }
+        this.scaleDegree = scaleDegree;
+        this.root = this.scale[this.scaleDegree - 1];
 
-    let impliedQuality = 'major';
-    const lowercase = currentFigure.toLowerCase();
-    if (currentFigure.match('/o')) {
-        impliedQuality = 'half-diminished';
-        currentFigure = currentFigure.replace('/o', '');
-    } else if (currentFigure.match('o')) {
-        impliedQuality = 'diminished';
-        currentFigure = currentFigure.replace('o', '');
-    } else if (currentFigure === lowercase) {
-        impliedQuality = 'minor';
-    }
-
-    const numbersArr = currentFigure.match(/\d+/);
-    this.numbers = undefined;
-    if (numbersArr != null) {
-        currentFigure = currentFigure.replace(/\d+/, '');
-        this.numbers = parseInt(numbersArr[0]);
-    }
-
-    const scaleDegree = roman.romanToNumber.indexOf(currentFigure.toLowerCase());
-    if (scaleDegree === -1) {
-        throw ('Cannot make a romanNumeral from ' + currentFigure);
-    }
-    this.scaleDegree = scaleDegree;
-    this.root = this.scale[this.scaleDegree - 1];
-
-    if (this.key.mode === 'minor'
+        if (this.key.mode === 'minor'
             && (this.scaleDegree === 6
                     || this.scaleDegree === 7)) {
-        if (['minor', 'diminished', 'half-diminished'].indexOf(impliedQuality) !== -1) {
-            const raiseTone = new interval.Interval('A1');
-            this.root = raiseTone.transposePitch(this.root);
-            if (debug) {
-                console.log('raised root because minor/dim on scaleDegree 6 or 7');
+            if (['minor', 'diminished', 'half-diminished'].indexOf(impliedQuality) !== -1) {
+                const raiseTone = new interval.Interval('A1');
+                this.root = raiseTone.transposePitch(this.root);
+                if (debug) {
+                    console.log('raised root because minor/dim on scaleDegree 6 or 7');
+                }
+            }
+        }
+
+        /* temp hack */
+        if (this.numbers === 7) {
+            if (scaleDegree === 5 && impliedQuality === 'major') {
+                impliedQuality = 'dominant-seventh';
+            } else {
+                impliedQuality += '-seventh';
+            }
+        }
+
+        this.impliedQuality = impliedQuality;
+        this.updatePitches();
+    }
+    get scale() {
+        if (this._scale !== undefined) {
+            return this._scale;
+        } else {
+            this._scale = this.key.getScale();
+            return this._scale;
+        }
+    }
+    get key() {
+        return this._key;
+    }
+    set key(keyStr) {
+        if (typeof (keyStr) === 'string') {
+            this._key = new key.Key(keyStr);
+        } else if (typeof (keyStr) === 'undefined') {
+            this._key = new key.Key('C');
+        } else {
+            this._key = keyStr;
+        }
+    }
+    get degreeName() {
+        if (this.scaleDegree < 7) {
+            return [undefined,
+                    'Tonic',
+                    'Supertonic',
+                    'Mediant',
+                    'Subdominant',
+                    'Dominant',
+                    'Submediant'][this.scaleDegree];
+        } else {
+            const tonicPitch = new pitch.Pitch(this.key.tonic);
+            let diffRootToTonic = (tonicPitch.ps - this.root.ps) % 12;
+            if (diffRootToTonic < 0) {
+                diffRootToTonic += 12;
+            }
+            if (diffRootToTonic === 1) {
+                return 'Leading-tone';
+            } else {
+                return 'Subtonic';
             }
         }
     }
 
-    /* temp hack */
-    if (this.numbers === 7) {
-        if (scaleDegree === 5 && impliedQuality === 'major') {
-            impliedQuality = 'dominant-seventh';
-        } else {
-            impliedQuality += '-seventh';
+
+    /**
+     * Update the .pitches array.  Called at instantiation, but not automatically afterwards.
+     *
+     * @memberof music21.roman.RomanNumeral
+     */
+    updatePitches() {
+        const impliedQuality = this.impliedQuality;
+        const chordSpacing = chord.chordDefinitions[impliedQuality];
+        const chordPitches = [this.root];
+        let lastPitch = this.root;
+        for (let j = 0; j < chordSpacing.length; j++) {
+            // console.log('got them', lastPitch);
+            const thisTransStr = chordSpacing[j];
+            const thisTrans = new interval.Interval(thisTransStr);
+            const nextPitch = thisTrans.transposePitch(lastPitch);
+            chordPitches.push(nextPitch);
+            lastPitch = nextPitch;
         }
+        this.pitches = chordPitches;
     }
 
+    /**
+     * Gives a string display.  Note that since inversion is not yet supported
+     * it needs to be given separately.
+     *
+     * Inverting 7th chords does not work.
+     *
+     * @memberof music21.roman.RomanNumeral
+     * @param {string} displayType - ['roman', 'bassName', 'nameOnly', other]
+     * @param {Int} [inversion=0]
+     * @returns {String}
+     */
+    asString(displayType, inversion) {
+        const keyObj = this.key;
+        const tonic = keyObj.tonic;
+        const mode = keyObj.mode;
 
-    this.impliedQuality = impliedQuality;
-    this.updatePitches();
-};
-
-roman.RomanNumeral.prototype = new chord.Chord();
-roman.RomanNumeral.prototype.constructor = roman.RomanNumeral;
-
-/**
- * Update the .pitches array.  Called at instantiation, but not automatically afterwards.
- *
- * @memberof music21.roman.RomanNumeral
- */
-roman.RomanNumeral.prototype.updatePitches = function updatePitches() {
-    const impliedQuality = this.impliedQuality;
-    const chordSpacing = chord.chordDefinitions[impliedQuality];
-    const chordPitches = [this.root];
-    let lastPitch = this.root;
-    for (let j = 0; j < chordSpacing.length; j++) {
-        // console.log('got them', lastPitch);
-        const thisTransStr = chordSpacing[j];
-        const thisTrans = new interval.Interval(thisTransStr);
-        const nextPitch = thisTrans.transposePitch(lastPitch);
-        chordPitches.push(nextPitch);
-        lastPitch = nextPitch;
-    }
-    this.pitches = chordPitches;
-};
-
-/**
- * Gives a string display.  Note that since inversion is not yet supported
- * it needs to be given separately.
- *
- * Inverting 7th chords does not work.
- *
- * @memberof music21.roman.RomanNumeral
- * @param {string} displayType - ['roman', 'bassName', 'nameOnly', other]
- * @param {Int} [inversion=0]
- * @returns {String}
- */
-roman.RomanNumeral.prototype.asString = function asString(displayType, inversion) {
-    const keyObj = this.key;
-    const tonic = keyObj.tonic;
-    const mode = keyObj.mode;
-
-    if (inversion === undefined) {
-        inversion = 0;
-    }
-    let inversionName = '';
-    if (inversion === 1) {
+        if (inversion === undefined) {
+            inversion = 0;
+        }
+        let inversionName = '';
+        if (inversion === 1) {
+            if (displayType === 'roman') {
+                inversionName = '6';
+            } else {
+                inversionName = ' (first inversion)';
+            }
+        } else if (inversion === 2) {
+            if (displayType === 'roman') {
+                inversionName = '64';
+            } else {
+                inversionName = ' (second inversion)';
+            }
+        }
+        let fullChordName;
+        let connector = ' in ';
+        let suffix = '';
         if (displayType === 'roman') {
-            inversionName = '6';
-        } else {
-            inversionName = ' (first inversion)';
+            fullChordName = this.figure;
+        } else if (displayType === 'nameOnly') { // use only with only choice being TONIC
+            fullChordName = '';
+            connector = '';
+            suffix = ' triad';
+        } else if (displayType === 'bassName') {
+            fullChordName = this.bass().name.replace(/\-/, 'b');
+            connector = ' in ';
+            suffix = '';
+        } else { // "default" submediant, etc...
+            fullChordName = this.degreeName;
+            if (this.numbers !== undefined) {
+                fullChordName += ' ' + this.numbers.toString();
+            }
         }
-    } else if (inversion === 2) {
-        if (displayType === 'roman') {
-            inversionName = '64';
-        } else {
-            inversionName = ' (second inversion)';
+        let tonicDisplay = tonic.replace(/\-/, 'b');
+        if (mode === 'minor') {
+            tonicDisplay = tonicDisplay.toLowerCase();
         }
+        const chordStr = fullChordName + inversionName + connector + tonicDisplay + ' ' + mode + suffix;
+        return chordStr;
     }
-    let fullChordName;
-    let connector = ' in ';
-    let suffix = '';
-    if (displayType === 'roman') {
-        fullChordName = this.figure;
-    } else if (displayType === 'nameOnly') { // use only with only choice being TONIC
-        fullChordName = '';
-        connector = '';
-        suffix = ' triad';
-    } else if (displayType === 'bassName') {
-        fullChordName = this.bass().name.replace(/\-/, 'b');
-        connector = ' in ';
-        suffix = '';
-    } else { // "default" submediant, etc...
-        fullChordName = this.degreeName;
-        if (this.numbers !== undefined) {
-            fullChordName += ' ' + this.numbers.toString();
-        }
-    }
-    let tonicDisplay = tonic.replace(/\-/, 'b');
-    if (mode === 'minor') {
-        tonicDisplay = tonicDisplay.toLowerCase();
-    }
-    const chordStr = fullChordName + inversionName + connector + tonicDisplay + ' ' + mode + suffix;
-    return chordStr;
-};
+}
+roman.RomanNumeral = RomanNumeral;
 
 roman.tests = () => {
     test('music21.roman.RomanNumeral', () => {

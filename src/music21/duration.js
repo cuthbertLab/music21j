@@ -6,6 +6,8 @@
  * Based on music21, Copyright (c) 2006-16, Michael Scott Cuthbert and cuthbertLab
  *
  */
+import { Music21Exception } from './exceptions21';
+
 import { common } from './common';
 import { debug } from './debug';
 import { prebase } from './prebase';
@@ -156,7 +158,7 @@ export class Duration extends prebase.ProtoM21Object {
         const typeNumber = duration.ordinalTypeFromNum.indexOf(typeIn);
         if (typeNumber === -1) {
             console.log('invalid type ' + typeIn);
-            throw ('invalid type ' + typeIn);
+            throw new Music21Exception('invalid type ' + typeIn);
         }
         this._type = typeIn;
         this.updateQlFromFeatures();
@@ -368,7 +370,7 @@ export class Tuplet extends prebase.ProtoM21Object {
      */
     setDurationType(type) {
         if (self.frozen === true) {
-            throw ('A frozen tuplet (or one attached to a duration) is immutable');
+            throw new Music21Exception('A frozen tuplet (or one attached to a duration) is immutable');
         }
         this.durationActual = new duration.Duration(type);
         this.durationNormal = this.durationActual;
@@ -384,7 +386,7 @@ export class Tuplet extends prebase.ProtoM21Object {
      */
     setRatio(actual, normal) {
         if (self.frozen === true) {
-            throw ('A frozen tuplet (or one attached to a duration) is immutable');
+            throw new Music21Exception('A frozen tuplet (or one attached to a duration) is immutable');
         }
         this.numberNotesActual = actual || 3;
         this.numberNotesNormal = normal || 2;

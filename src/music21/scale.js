@@ -12,6 +12,8 @@ import { debug } from './debug';
 import { pitch } from './pitch';
 import { interval } from './interval';
 
+import { Music21Exception } from './exceptions21';
+
 /**
  * Scale module. See {@link music21.scale} namespace
  *
@@ -39,7 +41,8 @@ scale.SimpleDiatonicScale = function SimpleDiatonicScale(tonic, scaleSteps) {
     if (tonic === undefined) {
         tonic = new pitch.Pitch('C4');
     } else if (!(tonic instanceof pitch.Pitch)) {
-        throw ('Cannot make a scale not from a music21.pitch.Pitch object: ' + tonic);
+        throw new Music21Exception('Cannot make a scale not from ' + 
+                'a music21.pitch.Pitch object: ' + tonic);
     }
     if (scaleSteps === undefined) {
         scaleSteps = ['M', 'M', 'm', 'M', 'M', 'M', 'm'];

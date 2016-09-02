@@ -1,4 +1,5 @@
 import { prebase } from './prebase';
+import { Music21Exception } from './exceptions21';
 
 /**
  * Simple tie module {@link music21.tie} namespace
@@ -30,8 +31,18 @@ export const tie = {};
 export class Tie extends prebase.ProtoM21Object {
     constructor(type) {
         super();
-        this.type = type; // start, stop, or continue
+        this._type = undefined;
         this.style = 'normal';
+        this.type = type;
+    }
+    get type() {
+        return this._type;
+    }
+    set type(t) {
+        if (!(['start', 'stop', 'continue', undefined].includes(t))) {
+            throw new Music21Exception('Tie type must be one of "start", "stop", "continue"');
+        }
+        self._type = t;
     }
 }
 tie.Tie = Tie;

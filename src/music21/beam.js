@@ -6,6 +6,8 @@
  * Based on music21 (=music21p), Copyright (c) 2006–16, Michael Scott Cuthbert and cuthbertLab
  *
  */
+import { Music21Exception } from './exceptions21';
+
 import { prebase } from './prebase';
 import { duration } from './duration';
 
@@ -122,7 +124,7 @@ export class Beams extends prebase.ProtoM21Object {
         } else if (level === 6 || level === duration.typeFromNumDict[256]) {
             count = 6;
         } else {
-            throw ('cannot fill beams for level ' + level);
+            throw new Music21Exception('cannot fill beams for level ' + level);
         }
         for (let i = 1; i <= count; i++) {
             const obj = new beam.Beam();
@@ -143,7 +145,7 @@ export class Beams extends prebase.ProtoM21Object {
      */
     getByNumber(number) {
         if (!(number in this.getNumbers())) {
-            throw ('beam number error');
+            throw new Music21Exception('beam number error: ' + number);
         }
         for (let i = 0; i < this.length; i++) {
             if (this.beamsList[i].number === number) {
@@ -204,7 +206,7 @@ export class Beams extends prebase.ProtoM21Object {
      */
     setAll(type, direction) {
         if (beam.validBeamTypes[type] === undefined) {
-            throw ('invalid beam type');
+            throw new Music21Exception('invalid beam type: ' + type);
         }
         for (let i = 0; i < this.length; i++) {
             const b = this.beamsList[i];
@@ -229,7 +231,7 @@ export class Beams extends prebase.ProtoM21Object {
             direction = splitit[1]; // can be undefined...
         }
         if (beam.validBeamTypes[type] === undefined) {
-            throw ('invalid beam type');
+            throw new Music21Exception('invalid beam type: ' + type);
         }
         for (let i = 0; i < this.length; i++) {
             if (this.beamsList[i].number === number) {

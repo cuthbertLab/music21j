@@ -1,6 +1,7 @@
 // order below doesn't matter, but good to give a sense
 // of what will be needed by almost everyone, and then
 // alphabetical.
+import * as exceptions21 from './music21/exceptions21';
 import { debug } from './music21/debug';
 import { common } from './music21/common';
 import { prebase } from './music21/prebase';
@@ -49,6 +50,7 @@ music21.chord = chord;
 music21.clef = clef;
 music21.dynamics = dynamics;
 music21.duration = duration;
+music21.exceptions21 = exceptions21;
 music21.expressions = expressions;
 music21.fromPython = fromPython;
 music21.instrument = instrument;

@@ -282,7 +282,6 @@ export class GeneralNote extends base.Music21Object {
                 vfn.addDotToAll();
             }
         }
-
         if (this.activeSite !== undefined
                 && this.activeSite.renderOptions.stemDirection !== undefined) {
             this.stemDirection = this.activeSite.renderOptions.stemDirection;
