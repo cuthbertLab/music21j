@@ -121,6 +121,27 @@
               
                 
                 <li>
+                  <a class="source" href="easyscore.html">
+                    easyscore.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="element.html">
+                    element.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="factory.html">
+                    factory.js
+                  </a>
+                </li>
+              
+                
+                <li>
                   <a class="source" href="formatter.html">
                     formatter.js
                   </a>
@@ -165,6 +186,13 @@
                 <li>
                   <a class="source" href="gracenotegroup.html">
                     gracenotegroup.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="gracetabnote.html">
+                    gracetabnote.js
                   </a>
                 </li>
               
@@ -226,8 +254,22 @@
               
                 
                 <li>
+                  <a class="source" href="notesubgroup.html">
+                    notesubgroup.js
+                  </a>
+                </li>
+              
+                
+                <li>
                   <a class="source" href="ornament.html">
                     ornament.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="parser.html">
+                    parser.js
                   </a>
                 </li>
               
@@ -242,6 +284,13 @@
                 <li>
                   <a class="source" href="raphaelcontext.html">
                     raphaelcontext.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="registry.html">
+                    registry.js
                   </a>
                 </li>
               
@@ -380,6 +429,13 @@
               
                 
                 <li>
+                  <a class="source" href="system.html">
+                    system.js
+                  </a>
+                </li>
+              
+                
+                <li>
                   <a class="source" href="tables.html">
                     tables.js
                   </a>
@@ -499,6 +555,13 @@
               
                 
                 <li>
+                  <a class="source" href="vibratobracket.html">
+                    vibratobracket.js
+                  </a>
+                </li>
+              
+                
+                <li>
                   <a class="source" href="voice.html">
                     voice.js
                   </a>
@@ -527,12 +590,13 @@ taking canvas path commands</p>
         
         <p>Warning: This file is merely a crutch to get bounding box information without
 explicit metadata. This is likely to get deprecated following SMuFL support.</p>
-<p>taken from: <a href="https://github.com/gabelerner/canvg/blob/860e418aca67b9a41e858a223d74d375793ec364/canvg.js#L449">https://github.com/gabelerner/canvg/blob/860e418aca67b9a41e858a223d74d375793ec364/canvg.js#L449</a></p>
+<p>taken from: <a href="https://github.com/gabelerner/canvg/blob/860e418aca67b9a41e858a223d74d375793ec364/ca">https://github.com/gabelerner/canvg/blob/860e418aca67b9a41e858a223d74d375793ec364/ca</a>
+nvg.js#L449</p>
 
         
           <div class='highlight'><pre>
-export <span class="hljs-keyword">class</span> BoundingBoxComputation {
-  constructor(x1, y1, x2, y2) { <span class="hljs-comment">// pass in initial points if you want</span>
+<span class="hljs-keyword">export</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">BoundingBoxComputation</span> </span>{
+  <span class="hljs-keyword">constructor</span>(x1, y1, x2, y2) { <span class="hljs-comment">// pass in initial points if you want</span>
     <span class="hljs-keyword">this</span>.x1 = <span class="hljs-built_in">Number</span>.NaN;
     <span class="hljs-keyword">this</span>.y1 = <span class="hljs-built_in">Number</span>.NaN;
     <span class="hljs-keyword">this</span>.x2 = <span class="hljs-built_in">Number</span>.NaN;
@@ -579,10 +643,10 @@ export <span class="hljs-keyword">class</span> BoundingBoxComputation {
   }
 
   addQuadraticCurve(p0x, p0y, p1x, p1y, p2x, p2y) {
-    <span class="hljs-keyword">var</span> cp1x = p0x + <span class="hljs-number">2</span> / <span class="hljs-number">3</span> * (p1x - p0x); <span class="hljs-comment">// CP1 = QP0 + 2/3 *(QP1-QP0)</span>
-    <span class="hljs-keyword">var</span> cp1y = p0y + <span class="hljs-number">2</span> / <span class="hljs-number">3</span> * (p1y - p0y); <span class="hljs-comment">// CP1 = QP0 + 2/3 *(QP1-QP0)</span>
-    <span class="hljs-keyword">var</span> cp2x = cp1x + <span class="hljs-number">1</span> / <span class="hljs-number">3</span> * (p2x - p0x); <span class="hljs-comment">// CP2 = CP1 + 1/3 *(QP2-QP0)</span>
-    <span class="hljs-keyword">var</span> cp2y = cp1y + <span class="hljs-number">1</span> / <span class="hljs-number">3</span> * (p2y - p0y); <span class="hljs-comment">// CP2 = CP1 + 1/3 *(QP2-QP0)</span>
+    <span class="hljs-keyword">const</span> cp1x = p0x + <span class="hljs-number">2</span> / <span class="hljs-number">3</span> * (p1x - p0x); <span class="hljs-comment">// CP1 = QP0 + 2/3 *(QP1-QP0)</span>
+    <span class="hljs-keyword">const</span> cp1y = p0y + <span class="hljs-number">2</span> / <span class="hljs-number">3</span> * (p1y - p0y); <span class="hljs-comment">// CP1 = QP0 + 2/3 *(QP1-QP0)</span>
+    <span class="hljs-keyword">const</span> cp2x = cp1x + <span class="hljs-number">1</span> / <span class="hljs-number">3</span> * (p2x - p0x); <span class="hljs-comment">// CP2 = CP1 + 1/3 *(QP2-QP0)</span>
+    <span class="hljs-keyword">const</span> cp2y = cp1y + <span class="hljs-number">1</span> / <span class="hljs-number">3</span> * (p2y - p0y); <span class="hljs-comment">// CP2 = CP1 + 1/3 *(QP2-QP0)</span>
     <span class="hljs-keyword">this</span>.addBezierCurve(p0x, p0y, cp1x, cp1y, cp2x, cp2y, p2x, p2y);
   }
 
@@ -593,30 +657,28 @@ export <span class="hljs-keyword">class</span> BoundingBoxComputation {
         <p>from <a href="http://blog.hackers-cafe.net/2009/06/how-to-calculate-bezier-curves-bounding.html">http://blog.hackers-cafe.net/2009/06/how-to-calculate-bezier-curves-bounding.html</a></p>
 
         
-          <div class='highlight'><pre>    <span class="hljs-keyword">var</span> p0 = [p0x, p0y];
-    <span class="hljs-keyword">var</span> p1 = [p1x, p1y];
-    <span class="hljs-keyword">var</span> p2 = [p2x, p2y];
-    <span class="hljs-keyword">var</span> p3 = [p3x, p3y];
-    <span class="hljs-keyword">var</span> i;
+          <div class='highlight'><pre>    <span class="hljs-keyword">const</span> p0 = [p0x, p0y];
+    <span class="hljs-keyword">const</span> p1 = [p1x, p1y];
+    <span class="hljs-keyword">const</span> p2 = [p2x, p2y];
+    <span class="hljs-keyword">const</span> p3 = [p3x, p3y];
+    <span class="hljs-keyword">let</span> i;
 
     <span class="hljs-keyword">this</span>.addPoint(p0[<span class="hljs-number">0</span>], p0[<span class="hljs-number">1</span>]);
     <span class="hljs-keyword">this</span>.addPoint(p3[<span class="hljs-number">0</span>], p3[<span class="hljs-number">1</span>]);
 
-    <span class="hljs-keyword">var</span> f = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(t, i)</span> {</span>
-      <span class="hljs-keyword">return</span> <span class="hljs-built_in">Math</span>.pow(<span class="hljs-number">1</span> - t, <span class="hljs-number">3</span>) * p0[i] +
-        <span class="hljs-number">3</span> * <span class="hljs-built_in">Math</span>.pow(<span class="hljs-number">1</span> - t, <span class="hljs-number">2</span>) * t * p1[i] +
-        <span class="hljs-number">3</span> * (<span class="hljs-number">1</span> - t) * <span class="hljs-built_in">Math</span>.pow(t, <span class="hljs-number">2</span>) * p2[i] +
-        <span class="hljs-built_in">Math</span>.pow(t, <span class="hljs-number">3</span>) * p3[i];
-    };
+    <span class="hljs-keyword">const</span> f = (t, i) =&gt; <span class="hljs-built_in">Math</span>.pow(<span class="hljs-number">1</span> - t, <span class="hljs-number">3</span>) * p0[i] +
+      <span class="hljs-number">3</span> * <span class="hljs-built_in">Math</span>.pow(<span class="hljs-number">1</span> - t, <span class="hljs-number">2</span>) * t * p1[i] +
+      <span class="hljs-number">3</span> * (<span class="hljs-number">1</span> - t) * <span class="hljs-built_in">Math</span>.pow(t, <span class="hljs-number">2</span>) * p2[i] +
+      <span class="hljs-built_in">Math</span>.pow(t, <span class="hljs-number">3</span>) * p3[i];
 
     <span class="hljs-keyword">for</span> (i = <span class="hljs-number">0</span>; i &lt;= <span class="hljs-number">1</span>; i++) {
-      <span class="hljs-keyword">var</span> b = <span class="hljs-number">6</span> * p0[i] - <span class="hljs-number">12</span> * p1[i] + <span class="hljs-number">6</span> * p2[i];
-      <span class="hljs-keyword">var</span> a = -<span class="hljs-number">3</span> * p0[i] + <span class="hljs-number">9</span> * p1[i] - <span class="hljs-number">9</span> * p2[i] + <span class="hljs-number">3</span> * p3[i];
-      <span class="hljs-keyword">var</span> c = <span class="hljs-number">3</span> * p1[i] - <span class="hljs-number">3</span> * p0[i];
+      <span class="hljs-keyword">const</span> b = <span class="hljs-number">6</span> * p0[i] - <span class="hljs-number">12</span> * p1[i] + <span class="hljs-number">6</span> * p2[i];
+      <span class="hljs-keyword">const</span> a = <span class="hljs-number">-3</span> * p0[i] + <span class="hljs-number">9</span> * p1[i] - <span class="hljs-number">9</span> * p2[i] + <span class="hljs-number">3</span> * p3[i];
+      <span class="hljs-keyword">const</span> c = <span class="hljs-number">3</span> * p1[i] - <span class="hljs-number">3</span> * p0[i];
 
       <span class="hljs-keyword">if</span> (a === <span class="hljs-number">0</span>) {
         <span class="hljs-keyword">if</span> (b === <span class="hljs-number">0</span>) <span class="hljs-keyword">continue</span>;
-        <span class="hljs-keyword">var</span> t = -c / b;
+        <span class="hljs-keyword">const</span> t = -c / b;
         <span class="hljs-keyword">if</span> (<span class="hljs-number">0</span> &lt; t &amp;&amp; t &lt; <span class="hljs-number">1</span>) {
           <span class="hljs-keyword">if</span> (i === <span class="hljs-number">0</span>) <span class="hljs-keyword">this</span>.addX(f(t, i));
           <span class="hljs-keyword">if</span> (i === <span class="hljs-number">1</span>) <span class="hljs-keyword">this</span>.addY(f(t, i));
@@ -624,14 +686,14 @@ export <span class="hljs-keyword">class</span> BoundingBoxComputation {
         <span class="hljs-keyword">continue</span>;
       }
 
-      <span class="hljs-keyword">var</span> b2ac = <span class="hljs-built_in">Math</span>.pow(b, <span class="hljs-number">2</span>) - <span class="hljs-number">4</span> * c * a;
+      <span class="hljs-keyword">const</span> b2ac = <span class="hljs-built_in">Math</span>.pow(b, <span class="hljs-number">2</span>) - <span class="hljs-number">4</span> * c * a;
       <span class="hljs-keyword">if</span> (b2ac &lt; <span class="hljs-number">0</span>) <span class="hljs-keyword">continue</span>;
-      <span class="hljs-keyword">var</span> t1 = (-b + <span class="hljs-built_in">Math</span>.sqrt(b2ac)) / (<span class="hljs-number">2</span> * a);
+      <span class="hljs-keyword">const</span> t1 = (-b + <span class="hljs-built_in">Math</span>.sqrt(b2ac)) / (<span class="hljs-number">2</span> * a);
       <span class="hljs-keyword">if</span> (<span class="hljs-number">0</span> &lt; t1 &amp;&amp; t1 &lt; <span class="hljs-number">1</span>) {
         <span class="hljs-keyword">if</span> (i === <span class="hljs-number">0</span>) <span class="hljs-keyword">this</span>.addX(f(t1, i));
         <span class="hljs-keyword">if</span> (i === <span class="hljs-number">1</span>) <span class="hljs-keyword">this</span>.addY(f(t1, i));
       }
-      <span class="hljs-keyword">var</span> t2 = (-b - <span class="hljs-built_in">Math</span>.sqrt(b2ac)) / (<span class="hljs-number">2</span> * a);
+      <span class="hljs-keyword">const</span> t2 = (-b - <span class="hljs-built_in">Math</span>.sqrt(b2ac)) / (<span class="hljs-number">2</span> * a);
       <span class="hljs-keyword">if</span> (<span class="hljs-number">0</span> &lt; t2 &amp;&amp; t2 &lt; <span class="hljs-number">1</span>) {
         <span class="hljs-keyword">if</span> (i === <span class="hljs-number">0</span>) <span class="hljs-keyword">this</span>.addX(f(t2, i));
         <span class="hljs-keyword">if</span> (i === <span class="hljs-number">1</span>) <span class="hljs-keyword">this</span>.addY(f(t2, i));

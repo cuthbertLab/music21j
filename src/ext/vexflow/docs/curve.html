@@ -121,6 +121,27 @@
               
                 
                 <li>
+                  <a class="source" href="easyscore.html">
+                    easyscore.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="element.html">
+                    element.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="factory.html">
+                    factory.js
+                  </a>
+                </li>
+              
+                
+                <li>
                   <a class="source" href="formatter.html">
                     formatter.js
                   </a>
@@ -165,6 +186,13 @@
                 <li>
                   <a class="source" href="gracenotegroup.html">
                     gracenotegroup.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="gracetabnote.html">
+                    gracetabnote.js
                   </a>
                 </li>
               
@@ -226,8 +254,22 @@
               
                 
                 <li>
+                  <a class="source" href="notesubgroup.html">
+                    notesubgroup.js
+                  </a>
+                </li>
+              
+                
+                <li>
                   <a class="source" href="ornament.html">
                     ornament.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="parser.html">
+                    parser.js
                   </a>
                 </li>
               
@@ -242,6 +284,13 @@
                 <li>
                   <a class="source" href="raphaelcontext.html">
                     raphaelcontext.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="registry.html">
+                    registry.js
                   </a>
                 </li>
               
@@ -380,6 +429,13 @@
               
                 
                 <li>
+                  <a class="source" href="system.html">
+                    system.js
+                  </a>
+                </li>
+              
+                
+                <li>
                   <a class="source" href="tables.html">
                     tables.js
                   </a>
@@ -499,6 +555,13 @@
               
                 
                 <li>
+                  <a class="source" href="vibratobracket.html">
+                    vibratobracket.js
+                  </a>
+                </li>
+              
+                
+                <li>
                   <a class="source" href="voice.html">
                     voice.js
                   </a>
@@ -524,14 +587,14 @@ Copyright Mohit Muthanna 2010</p>
 
         
           <div class='highlight'><pre>
-import { Vex } from <span class="hljs-string">'./vex'</span>;
+<span class="hljs-keyword">import</span> { Vex } <span class="hljs-keyword">from</span> <span class="hljs-string">'./vex'</span>;
+<span class="hljs-keyword">import</span> { Element } <span class="hljs-keyword">from</span> <span class="hljs-string">'./element'</span>;
 
-export <span class="hljs-keyword">class</span> Curve {
-
-  static get Position() {
+<span class="hljs-keyword">export</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Curve</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">Element</span> </span>{
+  <span class="hljs-keyword">static</span> get Position() {
     <span class="hljs-keyword">return</span> {
       NEAR_HEAD: <span class="hljs-number">1</span>,
-      NEAR_TOP: <span class="hljs-number">2</span>
+      NEAR_TOP: <span class="hljs-number">2</span>,
     };
   }</pre></div>
         
@@ -545,7 +608,10 @@ options:
    y_shift: pixels to shift</p>
 
         
-          <div class='highlight'><pre>  constructor(from, to, options) {
+          <div class='highlight'><pre>  <span class="hljs-keyword">constructor</span>(from, to, options) {
+    <span class="hljs-keyword">super</span>();
+    <span class="hljs-keyword">this</span>.setAttribute(<span class="hljs-string">'type'</span>, <span class="hljs-string">'Curve'</span>);
+
     <span class="hljs-keyword">this</span>.render_options = {
       spacing: <span class="hljs-number">2</span>,
       thickness: <span class="hljs-number">2</span>,
@@ -553,20 +619,21 @@ options:
       y_shift: <span class="hljs-number">10</span>,
       position: Curve.Position.NEAR_HEAD,
       invert: <span class="hljs-literal">false</span>,
-      cps: [{x: <span class="hljs-number">0</span>, y: <span class="hljs-number">10</span>}, {x: <span class="hljs-number">0</span>, y: <span class="hljs-number">10</span>}]
+      cps: [{ x: <span class="hljs-number">0</span>, y: <span class="hljs-number">10</span> }, { x: <span class="hljs-number">0</span>, y: <span class="hljs-number">10</span> }],
     };
 
     Vex.Merge(<span class="hljs-keyword">this</span>.render_options, options);
-    <span class="hljs-keyword">this</span>.setNotes(from, to);
+    <span class="hljs-keyword">this</span>.setNotes(<span class="hljs-keyword">from</span>, to);
   }
 
-  setContext(context) { <span class="hljs-keyword">this</span>.context = context; <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>; }
-  setNotes(from, to) {
-    <span class="hljs-keyword">if</span> (!from &amp;&amp; !to)
-      <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RuntimeError(<span class="hljs-string">"BadArguments"</span>,
-          <span class="hljs-string">"Curve needs to have either first_note or last_note set."</span>);
+  setNotes(<span class="hljs-keyword">from</span>, to) {
+    <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">from</span> &amp;&amp; !to) {
+      <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RuntimeError(
+        <span class="hljs-string">'BadArguments'</span>, <span class="hljs-string">'Curve needs to have either first_note or last_note set.'</span>
+      );
+    }
 
-    <span class="hljs-keyword">this</span>.from = from;
+    <span class="hljs-keyword">this</span>.from = <span class="hljs-keyword">from</span>;
     <span class="hljs-keyword">this</span>.to = to;
     <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
   }
@@ -579,58 +646,69 @@ options:
   }
 
   renderCurve(params) {
-    <span class="hljs-keyword">var</span> ctx = <span class="hljs-keyword">this</span>.context;
-    <span class="hljs-keyword">var</span> cps = <span class="hljs-keyword">this</span>.render_options.cps;
+    <span class="hljs-keyword">const</span> ctx = <span class="hljs-keyword">this</span>.context;
+    <span class="hljs-keyword">const</span> cps = <span class="hljs-keyword">this</span>.render_options.cps;
 
-    <span class="hljs-keyword">var</span> x_shift = <span class="hljs-keyword">this</span>.render_options.x_shift;
-    <span class="hljs-keyword">var</span> y_shift = <span class="hljs-keyword">this</span>.render_options.y_shift * params.direction;
+    <span class="hljs-keyword">const</span> x_shift = <span class="hljs-keyword">this</span>.render_options.x_shift;
+    <span class="hljs-keyword">const</span> y_shift = <span class="hljs-keyword">this</span>.render_options.y_shift * params.direction;
 
-    <span class="hljs-keyword">var</span> first_x = params.first_x + x_shift;
-    <span class="hljs-keyword">var</span> first_y = params.first_y + y_shift;
-    <span class="hljs-keyword">var</span> last_x = params.last_x - x_shift;
-    <span class="hljs-keyword">var</span> last_y = params.last_y + y_shift;
-    <span class="hljs-keyword">var</span> thickness = <span class="hljs-keyword">this</span>.render_options.thickness;
+    <span class="hljs-keyword">const</span> first_x = params.first_x + x_shift;
+    <span class="hljs-keyword">const</span> first_y = params.first_y + y_shift;
+    <span class="hljs-keyword">const</span> last_x = params.last_x - x_shift;
+    <span class="hljs-keyword">const</span> last_y = params.last_y + y_shift;
+    <span class="hljs-keyword">const</span> thickness = <span class="hljs-keyword">this</span>.render_options.thickness;
 
-    <span class="hljs-keyword">var</span> cp_spacing = (last_x - first_x) / (cps.length + <span class="hljs-number">2</span>);
+    <span class="hljs-keyword">const</span> cp_spacing = (last_x - first_x) / (cps.length + <span class="hljs-number">2</span>);
 
     ctx.beginPath();
     ctx.moveTo(first_x, first_y);
-    ctx.bezierCurveTo(first_x + cp_spacing + cps[<span class="hljs-number">0</span>].x,
-                      first_y + (cps[<span class="hljs-number">0</span>].y * params.direction),
-                      last_x - cp_spacing + cps[<span class="hljs-number">1</span>].x,
-                      last_y + (cps[<span class="hljs-number">1</span>].y * params.direction),
-                      last_x, last_y);
-    ctx.bezierCurveTo(last_x - cp_spacing + cps[<span class="hljs-number">1</span>].x,
-                      last_y + ((cps[<span class="hljs-number">1</span>].y + thickness) * params.direction),
-                      first_x + cp_spacing + cps[<span class="hljs-number">0</span>].x,
-                      first_y + ((cps[<span class="hljs-number">0</span>].y + thickness) * params.direction),
-                      first_x, first_y);
+    ctx.bezierCurveTo(
+      first_x + cp_spacing + cps[<span class="hljs-number">0</span>].x,
+      first_y + (cps[<span class="hljs-number">0</span>].y * params.direction),
+      last_x - cp_spacing + cps[<span class="hljs-number">1</span>].x,
+      last_y + (cps[<span class="hljs-number">1</span>].y * params.direction),
+      last_x,
+      last_y
+    );
+    ctx.bezierCurveTo(
+      last_x - cp_spacing + cps[<span class="hljs-number">1</span>].x,
+      last_y + ((cps[<span class="hljs-number">1</span>].y + thickness) * params.direction),
+      first_x + cp_spacing + cps[<span class="hljs-number">0</span>].x,
+      first_y + ((cps[<span class="hljs-number">0</span>].y + thickness) * params.direction),
+      first_x,
+      first_y
+    );
     ctx.stroke();
     ctx.closePath();
     ctx.fill();
   }
 
   draw() {
-    <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.context)
-      <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RERR(<span class="hljs-string">"NoContext"</span>, <span class="hljs-string">"No context to render tie."</span>);
-    <span class="hljs-keyword">var</span> first_note = <span class="hljs-keyword">this</span>.from;
-    <span class="hljs-keyword">var</span> last_note = <span class="hljs-keyword">this</span>.to;
-    <span class="hljs-keyword">var</span> first_x, last_x, first_y, last_y, stem_direction;
+    <span class="hljs-keyword">this</span>.checkContext();
+    <span class="hljs-keyword">this</span>.setRendered();
 
-    <span class="hljs-keyword">var</span> metric = <span class="hljs-string">"baseY"</span>;
-    <span class="hljs-keyword">var</span> end_metric = <span class="hljs-string">"baseY"</span>;
-    <span class="hljs-keyword">var</span> position = <span class="hljs-keyword">this</span>.render_options.position;
-    <span class="hljs-keyword">var</span> position_end = <span class="hljs-keyword">this</span>.render_options.position_end;
+    <span class="hljs-keyword">const</span> first_note = <span class="hljs-keyword">this</span>.from;
+    <span class="hljs-keyword">const</span> last_note = <span class="hljs-keyword">this</span>.to;
+    <span class="hljs-keyword">let</span> first_x;
+    <span class="hljs-keyword">let</span> last_x;
+    <span class="hljs-keyword">let</span> first_y;
+    <span class="hljs-keyword">let</span> last_y;
+    <span class="hljs-keyword">let</span> stem_direction;
+
+    <span class="hljs-keyword">let</span> metric = <span class="hljs-string">'baseY'</span>;
+    <span class="hljs-keyword">let</span> end_metric = <span class="hljs-string">'baseY'</span>;
+    <span class="hljs-keyword">const</span> position = <span class="hljs-keyword">this</span>.render_options.position;
+    <span class="hljs-keyword">const</span> position_end = <span class="hljs-keyword">this</span>.render_options.position_end;
 
     <span class="hljs-keyword">if</span> (position === Curve.Position.NEAR_TOP) {
-      metric = <span class="hljs-string">"topY"</span>;
-      end_metric = <span class="hljs-string">"topY"</span>;
+      metric = <span class="hljs-string">'topY'</span>;
+      end_metric = <span class="hljs-string">'topY'</span>;
     }
 
-    <span class="hljs-keyword">if</span> (position_end == Curve.Position.NEAR_HEAD) {
-      end_metric = <span class="hljs-string">"baseY"</span>;
-    } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (position_end == Curve.Position.NEAR_TOP) {
-      end_metric = <span class="hljs-string">"topY"</span>;
+    <span class="hljs-keyword">if</span> (position_end === Curve.Position.NEAR_HEAD) {
+      end_metric = <span class="hljs-string">'baseY'</span>;
+    } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (position_end === Curve.Position.NEAR_TOP) {
+      end_metric = <span class="hljs-string">'topY'</span>;
     }
 
     <span class="hljs-keyword">if</span> (first_note) {
@@ -652,12 +730,11 @@ options:
     }
 
     <span class="hljs-keyword">this</span>.renderCurve({
-      first_x: first_x,
-      last_x: last_x,
-      first_y: first_y,
-      last_y: last_y,
-      direction: stem_direction *
-        (<span class="hljs-keyword">this</span>.render_options.invert === <span class="hljs-literal">true</span> ? -<span class="hljs-number">1</span> : <span class="hljs-number">1</span>)
+      first_x,
+      last_x,
+      first_y,
+      last_y,
+      direction: stem_direction * (<span class="hljs-keyword">this</span>.render_options.invert === <span class="hljs-literal">true</span> ? <span class="hljs-number">-1</span> : <span class="hljs-number">1</span>),
     });
     <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
   }

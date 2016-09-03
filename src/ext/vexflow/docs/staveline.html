@@ -121,6 +121,27 @@
               
                 
                 <li>
+                  <a class="source" href="easyscore.html">
+                    easyscore.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="element.html">
+                    element.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="factory.html">
+                    factory.js
+                  </a>
+                </li>
+              
+                
+                <li>
                   <a class="source" href="formatter.html">
                     formatter.js
                   </a>
@@ -165,6 +186,13 @@
                 <li>
                   <a class="source" href="gracenotegroup.html">
                     gracenotegroup.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="gracetabnote.html">
+                    gracetabnote.js
                   </a>
                 </li>
               
@@ -226,8 +254,22 @@
               
                 
                 <li>
+                  <a class="source" href="notesubgroup.html">
+                    notesubgroup.js
+                  </a>
+                </li>
+              
+                
+                <li>
                   <a class="source" href="ornament.html">
                     ornament.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="parser.html">
+                    parser.js
                   </a>
                 </li>
               
@@ -242,6 +284,13 @@
                 <li>
                   <a class="source" href="raphaelcontext.html">
                     raphaelcontext.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="registry.html">
+                    registry.js
                   </a>
                 </li>
               
@@ -380,6 +429,13 @@
               
                 
                 <li>
+                  <a class="source" href="system.html">
+                    system.js
+                  </a>
+                </li>
+              
+                
+                <li>
                   <a class="source" href="tables.html">
                     tables.js
                   </a>
@@ -499,6 +555,13 @@
               
                 
                 <li>
+                  <a class="source" href="vibratobracket.html">
+                    vibratobracket.js
+                  </a>
+                </li>
+              
+                
+                <li>
                   <a class="source" href="voice.html">
                     voice.js
                   </a>
@@ -527,7 +590,9 @@ can format a <code>StaveLine</code> with arrows or colors for more pedagogical
 purposes, such as diagrams.</p>
 
         
-          <div class='highlight'><pre>import { Vex } from <span class="hljs-string">'./vex'</span>;</pre></div>
+          <div class='highlight'><pre><span class="hljs-keyword">import</span> { Vex } <span class="hljs-keyword">from</span> <span class="hljs-string">'./vex'</span>;
+<span class="hljs-keyword">import</span> { Element } <span class="hljs-keyword">from</span> <span class="hljs-string">'./element'</span>;
+<span class="hljs-keyword">import</span> { Flow } <span class="hljs-keyword">from</span> <span class="hljs-string">'./tables'</span>;</pre></div>
         
       
         
@@ -537,7 +602,7 @@ arrow heads on  HTML5 Canvas”</p>
 <p>Draw an arrow head that connects between 3 coordinates</p>
 
         
-          <div class='highlight'><pre><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">drawArrowHead</span><span class="hljs-params">(ctx, x0, y0, x1, y1, x2, y2)</span> {</span></pre></div>
+          <div class='highlight'><pre><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">drawArrowHead</span>(<span class="hljs-params">ctx, x0, y0, x1, y1, x2, y2</span>) </span>{</pre></div>
         
       
         
@@ -545,9 +610,9 @@ arrow heads on  HTML5 Canvas”</p>
 
         
           <div class='highlight'><pre>  ctx.beginPath();
-  ctx.moveTo(x0,y0);
-  ctx.lineTo(x1,y1);
-  ctx.lineTo(x2,y2);
+  ctx.moveTo(x0, y0);
+  ctx.lineTo(x1, y1);
+  ctx.lineTo(x2, y2);
   ctx.lineTo(x0, y0);
   ctx.closePath();
 
@@ -559,13 +624,13 @@ arrow heads on  HTML5 Canvas”</p>
         <p>Helper function to draw a line with arrow heads</p>
 
         
-          <div class='highlight'><pre><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">drawArrowLine</span><span class="hljs-params">(ctx, point1, point2, config)</span> {</span>
-  <span class="hljs-keyword">var</span> both_arrows = config.draw_start_arrow &amp;&amp; config.draw_end_arrow;
+          <div class='highlight'><pre><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">drawArrowLine</span>(<span class="hljs-params">ctx, point1, point2, config</span>) </span>{
+  <span class="hljs-keyword">const</span> both_arrows = config.draw_start_arrow &amp;&amp; config.draw_end_arrow;
 
-  <span class="hljs-keyword">var</span> x1 = point1.x;
-  <span class="hljs-keyword">var</span> y1 = point1.y;
-  <span class="hljs-keyword">var</span> x2 = point2.x;
-  <span class="hljs-keyword">var</span> y2 = point2.y;</pre></div>
+  <span class="hljs-keyword">const</span> x1 = point1.x;
+  <span class="hljs-keyword">const</span> y1 = point1.y;
+  <span class="hljs-keyword">const</span> x2 = point2.x;
+  <span class="hljs-keyword">const</span> y2 = point2.y;</pre></div>
         
       
         
@@ -573,9 +638,12 @@ arrow heads on  HTML5 Canvas”</p>
 so that wide lines won’t put a flat end on the arrow.</p>
 
         
-          <div class='highlight'><pre>  <span class="hljs-keyword">var</span> distance = <span class="hljs-built_in">Math</span>.sqrt((x2-x1)*(x2-x1)+(y2-y1)*(y2-y1));
-  <span class="hljs-keyword">var</span> ratio = (distance - config.arrowhead_length/<span class="hljs-number">3</span>) / distance;
-  <span class="hljs-keyword">var</span> end_x, end_y, start_x, start_y;
+          <div class='highlight'><pre>  <span class="hljs-keyword">const</span> distance = <span class="hljs-built_in">Math</span>.sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1));
+  <span class="hljs-keyword">const</span> ratio = (distance - config.arrowhead_length / <span class="hljs-number">3</span>) / distance;
+  <span class="hljs-keyword">let</span> end_x;
+  <span class="hljs-keyword">let</span> end_y;
+  <span class="hljs-keyword">let</span> start_x;
+  <span class="hljs-keyword">let</span> start_y;
   <span class="hljs-keyword">if</span> (config.draw_end_arrow || both_arrows) {
     end_x = <span class="hljs-built_in">Math</span>.round(x1 + (x2 - x1) * ratio);
     end_y = <span class="hljs-built_in">Math</span>.round(y1 + (y2 - y1) * ratio);
@@ -604,7 +672,7 @@ so that wide lines won’t put a flat end on the arrow.</p>
         
           <div class='highlight'><pre>  ctx.beginPath();
   ctx.moveTo(start_x, start_y);
-  ctx.lineTo(end_x,end_y);
+  ctx.lineTo(end_x, end_y);
   ctx.stroke();
   ctx.closePath();</pre></div>
         
@@ -613,18 +681,21 @@ so that wide lines won’t put a flat end on the arrow.</p>
         <p>calculate the angle of the line</p>
 
         
-          <div class='highlight'><pre>  <span class="hljs-keyword">var</span> line_angle = <span class="hljs-built_in">Math</span>.atan2(y2 - y1, x2 - x1);</pre></div>
+          <div class='highlight'><pre>  <span class="hljs-keyword">const</span> line_angle = <span class="hljs-built_in">Math</span>.atan2(y2 - y1, x2 - x1);</pre></div>
         
       
         
         <p>h is the line length of a side of the arrow head</p>
 
         
-          <div class='highlight'><pre>  <span class="hljs-keyword">var</span> h = <span class="hljs-built_in">Math</span>.abs(config.arrowhead_length / <span class="hljs-built_in">Math</span>.cos(config.arrowhead_angle));
+          <div class='highlight'><pre>  <span class="hljs-keyword">const</span> h = <span class="hljs-built_in">Math</span>.abs(config.arrowhead_length / <span class="hljs-built_in">Math</span>.cos(config.arrowhead_angle));
 
-  <span class="hljs-keyword">var</span> angle1, angle2;
-  <span class="hljs-keyword">var</span> top_x, top_y;
-  <span class="hljs-keyword">var</span> bottom_x, bottom_y;
+  <span class="hljs-keyword">let</span> angle1;
+  <span class="hljs-keyword">let</span> angle2;
+  <span class="hljs-keyword">let</span> top_x;
+  <span class="hljs-keyword">let</span> top_y;
+  <span class="hljs-keyword">let</span> bottom_x;
+  <span class="hljs-keyword">let</span> bottom_y;
 
   <span class="hljs-keyword">if</span> (config.draw_end_arrow || both_arrows) {
     angle1 = line_angle + <span class="hljs-built_in">Math</span>.PI + config.arrowhead_angle;
@@ -651,25 +722,25 @@ so that wide lines won’t put a flat end on the arrow.</p>
   }
 }
 
-export <span class="hljs-keyword">class</span> StaveLine {</pre></div>
+<span class="hljs-keyword">export</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">StaveLine</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">Element</span> </span>{</pre></div>
         
       
         
         <p>Text Positioning</p>
 
         
-          <div class='highlight'><pre>  static get TextVerticalPosition() {
+          <div class='highlight'><pre>  <span class="hljs-keyword">static</span> get TextVerticalPosition() {
     <span class="hljs-keyword">return</span> {
       TOP: <span class="hljs-number">1</span>,
-      BOTTOM: <span class="hljs-number">2</span>
+      BOTTOM: <span class="hljs-number">2</span>,
     };
   }
 
-  static get TextJustification() {
+  <span class="hljs-keyword">static</span> get TextJustification() {
     <span class="hljs-keyword">return</span> {
       LEFT: <span class="hljs-number">1</span>,
       CENTER: <span class="hljs-number">2</span>,
-      RIGHT: <span class="hljs-number">3</span>
+      RIGHT: <span class="hljs-number">3</span>,
     };
   }</pre></div>
         
@@ -685,16 +756,18 @@ export <span class="hljs-keyword">class</span> StaveLine {</pre></div>
  }
 </code></pre>
         
-          <div class='highlight'><pre>  constructor(notes) {
-    <span class="hljs-keyword">this</span>.notes = notes;
-    <span class="hljs-keyword">this</span>.context = <span class="hljs-literal">null</span>;
+          <div class='highlight'><pre>  <span class="hljs-keyword">constructor</span>(notes) {
+    <span class="hljs-keyword">super</span>();
+    <span class="hljs-keyword">this</span>.setAttribute(<span class="hljs-string">'type'</span>, <span class="hljs-string">'StaveLine'</span>);
 
-    <span class="hljs-keyword">this</span>.text = <span class="hljs-string">""</span>;
+    <span class="hljs-keyword">this</span>.notes = notes;
+
+    <span class="hljs-keyword">this</span>.text = <span class="hljs-string">''</span>;
 
     <span class="hljs-keyword">this</span>.font = {
-      family: <span class="hljs-string">"Arial"</span>,
+      family: <span class="hljs-string">'Arial'</span>,
       size: <span class="hljs-number">10</span>,
-      weight: <span class="hljs-string">""</span>
+      weight: <span class="hljs-string">''</span>,
     };
 
     <span class="hljs-keyword">this</span>.render_options = {</pre></div>
@@ -763,18 +836,11 @@ export <span class="hljs-keyword">class</span> StaveLine {</pre></div>
 
         
           <div class='highlight'><pre>      text_position_vertical: StaveLine.TextVerticalPosition.TOP,
-      text_justification: StaveLine.TextJustification.CENTER
+      text_justification: StaveLine.TextJustification.CENTER,
     };
 
     <span class="hljs-keyword">this</span>.setNotes(notes);
   }</pre></div>
-        
-      
-        
-        <p>Set the rendering context</p>
-
-        
-          <div class='highlight'><pre>  setContext(context) { <span class="hljs-keyword">this</span>.context = context; <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>; }</pre></div>
         
       
         
@@ -796,16 +862,20 @@ export <span class="hljs-keyword">class</span> StaveLine {</pre></div>
 
         
           <div class='highlight'><pre>  setNotes(notes) {
-    <span class="hljs-keyword">if</span> (!notes.first_note &amp;&amp; !notes.last_note)
-      <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RuntimeError(<span class="hljs-string">"BadArguments"</span>,
-          <span class="hljs-string">"Notes needs to have either first_note or last_note set."</span>);
+    <span class="hljs-keyword">if</span> (!notes.first_note &amp;&amp; !notes.last_note) {
+      <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RuntimeError(
+        <span class="hljs-string">'BadArguments'</span>, <span class="hljs-string">'Notes needs to have either first_note or last_note set.'</span>
+      );
+    }
 
     <span class="hljs-keyword">if</span> (!notes.first_indices) notes.first_indices = [<span class="hljs-number">0</span>];
     <span class="hljs-keyword">if</span> (!notes.last_indices) notes.last_indices = [<span class="hljs-number">0</span>];
 
-    <span class="hljs-keyword">if</span> (notes.first_indices.length != notes.last_indices.length)
-      <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RuntimeError(<span class="hljs-string">"BadArguments"</span>, <span class="hljs-string">"Connected notes must have similar"</span> +
-        <span class="hljs-string">" index sizes"</span>);</pre></div>
+    <span class="hljs-keyword">if</span> (notes.first_indices.length !== notes.last_indices.length) {
+      <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RuntimeError(
+        <span class="hljs-string">'BadArguments'</span>, <span class="hljs-string">'Connected notes must have similar index sizes'</span>
+      );
+    }</pre></div>
         
       
         
@@ -825,12 +895,8 @@ export <span class="hljs-keyword">class</span> StaveLine {</pre></div>
 
         
           <div class='highlight'><pre>  applyLineStyle() {
-    <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.context) {
-      <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RERR(<span class="hljs-string">"NoContext"</span>,<span class="hljs-string">"No context to apply the styling to"</span>);
-    }
-
-    <span class="hljs-keyword">var</span> render_options = <span class="hljs-keyword">this</span>.render_options;
-    <span class="hljs-keyword">var</span> ctx = <span class="hljs-keyword">this</span>.context;
+    <span class="hljs-keyword">const</span> ctx = <span class="hljs-keyword">this</span>.checkContext();
+    <span class="hljs-keyword">const</span> render_options = <span class="hljs-keyword">this</span>.render_options;
 
     <span class="hljs-keyword">if</span> (render_options.line_dash) {
       ctx.setLineDash(render_options.line_dash);
@@ -841,9 +907,9 @@ export <span class="hljs-keyword">class</span> StaveLine {</pre></div>
     }
 
     <span class="hljs-keyword">if</span> (render_options.rounded_end) {
-      ctx.setLineCap(<span class="hljs-string">"round"</span>);
+      ctx.setLineCap(<span class="hljs-string">'round'</span>);
     } <span class="hljs-keyword">else</span> {
-      ctx.setLineCap(<span class="hljs-string">"square"</span>);
+      ctx.setLineCap(<span class="hljs-string">'square'</span>);
     }
   }</pre></div>
         
@@ -853,11 +919,7 @@ export <span class="hljs-keyword">class</span> StaveLine {</pre></div>
 
         
           <div class='highlight'><pre>  applyFontStyle() {
-    <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.context) {
-      <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RERR(<span class="hljs-string">"NoContext"</span>,<span class="hljs-string">"No context to apply the styling to"</span>);
-    }
-
-    <span class="hljs-keyword">var</span> ctx = <span class="hljs-keyword">this</span>.context;
+    <span class="hljs-keyword">const</span> ctx = <span class="hljs-keyword">this</span>.checkContext();
 
     <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.font) {
       ctx.setFont(<span class="hljs-keyword">this</span>.font.family, <span class="hljs-keyword">this</span>.font.size, <span class="hljs-keyword">this</span>.font.weight);
@@ -875,14 +937,12 @@ export <span class="hljs-keyword">class</span> StaveLine {</pre></div>
 
         
           <div class='highlight'><pre>  draw() {
-    <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.context) {
-      <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RERR(<span class="hljs-string">"NoContext"</span>, <span class="hljs-string">"No context to render StaveLine."</span>);
-    }
+    <span class="hljs-keyword">const</span> ctx = <span class="hljs-keyword">this</span>.checkContext();
+    <span class="hljs-keyword">this</span>.setRendered();
 
-    <span class="hljs-keyword">var</span> ctx = <span class="hljs-keyword">this</span>.context;
-    <span class="hljs-keyword">var</span> first_note = <span class="hljs-keyword">this</span>.first_note;
-    <span class="hljs-keyword">var</span> last_note = <span class="hljs-keyword">this</span>.last_note;
-    <span class="hljs-keyword">var</span> render_options = <span class="hljs-keyword">this</span>.render_options;
+    <span class="hljs-keyword">const</span> first_note = <span class="hljs-keyword">this</span>.first_note;
+    <span class="hljs-keyword">const</span> last_note = <span class="hljs-keyword">this</span>.last_note;
+    <span class="hljs-keyword">const</span> render_options = <span class="hljs-keyword">this</span>.render_options;
 
     ctx.save();
     <span class="hljs-keyword">this</span>.applyLineStyle();</pre></div>
@@ -892,10 +952,10 @@ export <span class="hljs-keyword">class</span> StaveLine {</pre></div>
         <p>Cycle through each set of indices and draw lines</p>
 
         
-          <div class='highlight'><pre>    <span class="hljs-keyword">var</span> start_position;
-    <span class="hljs-keyword">var</span> end_position;
-    <span class="hljs-keyword">this</span>.first_indices.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(first_index, i)</span> {</span>
-      <span class="hljs-keyword">var</span> last_index = <span class="hljs-keyword">this</span>.last_indices[i];</pre></div>
+          <div class='highlight'><pre>    <span class="hljs-keyword">let</span> start_position;
+    <span class="hljs-keyword">let</span> end_position;
+    <span class="hljs-keyword">this</span>.first_indices.forEach((first_index, i) =&gt; {
+      <span class="hljs-keyword">const</span> last_index = <span class="hljs-keyword">this</span>.last_indices[i];</pre></div>
         
       
         
@@ -904,25 +964,23 @@ export <span class="hljs-keyword">class</span> StaveLine {</pre></div>
         
           <div class='highlight'><pre>      start_position = first_note.getModifierStartXY(<span class="hljs-number">2</span>, first_index);
       end_position = last_note.getModifierStartXY(<span class="hljs-number">1</span>, last_index);
-      <span class="hljs-keyword">var</span> upwards_slope = start_position.y &gt; end_position.y;</pre></div>
+      <span class="hljs-keyword">const</span> upwards_slope = start_position.y &gt; end_position.y;</pre></div>
         
       
         
         <p>Adjust <code>x</code> coordinates for modifiers</p>
 
         
-          <div class='highlight'><pre>      start_position.x += first_note.getMetrics().modRightPx +
-                          render_options.padding_left;
-      end_position.x -= last_note.getMetrics().modLeftPx +
-                        render_options.padding_right;</pre></div>
+          <div class='highlight'><pre>      start_position.x += first_note.getMetrics().modRightPx + render_options.padding_left;
+      end_position.x -= last_note.getMetrics().modLeftPx + render_options.padding_right;</pre></div>
         
       
         
         <p>Adjust first <code>x</code> coordinates for displacements</p>
 
         
-          <div class='highlight'><pre>      <span class="hljs-keyword">var</span> notehead_width = first_note.getGlyph().head_width;
-      <span class="hljs-keyword">var</span> first_displaced = first_note.getKeyProps()[first_index].displaced;
+          <div class='highlight'><pre>      <span class="hljs-keyword">const</span> notehead_width = first_note.getGlyph().getWidth();
+      <span class="hljs-keyword">const</span> first_displaced = first_note.getKeyProps()[first_index].displaced;
       <span class="hljs-keyword">if</span> (first_displaced &amp;&amp; first_note.getStemDirection() === <span class="hljs-number">1</span>) {
         start_position.x += notehead_width + render_options.padding_left;
       }</pre></div>
@@ -932,8 +990,8 @@ export <span class="hljs-keyword">class</span> StaveLine {</pre></div>
         <p>Adjust last <code>x</code> coordinates for displacements</p>
 
         
-          <div class='highlight'><pre>      <span class="hljs-keyword">var</span> last_displaced = last_note.getKeyProps()[last_index].displaced;
-      <span class="hljs-keyword">if</span> (last_displaced &amp;&amp; last_note.getStemDirection() === -<span class="hljs-number">1</span>) {
+          <div class='highlight'><pre>      <span class="hljs-keyword">const</span> last_displaced = last_note.getKeyProps()[last_index].displaced;
+      <span class="hljs-keyword">if</span> (last_displaced &amp;&amp; last_note.getStemDirection() === <span class="hljs-number">-1</span>) {
         end_position.x -= notehead_width + render_options.padding_right;
       }</pre></div>
         
@@ -942,12 +1000,11 @@ export <span class="hljs-keyword">class</span> StaveLine {</pre></div>
         <p>Adjust y position better if it’s not coming from the center of the note</p>
 
         
-          <div class='highlight'><pre>      start_position.y += upwards_slope ? -<span class="hljs-number">3</span> : <span class="hljs-number">1</span>;
+          <div class='highlight'><pre>      start_position.y += upwards_slope ? <span class="hljs-number">-3</span> : <span class="hljs-number">1</span>;
       end_position.y += upwards_slope ? <span class="hljs-number">2</span> : <span class="hljs-number">0</span>;
 
       drawArrowLine(ctx, start_position, end_position, <span class="hljs-keyword">this</span>.render_options);
-
-    }, <span class="hljs-keyword">this</span>);
+    });
 
     ctx.restore();</pre></div>
         
@@ -956,14 +1013,14 @@ export <span class="hljs-keyword">class</span> StaveLine {</pre></div>
         <p>Determine the x coordinate where to start the text</p>
 
         
-          <div class='highlight'><pre>    <span class="hljs-keyword">var</span> text_width = ctx.measureText(<span class="hljs-keyword">this</span>.text).width;
-    <span class="hljs-keyword">var</span> justification = render_options.text_justification;
-    <span class="hljs-keyword">var</span> x = <span class="hljs-number">0</span>;
+          <div class='highlight'><pre>    <span class="hljs-keyword">const</span> text_width = ctx.measureText(<span class="hljs-keyword">this</span>.text).width;
+    <span class="hljs-keyword">const</span> justification = render_options.text_justification;
+    <span class="hljs-keyword">let</span> x = <span class="hljs-number">0</span>;
     <span class="hljs-keyword">if</span> (justification === StaveLine.TextJustification.LEFT) {
       x = start_position.x;
     } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (justification === StaveLine.TextJustification.CENTER) {
-      <span class="hljs-keyword">var</span> delta_x = (end_position.x - start_position.x);
-      <span class="hljs-keyword">var</span> center_x = (delta_x / <span class="hljs-number">2</span> ) + start_position.x;
+      <span class="hljs-keyword">const</span> delta_x = (end_position.x - start_position.x);
+      <span class="hljs-keyword">const</span> center_x = (delta_x / <span class="hljs-number">2</span>) + start_position.x;
       x = center_x - (text_width / <span class="hljs-number">2</span>);
     } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (justification === StaveLine.TextJustification.RIGHT) {
       x = end_position.x  -  text_width;
@@ -974,12 +1031,12 @@ export <span class="hljs-keyword">class</span> StaveLine {</pre></div>
         <p>Determine the y value to start the text</p>
 
         
-          <div class='highlight'><pre>    <span class="hljs-keyword">var</span> y;
-    <span class="hljs-keyword">var</span> vertical_position = render_options.text_position_vertical;
+          <div class='highlight'><pre>    <span class="hljs-keyword">let</span> y;
+    <span class="hljs-keyword">const</span> vertical_position = render_options.text_position_vertical;
     <span class="hljs-keyword">if</span> (vertical_position === StaveLine.TextVerticalPosition.TOP) {
       y = first_note.getStave().getYForTopText();
     } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (vertical_position === StaveLine.TextVerticalPosition.BOTTOM) {
-      y = first_note.getStave().getYForBottomText();
+      y = first_note.getStave().getYForBottomText(Flow.TEXT_HEIGHT_OFFSET_HACK);
     }</pre></div>
         
       

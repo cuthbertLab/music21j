@@ -121,6 +121,27 @@
               
                 
                 <li>
+                  <a class="source" href="easyscore.html">
+                    easyscore.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="element.html">
+                    element.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="factory.html">
+                    factory.js
+                  </a>
+                </li>
+              
+                
+                <li>
                   <a class="source" href="formatter.html">
                     formatter.js
                   </a>
@@ -165,6 +186,13 @@
                 <li>
                   <a class="source" href="gracenotegroup.html">
                     gracenotegroup.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="gracetabnote.html">
+                    gracetabnote.js
                   </a>
                 </li>
               
@@ -226,8 +254,22 @@
               
                 
                 <li>
+                  <a class="source" href="notesubgroup.html">
+                    notesubgroup.js
+                  </a>
+                </li>
+              
+                
+                <li>
                   <a class="source" href="ornament.html">
                     ornament.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="parser.html">
+                    parser.js
                   </a>
                 </li>
               
@@ -242,6 +284,13 @@
                 <li>
                   <a class="source" href="raphaelcontext.html">
                     raphaelcontext.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="registry.html">
+                    registry.js
                   </a>
                 </li>
               
@@ -380,6 +429,13 @@
               
                 
                 <li>
+                  <a class="source" href="system.html">
+                    system.js
+                  </a>
+                </li>
+              
+                
+                <li>
                   <a class="source" href="tables.html">
                     tables.js
                   </a>
@@ -499,6 +555,13 @@
               
                 
                 <li>
+                  <a class="source" href="vibratobracket.html">
+                    vibratobracket.js
+                  </a>
+                </li>
+              
+                
+                <li>
                   <a class="source" href="voice.html">
                     voice.js
                   </a>
@@ -525,56 +588,62 @@ render grace notes.</p>
 
         
           <div class='highlight'><pre>
-import { Vex } from <span class="hljs-string">'./vex'</span>;
-import { Flow } from <span class="hljs-string">'./tables'</span>;
-import { Modifier } from <span class="hljs-string">'./modifier'</span>;
-import { Formatter } from <span class="hljs-string">'./formatter'</span>;
-import { Voice } from <span class="hljs-string">'./voice'</span>;
-import { Beam } from <span class="hljs-string">'./beam'</span>;
-import { StaveTie } from <span class="hljs-string">'./stavetie'</span>;
+<span class="hljs-keyword">import</span> { Vex } <span class="hljs-keyword">from</span> <span class="hljs-string">'./vex'</span>;
+<span class="hljs-keyword">import</span> { Flow } <span class="hljs-keyword">from</span> <span class="hljs-string">'./tables'</span>;
+<span class="hljs-keyword">import</span> { Modifier } <span class="hljs-keyword">from</span> <span class="hljs-string">'./modifier'</span>;
+<span class="hljs-keyword">import</span> { Formatter } <span class="hljs-keyword">from</span> <span class="hljs-string">'./formatter'</span>;
+<span class="hljs-keyword">import</span> { Voice } <span class="hljs-keyword">from</span> <span class="hljs-string">'./voice'</span>;
+<span class="hljs-keyword">import</span> { Beam } <span class="hljs-keyword">from</span> <span class="hljs-string">'./beam'</span>;
+<span class="hljs-keyword">import</span> { StaveTie } <span class="hljs-keyword">from</span> <span class="hljs-string">'./stavetie'</span>;
+<span class="hljs-keyword">import</span> { TabTie } <span class="hljs-keyword">from</span> <span class="hljs-string">'./tabtie'</span>;
+<span class="hljs-keyword">import</span> { StaveNote } <span class="hljs-keyword">from</span> <span class="hljs-string">'./stavenote'</span>;</pre></div>
+        
+      
+        
+        <p>To enable logging for this class. Set <code>Vex.Flow.GraceNoteGroup.DEBUG</code> to <code>true</code>.</p>
 
-export <span class="hljs-keyword">class</span> GraceNoteGroup extends Modifier {
-  static get CATEGORY() { <span class="hljs-keyword">return</span> <span class="hljs-string">'gracenotegroups'</span>; }</pre></div>
+        
+          <div class='highlight'><pre><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">L</span>(<span class="hljs-params">...args</span>) </span>{ <span class="hljs-keyword">if</span> (GraceNoteGroup.DEBUG) Vex.L(<span class="hljs-string">'Vex.Flow.GraceNoteGroup'</span>, args); }
+
+<span class="hljs-keyword">export</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">GraceNoteGroup</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">Modifier</span> </span>{
+  <span class="hljs-keyword">static</span> get CATEGORY() { <span class="hljs-keyword">return</span> <span class="hljs-string">'gracenotegroups'</span>; }</pre></div>
         
       
         
         <p>Arrange groups inside a <code>ModifierContext</code></p>
 
         
-          <div class='highlight'><pre>  static format(gracenote_groups, state) {
-    <span class="hljs-keyword">var</span> gracenote_spacing = <span class="hljs-number">4</span>;
+          <div class='highlight'><pre>  <span class="hljs-keyword">static</span> format(gracenote_groups, state) {
+    <span class="hljs-keyword">const</span> group_spacing_stave = <span class="hljs-number">4</span>;
+    <span class="hljs-keyword">const</span> group_spacing_tab = <span class="hljs-number">0</span>;
 
     <span class="hljs-keyword">if</span> (!gracenote_groups || gracenote_groups.length === <span class="hljs-number">0</span>) <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
 
-    <span class="hljs-keyword">var</span> group_list = [];
-    <span class="hljs-keyword">var</span> hasStave = <span class="hljs-literal">false</span>;
-    <span class="hljs-keyword">var</span> prev_note = <span class="hljs-literal">null</span>;
-    <span class="hljs-keyword">var</span> shiftL = <span class="hljs-number">0</span>;
+    <span class="hljs-keyword">const</span> group_list = [];
+    <span class="hljs-keyword">let</span> prev_note = <span class="hljs-literal">null</span>;
+    <span class="hljs-keyword">let</span> shiftL = <span class="hljs-number">0</span>;
 
-    <span class="hljs-keyword">var</span> i, gracenote_group, props_tmp;
-    <span class="hljs-keyword">for</span> (i = <span class="hljs-number">0</span>; i &lt; gracenote_groups.length; ++i) {
-      gracenote_group = gracenote_groups[i];
-      <span class="hljs-keyword">var</span> note = gracenote_group.getNote();
-      <span class="hljs-keyword">var</span> stave = note.getStave();
-      <span class="hljs-keyword">if</span> (note != prev_note) {</pre></div>
+    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> i = <span class="hljs-number">0</span>; i &lt; gracenote_groups.length; ++i) {
+      <span class="hljs-keyword">const</span> gracenote_group = gracenote_groups[i];
+      <span class="hljs-keyword">const</span> note = gracenote_group.getNote();
+      <span class="hljs-keyword">const</span> is_stavenote = (note.getCategory() === StaveNote.CATEGORY);
+      <span class="hljs-keyword">const</span> spacing = (is_stavenote ?  group_spacing_stave : group_spacing_tab);
+
+      <span class="hljs-keyword">if</span> (is_stavenote &amp;&amp; note !== prev_note) {</pre></div>
         
       
         
         <p>Iterate through all notes to get the displaced pixels</p>
 
         
-          <div class='highlight'><pre>         <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> n = <span class="hljs-number">0</span>; n &lt; note.keys.length; ++n) {
-            props_tmp = note.getKeyProps()[n];
-            shiftL = (props_tmp.displaced ? note.getExtraLeftPx() : shiftL);
-          }
-          prev_note = note;
+          <div class='highlight'><pre>        <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> n = <span class="hljs-number">0</span>; n &lt; note.keys.length; ++n) {
+          <span class="hljs-keyword">const</span> props_tmp = note.getKeyProps()[n];
+          shiftL = (props_tmp.displaced ? note.getExtraLeftPx() : shiftL);
+        }
+        prev_note = note;
       }
-      <span class="hljs-keyword">if</span> (stave != <span class="hljs-literal">null</span>) {
-        hasStave = <span class="hljs-literal">true</span>;
-        group_list.push({shift: shiftL, gracenote_group: gracenote_group});
-      } <span class="hljs-keyword">else</span> {
-        group_list.push({shift: shiftL, gracenote_group: gracenote_group });
-      }
+
+      group_list.push({ shift: shiftL, gracenote_group, spacing });
     }</pre></div>
         
       
@@ -582,18 +651,18 @@ export <span class="hljs-keyword">class</span> GraceNoteGroup extends Modifier {
         <p>If first note left shift in case it is displaced</p>
 
         
-          <div class='highlight'><pre>    <span class="hljs-keyword">var</span> group_shift = group_list[<span class="hljs-number">0</span>].shift;
-    <span class="hljs-keyword">var</span> formatWidth;
-    <span class="hljs-keyword">for</span> (i = <span class="hljs-number">0</span>; i &lt; group_list.length; ++i) {
-      gracenote_group = group_list[i].gracenote_group;
+          <div class='highlight'><pre>    <span class="hljs-keyword">let</span> group_shift = group_list[<span class="hljs-number">0</span>].shift;
+    <span class="hljs-keyword">let</span> formatWidth;
+    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> i = <span class="hljs-number">0</span>; i &lt; group_list.length; ++i) {
+      <span class="hljs-keyword">const</span> gracenote_group = group_list[i].gracenote_group;
       gracenote_group.preFormat();
-      formatWidth = gracenote_group.getWidth() + gracenote_spacing;
+      formatWidth = gracenote_group.getWidth() + group_list[i].spacing;
       group_shift = <span class="hljs-built_in">Math</span>.max(formatWidth, group_shift);
     }
 
-    <span class="hljs-keyword">for</span> (i = <span class="hljs-number">0</span>; i &lt; group_list.length; ++i) {
-      gracenote_group = group_list[i].gracenote_group;
-      formatWidth = gracenote_group.getWidth() + gracenote_spacing;
+    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> i = <span class="hljs-number">0</span>; i &lt; group_list.length; ++i) {
+      <span class="hljs-keyword">const</span> gracenote_group = group_list[i].gracenote_group;
+      formatWidth = gracenote_group.getWidth() + group_list[i].spacing;
       gracenote_group.setSpacingFromNextModifier(group_shift - <span class="hljs-built_in">Math</span>.min(formatWidth, group_shift));
     }
 
@@ -608,8 +677,9 @@ export <span class="hljs-keyword">class</span> GraceNoteGroup extends Modifier {
 <code>ModifierContext</code>.</p>
 
         
-          <div class='highlight'><pre>  constructor(grace_notes, show_slur) {
-    super();
+          <div class='highlight'><pre>  <span class="hljs-keyword">constructor</span>(grace_notes, show_slur) {
+    <span class="hljs-keyword">super</span>();
+    <span class="hljs-keyword">this</span>.setAttribute(<span class="hljs-string">'type'</span>, <span class="hljs-string">'GraceNoteGroup'</span>);
 
     <span class="hljs-keyword">this</span>.note = <span class="hljs-literal">null</span>;
     <span class="hljs-keyword">this</span>.index = <span class="hljs-literal">null</span>;
@@ -626,8 +696,12 @@ export <span class="hljs-keyword">class</span> GraceNoteGroup extends Modifier {
     <span class="hljs-keyword">this</span>.voice = <span class="hljs-keyword">new</span> Voice({
       num_beats: <span class="hljs-number">4</span>,
       beat_value: <span class="hljs-number">4</span>,
-      resolution: Flow.RESOLUTION
+      resolution: Flow.RESOLUTION,
     }).setStrict(<span class="hljs-literal">false</span>);
+
+    <span class="hljs-keyword">this</span>.render_options = {
+      slur_y_shift: <span class="hljs-number">0</span>,
+    };
 
     <span class="hljs-keyword">this</span>.voice.addTickables(<span class="hljs-keyword">this</span>.grace_notes);
 
@@ -636,7 +710,7 @@ export <span class="hljs-keyword">class</span> GraceNoteGroup extends Modifier {
 
   getCategory() { <span class="hljs-keyword">return</span> GraceNoteGroup.CATEGORY; }
 
-  preFormat(){
+  preFormat() {
     <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.preFormatted) <span class="hljs-keyword">return</span>;
 
     <span class="hljs-keyword">this</span>.formatter.joinVoices([<span class="hljs-keyword">this</span>.voice]).format([<span class="hljs-keyword">this</span>.voice], <span class="hljs-number">0</span>);
@@ -644,9 +718,9 @@ export <span class="hljs-keyword">class</span> GraceNoteGroup extends Modifier {
     <span class="hljs-keyword">this</span>.preFormatted = <span class="hljs-literal">true</span>;
   }
 
-  beamNotes(){
+  beamNotes() {
     <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.grace_notes.length &gt; <span class="hljs-number">1</span>) {
-      <span class="hljs-keyword">var</span> beam = <span class="hljs-keyword">new</span> Beam(<span class="hljs-keyword">this</span>.grace_notes);
+      <span class="hljs-keyword">const</span> beam = <span class="hljs-keyword">new</span> Beam(<span class="hljs-keyword">this</span>.grace_notes);
 
       beam.render_options.beam_width = <span class="hljs-number">3</span>;
       beam.render_options.partial_beam_length = <span class="hljs-number">4</span>;
@@ -660,29 +734,27 @@ export <span class="hljs-keyword">class</span> GraceNoteGroup extends Modifier {
   setNote(note) {
     <span class="hljs-keyword">this</span>.note = note;
   }
-  setWidth(width){
+  setWidth(width) {
     <span class="hljs-keyword">this</span>.width = width;
   }
-  getWidth(){
+  getWidth() {
     <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.width;
   }
   draw() {
-    <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.context)  {
-      <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RuntimeError(<span class="hljs-string">"NoContext"</span>,
-        <span class="hljs-string">"Can't draw Grace note without a context."</span>);
-    }
+    <span class="hljs-keyword">this</span>.checkContext();
 
-    <span class="hljs-keyword">var</span> note = <span class="hljs-keyword">this</span>.getNote();
+    <span class="hljs-keyword">const</span> note = <span class="hljs-keyword">this</span>.getNote();
 
-    L(<span class="hljs-string">"Drawing grace note group for:"</span>, note);
+    L(<span class="hljs-string">'Drawing grace note group for:'</span>, note);
 
     <span class="hljs-keyword">if</span> (!(note &amp;&amp; (<span class="hljs-keyword">this</span>.index !== <span class="hljs-literal">null</span>))) {
-      <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RuntimeError(<span class="hljs-string">"NoAttachedNote"</span>,
+      <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RuntimeError(<span class="hljs-string">'NoAttachedNote'</span>,
         <span class="hljs-string">"Can't draw grace note without a parent note and parent note index."</span>);
     }
 
-    <span class="hljs-keyword">var</span> that = <span class="hljs-keyword">this</span>;
-    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">alignGraceNotesWithNote</span><span class="hljs-params">(grace_notes, note, groupWidth)</span> {</span></pre></div>
+    <span class="hljs-keyword">this</span>.setRendered();
+    <span class="hljs-keyword">const</span> that = <span class="hljs-keyword">this</span>;
+    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">alignGraceNotesWithNote</span>(<span class="hljs-params">grace_notes, note</span>) </span>{</pre></div>
         
       
         
@@ -690,14 +762,18 @@ export <span class="hljs-keyword">class</span> GraceNoteGroup extends Modifier {
 So that th aligned with the note</p>
 
         
-          <div class='highlight'><pre>      <span class="hljs-keyword">var</span> tickContext = note.getTickContext();
-      <span class="hljs-keyword">var</span> extraPx = tickContext.getExtraPx();
-      <span class="hljs-keyword">var</span> x = tickContext.getX() - extraPx.left - extraPx.extraLeft + that.getSpacingFromNextModifier();
-      grace_notes.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(graceNote)</span> {</span>
-          <span class="hljs-keyword">var</span> tick_context = graceNote.getTickContext();
-          <span class="hljs-keyword">var</span> x_offset = tick_context.getX();
-          graceNote.setStave(note.stave);
-          tick_context.setX(x + x_offset);
+          <div class='highlight'><pre>      <span class="hljs-keyword">const</span> tickContext = note.getTickContext();
+      <span class="hljs-keyword">const</span> extraPx = tickContext.getExtraPx();
+      <span class="hljs-keyword">const</span> x = tickContext.getX()
+        - extraPx.left
+        - extraPx.extraLeft
+        + that.getSpacingFromNextModifier();
+
+      grace_notes.forEach(graceNote =&gt; {
+        <span class="hljs-keyword">const</span> tick_context = graceNote.getTickContext();
+        <span class="hljs-keyword">const</span> x_offset = tick_context.getX();
+        graceNote.setStave(note.stave);
+        tick_context.setX(x + x_offset);
       });
     }
 
@@ -708,9 +784,9 @@ So that th aligned with the note</p>
         <p>Draw notes</p>
 
         
-          <div class='highlight'><pre>    <span class="hljs-keyword">this</span>.grace_notes.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(graceNote)</span> {</span>
+          <div class='highlight'><pre>    <span class="hljs-keyword">this</span>.grace_notes.forEach(graceNote =&gt; {
       graceNote.setContext(<span class="hljs-keyword">this</span>.context).draw();
-    }, <span class="hljs-keyword">this</span>);</pre></div>
+    });</pre></div>
         
       
         
@@ -728,25 +804,22 @@ So that th aligned with the note</p>
         <p>Create and draw slur</p>
 
         
-          <div class='highlight'><pre>      <span class="hljs-keyword">this</span>.slur = <span class="hljs-keyword">new</span> StaveTie({
+          <div class='highlight'><pre>      <span class="hljs-keyword">const</span> is_stavenote = (<span class="hljs-keyword">this</span>.getNote().getCategory() === StaveNote.CATEGORY);
+      <span class="hljs-keyword">const</span> TieClass = (is_stavenote ? StaveTie : TabTie);
+
+      <span class="hljs-keyword">this</span>.slur = <span class="hljs-keyword">new</span> TieClass({
         last_note: <span class="hljs-keyword">this</span>.grace_notes[<span class="hljs-number">0</span>],
         first_note: note,
         first_indices: [<span class="hljs-number">0</span>],
-        last_indices: [<span class="hljs-number">0</span>]
+        last_indices: [<span class="hljs-number">0</span>],
       });
 
       <span class="hljs-keyword">this</span>.slur.render_options.cp2 = <span class="hljs-number">12</span>;
+      <span class="hljs-keyword">this</span>.slur.render_options.y_shift = (is_stavenote ? <span class="hljs-number">7</span> : <span class="hljs-number">5</span>) + <span class="hljs-keyword">this</span>.render_options.slur_y_shift;
       <span class="hljs-keyword">this</span>.slur.setContext(<span class="hljs-keyword">this</span>.context).draw();
     }
   }
 }</pre></div>
-        
-      
-        
-        <p>To enable logging for this class. Set <code>Vex.Flow.GraceNoteGroup.DEBUG</code> to <code>true</code>.</p>
-
-        
-          <div class='highlight'><pre><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">L</span><span class="hljs-params">()</span> {</span> <span class="hljs-keyword">if</span> (GraceNoteGroup.DEBUG) Vex.L(<span class="hljs-string">"Vex.Flow.GraceNoteGroup"</span>, <span class="hljs-built_in">arguments</span>); }</pre></div>
         
       
       <div class="fleur">h</div>

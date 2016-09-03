@@ -121,6 +121,27 @@
               
                 
                 <li>
+                  <a class="source" href="easyscore.html">
+                    easyscore.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="element.html">
+                    element.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="factory.html">
+                    factory.js
+                  </a>
+                </li>
+              
+                
+                <li>
                   <a class="source" href="formatter.html">
                     formatter.js
                   </a>
@@ -165,6 +186,13 @@
                 <li>
                   <a class="source" href="gracenotegroup.html">
                     gracenotegroup.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="gracetabnote.html">
+                    gracetabnote.js
                   </a>
                 </li>
               
@@ -226,8 +254,22 @@
               
                 
                 <li>
+                  <a class="source" href="notesubgroup.html">
+                    notesubgroup.js
+                  </a>
+                </li>
+              
+                
+                <li>
                   <a class="source" href="ornament.html">
                     ornament.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="parser.html">
+                    parser.js
                   </a>
                 </li>
               
@@ -242,6 +284,13 @@
                 <li>
                   <a class="source" href="raphaelcontext.html">
                     raphaelcontext.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="registry.html">
+                    registry.js
                   </a>
                 </li>
               
@@ -380,6 +429,13 @@
               
                 
                 <li>
+                  <a class="source" href="system.html">
+                    system.js
+                  </a>
+                </li>
+              
+                
+                <li>
                   <a class="source" href="tables.html">
                     tables.js
                   </a>
@@ -499,6 +555,13 @@
               
                 
                 <li>
+                  <a class="source" href="vibratobracket.html">
+                    vibratobracket.js
+                  </a>
+                </li>
+              
+                
+                <li>
                   <a class="source" href="voice.html">
                     voice.js
                   </a>
@@ -522,11 +585,11 @@
 
         
           <div class='highlight'><pre>
-import { Vex } from <span class="hljs-string">'./vex'</span>;
+<span class="hljs-keyword">import</span> { Vex } <span class="hljs-keyword">from</span> <span class="hljs-string">'./vex'</span>;
 
 <span class="hljs-comment">/** @constructor */</span>
-export <span class="hljs-keyword">class</span> VoiceGroup {
-  constructor() {
+<span class="hljs-keyword">export</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">VoiceGroup</span> </span>{
+  <span class="hljs-keyword">constructor</span>() {
     <span class="hljs-keyword">this</span>.voices = [];
     <span class="hljs-keyword">this</span>.modifierContexts = [];
   }</pre></div>
@@ -541,7 +604,7 @@ and preformatters to associate them with the right modifierContexts.</p>
   getModifierContexts() { <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.modifierContexts; }
 
   addVoice(voice) {
-    <span class="hljs-keyword">if</span> (!voice) <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RERR(<span class="hljs-string">"BadArguments"</span>, <span class="hljs-string">"Voice cannot be null."</span>);
+    <span class="hljs-keyword">if</span> (!voice) <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RERR(<span class="hljs-string">'BadArguments'</span>, <span class="hljs-string">'Voice cannot be null.'</span>);
     <span class="hljs-keyword">this</span>.voices.push(voice);
     voice.setVoiceGroup(<span class="hljs-keyword">this</span>);
   }

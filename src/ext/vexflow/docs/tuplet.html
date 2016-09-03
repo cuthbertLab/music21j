@@ -121,6 +121,27 @@
               
                 
                 <li>
+                  <a class="source" href="easyscore.html">
+                    easyscore.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="element.html">
+                    element.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="factory.html">
+                    factory.js
+                  </a>
+                </li>
+              
+                
+                <li>
                   <a class="source" href="formatter.html">
                     formatter.js
                   </a>
@@ -165,6 +186,13 @@
                 <li>
                   <a class="source" href="gracenotegroup.html">
                     gracenotegroup.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="gracetabnote.html">
+                    gracetabnote.js
                   </a>
                 </li>
               
@@ -226,8 +254,22 @@
               
                 
                 <li>
+                  <a class="source" href="notesubgroup.html">
+                    notesubgroup.js
+                  </a>
+                </li>
+              
+                
+                <li>
                   <a class="source" href="ornament.html">
                     ornament.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="parser.html">
+                    parser.js
                   </a>
                 </li>
               
@@ -242,6 +284,13 @@
                 <li>
                   <a class="source" href="raphaelcontext.html">
                     raphaelcontext.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="registry.html">
+                    registry.js
                   </a>
                 </li>
               
@@ -380,6 +429,13 @@
               
                 
                 <li>
+                  <a class="source" href="system.html">
+                    system.js
+                  </a>
+                </li>
+              
+                
+                <li>
                   <a class="source" href="tables.html">
                     tables.js
                   </a>
@@ -499,6 +555,13 @@
               
                 
                 <li>
+                  <a class="source" href="vibratobracket.html">
+                    vibratobracket.js
+                  </a>
+                </li>
+              
+                
+                <li>
                   <a class="source" href="voice.html">
                     voice.js
                   </a>
@@ -566,29 +629,32 @@
  * }
  */</span>
 
-import { Vex } from <span class="hljs-string">'./vex'</span>;
-import { Formatter } from <span class="hljs-string">'./formatter'</span>;
-import { Glyph } from <span class="hljs-string">'./glyph'</span>;
-import { Stem } from <span class="hljs-string">'./stem'</span>;
+<span class="hljs-keyword">import</span> { Vex } <span class="hljs-keyword">from</span> <span class="hljs-string">'./vex'</span>;
+<span class="hljs-keyword">import</span> { Element } <span class="hljs-keyword">from</span> <span class="hljs-string">'./element'</span>;
+<span class="hljs-keyword">import</span> { Formatter } <span class="hljs-keyword">from</span> <span class="hljs-string">'./formatter'</span>;
+<span class="hljs-keyword">import</span> { Glyph } <span class="hljs-keyword">from</span> <span class="hljs-string">'./glyph'</span>;
+<span class="hljs-keyword">import</span> { Stem } <span class="hljs-keyword">from</span> <span class="hljs-string">'./stem'</span>;
 
-export <span class="hljs-keyword">class</span> Tuplet {
-  static get LOCATION_TOP() {
+<span class="hljs-keyword">export</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Tuplet</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">Element</span> </span>{
+  <span class="hljs-keyword">static</span> get LOCATION_TOP() {
     <span class="hljs-keyword">return</span> <span class="hljs-number">1</span>;
   }
-  static get LOCATION_BOTTOM() {
-    <span class="hljs-keyword">return</span> -<span class="hljs-number">1</span>;
+  <span class="hljs-keyword">static</span> get LOCATION_BOTTOM() {
+    <span class="hljs-keyword">return</span> <span class="hljs-number">-1</span>;
   }
-  static get NESTING_OFFSET() {
+  <span class="hljs-keyword">static</span> get NESTING_OFFSET() {
     <span class="hljs-keyword">return</span> <span class="hljs-number">15</span>;
   }
 
-  constructor(notes, options) {
+  <span class="hljs-keyword">constructor</span>(notes, options) {
+    <span class="hljs-keyword">super</span>();
+    <span class="hljs-keyword">this</span>.setAttribute(<span class="hljs-string">'type'</span>, <span class="hljs-string">'Tuplet'</span>);
     <span class="hljs-keyword">if</span> (!notes || !notes.length) {
-      <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RuntimeError(<span class="hljs-string">"BadArguments"</span>, <span class="hljs-string">"No notes provided for tuplet."</span>);
+      <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RuntimeError(<span class="hljs-string">'BadArguments'</span>, <span class="hljs-string">'No notes provided for tuplet.'</span>);
     }
 
-    <span class="hljs-keyword">if</span> (notes.length == <span class="hljs-number">1</span>) {
-      <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RuntimeError(<span class="hljs-string">"BadArguments"</span>, <span class="hljs-string">"Too few notes for tuplet."</span>);
+    <span class="hljs-keyword">if</span> (notes.length === <span class="hljs-number">1</span>) {
+      <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RuntimeError(<span class="hljs-string">'BadArguments'</span>, <span class="hljs-string">'Too few notes for tuplet.'</span>);
     }
 
     <span class="hljs-keyword">this</span>.options = Vex.Merge({}, options);
@@ -602,20 +668,20 @@ export <span class="hljs-keyword">class</span> Tuplet {
 the preferred property name is now notes_occupied.</p>
 
         
-          <div class='highlight'><pre>    <span class="hljs-keyword">if</span>(<span class="hljs-keyword">this</span>.options.beats_occupied){
+          <div class='highlight'><pre>    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.options.beats_occupied) {
       <span class="hljs-keyword">this</span>.beatsOccupiedDeprecationWarning();
     }
     <span class="hljs-keyword">this</span>.notes_occupied = <span class="hljs-keyword">this</span>.options.notes_occupied ||
       <span class="hljs-keyword">this</span>.options.beats_occupied ||
       <span class="hljs-number">2</span>;
-    <span class="hljs-keyword">if</span>(<span class="hljs-string">"bracketed"</span> <span class="hljs-keyword">in</span> <span class="hljs-keyword">this</span>.options){
+    <span class="hljs-keyword">if</span> (<span class="hljs-string">'bracketed'</span> <span class="hljs-keyword">in</span> <span class="hljs-keyword">this</span>.options) {
       <span class="hljs-keyword">this</span>.bracketed = <span class="hljs-keyword">this</span>.options.bracketed;
     } <span class="hljs-keyword">else</span> {
       <span class="hljs-keyword">this</span>.bracketed =
-        notes.some(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(note)</span>{</span> <span class="hljs-keyword">return</span> note.beam === <span class="hljs-literal">null</span>; });
+        notes.some(note =&gt; note.beam === <span class="hljs-literal">null</span>);
     }
 
-    <span class="hljs-keyword">this</span>.ratioed = <span class="hljs-string">"ratioed"</span> <span class="hljs-keyword">in</span> <span class="hljs-keyword">this</span>.options ?
+    <span class="hljs-keyword">this</span>.ratioed = <span class="hljs-string">'ratioed'</span> <span class="hljs-keyword">in</span> <span class="hljs-keyword">this</span>.options ?
       <span class="hljs-keyword">this</span>.options.ratioed :
       (<span class="hljs-built_in">Math</span>.abs(<span class="hljs-keyword">this</span>.notes_occupied - <span class="hljs-keyword">this</span>.num_notes) &gt; <span class="hljs-number">1</span>);
     <span class="hljs-keyword">this</span>.point = <span class="hljs-number">28</span>;
@@ -630,29 +696,24 @@ the preferred property name is now notes_occupied.</p>
   }
 
   attach() {
-    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; <span class="hljs-keyword">this</span>.notes.length; i++) {
-      <span class="hljs-keyword">var</span> note = <span class="hljs-keyword">this</span>.notes[i];
+    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> i = <span class="hljs-number">0</span>; i &lt; <span class="hljs-keyword">this</span>.notes.length; i++) {
+      <span class="hljs-keyword">const</span> note = <span class="hljs-keyword">this</span>.notes[i];
       note.setTuplet(<span class="hljs-keyword">this</span>);
     }
   }
 
   detach() {
-    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; <span class="hljs-keyword">this</span>.notes.length; i++) {
-      <span class="hljs-keyword">var</span> note = <span class="hljs-keyword">this</span>.notes[i];
+    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> i = <span class="hljs-number">0</span>; i &lt; <span class="hljs-keyword">this</span>.notes.length; i++) {
+      <span class="hljs-keyword">const</span> note = <span class="hljs-keyword">this</span>.notes[i];
       note.resetTuplet(<span class="hljs-keyword">this</span>);
     }
-  }
-
-  setContext(context) {
-    <span class="hljs-keyword">this</span>.context = context;
-    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
   }
 
   <span class="hljs-comment">/**
    * Set whether or not the bracket is drawn.
    */</span>
   setBracketed(bracketed) {
-    <span class="hljs-keyword">this</span>.bracketed = bracketed ? <span class="hljs-literal">true</span> : <span class="hljs-literal">false</span>;
+    <span class="hljs-keyword">this</span>.bracketed = !!bracketed;
     <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
   }
 
@@ -660,7 +721,7 @@ the preferred property name is now notes_occupied.</p>
    * Set whether or not the ratio is shown.
    */</span>
   setRatioed(ratioed) {
-    <span class="hljs-keyword">this</span>.ratioed = ratioed ? <span class="hljs-literal">true</span> : <span class="hljs-literal">false</span>;
+    <span class="hljs-keyword">this</span>.ratioed = !!ratioed;
     <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
   }
 
@@ -668,10 +729,10 @@ the preferred property name is now notes_occupied.</p>
    * Set the tuplet to be displayed either on the top or bottom of the stave
    */</span>
   setTupletLocation(location) {
-    <span class="hljs-keyword">if</span> (!location) location = Tuplet.LOCATION_TOP;
-    <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (location != Tuplet.LOCATION_TOP &amp;&amp;
-        location != Tuplet.LOCATION_BOTTOM) {
-      <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RERR(<span class="hljs-string">"BadArgument"</span>, <span class="hljs-string">"Invalid tuplet location: "</span> + location);
+    <span class="hljs-keyword">if</span> (!location) {
+      location = Tuplet.LOCATION_TOP;
+    } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (location !== Tuplet.LOCATION_TOP &amp;&amp; location !== Tuplet.LOCATION_BOTTOM) {
+      <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RERR(<span class="hljs-string">'BadArgument'</span>, <span class="hljs-string">'Invalid tuplet location: '</span> + location);
     }
 
     <span class="hljs-keyword">this</span>.location = location;
@@ -686,14 +747,20 @@ the preferred property name is now notes_occupied.</p>
     <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.num_notes;
   }
 
-  beatsOccupiedDeprecationWarning(){
-      <span class="hljs-keyword">var</span> msg = <span class="hljs-string">"beats_occupied has been deprecated as an "</span> +
-        <span class="hljs-string">"option for tuplets. Please use notes_occupied "</span> +
-        <span class="hljs-string">"instead. Calls to getBeatsOccupied and "</span> +
-        <span class="hljs-string">"setBeatsOccupied should now be routed to "</span> +
-        <span class="hljs-string">"getNotesOccupied and setNotesOccupied instead."</span>;
-      <span class="hljs-keyword">if</span>(console &amp;&amp; console.warn) console.warn(msg);
-      <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span>(console) console.log(msg);
+  beatsOccupiedDeprecationWarning() {
+    <span class="hljs-keyword">const</span> msg = [
+      <span class="hljs-string">'beats_occupied has been deprecated as an '</span>,
+      <span class="hljs-string">'option for tuplets. Please use notes_occupied '</span>,
+      <span class="hljs-string">'instead. Calls to getBeatsOccupied and '</span>,
+      <span class="hljs-string">'setBeatsOccupied should now be routed to '</span>,
+      <span class="hljs-string">'getNotesOccupied and setNotesOccupied instead'</span>,
+    ].join(<span class="hljs-string">''</span>);
+
+    <span class="hljs-keyword">if</span> (<span class="hljs-built_in">console</span> &amp;&amp; <span class="hljs-built_in">console</span>.warn) { <span class="hljs-comment">// eslint-disable-line no-console</span>
+      <span class="hljs-built_in">console</span>.warn(msg); <span class="hljs-comment">// eslint-disable-line no-console</span>
+    } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-built_in">console</span>) {
+      <span class="hljs-built_in">console</span>.log(msg); <span class="hljs-comment">// eslint-disable-line no-console</span>
+    }
   }
 
   getBeatsOccupied() {
@@ -719,16 +786,16 @@ the preferred property name is now notes_occupied.</p>
 
   resolveGlyphs() {
     <span class="hljs-keyword">this</span>.num_glyphs = [];
-    <span class="hljs-keyword">var</span> n = <span class="hljs-keyword">this</span>.num_notes;
+    <span class="hljs-keyword">let</span> n = <span class="hljs-keyword">this</span>.num_notes;
     <span class="hljs-keyword">while</span> (n &gt;= <span class="hljs-number">1</span>) {
-      <span class="hljs-keyword">this</span>.num_glyphs.push(<span class="hljs-keyword">new</span> Glyph(<span class="hljs-string">"v"</span> + (n % <span class="hljs-number">10</span>), <span class="hljs-keyword">this</span>.point));
+      <span class="hljs-keyword">this</span>.num_glyphs.push(<span class="hljs-keyword">new</span> Glyph(<span class="hljs-string">'v'</span> + (n % <span class="hljs-number">10</span>), <span class="hljs-keyword">this</span>.point));
       n = <span class="hljs-built_in">parseInt</span>(n / <span class="hljs-number">10</span>, <span class="hljs-number">10</span>);
     }
 
     <span class="hljs-keyword">this</span>.denom_glyphs = [];
     n = <span class="hljs-keyword">this</span>.notes_occupied;
     <span class="hljs-keyword">while</span> (n &gt;= <span class="hljs-number">1</span>) {
-      <span class="hljs-keyword">this</span>.denom_glyphs.push(<span class="hljs-keyword">new</span> Glyph(<span class="hljs-string">"v"</span> + (n % <span class="hljs-number">10</span>), <span class="hljs-keyword">this</span>.point));
+      <span class="hljs-keyword">this</span>.denom_glyphs.push(<span class="hljs-keyword">new</span> Glyph(<span class="hljs-string">'v'</span> + (n % <span class="hljs-number">10</span>), <span class="hljs-keyword">this</span>.point));
       n = <span class="hljs-built_in">parseInt</span>(n / <span class="hljs-number">10</span>, <span class="hljs-number">10</span>);
     }
   }</pre></div>
@@ -740,11 +807,11 @@ on the same side (above/below), to calculate a y
 offset for this tuplet:</p>
 
         
-          <div class='highlight'><pre>  getNestedTupletCount(){
-    <span class="hljs-keyword">var</span> location = <span class="hljs-keyword">this</span>.location,
-        first_note = <span class="hljs-keyword">this</span>.notes[<span class="hljs-number">0</span>],
-        maxTupletCount = countTuplets(first_note, location),
-        minTupletCount = countTuplets(first_note, location);</pre></div>
+          <div class='highlight'><pre>  getNestedTupletCount() {
+    <span class="hljs-keyword">const</span> location = <span class="hljs-keyword">this</span>.location;
+    <span class="hljs-keyword">const</span> first_note = <span class="hljs-keyword">this</span>.notes[<span class="hljs-number">0</span>];
+    <span class="hljs-keyword">let</span> maxTupletCount = countTuplets(first_note, location);
+    <span class="hljs-keyword">let</span> minTupletCount = countTuplets(first_note, location);</pre></div>
         
       
         
@@ -752,18 +819,14 @@ offset for this tuplet:</p>
 as this tuplet:</p>
 
         
-          <div class='highlight'><pre>    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">countTuplets</span><span class="hljs-params">(note, location)</span>{</span>
-      <span class="hljs-keyword">return</span> note.tupletStack.filter(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(tuplet)</span>{</span>
-        <span class="hljs-keyword">return</span> tuplet.location===location;
-      }).length;
+          <div class='highlight'><pre>    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">countTuplets</span>(<span class="hljs-params">note, location</span>) </span>{
+      <span class="hljs-keyword">return</span> note.tupletStack.filter(tuplet =&gt; tuplet.location === location).length;
     }
 
-    <span class="hljs-keyword">this</span>.notes.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(note)</span>{</span>
-      <span class="hljs-keyword">var</span> tupletCount = countTuplets(note, location);
-      maxTupletCount = (tupletCount &gt; maxTupletCount) ?
-        tupletCount : maxTupletCount;
-      minTupletCount = (tupletCount &lt; minTupletCount) ?
-        tupletCount : minTupletCount;
+    <span class="hljs-keyword">this</span>.notes.forEach(note =&gt; {
+      <span class="hljs-keyword">const</span> tupletCount = countTuplets(note, location);
+      maxTupletCount = tupletCount &gt; maxTupletCount ? tupletCount : maxTupletCount;
+      minTupletCount = tupletCount &lt; minTupletCount ? tupletCount : minTupletCount;
     });
 
     <span class="hljs-keyword">return</span> maxTupletCount - minTupletCount;
@@ -774,8 +837,7 @@ as this tuplet:</p>
         <p>determine the y position of the tuplet:</p>
 
         
-          <div class='highlight'><pre>  getYPosition(){
-    <span class="hljs-keyword">var</span> i, y_pos;</pre></div>
+          <div class='highlight'><pre>  getYPosition() {</pre></div>
         
       
         
@@ -783,17 +845,17 @@ as this tuplet:</p>
 it and the notes:</p>
 
         
-          <div class='highlight'><pre>    <span class="hljs-keyword">var</span> nested_tuplet_y_offset =
+          <div class='highlight'><pre>    <span class="hljs-keyword">const</span> nested_tuplet_y_offset =
       <span class="hljs-keyword">this</span>.getNestedTupletCount() *
       Tuplet.NESTING_OFFSET *
-      (-<span class="hljs-keyword">this</span>.location);</pre></div>
+      -<span class="hljs-keyword">this</span>.location;</pre></div>
         
       
         
         <p>offset the tuplet for any manual y_offset:</p>
 
         
-          <div class='highlight'><pre>    <span class="hljs-keyword">var</span> y_offset = <span class="hljs-keyword">this</span>.options.y_offset || <span class="hljs-number">0</span>;</pre></div>
+          <div class='highlight'><pre>    <span class="hljs-keyword">const</span> y_offset = <span class="hljs-keyword">this</span>.options.y_offset || <span class="hljs-number">0</span>;</pre></div>
         
       
         
@@ -801,8 +863,9 @@ it and the notes:</p>
 or lowest locations, to form a base y_pos</p>
 
         
-          <div class='highlight'><pre>    <span class="hljs-keyword">var</span> first_note = <span class="hljs-keyword">this</span>.notes[<span class="hljs-number">0</span>];
-    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.location == Tuplet.LOCATION_TOP) {
+          <div class='highlight'><pre>    <span class="hljs-keyword">const</span> first_note = <span class="hljs-keyword">this</span>.notes[<span class="hljs-number">0</span>];
+    <span class="hljs-keyword">let</span> y_pos;
+    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.location === Tuplet.LOCATION_TOP) {
       y_pos = first_note.getStave().getYForLine(<span class="hljs-number">0</span>) - <span class="hljs-number">15</span>;</pre></div>
         
       
@@ -811,23 +874,25 @@ or lowest locations, to form a base y_pos</p>
 
         
           <div class='highlight'><pre>
-      <span class="hljs-keyword">for</span> (i=<span class="hljs-number">0</span>; i&lt;<span class="hljs-keyword">this</span>.notes.length; ++i) {
-        <span class="hljs-keyword">var</span> top_y = <span class="hljs-keyword">this</span>.notes[i].getStemDirection() === Stem.UP ?
-            <span class="hljs-keyword">this</span>.notes[i].getStemExtents().topY - <span class="hljs-number">10</span>
+      <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> i = <span class="hljs-number">0</span>; i &lt; <span class="hljs-keyword">this</span>.notes.length; ++i) {
+        <span class="hljs-keyword">const</span> top_y = <span class="hljs-keyword">this</span>.notes[i].getStemDirection() === Stem.UP
+          ? <span class="hljs-keyword">this</span>.notes[i].getStemExtents().topY - <span class="hljs-number">10</span>
           : <span class="hljs-keyword">this</span>.notes[i].getStemExtents().baseY - <span class="hljs-number">20</span>;
-        <span class="hljs-keyword">if</span> (top_y &lt; y_pos)
+
+        <span class="hljs-keyword">if</span> (top_y &lt; y_pos) {
           y_pos = top_y;
+        }
       }
-    }
-    <span class="hljs-keyword">else</span> {
+    } <span class="hljs-keyword">else</span> {
       y_pos = first_note.getStave().getYForLine(<span class="hljs-number">4</span>) + <span class="hljs-number">20</span>;
 
-      <span class="hljs-keyword">for</span> (i=<span class="hljs-number">0</span>; i&lt;<span class="hljs-keyword">this</span>.notes.length; ++i) {
-        <span class="hljs-keyword">var</span> bottom_y = <span class="hljs-keyword">this</span>.notes[i].getStemDirection() === Stem.UP ?
-            <span class="hljs-keyword">this</span>.notes[i].getStemExtents().baseY + <span class="hljs-number">20</span>
+      <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> i = <span class="hljs-number">0</span>; i &lt; <span class="hljs-keyword">this</span>.notes.length; ++i) {
+        <span class="hljs-keyword">const</span> bottom_y = <span class="hljs-keyword">this</span>.notes[i].getStemDirection() === Stem.UP
+          ? <span class="hljs-keyword">this</span>.notes[i].getStemExtents().baseY + <span class="hljs-number">20</span>
           : <span class="hljs-keyword">this</span>.notes[i].getStemExtents().topY + <span class="hljs-number">10</span>;
-        <span class="hljs-keyword">if</span> (bottom_y &gt; y_pos)
+        <span class="hljs-keyword">if</span> (bottom_y &gt; y_pos) {
           y_pos = bottom_y;
+        }
       }
     }
 
@@ -835,22 +900,21 @@ or lowest locations, to form a base y_pos</p>
   }
 
   draw() {
-    <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.context) <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RERR(<span class="hljs-string">"NoCanvasContext"</span>,
-        <span class="hljs-string">"Can't draw without a canvas context."</span>);</pre></div>
+    <span class="hljs-keyword">this</span>.checkContext();
+    <span class="hljs-keyword">this</span>.setRendered();</pre></div>
         
       
         
         <p>determine x value of left bound of tuplet</p>
 
         
-          <div class='highlight'><pre>    <span class="hljs-keyword">var</span> first_note = <span class="hljs-keyword">this</span>.notes[<span class="hljs-number">0</span>];
-    <span class="hljs-keyword">var</span> last_note = <span class="hljs-keyword">this</span>.notes[<span class="hljs-keyword">this</span>.notes.length - <span class="hljs-number">1</span>];
+          <div class='highlight'><pre>    <span class="hljs-keyword">const</span> first_note = <span class="hljs-keyword">this</span>.notes[<span class="hljs-number">0</span>];
+    <span class="hljs-keyword">const</span> last_note = <span class="hljs-keyword">this</span>.notes[<span class="hljs-keyword">this</span>.notes.length - <span class="hljs-number">1</span>];
 
     <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.bracketed) {
       <span class="hljs-keyword">this</span>.x_pos = first_note.getStemX();
       <span class="hljs-keyword">this</span>.width = last_note.getStemX() - <span class="hljs-keyword">this</span>.x_pos;
-    }
-    <span class="hljs-keyword">else</span> {
+    } <span class="hljs-keyword">else</span> {
       <span class="hljs-keyword">this</span>.x_pos = first_note.getTieLeftX() - <span class="hljs-number">5</span>;
       <span class="hljs-keyword">this</span>.width = last_note.getTieRightX() - <span class="hljs-keyword">this</span>.x_pos + <span class="hljs-number">5</span>;
     }</pre></div>
@@ -860,27 +924,23 @@ or lowest locations, to form a base y_pos</p>
         <p>determine y value for tuplet</p>
 
         
-          <div class='highlight'><pre>    <span class="hljs-keyword">this</span>.y_pos = <span class="hljs-keyword">this</span>.getYPosition();</pre></div>
+          <div class='highlight'><pre>    <span class="hljs-keyword">this</span>.y_pos = <span class="hljs-keyword">this</span>.getYPosition();
+
+    <span class="hljs-keyword">const</span> addGlyphWidth = (width, glyph) =&gt; width + glyph.getMetrics().width;</pre></div>
         
       
         
         <p>calculate total width of tuplet notation</p>
 
         
-          <div class='highlight'><pre>    <span class="hljs-keyword">var</span> width = <span class="hljs-number">0</span>;
-    <span class="hljs-keyword">var</span> glyph;
-    <span class="hljs-keyword">for</span> (glyph <span class="hljs-keyword">in</span> <span class="hljs-keyword">this</span>.num_glyphs) {
-      width += <span class="hljs-keyword">this</span>.num_glyphs[glyph].getMetrics().width;
-    }
+          <div class='highlight'><pre>    <span class="hljs-keyword">let</span> width = <span class="hljs-keyword">this</span>.num_glyphs.reduce(addGlyphWidth, <span class="hljs-number">0</span>);
     <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.ratioed) {
-      <span class="hljs-keyword">for</span> (glyph <span class="hljs-keyword">in</span> <span class="hljs-keyword">this</span>.denom_glyphs) {
-        width += <span class="hljs-keyword">this</span>.denom_glyphs[glyph].getMetrics().width;
-      }
+      width = <span class="hljs-keyword">this</span>.denom_glyphs.reduce(addGlyphWidth, width);
       width += <span class="hljs-keyword">this</span>.point * <span class="hljs-number">0.32</span>;
     }
 
-    <span class="hljs-keyword">var</span> notation_center_x = <span class="hljs-keyword">this</span>.x_pos + (<span class="hljs-keyword">this</span>.width/<span class="hljs-number">2</span>);
-    <span class="hljs-keyword">var</span> notation_start_x = notation_center_x - (width/<span class="hljs-number">2</span>);</pre></div>
+    <span class="hljs-keyword">const</span> notation_center_x = <span class="hljs-keyword">this</span>.x_pos + (<span class="hljs-keyword">this</span>.width / <span class="hljs-number">2</span>);
+    <span class="hljs-keyword">const</span> notation_start_x = notation_center_x - (width / <span class="hljs-number">2</span>);</pre></div>
         
       
         
@@ -888,7 +948,7 @@ or lowest locations, to form a base y_pos</p>
 
         
           <div class='highlight'><pre>    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.bracketed) {
-      <span class="hljs-keyword">var</span> line_width = <span class="hljs-keyword">this</span>.width/<span class="hljs-number">2</span> - width/<span class="hljs-number">2</span> - <span class="hljs-number">5</span>;</pre></div>
+      <span class="hljs-keyword">const</span> line_width = <span class="hljs-keyword">this</span>.width / <span class="hljs-number">2</span> - width / <span class="hljs-number">2</span> - <span class="hljs-number">5</span>;</pre></div>
         
       
         
@@ -896,15 +956,25 @@ or lowest locations, to form a base y_pos</p>
 
         
           <div class='highlight'><pre>      <span class="hljs-keyword">if</span> (line_width &gt; <span class="hljs-number">0</span>) {
-        <span class="hljs-keyword">this</span>.context.fillRect(<span class="hljs-keyword">this</span>.x_pos, <span class="hljs-keyword">this</span>.y_pos,line_width, <span class="hljs-number">1</span>);
-        <span class="hljs-keyword">this</span>.context.fillRect(<span class="hljs-keyword">this</span>.x_pos + <span class="hljs-keyword">this</span>.width / <span class="hljs-number">2</span> + width / <span class="hljs-number">2</span> + <span class="hljs-number">5</span>,
-                              <span class="hljs-keyword">this</span>.y_pos,line_width, <span class="hljs-number">1</span>);
-        <span class="hljs-keyword">this</span>.context.fillRect(<span class="hljs-keyword">this</span>.x_pos,
-            <span class="hljs-keyword">this</span>.y_pos + (<span class="hljs-keyword">this</span>.location == Tuplet.LOCATION_BOTTOM),
-            <span class="hljs-number">1</span>, <span class="hljs-keyword">this</span>.location * <span class="hljs-number">10</span>);
-        <span class="hljs-keyword">this</span>.context.fillRect(<span class="hljs-keyword">this</span>.x_pos + <span class="hljs-keyword">this</span>.width,
-            <span class="hljs-keyword">this</span>.y_pos + (<span class="hljs-keyword">this</span>.location == Tuplet.LOCATION_BOTTOM),
-            <span class="hljs-number">1</span>, <span class="hljs-keyword">this</span>.location * <span class="hljs-number">10</span>);
+        <span class="hljs-keyword">this</span>.context.fillRect(<span class="hljs-keyword">this</span>.x_pos, <span class="hljs-keyword">this</span>.y_pos, line_width, <span class="hljs-number">1</span>);
+        <span class="hljs-keyword">this</span>.context.fillRect(
+          <span class="hljs-keyword">this</span>.x_pos + <span class="hljs-keyword">this</span>.width / <span class="hljs-number">2</span> + width / <span class="hljs-number">2</span> + <span class="hljs-number">5</span>,
+          <span class="hljs-keyword">this</span>.y_pos,
+          line_width,
+          <span class="hljs-number">1</span>
+        );
+        <span class="hljs-keyword">this</span>.context.fillRect(
+          <span class="hljs-keyword">this</span>.x_pos,
+          <span class="hljs-keyword">this</span>.y_pos + (<span class="hljs-keyword">this</span>.location === Tuplet.LOCATION_BOTTOM),
+          <span class="hljs-number">1</span>,
+          <span class="hljs-keyword">this</span>.location * <span class="hljs-number">10</span>
+        );
+        <span class="hljs-keyword">this</span>.context.fillRect(
+          <span class="hljs-keyword">this</span>.x_pos + <span class="hljs-keyword">this</span>.width,
+          <span class="hljs-keyword">this</span>.y_pos + (<span class="hljs-keyword">this</span>.location === Tuplet.LOCATION_BOTTOM),
+          <span class="hljs-number">1</span>,
+          <span class="hljs-keyword">this</span>.location * <span class="hljs-number">10</span>
+        );
       }
     }</pre></div>
         
@@ -913,14 +983,11 @@ or lowest locations, to form a base y_pos</p>
         <p>draw numerator glyphs</p>
 
         
-          <div class='highlight'><pre>    <span class="hljs-keyword">var</span> x_offset = <span class="hljs-number">0</span>;
-    <span class="hljs-keyword">var</span> size = <span class="hljs-keyword">this</span>.num_glyphs.length;
-    <span class="hljs-keyword">for</span> (glyph <span class="hljs-keyword">in</span> <span class="hljs-keyword">this</span>.num_glyphs) {
-      <span class="hljs-keyword">this</span>.num_glyphs[size-glyph-<span class="hljs-number">1</span>].render(
-          <span class="hljs-keyword">this</span>.context, notation_start_x + x_offset,
-          <span class="hljs-keyword">this</span>.y_pos + (<span class="hljs-keyword">this</span>.point/<span class="hljs-number">3</span>) - <span class="hljs-number">2</span>);
-      x_offset += <span class="hljs-keyword">this</span>.num_glyphs[size-glyph-<span class="hljs-number">1</span>].getMetrics().width;
-    }</pre></div>
+          <div class='highlight'><pre>    <span class="hljs-keyword">let</span> x_offset = <span class="hljs-number">0</span>;
+    <span class="hljs-keyword">this</span>.num_glyphs.forEach(glyph =&gt; {
+      glyph.render(<span class="hljs-keyword">this</span>.context, notation_start_x + x_offset, <span class="hljs-keyword">this</span>.y_pos + (<span class="hljs-keyword">this</span>.point / <span class="hljs-number">3</span>) - <span class="hljs-number">2</span>);
+      x_offset += glyph.getMetrics().width;
+    });</pre></div>
         
       
         
@@ -928,26 +995,21 @@ or lowest locations, to form a base y_pos</p>
 
         
           <div class='highlight'><pre>    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.ratioed) {
-      <span class="hljs-keyword">var</span> colon_x = notation_start_x + x_offset + <span class="hljs-keyword">this</span>.point*<span class="hljs-number">0.16</span>;
-      <span class="hljs-keyword">var</span> colon_radius = <span class="hljs-keyword">this</span>.point * <span class="hljs-number">0.06</span>;
+      <span class="hljs-keyword">const</span> colon_x = notation_start_x + x_offset + <span class="hljs-keyword">this</span>.point * <span class="hljs-number">0.16</span>;
+      <span class="hljs-keyword">const</span> colon_radius = <span class="hljs-keyword">this</span>.point * <span class="hljs-number">0.06</span>;
       <span class="hljs-keyword">this</span>.context.beginPath();
-      <span class="hljs-keyword">this</span>.context.arc(colon_x, <span class="hljs-keyword">this</span>.y_pos - <span class="hljs-keyword">this</span>.point*<span class="hljs-number">0.08</span>,
-                       colon_radius, <span class="hljs-number">0</span>, <span class="hljs-built_in">Math</span>.PI*<span class="hljs-number">2</span>, <span class="hljs-literal">true</span>);
+      <span class="hljs-keyword">this</span>.context.arc(colon_x, <span class="hljs-keyword">this</span>.y_pos - <span class="hljs-keyword">this</span>.point * <span class="hljs-number">0.08</span>, colon_radius, <span class="hljs-number">0</span>, <span class="hljs-built_in">Math</span>.PI * <span class="hljs-number">2</span>, <span class="hljs-literal">true</span>);
       <span class="hljs-keyword">this</span>.context.closePath();
       <span class="hljs-keyword">this</span>.context.fill();
       <span class="hljs-keyword">this</span>.context.beginPath();
-      <span class="hljs-keyword">this</span>.context.arc(colon_x, <span class="hljs-keyword">this</span>.y_pos + <span class="hljs-keyword">this</span>.point*<span class="hljs-number">0.12</span>,
-                       colon_radius, <span class="hljs-number">0</span>, <span class="hljs-built_in">Math</span>.PI*<span class="hljs-number">2</span>, <span class="hljs-literal">true</span>);
+      <span class="hljs-keyword">this</span>.context.arc(colon_x, <span class="hljs-keyword">this</span>.y_pos + <span class="hljs-keyword">this</span>.point * <span class="hljs-number">0.12</span>, colon_radius, <span class="hljs-number">0</span>, <span class="hljs-built_in">Math</span>.PI * <span class="hljs-number">2</span>, <span class="hljs-literal">true</span>);
       <span class="hljs-keyword">this</span>.context.closePath();
       <span class="hljs-keyword">this</span>.context.fill();
-      x_offset += <span class="hljs-keyword">this</span>.point*<span class="hljs-number">0.32</span>;
-      size = <span class="hljs-keyword">this</span>.denom_glyphs.length;
-      <span class="hljs-keyword">for</span> (glyph <span class="hljs-keyword">in</span> <span class="hljs-keyword">this</span>.denom_glyphs) {
-        <span class="hljs-keyword">this</span>.denom_glyphs[size-glyph-<span class="hljs-number">1</span>].render(
-            <span class="hljs-keyword">this</span>.context, notation_start_x + x_offset,
-            <span class="hljs-keyword">this</span>.y_pos + (<span class="hljs-keyword">this</span>.point/<span class="hljs-number">3</span>) - <span class="hljs-number">2</span>);
-        x_offset += <span class="hljs-keyword">this</span>.denom_glyphs[size-glyph-<span class="hljs-number">1</span>].getMetrics().width;
-      }
+      x_offset += <span class="hljs-keyword">this</span>.point * <span class="hljs-number">0.32</span>;
+      <span class="hljs-keyword">this</span>.denom_glyphs.forEach(glyph =&gt; {
+        glyph.render(<span class="hljs-keyword">this</span>.context, notation_start_x + x_offset, <span class="hljs-keyword">this</span>.y_pos + (<span class="hljs-keyword">this</span>.point / <span class="hljs-number">3</span>) - <span class="hljs-number">2</span>);
+        x_offset += glyph.getMetrics().width;
+      });
     }
   }
 }</pre></div>

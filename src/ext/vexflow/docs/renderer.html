@@ -121,6 +121,27 @@
               
                 
                 <li>
+                  <a class="source" href="easyscore.html">
+                    easyscore.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="element.html">
+                    element.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="factory.html">
+                    factory.js
+                  </a>
+                </li>
+              
+                
+                <li>
                   <a class="source" href="formatter.html">
                     formatter.js
                   </a>
@@ -165,6 +186,13 @@
                 <li>
                   <a class="source" href="gracenotegroup.html">
                     gracenotegroup.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="gracetabnote.html">
+                    gracetabnote.js
                   </a>
                 </li>
               
@@ -226,8 +254,22 @@
               
                 
                 <li>
+                  <a class="source" href="notesubgroup.html">
+                    notesubgroup.js
+                  </a>
+                </li>
+              
+                
+                <li>
                   <a class="source" href="ornament.html">
                     ornament.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="parser.html">
+                    parser.js
                   </a>
                 </li>
               
@@ -242,6 +284,13 @@
                 <li>
                   <a class="source" href="raphaelcontext.html">
                     raphaelcontext.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="registry.html">
+                    registry.js
                   </a>
                 </li>
               
@@ -380,6 +429,13 @@
               
                 
                 <li>
+                  <a class="source" href="system.html">
+                    system.js
+                  </a>
+                </li>
+              
+                
+                <li>
                   <a class="source" href="tables.html">
                     tables.js
                   </a>
@@ -499,6 +555,13 @@
               
                 
                 <li>
+                  <a class="source" href="vibratobracket.html">
+                    vibratobracket.js
+                  </a>
+                </li>
+              
+                
+                <li>
                   <a class="source" href="voice.html">
                     voice.js
                   </a>
@@ -526,19 +589,20 @@
           <div class='highlight'><pre>
 <span class="hljs-comment">/* global document: false */</span>
 
-import { CanvasContext } from <span class="hljs-string">'./canvascontext'</span>;
-import { RaphaelContext } from <span class="hljs-string">'./raphaelcontext'</span>;
-import { SVGContext } from <span class="hljs-string">'./svgcontext'</span>;
+<span class="hljs-keyword">import</span> { CanvasContext } <span class="hljs-keyword">from</span> <span class="hljs-string">'./canvascontext'</span>;
+<span class="hljs-keyword">import</span> { RaphaelContext } <span class="hljs-keyword">from</span> <span class="hljs-string">'./raphaelcontext'</span>;
+<span class="hljs-keyword">import</span> { SVGContext } <span class="hljs-keyword">from</span> <span class="hljs-string">'./svgcontext'</span>;
+<span class="hljs-keyword">import</span> { Vex } <span class="hljs-keyword">from</span> <span class="hljs-string">'./vex'</span>;
 
-<span class="hljs-keyword">let</span> _lastContext = <span class="hljs-literal">null</span>;
+<span class="hljs-keyword">let</span> lastContext = <span class="hljs-literal">null</span>;
 
-export <span class="hljs-keyword">class</span> Renderer {
-  static get Backends() {
+<span class="hljs-keyword">export</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Renderer</span> </span>{
+  <span class="hljs-keyword">static</span> get Backends() {
     <span class="hljs-keyword">return</span> {
       CANVAS: <span class="hljs-number">1</span>,
       RAPHAEL: <span class="hljs-number">2</span>,
       SVG: <span class="hljs-number">3</span>,
-      VML: <span class="hljs-number">4</span>
+      VML: <span class="hljs-number">4</span>,
     };
   }</pre></div>
         
@@ -547,11 +611,11 @@ export <span class="hljs-keyword">class</span> Renderer {
         <p>End of line types</p>
 
         
-          <div class='highlight'><pre>  static get LineEndType() {
+          <div class='highlight'><pre>  <span class="hljs-keyword">static</span> get LineEndType() {
     <span class="hljs-keyword">return</span> {
-      NONE: <span class="hljs-number">1</span>,        <span class="hljs-comment">// No leg</span>
-      UP: <span class="hljs-number">2</span>,          <span class="hljs-comment">// Upward leg</span>
-      DOWN: <span class="hljs-number">3</span>         <span class="hljs-comment">// Downward leg</span>
+      NONE: <span class="hljs-number">1</span>, <span class="hljs-comment">// No leg</span>
+      UP: <span class="hljs-number">2</span>,   <span class="hljs-comment">// Upward leg</span>
+      DOWN: <span class="hljs-number">3</span>, <span class="hljs-comment">// Downward leg</span>
     };
   }</pre></div>
         
@@ -562,58 +626,56 @@ that does not allow modifiying canvas objects. There is a small
 performance degradation due to the extra indirection.</p>
 
         
-          <div class='highlight'><pre>  static get USE_CANVAS_PROXY() {
+          <div class='highlight'><pre>  <span class="hljs-keyword">static</span> get USE_CANVAS_PROXY() {
     <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
   }
 
-  static get lastContext() {
-    <span class="hljs-keyword">return</span> _lastContext;
+  <span class="hljs-keyword">static</span> get lastContext() {
+    <span class="hljs-keyword">return</span> lastContext;
   }
-  static set lastContext(ctx) {
-    _lastContext = ctx;
+  <span class="hljs-keyword">static</span> set lastContext(ctx) {
+    lastContext = ctx;
   }
 
-  static buildContext(sel, backend, width, height, background) {
-
-    <span class="hljs-keyword">var</span> renderer = <span class="hljs-keyword">new</span> Renderer(sel, backend);
+  <span class="hljs-keyword">static</span> buildContext(sel, backend, width, height, background) {
+    <span class="hljs-keyword">const</span> renderer = <span class="hljs-keyword">new</span> Renderer(sel, backend);
     <span class="hljs-keyword">if</span> (width &amp;&amp; height) { renderer.resize(width, height); }
 
-    <span class="hljs-keyword">if</span> (!background) background = <span class="hljs-string">"#FFF"</span>;
-    <span class="hljs-keyword">var</span> ctx = renderer.getContext();
+    <span class="hljs-keyword">if</span> (!background) background = <span class="hljs-string">'#FFF'</span>;
+    <span class="hljs-keyword">const</span> ctx = renderer.getContext();
     ctx.setBackgroundFillStyle(background);
     Renderer.lastContext = ctx;
     <span class="hljs-keyword">return</span> ctx;
   }
 
-  static getCanvasContext(sel, width, height, background) {
-    <span class="hljs-keyword">return</span> Renderer.buildContext(sel, Renderer.Backends.CANVAS,
-        width, height, background);
+  <span class="hljs-keyword">static</span> getCanvasContext(sel, width, height, background) {
+    <span class="hljs-keyword">return</span> Renderer.buildContext(sel, Renderer.Backends.CANVAS, width, height, background);
   }
 
-  static getRaphaelContext(sel, width, height, background) {
-    <span class="hljs-keyword">return</span> Renderer.buildContext(sel, Renderer.Backends.RAPHAEL,
-        width, height, background);
+  <span class="hljs-keyword">static</span> getRaphaelContext(sel, width, height, background) {
+    <span class="hljs-keyword">return</span> Renderer.buildContext(sel, Renderer.Backends.RAPHAEL, width, height, background);
   }
 
-  static getSVGContext(sel, width, height, background) {
-    <span class="hljs-keyword">return</span> Renderer.buildContext(sel, Renderer.Backends.SVG,
-        width, height, background);
+  <span class="hljs-keyword">static</span> getSVGContext(sel, width, height, background) {
+    <span class="hljs-keyword">return</span> Renderer.buildContext(sel, Renderer.Backends.SVG, width, height, background);
   }
 
-  static bolsterCanvasContext(ctx) {
+  <span class="hljs-keyword">static</span> bolsterCanvasContext(ctx) {
     <span class="hljs-keyword">if</span> (Renderer.USE_CANVAS_PROXY) {
       <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> CanvasContext(ctx);
     }
 
-    <span class="hljs-keyword">var</span> methods = [<span class="hljs-string">"clear"</span>, <span class="hljs-string">"setFont"</span>, <span class="hljs-string">"setRawFont"</span>, <span class="hljs-string">"setFillStyle"</span>, <span class="hljs-string">"setBackgroundFillStyle"</span>,
-                   <span class="hljs-string">"setStrokeStyle"</span>, <span class="hljs-string">"setShadowColor"</span>, <span class="hljs-string">"setShadowBlur"</span>, <span class="hljs-string">"setLineWidth"</span>,
-                   <span class="hljs-string">"setLineCap"</span>, <span class="hljs-string">"setLineDash"</span>, <span class="hljs-string">"openGroup"</span>, <span class="hljs-string">"closeGroup"</span>, <span class="hljs-string">"getGroup"</span>];
+    <span class="hljs-keyword">const</span> methodNames = [
+      <span class="hljs-string">'clear'</span>, <span class="hljs-string">'setFont'</span>, <span class="hljs-string">'setRawFont'</span>, <span class="hljs-string">'setFillStyle'</span>, <span class="hljs-string">'setBackgroundFillStyle'</span>,
+      <span class="hljs-string">'setStrokeStyle'</span>, <span class="hljs-string">'setShadowColor'</span>, <span class="hljs-string">'setShadowBlur'</span>, <span class="hljs-string">'setLineWidth'</span>,
+      <span class="hljs-string">'setLineCap'</span>, <span class="hljs-string">'setLineDash'</span>, <span class="hljs-string">'openGroup'</span>, <span class="hljs-string">'closeGroup'</span>, <span class="hljs-string">'getGroup'</span>,
+    ];
+
     ctx.vexFlowCanvasContext = ctx;
 
-    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i <span class="hljs-keyword">in</span> methods) {
-      <span class="hljs-keyword">var</span> method = methods[i];
-      ctx[method] = ctx[method] || CanvasContext.prototype[method];
-    }
+    methodNames.forEach(methodName =&gt; {
+      ctx[methodName] = ctx[methodName] || CanvasContext.prototype[methodName];
+    });
 
     <span class="hljs-keyword">return</span> ctx;
   }</pre></div>
@@ -625,36 +687,36 @@ dashPattern = [3,3] draws a 3 pixel dash followed by a three pixel space.
 setting the second number to 0 draws a solid line.</p>
 
         
-          <div class='highlight'><pre>  static drawDashedLine(context, fromX, fromY, toX, toY, dashPattern) {
+          <div class='highlight'><pre>  <span class="hljs-keyword">static</span> drawDashedLine(context, fromX, fromY, toX, toY, dashPattern) {
     context.beginPath();
 
-    <span class="hljs-keyword">var</span> dx = toX - fromX;
-    <span class="hljs-keyword">var</span> dy = toY - fromY;
-    <span class="hljs-keyword">var</span> angle = <span class="hljs-built_in">Math</span>.atan2(dy, dx);
-    <span class="hljs-keyword">var</span> x = fromX;
-    <span class="hljs-keyword">var</span> y = fromY;
+    <span class="hljs-keyword">const</span> dx = toX - fromX;
+    <span class="hljs-keyword">const</span> dy = toY - fromY;
+    <span class="hljs-keyword">const</span> angle = <span class="hljs-built_in">Math</span>.atan2(dy, dx);
+    <span class="hljs-keyword">let</span> x = fromX;
+    <span class="hljs-keyword">let</span> y = fromY;
     context.moveTo(fromX, fromY);
-    <span class="hljs-keyword">var</span> idx = <span class="hljs-number">0</span>;
-    <span class="hljs-keyword">var</span> draw = <span class="hljs-literal">true</span>;
+    <span class="hljs-keyword">let</span> idx = <span class="hljs-number">0</span>;
+    <span class="hljs-keyword">let</span> draw = <span class="hljs-literal">true</span>;
     <span class="hljs-keyword">while</span> (!((dx &lt; <span class="hljs-number">0</span> ? x &lt;= toX : x &gt;= toX) &amp;&amp; (dy &lt; <span class="hljs-number">0</span> ? y &lt;= toY : y &gt;= toY))) {
-      <span class="hljs-keyword">var</span> dashLength = dashPattern[idx++ % dashPattern.length];
-      <span class="hljs-keyword">var</span> nx = x + (<span class="hljs-built_in">Math</span>.cos(angle) * dashLength);
+      <span class="hljs-keyword">const</span> dashLength = dashPattern[idx++ % dashPattern.length];
+      <span class="hljs-keyword">const</span> nx = x + (<span class="hljs-built_in">Math</span>.cos(angle) * dashLength);
       x = dx &lt; <span class="hljs-number">0</span> ? <span class="hljs-built_in">Math</span>.max(toX, nx) : <span class="hljs-built_in">Math</span>.min(toX, nx);
-      <span class="hljs-keyword">var</span> ny = y + (<span class="hljs-built_in">Math</span>.sin(angle) * dashLength);
+      <span class="hljs-keyword">const</span> ny = y + (<span class="hljs-built_in">Math</span>.sin(angle) * dashLength);
       y = dy &lt; <span class="hljs-number">0</span> ? <span class="hljs-built_in">Math</span>.max(toY, ny) : <span class="hljs-built_in">Math</span>.min(toY, ny);
       <span class="hljs-keyword">if</span> (draw) {
         context.lineTo(x, y);
       } <span class="hljs-keyword">else</span> {
         context.moveTo(x, y);
       }
-        draw = !draw;
+      draw = !draw;
     }
 
     context.closePath();
     context.stroke();
   }
 
-  constructor(sel, backend) {</pre></div>
+  <span class="hljs-keyword">constructor</span>(sel, backend) {</pre></div>
         
       
         
@@ -662,15 +724,16 @@ setting the second number to 0 draws a solid line.</p>
 
         
           <div class='highlight'><pre>    <span class="hljs-keyword">this</span>.sel = sel;
-    <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.sel) <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RERR(<span class="hljs-string">"BadArgument"</span>,
-        <span class="hljs-string">"Invalid selector for renderer."</span>);</pre></div>
+    <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.sel) {
+      <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RERR(<span class="hljs-string">'BadArgument'</span>, <span class="hljs-string">'Invalid selector for renderer.'</span>);
+    }</pre></div>
         
       
         
         <p>Get element from selector</p>
 
         
-          <div class='highlight'><pre>    <span class="hljs-keyword">this</span>.element = document.getElementById(sel);
+          <div class='highlight'><pre>    <span class="hljs-keyword">this</span>.element = <span class="hljs-built_in">document</span>.getElementById(sel);
     <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.element) <span class="hljs-keyword">this</span>.element = sel;</pre></div>
         
       
@@ -681,38 +744,34 @@ setting the second number to 0 draws a solid line.</p>
           <div class='highlight'><pre>    <span class="hljs-keyword">this</span>.ctx = <span class="hljs-literal">null</span>;
     <span class="hljs-keyword">this</span>.paper = <span class="hljs-literal">null</span>;
     <span class="hljs-keyword">this</span>.backend = backend;
-    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.backend == Renderer.Backends.CANVAS) {</pre></div>
+    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.backend === Renderer.Backends.CANVAS) {</pre></div>
         
       
         
         <p>Create context.</p>
 
         
-          <div class='highlight'><pre>      <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.element.getContext) <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RERR(<span class="hljs-string">"BadElement"</span>,
-        <span class="hljs-string">"Can't get canvas context from element: "</span> + sel);
-      <span class="hljs-keyword">this</span>.ctx = Renderer.bolsterCanvasContext(
-          <span class="hljs-keyword">this</span>.element.getContext(<span class="hljs-string">'2d'</span>));
-
-    } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.backend == Renderer.Backends.RAPHAEL) {
+          <div class='highlight'><pre>      <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.element.getContext) {
+        <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RERR(<span class="hljs-string">'BadElement'</span>, <span class="hljs-string">`Can't get canvas context from element: <span class="hljs-subst">${sel}</span>`</span>);
+      }
+      <span class="hljs-keyword">this</span>.ctx = Renderer.bolsterCanvasContext(<span class="hljs-keyword">this</span>.element.getContext(<span class="hljs-string">'2d'</span>));
+    } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.backend === Renderer.Backends.RAPHAEL) {
       <span class="hljs-keyword">this</span>.ctx = <span class="hljs-keyword">new</span> RaphaelContext(<span class="hljs-keyword">this</span>.element);
-
-    } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.backend == Renderer.Backends.SVG) {
+    } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.backend === Renderer.Backends.SVG) {
       <span class="hljs-keyword">this</span>.ctx = <span class="hljs-keyword">new</span> SVGContext(<span class="hljs-keyword">this</span>.element);
-
     } <span class="hljs-keyword">else</span> {
-      <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RERR(<span class="hljs-string">"InvalidBackend"</span>,
-        <span class="hljs-string">"No support for backend: "</span> + <span class="hljs-keyword">this</span>.backend);
+      <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RERR(<span class="hljs-string">'InvalidBackend'</span>, <span class="hljs-string">`No support for backend: <span class="hljs-subst">${this.backend}</span>`</span>);
     }
   }
 
   resize(width, height) {
-    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.backend == Renderer.Backends.CANVAS) {
-      <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.element.getContext) <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RERR(<span class="hljs-string">"BadElement"</span>,
-        <span class="hljs-string">"Can't get canvas context from element: "</span> + <span class="hljs-keyword">this</span>.sel);
+    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.backend === Renderer.Backends.CANVAS) {
+      <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.element.getContext) {
+        <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RERR(<span class="hljs-string">'BadElement'</span>, <span class="hljs-string">`Can't get canvas context from element: <span class="hljs-subst">${this.sel}</span>`</span>);
+      }
       <span class="hljs-keyword">this</span>.element.width = width;
       <span class="hljs-keyword">this</span>.element.height = height;
-      <span class="hljs-keyword">this</span>.ctx = Renderer.bolsterCanvasContext(
-          <span class="hljs-keyword">this</span>.element.getContext(<span class="hljs-string">'2d'</span>));
+      <span class="hljs-keyword">this</span>.ctx = Renderer.bolsterCanvasContext(<span class="hljs-keyword">this</span>.element.getContext(<span class="hljs-string">'2d'</span>));
     } <span class="hljs-keyword">else</span> {
       <span class="hljs-keyword">this</span>.ctx.resize(width, height);
     }

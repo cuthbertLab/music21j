@@ -121,6 +121,27 @@
               
                 
                 <li>
+                  <a class="source" href="easyscore.html">
+                    easyscore.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="element.html">
+                    element.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="factory.html">
+                    factory.js
+                  </a>
+                </li>
+              
+                
+                <li>
                   <a class="source" href="formatter.html">
                     formatter.js
                   </a>
@@ -165,6 +186,13 @@
                 <li>
                   <a class="source" href="gracenotegroup.html">
                     gracenotegroup.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="gracetabnote.html">
+                    gracetabnote.js
                   </a>
                 </li>
               
@@ -226,8 +254,22 @@
               
                 
                 <li>
+                  <a class="source" href="notesubgroup.html">
+                    notesubgroup.js
+                  </a>
+                </li>
+              
+                
+                <li>
                   <a class="source" href="ornament.html">
                     ornament.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="parser.html">
+                    parser.js
                   </a>
                 </li>
               
@@ -242,6 +284,13 @@
                 <li>
                   <a class="source" href="raphaelcontext.html">
                     raphaelcontext.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="registry.html">
+                    registry.js
                   </a>
                 </li>
               
@@ -380,6 +429,13 @@
               
                 
                 <li>
+                  <a class="source" href="system.html">
+                    system.js
+                  </a>
+                </li>
+              
+                
+                <li>
                   <a class="source" href="tables.html">
                     tables.js
                   </a>
@@ -499,6 +555,13 @@
               
                 
                 <li>
+                  <a class="source" href="vibratobracket.html">
+                    vibratobracket.js
+                  </a>
+                </li>
+              
+                
+                <li>
                   <a class="source" href="voice.html">
                     voice.js
                   </a>
@@ -523,14 +586,14 @@ Author Larry Kuhns 2011</p>
 
         
           <div class='highlight'><pre>
-import { Vex } from <span class="hljs-string">'./vex'</span>;
-import { StaveModifier } from <span class="hljs-string">'./stavemodifier'</span>;
+<span class="hljs-keyword">import</span> { StaveModifier } <span class="hljs-keyword">from</span> <span class="hljs-string">'./stavemodifier'</span>;
 
-export <span class="hljs-keyword">class</span> StaveSection extends StaveModifier {
-  static get CATEGORY() { <span class="hljs-keyword">return</span> <span class="hljs-string">'stavesection'</span>; }
+<span class="hljs-keyword">export</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">StaveSection</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">StaveModifier</span> </span>{
+  <span class="hljs-keyword">static</span> get CATEGORY() { <span class="hljs-keyword">return</span> <span class="hljs-string">'stavesection'</span>; }
 
-  constructor(section, x, shift_y) {
-    super();
+  <span class="hljs-keyword">constructor</span>(section, x, shift_y) {
+    <span class="hljs-keyword">super</span>();
+    <span class="hljs-keyword">this</span>.setAttribute(<span class="hljs-string">'type'</span>, <span class="hljs-string">'StaveSection'</span>);
 
     <span class="hljs-keyword">this</span>.setWidth(<span class="hljs-number">16</span>);
     <span class="hljs-keyword">this</span>.section = section;
@@ -538,42 +601,41 @@ export <span class="hljs-keyword">class</span> StaveSection extends StaveModifie
     <span class="hljs-keyword">this</span>.shift_x = <span class="hljs-number">0</span>;
     <span class="hljs-keyword">this</span>.shift_y = shift_y;
     <span class="hljs-keyword">this</span>.font = {
-      family: <span class="hljs-string">"sans-serif"</span>,
+      family: <span class="hljs-string">'sans-serif'</span>,
       size: <span class="hljs-number">12</span>,
-      weight: <span class="hljs-string">"bold"</span>
+      weight: <span class="hljs-string">'bold'</span>,
     };
   }
+
   getCategory() { <span class="hljs-keyword">return</span> StaveSection.CATEGORY; }
   setStaveSection(section) { <span class="hljs-keyword">this</span>.section = section; <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>; }
   setShiftX(x) { <span class="hljs-keyword">this</span>.shift_x = x; <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>; }
   setShiftY(y) { <span class="hljs-keyword">this</span>.shift_y = y; <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>; }
   draw(stave, shift_x) {
-    <span class="hljs-keyword">if</span> (!stave.context) <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RERR(<span class="hljs-string">"NoContext"</span>,
-      <span class="hljs-string">"Can't draw stave section without a context."</span>);
-
-    <span class="hljs-keyword">var</span> ctx = stave.context;
+    <span class="hljs-keyword">const</span> ctx = stave.checkContext();
+    <span class="hljs-keyword">this</span>.setRendered();
 
     ctx.save();
     ctx.lineWidth = <span class="hljs-number">2</span>;
     ctx.setFont(<span class="hljs-keyword">this</span>.font.family, <span class="hljs-keyword">this</span>.font.size, <span class="hljs-keyword">this</span>.font.weight);
-    <span class="hljs-keyword">var</span> text_width = ctx.measureText(<span class="hljs-string">""</span> + <span class="hljs-keyword">this</span>.section).width;
-    <span class="hljs-keyword">var</span> width = text_width + <span class="hljs-number">6</span>;  <span class="hljs-comment">// add left &amp; right padding</span>
+    <span class="hljs-keyword">const</span> text_width = ctx.measureText(<span class="hljs-string">''</span> + <span class="hljs-keyword">this</span>.section).width;
+    <span class="hljs-keyword">let</span> width = text_width + <span class="hljs-number">6</span>;  <span class="hljs-comment">// add left &amp; right padding</span>
     <span class="hljs-keyword">if</span> (width &lt; <span class="hljs-number">18</span>) width = <span class="hljs-number">18</span>;
-    <span class="hljs-keyword">var</span> height = <span class="hljs-number">20</span>;</pre></div>
+    <span class="hljs-keyword">const</span> height = <span class="hljs-number">20</span>;</pre></div>
         
       
         
         <p> Seems to be a good default y</p>
 
         
-          <div class='highlight'><pre>    <span class="hljs-keyword">var</span> y = stave.getYForTopText(<span class="hljs-number">3</span>) + <span class="hljs-keyword">this</span>.shift_y;
-    <span class="hljs-keyword">var</span> x = <span class="hljs-keyword">this</span>.x + shift_x;
+          <div class='highlight'><pre>    <span class="hljs-keyword">const</span> y = stave.getYForTopText(<span class="hljs-number">3</span>) + <span class="hljs-keyword">this</span>.shift_y;
+    <span class="hljs-keyword">let</span> x = <span class="hljs-keyword">this</span>.x + shift_x;
     ctx.beginPath();
     ctx.lineWidth = <span class="hljs-number">2</span>;
     ctx.rect(x, y, width, height);
     ctx.stroke();
     x += (width - text_width) / <span class="hljs-number">2</span>;
-    ctx.fillText(<span class="hljs-string">""</span> + <span class="hljs-keyword">this</span>.section, x, y + <span class="hljs-number">16</span>);
+    ctx.fillText(<span class="hljs-string">''</span> + <span class="hljs-keyword">this</span>.section, x, y + <span class="hljs-number">16</span>);
     ctx.restore();
     <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
   }

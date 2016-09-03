@@ -121,6 +121,27 @@
               
                 
                 <li>
+                  <a class="source" href="easyscore.html">
+                    easyscore.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="element.html">
+                    element.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="factory.html">
+                    factory.js
+                  </a>
+                </li>
+              
+                
+                <li>
                   <a class="source" href="formatter.html">
                     formatter.js
                   </a>
@@ -165,6 +186,13 @@
                 <li>
                   <a class="source" href="gracenotegroup.html">
                     gracenotegroup.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="gracetabnote.html">
+                    gracetabnote.js
                   </a>
                 </li>
               
@@ -226,8 +254,22 @@
               
                 
                 <li>
+                  <a class="source" href="notesubgroup.html">
+                    notesubgroup.js
+                  </a>
+                </li>
+              
+                
+                <li>
                   <a class="source" href="ornament.html">
                     ornament.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="parser.html">
+                    parser.js
                   </a>
                 </li>
               
@@ -242,6 +284,13 @@
                 <li>
                   <a class="source" href="raphaelcontext.html">
                     raphaelcontext.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="registry.html">
+                    registry.js
                   </a>
                 </li>
               
@@ -380,6 +429,13 @@
               
                 
                 <li>
+                  <a class="source" href="system.html">
+                    system.js
+                  </a>
+                </li>
+              
+                
+                <li>
                   <a class="source" href="tables.html">
                     tables.js
                   </a>
@@ -499,6 +555,13 @@
               
                 
                 <li>
+                  <a class="source" href="vibratobracket.html">
+                    vibratobracket.js
+                  </a>
+                </li>
+              
+                
+                <li>
                   <a class="source" href="voice.html">
                     voice.js
                   </a>
@@ -526,19 +589,19 @@ Co-author: Benjamin W. Bohl</p>
 
         
           <div class='highlight'><pre>
-import { Vex } from <span class="hljs-string">'./vex'</span>;
-import { StaveModifier } from <span class="hljs-string">'./stavemodifier'</span>;
-import { Glyph } from <span class="hljs-string">'./glyph'</span>;</pre></div>
+<span class="hljs-keyword">import</span> { Vex } <span class="hljs-keyword">from</span> <span class="hljs-string">'./vex'</span>;
+<span class="hljs-keyword">import</span> { StaveModifier } <span class="hljs-keyword">from</span> <span class="hljs-string">'./stavemodifier'</span>;
+<span class="hljs-keyword">import</span> { Glyph } <span class="hljs-keyword">from</span> <span class="hljs-string">'./glyph'</span>;</pre></div>
         
       
         
         <p>To enable logging for this class, set <code>Vex.Flow.Clef.DEBUG</code> to <code>true</code>.</p>
 
         
-          <div class='highlight'><pre><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">L</span><span class="hljs-params">()</span> {</span> <span class="hljs-keyword">if</span> (Clef.DEBUG) Vex.L(<span class="hljs-string">"Vex.Flow.Clef"</span>, <span class="hljs-built_in">arguments</span>); }
+          <div class='highlight'><pre><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">L</span>(<span class="hljs-params">...args</span>) </span>{ <span class="hljs-keyword">if</span> (Clef.DEBUG) Vex.L(<span class="hljs-string">'Vex.Flow.Clef'</span>, args); }
 
-export <span class="hljs-keyword">class</span> Clef extends StaveModifier {
-  static get CATEGORY() { <span class="hljs-keyword">return</span> <span class="hljs-string">'clefs'</span>; }</pre></div>
+<span class="hljs-keyword">export</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Clef</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">StaveModifier</span> </span>{
+  <span class="hljs-keyword">static</span> get CATEGORY() { <span class="hljs-keyword">return</span> <span class="hljs-string">'clefs'</span>; }</pre></div>
         
       
         
@@ -546,55 +609,55 @@ export <span class="hljs-keyword">class</span> Clef extends StaveModifier {
 and a default stave line number.</p>
 
         
-          <div class='highlight'><pre>  static get types() {
+          <div class='highlight'><pre>  <span class="hljs-keyword">static</span> get types() {
     <span class="hljs-keyword">return</span> {
-      <span class="hljs-string">"treble"</span>: {
-        code: <span class="hljs-string">"v83"</span>,
-        line: <span class="hljs-number">3</span>
+      <span class="hljs-string">'treble'</span>: {
+        code: <span class="hljs-string">'v83'</span>,
+        line: <span class="hljs-number">3</span>,
       },
-      <span class="hljs-string">"bass"</span>: {
-        code: <span class="hljs-string">"v79"</span>,
-        line: <span class="hljs-number">1</span>
+      <span class="hljs-string">'bass'</span>: {
+        code: <span class="hljs-string">'v79'</span>,
+        line: <span class="hljs-number">1</span>,
       },
-      <span class="hljs-string">"alto"</span>: {
-        code: <span class="hljs-string">"vad"</span>,
-        line: <span class="hljs-number">2</span>
+      <span class="hljs-string">'alto'</span>: {
+        code: <span class="hljs-string">'vad'</span>,
+        line: <span class="hljs-number">2</span>,
       },
-      <span class="hljs-string">"tenor"</span>: {
-        code: <span class="hljs-string">"vad"</span>,
-        line: <span class="hljs-number">1</span>
+      <span class="hljs-string">'tenor'</span>: {
+        code: <span class="hljs-string">'vad'</span>,
+        line: <span class="hljs-number">1</span>,
       },
-      <span class="hljs-string">"percussion"</span>: {
-        code: <span class="hljs-string">"v59"</span>,
-        line: <span class="hljs-number">2</span>
+      <span class="hljs-string">'percussion'</span>: {
+        code: <span class="hljs-string">'v59'</span>,
+        line: <span class="hljs-number">2</span>,
       },
-      <span class="hljs-string">"soprano"</span>: {
-        code: <span class="hljs-string">"vad"</span>,
-        line: <span class="hljs-number">4</span>
+      <span class="hljs-string">'soprano'</span>: {
+        code: <span class="hljs-string">'vad'</span>,
+        line: <span class="hljs-number">4</span>,
       },
-      <span class="hljs-string">"mezzo-soprano"</span>: {
-        code: <span class="hljs-string">"vad"</span>,
-        line: <span class="hljs-number">3</span>
+      <span class="hljs-string">'mezzo-soprano'</span>: {
+        code: <span class="hljs-string">'vad'</span>,
+        line: <span class="hljs-number">3</span>,
       },
-      <span class="hljs-string">"baritone-c"</span>: {
-        code: <span class="hljs-string">"vad"</span>,
-        line: <span class="hljs-number">0</span>
+      <span class="hljs-string">'baritone-c'</span>: {
+        code: <span class="hljs-string">'vad'</span>,
+        line: <span class="hljs-number">0</span>,
       },
-      <span class="hljs-string">"baritone-f"</span>: {
-        code: <span class="hljs-string">"v79"</span>,
-        line: <span class="hljs-number">2</span>
+      <span class="hljs-string">'baritone-f'</span>: {
+        code: <span class="hljs-string">'v79'</span>,
+        line: <span class="hljs-number">2</span>,
       },
-      <span class="hljs-string">"subbass"</span>: {
-        code: <span class="hljs-string">"v79"</span>,
-        line: <span class="hljs-number">0</span>
+      <span class="hljs-string">'subbass'</span>: {
+        code: <span class="hljs-string">'v79'</span>,
+        line: <span class="hljs-number">0</span>,
       },
-      <span class="hljs-string">"french"</span>: {
-        code: <span class="hljs-string">"v83"</span>,
-        line: <span class="hljs-number">4</span>
+      <span class="hljs-string">'french'</span>: {
+        code: <span class="hljs-string">'v83'</span>,
+        line: <span class="hljs-number">4</span>,
       },
-      <span class="hljs-string">"tab"</span>: {
-        code: <span class="hljs-string">"v2f"</span>
-      }
+      <span class="hljs-string">'tab'</span>: {
+        code: <span class="hljs-string">'v2f'</span>,
+      },
     };
   }</pre></div>
         
@@ -603,73 +666,73 @@ and a default stave line number.</p>
         <p>Sizes affect the point-size of the clef.</p>
 
         
-          <div class='highlight'><pre>  static get sizes() {
+          <div class='highlight'><pre>  <span class="hljs-keyword">static</span> get sizes() {
     <span class="hljs-keyword">return</span> {
-      <span class="hljs-string">"default"</span>: <span class="hljs-number">40</span>,
-      <span class="hljs-string">"small"</span>: <span class="hljs-number">32</span>
+      <span class="hljs-string">'default'</span>: <span class="hljs-number">40</span>,
+      <span class="hljs-string">'small'</span>: <span class="hljs-number">32</span>,
     };
   }</pre></div>
         
       
         
-        <p>Annotations attach to clefs — such as “8” for octave up or down.</p>
+        <p>Annotations attach to clefs – such as “8” for octave up or down.</p>
 
         
-          <div class='highlight'><pre>  static get annotations() {
+          <div class='highlight'><pre>  <span class="hljs-keyword">static</span> get annotations() {
     <span class="hljs-keyword">return</span> {
-      <span class="hljs-string">"8va"</span>: {
-        code: <span class="hljs-string">"v8"</span>,
+      <span class="hljs-string">'8va'</span>: {
+        code: <span class="hljs-string">'v8'</span>,
         sizes: {
-          <span class="hljs-string">"default"</span>: {
+          <span class="hljs-string">'default'</span>: {
             point: <span class="hljs-number">20</span>,
             attachments: {
-              <span class="hljs-string">"treble"</span>: {
-                line: -<span class="hljs-number">1.2</span>,
-                x_shift: <span class="hljs-number">11</span>
-              }
-            }
+              <span class="hljs-string">'treble'</span>: {
+                line: <span class="hljs-number">-1.2</span>,
+                x_shift: <span class="hljs-number">11</span>,
+              },
+            },
           },
-          <span class="hljs-string">"small"</span>: {
+          <span class="hljs-string">'small'</span>: {
             point: <span class="hljs-number">18</span>,
             attachments: {
-              <span class="hljs-string">"treble"</span>: {
-                line: -<span class="hljs-number">0.4</span>,
-                x_shift: <span class="hljs-number">8</span>
-              }
-            }
-          }
-        }
+              <span class="hljs-string">'treble'</span>: {
+                line: <span class="hljs-number">-0.4</span>,
+                x_shift: <span class="hljs-number">8</span>,
+              },
+            },
+          },
+        },
       },
-      <span class="hljs-string">"8vb"</span>: {
-        code: <span class="hljs-string">"v8"</span>,
+      <span class="hljs-string">'8vb'</span>: {
+        code: <span class="hljs-string">'v8'</span>,
         sizes: {
-          <span class="hljs-string">"default"</span>: {
+          <span class="hljs-string">'default'</span>: {
             point: <span class="hljs-number">20</span>,
             attachments: {
-              <span class="hljs-string">"treble"</span>: {
+              <span class="hljs-string">'treble'</span>: {
                 line: <span class="hljs-number">6.3</span>,
-                x_shift: <span class="hljs-number">10</span>
+                x_shift: <span class="hljs-number">10</span>,
               },
-              <span class="hljs-string">"bass"</span>: {
+              <span class="hljs-string">'bass'</span>: {
                 line: <span class="hljs-number">4</span>,
-                x_shift: <span class="hljs-number">1</span>
-              }
-            }
+                x_shift: <span class="hljs-number">1</span>,
+              },
+            },
           },
-          <span class="hljs-string">"small"</span>: {
+          <span class="hljs-string">'small'</span>: {
             point: <span class="hljs-number">18</span>,
             attachments: {
-              <span class="hljs-string">"treble"</span>: {
+              <span class="hljs-string">'treble'</span>: {
                 line: <span class="hljs-number">5.8</span>,
-                x_shift: <span class="hljs-number">6</span>
+                x_shift: <span class="hljs-number">6</span>,
               },
-              <span class="hljs-string">"bass"</span>: {
+              <span class="hljs-string">'bass'</span>: {
                 line: <span class="hljs-number">3.5</span>,
-                x_shift: <span class="hljs-number">0.5</span>
-              }
-            }
-          }
-        }
+                x_shift: <span class="hljs-number">0.5</span>,
+              },
+            },
+          },
+        },
       },
     };
   }</pre></div>
@@ -680,20 +743,23 @@ and a default stave line number.</p>
 <code>Clef.types</code>.</p>
 
         
-          <div class='highlight'><pre>  constructor(type, size, annotation) {
-    super();
+          <div class='highlight'><pre>  <span class="hljs-keyword">constructor</span>(type, size, annotation) {
+    <span class="hljs-keyword">super</span>();
+    <span class="hljs-keyword">this</span>.setAttribute(<span class="hljs-string">'type'</span>, <span class="hljs-string">'Clef'</span>);
 
     <span class="hljs-keyword">this</span>.setPosition(StaveModifier.Position.BEGIN);
     <span class="hljs-keyword">this</span>.setType(type, size, annotation);
     <span class="hljs-keyword">this</span>.setWidth(<span class="hljs-keyword">this</span>.glyph.getMetrics().width);
-    L(<span class="hljs-string">"Creating clef:"</span>, type);
+    L(<span class="hljs-string">'Creating clef:'</span>, type);
   }
+
   getCategory() { <span class="hljs-keyword">return</span> Clef.CATEGORY; }
+
   setType(type, size, annotation) {
     <span class="hljs-keyword">this</span>.type = type;
     <span class="hljs-keyword">this</span>.clef = Clef.types[type];
     <span class="hljs-keyword">if</span> (size === <span class="hljs-literal">undefined</span>) {
-      <span class="hljs-keyword">this</span>.size = <span class="hljs-string">"default"</span>;
+      <span class="hljs-keyword">this</span>.size = <span class="hljs-string">'default'</span>;
     } <span class="hljs-keyword">else</span> {
       <span class="hljs-keyword">this</span>.size = size;
     }
@@ -706,39 +772,41 @@ and a default stave line number.</p>
 
         
           <div class='highlight'><pre>    <span class="hljs-keyword">if</span> (annotation !== <span class="hljs-literal">undefined</span>) {
-      <span class="hljs-keyword">var</span> anno_dict = Clef.annotations[annotation];
+      <span class="hljs-keyword">const</span> anno_dict = Clef.annotations[annotation];
       <span class="hljs-keyword">this</span>.annotation = {
         code: anno_dict.code,
         point: anno_dict.sizes[<span class="hljs-keyword">this</span>.size].point,
         line: anno_dict.sizes[<span class="hljs-keyword">this</span>.size].attachments[<span class="hljs-keyword">this</span>.type].line,
-        x_shift: anno_dict.sizes[<span class="hljs-keyword">this</span>.size].attachments[<span class="hljs-keyword">this</span>.type].x_shift
+        x_shift: anno_dict.sizes[<span class="hljs-keyword">this</span>.size].attachments[<span class="hljs-keyword">this</span>.type].x_shift,
       };
 
       <span class="hljs-keyword">this</span>.attachment = <span class="hljs-keyword">new</span> Glyph(<span class="hljs-keyword">this</span>.annotation.code, <span class="hljs-keyword">this</span>.annotation.point);
       <span class="hljs-keyword">this</span>.attachment.metrics.x_max = <span class="hljs-number">0</span>;
       <span class="hljs-keyword">this</span>.attachment.setXShift(<span class="hljs-keyword">this</span>.annotation.x_shift);
-    }
-    <span class="hljs-keyword">else</span> {
+    } <span class="hljs-keyword">else</span> {
       <span class="hljs-keyword">this</span>.annotation = <span class="hljs-literal">undefined</span>;
     }
 
     <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
   }
+
   getWidth() {
     <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.type === <span class="hljs-string">'tab'</span> &amp;&amp; !<span class="hljs-keyword">this</span>.stave) {
-      <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RERR(<span class="hljs-string">"ClefError"</span>, <span class="hljs-string">"Can't get width without stave."</span>);
+      <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RERR(<span class="hljs-string">'ClefError'</span>, <span class="hljs-string">"Can't get width without stave."</span>);
     }
 
     <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.width;
   }
+
   setStave(stave) {
     <span class="hljs-keyword">this</span>.stave = stave;
 
-    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.type !== <span class="hljs-string">'tab'</span>) <span class="hljs-keyword">return</span>;
+    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.type !== <span class="hljs-string">'tab'</span>) <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
 
-    <span class="hljs-keyword">var</span> glyphScale;
-    <span class="hljs-keyword">var</span> glyphOffset;
-    <span class="hljs-keyword">switch</span>(<span class="hljs-keyword">this</span>.stave.getOptions().num_lines) {
+    <span class="hljs-keyword">let</span> glyphScale;
+    <span class="hljs-keyword">let</span> glyphOffset;
+    <span class="hljs-keyword">const</span> numLines = <span class="hljs-keyword">this</span>.stave.getOptions().num_lines;
+    <span class="hljs-keyword">switch</span> (numLines) {
       <span class="hljs-keyword">case</span> <span class="hljs-number">8</span>:
         glyphScale = <span class="hljs-number">55</span>;
         glyphOffset = <span class="hljs-number">14</span>;
@@ -753,12 +821,14 @@ and a default stave line number.</p>
         <span class="hljs-keyword">break</span>;
       <span class="hljs-keyword">case</span> <span class="hljs-number">5</span>:
         glyphScale = <span class="hljs-number">30</span>;
-        glyphOffset = -<span class="hljs-number">6</span>;
+        glyphOffset = <span class="hljs-number">-6</span>;
         <span class="hljs-keyword">break</span>;
       <span class="hljs-keyword">case</span> <span class="hljs-number">4</span>:
         glyphScale = <span class="hljs-number">23</span>;
-        glyphOffset = -<span class="hljs-number">12</span>;
+        glyphOffset = <span class="hljs-number">-12</span>;
         <span class="hljs-keyword">break</span>;
+      <span class="hljs-keyword">default</span>:
+        <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RERR(<span class="hljs-string">'ClefError'</span>, <span class="hljs-string">`Invalid number of lines: <span class="hljs-subst">${numLines}</span>`</span>);
     }
 
     <span class="hljs-keyword">this</span>.glyph.setPoint(glyphScale);
@@ -766,9 +836,11 @@ and a default stave line number.</p>
 
     <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
   }
+
   draw() {
-    <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.x) <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RERR(<span class="hljs-string">"ClefError"</span>, <span class="hljs-string">"Can't draw clef without x."</span>);
-    <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.stave) <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RERR(<span class="hljs-string">"ClefError"</span>, <span class="hljs-string">"Can't draw clef without stave."</span>);
+    <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.x) <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RERR(<span class="hljs-string">'ClefError'</span>, <span class="hljs-string">"Can't draw clef without x."</span>);
+    <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.stave) <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RERR(<span class="hljs-string">'ClefError'</span>, <span class="hljs-string">"Can't draw clef without stave."</span>);
+    <span class="hljs-keyword">this</span>.setRendered();
 
     <span class="hljs-keyword">this</span>.glyph.setStave(<span class="hljs-keyword">this</span>.stave);
     <span class="hljs-keyword">this</span>.glyph.setContext(<span class="hljs-keyword">this</span>.stave.context);

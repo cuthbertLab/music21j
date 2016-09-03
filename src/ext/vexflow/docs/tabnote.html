@@ -121,6 +121,27 @@
               
                 
                 <li>
+                  <a class="source" href="easyscore.html">
+                    easyscore.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="element.html">
+                    element.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="factory.html">
+                    factory.js
+                  </a>
+                </li>
+              
+                
+                <li>
                   <a class="source" href="formatter.html">
                     formatter.js
                   </a>
@@ -165,6 +186,13 @@
                 <li>
                   <a class="source" href="gracenotegroup.html">
                     gracenotegroup.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="gracetabnote.html">
+                    gracetabnote.js
                   </a>
                 </li>
               
@@ -226,8 +254,22 @@
               
                 
                 <li>
+                  <a class="source" href="notesubgroup.html">
+                    notesubgroup.js
+                  </a>
+                </li>
+              
+                
+                <li>
                   <a class="source" href="ornament.html">
                     ornament.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="parser.html">
+                    parser.js
                   </a>
                 </li>
               
@@ -242,6 +284,13 @@
                 <li>
                   <a class="source" href="raphaelcontext.html">
                     raphaelcontext.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="registry.html">
+                    registry.js
                   </a>
                 </li>
               
@@ -380,6 +429,13 @@
               
                 
                 <li>
+                  <a class="source" href="system.html">
+                    system.js
+                  </a>
+                </li>
+              
+                
+                <li>
                   <a class="source" href="tables.html">
                     tables.js
                   </a>
@@ -499,6 +555,13 @@
               
                 
                 <li>
+                  <a class="source" href="vibratobracket.html">
+                    vibratobracket.js
+                  </a>
+                </li>
+              
+                
+                <li>
                   <a class="source" href="voice.html">
                     voice.js
                   </a>
@@ -526,13 +589,13 @@ more fret positions, and can either be drawn with or without stems.</p>
 
         
           <div class='highlight'><pre>
-import { Vex } from <span class="hljs-string">'./vex'</span>;
-import { Flow } from <span class="hljs-string">'./tables'</span>;
-import { Modifier } from <span class="hljs-string">'./modifier'</span>;
-import { Stem } from <span class="hljs-string">'./stem'</span>;
-import { StemmableNote } from <span class="hljs-string">'./stemmablenote'</span>;
-import { Dot } from <span class="hljs-string">'./dot'</span>;
-import { Glyph } from <span class="hljs-string">'./glyph'</span>;</pre></div>
+<span class="hljs-keyword">import</span> { Vex } <span class="hljs-keyword">from</span> <span class="hljs-string">'./vex'</span>;
+<span class="hljs-keyword">import</span> { Flow } <span class="hljs-keyword">from</span> <span class="hljs-string">'./tables'</span>;
+<span class="hljs-keyword">import</span> { Modifier } <span class="hljs-keyword">from</span> <span class="hljs-string">'./modifier'</span>;
+<span class="hljs-keyword">import</span> { Stem } <span class="hljs-keyword">from</span> <span class="hljs-string">'./stem'</span>;
+<span class="hljs-keyword">import</span> { StemmableNote } <span class="hljs-keyword">from</span> <span class="hljs-string">'./stemmablenote'</span>;
+<span class="hljs-keyword">import</span> { Dot } <span class="hljs-keyword">from</span> <span class="hljs-string">'./dot'</span>;
+<span class="hljs-keyword">import</span> { Glyph } <span class="hljs-keyword">from</span> <span class="hljs-string">'./glyph'</span>;</pre></div>
         
       
         
@@ -544,11 +607,11 @@ import { Glyph } from <span class="hljs-string">'./glyph'</span>;</pre></div>
 </ul>
 
         
-          <div class='highlight'><pre><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">getUnusedStringGroups</span><span class="hljs-params">(num_lines, strings_used)</span> {</span>
-  <span class="hljs-keyword">var</span> stem_through = [];
-  <span class="hljs-keyword">var</span> group = [];
-  <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> string = <span class="hljs-number">1</span>; string &lt;= num_lines ; string++) {
-    <span class="hljs-keyword">var</span> is_used = strings_used.indexOf(string) &gt; -<span class="hljs-number">1</span>;
+          <div class='highlight'><pre><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">getUnusedStringGroups</span>(<span class="hljs-params">num_lines, strings_used</span>) </span>{
+  <span class="hljs-keyword">const</span> stem_through = [];
+  <span class="hljs-keyword">let</span> group = [];
+  <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> string = <span class="hljs-number">1</span>; string &lt;= num_lines; string++) {
+    <span class="hljs-keyword">const</span> is_used = strings_used.indexOf(string) &gt; <span class="hljs-number">-1</span>;
 
     <span class="hljs-keyword">if</span> (!is_used) {
       group.push(string);
@@ -575,18 +638,18 @@ between fret positions</p>
 </ul>
 
         
-          <div class='highlight'><pre><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">getPartialStemLines</span> <span class="hljs-params">(stem_y, unused_strings, stave, stem_direction)</span> {</span>
-  <span class="hljs-keyword">var</span> up_stem = stem_direction !== <span class="hljs-number">1</span>;
-  <span class="hljs-keyword">var</span> down_stem = stem_direction !== -<span class="hljs-number">1</span>;
+          <div class='highlight'><pre><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">getPartialStemLines</span>(<span class="hljs-params">stem_y, unused_strings, stave, stem_direction</span>) </span>{
+  <span class="hljs-keyword">const</span> up_stem = stem_direction !== <span class="hljs-number">1</span>;
+  <span class="hljs-keyword">const</span> down_stem = stem_direction !== <span class="hljs-number">-1</span>;
 
-  <span class="hljs-keyword">var</span> line_spacing = stave.getSpacingBetweenLines();
-  <span class="hljs-keyword">var</span> total_lines = stave.getNumLines();
+  <span class="hljs-keyword">const</span> line_spacing = stave.getSpacingBetweenLines();
+  <span class="hljs-keyword">const</span> total_lines = stave.getNumLines();
 
-  <span class="hljs-keyword">var</span> stem_lines = [];
+  <span class="hljs-keyword">const</span> stem_lines = [];
 
-  unused_strings.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(strings)</span> {</span>
-    <span class="hljs-keyword">var</span> containsLastString = strings.indexOf(total_lines) &gt; -<span class="hljs-number">1</span>;
-    <span class="hljs-keyword">var</span> containsFirstString =  strings.indexOf(<span class="hljs-number">1</span>) &gt; -<span class="hljs-number">1</span>;
+  unused_strings.forEach(strings =&gt; {
+    <span class="hljs-keyword">const</span> containsLastString = strings.indexOf(total_lines) &gt; <span class="hljs-number">-1</span>;
+    <span class="hljs-keyword">const</span> containsFirstString =  strings.indexOf(<span class="hljs-number">1</span>) &gt; <span class="hljs-number">-1</span>;
 
     <span class="hljs-keyword">if</span> ((up_stem &amp;&amp; containsFirstString) ||
        (down_stem &amp;&amp; containsLastString)) {
@@ -604,16 +667,16 @@ values.</p>
       strings.push(strings[<span class="hljs-number">0</span>]);
     }
 
-    <span class="hljs-keyword">var</span> line_ys = [];</pre></div>
+    <span class="hljs-keyword">const</span> line_ys = [];</pre></div>
         
       
         
         <p>Iterate through each group string and store it’s y position</p>
 
         
-          <div class='highlight'><pre>    strings.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(string, index, strings)</span> {</span>
-      <span class="hljs-keyword">var</span> isTopBound = string === <span class="hljs-number">1</span>;
-      <span class="hljs-keyword">var</span> isBottomBound = string === total_lines;</pre></div>
+          <div class='highlight'><pre>    strings.forEach((string, index, strings) =&gt; {
+      <span class="hljs-keyword">const</span> isTopBound = string === <span class="hljs-number">1</span>;
+      <span class="hljs-keyword">const</span> isBottomBound = string === total_lines;</pre></div>
         
       
         
@@ -621,7 +684,7 @@ values.</p>
 we adjust for a 0 index array, since string numbers are index 1</p>
 
         
-          <div class='highlight'><pre>      <span class="hljs-keyword">var</span> y = stave.getYForLine(string - <span class="hljs-number">1</span>);</pre></div>
+          <div class='highlight'><pre>      <span class="hljs-keyword">let</span> y = stave.getYForLine(string - <span class="hljs-number">1</span>);</pre></div>
         
       
         
@@ -630,9 +693,9 @@ of the line</p>
 
         
           <div class='highlight'><pre>      <span class="hljs-keyword">if</span> (index === <span class="hljs-number">0</span> &amp;&amp; !isTopBound) {
-        y -= line_spacing/<span class="hljs-number">2</span> - <span class="hljs-number">1</span>;
-      } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (index === strings.length - <span class="hljs-number">1</span> &amp;&amp; !isBottomBound){
-        y += line_spacing/<span class="hljs-number">2</span> - <span class="hljs-number">1</span>;
+        y -= line_spacing / <span class="hljs-number">2</span> - <span class="hljs-number">1</span>;
+      } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (index === strings.length - <span class="hljs-number">1</span> &amp;&amp; !isBottomBound) {
+        y += line_spacing / <span class="hljs-number">2</span> - <span class="hljs-number">1</span>;
       }</pre></div>
         
       
@@ -650,7 +713,7 @@ stem above/below the stave if it’s the top/bottom string</p>
         
           <div class='highlight'><pre>      <span class="hljs-keyword">if</span> (stem_direction === <span class="hljs-number">1</span> &amp;&amp; isTopBound) {
         line_ys.push(stem_y - <span class="hljs-number">2</span>);
-      } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (stem_direction === -<span class="hljs-number">1</span> &amp;&amp; isBottomBound) {
+      } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (stem_direction === <span class="hljs-number">-1</span> &amp;&amp; isBottomBound) {
         line_ys.push(stem_y + <span class="hljs-number">2</span>);
       }
     });</pre></div>
@@ -660,16 +723,14 @@ stem above/below the stave if it’s the top/bottom string</p>
         <p>Add the sorted y values to the</p>
 
         
-          <div class='highlight'><pre>    stem_lines.push(line_ys.sort(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(a, b)</span> {</span>
-      <span class="hljs-keyword">return</span> a - b;
-    }));
+          <div class='highlight'><pre>    stem_lines.push(line_ys.sort((a, b) =&gt; a - b));
   });
 
   <span class="hljs-keyword">return</span> stem_lines;
 }
 
-export <span class="hljs-keyword">class</span> TabNote extends StemmableNote {
-  static get CATEGORY() { <span class="hljs-keyword">return</span> <span class="hljs-string">'tabnotes'</span>; }</pre></div>
+<span class="hljs-keyword">export</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">TabNote</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">StemmableNote</span> </span>{
+  <span class="hljs-keyword">static</span> get CATEGORY() { <span class="hljs-keyword">return</span> <span class="hljs-string">'tabnotes'</span>; }</pre></div>
         
       
         
@@ -677,8 +738,9 @@ export <span class="hljs-keyword">class</span> TabNote extends StemmableNote {
 and whether to <code>draw_stem</code> when rendering the note</p>
 
         
-          <div class='highlight'><pre>  constructor(tab_struct, draw_stem) {
-    super(tab_struct);
+          <div class='highlight'><pre>  <span class="hljs-keyword">constructor</span>(tab_struct, draw_stem) {
+    <span class="hljs-keyword">super</span>(tab_struct);
+    <span class="hljs-keyword">this</span>.setAttribute(<span class="hljs-string">'type'</span>, <span class="hljs-string">'TabNote'</span>);
 
     <span class="hljs-keyword">this</span>.ghost = <span class="hljs-literal">false</span>; <span class="hljs-comment">// Renders parenthesis around notes</span></pre></div>
         
@@ -702,14 +764,14 @@ and whether to <code>draw_stem</code> when rendering the note</p>
         <p>font size for note heads and rests</p>
 
         
-          <div class='highlight'><pre>      glyph_font_scale: <span class="hljs-number">30</span>,</pre></div>
+          <div class='highlight'><pre>      glyph_font_scale: Flow.DEFAULT_TABLATURE_FONT_SCALE,</pre></div>
         
       
         
         <p>Flag to draw a stem</p>
 
         
-          <div class='highlight'><pre>      draw_stem: draw_stem,</pre></div>
+          <div class='highlight'><pre>      draw_stem,</pre></div>
         
       
         
@@ -723,20 +785,42 @@ and whether to <code>draw_stem</code> when rendering the note</p>
         <p>Flag to extend the main stem through the stave and fret positions</p>
 
         
-          <div class='highlight'><pre>      draw_stem_through_stave: <span class="hljs-literal">false</span>
+          <div class='highlight'><pre>      draw_stem_through_stave: <span class="hljs-literal">false</span>,</pre></div>
+        
+      
+        
+        <p>vertical shift from stave line</p>
+
+        
+          <div class='highlight'><pre>      y_shift: <span class="hljs-number">0</span>,</pre></div>
+        
+      
+        
+        <p>normal glyph scale</p>
+
+        
+          <div class='highlight'><pre>      scale: <span class="hljs-number">1.0</span>,</pre></div>
+        
+      
+        
+        <p>default tablature font</p>
+
+        
+          <div class='highlight'><pre>      font: <span class="hljs-string">'10pt Arial'</span>,
     });
 
-    <span class="hljs-keyword">this</span>.glyph =
-      Flow.durationToGlyph(<span class="hljs-keyword">this</span>.duration, <span class="hljs-keyword">this</span>.noteType);
+    <span class="hljs-keyword">this</span>.glyph = Flow.durationToGlyph(<span class="hljs-keyword">this</span>.duration, <span class="hljs-keyword">this</span>.noteType);
+
     <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.glyph) {
-      <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RuntimeError(<span class="hljs-string">"BadArguments"</span>,
-          <span class="hljs-string">"Invalid note initialization data (No glyph found): "</span> +
-          <span class="hljs-built_in">JSON</span>.stringify(tab_struct));
+      <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RuntimeError(
+        <span class="hljs-string">'BadArguments'</span>,
+        <span class="hljs-string">`Invalid note initialization data (No glyph found): <span class="hljs-subst">${JSON.stringify(tab_struct)}</span>`</span>
+      );
     }
 
     <span class="hljs-keyword">this</span>.buildStem();
 
-    <span class="hljs-keyword">if</span> (tab_struct.stem_direction){
+    <span class="hljs-keyword">if</span> (tab_struct.stem_direction) {
       <span class="hljs-keyword">this</span>.setStemDirection(tab_struct.stem_direction);
     } <span class="hljs-keyword">else</span> {
       <span class="hljs-keyword">this</span>.setStemDirection(Stem.UP);
@@ -782,16 +866,17 @@ Often used for indicating frets that are being bent to</p>
         <p>Get the default stem extension for the note</p>
 
         
-          <div class='highlight'><pre>  getStemExtension(){
-    <span class="hljs-keyword">var</span> glyph = <span class="hljs-keyword">this</span>.getGlyph();
+          <div class='highlight'><pre>  getStemExtension() {
+    <span class="hljs-keyword">const</span> glyph = <span class="hljs-keyword">this</span>.getGlyph();
 
     <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.stem_extension_override != <span class="hljs-literal">null</span>) {
       <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.stem_extension_override;
     }
 
     <span class="hljs-keyword">if</span> (glyph) {
-      <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.getStemDirection() === <span class="hljs-number">1</span> ? glyph.tabnote_stem_up_extension :
-        glyph.tabnote_stem_down_extension;
+      <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.getStemDirection() === <span class="hljs-number">1</span>
+        ? glyph.tabnote_stem_up_extension
+        : glyph.tabnote_stem_down_extension;
     }
 
     <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
@@ -803,8 +888,8 @@ Often used for indicating frets that are being bent to</p>
 
         
           <div class='highlight'><pre>  addDot() {
-    <span class="hljs-keyword">var</span> dot = <span class="hljs-keyword">new</span> Dot();
-    <span class="hljs-keyword">this</span>.dots++;
+    <span class="hljs-keyword">const</span> dot = <span class="hljs-keyword">new</span> Dot();
+    <span class="hljs-keyword">this</span>.dots += <span class="hljs-number">1</span>;
     <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.addModifier(dot, <span class="hljs-number">0</span>);
   }</pre></div>
         
@@ -816,13 +901,24 @@ Often used for indicating frets that are being bent to</p>
           <div class='highlight'><pre>  updateWidth() {
     <span class="hljs-keyword">this</span>.glyphs = [];
     <span class="hljs-keyword">this</span>.width = <span class="hljs-number">0</span>;
-    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; <span class="hljs-keyword">this</span>.positions.length; ++i) {
-      <span class="hljs-keyword">var</span> fret = <span class="hljs-keyword">this</span>.positions[i].fret;
-      <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.ghost) fret = <span class="hljs-string">"("</span> + fret + <span class="hljs-string">")"</span>;
-      <span class="hljs-keyword">var</span> glyph = Flow.tabToGlyph(fret);
+    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> i = <span class="hljs-number">0</span>; i &lt; <span class="hljs-keyword">this</span>.positions.length; ++i) {
+      <span class="hljs-keyword">let</span> fret = <span class="hljs-keyword">this</span>.positions[i].fret;
+      <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.ghost) fret = <span class="hljs-string">'('</span> + fret + <span class="hljs-string">')'</span>;
+      <span class="hljs-keyword">const</span> glyph = Flow.tabToGlyph(fret, <span class="hljs-keyword">this</span>.render_options.scale);
       <span class="hljs-keyword">this</span>.glyphs.push(glyph);
-      <span class="hljs-keyword">this</span>.width = (glyph.width &gt; <span class="hljs-keyword">this</span>.width) ? glyph.width : <span class="hljs-keyword">this</span>.width;
-    }
+      <span class="hljs-keyword">this</span>.width = <span class="hljs-built_in">Math</span>.max(glyph.getWidth(), <span class="hljs-keyword">this</span>.width);
+    }</pre></div>
+        
+      
+        
+        <p>For some reason we associate a notehead glyph with a TabNote, and this
+glyph is used for certain width calculations. Of course, this is totally
+incorrect since a notehead is a poor approximation for the dimensions of
+a fret number which can have multiple digits. As a result, we must
+overwrite getWidth() to return the correct width</p>
+
+        
+          <div class='highlight'><pre>    <span class="hljs-keyword">this</span>.glyph.getWidth = () =&gt; <span class="hljs-keyword">this</span>.width;
   }</pre></div>
         
       
@@ -831,39 +927,48 @@ Often used for indicating frets that are being bent to</p>
 
         
           <div class='highlight'><pre>  setStave(stave) {
-    super.setStave(stave);
-    <span class="hljs-keyword">this</span>.context = stave.context;
-    <span class="hljs-keyword">this</span>.width = <span class="hljs-number">0</span>;</pre></div>
+    <span class="hljs-keyword">super</span>.setStave(stave);
+    <span class="hljs-keyword">this</span>.context = stave.context;</pre></div>
         
       
         
         <p>Calculate the fret number width based on font used</p>
 
         
-          <div class='highlight'><pre>    <span class="hljs-keyword">var</span> i;
+          <div class='highlight'><pre>    <span class="hljs-keyword">let</span> i;
     <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.context) {
+      <span class="hljs-keyword">const</span> ctx = <span class="hljs-keyword">this</span>.context;
+      <span class="hljs-keyword">this</span>.width = <span class="hljs-number">0</span>;
       <span class="hljs-keyword">for</span> (i = <span class="hljs-number">0</span>; i &lt; <span class="hljs-keyword">this</span>.glyphs.length; ++i) {
-        <span class="hljs-keyword">var</span> text = <span class="hljs-string">""</span> + <span class="hljs-keyword">this</span>.glyphs[i].text;
-        <span class="hljs-keyword">if</span> (text.toUpperCase() != <span class="hljs-string">"X"</span>)
-          <span class="hljs-keyword">this</span>.glyphs[i].width = <span class="hljs-keyword">this</span>.context.measureText(text).width;
-        <span class="hljs-keyword">this</span>.width = (<span class="hljs-keyword">this</span>.glyphs[i].width &gt; <span class="hljs-keyword">this</span>.width) ?
-          <span class="hljs-keyword">this</span>.glyphs[i].width : <span class="hljs-keyword">this</span>.width;
+        <span class="hljs-keyword">const</span> glyph = <span class="hljs-keyword">this</span>.glyphs[i];
+        <span class="hljs-keyword">const</span> text = <span class="hljs-string">''</span> + glyph.text;
+        <span class="hljs-keyword">if</span> (text.toUpperCase() !== <span class="hljs-string">'X'</span>) {
+          ctx.save();
+          ctx.setRawFont(<span class="hljs-keyword">this</span>.render_options.font);
+          glyph.width = ctx.measureText(text).width;
+          ctx.restore();
+          glyph.getWidth = () =&gt; glyph.width;
+        }
+        <span class="hljs-keyword">this</span>.width = <span class="hljs-built_in">Math</span>.max(glyph.getWidth(), <span class="hljs-keyword">this</span>.width);
       }
-    }
-
-    <span class="hljs-keyword">var</span> ys = [];</pre></div>
+      <span class="hljs-keyword">this</span>.glyph.getWidth = () =&gt; <span class="hljs-keyword">this</span>.width;
+    }</pre></div>
         
       
         
-        <p>Setup y coordinates for score.</p>
+        <p>we subtract 1 from <code>line</code> because getYForLine expects a 0-based index,
+while the position.str is a 1-based index</p>
 
         
-          <div class='highlight'><pre>    <span class="hljs-keyword">for</span> (i = <span class="hljs-number">0</span>; i &lt; <span class="hljs-keyword">this</span>.positions.length; ++i) {
-      <span class="hljs-keyword">var</span> line = <span class="hljs-keyword">this</span>.positions[i].str;
-      ys.push(<span class="hljs-keyword">this</span>.stave.getYForLine(line - <span class="hljs-number">1</span>));
+          <div class='highlight'><pre>    <span class="hljs-keyword">const</span> ys = <span class="hljs-keyword">this</span>.positions.map(({ str: line }) =&gt; stave.getYForLine(line - <span class="hljs-number">1</span>));
+
+    <span class="hljs-keyword">this</span>.setYs(ys);
+
+    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.stem) {
+      <span class="hljs-keyword">this</span>.stem.setYBounds(<span class="hljs-keyword">this</span>.getStemY(), <span class="hljs-keyword">this</span>.getStemY());
     }
 
-    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.setYs(ys);
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
   }</pre></div>
         
       
@@ -880,7 +985,7 @@ Often used for indicating frets that are being bent to</p>
         
           <div class='highlight'><pre>  addToModifierContext(mc) {
     <span class="hljs-keyword">this</span>.setModifierContext(mc);
-    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; <span class="hljs-keyword">this</span>.modifiers.length; ++i) {
+    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> i = <span class="hljs-number">0</span>; i &lt; <span class="hljs-keyword">this</span>.modifiers.length; ++i) {
       <span class="hljs-keyword">this</span>.modifierContext.addModifier(<span class="hljs-keyword">this</span>.modifiers[i]);
     }
     <span class="hljs-keyword">this</span>.modifierContext.addModifier(<span class="hljs-keyword">this</span>);
@@ -894,10 +999,10 @@ Often used for indicating frets that are being bent to</p>
 
         
           <div class='highlight'><pre>  getTieRightX() {
-    <span class="hljs-keyword">var</span> tieStartX = <span class="hljs-keyword">this</span>.getAbsoluteX();
-    <span class="hljs-keyword">var</span> note_glyph_width = <span class="hljs-keyword">this</span>.glyph.head_width;
-    tieStartX += (note_glyph_width / <span class="hljs-number">2</span>);
-    tieStartX += ((-<span class="hljs-keyword">this</span>.width / <span class="hljs-number">2</span>) + <span class="hljs-keyword">this</span>.width + <span class="hljs-number">2</span>);
+    <span class="hljs-keyword">let</span> tieStartX = <span class="hljs-keyword">this</span>.getAbsoluteX();
+    <span class="hljs-keyword">const</span> note_glyph_width = <span class="hljs-keyword">this</span>.glyph.getWidth();
+    tieStartX += note_glyph_width / <span class="hljs-number">2</span>;
+    tieStartX += (-<span class="hljs-keyword">this</span>.width / <span class="hljs-number">2</span>) + <span class="hljs-keyword">this</span>.width + <span class="hljs-number">2</span>;
 
     <span class="hljs-keyword">return</span> tieStartX;
   }</pre></div>
@@ -908,10 +1013,10 @@ Often used for indicating frets that are being bent to</p>
 
         
           <div class='highlight'><pre>  getTieLeftX() {
-    <span class="hljs-keyword">var</span> tieEndX = <span class="hljs-keyword">this</span>.getAbsoluteX();
-    <span class="hljs-keyword">var</span> note_glyph_width = <span class="hljs-keyword">this</span>.glyph.head_width;
-    tieEndX += (note_glyph_width / <span class="hljs-number">2</span>);
-    tieEndX -= ((<span class="hljs-keyword">this</span>.width / <span class="hljs-number">2</span>) + <span class="hljs-number">2</span>);
+    <span class="hljs-keyword">let</span> tieEndX = <span class="hljs-keyword">this</span>.getAbsoluteX();
+    <span class="hljs-keyword">const</span> note_glyph_width = <span class="hljs-keyword">this</span>.glyph.getWidth();
+    tieEndX += note_glyph_width / <span class="hljs-number">2</span>;
+    tieEndX -= (<span class="hljs-keyword">this</span>.width / <span class="hljs-number">2</span>) + <span class="hljs-number">2</span>;
 
     <span class="hljs-keyword">return</span> tieEndX;
   }</pre></div>
@@ -923,24 +1028,28 @@ Often used for indicating frets that are being bent to</p>
 
         
           <div class='highlight'><pre>  getModifierStartXY(position, index) {
-    <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.preFormatted) <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RERR(<span class="hljs-string">"UnformattedNote"</span>,
-        <span class="hljs-string">"Can't call GetModifierStartXY on an unformatted note"</span>);
-
-    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.ys.length === <span class="hljs-number">0</span>) <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RERR(<span class="hljs-string">"NoYValues"</span>,
-        <span class="hljs-string">"No Y-Values calculated for this note."</span>);
-
-    <span class="hljs-keyword">var</span> x = <span class="hljs-number">0</span>;
-    <span class="hljs-keyword">if</span> (position == Modifier.Position.LEFT) {
-      x = -<span class="hljs-number">1</span> * <span class="hljs-number">2</span>;  <span class="hljs-comment">// extra_left_px</span>
-    } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (position == Modifier.Position.RIGHT) {
-      x = <span class="hljs-keyword">this</span>.width + <span class="hljs-number">2</span>; <span class="hljs-comment">// extra_right_px</span>
-    } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (position == Modifier.Position.BELOW ||
-               position == Modifier.Position.ABOVE) {
-        <span class="hljs-keyword">var</span> note_glyph_width = <span class="hljs-keyword">this</span>.glyph.head_width;
-        x = note_glyph_width / <span class="hljs-number">2</span>;
+    <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.preFormatted) {
+      <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RERR(<span class="hljs-string">'UnformattedNote'</span>, <span class="hljs-string">"Can't call GetModifierStartXY on an unformatted note"</span>);
     }
 
-    <span class="hljs-keyword">return</span> {x: <span class="hljs-keyword">this</span>.getAbsoluteX() + x, y: <span class="hljs-keyword">this</span>.ys[index]};
+    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.ys.length === <span class="hljs-number">0</span>) {
+      <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RERR(<span class="hljs-string">'NoYValues'</span>, <span class="hljs-string">'No Y-Values calculated for this note.'</span>);
+    }
+
+    <span class="hljs-keyword">let</span> x = <span class="hljs-number">0</span>;
+    <span class="hljs-keyword">if</span> (position === Modifier.Position.LEFT) {
+      x = <span class="hljs-number">-1</span> * <span class="hljs-number">2</span>;  <span class="hljs-comment">// extra_left_px</span>
+    } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (position === Modifier.Position.RIGHT) {
+      x = <span class="hljs-keyword">this</span>.width + <span class="hljs-number">2</span>; <span class="hljs-comment">// extra_right_px</span>
+    } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (position === Modifier.Position.BELOW || position === Modifier.Position.ABOVE) {
+      <span class="hljs-keyword">const</span> note_glyph_width = <span class="hljs-keyword">this</span>.glyph.getWidth();
+      x = note_glyph_width / <span class="hljs-number">2</span>;
+    }
+
+    <span class="hljs-keyword">return</span> {
+      x: <span class="hljs-keyword">this</span>.getAbsoluteX() + x,
+      y: <span class="hljs-keyword">this</span>.ys[index],
+    };
   }</pre></div>
         
       
@@ -979,8 +1088,8 @@ Often used for indicating frets that are being bent to</p>
         <p>Get the y position for the stem</p>
 
         
-          <div class='highlight'><pre>  getStemY(){
-    <span class="hljs-keyword">var</span> num_lines = <span class="hljs-keyword">this</span>.stave.getNumLines();</pre></div>
+          <div class='highlight'><pre>  getStemY() {
+    <span class="hljs-keyword">const</span> num_lines = <span class="hljs-keyword">this</span>.stave.getNumLines();</pre></div>
         
       
         
@@ -988,9 +1097,9 @@ Often used for indicating frets that are being bent to</p>
 fret number and the stem</p>
 
         
-          <div class='highlight'><pre>    <span class="hljs-keyword">var</span> stemUpLine = -<span class="hljs-number">0.5</span>;
-    <span class="hljs-keyword">var</span> stemDownLine = num_lines - <span class="hljs-number">0.5</span>;
-    <span class="hljs-keyword">var</span> stemStartLine = Stem.UP === <span class="hljs-keyword">this</span>.stem_direction ? stemUpLine : stemDownLine;
+          <div class='highlight'><pre>    <span class="hljs-keyword">const</span> stemUpLine = <span class="hljs-number">-0.5</span>;
+    <span class="hljs-keyword">const</span> stemDownLine = num_lines - <span class="hljs-number">0.5</span>;
+    <span class="hljs-keyword">const</span> stemStartLine = Stem.UP === <span class="hljs-keyword">this</span>.stem_direction ? stemUpLine : stemDownLine;
 
     <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.stave.getYForLine(stemStartLine);
   }</pre></div>
@@ -1001,10 +1110,7 @@ fret number and the stem</p>
 
         
           <div class='highlight'><pre>  getStemExtents() {
-    <span class="hljs-keyword">var</span> stem_base_y = <span class="hljs-keyword">this</span>.getStemY();
-    <span class="hljs-keyword">var</span> stem_top_y = stem_base_y + (Stem.HEIGHT * -<span class="hljs-keyword">this</span>.stem_direction);
-
-    <span class="hljs-keyword">return</span> { topY: stem_top_y , baseY: stem_base_y};
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.stem.getExtents();
   }</pre></div>
         
       
@@ -1013,44 +1119,32 @@ fret number and the stem</p>
 
         
           <div class='highlight'><pre>  drawFlag() {
-    <span class="hljs-keyword">var</span> render_stem = <span class="hljs-keyword">this</span>.beam == <span class="hljs-literal">null</span> &amp;&amp; <span class="hljs-keyword">this</span>.render_options.draw_stem;
-    <span class="hljs-keyword">var</span> render_flag = <span class="hljs-keyword">this</span>.beam == <span class="hljs-literal">null</span> &amp;&amp; render_stem;</pre></div>
+    <span class="hljs-keyword">const</span> {
+      beam, glyph, context, stem, stem_direction,
+      render_options: { draw_stem, glyph_font_scale },
+    } = <span class="hljs-keyword">this</span>;
+
+    <span class="hljs-keyword">const</span> shouldDrawFlag = beam == <span class="hljs-literal">null</span> &amp;&amp; draw_stem;</pre></div>
         
       
         
         <p>Now it’s the flag’s turn.</p>
 
         
-          <div class='highlight'><pre>    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.glyph.flag &amp;&amp; render_flag) {
-      <span class="hljs-keyword">var</span> flag_x = <span class="hljs-keyword">this</span>.getStemX() + <span class="hljs-number">1</span> ;
-      <span class="hljs-keyword">var</span> flag_y = <span class="hljs-keyword">this</span>.getStemY() - (<span class="hljs-keyword">this</span>.stem.getHeight());
-      <span class="hljs-keyword">var</span> flag_code;
+          <div class='highlight'><pre>    <span class="hljs-keyword">if</span> (glyph.flag &amp;&amp; shouldDrawFlag) {
+      <span class="hljs-keyword">const</span> flag_x = <span class="hljs-keyword">this</span>.getStemX() + <span class="hljs-number">1</span>;
+      <span class="hljs-keyword">const</span> flag_y = <span class="hljs-keyword">this</span>.getStemY() - stem.getHeight();
 
-      <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.stem_direction == Stem.DOWN) {</pre></div>
-        
-      
-        
-        <p>Down stems have flags on the left.</p>
-
-        
-          <div class='highlight'><pre>        flag_code = <span class="hljs-keyword">this</span>.glyph.code_flag_downstem;
-      } <span class="hljs-keyword">else</span> {</pre></div>
-        
-      
-        
-        <p>Up stems have flags on the left.</p>
-
-        
-          <div class='highlight'><pre>        flag_code = <span class="hljs-keyword">this</span>.glyph.code_flag_upstem;
-      }</pre></div>
+      <span class="hljs-keyword">const</span> flag_code = stem_direction === Stem.DOWN
+        ? glyph.code_flag_downstem <span class="hljs-comment">// Down stems have flags on the left.</span>
+        : glyph.code_flag_upstem;</pre></div>
         
       
         
         <p>Draw the Flag</p>
 
         
-          <div class='highlight'><pre>      Glyph.renderGlyph(<span class="hljs-keyword">this</span>.context, flag_x, flag_y,
-          <span class="hljs-keyword">this</span>.render_options.glyph_font_scale, flag_code);
+          <div class='highlight'><pre>      Glyph.renderGlyph(context, flag_x, flag_y, glyph_font_scale, flag_code);
     }
   }</pre></div>
         
@@ -1066,7 +1160,7 @@ fret number and the stem</p>
         <p>Draw the modifiers</p>
 
         
-          <div class='highlight'><pre>    <span class="hljs-keyword">this</span>.modifiers.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(modifier)</span> {</span></pre></div>
+          <div class='highlight'><pre>    <span class="hljs-keyword">this</span>.modifiers.forEach((modifier) =&gt; {</pre></div>
         
       
         
@@ -1077,7 +1171,7 @@ fret number and the stem</p>
 
       modifier.setContext(<span class="hljs-keyword">this</span>.context);
       modifier.draw();
-    }, <span class="hljs-keyword">this</span>);
+    });
   }</pre></div>
         
       
@@ -1086,34 +1180,27 @@ fret number and the stem</p>
 
         
           <div class='highlight'><pre>  drawStemThrough() {
-    <span class="hljs-keyword">var</span> stem_x = <span class="hljs-keyword">this</span>.getStemX();
-    <span class="hljs-keyword">var</span> stem_y = <span class="hljs-keyword">this</span>.getStemY();
-    <span class="hljs-keyword">var</span> ctx = <span class="hljs-keyword">this</span>.context;
+    <span class="hljs-keyword">const</span> stem_x = <span class="hljs-keyword">this</span>.getStemX();
+    <span class="hljs-keyword">const</span> stem_y = <span class="hljs-keyword">this</span>.getStemY();
+    <span class="hljs-keyword">const</span> ctx = <span class="hljs-keyword">this</span>.context;
 
-    <span class="hljs-keyword">var</span> stem_through = <span class="hljs-keyword">this</span>.render_options.draw_stem_through_stave;
-    <span class="hljs-keyword">var</span> draw_stem = <span class="hljs-keyword">this</span>.render_options.draw_stem;
+    <span class="hljs-keyword">const</span> stem_through = <span class="hljs-keyword">this</span>.render_options.draw_stem_through_stave;
+    <span class="hljs-keyword">const</span> draw_stem = <span class="hljs-keyword">this</span>.render_options.draw_stem;
     <span class="hljs-keyword">if</span> (draw_stem &amp;&amp; stem_through) {
-      <span class="hljs-keyword">var</span> total_lines = <span class="hljs-keyword">this</span>.stave.getNumLines();
-      <span class="hljs-keyword">var</span> strings_used = <span class="hljs-keyword">this</span>.positions.map(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(position)</span> {</span>
-        <span class="hljs-keyword">return</span> position.str;
-      });
+      <span class="hljs-keyword">const</span> total_lines = <span class="hljs-keyword">this</span>.stave.getNumLines();
+      <span class="hljs-keyword">const</span> strings_used = <span class="hljs-keyword">this</span>.positions.map(position =&gt; position.str);
 
-      <span class="hljs-keyword">var</span> unused_strings = getUnusedStringGroups(total_lines, strings_used);
-      <span class="hljs-keyword">var</span> stem_lines = getPartialStemLines(stem_y, unused_strings,
-                            <span class="hljs-keyword">this</span>.getStave(), <span class="hljs-keyword">this</span>.getStemDirection());</pre></div>
-        
-      
-        
-        <p>Fine tune x position to match default stem</p>
-
-        
-          <div class='highlight'><pre>      <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.beam || <span class="hljs-keyword">this</span>.getStemDirection() === <span class="hljs-number">1</span>) {
-        stem_x += (Stem.WIDTH / <span class="hljs-number">2</span>);
-      }
+      <span class="hljs-keyword">const</span> unused_strings = getUnusedStringGroups(total_lines, strings_used);
+      <span class="hljs-keyword">const</span> stem_lines = getPartialStemLines(
+        stem_y,
+        unused_strings,
+        <span class="hljs-keyword">this</span>.getStave(),
+        <span class="hljs-keyword">this</span>.getStemDirection()
+      );
 
       ctx.save();
       ctx.setLineWidth(Stem.WIDTH);
-      stem_lines.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(bounds)</span> {</span>
+      stem_lines.forEach(bounds =&gt; {
         <span class="hljs-keyword">if</span> (bounds.length === <span class="hljs-number">0</span>) <span class="hljs-keyword">return</span>;
 
         ctx.beginPath();
@@ -1132,32 +1219,38 @@ fret number and the stem</p>
 
         
           <div class='highlight'><pre>  drawPositions() {
-    <span class="hljs-keyword">var</span> ctx = <span class="hljs-keyword">this</span>.context;
-    <span class="hljs-keyword">var</span> x = <span class="hljs-keyword">this</span>.getAbsoluteX();
-    <span class="hljs-keyword">var</span> ys = <span class="hljs-keyword">this</span>.ys;
-    <span class="hljs-keyword">var</span> y;
-
-    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; <span class="hljs-keyword">this</span>.positions.length; ++i) {
-      y = ys[i];
-
-      <span class="hljs-keyword">var</span> glyph = <span class="hljs-keyword">this</span>.glyphs[i];</pre></div>
+    <span class="hljs-keyword">const</span> ctx = <span class="hljs-keyword">this</span>.context;
+    <span class="hljs-keyword">const</span> x = <span class="hljs-keyword">this</span>.getAbsoluteX();
+    <span class="hljs-keyword">const</span> ys = <span class="hljs-keyword">this</span>.ys;
+    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> i = <span class="hljs-number">0</span>; i &lt; <span class="hljs-keyword">this</span>.positions.length; ++i) {
+      <span class="hljs-keyword">const</span> y = ys[i] + <span class="hljs-keyword">this</span>.render_options.y_shift;
+      <span class="hljs-keyword">const</span> glyph = <span class="hljs-keyword">this</span>.glyphs[i];</pre></div>
         
       
         
         <p>Center the fret text beneath the notation note head</p>
 
         
-          <div class='highlight'><pre>      <span class="hljs-keyword">var</span> note_glyph_width = <span class="hljs-keyword">this</span>.glyph.head_width;
-      <span class="hljs-keyword">var</span> tab_x = x + (note_glyph_width / <span class="hljs-number">2</span>) - (glyph.width / <span class="hljs-number">2</span>);
+          <div class='highlight'><pre>      <span class="hljs-keyword">const</span> note_glyph_width = <span class="hljs-keyword">this</span>.glyph.getWidth();
+      <span class="hljs-keyword">const</span> tab_x = x + (note_glyph_width / <span class="hljs-number">2</span>) - (glyph.getWidth() / <span class="hljs-number">2</span>);</pre></div>
+        
+      
+        
+        <p>FIXME: Magic numbers.</p>
 
-      ctx.clearRect(tab_x - <span class="hljs-number">2</span>, y - <span class="hljs-number">3</span>, glyph.width + <span class="hljs-number">4</span>, <span class="hljs-number">6</span>);
+        
+          <div class='highlight'><pre>      ctx.clearRect(tab_x - <span class="hljs-number">2</span>, y - <span class="hljs-number">3</span>, glyph.getWidth() + <span class="hljs-number">4</span>, <span class="hljs-number">6</span>);
 
       <span class="hljs-keyword">if</span> (glyph.code) {
-        Glyph.renderGlyph(ctx, tab_x, y + <span class="hljs-number">5</span> + glyph.shift_y,
-            <span class="hljs-keyword">this</span>.render_options.glyph_font_scale, glyph.code);
+        Glyph.renderGlyph(ctx, tab_x, y,
+          <span class="hljs-keyword">this</span>.render_options.glyph_font_scale * <span class="hljs-keyword">this</span>.render_options.scale,
+          glyph.code);
       } <span class="hljs-keyword">else</span> {
-        <span class="hljs-keyword">var</span> text = glyph.text.toString();
-        ctx.fillText(text, tab_x, y + <span class="hljs-number">5</span>);
+        ctx.save();
+        ctx.setRawFont(<span class="hljs-keyword">this</span>.render_options.font);
+        <span class="hljs-keyword">const</span> text = glyph.text.toString();
+        ctx.fillText(text, tab_x, y + <span class="hljs-number">5</span> * <span class="hljs-keyword">this</span>.render_options.scale);
+        ctx.restore();
       }
     }
   }</pre></div>
@@ -1168,29 +1261,30 @@ fret number and the stem</p>
 
         
           <div class='highlight'><pre>  draw() {
-    <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.context) <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RERR(<span class="hljs-string">"NoCanvasContext"</span>,
-        <span class="hljs-string">"Can't draw without a canvas context."</span>);
-    <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.stave) <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RERR(<span class="hljs-string">"NoStave"</span>, <span class="hljs-string">"Can't draw without a stave."</span>);
-    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.ys.length === <span class="hljs-number">0</span>) <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RERR(<span class="hljs-string">"NoYValues"</span>,
-        <span class="hljs-string">"Can't draw note without Y values."</span>);
+    <span class="hljs-keyword">this</span>.checkContext();
 
-    <span class="hljs-keyword">var</span> render_stem = <span class="hljs-keyword">this</span>.beam == <span class="hljs-literal">null</span> &amp;&amp; <span class="hljs-keyword">this</span>.render_options.draw_stem;
+    <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.stave) {
+      <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RERR(<span class="hljs-string">'NoStave'</span>, <span class="hljs-string">"Can't draw without a stave."</span>);
+    }
+
+    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.ys.length === <span class="hljs-number">0</span>) {
+      <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RERR(<span class="hljs-string">'NoYValues'</span>, <span class="hljs-string">"Can't draw note without Y values."</span>);
+    }
+
+    <span class="hljs-keyword">this</span>.setRendered();
+    <span class="hljs-keyword">const</span> render_stem = <span class="hljs-keyword">this</span>.beam == <span class="hljs-literal">null</span> &amp;&amp; <span class="hljs-keyword">this</span>.render_options.draw_stem;
 
     <span class="hljs-keyword">this</span>.drawPositions();
     <span class="hljs-keyword">this</span>.drawStemThrough();
 
-    <span class="hljs-keyword">var</span> stem_x = <span class="hljs-keyword">this</span>.getStemX();
-    <span class="hljs-keyword">var</span> stem_y = <span class="hljs-keyword">this</span>.getStemY();
+    <span class="hljs-keyword">const</span> stem_x = <span class="hljs-keyword">this</span>.getStemX();
+
+    <span class="hljs-keyword">this</span>.stem.setNoteHeadXBounds(stem_x, stem_x);
+
     <span class="hljs-keyword">if</span> (render_stem) {
-      <span class="hljs-keyword">this</span>.drawStem({
-        x_begin: stem_x,
-        x_end: stem_x,
-        y_top: stem_y,
-        y_bottom: stem_y,
-        y_extend: <span class="hljs-number">0</span>,
-        stem_extension: <span class="hljs-keyword">this</span>.getStemExtension(),
-        stem_direction: <span class="hljs-keyword">this</span>.stem_direction
-      });
+      <span class="hljs-keyword">this</span>.context.openGroup(<span class="hljs-string">'stem'</span>, <span class="hljs-literal">null</span>, { pointerBBox: <span class="hljs-literal">true</span> });
+      <span class="hljs-keyword">this</span>.stem.setContext(<span class="hljs-keyword">this</span>.context).draw();
+      <span class="hljs-keyword">this</span>.context.closeGroup();
     }
 
     <span class="hljs-keyword">this</span>.drawFlag();

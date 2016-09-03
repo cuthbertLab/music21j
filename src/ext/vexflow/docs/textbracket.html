@@ -121,6 +121,27 @@
               
                 
                 <li>
+                  <a class="source" href="easyscore.html">
+                    easyscore.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="element.html">
+                    element.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="factory.html">
+                    factory.js
+                  </a>
+                </li>
+              
+                
+                <li>
                   <a class="source" href="formatter.html">
                     formatter.js
                   </a>
@@ -165,6 +186,13 @@
                 <li>
                   <a class="source" href="gracenotegroup.html">
                     gracenotegroup.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="gracetabnote.html">
+                    gracetabnote.js
                   </a>
                 </li>
               
@@ -226,8 +254,22 @@
               
                 
                 <li>
+                  <a class="source" href="notesubgroup.html">
+                    notesubgroup.js
+                  </a>
+                </li>
+              
+                
+                <li>
                   <a class="source" href="ornament.html">
                     ornament.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="parser.html">
+                    parser.js
                   </a>
                 </li>
               
@@ -242,6 +284,13 @@
                 <li>
                   <a class="source" href="raphaelcontext.html">
                     raphaelcontext.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="registry.html">
+                    registry.js
                   </a>
                 </li>
               
@@ -380,6 +429,13 @@
               
                 
                 <li>
+                  <a class="source" href="system.html">
+                    system.js
+                  </a>
+                </li>
+              
+                
+                <li>
                   <a class="source" href="tables.html">
                     tables.js
                   </a>
@@ -499,6 +555,13 @@
               
                 
                 <li>
+                  <a class="source" href="vibratobracket.html">
+                    vibratobracket.js
+                  </a>
+                </li>
+              
+                
+                <li>
                   <a class="source" href="voice.html">
                     voice.js
                   </a>
@@ -527,45 +590,49 @@ using this class.</p>
 
         
           <div class='highlight'><pre>
-import { Vex } from <span class="hljs-string">'./vex'</span>;
-import { Flow } from <span class="hljs-string">'./tables'</span>;
-import { Renderer } from <span class="hljs-string">'./renderer'</span>;</pre></div>
+<span class="hljs-keyword">import</span> { Vex } <span class="hljs-keyword">from</span> <span class="hljs-string">'./vex'</span>;
+<span class="hljs-keyword">import</span> { Flow } <span class="hljs-keyword">from</span> <span class="hljs-string">'./tables'</span>;
+<span class="hljs-keyword">import</span> { Element } <span class="hljs-keyword">from</span> <span class="hljs-string">'./element'</span>;
+<span class="hljs-keyword">import</span> { Renderer } <span class="hljs-keyword">from</span> <span class="hljs-string">'./renderer'</span>;</pre></div>
         
       
         
         <p>To enable logging for this class. Set <code>Vex.Flow.TextBracket.DEBUG</code> to <code>true</code>.</p>
 
         
-          <div class='highlight'><pre><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">L</span><span class="hljs-params">()</span> {</span> <span class="hljs-keyword">if</span> (TextBracket.DEBUG) Vex.L(<span class="hljs-string">"Vex.Flow.TextBracket"</span>, <span class="hljs-built_in">arguments</span>); }
+          <div class='highlight'><pre><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">L</span>(<span class="hljs-params">...args</span>) </span>{ <span class="hljs-keyword">if</span> (TextBracket.DEBUG) Vex.L(<span class="hljs-string">'Vex.Flow.TextBracket'</span>, args); }
 
-export <span class="hljs-keyword">class</span> TextBracket {
-  static get Positions() {
+<span class="hljs-keyword">export</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">TextBracket</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">Element</span> </span>{
+  <span class="hljs-keyword">static</span> get Positions() {
     <span class="hljs-keyword">return</span> {
       TOP: <span class="hljs-number">1</span>,
-      BOTTOM: -<span class="hljs-number">1</span>
+      BOTTOM: <span class="hljs-number">-1</span>,
     };
   }
 
-  constructor(bracket_data) {
+  <span class="hljs-keyword">constructor</span>(bracket_data) {
+    <span class="hljs-keyword">super</span>();
+    <span class="hljs-keyword">this</span>.setAttribute(<span class="hljs-string">'type'</span>, <span class="hljs-string">'TextBracket'</span>);
+
     <span class="hljs-keyword">this</span>.start = bracket_data.start;
     <span class="hljs-keyword">this</span>.stop = bracket_data.stop;
 
-    <span class="hljs-keyword">this</span>.text = bracket_data.text || <span class="hljs-string">""</span>;
-    <span class="hljs-keyword">this</span>.superscript = bracket_data.superscript || <span class="hljs-string">""</span>;
+    <span class="hljs-keyword">this</span>.text = bracket_data.text || <span class="hljs-string">''</span>;
+    <span class="hljs-keyword">this</span>.superscript = bracket_data.superscript || <span class="hljs-string">''</span>;
 
     <span class="hljs-keyword">this</span>.position = bracket_data.position || TextBracket.Positions.TOP;
     <span class="hljs-keyword">this</span>.line = <span class="hljs-number">1</span>;
 
     <span class="hljs-keyword">this</span>.font = {
-      family: <span class="hljs-string">"Serif"</span>,
+      family: <span class="hljs-string">'Serif'</span>,
       size: <span class="hljs-number">15</span>,
-      weight: <span class="hljs-string">"italic"</span>
+      weight: <span class="hljs-string">'italic'</span>,
     };
 
     <span class="hljs-keyword">this</span>.render_options = {
       dashed: <span class="hljs-literal">true</span>,
       dash: [<span class="hljs-number">5</span>],
-      color: <span class="hljs-string">"black"</span>,
+      color: <span class="hljs-string">'black'</span>,
       line_width: <span class="hljs-number">1</span>,
       show_bracket: <span class="hljs-literal">true</span>,
       bracket_height: <span class="hljs-number">8</span>,</pre></div>
@@ -576,7 +643,7 @@ export <span class="hljs-keyword">class</span> TextBracket {
 under the superscript.</p>
 
         
-          <div class='highlight'><pre>      underline_superscript: <span class="hljs-literal">true</span>
+          <div class='highlight'><pre>      underline_superscript: <span class="hljs-literal">true</span>,
     };
   }</pre></div>
         
@@ -624,13 +691,6 @@ optionally set the <code>dash</code> pattern by passing in an array of numbers</
         <p>Set the rendering <code>context</code> for the octave bracket</p>
 
         
-          <div class='highlight'><pre>  setContext(context) { <span class="hljs-keyword">this</span>.context = context; <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>; }</pre></div>
-        
-      
-        
-        <p>Set the staff line to render the bracket on</p>
-
-        
           <div class='highlight'><pre>  setLine(line) { <span class="hljs-keyword">this</span>.line = line; <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>; }</pre></div>
         
       
@@ -639,16 +699,19 @@ optionally set the <code>dash</code> pattern by passing in an array of numbers</
 
         
           <div class='highlight'><pre>  draw() {
-    <span class="hljs-keyword">var</span> ctx = <span class="hljs-keyword">this</span>.context;
+    <span class="hljs-keyword">const</span> ctx = <span class="hljs-keyword">this</span>.context;
+    <span class="hljs-keyword">this</span>.setRendered();
 
-    <span class="hljs-keyword">var</span> y = <span class="hljs-number">0</span>;
-    <span class="hljs-keyword">switch</span>(<span class="hljs-keyword">this</span>.position) {
+    <span class="hljs-keyword">let</span> y = <span class="hljs-number">0</span>;
+    <span class="hljs-keyword">switch</span> (<span class="hljs-keyword">this</span>.position) {
       <span class="hljs-keyword">case</span> TextBracket.Positions.TOP:
         y =  <span class="hljs-keyword">this</span>.start.getStave().getYForTopText(<span class="hljs-keyword">this</span>.line);
         <span class="hljs-keyword">break</span>;
       <span class="hljs-keyword">case</span> TextBracket.Positions.BOTTOM:
-        y =  <span class="hljs-keyword">this</span>.start.getStave().getYForBottomText(<span class="hljs-keyword">this</span>.line);
+        y =  <span class="hljs-keyword">this</span>.start.getStave().getYForBottomText(<span class="hljs-keyword">this</span>.line + Flow.TEXT_HEIGHT_OFFSET_HACK);
         <span class="hljs-keyword">break</span>;
+      <span class="hljs-keyword">default</span>:
+        <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RERR(<span class="hljs-string">'InvalidPosition'</span>, <span class="hljs-string">`The position <span class="hljs-subst">${this.position}</span> is invalid`</span>);
     }</pre></div>
         
       
@@ -656,12 +719,12 @@ optionally set the <code>dash</code> pattern by passing in an array of numbers</
         <p>Get the preliminary start and stop coordintates for the bracket</p>
 
         
-          <div class='highlight'><pre>    <span class="hljs-keyword">var</span> start = { x: <span class="hljs-keyword">this</span>.start.getAbsoluteX(), y: y};
-    <span class="hljs-keyword">var</span> stop = { x: <span class="hljs-keyword">this</span>.stop.getAbsoluteX(), y: y };
+          <div class='highlight'><pre>    <span class="hljs-keyword">const</span> start = { x: <span class="hljs-keyword">this</span>.start.getAbsoluteX(), y };
+    <span class="hljs-keyword">const</span> stop = { x: <span class="hljs-keyword">this</span>.stop.getAbsoluteX(), y };
 
-    L(<span class="hljs-string">"Rendering TextBracket: start:"</span>, start, <span class="hljs-string">"stop:"</span>, stop, <span class="hljs-string">"y:"</span>, y);
+    L(<span class="hljs-string">'Rendering TextBracket: start:'</span>, start, <span class="hljs-string">'stop:'</span>, stop, <span class="hljs-string">'y:'</span>, y);
 
-    <span class="hljs-keyword">var</span> bracket_height = <span class="hljs-keyword">this</span>.render_options.bracket_height * <span class="hljs-keyword">this</span>.position;
+    <span class="hljs-keyword">const</span> bracket_height = <span class="hljs-keyword">this</span>.render_options.bracket_height * <span class="hljs-keyword">this</span>.position;
 
     ctx.save();
     <span class="hljs-keyword">this</span>.applyStyle(ctx);</pre></div>
@@ -678,15 +741,15 @@ optionally set the <code>dash</code> pattern by passing in an array of numbers</
         <p>Get the width and height for the octave number</p>
 
         
-          <div class='highlight'><pre>    <span class="hljs-keyword">var</span> main_width = ctx.measureText(<span class="hljs-keyword">this</span>.text).width;
-    <span class="hljs-keyword">var</span> main_height = ctx.measureText(<span class="hljs-string">"M"</span>).width;</pre></div>
+          <div class='highlight'><pre>    <span class="hljs-keyword">const</span> main_width = ctx.measureText(<span class="hljs-keyword">this</span>.text).width;
+    <span class="hljs-keyword">const</span> main_height = ctx.measureText(<span class="hljs-string">'M'</span>).width;</pre></div>
         
       
         
         <p>Calculate the y position for the super script</p>
 
         
-          <div class='highlight'><pre>    <span class="hljs-keyword">var</span> super_y = start.y - (main_height/<span class="hljs-number">2.5</span>);</pre></div>
+          <div class='highlight'><pre>    <span class="hljs-keyword">const</span> super_y = start.y - (main_height / <span class="hljs-number">2.5</span>);</pre></div>
         
       
         
@@ -701,17 +764,17 @@ optionally set the <code>dash</code> pattern by passing in an array of numbers</
         <p>Determine width and height of the superscript</p>
 
         
-          <div class='highlight'><pre>    <span class="hljs-keyword">var</span> superscript_width = ctx.measureText(<span class="hljs-keyword">this</span>.superscript).width;
-    <span class="hljs-keyword">var</span> super_height = ctx.measureText(<span class="hljs-string">"M"</span>).width;</pre></div>
+          <div class='highlight'><pre>    <span class="hljs-keyword">const</span> superscript_width = ctx.measureText(<span class="hljs-keyword">this</span>.superscript).width;
+    <span class="hljs-keyword">const</span> super_height = ctx.measureText(<span class="hljs-string">'M'</span>).width;</pre></div>
         
       
         
         <p>Setup initial coordinates for the bracket line</p>
 
         
-          <div class='highlight'><pre>    <span class="hljs-keyword">var</span> start_x = start.x;
-    <span class="hljs-keyword">var</span> line_y = super_y;
-    <span class="hljs-keyword">var</span> end_x = stop.x + <span class="hljs-keyword">this</span>.stop.getGlyph().head_width;</pre></div>
+          <div class='highlight'><pre>    <span class="hljs-keyword">let</span> start_x = start.x;
+    <span class="hljs-keyword">let</span> line_y = super_y;
+    <span class="hljs-keyword">const</span> end_x = stop.x + <span class="hljs-keyword">this</span>.stop.getGlyph().getWidth();</pre></div>
         
       
         
@@ -720,9 +783,9 @@ optionally set the <code>dash</code> pattern by passing in an array of numbers</
         
           <div class='highlight'><pre>    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.position === TextBracket.Positions.TOP) {
       start_x += main_width + superscript_width + <span class="hljs-number">5</span>;
-      line_y -= super_height/<span class="hljs-number">2.7</span>;
+      line_y -= super_height / <span class="hljs-number">2.7</span>;
     } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.position === TextBracket.Positions.BOTTOM) {
-      line_y += super_height/<span class="hljs-number">2.7</span>;
+      line_y += super_height / <span class="hljs-number">2.7</span>;
       start_x += main_width + <span class="hljs-number">2</span>;
 
       <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.render_options.underline_superscript) {
@@ -737,8 +800,14 @@ optionally set the <code>dash</code> pattern by passing in an array of numbers</
         <p>Main line</p>
 
         
-          <div class='highlight'><pre>      Renderer.drawDashedLine(ctx, start_x, line_y, end_x, line_y,
-        <span class="hljs-keyword">this</span>.render_options.dash);</pre></div>
+          <div class='highlight'><pre>      Renderer.drawDashedLine(
+        ctx,
+        start_x,
+        line_y,
+        end_x,
+        line_y,
+        <span class="hljs-keyword">this</span>.render_options.dash
+      );</pre></div>
         
       
         
@@ -746,8 +815,14 @@ optionally set the <code>dash</code> pattern by passing in an array of numbers</
 
         
           <div class='highlight'><pre>      <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.render_options.show_bracket) {
-        Renderer.drawDashedLine(ctx, end_x, line_y + (<span class="hljs-number">1</span> * <span class="hljs-keyword">this</span>.position),
-          end_x, line_y + bracket_height, <span class="hljs-keyword">this</span>.render_options.dash);
+        Renderer.drawDashedLine(
+          ctx,
+          end_x,
+          line_y + (<span class="hljs-number">1</span> * <span class="hljs-keyword">this</span>.position),
+          end_x,
+          line_y + bracket_height,
+          <span class="hljs-keyword">this</span>.render_options.dash
+        );
       }
     } <span class="hljs-keyword">else</span> {
       ctx.beginPath();

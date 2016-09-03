@@ -121,6 +121,27 @@
               
                 
                 <li>
+                  <a class="source" href="easyscore.html">
+                    easyscore.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="element.html">
+                    element.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="factory.html">
+                    factory.js
+                  </a>
+                </li>
+              
+                
+                <li>
                   <a class="source" href="formatter.html">
                     formatter.js
                   </a>
@@ -165,6 +186,13 @@
                 <li>
                   <a class="source" href="gracenotegroup.html">
                     gracenotegroup.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="gracetabnote.html">
+                    gracetabnote.js
                   </a>
                 </li>
               
@@ -226,8 +254,22 @@
               
                 
                 <li>
+                  <a class="source" href="notesubgroup.html">
+                    notesubgroup.js
+                  </a>
+                </li>
+              
+                
+                <li>
                   <a class="source" href="ornament.html">
                     ornament.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="parser.html">
+                    parser.js
                   </a>
                 </li>
               
@@ -242,6 +284,13 @@
                 <li>
                   <a class="source" href="raphaelcontext.html">
                     raphaelcontext.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="registry.html">
+                    registry.js
                   </a>
                 </li>
               
@@ -380,6 +429,13 @@
               
                 
                 <li>
+                  <a class="source" href="system.html">
+                    system.js
+                  </a>
+                </li>
+              
+                
+                <li>
                   <a class="source" href="tables.html">
                     tables.js
                   </a>
@@ -499,6 +555,13 @@
               
                 
                 <li>
+                  <a class="source" href="vibratobracket.html">
+                    vibratobracket.js
+                  </a>
+                </li>
+              
+                
+                <li>
                   <a class="source" href="voice.html">
                     voice.js
                   </a>
@@ -524,28 +587,38 @@
 
         
           <div class='highlight'><pre>
-import { Vex } from <span class="hljs-string">'./vex'</span>;
-import { Flow } from <span class="hljs-string">'./tables'</span>;
-import { Fraction } from <span class="hljs-string">'./fraction'</span>;
-import { Tuplet } from <span class="hljs-string">'./tuplet'</span>;
-import { Stem } from <span class="hljs-string">'./stem'</span>;
+<span class="hljs-keyword">import</span> { Vex } <span class="hljs-keyword">from</span> <span class="hljs-string">'./vex'</span>;
+<span class="hljs-keyword">import</span> { Flow } <span class="hljs-keyword">from</span> <span class="hljs-string">'./tables'</span>;
+<span class="hljs-keyword">import</span> { Element } <span class="hljs-keyword">from</span> <span class="hljs-string">'./element'</span>;
+<span class="hljs-keyword">import</span> { Fraction } <span class="hljs-keyword">from</span> <span class="hljs-string">'./fraction'</span>;
+<span class="hljs-keyword">import</span> { Tuplet } <span class="hljs-keyword">from</span> <span class="hljs-string">'./tuplet'</span>;
+<span class="hljs-keyword">import</span> { Stem } <span class="hljs-keyword">from</span> <span class="hljs-string">'./stem'</span>;
 
-<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">calculateStemDirection</span><span class="hljs-params">(notes)</span> {</span>
-  <span class="hljs-keyword">var</span> lineSum = <span class="hljs-number">0</span>;
-  notes.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(note)</span> {</span>
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">calculateStemDirection</span>(<span class="hljs-params">notes</span>) </span>{
+  <span class="hljs-keyword">let</span> lineSum = <span class="hljs-number">0</span>;
+  notes.forEach(note =&gt; {
     <span class="hljs-keyword">if</span> (note.keyProps) {
-      note.keyProps.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(keyProp)</span>{</span>
+      note.keyProps.forEach(keyProp =&gt; {
         lineSum += (keyProp.line - <span class="hljs-number">3</span>);
       });
     }
   });
 
-  <span class="hljs-keyword">if</span> (lineSum &gt;= <span class="hljs-number">0</span>)
+  <span class="hljs-keyword">if</span> (lineSum &gt;= <span class="hljs-number">0</span>) {
     <span class="hljs-keyword">return</span> Stem.DOWN;
+  }
   <span class="hljs-keyword">return</span> Stem.UP;
 }
 
-export <span class="hljs-keyword">class</span> Beam {</pre></div>
+<span class="hljs-keyword">const</span> getStemSlope = (firstNote, lastNote) =&gt; {
+  <span class="hljs-keyword">const</span> firstStemTipY = firstNote.getStemExtents().topY;
+  <span class="hljs-keyword">const</span> firstStemX = firstNote.getStemX();
+  <span class="hljs-keyword">const</span> lastStemTipY = lastNote.getStemExtents().topY;
+  <span class="hljs-keyword">const</span> lastStemX = lastNote.getStemX();
+  <span class="hljs-keyword">return</span> (lastStemTipY - firstStemTipY) / (lastStemX - firstStemX);
+};
+
+<span class="hljs-keyword">export</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Beam</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">Element</span> </span>{</pre></div>
         
       
         
@@ -554,34 +627,36 @@ Attempts to guess if the time signature is not found in table.
 Currently this is fairly naive.</p>
 
         
-          <div class='highlight'><pre>  static getDefaultBeamGroups(time_sig) {
-    <span class="hljs-keyword">if</span> (!time_sig || time_sig == <span class="hljs-string">"c"</span>) time_sig = <span class="hljs-string">"4/4"</span>;
+          <div class='highlight'><pre>  <span class="hljs-keyword">static</span> getDefaultBeamGroups(time_sig) {
+    <span class="hljs-keyword">if</span> (!time_sig || time_sig === <span class="hljs-string">'c'</span>) {
+      time_sig = <span class="hljs-string">'4/4'</span>;
+    }
 
-    <span class="hljs-keyword">var</span> defaults = {
-      <span class="hljs-string">'1/2'</span> :  [<span class="hljs-string">'1/2'</span>],
-      <span class="hljs-string">'2/2'</span> :  [<span class="hljs-string">'1/2'</span>],
-      <span class="hljs-string">'3/2'</span> :  [<span class="hljs-string">'1/2'</span>],
-      <span class="hljs-string">'4/2'</span> :  [<span class="hljs-string">'1/2'</span>],
+    <span class="hljs-keyword">const</span> defaults = {
+      <span class="hljs-string">'1/2'</span>: [<span class="hljs-string">'1/2'</span>],
+      <span class="hljs-string">'2/2'</span>: [<span class="hljs-string">'1/2'</span>],
+      <span class="hljs-string">'3/2'</span>: [<span class="hljs-string">'1/2'</span>],
+      <span class="hljs-string">'4/2'</span>: [<span class="hljs-string">'1/2'</span>],
 
-      <span class="hljs-string">'1/4'</span> :  [<span class="hljs-string">'1/4'</span>],
-      <span class="hljs-string">'2/4'</span> :  [<span class="hljs-string">'1/4'</span>],
-      <span class="hljs-string">'3/4'</span> :  [<span class="hljs-string">'1/4'</span>],
-      <span class="hljs-string">'4/4'</span> :  [<span class="hljs-string">'1/4'</span>],
+      <span class="hljs-string">'1/4'</span>: [<span class="hljs-string">'1/4'</span>],
+      <span class="hljs-string">'2/4'</span>: [<span class="hljs-string">'1/4'</span>],
+      <span class="hljs-string">'3/4'</span>: [<span class="hljs-string">'1/4'</span>],
+      <span class="hljs-string">'4/4'</span>: [<span class="hljs-string">'1/4'</span>],
 
-      <span class="hljs-string">'1/8'</span> :  [<span class="hljs-string">'1/8'</span>],
-      <span class="hljs-string">'2/8'</span> :  [<span class="hljs-string">'2/8'</span>],
-      <span class="hljs-string">'3/8'</span> :  [<span class="hljs-string">'3/8'</span>],
-      <span class="hljs-string">'4/8'</span> :  [<span class="hljs-string">'2/8'</span>],
+      <span class="hljs-string">'1/8'</span>: [<span class="hljs-string">'1/8'</span>],
+      <span class="hljs-string">'2/8'</span>: [<span class="hljs-string">'2/8'</span>],
+      <span class="hljs-string">'3/8'</span>: [<span class="hljs-string">'3/8'</span>],
+      <span class="hljs-string">'4/8'</span>: [<span class="hljs-string">'2/8'</span>],
 
-      <span class="hljs-string">'1/16'</span> : [<span class="hljs-string">'1/16'</span>],
-      <span class="hljs-string">'2/16'</span> : [<span class="hljs-string">'2/16'</span>],
-      <span class="hljs-string">'3/16'</span> : [<span class="hljs-string">'3/16'</span>],
-      <span class="hljs-string">'4/16'</span> : [<span class="hljs-string">'2/16'</span>]
+      <span class="hljs-string">'1/16'</span>: [<span class="hljs-string">'1/16'</span>],
+      <span class="hljs-string">'2/16'</span>: [<span class="hljs-string">'2/16'</span>],
+      <span class="hljs-string">'3/16'</span>: [<span class="hljs-string">'3/16'</span>],
+      <span class="hljs-string">'4/16'</span>: [<span class="hljs-string">'2/16'</span>],
     };
 
-    <span class="hljs-keyword">var</span> groups = defaults[time_sig];
+    <span class="hljs-keyword">const</span> groups = defaults[time_sig];
 
-    <span class="hljs-keyword">if</span> (!groups) {</pre></div>
+    <span class="hljs-keyword">if</span> (groups === <span class="hljs-literal">undefined</span>) {</pre></div>
         
       
         
@@ -589,10 +664,10 @@ Currently this is fairly naive.</p>
 the beam groupings from the time signature</p>
 
         
-          <div class='highlight'><pre>      <span class="hljs-keyword">var</span> beatTotal = <span class="hljs-built_in">parseInt</span>(time_sig.split(<span class="hljs-string">'/'</span>)[<span class="hljs-number">0</span>], <span class="hljs-number">10</span>);
-      <span class="hljs-keyword">var</span> beatValue = <span class="hljs-built_in">parseInt</span>(time_sig.split(<span class="hljs-string">'/'</span>)[<span class="hljs-number">1</span>], <span class="hljs-number">10</span>);
+          <div class='highlight'><pre>      <span class="hljs-keyword">const</span> beatTotal = <span class="hljs-built_in">parseInt</span>(time_sig.split(<span class="hljs-string">'/'</span>)[<span class="hljs-number">0</span>], <span class="hljs-number">10</span>);
+      <span class="hljs-keyword">const</span> beatValue = <span class="hljs-built_in">parseInt</span>(time_sig.split(<span class="hljs-string">'/'</span>)[<span class="hljs-number">1</span>], <span class="hljs-number">10</span>);
 
-      <span class="hljs-keyword">var</span> tripleMeter = beatTotal % <span class="hljs-number">3</span> === <span class="hljs-number">0</span>;
+      <span class="hljs-keyword">const</span> tripleMeter = beatTotal % <span class="hljs-number">3</span> === <span class="hljs-number">0</span>;
 
       <span class="hljs-keyword">if</span> (tripleMeter) {
         <span class="hljs-keyword">return</span> [<span class="hljs-keyword">new</span> Fraction(<span class="hljs-number">3</span>, beatValue)];
@@ -602,10 +677,10 @@ the beam groupings from the time signature</p>
         <span class="hljs-keyword">return</span> [<span class="hljs-keyword">new</span> Fraction(<span class="hljs-number">1</span>, beatValue)];
       }
     } <span class="hljs-keyword">else</span> {
-      <span class="hljs-keyword">return</span> groups.map(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(group)</span> {</span>
-        <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> Fraction().parse(group);
-      });
+      <span class="hljs-keyword">return</span> groups.map(group =&gt; <span class="hljs-keyword">new</span> Fraction().parse(group));
     }
+
+    <span class="hljs-keyword">return</span> [<span class="hljs-keyword">new</span> Fraction(<span class="hljs-number">1</span>, <span class="hljs-number">4</span>)];
   }</pre></div>
         
       
@@ -620,10 +695,10 @@ complex auto-beaming use <code>Beam.generateBeams()</code>.</p>
 </ul>
 
         
-          <div class='highlight'><pre>  static applyAndGetBeams(voice, stem_direction, groups) {
+          <div class='highlight'><pre>  <span class="hljs-keyword">static</span> applyAndGetBeams(voice, stem_direction, groups) {
     <span class="hljs-keyword">return</span> Beam.generateBeams(voice.getTickables(), {
-      groups: groups,
-      stem_direction: stem_direction
+      groups,
+      stem_direction,
     });
   }</pre></div>
         
@@ -634,7 +709,7 @@ configuration options.</p>
 <p>Example configuration object:</p>
 <pre><code>config = {
   groups: [<span class="hljs-keyword">new</span> Vex.Flow.Fraction(<span class="hljs-number">2</span>, <span class="hljs-number">8</span>)],
-  stem_direction: -<span class="hljs-number">1</span>,
+  stem_direction: <span class="hljs-number">-1</span>,
   beam_rests: <span class="hljs-literal">true</span>,
   beam_middle_only: <span class="hljs-literal">true</span>,
   show_stemlets: <span class="hljs-literal">false</span>
@@ -654,8 +729,7 @@ configuration options.</p>
 </ul>
 
         
-          <div class='highlight'><pre>  static generateBeams(notes, config) {
-
+          <div class='highlight'><pre>  <span class="hljs-keyword">static</span> generateBeams(notes, config) {
     <span class="hljs-keyword">if</span> (!config) config = {};
 
     <span class="hljs-keyword">if</span> (!config.groups || !config.groups.length) {
@@ -667,26 +741,24 @@ configuration options.</p>
         <p>Convert beam groups to tick amounts</p>
 
         
-          <div class='highlight'><pre>    <span class="hljs-keyword">var</span> tickGroups = config.groups.map(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(group)</span> {</span>
+          <div class='highlight'><pre>    <span class="hljs-keyword">const</span> tickGroups = config.groups.map(group =&gt; {
       <span class="hljs-keyword">if</span> (!group.multiply) {
-        <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RuntimeError(<span class="hljs-string">"InvalidBeamGroups"</span>,
-          <span class="hljs-string">"The beam groups must be an array of Vex.Flow.Fractions"</span>);
+        <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RuntimeError(<span class="hljs-string">'InvalidBeamGroups'</span>,
+          <span class="hljs-string">'The beam groups must be an array of Vex.Flow.Fractions'</span>);
       }
       <span class="hljs-keyword">return</span> group.clone().multiply(Flow.RESOLUTION, <span class="hljs-number">1</span>);
     });
 
-    <span class="hljs-keyword">var</span> unprocessedNotes = notes;
-    <span class="hljs-keyword">var</span> currentTickGroup = <span class="hljs-number">0</span>;
-    <span class="hljs-keyword">var</span> noteGroups       = [];
-    <span class="hljs-keyword">var</span> currentGroup     = [];
+    <span class="hljs-keyword">const</span> unprocessedNotes = notes;
+    <span class="hljs-keyword">let</span> currentTickGroup = <span class="hljs-number">0</span>;
+    <span class="hljs-keyword">let</span> noteGroups       = [];
+    <span class="hljs-keyword">let</span> currentGroup     = [];
 
-    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">getTotalTicks</span><span class="hljs-params">(vf_notes)</span>{</span>
-      <span class="hljs-keyword">return</span> vf_notes.reduce(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(memo,note)</span>{</span>
-        <span class="hljs-keyword">return</span> note.getTicks().clone().add(memo);
-      }, <span class="hljs-keyword">new</span> Fraction(<span class="hljs-number">0</span>, <span class="hljs-number">1</span>));
+    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">getTotalTicks</span>(<span class="hljs-params">vf_notes</span>) </span>{
+      <span class="hljs-keyword">return</span> vf_notes.reduce((memo, note) =&gt; note.getTicks().clone().add(memo), <span class="hljs-keyword">new</span> Fraction(<span class="hljs-number">0</span>, <span class="hljs-number">1</span>));
     }
 
-    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">nextTickGroup</span><span class="hljs-params">()</span> {</span>
+    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">nextTickGroup</span>(<span class="hljs-params"></span>) </span>{
       <span class="hljs-keyword">if</span> (tickGroups.length - <span class="hljs-number">1</span> &gt; currentTickGroup) {
         currentTickGroup += <span class="hljs-number">1</span>;
       } <span class="hljs-keyword">else</span> {
@@ -694,10 +766,10 @@ configuration options.</p>
       }
     }
 
-    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">createGroups</span><span class="hljs-params">()</span>{</span>
-      <span class="hljs-keyword">var</span> nextGroup = [];
+    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">createGroups</span>(<span class="hljs-params"></span>) </span>{
+      <span class="hljs-keyword">let</span> nextGroup = [];
 
-      unprocessedNotes.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(unprocessedNote)</span>{</span>
+      unprocessedNotes.forEach(unprocessedNote =&gt; {
         nextGroup    = [];
         <span class="hljs-keyword">if</span> (unprocessedNote.shouldIgnoreTicks()) {
           noteGroups.push(currentGroup);
@@ -706,15 +778,15 @@ configuration options.</p>
         }
 
         currentGroup.push(unprocessedNote);
-        <span class="hljs-keyword">var</span> ticksPerGroup = tickGroups[currentTickGroup].clone();
-        <span class="hljs-keyword">var</span> totalTicks = getTotalTicks(currentGroup);</pre></div>
+        <span class="hljs-keyword">const</span> ticksPerGroup = tickGroups[currentTickGroup].clone();
+        <span class="hljs-keyword">const</span> totalTicks = getTotalTicks(currentGroup);</pre></div>
         
       
         
         <p>Double the amount of ticks in a group, if it’s an unbeamable tuplet</p>
 
         
-          <div class='highlight'><pre>        <span class="hljs-keyword">var</span> unbeamable = Flow.durationToNumber(unprocessedNote.duration) &lt; <span class="hljs-number">8</span>;
+          <div class='highlight'><pre>        <span class="hljs-keyword">const</span> unbeamable = Flow.durationToNumber(unprocessedNote.duration) &lt; <span class="hljs-number">8</span>;
         <span class="hljs-keyword">if</span> (unbeamable &amp;&amp; unprocessedNote.tuplet) {
           ticksPerGroup.numerator *= <span class="hljs-number">2</span>;
         }</pre></div>
@@ -750,22 +822,23 @@ with it. Unbeamable notes leave the group overflowed.</p>
         <p>Adds any remainder notes</p>
 
         
-          <div class='highlight'><pre>      <span class="hljs-keyword">if</span> (currentGroup.length &gt; <span class="hljs-number">0</span>)
+          <div class='highlight'><pre>      <span class="hljs-keyword">if</span> (currentGroup.length &gt; <span class="hljs-number">0</span>) {
         noteGroups.push(currentGroup);
+      }
     }
 
-    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">getBeamGroups</span><span class="hljs-params">()</span> {</span>
-      <span class="hljs-keyword">return</span> noteGroups.filter(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(group)</span>{</span>
-          <span class="hljs-keyword">if</span> (group.length &gt; <span class="hljs-number">1</span>) {
-            <span class="hljs-keyword">var</span> beamable = <span class="hljs-literal">true</span>;
-            group.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(note)</span> {</span>
-              <span class="hljs-keyword">if</span> (note.getIntrinsicTicks() &gt;= Flow.durationToTicks(<span class="hljs-string">"4"</span>)) {
-                beamable = <span class="hljs-literal">false</span>;
-              }
-            });
-            <span class="hljs-keyword">return</span> beamable;
-          }
-          <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">getBeamGroups</span>(<span class="hljs-params"></span>) </span>{
+      <span class="hljs-keyword">return</span> noteGroups.filter(group =&gt; {
+        <span class="hljs-keyword">if</span> (group.length &gt; <span class="hljs-number">1</span>) {
+          <span class="hljs-keyword">let</span> beamable = <span class="hljs-literal">true</span>;
+          group.forEach(note =&gt; {
+            <span class="hljs-keyword">if</span> (note.getIntrinsicTicks() &gt;= Flow.durationToTicks(<span class="hljs-string">'4'</span>)) {
+              beamable = <span class="hljs-literal">false</span>;
+            }
+          });
+          <span class="hljs-keyword">return</span> beamable;
+        }
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
       });
     }</pre></div>
         
@@ -774,34 +847,34 @@ with it. Unbeamable notes leave the group overflowed.</p>
         <p>Splits up groups by Rest</p>
 
         
-          <div class='highlight'><pre>    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">sanitizeGroups</span><span class="hljs-params">()</span> {</span>
-      <span class="hljs-keyword">var</span> sanitizedGroups = [];
-      noteGroups.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(group)</span> {</span>
-        <span class="hljs-keyword">var</span> tempGroup = [];
-        group.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(note, index, group)</span> {</span>
-          <span class="hljs-keyword">var</span> isFirstOrLast = index === <span class="hljs-number">0</span> || index === group.length - <span class="hljs-number">1</span>;
-          <span class="hljs-keyword">var</span> prevNote = group[index-<span class="hljs-number">1</span>];
+          <div class='highlight'><pre>    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">sanitizeGroups</span>(<span class="hljs-params"></span>) </span>{
+      <span class="hljs-keyword">const</span> sanitizedGroups = [];
+      noteGroups.forEach(group =&gt; {
+        <span class="hljs-keyword">let</span> tempGroup = [];
+        group.forEach((note, index, group) =&gt; {
+          <span class="hljs-keyword">const</span> isFirstOrLast = index === <span class="hljs-number">0</span> || index === group.length - <span class="hljs-number">1</span>;
+          <span class="hljs-keyword">const</span> prevNote = group[index - <span class="hljs-number">1</span>];
 
-          <span class="hljs-keyword">var</span> breaksOnEachRest = !config.beam_rests &amp;&amp; note.isRest();
-          <span class="hljs-keyword">var</span> breaksOnFirstOrLastRest = (config.beam_rests &amp;&amp;
+          <span class="hljs-keyword">const</span> breaksOnEachRest = !config.beam_rests &amp;&amp; note.isRest();
+          <span class="hljs-keyword">const</span> breaksOnFirstOrLastRest = (config.beam_rests &amp;&amp;
             config.beam_middle_only &amp;&amp; note.isRest() &amp;&amp; isFirstOrLast);
 
-          <span class="hljs-keyword">var</span> breakOnStemChange = <span class="hljs-literal">false</span>;
+          <span class="hljs-keyword">let</span> breakOnStemChange = <span class="hljs-literal">false</span>;
           <span class="hljs-keyword">if</span> (config.maintain_stem_directions &amp;&amp; prevNote &amp;&amp;
               !note.isRest() &amp;&amp; !prevNote.isRest()) {
-            <span class="hljs-keyword">var</span> prevDirection = prevNote.getStemDirection();
-            <span class="hljs-keyword">var</span> currentDirection = note.getStemDirection();
+            <span class="hljs-keyword">const</span> prevDirection = prevNote.getStemDirection();
+            <span class="hljs-keyword">const</span> currentDirection = note.getStemDirection();
             breakOnStemChange = currentDirection !== prevDirection;
           }
 
-          <span class="hljs-keyword">var</span> isUnbeamableDuration = <span class="hljs-built_in">parseInt</span>(note.duration, <span class="hljs-number">10</span>) &lt; <span class="hljs-number">8</span>;</pre></div>
+          <span class="hljs-keyword">const</span> isUnbeamableDuration = <span class="hljs-built_in">parseInt</span>(note.duration, <span class="hljs-number">10</span>) &lt; <span class="hljs-number">8</span>;</pre></div>
         
       
         
         <p>Determine if the group should be broken at this note</p>
 
         
-          <div class='highlight'><pre>          <span class="hljs-keyword">var</span> shouldBreak = breaksOnEachRest || breaksOnFirstOrLastRest ||
+          <div class='highlight'><pre>          <span class="hljs-keyword">const</span> shouldBreak = breaksOnEachRest || breaksOnFirstOrLastRest ||
                             breakOnStemChange || isUnbeamableDuration;
 
           <span class="hljs-keyword">if</span> (shouldBreak) {</pre></div>
@@ -847,14 +920,14 @@ the next group of notes</p>
       noteGroups = sanitizedGroups;
     }
 
-    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">formatStems</span><span class="hljs-params">()</span> {</span>
-      noteGroups.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(group)</span>{</span>
-        <span class="hljs-keyword">var</span> stemDirection;
+    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">formatStems</span>(<span class="hljs-params"></span>) </span>{
+      noteGroups.forEach(group =&gt; {
+        <span class="hljs-keyword">let</span> stemDirection;
         <span class="hljs-keyword">if</span> (config.maintain_stem_directions) {
-          <span class="hljs-keyword">var</span> note = findFirstNote(group);
+          <span class="hljs-keyword">const</span> note = findFirstNote(group);
           stemDirection = note ? note.getStemDirection() : Stem.UP;
         } <span class="hljs-keyword">else</span> {
-          <span class="hljs-keyword">if</span> (config.stem_direction){
+          <span class="hljs-keyword">if</span> (config.stem_direction) {
             stemDirection = config.stem_direction;
           } <span class="hljs-keyword">else</span> {
             stemDirection = calculateStemDirection(group);
@@ -864,9 +937,9 @@ the next group of notes</p>
       });
     }
 
-    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">findFirstNote</span><span class="hljs-params">(group)</span> {</span>
-      <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; group.length; i++) {
-        <span class="hljs-keyword">var</span> note = group[i];
+    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">findFirstNote</span>(<span class="hljs-params">group</span>) </span>{
+      <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> i = <span class="hljs-number">0</span>; i &lt; group.length; i++) {
+        <span class="hljs-keyword">const</span> note = group[i];
         <span class="hljs-keyword">if</span> (!note.isRest()) {
           <span class="hljs-keyword">return</span> note;
         }
@@ -875,16 +948,35 @@ the next group of notes</p>
       <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
     }
 
-    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">applyStemDirection</span><span class="hljs-params">(group, direction)</span> {</span>
-      group.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(note)</span>{</span>
+    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">applyStemDirection</span>(<span class="hljs-params">group, direction</span>) </span>{
+      group.forEach(note =&gt; {
         note.setStemDirection(direction);
       });
-    }
+    }</pre></div>
+        
+      
+        
+        <p>Get all of the tuplets in all of the note groups</p>
 
-    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">getTupletGroups</span><span class="hljs-params">()</span> {</span>
-      <span class="hljs-keyword">return</span> noteGroups.filter(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(group)</span>{</span>
-        <span class="hljs-keyword">if</span> (group[<span class="hljs-number">0</span>]) <span class="hljs-keyword">return</span> group[<span class="hljs-number">0</span>].tuplet;
+        
+          <div class='highlight'><pre>    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">getTuplets</span>(<span class="hljs-params"></span>) </span>{
+      <span class="hljs-keyword">const</span> uniqueTuplets = [];</pre></div>
+        
+      
+        
+        <p>Go through all of the note groups and inspect for tuplets</p>
+
+        
+          <div class='highlight'><pre>      noteGroups.forEach(group =&gt; {
+        <span class="hljs-keyword">let</span> tuplet = <span class="hljs-literal">null</span>;
+        group.forEach(note =&gt; {
+          <span class="hljs-keyword">if</span> (note.tuplet &amp;&amp; (tuplet !== note.tuplet)) {
+            tuplet = note.tuplet;
+            uniqueTuplets.push(tuplet);
+          }
+        });
       });
+      <span class="hljs-keyword">return</span> uniqueTuplets;
     }</pre></div>
         
       
@@ -903,23 +995,23 @@ the rest of the API’s style - Silverwolf90 (Cyril)</p>
         <p>Get the notes to be beamed</p>
 
         
-          <div class='highlight'><pre>    <span class="hljs-keyword">var</span> beamedNoteGroups = getBeamGroups();</pre></div>
+          <div class='highlight'><pre>    <span class="hljs-keyword">const</span> beamedNoteGroups = getBeamGroups();</pre></div>
         
       
         
         <p>Get the tuplets in order to format them accurately</p>
 
         
-          <div class='highlight'><pre>    <span class="hljs-keyword">var</span> tupletGroups = getTupletGroups();</pre></div>
+          <div class='highlight'><pre>    <span class="hljs-keyword">const</span> allTuplets = getTuplets();</pre></div>
         
       
         
         <p>Create a Vex.Flow.Beam from each group of notes to be beamed</p>
 
         
-          <div class='highlight'><pre>    <span class="hljs-keyword">var</span> beams = [];
-    beamedNoteGroups.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(group)</span>{</span>
-      <span class="hljs-keyword">var</span> beam = <span class="hljs-keyword">new</span> Beam(group);
+          <div class='highlight'><pre>    <span class="hljs-keyword">const</span> beams = [];
+    beamedNoteGroups.forEach(group =&gt; {
+      <span class="hljs-keyword">const</span> beam = <span class="hljs-keyword">new</span> Beam(group);
 
       <span class="hljs-keyword">if</span> (config.show_stemlets) {
         beam.render_options.show_stemlets = <span class="hljs-literal">true</span>;
@@ -939,33 +1031,46 @@ the rest of the API’s style - Silverwolf90 (Cyril)</p>
         <p>Reformat tuplets</p>
 
         
-          <div class='highlight'><pre>    tupletGroups.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(group)</span>{</span>
-      <span class="hljs-keyword">var</span> firstNote = group[<span class="hljs-number">0</span>];
-      <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i=<span class="hljs-number">0</span>; i&lt;group.length; ++i) {
-        <span class="hljs-keyword">if</span> (group[i].hasStem()) {
-          firstNote = group[i];
+          <div class='highlight'><pre>    allTuplets.forEach(tuplet =&gt; {</pre></div>
+        
+      
+        
+        <p>Set the tuplet location based on the stem direction</p>
+
+        
+          <div class='highlight'><pre>      <span class="hljs-keyword">const</span> direction = tuplet.notes[<span class="hljs-number">0</span>].stem_direction === Stem.DOWN ?
+        Tuplet.LOCATION_BOTTOM : Tuplet.LOCATION_TOP;
+      tuplet.setTupletLocation(direction);</pre></div>
+        
+      
+        
+        <p>If any of the notes in the tuplet are not beamed, draw a bracket.</p>
+
+        
+          <div class='highlight'><pre>      <span class="hljs-keyword">let</span> bracketed = <span class="hljs-literal">false</span>;
+      <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> i = <span class="hljs-number">0</span>; i &lt; tuplet.notes.length; i++) {
+        <span class="hljs-keyword">const</span> note = tuplet.notes[i];
+        <span class="hljs-keyword">if</span> (note.beam === <span class="hljs-literal">null</span>) {
+          bracketed = <span class="hljs-literal">true</span>;
           <span class="hljs-keyword">break</span>;
         }
       }
-
-      <span class="hljs-keyword">var</span> tuplet = firstNote.tuplet;
-
-      <span class="hljs-keyword">if</span> (firstNote.beam) tuplet.setBracketed(<span class="hljs-literal">false</span>);
-      <span class="hljs-keyword">if</span> (firstNote.stem_direction == Stem.DOWN) {
-        tuplet.setTupletLocation(Tuplet.LOCATION_BOTTOM);
-      }
+      tuplet.setBracketed(bracketed);
     });
 
     <span class="hljs-keyword">return</span> beams;
   }
 
-  constructor(notes, auto_stem) {
-    <span class="hljs-keyword">if</span> (!notes || notes == []) {
-      <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RuntimeError(<span class="hljs-string">"BadArguments"</span>, <span class="hljs-string">"No notes provided for beam."</span>);
+  <span class="hljs-keyword">constructor</span>(notes, auto_stem) {
+    <span class="hljs-keyword">super</span>();
+    <span class="hljs-keyword">this</span>.setAttribute(<span class="hljs-string">'type'</span>, <span class="hljs-string">'Beam'</span>);
+
+    <span class="hljs-keyword">if</span> (!notes || notes === []) {
+      <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RuntimeError(<span class="hljs-string">'BadArguments'</span>, <span class="hljs-string">'No notes provided for beam.'</span>);
     }
 
-    <span class="hljs-keyword">if</span> (notes.length == <span class="hljs-number">1</span>) {
-      <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RuntimeError(<span class="hljs-string">"BadArguments"</span>, <span class="hljs-string">"Too few notes for beam."</span>);
+    <span class="hljs-keyword">if</span> (notes.length === <span class="hljs-number">1</span>) {
+      <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RuntimeError(<span class="hljs-string">'BadArguments'</span>, <span class="hljs-string">'Too few notes for beam.'</span>);
     }</pre></div>
         
       
@@ -975,13 +1080,13 @@ the rest of the API’s style - Silverwolf90 (Cyril)</p>
         
           <div class='highlight'><pre>    <span class="hljs-keyword">this</span>.ticks = notes[<span class="hljs-number">0</span>].getIntrinsicTicks();
 
-    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.ticks &gt;= Flow.durationToTicks(<span class="hljs-string">"4"</span>)) {
-      <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RuntimeError(<span class="hljs-string">"BadArguments"</span>,
-          <span class="hljs-string">"Beams can only be applied to notes shorter than a quarter note."</span>);
+    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.ticks &gt;= Flow.durationToTicks(<span class="hljs-string">'4'</span>)) {
+      <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RuntimeError(<span class="hljs-string">'BadArguments'</span>,
+          <span class="hljs-string">'Beams can only be applied to notes shorter than a quarter note.'</span>);
     }
 
-    <span class="hljs-keyword">var</span> i; <span class="hljs-comment">// shared iterator</span>
-    <span class="hljs-keyword">var</span> note;
+    <span class="hljs-keyword">let</span> i; <span class="hljs-comment">// shared iterator</span>
+    <span class="hljs-keyword">let</span> note;
 
     <span class="hljs-keyword">this</span>.stem_direction = Stem.UP;
 
@@ -993,7 +1098,7 @@ the rest of the API’s style - Silverwolf90 (Cyril)</p>
       }
     }
 
-    <span class="hljs-keyword">var</span> stem_direction = <span class="hljs-keyword">this</span>.stem_direction;</pre></div>
+    <span class="hljs-keyword">let</span> stem_direction = <span class="hljs-keyword">this</span>.stem_direction;</pre></div>
         
       
         
@@ -1009,11 +1114,9 @@ the rest of the API’s style - Silverwolf90 (Cyril)</p>
         <p>Auto Stem TabNotes</p>
 
         
-          <div class='highlight'><pre>      <span class="hljs-keyword">var</span> stem_weight = notes.reduce(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(memo, note)</span> {</span>
-        <span class="hljs-keyword">return</span> memo + note.stem_direction;
-      }, <span class="hljs-number">0</span>);
+          <div class='highlight'><pre>      <span class="hljs-keyword">const</span> stem_weight = notes.reduce((memo, note) =&gt; memo + note.stem_direction, <span class="hljs-number">0</span>);
 
-      stem_direction = stem_weight &gt; -<span class="hljs-number">1</span> ? Stem.UP : Stem.DOWN;
+      stem_direction = stem_weight &gt; <span class="hljs-number">-1</span> ? Stem.UP : Stem.DOWN;
     }</pre></div>
         
       
@@ -1037,23 +1140,16 @@ the rest of the API’s style - Silverwolf90 (Cyril)</p>
     <span class="hljs-keyword">this</span>.render_options = {
       beam_width: <span class="hljs-number">5</span>,
       max_slope: <span class="hljs-number">0.25</span>,
-      min_slope: -<span class="hljs-number">0.25</span>,
+      min_slope: <span class="hljs-number">-0.25</span>,
       slope_iterations: <span class="hljs-number">20</span>,
       slope_cost: <span class="hljs-number">100</span>,
       show_stemlets: <span class="hljs-literal">false</span>,
       stemlet_extension: <span class="hljs-number">7</span>,
       partial_beam_length: <span class="hljs-number">10</span>,
       flat_beams: <span class="hljs-literal">false</span>,
-      min_flat_beam_offset: <span class="hljs-number">15</span>
+      min_flat_beam_offset: <span class="hljs-number">15</span>,
     };
   }</pre></div>
-        
-      
-        
-        <p>The the rendering <code>context</code></p>
-
-        
-          <div class='highlight'><pre>  setContext(context) { <span class="hljs-keyword">this</span>.context = context; <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>; }</pre></div>
         
       
         
@@ -1067,14 +1163,10 @@ the rest of the API’s style - Silverwolf90 (Cyril)</p>
         <p>Get the max number of beams in the set of notes</p>
 
         
-          <div class='highlight'><pre>  getBeamCount(){
-    <span class="hljs-keyword">var</span> beamCounts =  <span class="hljs-keyword">this</span>.notes.map(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(note)</span> {</span>
-      <span class="hljs-keyword">return</span> note.getGlyph().beam_count;
-    });
+          <div class='highlight'><pre>  getBeamCount() {
+    <span class="hljs-keyword">const</span> beamCounts =  <span class="hljs-keyword">this</span>.notes.map(note =&gt; note.getGlyph().beam_count);
 
-    <span class="hljs-keyword">var</span> maxBeamCount =  beamCounts.reduce(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(max, beamCount)</span> {</span>
-        <span class="hljs-keyword">return</span> beamCount &gt; max ? beamCount : max;
-    });
+    <span class="hljs-keyword">const</span> maxBeamCount =  beamCounts.reduce((max, beamCount) =&gt; beamCount &gt; max ? beamCount : max);
 
     <span class="hljs-keyword">return</span> maxBeamCount;
   }</pre></div>
@@ -1104,57 +1196,57 @@ the rest of the API’s style - Silverwolf90 (Cyril)</p>
 
         
           <div class='highlight'><pre>  calculateSlope() {
-    <span class="hljs-keyword">var</span> first_note = <span class="hljs-keyword">this</span>.notes[<span class="hljs-number">0</span>];
-    <span class="hljs-keyword">var</span> first_y_px = first_note.getStemExtents().topY;
-    <span class="hljs-keyword">var</span> first_x_px = first_note.getStemX();
+    <span class="hljs-keyword">const</span> {
+      notes,
+      stem_direction: stemDirection,
+      render_options: { max_slope, min_slope, slope_iterations, slope_cost },
+    } = <span class="hljs-keyword">this</span>;
 
-    <span class="hljs-keyword">var</span> inc = (<span class="hljs-keyword">this</span>.render_options.max_slope - <span class="hljs-keyword">this</span>.render_options.min_slope) /
-        <span class="hljs-keyword">this</span>.render_options.slope_iterations;
-    <span class="hljs-keyword">var</span> min_cost = <span class="hljs-built_in">Number</span>.MAX_VALUE;
-    <span class="hljs-keyword">var</span> best_slope = <span class="hljs-number">0</span>;
-    <span class="hljs-keyword">var</span> y_shift = <span class="hljs-number">0</span>;</pre></div>
+    <span class="hljs-keyword">const</span> firstNote = notes[<span class="hljs-number">0</span>];
+    <span class="hljs-keyword">const</span> initialSlope = getStemSlope(firstNote, notes[notes.length - <span class="hljs-number">1</span>]);
+    <span class="hljs-keyword">const</span> increment = (max_slope - min_slope) / slope_iterations;
+    <span class="hljs-keyword">let</span> minCost = <span class="hljs-built_in">Number</span>.MAX_VALUE;
+    <span class="hljs-keyword">let</span> bestSlope = <span class="hljs-number">0</span>;
+    <span class="hljs-keyword">let</span> yShift = <span class="hljs-number">0</span>;</pre></div>
         
       
         
         <p>iterate through slope values to find best weighted fit</p>
 
         
-          <div class='highlight'><pre>    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> slope = <span class="hljs-keyword">this</span>.render_options.min_slope;
-         slope &lt;= <span class="hljs-keyword">this</span>.render_options.max_slope;
-         slope += inc) {
-      <span class="hljs-keyword">var</span> total_stem_extension = <span class="hljs-number">0</span>;
-      <span class="hljs-keyword">var</span> y_shift_tmp = <span class="hljs-number">0</span>;</pre></div>
+          <div class='highlight'><pre>    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> slope = min_slope; slope &lt;= max_slope; slope += increment) {
+      <span class="hljs-keyword">let</span> totalStemExtension = <span class="hljs-number">0</span>;
+      <span class="hljs-keyword">let</span> yShiftTemp = <span class="hljs-number">0</span>;</pre></div>
         
       
         
         <p>iterate through notes, calculating y shift and stem extension</p>
 
         
-          <div class='highlight'><pre>      <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">1</span>; i &lt; <span class="hljs-keyword">this</span>.notes.length; ++i) {
-        <span class="hljs-keyword">var</span> note = <span class="hljs-keyword">this</span>.notes[i];
+          <div class='highlight'><pre>      <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> i = <span class="hljs-number">1</span>; i &lt; notes.length; ++i) {
+        <span class="hljs-keyword">const</span> note = notes[i];
+        <span class="hljs-keyword">const</span> adjustedStemTipY = <span class="hljs-keyword">this</span>.getSlopeY(
+          note.getStemX(),
+          firstNote.getStemX(),
+          firstNote.getStemExtents().topY,
+          slope
+        ) + yShiftTemp;
 
-        <span class="hljs-keyword">var</span> x_px = note.getStemX();
-        <span class="hljs-keyword">var</span> y_px = note.getStemExtents().topY;
-        <span class="hljs-keyword">var</span> slope_y_px = <span class="hljs-keyword">this</span>.getSlopeY(x_px, first_x_px, first_y_px, slope) + y_shift_tmp;</pre></div>
+        <span class="hljs-keyword">const</span> stemTipY = note.getStemExtents().topY;</pre></div>
         
       
         
         <p>beam needs to be shifted up to accommodate note</p>
 
         
-          <div class='highlight'><pre>        <span class="hljs-keyword">if</span> (y_px * <span class="hljs-keyword">this</span>.stem_direction &lt; slope_y_px * <span class="hljs-keyword">this</span>.stem_direction) {
-          <span class="hljs-keyword">var</span> diff =  <span class="hljs-built_in">Math</span>.abs(y_px - slope_y_px);
-          y_shift_tmp += diff * -<span class="hljs-keyword">this</span>.stem_direction;
-          total_stem_extension += (diff * i);
+          <div class='highlight'><pre>        <span class="hljs-keyword">if</span> (stemTipY * stemDirection &lt; adjustedStemTipY * stemDirection) {
+          <span class="hljs-keyword">const</span> diff = <span class="hljs-built_in">Math</span>.abs(stemTipY - adjustedStemTipY);
+          yShiftTemp += diff * -stemDirection;
+          totalStemExtension += diff * i;
         } <span class="hljs-keyword">else</span> { <span class="hljs-comment">// beam overshoots note, account for the difference</span>
-          total_stem_extension += (y_px - slope_y_px) * <span class="hljs-keyword">this</span>.stem_direction;
+          totalStemExtension += (stemTipY - adjustedStemTipY) * stemDirection;
         }
-
-      }
-
-      <span class="hljs-keyword">var</span> last_note = <span class="hljs-keyword">this</span>.notes[<span class="hljs-keyword">this</span>.notes.length - <span class="hljs-number">1</span>];
-      <span class="hljs-keyword">var</span> first_last_slope = ((last_note.getStemExtents().topY - first_y_px) /
-              (last_note.getStemX() - first_x_px));</pre></div>
+      }</pre></div>
         
       
         
@@ -1162,32 +1254,31 @@ the rest of the API’s style - Silverwolf90 (Cyril)</p>
 difference between the first and last notes’ stem length;</p>
 
         
-          <div class='highlight'><pre>      <span class="hljs-keyword">var</span> ideal_slope = first_last_slope / <span class="hljs-number">2</span>;
-      <span class="hljs-keyword">var</span> distance_from_ideal = <span class="hljs-built_in">Math</span>.abs(ideal_slope - slope);</pre></div>
+          <div class='highlight'><pre>      <span class="hljs-keyword">const</span> idealSlope = initialSlope / <span class="hljs-number">2</span>;
+      <span class="hljs-keyword">const</span> distanceFromIdeal = <span class="hljs-built_in">Math</span>.abs(idealSlope - slope);</pre></div>
         
       
         
-        <p>This tries to align most beams to something closer to the ideal_slope, but
+        <p>This tries to align most beams to something closer to the idealSlope, but
 doesn’t go crazy. To disable, set this.render_options.slope_cost = 0</p>
 
         
-          <div class='highlight'><pre>      <span class="hljs-keyword">var</span> cost = <span class="hljs-keyword">this</span>.render_options.slope_cost * distance_from_ideal +
-          <span class="hljs-built_in">Math</span>.abs(total_stem_extension);</pre></div>
+          <div class='highlight'><pre>      <span class="hljs-keyword">const</span> cost = slope_cost * distanceFromIdeal + <span class="hljs-built_in">Math</span>.abs(totalStemExtension);</pre></div>
         
       
         
         <p>update state when a more ideal slope is found</p>
 
         
-          <div class='highlight'><pre>      <span class="hljs-keyword">if</span> (cost &lt; min_cost) {
-        min_cost = cost;
-        best_slope = slope;
-        y_shift = y_shift_tmp;
+          <div class='highlight'><pre>      <span class="hljs-keyword">if</span> (cost &lt; minCost) {
+        minCost = cost;
+        bestSlope = slope;
+        yShift = yShiftTemp;
       }
     }
 
-    <span class="hljs-keyword">this</span>.slope = best_slope;
-    <span class="hljs-keyword">this</span>.y_shift = y_shift;
+    <span class="hljs-keyword">this</span>.slope = bestSlope;
+    <span class="hljs-keyword">this</span>.y_shift = yShift;
   }</pre></div>
         
       
@@ -1195,7 +1286,11 @@ doesn’t go crazy. To disable, set this.render_options.slope_cost = 0</p>
         <p>Calculate a slope and y-shift for flat beams</p>
 
         
-          <div class='highlight'><pre>  calculateFlatSlope() {</pre></div>
+          <div class='highlight'><pre>  calculateFlatSlope() {
+    <span class="hljs-keyword">const</span> {
+      notes, stem_direction,
+      render_options: { beam_width, min_flat_beam_offset, flat_beam_offset },
+    } = <span class="hljs-keyword">this</span>;</pre></div>
         
       
         
@@ -1203,20 +1298,20 @@ doesn’t go crazy. To disable, set this.render_options.slope_cost = 0</p>
 generate one based on the notes in this particular note group</p>
 
         
-          <div class='highlight'><pre>    <span class="hljs-keyword">var</span> total = <span class="hljs-number">0</span>;
-    <span class="hljs-keyword">var</span> extreme_y = <span class="hljs-number">0</span>;  <span class="hljs-comment">// Store the highest or lowest note here</span>
-    <span class="hljs-keyword">var</span> extreme_beam_count = <span class="hljs-number">0</span>;  <span class="hljs-comment">// The beam count of the extreme note</span>
-    <span class="hljs-keyword">var</span> current_extreme = <span class="hljs-number">0</span>;
-    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; <span class="hljs-keyword">this</span>.notes.length; i++) {</pre></div>
+          <div class='highlight'><pre>    <span class="hljs-keyword">let</span> total = <span class="hljs-number">0</span>;
+    <span class="hljs-keyword">let</span> extremeY = <span class="hljs-number">0</span>;  <span class="hljs-comment">// Store the highest or lowest note here</span>
+    <span class="hljs-keyword">let</span> extremeBeamCount = <span class="hljs-number">0</span>;  <span class="hljs-comment">// The beam count of the extreme note</span>
+    <span class="hljs-keyword">let</span> currentExtreme = <span class="hljs-number">0</span>;
+    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> i = <span class="hljs-number">0</span>; i &lt; notes.length; i++) {</pre></div>
         
       
         
         <p>Total up all of the offsets so we can average them out later</p>
 
         
-          <div class='highlight'><pre>      <span class="hljs-keyword">var</span> note = <span class="hljs-keyword">this</span>.notes[i];
-      <span class="hljs-keyword">var</span> top_y = note.getStemExtents().topY;
-      total += top_y;</pre></div>
+          <div class='highlight'><pre>      <span class="hljs-keyword">const</span> note = notes[i];
+      <span class="hljs-keyword">const</span> stemTipY = note.getStemExtents().topY;
+      total += stemTipY;</pre></div>
         
       
         
@@ -1224,14 +1319,16 @@ generate one based on the notes in this particular note group</p>
  offset can be adjusted in case the average isn’t enough</p>
 
         
-          <div class='highlight'><pre>      <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.stem_direction === Stem.DOWN &amp;&amp; current_extreme &lt; top_y) {
-        current_extreme = top_y;
-        extreme_y = note.getNoteHeadBounds().y_bottom;
-        extreme_beam_count = note.getBeamCount();
-      } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.stem_direction === Stem.UP &amp;&amp; (current_extreme === <span class="hljs-number">0</span> || current_extreme &gt; top_y)) {
-        current_extreme = top_y;
-        extreme_y = note.getNoteHeadBounds().y_top;
-        extreme_beam_count = note.getBeamCount();
+          <div class='highlight'><pre>      <span class="hljs-keyword">if</span> (stem_direction === Stem.DOWN &amp;&amp; currentExtreme &lt; stemTipY) {
+        currentExtreme = stemTipY;
+        extremeY = <span class="hljs-built_in">Math</span>.max(...note.getYs());
+        extremeBeamCount = note.getBeamCount();
+      } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (
+        stem_direction === Stem.UP &amp;&amp; (currentExtreme === <span class="hljs-number">0</span> || currentExtreme &gt; stemTipY)
+      ) {
+        currentExtreme = stemTipY;
+        extremeY = <span class="hljs-built_in">Math</span>.min(...note.getYs());
+        extremeBeamCount = note.getBeamCount();
       }
     }</pre></div>
         
@@ -1241,7 +1338,7 @@ generate one based on the notes in this particular note group</p>
  works for all of the notes in the beam group.</p>
 
         
-          <div class='highlight'><pre>    <span class="hljs-keyword">var</span> offset = total / <span class="hljs-keyword">this</span>.notes.length;</pre></div>
+          <div class='highlight'><pre>    <span class="hljs-keyword">let</span> offset = total / notes.length;</pre></div>
         
       
         
@@ -1251,15 +1348,16 @@ generate one based on the notes in this particular note group</p>
  the width of the beams.</p>
 
         
-          <div class='highlight'><pre>    <span class="hljs-keyword">var</span> beam_width = <span class="hljs-keyword">this</span>.render_options.beam_width * <span class="hljs-number">1.5</span>;
-    <span class="hljs-keyword">var</span> extreme_test = <span class="hljs-keyword">this</span>.render_options.min_flat_beam_offset + (extreme_beam_count * beam_width);
-    <span class="hljs-keyword">var</span> new_offset = extreme_y + (extreme_test * -<span class="hljs-keyword">this</span>.stem_direction);
-    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.stem_direction === Stem.DOWN &amp;&amp; offset &lt; new_offset) {
-      offset = extreme_y + extreme_test;
-    } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.stem_direction === Stem.UP &amp;&amp; offset &gt; new_offset) {
-      offset = extreme_y - extreme_test;
+          <div class='highlight'><pre>    <span class="hljs-keyword">const</span> beamWidth = beam_width * <span class="hljs-number">1.5</span>;
+    <span class="hljs-keyword">const</span> extremeTest = min_flat_beam_offset + (extremeBeamCount * beamWidth);
+    <span class="hljs-keyword">const</span> newOffset = extremeY + (extremeTest * -stem_direction);
+    <span class="hljs-keyword">if</span> (stem_direction === Stem.DOWN &amp;&amp; offset &lt; newOffset) {
+      offset = extremeY + extremeTest;
+    } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (stem_direction === Stem.UP &amp;&amp; offset &gt; newOffset) {
+      offset = extremeY - extremeTest;
     }
-    <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.render_options.flat_beam_offset) {</pre></div>
+
+    <span class="hljs-keyword">if</span> (!flat_beam_offset) {</pre></div>
         
       
         
@@ -1267,9 +1365,9 @@ generate one based on the notes in this particular note group</p>
 
         
           <div class='highlight'><pre>      <span class="hljs-keyword">this</span>.render_options.flat_beam_offset = offset;
-    } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.stem_direction === Stem.DOWN &amp;&amp; offset &gt; <span class="hljs-keyword">this</span>.render_options.flat_beam_offset) {
+    } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (stem_direction === Stem.DOWN &amp;&amp; offset &gt; flat_beam_offset) {
       <span class="hljs-keyword">this</span>.render_options.flat_beam_offset = offset;
-    } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.stem_direction === Stem.UP &amp;&amp; offset &lt; <span class="hljs-keyword">this</span>.render_options.flat_beam_offset) {
+    } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (stem_direction === Stem.UP &amp;&amp; offset &lt; flat_beam_offset) {
       <span class="hljs-keyword">this</span>.render_options.flat_beam_offset = offset;
     }</pre></div>
         
@@ -1288,99 +1386,52 @@ generate one based on the notes in this particular note group</p>
 extends into the beams.</p>
 
         
-          <div class='highlight'><pre>  applyStemExtensions(){
-    <span class="hljs-keyword">var</span> first_note = <span class="hljs-keyword">this</span>.notes[<span class="hljs-number">0</span>];
-    <span class="hljs-keyword">var</span> first_y_px = first_note.getStemExtents().topY;</pre></div>
+          <div class='highlight'><pre>  applyStemExtensions() {
+    <span class="hljs-keyword">const</span> {
+      notes, slope, y_shift, stem_direction, beam_count,
+      render_options: {
+        show_stemlets,
+        flat_beam_offset,
+        flat_beams,
+        stemlet_extension,
+        beam_width,
+      },
+    } = <span class="hljs-keyword">this</span>;
+
+    <span class="hljs-keyword">const</span> firstNote = notes[<span class="hljs-number">0</span>];
+    <span class="hljs-keyword">let</span> firstStemTipY = firstNote.getStemExtents().topY;</pre></div>
         
       
         
-        <p>If rendering flat beams, and an offset exists, set the y-coordinate to
+        <p>If rendering flat beams, and an offset exists, set the y-coordinat`e to
  the offset so the stems all end at the beam offset.</p>
 
         
-          <div class='highlight'><pre>    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.render_options.flat_beams &amp;&amp; <span class="hljs-keyword">this</span>.render_options.flat_beam_offset) {
-      first_y_px = <span class="hljs-keyword">this</span>.render_options.flat_beam_offset;
+          <div class='highlight'><pre>    <span class="hljs-keyword">if</span> (flat_beams &amp;&amp; flat_beam_offset) {
+      firstStemTipY = flat_beam_offset;
     }
-    <span class="hljs-keyword">var</span> first_x_px = first_note.getStemX();
+    <span class="hljs-keyword">const</span> firstStemX = firstNote.getStemX();
 
-    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; <span class="hljs-keyword">this</span>.notes.length; ++i) {
-      <span class="hljs-keyword">var</span> note = <span class="hljs-keyword">this</span>.notes[i];
+    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> i = <span class="hljs-number">0</span>; i &lt; notes.length; ++i) {
+      <span class="hljs-keyword">const</span> note = notes[i];
+      <span class="hljs-keyword">const</span> stemX = note.getStemX();
+      <span class="hljs-keyword">const</span> { topY: stemTipY } = note.getStemExtents();
+      <span class="hljs-keyword">const</span> beamedStemTipY = <span class="hljs-keyword">this</span>.getSlopeY(stemX, firstStemX, firstStemTipY, slope) + y_shift;
+      <span class="hljs-keyword">const</span> preBeamExtension = note.getStem().getExtension();
+      <span class="hljs-keyword">const</span> beamExtension = stem_direction === Stem.UP
+        ? stemTipY - beamedStemTipY
+        : beamedStemTipY - stemTipY;
 
-      <span class="hljs-keyword">var</span> x_px = note.getStemX();
-      <span class="hljs-keyword">var</span> y_extents = note.getStemExtents();
-      <span class="hljs-keyword">var</span> base_y_px = y_extents.baseY;
-      <span class="hljs-keyword">var</span> top_y_px = y_extents.topY;</pre></div>
-        
-      
-        
-        <p>If flat beams, set the top of the stem to the offset, rather than
- relying on the topY value from above.</p>
+      note.stem.setExtension(preBeamExtension + beamExtension);
+      note.stem.renderHeightAdjustment = -Stem.WIDTH / <span class="hljs-number">2</span>;
 
-        
-          <div class='highlight'><pre>      <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.render_options.flat_beams) {
-        top_y_px = first_y_px;
-      }</pre></div>
-        
-      
-        
-        <p>For harmonic note heads, shorten stem length by 3 pixels</p>
-
-        
-          <div class='highlight'><pre>      base_y_px += <span class="hljs-keyword">this</span>.stem_direction * note.glyph.stem_offset;</pre></div>
-        
-      
-        
-        <p>Don’t go all the way to the top (for thicker stems)</p>
-
-        
-          <div class='highlight'><pre>      <span class="hljs-keyword">var</span> y_displacement = Flow.STEM_WIDTH;
-
-      <span class="hljs-keyword">if</span> (!note.hasStem()) {
-        <span class="hljs-keyword">if</span> (note.isRest() &amp;&amp; <span class="hljs-keyword">this</span>.render_options.show_stemlets) {
-          <span class="hljs-keyword">var</span> centerGlyphX = note.getCenterGlyphX();
-
-          <span class="hljs-keyword">var</span> width = <span class="hljs-keyword">this</span>.render_options.beam_width;
-          <span class="hljs-keyword">var</span> total_width = ((<span class="hljs-keyword">this</span>.beam_count - <span class="hljs-number">1</span>)* width * <span class="hljs-number">1.5</span>) + width;
-
-          <span class="hljs-keyword">var</span> stemlet_height = (total_width - y_displacement +
-            <span class="hljs-keyword">this</span>.render_options.stemlet_extension);
-
-          <span class="hljs-keyword">var</span> beam_y = <span class="hljs-keyword">this</span>.getSlopeY(centerGlyphX, first_x_px,
-                          first_y_px, <span class="hljs-keyword">this</span>.slope) + <span class="hljs-keyword">this</span>.y_shift;
-          <span class="hljs-keyword">var</span> start_y = beam_y + (Stem.HEIGHT * <span class="hljs-keyword">this</span>.stem_direction);
-          <span class="hljs-keyword">var</span> end_y = beam_y + (stemlet_height * <span class="hljs-keyword">this</span>.stem_direction);</pre></div>
-        
-      
-        
-        <p>Draw Stemlet</p>
-
-        
-          <div class='highlight'><pre>          note.setStem(<span class="hljs-keyword">new</span> Stem({
-            x_begin: centerGlyphX,
-            x_end: centerGlyphX,
-            y_bottom: <span class="hljs-keyword">this</span>.stem_direction === Stem.UP ? end_y : start_y,
-            y_top: <span class="hljs-keyword">this</span>.stem_direction === Stem.UP ? start_y : end_y,
-            y_extend: y_displacement,
-            stem_extension: -<span class="hljs-number">1</span>, <span class="hljs-comment">// To avoid protruding through the beam</span>
-            stem_direction: <span class="hljs-keyword">this</span>.stem_direction
-          }));
-        }
-
-        <span class="hljs-keyword">continue</span>;
+      <span class="hljs-keyword">if</span> (note.isRest() &amp;&amp; show_stemlets) {
+        <span class="hljs-keyword">const</span> beamWidth = beam_width;
+        <span class="hljs-keyword">const</span> totalBeamWidth = ((beam_count - <span class="hljs-number">1</span>) * beamWidth * <span class="hljs-number">1.5</span>) + beamWidth;
+        note.stem
+          .setVisibility(<span class="hljs-literal">true</span>)
+          .setStemlet(<span class="hljs-literal">true</span>, totalBeamWidth + stemlet_extension);
       }
-
-      <span class="hljs-keyword">var</span> slope_y = <span class="hljs-keyword">this</span>.getSlopeY(x_px, first_x_px, first_y_px,
-                      <span class="hljs-keyword">this</span>.slope) + <span class="hljs-keyword">this</span>.y_shift;
-
-      note.setStem(<span class="hljs-keyword">new</span> Stem({
-        x_begin: x_px - (Flow.STEM_WIDTH/<span class="hljs-number">2</span>),
-        x_end: x_px,
-        y_top: <span class="hljs-keyword">this</span>.stem_direction === Stem.UP ? top_y_px : base_y_px,
-        y_bottom: <span class="hljs-keyword">this</span>.stem_direction === Stem.UP ? base_y_px :  top_y_px,
-        y_extend: y_displacement,
-        stem_extension: <span class="hljs-built_in">Math</span>.abs(top_y_px - slope_y) - Stem.HEIGHT - <span class="hljs-number">1</span>,
-        stem_direction: <span class="hljs-keyword">this</span>.stem_direction
-      }));
     }
   }</pre></div>
         
@@ -1390,37 +1441,37 @@ extends into the beams.</p>
 
         
           <div class='highlight'><pre>  getBeamLines(duration) {
-    <span class="hljs-keyword">var</span> beam_lines = [];
-    <span class="hljs-keyword">var</span> beam_started = <span class="hljs-literal">false</span>;
-    <span class="hljs-keyword">var</span> current_beam = <span class="hljs-literal">null</span>;
-    <span class="hljs-keyword">var</span> partial_beam_length = <span class="hljs-keyword">this</span>.render_options.partial_beam_length;
-    <span class="hljs-keyword">var</span> previous_should_break = <span class="hljs-literal">false</span>;
-    <span class="hljs-keyword">var</span> tick_tally = <span class="hljs-number">0</span>;
-    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; <span class="hljs-keyword">this</span>.notes.length; ++i) {
-      <span class="hljs-keyword">var</span> note = <span class="hljs-keyword">this</span>.notes[i];</pre></div>
+    <span class="hljs-keyword">const</span> beam_lines = [];
+    <span class="hljs-keyword">let</span> beam_started = <span class="hljs-literal">false</span>;
+    <span class="hljs-keyword">let</span> current_beam = <span class="hljs-literal">null</span>;
+    <span class="hljs-keyword">const</span> partial_beam_length = <span class="hljs-keyword">this</span>.render_options.partial_beam_length;
+    <span class="hljs-keyword">let</span> previous_should_break = <span class="hljs-literal">false</span>;
+    <span class="hljs-keyword">let</span> tick_tally = <span class="hljs-number">0</span>;
+    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> i = <span class="hljs-number">0</span>; i &lt; <span class="hljs-keyword">this</span>.notes.length; ++i) {
+      <span class="hljs-keyword">const</span> note = <span class="hljs-keyword">this</span>.notes[i];</pre></div>
         
       
         
         <p>See if we need to break secondary beams on this note.</p>
 
         
-          <div class='highlight'><pre>      <span class="hljs-keyword">var</span> ticks = note.getIntrinsicTicks();
+          <div class='highlight'><pre>      <span class="hljs-keyword">const</span> ticks = note.ticks.value();
       tick_tally += ticks;
-      <span class="hljs-keyword">var</span> should_break = <span class="hljs-literal">false</span>;</pre></div>
+      <span class="hljs-keyword">let</span> should_break = <span class="hljs-literal">false</span>;</pre></div>
         
       
         
         <p>8th note beams are always drawn.</p>
 
         
-          <div class='highlight'><pre>      <span class="hljs-keyword">if</span> (<span class="hljs-built_in">parseInt</span>(duration) &gt;= <span class="hljs-number">8</span>) {</pre></div>
+          <div class='highlight'><pre>      <span class="hljs-keyword">if</span> (<span class="hljs-built_in">parseInt</span>(duration, <span class="hljs-number">10</span>) &gt;= <span class="hljs-number">8</span>) {</pre></div>
         
       
         
         <p>First, check to see if any indices were set up through breakSecondaryAt()</p>
 
         
-          <div class='highlight'><pre>        should_break = <span class="hljs-keyword">this</span>.break_on_indices.indexOf(i) !== -<span class="hljs-number">1</span>;</pre></div>
+          <div class='highlight'><pre>        should_break = <span class="hljs-keyword">this</span>.break_on_indices.indexOf(i) !== <span class="hljs-number">-1</span>;</pre></div>
         
       
         
@@ -1428,13 +1479,15 @@ extends into the beams.</p>
  handle that as well.</p>
 
         
-          <div class='highlight'><pre>        <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.render_options.secondary_break_ticks &amp;&amp; tick_tally &gt;= <span class="hljs-keyword">this</span>.render_options.secondary_break_ticks) {
+          <div class='highlight'><pre>        <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.render_options.secondary_break_ticks &amp;&amp; tick_tally &gt;=
+            <span class="hljs-keyword">this</span>.render_options.secondary_break_ticks) {
           tick_tally = <span class="hljs-number">0</span>;
           should_break = <span class="hljs-literal">true</span>;
         }
       }
-      <span class="hljs-keyword">var</span> note_gets_beam = ticks &lt; Flow.durationToTicks(duration);
-      <span class="hljs-keyword">var</span> stem_x = note.isRest() ? note.getCenterGlyphX() : note.getStemX();</pre></div>
+      <span class="hljs-keyword">const</span> note_gets_beam = note.getIntrinsicTicks() &lt; Flow.durationToTicks(duration);
+
+      <span class="hljs-keyword">const</span> stem_x = note.getStemX() - (Stem.WIDTH / <span class="hljs-number">2</span>);</pre></div>
         
       
         
@@ -1442,8 +1495,8 @@ extends into the beams.</p>
  level. This will help to inform the partial beam logic below.</p>
 
         
-          <div class='highlight'><pre>      <span class="hljs-keyword">var</span> next_note = <span class="hljs-keyword">this</span>.notes[i + <span class="hljs-number">1</span>];
-      <span class="hljs-keyword">var</span> beam_next = next_note &amp;&amp; next_note.getIntrinsicTicks() &lt; Flow.durationToTicks(duration);
+          <div class='highlight'><pre>      <span class="hljs-keyword">const</span> next_note = <span class="hljs-keyword">this</span>.notes[i + <span class="hljs-number">1</span>];
+      <span class="hljs-keyword">const</span> beam_next = next_note &amp;&amp; next_note.getIntrinsicTicks() &lt; Flow.durationToTicks(duration);
       <span class="hljs-keyword">if</span> (note_gets_beam) {</pre></div>
         
       
@@ -1496,7 +1549,7 @@ extends into the beams.</p>
         <p>The next note doesn’t get a beam. Draw a partial.</p>
 
         
-          <div class='highlight'><pre>            <span class="hljs-keyword">if</span>((previous_should_break || i === <span class="hljs-number">0</span>) &amp;&amp; next_note) {</pre></div>
+          <div class='highlight'><pre>            <span class="hljs-keyword">if</span> ((previous_should_break || i === <span class="hljs-number">0</span>) &amp;&amp; next_note) {</pre></div>
         
       
         
@@ -1551,7 +1604,7 @@ extends into the beams.</p>
         <p>Add a partial beam pointing left if this is the last note in the group</p>
 
         
-          <div class='highlight'><pre>    <span class="hljs-keyword">var</span> last_beam = beam_lines[beam_lines.length - <span class="hljs-number">1</span>];
+          <div class='highlight'><pre>    <span class="hljs-keyword">const</span> last_beam = beam_lines[beam_lines.length - <span class="hljs-number">1</span>];
     <span class="hljs-keyword">if</span> (last_beam &amp;&amp; last_beam.end === <span class="hljs-literal">null</span>) {
       last_beam.end = last_beam.start - partial_beam_length;
     }
@@ -1564,7 +1617,7 @@ extends into the beams.</p>
 
         
           <div class='highlight'><pre>  drawStems() {
-    <span class="hljs-keyword">this</span>.notes.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(note)</span> {</span>
+    <span class="hljs-keyword">this</span>.notes.forEach(note =&gt; {
       <span class="hljs-keyword">if</span> (note.getStem()) {
         note.getStem().setContext(<span class="hljs-keyword">this</span>.context).draw();
       }
@@ -1577,16 +1630,14 @@ extends into the beams.</p>
 
         
           <div class='highlight'><pre>  drawBeamLines() {
-    <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.context) <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RERR(<span class="hljs-string">"NoCanvasContext"</span>,
-        <span class="hljs-string">"Can't draw without a canvas context."</span>);
+    <span class="hljs-keyword">this</span>.checkContext();
 
-    <span class="hljs-keyword">var</span> valid_beam_durations = [<span class="hljs-string">"4"</span>, <span class="hljs-string">"8"</span>, <span class="hljs-string">"16"</span>, <span class="hljs-string">"32"</span>, <span class="hljs-string">"64"</span>];
+    <span class="hljs-keyword">const</span> valid_beam_durations = [<span class="hljs-string">'4'</span>, <span class="hljs-string">'8'</span>, <span class="hljs-string">'16'</span>, <span class="hljs-string">'32'</span>, <span class="hljs-string">'64'</span>];
 
-    <span class="hljs-keyword">var</span> first_note = <span class="hljs-keyword">this</span>.notes[<span class="hljs-number">0</span>];
-    <span class="hljs-keyword">var</span> last_note = <span class="hljs-keyword">this</span>.notes[<span class="hljs-keyword">this</span>.notes.length - <span class="hljs-number">1</span>];
+    <span class="hljs-keyword">const</span> firstNote = <span class="hljs-keyword">this</span>.notes[<span class="hljs-number">0</span>];
 
-    <span class="hljs-keyword">var</span> first_y_px = first_note.getStemExtents().topY;
-    <span class="hljs-keyword">var</span> last_y_px = last_note.getStemExtents().topY;</pre></div>
+    <span class="hljs-keyword">const</span> firstStemTipY = firstNote.getStemExtents().topY;
+    <span class="hljs-keyword">let</span> beamY = firstStemTipY;</pre></div>
         
       
         
@@ -1595,43 +1646,39 @@ extends into the beams.</p>
 
         
           <div class='highlight'><pre>    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.render_options.flat_beams &amp;&amp; <span class="hljs-keyword">this</span>.render_options.flat_beam_offset) {
-      first_y_px = <span class="hljs-keyword">this</span>.render_options.flat_beam_offset;
-      last_y_px = <span class="hljs-keyword">this</span>.render_options.flat_beam_offset;
+      beamY = <span class="hljs-keyword">this</span>.render_options.flat_beam_offset;
     }
 
-    <span class="hljs-keyword">var</span> first_x_px = first_note.getStemX();
-
-    <span class="hljs-keyword">var</span> beam_width = <span class="hljs-keyword">this</span>.render_options.beam_width * <span class="hljs-keyword">this</span>.stem_direction;</pre></div>
+    <span class="hljs-keyword">const</span> firstStemX = firstNote.getStemX();
+    <span class="hljs-keyword">const</span> beamThickness = <span class="hljs-keyword">this</span>.render_options.beam_width * <span class="hljs-keyword">this</span>.stem_direction;</pre></div>
         
       
         
         <p>Draw the beams.</p>
 
         
-          <div class='highlight'><pre>    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; valid_beam_durations.length; ++i) {
-      <span class="hljs-keyword">var</span> duration = valid_beam_durations[i];
-      <span class="hljs-keyword">var</span> beam_lines = <span class="hljs-keyword">this</span>.getBeamLines(duration);
+          <div class='highlight'><pre>    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> i = <span class="hljs-number">0</span>; i &lt; valid_beam_durations.length; ++i) {
+      <span class="hljs-keyword">const</span> duration = valid_beam_durations[i];
+      <span class="hljs-keyword">const</span> beamLines = <span class="hljs-keyword">this</span>.getBeamLines(duration);
 
-      <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> j = <span class="hljs-number">0</span>; j &lt; beam_lines.length; ++j) {
-        <span class="hljs-keyword">var</span> beam_line = beam_lines[j];
-        <span class="hljs-keyword">var</span> first_x = beam_line.start - (<span class="hljs-keyword">this</span>.stem_direction == Stem.DOWN ? Flow.STEM_WIDTH/<span class="hljs-number">2</span>:<span class="hljs-number">0</span>);
-        <span class="hljs-keyword">var</span> first_y = <span class="hljs-keyword">this</span>.getSlopeY(first_x, first_x_px, first_y_px, <span class="hljs-keyword">this</span>.slope);
+      <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> j = <span class="hljs-number">0</span>; j &lt; beamLines.length; ++j) {
+        <span class="hljs-keyword">const</span> beam_line = beamLines[j];
+        <span class="hljs-keyword">const</span> startBeamX = beam_line.start;
 
-        <span class="hljs-keyword">var</span> last_x = beam_line.end +
-          (<span class="hljs-keyword">this</span>.stem_direction == <span class="hljs-number">1</span> ? (Flow.STEM_WIDTH/<span class="hljs-number">3</span>):(-Flow.STEM_WIDTH/<span class="hljs-number">3</span>));
-        <span class="hljs-keyword">var</span> last_y = <span class="hljs-keyword">this</span>.getSlopeY(last_x, first_x_px, first_y_px, <span class="hljs-keyword">this</span>.slope);
+        <span class="hljs-keyword">const</span> startBeamY = <span class="hljs-keyword">this</span>.getSlopeY(startBeamX, firstStemX, beamY, <span class="hljs-keyword">this</span>.slope);
+        <span class="hljs-keyword">const</span> lastBeamX = beam_line.end;
+        <span class="hljs-keyword">const</span> lastBeamY = <span class="hljs-keyword">this</span>.getSlopeY(lastBeamX, firstStemX, beamY, <span class="hljs-keyword">this</span>.slope);
 
         <span class="hljs-keyword">this</span>.context.beginPath();
-        <span class="hljs-keyword">this</span>.context.moveTo(first_x, first_y + <span class="hljs-keyword">this</span>.y_shift);
-        <span class="hljs-keyword">this</span>.context.lineTo(first_x, first_y + beam_width + <span class="hljs-keyword">this</span>.y_shift);
-        <span class="hljs-keyword">this</span>.context.lineTo(last_x + <span class="hljs-number">1</span>, last_y + beam_width + <span class="hljs-keyword">this</span>.y_shift);
-        <span class="hljs-keyword">this</span>.context.lineTo(last_x + <span class="hljs-number">1</span>, last_y + <span class="hljs-keyword">this</span>.y_shift);
+        <span class="hljs-keyword">this</span>.context.moveTo(startBeamX, startBeamY);
+        <span class="hljs-keyword">this</span>.context.lineTo(startBeamX, startBeamY + beamThickness);
+        <span class="hljs-keyword">this</span>.context.lineTo(lastBeamX + <span class="hljs-number">1</span>, lastBeamY + beamThickness);
+        <span class="hljs-keyword">this</span>.context.lineTo(lastBeamX + <span class="hljs-number">1</span>, lastBeamY);
         <span class="hljs-keyword">this</span>.context.closePath();
         <span class="hljs-keyword">this</span>.context.fill();
       }
 
-      first_y_px += beam_width * <span class="hljs-number">1.5</span>;
-      last_y_px += beam_width * <span class="hljs-number">1.5</span>;
+      beamY += beamThickness * <span class="hljs-number">1.5</span>;
     }
   }</pre></div>
         
@@ -1657,7 +1704,7 @@ been formatted and have staves</p>
         <p>Calculate a smart slope if we’re not forcing the beams to be flat.</p>
 
         
-          <div class='highlight'><pre>    <span class="hljs-keyword">if</span>(<span class="hljs-keyword">this</span>.render_options.flat_beams) {
+          <div class='highlight'><pre>    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.notes[<span class="hljs-number">0</span>].getCategory() === <span class="hljs-string">'tabnotes'</span> || <span class="hljs-keyword">this</span>.render_options.flat_beams) {
       <span class="hljs-keyword">this</span>.calculateFlatSlope();
     } <span class="hljs-keyword">else</span> {
       <span class="hljs-keyword">this</span>.calculateSlope();
@@ -1673,19 +1720,15 @@ been formatted and have staves</p>
 
         
           <div class='highlight'><pre>  draw() {
-    <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.context) <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RERR(<span class="hljs-string">"NoCanvasContext"</span>,
-        <span class="hljs-string">"Can't draw without a canvas context."</span>);
-
+    <span class="hljs-keyword">this</span>.checkContext();
+    <span class="hljs-keyword">this</span>.setRendered();
     <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.unbeamable) <span class="hljs-keyword">return</span>;
 
     <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.postFormatted) {
       <span class="hljs-keyword">this</span>.postFormat();
     }
-
     <span class="hljs-keyword">this</span>.drawStems();
     <span class="hljs-keyword">this</span>.drawBeamLines();
-
-    <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
   }
 }</pre></div>
         

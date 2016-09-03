@@ -121,6 +121,27 @@
               
                 
                 <li>
+                  <a class="source" href="easyscore.html">
+                    easyscore.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="element.html">
+                    element.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="factory.html">
+                    factory.js
+                  </a>
+                </li>
+              
+                
+                <li>
                   <a class="source" href="formatter.html">
                     formatter.js
                   </a>
@@ -165,6 +186,13 @@
                 <li>
                   <a class="source" href="gracenotegroup.html">
                     gracenotegroup.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="gracetabnote.html">
+                    gracetabnote.js
                   </a>
                 </li>
               
@@ -226,8 +254,22 @@
               
                 
                 <li>
+                  <a class="source" href="notesubgroup.html">
+                    notesubgroup.js
+                  </a>
+                </li>
+              
+                
+                <li>
                   <a class="source" href="ornament.html">
                     ornament.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="parser.html">
+                    parser.js
                   </a>
                 </li>
               
@@ -242,6 +284,13 @@
                 <li>
                   <a class="source" href="raphaelcontext.html">
                     raphaelcontext.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="registry.html">
+                    registry.js
                   </a>
                 </li>
               
@@ -380,6 +429,13 @@
               
                 
                 <li>
+                  <a class="source" href="system.html">
+                    system.js
+                  </a>
+                </li>
+              
+                
+                <li>
                   <a class="source" href="tables.html">
                     tables.js
                   </a>
@@ -499,6 +555,13 @@
               
                 
                 <li>
+                  <a class="source" href="vibratobracket.html">
+                    vibratobracket.js
+                  </a>
+                </li>
+              
+                
+                <li>
                   <a class="source" href="voice.html">
                     voice.js
                   </a>
@@ -526,17 +589,17 @@ Examples of this would be such as dynamics, lyrics, chord changes, etc.</p>
 
         
           <div class='highlight'><pre>
-import { Vex } from <span class="hljs-string">'./vex'</span>;
-import { Flow } from <span class="hljs-string">'./tables'</span>;
-import { Note } from <span class="hljs-string">'./note'</span>;
-import { Glyph } from <span class="hljs-string">'./glyph'</span>;
+<span class="hljs-keyword">import</span> { Vex } <span class="hljs-keyword">from</span> <span class="hljs-string">'./vex'</span>;
+<span class="hljs-keyword">import</span> { Flow } <span class="hljs-keyword">from</span> <span class="hljs-string">'./tables'</span>;
+<span class="hljs-keyword">import</span> { Note } <span class="hljs-keyword">from</span> <span class="hljs-string">'./note'</span>;
+<span class="hljs-keyword">import</span> { Glyph } <span class="hljs-keyword">from</span> <span class="hljs-string">'./glyph'</span>;
 
-export <span class="hljs-keyword">class</span> TextNote extends Note {
-  static get Justification() {
+<span class="hljs-keyword">export</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">TextNote</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">Note</span> </span>{
+  <span class="hljs-keyword">static</span> get Justification() {
     <span class="hljs-keyword">return</span> {
       LEFT: <span class="hljs-number">1</span>,
       CENTER: <span class="hljs-number">2</span>,
-      RIGHT: <span class="hljs-number">3</span>
+      RIGHT: <span class="hljs-number">3</span>,
     };
   }</pre></div>
         
@@ -545,13 +608,13 @@ export <span class="hljs-keyword">class</span> TextNote extends Note {
         <p>Glyph data</p>
 
         
-          <div class='highlight'><pre>  static get GLYPHS() {
+          <div class='highlight'><pre>  <span class="hljs-keyword">static</span> get GLYPHS() {
     <span class="hljs-keyword">return</span> {
-      <span class="hljs-string">"segno"</span>: {
-        code: <span class="hljs-string">"v8c"</span>,
+      <span class="hljs-string">'segno'</span>: {
+        code: <span class="hljs-string">'v8c'</span>,
         point: <span class="hljs-number">40</span>,
         x_shift: <span class="hljs-number">0</span>,
-        y_shift: -<span class="hljs-number">10</span></pre></div>
+        y_shift: <span class="hljs-number">-10</span>,</pre></div>
         
       
         
@@ -559,11 +622,11 @@ export <span class="hljs-keyword">class</span> TextNote extends Note {
 
         
           <div class='highlight'><pre>      },
-      <span class="hljs-string">"tr"</span>: {
-        code: <span class="hljs-string">"v1f"</span>,
+      <span class="hljs-string">'tr'</span>: {
+        code: <span class="hljs-string">'v1f'</span>,
         point: <span class="hljs-number">40</span>,
         x_shift: <span class="hljs-number">0</span>,
-        y_shift: <span class="hljs-number">0</span></pre></div>
+        y_shift: <span class="hljs-number">0</span>,</pre></div>
         
       
         
@@ -571,11 +634,11 @@ export <span class="hljs-keyword">class</span> TextNote extends Note {
 
         
           <div class='highlight'><pre>      },
-      <span class="hljs-string">"mordent_upper"</span>: {
-        code: <span class="hljs-string">"v1e"</span>,
+      <span class="hljs-string">'mordent_upper'</span>: {
+        code: <span class="hljs-string">'v1e'</span>,
         point: <span class="hljs-number">40</span>,
         x_shift: <span class="hljs-number">0</span>,
-        y_shift: <span class="hljs-number">0</span></pre></div>
+        y_shift: <span class="hljs-number">0</span>,</pre></div>
         
       
         
@@ -583,11 +646,11 @@ export <span class="hljs-keyword">class</span> TextNote extends Note {
 
         
           <div class='highlight'><pre>      },
-      <span class="hljs-string">"mordent_lower"</span>: {
-        code: <span class="hljs-string">"v45"</span>,
+      <span class="hljs-string">'mordent_lower'</span>: {
+        code: <span class="hljs-string">'v45'</span>,
         point: <span class="hljs-number">40</span>,
         x_shift: <span class="hljs-number">0</span>,
-        y_shift: <span class="hljs-number">0</span></pre></div>
+        y_shift: <span class="hljs-number">0</span>,</pre></div>
         
       
         
@@ -595,11 +658,11 @@ export <span class="hljs-keyword">class</span> TextNote extends Note {
 
         
           <div class='highlight'><pre>      },
-      <span class="hljs-string">"f"</span>: {
-        code: <span class="hljs-string">"vba"</span>,
+      <span class="hljs-string">'f'</span>: {
+        code: <span class="hljs-string">'vba'</span>,
         point: <span class="hljs-number">40</span>,
         x_shift: <span class="hljs-number">0</span>,
-        y_shift: <span class="hljs-number">0</span></pre></div>
+        y_shift: <span class="hljs-number">0</span>,</pre></div>
         
       
         
@@ -607,11 +670,11 @@ export <span class="hljs-keyword">class</span> TextNote extends Note {
 
         
           <div class='highlight'><pre>      },
-      <span class="hljs-string">"p"</span>: {
-        code: <span class="hljs-string">"vbf"</span>,
+      <span class="hljs-string">'p'</span>: {
+        code: <span class="hljs-string">'vbf'</span>,
         point: <span class="hljs-number">40</span>,
         x_shift: <span class="hljs-number">0</span>,
-        y_shift: <span class="hljs-number">0</span></pre></div>
+        y_shift: <span class="hljs-number">0</span>,</pre></div>
         
       
         
@@ -619,11 +682,11 @@ export <span class="hljs-keyword">class</span> TextNote extends Note {
 
         
           <div class='highlight'><pre>      },
-      <span class="hljs-string">"m"</span>: {
-        code: <span class="hljs-string">"v62"</span>,
+      <span class="hljs-string">'m'</span>: {
+        code: <span class="hljs-string">'v62'</span>,
         point: <span class="hljs-number">40</span>,
         x_shift: <span class="hljs-number">0</span>,
-        y_shift: <span class="hljs-number">0</span></pre></div>
+        y_shift: <span class="hljs-number">0</span>,</pre></div>
         
       
         
@@ -631,11 +694,11 @@ export <span class="hljs-keyword">class</span> TextNote extends Note {
 
         
           <div class='highlight'><pre>      },
-      <span class="hljs-string">"s"</span>: {
-        code: <span class="hljs-string">"v4a"</span>,
+      <span class="hljs-string">'s'</span>: {
+        code: <span class="hljs-string">'v4a'</span>,
         point: <span class="hljs-number">40</span>,
         x_shift: <span class="hljs-number">0</span>,
-        y_shift: <span class="hljs-number">0</span></pre></div>
+        y_shift: <span class="hljs-number">0</span>,</pre></div>
         
       
         
@@ -643,11 +706,11 @@ export <span class="hljs-keyword">class</span> TextNote extends Note {
 
         
           <div class='highlight'><pre>      },
-      <span class="hljs-string">"z"</span>: {
-        code: <span class="hljs-string">"v80"</span>,
+      <span class="hljs-string">'z'</span>: {
+        code: <span class="hljs-string">'v80'</span>,
         point: <span class="hljs-number">40</span>,
         x_shift: <span class="hljs-number">0</span>,
-        y_shift: <span class="hljs-number">0</span></pre></div>
+        y_shift: <span class="hljs-number">0</span>,</pre></div>
         
       
         
@@ -655,11 +718,11 @@ export <span class="hljs-keyword">class</span> TextNote extends Note {
 
         
           <div class='highlight'><pre>      },
-      <span class="hljs-string">"coda"</span>: {
-        code: <span class="hljs-string">"v4d"</span>,
+      <span class="hljs-string">'coda'</span>: {
+        code: <span class="hljs-string">'v4d'</span>,
         point: <span class="hljs-number">40</span>,
         x_shift: <span class="hljs-number">0</span>,
-        y_shift: -<span class="hljs-number">8</span></pre></div>
+        y_shift: <span class="hljs-number">-8</span>,</pre></div>
         
       
         
@@ -667,53 +730,53 @@ export <span class="hljs-keyword">class</span> TextNote extends Note {
 
         
           <div class='highlight'><pre>      },
-      <span class="hljs-string">"pedal_open"</span>: {
-        code: <span class="hljs-string">"v36"</span>,
-        point:<span class="hljs-number">40</span>,
-        x_shift:<span class="hljs-number">0</span>,
-        y_shift:<span class="hljs-number">0</span>
+      <span class="hljs-string">'pedal_open'</span>: {
+        code: <span class="hljs-string">'v36'</span>,
+        point: <span class="hljs-number">40</span>,
+        x_shift: <span class="hljs-number">0</span>,
+        y_shift: <span class="hljs-number">0</span>,
       },
-      <span class="hljs-string">"pedal_close"</span>: {
-        code: <span class="hljs-string">"v5d"</span>,
-        point:<span class="hljs-number">40</span>,
-        x_shift:<span class="hljs-number">0</span>,
-        y_shift:<span class="hljs-number">3</span>
+      <span class="hljs-string">'pedal_close'</span>: {
+        code: <span class="hljs-string">'v5d'</span>,
+        point: <span class="hljs-number">40</span>,
+        x_shift: <span class="hljs-number">0</span>,
+        y_shift: <span class="hljs-number">3</span>,
       },
-      <span class="hljs-string">"caesura_straight"</span>: {
-        code: <span class="hljs-string">"v34"</span>,
-        point:<span class="hljs-number">40</span>,
-        x_shift:<span class="hljs-number">0</span>,
-        y_shift:<span class="hljs-number">2</span>
+      <span class="hljs-string">'caesura_straight'</span>: {
+        code: <span class="hljs-string">'v34'</span>,
+        point: <span class="hljs-number">40</span>,
+        x_shift: <span class="hljs-number">0</span>,
+        y_shift: <span class="hljs-number">2</span>,
       },
-      <span class="hljs-string">"caesura_curved"</span>: {
-        code: <span class="hljs-string">"v4b"</span>,
-        point:<span class="hljs-number">40</span>,
-        x_shift:<span class="hljs-number">0</span>,
-        y_shift:<span class="hljs-number">2</span>
+      <span class="hljs-string">'caesura_curved'</span>: {
+        code: <span class="hljs-string">'v4b'</span>,
+        point: <span class="hljs-number">40</span>,
+        x_shift: <span class="hljs-number">0</span>,
+        y_shift: <span class="hljs-number">2</span>,
       },
-      <span class="hljs-string">"breath"</span>: {
-        code: <span class="hljs-string">"v6c"</span>,
-        point:<span class="hljs-number">40</span>,
-        x_shift:<span class="hljs-number">0</span>,
-        y_shift:<span class="hljs-number">0</span>
+      <span class="hljs-string">'breath'</span>: {
+        code: <span class="hljs-string">'v6c'</span>,
+        point: <span class="hljs-number">40</span>,
+        x_shift: <span class="hljs-number">0</span>,
+        y_shift: <span class="hljs-number">0</span>,
       },
-      <span class="hljs-string">"tick"</span>: {
-        code: <span class="hljs-string">"v6f"</span>,
-        point:<span class="hljs-number">50</span>,
-        x_shift:<span class="hljs-number">0</span>,
-        y_shift:<span class="hljs-number">0</span>
+      <span class="hljs-string">'tick'</span>: {
+        code: <span class="hljs-string">'v6f'</span>,
+        point: <span class="hljs-number">50</span>,
+        x_shift: <span class="hljs-number">0</span>,
+        y_shift: <span class="hljs-number">0</span>,
       },
-      <span class="hljs-string">"turn"</span>: {
-        code: <span class="hljs-string">"v72"</span>,
-        point:<span class="hljs-number">40</span>,
-        x_shift:<span class="hljs-number">0</span>,
-        y_shift:<span class="hljs-number">0</span>
+      <span class="hljs-string">'turn'</span>: {
+        code: <span class="hljs-string">'v72'</span>,
+        point: <span class="hljs-number">40</span>,
+        x_shift: <span class="hljs-number">0</span>,
+        y_shift: <span class="hljs-number">0</span>,
       },
-      <span class="hljs-string">"turn_inverted"</span>: {
-        code: <span class="hljs-string">"v33"</span>,
-        point:<span class="hljs-number">40</span>,
-        x_shift:<span class="hljs-number">0</span>,
-        y_shift:<span class="hljs-number">0</span>
+      <span class="hljs-string">'turn_inverted'</span>: {
+        code: <span class="hljs-string">'v33'</span>,
+        point: <span class="hljs-number">40</span>,
+        x_shift: <span class="hljs-number">0</span>,
+        y_shift: <span class="hljs-number">0</span>,
       },</pre></div>
         
       
@@ -721,23 +784,24 @@ export <span class="hljs-keyword">class</span> TextNote extends Note {
         <p>DEPRECATED - please use “mordent_upper” or “mordent_lower”</p>
 
         
-          <div class='highlight'><pre>      <span class="hljs-string">"mordent"</span>: {
-        code: <span class="hljs-string">"v1e"</span>,
+          <div class='highlight'><pre>      <span class="hljs-string">'mordent'</span>: {
+        code: <span class="hljs-string">'v1e'</span>,
         point: <span class="hljs-number">40</span>,
         x_shift: <span class="hljs-number">0</span>,
-        y_shift: <span class="hljs-number">0</span></pre></div>
+        y_shift: <span class="hljs-number">0</span>,</pre></div>
         
       
         
         <p>width: 10 // optional</p>
 
         
-          <div class='highlight'><pre>      }
+          <div class='highlight'><pre>      },
     };
   }
 
-  constructor(text_struct) {
-    super(text_struct);</pre></div>
+  <span class="hljs-keyword">constructor</span>(text_struct) {
+    <span class="hljs-keyword">super</span>(text_struct);
+    <span class="hljs-keyword">this</span>.setAttribute(<span class="hljs-string">'type'</span>, <span class="hljs-string">'TextNote'</span>);</pre></div>
         
       
         
@@ -750,9 +814,9 @@ export <span class="hljs-keyword">class</span> TextNote extends Note {
     <span class="hljs-keyword">this</span>.glyph_type = text_struct.glyph;
     <span class="hljs-keyword">this</span>.glyph = <span class="hljs-literal">null</span>;
     <span class="hljs-keyword">this</span>.font = {
-      family: <span class="hljs-string">"Arial"</span>,
+      family: <span class="hljs-string">'Arial'</span>,
       size: <span class="hljs-number">12</span>,
-      weight: <span class="hljs-string">""</span>
+      weight: <span class="hljs-string">''</span>,
     };</pre></div>
         
       
@@ -766,19 +830,20 @@ export <span class="hljs-keyword">class</span> TextNote extends Note {
         
         <p>Determine and set initial note width. Note that the text width is
 an approximation and isn’t very accurate. The only way to accurately
-measure the length of text is with <code>canvasContext.measureText()</code></p>
+measure the length of text is with <code>canvasmeasureText()</code></p>
 
         
           <div class='highlight'><pre>    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.glyph_type) {
-      <span class="hljs-keyword">var</span> struct = TextNote.GLYPHS[<span class="hljs-keyword">this</span>.glyph_type];
-      <span class="hljs-keyword">if</span> (!struct) <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RERR(<span class="hljs-string">"Invalid glyph type: "</span> + <span class="hljs-keyword">this</span>.glyph_type);
+      <span class="hljs-keyword">const</span> struct = TextNote.GLYPHS[<span class="hljs-keyword">this</span>.glyph_type];
+      <span class="hljs-keyword">if</span> (!struct) <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RERR(<span class="hljs-string">'Invalid glyph type: '</span> + <span class="hljs-keyword">this</span>.glyph_type);
 
-      <span class="hljs-keyword">this</span>.glyph = <span class="hljs-keyword">new</span> Glyph(struct.code, struct.point, {cache: <span class="hljs-literal">false</span>});
+      <span class="hljs-keyword">this</span>.glyph = <span class="hljs-keyword">new</span> Glyph(struct.code, struct.point, { cache: <span class="hljs-literal">false</span> });
 
-      <span class="hljs-keyword">if</span> (struct.width)
+      <span class="hljs-keyword">if</span> (struct.width) {
         <span class="hljs-keyword">this</span>.setWidth(struct.width);
-      <span class="hljs-keyword">else</span>
+      } <span class="hljs-keyword">else</span> {
         <span class="hljs-keyword">this</span>.setWidth(<span class="hljs-keyword">this</span>.glyph.getMetrics().width);
+      }
 
       <span class="hljs-keyword">this</span>.glyph_struct = struct;
     } <span class="hljs-keyword">else</span> {
@@ -816,8 +881,8 @@ measure the length of text is with <code>canvasContext.measureText()</code></p>
 
         
           <div class='highlight'><pre>  preFormat() {
-    <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.context) <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RERR(<span class="hljs-string">"NoRenderContext"</span>,
-        <span class="hljs-string">"Can't measure text without rendering context."</span>);
+    <span class="hljs-keyword">this</span>.checkContext();
+
     <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.preFormatted) <span class="hljs-keyword">return</span>;
 
     <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.smooth) {
@@ -835,9 +900,9 @@ measure the length of text is with <code>canvasContext.measureText()</code></p>
       }
     }
 
-    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.justification == TextNote.Justification.CENTER) {
+    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.justification === TextNote.Justification.CENTER) {
       <span class="hljs-keyword">this</span>.extraLeftPx = <span class="hljs-keyword">this</span>.width / <span class="hljs-number">2</span>;
-    } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.justification == TextNote.Justification.RIGHT) {
+    } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.justification === TextNote.Justification.RIGHT) {
       <span class="hljs-keyword">this</span>.extraLeftPx = <span class="hljs-keyword">this</span>.width;
     }
 
@@ -850,26 +915,31 @@ measure the length of text is with <code>canvasContext.measureText()</code></p>
 
         
           <div class='highlight'><pre>  draw() {
-    <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.context) <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RERR(<span class="hljs-string">"NoCanvasContext"</span>,
-        <span class="hljs-string">"Can't draw without a canvas context."</span>);
-    <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.stave) <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RERR(<span class="hljs-string">"NoStave"</span>, <span class="hljs-string">"Can't draw without a stave."</span>);
+    <span class="hljs-keyword">this</span>.checkContext();
 
-    <span class="hljs-keyword">var</span> ctx = <span class="hljs-keyword">this</span>.context;
-    <span class="hljs-keyword">var</span> x = <span class="hljs-keyword">this</span>.getAbsoluteX();
-    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.justification == TextNote.Justification.CENTER) {
+    <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.stave) {
+      <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RERR(<span class="hljs-string">'NoStave'</span>, <span class="hljs-string">"Can't draw without a stave."</span>);
+    }
+
+    <span class="hljs-keyword">this</span>.setRendered();
+    <span class="hljs-keyword">const</span> ctx = <span class="hljs-keyword">this</span>.context;
+    <span class="hljs-keyword">let</span> x = <span class="hljs-keyword">this</span>.getAbsoluteX();
+    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.justification === TextNote.Justification.CENTER) {
       x -= <span class="hljs-keyword">this</span>.getWidth() / <span class="hljs-number">2</span>;
-    } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.justification == TextNote.Justification.RIGHT) {
+    } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.justification === TextNote.Justification.RIGHT) {
       x -= <span class="hljs-keyword">this</span>.getWidth();
     }
 
-    <span class="hljs-keyword">var</span> y;
+    <span class="hljs-keyword">let</span> y;
     <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.glyph) {
-      y = <span class="hljs-keyword">this</span>.stave.getYForLine(<span class="hljs-keyword">this</span>.line + (-<span class="hljs-number">3</span>));
-      <span class="hljs-keyword">this</span>.glyph.render(<span class="hljs-keyword">this</span>.context,
-                        x + <span class="hljs-keyword">this</span>.glyph_struct.x_shift,
-                        y + <span class="hljs-keyword">this</span>.glyph_struct.y_shift);
+      y = <span class="hljs-keyword">this</span>.stave.getYForLine(<span class="hljs-keyword">this</span>.line + <span class="hljs-number">-3</span>);
+      <span class="hljs-keyword">this</span>.glyph.render(
+        <span class="hljs-keyword">this</span>.context,
+        x + <span class="hljs-keyword">this</span>.glyph_struct.x_shift,
+        y + <span class="hljs-keyword">this</span>.glyph_struct.y_shift
+      );
     } <span class="hljs-keyword">else</span> {
-      y = <span class="hljs-keyword">this</span>.stave.getYForLine(<span class="hljs-keyword">this</span>.line + (-<span class="hljs-number">3</span>));
+      y = <span class="hljs-keyword">this</span>.stave.getYForLine(<span class="hljs-keyword">this</span>.line + <span class="hljs-number">-3</span>);
       ctx.save();
       ctx.setFont(<span class="hljs-keyword">this</span>.font.family, <span class="hljs-keyword">this</span>.font.size, <span class="hljs-keyword">this</span>.font.weight);
       ctx.fillText(<span class="hljs-keyword">this</span>.text, x, y);</pre></div>
@@ -879,14 +949,14 @@ measure the length of text is with <code>canvasContext.measureText()</code></p>
         <p>Width of the letter M gives us the approximate height of the text</p>
 
         
-          <div class='highlight'><pre>      <span class="hljs-keyword">var</span> height = ctx.measureText(<span class="hljs-string">"M"</span>).width;</pre></div>
+          <div class='highlight'><pre>      <span class="hljs-keyword">const</span> height = ctx.measureText(<span class="hljs-string">'M'</span>).width;</pre></div>
         
       
         
         <p>Get accurate width of text</p>
 
         
-          <div class='highlight'><pre>      <span class="hljs-keyword">var</span> width = ctx.measureText(<span class="hljs-keyword">this</span>.text).width;</pre></div>
+          <div class='highlight'><pre>      <span class="hljs-keyword">const</span> width = ctx.measureText(<span class="hljs-keyword">this</span>.text).width;</pre></div>
         
       
         
@@ -895,7 +965,7 @@ measure the length of text is with <code>canvasContext.measureText()</code></p>
         
           <div class='highlight'><pre>      <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.superscript) {
         ctx.setFont(<span class="hljs-keyword">this</span>.font.family, <span class="hljs-keyword">this</span>.font.size / <span class="hljs-number">1.3</span>, <span class="hljs-keyword">this</span>.font.weight);
-        ctx.fillText(<span class="hljs-keyword">this</span>.superscript, x + width + <span class="hljs-number">2</span>, y - (height/<span class="hljs-number">2.2</span>));
+        ctx.fillText(<span class="hljs-keyword">this</span>.superscript, x + width + <span class="hljs-number">2</span>, y - (height / <span class="hljs-number">2.2</span>));
       }</pre></div>
         
       
@@ -905,7 +975,7 @@ measure the length of text is with <code>canvasContext.measureText()</code></p>
         
           <div class='highlight'><pre>      <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.subscript) {
         ctx.setFont(<span class="hljs-keyword">this</span>.font.family, <span class="hljs-keyword">this</span>.font.size / <span class="hljs-number">1.3</span>, <span class="hljs-keyword">this</span>.font.weight);
-        ctx.fillText(<span class="hljs-keyword">this</span>.subscript, x + width + <span class="hljs-number">2</span>, y + (height/<span class="hljs-number">2.2</span>) - <span class="hljs-number">1</span>);
+        ctx.fillText(<span class="hljs-keyword">this</span>.subscript, x + width + <span class="hljs-number">2</span>, y + (height / <span class="hljs-number">2.2</span>) - <span class="hljs-number">1</span>);
       }
 
       ctx.restore();

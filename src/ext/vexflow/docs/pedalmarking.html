@@ -121,6 +121,27 @@
               
                 
                 <li>
+                  <a class="source" href="easyscore.html">
+                    easyscore.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="element.html">
+                    element.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="factory.html">
+                    factory.js
+                  </a>
+                </li>
+              
+                
+                <li>
                   <a class="source" href="formatter.html">
                     formatter.js
                   </a>
@@ -165,6 +186,13 @@
                 <li>
                   <a class="source" href="gracenotegroup.html">
                     gracenotegroup.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="gracetabnote.html">
+                    gracetabnote.js
                   </a>
                 </li>
               
@@ -226,8 +254,22 @@
               
                 
                 <li>
+                  <a class="source" href="notesubgroup.html">
+                    notesubgroup.js
+                  </a>
+                </li>
+              
+                
+                <li>
                   <a class="source" href="ornament.html">
                     ornament.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="parser.html">
+                    parser.js
                   </a>
                 </li>
               
@@ -242,6 +284,13 @@
                 <li>
                   <a class="source" href="raphaelcontext.html">
                     raphaelcontext.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="registry.html">
+                    registry.js
                   </a>
                 </li>
               
@@ -380,6 +429,13 @@
               
                 
                 <li>
+                  <a class="source" href="system.html">
+                    system.js
+                  </a>
+                </li>
+              
+                
+                <li>
                   <a class="source" href="tables.html">
                     tables.js
                   </a>
@@ -499,6 +555,13 @@
               
                 
                 <li>
+                  <a class="source" href="vibratobracket.html">
+                    vibratobracket.js
+                  </a>
+                </li>
+              
+                
+                <li>
                   <a class="source" href="voice.html">
                     voice.js
                   </a>
@@ -527,15 +590,16 @@ custom text for the release/depress pedal markings.</p>
 
         
           <div class='highlight'><pre>
-import { Vex } from <span class="hljs-string">'./vex'</span>;
-import { Glyph } from <span class="hljs-string">'./glyph'</span>;</pre></div>
+<span class="hljs-keyword">import</span> { Vex } <span class="hljs-keyword">from</span> <span class="hljs-string">'./vex'</span>;
+<span class="hljs-keyword">import</span> { Element } <span class="hljs-keyword">from</span> <span class="hljs-string">'./element'</span>;
+<span class="hljs-keyword">import</span> { Glyph } <span class="hljs-keyword">from</span> <span class="hljs-string">'./glyph'</span>;</pre></div>
         
       
         
         <p>To enable logging for this class. Set <code>Vex.Flow.PedalMarking.DEBUG</code> to <code>true</code>.</p>
 
         
-          <div class='highlight'><pre><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">L</span><span class="hljs-params">()</span> {</span> <span class="hljs-keyword">if</span> (PedalMarking.DEBUG) Vex.L(<span class="hljs-string">"Vex.Flow.PedalMarking"</span>, <span class="hljs-built_in">arguments</span>); }</pre></div>
+          <div class='highlight'><pre><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">L</span>(<span class="hljs-params">...args</span>) </span>{ <span class="hljs-keyword">if</span> (PedalMarking.DEBUG) Vex.L(<span class="hljs-string">'Vex.Flow.PedalMarking'</span>, args); }</pre></div>
         
       
         
@@ -544,39 +608,39 @@ at the coordinates <code>x</code> and `y. Takes into account the glyph data
 coordinate shifts.</p>
 
         
-          <div class='highlight'><pre><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">drawPedalGlyph</span><span class="hljs-params">(name, context, x, y, point)</span> {</span>
-  <span class="hljs-keyword">var</span> glyph_data = PedalMarking.GLYPHS[name];
-  <span class="hljs-keyword">var</span> glyph = <span class="hljs-keyword">new</span> Glyph(glyph_data.code, point);
+          <div class='highlight'><pre><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">drawPedalGlyph</span>(<span class="hljs-params">name, context, x, y, point</span>) </span>{
+  <span class="hljs-keyword">const</span> glyph_data = PedalMarking.GLYPHS[name];
+  <span class="hljs-keyword">const</span> glyph = <span class="hljs-keyword">new</span> Glyph(glyph_data.code, point);
   glyph.render(context, x + glyph_data.x_shift, y + glyph_data.y_shift);
 }
 
-export <span class="hljs-keyword">class</span> PedalMarking {</pre></div>
+<span class="hljs-keyword">export</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">PedalMarking</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">Element</span> </span>{</pre></div>
         
       
         
         <p>Glyph data</p>
 
         
-          <div class='highlight'><pre>  static get GLYPHS() {
+          <div class='highlight'><pre>  <span class="hljs-keyword">static</span> get GLYPHS() {
     <span class="hljs-keyword">return</span> {
-      <span class="hljs-string">"pedal_depress"</span>: {
-        code: <span class="hljs-string">"v36"</span>,
-        x_shift:-<span class="hljs-number">10</span>,
-        y_shift:<span class="hljs-number">0</span>
+      <span class="hljs-string">'pedal_depress'</span>: {
+        code: <span class="hljs-string">'v36'</span>,
+        x_shift: <span class="hljs-number">-10</span>,
+        y_shift: <span class="hljs-number">0</span>,
       },
-      <span class="hljs-string">"pedal_release"</span>: {
-        code: <span class="hljs-string">"v5d"</span>,
-        x_shift:-<span class="hljs-number">2</span>,
-        y_shift:<span class="hljs-number">3</span>
+      <span class="hljs-string">'pedal_release'</span>: {
+        code: <span class="hljs-string">'v5d'</span>,
+        x_shift: <span class="hljs-number">-2</span>,
+        y_shift: <span class="hljs-number">3</span>,
       },
     };
   }
 
-  static get Styles() {
+  <span class="hljs-keyword">static</span> get Styles() {
     <span class="hljs-keyword">return</span> {
       TEXT: <span class="hljs-number">1</span>,
       BRACKET: <span class="hljs-number">2</span>,
-      MIXED: <span class="hljs-number">3</span>
+      MIXED: <span class="hljs-number">3</span>,
     };
   }</pre></div>
         
@@ -586,8 +650,8 @@ export <span class="hljs-keyword">class</span> PedalMarking {</pre></div>
 Which uses the traditional “Ped” and “*”” markings.</p>
 
         
-          <div class='highlight'><pre>  static createSustain(notes) {
-    <span class="hljs-keyword">var</span> pedal = <span class="hljs-keyword">new</span> PedalMarking(notes);
+          <div class='highlight'><pre>  <span class="hljs-keyword">static</span> createSustain(notes) {
+    <span class="hljs-keyword">const</span> pedal = <span class="hljs-keyword">new</span> PedalMarking(notes);
     <span class="hljs-keyword">return</span> pedal;
   }</pre></div>
         
@@ -596,10 +660,10 @@ Which uses the traditional “Ped” and “*”” markings.</p>
         <p>Create a sostenuto pedal marking</p>
 
         
-          <div class='highlight'><pre>  static createSostenuto(notes) {
-    <span class="hljs-keyword">var</span> pedal = <span class="hljs-keyword">new</span> PedalMarking(notes);
+          <div class='highlight'><pre>  <span class="hljs-keyword">static</span> createSostenuto(notes) {
+    <span class="hljs-keyword">const</span> pedal = <span class="hljs-keyword">new</span> PedalMarking(notes);
     pedal.setStyle(PedalMarking.Styles.MIXED);
-    pedal.setCustomText(<span class="hljs-string">"Sost. Ped."</span>);
+    pedal.setCustomText(<span class="hljs-string">'Sost. Ped.'</span>);
     <span class="hljs-keyword">return</span> pedal;
   }</pre></div>
         
@@ -608,10 +672,10 @@ Which uses the traditional “Ped” and “*”” markings.</p>
         <p>Create an una corda pedal marking</p>
 
         
-          <div class='highlight'><pre>  static createUnaCorda(notes){
-    <span class="hljs-keyword">var</span> pedal = <span class="hljs-keyword">new</span> PedalMarking(notes);
+          <div class='highlight'><pre>  <span class="hljs-keyword">static</span> createUnaCorda(notes) {
+    <span class="hljs-keyword">const</span> pedal = <span class="hljs-keyword">new</span> PedalMarking(notes);
     pedal.setStyle(PedalMarking.Styles.TEXT);
-    pedal.setCustomText(<span class="hljs-string">"una corda"</span>, <span class="hljs-string">"tre corda"</span>);
+    pedal.setCustomText(<span class="hljs-string">'una corda'</span>, <span class="hljs-string">'tre corda'</span>);
     <span class="hljs-keyword">return</span> pedal;
   }</pre></div>
         
@@ -620,7 +684,10 @@ Which uses the traditional “Ped” and “*”” markings.</p>
         <h2 id="prototype-methods">Prototype Methods</h2>
 
         
-          <div class='highlight'><pre>  constructor(notes) {
+          <div class='highlight'><pre>  <span class="hljs-keyword">constructor</span>(notes) {
+    <span class="hljs-keyword">super</span>();
+    <span class="hljs-keyword">this</span>.setAttribute(<span class="hljs-string">'type'</span>, <span class="hljs-string">'PedalMarking'</span>);
+
     <span class="hljs-keyword">this</span>.notes = notes;
     <span class="hljs-keyword">this</span>.style = PedalMarking.TEXT;
     <span class="hljs-keyword">this</span>.line = <span class="hljs-number">0</span>;</pre></div>
@@ -630,13 +697,13 @@ Which uses the traditional “Ped” and “*”” markings.</p>
         <p>Custom text for the release/depress markings</p>
 
         
-          <div class='highlight'><pre>    <span class="hljs-keyword">this</span>.custom_depress_text = <span class="hljs-string">""</span>;
-    <span class="hljs-keyword">this</span>.custom_release_text = <span class="hljs-string">""</span>;
+          <div class='highlight'><pre>    <span class="hljs-keyword">this</span>.custom_depress_text = <span class="hljs-string">''</span>;
+    <span class="hljs-keyword">this</span>.custom_release_text = <span class="hljs-string">''</span>;
 
     <span class="hljs-keyword">this</span>.font = {
-      family: <span class="hljs-string">"Times New Roman"</span>,
+      family: <span class="hljs-string">'Times New Roman'</span>,
       size: <span class="hljs-number">12</span>,
-      weight: <span class="hljs-string">"italic bold"</span>
+      weight: <span class="hljs-string">'italic bold'</span>,
     };
 
     <span class="hljs-keyword">this</span>.render_options = {
@@ -644,7 +711,7 @@ Which uses the traditional “Ped” and “*”” markings.</p>
       text_margin_right: <span class="hljs-number">6</span>,
       bracket_line_width: <span class="hljs-number">1</span>,
       glyph_point_size: <span class="hljs-number">40</span>,
-      color: <span class="hljs-string">"black"</span>
+      color: <span class="hljs-string">'black'</span>,
     };
   }</pre></div>
         
@@ -655,8 +722,8 @@ set if the parameter is falsy.</p>
 
         
           <div class='highlight'><pre>  setCustomText(depress, release) {
-    <span class="hljs-keyword">this</span>.custom_depress_text = depress || <span class="hljs-string">""</span>;
-    <span class="hljs-keyword">this</span>.custom_release_text = release || <span class="hljs-string">""</span>;
+    <span class="hljs-keyword">this</span>.custom_depress_text = depress || <span class="hljs-string">''</span>;
+    <span class="hljs-keyword">this</span>.custom_release_text = release || <span class="hljs-string">''</span>;
     <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
   }</pre></div>
         
@@ -665,10 +732,9 @@ set if the parameter is falsy.</p>
         <p>Set the pedal marking style</p>
 
         
-          <div class='highlight'><pre>  setStyle(style){
+          <div class='highlight'><pre>  setStyle(style) {
     <span class="hljs-keyword">if</span> (style &lt; <span class="hljs-number">1</span> &amp;&amp; style &gt; <span class="hljs-number">3</span>)  {
-      <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RERR(<span class="hljs-string">"InvalidParameter"</span>,
-        <span class="hljs-string">"The style must be one found in PedalMarking.Styles"</span>);
+      <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RERR(<span class="hljs-string">'InvalidParameter'</span>, <span class="hljs-string">'The style must be one found in PedalMarking.Styles'</span>);
     }
 
     <span class="hljs-keyword">this</span>.style = style;
@@ -684,29 +750,22 @@ set if the parameter is falsy.</p>
         
       
         
-        <p>Set the rendering context</p>
-
-        
-          <div class='highlight'><pre>  setContext(context) { <span class="hljs-keyword">this</span>.context = context; <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>; }</pre></div>
-        
-      
-        
         <p>Draw the bracket based pedal markings</p>
 
         
           <div class='highlight'><pre>  drawBracketed() {
-    <span class="hljs-keyword">var</span> ctx = <span class="hljs-keyword">this</span>.context;
-    <span class="hljs-keyword">var</span> is_pedal_depressed = <span class="hljs-literal">false</span>;
-    <span class="hljs-keyword">var</span> prev_x;
-    <span class="hljs-keyword">var</span> prev_y;
-    <span class="hljs-keyword">var</span> pedal = <span class="hljs-keyword">this</span>;</pre></div>
+    <span class="hljs-keyword">const</span> ctx = <span class="hljs-keyword">this</span>.context;
+    <span class="hljs-keyword">let</span> is_pedal_depressed = <span class="hljs-literal">false</span>;
+    <span class="hljs-keyword">let</span> prev_x;
+    <span class="hljs-keyword">let</span> prev_y;
+    <span class="hljs-keyword">const</span> pedal = <span class="hljs-keyword">this</span>;</pre></div>
         
       
         
         <p>Iterate through each note</p>
 
         
-          <div class='highlight'><pre>    <span class="hljs-keyword">this</span>.notes.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(note, index, notes)</span> {</span></pre></div>
+          <div class='highlight'><pre>    <span class="hljs-keyword">this</span>.notes.forEach((note, index, notes) =&gt; {</pre></div>
         
       
         
@@ -720,16 +779,19 @@ set if the parameter is falsy.</p>
         <p>Get the initial coordinates for the note</p>
 
         
-          <div class='highlight'><pre>      <span class="hljs-keyword">var</span> x = note.getAbsoluteX();
-      <span class="hljs-keyword">var</span> y = note.getStave().getYForBottomText(pedal.line + <span class="hljs-number">3</span>);</pre></div>
+          <div class='highlight'><pre>      <span class="hljs-keyword">const</span> x = note.getAbsoluteX();
+      <span class="hljs-keyword">const</span> y = note.getStave().getYForBottomText(pedal.line + <span class="hljs-number">3</span>);</pre></div>
         
       
         
         <p>Throw if current note is positioned before the previous note</p>
 
         
-          <div class='highlight'><pre>      <span class="hljs-keyword">if</span> (x &lt; prev_x) <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RERR(<span class="hljs-string">'InvalidConfiguration'</span>,
-        <span class="hljs-string">'The notes provided must be in order of ascending x positions'</span>);</pre></div>
+          <div class='highlight'><pre>      <span class="hljs-keyword">if</span> (x &lt; prev_x) {
+        <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RERR(
+          <span class="hljs-string">'InvalidConfiguration'</span>, <span class="hljs-string">'The notes provided must be in order of ascending x positions'</span>
+        );
+      }</pre></div>
         
       
         
@@ -738,10 +800,10 @@ as the current note. We need to keep track of this for
 when adjustments are made for the release+depress action</p>
 
         
-          <div class='highlight'><pre>      <span class="hljs-keyword">var</span> next_is_same = notes[index+<span class="hljs-number">1</span>] === note;
-      <span class="hljs-keyword">var</span> prev_is_same = notes[index-<span class="hljs-number">1</span>] === note;
+          <div class='highlight'><pre>      <span class="hljs-keyword">const</span> next_is_same = notes[index + <span class="hljs-number">1</span>] === note;
+      <span class="hljs-keyword">const</span> prev_is_same = notes[index - <span class="hljs-number">1</span>] === note;
 
-      <span class="hljs-keyword">var</span> x_shift = <span class="hljs-number">0</span>;
+      <span class="hljs-keyword">let</span> x_shift = <span class="hljs-number">0</span>;
       <span class="hljs-keyword">if</span> (is_pedal_depressed) {</pre></div>
         
       
@@ -765,8 +827,8 @@ when adjustments are made for the release+depress action</p>
         <p>If we have custom text, use instead of the default “Ped” glyph</p>
 
         
-          <div class='highlight'><pre>            <span class="hljs-keyword">var</span> text_width = ctx.measureText(pedal.custom_depress_text).width;
-            ctx.fillText(pedal.custom_depress_text, x - (text_width/<span class="hljs-number">2</span>), y);
+          <div class='highlight'><pre>            <span class="hljs-keyword">const</span> text_width = ctx.measureText(pedal.custom_depress_text).width;
+            ctx.fillText(pedal.custom_depress_text, x - (text_width / <span class="hljs-number">2</span>), y);
             x_shift = (text_width / <span class="hljs-number">2</span>) + pedal.render_options.text_margin_right;
           } <span class="hljs-keyword">else</span> {</pre></div>
         
@@ -798,7 +860,7 @@ when adjustments are made for the release+depress action</p>
         <p>Adjustment for release+depress</p>
 
         
-          <div class='highlight'><pre>        x_shift = next_is_same ? -<span class="hljs-number">5</span> : <span class="hljs-number">0</span>;</pre></div>
+          <div class='highlight'><pre>        x_shift = next_is_same ? <span class="hljs-number">-5</span> : <span class="hljs-number">0</span>;</pre></div>
         
       
         
@@ -830,42 +892,42 @@ when adjustments are made for the release+depress action</p>
 
         
           <div class='highlight'><pre>  drawText() {
-    <span class="hljs-keyword">var</span> ctx = <span class="hljs-keyword">this</span>.context;
-    <span class="hljs-keyword">var</span> is_pedal_depressed = <span class="hljs-literal">false</span>;
-    <span class="hljs-keyword">var</span> pedal = <span class="hljs-keyword">this</span>;</pre></div>
+    <span class="hljs-keyword">const</span> ctx = <span class="hljs-keyword">this</span>.context;
+    <span class="hljs-keyword">let</span> is_pedal_depressed = <span class="hljs-literal">false</span>;
+    <span class="hljs-keyword">const</span> pedal = <span class="hljs-keyword">this</span>;</pre></div>
         
       
         
         <p>The glyph point size</p>
 
         
-          <div class='highlight'><pre>    <span class="hljs-keyword">var</span> point = pedal.render_options.glyph_point_size;</pre></div>
+          <div class='highlight'><pre>    <span class="hljs-keyword">const</span> point = pedal.render_options.glyph_point_size;</pre></div>
         
       
         
         <p>Iterate through each note, placing glyphs or custom text accordingly</p>
 
         
-          <div class='highlight'><pre>    <span class="hljs-keyword">this</span>.notes.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(note)</span> {</span>
+          <div class='highlight'><pre>    <span class="hljs-keyword">this</span>.notes.forEach(note =&gt; {
       is_pedal_depressed = !is_pedal_depressed;
-      <span class="hljs-keyword">var</span> stave = note.getStave();
-      <span class="hljs-keyword">var</span> x = note.getAbsoluteX();
-      <span class="hljs-keyword">var</span> y = stave.getYForBottomText(pedal.line + <span class="hljs-number">3</span>);
+      <span class="hljs-keyword">const</span> stave = note.getStave();
+      <span class="hljs-keyword">const</span> x = note.getAbsoluteX();
+      <span class="hljs-keyword">const</span> y = stave.getYForBottomText(pedal.line + <span class="hljs-number">3</span>);
 
-      <span class="hljs-keyword">var</span> text_width = <span class="hljs-number">0</span>;
+      <span class="hljs-keyword">let</span> text_width = <span class="hljs-number">0</span>;
       <span class="hljs-keyword">if</span> (is_pedal_depressed) {
         <span class="hljs-keyword">if</span> (pedal.custom_depress_text) {
           text_width = ctx.measureText(pedal.custom_depress_text).width;
-          ctx.fillText(pedal.custom_depress_text, x - (text_width/<span class="hljs-number">2</span>), y);
+          ctx.fillText(pedal.custom_depress_text, x - (text_width / <span class="hljs-number">2</span>), y);
         } <span class="hljs-keyword">else</span> {
-          drawPedalGlyph(<span class="hljs-string">"pedal_depress"</span>, ctx, x, y, point);
+          drawPedalGlyph(<span class="hljs-string">'pedal_depress'</span>, ctx, x, y, point);
         }
       } <span class="hljs-keyword">else</span> {
         <span class="hljs-keyword">if</span> (pedal.custom_release_text) {
           text_width = ctx.measureText(pedal.custom_release_text).width;
-          ctx.fillText(pedal.custom_release_text, x - (text_width/<span class="hljs-number">2</span>), y);
+          ctx.fillText(pedal.custom_release_text, x - (text_width / <span class="hljs-number">2</span>), y);
         } <span class="hljs-keyword">else</span> {
-          drawPedalGlyph(<span class="hljs-string">"pedal_release"</span>, ctx, x, y, point);
+          drawPedalGlyph(<span class="hljs-string">'pedal_release'</span>, ctx, x, y, point);
         }
       }
     });
@@ -877,19 +939,17 @@ when adjustments are made for the release+depress action</p>
 
         
           <div class='highlight'><pre>  draw() {
-    <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.context) <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RERR(<span class="hljs-string">"NoContext"</span>,
-      <span class="hljs-string">"Can't draw PedalMarking without a context."</span>);
-    <span class="hljs-keyword">var</span> ctx = <span class="hljs-keyword">this</span>.context;
+    <span class="hljs-keyword">const</span> ctx = <span class="hljs-keyword">this</span>.checkContext();
+    <span class="hljs-keyword">this</span>.setRendered();
 
     ctx.save();
     ctx.setStrokeStyle(<span class="hljs-keyword">this</span>.render_options.color);
     ctx.setFillStyle(<span class="hljs-keyword">this</span>.render_options.color);
     ctx.setFont(<span class="hljs-keyword">this</span>.font.family, <span class="hljs-keyword">this</span>.font.size, <span class="hljs-keyword">this</span>.font.weight);
 
-    L(<span class="hljs-string">"Rendering Pedal Marking"</span>);
+    L(<span class="hljs-string">'Rendering Pedal Marking'</span>);
 
-    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.style === PedalMarking.Styles.BRACKET ||
-        <span class="hljs-keyword">this</span>.style === PedalMarking.Styles.MIXED) {
+    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.style === PedalMarking.Styles.BRACKET || <span class="hljs-keyword">this</span>.style === PedalMarking.Styles.MIXED) {
       ctx.setLineWidth(<span class="hljs-keyword">this</span>.render_options.bracket_line_width);
       <span class="hljs-keyword">this</span>.drawBracketed();
     } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.style === PedalMarking.Styles.TEXT) {

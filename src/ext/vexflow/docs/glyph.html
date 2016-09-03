@@ -121,6 +121,27 @@
               
                 
                 <li>
+                  <a class="source" href="easyscore.html">
+                    easyscore.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="element.html">
+                    element.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="factory.html">
+                    factory.js
+                  </a>
+                </li>
+              
+                
+                <li>
                   <a class="source" href="formatter.html">
                     formatter.js
                   </a>
@@ -165,6 +186,13 @@
                 <li>
                   <a class="source" href="gracenotegroup.html">
                     gracenotegroup.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="gracetabnote.html">
+                    gracetabnote.js
                   </a>
                 </li>
               
@@ -226,8 +254,22 @@
               
                 
                 <li>
+                  <a class="source" href="notesubgroup.html">
+                    notesubgroup.js
+                  </a>
+                </li>
+              
+                
+                <li>
                   <a class="source" href="ornament.html">
                     ornament.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="parser.html">
+                    parser.js
                   </a>
                 </li>
               
@@ -242,6 +284,13 @@
                 <li>
                   <a class="source" href="raphaelcontext.html">
                     raphaelcontext.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="registry.html">
+                    registry.js
                   </a>
                 </li>
               
@@ -380,6 +429,13 @@
               
                 
                 <li>
+                  <a class="source" href="system.html">
+                    system.js
+                  </a>
+                </li>
+              
+                
+                <li>
                   <a class="source" href="tables.html">
                     tables.js
                   </a>
@@ -499,6 +555,13 @@
               
                 
                 <li>
+                  <a class="source" href="vibratobracket.html">
+                    vibratobracket.js
+                  </a>
+                </li>
+              
+                
+                <li>
                   <a class="source" href="voice.html">
                     voice.js
                   </a>
@@ -522,19 +585,20 @@
 
         
           <div class='highlight'><pre>
-import { Vex } from <span class="hljs-string">'./vex'</span>;
-import { BoundingBoxComputation } from <span class="hljs-string">'./boundingboxcomputation'</span>;
-import { BoundingBox } from <span class="hljs-string">'./boundingbox'</span>;
-import { Font } from <span class="hljs-string">'./fonts/vexflow_font'</span>;
+<span class="hljs-keyword">import</span> { Vex } <span class="hljs-keyword">from</span> <span class="hljs-string">'./vex'</span>;
+<span class="hljs-keyword">import</span> { Element } <span class="hljs-keyword">from</span> <span class="hljs-string">'./element'</span>;
+<span class="hljs-keyword">import</span> { BoundingBoxComputation } <span class="hljs-keyword">from</span> <span class="hljs-string">'./boundingboxcomputation'</span>;
+<span class="hljs-keyword">import</span> { BoundingBox } <span class="hljs-keyword">from</span> <span class="hljs-string">'./boundingbox'</span>;
+<span class="hljs-keyword">import</span> { Font } <span class="hljs-keyword">from</span> <span class="hljs-string">'./fonts/vexflow_font'</span>;
 
-<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">processOutline</span><span class="hljs-params">(outline, originX, originY, scaleX, scaleY, outlineFns)</span> {</span>
-  <span class="hljs-keyword">var</span> command;
-  <span class="hljs-keyword">var</span> x;
-  <span class="hljs-keyword">var</span> y;
-  <span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>;
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">processOutline</span>(<span class="hljs-params">outline, originX, originY, scaleX, scaleY, outlineFns</span>) </span>{
+  <span class="hljs-keyword">let</span> command;
+  <span class="hljs-keyword">let</span> x;
+  <span class="hljs-keyword">let</span> y;
+  <span class="hljs-keyword">let</span> i = <span class="hljs-number">0</span>;
 
-  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">nextX</span><span class="hljs-params">()</span> {</span> <span class="hljs-keyword">return</span> originX + outline[i++] * scaleX; }
-  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">nextY</span><span class="hljs-params">()</span> {</span> <span class="hljs-keyword">return</span> originY + outline[i++] * scaleY; }
+  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">nextX</span>(<span class="hljs-params"></span>) </span>{ <span class="hljs-keyword">return</span> originX + outline[i++] * scaleX; }
+  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">nextY</span>(<span class="hljs-params"></span>) </span>{ <span class="hljs-keyword">return</span> originY + outline[i++] * scaleY; }
 
   <span class="hljs-keyword">while</span> (i &lt; outline.length) {
     command = outline[i++];
@@ -553,22 +617,25 @@ import { Font } from <span class="hljs-string">'./fonts/vexflow_font'</span>;
         y = nextY();
         outlineFns.b(nextX(), nextY(), nextX(), nextY(), x, y);
         <span class="hljs-keyword">break</span>;
+      <span class="hljs-keyword">default</span>:
+        <span class="hljs-keyword">break</span>;
     }
   }
 }
 
-export <span class="hljs-keyword">class</span> Glyph {
+<span class="hljs-keyword">export</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Glyph</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">Element</span> </span>{
   <span class="hljs-comment">/* Static methods used to implement loading / unloading of glyphs */</span>
-  static loadMetrics(font, code, cache) {
-    <span class="hljs-keyword">var</span> glyph = font.glyphs[code];
-    <span class="hljs-keyword">if</span> (!glyph) <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RuntimeError(<span class="hljs-string">"BadGlyph"</span>, <span class="hljs-string">"Glyph "</span> + code +
-        <span class="hljs-string">" does not exist in font."</span>);
+  <span class="hljs-keyword">static</span> loadMetrics(font, code, cache) {
+    <span class="hljs-keyword">const</span> glyph = font.glyphs[code];
+    <span class="hljs-keyword">if</span> (!glyph) {
+      <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RERR(<span class="hljs-string">'BadGlyph'</span>, <span class="hljs-string">`Glyph <span class="hljs-subst">${code}</span> does not exist in font.`</span>);
+    }
 
-    <span class="hljs-keyword">var</span> x_min = glyph.x_min;
-    <span class="hljs-keyword">var</span> x_max = glyph.x_max;
-    <span class="hljs-keyword">var</span> ha = glyph.ha;
+    <span class="hljs-keyword">const</span> x_min = glyph.x_min;
+    <span class="hljs-keyword">const</span> x_max = glyph.x_max;
+    <span class="hljs-keyword">const</span> ha = glyph.ha;
 
-    <span class="hljs-keyword">var</span> outline;
+    <span class="hljs-keyword">let</span> outline;
 
     <span class="hljs-keyword">if</span> (glyph.o) {
       <span class="hljs-keyword">if</span> (cache) {
@@ -584,14 +651,13 @@ export <span class="hljs-keyword">class</span> Glyph {
       }
 
       <span class="hljs-keyword">return</span> {
-        x_min: x_min,
-        x_max: x_max,
-        ha: ha,
-        outline: outline
+        x_min,
+        x_max,
+        ha,
+        outline,
       };
     } <span class="hljs-keyword">else</span> {
-      <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RuntimeError(<span class="hljs-string">"BadGlyph"</span>, <span class="hljs-string">"Glyph "</span> + code +
-          <span class="hljs-string">" has no outline defined."</span>);
+      <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RERR(<span class="hljs-string">'BadGlyph'</span>, <span class="hljs-string">`Glyph <span class="hljs-subst">${code}</span> has no outline defined.`</span>);
     }
   }
 
@@ -606,32 +672,32 @@ export <span class="hljs-keyword">class</span> Glyph {
    * @param {string} val The glyph code in Vex.Flow.Font.
    * @param {boolean} nocache If set, disables caching of font outline.
    */</span>
-  static renderGlyph(ctx, x_pos, y_pos, point, val, nocache) {
-    <span class="hljs-keyword">var</span> scale = point * <span class="hljs-number">72.0</span> / (Font.resolution * <span class="hljs-number">100.0</span>);
-    <span class="hljs-keyword">var</span> metrics = Glyph.loadMetrics(Font, val, !nocache);
+  <span class="hljs-keyword">static</span> renderGlyph(ctx, x_pos, y_pos, point, val, nocache) {
+    <span class="hljs-keyword">const</span> scale = point * <span class="hljs-number">72.0</span> / (Font.resolution * <span class="hljs-number">100.0</span>);
+    <span class="hljs-keyword">const</span> metrics = Glyph.loadMetrics(Font, val, !nocache);
     Glyph.renderOutline(ctx, metrics.outline, scale, x_pos, y_pos);
   }
 
-  static renderOutline(ctx, outline, scale, x_pos, y_pos) {
+  <span class="hljs-keyword">static</span> renderOutline(ctx, outline, scale, x_pos, y_pos) {
     ctx.beginPath();
     ctx.moveTo(x_pos, y_pos);
     processOutline(outline, x_pos, y_pos, scale, -scale, {
       m: ctx.moveTo.bind(ctx),
       l: ctx.lineTo.bind(ctx),
       q: ctx.quadraticCurveTo.bind(ctx),
-      b: ctx.bezierCurveTo.bind(ctx)
+      b: ctx.bezierCurveTo.bind(ctx),
     });
     ctx.fill();
   }
 
-  static getOutlineBoundingBox(outline, scale, x_pos, y_pos) {
-    <span class="hljs-keyword">var</span> bboxComp = <span class="hljs-keyword">new</span> BoundingBoxComputation(x_pos, y_pos);
+  <span class="hljs-keyword">static</span> getOutlineBoundingBox(outline, scale, x_pos, y_pos) {
+    <span class="hljs-keyword">const</span> bboxComp = <span class="hljs-keyword">new</span> BoundingBoxComputation();
 
     processOutline(outline, x_pos, y_pos, scale, -scale, {
       m: bboxComp.addPoint.bind(bboxComp),
       l: bboxComp.addPoint.bind(bboxComp),
       q: bboxComp.addQuadraticCurve.bind(bboxComp),
-      b: bboxComp.addBezierCurve.bind(bboxComp)
+      b: bboxComp.addBezierCurve.bind(bboxComp),
     });
 
     <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> BoundingBox(
@@ -645,18 +711,25 @@ export <span class="hljs-keyword">class</span> Glyph {
   <span class="hljs-comment">/**
    * @constructor
    */</span>
-  constructor(code, point, options) {
+  <span class="hljs-keyword">constructor</span>(code, point, options) {
+    <span class="hljs-keyword">super</span>();
+    <span class="hljs-keyword">this</span>.setAttribute(<span class="hljs-string">'type'</span>, <span class="hljs-string">'Glyph'</span>);
+
     <span class="hljs-keyword">this</span>.code = code;
     <span class="hljs-keyword">this</span>.point = point;
-    <span class="hljs-keyword">this</span>.context = <span class="hljs-literal">null</span>;
     <span class="hljs-keyword">this</span>.options = {
       cache: <span class="hljs-literal">true</span>,
-      font: Font
+      font: Font,
     };
 
     <span class="hljs-keyword">this</span>.metrics = <span class="hljs-literal">null</span>;
     <span class="hljs-keyword">this</span>.x_shift = <span class="hljs-number">0</span>;
     <span class="hljs-keyword">this</span>.y_shift = <span class="hljs-number">0</span>;
+
+    <span class="hljs-keyword">this</span>.originShift = {
+      x: <span class="hljs-number">0</span>,
+      y: <span class="hljs-number">0</span>,
+    };
 
     <span class="hljs-keyword">if</span> (options) {
       <span class="hljs-keyword">this</span>.setOptions(options);
@@ -674,8 +747,6 @@ export <span class="hljs-keyword">class</span> Glyph {
   setStave(stave) { <span class="hljs-keyword">this</span>.stave = stave; <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>; }
   setXShift(x_shift) { <span class="hljs-keyword">this</span>.x_shift = x_shift; <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>; }
   setYShift(y_shift) { <span class="hljs-keyword">this</span>.y_shift = y_shift; <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>; }
-  setContext(context) { <span class="hljs-keyword">this</span>.context = context; <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>; }
-  getContext() { <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.context; }
 
   reset() {
     <span class="hljs-keyword">this</span>.scale = <span class="hljs-keyword">this</span>.point * <span class="hljs-number">72</span> / (<span class="hljs-keyword">this</span>.options.font.resolution * <span class="hljs-number">100</span>);
@@ -693,36 +764,59 @@ export <span class="hljs-keyword">class</span> Glyph {
   }
 
   getMetrics() {
-    <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.metrics) <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RuntimeError(<span class="hljs-string">"BadGlyph"</span>, <span class="hljs-string">"Glyph "</span> +
-      <span class="hljs-keyword">this</span>.code + <span class="hljs-string">" is not initialized."</span>);
+    <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.metrics) {
+      <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RuntimeError(<span class="hljs-string">'BadGlyph'</span>, <span class="hljs-string">`Glyph <span class="hljs-subst">${this.code}</span> is not initialized.`</span>);
+    }
 
     <span class="hljs-keyword">return</span> {
       x_min: <span class="hljs-keyword">this</span>.metrics.x_min * <span class="hljs-keyword">this</span>.scale,
       x_max: <span class="hljs-keyword">this</span>.metrics.x_max * <span class="hljs-keyword">this</span>.scale,
       width: <span class="hljs-keyword">this</span>.bbox.getW(),
-      height: <span class="hljs-keyword">this</span>.bbox.getH()
+      height: <span class="hljs-keyword">this</span>.bbox.getH(),
     };
   }
 
-  render(ctx, x_pos, y_pos) {
-    <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.metrics) <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RuntimeError(<span class="hljs-string">"BadGlyph"</span>, <span class="hljs-string">"Glyph "</span> +
-        <span class="hljs-keyword">this</span>.code + <span class="hljs-string">" is not initialized."</span>);
+  setOrigin(x, y) {
+    <span class="hljs-keyword">const</span> { bbox } = <span class="hljs-keyword">this</span>;
+    <span class="hljs-keyword">const</span> originX = <span class="hljs-built_in">Math</span>.abs(bbox.getX() / bbox.getW());
+    <span class="hljs-keyword">const</span> originY = <span class="hljs-built_in">Math</span>.abs(bbox.getY() / bbox.getH());
 
-    <span class="hljs-keyword">var</span> outline = <span class="hljs-keyword">this</span>.metrics.outline;
-    <span class="hljs-keyword">var</span> scale = <span class="hljs-keyword">this</span>.scale;
+    <span class="hljs-keyword">const</span> xShift = (x - originX) * bbox.getW();
+    <span class="hljs-keyword">const</span> yShift = (y - originY) * bbox.getH();
 
-    Glyph.renderOutline(ctx, outline, scale, x_pos, y_pos);
+    <span class="hljs-keyword">this</span>.originShift = {
+      x: -xShift,
+      y: -yShift,
+    };
+  }
+
+  render(ctx, x, y) {
+    <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.metrics) {
+      <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RuntimeError(<span class="hljs-string">'BadGlyph'</span>, <span class="hljs-string">`Glyph <span class="hljs-subst">${this.code}</span> is not initialized.`</span>);
+    }
+
+    <span class="hljs-keyword">const</span> outline = <span class="hljs-keyword">this</span>.metrics.outline;
+    <span class="hljs-keyword">const</span> scale = <span class="hljs-keyword">this</span>.scale;
+
+    <span class="hljs-keyword">this</span>.setRendered();
+    Glyph.renderOutline(ctx, outline, scale, x + <span class="hljs-keyword">this</span>.originShift.x, y + <span class="hljs-keyword">this</span>.originShift.y);
   }
 
   renderToStave(x) {
-    <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.metrics) <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RuntimeError(<span class="hljs-string">"BadGlyph"</span>, <span class="hljs-string">"Glyph "</span> +
-        <span class="hljs-keyword">this</span>.code + <span class="hljs-string">" is not initialized."</span>);
-    <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.stave) <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RuntimeError(<span class="hljs-string">"GlyphError"</span>, <span class="hljs-string">"No valid stave"</span>);
-    <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.context) <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RERR(<span class="hljs-string">"GlyphError"</span>, <span class="hljs-string">"No valid context"</span>);
+    <span class="hljs-keyword">this</span>.checkContext();
 
-    <span class="hljs-keyword">var</span> outline = <span class="hljs-keyword">this</span>.metrics.outline;
-    <span class="hljs-keyword">var</span> scale = <span class="hljs-keyword">this</span>.scale;
+    <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.metrics) {
+      <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RuntimeError(<span class="hljs-string">'BadGlyph'</span>, <span class="hljs-string">`Glyph <span class="hljs-subst">${this.code}</span> is not initialized.`</span>);
+    }
 
+    <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.stave) {
+      <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RuntimeError(<span class="hljs-string">'GlyphError'</span>, <span class="hljs-string">'No valid stave'</span>);
+    }
+
+    <span class="hljs-keyword">const</span> outline = <span class="hljs-keyword">this</span>.metrics.outline;
+    <span class="hljs-keyword">const</span> scale = <span class="hljs-keyword">this</span>.scale;
+
+    <span class="hljs-keyword">this</span>.setRendered();
     Glyph.renderOutline(<span class="hljs-keyword">this</span>.context, outline, scale,
         x + <span class="hljs-keyword">this</span>.x_shift, <span class="hljs-keyword">this</span>.stave.getYForGlyphs() + <span class="hljs-keyword">this</span>.y_shift);
   }

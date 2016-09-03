@@ -121,6 +121,27 @@
               
                 
                 <li>
+                  <a class="source" href="easyscore.html">
+                    easyscore.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="element.html">
+                    element.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="factory.html">
+                    factory.js
+                  </a>
+                </li>
+              
+                
+                <li>
                   <a class="source" href="formatter.html">
                     formatter.js
                   </a>
@@ -165,6 +186,13 @@
                 <li>
                   <a class="source" href="gracenotegroup.html">
                     gracenotegroup.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="gracetabnote.html">
+                    gracetabnote.js
                   </a>
                 </li>
               
@@ -226,8 +254,22 @@
               
                 
                 <li>
+                  <a class="source" href="notesubgroup.html">
+                    notesubgroup.js
+                  </a>
+                </li>
+              
+                
+                <li>
                   <a class="source" href="ornament.html">
                     ornament.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="parser.html">
+                    parser.js
                   </a>
                 </li>
               
@@ -242,6 +284,13 @@
                 <li>
                   <a class="source" href="raphaelcontext.html">
                     raphaelcontext.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="registry.html">
+                    registry.js
                   </a>
                 </li>
               
@@ -380,6 +429,13 @@
               
                 
                 <li>
+                  <a class="source" href="system.html">
+                    system.js
+                  </a>
+                </li>
+              
+                
+                <li>
                   <a class="source" href="tables.html">
                     tables.js
                   </a>
@@ -499,6 +555,13 @@
               
                 
                 <li>
+                  <a class="source" href="vibratobracket.html">
+                    vibratobracket.js
+                  </a>
+                </li>
+              
+                
+                <li>
                   <a class="source" href="voice.html">
                     voice.js
                   </a>
@@ -525,29 +588,30 @@ by its parent <code>StemmableNote</code>.</p>
 
         
           <div class='highlight'><pre>
-import { Vex } from <span class="hljs-string">'./vex'</span>;
-import { Flow } from <span class="hljs-string">'./tables'</span>;</pre></div>
+<span class="hljs-keyword">import</span> { Vex } <span class="hljs-keyword">from</span> <span class="hljs-string">'./vex'</span>;
+<span class="hljs-keyword">import</span> { Element } <span class="hljs-keyword">from</span> <span class="hljs-string">'./element'</span>;
+<span class="hljs-keyword">import</span> { Flow } <span class="hljs-keyword">from</span> <span class="hljs-string">'./tables'</span>;</pre></div>
         
       
         
         <p>To enable logging for this class. Set <code>Vex.Flow.Stem.DEBUG</code> to <code>true</code>.</p>
 
         
-          <div class='highlight'><pre><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">L</span><span class="hljs-params">()</span> {</span> <span class="hljs-keyword">if</span> (Stem.DEBUG) Vex.L(<span class="hljs-string">"Vex.Flow.Stem"</span>, <span class="hljs-built_in">arguments</span>); }
+          <div class='highlight'><pre><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">L</span>(<span class="hljs-params">...args</span>) </span>{ <span class="hljs-keyword">if</span> (Stem.DEBUG) Vex.L(<span class="hljs-string">'Vex.Flow.Stem'</span>, args); }
 
-export <span class="hljs-keyword">class</span> Stem {
-  static get CATEGORY() { <span class="hljs-keyword">return</span> <span class="hljs-string">'stem'</span>; }</pre></div>
+<span class="hljs-keyword">export</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Stem</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">Element</span> </span>{
+  <span class="hljs-keyword">static</span> get CATEGORY() { <span class="hljs-keyword">return</span> <span class="hljs-string">'stem'</span>; }</pre></div>
         
       
         
         <p>Stem directions</p>
 
         
-          <div class='highlight'><pre>  static get UP() {
+          <div class='highlight'><pre>  <span class="hljs-keyword">static</span> get UP() {
     <span class="hljs-keyword">return</span> <span class="hljs-number">1</span>;
   }
-  static get DOWN() {
-    <span class="hljs-keyword">return</span> -<span class="hljs-number">1</span>;
+  <span class="hljs-keyword">static</span> get DOWN() {
+    <span class="hljs-keyword">return</span> <span class="hljs-number">-1</span>;
   }</pre></div>
         
       
@@ -555,17 +619,16 @@ export <span class="hljs-keyword">class</span> Stem {
         <p>Theme</p>
 
         
-          <div class='highlight'><pre>  static get WIDTH() {
+          <div class='highlight'><pre>  <span class="hljs-keyword">static</span> get WIDTH() {
     <span class="hljs-keyword">return</span> Flow.STEM_WIDTH;
   }
-  static get HEIGHT() {
+  <span class="hljs-keyword">static</span> get HEIGHT() {
     <span class="hljs-keyword">return</span> Flow.STEM_HEIGHT;
   }
 
-  constructor(options = <span class="hljs-literal">null</span>) {
-    <span class="hljs-keyword">if</span>(options === <span class="hljs-literal">null</span>) {
-      <span class="hljs-keyword">return</span>;
-    }</pre></div>
+  <span class="hljs-keyword">constructor</span>(options = {}) {
+    <span class="hljs-keyword">super</span>();
+    <span class="hljs-keyword">this</span>.setAttribute(<span class="hljs-string">'type'</span>, <span class="hljs-string">'Stem'</span>);</pre></div>
         
       
         
@@ -582,13 +645,6 @@ export <span class="hljs-keyword">class</span> Stem {
         
           <div class='highlight'><pre>    <span class="hljs-keyword">this</span>.y_top = options.y_top || <span class="hljs-number">0</span>;
     <span class="hljs-keyword">this</span>.y_bottom = options.y_bottom || <span class="hljs-number">0</span>;</pre></div>
-        
-      
-        
-        <p>Stem base extension</p>
-
-        
-          <div class='highlight'><pre>    <span class="hljs-keyword">this</span>.y_extend = options.y_extend || <span class="hljs-number">0</span>;</pre></div>
         
       
         
@@ -609,7 +665,18 @@ export <span class="hljs-keyword">class</span> Stem {
         <p>Flag to override all draw calls</p>
 
         
-          <div class='highlight'><pre>    <span class="hljs-keyword">this</span>.hide = <span class="hljs-literal">false</span>;
+          <div class='highlight'><pre>    <span class="hljs-keyword">this</span>.hide = options.hide || <span class="hljs-literal">false</span>;
+
+    <span class="hljs-keyword">this</span>.isStemlet = options.isStemlet || <span class="hljs-literal">false</span>;
+    <span class="hljs-keyword">this</span>.stemletHeight = options.stemletHeight || <span class="hljs-number">0</span>;</pre></div>
+        
+      
+        
+        <p>Use to adjust the rendered height without affecting
+the results of <code>.getExtents()</code></p>
+
+        
+          <div class='highlight'><pre>    <span class="hljs-keyword">this</span>.renderHeightAdjustment = <span class="hljs-number">0</span>;
   }</pre></div>
         
       
@@ -628,14 +695,15 @@ export <span class="hljs-keyword">class</span> Stem {
         <p>Set the direction of the stem in relation to the noteheads</p>
 
         
-          <div class='highlight'><pre>  setDirection(direction){ <span class="hljs-keyword">this</span>.stem_direction = direction; }</pre></div>
+          <div class='highlight'><pre>  setDirection(direction) { <span class="hljs-keyword">this</span>.stem_direction = direction; }</pre></div>
         
       
         
         <p>Set the extension for the stem, generally for flags or beams</p>
 
         
-          <div class='highlight'><pre>  setExtension(ext) { <span class="hljs-keyword">this</span>.stem_extension = ext; }</pre></div>
+          <div class='highlight'><pre>  setExtension(ext) { <span class="hljs-keyword">this</span>.stem_extension = ext; }
+  getExtension() { <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.stem_extension; }</pre></div>
         
       
         
@@ -656,13 +724,6 @@ export <span class="hljs-keyword">class</span> Stem {
         
       
         
-        <p>Set the canvas context to render on</p>
-
-        
-          <div class='highlight'><pre>  setContext(context) { <span class="hljs-keyword">this</span>.context = context; <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;}</pre></div>
-        
-      
-        
         <p>Gets the entire height for the stem</p>
 
         
@@ -671,7 +732,7 @@ export <span class="hljs-keyword">class</span> Stem {
            ((Stem.HEIGHT + <span class="hljs-keyword">this</span>.stem_extension) * <span class="hljs-keyword">this</span>.stem_direction);
   }
   getBoundingBox() {
-    <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RERR(<span class="hljs-string">"NotImplemented"</span>, <span class="hljs-string">"getBoundingBox() not implemented."</span>);
+    <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RERR(<span class="hljs-string">'NotImplemented'</span>, <span class="hljs-string">'getBoundingBox() not implemented.'</span>);
   }</pre></div>
         
       
@@ -681,25 +742,14 @@ the extension</p>
 
         
           <div class='highlight'><pre>  getExtents() {
-    <span class="hljs-keyword">var</span> ys = [<span class="hljs-keyword">this</span>.y_top, <span class="hljs-keyword">this</span>.y_bottom];
+    <span class="hljs-keyword">const</span> isStemUp = <span class="hljs-keyword">this</span>.stem_direction === Stem.UP;
+    <span class="hljs-keyword">const</span> ys = [<span class="hljs-keyword">this</span>.y_top, <span class="hljs-keyword">this</span>.y_bottom];
+    <span class="hljs-keyword">const</span> stemHeight = Stem.HEIGHT + <span class="hljs-keyword">this</span>.stem_extension;
+    <span class="hljs-keyword">const</span> innerMostNoteheadY = (isStemUp ? <span class="hljs-built_in">Math</span>.min : <span class="hljs-built_in">Math</span>.max)(...ys);
+    <span class="hljs-keyword">const</span> outerMostNoteheadY = (isStemUp ? <span class="hljs-built_in">Math</span>.max : <span class="hljs-built_in">Math</span>.min)(...ys);
+    <span class="hljs-keyword">const</span> stemTipY = innerMostNoteheadY + (stemHeight * -<span class="hljs-keyword">this</span>.stem_direction);
 
-    <span class="hljs-keyword">var</span> top_pixel = <span class="hljs-keyword">this</span>.y_top;
-    <span class="hljs-keyword">var</span> base_pixel = <span class="hljs-keyword">this</span>.y_bottom;
-    <span class="hljs-keyword">var</span> stem_height = Stem.HEIGHT + <span class="hljs-keyword">this</span>.stem_extension;
-
-    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; ys.length; ++i) {
-      <span class="hljs-keyword">var</span> stem_top = ys[i] + (stem_height * -<span class="hljs-keyword">this</span>.stem_direction);
-
-      <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.stem_direction == Stem.DOWN) {
-        top_pixel = <span class="hljs-built_in">Math</span>.max(top_pixel, stem_top);
-        base_pixel = <span class="hljs-built_in">Math</span>.min(base_pixel, ys[i]);
-      } <span class="hljs-keyword">else</span> {
-        top_pixel = <span class="hljs-built_in">Math</span>.min(top_pixel, stem_top);
-        base_pixel = <span class="hljs-built_in">Math</span>.max(base_pixel, ys[i]);
-      }
-    }
-
-    <span class="hljs-keyword">return</span> { topY: top_pixel, baseY: base_pixel };
+    <span class="hljs-keyword">return</span> { topY: stemTipY, baseY: outerMostNoteheadY };
   }</pre></div>
         
       
@@ -708,7 +758,18 @@ the extension</p>
 
         
           <div class='highlight'><pre>  setStyle(style) { <span class="hljs-keyword">this</span>.style = style; <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>; }
-  getStyle() { <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.style; }</pre></div>
+  getStyle() { <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.style; }
+
+  setVisibility(isVisible) {
+    <span class="hljs-keyword">this</span>.hide = !isVisible;
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
+  }
+
+  setStemlet(isStemlet, stemletHeight) {
+    <span class="hljs-keyword">this</span>.isStemlet = isStemlet;
+    <span class="hljs-keyword">this</span>.stemletHeight = stemletHeight;
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
+  }</pre></div>
         
       
         
@@ -716,8 +777,8 @@ the extension</p>
 
         
           <div class='highlight'><pre>  applyStyle(context) {
-    <span class="hljs-keyword">var</span> style = <span class="hljs-keyword">this</span>.getStyle();
-    <span class="hljs-keyword">if</span>(style) {
+    <span class="hljs-keyword">const</span> style = <span class="hljs-keyword">this</span>.getStyle();
+    <span class="hljs-keyword">if</span> (style) {
       <span class="hljs-keyword">if</span> (style.shadowColor) context.setShadowColor(style.shadowColor);
       <span class="hljs-keyword">if</span> (style.shadowBlur) context.setShadowBlur(style.shadowBlur);
       <span class="hljs-keyword">if</span> (style.strokeStyle) context.setStrokeStyle(style.strokeStyle);
@@ -731,24 +792,23 @@ the extension</p>
 
         
           <div class='highlight'><pre>  draw() {
-    <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.context) <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RERR(<span class="hljs-string">"NoCanvasContext"</span>,
-        <span class="hljs-string">"Can't draw without a canvas context."</span>);
-
+    <span class="hljs-keyword">this</span>.setRendered();
     <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.hide) <span class="hljs-keyword">return</span>;
+    <span class="hljs-keyword">const</span> ctx = <span class="hljs-keyword">this</span>.checkContext();
 
-    <span class="hljs-keyword">var</span> ctx = <span class="hljs-keyword">this</span>.context;
-    <span class="hljs-keyword">var</span> stem_x, stem_y;
-    <span class="hljs-keyword">var</span> stem_direction = <span class="hljs-keyword">this</span>.stem_direction;
+    <span class="hljs-keyword">let</span> stem_x;
+    <span class="hljs-keyword">let</span> stem_y;
+    <span class="hljs-keyword">const</span> stem_direction = <span class="hljs-keyword">this</span>.stem_direction;
 
-    <span class="hljs-keyword">if</span> (stem_direction == Stem.DOWN) {</pre></div>
+    <span class="hljs-keyword">if</span> (stem_direction === Stem.DOWN) {</pre></div>
         
       
         
         <p>Down stems are rendered to the left of the head.</p>
 
         
-          <div class='highlight'><pre>      stem_x = <span class="hljs-keyword">this</span>.x_begin + (Stem.WIDTH / <span class="hljs-number">2</span>);
-      stem_y = <span class="hljs-keyword">this</span>.y_top + <span class="hljs-number">2</span>;
+          <div class='highlight'><pre>      stem_x = <span class="hljs-keyword">this</span>.x_begin;
+      stem_y = <span class="hljs-keyword">this</span>.y_top;
     } <span class="hljs-keyword">else</span> {</pre></div>
         
       
@@ -756,13 +816,22 @@ the extension</p>
         <p>Up stems are rendered to the right of the head.</p>
 
         
-          <div class='highlight'><pre>      stem_x = <span class="hljs-keyword">this</span>.x_end + (Stem.WIDTH / <span class="hljs-number">2</span>);
-      stem_y = <span class="hljs-keyword">this</span>.y_bottom - <span class="hljs-number">2</span>;
+          <div class='highlight'><pre>      stem_x = <span class="hljs-keyword">this</span>.x_end;
+      stem_y = <span class="hljs-keyword">this</span>.y_bottom;
     }
 
-    stem_y += <span class="hljs-keyword">this</span>.y_extend * stem_direction;
+    <span class="hljs-keyword">const</span> stemHeight = <span class="hljs-keyword">this</span>.getHeight();
 
-    L(<span class="hljs-string">"Rendering stem - "</span>, <span class="hljs-string">"Top Y: "</span>, <span class="hljs-keyword">this</span>.y_top, <span class="hljs-string">"Bottom Y: "</span>, <span class="hljs-keyword">this</span>.y_bottom);</pre></div>
+    L(<span class="hljs-string">'Rendering stem - '</span>, <span class="hljs-string">'Top Y: '</span>, <span class="hljs-keyword">this</span>.y_top, <span class="hljs-string">'Bottom Y: '</span>, <span class="hljs-keyword">this</span>.y_bottom);</pre></div>
+        
+      
+        
+        <p>The offset from the stem’s base which is required fo satisfy the stemlet height</p>
+
+        
+          <div class='highlight'><pre>    <span class="hljs-keyword">const</span> stemletYOffset = <span class="hljs-keyword">this</span>.isStemlet
+      ? stemHeight - <span class="hljs-keyword">this</span>.stemletHeight * <span class="hljs-keyword">this</span>.stem_direction
+      : <span class="hljs-number">0</span>;</pre></div>
         
       
         
@@ -773,8 +842,8 @@ the extension</p>
     <span class="hljs-keyword">this</span>.applyStyle(ctx);
     ctx.beginPath();
     ctx.setLineWidth(Stem.WIDTH);
-    ctx.moveTo(stem_x, stem_y);
-    ctx.lineTo(stem_x, stem_y - <span class="hljs-keyword">this</span>.getHeight());
+    ctx.moveTo(stem_x, stem_y - stemletYOffset);
+    ctx.lineTo(stem_x, stem_y - stemHeight - (<span class="hljs-keyword">this</span>.renderHeightAdjustment * stem_direction));
     ctx.stroke();
     ctx.restore();
   }

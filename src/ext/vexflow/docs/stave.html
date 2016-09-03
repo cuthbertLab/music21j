@@ -121,6 +121,27 @@
               
                 
                 <li>
+                  <a class="source" href="easyscore.html">
+                    easyscore.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="element.html">
+                    element.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="factory.html">
+                    factory.js
+                  </a>
+                </li>
+              
+                
+                <li>
                   <a class="source" href="formatter.html">
                     formatter.js
                   </a>
@@ -165,6 +186,13 @@
                 <li>
                   <a class="source" href="gracenotegroup.html">
                     gracenotegroup.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="gracetabnote.html">
+                    gracetabnote.js
                   </a>
                 </li>
               
@@ -226,8 +254,22 @@
               
                 
                 <li>
+                  <a class="source" href="notesubgroup.html">
+                    notesubgroup.js
+                  </a>
+                </li>
+              
+                
+                <li>
                   <a class="source" href="ornament.html">
                     ornament.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="parser.html">
+                    parser.js
                   </a>
                 </li>
               
@@ -242,6 +284,13 @@
                 <li>
                   <a class="source" href="raphaelcontext.html">
                     raphaelcontext.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="registry.html">
+                    registry.js
                   </a>
                 </li>
               
@@ -380,6 +429,13 @@
               
                 
                 <li>
+                  <a class="source" href="system.html">
+                    system.js
+                  </a>
+                </li>
+              
+                
+                <li>
                   <a class="source" href="tables.html">
                     tables.js
                   </a>
@@ -499,6 +555,13 @@
               
                 
                 <li>
+                  <a class="source" href="vibratobracket.html">
+                    vibratobracket.js
+                  </a>
+                </li>
+              
+                
+                <li>
                   <a class="source" href="voice.html">
                     voice.js
                   </a>
@@ -522,70 +585,84 @@
 
         
           <div class='highlight'><pre>
-import { Vex } from <span class="hljs-string">'./vex'</span>;
-import { Flow } from <span class="hljs-string">'./tables'</span>;
-import { Barline } from <span class="hljs-string">'./stavebarline'</span>;
-import { StaveModifier } from <span class="hljs-string">'./stavemodifier'</span>;
-import { Repetition } from <span class="hljs-string">'./staverepetition'</span>;
-import { StaveSection } from <span class="hljs-string">'./stavesection'</span>;
-import { StaveTempo } from <span class="hljs-string">'./stavetempo'</span>;
-import { StaveText } from <span class="hljs-string">'./stavetext'</span>;
-import { BoundingBox } from <span class="hljs-string">'./boundingbox'</span>;
-import { Clef } from <span class="hljs-string">'./clef'</span>;
-import { KeySignature } from <span class="hljs-string">'./keysignature'</span>;
-import { TimeSignature } from <span class="hljs-string">'./timesignature'</span>;
-import { Volta } from <span class="hljs-string">'./stavevolta'</span>;
+<span class="hljs-keyword">import</span> { Vex } <span class="hljs-keyword">from</span> <span class="hljs-string">'./vex'</span>;
+<span class="hljs-keyword">import</span> { Element } <span class="hljs-keyword">from</span> <span class="hljs-string">'./element'</span>;
+<span class="hljs-keyword">import</span> { Flow } <span class="hljs-keyword">from</span> <span class="hljs-string">'./tables'</span>;
+<span class="hljs-keyword">import</span> { Barline } <span class="hljs-keyword">from</span> <span class="hljs-string">'./stavebarline'</span>;
+<span class="hljs-keyword">import</span> { StaveModifier } <span class="hljs-keyword">from</span> <span class="hljs-string">'./stavemodifier'</span>;
+<span class="hljs-keyword">import</span> { Repetition } <span class="hljs-keyword">from</span> <span class="hljs-string">'./staverepetition'</span>;
+<span class="hljs-keyword">import</span> { StaveSection } <span class="hljs-keyword">from</span> <span class="hljs-string">'./stavesection'</span>;
+<span class="hljs-keyword">import</span> { StaveTempo } <span class="hljs-keyword">from</span> <span class="hljs-string">'./stavetempo'</span>;
+<span class="hljs-keyword">import</span> { StaveText } <span class="hljs-keyword">from</span> <span class="hljs-string">'./stavetext'</span>;
+<span class="hljs-keyword">import</span> { BoundingBox } <span class="hljs-keyword">from</span> <span class="hljs-string">'./boundingbox'</span>;
+<span class="hljs-keyword">import</span> { Clef } <span class="hljs-keyword">from</span> <span class="hljs-string">'./clef'</span>;
+<span class="hljs-keyword">import</span> { KeySignature } <span class="hljs-keyword">from</span> <span class="hljs-string">'./keysignature'</span>;
+<span class="hljs-keyword">import</span> { TimeSignature } <span class="hljs-keyword">from</span> <span class="hljs-string">'./timesignature'</span>;
+<span class="hljs-keyword">import</span> { Volta } <span class="hljs-keyword">from</span> <span class="hljs-string">'./stavevolta'</span>;
 
-<span class="hljs-keyword">const</span> THICKNESS = (Flow.STAVE_LINE_THICKNESS &gt; <span class="hljs-number">1</span> ?
-      Flow.STAVE_LINE_THICKNESS : <span class="hljs-number">0</span>);
+<span class="hljs-keyword">export</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Stave</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">Element</span> </span>{
+  <span class="hljs-keyword">constructor</span>(x, y, width, options) {
+    <span class="hljs-keyword">super</span>();
+    <span class="hljs-keyword">this</span>.setAttribute(<span class="hljs-string">'type'</span>, <span class="hljs-string">'Stave'</span>);
 
-export <span class="hljs-keyword">class</span> Stave {
-  constructor(x, y, width, options) {
     <span class="hljs-keyword">this</span>.x = x;
     <span class="hljs-keyword">this</span>.y = y;
     <span class="hljs-keyword">this</span>.width = width;
     <span class="hljs-keyword">this</span>.formatted = <span class="hljs-literal">false</span>;
     <span class="hljs-keyword">this</span>.start_x = x + <span class="hljs-number">5</span>;
     <span class="hljs-keyword">this</span>.end_x = x + width;
-    <span class="hljs-keyword">this</span>.context = <span class="hljs-literal">null</span>;
     <span class="hljs-keyword">this</span>.modifiers = [];  <span class="hljs-comment">// stave modifiers (clef, key, time, barlines, coda, segno, etc.)</span>
     <span class="hljs-keyword">this</span>.measure = <span class="hljs-number">0</span>;
-    <span class="hljs-keyword">this</span>.clef = <span class="hljs-string">"treble"</span>;
+    <span class="hljs-keyword">this</span>.clef = <span class="hljs-string">'treble'</span>;
     <span class="hljs-keyword">this</span>.font = {
-      family: <span class="hljs-string">"sans-serif"</span>,
+      family: <span class="hljs-string">'sans-serif'</span>,
       size: <span class="hljs-number">8</span>,
-      weight: <span class="hljs-string">""</span>
+      weight: <span class="hljs-string">''</span>,
     };
     <span class="hljs-keyword">this</span>.options = {
       vertical_bar_width: <span class="hljs-number">10</span>,       <span class="hljs-comment">// Width around vertical bar end-marker</span>
       glyph_spacing_px: <span class="hljs-number">10</span>,
       num_lines: <span class="hljs-number">5</span>,
-      fill_style: <span class="hljs-string">"#999999"</span>,
+      fill_style: <span class="hljs-string">'#999999'</span>,
       left_bar: <span class="hljs-literal">true</span>,               <span class="hljs-comment">// draw vertical bar on left</span>
       right_bar: <span class="hljs-literal">true</span>,               <span class="hljs-comment">// draw vertical bar on right</span>
       spacing_between_lines_px: <span class="hljs-number">10</span>, <span class="hljs-comment">// in pixels</span>
       space_above_staff_ln: <span class="hljs-number">4</span>,      <span class="hljs-comment">// in staff lines</span>
       space_below_staff_ln: <span class="hljs-number">4</span>,      <span class="hljs-comment">// in staff lines</span>
-      top_text_position: <span class="hljs-number">1</span>          <span class="hljs-comment">// in staff lines</span>
+      top_text_position: <span class="hljs-number">1</span>,          <span class="hljs-comment">// in staff lines</span>
     };
-    <span class="hljs-keyword">this</span>.bounds = {x: <span class="hljs-keyword">this</span>.x, y: <span class="hljs-keyword">this</span>.y, w: <span class="hljs-keyword">this</span>.width, h: <span class="hljs-number">0</span>};
+    <span class="hljs-keyword">this</span>.bounds = { x: <span class="hljs-keyword">this</span>.x, y: <span class="hljs-keyword">this</span>.y, w: <span class="hljs-keyword">this</span>.width, h: <span class="hljs-number">0</span> };
     Vex.Merge(<span class="hljs-keyword">this</span>.options, options);
 
     <span class="hljs-keyword">this</span>.resetLines();
 
-    <span class="hljs-keyword">var</span> BARTYPE = Barline.type;
-    <span class="hljs-keyword">this</span>.addModifier(<span class="hljs-keyword">new</span> Barline(<span class="hljs-keyword">this</span>.options.left_bar ? BARTYPE.SINGLE : BARTYPE.NONE));  <span class="hljs-comment">// beg bar</span>
-    <span class="hljs-keyword">this</span>.addEndModifier(<span class="hljs-keyword">new</span> Barline(<span class="hljs-keyword">this</span>.options.right_bar ? BARTYPE.SINGLE : BARTYPE.NONE)); <span class="hljs-comment">// end bar</span>
+    <span class="hljs-keyword">const</span> BARTYPE = Barline.type;</pre></div>
+        
+      
+        
+        <p>beg bar</p>
+
+        
+          <div class='highlight'><pre>    <span class="hljs-keyword">this</span>.addModifier(<span class="hljs-keyword">new</span> Barline(<span class="hljs-keyword">this</span>.options.left_bar ? BARTYPE.SINGLE : BARTYPE.NONE));</pre></div>
+        
+      
+        
+        <p>end bar</p>
+
+        
+          <div class='highlight'><pre>    <span class="hljs-keyword">this</span>.addEndModifier(<span class="hljs-keyword">new</span> Barline(<span class="hljs-keyword">this</span>.options.right_bar ? BARTYPE.SINGLE : BARTYPE.NONE));
   }
+
+  space(spacing) { <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.options.spacing_between_lines_px * spacing; }
 
   resetLines() {
     <span class="hljs-keyword">this</span>.options.line_config = [];
-    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; <span class="hljs-keyword">this</span>.options.num_lines; i++) {
-      <span class="hljs-keyword">this</span>.options.line_config.push({visible: <span class="hljs-literal">true</span>});
+    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> i = <span class="hljs-number">0</span>; i &lt; <span class="hljs-keyword">this</span>.options.num_lines; i++) {
+      <span class="hljs-keyword">this</span>.options.line_config.push({ visible: <span class="hljs-literal">true</span> });
     }
     <span class="hljs-keyword">this</span>.height = (<span class="hljs-keyword">this</span>.options.num_lines + <span class="hljs-keyword">this</span>.options.space_above_staff_ln) *
        <span class="hljs-keyword">this</span>.options.spacing_between_lines_px;
-    <span class="hljs-keyword">this</span>.options.bottom_text_position = <span class="hljs-keyword">this</span>.options.num_lines + <span class="hljs-number">1</span>;
+    <span class="hljs-keyword">this</span>.options.bottom_text_position = <span class="hljs-keyword">this</span>.options.num_lines;
   }
 
   getOptions() { <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.options; }
@@ -609,8 +686,6 @@ export <span class="hljs-keyword">class</span> Stave {
   }
   getTieStartX() { <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.start_x; }
   getTieEndX() { <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.x + <span class="hljs-keyword">this</span>.width; }
-  setContext(context) { <span class="hljs-keyword">this</span>.context = context; <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>; }
-  getContext() { <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.context; }
   getX() { <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.x; }
   getNumLines() { <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.options.num_lines; }
   setNumLines(lines) {
@@ -620,14 +695,21 @@ export <span class="hljs-keyword">class</span> Stave {
   }
   setY(y) { <span class="hljs-keyword">this</span>.y = y; <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>; }
 
-  setX(x){
-    <span class="hljs-keyword">var</span> shift = x - <span class="hljs-keyword">this</span>.x;
+  getTopLineTopY() {
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.getYForLine(<span class="hljs-number">0</span>) - (Flow.STAVE_LINE_THICKNESS / <span class="hljs-number">2</span>);
+  }
+  getBottomLineBottomY() {
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.getYForLine(<span class="hljs-keyword">this</span>.getNumLines() - <span class="hljs-number">1</span>) + (Flow.STAVE_LINE_THICKNESS / <span class="hljs-number">2</span>);
+  }
+
+  setX(x) {
+    <span class="hljs-keyword">const</span> shift = x - <span class="hljs-keyword">this</span>.x;
     <span class="hljs-keyword">this</span>.formatted = <span class="hljs-literal">false</span>;
     <span class="hljs-keyword">this</span>.x = x;
     <span class="hljs-keyword">this</span>.start_x += shift;
     <span class="hljs-keyword">this</span>.end_x += shift;
-    <span class="hljs-keyword">for</span>(<span class="hljs-keyword">var</span> i=<span class="hljs-number">0</span>; i&lt;<span class="hljs-keyword">this</span>.modifiers.length; i++) {
-      <span class="hljs-keyword">var</span> mod = <span class="hljs-keyword">this</span>.modifiers[i];
+    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> i = <span class="hljs-number">0</span>; i &lt; <span class="hljs-keyword">this</span>.modifiers.length; i++) {
+      <span class="hljs-keyword">const</span> mod = <span class="hljs-keyword">this</span>.modifiers[i];
       <span class="hljs-keyword">if</span> (mod.x !== <span class="hljs-literal">undefined</span>) {
         mod.x += shift;
       }
@@ -661,9 +743,10 @@ this.modifiers[1].setX(this.end_x);</p>
    * @param  {Number} index The index from which to determine the shift
    * @return {Number}       The amount of pixels shifted
    */</span>
-  getModifierXShift(index) {
-    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> index !== <span class="hljs-string">'number'</span>) <span class="hljs-keyword">new</span> Vex.RERR(<span class="hljs-string">"InvalidIndex"</span>,
-      <span class="hljs-string">"Must be of number type"</span>);
+  getModifierXShift(index = <span class="hljs-number">0</span>) {
+    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> index !== <span class="hljs-string">'number'</span>) {
+      <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RERR(<span class="hljs-string">'InvalidIndex'</span>, <span class="hljs-string">'Must be of number type'</span>);
+    }
 
     <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.formatted) <span class="hljs-keyword">this</span>.format();
 
@@ -671,10 +754,9 @@ this.modifiers[1].setX(this.end_x);</p>
       <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
     }
 
-    <span class="hljs-keyword">var</span> start_x = <span class="hljs-keyword">this</span>.start_x - <span class="hljs-keyword">this</span>.x;
-    <span class="hljs-keyword">var</span> begBarline = <span class="hljs-keyword">this</span>.modifiers[<span class="hljs-number">0</span>];
-    <span class="hljs-keyword">if</span> (begBarline.getType() === Barline.type.REPEAT_BEGIN &amp;&amp;
-        start_x &gt; begBarline.getWidth()) {
+    <span class="hljs-keyword">let</span> start_x = <span class="hljs-keyword">this</span>.start_x - <span class="hljs-keyword">this</span>.x;
+    <span class="hljs-keyword">const</span> begBarline = <span class="hljs-keyword">this</span>.modifiers[<span class="hljs-number">0</span>];
+    <span class="hljs-keyword">if</span> (begBarline.getType() === Barline.type.REPEAT_BEGIN &amp;&amp; start_x &gt; begBarline.getWidth()) {
       start_x -= begBarline.getWidth();
     }
 
@@ -692,7 +774,7 @@ this.modifiers[1].setX(this.end_x);</p>
   }
 
   setRepetitionTypeRight(type, y) {
-    <span class="hljs-keyword">this</span>.modifiers.push(<span class="hljs-keyword">new</span> Repetition(type, <span class="hljs-keyword">this</span>.x, y) );
+    <span class="hljs-keyword">this</span>.modifiers.push(<span class="hljs-keyword">new</span> Repetition(type, <span class="hljs-keyword">this</span>.x, y));
     <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
   }</pre></div>
         
@@ -745,19 +827,13 @@ this.modifiers[1].setX(this.end_x);</p>
   }
 
   getBoundingBox() {
-    <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> BoundingBox(<span class="hljs-keyword">this</span>.x, <span class="hljs-keyword">this</span>.y, <span class="hljs-keyword">this</span>.width, <span class="hljs-keyword">this</span>.getBottomY() - <span class="hljs-keyword">this</span>.y);</pre></div>
-        
-      
-        
-        <p>body…</p>
-
-        
-          <div class='highlight'><pre>  }
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> BoundingBox(<span class="hljs-keyword">this</span>.x, <span class="hljs-keyword">this</span>.y, <span class="hljs-keyword">this</span>.width, <span class="hljs-keyword">this</span>.getBottomY() - <span class="hljs-keyword">this</span>.y);
+  }
 
   getBottomY() {
-    <span class="hljs-keyword">var</span> options = <span class="hljs-keyword">this</span>.options;
-    <span class="hljs-keyword">var</span> spacing = options.spacing_between_lines_px;
-    <span class="hljs-keyword">var</span> score_bottom = <span class="hljs-keyword">this</span>.getYForLine(options.num_lines) +
+    <span class="hljs-keyword">const</span> options = <span class="hljs-keyword">this</span>.options;
+    <span class="hljs-keyword">const</span> spacing = options.spacing_between_lines_px;
+    <span class="hljs-keyword">const</span> score_bottom = <span class="hljs-keyword">this</span>.getYForLine(options.num_lines) +
        (options.space_below_staff_ln * spacing);
 
     <span class="hljs-keyword">return</span> score_bottom;
@@ -765,48 +841,53 @@ this.modifiers[1].setX(this.end_x);</p>
 
   getBottomLineY() {
     <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.getYForLine(<span class="hljs-keyword">this</span>.options.num_lines);
-  }
+  }</pre></div>
+        
+      
+        
+        <p>This returns the y for the <em>center</em> of a staff line</p>
 
-  getYForLine(line) {
-    <span class="hljs-keyword">var</span> options = <span class="hljs-keyword">this</span>.options;
-    <span class="hljs-keyword">var</span> spacing = options.spacing_between_lines_px;
-    <span class="hljs-keyword">var</span> headroom = options.space_above_staff_ln;
+        
+          <div class='highlight'><pre>  getYForLine(line) {
+    <span class="hljs-keyword">const</span> options = <span class="hljs-keyword">this</span>.options;
+    <span class="hljs-keyword">const</span> spacing = options.spacing_between_lines_px;
+    <span class="hljs-keyword">const</span> headroom = options.space_above_staff_ln;
 
-    <span class="hljs-keyword">var</span> y = <span class="hljs-keyword">this</span>.y + ((line * spacing) + (headroom * spacing)) -
-      (THICKNESS / <span class="hljs-number">2</span>);
+    <span class="hljs-keyword">const</span> y = <span class="hljs-keyword">this</span>.y + (line * spacing) + (headroom * spacing);
 
     <span class="hljs-keyword">return</span> y;
   }
 
-  getLineForY(y){</pre></div>
+  getLineForY(y) {</pre></div>
         
       
         
-        <p>Does the revers of getYForLine - somewhat dumb and just calls getYForLine until the right value is reaches</p>
+        <p>Does the reverse of getYForLine - somewhat dumb and just calls
+getYForLine until the right value is reaches</p>
 
         
           <div class='highlight'><pre>
-    <span class="hljs-keyword">var</span> options = <span class="hljs-keyword">this</span>.options;
-    <span class="hljs-keyword">var</span> spacing = options.spacing_between_lines_px;
-    <span class="hljs-keyword">var</span> headroom = options.space_above_staff_ln;
-    <span class="hljs-keyword">return</span> ((y - <span class="hljs-keyword">this</span>.y + (THICKNESS / <span class="hljs-number">2</span>)) / spacing) - headroom;
+    <span class="hljs-keyword">const</span> options = <span class="hljs-keyword">this</span>.options;
+    <span class="hljs-keyword">const</span> spacing = options.spacing_between_lines_px;
+    <span class="hljs-keyword">const</span> headroom = options.space_above_staff_ln;
+    <span class="hljs-keyword">return</span> ((y - <span class="hljs-keyword">this</span>.y) / spacing) - headroom;
   }
 
   getYForTopText(line) {
-    <span class="hljs-keyword">var</span> l = line || <span class="hljs-number">0</span>;
+    <span class="hljs-keyword">const</span> l = line || <span class="hljs-number">0</span>;
     <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.getYForLine(-l - <span class="hljs-keyword">this</span>.options.top_text_position);
   }
 
   getYForBottomText(line) {
-    <span class="hljs-keyword">var</span> l = line || <span class="hljs-number">0</span>;
+    <span class="hljs-keyword">const</span> l = line || <span class="hljs-number">0</span>;
     <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.getYForLine(<span class="hljs-keyword">this</span>.options.bottom_text_position + l);
   }
 
   getYForNote(line) {
-    <span class="hljs-keyword">var</span> options = <span class="hljs-keyword">this</span>.options;
-    <span class="hljs-keyword">var</span> spacing = options.spacing_between_lines_px;
-    <span class="hljs-keyword">var</span> headroom = options.space_above_staff_ln;
-    <span class="hljs-keyword">var</span> y = <span class="hljs-keyword">this</span>.y + (headroom * spacing) + (<span class="hljs-number">5</span> * spacing) - (line * spacing);
+    <span class="hljs-keyword">const</span> options = <span class="hljs-keyword">this</span>.options;
+    <span class="hljs-keyword">const</span> spacing = options.spacing_between_lines_px;
+    <span class="hljs-keyword">const</span> headroom = options.space_above_staff_ln;
+    <span class="hljs-keyword">const</span> y = <span class="hljs-keyword">this</span>.y + (headroom * spacing) + (<span class="hljs-number">5</span> * spacing) - (line * spacing);
 
     <span class="hljs-keyword">return</span> y;
   }
@@ -843,11 +924,10 @@ this.modifiers[1].setX(this.end_x);</p>
         <p>Only valid bar types at beginning of stave is none, single or begin repeat</p>
 
         
-          <div class='highlight'><pre>    <span class="hljs-keyword">if</span> (type == Barline.type.SINGLE ||
-        type == Barline.type.REPEAT_BEGIN ||
-        type == Barline.type.NONE) {
-        <span class="hljs-keyword">this</span>.modifiers[<span class="hljs-number">0</span>].setType(type);
-        <span class="hljs-keyword">this</span>.formatted = <span class="hljs-literal">false</span>;
+          <div class='highlight'><pre>    <span class="hljs-keyword">const</span> { SINGLE, REPEAT_BEGIN, NONE } = Barline.type;
+    <span class="hljs-keyword">if</span> (type === SINGLE || type === REPEAT_BEGIN || type === NONE) {
+      <span class="hljs-keyword">this</span>.modifiers[<span class="hljs-number">0</span>].setType(type);
+      <span class="hljs-keyword">this</span>.formatted = <span class="hljs-literal">false</span>;
     }
     <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
   }
@@ -859,7 +939,7 @@ this.modifiers[1].setX(this.end_x);</p>
         <p>Repeat end not valid at end of stave</p>
 
         
-          <div class='highlight'><pre>    <span class="hljs-keyword">if</span> (type != Barline.type.REPEAT_BEGIN) {
+          <div class='highlight'><pre>    <span class="hljs-keyword">if</span> (type !== Barline.type.REPEAT_BEGIN) {
       <span class="hljs-keyword">this</span>.modifiers[<span class="hljs-number">1</span>].setType(type);
       <span class="hljs-keyword">this</span>.formatted = <span class="hljs-literal">false</span>;
     }
@@ -872,7 +952,7 @@ this.modifiers[1].setX(this.end_x);</p>
     }
 
     <span class="hljs-keyword">this</span>.clef = clefSpec;
-    <span class="hljs-keyword">var</span> clefs = <span class="hljs-keyword">this</span>.getModifiers(position, Clef.CATEGORY);
+    <span class="hljs-keyword">const</span> clefs = <span class="hljs-keyword">this</span>.getModifiers(position, Clef.CATEGORY);
     <span class="hljs-keyword">if</span> (clefs.length === <span class="hljs-number">0</span>) {
       <span class="hljs-keyword">this</span>.addClef(clefSpec, size, annotation, position);
     } <span class="hljs-keyword">else</span> {
@@ -892,7 +972,7 @@ this.modifiers[1].setX(this.end_x);</p>
       position = StaveModifier.Position.BEGIN;
     }
 
-    <span class="hljs-keyword">var</span> keySignatures = <span class="hljs-keyword">this</span>.getModifiers(position, KeySignature.CATEGORY);
+    <span class="hljs-keyword">const</span> keySignatures = <span class="hljs-keyword">this</span>.getModifiers(position, KeySignature.CATEGORY);
     <span class="hljs-keyword">if</span> (keySignatures.length === <span class="hljs-number">0</span>) {
       <span class="hljs-keyword">this</span>.addKeySignature(keySpec, cancelKeySpec, position);
     } <span class="hljs-keyword">else</span> {
@@ -912,7 +992,7 @@ this.modifiers[1].setX(this.end_x);</p>
       position = StaveModifier.Position.BEGIN;
     }
 
-    <span class="hljs-keyword">var</span> timeSignatures = <span class="hljs-keyword">this</span>.getModifiers(position, TimeSignature.CATEGORY);
+    <span class="hljs-keyword">const</span> timeSignatures = <span class="hljs-keyword">this</span>.getModifiers(position, TimeSignature.CATEGORY);
     <span class="hljs-keyword">if</span> (timeSignatures.length === <span class="hljs-number">0</span>) {
       <span class="hljs-keyword">this</span>.addTimeSignature(timeSpec, customPadding, position);
     } <span class="hljs-keyword">else</span> {
@@ -933,8 +1013,7 @@ this.modifiers[1].setX(this.end_x);</p>
   }
 
   addClef(clef, size, annotation, position) {
-    <span class="hljs-keyword">if</span> (position === <span class="hljs-literal">undefined</span> ||
-        position === StaveModifier.Position.BEGIN) {
+    <span class="hljs-keyword">if</span> (position === <span class="hljs-literal">undefined</span> || position === StaveModifier.Position.BEGIN) {
       <span class="hljs-keyword">this</span>.clef = clef;
     }
 
@@ -970,17 +1049,17 @@ this.modifiers[1].setX(this.end_x);</p>
   getModifiers(position, category) {
     <span class="hljs-keyword">if</span> (position === <span class="hljs-literal">undefined</span>) <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.modifiers;
 
-    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.modifiers.filter(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(modifier)</span> {</span>
-      <span class="hljs-keyword">return</span> position === modifier.getPosition() &amp;&amp;
-        (category === <span class="hljs-literal">undefined</span> || category === modifier.getCategory());
-    });
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.modifiers.filter(modifier =&gt;
+      position === modifier.getPosition() &amp;&amp;
+      (category === <span class="hljs-literal">undefined</span> || category === modifier.getCategory())
+    );
   }
 
   sortByCategory(items, order) {
-    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = items.length - <span class="hljs-number">1</span>; i &gt;= <span class="hljs-number">0</span>; i--) {
-      <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> j = <span class="hljs-number">0</span>; j &lt; i; j++) {
+    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> i = items.length - <span class="hljs-number">1</span>; i &gt;= <span class="hljs-number">0</span>; i--) {
+      <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> j = <span class="hljs-number">0</span>; j &lt; i; j++) {
         <span class="hljs-keyword">if</span> (order[items[j].getCategory()] &gt; order[items[j + <span class="hljs-number">1</span>].getCategory()]) {
-          <span class="hljs-keyword">var</span> temp = items[j];
+          <span class="hljs-keyword">const</span> temp = items[j];
           items[j] = items[j + <span class="hljs-number">1</span>];
           items[j + <span class="hljs-number">1</span>] = temp;
         }
@@ -989,18 +1068,18 @@ this.modifiers[1].setX(this.end_x);</p>
   }
 
   format() {
-    <span class="hljs-keyword">var</span> begBarline = <span class="hljs-keyword">this</span>.modifiers[<span class="hljs-number">0</span>];
-    <span class="hljs-keyword">var</span> endBarline = <span class="hljs-keyword">this</span>.modifiers[<span class="hljs-number">1</span>];
+    <span class="hljs-keyword">const</span> begBarline = <span class="hljs-keyword">this</span>.modifiers[<span class="hljs-number">0</span>];
+    <span class="hljs-keyword">const</span> endBarline = <span class="hljs-keyword">this</span>.modifiers[<span class="hljs-number">1</span>];
 
-    <span class="hljs-keyword">var</span> begModifiers = <span class="hljs-keyword">this</span>.getModifiers(StaveModifier.Position.BEGIN);
-    <span class="hljs-keyword">var</span> endModifiers = <span class="hljs-keyword">this</span>.getModifiers(StaveModifier.Position.END);
+    <span class="hljs-keyword">const</span> begModifiers = <span class="hljs-keyword">this</span>.getModifiers(StaveModifier.Position.BEGIN);
+    <span class="hljs-keyword">const</span> endModifiers = <span class="hljs-keyword">this</span>.getModifiers(StaveModifier.Position.END);
 
     <span class="hljs-keyword">this</span>.sortByCategory(begModifiers, {
-      barlines: <span class="hljs-number">0</span>, clefs: <span class="hljs-number">1</span>, keysignatures: <span class="hljs-number">2</span>, timesignatures: <span class="hljs-number">3</span>
+      barlines: <span class="hljs-number">0</span>, clefs: <span class="hljs-number">1</span>, keysignatures: <span class="hljs-number">2</span>, timesignatures: <span class="hljs-number">3</span>,
     });
 
     <span class="hljs-keyword">this</span>.sortByCategory(endModifiers, {
-      timesignatures: <span class="hljs-number">0</span>, keysignatures: <span class="hljs-number">1</span>, barlines: <span class="hljs-number">2</span>, clefs: <span class="hljs-number">3</span>
+      timesignatures: <span class="hljs-number">0</span>, keysignatures: <span class="hljs-number">1</span>, barlines: <span class="hljs-number">2</span>, clefs: <span class="hljs-number">3</span>,
     });
 
     <span class="hljs-keyword">if</span> (begModifiers.length &gt; <span class="hljs-number">1</span> &amp;&amp;
@@ -1013,12 +1092,12 @@ this.modifiers[1].setX(this.end_x);</p>
       endModifiers.splice(<span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-keyword">new</span> Barline(Barline.type.NONE));
     }
 
-    <span class="hljs-keyword">var</span> width;
-    <span class="hljs-keyword">var</span> padding;
-    <span class="hljs-keyword">var</span> modifier;
-    <span class="hljs-keyword">var</span> offset = <span class="hljs-number">0</span>;
-    <span class="hljs-keyword">var</span> x = <span class="hljs-keyword">this</span>.x;
-    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; begModifiers.length; i++) {
+    <span class="hljs-keyword">let</span> width;
+    <span class="hljs-keyword">let</span> padding;
+    <span class="hljs-keyword">let</span> modifier;
+    <span class="hljs-keyword">let</span> offset = <span class="hljs-number">0</span>;
+    <span class="hljs-keyword">let</span> x = <span class="hljs-keyword">this</span>.x;
+    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> i = <span class="hljs-number">0</span>; i &lt; begModifiers.length; i++) {
       modifier = begModifiers[i];
       padding = modifier.getPadding(i + offset);
       width = modifier.getWidth();
@@ -1033,16 +1112,18 @@ this.modifiers[1].setX(this.end_x);</p>
     <span class="hljs-keyword">this</span>.start_x = x;
     x = <span class="hljs-keyword">this</span>.x + <span class="hljs-keyword">this</span>.width;
 
-    <span class="hljs-keyword">for</span> (i = <span class="hljs-number">0</span>; i &lt; endModifiers.length; i++) {
+    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> i = <span class="hljs-number">0</span>; i &lt; endModifiers.length; i++) {
       modifier = endModifiers[i];
       x -= modifier.getPadding(i);
-      <span class="hljs-keyword">if</span> (i !== <span class="hljs-number">0</span>)
+      <span class="hljs-keyword">if</span> (i !== <span class="hljs-number">0</span>) {
         x -= modifier.getWidth();
+      }
 
       modifier.setX(x);
 
-      <span class="hljs-keyword">if</span> (i === <span class="hljs-number">0</span>)
+      <span class="hljs-keyword">if</span> (i === <span class="hljs-number">0</span>) {
         x -= modifier.getWidth();
+      }
     }
 
     <span class="hljs-keyword">this</span>.end_x = endModifiers.length === <span class="hljs-number">1</span> ? <span class="hljs-keyword">this</span>.x + <span class="hljs-keyword">this</span>.width : x;
@@ -1053,29 +1134,33 @@ this.modifiers[1].setX(this.end_x);</p>
    * All drawing functions below need the context to be set.
    */</span>
   draw() {
-    <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.context) <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RERR(<span class="hljs-string">"NoCanvasContext"</span>,
-        <span class="hljs-string">"Can't draw stave without canvas context."</span>);
+    <span class="hljs-keyword">this</span>.checkContext();
+    <span class="hljs-keyword">this</span>.setRendered();
 
     <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.formatted) <span class="hljs-keyword">this</span>.format();
 
-    <span class="hljs-keyword">var</span> num_lines = <span class="hljs-keyword">this</span>.options.num_lines;
-    <span class="hljs-keyword">var</span> width = <span class="hljs-keyword">this</span>.width;
-    <span class="hljs-keyword">var</span> x = <span class="hljs-keyword">this</span>.x;
-    <span class="hljs-keyword">var</span> y;</pre></div>
+    <span class="hljs-keyword">const</span> num_lines = <span class="hljs-keyword">this</span>.options.num_lines;
+    <span class="hljs-keyword">const</span> width = <span class="hljs-keyword">this</span>.width;
+    <span class="hljs-keyword">const</span> x = <span class="hljs-keyword">this</span>.x;
+    <span class="hljs-keyword">let</span> y;</pre></div>
         
       
         
         <p>Render lines</p>
 
         
-          <div class='highlight'><pre>    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> line=<span class="hljs-number">0</span>; line &lt; num_lines; line++) {
+          <div class='highlight'><pre>    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> line = <span class="hljs-number">0</span>; line &lt; num_lines; line++) {
       y = <span class="hljs-keyword">this</span>.getYForLine(line);
 
       <span class="hljs-keyword">this</span>.context.save();
       <span class="hljs-keyword">this</span>.context.setFillStyle(<span class="hljs-keyword">this</span>.options.fill_style);
       <span class="hljs-keyword">this</span>.context.setStrokeStyle(<span class="hljs-keyword">this</span>.options.fill_style);
+      <span class="hljs-keyword">this</span>.context.setLineWidth(Flow.STAVE_LINE_THICKNESS);
       <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.options.line_config[line].visible) {
-        <span class="hljs-keyword">this</span>.context.fillRect(x, y, width, Flow.STAVE_LINE_THICKNESS);
+        <span class="hljs-keyword">this</span>.context.beginPath();
+        <span class="hljs-keyword">this</span>.context.moveTo(x, y);
+        <span class="hljs-keyword">this</span>.context.lineTo(x + width, y);
+        <span class="hljs-keyword">this</span>.context.stroke();
       }
       <span class="hljs-keyword">this</span>.context.restore();
     }</pre></div>
@@ -1085,15 +1170,16 @@ this.modifiers[1].setX(this.end_x);</p>
         <p>Draw the modifiers (bar lines, coda, segno, repeat brackets, etc.)</p>
 
         
-          <div class='highlight'><pre>    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; <span class="hljs-keyword">this</span>.modifiers.length; i++) {</pre></div>
+          <div class='highlight'><pre>    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> i = <span class="hljs-number">0</span>; i &lt; <span class="hljs-keyword">this</span>.modifiers.length; i++) {</pre></div>
         
       
         
         <p>Only draw modifier if it has a draw function</p>
 
         
-          <div class='highlight'><pre>      <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> <span class="hljs-keyword">this</span>.modifiers[i].draw == <span class="hljs-string">"function"</span>)
-        <span class="hljs-keyword">this</span>.modifiers[i].draw(<span class="hljs-keyword">this</span>, <span class="hljs-keyword">this</span>.getModifierXShift());
+          <div class='highlight'><pre>      <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> <span class="hljs-keyword">this</span>.modifiers[i].draw === <span class="hljs-string">'function'</span>) {
+        <span class="hljs-keyword">this</span>.modifiers[i].draw(<span class="hljs-keyword">this</span>, <span class="hljs-keyword">this</span>.getModifierXShift(i));
+      }
     }</pre></div>
         
       
@@ -1104,9 +1190,9 @@ this.modifiers[1].setX(this.end_x);</p>
           <div class='highlight'><pre>    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.measure &gt; <span class="hljs-number">0</span>) {
       <span class="hljs-keyword">this</span>.context.save();
       <span class="hljs-keyword">this</span>.context.setFont(<span class="hljs-keyword">this</span>.font.family, <span class="hljs-keyword">this</span>.font.size, <span class="hljs-keyword">this</span>.font.weight);
-      <span class="hljs-keyword">var</span> text_width = <span class="hljs-keyword">this</span>.context.measureText(<span class="hljs-string">""</span> + <span class="hljs-keyword">this</span>.measure).width;
+      <span class="hljs-keyword">const</span> text_width = <span class="hljs-keyword">this</span>.context.measureText(<span class="hljs-string">''</span> + <span class="hljs-keyword">this</span>.measure).width;
       y = <span class="hljs-keyword">this</span>.getYForTopText(<span class="hljs-number">0</span>) + <span class="hljs-number">3</span>;
-      <span class="hljs-keyword">this</span>.context.fillText(<span class="hljs-string">""</span> + <span class="hljs-keyword">this</span>.measure, <span class="hljs-keyword">this</span>.x - text_width / <span class="hljs-number">2</span>, y);
+      <span class="hljs-keyword">this</span>.context.fillText(<span class="hljs-string">''</span> + <span class="hljs-keyword">this</span>.measure, <span class="hljs-keyword">this</span>.x - text_width / <span class="hljs-number">2</span>, y);
       <span class="hljs-keyword">this</span>.context.restore();
     }
 
@@ -1124,13 +1210,13 @@ Do not delete - draws the beginning bar of the stave</p>
   }
 
   drawVerticalFixed(x, isDouble) {
-    <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.context) <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RERR(<span class="hljs-string">"NoCanvasContext"</span>,
-        <span class="hljs-string">"Can't draw stave without canvas context."</span>);
+    <span class="hljs-keyword">this</span>.checkContext();
 
-    <span class="hljs-keyword">var</span> top_line = <span class="hljs-keyword">this</span>.getYForLine(<span class="hljs-number">0</span>);
-    <span class="hljs-keyword">var</span> bottom_line = <span class="hljs-keyword">this</span>.getYForLine(<span class="hljs-keyword">this</span>.options.num_lines - <span class="hljs-number">1</span>);
-    <span class="hljs-keyword">if</span> (isDouble)
+    <span class="hljs-keyword">const</span> top_line = <span class="hljs-keyword">this</span>.getYForLine(<span class="hljs-number">0</span>);
+    <span class="hljs-keyword">const</span> bottom_line = <span class="hljs-keyword">this</span>.getYForLine(<span class="hljs-keyword">this</span>.options.num_lines - <span class="hljs-number">1</span>);
+    <span class="hljs-keyword">if</span> (isDouble) {
       <span class="hljs-keyword">this</span>.context.fillRect(x - <span class="hljs-number">3</span>, top_line, <span class="hljs-number">1</span>, bottom_line - top_line + <span class="hljs-number">1</span>);
+    }
     <span class="hljs-keyword">this</span>.context.fillRect(x, top_line, <span class="hljs-number">1</span>, bottom_line - top_line + <span class="hljs-number">1</span>);
   }
 
@@ -1139,11 +1225,10 @@ Do not delete - draws the beginning bar of the stave</p>
   }
 
   drawVerticalBarFixed(x) {
-    <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.context) <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RERR(<span class="hljs-string">"NoCanvasContext"</span>,
-        <span class="hljs-string">"Can't draw stave without canvas context."</span>);
+    <span class="hljs-keyword">this</span>.checkContext();
 
-    <span class="hljs-keyword">var</span> top_line = <span class="hljs-keyword">this</span>.getYForLine(<span class="hljs-number">0</span>);
-    <span class="hljs-keyword">var</span> bottom_line = <span class="hljs-keyword">this</span>.getYForLine(<span class="hljs-keyword">this</span>.options.num_lines - <span class="hljs-number">1</span>);
+    <span class="hljs-keyword">const</span> top_line = <span class="hljs-keyword">this</span>.getYForLine(<span class="hljs-number">0</span>);
+    <span class="hljs-keyword">const</span> bottom_line = <span class="hljs-keyword">this</span>.getYForLine(<span class="hljs-keyword">this</span>.options.num_lines - <span class="hljs-number">1</span>);
     <span class="hljs-keyword">this</span>.context.fillRect(x, top_line, <span class="hljs-number">1</span>, bottom_line - top_line + <span class="hljs-number">1</span>);
   }
 
@@ -1164,16 +1249,24 @@ Do not delete - draws the beginning bar of the stave</p>
    */</span>
   setConfigForLine(line_number, line_config) {
     <span class="hljs-keyword">if</span> (line_number &gt;= <span class="hljs-keyword">this</span>.options.num_lines || line_number &lt; <span class="hljs-number">0</span>) {
-      <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RERR(<span class="hljs-string">"StaveConfigError"</span>,
-        <span class="hljs-string">"The line number must be within the range of the number of lines in the Stave."</span>);
+      <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RERR(
+        <span class="hljs-string">'StaveConfigError'</span>,
+        <span class="hljs-string">'The line number must be within the range of the number of lines in the Stave.'</span>
+      );
     }
-    <span class="hljs-keyword">if</span> (!line_config.hasOwnProperty(<span class="hljs-string">'visible'</span>)) {
-      <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RERR(<span class="hljs-string">"StaveConfigError"</span>,
-        <span class="hljs-string">"The line configuration object is missing the 'visible' property."</span>);
+
+    <span class="hljs-keyword">if</span> (line_config.visible === <span class="hljs-literal">undefined</span>) {
+      <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RERR(
+        <span class="hljs-string">'StaveConfigError'</span>,
+        <span class="hljs-string">"The line configuration object is missing the 'visible' property."</span>
+      );
     }
+
     <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span>(line_config.visible) !== <span class="hljs-string">'boolean'</span>) {
-      <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RERR(<span class="hljs-string">"StaveConfigError"</span>,
-        <span class="hljs-string">"The line configuration objects 'visible' property must be true or false."</span>);
+      <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RERR(
+        <span class="hljs-string">'StaveConfigError'</span>,
+        <span class="hljs-string">"The line configuration objects 'visible' property must be true or false."</span>
+      );
     }
 
     <span class="hljs-keyword">this</span>.options.line_config[line_number] = line_config;
@@ -1192,8 +1285,10 @@ Do not delete - draws the beginning bar of the stave</p>
    */</span>
   setConfigForLines(lines_configuration) {
     <span class="hljs-keyword">if</span> (lines_configuration.length !== <span class="hljs-keyword">this</span>.options.num_lines) {
-      <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RERR(<span class="hljs-string">"StaveConfigError"</span>,
-        <span class="hljs-string">"The length of the lines configuration array must match the number of lines in the Stave"</span>);
+      <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RERR(
+        <span class="hljs-string">'StaveConfigError'</span>,
+        <span class="hljs-string">'The length of the lines configuration array must match the number of lines in the Stave'</span>
+      );
     }</pre></div>
         
       
@@ -1202,7 +1297,7 @@ Do not delete - draws the beginning bar of the stave</p>
  configuration options were supplied.</p>
 
         
-          <div class='highlight'><pre>    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> line_config <span class="hljs-keyword">in</span> lines_configuration) {</pre></div>
+          <div class='highlight'><pre>    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">const</span> line_config <span class="hljs-keyword">in</span> lines_configuration) {</pre></div>
         
       
         

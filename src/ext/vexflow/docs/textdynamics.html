@@ -121,6 +121,27 @@
               
                 
                 <li>
+                  <a class="source" href="easyscore.html">
+                    easyscore.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="element.html">
+                    element.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="factory.html">
+                    factory.js
+                  </a>
+                </li>
+              
+                
+                <li>
                   <a class="source" href="formatter.html">
                     formatter.js
                   </a>
@@ -165,6 +186,13 @@
                 <li>
                   <a class="source" href="gracenotegroup.html">
                     gracenotegroup.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="gracetabnote.html">
+                    gracetabnote.js
                   </a>
                 </li>
               
@@ -226,8 +254,22 @@
               
                 
                 <li>
+                  <a class="source" href="notesubgroup.html">
+                    notesubgroup.js
+                  </a>
+                </li>
+              
+                
+                <li>
                   <a class="source" href="ornament.html">
                     ornament.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="parser.html">
+                    parser.js
                   </a>
                 </li>
               
@@ -242,6 +284,13 @@
                 <li>
                   <a class="source" href="raphaelcontext.html">
                     raphaelcontext.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="registry.html">
+                    registry.js
                   </a>
                 </li>
               
@@ -380,6 +429,13 @@
               
                 
                 <li>
+                  <a class="source" href="system.html">
+                    system.js
+                  </a>
+                </li>
+              
+                
+                <li>
                   <a class="source" href="tables.html">
                     tables.js
                   </a>
@@ -499,6 +555,13 @@
               
                 
                 <li>
+                  <a class="source" href="vibratobracket.html">
+                    vibratobracket.js
+                  </a>
+                </li>
+              
+                
+                <li>
                   <a class="source" href="voice.html">
                     voice.js
                   </a>
@@ -527,50 +590,50 @@ the following letters:  P, M, F, Z, R, S</p>
 
         
           <div class='highlight'><pre>
-import { Vex } from <span class="hljs-string">'./vex'</span>;
-import { Note } from <span class="hljs-string">'./note'</span>;
-import { Glyph } from <span class="hljs-string">'./glyph'</span>;</pre></div>
+<span class="hljs-keyword">import</span> { Vex } <span class="hljs-keyword">from</span> <span class="hljs-string">'./vex'</span>;
+<span class="hljs-keyword">import</span> { Note } <span class="hljs-keyword">from</span> <span class="hljs-string">'./note'</span>;
+<span class="hljs-keyword">import</span> { Glyph } <span class="hljs-keyword">from</span> <span class="hljs-string">'./glyph'</span>;</pre></div>
         
       
         
         <p>To enable logging for this class. Set <code>Vex.Flow.TextDynamics.DEBUG</code> to <code>true</code>.</p>
 
         
-          <div class='highlight'><pre><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">L</span><span class="hljs-params">()</span> {</span> <span class="hljs-keyword">if</span> (TextDynamics.DEBUG) Vex.L(<span class="hljs-string">"Vex.Flow.TextDynamics"</span>, <span class="hljs-built_in">arguments</span>); }
+          <div class='highlight'><pre><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">L</span>(<span class="hljs-params">...args</span>) </span>{ <span class="hljs-keyword">if</span> (TextDynamics.DEBUG) Vex.L(<span class="hljs-string">'Vex.Flow.TextDynamics'</span>, args); }
 
-export <span class="hljs-keyword">class</span> TextDynamics extends Note {</pre></div>
+<span class="hljs-keyword">export</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">TextDynamics</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">Note</span> </span>{</pre></div>
         
       
         
         <p>The glyph data for each dynamics letter</p>
 
         
-          <div class='highlight'><pre>  static get GLYPHS() {
+          <div class='highlight'><pre>  <span class="hljs-keyword">static</span> get GLYPHS() {
     <span class="hljs-keyword">return</span> {
-      <span class="hljs-string">"f"</span>: {
-        code: <span class="hljs-string">"vba"</span>,
-        width: <span class="hljs-number">12</span>
+      <span class="hljs-string">'f'</span>: {
+        code: <span class="hljs-string">'vba'</span>,
+        width: <span class="hljs-number">12</span>,
       },
-      <span class="hljs-string">"p"</span>: {
-        code: <span class="hljs-string">"vbf"</span>,
-        width: <span class="hljs-number">14</span>
+      <span class="hljs-string">'p'</span>: {
+        code: <span class="hljs-string">'vbf'</span>,
+        width: <span class="hljs-number">14</span>,
       },
-      <span class="hljs-string">"m"</span>: {
-        code: <span class="hljs-string">"v62"</span>,
-        width: <span class="hljs-number">17</span>
+      <span class="hljs-string">'m'</span>: {
+        code: <span class="hljs-string">'v62'</span>,
+        width: <span class="hljs-number">17</span>,
       },
-      <span class="hljs-string">"s"</span>: {
-        code: <span class="hljs-string">"v4a"</span>,
-        width: <span class="hljs-number">10</span>
+      <span class="hljs-string">'s'</span>: {
+        code: <span class="hljs-string">'v4a'</span>,
+        width: <span class="hljs-number">10</span>,
       },
-      <span class="hljs-string">"z"</span>: {
-        code: <span class="hljs-string">"v80"</span>,
-        width: <span class="hljs-number">12</span>
+      <span class="hljs-string">'z'</span>: {
+        code: <span class="hljs-string">'v80'</span>,
+        width: <span class="hljs-number">12</span>,
       },
-      <span class="hljs-string">"r"</span>: {
-        code: <span class="hljs-string">"vb1"</span>,
-        width: <span class="hljs-number">12</span>
-      }
+      <span class="hljs-string">'r'</span>: {
+        code: <span class="hljs-string">'vb1'</span>,
+        width: <span class="hljs-number">12</span>,
+      },
     };
   }</pre></div>
         
@@ -583,18 +646,19 @@ that contains a <code>duration</code> property and a <code>sequence</code> of
 letters that represents the letters to render</p>
 
         
-          <div class='highlight'><pre>  constructor(text_struct) {
-    super(text_struct);
+          <div class='highlight'><pre>  <span class="hljs-keyword">constructor</span>(text_struct) {
+    <span class="hljs-keyword">super</span>(text_struct);
+    <span class="hljs-keyword">this</span>.setAttribute(<span class="hljs-string">'type'</span>, <span class="hljs-string">'TextDynamics'</span>);
 
     <span class="hljs-keyword">this</span>.sequence = text_struct.text.toLowerCase();
     <span class="hljs-keyword">this</span>.line = text_struct.line || <span class="hljs-number">0</span>;
     <span class="hljs-keyword">this</span>.glyphs = [];
 
     Vex.Merge(<span class="hljs-keyword">this</span>.render_options, {
-      glyph_font_size: <span class="hljs-number">40</span>
+      glyph_font_size: <span class="hljs-number">40</span>,
     });
 
-    L(<span class="hljs-string">"New Dynamics Text: "</span>, <span class="hljs-keyword">this</span>.sequence);
+    L(<span class="hljs-string">'New Dynamics Text: '</span>, <span class="hljs-keyword">this</span>.sequence);
   }</pre></div>
         
       
@@ -602,7 +666,10 @@ letters that represents the letters to render</p>
         <p>Set the Stave line on which the note should be placed</p>
 
         
-          <div class='highlight'><pre>  setLine(line) { <span class="hljs-keyword">this</span>.line = line;  <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>; }</pre></div>
+          <div class='highlight'><pre>  setLine(line) {
+    <span class="hljs-keyword">this</span>.line = line;
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
+  }</pre></div>
         
       
         
@@ -610,25 +677,25 @@ letters that represents the letters to render</p>
 
         
           <div class='highlight'><pre>  preFormat() {
-    <span class="hljs-keyword">var</span> total_width = <span class="hljs-number">0</span>;</pre></div>
+    <span class="hljs-keyword">let</span> total_width = <span class="hljs-number">0</span>;</pre></div>
         
       
         
         <p>Iterate through each letter</p>
 
         
-          <div class='highlight'><pre>    <span class="hljs-keyword">this</span>.sequence.split(<span class="hljs-string">''</span>).forEach(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(letter)</span> {</span></pre></div>
+          <div class='highlight'><pre>    <span class="hljs-keyword">this</span>.sequence.split(<span class="hljs-string">''</span>).forEach(letter =&gt; {</pre></div>
         
       
         
         <p>Get the glyph data for the letter</p>
 
         
-          <div class='highlight'><pre>      <span class="hljs-keyword">var</span> glyph_data = TextDynamics.GLYPHS[letter];
-      <span class="hljs-keyword">if</span> (!glyph_data) <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RERR(<span class="hljs-string">"Invalid dynamics character: "</span> + letter);
+          <div class='highlight'><pre>      <span class="hljs-keyword">const</span> glyph_data = TextDynamics.GLYPHS[letter];
+      <span class="hljs-keyword">if</span> (!glyph_data) <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RERR(<span class="hljs-string">'Invalid dynamics character: '</span> + letter);
 
-      <span class="hljs-keyword">var</span> size =  <span class="hljs-keyword">this</span>.render_options.glyph_font_size;
-      <span class="hljs-keyword">var</span> glyph = <span class="hljs-keyword">new</span> Glyph(glyph_data.code, size);</pre></div>
+      <span class="hljs-keyword">const</span> size =  <span class="hljs-keyword">this</span>.render_options.glyph_font_size;
+      <span class="hljs-keyword">const</span> glyph = <span class="hljs-keyword">new</span> Glyph(glyph_data.code, size);</pre></div>
         
       
         
@@ -638,7 +705,7 @@ letters that represents the letters to render</p>
           <div class='highlight'><pre>      <span class="hljs-keyword">this</span>.glyphs.push(glyph);
 
       total_width += glyph_data.width;
-    }, <span class="hljs-keyword">this</span>);</pre></div>
+    });</pre></div>
         
       
         
@@ -656,17 +723,18 @@ letters that represents the letters to render</p>
 
         
           <div class='highlight'><pre>  draw() {
-    <span class="hljs-keyword">var</span> x = <span class="hljs-keyword">this</span>.getAbsoluteX();
-    <span class="hljs-keyword">var</span> y = <span class="hljs-keyword">this</span>.stave.getYForLine(<span class="hljs-keyword">this</span>.line + (-<span class="hljs-number">3</span>));
+    <span class="hljs-keyword">this</span>.setRendered();
+    <span class="hljs-keyword">const</span> x = <span class="hljs-keyword">this</span>.getAbsoluteX();
+    <span class="hljs-keyword">const</span> y = <span class="hljs-keyword">this</span>.stave.getYForLine(<span class="hljs-keyword">this</span>.line + (<span class="hljs-number">-3</span>));
 
-    L(<span class="hljs-string">"Rendering Dynamics: "</span>, <span class="hljs-keyword">this</span>.sequence);
+    L(<span class="hljs-string">'Rendering Dynamics: '</span>, <span class="hljs-keyword">this</span>.sequence);
 
-    <span class="hljs-keyword">var</span> letter_x = x;
-    <span class="hljs-keyword">this</span>.glyphs.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(glyph, index)</span> {</span>
-      <span class="hljs-keyword">var</span> current_letter = <span class="hljs-keyword">this</span>.sequence[index];
+    <span class="hljs-keyword">let</span> letter_x = x;
+    <span class="hljs-keyword">this</span>.glyphs.forEach((glyph, index) =&gt; {
+      <span class="hljs-keyword">const</span> current_letter = <span class="hljs-keyword">this</span>.sequence[index];
       glyph.render(<span class="hljs-keyword">this</span>.context, letter_x, y);
       letter_x += TextDynamics.GLYPHS[current_letter].width;
-    }, <span class="hljs-keyword">this</span>);
+    });
   }
 }</pre></div>
         

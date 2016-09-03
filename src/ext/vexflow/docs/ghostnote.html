@@ -121,6 +121,27 @@
               
                 
                 <li>
+                  <a class="source" href="easyscore.html">
+                    easyscore.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="element.html">
+                    element.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="factory.html">
+                    factory.js
+                  </a>
+                </li>
+              
+                
+                <li>
                   <a class="source" href="formatter.html">
                     formatter.js
                   </a>
@@ -165,6 +186,13 @@
                 <li>
                   <a class="source" href="gracenotegroup.html">
                     gracenotegroup.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="gracetabnote.html">
+                    gracetabnote.js
                   </a>
                 </li>
               
@@ -226,8 +254,22 @@
               
                 
                 <li>
+                  <a class="source" href="notesubgroup.html">
+                    notesubgroup.js
+                  </a>
+                </li>
+              
+                
+                <li>
                   <a class="source" href="ornament.html">
                     ornament.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="parser.html">
+                    parser.js
                   </a>
                 </li>
               
@@ -242,6 +284,13 @@
                 <li>
                   <a class="source" href="raphaelcontext.html">
                     raphaelcontext.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="registry.html">
+                    registry.js
                   </a>
                 </li>
               
@@ -380,6 +429,13 @@
               
                 
                 <li>
+                  <a class="source" href="system.html">
+                    system.js
+                  </a>
+                </li>
+              
+                
+                <li>
                   <a class="source" href="tables.html">
                     tables.js
                   </a>
@@ -499,6 +555,13 @@
               
                 
                 <li>
+                  <a class="source" href="vibratobracket.html">
+                    vibratobracket.js
+                  </a>
+                </li>
+              
+                
+                <li>
                   <a class="source" href="voice.html">
                     voice.js
                   </a>
@@ -523,12 +586,12 @@
 
         
           <div class='highlight'><pre>
-import { Vex } from <span class="hljs-string">'./vex'</span>;
-import { StemmableNote } from <span class="hljs-string">'./stemmablenote'</span>;
+<span class="hljs-keyword">import</span> { Vex } <span class="hljs-keyword">from</span> <span class="hljs-string">'./vex'</span>;
+<span class="hljs-keyword">import</span> { StemmableNote } <span class="hljs-keyword">from</span> <span class="hljs-string">'./stemmablenote'</span>;
 
-export <span class="hljs-keyword">class</span> GhostNote extends StemmableNote {
+<span class="hljs-keyword">export</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">GhostNote</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">StemmableNote</span> </span>{
   <span class="hljs-comment">/** @constructor */</span>
-  constructor(parameter) {</pre></div>
+  <span class="hljs-keyword">constructor</span>(parameter) {</pre></div>
         
       
         
@@ -536,29 +599,30 @@ export <span class="hljs-keyword">class</span> GhostNote extends StemmableNote {
 
         
           <div class='highlight'><pre>    <span class="hljs-keyword">if</span> (!parameter) {
-      <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RuntimeError(<span class="hljs-string">"BadArguments"</span>,
-          <span class="hljs-string">"Ghost note must have valid initialization data to identify "</span> +
-          <span class="hljs-string">"duration."</span>);
+      <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RuntimeError(<span class="hljs-string">'BadArguments'</span>,
+          <span class="hljs-string">'Ghost note must have valid initialization data to identify '</span> +
+          <span class="hljs-string">'duration.'</span>);
     }
 
-    <span class="hljs-keyword">var</span> note_struct;</pre></div>
+    <span class="hljs-keyword">let</span> note_struct;</pre></div>
         
       
         
         <p>Preserve backwards-compatibility</p>
 
         
-          <div class='highlight'><pre>    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span>(parameter) === <span class="hljs-string">"string"</span>) {
+          <div class='highlight'><pre>    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span>(parameter) === <span class="hljs-string">'string'</span>) {
       note_struct = { duration: parameter };
-    } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span>(parameter) === <span class="hljs-string">"object"</span>) {
+    } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span>(parameter) === <span class="hljs-string">'object'</span>) {
       note_struct = parameter;
     } <span class="hljs-keyword">else</span> {
-      <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RuntimeError(<span class="hljs-string">"BadArguments"</span>,
-          <span class="hljs-string">"Ghost note must have valid initialization data to identify "</span> +
-          <span class="hljs-string">"duration."</span>);
+      <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RuntimeError(<span class="hljs-string">'BadArguments'</span>,
+          <span class="hljs-string">'Ghost note must have valid initialization data to identify '</span> +
+          <span class="hljs-string">'duration.'</span>);
     }
 
-    super(note_struct);</pre></div>
+    <span class="hljs-keyword">super</span>(note_struct);
+    <span class="hljs-keyword">this</span>.setAttribute(<span class="hljs-string">'type'</span>, <span class="hljs-string">'GhostNote'</span>);</pre></div>
         
       
         
@@ -570,7 +634,9 @@ export <span class="hljs-keyword">class</span> GhostNote extends StemmableNote {
 
   isRest() { <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>; }
 
-  setStave(stave) { GhostNote.superclass.setStave.call(<span class="hljs-keyword">this</span>, stave); }
+  setStave(stave) {
+    <span class="hljs-keyword">super</span>.setStave(stave);
+  }
 
   addToModifierContext() { <span class="hljs-comment">/* intentionally overridden */</span> <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>; }
 
@@ -580,15 +646,16 @@ export <span class="hljs-keyword">class</span> GhostNote extends StemmableNote {
   }
 
   draw() {
-    <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.stave) <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RERR(<span class="hljs-string">"NoStave"</span>, <span class="hljs-string">"Can't draw without a stave."</span>);</pre></div>
+    <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.stave) <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RERR(<span class="hljs-string">'NoStave'</span>, <span class="hljs-string">"Can't draw without a stave."</span>);</pre></div>
         
       
         
         <p>Draw the modifiers</p>
 
         
-          <div class='highlight'><pre>    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; <span class="hljs-keyword">this</span>.modifiers.length; ++i) {
-      <span class="hljs-keyword">var</span> modifier = <span class="hljs-keyword">this</span>.modifiers[i];
+          <div class='highlight'><pre>    <span class="hljs-keyword">this</span>.setRendered();
+    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> i = <span class="hljs-number">0</span>; i &lt; <span class="hljs-keyword">this</span>.modifiers.length; ++i) {
+      <span class="hljs-keyword">const</span> modifier = <span class="hljs-keyword">this</span>.modifiers[i];
       modifier.setContext(<span class="hljs-keyword">this</span>.context);
       modifier.draw();
     }

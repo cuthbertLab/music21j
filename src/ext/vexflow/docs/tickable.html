@@ -121,6 +121,27 @@
               
                 
                 <li>
+                  <a class="source" href="easyscore.html">
+                    easyscore.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="element.html">
+                    element.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="factory.html">
+                    factory.js
+                  </a>
+                </li>
+              
+                
+                <li>
                   <a class="source" href="formatter.html">
                     formatter.js
                   </a>
@@ -165,6 +186,13 @@
                 <li>
                   <a class="source" href="gracenotegroup.html">
                     gracenotegroup.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="gracetabnote.html">
+                    gracetabnote.js
                   </a>
                 </li>
               
@@ -226,8 +254,22 @@
               
                 
                 <li>
+                  <a class="source" href="notesubgroup.html">
+                    notesubgroup.js
+                  </a>
+                </li>
+              
+                
+                <li>
                   <a class="source" href="ornament.html">
                     ornament.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="parser.html">
+                    parser.js
                   </a>
                 </li>
               
@@ -242,6 +284,13 @@
                 <li>
                   <a class="source" href="raphaelcontext.html">
                     raphaelcontext.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="registry.html">
+                    registry.js
                   </a>
                 </li>
               
@@ -380,6 +429,13 @@
               
                 
                 <li>
+                  <a class="source" href="system.html">
+                    system.js
+                  </a>
+                </li>
+              
+                
+                <li>
                   <a class="source" href="tables.html">
                     tables.js
                   </a>
@@ -499,6 +555,13 @@
               
                 
                 <li>
+                  <a class="source" href="vibratobracket.html">
+                    vibratobracket.js
+                  </a>
+                </li>
+              
+                
+                <li>
                   <a class="source" href="voice.html">
                     voice.js
                   </a>
@@ -525,15 +588,26 @@ have a duration, i.e., they occupy space in the musical rendering dimension.</p>
 
         
           <div class='highlight'><pre>
-import { Vex } from <span class="hljs-string">'./vex'</span>;
-import { Flow } from <span class="hljs-string">'./tables'</span>;
-import { Fraction } from <span class="hljs-string">'./fraction'</span>;
+<span class="hljs-keyword">import</span> { Vex } <span class="hljs-keyword">from</span> <span class="hljs-string">'./vex'</span>;
+<span class="hljs-keyword">import</span> { Element } <span class="hljs-keyword">from</span> <span class="hljs-string">'./element'</span>;
+<span class="hljs-keyword">import</span> { Flow } <span class="hljs-keyword">from</span> <span class="hljs-string">'./tables'</span>;
+<span class="hljs-keyword">import</span> { Fraction } <span class="hljs-keyword">from</span> <span class="hljs-string">'./fraction'</span>;
 
-export <span class="hljs-keyword">class</span> Tickable {
-  constructor() {
+<span class="hljs-keyword">export</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Tickable</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">Element</span> </span>{
+  <span class="hljs-keyword">constructor</span>() {
+    <span class="hljs-keyword">super</span>();
+    <span class="hljs-keyword">this</span>.setAttribute(<span class="hljs-string">'type'</span>, <span class="hljs-string">'Tickable'</span>);</pre></div>
+        
+      
+        
+        <p>These properties represent the duration of
+this tickable element.</p>
+
+        
+          <div class='highlight'><pre>    <span class="hljs-keyword">this</span>.ticks = <span class="hljs-keyword">new</span> Fraction(<span class="hljs-number">0</span>, <span class="hljs-number">1</span>);
     <span class="hljs-keyword">this</span>.intrinsicTicks = <span class="hljs-number">0</span>;
     <span class="hljs-keyword">this</span>.tickMultiplier = <span class="hljs-keyword">new</span> Fraction(<span class="hljs-number">1</span>, <span class="hljs-number">1</span>);
-    <span class="hljs-keyword">this</span>.ticks = <span class="hljs-keyword">new</span> Fraction(<span class="hljs-number">0</span>, <span class="hljs-number">1</span>);
+
     <span class="hljs-keyword">this</span>.width = <span class="hljs-number">0</span>;
     <span class="hljs-keyword">this</span>.x_shift = <span class="hljs-number">0</span>; <span class="hljs-comment">// Shift from tick context</span>
     <span class="hljs-keyword">this</span>.voice = <span class="hljs-literal">null</span>;
@@ -543,15 +617,7 @@ export <span class="hljs-keyword">class</span> Tickable {
     <span class="hljs-keyword">this</span>.preFormatted = <span class="hljs-literal">false</span>;
     <span class="hljs-keyword">this</span>.postFormatted = <span class="hljs-literal">false</span>;
     <span class="hljs-keyword">this</span>.tuplet = <span class="hljs-literal">null</span>;
-    <span class="hljs-keyword">this</span>.tupletStack = [];</pre></div>
-        
-      
-        
-        <p>For interactivity</p>
-
-        
-          <div class='highlight'><pre>    <span class="hljs-keyword">this</span>.id = <span class="hljs-literal">null</span>;
-    <span class="hljs-keyword">this</span>.elem = <span class="hljs-literal">null</span>;
+    <span class="hljs-keyword">this</span>.tupletStack = [];
 
     <span class="hljs-keyword">this</span>.align_center = <span class="hljs-literal">false</span>;
     <span class="hljs-keyword">this</span>.center_x_shift = <span class="hljs-number">0</span>; <span class="hljs-comment">// Shift from tick context if center aligned</span></pre></div>
@@ -562,24 +628,60 @@ export <span class="hljs-keyword">class</span> Tickable {
 formatting and justification. It is set by tickables such as BarNote.</p>
 
         
-          <div class='highlight'><pre>    <span class="hljs-keyword">this</span>.ignore_ticks = <span class="hljs-literal">false</span>;
-    <span class="hljs-keyword">this</span>.context = <span class="hljs-literal">null</span>;
-  }
-  setContext(context) { <span class="hljs-keyword">this</span>.context = context; }</pre></div>
+          <div class='highlight'><pre>    <span class="hljs-keyword">this</span>.ignore_ticks = <span class="hljs-literal">false</span>;</pre></div>
         
       
         
-        <p>Set the DOM ID of the element. Must be called before draw(). TODO: Update
-ID of element if has already been rendered.</p>
+        <p>This is a space for an external formatting class or function to maintain
+metrics.</p>
 
         
-          <div class='highlight'><pre>  setId(id) { <span class="hljs-keyword">this</span>.id = id; }
-  getId() { <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.id; }
-  getElem() { <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.elem; }
-  getBoundingBox() { <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>; }
+          <div class='highlight'><pre>    <span class="hljs-keyword">this</span>.formatterMetrics = {</pre></div>
+        
+      
+        
+        <p>The freedom of a tickable is the distance it can move without colliding
+with neighboring elements. A formatter can set these values during its
+formatting pass, which a different formatter can then use to fine tune.</p>
+
+        
+          <div class='highlight'><pre>      freedom: { left: <span class="hljs-number">0</span>, right: <span class="hljs-number">0</span> },</pre></div>
+        
+      
+        
+        <p>The simplified rational duration of this tick as a string. It can be
+used as an index to a map or hashtable.</p>
+
+        
+          <div class='highlight'><pre>      duration: <span class="hljs-string">''</span>,</pre></div>
+        
+      
+        
+        <p>The number of formatting iterations undergone.</p>
+
+        
+          <div class='highlight'><pre>      iterations: <span class="hljs-number">0</span>,</pre></div>
+        
+      
+        
+        <p>The space in pixels allocated by this formatter, along with the mean space
+for tickables of this duration, and the deviation from the mean.</p>
+
+        
+          <div class='highlight'><pre>      space: {
+        used: <span class="hljs-number">0</span>,
+        mean: <span class="hljs-number">0</span>,
+        deviation: <span class="hljs-number">0</span>,
+      },
+    };
+  }
+
   getTicks() { <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.ticks; }
   shouldIgnoreTicks() { <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.ignore_ticks; }
   getWidth() { <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.width; }
+
+  getFormatterMetrics() { <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.formatterMetrics; }
+
   setXShift(x) { <span class="hljs-keyword">this</span>.x_shift = x; }
   getCenterXShift() {
     <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.isCenterAligned()) {
@@ -601,7 +703,7 @@ and preFormatter to associate them with the right modifierContexts.</p>
 
         
           <div class='highlight'><pre>  getVoice() {
-    <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.voice) <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RERR(<span class="hljs-string">"NoVoice"</span>, <span class="hljs-string">"Tickable has no voice."</span>);
+    <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.voice) <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RERR(<span class="hljs-string">'NoVoice'</span>, <span class="hljs-string">'Tickable has no voice.'</span>);
     <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.voice;
   }
   setVoice(voice) { <span class="hljs-keyword">this</span>.voice = voice; }
@@ -617,10 +719,11 @@ and preFormatter to associate them with the right modifierContexts.</p>
    * resets the intrinsic tick value to
    */</span>
   resetTuplet(tuplet) {
-    <span class="hljs-keyword">var</span> noteCount, notesOccupied;
-    <span class="hljs-keyword">if</span>(tuplet){
-      <span class="hljs-keyword">var</span> i = <span class="hljs-keyword">this</span>.tupletStack.indexOf(tuplet);
-      <span class="hljs-keyword">if</span>(i !== -<span class="hljs-number">1</span>){
+    <span class="hljs-keyword">let</span> noteCount;
+    <span class="hljs-keyword">let</span> notesOccupied;
+    <span class="hljs-keyword">if</span> (tuplet) {
+      <span class="hljs-keyword">const</span> i = <span class="hljs-keyword">this</span>.tupletStack.indexOf(tuplet);
+      <span class="hljs-keyword">if</span> (i !== <span class="hljs-number">-1</span>) {
         <span class="hljs-keyword">this</span>.tupletStack.splice(i, <span class="hljs-number">1</span>);
         noteCount = tuplet.getNoteCount();
         notesOccupied = tuplet.getNotesOccupied();</pre></div>
@@ -635,7 +738,7 @@ and preFormatter to associate them with the right modifierContexts.</p>
       <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
     }
 
-    <span class="hljs-keyword">while</span>(<span class="hljs-keyword">this</span>.tupletStack.length){
+    <span class="hljs-keyword">while</span> (<span class="hljs-keyword">this</span>.tupletStack.length) {
       tuplet = <span class="hljs-keyword">this</span>.tupletStack.pop();
       noteCount = tuplet.getNoteCount();
       notesOccupied = tuplet.getNotesOccupied();</pre></div>
@@ -649,6 +752,7 @@ and preFormatter to associate them with the right modifierContexts.</p>
     }
     <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
   }
+
   setTuplet(tuplet) {</pre></div>
         
       
@@ -660,8 +764,8 @@ and preFormatter to associate them with the right modifierContexts.</p>
     <span class="hljs-keyword">if</span> (tuplet) {
       <span class="hljs-keyword">this</span>.tupletStack.push(tuplet);
 
-      <span class="hljs-keyword">var</span> noteCount = tuplet.getNoteCount();
-      <span class="hljs-keyword">var</span> notesOccupied = tuplet.getNotesOccupied();
+      <span class="hljs-keyword">const</span> noteCount = tuplet.getNoteCount();
+      <span class="hljs-keyword">const</span> notesOccupied = tuplet.getNotesOccupied();
 
       <span class="hljs-keyword">this</span>.applyTickMultiplier(notesOccupied, noteCount);
     }
@@ -703,7 +807,7 @@ and preFormatter to associate them with the right modifierContexts.</p>
     }
   }
   postFormat() {
-    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.postFormatted) <span class="hljs-keyword">return</span>;
+    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.postFormatted) <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
     <span class="hljs-keyword">this</span>.postFormatted = <span class="hljs-literal">true</span>;
     <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
   }
@@ -722,7 +826,7 @@ and preFormatter to associate them with the right modifierContexts.</p>
     <span class="hljs-keyword">this</span>.ticks = <span class="hljs-keyword">this</span>.tickMultiplier.clone().multiply(<span class="hljs-keyword">this</span>.intrinsicTicks);
   }
   setDuration(duration) {
-    <span class="hljs-keyword">var</span> ticks = duration.numerator * (Flow.RESOLUTION / duration.denominator);
+    <span class="hljs-keyword">const</span> ticks = duration.numerator * (Flow.RESOLUTION / duration.denominator);
     <span class="hljs-keyword">this</span>.ticks = <span class="hljs-keyword">this</span>.tickMultiplier.clone().multiply(ticks);
     <span class="hljs-keyword">this</span>.intrinsicTicks = <span class="hljs-keyword">this</span>.ticks.value();
   }

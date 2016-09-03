@@ -121,6 +121,27 @@
               
                 
                 <li>
+                  <a class="source" href="easyscore.html">
+                    easyscore.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="element.html">
+                    element.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="factory.html">
+                    factory.js
+                  </a>
+                </li>
+              
+                
+                <li>
                   <a class="source" href="formatter.html">
                     formatter.js
                   </a>
@@ -165,6 +186,13 @@
                 <li>
                   <a class="source" href="gracenotegroup.html">
                     gracenotegroup.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="gracetabnote.html">
+                    gracetabnote.js
                   </a>
                 </li>
               
@@ -226,8 +254,22 @@
               
                 
                 <li>
+                  <a class="source" href="notesubgroup.html">
+                    notesubgroup.js
+                  </a>
+                </li>
+              
+                
+                <li>
                   <a class="source" href="ornament.html">
                     ornament.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="parser.html">
+                    parser.js
                   </a>
                 </li>
               
@@ -242,6 +284,13 @@
                 <li>
                   <a class="source" href="raphaelcontext.html">
                     raphaelcontext.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="registry.html">
+                    registry.js
                   </a>
                 </li>
               
@@ -380,6 +429,13 @@
               
                 
                 <li>
+                  <a class="source" href="system.html">
+                    system.js
+                  </a>
+                </li>
+              
+                
+                <li>
                   <a class="source" href="tables.html">
                     tables.js
                   </a>
@@ -499,6 +555,13 @@
               
                 
                 <li>
+                  <a class="source" href="vibratobracket.html">
+                    vibratobracket.js
+                  </a>
+                </li>
+              
+                
+                <li>
                   <a class="source" href="voice.html">
                     voice.js
                   </a>
@@ -527,40 +590,40 @@ needed, SVGContext is recommended.</p>
 
         
           <div class='highlight'><pre>
-export <span class="hljs-keyword">class</span> RaphaelContext {
-  constructor(element) {
+<span class="hljs-keyword">export</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">RaphaelContext</span> </span>{
+  <span class="hljs-keyword">constructor</span>(element) {
     <span class="hljs-keyword">this</span>.element = element;
-    <span class="hljs-keyword">this</span>.paper = Raphael(element);
-    <span class="hljs-keyword">this</span>.path = <span class="hljs-string">""</span>;
-    <span class="hljs-keyword">this</span>.pen = {x: <span class="hljs-number">0</span>, y: <span class="hljs-number">0</span>};
+    <span class="hljs-keyword">this</span>.paper = Raphael(element); <span class="hljs-comment">// eslint-disable-line</span>
+    <span class="hljs-keyword">this</span>.path = <span class="hljs-string">''</span>;
+    <span class="hljs-keyword">this</span>.pen = { x: <span class="hljs-number">0</span>, y: <span class="hljs-number">0</span> };
     <span class="hljs-keyword">this</span>.lineWidth = <span class="hljs-number">1.0</span>;
     <span class="hljs-keyword">this</span>.state = {
       scale: { x: <span class="hljs-number">1</span>, y: <span class="hljs-number">1</span> },
-      font_family: <span class="hljs-string">"Arial"</span>,
+      font_family: <span class="hljs-string">'Arial'</span>,
       font_size: <span class="hljs-number">8</span>,
-      font_weight: <span class="hljs-number">800</span>
+      font_weight: <span class="hljs-number">800</span>,
     };
 
     <span class="hljs-keyword">this</span>.attributes = {
-      <span class="hljs-string">"stroke-width"</span>: <span class="hljs-number">0.3</span>,
-      <span class="hljs-string">"fill"</span>: <span class="hljs-string">"black"</span>,
-      <span class="hljs-string">"stroke"</span>: <span class="hljs-string">"black"</span>,
-      <span class="hljs-string">"font"</span>: <span class="hljs-string">"10pt Arial"</span>
+      <span class="hljs-string">'stroke-width'</span>: <span class="hljs-number">0.3</span>,
+      <span class="hljs-string">'fill'</span>: <span class="hljs-string">'black'</span>,
+      <span class="hljs-string">'stroke'</span>: <span class="hljs-string">'black'</span>,
+      <span class="hljs-string">'font'</span>: <span class="hljs-string">'10pt Arial'</span>,
     };
 
     <span class="hljs-keyword">this</span>.background_attributes = {
-      <span class="hljs-string">"stroke-width"</span>: <span class="hljs-number">0</span>,
-      <span class="hljs-string">"fill"</span>: <span class="hljs-string">"white"</span>,
-      <span class="hljs-string">"stroke"</span>: <span class="hljs-string">"white"</span>,
-      <span class="hljs-string">"font"</span>: <span class="hljs-string">"10pt Arial"</span>
+      <span class="hljs-string">'stroke-width'</span>: <span class="hljs-number">0</span>,
+      <span class="hljs-string">'fill'</span>: <span class="hljs-string">'white'</span>,
+      <span class="hljs-string">'stroke'</span>: <span class="hljs-string">'white'</span>,
+      <span class="hljs-string">'font'</span>: <span class="hljs-string">'10pt Arial'</span>,
     };
 
     <span class="hljs-keyword">this</span>.shadow_attributes = {
       width: <span class="hljs-number">0</span>,
-      color: <span class="hljs-string">"black"</span>
+      color: <span class="hljs-string">'black'</span>,
     };
 
-    <span class="hljs-keyword">this</span>.state_stack= [];
+    <span class="hljs-keyword">this</span>.state_stack = [];
   }</pre></div>
         
       
@@ -568,16 +631,16 @@ export <span class="hljs-keyword">class</span> RaphaelContext {
         <p>Containers not implemented</p>
 
         
-          <div class='highlight'><pre>  openGroup(cls, id, attrs) {}
+          <div class='highlight'><pre>  openGroup() {}
   closeGroup() {}
-  add(elem) {}
+  add() {}
 
   setFont(family, size, weight) {
     <span class="hljs-keyword">this</span>.state.font_family = family;
     <span class="hljs-keyword">this</span>.state.font_size = size;
     <span class="hljs-keyword">this</span>.state.font_weight = weight;
-    <span class="hljs-keyword">this</span>.attributes.font = (<span class="hljs-keyword">this</span>.state.font_weight || <span class="hljs-string">""</span>) + <span class="hljs-string">" "</span> +
-      (<span class="hljs-keyword">this</span>.state.font_size * <span class="hljs-keyword">this</span>.state.scale.x) + <span class="hljs-string">"pt "</span> +
+    <span class="hljs-keyword">this</span>.attributes.font = (<span class="hljs-keyword">this</span>.state.font_weight || <span class="hljs-string">''</span>) + <span class="hljs-string">' '</span> +
+      (<span class="hljs-keyword">this</span>.state.font_size * <span class="hljs-keyword">this</span>.state.scale.x) + <span class="hljs-string">'pt '</span> +
       <span class="hljs-keyword">this</span>.state.font_family;
     <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
   }
@@ -614,7 +677,7 @@ export <span class="hljs-keyword">class</span> RaphaelContext {
   }
 
   setLineWidth(width) {
-    <span class="hljs-keyword">this</span>.attributes[<span class="hljs-string">"stroke-width"</span>] = width;
+    <span class="hljs-keyword">this</span>.attributes[<span class="hljs-string">'stroke-width'</span>] = width;
     <span class="hljs-keyword">this</span>.lineWidth = width;
   }</pre></div>
         
@@ -627,7 +690,7 @@ export <span class="hljs-keyword">class</span> RaphaelContext {
   setLineCap() { <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>; }
 
   scale(x, y) {
-    <span class="hljs-keyword">this</span>.state.scale = { x: x, y: y };</pre></div>
+    <span class="hljs-keyword">this</span>.state.scale = { x, y };</pre></div>
         
       
         
@@ -638,13 +701,13 @@ Raphael.JS, though it has no effect on the SVG output in
 Raphael 2 and higher.</p>
 
         
-          <div class='highlight'><pre>    <span class="hljs-keyword">this</span>.attributes.transform = <span class="hljs-string">"S"</span> + x + <span class="hljs-string">","</span> + y + <span class="hljs-string">",0,0"</span>;
-    <span class="hljs-keyword">this</span>.attributes.scale = x + <span class="hljs-string">","</span> + y + <span class="hljs-string">",0,0"</span>;
-    <span class="hljs-keyword">this</span>.attributes.font = <span class="hljs-keyword">this</span>.state.font_size * <span class="hljs-keyword">this</span>.state.scale.x + <span class="hljs-string">"pt "</span> +
+          <div class='highlight'><pre>    <span class="hljs-keyword">this</span>.attributes.transform = <span class="hljs-string">'S'</span> + x + <span class="hljs-string">','</span> + y + <span class="hljs-string">',0,0'</span>;
+    <span class="hljs-keyword">this</span>.attributes.scale = x + <span class="hljs-string">','</span> + y + <span class="hljs-string">',0,0'</span>;
+    <span class="hljs-keyword">this</span>.attributes.font = <span class="hljs-keyword">this</span>.state.font_size * <span class="hljs-keyword">this</span>.state.scale.x + <span class="hljs-string">'pt '</span> +
       <span class="hljs-keyword">this</span>.state.font_family;
-    <span class="hljs-keyword">this</span>.background_attributes.transform = <span class="hljs-string">"S"</span> + x + <span class="hljs-string">","</span> + y + <span class="hljs-string">",0,0"</span>;
+    <span class="hljs-keyword">this</span>.background_attributes.transform = <span class="hljs-string">'S'</span> + x + <span class="hljs-string">','</span> + y + <span class="hljs-string">',0,0'</span>;
     <span class="hljs-keyword">this</span>.background_attributes.font = <span class="hljs-keyword">this</span>.state.font_size *
-      <span class="hljs-keyword">this</span>.state.scale.x + <span class="hljs-string">"pt "</span> +
+      <span class="hljs-keyword">this</span>.state.scale.x + <span class="hljs-string">'pt '</span> +
       <span class="hljs-keyword">this</span>.state.font_family;
     <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
   }
@@ -676,8 +739,8 @@ is resized.</p>
 
     <span class="hljs-keyword">this</span>.paper.rect(x, y, width - <span class="hljs-number">0.5</span>, height - <span class="hljs-number">0.5</span>).
       attr(<span class="hljs-keyword">this</span>.attributes).
-      attr(<span class="hljs-string">"fill"</span>, <span class="hljs-string">"none"</span>).
-      attr(<span class="hljs-string">"stroke-width"</span>, <span class="hljs-keyword">this</span>.lineWidth);
+      attr(<span class="hljs-string">'fill'</span>, <span class="hljs-string">'none'</span>).
+      attr(<span class="hljs-string">'stroke-width'</span>, <span class="hljs-keyword">this</span>.lineWidth);
     <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
   }
 
@@ -687,8 +750,7 @@ is resized.</p>
       height = -height;
     }
 
-    <span class="hljs-keyword">this</span>.paper.rect(x, y, width - <span class="hljs-number">0.5</span>, height - <span class="hljs-number">0.5</span>).
-      attr(<span class="hljs-keyword">this</span>.attributes);
+    <span class="hljs-keyword">this</span>.paper.rect(x, y, width - <span class="hljs-number">0.5</span>, height - <span class="hljs-number">0.5</span>).attr(<span class="hljs-keyword">this</span>.attributes);
     <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
   }
 
@@ -704,33 +766,33 @@ is resized.</p>
   }
 
   beginPath() {
-    <span class="hljs-keyword">this</span>.path = <span class="hljs-string">""</span>;
+    <span class="hljs-keyword">this</span>.path = <span class="hljs-string">''</span>;
     <span class="hljs-keyword">this</span>.pen.x = <span class="hljs-number">0</span>;
     <span class="hljs-keyword">this</span>.pen.y = <span class="hljs-number">0</span>;
     <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
   }
 
   moveTo(x, y) {
-    <span class="hljs-keyword">this</span>.path += <span class="hljs-string">"M"</span> + x + <span class="hljs-string">","</span> + y;
+    <span class="hljs-keyword">this</span>.path += <span class="hljs-string">'M'</span> + x + <span class="hljs-string">','</span> + y;
     <span class="hljs-keyword">this</span>.pen.x = x;
     <span class="hljs-keyword">this</span>.pen.y = y;
     <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
   }
 
   lineTo(x, y) {
-    <span class="hljs-keyword">this</span>.path += <span class="hljs-string">"L"</span> + x + <span class="hljs-string">","</span> + y;
+    <span class="hljs-keyword">this</span>.path += <span class="hljs-string">'L'</span> + x + <span class="hljs-string">','</span> + y;
     <span class="hljs-keyword">this</span>.pen.x = x;
     <span class="hljs-keyword">this</span>.pen.y = y;
     <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
   }
 
   bezierCurveTo(x1, y1, x2, y2, x, y) {
-    <span class="hljs-keyword">this</span>.path += <span class="hljs-string">"C"</span> +
-      x1 + <span class="hljs-string">","</span> +
-      y1 + <span class="hljs-string">","</span> +
-      x2 + <span class="hljs-string">","</span> +
-      y2 + <span class="hljs-string">","</span> +
-      x + <span class="hljs-string">","</span> +
+    <span class="hljs-keyword">this</span>.path += <span class="hljs-string">'C'</span> +
+      x1 + <span class="hljs-string">','</span> +
+      y1 + <span class="hljs-string">','</span> +
+      x2 + <span class="hljs-string">','</span> +
+      y2 + <span class="hljs-string">','</span> +
+      x + <span class="hljs-string">','</span> +
       y;
     <span class="hljs-keyword">this</span>.pen.x = x;
     <span class="hljs-keyword">this</span>.pen.y = y;
@@ -738,10 +800,10 @@ is resized.</p>
   }
 
   quadraticCurveTo(x1, y1, x, y) {
-    <span class="hljs-keyword">this</span>.path += <span class="hljs-string">"Q"</span> +
-      x1 + <span class="hljs-string">","</span> +
-      y1 + <span class="hljs-string">","</span> +
-      x + <span class="hljs-string">","</span> +
+    <span class="hljs-keyword">this</span>.path += <span class="hljs-string">'Q'</span> +
+      x1 + <span class="hljs-string">','</span> +
+      y1 + <span class="hljs-string">','</span> +
+      x + <span class="hljs-string">','</span> +
       y;
     <span class="hljs-keyword">this</span>.pen.x = x;
     <span class="hljs-keyword">this</span>.pen.y = y;
@@ -755,7 +817,7 @@ arc method.</p>
 
         
           <div class='highlight'><pre>  arc(x, y, radius, startAngle, endAngle, antiClockwise) {
-    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">normalizeAngle</span><span class="hljs-params">(angle)</span> {</span>
+    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">normalizeAngle</span>(<span class="hljs-params">angle</span>) </span>{
       <span class="hljs-keyword">while</span> (angle &lt; <span class="hljs-number">0</span>) {
         angle += <span class="hljs-built_in">Math</span>.PI * <span class="hljs-number">2</span>;
       }
@@ -770,47 +832,44 @@ arc method.</p>
     endAngle = normalizeAngle(endAngle);
 
     <span class="hljs-keyword">if</span> (startAngle &gt; endAngle) {
-        <span class="hljs-keyword">var</span> tmp = startAngle;
-        startAngle = endAngle;
-        endAngle = tmp;
-        antiClockwise = !antiClockwise;
+      <span class="hljs-keyword">const</span> tmp = startAngle;
+      startAngle = endAngle;
+      endAngle = tmp;
+      antiClockwise = !antiClockwise;
     }
 
-    <span class="hljs-keyword">var</span> delta = endAngle - startAngle;
+    <span class="hljs-keyword">const</span> delta = endAngle - startAngle;
 
     <span class="hljs-keyword">if</span> (delta &gt; <span class="hljs-built_in">Math</span>.PI) {
-        <span class="hljs-keyword">this</span>.arcHelper(x, y, radius, startAngle, startAngle + delta / <span class="hljs-number">2</span>,
-                       antiClockwise);
-        <span class="hljs-keyword">this</span>.arcHelper(x, y, radius, startAngle + delta / <span class="hljs-number">2</span>, endAngle,
-                       antiClockwise);
-    }
-    <span class="hljs-keyword">else</span> {
-        <span class="hljs-keyword">this</span>.arcHelper(x, y, radius, startAngle, endAngle, antiClockwise);
+      <span class="hljs-keyword">this</span>.arcHelper(x, y, radius, startAngle, startAngle + delta / <span class="hljs-number">2</span>, antiClockwise);
+      <span class="hljs-keyword">this</span>.arcHelper(x, y, radius, startAngle + delta / <span class="hljs-number">2</span>, endAngle, antiClockwise);
+    } <span class="hljs-keyword">else</span> {
+      <span class="hljs-keyword">this</span>.arcHelper(x, y, radius, startAngle, endAngle, antiClockwise);
     }
     <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
   }
 
   arcHelper(x, y, radius, startAngle, endAngle, antiClockwise) {
-    <span class="hljs-keyword">var</span> x1 = x + radius * <span class="hljs-built_in">Math</span>.cos(startAngle);
-    <span class="hljs-keyword">var</span> y1 = y + radius * <span class="hljs-built_in">Math</span>.sin(startAngle);
+    <span class="hljs-keyword">const</span> x1 = x + radius * <span class="hljs-built_in">Math</span>.cos(startAngle);
+    <span class="hljs-keyword">const</span> y1 = y + radius * <span class="hljs-built_in">Math</span>.sin(startAngle);
 
-    <span class="hljs-keyword">var</span> x2 = x + radius * <span class="hljs-built_in">Math</span>.cos(endAngle);
-    <span class="hljs-keyword">var</span> y2 = y + radius * <span class="hljs-built_in">Math</span>.sin(endAngle);
+    <span class="hljs-keyword">const</span> x2 = x + radius * <span class="hljs-built_in">Math</span>.cos(endAngle);
+    <span class="hljs-keyword">const</span> y2 = y + radius * <span class="hljs-built_in">Math</span>.sin(endAngle);
 
-    <span class="hljs-keyword">var</span> largeArcFlag = <span class="hljs-number">0</span>;
-    <span class="hljs-keyword">var</span> sweepFlag = <span class="hljs-number">0</span>;
+    <span class="hljs-keyword">let</span> largeArcFlag = <span class="hljs-number">0</span>;
+    <span class="hljs-keyword">let</span> sweepFlag = <span class="hljs-number">0</span>;
     <span class="hljs-keyword">if</span> (antiClockwise) {
       sweepFlag = <span class="hljs-number">1</span>;
-      <span class="hljs-keyword">if</span> (endAngle - startAngle &lt; <span class="hljs-built_in">Math</span>.PI)
+      <span class="hljs-keyword">if</span> (endAngle - startAngle &lt; <span class="hljs-built_in">Math</span>.PI) {
         largeArcFlag = <span class="hljs-number">1</span>;
-    }
-    <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (endAngle - startAngle &gt; <span class="hljs-built_in">Math</span>.PI) {
-        largeArcFlag = <span class="hljs-number">1</span>;
+      }
+    } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (endAngle - startAngle &gt; <span class="hljs-built_in">Math</span>.PI) {
+      largeArcFlag = <span class="hljs-number">1</span>;
     }
 
-    <span class="hljs-keyword">this</span>.path += <span class="hljs-string">"M"</span> + x1 + <span class="hljs-string">","</span> + y1 + <span class="hljs-string">","</span> + <span class="hljs-string">"A"</span> +
-      radius + <span class="hljs-string">","</span> + radius + <span class="hljs-string">","</span> + <span class="hljs-string">"0,"</span> + largeArcFlag + <span class="hljs-string">","</span> + sweepFlag + <span class="hljs-string">","</span> +
-      x2 + <span class="hljs-string">","</span> + y2 + <span class="hljs-string">"M"</span> + <span class="hljs-keyword">this</span>.pen.x + <span class="hljs-string">","</span> + <span class="hljs-keyword">this</span>.pen.y;
+    <span class="hljs-keyword">this</span>.path += <span class="hljs-string">'M'</span> + x1 + <span class="hljs-string">','</span> + y1 + <span class="hljs-string">',A'</span> +
+      radius + <span class="hljs-string">','</span> + radius + <span class="hljs-string">',0,'</span> + largeArcFlag + <span class="hljs-string">','</span> + sweepFlag + <span class="hljs-string">','</span> +
+      x2 + <span class="hljs-string">','</span> + y2 + <span class="hljs-string">'M'</span> + <span class="hljs-keyword">this</span>.pen.x + <span class="hljs-string">','</span> + <span class="hljs-keyword">this</span>.pen.y;
   }</pre></div>
         
       
@@ -819,16 +878,16 @@ arc method.</p>
 
         
           <div class='highlight'><pre>  glow() {
-    <span class="hljs-keyword">var</span> out = <span class="hljs-keyword">this</span>.paper.set();
+    <span class="hljs-keyword">const</span> out = <span class="hljs-keyword">this</span>.paper.set();
     <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.shadow_attributes.width &gt; <span class="hljs-number">0</span>) {
-      <span class="hljs-keyword">var</span> sa = <span class="hljs-keyword">this</span>.shadow_attributes;
-      <span class="hljs-keyword">var</span> num_paths = sa.width / <span class="hljs-number">2</span>;
-      <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">1</span>; i &lt;= num_paths; i++) {
+      <span class="hljs-keyword">const</span> sa = <span class="hljs-keyword">this</span>.shadow_attributes;
+      <span class="hljs-keyword">const</span> num_paths = sa.width / <span class="hljs-number">2</span>;
+      <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> i = <span class="hljs-number">1</span>; i &lt;= num_paths; i++) {
         out.push(<span class="hljs-keyword">this</span>.paper.path(<span class="hljs-keyword">this</span>.path).attr({
           stroke: sa.color,
-          <span class="hljs-string">"stroke-linejoin"</span>: <span class="hljs-string">"round"</span>,
-          <span class="hljs-string">"stroke-linecap"</span>: <span class="hljs-string">"round"</span>,
-          <span class="hljs-string">"stroke-width"</span>: +(sa.width / num_paths * i).toFixed(<span class="hljs-number">3</span>),
+          <span class="hljs-string">'stroke-linejoin'</span>: <span class="hljs-string">'round'</span>,
+          <span class="hljs-string">'stroke-linecap'</span>: <span class="hljs-string">'round'</span>,
+          <span class="hljs-string">'stroke-width'</span>: +(sa.width / num_paths * i).toFixed(<span class="hljs-number">3</span>),
           opacity: +((sa.opacity || <span class="hljs-number">0.3</span>) / num_paths).toFixed(<span class="hljs-number">3</span>),</pre></div>
         
       
@@ -841,7 +900,7 @@ on the output SVG in Raphael 2.0+.</p>
 
         
           <div class='highlight'><pre>          transform: <span class="hljs-keyword">this</span>.attributes.transform,
-          scale: <span class="hljs-keyword">this</span>.attributes.scale
+          scale: <span class="hljs-keyword">this</span>.attributes.scale,
         }));
       }
     }
@@ -849,9 +908,9 @@ on the output SVG in Raphael 2.0+.</p>
   }
 
   fill() {
-    <span class="hljs-keyword">var</span> elem = <span class="hljs-keyword">this</span>.paper.path(<span class="hljs-keyword">this</span>.path).
+    <span class="hljs-keyword">const</span> elem = <span class="hljs-keyword">this</span>.paper.path(<span class="hljs-keyword">this</span>.path).
       attr(<span class="hljs-keyword">this</span>.attributes).
-      attr(<span class="hljs-string">"stroke-width"</span>, <span class="hljs-number">0</span>);
+      attr(<span class="hljs-string">'stroke-width'</span>, <span class="hljs-number">0</span>);
     <span class="hljs-keyword">this</span>.glow(elem);
     <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
   }
@@ -877,38 +936,43 @@ canvascontext.js as well.</p>
 
         
           <div class='highlight'><pre>
-    <span class="hljs-keyword">var</span> strokeWidth = <span class="hljs-keyword">this</span>.lineWidth * (<span class="hljs-keyword">this</span>.state.scale.x + <span class="hljs-keyword">this</span>.state.scale.y)/<span class="hljs-number">2</span>;
-    <span class="hljs-keyword">var</span> elem = <span class="hljs-keyword">this</span>.paper.path(<span class="hljs-keyword">this</span>.path).
+    <span class="hljs-keyword">const</span> strokeWidth = <span class="hljs-keyword">this</span>.lineWidth * (<span class="hljs-keyword">this</span>.state.scale.x + <span class="hljs-keyword">this</span>.state.scale.y) / <span class="hljs-number">2</span>;
+    <span class="hljs-keyword">const</span> elem = <span class="hljs-keyword">this</span>.paper.path(<span class="hljs-keyword">this</span>.path).
       attr(<span class="hljs-keyword">this</span>.attributes).
-      attr(<span class="hljs-string">"fill"</span>, <span class="hljs-string">"none"</span>).
-      attr(<span class="hljs-string">"stroke-width"</span>, strokeWidth);
+      attr(<span class="hljs-string">'fill'</span>, <span class="hljs-string">'none'</span>).
+      attr(<span class="hljs-string">'stroke-width'</span>, strokeWidth);
     <span class="hljs-keyword">this</span>.glow(elem);
     <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
   }
 
   closePath() {
-    <span class="hljs-keyword">this</span>.path += <span class="hljs-string">"Z"</span>;
+    <span class="hljs-keyword">this</span>.path += <span class="hljs-string">'Z'</span>;
     <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
   }
 
   measureText(text) {
-    <span class="hljs-keyword">var</span> txt = <span class="hljs-keyword">this</span>.paper.text(<span class="hljs-number">0</span>, <span class="hljs-number">0</span>, text).
+    <span class="hljs-keyword">const</span> txt = <span class="hljs-keyword">this</span>.paper.text(<span class="hljs-number">0</span>, <span class="hljs-number">0</span>, text).
       attr(<span class="hljs-keyword">this</span>.attributes).
-      attr(<span class="hljs-string">"fill"</span>, <span class="hljs-string">"none"</span>).
-      attr(<span class="hljs-string">"stroke"</span>, <span class="hljs-string">"none"</span>);
-    <span class="hljs-keyword">var</span> bounds = txt.getBBox();
+      attr(<span class="hljs-string">'fill'</span>, <span class="hljs-string">'none'</span>).
+      attr(<span class="hljs-string">'stroke'</span>, <span class="hljs-string">'none'</span>);
+    <span class="hljs-keyword">const</span> bounds = txt.getBBox();
     txt.remove();
 
     <span class="hljs-keyword">return</span> {
       width: bounds.width,
-      height: bounds.height
+      height: bounds.height,
     };
   }
 
   fillText(text, x, y) {
-    <span class="hljs-keyword">this</span>.paper.text(x + (<span class="hljs-keyword">this</span>.measureText(text).width / <span class="hljs-number">2</span>),
-        (y - (<span class="hljs-keyword">this</span>.state.font_size / (<span class="hljs-number">2.25</span> * <span class="hljs-keyword">this</span>.state.scale.y))), text).
-      attr(<span class="hljs-keyword">this</span>.attributes);
+    <span class="hljs-keyword">this</span>.paper
+      .text(
+        x + (<span class="hljs-keyword">this</span>.measureText(text).width / <span class="hljs-number">2</span>),
+        y - (<span class="hljs-keyword">this</span>.state.font_size / (<span class="hljs-number">2.25</span> * <span class="hljs-keyword">this</span>.state.scale.y)),
+        text
+      )
+      .attr(<span class="hljs-keyword">this</span>.attributes);
+
     <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
   }
 
@@ -921,18 +985,18 @@ canvascontext.js as well.</p>
         
           <div class='highlight'><pre>    <span class="hljs-keyword">this</span>.state_stack.push({
       state: {
-        font_family: <span class="hljs-keyword">this</span>.state.font_family
+        font_family: <span class="hljs-keyword">this</span>.state.font_family,
       },
       attributes: {
         font: <span class="hljs-keyword">this</span>.attributes.font,
         fill: <span class="hljs-keyword">this</span>.attributes.fill,
         stroke: <span class="hljs-keyword">this</span>.attributes.stroke,
-        <span class="hljs-string">"stroke-width"</span>: <span class="hljs-keyword">this</span>.attributes[<span class="hljs-string">"stroke-width"</span>]
+        <span class="hljs-string">'stroke-width'</span>: <span class="hljs-keyword">this</span>.attributes[<span class="hljs-string">'stroke-width'</span>],
       },
       shadow_attributes: {
         width: <span class="hljs-keyword">this</span>.shadow_attributes.width,
-        color: <span class="hljs-keyword">this</span>.shadow_attributes.color
-      }
+        color: <span class="hljs-keyword">this</span>.shadow_attributes.color,
+      },
     });
     <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
   }
@@ -944,12 +1008,12 @@ canvascontext.js as well.</p>
         <p>TODO(0xfe): State needs to be deep-restored.</p>
 
         
-          <div class='highlight'><pre>    <span class="hljs-keyword">var</span> state = <span class="hljs-keyword">this</span>.state_stack.pop();
+          <div class='highlight'><pre>    <span class="hljs-keyword">const</span> state = <span class="hljs-keyword">this</span>.state_stack.pop();
     <span class="hljs-keyword">this</span>.state.font_family = state.state.font_family;
     <span class="hljs-keyword">this</span>.attributes.font = state.attributes.font;
     <span class="hljs-keyword">this</span>.attributes.fill = state.attributes.fill;
     <span class="hljs-keyword">this</span>.attributes.stroke = state.attributes.stroke;
-    <span class="hljs-keyword">this</span>.attributes[<span class="hljs-string">"stroke-width"</span>] = state.attributes[<span class="hljs-string">"stroke-width"</span>];
+    <span class="hljs-keyword">this</span>.attributes[<span class="hljs-string">'stroke-width'</span>] = state.attributes[<span class="hljs-string">'stroke-width'</span>];
     <span class="hljs-keyword">this</span>.shadow_attributes.width = state.shadow_attributes.width;
     <span class="hljs-keyword">this</span>.shadow_attributes.color = state.shadow_attributes.color;
     <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;

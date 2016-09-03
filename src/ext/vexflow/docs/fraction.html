@@ -121,6 +121,27 @@
               
                 
                 <li>
+                  <a class="source" href="easyscore.html">
+                    easyscore.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="element.html">
+                    element.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="factory.html">
+                    factory.js
+                  </a>
+                </li>
+              
+                
+                <li>
                   <a class="source" href="formatter.html">
                     formatter.js
                   </a>
@@ -165,6 +186,13 @@
                 <li>
                   <a class="source" href="gracenotegroup.html">
                     gracenotegroup.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="gracetabnote.html">
+                    gracetabnote.js
                   </a>
                 </li>
               
@@ -226,8 +254,22 @@
               
                 
                 <li>
+                  <a class="source" href="notesubgroup.html">
+                    notesubgroup.js
+                  </a>
+                </li>
+              
+                
+                <li>
                   <a class="source" href="ornament.html">
                     ornament.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="parser.html">
+                    parser.js
                   </a>
                 </li>
               
@@ -242,6 +284,13 @@
                 <li>
                   <a class="source" href="raphaelcontext.html">
                     raphaelcontext.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="registry.html">
+                    registry.js
                   </a>
                 </li>
               
@@ -380,6 +429,13 @@
               
                 
                 <li>
+                  <a class="source" href="system.html">
+                    system.js
+                  </a>
+                </li>
+              
+                
+                <li>
                   <a class="source" href="tables.html">
                     tables.js
                   </a>
@@ -499,6 +555,13 @@
               
                 
                 <li>
+                  <a class="source" href="vibratobracket.html">
+                    vibratobracket.js
+                  </a>
+                </li>
+              
+                
+                <li>
                   <a class="source" href="voice.html">
                     voice.js
                   </a>
@@ -526,18 +589,20 @@
 
         
           <div class='highlight'><pre>
-import { Vex } from <span class="hljs-string">'./vex'</span>;
-export <span class="hljs-keyword">class</span> Fraction {
+<span class="hljs-comment">/* eslint-disable no-underscore-dangle */</span>
+
+<span class="hljs-keyword">import</span> { Vex } <span class="hljs-keyword">from</span> <span class="hljs-string">'./vex'</span>;
+<span class="hljs-keyword">export</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Fraction</span> </span>{
 
   <span class="hljs-comment">/**
    * GCD: Find greatest common divisor using Euclidean algorithm
    */</span>
-  static GCD(a, b) {
-    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> a !== <span class="hljs-string">"number"</span> || <span class="hljs-keyword">typeof</span> b !== <span class="hljs-string">"number"</span>) {
-      <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RERR(<span class="hljs-string">"BadArgument"</span>, <span class="hljs-string">"Invalid numbers: "</span> + a + <span class="hljs-string">", "</span> + b);
+  <span class="hljs-keyword">static</span> GCD(a, b) {
+    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> a !== <span class="hljs-string">'number'</span> || <span class="hljs-keyword">typeof</span> b !== <span class="hljs-string">'number'</span>) {
+      <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RERR(<span class="hljs-string">'BadArgument'</span>, <span class="hljs-string">`Invalid numbers: <span class="hljs-subst">${a}</span>, <span class="hljs-subst">${b}</span>`</span>);
     }
 
-    <span class="hljs-keyword">var</span> t;
+    <span class="hljs-keyword">let</span> t;
 
     <span class="hljs-keyword">while</span> (b !== <span class="hljs-number">0</span>) {
       t = b;
@@ -551,28 +616,28 @@ export <span class="hljs-keyword">class</span> Fraction {
   <span class="hljs-comment">/**
    * LCM: Lowest common multiple
    */</span>
-  static LCM(a, b) {
+  <span class="hljs-keyword">static</span> LCM(a, b) {
     <span class="hljs-keyword">return</span> ((a * b) / Fraction.GCD(a, b));
   }
 
   <span class="hljs-comment">/**
    * LCMM: Lowest common multiple for more than two numbers
    */</span>
-  static LCMM(args) {
+  <span class="hljs-keyword">static</span> LCMM(args) {
     <span class="hljs-keyword">if</span> (args.length === <span class="hljs-number">0</span>) {
       <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
-    } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (args.length == <span class="hljs-number">1</span>) {
+    } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (args.length === <span class="hljs-number">1</span>) {
       <span class="hljs-keyword">return</span> args[<span class="hljs-number">0</span>];
-    } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (args.length == <span class="hljs-number">2</span>) {
+    } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (args.length === <span class="hljs-number">2</span>) {
       <span class="hljs-keyword">return</span> Fraction.LCM(args[<span class="hljs-number">0</span>], args[<span class="hljs-number">1</span>]);
     } <span class="hljs-keyword">else</span> {
-      <span class="hljs-keyword">var</span> arg0 = args[<span class="hljs-number">0</span>];
+      <span class="hljs-keyword">const</span> arg0 = args[<span class="hljs-number">0</span>];
       args.shift();
       <span class="hljs-keyword">return</span> Fraction.LCM(arg0, Fraction.LCMM(args));
     }
   }
 
-  constructor(numerator, denominator) {
+  <span class="hljs-keyword">constructor</span>(numerator, denominator) {
     <span class="hljs-keyword">this</span>.set(numerator, denominator);
   }
   set(numerator, denominator) {
@@ -584,10 +649,10 @@ export <span class="hljs-keyword">class</span> Fraction {
     <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.numerator / <span class="hljs-keyword">this</span>.denominator;
   }
   simplify() {
-    <span class="hljs-keyword">var</span> u = <span class="hljs-keyword">this</span>.numerator;
-    <span class="hljs-keyword">var</span> d = <span class="hljs-keyword">this</span>.denominator;
+    <span class="hljs-keyword">let</span> u = <span class="hljs-keyword">this</span>.numerator;
+    <span class="hljs-keyword">let</span> d = <span class="hljs-keyword">this</span>.denominator;
 
-    <span class="hljs-keyword">var</span> gcd = Fraction.GCD(u, d);
+    <span class="hljs-keyword">const</span> gcd = Fraction.GCD(u, d);
     u /= gcd;
     d /= gcd;
 
@@ -598,8 +663,8 @@ export <span class="hljs-keyword">class</span> Fraction {
     <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.set(u, d);
   }
   add(param1, param2) {
-    <span class="hljs-keyword">var</span> otherNumerator;
-    <span class="hljs-keyword">var</span> otherDenominator;
+    <span class="hljs-keyword">let</span> otherNumerator;
+    <span class="hljs-keyword">let</span> otherDenominator;
 
     <span class="hljs-keyword">if</span> (param1 <span class="hljs-keyword">instanceof</span> Fraction) {
       otherNumerator = param1.numerator;
@@ -618,16 +683,16 @@ export <span class="hljs-keyword">class</span> Fraction {
       }
     }
 
-    <span class="hljs-keyword">var</span> lcm = Fraction.LCM(<span class="hljs-keyword">this</span>.denominator, otherDenominator);
-    <span class="hljs-keyword">var</span> a = lcm / <span class="hljs-keyword">this</span>.denominator;
-    <span class="hljs-keyword">var</span> b = lcm / otherDenominator;
+    <span class="hljs-keyword">const</span> lcm = Fraction.LCM(<span class="hljs-keyword">this</span>.denominator, otherDenominator);
+    <span class="hljs-keyword">const</span> a = lcm / <span class="hljs-keyword">this</span>.denominator;
+    <span class="hljs-keyword">const</span> b = lcm / otherDenominator;
 
-    <span class="hljs-keyword">var</span> u = <span class="hljs-keyword">this</span>.numerator * a + otherNumerator * b;
+    <span class="hljs-keyword">const</span> u = <span class="hljs-keyword">this</span>.numerator * a + otherNumerator * b;
     <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.set(u, lcm);
   }
   subtract(param1, param2) {
-    <span class="hljs-keyword">var</span> otherNumerator;
-    <span class="hljs-keyword">var</span> otherDenominator;
+    <span class="hljs-keyword">let</span> otherNumerator;
+    <span class="hljs-keyword">let</span> otherDenominator;
 
     <span class="hljs-keyword">if</span> (param1 <span class="hljs-keyword">instanceof</span> Fraction) {
       otherNumerator = param1.numerator;
@@ -646,16 +711,16 @@ export <span class="hljs-keyword">class</span> Fraction {
       }
     }
 
-    <span class="hljs-keyword">var</span> lcm = Fraction.LCM(<span class="hljs-keyword">this</span>.denominator, otherDenominator);
-    <span class="hljs-keyword">var</span> a = lcm / <span class="hljs-keyword">this</span>.denominator;
-    <span class="hljs-keyword">var</span> b = lcm / otherDenominator;
+    <span class="hljs-keyword">const</span> lcm = Fraction.LCM(<span class="hljs-keyword">this</span>.denominator, otherDenominator);
+    <span class="hljs-keyword">const</span> a = lcm / <span class="hljs-keyword">this</span>.denominator;
+    <span class="hljs-keyword">const</span> b = lcm / otherDenominator;
 
-    <span class="hljs-keyword">var</span> u = <span class="hljs-keyword">this</span>.numerator * a - otherNumerator * b;
+    <span class="hljs-keyword">const</span> u = <span class="hljs-keyword">this</span>.numerator * a - otherNumerator * b;
     <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.set(u, lcm);
   }
   multiply(param1, param2) {
-    <span class="hljs-keyword">var</span> otherNumerator;
-    <span class="hljs-keyword">var</span> otherDenominator;
+    <span class="hljs-keyword">let</span> otherNumerator;
+    <span class="hljs-keyword">let</span> otherDenominator;
 
     <span class="hljs-keyword">if</span> (param1 <span class="hljs-keyword">instanceof</span> Fraction) {
       otherNumerator = param1.numerator;
@@ -677,8 +742,8 @@ export <span class="hljs-keyword">class</span> Fraction {
     <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.set(<span class="hljs-keyword">this</span>.numerator * otherNumerator, <span class="hljs-keyword">this</span>.denominator * otherDenominator);
   }
   divide(param1, param2) {
-    <span class="hljs-keyword">var</span> otherNumerator;
-    <span class="hljs-keyword">var</span> otherDenominator;
+    <span class="hljs-keyword">let</span> otherNumerator;
+    <span class="hljs-keyword">let</span> otherDenominator;
 
     <span class="hljs-keyword">if</span> (param1 <span class="hljs-keyword">instanceof</span> Fraction) {
       otherNumerator = param1.numerator;
@@ -706,8 +771,8 @@ export <span class="hljs-keyword">class</span> Fraction {
 
         
           <div class='highlight'><pre>  equals(compare) {
-    <span class="hljs-keyword">var</span> a = Fraction.__compareA.copy(compare).simplify();
-    <span class="hljs-keyword">var</span> b = Fraction.__compareB.copy(<span class="hljs-keyword">this</span>).simplify();
+    <span class="hljs-keyword">const</span> a = Fraction.__compareA.copy(compare).simplify();
+    <span class="hljs-keyword">const</span> b = Fraction.__compareB.copy(<span class="hljs-keyword">this</span>).simplify();
 
     <span class="hljs-keyword">return</span> (a.numerator === b.numerator) &amp;&amp; (a.denominator === b.denominator);
   }</pre></div>
@@ -718,7 +783,7 @@ export <span class="hljs-keyword">class</span> Fraction {
 
         
           <div class='highlight'><pre>  greaterThan(compare) {
-    <span class="hljs-keyword">var</span> a = Fraction.__compareB.copy(<span class="hljs-keyword">this</span>);
+    <span class="hljs-keyword">const</span> a = Fraction.__compareB.copy(<span class="hljs-keyword">this</span>);
     a.subtract(compare);
     <span class="hljs-keyword">return</span> (a.numerator &gt; <span class="hljs-number">0</span>);
   }</pre></div>
@@ -729,7 +794,7 @@ export <span class="hljs-keyword">class</span> Fraction {
 
         
           <div class='highlight'><pre>  greaterThanEquals(compare) {
-    <span class="hljs-keyword">var</span> a = Fraction.__compareB.copy(<span class="hljs-keyword">this</span>);
+    <span class="hljs-keyword">const</span> a = Fraction.__compareB.copy(<span class="hljs-keyword">this</span>);
     a.subtract(compare);
     <span class="hljs-keyword">return</span> (a.numerator &gt;= <span class="hljs-number">0</span>);
   }</pre></div>
@@ -823,9 +888,9 @@ export <span class="hljs-keyword">class</span> Fraction {
 
         
           <div class='highlight'><pre>  toMixedString() {
-    <span class="hljs-keyword">var</span> s = <span class="hljs-string">''</span>;
-    <span class="hljs-keyword">var</span> q = <span class="hljs-keyword">this</span>.quotient();
-    <span class="hljs-keyword">var</span> f = Fraction.__tmp.copy(<span class="hljs-keyword">this</span>);
+    <span class="hljs-keyword">let</span> s = <span class="hljs-string">''</span>;
+    <span class="hljs-keyword">const</span> q = <span class="hljs-keyword">this</span>.quotient();
+    <span class="hljs-keyword">const</span> f = Fraction.__tmp.copy(<span class="hljs-keyword">this</span>);
 
     <span class="hljs-keyword">if</span> (q &lt; <span class="hljs-number">0</span>) {
       f.abs().fraction();
@@ -856,9 +921,9 @@ export <span class="hljs-keyword">class</span> Fraction {
 
         
           <div class='highlight'><pre>  parse(str) {
-    <span class="hljs-keyword">var</span> i = str.split(<span class="hljs-string">'/'</span>);
-    <span class="hljs-keyword">var</span> n = <span class="hljs-built_in">parseInt</span>(i[<span class="hljs-number">0</span>], <span class="hljs-number">10</span>);
-    <span class="hljs-keyword">var</span> d = (i[<span class="hljs-number">1</span>]) ? <span class="hljs-built_in">parseInt</span>(i[<span class="hljs-number">1</span>], <span class="hljs-number">10</span>) : <span class="hljs-number">1</span>;
+    <span class="hljs-keyword">const</span> i = str.split(<span class="hljs-string">'/'</span>);
+    <span class="hljs-keyword">const</span> n = <span class="hljs-built_in">parseInt</span>(i[<span class="hljs-number">0</span>], <span class="hljs-number">10</span>);
+    <span class="hljs-keyword">const</span> d = (i[<span class="hljs-number">1</span>]) ? <span class="hljs-built_in">parseInt</span>(i[<span class="hljs-number">1</span>], <span class="hljs-number">10</span>) : <span class="hljs-number">1</span>;
 
     <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.set(n, d);
   }

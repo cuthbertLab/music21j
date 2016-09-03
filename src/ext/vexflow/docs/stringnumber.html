@@ -121,6 +121,27 @@
               
                 
                 <li>
+                  <a class="source" href="easyscore.html">
+                    easyscore.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="element.html">
+                    element.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="factory.html">
+                    factory.js
+                  </a>
+                </li>
+              
+                
+                <li>
                   <a class="source" href="formatter.html">
                     formatter.js
                   </a>
@@ -165,6 +186,13 @@
                 <li>
                   <a class="source" href="gracenotegroup.html">
                     gracenotegroup.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="gracetabnote.html">
+                    gracetabnote.js
                   </a>
                 </li>
               
@@ -226,8 +254,22 @@
               
                 
                 <li>
+                  <a class="source" href="notesubgroup.html">
+                    notesubgroup.js
+                  </a>
+                </li>
+              
+                
+                <li>
                   <a class="source" href="ornament.html">
                     ornament.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="parser.html">
+                    parser.js
                   </a>
                 </li>
               
@@ -242,6 +284,13 @@
                 <li>
                   <a class="source" href="raphaelcontext.html">
                     raphaelcontext.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="registry.html">
+                    registry.js
                   </a>
                 </li>
               
@@ -380,6 +429,13 @@
               
                 
                 <li>
+                  <a class="source" href="system.html">
+                    system.js
+                  </a>
+                </li>
+              
+                
+                <li>
                   <a class="source" href="tables.html">
                     tables.js
                   </a>
@@ -499,6 +555,13 @@
               
                 
                 <li>
+                  <a class="source" href="vibratobracket.html">
+                    vibratobracket.js
+                  </a>
+                </li>
+              
+                
+                <li>
                   <a class="source" href="voice.html">
                     voice.js
                   </a>
@@ -526,13 +589,13 @@ number annotations beside notes.</p>
 
         
           <div class='highlight'><pre>
-import { Vex } from <span class="hljs-string">'./vex'</span>;
-import { Modifier } from <span class="hljs-string">'./modifier'</span>;
-import { Renderer } from <span class="hljs-string">'./renderer'</span>;
-import { StaveNote } from <span class="hljs-string">'./stavenote'</span>;
+<span class="hljs-keyword">import</span> { Vex } <span class="hljs-keyword">from</span> <span class="hljs-string">'./vex'</span>;
+<span class="hljs-keyword">import</span> { Modifier } <span class="hljs-keyword">from</span> <span class="hljs-string">'./modifier'</span>;
+<span class="hljs-keyword">import</span> { Renderer } <span class="hljs-keyword">from</span> <span class="hljs-string">'./renderer'</span>;
+<span class="hljs-keyword">import</span> { StaveNote } <span class="hljs-keyword">from</span> <span class="hljs-string">'./stavenote'</span>;
 
-export <span class="hljs-keyword">class</span> StringNumber extends Modifier {
-  static get CATEGORY() { <span class="hljs-keyword">return</span> <span class="hljs-string">'stringnumber'</span>; }</pre></div>
+<span class="hljs-keyword">export</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">StringNumber</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">Modifier</span> </span>{
+  <span class="hljs-keyword">static</span> get CATEGORY() { <span class="hljs-keyword">return</span> <span class="hljs-string">'stringnumber'</span>; }</pre></div>
         
       
         
@@ -540,19 +603,23 @@ export <span class="hljs-keyword">class</span> StringNumber extends Modifier {
 <p>Arrange string numbers inside a <code>ModifierContext</code></p>
 
         
-          <div class='highlight'><pre>  static format(nums, state) {
-    <span class="hljs-keyword">var</span> left_shift = state.left_shift;
-    <span class="hljs-keyword">var</span> right_shift = state.right_shift;
-    <span class="hljs-keyword">var</span> num_spacing = <span class="hljs-number">1</span>;
+          <div class='highlight'><pre>  <span class="hljs-keyword">static</span> format(nums, state) {
+    <span class="hljs-keyword">const</span> left_shift = state.left_shift;
+    <span class="hljs-keyword">const</span> right_shift = state.right_shift;
+    <span class="hljs-keyword">const</span> num_spacing = <span class="hljs-number">1</span>;
 
     <span class="hljs-keyword">if</span> (!nums || nums.length === <span class="hljs-number">0</span>) <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
 
-    <span class="hljs-keyword">var</span> nums_list = [];
-    <span class="hljs-keyword">var</span> prev_note = <span class="hljs-literal">null</span>;
-    <span class="hljs-keyword">var</span> shift_left = <span class="hljs-number">0</span>;
-    <span class="hljs-keyword">var</span> shift_right = <span class="hljs-number">0</span>;
+    <span class="hljs-keyword">const</span> nums_list = [];
+    <span class="hljs-keyword">let</span> prev_note = <span class="hljs-literal">null</span>;
+    <span class="hljs-keyword">let</span> shift_left = <span class="hljs-number">0</span>;
+    <span class="hljs-keyword">let</span> shift_right = <span class="hljs-number">0</span>;
 
-    <span class="hljs-keyword">var</span> i, num, note, pos, props_tmp;
+    <span class="hljs-keyword">let</span> i;
+    <span class="hljs-keyword">let</span> num;
+    <span class="hljs-keyword">let</span> note;
+    <span class="hljs-keyword">let</span> pos;
+    <span class="hljs-keyword">let</span> props_tmp;
     <span class="hljs-keyword">for</span> (i = <span class="hljs-number">0</span>; i &lt; nums.length; ++i) {
       num = nums[i];
       note = num.getNote();
@@ -561,20 +628,29 @@ export <span class="hljs-keyword">class</span> StringNumber extends Modifier {
         num = nums[i];
         note = num.getNote();
         pos = num.getPosition();
-        <span class="hljs-keyword">var</span> props = note.getKeyProps()[num.getIndex()];
+        <span class="hljs-keyword">const</span> props = note.getKeyProps()[num.getIndex()];
 
-        <span class="hljs-keyword">if</span> (note != prev_note) {
-          <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> n = <span class="hljs-number">0</span>; n &lt; note.keys.length; ++n) {
+        <span class="hljs-keyword">if</span> (note !== prev_note) {
+          <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> n = <span class="hljs-number">0</span>; n &lt; note.keys.length; ++n) {
             props_tmp = note.getKeyProps()[n];
-            <span class="hljs-keyword">if</span> (left_shift === <span class="hljs-number">0</span>)
-              shift_left = (props_tmp.displaced ? note.getExtraLeftPx() : shift_left);
-            <span class="hljs-keyword">if</span> (right_shift === <span class="hljs-number">0</span>)
-              shift_right = (props_tmp.displaced ? note.getExtraRightPx() : shift_right);
+            <span class="hljs-keyword">if</span> (left_shift === <span class="hljs-number">0</span>) {
+              shift_left = props_tmp.displaced ? note.getExtraLeftPx() : shift_left;
+            }
+            <span class="hljs-keyword">if</span> (right_shift === <span class="hljs-number">0</span>) {
+              shift_right = props_tmp.displaced ? note.getExtraRightPx() : shift_right;
+            }
           }
           prev_note = note;
         }
 
-        nums_list.push({ line: props.line, pos: pos, shiftL: shift_left, shiftR: shift_right, note: note, num: num });
+        nums_list.push({
+          pos,
+          note,
+          num,
+          line: props.line,
+          shiftL: shift_left,
+          shiftR: shift_right,
+        });
       }
     }</pre></div>
         
@@ -583,39 +659,44 @@ export <span class="hljs-keyword">class</span> StringNumber extends Modifier {
         <p>Sort string numbers by line number.</p>
 
         
-          <div class='highlight'><pre>    nums_list.sort(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(a, b)</span> {</span> <span class="hljs-keyword">return</span> (b.line - a.line); });
+          <div class='highlight'><pre>    nums_list.sort((a, b) =&gt; b.line - a.line);</pre></div>
+        
+      
+        
+        <p>TODO: This variable never gets assigned to anything. Is that a bug or can this be removed?</p>
 
-    <span class="hljs-keyword">var</span> num_shiftL = <span class="hljs-number">0</span>;
-    <span class="hljs-keyword">var</span> num_shiftR = <span class="hljs-number">0</span>;
-    <span class="hljs-keyword">var</span> x_widthL = <span class="hljs-number">0</span>;
-    <span class="hljs-keyword">var</span> x_widthR = <span class="hljs-number">0</span>;
-    <span class="hljs-keyword">var</span> last_line = <span class="hljs-literal">null</span>;
-    <span class="hljs-keyword">var</span> last_note = <span class="hljs-literal">null</span>;
+        
+          <div class='highlight'><pre>    <span class="hljs-keyword">let</span> num_shiftL = <span class="hljs-number">0</span>; <span class="hljs-comment">// eslint-disable-line</span>
+    <span class="hljs-keyword">let</span> num_shiftR = <span class="hljs-number">0</span>;
+    <span class="hljs-keyword">let</span> x_widthL = <span class="hljs-number">0</span>;
+    <span class="hljs-keyword">let</span> x_widthR = <span class="hljs-number">0</span>;
+    <span class="hljs-keyword">let</span> last_line = <span class="hljs-literal">null</span>;
+    <span class="hljs-keyword">let</span> last_note = <span class="hljs-literal">null</span>;
     <span class="hljs-keyword">for</span> (i = <span class="hljs-number">0</span>; i &lt; nums_list.length; ++i) {
-      <span class="hljs-keyword">var</span> num_shift = <span class="hljs-number">0</span>;
+      <span class="hljs-keyword">let</span> num_shift = <span class="hljs-number">0</span>;
       note = nums_list[i].note;
       pos = nums_list[i].pos;
       num = nums_list[i].num;
-      <span class="hljs-keyword">var</span> line = nums_list[i].line;
-      <span class="hljs-keyword">var</span> shiftL = nums_list[i].shiftL;
-      <span class="hljs-keyword">var</span> shiftR = nums_list[i].shiftR;</pre></div>
+      <span class="hljs-keyword">const</span> line = nums_list[i].line;
+      <span class="hljs-keyword">const</span> shiftL = nums_list[i].shiftL;
+      <span class="hljs-keyword">const</span> shiftR = nums_list[i].shiftR;</pre></div>
         
       
         
         <p>Reset the position of the string number every line.</p>
 
         
-          <div class='highlight'><pre>      <span class="hljs-keyword">if</span> (line != last_line || note != last_note) {
+          <div class='highlight'><pre>      <span class="hljs-keyword">if</span> (line !== last_line || note !== last_note) {
         num_shiftL = left_shift + shiftL;
         num_shiftR = right_shift + shiftR;
       }
 
-      <span class="hljs-keyword">var</span> num_width = num.getWidth() + num_spacing;
-      <span class="hljs-keyword">if</span> (pos == Modifier.Position.LEFT) {
+      <span class="hljs-keyword">const</span> num_width = num.getWidth() + num_spacing;
+      <span class="hljs-keyword">if</span> (pos === Modifier.Position.LEFT) {
         num.setXShift(left_shift);
         num_shift = shift_left + num_width; <span class="hljs-comment">// spacing</span>
         x_widthL = (num_shift &gt; x_widthL) ? num_shift : x_widthL;
-      } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (pos == Modifier.Position.RIGHT) {
+      } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (pos === Modifier.Position.RIGHT) {
         num.setXShift(num_shiftR);
         num_shift += num_width; <span class="hljs-comment">// spacing</span>
         x_widthR = (num_shift &gt; x_widthR) ? num_shift : x_widthR;
@@ -629,26 +710,27 @@ export <span class="hljs-keyword">class</span> StringNumber extends Modifier {
     <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
   }
 
-  constructor(number) {
-    super();
+  <span class="hljs-keyword">constructor</span>(number) {
+    <span class="hljs-keyword">super</span>();
+    <span class="hljs-keyword">this</span>.setAttribute(<span class="hljs-string">'type'</span>, <span class="hljs-string">'StringNumber'</span>);
 
     <span class="hljs-keyword">this</span>.note = <span class="hljs-literal">null</span>;
     <span class="hljs-keyword">this</span>.last_note = <span class="hljs-literal">null</span>;
     <span class="hljs-keyword">this</span>.index = <span class="hljs-literal">null</span>;
     <span class="hljs-keyword">this</span>.string_number = number;
-    <span class="hljs-keyword">this</span>.setWidth(<span class="hljs-number">20</span>);                                 <span class="hljs-comment">// ???</span>
-    <span class="hljs-keyword">this</span>.position = Modifier.Position.ABOVE;  <span class="hljs-comment">// Default position above stem or note head</span>
+    <span class="hljs-keyword">this</span>.setWidth(<span class="hljs-number">20</span>); <span class="hljs-comment">// ???</span>
+    <span class="hljs-keyword">this</span>.position = Modifier.Position.ABOVE; <span class="hljs-comment">// Default position above stem or note head</span>
     <span class="hljs-keyword">this</span>.x_shift = <span class="hljs-number">0</span>;
     <span class="hljs-keyword">this</span>.y_shift = <span class="hljs-number">0</span>;
-    <span class="hljs-keyword">this</span>.x_offset = <span class="hljs-number">0</span>;                               <span class="hljs-comment">// Horizontal offset from default</span>
-    <span class="hljs-keyword">this</span>.y_offset = <span class="hljs-number">0</span>;                               <span class="hljs-comment">// Vertical offset from default</span>
-    <span class="hljs-keyword">this</span>.dashed = <span class="hljs-literal">true</span>;                              <span class="hljs-comment">// true - draw dashed extension  false - no extension</span>
+    <span class="hljs-keyword">this</span>.x_offset = <span class="hljs-number">0</span>; <span class="hljs-comment">// Horizontal offset from default</span>
+    <span class="hljs-keyword">this</span>.y_offset = <span class="hljs-number">0</span>; <span class="hljs-comment">// Vertical offset from default</span>
+    <span class="hljs-keyword">this</span>.dashed = <span class="hljs-literal">true</span>; <span class="hljs-comment">// true - draw dashed extension  false - no extension</span>
     <span class="hljs-keyword">this</span>.leg = Renderer.LineEndType.NONE;   <span class="hljs-comment">// draw upward/downward leg at the of extension line</span>
     <span class="hljs-keyword">this</span>.radius = <span class="hljs-number">8</span>;
     <span class="hljs-keyword">this</span>.font = {
-      family: <span class="hljs-string">"sans-serif"</span>,
+      family: <span class="hljs-string">'sans-serif'</span>,
       size: <span class="hljs-number">10</span>,
-      weight: <span class="hljs-string">"bold"</span>
+      weight: <span class="hljs-string">'bold'</span>,
     };
   }
   getCategory() { <span class="hljs-keyword">return</span> StringNumber.CATEGORY; }
@@ -658,17 +740,17 @@ export <span class="hljs-keyword">class</span> StringNumber extends Modifier {
   setIndex(index) { <span class="hljs-keyword">this</span>.index = index; <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>; }
 
   setLineEndType(leg) {
-    <span class="hljs-keyword">if</span> (leg &gt;= Renderer.LineEndType.NONE &amp;&amp;
-        leg &lt;= Renderer.LineEndType.DOWN)
+    <span class="hljs-keyword">if</span> (leg &gt;= Renderer.LineEndType.NONE &amp;&amp; leg &lt;= Renderer.LineEndType.DOWN) {
       <span class="hljs-keyword">this</span>.leg = leg;
+    }
     <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
   }
 
   getPosition() { <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.position; }
   setPosition(position) {
-    <span class="hljs-keyword">if</span> (position &gt;= Modifier.Position.LEFT &amp;&amp;
-        position &lt;= Modifier.Position.BELOW)
+    <span class="hljs-keyword">if</span> (position &gt;= Modifier.Position.LEFT &amp;&amp; position &lt;= Modifier.Position.BELOW) {
       <span class="hljs-keyword">this</span>.position = position;
+    }
     <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
   }
 
@@ -679,47 +761,53 @@ export <span class="hljs-keyword">class</span> StringNumber extends Modifier {
   setDashed(dashed) { <span class="hljs-keyword">this</span>.dashed = dashed; <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>; }
 
   draw() {
-    <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.context) <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RERR(<span class="hljs-string">"NoContext"</span>,
-      <span class="hljs-string">"Can't draw string number without a context."</span>);
-    <span class="hljs-keyword">if</span> (!(<span class="hljs-keyword">this</span>.note &amp;&amp; (<span class="hljs-keyword">this</span>.index != <span class="hljs-literal">null</span>))) <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RERR(<span class="hljs-string">"NoAttachedNote"</span>,
-      <span class="hljs-string">"Can't draw string number without a note and index."</span>);
+    <span class="hljs-keyword">const</span> ctx = <span class="hljs-keyword">this</span>.checkContext();
+    <span class="hljs-keyword">if</span> (!(<span class="hljs-keyword">this</span>.note &amp;&amp; (<span class="hljs-keyword">this</span>.index != <span class="hljs-literal">null</span>))) {
+      <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RERR(<span class="hljs-string">'NoAttachedNote'</span>, <span class="hljs-string">"Can't draw string number without a note and index."</span>);
+    }
+    <span class="hljs-keyword">this</span>.setRendered();
 
-    <span class="hljs-keyword">var</span> ctx = <span class="hljs-keyword">this</span>.context;
-    <span class="hljs-keyword">var</span> line_space = <span class="hljs-keyword">this</span>.note.stave.options.spacing_between_lines_px;
+    <span class="hljs-keyword">const</span> line_space = <span class="hljs-keyword">this</span>.note.stave.options.spacing_between_lines_px;
 
-    <span class="hljs-keyword">var</span> start = <span class="hljs-keyword">this</span>.note.getModifierStartXY(<span class="hljs-keyword">this</span>.position, <span class="hljs-keyword">this</span>.index);
-    <span class="hljs-keyword">var</span> dot_x = (start.x + <span class="hljs-keyword">this</span>.x_shift + <span class="hljs-keyword">this</span>.x_offset);
-    <span class="hljs-keyword">var</span> dot_y = start.y + <span class="hljs-keyword">this</span>.y_shift + <span class="hljs-keyword">this</span>.y_offset;
+    <span class="hljs-keyword">const</span> start = <span class="hljs-keyword">this</span>.note.getModifierStartXY(<span class="hljs-keyword">this</span>.position, <span class="hljs-keyword">this</span>.index);
+    <span class="hljs-keyword">let</span> dot_x = (start.x + <span class="hljs-keyword">this</span>.x_shift + <span class="hljs-keyword">this</span>.x_offset);
+    <span class="hljs-keyword">let</span> dot_y = start.y + <span class="hljs-keyword">this</span>.y_shift + <span class="hljs-keyword">this</span>.y_offset;
 
     <span class="hljs-keyword">switch</span> (<span class="hljs-keyword">this</span>.position) {
       <span class="hljs-keyword">case</span> Modifier.Position.ABOVE:
-      <span class="hljs-keyword">case</span> Modifier.Position.BELOW:
-        <span class="hljs-keyword">var</span> stem_ext = <span class="hljs-keyword">this</span>.note.getStemExtents();
-        <span class="hljs-keyword">var</span> top = stem_ext.topY;
-        <span class="hljs-keyword">var</span> bottom = stem_ext.baseY + <span class="hljs-number">2</span>;
+      <span class="hljs-keyword">case</span> Modifier.Position.BELOW: {
+        <span class="hljs-keyword">const</span> stem_ext = <span class="hljs-keyword">this</span>.note.getStemExtents();
+        <span class="hljs-keyword">let</span> top = stem_ext.topY;
+        <span class="hljs-keyword">let</span> bottom = stem_ext.baseY + <span class="hljs-number">2</span>;
 
-        <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.note.stem_direction == StaveNote.STEM_DOWN) {
+        <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.note.stem_direction === StaveNote.STEM_DOWN) {
           top = stem_ext.baseY;
           bottom = stem_ext.topY - <span class="hljs-number">2</span>;
         }
 
-        <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.position == Modifier.Position.ABOVE) {
-          dot_y = <span class="hljs-keyword">this</span>.note.hasStem() ? top - (line_space * <span class="hljs-number">1.75</span>)
-                                      : start.y - (line_space * <span class="hljs-number">1.75</span>);
-      } <span class="hljs-keyword">else</span> {
-          dot_y = <span class="hljs-keyword">this</span>.note.hasStem() ? bottom + (line_space * <span class="hljs-number">1.5</span>)
-                                      : start.y + (line_space * <span class="hljs-number">1.75</span>);
+        <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.position === Modifier.Position.ABOVE) {
+          dot_y = <span class="hljs-keyword">this</span>.note.hasStem()
+            ? top - (line_space * <span class="hljs-number">1.75</span>)
+            : start.y - (line_space * <span class="hljs-number">1.75</span>);
+        } <span class="hljs-keyword">else</span> {
+          dot_y = <span class="hljs-keyword">this</span>.note.hasStem()
+            ? bottom + (line_space * <span class="hljs-number">1.5</span>)
+            : start.y + (line_space * <span class="hljs-number">1.75</span>);
         }
 
         dot_y += <span class="hljs-keyword">this</span>.y_shift + <span class="hljs-keyword">this</span>.y_offset;
 
         <span class="hljs-keyword">break</span>;
-      <span class="hljs-keyword">case</span> Modifier.Position.LEFT:
+      } <span class="hljs-keyword">case</span> Modifier.Position.LEFT:
         dot_x -= (<span class="hljs-keyword">this</span>.radius / <span class="hljs-number">2</span>) + <span class="hljs-number">5</span>;
         <span class="hljs-keyword">break</span>;
       <span class="hljs-keyword">case</span> Modifier.Position.RIGHT:
         dot_x += (<span class="hljs-keyword">this</span>.radius / <span class="hljs-number">2</span>) + <span class="hljs-number">6</span>;
         <span class="hljs-keyword">break</span>;
+      <span class="hljs-keyword">default</span>:
+        <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RERR(
+          <span class="hljs-string">'InvalidPosition'</span>, <span class="hljs-string">`The position <span class="hljs-subst">${this.position}</span> is invalid`</span>
+        );
     }
 
     ctx.save();
@@ -728,30 +816,34 @@ export <span class="hljs-keyword">class</span> StringNumber extends Modifier {
     ctx.lineWidth = <span class="hljs-number">1.5</span>;
     ctx.stroke();
     ctx.setFont(<span class="hljs-keyword">this</span>.font.family, <span class="hljs-keyword">this</span>.font.size, <span class="hljs-keyword">this</span>.font.weight);
-    <span class="hljs-keyword">var</span> x = dot_x - ctx.measureText(<span class="hljs-keyword">this</span>.string_number).width / <span class="hljs-number">2</span>;
-    ctx.fillText(<span class="hljs-string">""</span> + <span class="hljs-keyword">this</span>.string_number, x, dot_y + <span class="hljs-number">4.5</span>);
+    <span class="hljs-keyword">const</span> x = dot_x - ctx.measureText(<span class="hljs-keyword">this</span>.string_number).width / <span class="hljs-number">2</span>;
+    ctx.fillText(<span class="hljs-string">''</span> + <span class="hljs-keyword">this</span>.string_number, x, dot_y + <span class="hljs-number">4.5</span>);
 
     <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.last_note != <span class="hljs-literal">null</span>) {
-      <span class="hljs-keyword">var</span> end = <span class="hljs-keyword">this</span>.last_note.getStemX() - <span class="hljs-keyword">this</span>.note.getX() + <span class="hljs-number">5</span>;
-      ctx.strokeStyle=<span class="hljs-string">"#000000"</span>;
-      ctx.lineCap = <span class="hljs-string">"round"</span>;
+      <span class="hljs-keyword">const</span> end = <span class="hljs-keyword">this</span>.last_note.getStemX() - <span class="hljs-keyword">this</span>.note.getX() + <span class="hljs-number">5</span>;
+      ctx.strokeStyle = <span class="hljs-string">'#000000'</span>;
+      ctx.lineCap = <span class="hljs-string">'round'</span>;
       ctx.lineWidth = <span class="hljs-number">0.6</span>;
-      <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.dashed)
-        Renderer.drawDashedLine(ctx, dot_x + <span class="hljs-number">10</span>, dot_y, dot_x + end, dot_y, [<span class="hljs-number">3</span>,<span class="hljs-number">3</span>]);
-      <span class="hljs-keyword">else</span>
-        Renderer.drawDashedLine(ctx, dot_x + <span class="hljs-number">10</span>, dot_y, dot_x + end, dot_y, [<span class="hljs-number">3</span>,<span class="hljs-number">0</span>]);
+      <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.dashed) {
+        Renderer.drawDashedLine(ctx, dot_x + <span class="hljs-number">10</span>, dot_y, dot_x + end, dot_y, [<span class="hljs-number">3</span>, <span class="hljs-number">3</span>]);
+      } <span class="hljs-keyword">else</span> {
+        Renderer.drawDashedLine(ctx, dot_x + <span class="hljs-number">10</span>, dot_y, dot_x + end, dot_y, [<span class="hljs-number">3</span>, <span class="hljs-number">0</span>]);
+      }
 
-      <span class="hljs-keyword">var</span> len, pattern;
+      <span class="hljs-keyword">let</span> len;
+      <span class="hljs-keyword">let</span> pattern;
       <span class="hljs-keyword">switch</span> (<span class="hljs-keyword">this</span>.leg) {
         <span class="hljs-keyword">case</span> Renderer.LineEndType.UP:
-          len = -<span class="hljs-number">10</span>;
-          pattern = <span class="hljs-keyword">this</span>.dashed ? [<span class="hljs-number">3</span>,<span class="hljs-number">3</span>] : [<span class="hljs-number">3</span>,<span class="hljs-number">0</span>];
+          len = <span class="hljs-number">-10</span>;
+          pattern = <span class="hljs-keyword">this</span>.dashed ? [<span class="hljs-number">3</span>, <span class="hljs-number">3</span>] : [<span class="hljs-number">3</span>, <span class="hljs-number">0</span>];
           Renderer.drawDashedLine(ctx, dot_x + end, dot_y, dot_x + end, dot_y + len, pattern);
           <span class="hljs-keyword">break</span>;
         <span class="hljs-keyword">case</span> Renderer.LineEndType.DOWN:
           len = <span class="hljs-number">10</span>;
-          pattern = <span class="hljs-keyword">this</span>.dashed ? [<span class="hljs-number">3</span>,<span class="hljs-number">3</span>] : [<span class="hljs-number">3</span>,<span class="hljs-number">0</span>];
+          pattern = <span class="hljs-keyword">this</span>.dashed ? [<span class="hljs-number">3</span>, <span class="hljs-number">3</span>] : [<span class="hljs-number">3</span>, <span class="hljs-number">0</span>];
           Renderer.drawDashedLine(ctx, dot_x + end, dot_y, dot_x + end, dot_y + len, pattern);
+          <span class="hljs-keyword">break</span>;
+        <span class="hljs-keyword">default</span>:
           <span class="hljs-keyword">break</span>;
       }
     }

@@ -121,6 +121,27 @@
               
                 
                 <li>
+                  <a class="source" href="easyscore.html">
+                    easyscore.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="element.html">
+                    element.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="factory.html">
+                    factory.js
+                  </a>
+                </li>
+              
+                
+                <li>
                   <a class="source" href="formatter.html">
                     formatter.js
                   </a>
@@ -165,6 +186,13 @@
                 <li>
                   <a class="source" href="gracenotegroup.html">
                     gracenotegroup.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="gracetabnote.html">
+                    gracetabnote.js
                   </a>
                 </li>
               
@@ -226,8 +254,22 @@
               
                 
                 <li>
+                  <a class="source" href="notesubgroup.html">
+                    notesubgroup.js
+                  </a>
+                </li>
+              
+                
+                <li>
                   <a class="source" href="ornament.html">
                     ornament.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="parser.html">
+                    parser.js
                   </a>
                 </li>
               
@@ -242,6 +284,13 @@
                 <li>
                   <a class="source" href="raphaelcontext.html">
                     raphaelcontext.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="registry.html">
+                    registry.js
                   </a>
                 </li>
               
@@ -380,6 +429,13 @@
               
                 
                 <li>
+                  <a class="source" href="system.html">
+                    system.js
+                  </a>
+                </li>
+              
+                
+                <li>
                   <a class="source" href="tables.html">
                     tables.js
                   </a>
@@ -499,6 +555,13 @@
               
                 
                 <li>
+                  <a class="source" href="vibratobracket.html">
+                    vibratobracket.js
+                  </a>
+                </li>
+              
+                
+                <li>
                   <a class="source" href="voice.html">
                     voice.js
                   </a>
@@ -523,17 +586,17 @@ Author Radosaw Eichler 2012</p>
 
         
           <div class='highlight'><pre>
-import { Vex } from <span class="hljs-string">'./vex'</span>;
-import { Flow } from <span class="hljs-string">'./tables'</span>;
-import { Modifier } from <span class="hljs-string">'./modifier'</span>;
-import { StaveModifier } from <span class="hljs-string">'./stavemodifier'</span>;
-import { Glyph } from <span class="hljs-string">'./glyph'</span>;
+<span class="hljs-keyword">import</span> { Flow } <span class="hljs-keyword">from</span> <span class="hljs-string">'./tables'</span>;
+<span class="hljs-keyword">import</span> { Modifier } <span class="hljs-keyword">from</span> <span class="hljs-string">'./modifier'</span>;
+<span class="hljs-keyword">import</span> { StaveModifier } <span class="hljs-keyword">from</span> <span class="hljs-string">'./stavemodifier'</span>;
+<span class="hljs-keyword">import</span> { Glyph } <span class="hljs-keyword">from</span> <span class="hljs-string">'./glyph'</span>;
 
-export <span class="hljs-keyword">class</span> StaveTempo extends StaveModifier {
-  static get CATEGORY() { <span class="hljs-keyword">return</span> <span class="hljs-string">'stavetempo'</span>; }
+<span class="hljs-keyword">export</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">StaveTempo</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">StaveModifier</span> </span>{
+  <span class="hljs-keyword">static</span> get CATEGORY() { <span class="hljs-keyword">return</span> <span class="hljs-string">'stavetempo'</span>; }
 
-  constructor(tempo, x, shift_y) {
-    super();
+  <span class="hljs-keyword">constructor</span>(tempo, x, shift_y) {
+    <span class="hljs-keyword">super</span>();
+    <span class="hljs-keyword">this</span>.setAttribute(<span class="hljs-string">'type'</span>, <span class="hljs-string">'StaveTempo'</span>);
 
     <span class="hljs-keyword">this</span>.tempo = tempo;
     <span class="hljs-keyword">this</span>.position = Modifier.Position.ABOVE;
@@ -541,12 +604,12 @@ export <span class="hljs-keyword">class</span> StaveTempo extends StaveModifier 
     <span class="hljs-keyword">this</span>.shift_x = <span class="hljs-number">10</span>;
     <span class="hljs-keyword">this</span>.shift_y = shift_y;
     <span class="hljs-keyword">this</span>.font = {
-      family: <span class="hljs-string">"times"</span>,
+      family: <span class="hljs-string">'times'</span>,
       size: <span class="hljs-number">14</span>,
-      weight: <span class="hljs-string">"bold"</span>
+      weight: <span class="hljs-string">'bold'</span>,
     };
     <span class="hljs-keyword">this</span>.render_options = {
-      glyph_font_scale: <span class="hljs-number">30</span>  <span class="hljs-comment">// font size for note</span>
+      glyph_font_scale: <span class="hljs-number">30</span>,  <span class="hljs-comment">// font size for note</span>
     };
   }
   getCategory() { <span class="hljs-keyword">return</span> StaveTempo.CATEGORY; }
@@ -555,19 +618,25 @@ export <span class="hljs-keyword">class</span> StaveTempo extends StaveModifier 
   setShiftY(y) { <span class="hljs-keyword">this</span>.shift_y = y; <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>; }
 
   draw(stave, shift_x) {
-    <span class="hljs-keyword">if</span> (!stave.context) <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RERR(<span class="hljs-string">"NoContext"</span>,
-      <span class="hljs-string">"Can't draw stave tempo without a context."</span>);
+    <span class="hljs-keyword">const</span> ctx = stave.checkContext();
+    <span class="hljs-keyword">this</span>.setRendered();
 
-    <span class="hljs-keyword">var</span> options = <span class="hljs-keyword">this</span>.render_options;
-    <span class="hljs-keyword">var</span> scale = options.glyph_font_scale / <span class="hljs-number">38</span>;
-    <span class="hljs-keyword">var</span> name = <span class="hljs-keyword">this</span>.tempo.name;
-    <span class="hljs-keyword">var</span> duration = <span class="hljs-keyword">this</span>.tempo.duration;
-    <span class="hljs-keyword">var</span> dots = <span class="hljs-keyword">this</span>.tempo.dots;
-    <span class="hljs-keyword">var</span> bpm = <span class="hljs-keyword">this</span>.tempo.bpm;
-    <span class="hljs-keyword">var</span> font = <span class="hljs-keyword">this</span>.font;
-    <span class="hljs-keyword">var</span> ctx = stave.context;
-    <span class="hljs-keyword">var</span> x = <span class="hljs-keyword">this</span>.x + <span class="hljs-keyword">this</span>.shift_x + shift_x;
-    <span class="hljs-keyword">var</span> y = stave.getYForTopText(<span class="hljs-number">1</span>) + <span class="hljs-keyword">this</span>.shift_y;
+    <span class="hljs-keyword">const</span> options = <span class="hljs-keyword">this</span>.render_options;</pre></div>
+        
+      
+        
+        <p>FIXME: What does the ‘38’ mean? Why 38? Is that supposed to
+be the default font size for standard notation?</p>
+
+        
+          <div class='highlight'><pre>    <span class="hljs-keyword">const</span> scale = options.glyph_font_scale / <span class="hljs-number">38</span>;
+    <span class="hljs-keyword">const</span> name = <span class="hljs-keyword">this</span>.tempo.name;
+    <span class="hljs-keyword">const</span> duration = <span class="hljs-keyword">this</span>.tempo.duration;
+    <span class="hljs-keyword">const</span> dots = <span class="hljs-keyword">this</span>.tempo.dots;
+    <span class="hljs-keyword">const</span> bpm = <span class="hljs-keyword">this</span>.tempo.bpm;
+    <span class="hljs-keyword">const</span> font = <span class="hljs-keyword">this</span>.font;
+    <span class="hljs-keyword">let</span> x = <span class="hljs-keyword">this</span>.x + <span class="hljs-keyword">this</span>.shift_x + shift_x;
+    <span class="hljs-keyword">const</span> y = stave.getYForTopText(<span class="hljs-number">1</span>) + <span class="hljs-keyword">this</span>.shift_y;
 
     ctx.save();
 
@@ -581,16 +650,16 @@ export <span class="hljs-keyword">class</span> StaveTempo extends StaveModifier 
       ctx.setFont(font.family, font.size, <span class="hljs-string">'normal'</span>);
 
       <span class="hljs-keyword">if</span> (name) {
-        x += ctx.measureText(<span class="hljs-string">" "</span>).width;
-        ctx.fillText(<span class="hljs-string">"("</span>, x, y);
-        x += ctx.measureText(<span class="hljs-string">"("</span>).width;
+        x += ctx.measureText(<span class="hljs-string">' '</span>).width;
+        ctx.fillText(<span class="hljs-string">'('</span>, x, y);
+        x += ctx.measureText(<span class="hljs-string">'('</span>).width;
       }
 
-      <span class="hljs-keyword">var</span> code = Flow.durationToGlyph(duration);
+      <span class="hljs-keyword">const</span> code = Flow.durationToGlyph(duration);
 
       x += <span class="hljs-number">3</span> * scale;
       Glyph.renderGlyph(ctx, x, y, options.glyph_font_scale, code.code_head);
-      x += code.head_width * scale;</pre></div>
+      x += code.getWidth() * scale;</pre></div>
         
       
         
@@ -598,18 +667,17 @@ export <span class="hljs-keyword">class</span> StaveTempo extends StaveModifier 
 
         
           <div class='highlight'><pre>      <span class="hljs-keyword">if</span> (code.stem) {
-        <span class="hljs-keyword">var</span> stem_height = <span class="hljs-number">30</span>;
+        <span class="hljs-keyword">let</span> stem_height = <span class="hljs-number">30</span>;
 
         <span class="hljs-keyword">if</span> (code.beam_count) stem_height += <span class="hljs-number">3</span> * (code.beam_count - <span class="hljs-number">1</span>);
 
         stem_height *= scale;
 
-        <span class="hljs-keyword">var</span> y_top = y - stem_height;
-        ctx.fillRect(x, y_top, scale, stem_height);
+        <span class="hljs-keyword">const</span> y_top = y - stem_height;
+        ctx.fillRect(x - scale, y_top, scale, stem_height);
 
         <span class="hljs-keyword">if</span> (code.flag) {
-          Glyph.renderGlyph(ctx, x + scale, y_top, options.glyph_font_scale,
-                               code.code_flag_upstem);
+          Glyph.renderGlyph(ctx, x, y_top, options.glyph_font_scale, code.code_flag_upstem);
 
           <span class="hljs-keyword">if</span> (!dots) x += <span class="hljs-number">6</span> * scale;
         }
@@ -620,14 +688,14 @@ export <span class="hljs-keyword">class</span> StaveTempo extends StaveModifier 
         <p>Draw dot</p>
 
         
-          <div class='highlight'><pre>      <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; dots; i++) {
+          <div class='highlight'><pre>      <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> i = <span class="hljs-number">0</span>; i &lt; dots; i++) {
         x += <span class="hljs-number">6</span> * scale;
         ctx.beginPath();
         ctx.arc(x, y + <span class="hljs-number">2</span> * scale, <span class="hljs-number">2</span> * scale, <span class="hljs-number">0</span>, <span class="hljs-built_in">Math</span>.PI * <span class="hljs-number">2</span>, <span class="hljs-literal">false</span>);
         ctx.fill();
       }
 
-      ctx.fillText(<span class="hljs-string">" = "</span> + bpm + (name ? <span class="hljs-string">")"</span> : <span class="hljs-string">""</span>), x + <span class="hljs-number">3</span> * scale, y);
+      ctx.fillText(<span class="hljs-string">' = '</span> + bpm + (name ? <span class="hljs-string">')'</span> : <span class="hljs-string">''</span>), x + <span class="hljs-number">3</span> * scale, y);
     }
 
     ctx.restore();
