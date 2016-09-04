@@ -9109,6 +9109,7 @@
           var _this = possibleConstructorReturn(this, (Stream.__proto__ || Object.getPrototypeOf(Stream)).call(this));
 
           _this.classes.push('Stream');
+          _this.isStream = true;
           _this._duration = undefined;
 
           _this._elements = [];
