@@ -22,7 +22,7 @@ import { note } from './note';
  * @memberof music21
  * @requires music21/note
  */
-export    const chord = {};
+export const chord = {};
 
 /**
  * Chord related objects (esp. {@link music21.chord.Chord}) and methods.

@@ -29,7 +29,7 @@ common.merge = function mergeRecursive(destination, source) {
         return destination;
     }
     for (const p in source) {
-        if (!({}.hasOwnProperty.call(source, p))) {
+        if (!{}.hasOwnProperty.call(source, p)) {
             continue;
         }
         try {
@@ -58,7 +58,7 @@ common.mixin = function common_mixin(OtherParent, thisClassOrObject) {
 
     while (proto) {
         for (const key in Object.keys(proto)) {
-            if (!({}.hasOwnProperty.call(proto, key))) {
+            if (!{}.hasOwnProperty.call(proto, key)) {
                 continue;
             }
             if (!(key in classProto)) {
