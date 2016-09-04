@@ -121,6 +121,27 @@
               
                 
                 <li>
+                  <a class="source" href="easyscore.html">
+                    easyscore.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="element.html">
+                    element.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="factory.html">
+                    factory.js
+                  </a>
+                </li>
+              
+                
+                <li>
                   <a class="source" href="formatter.html">
                     formatter.js
                   </a>
@@ -165,6 +186,13 @@
                 <li>
                   <a class="source" href="gracenotegroup.html">
                     gracenotegroup.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="gracetabnote.html">
+                    gracetabnote.js
                   </a>
                 </li>
               
@@ -226,8 +254,22 @@
               
                 
                 <li>
+                  <a class="source" href="notesubgroup.html">
+                    notesubgroup.js
+                  </a>
+                </li>
+              
+                
+                <li>
                   <a class="source" href="ornament.html">
                     ornament.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="parser.html">
+                    parser.js
                   </a>
                 </li>
               
@@ -242,6 +284,13 @@
                 <li>
                   <a class="source" href="raphaelcontext.html">
                     raphaelcontext.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="registry.html">
+                    registry.js
                   </a>
                 </li>
               
@@ -380,6 +429,13 @@
               
                 
                 <li>
+                  <a class="source" href="system.html">
+                    system.js
+                  </a>
+                </li>
+              
+                
+                <li>
                   <a class="source" href="tables.html">
                     tables.js
                   </a>
@@ -499,6 +555,13 @@
               
                 
                 <li>
+                  <a class="source" href="vibratobracket.html">
+                    vibratobracket.js
+                  </a>
+                </li>
+              
+                
+                <li>
                   <a class="source" href="voice.html">
                     voice.js
                   </a>
@@ -528,43 +591,212 @@ attached to notes. The complete list of articulations is available in
 
         
           <div class='highlight'><pre>
-import { Vex } from <span class="hljs-string">'./vex'</span>;
-import { Flow } from <span class="hljs-string">'./tables'</span>;
-import { Modifier } from <span class="hljs-string">'./modifier'</span>;
-import { StaveNote } from <span class="hljs-string">'./stavenote'</span>;
-import { Glyph } from <span class="hljs-string">'./glyph'</span>;</pre></div>
+<span class="hljs-keyword">import</span> { Vex } <span class="hljs-keyword">from</span> <span class="hljs-string">'./vex'</span>;
+<span class="hljs-keyword">import</span> { Flow } <span class="hljs-keyword">from</span> <span class="hljs-string">'./tables'</span>;
+<span class="hljs-keyword">import</span> { Modifier } <span class="hljs-keyword">from</span> <span class="hljs-string">'./modifier'</span>;
+<span class="hljs-keyword">import</span> { Glyph } <span class="hljs-keyword">from</span> <span class="hljs-string">'./glyph'</span>;
+<span class="hljs-keyword">import</span> { Stem } <span class="hljs-keyword">from</span> <span class="hljs-string">'./stem'</span>;</pre></div>
         
       
         
         <p>To enable logging for this class. Set <code>Vex.Flow.Articulation.DEBUG</code> to <code>true</code>.</p>
 
         
-          <div class='highlight'><pre><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">L</span><span class="hljs-params">()</span> {</span> <span class="hljs-keyword">if</span> (Articulation.DEBUG) Vex.L(<span class="hljs-string">"Vex.Flow.Articulation"</span>, <span class="hljs-built_in">arguments</span>); }
+          <div class='highlight'><pre><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">L</span>(<span class="hljs-params">...args</span>) </span>{ <span class="hljs-keyword">if</span> (Articulation.DEBUG) Vex.L(<span class="hljs-string">'Vex.Flow.Articulation'</span>, args); }
 
-export <span class="hljs-keyword">class</span> Articulation extends Modifier {
-  static get CATEGORY() { <span class="hljs-keyword">return</span> <span class="hljs-string">'articulations'</span>; }
+<span class="hljs-keyword">const</span> { ABOVE, BELOW } = Modifier.Position;
 
-  static format(articulations, state) {
+<span class="hljs-keyword">const</span> roundToNearestHalf = (mathFn, value) =&gt; mathFn(value / <span class="hljs-number">0.5</span>) * <span class="hljs-number">0.5</span>;</pre></div>
+        
+      
+        
+        <p>This includes both staff and ledger lines</p>
+
+        
+          <div class='highlight'><pre><span class="hljs-keyword">const</span> isWithinLines = (line, position) =&gt; position === ABOVE ? line &lt;= <span class="hljs-number">5</span> : line &gt;= <span class="hljs-number">1</span>;
+
+<span class="hljs-keyword">const</span> getRoundingFunction = (line, position) =&gt; {
+  <span class="hljs-keyword">if</span> (isWithinLines(line, position)) {
+    <span class="hljs-keyword">if</span> (position === ABOVE) {
+      <span class="hljs-keyword">return</span> <span class="hljs-built_in">Math</span>.ceil;
+    } <span class="hljs-keyword">else</span> {
+      <span class="hljs-keyword">return</span> <span class="hljs-built_in">Math</span>.floor;
+    }
+  } <span class="hljs-keyword">else</span> {
+    <span class="hljs-keyword">return</span> <span class="hljs-built_in">Math</span>.round;
+  }
+};
+
+<span class="hljs-keyword">const</span> snapLineToStaff = (canSitBetweenLines, line, position, offsetDirection) =&gt; {</pre></div>
+        
+      
+        
+        <p>Initially, snap to nearest staff line or space</p>
+
+        
+          <div class='highlight'><pre>  <span class="hljs-keyword">const</span> snappedLine = roundToNearestHalf(getRoundingFunction(line, position), line);
+  <span class="hljs-keyword">const</span> canSnapToStaffSpace = canSitBetweenLines &amp;&amp; isWithinLines(snappedLine, position);
+  <span class="hljs-keyword">const</span> onStaffLine = snappedLine % <span class="hljs-number">1</span> === <span class="hljs-number">0</span>;
+
+  <span class="hljs-keyword">if</span> (canSnapToStaffSpace &amp;&amp; onStaffLine) {
+    <span class="hljs-keyword">const</span> HALF_STAFF_SPACE = <span class="hljs-number">0.5</span>;
+    <span class="hljs-keyword">return</span> snappedLine + (HALF_STAFF_SPACE * -offsetDirection);
+  } <span class="hljs-keyword">else</span> {
+    <span class="hljs-keyword">return</span> snappedLine;
+  }
+};
+
+<span class="hljs-keyword">const</span> getTopY = (note, textLine) =&gt; {
+  <span class="hljs-keyword">const</span> stave = note.getStave();
+  <span class="hljs-keyword">const</span> stemDirection = note.getStemDirection();
+  <span class="hljs-keyword">const</span> { topY: stemTipY, baseY: stemBaseY } = note.getStemExtents();
+
+  <span class="hljs-keyword">if</span> (note.getCategory() === <span class="hljs-string">'stavenotes'</span>) {
+    <span class="hljs-keyword">if</span> (note.hasStem()) {
+      <span class="hljs-keyword">if</span> (stemDirection === Stem.UP) {
+        <span class="hljs-keyword">return</span> stemTipY;
+      } <span class="hljs-keyword">else</span> {
+        <span class="hljs-keyword">return</span> stemBaseY;
+      }
+    } <span class="hljs-keyword">else</span> {
+      <span class="hljs-keyword">return</span> <span class="hljs-built_in">Math</span>.min(...note.getYs());
+    }
+  } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (note.getCategory() === <span class="hljs-string">'tabnotes'</span>) {
+    <span class="hljs-keyword">if</span> (note.hasStem()) {
+      <span class="hljs-keyword">if</span> (stemDirection === Stem.UP) {
+        <span class="hljs-keyword">return</span> stemTipY;
+      } <span class="hljs-keyword">else</span> {
+        <span class="hljs-keyword">return</span> stave.getYForTopText(textLine);
+      }
+    } <span class="hljs-keyword">else</span> {
+      <span class="hljs-keyword">return</span> stave.getYForTopText(textLine);
+    }
+  } <span class="hljs-keyword">else</span> {
+    <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RERR(
+      <span class="hljs-string">'UnknownCategory'</span>, <span class="hljs-string">'Only can get the top and bottom ys of stavenotes and tabnotes'</span>
+    );
+  }
+};
+
+<span class="hljs-keyword">const</span> getBottomY = (note, textLine) =&gt; {
+  <span class="hljs-keyword">const</span> stave = note.getStave();
+  <span class="hljs-keyword">const</span> stemDirection = note.getStemDirection();
+  <span class="hljs-keyword">const</span> { topY: stemTipY, baseY: stemBaseY } = note.getStemExtents();
+
+  <span class="hljs-keyword">if</span> (note.getCategory() === <span class="hljs-string">'stavenotes'</span>) {
+    <span class="hljs-keyword">if</span> (note.hasStem()) {
+      <span class="hljs-keyword">if</span> (stemDirection === Stem.UP) {
+        <span class="hljs-keyword">return</span> stemBaseY;
+      } <span class="hljs-keyword">else</span> {
+        <span class="hljs-keyword">return</span> stemTipY;
+      }
+    } <span class="hljs-keyword">else</span> {
+      <span class="hljs-keyword">return</span> <span class="hljs-built_in">Math</span>.max(...note.getYs());
+    }
+  } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (note.getCategory() === <span class="hljs-string">'tabnotes'</span>) {
+    <span class="hljs-keyword">if</span> (note.hasStem()) {
+      <span class="hljs-keyword">if</span> (stemDirection === Stem.UP) {
+        <span class="hljs-keyword">return</span> stave.getYForBottomText(textLine);
+      } <span class="hljs-keyword">else</span> {
+        <span class="hljs-keyword">return</span> stemTipY;
+      }
+    } <span class="hljs-keyword">else</span> {
+      <span class="hljs-keyword">return</span> stave.getYForBottomText(textLine);
+    }
+  } <span class="hljs-keyword">else</span> {
+    <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RERR(
+      <span class="hljs-string">'UnknownCategory'</span>, <span class="hljs-string">'Only can get the top and bottom ys of stavenotes and tabnotes'</span>
+    );
+  }
+};</pre></div>
+        
+      
+        
+        <p>Gets the initial offset of the articulation from the y value of the starting position.
+This is required because the top/bottom text positions already have spacing applied to
+provide a “visually pleasent” default position. However the y values provided from
+the stavenote’s top/bottom do <em>not</em> have any pre-applied spacing. This function
+normalizes this asymmetry.</p>
+
+        
+          <div class='highlight'><pre><span class="hljs-keyword">const</span> getInitialOffset = (note, position) =&gt; {
+  <span class="hljs-keyword">const</span> isOnStemTip = (
+    (position === ABOVE &amp;&amp; note.getStemDirection() === Stem.UP) ||
+    (position === BELOW &amp;&amp; note.getStemDirection() === Stem.DOWN)
+  );
+
+  <span class="hljs-keyword">if</span> (note.getCategory() === <span class="hljs-string">'stavenotes'</span>) {
+    <span class="hljs-keyword">if</span> (note.hasStem() &amp;&amp; isOnStemTip) {
+      <span class="hljs-keyword">return</span> <span class="hljs-number">0.5</span>;
+    } <span class="hljs-keyword">else</span> {</pre></div>
+        
+      
+        
+        <p>this amount is larger than the stem-tip offset because we start from
+the center of the notehead</p>
+
+        
+          <div class='highlight'><pre>      <span class="hljs-keyword">return</span> <span class="hljs-number">1</span>;
+    }
+  } <span class="hljs-keyword">else</span> {
+    <span class="hljs-keyword">if</span> (note.hasStem() &amp;&amp; isOnStemTip) {
+      <span class="hljs-keyword">return</span> <span class="hljs-number">1</span>;
+    } <span class="hljs-keyword">else</span> {
+      <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
+    }
+  }
+};
+
+<span class="hljs-keyword">export</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Articulation</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">Modifier</span> </span>{
+  <span class="hljs-keyword">static</span> get CATEGORY() { <span class="hljs-keyword">return</span> <span class="hljs-string">'articulations'</span>; }
+  <span class="hljs-keyword">static</span> get INITIAL_OFFSET() { <span class="hljs-keyword">return</span> <span class="hljs-number">-0.5</span>; }</pre></div>
+        
+      
+        
+        <p>FIXME:
+Most of the complex formatting logic (ie: snapping to space) is
+actually done in .render(). But that logic belongs in this method.</p>
+<p>Unfortunately, this isn’t possible because, by this point, stem lengths
+have not yet been finalized. Finalized stem lengths are required to determine the
+initial position of any stem-side articulation.</p>
+<p>This indicates that all objects should have their stave set before being
+formatted. It can’t be an optional if you want accurate vertical positioning.
+Consistently positioned articulations that play nice with other modifiers
+won’t be possible until we stop relying on render-time formatting.</p>
+<p>Ideally, when this function has completed, the vertical articulation positions
+should be ready to render without further adjustment. But the current state
+is far from this ideal.</p>
+
+        
+          <div class='highlight'><pre>  <span class="hljs-keyword">static</span> format(articulations, state) {
     <span class="hljs-keyword">if</span> (!articulations || articulations.length === <span class="hljs-number">0</span>) <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
 
-    <span class="hljs-keyword">var</span> width = <span class="hljs-number">0</span>;
-    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; articulations.length; ++i) {
-      <span class="hljs-keyword">var</span> increment = <span class="hljs-number">1</span>;
-      <span class="hljs-keyword">var</span> articulation = articulations[i];
-      width = <span class="hljs-built_in">Math</span>.max(articulation.getWidth(), width);
+    <span class="hljs-keyword">const</span> isAbove = artic =&gt; artic.getPosition() === ABOVE;
+    <span class="hljs-keyword">const</span> isBelow = artic =&gt; artic.getPosition() === BELOW;
+    <span class="hljs-keyword">const</span> margin = <span class="hljs-number">0.5</span>;
+    <span class="hljs-keyword">const</span> getIncrement = (articulation, line, position) =&gt;
+      roundToNearestHalf(
+        getRoundingFunction(line, position),
+        (articulation.glyph.getMetrics().height / <span class="hljs-number">10</span>) + margin
+      );
 
-      <span class="hljs-keyword">var</span> type = Flow.articulationCodes(articulation.type);
-
-      <span class="hljs-keyword">if</span> (!type.between_lines) increment += <span class="hljs-number">1.5</span>;
-
-      <span class="hljs-keyword">if</span> (articulation.getPosition() === Modifier.Position.ABOVE) {
+    articulations
+      .filter(isAbove)
+      .forEach(articulation =&gt; {
         articulation.setTextLine(state.top_text_line);
-        state.top_text_line += increment;
-      } <span class="hljs-keyword">else</span> {
+        state.top_text_line += getIncrement(articulation, state.top_text_line, ABOVE);
+      });
+
+    articulations
+      .filter(isBelow)
+      .forEach(articulation =&gt; {
         articulation.setTextLine(state.text_line);
-        state.text_line += increment;
-      }
-    }
+        state.text_line += getIncrement(articulation, state.text_line, BELOW);
+      });
+
+    <span class="hljs-keyword">const</span> width = articulations
+      .map(articulation =&gt; articulation.getWidth())
+      .reduce((maxWidth, articWidth) =&gt; <span class="hljs-built_in">Math</span>.max(articWidth, maxWidth));
 
     state.left_shift += width / <span class="hljs-number">2</span>;
     state.right_shift += width / <span class="hljs-number">2</span>;
@@ -577,28 +809,26 @@ export <span class="hljs-keyword">class</span> Articulation extends Modifier {
 <code>Vex.Flow.articulationCodes</code> in <code>tables.js</code>.</p>
 
         
-          <div class='highlight'><pre>  constructor(type) {
-    super();
+          <div class='highlight'><pre>  <span class="hljs-keyword">constructor</span>(type) {
+    <span class="hljs-keyword">super</span>();
+    <span class="hljs-keyword">this</span>.setAttribute(<span class="hljs-string">'type'</span>, <span class="hljs-string">'Articulation'</span>);
 
     <span class="hljs-keyword">this</span>.note = <span class="hljs-literal">null</span>;
     <span class="hljs-keyword">this</span>.index = <span class="hljs-literal">null</span>;
     <span class="hljs-keyword">this</span>.type = type;
-    <span class="hljs-keyword">this</span>.position = Modifier.Position.BELOW;
-
+    <span class="hljs-keyword">this</span>.position = BELOW;
     <span class="hljs-keyword">this</span>.render_options = {
-      font_scale: <span class="hljs-number">38</span>
+      font_scale: <span class="hljs-number">38</span>,
     };
 
     <span class="hljs-keyword">this</span>.articulation = Flow.articulationCodes(<span class="hljs-keyword">this</span>.type);
-    <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.articulation) <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RERR(<span class="hljs-string">"ArgumentError"</span>,
-       <span class="hljs-string">"Articulation not found: '"</span> + <span class="hljs-keyword">this</span>.type + <span class="hljs-string">"'"</span>);</pre></div>
-        
-      
-        
-        <p>Default width comes from articulation table.</p>
+    <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.articulation) {
+      <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RERR(<span class="hljs-string">'ArgumentError'</span>, <span class="hljs-string">`Articulation not found: <span class="hljs-subst">${this.type}</span>`</span>);
+    }
 
-        
-          <div class='highlight'><pre>    <span class="hljs-keyword">this</span>.setWidth(<span class="hljs-keyword">this</span>.articulation.width);
+    <span class="hljs-keyword">this</span>.glyph = <span class="hljs-keyword">new</span> Glyph(<span class="hljs-keyword">this</span>.articulation.code, <span class="hljs-keyword">this</span>.render_options.font_scale);
+
+    <span class="hljs-keyword">this</span>.setWidth(<span class="hljs-keyword">this</span>.glyph.getMetrics().width);
   }
 
   getCategory() { <span class="hljs-keyword">return</span> Articulation.CATEGORY; }</pre></div>
@@ -609,127 +839,67 @@ export <span class="hljs-keyword">class</span> Articulation extends Modifier {
 
         
           <div class='highlight'><pre>  draw() {
-    <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.context) <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RERR(<span class="hljs-string">"NoContext"</span>,
-      <span class="hljs-string">"Can't draw Articulation without a context."</span>);
-    <span class="hljs-keyword">if</span> (!(<span class="hljs-keyword">this</span>.note &amp;&amp; (<span class="hljs-keyword">this</span>.index !== <span class="hljs-literal">null</span>))) <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RERR(<span class="hljs-string">"NoAttachedNote"</span>,
-      <span class="hljs-string">"Can't draw Articulation without a note and index."</span>);
+    <span class="hljs-keyword">const</span> {
+      note, index, position, glyph,
+      articulation: { between_lines: canSitBetweenLines },
+      text_line: textLine,
+      context: ctx,
+    } = <span class="hljs-keyword">this</span>;
 
-    <span class="hljs-keyword">var</span> stem_direction = <span class="hljs-keyword">this</span>.note.getStemDirection();
-    <span class="hljs-keyword">var</span> stave = <span class="hljs-keyword">this</span>.note.getStave();
+    <span class="hljs-keyword">this</span>.checkContext();
 
-    <span class="hljs-keyword">var</span> is_on_head = (<span class="hljs-keyword">this</span>.position === Modifier.Position.ABOVE &amp;&amp;
-                      stem_direction === StaveNote.STEM_DOWN) ||
-                     (<span class="hljs-keyword">this</span>.position === Modifier.Position.BELOW &amp;&amp;
-                      stem_direction === StaveNote.STEM_UP);
+    <span class="hljs-keyword">if</span> (!note || index == <span class="hljs-literal">null</span>) {
+      <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RERR(<span class="hljs-string">'NoAttachedNote'</span>, <span class="hljs-string">"Can't draw Articulation without a note and index."</span>);
+    }
 
-    <span class="hljs-keyword">var</span> needsLineAdjustment = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(articulation, note_line, line_spacing)</span> {</span>
-      <span class="hljs-keyword">var</span> offset_direction = (articulation.position === Modifier.Position.ABOVE) ? <span class="hljs-number">1</span> : -<span class="hljs-number">1</span>;
-      <span class="hljs-keyword">var</span> duration = articulation.getNote().getDuration();
-      <span class="hljs-keyword">if</span>(!is_on_head &amp;&amp; Flow.durationToNumber(duration) &lt;= <span class="hljs-number">1</span>){</pre></div>
-        
-      
-        
-        <p>Add stem length, unless it’s on a whole note.</p>
+    <span class="hljs-keyword">this</span>.setRendered();
 
-        
-          <div class='highlight'><pre>        note_line += offset_direction * <span class="hljs-number">3.5</span>;
-      }
-
-      <span class="hljs-keyword">var</span> articulation_line = note_line + (offset_direction * line_spacing);
-
-      <span class="hljs-keyword">if</span>(articulation_line &gt;= <span class="hljs-number">1</span> &amp;&amp;
-         articulation_line &lt;= <span class="hljs-number">5</span> &amp;&amp;
-         articulation_line % <span class="hljs-number">1</span> === <span class="hljs-number">0</span>){
-        <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
-      }
-
-      <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
-    };</pre></div>
+    <span class="hljs-keyword">const</span> stave = note.getStave();
+    <span class="hljs-keyword">const</span> staffSpace = stave.getSpacingBetweenLines();
+    <span class="hljs-keyword">const</span> isTab = note.getCategory() === <span class="hljs-string">'tabnotes'</span>;</pre></div>
         
       
         
         <p>Articulations are centered over/under the note head.</p>
 
         
-          <div class='highlight'><pre>    <span class="hljs-keyword">var</span> start = <span class="hljs-keyword">this</span>.note.getModifierStartXY(<span class="hljs-keyword">this</span>.position, <span class="hljs-keyword">this</span>.index);
-    <span class="hljs-keyword">var</span> glyph_y = start.y;
-    <span class="hljs-keyword">var</span> shiftY = <span class="hljs-number">0</span>;
-    <span class="hljs-keyword">var</span> line_spacing = <span class="hljs-number">1</span>;
-    <span class="hljs-keyword">var</span> spacing = stave.getSpacingBetweenLines();
-    <span class="hljs-keyword">var</span> is_tabnote = <span class="hljs-keyword">this</span>.note.getCategory() === <span class="hljs-string">'tabnotes'</span>;
-    <span class="hljs-keyword">var</span> stem_ext = <span class="hljs-keyword">this</span>.note.getStem().getExtents();
+          <div class='highlight'><pre>    <span class="hljs-keyword">const</span> { x } = note.getModifierStartXY(position, index);
+    <span class="hljs-keyword">const</span> shouldSitOutsideStaff = !canSitBetweenLines || isTab;
 
-    <span class="hljs-keyword">var</span> top = stem_ext.topY;
-    <span class="hljs-keyword">var</span> bottom = stem_ext.baseY;
+    <span class="hljs-keyword">const</span> initialOffset = getInitialOffset(note, position);
 
-    <span class="hljs-keyword">if</span> (stem_direction === StaveNote.STEM_DOWN) {
-      top = stem_ext.baseY;
-      bottom = stem_ext.topY;
-    }</pre></div>
-        
-      
-        
-        <p>TabNotes don’t have stems attached to them. Tab stems are rendered
-outside the stave.</p>
+    <span class="hljs-keyword">let</span> y = {
+      [ABOVE]: () =&gt; {
+        glyph.setOrigin(<span class="hljs-number">0.5</span>, <span class="hljs-number">1</span>);
+        <span class="hljs-keyword">const</span> y = getTopY(note, textLine) - ((textLine + initialOffset) * staffSpace);
+        <span class="hljs-keyword">return</span> shouldSitOutsideStaff
+          ? <span class="hljs-built_in">Math</span>.min(stave.getYForTopText(Articulation.INITIAL_OFFSET), y)
+          : y;
+      },
+      [BELOW]: () =&gt; {
+        glyph.setOrigin(<span class="hljs-number">0.5</span>, <span class="hljs-number">0</span>);
+        <span class="hljs-keyword">const</span> y = getBottomY(note, textLine) + ((textLine + initialOffset) * staffSpace);
+        <span class="hljs-keyword">return</span> shouldSitOutsideStaff
+          ? <span class="hljs-built_in">Math</span>.max(stave.getYForBottomText(Articulation.INITIAL_OFFSET), y)
+          : y;
+      },
+    }[position]();
 
-        
-          <div class='highlight'><pre>    <span class="hljs-keyword">if</span> (is_tabnote) {
-      <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.note.hasStem()){
-        <span class="hljs-keyword">if</span> (stem_direction === StaveNote.STEM_UP) {
-          bottom = stave.getYForBottomText(<span class="hljs-keyword">this</span>.text_line - <span class="hljs-number">2</span>);
-        } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (stem_direction === StaveNote.STEM_DOWN ) {
-          top = stave.getYForTopText(<span class="hljs-keyword">this</span>.text_line - <span class="hljs-number">1.5</span>);
-        }
-      } <span class="hljs-keyword">else</span> { <span class="hljs-comment">// Without a stem</span>
-        top = stave.getYForTopText(<span class="hljs-keyword">this</span>.text_line - <span class="hljs-number">1</span>);
-        bottom = stave.getYForBottomText(<span class="hljs-keyword">this</span>.text_line - <span class="hljs-number">2</span>);
-      }
+    <span class="hljs-keyword">if</span> (!isTab) {
+      <span class="hljs-keyword">const</span> offsetDirection = position === ABOVE ? <span class="hljs-number">-1</span> : +<span class="hljs-number">1</span>;
+      <span class="hljs-keyword">const</span> noteLine = isTab ? note.positions[index].str : note.getKeyProps()[index].line;
+      <span class="hljs-keyword">const</span> distanceFromNote = (note.getYs()[index] - y) / staffSpace;
+      <span class="hljs-keyword">const</span> articLine = distanceFromNote + noteLine;
+      <span class="hljs-keyword">const</span> snappedLine = snapLineToStaff(canSitBetweenLines, articLine, position, offsetDirection);
+
+      <span class="hljs-keyword">if</span> (isWithinLines(snappedLine, position)) glyph.setOrigin(<span class="hljs-number">0.5</span>, <span class="hljs-number">0.5</span>);
+
+      y += <span class="hljs-built_in">Math</span>.abs(snappedLine - articLine) * staffSpace * offsetDirection;
     }
 
-    <span class="hljs-keyword">var</span> is_above = (<span class="hljs-keyword">this</span>.position === Modifier.Position.ABOVE) ? <span class="hljs-literal">true</span> : <span class="hljs-literal">false</span>;
-    <span class="hljs-keyword">var</span> note_line = <span class="hljs-keyword">this</span>.note.getLineNumber(is_above);</pre></div>
-        
-      
-        
-        <p>Beamed stems are longer than quarter note stems.</p>
+    L(<span class="hljs-string">`Rendering articulation at (x: <span class="hljs-subst">${x}</span>, y: <span class="hljs-subst">${y}</span>)`</span>);
 
-        
-          <div class='highlight'><pre>    <span class="hljs-keyword">if</span> (!is_on_head &amp;&amp; <span class="hljs-keyword">this</span>.note.beam) line_spacing += <span class="hljs-number">0.5</span>;</pre></div>
-        
-      
-        
-        <p>If articulation will overlap a line, reposition it.</p>
-
-        
-          <div class='highlight'><pre>    <span class="hljs-keyword">if</span> (needsLineAdjustment(<span class="hljs-keyword">this</span>, note_line, line_spacing)) line_spacing += <span class="hljs-number">0.5</span>;
-
-    <span class="hljs-keyword">var</span> glyph_y_between_lines;
-    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.position === Modifier.Position.ABOVE) {
-      shiftY = <span class="hljs-keyword">this</span>.articulation.shift_up;
-      glyph_y_between_lines = (top - <span class="hljs-number">7</span>) - (spacing * (<span class="hljs-keyword">this</span>.text_line + line_spacing));
-
-      <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.articulation.between_lines) {
-        glyph_y = glyph_y_between_lines;
-      } <span class="hljs-keyword">else</span> {
-        glyph_y = <span class="hljs-built_in">Math</span>.min(stave.getYForTopText(<span class="hljs-keyword">this</span>.text_line) - <span class="hljs-number">3</span>, glyph_y_between_lines);
-      }
-    } <span class="hljs-keyword">else</span> {
-      shiftY = <span class="hljs-keyword">this</span>.articulation.shift_down - <span class="hljs-number">10</span>;
-
-      glyph_y_between_lines = bottom + <span class="hljs-number">10</span> + spacing * (<span class="hljs-keyword">this</span>.text_line + line_spacing);
-      <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.articulation.between_lines) {
-        glyph_y = glyph_y_between_lines;
-      } <span class="hljs-keyword">else</span> {
-        glyph_y = <span class="hljs-built_in">Math</span>.max(stave.getYForBottomText(<span class="hljs-keyword">this</span>.text_line), glyph_y_between_lines);
-      }
-    }
-
-    <span class="hljs-keyword">var</span> glyph_x = start.x + <span class="hljs-keyword">this</span>.articulation.shift_right;
-    glyph_y += shiftY + <span class="hljs-keyword">this</span>.y_shift;
-
-    L(<span class="hljs-string">"Rendering articulation: "</span>, <span class="hljs-keyword">this</span>.articulation, glyph_x, glyph_y);
-    Glyph.renderGlyph(<span class="hljs-keyword">this</span>.context, glyph_x, glyph_y,
-                         <span class="hljs-keyword">this</span>.render_options.font_scale, <span class="hljs-keyword">this</span>.articulation.code);
+    glyph.render(ctx, x, y);
   }
 }</pre></div>
         

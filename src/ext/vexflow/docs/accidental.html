@@ -121,6 +121,27 @@
               
                 
                 <li>
+                  <a class="source" href="easyscore.html">
+                    easyscore.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="element.html">
+                    element.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="factory.html">
+                    factory.js
+                  </a>
+                </li>
+              
+                
+                <li>
                   <a class="source" href="formatter.html">
                     formatter.js
                   </a>
@@ -165,6 +186,13 @@
                 <li>
                   <a class="source" href="gracenotegroup.html">
                     gracenotegroup.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="gracetabnote.html">
+                    gracetabnote.js
                   </a>
                 </li>
               
@@ -226,8 +254,22 @@
               
                 
                 <li>
+                  <a class="source" href="notesubgroup.html">
+                    notesubgroup.js
+                  </a>
+                </li>
+              
+                
+                <li>
                   <a class="source" href="ornament.html">
                     ornament.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="parser.html">
+                    parser.js
                   </a>
                 </li>
               
@@ -242,6 +284,13 @@
                 <li>
                   <a class="source" href="raphaelcontext.html">
                     raphaelcontext.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="registry.html">
+                    registry.js
                   </a>
                 </li>
               
@@ -380,6 +429,13 @@
               
                 
                 <li>
+                  <a class="source" href="system.html">
+                    system.js
+                  </a>
+                </li>
+              
+                
+                <li>
                   <a class="source" href="tables.html">
                     tables.js
                   </a>
@@ -499,6 +555,13 @@
               
                 
                 <li>
+                  <a class="source" href="vibratobracket.html">
+                    vibratobracket.js
+                  </a>
+                </li>
+              
+                
+                <li>
                   <a class="source" href="voice.html">
                     voice.js
                   </a>
@@ -528,19 +591,19 @@ notes. Support is included for both western and microtonal accidentals.</p>
 
         
           <div class='highlight'><pre>
-import { Vex } from <span class="hljs-string">'./vex'</span>;
-import { Flow } from <span class="hljs-string">'./tables'</span>;
-import { Fraction } from <span class="hljs-string">'./fraction'</span>;
-import { Music } from <span class="hljs-string">'./music'</span>;
-import { Modifier } from <span class="hljs-string">'./modifier'</span>;
-import { Glyph } from <span class="hljs-string">'./glyph'</span>;</pre></div>
+<span class="hljs-keyword">import</span> { Vex } <span class="hljs-keyword">from</span> <span class="hljs-string">'./vex'</span>;
+<span class="hljs-keyword">import</span> { Fraction } <span class="hljs-keyword">from</span> <span class="hljs-string">'./fraction'</span>;
+<span class="hljs-keyword">import</span> { Flow } <span class="hljs-keyword">from</span> <span class="hljs-string">'./tables'</span>;
+<span class="hljs-keyword">import</span> { Music } <span class="hljs-keyword">from</span> <span class="hljs-string">'./music'</span>;
+<span class="hljs-keyword">import</span> { Modifier } <span class="hljs-keyword">from</span> <span class="hljs-string">'./modifier'</span>;
+<span class="hljs-keyword">import</span> { Glyph } <span class="hljs-keyword">from</span> <span class="hljs-string">'./glyph'</span>;</pre></div>
         
       
         
         <p>To enable logging for this class. Set <code>Vex.Flow.Accidental.DEBUG</code> to <code>true</code>.</p>
 
         
-          <div class='highlight'><pre><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">L</span><span class="hljs-params">()</span> {</span> <span class="hljs-keyword">if</span> (Accidental.DEBUG) Vex.L(<span class="hljs-string">"Vex.Flow.Accidental"</span>, <span class="hljs-built_in">arguments</span>); }</pre></div>
+          <div class='highlight'><pre><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">L</span>(<span class="hljs-params">...args</span>) </span>{ <span class="hljs-keyword">if</span> (Accidental.DEBUG) Vex.L(<span class="hljs-string">'Vex.Flow.Accidental'</span>, args); }</pre></div>
         
       
         
@@ -548,62 +611,60 @@ import { Glyph } from <span class="hljs-string">'./glyph'</span>;</pre></div>
 <code>ModifierContext</code>.</p>
 
         
-          <div class='highlight'><pre>export <span class="hljs-keyword">class</span> Accidental extends Modifier {
-  static get CATEGORY() { <span class="hljs-keyword">return</span> <span class="hljs-string">'accidentals'</span>; }</pre></div>
+          <div class='highlight'><pre><span class="hljs-keyword">export</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Accidental</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">Modifier</span> </span>{
+  <span class="hljs-keyword">static</span> get CATEGORY() { <span class="hljs-keyword">return</span> <span class="hljs-string">'accidentals'</span>; }</pre></div>
         
       
         
         <p>Arrange accidentals inside a ModifierContext.</p>
 
         
-          <div class='highlight'><pre>  static format(accidentals, state) {
-    <span class="hljs-keyword">var</span> left_shift = state.left_shift;
-    <span class="hljs-keyword">var</span> accidental_spacing = <span class="hljs-number">2</span>;</pre></div>
+          <div class='highlight'><pre>  <span class="hljs-keyword">static</span> format(accidentals, state) {
+    <span class="hljs-keyword">const</span> leftShift = state.left_shift;
+    <span class="hljs-keyword">const</span> accidentalSpacing = <span class="hljs-number">2</span>;</pre></div>
         
       
         
         <p>If there are no accidentals, we needn’t format their positions</p>
 
         
-          <div class='highlight'><pre>    <span class="hljs-keyword">if</span> (!accidentals || accidentals.length === <span class="hljs-number">0</span>) <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+          <div class='highlight'><pre>    <span class="hljs-keyword">if</span> (!accidentals || accidentals.length === <span class="hljs-number">0</span>) <span class="hljs-keyword">return</span>;
 
-    <span class="hljs-keyword">var</span> acc_list = [];
-    <span class="hljs-keyword">var</span> hasStave = <span class="hljs-literal">false</span>;
-    <span class="hljs-keyword">var</span> prev_note = <span class="hljs-literal">null</span>;
-    <span class="hljs-keyword">var</span> shiftL = <span class="hljs-number">0</span>;</pre></div>
+    <span class="hljs-keyword">const</span> accList = [];
+    <span class="hljs-keyword">let</span> prevNote = <span class="hljs-literal">null</span>;
+    <span class="hljs-keyword">let</span> shiftL = <span class="hljs-number">0</span>;</pre></div>
         
       
         
         <p>First determine the accidentals’ Y positions from the note.keys</p>
 
         
-          <div class='highlight'><pre>    <span class="hljs-keyword">var</span> i, acc, props_tmp;
-    <span class="hljs-keyword">for</span> (i = <span class="hljs-number">0</span>; i &lt; accidentals.length; ++i) {
-      acc = accidentals[i];
-      <span class="hljs-keyword">var</span> note = acc.getNote();
-      <span class="hljs-keyword">var</span> stave = note.getStave();
-      <span class="hljs-keyword">var</span> props = note.getKeyProps()[acc.getIndex()];
-      <span class="hljs-keyword">if</span> (note != prev_note) {</pre></div>
+          <div class='highlight'><pre>    <span class="hljs-keyword">let</span> propsTemp;
+    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> i = <span class="hljs-number">0</span>; i &lt; accidentals.length; ++i) {
+      <span class="hljs-keyword">const</span> acc = accidentals[i];
+      <span class="hljs-keyword">const</span> note = acc.getNote();
+      <span class="hljs-keyword">const</span> stave = note.getStave();
+      <span class="hljs-keyword">const</span> props = note.getKeyProps()[acc.getIndex()];
+      <span class="hljs-keyword">if</span> (note !== prevNote) {</pre></div>
         
       
         
         <p>Iterate through all notes to get the displaced pixels</p>
 
         
-          <div class='highlight'><pre>         <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> n = <span class="hljs-number">0</span>; n &lt; note.keys.length; ++n) {
-            props_tmp = note.getKeyProps()[n];
-            shiftL = (props_tmp.displaced ? note.getExtraLeftPx() : shiftL);
-          }
-          prev_note = note;
+          <div class='highlight'><pre>        <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> n = <span class="hljs-number">0</span>; n &lt; note.keys.length; ++n) {
+          propsTemp = note.getKeyProps()[n];
+          shiftL = propsTemp.displaced ? note.getExtraLeftPx() : shiftL;
+        }
+        prevNote = note;
       }
       <span class="hljs-keyword">if</span> (stave !== <span class="hljs-literal">null</span>) {
-        hasStave = <span class="hljs-literal">true</span>;
-        <span class="hljs-keyword">var</span> line_space = stave.options.spacing_between_lines_px;
-        <span class="hljs-keyword">var</span> y = stave.getYForLine(props.line);
-        <span class="hljs-keyword">var</span> acc_line = <span class="hljs-built_in">Math</span>.round(y / line_space * <span class="hljs-number">2</span>)/<span class="hljs-number">2</span>;
-        acc_list.push({ y: y, line: acc_line, shift: shiftL, acc: acc, lineSpace: line_space });
+        <span class="hljs-keyword">const</span> lineSpace = stave.options.spacing_between_lines_px;
+        <span class="hljs-keyword">const</span> y = stave.getYForLine(props.line);
+        <span class="hljs-keyword">const</span> accLine = <span class="hljs-built_in">Math</span>.round(y / lineSpace * <span class="hljs-number">2</span>) / <span class="hljs-number">2</span>;
+        accList.push({ y, line: accLine, shift: shiftL, acc, lineSpace });
       } <span class="hljs-keyword">else</span> {
-        acc_list.push({ line: props.line, shift: shiftL, acc: acc });
+        accList.push({ line: props.line, shift: shiftL, acc });
       }
     }</pre></div>
         
@@ -612,37 +673,57 @@ import { Glyph } from <span class="hljs-string">'./glyph'</span>;</pre></div>
         <p>Sort accidentals by line number.</p>
 
         
-          <div class='highlight'><pre>    acc_list.sort(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(a, b)</span> {</span> <span class="hljs-keyword">return</span> (b.line - a.line); });</pre></div>
+          <div class='highlight'><pre>    accList.sort((a, b) =&gt; b.line - a.line);</pre></div>
         
       
         
-        <p>Create an array of unique line numbers (line_list) from acc_list</p>
+        <p>FIXME: Confusing name. Each object in this array has a property called <code>line</code>.
+So if this is a list of lines, you end up with: <code>line.line</code> which is very awkward.</p>
 
         
-          <div class='highlight'><pre>    <span class="hljs-keyword">var</span> line_list = []; <span class="hljs-comment">// an array of unique line numbers</span>
-    <span class="hljs-keyword">var</span> acc_shift = <span class="hljs-number">0</span>; <span class="hljs-comment">// amount by which all accidentals must be shifted right or left for stem flipping, notehead shifting concerns.</span>
-    <span class="hljs-keyword">var</span> previous_line = <span class="hljs-literal">null</span>;
-
-    <span class="hljs-keyword">for</span>(i = <span class="hljs-number">0</span>; i&lt;acc_list.length; i++) {
-      acc = acc_list[i];</pre></div>
+          <div class='highlight'><pre>    <span class="hljs-keyword">const</span> lineList = [];</pre></div>
         
       
         
-        <p>if this is the first line, or a new line, add a line_list</p>
+        <p>amount by which all accidentals must be shifted right or left for
+stem flipping, notehead shifting concerns.</p>
 
         
-          <div class='highlight'><pre>      <span class="hljs-keyword">if</span>( (previous_line === <span class="hljs-literal">null</span>) || (previous_line != acc.line) ) {
-        line_list.push({line : acc.line, flat_line : <span class="hljs-literal">true</span>, dbl_sharp_line: <span class="hljs-literal">true</span>, num_acc : <span class="hljs-number">0</span>, width : <span class="hljs-number">0</span>});
+          <div class='highlight'><pre>    <span class="hljs-keyword">let</span> accShift = <span class="hljs-number">0</span>;
+    <span class="hljs-keyword">let</span> previousLine = <span class="hljs-literal">null</span>;</pre></div>
+        
+      
+        
+        <p>Create an array of unique line numbers (lineList) from accList</p>
+
+        
+          <div class='highlight'><pre>    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> i = <span class="hljs-number">0</span>; i &lt; accList.length; i++) {
+      <span class="hljs-keyword">const</span> acc = accList[i];</pre></div>
+        
+      
+        
+        <p>if this is the first line, or a new line, add a lineList</p>
+
+        
+          <div class='highlight'><pre>      <span class="hljs-keyword">if</span> (previousLine === <span class="hljs-literal">null</span> || previousLine !== acc.line) {
+        lineList.push({
+          line: acc.line,
+          flatLine: <span class="hljs-literal">true</span>,
+          dblSharpLine: <span class="hljs-literal">true</span>,
+          numAcc: <span class="hljs-number">0</span>,
+          width: <span class="hljs-number">0</span>,
+        });
       }</pre></div>
         
       
         
         <p>if this accidental is not a flat, the accidental needs 3.0 lines lower
-clearance instead of 2.5 lines for b or bb.</p>
+clearance instead of 2.5 lines for b or bb.
+FIXME: Naming could use work. acc.acc is very awkward</p>
 
         
-          <div class='highlight'><pre>      <span class="hljs-keyword">if</span>( (acc.acc.type != <span class="hljs-string">"b"</span>) &amp;&amp; (acc.acc.type !=<span class="hljs-string">"bb"</span>) ) {
-        line_list[line_list.length - <span class="hljs-number">1</span>].flat_line = <span class="hljs-literal">false</span>;
+          <div class='highlight'><pre>      <span class="hljs-keyword">if</span> (acc.acc.type !== <span class="hljs-string">'b'</span> &amp;&amp; acc.acc.type !== <span class="hljs-string">'bb'</span>) {
+        lineList[lineList.length - <span class="hljs-number">1</span>].flatLine = <span class="hljs-literal">false</span>;
       }</pre></div>
         
       
@@ -650,15 +731,16 @@ clearance instead of 2.5 lines for b or bb.</p>
         <p>if this accidental is not a double sharp, the accidental needs 3.0 lines above</p>
 
         
-          <div class='highlight'><pre>      <span class="hljs-keyword">if</span>( acc.acc.type != <span class="hljs-string">"##"</span>)
-        line_list[line_list.length - <span class="hljs-number">1</span>].dbl_sharp_line = <span class="hljs-literal">false</span>;</pre></div>
+          <div class='highlight'><pre>      <span class="hljs-keyword">if</span> (acc.acc.type !== <span class="hljs-string">'##'</span>) {
+        lineList[lineList.length - <span class="hljs-number">1</span>].dblSharpLine = <span class="hljs-literal">false</span>;
+      }</pre></div>
         
       
         
         <p>Track how many accidentals are on this line:</p>
 
         
-          <div class='highlight'><pre>      line_list[line_list.length - <span class="hljs-number">1</span>].num_acc++;</pre></div>
+          <div class='highlight'><pre>      lineList[lineList.length - <span class="hljs-number">1</span>].numAcc++;</pre></div>
         
       
         
@@ -671,16 +753,16 @@ for formatting lines w/ multiple accidentals:</p>
         <p>width = accidental width + universal spacing between accidentals</p>
 
         
-          <div class='highlight'><pre>      line_list[line_list.length - <span class="hljs-number">1</span>].width += acc.acc.getWidth() + accidental_spacing;</pre></div>
+          <div class='highlight'><pre>      lineList[lineList.length - <span class="hljs-number">1</span>].width += acc.acc.getWidth() + accidentalSpacing;</pre></div>
         
       
         
-        <p>if this acc_shift is larger, use it to keep first column accidentals in the same line</p>
+        <p>if this accShift is larger, use it to keep first column accidentals in the same line</p>
 
         
-          <div class='highlight'><pre>      acc_shift = ( (acc.shift &gt; acc_shift) ? acc.shift : acc_shift);
+          <div class='highlight'><pre>      accShift = acc.shift &gt; accShift ? acc.shift : accShift;
 
-      previous_line = acc.line;
+      previousLine = acc.line;
     }</pre></div>
         
       
@@ -689,7 +771,7 @@ for formatting lines w/ multiple accidentals:</p>
 <p>Default to a classic triangular layout (middle accidental farthest left),
 but follow exceptions as outlined in G. Read’s <em>Music Notation</em> and
 Elaine Gould’s <em>Behind Bars</em>.</p>
-<p>Additionally, this implements different vertical colission rules for
+<p>Additionally, this implements different vertical collision rules for
 flats (only need 2.5 lines clearance below) and double sharps (only
 need 2.5 lines of clearance above or below).</p>
 <p>Classic layouts and exception patterns are found in the ‘tables.js’
@@ -700,89 +782,102 @@ using as few columns as possible for the verticle structure.</p>
 
         
           <div class='highlight'><pre>
-    <span class="hljs-keyword">var</span> total_columns = <span class="hljs-number">0</span>;</pre></div>
+    <span class="hljs-keyword">let</span> totalColumns = <span class="hljs-number">0</span>;</pre></div>
         
       
         
         <p>establish the boundaries for a group of notes with clashing accidentals:</p>
 
         
-          <div class='highlight'><pre>    <span class="hljs-keyword">for</span>(i = <span class="hljs-number">0</span>; i&lt;line_list.length; i++) {
-      <span class="hljs-keyword">var</span> no_further_conflicts = <span class="hljs-literal">false</span>;
-      <span class="hljs-keyword">var</span> group_start = i;
-      <span class="hljs-keyword">var</span> group_end = i;
+          <div class='highlight'><pre>    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> i = <span class="hljs-number">0</span>; i &lt; lineList.length; i++) {
+      <span class="hljs-keyword">let</span> noFurtherConflicts = <span class="hljs-literal">false</span>;
+      <span class="hljs-keyword">const</span> groupStart = i;
+      <span class="hljs-keyword">let</span> groupEnd = i;
 
-      group_check_while : <span class="hljs-keyword">while</span>( (group_end+<span class="hljs-number">1</span> &lt; line_list.length) &amp;&amp; (!no_further_conflicts) ) {</pre></div>
+      <span class="hljs-keyword">while</span> (groupEnd + <span class="hljs-number">1</span> &lt; lineList.length &amp;&amp; !noFurtherConflicts) {</pre></div>
         
       
         
         <p>if this note conflicts with the next:</p>
 
         
-          <div class='highlight'><pre>        <span class="hljs-keyword">if</span>(<span class="hljs-keyword">this</span>.checkCollision(line_list[group_end], line_list[group_end + <span class="hljs-number">1</span>])) {</pre></div>
+          <div class='highlight'><pre>        <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.checkCollision(lineList[groupEnd], lineList[groupEnd + <span class="hljs-number">1</span>])) {</pre></div>
         
       
         
         <p>include the next note in the group:</p>
 
         
-          <div class='highlight'><pre>          group_end++;
+          <div class='highlight'><pre>          groupEnd++;
+        } <span class="hljs-keyword">else</span> {
+          noFurtherConflicts = <span class="hljs-literal">true</span>;
         }
-        <span class="hljs-keyword">else</span> no_further_conflicts = <span class="hljs-literal">true</span>;
       }</pre></div>
+        
+      
+        
+        <p>Gets an a line from the <code>lineList</code>, relative to the current group</p>
+
+        
+          <div class='highlight'><pre>      <span class="hljs-keyword">const</span> getGroupLine = (index) =&gt; lineList[groupStart + index];
+      <span class="hljs-keyword">const</span> getGroupLines = (indexes) =&gt; indexes.map(getGroupLine);
+      <span class="hljs-keyword">const</span> lineDifference = (indexA, indexB) =&gt; {
+        <span class="hljs-keyword">const</span> [a, b] = getGroupLines([indexA, indexB]).map(item =&gt; item.line);
+        <span class="hljs-keyword">return</span> a - b;
+      };
+
+      <span class="hljs-keyword">const</span> notColliding = (...indexPairs) =&gt;
+        indexPairs
+          .map(getGroupLines)
+          .every(lines =&gt; !<span class="hljs-keyword">this</span>.checkCollision(...lines));</pre></div>
         
       
         
         <p>Set columns for the lines in this group:</p>
 
         
-          <div class='highlight'><pre>      <span class="hljs-keyword">var</span> group_length = group_end - group_start + <span class="hljs-number">1</span>;</pre></div>
+          <div class='highlight'><pre>      <span class="hljs-keyword">const</span> groupLength = groupEnd - groupStart + <span class="hljs-number">1</span>;</pre></div>
         
       
         
         <p>Set the accidental column for each line of the group</p>
 
         
-          <div class='highlight'><pre>      <span class="hljs-keyword">var</span> end_case = (<span class="hljs-keyword">this</span>.checkCollision(line_list[group_start], line_list[group_end])) ? <span class="hljs-string">"a"</span> : <span class="hljs-string">"b"</span>;
+          <div class='highlight'><pre>      <span class="hljs-keyword">let</span> endCase = <span class="hljs-keyword">this</span>.checkCollision(lineList[groupStart], lineList[groupEnd]) ? <span class="hljs-string">'a'</span> : <span class="hljs-string">'b'</span>;
 
+      <span class="hljs-keyword">switch</span> (groupLength) {
+        <span class="hljs-keyword">case</span> <span class="hljs-number">3</span>:
+          <span class="hljs-keyword">if</span> (endCase === <span class="hljs-string">'a'</span> &amp;&amp; lineDifference(<span class="hljs-number">1</span>, <span class="hljs-number">2</span>) === <span class="hljs-number">0.5</span> &amp;&amp; lineDifference(<span class="hljs-number">0</span>, <span class="hljs-number">1</span>) !== <span class="hljs-number">0.5</span>) {
+            endCase = <span class="hljs-string">'second_on_bottom'</span>;
+          }
+          <span class="hljs-keyword">break</span>;
+        <span class="hljs-keyword">case</span> <span class="hljs-number">4</span>:
+          <span class="hljs-keyword">if</span> (notColliding([<span class="hljs-number">0</span>, <span class="hljs-number">2</span>], [<span class="hljs-number">1</span>, <span class="hljs-number">3</span>])) {
+            endCase = <span class="hljs-string">'spaced_out_tetrachord'</span>;
+          }
+          <span class="hljs-keyword">break</span>;
+        <span class="hljs-keyword">case</span> <span class="hljs-number">5</span>:
+          <span class="hljs-keyword">if</span> (endCase === <span class="hljs-string">'b'</span> &amp;&amp; notColliding([<span class="hljs-number">1</span>, <span class="hljs-number">3</span>])) {
+            endCase = <span class="hljs-string">'spaced_out_pentachord'</span>;
+            <span class="hljs-keyword">if</span> (notColliding([<span class="hljs-number">0</span>, <span class="hljs-number">2</span>], [<span class="hljs-number">2</span>, <span class="hljs-number">4</span>])) {
+              endCase = <span class="hljs-string">'very_spaced_out_pentachord'</span>;
+            }
+          }
+          <span class="hljs-keyword">break</span>;
+        <span class="hljs-keyword">case</span> <span class="hljs-number">6</span>:
+          <span class="hljs-keyword">if</span> (notColliding([<span class="hljs-number">0</span>, <span class="hljs-number">3</span>], [<span class="hljs-number">1</span>, <span class="hljs-number">4</span>], [<span class="hljs-number">2</span>, <span class="hljs-number">5</span>])) {
+            endCase = <span class="hljs-string">'spaced_out_hexachord'</span>;
+          }
+          <span class="hljs-keyword">if</span> (notColliding([<span class="hljs-number">0</span>, <span class="hljs-number">2</span>], [<span class="hljs-number">2</span>, <span class="hljs-number">4</span>], [<span class="hljs-number">1</span>, <span class="hljs-number">3</span>], [<span class="hljs-number">3</span>, <span class="hljs-number">5</span>])) {
+            endCase = <span class="hljs-string">'very_spaced_out_hexachord'</span>;
+          }
+          <span class="hljs-keyword">break</span>;
+        <span class="hljs-keyword">default</span>:
+          <span class="hljs-keyword">break</span>;
+      }
 
-        <span class="hljs-keyword">var</span> checkCollision = <span class="hljs-keyword">this</span>.checkCollision;
-        <span class="hljs-keyword">switch</span>(group_length) {
-          <span class="hljs-keyword">case</span> <span class="hljs-number">3</span>:
-            <span class="hljs-keyword">if</span>( (end_case == <span class="hljs-string">"a"</span>) &amp;&amp;
-                (line_list[group_start+<span class="hljs-number">1</span>].line - line_list[group_start+<span class="hljs-number">2</span>].line == <span class="hljs-number">0.5</span>) &amp;&amp;
-                (line_list[group_start].line - line_list[group_start + <span class="hljs-number">1</span>].line != <span class="hljs-number">0.5</span>) )
-              end_case = <span class="hljs-string">"second_on_bottom"</span>;
-              <span class="hljs-keyword">break</span>;
-          <span class="hljs-keyword">case</span> <span class="hljs-number">4</span>:
-            <span class="hljs-keyword">if</span>( (!checkCollision(line_list[group_start], line_list[group_start+<span class="hljs-number">2</span>])) &amp;&amp;
-                (!checkCollision(line_list[group_start+<span class="hljs-number">1</span>], line_list[group_start+<span class="hljs-number">3</span>])) )
-              end_case = <span class="hljs-string">"spaced_out_tetrachord"</span>;
-              <span class="hljs-keyword">break</span>;
-          <span class="hljs-keyword">case</span> <span class="hljs-number">5</span>:
-            <span class="hljs-keyword">if</span>( (end_case == <span class="hljs-string">"b"</span>) &amp;&amp;
-                (!checkCollision(line_list[group_start+<span class="hljs-number">1</span>], line_list[group_start+<span class="hljs-number">3</span>])) )
-              end_case = <span class="hljs-string">"spaced_out_pentachord"</span>;
-            <span class="hljs-keyword">if</span>( (end_case == <span class="hljs-string">"spaced_out_pentachord"</span>) &amp;&amp;
-                (!checkCollision(line_list[group_start], line_list[group_start+<span class="hljs-number">2</span>])) &amp;&amp;
-                (!checkCollision(line_list[group_start+<span class="hljs-number">2</span>], line_list[group_start+<span class="hljs-number">4</span>])) )
-              end_case = <span class="hljs-string">"very_spaced_out_pentachord"</span>;
-              <span class="hljs-keyword">break</span>;
-          <span class="hljs-keyword">case</span> <span class="hljs-number">6</span>:
-            <span class="hljs-keyword">if</span>( (!checkCollision(line_list[group_start], line_list[group_start+<span class="hljs-number">3</span>])) &amp;&amp;
-                (!checkCollision(line_list[group_start+<span class="hljs-number">1</span>], line_list[group_start+<span class="hljs-number">4</span>])) &amp;&amp;
-                (!checkCollision(line_list[group_start+<span class="hljs-number">2</span>], line_list[group_start+<span class="hljs-number">5</span>])) )
-              end_case = <span class="hljs-string">"spaced_out_hexachord"</span>;
-            <span class="hljs-keyword">if</span>( (!checkCollision(line_list[group_start], line_list[group_start+<span class="hljs-number">2</span>])) &amp;&amp;
-                (!checkCollision(line_list[group_start+<span class="hljs-number">2</span>], line_list[group_start+<span class="hljs-number">4</span>])) &amp;&amp;
-                (!checkCollision(line_list[group_start+<span class="hljs-number">1</span>], line_list[group_start+<span class="hljs-number">3</span>])) &amp;&amp;
-                (!checkCollision(line_list[group_start+<span class="hljs-number">3</span>], line_list[group_start+<span class="hljs-number">5</span>])) )
-              end_case = <span class="hljs-string">"very_spaced_out_hexachord"</span>;
-              <span class="hljs-keyword">break</span>;
-        }
-
-      <span class="hljs-keyword">var</span> group_member;
-      <span class="hljs-keyword">var</span> column;</pre></div>
+      <span class="hljs-keyword">let</span> groupMember;
+      <span class="hljs-keyword">let</span> column;</pre></div>
         
       
         
@@ -790,22 +885,22 @@ using as few columns as possible for the verticle structure.</p>
 of accidentals, using as few columns as possible while avoiding collisions.</p>
 
         
-          <div class='highlight'><pre>      <span class="hljs-keyword">if</span> (group_length&gt;=<span class="hljs-number">7</span>) {</pre></div>
+          <div class='highlight'><pre>      <span class="hljs-keyword">if</span> (groupLength &gt;= <span class="hljs-number">7</span>) {</pre></div>
         
       
         
         <p>First, determine how many columns to use:</p>
 
         
-          <div class='highlight'><pre>        <span class="hljs-keyword">var</span> pattern_length = <span class="hljs-number">2</span>;
-        <span class="hljs-keyword">var</span> colission_detected = <span class="hljs-literal">true</span>;
-        <span class="hljs-keyword">while</span>(colission_detected === <span class="hljs-literal">true</span>) {
-          colission_detected = <span class="hljs-literal">false</span>;
-          colission_detecter : <span class="hljs-keyword">for</span>(<span class="hljs-keyword">var</span> line = <span class="hljs-number">0</span>; line + pattern_length &lt; line_list.length; line++) {
-            <span class="hljs-keyword">if</span>(<span class="hljs-keyword">this</span>.checkCollision(line_list[line], line_list[line+pattern_length])) {
-              colission_detected = <span class="hljs-literal">true</span>;
-              pattern_length++;
-              <span class="hljs-keyword">break</span> colission_detecter;
+          <div class='highlight'><pre>        <span class="hljs-keyword">let</span> patternLength = <span class="hljs-number">2</span>;
+        <span class="hljs-keyword">let</span> collisionDetected = <span class="hljs-literal">true</span>;
+        <span class="hljs-keyword">while</span> (collisionDetected === <span class="hljs-literal">true</span>) {
+          collisionDetected = <span class="hljs-literal">false</span>;
+          <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> line = <span class="hljs-number">0</span>; line + patternLength &lt; lineList.length; line++) {
+            <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.checkCollision(lineList[line], lineList[line + patternLength])) {
+              collisionDetected = <span class="hljs-literal">true</span>;
+              patternLength++;
+              <span class="hljs-keyword">break</span>;
             }
           }
         }</pre></div>
@@ -815,10 +910,10 @@ of accidentals, using as few columns as possible while avoiding collisions.</p>
         <p>Then, assign a column to each line of accidentals</p>
 
         
-          <div class='highlight'><pre>        <span class="hljs-keyword">for</span>(group_member = i; group_member &lt;= group_end; group_member++) {
-          column = ((group_member-i) % pattern_length) + <span class="hljs-number">1</span>;
-          line_list[group_member].column = column;
-          total_columns = (total_columns &gt; column) ? total_columns : column;
+          <div class='highlight'><pre>        <span class="hljs-keyword">for</span> (groupMember = i; groupMember &lt;= groupEnd; groupMember++) {
+          column = ((groupMember - i) % patternLength) + <span class="hljs-number">1</span>;
+          lineList[groupMember].column = column;
+          totalColumns = (totalColumns &gt; column) ? totalColumns : column;
         }</pre></div>
         
       
@@ -828,10 +923,10 @@ the accidentalsColumnsTable housed in tables.js.</p>
 
         
           <div class='highlight'><pre>      } <span class="hljs-keyword">else</span> {
-        <span class="hljs-keyword">for</span>(group_member = i; group_member &lt;= group_end; group_member++) {
-          column = Flow.accidentalColumnsTable[group_length][end_case][group_member-i];
-          line_list[group_member].column = column;
-          total_columns = (total_columns &gt; column) ? total_columns : column;
+        <span class="hljs-keyword">for</span> (groupMember = i; groupMember &lt;= groupEnd; groupMember++) {
+          column = Flow.accidentalColumnsTable[groupLength][endCase][groupMember - i];
+          lineList[groupMember].column = column;
+          totalColumns = (totalColumns &gt; column) ? totalColumns : column;
         }
       }</pre></div>
         
@@ -841,7 +936,7 @@ the accidentalsColumnsTable housed in tables.js.</p>
 does not conflict at all with this group, it can have its own classic shape.</p>
 
         
-          <div class='highlight'><pre>      i = group_end;
+          <div class='highlight'><pre>      i = groupEnd;
     }</pre></div>
         
       
@@ -861,56 +956,56 @@ parallel columns.</p>
         <p>track each column’s max width, which will be used as initial shift of later columns:</p>
 
         
-          <div class='highlight'><pre>    <span class="hljs-keyword">var</span> column_widths = [];
-    <span class="hljs-keyword">var</span> column_x_offsets = [];
-    <span class="hljs-keyword">for</span>(i=<span class="hljs-number">0</span>; i&lt;=total_columns; i++) {
-      column_widths[i] = <span class="hljs-number">0</span>;
-      column_x_offsets[i] = <span class="hljs-number">0</span>;
+          <div class='highlight'><pre>    <span class="hljs-keyword">const</span> columnWidths = [];
+    <span class="hljs-keyword">const</span> columnXOffsets = [];
+    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> i = <span class="hljs-number">0</span>; i &lt;= totalColumns; i++) {
+      columnWidths[i] = <span class="hljs-number">0</span>;
+      columnXOffsets[i] = <span class="hljs-number">0</span>;
     }
 
-    column_widths[<span class="hljs-number">0</span>] = acc_shift + left_shift;
-    column_x_offsets[<span class="hljs-number">0</span>] = acc_shift + left_shift;</pre></div>
+    columnWidths[<span class="hljs-number">0</span>] = accShift + leftShift;
+    columnXOffsets[<span class="hljs-number">0</span>] = accShift + leftShift;</pre></div>
         
       
         
-        <p>Fill column_widths with widest needed x-space;
+        <p>Fill columnWidths with widest needed x-space;
 this is what keeps the columns parallel.</p>
 
         
-          <div class='highlight'><pre>    line_list.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(line)</span> {</span>
-      <span class="hljs-keyword">if</span>(line.width &gt; column_widths[line.column]) column_widths[line.column] = line.width;
+          <div class='highlight'><pre>    lineList.forEach(line =&gt; {
+      <span class="hljs-keyword">if</span> (line.width &gt; columnWidths[line.column]) columnWidths[line.column] = line.width;
     });
 
-    <span class="hljs-keyword">for</span>(i=<span class="hljs-number">1</span>; i&lt;column_widths.length; i++) {</pre></div>
+    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> i = <span class="hljs-number">1</span>; i &lt; columnWidths.length; i++) {</pre></div>
         
       
         
         <p>this column’s offset = this column’s width + previous column’s offset</p>
 
         
-          <div class='highlight'><pre>      column_x_offsets[i] = column_widths[i] + column_x_offsets[i-<span class="hljs-number">1</span>];
+          <div class='highlight'><pre>      columnXOffsets[i] = columnWidths[i] + columnXOffsets[i - <span class="hljs-number">1</span>];
     }
 
-    <span class="hljs-keyword">var</span> total_shift = column_x_offsets[column_x_offsets.length-<span class="hljs-number">1</span>];</pre></div>
+    <span class="hljs-keyword">const</span> totalShift = columnXOffsets[columnXOffsets.length - <span class="hljs-number">1</span>];</pre></div>
         
       
         
-        <p>Set the x_shift for each accidental according to column offsets:</p>
+        <p>Set the xShift for each accidental according to column offsets:</p>
 
         
-          <div class='highlight'><pre>    <span class="hljs-keyword">var</span> acc_count = <span class="hljs-number">0</span>;
-    line_list.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(line)</span> {</span>
-      <span class="hljs-keyword">var</span> line_width = <span class="hljs-number">0</span>;
-      <span class="hljs-keyword">var</span> last_acc_on_line = acc_count + line.num_acc;</pre></div>
+          <div class='highlight'><pre>    <span class="hljs-keyword">let</span> accCount = <span class="hljs-number">0</span>;
+    lineList.forEach(line =&gt; {
+      <span class="hljs-keyword">let</span> lineWidth = <span class="hljs-number">0</span>;
+      <span class="hljs-keyword">const</span> lastAccOnLine = accCount + line.numAcc;</pre></div>
         
       
         
         <p>handle all of the accidentals on a given line:</p>
 
         
-          <div class='highlight'><pre>      <span class="hljs-keyword">for</span>(acc_count; acc_count&lt;last_acc_on_line; acc_count++) {
-        <span class="hljs-keyword">var</span> x_shift = (column_x_offsets[line.column-<span class="hljs-number">1</span>] + line_width);
-        acc_list[acc_count].acc.setXShift(x_shift);</pre></div>
+          <div class='highlight'><pre>      <span class="hljs-keyword">for</span> (accCount; accCount &lt; lastAccOnLine; accCount++) {
+        <span class="hljs-keyword">const</span> xShift = (columnXOffsets[line.column - <span class="hljs-number">1</span>] + lineWidth);
+        accList[accCount].acc.setXShift(xShift);</pre></div>
         
       
         
@@ -918,8 +1013,8 @@ this is what keeps the columns parallel.</p>
 we loop, we add space for them.</p>
 
         
-          <div class='highlight'><pre>        line_width += acc_list[acc_count].acc.getWidth() + accidental_spacing;
-        L(<span class="hljs-string">"Line, acc_count, shift: "</span>, line.line, acc_count, x_shift);
+          <div class='highlight'><pre>        lineWidth += accList[accCount].acc.getWidth() + accidentalSpacing;
+        L(<span class="hljs-string">'Line, accCount, shift: '</span>, line.line, accCount, xShift);
       }
     });</pre></div>
         
@@ -928,7 +1023,7 @@ we loop, we add space for them.</p>
         <p>update the overall layout with the full width of the accidental shapes:</p>
 
         
-          <div class='highlight'><pre>    state.left_shift += total_shift;
+          <div class='highlight'><pre>    state.left_shift += totalShift;
   }</pre></div>
         
       
@@ -936,25 +1031,25 @@ we loop, we add space for them.</p>
         <p>Helper function to determine whether two lines of accidentals collide vertically</p>
 
         
-          <div class='highlight'><pre>  static checkCollision(line_1, line_2) {
-    <span class="hljs-keyword">var</span> clearance = line_2.line - line_1.line;
-    <span class="hljs-keyword">var</span> clearance_required = <span class="hljs-number">3</span>;</pre></div>
+          <div class='highlight'><pre>  <span class="hljs-keyword">static</span> checkCollision(line1, line2) {
+    <span class="hljs-keyword">let</span> clearance = line2.line - line1.line;
+    <span class="hljs-keyword">let</span> clearanceRequired = <span class="hljs-number">3</span>;</pre></div>
         
       
         
         <p>But less clearance is required for certain accidentals: b, bb and ##.</p>
 
         
-          <div class='highlight'><pre>    <span class="hljs-keyword">if</span>(clearance&gt;<span class="hljs-number">0</span>) { <span class="hljs-comment">// then line 2 is on top</span>
-      clearance_required = (line_2.flat_line || line_2.dbl_sharp_line) ? <span class="hljs-number">2.5</span> : <span class="hljs-number">3.0</span>;
-      <span class="hljs-keyword">if</span>(line_1.dbl_sharp_line) clearance -= <span class="hljs-number">0.5</span>;
+          <div class='highlight'><pre>    <span class="hljs-keyword">if</span> (clearance &gt; <span class="hljs-number">0</span>) { <span class="hljs-comment">// then line 2 is on top</span>
+      clearanceRequired = (line2.flatLine || line2.dblSharpLine) ? <span class="hljs-number">2.5</span> : <span class="hljs-number">3.0</span>;
+      <span class="hljs-keyword">if</span> (line1.dblSharpLine) clearance -= <span class="hljs-number">0.5</span>;
     } <span class="hljs-keyword">else</span> { <span class="hljs-comment">// line 1 is on top</span>
-      clearance_required = (line_1.flat_line || line_1.dbl_sharp_line) ? <span class="hljs-number">2.5</span> : <span class="hljs-number">3.0</span>;
-      <span class="hljs-keyword">if</span>(line_2.dbl_sharp_line) clearance -= <span class="hljs-number">0.5</span>;
+      clearanceRequired = (line1.flatLine || line1.dblSharpLine) ? <span class="hljs-number">2.5</span> : <span class="hljs-number">3.0</span>;
+      <span class="hljs-keyword">if</span> (line2.dblSharpLine) clearance -= <span class="hljs-number">0.5</span>;
     }
-    <span class="hljs-keyword">var</span> colission = (<span class="hljs-built_in">Math</span>.abs(clearance) &lt; clearance_required);
-    L(<span class="hljs-string">"Line_1, Line_2, Collision: "</span>, line_1.line, line_2.line, colission);
-    <span class="hljs-keyword">return</span>(colission);
+    <span class="hljs-keyword">const</span> collision = <span class="hljs-built_in">Math</span>.abs(clearance) &lt; clearanceRequired;
+    L(<span class="hljs-string">'Line_1, Line_2, Collision: '</span>, line1.line, line2.line, collision);
+    <span class="hljs-keyword">return</span> collision;
   }</pre></div>
         
       
@@ -964,20 +1059,20 @@ The accidentals will be remembered between all the voices provided.
 Optionally, you can also provide an initial <code>keySignature</code>.</p>
 
         
-          <div class='highlight'><pre>  static applyAccidentals(voices, keySignature) {
-    <span class="hljs-keyword">var</span> tickPositions = [];
-    <span class="hljs-keyword">var</span> tickNoteMap = {};</pre></div>
+          <div class='highlight'><pre>  <span class="hljs-keyword">static</span> applyAccidentals(voices, keySignature) {
+    <span class="hljs-keyword">const</span> tickPositions = [];
+    <span class="hljs-keyword">const</span> tickNoteMap = {};</pre></div>
         
       
         
         <p>Sort the tickables in each voice by their tick position in the voice</p>
 
         
-          <div class='highlight'><pre>    voices.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(voice)</span> {</span>
-      <span class="hljs-keyword">var</span> tickPosition = <span class="hljs-keyword">new</span> Flow.Fraction(<span class="hljs-number">0</span>, <span class="hljs-number">1</span>);
-      <span class="hljs-keyword">var</span> notes = voice.getTickables();
-      notes.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(note)</span> {</span>
-        <span class="hljs-keyword">var</span> notesAtPosition = tickNoteMap[tickPosition.value()];
+          <div class='highlight'><pre>    voices.forEach(voice =&gt; {
+      <span class="hljs-keyword">const</span> tickPosition = <span class="hljs-keyword">new</span> Fraction(<span class="hljs-number">0</span>, <span class="hljs-number">1</span>);
+      <span class="hljs-keyword">const</span> notes = voice.getTickables();
+      notes.forEach(note =&gt; {
+        <span class="hljs-keyword">const</span> notesAtPosition = tickNoteMap[tickPosition.value()];
 
         <span class="hljs-keyword">if</span> (!notesAtPosition) {
           tickPositions.push(tickPosition.value());
@@ -990,24 +1085,24 @@ Optionally, you can also provide an initial <code>keySignature</code>.</p>
       });
     });
 
-    <span class="hljs-keyword">var</span> music = <span class="hljs-keyword">new</span> Music();</pre></div>
+    <span class="hljs-keyword">const</span> music = <span class="hljs-keyword">new</span> Music();</pre></div>
         
       
         
         <p>Default key signature is C major</p>
 
         
-          <div class='highlight'><pre>    <span class="hljs-keyword">if</span> (!keySignature) keySignature = <span class="hljs-string">"C"</span>;</pre></div>
+          <div class='highlight'><pre>    <span class="hljs-keyword">if</span> (!keySignature) keySignature = <span class="hljs-string">'C'</span>;</pre></div>
         
       
         
         <p>Get the scale map, which represents the current state of each pitch</p>
 
         
-          <div class='highlight'><pre>    <span class="hljs-keyword">var</span> scaleMap = music.createScaleMap(keySignature);
+          <div class='highlight'><pre>    <span class="hljs-keyword">const</span> scaleMap = music.createScaleMap(keySignature);
 
-    tickPositions.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(tick)</span> {</span>
-      <span class="hljs-keyword">var</span> notes = tickNoteMap[tick];</pre></div>
+    tickPositions.forEach(tick =&gt; {
+      <span class="hljs-keyword">const</span> notes = tickNoteMap[tick];</pre></div>
         
       
         
@@ -1015,10 +1110,10 @@ Optionally, you can also provide an initial <code>keySignature</code>.</p>
 at this tick position</p>
 
         
-          <div class='highlight'><pre>      <span class="hljs-keyword">var</span> modifiedPitches = [];
+          <div class='highlight'><pre>      <span class="hljs-keyword">const</span> modifiedPitches = [];
 
-      notes.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(note)</span> {</span>
-          <span class="hljs-keyword">if</span> (note.isRest()) <span class="hljs-keyword">return</span>;</pre></div>
+      notes.forEach(note =&gt; {
+        <span class="hljs-keyword">if</span> (note.isRest()) <span class="hljs-keyword">return</span>;</pre></div>
         
       
         
@@ -1026,16 +1121,16 @@ at this tick position</p>
 applied</p>
 
         
-          <div class='highlight'><pre>          note.keys.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(keyString, keyIndex)</span> {</span>
-              <span class="hljs-keyword">var</span> key = music.getNoteParts(keyString.split(<span class="hljs-string">'/'</span>)[<span class="hljs-number">0</span>]);</pre></div>
+          <div class='highlight'><pre>        note.keys.forEach((keyString, keyIndex) =&gt; {
+          <span class="hljs-keyword">const</span> key = music.getNoteParts(keyString.split(<span class="hljs-string">'/'</span>)[<span class="hljs-number">0</span>]);</pre></div>
         
       
         
         <p>Force a natural for every key without an accidental</p>
 
         
-          <div class='highlight'><pre>              <span class="hljs-keyword">var</span> accidentalString = key.accidental || <span class="hljs-string">"n"</span>;
-              <span class="hljs-keyword">var</span> pitch = key.root + accidentalString;</pre></div>
+          <div class='highlight'><pre>          <span class="hljs-keyword">const</span> accidentalString = key.accidental || <span class="hljs-string">'n'</span>;
+          <span class="hljs-keyword">const</span> pitch = key.root + accidentalString;</pre></div>
         
       
         
@@ -1043,7 +1138,7 @@ applied</p>
 as the scale state</p>
 
         
-          <div class='highlight'><pre>              <span class="hljs-keyword">var</span> sameAccidental = scaleMap[key.root] === pitch;</pre></div>
+          <div class='highlight'><pre>          <span class="hljs-keyword">const</span> sameAccidental = scaleMap[key.root] === pitch;</pre></div>
         
       
         
@@ -1051,14 +1146,14 @@ as the scale state</p>
 modified the accidental state</p>
 
         
-          <div class='highlight'><pre>              <span class="hljs-keyword">var</span> previouslyModified = modifiedPitches.indexOf(pitch) &gt; -<span class="hljs-number">1</span>;</pre></div>
+          <div class='highlight'><pre>          <span class="hljs-keyword">const</span> previouslyModified = modifiedPitches.indexOf(pitch) &gt; <span class="hljs-number">-1</span>;</pre></div>
         
       
         
         <p>Add the accidental to the StaveNote</p>
 
         
-          <div class='highlight'><pre>              <span class="hljs-keyword">if</span> (!sameAccidental || (sameAccidental &amp;&amp; previouslyModified)) {</pre></div>
+          <div class='highlight'><pre>          <span class="hljs-keyword">if</span> (!sameAccidental || (sameAccidental &amp;&amp; previouslyModified)) {</pre></div>
         
       
         
@@ -1066,30 +1161,30 @@ modified the accidental state</p>
 updated state</p>
 
         
-          <div class='highlight'><pre>                  scaleMap[key.root] = pitch;</pre></div>
+          <div class='highlight'><pre>            scaleMap[key.root] = pitch;</pre></div>
         
       
         
         <p>Create the accidental</p>
 
         
-          <div class='highlight'><pre>                  <span class="hljs-keyword">var</span> accidental = <span class="hljs-keyword">new</span> Accidental(accidentalString);</pre></div>
+          <div class='highlight'><pre>            <span class="hljs-keyword">const</span> accidental = <span class="hljs-keyword">new</span> Accidental(accidentalString);</pre></div>
         
       
         
         <p>Attach the accidental to the StaveNote</p>
 
         
-          <div class='highlight'><pre>                  note.addAccidental(keyIndex, accidental);</pre></div>
+          <div class='highlight'><pre>            note.addAccidental(keyIndex, accidental);</pre></div>
         
       
         
         <p>Add the pitch to list of pitches that modified accidentals</p>
 
         
-          <div class='highlight'><pre>                  modifiedPitches.push(pitch);
-              }
-          });
+          <div class='highlight'><pre>            modifiedPitches.push(pitch);
+          }
+        });
       });
     });
   }</pre></div>
@@ -1101,9 +1196,11 @@ updated state</p>
 example: <code>#</code>, <code>##</code>, <code>b</code>, <code>n</code>, etc.</p>
 
         
-          <div class='highlight'><pre>  constructor(type = <span class="hljs-literal">null</span>) {
-    super();
-    L(<span class="hljs-string">"New accidental: "</span>, type);
+          <div class='highlight'><pre>  <span class="hljs-keyword">constructor</span>(type = null) {
+    <span class="hljs-keyword">super</span>();
+    <span class="hljs-keyword">this</span>.setAttribute(<span class="hljs-string">'type'</span>, <span class="hljs-string">'Accidental'</span>);
+
+    L(<span class="hljs-string">'New accidental: '</span>, type);
 
     <span class="hljs-keyword">this</span>.note = <span class="hljs-literal">null</span>;</pre></div>
         
@@ -1130,11 +1227,13 @@ example: <code>#</code>, <code>##</code>, <code>b</code>, <code>n</code>, etc.</
         <p>Length of stroke across heads above or below the stave.</p>
 
         
-          <div class='highlight'><pre>      stroke_px: <span class="hljs-number">3</span>
+          <div class='highlight'><pre>      stroke_px: <span class="hljs-number">3</span>,
     };
 
     <span class="hljs-keyword">this</span>.accidental = Flow.accidentalCodes(<span class="hljs-keyword">this</span>.type);
-    <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.accidental) <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RERR(<span class="hljs-string">"ArgumentError"</span>, <span class="hljs-string">"Unknown accidental type: "</span> + type);</pre></div>
+    <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.accidental) {
+      <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RERR(<span class="hljs-string">'ArgumentError'</span>, <span class="hljs-string">`Unknown accidental type: <span class="hljs-subst">${type}</span>`</span>);
+    }</pre></div>
         
       
         
@@ -1142,8 +1241,8 @@ example: <code>#</code>, <code>##</code>, <code>b</code>, <code>n</code>, etc.</
 
         
           <div class='highlight'><pre>    <span class="hljs-keyword">this</span>.cautionary = <span class="hljs-literal">false</span>;
-    <span class="hljs-keyword">this</span>.paren_left = <span class="hljs-literal">null</span>;
-    <span class="hljs-keyword">this</span>.paren_right = <span class="hljs-literal">null</span>;</pre></div>
+    <span class="hljs-keyword">this</span>.parenLeft = <span class="hljs-literal">null</span>;
+    <span class="hljs-keyword">this</span>.parenRight = <span class="hljs-literal">null</span>;</pre></div>
         
       
         
@@ -1160,8 +1259,11 @@ example: <code>#</code>, <code>##</code>, <code>b</code>, <code>n</code>, etc.</
         <p>Attach this accidental to <code>note</code>, which must be a <code>StaveNote</code>.</p>
 
         
-          <div class='highlight'><pre>  setNote(note){
-    <span class="hljs-keyword">if</span> (!note) <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RERR(<span class="hljs-string">"ArgumentError"</span>, <span class="hljs-string">"Bad note value: "</span> + note);
+          <div class='highlight'><pre>  setNote(note) {
+    <span class="hljs-keyword">if</span> (!note) {
+      <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RERR(<span class="hljs-string">'ArgumentError'</span>, <span class="hljs-string">`Bad note value: <span class="hljs-subst">${note}</span>`</span>);
+    }
+
     <span class="hljs-keyword">this</span>.note = note;</pre></div>
         
       
@@ -1183,16 +1285,22 @@ example: <code>#</code>, <code>##</code>, <code>b</code>, <code>n</code>, etc.</
           <div class='highlight'><pre>  setAsCautionary() {
     <span class="hljs-keyword">this</span>.cautionary = <span class="hljs-literal">true</span>;
     <span class="hljs-keyword">this</span>.render_options.font_scale = <span class="hljs-number">28</span>;
-    <span class="hljs-keyword">this</span>.paren_left = Flow.accidentalCodes(<span class="hljs-string">"{"</span>);
-    <span class="hljs-keyword">this</span>.paren_right = Flow.accidentalCodes(<span class="hljs-string">"}"</span>);
-    <span class="hljs-keyword">var</span> width_adjust = (<span class="hljs-keyword">this</span>.type == <span class="hljs-string">"##"</span> || <span class="hljs-keyword">this</span>.type == <span class="hljs-string">"bb"</span>) ? <span class="hljs-number">6</span> : <span class="hljs-number">4</span>;</pre></div>
+    <span class="hljs-keyword">this</span>.parenLeft = Flow.accidentalCodes(<span class="hljs-string">'{'</span>);
+    <span class="hljs-keyword">this</span>.parenRight = Flow.accidentalCodes(<span class="hljs-string">'}'</span>);
+    <span class="hljs-keyword">const</span> widthAdjust = (<span class="hljs-keyword">this</span>.type === <span class="hljs-string">'##'</span> || <span class="hljs-keyword">this</span>.type === <span class="hljs-string">'bb'</span>) ? <span class="hljs-number">6</span> : <span class="hljs-number">4</span>;</pre></div>
         
       
         
         <p>Make sure <code>width</code> accomodates for parentheses.</p>
 
         
-          <div class='highlight'><pre>    <span class="hljs-keyword">this</span>.setWidth(<span class="hljs-keyword">this</span>.paren_left.width + <span class="hljs-keyword">this</span>.accidental.width + <span class="hljs-keyword">this</span>.paren_right.width - width_adjust);
+          <div class='highlight'><pre>    <span class="hljs-keyword">this</span>.setWidth(
+      <span class="hljs-keyword">this</span>.parenLeft.width
+      + <span class="hljs-keyword">this</span>.accidental.width
+      + <span class="hljs-keyword">this</span>.parenRight.width
+      - widthAdjust
+    );
+
     <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
   }</pre></div>
         
@@ -1202,30 +1310,40 @@ example: <code>#</code>, <code>##</code>, <code>b</code>, <code>n</code>, etc.</
 
         
           <div class='highlight'><pre>  draw() {
-    <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.context) <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RERR(<span class="hljs-string">"NoContext"</span>,
-      <span class="hljs-string">"Can't draw accidental without a context."</span>);
-    <span class="hljs-keyword">if</span> (!(<span class="hljs-keyword">this</span>.note &amp;&amp; (<span class="hljs-keyword">this</span>.index != <span class="hljs-literal">null</span>))) <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RERR(<span class="hljs-string">"NoAttachedNote"</span>,
-      <span class="hljs-string">"Can't draw accidental without a note and index."</span>);</pre></div>
+    <span class="hljs-keyword">const</span> {
+      context,
+      type, position, note, index, cautionary,
+      x_shift, y_shift, width,
+      accidental, parenLeft, parenRight,
+      render_options: { font_scale },
+    } = <span class="hljs-keyword">this</span>;
+
+    <span class="hljs-keyword">this</span>.checkContext();
+
+    <span class="hljs-keyword">if</span> (!(note &amp;&amp; (index != <span class="hljs-literal">null</span>))) {
+      <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RERR(<span class="hljs-string">'NoAttachedNote'</span>, <span class="hljs-string">"Can't draw accidental without a note and index."</span>);
+    }</pre></div>
         
       
         
-        <p>Figure out the start <code>x</code> and <code>y</code> coordinates for this note and index.</p>
+        <p>Figure out the start <code>x</code> and <code>y</code> coordinates for note and index.</p>
 
         
-          <div class='highlight'><pre>    <span class="hljs-keyword">var</span> start = <span class="hljs-keyword">this</span>.note.getModifierStartXY(<span class="hljs-keyword">this</span>.position, <span class="hljs-keyword">this</span>.index);
-    <span class="hljs-keyword">var</span> acc_x = ((start.x + <span class="hljs-keyword">this</span>.x_shift) - <span class="hljs-keyword">this</span>.width);
-    <span class="hljs-keyword">var</span> acc_y = start.y + <span class="hljs-keyword">this</span>.y_shift;
-    L(<span class="hljs-string">"Rendering: "</span>, <span class="hljs-keyword">this</span>.type, acc_x, acc_y);
+          <div class='highlight'><pre>    <span class="hljs-keyword">const</span> start = note.getModifierStartXY(position, index);
+    <span class="hljs-keyword">let</span> accX = ((start.x + x_shift) - width);
+    <span class="hljs-keyword">const</span> accY = start.y + y_shift;
+    L(<span class="hljs-string">'Rendering: '</span>, type, accX, accY);
 
-    <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.cautionary) {</pre></div>
+    <span class="hljs-keyword">const</span> renderGlyphToContext = Glyph.renderGlyph.bind(<span class="hljs-literal">null</span>, context);
+
+    <span class="hljs-keyword">if</span> (!cautionary) {</pre></div>
         
       
         
         <p>Render the accidental alone.</p>
 
         
-          <div class='highlight'><pre>      Glyph.renderGlyph(<span class="hljs-keyword">this</span>.context, acc_x, acc_y,
-                           <span class="hljs-keyword">this</span>.render_options.font_scale, <span class="hljs-keyword">this</span>.accidental.code);
+          <div class='highlight'><pre>      renderGlyphToContext(accX, accY, font_scale, accidental.code);
     } <span class="hljs-keyword">else</span> {</pre></div>
         
       
@@ -1233,17 +1351,16 @@ example: <code>#</code>, <code>##</code>, <code>b</code>, <code>n</code>, etc.</
         <p>Render the accidental in parentheses.</p>
 
         
-          <div class='highlight'><pre>      acc_x += <span class="hljs-number">3</span>;
-      Glyph.renderGlyph(<span class="hljs-keyword">this</span>.context, acc_x, acc_y,
-                           <span class="hljs-keyword">this</span>.render_options.font_scale, <span class="hljs-keyword">this</span>.paren_left.code);
-      acc_x += <span class="hljs-number">2</span>;
-      Glyph.renderGlyph(<span class="hljs-keyword">this</span>.context, acc_x, acc_y,
-                           <span class="hljs-keyword">this</span>.render_options.font_scale, <span class="hljs-keyword">this</span>.accidental.code);
-      acc_x += <span class="hljs-keyword">this</span>.accidental.width - <span class="hljs-number">2</span>;
-      <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.type == <span class="hljs-string">"##"</span> || <span class="hljs-keyword">this</span>.type == <span class="hljs-string">"bb"</span>) acc_x -= <span class="hljs-number">2</span>;
-      Glyph.renderGlyph(<span class="hljs-keyword">this</span>.context, acc_x, acc_y,
-                           <span class="hljs-keyword">this</span>.render_options.font_scale, <span class="hljs-keyword">this</span>.paren_right.code);
+          <div class='highlight'><pre>      accX += <span class="hljs-number">3</span>;
+      renderGlyphToContext(accX, accY, font_scale, parenLeft.code);
+      accX += <span class="hljs-number">2</span>;
+      renderGlyphToContext(accX, accY, font_scale, accidental.code);
+      accX += accidental.width - <span class="hljs-number">2</span>;
+      <span class="hljs-keyword">if</span> (type === <span class="hljs-string">'##'</span> || type === <span class="hljs-string">'bb'</span>) accX -= <span class="hljs-number">2</span>;
+      renderGlyphToContext(accX, accY, font_scale, parenRight.code);
     }
+
+    <span class="hljs-keyword">this</span>.setRendered();
   }
 }</pre></div>
         

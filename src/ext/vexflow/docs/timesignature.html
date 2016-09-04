@@ -121,6 +121,27 @@
               
                 
                 <li>
+                  <a class="source" href="easyscore.html">
+                    easyscore.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="element.html">
+                    element.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="factory.html">
+                    factory.js
+                  </a>
+                </li>
+              
+                
+                <li>
                   <a class="source" href="formatter.html">
                     formatter.js
                   </a>
@@ -165,6 +186,13 @@
                 <li>
                   <a class="source" href="gracenotegroup.html">
                     gracenotegroup.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="gracetabnote.html">
+                    gracetabnote.js
                   </a>
                 </li>
               
@@ -226,8 +254,22 @@
               
                 
                 <li>
+                  <a class="source" href="notesubgroup.html">
+                    notesubgroup.js
+                  </a>
+                </li>
+              
+                
+                <li>
                   <a class="source" href="ornament.html">
                     ornament.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="parser.html">
+                    parser.js
                   </a>
                 </li>
               
@@ -242,6 +284,13 @@
                 <li>
                   <a class="source" href="raphaelcontext.html">
                     raphaelcontext.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="registry.html">
+                    registry.js
                   </a>
                 </li>
               
@@ -380,6 +429,13 @@
               
                 
                 <li>
+                  <a class="source" href="system.html">
+                    system.js
+                  </a>
+                </li>
+              
+                
+                <li>
                   <a class="source" href="tables.html">
                     tables.js
                   </a>
@@ -499,6 +555,13 @@
               
                 
                 <li>
+                  <a class="source" href="vibratobracket.html">
+                    vibratobracket.js
+                  </a>
+                </li>
+              
+                
+                <li>
                   <a class="source" href="voice.html">
                     voice.js
                   </a>
@@ -526,33 +589,54 @@ representation</p>
 
         
           <div class='highlight'><pre>
-import { Vex } from <span class="hljs-string">'./vex'</span>;
-import { Glyph } from <span class="hljs-string">'./glyph'</span>;
-import { StaveModifier } from <span class="hljs-string">'./stavemodifier'</span>;
+<span class="hljs-keyword">import</span> { Vex } <span class="hljs-keyword">from</span> <span class="hljs-string">'./vex'</span>;
+<span class="hljs-keyword">import</span> { Glyph } <span class="hljs-keyword">from</span> <span class="hljs-string">'./glyph'</span>;
+<span class="hljs-keyword">import</span> { StaveModifier } <span class="hljs-keyword">from</span> <span class="hljs-string">'./stavemodifier'</span>;
 
-export <span class="hljs-keyword">class</span> TimeSignature extends StaveModifier {
-  static get CATEGORY() { <span class="hljs-keyword">return</span> <span class="hljs-string">'timesignatures'</span>; }
-  static get glyphs() {
+<span class="hljs-keyword">const</span> assertIsValidFraction = (timeSpec) =&gt; {
+  <span class="hljs-keyword">const</span> numbers = timeSpec.split(<span class="hljs-string">'/'</span>).filter(number =&gt; number !== <span class="hljs-string">''</span>);
+
+  <span class="hljs-keyword">if</span> (numbers.length !== <span class="hljs-number">2</span>) {
+    <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RERR(
+      <span class="hljs-string">'BadTimeSignature'</span>,
+      <span class="hljs-string">`Invalid time spec: <span class="hljs-subst">${timeSpec}</span>. Must be in the form "&lt;numerator&gt;/&lt;denominator&gt;"`</span>
+    );
+  }
+
+  numbers.forEach(number =&gt; {
+    <span class="hljs-keyword">if</span> (<span class="hljs-built_in">isNaN</span>(<span class="hljs-built_in">Number</span>(number))) {
+      <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RERR(
+        <span class="hljs-string">'BadTimeSignature'</span>, <span class="hljs-string">`Invalid time spec: <span class="hljs-subst">${timeSpec}</span>. Must contain two valid numbers.`</span>
+      );
+    }
+  });
+};
+
+<span class="hljs-keyword">export</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">TimeSignature</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">StaveModifier</span> </span>{
+  <span class="hljs-keyword">static</span> get CATEGORY() { <span class="hljs-keyword">return</span> <span class="hljs-string">'timesignatures'</span>; }
+
+  <span class="hljs-keyword">static</span> get glyphs() {
     <span class="hljs-keyword">return</span> {
-      <span class="hljs-string">"C"</span>: {
-        code: <span class="hljs-string">"v41"</span>,
+      <span class="hljs-string">'C'</span>: {
+        code: <span class="hljs-string">'v41'</span>,
         point: <span class="hljs-number">40</span>,
-        line: <span class="hljs-number">2</span>
+        line: <span class="hljs-number">2</span>,
       },
-      <span class="hljs-string">"C|"</span>: {
-        code: <span class="hljs-string">"vb6"</span>,
+      <span class="hljs-string">'C|'</span>: {
+        code: <span class="hljs-string">'vb6'</span>,
         point: <span class="hljs-number">40</span>,
-        line: <span class="hljs-number">2</span>
-      }
+        line: <span class="hljs-number">2</span>,
+      },
     };
   }
 
-  constructor(timeSpec = <span class="hljs-literal">null</span>, customPadding = <span class="hljs-number">15</span>) {
-    super();
-    <span class="hljs-keyword">if</span>(timeSpec === <span class="hljs-literal">null</span>) {
-      <span class="hljs-keyword">return</span>;
-    }
-    <span class="hljs-keyword">var</span> padding = customPadding;
+  <span class="hljs-keyword">constructor</span>(timeSpec = null, customPadding = 15) {
+    <span class="hljs-keyword">super</span>();
+    <span class="hljs-keyword">this</span>.setAttribute(<span class="hljs-string">'type'</span>, <span class="hljs-string">'TimeSignature'</span>);
+
+    <span class="hljs-keyword">if</span> (timeSpec === <span class="hljs-literal">null</span>) <span class="hljs-keyword">return</span>;
+
+    <span class="hljs-keyword">const</span> padding = customPadding;
 
     <span class="hljs-keyword">this</span>.point = <span class="hljs-number">40</span>;
     <span class="hljs-keyword">this</span>.topLine = <span class="hljs-number">2</span>;
@@ -566,118 +650,89 @@ export <span class="hljs-keyword">class</span> TimeSignature extends StaveModifi
   getCategory() { <span class="hljs-keyword">return</span> TimeSignature.CATEGORY; }
 
   parseTimeSpec(timeSpec) {
-    <span class="hljs-keyword">if</span> (timeSpec == <span class="hljs-string">"C"</span> || timeSpec == <span class="hljs-string">"C|"</span>) {
-      <span class="hljs-keyword">var</span> glyphInfo = TimeSignature.glyphs[timeSpec];
-      <span class="hljs-keyword">return</span> {num: <span class="hljs-literal">false</span>, line: glyphInfo.line,
-        glyph: <span class="hljs-keyword">new</span> Glyph(glyphInfo.code, glyphInfo.point)};
+    <span class="hljs-keyword">if</span> (timeSpec === <span class="hljs-string">'C'</span> || timeSpec === <span class="hljs-string">'C|'</span>) {
+      <span class="hljs-keyword">const</span> { line, code, point } = TimeSignature.glyphs[timeSpec];
+      <span class="hljs-keyword">return</span> {
+        line,
+        num: <span class="hljs-literal">false</span>,
+        glyph: <span class="hljs-keyword">new</span> Glyph(code, point),
+      };
     }
 
-    <span class="hljs-keyword">var</span> topNums = [];
-    <span class="hljs-keyword">var</span> i, c;
-    <span class="hljs-keyword">for</span> (i = <span class="hljs-number">0</span>; i &lt; timeSpec.length; ++i) {
-      c = timeSpec.charAt(i);
-      <span class="hljs-keyword">if</span> (c == <span class="hljs-string">"/"</span>) {
-        <span class="hljs-keyword">break</span>;
-      }
-      <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-regexp">/[0-9]/</span>.test(c)) {
-        topNums.push(c);
-      }
-      <span class="hljs-keyword">else</span> {
-        <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RERR(<span class="hljs-string">"BadTimeSignature"</span>,
-            <span class="hljs-string">"Invalid time spec: "</span> + timeSpec);
-      }
-    }
+    assertIsValidFraction(timeSpec);
 
-    <span class="hljs-keyword">if</span> (i === <span class="hljs-number">0</span>) {
-      <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RERR(<span class="hljs-string">"BadTimeSignature"</span>,
-            <span class="hljs-string">"Invalid time spec: "</span> + timeSpec);
-    }</pre></div>
-        
-      
-        
-        <p>skip the “/“</p>
+    <span class="hljs-keyword">const</span> [topDigits, botDigits] = timeSpec
+      .split(<span class="hljs-string">'/'</span>)
+      .map(number =&gt; number.split(<span class="hljs-string">''</span>));
 
-        
-          <div class='highlight'><pre>    ++i;
-
-    <span class="hljs-keyword">if</span> (i == timeSpec.length) {
-      <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RERR(<span class="hljs-string">"BadTimeSignature"</span>,
-            <span class="hljs-string">"Invalid time spec: "</span> + timeSpec);
-    }
-
-
-    <span class="hljs-keyword">var</span> botNums = [];
-    <span class="hljs-keyword">for</span> (; i &lt; timeSpec.length; ++i) {
-      c = timeSpec.charAt(i);
-      <span class="hljs-keyword">if</span> (<span class="hljs-regexp">/[0-9]/</span>.test(c)) {
-        botNums.push(c);
-      }
-      <span class="hljs-keyword">else</span> {
-        <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RERR(<span class="hljs-string">"BadTimeSignature"</span>,
-            <span class="hljs-string">"Invalid time spec: "</span> + timeSpec);
-      }
-    }
-
-
-    <span class="hljs-keyword">return</span> {num: <span class="hljs-literal">true</span>, glyph: <span class="hljs-keyword">this</span>.makeTimeSignatureGlyph(topNums, botNums)};
+    <span class="hljs-keyword">return</span> {
+      num: <span class="hljs-literal">true</span>,
+      glyph: <span class="hljs-keyword">this</span>.makeTimeSignatureGlyph(topDigits, botDigits),
+    };
   }
 
-  makeTimeSignatureGlyph(topNums, botNums) {
-    <span class="hljs-keyword">var</span> glyph = <span class="hljs-keyword">new</span> Glyph(<span class="hljs-string">"v0"</span>, <span class="hljs-keyword">this</span>.point);
-    glyph[<span class="hljs-string">"topGlyphs"</span>] = [];
-    glyph[<span class="hljs-string">"botGlyphs"</span>] = [];
+  makeTimeSignatureGlyph(topDigits, botDigits) {
+    <span class="hljs-keyword">const</span> glyph = <span class="hljs-keyword">new</span> Glyph(<span class="hljs-string">'v0'</span>, <span class="hljs-keyword">this</span>.point);
+    glyph.topGlyphs = [];
+    glyph.botGlyphs = [];
 
-    <span class="hljs-keyword">var</span> topWidth = <span class="hljs-number">0</span>;
-    <span class="hljs-keyword">var</span> i, num;
-    <span class="hljs-keyword">for</span> (i = <span class="hljs-number">0</span>; i &lt; topNums.length; ++i) {
-      num = topNums[i];
-      <span class="hljs-keyword">var</span> topGlyph = <span class="hljs-keyword">new</span> Glyph(<span class="hljs-string">"v"</span> + num, <span class="hljs-keyword">this</span>.point);
+    <span class="hljs-keyword">let</span> topWidth = <span class="hljs-number">0</span>;
+    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> i = <span class="hljs-number">0</span>; i &lt; topDigits.length; ++i) {
+      <span class="hljs-keyword">const</span> num = topDigits[i];
+      <span class="hljs-keyword">const</span> topGlyph = <span class="hljs-keyword">new</span> Glyph(<span class="hljs-string">'v'</span> + num, <span class="hljs-keyword">this</span>.point);
 
       glyph.topGlyphs.push(topGlyph);
       topWidth += topGlyph.getMetrics().width;
     }
 
-    <span class="hljs-keyword">var</span> botWidth = <span class="hljs-number">0</span>;
-    <span class="hljs-keyword">for</span> (i = <span class="hljs-number">0</span>; i &lt; botNums.length; ++i) {
-      num = botNums[i];
-      <span class="hljs-keyword">var</span> botGlyph = <span class="hljs-keyword">new</span> Glyph(<span class="hljs-string">"v"</span> + num, <span class="hljs-keyword">this</span>.point);
+    <span class="hljs-keyword">let</span> botWidth = <span class="hljs-number">0</span>;
+    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> i = <span class="hljs-number">0</span>; i &lt; botDigits.length; ++i) {
+      <span class="hljs-keyword">const</span> num = botDigits[i];
+      <span class="hljs-keyword">const</span> botGlyph = <span class="hljs-keyword">new</span> Glyph(<span class="hljs-string">'v'</span> + num, <span class="hljs-keyword">this</span>.point);
 
       glyph.botGlyphs.push(botGlyph);
       botWidth += botGlyph.getMetrics().width;
     }
 
-    <span class="hljs-keyword">var</span> width = (topWidth &gt; botWidth ? topWidth : botWidth);
-    <span class="hljs-keyword">var</span> xMin = glyph.getMetrics().x_min;
+    <span class="hljs-keyword">const</span> width = topWidth &gt; botWidth ? topWidth : botWidth;
+    <span class="hljs-keyword">const</span> xMin = glyph.getMetrics().x_min;
 
-    glyph.getMetrics = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
-      <span class="hljs-keyword">return</span> {
-        x_min: xMin,
-        x_max: xMin + width,
-        width: width
-      };
-    };
+    glyph.getMetrics = () =&gt; ({
+      x_min: xMin,
+      x_max: xMin + width,
+      width,
+    });
 
-    <span class="hljs-keyword">var</span> topStartX = (width - topWidth) / <span class="hljs-number">2.0</span>;
-    <span class="hljs-keyword">var</span> botStartX = (width - botWidth) / <span class="hljs-number">2.0</span>;
+    <span class="hljs-keyword">const</span> topStartX = (width - topWidth) / <span class="hljs-number">2.0</span>;
+    <span class="hljs-keyword">const</span> botStartX = (width - botWidth) / <span class="hljs-number">2.0</span>;
 
-    <span class="hljs-keyword">var</span> that = <span class="hljs-keyword">this</span>;
-    glyph.renderToStave = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(x)</span> {</span>
-      <span class="hljs-keyword">var</span> start_x = x + topStartX;
-      <span class="hljs-keyword">var</span> i, g;
-      <span class="hljs-keyword">for</span> (i = <span class="hljs-number">0</span>; i &lt; <span class="hljs-keyword">this</span>.topGlyphs.length; ++i) {
-        g = <span class="hljs-keyword">this</span>.topGlyphs[i];
-        Glyph.renderOutline(<span class="hljs-keyword">this</span>.context, g.metrics.outline,
-            g.scale, start_x + g.x_shift, <span class="hljs-keyword">this</span>.stave.getYForLine(that.topLine) + <span class="hljs-number">1</span>);
-        start_x += g.getMetrics().width;
+    <span class="hljs-keyword">const</span> that = <span class="hljs-keyword">this</span>;
+    glyph.renderToStave = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">renderToStave</span>(<span class="hljs-params">x</span>) </span>{
+      <span class="hljs-keyword">let</span> start_x = x + topStartX;
+      <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> i = <span class="hljs-number">0</span>; i &lt; <span class="hljs-keyword">this</span>.topGlyphs.length; ++i) {
+        <span class="hljs-keyword">const</span> glyph = <span class="hljs-keyword">this</span>.topGlyphs[i];
+        Glyph.renderOutline(
+          <span class="hljs-keyword">this</span>.context,
+          glyph.metrics.outline,
+          glyph.scale,
+          start_x + glyph.x_shift,
+          <span class="hljs-keyword">this</span>.stave.getYForLine(that.topLine) + <span class="hljs-number">1</span>
+        );
+        start_x += glyph.getMetrics().width;
       }
 
       start_x = x + botStartX;
-      <span class="hljs-keyword">for</span> (i = <span class="hljs-number">0</span>; i &lt; <span class="hljs-keyword">this</span>.botGlyphs.length; ++i) {
-        g = <span class="hljs-keyword">this</span>.botGlyphs[i];
-        that.placeGlyphOnLine(g, <span class="hljs-keyword">this</span>.stave, g.line);
-        Glyph.renderOutline(<span class="hljs-keyword">this</span>.context, g.metrics.outline,
-            g.scale, start_x + g.x_shift, <span class="hljs-keyword">this</span>.stave.getYForLine(that.bottomLine) + <span class="hljs-number">1</span>);
-        start_x += g.getMetrics().width;
+      <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> i = <span class="hljs-number">0</span>; i &lt; <span class="hljs-keyword">this</span>.botGlyphs.length; ++i) {
+        <span class="hljs-keyword">const</span> glyph = <span class="hljs-keyword">this</span>.botGlyphs[i];
+        that.placeGlyphOnLine(glyph, <span class="hljs-keyword">this</span>.stave, glyph.line);
+        Glyph.renderOutline(
+          <span class="hljs-keyword">this</span>.context,
+          glyph.metrics.outline,
+          glyph.scale,
+          start_x + glyph.x_shift,
+          <span class="hljs-keyword">this</span>.stave.getYForLine(that.bottomLine) + <span class="hljs-number">1</span>
+        );
+        start_x += glyph.getMetrics().width;
       }
     };
 
@@ -694,9 +749,15 @@ export <span class="hljs-keyword">class</span> TimeSignature extends StaveModifi
   }
 
   draw() {
-    <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.x) <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RERR(<span class="hljs-string">"TimeSignatureError"</span>, <span class="hljs-string">"Can't draw time signature without x."</span>);
-    <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.stave) <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RERR(<span class="hljs-string">"TimeSignatureError"</span>, <span class="hljs-string">"Can't draw time signature without stave."</span>);
+    <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.x) {
+      <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RERR(<span class="hljs-string">'TimeSignatureError'</span>, <span class="hljs-string">"Can't draw time signature without x."</span>);
+    }
 
+    <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.stave) {
+      <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RERR(<span class="hljs-string">'TimeSignatureError'</span>, <span class="hljs-string">"Can't draw time signature without stave."</span>);
+    }
+
+    <span class="hljs-keyword">this</span>.setRendered();
     <span class="hljs-keyword">this</span>.timeSig.glyph.setStave(<span class="hljs-keyword">this</span>.stave);
     <span class="hljs-keyword">this</span>.timeSig.glyph.setContext(<span class="hljs-keyword">this</span>.stave.context);
     <span class="hljs-keyword">this</span>.placeGlyphOnLine(<span class="hljs-keyword">this</span>.timeSig.glyph, <span class="hljs-keyword">this</span>.stave, <span class="hljs-keyword">this</span>.timeSig.line);

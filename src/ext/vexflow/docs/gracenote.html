@@ -121,6 +121,27 @@
               
                 
                 <li>
+                  <a class="source" href="easyscore.html">
+                    easyscore.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="element.html">
+                    element.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="factory.html">
+                    factory.js
+                  </a>
+                </li>
+              
+                
+                <li>
                   <a class="source" href="formatter.html">
                     formatter.js
                   </a>
@@ -165,6 +186,13 @@
                 <li>
                   <a class="source" href="gracenotegroup.html">
                     gracenotegroup.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="gracetabnote.html">
+                    gracetabnote.js
                   </a>
                 </li>
               
@@ -226,8 +254,22 @@
               
                 
                 <li>
+                  <a class="source" href="notesubgroup.html">
+                    notesubgroup.js
+                  </a>
+                </li>
+              
+                
+                <li>
                   <a class="source" href="ornament.html">
                     ornament.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="parser.html">
+                    parser.js
                   </a>
                 </li>
               
@@ -242,6 +284,13 @@
                 <li>
                   <a class="source" href="raphaelcontext.html">
                     raphaelcontext.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="registry.html">
+                    registry.js
                   </a>
                 </li>
               
@@ -380,6 +429,13 @@
               
                 
                 <li>
+                  <a class="source" href="system.html">
+                    system.js
+                  </a>
+                </li>
+              
+                
+                <li>
                   <a class="source" href="tables.html">
                     tables.js
                   </a>
@@ -499,6 +555,13 @@
               
                 
                 <li>
+                  <a class="source" href="vibratobracket.html">
+                    vibratobracket.js
+                  </a>
+                </li>
+              
+                
+                <li>
                   <a class="source" href="voice.html">
                     voice.js
                   </a>
@@ -522,19 +585,20 @@
 
         
           <div class='highlight'><pre>
-import { Vex } from <span class="hljs-string">'./vex'</span>;
-import { StaveNote } from <span class="hljs-string">'./stavenote'</span>;
+<span class="hljs-keyword">import</span> { StaveNote } <span class="hljs-keyword">from</span> <span class="hljs-string">'./stavenote'</span>;
+<span class="hljs-keyword">import</span> { Flow } <span class="hljs-keyword">from</span> <span class="hljs-string">'./tables'</span>;
 
-export <span class="hljs-keyword">class</span> GraceNote extends StaveNote {
-  static get CATEGORY() { <span class="hljs-keyword">return</span> <span class="hljs-string">'gracenotes'</span>; }
+<span class="hljs-keyword">export</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">GraceNote</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">StaveNote</span> </span>{
+  <span class="hljs-keyword">static</span> get CATEGORY() { <span class="hljs-keyword">return</span> <span class="hljs-string">'gracenotes'</span>; }
+  <span class="hljs-keyword">static</span> get LEDGER_LINE_OFFSET() { <span class="hljs-keyword">return</span> <span class="hljs-number">2</span>; }
+  <span class="hljs-keyword">static</span> get SCALE() { <span class="hljs-keyword">return</span> <span class="hljs-number">0.66</span>; }
 
-  constructor(note_struct) {
-    super(note_struct);
-
-    <span class="hljs-keyword">this</span>.render_options.glyph_font_scale = <span class="hljs-number">22</span>;
-    <span class="hljs-keyword">this</span>.render_options.stem_height = <span class="hljs-number">20</span>;
-    <span class="hljs-keyword">this</span>.render_options.stroke_px = <span class="hljs-number">2</span>;
-    <span class="hljs-keyword">this</span>.glyph.head_width = <span class="hljs-number">6</span>;
+  <span class="hljs-keyword">constructor</span>(note_struct) {
+    <span class="hljs-keyword">super</span>(<span class="hljs-built_in">Object</span>.assign(note_struct, {
+      glyph_font_scale: Flow.DEFAULT_NOTATION_FONT_SCALE * GraceNote.SCALE,
+      stroke_px: GraceNote.LEDGER_LINE_OFFSET,
+    }));
+    <span class="hljs-keyword">this</span>.setAttribute(<span class="hljs-string">'type'</span>, <span class="hljs-string">'GraceNote'</span>);
 
     <span class="hljs-keyword">this</span>.slash = note_struct.slash;
     <span class="hljs-keyword">this</span>.slur = <span class="hljs-literal">true</span>;
@@ -544,16 +608,17 @@ export <span class="hljs-keyword">class</span> GraceNote extends StaveNote {
     <span class="hljs-keyword">this</span>.width = <span class="hljs-number">3</span>;
   }
 
-  getStemExtension(){
-    <span class="hljs-keyword">var</span> glyph = <span class="hljs-keyword">this</span>.getGlyph();
+  getStemExtension() {
+    <span class="hljs-keyword">const</span> glyph = <span class="hljs-keyword">this</span>.getGlyph();
 
     <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.stem_extension_override != <span class="hljs-literal">null</span>) {
       <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.stem_extension_override;
     }
 
     <span class="hljs-keyword">if</span> (glyph) {
-      <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.getStemDirection() === <span class="hljs-number">1</span> ? glyph.gracenote_stem_up_extension :
-        glyph.gracenote_stem_down_extension;
+      <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.getStemDirection() === <span class="hljs-number">1</span>
+        ? glyph.gracenote_stem_up_extension
+        : glyph.gracenote_stem_down_extension;
     }
 
     <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
@@ -561,21 +626,22 @@ export <span class="hljs-keyword">class</span> GraceNote extends StaveNote {
 
   getCategory() { <span class="hljs-keyword">return</span> GraceNote.CATEGORY; }
 
-  draw(){
-    super.draw();
-    <span class="hljs-keyword">var</span> ctx = <span class="hljs-keyword">this</span>.context;
-    <span class="hljs-keyword">var</span> stem_direction = <span class="hljs-keyword">this</span>.getStemDirection();
+  draw() {
+    <span class="hljs-keyword">super</span>.draw();
+    <span class="hljs-keyword">this</span>.setRendered();
+    <span class="hljs-keyword">const</span> ctx = <span class="hljs-keyword">this</span>.context;
+    <span class="hljs-keyword">const</span> stem_direction = <span class="hljs-keyword">this</span>.getStemDirection();
 
     <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.slash) {
       ctx.beginPath();
 
-      <span class="hljs-keyword">var</span> x = <span class="hljs-keyword">this</span>.getAbsoluteX();
-      <span class="hljs-keyword">var</span> y = <span class="hljs-keyword">this</span>.getYs()[<span class="hljs-number">0</span>] - (<span class="hljs-keyword">this</span>.stem.getHeight() / <span class="hljs-number">2.8</span>);
+      <span class="hljs-keyword">let</span> x = <span class="hljs-keyword">this</span>.getAbsoluteX();
+      <span class="hljs-keyword">let</span> y = <span class="hljs-keyword">this</span>.getYs()[<span class="hljs-number">0</span>] - (<span class="hljs-keyword">this</span>.stem.getHeight() / <span class="hljs-number">2.8</span>);
       <span class="hljs-keyword">if</span> (stem_direction === <span class="hljs-number">1</span>) {
         x += <span class="hljs-number">1</span>;
         ctx.moveTo(x, y);
         ctx.lineTo(x + <span class="hljs-number">13</span>, y - <span class="hljs-number">9</span>);
-      } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (stem_direction === -<span class="hljs-number">1</span>) {
+      } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (stem_direction === <span class="hljs-number">-1</span>) {
         x -= <span class="hljs-number">4</span>;
         y += <span class="hljs-number">1</span>;
         ctx.moveTo(x, y);

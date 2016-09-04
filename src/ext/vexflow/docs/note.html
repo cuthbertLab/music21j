@@ -121,6 +121,27 @@
               
                 
                 <li>
+                  <a class="source" href="easyscore.html">
+                    easyscore.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="element.html">
+                    element.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="factory.html">
+                    factory.js
+                  </a>
+                </li>
+              
+                
+                <li>
                   <a class="source" href="formatter.html">
                     formatter.js
                   </a>
@@ -165,6 +186,13 @@
                 <li>
                   <a class="source" href="gracenotegroup.html">
                     gracenotegroup.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="gracetabnote.html">
+                    gracetabnote.js
                   </a>
                 </li>
               
@@ -226,8 +254,22 @@
               
                 
                 <li>
+                  <a class="source" href="notesubgroup.html">
+                    notesubgroup.js
+                  </a>
+                </li>
+              
+                
+                <li>
                   <a class="source" href="ornament.html">
                     ornament.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="parser.html">
+                    parser.js
                   </a>
                 </li>
               
@@ -242,6 +284,13 @@
                 <li>
                   <a class="source" href="raphaelcontext.html">
                     raphaelcontext.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="registry.html">
+                    registry.js
                   </a>
                 </li>
               
@@ -380,6 +429,13 @@
               
                 
                 <li>
+                  <a class="source" href="system.html">
+                    system.js
+                  </a>
+                </li>
+              
+                
+                <li>
                   <a class="source" href="tables.html">
                     tables.js
                   </a>
@@ -499,6 +555,13 @@
               
                 
                 <li>
+                  <a class="source" href="vibratobracket.html">
+                    vibratobracket.js
+                  </a>
+                </li>
+              
+                
+                <li>
                   <a class="source" href="voice.html">
                     voice.js
                   </a>
@@ -529,12 +592,13 @@ array of them. All notes also have a rendering context and belong to a stave.</p
 
         
           <div class='highlight'><pre>
-import { Vex } from <span class="hljs-string">'./vex'</span>;
-import { Flow } from <span class="hljs-string">'./tables'</span>;
-import { Tickable } from <span class="hljs-string">'./tickable'</span>;
+<span class="hljs-keyword">import</span> { Vex } <span class="hljs-keyword">from</span> <span class="hljs-string">'./vex'</span>;
+<span class="hljs-keyword">import</span> { Flow } <span class="hljs-keyword">from</span> <span class="hljs-string">'./tables'</span>;
+<span class="hljs-keyword">import</span> { Tickable } <span class="hljs-keyword">from</span> <span class="hljs-string">'./tickable'</span>;
 
-export <span class="hljs-keyword">class</span> Note extends Tickable {
-  static get CATEGORY() { <span class="hljs-keyword">return</span> <span class="hljs-string">'note'</span>; }</pre></div>
+<span class="hljs-keyword">export</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Note</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">Tickable</span> </span>{
+  <span class="hljs-keyword">static</span> get CATEGORY() { <span class="hljs-keyword">return</span> <span class="hljs-string">'note'</span>; }
+  <span class="hljs-keyword">static</span> get STAVEPADDING() { <span class="hljs-keyword">return</span> <span class="hljs-number">12</span>; }</pre></div>
         
       
         
@@ -542,39 +606,52 @@ export <span class="hljs-keyword">class</span> Note extends Tickable {
 note.</p>
 
         
-          <div class='highlight'><pre>  static plotMetrics(ctx, note, yPos) {
-    <span class="hljs-keyword">var</span> metrics = note.getMetrics();
-    <span class="hljs-keyword">var</span> w = metrics.width;
-    <span class="hljs-keyword">var</span> xStart = note.getAbsoluteX() - metrics.modLeftPx - metrics.extraLeftPx;
-    <span class="hljs-keyword">var</span> xPre1 = note.getAbsoluteX() - metrics.extraLeftPx;
-    <span class="hljs-keyword">var</span> xAbs = note.getAbsoluteX();
-    <span class="hljs-keyword">var</span> xPost1 = note.getAbsoluteX() + metrics.noteWidth;
-    <span class="hljs-keyword">var</span> xPost2 = note.getAbsoluteX() + metrics.noteWidth + metrics.extraRightPx;
-    <span class="hljs-keyword">var</span> xEnd = note.getAbsoluteX() + metrics.noteWidth + metrics.extraRightPx + metrics.modRightPx;
+          <div class='highlight'><pre>  <span class="hljs-keyword">static</span> plotMetrics(ctx, note, yPos) {
+    <span class="hljs-keyword">const</span> metrics = note.getMetrics();
+    <span class="hljs-keyword">const</span> xStart = note.getAbsoluteX() - metrics.modLeftPx - metrics.extraLeftPx;
+    <span class="hljs-keyword">const</span> xPre1 = note.getAbsoluteX() - metrics.extraLeftPx;
+    <span class="hljs-keyword">const</span> xAbs = note.getAbsoluteX();
+    <span class="hljs-keyword">const</span> xPost1 = note.getAbsoluteX() + metrics.noteWidth;
+    <span class="hljs-keyword">const</span> xPost2 = note.getAbsoluteX() + metrics.noteWidth + metrics.extraRightPx;
+    <span class="hljs-keyword">const</span> xEnd = note.getAbsoluteX()
+      + metrics.noteWidth
+      + metrics.extraRightPx
+      + metrics.modRightPx;
+    <span class="hljs-keyword">const</span> xFreedomRight = xEnd + note.getFormatterMetrics().freedom.right;
 
-    <span class="hljs-keyword">var</span> xWidth = xEnd - xStart;
+    <span class="hljs-keyword">const</span> xWidth = xEnd - xStart;
     ctx.save();
-    ctx.setFont(<span class="hljs-string">"Arial"</span>, <span class="hljs-number">8</span>, <span class="hljs-string">""</span>);
-    ctx.fillText(<span class="hljs-built_in">Math</span>.round(xWidth) + <span class="hljs-string">"px"</span>, xStart + note.getXShift(), yPos);
+    ctx.setFont(<span class="hljs-string">'Arial'</span>, <span class="hljs-number">8</span>, <span class="hljs-string">''</span>);
+    ctx.fillText(<span class="hljs-built_in">Math</span>.round(xWidth) + <span class="hljs-string">'px'</span>, xStart + note.getXShift(), yPos);
 
-    <span class="hljs-keyword">var</span> y = (yPos + <span class="hljs-number">7</span>);
-    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">stroke</span><span class="hljs-params">(x1, x2, color)</span> {</span>
+    <span class="hljs-keyword">const</span> y = (yPos + <span class="hljs-number">7</span>);
+    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">stroke</span>(<span class="hljs-params">x1, x2, color, yy = y</span>) </span>{
       ctx.beginPath();
       ctx.setStrokeStyle(color);
       ctx.setFillStyle(color);
       ctx.setLineWidth(<span class="hljs-number">3</span>);
-      ctx.moveTo(x1 + note.getXShift(), y);
-      ctx.lineTo(x2 + note.getXShift(), y);
+      ctx.moveTo(x1 + note.getXShift(), yy);
+      ctx.lineTo(x2 + note.getXShift(), yy);
       ctx.stroke();
     }
 
-    stroke(xStart, xPre1, <span class="hljs-string">"red"</span>);
-    stroke(xPre1, xAbs, <span class="hljs-string">"#999"</span>);
-    stroke(xAbs, xPost1, <span class="hljs-string">"green"</span>);
-    stroke(xPost1, xPost2, <span class="hljs-string">"#999"</span>);
-    stroke(xPost2, xEnd, <span class="hljs-string">"red"</span>);
-    stroke(xStart - note.getXShift(), xStart, <span class="hljs-string">"#DDD"</span>); <span class="hljs-comment">// Shift</span>
-    Vex.drawDot(ctx, xAbs + note.getXShift(), y, <span class="hljs-string">"blue"</span>);
+    stroke(xStart, xPre1, <span class="hljs-string">'red'</span>);
+    stroke(xPre1, xAbs, <span class="hljs-string">'#999'</span>);
+    stroke(xAbs, xPost1, <span class="hljs-string">'green'</span>);
+    stroke(xPost1, xPost2, <span class="hljs-string">'#999'</span>);
+    stroke(xPost2, xEnd, <span class="hljs-string">'red'</span>);
+    stroke(xEnd, xFreedomRight, <span class="hljs-string">'#DD0'</span>);
+    stroke(xStart - note.getXShift(), xStart, <span class="hljs-string">'#BBB'</span>); <span class="hljs-comment">// Shift</span>
+    Vex.drawDot(ctx, xAbs + note.getXShift(), y, <span class="hljs-string">'blue'</span>);
+
+    <span class="hljs-keyword">const</span> formatterMetrics = note.getFormatterMetrics();
+    <span class="hljs-keyword">if</span> (formatterMetrics.iterations &gt; <span class="hljs-number">0</span>) {
+      <span class="hljs-keyword">const</span> spaceDeviation = formatterMetrics.space.deviation;
+      <span class="hljs-keyword">const</span> prefix = spaceDeviation &gt;= <span class="hljs-number">0</span> ? <span class="hljs-string">'+'</span> : <span class="hljs-string">''</span>;
+      ctx.setFillStyle(<span class="hljs-string">'red'</span>);
+      ctx.fillText(prefix + <span class="hljs-built_in">Math</span>.round(spaceDeviation),
+        xAbs + note.getXShift(), yPos - <span class="hljs-number">10</span>);
+    }
     ctx.restore();
   }</pre></div>
         
@@ -590,13 +667,14 @@ of the following fields:</p>
 <p>The range of values for these parameters are available in <code>src/tables.js</code>.</p>
 
         
-          <div class='highlight'><pre>  constructor(note_struct) {
-    super();
+          <div class='highlight'><pre>  <span class="hljs-keyword">constructor</span>(note_struct) {
+    <span class="hljs-keyword">super</span>();
+    <span class="hljs-keyword">this</span>.setAttribute(<span class="hljs-string">'type'</span>, <span class="hljs-string">'Note'</span>);
 
     <span class="hljs-keyword">if</span> (!note_struct) {
-      <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RuntimeError(<span class="hljs-string">"BadArguments"</span>,
-          <span class="hljs-string">"Note must have valid initialization data to identify "</span> +
-          <span class="hljs-string">"duration and type."</span>);
+      <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RuntimeError(
+        <span class="hljs-string">'BadArguments'</span>, <span class="hljs-string">'Note must have valid initialization data to identify duration and type.'</span>
+      );
     }</pre></div>
         
       
@@ -604,10 +682,11 @@ of the following fields:</p>
         <p>Parse <code>note_struct</code> and get note properties.</p>
 
         
-          <div class='highlight'><pre>    <span class="hljs-keyword">var</span> initData = Flow.parseNoteData(note_struct);
+          <div class='highlight'><pre>    <span class="hljs-keyword">const</span> initData = Flow.parseNoteData(note_struct);
     <span class="hljs-keyword">if</span> (!initData) {
-      <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RuntimeError(<span class="hljs-string">"BadArguments"</span>,
-          <span class="hljs-string">"Invalid note initialization object: "</span> + <span class="hljs-built_in">JSON</span>.stringify(note_struct));
+      <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RuntimeError(
+        <span class="hljs-string">'BadArguments'</span>, <span class="hljs-string">`Invalid note initialization object: <span class="hljs-subst">${JSON.stringify(note_struct)}</span>`</span>
+      );
     }</pre></div>
         
       
@@ -646,10 +725,8 @@ of the following fields:</p>
         
           <div class='highlight'><pre>    <span class="hljs-keyword">this</span>.glyph = Flow.durationToGlyph(<span class="hljs-keyword">this</span>.duration, <span class="hljs-keyword">this</span>.noteType);
 
-    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.positions &amp;&amp;
-        (<span class="hljs-keyword">typeof</span>(<span class="hljs-keyword">this</span>.positions) != <span class="hljs-string">"object"</span> || !<span class="hljs-keyword">this</span>.positions.length)) {
-      <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RuntimeError(
-        <span class="hljs-string">"BadArguments"</span>, <span class="hljs-string">"Note keys must be array type."</span>);
+    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.positions &amp;&amp; (<span class="hljs-keyword">typeof</span>(<span class="hljs-keyword">this</span>.positions) !== <span class="hljs-string">'object'</span> || !<span class="hljs-keyword">this</span>.positions.length)) {
+      <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RuntimeError(<span class="hljs-string">'BadArguments'</span>, <span class="hljs-string">'Note keys must be array type.'</span>);
     }</pre></div>
         
       
@@ -698,11 +775,10 @@ of the following fields:</p>
         <p>The render surface.</p>
 
         
-          <div class='highlight'><pre>    <span class="hljs-keyword">this</span>.context = <span class="hljs-literal">null</span>;
-    <span class="hljs-keyword">this</span>.stave = <span class="hljs-literal">null</span>;
+          <div class='highlight'><pre>    <span class="hljs-keyword">this</span>.stave = <span class="hljs-literal">null</span>;
     <span class="hljs-keyword">this</span>.render_options = {
       annotation_spacing: <span class="hljs-number">5</span>,
-      stave_padding: <span class="hljs-number">12</span>
+      stave_padding: Note.STAVEPADDING,
     };
   }</pre></div>
         
@@ -800,7 +876,11 @@ a <code>ModifierContext</code>.</p>
         <p>Get the glyph associated with this note.</p>
 
         
-          <div class='highlight'><pre>  getGlyph() { <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.glyph; }</pre></div>
+          <div class='highlight'><pre>  getGlyph() { <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.glyph; }
+
+  getGlyphWidth() {
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.glyph.getWidth(<span class="hljs-keyword">this</span>.render_options.glyph_font_scale);
+  }</pre></div>
         
       
         
@@ -810,8 +890,10 @@ an individual pitch/key within the note/chord.</p>
         
           <div class='highlight'><pre>  setYs(ys) { <span class="hljs-keyword">this</span>.ys = ys; <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>; }
   getYs() {
-    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.ys.length === <span class="hljs-number">0</span>) <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RERR(<span class="hljs-string">"NoYValues"</span>,
-        <span class="hljs-string">"No Y-values calculated for this note."</span>);
+    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.ys.length === <span class="hljs-number">0</span>) {
+      <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RERR(<span class="hljs-string">'NoYValues'</span>, <span class="hljs-string">'No Y-values calculated for this note.'</span>);
+    }
+
     <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.ys;
   }</pre></div>
         
@@ -822,8 +904,10 @@ be rendered.</p>
 
         
           <div class='highlight'><pre>  getYForTopText(text_line) {
-    <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.stave) <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RERR(<span class="hljs-string">"NoStave"</span>,
-        <span class="hljs-string">"No stave attached to this note."</span>);
+    <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.stave) {
+      <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RERR(<span class="hljs-string">'NoStave'</span>, <span class="hljs-string">'No stave attached to this note.'</span>);
+    }
+
     <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.stave.getYForTopText(text_line);
   }</pre></div>
         
@@ -840,7 +924,7 @@ be rendered.</p>
 
         
           <div class='highlight'><pre>  getVoice() {
-    <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.voice) <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RERR(<span class="hljs-string">"NoVoice"</span>, <span class="hljs-string">"Note has no voice."</span>);
+    <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.voice) <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RERR(<span class="hljs-string">'NoVoice'</span>, <span class="hljs-string">'Note has no voice.'</span>);
     <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.voice;
   }</pre></div>
         
@@ -905,9 +989,14 @@ be rendered.</p>
 
         
           <div class='highlight'><pre>  getModifierStartXY() {
-    <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.preFormatted) <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RERR(<span class="hljs-string">"UnformattedNote"</span>,
-        <span class="hljs-string">"Can't call GetModifierStartXY on an unformatted note"</span>);
-    <span class="hljs-keyword">return</span> {x: <span class="hljs-keyword">this</span>.getAbsoluteX(), y: <span class="hljs-keyword">this</span>.ys[<span class="hljs-number">0</span>]};
+    <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.preFormatted) {
+      <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RERR(<span class="hljs-string">'UnformattedNote'</span>, <span class="hljs-string">"Can't call GetModifierStartXY on an unformatted note"</span>);
+    }
+
+    <span class="hljs-keyword">return</span> {
+      x: <span class="hljs-keyword">this</span>.getAbsoluteX(),
+      y: <span class="hljs-keyword">this</span>.ys[<span class="hljs-number">0</span>],
+    };
   }</pre></div>
         
       
@@ -924,37 +1013,39 @@ be rendered.</p>
 
         
           <div class='highlight'><pre>  getMetrics() {
-    <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.preFormatted) <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RERR(<span class="hljs-string">"UnformattedNote"</span>,
-        <span class="hljs-string">"Can't call getMetrics on an unformatted note."</span>);
-    <span class="hljs-keyword">var</span> modLeftPx = <span class="hljs-number">0</span>;
-    <span class="hljs-keyword">var</span> modRightPx = <span class="hljs-number">0</span>;
+    <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.preFormatted) {
+      <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RERR(<span class="hljs-string">'UnformattedNote'</span>, <span class="hljs-string">"Can't call getMetrics on an unformatted note."</span>);
+    }
+
+    <span class="hljs-keyword">let</span> modLeftPx = <span class="hljs-number">0</span>;
+    <span class="hljs-keyword">let</span> modRightPx = <span class="hljs-number">0</span>;
     <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.modifierContext != <span class="hljs-literal">null</span>) {
       modLeftPx = <span class="hljs-keyword">this</span>.modifierContext.state.left_shift;
       modRightPx = <span class="hljs-keyword">this</span>.modifierContext.state.right_shift;
     }
 
-    <span class="hljs-keyword">var</span> width = <span class="hljs-keyword">this</span>.getWidth();
-    <span class="hljs-keyword">return</span> { width: width,
-             noteWidth: width -
-                        modLeftPx - modRightPx -
-                        <span class="hljs-keyword">this</span>.extraLeftPx - <span class="hljs-keyword">this</span>.extraRightPx,
-             left_shift: <span class="hljs-keyword">this</span>.x_shift, <span class="hljs-comment">// TODO(0xfe): Make style consistent</span></pre></div>
+    <span class="hljs-keyword">const</span> width = <span class="hljs-keyword">this</span>.getWidth();
+    <span class="hljs-keyword">return</span> {
+      width,
+      noteWidth: width - modLeftPx - modRightPx - <span class="hljs-keyword">this</span>.extraLeftPx - <span class="hljs-keyword">this</span>.extraRightPx,
+      left_shift: <span class="hljs-keyword">this</span>.x_shift, <span class="hljs-comment">// TODO(0xfe): Make style consistent</span></pre></div>
         
       
         
         <p>Modifiers, accidentals etc.</p>
 
         
-          <div class='highlight'><pre>             modLeftPx: modLeftPx,
-             modRightPx: modRightPx,</pre></div>
+          <div class='highlight'><pre>      modLeftPx,
+      modRightPx,</pre></div>
         
       
         
         <p>Displaced note head on left or right.</p>
 
         
-          <div class='highlight'><pre>             extraLeftPx: <span class="hljs-keyword">this</span>.extraLeftPx,
-             extraRightPx: <span class="hljs-keyword">this</span>.extraRightPx };
+          <div class='highlight'><pre>      extraLeftPx: <span class="hljs-keyword">this</span>.extraLeftPx,
+      extraRightPx: <span class="hljs-keyword">this</span>.extraRightPx,
+    };
   }</pre></div>
         
       
@@ -964,10 +1055,11 @@ be rendered.</p>
         
           <div class='highlight'><pre>  setWidth(width) { <span class="hljs-keyword">this</span>.width = width; }
   getWidth() {
-    <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.preFormatted) <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RERR(<span class="hljs-string">"UnformattedNote"</span>,
-        <span class="hljs-string">"Can't call GetWidth on an unformatted note."</span>);
-    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.width +
-      (<span class="hljs-keyword">this</span>.modifierContext ?  <span class="hljs-keyword">this</span>.modifierContext.getWidth() : <span class="hljs-number">0</span>);
+    <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.preFormatted) {
+      <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RERR(<span class="hljs-string">'UnformattedNote'</span>, <span class="hljs-string">"Can't call GetWidth on an unformatted note."</span>);
+    }
+
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.width + (<span class="hljs-keyword">this</span>.modifierContext ? <span class="hljs-keyword">this</span>.modifierContext.getWidth() : <span class="hljs-number">0</span>);
   }</pre></div>
         
       
@@ -984,8 +1076,10 @@ be rendered.</p>
 
         
           <div class='highlight'><pre>  getX() {
-    <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.tickContext) <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RERR(<span class="hljs-string">"NoTickContext"</span>,
-        <span class="hljs-string">"Note needs a TickContext assigned for an X-Value"</span>);
+    <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.tickContext) {
+      <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RERR(<span class="hljs-string">'NoTickContext'</span>, <span class="hljs-string">'Note needs a TickContext assigned for an X-Value'</span>);
+    }
+
     <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.tickContext.getX() + <span class="hljs-keyword">this</span>.x_shift;
   }</pre></div>
         
@@ -997,20 +1091,21 @@ looking for the post-formatted x-position.</p>
 
         
           <div class='highlight'><pre>  getAbsoluteX() {
-    <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.tickContext) <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RERR(<span class="hljs-string">"NoTickContext"</span>,
-        <span class="hljs-string">"Note needs a TickContext assigned for an X-Value"</span>);</pre></div>
+    <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.tickContext) {
+      <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RERR(<span class="hljs-string">'NoTickContext'</span>, <span class="hljs-string">'Note needs a TickContext assigned for an X-Value'</span>);
+    }</pre></div>
         
       
         
         <p>Position note to left edge of tick context.</p>
 
         
-          <div class='highlight'><pre>    <span class="hljs-keyword">var</span> x = <span class="hljs-keyword">this</span>.tickContext.getX();
+          <div class='highlight'><pre>    <span class="hljs-keyword">let</span> x = <span class="hljs-keyword">this</span>.tickContext.getX();
     <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.stave) {
       x += <span class="hljs-keyword">this</span>.stave.getNoteStartX() + <span class="hljs-keyword">this</span>.render_options.stave_padding;
     }
 
-    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.isCenterAligned()){
+    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.isCenterAligned()) {
       x += <span class="hljs-keyword">this</span>.getCenterXShift();
     }
 
@@ -1025,7 +1120,7 @@ looking for the post-formatted x-position.</p>
 
         
           <div class='highlight'><pre>    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.preFormatted) {
-      <span class="hljs-keyword">var</span> extra = <span class="hljs-keyword">this</span>.tickContext.getExtraPx();
+      <span class="hljs-keyword">const</span> extra = <span class="hljs-keyword">this</span>.tickContext.getExtraPx();
       <span class="hljs-keyword">this</span>.left_modPx = <span class="hljs-built_in">Math</span>.max(<span class="hljs-keyword">this</span>.left_modPx, extra.left);
       <span class="hljs-keyword">this</span>.right_modPx = <span class="hljs-built_in">Math</span>.max(<span class="hljs-keyword">this</span>.right_modPx, extra.right);
     }

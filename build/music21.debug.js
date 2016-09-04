@@ -8970,7 +8970,7 @@
                           continue;
                       }
                       var nTicks = parseInt(vfn.ticks);
-                      var formatterNote = formatter.tContexts.map[String(nextTicks)];
+                      var formatterNote = formatter.tickContexts.map[String(nextTicks)];
                       nextTicks += nTicks;
                       el.x = vfn.getAbsoluteX();
                       // these are a bit hacky...

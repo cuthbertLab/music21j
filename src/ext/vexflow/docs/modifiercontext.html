@@ -121,6 +121,27 @@
               
                 
                 <li>
+                  <a class="source" href="easyscore.html">
+                    easyscore.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="element.html">
+                    element.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="factory.html">
+                    factory.js
+                  </a>
+                </li>
+              
+                
+                <li>
                   <a class="source" href="formatter.html">
                     formatter.js
                   </a>
@@ -165,6 +186,13 @@
                 <li>
                   <a class="source" href="gracenotegroup.html">
                     gracenotegroup.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="gracetabnote.html">
+                    gracetabnote.js
                   </a>
                 </li>
               
@@ -226,8 +254,22 @@
               
                 
                 <li>
+                  <a class="source" href="notesubgroup.html">
+                    notesubgroup.js
+                  </a>
+                </li>
+              
+                
+                <li>
                   <a class="source" href="ornament.html">
                     ornament.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="parser.html">
+                    parser.js
                   </a>
                 </li>
               
@@ -242,6 +284,13 @@
                 <li>
                   <a class="source" href="raphaelcontext.html">
                     raphaelcontext.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="registry.html">
+                    registry.js
                   </a>
                 </li>
               
@@ -380,6 +429,13 @@
               
                 
                 <li>
+                  <a class="source" href="system.html">
+                    system.js
+                  </a>
+                </li>
+              
+                
+                <li>
                   <a class="source" href="tables.html">
                     tables.js
                   </a>
@@ -499,6 +555,13 @@
               
                 
                 <li>
+                  <a class="source" href="vibratobracket.html">
+                    vibratobracket.js
+                  </a>
+                </li>
+              
+                
+                <li>
                   <a class="source" href="voice.html">
                     voice.js
                   </a>
@@ -525,29 +588,30 @@ fingering positions etc.)</p>
 
         
           <div class='highlight'><pre>
-import { Vex } from <span class="hljs-string">'./vex'</span>;
-import { StaveNote } from <span class="hljs-string">'./stavenote'</span>;
-import { Dot } from <span class="hljs-string">'./dot'</span>;
-import { FretHandFinger } from <span class="hljs-string">'./frethandfinger'</span>;
-import { Accidental } from <span class="hljs-string">'./accidental'</span>;
-import { GraceNoteGroup } from <span class="hljs-string">'./gracenotegroup'</span>;
-import { Stroke } from <span class="hljs-string">'./strokes'</span>;
-import { StringNumber } from <span class="hljs-string">'./stringnumber'</span>;
-import { Articulation } from <span class="hljs-string">'./articulation'</span>;
-import { Ornament } from <span class="hljs-string">'./ornament'</span>;
-import { Annotation } from <span class="hljs-string">'./annotation'</span>;
-import { Bend } from <span class="hljs-string">'./bend'</span>;
-import { Vibrato } from <span class="hljs-string">'./vibrato'</span>;</pre></div>
+<span class="hljs-keyword">import</span> { Vex } <span class="hljs-keyword">from</span> <span class="hljs-string">'./vex'</span>;
+<span class="hljs-keyword">import</span> { StaveNote } <span class="hljs-keyword">from</span> <span class="hljs-string">'./stavenote'</span>;
+<span class="hljs-keyword">import</span> { Dot } <span class="hljs-keyword">from</span> <span class="hljs-string">'./dot'</span>;
+<span class="hljs-keyword">import</span> { FretHandFinger } <span class="hljs-keyword">from</span> <span class="hljs-string">'./frethandfinger'</span>;
+<span class="hljs-keyword">import</span> { Accidental } <span class="hljs-keyword">from</span> <span class="hljs-string">'./accidental'</span>;
+<span class="hljs-keyword">import</span> { NoteSubGroup } <span class="hljs-keyword">from</span> <span class="hljs-string">'./notesubgroup'</span>;
+<span class="hljs-keyword">import</span> { GraceNoteGroup } <span class="hljs-keyword">from</span> <span class="hljs-string">'./gracenotegroup'</span>;
+<span class="hljs-keyword">import</span> { Stroke } <span class="hljs-keyword">from</span> <span class="hljs-string">'./strokes'</span>;
+<span class="hljs-keyword">import</span> { StringNumber } <span class="hljs-keyword">from</span> <span class="hljs-string">'./stringnumber'</span>;
+<span class="hljs-keyword">import</span> { Articulation } <span class="hljs-keyword">from</span> <span class="hljs-string">'./articulation'</span>;
+<span class="hljs-keyword">import</span> { Ornament } <span class="hljs-keyword">from</span> <span class="hljs-string">'./ornament'</span>;
+<span class="hljs-keyword">import</span> { Annotation } <span class="hljs-keyword">from</span> <span class="hljs-string">'./annotation'</span>;
+<span class="hljs-keyword">import</span> { Bend } <span class="hljs-keyword">from</span> <span class="hljs-string">'./bend'</span>;
+<span class="hljs-keyword">import</span> { Vibrato } <span class="hljs-keyword">from</span> <span class="hljs-string">'./vibrato'</span>;</pre></div>
         
       
         
         <p>To enable logging for this class. Set <code>Vex.Flow.ModifierContext.DEBUG</code> to <code>true</code>.</p>
 
         
-          <div class='highlight'><pre><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">L</span><span class="hljs-params">()</span> {</span> <span class="hljs-keyword">if</span> (ModifierContext.DEBUG) Vex.L(<span class="hljs-string">"Vex.Flow.ModifierContext"</span>, <span class="hljs-built_in">arguments</span>); }
+          <div class='highlight'><pre><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">L</span>(<span class="hljs-params">...args</span>) </span>{ <span class="hljs-keyword">if</span> (ModifierContext.DEBUG) Vex.L(<span class="hljs-string">'Vex.Flow.ModifierContext'</span>, args); }
 
-export <span class="hljs-keyword">class</span> ModifierContext {
-  constructor() {</pre></div>
+<span class="hljs-keyword">export</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">ModifierContext</span> </span>{
+  <span class="hljs-keyword">constructor</span>() {</pre></div>
         
       
         
@@ -569,12 +633,12 @@ export <span class="hljs-keyword">class</span> ModifierContext {
       left_shift: <span class="hljs-number">0</span>,
       right_shift: <span class="hljs-number">0</span>,
       text_line: <span class="hljs-number">0</span>,
-      top_text_line: <span class="hljs-number">0</span>
+      top_text_line: <span class="hljs-number">0</span>,
     };</pre></div>
         
       
         
-        <p>Add new modifiers to this array. The ordering is significant — lower
+        <p>Add new modifiers to this array. The ordering is significant – lower
 modifiers are formatted and rendered before higher ones.</p>
 
         
@@ -584,13 +648,14 @@ modifiers are formatted and rendered before higher ones.</p>
       FretHandFinger,
       Accidental,
       GraceNoteGroup,
+      NoteSubGroup,
       Stroke,
       StringNumber,
       Articulation,
       Ornament,
       Annotation,
       Bend,
-      Vibrato
+      Vibrato,
     ];</pre></div>
         
       
@@ -598,11 +663,11 @@ modifiers are formatted and rendered before higher ones.</p>
         <p>If post-formatting is required for an element, add it to this array.</p>
 
         
-          <div class='highlight'><pre>    <span class="hljs-keyword">this</span>.POSTFORMAT = [ StaveNote ];
+          <div class='highlight'><pre>    <span class="hljs-keyword">this</span>.POSTFORMAT = [StaveNote];
   }
 
   addModifier(modifier) {
-    <span class="hljs-keyword">var</span> type = modifier.getCategory();
+    <span class="hljs-keyword">const</span> type = modifier.getCategory();
     <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.modifiers[type]) <span class="hljs-keyword">this</span>.modifiers[type] = [];
     <span class="hljs-keyword">this</span>.modifiers[type].push(modifier);
     modifier.setModifierContext(<span class="hljs-keyword">this</span>);
@@ -617,23 +682,24 @@ modifiers are formatted and rendered before higher ones.</p>
   getState() { <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.state; }
 
   getMetrics() {
-    <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.formatted) <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RERR(<span class="hljs-string">"UnformattedModifier"</span>,
-        <span class="hljs-string">"Unformatted modifier has no metrics."</span>);
+    <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.formatted) {
+      <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RERR(<span class="hljs-string">'UnformattedModifier'</span>, <span class="hljs-string">'Unformatted modifier has no metrics.'</span>);
+    }
 
     <span class="hljs-keyword">return</span> {
       width: <span class="hljs-keyword">this</span>.state.left_shift + <span class="hljs-keyword">this</span>.state.right_shift + <span class="hljs-keyword">this</span>.spacing,
       spacing: <span class="hljs-keyword">this</span>.spacing,
       extra_left_px: <span class="hljs-keyword">this</span>.state.left_shift,
-      extra_right_px: <span class="hljs-keyword">this</span>.state.right_shift
+      extra_right_px: <span class="hljs-keyword">this</span>.state.right_shift,
     };
   }
 
   preFormat() {
     <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.preFormatted) <span class="hljs-keyword">return</span>;
-    <span class="hljs-keyword">this</span>.PREFORMAT.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(modifier)</span> {</span>
-      L(<span class="hljs-string">"Preformatting ModifierContext: "</span>, modifier.CATEGORY);
+    <span class="hljs-keyword">this</span>.PREFORMAT.forEach((modifier) =&gt; {
+      L(<span class="hljs-string">'Preformatting ModifierContext: '</span>, modifier.CATEGORY);
       modifier.format(<span class="hljs-keyword">this</span>.getModifiers(modifier.CATEGORY), <span class="hljs-keyword">this</span>.state, <span class="hljs-keyword">this</span>);
-    }, <span class="hljs-keyword">this</span>);</pre></div>
+    });</pre></div>
         
       
         
@@ -646,10 +712,10 @@ modifiers are formatted and rendered before higher ones.</p>
 
   postFormat() {
     <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.postFormatted) <span class="hljs-keyword">return</span>;
-    <span class="hljs-keyword">this</span>.POSTFORMAT.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(modifier)</span> {</span>
-      L(<span class="hljs-string">"Postformatting ModifierContext: "</span>, modifier.CATEGORY);
+    <span class="hljs-keyword">this</span>.POSTFORMAT.forEach((modifier) =&gt; {
+      L(<span class="hljs-string">'Postformatting ModifierContext: '</span>, modifier.CATEGORY);
       modifier.postFormat(<span class="hljs-keyword">this</span>.getModifiers(modifier.CATEGORY), <span class="hljs-keyword">this</span>);
-    }, <span class="hljs-keyword">this</span>);
+    });
   }
 }</pre></div>
         

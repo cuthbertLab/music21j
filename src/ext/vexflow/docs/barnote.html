@@ -121,6 +121,27 @@
               
                 
                 <li>
+                  <a class="source" href="easyscore.html">
+                    easyscore.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="element.html">
+                    element.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="factory.html">
+                    factory.js
+                  </a>
+                </li>
+              
+                
+                <li>
                   <a class="source" href="formatter.html">
                     formatter.js
                   </a>
@@ -165,6 +186,13 @@
                 <li>
                   <a class="source" href="gracenotegroup.html">
                     gracenotegroup.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="gracetabnote.html">
+                    gracetabnote.js
                   </a>
                 </li>
               
@@ -226,8 +254,22 @@
               
                 
                 <li>
+                  <a class="source" href="notesubgroup.html">
+                    notesubgroup.js
+                  </a>
+                </li>
+              
+                
+                <li>
                   <a class="source" href="ornament.html">
                     ornament.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="parser.html">
+                    parser.js
                   </a>
                 </li>
               
@@ -242,6 +284,13 @@
                 <li>
                   <a class="source" href="raphaelcontext.html">
                     raphaelcontext.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="registry.html">
+                    registry.js
                   </a>
                 </li>
               
@@ -380,6 +429,13 @@
               
                 
                 <li>
+                  <a class="source" href="system.html">
+                    system.js
+                  </a>
+                </li>
+              
+                
+                <li>
                   <a class="source" href="tables.html">
                     tables.js
                   </a>
@@ -499,6 +555,13 @@
               
                 
                 <li>
+                  <a class="source" href="vibratobracket.html">
+                    vibratobracket.js
+                  </a>
+                </li>
+              
+                
+                <li>
                   <a class="source" href="voice.html">
                     voice.js
                   </a>
@@ -527,25 +590,26 @@ duration, it consumes no <code>tick</code>s, and is dealt with appropriately by 
 
         
           <div class='highlight'><pre>
-import { Vex } from <span class="hljs-string">'./vex'</span>;
-import { Note } from <span class="hljs-string">'./note'</span>;
-import { Barline } from <span class="hljs-string">'./stavebarline'</span>;
-import { BoundingBox } from <span class="hljs-string">'./boundingbox'</span>;</pre></div>
+<span class="hljs-keyword">import</span> { Vex } <span class="hljs-keyword">from</span> <span class="hljs-string">'./vex'</span>;
+<span class="hljs-keyword">import</span> { Note } <span class="hljs-keyword">from</span> <span class="hljs-string">'./note'</span>;
+<span class="hljs-keyword">import</span> { Barline } <span class="hljs-keyword">from</span> <span class="hljs-string">'./stavebarline'</span>;
+<span class="hljs-keyword">import</span> { BoundingBox } <span class="hljs-keyword">from</span> <span class="hljs-string">'./boundingbox'</span>;</pre></div>
         
       
         
         <p>To enable logging for this class. Set <code>Vex.Flow.BarNote.DEBUG</code> to <code>true</code>.</p>
 
         
-          <div class='highlight'><pre><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">L</span><span class="hljs-params">()</span> {</span> <span class="hljs-keyword">if</span> (BarNote.DEBUG) Vex.L(<span class="hljs-string">"Vex.Flow.BarNote"</span>, <span class="hljs-built_in">arguments</span>); }
+          <div class='highlight'><pre><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">L</span>(<span class="hljs-params">...args</span>) </span>{ <span class="hljs-keyword">if</span> (BarNote.DEBUG) Vex.L(<span class="hljs-string">'Vex.Flow.BarNote'</span>, args); }
 
-export <span class="hljs-keyword">class</span> BarNote extends Note {
-  constructor() {
-    super({ duration: <span class="hljs-string">'b'</span> });
+<span class="hljs-keyword">export</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">BarNote</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">Note</span> </span>{
+  <span class="hljs-keyword">constructor</span>(type) {
+    <span class="hljs-keyword">super</span>({ duration: <span class="hljs-string">'b'</span> });
+    <span class="hljs-keyword">this</span>.setAttribute(<span class="hljs-string">'type'</span>, <span class="hljs-string">'BarNote'</span>);
 
-    <span class="hljs-keyword">var</span> TYPE = Barline.type;
+    <span class="hljs-keyword">const</span> TYPE = Barline.type;
     <span class="hljs-keyword">this</span>.metrics = {
-      widths: {}
+      widths: {},
     };</pre></div>
         
       
@@ -567,7 +631,7 @@ export <span class="hljs-keyword">class</span> BarNote extends Note {
 
         
           <div class='highlight'><pre>    <span class="hljs-keyword">this</span>.ignore_ticks = <span class="hljs-literal">true</span>;
-    <span class="hljs-keyword">this</span>.type = TYPE.SINGLE;</pre></div>
+    <span class="hljs-keyword">this</span>.type = type === <span class="hljs-literal">undefined</span> ? TYPE.SINGLE : type;</pre></div>
         
       
         
@@ -610,11 +674,13 @@ export <span class="hljs-keyword">class</span> BarNote extends Note {
 
         
           <div class='highlight'><pre>  draw() {
-    <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.stave) <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RERR(<span class="hljs-string">"NoStave"</span>, <span class="hljs-string">"Can't draw without a stave."</span>);
-    L(<span class="hljs-string">"Rendering bar line at: "</span>, <span class="hljs-keyword">this</span>.getAbsoluteX());
-    <span class="hljs-keyword">var</span> barline = <span class="hljs-keyword">new</span> Barline(<span class="hljs-keyword">this</span>.type);
+    <span class="hljs-keyword">this</span>.checkContext();
+    <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.stave) <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RERR(<span class="hljs-string">'NoStave'</span>, <span class="hljs-string">"Can't draw without a stave."</span>);
+    L(<span class="hljs-string">'Rendering bar line at: '</span>, <span class="hljs-keyword">this</span>.getAbsoluteX());
+    <span class="hljs-keyword">const</span> barline = <span class="hljs-keyword">new</span> Barline(<span class="hljs-keyword">this</span>.type);
     barline.setX(<span class="hljs-keyword">this</span>.getAbsoluteX());
     barline.draw(<span class="hljs-keyword">this</span>.stave);
+    <span class="hljs-keyword">this</span>.setRendered();
   }
 }</pre></div>
         

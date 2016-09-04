@@ -958,7 +958,7 @@ export class Renderer {
                     continue;
                 }
                 const nTicks = parseInt(vfn.ticks);
-                const formatterNote = formatter.tContexts.map[String(nextTicks)];
+                const formatterNote = formatter.tickContexts.map[String(nextTicks)];
                 nextTicks += nTicks;
                 el.x = vfn.getAbsoluteX();
                 // these are a bit hacky...

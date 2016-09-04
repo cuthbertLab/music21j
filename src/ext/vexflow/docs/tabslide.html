@@ -121,6 +121,27 @@
               
                 
                 <li>
+                  <a class="source" href="easyscore.html">
+                    easyscore.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="element.html">
+                    element.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="factory.html">
+                    factory.js
+                  </a>
+                </li>
+              
+                
+                <li>
                   <a class="source" href="formatter.html">
                     formatter.js
                   </a>
@@ -165,6 +186,13 @@
                 <li>
                   <a class="source" href="gracenotegroup.html">
                     gracenotegroup.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="gracetabnote.html">
+                    gracetabnote.js
                   </a>
                 </li>
               
@@ -226,8 +254,22 @@
               
                 
                 <li>
+                  <a class="source" href="notesubgroup.html">
+                    notesubgroup.js
+                  </a>
+                </li>
+              
+                
+                <li>
                   <a class="source" href="ornament.html">
                     ornament.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="parser.html">
+                    parser.js
                   </a>
                 </li>
               
@@ -242,6 +284,13 @@
                 <li>
                   <a class="source" href="raphaelcontext.html">
                     raphaelcontext.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="registry.html">
+                    registry.js
                   </a>
                 </li>
               
@@ -380,6 +429,13 @@
               
                 
                 <li>
+                  <a class="source" href="system.html">
+                    system.js
+                  </a>
+                </li>
+              
+                
+                <li>
                   <a class="source" href="tables.html">
                     tables.js
                   </a>
@@ -499,6 +555,13 @@
               
                 
                 <li>
+                  <a class="source" href="vibratobracket.html">
+                    vibratobracket.js
+                  </a>
+                </li>
+              
+                
+                <li>
                   <a class="source" href="voice.html">
                     voice.js
                   </a>
@@ -525,26 +588,26 @@ ties include: regular ties, hammer ons, pull offs, and slides.</p>
 
         
           <div class='highlight'><pre>
-import { Vex } from <span class="hljs-string">'./vex'</span>;
-import { TabTie } from <span class="hljs-string">'./tabtie'</span>;
+<span class="hljs-keyword">import</span> { Vex } <span class="hljs-keyword">from</span> <span class="hljs-string">'./vex'</span>;
+<span class="hljs-keyword">import</span> { TabTie } <span class="hljs-keyword">from</span> <span class="hljs-string">'./tabtie'</span>;
 
-export <span class="hljs-keyword">class</span> TabSlide extends TabTie {
-  static get SLIDE_UP() {
+<span class="hljs-keyword">export</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">TabSlide</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">TabTie</span> </span>{
+  <span class="hljs-keyword">static</span> get SLIDE_UP() {
     <span class="hljs-keyword">return</span> <span class="hljs-number">1</span>;
   }
-  static get SLIDE_DOWN() {
-    <span class="hljs-keyword">return</span> -<span class="hljs-number">1</span>;
+  <span class="hljs-keyword">static</span> get SLIDE_DOWN() {
+    <span class="hljs-keyword">return</span> <span class="hljs-number">-1</span>;
   }
 
-  static createSlideUp(notes) {
+  <span class="hljs-keyword">static</span> createSlideUp(notes) {
     <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> TabSlide(notes, TabSlide.SLIDE_UP);
   }
 
-  static createSlideDown(notes) {
+  <span class="hljs-keyword">static</span> createSlideDown(notes) {
     <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> TabSlide(notes, TabSlide.SLIDE_DOWN);
   }
 
-  constructor(notes, direction) {
+  <span class="hljs-keyword">constructor</span>(notes, direction) {
     <span class="hljs-comment">/**
      * Notes is a struct that has:
      *
@@ -556,10 +619,12 @@ export <span class="hljs-keyword">class</span> TabSlide extends TabTie {
      *  }
      *
      **/</span>
-    super(notes, <span class="hljs-string">"sl."</span>);
+    <span class="hljs-keyword">super</span>(notes, <span class="hljs-string">'sl.'</span>);
+    <span class="hljs-keyword">this</span>.setAttribute(<span class="hljs-string">'type'</span>, <span class="hljs-string">'TabSlide'</span>);
+
     <span class="hljs-keyword">if</span> (!direction) {
-      <span class="hljs-keyword">var</span> first_fret = notes.first_note.getPositions()[<span class="hljs-number">0</span>].fret;
-      <span class="hljs-keyword">var</span> last_fret = notes.last_note.getPositions()[<span class="hljs-number">0</span>].fret;
+      <span class="hljs-keyword">const</span> first_fret = notes.first_note.getPositions()[<span class="hljs-number">0</span>].fret;
+      <span class="hljs-keyword">const</span> last_fret = notes.last_note.getPositions()[<span class="hljs-number">0</span>].fret;
 
       direction = ((<span class="hljs-built_in">parseInt</span>(first_fret, <span class="hljs-number">10</span>) &gt; <span class="hljs-built_in">parseInt</span>(last_fret, <span class="hljs-number">10</span>)) ?
         TabSlide.SLIDE_DOWN : TabSlide.SLIDE_UP);
@@ -570,31 +635,32 @@ export <span class="hljs-keyword">class</span> TabSlide extends TabTie {
     <span class="hljs-keyword">this</span>.render_options.cp2 = <span class="hljs-number">14</span>;
     <span class="hljs-keyword">this</span>.render_options.y_shift = <span class="hljs-number">0.5</span>;
 
-    <span class="hljs-keyword">this</span>.setFont({font: <span class="hljs-string">"Times"</span>, size: <span class="hljs-number">10</span>, style: <span class="hljs-string">"bold italic"</span>});
+    <span class="hljs-keyword">this</span>.setFont({ font: <span class="hljs-string">'Times'</span>, size: <span class="hljs-number">10</span>, style: <span class="hljs-string">'bold italic'</span> });
     <span class="hljs-keyword">this</span>.setNotes(notes);
   }
 
   renderTie(params) {
-    <span class="hljs-keyword">if</span> (params.first_ys.length === <span class="hljs-number">0</span> || params.last_ys.length === <span class="hljs-number">0</span>)
-      <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RERR(<span class="hljs-string">"BadArguments"</span>, <span class="hljs-string">"No Y-values to render"</span>);
-
-    <span class="hljs-keyword">var</span> ctx = <span class="hljs-keyword">this</span>.context;
-    <span class="hljs-keyword">var</span> first_x_px = params.first_x_px;
-    <span class="hljs-keyword">var</span> first_ys = params.first_ys;
-    <span class="hljs-keyword">var</span> last_x_px = params.last_x_px;
-
-    <span class="hljs-keyword">var</span> direction = <span class="hljs-keyword">this</span>.slide_direction;
-    <span class="hljs-keyword">if</span> (direction != TabSlide.SLIDE_UP &amp;&amp;
-        direction != TabSlide.SLIDE_DOWN) {
-      <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RERR(<span class="hljs-string">"BadSlide"</span>, <span class="hljs-string">"Invalid slide direction"</span>);
+    <span class="hljs-keyword">if</span> (params.first_ys.length === <span class="hljs-number">0</span> || params.last_ys.length === <span class="hljs-number">0</span>) {
+      <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RERR(<span class="hljs-string">'BadArguments'</span>, <span class="hljs-string">'No Y-values to render'</span>);
     }
 
-    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; <span class="hljs-keyword">this</span>.first_indices.length; ++i) {
-      <span class="hljs-keyword">var</span> slide_y = first_ys[<span class="hljs-keyword">this</span>.first_indices[i]] +
+    <span class="hljs-keyword">const</span> ctx = <span class="hljs-keyword">this</span>.context;
+    <span class="hljs-keyword">const</span> first_x_px = params.first_x_px;
+    <span class="hljs-keyword">const</span> first_ys = params.first_ys;
+    <span class="hljs-keyword">const</span> last_x_px = params.last_x_px;
+
+    <span class="hljs-keyword">const</span> direction = <span class="hljs-keyword">this</span>.slide_direction;
+    <span class="hljs-keyword">if</span> (direction !== TabSlide.SLIDE_UP &amp;&amp; direction !== TabSlide.SLIDE_DOWN) {
+      <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RERR(<span class="hljs-string">'BadSlide'</span>, <span class="hljs-string">'Invalid slide direction'</span>);
+    }
+
+    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> i = <span class="hljs-number">0</span>; i &lt; <span class="hljs-keyword">this</span>.first_indices.length; ++i) {
+      <span class="hljs-keyword">const</span> slide_y = first_ys[<span class="hljs-keyword">this</span>.first_indices[i]] +
         <span class="hljs-keyword">this</span>.render_options.y_shift;
 
-      <span class="hljs-keyword">if</span> (<span class="hljs-built_in">isNaN</span>(slide_y))
-        <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RERR(<span class="hljs-string">"BadArguments"</span>, <span class="hljs-string">"Bad indices for slide rendering."</span>);
+      <span class="hljs-keyword">if</span> (<span class="hljs-built_in">isNaN</span>(slide_y)) {
+        <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RERR(<span class="hljs-string">'BadArguments'</span>, <span class="hljs-string">'Bad indices for slide rendering.'</span>);
+      }
 
       ctx.beginPath();
       ctx.moveTo(first_x_px, slide_y + (<span class="hljs-number">3</span> * direction));
@@ -602,6 +668,8 @@ export <span class="hljs-keyword">class</span> TabSlide extends TabTie {
       ctx.closePath();
       ctx.stroke();
     }
+
+    <span class="hljs-keyword">this</span>.setRendered();
   }
 }</pre></div>
         

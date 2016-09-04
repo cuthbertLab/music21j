@@ -108,6 +108,7 @@ module.exports = (grunt) => {
                            paths: {
                                vexflow: './src/ext/vexflow/vexflow-min.js',
                                qunit: './tests/qQnit/quint-2.0.1.js',
+                               eventjs: './src/ext/midijs/examples/inc/event.js',
                            },
             },   
             files: {

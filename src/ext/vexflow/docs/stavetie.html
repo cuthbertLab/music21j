@@ -121,6 +121,27 @@
               
                 
                 <li>
+                  <a class="source" href="easyscore.html">
+                    easyscore.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="element.html">
+                    element.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="factory.html">
+                    factory.js
+                  </a>
+                </li>
+              
+                
+                <li>
                   <a class="source" href="formatter.html">
                     formatter.js
                   </a>
@@ -165,6 +186,13 @@
                 <li>
                   <a class="source" href="gracenotegroup.html">
                     gracenotegroup.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="gracetabnote.html">
+                    gracetabnote.js
                   </a>
                 </li>
               
@@ -226,8 +254,22 @@
               
                 
                 <li>
+                  <a class="source" href="notesubgroup.html">
+                    notesubgroup.js
+                  </a>
+                </li>
+              
+                
+                <li>
                   <a class="source" href="ornament.html">
                     ornament.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="parser.html">
+                    parser.js
                   </a>
                 </li>
               
@@ -242,6 +284,13 @@
                 <li>
                   <a class="source" href="raphaelcontext.html">
                     raphaelcontext.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="registry.html">
+                    registry.js
                   </a>
                 </li>
               
@@ -380,6 +429,13 @@
               
                 
                 <li>
+                  <a class="source" href="system.html">
+                    system.js
+                  </a>
+                </li>
+              
+                
+                <li>
                   <a class="source" href="tables.html">
                     tables.js
                   </a>
@@ -499,6 +555,13 @@
               
                 
                 <li>
+                  <a class="source" href="vibratobracket.html">
+                    vibratobracket.js
+                  </a>
+                </li>
+              
+                
+                <li>
                   <a class="source" href="voice.html">
                     voice.js
                   </a>
@@ -525,10 +588,11 @@ ties include: regular ties, hammer ons, pull offs, and slides.</p>
 
         
           <div class='highlight'><pre>
-import { Vex } from <span class="hljs-string">'./vex'</span>;
+<span class="hljs-keyword">import</span> { Vex } <span class="hljs-keyword">from</span> <span class="hljs-string">'./vex'</span>;
+<span class="hljs-keyword">import</span> { Element } <span class="hljs-keyword">from</span> <span class="hljs-string">'./element'</span>;
 
-export <span class="hljs-keyword">class</span> StaveTie {
-  constructor(notes, text) {
+<span class="hljs-keyword">export</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">StaveTie</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">Element</span> </span>{
+  <span class="hljs-keyword">constructor</span>(notes, text) {
     <span class="hljs-comment">/**
      * Notes is a struct that has:
      *
@@ -540,6 +604,8 @@ export <span class="hljs-keyword">class</span> StaveTie {
      *  }
      *
      **/</span>
+    <span class="hljs-keyword">super</span>();
+    <span class="hljs-keyword">this</span>.setAttribute(<span class="hljs-string">'type'</span>, <span class="hljs-string">'StaveTie'</span>);
     <span class="hljs-keyword">this</span>.notes = notes;
     <span class="hljs-keyword">this</span>.context = <span class="hljs-literal">null</span>;
     <span class="hljs-keyword">this</span>.text = text;
@@ -553,14 +619,13 @@ export <span class="hljs-keyword">class</span> StaveTie {
       last_x_shift: <span class="hljs-number">0</span>,
       y_shift: <span class="hljs-number">7</span>,
       tie_spacing: <span class="hljs-number">0</span>,
-      font: { family: <span class="hljs-string">"Arial"</span>, size: <span class="hljs-number">10</span>, style: <span class="hljs-string">""</span> }
+      font: { family: <span class="hljs-string">'Arial'</span>, size: <span class="hljs-number">10</span>, style: <span class="hljs-string">''</span> },
     };
 
     <span class="hljs-keyword">this</span>.font = <span class="hljs-keyword">this</span>.render_options.font;
     <span class="hljs-keyword">this</span>.setNotes(notes);
   }
 
-  setContext(context) { <span class="hljs-keyword">this</span>.context = context; <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>; }
   setFont(font) { <span class="hljs-keyword">this</span>.font = font; <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>; }
   setDirection(direction) { <span class="hljs-keyword">this</span>.direction = direction; <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>; }
 
@@ -570,16 +635,18 @@ export <span class="hljs-keyword">class</span> StaveTie {
    * @param {!Object} notes The notes to tie up.
    */</span>
   setNotes(notes) {
-    <span class="hljs-keyword">if</span> (!notes.first_note &amp;&amp; !notes.last_note)
-      <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RuntimeError(<span class="hljs-string">"BadArguments"</span>,
-          <span class="hljs-string">"Tie needs to have either first_note or last_note set."</span>);
+    <span class="hljs-keyword">if</span> (!notes.first_note &amp;&amp; !notes.last_note) {
+      <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RuntimeError(
+        <span class="hljs-string">'BadArguments'</span>, <span class="hljs-string">'Tie needs to have either first_note or last_note set.'</span>
+      );
+    }
 
     <span class="hljs-keyword">if</span> (!notes.first_indices) notes.first_indices = [<span class="hljs-number">0</span>];
     <span class="hljs-keyword">if</span> (!notes.last_indices) notes.last_indices = [<span class="hljs-number">0</span>];
 
-    <span class="hljs-keyword">if</span> (notes.first_indices.length != notes.last_indices.length)
-      <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RuntimeError(<span class="hljs-string">"BadArguments"</span>, <span class="hljs-string">"Tied notes must have similar"</span> +
-      <span class="hljs-string">" index sizes"</span>);</pre></div>
+    <span class="hljs-keyword">if</span> (notes.first_indices.length !== notes.last_indices.length) {
+      <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RuntimeError(<span class="hljs-string">'BadArguments'</span>, <span class="hljs-string">'Tied notes must have similar index sizes'</span>);
+    }</pre></div>
         
       
         
@@ -601,40 +668,39 @@ export <span class="hljs-keyword">class</span> StaveTie {
   }
 
   renderTie(params) {
-    <span class="hljs-keyword">if</span> (params.first_ys.length === <span class="hljs-number">0</span> || params.last_ys.length === <span class="hljs-number">0</span>)
-      <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RERR(<span class="hljs-string">"BadArguments"</span>, <span class="hljs-string">"No Y-values to render"</span>);
+    <span class="hljs-keyword">if</span> (params.first_ys.length === <span class="hljs-number">0</span> || params.last_ys.length === <span class="hljs-number">0</span>) {
+      <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RERR(<span class="hljs-string">'BadArguments'</span>, <span class="hljs-string">'No Y-values to render'</span>);
+    }
 
-    <span class="hljs-keyword">var</span> ctx = <span class="hljs-keyword">this</span>.context;
-    <span class="hljs-keyword">var</span> cp1 = <span class="hljs-keyword">this</span>.render_options.cp1;
-    <span class="hljs-keyword">var</span> cp2 = <span class="hljs-keyword">this</span>.render_options.cp2;
+    <span class="hljs-keyword">const</span> ctx = <span class="hljs-keyword">this</span>.context;
+    <span class="hljs-keyword">let</span> cp1 = <span class="hljs-keyword">this</span>.render_options.cp1;
+    <span class="hljs-keyword">let</span> cp2 = <span class="hljs-keyword">this</span>.render_options.cp2;
 
     <span class="hljs-keyword">if</span> (<span class="hljs-built_in">Math</span>.abs(params.last_x_px - params.first_x_px) &lt; <span class="hljs-number">10</span>) {
       cp1 = <span class="hljs-number">2</span>; cp2 = <span class="hljs-number">8</span>;
     }
 
-    <span class="hljs-keyword">var</span> first_x_shift = <span class="hljs-keyword">this</span>.render_options.first_x_shift;
-    <span class="hljs-keyword">var</span> last_x_shift = <span class="hljs-keyword">this</span>.render_options.last_x_shift;
-    <span class="hljs-keyword">var</span> y_shift = <span class="hljs-keyword">this</span>.render_options.y_shift * params.direction;
+    <span class="hljs-keyword">const</span> first_x_shift = <span class="hljs-keyword">this</span>.render_options.first_x_shift;
+    <span class="hljs-keyword">const</span> last_x_shift = <span class="hljs-keyword">this</span>.render_options.last_x_shift;
+    <span class="hljs-keyword">const</span> y_shift = <span class="hljs-keyword">this</span>.render_options.y_shift * params.direction;
 
-    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; <span class="hljs-keyword">this</span>.first_indices.length; ++i) {
-      <span class="hljs-keyword">var</span> cp_x = ((params.last_x_px + last_x_shift) +
+    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> i = <span class="hljs-number">0</span>; i &lt; <span class="hljs-keyword">this</span>.first_indices.length; ++i) {
+      <span class="hljs-keyword">const</span> cp_x = ((params.last_x_px + last_x_shift) +
           (params.first_x_px + first_x_shift)) / <span class="hljs-number">2</span>;
-      <span class="hljs-keyword">var</span> first_y_px = params.first_ys[<span class="hljs-keyword">this</span>.first_indices[i]] + y_shift;
-      <span class="hljs-keyword">var</span> last_y_px = params.last_ys[<span class="hljs-keyword">this</span>.last_indices[i]] + y_shift;
+      <span class="hljs-keyword">const</span> first_y_px = params.first_ys[<span class="hljs-keyword">this</span>.first_indices[i]] + y_shift;
+      <span class="hljs-keyword">const</span> last_y_px = params.last_ys[<span class="hljs-keyword">this</span>.last_indices[i]] + y_shift;
 
-      <span class="hljs-keyword">if</span> (<span class="hljs-built_in">isNaN</span>(first_y_px) || <span class="hljs-built_in">isNaN</span>(last_y_px))
-        <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RERR(<span class="hljs-string">"BadArguments"</span>, <span class="hljs-string">"Bad indices for tie rendering."</span>);
+      <span class="hljs-keyword">if</span> (<span class="hljs-built_in">isNaN</span>(first_y_px) || <span class="hljs-built_in">isNaN</span>(last_y_px)) {
+        <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RERR(<span class="hljs-string">'BadArguments'</span>, <span class="hljs-string">'Bad indices for tie rendering.'</span>);
+      }
 
-      <span class="hljs-keyword">var</span> top_cp_y = ((first_y_px + last_y_px) / <span class="hljs-number">2</span>) + (cp1 * params.direction);
-      <span class="hljs-keyword">var</span> bottom_cp_y = ((first_y_px + last_y_px) / <span class="hljs-number">2</span>) + (cp2 * params.direction);
+      <span class="hljs-keyword">const</span> top_cp_y = ((first_y_px + last_y_px) / <span class="hljs-number">2</span>) + (cp1 * params.direction);
+      <span class="hljs-keyword">const</span> bottom_cp_y = ((first_y_px + last_y_px) / <span class="hljs-number">2</span>) + (cp2 * params.direction);
 
       ctx.beginPath();
       ctx.moveTo(params.first_x_px + first_x_shift, first_y_px);
-      ctx.quadraticCurveTo(cp_x, top_cp_y,
-          params.last_x_px + last_x_shift, last_y_px);
-      ctx.quadraticCurveTo(cp_x, bottom_cp_y,
-          params.first_x_px + first_x_shift, first_y_px);
-
+      ctx.quadraticCurveTo(cp_x, top_cp_y, params.last_x_px + last_x_shift, last_y_px);
+      ctx.quadraticCurveTo(cp_x, bottom_cp_y, params.first_x_px + first_x_shift, first_y_px);
       ctx.closePath();
       ctx.fill();
     }
@@ -642,24 +708,31 @@ export <span class="hljs-keyword">class</span> StaveTie {
 
   renderText(first_x_px, last_x_px) {
     <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.text) <span class="hljs-keyword">return</span>;
-    <span class="hljs-keyword">var</span> center_x = (first_x_px + last_x_px) / <span class="hljs-number">2</span>;
+    <span class="hljs-keyword">let</span> center_x = (first_x_px + last_x_px) / <span class="hljs-number">2</span>;
     center_x -= <span class="hljs-keyword">this</span>.context.measureText(<span class="hljs-keyword">this</span>.text).width / <span class="hljs-number">2</span>;
 
     <span class="hljs-keyword">this</span>.context.save();
     <span class="hljs-keyword">this</span>.context.setFont(<span class="hljs-keyword">this</span>.font.family, <span class="hljs-keyword">this</span>.font.size, <span class="hljs-keyword">this</span>.font.style);
     <span class="hljs-keyword">this</span>.context.fillText(
-        <span class="hljs-keyword">this</span>.text, center_x + <span class="hljs-keyword">this</span>.render_options.text_shift_x,
-        (<span class="hljs-keyword">this</span>.first_note || <span class="hljs-keyword">this</span>.last_note).getStave().getYForTopText() - <span class="hljs-number">1</span>);
+      <span class="hljs-keyword">this</span>.text,
+      center_x + <span class="hljs-keyword">this</span>.render_options.text_shift_x,
+      (<span class="hljs-keyword">this</span>.first_note || <span class="hljs-keyword">this</span>.last_note).getStave().getYForTopText() - <span class="hljs-number">1</span>
+    );
     <span class="hljs-keyword">this</span>.context.restore();
   }
 
   draw() {
-    <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.context)
-      <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Vex.RERR(<span class="hljs-string">"NoContext"</span>, <span class="hljs-string">"No context to render tie."</span>);
-    <span class="hljs-keyword">var</span> first_note = <span class="hljs-keyword">this</span>.first_note;
-    <span class="hljs-keyword">var</span> last_note = <span class="hljs-keyword">this</span>.last_note;
-    <span class="hljs-keyword">var</span> first_x_px, last_x_px, first_ys, last_ys, stem_direction;
+    <span class="hljs-keyword">this</span>.checkContext();
+    <span class="hljs-keyword">this</span>.setRendered();
 
+    <span class="hljs-keyword">const</span> first_note = <span class="hljs-keyword">this</span>.first_note;
+    <span class="hljs-keyword">const</span> last_note = <span class="hljs-keyword">this</span>.last_note;
+
+    <span class="hljs-keyword">let</span> first_x_px;
+    <span class="hljs-keyword">let</span> last_x_px;
+    <span class="hljs-keyword">let</span> first_ys;
+    <span class="hljs-keyword">let</span> last_ys;
+    <span class="hljs-keyword">let</span> stem_direction;
     <span class="hljs-keyword">if</span> (first_note) {
       first_x_px = first_note.getTieRightX() + <span class="hljs-keyword">this</span>.render_options.tie_spacing;
       stem_direction = first_note.getStemDirection();
@@ -680,16 +753,16 @@ export <span class="hljs-keyword">class</span> StaveTie {
       <span class="hljs-keyword">this</span>.last_indices = <span class="hljs-keyword">this</span>.first_indices;
     }
 
-    <span class="hljs-keyword">if</span>(<span class="hljs-keyword">this</span>.direction){
+    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.direction) {
       stem_direction = <span class="hljs-keyword">this</span>.direction;
     }
 
     <span class="hljs-keyword">this</span>.renderTie({
-      first_x_px: first_x_px,
-      last_x_px: last_x_px,
-      first_ys: first_ys,
-      last_ys: last_ys,
-      direction: stem_direction
+      first_x_px,
+      last_x_px,
+      first_ys,
+      last_ys,
+      direction: stem_direction,
     });
 
     <span class="hljs-keyword">this</span>.renderText(first_x_px, last_x_px);

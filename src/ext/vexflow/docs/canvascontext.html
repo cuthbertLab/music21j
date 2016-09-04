@@ -121,6 +121,27 @@
               
                 
                 <li>
+                  <a class="source" href="easyscore.html">
+                    easyscore.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="element.html">
+                    element.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="factory.html">
+                    factory.js
+                  </a>
+                </li>
+              
+                
+                <li>
                   <a class="source" href="formatter.html">
                     formatter.js
                   </a>
@@ -165,6 +186,13 @@
                 <li>
                   <a class="source" href="gracenotegroup.html">
                     gracenotegroup.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="gracetabnote.html">
+                    gracetabnote.js
                   </a>
                 </li>
               
@@ -226,8 +254,22 @@
               
                 
                 <li>
+                  <a class="source" href="notesubgroup.html">
+                    notesubgroup.js
+                  </a>
+                </li>
+              
+                
+                <li>
                   <a class="source" href="ornament.html">
                     ornament.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="parser.html">
+                    parser.js
                   </a>
                 </li>
               
@@ -242,6 +284,13 @@
                 <li>
                   <a class="source" href="raphaelcontext.html">
                     raphaelcontext.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="registry.html">
+                    registry.js
                   </a>
                 </li>
               
@@ -380,6 +429,13 @@
               
                 
                 <li>
+                  <a class="source" href="system.html">
+                    system.js
+                  </a>
+                </li>
+              
+                
+                <li>
                   <a class="source" href="tables.html">
                     tables.js
                   </a>
@@ -499,6 +555,13 @@
               
                 
                 <li>
+                  <a class="source" href="vibratobracket.html">
+                    vibratobracket.js
+                  </a>
+                </li>
+              
+                
+                <li>
                   <a class="source" href="voice.html">
                     voice.js
                   </a>
@@ -519,22 +582,22 @@
       
         
         <p><a href="http://vexflow.com">VexFlow</a> - Copyright (c) Mohit Muthanna 2010.
-Mohit Muthanna <a href="&#109;&#97;&#x69;&#108;&#116;&#111;&#x3a;&#x6d;&#111;&#x68;&#x69;&#x74;&#x40;&#109;&#117;&#x74;&#104;&#97;&#x6e;&#x6e;&#x61;&#x2e;&#x63;&#x6f;&#x6d;">&#x6d;&#111;&#x68;&#x69;&#x74;&#x40;&#109;&#117;&#x74;&#104;&#97;&#x6e;&#x6e;&#x61;&#x2e;&#x63;&#x6f;&#x6d;</a></p>
+Mohit Muthanna <a href="&#109;&#97;&#105;&#108;&#x74;&#111;&#58;&#x6d;&#111;&#x68;&#x69;&#x74;&#x40;&#109;&#x75;&#116;&#104;&#97;&#110;&#110;&#97;&#46;&#99;&#x6f;&#109;">&#x6d;&#111;&#x68;&#x69;&#x74;&#x40;&#109;&#x75;&#116;&#104;&#97;&#110;&#110;&#97;&#46;&#99;&#x6f;&#109;</a></p>
 <p>A rendering context for the Raphael backend.</p>
 <p>Copyright Mohit Cheppudira 2010</p>
 
         
           <div class='highlight'><pre>
 <span class="hljs-comment">/** @constructor */</span>
-export <span class="hljs-keyword">class</span> CanvasContext {
-  static get WIDTH() {
+<span class="hljs-keyword">export</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">CanvasContext</span> </span>{
+  <span class="hljs-keyword">static</span> get WIDTH() {
     <span class="hljs-keyword">return</span> <span class="hljs-number">600</span>;
   }
-  static get HEIGHT() {
+  <span class="hljs-keyword">static</span> get HEIGHT() {
     <span class="hljs-keyword">return</span> <span class="hljs-number">400</span>;
   }
 
-  constructor(context) {</pre></div>
+  <span class="hljs-keyword">constructor</span>(context) {</pre></div>
         
       
         
@@ -546,7 +609,7 @@ property</p>
     <span class="hljs-keyword">if</span> (!context.canvas) {
       <span class="hljs-keyword">this</span>.canvas = {
         width: CanvasContext.WIDTH,
-        height: CanvasContext.HEIGHT
+        height: CanvasContext.HEIGHT,
       };
     } <span class="hljs-keyword">else</span> {
       <span class="hljs-keyword">this</span>.canvas = context.canvas;
@@ -562,12 +625,12 @@ property</p>
         <p>Containers not implemented</p>
 
         
-          <div class='highlight'><pre>  openGroup(cls, id, attrs) {}
+          <div class='highlight'><pre>  openGroup() {}
   closeGroup() {}
-  add(elem) {}
+  add() {}
 
   setFont(family, size, weight) {
-    <span class="hljs-keyword">this</span>.vexFlowCanvasContext.font = (weight || <span class="hljs-string">""</span>) + <span class="hljs-string">" "</span> + size + <span class="hljs-string">"pt "</span> + family;
+    <span class="hljs-keyword">this</span>.vexFlowCanvasContext.font = (weight || <span class="hljs-string">''</span>) + <span class="hljs-string">' '</span> + size + <span class="hljs-string">'pt '</span> + family;
     <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
   }
 
@@ -621,7 +684,7 @@ a ctx.lineDash method, as previous versions of VexFlow
 expected.</p>
 
         
-          <div class='highlight'><pre>  setLineDash(dash){
+          <div class='highlight'><pre>  setLineDash(dash) {
     <span class="hljs-keyword">this</span>.vexFlowCanvasContext.lineDash = dash;
     <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
   }
