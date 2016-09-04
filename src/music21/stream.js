@@ -86,6 +86,7 @@ export class Stream extends base.Music21Object {
     constructor() {
         super();
         this.classes.push('Stream');
+        this.isStream = true;
         this._duration = undefined;
 
         this._elements = [];
