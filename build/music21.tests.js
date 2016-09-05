@@ -1,5 +1,5 @@
 /**
- * music21j 0.9 built on  * 2016-09-02.
+ * music21j 0.9.0 built on  * 2016-09-05.
  * Copyright (c) 2013-2016 Michael Scott Cuthbert and cuthbertLab
  * BSD License, see LICENSE
  *
@@ -9109,6 +9109,7 @@
           var _this = possibleConstructorReturn(this, (Stream.__proto__ || Object.getPrototypeOf(Stream)).call(this));
 
           _this.classes.push('Stream');
+          _this.isStream = true;
           _this._duration = undefined;
 
           _this._elements = [];
@@ -10443,12 +10444,15 @@
            * @memberof music21.stream.Stream
            * @param {Int} minAccidental - alter of the min accidental (default -1)
            * @param {Int} maxAccidental - alter of the max accidental (default 1)
-           * @returns {DOMObject} the accidental toolbar.
+           * @param {jQueryObject} $siblingCanvas - canvas to use for redrawing;
+           * @returns {jQueryObject} the accidental toolbar.
            */
 
       }, {
           key: 'getAccidentalToolbar',
-          value: function getAccidentalToolbar(minAccidental, maxAccidental) {
+          value: function getAccidentalToolbar(minAccidental, maxAccidental, $siblingCanvas) {
+              var _this2 = this;
+
               if (minAccidental === undefined) {
                   minAccidental = -1;
               }
@@ -10458,63 +10462,73 @@
               minAccidental = Math.round(minAccidental);
               maxAccidental = Math.round(maxAccidental);
 
-              var addAccidental = function addAccidentalClicked(clickedButton, alter) {
+              var addAccidental = function addAccidental(newAlter, clickEvent) {
                   /*
                    * To be called on a button...
-                   *   this will usually refer to a window Object
                    */
-                  var accidentalToolbar = $$1(clickedButton).parent();
-                  var siblingCanvas = accidentalToolbar.parent().find('canvas');
-                  var s = siblingCanvas[0].storedStream;
-                  if (s.activeNote !== undefined) {
-                      var n = s.activeNote;
-                      n.pitch.accidental = new pitch.Accidental(alter);
+                  var $useCanvas = $siblingCanvas;
+                  if ($useCanvas === undefined) {
+                      var $searchParent = $$1(clickEvent.target).parent();
+                      while ($searchParent !== undefined && ($useCanvas === undefined || $useCanvas[0] === undefined)) {
+                          $useCanvas = $searchParent.find('canvas');
+                          $searchParent = $searchParent.parent();
+                      }
+                      if ($useCanvas[0] === undefined) {
+                          console.log('Could not find a canvas...');
+                          return;
+                      }
+                  }
+                  if (_this2.activeNote !== undefined) {
+                      var n = _this2.activeNote;
+                      n.pitch.accidental = new pitch.Accidental(newAlter);
                       /* console.log(n.pitch.name); */
-                      s.redrawCanvas(siblingCanvas[0]);
-                      if (s.changedCallbackFunction !== undefined) {
-                          s.changedCallbackFunction({ canvas: siblingCanvas[0] });
+                      _this2.redrawCanvas($useCanvas[0]);
+                      if (_this2.changedCallbackFunction !== undefined) {
+                          _this2.changedCallbackFunction({ canvas: $useCanvas[0] });
                       }
                   }
               };
 
-              var buttonDiv = $$1('<div/>').attr('class', 'buttonToolbar vexflowToolbar').css('position', 'absolute').css('top', '10px');
-              buttonDiv.append($$1('<span/>').css('margin-left', '50px'));
-              var clickFunc = function addAccidentalClickFunc() {
-                  addAccidental(this, $$1(this).data('alter'));
-              };
-              for (var i = minAccidental; i <= maxAccidental; i++) {
+              var $buttonDiv = $$1('<div/>').attr('class', 'buttonToolbar vexflowToolbar');
+
+              var _loop = function _loop(i) {
                   var acc = new pitch.Accidental(i);
-                  buttonDiv.append($$1('<button>' + acc.unicodeModifier + '</button>').data('alter', i).click(clickFunc)
+                  $buttonDiv.append($$1('<button>' + acc.unicodeModifier + '</button>').click(function (e) {
+                      return addAccidental(i, e);
+                  })
                   //                  .css('font-family', 'Bravura')
                   //                  .css('font-size', '40px')
                   );
+              };
+
+              for (var i = minAccidental; i <= maxAccidental; i++) {
+                  _loop(i);
               }
-              return buttonDiv;
+              return $buttonDiv;
           }
           /**
            *
            * @memberof music21.stream.Stream
-           * @returns {DOMObject} a play toolbar
+           * @returns {jQueryObject} a Div containing two buttons -- play and stop
            */
 
       }, {
           key: 'getPlayToolbar',
           value: function getPlayToolbar() {
-              var _this2 = this;
+              var _this3 = this;
 
-              var buttonDiv = $$1('<div/>').attr('class', 'playToolbar vexflowToolbar').css('position', 'absolute').css('top', '10px');
-              buttonDiv.append($$1('<span/>').css('margin-left', '50px'));
-              var bPlay = $$1('<button>&#9658</button>');
-              bPlay.click(function () {
-                  _this2.playStream();
+              var $buttonDiv = $$1('<div/>').attr('class', 'playToolbar vexflowToolbar');
+              var $bPlay = $$1('<button>&#9658</button>');
+              $bPlay.click(function () {
+                  _this3.playStream();
               });
-              buttonDiv.append(bPlay);
-              var bStop = $$1('<button>&#9724</button>');
-              bStop.click(function () {
-                  _this2.stopPlayStream();
+              $buttonDiv.append($bPlay);
+              var $bStop = $$1('<button>&#9724</button>');
+              $bStop.click(function () {
+                  _this3.stopPlayStream();
               });
-              buttonDiv.append(bStop);
-              return buttonDiv;
+              $buttonDiv.append($bStop);
+              return $buttonDiv;
           }
           //  reflow
 
@@ -10827,10 +10841,10 @@
       function Voice() {
           classCallCheck(this, Voice);
 
-          var _this3 = possibleConstructorReturn(this, (Voice.__proto__ || Object.getPrototypeOf(Voice)).call(this));
+          var _this4 = possibleConstructorReturn(this, (Voice.__proto__ || Object.getPrototypeOf(Voice)).call(this));
 
-          _this3.classes.push('Voice');
-          return _this3;
+          _this4.classes.push('Voice');
+          return _this4;
       }
 
       return Voice;
@@ -10848,11 +10862,11 @@
       function Measure() {
           classCallCheck(this, Measure);
 
-          var _this4 = possibleConstructorReturn(this, (Measure.__proto__ || Object.getPrototypeOf(Measure)).call(this));
+          var _this5 = possibleConstructorReturn(this, (Measure.__proto__ || Object.getPrototypeOf(Measure)).call(this));
 
-          _this4.classes.push('Measure');
-          _this4.number = 0; // measure number
-          return _this4;
+          _this5.classes.push('Measure');
+          _this5.number = 0; // measure number
+          return _this5;
       }
 
       return Measure;
@@ -10872,11 +10886,11 @@
       function Part() {
           classCallCheck(this, Part);
 
-          var _this5 = possibleConstructorReturn(this, (Part.__proto__ || Object.getPrototypeOf(Part)).call(this));
+          var _this6 = possibleConstructorReturn(this, (Part.__proto__ || Object.getPrototypeOf(Part)).call(this));
 
-          _this5.classes.push('Part');
-          _this5.systemHeight = _this5.renderOptions.naiveHeight;
-          return _this5;
+          _this6.classes.push('Part');
+          _this6.systemHeight = _this6.renderOptions.naiveHeight;
+          return _this6;
       }
 
       /**
@@ -11224,12 +11238,12 @@
       function Score() {
           classCallCheck(this, Score);
 
-          var _this6 = possibleConstructorReturn(this, (Score.__proto__ || Object.getPrototypeOf(Score)).call(this));
+          var _this7 = possibleConstructorReturn(this, (Score.__proto__ || Object.getPrototypeOf(Score)).call(this));
 
-          _this6.classes.push('Score');
-          _this6.measureWidths = [];
-          _this6.partSpacing = _this6.renderOptions.naiveHeight;
-          return _this6;
+          _this7.classes.push('Score');
+          _this7.measureWidths = [];
+          _this7.partSpacing = _this7.renderOptions.naiveHeight;
+          return _this7;
       }
 
       createClass(Score, [{
@@ -13382,6 +13396,7 @@
   music21.pitch = pitch;
   music21.renderOptions = renderOptions;
   music21.roman = roman;
+  music21.scale = scale;
   music21.stream = stream;
   music21.streamInteraction = streamInteraction;
   music21.tempo = tempo;

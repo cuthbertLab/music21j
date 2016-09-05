@@ -1455,8 +1455,7 @@ export class Stream extends base.Music21Object {
         // this.resetRenderOptions(true, true); // recursive, preserveEvents
         // this.setSubstreamRenderOptions();
         const $canvas = $(canvas); // works even if canvas is already $jquery
-        const $newCanv = this.createNewCanvas(canvas.width,
-                canvas.height);
+        const $newCanv = this.createNewCanvas(canvas.width, canvas.height);
         this.renderVexflowOnCanvas($newCanv);
         $canvas.replaceWith($newCanv);
         common.jQueryEventCopy($.event, $canvas, $newCanv); /* copy events -- using custom extension... */
@@ -1495,9 +1494,10 @@ export class Stream extends base.Music21Object {
      * @memberof music21.stream.Stream
      * @param {Int} minAccidental - alter of the min accidental (default -1)
      * @param {Int} maxAccidental - alter of the max accidental (default 1)
-     * @returns {DOMObject} the accidental toolbar.
+     * @param {jQueryObject} $siblingCanvas - canvas to use for redrawing;
+     * @returns {jQueryObject} the accidental toolbar.
      */
-    getAccidentalToolbar(minAccidental, maxAccidental) {
+    getAccidentalToolbar(minAccidental, maxAccidental, $siblingCanvas) {
         if (minAccidental === undefined) {
             minAccidental = -1;
         }
@@ -1507,57 +1507,61 @@ export class Stream extends base.Music21Object {
         minAccidental = Math.round(minAccidental);
         maxAccidental = Math.round(maxAccidental);
 
-        const addAccidental = function addAccidentalClicked(clickedButton, alter) {
+        const addAccidental = (newAlter, clickEvent) => {
             /*
              * To be called on a button...
-             *   this will usually refer to a window Object
              */
-            const accidentalToolbar = $(clickedButton).parent();
-            const siblingCanvas = accidentalToolbar.parent().find('canvas');
-            const s = siblingCanvas[0].storedStream;
-            if (s.activeNote !== undefined) {
-                const n = s.activeNote;
-                n.pitch.accidental = new pitch.Accidental(alter);
+            let $useCanvas = $siblingCanvas;
+            if ($useCanvas === undefined) {
+                let $searchParent = $(clickEvent.target).parent();
+                while ($searchParent !== undefined
+                            && ($useCanvas === undefined
+                                    || $useCanvas[0] === undefined)) {
+                    $useCanvas = $searchParent.find('canvas');
+                    $searchParent = $searchParent.parent();
+                }
+                if ($useCanvas[0] === undefined) {
+                    console.log('Could not find a canvas...');
+                    return;
+                }
+            }
+            if (this.activeNote !== undefined) {
+                const n = this.activeNote;
+                n.pitch.accidental = new pitch.Accidental(newAlter);
                 /* console.log(n.pitch.name); */
-                s.redrawCanvas(siblingCanvas[0]);
-                if (s.changedCallbackFunction !== undefined) {
-                    s.changedCallbackFunction({ canvas: siblingCanvas[0] });
+                this.redrawCanvas($useCanvas[0]);
+                if (this.changedCallbackFunction !== undefined) {
+                    this.changedCallbackFunction({ canvas: $useCanvas[0] });
                 }
             }
         };
 
 
-        const buttonDiv = $('<div/>').attr('class', 'buttonToolbar vexflowToolbar').css('position', 'absolute').css('top', '10px');
-        buttonDiv.append($('<span/>').css('margin-left', '50px'));
-        const clickFunc = function addAccidentalClickFunc() {
-            addAccidental(this, $(this).data('alter'));
-        };
+        const $buttonDiv = $('<div/>').attr('class', 'buttonToolbar vexflowToolbar');
         for (let i = minAccidental; i <= maxAccidental; i++) {
             const acc = new pitch.Accidental(i);
-            buttonDiv.append($('<button>' + acc.unicodeModifier + '</button>')
-                    .data('alter', i)
-                    .click(clickFunc)
+            $buttonDiv.append($('<button>' + acc.unicodeModifier + '</button>')
+                             .click((e) => addAccidental(i, e))
 //                  .css('font-family', 'Bravura')
 //                  .css('font-size', '40px')
             );
         }
-        return buttonDiv;
+        return $buttonDiv;
     }
     /**
      *
      * @memberof music21.stream.Stream
-     * @returns {DOMObject} a play toolbar
+     * @returns {jQueryObject} a Div containing two buttons -- play and stop
      */
     getPlayToolbar() {
-        const buttonDiv = $('<div/>').attr('class', 'playToolbar vexflowToolbar').css('position', 'absolute').css('top', '10px');
-        buttonDiv.append($('<span/>').css('margin-left', '50px'));
-        const bPlay = $('<button>&#9658</button>');
-        bPlay.click(() => { this.playStream(); });
-        buttonDiv.append(bPlay);
-        const bStop = $('<button>&#9724</button>');
-        bStop.click(() => { this.stopPlayStream(); });
-        buttonDiv.append(bStop);
-        return buttonDiv;
+        const $buttonDiv = $('<div/>').attr('class', 'playToolbar vexflowToolbar');
+        const $bPlay = $('<button>&#9658</button>');
+        $bPlay.click(() => { this.playStream(); });
+        $buttonDiv.append($bPlay);
+        const $bStop = $('<button>&#9724</button>');
+        $bStop.click(() => { this.stopPlayStream(); });
+        $buttonDiv.append($bStop);
+        return $buttonDiv;
     }
 //  reflow
 
