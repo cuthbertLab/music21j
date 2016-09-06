@@ -924,7 +924,7 @@ export class Stream extends base.Music21Object {
         } else {
             const rendOp = this.renderOptions;
             totalLength = 30 * this.length;
-            totalLength += rendOp.displayClef ? 20 : 0;
+            totalLength += rendOp.displayClef ? 40 : 0;
             totalLength += (rendOp.displayKeySignature && this.keySignature) ? this.keySignature.width : 0;
             totalLength += rendOp.displayTimeSignature ? 30 : 0;
             // totalLength += rendOp.staffPadding;
@@ -1537,7 +1537,7 @@ export class Stream extends base.Music21Object {
         };
 
 
-        const $buttonDiv = $('<div/>').attr('class', 'buttonToolbar vexflowToolbar');
+        const $buttonDiv = $('<div/>').attr('class', 'accidentalToolbar scoreToolbar');
         for (let i = minAccidental; i <= maxAccidental; i++) {
             const acc = new pitch.Accidental(i);
             $buttonDiv.append($('<button>' + acc.unicodeModifier + '</button>')
@@ -1554,7 +1554,7 @@ export class Stream extends base.Music21Object {
      * @returns {jQueryObject} a Div containing two buttons -- play and stop
      */
     getPlayToolbar() {
-        const $buttonDiv = $('<div/>').attr('class', 'playToolbar vexflowToolbar');
+        const $buttonDiv = $('<div/>').attr('class', 'playToolbar scoreToolbar');
         const $bPlay = $('<button>&#9658</button>');
         $bPlay.click(() => { this.playStream(); });
         $buttonDiv.append($bPlay);
@@ -1683,15 +1683,12 @@ export class Part extends Stream {
      * @returns {Number}
      */
     numSystems() {
-        let numSystems = 0;
+        let numSystems = 1;
         const subStreams = this.getElementsByClass('Stream');
-        for (let i = 0; i < subStreams.length; i++) {
+        for (let i = 1; i < subStreams.length; i++) {
             if (subStreams.get(i).renderOptions.startNewSystem) {
                 numSystems++;
             }
-        }
-        if (numSystems === 0) {
-            numSystems = 1;
         }
         return numSystems;
     }
@@ -1786,8 +1783,9 @@ export class Part extends Stream {
             if ((currentRight > maxSystemWidth) && (lastSystemBreak !== i)) {
                 systemBreakIndexes.push(i - 1);
                 systemCurrentWidths.push(currentLeft);
+                                
                 // console.log('setting new width at ' + currentLeft);
-                currentLeft = startLeft + measureWidths[i];
+                currentLeft = startLeft + measureWidths[i]; // 20 + this width;
                 lastSystemBreak = i;
             } else {
                 currentLeft = currentRight;
@@ -1798,6 +1796,7 @@ export class Part extends Stream {
 
         let currentSystemIndex = 0;
         let leftSubtract = 0;
+        let newLeftSubtract = undefined;
         for (i = 0; i < this.length; i++) {
             const m = this.get(i);
             if (m.renderOptions === undefined) {
@@ -1810,15 +1809,22 @@ export class Part extends Stream {
 
             if (systemBreakIndexes.indexOf(i - 1) !== -1) {
                 /* first measure of new System */
-                leftSubtract = currentLeft - 20;
+                const oldWidth = m.renderOptions.width; 
                 m.renderOptions.displayClef = true;
                 m.renderOptions.displayKeySignature = true;
                 m.renderOptions.startNewSystem = true;
+
+                const newWidth = m.estimateStaffLength() + m.renderOptions.staffPadding;
+                m.renderOptions.width = newWidth;
+                leftSubtract = currentLeft - 20;
+                // after this one, we'll have a new left subtract...
+                newLeftSubtract = leftSubtract - (newWidth - oldWidth);
+
                 currentSystemIndex++;
             } else if (i !== 0) {
                 m.renderOptions.startNewSystem = false;
-                m.renderOptions.displayClef = false;
-                m.renderOptions.displayKeySignature = false;
+                m.renderOptions.displayClef = false; // check for changed clef first?
+                m.renderOptions.displayKeySignature = false; // check for changed KS first?
             }
             m.renderOptions.systemIndex = currentSystemIndex;
             let currentSystemMultiplier;
@@ -1832,6 +1838,10 @@ export class Part extends Stream {
             }
             /* might make a small gap? fix? */
             const newLeft = currentLeft - leftSubtract;
+            if (newLeftSubtract !== undefined) {
+                leftSubtract = newLeftSubtract;
+                newLeftSubtract = undefined;
+            }
             // console.log('M: ' + i + ' ; old left: ' + currentLeft + ' ; new Left: ' + newLeft);
             m.renderOptions.left = Math.floor(newLeft * currentSystemMultiplier);
             m.renderOptions.width = Math.floor(m.renderOptions.width * currentSystemMultiplier);

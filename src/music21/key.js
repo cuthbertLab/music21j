@@ -82,7 +82,11 @@ export class KeySignature extends base.Music21Object {
      * @readonly
      */
     get width() {
-        return 5 * Math.abs(this.sharps);
+        if (this.sharps == 0) {
+            return 0;
+        } else { // add one to add extra space after the KS...
+            return 12 * (1 + Math.abs(this.sharps));
+        }
     }
      /**
       * An Array of Altered Pitches in KeySignature order (i.e., for flats, Bb, Eb, etc.)

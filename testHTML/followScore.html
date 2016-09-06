@@ -11,6 +11,7 @@
         require(['music21'], function () { 
             
             var s1 = music21.tinyNotation.TinyNotation("4/4 c2 d#4 e8 f g4 r8 B c4~ c16 d32 e f g a b c'1 b4 a g f e8 f e d c4 B c1 d2 c2 b''2 c''2 d'1 c''1");
+            // s1.keySignature = new music21.key.KeySignature(5);
             var m = s1.get(0);
             m.get(0).stemDirection = 'down';
             m.elements.pop();
@@ -45,6 +46,8 @@
             mQuarters.insert(0, voice2);
             
             var s2 = music21.tinyNotation.TinyNotation("4/4 E2 F#4 G8 r trip{G8 F A} G4 E2~ E1 B4 c B A G16 A8. G8 F E4 D C1 BB2 C2 D2 C2 BBB1 CC1");
+            // s2.keySignature = new music21.key.KeySignature(-5);
+
             var tm = s2.get(-6);
             var lyrics = ['Wel-', '-come', 'to', 'this', 'ly-','-ric!'];
             for (var i = 0; i < lyrics.length; i++) {

@@ -5725,7 +5725,12 @@
       }, {
           key: 'width',
           get: function get() {
-              return 5 * Math.abs(this.sharps);
+              if (this.sharps == 0) {
+                  return 0;
+              } else {
+                  // add one to add extra space after the KS...
+                  return 12 * (1 + Math.abs(this.sharps));
+              }
           }
           /**
            * An Array of Altered Pitches in KeySignature order (i.e., for flats, Bb, Eb, etc.)
@@ -9806,7 +9811,7 @@
               } else {
                   var rendOp = this.renderOptions;
                   totalLength = 30 * this.length;
-                  totalLength += rendOp.displayClef ? 20 : 0;
+                  totalLength += rendOp.displayClef ? 40 : 0;
                   totalLength += rendOp.displayKeySignature && this.keySignature ? this.keySignature.width : 0;
                   totalLength += rendOp.displayTimeSignature ? 30 : 0;
                   // totalLength += rendOp.staffPadding;
@@ -10489,7 +10494,7 @@
                   }
               };
 
-              var $buttonDiv = $$1('<div/>').attr('class', 'buttonToolbar vexflowToolbar');
+              var $buttonDiv = $$1('<div/>').attr('class', 'accidentalToolbar scoreToolbar');
 
               var _loop = function _loop(i) {
                   var acc = new pitch.Accidental(i);
@@ -10517,7 +10522,7 @@
           value: function getPlayToolbar() {
               var _this3 = this;
 
-              var $buttonDiv = $$1('<div/>').attr('class', 'playToolbar vexflowToolbar');
+              var $buttonDiv = $$1('<div/>').attr('class', 'playToolbar scoreToolbar');
               var $bPlay = $$1('<button>&#9658</button>');
               $bPlay.click(function () {
                   _this3.playStream();
@@ -10906,15 +10911,12 @@
       createClass(Part, [{
           key: 'numSystems',
           value: function numSystems() {
-              var numSystems = 0;
+              var numSystems = 1;
               var subStreams = this.getElementsByClass('Stream');
-              for (var i = 0; i < subStreams.length; i++) {
+              for (var i = 1; i < subStreams.length; i++) {
                   if (subStreams.get(i).renderOptions.startNewSystem) {
                       numSystems++;
                   }
-              }
-              if (numSystems === 0) {
-                  numSystems = 1;
               }
               return numSystems;
           }
@@ -11019,8 +11021,9 @@
                   if (currentRight > maxSystemWidth && lastSystemBreak !== i) {
                       systemBreakIndexes.push(i - 1);
                       systemCurrentWidths.push(currentLeft);
+
                       // console.log('setting new width at ' + currentLeft);
-                      currentLeft = startLeft + measureWidths[i];
+                      currentLeft = startLeft + measureWidths[i]; // 20 + this width;
                       lastSystemBreak = i;
                   } else {
                       currentLeft = currentRight;
@@ -11031,6 +11034,7 @@
 
               var currentSystemIndex = 0;
               var leftSubtract = 0;
+              var newLeftSubtract = undefined;
               for (i = 0; i < this.length; i++) {
                   var m = this.get(i);
                   if (m.renderOptions === undefined) {
@@ -11043,15 +11047,22 @@
 
                   if (systemBreakIndexes.indexOf(i - 1) !== -1) {
                       /* first measure of new System */
-                      leftSubtract = currentLeft - 20;
+                      var oldWidth = m.renderOptions.width;
                       m.renderOptions.displayClef = true;
                       m.renderOptions.displayKeySignature = true;
                       m.renderOptions.startNewSystem = true;
+
+                      var newWidth = m.estimateStaffLength() + m.renderOptions.staffPadding;
+                      m.renderOptions.width = newWidth;
+                      leftSubtract = currentLeft - 20;
+                      // after this one, we'll have a new left subtract...
+                      newLeftSubtract = leftSubtract - (newWidth - oldWidth);
+
                       currentSystemIndex++;
                   } else if (i !== 0) {
                       m.renderOptions.startNewSystem = false;
-                      m.renderOptions.displayClef = false;
-                      m.renderOptions.displayKeySignature = false;
+                      m.renderOptions.displayClef = false; // check for changed clef first?
+                      m.renderOptions.displayKeySignature = false; // check for changed KS first?
                   }
                   m.renderOptions.systemIndex = currentSystemIndex;
                   var currentSystemMultiplier = void 0;
@@ -11065,6 +11076,10 @@
                   }
                   /* might make a small gap? fix? */
                   var newLeft = currentLeft - leftSubtract;
+                  if (newLeftSubtract !== undefined) {
+                      leftSubtract = newLeftSubtract;
+                      newLeftSubtract = undefined;
+                  }
                   // console.log('M: ' + i + ' ; old left: ' + currentLeft + ' ; new Left: ' + newLeft);
                   m.renderOptions.left = Math.floor(newLeft * currentSystemMultiplier);
                   m.renderOptions.width = Math.floor(m.renderOptions.width * currentSystemMultiplier);
