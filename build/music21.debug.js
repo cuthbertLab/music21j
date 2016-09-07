@@ -5728,8 +5728,8 @@
               if (this.sharps == 0) {
                   return 0;
               } else {
-                  // add one to add extra space after the KS...
-                  return 12 * (1 + Math.abs(this.sharps));
+                  // add 6 to add extra space after the KS...
+                  return 12 * Math.abs(this.sharps) + 6;
               }
           }
           /**
@@ -6567,7 +6567,9 @@
                   'class': 'keyboardkey ' + this.keyClass,
                   'id': this.id,
                   width: this.width * this.scaleFactor,
-                  height: this.height * this.scaleFactor
+                  height: this.height * this.scaleFactor,
+                  rx: 3,
+                  ry: 3
               };
               var keyDOM = common.makeSVGright('rect', keyattrs);
               for (var x in this.callbacks) {
@@ -9811,7 +9813,7 @@
               } else {
                   var rendOp = this.renderOptions;
                   totalLength = 30 * this.length;
-                  totalLength += rendOp.displayClef ? 40 : 0;
+                  totalLength += rendOp.displayClef ? 30 : 0;
                   totalLength += rendOp.displayKeySignature && this.keySignature ? this.keySignature.width : 0;
                   totalLength += rendOp.displayTimeSignature ? 30 : 0;
                   // totalLength += rendOp.staffPadding;

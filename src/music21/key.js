@@ -84,8 +84,8 @@ export class KeySignature extends base.Music21Object {
     get width() {
         if (this.sharps == 0) {
             return 0;
-        } else { // add one to add extra space after the KS...
-            return 12 * (1 + Math.abs(this.sharps));
+        } else { // add 6 to add extra space after the KS...
+            return 12 * Math.abs(this.sharps) + 6;
         }
     }
      /**

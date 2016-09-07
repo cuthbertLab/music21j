@@ -202,13 +202,12 @@ module.exports = (grunt) => {
     grunt.loadNpmTasks('grunt-jsdoc');
     grunt.loadNpmTasks('grunt-bump');
     grunt.loadNpmTasks('grunt-eslint');
-//  grunt.loadNpmTasks('grunt-webpack');
 
     // Default task(s).
-    grunt.registerTask('default', ['rollup:files', 'uglify:build', 'eslint', 'jsdoc']); //, , ... 'jsdoc']); 
-    //grunt.registerTask('default', ['webpack:build', 'concat', 'uglify:build']); //, 'jsdoc']);
+    grunt.registerTask('default', ['rollup:files', 'uglify:build', 'eslint']); 
     grunt.registerTask('test', 'Run qunit tests', ['rollup:tests', 'qunit']);
     grunt.registerTask('publish', 'Raise the version and publish', function () { 
+        grunt.task.run('jsdoc');
         grunt.task.run('bump');
     });
 

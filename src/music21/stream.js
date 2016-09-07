@@ -924,7 +924,7 @@ export class Stream extends base.Music21Object {
         } else {
             const rendOp = this.renderOptions;
             totalLength = 30 * this.length;
-            totalLength += rendOp.displayClef ? 40 : 0;
+            totalLength += rendOp.displayClef ? 30 : 0;
             totalLength += (rendOp.displayKeySignature && this.keySignature) ? this.keySignature.width : 0;
             totalLength += rendOp.displayTimeSignature ? 30 : 0;
             // totalLength += rendOp.staffPadding;

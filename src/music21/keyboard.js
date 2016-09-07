@@ -90,6 +90,8 @@ export class Key {
             'id': this.id,
             width: this.width * this.scaleFactor,
             height: this.height * this.scaleFactor,
+            rx: 3,
+            ry: 3,
         };
         const keyDOM = common.makeSVGright('rect', keyattrs);
         for (const x in this.callbacks) {
