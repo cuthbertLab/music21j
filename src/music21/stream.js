@@ -1783,7 +1783,7 @@ export class Part extends Stream {
             if ((currentRight > maxSystemWidth) && (lastSystemBreak !== i)) {
                 systemBreakIndexes.push(i - 1);
                 systemCurrentWidths.push(currentLeft);
-                                
+
                 // console.log('setting new width at ' + currentLeft);
                 currentLeft = startLeft + measureWidths[i]; // 20 + this width;
                 lastSystemBreak = i;
@@ -1796,7 +1796,7 @@ export class Part extends Stream {
 
         let currentSystemIndex = 0;
         let leftSubtract = 0;
-        let newLeftSubtract = undefined;
+        let newLeftSubtract;
         for (i = 0; i < this.length; i++) {
             const m = this.get(i);
             if (m.renderOptions === undefined) {
@@ -1809,7 +1809,7 @@ export class Part extends Stream {
 
             if (systemBreakIndexes.indexOf(i - 1) !== -1) {
                 /* first measure of new System */
-                const oldWidth = m.renderOptions.width; 
+                const oldWidth = m.renderOptions.width;
                 m.renderOptions.displayClef = true;
                 m.renderOptions.displayKeySignature = true;
                 m.renderOptions.startNewSystem = true;

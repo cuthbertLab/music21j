@@ -60,6 +60,8 @@ tinyNotation.regularExpressions = {
     DOT: /\.+/,
     TIMESIG: /(\d+)\/(\d+)/,
 
+    PARTBREAK: /partBreak/, // nonstandard...fix later...
+
     TRIP: /trip\{/,
     QUAD: /quad\{/,
     ENDBRAC: /\}$/,
@@ -84,7 +86,10 @@ tinyNotation.regularExpressions = {
 tinyNotation.TinyNotation = function TinyNotation(textIn) {
     textIn = textIn.trim();
     const tokens = textIn.split(' ');
-    const p = new stream.Part();
+
+    let optionalScore;
+
+    let p = new stream.Part();
     let m = new stream.Measure();
     let currentTSBarDuration = 4.0;
     let lastDurationQL = 1.0;
@@ -105,6 +110,25 @@ tinyNotation.TinyNotation = function TinyNotation(textIn) {
 
         let token = tokens[i];
         let noteObj;
+        if (tnre.PARTBREAK.exec(token)) {
+            if (m.length > 0) {
+                p.append(m);
+                m = new stream.Measure();
+            }
+            if (optionalScore === undefined) {
+                optionalScore = new stream.Score();
+            }
+            optionalScore.insert(0, p);
+            p = new stream.Part();
+
+            storedDict.lastNoteTied = false;
+            storedDict.inTrip = false;
+            storedDict.inQuad = false;
+            storedDict.endTupletAfterNote = false;
+
+            continue;
+        }
+
         if (tnre.TRIP.exec(token)) {
             token = token.slice(5); // cut...
             storedDict.inTrip = true;
@@ -198,15 +222,30 @@ tinyNotation.TinyNotation = function TinyNotation(textIn) {
         }
         m.append(noteObj);
     }
-    if (p.length > 0) {
+
+    let returnObject;
+
+    if (optionalScore !== undefined) {
+        if (m.length > 0) {
+            p.append(m);
+        }
+        if (p.length > 0) {
+            optionalScore.append(p);
+        }
+        for (let i = 0; i < optionalScore.length; i++) {
+            const innerPart = optionalScore.get(i);
+            innerPart.clef = clef.bestClef(innerPart);
+        }
+        returnObject = optionalScore;
+    } else if (p.length > 0) {
         p.append(m);
-        const thisClef = clef.bestClef(p);
-        p.clef = thisClef;
-        return p; // return measure object if one measure or less
+        p.clef = clef.bestClef(p);
+        returnObject = p;
     } else {
         m.clef = clef.bestClef(m);
-        return m;
+        returnObject = m;
     }
+    return returnObject;
 };
 
 // render notation divs in HTML
@@ -233,10 +272,10 @@ tinyNotation.renderNotationDivs = function renderNotationDivs(classTypes, select
     }
     for (let i = 0; i < allRender.length; i++) {
         const thisTN = allRender[i];
-        const thisTNJQ = $(thisTN);
+        const $thisTN = $(thisTN);
         let thisTNContents;
-        if (thisTNJQ.attr('tinynotationcontents') !== undefined) {
-            thisTNContents = thisTNJQ.attr('tinynotationcontents');
+        if ($thisTN.attr('tinynotationcontents') !== undefined) {
+            thisTNContents = $thisTN.attr('tinynotationcontents');
         } else if (thisTN.textContent !== undefined) {
             thisTNContents = thisTN.textContent;
             thisTNContents = thisTNContents.replace(/s+/g, ' '); // no line-breaks, etc.
@@ -248,15 +287,15 @@ tinyNotation.renderNotationDivs = function renderNotationDivs(classTypes, select
         }
         if (thisTNContents) {
             const st = tinyNotation.TinyNotation(thisTNContents);
-            if (thisTNJQ.hasClass('noPlayback')) {
+            if ($thisTN.hasClass('noPlayback')) {
                 st.renderOptions.events.click = undefined;
             }
             const newCanvas = st.createCanvas();
 
-            thisTNJQ.attr('tinynotationcontents', thisTNContents);
-            thisTNJQ.empty();
-            thisTNJQ.data('stream', st);
-            thisTNJQ.append(newCanvas);
+            $thisTN.attr('tinynotationcontents', thisTNContents);
+            $thisTN.empty();
+            $thisTN.data('stream', st);
+            $thisTN.append(newCanvas);
             // console.log(thisTNContents);
         }
     }

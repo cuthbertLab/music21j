@@ -1,5 +1,5 @@
 /**
- * music21j 0.9.0 built on  * 2016-09-05.
+ * music21j 0.9.0 built on  * 2016-09-10.
  * Copyright (c) 2013-2016 Michael Scott Cuthbert and cuthbertLab
  * BSD License, see LICENSE
  *
@@ -5725,7 +5725,7 @@
       }, {
           key: 'width',
           get: function get() {
-              if (this.sharps == 0) {
+              if (this.sharps === 0) {
                   return 0;
               } else {
                   // add 6 to add extra space after the KS...
@@ -11036,7 +11036,7 @@
 
               var currentSystemIndex = 0;
               var leftSubtract = 0;
-              var newLeftSubtract = undefined;
+              var newLeftSubtract = void 0;
               for (i = 0; i < this.length; i++) {
                   var m = this.get(i);
                   if (m.renderOptions === undefined) {
@@ -12518,6 +12518,8 @@
       DOT: /\.+/,
       TIMESIG: /(\d+)\/(\d+)/,
 
+      PARTBREAK: /partBreak/, // nonstandard...fix later...
+
       TRIP: /trip\{/,
       QUAD: /quad\{/,
       ENDBRAC: /\}$/
@@ -12542,6 +12544,9 @@
   tinyNotation.TinyNotation = function TinyNotation(textIn) {
       textIn = textIn.trim();
       var tokens = textIn.split(' ');
+
+      var optionalScore = void 0;
+
       var p = new stream.Part();
       var m = new stream.Measure();
       var currentTSBarDuration = 4.0;
@@ -12563,6 +12568,25 @@
 
           var token = tokens[i];
           var noteObj = void 0;
+          if (tnre.PARTBREAK.exec(token)) {
+              if (m.length > 0) {
+                  p.append(m);
+                  m = new stream.Measure();
+              }
+              if (optionalScore === undefined) {
+                  optionalScore = new stream.Score();
+              }
+              optionalScore.insert(0, p);
+              p = new stream.Part();
+
+              storedDict.lastNoteTied = false;
+              storedDict.inTrip = false;
+              storedDict.inQuad = false;
+              storedDict.endTupletAfterNote = false;
+
+              continue;
+          }
+
           if (tnre.TRIP.exec(token)) {
               token = token.slice(5); // cut...
               storedDict.inTrip = true;
@@ -12655,15 +12679,30 @@
           }
           m.append(noteObj);
       }
-      if (p.length > 0) {
+
+      var returnObject = void 0;
+
+      if (optionalScore !== undefined) {
+          if (m.length > 0) {
+              p.append(m);
+          }
+          if (p.length > 0) {
+              optionalScore.append(p);
+          }
+          for (var _i = 0; _i < optionalScore.length; _i++) {
+              var innerPart = optionalScore.get(_i);
+              innerPart.clef = clef.bestClef(innerPart);
+          }
+          returnObject = optionalScore;
+      } else if (p.length > 0) {
           p.append(m);
-          var thisClef = clef.bestClef(p);
-          p.clef = thisClef;
-          return p; // return measure object if one measure or less
+          p.clef = clef.bestClef(p);
+          returnObject = p;
       } else {
           m.clef = clef.bestClef(m);
-          return m;
+          returnObject = m;
       }
+      return returnObject;
   };
 
   // render notation divs in HTML
@@ -12690,10 +12729,10 @@
       }
       for (var i = 0; i < allRender.length; i++) {
           var thisTN = allRender[i];
-          var thisTNJQ = $(thisTN);
+          var $thisTN = $(thisTN);
           var thisTNContents = void 0;
-          if (thisTNJQ.attr('tinynotationcontents') !== undefined) {
-              thisTNContents = thisTNJQ.attr('tinynotationcontents');
+          if ($thisTN.attr('tinynotationcontents') !== undefined) {
+              thisTNContents = $thisTN.attr('tinynotationcontents');
           } else if (thisTN.textContent !== undefined) {
               thisTNContents = thisTN.textContent;
               thisTNContents = thisTNContents.replace(/s+/g, ' '); // no line-breaks, etc.
@@ -12704,15 +12743,15 @@
           }
           if (thisTNContents) {
               var st = tinyNotation.TinyNotation(thisTNContents);
-              if (thisTNJQ.hasClass('noPlayback')) {
+              if ($thisTN.hasClass('noPlayback')) {
                   st.renderOptions.events.click = undefined;
               }
               var newCanvas = st.createCanvas();
 
-              thisTNJQ.attr('tinynotationcontents', thisTNContents);
-              thisTNJQ.empty();
-              thisTNJQ.data('stream', st);
-              thisTNJQ.append(newCanvas);
+              $thisTN.attr('tinynotationcontents', thisTNContents);
+              $thisTN.empty();
+              $thisTN.data('stream', st);
+              $thisTN.append(newCanvas);
               // console.log(thisTNContents);
           }
       }

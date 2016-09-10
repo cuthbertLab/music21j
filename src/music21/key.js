@@ -82,7 +82,7 @@ export class KeySignature extends base.Music21Object {
      * @readonly
      */
     get width() {
-        if (this.sharps == 0) {
+        if (this.sharps === 0) {
             return 0;
         } else { // add 6 to add extra space after the KS...
             return 12 * Math.abs(this.sharps) + 6;
