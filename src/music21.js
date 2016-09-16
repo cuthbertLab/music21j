@@ -164,8 +164,10 @@ var m21requireConfig = {
             // browser shims
             'webMidiApiShim': pathSimplify(m21srcPath + '/ext/midijs/inc/shim/WebMIDIAPI'), //not currently loaded/used?
             'webAudioShim': pathSimplify(m21srcPath + '/ext/midijs/inc/shim/WebAudioAPI'), // Safari prefixed to <= 9; IE <= Edge
-            'es6Shim': pathSimplify(m21srcPath + '/ext/es6-shim'),
 
+            'es6Shim': pathSimplify(m21srcPath + '/ext/es6-shim'),
+            'babelPolyfill': pathSimplify(m21srcPath + '/ext/polyfill'),
+            
             'm21': pathSimplify(m21srcPath + '/../build/music21.debug'),
             'jsonpickle': pathSimplify(m21srcPath + '/ext/jsonpickle/build/jsonpickle.debug'),
 
@@ -201,7 +203,7 @@ var m21requireConfig = {
                 exports: 'Vex'
             },
             'm21': {
-                deps: ['jquery', 'MIDI', 'vexflow', 'jsonpickle'],
+                deps: ['jquery', 'MIDI', 'vexflow', 'jsonpickle', 'babelPolyfill'],
                 exports: 'm21'            
             }
         }
@@ -217,6 +219,7 @@ var m21modules = ['m21',
                   'jquery-ui',
                   'attrchange',
                   'es6Shim',
+                  'babelPolyfill',
                   //'webmidiapi',
 
                   ];

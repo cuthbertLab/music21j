@@ -144,12 +144,12 @@ export class Beams extends prebase.ProtoM21Object {
      * @returns {music21.beam.Beam|undefined}
      */
     getByNumber(number) {
-        if (!(number in this.getNumbers())) {
+        if (!(this.getNumbers().includes(number))) {
             throw new Music21Exception('beam number error: ' + number);
         }
-        for (let i = 0; i < this.length; i++) {
-            if (this.beamsList[i].number === number) {
-                return this.beamsList[i];
+        for (const thisBeam of this.beamsList) {
+            if (thisBeam.number === number) {
+                return thisBeam;
             }
         }
         return undefined;
@@ -162,10 +162,9 @@ export class Beams extends prebase.ProtoM21Object {
      */
     getNumbers() {
         const numbers = [];
-        for (let i = 0; i < this.length; i++) {
-            numbers.push(this.beamsList[i].number);
+        for (const thisBeam of this.beamsList) {
+            numbers.push(thisBeam.number);
         }
-        return numbers;
     }
     /**
      * Returns the type + "-" + direction (if direction is defined)

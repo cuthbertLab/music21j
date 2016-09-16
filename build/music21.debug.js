@@ -1,5 +1,5 @@
 /**
- * music21j 0.9.0 built on  * 2016-09-10.
+ * music21j 0.9.0 built on  * 2016-09-16.
  * Copyright (c) 2013-2016 Michael Scott Cuthbert and cuthbertLab
  * BSD License, see LICENSE
  *
@@ -2009,14 +2009,36 @@
       }, {
           key: 'getByNumber',
           value: function getByNumber(number) {
-              if (!(number in this.getNumbers())) {
+              if (!this.getNumbers().includes(number)) {
                   throw new Music21Exception('beam number error: ' + number);
               }
-              for (var i = 0; i < this.length; i++) {
-                  if (this.beamsList[i].number === number) {
-                      return this.beamsList[i];
+              var _iteratorNormalCompletion = true;
+              var _didIteratorError = false;
+              var _iteratorError = undefined;
+
+              try {
+                  for (var _iterator = this.beamsList[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+                      var thisBeam = _step.value;
+
+                      if (thisBeam.number === number) {
+                          return thisBeam;
+                      }
+                  }
+              } catch (err) {
+                  _didIteratorError = true;
+                  _iteratorError = err;
+              } finally {
+                  try {
+                      if (!_iteratorNormalCompletion && _iterator.return) {
+                          _iterator.return();
+                      }
+                  } finally {
+                      if (_didIteratorError) {
+                          throw _iteratorError;
+                      }
                   }
               }
+
               return undefined;
           }
           /**
@@ -2030,10 +2052,30 @@
           key: 'getNumbers',
           value: function getNumbers() {
               var numbers = [];
-              for (var i = 0; i < this.length; i++) {
-                  numbers.push(this.beamsList[i].number);
+              var _iteratorNormalCompletion2 = true;
+              var _didIteratorError2 = false;
+              var _iteratorError2 = undefined;
+
+              try {
+                  for (var _iterator2 = this.beamsList[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+                      var thisBeam = _step2.value;
+
+                      numbers.push(thisBeam.number);
+                  }
+              } catch (err) {
+                  _didIteratorError2 = true;
+                  _iteratorError2 = err;
+              } finally {
+                  try {
+                      if (!_iteratorNormalCompletion2 && _iterator2.return) {
+                          _iterator2.return();
+                      }
+                  } finally {
+                      if (_didIteratorError2) {
+                          throw _iteratorError2;
+                      }
+                  }
               }
-              return numbers;
           }
           /**
            * Returns the type + "-" + direction (if direction is defined)
