@@ -1,6 +1,6 @@
 <html>
 <head>
-    <script src="recorderWithWorker.js"></script>
+    <script src="../../ext/require/require.js" data-main="../../src/music21"></script>
     <style>
     canvas {
         display: inline-block; 
@@ -9,7 +9,11 @@
     }
     </style>
     <script>
-    var audioRecorder;
+    audioRecorder = undefined;
+    require(['music21'], function(music21) {
+        audioRecorder = new music21.audioRecording.Recorder();
+        audioRecorder.initAudio();
+    });
 
     var isRecording = false;
     function toggleRecording() {
@@ -29,17 +33,11 @@
     function save() {
         audioRecorder.exportWAV();
     }
-
-    function initAudio() {
-        audioRecorder = new Recorder();
-        audioRecorder.initAudio();
-    }
-    
     function playback() {
         audioRecorder.getBuffers( function(b) { audioRecorder.playBuffers(b) });
     }
 
-    window.addEventListener('load', initAudio );    
+    
     </script>
 </head>
 <body>

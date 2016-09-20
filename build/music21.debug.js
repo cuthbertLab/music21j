@@ -1599,7 +1599,8 @@
               if (audioSearch._audioContext !== null) {
                   return audioSearch._audioContext;
               } else {
-                  if (MIDI__default.WebAudio !== undefined && MIDI__default.WebAudio.getContext() !== undefined) {
+                  // AudioContext should be a singleton, but MIDI reports loaded before it is!
+                  if (MIDI__default !== undefined && MIDI__default.WebAudio !== undefined && MIDI__default.WebAudio.getContext() !== undefined) {
                       window.globalAudioContext = MIDI__default.WebAudio.getContext();
                   } else if (typeof window.globalAudioContext === 'undefined') {
                       window.globalAudioContext = new audioSearch.AudioContextCaller();
@@ -1823,39 +1824,383 @@
       return [midiNum, centsOff];
   };
 
-  // http://paulirish.com/2011/requestanimationframe-for-smart-animating/
-  // http://my.opera.com/emoller/blog/2011/12/20/requestanimationframe-for-smart-er-animating
+  /**
+   * Adopted from Matt Diamond's recorder.js code MIT License
+   */
+  var Recorder = function () {
+      function Recorder(cfg) {
+          classCallCheck(this, Recorder);
 
-  // requestAnimationFrame polyfill by Erik Möller
-  // fixes from Paul Irish and Tino Zijdel
-
-  function requestAnimationFramePolyFill() {
-      var lastTime = 0;
-      var vendors = ['ms', 'moz', 'webkit', 'o'];
-      for (var x = 0; x < vendors.length && !window.requestAnimationFrame; ++x) {
-          window.requestAnimationFrame = window[vendors[x] + 'RequestAnimationFrame'];
-          window.cancelAnimationFrame = window[vendors[x] + 'CancelAnimationFrame'] || window[vendors[x] + 'CancelRequestAnimationFrame'];
-      }
-
-      if (!window.requestAnimationFrame) {
-          window.requestAnimationFrame = function (callback, element) {
-              var currTime = new Date().getTime();
-              var timeToCall = Math.max(0, 16 - (currTime - lastTime));
-              var timeoutId = window.setTimeout(function () {
-                  return callback(currTime + timeToCall);
-              }, timeToCall);
-              lastTime = currTime + timeToCall;
-              return timeoutId;
+          var config = cfg || {};
+          this.bufferLen = config.bufferLen || 4096;
+          this.config = config;
+          this.recording = false;
+          this.currCallback = undefined;
+          this.audioContext = audioSearch.audioContext;
+          this.frequencyCanvasInfo = {
+              id: 'frequencyAnalyser',
+              width: undefined,
+              height: undefined,
+              canvasContext: undefined,
+              animationFrameID: undefined
           };
+          this.waveformCanvasInfo = {
+              id: 'waveformCanvas',
+              width: undefined,
+              height: undefined,
+              canvasContext: undefined
+          };
+          this.analyserNode = undefined;
       }
 
-      if (!window.cancelAnimationFrame) {
-          window.cancelAnimationFrame = function (id) {
-              clearTimeout(id);
-          };
-      }
-  }
-  requestAnimationFramePolyFill();
+      /**
+       * Start here -- polyfills navigator, runs getUserMedia and then sends to audioStreamConnected
+       */
+
+
+      createClass(Recorder, [{
+          key: 'initAudio',
+          value: function initAudio() {
+              var _this = this;
+
+              this.polyfillNavigator();
+              navigator.getUserMedia({
+                  'audio': {
+                      'mandatory': {
+                          'googEchoCancellation': 'false',
+                          'googAutoGainControl': 'false',
+                          'googNoiseSuppression': 'false',
+                          'googHighpassFilter': 'false'
+                      },
+                      'optional': []
+                  }
+              }, function (s) {
+                  return _this.audioStreamConnected(s);
+              }, function (error) {
+                  console.log('Error getting audio -- try on google Chrome?');
+                  console.log(error);
+              });
+          }
+
+          /**
+           * After the user has given permission to record, this method is called.
+           * It creates a gain point, and then connects the input source to the gain.
+           * It connects an analyserNode (fftSize 2048) to the gain.
+           * 
+           * It creates a second gain of 0.0 connected to the destination, so that
+           * we're not hearing what we're playing in in an infinite loop (SUCKS to turn this off...)
+           * 
+           * And it calls this.connectSource on the inputPoint so that
+           * we can do something with all these wonderful inputs.
+           */
+
+      }, {
+          key: 'audioStreamConnected',
+          value: function audioStreamConnected(stream) {
+              var inputPoint = this.audioContext.createGain();
+
+              // Create an AudioNode from the stream.
+              var audioInput = this.audioContext.createMediaStreamSource(stream);
+              audioInput.connect(inputPoint);
+
+              var analyserNode = this.audioContext.createAnalyser();
+              analyserNode.fftSize = 2048;
+              this.analyserNode = analyserNode;
+              inputPoint.connect(analyserNode);
+
+              this.connectSource(inputPoint);
+
+              var zeroGain = this.audioContext.createGain();
+              zeroGain.gain.value = 0.0;
+              inputPoint.connect(zeroGain);
+              zeroGain.connect(this.audioContext.destination);
+          }
+
+          /**
+           * Creates a worker to receive and process all the messages asychronously.
+           */
+
+      }, {
+          key: 'connectSource',
+          value: function connectSource(source) {
+              var _this2 = this;
+
+              this.context = source.context;
+              this.setNode();
+
+              // create a Worker with inline code...
+              var workerBlob = new Blob(['(', recorderWorkerJs, ')()'], { type: 'application/javascript' });
+              var workerURL = URL.createObjectURL(workerBlob);
+              this.worker = new Worker(workerURL);
+              /**
+               * When worker sends a message, we just send it to the currentCallback...
+               */
+              this.worker.onmessage = function (e) {
+                  var blob = e.data;
+                  _this2.currCallback(blob);
+              };
+              URL.revokeObjectURL(workerURL);
+
+              this.worker.postMessage({
+                  command: 'init',
+                  config: {
+                      sampleRate: this.context.sampleRate
+                  }
+              });
+
+              /**
+               * Whenever the ScriptProcessorNode receives enough audio to process
+               * (i.e., this.bufferLen stereo samples; default 4096), then it calls onaudioprocess
+               * which is set up to send the event's .getChannelData to the WebWorker via a
+               * postMessage.  
+               * 
+               * The 'record' command sends no message back.
+               */
+              this.node.onaudioprocess = function (e) {
+                  if (!_this2.recording) {
+                      return;
+                  }
+                  _this2.worker.postMessage({
+                      command: 'record',
+                      buffer: [e.inputBuffer.getChannelData(0), e.inputBuffer.getChannelData(1)]
+                  });
+              };
+
+              source.connect(this.node);
+
+              /** 
+               * polyfill for Chrome error.
+               * 
+               * if the ScriptProcessorNode (this.node) is not connected to an output
+               * the "onaudioprocess" event is not triggered in Chrome.
+               */
+              this.node.connect(this.context.destination);
+          }
+
+          /**
+           * Creates a ScriptProcessorNode (preferably) to allow for direct audio processing.
+           * 
+           * Sets it to this.node and returns it.
+           */
+
+      }, {
+          key: 'setNode',
+          value: function setNode() {
+              var numInputChannels = 2;
+              var numOutputChannels = 2;
+              if (!this.context.createScriptProcessor) {
+                  this.node = this.context.createJavaScriptNode(this.bufferLen, numInputChannels, numOutputChannels);
+              } else {
+                  this.node = this.context.createScriptProcessor(this.bufferLen, numInputChannels, numOutputChannels);
+              }
+              return this.node;
+          }
+
+          /**
+           * Configure from another source...
+           */
+
+      }, {
+          key: 'configure',
+          value: function configure(cfg) {
+              for (var prop in cfg) {
+                  if (Object.hasOwnProperty.call(cfg, prop)) {
+                      this.config[prop] = cfg[prop];
+                  }
+              }
+          }
+      }, {
+          key: 'record',
+          value: function record() {
+              this.recording = true;
+          }
+      }, {
+          key: 'stop',
+          value: function stop() {
+              this.recording = false;
+          }
+      }, {
+          key: 'clear',
+          value: function clear() {
+              this.worker.postMessage({ command: 'clear' });
+          }
+
+          /**
+           * Directly get the buffers from the worker and then call cb.
+           */
+
+      }, {
+          key: 'getBuffers',
+          value: function getBuffers(cb) {
+              this.currCallback = cb || this.config.callback;
+              this.worker.postMessage({ command: 'getBuffers' });
+          }
+
+          /**
+           * call exportWAV or exportMonoWAV on the worker, then call cb or (if undefined) setupDownload.
+           */
+
+      }, {
+          key: 'exportWAV',
+          value: function exportWAV(cb, type, isMono) {
+              var _this3 = this;
+
+              var command = 'exportWAV';
+              if (isMono === true) {
+                  // default false
+                  command = 'exportMonoWAV';
+              }
+              this.currCallback = cb || this.config.callback;
+              type = type || this.config.type || 'audio/wav';
+              if (!this.currCallback) {
+                  this.currCallback = function (blob) {
+                      _this3.setupDownload(blob, 'myRecording' + Date.now().toString() + '.wav');
+                  };
+              }
+              this.worker.postMessage({
+                  'command': command,
+                  'type': type
+              });
+          }
+      }, {
+          key: 'exportMonoWAV',
+          value: function exportMonoWAV(cb, type) {
+              this.exportWAV(cb, type, true);
+          }
+      }, {
+          key: 'setupDownload',
+          value: function setupDownload(blob, filename, elementId) {
+              elementId = elementId || 'save';
+              var url = (window.URL || window.webkitURL).createObjectURL(blob);
+              var link = document.getElementById(elementId);
+              link.href = url;
+              link.download = filename || 'output.wav';
+          }
+
+          /**
+           * Polyfills for getUserMedia (requestAnimationFrame polyfills not needed.)
+           * As of 2016 September, only Edge support unprefixed.
+           */
+
+      }, {
+          key: 'polyfillNavigator',
+          value: function polyfillNavigator() {
+              if (!navigator.getUserMedia) {
+                  navigator.getUserMedia = navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
+              }
+          }
+      }, {
+          key: 'updateAnalysers',
+          value: function updateAnalysers(time) {
+              var _this4 = this;
+
+              if (!this.frequencyCanvasInfo.canvasContext) {
+                  var canvas = document.getElementById(this.frequencyCanvasInfo.id);
+                  if (!canvas) {
+                      return;
+                  }
+                  this.frequencyCanvasInfo.width = canvas.width;
+                  this.frequencyCanvasInfo.height = canvas.height;
+                  this.frequencyCanvasInfo.canvasContext = canvas.getContext('2d');
+              }
+
+              // analyser draw code here
+              var SPACING = 3;
+              var BAR_WIDTH = 1;
+              var numBars = Math.round(this.frequencyCanvasInfo.width / SPACING);
+              var freqByteData = new Uint8Array(this.analyserNode.frequencyBinCount);
+
+              this.analyserNode.getByteFrequencyData(freqByteData);
+
+              var canvasContext = this.frequencyCanvasInfo.canvasContext;
+              canvasContext.clearRect(0, 0, this.frequencyCanvasInfo.width, this.frequencyCanvasInfo.height);
+              canvasContext.fillStyle = '#F6D565';
+              canvasContext.lineCap = 'round';
+              var multiplier = this.analyserNode.frequencyBinCount / numBars;
+
+              // Draw rectangle for each frequency bin.
+              for (var i = 0; i < numBars; ++i) {
+                  var magnitude = 0;
+                  var offset = Math.floor(i * multiplier);
+                  for (var j = 0; j < multiplier; j++) {
+                      magnitude += freqByteData[offset + j];
+                  }
+                  magnitude = magnitude * (this.frequencyCanvasInfo.height / 256) / multiplier;
+                  canvasContext.fillStyle = 'hsl( ' + Math.round(i * 360 / numBars) + ', 100%, 50%)';
+                  canvasContext.fillRect(i * SPACING, this.frequencyCanvasInfo.height, BAR_WIDTH, -1 * magnitude);
+              }
+
+              this.frequencyCanvasInfo.animationFrameID = window.requestAnimationFrame(function (t) {
+                  return _this4.updateAnalysers(t);
+              });
+          }
+      }, {
+          key: 'drawWaveformCanvas',
+          value: function drawWaveformCanvas(buffers) {
+              var data = buffers[0]; // one track of stereo recording.
+              if (!this.waveformCanvasInfo.context) {
+                  var canvas = document.getElementById(this.waveformCanvasInfo.id);
+                  if (!canvas) {
+                      return;
+                  }
+                  this.waveformCanvasInfo.width = canvas.width;
+                  this.waveformCanvasInfo.height = canvas.height;
+                  this.waveformCanvasInfo.context = canvas.getContext('2d');
+              }
+              var context = this.waveformCanvasInfo.context;
+              var step = Math.ceil(data.length / this.waveformCanvasInfo.width);
+              var amp = this.waveformCanvasInfo.height / 2;
+              context.fillStyle = 'silver';
+              context.clearRect(0, 0, this.waveformCanvasInfo.width, this.waveformCanvasInfo.height);
+              for (var i = 0; i < this.waveformCanvasInfo.width; i++) {
+                  var min = 1.0;
+                  var max = -1.0;
+                  for (var j = 0; j < step; j++) {
+                      var datum = data[i * step + j];
+                      if (datum < min) {
+                          min = datum;
+                      }
+                      if (datum > max) {
+                          max = datum;
+                      }
+                  }
+                  context.fillRect(i, (1 + min) * amp, 1, Math.max(1, (max - min) * amp));
+              }
+          }
+
+          /**
+           * set this as a callback from getBuffers.  Returns the source so that a stop() command
+           * is possible.
+           */
+
+      }, {
+          key: 'playBuffers',
+          value: function playBuffers(buffers) {
+              var channels = 2;
+              var numFrames = buffers[0].length;
+              var audioBuffer = this.context.createBuffer(channels, numFrames, this.context.sampleRate);
+              for (var channel = 0; channel < channels; channel++) {
+                  var thisChannelBuffer = audioBuffer.getChannelData(channel);
+                  for (var i = 0; i < numFrames; i++) {
+                      thisChannelBuffer[i] = buffers[channel][i];
+                  }
+              }
+              var source = this.context.createBufferSource();
+              source.buffer = audioBuffer;
+              source.connect(this.context.destination);
+              source.start();
+              return source;
+          }
+      }]);
+      return Recorder;
+  }();
+
+  /**
+   * This code does NOT go through babel, so no arrow functions, let, const, etc.
+   */
+  var recorderWorkerJs = 'function recorderWorkerJs() {\n    /**\n     *\n     *   Rewritten from Matt Diamond\'s recorderWorker -- MIT License\n     */\n    RecorderWorker = function RecorderWorker(parentContext) {\n            this.parent = parentContext;\n            this.recLength = 0;\n            this.recBuffersL = [];\n            this.recBuffersR = [];\n            this.sampleRate = undefined;\n    };\n    RecorderWorker.prototype.onmessage = function onmessage(e) {\n            switch (e.data.command) {\n            case \'init\':\n                this.init(e.data.config);\n                break;\n            case \'record\':\n                this.record(e.data.buffer);\n                break;\n            case \'exportWAV\':\n                this.exportWAV(e.data.type);\n                break;\n            case \'exportMonoWAV\':\n                this.exportMonoWAV(e.data.type);\n                break;\n            case \'getBuffers\':\n                this.getBuffers();\n                break;\n            case \'clear\':\n                this.clear();\n                break;\n            default:\n                break;\n            }        \n   };\n   RecorderWorker.prototype.postMessage = function postMessage(msg) {\n            this.parent.postMessage(msg);\n   };\n\n   RecorderWorker.prototype.init = function init(config) {\n            this.sampleRate = config.sampleRate;\n   };\n\n   RecorderWorker.prototype.record = function record(inputBuffer) {\n            var inputBufferL = inputBuffer[0];\n            var inputBufferR = inputBuffer[1];\n            this.recBuffersL.push(inputBufferL);\n            this.recBuffersR.push(inputBufferR);\n            this.recLength += inputBufferL.length;        \n   };\n\n   RecorderWorker.prototype.exportWAV = function exportWAV(type) {\n            var bufferL = this.mergeBuffers(this.recBuffersL);\n            var bufferR = this.mergeBuffers(this.recBuffersR);\n            var interleaved = this.interleave(bufferL, bufferR);\n            var dataview = this.encodeWAV(interleaved);\n            var audioBlob = new Blob([dataview], { \'type\': type });\n\n            this.postMessage(audioBlob);        \n   };\n\n   RecorderWorker.prototype.exportMonoWAV = function exportMonoWAV(type) {\n            var bufferL = this.mergeBuffers(this.recBuffersL);\n            var dataview = this.encodeWAV(bufferL);\n            var audioBlob = new Blob([dataview], { \'type\': type });\n\n            this.postMessage(audioBlob);                \n   };\n\n   RecorderWorker.prototype.mergeBuffers = function mergeBuffers(recBuffers) {\n            var result = new Float32Array(this.recLength);\n            var offset = 0;\n            for (var i = 0; i < recBuffers.length; i++) {\n                result.set(recBuffers[i], offset);\n                offset += recBuffers[i].length;\n            }\n            return result;\n    };\n\n    RecorderWorker.prototype.getBuffers = function getBuffers() {\n            var buffers = [];\n            buffers.push(this.mergeBuffers(this.recBuffersL));\n            buffers.push(this.mergeBuffers(this.recBuffersR));\n            this.postMessage(buffers);        \n        };\n\n    RecorderWorker.prototype.clear = function clear() {\n            this.recLength = 0;\n            this.recBuffersL = [];\n            this.recBuffersR = [];\n        }\n\n    RecorderWorker.prototype.interleave = function interleave(inputL, inputR) {\n            var combinedLength = inputL.length + inputR.length;\n            var result = new Float32Array(combinedLength);\n\n            var index = 0;\n            var inputIndex = 0;\n\n            while (index < combinedLength) {\n                result[index++] = inputL[inputIndex];\n                result[index++] = inputR[inputIndex];\n                inputIndex++;\n            }\n            return result;\n        }\n    RecorderWorker.prototype.encodeWAV = function encodeWAV(samples, mono) {\n            var buffer = new ArrayBuffer(44 + (samples.length * 2));\n            var view = new DataView(buffer);\n\n            /* RIFF identifier */\n            writeString(view, 0, \'RIFF\');\n\n            /* file length */\n            view.setUint32(4, 32 + samples.length * 2, true);\n\n            /* RIFF type */\n            writeString(view, 8, \'WAVE\');\n\n            /* format chunk identifier */\n            writeString(view, 12, \'fmt \');\n\n            /* format chunk length */\n            view.setUint32(16, 16, true);\n\n            /* sample format (raw) */\n            view.setUint16(20, 1, true);\n\n            /* channel count */\n            view.setUint16(22, mono ? 1 : 2, true);\n\n            /* sample rate */\n            view.setUint32(24, this.sampleRate, true);\n\n            /* byte rate (sample rate * block align) */\n            view.setUint32(28, this.sampleRate * 4, true);\n\n            /* block align (channel count * bytes per sample) */\n            view.setUint16(32, 4, true);\n\n            /* bits per sample */\n            view.setUint16(34, 16, true);\n\n            /* data chunk identifier */\n            writeString(view, 36, \'data\');\n\n            /* data chunk length */\n            view.setUint32(40, samples.length * 2, true);\n\n            floatTo16BitPCM(view, 44, samples);\n\n            return view;\n        }\n\n    function floatTo16BitPCM(output, offset, input) {\n        for (var i = 0; i < input.length; i++, offset += 2) {\n            var s = Math.max(-1, Math.min(1, input[i]));\n            output.setInt16(offset, s < 0 ? s * 0x8000 : s * 0x7FFF, true);\n        }    \n    }\n\n    function writeString(view, offset, string) {\n        for (var i = 0; i < string.length; i++) {\n            view.setUint8(offset + i, string.charCodeAt(i));\n        }\n    }\n\n    var recordWorker = new RecorderWorker(this);\n    this.onmessage = (function mainOnMessage(e) { recordWorker.onmessage(e) }).bind(this);\n}';
+
+  var audioRecording = { 'Recorder': Recorder };
 
   /**
    * music21j -- Javascript reimplementation of Core music21p features.
@@ -13481,6 +13826,7 @@
   music21.base = base;
 
   music21.articulations = articulations;
+  music21.audioRecording = audioRecording;
   music21.audioSearch = audioSearch;
   music21.beam = beam;
   music21.chord = chord;

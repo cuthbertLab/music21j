@@ -8,6 +8,7 @@ import { prebase } from './music21/prebase';
 import { base } from './music21/base';
 
 import { articulations } from './music21/articulations';
+import { audioRecording } from './music21/audioRecording';
 import { audioSearch } from './music21/audioSearch';
 import { beam } from './music21/beam';
 import { chord } from './music21/chord';
@@ -45,6 +46,7 @@ music21.prebase = prebase;
 music21.base = base;
 
 music21.articulations = articulations;
+music21.audioRecording = audioRecording;
 music21.audioSearch = audioSearch;
 music21.beam = beam;
 music21.chord = chord;
