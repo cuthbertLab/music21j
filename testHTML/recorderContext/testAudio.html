@@ -1,10 +1,56 @@
 <html>
 <head>
-<script src="recorder.js"></script>
+    <script src="recorderWithWorker.js"></script>
+    <style>
+    canvas {
+        display: inline-block; 
+        background: #202020; 
+        box-shadow: 0px 0px 10px blue;
+    }
+    </style>
+    <script>
+    var audioRecorder;
+
+    var isRecording = false;
+    function toggleRecording() {
+        if (isRecording) {
+            console.log('stopping');
+            audioRecorder.stop();
+            isRecording = false;
+            audioRecorder.getBuffers( b => audioRecorder.drawWaveformCanvas(b) );
+        } else {
+            console.log('starting');
+            audioRecorder.clear();
+            audioRecorder.record();
+            audioRecorder.updateAnalysers();
+            isRecording = true;
+        }
+    }
+    function save() {
+        audioRecorder.exportWAV();
+    }
+
+    function initAudio() {
+        audioRecorder = new Recorder();
+        audioRecorder.initAudio();
+    }
+    
+    function playback() {
+        audioRecorder.getBuffers( function(b) { audioRecorder.playBuffers(b) });
+    }
+
+    window.addEventListener('load', initAudio );    
+    </script>
 </head>
 <body>
-<button onclick="toggleRecording(this)">Record</button>
-<button onclick="save()">Save</button>
-<a href="#" id="save">hi</a>
+<div>
+	<button onclick="toggleRecording(this)">Record</button>
+	<button onclick="save()">Save</button>
+	<a href="#" id="save">hi</a>
+</div>
+<div>
+    <canvas id="frequencyAnalyser" width="256" height="50"></canvas>
+    <canvas id="waveformCanvas" width="256" height="50" onclick='playback()'></canvas>
+</div>
 </body>
 </html>

@@ -1,5 +1,7 @@
+import MIDI from 'MIDI';
 
 import { common } from './common';
+
 
 /**
  * audioSearch module. See {@link music21.audioSearch} namespace
@@ -29,7 +31,13 @@ Object.defineProperties(audioSearch,
                 if (audioSearch._audioContext !== null) {
                     return audioSearch._audioContext;
                 } else {
-                    audioSearch._audioContext = new audioSearch.AudioContextCaller();
+                    // AudioContext should be a singleton...
+                    if (MIDI.WebAudio !== undefined && MIDI.WebAudio.getContext() !== undefined) {
+                        window.globalAudioContext = MIDI.WebAudio.getContext();
+                    } else if (typeof window.globalAudioContext === 'undefined') {
+                        window.globalAudioContext = new audioSearch.AudioContextCaller();
+                    }
+                    audioSearch._audioContext = window.globalAudioContext;
                     return audioSearch._audioContext;
                 }
             },

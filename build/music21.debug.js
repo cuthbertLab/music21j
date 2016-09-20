@@ -1,5 +1,5 @@
 /**
- * music21j 0.9.0 built on  * 2016-09-16.
+ * music21j 0.9.0 built on  * 2016-09-20.
  * Copyright (c) 2013-2016 Michael Scott Cuthbert and cuthbertLab
  * BSD License, see LICENSE
  *
@@ -11,6 +11,8 @@
   typeof define === 'function' && define.amd ? define(['jquery', 'vexflow', 'MIDI', 'jsonpickle', 'eventjs'], factory) :
   (global.music21 = factory(global.$,global.Vex,global.MIDI,global.jsonpickle,global.eventjs));
 }(this, (function ($,Vex,MIDI,jsonpickle,eventjs) { 'use strict';
+
+  var MIDI__default = MIDI['default'];
 
   var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) {
     return typeof obj;
@@ -1597,7 +1599,12 @@
               if (audioSearch._audioContext !== null) {
                   return audioSearch._audioContext;
               } else {
-                  audioSearch._audioContext = new audioSearch.AudioContextCaller();
+                  if (MIDI__default.WebAudio !== undefined && MIDI__default.WebAudio.getContext() !== undefined) {
+                      window.globalAudioContext = MIDI__default.WebAudio.getContext();
+                  } else if (typeof window.globalAudioContext === 'undefined') {
+                      window.globalAudioContext = new audioSearch.AudioContextCaller();
+                  }
+                  audioSearch._audioContext = window.globalAudioContext;
                   return audioSearch._audioContext;
               }
           },

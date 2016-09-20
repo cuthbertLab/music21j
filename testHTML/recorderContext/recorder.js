@@ -3,21 +3,19 @@
  */
 const WORKER_PATH = '/testHTML/recorderContext/recorderWorker.js';
 class Recorder {
-    constructor(source, cfg) {
+    constructor(cfg) {
         const config = cfg || {};
         const bufferLen = config.bufferLen || 4096;
         this.config = config;
-        this.context = source.context;
-        this.setNode();
-        this.worker = new Worker(config.workerPath || WORKER_PATH);
-        this.worker.postMessage({
-            command: 'init',
-            config: {
-                sampleRate: this.context.sampleRate
-            }
-        });
         this.recording = false,
         this.currCallback = undefined;
+        window.AudioContext = window.AudioContext || window.webkitAudioContext;
+        this.audioContext = new AudioContext();    
+    }
+
+    connectSource(source) {
+        this.context = source.context;
+        this.setNode();
         this.node.onaudioprocess = e => {
             if (!this.recording) {
                 return;
@@ -30,17 +28,26 @@ class Recorder {
                          ]
             });
         };
+        this.worker = new Worker(this.config.workerPath || WORKER_PATH);
+        this.worker.postMessage({
+            command: 'init',
+            config: {
+                sampleRate: this.context.sampleRate
+            }
+        });
         this.worker.onmessage = e => {
             const blob = e.data;
             this.currCallback(blob);
         }
-
+        /** 
+         * polyfill
+         */
         source.connect(this.node);
         this.node.connect(this.context.destination);   
         // if the script node is not connected to an output 
         // the "onaudioprocess" event is not triggered in chrome.        
     }
-
+    
     setNode() {
         if (!this.context.createScriptProcessor){
             this.node = this.context.createJavaScriptNode(this.bufferLen, 2, 2);
@@ -48,7 +55,8 @@ class Recorder {
             this.node = this.context.createScriptProcessor(this.bufferLen, 2, 2);
         }
     }
-    configure (cfg) {
+    
+    configure(cfg) {
         for (var prop in cfg){
             if (cfg.hasOwnProperty(prop)){
                 this.config[prop] = cfg[prop];
@@ -102,6 +110,56 @@ class Recorder {
         link.href = url;
         link.download = filename || 'output.wav';
     }
+    initAudio() {
+        this.polyfillNavigator();
+        navigator.getUserMedia({
+            "audio": {
+                "mandatory": {
+                    "googEchoCancellation": "false",
+                    "googAutoGainControl": "false",
+                    "googNoiseSuppression": "false",
+                    "googHighpassFilter": "false"
+                },
+                "optional": []
+            },
+        }, s => this.audioStreamConnected(s), error => {
+            alert('Error getting audio -- try on google Chrome?');
+            console.log(error);
+        });
+    }
+    polyfillNavigator() {
+        /**
+         * Polyfills
+         */
+        if (!navigator.getUserMedia) {
+            navigator.getUserMedia = navigator.webkitGetUserMedia || navigator.mozGetUserMedia;        
+        }
+        if (!navigator.cancelAnimationFrame) {
+            navigator.cancelAnimationFrame = navigator.webkitCancelAnimationFrame || navigator.mozCancelAnimationFrame;        
+        }
+        if (!navigator.requestAnimationFrame) {
+            navigator.requestAnimationFrame = navigator.webkitRequestAnimationFrame || navigator.mozRequestAnimationFrame;        
+        }        
+    }
+    audioStreamConnected(stream) {
+        const inputPoint = this.audioContext.createGain();
+
+        // Create an AudioNode from the stream.
+        const realAudioInput = this.audioContext.createMediaStreamSource(stream);
+        const audioInput = realAudioInput;
+        audioInput.connect(inputPoint);
+
+        const analyserNode = this.audioContext.createAnalyser();
+        analyserNode.fftSize = 2048;
+        inputPoint.connect(analyserNode);
+        this.connectSource(inputPoint);
+        const zeroGain = this.audioContext.createGain();
+        zeroGain.gain.value = 0.0;
+        inputPoint.connect(zeroGain);
+        zeroGain.connect(this.audioContext.destination);
+        // updateAnalysers();
+    }
+
 };
 
 function drawBuffer(width, height, context, data) {
@@ -136,75 +194,27 @@ function drawBuffer(width, height, context, data) {
  */
 var audioRecorder;
 
-function gotStream(stream) {
-    inputPoint = audioContext.createGain();
-
-    // Create an AudioNode from the stream.
-    realAudioInput = audioContext.createMediaStreamSource(stream);
-    audioInput = realAudioInput;
-    audioInput.connect(inputPoint);
-
-//    audioInput = convertToMono( input );
-
-    analyserNode = audioContext.createAnalyser();
-    analyserNode.fftSize = 2048;
-    inputPoint.connect( analyserNode );
-
-    audioRecorder = new Recorder( inputPoint );
-
-    zeroGain = audioContext.createGain();
-    zeroGain.gain.value = 0.0;
-    inputPoint.connect( zeroGain );
-    zeroGain.connect( audioContext.destination );
-    // updateAnalysers();
-}
-
-
-function initAudio() {
-    /**
-     * Polyfills
-     */
-    if (!navigator.getUserMedia) {
-        navigator.getUserMedia = navigator.webkitGetUserMedia || navigator.mozGetUserMedia;        
-    }
-    if (!navigator.cancelAnimationFrame) {
-        navigator.cancelAnimationFrame = navigator.webkitCancelAnimationFrame || navigator.mozCancelAnimationFrame;        
-    }
-    if (!navigator.requestAnimationFrame) {
-        navigator.requestAnimationFrame = navigator.webkitRequestAnimationFrame || navigator.mozRequestAnimationFrame;        
-    }
-
-    navigator.getUserMedia(
-            {
-                "audio": {
-                    "mandatory": {
-                        "googEchoCancellation": "false",
-                        "googAutoGainControl": "false",
-                        "googNoiseSuppression": "false",
-                        "googHighpassFilter": "false"
-                    },
-                    "optional": []
-                },
-            }, gotStream, function(e) {
-                alert('Error getting audio');
-                console.log(e);
-            });
-}
-
 var isRecording = false;
 function toggleRecording() {
     if (isRecording) {
+        console.log('stopping');
         audioRecorder.stop();
+        isRecording = false;
     } else {
+        console.log('starting');
         audioRecorder.record();
+        isRecording = true;
     }
 }
 function save() {
+    console.log(audioRecorder);
     audioRecorder.exportWAV();
 }
 
-window.AudioContext = window.AudioContext || window.webkitAudioContext;
+function initAudio() {
+    audioRecorder = new Recorder();
+    audioRecorder.initAudio();
+}
 
-var audioContext = new AudioContext();
 
 window.addEventListener('load', initAudio );
