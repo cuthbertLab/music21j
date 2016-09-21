@@ -1,7 +1,6 @@
 #node
-
 node_modules/
-
+node_modules/grunt/package.json
 
 *.py[cod]
 .buildpath
@@ -57,3 +56,7 @@ nosetests.xml
 
 
 
+
+node_modules/grunt/package.json
+
+node_modules/grunt-contrib-uglify/package.json
