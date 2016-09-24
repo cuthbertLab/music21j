@@ -48,6 +48,29 @@ export class RenderStack {
         t.push(...this.textVoices);
         return t;
     }
+    /**
+     * @memberof music21.vfShow.RenderStack
+     * @returns {Array<Array>} each array represents one staff.... 
+     * where this.voices and this.textVoices are all in that staff...
+     */
+    tickablesByStave() {
+        const tickablesByStave = []; // a list of lists of tickables being placed on the same Stave.
+        const knownStaves = []; // a list of Vex.Flow.Stave objects...
+        
+        for (const t of this.allTickables()) {
+            const thisStaveIndex = knownStaves.indexOf(t.stave);
+            let currentStaveHolder;
+            if (thisStaveIndex === -1) {
+                knownStaves.push(t.stave);
+                currentStaveHolder = [];
+                tickablesByStave.push(currentStaveHolder);
+            } else {
+                currentStaveHolder = tickablesByStave[thisStaveIndex];
+            }
+            currentStaveHolder.push(t);
+        }
+        return tickablesByStave;        
+    }
 }
 vfShow.RenderStack = RenderStack;
 
@@ -493,17 +516,20 @@ export class Renderer {
         let maxGlyphStart = 0; // find the stave with the farthest start point -- diff key sig, etc.
         for (let i = 0; i < allTickables.length; i++) {
             // console.log(voices[i], voices[i].stave, i);
-            if (allTickables[i].stave.start_x > maxGlyphStart) {
-                maxGlyphStart = allTickables[i].stave.start_x;
+            if (allTickables[i].stave.getNoteStartX() > maxGlyphStart) {
+                maxGlyphStart = allTickables[i].stave.getNoteStartX();
             }
         }
         for (let i = 0; i < allTickables.length; i++) {
-            allTickables[i].stave.start_x = maxGlyphStart; // corrected!
+            allTickables[i].stave.setNoteStartX(maxGlyphStart); // corrected!
         }
         // TODO: should do the same for end_x -- for key sig changes, etc...
 
         const stave = voices[0].stave; // all staves should be same length, so does not matter;
-        formatter.joinVoices(allTickables);
+        const tickablesByStave = stack.tickablesByStave();
+        for (const staveTickables of tickablesByStave) {
+            formatter.joinVoices(staveTickables);
+        }
         formatter.formatToStave(allTickables, stave);
         if (autoBeam) {
             for (let i = 0; i < voices.length; i++) {
@@ -688,11 +714,11 @@ export class Renderer {
         for (let i = 0; i < s.length; i++) {
             const thisEl = s.get(i);
             if (thisEl.isClassOrSubclass('GeneralNote') && (thisEl.duration !== undefined)) {
+                // sets thisEl.activeVexflowNote -- may be overwritten but not so fast...
                 const vfn = thisEl.vexflowNote(options);
                 if (vfn === undefined) {
                     console.error('Cannot create a vexflowNote from: ', thisEl);
                 }
-                // sets thisEl.activeVexflowNote -- may be overwritten but not so fast...
                 if (stave !== undefined) {
                     vfn.setStave(stave);
                 }

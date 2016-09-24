@@ -1,5 +1,5 @@
 /**
- * music21j 0.9.0 built on  * 2016-09-20.
+ * music21j 0.9.0 built on  * 2016-09-24.
  * Copyright (c) 2013-2016 Michael Scott Cuthbert and cuthbertLab
  * BSD License, see LICENSE
  *
@@ -3142,6 +3142,7 @@
            *
            * @memberof music21.note.GeneralNote
            * @param {Vex.Flow.StaveNote} vfn - a Vex.Flow note
+           * @param {object
            */
 
       }, {
@@ -3152,15 +3153,9 @@
                       vfn.addDotToAll();
                   }
               }
-              if (this.activeSite !== undefined && this.activeSite.renderOptions.stemDirection !== undefined) {
-                  this.stemDirection = this.activeSite.renderOptions.stemDirection;
-              } else if (this.stemDirection === undefined && options.clef !== undefined) {
-                  this.setStemDirectionFromClef(options.clef);
-              }
               if (debug) {
                   console.log(this.stemDirection);
               }
-              vfn.setStemDirection(this.stemDirection === 'down' ? Vex.Flow.StaveNote.STEM_DOWN : Vex.Flow.StaveNote.STEM_UP);
               if (this.stemDirection === 'noStem') {
                   vfn.hasStem = function () {
                       return false;
@@ -3409,7 +3404,8 @@
            * Returns a `Vex.Flow.StaveNote` that approximates this note.
            *
            * @memberof music21.note.Note
-           * @param {object} [options={}] - `{clef: {@link music21.clef.Clef} }` clef to set the stem direction of.
+           * @param {object} [options={}] - `{clef: {@link music21.clef.Clef} }` 
+           * clef to set the stem direction of.
            * @returns {Vex.Flow.StaveNote}
            */
 
@@ -3420,6 +3416,13 @@
               common.merge(params, options);
               var clef = params.clef;
 
+              // fixup stem direction -- must happen before Vex.Flow.Note is created...
+              if (this.activeSite !== undefined && this.activeSite.renderOptions.stemDirection !== undefined && note.stemDirectionNames.includes(this.activeSite.renderOptions.stemDirection)) {
+                  this.stemDirection = this.activeSite.renderOptions.stemDirection;
+              } else if (this.stemDirection === undefined && options.clef !== undefined) {
+                  this.setStemDirectionFromClef(options.clef);
+              }
+
               if (this.duration === undefined) {
                   // console.log(this);
                   return undefined;
@@ -3429,9 +3432,14 @@
                   return undefined;
               }
               var vexflowKey = this.pitch.vexflowName(clef);
+
+              var vfnStemDirection = this.stemDirection === 'down' ? Vex.Flow.StaveNote.STEM_DOWN : Vex.Flow.StaveNote.STEM_UP;
+
+              //        const vfnStemDirection = -1;
               var vfn = new Vex.Flow.StaveNote({
                   keys: [vexflowKey],
-                  duration: vfd
+                  duration: vfd,
+                  stem_direction: vfnStemDirection
               });
               this.vexflowAccidentalsAndDisplay(vfn, params); // clean up stuff...
               if (this.pitch.accidental !== undefined) {
@@ -3445,13 +3453,15 @@
               if (this.articulations[0] !== undefined) {
                   for (var i = 0; i < this.articulations.length; i++) {
                       var art = this.articulations[i];
-                      vfn.addArticulation(0, art.vexflow()); // 0 refers to the first pitch (for chords etc.)...
+                      // 0 refers to the first pitch (for chords etc.)...
+                      vfn.addArticulation(0, art.vexflow());
                   }
               }
               if (this.expressions[0] !== undefined) {
                   for (var j = 0; j < this.expressions.length; j++) {
                       var exp = this.expressions[j];
-                      vfn.addArticulation(0, exp.vexflow()); // 0 refers to the first pitch (for chords etc.)...
+                      // 0 refers to the first pitch (for chords etc.)...
+                      vfn.addArticulation(0, exp.vexflow());
                   }
               }
               if (this.noteheadColor) {
@@ -7830,7 +7840,7 @@
           rightBarline: undefined,
           staffLines: 5,
           staffConnectors: ['single', 'brace'],
-          staffPadding: 60,
+          staffPadding: 60, // width...
           events: {
               'click': 'play',
               'dblclick': undefined
@@ -8392,7 +8402,8 @@
    * @class RenderStack
    * @memberof music21.vfShow
    * @property {Array<Vex.Flow.Voice>} voices - Vex.Flow.Voice objects
-   * @property {Array<music21.stream.Stream>} streams - {@link music21.stream.Stream} objects associated with the voices
+   * @property {Array<music21.stream.Stream>} streams - {@link music21.stream.Stream} objects 
+   * associated with the voices
    * @property {Array} textVoices - Vex.Flow.Voice objects for the text.
    */
   var RenderStack = function () {
@@ -8417,6 +8428,54 @@
               t.push.apply(t, toConsumableArray(this.textVoices));
               return t;
           }
+          /**
+           * @memberof music21.vfShow.RenderStack
+           * @returns {Array<Array>} each array represents one staff.... 
+           * where this.voices and this.textVoices are all in that staff...
+           */
+
+      }, {
+          key: 'tickablesByStave',
+          value: function tickablesByStave() {
+              var tickablesByStave = []; // a list of lists of tickables being placed on the same Stave.
+              var knownStaves = []; // a list of Vex.Flow.Stave objects...
+
+              var _iteratorNormalCompletion = true;
+              var _didIteratorError = false;
+              var _iteratorError = undefined;
+
+              try {
+                  for (var _iterator = this.allTickables()[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+                      var t = _step.value;
+
+                      var thisStaveIndex = knownStaves.indexOf(t.stave);
+                      var currentStaveHolder = void 0;
+                      if (thisStaveIndex === -1) {
+                          knownStaves.push(t.stave);
+                          currentStaveHolder = [];
+                          tickablesByStave.push(currentStaveHolder);
+                      } else {
+                          currentStaveHolder = tickablesByStave[thisStaveIndex];
+                      }
+                      currentStaveHolder.push(t);
+                  }
+              } catch (err) {
+                  _didIteratorError = true;
+                  _iteratorError = err;
+              } finally {
+                  try {
+                      if (!_iteratorNormalCompletion && _iterator.return) {
+                          _iterator.return();
+                      }
+                  } finally {
+                      if (_didIteratorError) {
+                          throw _iteratorError;
+                      }
+                  }
+              }
+
+              return tickablesByStave;
+          }
       }]);
       return RenderStack;
   }();
@@ -8440,7 +8499,8 @@
    * @param {music21.stream.Stream} s - main stream to render
    * @param {canvas} [canvas] - existing canvas element
    * @param {DOMObject|jQueryDOMObject} [where=document.body] - where to render the stream
-   * @property {Vex.Flow.Renderer} vfRenderer - a Vex.Flow.Renderer to use (will create if not existing)
+   * @property {Vex.Flow.Renderer} vfRenderer - a Vex.Flow.Renderer to use 
+   * (will create if not existing)
    * @property {Vex.Flow.Context} ctx - a Vex.Flow.Context (Canvas or Raphael [not yet]) to use.
    * @property {canvas} canvas - canvas element
    * @property {jQueryDOMObject} $canvas - jQuery canvas element
@@ -8467,7 +8527,7 @@
           this._ctx = undefined;
           this.beamGroups = [];
           this.stacks = []; // an Array of RenderStacks: {voices: [Array of Vex.Flow.Voice objects],
-          //                            streams: [Array of Streams, usually Measures]}
+          //                                           streams: [Array of Streams, usually Measures]}
           this.ties = [];
           this.systemBreakOffsets = [];
           this.vfTuplets = [];
@@ -8633,8 +8693,10 @@
            * @param {music21.stream.Stream} s - a flat stream object
            * @param {music21.vfShow.RenderStack} stack - a RenderStack object to prepare into.
            * @param {Vex.Flow.Stave} [optionalStave] - an optional existing stave.
-           * @param {object} [optional_renderOp] - render options. Passed to {@link music21.vfShow.Renderer#renderStave}
-           * @returns {Vex.Flow.Stave} staff to return too (also changes the `stack` parameter and runs `makeAccidentals` on s)
+           * @param {object} [optional_renderOp] - render options. 
+           * Passed to {@link music21.vfShow.Renderer#renderStave}
+           * @returns {Vex.Flow.Stave} staff to return too 
+           * (also changes the `stack` parameter and runs `makeAccidentals` on s)
            */
 
       }, {
@@ -8665,7 +8727,8 @@
            *
            * @memberof music21.vfShow.Renderer
            * @param {music21.stream.Stream} [m=this.stream] - a flat stream
-           * @param {object} [optional_rendOp] - render options, passed to {@link music21.vfShow.Renderer#newStave} and {@link music21.vfShow.Renderer#setClefEtc}
+           * @param {object} [optional_rendOp] - render options, passed 
+           * to {@link music21.vfShow.Renderer#newStave} and {@link music21.vfShow.Renderer#setClefEtc}
            * @returns {Vex.Flow.Stave} stave
            */
 
@@ -8878,17 +8941,42 @@
               var maxGlyphStart = 0; // find the stave with the farthest start point -- diff key sig, etc.
               for (var i = 0; i < allTickables.length; i++) {
                   // console.log(voices[i], voices[i].stave, i);
-                  if (allTickables[i].stave.start_x > maxGlyphStart) {
-                      maxGlyphStart = allTickables[i].stave.start_x;
+                  if (allTickables[i].stave.getNoteStartX() > maxGlyphStart) {
+                      maxGlyphStart = allTickables[i].stave.getNoteStartX();
                   }
               }
               for (var _i = 0; _i < allTickables.length; _i++) {
-                  allTickables[_i].stave.start_x = maxGlyphStart; // corrected!
+                  allTickables[_i].stave.setNoteStartX(maxGlyphStart); // corrected!
               }
               // TODO: should do the same for end_x -- for key sig changes, etc...
 
               var stave = voices[0].stave; // all staves should be same length, so does not matter;
-              formatter.joinVoices(allTickables);
+              var tickablesByStave = stack.tickablesByStave();
+              var _iteratorNormalCompletion2 = true;
+              var _didIteratorError2 = false;
+              var _iteratorError2 = undefined;
+
+              try {
+                  for (var _iterator2 = tickablesByStave[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+                      var staveTickables = _step2.value;
+
+                      formatter.joinVoices(staveTickables);
+                  }
+              } catch (err) {
+                  _didIteratorError2 = true;
+                  _iteratorError2 = err;
+              } finally {
+                  try {
+                      if (!_iteratorNormalCompletion2 && _iterator2.return) {
+                          _iterator2.return();
+                      }
+                  } finally {
+                      if (_didIteratorError2) {
+                          throw _iteratorError2;
+                      }
+                  }
+              }
+
               formatter.formatToStave(allTickables, stave);
               if (autoBeam) {
                   for (var _i2 = 0; _i2 < voices.length; _i2++) {
@@ -8898,7 +8986,8 @@
                       var voice = voices[_i2];
                       var beatGroups = [new Vex.Flow.Fraction(2, 8)]; // default beam groups
                       if (measures[_i2] !== undefined && measures[_i2].timeSignature !== undefined) {
-                          beatGroups = measures[_i2].timeSignature.vexflowBeatGroups(Vex); // TODO: getContextByClass...
+                          beatGroups = measures[_i2].timeSignature.vexflowBeatGroups(Vex);
+                          // TODO: getContextByClass...
                           // console.log(beatGroups);
                       }
                       var beamGroups = Vex.Flow.Beam.applyAndGetBeams(voice, undefined, beatGroups);
@@ -8960,12 +9049,15 @@
               return stave;
           }
           /**
-           * Sets the number of stafflines, puts the clef on the Stave, adds keySignature, timeSignature, and rightBarline
+           * Sets the number of stafflines, puts the clef on the Stave, 
+           * adds keySignature, timeSignature, and rightBarline
            *
            * @memberof music21.vfShow.Renderer
            * @param {music21.stream.Stream} s
            * @param {Vex.Flow.Stave} stave
-           * @param {object} [rendOp=s.renderOptions] - a {@link music21.renderOptions.RenderOptions} object that might have `{showMeasureNumber: boolean, rightBarLine: string<{'single', 'double', 'end'}>}`
+           * @param {object} [rendOp=s.renderOptions] - a {@link music21.renderOptions.RenderOptions} 
+           * object that might have 
+           * `{showMeasureNumber: boolean, rightBarLine: string<{'single', 'double', 'end'}>}`
            */
 
       }, {
@@ -9016,7 +9108,8 @@
            * to show the bottom(top?), not middle, lines and that looks bad.
            *
            * @memberof music21.vfShow.Renderer
-           * @param {music21.stream.Stream} s - stream to get the `.staffLines` from `s.renderOptions` from -- should allow for overriding.
+           * @param {music21.stream.Stream} s - stream to get the `.staffLines` 
+           * from `s.renderOptions` from -- should allow for overriding.
            * @param {Vex.Flow.Stave} vexflowStave - stave to set the staff lines for.
            */
 
@@ -9044,14 +9137,13 @@
               }
           }
           /**
-           *
            * Gets the Vex.Flow.StaveNote objects from a Stream.
            *
            * Also changes `this.vfTuplets`.
            *
            * @memberof music21.vfShow.Renderer
            * @param {music21.stream.Stream} [s=this.stream] - flat stream to find notes in
-           * @param {Vex.Flow.Stave} stave
+           * @param {Vex.Flow.Stave} stave - Vex.Flow.Stave to render notes on to.
            * @returns {Array<Vex.Flow.StaveNote>} notes to return
            */
 
@@ -9072,11 +9164,11 @@
               for (var i = 0; i < s.length; i++) {
                   var thisEl = s.get(i);
                   if (thisEl.isClassOrSubclass('GeneralNote') && thisEl.duration !== undefined) {
+                      // sets thisEl.activeVexflowNote -- may be overwritten but not so fast...
                       var vfn = thisEl.vexflowNote(options);
                       if (vfn === undefined) {
                           console.error('Cannot create a vexflowNote from: ', thisEl);
                       }
-                      // sets thisEl.activeVexflowNote -- may be overwritten but not so fast...
                       if (stave !== undefined) {
                           vfn.setStave(stave);
                       }
@@ -9257,7 +9349,8 @@
           }
 
           /**
-           * If a stream has parts (NOT CHECKED HERE) create and draw an appropriate Vex.Flow.StaveConnector
+           * If a stream has parts (NOT CHECKED HERE) create and 
+           * draw an appropriate Vex.Flow.StaveConnector
            *
            * @memberof music21.vfShow.Renderer
            * @param {music21.stream.Score} s

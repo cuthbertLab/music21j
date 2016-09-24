@@ -275,6 +275,7 @@ export class GeneralNote extends base.Music21Object {
      *
      * @memberof music21.note.GeneralNote
      * @param {Vex.Flow.StaveNote} vfn - a Vex.Flow note
+     * @param {object
      */
     vexflowAccidentalsAndDisplay(vfn, options) {
         if (this.duration.dots > 0) {
@@ -282,19 +283,9 @@ export class GeneralNote extends base.Music21Object {
                 vfn.addDotToAll();
             }
         }
-        if (this.activeSite !== undefined
-                && this.activeSite.renderOptions.stemDirection !== undefined) {
-            this.stemDirection = this.activeSite.renderOptions.stemDirection;
-        } else if (this.stemDirection === undefined
-                        && options.clef !== undefined) {
-            this.setStemDirectionFromClef(options.clef);
-        }
         if (debug) {
             console.log(this.stemDirection);
         }
-        vfn.setStemDirection(this.stemDirection === 'down' ?
-                Vex.Flow.StaveNote.STEM_DOWN :
-                    Vex.Flow.StaveNote.STEM_UP);
         if (this.stemDirection === 'noStem') {
             vfn.hasStem = () => false; // need to override...
             // vfn.render_options.stem_height = 0;
@@ -511,7 +502,8 @@ export class Note extends NotRest {
      * Returns a `Vex.Flow.StaveNote` that approximates this note.
      *
      * @memberof music21.note.Note
-     * @param {object} [options={}] - `{clef: {@link music21.clef.Clef} }` clef to set the stem direction of.
+     * @param {object} [options={}] - `{clef: {@link music21.clef.Clef} }` 
+     * clef to set the stem direction of.
      * @returns {Vex.Flow.StaveNote}
      */
     vexflowNote(options) {
@@ -519,6 +511,18 @@ export class Note extends NotRest {
         common.merge(params, options);
         const clef = params.clef;
 
+
+        // fixup stem direction -- must happen before Vex.Flow.Note is created...
+        if (this.activeSite !== undefined
+                && this.activeSite.renderOptions.stemDirection !== undefined
+                && note.stemDirectionNames.includes(this.activeSite.renderOptions.stemDirection)) {
+            this.stemDirection = this.activeSite.renderOptions.stemDirection;
+        } else if (this.stemDirection === undefined
+                        && options.clef !== undefined) {
+            this.setStemDirectionFromClef(options.clef);
+        }
+        
+        
         if (this.duration === undefined) {
             // console.log(this);
             return undefined;
@@ -528,9 +532,16 @@ export class Note extends NotRest {
             return undefined;
         }
         const vexflowKey = this.pitch.vexflowName(clef);
+
+        const vfnStemDirection = (this.stemDirection === 'down') ?
+                Vex.Flow.StaveNote.STEM_DOWN :
+                    Vex.Flow.StaveNote.STEM_UP;
+
+//        const vfnStemDirection = -1;
         const vfn = new Vex.Flow.StaveNote({
             keys: [vexflowKey],
             duration: vfd,
+            stem_direction: vfnStemDirection,
         });
         this.vexflowAccidentalsAndDisplay(vfn, params); // clean up stuff...
         if (this.pitch.accidental !== undefined) {
@@ -546,13 +557,15 @@ export class Note extends NotRest {
         if (this.articulations[0] !== undefined) {
             for (let i = 0; i < this.articulations.length; i++) {
                 const art = this.articulations[i];
-                vfn.addArticulation(0, art.vexflow()); // 0 refers to the first pitch (for chords etc.)...
+                // 0 refers to the first pitch (for chords etc.)...
+                vfn.addArticulation(0, art.vexflow()); 
             }
         }
         if (this.expressions[0] !== undefined) {
             for (let j = 0; j < this.expressions.length; j++) {
                 const exp = this.expressions[j];
-                vfn.addArticulation(0, exp.vexflow()); // 0 refers to the first pitch (for chords etc.)...
+                // 0 refers to the first pitch (for chords etc.)...
+                vfn.addArticulation(0, exp.vexflow()); 
             }
         }
         if (this.noteheadColor) {

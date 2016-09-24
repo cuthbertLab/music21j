@@ -43,6 +43,6 @@ export default function tests() {
         assert.equal(s[5].nameWithOctave, 'D5');
         assert.equal(s[6].nameWithOctave, 'E#5');
 
-        assert.equal(k.width, 15, 'checking width is 5 * abs(sharps)');
+        assert.equal(k.width, 42, 'checking width');
     });
 }

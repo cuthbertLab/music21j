@@ -66,7 +66,8 @@
 
 		    var trebleChordOrRest;
 		    if (treblePitches.length > 0) {
-		        trebleChordOrRest = new music21.chord.Chord(treblePitches);		        
+		        trebleChordOrRest = new music21.chord.Chord(treblePitches);	
+		        // trebleChordOrRest.stemDirection = 'up';
 		    } else {
 		        trebleChordOrRest = new music21.note.Rest();		        
 		    }
@@ -75,6 +76,7 @@
             var bassChordOrRest;
             if (bassPitches.length > 0) {
                 bassChordOrRest = new music21.chord.Chord(bassPitches);             
+                // bassChordOrRest.stemDirection = 'up';
             } else {
                 bassChordOrRest = new music21.note.Rest();                
             }
