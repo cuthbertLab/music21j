@@ -60,7 +60,7 @@ export class RenderOptions {
             rightBarline: undefined,
             staffLines: 5,
             staffConnectors: ['single', 'brace'],
-            staffPadding: 60,
+            staffPadding: 60, // width...
             events: {
                 'click': 'play',
                 'dblclick': undefined,

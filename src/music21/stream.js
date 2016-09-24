@@ -864,7 +864,8 @@ export class Stream extends base.Music21Object {
             if (numSystems === undefined || ignoreSystems) {
                 numSystems = 1;
             }
-            const scoreHeight = (numSystems * staffHeight * numParts) + ((numSystems - 1) * systemPadding);
+            const scoreHeight = (numSystems * staffHeight * numParts) + (
+                    (numSystems - 1) * systemPadding);
             // console.log('scoreHeight of ' + scoreHeight);
             return scoreHeight;
         } else if (this.isClassOrSubclass('Part')) {

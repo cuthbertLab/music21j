@@ -28,7 +28,8 @@ export const vfShow = {};
  * @class RenderStack
  * @memberof music21.vfShow
  * @property {Array<Vex.Flow.Voice>} voices - Vex.Flow.Voice objects
- * @property {Array<music21.stream.Stream>} streams - {@link music21.stream.Stream} objects associated with the voices
+ * @property {Array<music21.stream.Stream>} streams - {@link music21.stream.Stream} objects 
+ * associated with the voices
  * @property {Array} textVoices - Vex.Flow.Voice objects for the text.
  */
 export class RenderStack {
@@ -69,7 +70,8 @@ vfShow.RenderStack = RenderStack;
  * @param {music21.stream.Stream} s - main stream to render
  * @param {canvas} [canvas] - existing canvas element
  * @param {DOMObject|jQueryDOMObject} [where=document.body] - where to render the stream
- * @property {Vex.Flow.Renderer} vfRenderer - a Vex.Flow.Renderer to use (will create if not existing)
+ * @property {Vex.Flow.Renderer} vfRenderer - a Vex.Flow.Renderer to use 
+ * (will create if not existing)
  * @property {Vex.Flow.Context} ctx - a Vex.Flow.Context (Canvas or Raphael [not yet]) to use.
  * @property {canvas} canvas - canvas element
  * @property {jQueryDOMObject} $canvas - jQuery canvas element
@@ -94,7 +96,7 @@ export class Renderer {
         this._ctx = undefined;
         this.beamGroups = [];
         this.stacks = []; // an Array of RenderStacks: {voices: [Array of Vex.Flow.Voice objects],
-        //                            streams: [Array of Streams, usually Measures]}
+        //                                           streams: [Array of Streams, usually Measures]}
         this.ties = [];
         this.systemBreakOffsets = [];
         this.vfTuplets = [];
@@ -120,7 +122,9 @@ export class Renderer {
         if (this._vfRenderer !== undefined) {
             return this._vfRenderer;
         } else {
-            this._vfRenderer = new Vex.Flow.Renderer(this.canvas, Vex.Flow.Renderer.Backends.CANVAS);
+            this._vfRenderer = new Vex.Flow.Renderer(
+                this.canvas, 
+                Vex.Flow.Renderer.Backends.CANVAS);
             return this._vfRenderer;
         }
     }
@@ -133,8 +137,9 @@ export class Renderer {
         } else {
             this._ctx = this.vfRenderer.getContext();
             if (this.stream && this.stream.renderOptions) {
-                this._ctx.scale(this.stream.renderOptions.scaleFactor.x,
-                        this.stream.renderOptions.scaleFactor.y);
+                this._ctx.scale(
+                    this.stream.renderOptions.scaleFactor.x,
+                    this.stream.renderOptions.scaleFactor.y);
             }
             return this._ctx;
         }
@@ -215,7 +220,7 @@ export class Renderer {
             if (subStream.renderOptions.startNewSystem) {
                 this.systemBreakOffsets.push(subStream.offset);
             }
-            if (i === p.length - 1) {
+            if (i === (p.length - 1)) {
                 subStream.renderOptions.rightBarline = 'end';
             }
             if (this.stacks[i] === undefined) {
@@ -270,8 +275,10 @@ export class Renderer {
      * @param {music21.stream.Stream} s - a flat stream object
      * @param {music21.vfShow.RenderStack} stack - a RenderStack object to prepare into.
      * @param {Vex.Flow.Stave} [optionalStave] - an optional existing stave.
-     * @param {object} [optional_renderOp] - render options. Passed to {@link music21.vfShow.Renderer#renderStave}
-     * @returns {Vex.Flow.Stave} staff to return too (also changes the `stack` parameter and runs `makeAccidentals` on s)
+     * @param {object} [optional_renderOp] - render options. 
+     * Passed to {@link music21.vfShow.Renderer#renderStave}
+     * @returns {Vex.Flow.Stave} staff to return too 
+     * (also changes the `stack` parameter and runs `makeAccidentals` on s)
      */
     prepareFlat(s, stack, optionalStave, optional_renderOp) {
         s.makeAccidentals();
@@ -299,7 +306,8 @@ export class Renderer {
      *
      * @memberof music21.vfShow.Renderer
      * @param {music21.stream.Stream} [m=this.stream] - a flat stream
-     * @param {object} [optional_rendOp] - render options, passed to {@link music21.vfShow.Renderer#newStave} and {@link music21.vfShow.Renderer#setClefEtc}
+     * @param {object} [optional_rendOp] - render options, passed 
+     * to {@link music21.vfShow.Renderer#newStave} and {@link music21.vfShow.Renderer#setClefEtc}
      * @returns {Vex.Flow.Stave} stave
      */
     renderStave(m, optional_rendOp) {
@@ -503,7 +511,8 @@ export class Renderer {
                 const voice = voices[i];
                 let beatGroups = [new Vex.Flow.Fraction(2, 8)]; // default beam groups
                 if (measures[i] !== undefined && measures[i].timeSignature !== undefined) {
-                    beatGroups = measures[i].timeSignature.vexflowBeatGroups(Vex); // TODO: getContextByClass...
+                    beatGroups = measures[i].timeSignature.vexflowBeatGroups(Vex); 
+                    // TODO: getContextByClass...
                     // console.log(beatGroups);
                 }
                 const beamGroups = Vex.Flow.Beam.applyAndGetBeams(voice, undefined, beatGroups);
@@ -559,12 +568,15 @@ export class Renderer {
         return stave;
     }
     /**
-     * Sets the number of stafflines, puts the clef on the Stave, adds keySignature, timeSignature, and rightBarline
+     * Sets the number of stafflines, puts the clef on the Stave, 
+     * adds keySignature, timeSignature, and rightBarline
      *
      * @memberof music21.vfShow.Renderer
      * @param {music21.stream.Stream} s
      * @param {Vex.Flow.Stave} stave
-     * @param {object} [rendOp=s.renderOptions] - a {@link music21.renderOptions.RenderOptions} object that might have `{showMeasureNumber: boolean, rightBarLine: string<{'single', 'double', 'end'}>}`
+     * @param {object} [rendOp=s.renderOptions] - a {@link music21.renderOptions.RenderOptions} 
+     * object that might have 
+     * `{showMeasureNumber: boolean, rightBarLine: string<{'single', 'double', 'end'}>}`
      */
     setClefEtc(s, stave, rendOp) {
         if (rendOp === undefined) {
@@ -614,7 +626,8 @@ export class Renderer {
      * to show the bottom(top?), not middle, lines and that looks bad.
      *
      * @memberof music21.vfShow.Renderer
-     * @param {music21.stream.Stream} s - stream to get the `.staffLines` from `s.renderOptions` from -- should allow for overriding.
+     * @param {music21.stream.Stream} s - stream to get the `.staffLines` 
+     * from `s.renderOptions` from -- should allow for overriding.
      * @param {Vex.Flow.Stave} vexflowStave - stave to set the staff lines for.
      */
     setStafflines(s, vexflowStave) {
@@ -651,14 +664,13 @@ export class Renderer {
         }
     }
     /**
-     *
      * Gets the Vex.Flow.StaveNote objects from a Stream.
      *
      * Also changes `this.vfTuplets`.
      *
      * @memberof music21.vfShow.Renderer
      * @param {music21.stream.Stream} [s=this.stream] - flat stream to find notes in
-     * @param {Vex.Flow.Stave} stave
+     * @param {Vex.Flow.Stave} stave - Vex.Flow.Stave to render notes on to.
      * @returns {Array<Vex.Flow.StaveNote>} notes to return
      */
     vexflowNotes(s, stave) {
@@ -697,7 +709,8 @@ export class Renderer {
                     activeTupletLength += thisEl.duration.quarterLength;
                     // console.log(activeTupletLength, activeTuplet.totalTupletLength());
                     if (activeTupletLength >= activeTuplet.totalTupletLength() ||
-                            Math.abs(activeTupletLength - activeTuplet.totalTupletLength()) < 0.001) {
+                            Math.abs(activeTupletLength 
+                                        - activeTuplet.totalTupletLength()) < 0.001) {
                         // console.log(activeTupletVexflowNotes);
                         const tupletOptions = { num_notes: activeTuplet.numberNotesActual,
                                 notes_occupied: activeTuplet.numberNotesNormal };
@@ -825,7 +838,8 @@ export class Renderer {
         }
         // console.log('creating voice');
         if (debug) {
-            console.log('New voice, num_beats: ' + num1024.toString() + ' beat_value: ' + beatValue.toString());
+            console.log('New voice, num_beats: ' + num1024.toString() 
+                + ' beat_value: ' + beatValue.toString());
         }
         const vfv = new Vex.Flow.Voice({ num_beats: num1024,
             beat_value: beatValue,
@@ -853,7 +867,8 @@ export class Renderer {
     }
 
     /**
-     * If a stream has parts (NOT CHECKED HERE) create and draw an appropriate Vex.Flow.StaveConnector
+     * If a stream has parts (NOT CHECKED HERE) create and 
+     * draw an appropriate Vex.Flow.StaveConnector
      *
      * @memberof music21.vfShow.Renderer
      * @param {music21.stream.Score} s
@@ -943,7 +958,8 @@ export class Renderer {
         if (stave !== undefined) {
             noteOffsetLeft = stave.start_x + stave.glyph_start_x;
             if (debug) {
-                console.log('noteOffsetLeft: ' + noteOffsetLeft + ' ; stave.start_x: ' + stave.start_x);
+                console.log('noteOffsetLeft: ' + noteOffsetLeft 
+                    + ' ; stave.start_x: ' + stave.start_x);
                 console.log('Bottom y: ' + stave.getBottomY());
             }
             // staveHeight = stave.height;
