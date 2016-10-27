@@ -239,7 +239,7 @@ music21 = {}; // global
 if ((Object.defineProperties === undefined) && warnBanner) {
     var newDiv = document.createElement("div");
     newDiv.setAttribute('style', 'font-size: 40px; padding: 40px 20px 40px 20px; margin-top: 20px; line-height: 50px; width: 500px; height: 400px; color: #ffffff; background-color: #900000;');
-    var textInside = document.createTextNode('Unfortunately, IE9, Safari 4 or 5 (Leopard/Snow Leopard), and other out-of-date browsers do not work with music21j. Please upgrade your browser w/ the link above.');
+    var textInside = document.createTextNode('Unfortunately, IE10 or lower, Safari 7, and other out-of-date browsers do not work with music21j. Please upgrade your browser w/ the link above.');
     newDiv.appendChild(textInside);
     document.body.appendChild(newDiv);
     var $buoop  = {test: false, reminder: 0}; // used by update.js...

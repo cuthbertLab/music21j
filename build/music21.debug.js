@@ -1,5 +1,5 @@
 /**
- * music21j 0.9.0 built on  * 2016-09-24.
+ * music21j 0.9.0 built on  * 2016-10-13.
  * Copyright (c) 2013-2016 Michael Scott Cuthbert and cuthbertLab
  * BSD License, see LICENSE
  *
@@ -3464,7 +3464,7 @@
                       vfn.addArticulation(0, exp.vexflow());
                   }
               }
-              if (this.noteheadColor) {
+              if (this.noteheadColor !== undefined) {
                   vfn.setKeyStyle(0, { fillStyle: this.noteheadColor });
               }
               this.activeVexflowNote = vfn;

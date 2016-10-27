@@ -568,7 +568,7 @@ export class Note extends NotRest {
                 vfn.addArticulation(0, exp.vexflow()); 
             }
         }
-        if (this.noteheadColor) {
+        if (this.noteheadColor !== undefined) {
             vfn.setKeyStyle(0, { fillStyle: this.noteheadColor });
         }
         this.activeVexflowNote = vfn;

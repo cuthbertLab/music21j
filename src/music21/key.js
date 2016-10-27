@@ -64,8 +64,10 @@ export class KeySignature extends base.Music21Object {
         this._alteredPitchesCache = undefined;
 
         // 12 flats/sharps enough for now...
-        this.flatMapping = ['C', 'F', 'B-', 'E-', 'A-', 'D-', 'G-', 'C-', 'F-', 'B--', 'E--', 'A--', 'D--'];
-        this.sharpMapping = ['C', 'G', 'D', 'A', 'E', 'B', 'F#', 'C#', 'G#', 'D#', 'A#', 'E#', 'B#'];
+        this.flatMapping = ['C', 'F', 'B-', 'E-', 'A-', 'D-', 'G-', 
+                            'C-', 'F-', 'B--', 'E--', 'A--', 'D--'];
+        this.sharpMapping = ['C', 'G', 'D', 'A', 'E', 'B', 'F#', 
+                             'C#', 'G#', 'D#', 'A#', 'E#', 'B#'];
     }
     get sharps() {
         return this._sharps;
