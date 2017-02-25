@@ -50,6 +50,10 @@ If you have `git` installed, you can use (on Mac/Unix):
 % cd ~/git
 % git clone https://github.com/cuthbertLab/music21j.git
 % cd music21j
+% git submodule init
+% git submodule update
+% git pull
+% git submodule update --recursive
 % npm install
 ```
 
