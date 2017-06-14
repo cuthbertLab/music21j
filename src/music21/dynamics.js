@@ -28,27 +28,30 @@ import { base } from './base';
  * @requires music21/base
  */
 export const dynamics = {};
-dynamics.shortNames = ['pppppp', 'ppppp', 'pppp', 'ppp', 'pp', 'p', 'mp',
-                       'mf', 'f', 'fp', 'sf', 'ff', 'fff', 'ffff', 'fffff', 'ffffff'];
-dynamics.longNames = { 'ppp': ['pianississimo'],
-        'pp': ['pianissimo'],
-        'p': ['piano'],
-        'mp': ['mezzopiano'],
-        'mf': ['mezzoforte'],
-        'f': ['forte'],
-        'fp': ['fortepiano'],
-        'sf': ['sforzando'],
-        'ff': ['fortissimo'],
-        'fff': ['fortississimo'],
+dynamics.shortNames = [
+    'pppppp', 'ppppp', 'pppp', 'ppp', 'pp', 'p', 'mp',
+    'mf', 'f', 'fp', 'sf', 'ff', 'fff', 'ffff', 'fffff', 'ffffff'];
+dynamics.longNames = {
+    'ppp': ['pianississimo'],
+    'pp': ['pianissimo'],
+    'p': ['piano'],
+    'mp': ['mezzopiano'],
+    'mf': ['mezzoforte'],
+    'f': ['forte'],
+    'fp': ['fortepiano'],
+    'sf': ['sforzando'],
+    'ff': ['fortissimo'],
+    'fff': ['fortississimo'],
 };
-dynamics.englishNames = { 'ppp': ['extremely soft'],
-        'pp': ['very soft'],
-        'p': ['soft'],
-        'mp': ['moderately soft'],
-        'mf': ['moderately loud'],
-        'f': ['loud'],
-        'ff': ['very loud'],
-        'fff': ['extremely loud'],
+dynamics.englishNames = {
+    'ppp': ['extremely soft'],
+    'pp': ['very soft'],
+    'p': ['soft'],
+    'mp': ['moderately soft'],
+    'mf': ['moderately loud'],
+    'f': ['loud'],
+    'ff': ['very loud'],
+    'fff': ['extremely loud'],
 };
 dynamics.dynamicStrToScalar = {
     'None': [0.5], // default value

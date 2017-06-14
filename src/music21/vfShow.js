@@ -28,7 +28,7 @@ export const vfShow = {};
  * @class RenderStack
  * @memberof music21.vfShow
  * @property {Array<Vex.Flow.Voice>} voices - Vex.Flow.Voice objects
- * @property {Array<music21.stream.Stream>} streams - {@link music21.stream.Stream} objects 
+ * @property {Array<music21.stream.Stream>} streams - {@link music21.stream.Stream} objects
  * associated with the voices
  * @property {Array} textVoices - Vex.Flow.Voice objects for the text.
  */
@@ -50,13 +50,13 @@ export class RenderStack {
     }
     /**
      * @memberof music21.vfShow.RenderStack
-     * @returns {Array<Array>} each array represents one staff.... 
+     * @returns {Array<Array>} each array represents one staff....
      * where this.voices and this.textVoices are all in that staff...
      */
     tickablesByStave() {
         const tickablesByStave = []; // a list of lists of tickables being placed on the same Stave.
         const knownStaves = []; // a list of Vex.Flow.Stave objects...
-        
+
         for (const t of this.allTickables()) {
             const thisStaveIndex = knownStaves.indexOf(t.stave);
             let currentStaveHolder;
@@ -69,7 +69,7 @@ export class RenderStack {
             }
             currentStaveHolder.push(t);
         }
-        return tickablesByStave;        
+        return tickablesByStave;
     }
 }
 vfShow.RenderStack = RenderStack;
@@ -93,7 +93,7 @@ vfShow.RenderStack = RenderStack;
  * @param {music21.stream.Stream} s - main stream to render
  * @param {canvas} [canvas] - existing canvas element
  * @param {DOMObject|jQueryDOMObject} [where=document.body] - where to render the stream
- * @property {Vex.Flow.Renderer} vfRenderer - a Vex.Flow.Renderer to use 
+ * @property {Vex.Flow.Renderer} vfRenderer - a Vex.Flow.Renderer to use
  * (will create if not existing)
  * @property {Vex.Flow.Context} ctx - a Vex.Flow.Context (Canvas or Raphael [not yet]) to use.
  * @property {canvas} canvas - canvas element
@@ -146,7 +146,7 @@ export class Renderer {
             return this._vfRenderer;
         } else {
             this._vfRenderer = new Vex.Flow.Renderer(
-                this.canvas, 
+                this.canvas,
                 Vex.Flow.Renderer.Backends.CANVAS);
             return this._vfRenderer;
         }
@@ -298,9 +298,9 @@ export class Renderer {
      * @param {music21.stream.Stream} s - a flat stream object
      * @param {music21.vfShow.RenderStack} stack - a RenderStack object to prepare into.
      * @param {Vex.Flow.Stave} [optionalStave] - an optional existing stave.
-     * @param {object} [optional_renderOp] - render options. 
+     * @param {object} [optional_renderOp] - render options.
      * Passed to {@link music21.vfShow.Renderer#renderStave}
-     * @returns {Vex.Flow.Stave} staff to return too 
+     * @returns {Vex.Flow.Stave} staff to return too
      * (also changes the `stack` parameter and runs `makeAccidentals` on s)
      */
     prepareFlat(s, stack, optionalStave, optional_renderOp) {
@@ -329,7 +329,7 @@ export class Renderer {
      *
      * @memberof music21.vfShow.Renderer
      * @param {music21.stream.Stream} [m=this.stream] - a flat stream
-     * @param {object} [optional_rendOp] - render options, passed 
+     * @param {object} [optional_rendOp] - render options, passed
      * to {@link music21.vfShow.Renderer#newStave} and {@link music21.vfShow.Renderer#setClefEtc}
      * @returns {Vex.Flow.Stave} stave
      */
@@ -537,7 +537,7 @@ export class Renderer {
                 const voice = voices[i];
                 let beatGroups = [new Vex.Flow.Fraction(2, 8)]; // default beam groups
                 if (measures[i] !== undefined && measures[i].timeSignature !== undefined) {
-                    beatGroups = measures[i].timeSignature.vexflowBeatGroups(Vex); 
+                    beatGroups = measures[i].timeSignature.vexflowBeatGroups(Vex);
                     // TODO: getContextByClass...
                     // console.log(beatGroups);
                 }
@@ -594,14 +594,14 @@ export class Renderer {
         return stave;
     }
     /**
-     * Sets the number of stafflines, puts the clef on the Stave, 
+     * Sets the number of stafflines, puts the clef on the Stave,
      * adds keySignature, timeSignature, and rightBarline
      *
      * @memberof music21.vfShow.Renderer
      * @param {music21.stream.Stream} s
      * @param {Vex.Flow.Stave} stave
-     * @param {object} [rendOp=s.renderOptions] - a {@link music21.renderOptions.RenderOptions} 
-     * object that might have 
+     * @param {object} [rendOp=s.renderOptions] - a {@link music21.renderOptions.RenderOptions}
+     * object that might have
      * `{showMeasureNumber: boolean, rightBarLine: string<{'single', 'double', 'end'}>}`
      */
     setClefEtc(s, stave, rendOp) {
@@ -652,7 +652,7 @@ export class Renderer {
      * to show the bottom(top?), not middle, lines and that looks bad.
      *
      * @memberof music21.vfShow.Renderer
-     * @param {music21.stream.Stream} s - stream to get the `.staffLines` 
+     * @param {music21.stream.Stream} s - stream to get the `.staffLines`
      * from `s.renderOptions` from -- should allow for overriding.
      * @param {Vex.Flow.Stave} vexflowStave - stave to set the staff lines for.
      */
@@ -664,26 +664,26 @@ export class Renderer {
             } else if (rendOp.staffLines === 1) {
                 // Vex.Flow.Stave.setNumLines hides all but the top line.
                 // this is better
-                vexflowStave.options.line_config = [{ visible: false },
-                                                    { visible: false },
-                                                    { visible: true }, // show middle
-                                                    { visible: false },
-                                                    { visible: false },
-                                                    ];
+                vexflowStave.options.line_config = [
+                    { visible: false },
+                    { visible: false },
+                    { visible: true }, // show middle
+                    { visible: false },
+                    { visible: false }];
             } else if (rendOp.staffLines === 2) {
-                vexflowStave.options.line_config = [{ visible: false },
-                                                    { visible: false },
-                                                    { visible: true }, // show middle
-                                                    { visible: true },
-                                                    { visible: false },
-                                                    ];
+                vexflowStave.options.line_config = [
+                    { visible: false },
+                    { visible: false },
+                    { visible: true }, // show middle
+                    { visible: true },
+                    { visible: false }];
             } else if (rendOp.staffLines === 3) {
-                vexflowStave.options.line_config = [{ visible: false },
-                                                    { visible: true },
-                                                    { visible: true }, // show middle
-                                                    { visible: true },
-                                                    { visible: false },
-                                                    ];
+                vexflowStave.options.line_config = [
+                    { visible: false },
+                    { visible: true },
+                    { visible: true }, // show middle
+                    { visible: true },
+                    { visible: false }];
             } else {
                 vexflowStave.setNumLines(rendOp.staffLines);
             }
@@ -735,11 +735,12 @@ export class Renderer {
                     activeTupletLength += thisEl.duration.quarterLength;
                     // console.log(activeTupletLength, activeTuplet.totalTupletLength());
                     if (activeTupletLength >= activeTuplet.totalTupletLength() ||
-                            Math.abs(activeTupletLength 
+                            Math.abs(activeTupletLength
                                         - activeTuplet.totalTupletLength()) < 0.001) {
                         // console.log(activeTupletVexflowNotes);
-                        const tupletOptions = { num_notes: activeTuplet.numberNotesActual,
-                                notes_occupied: activeTuplet.numberNotesNormal };
+                        const tupletOptions = {
+                            num_notes: activeTuplet.numberNotesActual,
+                            notes_occupied: activeTuplet.numberNotesNormal };
                         // console.log('tupletOptions', tupletOptions);
                         const vfTuplet = new Vex.Flow.Tuplet(activeTupletVexflowNotes,
                                 tupletOptions);
@@ -864,7 +865,7 @@ export class Renderer {
         }
         // console.log('creating voice');
         if (debug) {
-            console.log('New voice, num_beats: ' + num1024.toString() 
+            console.log('New voice, num_beats: ' + num1024.toString()
                 + ' beat_value: ' + beatValue.toString());
         }
         const vfv = new Vex.Flow.Voice({ num_beats: num1024,
@@ -893,7 +894,7 @@ export class Renderer {
     }
 
     /**
-     * If a stream has parts (NOT CHECKED HERE) create and 
+     * If a stream has parts (NOT CHECKED HERE) create and
      * draw an appropriate Vex.Flow.StaveConnector
      *
      * @memberof music21.vfShow.Renderer
@@ -984,7 +985,7 @@ export class Renderer {
         if (stave !== undefined) {
             noteOffsetLeft = stave.start_x + stave.glyph_start_x;
             if (debug) {
-                console.log('noteOffsetLeft: ' + noteOffsetLeft 
+                console.log('noteOffsetLeft: ' + noteOffsetLeft
                     + ' ; stave.start_x: ' + stave.start_x);
                 console.log('Bottom y: ' + stave.getBottomY());
             }

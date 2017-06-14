@@ -151,13 +151,14 @@ export class RomanNumeral extends chord.Chord {
     }
     get degreeName() {
         if (this.scaleDegree < 7) {
-            return [undefined,
-                    'Tonic',
-                    'Supertonic',
-                    'Mediant',
-                    'Subdominant',
-                    'Dominant',
-                    'Submediant'][this.scaleDegree];
+            return [
+                undefined,
+                'Tonic',
+                'Supertonic',
+                'Mediant',
+                'Subdominant',
+                'Dominant',
+                'Submediant'][this.scaleDegree];
         } else {
             const tonicPitch = new pitch.Pitch(this.key.tonic);
             let diffRootToTonic = (tonicPitch.ps - this.root.ps) % 12;
@@ -237,7 +238,7 @@ export class RomanNumeral extends chord.Chord {
             connector = '';
             suffix = ' triad';
         } else if (displayType === 'bassName') {
-            fullChordName = this.bass().name.replace(/\-/, 'b');
+            fullChordName = this.bass().name.replace(/-/, 'b');
             connector = ' in ';
             suffix = '';
         } else { // "default" submediant, etc...
@@ -246,7 +247,7 @@ export class RomanNumeral extends chord.Chord {
                 fullChordName += ' ' + this.numbers.toString();
             }
         }
-        let tonicDisplay = tonic.replace(/\-/, 'b');
+        let tonicDisplay = tonic.replace(/-/, 'b');
         if (mode === 'minor') {
             tonicDisplay = tonicDisplay.toLowerCase();
         }

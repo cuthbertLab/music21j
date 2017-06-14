@@ -261,8 +261,9 @@ miditools.sendOutChord = function sendOutChord(chordNoteList) {
 */
 miditools.callBacks = {
     raw: (t, a, b, c) => new miditools.Event(t, a, b, c),
-    general: [miditools.sendToMIDIjs,
-              miditools.quantizeLastNote],
+    general: [
+        miditools.sendToMIDIjs,
+        miditools.quantizeLastNote],
     sendOutChord: (arrayOfNotes) => { },
 };
 

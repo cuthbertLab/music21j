@@ -26,26 +26,26 @@ audioSearch._audioContext = null;
 audioSearch.animationFrameCallbackId = null;
 
 Object.defineProperties(audioSearch,
-        { 'audioContext': {
-            'get': () => {
-                if (audioSearch._audioContext !== null) {
-                    return audioSearch._audioContext;
-                } else {
-                    // AudioContext should be a singleton, but MIDI reports loaded before it is!
-                    if (MIDI !== undefined && MIDI.WebAudio !== undefined && MIDI.WebAudio.getContext() !== undefined) {
-                        window.globalAudioContext = MIDI.WebAudio.getContext();
-                    } else if (typeof window.globalAudioContext === 'undefined') {
-                        window.globalAudioContext = new audioSearch.AudioContextCaller();
-                    }
-                    audioSearch._audioContext = window.globalAudioContext;
-                    return audioSearch._audioContext;
+    { 'audioContext': {  
+        'get': () => {
+            if (audioSearch._audioContext !== null) {
+                return audioSearch._audioContext;
+            } else {
+                // AudioContext should be a singleton, but MIDI reports loaded before it is!
+                if (MIDI !== undefined && MIDI.WebAudio !== undefined 
+                        && MIDI.WebAudio.getContext() !== undefined) {
+                    window.globalAudioContext = MIDI.WebAudio.getContext();
+                } else if (typeof window.globalAudioContext === 'undefined') {
+                    window.globalAudioContext = new audioSearch.AudioContextCaller();
                 }
-            },
-            'set': (ac) => {
-                audioSearch._audioContext = ac;
-            },
+                audioSearch._audioContext = window.globalAudioContext;
+                return audioSearch._audioContext;
+            }
         },
-        });
+        'set': (ac) => {
+            audioSearch._audioContext = ac;
+        },
+    } });
 
 
 /**

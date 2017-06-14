@@ -53,12 +53,14 @@ duration.typeFromNumDict = {
     '0.0625': 'duplex-maxima',
 };
 duration.quarterTypeIndex = 6; // where is quarter in the following array.
-duration.ordinalTypeFromNum = ['duplex-maxima', 'maxima', 'longa', 'breve',
-                               'whole', 'half', 'quarter', 'eighth', '16th',
-                               '32nd', '64th', '128th', '256th', '512th', '1024th'];
-duration.vexflowDurationArray = [undefined, undefined, undefined, undefined,
-                                 'w', 'h', 'q', '8', '16',
-                                 '32', undefined, undefined, undefined, undefined, undefined];
+duration.ordinalTypeFromNum = [
+    'duplex-maxima', 'maxima', 'longa', 'breve',
+    'whole', 'half', 'quarter', 'eighth', '16th',
+    '32nd', '64th', '128th', '256th', '512th', '1024th'];
+duration.vexflowDurationArray = [
+    undefined, undefined, undefined, undefined,
+    'w', 'h', 'q', '8', '16',
+    '32', undefined, undefined, undefined, undefined, undefined];
 
 /**
  * Duration object; found as the `.duration` attribute on {@link music21.base.Music21Object} instances

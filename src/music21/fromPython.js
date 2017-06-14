@@ -52,17 +52,18 @@ export const fromPython = {};
 export class Converter {
     constructor() {
         this.debug = true;
-        this.knownUnparsables = ['music21.spanner.Line',
-                                 'music21.instrument.Instrument',
-                                 'music21.layout.StaffGroup',
-                                 'music21.layout.StaffLayout',
-                                 'music21.layout.SystemLayout',
-                                 'music21.layout.PageLayout',
-                                 'music21.expressions.TextExpression',
-                                 'music21.bar.Barline', // Soon...
-                                 'music21.tempo.MetronomeMark', // should be possible
-                                 'music21.metadata.Metadata', // Soon...
-                                 ];
+        this.knownUnparsables = [
+            'music21.spanner.Line',
+            'music21.instrument.Instrument',
+            'music21.layout.StaffGroup',
+            'music21.layout.StaffLayout',
+            'music21.layout.SystemLayout',
+            'music21.layout.PageLayout',
+            'music21.expressions.TextExpression',
+            'music21.bar.Barline', // Soon...
+            'music21.tempo.MetronomeMark', // should be possible
+            'music21.metadata.Metadata', // Soon...
+        ];
         this.handlers = {
             'music21.duration.Duration': {
                 post_restore: (d) => {
@@ -197,4 +198,3 @@ export class Converter {
     }
 }
 fromPython.Converter = Converter;
-

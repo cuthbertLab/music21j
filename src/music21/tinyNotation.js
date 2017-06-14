@@ -47,10 +47,10 @@ tinyNotation.regularExpressions = {
     OCTAVE5: /([a-g])('+)/,
     OCTAVE4: /([a-g])/,
     EDSHARP: /\((#+)\)/,
-    EDFLAT: /\((\-+)\)/,
+    EDFLAT: /\((-+)\)/,
     EDNAT: /\(n\)/,
     SHARP: /^[A-Ga-g]+'*(#+)/,  // simple notation finds
-    FLAT: /^[A-Ga-g]+'*(\-+)/,  // double sharps too
+    FLAT: /^[A-Ga-g]+'*(-+)/,  // double sharps too
     NAT: /^[A-Ga-g]+'*n/,  // explicit naturals
     TYPE: /(\d+)/,
     TIE: /.~/, // not preceding ties
@@ -300,4 +300,3 @@ tinyNotation.renderNotationDivs = function renderNotationDivs(classTypes, select
         }
     }
 };
-

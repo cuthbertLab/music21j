@@ -9,7 +9,7 @@
  * @namespace music21.common
  * @memberof music21
  */
-import * as $ from 'jquery';
+import $ from 'jquery';
 
 export const common = {};
 
@@ -213,7 +213,7 @@ common.stripPx = function stripPx(str) {
  * @returns {string} may be "" if empty.
  */
 common.urlParam = function urlParam(name) {
-    name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+    name = name.replace(/[[]/, '\\[').replace(/[\]]/, '\\]');
     const regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
     const results = regex.exec(location.search);
     return results == null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));

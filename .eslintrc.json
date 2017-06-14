@@ -6,6 +6,7 @@
   },
   "rules": {
     "dot-notation": ["error", {"allowKeywords": false}],
+    "comma-dangle": [0],
     "indent": ["error", 4],
     "curly": ["error", "all"],
     "camelcase": [0],

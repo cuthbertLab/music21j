@@ -315,8 +315,9 @@ export class Chord extends note.NotRest {
         for (let i = 0; i < this._notes.length; i++) {
             pitchKeys.push(this._notes[i].pitch.vexflowName(clef));
         }
-        const vfn = new Vex.Flow.StaveNote({ keys: pitchKeys,
-                                            duration: this.duration.vexflowDuration });
+        const vfn = new Vex.Flow.StaveNote({ 
+            keys: pitchKeys,
+            duration: this.duration.vexflowDuration });
         this.vexflowAccidentalsAndDisplay(vfn, options); // clean up stuff...
         for (let i = 0; i < this._notes.length; i++) {
             const tn = this._notes[i];

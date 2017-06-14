@@ -64,10 +64,12 @@ export class KeySignature extends base.Music21Object {
         this._alteredPitchesCache = undefined;
 
         // 12 flats/sharps enough for now...
-        this.flatMapping = ['C', 'F', 'B-', 'E-', 'A-', 'D-', 'G-', 
-                            'C-', 'F-', 'B--', 'E--', 'A--', 'D--'];
-        this.sharpMapping = ['C', 'G', 'D', 'A', 'E', 'B', 'F#', 
-                             'C#', 'G#', 'D#', 'A#', 'E#', 'B#'];
+        this.flatMapping = [
+            'C', 'F', 'B-', 'E-', 'A-', 'D-', 'G-',
+            'C-', 'F-', 'B--', 'E--', 'A--', 'D--'];
+        this.sharpMapping = [
+            'C', 'G', 'D', 'A', 'E', 'B', 'F#',
+            'C#', 'G#', 'D#', 'A#', 'E#', 'B#'];
     }
     get sharps() {
         return this._sharps;
@@ -169,7 +171,7 @@ export class KeySignature extends base.Music21Object {
     vexflow() {
         console.log('calling deprecated function KeySignature.vexflow');
         const tempName = this.majorName();
-        return tempName.replace(/\-/g, 'b');
+        return tempName.replace(/-/g, 'b');
     }
      /**
       * Returns the accidental associated with a step in this key, or undefined if none.
@@ -293,4 +295,3 @@ export class Key extends KeySignature {
     }
 }
 key.Key = Key;
-
