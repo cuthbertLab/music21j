@@ -233,8 +233,21 @@ export class Recorder {
     polyfillNavigator() {
         if (!navigator.getUserMedia) {
             navigator.getUserMedia = navigator.webkitGetUserMedia || navigator.mozGetUserMedia;        
-        }        
+        }
+
+        if (global.AnalyserNode && !global.AnalyserNode.prototype.getFloatTimeDomainData) {
+        	const uint8 = new Uint8Array(2048);
+        	global.AnalyserNode.prototype.getFloatTimeDomainData = function(array) {
+        	    this.getByteTimeDomainData(uint8);
+        	    const imax = array.length;
+        	    for (const i = 0; i < imax; i++) {
+        	    	array[i] = (uint8[i] - 128) * 0.0078125;
+        	    }
+        	};
+        }    
     }
+
+    
     updateAnalysers(time) {        
         if (!this.frequencyCanvasInfo.canvasContext) {
             const canvas = document.getElementById(this.frequencyCanvasInfo.id);
