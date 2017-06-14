@@ -91,21 +91,21 @@ audioSearch.userMediaStarted = function userMediaStarted(audioStream) {
      * This function which patches Safari requires some time to get started
      * so we call it on object creation.
      */
-
-    audioSearch.sampleBuffer = new Float32Array(audioSearch.fftSize / 2);
-    const mediaStreamSource = audioSearch.audioContext.createMediaStreamSource(audioStream);
-    const analyser = audioSearch.audioContext.createAnalyser();
-    if (!analyser.getFloatTimeDomainData) { // Safari 11...
+    if (window.AnalyserNode && !window.AnalyserNode.prototype.getFloatTimeDomainData) {
         const uint8 = new Uint8Array(2048);
-        analyser.getFloatTimeDomainData = function getFloatTimeDomainData(array) {
+        const gftdd = function getFloatTimeDomainData(array) {
             this.getByteTimeDomainData(uint8);
             const imax = array.length;
             for (let i = 0; i < imax; i++) {
                 array[i] = (uint8[i] - 128) * 0.0078125;
             }
         };
+        window.AnalyserNode.prototype.getFloatTimeDomainData = gftdd;
     }
 
+    audioSearch.sampleBuffer = new Float32Array(audioSearch.fftSize / 2);
+    const mediaStreamSource = audioSearch.audioContext.createMediaStreamSource(audioStream);
+    const analyser = audioSearch.audioContext.createAnalyser();
     analyser.fftSize = audioSearch.fftSize;
     mediaStreamSource.connect(analyser);
     audioSearch.currentAnalyser = analyser;
