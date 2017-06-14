@@ -35,13 +35,13 @@ export class Recorder {
         navigator.getUserMedia({
             'audio': {
                 'mandatory': {
-                    'googEchoCancellation': false,
-                    'googAutoGainControl': false,
-                    'googNoiseSuppression': false,
-                    'googHighpassFilter': false,
-                    'echoCancellation': false,
-                    'autoGainControl': false,
-                    'noiseSuppression': false,
+                    // 'googEchoCancellation': false,
+                    // 'googAutoGainControl': false,
+                    // 'googNoiseSuppression': false,
+                    // 'googHighpassFilter': false,
+                    // 'echoCancellation': false,
+                    // 'autoGainControl': false,
+                    // 'noiseSuppression': false,
                     // 'highpassFilter': false,
                 },
                 'optional': [],
