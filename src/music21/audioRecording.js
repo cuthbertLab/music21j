@@ -10,7 +10,7 @@ export class Recorder {
         this.config = config;
         this.recording = false;
         this.currCallback = undefined;
-        this.audioContext = audioSearch.audioContext; 
+        this.audioContext = audioSearch.audioContext;
         this.frequencyCanvasInfo = {
             id: 'frequencyAnalyser',
             width: undefined,
@@ -52,10 +52,10 @@ export class Recorder {
      * After the user has given permission to record, this method is called.
      * It creates a gain point, and then connects the input source to the gain.
      * It connects an analyserNode (fftSize 2048) to the gain.
-     * 
+     *
      * It creates a second gain of 0.0 connected to the destination, so that
      * we're not hearing what we're playing in in an infinite loop (SUCKS to turn this off...)
-     * 
+     *
      * And it calls this.connectSource on the inputPoint so that
      * we can do something with all these wonderful inputs.
      */
@@ -68,11 +68,11 @@ export class Recorder {
 
         const analyserNode = this.audioContext.createAnalyser();
         analyserNode.fftSize = 2048;
-        this.analyserNode = analyserNode;        
+        this.analyserNode = analyserNode;
         inputPoint.connect(analyserNode);
-        
+
         this.connectSource(inputPoint);
-        
+
         const zeroGain = this.audioContext.createGain();
         zeroGain.gain.value = 0.0;
         inputPoint.connect(zeroGain);
@@ -85,7 +85,7 @@ export class Recorder {
     connectSource(source) {
         this.context = source.context;
         this.setNode();
-        
+
         // create a Worker with inline code...
         const workerBlob = new Blob(['(',
             recorderWorkerJs,
@@ -101,7 +101,7 @@ export class Recorder {
             this.currCallback(blob);
         };
         URL.revokeObjectURL(workerURL);
-        
+
         this.worker.postMessage({
             command: 'init',
             config: {
@@ -113,8 +113,8 @@ export class Recorder {
          * Whenever the ScriptProcessorNode receives enough audio to process
          * (i.e., this.bufferLen stereo samples; default 4096), then it calls onaudioprocess
          * which is set up to send the event's .getChannelData to the WebWorker via a
-         * postMessage.  
-         * 
+         * postMessage.
+         *
          * The 'record' command sends no message back.
          */
         this.node.onaudioprocess = e => {
@@ -129,21 +129,21 @@ export class Recorder {
                 ],
             });
         };
-        
+
         source.connect(this.node);
 
-        /** 
+        /**
          * polyfill for Chrome error.
-         * 
+         *
          * if the ScriptProcessorNode (this.node) is not connected to an output
          * the "onaudioprocess" event is not triggered in Chrome.
          */
-        this.node.connect(this.context.destination);   
+        this.node.connect(this.context.destination);
     }
-    
+
     /**
      * Creates a ScriptProcessorNode (preferably) to allow for direct audio processing.
-     * 
+     *
      * Sets it to this.node and returns it.
      */
     setNode() {
@@ -151,18 +151,18 @@ export class Recorder {
         const numOutputChannels = 2;
         if (!this.context.createScriptProcessor) {
             this.node = this.context.createJavaScriptNode(
-                this.bufferLen, 
-                numInputChannels, 
+                this.bufferLen,
+                numInputChannels,
                 numOutputChannels);
         } else {
             this.node = this.context.createScriptProcessor(
-                this.bufferLen, 
-                numInputChannels, 
+                this.bufferLen,
+                numInputChannels,
                 numOutputChannels);
         }
         return this.node;
     }
-    
+
     /**
      * Configure from another source...
      */
@@ -173,8 +173,8 @@ export class Recorder {
             }
         }
     }
-    
-    
+
+
     record() {
         this.recording = true;
     }
@@ -184,7 +184,7 @@ export class Recorder {
     clear() {
         this.worker.postMessage({ command: 'clear' });
     }
-    
+
     /**
      * Directly get the buffers from the worker and then call cb.
      */
@@ -196,7 +196,7 @@ export class Recorder {
     /**
      * call exportWAV or exportMonoWAV on the worker, then call cb or (if undefined) setupDownload.
      */
-    exportWAV(cb, type, isMono) {        
+    exportWAV(cb, type, isMono) {
         let command = 'exportWAV';
         if (isMono === true) { // default false
             command = 'exportMonoWAV';
@@ -232,10 +232,10 @@ export class Recorder {
      */
     polyfillNavigator() {
         if (!navigator.getUserMedia) {
-            navigator.getUserMedia = navigator.webkitGetUserMedia || navigator.mozGetUserMedia;        
+            navigator.getUserMedia = navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
         }
 
-        if (global.AnalyserNode && !global.AnalyserNode.prototype.getFloatTimeDomainData) {
+        if (window.AnalyserNode && !window.AnalyserNode.prototype.getFloatTimeDomainData) {
             const uint8 = new Uint8Array(2048);
             const gftdd = function getFloatTimeDomainData(array) {
                 this.getByteTimeDomainData(uint8);
@@ -244,12 +244,12 @@ export class Recorder {
                     array[i] = (uint8[i] - 128) * 0.0078125;
                 }
             };
-            global.AnalyserNode.prototype.getFloatTimeDomainData = gftdd;
-        }    
+            window.AnalyserNode.prototype.getFloatTimeDomainData = gftdd;
+        }
     }
 
-    
-    updateAnalysers(time) {        
+
+    updateAnalysers(time) {
         if (!this.frequencyCanvasInfo.canvasContext) {
             const canvas = document.getElementById(this.frequencyCanvasInfo.id);
             if (!canvas) {
@@ -266,7 +266,7 @@ export class Recorder {
         const numBars = Math.round(this.frequencyCanvasInfo.width / SPACING);
         const freqByteData = new Uint8Array(this.analyserNode.frequencyBinCount);
 
-        this.analyserNode.getByteFrequencyData(freqByteData); 
+        this.analyserNode.getByteFrequencyData(freqByteData);
 
         const canvasContext = this.frequencyCanvasInfo.canvasContext;
         canvasContext.clearRect(0, 0, this.frequencyCanvasInfo.width, this.frequencyCanvasInfo.height);
@@ -279,18 +279,18 @@ export class Recorder {
             let magnitude = 0;
             const offset = Math.floor(i * multiplier);
             for (let j = 0; j < multiplier; j++) {
-                magnitude += freqByteData[offset + j];                
+                magnitude += freqByteData[offset + j];
             }
             magnitude = magnitude * (this.frequencyCanvasInfo.height / 256) / multiplier;
             canvasContext.fillStyle = 'hsl( ' + Math.round((i * 360) / numBars) + ', 100%, 50%)';
             canvasContext.fillRect(
-                i * SPACING, 
-                this.frequencyCanvasInfo.height, 
-                BAR_WIDTH, 
+                i * SPACING,
+                this.frequencyCanvasInfo.height,
+                BAR_WIDTH,
                 -1 * magnitude
             );
         }
-        
+
         this.frequencyCanvasInfo.animationFrameID = window.requestAnimationFrame(t => this.updateAnalysers(t));
     }
 
@@ -303,7 +303,7 @@ export class Recorder {
             }
             this.waveformCanvasInfo.width = canvas.width;
             this.waveformCanvasInfo.height = canvas.height;
-            this.waveformCanvasInfo.context = canvas.getContext('2d');            
+            this.waveformCanvasInfo.context = canvas.getContext('2d');
         }
         const context = this.waveformCanvasInfo.context;
         const step = Math.ceil(data.length / this.waveformCanvasInfo.width);
@@ -314,17 +314,17 @@ export class Recorder {
             let min = 1.0;
             let max = -1.0;
             for (let j = 0; j < step; j++) {
-                const datum = data[(i * step) + j]; 
+                const datum = data[(i * step) + j];
                 if (datum < min) {
-                    min = datum;                
+                    min = datum;
                 }
                 if (datum > max) {
-                    max = datum;                
+                    max = datum;
                 }
             }
             context.fillRect(
-                    i, 
-                    (1 + min) * amp, 
+                    i,
+                    (1 + min) * amp,
                     1,
                     Math.max(1, (max - min) * amp)
             );
@@ -344,7 +344,7 @@ export class Recorder {
             for (let i = 0; i < numFrames; i++) {
                 thisChannelBuffer[i] = buffers[channel][i];
             }
-        }        
+        }
         const source = this.context.createBufferSource();
         source.buffer = audioBuffer;
         source.connect(this.context.destination);
@@ -390,7 +390,7 @@ const recorderWorkerJs = `function recorderWorkerJs() {
                 break;
             default:
                 break;
-            }        
+            }
    };
    RecorderWorker.prototype.postMessage = function postMessage(msg) {
             this.parent.postMessage(msg);
@@ -405,7 +405,7 @@ const recorderWorkerJs = `function recorderWorkerJs() {
             var inputBufferR = inputBuffer[1];
             this.recBuffersL.push(inputBufferL);
             this.recBuffersR.push(inputBufferR);
-            this.recLength += inputBufferL.length;        
+            this.recLength += inputBufferL.length;
    };
 
    RecorderWorker.prototype.exportWAV = function exportWAV(type) {
@@ -415,7 +415,7 @@ const recorderWorkerJs = `function recorderWorkerJs() {
             var dataview = this.encodeWAV(interleaved);
             var audioBlob = new Blob([dataview], { 'type': type });
 
-            this.postMessage(audioBlob);        
+            this.postMessage(audioBlob);
    };
 
    RecorderWorker.prototype.exportMonoWAV = function exportMonoWAV(type) {
@@ -423,7 +423,7 @@ const recorderWorkerJs = `function recorderWorkerJs() {
             var dataview = this.encodeWAV(bufferL);
             var audioBlob = new Blob([dataview], { 'type': type });
 
-            this.postMessage(audioBlob);                
+            this.postMessage(audioBlob);
    };
 
    RecorderWorker.prototype.mergeBuffers = function mergeBuffers(recBuffers) {
@@ -440,7 +440,7 @@ const recorderWorkerJs = `function recorderWorkerJs() {
             var buffers = [];
             buffers.push(this.mergeBuffers(this.recBuffersL));
             buffers.push(this.mergeBuffers(this.recBuffersR));
-            this.postMessage(buffers);        
+            this.postMessage(buffers);
         };
 
     RecorderWorker.prototype.clear = function clear() {
@@ -515,7 +515,7 @@ const recorderWorkerJs = `function recorderWorkerJs() {
         for (var i = 0; i < input.length; i++, offset += 2) {
             var s = Math.max(-1, Math.min(1, input[i]));
             output.setInt16(offset, s < 0 ? s * 0x8000 : s * 0x7FFF, true);
-        }    
+        }
     }
 
     function writeString(view, offset, string) {
