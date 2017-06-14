@@ -1770,6 +1770,22 @@
   audioSearch.currentAnalyser = null;
 
   audioSearch.userMediaStarted = function userMediaStarted(audioStream) {
+      /**
+       * This function which patches Safari requires some time to get started
+       * so we call it on object creation.
+       */
+      if (window.AnalyserNode && !window.AnalyserNode.prototype.getFloatTimeDomainData) {
+          var uint8 = new Uint8Array(2048);
+          var gftdd = function getFloatTimeDomainData(array) {
+              this.getByteTimeDomainData(uint8);
+              var imax = array.length;
+              for (var i = 0; i < imax; i++) {
+                  array[i] = (uint8[i] - 128) * 0.0078125;
+              }
+          };
+          window.AnalyserNode.prototype.getFloatTimeDomainData = gftdd;
+      }
+
       audioSearch.sampleBuffer = new Float32Array(audioSearch.fftSize / 2);
       var mediaStreamSource = audioSearch.audioContext.createMediaStreamSource(audioStream);
       var analyser = audioSearch.audioContext.createAnalyser();
@@ -1976,10 +1992,14 @@
               navigator.getUserMedia({
                   'audio': {
                       'mandatory': {
-                          'googEchoCancellation': 'false',
-                          'googAutoGainControl': 'false',
-                          'googNoiseSuppression': 'false',
-                          'googHighpassFilter': 'false'
+                          'googEchoCancellation': false,
+                          'googAutoGainControl': false,
+                          'googNoiseSuppression': false,
+                          'googHighpassFilter': false,
+                          'echoCancellation': false,
+                          'autoGainControl': false,
+                          'noiseSuppression': false
+                          // 'highpassFilter': false,
                       },
                       'optional': []
                   }
@@ -2196,18 +2216,6 @@
           value: function polyfillNavigator() {
               if (!navigator.getUserMedia) {
                   navigator.getUserMedia = navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
-              }
-
-              if (window.AnalyserNode && !window.AnalyserNode.prototype.getFloatTimeDomainData) {
-                  var uint8 = new Uint8Array(2048);
-                  var gftdd = function getFloatTimeDomainData(array) {
-                      this.getByteTimeDomainData(uint8);
-                      var imax = array.length;
-                      for (var i = 0; i < imax; i++) {
-                          array[i] = (uint8[i] - 128) * 0.0078125;
-                      }
-                  };
-                  window.AnalyserNode.prototype.getFloatTimeDomainData = gftdd;
               }
           }
       }, {

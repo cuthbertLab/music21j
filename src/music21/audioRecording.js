@@ -35,10 +35,14 @@ export class Recorder {
         navigator.getUserMedia({
             'audio': {
                 'mandatory': {
-                    'googEchoCancellation': 'false',
-                    'googAutoGainControl': 'false',
-                    'googNoiseSuppression': 'false',
-                    'googHighpassFilter': 'false',
+                    'googEchoCancellation': false,
+                    'googAutoGainControl': false,
+                    'googNoiseSuppression': false,
+                    'googHighpassFilter': false,
+                    'echoCancellation': false,
+                    'autoGainControl': false,
+                    'noiseSuppression': false,
+                    // 'highpassFilter': false,
                 },
                 'optional': [],
             },
@@ -233,18 +237,6 @@ export class Recorder {
     polyfillNavigator() {
         if (!navigator.getUserMedia) {
             navigator.getUserMedia = navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
-        }
-
-        if (window.AnalyserNode && !window.AnalyserNode.prototype.getFloatTimeDomainData) {
-            const uint8 = new Uint8Array(2048);
-            const gftdd = function getFloatTimeDomainData(array) {
-                this.getByteTimeDomainData(uint8);
-                const imax = array.length;
-                for (let i = 0; i < imax; i++) {
-                    array[i] = (uint8[i] - 128) * 0.0078125;
-                }
-            };
-            window.AnalyserNode.prototype.getFloatTimeDomainData = gftdd;
         }
     }
 
