@@ -1,0 +1,14 @@
+#!/bin/bash
+# see http://stackoverflow.com/questions/1030169/easy-way-pull-latest-of-all-submodules
+
+git pull 
+
+
+git submodule update --init --recursive 
+git submodule foreach --recursive git fetch 
+# fix if not using origin master
+git submodule foreach --recursive git merge origin master
+git submodule status --recursive
+
+## if dirty:
+## git submodule foreach git reset --hard
