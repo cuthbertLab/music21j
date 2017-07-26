@@ -54,6 +54,9 @@ If you have `git` installed, you can use (on Mac/Unix):
 % npm install
 ```
 
+if the last line (`npm install`) doesn't work, download the
+latest version of `node.js` first from https://nodejs.org/en/download/
+
 The files in music21j are best viewed by running your own
 webserver (rather than using `file:///...` links). We've
 included a small script to start you up:

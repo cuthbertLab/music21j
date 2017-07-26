@@ -1,5 +1,6 @@
 import articulations from './moduleTests/articulations';
 import beam from './moduleTests/beam';
+import chord from './moduleTests/chord';
 import clef from './moduleTests/clef';
 import duration from './moduleTests/duration';
 import dynamics from './moduleTests/dynamics';
@@ -12,6 +13,7 @@ import stream from './moduleTests/stream';
 const allTests = {
         articulations: articulations,
         beam: beam,
+        chord: chord,
         clef: clef,
         duration: duration,
         dynamics: dynamics,

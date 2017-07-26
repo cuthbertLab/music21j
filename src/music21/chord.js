@@ -50,7 +50,7 @@ export class Chord extends note.NotRest {
         this.isRest = false; // for speed
 
         this._notes = [];
-        notes.forEach(this.add, this);
+        notes.forEach(this.append, this);
     }
     get length() {
         return this._notes.length;
@@ -111,7 +111,10 @@ export class Chord extends note.NotRest {
      * @param {string|music21.note.Note|music21.pitch.Pitch} noteObj - the Note or Pitch to be added or a string defining a pitch.
      * @returns {music21.chord.Chord} the original chord.
      */
-    add(noteObj) {
+    append(noteObj, runSort) {
+        if (runSort === undefined) {
+            runSort = true;
+        }
         // takes in either a note or a pitch
         if (typeof (noteObj) === 'string') {
             noteObj = new note.Note(noteObj);
@@ -123,7 +126,9 @@ export class Chord extends note.NotRest {
         }
         this._notes.push(noteObj);
         // inefficient because sorts after each add, but safe and #(p) is small
-        this._notes.sort((a, b) => a.pitch.ps - b.pitch.ps);
+        if (runSort === true) {
+            this._notes.sort((a, b) => a.pitch.ps - b.pitch.ps);
+        }
         return this;
     }
     /**
@@ -282,6 +287,21 @@ export class Chord extends note.NotRest {
         }
     }
     /**
+     * Returns True if the chord is a major or minor triad
+     *
+     * @memberof music21.chord.Chord
+     * @returns {Boolean}
+     */
+    canBeTonic() {
+        if (this.isMajorTriad() || this.isMinorTriad()) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+
+    /**
      * Returns the inversion of the chord as a number (root-position = 0)
      *
      * Unlike music21 version, cannot set the inversion, yet.
@@ -315,7 +335,7 @@ export class Chord extends note.NotRest {
         for (let i = 0; i < this._notes.length; i++) {
             pitchKeys.push(this._notes[i].pitch.vexflowName(clef));
         }
-        const vfn = new Vex.Flow.StaveNote({ 
+        const vfn = new Vex.Flow.StaveNote({
             keys: pitchKeys,
             duration: this.duration.vexflowDuration });
         this.vexflowAccidentalsAndDisplay(vfn, options); // clean up stuff...
@@ -381,4 +401,3 @@ chord.chordDefinitions = {
     'diminished-seventh': ['m3', 'm3', 'm3'],
     'half-diminished-seventh': ['m3', 'm3', 'M3'],
 };
-

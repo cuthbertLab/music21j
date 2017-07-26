@@ -1,5 +1,5 @@
 /**
- * music21j 0.9.0 built on  * 2017-07-18.
+ * music21j 0.9.0 built on  * 2017-07-26.
  * Copyright (c) 2013-2016 Michael Scott Cuthbert and cuthbertLab
  * BSD License, see LICENSE
  *
@@ -3755,7 +3755,7 @@
           _this.isRest = false; // for speed
 
           _this._notes = [];
-          notes.forEach(_this.add, _this);
+          notes.forEach(_this.append, _this);
           return _this;
       }
 
@@ -3794,8 +3794,11 @@
            */
 
       }, {
-          key: 'add',
-          value: function add(noteObj) {
+          key: 'append',
+          value: function append(noteObj, runSort) {
+              if (runSort === undefined) {
+                  runSort = true;
+              }
               // takes in either a note or a pitch
               if (typeof noteObj === 'string') {
                   noteObj = new note.Note(noteObj);
@@ -3807,9 +3810,11 @@
               }
               this._notes.push(noteObj);
               // inefficient because sorts after each add, but safe and #(p) is small
-              this._notes.sort(function (a, b) {
-                  return a.pitch.ps - b.pitch.ps;
-              });
+              if (runSort === true) {
+                  this._notes.sort(function (a, b) {
+                      return a.pitch.ps - b.pitch.ps;
+                  });
+              }
               return this;
           }
           /**
@@ -3988,6 +3993,23 @@
                   return false;
               }
           }
+          /**
+           * Returns True if the chord is a major or minor triad
+           *
+           * @memberof music21.chord.Chord
+           * @returns {Boolean}
+           */
+
+      }, {
+          key: 'canBeTonic',
+          value: function canBeTonic() {
+              if (this.isMajorTriad() || this.isMinorTriad()) {
+                  return true;
+              } else {
+                  return false;
+              }
+          }
+
           /**
            * Returns the inversion of the chord as a number (root-position = 0)
            *
@@ -14115,6 +14137,17 @@
   }
 
   function tests$2() {
+      QUnit.test('music21.chord.Chord', function (assert) {
+          var c = new music21.chord.Chord(['C5', 'E5', 'G5']);
+
+          assert.equal(c.length, 3, 'Checking length of Chord');
+          assert.equal(c.isMajorTriad(), true, 'C E G should be a major triad');
+          assert.equal(c.isMinorTriad(), false, 'C E G should not be minor triad');
+          assert.equal(c.canBeTonic(), true, 'C E G can be a tonic');
+      });
+  }
+
+  function tests$3() {
       QUnit.test('music21.clef.Clef', function (assert) {
           var c1 = new music21.clef.Clef();
           assert.equal(c1.isClassOrSubclass('Clef'), true, 'clef is a Clef');
@@ -14146,7 +14179,7 @@
       });
   }
 
-  function tests$3() {
+  function tests$4() {
       QUnit.test('music21.duration.Duration', function (assert) {
           var d = new music21.duration.Duration(1.0);
           assert.equal(d.type, 'quarter', 'got quarter note from 1.0');
@@ -14265,7 +14298,7 @@
       });
   }
 
-  function tests$4() {
+  function tests$5() {
       QUnit.test('music21.dynamics.Dynamic', function (assert) {
           var dynamic = new music21.dynamics.Dynamic('pp');
           assert.equal(dynamic.value, 'pp', 'matching dynamic');
@@ -14292,7 +14325,7 @@
       });
   }
 
-  function tests$5() {
+  function tests$6() {
       QUnit.test('music21.key.Key', function (assert) {
           var testSharps = [
           // sharps, mode, given name, given mode
@@ -14326,7 +14359,7 @@
       });
   }
 
-  function tests$6() {
+  function tests$7() {
       QUnit.test('music21.note.Note', function (assert) {
           var n = new music21.note.Note('D#5');
 
@@ -14336,7 +14369,7 @@
       });
   }
 
-  function tests$7() {
+  function tests$8() {
       QUnit.test('music21.pitch.Accidental', function (assert) {
           var a = new music21.pitch.Accidental('-');
           assert.equal(a.alter, -1.0, 'flat alter passed');
@@ -14354,7 +14387,7 @@
       });
   }
 
-  function tests$8() {
+  function tests$9() {
       QUnit.test('music21.roman.RomanNumeral', function (assert) {
           var t1 = 'IV';
           var rn1 = new music21.roman.RomanNumeral(t1, 'F');
@@ -14416,7 +14449,7 @@
       });
   }
 
-  function tests$9() {
+  function tests$10() {
       QUnit.test('music21.stream.Stream', function (assert) {
           var s = new music21.stream.Stream();
           s.append(new music21.note.Note('C#5'));
@@ -14577,14 +14610,15 @@
   var allTests = {
           articulations: tests,
           beam: tests$1,
-          clef: tests$2,
-          duration: tests$3,
-          dynamics: tests$4,
-          key: tests$5,
-          note: tests$6,
-          pitch: tests$7,
-          roman: tests$8,
-          stream: tests$9
+          chord: tests$2,
+          clef: tests$3,
+          duration: tests$4,
+          dynamics: tests$5,
+          key: tests$6,
+          note: tests$7,
+          pitch: tests$8,
+          roman: tests$9,
+          stream: tests$10
   };
   if ((typeof window === 'undefined' ? 'undefined' : _typeof(window)) !== undefined) {
           window.allTests = allTests;
