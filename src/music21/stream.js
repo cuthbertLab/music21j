@@ -1688,7 +1688,7 @@ export class Part extends Stream {
         const subStreams = this.getElementsByClass('Stream');
         for (let i = 1; i < subStreams.length; i++) {
             if (subStreams.get(i).renderOptions.startNewSystem) {
-                numSystems++;
+                numSystems += 1;
             }
         }
         return numSystems;
@@ -1821,7 +1821,7 @@ export class Part extends Stream {
                 // after this one, we'll have a new left subtract...
                 newLeftSubtract = leftSubtract - (newWidth - oldWidth);
 
-                currentSystemIndex++;
+                currentSystemIndex += 1;
             } else if (i !== 0) {
                 m.renderOptions.startNewSystem = false;
                 m.renderOptions.displayClef = false; // check for changed clef first?
@@ -1917,7 +1917,7 @@ export class Part extends Stream {
                 elRendOp.width = el.estimateStaffLength() + elRendOp.staffPadding;
                 elRendOp.height = el.estimateStreamHeight();
                 currentMeasureLeft += elRendOp.width;
-                currentMeasureIndex++;
+                currentMeasureIndex += 1;
             }
         }
         return this;
@@ -2045,7 +2045,7 @@ export class Score extends Stream {
                 el.renderOptions.top = currentPartTop;
                 el.setSubstreamRenderOptions();
                 currentPartTop += partSpacing;
-                currentPartNumber++;
+                currentPartNumber += 1;
             }
         }
         this.evenPartMeasureSpacing();
@@ -2224,7 +2224,7 @@ export class Score extends Stream {
                     }
                     measureStacks[j][currentPartNumber] = thisMeasureWidth;
                 }
-                currentPartNumber++;
+                currentPartNumber += 1;
             }
         }
         let currentLeft = 20;

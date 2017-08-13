@@ -50,7 +50,7 @@ export class Chord extends note.NotRest {
         this.isRest = false; // for speed
 
         this._notes = [];
-        notes.forEach(this.append, this);
+        notes.forEach(this.add, this);
     }
     get length() {
         return this._notes.length;
@@ -107,11 +107,14 @@ export class Chord extends note.NotRest {
     /**
      * Adds a note to the chord, sorting the note array
      *
+     * TODO: rename to append like music21p, allow for an Array of notes,
+     *       and make a runSort=True variable.
+     *
      * @memberof music21.chord.Chord
      * @param {string|music21.note.Note|music21.pitch.Pitch} noteObj - the Note or Pitch to be added or a string defining a pitch.
      * @returns {music21.chord.Chord} the original chord.
      */
-    append(noteObj, runSort) {
+    add(noteObj, runSort) {
         if (runSort === undefined) {
             runSort = true;
         }

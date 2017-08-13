@@ -315,8 +315,9 @@ webmidi.populateSelect = function populateSelect() {
         midiOptions.push(port.name);
         // console.log(appendOption);
         webmidi.$select.append($appendOption);
-        i++;
+        i += 1;
     });
+
     if (allAppendOptions.length > 0) {
         webmidi.$select.val(midiOptions[0]);
         allAppendOptions[0].attr('selected', true);

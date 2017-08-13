@@ -92,7 +92,7 @@ common.statisticalMode = function statisticalMode(a) {
         if (modeMap[el] == null) {
             modeMap[el] = 0;
         }
-        modeMap[el]++;
+        modeMap[el] += 1;
         if (modeMap[el] > maxCount) {
             maxEl = el;
             maxCount = modeMap[el];

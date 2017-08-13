@@ -1,5 +1,5 @@
 /**
- * music21j 0.9.0 built on  * 2017-06-14.
+ * music21j 0.9.0 built on  * 2017-08-13.
  * Copyright (c) 2013-2016 Michael Scott Cuthbert and cuthbertLab
  * BSD License, see LICENSE
  *
@@ -376,7 +376,7 @@
           if (modeMap[el] == null) {
               modeMap[el] = 0;
           }
-          modeMap[el]++;
+          modeMap[el] += 1;
           if (modeMap[el] > maxCount) {
               maxEl = el;
               maxCount = modeMap[el];
@@ -1980,10 +1980,10 @@
               navigator.getUserMedia({
                   'audio': {
                       'mandatory': {
-                          // 'googEchoCancellation': false,
-                          // 'googAutoGainControl': false,
-                          // 'googNoiseSuppression': false,
-                          // 'googHighpassFilter': false,
+                          'googEchoCancellation': 'false',
+                          'googAutoGainControl': 'false',
+                          'googNoiseSuppression': 'false',
+                          'googHighpassFilter': 'false'
                           // 'echoCancellation': false,
                           // 'autoGainControl': false,
                           // 'noiseSuppression': false,
@@ -3788,6 +3788,9 @@
           /**
            * Adds a note to the chord, sorting the note array
            *
+           * TODO: rename to append like music21p, allow for an Array of notes,
+           *       and make a runSort=True variable.
+           *
            * @memberof music21.chord.Chord
            * @param {string|music21.note.Note|music21.pitch.Pitch} noteObj - the Note or Pitch to be added or a string defining a pitch.
            * @returns {music21.chord.Chord} the original chord.
@@ -3795,7 +3798,10 @@
 
       }, {
           key: 'add',
-          value: function add(noteObj) {
+          value: function add(noteObj, runSort) {
+              if (runSort === undefined) {
+                  runSort = true;
+              }
               // takes in either a note or a pitch
               if (typeof noteObj === 'string') {
                   noteObj = new note.Note(noteObj);
@@ -3807,9 +3813,11 @@
               }
               this._notes.push(noteObj);
               // inefficient because sorts after each add, but safe and #(p) is small
-              this._notes.sort(function (a, b) {
-                  return a.pitch.ps - b.pitch.ps;
-              });
+              if (runSort === true) {
+                  this._notes.sort(function (a, b) {
+                      return a.pitch.ps - b.pitch.ps;
+                  });
+              }
               return this;
           }
           /**
@@ -3988,6 +3996,23 @@
                   return false;
               }
           }
+          /**
+           * Returns True if the chord is a major or minor triad
+           *
+           * @memberof music21.chord.Chord
+           * @returns {Boolean}
+           */
+
+      }, {
+          key: 'canBeTonic',
+          value: function canBeTonic() {
+              if (this.isMajorTriad() || this.isMinorTriad()) {
+                  return true;
+              } else {
+                  return false;
+              }
+          }
+
           /**
            * Returns the inversion of the chord as a number (root-position = 0)
            *
@@ -7575,10 +7600,10 @@
           value: function wrapScrollable(svgDOM) {
               var _this3 = this;
 
-              var $wrapper = $__default("<div class='keyboardScrollableWrapper'></div>").css({
+              var $wrapper = $("<div class='keyboardScrollableWrapper'></div>").css({
                   display: 'inline-block'
               });
-              var $bDown = $__default("<button class='keyboardOctaveDown'>&lt;&lt;</button>").css({
+              var $bDown = $("<button class='keyboardOctaveDown'>&lt;&lt;</button>").css({
                   'font-size': Math.floor(this.scaleFactor * 15).toString() + 'px'
               }).bind('click', function () {
                   miditools.transposeOctave -= 1;
@@ -7586,7 +7611,7 @@
                   _this3._endDNN -= 7;
                   _this3.redrawSVG();
               });
-              var $bUp = $__default("<button class='keyboardOctaveUp'>&gt;&gt;</button>").css({
+              var $bUp = $("<button class='keyboardOctaveUp'>&gt;&gt;</button>").css({
                   'font-size': Math.floor(this.scaleFactor * 15).toString() + 'px'
               }).bind('click', function () {
                   miditools.transposeOctave += 1;
@@ -7594,7 +7619,7 @@
                   _this3._endDNN += 7;
                   _this3.redrawSVG();
               });
-              var $kWrapper = $__default("<div style='display:inline-block; vertical-align: middle' class='keyboardScrollableInnerDiv'></div>");
+              var $kWrapper = $("<div style='display:inline-block; vertical-align: middle' class='keyboardScrollableInnerDiv'></div>");
               $kWrapper[0].appendChild(svgDOM);
               $wrapper.append($bDown);
               $wrapper.append($kWrapper);
@@ -7615,13 +7640,13 @@
       }, {
           key: 'appendHideableKeyboard',
           value: function appendHideableKeyboard(where, keyboardSVG) {
-              var $container = $__default("<div class='keyboardHideableContainer'/>");
-              var $bInside = $__default("<div class='keyboardToggleInside'>↥</div>").css({
+              var $container = $("<div class='keyboardHideableContainer'/>");
+              var $bInside = $("<div class='keyboardToggleInside'>↥</div>").css({
                   display: 'inline-block',
                   'padding-top': '40px',
                   'font-size': '40px'
               });
-              var $b = $__default("<div class='keyboardToggleOutside'/>").css({
+              var $b = $("<div class='keyboardToggleOutside'/>").css({
                   display: 'inline-block',
                   'vertical-align': 'top',
                   background: 'white'
@@ -7630,7 +7655,7 @@
               $b.data('defaultDisplay', $container.find('.keyboardSVG').css('display'));
               $b.data('state', 'down');
               $b.click(keyboard.triggerToggleShow);
-              var $explain = $__default("<div class='keyboardExplain'>Show keyboard</div>").css({
+              var $explain = $("<div class='keyboardExplain'>Show keyboard</div>").css({
                   'display': 'none',
                   'background-color': 'white',
                   'padding': '10px 10px 10px 10px',
@@ -7639,7 +7664,7 @@
               $b.append($explain);
               $container.append($b);
               $container[0].appendChild(keyboardSVG); // svg must use appendChild, not append.
-              $__default(where).append($container);
+              $(where).append($container);
               return $container;
           }
       }]);
@@ -7655,7 +7680,7 @@
   keyboard.triggerToggleShow = function triggerToggleShow(e) {
       // "this" refers to the object clicked
       // e -- event is not used.
-      var $t = $__default(this);
+      var $t = $(this);
       var state = $t.data('state');
       var $parent = $t.parent();
       var $k = $parent.find('.keyboardScrollableWrapper');
@@ -11520,7 +11545,7 @@
               var subStreams = this.getElementsByClass('Stream');
               for (var i = 1; i < subStreams.length; i++) {
                   if (subStreams.get(i).renderOptions.startNewSystem) {
-                      numSystems++;
+                      numSystems += 1;
                   }
               }
               return numSystems;
@@ -11663,7 +11688,7 @@
                       // after this one, we'll have a new left subtract...
                       newLeftSubtract = leftSubtract - (newWidth - oldWidth);
 
-                      currentSystemIndex++;
+                      currentSystemIndex += 1;
                   } else if (i !== 0) {
                       m.renderOptions.startNewSystem = false;
                       m.renderOptions.displayClef = false; // check for changed clef first?
@@ -11756,7 +11781,7 @@
                       elRendOp.width = el.estimateStaffLength() + elRendOp.staffPadding;
                       elRendOp.height = el.estimateStreamHeight();
                       currentMeasureLeft += elRendOp.width;
-                      currentMeasureIndex++;
+                      currentMeasureIndex += 1;
                   }
               }
               return this;
@@ -11889,7 +11914,7 @@
                       el.renderOptions.top = currentPartTop;
                       el.setSubstreamRenderOptions();
                       currentPartTop += partSpacing;
-                      currentPartNumber++;
+                      currentPartNumber += 1;
                   }
               }
               this.evenPartMeasureSpacing();
@@ -12092,7 +12117,7 @@
                           }
                           measureStacks[j][currentPartNumber] = thisMeasureWidth;
                       }
-                      currentPartNumber++;
+                      currentPartNumber += 1;
                   }
               }
               var currentLeft = 20;
@@ -13667,8 +13692,9 @@
           midiOptions.push(port.name);
           // console.log(appendOption);
           webmidi.$select.append($appendOption);
-          i++;
+          i += 1;
       });
+
       if (allAppendOptions.length > 0) {
           webmidi.$select.val(midiOptions[0]);
           allAppendOptions[0].attr('selected', true);
