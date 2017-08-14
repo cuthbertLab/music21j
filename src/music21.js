@@ -1,36 +1,36 @@
 /**
- * If you are a programmer, this is probably not the script you are looking for.  
+ * If you are a programmer, this is probably not the script you are looking for.
  * The guts of music21j begin at src/loadModules.js
- * 
+ *
  * @exports music21
  */
 //Not strict mode
 
 if (typeof(m21basis) === "undefined") {
     /**
-     * **music21j**: Javascript reimplementation of Core music21 features.  
-     * 
+     * **music21j**: Javascript reimplementation of Core music21 features.
+     *
      * See http://web.mit.edu/music21/ for more details.
-     * 
+     *
      * Copyright (c) 2013-16, Michael Scott Cuthbert and cuthbertLab
-     * 
+     *
      * Based on music21, Copyright (c) 2006-16, Michael Scott Cuthbert and cuthbertLab
      * The plan is to implement all core music21 features as Javascript and to expose
      * more sophisticated features via server-side connections to remote servers running the
      * python music21 (music21p).
-     * 
-     * Requires an ECMAScript 5 compatible browser w/ SVG and Canvas. IE 11 or any recent 
-     * version of Firefox, Safari, Edge,  Chrome, etc. will do. To disable the warning, 
+     *
+     * Requires an ECMAScript 5 compatible browser w/ SVG and Canvas. IE 11 or any recent
+     * version of Firefox, Safari, Edge,  Chrome, etc. will do. To disable the warning,
      * set an attribute in the &lt;script&gt; tag that calls requirejs, warnBanner="no".
-     * 
+     *
      * All interfaces are alpha and may change radically from day to day and release to release.
-     * Do not use this in production code yet. 
-     * 
+     * Do not use this in production code yet.
+     *
      * See src/moduleLoader.js for version and version history.
-     * 
-     * music21j acknowledges VexFlow, MIDI.js in particular for their great efforts without which 
+     *
+     * music21j acknowledges VexFlow, MIDI.js in particular for their great efforts without which
      * this module would not be possible.
-     *  
+     *
      * @namespace music21
      */
     m21basis = {VERSION: 0.9}; // update in README.md also
@@ -70,14 +70,14 @@ var pathSimplify = function (path) {
         if (el === '..') {
             if (pout.length > 0) {
                 if (pout[pout.length - 1] !== '..') {
-                    pout.pop();                          
+                    pout.pop();
                 } else {
                     pout.push('..');
-                }               
+                }
             } else {
                 pout.push('..');
             }
-            //} else if (el == '') { 
+            //} else if (el == '') {
             //   // pass
         } else {
             pout.push(el);
@@ -92,14 +92,14 @@ var pathSimplify = function (path) {
 };
 
 /**
- * Get an attribute from the script tag that invokes music21 via its data-main 
+ * Get an attribute from the script tag that invokes music21 via its data-main
  * attribute.
- * 
+ *
  * E.g. if you invoked music21 with:
  *     <script src="require.js" data-main="src/music21" quiet="2" hi="hello"></script>
- * 
+ *
  * then "getM21attribute('quiet')" would return "2".
- * 
+ *
  */
 var getM21attribute = function (attrName) {
     var scripts = document.getElementsByTagName('script');
@@ -148,7 +148,7 @@ m21basis.m21srcPath = m21srcPath;
 
 var m21requireConfig = {
         paths: {
-            'jquery':     pathSimplify(m21srcPath + '/ext/jquery/jquery-2.1.1.min'),
+            'jquery':     pathSimplify(m21srcPath + '/ext/jquery/jquery-3.2.1.min'),
             'attrchange': pathSimplify(m21srcPath + '/ext/jqueryPlugins/attrchange'),
             'jquery-ui':  pathSimplify(m21srcPath + '/ext/jqueryPlugins/jqueryUI/jquery-ui.min'),
             'vexflow':    pathSimplify(m21srcPath + '/ext/vexflow/vexflow-min'),
@@ -156,8 +156,8 @@ var m21requireConfig = {
             'jasmidMidifile':   pathSimplify(m21srcPath + '/ext/midijs/inc/jasmid/midifile'),
             'jasmidReplayer':   pathSimplify(m21srcPath + '/ext/midijs/inc/jasmid/replayer'),
             'jasmidStream':     pathSimplify(m21srcPath + '/ext/midijs/inc/jasmid/stream'),
-            // a very nice event handler from Mudcu.be that handles drags 
-            'eventjs':          pathSimplify(m21srcPath + '/ext/midijs/examples/inc/event'),     
+            // a very nice event handler from Mudcu.be that handles drags
+            'eventjs':          pathSimplify(m21srcPath + '/ext/midijs/examples/inc/event'),
             // read binary data in base64.  In "shim" but is not a shim.
             'base64Binary': pathSimplify(m21srcPath + '/ext/midijs/inc/shim/Base64binary'),
 
@@ -167,7 +167,7 @@ var m21requireConfig = {
 
             'es6Shim': pathSimplify(m21srcPath + '/ext/es6-shim'),
             'babelPolyfill': pathSimplify(m21srcPath + '/ext/polyfill'),
-            
+
             'm21': pathSimplify(m21srcPath + '/../build/music21.debug'),
             'jsonpickle': pathSimplify(m21srcPath + '/ext/jsonpickle/build/jsonpickle.debug'),
 
@@ -179,14 +179,14 @@ var m21requireConfig = {
         shim: {
             'eventjs': {
                 exports: 'eventjs',
-            },        
+            },
             'webMidiApiShim': {
                 deps: ['es6Shim'],
-                exports: 'window',            
+                exports: 'window',
             },
             'MIDI': {
                 deps: [ //'base64Shim',  // Bye-bye IE9!
-                        'base64Binary', 'webAudioShim', 
+                        'base64Binary', 'webAudioShim',
                         'jasmidMidifile', 'jasmidReplayer', 'jasmidStream', 'eventjs'],
                         exports: 'MIDI',
             },
@@ -204,7 +204,7 @@ var m21requireConfig = {
             },
             'm21': {
                 deps: ['jquery', 'MIDI', 'vexflow', 'jsonpickle', 'babelPolyfill'],
-                exports: 'm21'            
+                exports: 'm21'
             }
         }
 };
@@ -244,16 +244,16 @@ if ((Object.defineProperties === undefined) && warnBanner) {
     document.body.appendChild(newDiv);
     var $buoop  = {test: false, reminder: 0}; // used by update.js...
     var e = document.createElement("script");
-    e.setAttribute("type", "text/javascript"); 
-    e.setAttribute("src", "http://browser-update.org/update.js"); 
-    document.body.appendChild(e);     
+    e.setAttribute("type", "text/javascript");
+    e.setAttribute("src", "http://browser-update.org/update.js");
+    document.body.appendChild(e);
 
 } else {
     if ( typeof define === "function" && define.amd) {
         require.config(m21requireConfig);
         //console.log(require.nameToUrl('jquery'));
-        define( m21modules, 
-                function (m21, midi, vexflow, $, jsonpickle) {  // BUG, what if midi is in noLoad?     
+        define( m21modules,
+                function (m21, midi, vexflow, $, jsonpickle) {  // BUG, what if midi is in noLoad?
             //console.log('inside of require...');
             music21 = m21;
             for (var u in m21.common.urls) {
@@ -266,7 +266,7 @@ if ((Object.defineProperties === undefined) && warnBanner) {
             music21.scriptConfig = m21conf;
             //console.log(music21.chord);
             if (midi) {  music21.MIDI = midi; }
-            if (vexflow) { music21.Vex = vexflow; } 
+            if (vexflow) { music21.Vex = vexflow; }
             else { console.log('could not load VexFlow'); }
             if (music21.MIDI) {
                 if ((music21.scriptConfig.loadSoundfont === undefined) ||
@@ -284,6 +284,6 @@ if ((Object.defineProperties === undefined) && warnBanner) {
             }
             //console.log('end inside of require...');
             return music21;
-        });         
+        });
     }
 }
