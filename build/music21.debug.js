@@ -1,5 +1,5 @@
 /**
- * music21j 0.9.0 built on  * 2017-08-13.
+ * music21j 0.9.0 built on  * 2017-08-15.
  * Copyright (c) 2013-2016 Michael Scott Cuthbert and cuthbertLab
  * BSD License, see LICENSE
  *
@@ -13785,14 +13785,15 @@
    * @property {DOMObject} [canvasDiv]
    */
   var RhythmChooser = function () {
-      function RhythmChooser(s, c) {
+      function RhythmChooser(streamObj, canvasDiv) {
           var _this = this;
 
           classCallCheck(this, RhythmChooser);
 
-          this.stream = s;
-          this.canvasDiv = c;
+          this.stream = streamObj;
+          this.canvasDiv = canvasDiv;
           this.values = ['whole', 'half', 'quarter', 'eighth', '16th', 'dot', 'undo'];
+
           if (this.stream.hasSubStreams()) {
               this.measureMode = true;
           } else {
@@ -13871,16 +13872,19 @@
                       var el = _this.stream.get(-1);
                       el.tie = new _tie.Tie('start');
                       _this.tieActive = true;
+                      return el;
+                  } else {
+                      return undefined;
                   }
               },
-              'default': function _default(t) {
+              'default': function _default(buttonM21type) {
                   var newN = new note.Note('B4');
                   newN.stemDirection = 'up';
-                  if (t.indexOf('rest_') === 0) {
+                  if (buttonM21type.indexOf('rest_') === 0) {
                       newN = new note.Rest();
-                      t = t.slice('rest_'.length);
+                      buttonM21type = buttonM21type.slice('rest_'.length);
                   }
-                  newN.duration.type = t;
+                  newN.duration.type = buttonM21type;
                   if (_this.tieActive) {
                       newN.tie = new _tie.Tie('stop');
                       _this.tieActive = false;
@@ -13956,21 +13960,21 @@
                       _this.tieActive = true;
                   }
               },
-              'default': function _default(t) {
+              'default': function _default(buttonM21type) {
                   var newN = new note.Note('B4');
                   newN.stemDirection = 'up';
-                  if (t.indexOf('rest_') === 0) {
+                  if (buttonM21type.indexOf('rest_') === 0) {
                       newN = new note.Rest();
-                      t = t.slice('rest_'.length);
+                      buttonM21type = buttonM21type.slice('rest_'.length);
                   }
-                  newN.duration.type = t;
+                  newN.duration.type = buttonM21type;
                   if (_this.tieActive) {
                       newN.tie = new _tie.Tie('stop');
                       _this.tieActive = false;
                   }
                   var lastMeasure = _this.stream.get(-1);
                   if (_this.autoAddMeasure && lastMeasure.duration.quarterLength >= _this.stream.timeSignature.barDuration.quarterLength) {
-                      _this.measureButtonHandlers.addMeasure.apply(_this, [t]);
+                      _this.measureButtonHandlers.addMeasure.apply(_this, [buttonM21type]);
                       lastMeasure = _this.stream.get(-1);
                   }
                   lastMeasure.append(newN);
@@ -14045,6 +14049,76 @@
       return RhythmChooser;
   }();
   widgets.RhythmChooser = RhythmChooser;
+
+  var Augmenter = function () {
+      function Augmenter(streamObj, canvasDiv) {
+          classCallCheck(this, Augmenter);
+
+          this.streamObj = streamObj;
+          this.canvasDiv = canvasDiv;
+      }
+
+      createClass(Augmenter, [{
+          key: 'performChange',
+          value: function performChange(amountToScale, streamObjToWorkOn) {
+              var replaceCanvas = false;
+              if (streamObjToWorkOn === undefined) {
+                  replaceCanvas = true;
+                  streamObjToWorkOn = this.streamObj;
+              }
+              for (var i = 0; i < streamObjToWorkOn.length; i++) {
+                  var el = streamObjToWorkOn.get(i);
+                  if (el.isStream === true) {
+                      this.performChange(amountToScale, el);
+                  } else {
+                      el.duration.quarterLength *= amountToScale;
+                  }
+              }
+              if (streamObjToWorkOn.timeSignature !== undefined) {
+                  streamObjToWorkOn.timeSignature.denominator *= 1 / amountToScale;
+              }
+
+              if (this.canvasDiv !== undefined && replaceCanvas === true) {
+                  this.canvasDiv = streamObjToWorkOn.replaceCanvas(this.canvasDiv);
+              }
+          }
+      }, {
+          key: 'makeSmaller',
+          value: function makeSmaller() {
+              return this.performChange(0.5);
+          }
+      }, {
+          key: 'makeLarger',
+          value: function makeLarger() {
+              return this.performChange(2.0);
+          }
+      }, {
+          key: 'addDiv',
+          value: function addDiv($where) {
+              var _this2 = this;
+
+              var $newDiv = $('<div class="augmenterDiv" />');
+              var $smaller = $('<button class="augmenterButton">Make Smaller</button>');
+              var $larger = $('<button class="augmenterButton">Make Larger</button>');
+
+              $smaller.on('click', function () {
+                  _this2.makeSmaller();
+              });
+              $larger.on('click', function () {
+                  _this2.makeLarger();
+              });
+
+              $newDiv.append($smaller);
+              $newDiv.append($larger);
+
+              $where.append($newDiv);
+              return $newDiv;
+          }
+      }]);
+      return Augmenter;
+  }();
+
+  widgets.Augmenter = Augmenter;
 
   // order below doesn't matter, but good to give a sense
   // of what will be needed by almost everyone, and then
