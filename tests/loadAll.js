@@ -9,6 +9,7 @@ import note from './moduleTests/note';
 import pitch from './moduleTests/pitch';
 import roman from './moduleTests/roman';
 import stream from './moduleTests/stream';
+import tie from './moduleTests/tie';
 
 const allTests = {
         articulations: articulations,
@@ -22,6 +23,7 @@ const allTests = {
         pitch: pitch,
         roman: roman,
         stream: stream,
+        tie: tie,
 };
 if (typeof window !== undefined) {
     window.allTests = allTests;

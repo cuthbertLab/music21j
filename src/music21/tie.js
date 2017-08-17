@@ -15,6 +15,7 @@ import { Music21Exception } from './exceptions21';
  * @requires music21/prebase
  */
 export const tie = {};
+const VALID_TIE_TYPES = ['start', 'stop', 'continue', 'let-ring', undefined];
 
 /**
  * Tie class. Found in {@link music21.note.GeneralNote} `.tie`.
@@ -24,9 +25,10 @@ export const tie = {};
  * @class Tie
  * @memberof music21.tie
  * @extends music21.prebase.ProtoM21Object
- * @param {string} type - 'start', 'stop', or 'continue'
+ * @param {string} type - 'start', 'stop', 'continue', or 'let-ring'
  * @property {string} type - the tie type
  * @property {string} style - only supports 'normal' for now.
+ * @property {string|undefined} placement - undefined = unknown or above/below. (NB curently does nothing)
  */
 export class Tie extends prebase.ProtoM21Object {
     constructor(type) {
@@ -34,15 +36,16 @@ export class Tie extends prebase.ProtoM21Object {
         this._type = undefined;
         this.style = 'normal';
         this.type = type;
+        this.placement = undefined;
     }
     get type() {
         return this._type;
     }
-    set type(t) {
-        if (!(['start', 'stop', 'continue', undefined].includes(t))) {
-            throw new Music21Exception('Tie type must be one of "start", "stop", "continue"');
+    set type(newType) {
+        if (!(VALID_TIE_TYPES.includes(newType))) {
+            throw new Music21Exception('Tie type must be one of "start", "stop", "continue", "let-ring"');
         }
-        this._type = t;
+        this._type = newType;
     }
 }
 tie.Tie = Tie;
