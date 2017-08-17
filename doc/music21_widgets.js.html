@@ -542,10 +542,11 @@ export const widgets = {};
  * @property {DOMObject} [canvasDiv]
  */
 export class RhythmChooser {
-    constructor(s, c) {
-        this.stream = s;
-        this.canvasDiv = c;
+    constructor(streamObj, canvasDiv) {
+        this.stream = streamObj;
+        this.canvasDiv = canvasDiv;
         this.values = ['whole', 'half', 'quarter', 'eighth', '16th', 'dot', 'undo'];
+
         if (this.stream.hasSubStreams()) {
             this.measureMode = true;
         } else {
@@ -615,23 +616,28 @@ export class RhythmChooser {
                     el.duration.dots += 1;
                     this.stream.append(el);
                     return el;
-                } else { return undefined; }
+                } else {
+                    return undefined;
+                }
             },
             'tie': (unused_t) => {
                 if (this.stream.length > 0) {
                     const el = this.stream.get(-1);
                     el.tie = new tie.Tie('start');
                     this.tieActive = true;
+                    return el;
+                } else {
+                    return undefined;
                 }
             },
-            'default': (t) => {
+            'default': (buttonM21type) => {
                 let newN = new note.Note('B4');
                 newN.stemDirection = 'up';
-                if (t.indexOf('rest_') === 0) {
+                if (buttonM21type.indexOf('rest_') === 0) {
                     newN = new note.Rest();
-                    t = t.slice('rest_'.length);
+                    buttonM21type = buttonM21type.slice('rest_'.length);
                 }
-                newN.duration.type = t;
+                newN.duration.type = buttonM21type;
                 if (this.tieActive) {
                     newN.tie = new tie.Tie('stop');
                     this.tieActive = false;
@@ -703,14 +709,14 @@ export class RhythmChooser {
                     this.tieActive = true;
                 }
             },
-            'default': (t) => {
+            'default': (buttonM21type) => {
                 let newN = new note.Note('B4');
                 newN.stemDirection = 'up';
-                if (t.indexOf('rest_') === 0) {
+                if (buttonM21type.indexOf('rest_') === 0) {
                     newN = new note.Rest();
-                    t = t.slice('rest_'.length);
+                    buttonM21type = buttonM21type.slice('rest_'.length);
                 }
-                newN.duration.type = t;
+                newN.duration.type = buttonM21type;
                 if (this.tieActive) {
                     newN.tie = new tie.Tie('stop');
                     this.tieActive = false;
@@ -719,7 +725,7 @@ export class RhythmChooser {
                 if (this.autoAddMeasure &amp;&amp;
                         lastMeasure.duration.quarterLength >=
                             this.stream.timeSignature.barDuration.quarterLength) {
-                    this.measureButtonHandlers.addMeasure.apply(this, [t]);
+                    this.measureButtonHandlers.addMeasure.apply(this, [buttonM21type]);
                     lastMeasure = this.stream.get(-1);
                 }
                 lastMeasure.append(newN);
@@ -786,6 +792,63 @@ export class RhythmChooser {
     }
 }
 widgets.RhythmChooser = RhythmChooser;
+
+export class Augmenter {
+    constructor(streamObj, canvasDiv) {
+        this.streamObj = streamObj;
+        this.canvasDiv = canvasDiv;
+    }
+
+    performChange(amountToScale, streamObjToWorkOn) {
+        let replaceCanvas = false;
+        if (streamObjToWorkOn === undefined) {
+            replaceCanvas = true;
+            streamObjToWorkOn = this.streamObj;
+        }
+        for (let i = 0; i &lt; streamObjToWorkOn.length; i++) {
+            const el = streamObjToWorkOn.get(i);
+            if (el.isStream === true) {
+                this.performChange(amountToScale, el);
+            } else {
+                el.duration.quarterLength *= amountToScale;
+            }
+        }
+        if (streamObjToWorkOn.timeSignature !== undefined) {
+            streamObjToWorkOn.timeSignature.denominator *= 1 / amountToScale;
+        }
+
+
+        if (this.canvasDiv !== undefined
+            &amp;&amp; replaceCanvas === true) {
+            this.canvasDiv = streamObjToWorkOn.replaceCanvas(this.canvasDiv);
+        }
+    }
+
+    makeSmaller() {
+        return this.performChange(0.5);
+    }
+
+    makeLarger() {
+        return this.performChange(2.0);
+    }
+
+    addDiv($where) {
+        const $newDiv = $('&lt;div class="augmenterDiv" />');
+        const $smaller = $('&lt;button class="augmenterButton">Make Smaller&lt;/button>');
+        const $larger = $('&lt;button class="augmenterButton">Make Larger&lt;/button>');
+
+        $smaller.on('click', () => { this.makeSmaller(); });
+        $larger.on('click', () => { this.makeLarger(); });
+
+        $newDiv.append($smaller);
+        $newDiv.append($larger);
+
+        $where.append($newDiv);
+        return $newDiv;
+    }
+}
+
+widgets.Augmenter = Augmenter;
 </pre>
 	</article>
 </section>
@@ -806,8 +869,8 @@ widgets.RhythmChooser = RhythmChooser;
 					<br />
 					
 		<span class="jsdoc-message">
-		Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a>
-		on Wed Jul 26th 2017 using the <a
+		Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.4</a>
+		on Thu Aug 17th 2017 using the <a
 			href="https://github.com/terryweiss/docstrap">DocStrap template</a>.
 		</span>
 				</footer>
