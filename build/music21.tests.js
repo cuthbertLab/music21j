@@ -13047,6 +13047,7 @@
    * @requires music21/prebase
    */
   var _tie = {};
+  var VALID_TIE_TYPES = ['start', 'stop', 'continue', 'let-ring', undefined];
 
   /**
    * Tie class. Found in {@link music21.note.GeneralNote} `.tie`.
@@ -13056,9 +13057,10 @@
    * @class Tie
    * @memberof music21.tie
    * @extends music21.prebase.ProtoM21Object
-   * @param {string} type - 'start', 'stop', or 'continue'
+   * @param {string} type - 'start', 'stop', 'continue', or 'let-ring'
    * @property {string} type - the tie type
    * @property {string} style - only supports 'normal' for now.
+   * @property {string|undefined} placement - undefined = unknown or above/below. (NB curently does nothing)
    */
   var Tie = function (_prebase$ProtoM21Obje) {
       inherits(Tie, _prebase$ProtoM21Obje);
@@ -13071,6 +13073,7 @@
           _this._type = undefined;
           _this.style = 'normal';
           _this.type = type;
+          _this.placement = undefined;
           return _this;
       }
 
@@ -13079,11 +13082,11 @@
           get: function get() {
               return this._type;
           },
-          set: function set(t) {
-              if (!['start', 'stop', 'continue', undefined].includes(t)) {
-                  throw new Music21Exception('Tie type must be one of "start", "stop", "continue"');
+          set: function set(newType) {
+              if (!VALID_TIE_TYPES.includes(newType)) {
+                  throw new Music21Exception('Tie type must be one of "start", "stop", "continue", "let-ring"');
               }
-              this._type = t;
+              this._type = newType;
           }
       }]);
       return Tie;
@@ -14685,6 +14688,13 @@
       });
   };
 
+  function tests$11() {
+      QUnit.test('music21.tie.Tie', function (assert) {
+          var t = new music21.tie.Tie('start');
+          assert.equal(t.type, 'start', 'Tie type is start');
+      });
+  }
+
   var allTests = {
           articulations: tests,
           beam: tests$1,
@@ -14696,7 +14706,8 @@
           note: tests$7,
           pitch: tests$8,
           roman: tests$9,
-          stream: tests$10
+          stream: tests$10,
+          tie: tests$11
   };
   if ((typeof window === 'undefined' ? 'undefined' : _typeof(window)) !== undefined) {
           window.allTests = allTests;
