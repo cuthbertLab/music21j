@@ -9,7 +9,7 @@
  * @namespace music21.common
  * @memberof music21
  */
-import $ from 'jquery';
+import * as $ from 'jquery';
 
 export const common = {};
 

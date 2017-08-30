@@ -1459,7 +1459,7 @@ export class Stream extends base.Music21Object {
         const $newCanv = this.createNewCanvas(canvas.width, canvas.height);
         this.renderVexflowOnCanvas($newCanv);
         $canvas.replaceWith($newCanv);
-        common.jQueryEventCopy($.event, $canvas, $newCanv); /* copy events -- using custom extension... */
+        // common.jQueryEventCopy($.event, $canvas, $newCanv); /* copy events -- using custom extension... */
         return this;
     }
 

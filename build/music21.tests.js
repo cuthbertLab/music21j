@@ -1,5 +1,5 @@
 /**
- * music21j 0.9.0 built on  * 2017-08-17.
+ * music21j 0.9.0 built on  * 2017-08-29.
  * Copyright (c) 2013-2016 Michael Scott Cuthbert and cuthbertLab
  * BSD License, see LICENSE
  *
@@ -12,7 +12,6 @@
   (global.music21 = factory(global.QUnit,global.$,global.Vex,global.MIDI,global.jsonpickle,global.eventjs));
 }(this, (function (QUnit,$$1,Vex,MIDI,jsonpickle,eventjs) { 'use strict';
 
-  var $$1__default = $$1['default'];
   var MIDI__default = MIDI['default'];
 
   var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) {
@@ -514,10 +513,10 @@
    * @author Yannick Albert (mail@yckart.com || http://yckart.com)
    */
   common.jQueryEventCopy = function jQueryEventCopy(eventObj, from, to) {
-      from = from.jquery ? from : $$1__default(from);
-      to = to.jquery ? to : $$1__default(to);
+      from = from.jquery ? from : $$1(from);
+      to = to.jquery ? to : $$1(to);
 
-      var events = from[0].events || $$1__default.data(from[0], 'events') || $$1__default._data(from[0], 'events');
+      var events = from[0].events || $$1.data(from[0], 'events') || $$1._data(from[0], 'events');
       if (!from.length || !to.length || !events) {
           return undefined;
       }
@@ -530,7 +529,7 @@
                   if (!{}.hasOwnProperty.call(events[type], handler)) {
                       continue;
                   }
-                  $$1__default.event.add(eventObj, type, events[type][handler], events[type][handler].data);
+                  $$1.event.add(eventObj, type, events[type][handler], events[type][handler].data);
               }
           }
       });
@@ -11041,7 +11040,7 @@
               var $newCanv = this.createNewCanvas(canvas.width, canvas.height);
               this.renderVexflowOnCanvas($newCanv);
               $canvas.replaceWith($newCanv);
-              common.jQueryEventCopy($$1.event, $canvas, $newCanv); /* copy events -- using custom extension... */
+              // common.jQueryEventCopy($.event, $canvas, $newCanv); /* copy events -- using custom extension... */
               return this;
           }
 
