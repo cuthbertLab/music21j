@@ -222,6 +222,10 @@ common.urlParam = function urlParam(name) {
 
 /**
  * Copies an event from one jQuery object to another.
+ * This is buggy in jQuery 3 -- do not use.  use .clone(true, true);
+ * and then replace the elements.
+ * 
+ * To be removed once I'm sure it is not needed
  *
  * @function music21.common.jQueryEventCopy
  * @param {Event} eventObj - Event to copy from "from" to "to"
