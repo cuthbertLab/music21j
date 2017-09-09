@@ -135,22 +135,12 @@ export class Stream extends base.Music21Object {
         if (this._duration !== undefined) {
             return this._duration;
         }
-        let highestTime = 0.0;
-        for (let i = 0; i < this.length; i++) {
-            const el = this.get(i);
-            let endTime = el.offset;
-            if (el.duration !== undefined) {
-                endTime += el.duration.quarterLength;
-            }
-            if (endTime > highestTime) {
-                highestTime = endTime;
-            }
-        }
-        return new duration.Duration(highestTime);
+        return new duration.Duration(this.highestTime);
     }
     set duration(newDuration) {
         this._duration = newDuration;
     }
+
     get flat() {
         if (this.hasSubStreams()) {
             const tempEls = [];
@@ -177,7 +167,10 @@ export class Stream extends base.Music21Object {
             return this;
         }
     }
-    get notes() { return this.getElementsByClass(['Note', 'Chord']); }
+
+    get notes() {
+        return this.getElementsByClass(['Note', 'Chord']);
+    }
     get notesAndRests() {
         return this.getElementsByClass('GeneralNote');
     }

@@ -38,7 +38,7 @@ export class Accidental extends prebase.ProtoM21Object {
         this._unicodeModifier = '';
         this.displayType = 'normal'; // "normal", "always" supported currently
         this.displayStatus = undefined; // true, false, undefined
-        this.init(accName);
+        this.set(accName);
     }
     /**
      * Sets a parameter of the accidental and updates name, alter, and modifier to suit.
@@ -47,7 +47,7 @@ export class Accidental extends prebase.ProtoM21Object {
      * @param {number|string} accName - the name, number, or modifier to set
      * @returns {undefined}
      */
-    init(accName) {
+    set(accName) {
         if ((accName !== undefined) && (accName.toLowerCase !== undefined)) {
             accName = accName.toLowerCase();
         }
