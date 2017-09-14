@@ -1,5 +1,5 @@
 import * as QUnit from 'qunit';
-import music21 from '../../src/loadModules'; 
+import music21 from '../../src/loadModules';
 
 export default function tests() {
     QUnit.test('music21.stream.Stream', (assert) => {
@@ -15,15 +15,15 @@ export default function tests() {
     QUnit.test('music21.stream.Stream.duration', (assert) => {
         const s = new music21.stream.Stream();
         assert.equal(s.duration.quarterLength, 0, 'EmptyString QuarterLength');
-        
+
         s.append(new music21.note.Note('C#5'));
         assert.equal(s.duration.quarterLength, 1.0, '1 quarter QuarterLength');
-        
+
         const n =  new music21.note.Note('F5');
         n.duration.type = 'half';
         s.append(n);
         assert.equal(s.duration.quarterLength, 3.0, '3 quarter QuarterLength');
-        
+
         s.duration = new music21.duration.Duration(3.0);
         s.append(new music21.note.Note('D#5'));
         assert.equal(s.duration.quarterLength, 3.0, 'overridden duration -- remains');
@@ -155,8 +155,9 @@ export default function tests() {
         s1.append(n3);
         const n4 = new music21.note.Note('G3');
         s1.append(n4);
-        const div1 = s1.editableAccidentalCanvas();
+        const sne1 = new music21.streamInteraction.SimpleNoteEditor(s1);
+        const div1 = sne1.editableAccidentalCanvas();
         $(document.body).append(div1);
-        
+
     });
 };

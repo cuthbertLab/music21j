@@ -15964,7 +15964,8 @@
           s1.append(n3);
           var n4 = new music21.note.Note('G3');
           s1.append(n4);
-          var div1 = s1.editableAccidentalCanvas();
+          var sne1 = new music21.streamInteraction.SimpleNoteEditor(s1);
+          var div1 = sne1.editableAccidentalCanvas();
           $(document.body).append(div1);
       });
   };
