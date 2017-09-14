@@ -19,9 +19,9 @@
 import * as MIDI from 'MIDI';
 import * as $ from 'jquery';
 
-import { common } from './common';
-import { miditools } from './miditools';
-import { pitch } from './pitch';
+import { common } from './common.js';
+import { miditools } from './miditools.js';
+import { pitch } from './pitch.js';
 
 
 /**

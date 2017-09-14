@@ -1,6 +1,7 @@
 import * as Vex from 'vexflow';
-import { common } from './common';
-import { prebase } from './prebase';
+
+import { common } from './common.js';
+import { prebase } from './prebase.js';
 
 /**
  * articulations module. See {@link music21.articulations} namespace

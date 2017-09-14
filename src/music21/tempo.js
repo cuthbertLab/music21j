@@ -9,7 +9,7 @@
 import * as MIDI from 'MIDI';
 import * as $ from 'jquery';
 
-import { prebase } from './prebase';
+import { prebase } from './prebase.js';
 
 /* a Music21Object in m21p; the overhead is too high here to follow ... */
 /**
@@ -296,4 +296,3 @@ export class Metronome extends prebase.ProtoM21Object {
     }
 }
 tempo.Metronome = Metronome;
-

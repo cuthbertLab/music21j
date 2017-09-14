@@ -6,10 +6,10 @@
  * Based on music21 (=music21p), Copyright (c) 2006–16, Michael Scott Cuthbert and cuthbertLab
  *
  */
-import { Music21Exception } from './exceptions21';
+import { Music21Exception } from './exceptions21.js';
 
-import { prebase } from './prebase';
-import { duration } from './duration';
+import { prebase } from './prebase.js';
+import { duration } from './duration.js';
 
 /**
  * Module holding beam materials. See {@link music21.beam} namespace.
@@ -242,4 +242,3 @@ export class Beams extends prebase.ProtoM21Object {
     }
 }
 beam.Beams = Beams;
-

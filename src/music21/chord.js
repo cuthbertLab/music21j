@@ -7,8 +7,9 @@
  *
  */
 import * as Vex from 'vexflow';
-import { Music21Exception } from './exceptions21';
-import { note } from './note';
+
+import { Music21Exception } from './exceptions21.js';
+import { note } from './note.js';
 
 /**
  * chord Module. See {@link music21.chord} namespace for more details

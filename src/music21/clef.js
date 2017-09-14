@@ -8,8 +8,8 @@
  * Based on music21 (=music21p), Copyright (c) 2006–14, Michael Scott Cuthbert and cuthbertLab
  *
  */
-import { base } from './base';
-import { pitch } from './pitch';
+import { base } from './base.js';
+import { pitch } from './pitch.js';
 
 /**
  * Clef module, see {@link music21.clef} for namespace
@@ -276,5 +276,54 @@ clef.bestClef = function bestClef(st) {
         return new clef.TrebleClef();
     } else {
         return new clef.BassClef();
+    }
+};
+
+clef.clefFromString = function clefFromString(clefString, octaveShift) {
+    if (octaveShift === undefined) {
+        octaveShift = 0;
+    }
+    const xnStr = clefString.trim();
+    let thisType;
+    let lineNum;
+    if (xnStr.toLowerCase() === 'percussion') {
+        return new clef.PercussionClef(clefString, octaveShift);
+    } // todo: tab, none, jianpu
+
+    if (xnStr.length === 2) {
+        thisType = xnStr[0].toUpperCase();
+        lineNum = xnStr[1];
+    } else if (xnStr.length === 1) {
+        thisType = xnStr[0].toUpperCase();
+        if (thisType === 'G') {
+            lineNum = 2;
+        } else if (thisType === 'F') {
+            lineNum = 4;
+        } else if (thisType === 'C') {
+            lineNum = 3;
+        } else {
+            lineNum = 0;
+        }
+    }
+
+    const arrayEqual = (a, b) => (a.length === b.length) && a.every((el, ix) => el === b[ix]);
+
+    const params = [thisType, lineNum, octaveShift];
+    if (arrayEqual(params, ['G', 2, 0])) {
+        return new clef.TrebleClef();
+    } else if (arrayEqual(params, ['G', 2, -1])) {
+        return new clef.Treble8vbClef();
+    } else if (arrayEqual(params, ['G', 2, 1])) {
+        return new clef.Treble8vaClef();
+    } else if (arrayEqual(params, ['F', 4, 0])) {
+        return new clef.BassClef();
+    } else if (arrayEqual(params, ['F', 4, -1])) {
+        return new clef.Bass8vbClef();
+    } else if (arrayEqual(params, ['C', 3, 0])) {
+        return new clef.AltoClef();
+    } else if (arrayEqual(params, ['C', 4, 0])) {
+        return new clef.TenorClef();
+    } else {
+        return new clef.Clef(xnStr, octaveShift);
     }
 };

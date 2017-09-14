@@ -6,11 +6,11 @@
  * Based on music21, Copyright (c) 2006-16, Michael Scott Cuthbert and cuthbertLab
  *
  */
-import { Music21Exception } from './exceptions21';
+import { Music21Exception } from './exceptions21.js';
 
-import { common } from './common';
-import { debug } from './debug';
-import { prebase } from './prebase';
+import { common } from './common.js';
+import { debug } from './debug.js';
+import { prebase } from './prebase.js';
 /**
  * Duration module. See {@link music21.duration}
  *
@@ -417,4 +417,3 @@ export class Tuplet extends prebase.ProtoM21Object {
     }
 }
 duration.Tuplet = Tuplet;
-

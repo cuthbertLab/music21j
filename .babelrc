@@ -4,7 +4,6 @@
   ],
   "plugins": [
        "transform-object-assign",
-       "external-helpers"
+       "external-helpers",
   ]
 }
- 

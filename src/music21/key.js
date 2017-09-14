@@ -6,13 +6,13 @@
  * Based on music21 (=music21p), Copyright (c) 2006–16, Michael Scott Cuthbert and cuthbertLab
  *
  */
-import { Music21Exception } from './exceptions21';
+import { Music21Exception } from './exceptions21.js';
 
-import { base } from './base';
-import { debug } from './debug';
-import { interval } from './interval';
-import { pitch } from './pitch';
-import { scale } from './scale';
+import { base } from './base.js';
+import { debug } from './debug.js';
+import { interval } from './interval.js';
+import { pitch } from './pitch.js';
+import { scale } from './scale.js';
 
 /**
  * key and keysignature module. See {@link music21.key} namespace for details

@@ -11,19 +11,19 @@
 import * as $ from 'jquery';
 import * as MIDI from 'MIDI';
 
-import { Music21Exception } from './exceptions21';
+import { Music21Exception } from './exceptions21.js';
 
-import { base } from './base';
-import { clef } from './clef';
-import { common } from './common';
-import { debug } from './debug';
-import { duration } from './duration';
-import { instrument } from './instrument';
-import { meter } from './meter';
-import { pitch } from './pitch';
-import { renderOptions } from './renderOptions';
-import { streamInteraction } from './streamInteraction';
-import { vfShow } from './vfShow';
+import { base } from './base.js';
+import { clef } from './clef.js';
+import { common } from './common.js';
+import { debug } from './debug.js';
+import { duration } from './duration.js';
+import { instrument } from './instrument.js';
+import { meter } from './meter.js';
+import { pitch } from './pitch.js';
+import { renderOptions } from './renderOptions.js';
+import { streamInteraction } from './streamInteraction.js';
+import { vfShow } from './vfShow.js';
 
 /**
  * powerful stream module, See {@link music21.stream} namespace
@@ -135,6 +135,12 @@ export class Stream extends base.Music21Object {
         if (this._duration !== undefined) {
             return this._duration;
         }
+        return new duration.Duration(this.highestTime);
+    }
+    set duration(newDuration) {
+        this._duration = newDuration;
+    }
+    get highestTime() {
         let highestTime = 0.0;
         for (let i = 0; i < this.length; i++) {
             const el = this.get(i);
@@ -146,11 +152,9 @@ export class Stream extends base.Music21Object {
                 highestTime = endTime;
             }
         }
-        return new duration.Duration(highestTime);
+        return highestTime;
     }
-    set duration(newDuration) {
-        this._duration = newDuration;
-    }
+
     get flat() {
         if (this.hasSubStreams()) {
             const tempEls = [];
@@ -177,7 +181,10 @@ export class Stream extends base.Music21Object {
             return this;
         }
     }
-    get notes() { return this.getElementsByClass(['Note', 'Chord']); }
+
+    get notes() {
+        return this.getElementsByClass(['Note', 'Chord']);
+    }
     get notesAndRests() {
         return this.getElementsByClass('GeneralNote');
     }

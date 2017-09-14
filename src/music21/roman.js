@@ -6,13 +6,13 @@
  * Based on music21 (=music21p), Copyright (c) 2006–16, Michael Scott Cuthbert and cuthbertLab
  *
  */
-import { Music21Exception } from './exceptions21';
+import { Music21Exception } from './exceptions21.js';
 
-import { chord } from './chord';
-import { debug } from './debug';
-import { key } from './key';
-import { pitch } from './pitch';
-import { interval } from './interval';
+import { chord } from './chord.js';
+import { debug } from './debug.js';
+import { key } from './key.js';
+import { pitch } from './pitch.js';
+import { interval } from './interval.js';
 
 /**
  * Roman numeral module. See {@link music21.roman} namespace

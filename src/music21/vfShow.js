@@ -1,8 +1,8 @@
 import * as $ from 'jquery';
 import * as Vex from 'vexflow';
 
-import { debug } from './debug';
-import { duration } from './duration';
+import { debug } from './debug.js';
+import { duration } from './duration.js';
 /**
  * for rendering vexflow. Will eventually go to music21/converter/vexflow
  *

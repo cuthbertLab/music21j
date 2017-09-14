@@ -1,5 +1,5 @@
-import { prebase } from './prebase';
-import { Music21Exception } from './exceptions21';
+import { prebase } from './prebase.js';
+import { Music21Exception } from './exceptions21.js';
 
 /**
  * Simple tie module {@link music21.tie} namespace

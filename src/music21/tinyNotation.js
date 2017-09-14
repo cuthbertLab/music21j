@@ -8,13 +8,13 @@
  */
 import * as $ from 'jquery';
 
-import { clef } from './clef';
-import { duration } from './duration';
-import { pitch } from './pitch';
-import { note } from './note';
-import { meter } from './meter';
-import { stream } from './stream';
-import { tie } from './tie';
+import { clef } from './clef.js';
+import { duration } from './duration.js';
+import { pitch } from './pitch.js';
+import { note } from './note.js';
+import { meter } from './meter.js';
+import { stream } from './stream.js';
+import { tie } from './tie.js';
 
 /**
  * TinyNotation module, see {@link music21.tinyNotation} namespace

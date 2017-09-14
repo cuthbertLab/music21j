@@ -1,8 +1,8 @@
 import * as $ from 'jquery';
 
-import { note } from './note';
-import { stream } from './stream';
-import { tie } from './tie';
+import { note } from './note.js';
+import { stream } from './stream.js';
+import { tie } from './tie.js';
 
 /**
  * Widgets module -- random widgets.  See {@link music21.widgets}

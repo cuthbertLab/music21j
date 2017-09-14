@@ -1,5 +1,5 @@
 /**
- * music21j 0.9.0 built on  * 2017-08-29.
+ * music21j 0.9.0 built on  * 2017-09-14.
  * Copyright (c) 2013-2016 Michael Scott Cuthbert and cuthbertLab
  * BSD License, see LICENSE
  *
@@ -504,6 +504,10 @@
 
   /**
    * Copies an event from one jQuery object to another.
+   * This is buggy in jQuery 3 -- do not use.  use .clone(true, true);
+   * and then replace the elements.
+   * 
+   * To be removed once I'm sure it is not needed
    *
    * @function music21.common.jQueryEventCopy
    * @param {Event} eventObj - Event to copy from "from" to "to"
@@ -2683,7 +2687,7 @@
           _this._unicodeModifier = '';
           _this.displayType = 'normal'; // "normal", "always" supported currently
           _this.displayStatus = undefined; // true, false, undefined
-          _this.init(accName);
+          _this.set(accName);
           return _this;
       }
       /**
@@ -2696,8 +2700,8 @@
 
 
       createClass(Accidental, [{
-          key: 'init',
-          value: function init(accName) {
+          key: 'set',
+          value: function set(accName) {
               if (accName !== undefined && accName.toLowerCase !== undefined) {
                   accName = accName.toLowerCase();
               }
@@ -3520,7 +3524,7 @@
            * Returns a `Vex.Flow.StaveNote` that approximates this note.
            *
            * @memberof music21.note.Note
-           * @param {object} [options={}] - `{clef: {@link music21.clef.Clef} }` 
+           * @param {object} [options={}] - `{clef: {@link music21.clef.Clef} }`
            * clef to set the stem direction of.
            * @returns {Vex.Flow.StaveNote}
            */
@@ -4513,6 +4517,59 @@
           return new clef.TrebleClef();
       } else {
           return new clef.BassClef();
+      }
+  };
+
+  clef.clefFromString = function clefFromString(clefString, octaveShift) {
+      if (octaveShift === undefined) {
+          octaveShift = 0;
+      }
+      var xnStr = clefString.trim();
+      var thisType = void 0;
+      var lineNum = void 0;
+      if (xnStr.toLowerCase() === 'percussion') {
+          return new clef.PercussionClef(clefString, octaveShift);
+      } // todo: tab, none, jianpu
+
+      if (xnStr.length === 2) {
+          thisType = xnStr[0].toUpperCase();
+          lineNum = xnStr[1];
+      } else if (xnStr.length === 1) {
+          thisType = xnStr[0].toUpperCase();
+          if (thisType === 'G') {
+              lineNum = 2;
+          } else if (thisType === 'F') {
+              lineNum = 4;
+          } else if (thisType === 'C') {
+              lineNum = 3;
+          } else {
+              lineNum = 0;
+          }
+      }
+
+      var arrayEqual = function arrayEqual(a, b) {
+          return a.length === b.length && a.every(function (el, ix) {
+              return el === b[ix];
+          });
+      };
+
+      var params = [thisType, lineNum, octaveShift];
+      if (arrayEqual(params, ['G', 2, 0])) {
+          return new clef.TrebleClef();
+      } else if (arrayEqual(params, ['G', 2, -1])) {
+          return new clef.Treble8vbClef();
+      } else if (arrayEqual(params, ['G', 2, 1])) {
+          return new clef.Treble8vaClef();
+      } else if (arrayEqual(params, ['F', 4, 0])) {
+          return new clef.BassClef();
+      } else if (arrayEqual(params, ['F', 4, -1])) {
+          return new clef.Bass8vbClef();
+      } else if (arrayEqual(params, ['C', 3, 0])) {
+          return new clef.AltoClef();
+      } else if (arrayEqual(params, ['C', 4, 0])) {
+          return new clef.TenorClef();
+      } else {
+          return new clef.Clef(xnStr, octaveShift);
       }
   };
 
@@ -8214,7 +8271,8 @@
    * @class PixelMapper
    * @memberof music21.streamInteraction
    * @param {music21.stream.Stream} s - stream object
-   * @property {Array<music21.streamInteraction.PixelMap>} allMaps - a `PixelMap` object for each offset in the Stream and one additional one for the end of the Stream.
+   * @property {Array<music21.streamInteraction.PixelMap>} allMaps - a `PixelMap` object
+   *     for each offset in the Stream and one additional one for the end of the Stream.
    * @property {music21.stream.Stream} s - stream object
    * @property {music21.stream.Stream} notesAndRests - `this.stream.flat.notesAndRests`
    * @property {number} pixelScaling - `this.stream.renderOptions.scaleFactor.x`
@@ -8519,6 +8577,365 @@
       this.activeElementHierarchy = [undefined];
   };
   streamInteraction.CursorSelect = CursorSelect;
+
+  var SimpleNoteEditor = function () {
+      function SimpleNoteEditor(s) {
+          classCallCheck(this, SimpleNoteEditor);
+
+          this.stream = s;
+          this.activeNote = undefined;
+          this.changedCallbackFunction = undefined; // for editable canvases
+      }
+
+      /**
+       * A function bound to the current stream that
+       * will changes the stream. Used in editableAccidentalCanvas, among other places.
+       *
+       *      var can = s.appendNewCanvas();
+       *      $(can).on('click', s.changeClickedNoteFromEvent);
+       *
+       * @memberof music21.stream.Stream
+       * @param {Event} e
+       * @returns {music21.base.Music21Object|undefined} - returns whatever changedCallbackFunction does.
+       */
+
+
+      createClass(SimpleNoteEditor, [{
+          key: 'changeClickedNoteFromEvent',
+          value: function changeClickedNoteFromEvent(e) {
+              var canvasElement = e.currentTarget;
+
+              var _findNoteForClick = this.findNoteForClick(canvasElement, e),
+                  _findNoteForClick2 = slicedToArray(_findNoteForClick, 2),
+                  clickedDiatonicNoteNum = _findNoteForClick2[0],
+                  foundNote = _findNoteForClick2[1];
+
+              if (foundNote === undefined) {
+                  if (debug) {
+                      console.log('No note found');
+                  }
+                  return undefined;
+              }
+              return this.noteChanged(clickedDiatonicNoteNum, foundNote, canvasElement);
+          }
+
+          /**
+           * Change the pitch of a note given that it has been clicked and then
+           * call changedCallbackFunction
+           *
+           * To be removed...
+           *
+           * @memberof music21.stream.Stream
+           * @param {Int} clickedDiatonicNoteNum
+           * @param {music21.base.Music21Object} foundNote
+           * @param {DOMObject} canvas
+           * @returns {any} output of changedCallbackFunction
+           */
+
+      }, {
+          key: 'noteChanged',
+          value: function noteChanged(clickedDiatonicNoteNum, foundNote, canvas) {
+              var n = foundNote;
+              var p = new pitch.Pitch('C');
+              p.diatonicNoteNum = clickedDiatonicNoteNum;
+              p.accidental = n.pitch.accidental;
+              n.pitch = p;
+              n.stemDirection = undefined;
+              this.activeNote = n;
+              this.stream.redrawCanvas(canvas);
+              if (this.changedCallbackFunction !== undefined) {
+                  return this.changedCallbackFunction({ foundNote: n, canvas: canvas });
+              } else {
+                  return undefined;
+              }
+          }
+
+          /**
+           * Given an event object, and an x and y location, returns a two-element array
+           * of the pitch.Pitch.diatonicNoteNum that was clicked (i.e., if C4 was clicked this
+           * will return 29; if D4 was clicked this will return 30) and the closest note in the
+           * stream that was clicked.
+           *
+           * Return a list of [diatonicNoteNum, closestXNote]
+           * for an event (e) called on the canvas (canvas)
+           *
+           * @memberof music21.stream.Stream
+           * @param {DOMObject} canvas
+           * @param {Event} e
+           * @param {number} x
+           * @param {number} y
+           * @returns {Array} [diatonicNoteNum, closestXNote]
+           */
+
+      }, {
+          key: 'findNoteForClick',
+          value: function findNoteForClick(canvas, e, x, y) {
+              if (x === undefined || y === undefined) {
+                  var _getScaledXYforCanvas = this.getScaledXYforCanvas(canvas, e);
+
+                  var _getScaledXYforCanvas2 = slicedToArray(_getScaledXYforCanvas, 2);
+
+                  x = _getScaledXYforCanvas2[0];
+                  y = _getScaledXYforCanvas2[1];
+              }
+              var clickedDiatonicNoteNum = this.diatonicNoteNumFromScaledY(y);
+              var foundNote = this.noteElementFromScaledX(x);
+              return [clickedDiatonicNoteNum, foundNote];
+          }
+          /**
+           *
+           * Given a Y position find the diatonicNoteNum that a note at that position would have.
+           *
+           * searches this.storedVexflowStave
+           *
+           * Y position must be offset from the start of the stave...
+           *
+           * @memberof music21.stream.Stream
+           * @param {number} yPxScaled
+           * @returns {Int}
+           */
+
+      }, {
+          key: 'diatonicNoteNumFromScaledY',
+          value: function diatonicNoteNumFromScaledY(yPxScaled) {
+              var storedVFStave = this.stream.recursiveGetStoredVexflowStave();
+              // for (var i = -10; i < 10; i++) {
+              //    console.log("line: " + i + " y: " + storedVFStave.getYForLine(i));
+              // }
+              var lineSpacing = storedVFStave.options.spacing_between_lines_px;
+              var linesAboveStaff = storedVFStave.options.space_above_staff_ln;
+
+              var notesFromTop = yPxScaled * 2 / lineSpacing;
+              var notesAboveLowestLine = (storedVFStave.options.num_lines - 1 + linesAboveStaff) * 2 - notesFromTop;
+              var clickedDiatonicNoteNum = this.stream.clef.lowestLine + Math.round(notesAboveLowestLine);
+              return clickedDiatonicNoteNum;
+          }
+          /**
+           *
+           * Return the note at pixel X (or within allowablePixels [default 10])
+           * of the note.
+           *
+           * systemIndex element is not used on bare Stream
+            * @memberof music21.stream.Stream
+           * @param {number} xPxScaled
+           * @param {number} [allowablePixels=10]
+           * @param {number} [unused_systemIndex]
+           * @returns {music21.base.Music21Object|undefined}
+           */
+
+      }, {
+          key: 'noteElementFromScaledX',
+          value: function noteElementFromScaledX(xPxScaled, allowablePixels, unused_systemIndex) {
+              var s = this.stream;
+              var foundNote = void 0;
+              if (allowablePixels === undefined) {
+                  allowablePixels = 10;
+              }
+
+              for (var i = 0; i < s.length; i++) {
+                  var n = s.get(i);
+                  /* should also
+                   * compensate for accidentals...
+                   */
+                  if (xPxScaled > n.x - allowablePixels && xPxScaled < n.x + n.width + allowablePixels) {
+                      foundNote = n;
+                      break; /* O(n); can be made O(log n) */
+                  }
+              }
+              // console.log(n.pitch.nameWithOctave);
+              return foundNote;
+          }
+
+          /**
+           * return a list of [scaledX, scaledY] for
+           * a canvas element.
+           *
+           * xScaled refers to 1/scaleFactor.x -- for instance, scaleFactor.x = 0.7 (default)
+           * x of 1 gives 1.42857...
+           *
+           * @memberof music21.stream.Stream
+           * @param {DOMObject} canvas
+           * @param {Event} e
+           * @returns {Array<number>} [scaledX, scaledY]
+           */
+
+      }, {
+          key: 'getScaledXYforCanvas',
+          value: function getScaledXYforCanvas(canvas, e) {
+              var _getUnscaledXYforCanv = this.getUnscaledXYforCanvas(canvas, e),
+                  _getUnscaledXYforCanv2 = slicedToArray(_getUnscaledXYforCanv, 2),
+                  xPx = _getUnscaledXYforCanv2[0],
+                  yPx = _getUnscaledXYforCanv2[1];
+
+              var pixelScaling = this.stream.renderOptions.scaleFactor;
+
+              var yPxScaled = yPx / pixelScaling.y;
+              var xPxScaled = xPx / pixelScaling.x;
+              return [xPxScaled, yPxScaled];
+          }
+          /**
+           * Given a mouse click, or other event with .pageX and .pageY,
+           * find the x and y for the canvas.
+           *
+           * @memberof music21.stream.Stream
+           * @param {DOMObject} canvas
+           * @param {Event} e
+           * @returns {Array<number>} two-elements, [x, y] in pixels.
+           */
+
+      }, {
+          key: 'getUnscaledXYforCanvas',
+          value: function getUnscaledXYforCanvas(canvas, e) {
+              var offset = null;
+              if (canvas === undefined) {
+                  offset = { left: 0, top: 0 };
+              } else {
+                  offset = $(canvas).offset();
+              }
+              /*
+               * mouse event handler code from: http://diveintohtml5.org/canvas.html
+               */
+              var xClick = void 0;
+              var yClick = void 0;
+              if (e.pageX !== undefined && e.pageY !== undefined) {
+                  xClick = e.pageX;
+                  yClick = e.pageY;
+              } else {
+                  xClick = e.clientX + document.body.scrollLeft + document.documentElement.scrollLeft;
+                  yClick = e.clientY + document.body.scrollTop + document.documentElement.scrollTop;
+              }
+              var xPx = xClick - offset.left;
+              var yPx = yClick - offset.top;
+              return [xPx, yPx];
+          }
+
+          /**
+           * Renders a stream on a canvas with the ability to edit it and
+           * a toolbar that allows the accidentals to be edited.
+           *
+           * @memberof music21.stream.Stream
+           * @param {number} [width]
+           * @param {number} [height]
+           * @returns {DOMObject} &lt;div&gt; tag around the canvas.
+           */
+
+      }, {
+          key: 'editableAccidentalCanvas',
+          value: function editableAccidentalCanvas(width, height) {
+              /*
+               * Create an editable canvas with an accidental selection bar.
+               */
+              var d = $('<div/>').css('text-align', 'left').css('position', 'relative');
+              var buttonDiv = this.getAccidentalToolbar();
+              d.append(buttonDiv);
+              d.append($("<br clear='all'/>"));
+              this.activateClick();
+              this.stream.appendNewCanvas(d, width, height);
+              return d;
+          }
+
+          /**
+           * activateClick - sets the stream's renderOptions to activate clickFunction.
+           *
+           * @param  {undefined|function} clickFunction  arrow function to be called
+           *                                              (default changeClickedNoteFromEvent)
+           * @return {undefined}
+           */
+
+      }, {
+          key: 'activateClick',
+          value: function activateClick(clickFunction) {
+              var _this = this;
+
+              if (clickFunction === undefined) {
+                  clickFunction = function clickFunction(e) {
+                      return _this.changeClickedNoteFromEvent(e);
+                  };
+              }
+              this.stream.renderOptions.events.click = function (e) {
+                  return clickFunction(e);
+              };
+          }
+          /**
+           *
+           * @memberof music21.stream.Stream
+           * @param {Int} minAccidental - alter of the min accidental (default -1)
+           * @param {Int} maxAccidental - alter of the max accidental (default 1)
+           * @param {jQueryObject} $siblingCanvas - canvas to use for redrawing;
+           * @returns {jQueryObject} the accidental toolbar.
+           */
+
+      }, {
+          key: 'getAccidentalToolbar',
+          value: function getAccidentalToolbar(minAccidental, maxAccidental, $siblingCanvas) {
+              var _this2 = this;
+
+              if (minAccidental === undefined) {
+                  minAccidental = -1;
+              }
+              if (maxAccidental === undefined) {
+                  maxAccidental = 1;
+              }
+              minAccidental = Math.round(minAccidental);
+              maxAccidental = Math.round(maxAccidental);
+
+              var $buttonDiv = $('<div/>').attr('class', 'accidentalToolbar scoreToolbar');
+
+              var _loop = function _loop(i) {
+                  var acc = new pitch.Accidental(i);
+                  $buttonDiv.append($('<button>' + acc.unicodeModifier + '</button>').click(function (e) {
+                      return _this2.addAccidental(i, e, $siblingCanvas);
+                  }));
+              };
+
+              for (var i = minAccidental; i <= maxAccidental; i++) {
+                  _loop(i);
+              }
+              return $buttonDiv;
+          }
+      }, {
+          key: 'addAccidental',
+          value: function addAccidental(newAlter, clickEvent, $useCanvas) {
+              /*
+               * To be called on a button...
+               */
+              if ($useCanvas === undefined) {
+                  var $searchParent = $(clickEvent.target).parent();
+                  while ($searchParent !== undefined && ($useCanvas === undefined || $useCanvas[0] === undefined)) {
+                      $useCanvas = $searchParent.find('canvas');
+                      $searchParent = $searchParent.parent();
+                  }
+                  if ($useCanvas[0] === undefined) {
+                      console.log('Could not find a canvas...');
+                      return;
+                  }
+              }
+              if (this.activeNote !== undefined) {
+                  var n = this.activeNote;
+                  n.pitch.accidental = new pitch.Accidental(newAlter);
+                  /* console.log(n.pitch.name); */
+                  this.stream.redrawCanvas($useCanvas[0]);
+                  if (this.changedCallbackFunction !== undefined) {
+                      this.changedCallbackFunction({ canvas: $useCanvas[0] });
+                  }
+              }
+          }
+      }]);
+      return SimpleNoteEditor;
+  }();
+
+  streamInteraction.SimpleNoteEditor = SimpleNoteEditor;
+
+  var GrandStaffEditor = function GrandStaffEditor(s) {
+      classCallCheck(this, GrandStaffEditor);
+
+      this.stream = s;
+      if (s.elements.length !== 2) {
+          throw new StreamException('Stream must be a grand staff!');
+      }
+  };
+
+  streamInteraction.GrandStaffEditor = GrandStaffEditor;
 
   /**
    * for rendering vexflow. Will eventually go to music21/converter/vexflow
@@ -11040,6 +11457,7 @@
               var $newCanv = this.createNewCanvas(canvas.width, canvas.height);
               this.renderVexflowOnCanvas($newCanv);
               $canvas.replaceWith($newCanv);
+              // this is no longer necessary.
               // common.jQueryEventCopy($.event, $canvas, $newCanv); /* copy events -- using custom extension... */
               return this;
           }
@@ -11239,6 +11657,14 @@
               if (this._duration !== undefined) {
                   return this._duration;
               }
+              return new duration.Duration(this.highestTime);
+          },
+          set: function set(newDuration) {
+              this._duration = newDuration;
+          }
+      }, {
+          key: 'highestTime',
+          get: function get() {
               var highestTime = 0.0;
               for (var i = 0; i < this.length; i++) {
                   var el = this.get(i);
@@ -11250,10 +11676,7 @@
                       highestTime = endTime;
                   }
               }
-              return new duration.Duration(highestTime);
-          },
-          set: function set(newDuration) {
-              this._duration = newDuration;
+              return highestTime;
           }
       }, {
           key: 'flat',
@@ -12167,9 +12590,10 @@
   // future -- rewrite of Score and Part to Page, System, SystemPart
   // not currently used
   // import * as $ from 'jquery';
-  // import { base } from './base';
-  // import { renderOptions } from './renderOptions';
-  // import { common } from './common';
+  //
+  // import { base } from './base.js';
+  // import { renderOptions } from './renderOptions.js';
+  // import { common } from './common.js';
   /**
    * Does not work yet, so not documented
    *
@@ -12443,6 +12867,923 @@
   }(stream.Part);
 
   layout.Staff = Staff;
+
+  /**
+   * Simple tie module {@link music21.tie} namespace
+   *
+   * @exports music21/tie
+   */
+
+  /**
+   * Tie namespace, just has the {@link music21.tie.Tie} object
+   *
+   * @namespace music21.tie
+   * @memberof music21
+   * @requires music21/prebase
+   */
+  var _tie = {};
+  var VALID_TIE_TYPES = ['start', 'stop', 'continue', 'let-ring', undefined];
+
+  /**
+   * Tie class. Found in {@link music21.note.GeneralNote} `.tie`.
+   *
+   * Does not support advanced music21p values `.to` and `.from`
+   *
+   * @class Tie
+   * @memberof music21.tie
+   * @extends music21.prebase.ProtoM21Object
+   * @param {string} type - 'start', 'stop', 'continue', or 'let-ring'
+   * @property {string} type - the tie type
+   * @property {string} style - only supports 'normal' for now.
+   * @property {string|undefined} placement - undefined = unknown or above/below. (NB curently does nothing)
+   */
+  var Tie = function (_prebase$ProtoM21Obje) {
+      inherits(Tie, _prebase$ProtoM21Obje);
+
+      function Tie(type) {
+          classCallCheck(this, Tie);
+
+          var _this = possibleConstructorReturn(this, (Tie.__proto__ || Object.getPrototypeOf(Tie)).call(this));
+
+          _this._type = undefined;
+          _this.style = 'normal';
+          _this.type = type;
+          _this.placement = undefined;
+          return _this;
+      }
+
+      createClass(Tie, [{
+          key: 'type',
+          get: function get() {
+              return this._type;
+          },
+          set: function set(newType) {
+              if (!VALID_TIE_TYPES.includes(newType)) {
+                  throw new Music21Exception('Tie type must be one of "start", "stop", "continue", "let-ring"');
+              }
+              this._type = newType;
+          }
+      }]);
+      return Tie;
+  }(prebase.ProtoM21Object);
+  _tie.Tie = Tie;
+
+  var DEFAULTS = {
+      divisionsPerQuarter: 32 * 3 * 3 * 5 * 7
+  };
+
+  function hyphenToCamelCase(tag) {
+      return tag.replace(/-([a-z])/g, function (firstLetter) {
+          return firstLetter[1].toUpperCase();
+      });
+  }
+
+  function seta(m21El, xmlEl, tag, attributeName, transform) {
+      var $matchEl = $(xmlEl).children(tag);
+      if (!$matchEl) {
+          return;
+      }
+      var value = $matchEl.contents().eq(0).text();
+      if (value === undefined || value === '') {
+          return;
+      }
+      if (transform !== undefined) {
+          value = transform(value);
+      }
+      if (attributeName === undefined) {
+          attributeName = hyphenToCamelCase(tag);
+      }
+      m21El[attributeName] = value;
+  }
+
+  var ScoreParser = function () {
+      function ScoreParser() {
+          classCallCheck(this, ScoreParser);
+
+          this.xmlText = undefined;
+          this.xmlUrl = undefined;
+          this.$xmlRoot = undefined;
+          this.stream = new stream.Score();
+
+          this.definesExplicitSystemBreaks = false;
+          this.definesExplicitPageBreaks = false;
+
+          this.mxScorePartDict = {};
+          this.m21PartObjectsById = {};
+          this.partGroupList = [];
+          this.parts = [];
+
+          this.musicXmlVersion = '1.0';
+      }
+
+      createClass(ScoreParser, [{
+          key: 'scoreFromUrl',
+          value: function scoreFromUrl(url) {
+              var _this = this;
+
+              this.xmlUrl = url;
+              return $.get(url, {}, function (xmlDoc, textStatus) {
+                  return _this.scoreFromDOMTree(xmlDoc);
+              });
+          }
+      }, {
+          key: 'scoreFromText',
+          value: function scoreFromText(xmlText) {
+              this.xmlText = xmlText;
+              var xmlDoc = $.parseXML(xmlText);
+              return this.scoreFromDOMTree(xmlDoc);
+          }
+      }, {
+          key: 'scoreFromDOMTree',
+          value: function scoreFromDOMTree(xmlDoc) {
+              this.$xmlRoot = $($(xmlDoc).children('score-partwise'));
+              this.xmlRootToScore(this.$xmlRoot, this.stream);
+              return this.stream;
+          }
+      }, {
+          key: 'xmlRootToScore',
+          value: function xmlRootToScore($mxScore, inputM21) {
+              var s = inputM21;
+              if (inputM21 === undefined) {
+                  s = new stream.Score();
+              }
+              // version
+              // defaults
+              // credit
+              this.parsePartList($mxScore);
+              var _iteratorNormalCompletion = true;
+              var _didIteratorError = false;
+              var _iteratorError = undefined;
+
+              try {
+                  for (var _iterator = $mxScore.children('part')[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+                      var p = _step.value;
+
+                      var $p = $(p);
+                      var partId = $p.attr('id');
+                      // if (partId === undefined) {
+                      //     partId = //something
+                      // }
+                      var $mxScorePart = this.mxScorePartDict[partId];
+                      var part = this.xmlPartToPart($p, $mxScorePart);
+                      if (part !== undefined) {
+                          // partStreams are undefined
+                          s.insert(0.0, part);
+                          this.m21PartObjectsById[partId] = part;
+                          this.parts.push(part);
+                      }
+                  }
+                  // partGroups;
+                  // spanners;
+                  // definesExplicitSystemreaks, etc.
+                  // sort
+              } catch (err) {
+                  _didIteratorError = true;
+                  _iteratorError = err;
+              } finally {
+                  try {
+                      if (!_iteratorNormalCompletion && _iterator.return) {
+                          _iterator.return();
+                      }
+                  } finally {
+                      if (_didIteratorError) {
+                          throw _iteratorError;
+                      }
+                  }
+              }
+
+              return s;
+          }
+      }, {
+          key: 'xmlPartToPart',
+          value: function xmlPartToPart($mxPart, $mxScorePart) {
+              var parser = new PartParser($mxPart, $mxScorePart, this);
+              parser.parse();
+              // handle partStreams
+              return parser.stream;
+          }
+      }, {
+          key: 'parsePartList',
+          value: function parsePartList($mxScore) {
+              var mxPartList = $mxScore.children('part-list');
+              if (!mxPartList) {
+                  return;
+              }
+              // const openPartGroups = [];
+              var _iteratorNormalCompletion2 = true;
+              var _didIteratorError2 = false;
+              var _iteratorError2 = undefined;
+
+              try {
+                  for (var _iterator2 = mxPartList[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+                      var partListElement = _step2.value;
+
+                      var $partListElement = $(partListElement);
+                      var partId = $partListElement.attr('id');
+                      this.mxScorePartDict[partId] = $partListElement;
+                  }
+                  // deal with part-groups
+              } catch (err) {
+                  _didIteratorError2 = true;
+                  _iteratorError2 = err;
+              } finally {
+                  try {
+                      if (!_iteratorNormalCompletion2 && _iterator2.return) {
+                          _iterator2.return();
+                      }
+                  } finally {
+                      if (_didIteratorError2) {
+                          throw _iteratorError2;
+                      }
+                  }
+              }
+          }
+      }]);
+      return ScoreParser;
+  }();
+
+  var PartParser = function () {
+      function PartParser($mxPart, $mxScorePart, parent) {
+          classCallCheck(this, PartParser);
+
+          this.$mxPart = $mxPart;
+          this.$mxScorePart = $mxScorePart;
+          // ignore parent for now
+          if ($mxPart !== undefined) {
+              this.partId = $mxPart.attr('id');
+              // ignore empty partId for now
+          }
+          // spannerBundles
+          this.stream = new stream.Part();
+          this.atSoundingPitch = true;
+          this.staffReferenceList = [];
+
+          this.lastTimeSignature = undefined;
+          this.lastMeasureWasShort = false;
+          this.lastMeasureOffset = 0.0;
+          this.lastClefs = {
+              0: new clef.TrebleClef()
+          };
+          this.activeTuplets = [];
+          this.activeTuplets.length = 7;
+          this.activeTuplets.fill(undefined);
+
+          this.maxStaves = 1;
+          this.lastMeasureNumber = 0;
+          this.lastNumberSuffix = undefined;
+
+          this.multiMeasureRestsToCapture = 0;
+          this.activeMultimeasureRestSpanner = undefined;
+
+          this.activeInstrument = undefined;
+          this.firstMeasureParsed = false;
+          this.$activeAttributes = undefined;
+          this.lastDivisions = DEFAULTS.divisionsPerQuarter;
+
+          this.appendToScoreAfterParse = true;
+          this.lastMeasureParser = undefined;
+      }
+
+      createClass(PartParser, [{
+          key: 'parse',
+          value: function parse() {
+              this.parseXmlScorePart();
+              this.parseMeasures();
+              // atSoundingPitch;
+              // spannerBundles
+              // partStaves;
+          }
+      }, {
+          key: 'parseXmlScorePart',
+          value: function parseXmlScorePart() {
+              var part = this.stream;
+              var $mxScorePart = this.$mxScorePart;
+
+              seta(part, $mxScorePart, 'part-name'); // todo -- clean string
+              // remainder of part names
+              // instruments
+          }
+      }, {
+          key: 'parseMeasures',
+          value: function parseMeasures() {
+              var _iteratorNormalCompletion3 = true;
+              var _didIteratorError3 = false;
+              var _iteratorError3 = undefined;
+
+              try {
+                  for (var _iterator3 = this.$mxPart.children('measure')[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+                      var mxMeasure = _step3.value;
+
+                      var $mxMeasure = $(mxMeasure);
+                      this.xmlMeasureToMeasure($mxMeasure);
+                  }
+              } catch (err) {
+                  _didIteratorError3 = true;
+                  _iteratorError3 = err;
+              } finally {
+                  try {
+                      if (!_iteratorNormalCompletion3 && _iterator3.return) {
+                          _iterator3.return();
+                      }
+                  } finally {
+                      if (_didIteratorError3) {
+                          throw _iteratorError3;
+                      }
+                  }
+              }
+
+              if (this.lastMeasureParser !== undefined) {
+                  this.lastMeasureParser.parent = undefined; // gc.
+              }
+          }
+      }, {
+          key: 'xmlMeasureToMeasure',
+          value: function xmlMeasureToMeasure($mxMeasure) {
+              var measureParser = new MeasureParser($mxMeasure, this);
+              measureParser.parse();
+              if (this.lastMeasureParser !== undefined) {
+                  this.lastMeasureParser.parent = undefined; // gc.
+              }
+              this.lastMeasureParser = measureParser;
+              // max staves
+              // transposition
+              this.firstMeasureParsed = true;
+              // staffReferenceList
+
+              var m = measureParser.stream;
+              this.setLastMeasureInfo(m);
+              // fullMeasureRests
+
+              // TODO: offsets!!!
+              // this.stream.insert(this.lastMeasureOffset, m);
+              this.stream.append(m);
+
+              this.adjustTimeAttributesFromMeasure(m);
+          }
+      }, {
+          key: 'setLastMeasureInfo',
+          value: function setLastMeasureInfo(m) {
+              if (m.number !== this.lastMeasureNumber) {
+                  this.lastMeasureNumber = m.number;
+                  this.lastNumberSuffix = m.numberSuffix;
+              }
+
+              if (m.timeSignature !== undefined) {
+                  this.lastTimeSignature = m.timeSignature;
+              } else if (this.lastTimeSignature === undefined) {
+                  this.lastTimeSignature = new meter.TimeSignature('4/4');
+              }
+          }
+      }, {
+          key: 'adjustTimeAttributesFromMeasure',
+          value: function adjustTimeAttributesFromMeasure(m) {
+              var mHighestTime = m.highestTime;
+              // ignore incomplete measures.
+              var mOffsetShift = mHighestTime;
+              this.lastMeasureOffset += mOffsetShift;
+          }
+      }]);
+      return PartParser;
+  }();
+
+  var MeasureParser = function () {
+      function MeasureParser($mxMeasure, parent) {
+          classCallCheck(this, MeasureParser);
+
+          this.$mxMeasure = $mxMeasure;
+          this.$mxMeasureElements = [];
+
+          this.divisions = undefined;
+          this.parent = parent;
+
+          this.transposition = undefined;
+          // spannerBundles
+          this.staffReference = {};
+          // activeTuplets
+          this.useVoices = false;
+          this.voicesById = {};
+          this.voiceIndices = new Set();
+          this.staves = 1;
+          this.$activeAttributes = undefined;
+          this.attributesAreInternal = true;
+          this.measureNumber = undefined;
+          this.numberSuffix = undefined;
+
+          if (parent !== undefined) {
+              this.divisions = parent.lastDivisions;
+          } else {
+              this.divisions = DEFAULTS.divisionsPerQuarter;
+          }
+
+          this.staffLayoutObjects = [];
+          this.stream = new stream.Measure();
+
+          this.$mxNoteList = [];
+          this.$mxLyricList = [];
+          this.nLast = undefined;
+          this.chordVoice = undefined;
+          this.fullMeasureRest = false;
+          this.restAndNoteCount = {
+              rest: 0,
+              note: 0
+          };
+          this.lastClefs = {
+              0: undefined
+          };
+          this.parseIndex = 0;
+          this.offsetMeasureNote = 0.0;
+
+          // class attributes in m21p
+          this.attributeTagsToMethods = {
+              'time': 'handleTimeSignature',
+              'clef': 'handleClef',
+              'key': 'handleKeySignature'
+              // 'staff-details': 'handleStaffDetails',
+              // 'measure-style': 'handleMeasureStyle',
+          };
+          this.musicDataMethods = {
+              'note': 'xmlToNote',
+              // 'backup': 'xmlBackup',
+              // 'forward': 'xmlForward',
+              // 'direction': 'xmlDirection',
+              'attributes': 'parseAttributesTag'
+              // 'harmony': 'xmlHarmony',
+              // 'figured-bass': undefined,
+              // 'sound': undefined,
+              // 'barline': 'xmlBarline',
+              // 'grouping': undefined,
+              // 'link': undefined,
+              // 'bookmark': undefined,
+
+              // Note: <print> is handled separately...
+          };
+      }
+
+      createClass(MeasureParser, [{
+          key: 'parse',
+          value: function parse() {
+              // mxPrint
+              this.parseMeasureAttributes();
+              // updateVoiceInformation;
+
+              var children = this.$mxMeasure.children();
+              this.$mxMeasureElements = [];
+              var _iteratorNormalCompletion4 = true;
+              var _didIteratorError4 = false;
+              var _iteratorError4 = undefined;
+
+              try {
+                  for (var _iterator4 = children[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
+                      var c = _step4.value;
+
+                      var $c = $(c);
+                      this.$mxMeasureElements.push($c);
+                  }
+              } catch (err) {
+                  _didIteratorError4 = true;
+                  _iteratorError4 = err;
+              } finally {
+                  try {
+                      if (!_iteratorNormalCompletion4 && _iterator4.return) {
+                          _iterator4.return();
+                      }
+                  } finally {
+                      if (_didIteratorError4) {
+                          throw _iteratorError4;
+                      }
+                  }
+              }
+
+              var i = 0;
+              var _iteratorNormalCompletion5 = true;
+              var _didIteratorError5 = false;
+              var _iteratorError5 = undefined;
+
+              try {
+                  for (var _iterator5 = this.$mxMeasureElements[Symbol.iterator](), _step5; !(_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done); _iteratorNormalCompletion5 = true) {
+                      var $mxObj = _step5.value;
+
+                      var tag = $mxObj[0].tagName;
+                      this.parseIndex = i;
+                      var methName = this.musicDataMethods[tag];
+                      if (methName !== undefined) {
+                          this[methName]($mxObj);
+                      }
+                      i += 1;
+                  }
+                  // useVoices
+                  // fullMeasureRest
+              } catch (err) {
+                  _didIteratorError5 = true;
+                  _iteratorError5 = err;
+              } finally {
+                  try {
+                      if (!_iteratorNormalCompletion5 && _iterator5.return) {
+                          _iterator5.return();
+                      }
+                  } finally {
+                      if (_didIteratorError5) {
+                          throw _iteratorError5;
+                      }
+                  }
+              }
+          }
+      }, {
+          key: 'insertInMeasureOrVoice',
+          value: function insertInMeasureOrVoice($mxObj, el) {
+              // TODO: offsets!
+              // this.stream.insert(this.offsetMeasureNote, el);
+              this.stream.append(el);
+          }
+      }, {
+          key: 'xmlToNote',
+          value: function xmlToNote($mxNote) {
+              var nextNoteIsChord = false;
+              var $mxObjNext = this.$mxMeasureElements[this.parseIndex + 1];
+              if ($mxObjNext !== undefined) {
+                  if ($mxObjNext[0].tagName === 'note' && $mxObjNext.children('chord').length > 0) {
+                      nextNoteIsChord = true;
+                  }
+              }
+              var isChord = false;
+              var isRest = false;
+
+              var offsetIncrement = 0.0;
+              if ($mxNote.children('rest').length > 0) {
+                  isRest = true;
+              }
+              if ($mxNote.children('chord').length > 0) {
+                  isChord = true;
+              }
+              if (nextNoteIsChord) {
+                  isChord = true;
+              }
+
+              var n = void 0;
+
+              if (isChord) {
+                  this.$mxNoteList.push($mxNote);
+                  // chord lyrics
+              } else if (!isChord && !isRest) {
+                  // normal note
+                  this.restAndNoteCount.note += 1;
+                  n = this.xmlToSimpleNote($mxNote);
+              } else {
+                  this.restAndNoteCount.rest += 1;
+                  n = this.xmlToRest($mxNote);
+              }
+
+              if (!isChord) {
+                  // update lyrics
+                  // add to staffReference
+                  this.insertInMeasureOrVoice($mxNote, n);
+                  offsetIncrement = n.duration.quarterLength;
+                  this.nLast = n;
+              }
+
+              if (this.$mxNoteList && !nextNoteIsChord) {
+                  var c = this.xmlToChord(this.$mxNoteList);
+                  // update lyrics
+                  // addToStaffRest;
+
+                  // voices;
+                  this.insertInMeasureOrVoice($mxNote, c);
+
+                  this.$mxNoteList = [];
+                  this.$mxLyricList = [];
+                  offsetIncrement = c.duration.quarterLength;
+                  this.nLast = c;
+              }
+
+              this.offsetMeasureNote += offsetIncrement;
+          }
+      }, {
+          key: 'xmlToChord',
+          value: function xmlToChord($mxNoteList) {
+              var notes = [];
+              var _iteratorNormalCompletion6 = true;
+              var _didIteratorError6 = false;
+              var _iteratorError6 = undefined;
+
+              try {
+                  for (var _iterator6 = $mxNoteList[Symbol.iterator](), _step6; !(_iteratorNormalCompletion6 = (_step6 = _iterator6.next()).done); _iteratorNormalCompletion6 = true) {
+                      var $mxNote = _step6.value;
+
+                      var freeSpanners = false;
+                      notes.push(this.xmlToSimpleNote($mxNote, freeSpanners));
+                  }
+              } catch (err) {
+                  _didIteratorError6 = true;
+                  _iteratorError6 = err;
+              } finally {
+                  try {
+                      if (!_iteratorNormalCompletion6 && _iterator6.return) {
+                          _iterator6.return();
+                      }
+                  } finally {
+                      if (_didIteratorError6) {
+                          throw _iteratorError6;
+                      }
+                  }
+              }
+
+              var c = new chord.Chord(notes);
+              // move beams from first note;
+              // move articulations;
+              // move expressions;
+              // move spanners;
+
+              return c;
+          }
+      }, {
+          key: 'xmlToSimpleNote',
+          value: function xmlToSimpleNote($mxNote, freeSpanners) {
+              var n = new note.Note();
+              this.xmlToPitch($mxNote, n.pitch);
+              // beams;
+              // stems;
+              // noteheads
+              return this.xmlNoteToGeneralNoteHelper(n, $mxNote, freeSpanners);
+          }
+
+          // xmlToBeam
+          // xmlToBeams
+          // xmlNotehead
+
+      }, {
+          key: 'xmlToPitch',
+          value: function xmlToPitch($mxNote, inputM21) {
+              var p = inputM21;
+              if (inputM21 === undefined) {
+                  p = new pitch.Pitch();
+              }
+
+              var $mxPitch = void 0;
+              if ($mxNote[0].tagName === 'pitch') {
+                  $mxPitch = $mxNote;
+              } else {
+                  $mxPitch = $($mxNote.children('pitch')[0]);
+                  if ($mxPitch.length === 0) {
+                      // whoops!
+                      return p;
+                  }
+              }
+
+              seta(p, $mxPitch, 'step');
+              seta(p, $mxPitch, 'octave', undefined, parseInt);
+              var $mxAlter = $mxPitch.children('alter');
+              var accAlter = void 0;
+              if ($mxAlter) {
+                  accAlter = parseFloat($mxAlter.text().trim());
+              }
+
+              var $mxAccidental = $mxNote.children('accidental');
+              // dropping support for musescore 0.9 errors...
+              if ($mxAccidental.length > 0) {
+                  var accObj = this.xmlToAccidental($mxAccidental);
+                  p.accidental = accObj;
+                  p.accidental.displayStatus = true;
+                  // independent accidental from alter
+              } else if (accAlter !== undefined) {
+                  p.accidental = new pitch.Accidental(accAlter);
+                  p.accidental.displayStatus = false;
+              }
+              return p;
+          }
+      }, {
+          key: 'xmlToAccidental',
+          value: function xmlToAccidental($mxAccidental) {
+              var acc = new pitch.Accidental();
+              // to-do m21/musicxml accidental name differences;
+              var name = $($mxAccidental[0]).text().trim().toLowerCase();
+              acc.set(name);
+
+              // set print style
+              // parentheses
+              // bracket
+              // editorial
+              return acc;
+          }
+      }, {
+          key: 'xmlToRest',
+          value: function xmlToRest($mxRest) {
+              var r = new note.Rest();
+              // full measure rest
+              // apply multimeasure rest
+              // display-step, octave, etc.
+              return this.xmlNoteToGeneralNoteHelper(r, $mxRest);
+          }
+      }, {
+          key: 'xmlNoteToGeneralNoteHelper',
+          value: function xmlNoteToGeneralNoteHelper(n, $mxNote, freeSpanners) {
+              if (freeSpanners === undefined) {
+                  freeSpanners = true;
+              }
+              // spanners
+              // setPrintStyle
+              // print-object
+              // dynamics
+              // pizzacato
+              // grace
+              this.xmlToDuration($mxNote, n.duration);
+              // type styles
+              // color
+              // position
+              if ($mxNote.children('tie').length > 0) {
+                  n.tie = this.xmlToTie($mxNote);
+              }
+              // grace
+              // notations
+              // editorial
+              return n;
+          }
+      }, {
+          key: 'xmlToDuration',
+          value: function xmlToDuration($mxNote, inputM21) {
+              var d = inputM21;
+              if (inputM21 === undefined) {
+                  d = new duration.Duration();
+              }
+              var divisions = this.divisions;
+              var mxDuration = $mxNote.children('duration')[0];
+              var qLen = 0.0;
+
+              if (mxDuration) {
+                  var noteDivisions = parseFloat($(mxDuration).text().trim());
+                  qLen = noteDivisions / divisions;
+              }
+
+              var mxType = $mxNote.children('type')[0];
+              if (mxType) {
+                  // long vs longa todo
+                  var durationType = $(mxType).text().trim();
+                  var numDots = $mxNote.children('dot').length;
+                  // tuplets!!!! big to-do!
+                  d.type = durationType;
+                  d.dots = numDots;
+              } else {
+                  d.quarterLength = qLen;
+              }
+
+              return d;
+          }
+
+          // xmlGraceToGrace
+          // xmlNotations
+          // xmlTechnicalToArticulation
+          // setHarmonic
+          // handleFingering
+          // xmlToArticulation
+          // xmlOrnamentToExpression
+          // xmlDirectionTypeToSpanners
+          // xmlNotationsToSpanners
+          // xmlToTremolo
+          // xmlOneSpanner
+
+      }, {
+          key: 'xmlToTie',
+          value: function xmlToTie($mxNote) {
+              var t = new _tie.Tie();
+              var allTies = $mxNote.children('tie');
+              if (allTies.length > 1) {
+                  t.type = 'continue';
+              } else {
+                  var $t0 = $(allTies[0]);
+                  t.type = $t0.attr('type');
+              }
+              // style
+              return t;
+          }
+      }, {
+          key: 'insertIntoMeasureOrVoice',
+          value: function insertIntoMeasureOrVoice($mxElement, el) {
+              this.stream.insert(this.offsetMeasureNote, el);
+          }
+      }, {
+          key: 'parseMeasureAttributes',
+          value: function parseMeasureAttributes() {
+              this.parseMeasureNumbers();
+              // width;
+          }
+      }, {
+          key: 'parseMeasureNumbers',
+          value: function parseMeasureNumbers() {
+              var mNumRaw = this.$mxMeasure.attr('number');
+              var mNum = parseInt(mNumRaw); // no suffixes...
+              this.stream.number = mNum;
+              if (this.parent) {
+                  this.parent.lastMeasureNumber = mNum;
+              }
+              this.measureNumber = mNum;
+          }
+      }, {
+          key: 'parseAttributesTag',
+          value: function parseAttributesTag($mxAttributes) {
+              this.attributesAreInternal = false;
+              this.$activeAttributes = $mxAttributes;
+              var _iteratorNormalCompletion7 = true;
+              var _didIteratorError7 = false;
+              var _iteratorError7 = undefined;
+
+              try {
+                  for (var _iterator7 = $mxAttributes[Symbol.iterator](), _step7; !(_iteratorNormalCompletion7 = (_step7 = _iterator7.next()).done); _iteratorNormalCompletion7 = true) {
+                      var mxSub = _step7.value;
+
+                      var tag = mxSub.tagName;
+                      var $mxSub = $(mxSub);
+                      var methName = this.attributeTagsToMethods[tag];
+                      if (methName !== undefined) {
+                          this[methName]($mxSub);
+                      } else if (tag === 'staves') {
+                          this.staves = parseInt($mxSub.text());
+                      } else if (tag === 'divisions') {
+                          this.divisions = parseFloat($mxSub.text());
+                      }
+                      // transpose;
+                  }
+              } catch (err) {
+                  _didIteratorError7 = true;
+                  _iteratorError7 = err;
+              } finally {
+                  try {
+                      if (!_iteratorNormalCompletion7 && _iterator7.return) {
+                          _iterator7.return();
+                      }
+                  } finally {
+                      if (_didIteratorError7) {
+                          throw _iteratorError7;
+                      }
+                  }
+              }
+
+              if (this.parent !== undefined) {
+                  this.parent.lastDivisions = this.divisions;
+                  this.parent.$activeAttributes = this.$activeAttributes;
+              }
+          }
+          // xmlTransposeToInterval
+
+      }, {
+          key: 'handleTimeSignature',
+          value: function handleTimeSignature($mxTime) {
+              var ts = this.xmlToTimeSignature($mxTime);
+              this.insertIntoMeasureOrVoice($mxTime, ts);
+          }
+      }, {
+          key: 'xmlToTimeSignature',
+          value: function xmlToTimeSignature($mxTime) {
+              // senza-misura
+              // simple time signature only;
+              var numerator = $($mxTime.children('beats')[0]).text().trim();
+              var denominator = $($mxTime.children('beat-type')[0]).text().trim();
+              return new meter.TimeSignature(numerator + '/' + denominator);
+              // symbol
+          }
+      }, {
+          key: 'handleClef',
+          value: function handleClef($mxClef) {
+              var clefObj = this.xmlToClef($mxClef);
+              this.insertIntoMeasureOrVoice($mxClef, clefObj);
+              this.lastClefs[0] = clefObj;
+          }
+      }, {
+          key: 'xmlToClef',
+          value: function xmlToClef($mxClef) {
+              var sign = $($mxClef.children('sign')[0]).text().trim();
+              // TODO: percussion, etc.
+              var line = $($mxClef.children('line')[0]).text().trim();
+
+              var clefOctaveChange = 0;
+              var $coc = $mxClef.children('clef-octave-change');
+              if ($coc.length > 0) {
+                  clefOctaveChange = parseInt($($coc[0]).text().trim());
+              }
+              return clef.clefFromString(sign + line, clefOctaveChange);
+          }
+      }, {
+          key: 'handleKeySignature',
+          value: function handleKeySignature($mxKey) {
+              var keySig = this.xmlToKeySignature($mxKey);
+              this.insertIntoMeasureOrVoice($mxKey, keySig);
+          }
+      }, {
+          key: 'xmlToKeySignature',
+          value: function xmlToKeySignature($mxKey) {
+              var ks = new key.KeySignature();
+              seta(ks, $mxKey, 'fifths', 'sharps', parseInt);
+              // mode!
+              // non-standard and key-octaves
+              return ks;
+          }
+      }]);
+      return MeasureParser;
+  }();
+
+  var musicxml = {
+      ScoreParser: ScoreParser,
+      PartParser: PartParser,
+      MeasureParser: MeasureParser
+  };
 
   /**
    * music21j -- Javascript reimplementation of Core music21p features.
@@ -13031,66 +14372,6 @@
       return Metronome;
   }(prebase.ProtoM21Object);
   tempo.Metronome = Metronome;
-
-  /**
-   * Simple tie module {@link music21.tie} namespace
-   *
-   * @exports music21/tie
-   */
-
-  /**
-   * Tie namespace, just has the {@link music21.tie.Tie} object
-   *
-   * @namespace music21.tie
-   * @memberof music21
-   * @requires music21/prebase
-   */
-  var _tie = {};
-  var VALID_TIE_TYPES = ['start', 'stop', 'continue', 'let-ring', undefined];
-
-  /**
-   * Tie class. Found in {@link music21.note.GeneralNote} `.tie`.
-   *
-   * Does not support advanced music21p values `.to` and `.from`
-   *
-   * @class Tie
-   * @memberof music21.tie
-   * @extends music21.prebase.ProtoM21Object
-   * @param {string} type - 'start', 'stop', 'continue', or 'let-ring'
-   * @property {string} type - the tie type
-   * @property {string} style - only supports 'normal' for now.
-   * @property {string|undefined} placement - undefined = unknown or above/below. (NB curently does nothing)
-   */
-  var Tie = function (_prebase$ProtoM21Obje) {
-      inherits(Tie, _prebase$ProtoM21Obje);
-
-      function Tie(type) {
-          classCallCheck(this, Tie);
-
-          var _this = possibleConstructorReturn(this, (Tie.__proto__ || Object.getPrototypeOf(Tie)).call(this));
-
-          _this._type = undefined;
-          _this.style = 'normal';
-          _this.type = type;
-          _this.placement = undefined;
-          return _this;
-      }
-
-      createClass(Tie, [{
-          key: 'type',
-          get: function get() {
-              return this._type;
-          },
-          set: function set(newType) {
-              if (!VALID_TIE_TYPES.includes(newType)) {
-                  throw new Music21Exception('Tie type must be one of "start", "stop", "continue", "let-ring"');
-              }
-              this._type = newType;
-          }
-      }]);
-      return Tie;
-  }(prebase.ProtoM21Object);
-  _tie.Tie = Tie;
 
   /**
    * music21j -- Javascript reimplementation of Core music21p features.
@@ -14150,6 +15431,7 @@
   music21.layout = layout;
   music21.meter = meter;
   music21.miditools = miditools;
+  music21.musicxml = musicxml;
   music21.note = note;
   music21.pitch = pitch;
   music21.renderOptions = renderOptions;
