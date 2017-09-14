@@ -8570,6 +8570,7 @@
   streamInteraction.PixelMap = PixelMap;
 
   /*  NOT DONE YET */
+  /*  Will allow for selecting notes by keyboard with cursor */
   var CursorSelect = function CursorSelect(s) {
       classCallCheck(this, CursorSelect);
 
@@ -8605,10 +8606,10 @@
           value: function changeClickedNoteFromEvent(e) {
               var canvasElement = e.currentTarget;
 
-              var _findNoteForClick = this.findNoteForClick(canvasElement, e),
-                  _findNoteForClick2 = slicedToArray(_findNoteForClick, 2),
-                  clickedDiatonicNoteNum = _findNoteForClick2[0],
-                  foundNote = _findNoteForClick2[1];
+              var _stream$findNoteForCl = this.stream.findNoteForClick(canvasElement, e),
+                  _stream$findNoteForCl2 = slicedToArray(_stream$findNoteForCl, 2),
+                  clickedDiatonicNoteNum = _stream$findNoteForCl2[0],
+                  foundNote = _stream$findNoteForCl2[1];
 
               if (foundNote === undefined) {
                   if (debug) {
@@ -8648,165 +8649,6 @@
               } else {
                   return undefined;
               }
-          }
-
-          /**
-           * Given an event object, and an x and y location, returns a two-element array
-           * of the pitch.Pitch.diatonicNoteNum that was clicked (i.e., if C4 was clicked this
-           * will return 29; if D4 was clicked this will return 30) and the closest note in the
-           * stream that was clicked.
-           *
-           * Return a list of [diatonicNoteNum, closestXNote]
-           * for an event (e) called on the canvas (canvas)
-           *
-           * @memberof music21.stream.Stream
-           * @param {DOMObject} canvas
-           * @param {Event} e
-           * @param {number} x
-           * @param {number} y
-           * @returns {Array} [diatonicNoteNum, closestXNote]
-           */
-
-      }, {
-          key: 'findNoteForClick',
-          value: function findNoteForClick(canvas, e, x, y) {
-              if (x === undefined || y === undefined) {
-                  var _getScaledXYforCanvas = this.getScaledXYforCanvas(canvas, e);
-
-                  var _getScaledXYforCanvas2 = slicedToArray(_getScaledXYforCanvas, 2);
-
-                  x = _getScaledXYforCanvas2[0];
-                  y = _getScaledXYforCanvas2[1];
-              }
-              var clickedDiatonicNoteNum = this.diatonicNoteNumFromScaledY(y);
-              var foundNote = this.noteElementFromScaledX(x);
-              return [clickedDiatonicNoteNum, foundNote];
-          }
-          /**
-           *
-           * Given a Y position find the diatonicNoteNum that a note at that position would have.
-           *
-           * searches this.storedVexflowStave
-           *
-           * Y position must be offset from the start of the stave...
-           *
-           * @memberof music21.stream.Stream
-           * @param {number} yPxScaled
-           * @returns {Int}
-           */
-
-      }, {
-          key: 'diatonicNoteNumFromScaledY',
-          value: function diatonicNoteNumFromScaledY(yPxScaled) {
-              var storedVFStave = this.stream.recursiveGetStoredVexflowStave();
-              // for (var i = -10; i < 10; i++) {
-              //    console.log("line: " + i + " y: " + storedVFStave.getYForLine(i));
-              // }
-              var lineSpacing = storedVFStave.options.spacing_between_lines_px;
-              var linesAboveStaff = storedVFStave.options.space_above_staff_ln;
-
-              var notesFromTop = yPxScaled * 2 / lineSpacing;
-              var notesAboveLowestLine = (storedVFStave.options.num_lines - 1 + linesAboveStaff) * 2 - notesFromTop;
-              var clickedDiatonicNoteNum = this.stream.clef.lowestLine + Math.round(notesAboveLowestLine);
-              return clickedDiatonicNoteNum;
-          }
-          /**
-           *
-           * Return the note at pixel X (or within allowablePixels [default 10])
-           * of the note.
-           *
-           * systemIndex element is not used on bare Stream
-            * @memberof music21.stream.Stream
-           * @param {number} xPxScaled
-           * @param {number} [allowablePixels=10]
-           * @param {number} [unused_systemIndex]
-           * @returns {music21.base.Music21Object|undefined}
-           */
-
-      }, {
-          key: 'noteElementFromScaledX',
-          value: function noteElementFromScaledX(xPxScaled, allowablePixels, unused_systemIndex) {
-              var s = this.stream;
-              var foundNote = void 0;
-              if (allowablePixels === undefined) {
-                  allowablePixels = 10;
-              }
-
-              for (var i = 0; i < s.length; i++) {
-                  var n = s.get(i);
-                  /* should also
-                   * compensate for accidentals...
-                   */
-                  if (xPxScaled > n.x - allowablePixels && xPxScaled < n.x + n.width + allowablePixels) {
-                      foundNote = n;
-                      break; /* O(n); can be made O(log n) */
-                  }
-              }
-              // console.log(n.pitch.nameWithOctave);
-              return foundNote;
-          }
-
-          /**
-           * return a list of [scaledX, scaledY] for
-           * a canvas element.
-           *
-           * xScaled refers to 1/scaleFactor.x -- for instance, scaleFactor.x = 0.7 (default)
-           * x of 1 gives 1.42857...
-           *
-           * @memberof music21.stream.Stream
-           * @param {DOMObject} canvas
-           * @param {Event} e
-           * @returns {Array<number>} [scaledX, scaledY]
-           */
-
-      }, {
-          key: 'getScaledXYforCanvas',
-          value: function getScaledXYforCanvas(canvas, e) {
-              var _getUnscaledXYforCanv = this.getUnscaledXYforCanvas(canvas, e),
-                  _getUnscaledXYforCanv2 = slicedToArray(_getUnscaledXYforCanv, 2),
-                  xPx = _getUnscaledXYforCanv2[0],
-                  yPx = _getUnscaledXYforCanv2[1];
-
-              var pixelScaling = this.stream.renderOptions.scaleFactor;
-
-              var yPxScaled = yPx / pixelScaling.y;
-              var xPxScaled = xPx / pixelScaling.x;
-              return [xPxScaled, yPxScaled];
-          }
-          /**
-           * Given a mouse click, or other event with .pageX and .pageY,
-           * find the x and y for the canvas.
-           *
-           * @memberof music21.stream.Stream
-           * @param {DOMObject} canvas
-           * @param {Event} e
-           * @returns {Array<number>} two-elements, [x, y] in pixels.
-           */
-
-      }, {
-          key: 'getUnscaledXYforCanvas',
-          value: function getUnscaledXYforCanvas(canvas, e) {
-              var offset = null;
-              if (canvas === undefined) {
-                  offset = { left: 0, top: 0 };
-              } else {
-                  offset = $$1(canvas).offset();
-              }
-              /*
-               * mouse event handler code from: http://diveintohtml5.org/canvas.html
-               */
-              var xClick = void 0;
-              var yClick = void 0;
-              if (e.pageX !== undefined && e.pageY !== undefined) {
-                  xClick = e.pageX;
-                  yClick = e.pageY;
-              } else {
-                  xClick = e.clientX + document.body.scrollLeft + document.documentElement.scrollLeft;
-                  yClick = e.clientY + document.body.scrollTop + document.documentElement.scrollTop;
-              }
-              var xPx = xClick - offset.left;
-              var yPx = yClick - offset.top;
-              return [xPx, yPx];
           }
 
           /**
@@ -9641,11 +9483,12 @@
                   stave.addClef(s.clef.name, size, ottava);
               }
               if (s.keySignature !== undefined && rendOp.displayKeySignature) {
-                  stave.addKeySignature(s.keySignature.vexflow());
+                  var ksVFName = s.keySignature.majorName().replace(/-/g, 'b');
+                  stave.addKeySignature(ksVFName);
               }
 
               if (s.timeSignature !== undefined && rendOp.displayTimeSignature) {
-                  stave.addTimeSignature(s.timeSignature.numerator.toString() + '/' + s.timeSignature.denominator.toString()); // TODO: convertToVexflow...
+                  stave.addTimeSignature(s.timeSignature.numerator.toString() + '/' + s.timeSignature.denominator.toString());
               }
               if (rendOp.rightBarline !== undefined) {
                   var bl = rendOp.rightBarline;

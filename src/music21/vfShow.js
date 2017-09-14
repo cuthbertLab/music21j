@@ -623,13 +623,14 @@ export class Renderer {
             stave.addClef(s.clef.name, size, ottava);
         }
         if ((s.keySignature !== undefined) && (rendOp.displayKeySignature)) {
-            stave.addKeySignature(s.keySignature.vexflow());
+            const ksVFName = s.keySignature.majorName().replace(/-/g, 'b');
+            stave.addKeySignature(ksVFName);
         }
 
         if ((s.timeSignature !== undefined) && (rendOp.displayTimeSignature)) {
             stave.addTimeSignature(
                     s.timeSignature.numerator.toString() + '/' +
-                    s.timeSignature.denominator.toString()); // TODO: convertToVexflow...
+                    s.timeSignature.denominator.toString());
         }
         if (rendOp.rightBarline !== undefined) {
             const bl = rendOp.rightBarline;
