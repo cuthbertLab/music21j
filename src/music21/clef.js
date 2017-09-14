@@ -8,8 +8,8 @@
  * Based on music21 (=music21p), Copyright (c) 2006–14, Michael Scott Cuthbert and cuthbertLab
  *
  */
-import { base } from './base';
-import { pitch } from './pitch';
+import { base } from './base.js';
+import { pitch } from './pitch.js';
 
 /**
  * Clef module, see {@link music21.clef} for namespace

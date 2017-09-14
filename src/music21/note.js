@@ -9,12 +9,12 @@
 import * as MIDI from 'MIDI';
 import * as Vex from 'vexflow';
 
-import { prebase } from './prebase';
-import { base } from './base';
-import { debug } from './debug';
-import { pitch } from './pitch';
-import { beam } from './beam';
-import { common } from './common';
+import { prebase } from './prebase.js';
+import { base } from './base.js';
+import { debug } from './debug.js';
+import { pitch } from './pitch.js';
+import { beam } from './beam.js';
+import { common } from './common.js';
 
 /**
  * Module for note classes. See the namespace {@link music21.note}
@@ -502,7 +502,7 @@ export class Note extends NotRest {
      * Returns a `Vex.Flow.StaveNote` that approximates this note.
      *
      * @memberof music21.note.Note
-     * @param {object} [options={}] - `{clef: {@link music21.clef.Clef} }` 
+     * @param {object} [options={}] - `{clef: {@link music21.clef.Clef} }`
      * clef to set the stem direction of.
      * @returns {Vex.Flow.StaveNote}
      */
@@ -521,8 +521,8 @@ export class Note extends NotRest {
                         && options.clef !== undefined) {
             this.setStemDirectionFromClef(options.clef);
         }
-        
-        
+
+
         if (this.duration === undefined) {
             // console.log(this);
             return undefined;
@@ -558,14 +558,14 @@ export class Note extends NotRest {
             for (let i = 0; i < this.articulations.length; i++) {
                 const art = this.articulations[i];
                 // 0 refers to the first pitch (for chords etc.)...
-                vfn.addArticulation(0, art.vexflow()); 
+                vfn.addArticulation(0, art.vexflow());
             }
         }
         if (this.expressions[0] !== undefined) {
             for (let j = 0; j < this.expressions.length; j++) {
                 const exp = this.expressions[j];
                 // 0 refers to the first pitch (for chords etc.)...
-                vfn.addArticulation(0, exp.vexflow()); 
+                vfn.addArticulation(0, exp.vexflow());
             }
         }
         if (this.noteheadColor !== undefined) {

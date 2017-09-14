@@ -8,8 +8,8 @@
  * Based on music21 (=music21p), Copyright (c) 2006–16, Michael Scott Cuthbert and cuthbertLab
  *
  */
-import { duration } from './duration';
-import { prebase } from './prebase';
+import { duration } from './duration.js';
+import { prebase } from './prebase.js';
 
 /**
  * module for Music21Objects, see {@link music21.base}

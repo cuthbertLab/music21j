@@ -3,9 +3,9 @@
 <head>
  <title>21M.051 Note changer</title>
  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <script data-main="../src/music21" 
+    <script data-main="../src/music21"
         m21conf='{"loadSoundfont": true }'
-        warnBanner="no" 
+        warnBanner="no"
         src="../ext/require/require.js"></script>
  <link rel="stylesheet" href="http://web.mit.edu/music21/doc/_static/m21.css" type="text/css" />
  <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Source+Code+Pro|Open+Sans:300italic,400italic,700italic,400,300,700" type="text/css" />
@@ -14,17 +14,19 @@
 
 <script>
 
-require(['music21'], function() { 
+require(['music21'], function() {
 	var s = music21.tinyNotation.TinyNotation("G2 B4 c4");
 	s.clef = new music21.clef.Clef('bass');
-	var d = s.editableAccidentalCanvas();
-	
+    var sne = new music21.streamInteraction.SimpleNoteEditor(s)
+	var d = sne.editableAccidentalCanvas();
+
 	$("#editable").append(d);
 	$("#editable").append( $("<br clear='all'/>") );
 
 	var s2 = music21.tinyNotation.TinyNotation("a2 b4 c'4");
 	s2.clef = new music21.clef.Clef('treble');
-	var d2 = s2.editableAccidentalCanvas();
+    var sne2 = new music21.streamInteraction.SimpleNoteEditor(s2)
+	var d2 = sne2.editableAccidentalCanvas();
 	$("#editable").append(d2);
 });
 
@@ -60,8 +62,8 @@ set <code>class=""music21 tinyNotation"</code> or
 <div class="music21 tinyNotation">c4 d8 e8 f2</div>
 <div>
 &lt;div class="music21 tinyNotation noPlayback"&gt;3/4 D8. F#16 E8 F Gn A C#2. D2.&lt;/div&gt; (clicking does nothing)
-</div> 
-<div class="music21 tinyNotation noPlayback">3/4 D8. F#16 
+</div>
+<div class="music21 tinyNotation noPlayback">3/4 D8. F#16
 
     E8 F Gn A c#2. d2.</div>
 

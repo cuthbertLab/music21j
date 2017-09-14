@@ -11,11 +11,11 @@ import * as $ from 'jquery';
 import * as eventjs from 'eventjs'; // drag handler...
 import * as MIDI from 'MIDI';
 
-import { chord } from './chord';
-import { common } from './common';
-import { debug } from './debug';
-import { instrument } from './instrument';
-import { note } from './note';
+import { chord } from './chord.js';
+import { common } from './common.js';
+import { debug } from './debug.js';
+import { instrument } from './instrument.js';
+import { note } from './note.js';
 
 /**
  * A collection of tools for midi. See the namespace {@link music21.miditools}

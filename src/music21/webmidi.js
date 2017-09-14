@@ -11,9 +11,9 @@
  *
  */
 import * as $ from 'jquery';
-import { debug } from './debug';
-import { common } from './common';
-import { miditools } from './miditools';
+import { debug } from './debug.js';
+import { common } from './common.js';
+import { miditools } from './miditools.js';
 
 /**
  * webmidi -- for connecting with external midi devices

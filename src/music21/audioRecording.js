@@ -1,4 +1,4 @@
-import { audioSearch } from './audioSearch';
+import { audioSearch } from './audioSearch.js';
 
 /**
  * Adopted from Matt Diamond's recorder.js code MIT License

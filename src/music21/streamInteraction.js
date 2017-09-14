@@ -1,5 +1,9 @@
 import * as $ from 'jquery';
-import { common } from './common';
+
+import { common } from './common.js';
+import { debug } from './debug.js';
+import { pitch } from './pitch.js';
+import { StreamException } from './exceptions21.js';
 
 /**
  * module with tools for working with Streams. See {@link music21.streamInteraction} namespace.
@@ -205,7 +209,8 @@ streamInteraction.ScrollPlayer = ScrollPlayer;
  * @class PixelMapper
  * @memberof music21.streamInteraction
  * @param {music21.stream.Stream} s - stream object
- * @property {Array<music21.streamInteraction.PixelMap>} allMaps - a `PixelMap` object for each offset in the Stream and one additional one for the end of the Stream.
+ * @property {Array<music21.streamInteraction.PixelMap>} allMaps - a `PixelMap` object
+ *     for each offset in the Stream and one additional one for the end of the Stream.
  * @property {music21.stream.Stream} s - stream object
  * @property {music21.stream.Stream} notesAndRests - `this.stream.flat.notesAndRests`
  * @property {number} pixelScaling - `this.stream.renderOptions.scaleFactor.x`
@@ -475,3 +480,306 @@ export class CursorSelect {
     }
 }
 streamInteraction.CursorSelect = CursorSelect;
+
+export class SimpleNoteEditor {
+    constructor(s) {
+        this.stream = s;
+        this.activeNote = undefined;
+        this.changedCallbackFunction = undefined; // for editable canvases
+    }
+
+    /**
+     * A function bound to the current stream that
+     * will changes the stream. Used in editableAccidentalCanvas, among other places.
+     *
+     *      var can = s.appendNewCanvas();
+     *      $(can).on('click', s.changeClickedNoteFromEvent);
+     *
+     * @memberof music21.stream.Stream
+     * @param {Event} e
+     * @returns {music21.base.Music21Object|undefined} - returns whatever changedCallbackFunction does.
+     */
+    changeClickedNoteFromEvent(e) {
+        const canvasElement = e.currentTarget;
+        const [clickedDiatonicNoteNum, foundNote] = this.findNoteForClick(canvasElement, e);
+        if (foundNote === undefined) {
+            if (debug) {
+                console.log('No note found');
+            }
+            return undefined;
+        }
+        return this.noteChanged(clickedDiatonicNoteNum, foundNote, canvasElement);
+    }
+
+    /**
+     * Change the pitch of a note given that it has been clicked and then
+     * call changedCallbackFunction
+     *
+     * To be removed...
+     *
+     * @memberof music21.stream.Stream
+     * @param {Int} clickedDiatonicNoteNum
+     * @param {music21.base.Music21Object} foundNote
+     * @param {DOMObject} canvas
+     * @returns {any} output of changedCallbackFunction
+     */
+    noteChanged(clickedDiatonicNoteNum, foundNote, canvas) {
+        const n = foundNote;
+        const p = new pitch.Pitch('C');
+        p.diatonicNoteNum = clickedDiatonicNoteNum;
+        p.accidental = n.pitch.accidental;
+        n.pitch = p;
+        n.stemDirection = undefined;
+        this.activeNote = n;
+        this.stream.redrawCanvas(canvas);
+        if (this.changedCallbackFunction !== undefined) {
+            return this.changedCallbackFunction({ foundNote: n, canvas });
+        } else {
+            return undefined;
+        }
+    }
+
+    /**
+     * Given an event object, and an x and y location, returns a two-element array
+     * of the pitch.Pitch.diatonicNoteNum that was clicked (i.e., if C4 was clicked this
+     * will return 29; if D4 was clicked this will return 30) and the closest note in the
+     * stream that was clicked.
+     *
+     * Return a list of [diatonicNoteNum, closestXNote]
+     * for an event (e) called on the canvas (canvas)
+     *
+     * @memberof music21.stream.Stream
+     * @param {DOMObject} canvas
+     * @param {Event} e
+     * @param {number} x
+     * @param {number} y
+     * @returns {Array} [diatonicNoteNum, closestXNote]
+     */
+    findNoteForClick(canvas, e, x, y) {
+        if (x === undefined || y === undefined) {
+            [x, y] = this.getScaledXYforCanvas(canvas, e);
+        }
+        const clickedDiatonicNoteNum = this.diatonicNoteNumFromScaledY(y);
+        const foundNote = this.noteElementFromScaledX(x);
+        return [clickedDiatonicNoteNum, foundNote];
+    }
+    /**
+     *
+     * Given a Y position find the diatonicNoteNum that a note at that position would have.
+     *
+     * searches this.storedVexflowStave
+     *
+     * Y position must be offset from the start of the stave...
+     *
+     * @memberof music21.stream.Stream
+     * @param {number} yPxScaled
+     * @returns {Int}
+     */
+    diatonicNoteNumFromScaledY(yPxScaled) {
+        const storedVFStave = this.stream.recursiveGetStoredVexflowStave();
+        // for (var i = -10; i < 10; i++) {
+        //    console.log("line: " + i + " y: " + storedVFStave.getYForLine(i));
+        // }
+        const lineSpacing = storedVFStave.options.spacing_between_lines_px;
+        const linesAboveStaff = storedVFStave.options.space_above_staff_ln;
+
+        const notesFromTop = yPxScaled * 2 / lineSpacing;
+        const notesAboveLowestLine = ((storedVFStave.options.num_lines - 1 + linesAboveStaff) * 2) - notesFromTop;
+        const clickedDiatonicNoteNum = this.stream.clef.lowestLine + Math.round(notesAboveLowestLine);
+        return clickedDiatonicNoteNum;
+    }
+    /**
+     *
+     * Return the note at pixel X (or within allowablePixels [default 10])
+     * of the note.
+     *
+     * systemIndex element is not used on bare Stream
+
+     * @memberof music21.stream.Stream
+     * @param {number} xPxScaled
+     * @param {number} [allowablePixels=10]
+     * @param {number} [unused_systemIndex]
+     * @returns {music21.base.Music21Object|undefined}
+     */
+    noteElementFromScaledX(xPxScaled, allowablePixels, unused_systemIndex) {
+        const s = this.stream;
+        let foundNote;
+        if (allowablePixels === undefined) {
+            allowablePixels = 10;
+        }
+
+        for (let i = 0; i < s.length; i++) {
+            const n = s.get(i);
+            /* should also
+             * compensate for accidentals...
+             */
+            if (xPxScaled > (n.x - allowablePixels)
+                    && xPxScaled < (n.x + n.width + allowablePixels)) {
+                foundNote = n;
+                break; /* O(n); can be made O(log n) */
+            }
+        }
+        // console.log(n.pitch.nameWithOctave);
+        return foundNote;
+    }
+
+
+    /**
+     * return a list of [scaledX, scaledY] for
+     * a canvas element.
+     *
+     * xScaled refers to 1/scaleFactor.x -- for instance, scaleFactor.x = 0.7 (default)
+     * x of 1 gives 1.42857...
+     *
+     * @memberof music21.stream.Stream
+     * @param {DOMObject} canvas
+     * @param {Event} e
+     * @returns {Array<number>} [scaledX, scaledY]
+     */
+    getScaledXYforCanvas(canvas, e) {
+        const [xPx, yPx] = this.getUnscaledXYforCanvas(canvas, e);
+        const pixelScaling = this.stream.renderOptions.scaleFactor;
+
+        const yPxScaled = yPx / pixelScaling.y;
+        const xPxScaled = xPx / pixelScaling.x;
+        return [xPxScaled, yPxScaled];
+    }
+    /**
+     * Given a mouse click, or other event with .pageX and .pageY,
+     * find the x and y for the canvas.
+     *
+     * @memberof music21.stream.Stream
+     * @param {DOMObject} canvas
+     * @param {Event} e
+     * @returns {Array<number>} two-elements, [x, y] in pixels.
+     */
+    getUnscaledXYforCanvas(canvas, e) {
+        let offset = null;
+        if (canvas === undefined) {
+            offset = { left: 0, top: 0 };
+        } else {
+            offset = $(canvas).offset();
+        }
+        /*
+         * mouse event handler code from: http://diveintohtml5.org/canvas.html
+         */
+        let xClick;
+        let yClick;
+        if (e.pageX !== undefined && e.pageY !== undefined) {
+            xClick = e.pageX;
+            yClick = e.pageY;
+        } else {
+            xClick = e.clientX + document.body.scrollLeft + document.documentElement.scrollLeft;
+            yClick = e.clientY + document.body.scrollTop + document.documentElement.scrollTop;
+        }
+        const xPx = (xClick - offset.left);
+        const yPx = (yClick - offset.top);
+        return [xPx, yPx];
+    }
+
+
+    /**
+     * Renders a stream on a canvas with the ability to edit it and
+     * a toolbar that allows the accidentals to be edited.
+     *
+     * @memberof music21.stream.Stream
+     * @param {number} [width]
+     * @param {number} [height]
+     * @returns {DOMObject} &lt;div&gt; tag around the canvas.
+     */
+    editableAccidentalCanvas(width, height) {
+        /*
+         * Create an editable canvas with an accidental selection bar.
+         */
+        const d = $('<div/>').css('text-align', 'left').css('position', 'relative');
+        const buttonDiv = this.getAccidentalToolbar();
+        d.append(buttonDiv);
+        d.append($("<br clear='all'/>"));
+        this.activateClick();
+        this.stream.appendNewCanvas(d, width, height);
+        return d;
+    }
+
+    /**
+     * activateClick - sets the stream's renderOptions to activate clickFunction.
+     *
+     * @param  {undefined|function} clickFunction  arrow function to be called
+     *                                              (default changeClickedNoteFromEvent)
+     * @return {undefined}
+     */
+    activateClick(clickFunction) {
+        if (clickFunction === undefined) {
+            clickFunction = (e) => this.changeClickedNoteFromEvent(e);
+        }
+        this.stream.renderOptions.events.click = (e) => clickFunction(e);
+    }
+    /**
+     *
+     * @memberof music21.stream.Stream
+     * @param {Int} minAccidental - alter of the min accidental (default -1)
+     * @param {Int} maxAccidental - alter of the max accidental (default 1)
+     * @param {jQueryObject} $siblingCanvas - canvas to use for redrawing;
+     * @returns {jQueryObject} the accidental toolbar.
+     */
+    getAccidentalToolbar(minAccidental, maxAccidental, $siblingCanvas) {
+        if (minAccidental === undefined) {
+            minAccidental = -1;
+        }
+        if (maxAccidental === undefined) {
+            maxAccidental = 1;
+        }
+        minAccidental = Math.round(minAccidental);
+        maxAccidental = Math.round(maxAccidental);
+
+        const $buttonDiv = $('<div/>').attr('class', 'accidentalToolbar scoreToolbar');
+        for (let i = minAccidental; i <= maxAccidental; i++) {
+            const acc = new pitch.Accidental(i);
+            $buttonDiv.append($('<button>' + acc.unicodeModifier + '</button>')
+                             .click((e) => this.addAccidental(i, e, $siblingCanvas))
+            );
+        }
+        return $buttonDiv;
+    }
+
+    addAccidental(newAlter, clickEvent, $useCanvas) {
+        /*
+         * To be called on a button...
+         */
+        if ($useCanvas === undefined) {
+            let $searchParent = $(clickEvent.target).parent();
+            while ($searchParent !== undefined
+                        && ($useCanvas === undefined
+                                || $useCanvas[0] === undefined)) {
+                $useCanvas = $searchParent.find('canvas');
+                $searchParent = $searchParent.parent();
+            }
+            if ($useCanvas[0] === undefined) {
+                console.log('Could not find a canvas...');
+                return;
+            }
+        }
+        if (this.activeNote !== undefined) {
+            const n = this.activeNote;
+            n.pitch.accidental = new pitch.Accidental(newAlter);
+            /* console.log(n.pitch.name); */
+            this.stream.redrawCanvas($useCanvas[0]);
+            if (this.changedCallbackFunction !== undefined) {
+                this.changedCallbackFunction({ canvas: $useCanvas[0] });
+            }
+        }
+    }
+
+}
+
+streamInteraction.SimpleNoteEditor = SimpleNoteEditor;
+
+export class GrandStaffEditor {
+    constructor(s) {
+        this.stream = s;
+        if (s.elements.length !== 2) {
+            throw new StreamException('Stream must be a grand staff!');
+        }
+    }
+}
+
+streamInteraction.GrandStaffEditor = GrandStaffEditor;

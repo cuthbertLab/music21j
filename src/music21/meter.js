@@ -8,8 +8,9 @@
  *
  */
 import * as Vex from 'vexflow';
-import { base } from './base';
-import { duration } from './duration';
+
+import { base } from './base.js';
+import { duration } from './duration.js';
 
 /**
  * meter module. See {@link music21.meter} namespace for details.

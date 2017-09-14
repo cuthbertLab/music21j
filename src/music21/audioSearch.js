@@ -1,6 +1,6 @@
 import MIDI from 'MIDI';
 
-import { common } from './common';
+import { common } from './common.js';
 
 
 /**

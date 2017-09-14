@@ -1,6 +1,6 @@
 import * as Vex from 'vexflow';
 
-import { base } from './base';
+import { base } from './base.js';
 /**
  * Expressions module.  See {@link music21.expressions}
  *

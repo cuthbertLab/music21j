@@ -6,7 +6,7 @@
  * Based on music21 (=music21p), Copyright (c) 2006–16, Michael Scott Cuthbert and cuthbertLab
  *
  */
-import { base } from './base';
+import { base } from './base.js';
 
 /**
  * Instrument module, see {@link music21.instrument}
@@ -283,4 +283,3 @@ instrument.find = function instrument_find(fn, inst) {
     }
     return undefined;
 };
-

@@ -18,4 +18,4 @@ export class Music21Exception extends ExtendableError {
 
 export class StreamException extends Music21Exception {
 }
-
+ 

@@ -1,5 +1,5 @@
 /**
- * music21j 0.9.0 built on  * 2017-09-09.
+ * music21j 0.9.0 built on  * 2017-09-14.
  * Copyright (c) 2013-2016 Michael Scott Cuthbert and cuthbertLab
  * BSD License, see LICENSE
  *
@@ -3524,7 +3524,7 @@
            * Returns a `Vex.Flow.StaveNote` that approximates this note.
            *
            * @memberof music21.note.Note
-           * @param {object} [options={}] - `{clef: {@link music21.clef.Clef} }` 
+           * @param {object} [options={}] - `{clef: {@link music21.clef.Clef} }`
            * clef to set the stem direction of.
            * @returns {Vex.Flow.StaveNote}
            */
@@ -8271,7 +8271,8 @@
    * @class PixelMapper
    * @memberof music21.streamInteraction
    * @param {music21.stream.Stream} s - stream object
-   * @property {Array<music21.streamInteraction.PixelMap>} allMaps - a `PixelMap` object for each offset in the Stream and one additional one for the end of the Stream.
+   * @property {Array<music21.streamInteraction.PixelMap>} allMaps - a `PixelMap` object
+   *     for each offset in the Stream and one additional one for the end of the Stream.
    * @property {music21.stream.Stream} s - stream object
    * @property {music21.stream.Stream} notesAndRests - `this.stream.flat.notesAndRests`
    * @property {number} pixelScaling - `this.stream.renderOptions.scaleFactor.x`
@@ -8576,6 +8577,365 @@
       this.activeElementHierarchy = [undefined];
   };
   streamInteraction.CursorSelect = CursorSelect;
+
+  var SimpleNoteEditor = function () {
+      function SimpleNoteEditor(s) {
+          classCallCheck(this, SimpleNoteEditor);
+
+          this.stream = s;
+          this.activeNote = undefined;
+          this.changedCallbackFunction = undefined; // for editable canvases
+      }
+
+      /**
+       * A function bound to the current stream that
+       * will changes the stream. Used in editableAccidentalCanvas, among other places.
+       *
+       *      var can = s.appendNewCanvas();
+       *      $(can).on('click', s.changeClickedNoteFromEvent);
+       *
+       * @memberof music21.stream.Stream
+       * @param {Event} e
+       * @returns {music21.base.Music21Object|undefined} - returns whatever changedCallbackFunction does.
+       */
+
+
+      createClass(SimpleNoteEditor, [{
+          key: 'changeClickedNoteFromEvent',
+          value: function changeClickedNoteFromEvent(e) {
+              var canvasElement = e.currentTarget;
+
+              var _findNoteForClick = this.findNoteForClick(canvasElement, e),
+                  _findNoteForClick2 = slicedToArray(_findNoteForClick, 2),
+                  clickedDiatonicNoteNum = _findNoteForClick2[0],
+                  foundNote = _findNoteForClick2[1];
+
+              if (foundNote === undefined) {
+                  if (debug) {
+                      console.log('No note found');
+                  }
+                  return undefined;
+              }
+              return this.noteChanged(clickedDiatonicNoteNum, foundNote, canvasElement);
+          }
+
+          /**
+           * Change the pitch of a note given that it has been clicked and then
+           * call changedCallbackFunction
+           *
+           * To be removed...
+           *
+           * @memberof music21.stream.Stream
+           * @param {Int} clickedDiatonicNoteNum
+           * @param {music21.base.Music21Object} foundNote
+           * @param {DOMObject} canvas
+           * @returns {any} output of changedCallbackFunction
+           */
+
+      }, {
+          key: 'noteChanged',
+          value: function noteChanged(clickedDiatonicNoteNum, foundNote, canvas) {
+              var n = foundNote;
+              var p = new pitch.Pitch('C');
+              p.diatonicNoteNum = clickedDiatonicNoteNum;
+              p.accidental = n.pitch.accidental;
+              n.pitch = p;
+              n.stemDirection = undefined;
+              this.activeNote = n;
+              this.stream.redrawCanvas(canvas);
+              if (this.changedCallbackFunction !== undefined) {
+                  return this.changedCallbackFunction({ foundNote: n, canvas: canvas });
+              } else {
+                  return undefined;
+              }
+          }
+
+          /**
+           * Given an event object, and an x and y location, returns a two-element array
+           * of the pitch.Pitch.diatonicNoteNum that was clicked (i.e., if C4 was clicked this
+           * will return 29; if D4 was clicked this will return 30) and the closest note in the
+           * stream that was clicked.
+           *
+           * Return a list of [diatonicNoteNum, closestXNote]
+           * for an event (e) called on the canvas (canvas)
+           *
+           * @memberof music21.stream.Stream
+           * @param {DOMObject} canvas
+           * @param {Event} e
+           * @param {number} x
+           * @param {number} y
+           * @returns {Array} [diatonicNoteNum, closestXNote]
+           */
+
+      }, {
+          key: 'findNoteForClick',
+          value: function findNoteForClick(canvas, e, x, y) {
+              if (x === undefined || y === undefined) {
+                  var _getScaledXYforCanvas = this.getScaledXYforCanvas(canvas, e);
+
+                  var _getScaledXYforCanvas2 = slicedToArray(_getScaledXYforCanvas, 2);
+
+                  x = _getScaledXYforCanvas2[0];
+                  y = _getScaledXYforCanvas2[1];
+              }
+              var clickedDiatonicNoteNum = this.diatonicNoteNumFromScaledY(y);
+              var foundNote = this.noteElementFromScaledX(x);
+              return [clickedDiatonicNoteNum, foundNote];
+          }
+          /**
+           *
+           * Given a Y position find the diatonicNoteNum that a note at that position would have.
+           *
+           * searches this.storedVexflowStave
+           *
+           * Y position must be offset from the start of the stave...
+           *
+           * @memberof music21.stream.Stream
+           * @param {number} yPxScaled
+           * @returns {Int}
+           */
+
+      }, {
+          key: 'diatonicNoteNumFromScaledY',
+          value: function diatonicNoteNumFromScaledY(yPxScaled) {
+              var storedVFStave = this.stream.recursiveGetStoredVexflowStave();
+              // for (var i = -10; i < 10; i++) {
+              //    console.log("line: " + i + " y: " + storedVFStave.getYForLine(i));
+              // }
+              var lineSpacing = storedVFStave.options.spacing_between_lines_px;
+              var linesAboveStaff = storedVFStave.options.space_above_staff_ln;
+
+              var notesFromTop = yPxScaled * 2 / lineSpacing;
+              var notesAboveLowestLine = (storedVFStave.options.num_lines - 1 + linesAboveStaff) * 2 - notesFromTop;
+              var clickedDiatonicNoteNum = this.stream.clef.lowestLine + Math.round(notesAboveLowestLine);
+              return clickedDiatonicNoteNum;
+          }
+          /**
+           *
+           * Return the note at pixel X (or within allowablePixels [default 10])
+           * of the note.
+           *
+           * systemIndex element is not used on bare Stream
+            * @memberof music21.stream.Stream
+           * @param {number} xPxScaled
+           * @param {number} [allowablePixels=10]
+           * @param {number} [unused_systemIndex]
+           * @returns {music21.base.Music21Object|undefined}
+           */
+
+      }, {
+          key: 'noteElementFromScaledX',
+          value: function noteElementFromScaledX(xPxScaled, allowablePixels, unused_systemIndex) {
+              var s = this.stream;
+              var foundNote = void 0;
+              if (allowablePixels === undefined) {
+                  allowablePixels = 10;
+              }
+
+              for (var i = 0; i < s.length; i++) {
+                  var n = s.get(i);
+                  /* should also
+                   * compensate for accidentals...
+                   */
+                  if (xPxScaled > n.x - allowablePixels && xPxScaled < n.x + n.width + allowablePixels) {
+                      foundNote = n;
+                      break; /* O(n); can be made O(log n) */
+                  }
+              }
+              // console.log(n.pitch.nameWithOctave);
+              return foundNote;
+          }
+
+          /**
+           * return a list of [scaledX, scaledY] for
+           * a canvas element.
+           *
+           * xScaled refers to 1/scaleFactor.x -- for instance, scaleFactor.x = 0.7 (default)
+           * x of 1 gives 1.42857...
+           *
+           * @memberof music21.stream.Stream
+           * @param {DOMObject} canvas
+           * @param {Event} e
+           * @returns {Array<number>} [scaledX, scaledY]
+           */
+
+      }, {
+          key: 'getScaledXYforCanvas',
+          value: function getScaledXYforCanvas(canvas, e) {
+              var _getUnscaledXYforCanv = this.getUnscaledXYforCanvas(canvas, e),
+                  _getUnscaledXYforCanv2 = slicedToArray(_getUnscaledXYforCanv, 2),
+                  xPx = _getUnscaledXYforCanv2[0],
+                  yPx = _getUnscaledXYforCanv2[1];
+
+              var pixelScaling = this.stream.renderOptions.scaleFactor;
+
+              var yPxScaled = yPx / pixelScaling.y;
+              var xPxScaled = xPx / pixelScaling.x;
+              return [xPxScaled, yPxScaled];
+          }
+          /**
+           * Given a mouse click, or other event with .pageX and .pageY,
+           * find the x and y for the canvas.
+           *
+           * @memberof music21.stream.Stream
+           * @param {DOMObject} canvas
+           * @param {Event} e
+           * @returns {Array<number>} two-elements, [x, y] in pixels.
+           */
+
+      }, {
+          key: 'getUnscaledXYforCanvas',
+          value: function getUnscaledXYforCanvas(canvas, e) {
+              var offset = null;
+              if (canvas === undefined) {
+                  offset = { left: 0, top: 0 };
+              } else {
+                  offset = $$1(canvas).offset();
+              }
+              /*
+               * mouse event handler code from: http://diveintohtml5.org/canvas.html
+               */
+              var xClick = void 0;
+              var yClick = void 0;
+              if (e.pageX !== undefined && e.pageY !== undefined) {
+                  xClick = e.pageX;
+                  yClick = e.pageY;
+              } else {
+                  xClick = e.clientX + document.body.scrollLeft + document.documentElement.scrollLeft;
+                  yClick = e.clientY + document.body.scrollTop + document.documentElement.scrollTop;
+              }
+              var xPx = xClick - offset.left;
+              var yPx = yClick - offset.top;
+              return [xPx, yPx];
+          }
+
+          /**
+           * Renders a stream on a canvas with the ability to edit it and
+           * a toolbar that allows the accidentals to be edited.
+           *
+           * @memberof music21.stream.Stream
+           * @param {number} [width]
+           * @param {number} [height]
+           * @returns {DOMObject} &lt;div&gt; tag around the canvas.
+           */
+
+      }, {
+          key: 'editableAccidentalCanvas',
+          value: function editableAccidentalCanvas(width, height) {
+              /*
+               * Create an editable canvas with an accidental selection bar.
+               */
+              var d = $$1('<div/>').css('text-align', 'left').css('position', 'relative');
+              var buttonDiv = this.getAccidentalToolbar();
+              d.append(buttonDiv);
+              d.append($$1("<br clear='all'/>"));
+              this.activateClick();
+              this.stream.appendNewCanvas(d, width, height);
+              return d;
+          }
+
+          /**
+           * activateClick - sets the stream's renderOptions to activate clickFunction.
+           *
+           * @param  {undefined|function} clickFunction  arrow function to be called
+           *                                              (default changeClickedNoteFromEvent)
+           * @return {undefined}
+           */
+
+      }, {
+          key: 'activateClick',
+          value: function activateClick(clickFunction) {
+              var _this = this;
+
+              if (clickFunction === undefined) {
+                  clickFunction = function clickFunction(e) {
+                      return _this.changeClickedNoteFromEvent(e);
+                  };
+              }
+              this.stream.renderOptions.events.click = function (e) {
+                  return clickFunction(e);
+              };
+          }
+          /**
+           *
+           * @memberof music21.stream.Stream
+           * @param {Int} minAccidental - alter of the min accidental (default -1)
+           * @param {Int} maxAccidental - alter of the max accidental (default 1)
+           * @param {jQueryObject} $siblingCanvas - canvas to use for redrawing;
+           * @returns {jQueryObject} the accidental toolbar.
+           */
+
+      }, {
+          key: 'getAccidentalToolbar',
+          value: function getAccidentalToolbar(minAccidental, maxAccidental, $siblingCanvas) {
+              var _this2 = this;
+
+              if (minAccidental === undefined) {
+                  minAccidental = -1;
+              }
+              if (maxAccidental === undefined) {
+                  maxAccidental = 1;
+              }
+              minAccidental = Math.round(minAccidental);
+              maxAccidental = Math.round(maxAccidental);
+
+              var $buttonDiv = $$1('<div/>').attr('class', 'accidentalToolbar scoreToolbar');
+
+              var _loop = function _loop(i) {
+                  var acc = new pitch.Accidental(i);
+                  $buttonDiv.append($$1('<button>' + acc.unicodeModifier + '</button>').click(function (e) {
+                      return _this2.addAccidental(i, e, $siblingCanvas);
+                  }));
+              };
+
+              for (var i = minAccidental; i <= maxAccidental; i++) {
+                  _loop(i);
+              }
+              return $buttonDiv;
+          }
+      }, {
+          key: 'addAccidental',
+          value: function addAccidental(newAlter, clickEvent, $useCanvas) {
+              /*
+               * To be called on a button...
+               */
+              if ($useCanvas === undefined) {
+                  var $searchParent = $$1(clickEvent.target).parent();
+                  while ($searchParent !== undefined && ($useCanvas === undefined || $useCanvas[0] === undefined)) {
+                      $useCanvas = $searchParent.find('canvas');
+                      $searchParent = $searchParent.parent();
+                  }
+                  if ($useCanvas[0] === undefined) {
+                      console.log('Could not find a canvas...');
+                      return;
+                  }
+              }
+              if (this.activeNote !== undefined) {
+                  var n = this.activeNote;
+                  n.pitch.accidental = new pitch.Accidental(newAlter);
+                  /* console.log(n.pitch.name); */
+                  this.stream.redrawCanvas($useCanvas[0]);
+                  if (this.changedCallbackFunction !== undefined) {
+                      this.changedCallbackFunction({ canvas: $useCanvas[0] });
+                  }
+              }
+          }
+      }]);
+      return SimpleNoteEditor;
+  }();
+
+  streamInteraction.SimpleNoteEditor = SimpleNoteEditor;
+
+  var GrandStaffEditor = function GrandStaffEditor(s) {
+      classCallCheck(this, GrandStaffEditor);
+
+      this.stream = s;
+      if (s.elements.length !== 2) {
+          throw new StreamException('Stream must be a grand staff!');
+      }
+  };
+
+  streamInteraction.GrandStaffEditor = GrandStaffEditor;
 
   /**
    * for rendering vexflow. Will eventually go to music21/converter/vexflow
@@ -11303,6 +11663,22 @@
               this._duration = newDuration;
           }
       }, {
+          key: 'highestTime',
+          get: function get() {
+              var highestTime = 0.0;
+              for (var i = 0; i < this.length; i++) {
+                  var el = this.get(i);
+                  var endTime = el.offset;
+                  if (el.duration !== undefined) {
+                      endTime += el.duration.quarterLength;
+                  }
+                  if (endTime > highestTime) {
+                      highestTime = endTime;
+                  }
+              }
+              return highestTime;
+          }
+      }, {
           key: 'flat',
           get: function get() {
               if (this.hasSubStreams()) {
@@ -12214,9 +12590,10 @@
   // future -- rewrite of Score and Part to Page, System, SystemPart
   // not currently used
   // import * as $ from 'jquery';
-  // import { base } from './base';
-  // import { renderOptions } from './renderOptions';
-  // import { common } from './common';
+  //
+  // import { base } from './base.js';
+  // import { renderOptions } from './renderOptions.js';
+  // import { common } from './common.js';
   /**
    * Does not work yet, so not documented
    *

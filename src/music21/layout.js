@@ -1,10 +1,11 @@
 // future -- rewrite of Score and Part to Page, System, SystemPart
 // not currently used
 // import * as $ from 'jquery';
-// import { base } from './base';
-// import { renderOptions } from './renderOptions';
-import { stream } from './stream';
-// import { common } from './common';
+//
+// import { base } from './base.js';
+// import { renderOptions } from './renderOptions.js';
+import { stream } from './stream.js';
+// import { common } from './common.js';
 /**
  * Does not work yet, so not documented
  *

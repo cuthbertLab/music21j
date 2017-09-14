@@ -6,9 +6,9 @@
  * Based on music21, Copyright (c) 2006–16, Michael Scott Cuthbert and cuthbertLab
  *
  */
-import { Music21Exception } from './exceptions21';
+import { Music21Exception } from './exceptions21.js';
 
-import { prebase } from './prebase';
+import { prebase } from './prebase.js';
 /**
  * pitch module.  See {@link music21.pitch} namespace
  *

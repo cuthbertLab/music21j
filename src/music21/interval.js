@@ -6,9 +6,9 @@
  * Based on music21 (=music21p), Copyright (c) 2006-16, Michael Scott Cuthbert and cuthbertLab
  *
  */
-import { debug } from './debug';
-import { prebase } from './prebase';
-import { pitch } from './pitch';
+import { debug } from './debug.js';
+import { prebase } from './prebase.js';
+import { pitch } from './pitch.js';
 
 /**
  * interval module. See {@link music21.interval} for namespace
@@ -802,4 +802,3 @@ interval._getSpecifierFromGenericChromatic = function _getSpecifierFromGenericCh
     }
     return specifier;
 };
-

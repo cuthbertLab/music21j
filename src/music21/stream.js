@@ -11,19 +11,19 @@
 import * as $ from 'jquery';
 import * as MIDI from 'MIDI';
 
-import { Music21Exception } from './exceptions21';
+import { Music21Exception } from './exceptions21.js';
 
-import { base } from './base';
-import { clef } from './clef';
-import { common } from './common';
-import { debug } from './debug';
-import { duration } from './duration';
-import { instrument } from './instrument';
-import { meter } from './meter';
-import { pitch } from './pitch';
-import { renderOptions } from './renderOptions';
-import { streamInteraction } from './streamInteraction';
-import { vfShow } from './vfShow';
+import { base } from './base.js';
+import { clef } from './clef.js';
+import { common } from './common.js';
+import { debug } from './debug.js';
+import { duration } from './duration.js';
+import { instrument } from './instrument.js';
+import { meter } from './meter.js';
+import { pitch } from './pitch.js';
+import { renderOptions } from './renderOptions.js';
+import { streamInteraction } from './streamInteraction.js';
+import { vfShow } from './vfShow.js';
 
 /**
  * powerful stream module, See {@link music21.stream} namespace
@@ -139,6 +139,20 @@ export class Stream extends base.Music21Object {
     }
     set duration(newDuration) {
         this._duration = newDuration;
+    }
+    get highestTime() {
+        let highestTime = 0.0;
+        for (let i = 0; i < this.length; i++) {
+            const el = this.get(i);
+            let endTime = el.offset;
+            if (el.duration !== undefined) {
+                endTime += el.duration.quarterLength;
+            }
+            if (endTime > highestTime) {
+                highestTime = endTime;
+            }
+        }
+        return highestTime;
     }
 
     get flat() {
