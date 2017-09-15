@@ -66,6 +66,7 @@ export const stream = {};
  * @property {Array<music21.base.Music21Object>} elements - the elements in the stream. DO NOT MODIFY individual components (consider it like a Python tuple)
  * @property {Int} length - (readonly) the number of elements in the stream.
  * @property {music21.duration.Duration} duration - the total duration of the stream's elements
+ * @property {number} highestTime -- the highest time point in the stream's elements
  * @property {music21.clef.Clef} clef - the clef for the Stream (if there is one; if there are multiple, then the first clef)
  * @property {music21.meter.TimeSignature} timeSignature - the first TimeSignature of the Stream
  * @property {music21.key.KeySignature} keySignature - the first KeySignature for the Stream
@@ -1367,6 +1368,25 @@ export class Stream extends base.Music21Object {
     }
 
     /**
+     * Returns the stream that is at X location xPxScaled and system systemIndex.
+     *
+     * Override in subclasses, always returns this; here.
+     *
+     * @memberof music21.stream.Stream
+     * @param {number} [xPxScaled]
+     * @param {number} [allowablePixels=10]
+     * @param {number} [systemIndex]
+     * @returns {music21.stream.Stream}
+     *
+     */
+    getStreamFromScaledXandSystemIndex(
+            xPxScaled,
+            allowablePixels,
+            systemIndex) {
+        return this;
+    }
+
+    /**
      *
      * Return the note at pixel X (or within allowablePixels [default 10])
      * of the note.
@@ -1376,17 +1396,19 @@ export class Stream extends base.Music21Object {
      * @memberof music21.stream.Stream
      * @param {number} xPxScaled
      * @param {number} [allowablePixels=10]
-     * @param {number} [unused_systemIndex]
+     * @param {number} [systemIndex]
      * @returns {music21.base.Music21Object|undefined}
      */
-    noteElementFromScaledX(xPxScaled, allowablePixels, unused_systemIndex) {
+    noteElementFromScaledX(xPxScaled, allowablePixels, systemIndex) {
         let foundNote;
         if (allowablePixels === undefined) {
             allowablePixels = 10;
         }
-
-        for (let i = 0; i < this.length; i++) {
-            const n = this.get(i);
+        const subStream = this.getStreamFromScaledXandSystemIndex(
+            xPxScaled, allowablePixels, systemIndex
+        );
+        for (let i = 0; i < subStream.length; i++) {
+            const n = subStream.get(i);
             /* should also
              * compensate for accidentals...
              */
@@ -1959,17 +1981,10 @@ export class Part extends Stream {
         return [clickedDiatonicNoteNum, foundNote];
     }
 
-    /**
-     * Override the noteElementFromScaledX for Stream
-     * to take into account sub measures...
-     *
-     * @memberof music21.stream.Part
-     * @param {number} scaledX
-     * @param {number} allowablePixels
-     * @param {Int} systemIndex
-     * @returns {music21.base.Music21Object|undefined}
-     */
-    noteElementFromScaledX(scaledX, allowablePixels, systemIndex) {
+    getStreamFromScaledXandSystemIndex(
+            xPxScaled,
+            allowablePixels,
+            systemIndex) {
         let gotMeasure;
         for (let i = 0; i < this.length; i++) {
             // TODO: if not measure, do not crash...
@@ -1980,12 +1995,12 @@ export class Part extends Stream {
             const top = rendOp.top;
             const bottom = top + rendOp.height;
             if (debug) {
-                console.log('Searching for X:' + Math.round(scaledX) +
+                console.log('Searching for X:' + Math.round(xPxScaled) +
                         ' in M ' + i +
                         ' with boundaries L:' + left + ' R:' + right +
                         ' T: ' + top + ' B: ' + bottom);
             }
-            if (scaledX >= left && scaledX <= right) {
+            if (xPxScaled >= left && xPxScaled <= right) {
                 if (systemIndex === undefined) {
                     gotMeasure = m;
                     break;
@@ -1995,13 +2010,8 @@ export class Part extends Stream {
                 }
             }
         }
-        if (gotMeasure) {
-            return gotMeasure.noteElementFromScaledX(scaledX, allowablePixels);
-        } else {
-            return undefined;
-        }
+        return gotMeasure;
     }
-
 }
 stream.Part = Part;
 

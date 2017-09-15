@@ -9982,6 +9982,7 @@
    * @property {Array<music21.base.Music21Object>} elements - the elements in the stream. DO NOT MODIFY individual components (consider it like a Python tuple)
    * @property {Int} length - (readonly) the number of elements in the stream.
    * @property {music21.duration.Duration} duration - the total duration of the stream's elements
+   * @property {number} highestTime -- the highest time point in the stream's elements
    * @property {music21.clef.Clef} clef - the clef for the Stream (if there is one; if there are multiple, then the first clef)
    * @property {music21.meter.TimeSignature} timeSignature - the first TimeSignature of the Stream
    * @property {music21.key.KeySignature} keySignature - the first KeySignature for the Stream
@@ -11186,6 +11187,25 @@
           }
 
           /**
+           * Returns the stream that is at X location xPxScaled and system systemIndex.
+           *
+           * Override in subclasses, always returns this; here.
+           *
+           * @memberof music21.stream.Stream
+           * @param {number} [xPxScaled]
+           * @param {number} [allowablePixels=10]
+           * @param {number} [systemIndex]
+           * @returns {music21.stream.Stream}
+           *
+           */
+
+      }, {
+          key: 'getStreamFromScaledXandSystemIndex',
+          value: function getStreamFromScaledXandSystemIndex(xPxScaled, allowablePixels, systemIndex) {
+              return this;
+          }
+
+          /**
            *
            * Return the note at pixel X (or within allowablePixels [default 10])
            * of the note.
@@ -11194,20 +11214,20 @@
             * @memberof music21.stream.Stream
            * @param {number} xPxScaled
            * @param {number} [allowablePixels=10]
-           * @param {number} [unused_systemIndex]
+           * @param {number} [systemIndex]
            * @returns {music21.base.Music21Object|undefined}
            */
 
       }, {
           key: 'noteElementFromScaledX',
-          value: function noteElementFromScaledX(xPxScaled, allowablePixels, unused_systemIndex) {
+          value: function noteElementFromScaledX(xPxScaled, allowablePixels, systemIndex) {
               var foundNote = void 0;
               if (allowablePixels === undefined) {
                   allowablePixels = 10;
               }
-
-              for (var i = 0; i < this.length; i++) {
-                  var n = this.get(i);
+              var subStream = this.getStreamFromScaledXandSystemIndex(xPxScaled, allowablePixels, systemIndex);
+              for (var i = 0; i < subStream.length; i++) {
+                  var n = subStream.get(i);
                   /* should also
                    * compensate for accidentals...
                    */
@@ -12086,21 +12106,9 @@
               var foundNote = this.noteElementFromScaledX(x, undefined, systemIndex);
               return [clickedDiatonicNoteNum, foundNote];
           }
-
-          /**
-           * Override the noteElementFromScaledX for Stream
-           * to take into account sub measures...
-           *
-           * @memberof music21.stream.Part
-           * @param {number} scaledX
-           * @param {number} allowablePixels
-           * @param {Int} systemIndex
-           * @returns {music21.base.Music21Object|undefined}
-           */
-
       }, {
-          key: 'noteElementFromScaledX',
-          value: function noteElementFromScaledX(scaledX, allowablePixels, systemIndex) {
+          key: 'getStreamFromScaledXandSystemIndex',
+          value: function getStreamFromScaledXandSystemIndex(xPxScaled, allowablePixels, systemIndex) {
               var gotMeasure = void 0;
               for (var i = 0; i < this.length; i++) {
                   // TODO: if not measure, do not crash...
@@ -12111,9 +12119,9 @@
                   var top = rendOp.top;
                   var bottom = top + rendOp.height;
                   if (debug) {
-                      console.log('Searching for X:' + Math.round(scaledX) + ' in M ' + i + ' with boundaries L:' + left + ' R:' + right + ' T: ' + top + ' B: ' + bottom);
+                      console.log('Searching for X:' + Math.round(xPxScaled) + ' in M ' + i + ' with boundaries L:' + left + ' R:' + right + ' T: ' + top + ' B: ' + bottom);
                   }
-                  if (scaledX >= left && scaledX <= right) {
+                  if (xPxScaled >= left && xPxScaled <= right) {
                       if (systemIndex === undefined) {
                           gotMeasure = m;
                           break;
@@ -12123,11 +12131,7 @@
                       }
                   }
               }
-              if (gotMeasure) {
-                  return gotMeasure.noteElementFromScaledX(scaledX, allowablePixels);
-              } else {
-                  return undefined;
-              }
+              return gotMeasure;
           }
       }]);
       return Part;
