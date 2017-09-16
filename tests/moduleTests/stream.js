@@ -22,6 +22,7 @@ export default function tests() {
         const n =  new music21.note.Note('F5');
         n.duration.type = 'half';
         s.append(n);
+        assert.equal(s.highestTime, 3.0);
         assert.equal(s.duration.quarterLength, 3.0, '3 quarter QuarterLength');
 
         s.duration = new music21.duration.Duration(3.0);

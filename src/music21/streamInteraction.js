@@ -528,7 +528,11 @@ export class SimpleNoteEditor {
         const n = foundNote;
         const p = new pitch.Pitch('C');
         p.diatonicNoteNum = clickedDiatonicNoteNum;
-        p.accidental = n.pitch.accidental;
+        if (n.pitch.accidental === undefined && this.stream.keySignature !== undefined) {
+            p.accidental = this.stream.keySignature.accidentalByStep(p.step);
+        } else {
+            p.accidental = n.pitch.accidental;
+        }
         n.pitch = p;
         n.stemDirection = undefined;
         this.activeNote = n;
@@ -553,13 +557,13 @@ export class SimpleNoteEditor {
         /*
          * Create an editable canvas with an accidental selection bar.
          */
-        const d = $('<div/>').css('text-align', 'left').css('position', 'relative');
-        const buttonDiv = this.getAccidentalToolbar();
-        d.append(buttonDiv);
-        d.append($("<br clear='all'/>"));
+        const $d = $('<div/>').css('text-align', 'left').css('position', 'relative');
+        const $buttonDiv = this.getAccidentalToolbar();
+        $d.append($buttonDiv);
+        $d.append($("<br clear='all'/>"));
         this.activateClick();
-        this.stream.appendNewCanvas(d, width, height);
-        return d;
+        this.stream.appendNewCanvas($d, width, height);
+        return $d;
     }
 
     /**
@@ -667,6 +671,7 @@ export class FourPartEditor extends GrandStaffEditor {
         }
         this.activePart = this.parts.get(0);
         this.activeMeasureIndex = 0;
+        this.activeNoteIndex = 0;
         this.activeVoice = this.activePart.measures.get(0).voices.get(0);
         this.activeVoiceNumber = 0; // 0, 1, 2, 3
         this.buttons = [];
@@ -676,13 +681,78 @@ export class FourPartEditor extends GrandStaffEditor {
         /*
          * Create an editable canvas with an accidental selection bar.
          */
-        const d = $('<div/>').css('text-align', 'left').css('position', 'relative');
-        const buttonDiv = this.voiceSelectionToolbar();
-        d.append(buttonDiv);
-        d.append($("<br clear='all'/>"));
+        const $d = $('<div/>').css('text-align', 'left').css('position', 'relative');
+        const $buttonDivPlay = this.stream.getPlayToolbar();
+        $buttonDivPlay.addClass('inlineBlock');
+        $buttonDivPlay.css({
+            'margin-right': '12px',
+        });
+        $d.append($buttonDivPlay);
+        const $buttonDiv = this.getAccidentalToolbar();
+        $buttonDiv.addClass('inlineBlock');
+        $buttonDiv.css({
+            'margin-right': '12px',
+        });
+        $d.append($buttonDiv);
+        const $voiceDiv = this.voiceSelectionToolbar();
+        $voiceDiv.addClass('inlineBlock');
+        $voiceDiv.css({
+            'margin-right': '12px',
+        });
+        $d.append($voiceDiv);
+        $d.append($("<br clear='all'/>"));
         this.activateClick();
-        this.stream.appendNewCanvas(d, width, height);
-        return d;
+        this.stream.appendNewCanvas($d, width, height);
+        return $d;
+    }
+
+    /**
+     * A function bound to the current stream that
+     * will changes the stream. Used in editableAccidentalCanvas, among other places.
+     *
+     *      var can = s.appendNewCanvas();
+     *      $(can).on('click', s.changeClickedNoteFromEvent);
+     *
+     * @memberof music21.stream.Stream
+     * @param {Event} e
+     * @returns {music21.base.Music21Object|undefined} - returns whatever changedCallbackFunction does.
+     */
+    changeClickedNoteFromEvent(e) {
+        const canvasElement = e.currentTarget;
+        const [unused_wrong_dnn, foundNote] = this.activeVoice.findNoteForClick(canvasElement, e);
+        const [clickedDiatonicNoteNum, unused_wrong_note] = this.stream.findNoteForClick(canvasElement, e);
+
+        if (foundNote === undefined) {
+            if (debug) {
+                console.log('No note found');
+            }
+            return undefined;
+        }
+        return this.noteChanged(clickedDiatonicNoteNum, foundNote, canvasElement);
+    }
+
+    noteChanged(clickedDiatonicNoteNum, foundNote, canvas) {
+        const n = foundNote;
+        const p = new pitch.Pitch('C');
+        p.diatonicNoteNum = clickedDiatonicNoteNum;
+        if (n.pitch.accidental === undefined && this.stream.keySignature !== undefined) {
+            p.accidental = this.stream.keySignature.accidentalByStep(p.step);
+        } else {
+            p.accidental = n.pitch.accidental;
+        }
+        n.pitch = p;
+        if (this.activeVoiceNumber === 0 || this.activeVoiceNumber === 2) {
+            n.stemDirection = 'up';
+        } else {
+            n.stemDirection = 'down';
+        }
+        this.activeNote = n;
+        this.stream.redrawCanvas(canvas);
+        if (this.changedCallbackFunction !== undefined) {
+            return this.changedCallbackFunction({ foundNote: n, canvas });
+        } else {
+            return undefined;
+        }
     }
 
 
@@ -717,6 +787,7 @@ export class FourPartEditor extends GrandStaffEditor {
                 .measures.get(this.activeMeasureIndex)
                 .voices.get(newVoice - 2);
         }
+        this.activeNote = this.activeVoice.notes.get(0);
     }
 }
 

@@ -1,5 +1,5 @@
 /**
- * music21j 0.9.0 built on  * 2017-09-15.
+ * music21j 0.9.0 built on  * 2017-09-16.
  * Copyright (c) 2013-2016 Michael Scott Cuthbert and cuthbertLab
  * BSD License, see LICENSE
  *
@@ -8639,7 +8639,11 @@
               var n = foundNote;
               var p = new pitch.Pitch('C');
               p.diatonicNoteNum = clickedDiatonicNoteNum;
-              p.accidental = n.pitch.accidental;
+              if (n.pitch.accidental === undefined && this.stream.keySignature !== undefined) {
+                  p.accidental = this.stream.keySignature.accidentalByStep(p.step);
+              } else {
+                  p.accidental = n.pitch.accidental;
+              }
               n.pitch = p;
               n.stemDirection = undefined;
               this.activeNote = n;
@@ -8667,13 +8671,13 @@
               /*
                * Create an editable canvas with an accidental selection bar.
                */
-              var d = $('<div/>').css('text-align', 'left').css('position', 'relative');
-              var buttonDiv = this.getAccidentalToolbar();
-              d.append(buttonDiv);
-              d.append($("<br clear='all'/>"));
+              var $d = $('<div/>').css('text-align', 'left').css('position', 'relative');
+              var $buttonDiv = this.getAccidentalToolbar();
+              $d.append($buttonDiv);
+              $d.append($("<br clear='all'/>"));
               this.activateClick();
-              this.stream.appendNewCanvas(d, width, height);
-              return d;
+              this.stream.appendNewCanvas($d, width, height);
+              return $d;
           }
 
           /**
@@ -8814,6 +8818,7 @@
           }
           _this4.activePart = _this4.parts.get(0);
           _this4.activeMeasureIndex = 0;
+          _this4.activeNoteIndex = 0;
           _this4.activeVoice = _this4.activePart.measures.get(0).voices.get(0);
           _this4.activeVoiceNumber = 0; // 0, 1, 2, 3
           _this4.buttons = [];
@@ -8826,13 +8831,90 @@
               /*
                * Create an editable canvas with an accidental selection bar.
                */
-              var d = $('<div/>').css('text-align', 'left').css('position', 'relative');
-              var buttonDiv = this.voiceSelectionToolbar();
-              d.append(buttonDiv);
-              d.append($("<br clear='all'/>"));
+              var $d = $('<div/>').css('text-align', 'left').css('position', 'relative');
+              var $buttonDivPlay = this.stream.getPlayToolbar();
+              $buttonDivPlay.addClass('inlineBlock');
+              $buttonDivPlay.css({
+                  'margin-right': '12px'
+              });
+              $d.append($buttonDivPlay);
+              var $buttonDiv = this.getAccidentalToolbar();
+              $buttonDiv.addClass('inlineBlock');
+              $buttonDiv.css({
+                  'margin-right': '12px'
+              });
+              $d.append($buttonDiv);
+              var $voiceDiv = this.voiceSelectionToolbar();
+              $voiceDiv.addClass('inlineBlock');
+              $voiceDiv.css({
+                  'margin-right': '12px'
+              });
+              $d.append($voiceDiv);
+              $d.append($("<br clear='all'/>"));
               this.activateClick();
-              this.stream.appendNewCanvas(d, width, height);
-              return d;
+              this.stream.appendNewCanvas($d, width, height);
+              return $d;
+          }
+
+          /**
+           * A function bound to the current stream that
+           * will changes the stream. Used in editableAccidentalCanvas, among other places.
+           *
+           *      var can = s.appendNewCanvas();
+           *      $(can).on('click', s.changeClickedNoteFromEvent);
+           *
+           * @memberof music21.stream.Stream
+           * @param {Event} e
+           * @returns {music21.base.Music21Object|undefined} - returns whatever changedCallbackFunction does.
+           */
+
+      }, {
+          key: 'changeClickedNoteFromEvent',
+          value: function changeClickedNoteFromEvent(e) {
+              var canvasElement = e.currentTarget;
+
+              var _activeVoice$findNote = this.activeVoice.findNoteForClick(canvasElement, e),
+                  _activeVoice$findNote2 = slicedToArray(_activeVoice$findNote, 2),
+                  unused_wrong_dnn = _activeVoice$findNote2[0],
+                  foundNote = _activeVoice$findNote2[1];
+
+              var _stream$findNoteForCl3 = this.stream.findNoteForClick(canvasElement, e),
+                  _stream$findNoteForCl4 = slicedToArray(_stream$findNoteForCl3, 2),
+                  clickedDiatonicNoteNum = _stream$findNoteForCl4[0],
+                  unused_wrong_note = _stream$findNoteForCl4[1];
+
+              if (foundNote === undefined) {
+                  if (debug) {
+                      console.log('No note found');
+                  }
+                  return undefined;
+              }
+              return this.noteChanged(clickedDiatonicNoteNum, foundNote, canvasElement);
+          }
+      }, {
+          key: 'noteChanged',
+          value: function noteChanged(clickedDiatonicNoteNum, foundNote, canvas) {
+              var n = foundNote;
+              var p = new pitch.Pitch('C');
+              p.diatonicNoteNum = clickedDiatonicNoteNum;
+              if (n.pitch.accidental === undefined && this.stream.keySignature !== undefined) {
+                  p.accidental = this.stream.keySignature.accidentalByStep(p.step);
+              } else {
+                  p.accidental = n.pitch.accidental;
+              }
+              n.pitch = p;
+              if (this.activeVoiceNumber === 0 || this.activeVoiceNumber === 2) {
+                  n.stemDirection = 'up';
+              } else {
+                  n.stemDirection = 'down';
+              }
+              this.activeNote = n;
+              this.stream.redrawCanvas(canvas);
+              if (this.changedCallbackFunction !== undefined) {
+                  return this.changedCallbackFunction({ foundNote: n, canvas: canvas });
+              } else {
+                  return undefined;
+              }
           }
       }, {
           key: 'voiceSelectionToolbar',
@@ -8877,6 +8959,7 @@
                   this.activePart = this.parts.get(1);
                   this.activeVoice = this.activePart.measures.get(this.activeMeasureIndex).voices.get(newVoice - 2);
               }
+              this.activeNote = this.activeVoice.notes.get(0);
           }
       }]);
       return FourPartEditor;
@@ -10870,28 +10953,36 @@
                   startNote: undefined
               };
               common.merge(params, options);
-              var startNote = params.startNote;
-              var currentNote = 0;
-              if (startNote !== undefined) {
-                  currentNote = startNote;
+              var startNoteIndex = params.startNote;
+              var currentNoteIndex = 0;
+              if (startNoteIndex !== undefined) {
+                  currentNoteIndex = startNoteIndex;
               }
               var flatEls = this.flat.elements;
-              var lastNote = flatEls.length;
+              var lastNoteIndex = flatEls.length - 1;
               this._stopPlaying = false;
               var thisStream = this;
 
               var playNext = function playNext(elements, params) {
-                  if (currentNote < lastNote && !thisStream._stopPlaying) {
-                      var el = elements[currentNote];
+                  if (currentNoteIndex <= lastNoteIndex && !thisStream._stopPlaying) {
+                      var el = elements[currentNoteIndex];
                       var nextNote = void 0;
-                      if (currentNote < lastNote + 1) {
-                          nextNote = elements[currentNote + 1];
+                      var playDuration = void 0;
+                      if (currentNoteIndex < lastNoteIndex) {
+                          nextNote = elements[currentNoteIndex + 1];
+                          playDuration = nextNote.offset - el.offset;
+                      } else {
+                          playDuration = el.duration.quarterLength;
                       }
-                      var milliseconds = 0;
+                      var milliseconds = playDuration * 1000 * 60 / params.tempo;
+                      if (debug) {
+                          console.log('playing: ', el, playDuration, milliseconds, params.tempo);
+                      }
+
                       if (el.playMidi !== undefined) {
-                          milliseconds = el.playMidi(params.tempo, nextNote, params);
+                          el.playMidi(params.tempo, nextNote, params);
                       }
-                      currentNote += 1;
+                      currentNoteIndex += 1;
                       setTimeout(function () {
                           playNext(elements, params);
                       }, milliseconds);

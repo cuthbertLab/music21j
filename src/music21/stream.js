@@ -955,28 +955,36 @@ export class Stream extends base.Music21Object {
             startNote: undefined,
         };
         common.merge(params, options);
-        const startNote = params.startNote;
-        let currentNote = 0;
-        if (startNote !== undefined) {
-            currentNote = startNote;
+        const startNoteIndex = params.startNote;
+        let currentNoteIndex = 0;
+        if (startNoteIndex !== undefined) {
+            currentNoteIndex = startNoteIndex;
         }
         const flatEls = this.flat.elements;
-        const lastNote = flatEls.length;
+        const lastNoteIndex = flatEls.length - 1;
         this._stopPlaying = false;
         const thisStream = this;
 
         const playNext = function playNext(elements, params) {
-            if (currentNote < lastNote && !thisStream._stopPlaying) {
-                const el = elements[currentNote];
+            if (currentNoteIndex <= lastNoteIndex && !thisStream._stopPlaying) {
+                const el = elements[currentNoteIndex];
                 let nextNote;
-                if (currentNote < lastNote + 1) {
-                    nextNote = elements[currentNote + 1];
+                let playDuration;
+                if (currentNoteIndex < lastNoteIndex) {
+                    nextNote = elements[currentNoteIndex + 1];
+                    playDuration = nextNote.offset - el.offset;
+                } else {
+                    playDuration = el.duration.quarterLength;
                 }
-                let milliseconds = 0;
+                const milliseconds = playDuration * 1000 * 60 / params.tempo;
+                if (debug) {
+                    console.log('playing: ', el, playDuration, milliseconds, params.tempo);                    
+                }
+
                 if (el.playMidi !== undefined) {
-                    milliseconds = el.playMidi(params.tempo, nextNote, params);
+                    el.playMidi(params.tempo, nextNote, params);
                 }
-                currentNote += 1;
+                currentNoteIndex += 1;
                 setTimeout(() => { playNext(elements, params); }, milliseconds);
             } else if (params && params.done) {
                 params.done.call();

@@ -42,21 +42,29 @@
          v100.append(nt);
          v101.append(nb);
 
-         m10.insert(0, v100);
-         m10.insert(0, v101);
-
          m00.insert(0, v000);
          m00.insert(0, v001);
 
+         m10.insert(0, v100);
+         m10.insert(0, v101);
+
+         const m01 = m00.clone(true);
+         const m11 = m10.clone(true);
+
          p0.append(m00);
+         p0.append(m01);
          p1.append(m10);
+         p1.append(m11);
 
          s.insert(0, p0);
          s.insert(0, p1);
+         s.tempo = 60;
+         s.keySignature = new music21.key.Key('F');
 
          s.autoBeam = false; // important for not wiping out stem direction!
          // s.appendNewCanvas();
          fpe = new music21.streamInteraction.FourPartEditor(s);
+         fpe.activeMeasureIndex = 1;
          $vst = fpe.editableCanvas();
          $(document.body).append($vst);
      });
