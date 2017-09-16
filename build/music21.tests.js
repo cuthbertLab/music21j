@@ -1,5 +1,5 @@
 /**
- * music21j 0.9.0 built on  * 2017-09-14.
+ * music21j 0.9.0 built on  * 2017-09-15.
  * Copyright (c) 2013-2016 Michael Scott Cuthbert and cuthbertLab
  * BSD License, see LICENSE
  *
@@ -8736,19 +8736,29 @@
               return $buttonDiv;
           }
       }, {
+          key: 'getUseCanvasFromClickEvent',
+          value: function getUseCanvasFromClickEvent(clickEvent) {
+              var $searchParent = $$1(clickEvent.target).parent();
+              var $useCanvas = void 0;
+              while ($searchParent !== undefined && ($useCanvas === undefined || $useCanvas[0] === undefined)) {
+                  $useCanvas = $searchParent.find('canvas');
+                  $searchParent = $searchParent.parent();
+              }
+              if ($useCanvas[0] === undefined) {
+                  console.log('Could not find a canvas...');
+                  return undefined;
+              }
+              return $useCanvas;
+          }
+      }, {
           key: 'addAccidental',
           value: function addAccidental(newAlter, clickEvent, $useCanvas) {
               /*
                * To be called on a button...
                */
               if ($useCanvas === undefined) {
-                  var $searchParent = $$1(clickEvent.target).parent();
-                  while ($searchParent !== undefined && ($useCanvas === undefined || $useCanvas[0] === undefined)) {
-                      $useCanvas = $searchParent.find('canvas');
-                      $searchParent = $searchParent.parent();
-                  }
-                  if ($useCanvas[0] === undefined) {
-                      console.log('Could not find a canvas...');
+                  $useCanvas = this.getUseCanvasFromClickEvent(clickEvent);
+                  if ($useCanvas === undefined) {
                       return;
                   }
               }
@@ -8768,16 +8778,111 @@
 
   streamInteraction.SimpleNoteEditor = SimpleNoteEditor;
 
-  var GrandStaffEditor = function GrandStaffEditor(s) {
-      classCallCheck(this, GrandStaffEditor);
+  var GrandStaffEditor = function (_SimpleNoteEditor) {
+      inherits(GrandStaffEditor, _SimpleNoteEditor);
 
-      this.stream = s;
-      if (s.elements.length !== 2) {
-          throw new StreamException('Stream must be a grand staff!');
+      function GrandStaffEditor(s) {
+          classCallCheck(this, GrandStaffEditor);
+
+          var _this3 = possibleConstructorReturn(this, (GrandStaffEditor.__proto__ || Object.getPrototypeOf(GrandStaffEditor)).call(this, s));
+
+          if (s.parts.length !== 2) {
+              throw new StreamException('Stream must be a grand staff!');
+          }
+          return _this3;
       }
-  };
+
+      return GrandStaffEditor;
+  }(SimpleNoteEditor);
 
   streamInteraction.GrandStaffEditor = GrandStaffEditor;
+
+  var FourPartEditor = function (_GrandStaffEditor) {
+      inherits(FourPartEditor, _GrandStaffEditor);
+
+      function FourPartEditor(s) {
+          classCallCheck(this, FourPartEditor);
+
+          var _this4 = possibleConstructorReturn(this, (FourPartEditor.__proto__ || Object.getPrototypeOf(FourPartEditor)).call(this, s));
+
+          _this4.parts = s.parts;
+          for (var i = 0; i < _this4.parts.length; i++) {
+              var thisPart = _this4.parts.get(i);
+              if (thisPart.measures.get(0).voices.length !== 2) {
+                  throw new StreamException('Each part must have at least one measure with two voices');
+              }
+          }
+          _this4.activePart = _this4.parts.get(0);
+          _this4.activeMeasureIndex = 0;
+          _this4.activeVoice = _this4.activePart.measures.get(0).voices.get(0);
+          _this4.activeVoiceNumber = 0; // 0, 1, 2, 3
+          _this4.buttons = [];
+          return _this4;
+      }
+
+      createClass(FourPartEditor, [{
+          key: 'editableCanvas',
+          value: function editableCanvas(width, height) {
+              /*
+               * Create an editable canvas with an accidental selection bar.
+               */
+              var d = $$1('<div/>').css('text-align', 'left').css('position', 'relative');
+              var buttonDiv = this.voiceSelectionToolbar();
+              d.append(buttonDiv);
+              d.append($$1("<br clear='all'/>"));
+              this.activateClick();
+              this.stream.appendNewCanvas(d, width, height);
+              return d;
+          }
+      }, {
+          key: 'voiceSelectionToolbar',
+          value: function voiceSelectionToolbar() {
+              var _this5 = this;
+
+              this.buttons = [];
+              var $buttonDiv = $$1('<div/>').attr('class', 'voiceSelectionToolbar scoreToolbar');
+              var voiceNames = ['S', 'A', 'T', 'B'];
+              var _arr = [0, 1, 2, 3];
+
+              var _loop2 = function _loop2() {
+                  var i = _arr[_i];
+                  var $thisButton = $$1('<button>' + voiceNames[i] + '</button>').click(function () {
+                      return _this5.changeActiveVoice(i);
+                  });
+                  _this5.buttons.push($thisButton);
+                  $buttonDiv.append($thisButton);
+              };
+
+              for (var _i = 0; _i < _arr.length; _i++) {
+                  _loop2();
+              }
+              this.changeActiveVoice(0);
+              return $buttonDiv;
+          }
+      }, {
+          key: 'changeActiveVoice',
+          value: function changeActiveVoice(newVoice, $buttonDiv, clickEvent) {
+              var _arr2 = [0, 1, 2, 3];
+
+              for (var _i2 = 0; _i2 < _arr2.length; _i2++) {
+                  var _i3 = _arr2[_i2];
+                  this.buttons[_i3].css('background-color', 'white');
+              }
+              this.buttons[newVoice].css('background-color', 'red');
+              this.activeVoiceNumber = newVoice;
+              if (newVoice < 2) {
+                  this.activePart = this.parts.get(0);
+                  this.activeVoice = this.activePart.measures.get(this.activeMeasureIndex).voices.get(newVoice);
+              } else {
+                  this.activePart = this.parts.get(1);
+                  this.activeVoice = this.activePart.measures.get(this.activeMeasureIndex).voices.get(newVoice - 2);
+              }
+          }
+      }]);
+      return FourPartEditor;
+  }(GrandStaffEditor);
+
+  streamInteraction.FourPartEditor = FourPartEditor;
 
   /**
    * for rendering vexflow. Will eventually go to music21/converter/vexflow
@@ -9008,8 +9113,10 @@
           key: 'prepareScorelike',
           value: function prepareScorelike(s) {
               // console.log('prepareScorelike called');
-              for (var i = 0; i < s.length; i++) {
-                  var subStream = s.get(i);
+              //
+              var parts = s.parts;
+              for (var i = 0; i < parts.length; i++) {
+                  var subStream = parts.get(i);
                   this.preparePartlike(subStream);
               }
               this.addStaffConnectors(s);
@@ -9029,8 +9136,9 @@
           value: function preparePartlike(p) {
               // console.log('preparePartlike called');
               this.systemBreakOffsets = [];
-              for (var i = 0; i < p.length; i++) {
-                  var subStream = p.get(i);
+              var measureList = p.measures;
+              for (var i = 0; i < measureList.length; i++) {
+                  var subStream = measureList.get(i);
                   if (subStream.renderOptions.startNewSystem) {
                       this.systemBreakOffsets.push(subStream.offset);
                   }
@@ -9766,22 +9874,46 @@
               if (s === undefined) {
                   s = this.stream;
               }
-              var numParts = s.length;
+              var parts = s.parts;
+              var numParts = parts.length;
               if (numParts < 2) {
                   return;
               }
 
-              var firstPart = s.get(0);
-              var lastPart = s.get(-1);
-              var numMeasures = firstPart.length;
+              var firstPart = parts.get(0);
+              var lastPart = parts.get(-1);
+
+              var firstPartMeasures = firstPart.measures;
+              var lastPartMeasures = lastPart.measures;
+              var numMeasures = firstPartMeasures.length;
+
               for (var mIndex = 0; mIndex < numMeasures; mIndex++) {
-                  var thisPartMeasure = firstPart.get(mIndex);
-                  var lastPartMeasure = lastPart.get(mIndex); // only needed once per system but
+                  var thisPartMeasure = firstPartMeasures.get(mIndex);
+                  var lastPartMeasure = lastPartMeasures.get(mIndex); // only needed once per system but
                   // good for symmetry.
                   if (thisPartMeasure.renderOptions.startNewSystem) {
                       var topVFStaff = thisPartMeasure.activeVFStave;
                       var bottomVFStaff = lastPartMeasure.activeVFStave;
-                      /* TODO: warning if no staves... */
+                      if (topVFStaff === undefined) {
+                          if (thisPartMeasure.hasSubStreams()) {
+                              var thisPartVoice = thisPartMeasure.getElementsByClass('Stream').get(0);
+                              topVFStaff = thisPartVoice.activeVFStave;
+                              if (topVFStaff === undefined) {
+                                  console.warn('No active VexFlow Staves defined for at least one measure');
+                                  continue;
+                              }
+                          }
+                      }
+                      if (bottomVFStaff === undefined) {
+                          if (lastPartMeasure.hasSubStreams()) {
+                              var lastPartVoice = lastPartMeasure.getElementsByClass('Stream').get(0);
+                              bottomVFStaff = lastPartVoice.activeVFStave;
+                              if (bottomVFStaff === undefined) {
+                                  console.warn('No active VexFlow Staves defined for at least one measure');
+                                  continue;
+                              }
+                          }
+                      }
                       for (var i = 0; i < s.renderOptions.staffConnectors.length; i++) {
                           var sc = new Vex.Flow.StaveConnector(topVFStaff, bottomVFStaff);
                           var scTypeM21 = s.renderOptions.staffConnectors[i];
@@ -10456,7 +10588,7 @@
                       tempEls.push(thisEl);
                   }
               }
-              var newSt = new stream.Stream(); // TODO: take Stream class Part, etc.
+              var newSt = this.clone();
               newSt.elements = tempEls;
               return newSt;
           }
@@ -11680,29 +11812,17 @@
       }, {
           key: 'parts',
           get: function get() {
-              var parts = [];
-              for (var i = 0; i < this.length; i++) {
-                  var el = this.get(i);
-                  if (el.isClassOrSubclass('Part')) {
-                      parts.push(el);
-                  }
-              }
-              return parts;
+              return this.getElementsByClass('Part');
           }
-          /* TODO -- make it return a Stream.Part and not list. to match music21p
-           * but okay for now */
-
       }, {
           key: 'measures',
           get: function get() {
-              var measures = [];
-              for (var i = 0; i < this.length; i++) {
-                  var el = this.get(i);
-                  if (el.isClassOrSubclass('Measure')) {
-                      measures.push(el);
-                  }
-              }
-              return measures;
+              return this.getElementsByClass('Measure');
+          }
+      }, {
+          key: 'voices',
+          get: function get() {
+              return this.getElementsByClass('Voice');
           }
       }, {
           key: 'length',

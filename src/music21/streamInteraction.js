@@ -603,20 +603,29 @@ export class SimpleNoteEditor {
         return $buttonDiv;
     }
 
+    getUseCanvasFromClickEvent(clickEvent) {
+        let $searchParent = $(clickEvent.target).parent();
+        let $useCanvas;
+        while ($searchParent !== undefined
+                    && ($useCanvas === undefined
+                            || $useCanvas[0] === undefined)) {
+            $useCanvas = $searchParent.find('canvas');
+            $searchParent = $searchParent.parent();
+        }
+        if ($useCanvas[0] === undefined) {
+            console.log('Could not find a canvas...');
+            return undefined;
+        }
+        return $useCanvas;
+    }
+
     addAccidental(newAlter, clickEvent, $useCanvas) {
         /*
          * To be called on a button...
          */
         if ($useCanvas === undefined) {
-            let $searchParent = $(clickEvent.target).parent();
-            while ($searchParent !== undefined
-                        && ($useCanvas === undefined
-                                || $useCanvas[0] === undefined)) {
-                $useCanvas = $searchParent.find('canvas');
-                $searchParent = $searchParent.parent();
-            }
-            if ($useCanvas[0] === undefined) {
-                console.log('Could not find a canvas...');
+            $useCanvas = this.getUseCanvasFromClickEvent(clickEvent);
+            if ($useCanvas === undefined) {
                 return;
             }
         }
@@ -635,13 +644,80 @@ export class SimpleNoteEditor {
 
 streamInteraction.SimpleNoteEditor = SimpleNoteEditor;
 
-export class GrandStaffEditor {
+export class GrandStaffEditor extends SimpleNoteEditor {
     constructor(s) {
-        this.stream = s;
-        if (s.elements.length !== 2) {
+        super(s);
+        if (s.parts.length !== 2) {
             throw new StreamException('Stream must be a grand staff!');
         }
     }
 }
 
 streamInteraction.GrandStaffEditor = GrandStaffEditor;
+
+export class FourPartEditor extends GrandStaffEditor {
+    constructor(s) {
+        super(s);
+        this.parts = s.parts;
+        for (let i = 0; i < this.parts.length; i++) {
+            const thisPart = this.parts.get(i);
+            if (thisPart.measures.get(0).voices.length !== 2) {
+                throw new StreamException('Each part must have at least one measure with two voices');
+            }
+        }
+        this.activePart = this.parts.get(0);
+        this.activeMeasureIndex = 0;
+        this.activeVoice = this.activePart.measures.get(0).voices.get(0);
+        this.activeVoiceNumber = 0; // 0, 1, 2, 3
+        this.buttons = [];
+    }
+
+    editableCanvas(width, height) {
+        /*
+         * Create an editable canvas with an accidental selection bar.
+         */
+        const d = $('<div/>').css('text-align', 'left').css('position', 'relative');
+        const buttonDiv = this.voiceSelectionToolbar();
+        d.append(buttonDiv);
+        d.append($("<br clear='all'/>"));
+        this.activateClick();
+        this.stream.appendNewCanvas(d, width, height);
+        return d;
+    }
+
+
+    voiceSelectionToolbar() {
+        this.buttons = [];
+        const $buttonDiv = $('<div/>').attr('class', 'voiceSelectionToolbar scoreToolbar');
+        const voiceNames = ['S', 'A', 'T', 'B'];
+        for (const i of [0, 1, 2, 3]) {
+            const $thisButton = $('<button>' + voiceNames[i] + '</button>')
+                             .click(() => this.changeActiveVoice(i));
+            this.buttons.push($thisButton);
+            $buttonDiv.append($thisButton);
+        }
+        this.changeActiveVoice(0);
+        return $buttonDiv;
+    }
+
+    changeActiveVoice(newVoice, $buttonDiv, clickEvent) {
+        for (const i of [0, 1, 2, 3]) {
+            this.buttons[i].css('background-color', 'white');
+        }
+        this.buttons[newVoice].css('background-color', 'red');
+        this.activeVoiceNumber = newVoice;
+        if (newVoice < 2) {
+            this.activePart = this.parts.get(0);
+            this.activeVoice = this.activePart
+                .measures.get(this.activeMeasureIndex)
+                .voices.get(newVoice);
+        } else {
+            this.activePart = this.parts.get(1);
+            this.activeVoice = this.activePart
+                .measures.get(this.activeMeasureIndex)
+                .voices.get(newVoice - 2);
+        }
+    }
+}
+
+streamInteraction.FourPartEditor = FourPartEditor;

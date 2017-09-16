@@ -275,27 +275,16 @@ export class Stream extends base.Music21Object {
         this.renderOptions.maxSystemWidth = newSW * this.renderOptions.scaleFactor.x;
     }
     get parts() {
-        const parts = [];
-        for (let i = 0; i < this.length; i++) {
-            const el = this.get(i);
-            if (el.isClassOrSubclass('Part')) {
-                parts.push(el);
-            }
-        }
-        return parts;
+        return this.getElementsByClass('Part');
     }
-    /* TODO -- make it return a Stream.Part and not list. to match music21p
-     * but okay for now */
     get measures() {
-        const measures = [];
-        for (let i = 0; i < this.length; i++) {
-            const el = this.get(i);
-            if (el.isClassOrSubclass('Measure')) {
-                measures.push(el);
-            }
-        }
-        return measures;
+        return this.getElementsByClass('Measure');
     }
+    get voices() {
+        return this.getElementsByClass('Voice');
+    }
+
+
     get length() {
         return this._elements.length;
     }
@@ -636,6 +625,7 @@ export class Stream extends base.Music21Object {
         }
     }
 
+
     /**
      * Returns true if any note in the stream has lyrics, otherwise false
      *
@@ -703,7 +693,7 @@ export class Stream extends base.Music21Object {
                 tempEls.push(thisEl);
             }
         }
-        const newSt = new stream.Stream(); // TODO: take Stream class Part, etc.
+        const newSt = this.clone();
         newSt.elements = tempEls;
         return newSt;
     }

@@ -220,8 +220,10 @@ export class Renderer {
      */
     prepareScorelike(s) {
         // console.log('prepareScorelike called');
-        for (let i = 0; i < s.length; i++) {
-            const subStream = s.get(i);
+        //
+        const parts = s.parts;
+        for (let i = 0; i < parts.length; i++) {
+            const subStream = parts.get(i);
             this.preparePartlike(subStream);
         }
         this.addStaffConnectors(s);
@@ -238,8 +240,9 @@ export class Renderer {
     preparePartlike(p) {
         // console.log('preparePartlike called');
         this.systemBreakOffsets = [];
-        for (let i = 0; i < p.length; i++) {
-            const subStream = p.get(i);
+        const measureList = p.measures;
+        for (let i = 0; i < measureList.length; i++) {
+            const subStream = measureList.get(i);
             if (subStream.renderOptions.startNewSystem) {
                 this.systemBreakOffsets.push(subStream.offset);
             }
@@ -905,22 +908,46 @@ export class Renderer {
         if (s === undefined) {
             s = this.stream;
         }
-        const numParts = s.length;
+        const parts = s.parts;
+        const numParts = parts.length;
         if (numParts < 2) {
             return;
         }
 
-        const firstPart = s.get(0);
-        const lastPart = s.get(-1);
-        const numMeasures = firstPart.length;
+        const firstPart = parts.get(0);
+        const lastPart = parts.get(-1);
+
+        const firstPartMeasures = firstPart.measures;
+        const lastPartMeasures = lastPart.measures;
+        const numMeasures = firstPartMeasures.length;
+
         for (let mIndex = 0; mIndex < numMeasures; mIndex++) {
-            const thisPartMeasure = firstPart.get(mIndex);
-            const lastPartMeasure = lastPart.get(mIndex); // only needed once per system but
+            const thisPartMeasure = firstPartMeasures.get(mIndex);
+            const lastPartMeasure = lastPartMeasures.get(mIndex); // only needed once per system but
             // good for symmetry.
             if (thisPartMeasure.renderOptions.startNewSystem) {
-                const topVFStaff = thisPartMeasure.activeVFStave;
-                const bottomVFStaff = lastPartMeasure.activeVFStave;
-                /* TODO: warning if no staves... */
+                let topVFStaff = thisPartMeasure.activeVFStave;
+                let bottomVFStaff = lastPartMeasure.activeVFStave;
+                if (topVFStaff === undefined) {
+                    if (thisPartMeasure.hasSubStreams()) {
+                        const thisPartVoice = thisPartMeasure.getElementsByClass('Stream').get(0);
+                        topVFStaff = thisPartVoice.activeVFStave;
+                        if (topVFStaff === undefined) {
+                            console.warn('No active VexFlow Staves defined for at least one measure');
+                            continue;
+                        }
+                    }
+                }
+                if (bottomVFStaff === undefined) {
+                    if (lastPartMeasure.hasSubStreams()) {
+                        const lastPartVoice = lastPartMeasure.getElementsByClass('Stream').get(0);
+                        bottomVFStaff = lastPartVoice.activeVFStave;
+                        if (bottomVFStaff === undefined) {
+                            console.warn('No active VexFlow Staves defined for at least one measure');
+                            continue;
+                        }
+                    }
+                }
                 for (let i = 0; i < s.renderOptions.staffConnectors.length; i++) {
                     const sc = new Vex.Flow.StaveConnector(topVFStaff, bottomVFStaff);
                     const scTypeM21 = s.renderOptions.staffConnectors[i];

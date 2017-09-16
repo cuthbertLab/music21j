@@ -1,0 +1,74 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns = "http://www.w3.org/1999/xhtml">
+<head>
+ <title>Local Template for Music21j</title>
+ <link rel="stylesheet" href="../css/m21.css" type="text/css" />
+ <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+     <script data-main="../src/music21" src="../ext/require/require.js"></script>
+     <script>
+     require(['music21'], function() {
+         s = new music21.stream.Score();
+         const p0 = new music21.stream.Part();
+         p0.clef = new music21.clef.TrebleClef();
+         p0.timeSignature = new music21.meter.TimeSignature('2/4');
+         const p1 = new music21.stream.Part();
+         p1.clef = new music21.clef.BassClef();
+         p1.timeSignature = new music21.meter.TimeSignature('2/4');
+
+         const m00 = new music21.stream.Measure();
+         const v000 = new music21.stream.Voice();
+         const v001 = new music21.stream.Voice();
+
+         const m10 = new music21.stream.Measure();
+         const v100 = new music21.stream.Voice();
+         const v101 = new music21.stream.Voice();
+
+         const ns = new music21.note.Note('C5');
+         const na = new music21.note.Note('E4');
+         const nt = new music21.note.Note('C4');
+         const nb = new music21.note.Note('C3');
+
+         ns.stemDirection = 'up';
+         na.stemDirection = 'down';
+         nt.stemDirection = 'up';
+         nb.stemDirection = 'down';
+
+         for (const thisNote of [ns, na, nt, nb]) {
+             thisNote.duration.type = 'half';
+         }
+
+         v000.append(ns);
+         v001.append(na);
+         v100.append(nt);
+         v101.append(nb);
+
+         m10.insert(0, v100);
+         m10.insert(0, v101);
+
+         m00.insert(0, v000);
+         m00.insert(0, v001);
+
+         p0.append(m00);
+         p1.append(m10);
+
+         s.insert(0, p0);
+         s.insert(0, p1);
+
+         s.autoBeam = false; // important for not wiping out stem direction!
+         // s.appendNewCanvas();
+         fpe = new music21.streamInteraction.FourPartEditor(s);
+         $vst = fpe.editableCanvas();
+         $(document.body).append($vst);
+     });
+     </script>
+</head>
+<body>
+<div class="document">
+	<div class="bodywrapper">
+	  <div class="body" id="testBank">
+	  </div>
+	</div>
+</div>
+
+</body>
+</html>
