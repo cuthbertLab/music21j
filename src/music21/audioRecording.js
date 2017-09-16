@@ -32,24 +32,28 @@ export class Recorder {
      */
     initAudio() {
         this.polyfillNavigator();
-        navigator.getUserMedia({
-            'audio': {
-                'mandatory': {
-                    'googEchoCancellation': 'false',
-                    'googAutoGainControl': 'false',
-                    'googNoiseSuppression': 'false',
-                    'googHighpassFilter': 'false',
-                    // 'echoCancellation': false,
-                    // 'autoGainControl': false,
-                    // 'noiseSuppression': false,
-                    // 'highpassFilter': false,
+        navigator.getUserMedia(
+            {
+                audio: {
+                    mandatory: {
+                        googEchoCancellation: 'false',
+                        googAutoGainControl: 'false',
+                        googNoiseSuppression: 'false',
+                        googHighpassFilter: 'false',
+                        // 'echoCancellation': false,
+                        // 'autoGainControl': false,
+                        // 'noiseSuppression': false,
+                        // 'highpassFilter': false,
+                    },
+                    optional: [],
                 },
-                'optional': [],
             },
-        }, s => this.audioStreamConnected(s), error => {
-            console.log('Error getting audio -- try on google Chrome?');
-            console.log(error);
-        });
+            s => this.audioStreamConnected(s),
+            error => {
+                console.log('Error getting audio -- try on google Chrome?');
+                console.log(error);
+            }
+        );
     }
 
     /**
@@ -91,10 +95,9 @@ export class Recorder {
         this.setNode();
 
         // create a Worker with inline code...
-        const workerBlob = new Blob(['(',
-            recorderWorkerJs,
-            ')()',
-        ], { type: 'application/javascript' });
+        const workerBlob = new Blob(['(', recorderWorkerJs, ')()'], {
+            type: 'application/javascript',
+        });
         const workerURL = URL.createObjectURL(workerBlob);
         this.worker = new Worker(workerURL);
         /**
@@ -157,12 +160,14 @@ export class Recorder {
             this.node = this.context.createJavaScriptNode(
                 this.bufferLen,
                 numInputChannels,
-                numOutputChannels);
+                numOutputChannels
+            );
         } else {
             this.node = this.context.createScriptProcessor(
                 this.bufferLen,
                 numInputChannels,
-                numOutputChannels);
+                numOutputChannels
+            );
         }
         return this.node;
     }
@@ -177,7 +182,6 @@ export class Recorder {
             }
         }
     }
-
 
     record() {
         this.recording = true;
@@ -202,19 +206,23 @@ export class Recorder {
      */
     exportWAV(cb, type, isMono) {
         let command = 'exportWAV';
-        if (isMono === true) { // default false
+        if (isMono === true) {
+            // default false
             command = 'exportMonoWAV';
         }
         this.currCallback = cb || this.config.callback;
         type = type || this.config.type || 'audio/wav';
         if (!this.currCallback) {
             this.currCallback = blob => {
-                this.setupDownload(blob, 'myRecording' + Date.now().toString() + '.wav');
+                this.setupDownload(
+                    blob,
+                    'myRecording' + Date.now().toString() + '.wav'
+                );
             };
         }
         this.worker.postMessage({
-            'command': command,
-            'type': type,
+            command,
+            type,
         });
     }
 
@@ -236,10 +244,10 @@ export class Recorder {
      */
     polyfillNavigator() {
         if (!navigator.getUserMedia) {
-            navigator.getUserMedia = navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
+            navigator.getUserMedia
+                = navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
         }
     }
-
 
     updateAnalysers(time) {
         if (!this.frequencyCanvasInfo.canvasContext) {
@@ -256,12 +264,19 @@ export class Recorder {
         const SPACING = 3;
         const BAR_WIDTH = 1;
         const numBars = Math.round(this.frequencyCanvasInfo.width / SPACING);
-        const freqByteData = new Uint8Array(this.analyserNode.frequencyBinCount);
+        const freqByteData = new Uint8Array(
+            this.analyserNode.frequencyBinCount
+        );
 
         this.analyserNode.getByteFrequencyData(freqByteData);
 
         const canvasContext = this.frequencyCanvasInfo.canvasContext;
-        canvasContext.clearRect(0, 0, this.frequencyCanvasInfo.width, this.frequencyCanvasInfo.height);
+        canvasContext.clearRect(
+            0,
+            0,
+            this.frequencyCanvasInfo.width,
+            this.frequencyCanvasInfo.height
+        );
         canvasContext.fillStyle = '#F6D565';
         canvasContext.lineCap = 'round';
         const multiplier = this.analyserNode.frequencyBinCount / numBars;
@@ -273,8 +288,12 @@ export class Recorder {
             for (let j = 0; j < multiplier; j++) {
                 magnitude += freqByteData[offset + j];
             }
-            magnitude = magnitude * (this.frequencyCanvasInfo.height / 256) / multiplier;
-            canvasContext.fillStyle = 'hsl( ' + Math.round((i * 360) / numBars) + ', 100%, 50%)';
+            magnitude
+                = magnitude
+                * (this.frequencyCanvasInfo.height / 256)
+                / multiplier;
+            canvasContext.fillStyle
+                = 'hsl( ' + Math.round(i * 360 / numBars) + ', 100%, 50%)';
             canvasContext.fillRect(
                 i * SPACING,
                 this.frequencyCanvasInfo.height,
@@ -283,7 +302,9 @@ export class Recorder {
             );
         }
 
-        this.frequencyCanvasInfo.animationFrameID = window.requestAnimationFrame(t => this.updateAnalysers(t));
+        this.frequencyCanvasInfo.animationFrameID = window.requestAnimationFrame(
+            t => this.updateAnalysers(t)
+        );
     }
 
     drawWaveformCanvas(buffers) {
@@ -301,12 +322,17 @@ export class Recorder {
         const step = Math.ceil(data.length / this.waveformCanvasInfo.width);
         const amp = this.waveformCanvasInfo.height / 2;
         context.fillStyle = 'silver';
-        context.clearRect(0, 0, this.waveformCanvasInfo.width, this.waveformCanvasInfo.height);
+        context.clearRect(
+            0,
+            0,
+            this.waveformCanvasInfo.width,
+            this.waveformCanvasInfo.height
+        );
         for (let i = 0; i < this.waveformCanvasInfo.width; i++) {
             let min = 1.0;
             let max = -1.0;
             for (let j = 0; j < step; j++) {
-                const datum = data[(i * step) + j];
+                const datum = data[i * step + j];
                 if (datum < min) {
                     min = datum;
                 }
@@ -315,10 +341,10 @@ export class Recorder {
                 }
             }
             context.fillRect(
-                    i,
-                    (1 + min) * amp,
-                    1,
-                    Math.max(1, (max - min) * amp)
+                i,
+                (1 + min) * amp,
+                1,
+                Math.max(1, (max - min) * amp)
             );
         }
     }
@@ -330,7 +356,11 @@ export class Recorder {
     playBuffers(buffers) {
         const channels = 2;
         const numFrames = buffers[0].length;
-        const audioBuffer = this.context.createBuffer(channels, numFrames, this.context.sampleRate);
+        const audioBuffer = this.context.createBuffer(
+            channels,
+            numFrames,
+            this.context.sampleRate
+        );
         for (let channel = 0; channel < channels; channel++) {
             const thisChannelBuffer = audioBuffer.getChannelData(channel);
             for (let i = 0; i < numFrames; i++) {
@@ -520,5 +550,5 @@ const recorderWorkerJs = `function recorderWorkerJs() {
     this.onmessage = (function mainOnMessage(e) { recordWorker.onmessage(e) }).bind(this);
 }`;
 
-export const audioRecording = { 'Recorder': Recorder };
+export const audioRecording = { Recorder };
 export default audioRecording;

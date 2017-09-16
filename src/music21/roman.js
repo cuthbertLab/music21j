@@ -98,21 +98,32 @@ export class RomanNumeral extends chord.Chord {
             this.numbers = parseInt(numbersArr[0]);
         }
 
-        const scaleDegree = roman.romanToNumber.indexOf(currentFigure.toLowerCase());
+        const scaleDegree = roman.romanToNumber.indexOf(
+            currentFigure.toLowerCase()
+        );
         if (scaleDegree === -1) {
-            throw new Music21Exception('Cannot make a romanNumeral from ' + currentFigure);
+            throw new Music21Exception(
+                'Cannot make a romanNumeral from ' + currentFigure
+            );
         }
         this.scaleDegree = scaleDegree;
         this.root = this.scale[this.scaleDegree - 1];
 
-        if (this.key.mode === 'minor'
-            && (this.scaleDegree === 6
-                    || this.scaleDegree === 7)) {
-            if (['minor', 'diminished', 'half-diminished'].indexOf(impliedQuality) !== -1) {
+        if (
+            this.key.mode === 'minor'
+            && (this.scaleDegree === 6 || this.scaleDegree === 7)
+        ) {
+            if (
+                ['minor', 'diminished', 'half-diminished'].indexOf(
+                    impliedQuality
+                ) !== -1
+            ) {
                 const raiseTone = new interval.Interval('A1');
                 this.root = raiseTone.transposePitch(this.root);
                 if (debug) {
-                    console.log('raised root because minor/dim on scaleDegree 6 or 7');
+                    console.log(
+                        'raised root because minor/dim on scaleDegree 6 or 7'
+                    );
                 }
             }
         }
@@ -141,9 +152,9 @@ export class RomanNumeral extends chord.Chord {
         return this._key;
     }
     set key(keyStr) {
-        if (typeof (keyStr) === 'string') {
+        if (typeof keyStr === 'string') {
             this._key = new key.Key(keyStr);
-        } else if (typeof (keyStr) === 'undefined') {
+        } else if (typeof keyStr === 'undefined') {
             this._key = new key.Key('C');
         } else {
             this._key = keyStr;
@@ -158,7 +169,8 @@ export class RomanNumeral extends chord.Chord {
                 'Mediant',
                 'Subdominant',
                 'Dominant',
-                'Submediant'][this.scaleDegree];
+                'Submediant',
+            ][this.scaleDegree];
         } else {
             const tonicPitch = new pitch.Pitch(this.key.tonic);
             let diffRootToTonic = (tonicPitch.ps - this.root.ps) % 12;
@@ -172,7 +184,6 @@ export class RomanNumeral extends chord.Chord {
             }
         }
     }
-
 
     /**
      * Update the .pitches array.  Called at instantiation, but not automatically afterwards.
@@ -233,7 +244,8 @@ export class RomanNumeral extends chord.Chord {
         let suffix = '';
         if (displayType === 'roman') {
             fullChordName = this.figure;
-        } else if (displayType === 'nameOnly') { // use only with only choice being TONIC
+        } else if (displayType === 'nameOnly') {
+            // use only with only choice being TONIC
             fullChordName = '';
             connector = '';
             suffix = ' triad';
@@ -241,7 +253,8 @@ export class RomanNumeral extends chord.Chord {
             fullChordName = this.bass().name.replace(/-/, 'b');
             connector = ' in ';
             suffix = '';
-        } else { // "default" submediant, etc...
+        } else {
+            // "default" submediant, etc...
             fullChordName = this.degreeName;
             if (this.numbers !== undefined) {
                 fullChordName += ' ' + this.numbers.toString();
@@ -251,7 +264,14 @@ export class RomanNumeral extends chord.Chord {
         if (mode === 'minor') {
             tonicDisplay = tonicDisplay.toLowerCase();
         }
-        const chordStr = fullChordName + inversionName + connector + tonicDisplay + ' ' + mode + suffix;
+        const chordStr
+            = fullChordName
+            + inversionName
+            + connector
+            + tonicDisplay
+            + ' '
+            + mode
+            + suffix;
         return chordStr;
     }
 }

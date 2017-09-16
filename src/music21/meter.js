@@ -28,7 +28,6 @@ import { duration } from './duration.js';
  */
 export const meter = {};
 
-
 /**
  * A MUCH simpler version of the music21p TimeSignature object.
  *
@@ -48,7 +47,7 @@ export class TimeSignature extends base.Music21Object {
         this._numerator = 4;
         this._denominator = 4;
         this.beatGroups = [];
-        if (typeof (meterString) === 'string') {
+        if (typeof meterString === 'string') {
             this.ratioString = meterString;
         }
     }
@@ -107,7 +106,8 @@ export class TimeSignature extends base.Music21Object {
             tempBeatGroups.push([1, 2]);
         } else if (beatValue <= 1) {
             tempBeatGroups.push([1, 1]);
-        } else { // 4/4, 2/4, 3/4, standard stuff
+        } else {
+            // 4/4, 2/4, 3/4, standard stuff
             tempBeatGroups.push([2, 8]);
         }
         return tempBeatGroups;

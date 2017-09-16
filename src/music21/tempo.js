@@ -39,38 +39,37 @@ export const tempo = {};
  * // 40
  */
 tempo.defaultTempoValues = {
-    'larghissimo': 16,
-    'largamente': 32,
-    'grave': 40,
+    larghissimo: 16,
+    largamente: 32,
+    grave: 40,
     'molto adagio': 40,
-    'largo': 46,
-    'lento': 52,
-    'adagio': 56,
-    'slow': 56,
-    'langsam': 56,
-    'larghetto': 60,
-    'adagietto': 66,
-    'andante': 72,
-    'andantino': 80,
+    largo: 46,
+    lento: 52,
+    adagio: 56,
+    slow: 56,
+    langsam: 56,
+    larghetto: 60,
+    adagietto: 66,
+    andante: 72,
+    andantino: 80,
     'andante moderato': 83,
-    'maestoso': 88,
-    'moderato': 92,
-    'moderate': 92,
-    'allegretto': 108,
-    'animato': 120,
+    maestoso: 88,
+    moderato: 92,
+    moderate: 92,
+    allegretto: 108,
+    animato: 120,
     'allegro moderato': 128,
-    'allegro': 132,
-    'fast': 132,
-    'schnell': 132,
-    'allegrissimo': 140,
+    allegro: 132,
+    fast: 132,
+    schnell: 132,
+    allegrissimo: 140,
     'molto allegro': 144,
     'très vite': 144,
-    'vivace': 160,
-    'vivacissimo': 168,
-    'presto': 184,
-    'prestissimo': 208,
+    vivace: 160,
+    vivacissimo: 168,
+    presto: 184,
+    prestissimo: 208,
 };
-
 
 tempo.baseTempo = 60;
 
@@ -107,8 +106,8 @@ export class Metronome extends prebase.ProtoM21Object {
         this.chirpTimeout = undefined;
         this.silent = false;
         this.flash = false;
-        this.tempoRanges =     [0, 40, 60, 72, 120, 144, 240, 999];
-        this.tempoIncreases = [0, 1,  2,  3,  4,   6,   8,  15, 100];
+        this.tempoRanges = [0, 40, 60, 72, 120, 144, 240, 999];
+        this.tempoIncreases = [0, 1, 2, 3, 4, 6, 8, 15, 100];
     }
     get tempo() {
         return this._tempo;
@@ -125,12 +124,15 @@ export class Metronome extends prebase.ProtoM21Object {
         return 60.0 / this.tempo;
     }
     _silentFlash(flashColor) {
-        this.$metronomeDiv.find('.metroFlash').css('background-color', flashColor).fadeOut(
-                this.beatLength * 1000 * 1 / 4, function silentFadeOut() {
-                    $(this).css('background-color', '#ffffff').fadeIn(1);
-                });
+        this.$metronomeDiv
+            .find('.metroFlash')
+            .css('background-color', flashColor)
+            .fadeOut(this.beatLength * 1000 * 1 / 4, function silentFadeOut() {
+                $(this)
+                    .css('background-color', '#ffffff')
+                    .fadeIn(1);
+            });
     }
-
 
     /**
      * Play a note (a higher one on the downbeat) and start the metronome chirping.
@@ -158,10 +160,10 @@ export class Metronome extends prebase.ProtoM21Object {
             }
         }
         const that = this;
-        this.chirpTimeout = setTimeout(() => { that.chirp(); },
-                1000 * 60 / this.tempo);
+        this.chirpTimeout = setTimeout(() => {
+            that.chirp();
+        }, 1000 * 60 / this.tempo);
     }
-
 
     /**
      * Stop the metronome from chirping.
@@ -255,7 +257,9 @@ export class Metronome extends prebase.ProtoM21Object {
             jWhere = $('body');
         }
         const metroThis = this;
-        const tempoHolder = $('<span class="tempoHolder">' + this.tempo.toString() + '</span>');
+        const tempoHolder = $(
+            '<span class="tempoHolder">' + this.tempo.toString() + '</span>'
+        );
         tempoHolder.css({
             'font-size': '24px',
             'padding-left': '10px',
@@ -265,25 +269,35 @@ export class Metronome extends prebase.ProtoM21Object {
         newDiv.append(tempoHolder);
 
         const b1 = $('<button>start</button>');
-        b1.on('click', () => { metroThis.chirp(); });
+        b1.on('click', () => {
+            metroThis.chirp();
+        });
         const b2 = $('<button>stop</button>');
-        b2.on('click', () => { metroThis.stopChirp(); });
+        b2.on('click', () => {
+            metroThis.stopChirp();
+        });
         newDiv.prepend(b2);
         newDiv.prepend(b1);
         const b3 = $('<button>up</button>');
         b3.on('click', function increaseSpeedButton() {
             metroThis.increaseSpeed();
-            $(this).prevAll('.tempoHolder').html(metroThis.tempo.toString());
+            $(this)
+                .prevAll('.tempoHolder')
+                .html(metroThis.tempo.toString());
         });
         const b4 = $('<button>down</button>');
         b4.on('click', function decreaseSpeedButton() {
             metroThis.decreaseSpeed();
-            $(this).prevAll('.tempoHolder').html(metroThis.tempo.toString());
+            $(this)
+                .prevAll('.tempoHolder')
+                .html(metroThis.tempo.toString());
         });
         newDiv.append(b3);
         newDiv.append(b4);
-        const $flash = $('<span class="metroFlash">' +
-                '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>');
+        const $flash = $(
+            '<span class="metroFlash">'
+                + '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>'
+        );
         $flash.css('margin-left', '40px');
         $flash.css('height', '40px');
 

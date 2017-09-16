@@ -42,8 +42,10 @@ export class Tie extends prebase.ProtoM21Object {
         return this._type;
     }
     set type(newType) {
-        if (!(VALID_TIE_TYPES.includes(newType))) {
-            throw new Music21Exception('Tie type must be one of "start", "stop", "continue", "let-ring"');
+        if (!VALID_TIE_TYPES.includes(newType)) {
+            throw new Music21Exception(
+                'Tie type must be one of "start", "stop", "continue", "let-ring"'
+            );
         }
         this._type = newType;
     }

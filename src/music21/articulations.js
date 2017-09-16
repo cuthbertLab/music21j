@@ -115,7 +115,6 @@ export class TimbreArticulation extends Articulation {
 }
 articulations.TimbreArticulation = TimbreArticulation;
 
-
 /**
  * 50% louder than usual
  *

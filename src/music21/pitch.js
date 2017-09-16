@@ -48,11 +48,16 @@ export class Accidental extends prebase.ProtoM21Object {
      * @returns {undefined}
      */
     set(accName) {
-        if ((accName !== undefined) && (accName.toLowerCase !== undefined)) {
+        if (accName !== undefined && accName.toLowerCase !== undefined) {
             accName = accName.toLowerCase();
         }
 
-        if (accName === 'natural' || accName === 'n' || accName === 0 || accName === undefined) {
+        if (
+            accName === 'natural'
+            || accName === 'n'
+            || accName === 0
+            || accName === undefined
+        ) {
             this._name = 'natural';
             this._alter = 0.0;
             this._modifier = '';
@@ -67,22 +72,38 @@ export class Accidental extends prebase.ProtoM21Object {
             this._alter = -1.0;
             this._modifier = '-';
             this._unicodeModifier = '♭';
-        } else if (accName === 'double-flat' || accName === '--' || accName === -2) {
+        } else if (
+            accName === 'double-flat'
+            || accName === '--'
+            || accName === -2
+        ) {
             this._name = 'double-flat';
             this._alter = -2.0;
             this._modifier = '--';
             this._unicodeModifier = '&#x1d12b;';
-        } else if (accName === 'double-sharp' || accName === '##' || accName === 2) {
+        } else if (
+            accName === 'double-sharp'
+            || accName === '##'
+            || accName === 2
+        ) {
             this._name = 'double-sharp';
             this._alter = 2.0;
             this._modifier = '##';
             this._unicodeModifier = '&#x1d12a;';
-        } else if (accName === 'triple-flat' || accName === '---' || accName === -3) {
+        } else if (
+            accName === 'triple-flat'
+            || accName === '---'
+            || accName === -3
+        ) {
             this._name = 'triple-flat';
             this._alter = -3.0;
             this._modifier = '---';
             this._unicodeModifier = '♭&#x1d12b;';
-        } else if (accName === 'triple-sharp' || accName === '###' || accName === 3) {
+        } else if (
+            accName === 'triple-sharp'
+            || accName === '###'
+            || accName === 3
+        ) {
             this._name = 'triple-sharp';
             this._alter = 3.0;
             this._modifier = '###';
@@ -173,11 +194,23 @@ export class Accidental extends prebase.ProtoM21Object {
 }
 pitch.Accidental = Accidental;
 
-
-pitch.nameToMidi = { 'C': 0, 'D': 2, 'E': 4, 'F': 5, 'G': 7, 'A': 9, 'B': 11 };
-pitch.nameToSteps = { 'C': 0, 'D': 1, 'E': 2, 'F': 3, 'G': 4, 'A': 5, 'B': 6 };
+pitch.nameToMidi = { C: 0, D: 2, E: 4, F: 5, G: 7, A: 9, B: 11 };
+pitch.nameToSteps = { C: 0, D: 1, E: 2, F: 3, G: 4, A: 5, B: 6 };
 pitch.stepsToName = ['C', 'D', 'E', 'F', 'G', 'A', 'B'];
-pitch.midiToName = ['C', 'C#', 'D', 'E-', 'E', 'F', 'F#', 'G', 'A-', 'A', 'B-', 'B'];
+pitch.midiToName = [
+    'C',
+    'C#',
+    'D',
+    'E-',
+    'E',
+    'F',
+    'F#',
+    'G',
+    'A-',
+    'A',
+    'B-',
+    'B',
+];
 
 /**
  * Pitch objects are found in {@link music21.note.Note} objects, and many other places.
@@ -230,14 +263,23 @@ export class Pitch extends prebase.ProtoM21Object {
         }
     }
 
-
-    get step() { return this._step; }
-    set step(s) { this._step = s; }
-    get octave() { return this._octave; }
-    set octave(o) { this._octave = o; }
-    get accidental() { return this._accidental; }
+    get step() {
+        return this._step;
+    }
+    set step(s) {
+        this._step = s;
+    }
+    get octave() {
+        return this._octave;
+    }
+    set octave(o) {
+        this._octave = o;
+    }
+    get accidental() {
+        return this._accidental;
+    }
     set accidental(a) {
-        if (typeof (a) !== 'object' && a !== undefined) {
+        if (typeof a !== 'object' && a !== undefined) {
             a = new pitch.Accidental(a);
         }
         this._accidental = a;
@@ -252,7 +294,8 @@ export class Pitch extends prebase.ProtoM21Object {
     set name(nn) {
         this.step = nn.slice(0, 1).toUpperCase();
         const tempAccidental = nn.slice(1);
-        if (tempAccidental) { // not the empty string
+        if (tempAccidental) {
+            // not the empty string
             this.accidental = tempAccidental; // converts automatically
         } else {
             this.accidental = undefined;
@@ -272,7 +315,7 @@ export class Pitch extends prebase.ProtoM21Object {
         }
     }
     get diatonicNoteNum() {
-        return (this.octave * 7) + pitch.nameToSteps[this.step] + 1;
+        return this.octave * 7 + pitch.nameToSteps[this.step] + 1;
     }
     set diatonicNoteNum(newDNN) {
         newDNN -= 1; // makes math easier
@@ -290,7 +333,11 @@ export class Pitch extends prebase.ProtoM21Object {
         if (this.accidental !== undefined) {
             accidentalAlter = parseInt(this.accidental.alter);
         }
-        return (this.octave + 1) * 12 + pitch.nameToMidi[this.step] + accidentalAlter;
+        return (
+            (this.octave + 1) * 12
+            + pitch.nameToMidi[this.step]
+            + accidentalAlter
+        );
     }
     set ps(ps) {
         this.name = pitch.midiToName[ps % 12];
@@ -318,7 +365,8 @@ export class Pitch extends prebase.ProtoM21Object {
         if (this.accidental !== undefined) {
             accidentalType = this.accidental.vexflowModifier;
         }
-        const outName = tempPitch.step + accidentalType + '/' + tempPitch.octave;
+        const outName
+            = tempPitch.step + accidentalType + '/' + tempPitch.octave;
         return outName;
     }
 }

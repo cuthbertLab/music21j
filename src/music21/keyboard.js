@@ -23,7 +23,6 @@ import { common } from './common.js';
 import { miditools } from './miditools.js';
 import { pitch } from './pitch.js';
 
-
 /**
  * Keyboard module, see {@link music21.keyboard} namespace
  *
@@ -86,8 +85,8 @@ export class Key {
             style: this.keyStyle,
             x: startX,
             y: 0,
-            'class': 'keyboardkey ' + this.keyClass,
-            'id': this.id,
+            class: 'keyboardkey ' + this.keyClass,
+            id: this.id,
             width: this.width * this.scaleFactor,
             height: this.height * this.scaleFactor,
             rx: 3,
@@ -110,9 +109,10 @@ export class Key {
      * @returns {DOMObject}
      */
     addCircle(strokeColor) {
-        if ((this.svgObj === undefined) ||
-                (this.parent === undefined) ||
-                (this.parent.svgObj === undefined)
+        if (
+            this.svgObj === undefined
+            || this.parent === undefined
+            || this.parent.svgObj === undefined
         ) {
             return undefined;
         }
@@ -120,7 +120,7 @@ export class Key {
             strokeColor = 'red';
         }
         const x = parseInt(this.svgObj.getAttribute('x'));
-        const cx = x + this.parent.scaleFactor * (this.width) / 2;
+        const cx = x + this.parent.scaleFactor * this.width / 2;
         // console.log('cx', cx);
         const keyattrs = {
             stroke: strokeColor,
@@ -128,7 +128,7 @@ export class Key {
             fill: 'none',
             cx,
             cy: (this.height - 10) * this.parent.scaleFactor,
-            'class': 'keyboardkeyannotation',
+            class: 'keyboardkeyannotation',
             r: this.width * this.parent.scaleFactor / 4,
         };
 
@@ -145,19 +145,23 @@ export class Key {
      * @returns {DOMObject}
      */
     addNoteName(labelOctaves) {
-        if ((this.svgObj === undefined)
-                || (this.parent === undefined)
-                || (this.parent.svgObj === undefined)) {
+        if (
+            this.svgObj === undefined
+            || this.parent === undefined
+            || this.parent.svgObj === undefined
+        ) {
             return this;
         }
-        if ((this.id === 0) && (this.pitchObj === undefined)) {
+        if (this.id === 0 && this.pitchObj === undefined) {
             return this;
         } else if (this.pitchObj === undefined) {
             this.pitchObj = new pitch.Pitch();
             this.pitchObj.ps = this.id;
         }
-        if ((this.pitchObj.accidental !== undefined) &&
-                (this.pitchObj.accidental.alter !== 0)) {
+        if (
+            this.pitchObj.accidental !== undefined
+            && this.pitchObj.accidental.alter !== 0
+        ) {
             return this;
         }
         let x = parseInt(this.svgObj.getAttribute('x'));
@@ -178,7 +182,7 @@ export class Key {
             fill: textfill,
             x: x + this.parent.scaleFactor * (this.width / 2 - 5),
             y: this.parent.scaleFactor * (this.height - 20),
-            'class': 'keyboardkeyname',
+            class: 'keyboardkeyname',
             'font-size': fontSize,
         };
 
@@ -196,9 +200,10 @@ export class Key {
      * @returns {undefined}
      */
     removeNoteName() {
-        if ((this.svgObj === undefined)
-                || (this.parent === undefined)
-                || (this.parent.svgObj === undefined)
+        if (
+            this.svgObj === undefined
+            || this.parent === undefined
+            || this.parent.svgObj === undefined
         ) {
             return;
         }
@@ -210,7 +215,6 @@ export class Key {
         }
         this.noteNameSvgObj = undefined;
     }
-
 }
 keyboard.Key = Key;
 
@@ -251,7 +255,6 @@ export class BlackKey extends Key {
 }
 
 keyboard.BlackKey = BlackKey;
-
 
 /**
  * A Class representing a whole Keyboard full of keys.
@@ -306,7 +309,13 @@ export class Keyboard {
             click: this.clickhandler,
         };
         //   more accurate offsets from http://www.mathpages.com/home/kmath043.htm
-        this.sharpOffsets = { 0: 14.3333, 1: 18.6666, 3: 13.25, 4: 16.25, 5: 19.75 };
+        this.sharpOffsets = {
+            0: 14.3333,
+            1: 18.6666,
+            3: 13.25,
+            4: 16.25,
+            5: 19.75,
+        };
     }
     /**
      * Redraws the SVG associated with this Keyboard
@@ -372,7 +381,7 @@ export class Keyboard {
             fillColor = 'yellow';
         }
         keyRect.setAttribute('style', 'fill:' + fillColor + ';stroke:black');
-        miditools.loadSoundfont('acoustic_grand_piano', (i) => {
+        miditools.loadSoundfont('acoustic_grand_piano', i => {
             MIDI.noteOn(i.midiChannel, id, 100, 0);
             MIDI.noteOff(i.midiChannel, id, 500);
         });
@@ -395,7 +404,7 @@ export class Keyboard {
             if (typeof this.startPitch === 'string') {
                 const tempP = new pitch.Pitch(this.startPitch);
                 this._startDNN = tempP.diatonicNoteNum;
-            }  else {
+            } else {
                 this._startDNN = this.startPitch;
             }
         }
@@ -411,15 +420,16 @@ export class Keyboard {
 
         let currentIndex = (this._startDNN - 1) % 7; // C = 0
         const keyboardDiatonicLength = 1 + this._endDNN - this._startDNN;
-        const totalWidth = this.whiteKeyWidth * this.scaleFactor * keyboardDiatonicLength;
+        const totalWidth
+            = this.whiteKeyWidth * this.scaleFactor * keyboardDiatonicLength;
         const height = 120 * this.scaleFactor;
         const heightString = height.toString() + 'px';
 
         const svgDOM = common.makeSVGright('svg', {
             'xml:space': 'preserve',
-            'height': heightString,
-            'width': totalWidth.toString() + 'px',
-            'class': 'keyboardSVG',
+            height: heightString,
+            width: totalWidth.toString() + 'px',
+            class: 'keyboardSVG',
         });
         const movingPitch = new pitch.Pitch('C4');
         const blackKeys = [];
@@ -433,16 +443,23 @@ export class Keyboard {
             this.keyObjects[movingPitch.midi] = wk;
             wk.scaleFactor = this.scaleFactor;
             wk.width = this.whiteKeyWidth;
-            wk.callbacks.click = function whitekeyCallbacksClick() { thisKeyboardObject.clickhandler(this); };
+            wk.callbacks.click = function whitekeyCallbacksClick() {
+                thisKeyboardObject.clickhandler(this);
+            };
 
-            const wkSVG = wk.makeKey(this.whiteKeyWidth * this.scaleFactor * wki);
+            const wkSVG = wk.makeKey(
+                this.whiteKeyWidth * this.scaleFactor * wki
+            );
             svgDOM.appendChild(wkSVG);
 
-            if (((currentIndex === 0)
-                    || (currentIndex === 1)
-                    || (currentIndex === 3)
-                    || (currentIndex === 4)
-                    || (currentIndex === 5)) && (wki !== keyboardDiatonicLength - 1)) {
+            if (
+                (currentIndex === 0
+                    || currentIndex === 1
+                    || currentIndex === 3
+                    || currentIndex === 4
+                    || currentIndex === 5)
+                && wki !== keyboardDiatonicLength - 1
+            ) {
                 // create but do not append blackkey to the right of whitekey
                 const bk = new keyboard.BlackKey();
                 bk.id = movingPitch.midi + 1;
@@ -450,12 +467,23 @@ export class Keyboard {
                 bk.parent = this;
 
                 bk.scaleFactor = this.scaleFactor;
-                bk.width = this._defaultBlackKeyWidth * this.whiteKeyWidth / this._defaultWhiteKeyWidth;
-                bk.callbacks.click = function blackKeyClicksCallback() { thisKeyboardObject.clickhandler(this); };
+                bk.width
+                    = this._defaultBlackKeyWidth
+                    * this.whiteKeyWidth
+                    / this._defaultWhiteKeyWidth;
+                bk.callbacks.click = function blackKeyClicksCallback() {
+                    thisKeyboardObject.clickhandler(this);
+                };
 
                 let offsetFromWhiteKey = this.sharpOffsets[currentIndex];
-                offsetFromWhiteKey *= this.whiteKeyWidth / this._defaultWhiteKeyWidth * this.scaleFactor;
-                const bkSVG = bk.makeKey(this.whiteKeyWidth * this.scaleFactor * wki + offsetFromWhiteKey);
+                offsetFromWhiteKey
+                    *= this.whiteKeyWidth
+                    / this._defaultWhiteKeyWidth
+                    * this.scaleFactor;
+                const bkSVG = bk.makeKey(
+                    this.whiteKeyWidth * this.scaleFactor * wki
+                        + offsetFromWhiteKey
+                );
                 blackKeys.push(bkSVG);
             }
             currentIndex += 1;
@@ -467,8 +495,12 @@ export class Keyboard {
         }
 
         this.svgObj = svgDOM;
-        if (this.markC) { this.markMiddleC(); }
-        if (this.showNames) { this.markNoteNames(this.showOctaves); }
+        if (this.markC) {
+            this.markMiddleC();
+        }
+        if (this.showNames) {
+            this.markNoteNames(this.showOctaves);
+        }
 
         return svgDOM;
     }
@@ -515,7 +547,6 @@ export class Keyboard {
         }
     }
 
-
     /**
      * Wraps the SVG object inside a scrollable set of buttons
      *
@@ -527,26 +558,34 @@ export class Keyboard {
      * @returns {JQueryDOMObject}
      */
     wrapScrollable(svgDOM) {
-        const $wrapper = $("<div class='keyboardScrollableWrapper'></div>").css({
+        const $wrapper = $(
+            "<div class='keyboardScrollableWrapper'></div>"
+        ).css({
             display: 'inline-block',
         });
-        const $bDown = $("<button class='keyboardOctaveDown'>&lt;&lt;</button>").css({
-            'font-size': Math.floor(this.scaleFactor * 15).toString() + 'px',
-        }).bind('click', () => {
-            miditools.transposeOctave -= 1;
-            this._startDNN -= 7;
-            this._endDNN -= 7;
-            this.redrawSVG();
-        });
-        const $bUp = $("<button class='keyboardOctaveUp'>&gt;&gt;</button>").css({
-            'font-size': Math.floor(this.scaleFactor * 15).toString() + 'px',
-        }).bind('click', () => {
-            miditools.transposeOctave += 1;
-            this._startDNN += 7;
-            this._endDNN += 7;
-            this.redrawSVG();
-        });
-        const $kWrapper = $("<div style='display:inline-block; vertical-align: middle' class='keyboardScrollableInnerDiv'></div>");
+        const $bDown = $("<button class='keyboardOctaveDown'>&lt;&lt;</button>")
+            .css({
+                'font-size': Math.floor(this.scaleFactor * 15).toString() + 'px',
+            })
+            .bind('click', () => {
+                miditools.transposeOctave -= 1;
+                this._startDNN -= 7;
+                this._endDNN -= 7;
+                this.redrawSVG();
+            });
+        const $bUp = $("<button class='keyboardOctaveUp'>&gt;&gt;</button>")
+            .css({
+                'font-size': Math.floor(this.scaleFactor * 15).toString() + 'px',
+            })
+            .bind('click', () => {
+                miditools.transposeOctave += 1;
+                this._startDNN += 7;
+                this._endDNN += 7;
+                this.redrawSVG();
+            });
+        const $kWrapper = $(
+            "<div style='display:inline-block; vertical-align: middle' class='keyboardScrollableInnerDiv'></div>"
+        );
         $kWrapper[0].appendChild(svgDOM);
         $wrapper.append($bDown);
         $wrapper.append($kWrapper);
@@ -576,14 +615,18 @@ export class Keyboard {
             background: 'white',
         });
         $b.append($bInside);
-        $b.data('defaultDisplay', $container.find('.keyboardSVG').css('display'));
+        $b.data(
+            'defaultDisplay',
+            $container.find('.keyboardSVG').css('display')
+        );
         $b.data('state', 'down');
         $b.click(keyboard.triggerToggleShow);
-        const $explain = $("<div class='keyboardExplain'>Show keyboard</div>")
-        .css({
-            'display': 'none',
+        const $explain = $(
+            "<div class='keyboardExplain'>Show keyboard</div>"
+        ).css({
+            display: 'none',
             'background-color': 'white',
-            'padding': '10px 10px 10px 10px',
+            padding: '10px 10px 10px 10px',
             'font-size': '12pt',
         });
         $b.append($explain);
@@ -607,7 +650,8 @@ keyboard.triggerToggleShow = function triggerToggleShow(e) {
     const state = $t.data('state');
     const $parent = $t.parent();
     let $k = $parent.find('.keyboardScrollableWrapper');
-    if ($k.length === 0) { // not scrollable
+    if ($k.length === 0) {
+        // not scrollable
         $k = $parent.find('.keyboardSVG');
     }
     const $bInside = $t.find('.keyboardToggleInside');
@@ -661,11 +705,16 @@ keyboard.jazzHighlight = function jazzHighlight(e) {
                 const intensity = normalizedVelocity.toString();
                 intensityRGB = 'rgba(255, 255, 0, ' + intensity + ')';
             } else {
-                const intensity = (Math.floor(normalizedVelocity * 255)).toString();
+                const intensity = Math.floor(
+                    normalizedVelocity * 255
+                ).toString();
                 intensityRGB = 'rgb(' + intensity + ',' + intensity + ',0)';
                 // console.log(intensityRGB);
             }
-            svgObj.setAttribute('style', 'fill:' + intensityRGB + ';stroke:black');
+            svgObj.setAttribute(
+                'style',
+                'fill:' + intensityRGB + ';stroke:black'
+            );
         }
     } else if (e.noteOff) {
         const midiNote = e.midiNote;

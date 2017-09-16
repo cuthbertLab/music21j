@@ -42,7 +42,7 @@ export class Expression extends base.Music21Object {
      * @returns {Vex.Flow.Articulation}
      */
     vexflow() {
-        const vfe =  new Vex.Flow.Articulation(this.vexflowModifier);
+        const vfe = new Vex.Flow.Articulation(this.vexflowModifier);
         if (this.setPosition) {
             vfe.setPosition(this.setPosition);
         }

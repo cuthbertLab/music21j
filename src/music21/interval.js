@@ -23,7 +23,7 @@ import { pitch } from './pitch.js';
  * @requires music21/prebase
  * @requires music21/pitch
  */
-export	const interval = {};
+export const interval = {};
 
 /**
  * Interval Directions as an Object/map
@@ -71,10 +71,22 @@ interval.IntervalDirectionTerms = ['Descending', 'Oblique', 'Ascending'];
  * // 15, Double Octave
  */
 interval.MusicOrdinals = [
-    undefined, 'Unison', 'Second', 'Third', 'Fourth',
-    'Fifth', 'Sixth', 'Seventh', 'Octave',
-    'Ninth', 'Tenth', 'Eleventh', 'Twelfth',
-    'Thirteenth', 'Fourteenth', 'Double Octave',
+    undefined,
+    'Unison',
+    'Second',
+    'Third',
+    'Fourth',
+    'Fifth',
+    'Sixth',
+    'Seventh',
+    'Octave',
+    'Ninth',
+    'Tenth',
+    'Eleventh',
+    'Twelfth',
+    'Thirteenth',
+    'Fourteenth',
+    'Double Octave',
 ];
 
 /**
@@ -171,7 +183,7 @@ export class GenericInterval extends prebase.ProtoM21Object {
         }
         this.simpleUndirected = tempSteps;
         this.undirectedOctaves = tempOctaves;
-        if ((tempSteps === 1) && (tempOctaves >= 1)) {
+        if (tempSteps === 1 && tempOctaves >= 1) {
             this.semiSimpleUndirected = 8;
         } else {
             this.semiSimpleUndirected = this.simpleUndirected;
@@ -182,7 +194,7 @@ export class GenericInterval extends prebase.ProtoM21Object {
             if (tempSteps !== 1) {
                 this.simpleDirected = -1 * tempSteps;
             } else {
-                this.simpleDirected = 1;  // no descending unisons...
+                this.simpleDirected = 1; // no descending unisons...
             }
             this.semiSimpleDirected = -1 * this.semiSimpleUndirected;
         } else {
@@ -190,9 +202,11 @@ export class GenericInterval extends prebase.ProtoM21Object {
             this.simpleDirected = tempSteps;
             this.semiSimpleDirected = this.semiSimpleUndirected;
         }
-        if ((this.simpleUndirected === 1)
-                || (this.simpleUndirected === 4)
-                || (this.simpleUndirected === 5)) {
+        if (
+            this.simpleUndirected === 1
+            || this.simpleUndirected === 4
+            || this.simpleUndirected === 5
+        ) {
             this.perfectable = true;
         } else {
             this.perfectable = false;
@@ -205,7 +219,8 @@ export class GenericInterval extends prebase.ProtoM21Object {
         }
 
         this.simpleNiceName = interval.MusicOrdinals[this.simpleUndirected];
-        this.semiSimpleNiceName = interval.MusicOrdinals[this.semiSimpleUndirected];
+        this.semiSimpleNiceName
+            = interval.MusicOrdinals[this.semiSimpleUndirected];
 
         if (Math.abs(this.directed) === 1) {
             this.staffDistance = 0;
@@ -220,7 +235,7 @@ export class GenericInterval extends prebase.ProtoM21Object {
         this.mod7inversion = 9 - this.semiSimpleUndirected;
 
         if (this.direction === interval.IntervalDirections.DESCENDING) {
-            this.mod7 = this.mod7inversion;  // see chord.semitonesFromChordStep for usage...
+            this.mod7 = this.mod7inversion; // see chord.semitonesFromChordStep for usage...
         } else {
             this.mod7 = this.simpleDirected;
         }
@@ -246,7 +261,9 @@ export class GenericInterval extends prebase.ProtoM21Object {
         if (this.undirected === 1) {
             return new interval.GenericInterval(1);
         } else {
-            return new interval.GenericInterval(this.undirected * (-1 * this.direction));
+            return new interval.GenericInterval(
+                this.undirected * (-1 * this.direction)
+            );
         }
     }
     /**
@@ -278,7 +295,9 @@ export class GenericInterval extends prebase.ProtoM21Object {
 
         // if not reverse...
         const newDiatonicNumber = oldDiatonicNum + distanceToMove;
-        const newInfo = interval.IntervalConvertDiatonicNumberToStep(newDiatonicNumber);
+        const newInfo = interval.IntervalConvertDiatonicNumberToStep(
+            newDiatonicNumber
+        );
         pitch2.step = newInfo[0];
         pitch2.octave = newInfo[1];
         if (p.accidental !== undefined) {
@@ -304,17 +323,44 @@ interval.IntervalSpecifiersEnum = {
 };
 
 interval.IntervalNiceSpecNames = [
-    'ERROR', 'Perfect', 'Major', 'Minor',
-    'Augmented', 'Diminished', 'Doubly-Augmented', 'Doubly-Diminished',
-    'Triply-Augmented', 'Triply-Diminished', 'Quadruply-Augmented', 'Quadruply-Diminished',
+    'ERROR',
+    'Perfect',
+    'Major',
+    'Minor',
+    'Augmented',
+    'Diminished',
+    'Doubly-Augmented',
+    'Doubly-Diminished',
+    'Triply-Augmented',
+    'Triply-Diminished',
+    'Quadruply-Augmented',
+    'Quadruply-Diminished',
 ];
 interval.IntervalPrefixSpecs = [
-    undefined, 'P', 'M', 'm', 'A', 'd', 'AA', 'dd', 'AAA', 'ddd', 'AAAA', 'dddd',
+    undefined,
+    'P',
+    'M',
+    'm',
+    'A',
+    'd',
+    'AA',
+    'dd',
+    'AAA',
+    'ddd',
+    'AAAA',
+    'dddd',
 ];
 
-
 interval.IntervalOrderedPerfSpecs = [
-    'dddd', 'ddd', 'dd', 'd', 'P', 'A', 'AA', 'AAA', 'AAAA',
+    'dddd',
+    'ddd',
+    'dd',
+    'd',
+    'P',
+    'A',
+    'AA',
+    'AAA',
+    'AAAA',
 ];
 
 interval.IntervalPerfSpecifiers = [
@@ -331,7 +377,16 @@ interval.IntervalPerfSpecifiers = [
 interval.IntervalPerfOffset = 4;
 
 interval.IntervalOrderedImperfSpecs = [
-    'dddd', 'ddd', 'dd', 'd', 'm', 'M', 'A', 'AA', 'AAA', 'AAAA',
+    'dddd',
+    'ddd',
+    'dd',
+    'd',
+    'm',
+    'M',
+    'A',
+    'AA',
+    'AAA',
+    'AAAA',
 ];
 
 interval.IntervalSpecifiers = [
@@ -349,18 +404,38 @@ interval.IntervalSpecifiers = [
 interval.IntervalMajOffset = 5;
 
 interval.IntervalSemitonesGeneric = {
-    1: 0, 2: 2, 3: 4, 4: 5, 5: 7, 6: 9, 7: 11,
+    1: 0,
+    2: 2,
+    3: 4,
+    4: 5,
+    5: 7,
+    6: 9,
+    7: 11,
 };
 interval.IntervalAdjustPerfect = {
-    'P': 0, 'A': 1, 'AA': 2, 'AAA': 3, 'AAAA': 4,
-    'd': -1, 'dd': -2, 'ddd': -3, 'dddd': -4,
+    P: 0,
+    A: 1,
+    AA: 2,
+    AAA: 3,
+    AAAA: 4,
+    d: -1,
+    dd: -2,
+    ddd: -3,
+    dddd: -4,
 }; // offset from Perfect
 
 interval.IntervalAdjustImperf = {
-    'M': 0, 'm': -1, 'A': 1, 'AA': 2, 'AAA': 3, 'AAAA': 4,
-    'd': -2, 'dd': -3, 'ddd': -4, 'dddd': -5,
+    M: 0,
+    m: -1,
+    A: 1,
+    AA: 2,
+    AAA: 3,
+    AAAA: 4,
+    d: -2,
+    dd: -3,
+    ddd: -4,
+    dddd: -5,
 }; // offset from major
-
 
 /**
  * Represents a Diatonic interval.  See example for usage.
@@ -406,27 +481,59 @@ export class DiatonicInterval extends prebase.ProtoM21Object {
         }
         this.generic = generic;
 
-        if ((generic.undirected !== 1) || (specifier === interval.IntervalSpecifiersEnum.PERFECT)) {
+        if (
+            generic.undirected !== 1
+            || specifier === interval.IntervalSpecifiersEnum.PERFECT
+        ) {
             this.direction = generic.direction;
-        } else if (interval.IntervalPerfSpecifiers.indexOf(specifier) <= interval.IntervalPerfSpecifiers.indexOf(interval.IntervalSpecifiersEnum.DIMINISHED)) {
+        } else if (
+            interval.IntervalPerfSpecifiers.indexOf(specifier)
+            <= interval.IntervalPerfSpecifiers.indexOf(
+                interval.IntervalSpecifiersEnum.DIMINISHED
+            )
+        ) {
             // diminished unisons -- very controversial
             this.direction = interval.IntervalDirections.DESCENDING;
         } else {
             this.direction = interval.IntervalDirections.ASCENDING;
         }
-        const diatonicDirectionNiceName = interval.IntervalDirectionTerms[this.direction + 1];
-        this.name = interval.IntervalPrefixSpecs[this.specifier] + generic.undirected.toString();
-        this.niceName = interval.IntervalNiceSpecNames[this.specifier] + ' ' + generic.niceName;
-        this.simpleName = interval.IntervalPrefixSpecs[this.specifier] + generic.simpleUndirected.toString();
-        this.simpleNiceName = interval.IntervalNiceSpecNames[this.specifier] + ' ' + generic.simpleNiceName;
-        this.semiSimpleName = interval.IntervalPrefixSpecs[this.specifier] + generic.semiSimpleUndirected.toString();
-        this.semiSimpleNiceName = interval.IntervalNiceSpecNames[this.specifier] + ' ' + generic.semiSimpleNiceName;
-        this.directedName = interval.IntervalPrefixSpecs[this.specifier] + generic.directed.toString();
+        const diatonicDirectionNiceName
+            = interval.IntervalDirectionTerms[this.direction + 1];
+        this.name
+            = interval.IntervalPrefixSpecs[this.specifier]
+            + generic.undirected.toString();
+        this.niceName
+            = interval.IntervalNiceSpecNames[this.specifier]
+            + ' '
+            + generic.niceName;
+        this.simpleName
+            = interval.IntervalPrefixSpecs[this.specifier]
+            + generic.simpleUndirected.toString();
+        this.simpleNiceName
+            = interval.IntervalNiceSpecNames[this.specifier]
+            + ' '
+            + generic.simpleNiceName;
+        this.semiSimpleName
+            = interval.IntervalPrefixSpecs[this.specifier]
+            + generic.semiSimpleUndirected.toString();
+        this.semiSimpleNiceName
+            = interval.IntervalNiceSpecNames[this.specifier]
+            + ' '
+            + generic.semiSimpleNiceName;
+        this.directedName
+            = interval.IntervalPrefixSpecs[this.specifier]
+            + generic.directed.toString();
         this.directedNiceName = diatonicDirectionNiceName + ' ' + this.niceName;
-        this.directedSimpleName = interval.IntervalPrefixSpecs[this.specifier] + generic.simpleDirected.toString();
-        this.directedSimpleNiceName = diatonicDirectionNiceName + ' ' + this.simpleNiceName;
-        this.directedSemiSimpleName = interval.IntervalPrefixSpecs[this.specifier] + generic.semiSimpleDirected.toString();
-        this.directedSemiSimpleNiceName = diatonicDirectionNiceName + ' ' + this.semiSimpleNameName;
+        this.directedSimpleName
+            = interval.IntervalPrefixSpecs[this.specifier]
+            + generic.simpleDirected.toString();
+        this.directedSimpleNiceName
+            = diatonicDirectionNiceName + ' ' + this.simpleNiceName;
+        this.directedSemiSimpleName
+            = interval.IntervalPrefixSpecs[this.specifier]
+            + generic.semiSimpleDirected.toString();
+        this.directedSemiSimpleNiceName
+            = diatonicDirectionNiceName + ' ' + this.semiSimpleNameName;
         this.specificName = interval.IntervalNiceSpecNames[this.specifier];
         this.perfectable = generic.perfectable;
         this.isDiatonicStep = generic.isDiatonicStep;
@@ -434,16 +541,33 @@ export class DiatonicInterval extends prebase.ProtoM21Object {
 
         // generate inversions
         if (this.perfectable) {
-            this.orderedSpecifierIndex = interval.IntervalOrderedPerfSpecs.indexOf(interval.IntervalPrefixSpecs[this.specifier]);
-            this.invertedOrderedSpecIndex = (interval.IntervalOrderedPerfSpecs.length - 1 - this.orderedSpecifierIndex);
-            this.invertedOrderedSpecifier = interval.IntervalOrderedPerfSpecs[this.invertedOrderedSpecIndex];
+            this.orderedSpecifierIndex = interval.IntervalOrderedPerfSpecs.indexOf(
+                interval.IntervalPrefixSpecs[this.specifier]
+            );
+            this.invertedOrderedSpecIndex
+                = interval.IntervalOrderedPerfSpecs.length
+                - 1
+                - this.orderedSpecifierIndex;
+            this.invertedOrderedSpecifier
+                = interval.IntervalOrderedPerfSpecs[
+                    this.invertedOrderedSpecIndex
+                ];
         } else {
-            this.orderedSpecifierIndex = interval.IntervalOrderedImperfSpecs.indexOf(interval.IntervalPrefixSpecs[this.specifier]);
-            this.invertedOrderedSpecIndex = (interval.IntervalOrderedImperfSpecs.length - 1 - this.orderedSpecifierIndex);
-            this.invertedOrderedSpecifier = interval.IntervalOrderedImperfSpecs[this.invertedOrderedSpecIndex];
+            this.orderedSpecifierIndex = interval.IntervalOrderedImperfSpecs.indexOf(
+                interval.IntervalPrefixSpecs[this.specifier]
+            );
+            this.invertedOrderedSpecIndex
+                = interval.IntervalOrderedImperfSpecs.length
+                - 1
+                - this.orderedSpecifierIndex;
+            this.invertedOrderedSpecifier
+                = interval.IntervalOrderedImperfSpecs[
+                    this.invertedOrderedSpecIndex
+                ];
         }
 
-        this.mod7inversion = this.invertedOrderedSpecifier + generic.mod7inversion.toString();
+        this.mod7inversion
+            = this.invertedOrderedSpecifier + generic.mod7inversion.toString();
         /* ( if (this.direction == interval.IntervalDirections.DESCENDING) {
 			this.mod7 = this.mod7inversion;
 		} else {
@@ -461,8 +585,11 @@ export class DiatonicInterval extends prebase.ProtoM21Object {
      * @returns {music21.interval.ChromaticInterval}
      */
     getChromatic() {
-        const octaveOffset = Math.floor(Math.abs(this.generic.staffDistance) / 7);
-        const semitonesStart = interval.IntervalSemitonesGeneric[this.generic.simpleUndirected];
+        const octaveOffset = Math.floor(
+            Math.abs(this.generic.staffDistance) / 7
+        );
+        const semitonesStart
+            = interval.IntervalSemitonesGeneric[this.generic.simpleUndirected];
         const specName = interval.IntervalPrefixSpecs[this.specifier];
 
         let semitonesAdjust = 0;
@@ -472,8 +599,7 @@ export class DiatonicInterval extends prebase.ProtoM21Object {
             semitonesAdjust = interval.IntervalAdjustImperf[specName];
         }
 
-        let semitones = (octaveOffset * 12) + semitonesStart + semitonesAdjust;
-
+        let semitones = octaveOffset * 12 + semitonesStart + semitonesAdjust;
 
         // direction should be same as original
 
@@ -481,11 +607,23 @@ export class DiatonicInterval extends prebase.ProtoM21Object {
             semitones *= -1;
         }
         if (debug) {
-            console.log('DiatonicInterval.getChromatic -- octaveOffset: ' + octaveOffset);
-            console.log('DiatonicInterval.getChromatic -- semitonesStart: ' + semitonesStart);
-            console.log('DiatonicInterval.getChromatic -- specName: ' + specName);
-            console.log('DiatonicInterval.getChromatic -- semitonesAdjust: ' + semitonesAdjust);
-            console.log('DiatonicInterval.getChromatic -- semitones: ' + semitones);
+            console.log(
+                'DiatonicInterval.getChromatic -- octaveOffset: ' + octaveOffset
+            );
+            console.log(
+                'DiatonicInterval.getChromatic -- semitonesStart: '
+                    + semitonesStart
+            );
+            console.log(
+                'DiatonicInterval.getChromatic -- specName: ' + specName
+            );
+            console.log(
+                'DiatonicInterval.getChromatic -- semitonesAdjust: '
+                    + semitonesAdjust
+            );
+            console.log(
+                'DiatonicInterval.getChromatic -- semitones: ' + semitones
+            );
         }
         return new interval.ChromaticInterval(semitones);
     }
@@ -541,10 +679,12 @@ export class ChromaticInterval extends prebase.ProtoM21Object {
         }
     }
     reverse() {
-        return new interval.ChromaticInterval(this.undirected * (-1 * this.direction));
+        return new interval.ChromaticInterval(
+            this.undirected * (-1 * this.direction)
+        );
     }
 
-//  TODO: this.getDiatonic()
+    //  TODO: this.getDiatonic()
 
     /**
      * Transposes pitches but does not maintain accidentals, etc.
@@ -570,7 +710,6 @@ export class ChromaticInterval extends prebase.ProtoM21Object {
 }
 interval.ChromaticInterval = ChromaticInterval;
 
-
 interval.IntervalStepNames = ['C', 'D', 'E', 'F', 'G', 'A', 'B'];
 
 /**
@@ -579,22 +718,24 @@ interval.IntervalStepNames = ['C', 'D', 'E', 'F', 'G', 'A', 'B'];
  * @param {Int} dn - diatonic number, where 29 = C4, C#4 etc.
  * @returns {Array} two element array of {string} stepName and {Int} octave
  */
-interval.IntervalConvertDiatonicNumberToStep = function IntervalConvertDiatonicNumberToStep(dn) {
+interval.IntervalConvertDiatonicNumberToStep = function IntervalConvertDiatonicNumberToStep(
+    dn
+) {
     let stepNumber;
     let octave;
     if (dn === 0) {
         return ['B', -1];
     } else if (dn > 0) {
         octave = Math.floor((dn - 1) / 7);
-        stepNumber = (dn - 1) - (octave * 7);
-    } else { // low notes... test, because js(floor) != py(int);
+        stepNumber = dn - 1 - octave * 7;
+    } else {
+        // low notes... test, because js(floor) != py(int);
         octave = Math.floor(dn / 7);
-        stepNumber = (dn - 1) - ((octave + 1) * 7);
+        stepNumber = dn - 1 - (octave + 1) * 7;
     }
     const stepName = interval.IntervalStepNames[stepNumber];
     return [stepName, octave];
 };
-
 
 /**
  * This is the main, powerful Interval class.
@@ -617,7 +758,6 @@ interval.IntervalConvertDiatonicNumberToStep = function IntervalConvertDiatonicN
  * // "Augmented Eleventh"
  */
 export class Interval extends prebase.ProtoM21Object {
-
     constructor(...restArgs) {
         super();
         this.classes.push('Interval');
@@ -625,7 +765,7 @@ export class Interval extends prebase.ProtoM21Object {
         // todo: allow full range of ways of specifying as in m21p
         if (restArgs.length === 1) {
             const arg0 = restArgs[0];
-            if (typeof (arg0) === 'string') {
+            if (typeof arg0 === 'string') {
                 // simple...
                 const specifier = arg0.slice(0, 1);
                 const generic = parseInt(arg0.slice(1));
@@ -641,7 +781,10 @@ export class Interval extends prebase.ProtoM21Object {
                 console.error('cant parse string arguments to Interval yet');
             }
         } else if (restArgs.length === 2) {
-            if (restArgs[0].pitch === undefined && restArgs[0].diatonicNoteNum === undefined) {
+            if (
+                restArgs[0].pitch === undefined
+                && restArgs[0].diatonicNoteNum === undefined
+            ) {
                 this.diatonic = restArgs[0];
                 this.chromatic = restArgs[1];
             } else {
@@ -685,7 +828,7 @@ export class Interval extends prebase.ProtoM21Object {
         this.semitones = this.chromatic.semitones;
         this.intervalClass = this.chromatic.intervalClass;
         this.cents = this.chromatic.cents;
-        this.isStep = (this.isChromaticStep || this.isDiatonicStep);
+        this.isStep = this.isChromaticStep || this.isDiatonicStep;
     }
 
     /**
@@ -702,7 +845,7 @@ export class Interval extends prebase.ProtoM21Object {
         }
     }
 
-//  todo general: microtones
+    //  todo general: microtones
     /**
      * @memberof music21.interval.Interval
      * @param {music21.pitch.Pitch} p - pitch to transpose
@@ -720,14 +863,20 @@ export class Interval extends prebase.ProtoM21Object {
         const pitch2 = this.diatonic.generic.transposePitch(p);
         pitch2.accidental = undefined;
         // step and octave are right now, but not necessarily accidental
-        const halfStepsToFix = this.chromatic.semitones - parseInt(pitch2.ps - p.ps);
+        const halfStepsToFix
+            = this.chromatic.semitones - parseInt(pitch2.ps - p.ps);
         if (halfStepsToFix !== 0) {
             pitch2.accidental = new pitch.Accidental(halfStepsToFix);
         }
         if (debug) {
             console.log('Interval.transposePitch -- new step ' + pitch2.step);
-            console.log('Interval.transposePitch -- new octave ' + pitch2.octave);
-            console.log('Interval.transposePitch -- fixing halfsteps for ' + halfStepsToFix);
+            console.log(
+                'Interval.transposePitch -- new octave ' + pitch2.octave
+            );
+            console.log(
+                'Interval.transposePitch -- fixing halfsteps for '
+                    + halfStepsToFix
+            );
         }
         return pitch2;
     }
@@ -750,7 +899,9 @@ interval.notesToGeneric = function notesToGeneric(n1, n2) {
     return new interval.GenericInterval(genDist);
 };
 
-interval.convertStaffDistanceToInterval = function convertStaffDistanceToInterval(staffDist) {
+interval.convertStaffDistanceToInterval = function convertStaffDistanceToInterval(
+    staffDist
+) {
     if (staffDist === 0) {
         return 1;
     } else if (staffDist > 0) {
@@ -778,27 +929,39 @@ interval.intervalsToDiatonic = function intervalsToDiatonic(gInt, cInt) {
     return new interval.DiatonicInterval(specifier, gInt);
 };
 
-interval._getSpecifierFromGenericChromatic = function _getSpecifierFromGenericChromatic(gInt, cInt) {
+interval._getSpecifierFromGenericChromatic = function _getSpecifierFromGenericChromatic(
+    gInt,
+    cInt
+) {
     const noteVals = [undefined, 0, 2, 4, 5, 7, 9, 11];
-    const normalSemis = noteVals[gInt.simpleUndirected] + 12 * gInt.undirectedOctaves;
+    const normalSemis
+        = noteVals[gInt.simpleUndirected] + 12 * gInt.undirectedOctaves;
     let theseSemis = 0;
-    if (gInt.direction !== cInt.direction
-            && gInt.direction !== interval.IntervalDirections.OBLIQUE
-            && cInt.direction !== interval.IntervalDirections.OBLIQUE) {
+    if (
+        gInt.direction !== cInt.direction
+        && gInt.direction !== interval.IntervalDirections.OBLIQUE
+        && cInt.direction !== interval.IntervalDirections.OBLIQUE
+    ) {
         // intervals like d2 and dd2 etc. (the last test doesn't matter, since -1*0 === 0, but in theory it should be there)
         theseSemis = -1 * cInt.undirected;
     } else if (gInt.undirected === 1) {
         theseSemis = cInt.directed; // matters for unison
     } else {
         // all normal intervals
-        theseSemis  = cInt.undirected;
+        theseSemis = cInt.undirected;
     }
     const semisRounded = Math.round(theseSemis);
     let specifier = '';
     if (gInt.perfectable) {
-        specifier = interval.IntervalPerfSpecifiers[interval.IntervalPerfOffset + semisRounded - normalSemis];
+        specifier
+            = interval.IntervalPerfSpecifiers[
+                interval.IntervalPerfOffset + semisRounded - normalSemis
+            ];
     } else {
-        specifier = interval.IntervalSpecifiers[interval.IntervalMajOffset + semisRounded - normalSemis];
+        specifier
+            = interval.IntervalSpecifiers[
+                interval.IntervalMajOffset + semisRounded - normalSemis
+            ];
     }
     return specifier;
 };

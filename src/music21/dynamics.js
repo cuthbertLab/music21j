@@ -29,45 +29,60 @@ import { base } from './base.js';
  */
 export const dynamics = {};
 dynamics.shortNames = [
-    'pppppp', 'ppppp', 'pppp', 'ppp', 'pp', 'p', 'mp',
-    'mf', 'f', 'fp', 'sf', 'ff', 'fff', 'ffff', 'fffff', 'ffffff'];
+    'pppppp',
+    'ppppp',
+    'pppp',
+    'ppp',
+    'pp',
+    'p',
+    'mp',
+    'mf',
+    'f',
+    'fp',
+    'sf',
+    'ff',
+    'fff',
+    'ffff',
+    'fffff',
+    'ffffff',
+];
 dynamics.longNames = {
-    'ppp': ['pianississimo'],
-    'pp': ['pianissimo'],
-    'p': ['piano'],
-    'mp': ['mezzopiano'],
-    'mf': ['mezzoforte'],
-    'f': ['forte'],
-    'fp': ['fortepiano'],
-    'sf': ['sforzando'],
-    'ff': ['fortissimo'],
-    'fff': ['fortississimo'],
+    ppp: ['pianississimo'],
+    pp: ['pianissimo'],
+    p: ['piano'],
+    mp: ['mezzopiano'],
+    mf: ['mezzoforte'],
+    f: ['forte'],
+    fp: ['fortepiano'],
+    sf: ['sforzando'],
+    ff: ['fortissimo'],
+    fff: ['fortississimo'],
 };
 dynamics.englishNames = {
-    'ppp': ['extremely soft'],
-    'pp': ['very soft'],
-    'p': ['soft'],
-    'mp': ['moderately soft'],
-    'mf': ['moderately loud'],
-    'f': ['loud'],
-    'ff': ['very loud'],
-    'fff': ['extremely loud'],
+    ppp: ['extremely soft'],
+    pp: ['very soft'],
+    p: ['soft'],
+    mp: ['moderately soft'],
+    mf: ['moderately loud'],
+    f: ['loud'],
+    ff: ['very loud'],
+    fff: ['extremely loud'],
 };
 dynamics.dynamicStrToScalar = {
-    'None': [0.5], // default value
-    'n': [0.0],
-    'pppp': [0.1],
-    'ppp': [0.15],
-    'pp': [0.25],
-    'p': [0.35],
-    'mp': [0.45],
-    'mf': [0.55],
-    'f': [0.7],
-    'fp': [0.75],
-    'sf': [0.85],
-    'ff': [0.85],
-    'fff': [0.9],
-    'ffff': [0.95],
+    None: [0.5], // default value
+    n: [0.0],
+    pppp: [0.1],
+    ppp: [0.15],
+    pp: [0.25],
+    p: [0.35],
+    mp: [0.45],
+    mf: [0.55],
+    f: [0.7],
+    fp: [0.75],
+    sf: [0.85],
+    ff: [0.85],
+    fff: [0.9],
+    ffff: [0.95],
 };
 
 /**
@@ -96,7 +111,7 @@ export class Dynamic extends base.Music21Object {
         return this._value;
     }
     set value(value) {
-        if (typeof (value) !== 'string') {
+        if (typeof value !== 'string') {
             // assume number
             this._volumeScalar = value;
             if (value <= 0) {
@@ -145,9 +160,7 @@ export class Dynamic extends base.Music21Object {
         }
     }
     set volumeScalar(value) {
-        if ((typeof (value) === 'number')
-                && (value <= 1)
-                && (value >= 0)) {
+        if (typeof value === 'number' && value <= 1 && value >= 0) {
             this._volumeScalar = value;
         }
     }

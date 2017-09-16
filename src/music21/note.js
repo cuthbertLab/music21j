@@ -137,17 +137,17 @@ export class Lyric extends prebase.ProtoM21Object {
             return this;
         }
 
-        if (!applyRaw
-                && (rawText.indexOf(this.lyricConnector) === 0)
-                && (rawText.slice(-1) === this.lyricConnector)) {
+        if (
+            !applyRaw
+            && rawText.indexOf(this.lyricConnector) === 0
+            && rawText.slice(-1) === this.lyricConnector
+        ) {
             this.text = rawText.slice(1, -1);
             this.syllabic = 'middle';
-        } else if (!applyRaw
-                    && (rawText.indexOf(this.lyricConnector) === 0)) {
+        } else if (!applyRaw && rawText.indexOf(this.lyricConnector) === 0) {
             this.text = rawText.slice(1);
             this.syllabic = 'end';
-        } else if (!applyRaw
-                    && (rawText.slice(-1) === this.lyricConnector)) {
+        } else if (!applyRaw && rawText.slice(-1) === this.lyricConnector) {
             this.text = rawText.slice(0, -1);
             this.syllabic = 'begin';
         } else {
@@ -217,7 +217,7 @@ export class GeneralNote extends base.Music21Object {
             volume = 60;
         }
         if (this.articulations !== undefined) {
-            this.articulations.forEach((a) => {
+            this.articulations.forEach(a => {
                 volume *= a.dynamicScale;
                 if (volume > 127) {
                     volume = 127;
@@ -242,7 +242,13 @@ export class GeneralNote extends base.Music21Object {
         applyRaw = applyRaw || false;
         if (lyricNumber === undefined) {
             const maxLyrics = this.lyrics.length + 1;
-            const newLyric = new note.Lyric(text, maxLyrics, undefined, applyRaw, lyricIdentifier);
+            const newLyric = new note.Lyric(
+                text,
+                maxLyrics,
+                undefined,
+                applyRaw,
+                lyricIdentifier
+            );
             this.lyrics.push(newLyric);
         } else {
             let foundLyric = false;
@@ -255,7 +261,13 @@ export class GeneralNote extends base.Music21Object {
                 }
             }
             if (foundLyric === false) {
-                const newLyric = new note.Lyric(text, lyricNumber, undefined, applyRaw, lyricIdentifier);
+                const newLyric = new note.Lyric(
+                    text,
+                    lyricNumber,
+                    undefined,
+                    applyRaw,
+                    lyricIdentifier
+                );
                 this.lyrics.push(newLyric);
             }
         }
@@ -293,16 +305,21 @@ export class GeneralNote extends base.Music21Object {
             // correct VexFlow stem length for notes far from the center line;
             let staveDNNSpacing = 5;
             if (options.stave) {
-                staveDNNSpacing = Math.floor(options.stave.options.spacing_between_lines_px / 2);
+                staveDNNSpacing = Math.floor(
+                    options.stave.options.spacing_between_lines_px / 2
+                );
             }
             if (options.clef !== undefined && this.pitch !== undefined) {
                 const midLine = options.clef.lowestLine + 4;
                 // console.log(midLine);
-                const absDNNfromCenter = Math.abs(this.pitch.diatonicNoteNum - midLine);
+                const absDNNfromCenter = Math.abs(
+                    this.pitch.diatonicNoteNum - midLine
+                );
                 const absOverOctave = absDNNfromCenter - 7;
                 // console.log(absOverOctave);
                 if (absOverOctave > 0 && vfn.getStemLength !== undefined) {
-                    const stemHeight = (absOverOctave * staveDNNSpacing) + vfn.getStemLength();
+                    const stemHeight
+                        = absOverOctave * staveDNNSpacing + vfn.getStemLength();
                     vfn.setStemLength(stemHeight);
                 }
             }
@@ -340,15 +357,20 @@ export class GeneralNote extends base.Music21Object {
         const ql = this.duration.quarterLength;
         milliseconds = 60 * ql * 1000 / tempo;
         let midNum;
-        if (this.isClassOrSubclass('Note')) { // Note, not rest
+        if (this.isClassOrSubclass('Note')) {
+            // Note, not rest
             midNum = this.pitch.midi;
             let stopTime = milliseconds / 1000;
-            if (nextElement !== undefined && nextElement.isClassOrSubclass('Note')) {
+            if (
+                nextElement !== undefined
+                && nextElement.isClassOrSubclass('Note')
+            ) {
                 if (nextElement.pitch.midi !== this.pitch.midi) {
                     stopTime += 60 * 0.25 / tempo; // legato -- play 16th note longer
-                } else if (this.tie !== undefined
-                            && (this.tie.type === 'start'
-                                || this.tie.type === 'continue')) {
+                } else if (
+                    this.tie !== undefined
+                    && (this.tie.type === 'start' || this.tie.type === 'continue')
+                ) {
                     stopTime += 60 * nextElement.duration.quarterLength / tempo;
                     // this does not take into account 3 or more notes tied.
                     // TODO: look ahead at next nexts, etc.
@@ -363,7 +385,7 @@ export class GeneralNote extends base.Music21Object {
                 // console.log(volume);
                 MIDI.noteOn(channel, midNum, volume, 0);
                 MIDI.noteOff(channel, midNum, stopTime);
-            }// else { console.log ('not going to play ', this.nameWithOctave); }
+            } // else { console.log ('not going to play ', this.nameWithOctave); }
         } else if (this.isClassOrSubclass('Chord')) {
             // TODO: Tied Chords.
             for (let j = 0; j < this._notes.length; j++) {
@@ -442,9 +464,11 @@ export class Note extends NotRest {
         this.classes.push('Note');
         this.isNote = true; // for speed
         this.isRest = false; // for speed
-        if (nn !== undefined
-                && nn.isClassOrSubclass !== undefined
-                && nn.isClassOrSubclass('Pitch') === true) {
+        if (
+            nn !== undefined
+            && nn.isClassOrSubclass !== undefined
+            && nn.isClassOrSubclass('Pitch') === true
+        ) {
             this.pitch = nn;
         } else {
             this.pitch = new pitch.Pitch(nn);
@@ -511,17 +535,21 @@ export class Note extends NotRest {
         common.merge(params, options);
         const clef = params.clef;
 
-
         // fixup stem direction -- must happen before Vex.Flow.Note is created...
-        if (this.activeSite !== undefined
-                && this.activeSite.renderOptions.stemDirection !== undefined
-                && note.stemDirectionNames.includes(this.activeSite.renderOptions.stemDirection)) {
+        if (
+            this.activeSite !== undefined
+            && this.activeSite.renderOptions.stemDirection !== undefined
+            && note.stemDirectionNames.includes(
+                this.activeSite.renderOptions.stemDirection
+            )
+        ) {
             this.stemDirection = this.activeSite.renderOptions.stemDirection;
-        } else if (this.stemDirection === undefined
-                        && options.clef !== undefined) {
+        } else if (
+            this.stemDirection === undefined
+            && options.clef !== undefined
+        ) {
             this.setStemDirectionFromClef(options.clef);
         }
-
 
         if (this.duration === undefined) {
             // console.log(this);
@@ -533,11 +561,12 @@ export class Note extends NotRest {
         }
         const vexflowKey = this.pitch.vexflowName(clef);
 
-        const vfnStemDirection = (this.stemDirection === 'down') ?
-                Vex.Flow.StaveNote.STEM_DOWN :
-                    Vex.Flow.StaveNote.STEM_UP;
+        const vfnStemDirection
+            = this.stemDirection === 'down'
+                ? Vex.Flow.StaveNote.STEM_DOWN
+                : Vex.Flow.StaveNote.STEM_UP;
 
-//        const vfnStemDirection = -1;
+        //        const vfnStemDirection = -1;
         const vfn = new Vex.Flow.StaveNote({
             keys: [vexflowKey],
             duration: vfd,
@@ -545,12 +574,26 @@ export class Note extends NotRest {
         });
         this.vexflowAccidentalsAndDisplay(vfn, params); // clean up stuff...
         if (this.pitch.accidental !== undefined) {
-            if (this.pitch.accidental.vexflowModifier !== 'n'
-                    && this.pitch.accidental.displayStatus !== false) {
-                vfn.addAccidental(0, new Vex.Flow.Accidental(this.pitch.accidental.vexflowModifier));
-            } else if (this.pitch.accidental.displayType === 'always'
-                            || this.pitch.accidental.displayStatus === true) {
-                vfn.addAccidental(0, new Vex.Flow.Accidental(this.pitch.accidental.vexflowModifier));
+            if (
+                this.pitch.accidental.vexflowModifier !== 'n'
+                && this.pitch.accidental.displayStatus !== false
+            ) {
+                vfn.addAccidental(
+                    0,
+                    new Vex.Flow.Accidental(
+                        this.pitch.accidental.vexflowModifier
+                    )
+                );
+            } else if (
+                this.pitch.accidental.displayType === 'always'
+                || this.pitch.accidental.displayStatus === true
+            ) {
+                vfn.addAccidental(
+                    0,
+                    new Vex.Flow.Accidental(
+                        this.pitch.accidental.vexflowModifier
+                    )
+                );
             }
         }
 
@@ -578,7 +621,6 @@ export class Note extends NotRest {
 note.Note = Note;
 
 /* ------ TODO: Unpitched ------ */
-
 
 /* ------ Rest ------ */
 
@@ -613,8 +655,10 @@ export class Rest extends GeneralNote {
     vexflowNote(options) {
         let keyLine = 'b/4';
         if (this.duration.type === 'whole') {
-            if (this.activeSite !== undefined
-                    && this.activeSite.renderOptions.staffLines !== 1) {
+            if (
+                this.activeSite !== undefined
+                && this.activeSite.renderOptions.staffLines !== 1
+            ) {
                 keyLine = 'd/5';
             }
         }
@@ -628,8 +672,10 @@ export class Rest extends GeneralNote {
             keyLine = p.vexflowName(undefined);
         }
 
-        const vfn = new Vex.Flow.StaveNote({ keys: [keyLine],
-            duration: this.duration.vexflowDuration + 'r' });
+        const vfn = new Vex.Flow.StaveNote({
+            keys: [keyLine],
+            duration: this.duration.vexflowDuration + 'r',
+        });
         if (this.duration.dots > 0) {
             for (let i = 0; i < this.duration.dots; i++) {
                 vfn.addDotToAll();

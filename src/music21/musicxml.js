@@ -15,7 +15,9 @@ const DEFAULTS = {
 };
 
 function hyphenToCamelCase(tag) {
-    return tag.replace(/-([a-z])/g, firstLetter => firstLetter[1].toUpperCase());
+    return tag.replace(/-([a-z])/g, firstLetter =>
+        firstLetter[1].toUpperCase()
+    );
 }
 
 function seta(m21El, xmlEl, tag, attributeName, transform) {
@@ -23,7 +25,10 @@ function seta(m21El, xmlEl, tag, attributeName, transform) {
     if (!$matchEl) {
         return;
     }
-    let value = $matchEl.contents().eq(0).text();
+    let value = $matchEl
+        .contents()
+        .eq(0)
+        .text();
     if (value === undefined || value === '') {
         return;
     }
@@ -56,8 +61,9 @@ export class ScoreParser {
 
     scoreFromUrl(url) {
         this.xmlUrl = url;
-        return $.get(url, {},
-                (xmlDoc, textStatus) => this.scoreFromDOMTree(xmlDoc));
+        return $.get(url, {}, (xmlDoc, textStatus) =>
+            this.scoreFromDOMTree(xmlDoc)
+        );
     }
 
     scoreFromText(xmlText) {
@@ -89,7 +95,8 @@ export class ScoreParser {
             // }
             const $mxScorePart = this.mxScorePartDict[partId];
             const part = this.xmlPartToPart($p, $mxScorePart);
-            if (part !== undefined) { // partStreams are undefined
+            if (part !== undefined) {
+                // partStreams are undefined
                 s.insert(0.0, part);
                 this.m21PartObjectsById[partId] = part;
                 this.parts.push(part);
@@ -282,18 +289,18 @@ export class MeasureParser {
 
         // class attributes in m21p
         this.attributeTagsToMethods = {
-            'time': 'handleTimeSignature',
-            'clef': 'handleClef',
-            'key': 'handleKeySignature',
+            time: 'handleTimeSignature',
+            clef: 'handleClef',
+            key: 'handleKeySignature',
             // 'staff-details': 'handleStaffDetails',
             // 'measure-style': 'handleMeasureStyle',
         };
         this.musicDataMethods = {
-            'note': 'xmlToNote',
+            note: 'xmlToNote',
             // 'backup': 'xmlBackup',
             // 'forward': 'xmlForward',
             // 'direction': 'xmlDirection',
-            'attributes': 'parseAttributesTag',
+            attributes: 'parseAttributesTag',
             // 'harmony': 'xmlHarmony',
             // 'figured-bass': undefined,
             // 'sound': undefined,
@@ -342,8 +349,10 @@ export class MeasureParser {
         let nextNoteIsChord = false;
         const $mxObjNext = this.$mxMeasureElements[this.parseIndex + 1];
         if ($mxObjNext !== undefined) {
-            if ($mxObjNext[0].tagName === 'note'
-                    && $mxObjNext.children('chord').length > 0) {
+            if (
+                $mxObjNext[0].tagName === 'note'
+                && $mxObjNext.children('chord').length > 0
+            ) {
                 nextNoteIsChord = true;
             }
         }
@@ -470,7 +479,10 @@ export class MeasureParser {
     xmlToAccidental($mxAccidental) {
         const acc = new pitch.Accidental();
         // to-do m21/musicxml accidental name differences;
-        const name = $($mxAccidental[0]).text().trim().toLowerCase();
+        const name = $($mxAccidental[0])
+            .text()
+            .trim()
+            .toLowerCase();
         acc.set(name);
 
         // set print style
@@ -521,14 +533,20 @@ export class MeasureParser {
         let qLen = 0.0;
 
         if (mxDuration) {
-            const noteDivisions = parseFloat($(mxDuration).text().trim());
+            const noteDivisions = parseFloat(
+                $(mxDuration)
+                    .text()
+                    .trim()
+            );
             qLen = noteDivisions / divisions;
         }
 
         const mxType = $mxNote.children('type')[0];
         if (mxType) {
             // long vs longa todo
-            const durationType = $(mxType).text().trim();
+            const durationType = $(mxType)
+                .text()
+                .trim();
             const numDots = $mxNote.children('dot').length;
             // tuplets!!!! big to-do!
             d.type = durationType;
@@ -615,8 +633,12 @@ export class MeasureParser {
     xmlToTimeSignature($mxTime) {
         // senza-misura
         // simple time signature only;
-        const numerator = $($mxTime.children('beats')[0]).text().trim();
-        const denominator = $($mxTime.children('beat-type')[0]).text().trim();
+        const numerator = $($mxTime.children('beats')[0])
+            .text()
+            .trim();
+        const denominator = $($mxTime.children('beat-type')[0])
+            .text()
+            .trim();
         return new meter.TimeSignature(numerator + '/' + denominator);
         // symbol
     }
@@ -628,14 +650,22 @@ export class MeasureParser {
     }
 
     xmlToClef($mxClef) {
-        const sign = $($mxClef.children('sign')[0]).text().trim();
+        const sign = $($mxClef.children('sign')[0])
+            .text()
+            .trim();
         // TODO: percussion, etc.
-        const line = $($mxClef.children('line')[0]).text().trim();
+        const line = $($mxClef.children('line')[0])
+            .text()
+            .trim();
 
         let clefOctaveChange = 0;
         const $coc = $mxClef.children('clef-octave-change');
         if ($coc.length > 0) {
-            clefOctaveChange = parseInt($($coc[0]).text().trim());
+            clefOctaveChange = parseInt(
+                $($coc[0])
+                    .text()
+                    .trim()
+            );
         }
         return clef.clefFromString(sign + line, clefOctaveChange);
     }

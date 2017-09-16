@@ -74,7 +74,6 @@ export class RenderStack {
 }
 vfShow.RenderStack = RenderStack;
 
-
 /**
  * Renderer is a function that takes a stream, an
  * optional existing canvas element and a DOM
@@ -147,7 +146,8 @@ export class Renderer {
         } else {
             this._vfRenderer = new Vex.Flow.Renderer(
                 this.canvas,
-                Vex.Flow.Renderer.Backends.CANVAS);
+                Vex.Flow.Renderer.Backends.CANVAS
+            );
             return this._vfRenderer;
         }
     }
@@ -162,7 +162,8 @@ export class Renderer {
             if (this.stream && this.stream.renderOptions) {
                 this._ctx.scale(
                     this.stream.renderOptions.scaleFactor.x,
-                    this.stream.renderOptions.scaleFactor.y);
+                    this.stream.renderOptions.scaleFactor.y
+                );
             }
             return this._ctx;
         }
@@ -246,7 +247,7 @@ export class Renderer {
             if (subStream.renderOptions.startNewSystem) {
                 this.systemBreakOffsets.push(subStream.offset);
             }
-            if (i === (p.length - 1)) {
+            if (i === p.length - 1) {
                 subStream.renderOptions.rightBarline = 'end';
             }
             if (this.stacks[i] === undefined) {
@@ -371,7 +372,7 @@ export class Renderer {
      */
     drawTuplets() {
         const ctx = this.ctx;
-        this.vfTuplets.forEach((vft) => {
+        this.vfTuplets.forEach(vft => {
             vft.setContext(ctx).draw();
         });
     }
@@ -406,7 +407,10 @@ export class Renderer {
             // this.systemBreakOffsets.length will be 0 for a flat score
             for (let sbI = 0; sbI < this.systemBreakOffsets.length; sbI++) {
                 const thisSystemBreak = this.systemBreakOffsets[sbI];
-                if (thisNote.offset < thisSystemBreak && nextNote.offset >= thisSystemBreak) {
+                if (
+                    thisNote.offset < thisSystemBreak
+                    && nextNote.offset >= thisSystemBreak
+                ) {
                     onSameSystem = false;
                     break;
                 }
@@ -539,12 +543,21 @@ export class Renderer {
                 // find beam groups -- n.b. this wipes out stemDirection. worth it usually...
                 const voice = voices[i];
                 let beatGroups = [new Vex.Flow.Fraction(2, 8)]; // default beam groups
-                if (measures[i] !== undefined && measures[i].timeSignature !== undefined) {
-                    beatGroups = measures[i].timeSignature.vexflowBeatGroups(Vex);
+                if (
+                    measures[i] !== undefined
+                    && measures[i].timeSignature !== undefined
+                ) {
+                    beatGroups = measures[i].timeSignature.vexflowBeatGroups(
+                        Vex
+                    );
                     // TODO: getContextByClass...
                     // console.log(beatGroups);
                 }
-                const beamGroups = Vex.Flow.Beam.applyAndGetBeams(voice, undefined, beatGroups);
+                const beamGroups = Vex.Flow.Beam.applyAndGetBeams(
+                    voice,
+                    undefined,
+                    beatGroups
+                );
                 this.beamGroups.push(...beamGroups);
             }
         }
@@ -581,7 +594,7 @@ export class Renderer {
         if (width === undefined) {
             width = s.estimateStaffLength() + rendOp.staffPadding;
         }
-        let top = rendOp.top;// * rendOp.scaleFactor.y;
+        let top = rendOp.top; // * rendOp.scaleFactor.y;
         if (top === undefined) {
             top = 0;
         }
@@ -591,7 +604,14 @@ export class Renderer {
         }
         // console.log('streamLength: ' + streamLength);
         if (debug) {
-            console.log('creating new stave: left:' + left + ' top: ' + top + ' width: ' + width);
+            console.log(
+                'creating new stave: left:'
+                    + left
+                    + ' top: '
+                    + top
+                    + ' width: '
+                    + width
+            );
         }
         const stave = new Vex.Flow.Stave(left, top, width);
         return stave;
@@ -625,22 +645,24 @@ export class Renderer {
             }
             stave.addClef(s.clef.name, size, ottava);
         }
-        if ((s.keySignature !== undefined) && (rendOp.displayKeySignature)) {
+        if (s.keySignature !== undefined && rendOp.displayKeySignature) {
             const ksVFName = s.keySignature.majorName().replace(/-/g, 'b');
             stave.addKeySignature(ksVFName);
         }
 
-        if ((s.timeSignature !== undefined) && (rendOp.displayTimeSignature)) {
+        if (s.timeSignature !== undefined && rendOp.displayTimeSignature) {
             stave.addTimeSignature(
-                    s.timeSignature.numerator.toString() + '/' +
-                    s.timeSignature.denominator.toString());
+                s.timeSignature.numerator.toString()
+                    + '/'
+                    + s.timeSignature.denominator.toString()
+            );
         }
         if (rendOp.rightBarline !== undefined) {
             const bl = rendOp.rightBarline;
             const barlineMap = {
-                'single': 'SINGLE',
-                'double': 'DOUBLE',
-                'end': 'END',
+                single: 'SINGLE',
+                double: 'DOUBLE',
+                end: 'END',
             };
             const vxBL = barlineMap[bl];
             if (vxBL !== undefined) {
@@ -673,21 +695,24 @@ export class Renderer {
                     { visible: false },
                     { visible: true }, // show middle
                     { visible: false },
-                    { visible: false }];
+                    { visible: false },
+                ];
             } else if (rendOp.staffLines === 2) {
                 vexflowStave.options.line_config = [
                     { visible: false },
                     { visible: false },
                     { visible: true }, // show middle
                     { visible: true },
-                    { visible: false }];
+                    { visible: false },
+                ];
             } else if (rendOp.staffLines === 3) {
                 vexflowStave.options.line_config = [
                     { visible: false },
                     { visible: true },
                     { visible: true }, // show middle
                     { visible: true },
-                    { visible: false }];
+                    { visible: false },
+                ];
             } else {
                 vexflowStave.setNumLines(rendOp.staffLines);
             }
@@ -717,7 +742,10 @@ export class Renderer {
         const options = { clef: s.clef, stave };
         for (let i = 0; i < s.length; i++) {
             const thisEl = s.get(i);
-            if (thisEl.isClassOrSubclass('GeneralNote') && (thisEl.duration !== undefined)) {
+            if (
+                thisEl.isClassOrSubclass('GeneralNote')
+                && thisEl.duration !== undefined
+            ) {
                 // sets thisEl.activeVexflowNote -- may be overwritten but not so fast...
                 const vfn = thisEl.vexflowNote(options);
                 if (vfn === undefined) {
@@ -738,16 +766,24 @@ export class Renderer {
                     activeTupletVexflowNotes.push(vfn);
                     activeTupletLength += thisEl.duration.quarterLength;
                     // console.log(activeTupletLength, activeTuplet.totalTupletLength());
-                    if (activeTupletLength >= activeTuplet.totalTupletLength() ||
-                            Math.abs(activeTupletLength
-                                        - activeTuplet.totalTupletLength()) < 0.001) {
+                    if (
+                        activeTupletLength
+                            >= activeTuplet.totalTupletLength()
+                        || Math.abs(
+                            activeTupletLength
+                                - activeTuplet.totalTupletLength()
+                        ) < 0.001
+                    ) {
                         // console.log(activeTupletVexflowNotes);
                         const tupletOptions = {
                             num_notes: activeTuplet.numberNotesActual,
-                            notes_occupied: activeTuplet.numberNotesNormal };
+                            notes_occupied: activeTuplet.numberNotesNormal,
+                        };
                         // console.log('tupletOptions', tupletOptions);
-                        const vfTuplet = new Vex.Flow.Tuplet(activeTupletVexflowNotes,
-                                tupletOptions);
+                        const vfTuplet = new Vex.Flow.Tuplet(
+                            activeTupletVexflowNotes,
+                            tupletOptions
+                        );
                         if (activeTuplet.tupletNormalShow === 'ratio') {
                             vfTuplet.setRatioed(true);
                         }
@@ -784,7 +820,10 @@ export class Renderer {
                 text,
                 font,
                 duration: d,
-            }).setLine(11).setStave(stave).setJustification(Vex.Flow.TextNote.Justification.LEFT);
+            })
+                .setLine(11)
+                .setStave(stave)
+                .setJustification(Vex.Flow.TextNote.Justification.LEFT);
             return t1;
         };
 
@@ -811,7 +850,10 @@ export class Renderer {
                 if (text === undefined) {
                     text = '';
                 }
-                if (lyricsArray[0].syllabic === 'middle' || lyricsArray[0].syllabic === 'begin') {
+                if (
+                    lyricsArray[0].syllabic === 'middle'
+                    || lyricsArray[0].syllabic === 'begin'
+                ) {
                     addConnector = ' ' + lyricsArray[0].lyricConnector;
                     const tempQl = el.duration.quarterLength / 2.0;
                     d = new duration.Duration(tempQl).vexflowDuration;
@@ -839,42 +881,48 @@ export class Renderer {
         let num1024 = Math.round(totalLength / (1 / 256));
         let beatValue = 1024;
 
-        if (num1024 % 512 === 0)  {
+        if (num1024 % 512 === 0) {
             beatValue = 2;
             num1024 /= 512;
-        } else if (num1024 % 256 === 0)  {
+        } else if (num1024 % 256 === 0) {
             beatValue = 4;
             num1024 /= 256;
-        } else if (num1024 % 128 === 0)  {
+        } else if (num1024 % 128 === 0) {
             beatValue = 8;
             num1024 /= 128;
-        } else if (num1024 % 64 === 0)  {
+        } else if (num1024 % 64 === 0) {
             beatValue = 16;
             num1024 /= 64;
-        } else if (num1024 % 32 === 0)  {
+        } else if (num1024 % 32 === 0) {
             beatValue = 32;
             num1024 /= 32;
-        } else if (num1024 % 16 === 0)  {
+        } else if (num1024 % 16 === 0) {
             beatValue = 64;
             num1024 /= 16;
-        } else if (num1024 % 8 === 0)  {
+        } else if (num1024 % 8 === 0) {
             beatValue = 128;
             num1024 /= 8;
-        } else if (num1024 % 4 === 0)  {
+        } else if (num1024 % 4 === 0) {
             beatValue = 256;
             num1024 /= 4;
-        } else if (num1024 % 2 === 0)  {
+        } else if (num1024 % 2 === 0) {
             beatValue = 512;
             num1024 /= 2;
         }
         // console.log('creating voice');
         if (debug) {
-            console.log('New voice, num_beats: ' + num1024.toString()
-                + ' beat_value: ' + beatValue.toString());
+            console.log(
+                'New voice, num_beats: '
+                    + num1024.toString()
+                    + ' beat_value: '
+                    + beatValue.toString()
+            );
         }
-        const vfv = new Vex.Flow.Voice({ num_beats: num1024,
+        const vfv = new Vex.Flow.Voice({
+            num_beats: num1024,
             beat_value: beatValue,
-            resolution: Vex.Flow.RESOLUTION });
+            resolution: Vex.Flow.RESOLUTION,
+        });
 
         // from vexflow/src/voice.js
         //
@@ -889,10 +937,10 @@ export class Renderer {
     }
     staffConnectorsMap(connectorType) {
         const connectorMap = {
-            'brace': Vex.Flow.StaveConnector.type.BRACE,
-            'single': Vex.Flow.StaveConnector.type.SINGLE,
-            'double': Vex.Flow.StaveConnector.type.DOUBLE,
-            'bracket': Vex.Flow.StaveConnector.type.BRACKET,
+            brace: Vex.Flow.StaveConnector.type.BRACE,
+            single: Vex.Flow.StaveConnector.type.SINGLE,
+            double: Vex.Flow.StaveConnector.type.DOUBLE,
+            bracket: Vex.Flow.StaveConnector.type.BRACKET,
         };
         return connectorMap[connectorType];
     }
@@ -930,26 +978,41 @@ export class Renderer {
                 let bottomVFStaff = lastPartMeasure.activeVFStave;
                 if (topVFStaff === undefined) {
                     if (thisPartMeasure.hasSubStreams()) {
-                        const thisPartVoice = thisPartMeasure.getElementsByClass('Stream').get(0);
+                        const thisPartVoice = thisPartMeasure
+                            .getElementsByClass('Stream')
+                            .get(0);
                         topVFStaff = thisPartVoice.activeVFStave;
                         if (topVFStaff === undefined) {
-                            console.warn('No active VexFlow Staves defined for at least one measure');
+                            console.warn(
+                                'No active VexFlow Staves defined for at least one measure'
+                            );
                             continue;
                         }
                     }
                 }
                 if (bottomVFStaff === undefined) {
                     if (lastPartMeasure.hasSubStreams()) {
-                        const lastPartVoice = lastPartMeasure.getElementsByClass('Stream').get(0);
+                        const lastPartVoice = lastPartMeasure
+                            .getElementsByClass('Stream')
+                            .get(0);
                         bottomVFStaff = lastPartVoice.activeVFStave;
                         if (bottomVFStaff === undefined) {
-                            console.warn('No active VexFlow Staves defined for at least one measure');
+                            console.warn(
+                                'No active VexFlow Staves defined for at least one measure'
+                            );
                             continue;
                         }
                     }
                 }
-                for (let i = 0; i < s.renderOptions.staffConnectors.length; i++) {
-                    const sc = new Vex.Flow.StaveConnector(topVFStaff, bottomVFStaff);
+                for (
+                    let i = 0;
+                    i < s.renderOptions.staffConnectors.length;
+                    i++
+                ) {
+                    const sc = new Vex.Flow.StaveConnector(
+                        topVFStaff,
+                        bottomVFStaff
+                    );
                     const scTypeM21 = s.renderOptions.staffConnectors[i];
                     const scTypeVF = this.staffConnectorsMap(scTypeM21);
                     sc.setType(scTypeVF);
@@ -1013,8 +1076,12 @@ export class Renderer {
         if (stave !== undefined) {
             noteOffsetLeft = stave.start_x + stave.glyph_start_x;
             if (debug) {
-                console.log('noteOffsetLeft: ' + noteOffsetLeft
-                    + ' ; stave.start_x: ' + stave.start_x);
+                console.log(
+                    'noteOffsetLeft: '
+                        + noteOffsetLeft
+                        + ' ; stave.start_x: '
+                        + stave.start_x
+                );
                 console.log('Bottom y: ' + stave.getBottomY());
             }
             // staveHeight = stave.height;
@@ -1029,7 +1096,8 @@ export class Renderer {
                     continue;
                 }
                 const nTicks = parseInt(vfn.ticks);
-                const formatterNote = formatter.tickContexts.map[String(nextTicks)];
+                const formatterNote
+                    = formatter.tickContexts.map[String(nextTicks)];
                 nextTicks += nTicks;
                 el.x = vfn.getAbsoluteX();
                 // these are a bit hacky...
@@ -1041,9 +1109,12 @@ export class Renderer {
                 }
 
                 el.width = formatterNote.width;
-                if (el.pitch !== undefined) { // note only...
-                    el.y = (stave.getBottomY() - (s.clef.lowestLine - el.pitch.diatonicNoteNum) *
-                            stave.options.spacing_between_lines_px);
+                if (el.pitch !== undefined) {
+                    // note only...
+                    el.y
+                        = stave.getBottomY()
+                        - (s.clef.lowestLine - el.pitch.diatonicNoteNum)
+                            * stave.options.spacing_between_lines_px;
                     // console.log('Note DNN: ' + el.pitch.diatonicNoteNum + " ; y: " + el.y);
                 }
             }
@@ -1052,7 +1123,13 @@ export class Renderer {
             for (let i = 0; i < s.length; i++) {
                 const n = s.get(i);
                 if (n.pitch !== undefined) {
-                    console.log(n.pitch.diatonicNoteNum + ' ' + n.x + ' ' + (n.x + n.width));
+                    console.log(
+                        n.pitch.diatonicNoteNum
+                            + ' '
+                            + n.x
+                            + ' '
+                            + (n.x + n.width)
+                    );
                 }
             }
         }

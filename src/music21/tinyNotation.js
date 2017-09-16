@@ -49,12 +49,12 @@ tinyNotation.regularExpressions = {
     EDSHARP: /\((#+)\)/,
     EDFLAT: /\((-+)\)/,
     EDNAT: /\(n\)/,
-    SHARP: /^[A-Ga-g]+'*(#+)/,  // simple notation finds
-    FLAT: /^[A-Ga-g]+'*(-+)/,  // double sharps too
-    NAT: /^[A-Ga-g]+'*n/,  // explicit naturals
+    SHARP: /^[A-Ga-g]+'*(#+)/, // simple notation finds
+    FLAT: /^[A-Ga-g]+'*(-+)/, // double sharps too
+    NAT: /^[A-Ga-g]+'*n/, // explicit naturals
     TYPE: /(\d+)/,
     TIE: /.~/, // not preceding ties
-    PRECTIE: /~/,  // front ties
+    PRECTIE: /~/, // front ties
     ID_EL: /=([A-Za-z0-9]*)/,
     LYRIC: /_(.*)/,
     DOT: /\.+/,
@@ -142,7 +142,6 @@ tinyNotation.TinyNotation = function TinyNotation(textIn) {
             storedDict.endTupletAfterNote = true;
         }
 
-
         if (tnre.TIMESIG.exec(token)) {
             const MATCH = tnre.TIMESIG.exec(token);
             const ts = new meter.TimeSignature();
@@ -210,10 +209,14 @@ tinyNotation.TinyNotation = function TinyNotation(textIn) {
 
         if (storedDict.inTrip) {
             // console.log(noteObj.duration.quarterLength);
-            noteObj.duration.appendTuplet(new duration.Tuplet(3, 2, noteObj.duration.quarterLength));
+            noteObj.duration.appendTuplet(
+                new duration.Tuplet(3, 2, noteObj.duration.quarterLength)
+            );
         }
         if (storedDict.inQuad) {
-            noteObj.duration.appendTuplet(new duration.Tuplet(4, 3, noteObj.duration.quarterLength));
+            noteObj.duration.appendTuplet(
+                new duration.Tuplet(4, 3, noteObj.duration.quarterLength)
+            );
         }
         if (storedDict.endTupletAfterNote) {
             storedDict.inTrip = false;
@@ -257,7 +260,10 @@ tinyNotation.TinyNotation = function TinyNotation(textIn) {
  * @memberof music21.tinyNotation
  * @param {string} classTypes - a JQuery selector to find elements to replace.
  */
-tinyNotation.renderNotationDivs = function renderNotationDivs(classTypes, selector) {
+tinyNotation.renderNotationDivs = function renderNotationDivs(
+    classTypes,
+    selector
+) {
     if (classTypes === undefined) {
         classTypes = '.music21.tinyNotation';
     }
@@ -281,8 +287,10 @@ tinyNotation.renderNotationDivs = function renderNotationDivs(classTypes, select
             thisTNContents = thisTNContents.replace(/s+/g, ' '); // no line-breaks, etc.
         }
 
-        if ((String.prototype.trim !== undefined)
-                && (thisTNContents !== undefined)) {
+        if (
+            String.prototype.trim !== undefined
+            && thisTNContents !== undefined
+        ) {
             thisTNContents = thisTNContents.trim(); // remove leading, trailing whitespace
         }
         if (thisTNContents) {

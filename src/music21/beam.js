@@ -27,10 +27,10 @@ import { duration } from './duration.js';
 export const beam = {};
 
 beam.validBeamTypes = {
-    'start': true,
-    'stop': true,
-    'continue': true,
-    'partial': true,
+    start: true,
+    stop: true,
+    continue: true,
+    partial: true,
 };
 
 /**
@@ -111,7 +111,11 @@ export class Beams extends prebase.ProtoM21Object {
     fill(level, type) {
         this.beamsList = [];
         let count = 1;
-        if (level === 1 || level === '8th' || level === duration.typeFromNumDict[8]) {
+        if (
+            level === 1
+            || level === '8th'
+            || level === duration.typeFromNumDict[8]
+        ) {
             count = 1;
         } else if (level === 2 || level === duration.typeFromNumDict[16]) {
             count = 2;
@@ -144,7 +148,7 @@ export class Beams extends prebase.ProtoM21Object {
      * @returns {music21.beam.Beam|undefined}
      */
     getByNumber(number) {
-        if (!(this.getNumbers().includes(number))) {
+        if (!this.getNumbers().includes(number)) {
             throw new Music21Exception('beam number error: ' + number);
         }
         for (const thisBeam of this.beamsList) {

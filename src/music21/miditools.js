@@ -52,10 +52,10 @@ export class Event {
         this.data1 = a;
         this.data2 = b;
         this.data3 = c;
-        this.midiCommand = (a >> 4);
+        this.midiCommand = a >> 4;
 
-        this.noteOff = (this.midiCommand === 8);
-        this.noteOn = (this.midiCommand === 9);
+        this.noteOff = this.midiCommand === 8;
+        this.noteOn = this.midiCommand === 9;
 
         this.midiNote = undefined;
         if (this.noteOn || this.noteOff) {
@@ -136,7 +136,7 @@ miditools._baseTempo = 60;
 miditools.metronome = undefined;
 
 Object.defineProperties(miditools, {
-    'tempo': {
+    tempo: {
         enumerable: true,
         get() {
             if (this.metronome === undefined) {
@@ -167,8 +167,7 @@ Object.defineProperties(miditools, {
 miditools.clearOldChords = function clearOldChords() {
     // clear out notes that may be a chord...
     const nowInMs = Date.now(); // in ms
-    if ((miditools.heldChordTime +
-            miditools.maxDelay) < nowInMs) {
+    if (miditools.heldChordTime + miditools.maxDelay < nowInMs) {
         miditools.heldChordTime = nowInMs;
         if (miditools.heldChordNotes !== undefined) {
             // console.log('to send out chords');
@@ -187,7 +186,8 @@ miditools.clearOldChords = function clearOldChords() {
  *  @memberof music21.miditools
  *  @returns undefined
  */
-miditools.makeChords = function makeChords(jEvent) { // jEvent is a miditools.Event object
+miditools.makeChords = function makeChords(jEvent) {
+    // jEvent is a miditools.Event object
     if (jEvent.noteOn) {
         const m21n = jEvent.music21Note();
         if (miditools.heldChordNotes === undefined) {
@@ -196,7 +196,7 @@ miditools.makeChords = function makeChords(jEvent) { // jEvent is a miditools.Ev
             for (let i = 0; i < miditools.heldChordNotes.length; i++) {
                 const foundNote = miditools.heldChordNotes[i];
                 if (foundNote.pitch.ps === m21n.pitch.ps) {
-                    return;  // no duplicates
+                    return; // no duplicates
                 }
             }
             miditools.heldChordNotes.push(m21n);
@@ -261,10 +261,8 @@ miditools.sendOutChord = function sendOutChord(chordNoteList) {
 */
 miditools.callBacks = {
     raw: (t, a, b, c) => new miditools.Event(t, a, b, c),
-    general: [
-        miditools.sendToMIDIjs,
-        miditools.quantizeLastNote],
-    sendOutChord: (arrayOfNotes) => { },
+    general: [miditools.sendToMIDIjs, miditools.quantizeLastNote],
+    sendOutChord: arrayOfNotes => {},
 };
 
 /**
@@ -314,7 +312,7 @@ miditools.quantizeLastNote = function quantizeLastNote(lastElement) {
  * @param {music21.miditools.Event} midiEvent - event to send out.
  * @returns undefined
  */
-miditools.sendToMIDIjs = (midiEvent) => {
+miditools.sendToMIDIjs = midiEvent => {
     midiEvent.sendToMIDIjs();
 };
 
@@ -340,26 +338,34 @@ miditools.postLoadCallback = function postLoadCallback(soundfont, callback) {
     // this should be bound to MIDI
     if (debug) {
         console.log('soundfont loaded about to execute callback.');
-        console.log('first playing two notes very softly -- seems to flush the buffer.');
+        console.log(
+            'first playing two notes very softly -- seems to flush the buffer.'
+        );
     }
     $('.loadingSoundfont').remove();
 
-    const isFirefox = typeof InstallTrigger !== 'undefined';   // Firefox 1.0+
-    const isAudioTag = (MIDI.technology === 'HTML Audio Tag');
+    const isFirefox = typeof InstallTrigger !== 'undefined'; // Firefox 1.0+
+    const isAudioTag = MIDI.technology === 'HTML Audio Tag';
     const instrumentObj = instrument.find(soundfont);
     if (instrumentObj !== undefined) {
-        MIDI.programChange(instrumentObj.midiChannel, instrumentObj.midiProgram);
+        MIDI.programChange(
+            instrumentObj.midiChannel,
+            instrumentObj.midiProgram
+        );
         if (debug) {
-            console.log(soundfont + ' (' + instrumentObj.midiProgram + ') loaded on ', instrumentObj.midiChannel);
+            console.log(
+                soundfont + ' (' + instrumentObj.midiProgram + ') loaded on ',
+                instrumentObj.midiChannel
+            );
         }
-        if ((isFirefox === false) && (isAudioTag === false)) {
+        if (isFirefox === false && isAudioTag === false) {
             const c = instrumentObj.midiChannel;
             // Firefox ignores sound volume! so don't play! as does IE and others using HTML audio tag.
-            MIDI.noteOn(c, 36, 1, 0);     // if no notes have been played before then
-            MIDI.noteOff(c, 36, 1, 0.1);  // the second note to be played is always
-            MIDI.noteOn(c, 48, 1, 0.2);   // very clipped (on Safari at least)
-            MIDI.noteOff(c, 48, 1, 0.3);  // this helps a lot.
-            MIDI.noteOn(c, 60, 1, 0.3);   // chrome needs three?
+            MIDI.noteOn(c, 36, 1, 0); // if no notes have been played before then
+            MIDI.noteOff(c, 36, 1, 0.1); // the second note to be played is always
+            MIDI.noteOn(c, 48, 1, 0.2); // very clipped (on Safari at least)
+            MIDI.noteOff(c, 48, 1, 0.3); // this helps a lot.
+            MIDI.noteOn(c, 60, 1, 0.3); // chrome needs three?
             MIDI.noteOff(c, 60, 1, 0.4);
         }
     }
@@ -368,7 +374,6 @@ miditools.postLoadCallback = function postLoadCallback(soundfont, callback) {
     }
     miditools.loadedSoundfonts[soundfont] = true;
 };
-
 
 /**
  * method to load soundfonts while waiting for other processes that need them
@@ -396,7 +401,9 @@ miditools.loadSoundfont = function loadSoundfont(soundfont, callback) {
         const waitThenCall = () => {
             if (miditools.loadedSoundfonts[soundfont] === true) {
                 if (debug) {
-                    console.log('other process has finished loading; calling callback');
+                    console.log(
+                        'other process has finished loading; calling callback'
+                    );
                 }
                 if (callback !== undefined) {
                     const instrumentObj = instrument.find(soundfont);
@@ -419,12 +426,20 @@ miditools.loadSoundfont = function loadSoundfont(soundfont, callback) {
             if (debug) {
                 console.log('document ready, waiting to load soundfont');
             }
-            $(document.body).append($("<div class='loadingSoundfont'><b>Loading MIDI Instrument</b>: " +
-                                      'audio will begin when this message disappears.</div>'));
+            $(document.body).append(
+                $(
+                    "<div class='loadingSoundfont'><b>Loading MIDI Instrument</b>: "
+                        + 'audio will begin when this message disappears.</div>'
+                )
+            );
             MIDI.loadPlugin({
                 soundfontUrl: common.urls.soundfontUrl,
                 instrument: soundfont,
-                onsuccess: miditools.postLoadCallback.bind(MIDI, soundfont, callback),
+                onsuccess: miditools.postLoadCallback.bind(
+                    MIDI,
+                    soundfont,
+                    callback
+                ),
             });
         });
     }
@@ -459,10 +474,16 @@ export class MidiPlayer {
         }
         const $playDiv = $('<div class="midiPlayer">');
         const $controls = $('<div class="positionControls">');
-        const $playPause = $('<input type="image" src="' + this.playPng() +
-                '" align="absmiddle" value="play" class="playPause">');
-        const $stop = $('<input type="image" src="' + this.stopPng() +
-                '" align="absmiddle" value="stop" class="stopButton">');
+        const $playPause = $(
+            '<input type="image" src="'
+                + this.playPng()
+                + '" align="absmiddle" value="play" class="playPause">'
+        );
+        const $stop = $(
+            '<input type="image" src="'
+                + this.stopPng()
+                + '" align="absmiddle" value="stop" class="stopButton">'
+        );
 
         $playPause.on('click', this.pausePlayStop.bind(this));
         $stop.on('click', this.stopButton.bind(this));
@@ -472,7 +493,9 @@ export class MidiPlayer {
 
         const $time = $('<div class="timeControls">');
         const $timePlayed = $('<span class="timePlayed">0:00</span>');
-        const $capsule = $('<span class="capsule"><span class="cursor"></span></span>');
+        const $capsule = $(
+            '<span class="capsule"><span class="cursor"></span></span>'
+        );
         const $timeRemaining = $('<span class="timeRemaining">-0:00</span>');
         $time.append($timePlayed);
         $time.append($capsule);
@@ -517,20 +540,24 @@ export class MidiPlayer {
         }
     }
 
-
     base64Load(b64data) {
         const player = this.player;
         player.timeWarp = this.speed;
 
         const m21midiplayer = this;
         miditools.loadSoundfont('acoustic_grand_piano', () => {
-            player.loadFile(b64data, () => {   // success
-                m21midiplayer.fileLoaded();
-            },
-            undefined,  // loading
-            (e) => {  // failure
-                console.log(e);
-            });
+            player.loadFile(
+                b64data,
+                () => {
+                    // success
+                    m21midiplayer.fileLoaded();
+                },
+                undefined, // loading
+                e => {
+                    // failure
+                    console.log(e);
+                }
+            );
         });
     }
 
@@ -546,7 +573,6 @@ export class MidiPlayer {
         this.player.start();
         this.updatePlaying();
     }
-
 
     updatePlaying() {
         const self = this;
@@ -564,7 +590,7 @@ export class MidiPlayer {
         eventjs.add($capsule[0], 'drag', (event, self) => {
             eventjs.cancel(event);
             const player = this.player;
-            player.currentTime = (self.x) / 420 * player.endTime;
+            player.currentTime = self.x / 420 * player.endTime;
             if (player.currentTime < 0) {
                 player.currentTime = 0;
             }
@@ -579,23 +605,24 @@ export class MidiPlayer {
         });
         //
         function timeFormatting(n) {
-            const minutes = n / 60 >> 0;
-            let seconds = String(n - (minutes * 60) >> 0);
+            const minutes = (n / 60) >> 0;
+            let seconds = String((n - minutes * 60) >> 0);
             if (seconds.length === 1) {
                 seconds = '0' + seconds;
             }
             return minutes + ':' + seconds;
         }
 
-        player.setAnimation((data) => {
+        player.setAnimation(data => {
             const percent = data.now / data.end;
             const now = data.now >> 0; // where we are now
             const end = data.end >> 0; // end of song
-            if (now === end) { // go to next song
+            if (now === end) {
+                // go to next song
                 self.songFinished();
             }
             // display the information to the user
-            timeCursor.style.width = (percent * 100) + '%';
+            timeCursor.style.width = percent * 100 + '%';
             timePlayed.innerHTML = timeFormatting(now);
             timeRemaining.innerHTML = '-' + timeFormatting(end - now);
         });

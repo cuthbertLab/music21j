@@ -58,7 +58,11 @@ export class Music21Object extends prebase.ProtoM21Object {
         // this.sites, this.activeSites, this.offset -- not yet...
         // beat, measureNumber, etc.
         // lots to do...
-        this._cloneCallbacks.activeSite = function Music21Object_cloneCallbacks_activeSite(p, ret, obj) {
+        this._cloneCallbacks.activeSite = function Music21Object_cloneCallbacks_activeSite(
+            p,
+            ret,
+            obj
+        ) {
             ret[p] = undefined;
         };
     }
@@ -72,12 +76,12 @@ export class Music21Object extends prebase.ProtoM21Object {
         return this._duration;
     }
     set duration(newDuration) {
-        if (typeof (newDuration) === 'object') {
+        if (typeof newDuration === 'object') {
             this._duration = newDuration;
             // common errors below...
-        } else if (typeof (newDuration) === 'number') {
+        } else if (typeof newDuration === 'number') {
             this._duration.quarterLength = newDuration;
-        } else if (typeof (newDuration) === 'string') {
+        } else if (typeof newDuration === 'string') {
             this._duration.type = newDuration;
         }
     }

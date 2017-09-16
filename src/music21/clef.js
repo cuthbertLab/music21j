@@ -30,13 +30,13 @@ export const clef = {};
  */
 // TODO: Fix to newest Vexflow format...
 clef.lowestLines = {
-    'treble': 31,
-    'soprano': 29,
+    treble: 31,
+    soprano: 29,
     'mezzo-soprano': 27,
-    'alto': 25,
-    'tenor': 23,
-    'bass': 19,
-    'percussion': 31,
+    alto: 25,
+    tenor: 23,
+    bass: 19,
+    percussion: 31,
 };
 /**
  * Clefname can be one of
@@ -60,7 +60,8 @@ export class Clef extends base.Music21Object {
             name = name.toLowerCase();
             this.name = name;
             this.lowestLine = clef.lowestLines[name];
-            this.lowestLineTrebleOffset = clef.lowestLines.treble - this.lowestLine;
+            this.lowestLineTrebleOffset
+                = clef.lowestLines.treble - this.lowestLine;
         } else {
             this.name = undefined;
             this.lowestLine = clef.lowestLines.treble;
@@ -70,7 +71,7 @@ export class Clef extends base.Music21Object {
             this.octaveChange = 0;
         } else {
             this.octaveChange = octaveChange;
-            this.lowestLine += (7 * octaveChange);
+            this.lowestLine += 7 * octaveChange;
             this.lowestLineTrebleOffset -= 7 * octaveChange;
         }
     }
@@ -206,7 +207,6 @@ export class SopranoClef extends Clef {
 }
 clef.SopranoClef = SopranoClef;
 
-
 /**
  * A Mezzo-Soprano Clef (same as new music21.clef.Clef('mezzo-soprano')
  *
@@ -272,7 +272,8 @@ clef.bestClef = function bestClef(st) {
         averageHeight = totalPitch / totalNotes;
     }
     // console.log('bestClef: average height', averageHeight);
-    if (averageHeight > 28) {    // 29 = c4
+    if (averageHeight > 28) {
+        // 29 = c4
         return new clef.TrebleClef();
     } else {
         return new clef.BassClef();
@@ -306,7 +307,8 @@ clef.clefFromString = function clefFromString(clefString, octaveShift) {
         }
     }
 
-    const arrayEqual = (a, b) => (a.length === b.length) && a.every((el, ix) => el === b[ix]);
+    const arrayEqual = (a, b) =>
+        a.length === b.length && a.every((el, ix) => el === b[ix]);
 
     const params = [thisType, lineNum, octaveShift];
     if (arrayEqual(params, ['G', 2, 0])) {

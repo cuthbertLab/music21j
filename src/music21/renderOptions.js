@@ -62,8 +62,8 @@ export class RenderOptions {
             staffConnectors: ['single', 'brace'],
             staffPadding: 60, // width...
             events: {
-                'click': 'play',
-                'dblclick': undefined,
+                click: 'play',
+                dblclick: undefined,
                 // resize
             },
             startNewSystem: false,

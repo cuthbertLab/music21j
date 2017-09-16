@@ -34,15 +34,19 @@ export const scale = {};
  *
  * @function music21.scale.SimpleDiatonicScale
  * @param {music21.pitch.Pitch} tonic
- * @param {Array<string>} scaleSteps - an array of diatonic prefixes, generally 'M' (major) or 'm' (minor) describing the seconds.
+ * @param {Array<string>} scaleSteps - an array of diatonic prefixes,
+ *     generally 'M' (major) or 'm' (minor) describing the seconds.
  * @returns {Array<music21.pitch.Pitch>} an octave of scale objects.
  */
 scale.SimpleDiatonicScale = function SimpleDiatonicScale(tonic, scaleSteps) {
     if (tonic === undefined) {
         tonic = new pitch.Pitch('C4');
     } else if (!(tonic instanceof pitch.Pitch)) {
-        throw new Music21Exception('Cannot make a scale not from ' +
-                'a music21.pitch.Pitch object: ' + tonic);
+        throw new Music21Exception(
+            'Cannot make a scale not from '
+                + 'a music21.pitch.Pitch object: '
+                + tonic
+        );
     }
     if (scaleSteps === undefined) {
         scaleSteps = ['M', 'M', 'm', 'M', 'M', 'M', 'm'];
@@ -80,26 +84,28 @@ scale.ScaleSimpleMajor = function ScaleSimpleMajor(tonic) {
  *
  * @function music21.scale.ScaleSimpleMinor
  * @param {music21.pitch.Pitch} tonic
- * @param {string} [minorType='natural] - 'harmonic', 'harmonic-minor', 'melodic', 'melodic-minor', 'melodic-minor-ascending', 'melodic-ascending' or other (=natural/melodic-descending)
+ * @param {string} [minorType='natural'] - 'harmonic', 'harmonic-minor',
+ *     'melodic', 'melodic-minor', 'melodic-minor-ascending',
+ *     'melodic-ascending' or other (=natural/melodic-descending)
  * @returns {Array<music21.pitch.Pitch>} an octave of scale objects.
  */
 scale.ScaleSimpleMinor = function ScaleSimpleMinor(tonic, minorType) {
     const scaleSteps = ['M', 'm', 'M', 'M', 'm', 'M', 'M'];
-    if (typeof (minorType) === 'string') {
+    if (typeof minorType === 'string') {
         // "harmonic minor" -> "harmonic-minor"
         minorType = minorType.replace(/\s/g, '-');
     }
-    if (minorType === 'harmonic'
-        || minorType === 'harmonic-minor') {
+    if (minorType === 'harmonic' || minorType === 'harmonic-minor') {
         scaleSteps[5] = 'A';
         scaleSteps[6] = 'm';
-    } else if (minorType === 'melodic'
-            || minorType === 'melodic-ascending'
-            || minorType === 'melodic-minor'
-            || minorType === 'melodic-minor-ascending') {
+    } else if (
+        minorType === 'melodic'
+        || minorType === 'melodic-ascending'
+        || minorType === 'melodic-minor'
+        || minorType === 'melodic-minor-ascending'
+    ) {
         scaleSteps[4] = 'M';
         scaleSteps[6] = 'm';
     }
     return new scale.SimpleDiatonicScale(tonic, scaleSteps);
 };
-

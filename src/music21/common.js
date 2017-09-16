@@ -122,7 +122,7 @@ common.makeSVGright = function makeSVGright(tag, attrs) {
 
     const el = document.createElementNS('http://www.w3.org/2000/svg', tag);
     for (const k in attrs) {
-        if (!({}.hasOwnProperty.call(attrs, k))) {
+        if (!{}.hasOwnProperty.call(attrs, k)) {
             continue;
         }
         el.setAttribute(k, attrs[k]);
@@ -142,7 +142,11 @@ common.makeSVGright = function makeSVGright(tag, attrs) {
 common.ordinalAbbreviation = function ordinalAbbreviation(value, plural) {
     let post = '';
     const valueHundreths = value % 100;
-    if (valueHundreths === 11 || valueHundreths === 12 || valueHundreths === 13) {
+    if (
+        valueHundreths === 11
+        || valueHundreths === 12
+        || valueHundreths === 13
+    ) {
         post = 'th';
     } else {
         const valueMod = value % 10;
@@ -179,7 +183,7 @@ common.rationalize = function rationalize(ql, epsilon, maxDenominator) {
         if (Math.abs(ql * i - Math.round(ql * i)) < epsilon) {
             const numerator = Math.round(ql * i);
             const denominator = i;
-            return { 'numerator': numerator, 'denominator': denominator };
+            return { numerator, denominator };
         }
     }
     return undefined;
@@ -216,15 +220,16 @@ common.urlParam = function urlParam(name) {
     name = name.replace(/[[]/, '\\[').replace(/[\]]/, '\\]');
     const regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
     const results = regex.exec(location.search);
-    return results == null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+    return results == null
+        ? ''
+        : decodeURIComponent(results[1].replace(/\+/g, ' '));
 };
-
 
 /**
  * Copies an event from one jQuery object to another.
  * This is buggy in jQuery 3 -- do not use.  use .clone(true, true);
  * and then replace the elements.
- * 
+ *
  * To be removed once I'm sure it is not needed
  *
  * @function music21.common.jQueryEventCopy
@@ -238,20 +243,28 @@ common.jQueryEventCopy = function jQueryEventCopy(eventObj, from, to) {
     from = from.jquery ? from : $(from);
     to = to.jquery ? to : $(to);
 
-    const events = from[0].events || $.data(from[0], 'events') || $._data(from[0], 'events');
+    const events
+        = from[0].events
+        || $.data(from[0], 'events')
+        || $._data(from[0], 'events');
     if (!from.length || !to.length || !events) {
         return undefined;
     }
     return to.each(() => {
         for (const type in events) {
-            if (!({}.hasOwnProperty.call(events, type))) {
+            if (!{}.hasOwnProperty.call(events, type)) {
                 continue;
             }
             for (const handler in events[type]) {
-                if (!({}.hasOwnProperty.call(events[type], handler))) {
+                if (!{}.hasOwnProperty.call(events[type], handler)) {
                     continue;
                 }
-                $.event.add(eventObj, type, events[type][handler], events[type][handler].data);
+                $.event.add(
+                    eventObj,
+                    type,
+                    events[type][handler],
+                    events[type][handler].data
+                );
             }
         }
     });
@@ -300,7 +313,9 @@ common.jQueryEventCopy = function jQueryEventCopy(eventObj, from, to) {
  * @function music21.common.setWindowVisibilityWatcher
  * @param {function} callback
  */
-common.setWindowVisibilityWatcher = function setWindowVisibilityWatcher(callback) {
+common.setWindowVisibilityWatcher = function setWindowVisibilityWatcher(
+    callback
+) {
     let hidden = 'hidden';
 
     // Standards:
@@ -323,12 +338,16 @@ common.setWindowVisibilityWatcher = function setWindowVisibilityWatcher(callback
     // Also catch window... -- get two calls for a tab shift, but one for window losing focus
     window.onpageshow = window.onpagehide = window.onfocus = window.onblur = windowFocusChanged;
 
-
     function windowFocusChanged(evt) {
         const v = 'visible';
         const h = 'hidden';
         const evtMap = {
-            focus: v, focusin: v, pageshow: v, blur: h, focusout: h, pagehide: h,
+            focus: v,
+            focusin: v,
+            pageshow: v,
+            blur: h,
+            focusout: h,
+            pagehide: h,
         };
 
         evt = evt || window.event;
@@ -341,8 +360,9 @@ common.setWindowVisibilityWatcher = function setWindowVisibilityWatcher(callback
         callback(callbackState, evt);
     }
     // set the initial state
-    const initialState = ((document.visibilityState === 'visible') ? 'focus' : 'blur');
-    const initialStateEvent = { 'type': initialState };
+    const initialState
+        = document.visibilityState === 'visible' ? 'focus' : 'blur';
+    const initialStateEvent = { type: initialState };
     windowFocusChanged(initialStateEvent);
 };
 

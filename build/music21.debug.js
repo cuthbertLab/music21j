@@ -462,7 +462,7 @@
           if (Math.abs(ql * i - Math.round(ql * i)) < epsilon) {
               var numerator = Math.round(ql * i);
               var denominator = i;
-              return { 'numerator': numerator, 'denominator': denominator };
+              return { numerator: numerator, denominator: denominator };
           }
       }
       return undefined;
@@ -506,7 +506,7 @@
    * Copies an event from one jQuery object to another.
    * This is buggy in jQuery 3 -- do not use.  use .clone(true, true);
    * and then replace the elements.
-   * 
+   *
    * To be removed once I'm sure it is not needed
    *
    * @function music21.common.jQueryEventCopy
@@ -609,7 +609,12 @@
           var v = 'visible';
           var h = 'hidden';
           var evtMap = {
-              focus: v, focusin: v, pageshow: v, blur: h, focusout: h, pagehide: h
+              focus: v,
+              focusin: v,
+              pageshow: v,
+              blur: h,
+              focusout: h,
+              pagehide: h
           };
 
           evt = evt || window.event;
@@ -623,7 +628,7 @@
       }
       // set the initial state
       var initialState = document.visibilityState === 'visible' ? 'focus' : 'blur';
-      var initialStateEvent = { 'type': initialState };
+      var initialStateEvent = { type: initialState };
       windowFocusChanged(initialStateEvent);
   };
 
@@ -1711,8 +1716,9 @@
   audioSearch._audioContext = null;
   audioSearch.animationFrameCallbackId = null;
 
-  Object.defineProperties(audioSearch, { 'audioContext': {
-          'get': function get() {
+  Object.defineProperties(audioSearch, {
+      audioContext: {
+          get: function get() {
               if (audioSearch._audioContext !== null) {
                   return audioSearch._audioContext;
               } else {
@@ -1726,10 +1732,11 @@
                   return audioSearch._audioContext;
               }
           },
-          'set': function set(ac) {
+          set: function set(ac) {
               audioSearch._audioContext = ac;
           }
-      } });
+      }
+  });
 
   /**
    *
@@ -1760,9 +1767,9 @@
       }
       if (dictionary === undefined) {
           dictionary = {
-              'audio': {
-                  'mandatory': {},
-                  'optional': []
+              audio: {
+                  mandatory: {},
+                  optional: []
               }
           };
       }
@@ -1981,18 +1988,18 @@
 
               this.polyfillNavigator();
               navigator.getUserMedia({
-                  'audio': {
-                      'mandatory': {
-                          'googEchoCancellation': 'false',
-                          'googAutoGainControl': 'false',
-                          'googNoiseSuppression': 'false',
-                          'googHighpassFilter': 'false'
+                  audio: {
+                      mandatory: {
+                          googEchoCancellation: 'false',
+                          googAutoGainControl: 'false',
+                          googNoiseSuppression: 'false',
+                          googHighpassFilter: 'false'
                           // 'echoCancellation': false,
                           // 'autoGainControl': false,
                           // 'noiseSuppression': false,
                           // 'highpassFilter': false,
                       },
-                      'optional': []
+                      optional: []
                   }
               }, function (s) {
                   return _this.audioStreamConnected(s);
@@ -2049,7 +2056,9 @@
               this.setNode();
 
               // create a Worker with inline code...
-              var workerBlob = new Blob(['(', recorderWorkerJs, ')()'], { type: 'application/javascript' });
+              var workerBlob = new Blob(['(', recorderWorkerJs, ')()'], {
+                  type: 'application/javascript'
+              });
               var workerURL = URL.createObjectURL(workerBlob);
               this.worker = new Worker(workerURL);
               /**
@@ -2178,8 +2187,8 @@
                   };
               }
               this.worker.postMessage({
-                  'command': command,
-                  'type': type
+                  command: command,
+                  type: type
               });
           }
       }, {
@@ -2320,7 +2329,7 @@
    */
   var recorderWorkerJs = 'function recorderWorkerJs() {\n    /**\n     *\n     *   Rewritten from Matt Diamond\'s recorderWorker -- MIT License\n     */\n    RecorderWorker = function RecorderWorker(parentContext) {\n            this.parent = parentContext;\n            this.recLength = 0;\n            this.recBuffersL = [];\n            this.recBuffersR = [];\n            this.sampleRate = undefined;\n    };\n    RecorderWorker.prototype.onmessage = function onmessage(e) {\n            switch (e.data.command) {\n            case \'init\':\n                this.init(e.data.config);\n                break;\n            case \'record\':\n                this.record(e.data.buffer);\n                break;\n            case \'exportWAV\':\n                this.exportWAV(e.data.type);\n                break;\n            case \'exportMonoWAV\':\n                this.exportMonoWAV(e.data.type);\n                break;\n            case \'getBuffers\':\n                this.getBuffers();\n                break;\n            case \'clear\':\n                this.clear();\n                break;\n            default:\n                break;\n            }\n   };\n   RecorderWorker.prototype.postMessage = function postMessage(msg) {\n            this.parent.postMessage(msg);\n   };\n\n   RecorderWorker.prototype.init = function init(config) {\n            this.sampleRate = config.sampleRate;\n   };\n\n   RecorderWorker.prototype.record = function record(inputBuffer) {\n            var inputBufferL = inputBuffer[0];\n            var inputBufferR = inputBuffer[1];\n            this.recBuffersL.push(inputBufferL);\n            this.recBuffersR.push(inputBufferR);\n            this.recLength += inputBufferL.length;\n   };\n\n   RecorderWorker.prototype.exportWAV = function exportWAV(type) {\n            var bufferL = this.mergeBuffers(this.recBuffersL);\n            var bufferR = this.mergeBuffers(this.recBuffersR);\n            var interleaved = this.interleave(bufferL, bufferR);\n            var dataview = this.encodeWAV(interleaved);\n            var audioBlob = new Blob([dataview], { \'type\': type });\n\n            this.postMessage(audioBlob);\n   };\n\n   RecorderWorker.prototype.exportMonoWAV = function exportMonoWAV(type) {\n            var bufferL = this.mergeBuffers(this.recBuffersL);\n            var dataview = this.encodeWAV(bufferL);\n            var audioBlob = new Blob([dataview], { \'type\': type });\n\n            this.postMessage(audioBlob);\n   };\n\n   RecorderWorker.prototype.mergeBuffers = function mergeBuffers(recBuffers) {\n            var result = new Float32Array(this.recLength);\n            var offset = 0;\n            for (var i = 0; i < recBuffers.length; i++) {\n                result.set(recBuffers[i], offset);\n                offset += recBuffers[i].length;\n            }\n            return result;\n    };\n\n    RecorderWorker.prototype.getBuffers = function getBuffers() {\n            var buffers = [];\n            buffers.push(this.mergeBuffers(this.recBuffersL));\n            buffers.push(this.mergeBuffers(this.recBuffersR));\n            this.postMessage(buffers);\n        };\n\n    RecorderWorker.prototype.clear = function clear() {\n            this.recLength = 0;\n            this.recBuffersL = [];\n            this.recBuffersR = [];\n        }\n\n    RecorderWorker.prototype.interleave = function interleave(inputL, inputR) {\n            var combinedLength = inputL.length + inputR.length;\n            var result = new Float32Array(combinedLength);\n\n            var index = 0;\n            var inputIndex = 0;\n\n            while (index < combinedLength) {\n                result[index++] = inputL[inputIndex];\n                result[index++] = inputR[inputIndex];\n                inputIndex++;\n            }\n            return result;\n        }\n    RecorderWorker.prototype.encodeWAV = function encodeWAV(samples, mono) {\n            var buffer = new ArrayBuffer(44 + (samples.length * 2));\n            var view = new DataView(buffer);\n\n            /* RIFF identifier */\n            writeString(view, 0, \'RIFF\');\n\n            /* file length */\n            view.setUint32(4, 32 + samples.length * 2, true);\n\n            /* RIFF type */\n            writeString(view, 8, \'WAVE\');\n\n            /* format chunk identifier */\n            writeString(view, 12, \'fmt \');\n\n            /* format chunk length */\n            view.setUint32(16, 16, true);\n\n            /* sample format (raw) */\n            view.setUint16(20, 1, true);\n\n            /* channel count */\n            view.setUint16(22, mono ? 1 : 2, true);\n\n            /* sample rate */\n            view.setUint32(24, this.sampleRate, true);\n\n            /* byte rate (sample rate * block align) */\n            view.setUint32(28, this.sampleRate * 4, true);\n\n            /* block align (channel count * bytes per sample) */\n            view.setUint16(32, 4, true);\n\n            /* bits per sample */\n            view.setUint16(34, 16, true);\n\n            /* data chunk identifier */\n            writeString(view, 36, \'data\');\n\n            /* data chunk length */\n            view.setUint32(40, samples.length * 2, true);\n\n            floatTo16BitPCM(view, 44, samples);\n\n            return view;\n        }\n\n    function floatTo16BitPCM(output, offset, input) {\n        for (var i = 0; i < input.length; i++, offset += 2) {\n            var s = Math.max(-1, Math.min(1, input[i]));\n            output.setInt16(offset, s < 0 ? s * 0x8000 : s * 0x7FFF, true);\n        }\n    }\n\n    function writeString(view, offset, string) {\n        for (var i = 0; i < string.length; i++) {\n            view.setUint8(offset + i, string.charCodeAt(i));\n        }\n    }\n\n    var recordWorker = new RecorderWorker(this);\n    this.onmessage = (function mainOnMessage(e) { recordWorker.onmessage(e) }).bind(this);\n}';
 
-  var audioRecording = { 'Recorder': Recorder };
+  var audioRecording = { Recorder: Recorder };
 
   /**
    * music21j -- Javascript reimplementation of Core music21p features.
@@ -2346,10 +2355,10 @@
   var beam = {};
 
   beam.validBeamTypes = {
-      'start': true,
-      'stop': true,
-      'continue': true,
-      'partial': true
+      start: true,
+      stop: true,
+      continue: true,
+      partial: true
   };
 
   /**
@@ -2843,8 +2852,8 @@
   }(prebase.ProtoM21Object);
   pitch.Accidental = Accidental;
 
-  pitch.nameToMidi = { 'C': 0, 'D': 2, 'E': 4, 'F': 5, 'G': 7, 'A': 9, 'B': 11 };
-  pitch.nameToSteps = { 'C': 0, 'D': 1, 'E': 2, 'F': 3, 'G': 4, 'A': 5, 'B': 6 };
+  pitch.nameToMidi = { C: 0, D: 2, E: 4, F: 5, G: 7, A: 9, B: 11 };
+  pitch.nameToSteps = { C: 0, D: 1, E: 2, F: 3, G: 4, A: 5, B: 6 };
   pitch.stepsToName = ['C', 'D', 'E', 'F', 'G', 'A', 'B'];
   pitch.midiToName = ['C', 'C#', 'D', 'E-', 'E', 'F', 'F#', 'G', 'A-', 'A', 'B-', 'B'];
 
@@ -3688,8 +3697,10 @@
                   keyLine = p.vexflowName(undefined);
               }
 
-              var vfn = new Vex.Flow.StaveNote({ keys: [keyLine],
-                  duration: this.duration.vexflowDuration + 'r' });
+              var vfn = new Vex.Flow.StaveNote({
+                  keys: [keyLine],
+                  duration: this.duration.vexflowDuration + 'r'
+              });
               if (this.duration.dots > 0) {
                   for (var i = 0; i < this.duration.dots; i++) {
                       vfn.addDotToAll();
@@ -4058,7 +4069,8 @@
               }
               var vfn = new Vex.Flow.StaveNote({
                   keys: pitchKeys,
-                  duration: this.duration.vexflowDuration });
+                  duration: this.duration.vexflowDuration
+              });
               this.vexflowAccidentalsAndDisplay(vfn, options); // clean up stuff...
               for (var _i = 0; _i < this._notes.length; _i++) {
                   var tn = this._notes[_i];
@@ -4147,10 +4159,10 @@
   chord.Chord = Chord;
 
   chord.chordDefinitions = {
-      'major': ['M3', 'm3'],
-      'minor': ['m3', 'M3'],
-      'diminished': ['m3', 'm3'],
-      'augmented': ['M3', 'M3'],
+      major: ['M3', 'm3'],
+      minor: ['m3', 'M3'],
+      diminished: ['m3', 'm3'],
+      augmented: ['M3', 'M3'],
       'major-seventh': ['M3', 'm3', 'M3'],
       'dominant-seventh': ['M3', 'm3', 'm3'],
       'minor-seventh': ['m3', 'M3', 'm3'],
@@ -4187,13 +4199,13 @@
    */
   // TODO: Fix to newest Vexflow format...
   clef.lowestLines = {
-      'treble': 31,
-      'soprano': 29,
+      treble: 31,
+      soprano: 29,
       'mezzo-soprano': 27,
-      'alto': 25,
-      'tenor': 23,
-      'bass': 19,
-      'percussion': 31
+      alto: 25,
+      tenor: 23,
+      bass: 19,
+      percussion: 31
   };
   /**
    * Clefname can be one of
@@ -4603,42 +4615,42 @@
   var dynamics = {};
   dynamics.shortNames = ['pppppp', 'ppppp', 'pppp', 'ppp', 'pp', 'p', 'mp', 'mf', 'f', 'fp', 'sf', 'ff', 'fff', 'ffff', 'fffff', 'ffffff'];
   dynamics.longNames = {
-      'ppp': ['pianississimo'],
-      'pp': ['pianissimo'],
-      'p': ['piano'],
-      'mp': ['mezzopiano'],
-      'mf': ['mezzoforte'],
-      'f': ['forte'],
-      'fp': ['fortepiano'],
-      'sf': ['sforzando'],
-      'ff': ['fortissimo'],
-      'fff': ['fortississimo']
+      ppp: ['pianississimo'],
+      pp: ['pianissimo'],
+      p: ['piano'],
+      mp: ['mezzopiano'],
+      mf: ['mezzoforte'],
+      f: ['forte'],
+      fp: ['fortepiano'],
+      sf: ['sforzando'],
+      ff: ['fortissimo'],
+      fff: ['fortississimo']
   };
   dynamics.englishNames = {
-      'ppp': ['extremely soft'],
-      'pp': ['very soft'],
-      'p': ['soft'],
-      'mp': ['moderately soft'],
-      'mf': ['moderately loud'],
-      'f': ['loud'],
-      'ff': ['very loud'],
-      'fff': ['extremely loud']
+      ppp: ['extremely soft'],
+      pp: ['very soft'],
+      p: ['soft'],
+      mp: ['moderately soft'],
+      mf: ['moderately loud'],
+      f: ['loud'],
+      ff: ['very loud'],
+      fff: ['extremely loud']
   };
   dynamics.dynamicStrToScalar = {
-      'None': [0.5], // default value
-      'n': [0.0],
-      'pppp': [0.1],
-      'ppp': [0.15],
-      'pp': [0.25],
-      'p': [0.35],
-      'mp': [0.45],
-      'mf': [0.55],
-      'f': [0.7],
-      'fp': [0.75],
-      'sf': [0.85],
-      'ff': [0.85],
-      'fff': [0.9],
-      'ffff': [0.95]
+      None: [0.5], // default value
+      n: [0.0],
+      pppp: [0.1],
+      ppp: [0.15],
+      pp: [0.25],
+      p: [0.35],
+      mp: [0.45],
+      mf: [0.55],
+      f: [0.7],
+      fp: [0.75],
+      sf: [0.85],
+      ff: [0.85],
+      fff: [0.9],
+      ffff: [0.95]
   };
 
   /**
@@ -5175,7 +5187,35 @@
   instrument.usedChannels = []; // differs from m21p -- stored midiProgram numbers
   instrument.maxMidi = 16;
 
-  instrument.info = [{ 'fn': 'acoustic_grand_piano', 'name': 'Acoustic Grand Piano', 'midiNumber': 0 }, { 'fn': 'bright_acoustic_piano', 'name': 'Bright Acoustic Piano', 'midiNumber': 1 }, { 'fn': 'electric_grand_piano', 'name': 'Electric Grand Piano', 'midiNumber': 2 }, { 'fn': 'honkytonk_piano', 'name': 'Honky-tonk Piano', 'midiNumber': 3 }, { 'fn': 'electric_piano_1', 'name': 'Electric Piano 1', 'midiNumber': 4 }, { 'fn': 'electric_piano_2', 'name': 'Electric Piano 2', 'midiNumber': 5 }, { 'fn': 'harpsichord', 'name': 'Harpsichord', 'midiNumber': 6 }, { 'fn': 'clavinet', 'name': 'Clavinet', 'midiNumber': 7 }, { 'fn': 'celesta', 'name': 'Celesta', 'midiNumber': 8 }, { 'fn': 'glockenspiel', 'name': 'Glockenspiel', 'midiNumber': 9 }, { 'fn': 'music_box', 'name': 'Music Box', 'midiNumber': 10 }, { 'fn': 'vibraphone', 'name': 'Vibraphone', 'midiNumber': 11 }, { 'fn': 'marimba', 'name': 'Marimba', 'midiNumber': 12 }, { 'fn': 'xylophone', 'name': 'Xylophone', 'midiNumber': 13 }, { 'fn': 'tubular_bells', 'name': 'Tubular Bells', 'midiNumber': 14 }, { 'fn': 'dulcimer', 'name': 'Dulcimer', 'midiNumber': 15 }, { 'fn': 'drawbar_organ', 'name': 'Drawbar Organ', 'midiNumber': 16 }, { 'fn': 'percussive_organ', 'name': 'Percussive Organ', 'midiNumber': 17 }, { 'fn': 'rock_organ', 'name': 'Rock Organ', 'midiNumber': 18 }, { 'fn': 'church_organ', 'name': 'Church Organ', 'midiNumber': 19 }, { 'fn': 'reed_organ', 'name': 'Reed Organ', 'midiNumber': 20 }, { 'fn': 'accordion', 'name': 'Accordion', 'midiNumber': 21 }, { 'fn': 'harmonica', 'name': 'Harmonica', 'midiNumber': 22 }, { 'fn': 'tango_accordion', 'name': 'Tango Accordion', 'midiNumber': 23 }, { 'fn': 'acoustic_guitar_nylon', 'name': 'Acoustic Guitar (nylon)', 'midiNumber': 24 }, { 'fn': 'acoustic_guitar_steel', 'name': 'Acoustic Guitar (steel)', 'midiNumber': 25 }, { 'fn': 'electric_guitar_jazz', 'name': 'Electric Guitar (jazz)', 'midiNumber': 26 }, { 'fn': 'electric_guitar_clean', 'name': 'Electric Guitar (clean)', 'midiNumber': 27 }, { 'fn': 'electric_guitar_muted', 'name': 'Electric Guitar (muted)', 'midiNumber': 28 }, { 'fn': 'overdriven_guitar', 'name': 'Overdriven Guitar', 'midiNumber': 29 }, { 'fn': 'distortion_guitar', 'name': 'Distortion Guitar', 'midiNumber': 30 }, { 'fn': 'guitar_harmonics', 'name': 'Guitar Harmonics', 'midiNumber': 31 }, { 'fn': 'acoustic_bass', 'name': 'Acoustic Bass', 'midiNumber': 32 }, { 'fn': 'electric_bass_finger', 'name': 'Electric Bass (finger)', 'midiNumber': 33 }, { 'fn': 'electric_bass_pick', 'name': 'Electric Bass (pick)', 'midiNumber': 34 }, { 'fn': 'fretless_bass', 'name': 'Fretless Bass', 'midiNumber': 35 }, { 'fn': 'slap_bass_1', 'name': 'Slap Bass 1', 'midiNumber': 36 }, { 'fn': 'slap_bass_2', 'name': 'Slap Bass 2', 'midiNumber': 37 }, { 'fn': 'synth_bass_1', 'name': 'Synth Bass 1', 'midiNumber': 38 }, { 'fn': 'synth_bass_2', 'name': 'Synth Bass 2', 'midiNumber': 39 }, { 'fn': 'violin', 'name': 'Violin', 'midiNumber': 40 }, { 'fn': 'viola', 'name': 'Viola', 'midiNumber': 41 }, { 'fn': 'cello', 'name': 'Cello', 'midiNumber': 42 }, { 'fn': 'contrabass', 'name': 'Contrabass', 'midiNumber': 43 }, { 'fn': 'tremolo_strings', 'name': 'Tremolo Strings', 'midiNumber': 44 }, { 'fn': 'pizzicato_strings', 'name': 'Pizzicato Strings', 'midiNumber': 45 }, { 'fn': 'orchestral_harp', 'name': 'Orchestral Harp', 'midiNumber': 46 }, { 'fn': 'timpani', 'name': 'Timpani', 'midiNumber': 47 }, { 'fn': 'string_ensemble_1', 'name': 'String Ensemble 1', 'midiNumber': 48 }, { 'fn': 'string_ensemble_2', 'name': 'String Ensemble 2', 'midiNumber': 49 }, { 'fn': 'synth_strings_1', 'name': 'Synth Strings 1', 'midiNumber': 50 }, { 'fn': 'synth_strings_2', 'name': 'Synth Strings 2', 'midiNumber': 51 }, { 'fn': 'choir_aahs', 'name': 'Choir Aahs', 'midiNumber': 52 }, { 'fn': 'voice_oohs', 'name': 'Voice Oohs', 'midiNumber': 53 }, { 'fn': 'synth_choir', 'name': 'Synth Choir', 'midiNumber': 54 }, { 'fn': 'orchestra_hit', 'name': 'Orchestra Hit', 'midiNumber': 55 }, { 'fn': 'trumpet', 'name': 'Trumpet', 'midiNumber': 56 }, { 'fn': 'trombone', 'name': 'Trombone', 'midiNumber': 57 }, { 'fn': 'tuba', 'name': 'Tuba', 'midiNumber': 58 }, { 'fn': 'muted_trumpet', 'name': 'Muted Trumpet', 'midiNumber': 59 }, { 'fn': 'french_horn', 'name': 'French Horn', 'midiNumber': 60 }, { 'fn': 'brass_section', 'name': 'Brass Section', 'midiNumber': 61 }, { 'fn': 'synth_brass_1', 'name': 'Synth Brass 1', 'midiNumber': 62 }, { 'fn': 'synth_brass_2', 'name': 'Synth Brass 2', 'midiNumber': 63 }, { 'fn': 'soprano_sax', 'name': 'Soprano Sax', 'midiNumber': 64 }, { 'fn': 'alto_sax', 'name': 'Alto Sax', 'midiNumber': 65 }, { 'fn': 'tenor_sax', 'name': 'Tenor Sax', 'midiNumber': 66 }, { 'fn': 'baritone_sax', 'name': 'Baritone Sax', 'midiNumber': 67 }, { 'fn': 'oboe', 'name': 'Oboe', 'midiNumber': 68 }, { 'fn': 'english_horn', 'name': 'English Horn', 'midiNumber': 69 }, { 'fn': 'bassoon', 'name': 'Bassoon', 'midiNumber': 70 }, { 'fn': 'clarinet', 'name': 'Clarinet', 'midiNumber': 71 }, { 'fn': 'piccolo', 'name': 'Piccolo', 'midiNumber': 72 }, { 'fn': 'flute', 'name': 'Flute', 'midiNumber': 73 }, { 'fn': 'recorder', 'name': 'Recorder', 'midiNumber': 74 }, { 'fn': 'pan_flute', 'name': 'Pan Flute', 'midiNumber': 75 }, { 'fn': 'blown_bottle', 'name': 'Blown bottle', 'midiNumber': 76 }, { 'fn': 'shakuhachi', 'name': 'Shakuhachi', 'midiNumber': 77 }, { 'fn': 'whistle', 'name': 'Whistle', 'midiNumber': 78 }, { 'fn': 'ocarina', 'name': 'Ocarina', 'midiNumber': 79 }, { 'fn': 'lead_1_square', 'name': 'Lead 1 (square)', 'midiNumber': 80 }, { 'fn': 'lead_2_sawtooth', 'name': 'Lead 2 (sawtooth)', 'midiNumber': 81 }, { 'fn': 'lead_3_calliope', 'name': 'Lead 3 (calliope)', 'midiNumber': 82 }, { 'fn': 'lead_4_chiff', 'name': 'Lead 4 chiff', 'midiNumber': 83 }, { 'fn': 'lead_5_charang', 'name': 'Lead 5 (charang)', 'midiNumber': 84 }, { 'fn': 'lead_6_voice', 'name': 'Lead 6 (voice)', 'midiNumber': 85 }, { 'fn': 'lead_7_fifths', 'name': 'Lead 7 (fifths)', 'midiNumber': 86 }, { 'fn': 'lead_8_bass__lead', 'name': 'Lead 8 (bass + lead)', 'midiNumber': 87 }, { 'fn': 'pad_1_new_age', 'name': 'Pad 1 (new age)', 'midiNumber': 88 }, { 'fn': 'pad_2_warm', 'name': 'Pad 2 (warm)', 'midiNumber': 89 }, { 'fn': 'pad_3_polysynth', 'name': 'Pad 3 (polysynth)', 'midiNumber': 90 }, { 'fn': 'pad_4_choir', 'name': 'Pad 4 (choir)', 'midiNumber': 91 }, { 'fn': 'pad_5_bowed', 'name': 'Pad 5 (bowed)', 'midiNumber': 92 }, { 'fn': 'pad_6_metallic', 'name': 'Pad 6 (metallic)', 'midiNumber': 93 }, { 'fn': 'pad_7_halo', 'name': 'Pad 7 (halo)', 'midiNumber': 94 }, { 'fn': 'pad_8_sweep', 'name': 'Pad 8 (sweep)', 'midiNumber': 95 }, { 'fn': 'fx_1_rain', 'name': 'FX 1 (rain)', 'midiNumber': 96 }, { 'fn': 'fx_2_soundtrack', 'name': 'FX 2 (soundtrack)', 'midiNumber': 97 }, { 'fn': 'fx_3_crystal', 'name': 'FX 3 (crystal)', 'midiNumber': 98 }, { 'fn': 'fx_4_atmosphere', 'name': 'FX 4 (atmosphere)', 'midiNumber': 99 }, { 'fn': 'fx_5_brightness', 'name': 'FX 5 (brightness)', 'midiNumber': 100 }, { 'fn': 'fx_6_goblins', 'name': 'FX 6 (goblins)', 'midiNumber': 101 }, { 'fn': 'fx_7_echoes', 'name': 'FX 7 (echoes)', 'midiNumber': 102 }, { 'fn': 'fx_8_scifi', 'name': 'FX 8 (sci-fi)', 'midiNumber': 103 }, { 'fn': 'sitar', 'name': 'Sitar', 'midiNumber': 104 }, { 'fn': 'banjo', 'name': 'Banjo', 'midiNumber': 105 }, { 'fn': 'shamisen', 'name': 'Shamisen', 'midiNumber': 106 }, { 'fn': 'koto', 'name': 'Koto', 'midiNumber': 107 }, { 'fn': 'kalimba', 'name': 'Kalimba', 'midiNumber': 108 }, { 'fn': 'bagpipe', 'name': 'Bagpipe', 'midiNumber': 109 }, { 'fn': 'fiddle', 'name': 'Fiddle', 'midiNumber': 110 }, { 'fn': 'shanai', 'name': 'Shanai', 'midiNumber': 111 }, { 'fn': 'tinkle_bell', 'name': 'Tinkle Bell', 'midiNumber': 112 }, { 'fn': 'agogo', 'name': 'Agogo', 'midiNumber': 113 }, { 'fn': 'steel_drums', 'name': 'Steel Drums', 'midiNumber': 114 }, { 'fn': 'woodblock', 'name': 'Woodblock', 'midiNumber': 115 }, { 'fn': 'taiko_drum', 'name': 'Taiko Drum', 'midiNumber': 116 }, { 'fn': 'melodic_tom', 'name': 'Melodic Tom', 'midiNumber': 117 }, { 'fn': 'synth_drum', 'name': 'Synth Drum', 'midiNumber': 118 }, { 'fn': 'reverse_cymbal', 'name': 'Reverse Cymbal', 'midiNumber': 119 }, { 'fn': 'guitar_fret_noise', 'name': 'Guitar Fret Noise', 'midiNumber': 120 }, { 'fn': 'breath_noise', 'name': 'Breath Noise', 'midiNumber': 121 }, { 'fn': 'seashore', 'name': 'Seashore', 'midiNumber': 122 }, { 'fn': 'bird_tweet', 'name': 'Bird Tweet', 'midiNumber': 123 }, { 'fn': 'telephone_ring', 'name': 'Telephone Ring', 'midiNumber': 124 }, { 'fn': 'helicopter', 'name': 'Helicopter', 'midiNumber': 125 }, { 'fn': 'applause', 'name': 'Applause', 'midiNumber': 126 }, { 'fn': 'gunshot', 'name': 'Gunshot', 'midiNumber': 127 }];
+  instrument.info = [{ fn: 'acoustic_grand_piano', name: 'Acoustic Grand Piano', midiNumber: 0 }, {
+      fn: 'bright_acoustic_piano',
+      name: 'Bright Acoustic Piano',
+      midiNumber: 1
+  }, { fn: 'electric_grand_piano', name: 'Electric Grand Piano', midiNumber: 2 }, { fn: 'honkytonk_piano', name: 'Honky-tonk Piano', midiNumber: 3 }, { fn: 'electric_piano_1', name: 'Electric Piano 1', midiNumber: 4 }, { fn: 'electric_piano_2', name: 'Electric Piano 2', midiNumber: 5 }, { fn: 'harpsichord', name: 'Harpsichord', midiNumber: 6 }, { fn: 'clavinet', name: 'Clavinet', midiNumber: 7 }, { fn: 'celesta', name: 'Celesta', midiNumber: 8 }, { fn: 'glockenspiel', name: 'Glockenspiel', midiNumber: 9 }, { fn: 'music_box', name: 'Music Box', midiNumber: 10 }, { fn: 'vibraphone', name: 'Vibraphone', midiNumber: 11 }, { fn: 'marimba', name: 'Marimba', midiNumber: 12 }, { fn: 'xylophone', name: 'Xylophone', midiNumber: 13 }, { fn: 'tubular_bells', name: 'Tubular Bells', midiNumber: 14 }, { fn: 'dulcimer', name: 'Dulcimer', midiNumber: 15 }, { fn: 'drawbar_organ', name: 'Drawbar Organ', midiNumber: 16 }, { fn: 'percussive_organ', name: 'Percussive Organ', midiNumber: 17 }, { fn: 'rock_organ', name: 'Rock Organ', midiNumber: 18 }, { fn: 'church_organ', name: 'Church Organ', midiNumber: 19 }, { fn: 'reed_organ', name: 'Reed Organ', midiNumber: 20 }, { fn: 'accordion', name: 'Accordion', midiNumber: 21 }, { fn: 'harmonica', name: 'Harmonica', midiNumber: 22 }, { fn: 'tango_accordion', name: 'Tango Accordion', midiNumber: 23 }, {
+      fn: 'acoustic_guitar_nylon',
+      name: 'Acoustic Guitar (nylon)',
+      midiNumber: 24
+  }, {
+      fn: 'acoustic_guitar_steel',
+      name: 'Acoustic Guitar (steel)',
+      midiNumber: 25
+  }, {
+      fn: 'electric_guitar_jazz',
+      name: 'Electric Guitar (jazz)',
+      midiNumber: 26
+  }, {
+      fn: 'electric_guitar_clean',
+      name: 'Electric Guitar (clean)',
+      midiNumber: 27
+  }, {
+      fn: 'electric_guitar_muted',
+      name: 'Electric Guitar (muted)',
+      midiNumber: 28
+  }, { fn: 'overdriven_guitar', name: 'Overdriven Guitar', midiNumber: 29 }, { fn: 'distortion_guitar', name: 'Distortion Guitar', midiNumber: 30 }, { fn: 'guitar_harmonics', name: 'Guitar Harmonics', midiNumber: 31 }, { fn: 'acoustic_bass', name: 'Acoustic Bass', midiNumber: 32 }, {
+      fn: 'electric_bass_finger',
+      name: 'Electric Bass (finger)',
+      midiNumber: 33
+  }, { fn: 'electric_bass_pick', name: 'Electric Bass (pick)', midiNumber: 34 }, { fn: 'fretless_bass', name: 'Fretless Bass', midiNumber: 35 }, { fn: 'slap_bass_1', name: 'Slap Bass 1', midiNumber: 36 }, { fn: 'slap_bass_2', name: 'Slap Bass 2', midiNumber: 37 }, { fn: 'synth_bass_1', name: 'Synth Bass 1', midiNumber: 38 }, { fn: 'synth_bass_2', name: 'Synth Bass 2', midiNumber: 39 }, { fn: 'violin', name: 'Violin', midiNumber: 40 }, { fn: 'viola', name: 'Viola', midiNumber: 41 }, { fn: 'cello', name: 'Cello', midiNumber: 42 }, { fn: 'contrabass', name: 'Contrabass', midiNumber: 43 }, { fn: 'tremolo_strings', name: 'Tremolo Strings', midiNumber: 44 }, { fn: 'pizzicato_strings', name: 'Pizzicato Strings', midiNumber: 45 }, { fn: 'orchestral_harp', name: 'Orchestral Harp', midiNumber: 46 }, { fn: 'timpani', name: 'Timpani', midiNumber: 47 }, { fn: 'string_ensemble_1', name: 'String Ensemble 1', midiNumber: 48 }, { fn: 'string_ensemble_2', name: 'String Ensemble 2', midiNumber: 49 }, { fn: 'synth_strings_1', name: 'Synth Strings 1', midiNumber: 50 }, { fn: 'synth_strings_2', name: 'Synth Strings 2', midiNumber: 51 }, { fn: 'choir_aahs', name: 'Choir Aahs', midiNumber: 52 }, { fn: 'voice_oohs', name: 'Voice Oohs', midiNumber: 53 }, { fn: 'synth_choir', name: 'Synth Choir', midiNumber: 54 }, { fn: 'orchestra_hit', name: 'Orchestra Hit', midiNumber: 55 }, { fn: 'trumpet', name: 'Trumpet', midiNumber: 56 }, { fn: 'trombone', name: 'Trombone', midiNumber: 57 }, { fn: 'tuba', name: 'Tuba', midiNumber: 58 }, { fn: 'muted_trumpet', name: 'Muted Trumpet', midiNumber: 59 }, { fn: 'french_horn', name: 'French Horn', midiNumber: 60 }, { fn: 'brass_section', name: 'Brass Section', midiNumber: 61 }, { fn: 'synth_brass_1', name: 'Synth Brass 1', midiNumber: 62 }, { fn: 'synth_brass_2', name: 'Synth Brass 2', midiNumber: 63 }, { fn: 'soprano_sax', name: 'Soprano Sax', midiNumber: 64 }, { fn: 'alto_sax', name: 'Alto Sax', midiNumber: 65 }, { fn: 'tenor_sax', name: 'Tenor Sax', midiNumber: 66 }, { fn: 'baritone_sax', name: 'Baritone Sax', midiNumber: 67 }, { fn: 'oboe', name: 'Oboe', midiNumber: 68 }, { fn: 'english_horn', name: 'English Horn', midiNumber: 69 }, { fn: 'bassoon', name: 'Bassoon', midiNumber: 70 }, { fn: 'clarinet', name: 'Clarinet', midiNumber: 71 }, { fn: 'piccolo', name: 'Piccolo', midiNumber: 72 }, { fn: 'flute', name: 'Flute', midiNumber: 73 }, { fn: 'recorder', name: 'Recorder', midiNumber: 74 }, { fn: 'pan_flute', name: 'Pan Flute', midiNumber: 75 }, { fn: 'blown_bottle', name: 'Blown bottle', midiNumber: 76 }, { fn: 'shakuhachi', name: 'Shakuhachi', midiNumber: 77 }, { fn: 'whistle', name: 'Whistle', midiNumber: 78 }, { fn: 'ocarina', name: 'Ocarina', midiNumber: 79 }, { fn: 'lead_1_square', name: 'Lead 1 (square)', midiNumber: 80 }, { fn: 'lead_2_sawtooth', name: 'Lead 2 (sawtooth)', midiNumber: 81 }, { fn: 'lead_3_calliope', name: 'Lead 3 (calliope)', midiNumber: 82 }, { fn: 'lead_4_chiff', name: 'Lead 4 chiff', midiNumber: 83 }, { fn: 'lead_5_charang', name: 'Lead 5 (charang)', midiNumber: 84 }, { fn: 'lead_6_voice', name: 'Lead 6 (voice)', midiNumber: 85 }, { fn: 'lead_7_fifths', name: 'Lead 7 (fifths)', midiNumber: 86 }, { fn: 'lead_8_bass__lead', name: 'Lead 8 (bass + lead)', midiNumber: 87 }, { fn: 'pad_1_new_age', name: 'Pad 1 (new age)', midiNumber: 88 }, { fn: 'pad_2_warm', name: 'Pad 2 (warm)', midiNumber: 89 }, { fn: 'pad_3_polysynth', name: 'Pad 3 (polysynth)', midiNumber: 90 }, { fn: 'pad_4_choir', name: 'Pad 4 (choir)', midiNumber: 91 }, { fn: 'pad_5_bowed', name: 'Pad 5 (bowed)', midiNumber: 92 }, { fn: 'pad_6_metallic', name: 'Pad 6 (metallic)', midiNumber: 93 }, { fn: 'pad_7_halo', name: 'Pad 7 (halo)', midiNumber: 94 }, { fn: 'pad_8_sweep', name: 'Pad 8 (sweep)', midiNumber: 95 }, { fn: 'fx_1_rain', name: 'FX 1 (rain)', midiNumber: 96 }, { fn: 'fx_2_soundtrack', name: 'FX 2 (soundtrack)', midiNumber: 97 }, { fn: 'fx_3_crystal', name: 'FX 3 (crystal)', midiNumber: 98 }, { fn: 'fx_4_atmosphere', name: 'FX 4 (atmosphere)', midiNumber: 99 }, { fn: 'fx_5_brightness', name: 'FX 5 (brightness)', midiNumber: 100 }, { fn: 'fx_6_goblins', name: 'FX 6 (goblins)', midiNumber: 101 }, { fn: 'fx_7_echoes', name: 'FX 7 (echoes)', midiNumber: 102 }, { fn: 'fx_8_scifi', name: 'FX 8 (sci-fi)', midiNumber: 103 }, { fn: 'sitar', name: 'Sitar', midiNumber: 104 }, { fn: 'banjo', name: 'Banjo', midiNumber: 105 }, { fn: 'shamisen', name: 'Shamisen', midiNumber: 106 }, { fn: 'koto', name: 'Koto', midiNumber: 107 }, { fn: 'kalimba', name: 'Kalimba', midiNumber: 108 }, { fn: 'bagpipe', name: 'Bagpipe', midiNumber: 109 }, { fn: 'fiddle', name: 'Fiddle', midiNumber: 110 }, { fn: 'shanai', name: 'Shanai', midiNumber: 111 }, { fn: 'tinkle_bell', name: 'Tinkle Bell', midiNumber: 112 }, { fn: 'agogo', name: 'Agogo', midiNumber: 113 }, { fn: 'steel_drums', name: 'Steel Drums', midiNumber: 114 }, { fn: 'woodblock', name: 'Woodblock', midiNumber: 115 }, { fn: 'taiko_drum', name: 'Taiko Drum', midiNumber: 116 }, { fn: 'melodic_tom', name: 'Melodic Tom', midiNumber: 117 }, { fn: 'synth_drum', name: 'Synth Drum', midiNumber: 118 }, { fn: 'reverse_cymbal', name: 'Reverse Cymbal', midiNumber: 119 }, { fn: 'guitar_fret_noise', name: 'Guitar Fret Noise', midiNumber: 120 }, { fn: 'breath_noise', name: 'Breath Noise', midiNumber: 121 }, { fn: 'seashore', name: 'Seashore', midiNumber: 122 }, { fn: 'bird_tweet', name: 'Bird Tweet', midiNumber: 123 }, { fn: 'telephone_ring', name: 'Telephone Ring', midiNumber: 124 }, { fn: 'helicopter', name: 'Helicopter', midiNumber: 125 }, { fn: 'applause', name: 'Applause', midiNumber: 126 }, { fn: 'gunshot', name: 'Gunshot', midiNumber: 127 }];
 
   /**
    * Find information for a given instrument (by filename or name)
@@ -5532,18 +5572,38 @@
   interval.IntervalMajOffset = 5;
 
   interval.IntervalSemitonesGeneric = {
-      1: 0, 2: 2, 3: 4, 4: 5, 5: 7, 6: 9, 7: 11
+      1: 0,
+      2: 2,
+      3: 4,
+      4: 5,
+      5: 7,
+      6: 9,
+      7: 11
   };
   interval.IntervalAdjustPerfect = {
-      'P': 0, 'A': 1, 'AA': 2, 'AAA': 3, 'AAAA': 4,
-      'd': -1, 'dd': -2, 'ddd': -3, 'dddd': -4
+      P: 0,
+      A: 1,
+      AA: 2,
+      AAA: 3,
+      AAAA: 4,
+      d: -1,
+      dd: -2,
+      ddd: -3,
+      dddd: -4
   }; // offset from Perfect
 
   interval.IntervalAdjustImperf = {
-      'M': 0, 'm': -1, 'A': 1, 'AA': 2, 'AAA': 3, 'AAAA': 4,
-      'd': -2, 'dd': -3, 'ddd': -4, 'dddd': -5
+      M: 0,
+      m: -1,
+      A: 1,
+      AA: 2,
+      AAA: 3,
+      AAAA: 4,
+      d: -2,
+      dd: -3,
+      ddd: -4,
+      dddd: -5
   }; // offset from major
-
 
   /**
    * Represents a Diatonic interval.  See example for usage.
@@ -6061,7 +6121,8 @@
    *
    * @function music21.scale.SimpleDiatonicScale
    * @param {music21.pitch.Pitch} tonic
-   * @param {Array<string>} scaleSteps - an array of diatonic prefixes, generally 'M' (major) or 'm' (minor) describing the seconds.
+   * @param {Array<string>} scaleSteps - an array of diatonic prefixes,
+   *     generally 'M' (major) or 'm' (minor) describing the seconds.
    * @returns {Array<music21.pitch.Pitch>} an octave of scale objects.
    */
   scale.SimpleDiatonicScale = function SimpleDiatonicScale(tonic, scaleSteps) {
@@ -6106,7 +6167,9 @@
    *
    * @function music21.scale.ScaleSimpleMinor
    * @param {music21.pitch.Pitch} tonic
-   * @param {string} [minorType='natural] - 'harmonic', 'harmonic-minor', 'melodic', 'melodic-minor', 'melodic-minor-ascending', 'melodic-ascending' or other (=natural/melodic-descending)
+   * @param {string} [minorType='natural'] - 'harmonic', 'harmonic-minor',
+   *     'melodic', 'melodic-minor', 'melodic-minor-ascending',
+   *     'melodic-ascending' or other (=natural/melodic-descending)
    * @returns {Array<music21.pitch.Pitch>} an octave of scale objects.
    */
   scale.ScaleSimpleMinor = function ScaleSimpleMinor(tonic, minorType) {
@@ -6151,13 +6214,13 @@
   var key = {};
 
   key.modeSharpsAlter = {
-      'major': 0,
-      'minor': -3,
-      'dorian': -2,
-      'phrygian': -4,
-      'lydian': 1,
-      'mixolydian': -1,
-      'locrian': -5
+      major: 0,
+      minor: -3,
+      dorian: -2,
+      phrygian: -4,
+      lydian: 1,
+      mixolydian: -1,
+      locrian: -5
   };
 
   /**
@@ -6197,15 +6260,15 @@
           key: 'majorName',
 
           /**
-           * Return the name of the major key with this many sharps
-           *
-           * @memberof music21.key.KeySignature
-           * @returns {(string|undefined)} name of key
-           * @example
-           * var ks = new music21.key.KeySignature(-3)
-           * ks.majorName()
-           * // "E-"
-           */
+            * Return the name of the major key with this many sharps
+            *
+            * @memberof music21.key.KeySignature
+            * @returns {(string|undefined)} name of key
+            * @example
+            * var ks = new music21.key.KeySignature(-3)
+            * ks.majorName()
+            * // "E-"
+            */
           value: function majorName() {
               if (this.sharps >= 0) {
                   return this.sharpMapping[this.sharps];
@@ -6214,10 +6277,10 @@
               }
           }
           /**
-           * Return the name of the minor key with this many sharps
-           * @memberof music21.key.KeySignature
-           * @returns {(string|undefined)}
-           */
+            * Return the name of the minor key with this many sharps
+            * @memberof music21.key.KeySignature
+            * @returns {(string|undefined)}
+            */
 
       }, {
           key: 'minorName',
@@ -6230,14 +6293,14 @@
               }
           }
           /**
-           * returns the vexflow name (just the `majorName()` with "b" for "-") for
-           * the key signature.  Does not create the object.
-           *
-           * Deprecated.
-           *
-           * @memberof music21.key.KeySignature
-           * @returns {string}
-           */
+            * returns the vexflow name (just the `majorName()` with "b" for "-") for
+            * the key signature.  Does not create the object.
+            *
+            * Deprecated.
+            *
+            * @memberof music21.key.KeySignature
+            * @returns {string}
+            */
 
       }, {
           key: 'vexflow',
@@ -6247,12 +6310,12 @@
               return tempName.replace(/-/g, 'b');
           }
           /**
-           * Returns the accidental associated with a step in this key, or undefined if none.
-           *
-           * @memberof music21.key.KeySignature
-           * @param {string} step - a valid step name such as "C","D", etc., but not "C#" etc.
-           * @returns {(music21.pitch.Accidental|undefined)}
-           */
+            * Returns the accidental associated with a step in this key, or undefined if none.
+            *
+            * @memberof music21.key.KeySignature
+            * @param {string} step - a valid step name such as "C","D", etc., but not "C#" etc.
+            * @returns {(music21.pitch.Accidental|undefined)}
+            */
 
       }, {
           key: 'accidentalByStep',
@@ -6270,22 +6333,22 @@
               return undefined;
           }
           /**
-           * Takes a pitch in C major and transposes it so that it has
-           * the same step position in the current key signature.
-           *
-           * @memberof music21.key.KeySignature
-           * @returns {music21.pitch.Pitch}
-           * @example
-           * var ks = new music21.key.KeySignature(-3)
-           * var p1 = new music21.pitch.Pitch('B')
-           * var p2 = ks.transposePitchFromC(p1)
-           * p2.name
-           * // "D"
-           * var p3 = new music21.pitch.Pitch('G-')
-           * var p4 = ks.transposePitchFromC(p3)
-           * p4.name
-           * // "B--"
-           */
+            * Takes a pitch in C major and transposes it so that it has
+            * the same step position in the current key signature.
+            *
+            * @memberof music21.key.KeySignature
+            * @returns {music21.pitch.Pitch}
+            * @example
+            * var ks = new music21.key.KeySignature(-3)
+            * var p1 = new music21.pitch.Pitch('B')
+            * var p2 = ks.transposePitchFromC(p1)
+            * p2.name
+            * // "D"
+            * var p3 = new music21.pitch.Pitch('G-')
+            * var p4 = ks.transposePitchFromC(p3)
+            * p4.name
+            * // "B--"
+            */
 
       }, {
           key: 'transposePitchFromC',
@@ -6338,21 +6401,21 @@
               }
           }
           /**
-           * An Array of Altered Pitches in KeySignature order (i.e., for flats, Bb, Eb, etc.)
-           *
-           * @memberof music21.key.KeySignature#
-           * @var {Array<music21.pitch.Pitch>} alteredPitches
-           * @readonly
-           * @example
-           * var ks = new music21.key.KeySignature(3)
-           * var ap = ks.alteredPitches
-           * var apName = [];
-           * for (var i = 0; i < ap.length; i++) {
-           *     apName.push(ap[i].name);
-           * }
-           * apName
-           * // ["F#", "C#", "G#"]
-           */
+            * An Array of Altered Pitches in KeySignature order (i.e., for flats, Bb, Eb, etc.)
+            *
+            * @memberof music21.key.KeySignature#
+            * @var {Array<music21.pitch.Pitch>} alteredPitches
+            * @readonly
+            * @example
+            * var ks = new music21.key.KeySignature(3)
+            * var ap = ks.alteredPitches
+            * var apName = [];
+            * for (var i = 0; i < ap.length; i++) {
+            *     apName.push(ap[i].name);
+            * }
+            * apName
+            * // ["F#", "C#", "G#"]
+            */
 
       }, {
           key: 'alteredPitches',
@@ -6596,7 +6659,7 @@
   miditools.metronome = undefined;
 
   Object.defineProperties(miditools, {
-      'tempo': {
+      tempo: {
           enumerable: true,
           get: function get() {
               if (this.metronome === undefined) {
@@ -7167,8 +7230,8 @@
                   style: this.keyStyle,
                   x: startX,
                   y: 0,
-                  'class': 'keyboardkey ' + this.keyClass,
-                  'id': this.id,
+                  class: 'keyboardkey ' + this.keyClass,
+                  id: this.id,
                   width: this.width * this.scaleFactor,
                   height: this.height * this.scaleFactor,
                   rx: 3,
@@ -7209,7 +7272,7 @@
                   fill: 'none',
                   cx: cx,
                   cy: (this.height - 10) * this.parent.scaleFactor,
-                  'class': 'keyboardkeyannotation',
+                  class: 'keyboardkeyannotation',
                   r: this.width * this.parent.scaleFactor / 4
               };
 
@@ -7259,7 +7322,7 @@
                   fill: textfill,
                   x: x + this.parent.scaleFactor * (this.width / 2 - 5),
                   y: this.parent.scaleFactor * (this.height - 20),
-                  'class': 'keyboardkeyname',
+                  class: 'keyboardkeyname',
                   'font-size': fontSize
               };
 
@@ -7405,7 +7468,13 @@
               click: this.clickhandler
           };
           //   more accurate offsets from http://www.mathpages.com/home/kmath043.htm
-          this.sharpOffsets = { 0: 14.3333, 1: 18.6666, 3: 13.25, 4: 16.25, 5: 19.75 };
+          this.sharpOffsets = {
+              0: 14.3333,
+              1: 18.6666,
+              3: 13.25,
+              4: 16.25,
+              5: 19.75
+          };
       }
       /**
        * Redraws the SVG associated with this Keyboard
@@ -7529,9 +7598,9 @@
 
               var svgDOM = common.makeSVGright('svg', {
                   'xml:space': 'preserve',
-                  'height': heightString,
-                  'width': totalWidth.toString() + 'px',
-                  'class': 'keyboardSVG'
+                  height: heightString,
+                  width: totalWidth.toString() + 'px',
+                  class: 'keyboardSVG'
               });
               var movingPitch = new pitch.Pitch('C4');
               var blackKeys = [];
@@ -7712,9 +7781,9 @@
               $b.data('state', 'down');
               $b.click(keyboard.triggerToggleShow);
               var $explain = $("<div class='keyboardExplain'>Show keyboard</div>").css({
-                  'display': 'none',
+                  display: 'none',
                   'background-color': 'white',
-                  'padding': '10px 10px 10px 10px',
+                  padding: '10px 10px 10px 10px',
                   'font-size': '12pt'
               });
               $b.append($explain);
@@ -8041,8 +8110,8 @@
           staffConnectors: ['single', 'brace'],
           staffPadding: 60, // width...
           events: {
-              'click': 'play',
-              'dblclick': undefined
+              click: 'play',
+              dblclick: undefined
               // resize
           },
           startNewSystem: false,
@@ -8187,9 +8256,9 @@
           value: function createScrollBar() {
               var canvas = this.canvas;
               var svgDOM = common.makeSVGright('svg', {
-                  'height': canvas.height.toString() + 'px',
-                  'width': canvas.width.toString() + 'px',
-                  'style': 'position:absolute; top: 0px; left: 0px;'
+                  height: canvas.height.toString() + 'px',
+                  width: canvas.width.toString() + 'px',
+                  style: 'position:absolute; top: 0px; left: 0px;'
               });
               var scaleY = this.stream.renderOptions.scaleFactor.y;
               var eachSystemHeight = canvas.height / (scaleY * (this.pixelMapper.maxSystemIndex + 1));
@@ -8586,6 +8655,7 @@
           this.stream = s;
           this.activeNote = undefined;
           this.changedCallbackFunction = undefined; // for editable canvases
+          this.accidentalsByStepOctave = {};
       }
 
       /**
@@ -9684,9 +9754,9 @@
               if (rendOp.rightBarline !== undefined) {
                   var bl = rendOp.rightBarline;
                   var barlineMap = {
-                      'single': 'SINGLE',
-                      'double': 'DOUBLE',
-                      'end': 'END'
+                      single: 'SINGLE',
+                      double: 'DOUBLE',
+                      end: 'END'
                   };
                   var vxBL = barlineMap[bl];
                   if (vxBL !== undefined) {
@@ -9782,7 +9852,8 @@
                               // console.log(activeTupletVexflowNotes);
                               var tupletOptions = {
                                   num_notes: activeTuplet.numberNotesActual,
-                                  notes_occupied: activeTuplet.numberNotesNormal };
+                                  notes_occupied: activeTuplet.numberNotesNormal
+                              };
                               // console.log('tupletOptions', tupletOptions);
                               var vfTuplet = new Vex.Flow.Tuplet(activeTupletVexflowNotes, tupletOptions);
                               if (activeTuplet.tupletNormalShow === 'ratio') {
@@ -9916,9 +9987,11 @@
               if (debug) {
                   console.log('New voice, num_beats: ' + num1024.toString() + ' beat_value: ' + beatValue.toString());
               }
-              var vfv = new Vex.Flow.Voice({ num_beats: num1024,
+              var vfv = new Vex.Flow.Voice({
+                  num_beats: num1024,
                   beat_value: beatValue,
-                  resolution: Vex.Flow.RESOLUTION });
+                  resolution: Vex.Flow.RESOLUTION
+              });
 
               // from vexflow/src/voice.js
               //
@@ -9935,10 +10008,10 @@
           key: 'staffConnectorsMap',
           value: function staffConnectorsMap(connectorType) {
               var connectorMap = {
-                  'brace': Vex.Flow.StaveConnector.type.BRACE,
-                  'single': Vex.Flow.StaveConnector.type.SINGLE,
-                  'double': Vex.Flow.StaveConnector.type.DOUBLE,
-                  'bracket': Vex.Flow.StaveConnector.type.BRACKET
+                  brace: Vex.Flow.StaveConnector.type.BRACE,
+                  single: Vex.Flow.StaveConnector.type.SINGLE,
+                  double: Vex.Flow.StaveConnector.type.DOUBLE,
+                  bracket: Vex.Flow.StaveConnector.type.BRACKET
               };
               return connectorMap[connectorType];
           }
@@ -13353,18 +13426,18 @@
 
           // class attributes in m21p
           this.attributeTagsToMethods = {
-              'time': 'handleTimeSignature',
-              'clef': 'handleClef',
-              'key': 'handleKeySignature'
+              time: 'handleTimeSignature',
+              clef: 'handleClef',
+              key: 'handleKeySignature'
               // 'staff-details': 'handleStaffDetails',
               // 'measure-style': 'handleMeasureStyle',
           };
           this.musicDataMethods = {
-              'note': 'xmlToNote',
+              note: 'xmlToNote',
               // 'backup': 'xmlBackup',
               // 'forward': 'xmlForward',
               // 'direction': 'xmlDirection',
-              'attributes': 'parseAttributesTag'
+              attributes: 'parseAttributesTag'
               // 'harmony': 'xmlHarmony',
               // 'figured-bass': undefined,
               // 'sound': undefined,
@@ -14143,36 +14216,36 @@
    * // 40
    */
   tempo.defaultTempoValues = {
-      'larghissimo': 16,
-      'largamente': 32,
-      'grave': 40,
+      larghissimo: 16,
+      largamente: 32,
+      grave: 40,
       'molto adagio': 40,
-      'largo': 46,
-      'lento': 52,
-      'adagio': 56,
-      'slow': 56,
-      'langsam': 56,
-      'larghetto': 60,
-      'adagietto': 66,
-      'andante': 72,
-      'andantino': 80,
+      largo: 46,
+      lento: 52,
+      adagio: 56,
+      slow: 56,
+      langsam: 56,
+      larghetto: 60,
+      adagietto: 66,
+      andante: 72,
+      andantino: 80,
       'andante moderato': 83,
-      'maestoso': 88,
-      'moderato': 92,
-      'moderate': 92,
-      'allegretto': 108,
-      'animato': 120,
+      maestoso: 88,
+      moderato: 92,
+      moderate: 92,
+      allegretto: 108,
+      animato: 120,
       'allegro moderato': 128,
-      'allegro': 132,
-      'fast': 132,
-      'schnell': 132,
-      'allegrissimo': 140,
+      allegro: 132,
+      fast: 132,
+      schnell: 132,
+      allegrissimo: 140,
       'molto allegro': 144,
       'très vite': 144,
-      'vivace': 160,
-      'vivacissimo': 168,
-      'presto': 184,
-      'prestissimo': 208
+      vivace: 160,
+      vivacissimo: 168,
+      presto: 184,
+      prestissimo: 208
   };
 
   tempo.baseTempo = 60;
@@ -15176,7 +15249,7 @@
            * @memberof music21.widgets.RhythmChooser
            */
           this.styles = {
-              'undo': 'font-family: serif; font-size: 30pt; top: -7px;'
+              undo: 'font-family: serif; font-size: 30pt; top: -7px;'
           };
           /**
            * An object mapping a value type to a function when it is clicked
@@ -15191,14 +15264,14 @@
            * @memberof music21.widgets.RhythmChooser#
            */
           this.buttonHandlers = {
-              'undo': function undo(unused_t) {
+              undo: function undo(unused_t) {
                   if (_this.stream.length > 0) {
                       return _this.stream.pop();
                   } else {
                       return undefined;
                   }
               },
-              'dot': function dot(unused_t) {
+              dot: function dot(unused_t) {
                   if (_this.stream.length > 0) {
                       var el = _this.stream.pop();
                       el.duration.dots += 1;
@@ -15208,7 +15281,7 @@
                       return undefined;
                   }
               },
-              'tie': function tie(unused_t) {
+              tie: function tie(unused_t) {
                   if (_this.stream.length > 0) {
                       var el = _this.stream.get(-1);
                       el.tie = new _tie.Tie('start');
@@ -15218,7 +15291,7 @@
                       return undefined;
                   }
               },
-              'default': function _default(buttonM21type) {
+              default: function _default(buttonM21type) {
                   var newN = new note.Note('B4');
                   newN.stemDirection = 'up';
                   if (buttonM21type.indexOf('rest_') === 0) {
@@ -15248,7 +15321,7 @@
            * @memberof music21.widgets.RhythmChooser#
            */
           this.measureButtonHandlers = {
-              'undo': function undo(unused_t) {
+              undo: function undo(unused_t) {
                   if (_this.stream.length > 0) {
                       var lastMeasure = _this.stream.get(-1);
                       var retValue = lastMeasure.pop();
@@ -15260,7 +15333,7 @@
                       return undefined;
                   }
               },
-              'dot': function dot(unused_t) {
+              dot: function dot(unused_t) {
                   if (_this.stream.length > 0) {
                       var lastMeasure = _this.stream.get(-1);
                       var el = lastMeasure.pop();
@@ -15271,7 +15344,7 @@
                       return undefined;
                   }
               },
-              'addMeasure': function addMeasure(unused_t) {
+              addMeasure: function addMeasure(unused_t) {
                   var lastMeasure = _this.stream.get(-1);
                   var m = new stream.Measure();
                   m.renderOptions.staffLines = lastMeasure.renderOptions.staffLines;
@@ -15281,7 +15354,7 @@
                   m.autoBeam = lastMeasure.autoBeam;
                   _this.stream.append(m);
               },
-              'tie': function tie(unused_t) {
+              tie: function tie(unused_t) {
                   var lastMeasure = _this.stream.get(-1);
                   var el = void 0;
                   if (lastMeasure.length > 0) {
@@ -15301,7 +15374,7 @@
                       _this.tieActive = true;
                   }
               },
-              'default': function _default(buttonM21type) {
+              default: function _default(buttonM21type) {
                   var newN = new note.Note('B4');
                   newN.stemDirection = 'up';
                   if (buttonM21type.indexOf('rest_') === 0) {

@@ -11,7 +11,10 @@ import { stream } from './stream.js';
  *
  */
 export const layout = {};
-layout.makeLayoutFromScore = function makeLayoutFromScore(score, containerWidth) {
+layout.makeLayoutFromScore = function makeLayoutFromScore(
+    score,
+    containerWidth
+) {
     /*
      * Divide a part up into systems and fix the measure
      * widths so that they are all even.
@@ -32,7 +35,8 @@ layout.makeLayoutFromScore = function makeLayoutFromScore(score, containerWidth)
     const numMeasures = partZero.length;
 
     const measureWidths = partZero.getMeasureWidths();
-    const maxSystemWidth = containerWidth || score.maxSystemWidth; /* of course fix! */
+    const maxSystemWidth
+        = containerWidth || score.maxSystemWidth; /* of course fix! */
 
     const layoutScore = new layout.LayoutScore();
     const currentPage = new layout.Page(); // to-do multiple pages...
@@ -69,7 +73,7 @@ layout.makeLayoutFromScore = function makeLayoutFromScore(score, containerWidth)
     for (let i = 0; i < measureWidths.length; i++) {
         const currentRight = currentLeft + measureWidths[i];
         /* console.log("left: " + currentLeft + " ; right: " + currentRight + " ; m: " + i); */
-        if ((currentRight > maxSystemWidth) && (lastSystemBreak !== i)) {
+        if (currentRight > maxSystemWidth && lastSystemBreak !== i) {
             // new system...
             for (let j = 0; j < currentStaves.length; j++) {
                 currentStaves.measureEnd = i;
@@ -87,7 +91,9 @@ layout.makeLayoutFromScore = function makeLayoutFromScore(score, containerWidth)
 
             systemBreakIndexes.push(i - 1);
             systemCurrentWidths.push(currentLeft);
-            console.log('setting new width at ' + currentLeft + ' measure ' + i);
+            console.log(
+                'setting new width at ' + currentLeft + ' measure ' + i
+            );
             currentLeft = startLeft + measureWidths[i];
             lastSystemBreak = i;
         } else {
@@ -104,7 +110,6 @@ layout.makeLayoutFromScore = function makeLayoutFromScore(score, containerWidth)
     currentPage.insert(0, currentSystem);
     return layoutScore;
 };
-
 
 export class LayoutScore extends stream.Score {
     constructor() {
@@ -145,7 +150,6 @@ export class LayoutScore extends stream.Score {
     }
 }
 layout.LayoutScore = LayoutScore;
-
 
 /**
  * All music must currently be on page 1.

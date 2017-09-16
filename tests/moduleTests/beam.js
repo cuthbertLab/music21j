@@ -1,8 +1,8 @@
 import * as QUnit from 'qunit';
-import music21 from '../../src/loadModules'; 
+import music21 from '../../src/loadModules';
 
 export default function tests() {
-        QUnit.test('music21.beam.Beams', (assert) => {
+    QUnit.test('music21.beam.Beams', assert => {
         const a = new music21.beam.Beams();
         a.fill('16th');
         a.setAll('start');
@@ -20,4 +20,4 @@ export default function tests() {
         assert.equal(b.beamsList[1].type, 'partial');
         assert.equal(b.beamsList[1].direction, 'right');
     });
-} 
+}

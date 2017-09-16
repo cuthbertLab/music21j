@@ -38,7 +38,15 @@ export class RhythmChooser {
     constructor(streamObj, canvasDiv) {
         this.stream = streamObj;
         this.canvasDiv = canvasDiv;
-        this.values = ['whole', 'half', 'quarter', 'eighth', '16th', 'dot', 'undo'];
+        this.values = [
+            'whole',
+            'half',
+            'quarter',
+            'eighth',
+            '16th',
+            'dot',
+            'undo',
+        ];
 
         if (this.stream.hasSubStreams()) {
             this.measureMode = true;
@@ -81,7 +89,7 @@ export class RhythmChooser {
          * @memberof music21.widgets.RhythmChooser
          */
         this.styles = {
-            'undo': 'font-family: serif; font-size: 30pt; top: -7px;',
+            undo: 'font-family: serif; font-size: 30pt; top: -7px;',
         };
         /**
          * An object mapping a value type to a function when it is clicked
@@ -96,14 +104,14 @@ export class RhythmChooser {
          * @memberof music21.widgets.RhythmChooser#
          */
         this.buttonHandlers = {
-            'undo': (unused_t) => {
+            undo: unused_t => {
                 if (this.stream.length > 0) {
                     return this.stream.pop();
                 } else {
                     return undefined;
                 }
             },
-            'dot': (unused_t) => {
+            dot: unused_t => {
                 if (this.stream.length > 0) {
                     const el = this.stream.pop();
                     el.duration.dots += 1;
@@ -113,7 +121,7 @@ export class RhythmChooser {
                     return undefined;
                 }
             },
-            'tie': (unused_t) => {
+            tie: unused_t => {
                 if (this.stream.length > 0) {
                     const el = this.stream.get(-1);
                     el.tie = new tie.Tie('start');
@@ -123,7 +131,7 @@ export class RhythmChooser {
                     return undefined;
                 }
             },
-            'default': (buttonM21type) => {
+            default: buttonM21type => {
                 let newN = new note.Note('B4');
                 newN.stemDirection = 'up';
                 if (buttonM21type.indexOf('rest_') === 0) {
@@ -153,7 +161,7 @@ export class RhythmChooser {
          * @memberof music21.widgets.RhythmChooser#
          */
         this.measureButtonHandlers = {
-            'undo': (unused_t) => {
+            undo: unused_t => {
                 if (this.stream.length > 0) {
                     const lastMeasure = this.stream.get(-1);
                     const retValue = lastMeasure.pop();
@@ -165,26 +173,30 @@ export class RhythmChooser {
                     return undefined;
                 }
             },
-            'dot': (unused_t) => {
+            dot: unused_t => {
                 if (this.stream.length > 0) {
                     const lastMeasure = this.stream.get(-1);
                     const el = lastMeasure.pop();
                     el.duration.dots += 1;
                     lastMeasure.append(el);
                     return el;
-                } else { return undefined; }
+                } else {
+                    return undefined;
+                }
             },
-            'addMeasure': (unused_t) => {
+            addMeasure: unused_t => {
                 const lastMeasure = this.stream.get(-1);
                 const m = new stream.Measure();
-                m.renderOptions.staffLines = lastMeasure.renderOptions.staffLines;
-                m.renderOptions.measureIndex = lastMeasure.renderOptions.measureIndex + 1;
+                m.renderOptions.staffLines
+                    = lastMeasure.renderOptions.staffLines;
+                m.renderOptions.measureIndex
+                    = lastMeasure.renderOptions.measureIndex + 1;
                 m.renderOptions.rightBarline = 'end';
                 lastMeasure.renderOptions.rightBarline = 'single';
                 m.autoBeam = lastMeasure.autoBeam;
                 this.stream.append(m);
             },
-            'tie': (unused_t) => {
+            tie: unused_t => {
                 const lastMeasure = this.stream.get(-1);
                 let el;
                 if (lastMeasure.length > 0) {
@@ -197,12 +209,14 @@ export class RhythmChooser {
                 }
                 if (el !== undefined) {
                     let tieType = 'start';
-                    if (el.tie !== undefined) { tieType = 'continue'; }
+                    if (el.tie !== undefined) {
+                        tieType = 'continue';
+                    }
                     el.tie = new tie.Tie(tieType);
                     this.tieActive = true;
                 }
             },
-            'default': (buttonM21type) => {
+            default: buttonM21type => {
                 let newN = new note.Note('B4');
                 newN.stemDirection = 'up';
                 if (buttonM21type.indexOf('rest_') === 0) {
@@ -215,10 +229,14 @@ export class RhythmChooser {
                     this.tieActive = false;
                 }
                 let lastMeasure = this.stream.get(-1);
-                if (this.autoAddMeasure &&
-                        lastMeasure.duration.quarterLength >=
-                            this.stream.timeSignature.barDuration.quarterLength) {
-                    this.measureButtonHandlers.addMeasure.apply(this, [buttonM21type]);
+                if (
+                    this.autoAddMeasure
+                    && lastMeasure.duration.quarterLength
+                        >= this.stream.timeSignature.barDuration.quarterLength
+                ) {
+                    this.measureButtonHandlers.addMeasure.apply(this, [
+                        buttonM21type,
+                    ]);
                     lastMeasure = this.stream.get(-1);
                 }
                 lastMeasure.append(newN);
@@ -241,15 +259,22 @@ export class RhythmChooser {
         for (let i = 0; i < this.values.length; i++) {
             const value = this.values[i];
             const entity = this.valueMappings[value];
-            const $inner = $('<button class="btButton" m21Type="' + value + '">'
-                    + entity + '</button>');
+            const $inner = $(
+                '<button class="btButton" m21Type="'
+                    + value
+                    + '">'
+                    + entity
+                    + '</button>'
+            );
             if (this.styles[value] !== undefined) {
                 $inner.attr('style', this.styles[value]);
             }
 
-            $inner.click((function rhythmButtonDiv_click(value) {
-                this.handleButton(value);
-            }).bind(this, value));
+            $inner.click(
+                function rhythmButtonDiv_click(value) {
+                    this.handleButton(value);
+                }.bind(this, value)
+            );
             $outer.append($inner);
         }
         if (where !== undefined) {
@@ -310,9 +335,7 @@ export class Augmenter {
             streamObjToWorkOn.timeSignature.denominator *= 1 / amountToScale;
         }
 
-
-        if (this.canvasDiv !== undefined
-            && replaceCanvas === true) {
+        if (this.canvasDiv !== undefined && replaceCanvas === true) {
             this.canvasDiv = streamObjToWorkOn.replaceCanvas(this.canvasDiv);
         }
     }
@@ -327,11 +350,19 @@ export class Augmenter {
 
     addDiv($where) {
         const $newDiv = $('<div class="augmenterDiv" />');
-        const $smaller = $('<button class="augmenterButton">Make Smaller</button>');
-        const $larger = $('<button class="augmenterButton">Make Larger</button>');
+        const $smaller = $(
+            '<button class="augmenterButton">Make Smaller</button>'
+        );
+        const $larger = $(
+            '<button class="augmenterButton">Make Larger</button>'
+        );
 
-        $smaller.on('click', () => { this.makeSmaller(); });
-        $larger.on('click', () => { this.makeLarger(); });
+        $smaller.on('click', () => {
+            this.makeSmaller();
+        });
+        $larger.on('click', () => {
+            this.makeLarger();
+        });
 
         $newDiv.append($smaller);
         $newDiv.append($larger);

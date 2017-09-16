@@ -2,7 +2,6 @@ import MIDI from 'MIDI';
 
 import { common } from './common.js';
 
-
 /**
  * audioSearch module. See {@link music21.audioSearch} namespace
  *
@@ -21,19 +20,23 @@ export const audioSearch = {};
 
 audioSearch.fftSize = 2048;
 
-audioSearch.AudioContextCaller = window.AudioContext || window.webkitAudioContext;
+audioSearch.AudioContextCaller
+    = window.AudioContext || window.webkitAudioContext;
 audioSearch._audioContext = null;
 audioSearch.animationFrameCallbackId = null;
 
-Object.defineProperties(audioSearch,
-    { 'audioContext': {
-        'get': () => {
+Object.defineProperties(audioSearch, {
+    audioContext: {
+        get: () => {
             if (audioSearch._audioContext !== null) {
                 return audioSearch._audioContext;
             } else {
                 // AudioContext should be a singleton, but MIDI reports loaded before it is!
-                if (MIDI !== undefined && MIDI.WebAudio !== undefined
-                        && MIDI.WebAudio.getContext() !== undefined) {
+                if (
+                    MIDI !== undefined
+                    && MIDI.WebAudio !== undefined
+                    && MIDI.WebAudio.getContext() !== undefined
+                ) {
                     window.globalAudioContext = MIDI.WebAudio.getContext();
                 } else if (typeof window.globalAudioContext === 'undefined') {
                     window.globalAudioContext = new audioSearch.AudioContextCaller();
@@ -42,11 +45,11 @@ Object.defineProperties(audioSearch,
                 return audioSearch._audioContext;
             }
         },
-        'set': (ac) => {
+        set: ac => {
             audioSearch._audioContext = ac;
         },
-    } });
-
+    },
+});
 
 /**
  *
@@ -59,24 +62,33 @@ Object.defineProperties(audioSearch,
 audioSearch.getUserMedia = function getUserMedia(dictionary, callback, error) {
     if (error === undefined) {
         /* eslint no-alert: "off"*/
-        error = () => { alert('navigator.getUserMedia either not defined (Safari, IE) or denied.'); };
+        error = () => {
+            alert(
+                'navigator.getUserMedia either not defined (Safari, IE) or denied.'
+            );
+        };
     }
     if (callback === undefined) {
-        callback = (mediaStream) => { audioSearch.userMediaStarted(mediaStream); };
+        callback = mediaStream => {
+            audioSearch.userMediaStarted(mediaStream);
+        };
     }
     const n = navigator;
     // need to polyfill navigator, or binding problems are hard...
-    n.getUserMedia = n.getUserMedia || n.webkitGetUserMedia || n.mozGetUserMedia || n.msGetUserMedia;
+    n.getUserMedia
+        = n.getUserMedia
+        || n.webkitGetUserMedia
+        || n.mozGetUserMedia
+        || n.msGetUserMedia;
 
     if (n.getUserMedia === undefined) {
         error();
     }
     if (dictionary === undefined) {
         dictionary = {
-            'audio': {
-                'mandatory': {
-                },
-                'optional': [],
+            audio: {
+                mandatory: {},
+                optional: [],
             },
         };
     }
@@ -92,7 +104,9 @@ audioSearch.userMediaStarted = function userMediaStarted(audioStream) {
      * so we call it on object creation.
      */
     audioSearch.sampleBuffer = new Float32Array(audioSearch.fftSize / 2);
-    const mediaStreamSource = audioSearch.audioContext.createMediaStreamSource(audioStream);
+    const mediaStreamSource = audioSearch.audioContext.createMediaStreamSource(
+        audioStream
+    );
     const analyser = audioSearch.audioContext.createAnalyser();
     analyser.fftSize = audioSearch.fftSize;
     mediaStreamSource.connect(analyser);
@@ -103,16 +117,21 @@ audioSearch.userMediaStarted = function userMediaStarted(audioStream) {
 audioSearch.minFrequency = 55;
 audioSearch.maxFrequency = 1050;
 audioSearch.animateLoop = function animateLoop(time) {
-    audioSearch.currentAnalyser.getFloatTimeDomainData(audioSearch.sampleBuffer);
+    audioSearch.currentAnalyser.getFloatTimeDomainData(
+        audioSearch.sampleBuffer
+    );
     // returns best frequency or -1
     const frequencyDetected = audioSearch.autoCorrelate(
-            audioSearch.sampleBuffer,
-            audioSearch.audioContext.sampleRate,
-            audioSearch.minFrequency,
-            audioSearch.maxFrequency);
+        audioSearch.sampleBuffer,
+        audioSearch.audioContext.sampleRate,
+        audioSearch.minFrequency,
+        audioSearch.maxFrequency
+    );
     const retValue = audioSearch.sampleCallback(frequencyDetected);
     if (retValue !== -1) {
-        audioSearch.animationFrameCallbackId = window.requestAnimationFrame(audioSearch.animateLoop);
+        audioSearch.animationFrameCallbackId = window.requestAnimationFrame(
+            audioSearch.animateLoop
+        );
     }
 };
 
@@ -127,8 +146,13 @@ audioSearch.smoothPitchExtraction = function smoothPitchExtraction(frequency) {
         audioSearch.lastPitchesDetected.shift();
         audioSearch.lastCentsDeviationsDetected.shift();
     } else {
-        const [midiNum, centsOff] = audioSearch.midiNumDiffFromFrequency(frequency);
-        if (audioSearch.lastPitchClassesDetected.length > audioSearch.pitchSmoothingSize) {
+        const [midiNum, centsOff] = audioSearch.midiNumDiffFromFrequency(
+            frequency
+        );
+        if (
+            audioSearch.lastPitchClassesDetected.length
+            > audioSearch.pitchSmoothingSize
+        ) {
             audioSearch.lastPitchClassesDetected.shift();
             audioSearch.lastPitchesDetected.shift();
             audioSearch.lastCentsDeviationsDetected.shift();
@@ -137,7 +161,9 @@ audioSearch.smoothPitchExtraction = function smoothPitchExtraction(frequency) {
         audioSearch.lastPitchesDetected.push(midiNum);
         audioSearch.lastCentsDeviationsDetected.push(centsOff);
     }
-    const mostCommonPitchClass = common.statisticalMode(audioSearch.lastPitchClassesDetected);
+    const mostCommonPitchClass = common.statisticalMode(
+        audioSearch.lastPitchClassesDetected
+    );
     if (mostCommonPitchClass === null) {
         return [-1, 0];
     }
@@ -155,7 +181,7 @@ audioSearch.smoothPitchExtraction = function smoothPitchExtraction(frequency) {
     let totalSamplePoints = 0;
     let totalSample = 0;
     for (let j = 0; j < centsMatchingClass.length; j++) {
-        const weight = (Math.pow(j, 2) + 1);
+        const weight = Math.pow(j, 2) + 1;
         totalSample += weight * centsMatchingClass[j];
         totalSamplePoints += weight;
     }
@@ -164,11 +190,18 @@ audioSearch.smoothPitchExtraction = function smoothPitchExtraction(frequency) {
 };
 
 audioSearch.sampleCallback = function sampleCallback(frequency) {
-    const [unused_midiNum, unused_centsOff] = audioSearch.smoothPitchExtraction(frequency);
+    const [unused_midiNum, unused_centsOff] = audioSearch.smoothPitchExtraction(
+        frequency
+    );
 };
 
 // from Chris Wilson. Replace with Jordi's
-audioSearch.autoCorrelate = function autoCorrelate(buf, sampleRate, minFrequency, maxFrequency) {
+audioSearch.autoCorrelate = function autoCorrelate(
+    buf,
+    sampleRate,
+    minFrequency,
+    maxFrequency
+) {
     const SIZE = buf.length;
     const MAX_SAMPLES = Math.floor(SIZE / 2);
     if (minFrequency === undefined) {
@@ -205,11 +238,11 @@ audioSearch.autoCorrelate = function autoCorrelate(buf, sampleRate, minFrequency
         }
 
         for (let i = 0; i < MAX_SAMPLES; i++) {
-            correlation += Math.abs((buf[i]) - (buf[i + offset]));
+            correlation += Math.abs(buf[i] - buf[i + offset]);
         }
-        correlation = 1 - (correlation / MAX_SAMPLES);
+        correlation = 1 - correlation / MAX_SAMPLES;
         correlations[offset] = correlation; // store it, for the tweaking we need to do below.
-        if ((correlation > 0.9) && (correlation > lastCorrelation)) {
+        if (correlation > 0.9 && correlation > lastCorrelation) {
             foundGoodCorrelation = true;
             if (correlation > best_correlation) {
                 best_correlation = correlation;
@@ -225,8 +258,11 @@ audioSearch.autoCorrelate = function autoCorrelate(buf, sampleRate, minFrequency
             // we know best_offset >=1,
             // since foundGoodCorrelation cannot go to true until the second pass (offset=1), and
             // we can't drop into this clause until the following pass (else if).
-            const shift = (correlations[best_offset + 1] - correlations[best_offset - 1]) / correlations[best_offset];
-            return sampleRate / (best_offset + (8 * shift));
+            const shift
+                = (correlations[best_offset + 1]
+                    - correlations[best_offset - 1])
+                / correlations[best_offset];
+            return sampleRate / (best_offset + 8 * shift);
         }
         lastCorrelation = correlation;
     }
@@ -244,8 +280,10 @@ audioSearch.autoCorrelate = function autoCorrelate(buf, sampleRate, minFrequency
  * @param {Number} frequency
  * @returns {Array<Int>} [miniNumber, centsOff]
  */
-audioSearch.midiNumDiffFromFrequency = function midiNumDiffFromFrequency(frequency) {
-    const midiNumFloat = (12 * (Math.log(frequency / 440) / Math.log(2))) + 69;
+audioSearch.midiNumDiffFromFrequency = function midiNumDiffFromFrequency(
+    frequency
+) {
+    const midiNumFloat = 12 * (Math.log(frequency / 440) / Math.log(2)) + 69;
     const midiNum = Math.round(midiNumFloat);
     const centsOff = Math.round(100 * (midiNumFloat - midiNum));
     return [midiNum, centsOff];

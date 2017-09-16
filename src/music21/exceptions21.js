@@ -8,14 +8,11 @@ class ExtendableError extends Error {
         if (typeof Error.captureStackTrace === 'function') {
             Error.captureStackTrace(this, this.constructor);
         } else {
-            this.stack = (new Error(message)).stack;
+            this.stack = new Error(message).stack;
         }
     }
 }
 
-export class Music21Exception extends ExtendableError {
-}
+export class Music21Exception extends ExtendableError {}
 
-export class StreamException extends Music21Exception {
-}
- 
+export class StreamException extends Music21Exception {}

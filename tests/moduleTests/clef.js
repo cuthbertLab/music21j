@@ -1,8 +1,8 @@
 import * as QUnit from 'qunit';
-import music21 from '../../src/loadModules'; 
+import music21 from '../../src/loadModules';
 
 export default function tests() {
-    QUnit.test('music21.clef.Clef', (assert) => {
+    QUnit.test('music21.clef.Clef', assert => {
         const c1 = new music21.clef.Clef();
         assert.equal(c1.isClassOrSubclass('Clef'), true, 'clef is a Clef');
 
@@ -18,7 +18,7 @@ export default function tests() {
         const p2 = ac.convertPitchToTreble(n.pitch);
         assert.equal(p2.nameWithOctave, 'B#4', 'converted to treble');
     });
-    QUnit.test('music21.clef.Clef 8va', (assert) => {
+    QUnit.test('music21.clef.Clef 8va', assert => {
         const ac = new music21.clef.Treble8vaClef();
         assert.equal(ac.lowestLine, 38, 'first line set');
         const n = new music21.note.Note('C#5');

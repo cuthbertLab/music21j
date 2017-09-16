@@ -51,7 +51,8 @@ export class ProtoM21Object {
         const ret = new this.constructor();
 
         // todo: do Arrays work?
-        for (const key in this) { // not that we ONLY copy the keys in Ret -- it's easier that way.
+        for (const key in this) {
+            // not that we ONLY copy the keys in Ret -- it's easier that way.
             if ({}.hasOwnProperty.call(this, key) === false) {
                 continue;
             }
@@ -60,18 +61,22 @@ export class ProtoM21Object {
                     ret[key] = this[key];
                 } else if (this._cloneCallbacks[key] === false) {
                     ret[key] = undefined;
-                } else { // call the cloneCallbacks function
+                } else {
+                    // call the cloneCallbacks function
                     this._cloneCallbacks[key](key, ret, this);
                 }
             } else if (
-                    Object.getOwnPropertyDescriptor(this, key).get !== undefined
-                    || Object.getOwnPropertyDescriptor(this, key).set !== undefined
+                Object.getOwnPropertyDescriptor(this, key).get !== undefined
+                || Object.getOwnPropertyDescriptor(this, key).set !== undefined
             ) {
                 // do nothing
-            } else if (typeof (this[key]) === 'function') {
+            } else if (typeof this[key] === 'function') {
                 // do nothing -- events might not be copied.
-            } else if (typeof (this[key]) === 'object' && this[key] !== null &&
-                    this[key].isProtoM21Object) {
+            } else if (
+                typeof this[key] === 'object'
+                && this[key] !== null
+                && this[key].isProtoM21Object
+            ) {
                 // console.log('cloning ', key);
                 ret[key] = this[key].clone();
             } else {
@@ -83,7 +88,7 @@ export class ProtoM21Object {
                         console.log('typeError:', e, key);
                         // do nothing
                     } else {
-                        throw (e);
+                        throw e;
                     }
                 }
             }
@@ -115,4 +120,3 @@ export class ProtoM21Object {
     }
 }
 prebase.ProtoM21Object = ProtoM21Object;
-

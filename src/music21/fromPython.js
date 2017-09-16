@@ -66,20 +66,20 @@ export class Converter {
         ];
         this.handlers = {
             'music21.duration.Duration': {
-                post_restore: (d) => {
+                post_restore: d => {
                     d.quarterLength = d._qtrLength;
                     return d;
                 },
             },
             'music21.meter.TimeSignature': {
-                post_restore: (ts) => {
+                post_restore: ts => {
                     ts._numerator = ts.displaySequence._numerator;
                     ts._denominator = ts.displaySequence._denominator;
                     return ts;
                 },
             },
             'music21.stream.Part': {
-                post_restore: (p) => {
+                post_restore: p => {
                     this.currentPart = p;
                     this.lastClef = undefined;
                     this.lastKeySignature = undefined;
@@ -88,7 +88,7 @@ export class Converter {
                     return p;
                 },
             },
-                // TODO: all inherit somehow, through _classes or better, prototype...
+            // TODO: all inherit somehow, through _classes or better, prototype...
             'music21.stream.Score': {
                 post_restore: this.streamPostRestore.bind(this),
             },
@@ -151,21 +151,30 @@ export class Converter {
                     // console.log("Got timeSignature", streamPart, newM21pObj, storedElement);
                     s._timeSignature = el;
                     this.lastTimeSignature = el;
-                    if (streamPart !== undefined && streamPart.timeSignature === undefined) {
+                    if (
+                        streamPart !== undefined
+                        && streamPart.timeSignature === undefined
+                    ) {
                         streamPart.timeSignature = el;
                     }
                     appendEl = false;
                 } else if (thisClass === 'Clef') {
                     s._clef = el;
                     this.lastClef = el;
-                    if (streamPart !== undefined && streamPart.clef === undefined) {
+                    if (
+                        streamPart !== undefined
+                        && streamPart.clef === undefined
+                    ) {
                         streamPart.clef = el;
                     }
                     appendEl = false;
                 } else if (thisClass === 'KeySignature') {
                     s._keySignature = el;
                     this.lastKeySignature = el;
-                    if (streamPart !== undefined && streamPart.keySignature === undefined) {
+                    if (
+                        streamPart !== undefined
+                        && streamPart.keySignature === undefined
+                    ) {
                         streamPart.keySignature = el;
                     }
                     appendEl = false;

@@ -66,7 +66,7 @@ export class ScrollPlayer {
          * @method streamInteraction.ScrollPlayer#scrollScore
          * @memberof music21.streamInteraction.ScrollPlayer
          */
-        this.scrollScore = (function scrollScore() {
+        this.scrollScore = function scrollScore() {
             const timeSinceStartInMS = new Date().getTime() - this.startTime;
             const offset = timeSinceStartInMS / 1000 * this.tempo / 60;
             const pm = this.pixelMapper;
@@ -75,7 +75,10 @@ export class ScrollPlayer {
             if (systemIndex > this.previousSystemIndex) {
                 this.lastX = -100; // arbitrary negative...
                 this.previousSystemIndex = systemIndex;
-                this.barDOM.setAttribute('y', systemIndex * this.eachSystemHeight);
+                this.barDOM.setAttribute(
+                    'y',
+                    systemIndex * this.eachSystemHeight
+                );
             }
             let x = pm.getXAtOffset(offset);
             x = Math.floor(x);
@@ -89,7 +92,7 @@ export class ScrollPlayer {
             // pm is a pixelMap not a Stream
             for (let j = 0; j < pm.allMaps.length; j++) {
                 const pmOff = pm.allMaps[j].offset;
-                if (j <= this.lastNoteIndex)  {
+                if (j <= this.lastNoteIndex) {
                     continue;
                 } else if (Math.abs(offset - pmOff) > 0.1) {
                     continue;
@@ -114,9 +117,8 @@ export class ScrollPlayer {
                 const fauxEvent = undefined;
                 this.stopPlaying(fauxEvent);
             }
-        }).bind(this);
+        }.bind(this);
     }
-
 
     /**
      * Create the scrollbar (barDOM), the svg to place it in (svgDOM)
@@ -134,20 +136,21 @@ export class ScrollPlayer {
     createScrollBar() {
         const canvas = this.canvas;
         const svgDOM = common.makeSVGright('svg', {
-            'height': canvas.height.toString() + 'px',
-            'width': canvas.width.toString() + 'px',
-            'style': 'position:absolute; top: 0px; left: 0px;',
+            height: canvas.height.toString() + 'px',
+            width: canvas.width.toString() + 'px',
+            style: 'position:absolute; top: 0px; left: 0px;',
         });
         const scaleY = this.stream.renderOptions.scaleFactor.y;
-        const eachSystemHeight = canvas.height / (scaleY * (this.pixelMapper.maxSystemIndex + 1));
+        const eachSystemHeight
+            = canvas.height / (scaleY * (this.pixelMapper.maxSystemIndex + 1));
         const barDOM = common.makeSVGright('rect', {
             width: 10,
-            height: eachSystemHeight - 6,  // small fudge for separation
+            height: eachSystemHeight - 6, // small fudge for separation
             x: this.pixelMapper.startX,
             y: 3,
             style: 'fill: rgba(255, 255, 20, .5);stroke:white',
         });
-        barDOM.setAttribute('transform', 'scale(' + scaleY  + ')');
+        barDOM.setAttribute('transform', 'scale(' + scaleY + ')');
         svgDOM.appendChild(barDOM);
 
         const canvasParent = $(canvas).parent()[0];
@@ -173,7 +176,9 @@ export class ScrollPlayer {
         this.createScrollBar();
 
         this.savedRenderOptionClick = this.stream.renderOptions.events.click;
-        this.stream.renderOptions.events.click = (function startPlayingClick(e) { this.stopPlaying(e); }).bind(this);
+        this.stream.renderOptions.events.click = function startPlayingClick(e) {
+            this.stopPlaying(e);
+        }.bind(this);
         this.stream.setRenderInteraction(this.canvasParent);
         this.scrollScore();
     }
@@ -199,7 +204,6 @@ export class ScrollPlayer {
     }
 }
 streamInteraction.ScrollPlayer = ScrollPlayer;
-
 
 /**
  * A `PixelMapper` is an object that knows how to map offsets to pixels on a flat Stream.
@@ -250,8 +254,8 @@ export class PixelMapper {
             this.addNoteToMap(n);
         }
         // prepare final map.
-        const finalStave =  ns.get(-1).activeVexflowNote.stave;
-        const finalX = (finalStave.x + finalStave.width);
+        const finalStave = ns.get(-1).activeVexflowNote.stave;
+        const finalX = finalStave.x + finalStave.width;
         const endOffset = ns.get(-1).duration.quarterLength + ns.get(-1).offset;
 
         const lastMap = new streamInteraction.PixelMap(this, endOffset);
@@ -261,7 +265,6 @@ export class PixelMapper {
         this.allMaps.push(lastMap);
         return this.allMaps;
     }
-
 
     /**
      * Adds a {@link music21.base.Music21Object}, usually a {@link music21.note.Note} object,
@@ -378,7 +381,8 @@ export class PixelMapper {
         let pixelDistance = nextNoteMap.x - prevNoteMap.x;
         if (nextNoteMap.systemIndex !== prevNoteMap.systemIndex) {
             const stave = prevNoteMap.elements[0].activeVexflowNote.stave;
-            pixelDistance = (stave.x + stave.width) * pixelScaling - prevNoteMap.x;
+            pixelDistance
+                = (stave.x + stave.width) * pixelScaling - prevNoteMap.x;
         }
         let offsetToPixelScale = 0;
         if (offsetDistance !== 0) {
@@ -405,7 +409,6 @@ export class PixelMapper {
     }
 }
 streamInteraction.PixelMapper = PixelMapper;
-
 
 /*  PIXEL MAP */
 
@@ -487,6 +490,7 @@ export class SimpleNoteEditor {
         this.stream = s;
         this.activeNote = undefined;
         this.changedCallbackFunction = undefined; // for editable canvases
+        this.accidentalsByStepOctave = {};
     }
 
     /**
@@ -502,14 +506,21 @@ export class SimpleNoteEditor {
      */
     changeClickedNoteFromEvent(e) {
         const canvasElement = e.currentTarget;
-        const [clickedDiatonicNoteNum, foundNote] = this.stream.findNoteForClick(canvasElement, e);
+        const [
+            clickedDiatonicNoteNum,
+            foundNote,
+        ] = this.stream.findNoteForClick(canvasElement, e);
         if (foundNote === undefined) {
             if (debug) {
                 console.log('No note found');
             }
             return undefined;
         }
-        return this.noteChanged(clickedDiatonicNoteNum, foundNote, canvasElement);
+        return this.noteChanged(
+            clickedDiatonicNoteNum,
+            foundNote,
+            canvasElement
+        );
     }
 
     /**
@@ -528,7 +539,10 @@ export class SimpleNoteEditor {
         const n = foundNote;
         const p = new pitch.Pitch('C');
         p.diatonicNoteNum = clickedDiatonicNoteNum;
-        if (n.pitch.accidental === undefined && this.stream.keySignature !== undefined) {
+        if (
+            n.pitch.accidental === undefined
+            && this.stream.keySignature !== undefined
+        ) {
             p.accidental = this.stream.keySignature.accidentalByStep(p.step);
         } else {
             p.accidental = n.pitch.accidental;
@@ -557,7 +571,9 @@ export class SimpleNoteEditor {
         /*
          * Create an editable canvas with an accidental selection bar.
          */
-        const $d = $('<div/>').css('text-align', 'left').css('position', 'relative');
+        const $d = $('<div/>')
+            .css('text-align', 'left')
+            .css('position', 'relative');
         const $buttonDiv = this.getAccidentalToolbar();
         $d.append($buttonDiv);
         $d.append($("<br clear='all'/>"));
@@ -597,11 +613,16 @@ export class SimpleNoteEditor {
         minAccidental = Math.round(minAccidental);
         maxAccidental = Math.round(maxAccidental);
 
-        const $buttonDiv = $('<div/>').attr('class', 'accidentalToolbar scoreToolbar');
+        const $buttonDiv = $('<div/>').attr(
+            'class',
+            'accidentalToolbar scoreToolbar'
+        );
         for (let i = minAccidental; i <= maxAccidental; i++) {
             const acc = new pitch.Accidental(i);
-            $buttonDiv.append($('<button>' + acc.unicodeModifier + '</button>')
-                             .click((e) => this.addAccidental(i, e, $siblingCanvas))
+            $buttonDiv.append(
+                $('<button>' + acc.unicodeModifier + '</button>').click(e =>
+                    this.addAccidental(i, e, $siblingCanvas)
+                )
             );
         }
         return $buttonDiv;
@@ -610,9 +631,10 @@ export class SimpleNoteEditor {
     getUseCanvasFromClickEvent(clickEvent) {
         let $searchParent = $(clickEvent.target).parent();
         let $useCanvas;
-        while ($searchParent !== undefined
-                    && ($useCanvas === undefined
-                            || $useCanvas[0] === undefined)) {
+        while (
+            $searchParent !== undefined
+            && ($useCanvas === undefined || $useCanvas[0] === undefined)
+        ) {
             $useCanvas = $searchParent.find('canvas');
             $searchParent = $searchParent.parent();
         }
@@ -643,7 +665,6 @@ export class SimpleNoteEditor {
             }
         }
     }
-
 }
 
 streamInteraction.SimpleNoteEditor = SimpleNoteEditor;
@@ -666,7 +687,9 @@ export class FourPartEditor extends GrandStaffEditor {
         for (let i = 0; i < this.parts.length; i++) {
             const thisPart = this.parts.get(i);
             if (thisPart.measures.get(0).voices.length !== 2) {
-                throw new StreamException('Each part must have at least one measure with two voices');
+                throw new StreamException(
+                    'Each part must have at least one measure with two voices'
+                );
             }
         }
         this.activePart = this.parts.get(0);
@@ -681,7 +704,9 @@ export class FourPartEditor extends GrandStaffEditor {
         /*
          * Create an editable canvas with an accidental selection bar.
          */
-        const $d = $('<div/>').css('text-align', 'left').css('position', 'relative');
+        const $d = $('<div/>')
+            .css('text-align', 'left')
+            .css('position', 'relative');
         const $buttonDivPlay = this.stream.getPlayToolbar();
         $buttonDivPlay.addClass('inlineBlock');
         $buttonDivPlay.css({
@@ -719,8 +744,14 @@ export class FourPartEditor extends GrandStaffEditor {
      */
     changeClickedNoteFromEvent(e) {
         const canvasElement = e.currentTarget;
-        const [unused_wrong_dnn, foundNote] = this.activeVoice.findNoteForClick(canvasElement, e);
-        const [clickedDiatonicNoteNum, unused_wrong_note] = this.stream.findNoteForClick(canvasElement, e);
+        const [unused_wrong_dnn, foundNote] = this.activeVoice.findNoteForClick(
+            canvasElement,
+            e
+        );
+        const [
+            clickedDiatonicNoteNum,
+            unused_wrong_note,
+        ] = this.stream.findNoteForClick(canvasElement, e);
 
         if (foundNote === undefined) {
             if (debug) {
@@ -728,14 +759,21 @@ export class FourPartEditor extends GrandStaffEditor {
             }
             return undefined;
         }
-        return this.noteChanged(clickedDiatonicNoteNum, foundNote, canvasElement);
+        return this.noteChanged(
+            clickedDiatonicNoteNum,
+            foundNote,
+            canvasElement
+        );
     }
 
     noteChanged(clickedDiatonicNoteNum, foundNote, canvas) {
         const n = foundNote;
         const p = new pitch.Pitch('C');
         p.diatonicNoteNum = clickedDiatonicNoteNum;
-        if (n.pitch.accidental === undefined && this.stream.keySignature !== undefined) {
+        if (
+            n.pitch.accidental === undefined
+            && this.stream.keySignature !== undefined
+        ) {
             p.accidental = this.stream.keySignature.accidentalByStep(p.step);
         } else {
             p.accidental = n.pitch.accidental;
@@ -755,14 +793,17 @@ export class FourPartEditor extends GrandStaffEditor {
         }
     }
 
-
     voiceSelectionToolbar() {
         this.buttons = [];
-        const $buttonDiv = $('<div/>').attr('class', 'voiceSelectionToolbar scoreToolbar');
+        const $buttonDiv = $('<div/>').attr(
+            'class',
+            'voiceSelectionToolbar scoreToolbar'
+        );
         const voiceNames = ['S', 'A', 'T', 'B'];
         for (const i of [0, 1, 2, 3]) {
-            const $thisButton = $('<button>' + voiceNames[i] + '</button>')
-                             .click(() => this.changeActiveVoice(i));
+            const $thisButton = $(
+                '<button>' + voiceNames[i] + '</button>'
+            ).click(() => this.changeActiveVoice(i));
             this.buttons.push($thisButton);
             $buttonDiv.append($thisButton);
         }
@@ -778,13 +819,13 @@ export class FourPartEditor extends GrandStaffEditor {
         this.activeVoiceNumber = newVoice;
         if (newVoice < 2) {
             this.activePart = this.parts.get(0);
-            this.activeVoice = this.activePart
-                .measures.get(this.activeMeasureIndex)
+            this.activeVoice = this.activePart.measures
+                .get(this.activeMeasureIndex)
                 .voices.get(newVoice);
         } else {
             this.activePart = this.parts.get(1);
-            this.activeVoice = this.activePart
-                .measures.get(this.activeMeasureIndex)
+            this.activeVoice = this.activePart.measures
+                .get(this.activeMeasureIndex)
                 .voices.get(newVoice - 2);
         }
         this.activeNote = this.activeVoice.notes.get(0);

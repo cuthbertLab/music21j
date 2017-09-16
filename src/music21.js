@@ -211,18 +211,19 @@ var m21requireConfig = {
 //console.log('jsonpickle in music21: ', m21requireConfig.packages[0].location);
 
 
-var m21modules = ['m21',
-                  'MIDI',
-                  'vexflow',
-                  'jquery',
-                  'jsonpickle',
-                  'jquery-ui',
-                  'attrchange',
-                  'es6Shim',
-                  'babelPolyfill',
-                  //'webmidiapi',
+var m21modules = [
+    'm21',
+    'MIDI',
+    'vexflow',
+    'jquery',
+    'jsonpickle',
+    'jquery-ui',
+    'attrchange',
+    'es6Shim',
+    'babelPolyfill',
+    //'webmidiapi',
+];
 
-                  ];
 //BUG: will this work if multiple files are listed in noLoad???
 if (m21conf.noLoad !== undefined) {
     m21conf.noLoad.forEach(function(val, i, noLoad) {
@@ -238,11 +239,16 @@ music21 = {}; // global
 
 if ((Object.defineProperties === undefined) && warnBanner) {
     var newDiv = document.createElement("div");
-    newDiv.setAttribute('style', 'font-size: 40px; padding: 40px 20px 40px 20px; margin-top: 20px; line-height: 50px; width: 500px; height: 400px; color: #ffffff; background-color: #900000;');
-    var textInside = document.createTextNode('Unfortunately, IE10 or lower, Safari 7, and other out-of-date browsers do not work with music21j. Please upgrade your browser w/ the link above.');
+    newDiv.setAttribute('style',
+        'font-size: 40px; padding: 40px 20px 40px 20px; margin-top: 20px; line-height: 50px; width: 500px; height: 400px; color: #ffffff; background-color: #900000;');
+    var textInside = document.createTextNode(
+        'Unfortunately, IE10 or lower, Safari 7, and other out-of-date browsers do not work with music21j. Please upgrade your browser w/ the link above.');
     newDiv.appendChild(textInside);
     document.body.appendChild(newDiv);
-    var $buoop  = {test: false, reminder: 0}; // used by update.js...
+    var $buoop  = {
+        test: false,
+        reminder: 0,
+    }; // used by update.js...
     var e = document.createElement("script");
     e.setAttribute("type", "text/javascript");
     e.setAttribute("src", "http://browser-update.org/update.js");

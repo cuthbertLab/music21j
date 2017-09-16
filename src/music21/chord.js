@@ -42,7 +42,7 @@ export const chord = {};
 export class Chord extends note.NotRest {
     constructor(notes) {
         super();
-        if (typeof (notes) === 'undefined') {
+        if (typeof notes === 'undefined') {
             notes = [];
         }
         this.classes.push('Chord');
@@ -67,7 +67,7 @@ export class Chord extends note.NotRest {
         this._notes = [];
         for (let i = 0; i < tempPitches.length; i++) {
             let addNote;
-            if (typeof (tempPitches[i]) === 'string') {
+            if (typeof tempPitches[i] === 'string') {
                 addNote = new note.Note(tempPitches[i]);
             } else if (tempPitches[i].isClassOrSubclass('Pitch')) {
                 addNote = new note.Note();
@@ -76,7 +76,9 @@ export class Chord extends note.NotRest {
                 addNote = tempPitches[i];
             } else {
                 console.warn('bad pitch', tempPitches[i]);
-                throw new Music21Exception('Cannot add pitch from ' + tempPitches[i]);
+                throw new Music21Exception(
+                    'Cannot add pitch from ' + tempPitches[i]
+                );
             }
             this._notes.push(addNote);
         }
@@ -120,7 +122,7 @@ export class Chord extends note.NotRest {
             runSort = true;
         }
         // takes in either a note or a pitch
-        if (typeof (noteObj) === 'string') {
+        if (typeof noteObj === 'string') {
             noteObj = new note.Note(noteObj);
         } else if (noteObj.isClassOrSubclass('Pitch')) {
             const pitchObj = noteObj;
@@ -176,7 +178,10 @@ export class Chord extends note.NotRest {
             const p = closedPitches[i];
             const currentListOfThirds = [];
             for (let tsIndex = 0; tsIndex < testSteps.length; tsIndex++) {
-                const chordStepPitch = closedChord.getChordStep(testSteps[tsIndex], p);
+                const chordStepPitch = closedChord.getChordStep(
+                    testSteps[tsIndex],
+                    p
+                );
                 if (chordStepPitch !== undefined) {
                     // console.log(p.name + " " + testSteps[tsIndex].toString() + " " + chordStepPitch.name);
                     currentListOfThirds.push(true);
@@ -304,7 +309,6 @@ export class Chord extends note.NotRest {
         }
     }
 
-
     /**
      * Returns the inversion of the chord as a number (root-position = 0)
      *
@@ -341,17 +345,32 @@ export class Chord extends note.NotRest {
         }
         const vfn = new Vex.Flow.StaveNote({
             keys: pitchKeys,
-            duration: this.duration.vexflowDuration });
+            duration: this.duration.vexflowDuration,
+        });
         this.vexflowAccidentalsAndDisplay(vfn, options); // clean up stuff...
         for (let i = 0; i < this._notes.length; i++) {
             const tn = this._notes[i];
             if (tn.pitch.accidental !== undefined) {
-                if (tn.pitch.accidental.vexflowModifier !== 'n'
-                        && tn.pitch.accidental.displayStatus !== false) {
-                    vfn.addAccidental(i, new Vex.Flow.Accidental(tn.pitch.accidental.vexflowModifier));
-                } else if (tn.pitch.accidental.displayType === 'always'
-                        || tn.pitch.accidental.displayStatus === true) {
-                    vfn.addAccidental(i, new Vex.Flow.Accidental(tn.pitch.accidental.vexflowModifier));
+                if (
+                    tn.pitch.accidental.vexflowModifier !== 'n'
+                    && tn.pitch.accidental.displayStatus !== false
+                ) {
+                    vfn.addAccidental(
+                        i,
+                        new Vex.Flow.Accidental(
+                            tn.pitch.accidental.vexflowModifier
+                        )
+                    );
+                } else if (
+                    tn.pitch.accidental.displayType === 'always'
+                    || tn.pitch.accidental.displayStatus === true
+                ) {
+                    vfn.addAccidental(
+                        i,
+                        new Vex.Flow.Accidental(
+                            tn.pitch.accidental.vexflowModifier
+                        )
+                    );
                 }
             }
         }
@@ -381,7 +400,8 @@ export class Chord extends note.NotRest {
         const testRootDNN = testRoot.diatonicNoteNum;
         for (let i = 0; i < thisPitches.length; i++) {
             const thisPitch = thisPitches[i];
-            let thisInterval = (thisPitch.diatonicNoteNum - testRootDNN + 1) % 7; // fast cludge
+            let thisInterval
+                = (thisPitch.diatonicNoteNum - testRootDNN + 1) % 7; // fast cludge
             if (thisInterval <= 0) {
                 thisInterval += 7;
             }
@@ -395,10 +415,10 @@ export class Chord extends note.NotRest {
 chord.Chord = Chord;
 
 chord.chordDefinitions = {
-    'major': ['M3', 'm3'],
-    'minor': ['m3', 'M3'],
-    'diminished': ['m3', 'm3'],
-    'augmented': ['M3', 'M3'],
+    major: ['M3', 'm3'],
+    minor: ['m3', 'M3'],
+    diminished: ['m3', 'm3'],
+    augmented: ['M3', 'M3'],
     'major-seventh': ['M3', 'm3', 'M3'],
     'dominant-seventh': ['M3', 'm3', 'm3'],
     'minor-seventh': ['m3', 'M3', 'm3'],

@@ -32,13 +32,13 @@ import { scale } from './scale.js';
 export const key = {};
 
 key.modeSharpsAlter = {
-    'major': 0,
-    'minor': -3,
-    'dorian': -2,
-    'phrygian': -4,
-    'lydian': 1,
-    'mixolydian': -1,
-    'locrian': -5,
+    major: 0,
+    minor: -3,
+    dorian: -2,
+    phrygian: -4,
+    lydian: 1,
+    mixolydian: -1,
+    locrian: -5,
 };
 
 /**
@@ -65,11 +65,35 @@ export class KeySignature extends base.Music21Object {
 
         // 12 flats/sharps enough for now...
         this.flatMapping = [
-            'C', 'F', 'B-', 'E-', 'A-', 'D-', 'G-',
-            'C-', 'F-', 'B--', 'E--', 'A--', 'D--'];
+            'C',
+            'F',
+            'B-',
+            'E-',
+            'A-',
+            'D-',
+            'G-',
+            'C-',
+            'F-',
+            'B--',
+            'E--',
+            'A--',
+            'D--',
+        ];
         this.sharpMapping = [
-            'C', 'G', 'D', 'A', 'E', 'B', 'F#',
-            'C#', 'G#', 'D#', 'A#', 'E#', 'B#'];
+            'C',
+            'G',
+            'D',
+            'A',
+            'E',
+            'B',
+            'F#',
+            'C#',
+            'G#',
+            'D#',
+            'A#',
+            'E#',
+            'B#',
+        ];
     }
     get sharps() {
         return this._sharps;
@@ -88,11 +112,12 @@ export class KeySignature extends base.Music21Object {
     get width() {
         if (this.sharps === 0) {
             return 0;
-        } else { // add 6 to add extra space after the KS...
+        } else {
+            // add 6 to add extra space after the KS...
             return 12 * Math.abs(this.sharps) + 6;
         }
     }
-     /**
+    /**
       * An Array of Altered Pitches in KeySignature order (i.e., for flats, Bb, Eb, etc.)
       *
       * @memberof music21.key.KeySignature#
@@ -129,7 +154,7 @@ export class KeySignature extends base.Music21Object {
         this._alteredPitchesCache = post;
         return post;
     }
-     /**
+    /**
       * Return the name of the major key with this many sharps
       *
       * @memberof music21.key.KeySignature
@@ -146,7 +171,7 @@ export class KeySignature extends base.Music21Object {
             return this.flatMapping[Math.abs(this.sharps)];
         }
     }
-     /**
+    /**
       * Return the name of the minor key with this many sharps
       * @memberof music21.key.KeySignature
       * @returns {(string|undefined)}
@@ -159,7 +184,7 @@ export class KeySignature extends base.Music21Object {
             return this.flatMapping[Math.abs(tempSharps)];
         }
     }
-     /**
+    /**
       * returns the vexflow name (just the `majorName()` with "b" for "-") for
       * the key signature.  Does not create the object.
       *
@@ -173,7 +198,7 @@ export class KeySignature extends base.Music21Object {
         const tempName = this.majorName();
         return tempName.replace(/-/g, 'b');
     }
-     /**
+    /**
       * Returns the accidental associated with a step in this key, or undefined if none.
       *
       * @memberof music21.key.KeySignature
@@ -187,13 +212,13 @@ export class KeySignature extends base.Music21Object {
                 if (aps[i].accidental === undefined) {
                     return undefined;
                 }
-                 // make a new accidental;
+                // make a new accidental;
                 return new pitch.Accidental(aps[i].accidental.alter);
             }
         }
         return undefined;
     }
-     /**
+    /**
       * Takes a pitch in C major and transposes it so that it has
       * the same step position in the current key signature.
       *
@@ -225,7 +250,7 @@ export class KeySignature extends base.Music21Object {
         let newPitch = p;
         for (let i = 0; i < transTimes; i++) {
             newPitch = transInterval.transposePitch(newPitch);
-            if ((i % 2) === 1) {
+            if (i % 2 === 1) {
                 newPitch.octave -= 1;
             }
         }
@@ -233,7 +258,6 @@ export class KeySignature extends base.Music21Object {
     }
 }
 key.KeySignature = KeySignature;
-
 
 /**
  * Create a Key object. Like a KeySignature but with ideas about Tonic, Dominant, etc.
@@ -260,7 +284,9 @@ export class Key extends KeySignature {
             }
         }
 
-        const sharpsArray = 'A-- E-- B-- F- C- G- D- A- E- B- F C G D A E B F# C# G# D# A# E# B#'.split(' ');
+        const sharpsArray = 'A-- E-- B-- F- C- G- D- A- E- B- F C G D A E B F# C# G# D# A# E# B#'.split(
+            ' '
+        );
         const sharpsIndex = sharpsArray.indexOf(keyName.toUpperCase());
         if (sharpsIndex === -1) {
             throw new Music21Exception('Cannot find the key for ' + keyName);

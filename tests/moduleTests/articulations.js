@@ -1,8 +1,8 @@
 import * as QUnit from 'qunit';
-import music21 from '../../src/loadModules'; 
+import music21 from '../../src/loadModules';
 
 export default function tests() {
-    QUnit.test('music21.articulations.Articulation', (assert) => {
+    QUnit.test('music21.articulations.Articulation', assert => {
         const acc = new music21.articulations.Accent();
         assert.equal(acc.name, 'accent', 'matching names for accent');
         const ten = new music21.articulations.Tenuto();
@@ -14,7 +14,7 @@ export default function tests() {
         assert.equal(n.articulations[1].name, 'tenuto', 'tenuto in array');
     });
 
-    QUnit.test('music21.articulations.Articulation display', (assert) => {
+    QUnit.test('music21.articulations.Articulation display', assert => {
         // Marcato is a pseudo multiple inheritance
         const marc = new music21.articulations.Marcato();
         assert.equal(marc.name, 'marcato', 'matching names for marcato');
@@ -30,5 +30,4 @@ export default function tests() {
         measure.appendNewCanvas();
         assert.ok(true, 'something worked');
     });
-
 }

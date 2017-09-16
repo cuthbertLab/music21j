@@ -54,13 +54,39 @@ duration.typeFromNumDict = {
 };
 duration.quarterTypeIndex = 6; // where is quarter in the following array.
 duration.ordinalTypeFromNum = [
-    'duplex-maxima', 'maxima', 'longa', 'breve',
-    'whole', 'half', 'quarter', 'eighth', '16th',
-    '32nd', '64th', '128th', '256th', '512th', '1024th'];
+    'duplex-maxima',
+    'maxima',
+    'longa',
+    'breve',
+    'whole',
+    'half',
+    'quarter',
+    'eighth',
+    '16th',
+    '32nd',
+    '64th',
+    '128th',
+    '256th',
+    '512th',
+    '1024th',
+];
 duration.vexflowDurationArray = [
-    undefined, undefined, undefined, undefined,
-    'w', 'h', 'q', '8', '16',
-    '32', undefined, undefined, undefined, undefined, undefined];
+    undefined,
+    undefined,
+    undefined,
+    undefined,
+    'w',
+    'h',
+    'q',
+    '8',
+    '16',
+    '32',
+    undefined,
+    undefined,
+    undefined,
+    undefined,
+    undefined,
+];
 
 /**
  * Duration object; found as the `.duration` attribute on {@link music21.base.Music21Object} instances
@@ -80,7 +106,7 @@ export class Duration extends prebase.ProtoM21Object {
         this._durationNumber = undefined;
         this._type = 'quarter';
         this._tuplets = [];
-        if (typeof (ql) === 'string') {
+        if (typeof ql === 'string') {
             this.type = ql;
         } else {
             this.quarterLength = ql;
@@ -214,15 +240,18 @@ export class Duration extends prebase.ProtoM21Object {
         ret[tupletKey] = newTuplets;
     }
     _findDots(ql) {
-        if (ql === 0) { return 0; } // zero length stream probably;
+        if (ql === 0) {
+            return 0;
+        } // zero length stream probably;
         const typeNumber = duration.ordinalTypeFromNum.indexOf(this._type);
         const powerOfTwo = Math.pow(2, duration.quarterTypeIndex - typeNumber);
         // alert(undottedQL * 1.5 + " " + ql)
         // console.log('find dots called on ql: ', ql, typeNumber, powerOfTwo);
         for (let dotsNum = 0; dotsNum <= 4; dotsNum++) {
-            const dotMultiplier = (Math.pow(2, dotsNum) - 1.0) / (Math.pow(2, dotsNum));
+            const dotMultiplier
+                = (Math.pow(2, dotsNum) - 1.0) / Math.pow(2, dotsNum);
             const durationMultiplier = 1 + dotMultiplier;
-            if (Math.abs((powerOfTwo * durationMultiplier) - ql) < 0.0001) {
+            if (Math.abs(powerOfTwo * durationMultiplier - ql) < 0.0001) {
                 return dotsNum;
             }
         }
@@ -233,11 +262,15 @@ export class Duration extends prebase.ProtoM21Object {
     }
     updateQlFromFeatures() {
         const typeNumber = duration.ordinalTypeFromNum.indexOf(this._type); // must be set property
-        const undottedQuarterLength = Math.pow(2, duration.quarterTypeIndex - typeNumber);
-        const dottedMultiplier = 1 + ((Math.pow(2, this._dots) - 1) / Math.pow(2, this._dots));
+        const undottedQuarterLength = Math.pow(
+            2,
+            duration.quarterTypeIndex - typeNumber
+        );
+        const dottedMultiplier
+            = 1 + (Math.pow(2, this._dots) - 1) / Math.pow(2, this._dots);
         const unTupletedQl = undottedQuarterLength * dottedMultiplier;
         let tupletCorrectedQl = unTupletedQl;
-        this._tuplets.forEach((tuplet) => {
+        this._tuplets.forEach(tuplet => {
             tupletCorrectedQl *= tuplet.tupletMultiplier();
         });
         this._quarterLength = tupletCorrectedQl;
@@ -250,8 +283,12 @@ export class Duration extends prebase.ProtoM21Object {
         // console.log(this._findDots);
         this._dots = this._findDots(ql);
 
-        const undottedQuarterLength = Math.pow(2, duration.quarterTypeIndex - typeNumber);
-        const dottedMultiplier = 1 + ((Math.pow(2, this._dots) - 1) / Math.pow(2, this._dots));
+        const undottedQuarterLength = Math.pow(
+            2,
+            duration.quarterTypeIndex - typeNumber
+        );
+        const dottedMultiplier
+            = 1 + (Math.pow(2, this._dots) - 1) / Math.pow(2, this._dots);
         let unTupletedQl = undottedQuarterLength * dottedMultiplier;
         if (unTupletedQl !== ql && ql !== 0) {
             typeNumber -= 1;
@@ -262,7 +299,11 @@ export class Duration extends prebase.ProtoM21Object {
             if (ratioRat === undefined) {
                 // probably a Stream with a length that is inexpressable;
             } else {
-                const t = new duration.Tuplet(ratioRat.denominator, ratioRat.numerator, new duration.Duration(unTupletedQl));
+                const t = new duration.Tuplet(
+                    ratioRat.denominator,
+                    ratioRat.numerator,
+                    new duration.Duration(unTupletedQl)
+                );
                 this.appendTuplet(t, true); // skipUpdateQl
             }
             // console.log(ratioRat, ql, unTupletedQl);
@@ -286,7 +327,6 @@ export class Duration extends prebase.ProtoM21Object {
 
 duration.Duration = Duration;
 
-
 /**
  * Represents a Tuplet; found in {@link music21.duration.Duration#tuplets}
  *
@@ -299,14 +339,18 @@ duration.Duration = Duration;
  * @param {(music21.duration.Duration|number)} durationNormal - unused; see music21p for description
  */
 export class Tuplet extends prebase.ProtoM21Object {
-    constructor(numberNotesActual, numberNotesNormal,
-            durationActual, durationNormal) {
+    constructor(
+        numberNotesActual,
+        numberNotesNormal,
+        durationActual,
+        durationNormal
+    ) {
         super();
         this.classes.push('Tuplet');
         this.numberNotesActual = numberNotesActual || 3;
         this.numberNotesNormal = numberNotesNormal || 2;
         this.durationActual = durationActual || new duration.Duration(0.5);
-        if (typeof (this.durationActual) === 'number') {
+        if (typeof this.durationActual === 'number') {
             this.durationActual = new duration.Duration(this.durationActual);
         }
         this.durationNormal = durationNormal || this.durationActual;
@@ -361,7 +405,13 @@ export class Tuplet extends prebase.ProtoM21Object {
             return 'Sextuplet';
         }
         const ordStr = common.ordinalAbbreviation(numNormal, true); // plural
-        return 'Tuplet of ' + numActual.toString() + '/' + numNormal.toString() + ordStr;
+        return (
+            'Tuplet of '
+            + numActual.toString()
+            + '/'
+            + numNormal.toString()
+            + ordStr
+        );
     }
     /**
      * Set both durationActual and durationNormal for the tuplet.
@@ -372,7 +422,9 @@ export class Tuplet extends prebase.ProtoM21Object {
      */
     setDurationType(type) {
         if (this.frozen === true) {
-            throw new Music21Exception('A frozen tuplet (or one attached to a duration) is immutable');
+            throw new Music21Exception(
+                'A frozen tuplet (or one attached to a duration) is immutable'
+            );
         }
         this.durationActual = new duration.Duration(type);
         this.durationNormal = this.durationActual;
@@ -388,7 +440,9 @@ export class Tuplet extends prebase.ProtoM21Object {
      */
     setRatio(actual, normal) {
         if (this.frozen === true) {
-            throw new Music21Exception('A frozen tuplet (or one attached to a duration) is immutable');
+            throw new Music21Exception(
+                'A frozen tuplet (or one attached to a duration) is immutable'
+            );
         }
         this.numberNotesActual = actual || 3;
         this.numberNotesNormal = normal || 2;
@@ -412,8 +466,9 @@ export class Tuplet extends prebase.ProtoM21Object {
      */
     tupletMultiplier() {
         const lengthActual = this.durationActual.quarterLength;
-        return (this.totalTupletLength() / (
-                this.numberNotesActual * lengthActual));
+        return (
+            this.totalTupletLength() / (this.numberNotesActual * lengthActual)
+        );
     }
 }
 duration.Tuplet = Tuplet;
