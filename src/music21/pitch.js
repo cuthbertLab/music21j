@@ -101,7 +101,7 @@ export class Accidental extends prebase.ProtoM21Object {
         return this._name;
     }
     set name(n) {
-        this.init(n);
+        this.set(n);
     }
     /**
      * Return or set the alteration amount (-1.0 = flat; 1.0 = sharp; etc.)
@@ -115,7 +115,7 @@ export class Accidental extends prebase.ProtoM21Object {
         return this._alter;
     }
     set alter(alter) {
-        this.init(alter);
+        this.set(alter);
     }
     /**
      * Return or set the modifier ('-', '#', '')
@@ -129,7 +129,7 @@ export class Accidental extends prebase.ProtoM21Object {
         return this._modifier;
     }
     set modifier(modifier) {
-        this.init(modifier);
+        this.set(modifier);
     }
     /**
      * Returns the modifier for vexflow ('b', '#', 'n')

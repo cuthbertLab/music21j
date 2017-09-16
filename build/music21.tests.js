@@ -2758,7 +2758,7 @@
               return this._name;
           },
           set: function set(n) {
-              this.init(n);
+              this.set(n);
           }
           /**
            * Return or set the alteration amount (-1.0 = flat; 1.0 = sharp; etc.)
@@ -2775,7 +2775,7 @@
               return this._alter;
           },
           set: function set(alter) {
-              this.init(alter);
+              this.set(alter);
           }
           /**
            * Return or set the modifier ('-', '#', '')
@@ -2791,7 +2791,7 @@
               return this._modifier;
           },
           set: function set(modifier) {
-              this.init(modifier);
+              this.set(modifier);
           }
           /**
            * Returns the modifier for vexflow ('b', '#', 'n')
