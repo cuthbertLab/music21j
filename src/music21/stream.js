@@ -1288,15 +1288,9 @@ export class Stream extends base.Music21Object {
             $where = $(where);
         }
         const $innerDiv = $('<div>').css('position', 'absolute');
-        let c;
-        this.renderOptions.events.click = (function renderOptionsOuterEventClick(
-            storedThis
-        ) {
-            return function renderOptionsInnerEventClick(event) {
-                storedThis.scrollScoreStart(c, event);
-            };
-        }(this)); // create new function with this stream as storedThis
-        c = this.appendNewCanvas($innerDiv);
+        const c = this.appendNewCanvas($innerDiv);
+        this.renderOptions.events.click = event =>
+            this.scrollScoreStart(c, event);
         this.setRenderInteraction($innerDiv);
         $where.append($innerDiv);
         return c;

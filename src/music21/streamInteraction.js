@@ -23,7 +23,7 @@ export const streamInteraction = {};
 /**
  * Object for adding scrolling while playing.
  *
- * @class ScrollPlayer
+ * @class Follower
  * @memberof music21.streamInteraction
  * @param {music21.stream.Stream} s -- Stream
  * @param {canvas} c -- canvas
@@ -38,86 +38,190 @@ export const streamInteraction = {};
  * @property {number} startTime - the time in ms when the scrolling started
  * @property {Int} [previousSystemIndex=0] - the last systemIndex being scrolled
  * @property {number} [eachSystemHeight=120] - currently all systems need to have the same height.
- * @property {Int} [timingMS=50] - amount of time between polls to scroll
+ * @property {Int} [timingMS=50] - amount of time in milliseconds between polls to scroll
  * @property {function} savedRenderOptionClick - starting ScrollPlayer overrides the `'click'` event for the stream, switching it to Stop. this saves it for restoring later.
  */
-export class ScrollPlayer {
+export class Follower {
     constructor(s, c) {
         this.pixelMapper = new streamInteraction.PixelMapper(s);
         this.stream = s;
         this.canvas = c;
         this.tempo = s.tempo;
-        this.lastX = 0;
+
+        this.lastX = -100;
+        this.lastY = -100;
         this.lastNoteIndex = -1;
+
         this.barDOM = undefined;
         this.svgDOM = undefined;
-        this.canvasParent = undefined;
+        this.canvasParent = $(c).parent()[0];
         this.lastTimeout = undefined;
         this.startTime = new Date().getTime();
         this.previousSystemIndex = 0;
         this.eachSystemHeight = 120;
         this.timingMS = 50;
         this.savedRenderOptionClick = undefined;
-        /**
-         * function, bound to `this` to scroll the barDOM.
-         *
-         * calls itself until a stop click is received or the piece ends.
-         *
-         * @method streamInteraction.ScrollPlayer#scrollScore
-         * @memberof music21.streamInteraction.ScrollPlayer
-         */
-        this.scrollScore = function scrollScore() {
-            const timeSinceStartInMS = new Date().getTime() - this.startTime;
-            const offset = timeSinceStartInMS / 1000 * this.tempo / 60;
-            const pm = this.pixelMapper;
-            const systemIndex = pm.getSystemIndexAtOffset(offset);
 
-            if (systemIndex > this.previousSystemIndex) {
-                this.lastX = -100; // arbitrary negative...
-                this.previousSystemIndex = systemIndex;
-                this.barDOM.setAttribute(
-                    'y',
-                    systemIndex * this.eachSystemHeight
-                );
-            }
-            let x = pm.getXAtOffset(offset);
-            x = Math.floor(x);
+        this.scaleY = this.stream.renderOptions.scaleFactor.y;
+        this.eachSystemHeight
+            = this.canvas.height
+            / (this.scaleY * (this.pixelMapper.maxSystemIndex + 1));
 
-            // console.log(x);
+        this.newLocationCallbacks = [];
+        this.activeElementsCallbacks = [elList => this.playNotes(elList)];
+    }
 
-            if (x > this.lastX) {
-                this.barDOM.setAttribute('x', x);
-                this.lastX = x;
+    playNotes(elList) {
+        for (const el of elList) {
+            if (el !== undefined && el.playMidi !== undefined) {
+                el.playMidi(this.tempo);
             }
-            // pm is a pixelMap not a Stream
-            for (let j = 0; j < pm.allMaps.length; j++) {
-                const pmOff = pm.allMaps[j].offset;
-                if (j <= this.lastNoteIndex) {
-                    continue;
-                } else if (Math.abs(offset - pmOff) > 0.1) {
-                    continue;
-                }
-                const elList = pm.allMaps[j].elements;
-                for (let elIndex = 0; elIndex < elList.length; elIndex++) {
-                    const el = elList[elIndex];
-                    if (el !== undefined && el.playMidi !== undefined) {
-                        el.playMidi(this.tempo);
-                    }
-                }
-                this.lastNoteIndex = j;
+        }
+    }
+
+    /**
+     * function, bound to `this` to scroll the barDOM.
+     *
+     * calls itself until a stop click is received or the piece ends.
+     *
+     * @method streamInteraction.Follower#followScore
+     * @memberof music21.streamInteraction.Follower
+     */
+    followScore() {
+        const timeSinceStartInMS = new Date().getTime() - this.startTime;
+        const offset = timeSinceStartInMS / 1000 * this.tempo / 60;
+        const pm = this.pixelMapper;
+        const systemIndex = pm.getSystemIndexAtOffset(offset);
+        let y = this.lastY;
+
+        if (systemIndex > this.previousSystemIndex) {
+            this.lastX = -100; // arbitrary negative...
+            this.previousSystemIndex = systemIndex;
+            y = systemIndex * this.eachSystemHeight;
+        }
+        let x = pm.getXAtOffset(offset);
+        x = Math.floor(x);
+
+        // console.log(x);
+
+        for (const newLocationCallback of this.newLocationCallbacks) {
+            newLocationCallback(x, y);
+        }
+
+        this.lastX = x;
+        this.lastY = y;
+
+        // pm is a pixelMap not a Stream
+        for (let j = 0; j < pm.allMaps.length; j++) {
+            const pmOff = pm.allMaps[j].offset;
+            if (j <= this.lastNoteIndex) {
+                continue;
+            } else if (Math.abs(offset - pmOff) > 0.1) {
+                continue;
             }
-            // console.log(x, offset);
-            // console.log(barDOM.setAttribute);
-            let newTimeout;
-            if (x < pm.maxX || systemIndex < pm.maxSystemIndex) {
-                // console.log(x, pm.maxX);
-                newTimeout = setTimeout(this.scrollScore, this.timingMS);
-                this.lastTimeout = newTimeout;
-            } else {
-                const fauxEvent = undefined;
-                this.stopPlaying(fauxEvent);
+            const elList = pm.allMaps[j].elements;
+            for (const elementCallback of this.activeElementsCallbacks) {
+                elementCallback(elList);
             }
-        }.bind(this);
+            this.lastNoteIndex = j;
+        }
+        // console.log(x, offset);
+        // console.log(barDOM.setAttribute);
+        let newTimeout;
+        if (x < pm.maxX || systemIndex < pm.maxSystemIndex) {
+            // console.log(x, pm.maxX);
+            newTimeout = setTimeout(() => this.followScore(), this.timingMS);
+            this.lastTimeout = newTimeout;
+        } else {
+            const fauxEvent = undefined;
+            this.stopPlaying(fauxEvent);
+        }
+    }
+
+    /**
+     * start playing! Create a scroll bar and start scrolling
+     *
+     * (set this to an event on stream, or something...)
+     *
+     * currently called from {@link music21.stream.Stream#scrollScoreStart} via
+     * {@link music21.stream.Stream#renderScrollableCanvas}. Will change.
+     *
+     * @memberof music21.streamInteraction.ScrollPlayer
+     */
+    startPlaying() {
+        this.savedRenderOptionClick = this.stream.renderOptions.events.click;
+        this.stream.renderOptions.events.click = e => this.stopPlaying(e);
+        this.stream.setRenderInteraction(this.canvasParent);
+        this.followScore();
+    }
+
+    /**
+     * Called when the ScrollPlayer should stop playing
+     *
+     * @memberof music21.streamInteraction.ScrollPlayer
+     * @param {DOMEvent} [event]
+     */
+    stopPlaying(event) {
+        this.stream.renderOptions.events.click = this.savedRenderOptionClick;
+        if (this.lastTimeout !== undefined) {
+            clearTimeout(this.lastTimeout);
+        }
+        this.stream.setRenderInteraction(this.canvasParent);
+        if (event !== undefined) {
+            event.stopPropagation();
+        }
+    }
+}
+streamInteraction.Follower = Follower;
+
+/**
+ * Object for adding scrolling while playing.
+ *
+ * @class ScrollPlayer
+ * @memberof music21.streamInteraction
+ * @param {music21.stream.Stream} s -- Stream
+ * @param {canvas} c -- canvas
+ * @property {SVGDOMObject} barDOM - DOM object representing the scrolling bar
+ * @property {SVGDOMObject} svgDOM - DOM object holding the scrolling bar (overlaid on top of canvas)
+ */
+export class ScrollPlayer extends Follower {
+    constructor(s, c) {
+        super(s, c);
+        this.barDOM = undefined;
+        this.svgDOM = undefined;
+        this.newLocationCallbacks.push((x, y) => this.updateBar(x, y));
+    }
+
+    /**
+     * updateBar - Update the position of the bar
+     *
+     * @param  {type} x current x position in playback
+     * @param  {type} y current y position in playback
+     * @return {undefined}
+     */
+
+    updateBar(x, y) {
+        if (x > this.lastX) {
+            this.barDOM.setAttribute('x', x);
+        }
+        if (y > this.lastY) {
+            this.barDOM.setAttribute('y', y);
+        }
+    }
+
+    /**
+     * start playing! Create a scroll bar and start scrolling
+     *
+     * (set this to an event on stream, or something...)
+     *
+     * currently called from {@link music21.stream.Stream#scrollScoreStart} via
+     * {@link music21.stream.Stream#renderScrollableCanvas}. Will change.
+     *
+     * @memberof music21.streamInteraction.ScrollPlayer
+     */
+    startPlaying() {
+        this.createScrollBar();
+        super.startPlaying();
     }
 
     /**
@@ -140,47 +244,20 @@ export class ScrollPlayer {
             width: canvas.width.toString() + 'px',
             style: 'position:absolute; top: 0px; left: 0px;',
         });
-        const scaleY = this.stream.renderOptions.scaleFactor.y;
-        const eachSystemHeight
-            = canvas.height / (scaleY * (this.pixelMapper.maxSystemIndex + 1));
         const barDOM = common.makeSVGright('rect', {
             width: 10,
-            height: eachSystemHeight - 6, // small fudge for separation
+            height: this.eachSystemHeight - 6, // small fudge for separation
             x: this.pixelMapper.startX,
             y: 3,
             style: 'fill: rgba(255, 255, 20, .5);stroke:white',
         });
-        barDOM.setAttribute('transform', 'scale(' + scaleY + ')');
+        barDOM.setAttribute('transform', 'scale(' + this.scaleY + ')');
         svgDOM.appendChild(barDOM);
 
-        const canvasParent = $(canvas).parent()[0];
-        canvasParent.appendChild(svgDOM);
+        this.canvasParent.appendChild(svgDOM);
         this.barDOM = barDOM;
         this.svgDOM = svgDOM;
-        this.canvasParent = canvasParent;
-        this.eachSystemHeight = eachSystemHeight;
         return barDOM;
-    }
-
-    /**
-     * start playing! Create a scroll bar and start scrolling
-     *
-     * (set this to an event on stream, or something...)
-     *
-     * currently called from {@link music21.stream.Stream#scrollScoreStart} via
-     * {@link music21.stream.Stream#renderScrollableCanvas}. Will change.
-     *
-     * @memberof music21.streamInteraction.ScrollPlayer
-     */
-    startPlaying() {
-        this.createScrollBar();
-
-        this.savedRenderOptionClick = this.stream.renderOptions.events.click;
-        this.stream.renderOptions.events.click = function startPlayingClick(e) {
-            this.stopPlaying(e);
-        }.bind(this);
-        this.stream.setRenderInteraction(this.canvasParent);
-        this.scrollScore();
     }
 
     /**
@@ -190,17 +267,9 @@ export class ScrollPlayer {
      * @param {DOMEvent} [event]
      */
     stopPlaying(event) {
-        this.stream.renderOptions.events.click = this.savedRenderOptionClick;
+        super.stopPlaying(event);
         this.barDOM.setAttribute('style', 'display:none');
-        // TODO: generalize...
         this.canvasParent.removeChild(this.svgDOM);
-        if (this.lastTimeout !== undefined) {
-            clearTimeout(this.lastTimeout);
-        }
-        this.stream.setRenderInteraction(this.canvasParent);
-        if (event !== undefined) {
-            event.stopPropagation();
-        }
     }
 }
 streamInteraction.ScrollPlayer = ScrollPlayer;

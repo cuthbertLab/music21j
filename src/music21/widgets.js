@@ -1,4 +1,4 @@
-import * as $ from 'jquery';
+import * as $ from 'jquery'; // ../ext/jquery/jquery-3.2.1.min.js';
 
 import { note } from './note.js';
 import { stream } from './stream.js';

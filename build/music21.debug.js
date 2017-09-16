@@ -157,6 +157,31 @@
     };
   }();
 
+  var get = function get(object, property, receiver) {
+    if (object === null) object = Function.prototype;
+    var desc = Object.getOwnPropertyDescriptor(object, property);
+
+    if (desc === undefined) {
+      var parent = Object.getPrototypeOf(object);
+
+      if (parent === null) {
+        return undefined;
+      } else {
+        return get(parent, property, receiver);
+      }
+    } else if ("value" in desc) {
+      return desc.value;
+    } else {
+      var getter = desc.get;
+
+      if (getter === undefined) {
+        return undefined;
+      }
+
+      return getter.call(receiver);
+    }
+  };
+
   var inherits = function (subClass, superClass) {
     if (typeof superClass !== "function" && superClass !== null) {
       throw new TypeError("Super expression must either be null or a function, not " + typeof superClass);
@@ -8140,7 +8165,7 @@
   /**
    * Object for adding scrolling while playing.
    *
-   * @class ScrollPlayer
+   * @class Follower
    * @memberof music21.streamInteraction
    * @param {music21.stream.Stream} s -- Stream
    * @param {canvas} c -- canvas
@@ -8155,56 +8180,132 @@
    * @property {number} startTime - the time in ms when the scrolling started
    * @property {Int} [previousSystemIndex=0] - the last systemIndex being scrolled
    * @property {number} [eachSystemHeight=120] - currently all systems need to have the same height.
-   * @property {Int} [timingMS=50] - amount of time between polls to scroll
+   * @property {Int} [timingMS=50] - amount of time in milliseconds between polls to scroll
    * @property {function} savedRenderOptionClick - starting ScrollPlayer overrides the `'click'` event for the stream, switching it to Stop. this saves it for restoring later.
    */
-  var ScrollPlayer = function () {
-      function ScrollPlayer(s, c) {
-          classCallCheck(this, ScrollPlayer);
+  var Follower = function () {
+      function Follower(s, c) {
+          var _this = this;
+
+          classCallCheck(this, Follower);
 
           this.pixelMapper = new streamInteraction.PixelMapper(s);
           this.stream = s;
           this.canvas = c;
           this.tempo = s.tempo;
-          this.lastX = 0;
+
+          this.lastX = -100;
+          this.lastY = -100;
           this.lastNoteIndex = -1;
+
           this.barDOM = undefined;
           this.svgDOM = undefined;
-          this.canvasParent = undefined;
+          this.canvasParent = $(c).parent()[0];
           this.lastTimeout = undefined;
           this.startTime = new Date().getTime();
           this.previousSystemIndex = 0;
           this.eachSystemHeight = 120;
           this.timingMS = 50;
           this.savedRenderOptionClick = undefined;
+
+          this.scaleY = this.stream.renderOptions.scaleFactor.y;
+          this.eachSystemHeight = this.canvas.height / (this.scaleY * (this.pixelMapper.maxSystemIndex + 1));
+
+          this.newLocationCallbacks = [];
+          this.activeElementsCallbacks = [function (elList) {
+              return _this.playNotes(elList);
+          }];
+      }
+
+      createClass(Follower, [{
+          key: 'playNotes',
+          value: function playNotes(elList) {
+              var _iteratorNormalCompletion = true;
+              var _didIteratorError = false;
+              var _iteratorError = undefined;
+
+              try {
+                  for (var _iterator = elList[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+                      var el = _step.value;
+
+                      if (el !== undefined && el.playMidi !== undefined) {
+                          el.playMidi(this.tempo);
+                      }
+                  }
+              } catch (err) {
+                  _didIteratorError = true;
+                  _iteratorError = err;
+              } finally {
+                  try {
+                      if (!_iteratorNormalCompletion && _iterator.return) {
+                          _iterator.return();
+                      }
+                  } finally {
+                      if (_didIteratorError) {
+                          throw _iteratorError;
+                      }
+                  }
+              }
+          }
+
           /**
            * function, bound to `this` to scroll the barDOM.
            *
            * calls itself until a stop click is received or the piece ends.
            *
-           * @method streamInteraction.ScrollPlayer#scrollScore
-           * @memberof music21.streamInteraction.ScrollPlayer
+           * @method streamInteraction.Follower#followScore
+           * @memberof music21.streamInteraction.Follower
            */
-          this.scrollScore = function scrollScore() {
+
+      }, {
+          key: 'followScore',
+          value: function followScore() {
+              var _this2 = this;
+
               var timeSinceStartInMS = new Date().getTime() - this.startTime;
               var offset = timeSinceStartInMS / 1000 * this.tempo / 60;
               var pm = this.pixelMapper;
               var systemIndex = pm.getSystemIndexAtOffset(offset);
+              var y = this.lastY;
 
               if (systemIndex > this.previousSystemIndex) {
                   this.lastX = -100; // arbitrary negative...
                   this.previousSystemIndex = systemIndex;
-                  this.barDOM.setAttribute('y', systemIndex * this.eachSystemHeight);
+                  y = systemIndex * this.eachSystemHeight;
               }
               var x = pm.getXAtOffset(offset);
               x = Math.floor(x);
 
               // console.log(x);
 
-              if (x > this.lastX) {
-                  this.barDOM.setAttribute('x', x);
-                  this.lastX = x;
+              var _iteratorNormalCompletion2 = true;
+              var _didIteratorError2 = false;
+              var _iteratorError2 = undefined;
+
+              try {
+                  for (var _iterator2 = this.newLocationCallbacks[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+                      var newLocationCallback = _step2.value;
+
+                      newLocationCallback(x, y);
+                  }
+              } catch (err) {
+                  _didIteratorError2 = true;
+                  _iteratorError2 = err;
+              } finally {
+                  try {
+                      if (!_iteratorNormalCompletion2 && _iterator2.return) {
+                          _iterator2.return();
+                      }
+                  } finally {
+                      if (_didIteratorError2) {
+                          throw _iteratorError2;
+                      }
+                  }
               }
+
+              this.lastX = x;
+              this.lastY = y;
+
               // pm is a pixelMap not a Stream
               for (var j = 0; j < pm.allMaps.length; j++) {
                   var pmOff = pm.allMaps[j].offset;
@@ -8214,12 +8315,31 @@
                       continue;
                   }
                   var elList = pm.allMaps[j].elements;
-                  for (var elIndex = 0; elIndex < elList.length; elIndex++) {
-                      var el = elList[elIndex];
-                      if (el !== undefined && el.playMidi !== undefined) {
-                          el.playMidi(this.tempo);
+                  var _iteratorNormalCompletion3 = true;
+                  var _didIteratorError3 = false;
+                  var _iteratorError3 = undefined;
+
+                  try {
+                      for (var _iterator3 = this.activeElementsCallbacks[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+                          var elementCallback = _step3.value;
+
+                          elementCallback(elList);
+                      }
+                  } catch (err) {
+                      _didIteratorError3 = true;
+                      _iteratorError3 = err;
+                  } finally {
+                      try {
+                          if (!_iteratorNormalCompletion3 && _iterator3.return) {
+                              _iterator3.return();
+                          }
+                      } finally {
+                          if (_didIteratorError3) {
+                              throw _iteratorError3;
+                          }
                       }
                   }
+
                   this.lastNoteIndex = j;
               }
               // console.log(x, offset);
@@ -8227,58 +8347,107 @@
               var newTimeout = void 0;
               if (x < pm.maxX || systemIndex < pm.maxSystemIndex) {
                   // console.log(x, pm.maxX);
-                  newTimeout = setTimeout(this.scrollScore, this.timingMS);
+                  newTimeout = setTimeout(function () {
+                      return _this2.followScore();
+                  }, this.timingMS);
                   this.lastTimeout = newTimeout;
               } else {
                   var fauxEvent = undefined;
                   this.stopPlaying(fauxEvent);
               }
-          }.bind(this);
+          }
+
+          /**
+           * start playing! Create a scroll bar and start scrolling
+           *
+           * (set this to an event on stream, or something...)
+           *
+           * currently called from {@link music21.stream.Stream#scrollScoreStart} via
+           * {@link music21.stream.Stream#renderScrollableCanvas}. Will change.
+           *
+           * @memberof music21.streamInteraction.ScrollPlayer
+           */
+
+      }, {
+          key: 'startPlaying',
+          value: function startPlaying() {
+              var _this3 = this;
+
+              this.savedRenderOptionClick = this.stream.renderOptions.events.click;
+              this.stream.renderOptions.events.click = function (e) {
+                  return _this3.stopPlaying(e);
+              };
+              this.stream.setRenderInteraction(this.canvasParent);
+              this.followScore();
+          }
+
+          /**
+           * Called when the ScrollPlayer should stop playing
+           *
+           * @memberof music21.streamInteraction.ScrollPlayer
+           * @param {DOMEvent} [event]
+           */
+
+      }, {
+          key: 'stopPlaying',
+          value: function stopPlaying(event) {
+              this.stream.renderOptions.events.click = this.savedRenderOptionClick;
+              if (this.lastTimeout !== undefined) {
+                  clearTimeout(this.lastTimeout);
+              }
+              this.stream.setRenderInteraction(this.canvasParent);
+              if (event !== undefined) {
+                  event.stopPropagation();
+              }
+          }
+      }]);
+      return Follower;
+  }();
+  streamInteraction.Follower = Follower;
+
+  /**
+   * Object for adding scrolling while playing.
+   *
+   * @class ScrollPlayer
+   * @memberof music21.streamInteraction
+   * @param {music21.stream.Stream} s -- Stream
+   * @param {canvas} c -- canvas
+   * @property {SVGDOMObject} barDOM - DOM object representing the scrolling bar
+   * @property {SVGDOMObject} svgDOM - DOM object holding the scrolling bar (overlaid on top of canvas)
+   */
+  var ScrollPlayer = function (_Follower) {
+      inherits(ScrollPlayer, _Follower);
+
+      function ScrollPlayer(s, c) {
+          classCallCheck(this, ScrollPlayer);
+
+          var _this4 = possibleConstructorReturn(this, (ScrollPlayer.__proto__ || Object.getPrototypeOf(ScrollPlayer)).call(this, s, c));
+
+          _this4.barDOM = undefined;
+          _this4.svgDOM = undefined;
+          _this4.newLocationCallbacks.push(function (x, y) {
+              return _this4.updateBar(x, y);
+          });
+          return _this4;
       }
 
       /**
-       * Create the scrollbar (barDOM), the svg to place it in (svgDOM)
-       * and append it over the stream.
+       * updateBar - Update the position of the bar
        *
-       * Sets as a consequence:
-       * - this.barDOM
-       * - this.svgDOM
-       * - this.eachSystemHeight
-       * - this.canvasParent
-       *
-       * @memberof music21.streamInteraction.ScrollPlayer
-       * @returns {SVGDOMObject} scroll bar
+       * @param  {type} x current x position in playback
+       * @param  {type} y current y position in playback
+       * @return {undefined}
        */
 
-
       createClass(ScrollPlayer, [{
-          key: 'createScrollBar',
-          value: function createScrollBar() {
-              var canvas = this.canvas;
-              var svgDOM = common.makeSVGright('svg', {
-                  height: canvas.height.toString() + 'px',
-                  width: canvas.width.toString() + 'px',
-                  style: 'position:absolute; top: 0px; left: 0px;'
-              });
-              var scaleY = this.stream.renderOptions.scaleFactor.y;
-              var eachSystemHeight = canvas.height / (scaleY * (this.pixelMapper.maxSystemIndex + 1));
-              var barDOM = common.makeSVGright('rect', {
-                  width: 10,
-                  height: eachSystemHeight - 6, // small fudge for separation
-                  x: this.pixelMapper.startX,
-                  y: 3,
-                  style: 'fill: rgba(255, 255, 20, .5);stroke:white'
-              });
-              barDOM.setAttribute('transform', 'scale(' + scaleY + ')');
-              svgDOM.appendChild(barDOM);
-
-              var canvasParent = $(canvas).parent()[0];
-              canvasParent.appendChild(svgDOM);
-              this.barDOM = barDOM;
-              this.svgDOM = svgDOM;
-              this.canvasParent = canvasParent;
-              this.eachSystemHeight = eachSystemHeight;
-              return barDOM;
+          key: 'updateBar',
+          value: function updateBar(x, y) {
+              if (x > this.lastX) {
+                  this.barDOM.setAttribute('x', x);
+              }
+              if (y > this.lastY) {
+                  this.barDOM.setAttribute('y', y);
+              }
           }
 
           /**
@@ -8296,13 +8465,46 @@
           key: 'startPlaying',
           value: function startPlaying() {
               this.createScrollBar();
+              get(ScrollPlayer.prototype.__proto__ || Object.getPrototypeOf(ScrollPlayer.prototype), 'startPlaying', this).call(this);
+          }
 
-              this.savedRenderOptionClick = this.stream.renderOptions.events.click;
-              this.stream.renderOptions.events.click = function startPlayingClick(e) {
-                  this.stopPlaying(e);
-              }.bind(this);
-              this.stream.setRenderInteraction(this.canvasParent);
-              this.scrollScore();
+          /**
+           * Create the scrollbar (barDOM), the svg to place it in (svgDOM)
+           * and append it over the stream.
+           *
+           * Sets as a consequence:
+           * - this.barDOM
+           * - this.svgDOM
+           * - this.eachSystemHeight
+           * - this.canvasParent
+           *
+           * @memberof music21.streamInteraction.ScrollPlayer
+           * @returns {SVGDOMObject} scroll bar
+           */
+
+      }, {
+          key: 'createScrollBar',
+          value: function createScrollBar() {
+              var canvas = this.canvas;
+              var svgDOM = common.makeSVGright('svg', {
+                  height: canvas.height.toString() + 'px',
+                  width: canvas.width.toString() + 'px',
+                  style: 'position:absolute; top: 0px; left: 0px;'
+              });
+              var barDOM = common.makeSVGright('rect', {
+                  width: 10,
+                  height: this.eachSystemHeight - 6, // small fudge for separation
+                  x: this.pixelMapper.startX,
+                  y: 3,
+                  style: 'fill: rgba(255, 255, 20, .5);stroke:white'
+              });
+              barDOM.setAttribute('transform', 'scale(' + this.scaleY + ')');
+              svgDOM.appendChild(barDOM);
+
+              this.canvasParent.appendChild(svgDOM);
+              this.barDOM = barDOM;
+              this.svgDOM = svgDOM;
+              return barDOM;
           }
 
           /**
@@ -8315,21 +8517,13 @@
       }, {
           key: 'stopPlaying',
           value: function stopPlaying(event) {
-              this.stream.renderOptions.events.click = this.savedRenderOptionClick;
+              get(ScrollPlayer.prototype.__proto__ || Object.getPrototypeOf(ScrollPlayer.prototype), 'stopPlaying', this).call(this, event);
               this.barDOM.setAttribute('style', 'display:none');
-              // TODO: generalize...
               this.canvasParent.removeChild(this.svgDOM);
-              if (this.lastTimeout !== undefined) {
-                  clearTimeout(this.lastTimeout);
-              }
-              this.stream.setRenderInteraction(this.canvasParent);
-              if (event !== undefined) {
-                  event.stopPropagation();
-              }
           }
       }]);
       return ScrollPlayer;
-  }();
+  }(Follower);
   streamInteraction.ScrollPlayer = ScrollPlayer;
 
   /**
@@ -8761,11 +8955,11 @@
       }, {
           key: 'activateClick',
           value: function activateClick(clickFunction) {
-              var _this = this;
+              var _this5 = this;
 
               if (clickFunction === undefined) {
                   clickFunction = function clickFunction(e) {
-                      return _this.changeClickedNoteFromEvent(e);
+                      return _this5.changeClickedNoteFromEvent(e);
                   };
               }
               this.stream.renderOptions.events.click = function (e) {
@@ -8784,7 +8978,7 @@
       }, {
           key: 'getAccidentalToolbar',
           value: function getAccidentalToolbar(minAccidental, maxAccidental, $siblingCanvas) {
-              var _this2 = this;
+              var _this6 = this;
 
               if (minAccidental === undefined) {
                   minAccidental = -1;
@@ -8800,7 +8994,7 @@
               var _loop = function _loop(i) {
                   var acc = new pitch.Accidental(i);
                   $buttonDiv.append($('<button>' + acc.unicodeModifier + '</button>').click(function (e) {
-                      return _this2.addAccidental(i, e, $siblingCanvas);
+                      return _this6.addAccidental(i, e, $siblingCanvas);
                   }));
               };
 
@@ -8858,12 +9052,12 @@
       function GrandStaffEditor(s) {
           classCallCheck(this, GrandStaffEditor);
 
-          var _this3 = possibleConstructorReturn(this, (GrandStaffEditor.__proto__ || Object.getPrototypeOf(GrandStaffEditor)).call(this, s));
+          var _this7 = possibleConstructorReturn(this, (GrandStaffEditor.__proto__ || Object.getPrototypeOf(GrandStaffEditor)).call(this, s));
 
           if (s.parts.length !== 2) {
               throw new StreamException('Stream must be a grand staff!');
           }
-          return _this3;
+          return _this7;
       }
 
       return GrandStaffEditor;
@@ -8877,22 +9071,22 @@
       function FourPartEditor(s) {
           classCallCheck(this, FourPartEditor);
 
-          var _this4 = possibleConstructorReturn(this, (FourPartEditor.__proto__ || Object.getPrototypeOf(FourPartEditor)).call(this, s));
+          var _this8 = possibleConstructorReturn(this, (FourPartEditor.__proto__ || Object.getPrototypeOf(FourPartEditor)).call(this, s));
 
-          _this4.parts = s.parts;
-          for (var i = 0; i < _this4.parts.length; i++) {
-              var thisPart = _this4.parts.get(i);
+          _this8.parts = s.parts;
+          for (var i = 0; i < _this8.parts.length; i++) {
+              var thisPart = _this8.parts.get(i);
               if (thisPart.measures.get(0).voices.length !== 2) {
                   throw new StreamException('Each part must have at least one measure with two voices');
               }
           }
-          _this4.activePart = _this4.parts.get(0);
-          _this4.activeMeasureIndex = 0;
-          _this4.activeNoteIndex = 0;
-          _this4.activeVoice = _this4.activePart.measures.get(0).voices.get(0);
-          _this4.activeVoiceNumber = 0; // 0, 1, 2, 3
-          _this4.buttons = [];
-          return _this4;
+          _this8.activePart = _this8.parts.get(0);
+          _this8.activeMeasureIndex = 0;
+          _this8.activeNoteIndex = 0;
+          _this8.activeVoice = _this8.activePart.measures.get(0).voices.get(0);
+          _this8.activeVoiceNumber = 0; // 0, 1, 2, 3
+          _this8.buttons = [];
+          return _this8;
       }
 
       createClass(FourPartEditor, [{
@@ -8989,7 +9183,7 @@
       }, {
           key: 'voiceSelectionToolbar',
           value: function voiceSelectionToolbar() {
-              var _this5 = this;
+              var _this9 = this;
 
               this.buttons = [];
               var $buttonDiv = $('<div/>').attr('class', 'voiceSelectionToolbar scoreToolbar');
@@ -8999,9 +9193,9 @@
               var _loop2 = function _loop2() {
                   var i = _arr[_i];
                   var $thisButton = $('<button>' + voiceNames[i] + '</button>').click(function () {
-                      return _this5.changeActiveVoice(i);
+                      return _this9.changeActiveVoice(i);
                   });
-                  _this5.buttons.push($thisButton);
+                  _this9.buttons.push($thisButton);
                   $buttonDiv.append($thisButton);
               };
 
@@ -11274,6 +11468,8 @@
       }, {
           key: 'renderScrollableCanvas',
           value: function renderScrollableCanvas(where) {
+              var _this2 = this;
+
               var $where = where;
               if (where === undefined) {
                   $where = $(document.body);
@@ -11281,13 +11477,10 @@
                   $where = $(where);
               }
               var $innerDiv = $('<div>').css('position', 'absolute');
-              var c = void 0;
-              this.renderOptions.events.click = function renderOptionsOuterEventClick(storedThis) {
-                  return function renderOptionsInnerEventClick(event) {
-                      storedThis.scrollScoreStart(c, event);
-                  };
-              }(this); // create new function with this stream as storedThis
-              c = this.appendNewCanvas($innerDiv);
+              var c = this.appendNewCanvas($innerDiv);
+              this.renderOptions.events.click = function (event) {
+                  return _this2.scrollScoreStart(c, event);
+              };
               this.setRenderInteraction($innerDiv);
               $where.append($innerDiv);
               return c;
@@ -11662,7 +11855,7 @@
       }, {
           key: 'getAccidentalToolbar',
           value: function getAccidentalToolbar(minAccidental, maxAccidental, $siblingCanvas) {
-              var _this2 = this;
+              var _this3 = this;
 
               if (minAccidental === undefined) {
                   minAccidental = -1;
@@ -11689,13 +11882,13 @@
                           return;
                       }
                   }
-                  if (_this2.activeNote !== undefined) {
-                      var n = _this2.activeNote;
+                  if (_this3.activeNote !== undefined) {
+                      var n = _this3.activeNote;
                       n.pitch.accidental = new pitch.Accidental(newAlter);
                       /* console.log(n.pitch.name); */
-                      _this2.redrawCanvas($useCanvas[0]);
-                      if (_this2.changedCallbackFunction !== undefined) {
-                          _this2.changedCallbackFunction({ canvas: $useCanvas[0] });
+                      _this3.redrawCanvas($useCanvas[0]);
+                      if (_this3.changedCallbackFunction !== undefined) {
+                          _this3.changedCallbackFunction({ canvas: $useCanvas[0] });
                       }
                   }
               };
@@ -11726,17 +11919,17 @@
       }, {
           key: 'getPlayToolbar',
           value: function getPlayToolbar() {
-              var _this3 = this;
+              var _this4 = this;
 
               var $buttonDiv = $('<div/>').attr('class', 'playToolbar scoreToolbar');
               var $bPlay = $('<button>&#9658</button>');
               $bPlay.click(function () {
-                  _this3.playStream();
+                  _this4.playStream();
               });
               $buttonDiv.append($bPlay);
               var $bStop = $('<button>&#9724</button>');
               $bStop.click(function () {
-                  _this3.stopPlayStream();
+                  _this4.stopPlayStream();
               });
               $buttonDiv.append($bStop);
               return $buttonDiv;
@@ -12045,10 +12238,10 @@
       function Voice() {
           classCallCheck(this, Voice);
 
-          var _this4 = possibleConstructorReturn(this, (Voice.__proto__ || Object.getPrototypeOf(Voice)).call(this));
+          var _this5 = possibleConstructorReturn(this, (Voice.__proto__ || Object.getPrototypeOf(Voice)).call(this));
 
-          _this4.classes.push('Voice');
-          return _this4;
+          _this5.classes.push('Voice');
+          return _this5;
       }
 
       return Voice;
@@ -12066,11 +12259,11 @@
       function Measure() {
           classCallCheck(this, Measure);
 
-          var _this5 = possibleConstructorReturn(this, (Measure.__proto__ || Object.getPrototypeOf(Measure)).call(this));
+          var _this6 = possibleConstructorReturn(this, (Measure.__proto__ || Object.getPrototypeOf(Measure)).call(this));
 
-          _this5.classes.push('Measure');
-          _this5.number = 0; // measure number
-          return _this5;
+          _this6.classes.push('Measure');
+          _this6.number = 0; // measure number
+          return _this6;
       }
 
       return Measure;
@@ -12090,11 +12283,11 @@
       function Part() {
           classCallCheck(this, Part);
 
-          var _this6 = possibleConstructorReturn(this, (Part.__proto__ || Object.getPrototypeOf(Part)).call(this));
+          var _this7 = possibleConstructorReturn(this, (Part.__proto__ || Object.getPrototypeOf(Part)).call(this));
 
-          _this6.classes.push('Part');
-          _this6.systemHeight = _this6.renderOptions.naiveHeight;
-          return _this6;
+          _this7.classes.push('Part');
+          _this7.systemHeight = _this7.renderOptions.naiveHeight;
+          return _this7;
       }
 
       /**
@@ -12435,12 +12628,12 @@
       function Score() {
           classCallCheck(this, Score);
 
-          var _this7 = possibleConstructorReturn(this, (Score.__proto__ || Object.getPrototypeOf(Score)).call(this));
+          var _this8 = possibleConstructorReturn(this, (Score.__proto__ || Object.getPrototypeOf(Score)).call(this));
 
-          _this7.classes.push('Score');
-          _this7.measureWidths = [];
-          _this7.partSpacing = _this7.renderOptions.naiveHeight;
-          return _this7;
+          _this8.classes.push('Score');
+          _this8.measureWidths = [];
+          _this8.partSpacing = _this8.renderOptions.naiveHeight;
+          return _this8;
       }
 
       createClass(Score, [{
@@ -15168,6 +15361,8 @@
   </html>
    **/
 
+  // ../ext/jquery/jquery-3.2.1.min.js';
+
   /**
    * Widgets module -- random widgets.  See {@link music21.widgets}
    *
@@ -15537,45 +15732,47 @@
   // order below doesn't matter, but good to give a sense
   // of what will be needed by almost everyone, and then
   // alphabetical.
-  var music21 = {};
+  var music21 = {
+      common: common,
+      debug: debug,
+      prebase: prebase,
+      base: base,
 
-  music21.common = common;
-  music21.debug = debug;
-  music21.prebase = prebase;
-  music21.base = base;
+      articulations: articulations,
+      audioRecording: audioRecording,
+      audioSearch: audioSearch,
+      beam: beam,
+      chord: chord,
+      clef: clef,
+      dynamics: dynamics,
+      duration: duration,
+      exceptions21: exceptions21,
+      expressions: expressions,
+      fromPython: fromPython,
+      instrument: instrument,
+      interval: interval,
+      key: key,
+      keyboard: keyboard,
+      layout: layout,
+      meter: meter,
+      miditools: miditools,
+      musicxml: musicxml,
+      note: note,
+      pitch: pitch,
+      renderOptions: renderOptions,
+      roman: roman,
+      scale: scale,
+      stream: stream,
+      streamInteraction: streamInteraction,
+      tempo: tempo,
+      tie: _tie,
+      tinyNotation: tinyNotation,
+      vfShow: vfShow,
+      webmidi: webmidi,
+      widgets: widgets
+  };
 
-  music21.articulations = articulations;
-  music21.audioRecording = audioRecording;
-  music21.audioSearch = audioSearch;
-  music21.beam = beam;
-  music21.chord = chord;
-  music21.clef = clef;
-  music21.dynamics = dynamics;
-  music21.duration = duration;
-  music21.exceptions21 = exceptions21;
-  music21.expressions = expressions;
-  music21.fromPython = fromPython;
-  music21.instrument = instrument;
-  music21.interval = interval;
-  music21.key = key;
-  music21.keyboard = keyboard;
-  music21.layout = layout;
-  music21.meter = meter;
-  music21.miditools = miditools;
-  music21.musicxml = musicxml;
-  music21.note = note;
-  music21.pitch = pitch;
-  music21.renderOptions = renderOptions;
-  music21.roman = roman;
-  music21.scale = scale;
-  music21.stream = stream;
-  music21.streamInteraction = streamInteraction;
-  music21.tempo = tempo;
-  music21.tie = _tie;
-  music21.tinyNotation = tinyNotation;
-  music21.vfShow = vfShow;
-  music21.webmidi = webmidi;
-  music21.widgets = widgets;
+  music21.Music21Object = base.Music21Object;
 
   return music21;
 

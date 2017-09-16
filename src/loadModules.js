@@ -39,44 +39,46 @@ import { vfShow } from './music21/vfShow.js';
 import { webmidi } from './music21/webmidi.js';
 import { widgets } from './music21/widgets.js';
 
-const music21 = {};
+const music21 = {
+    common,
+    debug,
+    prebase,
+    base,
 
-music21.common = common;
-music21.debug = debug;
-music21.prebase = prebase;
-music21.base = base;
+    articulations,
+    audioRecording,
+    audioSearch,
+    beam,
+    chord,
+    clef,
+    dynamics,
+    duration,
+    exceptions21,
+    expressions,
+    fromPython,
+    instrument,
+    interval,
+    key,
+    keyboard,
+    layout,
+    meter,
+    miditools,
+    musicxml,
+    note,
+    pitch,
+    renderOptions,
+    roman,
+    scale,
+    stream,
+    streamInteraction,
+    tempo,
+    tie,
+    tinyNotation,
+    vfShow,
+    webmidi,
+    widgets,
+};
 
-music21.articulations = articulations;
-music21.audioRecording = audioRecording;
-music21.audioSearch = audioSearch;
-music21.beam = beam;
-music21.chord = chord;
-music21.clef = clef;
-music21.dynamics = dynamics;
-music21.duration = duration;
-music21.exceptions21 = exceptions21;
-music21.expressions = expressions;
-music21.fromPython = fromPython;
-music21.instrument = instrument;
-music21.interval = interval;
-music21.key = key;
-music21.keyboard = keyboard;
-music21.layout = layout;
-music21.meter = meter;
-music21.miditools = miditools;
-music21.musicxml = musicxml;
-music21.note = note;
-music21.pitch = pitch;
-music21.renderOptions = renderOptions;
-music21.roman = roman;
-music21.scale = scale;
-music21.stream = stream;
-music21.streamInteraction = streamInteraction;
-music21.tempo = tempo;
-music21.tie = tie;
-music21.tinyNotation = tinyNotation;
-music21.vfShow = vfShow;
-music21.webmidi = webmidi;
-music21.widgets = widgets;
+music21.Music21Object = base.Music21Object;
 
 export default music21;

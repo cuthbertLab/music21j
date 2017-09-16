@@ -147,69 +147,72 @@ m21basis.m21srcPath = m21srcPath;
 //console.log('m21srcPath non simplified', require.toUrl('music21'));
 
 var m21requireConfig = {
-        paths: {
-            'jquery':     pathSimplify(m21srcPath + '/ext/jquery/jquery-3.2.1.min'),
-            'attrchange': pathSimplify(m21srcPath + '/ext/jqueryPlugins/attrchange'),
-            'jquery-ui':  pathSimplify(m21srcPath + '/ext/jqueryPlugins/jqueryUI/jquery-ui.min'),
-            'vexflow':    pathSimplify(m21srcPath + '/ext/vexflow/vexflow-min'),
-            'MIDI':       pathSimplify(m21srcPath + '/ext/midijs/build/MIDI'),
-            'jasmidMidifile':   pathSimplify(m21srcPath + '/ext/midijs/inc/jasmid/midifile'),
-            'jasmidReplayer':   pathSimplify(m21srcPath + '/ext/midijs/inc/jasmid/replayer'),
-            'jasmidStream':     pathSimplify(m21srcPath + '/ext/midijs/inc/jasmid/stream'),
-            // a very nice event handler from Mudcu.be that handles drags
-            'eventjs':          pathSimplify(m21srcPath + '/ext/midijs/examples/inc/event'),
-            // read binary data in base64.  In "shim" but is not a shim.
-            'base64Binary': pathSimplify(m21srcPath + '/ext/midijs/inc/shim/Base64binary'),
+    // note: for building make sure to change notes in
+    // Gruntfile.js, especially the rollup section.
+    paths: {
+        'jquery':     pathSimplify(m21srcPath + '/ext/jquery/jquery-3.2.1.min'),
+        'attrchange': pathSimplify(m21srcPath + '/ext/jqueryPlugins/attrchange'),
+        'jquery-ui':  pathSimplify(m21srcPath + '/ext/jqueryPlugins/jqueryUI/jquery-ui.min'),
+        'vexflow':    pathSimplify(m21srcPath + '/ext/vexflow/vexflow-min'),
+        'MIDI':       pathSimplify(m21srcPath + '/ext/midijs/build/MIDI'),
+        'jasmidMidifile':   pathSimplify(m21srcPath + '/ext/midijs/inc/jasmid/midifile'),
+        'jasmidReplayer':   pathSimplify(m21srcPath + '/ext/midijs/inc/jasmid/replayer'),
+        'jasmidStream':     pathSimplify(m21srcPath + '/ext/midijs/inc/jasmid/stream'),
+        // a very nice event handler from Mudcu.be that handles drags
+        'eventjs':          pathSimplify(m21srcPath + '/ext/midijs/examples/inc/event'),
+        // read binary data in base64.  In "shim" but is not a shim.
+        'base64Binary': pathSimplify(m21srcPath + '/ext/midijs/inc/shim/Base64binary'),
 
-            // browser shims
-            'webMidiApiShim': pathSimplify(m21srcPath + '/ext/midijs/inc/shim/WebMIDIAPI'), //not currently loaded/used?
-            'webAudioShim': pathSimplify(m21srcPath + '/ext/midijs/inc/shim/WebAudioAPI'), // Safari prefixed to <= 9; IE <= Edge
+        // browser shims
+        'webMidiApiShim': pathSimplify(m21srcPath + '/ext/midijs/inc/shim/WebMIDIAPI'), //not currently loaded/used?
+        'webAudioShim': pathSimplify(m21srcPath + '/ext/midijs/inc/shim/WebAudioAPI'), // Safari prefixed to <= 9; IE <= Edge
 
-            'es6Shim': pathSimplify(m21srcPath + '/ext/es6-shim'),
-            'babelPolyfill': pathSimplify(m21srcPath + '/ext/polyfill'),
+        'es6Shim': pathSimplify(m21srcPath + '/ext/es6-shim'),
+        'babelPolyfill': pathSimplify(m21srcPath + '/ext/polyfill'),
 
-            'm21': pathSimplify(m21srcPath + '/../build/music21.debug'),
-            'jsonpickle': pathSimplify(m21srcPath + '/ext/jsonpickle/build/jsonpickle.debug'),
+        'm21': pathSimplify(m21srcPath + '/../build/music21.debug'),
+        'jsonpickle': pathSimplify(m21srcPath + '/ext/jsonpickle/build/jsonpickle.debug'),
 
-            // formerly used Shims (IE9)
-            //'base64Shim':   pathSimplify(m21srcPath + '/ext/midijs/inc/shim/Base64'),
+        // formerly used Shims (IE9)
+        //'base64Shim':   pathSimplify(m21srcPath + '/ext/midijs/inc/shim/Base64'),
 
-            //'vexflowMods': 'ext/vexflowMods',
+        //'vexflowMods': 'ext/vexflowMods',
+    },
+    shim: {
+        'eventjs': {
+            exports: 'eventjs',
         },
-        shim: {
-            'eventjs': {
-                exports: 'eventjs',
-            },
-            'webMidiApiShim': {
-                deps: ['es6Shim'],
-                exports: 'window',
-            },
-            'MIDI': {
-                deps: [ //'base64Shim',  // Bye-bye IE9!
-                        'base64Binary', 'webAudioShim',
-                        'jasmidMidifile', 'jasmidReplayer', 'jasmidStream', 'eventjs'],
-                        exports: 'MIDI',
-            },
-            'attrchange': {
-                deps: [ 'jquery' ],
-                exports: 'jQuery.attrchange',
-            },
-            'jquery-ui': {
-                deps: [ 'jquery' ],
-                exports: 'jQuery.ui'
-            },
-            'vexflow': {
-                deps: [ 'jquery' ],
-                exports: 'Vex'
-            },
-            'm21': {
-                deps: ['jquery', 'MIDI', 'vexflow', 'jsonpickle', 'babelPolyfill'],
-                exports: 'm21'
-            }
+        'webMidiApiShim': {
+            deps: ['es6Shim'],
+            exports: 'window',
+        },
+        'MIDI': {
+            deps: [ //'base64Shim',  // Bye-bye IE9!
+                    'base64Binary', 'webAudioShim',
+                    'jasmidMidifile', 'jasmidReplayer', 'jasmidStream', 'eventjs'],
+                    exports: 'MIDI',
+        },
+        'attrchange': {
+            deps: [ 'jquery' ],
+            exports: 'jQuery.attrchange',
+        },
+        'jquery-ui': {
+            deps: [ 'jquery' ],
+            exports: 'jQuery.ui'
+        },
+        'vexflow': {
+            deps: [ 'jquery' ],
+            exports: 'Vex'
+        },
+        'm21': {
+            deps: ['jquery', 'MIDI', 'vexflow', 'jsonpickle', 'babelPolyfill'],
+            exports: 'm21'
         }
+    }
 };
 //console.log('jsonpickle in music21: ', m21requireConfig.packages[0].location);
 
+// m21requireConfig.paths['../ext/jquery.js'] = m21requireConfig.paths.jquery;
 
 var m21modules = [
     'm21',
