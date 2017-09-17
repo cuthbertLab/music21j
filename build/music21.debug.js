@@ -306,7 +306,7 @@
       StreamException: StreamException
   });
 
-  var debug = true;
+  var debug = false;
 
   /**
    * common functions
