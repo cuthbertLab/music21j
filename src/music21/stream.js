@@ -1498,11 +1498,7 @@ export class Stream extends base.Music21Object {
      * @returns {music21.stream.Stream}
      *
      */
-    getStreamFromScaledXandSystemIndex(
-        xPxScaled,
-        allowablePixels,
-        systemIndex
-    ) {
+    getStreamFromScaledXandSystemIndex(xPxScaled, systemIndex) {
         return this;
     }
 
@@ -1526,7 +1522,6 @@ export class Stream extends base.Music21Object {
         }
         const subStream = this.getStreamFromScaledXandSystemIndex(
             xPxScaled,
-            allowablePixels,
             systemIndex
         );
         for (let i = 0; i < subStream.length; i++) {
@@ -2113,6 +2108,26 @@ export class Part extends Stream {
         }
         return this;
     }
+
+    /**
+     * systemIndexAndScaledY - given a scaled Y, return the systemIndex
+     * and the scaledYRelativeToSystem
+     *
+     * @memberof music21.stream.Part
+     * @param  {number} y the scaled Y
+     * @return {[int, number]}   systemIndex, scaledYRelativeToSystem
+     */
+    systemIndexAndScaledY(y) {
+        let systemPadding = this.renderOptions.systemPadding;
+        if (systemPadding === undefined) {
+            systemPadding = this.renderOptions.naiveSystemPadding;
+        }
+        const systemIndex = Math.floor(y / (this.systemHeight + systemPadding));
+        const scaledYRelativeToSystem
+            = y - systemIndex * (this.systemHeight + systemPadding);
+        return [systemIndex, scaledYRelativeToSystem];
+    }
+
     /**
      * Overrides the default music21.stream.Stream#findNoteForClick
      * by taking into account systems
@@ -2138,9 +2153,10 @@ export class Part extends Stream {
         if (systemPadding === undefined) {
             systemPadding = this.renderOptions.naiveSystemPadding;
         }
-        const systemIndex = Math.floor(y / (this.systemHeight + systemPadding));
-        const scaledYRelativeToSystem
-            = y - systemIndex * (this.systemHeight + systemPadding);
+        const [
+            systemIndex,
+            scaledYRelativeToSystem,
+        ] = this.systemIndexAndScaledY(y);
         const clickedDiatonicNoteNum = this.diatonicNoteNumFromScaledY(
             scaledYRelativeToSystem
         );
@@ -2153,15 +2169,20 @@ export class Part extends Stream {
         return [clickedDiatonicNoteNum, foundNote];
     }
 
-    getStreamFromScaledXandSystemIndex(
-        xPxScaled,
-        allowablePixels,
-        systemIndex
-    ) {
+    /**
+     * Returns the measure that is at X location xPxScaled and system systemIndex.
+     *
+     * @memberof music21.stream.Part
+     * @param {number} [xPxScaled]
+     * @param {number} [systemIndex]
+     * @returns {music21.stream.Stream}
+     *
+     */
+    getStreamFromScaledXandSystemIndex(xPxScaled, systemIndex) {
         let gotMeasure;
-        for (let i = 0; i < this.length; i++) {
-            // TODO: if not measure, do not crash...
-            const m = this.get(i);
+        const measures = this.measures;
+        for (let i = 0; i < measures.length; i++) {
+            const m = measures.get(i);
             const rendOp = m.renderOptions;
             const left = rendOp.left;
             const right = left + rendOp.width;
@@ -2225,6 +2246,23 @@ export class Score extends Stream {
         return systemPadding;
     }
 
+    /**
+     * Returns the measure that is at X location xPxScaled and system systemIndex.
+     *
+     * Always returns the measure of the top part... 
+     *
+     * @memberof music21.stream.Score
+     * @param {number} [xPxScaled]
+     * @param {number} [systemIndex]
+     * @returns {music21.stream.Stream} usually a Measure
+     *
+     */
+    getStreamFromScaledXandSystemIndex(xPxScaled, systemIndex) {
+        const parts = this.parts;
+        return parts
+            .get(0)
+            .getStreamFromScaledXandSystemIndex(xPxScaled, systemIndex);
+    }
     /**
      * overrides music21.stream.Stream#setSubstreamRenderOptions
      *
@@ -2360,24 +2398,41 @@ export class Score extends Stream {
     }
 
     /**
+     * systemIndexAndScaledY - given a scaled Y, return the systemIndex
+     * and the scaledYRelativeToSystem
+     *
+     * @memberof music21.stream.Score
+     * @param  {number} y the scaled Y
+     * @return {[int, number]}   systemIndex, scaledYRelativeToSystem
+     */
+    systemIndexAndScaledY(y) {
+        let systemPadding = this.renderOptions.systemPadding;
+        if (systemPadding === undefined) {
+            systemPadding = this.renderOptions.naiveSystemPadding;
+        }
+
+        const numParts = this.parts.length;
+        const systemHeight = numParts * this.partSpacing + this.systemPadding;
+        const systemIndex = Math.floor(y / systemHeight);
+        const scaledYRelativeToSystem = y - systemIndex * systemHeight;
+        return [systemIndex, scaledYRelativeToSystem];
+    }
+
+    /**
+     * Returns a list of [clickedDiatonicNoteNum, foundNote] for a
+     * click event, taking into account that the note will be in different
+     * Part objects (and different Systems) given the height and possibly different Systems.
+     *
      * @memberof music21.stream.Score
      * @param {DOMObject} canvas
      * @param {Event} e
      * @returns {Array} [diatonicNoteNum, m21Element]
      */
     findNoteForClick(canvas, e) {
-        /**
-         * Returns a list of [clickedDiatonicNoteNum, foundNote] for a
-         * click event, taking into account that the note will be in different
-         * Part objects (and different Systems) given the height and possibly different Systems.
-         *
-         */
         const [x, y] = this.getScaledXYforCanvas(canvas, e);
-
-        const numParts = this.parts.length;
-        const systemHeight = numParts * this.partSpacing + this.systemPadding;
-        const systemIndex = Math.floor(y / systemHeight);
-        const scaledYFromSystemTop = y - systemIndex * systemHeight;
+        const [systemIndex, scaledYFromSystemTop] = this.systemIndexAndScaledY(
+            y
+        );
         const partIndex = Math.floor(scaledYFromSystemTop / this.partSpacing);
         const scaledYinPart
             = scaledYFromSystemTop - partIndex * this.partSpacing;

@@ -569,7 +569,7 @@ export class SimpleNoteEditor {
      *      var can = s.appendNewCanvas();
      *      $(can).on('click', s.changeClickedNoteFromEvent);
      *
-     * @memberof music21.stream.Stream
+     * @memberof music21.streamInteraction.SimpleNoteEditor
      * @param {Event} e
      * @returns {music21.base.Music21Object|undefined} - returns whatever changedCallbackFunction does.
      */
@@ -596,9 +596,7 @@ export class SimpleNoteEditor {
      * Change the pitch of a note given that it has been clicked and then
      * call changedCallbackFunction
      *
-     * To be removed...
-     *
-     * @memberof music21.stream.Stream
+     * @memberof music21.streamInteraction.SimpleNoteEditor
      * @param {Int} clickedDiatonicNoteNum
      * @param {music21.base.Music21Object} foundNote
      * @param {DOMObject} canvas
@@ -609,11 +607,13 @@ export class SimpleNoteEditor {
         const p = new pitch.Pitch('C');
         p.diatonicNoteNum = clickedDiatonicNoteNum;
         if (
-            n.pitch.accidental === undefined
+            (n.pitch.accidental === undefined
+                || n.accidentalIsFromKeySignature === true)
             && this.stream.keySignature !== undefined
         ) {
             p.accidental = this.stream.keySignature.accidentalByStep(p.step);
-        } else {
+            n.accidentalIsFromKeySignature = true;
+        } else if (n.accidentalIsFromKeySignature !== true) {
             p.accidental = n.pitch.accidental;
         }
         n.pitch = p;
@@ -631,7 +631,7 @@ export class SimpleNoteEditor {
      * Renders a stream on a canvas with the ability to edit it and
      * a toolbar that allows the accidentals to be edited.
      *
-     * @memberof music21.stream.Stream
+     * @memberof music21.streamInteraction.SimpleNoteEditor
      * @param {number} [width]
      * @param {number} [height]
      * @returns {DOMObject} &lt;div&gt; tag around the canvas.
@@ -654,6 +654,7 @@ export class SimpleNoteEditor {
     /**
      * activateClick - sets the stream's renderOptions to activate clickFunction.
      *
+     * @memberof music21.streamInteraction.SimpleNoteEditor
      * @param  {undefined|function} clickFunction  arrow function to be called
      *                                              (default changeClickedNoteFromEvent)
      * @return {undefined}
@@ -666,7 +667,7 @@ export class SimpleNoteEditor {
     }
     /**
      *
-     * @memberof music21.stream.Stream
+     * @memberof music21.streamInteraction.SimpleNoteEditor
      * @param {Int} minAccidental - alter of the min accidental (default -1)
      * @param {Int} maxAccidental - alter of the max accidental (default 1)
      * @param {jQueryObject} $siblingCanvas - canvas to use for redrawing;
@@ -697,6 +698,12 @@ export class SimpleNoteEditor {
         return $buttonDiv;
     }
 
+    /**
+     * getUseCanvasFromClickEvent - get the active canvas from the click even
+     *
+     * @param  {event} clickEvent
+     * @return {jQueryObject}            $canvas
+     */
     getUseCanvasFromClickEvent(clickEvent) {
         let $searchParent = $(clickEvent.target).parent();
         let $useCanvas;
@@ -715,9 +722,6 @@ export class SimpleNoteEditor {
     }
 
     addAccidental(newAlter, clickEvent, $useCanvas) {
-        /*
-         * To be called on a button...
-         */
         if ($useCanvas === undefined) {
             $useCanvas = this.getUseCanvasFromClickEvent(clickEvent);
             if ($useCanvas === undefined) {
@@ -726,6 +730,7 @@ export class SimpleNoteEditor {
         }
         if (this.activeNote !== undefined) {
             const n = this.activeNote;
+            n.accidentalIsFromKeySignature = false;
             n.pitch.accidental = new pitch.Accidental(newAlter);
             /* console.log(n.pitch.name); */
             this.stream.redrawCanvas($useCanvas[0]);
@@ -761,11 +766,17 @@ export class FourPartEditor extends GrandStaffEditor {
                 );
             }
         }
+        this.editableMeasureIndexes = common.range(
+            this.parts.get(0).measures.length
+        );
         this.activePart = this.parts.get(0);
         this.activeMeasureIndex = 0;
-        this.activeNoteIndex = 0;
-        this.activeVoice = this.activePart.measures.get(0).voices.get(0);
+        this.activeMeasure = this.activePart.measures.get(
+            this.activeMeasureIndex
+        );
+        this.activeVoice = this.activeMeasure.voices.get(0);
         this.activeVoiceNumber = 0; // 0, 1, 2, 3
+        this.activeNoteIndex = 0;
         this.buttons = [];
     }
 
@@ -801,6 +812,51 @@ export class FourPartEditor extends GrandStaffEditor {
     }
 
     /**
+     * setActiveInformation - given a click event, set the active information
+     *
+     * @param  {DOMObject} canvasElement canvas
+     * @param  {event} e             click event.
+     * @return {undefined}
+     */
+
+    setActiveInformation(canvasElement, e) {
+        const [x, y] = this.stream.getScaledXYforCanvas(canvasElement, e);
+        const systemIndex = this.stream.systemIndexAndScaledY(y)[0];
+        // measureChosen will always be in the first part...
+        const measureChosen = this.stream.getStreamFromScaledXandSystemIndex(
+            x,
+            systemIndex
+        );
+        let matchIndex;
+        const measuresStream = this.parts.get(0).measures;
+        for (let i = 0; i < measuresStream.length; i++) {
+            const matchMeasure = measuresStream.get(i);
+            if (matchMeasure === measureChosen) {
+                matchIndex = i;
+                break;
+            }
+        }
+        if (matchIndex === undefined) {
+            return;
+        }
+        if (!this.editableMeasureIndexes.includes(matchIndex)) {
+            return;
+        }
+        this.activeMeasureIndex = matchIndex;
+        if (this.activeVoiceNumber < 2) {
+            this.activePart = this.parts.get(0);
+        } else {
+            this.activePart = this.parts.get(1);
+        }
+        const voiceIndexInMeasure = this.activeVoiceNumber % 2;
+        this.activeMeasure = this.activePart.measures.get(
+            this.activeMeasureIndex
+        );
+        this.activeVoice = this.activeMeasure.voices.get(voiceIndexInMeasure);
+        return;
+    }
+
+    /**
      * A function bound to the current stream that
      * will changes the stream. Used in editableAccidentalCanvas, among other places.
      *
@@ -813,6 +869,8 @@ export class FourPartEditor extends GrandStaffEditor {
      */
     changeClickedNoteFromEvent(e) {
         const canvasElement = e.currentTarget;
+        this.setActiveInformation(canvasElement, e);
+
         const [unused_wrong_dnn, foundNote] = this.activeVoice.findNoteForClick(
             canvasElement,
             e
@@ -840,15 +898,17 @@ export class FourPartEditor extends GrandStaffEditor {
         const p = new pitch.Pitch('C');
         p.diatonicNoteNum = clickedDiatonicNoteNum;
         if (
-            n.pitch.accidental === undefined
+            (n.pitch.accidental === undefined
+                || n.accidentalIsFromKeySignature === true)
             && this.stream.keySignature !== undefined
         ) {
             p.accidental = this.stream.keySignature.accidentalByStep(p.step);
-        } else {
+            n.accidentalIsFromKeySignature = true;
+        } else if (n.accidentalIsFromKeySignature !== true) {
             p.accidental = n.pitch.accidental;
         }
         n.pitch = p;
-        if (this.activeVoiceNumber === 0 || this.activeVoiceNumber === 2) {
+        if (this.activeVoiceNumber % 2 === 0) {
             n.stemDirection = 'up';
         } else {
             n.stemDirection = 'down';
@@ -883,6 +943,7 @@ export class FourPartEditor extends GrandStaffEditor {
     changeActiveVoice(newVoice, $buttonDiv, clickEvent) {
         for (const i of [0, 1, 2, 3]) {
             this.buttons[i].removeClass('editorButtonSelected');
+            this.buttons[i].addClass('editorButtonNotSelected');
         }
         this.buttons[newVoice].removeClass('editorButtonNotSelected');
         this.buttons[newVoice].addClass('editorButtonSelected');

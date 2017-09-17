@@ -355,6 +355,21 @@
       return destination;
   };
 
+  common.range = function common_range(start, stop, step) {
+      if (step === undefined) {
+          step = 1;
+      }
+      if (stop === undefined) {
+          stop = start;
+          start = 0;
+      }
+
+      var count = Math.ceil((stop - start) / step);
+      return Array.apply(0, Array(count)).map(function (e, i) {
+          return i * step + start;
+      });
+  };
+
   /**
    * Mix in another class into this class -- a form of multiple inheritance.
    * See articulations.Marcato for an example.
@@ -9720,7 +9735,7 @@
        *      var can = s.appendNewCanvas();
        *      $(can).on('click', s.changeClickedNoteFromEvent);
        *
-       * @memberof music21.stream.Stream
+       * @memberof music21.streamInteraction.SimpleNoteEditor
        * @param {Event} e
        * @returns {music21.base.Music21Object|undefined} - returns whatever changedCallbackFunction does.
        */
@@ -9749,9 +9764,7 @@
            * Change the pitch of a note given that it has been clicked and then
            * call changedCallbackFunction
            *
-           * To be removed...
-           *
-           * @memberof music21.stream.Stream
+           * @memberof music21.streamInteraction.SimpleNoteEditor
            * @param {Int} clickedDiatonicNoteNum
            * @param {music21.base.Music21Object} foundNote
            * @param {DOMObject} canvas
@@ -9764,9 +9777,10 @@
               var n = foundNote;
               var p = new pitch.Pitch('C');
               p.diatonicNoteNum = clickedDiatonicNoteNum;
-              if (n.pitch.accidental === undefined && this.stream.keySignature !== undefined) {
+              if ((n.pitch.accidental === undefined || n.accidentalIsFromKeySignature === true) && this.stream.keySignature !== undefined) {
                   p.accidental = this.stream.keySignature.accidentalByStep(p.step);
-              } else {
+                  n.accidentalIsFromKeySignature = true;
+              } else if (n.accidentalIsFromKeySignature !== true) {
                   p.accidental = n.pitch.accidental;
               }
               n.pitch = p;
@@ -9784,7 +9798,7 @@
            * Renders a stream on a canvas with the ability to edit it and
            * a toolbar that allows the accidentals to be edited.
            *
-           * @memberof music21.stream.Stream
+           * @memberof music21.streamInteraction.SimpleNoteEditor
            * @param {number} [width]
            * @param {number} [height]
            * @returns {DOMObject} &lt;div&gt; tag around the canvas.
@@ -9808,6 +9822,7 @@
           /**
            * activateClick - sets the stream's renderOptions to activate clickFunction.
            *
+           * @memberof music21.streamInteraction.SimpleNoteEditor
            * @param  {undefined|function} clickFunction  arrow function to be called
            *                                              (default changeClickedNoteFromEvent)
            * @return {undefined}
@@ -9829,7 +9844,7 @@
           }
           /**
            *
-           * @memberof music21.stream.Stream
+           * @memberof music21.streamInteraction.SimpleNoteEditor
            * @param {Int} minAccidental - alter of the min accidental (default -1)
            * @param {Int} maxAccidental - alter of the max accidental (default 1)
            * @param {jQueryObject} $siblingCanvas - canvas to use for redrawing;
@@ -9864,6 +9879,14 @@
               }
               return $buttonDiv;
           }
+
+          /**
+           * getUseCanvasFromClickEvent - get the active canvas from the click even
+           *
+           * @param  {event} clickEvent
+           * @return {jQueryObject}            $canvas
+           */
+
       }, {
           key: 'getUseCanvasFromClickEvent',
           value: function getUseCanvasFromClickEvent(clickEvent) {
@@ -9882,9 +9905,6 @@
       }, {
           key: 'addAccidental',
           value: function addAccidental(newAlter, clickEvent, $useCanvas) {
-              /*
-               * To be called on a button...
-               */
               if ($useCanvas === undefined) {
                   $useCanvas = this.getUseCanvasFromClickEvent(clickEvent);
                   if ($useCanvas === undefined) {
@@ -9893,6 +9913,7 @@
               }
               if (this.activeNote !== undefined) {
                   var n = this.activeNote;
+                  n.accidentalIsFromKeySignature = false;
                   n.pitch.accidental = new pitch.Accidental(newAlter);
                   /* console.log(n.pitch.name); */
                   this.stream.redrawCanvas($useCanvas[0]);
@@ -9941,11 +9962,13 @@
                   throw new StreamException('Each part must have at least one measure with two voices');
               }
           }
+          _this8.editableMeasureIndexes = common.range(_this8.parts.get(0).measures.length);
           _this8.activePart = _this8.parts.get(0);
           _this8.activeMeasureIndex = 0;
-          _this8.activeNoteIndex = 0;
-          _this8.activeVoice = _this8.activePart.measures.get(0).voices.get(0);
+          _this8.activeMeasure = _this8.activePart.measures.get(_this8.activeMeasureIndex);
+          _this8.activeVoice = _this8.activeMeasure.voices.get(0);
           _this8.activeVoiceNumber = 0; // 0, 1, 2, 3
+          _this8.activeNoteIndex = 0;
           _this8.buttons = [];
           return _this8;
       }
@@ -9982,6 +10005,52 @@
           }
 
           /**
+           * setActiveInformation - given a click event, set the active information
+           *
+           * @param  {DOMObject} canvasElement canvas
+           * @param  {event} e             click event.
+           * @return {undefined}
+           */
+
+      }, {
+          key: 'setActiveInformation',
+          value: function setActiveInformation(canvasElement, e) {
+              var _stream$getScaledXYfo = this.stream.getScaledXYforCanvas(canvasElement, e),
+                  _stream$getScaledXYfo2 = slicedToArray(_stream$getScaledXYfo, 2),
+                  x = _stream$getScaledXYfo2[0],
+                  y = _stream$getScaledXYfo2[1];
+
+              var systemIndex = this.stream.systemIndexAndScaledY(y)[0];
+              // measureChosen will always be in the first part...
+              var measureChosen = this.stream.getStreamFromScaledXandSystemIndex(x, systemIndex);
+              var matchIndex = void 0;
+              var measuresStream = this.parts.get(0).measures;
+              for (var i = 0; i < measuresStream.length; i++) {
+                  var matchMeasure = measuresStream.get(i);
+                  if (matchMeasure === measureChosen) {
+                      matchIndex = i;
+                      break;
+                  }
+              }
+              if (matchIndex === undefined) {
+                  return;
+              }
+              if (!this.editableMeasureIndexes.includes(matchIndex)) {
+                  return;
+              }
+              this.activeMeasureIndex = matchIndex;
+              if (this.activeVoiceNumber < 2) {
+                  this.activePart = this.parts.get(0);
+              } else {
+                  this.activePart = this.parts.get(1);
+              }
+              var voiceIndexInMeasure = this.activeVoiceNumber % 2;
+              this.activeMeasure = this.activePart.measures.get(this.activeMeasureIndex);
+              this.activeVoice = this.activeMeasure.voices.get(voiceIndexInMeasure);
+              return;
+          }
+
+          /**
            * A function bound to the current stream that
            * will changes the stream. Used in editableAccidentalCanvas, among other places.
            *
@@ -9997,6 +10066,7 @@
           key: 'changeClickedNoteFromEvent',
           value: function changeClickedNoteFromEvent(e) {
               var canvasElement = e.currentTarget;
+              this.setActiveInformation(canvasElement, e);
 
               var _activeVoice$findNote = this.activeVoice.findNoteForClick(canvasElement, e),
                   _activeVoice$findNote2 = slicedToArray(_activeVoice$findNote, 2),
@@ -10022,13 +10092,14 @@
               var n = foundNote;
               var p = new pitch.Pitch('C');
               p.diatonicNoteNum = clickedDiatonicNoteNum;
-              if (n.pitch.accidental === undefined && this.stream.keySignature !== undefined) {
+              if ((n.pitch.accidental === undefined || n.accidentalIsFromKeySignature === true) && this.stream.keySignature !== undefined) {
                   p.accidental = this.stream.keySignature.accidentalByStep(p.step);
-              } else {
+                  n.accidentalIsFromKeySignature = true;
+              } else if (n.accidentalIsFromKeySignature !== true) {
                   p.accidental = n.pitch.accidental;
               }
               n.pitch = p;
-              if (this.activeVoiceNumber === 0 || this.activeVoiceNumber === 2) {
+              if (this.activeVoiceNumber % 2 === 0) {
                   n.stemDirection = 'up';
               } else {
                   n.stemDirection = 'down';
@@ -10074,6 +10145,7 @@
               for (var _i2 = 0; _i2 < _arr2.length; _i2++) {
                   var _i3 = _arr2[_i2];
                   this.buttons[_i3].removeClass('editorButtonSelected');
+                  this.buttons[_i3].addClass('editorButtonNotSelected');
               }
               this.buttons[newVoice].removeClass('editorButtonNotSelected');
               this.buttons[newVoice].addClass('editorButtonSelected');
@@ -12552,7 +12624,7 @@
 
       }, {
           key: 'getStreamFromScaledXandSystemIndex',
-          value: function getStreamFromScaledXandSystemIndex(xPxScaled, allowablePixels, systemIndex) {
+          value: function getStreamFromScaledXandSystemIndex(xPxScaled, systemIndex) {
               return this;
           }
 
@@ -12576,7 +12648,7 @@
               if (allowablePixels === undefined) {
                   allowablePixels = 10;
               }
-              var subStream = this.getStreamFromScaledXandSystemIndex(xPxScaled, allowablePixels, systemIndex);
+              var subStream = this.getStreamFromScaledXandSystemIndex(xPxScaled, systemIndex);
               for (var i = 0; i < subStream.length; i++) {
                   var n = subStream.get(i);
                   /* should also
@@ -13410,6 +13482,28 @@
               }
               return this;
           }
+
+          /**
+           * systemIndexAndScaledY - given a scaled Y, return the systemIndex
+           * and the scaledYRelativeToSystem
+           *
+           * @memberof music21.stream.Part
+           * @param  {number} y the scaled Y
+           * @return {[int, number]}   systemIndex, scaledYRelativeToSystem
+           */
+
+      }, {
+          key: 'systemIndexAndScaledY',
+          value: function systemIndexAndScaledY(y) {
+              var systemPadding = this.renderOptions.systemPadding;
+              if (systemPadding === undefined) {
+                  systemPadding = this.renderOptions.naiveSystemPadding;
+              }
+              var systemIndex = Math.floor(y / (this.systemHeight + systemPadding));
+              var scaledYRelativeToSystem = y - systemIndex * (this.systemHeight + systemPadding);
+              return [systemIndex, scaledYRelativeToSystem];
+          }
+
           /**
            * Overrides the default music21.stream.Stream#findNoteForClick
            * by taking into account systems
@@ -13438,20 +13532,35 @@
               if (systemPadding === undefined) {
                   systemPadding = this.renderOptions.naiveSystemPadding;
               }
-              var systemIndex = Math.floor(y / (this.systemHeight + systemPadding));
-              var scaledYRelativeToSystem = y - systemIndex * (this.systemHeight + systemPadding);
+
+              var _systemIndexAndScaled = this.systemIndexAndScaledY(y),
+                  _systemIndexAndScaled2 = slicedToArray(_systemIndexAndScaled, 2),
+                  systemIndex = _systemIndexAndScaled2[0],
+                  scaledYRelativeToSystem = _systemIndexAndScaled2[1];
+
               var clickedDiatonicNoteNum = this.diatonicNoteNumFromScaledY(scaledYRelativeToSystem);
 
               var foundNote = this.noteElementFromScaledX(x, undefined, systemIndex);
               return [clickedDiatonicNoteNum, foundNote];
           }
+
+          /**
+           * Returns the measure that is at X location xPxScaled and system systemIndex.
+           *
+           * @memberof music21.stream.Part
+           * @param {number} [xPxScaled]
+           * @param {number} [systemIndex]
+           * @returns {music21.stream.Stream}
+           *
+           */
+
       }, {
           key: 'getStreamFromScaledXandSystemIndex',
-          value: function getStreamFromScaledXandSystemIndex(xPxScaled, allowablePixels, systemIndex) {
+          value: function getStreamFromScaledXandSystemIndex(xPxScaled, systemIndex) {
               var gotMeasure = void 0;
-              for (var i = 0; i < this.length; i++) {
-                  // TODO: if not measure, do not crash...
-                  var m = this.get(i);
+              var measures = this.measures;
+              for (var i = 0; i < measures.length; i++) {
+                  var m = measures.get(i);
                   var rendOp = m.renderOptions;
                   var left = rendOp.left;
                   var right = left + rendOp.width;
@@ -13499,9 +13608,24 @@
       }
 
       createClass(Score, [{
-          key: 'setSubstreamRenderOptions',
+          key: 'getStreamFromScaledXandSystemIndex',
 
 
+          /**
+           * Returns the measure that is at X location xPxScaled and system systemIndex.
+           *
+           * Always returns the measure of the top part... 
+           *
+           * @memberof music21.stream.Score
+           * @param {number} [xPxScaled]
+           * @param {number} [systemIndex]
+           * @returns {music21.stream.Stream} usually a Measure
+           *
+           */
+          value: function getStreamFromScaledXandSystemIndex(xPxScaled, systemIndex) {
+              var parts = this.parts;
+              return parts.get(0).getStreamFromScaledXandSystemIndex(xPxScaled, systemIndex);
+          }
           /**
            * overrides music21.stream.Stream#setSubstreamRenderOptions
            *
@@ -13510,6 +13634,9 @@
            * @memberof music21.stream.Score
            * @returns {music21.stream.Score} this
            */
+
+      }, {
+          key: 'setSubstreamRenderOptions',
           value: function setSubstreamRenderOptions() {
               var currentPartNumber = 0;
               var currentPartTop = 0;
@@ -13649,6 +13776,34 @@
           }
 
           /**
+           * systemIndexAndScaledY - given a scaled Y, return the systemIndex
+           * and the scaledYRelativeToSystem
+           *
+           * @memberof music21.stream.Score
+           * @param  {number} y the scaled Y
+           * @return {[int, number]}   systemIndex, scaledYRelativeToSystem
+           */
+
+      }, {
+          key: 'systemIndexAndScaledY',
+          value: function systemIndexAndScaledY(y) {
+              var systemPadding = this.renderOptions.systemPadding;
+              if (systemPadding === undefined) {
+                  systemPadding = this.renderOptions.naiveSystemPadding;
+              }
+
+              var numParts = this.parts.length;
+              var systemHeight = numParts * this.partSpacing + this.systemPadding;
+              var systemIndex = Math.floor(y / systemHeight);
+              var scaledYRelativeToSystem = y - systemIndex * systemHeight;
+              return [systemIndex, scaledYRelativeToSystem];
+          }
+
+          /**
+           * Returns a list of [clickedDiatonicNoteNum, foundNote] for a
+           * click event, taking into account that the note will be in different
+           * Part objects (and different Systems) given the height and possibly different Systems.
+           *
            * @memberof music21.stream.Score
            * @param {DOMObject} canvas
            * @param {Event} e
@@ -13658,21 +13813,16 @@
       }, {
           key: 'findNoteForClick',
           value: function findNoteForClick(canvas, e) {
-              /**
-               * Returns a list of [clickedDiatonicNoteNum, foundNote] for a
-               * click event, taking into account that the note will be in different
-               * Part objects (and different Systems) given the height and possibly different Systems.
-               *
-               */
               var _getScaledXYforCanvas5 = this.getScaledXYforCanvas(canvas, e),
                   _getScaledXYforCanvas6 = slicedToArray(_getScaledXYforCanvas5, 2),
                   x = _getScaledXYforCanvas6[0],
                   y = _getScaledXYforCanvas6[1];
 
-              var numParts = this.parts.length;
-              var systemHeight = numParts * this.partSpacing + this.systemPadding;
-              var systemIndex = Math.floor(y / systemHeight);
-              var scaledYFromSystemTop = y - systemIndex * systemHeight;
+              var _systemIndexAndScaled3 = this.systemIndexAndScaledY(y),
+                  _systemIndexAndScaled4 = slicedToArray(_systemIndexAndScaled3, 2),
+                  systemIndex = _systemIndexAndScaled4[0],
+                  scaledYFromSystemTop = _systemIndexAndScaled4[1];
+
               var partIndex = Math.floor(scaledYFromSystemTop / this.partSpacing);
               var scaledYinPart = scaledYFromSystemTop - partIndex * this.partSpacing;
               // console.log('systemIndex: ' + systemIndex + " partIndex: " + partIndex);

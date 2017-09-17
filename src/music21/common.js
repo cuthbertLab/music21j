@@ -47,6 +47,19 @@ common.merge = function mergeRecursive(destination, source) {
     return destination;
 };
 
+common.range = function common_range(start, stop, step) {
+    if (step === undefined) {
+        step = 1;
+    }
+    if (stop === undefined) {
+        stop = start;
+        start = 0;
+    }
+
+    const count = Math.ceil((stop - start) / step);
+    return Array.apply(0, Array(count)).map((e, i) => i * step + start);
+};
+
 /**
  * Mix in another class into this class -- a form of multiple inheritance.
  * See articulations.Marcato for an example.
