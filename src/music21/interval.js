@@ -30,24 +30,24 @@ export const interval = {};
  *
  * @memberof music21.interval
  * @example
- * if (music21.interval.IntervalDirections.OBLIQUE >
- *     music21.interval.IntervalDirections.ASCENDING ) {
- *    console.log(music21.interval.IntervalDirections.DESCENDING);
+ * if (music21.interval.Direction.OBLIQUE >
+ *     music21.interval.Direction.ASCENDING ) {
+ *    console.log(music21.interval.Direction.DESCENDING);
  * }
  *
  */
-interval.IntervalDirections = {
+interval.Direction = {
     DESCENDING: -1,
     OBLIQUE: 0,
     ASCENDING: 1,
 };
 
 /**
- * N.B. a dict in music21p -- the indexes here let IntervalDirections call them + 1
+ * N.B. a dict in music21p -- the indexes here let Direction call them + 1
  *
  * @memberof music21.interval
  * @example
- * console.log(music21.interval.IntervalDirectionTerms[music21l.interval.IntervalDirections.OBLIQUE + 1])
+ * console.log(music21.interval.IntervalDirectionTerms[music21l.interval.Direction.OBLIQUE + 1])
  * // "Oblique"
  */
 interval.IntervalDirectionTerms = ['Descending', 'Oblique', 'Ascending'];
@@ -105,7 +105,7 @@ interval.MusicOrdinals = [
  * // -14
  * gi.undirected
  * // 14
- * gi.direction == music21.interval.IntervalDirections.DESCENDING
+ * gi.direction == music21.interval.Direction.DESCENDING
  * // true
  * gi.isSkip
  * // true
@@ -147,11 +147,11 @@ export class GenericInterval extends prebase.ProtoM21Object {
         this.undirected = Math.abs(this.value);
 
         if (this.directed === 1) {
-            this.direction = interval.IntervalDirections.OBLIQUE;
+            this.direction = interval.Direction.OBLIQUE;
         } else if (this.directed < 0) {
-            this.direction = interval.IntervalDirections.DESCENDING;
+            this.direction = interval.Direction.DESCENDING;
         } else if (this.directed > 1) {
-            this.direction = interval.IntervalDirections.ASCENDING;
+            this.direction = interval.Direction.ASCENDING;
         }
         // else (raise exception)
 
@@ -189,7 +189,7 @@ export class GenericInterval extends prebase.ProtoM21Object {
             this.semiSimpleUndirected = this.simpleUndirected;
         }
 
-        if (this.direction === interval.IntervalDirections.DESCENDING) {
+        if (this.direction === interval.Direction.DESCENDING) {
             this.octaves = -1 * tempOctaves;
             if (tempSteps !== 1) {
                 this.simpleDirected = -1 * tempSteps;
@@ -234,7 +234,7 @@ export class GenericInterval extends prebase.ProtoM21Object {
         // 2 -> 7; 3 -> 6; 8 -> 1 etc.
         this.mod7inversion = 9 - this.semiSimpleUndirected;
 
-        if (this.direction === interval.IntervalDirections.DESCENDING) {
+        if (this.direction === interval.Direction.DESCENDING) {
             this.mod7 = this.mod7inversion; // see chord.semitonesFromChordStep for usage...
         } else {
             this.mod7 = this.simpleDirected;
@@ -452,7 +452,7 @@ interval.IntervalAdjustImperf = {
  * // 'M'
  * di.name;
  * // 'M10'
- * di.direction == music21.interval.IntervalDirections.ASCENDING;
+ * di.direction == music21.interval.Direction.ASCENDING;
  * // true
  * di.niceName
  * // "Major Tenth"
@@ -493,9 +493,9 @@ export class DiatonicInterval extends prebase.ProtoM21Object {
             )
         ) {
             // diminished unisons -- very controversial
-            this.direction = interval.IntervalDirections.DESCENDING;
+            this.direction = interval.Direction.DESCENDING;
         } else {
-            this.direction = interval.IntervalDirections.ASCENDING;
+            this.direction = interval.Direction.ASCENDING;
         }
         const diatonicDirectionNiceName
             = interval.IntervalDirectionTerms[this.direction + 1];
@@ -568,7 +568,7 @@ export class DiatonicInterval extends prebase.ProtoM21Object {
 
         this.mod7inversion
             = this.invertedOrderedSpecifier + generic.mod7inversion.toString();
-        /* ( if (this.direction == interval.IntervalDirections.DESCENDING) {
+        /* ( if (this.direction == interval.Direction.DESCENDING) {
 			this.mod7 = this.mod7inversion;
 		} else {
 			this.mod7 = this.simpleName;
@@ -603,7 +603,7 @@ export class DiatonicInterval extends prebase.ProtoM21Object {
 
         // direction should be same as original
 
-        if (this.generic.direction === interval.IntervalDirections.DESCENDING) {
+        if (this.generic.direction === interval.Direction.DESCENDING) {
             semitones *= -1;
         }
         if (debug) {
@@ -652,16 +652,16 @@ export class ChromaticInterval extends prebase.ProtoM21Object {
         this.undirected = Math.abs(value);
 
         if (this.directed === 0) {
-            this.direction = interval.IntervalDirections.OBLIQUE;
+            this.direction = interval.Direction.OBLIQUE;
         } else if (this.directed === this.undirected) {
-            this.direction = interval.IntervalDirections.ASCENDING;
+            this.direction = interval.Direction.ASCENDING;
         } else {
-            this.direction = interval.IntervalDirections.DESCENDING;
+            this.direction = interval.Direction.DESCENDING;
         }
 
         this.mod12 = this.semitones % 12;
         this.simpleUndirected = this.undirected % 12;
-        if (this.direction === interval.IntervalDirections.DESCENDING) {
+        if (this.direction === interval.Direction.DESCENDING) {
             this.simpleDirected = -1 * this.simpleUndirected;
         } else {
             this.simpleDirected = this.simpleUndirected;
@@ -939,8 +939,8 @@ interval._getSpecifierFromGenericChromatic = function _getSpecifierFromGenericCh
     let theseSemis = 0;
     if (
         gInt.direction !== cInt.direction
-        && gInt.direction !== interval.IntervalDirections.OBLIQUE
-        && cInt.direction !== interval.IntervalDirections.OBLIQUE
+        && gInt.direction !== interval.Direction.OBLIQUE
+        && cInt.direction !== interval.Direction.OBLIQUE
     ) {
         // intervals like d2 and dd2 etc. (the last test doesn't matter, since -1*0 === 0, but in theory it should be there)
         theseSemis = -1 * cInt.undirected;

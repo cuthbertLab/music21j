@@ -8,6 +8,8 @@
  * Based on music21 (=music21p), Copyright (c) 2006–16, Michael Scott Cuthbert and cuthbertLab
  *
  */
+import { base } from './base.js';
+import { common } from './common.js';
 import { debug } from './debug.js';
 import { pitch } from './pitch.js';
 import { interval } from './interval.js';
@@ -28,6 +30,86 @@ import { Music21Exception } from './exceptions21.js';
  * @requires music21/interval
  */
 export const scale = {};
+
+class Scale extends base.Music21Object {
+    constructor() {
+        super();
+        this.classes.push('Scale');
+        this.type = 'Scale';
+    }
+
+    get name() {
+        return this.type;
+    }
+
+    get isConcrete() {
+        return false;
+    }
+}
+
+class AbstractScale extends Scale {
+    constructor() {
+        super();
+        this.classes.push('AbstractScale');
+        this._net = []; // simplified -- no IntervalNetwork, just list of intervals
+        this.tonicDegree = 1;
+        this.octaveDuplicating = true;
+        this.deterministic = true;
+        this._alteredDegrees = {};
+    }
+
+    equals(other) {
+        if (
+            common.arrayEquals(this.classes, other.classes)
+            && this.tonicDegree === other.tonicDegree
+            && common.arrayEquals(this._net, other._net)
+        ) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    buildNetworkFromPitches(pitchList) {
+        const pitchListReal = [];
+        for (const p of pitchList) {
+            if (typeof p === 'string') {
+                pitchListReal.push(new pitch.Pitch(p));
+            } else if (p.classes.includes('Note')) {
+                pitchListReal.push(p.pitch);
+            } else {
+                pitchListReal.push(p);
+            }
+        }
+        pitchList = pitchListReal;
+
+        pLast = pitchList[pitchList.length - 1];
+        if (pLast.name === pitchList[0]) {
+            const p = pitchList[0].clone(true);
+            if (pLast.ps > pitchList[0]) {
+                // ascending;
+                while (p.ps < pLast.ps) {
+                    p.octave += 1;
+                }
+            } else {
+                while (p.ps < pLast.ps) {
+                    p.octave += -1;
+                }
+            }
+            pitchList.push(p);
+        }
+
+        const intervalList = [];
+        for (let i = 0; i < pitchList.length - 1; i++) {
+            const thisInterval = new interval.Interval(
+                pitchList[i],
+                pitchList[i + 1]
+            );
+            intervalList.push(thisInterval);
+        }
+        this._net = intervalList;
+    }
+}
 
 /**
  * Function, not class

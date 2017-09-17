@@ -35,6 +35,7 @@ import { streamInteraction } from './music21/streamInteraction.js';
 import { tempo } from './music21/tempo.js';
 import { tie } from './music21/tie.js';
 import { tinyNotation } from './music21/tinyNotation.js';
+import { voiceLeading } from './music21/voiceLeading.js';
 import { vfShow } from './music21/vfShow.js';
 import { webmidi } from './music21/webmidi.js';
 import { widgets } from './music21/widgets.js';
@@ -74,6 +75,7 @@ const music21 = {
     tempo,
     tie,
     tinyNotation,
+    voiceLeading,
     vfShow,
     webmidi,
     widgets,

@@ -563,6 +563,23 @@
           }
       });
   };
+
+  common.arrayEquals = function arrayEquals(a1, a2) {
+      if (a1.length !== a2.length) {
+          return false;
+      }
+      for (var i = 0; i < a1.length; i++) {
+          if (a1[i] instanceof Array && a2[i] instanceof Array) {
+              if (!arrayEquals(a1[i], a2[i])) {
+                  return false;
+              }
+          } else if (a1[i] !== a2[i]) {
+              return false;
+          }
+      }
+      return true;
+  };
+
   // common.walk = function (obj, callback, callList, seen, numSeen) {
   // if (depth == undefined) {
   // depth = 0;
@@ -5296,24 +5313,24 @@
    *
    * @memberof music21.interval
    * @example
-   * if (music21.interval.IntervalDirections.OBLIQUE >
-   *     music21.interval.IntervalDirections.ASCENDING ) {
-   *    console.log(music21.interval.IntervalDirections.DESCENDING);
+   * if (music21.interval.Direction.OBLIQUE >
+   *     music21.interval.Direction.ASCENDING ) {
+   *    console.log(music21.interval.Direction.DESCENDING);
    * }
    *
    */
-  interval.IntervalDirections = {
+  interval.Direction = {
       DESCENDING: -1,
       OBLIQUE: 0,
       ASCENDING: 1
   };
 
   /**
-   * N.B. a dict in music21p -- the indexes here let IntervalDirections call them + 1
+   * N.B. a dict in music21p -- the indexes here let Direction call them + 1
    *
    * @memberof music21.interval
    * @example
-   * console.log(music21.interval.IntervalDirectionTerms[music21l.interval.IntervalDirections.OBLIQUE + 1])
+   * console.log(music21.interval.IntervalDirectionTerms[music21l.interval.Direction.OBLIQUE + 1])
    * // "Oblique"
    */
   interval.IntervalDirectionTerms = ['Descending', 'Oblique', 'Ascending'];
@@ -5354,7 +5371,7 @@
    * // -14
    * gi.undirected
    * // 14
-   * gi.direction == music21.interval.IntervalDirections.DESCENDING
+   * gi.direction == music21.interval.Direction.DESCENDING
    * // true
    * gi.isSkip
    * // true
@@ -5401,11 +5418,11 @@
           _this.undirected = Math.abs(_this.value);
 
           if (_this.directed === 1) {
-              _this.direction = interval.IntervalDirections.OBLIQUE;
+              _this.direction = interval.Direction.OBLIQUE;
           } else if (_this.directed < 0) {
-              _this.direction = interval.IntervalDirections.DESCENDING;
+              _this.direction = interval.Direction.DESCENDING;
           } else if (_this.directed > 1) {
-              _this.direction = interval.IntervalDirections.ASCENDING;
+              _this.direction = interval.Direction.ASCENDING;
           }
           // else (raise exception)
 
@@ -5443,7 +5460,7 @@
               _this.semiSimpleUndirected = _this.simpleUndirected;
           }
 
-          if (_this.direction === interval.IntervalDirections.DESCENDING) {
+          if (_this.direction === interval.Direction.DESCENDING) {
               _this.octaves = -1 * tempOctaves;
               if (tempSteps !== 1) {
                   _this.simpleDirected = -1 * tempSteps;
@@ -5483,7 +5500,7 @@
           // 2 -> 7; 3 -> 6; 8 -> 1 etc.
           _this.mod7inversion = 9 - _this.semiSimpleUndirected;
 
-          if (_this.direction === interval.IntervalDirections.DESCENDING) {
+          if (_this.direction === interval.Direction.DESCENDING) {
               _this.mod7 = _this.mod7inversion; // see chord.semitonesFromChordStep for usage...
           } else {
               _this.mod7 = _this.simpleDirected;
@@ -5645,7 +5662,7 @@
    * // 'M'
    * di.name;
    * // 'M10'
-   * di.direction == music21.interval.IntervalDirections.ASCENDING;
+   * di.direction == music21.interval.Direction.ASCENDING;
    * // true
    * di.niceName
    * // "Major Tenth"
@@ -5683,9 +5700,9 @@
               _this2.direction = generic.direction;
           } else if (interval.IntervalPerfSpecifiers.indexOf(specifier) <= interval.IntervalPerfSpecifiers.indexOf(interval.IntervalSpecifiersEnum.DIMINISHED)) {
               // diminished unisons -- very controversial
-              _this2.direction = interval.IntervalDirections.DESCENDING;
+              _this2.direction = interval.Direction.DESCENDING;
           } else {
-              _this2.direction = interval.IntervalDirections.ASCENDING;
+              _this2.direction = interval.Direction.ASCENDING;
           }
           var diatonicDirectionNiceName = interval.IntervalDirectionTerms[_this2.direction + 1];
           _this2.name = interval.IntervalPrefixSpecs[_this2.specifier] + generic.undirected.toString();
@@ -5717,7 +5734,7 @@
           }
 
           _this2.mod7inversion = _this2.invertedOrderedSpecifier + generic.mod7inversion.toString();
-          /* ( if (this.direction == interval.IntervalDirections.DESCENDING) {
+          /* ( if (this.direction == interval.Direction.DESCENDING) {
           this.mod7 = this.mod7inversion;
           } else {
           this.mod7 = this.simpleName;
@@ -5754,7 +5771,7 @@
 
               // direction should be same as original
 
-              if (this.generic.direction === interval.IntervalDirections.DESCENDING) {
+              if (this.generic.direction === interval.Direction.DESCENDING) {
                   semitones *= -1;
               }
               if (debug) {
@@ -5798,16 +5815,16 @@
           _this3.undirected = Math.abs(value);
 
           if (_this3.directed === 0) {
-              _this3.direction = interval.IntervalDirections.OBLIQUE;
+              _this3.direction = interval.Direction.OBLIQUE;
           } else if (_this3.directed === _this3.undirected) {
-              _this3.direction = interval.IntervalDirections.ASCENDING;
+              _this3.direction = interval.Direction.ASCENDING;
           } else {
-              _this3.direction = interval.IntervalDirections.DESCENDING;
+              _this3.direction = interval.Direction.DESCENDING;
           }
 
           _this3.mod12 = _this3.semitones % 12;
           _this3.simpleUndirected = _this3.undirected % 12;
-          if (_this3.direction === interval.IntervalDirections.DESCENDING) {
+          if (_this3.direction === interval.Direction.DESCENDING) {
               _this3.simpleDirected = -1 * _this3.simpleUndirected;
           } else {
               _this3.simpleDirected = _this3.simpleUndirected;
@@ -6097,7 +6114,7 @@
       var noteVals = [undefined, 0, 2, 4, 5, 7, 9, 11];
       var normalSemis = noteVals[gInt.simpleUndirected] + 12 * gInt.undirectedOctaves;
       var theseSemis = 0;
-      if (gInt.direction !== cInt.direction && gInt.direction !== interval.IntervalDirections.OBLIQUE && cInt.direction !== interval.IntervalDirections.OBLIQUE) {
+      if (gInt.direction !== cInt.direction && gInt.direction !== interval.Direction.OBLIQUE && cInt.direction !== interval.Direction.OBLIQUE) {
           // intervals like d2 and dd2 etc. (the last test doesn't matter, since -1*0 === 0, but in theory it should be there)
           theseSemis = -1 * cInt.undirected;
       } else if (gInt.undirected === 1) {
@@ -6141,6 +6158,123 @@
    */
   var scale = {};
 
+  var Scale = function (_base$Music21Object) {
+      inherits(Scale, _base$Music21Object);
+
+      function Scale() {
+          classCallCheck(this, Scale);
+
+          var _this = possibleConstructorReturn(this, (Scale.__proto__ || Object.getPrototypeOf(Scale)).call(this));
+
+          _this.classes.push('Scale');
+          _this.type = 'Scale';
+          return _this;
+      }
+
+      createClass(Scale, [{
+          key: 'name',
+          get: function get() {
+              return this.type;
+          }
+      }, {
+          key: 'isConcrete',
+          get: function get() {
+              return false;
+          }
+      }]);
+      return Scale;
+  }(base.Music21Object);
+
+  var AbstractScale = function (_Scale) {
+      inherits(AbstractScale, _Scale);
+
+      function AbstractScale() {
+          classCallCheck(this, AbstractScale);
+
+          var _this2 = possibleConstructorReturn(this, (AbstractScale.__proto__ || Object.getPrototypeOf(AbstractScale)).call(this));
+
+          _this2.classes.push('AbstractScale');
+          _this2._net = []; // simplified -- no IntervalNetwork, just list of intervals
+          _this2.tonicDegree = 1;
+          _this2.octaveDuplicating = true;
+          _this2.deterministic = true;
+          _this2._alteredDegrees = {};
+          return _this2;
+      }
+
+      createClass(AbstractScale, [{
+          key: 'equals',
+          value: function equals(other) {
+              if (common.arrayEquals(this.classes, other.classes) && this.tonicDegree === other.tonicDegree && common.arrayEquals(this._net, other._net)) {
+                  return true;
+              } else {
+                  return false;
+              }
+          }
+      }, {
+          key: 'buildNetworkFromPitches',
+          value: function buildNetworkFromPitches(pitchList) {
+              var pitchListReal = [];
+              var _iteratorNormalCompletion = true;
+              var _didIteratorError = false;
+              var _iteratorError = undefined;
+
+              try {
+                  for (var _iterator = pitchList[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+                      var _p = _step.value;
+
+                      if (typeof _p === 'string') {
+                          pitchListReal.push(new pitch.Pitch(_p));
+                      } else if (_p.classes.includes('Note')) {
+                          pitchListReal.push(_p.pitch);
+                      } else {
+                          pitchListReal.push(_p);
+                      }
+                  }
+              } catch (err) {
+                  _didIteratorError = true;
+                  _iteratorError = err;
+              } finally {
+                  try {
+                      if (!_iteratorNormalCompletion && _iterator.return) {
+                          _iterator.return();
+                      }
+                  } finally {
+                      if (_didIteratorError) {
+                          throw _iteratorError;
+                      }
+                  }
+              }
+
+              pitchList = pitchListReal;
+
+              pLast = pitchList[pitchList.length - 1];
+              if (pLast.name === pitchList[0]) {
+                  var p = pitchList[0].clone(true);
+                  if (pLast.ps > pitchList[0]) {
+                      // ascending;
+                      while (p.ps < pLast.ps) {
+                          p.octave += 1;
+                      }
+                  } else {
+                      while (p.ps < pLast.ps) {
+                          p.octave += -1;
+                      }
+                  }
+                  pitchList.push(p);
+              }
+
+              var intervalList = [];
+              for (var i = 0; i < pitchList.length - 1; i++) {
+                  var thisInterval = new interval.Interval(pitchList[i], pitchList[i + 1]);
+                  intervalList.push(thisInterval);
+              }
+              this._net = intervalList;
+          }
+      }]);
+      return AbstractScale;
+  }(Scale);
+
   /**
    * Function, not class
    *
@@ -6150,6 +6284,8 @@
    *     generally 'M' (major) or 'm' (minor) describing the seconds.
    * @returns {Array<music21.pitch.Pitch>} an octave of scale objects.
    */
+
+
   scale.SimpleDiatonicScale = function SimpleDiatonicScale(tonic, scaleSteps) {
       if (tonic === undefined) {
           tonic = new pitch.Pitch('C4');
@@ -6246,6 +6382,17 @@
       lydian: 1,
       mixolydian: -1,
       locrian: -5
+  };
+
+  key.convertKeyStringToMusic21KeyString = function convertKeyStringToMusic21KeyString(textString) {
+      if (textString === 'bb') {
+          textString = 'b-';
+      } else if (textString === 'Bb') {
+          textString = 'B-';
+      } else if (textString.endsWith('b') && !textString.startsWith('b')) {
+          textString = textString.replace(/b$/, '-');
+      }
+      return textString;
   };
 
   /**
@@ -14988,6 +15135,319 @@
       }
   };
 
+  var intervalCache = [];
+
+  var MotionType = {
+      antiParallel: 'Anti-Parallel',
+      contrary: 'Contrary',
+      noMotion: 'No Motion',
+      oblique: 'Oblique',
+      parallel: 'Parallel',
+      similar: 'Similar'
+  };
+
+  var VoiceLeadingQuartet = function (_Music21Object) {
+      inherits(VoiceLeadingQuartet, _Music21Object);
+
+      function VoiceLeadingQuartet(v1n1, v1n2, v2n1, v2n2, analyticKey) {
+          classCallCheck(this, VoiceLeadingQuartet);
+
+          var _this = possibleConstructorReturn(this, (VoiceLeadingQuartet.__proto__ || Object.getPrototypeOf(VoiceLeadingQuartet)).call(this));
+
+          _this.classes.push('VoiceLeadingQuartet');
+          if (!intervalCache.length) {
+              intervalCache.push(new interval.Interval('P1'));
+              intervalCache.push(new interval.Interval('P5'));
+              intervalCache.push(new interval.Interval('P8'));
+          }
+          _this.unison = intervalCache[0];
+          _this.fifth = intervalCache[1];
+          _this.octave = intervalCache[2];
+
+          // this._v1n1 = undefined;
+          // this._v1n2 = undefined;
+          // this._v2n1 = undefined;
+          // this._v2n2 = undefined;
+
+          _this.v1n1 = v1n1;
+          _this.v1n2 = v1n2;
+          _this.v2n1 = v2n1;
+          _this.v2n2 = v2n2;
+
+          _this.vIntervals = [];
+          _this.hIntervals = [];
+
+          _this._key = undefined;
+          if (analyticKey !== undefined) {
+              _this.key = analyticKey;
+          }
+          if (v1n1 !== undefined && v1n2 !== undefined && v2n1 !== undefined && v2n2 !== undefined) {
+              _this._findIntervals();
+          }
+          return _this;
+      }
+
+      createClass(VoiceLeadingQuartet, [{
+          key: '_findIntervals',
+          value: function _findIntervals() {
+              this.vIntervals.push(new interval.Interval(this.v1n1, this.v2n1));
+              this.vIntervals.push(new interval.Interval(this.v1n2, this.v2n2));
+              this.hIntervals.push(new interval.Interval(this.v1n1, this.v1n2));
+              this.hIntervals.push(new interval.Interval(this.v2n1, this.v2n2));
+          }
+      }, {
+          key: 'motionType',
+          value: function motionType() {
+              if (this.obliqueMotion()) {
+                  return MotionType.oblique;
+              } else if (this.parallelMotion()) {
+                  return MotionType.parallel;
+              } else if (this.similarMotion()) {
+                  return MotionType.similar;
+              } else if (this.contraryMotion()) {
+                  return MotionType.contrary;
+              } else if (this.antiParallelMotion()) {
+                  return MotionType.antiParallel;
+              } else if (this.noMotion()) {
+                  return MotionType.noMotion;
+              }
+              return undefined;
+          }
+      }, {
+          key: 'noMotion',
+          value: function noMotion() {
+              var _iteratorNormalCompletion = true;
+              var _didIteratorError = false;
+              var _iteratorError = undefined;
+
+              try {
+                  for (var _iterator = this.hIntervals[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+                      var iV = _step.value;
+
+                      if (iV.name !== 'P1') {
+                          return false;
+                      }
+                  }
+              } catch (err) {
+                  _didIteratorError = true;
+                  _iteratorError = err;
+              } finally {
+                  try {
+                      if (!_iteratorNormalCompletion && _iterator.return) {
+                          _iterator.return();
+                      }
+                  } finally {
+                      if (_didIteratorError) {
+                          throw _iteratorError;
+                      }
+                  }
+              }
+
+              return true;
+          }
+      }, {
+          key: 'obliqueMotion',
+          value: function obliqueMotion() {
+              if (this.noMotion()) {
+                  return false;
+              }
+
+              var _iteratorNormalCompletion2 = true;
+              var _didIteratorError2 = false;
+              var _iteratorError2 = undefined;
+
+              try {
+                  for (var _iterator2 = this.hIntervals[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+                      var iH = _step2.value;
+
+                      if (iH.name === 'P1') {
+                          return true;
+                      }
+                  }
+              } catch (err) {
+                  _didIteratorError2 = true;
+                  _iteratorError2 = err;
+              } finally {
+                  try {
+                      if (!_iteratorNormalCompletion2 && _iterator2.return) {
+                          _iterator2.return();
+                      }
+                  } finally {
+                      if (_didIteratorError2) {
+                          throw _iteratorError2;
+                      }
+                  }
+              }
+
+              return false;
+          }
+      }, {
+          key: 'similarMotion',
+          value: function similarMotion() {
+              if (this.noMotion()) {
+                  return false;
+              }
+
+              if (this.hIntervals[0].direction === this.hIntervals[1].direction) {
+                  return true;
+              } else {
+                  return false;
+              }
+          }
+      }, {
+          key: 'parallelMotion',
+          value: function parallelMotion(requiredInterval) {
+              if (!this.similarMotion()) {
+                  return false;
+              }
+              if (this.vIntervals[0].directedSimpleName !== this.vIntervals[1].directedSimpleName) {
+                  return false;
+              }
+              if (requiredInterval === undefined) {
+                  return true;
+              }
+              if (typeof requiredInterval === 'string') {
+                  requiredInterval = new interval.Interval(requiredInterval);
+              }
+              if (this.vIntervals[0].simpleName === requiredInterval.simpleName) {
+                  return true;
+              } else {
+                  return false;
+              }
+          }
+      }, {
+          key: 'contraryMotion',
+          value: function contraryMotion() {
+              if (this.noMotion()) {
+                  return false;
+              }
+              if (this.obliqueMotion()) {
+                  return false;
+              }
+              if (this.hIntervals[0].direction === this.hIntervals[1].direction) {
+                  return false;
+              } else {
+                  return true;
+              }
+          }
+      }, {
+          key: 'outwardContraryMotion',
+          value: function outwardContraryMotion() {
+              return this.contraryMotion() && this.hIntervals[0].direction === interval.Direction.ASCENDING;
+          }
+      }, {
+          key: 'inwardContraryMotion',
+          value: function inwardContraryMotion() {
+              return this.contraryMotion() && this.hIntervals[0].direction === interval.Direction.DESCENDING;
+          }
+      }, {
+          key: 'antiParallelMotion',
+          value: function antiParallelMotion(simpleName) {
+              if (!this.contraryMotion()) {
+                  return false;
+              }
+              if (this.vIntervals[0].simpleName !== this.vIntervals[1].simpleName) {
+                  return false;
+              }
+              if (simpleName === undefined) {
+                  return true;
+              }
+              if (typeof simpleName === 'string') {
+                  if (this.vIntervals[0].simpleName === simpleName) {
+                      return true;
+                  } else {
+                      return false;
+                  }
+              } else if (this.vIntervals[0].simpleName === simpleName.simpleName) {
+                  return true;
+              } else {
+                  return false;
+              }
+          }
+      }, {
+          key: 'parallelInterval',
+          value: function parallelInterval(thisInterval) {
+              if (!(this.parallelMotion() || this.antiParallelMotion())) {
+                  return false;
+              }
+              if (typeof thisInterval === 'string') {
+                  thisInterval = new interval.Interval(thisInterval);
+              }
+
+              if (this.vIntervals[0].semiSimpleName === thisInterval.semiSimpleName) {
+                  return true;
+              } else {
+                  return false;
+              }
+          }
+      }, {
+          key: 'parallelFifth',
+          value: function parallelFifth() {
+              return this.parallelInterval(this.fifth);
+          }
+      }, {
+          key: 'parallelOctave',
+          value: function parallelOctave() {
+              return this.parallelInterval(this.octave);
+          }
+      }, {
+          key: 'parallelUnison',
+          value: function parallelUnison() {
+              return this.parallelInterval(this.unison);
+          }
+      }, {
+          key: 'parallelUnisonOrOctave',
+          value: function parallelUnisonOrOctave() {
+              return this.parallelUnison() || this.parallelOctave();
+          }
+      }, {
+          key: 'hiddenInterval',
+          value: function hiddenInterval(thisInterval) {
+              if (this.parallelMotion()) {
+                  return false;
+              }
+              if (!this.similarMotion()) {
+                  return false;
+              }
+
+              if (typeof thisInterval === 'string') {
+                  thisInterval = new interval.Interval(thisInterval);
+              }
+              if (this.vIntervals[1].simpleName === thisInterval.simpleName) {
+                  return true;
+              } else {
+                  return false;
+              }
+          }
+      }, {
+          key: 'hiddenFifth',
+          value: function hiddenFifth() {
+              return this.hiddenInterval(this.fifth);
+          }
+      }, {
+          key: 'hiddenOctave',
+          value: function hiddenOctave() {
+              return this.hiddenInterval(this.octave);
+          }
+      }, {
+          key: 'key',
+          get: function get() {
+              return this._key;
+          },
+          set: function set(keyValue) {
+              if (typeof keyValue === 'string') {
+                  keyValue = new key.Key(key.convertKeyStringToMusic21KeyString(keyValue));
+              }
+              this._key = keyValue;
+          }
+      }]);
+      return VoiceLeadingQuartet;
+  }(Music21Object);
+
+  var voiceLeading = {
+      VoiceLeadingQuartet: VoiceLeadingQuartet
+  };
+
   /**
    * music21j -- Javascript reimplementation of Core music21p features.
    * music21/webmidi -- webmidi or wrapper around the Jazz Plugin
@@ -15767,6 +16227,7 @@
       tempo: tempo,
       tie: _tie,
       tinyNotation: tinyNotation,
+      voiceLeading: voiceLeading,
       vfShow: vfShow,
       webmidi: webmidi,
       widgets: widgets

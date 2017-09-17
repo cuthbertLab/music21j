@@ -2,6 +2,17 @@ import * as QUnit from 'qunit';
 import music21 from '../../src/loadModules';
 
 export default function tests() {
+    QUnit.test('music21.key.convertKeyStringToMusic21KeyString', assert => {
+        const conv = music21.key.convertKeyStringToMusic21KeyString;
+        assert.equal(conv('A'), 'A', 'normal string passed');
+        assert.equal(conv('a-'), 'a-', 'normal string passed');
+        assert.equal(conv('Bb'), 'B-', 'Bb passed');
+        assert.equal(conv('bb'), 'b-', 'bb passed');
+        assert.equal(conv('b'), 'b', 'b minor passed');
+        assert.equal(conv('B'), 'B', 'B major passed');
+        assert.equal(conv('Eb'), 'E-', 'E- major passed');
+    });
+
     QUnit.test('music21.key.Key', assert => {
         const testSharps = [
             // sharps, mode, given name, given mode

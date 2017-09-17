@@ -41,6 +41,19 @@ key.modeSharpsAlter = {
     locrian: -5,
 };
 
+key.convertKeyStringToMusic21KeyString = function convertKeyStringToMusic21KeyString(
+    textString
+) {
+    if (textString === 'bb') {
+        textString = 'b-';
+    } else if (textString === 'Bb') {
+        textString = 'B-';
+    } else if (textString.endsWith('b') && !textString.startsWith('b')) {
+        textString = textString.replace(/b$/, '-');
+    }
+    return textString;
+};
+
 /**
  * @class KeySignature
  * @memberof music21.key

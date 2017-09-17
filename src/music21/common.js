@@ -269,6 +269,23 @@ common.jQueryEventCopy = function jQueryEventCopy(eventObj, from, to) {
         }
     });
 };
+
+common.arrayEquals = function arrayEquals(a1, a2) {
+    if (a1.length !== a2.length) {
+        return false;
+    }
+    for (let i = 0; i < a1.length; i++) {
+        if (a1[i] instanceof Array && a2[i] instanceof Array) {
+            if (!arrayEquals(a1[i], a2[i])) {
+                return false;
+            }
+        } else if (a1[i] !== a2[i]) {
+            return false;
+        }
+    }
+    return true;
+};
+
 // common.walk = function (obj, callback, callList, seen, numSeen) {
 // if (depth == undefined) {
 // depth = 0;

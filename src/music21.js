@@ -245,10 +245,11 @@ if ((Object.defineProperties === undefined) && warnBanner) {
     newDiv.setAttribute('style',
         'font-size: 40px; padding: 40px 20px 40px 20px; margin-top: 20px; line-height: 50px; width: 500px; height: 400px; color: #ffffff; background-color: #900000;');
     var textInside = document.createTextNode(
-        'Unfortunately, IE10 or lower, Safari 7, and other out-of-date browsers do not work with music21j. Please upgrade your browser w/ the link above.');
+        'Unfortunately, IE, Edge 12, Safari 9, and other out-of-date browsers do not work well with music21j. Please upgrade your browser w/ the link above.');
     newDiv.appendChild(textInside);
     document.body.appendChild(newDiv);
     var $buoop  = {
+        vs: {i: 12, f: -4, o: -4, s: 9, c: -4},
         test: false,
         reminder: 0,
     }; // used by update.js...
