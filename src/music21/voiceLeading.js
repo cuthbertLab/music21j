@@ -1,5 +1,6 @@
 import { interval } from './interval.js';
 import { key } from './key.js';
+import { note } from './note.js';
 
 import { Music21Object } from './base.js';
 
@@ -27,10 +28,10 @@ class VoiceLeadingQuartet extends Music21Object {
         this.fifth = intervalCache[1];
         this.octave = intervalCache[2];
 
-        // this._v1n1 = undefined;
-        // this._v1n2 = undefined;
-        // this._v2n1 = undefined;
-        // this._v2n2 = undefined;
+        this._v1n1 = undefined;
+        this._v1n2 = undefined;
+        this._v2n1 = undefined;
+        this._v2n2 = undefined;
 
         this.v1n1 = v1n1;
         this.v1n2 = v1n2;
@@ -53,6 +54,46 @@ class VoiceLeadingQuartet extends Music21Object {
             this._findIntervals();
         }
     }
+
+    _setVoiceNote(value, which) {
+        if (value === undefined) {
+            this[which] = value;
+        } else if (typeof value === 'string') {
+            this[which] = new note.Note(value);
+        } else if (value.classes.includes('Note')) {
+            this[which] = value;
+        } else {
+            const n = new note.Note(value.nameWithOctave);
+            n.duration.quarterLength = 0.0;
+            this[which] = n;
+        }
+    }
+
+    get v1n1() {
+        return this._v1n1;
+    }
+    set v1n1(value) {
+        this._setVoiceNote(value, '_v1n1');
+    }
+    get v1n2() {
+        return this._v1n2;
+    }
+    set v1n2(value) {
+        this._setVoiceNote(value, '_v1n2');
+    }
+    get v2n1() {
+        return this._v2n1;
+    }
+    set v2n1(value) {
+        this._setVoiceNote(value, '_v2n1');
+    }
+    get v2n2() {
+        return this._v2n2;
+    }
+    set v2n2(value) {
+        this._setVoiceNote(value, '_v2n2');
+    }
+
     get key() {
         return this._key;
     }
@@ -252,6 +293,72 @@ class VoiceLeadingQuartet extends Music21Object {
 
     hiddenOctave() {
         return this.hiddenInterval(this.octave);
+    }
+
+    /**
+     * isProperResolution - Checks whether the voice-leading quartet resolves correctly according to standard
+     *         counterpoint rules. If the first harmony is dissonant (d5, A4, or m7) it checks
+     *         that these are correctly resolved. If the first harmony is consonant, True is returned.
+     *
+     *         The key parameter should be specified to check for motion in the bass from specific
+     *         note degrees. If it is not set, then no checking for scale degrees takes place.
+     *
+     *         Diminished Fifth: in by contrary motion to a third, with 7 resolving up to 1 in the bass
+     *         Augmented Fourth: out by contrary motion to a sixth, with chordal seventh resolving
+     *         down to a third in the bass.
+     *         Minor Seventh: In to a third with a leap form 5 to 1 in the bass
+     *
+     * @return {boolean}  true if proper or rules do not apply; false if improper
+     */
+
+    isProperResolution() {
+        if (this.noMotion()) {
+            return true;
+        }
+        let scale;
+        let n1degree;
+        let n2degree;
+        if (this.key !== undefined) {
+            scale = this.key.getScale();
+            n1degree = scale.getScaleDegreeFromPitch(this.v2n1);
+            n2degree = scale.getScaleDegreeFromPitch(this.v2n2);
+        }
+        const firstHarmony = this.vIntervals[0].simpleName;
+        const secondHarmony = this.vIntervals[1].generic.simpleUndirected;
+
+        if (firstHarmony === 'P4') {
+            if (this.v1n1.pitch.ps >= this.v1n2.pitch.ps) {
+                return true;
+            } else {
+                return false;
+            }
+        } else if (firstHarmony === 'd5') {
+            if (scale !== undefined && n1degree !== 7) {
+                return true;
+            }
+            if (scale !== undefined && n2degree !== 1) {
+                return false;
+            }
+            return this.inwardContraryMotion() && secondHarmony === 3;
+        } else if (firstHarmony === 'A4') {
+            if (scale !== undefined && n1degree !== 4) {
+                return true;
+            }
+            if (scale !== undefined && n2degree !== 3) {
+                return false;
+            }
+            return this.outwardContraryMotion() && secondHarmony === 6;
+        } else if (firstHarmony === 'm7') {
+            if (scale !== undefined && n1degree !== 5) {
+                return true;
+            }
+            if (scale !== undefined && n2degree !== 1) {
+                return false;
+            }
+            return this.inwardContraryMotion() && secondHarmony === 3;
+        } else {
+            return true;
+        }
     }
 }
 

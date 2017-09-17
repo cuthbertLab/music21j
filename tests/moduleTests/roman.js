@@ -7,7 +7,7 @@ export default function tests() {
         let rn1 = new music21.roman.RomanNumeral(t1, 'F');
         assert.equal(rn1.scaleDegree, 4, 'test scale dgree of F IV');
         const scale = rn1.scale;
-        assert.equal(scale[0].name, 'F', 'test scale is F');
+        assert.equal(scale.tonic.name, 'F', 'test scale is F');
         assert.equal(rn1.root.name, 'B-', 'test root of F IV');
         assert.equal(rn1.impliedQuality, 'major', 'test quality is major');
         assert.equal(rn1.pitches[0].name, 'B-', 'test pitches[0] == B-');
@@ -61,7 +61,7 @@ export default function tests() {
         const rn1 = new music21.roman.RomanNumeral(t1, 'F');
         assert.equal(rn1.scaleDegree, 4, 'test scale dgree of F IV');
         const scale = rn1.scale;
-        assert.equal(scale[0].name, 'F', 'test scale is F');
+        assert.equal(scale.tonic.name, 'F', 'test scale is F');
         assert.equal(rn1.root.name, 'B-', 'test root of F IV');
         assert.equal(rn1.impliedQuality, 'major', 'test quality is major');
         assert.equal(rn1.pitches[0].name, 'B-', 'test pitches[0] == B-');

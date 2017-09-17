@@ -1,5 +1,5 @@
 /**
- * music21j 0.9.0 built on  * 2017-09-16.
+ * music21j 0.9.0 built on  * 2017-09-17.
  * Copyright (c) 2013-2016 Michael Scott Cuthbert and cuthbertLab
  * BSD License, see LICENSE
  *
@@ -6135,6 +6135,270 @@
 
   /**
    * music21j -- Javascript reimplementation of Core music21p features.
+   * music21/roman -- roman.RomanNumberal -- Chord subclass
+   *
+   * Copyright (c) 2013-16, Michael Scott Cuthbert and cuthbertLab
+   * Based on music21 (=music21p), Copyright (c) 2006–16, Michael Scott Cuthbert and cuthbertLab
+   *
+   */
+  /**
+   * Roman numeral module. See {@link music21.roman} namespace
+   *
+   * @exports music21/roman
+   */
+  /**
+   * music21.roman -- namespace for dealing with RomanNumeral analysis.
+   *
+   * @namespace music21.roman
+   * @memberof music21
+   * @requires music21/chord
+   * @requires music21/key
+   * @requires music21/pitch
+   * @requires music21/interval
+   */
+  var roman = {};
+
+  /**
+   * maps an index number to a roman numeral in lowercase
+   *
+   * @memberof music21.roman
+   * @example
+   * music21.roman.romanToNumber[4]
+   * // 'iv'
+   */
+  roman.romanToNumber = [undefined, 'i', 'ii', 'iii', 'iv', 'v', 'vi', 'vii'];
+
+  /**
+   * Represents a RomanNumeral.  By default, capital Roman Numerals are
+   * major chords; lowercase are minor.
+   *
+   * see music21p's roman module for better instructions.
+   *
+   * current limitations:
+   *
+   * no inversions
+   * no numeric figures except 7
+   * no d7 = dominant 7
+   * no frontAlterationAccidentals
+   * no secondary dominants
+   * no Aug6th chords
+   *
+   * @class RomanNumeral
+   * @memberof music21.roman
+   * @extends music21.chord.Chord
+   * @param {string} figure - the roman numeral as a string, e.g., 'IV', 'viio', 'V7'
+   * @param {string|music21.key.Key} [keyStr='C']
+   * @property {Array<music21.pitch.Pitch>} scale - (readonly) returns the scale associated with the roman numeral
+   * @property {music21.key.Key} key - the key associated with the RomanNumeral (not allowed to be undefined yet)
+   * @property {string} figure - the figure as passed in
+   * @property {string} degreeName - the name associated with the scale degree, such as "mediant" etc., scale 7 will be "leading tone" or "subtonic" appropriately
+   * @property {Int} scaleDegree
+   * @property {string} impliedQuality - "major", "minor", "diminished", "augmented"
+   * @property {Array<music21.pitch.Pitch>} pitches - RomanNumerals are Chord objects, so .pitches will work for them also.
+   */
+  var RomanNumeral = function (_chord$Chord) {
+      inherits(RomanNumeral, _chord$Chord);
+
+      function RomanNumeral(figure, keyStr) {
+          classCallCheck(this, RomanNumeral);
+
+          var _this = possibleConstructorReturn(this, (RomanNumeral.__proto__ || Object.getPrototypeOf(RomanNumeral)).call(this));
+
+          _this.classes.push('RomanNumeral');
+          _this.figure = figure;
+          _this._scale = undefined;
+          _this._key = undefined;
+          _this.key = keyStr;
+          var currentFigure = figure;
+
+          var impliedQuality = 'major';
+          var lowercase = currentFigure.toLowerCase();
+          if (currentFigure.match('/o')) {
+              impliedQuality = 'half-diminished';
+              currentFigure = currentFigure.replace('/o', '');
+          } else if (currentFigure.match('o')) {
+              impliedQuality = 'diminished';
+              currentFigure = currentFigure.replace('o', '');
+          } else if (currentFigure === lowercase) {
+              impliedQuality = 'minor';
+          }
+
+          var numbersArr = currentFigure.match(/\d+/);
+          _this.numbers = undefined;
+          if (numbersArr != null) {
+              currentFigure = currentFigure.replace(/\d+/, '');
+              _this.numbers = parseInt(numbersArr[0]);
+          }
+
+          var scaleDegree = roman.romanToNumber.indexOf(currentFigure.toLowerCase());
+          if (scaleDegree === -1) {
+              throw new Music21Exception('Cannot make a romanNumeral from ' + currentFigure);
+          }
+          _this.scaleDegree = scaleDegree;
+          _this.root = _this.scale.pitchFromDegree(_this.scaleDegree);
+
+          if (_this.key.mode === 'minor' && (_this.scaleDegree === 6 || _this.scaleDegree === 7)) {
+              if (['minor', 'diminished', 'half-diminished'].indexOf(impliedQuality) !== -1) {
+                  var raiseTone = new interval.Interval('A1');
+                  _this.root = raiseTone.transposePitch(_this.root);
+                  if (debug) {
+                      console.log('raised root because minor/dim on scaleDegree 6 or 7');
+                  }
+              }
+          }
+
+          /* temp hack */
+          if (_this.numbers === 7) {
+              if (scaleDegree === 5 && impliedQuality === 'major') {
+                  impliedQuality = 'dominant-seventh';
+              } else {
+                  impliedQuality += '-seventh';
+              }
+          }
+
+          _this.impliedQuality = impliedQuality;
+          _this.updatePitches();
+          return _this;
+      }
+
+      createClass(RomanNumeral, [{
+          key: 'updatePitches',
+
+
+          /**
+           * Update the .pitches array.  Called at instantiation, but not automatically afterwards.
+           *
+           * @memberof music21.roman.RomanNumeral
+           */
+          value: function updatePitches() {
+              var impliedQuality = this.impliedQuality;
+              var chordSpacing = chord.chordDefinitions[impliedQuality];
+              var chordPitches = [this.root];
+              var lastPitch = this.root;
+              for (var j = 0; j < chordSpacing.length; j++) {
+                  // console.log('got them', lastPitch);
+                  var thisTransStr = chordSpacing[j];
+                  var thisTrans = new interval.Interval(thisTransStr);
+                  var nextPitch = thisTrans.transposePitch(lastPitch);
+                  chordPitches.push(nextPitch);
+                  lastPitch = nextPitch;
+              }
+              this.pitches = chordPitches;
+          }
+
+          /**
+           * Gives a string display.  Note that since inversion is not yet supported
+           * it needs to be given separately.
+           *
+           * Inverting 7th chords does not work.
+           *
+           * @memberof music21.roman.RomanNumeral
+           * @param {string} displayType - ['roman', 'bassName', 'nameOnly', other]
+           * @param {Int} [inversion=0]
+           * @returns {String}
+           */
+
+      }, {
+          key: 'asString',
+          value: function asString(displayType, inversion) {
+              var keyObj = this.key;
+              var tonic = keyObj.tonic;
+              var mode = keyObj.mode;
+
+              if (inversion === undefined) {
+                  inversion = 0;
+              }
+              var inversionName = '';
+              if (inversion === 1) {
+                  if (displayType === 'roman') {
+                      inversionName = '6';
+                  } else {
+                      inversionName = ' (first inversion)';
+                  }
+              } else if (inversion === 2) {
+                  if (displayType === 'roman') {
+                      inversionName = '64';
+                  } else {
+                      inversionName = ' (second inversion)';
+                  }
+              }
+              var fullChordName = void 0;
+              var connector = ' in ';
+              var suffix = '';
+              if (displayType === 'roman') {
+                  fullChordName = this.figure;
+              } else if (displayType === 'nameOnly') {
+                  // use only with only choice being TONIC
+                  fullChordName = '';
+                  connector = '';
+                  suffix = ' triad';
+              } else if (displayType === 'bassName') {
+                  fullChordName = this.bass().name.replace(/-/, 'b');
+                  connector = ' in ';
+                  suffix = '';
+              } else {
+                  // "default" submediant, etc...
+                  fullChordName = this.degreeName;
+                  if (this.numbers !== undefined) {
+                      fullChordName += ' ' + this.numbers.toString();
+                  }
+              }
+              var tonicDisplay = tonic.replace(/-/, 'b');
+              if (mode === 'minor') {
+                  tonicDisplay = tonicDisplay.toLowerCase();
+              }
+              var chordStr = fullChordName + inversionName + connector + tonicDisplay + ' ' + mode + suffix;
+              return chordStr;
+          }
+      }, {
+          key: 'scale',
+          get: function get() {
+              if (this._scale !== undefined) {
+                  return this._scale;
+              } else {
+                  this._scale = this.key.getScale();
+                  return this._scale;
+              }
+          }
+      }, {
+          key: 'key',
+          get: function get() {
+              return this._key;
+          },
+          set: function set(keyStr) {
+              if (typeof keyStr === 'string') {
+                  this._key = new key.Key(keyStr);
+              } else if (typeof keyStr === 'undefined') {
+                  this._key = new key.Key('C');
+              } else {
+                  this._key = keyStr;
+              }
+          }
+      }, {
+          key: 'degreeName',
+          get: function get() {
+              if (this.scaleDegree < 7) {
+                  return [undefined, 'Tonic', 'Supertonic', 'Mediant', 'Subdominant', 'Dominant', 'Submediant'][this.scaleDegree];
+              } else {
+                  var tonicPitch = new pitch.Pitch(this.key.tonic);
+                  var diffRootToTonic = (tonicPitch.ps - this.root.ps) % 12;
+                  if (diffRootToTonic < 0) {
+                      diffRootToTonic += 12;
+                  }
+                  if (diffRootToTonic === 1) {
+                      return 'Leading-tone';
+                  } else {
+                      return 'Subtonic';
+                  }
+              }
+          }
+      }]);
+      return RomanNumeral;
+  }(chord.Chord);
+  roman.RomanNumeral = RomanNumeral;
+
+  /**
+   * music21j -- Javascript reimplementation of Core music21p features.
    * music21/scale -- Scales
    *
    * Does not implement the full range of scales from music21p
@@ -6143,6 +6407,10 @@
    * Based on music21 (=music21p), Copyright (c) 2006–16, Michael Scott Cuthbert and cuthbertLab
    *
    */
+  // const DIRECTION_BI = 'bi';
+  // const DIRECTION_DESCENDING = 'descending';
+  // const DIRECTION_ASCENDING = 'ascending';
+
   /**
    * Scale module. See {@link music21.scale} namespace
    *
@@ -6156,8 +6424,6 @@
    * @requires music21/pitch
    * @requires music21/interval
    */
-  var scale = {};
-
   var Scale = function (_base$Music21Object) {
       inherits(Scale, _base$Music21Object);
 
@@ -6199,6 +6465,7 @@
           _this2.octaveDuplicating = true;
           _this2.deterministic = true;
           _this2._alteredDegrees = {};
+          _this2._oneOctaveRealizationCache = undefined;
           return _this2;
       }
 
@@ -6271,9 +6538,434 @@
               }
               this._net = intervalList;
           }
+      }, {
+          key: 'getDegreeMaxUnique',
+          value: function getDegreeMaxUnique() {
+              return this._net.length;
+          }
+      }, {
+          key: 'getRealization',
+          value: function getRealization(pitchObj, unused_stepOfPitch, unused_minPitch, unused_maxPitch, unused_direction, unused_reverse) {
+              // if (direction === undefined) {
+              //     direction = DIRECTION_ASCENDING;
+              // }
+              // if (stepOfPitch === undefined) {
+              //     stepOfPitch = 1;
+              // }
+              if (typeof pitchObj === 'string') {
+                  pitchObj = new pitch.Pitch(pitchObj);
+              } else {
+                  pitchObj = pitchObj.clone(true);
+              }
+              var post = [pitchObj];
+              var _iteratorNormalCompletion2 = true;
+              var _didIteratorError2 = false;
+              var _iteratorError2 = undefined;
+
+              try {
+                  for (var _iterator2 = this._net[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+                      var intV = _step2.value;
+
+                      pitchObj = intV.transposePitch(pitchObj);
+                      post.push(pitchObj);
+                  }
+              } catch (err) {
+                  _didIteratorError2 = true;
+                  _iteratorError2 = err;
+              } finally {
+                  try {
+                      if (!_iteratorNormalCompletion2 && _iterator2.return) {
+                          _iterator2.return();
+                      }
+                  } finally {
+                      if (_didIteratorError2) {
+                          throw _iteratorError2;
+                      }
+                  }
+              }
+
+              return post;
+          }
+      }, {
+          key: 'getPitchFromNodeDegree',
+          value: function getPitchFromNodeDegree(pitchReference, unused_nodeName, nodeDegreeTarget) {
+              var zeroIndexDegree = nodeDegreeTarget - 1;
+              for (var i = 0; i < zeroIndexDegree; i++) {
+                  var thisIntv = this._net[i % this._net.length];
+                  pitchReference = thisIntv.transposePitch(pitchReference);
+              }
+              return pitchReference;
+          }
+      }, {
+          key: 'getRelativeNodeDegree',
+          value: function getRelativeNodeDegree(pitchReference, unused_nodeName, pitchTarget, unused_comparisonAttribute, unused_direction) {
+              if (typeof pitchTarget === 'string') {
+                  pitchTarget = new pitch.Pitch(pitchTarget);
+              }
+              var realizedPitches = void 0;
+              if (this._oneOctaveRealizationCache !== undefined) {
+                  realizedPitches = this._oneOctaveRealizationCache;
+              } else {
+                  realizedPitches = this.getRealization(pitchReference);
+                  this._oneOctaveRealizationCache = realizedPitches;
+              }
+              var realizedNames = [];
+              var _iteratorNormalCompletion3 = true;
+              var _didIteratorError3 = false;
+              var _iteratorError3 = undefined;
+
+              try {
+                  for (var _iterator3 = realizedPitches[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+                      var p = _step3.value;
+
+                      realizedNames.push(p.name);
+                  }
+              } catch (err) {
+                  _didIteratorError3 = true;
+                  _iteratorError3 = err;
+              } finally {
+                  try {
+                      if (!_iteratorNormalCompletion3 && _iterator3.return) {
+                          _iterator3.return();
+                      }
+                  } finally {
+                      if (_didIteratorError3) {
+                          throw _iteratorError3;
+                      }
+                  }
+              }
+
+              var realizedIndex = realizedNames.indexOf(pitchTarget.name);
+              if (realizedIndex === -1) {
+                  return undefined;
+              } else {
+                  return realizedIndex + 1;
+              }
+          }
       }]);
       return AbstractScale;
   }(Scale);
+
+  var AbstractDiatonicScale = function (_AbstractScale) {
+      inherits(AbstractDiatonicScale, _AbstractScale);
+
+      function AbstractDiatonicScale(mode) {
+          classCallCheck(this, AbstractDiatonicScale);
+
+          var _this3 = possibleConstructorReturn(this, (AbstractDiatonicScale.__proto__ || Object.getPrototypeOf(AbstractDiatonicScale)).call(this));
+
+          _this3.classes.push('AbstractDiatonicScale');
+          _this3.type = 'Abstract diatonic';
+          _this3.tonicDegree = undefined;
+          _this3.dominantDegree = undefined;
+          _this3.octaveDuplicating = true;
+          _this3._buildNetwork(mode);
+          return _this3;
+      }
+
+      createClass(AbstractDiatonicScale, [{
+          key: '_buildNetwork',
+          value: function _buildNetwork(mode) {
+              var srcList = ['M2', 'M2', 'm2', 'M2', 'M2', 'M2', 'm2'];
+              var intervalList = void 0;
+              this.tonicDegree = 1;
+              this.dominantDegree = 5;
+              if (['major', 'ionian', undefined].includes(mode)) {
+                  intervalList = srcList;
+                  this.relativeMajorDegree = 1;
+                  this.relativeMinorDegree = 6;
+              } else if (['minor', 'aeolian'].includes(mode)) {
+                  var _intervalList;
+
+                  intervalList = srcList.slice(5, 7);
+                  (_intervalList = intervalList).push.apply(_intervalList, toConsumableArray(srcList.slice(0, 5)));
+                  this.relativeMajorDegree = 3;
+                  this.relativeMinorDegree = 1;
+              }
+              this._net = [];
+              var _iteratorNormalCompletion4 = true;
+              var _didIteratorError4 = false;
+              var _iteratorError4 = undefined;
+
+              try {
+                  for (var _iterator4 = intervalList[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
+                      var intVStr = _step4.value;
+
+                      this._net.push(new interval.Interval(intVStr));
+                  }
+              } catch (err) {
+                  _didIteratorError4 = true;
+                  _iteratorError4 = err;
+              } finally {
+                  try {
+                      if (!_iteratorNormalCompletion4 && _iterator4.return) {
+                          _iterator4.return();
+                      }
+                  } finally {
+                      if (_didIteratorError4) {
+                          throw _iteratorError4;
+                      }
+                  }
+              }
+          }
+      }]);
+      return AbstractDiatonicScale;
+  }(AbstractScale);
+
+  var AbstractHarmonicMinorScale = function (_AbstractScale2) {
+      inherits(AbstractHarmonicMinorScale, _AbstractScale2);
+
+      function AbstractHarmonicMinorScale() {
+          classCallCheck(this, AbstractHarmonicMinorScale);
+
+          var _this4 = possibleConstructorReturn(this, (AbstractHarmonicMinorScale.__proto__ || Object.getPrototypeOf(AbstractHarmonicMinorScale)).call(this));
+
+          _this4.classes.push('AbstractHarmonicMinorScale');
+          _this4.type = 'Abstract harmonic minor';
+          _this4.octaveDuplicating = true;
+          _this4._buildNetwork();
+          return _this4;
+      }
+
+      createClass(AbstractHarmonicMinorScale, [{
+          key: '_buildNetwork',
+          value: function _buildNetwork() {
+              var intervalList = ['M2', 'm2', 'M2', 'M2', 'm2', 'A2', 'm2'];
+              this._net = [];
+              var _iteratorNormalCompletion5 = true;
+              var _didIteratorError5 = false;
+              var _iteratorError5 = undefined;
+
+              try {
+                  for (var _iterator5 = intervalList[Symbol.iterator](), _step5; !(_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done); _iteratorNormalCompletion5 = true) {
+                      var intVStr = _step5.value;
+
+                      this._net.push(new interval.Interval(intVStr));
+                  }
+              } catch (err) {
+                  _didIteratorError5 = true;
+                  _iteratorError5 = err;
+              } finally {
+                  try {
+                      if (!_iteratorNormalCompletion5 && _iterator5.return) {
+                          _iterator5.return();
+                      }
+                  } finally {
+                      if (_didIteratorError5) {
+                          throw _iteratorError5;
+                      }
+                  }
+              }
+          }
+      }]);
+      return AbstractHarmonicMinorScale;
+  }(AbstractScale);
+
+  // temporary, until bidirectional scales are created
+  // no need for descending, since minor takes care of that.
+  var AbstractAscendingMelodicMinorScale = function (_AbstractScale3) {
+      inherits(AbstractAscendingMelodicMinorScale, _AbstractScale3);
+
+      function AbstractAscendingMelodicMinorScale() {
+          classCallCheck(this, AbstractAscendingMelodicMinorScale);
+
+          var _this5 = possibleConstructorReturn(this, (AbstractAscendingMelodicMinorScale.__proto__ || Object.getPrototypeOf(AbstractAscendingMelodicMinorScale)).call(this));
+
+          _this5.classes.push('AbstractAscendingMelodicMinorScale');
+          _this5.type = 'Abstract ascending melodic minor';
+          _this5.octaveDuplicating = true;
+          _this5._buildNetwork();
+          return _this5;
+      }
+
+      createClass(AbstractAscendingMelodicMinorScale, [{
+          key: '_buildNetwork',
+          value: function _buildNetwork() {
+              var intervalList = ['M2', 'm2', 'M2', 'M2', 'M2', 'M2', 'm2'];
+              this._net = [];
+              var _iteratorNormalCompletion6 = true;
+              var _didIteratorError6 = false;
+              var _iteratorError6 = undefined;
+
+              try {
+                  for (var _iterator6 = intervalList[Symbol.iterator](), _step6; !(_iteratorNormalCompletion6 = (_step6 = _iterator6.next()).done); _iteratorNormalCompletion6 = true) {
+                      var intVStr = _step6.value;
+
+                      this._net.push(new interval.Interval(intVStr));
+                  }
+              } catch (err) {
+                  _didIteratorError6 = true;
+                  _iteratorError6 = err;
+              } finally {
+                  try {
+                      if (!_iteratorNormalCompletion6 && _iterator6.return) {
+                          _iterator6.return();
+                      }
+                  } finally {
+                      if (_didIteratorError6) {
+                          throw _iteratorError6;
+                      }
+                  }
+              }
+          }
+      }]);
+      return AbstractAscendingMelodicMinorScale;
+  }(AbstractScale);
+
+  var ConcreteScale = function (_Scale2) {
+      inherits(ConcreteScale, _Scale2);
+
+      function ConcreteScale(tonic) {
+          classCallCheck(this, ConcreteScale);
+
+          var _this6 = possibleConstructorReturn(this, (ConcreteScale.__proto__ || Object.getPrototypeOf(ConcreteScale)).call(this));
+
+          _this6.classes.push('ConcreteScale');
+          if (typeof tonic === 'string') {
+              tonic = new pitch.Pitch(tonic);
+          }
+          _this6.tonic = tonic;
+          _this6['abstract'] = undefined;
+          return _this6;
+      }
+
+      createClass(ConcreteScale, [{
+          key: 'getTonic',
+          value: function getTonic() {
+              return this.tonic;
+          }
+
+          // transpose
+          // tune
+
+      }, {
+          key: 'romanNumeral',
+          value: function romanNumeral(degree) {
+              return new roman.RomanNumeral(degree, this);
+          }
+      }, {
+          key: 'getPitches',
+          value: function getPitches(unused_minPitch, unused_maxPitch, unused_direction) {
+              var pitchObj = void 0;
+              if (this.tonic === undefined) {
+                  pitchObj = new pitch.Pitch('C4');
+              } else {
+                  pitchObj = this.tonic;
+              }
+              return this['abstract'].getRealization(pitchObj);
+          }
+      }, {
+          key: 'pitchFromDegree',
+          value: function pitchFromDegree(degree, unused_minPitch, unused_maxPitch, unused_direction, unused_equateTermini) {
+              return this['abstract'].getPitchFromNodeDegree(this.tonic, this['abstract'].tonicDegree, degree);
+          }
+      }, {
+          key: 'getScaleDegreeFromPitch',
+          value: function getScaleDegreeFromPitch(pitchTarget, unused_direction, unused_comparisonAttribute) {
+              return this['abstract'].getRelativeNodeDegree(this.tonic, this['abstract'].tonicDegree, pitchTarget);
+          }
+      }, {
+          key: 'isConcrete',
+          get: function get() {
+              if (this.tonic !== undefined) {
+                  return true;
+              } else {
+                  return false;
+              }
+          }
+      }]);
+      return ConcreteScale;
+  }(Scale);
+
+  var DiatonicScale = function (_ConcreteScale) {
+      inherits(DiatonicScale, _ConcreteScale);
+
+      function DiatonicScale(tonic) {
+          classCallCheck(this, DiatonicScale);
+
+          // a.k.a. ^2 :-)
+          var _this7 = possibleConstructorReturn(this, (DiatonicScale.__proto__ || Object.getPrototypeOf(DiatonicScale)).call(this, tonic));
+
+          _this7.classes.push('DiatonicScale');
+          _this7['abstract'] = new AbstractDiatonicScale();
+          _this7.type = 'diatonic';
+          return _this7;
+      }
+
+      return DiatonicScale;
+  }(ConcreteScale);
+
+  var MajorScale = function (_DiatonicScale) {
+      inherits(MajorScale, _DiatonicScale);
+
+      function MajorScale(tonic) {
+          classCallCheck(this, MajorScale);
+
+          // a.k.a. ^2 :-)
+          var _this8 = possibleConstructorReturn(this, (MajorScale.__proto__ || Object.getPrototypeOf(MajorScale)).call(this, tonic));
+
+          _this8.classes.push('MajorScale');
+          _this8.type = 'major';
+          _this8['abstract']._buildNetwork(_this8.type);
+          return _this8;
+      }
+
+      return MajorScale;
+  }(DiatonicScale);
+
+  var MinorScale = function (_DiatonicScale2) {
+      inherits(MinorScale, _DiatonicScale2);
+
+      function MinorScale(tonic) {
+          classCallCheck(this, MinorScale);
+
+          // a.k.a. ^2 :-)
+          var _this9 = possibleConstructorReturn(this, (MinorScale.__proto__ || Object.getPrototypeOf(MinorScale)).call(this, tonic));
+
+          _this9.classes.push('MinorScale');
+          _this9.type = 'minor';
+          _this9['abstract']._buildNetwork(_this9.type);
+          return _this9;
+      }
+
+      return MinorScale;
+  }(DiatonicScale);
+
+  var HarmonicMinorScale = function (_ConcreteScale2) {
+      inherits(HarmonicMinorScale, _ConcreteScale2);
+
+      function HarmonicMinorScale(tonic) {
+          classCallCheck(this, HarmonicMinorScale);
+
+          // a.k.a. ^2 :-)
+          var _this10 = possibleConstructorReturn(this, (HarmonicMinorScale.__proto__ || Object.getPrototypeOf(HarmonicMinorScale)).call(this, tonic));
+
+          _this10.classes.push('HarmonicMinorScale');
+          _this10.type = 'harmonic minor';
+          _this10['abstract'] = new AbstractHarmonicMinorScale();
+          return _this10;
+      }
+
+      return HarmonicMinorScale;
+  }(ConcreteScale);
+
+  var AscendingMelodicMinorScale = function (_ConcreteScale3) {
+      inherits(AscendingMelodicMinorScale, _ConcreteScale3);
+
+      function AscendingMelodicMinorScale(tonic) {
+          classCallCheck(this, AscendingMelodicMinorScale);
+
+          // a.k.a. ^2 :-)
+          var _this11 = possibleConstructorReturn(this, (AscendingMelodicMinorScale.__proto__ || Object.getPrototypeOf(AscendingMelodicMinorScale)).call(this, tonic));
+
+          _this11.classes.push('HarmonicMinorScale');
+          _this11.type = 'harmonic minor';
+          _this11['abstract'] = new AbstractAscendingMelodicMinorScale();
+          return _this11;
+      }
+
+      return AscendingMelodicMinorScale;
+  }(ConcreteScale);
 
   /**
    * Function, not class
@@ -6284,7 +6976,7 @@
    *     generally 'M' (major) or 'm' (minor) describing the seconds.
    * @returns {Array<music21.pitch.Pitch>} an octave of scale objects.
    */
-  scale.SimpleDiatonicScale = function SimpleDiatonicScale(tonic, scaleSteps) {
+  function SimpleDiatonicScale(tonic, scaleSteps) {
       if (tonic === undefined) {
           tonic = new pitch.Pitch('C4');
       } else if (!(tonic instanceof pitch.Pitch)) {
@@ -6307,7 +6999,7 @@
           lastPitch = newPitch;
       }
       return pitches;
-  };
+  }
 
   /**
    * One octave of a major scale
@@ -6316,10 +7008,10 @@
    * @param {music21.pitch.Pitch} tonic
    * @returns {Array<music21.pitch.Pitch>} an octave of scale objects.
    */
-  scale.ScaleSimpleMajor = function ScaleSimpleMajor(tonic) {
+  function ScaleSimpleMajor(tonic) {
       var scaleSteps = ['M', 'M', 'm', 'M', 'M', 'M', 'm'];
-      return new scale.SimpleDiatonicScale(tonic, scaleSteps);
-  };
+      return SimpleDiatonicScale(tonic, scaleSteps);
+  }
 
   /**
    * One octave of a minor scale
@@ -6331,7 +7023,7 @@
    *     'melodic-ascending' or other (=natural/melodic-descending)
    * @returns {Array<music21.pitch.Pitch>} an octave of scale objects.
    */
-  scale.ScaleSimpleMinor = function ScaleSimpleMinor(tonic, minorType) {
+  function ScaleSimpleMinor(tonic, minorType) {
       var scaleSteps = ['M', 'm', 'M', 'M', 'm', 'M', 'M'];
       if (typeof minorType === 'string') {
           // "harmonic minor" -> "harmonic-minor"
@@ -6344,7 +7036,25 @@
           scaleSteps[4] = 'M';
           scaleSteps[6] = 'm';
       }
-      return new scale.SimpleDiatonicScale(tonic, scaleSteps);
+      return SimpleDiatonicScale(tonic, scaleSteps);
+  }
+
+  var scale = {
+      Scale: Scale,
+      AbstractScale: AbstractScale,
+      AbstractDiatonicScale: AbstractDiatonicScale,
+      AbstractHarmonicMinorScale: AbstractHarmonicMinorScale,
+      AbstractAscendingMelodicMinorScale: AbstractAscendingMelodicMinorScale,
+      ConcreteScale: ConcreteScale,
+      DiatonicScale: DiatonicScale,
+      MajorScale: MajorScale,
+      MinorScale: MinorScale,
+      HarmonicMinorScale: HarmonicMinorScale,
+      AscendingMelodicMinorScale: AscendingMelodicMinorScale,
+
+      ScaleSimpleMinor: ScaleSimpleMinor,
+      ScaleSimpleMajor: ScaleSimpleMajor,
+      SimpleDiatonicScale: SimpleDiatonicScale
   };
 
   /**
@@ -6355,8 +7065,7 @@
    * Based on music21 (=music21p), Copyright (c) 2006–16, Michael Scott Cuthbert and cuthbertLab
    *
    */
-  /**
-   * key and keysignature module. See {@link music21.key} namespace for details
+  /* key and keysignature module. See {@link music21.key} namespace for details
    *
    * @exports music21/key
    */
@@ -6619,6 +7328,7 @@
    * Create a Key object. Like a KeySignature but with ideas about Tonic, Dominant, etc.
    *
    * TODO: allow keyName to be a {@link music21.pitch.Pitch}
+   * TODO: Scale mixin.
    *
    * @class Key
    * @memberof music21.key
@@ -6662,7 +7372,7 @@
           return _this2;
       }
       /**
-       * returns a {@link music21.scale.ScaleSimpleMajor} or {@link music21.scale.ScaleSimpleMinor}
+       * returns a {@link music21.scale.MajorScale} or {@link music21.scale.MinorScale}
        * object from the pitch object.
        *
        * @memberof music21.key.Key
@@ -6679,9 +7389,15 @@
               }
               var pitchObj = new pitch.Pitch(this.tonic);
               if (scaleType === 'major') {
-                  return scale.ScaleSimpleMajor(pitchObj);
+                  return new scale.MajorScale(pitchObj);
+              } else if (scaleType === 'minor') {
+                  return new scale.MinorScale(pitchObj);
+              } else if (['harmonic minor', 'harmonic-minor'].includes(scaleType)) {
+                  return new scale.HarmonicMinorScale(pitchObj);
+              } else if (['melodic minor', 'melodic-minor'].includes(scaleType)) {
+                  return new scale.AscendingMelodicMinorScale(pitchObj);
               } else {
-                  return scale.ScaleSimpleMinor(pitchObj, scaleType);
+                  return new scale.ConcreteScale(pitchObj);
               }
           }
       }]);
@@ -14255,270 +14971,6 @@
   };
 
   /**
-   * music21j -- Javascript reimplementation of Core music21p features.
-   * music21/roman -- roman.RomanNumberal -- Chord subclass
-   *
-   * Copyright (c) 2013-16, Michael Scott Cuthbert and cuthbertLab
-   * Based on music21 (=music21p), Copyright (c) 2006–16, Michael Scott Cuthbert and cuthbertLab
-   *
-   */
-  /**
-   * Roman numeral module. See {@link music21.roman} namespace
-   *
-   * @exports music21/roman
-   */
-  /**
-   * music21.roman -- namespace for dealing with RomanNumeral analysis.
-   *
-   * @namespace music21.roman
-   * @memberof music21
-   * @requires music21/chord
-   * @requires music21/key
-   * @requires music21/pitch
-   * @requires music21/interval
-   */
-  var roman = {};
-
-  /**
-   * maps an index number to a roman numeral in lowercase
-   *
-   * @memberof music21.roman
-   * @example
-   * music21.roman.romanToNumber[4]
-   * // 'iv'
-   */
-  roman.romanToNumber = [undefined, 'i', 'ii', 'iii', 'iv', 'v', 'vi', 'vii'];
-
-  /**
-   * Represents a RomanNumeral.  By default, capital Roman Numerals are
-   * major chords; lowercase are minor.
-   *
-   * see music21p's roman module for better instructions.
-   *
-   * current limitations:
-   *
-   * no inversions
-   * no numeric figures except 7
-   * no d7 = dominant 7
-   * no frontAlterationAccidentals
-   * no secondary dominants
-   * no Aug6th chords
-   *
-   * @class RomanNumeral
-   * @memberof music21.roman
-   * @extends music21.chord.Chord
-   * @param {string} figure - the roman numeral as a string, e.g., 'IV', 'viio', 'V7'
-   * @param {string|music21.key.Key} [keyStr='C']
-   * @property {Array<music21.pitch.Pitch>} scale - (readonly) returns the scale associated with the roman numeral
-   * @property {music21.key.Key} key - the key associated with the RomanNumeral (not allowed to be undefined yet)
-   * @property {string} figure - the figure as passed in
-   * @property {string} degreeName - the name associated with the scale degree, such as "mediant" etc., scale 7 will be "leading tone" or "subtonic" appropriately
-   * @property {Int} scaleDegree
-   * @property {string} impliedQuality - "major", "minor", "diminished", "augmented"
-   * @property {Array<music21.pitch.Pitch>} pitches - RomanNumerals are Chord objects, so .pitches will work for them also.
-   */
-  var RomanNumeral = function (_chord$Chord) {
-      inherits(RomanNumeral, _chord$Chord);
-
-      function RomanNumeral(figure, keyStr) {
-          classCallCheck(this, RomanNumeral);
-
-          var _this = possibleConstructorReturn(this, (RomanNumeral.__proto__ || Object.getPrototypeOf(RomanNumeral)).call(this));
-
-          _this.classes.push('RomanNumeral');
-          _this.figure = figure;
-          _this._scale = undefined;
-          _this._key = undefined;
-          _this.key = keyStr;
-          var currentFigure = figure;
-
-          var impliedQuality = 'major';
-          var lowercase = currentFigure.toLowerCase();
-          if (currentFigure.match('/o')) {
-              impliedQuality = 'half-diminished';
-              currentFigure = currentFigure.replace('/o', '');
-          } else if (currentFigure.match('o')) {
-              impliedQuality = 'diminished';
-              currentFigure = currentFigure.replace('o', '');
-          } else if (currentFigure === lowercase) {
-              impliedQuality = 'minor';
-          }
-
-          var numbersArr = currentFigure.match(/\d+/);
-          _this.numbers = undefined;
-          if (numbersArr != null) {
-              currentFigure = currentFigure.replace(/\d+/, '');
-              _this.numbers = parseInt(numbersArr[0]);
-          }
-
-          var scaleDegree = roman.romanToNumber.indexOf(currentFigure.toLowerCase());
-          if (scaleDegree === -1) {
-              throw new Music21Exception('Cannot make a romanNumeral from ' + currentFigure);
-          }
-          _this.scaleDegree = scaleDegree;
-          _this.root = _this.scale[_this.scaleDegree - 1];
-
-          if (_this.key.mode === 'minor' && (_this.scaleDegree === 6 || _this.scaleDegree === 7)) {
-              if (['minor', 'diminished', 'half-diminished'].indexOf(impliedQuality) !== -1) {
-                  var raiseTone = new interval.Interval('A1');
-                  _this.root = raiseTone.transposePitch(_this.root);
-                  if (debug) {
-                      console.log('raised root because minor/dim on scaleDegree 6 or 7');
-                  }
-              }
-          }
-
-          /* temp hack */
-          if (_this.numbers === 7) {
-              if (scaleDegree === 5 && impliedQuality === 'major') {
-                  impliedQuality = 'dominant-seventh';
-              } else {
-                  impliedQuality += '-seventh';
-              }
-          }
-
-          _this.impliedQuality = impliedQuality;
-          _this.updatePitches();
-          return _this;
-      }
-
-      createClass(RomanNumeral, [{
-          key: 'updatePitches',
-
-
-          /**
-           * Update the .pitches array.  Called at instantiation, but not automatically afterwards.
-           *
-           * @memberof music21.roman.RomanNumeral
-           */
-          value: function updatePitches() {
-              var impliedQuality = this.impliedQuality;
-              var chordSpacing = chord.chordDefinitions[impliedQuality];
-              var chordPitches = [this.root];
-              var lastPitch = this.root;
-              for (var j = 0; j < chordSpacing.length; j++) {
-                  // console.log('got them', lastPitch);
-                  var thisTransStr = chordSpacing[j];
-                  var thisTrans = new interval.Interval(thisTransStr);
-                  var nextPitch = thisTrans.transposePitch(lastPitch);
-                  chordPitches.push(nextPitch);
-                  lastPitch = nextPitch;
-              }
-              this.pitches = chordPitches;
-          }
-
-          /**
-           * Gives a string display.  Note that since inversion is not yet supported
-           * it needs to be given separately.
-           *
-           * Inverting 7th chords does not work.
-           *
-           * @memberof music21.roman.RomanNumeral
-           * @param {string} displayType - ['roman', 'bassName', 'nameOnly', other]
-           * @param {Int} [inversion=0]
-           * @returns {String}
-           */
-
-      }, {
-          key: 'asString',
-          value: function asString(displayType, inversion) {
-              var keyObj = this.key;
-              var tonic = keyObj.tonic;
-              var mode = keyObj.mode;
-
-              if (inversion === undefined) {
-                  inversion = 0;
-              }
-              var inversionName = '';
-              if (inversion === 1) {
-                  if (displayType === 'roman') {
-                      inversionName = '6';
-                  } else {
-                      inversionName = ' (first inversion)';
-                  }
-              } else if (inversion === 2) {
-                  if (displayType === 'roman') {
-                      inversionName = '64';
-                  } else {
-                      inversionName = ' (second inversion)';
-                  }
-              }
-              var fullChordName = void 0;
-              var connector = ' in ';
-              var suffix = '';
-              if (displayType === 'roman') {
-                  fullChordName = this.figure;
-              } else if (displayType === 'nameOnly') {
-                  // use only with only choice being TONIC
-                  fullChordName = '';
-                  connector = '';
-                  suffix = ' triad';
-              } else if (displayType === 'bassName') {
-                  fullChordName = this.bass().name.replace(/-/, 'b');
-                  connector = ' in ';
-                  suffix = '';
-              } else {
-                  // "default" submediant, etc...
-                  fullChordName = this.degreeName;
-                  if (this.numbers !== undefined) {
-                      fullChordName += ' ' + this.numbers.toString();
-                  }
-              }
-              var tonicDisplay = tonic.replace(/-/, 'b');
-              if (mode === 'minor') {
-                  tonicDisplay = tonicDisplay.toLowerCase();
-              }
-              var chordStr = fullChordName + inversionName + connector + tonicDisplay + ' ' + mode + suffix;
-              return chordStr;
-          }
-      }, {
-          key: 'scale',
-          get: function get() {
-              if (this._scale !== undefined) {
-                  return this._scale;
-              } else {
-                  this._scale = this.key.getScale();
-                  return this._scale;
-              }
-          }
-      }, {
-          key: 'key',
-          get: function get() {
-              return this._key;
-          },
-          set: function set(keyStr) {
-              if (typeof keyStr === 'string') {
-                  this._key = new key.Key(keyStr);
-              } else if (typeof keyStr === 'undefined') {
-                  this._key = new key.Key('C');
-              } else {
-                  this._key = keyStr;
-              }
-          }
-      }, {
-          key: 'degreeName',
-          get: function get() {
-              if (this.scaleDegree < 7) {
-                  return [undefined, 'Tonic', 'Supertonic', 'Mediant', 'Subdominant', 'Dominant', 'Submediant'][this.scaleDegree];
-              } else {
-                  var tonicPitch = new pitch.Pitch(this.key.tonic);
-                  var diffRootToTonic = (tonicPitch.ps - this.root.ps) % 12;
-                  if (diffRootToTonic < 0) {
-                      diffRootToTonic += 12;
-                  }
-                  if (diffRootToTonic === 1) {
-                      return 'Leading-tone';
-                  } else {
-                      return 'Subtonic';
-                  }
-              }
-          }
-      }]);
-      return RomanNumeral;
-  }(chord.Chord);
-  roman.RomanNumeral = RomanNumeral;
-
-  /**
    * music21j -- Javascript reimplementation of Core music21 features.
    * music21/tempo -- tempo and (not in music21p) metronome objects
    *
@@ -15162,10 +15614,10 @@
           _this.fifth = intervalCache[1];
           _this.octave = intervalCache[2];
 
-          // this._v1n1 = undefined;
-          // this._v1n2 = undefined;
-          // this._v2n1 = undefined;
-          // this._v2n2 = undefined;
+          _this._v1n1 = undefined;
+          _this._v1n2 = undefined;
+          _this._v2n1 = undefined;
+          _this._v2n2 = undefined;
 
           _this.v1n1 = v1n1;
           _this.v1n2 = v1n2;
@@ -15186,6 +15638,21 @@
       }
 
       createClass(VoiceLeadingQuartet, [{
+          key: '_setVoiceNote',
+          value: function _setVoiceNote(value, which) {
+              if (value === undefined) {
+                  this[which] = value;
+              } else if (typeof value === 'string') {
+                  this[which] = new note.Note(value);
+              } else if (value.classes.includes('Note')) {
+                  this[which] = value;
+              } else {
+                  var n = new note.Note(value.nameWithOctave);
+                  n.duration.quarterLength = 0.0;
+                  this[which] = n;
+              }
+          }
+      }, {
           key: '_findIntervals',
           value: function _findIntervals() {
               this.vIntervals.push(new interval.Interval(this.v1n1, this.v2n1));
@@ -15426,6 +15893,106 @@
           key: 'hiddenOctave',
           value: function hiddenOctave() {
               return this.hiddenInterval(this.octave);
+          }
+
+          /**
+           * isProperResolution - Checks whether the voice-leading quartet resolves correctly according to standard
+           *         counterpoint rules. If the first harmony is dissonant (d5, A4, or m7) it checks
+           *         that these are correctly resolved. If the first harmony is consonant, True is returned.
+           *
+           *         The key parameter should be specified to check for motion in the bass from specific
+           *         note degrees. If it is not set, then no checking for scale degrees takes place.
+           *
+           *         Diminished Fifth: in by contrary motion to a third, with 7 resolving up to 1 in the bass
+           *         Augmented Fourth: out by contrary motion to a sixth, with chordal seventh resolving
+           *         down to a third in the bass.
+           *         Minor Seventh: In to a third with a leap form 5 to 1 in the bass
+           *
+           * @return {boolean}  true if proper or rules do not apply; false if improper
+           */
+
+      }, {
+          key: 'isProperResolution',
+          value: function isProperResolution() {
+              if (this.noMotion()) {
+                  return true;
+              }
+              var scale = void 0;
+              var n1degree = void 0;
+              var n2degree = void 0;
+              if (this.key !== undefined) {
+                  scale = this.key.getScale();
+                  n1degree = scale.getScaleDegreeFromPitch(this.v2n1);
+                  n2degree = scale.getScaleDegreeFromPitch(this.v2n2);
+              }
+              var firstHarmony = this.vIntervals[0].simpleName;
+              var secondHarmony = this.vIntervals[1].generic.simpleUndirected;
+
+              if (firstHarmony === 'P4') {
+                  if (this.v1n1.pitch.ps >= this.v1n2.pitch.ps) {
+                      return true;
+                  } else {
+                      return false;
+                  }
+              } else if (firstHarmony === 'd5') {
+                  if (scale !== undefined && n1degree !== 7) {
+                      return true;
+                  }
+                  if (scale !== undefined && n2degree !== 1) {
+                      return false;
+                  }
+                  return this.inwardContraryMotion() && secondHarmony === 3;
+              } else if (firstHarmony === 'A4') {
+                  if (scale !== undefined && n1degree !== 4) {
+                      return true;
+                  }
+                  if (scale !== undefined && n2degree !== 3) {
+                      return false;
+                  }
+                  return this.outwardContraryMotion() && secondHarmony === 6;
+              } else if (firstHarmony === 'm7') {
+                  if (scale !== undefined && n1degree !== 5) {
+                      return true;
+                  }
+                  if (scale !== undefined && n2degree !== 1) {
+                      return false;
+                  }
+                  return this.inwardContraryMotion() && secondHarmony === 3;
+              } else {
+                  return true;
+              }
+          }
+      }, {
+          key: 'v1n1',
+          get: function get() {
+              return this._v1n1;
+          },
+          set: function set(value) {
+              this._setVoiceNote(value, '_v1n1');
+          }
+      }, {
+          key: 'v1n2',
+          get: function get() {
+              return this._v1n2;
+          },
+          set: function set(value) {
+              this._setVoiceNote(value, '_v1n2');
+          }
+      }, {
+          key: 'v2n1',
+          get: function get() {
+              return this._v2n1;
+          },
+          set: function set(value) {
+              this._setVoiceNote(value, '_v2n1');
+          }
+      }, {
+          key: 'v2n2',
+          get: function get() {
+              return this._v2n2;
+          },
+          set: function set(value) {
+              this._setVoiceNote(value, '_v2n2');
           }
       }, {
           key: 'key',
@@ -16504,13 +17071,13 @@
           }
 
           var k = new music21.key.Key('f#');
-          var s = k.getScale();
+          var s = k.getScale().getPitches();
           assert.equal(s[2].nameWithOctave, 'A4', 'test minor scale');
           assert.equal(s[6].nameWithOctave, 'E5');
-          s = k.getScale('major');
+          s = k.getScale('major').getPitches();
           assert.equal(s[2].nameWithOctave, 'A#4', 'test major scale');
           assert.equal(s[6].nameWithOctave, 'E#5');
-          s = k.getScale('harmonic minor');
+          s = k.getScale('harmonic minor').getPitches();
           assert.equal(s[2].nameWithOctave, 'A4', 'test harmonic minor scale');
           assert.equal(s[5].nameWithOctave, 'D5');
           assert.equal(s[6].nameWithOctave, 'E#5');
@@ -16557,7 +17124,7 @@
           var rn1 = new music21.roman.RomanNumeral(t1, 'F');
           assert.equal(rn1.scaleDegree, 4, 'test scale dgree of F IV');
           var scale = rn1.scale;
-          assert.equal(scale[0].name, 'F', 'test scale is F');
+          assert.equal(scale.tonic.name, 'F', 'test scale is F');
           assert.equal(rn1.root.name, 'B-', 'test root of F IV');
           assert.equal(rn1.impliedQuality, 'major', 'test quality is major');
           assert.equal(rn1.pitches[0].name, 'B-', 'test pitches[0] == B-');
@@ -16603,7 +17170,7 @@
           var rn1 = new music21.roman.RomanNumeral(t1, 'F');
           assert.equal(rn1.scaleDegree, 4, 'test scale dgree of F IV');
           var scale = rn1.scale;
-          assert.equal(scale[0].name, 'F', 'test scale is F');
+          assert.equal(scale.tonic.name, 'F', 'test scale is F');
           assert.equal(rn1.root.name, 'B-', 'test root of F IV');
           assert.equal(rn1.impliedQuality, 'major', 'test quality is major');
           assert.equal(rn1.pitches[0].name, 'B-', 'test pitches[0] == B-');
@@ -16614,6 +17181,40 @@
   }
 
   function tests$10() {
+      QUnit.test('music21.scale.Scale', function (assert) {
+          var sc = new music21.scale.Scale();
+          assert.ok(sc.classes.includes('Scale'));
+      });
+      QUnit.test('music21.scale.AbstractDiatonicScale', function (assert) {
+          var sc = new music21.scale.AbstractDiatonicScale('major');
+          var net = sc._net;
+          assert.equal(net.length, 7);
+          assert.equal(net[0].name, 'M2');
+          var p = new music21.pitch.Pitch('A-');
+          var pitches = sc.getRealization(p);
+          assert.equal(pitches.length, 8);
+          assert.equal(pitches[3].name, 'D-');
+          assert.equal(sc.getPitchFromNodeDegree(p, undefined, 4).name, 'D-');
+      });
+
+      QUnit.test('music21.scale.MajorScale', function (assert) {
+          var sc = new music21.scale.MajorScale('F');
+          assert.equal(sc.tonic.name, 'F');
+          var pitches = sc.getPitches();
+          assert.equal(pitches[0].name, 'F');
+          assert.equal(pitches[1].name, 'G');
+          assert.equal(pitches[2].name, 'A');
+          assert.equal(pitches[3].name, 'B-');
+          assert.equal(pitches[4].name, 'C');
+          assert.equal(pitches[5].name, 'D');
+          assert.equal(pitches[6].name, 'E');
+          assert.equal(pitches[7].name, 'F');
+          assert.equal(sc.pitchFromDegree(5).name, 'C');
+          assert.equal(sc.getScaleDegreeFromPitch('B-'), 4);
+      });
+  }
+
+  function tests$11() {
       QUnit.test('music21.stream.Stream', function (assert) {
           var s = new music21.stream.Stream();
           s.append(new music21.note.Note('C#5'));
@@ -16773,29 +17374,119 @@
       });
   }
 
-  function tests$11() {
+  function tests$12() {
       QUnit.test('music21.tie.Tie', function (assert) {
           var t = new music21.tie.Tie('start');
           assert.equal(t.type, 'start', 'Tie type is start');
       });
   }
 
+  function tests$13() {
+      QUnit.test('music21.voiceLeading.VoiceLeadingQuartet', function (assert) {
+          var VLQ = music21.voiceLeading.VoiceLeadingQuartet;
+          var sc = new VLQ();
+          assert.ok(sc.classes.includes('VoiceLeadingQuartet'));
+          var N = music21.note.Note;
+          var v1n1 = new N('C4');
+          var v1n2 = new N('B3');
+          var v2n1 = new N('F3');
+          var v2n2 = new N('E3');
+          var vlq1 = new VLQ(v1n1, v1n2, v2n1, v2n2);
+          assert.equal(vlq1.vIntervals[0].name, 'P5');
+          assert.equal(vlq1.vIntervals[1].name, 'P5');
+          assert.equal(vlq1.hIntervals[0].name, 'm2');
+          assert.equal(vlq1.hIntervals[1].name, 'm2');
+          assert.ok(!vlq1.noMotion(), 'not no motion');
+          assert.ok(!vlq1.obliqueMotion());
+          assert.ok(vlq1.similarMotion());
+          assert.ok(vlq1.parallelMotion());
+          assert.ok(vlq1.parallelMotion('P5'));
+          assert.ok(vlq1.parallelInterval('P5'));
+          assert.ok(vlq1.parallelFifth());
+          assert.ok(!vlq1.parallelOctave());
+          v2n2 = new N('A3');
+          var vlq2 = new VLQ(v1n1, v1n2, v2n1, v2n2);
+          assert.equal(vlq2.vIntervals[1].name, 'M2');
+          assert.equal(vlq2.hIntervals[1].name, 'M3');
+          assert.ok(!vlq2.similarMotion(), 'not similar motion');
+          assert.ok(vlq2.contraryMotion(), 'contrary motion');
+          assert.ok(vlq2.inwardContraryMotion(), 'inward contrary motion');
+          assert.ok(!vlq2.outwardContraryMotion(), 'not outward contrary motion');
+
+          var vlq3 = new VLQ('C4', 'D4', 'A3', 'F3');
+          assert.ok(vlq3.contraryMotion(), 'contrary motion set w/ strings');
+      });
+      QUnit.test('music21.voiceLeading.VoiceLeadingQuartet proper resolution', function (assert) {
+          var VLQ = music21.voiceLeading.VoiceLeadingQuartet;
+          var sc = new VLQ();
+          assert.ok(sc.classes.includes('VoiceLeadingQuartet'));
+          var N = music21.note.Note;
+          var v1n1 = new N('B-4');
+          var v1n2 = new N('A4');
+          var v2n1 = new N('E4');
+          var v2n2 = new N('F4');
+          var vlq1 = new VLQ(v1n1, v1n2, v2n1, v2n2);
+          assert.ok(vlq1.isProperResolution(), 'd5 resolves inward');
+          v2n2 = new N('D4');
+          vlq1 = new VLQ(v1n1, v1n2, v2n1, v2n2);
+          assert.ok(!vlq1.isProperResolution(), 'd5 resolves outward');
+          vlq1.key = 'B-';
+          assert.ok(vlq1.isProperResolution(), 'not on scale degrees that need resolution');
+          v1n1 = new N('E5');
+          v1n2 = new N('F5');
+          v2n1 = new N('B-4');
+          v2n2 = new N('A4');
+          vlq1 = new VLQ(v1n1, v1n2, v2n1, v2n2);
+          assert.ok(vlq1.isProperResolution(), 'A4 resolves outward');
+          v2n2 = new N('D4');
+          vlq1 = new VLQ(v1n1, v1n2, v2n1, v2n2);
+          assert.ok(!vlq1.isProperResolution(), 'A4 resolves inward');
+          vlq1.key = 'B-';
+          assert.ok(vlq1.isProperResolution(), 'not on scale degrees that need resolution');
+          v1n1 = new N('B-4');
+          v1n2 = new N('A4');
+          v2n1 = new N('C4');
+          v2n2 = new N('F4');
+          vlq1 = new VLQ(v1n1, v1n2, v2n1, v2n2);
+          assert.ok(vlq1.isProperResolution(), 'm7 resolves inward');
+          v2n2 = new N('F3');
+          vlq1 = new VLQ(v1n1, v1n2, v2n1, v2n2);
+          assert.ok(!vlq1.isProperResolution(), 'm7 with similar motion');
+          vlq1.key = 'B-';
+          assert.ok(vlq1.isProperResolution(), 'm7 not on scale degrees that need resolution');
+          vlq1.key = 'F';
+          assert.ok(!vlq1.isProperResolution(), 'm7 on scale degrees that need resolution');
+
+          v1n1 = new N('F5');
+          v1n2 = new N('G5');
+          v2n1 = new N('C4');
+          v2n2 = new N('C4');
+          vlq1 = new VLQ(v1n1, v1n2, v2n1, v2n2);
+          assert.ok(!vlq1.isProperResolution(), 'P4 must move down or remain constant');
+          v1n2 = new N('E5');
+          vlq1 = new VLQ(v1n1, v1n2, v2n1, v2n2);
+          assert.ok(vlq1.isProperResolution(), 'P4 moves down: ' + vlq1.v1n1.ps + vlq1.v1n2.ps);
+      });
+  }
+
   var allTests = {
-          articulations: tests,
-          beam: tests$1,
-          chord: tests$2,
-          clef: tests$3,
-          duration: tests$4,
-          dynamics: tests$5,
-          key: tests$6,
-          note: tests$7,
-          pitch: tests$8,
-          roman: tests$9,
-          stream: tests$10,
-          tie: tests$11
+      articulations: tests,
+      beam: tests$1,
+      chord: tests$2,
+      clef: tests$3,
+      duration: tests$4,
+      dynamics: tests$5,
+      key: tests$6,
+      note: tests$7,
+      pitch: tests$8,
+      roman: tests$9,
+      scale: tests$10,
+      stream: tests$11,
+      tie: tests$12,
+      voiceLeading: tests$13
   };
   if ((typeof window === 'undefined' ? 'undefined' : _typeof(window)) !== undefined) {
-          window.allTests = allTests;
+      window.allTests = allTests;
   }
 
   return allTests;

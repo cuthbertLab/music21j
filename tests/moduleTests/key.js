@@ -47,13 +47,13 @@ export default function tests() {
         }
 
         const k = new music21.key.Key('f#');
-        let s = k.getScale();
+        let s = k.getScale().getPitches();
         assert.equal(s[2].nameWithOctave, 'A4', 'test minor scale');
         assert.equal(s[6].nameWithOctave, 'E5');
-        s = k.getScale('major');
+        s = k.getScale('major').getPitches();
         assert.equal(s[2].nameWithOctave, 'A#4', 'test major scale');
         assert.equal(s[6].nameWithOctave, 'E#5');
-        s = k.getScale('harmonic minor');
+        s = k.getScale('harmonic minor').getPitches();
         assert.equal(s[2].nameWithOctave, 'A4', 'test harmonic minor scale');
         assert.equal(s[5].nameWithOctave, 'D5');
         assert.equal(s[6].nameWithOctave, 'E#5');

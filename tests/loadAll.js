@@ -8,22 +8,26 @@ import key from './moduleTests/key';
 import note from './moduleTests/note';
 import pitch from './moduleTests/pitch';
 import roman from './moduleTests/roman';
+import scale from './moduleTests/scale';
 import stream from './moduleTests/stream';
 import tie from './moduleTests/tie';
+import voiceLeading from './moduleTests/voiceLeading';
 
 const allTests = {
-        articulations: articulations,
-        beam: beam,
-        chord: chord,
-        clef: clef,
-        duration: duration,
-        dynamics: dynamics,
-        key: key,
-        note: note,
-        pitch: pitch,
-        roman: roman,
-        stream: stream,
-        tie: tie,
+    articulations,
+    beam,
+    chord,
+    clef,
+    duration,
+    dynamics,
+    key,
+    note,
+    pitch,
+    roman,
+    scale,
+    stream,
+    tie,
+    voiceLeading,
 };
 if (typeof window !== undefined) {
     window.allTests = allTests;

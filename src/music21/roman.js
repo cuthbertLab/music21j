@@ -107,7 +107,7 @@ export class RomanNumeral extends chord.Chord {
             );
         }
         this.scaleDegree = scaleDegree;
-        this.root = this.scale[this.scaleDegree - 1];
+        this.root = this.scale.pitchFromDegree(this.scaleDegree);
 
         if (
             this.key.mode === 'minor'

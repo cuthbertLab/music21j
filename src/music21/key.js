@@ -14,8 +14,7 @@ import { interval } from './interval.js';
 import { pitch } from './pitch.js';
 import { scale } from './scale.js';
 
-/**
- * key and keysignature module. See {@link music21.key} namespace for details
+/* key and keysignature module. See {@link music21.key} namespace for details
  *
  * @exports music21/key
  */
@@ -276,6 +275,7 @@ key.KeySignature = KeySignature;
  * Create a Key object. Like a KeySignature but with ideas about Tonic, Dominant, etc.
  *
  * TODO: allow keyName to be a {@link music21.pitch.Pitch}
+ * TODO: Scale mixin.
  *
  * @class Key
  * @memberof music21.key
@@ -314,7 +314,7 @@ export class Key extends KeySignature {
         this.mode = mode;
     }
     /**
-     * returns a {@link music21.scale.ScaleSimpleMajor} or {@link music21.scale.ScaleSimpleMinor}
+     * returns a {@link music21.scale.MajorScale} or {@link music21.scale.MinorScale}
      * object from the pitch object.
      *
      * @memberof music21.key.Key
@@ -327,9 +327,15 @@ export class Key extends KeySignature {
         }
         const pitchObj = new pitch.Pitch(this.tonic);
         if (scaleType === 'major') {
-            return scale.ScaleSimpleMajor(pitchObj);
+            return new scale.MajorScale(pitchObj);
+        } else if (scaleType === 'minor') {
+            return new scale.MinorScale(pitchObj);
+        } else if (['harmonic minor', 'harmonic-minor'].includes(scaleType)) {
+            return new scale.HarmonicMinorScale(pitchObj);
+        } else if (['melodic minor', 'melodic-minor'].includes(scaleType)) {
+            return new scale.AscendingMelodicMinorScale(pitchObj);
         } else {
-            return scale.ScaleSimpleMinor(pitchObj, scaleType);
+            return new scale.ConcreteScale(pitchObj);
         }
     }
 }
