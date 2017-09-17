@@ -884,6 +884,7 @@ export class FourPartEditor extends GrandStaffEditor {
         for (const i of [0, 1, 2, 3]) {
             this.buttons[i].removeClass('editorButtonSelected');
         }
+        this.buttons[newVoice].removeClass('editorButtonNotSelected');
         this.buttons[newVoice].addClass('editorButtonSelected');
         this.activeVoiceNumber = newVoice;
         if (newVoice < 2) {

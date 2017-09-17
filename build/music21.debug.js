@@ -10075,6 +10075,7 @@
                   var _i3 = _arr2[_i2];
                   this.buttons[_i3].removeClass('editorButtonSelected');
               }
+              this.buttons[newVoice].removeClass('editorButtonNotSelected');
               this.buttons[newVoice].addClass('editorButtonSelected');
               this.activeVoiceNumber = newVoice;
               if (newVoice < 2) {
