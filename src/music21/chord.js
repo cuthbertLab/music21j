@@ -50,6 +50,9 @@ export class Chord extends note.NotRest {
         this.isNote = false; // for speed
         this.isRest = false; // for speed
 
+        this._overrides = {};
+        this._cache = {};
+
         this._notes = [];
         notes.forEach(this.add, this);
     }
@@ -82,6 +85,8 @@ export class Chord extends note.NotRest {
             }
             this._notes.push(addNote);
         }
+        this._cache = {};
+        this._overrides = {};
     }
     setStemDirectionFromClef(clef) {
         if (clef === undefined) {
@@ -110,31 +115,38 @@ export class Chord extends note.NotRest {
     /**
      * Adds a note to the chord, sorting the note array
      *
-     * TODO: rename to append like music21p, allow for an Array of notes,
+     * TODO: allow for an Array of notes,
      *       and make a runSort=True variable.
      *
      * @memberof music21.chord.Chord
-     * @param {string|music21.note.Note|music21.pitch.Pitch} noteObj - the Note or Pitch to be added or a string defining a pitch.
+     * @param {string|music21.note.Note|music21.pitch.Pitch} notes - the Note or Pitch to be added or a string defining a pitch.
+     * @param {boolean} runSort - Sort after running (default true)
      * @returns {music21.chord.Chord} the original chord.
      */
-    add(noteObj, runSort) {
+    add(notes, runSort) {
         if (runSort === undefined) {
             runSort = true;
         }
-        // takes in either a note or a pitch
-        if (typeof noteObj === 'string') {
-            noteObj = new note.Note(noteObj);
-        } else if (noteObj.isClassOrSubclass('Pitch')) {
-            const pitchObj = noteObj;
-            const noteObj2 = new note.Note();
-            noteObj2.pitch = pitchObj;
-            noteObj = noteObj2;
+        if (!(notes instanceof Array)) {
+            notes = [notes];
         }
-        this._notes.push(noteObj);
+        for (let noteObj of notes) {
+            // takes in either a note or a pitch
+            if (typeof noteObj === 'string') {
+                noteObj = new note.Note(noteObj);
+            } else if (noteObj.isClassOrSubclass('Pitch')) {
+                const pitchObj = noteObj;
+                const noteObj2 = new note.Note();
+                noteObj2.pitch = pitchObj;
+                noteObj = noteObj2;
+            }
+            this._notes.push(noteObj);
+        }
         // inefficient because sorts after each add, but safe and #(p) is small
         if (runSort === true) {
             this._notes.sort((a, b) => a.pitch.ps - b.pitch.ps);
         }
+        this._cache = {};
         return this;
     }
     /**
@@ -163,7 +175,21 @@ export class Chord extends note.NotRest {
      * @memberof music21.chord.Chord
      * @returns {music21.pitch.Pitch} the root of the chord.
      */
-    root() {
+    root(newroot) {
+        if (newroot !== undefined) {
+            this._overrides.root = newroot;
+            this._cache.root = newroot;
+            this._cache.inversion = undefined;
+        }
+
+        if (this._overrides.root !== undefined) {
+            return this._cache.root;
+        }
+
+        if (this._cache.root !== undefined) {
+            return this._cache.root;
+        }
+
         const closedChord = this.removeDuplicatePitches();
         /* var chordBass = closedChord.bass(); */
         const closedPitches = closedChord.pitches;
@@ -202,7 +228,9 @@ export class Chord extends note.NotRest {
                 // should test rootedness function, etc. 13ths. etc.
             }
         }
-        return closedChord.pitches[0]; // fallback, just return the bass...
+        const newRoot = closedChord.pitches[0]; // fallback, just return the bass...
+        this._cache.root = newRoot;
+        return newRoot;
     }
     /**
      * Returns the number of semitones above the root that a given chordstep is.
@@ -410,6 +438,16 @@ export class Chord extends note.NotRest {
             }
         }
         return undefined;
+    }
+
+    get third() {
+        return this.getChordStep(3);
+    }
+    get fifth() {
+        return this.getChordStep(5);
+    }
+    get seventh() {
+        return this.getChordStep(7);
     }
 }
 chord.Chord = Chord;

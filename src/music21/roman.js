@@ -107,7 +107,7 @@ export class RomanNumeral extends chord.Chord {
             );
         }
         this.scaleDegree = scaleDegree;
-        this.root = this.scale.pitchFromDegree(this.scaleDegree);
+        this._tempRoot = this.scale.pitchFromDegree(this.scaleDegree);
 
         if (
             this.key.mode === 'minor'
@@ -119,7 +119,7 @@ export class RomanNumeral extends chord.Chord {
                 ) !== -1
             ) {
                 const raiseTone = new interval.Interval('A1');
-                this.root = raiseTone.transposePitch(this.root);
+                this._tempRoot = raiseTone.transposePitch(this._tempRoot);
                 if (debug) {
                     console.log(
                         'raised root because minor/dim on scaleDegree 6 or 7'
@@ -173,7 +173,7 @@ export class RomanNumeral extends chord.Chord {
             ][this.scaleDegree];
         } else {
             const tonicPitch = new pitch.Pitch(this.key.tonic);
-            let diffRootToTonic = (tonicPitch.ps - this.root.ps) % 12;
+            let diffRootToTonic = (tonicPitch.ps - this.root().ps) % 12;
             if (diffRootToTonic < 0) {
                 diffRootToTonic += 12;
             }
@@ -193,8 +193,8 @@ export class RomanNumeral extends chord.Chord {
     updatePitches() {
         const impliedQuality = this.impliedQuality;
         const chordSpacing = chord.chordDefinitions[impliedQuality];
-        const chordPitches = [this.root];
-        let lastPitch = this.root;
+        const chordPitches = [this._tempRoot];
+        let lastPitch = this._tempRoot;
         for (let j = 0; j < chordSpacing.length; j++) {
             // console.log('got them', lastPitch);
             const thisTransStr = chordSpacing[j];
@@ -204,6 +204,7 @@ export class RomanNumeral extends chord.Chord {
             lastPitch = nextPitch;
         }
         this.pitches = chordPitches;
+        this.root(this._tempRoot);
     }
 
     /**

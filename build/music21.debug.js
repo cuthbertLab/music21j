@@ -3825,6 +3825,9 @@
           _this.isNote = false; // for speed
           _this.isRest = false; // for speed
 
+          _this._overrides = {};
+          _this._cache = {};
+
           _this._notes = [];
           notes.forEach(_this.add, _this);
           return _this;
@@ -3859,36 +3862,65 @@
           /**
            * Adds a note to the chord, sorting the note array
            *
-           * TODO: rename to append like music21p, allow for an Array of notes,
+           * TODO: allow for an Array of notes,
            *       and make a runSort=True variable.
            *
            * @memberof music21.chord.Chord
-           * @param {string|music21.note.Note|music21.pitch.Pitch} noteObj - the Note or Pitch to be added or a string defining a pitch.
+           * @param {string|music21.note.Note|music21.pitch.Pitch} notes - the Note or Pitch to be added or a string defining a pitch.
+           * @param {boolean} runSort - Sort after running (default true)
            * @returns {music21.chord.Chord} the original chord.
            */
 
       }, {
           key: 'add',
-          value: function add(noteObj, runSort) {
+          value: function add(notes, runSort) {
               if (runSort === undefined) {
                   runSort = true;
               }
-              // takes in either a note or a pitch
-              if (typeof noteObj === 'string') {
-                  noteObj = new note.Note(noteObj);
-              } else if (noteObj.isClassOrSubclass('Pitch')) {
-                  var pitchObj = noteObj;
-                  var noteObj2 = new note.Note();
-                  noteObj2.pitch = pitchObj;
-                  noteObj = noteObj2;
+              if (!(notes instanceof Array)) {
+                  notes = [notes];
               }
-              this._notes.push(noteObj);
-              // inefficient because sorts after each add, but safe and #(p) is small
+              var _iteratorNormalCompletion = true;
+              var _didIteratorError = false;
+              var _iteratorError = undefined;
+
+              try {
+                  for (var _iterator = notes[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+                      var noteObj = _step.value;
+
+                      // takes in either a note or a pitch
+                      if (typeof noteObj === 'string') {
+                          noteObj = new note.Note(noteObj);
+                      } else if (noteObj.isClassOrSubclass('Pitch')) {
+                          var pitchObj = noteObj;
+                          var noteObj2 = new note.Note();
+                          noteObj2.pitch = pitchObj;
+                          noteObj = noteObj2;
+                      }
+                      this._notes.push(noteObj);
+                  }
+                  // inefficient because sorts after each add, but safe and #(p) is small
+              } catch (err) {
+                  _didIteratorError = true;
+                  _iteratorError = err;
+              } finally {
+                  try {
+                      if (!_iteratorNormalCompletion && _iterator.return) {
+                          _iterator.return();
+                      }
+                  } finally {
+                      if (_didIteratorError) {
+                          throw _iteratorError;
+                      }
+                  }
+              }
+
               if (runSort === true) {
                   this._notes.sort(function (a, b) {
                       return a.pitch.ps - b.pitch.ps;
                   });
               }
+              this._cache = {};
               return this;
           }
           /**
@@ -3923,7 +3955,21 @@
 
       }, {
           key: 'root',
-          value: function root() {
+          value: function root(newroot) {
+              if (newroot !== undefined) {
+                  this._overrides.root = newroot;
+                  this._cache.root = newroot;
+                  this._cache.inversion = undefined;
+              }
+
+              if (this._overrides.root !== undefined) {
+                  return this._cache.root;
+              }
+
+              if (this._cache.root !== undefined) {
+                  return this._cache.root;
+              }
+
               var closedChord = this.removeDuplicatePitches();
               /* var chordBass = closedChord.bass(); */
               var closedPitches = closedChord.pitches;
@@ -3959,7 +4005,9 @@
                       // should test rootedness function, etc. 13ths. etc.
                   }
               }
-              return closedChord.pitches[0]; // fallback, just return the bass...
+              var newRoot = closedChord.pitches[0]; // fallback, just return the bass...
+              this._cache.root = newRoot;
+              return newRoot;
           }
           /**
            * Returns the number of semitones above the root that a given chordstep is.
@@ -4209,6 +4257,23 @@
                   }
                   this._notes.push(addNote);
               }
+              this._cache = {};
+              this._overrides = {};
+          }
+      }, {
+          key: 'third',
+          get: function get() {
+              return this.getChordStep(3);
+          }
+      }, {
+          key: 'fifth',
+          get: function get() {
+              return this.getChordStep(5);
+          }
+      }, {
+          key: 'seventh',
+          get: function get() {
+              return this.getChordStep(7);
           }
       }]);
       return Chord;
@@ -6250,12 +6315,12 @@
               throw new Music21Exception('Cannot make a romanNumeral from ' + currentFigure);
           }
           _this.scaleDegree = scaleDegree;
-          _this.root = _this.scale.pitchFromDegree(_this.scaleDegree);
+          _this._tempRoot = _this.scale.pitchFromDegree(_this.scaleDegree);
 
           if (_this.key.mode === 'minor' && (_this.scaleDegree === 6 || _this.scaleDegree === 7)) {
               if (['minor', 'diminished', 'half-diminished'].indexOf(impliedQuality) !== -1) {
                   var raiseTone = new interval.Interval('A1');
-                  _this.root = raiseTone.transposePitch(_this.root);
+                  _this._tempRoot = raiseTone.transposePitch(_this._tempRoot);
                   if (debug) {
                       console.log('raised root because minor/dim on scaleDegree 6 or 7');
                   }
@@ -6288,8 +6353,8 @@
           value: function updatePitches() {
               var impliedQuality = this.impliedQuality;
               var chordSpacing = chord.chordDefinitions[impliedQuality];
-              var chordPitches = [this.root];
-              var lastPitch = this.root;
+              var chordPitches = [this._tempRoot];
+              var lastPitch = this._tempRoot;
               for (var j = 0; j < chordSpacing.length; j++) {
                   // console.log('got them', lastPitch);
                   var thisTransStr = chordSpacing[j];
@@ -6299,6 +6364,7 @@
                   lastPitch = nextPitch;
               }
               this.pitches = chordPitches;
+              this.root(this._tempRoot);
           }
 
           /**
@@ -6396,7 +6462,7 @@
                   return [undefined, 'Tonic', 'Supertonic', 'Mediant', 'Subdominant', 'Dominant', 'Submediant'][this.scaleDegree];
               } else {
                   var tonicPitch = new pitch.Pitch(this.key.tonic);
-                  var diffRootToTonic = (tonicPitch.ps - this.root.ps) % 12;
+                  var diffRootToTonic = (tonicPitch.ps - this.root().ps) % 12;
                   if (diffRootToTonic < 0) {
                       diffRootToTonic += 12;
                   }
