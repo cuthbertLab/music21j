@@ -306,7 +306,7 @@
       StreamException: StreamException
   });
 
-  var debug = false;
+  var debug = true;
 
   /**
    * common functions
@@ -10053,7 +10053,7 @@
 
               var _loop2 = function _loop2() {
                   var i = _arr[_i];
-                  var $thisButton = $$1('<button>' + voiceNames[i] + '</button>').click(function () {
+                  var $thisButton = $$1('<button>' + voiceNames[i] + '</button>').addClass('editorButtonNotSelected').click(function () {
                       return _this9.changeActiveVoice(i);
                   });
                   _this9.buttons.push($thisButton);
@@ -10073,9 +10073,9 @@
 
               for (var _i2 = 0; _i2 < _arr2.length; _i2++) {
                   var _i3 = _arr2[_i2];
-                  this.buttons[_i3].css('background-color', 'white');
+                  this.buttons[_i3].removeClass('editorButtonSelected');
               }
-              this.buttons[newVoice].css('background-color', 'red');
+              this.buttons[newVoice].addClass('editorButtonSelected');
               this.activeVoiceNumber = newVoice;
               if (newVoice < 2) {
                   this.activePart = this.parts.get(0);

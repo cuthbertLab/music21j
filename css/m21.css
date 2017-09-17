@@ -1,53 +1,80 @@
-@import url("m21jFonts.css");
+@import url('m21jFonts.css');
 
 .inlineBlock {
-	display: inline-block;
-	vertical-align: top;
+    display: inline-block;
+    vertical-align: top;
 }
 
 .btButton {
-      font-family: BravuraTextM21j;
-      font-size: 40pt;
-      position:relative;
-      width: 100px;
-      height: 100px;
-      padding-top: 10px;
-      padding-left: 20px;
-      padding-right: 20px;
-      padding-bottom: 10px;
-      border: 2px black dashed;
-      background-color: #ffff99;
-      text-align: center;
-      display: inline-block;
-      margin-right: 4px;
+    font-family: BravuraTextM21j;
+    font-size: 40pt;
+    position: relative;
+    width: 100px;
+    height: 100px;
+    padding-top: 10px;
+    padding-left: 20px;
+    padding-right: 20px;
+    padding-bottom: 10px;
+    border: 2px black dashed;
+    background-color: #ffff99;
+    text-align: center;
+    display: inline-block;
+    margin-right: 4px;
 }
 
 .loadingSoundfont {
-      top: 40px;
-      background-color: #99ff99;
-      color: black;
-      font-weight: normal;
-      position: fixed;
-      right: 30px;
-      width: 170px;
-      font-size: 10px;
-      opacity: .7;
-      border-radius: 15px;
-      box-shadow: 0px 0px 19px #999;
-      padding: 10px 10px 10px 10px;
-      z-index: 20;
+    top: 40px;
+    background-color: #99ff99;
+    color: black;
+    font-weight: normal;
+    position: fixed;
+    right: 30px;
+    width: 170px;
+    font-size: 10px;
+    opacity: 0.7;
+    border-radius: 15px;
+    box-shadow: 0px 0px 19px #999;
+    padding: 10px 10px 10px 10px;
+    z-index: 20;
 }
 
+/* four part editor */
+.editorButtonNotSelected {
+    background-color: white;
+}
+
+.editorButtonSelected {
+    background-color: red;
+}
 
 /* midi player */
 
 .midiPlayer {
-    background-image: -webkit-gradient(linear,left top,left bottom,from(rgba(66,66,66,1)),to(rgba(22,22,22,1)));
-    background-image: -webkit-linear-gradient(top, rgba(66, 66, 66, 1) 0%, rgba(22, 22, 22, 1) 100%);
-    background-image: -moz-linear-gradient(top, rgba(66, 66, 66, 1) 0%, rgba(22, 22, 22, 1) 100%);
-    background-image: -ms-gradient(top, rgba(66, 66, 66, 1) 0%, rgba(22, 22, 22, 1) 100%);
-    background-image: -o-gradient(top, rgba(66, 66, 66, 1) 0%, rgba(22, 22, 22, 1) 100%);
-    background-image: linear-gradient(top, rgba(66, 66, 66, 1) 0%, rgba(22, 22, 22, 1) 100%);
+    background-image: -webkit-linear-gradient(
+        top,
+        rgba(66, 66, 66, 1) 0%,
+        rgba(22, 22, 22, 1) 100%
+    );
+    background-image: -moz-linear-gradient(
+        top,
+        rgba(66, 66, 66, 1) 0%,
+        rgba(22, 22, 22, 1) 100%
+    );
+    background-image: -ms-gradient(
+        top,
+        rgba(66, 66, 66, 1) 0%,
+        rgba(22, 22, 22, 1) 100%
+    );
+    background-image: -o-gradient(
+        top,
+        rgba(66, 66, 66, 1) 0%,
+        rgba(22, 22, 22, 1) 100%
+    );
+    background-image: linear-gradient(
+        top,
+        rgba(66, 66, 66, 1) 0%,
+        rgba(22, 22, 22, 1) 100%
+    );
     padding: 15px 20px;
     border: 1px solid #000;
     box-shadow: 0 0 10px #fff;
@@ -56,7 +83,7 @@
     border-radius: 10px;
     -moz-border-radius: 10px;
     -webkit-border-radius: 10px;
-    color: #FFFFFF;
+    color: #ffffff;
     color: rgba(255, 255, 255, 0.8);
     text-shadow: 1px 1px 2px #000;
     -moz-text-shadow: 1px 1px 2px #000;
@@ -73,8 +100,11 @@
     -moz-box-shadow: 0 0 10px #555;
     -webkit-box-shadow: 0 0 10px #555;
     background: #000;
-    background-image: -webkit-gradient(linear, left top, left bottom, color-stop(1, rgba(0,0,0,0.5)), color-stop(0, #333));
-    background-image: -webkit-linear-gradient(top, rgba(0, 0, 0, 0.5) 1, #333 0);
+    background-image: -webkit-linear-gradient(
+        top,
+        rgba(0, 0, 0, 0.5) 1,
+        #333 0
+    );
     background-image: -moz-linear-gradient(top, rgba(0, 0, 0, 0.5) 1, #333 0);
     background-image: -ms-gradient(top, rgba(0, 0, 0, 0.5) 1, #333 0);
     background-image: -o-gradient(top, rgba(0, 0, 0, 0.5) 1, #333 0);
@@ -95,7 +125,6 @@
     border-top-right-radius: 0;
     border-bottom-right-radius: 0;
     background: #003b96;
-    background-image: -webkit-gradient(linear, left top, left bottom, color-stop(1, #003b96), color-stop(0, #0088e9));
     background-image: -webkit-linear-gradient(top, #0088e9 0%, #003b96 100%);
     background-image: -moz-linear-gradient(top, #0088e9 0%, #003b96 100%);
     background-image: -ms-gradient(top, #0088e9 0%, #003b96 100%);
@@ -106,7 +135,8 @@
     height: 100%;
 }
 
-.midiPlayer .timePlayed, .midiPlayer .timeRemaining {
+.midiPlayer .timePlayed,
+.midiPlayer .timeRemaining {
     position: relative;
     top: -9px;
     padding: 0 10px;
@@ -135,15 +165,15 @@
     float: right;
 }
 
-.midiPlayer .positionControls input[type="image"]:hover {
+.midiPlayer .positionControls input[type='image']:hover {
     opacity: 1;
 }
 
-.midiPlayer .positionControls input[type="image"]:active {
+.midiPlayer .positionControls input[type='image']:active {
     opacity: 0.85;
 }
 
-.midiPlayer .positionControls input[type="image"] {
+.midiPlayer .positionControls input[type='image'] {
     opacity: 0.7;
     outline: none;
 }

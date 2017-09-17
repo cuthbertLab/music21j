@@ -870,9 +870,9 @@ export class FourPartEditor extends GrandStaffEditor {
         );
         const voiceNames = ['S', 'A', 'T', 'B'];
         for (const i of [0, 1, 2, 3]) {
-            const $thisButton = $(
-                '<button>' + voiceNames[i] + '</button>'
-            ).click(() => this.changeActiveVoice(i));
+            const $thisButton = $('<button>' + voiceNames[i] + '</button>')
+                .addClass('editorButtonNotSelected')
+                .click(() => this.changeActiveVoice(i));
             this.buttons.push($thisButton);
             $buttonDiv.append($thisButton);
         }
@@ -882,9 +882,9 @@ export class FourPartEditor extends GrandStaffEditor {
 
     changeActiveVoice(newVoice, $buttonDiv, clickEvent) {
         for (const i of [0, 1, 2, 3]) {
-            this.buttons[i].css('background-color', 'white');
+            this.buttons[i].removeClass('editorButtonSelected');
         }
-        this.buttons[newVoice].css('background-color', 'red');
+        this.buttons[newVoice].addClass('editorButtonSelected');
         this.activeVoiceNumber = newVoice;
         if (newVoice < 2) {
             this.activePart = this.parts.get(0);
