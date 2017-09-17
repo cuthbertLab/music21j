@@ -47,7 +47,7 @@ class Scale extends base.Music21Object {
     }
 }
 
-class AbstractScale extends Scale {
+export class AbstractScale extends Scale {
     constructor() {
         super();
         this.classes.push('AbstractScale');
@@ -83,7 +83,7 @@ class AbstractScale extends Scale {
         }
         pitchList = pitchListReal;
 
-        pLast = pitchList[pitchList.length - 1];
+        const pLast = pitchList[pitchList.length - 1];
         if (pLast.name === pitchList[0]) {
             const p = pitchList[0].clone(true);
             if (pLast.ps > pitchList[0]) {

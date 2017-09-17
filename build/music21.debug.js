@@ -6248,7 +6248,7 @@
 
               pitchList = pitchListReal;
 
-              pLast = pitchList[pitchList.length - 1];
+              var pLast = pitchList[pitchList.length - 1];
               if (pLast.name === pitchList[0]) {
                   var p = pitchList[0].clone(true);
                   if (pLast.ps > pitchList[0]) {
@@ -6284,8 +6284,6 @@
    *     generally 'M' (major) or 'm' (minor) describing the seconds.
    * @returns {Array<music21.pitch.Pitch>} an octave of scale objects.
    */
-
-
   scale.SimpleDiatonicScale = function SimpleDiatonicScale(tonic, scaleSteps) {
       if (tonic === undefined) {
           tonic = new pitch.Pitch('C4');
