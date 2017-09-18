@@ -870,6 +870,7 @@ export class FourPartEditor extends GrandStaffEditor {
     changeClickedNoteFromEvent(e) {
         const canvasElement = e.currentTarget;
         this.setActiveInformation(canvasElement, e);
+        this.activeVoice.renderOptions.scaleFactor = this.stream.renderOptions.scaleFactor;
 
         const [unused_wrong_dnn, foundNote] = this.activeVoice.findNoteForClick(
             canvasElement,

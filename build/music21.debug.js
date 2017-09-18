@@ -10133,6 +10133,7 @@
           value: function changeClickedNoteFromEvent(e) {
               var canvasElement = e.currentTarget;
               this.setActiveInformation(canvasElement, e);
+              this.activeVoice.renderOptions.scaleFactor = this.stream.renderOptions.scaleFactor;
 
               var _activeVoice$findNote = this.activeVoice.findNoteForClick(canvasElement, e),
                   _activeVoice$findNote2 = slicedToArray(_activeVoice$findNote, 2),

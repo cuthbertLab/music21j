@@ -6,69 +6,72 @@
  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
      <script data-main="../src/music21" src="../ext/require/require.js"></script>
      <script>
-     require(['music21'], function() {
-         s = new music21.stream.Score();
-         const p0 = new music21.stream.Part();
-         p0.clef = new music21.clef.TrebleClef();
-         p0.timeSignature = new music21.meter.TimeSignature('2/4');
-         const p1 = new music21.stream.Part();
-         p1.clef = new music21.clef.BassClef();
-         p1.timeSignature = new music21.meter.TimeSignature('2/4');
+     require(['music21'], () => {
+    s = new music21.stream.Score();
+    const p0 = new music21.stream.Part();
+    p0.clef = new music21.clef.TrebleClef();
+    p0.timeSignature = new music21.meter.TimeSignature('2/4');
+    const p1 = new music21.stream.Part();
+    p1.clef = new music21.clef.BassClef();
+    p1.timeSignature = new music21.meter.TimeSignature('2/4');
 
-         const m00 = new music21.stream.Measure();
-         const v000 = new music21.stream.Voice();
-         const v001 = new music21.stream.Voice();
+    const m00 = new music21.stream.Measure();
+    const v000 = new music21.stream.Voice();
+    const v001 = new music21.stream.Voice();
 
-         const m10 = new music21.stream.Measure();
-         const v100 = new music21.stream.Voice();
-         const v101 = new music21.stream.Voice();
+    const m10 = new music21.stream.Measure();
+    const v100 = new music21.stream.Voice();
+    const v101 = new music21.stream.Voice();
 
-         const ns = new music21.note.Note('C5');
-         const na = new music21.note.Note('E4');
-         const nt = new music21.note.Note('C4');
-         const nb = new music21.note.Note('C3');
+    const ns = new music21.note.Note('C5');
+    const na = new music21.note.Note('E4');
+    const nt = new music21.note.Note('C4');
+    const nb = new music21.note.Note('C3');
 
-         ns.stemDirection = 'up';
-         na.stemDirection = 'down';
-         nt.stemDirection = 'up';
-         nb.stemDirection = 'down';
+    ns.stemDirection = 'up';
+    na.stemDirection = 'down';
+    nt.stemDirection = 'up';
+    nb.stemDirection = 'down';
 
-         for (const thisNote of [ns, na, nt, nb]) {
-             thisNote.duration.type = 'half';
-         }
+    for (const thisNote of [ns, na, nt, nb]) {
+        thisNote.duration.type = 'half';
+    }
 
-         v000.append(ns);
-         v001.append(na);
-         v100.append(nt);
-         v101.append(nb);
+    v000.append(ns);
+    v001.append(na);
+    v100.append(nt);
+    v101.append(nb);
 
-         m00.insert(0, v000);
-         m00.insert(0, v001);
+    m00.insert(0, v000);
+    m00.insert(0, v001);
 
-         m10.insert(0, v100);
-         m10.insert(0, v101);
+    m10.insert(0, v100);
+    m10.insert(0, v101);
 
-         const m01 = m00.clone(true);
-         const m11 = m10.clone(true);
+    const m01 = m00.clone(true);
+    const m11 = m10.clone(true);
 
-         p0.append(m00);
-         p0.append(m01);
-         p1.append(m10);
-         p1.append(m11);
+    p0.append(m00);
+    p0.append(m01);
+    p1.append(m10);
+    p1.append(m11);
 
-         s.insert(0, p0);
-         s.insert(0, p1);
-         s.tempo = 60;
-         s.keySignature = new music21.key.Key('F');
+    s.insert(0, p0);
+    s.insert(0, p1);
+    s.tempo = 60;
+    s.keySignature = new music21.key.Key('F');
 
-         s.autoBeam = false; // important for not wiping out stem direction!
-         // s.appendNewCanvas();
-         fpe = new music21.streamInteraction.FourPartEditor(s);
-         fpe.activeMeasureIndex = 1;
-         $vst = fpe.editableCanvas();
-         $(document.body).append($vst);
-     });
-     </script>
+    s.renderOptions.scaleFactor.x = 1.0;
+    s.renderOptions.scaleFactor.y = 1.0;
+
+    s.autoBeam = false; // important for not wiping out stem direction!
+    // s.appendNewCanvas();
+    fpe = new music21.streamInteraction.FourPartEditor(s);
+    fpe.activeMeasureIndex = 1;
+    $vst = fpe.editableCanvas();
+    $(document.body).append($vst);
+});
+</script>
 </head>
 <body>
 <div class="document">
