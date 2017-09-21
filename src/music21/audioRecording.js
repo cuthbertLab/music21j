@@ -247,6 +247,16 @@ export class Recorder {
             navigator.getUserMedia
                 = navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
         }
+        if (window.AnalyserNode && !window.AnalyserNode.prototype.getFloatTimeDomainData) {
+            const uint8 = new Uint8Array(2048);
+            window.AnalyserNode.prototype.getFloatTimeDomainData = function getFloatTimeDomainData(array) {
+                this.getByteTimeDomainData(uint8);
+                const imax = array.length;
+                for (let i = 0; i < imax; i++) {
+                    array[i] = (uint8[i] - 128) * 0.0078125;
+                }
+            };
+        }
     }
 
     updateAnalysers(time) {

@@ -1,5 +1,5 @@
 /**
- * music21j 0.9.0 built on  * 2017-09-17.
+ * music21j 0.9.0 built on  * 2017-09-21.
  * Copyright (c) 2013-2016 Michael Scott Cuthbert and cuthbertLab
  * BSD License, see LICENSE
  *
@@ -2273,6 +2273,16 @@
           value: function polyfillNavigator() {
               if (!navigator.getUserMedia) {
                   navigator.getUserMedia = navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
+              }
+              if (window.AnalyserNode && !window.AnalyserNode.prototype.getFloatTimeDomainData) {
+                  var uint8 = new Uint8Array(2048);
+                  window.AnalyserNode.prototype.getFloatTimeDomainData = function getFloatTimeDomainData(array) {
+                      this.getByteTimeDomainData(uint8);
+                      var imax = array.length;
+                      for (var i = 0; i < imax; i++) {
+                          array[i] = (uint8[i] - 128) * 0.0078125;
+                      }
+                  };
               }
           }
       }, {
