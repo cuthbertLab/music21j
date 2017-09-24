@@ -65,7 +65,10 @@ class Notation {
                     modifierString += c;
                 }
             }
-            const number = parseInt(numberString);
+            let number;
+            if (numberString !== '') {
+                number = parseInt(numberString);
+            }
             numbers.push(number);
             if (modifierString === '') {
                 modifierString = undefined;

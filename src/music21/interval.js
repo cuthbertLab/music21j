@@ -296,11 +296,11 @@ export class GenericInterval extends prebase.ProtoM21Object {
 
         // if not reverse...
         const newDiatonicNumber = oldDiatonicNum + distanceToMove;
-        const newInfo = interval.IntervalConvertDiatonicNumberToStep(
+        const [newStep, newOctave] = interval.convertDiatonicNumberToStep(
             newDiatonicNumber
         );
-        pitch2.step = newInfo[0];
-        pitch2.octave = newInfo[1];
+        pitch2.step = newStep;
+        pitch2.octave = newOctave;
         if (p.accidental !== undefined) {
             pitch2.accidental = new pitch.Accidental(p.accidental.name);
         }
@@ -714,12 +714,12 @@ interval.ChromaticInterval = ChromaticInterval;
 interval.IntervalStepNames = ['C', 'D', 'E', 'F', 'G', 'A', 'B'];
 
 /**
- * @function music21.interval.IntervalConvertDiatonicNumberToStep
+ * @function music21.interval.convertDiatonicNumberToStep
  * @memberof music21.interval
  * @param {Int} dn - diatonic number, where 29 = C4, C#4 etc.
  * @returns {Array} two element array of {string} stepName and {Int} octave
  */
-interval.IntervalConvertDiatonicNumberToStep = function IntervalConvertDiatonicNumberToStep(
+interval.convertDiatonicNumberToStep = function convertDiatonicNumberToStep(
     dn
 ) {
     let stepNumber;
@@ -883,6 +883,21 @@ export class Interval extends prebase.ProtoM21Object {
     }
 }
 interval.Interval = Interval;
+
+interval.intervalFromGenericAndChromatic = function intervalFromGenericAndChromatic(
+    gInt,
+    cInt
+) {
+    if (typeof gInt === 'number') {
+        gInt = new GenericInterval(gInt);
+    }
+    if (typeof cInt === 'number') {
+        cInt = new ChromaticInterval(cInt);
+    }
+    const specifier = interval._getSpecifierFromGenericChromatic(gInt, cInt);
+    const dInt = new DiatonicInterval(specifier, gInt);
+    return new Interval(dInt, cInt);
+};
 /**
  * Convert two notes or pitches to a GenericInterval;
  */

@@ -229,7 +229,7 @@ roman.romanToNumber = [undefined, 'i', 'ii', 'iii', 'iv', 'v', 'vi', 'vii'];
  */
 export class RomanNumeral extends harmony.Harmony {
     constructor(figure, keyStr, keywords) {
-        const params = { updatePitches: true };
+        const params = { updatePitches: false, parseFigure: false };
         common.merge(params, keywords);
         super(figure, params);
         this.classes.push('RomanNumeral');
@@ -256,6 +256,7 @@ export class RomanNumeral extends harmony.Harmony {
 
         this.impliedQuality = undefined;
         this.impliedScale = undefined;
+        this.scaleOffset = undefined;
         this.useImpliedScale = false;
         this.bracketedAlterations = undefined;
         this.omittedSteps = [];
@@ -270,11 +271,12 @@ export class RomanNumeral extends harmony.Harmony {
         // to remove...
         this.numbers = '';
 
-        this.parseFigure();
+        this._parseFigure();
         this._parsingComplete = true;
+        this._updatePitches();
     }
 
-    parseFigure() {
+    _parseFigure() {
         let workingFigure = this.figure;
 
         let useScale = this.impliedScale;
@@ -287,7 +289,7 @@ export class RomanNumeral extends harmony.Harmony {
         // workingFigure = this._parseOmittedSteps(workingFigure);
         // workingFigure = this._parseBracketedAlterations(workingFigure);
         workingFigure = workingFigure.replace(/^N/, 'bII');
-        // workingFigure = this._parseFrontAlterations(workingFigure);
+        workingFigure = this._parseFrontAlterations(workingFigure);
         [workingFigure, useScale] = this._parseRNAloneAmidstAug6(
             workingFigure,
             useScale
@@ -306,16 +308,32 @@ export class RomanNumeral extends harmony.Harmony {
             workingFigure = workingFigure.replace(/\d+/, '');
             this.numbers = parseInt(numbersArr[0]);
         }
-        /* temp hack */
-        if (this.numbers === 7) {
-            if (this.scaleDegree === 5 && this.impliedQuality === 'major') {
-                this.impliedQuality = 'dominant-seventh';
-            } else {
-                this.impliedQuality += '-seventh';
-            }
-        }
+    }
 
-        this.updatePitches();
+    _parseFrontAlterations(workingFigure) {
+        let frontAlterationString = '';
+        let frontAlterationTransposeInterval;
+        let frontAlterationAccidental;
+        const _alterationRegex = new RegExp('^(b+|-+|#+)');
+        const match = _alterationRegex.exec(workingFigure);
+        if (match != null) {
+            const group = match[1];
+            let alteration = group.length;
+            if (group[0] === 'b' || group[0] === '-') {
+                alteration *= -1;
+            }
+            frontAlterationTransposeInterval = interval.intervalFromGenericAndChromatic(
+                1,
+                alteration
+            );
+            frontAlterationAccidental = new pitch.Accidental(alteration);
+            frontAlterationString = group;
+            workingFigure = workingFigure.replace(_alterationRegex, '');
+        }
+        this.frontAlterationString = frontAlterationString;
+        this.frontAlterationTransposeInterval = frontAlterationTransposeInterval;
+        this.frontAlterationAccidental = frontAlterationAccidental;
+        return workingFigure;
     }
 
     _setImpliedQualityFromString(workingFigure) {
@@ -452,8 +470,8 @@ export class RomanNumeral extends harmony.Harmony {
     set figure(newFigure) {
         this._figure = newFigure;
         if (this._parsingComplete) {
-            this.parseFigure();
-            this.updatePitches();
+            this._parseFigure();
+            this._updatePitches();
         }
     }
 
@@ -502,21 +520,172 @@ export class RomanNumeral extends harmony.Harmony {
      *
      * @memberof music21.roman.RomanNumeral
      */
-    updatePitches() {
-        const impliedQuality = this.impliedQuality;
-        const chordSpacing = chord.chordDefinitions[impliedQuality];
-        const chordPitches = [this._tempRoot];
-        let lastPitch = this._tempRoot;
-        for (let j = 0; j < chordSpacing.length; j++) {
-            // console.log('got them', lastPitch);
-            const thisTransStr = chordSpacing[j];
-            const thisTrans = new interval.Interval(thisTransStr);
-            const nextPitch = thisTrans.transposePitch(lastPitch);
-            chordPitches.push(nextPitch);
-            lastPitch = nextPitch;
+    _updatePitches() {
+        let useScale;
+        if (this.secondaryRomanNumeralKey !== undefined) {
+            useScale = this.secondaryRomanNumeralKey;
+        } else if (!this.useImpliedScale) {
+            useScale = this.key;
+        } else {
+            useScale = this.impliedScale;
         }
-        this.pitches = chordPitches;
-        this.root(this._tempRoot);
+
+        this.scaleCardinality = 7; // simple speedup;
+        const bassScaleDegree = this.bassScaleDegreeFromNotation(
+            this.figuresNotationObj
+        );
+        const bassPitch = useScale.pitchFromDegree(
+            bassScaleDegree,
+            'ascending'
+        );
+        const pitches = [bassPitch];
+        let lastPitch = bassPitch;
+        const numberNotes = this.figuresNotationObj.numbers.length;
+
+        for (let j = 0; j < numberNotes; j++) {
+            const i = numberNotes - j - 1;
+            const thisScaleDegree
+                = bassScaleDegree + this.figuresNotationObj.numbers[i] - 1;
+            const newPitch = useScale.pitchFromDegree(
+                thisScaleDegree,
+                'ascending'
+            );
+            const pitchName = this.figuresNotationObj.modifiers[
+                i
+            ].modifyPitchName(newPitch.name);
+            const newNewPitch = new pitch.Pitch(pitchName);
+            newNewPitch.octave = newPitch.octave;
+            if (newNewPitch.ps < lastPitch.ps) {
+                newNewPitch.octave += 1;
+            }
+            pitches.push(newNewPitch);
+            lastPitch = newNewPitch;
+        }
+        if (this.frontAlterationTransposeInterval !== undefined) {
+            const newPitches = [];
+            for (const thisPitch of pitches) {
+                const newPitch = this.frontAlterationTransposeInterval.transposePitch(
+                    thisPitch
+                );
+                newPitches.push(newPitch);
+            }
+            this.pitches = newPitches;
+        } else {
+            this.pitches = pitches;
+        }
+
+        this._matchAccidentalsToQuality(this.impliedQuality);
+
+        this.scaleOffset = this.frontAlterationTransposeInterval;
+
+        if (this.omittedSteps) {
+            // do something...
+        }
+
+        // const impliedQuality = this.impliedQuality;
+        // const chordSpacing = chord.chordDefinitions[impliedQuality];
+        // const chordPitches = [this._tempRoot];
+        // let lastPitch = this._tempRoot;
+        // for (let j = 0; j < chordSpacing.length; j++) {
+        //     // console.log('got them', lastPitch);
+        //     const thisTransStr = chordSpacing[j];
+        //     const thisTrans = new interval.Interval(thisTransStr);
+        //     const nextPitch = thisTrans.transposePitch(lastPitch);
+        //     chordPitches.push(nextPitch);
+        //     lastPitch = nextPitch;
+        // }
+        // this.pitches = chordPitches;
+        // this.root(this._tempRoot);
+    }
+
+    bassScaleDegreeFromNotation(notationObject) {
+        const c = new pitch.Pitch('C3');
+        const cDNN = c.diatonicNoteNum; // always 22
+        const pitches = [c];
+        for (const i of notationObject.numbers) {
+            const distanceToMove = i - 1;
+            const newDiatonicNumber = cDNN + distanceToMove;
+            const [newStep, newOctave] = interval.convertDiatonicNumberToStep(
+                newDiatonicNumber
+            );
+            const newPitch = new pitch.Pitch('C3');
+            newPitch.step = newStep;
+            newPitch.octave = newOctave;
+            pitches.push(newPitch);
+        }
+        const tempChord = new chord.Chord(pitches);
+        const rootDNN = tempChord.root().diatonicNoteNum;
+        const staffDistanceFromBassToRoot = rootDNN - cDNN;
+        let bassSD = common.posMod(
+            this.scaleDegree - staffDistanceFromBassToRoot,
+            7
+        );
+        if (bassSD === 0) {
+            bassSD = 7;
+        }
+        return bassSD;
+    }
+
+    _matchAccidentalsToQuality(impliedQuality) {
+        const correctSemitones = this._findSemitoneSizeForQuality(
+            impliedQuality
+        );
+        const chordStepsToExamine = [3, 5, 7];
+        for (let i = 0; i < chordStepsToExamine.length; i++) {
+            const thisChordStep = chordStepsToExamine[i];
+            const thisCorrect = correctSemitones[i];
+            const thisSemis = this.semitonesFromChordStep(thisChordStep);
+            if (thisSemis === undefined) {
+                continue;
+            }
+            if (thisSemis === thisCorrect) {
+                continue;
+            }
+
+            let correctedSemis = thisCorrect - thisSemis;
+            if (correctedSemis >= 6) {
+                correctedSemis = -1 * (12 - correctedSemis);
+            } else if (correctedSemis <= -6) {
+                correctedSemis += 12;
+            }
+
+            const faultyPitch = this.getChordStep(thisChordStep);
+            // TODO: check for faultyPitch is undefined
+
+            if (faultyPitch.accidental === undefined) {
+                faultyPitch.accidental = new pitch.Accidental(correctedSemis);
+            } else {
+                const acc = faultyPitch.accidental;
+                correctedSemis += acc.alter;
+                if (correctedSemis >= 6) {
+                    correctedSemis = -1 * (12 - correctedSemis);
+                } else if (correctedSemis <= -6) {
+                    correctedSemis += 12;
+                }
+                acc.set(correctedSemis);
+            }
+        }
+    }
+
+    _findSemitoneSizeForQuality(impliedQuality) {
+        let correctSemitones;
+        if (impliedQuality === 'major') {
+            correctSemitones = [4, 7];
+        } else if (impliedQuality === 'minor') {
+            correctSemitones = [3, 7];
+        } else if (impliedQuality === 'diminished') {
+            correctSemitones = [3, 6, 9];
+        } else if (impliedQuality === 'half-diminished') {
+            correctSemitones = [3, 6, 10];
+        } else if (impliedQuality === 'augmented') {
+            correctSemitones = [4, 8];
+        } else if (impliedQuality === 'dominant-seventh') {
+            correctSemitones = [4, 7, 10];
+        } else {
+            correctSemitones = [];
+        }
+
+        return correctSemitones;
     }
 
     /**

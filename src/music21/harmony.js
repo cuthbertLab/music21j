@@ -16,7 +16,7 @@ class Harmony extends chord.Chord {
         this._key = undefined;
         // this._updateBasedOnXMLInput(keywords);
         this._figure = figure;
-        if (this._figure !== undefined) {
+        if (keywords.parseFigure !== false && this._figure !== undefined) {
             this._parseFigure();
         }
         if (
@@ -34,7 +34,8 @@ class Harmony extends chord.Chord {
         }
         // this._updateBasedOnXMLInput(keywords);
         if (
-            this._figure !== undefined
+            keywords.parseFigure !== false
+            && this._figure !== undefined
             && this._figure.indexOf('sus') !== -1
             && this._figure.indexOf('sus2') === -1
         ) {

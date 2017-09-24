@@ -263,6 +263,8 @@ export class Pitch extends prebase.ProtoM21Object {
         }
     }
 
+    // N.B. cannot use transpose here, because of circular import.
+
     get step() {
         return this._step;
     }

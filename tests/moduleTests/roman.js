@@ -49,6 +49,7 @@ export default function tests() {
         assert.equal(rnKey.tonic.name, 'F', 'test scale is F');
         assert.equal(rn1.root().name, 'B-', 'test root of F IV');
         assert.equal(rn1.impliedQuality, 'major', 'test quality is major');
+        assert.equal(rn1.pitches.length, 3, 'should be three pitches');
         assert.equal(rn1.pitches[0].name, 'B-', 'test pitches[0] == B-');
         assert.equal(rn1.pitches[1].name, 'D', 'test pitches[1] == D');
         assert.equal(rn1.pitches[2].name, 'F', 'test pitches[2] == F');
@@ -57,18 +58,15 @@ export default function tests() {
 
         let t2;
         t2 = 'viio7';
+        assert.equal(t2, 'viio7', 'beginning viio7 test');
         rn1 = new music21.roman.RomanNumeral(t2, 'a');
         assert.equal(rn1.scaleDegree, 7, 'test scale dgree of A viio7');
         assert.equal(rn1.root().name, 'G#', 'test root name == G#');
-        assert.equal(
-            rn1.impliedQuality,
-            'diminished-seventh',
-            'implied quality'
-        );
-        assert.equal(rn1.pitches[0].name, 'G#', 'test pitches[0] == G#');
-        assert.equal(rn1.pitches[1].name, 'B', 'test pitches[1] == B');
-        assert.equal(rn1.pitches[2].name, 'D', 'test pitches[2] == D');
-        assert.equal(rn1.pitches[3].name, 'F', 'test pitches[3] == F');
+        assert.equal(rn1.impliedQuality, 'diminished', 'implied quality');
+        assert.equal(rn1.pitches[0].name, 'G#', 'test viio7 pitches[0] == G#');
+        assert.equal(rn1.pitches[1].name, 'B', 'test viio7 pitches[1] == B');
+        assert.equal(rn1.pitches[2].name, 'D', 'test viio7 pitches[2] == D');
+        assert.equal(rn1.pitches[3].name, 'F', 'test viio7 pitches[3] == F');
         assert.equal(rn1.degreeName, 'Leading-tone', 'test is Leading-tone');
         assert.equal(rn1.figureAndKey, 'viio7 in a minor');
 
@@ -77,11 +75,7 @@ export default function tests() {
         assert.equal(rn1.scaleDegree, 5, 'test scale dgree of a V7');
         assert.equal(rn1.romanNumeralAlone, 'V', 'test romanNumeralAlone');
         assert.equal(rn1.root().name, 'E', 'root name is E');
-        assert.equal(
-            rn1.impliedQuality,
-            'dominant-seventh',
-            'implied quality dominant-seventh'
-        );
+        assert.equal(rn1.impliedQuality, 'major', 'implied quality major');
         assert.equal(rn1.pitches[0].name, 'E', 'test pitches[0] == E');
         assert.equal(rn1.pitches[1].name, 'G#', 'test pitches[1] == G#');
         assert.equal(rn1.pitches[2].name, 'B', 'test pitches[2] == B');
@@ -97,14 +91,27 @@ export default function tests() {
         assert.equal(rn1.pitches[1].name, 'G#', 'test pitches[1] == G#');
         assert.equal(rn1.pitches[2].name, 'B', 'test pitches[2] == B');
         assert.equal(rn1.degreeName, 'Subtonic', 'test is Subtonic');
+
+        t2 = '#IV';
+        rn1 = new music21.roman.RomanNumeral(t2, 'F');
+        assert.equal(rn1.scaleDegree, 4, 'test scale dgree of F #IV');
+        assert.equal(rn1.root().name, 'B', 'test root of F #IV');
+        assert.equal(rn1.impliedQuality, 'major', 'test quality is major');
+        assert.equal(rn1.pitches.length, 3, 'should be three pitches');
+        assert.equal(rn1.pitches[0].name, 'B', 'test pitches[0] == B');
+        assert.equal(rn1.pitches[1].name, 'D#', 'test pitches[1] == D#');
+        assert.equal(rn1.pitches[2].name, 'F#', 'test pitches[2] == F#');
+        assert.equal(rn1.figureAndKey, '#IV in F major');
+        assert.equal(rn1.degreeName, 'Subdominant', 'test is Subdominant');
     });
 
     QUnit.test('music21.roman.RomanNumeral - inversions', assert => {
         const t1 = 'IV6';
-        const rn1 = new music21.roman.RomanNumeral(t1, 'F');
+        let rn1;
+        rn1 = new music21.roman.RomanNumeral(t1, 'F');
         assert.equal(rn1.scaleDegree, 4, 'test scale dgree of F IV6');
-        const scale = rn1.scale;
-        assert.equal(scale.tonic.name, 'F', 'test scale is F');
+        const rnKey = rn1.key;
+        assert.equal(rnKey.tonic.name, 'F', 'test scale is F');
         assert.equal(rn1.root().name, 'B-', 'test root of F IV6');
         assert.equal(rn1.bass().name, 'D', 'test bass of F IV6');
         assert.equal(rn1.impliedQuality, 'major', 'test quality is major');
@@ -112,5 +119,18 @@ export default function tests() {
         assert.ok(rn1.pitches.map(p => p.name).includes('B-'), 'B- in pitches');
         assert.ok(rn1.pitches.map(p => p.name).includes('F'), 'F in pitches');
         assert.equal(rn1.degreeName, 'Subdominant', 'test is Subdominant');
+
+        const t2 = 'V43';
+        rn1 = new music21.roman.RomanNumeral(t2, 'a');
+        assert.equal(rn1.scaleDegree, 5, 'test scale dgree of a V43');
+        assert.equal(rn1.romanNumeralAlone, 'V', 'test romanNumeralAlone');
+        assert.equal(rn1.root().name, 'E', 'root name is E');
+        assert.equal(rn1.bass().name, 'B', 'bass name is B');
+        assert.equal(rn1.impliedQuality, 'major', 'implied quality major');
+        assert.equal(rn1.pitches[0].name, 'B', 'test pitches[0] == B');
+        assert.equal(rn1.pitches[1].name, 'D', 'test pitches[1] == D');
+        assert.equal(rn1.pitches[2].name, 'E', 'test pitches[2] == E');
+        assert.equal(rn1.pitches[3].name, 'G#', 'test pitches[3] == G#');
+        assert.equal(rn1.degreeName, 'Dominant', 'test is Dominant');
     });
 }

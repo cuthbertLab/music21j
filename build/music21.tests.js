@@ -3113,6 +3113,8 @@
           return _this2;
       }
 
+      // N.B. cannot use transpose here, because of circular import.
+
       createClass(Pitch, [{
           key: 'vexflowName',
 
@@ -3528,9 +3530,14 @@
 
               // if not reverse...
               var newDiatonicNumber = oldDiatonicNum + distanceToMove;
-              var newInfo = interval.IntervalConvertDiatonicNumberToStep(newDiatonicNumber);
-              pitch2.step = newInfo[0];
-              pitch2.octave = newInfo[1];
+
+              var _interval$convertDiat = interval.convertDiatonicNumberToStep(newDiatonicNumber),
+                  _interval$convertDiat2 = slicedToArray(_interval$convertDiat, 2),
+                  newStep = _interval$convertDiat2[0],
+                  newOctave = _interval$convertDiat2[1];
+
+              pitch2.step = newStep;
+              pitch2.octave = newOctave;
               if (p.accidental !== undefined) {
                   pitch2.accidental = new pitch.Accidental(p.accidental.name);
               }
@@ -3838,12 +3845,12 @@
   interval.IntervalStepNames = ['C', 'D', 'E', 'F', 'G', 'A', 'B'];
 
   /**
-   * @function music21.interval.IntervalConvertDiatonicNumberToStep
+   * @function music21.interval.convertDiatonicNumberToStep
    * @memberof music21.interval
    * @param {Int} dn - diatonic number, where 29 = C4, C#4 etc.
    * @returns {Array} two element array of {string} stepName and {Int} octave
    */
-  interval.IntervalConvertDiatonicNumberToStep = function IntervalConvertDiatonicNumberToStep(dn) {
+  interval.convertDiatonicNumberToStep = function convertDiatonicNumberToStep(dn) {
       var stepNumber = void 0;
       var octave = void 0;
       if (dn === 0) {
@@ -4020,6 +4027,18 @@
       return Interval;
   }(prebase.ProtoM21Object);
   interval.Interval = Interval;
+
+  interval.intervalFromGenericAndChromatic = function intervalFromGenericAndChromatic(gInt, cInt) {
+      if (typeof gInt === 'number') {
+          gInt = new GenericInterval(gInt);
+      }
+      if (typeof cInt === 'number') {
+          cInt = new ChromaticInterval(cInt);
+      }
+      var specifier = interval._getSpecifierFromGenericChromatic(gInt, cInt);
+      var dInt = new DiatonicInterval(specifier, gInt);
+      return new Interval(dInt, cInt);
+  };
   /**
    * Convert two notes or pitches to a GenericInterval;
    */
@@ -6110,7 +6129,10 @@
                           }
                       }
 
-                      var number = parseInt(numberString);
+                      var number = void 0;
+                      if (numberString !== '') {
+                          number = parseInt(numberString);
+                      }
                       numbers.push(number);
                       if (modifierString === '') {
                           modifierString = undefined;
@@ -7621,7 +7643,7 @@
           _this._key = undefined;
           // this._updateBasedOnXMLInput(keywords);
           _this._figure = figure;
-          if (_this._figure !== undefined) {
+          if (keywords.parseFigure !== false && _this._figure !== undefined) {
               _this._parseFigure();
           }
           if (_this._overrides.bass === undefined && _this._overrides.root !== undefined) {
@@ -7631,7 +7653,7 @@
               _this._updatePitches();
           }
           // this._updateBasedOnXMLInput(keywords);
-          if (_this._figure !== undefined && _this._figure.indexOf('sus') !== -1 && _this._figure.indexOf('sus2') === -1) {
+          if (keywords.parseFigure !== false && _this._figure !== undefined && _this._figure.indexOf('sus') !== -1 && _this._figure.indexOf('sus2') === -1) {
               _this.root(_this.bass());
           }
           return _this;
@@ -15834,7 +15856,7 @@
       function RomanNumeral(figure, keyStr, keywords) {
           classCallCheck(this, RomanNumeral);
 
-          var params = { updatePitches: true };
+          var params = { updatePitches: false, parseFigure: false };
           common.merge(params, keywords);
 
           var _this = possibleConstructorReturn(this, (RomanNumeral.__proto__ || Object.getPrototypeOf(RomanNumeral)).call(this, figure, params));
@@ -15863,6 +15885,7 @@
 
           _this.impliedQuality = undefined;
           _this.impliedScale = undefined;
+          _this.scaleOffset = undefined;
           _this.useImpliedScale = false;
           _this.bracketedAlterations = undefined;
           _this.omittedSteps = [];
@@ -15877,14 +15900,15 @@
           // to remove...
           _this.numbers = '';
 
-          _this.parseFigure();
+          _this._parseFigure();
           _this._parsingComplete = true;
+          _this._updatePitches();
           return _this;
       }
 
       createClass(RomanNumeral, [{
-          key: 'parseFigure',
-          value: function parseFigure() {
+          key: '_parseFigure',
+          value: function _parseFigure() {
               var workingFigure = this.figure;
 
               var useScale = this.impliedScale;
@@ -15897,7 +15921,7 @@
               // workingFigure = this._parseOmittedSteps(workingFigure);
               // workingFigure = this._parseBracketedAlterations(workingFigure);
               workingFigure = workingFigure.replace(/^N/, 'bII');
-              // workingFigure = this._parseFrontAlterations(workingFigure);
+              workingFigure = this._parseFrontAlterations(workingFigure);
 
               var _parseRNAloneAmidstAu = this._parseRNAloneAmidstAug6(workingFigure, useScale);
 
@@ -15918,16 +15942,30 @@
                   workingFigure = workingFigure.replace(/\d+/, '');
                   this.numbers = parseInt(numbersArr[0]);
               }
-              /* temp hack */
-              if (this.numbers === 7) {
-                  if (this.scaleDegree === 5 && this.impliedQuality === 'major') {
-                      this.impliedQuality = 'dominant-seventh';
-                  } else {
-                      this.impliedQuality += '-seventh';
+          }
+      }, {
+          key: '_parseFrontAlterations',
+          value: function _parseFrontAlterations(workingFigure) {
+              var frontAlterationString = '';
+              var frontAlterationTransposeInterval = void 0;
+              var frontAlterationAccidental = void 0;
+              var _alterationRegex = new RegExp('^(b+|-+|#+)');
+              var match = _alterationRegex.exec(workingFigure);
+              if (match != null) {
+                  var group = match[1];
+                  var alteration = group.length;
+                  if (group[0] === 'b' || group[0] === '-') {
+                      alteration *= -1;
                   }
+                  frontAlterationTransposeInterval = interval.intervalFromGenericAndChromatic(1, alteration);
+                  frontAlterationAccidental = new pitch.Accidental(alteration);
+                  frontAlterationString = group;
+                  workingFigure = workingFigure.replace(_alterationRegex, '');
               }
-
-              this.updatePitches();
+              this.frontAlterationString = frontAlterationString;
+              this.frontAlterationTransposeInterval = frontAlterationTransposeInterval;
+              this.frontAlterationAccidental = frontAlterationAccidental;
+              return workingFigure;
           }
       }, {
           key: '_setImpliedQualityFromString',
@@ -16006,7 +16044,7 @@
            */
 
       }, {
-          key: 'updatePitches',
+          key: '_updatePitches',
 
 
           /**
@@ -16014,21 +16052,204 @@
            *
            * @memberof music21.roman.RomanNumeral
            */
-          value: function updatePitches() {
-              var impliedQuality = this.impliedQuality;
-              var chordSpacing = chord.chordDefinitions[impliedQuality];
-              var chordPitches = [this._tempRoot];
-              var lastPitch = this._tempRoot;
-              for (var j = 0; j < chordSpacing.length; j++) {
-                  // console.log('got them', lastPitch);
-                  var thisTransStr = chordSpacing[j];
-                  var thisTrans = new interval.Interval(thisTransStr);
-                  var nextPitch = thisTrans.transposePitch(lastPitch);
-                  chordPitches.push(nextPitch);
-                  lastPitch = nextPitch;
+          value: function _updatePitches() {
+              var useScale = void 0;
+              if (this.secondaryRomanNumeralKey !== undefined) {
+                  useScale = this.secondaryRomanNumeralKey;
+              } else if (!this.useImpliedScale) {
+                  useScale = this.key;
+              } else {
+                  useScale = this.impliedScale;
               }
-              this.pitches = chordPitches;
-              this.root(this._tempRoot);
+
+              this.scaleCardinality = 7; // simple speedup;
+              var bassScaleDegree = this.bassScaleDegreeFromNotation(this.figuresNotationObj);
+              var bassPitch = useScale.pitchFromDegree(bassScaleDegree, 'ascending');
+              var pitches = [bassPitch];
+              var lastPitch = bassPitch;
+              var numberNotes = this.figuresNotationObj.numbers.length;
+
+              for (var j = 0; j < numberNotes; j++) {
+                  var i = numberNotes - j - 1;
+                  var thisScaleDegree = bassScaleDegree + this.figuresNotationObj.numbers[i] - 1;
+                  var newPitch = useScale.pitchFromDegree(thisScaleDegree, 'ascending');
+                  var pitchName = this.figuresNotationObj.modifiers[i].modifyPitchName(newPitch.name);
+                  var newNewPitch = new pitch.Pitch(pitchName);
+                  newNewPitch.octave = newPitch.octave;
+                  if (newNewPitch.ps < lastPitch.ps) {
+                      newNewPitch.octave += 1;
+                  }
+                  pitches.push(newNewPitch);
+                  lastPitch = newNewPitch;
+              }
+              if (this.frontAlterationTransposeInterval !== undefined) {
+                  var newPitches = [];
+                  var _iteratorNormalCompletion2 = true;
+                  var _didIteratorError2 = false;
+                  var _iteratorError2 = undefined;
+
+                  try {
+                      for (var _iterator2 = pitches[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+                          var thisPitch = _step2.value;
+
+                          var _newPitch = this.frontAlterationTransposeInterval.transposePitch(thisPitch);
+                          newPitches.push(_newPitch);
+                      }
+                  } catch (err) {
+                      _didIteratorError2 = true;
+                      _iteratorError2 = err;
+                  } finally {
+                      try {
+                          if (!_iteratorNormalCompletion2 && _iterator2.return) {
+                              _iterator2.return();
+                          }
+                      } finally {
+                          if (_didIteratorError2) {
+                              throw _iteratorError2;
+                          }
+                      }
+                  }
+
+                  this.pitches = newPitches;
+              } else {
+                  this.pitches = pitches;
+              }
+
+              this._matchAccidentalsToQuality(this.impliedQuality);
+
+              this.scaleOffset = this.frontAlterationTransposeInterval;
+
+              if (this.omittedSteps) {}
+              // do something...
+
+
+              // const impliedQuality = this.impliedQuality;
+              // const chordSpacing = chord.chordDefinitions[impliedQuality];
+              // const chordPitches = [this._tempRoot];
+              // let lastPitch = this._tempRoot;
+              // for (let j = 0; j < chordSpacing.length; j++) {
+              //     // console.log('got them', lastPitch);
+              //     const thisTransStr = chordSpacing[j];
+              //     const thisTrans = new interval.Interval(thisTransStr);
+              //     const nextPitch = thisTrans.transposePitch(lastPitch);
+              //     chordPitches.push(nextPitch);
+              //     lastPitch = nextPitch;
+              // }
+              // this.pitches = chordPitches;
+              // this.root(this._tempRoot);
+          }
+      }, {
+          key: 'bassScaleDegreeFromNotation',
+          value: function bassScaleDegreeFromNotation(notationObject) {
+              var c = new pitch.Pitch('C3');
+              var cDNN = c.diatonicNoteNum; // always 22
+              var pitches = [c];
+              var _iteratorNormalCompletion3 = true;
+              var _didIteratorError3 = false;
+              var _iteratorError3 = undefined;
+
+              try {
+                  for (var _iterator3 = notationObject.numbers[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+                      var i = _step3.value;
+
+                      var distanceToMove = i - 1;
+                      var newDiatonicNumber = cDNN + distanceToMove;
+
+                      var _interval$convertDiat = interval.convertDiatonicNumberToStep(newDiatonicNumber),
+                          _interval$convertDiat2 = slicedToArray(_interval$convertDiat, 2),
+                          newStep = _interval$convertDiat2[0],
+                          newOctave = _interval$convertDiat2[1];
+
+                      var newPitch = new pitch.Pitch('C3');
+                      newPitch.step = newStep;
+                      newPitch.octave = newOctave;
+                      pitches.push(newPitch);
+                  }
+              } catch (err) {
+                  _didIteratorError3 = true;
+                  _iteratorError3 = err;
+              } finally {
+                  try {
+                      if (!_iteratorNormalCompletion3 && _iterator3.return) {
+                          _iterator3.return();
+                      }
+                  } finally {
+                      if (_didIteratorError3) {
+                          throw _iteratorError3;
+                      }
+                  }
+              }
+
+              var tempChord = new chord.Chord(pitches);
+              var rootDNN = tempChord.root().diatonicNoteNum;
+              var staffDistanceFromBassToRoot = rootDNN - cDNN;
+              var bassSD = common.posMod(this.scaleDegree - staffDistanceFromBassToRoot, 7);
+              if (bassSD === 0) {
+                  bassSD = 7;
+              }
+              return bassSD;
+          }
+      }, {
+          key: '_matchAccidentalsToQuality',
+          value: function _matchAccidentalsToQuality(impliedQuality) {
+              var correctSemitones = this._findSemitoneSizeForQuality(impliedQuality);
+              var chordStepsToExamine = [3, 5, 7];
+              for (var i = 0; i < chordStepsToExamine.length; i++) {
+                  var thisChordStep = chordStepsToExamine[i];
+                  var thisCorrect = correctSemitones[i];
+                  var thisSemis = this.semitonesFromChordStep(thisChordStep);
+                  if (thisSemis === undefined) {
+                      continue;
+                  }
+                  if (thisSemis === thisCorrect) {
+                      continue;
+                  }
+
+                  var correctedSemis = thisCorrect - thisSemis;
+                  if (correctedSemis >= 6) {
+                      correctedSemis = -1 * (12 - correctedSemis);
+                  } else if (correctedSemis <= -6) {
+                      correctedSemis += 12;
+                  }
+
+                  var faultyPitch = this.getChordStep(thisChordStep);
+                  // TODO: check for faultyPitch is undefined
+
+                  if (faultyPitch.accidental === undefined) {
+                      faultyPitch.accidental = new pitch.Accidental(correctedSemis);
+                  } else {
+                      var acc = faultyPitch.accidental;
+                      correctedSemis += acc.alter;
+                      if (correctedSemis >= 6) {
+                          correctedSemis = -1 * (12 - correctedSemis);
+                      } else if (correctedSemis <= -6) {
+                          correctedSemis += 12;
+                      }
+                      acc.set(correctedSemis);
+                  }
+              }
+          }
+      }, {
+          key: '_findSemitoneSizeForQuality',
+          value: function _findSemitoneSizeForQuality(impliedQuality) {
+              var correctSemitones = void 0;
+              if (impliedQuality === 'major') {
+                  correctSemitones = [4, 7];
+              } else if (impliedQuality === 'minor') {
+                  correctSemitones = [3, 7];
+              } else if (impliedQuality === 'diminished') {
+                  correctSemitones = [3, 6, 9];
+              } else if (impliedQuality === 'half-diminished') {
+                  correctSemitones = [3, 6, 10];
+              } else if (impliedQuality === 'augmented') {
+                  correctSemitones = [4, 8];
+              } else if (impliedQuality === 'dominant-seventh') {
+                  correctSemitones = [4, 7, 10];
+              } else {
+                  correctSemitones = [];
+              }
+
+              return correctSemitones;
           }
 
           /**
@@ -16146,8 +16367,8 @@
           set: function set(newFigure) {
               this._figure = newFigure;
               if (this._parsingComplete) {
-                  this.parseFigure();
-                  this.updatePitches();
+                  this._parseFigure();
+                  this._updatePitches();
               }
           }
       }, {
@@ -18305,9 +18526,15 @@
       });
   }
 
+  var interval$1 = music21.interval;
   var Interval$1 = music21.interval.Interval;
 
   function tests$8() {
+      QUnit.test('music21.interval.intervalFromGenericAndChromatic', function (assert) {
+          var i = void 0;
+          i = interval$1.intervalFromGenericAndChromatic(2, 2);
+          assert.equal(i.name, 'M2');
+      });
       QUnit.test('music21.interval.Interval', function (assert) {
           var i = void 0;
           i = new Interval$1('P5');
@@ -18441,6 +18668,7 @@
           assert.equal(rnKey.tonic.name, 'F', 'test scale is F');
           assert.equal(rn1.root().name, 'B-', 'test root of F IV');
           assert.equal(rn1.impliedQuality, 'major', 'test quality is major');
+          assert.equal(rn1.pitches.length, 3, 'should be three pitches');
           assert.equal(rn1.pitches[0].name, 'B-', 'test pitches[0] == B-');
           assert.equal(rn1.pitches[1].name, 'D', 'test pitches[1] == D');
           assert.equal(rn1.pitches[2].name, 'F', 'test pitches[2] == F');
@@ -18449,14 +18677,15 @@
 
           var t2 = void 0;
           t2 = 'viio7';
+          assert.equal(t2, 'viio7', 'beginning viio7 test');
           rn1 = new music21.roman.RomanNumeral(t2, 'a');
           assert.equal(rn1.scaleDegree, 7, 'test scale dgree of A viio7');
           assert.equal(rn1.root().name, 'G#', 'test root name == G#');
-          assert.equal(rn1.impliedQuality, 'diminished-seventh', 'implied quality');
-          assert.equal(rn1.pitches[0].name, 'G#', 'test pitches[0] == G#');
-          assert.equal(rn1.pitches[1].name, 'B', 'test pitches[1] == B');
-          assert.equal(rn1.pitches[2].name, 'D', 'test pitches[2] == D');
-          assert.equal(rn1.pitches[3].name, 'F', 'test pitches[3] == F');
+          assert.equal(rn1.impliedQuality, 'diminished', 'implied quality');
+          assert.equal(rn1.pitches[0].name, 'G#', 'test viio7 pitches[0] == G#');
+          assert.equal(rn1.pitches[1].name, 'B', 'test viio7 pitches[1] == B');
+          assert.equal(rn1.pitches[2].name, 'D', 'test viio7 pitches[2] == D');
+          assert.equal(rn1.pitches[3].name, 'F', 'test viio7 pitches[3] == F');
           assert.equal(rn1.degreeName, 'Leading-tone', 'test is Leading-tone');
           assert.equal(rn1.figureAndKey, 'viio7 in a minor');
 
@@ -18465,7 +18694,7 @@
           assert.equal(rn1.scaleDegree, 5, 'test scale dgree of a V7');
           assert.equal(rn1.romanNumeralAlone, 'V', 'test romanNumeralAlone');
           assert.equal(rn1.root().name, 'E', 'root name is E');
-          assert.equal(rn1.impliedQuality, 'dominant-seventh', 'implied quality dominant-seventh');
+          assert.equal(rn1.impliedQuality, 'major', 'implied quality major');
           assert.equal(rn1.pitches[0].name, 'E', 'test pitches[0] == E');
           assert.equal(rn1.pitches[1].name, 'G#', 'test pitches[1] == G#');
           assert.equal(rn1.pitches[2].name, 'B', 'test pitches[2] == B');
@@ -18481,14 +18710,27 @@
           assert.equal(rn1.pitches[1].name, 'G#', 'test pitches[1] == G#');
           assert.equal(rn1.pitches[2].name, 'B', 'test pitches[2] == B');
           assert.equal(rn1.degreeName, 'Subtonic', 'test is Subtonic');
+
+          t2 = '#IV';
+          rn1 = new music21.roman.RomanNumeral(t2, 'F');
+          assert.equal(rn1.scaleDegree, 4, 'test scale dgree of F #IV');
+          assert.equal(rn1.root().name, 'B', 'test root of F #IV');
+          assert.equal(rn1.impliedQuality, 'major', 'test quality is major');
+          assert.equal(rn1.pitches.length, 3, 'should be three pitches');
+          assert.equal(rn1.pitches[0].name, 'B', 'test pitches[0] == B');
+          assert.equal(rn1.pitches[1].name, 'D#', 'test pitches[1] == D#');
+          assert.equal(rn1.pitches[2].name, 'F#', 'test pitches[2] == F#');
+          assert.equal(rn1.figureAndKey, '#IV in F major');
+          assert.equal(rn1.degreeName, 'Subdominant', 'test is Subdominant');
       });
 
       QUnit.test('music21.roman.RomanNumeral - inversions', function (assert) {
           var t1 = 'IV6';
-          var rn1 = new music21.roman.RomanNumeral(t1, 'F');
+          var rn1 = void 0;
+          rn1 = new music21.roman.RomanNumeral(t1, 'F');
           assert.equal(rn1.scaleDegree, 4, 'test scale dgree of F IV6');
-          var scale = rn1.scale;
-          assert.equal(scale.tonic.name, 'F', 'test scale is F');
+          var rnKey = rn1.key;
+          assert.equal(rnKey.tonic.name, 'F', 'test scale is F');
           assert.equal(rn1.root().name, 'B-', 'test root of F IV6');
           assert.equal(rn1.bass().name, 'D', 'test bass of F IV6');
           assert.equal(rn1.impliedQuality, 'major', 'test quality is major');
@@ -18500,6 +18742,19 @@
               return p.name;
           }).includes('F'), 'F in pitches');
           assert.equal(rn1.degreeName, 'Subdominant', 'test is Subdominant');
+
+          var t2 = 'V43';
+          rn1 = new music21.roman.RomanNumeral(t2, 'a');
+          assert.equal(rn1.scaleDegree, 5, 'test scale dgree of a V43');
+          assert.equal(rn1.romanNumeralAlone, 'V', 'test romanNumeralAlone');
+          assert.equal(rn1.root().name, 'E', 'root name is E');
+          assert.equal(rn1.bass().name, 'B', 'bass name is B');
+          assert.equal(rn1.impliedQuality, 'major', 'implied quality major');
+          assert.equal(rn1.pitches[0].name, 'B', 'test pitches[0] == B');
+          assert.equal(rn1.pitches[1].name, 'D', 'test pitches[1] == D');
+          assert.equal(rn1.pitches[2].name, 'E', 'test pitches[2] == E');
+          assert.equal(rn1.pitches[3].name, 'G#', 'test pitches[3] == G#');
+          assert.equal(rn1.degreeName, 'Dominant', 'test is Dominant');
       });
   }
 
