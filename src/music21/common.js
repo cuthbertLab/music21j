@@ -81,6 +81,19 @@ common.mixin = function common_mixin(OtherParent, thisClassOrObject) {
         proto = Object.getPrototypeOf(proto);
     }
 };
+
+/**
+ * posMod - return a modulo value that is not negative
+ *
+ * @param  {Int} a value
+ * @param  {Int} b modulo 
+ * @return {Int}   a mod b between 0 and b - 1
+ */
+
+common.posMod = function posMod(a, b) {
+    return (a % b + b) % b;
+};
+
 /**
  *
  * Returns the statistical mode (most commonly appearing element)

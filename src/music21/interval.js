@@ -6,6 +6,7 @@
  * Based on music21 (=music21p), Copyright (c) 2006-16, Michael Scott Cuthbert and cuthbertLab
  *
  */
+import { common } from './common.js';
 import { debug } from './debug.js';
 import { prebase } from './prebase.js';
 import { pitch } from './pitch.js';
@@ -175,7 +176,7 @@ export class GenericInterval extends prebase.ProtoM21Object {
             this.isUnison = false;
         }
 
-        let tempSteps = this.undirected % 7;
+        let tempSteps = common.posMod(this.undirected, 7);
         let tempOctaves = parseInt(this.undirected / 7);
         if (tempSteps === 0) {
             tempOctaves -= 1;
@@ -659,8 +660,8 @@ export class ChromaticInterval extends prebase.ProtoM21Object {
             this.direction = interval.Direction.DESCENDING;
         }
 
-        this.mod12 = this.semitones % 12;
-        this.simpleUndirected = this.undirected % 12;
+        this.mod12 = common.posMod(this.semitones, 12);
+        this.simpleUndirected = common.posMod(this.undirected, 12);
         if (this.direction === interval.Direction.DESCENDING) {
             this.simpleDirected = -1 * this.simpleUndirected;
         } else {

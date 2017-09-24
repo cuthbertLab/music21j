@@ -31,6 +31,158 @@ import { interval } from './interval.js';
  */
 export const roman = {};
 
+roman.figureShorthands = {
+    '53': '',
+    '3': '',
+    '63': '6',
+    '753': '7',
+    '75': '7', // controversial perhaps
+    '73': '7', // controversial perhaps
+    '9753': '9',
+    '975': '9', // controversial perhaps
+    '953': '9', // controversial perhaps
+    '97': '9', // controversial perhaps
+    '95': '9', // controversial perhaps
+    '93': '9', // controversial perhaps
+    '653': '65',
+    '6b53': '6b5',
+    '643': '43',
+    '642': '42',
+    bb7b5b3: 'o7',
+    bb7b53: 'o7',
+    // '6b5bb3': 'o65',
+    b7b5b3: '/o7',
+};
+
+roman.functionalityScores = {
+    I: 100,
+    i: 90,
+    V7: 80,
+    V: 70,
+    V65: 68,
+    I6: 65,
+    V6: 63,
+    V43: 61,
+    I64: 60,
+    IV: 59,
+    i6: 58,
+    viio7: 57,
+    V42: 55,
+    viio65: 53,
+    viio6: 52,
+    '#viio65': 51,
+    ii: 50,
+    '#viio6': 49,
+    ii65: 48,
+    ii43: 47,
+    ii42: 46,
+    IV6: 45,
+    ii6: 43,
+    VI: 42,
+    '#VI': 41,
+    vi: 40,
+    viio: 39,
+    '#viio': 39,
+    iio: 37, // common in Minor
+    iio42: 36,
+    bII6: 35, // Neapolitan
+    iio43: 32,
+    iio65: 31,
+    '#vio': 28,
+    '#vio6': 28,
+    III: 22,
+    v: 20,
+    VII: 19,
+    VII7: 18,
+    IV65: 17,
+    IV7: 16,
+    iii: 15,
+    iii6: 12,
+    vi6: 10,
+};
+
+/**
+ * expandShortHand - expand a string of numbers into an array
+ *
+ * N.B. this is NOT where abbreviations get expanded
+ *
+ * @memberof music21.roman
+ * @param  {string} shorthand string of a figure w/o roman to parse
+ * @return {Array[string]}           array of shorthands
+ */
+
+roman.expandShortHand = function expandShortHand(shorthand) {
+    shorthand = shorthand.replace('/', '');
+    if (shorthand.match(/[b-]$/)) {
+        shorthand += '3';
+    }
+    shorthand = shorthand.replace('11', 'x');
+    shorthand = shorthand.replace('13', 'y');
+    shorthand = shorthand.replace('15', 'z');
+    const rx = new RegExp('#*-*b*o*[1-9xyz]', 'g');
+    let shorthandGroups = [];
+    let match = rx.exec(shorthand);
+    while (match !== null) {
+        shorthandGroups.push(match[0]);
+        match = rx.exec(shorthand);
+    }
+    if (shorthandGroups.length === 1 && shorthandGroups[0].endsWith('3')) {
+        shorthandGroups = ['5', shorthandGroups[0]];
+    }
+    const shGroupOut = [];
+    for (let sh of shorthandGroups) {
+        sh = sh.replace('x', '11');
+        sh = sh.replace('y', '13');
+        sh = sh.replace('z', '15');
+        shGroupOut.push(sh);
+    }
+    return shGroupOut;
+};
+
+/**
+ * correctSuffixForChordQuality - Correct a given inversionString suffix given a
+ *     chord of various qualities.
+ *
+ * @memberof music21.roman
+ * @param  {music21.chord.Chord} chordObj
+ * @param  {string} inversionString a string like '6' to fix.
+ * @return {string}           corrected inversionString
+  */
+
+roman.correctSuffixForChordQuality = function correctSuffixForChordQuality(
+    chordObj,
+    inversionString
+) {
+    const fifthType = chordObj.semitonesFromChordStep(5);
+    let qualityName = '';
+    if (fifthType === 6) {
+        qualityName = 'o';
+    } else if (fifthType === 8) {
+        qualityName = '+';
+    }
+
+    if (
+        inversionString !== undefined
+        && (inversionString.startsWith('o') || inversionString.startsWith('/o'))
+    ) {
+        if (qualityName === 'o') {
+            // don't call viio7, viioo7.
+            qualityName = '';
+        }
+    }
+
+    const seventhType = chordObj.semitonesFromChordStep(7);
+    if (seventhType !== undefined && fifthType === 6) {
+        // there is a seventh and this is a diminished 5
+        if (seventhType === 10 && qualityName === 'o') {
+            qualityName = '/o';
+        } else if (seventhType !== 9) {
+            // do something for very odd chords built on diminished triad.
+        }
+    }
+    return qualityName + inversionString;
+};
+
 /**
  * maps an index number to a roman numeral in lowercase
  *

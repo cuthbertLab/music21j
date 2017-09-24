@@ -9,6 +9,7 @@
 import * as Vex from 'vexflow';
 
 import { Music21Exception } from './exceptions21.js';
+import { interval } from './interval.js';
 import { note } from './note.js';
 
 /**
@@ -44,6 +45,8 @@ export class Chord extends note.NotRest {
         super();
         if (typeof notes === 'undefined') {
             notes = [];
+        } else if (typeof notes === 'string') {
+            notes = notes.split(/\s+/);
         }
         this.classes.push('Chord');
         this.isChord = true; // for speed
@@ -149,6 +152,9 @@ export class Chord extends note.NotRest {
         this._cache = {};
         return this;
     }
+
+    // TODO: remove
+
     /**
      * Removes any pitches that appear more than once (in any octave), removing the higher ones, and returns a new Chord.
      *
@@ -289,6 +295,7 @@ export class Chord extends note.NotRest {
         const uniqueChord = this.removeDuplicatePitches();
         return uniqueChord.pitches.length;
     }
+
     /**
     *
     * @memberof music21.chord.Chord
@@ -323,8 +330,44 @@ export class Chord extends note.NotRest {
             return false;
         }
     }
+
+    isDominantSeventh() {
+        const third = this.third;
+        const fifth = this.fifth;
+        const seventh = this.seventh;
+
+        if (
+            third === undefined
+            || fifth === undefined
+            || seventh === undefined
+        ) {
+            return false;
+        }
+
+        for (const thisPitch of this.pitches) {
+            const thisInterval = new interval.Interval(this.root(), thisPitch);
+            if (![0, 4, 7, 10].includes(thisInterval.chromatic.mod12)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     /**
-     * Returns True if the chord is a major or minor triad
+     * canBeDominantV - Returns true if the chord is a Major Triad or a Dominant Seventh
+     *
+     * @return {Boolean}
+     */
+    canBeDominantV() {
+        if (this.isMajorTriad() || this.isDominantSeventh()) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Returns true if the chord is a major or minor triad
      *
      * @memberof music21.chord.Chord
      * @returns {Boolean}

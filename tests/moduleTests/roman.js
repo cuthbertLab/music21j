@@ -2,6 +2,45 @@ import * as QUnit from 'qunit';
 import music21 from '../../src/loadModules';
 
 export default function tests() {
+    QUnit.test('music21.roman.expandShortHand', assert => {
+        let outGroups;
+        outGroups = music21.roman.expandShortHand('64');
+        assert.equal(outGroups.length, 2);
+        assert.equal(outGroups[0], 6);
+        assert.equal(outGroups[1], 4);
+
+        outGroups = music21.roman.expandShortHand('973');
+        assert.equal(outGroups.toString(), '9,7,3');
+
+        outGroups = music21.roman.expandShortHand('11b3');
+        assert.equal(outGroups.toString(), '11,b3');
+
+        outGroups = music21.roman.expandShortHand('b13#9-6');
+        assert.equal(outGroups.toString(), 'b13,#9,-6');
+
+        outGroups = music21.roman.expandShortHand('-');
+        assert.equal(outGroups.toString(), '5,-3');
+
+        outGroups = music21.roman.expandShortHand('6/4');
+        assert.equal(outGroups.toString(), '6,4');
+
+        // no shorthand expansion here
+        outGroups = music21.roman.expandShortHand('7');
+        assert.equal(outGroups.toString(), '7');
+
+        outGroups = music21.roman.expandShortHand('4/3');
+        assert.equal(outGroups.toString(), '4,3');
+
+        outGroups = music21.roman.expandShortHand('6');
+        assert.equal(outGroups.toString(), '6');
+    });
+    QUnit.test('music21.roman.correctSuffixForChordQuality', assert => {
+        let c;
+        c = new music21.chord.Chord('E3 C4 G4');
+        assert.equal(music21.roman.correctSuffixForChordQuality(c, '6'), '6');
+        c = new music21.chord.Chord('E3 C4 G-4');
+        assert.equal(music21.roman.correctSuffixForChordQuality(c, '6'), 'o6');
+    });
     QUnit.test('music21.roman.RomanNumeral', assert => {
         const t1 = 'IV';
         let rn1 = new music21.roman.RomanNumeral(t1, 'F');
