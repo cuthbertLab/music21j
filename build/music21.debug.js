@@ -3530,7 +3530,6 @@
 
               // if not reverse...
               var newDiatonicNumber = oldDiatonicNum + distanceToMove;
-              pitch2.octave = newInfo[1];
 
               var _interval$convertDiat = interval.convertDiatonicNumberToStep(newDiatonicNumber),
                   _interval$convertDiat2 = slicedToArray(_interval$convertDiat, 2),
