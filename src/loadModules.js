@@ -16,7 +16,9 @@ import { clef } from './music21/clef.js';
 import { duration } from './music21/duration.js';
 import { dynamics } from './music21/dynamics.js';
 import { expressions } from './music21/expressions.js';
+import { figuredBass } from './music21/figuredBass.js';
 import { fromPython } from './music21/fromPython.js';
+import { harmony } from './music21/harmony.js';
 import { instrument } from './music21/instrument.js';
 import { interval } from './music21/interval.js';
 import { key } from './music21/key.js';
@@ -56,7 +58,9 @@ const music21 = {
     duration,
     exceptions21,
     expressions,
+    figuredBass,
     fromPython,
+    harmony,
     instrument,
     interval,
     key,

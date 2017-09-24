@@ -9,6 +9,7 @@
 import { Music21Exception } from './exceptions21.js';
 
 import { base } from './base.js';
+// import { common } from './common.js';
 import { debug } from './debug.js';
 import { interval } from './interval.js';
 import { pitch } from './pitch.js';
@@ -310,8 +311,10 @@ export class Key extends KeySignature {
             console.log('Found sharps ' + sharps + ' for key: ' + keyName);
         }
         super(sharps);
-        this.tonic = keyName;
+
+        this.tonic = new pitch.Pitch(keyName);
         this.mode = mode;
+        this._scale = this.getScale();
     }
     /**
      * returns a {@link music21.scale.MajorScale} or {@link music21.scale.MinorScale}
@@ -325,7 +328,7 @@ export class Key extends KeySignature {
         if (scaleType === undefined) {
             scaleType = this.mode;
         }
-        const pitchObj = new pitch.Pitch(this.tonic);
+        const pitchObj = this.tonic;
         if (scaleType === 'major') {
             return new scale.MajorScale(pitchObj);
         } else if (scaleType === 'minor') {
@@ -337,6 +340,20 @@ export class Key extends KeySignature {
         } else {
             return new scale.ConcreteScale(pitchObj);
         }
+    }
+
+    // when scale.js adds functionality, it must be added here.
+    get isConcrete() {
+        return this._scale.isConcrete;
+    }
+    getPitches(...args) {
+        return this._scale.getPitches(...args);
+    }
+    pitchFromDegree(...args) {
+        return this._scale.pitchFromDegree(...args);
+    }
+    getScaleDegreeFromPitch(...args) {
+        return this._scale.getScaleDegreeFromPitch(...args);
     }
 }
 key.Key = Key;

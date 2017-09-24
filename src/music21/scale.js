@@ -11,9 +11,8 @@
 import { base } from './base.js';
 import { common } from './common.js';
 import { debug } from './debug.js';
-import { pitch } from './pitch.js';
 import { interval } from './interval.js';
-import { roman } from './roman.js';
+import { pitch } from './pitch.js';
 
 import { Music21Exception } from './exceptions21.js';
 
@@ -31,8 +30,11 @@ import { Music21Exception } from './exceptions21.js';
  *
  * @namespace music21.scale
  * @memberof music21
- * @requires music21/pitch
+ * @requires music21/base
+ * @requires music21/common
+ * @requires music21/debug
  * @requires music21/interval
+ * @requires music21/pitch
  */
 export class Scale extends base.Music21Object {
     constructor() {
@@ -262,6 +264,8 @@ export class ConcreteScale extends Scale {
         this.tonic = tonic;
         this['abstract'] = undefined;
     }
+
+    // when adding functionality here, must also be added to key.Key.
     get isConcrete() {
         if (this.tonic !== undefined) {
             return true;
@@ -276,9 +280,10 @@ export class ConcreteScale extends Scale {
 
     // transpose
     // tune
-    romanNumeral(degree) {
-        return new roman.RomanNumeral(degree, this);
-    }
+    // No .romanNumeral function because of circular imports...
+    // romanNumeral(degree) {
+    //     return new roman.RomanNumeral(degree, this);
+    // }
 
     getPitches(unused_minPitch, unused_maxPitch, unused_direction) {
         let pitchObj;

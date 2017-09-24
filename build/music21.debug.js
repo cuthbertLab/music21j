@@ -7,10 +7,10 @@
  */
 
 (function (global, factory) {
-  typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory(require('jquery'), require('vexflow'), require('MIDI'), require('jsonpickle'), require('eventjs')) :
-  typeof define === 'function' && define.amd ? define(['jquery', 'vexflow', 'MIDI', 'jsonpickle', 'eventjs'], factory) :
-  (global.music21 = factory(global.$,global.Vex,global.MIDI,global.jsonpickle,global.eventjs));
-}(this, (function ($,Vex,MIDI,jsonpickle,eventjs) { 'use strict';
+  typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory(require('vexflow'), require('MIDI'), require('jsonpickle'), require('jquery'), require('eventjs')) :
+  typeof define === 'function' && define.amd ? define(['vexflow', 'MIDI', 'jsonpickle', 'jquery', 'eventjs'], factory) :
+  (global.music21 = factory(global.Vex,global.MIDI,global.jsonpickle,global.$,global.eventjs));
+}(this, (function (Vex,MIDI,jsonpickle,$,eventjs) { 'use strict';
 
   var MIDI__default = MIDI['default'];
 
@@ -371,7 +371,7 @@
   };
 
   /**
-   * Mix in another class into this class -- a form of multiple inheritance.
+   * Mix in another class into this class -- a simple form of multiple inheritance.
    * See articulations.Marcato for an example.
    *
    */
@@ -393,10 +393,61 @@
   };
 
   /**
+   * Aggregation -- closer to true multiple inheritance -- prefers last class's functions.  See
+   * https://stackoverflow.com/questions/29879267/es6-class-multiple-inheritance
+   *
+   *  not currently used...
+   */
+
+  common.aggregation = function (baseClass) {
+      for (var _len = arguments.length, mixins = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+          mixins[_key - 1] = arguments[_key];
+      }
+
+      var base = function (_baseClass) {
+          inherits(base, _baseClass);
+
+          function base() {
+              var _ref;
+
+              classCallCheck(this, base);
+
+              for (var _len2 = arguments.length, args = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+                  args[_key2] = arguments[_key2];
+              }
+
+              var _this = possibleConstructorReturn(this, (_ref = base.__proto__ || Object.getPrototypeOf(base)).call.apply(_ref, [this].concat(args)));
+
+              mixins.forEach(function (mixin) {
+                  copyProps(_this, new mixin());
+              });
+              return _this;
+          }
+
+          return base;
+      }(baseClass);
+
+      var copyProps = function copyProps(target, source) {
+          // this function copies all properties and symbols, filtering out some special ones
+          Object.getOwnPropertyNames(source).concat(Object.getOwnPropertySymbols(source)).forEach(function (prop) {
+              if (!prop.match(/^(?:constructor|prototype|arguments|caller|name|bind|call|apply|toString|length)$/)) {
+                  Object.defineProperty(target, prop, Object.getOwnPropertyDescriptor(source, prop));
+              }
+          });
+      };
+      mixins.forEach(function (mixin) {
+          // outside contructor() to allow aggregation(A,B,C).staticFunction() to be called etc.
+          copyProps(base.prototype, mixin.prototype);
+          copyProps(base, mixin);
+      });
+      return base;
+  };
+
+  /**
    * posMod - return a modulo value that is not negative
    *
    * @param  {Int} a value
-   * @param  {Int} b modulo 
+   * @param  {Int} b modulo
    * @return {Int}   a mod b between 0 and b - 1
    */
 
@@ -435,6 +486,111 @@
           }
       }
       return maxEl;
+  };
+
+  /**
+   * fromRoman - Convert a Roman numeral (upper or lower) to an int.
+   *
+   * @param  {string} num roman numeral representation of a number
+   * @return {Int}     integer value of roman numeral;
+   */
+
+  common.fromRoman = function fromRoman(num) {
+      var inputRoman = num.toUpperCase();
+      var subtractionValues = [1, 10, 100];
+      var nums = ['M', 'D', 'C', 'L', 'X', 'V', 'I'];
+      var ints = [1000, 500, 100, 50, 10, 5, 1];
+      var places = [];
+      var _iteratorNormalCompletion = true;
+      var _didIteratorError = false;
+      var _iteratorError = undefined;
+
+      try {
+          for (var _iterator = inputRoman[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+              var _c = _step.value;
+
+              if (!nums.includes(_c)) {
+                  throw new Error('Value is not a valid roman numeral: ' + inputRoman);
+              }
+          }
+      } catch (err) {
+          _didIteratorError = true;
+          _iteratorError = err;
+      } finally {
+          try {
+              if (!_iteratorNormalCompletion && _iterator.return) {
+                  _iterator.return();
+              }
+          } finally {
+              if (_didIteratorError) {
+                  throw _iteratorError;
+              }
+          }
+      }
+
+      for (var i = 0; i < inputRoman.length; i++) {
+          var c = inputRoman[i];
+          var value = ints[nums.indexOf(c)];
+          if (i < inputRoman.length - 1) {
+              var nextValue = ints[nums.indexOf(inputRoman[i + 1])];
+              if (nextValue > value && subtractionValues.includes(value)) {
+                  value *= -1;
+              }
+          }
+          places.push(value);
+      }
+      var summation = 0;
+      var _iteratorNormalCompletion2 = true;
+      var _didIteratorError2 = false;
+      var _iteratorError2 = undefined;
+
+      try {
+          for (var _iterator2 = places[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+              var n = _step2.value;
+
+              summation += n;
+          }
+      } catch (err) {
+          _didIteratorError2 = true;
+          _iteratorError2 = err;
+      } finally {
+          try {
+              if (!_iteratorNormalCompletion2 && _iterator2.return) {
+                  _iterator2.return();
+              }
+          } finally {
+              if (_didIteratorError2) {
+                  throw _iteratorError2;
+              }
+          }
+      }
+
+      return summation;
+  };
+
+  /**
+   * toRoman - Convert a number from 1 to 3999 to a roman numeral
+   *
+   * @param  {Int} num number to convert
+   * @return {string}     as roman numeral
+   */
+
+  common.toRoman = function toRoman(num) {
+      if (typeof num !== 'number') {
+          throw new Error('expected integer, got ' + (typeof num === 'undefined' ? 'undefined' : _typeof(num)));
+      }
+      if (num < 0 || num > 4000) {
+          throw new Error('Argument must be between 1 and 3999');
+      }
+      var ints = [1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1];
+      var nums = ['M', 'CM', 'D', 'CD', 'C', 'XC', 'L', 'XL', 'X', 'IX', 'V', 'IV', 'I'];
+      var result = '';
+      for (var i = 0; i < ints.length; i++) {
+          var count = Math.floor(num / ints[i]);
+          result += nums[i].repeat(count);
+          num -= ints[i] * count;
+      }
+      return result;
   };
 
   /**
@@ -553,43 +709,6 @@
       var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
       var results = regex.exec(location.search);
       return results == null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
-  };
-
-  /**
-   * Copies an event from one jQuery object to another.
-   * This is buggy in jQuery 3 -- do not use.  use .clone(true, true);
-   * and then replace the elements.
-   *
-   * To be removed once I'm sure it is not needed
-   *
-   * @function music21.common.jQueryEventCopy
-   * @param {Event} eventObj - Event to copy from "from" to "to"
-   * @param {jQuery|string|DOMObject} from - jQuery object to copy events from. Only uses the first matched element.
-   * @param {jQuery|string|DOMObject} to - jQuery object to copy events to. Copies to all matched elements.
-   * @author Brandon Aaron (brandon.aaron@gmail.com || http://brandonaaron.net)
-   * @author Yannick Albert (mail@yckart.com || http://yckart.com)
-   */
-  common.jQueryEventCopy = function jQueryEventCopy(eventObj, from, to) {
-      from = from.jquery ? from : $(from);
-      to = to.jquery ? to : $(to);
-
-      var events = from[0].events || $.data(from[0], 'events') || $._data(from[0], 'events');
-      if (!from.length || !to.length || !events) {
-          return undefined;
-      }
-      return to.each(function () {
-          for (var type in events) {
-              if (!{}.hasOwnProperty.call(events, type)) {
-                  continue;
-              }
-              for (var handler in events[type]) {
-                  if (!{}.hasOwnProperty.call(events[type], handler)) {
-                      continue;
-                  }
-                  $.event.add(eventObj, type, events[type][handler], events[type][handler].data);
-              }
-          }
-      });
   };
 
   common.arrayEquals = function arrayEquals(a1, a2) {
@@ -5893,6 +6012,348 @@
   }(Expression);
   expressions.Fermata = Fermata;
 
+  var shorthandNotation = {
+      '': [5, 3],
+      '5': [5, 3],
+      '6': [6, 3],
+      '7': [7, 5, 3],
+      '9': [9, 7, 5, 3],
+      '11': [11, 9, 7, 5, 3],
+      '13': [13, 11, 9, 7, 5, 3],
+      '6,5': [6, 5, 3],
+      '4,3': [6, 4, 3],
+      '4,2': [6, 4, 2],
+      '2': [6, 4, 2]
+  };
+  /**
+   * In music21p is in figuredBass.notation -- eventually to be moved there.
+   */
+
+  var Notation = function () {
+      function Notation(notationColumn) {
+          classCallCheck(this, Notation);
+
+          if (notationColumn === undefined) {
+              notationColumn = '';
+          }
+          this.notationColumn = notationColumn;
+          this.figureStrings = undefined;
+          this.origNumbers = undefined;
+          this.origModStrings = undefined;
+          this.numbers = undefined;
+          this.modifierStrings = undefined;
+          this._parseNotationColumn();
+          this._translateToLonghand();
+
+          this.modifiers = undefined;
+          this.figures = undefined;
+          this._getModifiers();
+          this._getFigures();
+      }
+
+      /**
+       * _parseNotationColumn - Given a notation column below a pitch, defines both this.numbers
+       *    and this.modifierStrings, which provide the intervals above the
+       *    bass and (if necessary) how to modify the corresponding pitches
+       *    accordingly.
+       *
+       * @return {undefined}
+       */
+
+      createClass(Notation, [{
+          key: '_parseNotationColumn',
+          value: function _parseNotationColumn() {
+              var nc = this.notationColumn;
+              var figures = nc.split(/,/);
+              var numbers = [];
+              var modifierStrings = [];
+              var figureStrings = [];
+
+              var _iteratorNormalCompletion = true;
+              var _didIteratorError = false;
+              var _iteratorError = undefined;
+
+              try {
+                  for (var _iterator = figures[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+                      var figure = _step.value;
+
+                      figure = figure.trim();
+                      figureStrings.push(figure);
+                      var numberString = '';
+                      var modifierString = '';
+                      var _iteratorNormalCompletion2 = true;
+                      var _didIteratorError2 = false;
+                      var _iteratorError2 = undefined;
+
+                      try {
+                          for (var _iterator2 = figure[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+                              var c = _step2.value;
+
+                              if (c.match(/\d/)) {
+                                  numberString += c;
+                              } else {
+                                  modifierString += c;
+                              }
+                          }
+                      } catch (err) {
+                          _didIteratorError2 = true;
+                          _iteratorError2 = err;
+                      } finally {
+                          try {
+                              if (!_iteratorNormalCompletion2 && _iterator2.return) {
+                                  _iterator2.return();
+                              }
+                          } finally {
+                              if (_didIteratorError2) {
+                                  throw _iteratorError2;
+                              }
+                          }
+                      }
+
+                      var number = parseInt(numberString);
+                      numbers.push(number);
+                      if (modifierString === '') {
+                          modifierString = undefined;
+                      }
+                      modifierStrings.push(modifierString);
+                  }
+              } catch (err) {
+                  _didIteratorError = true;
+                  _iteratorError = err;
+              } finally {
+                  try {
+                      if (!_iteratorNormalCompletion && _iterator.return) {
+                          _iterator.return();
+                      }
+                  } finally {
+                      if (_didIteratorError) {
+                          throw _iteratorError;
+                      }
+                  }
+              }
+
+              this.origNumbers = numbers;
+              this.numbers = numbers;
+              this.modifierStrings = modifierStrings;
+              this.figureStrings = figureStrings;
+          }
+      }, {
+          key: '_translateToLonghand',
+          value: function _translateToLonghand() {
+              var oldNumbers = this.numbers;
+              var newNumbers = oldNumbers;
+              var oldModifierStrings = this.modifierStrings;
+              var newModifierStrings = oldModifierStrings;
+              var oldNumbersString = oldNumbers.toString();
+
+              if (shorthandNotation[oldNumbersString] !== undefined) {
+                  newNumbers = shorthandNotation[oldNumbersString];
+                  newModifierStrings = [];
+                  var temp = [];
+                  var _iteratorNormalCompletion3 = true;
+                  var _didIteratorError3 = false;
+                  var _iteratorError3 = undefined;
+
+                  try {
+                      for (var _iterator3 = oldNumbers[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+                          var number = _step3.value;
+
+                          if (number === undefined) {
+                              temp.push(3);
+                          } else {
+                              temp.push(number);
+                          }
+                      }
+                  } catch (err) {
+                      _didIteratorError3 = true;
+                      _iteratorError3 = err;
+                  } finally {
+                      try {
+                          if (!_iteratorNormalCompletion3 && _iterator3.return) {
+                              _iterator3.return();
+                          }
+                      } finally {
+                          if (_didIteratorError3) {
+                              throw _iteratorError3;
+                          }
+                      }
+                  }
+
+                  oldNumbers = temp;
+
+                  var _iteratorNormalCompletion4 = true;
+                  var _didIteratorError4 = false;
+                  var _iteratorError4 = undefined;
+
+                  try {
+                      for (var _iterator4 = newNumbers[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
+                          var _number = _step4.value;
+
+                          var newModifierString = void 0;
+                          if (oldNumbers.includes(_number)) {
+                              var modifierStringIndex = oldNumbers.indexOf(_number);
+                              newModifierString = oldModifierStrings[modifierStringIndex];
+                          }
+                          newModifierStrings.push(newModifierString);
+                      }
+                  } catch (err) {
+                      _didIteratorError4 = true;
+                      _iteratorError4 = err;
+                  } finally {
+                      try {
+                          if (!_iteratorNormalCompletion4 && _iterator4.return) {
+                              _iterator4.return();
+                          }
+                      } finally {
+                          if (_didIteratorError4) {
+                              throw _iteratorError4;
+                          }
+                      }
+                  }
+              } else {
+                  var _temp = [];
+                  var _iteratorNormalCompletion5 = true;
+                  var _didIteratorError5 = false;
+                  var _iteratorError5 = undefined;
+
+                  try {
+                      for (var _iterator5 = oldNumbers[Symbol.iterator](), _step5; !(_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done); _iteratorNormalCompletion5 = true) {
+                          var _number2 = _step5.value;
+
+                          if (_number2 === undefined) {
+                              _temp.push(3);
+                          } else {
+                              _temp.push(_number2);
+                          }
+                      }
+                  } catch (err) {
+                      _didIteratorError5 = true;
+                      _iteratorError5 = err;
+                  } finally {
+                      try {
+                          if (!_iteratorNormalCompletion5 && _iterator5.return) {
+                              _iterator5.return();
+                          }
+                      } finally {
+                          if (_didIteratorError5) {
+                              throw _iteratorError5;
+                          }
+                      }
+                  }
+
+                  newNumbers = _temp;
+              }
+              this.numbers = newNumbers;
+              this.modifierStrings = newModifierStrings;
+          }
+      }, {
+          key: '_getModifiers',
+          value: function _getModifiers() {
+              var modifiers = [];
+              for (var i = 0; i < this.numbers.length; i++) {
+                  var modifierString = this.modifierStrings[i];
+                  var modifier = new Modifier(modifierString);
+                  modifiers.push(modifier);
+              }
+              this.modifiers = modifiers;
+          }
+      }, {
+          key: '_getFigures',
+          value: function _getFigures() {
+              var figures = [];
+              for (var i = 0; i < this.numbers.length; i++) {
+                  var number = this.numbers[i];
+                  var modifierString = this.modifierStrings[i];
+                  var figure = new Figure(number, modifierString);
+                  figures.push(figure);
+              }
+              this.figures = figures;
+          }
+      }]);
+      return Notation;
+  }();
+
+  var Figure = function Figure(number, modifierString) {
+      classCallCheck(this, Figure);
+
+      this.number = number;
+      this.modifierString = modifierString;
+      this.modifier = new Modifier(modifierString);
+  };
+
+  var specialModifiers = {
+      '+': '#',
+      '/': '-',
+      '\\': '#',
+      b: '-',
+      bb: '--',
+      bbb: '---',
+      bbbb: '-----',
+      '++': '##',
+      '+++': '###',
+      '++++': '####'
+  };
+
+  var Modifier = function () {
+      function Modifier(modifierString) {
+          classCallCheck(this, Modifier);
+
+          this.modifierString = modifierString;
+          this.accidental = this._toAccidental();
+      }
+
+      createClass(Modifier, [{
+          key: '_toAccidental',
+          value: function _toAccidental() {
+              var modStr = this.modifierString;
+              if (modStr === undefined || modStr === '') {
+                  return undefined;
+              }
+              var a = new pitch.Accidental();
+              if (specialModifiers[modStr] !== undefined) {
+                  modStr = specialModifiers[modStr];
+              }
+              a.set(modStr);
+              return a;
+          }
+      }, {
+          key: 'modifyPitchName',
+          value: function modifyPitchName(pitchNameToAlter) {
+              var pitchToAlter = new pitch.Pitch(pitchNameToAlter);
+              this.modifyPitch(pitchToAlter, true);
+              return pitchToAlter.name;
+          }
+      }, {
+          key: 'modifyPitch',
+          value: function modifyPitch(pitchToAlter, inPlace) {
+              if (inPlace !== true) {
+                  pitchToAlter = pitchToAlter.clone();
+              }
+
+              if (this.accidental === undefined) {
+                  return pitchToAlter;
+              }
+
+              if (this.accidental.alter === 0.0 || pitchToAlter.accidental === undefined) {
+                  pitchToAlter.accidental = this.accidental.clone();
+              } else {
+                  var newAccidental = new pitch.Accidental();
+                  var newAlter = pitchToAlter.accidental.alter + this.accidental.alter;
+                  newAccidental.set(newAlter);
+                  pitchToAlter.accidental = newAccidental;
+              }
+              return pitchToAlter;
+          }
+      }]);
+      return Modifier;
+  }();
+
+  var figuredBass = {
+      Notation: Notation,
+      Figure: Figure,
+      Modifier: Modifier
+  };
+
   /**
    * music21j -- Javascript reimplementation of Core music21p features.
    * music21/fromPython -- Conversion from music21p jsonpickle streams
@@ -6098,643 +6559,6 @@
 
   /**
    * music21j -- Javascript reimplementation of Core music21p features.
-   * music21/instrument -- instrument objects
-   *
-   * Copyright (c) 2013-16, Michael Scott Cuthbert and cuthbertLab
-   * Based on music21 (=music21p), Copyright (c) 2006–16, Michael Scott Cuthbert and cuthbertLab
-   *
-   */
-  /**
-   * Instrument module, see {@link music21.instrument}
-   *
-   * @exports music21/instrument
-   */
-
-  /**
-   * Looking for the {@link music21.instrument.Instrument} object? :-)
-   *
-   * @namespace music21.instrument
-   * @memberof music21
-   * @requires music21/base
-   */
-  var instrument = {};
-
-  /**
-   * Represents an instrument.  instrumentNames are found in the ext/soundfonts directory
-   *
-   * See {@link music21.miditools} and esp. `loadSoundfont` for a way of loading soundfonts into
-   * instruments.
-   *
-   * @class Instrument
-   * @memberof music21.instrument
-   * @param {string} instrumentName
-   * @property {string|undefined} partId
-   * @property {string|undefined} partName
-   * @property {string|undefined} partAbbreviation
-   * @property {string|undefined} instrumentId
-   * @property {string|undefined} instrumentName
-   * @property {string|undefined} instrumentAbbreviation
-   * @property {Int|undefined} midiProgram
-   * @property {Int|undefined} midiChannel
-   * @property {Int|undefined} lowestNote
-   * @property {Int|undefined} highestNote
-   * @property {music21.interval.Interval|undefined} transposition
-   * @property {Boolean} inGMPercMap=false
-   * @property {string|undefined} soundfontFn
-   * @property {string|undefined} oggSoundfont - url of oggSoundfont for this instrument
-   * @property {string|undefined} mp3Soundfont - url of mp3Soundfont for this instrument
-   */
-
-  var Instrument = function (_base$Music21Object) {
-      inherits(Instrument, _base$Music21Object);
-
-      function Instrument(instrumentName) {
-          classCallCheck(this, Instrument);
-
-          var _this = possibleConstructorReturn(this, (Instrument.__proto__ || Object.getPrototypeOf(Instrument)).call(this));
-
-          _this.classSortOrder = -25;
-
-          _this.partId = undefined;
-          _this.partName = undefined;
-          _this.partAbbreviation = undefined;
-
-          _this.instrumentId = undefined;
-          _this.instrumentName = undefined;
-          _this.instrumentAbbreviation = undefined;
-          _this.midiProgram = undefined;
-          _this._midiChannel = undefined;
-
-          _this.lowestNote = undefined;
-          _this.highestNote = undefined;
-
-          _this.transpostion = undefined;
-
-          _this.inGMPercMap = false;
-          _this.soundfontFn = undefined;
-
-          if (instrumentName !== undefined) {
-              instrument.find(instrumentName);
-          }
-          return _this;
-      }
-      /**
-       * Assign an instrument to an unused midi channel.
-       *
-       * Will use the global list of used channels (`music21.instrument.Instrument.usedChannels`)
-       * if not given.  Assigns up to `music21.instrument.maxMidi` channels (16)
-       * Skips 10 unless this.inGMPercMap is true
-       *
-       * @memberof music21.instrument.Instrument
-       * @param {Array<Int>} [usedChannels]
-       * @returns {Number}
-       */
-
-
-      createClass(Instrument, [{
-          key: 'autoAssignMidiChannel',
-          value: function autoAssignMidiChannel(usedChannels) {
-              if (usedChannels === undefined) {
-                  usedChannels = instrument.usedChannels;
-              }
-              var startChannel = 0;
-              if (this.inGMPercMap) {
-                  startChannel = 10;
-              }
-              for (var ch = startChannel; ch < instrument.maxMidi; ch++) {
-                  if (ch % 16 === 10 && this.inGMPercMap !== true) {
-                      continue; // skip 10 / percussion.
-                  }
-                  if (usedChannels[ch] === undefined || usedChannels[ch] === this.midiProgram) {
-                      usedChannels[ch] = this.midiProgram;
-                      this.midiChannel = ch;
-                      return ch;
-                  }
-              }
-              // TODO: no channels! throw exception!
-              return undefined;
-          }
-      }, {
-          key: 'oggSounfont',
-          get: function get() {
-              return this.soundfontFn + '-ogg.js';
-          }
-      }, {
-          key: 'mp3Soundfont',
-          get: function get() {
-              return this.soundfontFn + '-mp3.js';
-          }
-      }, {
-          key: 'midiChannel',
-          get: function get() {
-              if (this._midiChannel === undefined) {
-                  this.autoAssignMidiChannel();
-              }
-              return this._midiChannel;
-          },
-          set: function set(ch) {
-              this._midiChannel = ch;
-          }
-      }]);
-      return Instrument;
-  }(base.Music21Object);
-
-  instrument.Instrument = Instrument;
-
-  instrument.usedChannels = []; // differs from m21p -- stored midiProgram numbers
-  instrument.maxMidi = 16;
-
-  instrument.info = [{ fn: 'acoustic_grand_piano', name: 'Acoustic Grand Piano', midiNumber: 0 }, {
-      fn: 'bright_acoustic_piano',
-      name: 'Bright Acoustic Piano',
-      midiNumber: 1
-  }, { fn: 'electric_grand_piano', name: 'Electric Grand Piano', midiNumber: 2 }, { fn: 'honkytonk_piano', name: 'Honky-tonk Piano', midiNumber: 3 }, { fn: 'electric_piano_1', name: 'Electric Piano 1', midiNumber: 4 }, { fn: 'electric_piano_2', name: 'Electric Piano 2', midiNumber: 5 }, { fn: 'harpsichord', name: 'Harpsichord', midiNumber: 6 }, { fn: 'clavinet', name: 'Clavinet', midiNumber: 7 }, { fn: 'celesta', name: 'Celesta', midiNumber: 8 }, { fn: 'glockenspiel', name: 'Glockenspiel', midiNumber: 9 }, { fn: 'music_box', name: 'Music Box', midiNumber: 10 }, { fn: 'vibraphone', name: 'Vibraphone', midiNumber: 11 }, { fn: 'marimba', name: 'Marimba', midiNumber: 12 }, { fn: 'xylophone', name: 'Xylophone', midiNumber: 13 }, { fn: 'tubular_bells', name: 'Tubular Bells', midiNumber: 14 }, { fn: 'dulcimer', name: 'Dulcimer', midiNumber: 15 }, { fn: 'drawbar_organ', name: 'Drawbar Organ', midiNumber: 16 }, { fn: 'percussive_organ', name: 'Percussive Organ', midiNumber: 17 }, { fn: 'rock_organ', name: 'Rock Organ', midiNumber: 18 }, { fn: 'church_organ', name: 'Church Organ', midiNumber: 19 }, { fn: 'reed_organ', name: 'Reed Organ', midiNumber: 20 }, { fn: 'accordion', name: 'Accordion', midiNumber: 21 }, { fn: 'harmonica', name: 'Harmonica', midiNumber: 22 }, { fn: 'tango_accordion', name: 'Tango Accordion', midiNumber: 23 }, {
-      fn: 'acoustic_guitar_nylon',
-      name: 'Acoustic Guitar (nylon)',
-      midiNumber: 24
-  }, {
-      fn: 'acoustic_guitar_steel',
-      name: 'Acoustic Guitar (steel)',
-      midiNumber: 25
-  }, {
-      fn: 'electric_guitar_jazz',
-      name: 'Electric Guitar (jazz)',
-      midiNumber: 26
-  }, {
-      fn: 'electric_guitar_clean',
-      name: 'Electric Guitar (clean)',
-      midiNumber: 27
-  }, {
-      fn: 'electric_guitar_muted',
-      name: 'Electric Guitar (muted)',
-      midiNumber: 28
-  }, { fn: 'overdriven_guitar', name: 'Overdriven Guitar', midiNumber: 29 }, { fn: 'distortion_guitar', name: 'Distortion Guitar', midiNumber: 30 }, { fn: 'guitar_harmonics', name: 'Guitar Harmonics', midiNumber: 31 }, { fn: 'acoustic_bass', name: 'Acoustic Bass', midiNumber: 32 }, {
-      fn: 'electric_bass_finger',
-      name: 'Electric Bass (finger)',
-      midiNumber: 33
-  }, { fn: 'electric_bass_pick', name: 'Electric Bass (pick)', midiNumber: 34 }, { fn: 'fretless_bass', name: 'Fretless Bass', midiNumber: 35 }, { fn: 'slap_bass_1', name: 'Slap Bass 1', midiNumber: 36 }, { fn: 'slap_bass_2', name: 'Slap Bass 2', midiNumber: 37 }, { fn: 'synth_bass_1', name: 'Synth Bass 1', midiNumber: 38 }, { fn: 'synth_bass_2', name: 'Synth Bass 2', midiNumber: 39 }, { fn: 'violin', name: 'Violin', midiNumber: 40 }, { fn: 'viola', name: 'Viola', midiNumber: 41 }, { fn: 'cello', name: 'Cello', midiNumber: 42 }, { fn: 'contrabass', name: 'Contrabass', midiNumber: 43 }, { fn: 'tremolo_strings', name: 'Tremolo Strings', midiNumber: 44 }, { fn: 'pizzicato_strings', name: 'Pizzicato Strings', midiNumber: 45 }, { fn: 'orchestral_harp', name: 'Orchestral Harp', midiNumber: 46 }, { fn: 'timpani', name: 'Timpani', midiNumber: 47 }, { fn: 'string_ensemble_1', name: 'String Ensemble 1', midiNumber: 48 }, { fn: 'string_ensemble_2', name: 'String Ensemble 2', midiNumber: 49 }, { fn: 'synth_strings_1', name: 'Synth Strings 1', midiNumber: 50 }, { fn: 'synth_strings_2', name: 'Synth Strings 2', midiNumber: 51 }, { fn: 'choir_aahs', name: 'Choir Aahs', midiNumber: 52 }, { fn: 'voice_oohs', name: 'Voice Oohs', midiNumber: 53 }, { fn: 'synth_choir', name: 'Synth Choir', midiNumber: 54 }, { fn: 'orchestra_hit', name: 'Orchestra Hit', midiNumber: 55 }, { fn: 'trumpet', name: 'Trumpet', midiNumber: 56 }, { fn: 'trombone', name: 'Trombone', midiNumber: 57 }, { fn: 'tuba', name: 'Tuba', midiNumber: 58 }, { fn: 'muted_trumpet', name: 'Muted Trumpet', midiNumber: 59 }, { fn: 'french_horn', name: 'French Horn', midiNumber: 60 }, { fn: 'brass_section', name: 'Brass Section', midiNumber: 61 }, { fn: 'synth_brass_1', name: 'Synth Brass 1', midiNumber: 62 }, { fn: 'synth_brass_2', name: 'Synth Brass 2', midiNumber: 63 }, { fn: 'soprano_sax', name: 'Soprano Sax', midiNumber: 64 }, { fn: 'alto_sax', name: 'Alto Sax', midiNumber: 65 }, { fn: 'tenor_sax', name: 'Tenor Sax', midiNumber: 66 }, { fn: 'baritone_sax', name: 'Baritone Sax', midiNumber: 67 }, { fn: 'oboe', name: 'Oboe', midiNumber: 68 }, { fn: 'english_horn', name: 'English Horn', midiNumber: 69 }, { fn: 'bassoon', name: 'Bassoon', midiNumber: 70 }, { fn: 'clarinet', name: 'Clarinet', midiNumber: 71 }, { fn: 'piccolo', name: 'Piccolo', midiNumber: 72 }, { fn: 'flute', name: 'Flute', midiNumber: 73 }, { fn: 'recorder', name: 'Recorder', midiNumber: 74 }, { fn: 'pan_flute', name: 'Pan Flute', midiNumber: 75 }, { fn: 'blown_bottle', name: 'Blown bottle', midiNumber: 76 }, { fn: 'shakuhachi', name: 'Shakuhachi', midiNumber: 77 }, { fn: 'whistle', name: 'Whistle', midiNumber: 78 }, { fn: 'ocarina', name: 'Ocarina', midiNumber: 79 }, { fn: 'lead_1_square', name: 'Lead 1 (square)', midiNumber: 80 }, { fn: 'lead_2_sawtooth', name: 'Lead 2 (sawtooth)', midiNumber: 81 }, { fn: 'lead_3_calliope', name: 'Lead 3 (calliope)', midiNumber: 82 }, { fn: 'lead_4_chiff', name: 'Lead 4 chiff', midiNumber: 83 }, { fn: 'lead_5_charang', name: 'Lead 5 (charang)', midiNumber: 84 }, { fn: 'lead_6_voice', name: 'Lead 6 (voice)', midiNumber: 85 }, { fn: 'lead_7_fifths', name: 'Lead 7 (fifths)', midiNumber: 86 }, { fn: 'lead_8_bass__lead', name: 'Lead 8 (bass + lead)', midiNumber: 87 }, { fn: 'pad_1_new_age', name: 'Pad 1 (new age)', midiNumber: 88 }, { fn: 'pad_2_warm', name: 'Pad 2 (warm)', midiNumber: 89 }, { fn: 'pad_3_polysynth', name: 'Pad 3 (polysynth)', midiNumber: 90 }, { fn: 'pad_4_choir', name: 'Pad 4 (choir)', midiNumber: 91 }, { fn: 'pad_5_bowed', name: 'Pad 5 (bowed)', midiNumber: 92 }, { fn: 'pad_6_metallic', name: 'Pad 6 (metallic)', midiNumber: 93 }, { fn: 'pad_7_halo', name: 'Pad 7 (halo)', midiNumber: 94 }, { fn: 'pad_8_sweep', name: 'Pad 8 (sweep)', midiNumber: 95 }, { fn: 'fx_1_rain', name: 'FX 1 (rain)', midiNumber: 96 }, { fn: 'fx_2_soundtrack', name: 'FX 2 (soundtrack)', midiNumber: 97 }, { fn: 'fx_3_crystal', name: 'FX 3 (crystal)', midiNumber: 98 }, { fn: 'fx_4_atmosphere', name: 'FX 4 (atmosphere)', midiNumber: 99 }, { fn: 'fx_5_brightness', name: 'FX 5 (brightness)', midiNumber: 100 }, { fn: 'fx_6_goblins', name: 'FX 6 (goblins)', midiNumber: 101 }, { fn: 'fx_7_echoes', name: 'FX 7 (echoes)', midiNumber: 102 }, { fn: 'fx_8_scifi', name: 'FX 8 (sci-fi)', midiNumber: 103 }, { fn: 'sitar', name: 'Sitar', midiNumber: 104 }, { fn: 'banjo', name: 'Banjo', midiNumber: 105 }, { fn: 'shamisen', name: 'Shamisen', midiNumber: 106 }, { fn: 'koto', name: 'Koto', midiNumber: 107 }, { fn: 'kalimba', name: 'Kalimba', midiNumber: 108 }, { fn: 'bagpipe', name: 'Bagpipe', midiNumber: 109 }, { fn: 'fiddle', name: 'Fiddle', midiNumber: 110 }, { fn: 'shanai', name: 'Shanai', midiNumber: 111 }, { fn: 'tinkle_bell', name: 'Tinkle Bell', midiNumber: 112 }, { fn: 'agogo', name: 'Agogo', midiNumber: 113 }, { fn: 'steel_drums', name: 'Steel Drums', midiNumber: 114 }, { fn: 'woodblock', name: 'Woodblock', midiNumber: 115 }, { fn: 'taiko_drum', name: 'Taiko Drum', midiNumber: 116 }, { fn: 'melodic_tom', name: 'Melodic Tom', midiNumber: 117 }, { fn: 'synth_drum', name: 'Synth Drum', midiNumber: 118 }, { fn: 'reverse_cymbal', name: 'Reverse Cymbal', midiNumber: 119 }, { fn: 'guitar_fret_noise', name: 'Guitar Fret Noise', midiNumber: 120 }, { fn: 'breath_noise', name: 'Breath Noise', midiNumber: 121 }, { fn: 'seashore', name: 'Seashore', midiNumber: 122 }, { fn: 'bird_tweet', name: 'Bird Tweet', midiNumber: 123 }, { fn: 'telephone_ring', name: 'Telephone Ring', midiNumber: 124 }, { fn: 'helicopter', name: 'Helicopter', midiNumber: 125 }, { fn: 'applause', name: 'Applause', midiNumber: 126 }, { fn: 'gunshot', name: 'Gunshot', midiNumber: 127 }];
-
-  /**
-   * Find information for a given instrument (by filename or name)
-   * and load it into an instrument object.
-   *
-   * @function music21.instrument.find
-   * @memberof music21.instrument
-   * @param {string} fn - name or filename of instrument
-   * @param {music21.instrument.Instrument} [inst] - instrument object to load into
-   * @returns {music21.instrument.Instrument|undefined}
-   */
-  instrument.find = function instrument_find(fn, inst) {
-      if (inst === undefined) {
-          inst = new instrument.Instrument();
-      }
-      for (var i = 0; i < instrument.info.length; i++) {
-          var info = instrument.info[i];
-          if (info.fn === fn || info.name === fn) {
-              inst.soundfontFn = info.fn;
-              inst.instrumentName = info.name;
-              inst.midiProgram = info.midiNumber;
-              return inst;
-          }
-      }
-      return undefined;
-  };
-
-  /**
-   * music21j -- Javascript reimplementation of Core music21p features.
-   * music21/roman -- roman.RomanNumberal -- Chord subclass
-   *
-   * Copyright (c) 2013-16, Michael Scott Cuthbert and cuthbertLab
-   * Based on music21 (=music21p), Copyright (c) 2006–16, Michael Scott Cuthbert and cuthbertLab
-   *
-   */
-  /**
-   * Roman numeral module. See {@link music21.roman} namespace
-   *
-   * @exports music21/roman
-   */
-  /**
-   * music21.roman -- namespace for dealing with RomanNumeral analysis.
-   *
-   * @namespace music21.roman
-   * @memberof music21
-   * @requires music21/chord
-   * @requires music21/key
-   * @requires music21/pitch
-   * @requires music21/interval
-   */
-  var roman = {};
-
-  roman.figureShorthands = {
-      '53': '',
-      '3': '',
-      '63': '6',
-      '753': '7',
-      '75': '7', // controversial perhaps
-      '73': '7', // controversial perhaps
-      '9753': '9',
-      '975': '9', // controversial perhaps
-      '953': '9', // controversial perhaps
-      '97': '9', // controversial perhaps
-      '95': '9', // controversial perhaps
-      '93': '9', // controversial perhaps
-      '653': '65',
-      '6b53': '6b5',
-      '643': '43',
-      '642': '42',
-      bb7b5b3: 'o7',
-      bb7b53: 'o7',
-      // '6b5bb3': 'o65',
-      b7b5b3: '/o7'
-  };
-
-  roman.functionalityScores = {
-      I: 100,
-      i: 90,
-      V7: 80,
-      V: 70,
-      V65: 68,
-      I6: 65,
-      V6: 63,
-      V43: 61,
-      I64: 60,
-      IV: 59,
-      i6: 58,
-      viio7: 57,
-      V42: 55,
-      viio65: 53,
-      viio6: 52,
-      '#viio65': 51,
-      ii: 50,
-      '#viio6': 49,
-      ii65: 48,
-      ii43: 47,
-      ii42: 46,
-      IV6: 45,
-      ii6: 43,
-      VI: 42,
-      '#VI': 41,
-      vi: 40,
-      viio: 39,
-      '#viio': 39,
-      iio: 37, // common in Minor
-      iio42: 36,
-      bII6: 35, // Neapolitan
-      iio43: 32,
-      iio65: 31,
-      '#vio': 28,
-      '#vio6': 28,
-      III: 22,
-      v: 20,
-      VII: 19,
-      VII7: 18,
-      IV65: 17,
-      IV7: 16,
-      iii: 15,
-      iii6: 12,
-      vi6: 10
-  };
-
-  /**
-   * expandShortHand - expand a string of numbers into an array
-   *
-   * N.B. this is NOT where abbreviations get expanded
-   *
-   * @memberof music21.roman
-   * @param  {string} shorthand string of a figure w/o roman to parse
-   * @return {Array[string]}           array of shorthands
-   */
-
-  roman.expandShortHand = function expandShortHand(shorthand) {
-      shorthand = shorthand.replace('/', '');
-      if (shorthand.match(/[b-]$/)) {
-          shorthand += '3';
-      }
-      shorthand = shorthand.replace('11', 'x');
-      shorthand = shorthand.replace('13', 'y');
-      shorthand = shorthand.replace('15', 'z');
-      var rx = new RegExp('#*-*b*o*[1-9xyz]', 'g');
-      var shorthandGroups = [];
-      var match = rx.exec(shorthand);
-      while (match !== null) {
-          shorthandGroups.push(match[0]);
-          match = rx.exec(shorthand);
-      }
-      if (shorthandGroups.length === 1 && shorthandGroups[0].endsWith('3')) {
-          shorthandGroups = ['5', shorthandGroups[0]];
-      }
-      var shGroupOut = [];
-      var _iteratorNormalCompletion = true;
-      var _didIteratorError = false;
-      var _iteratorError = undefined;
-
-      try {
-          for (var _iterator = shorthandGroups[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-              var sh = _step.value;
-
-              sh = sh.replace('x', '11');
-              sh = sh.replace('y', '13');
-              sh = sh.replace('z', '15');
-              shGroupOut.push(sh);
-          }
-      } catch (err) {
-          _didIteratorError = true;
-          _iteratorError = err;
-      } finally {
-          try {
-              if (!_iteratorNormalCompletion && _iterator.return) {
-                  _iterator.return();
-              }
-          } finally {
-              if (_didIteratorError) {
-                  throw _iteratorError;
-              }
-          }
-      }
-
-      return shGroupOut;
-  };
-
-  /**
-   * correctSuffixForChordQuality - Correct a given inversionString suffix given a
-   *     chord of various qualities.
-   *
-   * @memberof music21.roman
-   * @param  {music21.chord.Chord} chordObj
-   * @param  {string} inversionString a string like '6' to fix.
-   * @return {string}           corrected inversionString
-    */
-
-  roman.correctSuffixForChordQuality = function correctSuffixForChordQuality(chordObj, inversionString) {
-      var fifthType = chordObj.semitonesFromChordStep(5);
-      var qualityName = '';
-      if (fifthType === 6) {
-          qualityName = 'o';
-      } else if (fifthType === 8) {
-          qualityName = '+';
-      }
-
-      if (inversionString !== undefined && (inversionString.startsWith('o') || inversionString.startsWith('/o'))) {
-          if (qualityName === 'o') {
-              // don't call viio7, viioo7.
-              qualityName = '';
-          }
-      }
-
-      var seventhType = chordObj.semitonesFromChordStep(7);
-      if (seventhType !== undefined && fifthType === 6) {
-          // there is a seventh and this is a diminished 5
-          if (seventhType === 10 && qualityName === 'o') {
-              qualityName = '/o';
-          } else if (seventhType !== 9) {
-              // do something for very odd chords built on diminished triad.
-          }
-      }
-      return qualityName + inversionString;
-  };
-
-  /**
-   * maps an index number to a roman numeral in lowercase
-   *
-   * @memberof music21.roman
-   * @example
-   * music21.roman.romanToNumber[4]
-   * // 'iv'
-   */
-  roman.romanToNumber = [undefined, 'i', 'ii', 'iii', 'iv', 'v', 'vi', 'vii'];
-
-  /**
-   * Represents a RomanNumeral.  By default, capital Roman Numerals are
-   * major chords; lowercase are minor.
-   *
-   * see music21p's roman module for better instructions.
-   *
-   * current limitations:
-   *
-   * no inversions
-   * no numeric figures except 7
-   * no d7 = dominant 7
-   * no frontAlterationAccidentals
-   * no secondary dominants
-   * no Aug6th chords
-   *
-   * @class RomanNumeral
-   * @memberof music21.roman
-   * @extends music21.chord.Chord
-   * @param {string} figure - the roman numeral as a string, e.g., 'IV', 'viio', 'V7'
-   * @param {string|music21.key.Key} [keyStr='C']
-   * @property {Array<music21.pitch.Pitch>} scale - (readonly) returns the scale associated with the roman numeral
-   * @property {music21.key.Key} key - the key associated with the RomanNumeral (not allowed to be undefined yet)
-   * @property {string} figure - the figure as passed in
-   * @property {string} degreeName - the name associated with the scale degree, such as "mediant" etc., scale 7 will be "leading tone" or "subtonic" appropriately
-   * @property {Int} scaleDegree
-   * @property {string} impliedQuality - "major", "minor", "diminished", "augmented"
-   * @property {Array<music21.pitch.Pitch>} pitches - RomanNumerals are Chord objects, so .pitches will work for them also.
-   */
-  var RomanNumeral = function (_chord$Chord) {
-      inherits(RomanNumeral, _chord$Chord);
-
-      function RomanNumeral(figure, keyStr) {
-          classCallCheck(this, RomanNumeral);
-
-          var _this = possibleConstructorReturn(this, (RomanNumeral.__proto__ || Object.getPrototypeOf(RomanNumeral)).call(this));
-
-          _this.classes.push('RomanNumeral');
-          _this.figure = figure;
-          _this._scale = undefined;
-          _this._key = undefined;
-          _this.key = keyStr;
-          var currentFigure = figure;
-
-          var impliedQuality = 'major';
-          var lowercase = currentFigure.toLowerCase();
-          if (currentFigure.match('/o')) {
-              impliedQuality = 'half-diminished';
-              currentFigure = currentFigure.replace('/o', '');
-          } else if (currentFigure.match('o')) {
-              impliedQuality = 'diminished';
-              currentFigure = currentFigure.replace('o', '');
-          } else if (currentFigure === lowercase) {
-              impliedQuality = 'minor';
-          }
-
-          var numbersArr = currentFigure.match(/\d+/);
-          _this.numbers = undefined;
-          if (numbersArr != null) {
-              currentFigure = currentFigure.replace(/\d+/, '');
-              _this.numbers = parseInt(numbersArr[0]);
-          }
-
-          var scaleDegree = roman.romanToNumber.indexOf(currentFigure.toLowerCase());
-          if (scaleDegree === -1) {
-              throw new Music21Exception('Cannot make a romanNumeral from ' + currentFigure);
-          }
-          _this.scaleDegree = scaleDegree;
-          _this._tempRoot = _this.scale.pitchFromDegree(_this.scaleDegree);
-
-          if (_this.key.mode === 'minor' && (_this.scaleDegree === 6 || _this.scaleDegree === 7)) {
-              if (['minor', 'diminished', 'half-diminished'].indexOf(impliedQuality) !== -1) {
-                  var raiseTone = new interval.Interval('A1');
-                  _this._tempRoot = raiseTone.transposePitch(_this._tempRoot);
-                  if (debug) {
-                      console.log('raised root because minor/dim on scaleDegree 6 or 7');
-                  }
-              }
-          }
-
-          /* temp hack */
-          if (_this.numbers === 7) {
-              if (scaleDegree === 5 && impliedQuality === 'major') {
-                  impliedQuality = 'dominant-seventh';
-              } else {
-                  impliedQuality += '-seventh';
-              }
-          }
-
-          _this.impliedQuality = impliedQuality;
-          _this.updatePitches();
-          return _this;
-      }
-
-      createClass(RomanNumeral, [{
-          key: 'updatePitches',
-
-
-          /**
-           * Update the .pitches array.  Called at instantiation, but not automatically afterwards.
-           *
-           * @memberof music21.roman.RomanNumeral
-           */
-          value: function updatePitches() {
-              var impliedQuality = this.impliedQuality;
-              var chordSpacing = chord.chordDefinitions[impliedQuality];
-              var chordPitches = [this._tempRoot];
-              var lastPitch = this._tempRoot;
-              for (var j = 0; j < chordSpacing.length; j++) {
-                  // console.log('got them', lastPitch);
-                  var thisTransStr = chordSpacing[j];
-                  var thisTrans = new interval.Interval(thisTransStr);
-                  var nextPitch = thisTrans.transposePitch(lastPitch);
-                  chordPitches.push(nextPitch);
-                  lastPitch = nextPitch;
-              }
-              this.pitches = chordPitches;
-              this.root(this._tempRoot);
-          }
-
-          /**
-           * Gives a string display.  Note that since inversion is not yet supported
-           * it needs to be given separately.
-           *
-           * Inverting 7th chords does not work.
-           *
-           * @memberof music21.roman.RomanNumeral
-           * @param {string} displayType - ['roman', 'bassName', 'nameOnly', other]
-           * @param {Int} [inversion=0]
-           * @returns {String}
-           */
-
-      }, {
-          key: 'asString',
-          value: function asString(displayType, inversion) {
-              var keyObj = this.key;
-              var tonic = keyObj.tonic;
-              var mode = keyObj.mode;
-
-              if (inversion === undefined) {
-                  inversion = 0;
-              }
-              var inversionName = '';
-              if (inversion === 1) {
-                  if (displayType === 'roman') {
-                      inversionName = '6';
-                  } else {
-                      inversionName = ' (first inversion)';
-                  }
-              } else if (inversion === 2) {
-                  if (displayType === 'roman') {
-                      inversionName = '64';
-                  } else {
-                      inversionName = ' (second inversion)';
-                  }
-              }
-              var fullChordName = void 0;
-              var connector = ' in ';
-              var suffix = '';
-              if (displayType === 'roman') {
-                  fullChordName = this.figure;
-              } else if (displayType === 'nameOnly') {
-                  // use only with only choice being TONIC
-                  fullChordName = '';
-                  connector = '';
-                  suffix = ' triad';
-              } else if (displayType === 'bassName') {
-                  fullChordName = this.bass().name.replace(/-/, 'b');
-                  connector = ' in ';
-                  suffix = '';
-              } else {
-                  // "default" submediant, etc...
-                  fullChordName = this.degreeName;
-                  if (this.numbers !== undefined) {
-                      fullChordName += ' ' + this.numbers.toString();
-                  }
-              }
-              var tonicDisplay = tonic.replace(/-/, 'b');
-              if (mode === 'minor') {
-                  tonicDisplay = tonicDisplay.toLowerCase();
-              }
-              var chordStr = fullChordName + inversionName + connector + tonicDisplay + ' ' + mode + suffix;
-              return chordStr;
-          }
-      }, {
-          key: 'scale',
-          get: function get() {
-              if (this._scale !== undefined) {
-                  return this._scale;
-              } else {
-                  this._scale = this.key.getScale();
-                  return this._scale;
-              }
-          }
-      }, {
-          key: 'key',
-          get: function get() {
-              return this._key;
-          },
-          set: function set(keyStr) {
-              if (typeof keyStr === 'string') {
-                  this._key = new key.Key(keyStr);
-              } else if (typeof keyStr === 'undefined') {
-                  this._key = new key.Key('C');
-              } else {
-                  this._key = keyStr;
-              }
-          }
-      }, {
-          key: 'degreeName',
-          get: function get() {
-              if (this.scaleDegree < 7) {
-                  return [undefined, 'Tonic', 'Supertonic', 'Mediant', 'Subdominant', 'Dominant', 'Submediant'][this.scaleDegree];
-              } else {
-                  var tonicPitch = new pitch.Pitch(this.key.tonic);
-                  var diffRootToTonic = (tonicPitch.ps - this.root().ps) % 12;
-                  if (diffRootToTonic < 0) {
-                      diffRootToTonic += 12;
-                  }
-                  if (diffRootToTonic === 1) {
-                      return 'Leading-tone';
-                  } else {
-                      return 'Subtonic';
-                  }
-              }
-          }
-      }]);
-      return RomanNumeral;
-  }(chord.Chord);
-  roman.RomanNumeral = RomanNumeral;
-
-  /**
-   * music21j -- Javascript reimplementation of Core music21p features.
    * music21/scale -- Scales
    *
    * Does not implement the full range of scales from music21p
@@ -6757,8 +6581,11 @@
    *
    * @namespace music21.scale
    * @memberof music21
-   * @requires music21/pitch
+   * @requires music21/base
+   * @requires music21/common
+   * @requires music21/debug
    * @requires music21/interval
+   * @requires music21/pitch
    */
   var Scale = function (_base$Music21Object) {
       inherits(Scale, _base$Music21Object);
@@ -7165,6 +6992,9 @@
           return _this6;
       }
 
+      // when adding functionality here, must also be added to key.Key.
+
+
       createClass(ConcreteScale, [{
           key: 'getTonic',
           value: function getTonic() {
@@ -7173,12 +7003,11 @@
 
           // transpose
           // tune
+          // No .romanNumeral function because of circular imports...
+          // romanNumeral(degree) {
+          //     return new roman.RomanNumeral(degree, this);
+          // }
 
-      }, {
-          key: 'romanNumeral',
-          value: function romanNumeral(degree) {
-              return new roman.RomanNumeral(degree, this);
-          }
       }, {
           key: 'getPitches',
           value: function getPitches(unused_minPitch, unused_maxPitch, unused_direction) {
@@ -7401,6 +7230,7 @@
    * Based on music21 (=music21p), Copyright (c) 2006–16, Michael Scott Cuthbert and cuthbertLab
    *
    */
+  // import { common } from './common.js';
   /* key and keysignature module. See {@link music21.key} namespace for details
    *
    * @exports music21/key
@@ -7703,8 +7533,9 @@
 
           var _this2 = possibleConstructorReturn(this, (Key.__proto__ || Object.getPrototypeOf(Key)).call(this, sharps));
 
-          _this2.tonic = keyName;
+          _this2.tonic = new pitch.Pitch(keyName);
           _this2.mode = mode;
+          _this2._scale = _this2.getScale();
           return _this2;
       }
       /**
@@ -7723,7 +7554,7 @@
               if (scaleType === undefined) {
                   scaleType = this.mode;
               }
-              var pitchObj = new pitch.Pitch(this.tonic);
+              var pitchObj = this.tonic;
               if (scaleType === 'major') {
                   return new scale.MajorScale(pitchObj);
               } else if (scaleType === 'minor') {
@@ -7736,10 +7567,327 @@
                   return new scale.ConcreteScale(pitchObj);
               }
           }
+
+          // when scale.js adds functionality, it must be added here.
+
+      }, {
+          key: 'getPitches',
+          value: function getPitches() {
+              var _scale;
+
+              return (_scale = this._scale).getPitches.apply(_scale, arguments);
+          }
+      }, {
+          key: 'pitchFromDegree',
+          value: function pitchFromDegree() {
+              var _scale2;
+
+              return (_scale2 = this._scale).pitchFromDegree.apply(_scale2, arguments);
+          }
+      }, {
+          key: 'getScaleDegreeFromPitch',
+          value: function getScaleDegreeFromPitch() {
+              var _scale3;
+
+              return (_scale3 = this._scale).getScaleDegreeFromPitch.apply(_scale3, arguments);
+          }
+      }, {
+          key: 'isConcrete',
+          get: function get() {
+              return this._scale.isConcrete;
+          }
       }]);
       return Key;
   }(KeySignature);
   key.Key = Key;
+
+  var Harmony = function (_chord$Chord) {
+      inherits(Harmony, _chord$Chord);
+
+      function Harmony(figure, keywords) {
+          classCallCheck(this, Harmony);
+
+          if (keywords === undefined) {
+              keywords = {};
+          }
+
+          var _this = possibleConstructorReturn(this, (Harmony.__proto__ || Object.getPrototypeOf(Harmony)).call(this));
+
+          _this.classes.push('Harmony');
+          _this._writeAsChord = false;
+          _this._roman = undefined;
+          _this.chordStepModifications = [];
+          _this._degreesList = [];
+          _this._key = undefined;
+          // this._updateBasedOnXMLInput(keywords);
+          _this._figure = figure;
+          if (_this._figure !== undefined) {
+              _this._parseFigure();
+          }
+          if (_this._overrides.bass === undefined && _this._overrides.root !== undefined) {
+              _this.bass(_this._overrides.root);
+          }
+          if (keywords.updatePitches && _this._figure !== undefined || _this._overrides.root !== undefined || _this._overrides.bass !== undefined) {
+              _this._updatePitches();
+          }
+          // this._updateBasedOnXMLInput(keywords);
+          if (_this._figure !== undefined && _this._figure.indexOf('sus') !== -1 && _this._figure.indexOf('sus2') === -1) {
+              _this.root(_this.bass());
+          }
+          return _this;
+      }
+
+      createClass(Harmony, [{
+          key: '_parseFigure',
+          value: function _parseFigure() {}
+      }, {
+          key: '_updatePitches',
+          value: function _updatePitches() {}
+      }, {
+          key: 'findFigure',
+          value: function findFigure() {
+              return;
+          }
+      }, {
+          key: 'figure',
+          get: function get() {
+              if (this._figure === undefined) {
+                  return this.findFigure();
+              } else {
+                  return this._figure;
+              }
+          },
+          set: function set(newFigure) {
+              this._figure = newFigure;
+              if (this._figure !== undefined) {
+                  this._parseFigure();
+                  this._updatePitches();
+              }
+          }
+      }, {
+          key: 'key',
+          get: function get() {
+              return this._key;
+          },
+          set: function set(keyOrScale) {
+              if (typeof keyOrScale === 'string') {
+                  this._key = new key.Key(keyOrScale);
+              } else {
+                  this._key = keyOrScale;
+                  this._roman = undefined;
+              }
+          }
+      }]);
+      return Harmony;
+  }(chord.Chord);
+
+  var harmony = {
+      Harmony: Harmony
+  };
+
+  /**
+   * music21j -- Javascript reimplementation of Core music21p features.
+   * music21/instrument -- instrument objects
+   *
+   * Copyright (c) 2013-16, Michael Scott Cuthbert and cuthbertLab
+   * Based on music21 (=music21p), Copyright (c) 2006–16, Michael Scott Cuthbert and cuthbertLab
+   *
+   */
+  /**
+   * Instrument module, see {@link music21.instrument}
+   *
+   * @exports music21/instrument
+   */
+
+  /**
+   * Looking for the {@link music21.instrument.Instrument} object? :-)
+   *
+   * @namespace music21.instrument
+   * @memberof music21
+   * @requires music21/base
+   */
+  var instrument = {};
+
+  /**
+   * Represents an instrument.  instrumentNames are found in the ext/soundfonts directory
+   *
+   * See {@link music21.miditools} and esp. `loadSoundfont` for a way of loading soundfonts into
+   * instruments.
+   *
+   * @class Instrument
+   * @memberof music21.instrument
+   * @param {string} instrumentName
+   * @property {string|undefined} partId
+   * @property {string|undefined} partName
+   * @property {string|undefined} partAbbreviation
+   * @property {string|undefined} instrumentId
+   * @property {string|undefined} instrumentName
+   * @property {string|undefined} instrumentAbbreviation
+   * @property {Int|undefined} midiProgram
+   * @property {Int|undefined} midiChannel
+   * @property {Int|undefined} lowestNote
+   * @property {Int|undefined} highestNote
+   * @property {music21.interval.Interval|undefined} transposition
+   * @property {Boolean} inGMPercMap=false
+   * @property {string|undefined} soundfontFn
+   * @property {string|undefined} oggSoundfont - url of oggSoundfont for this instrument
+   * @property {string|undefined} mp3Soundfont - url of mp3Soundfont for this instrument
+   */
+
+  var Instrument = function (_base$Music21Object) {
+      inherits(Instrument, _base$Music21Object);
+
+      function Instrument(instrumentName) {
+          classCallCheck(this, Instrument);
+
+          var _this = possibleConstructorReturn(this, (Instrument.__proto__ || Object.getPrototypeOf(Instrument)).call(this));
+
+          _this.classSortOrder = -25;
+
+          _this.partId = undefined;
+          _this.partName = undefined;
+          _this.partAbbreviation = undefined;
+
+          _this.instrumentId = undefined;
+          _this.instrumentName = undefined;
+          _this.instrumentAbbreviation = undefined;
+          _this.midiProgram = undefined;
+          _this._midiChannel = undefined;
+
+          _this.lowestNote = undefined;
+          _this.highestNote = undefined;
+
+          _this.transpostion = undefined;
+
+          _this.inGMPercMap = false;
+          _this.soundfontFn = undefined;
+
+          if (instrumentName !== undefined) {
+              instrument.find(instrumentName);
+          }
+          return _this;
+      }
+      /**
+       * Assign an instrument to an unused midi channel.
+       *
+       * Will use the global list of used channels (`music21.instrument.Instrument.usedChannels`)
+       * if not given.  Assigns up to `music21.instrument.maxMidi` channels (16)
+       * Skips 10 unless this.inGMPercMap is true
+       *
+       * @memberof music21.instrument.Instrument
+       * @param {Array<Int>} [usedChannels]
+       * @returns {Number}
+       */
+
+
+      createClass(Instrument, [{
+          key: 'autoAssignMidiChannel',
+          value: function autoAssignMidiChannel(usedChannels) {
+              if (usedChannels === undefined) {
+                  usedChannels = instrument.usedChannels;
+              }
+              var startChannel = 0;
+              if (this.inGMPercMap) {
+                  startChannel = 10;
+              }
+              for (var ch = startChannel; ch < instrument.maxMidi; ch++) {
+                  if (ch % 16 === 10 && this.inGMPercMap !== true) {
+                      continue; // skip 10 / percussion.
+                  }
+                  if (usedChannels[ch] === undefined || usedChannels[ch] === this.midiProgram) {
+                      usedChannels[ch] = this.midiProgram;
+                      this.midiChannel = ch;
+                      return ch;
+                  }
+              }
+              // TODO: no channels! throw exception!
+              return undefined;
+          }
+      }, {
+          key: 'oggSounfont',
+          get: function get() {
+              return this.soundfontFn + '-ogg.js';
+          }
+      }, {
+          key: 'mp3Soundfont',
+          get: function get() {
+              return this.soundfontFn + '-mp3.js';
+          }
+      }, {
+          key: 'midiChannel',
+          get: function get() {
+              if (this._midiChannel === undefined) {
+                  this.autoAssignMidiChannel();
+              }
+              return this._midiChannel;
+          },
+          set: function set(ch) {
+              this._midiChannel = ch;
+          }
+      }]);
+      return Instrument;
+  }(base.Music21Object);
+
+  instrument.Instrument = Instrument;
+
+  instrument.usedChannels = []; // differs from m21p -- stored midiProgram numbers
+  instrument.maxMidi = 16;
+
+  instrument.info = [{ fn: 'acoustic_grand_piano', name: 'Acoustic Grand Piano', midiNumber: 0 }, {
+      fn: 'bright_acoustic_piano',
+      name: 'Bright Acoustic Piano',
+      midiNumber: 1
+  }, { fn: 'electric_grand_piano', name: 'Electric Grand Piano', midiNumber: 2 }, { fn: 'honkytonk_piano', name: 'Honky-tonk Piano', midiNumber: 3 }, { fn: 'electric_piano_1', name: 'Electric Piano 1', midiNumber: 4 }, { fn: 'electric_piano_2', name: 'Electric Piano 2', midiNumber: 5 }, { fn: 'harpsichord', name: 'Harpsichord', midiNumber: 6 }, { fn: 'clavinet', name: 'Clavinet', midiNumber: 7 }, { fn: 'celesta', name: 'Celesta', midiNumber: 8 }, { fn: 'glockenspiel', name: 'Glockenspiel', midiNumber: 9 }, { fn: 'music_box', name: 'Music Box', midiNumber: 10 }, { fn: 'vibraphone', name: 'Vibraphone', midiNumber: 11 }, { fn: 'marimba', name: 'Marimba', midiNumber: 12 }, { fn: 'xylophone', name: 'Xylophone', midiNumber: 13 }, { fn: 'tubular_bells', name: 'Tubular Bells', midiNumber: 14 }, { fn: 'dulcimer', name: 'Dulcimer', midiNumber: 15 }, { fn: 'drawbar_organ', name: 'Drawbar Organ', midiNumber: 16 }, { fn: 'percussive_organ', name: 'Percussive Organ', midiNumber: 17 }, { fn: 'rock_organ', name: 'Rock Organ', midiNumber: 18 }, { fn: 'church_organ', name: 'Church Organ', midiNumber: 19 }, { fn: 'reed_organ', name: 'Reed Organ', midiNumber: 20 }, { fn: 'accordion', name: 'Accordion', midiNumber: 21 }, { fn: 'harmonica', name: 'Harmonica', midiNumber: 22 }, { fn: 'tango_accordion', name: 'Tango Accordion', midiNumber: 23 }, {
+      fn: 'acoustic_guitar_nylon',
+      name: 'Acoustic Guitar (nylon)',
+      midiNumber: 24
+  }, {
+      fn: 'acoustic_guitar_steel',
+      name: 'Acoustic Guitar (steel)',
+      midiNumber: 25
+  }, {
+      fn: 'electric_guitar_jazz',
+      name: 'Electric Guitar (jazz)',
+      midiNumber: 26
+  }, {
+      fn: 'electric_guitar_clean',
+      name: 'Electric Guitar (clean)',
+      midiNumber: 27
+  }, {
+      fn: 'electric_guitar_muted',
+      name: 'Electric Guitar (muted)',
+      midiNumber: 28
+  }, { fn: 'overdriven_guitar', name: 'Overdriven Guitar', midiNumber: 29 }, { fn: 'distortion_guitar', name: 'Distortion Guitar', midiNumber: 30 }, { fn: 'guitar_harmonics', name: 'Guitar Harmonics', midiNumber: 31 }, { fn: 'acoustic_bass', name: 'Acoustic Bass', midiNumber: 32 }, {
+      fn: 'electric_bass_finger',
+      name: 'Electric Bass (finger)',
+      midiNumber: 33
+  }, { fn: 'electric_bass_pick', name: 'Electric Bass (pick)', midiNumber: 34 }, { fn: 'fretless_bass', name: 'Fretless Bass', midiNumber: 35 }, { fn: 'slap_bass_1', name: 'Slap Bass 1', midiNumber: 36 }, { fn: 'slap_bass_2', name: 'Slap Bass 2', midiNumber: 37 }, { fn: 'synth_bass_1', name: 'Synth Bass 1', midiNumber: 38 }, { fn: 'synth_bass_2', name: 'Synth Bass 2', midiNumber: 39 }, { fn: 'violin', name: 'Violin', midiNumber: 40 }, { fn: 'viola', name: 'Viola', midiNumber: 41 }, { fn: 'cello', name: 'Cello', midiNumber: 42 }, { fn: 'contrabass', name: 'Contrabass', midiNumber: 43 }, { fn: 'tremolo_strings', name: 'Tremolo Strings', midiNumber: 44 }, { fn: 'pizzicato_strings', name: 'Pizzicato Strings', midiNumber: 45 }, { fn: 'orchestral_harp', name: 'Orchestral Harp', midiNumber: 46 }, { fn: 'timpani', name: 'Timpani', midiNumber: 47 }, { fn: 'string_ensemble_1', name: 'String Ensemble 1', midiNumber: 48 }, { fn: 'string_ensemble_2', name: 'String Ensemble 2', midiNumber: 49 }, { fn: 'synth_strings_1', name: 'Synth Strings 1', midiNumber: 50 }, { fn: 'synth_strings_2', name: 'Synth Strings 2', midiNumber: 51 }, { fn: 'choir_aahs', name: 'Choir Aahs', midiNumber: 52 }, { fn: 'voice_oohs', name: 'Voice Oohs', midiNumber: 53 }, { fn: 'synth_choir', name: 'Synth Choir', midiNumber: 54 }, { fn: 'orchestra_hit', name: 'Orchestra Hit', midiNumber: 55 }, { fn: 'trumpet', name: 'Trumpet', midiNumber: 56 }, { fn: 'trombone', name: 'Trombone', midiNumber: 57 }, { fn: 'tuba', name: 'Tuba', midiNumber: 58 }, { fn: 'muted_trumpet', name: 'Muted Trumpet', midiNumber: 59 }, { fn: 'french_horn', name: 'French Horn', midiNumber: 60 }, { fn: 'brass_section', name: 'Brass Section', midiNumber: 61 }, { fn: 'synth_brass_1', name: 'Synth Brass 1', midiNumber: 62 }, { fn: 'synth_brass_2', name: 'Synth Brass 2', midiNumber: 63 }, { fn: 'soprano_sax', name: 'Soprano Sax', midiNumber: 64 }, { fn: 'alto_sax', name: 'Alto Sax', midiNumber: 65 }, { fn: 'tenor_sax', name: 'Tenor Sax', midiNumber: 66 }, { fn: 'baritone_sax', name: 'Baritone Sax', midiNumber: 67 }, { fn: 'oboe', name: 'Oboe', midiNumber: 68 }, { fn: 'english_horn', name: 'English Horn', midiNumber: 69 }, { fn: 'bassoon', name: 'Bassoon', midiNumber: 70 }, { fn: 'clarinet', name: 'Clarinet', midiNumber: 71 }, { fn: 'piccolo', name: 'Piccolo', midiNumber: 72 }, { fn: 'flute', name: 'Flute', midiNumber: 73 }, { fn: 'recorder', name: 'Recorder', midiNumber: 74 }, { fn: 'pan_flute', name: 'Pan Flute', midiNumber: 75 }, { fn: 'blown_bottle', name: 'Blown bottle', midiNumber: 76 }, { fn: 'shakuhachi', name: 'Shakuhachi', midiNumber: 77 }, { fn: 'whistle', name: 'Whistle', midiNumber: 78 }, { fn: 'ocarina', name: 'Ocarina', midiNumber: 79 }, { fn: 'lead_1_square', name: 'Lead 1 (square)', midiNumber: 80 }, { fn: 'lead_2_sawtooth', name: 'Lead 2 (sawtooth)', midiNumber: 81 }, { fn: 'lead_3_calliope', name: 'Lead 3 (calliope)', midiNumber: 82 }, { fn: 'lead_4_chiff', name: 'Lead 4 chiff', midiNumber: 83 }, { fn: 'lead_5_charang', name: 'Lead 5 (charang)', midiNumber: 84 }, { fn: 'lead_6_voice', name: 'Lead 6 (voice)', midiNumber: 85 }, { fn: 'lead_7_fifths', name: 'Lead 7 (fifths)', midiNumber: 86 }, { fn: 'lead_8_bass__lead', name: 'Lead 8 (bass + lead)', midiNumber: 87 }, { fn: 'pad_1_new_age', name: 'Pad 1 (new age)', midiNumber: 88 }, { fn: 'pad_2_warm', name: 'Pad 2 (warm)', midiNumber: 89 }, { fn: 'pad_3_polysynth', name: 'Pad 3 (polysynth)', midiNumber: 90 }, { fn: 'pad_4_choir', name: 'Pad 4 (choir)', midiNumber: 91 }, { fn: 'pad_5_bowed', name: 'Pad 5 (bowed)', midiNumber: 92 }, { fn: 'pad_6_metallic', name: 'Pad 6 (metallic)', midiNumber: 93 }, { fn: 'pad_7_halo', name: 'Pad 7 (halo)', midiNumber: 94 }, { fn: 'pad_8_sweep', name: 'Pad 8 (sweep)', midiNumber: 95 }, { fn: 'fx_1_rain', name: 'FX 1 (rain)', midiNumber: 96 }, { fn: 'fx_2_soundtrack', name: 'FX 2 (soundtrack)', midiNumber: 97 }, { fn: 'fx_3_crystal', name: 'FX 3 (crystal)', midiNumber: 98 }, { fn: 'fx_4_atmosphere', name: 'FX 4 (atmosphere)', midiNumber: 99 }, { fn: 'fx_5_brightness', name: 'FX 5 (brightness)', midiNumber: 100 }, { fn: 'fx_6_goblins', name: 'FX 6 (goblins)', midiNumber: 101 }, { fn: 'fx_7_echoes', name: 'FX 7 (echoes)', midiNumber: 102 }, { fn: 'fx_8_scifi', name: 'FX 8 (sci-fi)', midiNumber: 103 }, { fn: 'sitar', name: 'Sitar', midiNumber: 104 }, { fn: 'banjo', name: 'Banjo', midiNumber: 105 }, { fn: 'shamisen', name: 'Shamisen', midiNumber: 106 }, { fn: 'koto', name: 'Koto', midiNumber: 107 }, { fn: 'kalimba', name: 'Kalimba', midiNumber: 108 }, { fn: 'bagpipe', name: 'Bagpipe', midiNumber: 109 }, { fn: 'fiddle', name: 'Fiddle', midiNumber: 110 }, { fn: 'shanai', name: 'Shanai', midiNumber: 111 }, { fn: 'tinkle_bell', name: 'Tinkle Bell', midiNumber: 112 }, { fn: 'agogo', name: 'Agogo', midiNumber: 113 }, { fn: 'steel_drums', name: 'Steel Drums', midiNumber: 114 }, { fn: 'woodblock', name: 'Woodblock', midiNumber: 115 }, { fn: 'taiko_drum', name: 'Taiko Drum', midiNumber: 116 }, { fn: 'melodic_tom', name: 'Melodic Tom', midiNumber: 117 }, { fn: 'synth_drum', name: 'Synth Drum', midiNumber: 118 }, { fn: 'reverse_cymbal', name: 'Reverse Cymbal', midiNumber: 119 }, { fn: 'guitar_fret_noise', name: 'Guitar Fret Noise', midiNumber: 120 }, { fn: 'breath_noise', name: 'Breath Noise', midiNumber: 121 }, { fn: 'seashore', name: 'Seashore', midiNumber: 122 }, { fn: 'bird_tweet', name: 'Bird Tweet', midiNumber: 123 }, { fn: 'telephone_ring', name: 'Telephone Ring', midiNumber: 124 }, { fn: 'helicopter', name: 'Helicopter', midiNumber: 125 }, { fn: 'applause', name: 'Applause', midiNumber: 126 }, { fn: 'gunshot', name: 'Gunshot', midiNumber: 127 }];
+
+  /**
+   * Find information for a given instrument (by filename or name)
+   * and load it into an instrument object.
+   *
+   * @function music21.instrument.find
+   * @memberof music21.instrument
+   * @param {string} fn - name or filename of instrument
+   * @param {music21.instrument.Instrument} [inst] - instrument object to load into
+   * @returns {music21.instrument.Instrument|undefined}
+   */
+  instrument.find = function instrument_find(fn, inst) {
+      if (inst === undefined) {
+          inst = new instrument.Instrument();
+      }
+      for (var i = 0; i < instrument.info.length; i++) {
+          var info = instrument.info[i];
+          if (info.fn === fn || info.name === fn) {
+              inst.soundfontFn = info.fn;
+              inst.instrumentName = info.name;
+              inst.midiProgram = info.midiNumber;
+              return inst;
+          }
+      }
+      return undefined;
+  };
 
   /**
    * music21j -- Javascript reimplementation of Core music21p features.
@@ -15444,6 +15592,604 @@
   };
 
   /**
+   * music21j -- Javascript reimplementation of Core music21p features.
+   * music21/roman -- roman.RomanNumberal -- Chord subclass
+   *
+   * Copyright (c) 2013-16, Michael Scott Cuthbert and cuthbertLab
+   * Based on music21 (=music21p), Copyright (c) 2006–16, Michael Scott Cuthbert and cuthbertLab
+   *
+   */
+  // import { Music21Exception } from './exceptions21.js';
+
+  // import { debug } from './debug.js';
+  /**
+   * Roman numeral module. See {@link music21.roman} namespace
+   *
+   * @exports music21/roman
+   */
+  /**
+   * music21.roman -- namespace for dealing with RomanNumeral analysis.
+   *
+   * @namespace music21.roman
+   * @memberof music21
+   * @requires music21/chord
+   * @requires music21/common
+   * @requires music21/figuredBass
+   * @requires music21/harmony
+   * @requires music21/key
+   * @requires music21/pitch
+   * @requires music21/interval
+   */
+  var roman = {};
+
+  roman.figureShorthands = {
+      '53': '',
+      '3': '',
+      '63': '6',
+      '753': '7',
+      '75': '7', // controversial perhaps
+      '73': '7', // controversial perhaps
+      '9753': '9',
+      '975': '9', // controversial perhaps
+      '953': '9', // controversial perhaps
+      '97': '9', // controversial perhaps
+      '95': '9', // controversial perhaps
+      '93': '9', // controversial perhaps
+      '653': '65',
+      '6b53': '6b5',
+      '643': '43',
+      '642': '42',
+      bb7b5b3: 'o7',
+      bb7b53: 'o7',
+      // '6b5bb3': 'o65',
+      b7b5b3: '/o7'
+  };
+
+  roman.functionalityScores = {
+      I: 100,
+      i: 90,
+      V7: 80,
+      V: 70,
+      V65: 68,
+      I6: 65,
+      V6: 63,
+      V43: 61,
+      I64: 60,
+      IV: 59,
+      i6: 58,
+      viio7: 57,
+      V42: 55,
+      viio65: 53,
+      viio6: 52,
+      '#viio65': 51,
+      ii: 50,
+      '#viio6': 49,
+      ii65: 48,
+      ii43: 47,
+      ii42: 46,
+      IV6: 45,
+      ii6: 43,
+      VI: 42,
+      '#VI': 41,
+      vi: 40,
+      viio: 39,
+      '#viio': 39,
+      iio: 37, // common in Minor
+      iio42: 36,
+      bII6: 35, // Neapolitan
+      iio43: 32,
+      iio65: 31,
+      '#vio': 28,
+      '#vio6': 28,
+      III: 22,
+      v: 20,
+      VII: 19,
+      VII7: 18,
+      IV65: 17,
+      IV7: 16,
+      iii: 15,
+      iii6: 12,
+      vi6: 10
+  };
+
+  /**
+   * expandShortHand - expand a string of numbers into an array
+   *
+   * N.B. this is NOT where abbreviations get expanded
+   *
+   * @memberof music21.roman
+   * @param  {string} shorthand string of a figure w/o roman to parse
+   * @return {Array[string]}           array of shorthands
+   */
+
+  roman.expandShortHand = function expandShortHand(shorthand) {
+      shorthand = shorthand.replace('/', '');
+      if (shorthand.match(/[b-]$/)) {
+          shorthand += '3';
+      }
+      shorthand = shorthand.replace('11', 'x');
+      shorthand = shorthand.replace('13', 'y');
+      shorthand = shorthand.replace('15', 'z');
+      var rx = new RegExp('#*-*b*o*[1-9xyz]', 'g');
+      var shorthandGroups = [];
+      var match = rx.exec(shorthand);
+      while (match !== null) {
+          shorthandGroups.push(match[0]);
+          match = rx.exec(shorthand);
+      }
+      if (shorthandGroups.length === 1 && shorthandGroups[0].endsWith('3')) {
+          shorthandGroups = ['5', shorthandGroups[0]];
+      }
+      var shGroupOut = [];
+      var _iteratorNormalCompletion = true;
+      var _didIteratorError = false;
+      var _iteratorError = undefined;
+
+      try {
+          for (var _iterator = shorthandGroups[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+              var sh = _step.value;
+
+              sh = sh.replace('x', '11');
+              sh = sh.replace('y', '13');
+              sh = sh.replace('z', '15');
+              shGroupOut.push(sh);
+          }
+      } catch (err) {
+          _didIteratorError = true;
+          _iteratorError = err;
+      } finally {
+          try {
+              if (!_iteratorNormalCompletion && _iterator.return) {
+                  _iterator.return();
+              }
+          } finally {
+              if (_didIteratorError) {
+                  throw _iteratorError;
+              }
+          }
+      }
+
+      return shGroupOut;
+  };
+
+  /**
+   * correctSuffixForChordQuality - Correct a given inversionString suffix given a
+   *     chord of various qualities.
+   *
+   * @memberof music21.roman
+   * @param  {music21.chord.Chord} chordObj
+   * @param  {string} inversionString a string like '6' to fix.
+   * @return {string}           corrected inversionString
+    */
+
+  roman.correctSuffixForChordQuality = function correctSuffixForChordQuality(chordObj, inversionString) {
+      var fifthType = chordObj.semitonesFromChordStep(5);
+      var qualityName = '';
+      if (fifthType === 6) {
+          qualityName = 'o';
+      } else if (fifthType === 8) {
+          qualityName = '+';
+      }
+
+      if (inversionString !== undefined && (inversionString.startsWith('o') || inversionString.startsWith('/o'))) {
+          if (qualityName === 'o') {
+              // don't call viio7, viioo7.
+              qualityName = '';
+          }
+      }
+
+      var seventhType = chordObj.semitonesFromChordStep(7);
+      if (seventhType !== undefined && fifthType === 6) {
+          // there is a seventh and this is a diminished 5
+          if (seventhType === 10 && qualityName === 'o') {
+              qualityName = '/o';
+          } else if (seventhType !== 9) {
+              // do something for very odd chords built on diminished triad.
+          }
+      }
+      return qualityName + inversionString;
+  };
+
+  /**
+   * maps an index number to a roman numeral in lowercase
+   *
+   * @memberof music21.roman
+   * @example
+   * music21.roman.romanToNumber[4]
+   * // 'iv'
+   */
+  roman.romanToNumber = [undefined, 'i', 'ii', 'iii', 'iv', 'v', 'vi', 'vii'];
+
+  /**
+   * Represents a RomanNumeral.  By default, capital Roman Numerals are
+   * major chords; lowercase are minor.
+   *
+   * see music21p's roman module for better instructions.
+   *
+   * current limitations:
+   *
+   * no inversions
+   * no numeric figures except 7
+   * no d7 = dominant 7
+   * no frontAlterationAccidentals
+   * no secondary dominants
+   * no Aug6th chords
+   *
+   * @class RomanNumeral
+   * @memberof music21.roman
+   * @extends music21.chord.Chord
+   * @param {string} figure - the roman numeral as a string, e.g., 'IV', 'viio', 'V7'
+   * @param {string|music21.key.Key} [keyStr='C']
+   * @property {Array<music21.pitch.Pitch>} scale - (readonly) returns the scale associated with the roman numeral
+   * @property {music21.key.Key} key - the key associated with the RomanNumeral (not allowed to be undefined yet)
+   * @property {string} figure - the figure as passed in
+   * @property {string} degreeName - the name associated with the scale degree, such as "mediant" etc., scale 7 will be "leading tone" or "subtonic" appropriately
+   * @property {Int} scaleDegree
+   * @property {string} impliedQuality - "major", "minor", "diminished", "augmented"
+   * @property {Array<music21.pitch.Pitch>} pitches - RomanNumerals are Chord objects, so .pitches will work for them also.
+   */
+  var RomanNumeral = function (_harmony$Harmony) {
+      inherits(RomanNumeral, _harmony$Harmony);
+
+      function RomanNumeral(figure, keyStr, keywords) {
+          classCallCheck(this, RomanNumeral);
+
+          var params = { updatePitches: true };
+          common.merge(params, keywords);
+
+          var _this = possibleConstructorReturn(this, (RomanNumeral.__proto__ || Object.getPrototypeOf(RomanNumeral)).call(this, figure, params));
+
+          _this.classes.push('RomanNumeral');
+          _this._parsingComplete = false;
+
+          // not yet used...
+          _this.primaryFigure = undefined;
+          _this.secondaryRomanNumeral = undefined;
+          _this.secondaryRomanNumeralKey = undefined;
+          _this.pivotChord = undefined;
+          _this.scaleCardinality = 7;
+          _this._figure = undefined;
+
+          _this.caseMatters = true;
+          if (typeof figure === 'number') {
+              _this.caseMatters = false;
+          }
+
+          _this.scaleDegree = undefined;
+          _this.frontAlterationString = undefined;
+          _this.frontAlterationTransposeInterval = undefined;
+          _this.frontAlterationAccidental = undefined;
+          _this.romanNumeralAlone = undefined;
+
+          _this.impliedQuality = undefined;
+          _this.impliedScale = undefined;
+          _this.useImpliedScale = false;
+          _this.bracketedAlterations = undefined;
+          _this.omittedSteps = [];
+          _this.followsKeyChange = false;
+          _this._functionalityScore = undefined;
+
+          _this._scale = undefined; // the key
+
+          _this.figure = figure;
+          _this.key = keyStr;
+
+          // to remove...
+          _this.numbers = '';
+
+          _this.parseFigure();
+          _this._parsingComplete = true;
+          return _this;
+      }
+
+      createClass(RomanNumeral, [{
+          key: 'parseFigure',
+          value: function parseFigure() {
+              var workingFigure = this.figure;
+
+              var useScale = this.impliedScale;
+              if (!this.useImpliedScale) {
+                  useScale = this.key;
+              }
+              // [workingFigure, useScale] = this._correctForSecondaryRomanNumeral
+              this.primaryFigure = workingFigure;
+
+              // workingFigure = this._parseOmittedSteps(workingFigure);
+              // workingFigure = this._parseBracketedAlterations(workingFigure);
+              workingFigure = workingFigure.replace(/^N/, 'bII');
+              // workingFigure = this._parseFrontAlterations(workingFigure);
+
+              var _parseRNAloneAmidstAu = this._parseRNAloneAmidstAug6(workingFigure, useScale);
+
+              var _parseRNAloneAmidstAu2 = slicedToArray(_parseRNAloneAmidstAu, 2);
+
+              workingFigure = _parseRNAloneAmidstAu2[0];
+              useScale = _parseRNAloneAmidstAu2[1];
+
+              workingFigure = this._setImpliedQualityFromString(workingFigure);
+
+              this._tempRoot = useScale.pitchFromDegree(this.scaleDegree);
+              this._fixMinorVIandVII(useScale);
+              var expandedFigure = roman.expandShortHand(workingFigure);
+              this.figuresNotationObj = new figuredBass.Notation(expandedFigure.toString());
+
+              var numbersArr = workingFigure.match(/\d+/);
+              if (numbersArr != null) {
+                  workingFigure = workingFigure.replace(/\d+/, '');
+                  this.numbers = parseInt(numbersArr[0]);
+              }
+              /* temp hack */
+              if (this.numbers === 7) {
+                  if (this.scaleDegree === 5 && this.impliedQuality === 'major') {
+                      this.impliedQuality = 'dominant-seventh';
+                  } else {
+                      this.impliedQuality += '-seventh';
+                  }
+              }
+
+              this.updatePitches();
+          }
+      }, {
+          key: '_setImpliedQualityFromString',
+          value: function _setImpliedQualityFromString(workingFigure) {
+              var impliedQuality = 'major';
+              if (workingFigure.startsWith('o')) {
+                  impliedQuality = 'diminished';
+                  workingFigure = workingFigure.replace(/^o/, '');
+              } else if (workingFigure.startsWith('/o')) {
+                  impliedQuality = 'half-diminished';
+                  workingFigure = workingFigure.replace(/^\/o/, '');
+              } else if (workingFigure.startsWith('+')) {
+                  impliedQuality = 'augmented';
+                  workingFigure = workingFigure.replace(/^\+/, '');
+              } else if (workingFigure.endsWith('d7')) {
+                  impliedQuality = 'dominant-seventh';
+                  workingFigure = workingFigure.replace(/d7$/, '7');
+              } else if (this.caseMatters && this.romanNumeralAlone.toUpperCase() === this.romanNumeralAlone) {
+                  impliedQuality = 'major';
+              } else if (this.caseMatters && this.romanNumeralAlone.toLowerCase() === this.romanNumeralAlone) {
+                  impliedQuality = 'minor';
+              }
+              this.impliedQuality = impliedQuality;
+              return workingFigure;
+          }
+      }, {
+          key: '_fixMinorVIandVII',
+          value: function _fixMinorVIandVII(useScale) {
+              if (useScale.mode !== 'minor') {
+                  return;
+              }
+              if (!this.caseMatters) {
+                  return;
+              }
+              if (this.scaleDegree !== 6 && this.scaleDegree !== 7) {
+                  return;
+              }
+              if (!['minor', 'diminished', 'half-diminished'].includes(this.impliedQuality)) {
+                  return;
+              }
+
+              var fati = this.frontAlterationTransposeInterval;
+              if (fati !== undefined) {
+                  var newFati = interval.add([fati, new interval.Interval('A1')]);
+                  this.frontAlterationTransposeInterval = newFati;
+                  this.frontAlterationAccidental.alter = this.frontAlterationAccidental.alter + 1;
+              } else {
+                  this.frontAlterationTransposeInterval = new interval.Interval('A1');
+                  this.frontAlterationAccidental = new pitch.Accidental(1);
+              }
+
+              this._tempRoot = this.frontAlterationTransposeInterval.transposePitch(this._tempRoot);
+
+              return;
+          }
+      }, {
+          key: '_parseRNAloneAmidstAug6',
+          value: function _parseRNAloneAmidstAug6(workingFigure, useScale) {
+              // TODO: Augmented Sixth!!!
+              var romanNumeralAlone = '';
+              var _romanNumeralAloneRegex = new RegExp('(IV|I{1,3}|VI{0,2}|iv|i{1,3}|vi{0,2}|N)');
+              // const _augmentedSixthRegex = new RegExp('(It|Ger|Fr|Sw)');
+              var rm = _romanNumeralAloneRegex.exec(workingFigure);
+              // const a6match = _augmentedSixthRegex.exec(workingFigure);
+              romanNumeralAlone = rm[1];
+              this.scaleDegree = common.fromRoman(romanNumeralAlone);
+              workingFigure = workingFigure.replace(_romanNumeralAloneRegex, '');
+              this.romanNumeralAlone = romanNumeralAlone;
+              return [workingFigure, useScale];
+          }
+
+          /**
+           * get romanNumeral - return either romanNumeralAlone (II) or with frontAlterationAccidental (#II)
+           *
+           * @return {string}  new romanNumeral;
+           */
+
+      }, {
+          key: 'updatePitches',
+
+
+          /**
+           * Update the .pitches array.  Called at instantiation, but not automatically afterwards.
+           *
+           * @memberof music21.roman.RomanNumeral
+           */
+          value: function updatePitches() {
+              var impliedQuality = this.impliedQuality;
+              var chordSpacing = chord.chordDefinitions[impliedQuality];
+              var chordPitches = [this._tempRoot];
+              var lastPitch = this._tempRoot;
+              for (var j = 0; j < chordSpacing.length; j++) {
+                  // console.log('got them', lastPitch);
+                  var thisTransStr = chordSpacing[j];
+                  var thisTrans = new interval.Interval(thisTransStr);
+                  var nextPitch = thisTrans.transposePitch(lastPitch);
+                  chordPitches.push(nextPitch);
+                  lastPitch = nextPitch;
+              }
+              this.pitches = chordPitches;
+              this.root(this._tempRoot);
+          }
+
+          /**
+           * Gives a string display.  Note that since inversion is not yet supported
+           * it needs to be given separately.
+           *
+           * Inverting 7th chords does not work.
+           *
+           * @memberof music21.roman.RomanNumeral
+           * @param {string} displayType - ['roman', 'bassName', 'nameOnly', other]
+           * @param {Int} [inversion=0]
+           * @returns {String}
+           */
+
+      }, {
+          key: 'asString',
+          value: function asString(displayType, inversion) {
+              var keyObj = this.key;
+              var tonicName = keyObj.tonic.name;
+              var mode = keyObj.mode;
+
+              if (inversion === undefined) {
+                  inversion = 0;
+              }
+              var inversionName = '';
+              if (inversion === 1) {
+                  if (displayType === 'roman') {
+                      inversionName = '6';
+                  } else {
+                      inversionName = ' (first inversion)';
+                  }
+              } else if (inversion === 2) {
+                  if (displayType === 'roman') {
+                      inversionName = '64';
+                  } else {
+                      inversionName = ' (second inversion)';
+                  }
+              }
+              var fullChordName = void 0;
+              var connector = ' in ';
+              var suffix = '';
+              if (displayType === 'roman') {
+                  fullChordName = this.figure;
+              } else if (displayType === 'nameOnly') {
+                  // use only with only choice being tonicName
+                  fullChordName = '';
+                  connector = '';
+                  suffix = ' triad';
+              } else if (displayType === 'bassName') {
+                  fullChordName = this.bass().name.replace(/-/, 'b');
+                  connector = ' in ';
+                  suffix = '';
+              } else {
+                  // "default" submediant, etc...
+                  fullChordName = this.degreeName;
+                  if (this.numbers !== undefined) {
+                      fullChordName += ' ' + this.numbers.toString();
+                  }
+              }
+              var tonicDisplay = tonicName.replace(/-/, 'b');
+              if (mode === 'minor') {
+                  tonicDisplay = tonicDisplay.toLowerCase();
+              }
+              var chordStr = fullChordName + inversionName + connector + tonicDisplay + ' ' + mode + suffix;
+              return chordStr;
+          }
+      }, {
+          key: 'romanNumeral',
+          get: function get() {
+              if (this.frontAlterationAccidental === undefined) {
+                  return this.romanNumeralAlone;
+              } else {
+                  return this.frontAlterationAccidental.modifier + this.romanNumeralAlone;
+              }
+          }
+      }, {
+          key: 'scale',
+          get: function get() {
+              if (this._scale !== undefined) {
+                  return this._scale;
+              } else {
+                  this._scale = this.key.getScale();
+                  return this._scale;
+              }
+          }
+      }, {
+          key: 'key',
+          get: function get() {
+              return this._scale;
+          },
+          set: function set(keyOrScale) {
+              if (typeof keyOrScale === 'string') {
+                  this._scale = new key.Key(keyOrScale);
+              } else if (typeof keyOrScale === 'undefined') {
+                  this._scale = new key.Key('C');
+              } else {
+                  this._scale = keyOrScale;
+              }
+              if (keyOrScale === undefined) {
+                  this.useImpliedScale = true;
+                  this.impliedScale = new scale.MajorScale('C');
+              } else {
+                  this.useImpliedScale = false;
+                  this.impliedScale = false;
+              }
+              if (this._parsingComplete) {
+                  this._updatePitches();
+              }
+          }
+      }, {
+          key: 'figure',
+          get: function get() {
+              return this._figure;
+          },
+          set: function set(newFigure) {
+              this._figure = newFigure;
+              if (this._parsingComplete) {
+                  this.parseFigure();
+                  this.updatePitches();
+              }
+          }
+      }, {
+          key: 'figureAndKey',
+          get: function get() {
+              var tonicName = this.key.tonic.name;
+              var mode = '';
+              if (this.key.mode !== undefined) {
+                  mode = ' ' + this.key.mode;
+              }
+
+              if (mode === ' minor') {
+                  tonicName = tonicName.toLowerCase();
+              } else if (mode === ' major') {
+                  tonicName = tonicName.toUpperCase();
+              }
+              return this.figure + ' in ' + tonicName + mode;
+          }
+      }, {
+          key: 'degreeName',
+          get: function get() {
+              if (this.scaleDegree < 7) {
+                  return [undefined, 'Tonic', 'Supertonic', 'Mediant', 'Subdominant', 'Dominant', 'Submediant'][this.scaleDegree];
+              } else {
+                  var tonicPitch = this.key.tonic;
+                  var diffRootToTonic = (tonicPitch.ps - this.root().ps) % 12;
+                  if (diffRootToTonic < 0) {
+                      diffRootToTonic += 12;
+                  }
+                  if (diffRootToTonic === 1) {
+                      return 'Leading-tone';
+                  } else {
+                      return 'Subtonic';
+                  }
+              }
+          }
+      }]);
+      return RomanNumeral;
+  }(harmony.Harmony);
+  roman.RomanNumeral = RomanNumeral;
+
+  /**
    * music21j -- Javascript reimplementation of Core music21 features.
    * music21/tempo -- tempo and (not in music21p) metronome objects
    *
@@ -17246,7 +17992,9 @@
       duration: duration,
       exceptions21: exceptions21,
       expressions: expressions,
+      figuredBass: figuredBass,
       fromPython: fromPython,
+      harmony: harmony,
       instrument: instrument,
       interval: interval,
       key: key,

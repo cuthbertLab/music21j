@@ -5,6 +5,7 @@ import clef from './moduleTests/clef';
 import common from './moduleTests/common';
 import duration from './moduleTests/duration';
 import dynamics from './moduleTests/dynamics';
+import figuredBass from './moduleTests/figuredBass';
 import interval from './moduleTests/interval';
 import key from './moduleTests/key';
 import note from './moduleTests/note';
@@ -23,6 +24,7 @@ const allTests = {
     common,
     duration,
     dynamics,
+    figuredBass,
     interval,
     key,
     note,

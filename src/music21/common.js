@@ -9,8 +9,6 @@
  * @namespace music21.common
  * @memberof music21
  */
-import * as $ from 'jquery';
-
 export const common = {};
 
 /**
@@ -61,7 +59,7 @@ common.range = function common_range(start, stop, step) {
 };
 
 /**
- * Mix in another class into this class -- a form of multiple inheritance.
+ * Mix in another class into this class -- a simple form of multiple inheritance.
  * See articulations.Marcato for an example.
  *
  */
@@ -83,10 +81,52 @@ common.mixin = function common_mixin(OtherParent, thisClassOrObject) {
 };
 
 /**
+ * Aggregation -- closer to true multiple inheritance -- prefers last class's functions.  See
+ * https://stackoverflow.com/questions/29879267/es6-class-multiple-inheritance
+ *
+ *  not currently used...
+ */
+
+common.aggregation = (baseClass, ...mixins) => {
+    class base extends baseClass {
+        constructor(...args) {
+            super(...args);
+            mixins.forEach(mixin => {
+                copyProps(this, new mixin());
+            });
+        }
+    }
+    let copyProps = (target, source) => {
+        // this function copies all properties and symbols, filtering out some special ones
+        Object.getOwnPropertyNames(source)
+            .concat(Object.getOwnPropertySymbols(source))
+            .forEach(prop => {
+                if (
+                    !prop.match(
+                        /^(?:constructor|prototype|arguments|caller|name|bind|call|apply|toString|length)$/
+                    )
+                ) {
+                    Object.defineProperty(
+                        target,
+                        prop,
+                        Object.getOwnPropertyDescriptor(source, prop)
+                    );
+                }
+            });
+    };
+    mixins.forEach(mixin => {
+        // outside contructor() to allow aggregation(A,B,C).staticFunction() to be called etc.
+        copyProps(base.prototype, mixin.prototype);
+        copyProps(base, mixin);
+    });
+    return base;
+};
+
+/**
  * posMod - return a modulo value that is not negative
  *
  * @param  {Int} a value
- * @param  {Int} b modulo 
+ * @param  {Int} b modulo
  * @return {Int}   a mod b between 0 and b - 1
  */
 
@@ -125,6 +165,83 @@ common.statisticalMode = function statisticalMode(a) {
         }
     }
     return maxEl;
+};
+
+/**
+ * fromRoman - Convert a Roman numeral (upper or lower) to an int.
+ *
+ * @param  {string} num roman numeral representation of a number
+ * @return {Int}     integer value of roman numeral;
+ */
+
+common.fromRoman = function fromRoman(num) {
+    const inputRoman = num.toUpperCase();
+    const subtractionValues = [1, 10, 100];
+    const nums = ['M', 'D', 'C', 'L', 'X', 'V', 'I'];
+    const ints = [1000, 500, 100, 50, 10, 5, 1];
+    const places = [];
+    for (const c of inputRoman) {
+        if (!nums.includes(c)) {
+            throw new Error(
+                'Value is not a valid roman numeral: ' + inputRoman
+            );
+        }
+    }
+    for (let i = 0; i < inputRoman.length; i++) {
+        const c = inputRoman[i];
+        let value = ints[nums.indexOf(c)];
+        if (i < inputRoman.length - 1) {
+            const nextValue = ints[nums.indexOf(inputRoman[i + 1])];
+            if (nextValue > value && subtractionValues.includes(value)) {
+                value *= -1;
+            }
+        }
+        places.push(value);
+    }
+    let summation = 0;
+    for (const n of places) {
+        summation += n;
+    }
+    return summation;
+};
+
+/**
+ * toRoman - Convert a number from 1 to 3999 to a roman numeral
+ *
+ * @param  {Int} num number to convert
+ * @return {string}     as roman numeral
+ */
+
+common.toRoman = function toRoman(num) {
+    if (typeof num !== 'number') {
+        throw new Error('expected integer, got ' + typeof num);
+    }
+    if (num < 0 || num > 4000) {
+        throw new Error('Argument must be between 1 and 3999');
+    }
+    const ints = [1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1];
+    const nums = [
+        'M',
+        'CM',
+        'D',
+        'CD',
+        'C',
+        'XC',
+        'L',
+        'XL',
+        'X',
+        'IX',
+        'V',
+        'IV',
+        'I',
+    ];
+    let result = '';
+    for (let i = 0; i < ints.length; i++) {
+        const count = Math.floor(num / ints[i]);
+        result += nums[i].repeat(count);
+        num -= ints[i] * count;
+    }
+    return result;
 };
 
 /**
@@ -249,51 +366,6 @@ common.urlParam = function urlParam(name) {
     return results == null
         ? ''
         : decodeURIComponent(results[1].replace(/\+/g, ' '));
-};
-
-/**
- * Copies an event from one jQuery object to another.
- * This is buggy in jQuery 3 -- do not use.  use .clone(true, true);
- * and then replace the elements.
- *
- * To be removed once I'm sure it is not needed
- *
- * @function music21.common.jQueryEventCopy
- * @param {Event} eventObj - Event to copy from "from" to "to"
- * @param {jQuery|string|DOMObject} from - jQuery object to copy events from. Only uses the first matched element.
- * @param {jQuery|string|DOMObject} to - jQuery object to copy events to. Copies to all matched elements.
- * @author Brandon Aaron (brandon.aaron@gmail.com || http://brandonaaron.net)
- * @author Yannick Albert (mail@yckart.com || http://yckart.com)
- */
-common.jQueryEventCopy = function jQueryEventCopy(eventObj, from, to) {
-    from = from.jquery ? from : $(from);
-    to = to.jquery ? to : $(to);
-
-    const events
-        = from[0].events
-        || $.data(from[0], 'events')
-        || $._data(from[0], 'events');
-    if (!from.length || !to.length || !events) {
-        return undefined;
-    }
-    return to.each(() => {
-        for (const type in events) {
-            if (!{}.hasOwnProperty.call(events, type)) {
-                continue;
-            }
-            for (const handler in events[type]) {
-                if (!{}.hasOwnProperty.call(events[type], handler)) {
-                    continue;
-                }
-                $.event.add(
-                    eventObj,
-                    type,
-                    events[type][handler],
-                    events[type][handler].data
-                );
-            }
-        }
-    });
 };
 
 common.arrayEquals = function arrayEquals(a1, a2) {

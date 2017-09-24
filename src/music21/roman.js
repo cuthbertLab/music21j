@@ -6,14 +6,17 @@
  * Based on music21 (=music21p), Copyright (c) 2006–16, Michael Scott Cuthbert and cuthbertLab
  *
  */
-import { Music21Exception } from './exceptions21.js';
+// import { Music21Exception } from './exceptions21.js';
 
 import { chord } from './chord.js';
-import { debug } from './debug.js';
+import { common } from './common.js';
+// import { debug } from './debug.js';
+import { figuredBass } from './figuredBass.js';
+import { harmony } from './harmony.js';
+import { interval } from './interval.js';
 import { key } from './key.js';
 import { pitch } from './pitch.js';
-import { interval } from './interval.js';
-
+import { scale } from './scale.js';
 /**
  * Roman numeral module. See {@link music21.roman} namespace
  *
@@ -25,6 +28,9 @@ import { interval } from './interval.js';
  * @namespace music21.roman
  * @memberof music21
  * @requires music21/chord
+ * @requires music21/common
+ * @requires music21/figuredBass
+ * @requires music21/harmony
  * @requires music21/key
  * @requires music21/pitch
  * @requires music21/interval
@@ -221,77 +227,194 @@ roman.romanToNumber = [undefined, 'i', 'ii', 'iii', 'iv', 'v', 'vi', 'vii'];
  * @property {string} impliedQuality - "major", "minor", "diminished", "augmented"
  * @property {Array<music21.pitch.Pitch>} pitches - RomanNumerals are Chord objects, so .pitches will work for them also.
  */
-export class RomanNumeral extends chord.Chord {
-    constructor(figure, keyStr) {
-        super();
+export class RomanNumeral extends harmony.Harmony {
+    constructor(figure, keyStr, keywords) {
+        const params = { updatePitches: true };
+        common.merge(params, keywords);
+        super(figure, params);
         this.classes.push('RomanNumeral');
-        this.figure = figure;
-        this._scale = undefined;
-        this._key = undefined;
-        this.key = keyStr;
-        let currentFigure = figure;
+        this._parsingComplete = false;
 
-        let impliedQuality = 'major';
-        const lowercase = currentFigure.toLowerCase();
-        if (currentFigure.match('/o')) {
-            impliedQuality = 'half-diminished';
-            currentFigure = currentFigure.replace('/o', '');
-        } else if (currentFigure.match('o')) {
-            impliedQuality = 'diminished';
-            currentFigure = currentFigure.replace('o', '');
-        } else if (currentFigure === lowercase) {
-            impliedQuality = 'minor';
+        // not yet used...
+        this.primaryFigure = undefined;
+        this.secondaryRomanNumeral = undefined;
+        this.secondaryRomanNumeralKey = undefined;
+        this.pivotChord = undefined;
+        this.scaleCardinality = 7;
+        this._figure = undefined;
+
+        this.caseMatters = true;
+        if (typeof figure === 'number') {
+            this.caseMatters = false;
         }
 
-        const numbersArr = currentFigure.match(/\d+/);
-        this.numbers = undefined;
+        this.scaleDegree = undefined;
+        this.frontAlterationString = undefined;
+        this.frontAlterationTransposeInterval = undefined;
+        this.frontAlterationAccidental = undefined;
+        this.romanNumeralAlone = undefined;
+
+        this.impliedQuality = undefined;
+        this.impliedScale = undefined;
+        this.useImpliedScale = false;
+        this.bracketedAlterations = undefined;
+        this.omittedSteps = [];
+        this.followsKeyChange = false;
+        this._functionalityScore = undefined;
+
+        this._scale = undefined; // the key
+
+        this.figure = figure;
+        this.key = keyStr;
+
+        // to remove...
+        this.numbers = '';
+
+        this.parseFigure();
+        this._parsingComplete = true;
+    }
+
+    parseFigure() {
+        let workingFigure = this.figure;
+
+        let useScale = this.impliedScale;
+        if (!this.useImpliedScale) {
+            useScale = this.key;
+        }
+        // [workingFigure, useScale] = this._correctForSecondaryRomanNumeral
+        this.primaryFigure = workingFigure;
+
+        // workingFigure = this._parseOmittedSteps(workingFigure);
+        // workingFigure = this._parseBracketedAlterations(workingFigure);
+        workingFigure = workingFigure.replace(/^N/, 'bII');
+        // workingFigure = this._parseFrontAlterations(workingFigure);
+        [workingFigure, useScale] = this._parseRNAloneAmidstAug6(
+            workingFigure,
+            useScale
+        );
+        workingFigure = this._setImpliedQualityFromString(workingFigure);
+
+        this._tempRoot = useScale.pitchFromDegree(this.scaleDegree);
+        this._fixMinorVIandVII(useScale);
+        const expandedFigure = roman.expandShortHand(workingFigure);
+        this.figuresNotationObj = new figuredBass.Notation(
+            expandedFigure.toString()
+        );
+
+        const numbersArr = workingFigure.match(/\d+/);
         if (numbersArr != null) {
-            currentFigure = currentFigure.replace(/\d+/, '');
+            workingFigure = workingFigure.replace(/\d+/, '');
             this.numbers = parseInt(numbersArr[0]);
         }
-
-        const scaleDegree = roman.romanToNumber.indexOf(
-            currentFigure.toLowerCase()
-        );
-        if (scaleDegree === -1) {
-            throw new Music21Exception(
-                'Cannot make a romanNumeral from ' + currentFigure
-            );
-        }
-        this.scaleDegree = scaleDegree;
-        this._tempRoot = this.scale.pitchFromDegree(this.scaleDegree);
-
-        if (
-            this.key.mode === 'minor'
-            && (this.scaleDegree === 6 || this.scaleDegree === 7)
-        ) {
-            if (
-                ['minor', 'diminished', 'half-diminished'].indexOf(
-                    impliedQuality
-                ) !== -1
-            ) {
-                const raiseTone = new interval.Interval('A1');
-                this._tempRoot = raiseTone.transposePitch(this._tempRoot);
-                if (debug) {
-                    console.log(
-                        'raised root because minor/dim on scaleDegree 6 or 7'
-                    );
-                }
-            }
-        }
-
         /* temp hack */
         if (this.numbers === 7) {
-            if (scaleDegree === 5 && impliedQuality === 'major') {
-                impliedQuality = 'dominant-seventh';
+            if (this.scaleDegree === 5 && this.impliedQuality === 'major') {
+                this.impliedQuality = 'dominant-seventh';
             } else {
-                impliedQuality += '-seventh';
+                this.impliedQuality += '-seventh';
             }
         }
 
-        this.impliedQuality = impliedQuality;
         this.updatePitches();
     }
+
+    _setImpliedQualityFromString(workingFigure) {
+        let impliedQuality = 'major';
+        if (workingFigure.startsWith('o')) {
+            impliedQuality = 'diminished';
+            workingFigure = workingFigure.replace(/^o/, '');
+        } else if (workingFigure.startsWith('/o')) {
+            impliedQuality = 'half-diminished';
+            workingFigure = workingFigure.replace(/^\/o/, '');
+        } else if (workingFigure.startsWith('+')) {
+            impliedQuality = 'augmented';
+            workingFigure = workingFigure.replace(/^\+/, '');
+        } else if (workingFigure.endsWith('d7')) {
+            impliedQuality = 'dominant-seventh';
+            workingFigure = workingFigure.replace(/d7$/, '7');
+        } else if (
+            this.caseMatters
+            && this.romanNumeralAlone.toUpperCase() === this.romanNumeralAlone
+        ) {
+            impliedQuality = 'major';
+        } else if (
+            this.caseMatters
+            && this.romanNumeralAlone.toLowerCase() === this.romanNumeralAlone
+        ) {
+            impliedQuality = 'minor';
+        }
+        this.impliedQuality = impliedQuality;
+        return workingFigure;
+    }
+
+    _fixMinorVIandVII(useScale) {
+        if (useScale.mode !== 'minor') {
+            return;
+        }
+        if (!this.caseMatters) {
+            return;
+        }
+        if (this.scaleDegree !== 6 && this.scaleDegree !== 7) {
+            return;
+        }
+        if (
+            !['minor', 'diminished', 'half-diminished'].includes(
+                this.impliedQuality
+            )
+        ) {
+            return;
+        }
+
+        const fati = this.frontAlterationTransposeInterval;
+        if (fati !== undefined) {
+            const newFati = interval.add([fati, new interval.Interval('A1')]);
+            this.frontAlterationTransposeInterval = newFati;
+            this.frontAlterationAccidental.alter
+                = this.frontAlterationAccidental.alter + 1;
+        } else {
+            this.frontAlterationTransposeInterval = new interval.Interval('A1');
+            this.frontAlterationAccidental = new pitch.Accidental(1);
+        }
+
+        this._tempRoot = this.frontAlterationTransposeInterval.transposePitch(
+            this._tempRoot
+        );
+
+        return;
+    }
+
+    _parseRNAloneAmidstAug6(workingFigure, useScale) {
+        // TODO: Augmented Sixth!!!
+        let romanNumeralAlone = '';
+        const _romanNumeralAloneRegex = new RegExp(
+            '(IV|I{1,3}|VI{0,2}|iv|i{1,3}|vi{0,2}|N)'
+        );
+        // const _augmentedSixthRegex = new RegExp('(It|Ger|Fr|Sw)');
+        const rm = _romanNumeralAloneRegex.exec(workingFigure);
+        // const a6match = _augmentedSixthRegex.exec(workingFigure);
+        romanNumeralAlone = rm[1];
+        this.scaleDegree = common.fromRoman(romanNumeralAlone);
+        workingFigure = workingFigure.replace(_romanNumeralAloneRegex, '');
+        this.romanNumeralAlone = romanNumeralAlone;
+        return [workingFigure, useScale];
+    }
+
+    /**
+     * get romanNumeral - return either romanNumeralAlone (II) or with frontAlterationAccidental (#II)
+     *
+     * @return {string}  new romanNumeral;
+     */
+
+    get romanNumeral() {
+        if (this.frontAlterationAccidental === undefined) {
+            return this.romanNumeralAlone;
+        } else {
+            return (
+                this.frontAlterationAccidental.modifier + this.romanNumeralAlone
+            );
+        }
+    }
+
     get scale() {
         if (this._scale !== undefined) {
             return this._scale;
@@ -301,17 +424,54 @@ export class RomanNumeral extends chord.Chord {
         }
     }
     get key() {
-        return this._key;
+        return this._scale;
     }
-    set key(keyStr) {
-        if (typeof keyStr === 'string') {
-            this._key = new key.Key(keyStr);
-        } else if (typeof keyStr === 'undefined') {
-            this._key = new key.Key('C');
+    set key(keyOrScale) {
+        if (typeof keyOrScale === 'string') {
+            this._scale = new key.Key(keyOrScale);
+        } else if (typeof keyOrScale === 'undefined') {
+            this._scale = new key.Key('C');
         } else {
-            this._key = keyStr;
+            this._scale = keyOrScale;
+        }
+        if (keyOrScale === undefined) {
+            this.useImpliedScale = true;
+            this.impliedScale = new scale.MajorScale('C');
+        } else {
+            this.useImpliedScale = false;
+            this.impliedScale = false;
+        }
+        if (this._parsingComplete) {
+            this._updatePitches();
         }
     }
+
+    get figure() {
+        return this._figure;
+    }
+    set figure(newFigure) {
+        this._figure = newFigure;
+        if (this._parsingComplete) {
+            this.parseFigure();
+            this.updatePitches();
+        }
+    }
+
+    get figureAndKey() {
+        let tonicName = this.key.tonic.name;
+        let mode = '';
+        if (this.key.mode !== undefined) {
+            mode = ' ' + this.key.mode;
+        }
+
+        if (mode === ' minor') {
+            tonicName = tonicName.toLowerCase();
+        } else if (mode === ' major') {
+            tonicName = tonicName.toUpperCase();
+        }
+        return this.figure + ' in ' + tonicName + mode;
+    }
+
     get degreeName() {
         if (this.scaleDegree < 7) {
             return [
@@ -324,7 +484,7 @@ export class RomanNumeral extends chord.Chord {
                 'Submediant',
             ][this.scaleDegree];
         } else {
-            const tonicPitch = new pitch.Pitch(this.key.tonic);
+            const tonicPitch = this.key.tonic;
             let diffRootToTonic = (tonicPitch.ps - this.root().ps) % 12;
             if (diffRootToTonic < 0) {
                 diffRootToTonic += 12;
@@ -372,7 +532,7 @@ export class RomanNumeral extends chord.Chord {
      */
     asString(displayType, inversion) {
         const keyObj = this.key;
-        const tonic = keyObj.tonic;
+        const tonicName = keyObj.tonic.name;
         const mode = keyObj.mode;
 
         if (inversion === undefined) {
@@ -398,7 +558,7 @@ export class RomanNumeral extends chord.Chord {
         if (displayType === 'roman') {
             fullChordName = this.figure;
         } else if (displayType === 'nameOnly') {
-            // use only with only choice being TONIC
+            // use only with only choice being tonicName
             fullChordName = '';
             connector = '';
             suffix = ' triad';
@@ -413,7 +573,7 @@ export class RomanNumeral extends chord.Chord {
                 fullChordName += ' ' + this.numbers.toString();
             }
         }
-        let tonicDisplay = tonic.replace(/-/, 'b');
+        let tonicDisplay = tonicName.replace(/-/, 'b');
         if (mode === 'minor') {
             tonicDisplay = tonicDisplay.toLowerCase();
         }
