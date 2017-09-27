@@ -1,5 +1,5 @@
 /**
- * music21j 0.9.0 built on  * 2017-09-24.
+ * music21j 0.9.0 built on  * 2017-09-26.
  * Copyright (c) 2013-2016 Michael Scott Cuthbert and cuthbertLab
  * BSD License, see LICENSE
  *
@@ -16271,6 +16271,7 @@
               var tonicName = keyObj.tonic.name;
               var mode = keyObj.mode;
 
+              // specifying inversion is for backwards compatibility only.
               if (inversion === undefined) {
                   inversion = 0;
               }
@@ -16300,8 +16301,6 @@
                   suffix = ' triad';
               } else if (displayType === 'bassName') {
                   fullChordName = this.bass().name.replace(/-/, 'b');
-                  connector = ' in ';
-                  suffix = '';
               } else {
                   // "default" submediant, etc...
                   fullChordName = this.degreeName;
