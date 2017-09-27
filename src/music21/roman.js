@@ -704,6 +704,7 @@ export class RomanNumeral extends harmony.Harmony {
         const tonicName = keyObj.tonic.name;
         const mode = keyObj.mode;
 
+        // specifying inversion is for backwards compatibility only.
         if (inversion === undefined) {
             inversion = 0;
         }
@@ -733,8 +734,6 @@ export class RomanNumeral extends harmony.Harmony {
             suffix = ' triad';
         } else if (displayType === 'bassName') {
             fullChordName = this.bass().name.replace(/-/, 'b');
-            connector = ' in ';
-            suffix = '';
         } else {
             // "default" submediant, etc...
             fullChordName = this.degreeName;
