@@ -16294,6 +16294,7 @@
               var suffix = '';
               if (displayType === 'roman') {
                   fullChordName = this.figure;
+                  fullChordName = fullChordName.replace('/o', 'ø');
               } else if (displayType === 'nameOnly') {
                   // use only with only choice being tonicName
                   fullChordName = '';
