@@ -120,7 +120,7 @@ export default function tests() {
         assert.ok(rn1.pitches.map(p => p.name).includes('F'), 'F in pitches');
         assert.equal(rn1.degreeName, 'Subdominant', 'test is Subdominant');
 
-        const t2 = 'V43';
+        let t2 = 'V43';
         rn1 = new music21.roman.RomanNumeral(t2, 'a');
         assert.equal(rn1.scaleDegree, 5, 'test scale dgree of a V43');
         assert.equal(rn1.romanNumeralAlone, 'V', 'test romanNumeralAlone');
@@ -132,5 +132,26 @@ export default function tests() {
         assert.equal(rn1.pitches[2].name, 'E', 'test pitches[2] == E');
         assert.equal(rn1.pitches[3].name, 'G#', 'test pitches[3] == G#');
         assert.equal(rn1.degreeName, 'Dominant', 'test is Dominant');
+
+        t2 = 'ii/o65';
+        rn1 = new music21.roman.RomanNumeral(t2, 'g');
+        assert.equal(rn1.scaleDegree, 2, 'test scale dgree of a ii/o65');
+        assert.equal(
+            rn1.romanNumeralAlone,
+            'ii',
+            'test romanNumeralAlone is ii'
+        );
+        assert.equal(rn1.root().name, 'A', 'root name is A');
+        assert.equal(rn1.bass().name, 'C', 'bass name is C');
+        assert.equal(
+            rn1.impliedQuality,
+            'half-diminished',
+            'implied quality half-diminished'
+        );
+        assert.equal(rn1.pitches[0].name, 'C', 'test ii/o65 pitches[0] == C');
+        assert.equal(rn1.pitches[1].name, 'E-', 'test ii/o65 pitches[1] == E-');
+        assert.equal(rn1.pitches[2].name, 'G', 'test ii/o65 pitches[2] == G');
+        assert.equal(rn1.pitches[3].name, 'A', 'test ii/o65 pitches[3] == A');
+        assert.equal(rn1.degreeName, 'Supertonic', 'test is Supertonic');
     });
 }

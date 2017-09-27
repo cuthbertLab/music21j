@@ -1,5 +1,5 @@
 /**
- * music21j 0.9.0 built on  * 2017-09-24.
+ * music21j 0.9.0 built on  * 2017-09-26.
  * Copyright (c) 2013-2016 Michael Scott Cuthbert and cuthbertLab
  * BSD License, see LICENSE
  *
@@ -16271,6 +16271,7 @@
               var tonicName = keyObj.tonic.name;
               var mode = keyObj.mode;
 
+              // specifying inversion is for backwards compatibility only.
               if (inversion === undefined) {
                   inversion = 0;
               }
@@ -16300,8 +16301,6 @@
                   suffix = ' triad';
               } else if (displayType === 'bassName') {
                   fullChordName = this.bass().name.replace(/-/, 'b');
-                  connector = ' in ';
-                  suffix = '';
               } else {
                   // "default" submediant, etc...
                   fullChordName = this.degreeName;
@@ -18755,6 +18754,19 @@
           assert.equal(rn1.pitches[2].name, 'E', 'test pitches[2] == E');
           assert.equal(rn1.pitches[3].name, 'G#', 'test pitches[3] == G#');
           assert.equal(rn1.degreeName, 'Dominant', 'test is Dominant');
+
+          t2 = 'ii/o65';
+          rn1 = new music21.roman.RomanNumeral(t2, 'g');
+          assert.equal(rn1.scaleDegree, 2, 'test scale dgree of a ii/o65');
+          assert.equal(rn1.romanNumeralAlone, 'ii', 'test romanNumeralAlone is ii');
+          assert.equal(rn1.root().name, 'A', 'root name is A');
+          assert.equal(rn1.bass().name, 'C', 'bass name is C');
+          assert.equal(rn1.impliedQuality, 'half-diminished', 'implied quality half-diminished');
+          assert.equal(rn1.pitches[0].name, 'C', 'test ii/o65 pitches[0] == C');
+          assert.equal(rn1.pitches[1].name, 'E-', 'test ii/o65 pitches[1] == E-');
+          assert.equal(rn1.pitches[2].name, 'G', 'test ii/o65 pitches[2] == G');
+          assert.equal(rn1.pitches[3].name, 'A', 'test ii/o65 pitches[3] == A');
+          assert.equal(rn1.degreeName, 'Supertonic', 'test is Supertonic');
       });
   }
 
