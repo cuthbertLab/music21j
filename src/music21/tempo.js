@@ -92,7 +92,6 @@ tempo.baseTempo = 60;
 export class Metronome extends prebase.ProtoM21Object {
     constructor(tempoInt) {
         super();
-        this.classes.push('Metronome');
         this._tempo = 60; // overridden by music21.tempo.baseTempo;
         if (tempoInt === undefined) {
             this.tempo = tempo.baseTempo;

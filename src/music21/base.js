@@ -43,17 +43,31 @@ export const base = {};
  * @property {number} priority - The priority (lower = earlier or more left) for elements at the same offset. (default 0)
  */
 export class Music21Object extends prebase.ProtoM21Object {
-    constructor() {
+    constructor(keywords) {
         super();
-        this.classes.push('Music21Object');
         this.classSortOrder = 20; // default;
-        this._priority = 0; // default;
-        this.offset = null; // default -- simple version of m21.
+
         this.activeSite = undefined;
+        this.offset = null; // for now
+        // this._activeSite = undefined;
+        // this._naiveOffset = null;
+        this._activeSiteStoredOffset = undefined;
+
+        // this._derivation = undefined;
+        // this._style = undefined;
+        // this._editorial = undefined;
+
+        this._duration = new duration.Duration();
+
+        this._priority = 0; // default;
+
+        // id
+        // groups
+        // this.sites = new sites.Sites();
+
         this.isMusic21Object = true;
         this.isStream = false;
 
-        this._duration = new duration.Duration();
         this.groups = []; // custom object in m21p
         // this.sites, this.activeSites, this.offset -- not yet...
         // beat, measureNumber, etc.
@@ -101,7 +115,7 @@ export class Music21Object extends prebase.ProtoM21Object {
      * @param {music21.stream.Stream} site
      * @returns Number|undefined
      */
-    getOffsetBySite(site) {
+    getOffsetBySite(site, stringReturns = false) {
         if (site === undefined) {
             return this.offset;
         }

@@ -43,7 +43,6 @@ export const meter = {};
 export class TimeSignature extends base.Music21Object {
     constructor(meterString) {
         super();
-        this.classes.push('TimeSignature');
         this._numerator = 4;
         this._denominator = 4;
         this.beatGroups = [];

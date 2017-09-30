@@ -48,7 +48,6 @@ export class Chord extends note.NotRest {
         } else if (typeof notes === 'string') {
             notes = notes.split(/\s+/);
         }
-        this.classes.push('Chord');
         this.isChord = true; // for speed
         this.isNote = false; // for speed
         this.isRest = false; // for speed

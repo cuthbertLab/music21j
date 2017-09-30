@@ -31,7 +31,6 @@ export const pitch = {};
 export class Accidental extends prebase.ProtoM21Object {
     constructor(accName) {
         super();
-        this.classes.push('Accidental');
         this._name = '';
         this._alter = 0.0;
         this._modifier = '';
@@ -240,12 +239,8 @@ pitch.midiToName = [
  * @property {string} step - letter name for the pitch (C-G, A, B), without accidental; default 'C'
  */
 export class Pitch extends prebase.ProtoM21Object {
-    constructor(pn) {
+    constructor(pn = 'C') {
         super();
-        this.classes.push('Pitch');
-        if (pn === undefined) {
-            pn = 'C';
-        }
         this._step = 'C';
         this._octave = 4;
         this._accidental = undefined;

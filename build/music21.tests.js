@@ -1,5 +1,5 @@
 /**
- * music21j 0.9.0 built on  * 2017-09-26.
+ * music21j 0.9.0 built on  * 2017-09-30.
  * Copyright (c) 2013-2016 Michael Scott Cuthbert and cuthbertLab
  * BSD License, see LICENSE
  *
@@ -727,38 +727,25 @@
       return true;
   };
 
-  // common.walk = function (obj, callback, callList, seen, numSeen) {
-  // if (depth == undefined) {
-  // depth = 0;
-  // }
-  // if (depth > 20) {
-  // throw "max depth reached";
-  // }
-  // if (callList === undefined) {
-  // callList = [];
-  // }
-  // if (seen === undefined) {
-  // seen = new Set();
-  // }
-  // var next, item;
-  // for (item in obj) {
-  // if (obj.hasOwnProperty(item)) {
-  // next = obj[item];
-  // var nextCallList = []
-  // nextCallList.push.apply(callList);
-  // nextCallList.push(item);
-  // if (callback !== undefined) {
-  // callback.call(this, item, next, nextCallList);
-  // }
-  // if (typeof next =='object' && next != null) {
-  // if (seen.has(next) == false) {
-  // seen.add(next);
-  // common.walk(next, callback, nextCallList, seen, depth+1);
-  // }
-  // }
-  // }
-  // }
-  // };
+  var _singletonCounter = {};
+  _singletonCounter.value = 0;
+
+  var SingletonCounter = function () {
+      function SingletonCounter() {
+          classCallCheck(this, SingletonCounter);
+      }
+
+      createClass(SingletonCounter, [{
+          key: 'call',
+          value: function call() {
+              var post = _singletonCounter.value;
+              _singletonCounter.value += 1;
+              return post;
+          }
+      }]);
+      return SingletonCounter;
+  }();
+  common.SingletonCounter = SingletonCounter;
 
   /**
    * runs a callback with either "visible" or "hidden" as the argument anytime the
@@ -856,33 +843,34 @@
       function ProtoM21Object() {
           classCallCheck(this, ProtoM21Object);
 
-          this.classes = ['ProtoM21Object'];
+          this._storedClasses = undefined;
           this.isProtoM21Object = true;
           this.isMusic21Object = false;
           this._cloneCallbacks = {};
       }
-      /**
-       * Makes (as much as possible) a complete duplicate copy of the object called with .clone()
-       *
-       * Works similarly to Python's copy.deepcopy().
-       *
-       * Every ProtoM21Object has a `._cloneCallbacks` object which maps `{attribute: callbackFunction}`
-       * to handle custom clone cases.  See, for instance, {@link music21.base.Music21Object} which
-       * uses a custom callback to NOT clone the `.activeSite` attribute.
-       *
-       * @returns {object}
-       * @memberof music21.prebase.ProtoM21Object
-       * @example
-       * var n1 = new music21.note.Note("C#");
-       * n1.duration.quarterLength = 4;
-       * var n2 = n1.clone();
-       * n2.duration.quarterLength == 4; // true
-       * n2 === n1; // false
-       */
-
 
       createClass(ProtoM21Object, [{
           key: 'clone',
+
+
+          /**
+           * Makes (as much as possible) a complete duplicate copy of the object called with .clone()
+           *
+           * Works similarly to Python's copy.deepcopy().
+           *
+           * Every ProtoM21Object has a `._cloneCallbacks` object which maps `{attribute: callbackFunction}`
+           * to handle custom clone cases.  See, for instance, {@link music21.base.Music21Object} which
+           * uses a custom callback to NOT clone the `.activeSite` attribute.
+           *
+           * @returns {object}
+           * @memberof music21.prebase.ProtoM21Object
+           * @example
+           * var n1 = new music21.note.Note("C#");
+           * n1.duration.quarterLength = 4;
+           * var n2 = n1.clone();
+           * n2.duration.quarterLength == 4; // true
+           * n2 === n1; // false
+           */
           value: function clone() {
               var ret = new this.constructor();
 
@@ -949,6 +937,27 @@
                   }
               }
               return false;
+          }
+      }, {
+          key: 'classes',
+          get: function get() {
+              if (this._storedClasses !== undefined) {
+                  return this._storedClasses;
+              }
+              var classList = [];
+              var thisConstructor = this.constructor;
+              var maxLinks = 20;
+              while (thisConstructor !== null && thisConstructor !== undefined && maxLinks) {
+                  maxLinks -= 1;
+                  if (thisConstructor.name === '') {
+                      break;
+                  }
+                  classList.push(thisConstructor.name);
+                  thisConstructor = Object.getPrototypeOf(thisConstructor);
+              }
+              classList.push('object');
+              this._storedClasses = classList;
+              return classList;
           }
       }]);
       return ProtoM21Object;
@@ -1025,7 +1034,6 @@
 
           var _this = possibleConstructorReturn(this, (Duration.__proto__ || Object.getPrototypeOf(Duration)).call(this));
 
-          _this.classes.push('Duration');
           _this._quarterLength = 1.0;
           _this._dots = 0;
           _this._durationNumber = undefined;
@@ -1288,7 +1296,6 @@
 
           var _this2 = possibleConstructorReturn(this, (Tuplet.__proto__ || Object.getPrototypeOf(Tuplet)).call(this));
 
-          _this2.classes.push('Tuplet');
           _this2.numberNotesActual = numberNotesActual || 3;
           _this2.numberNotesNormal = numberNotesNormal || 2;
           _this2.durationActual = durationActual || new duration.Duration(0.5);
@@ -1466,20 +1473,34 @@
   var Music21Object = function (_prebase$ProtoM21Obje) {
       inherits(Music21Object, _prebase$ProtoM21Obje);
 
-      function Music21Object() {
+      function Music21Object(keywords) {
           classCallCheck(this, Music21Object);
 
           var _this = possibleConstructorReturn(this, (Music21Object.__proto__ || Object.getPrototypeOf(Music21Object)).call(this));
 
-          _this.classes.push('Music21Object');
           _this.classSortOrder = 20; // default;
-          _this._priority = 0; // default;
-          _this.offset = null; // default -- simple version of m21.
+
           _this.activeSite = undefined;
+          _this.offset = null; // for now
+          // this._activeSite = undefined;
+          // this._naiveOffset = null;
+          _this._activeSiteStoredOffset = undefined;
+
+          // this._derivation = undefined;
+          // this._style = undefined;
+          // this._editorial = undefined;
+
+          _this._duration = new duration.Duration();
+
+          _this._priority = 0; // default;
+
+          // id
+          // groups
+          // this.sites = new sites.Sites();
+
           _this.isMusic21Object = true;
           _this.isStream = false;
 
-          _this._duration = new duration.Duration();
           _this.groups = []; // custom object in m21p
           // this.sites, this.activeSites, this.offset -- not yet...
           // beat, measureNumber, etc.
@@ -1504,6 +1525,8 @@
            * @returns Number|undefined
            */
           value: function getOffsetBySite(site) {
+              var stringReturns = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+
               if (site === undefined) {
                   return this.offset;
               }
@@ -1584,7 +1607,6 @@
 
           var _this = possibleConstructorReturn(this, (Articulation.__proto__ || Object.getPrototypeOf(Articulation)).call(this));
 
-          _this.classes.push('Articulation');
           _this.name = undefined;
           _this.placement = 'above';
           _this.vexflowModifier = undefined;
@@ -1630,7 +1652,7 @@
 
           var _this2 = possibleConstructorReturn(this, (LengthArticulation.__proto__ || Object.getPrototypeOf(LengthArticulation)).call(this));
 
-          _this2.classes.push('LengthArticulation');
+          _this2.name = 'length-articulation';
           return _this2;
       }
 
@@ -1653,7 +1675,7 @@
 
           var _this3 = possibleConstructorReturn(this, (DynamicArticulation.__proto__ || Object.getPrototypeOf(DynamicArticulation)).call(this));
 
-          _this3.classes.push('DynamicArticulation');
+          _this3.name = 'dynamic-articulation';
           return _this3;
       }
 
@@ -1676,7 +1698,7 @@
 
           var _this4 = possibleConstructorReturn(this, (PitchArticulation.__proto__ || Object.getPrototypeOf(PitchArticulation)).call(this));
 
-          _this4.classes.push('PitchArticulation');
+          _this4.name = 'pitch-articulation';
           return _this4;
       }
 
@@ -1699,7 +1721,7 @@
 
           var _this5 = possibleConstructorReturn(this, (TimbreArticulation.__proto__ || Object.getPrototypeOf(TimbreArticulation)).call(this));
 
-          _this5.classes.push('TimbreArticulation');
+          _this5.name = 'timbre-articulation';
           return _this5;
       }
 
@@ -1722,7 +1744,6 @@
 
           var _this6 = possibleConstructorReturn(this, (Accent.__proto__ || Object.getPrototypeOf(Accent)).call(this));
 
-          _this6.classes.push('Accent');
           _this6.name = 'accent';
           _this6.vexflowModifier = 'a>';
           _this6.dynamicScale = 1.5;
@@ -1748,7 +1769,6 @@
 
           var _this7 = possibleConstructorReturn(this, (StrongAccent.__proto__ || Object.getPrototypeOf(StrongAccent)).call(this));
 
-          _this7.classes.push('StrongAccent');
           _this7.name = 'strong accent';
           _this7.vexflowModifier = 'a^';
           _this7.dynamicScale = 2.0;
@@ -1774,7 +1794,6 @@
 
           var _this8 = possibleConstructorReturn(this, (Staccato.__proto__ || Object.getPrototypeOf(Staccato)).call(this));
 
-          _this8.classes.push('Staccato');
           _this8.name = 'staccato';
           _this8.vexflowModifier = 'a.';
           return _this8;
@@ -1799,7 +1818,6 @@
 
           var _this9 = possibleConstructorReturn(this, (Staccatissimo.__proto__ || Object.getPrototypeOf(Staccatissimo)).call(this));
 
-          _this9.classes.push('Staccatissimo');
           _this9.name = 'staccatissimo';
           _this9.vexflowModifier = 'av';
           return _this9;
@@ -1824,7 +1842,6 @@
 
           var _this10 = possibleConstructorReturn(this, (Spiccato.__proto__ || Object.getPrototypeOf(Spiccato)).call(this));
 
-          _this10.classes.push('Spiccato');
           _this10.name = 'spiccato';
           _this10.vexflowModifier = undefined;
           return _this10;
@@ -1849,7 +1866,6 @@
           var _this11 = possibleConstructorReturn(this, (Marcato.__proto__ || Object.getPrototypeOf(Marcato)).call(this));
 
           common.mixin(LengthArticulation, _this11);
-          _this11.classes.push('Marcato');
           _this11.name = 'marcato';
           _this11.vexflowModifier = 'a^';
           _this11.dynamicScale = 1.7;
@@ -1873,7 +1889,6 @@
 
           var _this12 = possibleConstructorReturn(this, (Tenuto.__proto__ || Object.getPrototypeOf(Tenuto)).call(this));
 
-          _this12.classes.push('Tenuto');
           _this12.name = 'tenuto';
           _this12.vexflowModifier = 'a-';
           return _this12;
@@ -2579,7 +2594,6 @@
 
           var _this = possibleConstructorReturn(this, (Beam.__proto__ || Object.getPrototypeOf(Beam)).call(this));
 
-          _this.classes.push('Beam');
           _this.type = type;
           _this.direction = direction;
           _this.independentAngle = undefined;
@@ -2608,7 +2622,6 @@
 
           var _this2 = possibleConstructorReturn(this, (Beams.__proto__ || Object.getPrototypeOf(Beams)).call(this));
 
-          _this2.classes.push('Beams');
           _this2.beamsList = [];
           _this2.feathered = false;
           return _this2;
@@ -2888,7 +2901,6 @@
 
           var _this = possibleConstructorReturn(this, (Accidental.__proto__ || Object.getPrototypeOf(Accidental)).call(this));
 
-          _this.classes.push('Accidental');
           _this._name = '';
           _this._alter = 0.0;
           _this._modifier = '';
@@ -3086,15 +3098,12 @@
   var Pitch = function (_prebase$ProtoM21Obje2) {
       inherits(Pitch, _prebase$ProtoM21Obje2);
 
-      function Pitch(pn) {
+      function Pitch() {
+          var pn = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'C';
           classCallCheck(this, Pitch);
 
           var _this2 = possibleConstructorReturn(this, (Pitch.__proto__ || Object.getPrototypeOf(Pitch)).call(this));
 
-          _this2.classes.push('Pitch');
-          if (pn === undefined) {
-              pn = 'C';
-          }
           _this2._step = 'C';
           _this2._octave = 4;
           _this2._accidental = undefined;
@@ -3366,7 +3375,6 @@
 
           var _this = possibleConstructorReturn(this, (GenericInterval.__proto__ || Object.getPrototypeOf(GenericInterval)).call(this));
 
-          _this.classes.push('GenericInterval');
           if (gi === undefined) {
               gi = 1;
           }
@@ -3639,8 +3647,6 @@
 
           var _this2 = possibleConstructorReturn(this, (DiatonicInterval.__proto__ || Object.getPrototypeOf(DiatonicInterval)).call(this));
 
-          _this2.classes.push('DiatonicInterval');
-
           if (specifier === undefined) {
               specifier = 'P';
           }
@@ -3769,8 +3775,6 @@
 
           var _this3 = possibleConstructorReturn(this, (ChromaticInterval.__proto__ || Object.getPrototypeOf(ChromaticInterval)).call(this));
 
-          _this3.classes.push('ChromaticInterval');
-
           _this3.semitones = value;
           _this3.cents = Math.round(value * 100.0, 5);
           _this3.directed = value;
@@ -3893,11 +3897,8 @@
       function Interval() {
           classCallCheck(this, Interval);
 
-          var _this4 = possibleConstructorReturn(this, (Interval.__proto__ || Object.getPrototypeOf(Interval)).call(this));
-
-          _this4.classes.push('Interval');
-
           // todo: allow full range of ways of specifying as in m21p
+          var _this4 = possibleConstructorReturn(this, (Interval.__proto__ || Object.getPrototypeOf(Interval)).call(this));
 
           for (var _len = arguments.length, restArgs = Array(_len), _key = 0; _key < _len; _key++) {
               restArgs[_key] = arguments[_key];
@@ -4161,15 +4162,18 @@
   var Lyric = function (_prebase$ProtoM21Obje) {
       inherits(Lyric, _prebase$ProtoM21Obje);
 
-      function Lyric(text, number, syllabic, applyRaw, identifier) {
+      function Lyric(text) {
+          var number = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 1;
+          var syllabic = arguments[2];
+          var applyRaw = arguments[3];
+          var identifier = arguments[4];
           classCallCheck(this, Lyric);
 
           var _this = possibleConstructorReturn(this, (Lyric.__proto__ || Object.getPrototypeOf(Lyric)).call(this));
 
-          _this.classes.push('Lyric');
           _this.lyricConnector = '-'; // override to place something else between two notes...
           _this.text = text;
-          _this._number = number || 1;
+          _this._number = number;
           _this.syllabic = syllabic;
           _this.applyRaw = applyRaw || false;
           _this.setTextAndSyllabic(_this.text, _this.applyRaw);
@@ -4179,7 +4183,9 @@
 
       createClass(Lyric, [{
           key: 'setTextAndSyllabic',
-          value: function setTextAndSyllabic(rawText, applyRaw) {
+          value: function setTextAndSyllabic(rawText) {
+              var applyRaw = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+
               if (rawText === undefined) {
                   this.text = undefined;
                   return this;
@@ -4269,7 +4275,6 @@
 
           var _this2 = possibleConstructorReturn(this, (GeneralNote.__proto__ || Object.getPrototypeOf(GeneralNote)).call(this));
 
-          _this2.classes.push('GeneralNote');
           _this2.isChord = false;
           if (ql !== undefined) {
               _this2.duration.quarterLength = ql;
@@ -4297,8 +4302,10 @@
            * @param {boolean} [applyRaw=false] - if `true`, do not parse the text for cluses about syllable placement.
            * @param {string} [lyricIdentifier] - an optional identifier
            */
-          value: function addLyric(text, lyricNumber, applyRaw, lyricIdentifier) {
-              applyRaw = applyRaw || false;
+          value: function addLyric(text, lyricNumber) {
+              var applyRaw = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+              var lyricIdentifier = arguments[3];
+
               if (lyricNumber === undefined) {
                   var maxLyrics = this.lyrics.length + 1;
                   var newLyric = new note.Lyric(text, maxLyrics, undefined, applyRaw, lyricIdentifier);
@@ -4387,12 +4394,13 @@
 
       }, {
           key: 'playMidi',
-          value: function playMidi(tempo, nextElement, options) {
+          value: function playMidi() {
+              var tempo = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 120;
+              var nextElement = arguments[1];
+              var options = arguments[2];
+
               // returns the number of milliseconds to the next element in
               // case that can't be determined otherwise.
-              if (tempo === undefined) {
-                  tempo = 120;
-              }
               if (options === undefined) {
                   var inst = void 0;
                   if (this.activeSite !== undefined) {
@@ -4505,7 +4513,6 @@
 
           var _this3 = possibleConstructorReturn(this, (NotRest.__proto__ || Object.getPrototypeOf(NotRest)).call(this, ql));
 
-          _this3.classes.push('NotRest');
           _this3.notehead = 'normal';
           _this3.noteheadFill = 'default';
           _this3.noteheadColor = undefined;
@@ -4558,7 +4565,6 @@
 
           var _this4 = possibleConstructorReturn(this, (Note.__proto__ || Object.getPrototypeOf(Note)).call(this, ql));
 
-          _this4.classes.push('Note');
           _this4.isNote = true; // for speed
           _this4.isRest = false; // for speed
           if (nn !== undefined && nn.isClassOrSubclass !== undefined && nn.isClassOrSubclass('Pitch') === true) {
@@ -4728,7 +4734,6 @@
 
           var _this5 = possibleConstructorReturn(this, (Rest.__proto__ || Object.getPrototypeOf(Rest)).call(this, ql));
 
-          _this5.classes.push('Rest');
           _this5.isNote = false; // for speed
           _this5.isRest = true; // for speed
           _this5.name = 'rest'; // for note compatibility
@@ -4831,7 +4836,6 @@
           } else if (typeof notes === 'string') {
               notes = notes.split(/\s+/);
           }
-          _this.classes.push('Chord');
           _this.isChord = true; // for speed
           _this.isNote = false; // for speed
           _this.isRest = false; // for speed
@@ -5424,7 +5428,6 @@
 
           var _this = possibleConstructorReturn(this, (Clef.__proto__ || Object.getPrototypeOf(Clef)).call(this));
 
-          _this.classes.push('Clef');
           if (name !== undefined) {
               name = name.toLowerCase();
               _this.name = name;
@@ -5489,11 +5492,7 @@
 
       function TrebleClef() {
           classCallCheck(this, TrebleClef);
-
-          var _this2 = possibleConstructorReturn(this, (TrebleClef.__proto__ || Object.getPrototypeOf(TrebleClef)).call(this, 'treble'));
-
-          _this2.classes.push('TrebleClef');
-          return _this2;
+          return possibleConstructorReturn(this, (TrebleClef.__proto__ || Object.getPrototypeOf(TrebleClef)).call(this, 'treble'));
       }
 
       return TrebleClef;
@@ -5513,11 +5512,7 @@
 
       function Treble8vbClef() {
           classCallCheck(this, Treble8vbClef);
-
-          var _this3 = possibleConstructorReturn(this, (Treble8vbClef.__proto__ || Object.getPrototypeOf(Treble8vbClef)).call(this, 'treble', -1));
-
-          _this3.classes.push('Treble8vbClef');
-          return _this3;
+          return possibleConstructorReturn(this, (Treble8vbClef.__proto__ || Object.getPrototypeOf(Treble8vbClef)).call(this, 'treble', -1));
       }
 
       return Treble8vbClef;
@@ -5536,11 +5531,7 @@
 
       function Treble8vaClef() {
           classCallCheck(this, Treble8vaClef);
-
-          var _this4 = possibleConstructorReturn(this, (Treble8vaClef.__proto__ || Object.getPrototypeOf(Treble8vaClef)).call(this, 'treble', 1));
-
-          _this4.classes.push('Treble8vaClef');
-          return _this4;
+          return possibleConstructorReturn(this, (Treble8vaClef.__proto__ || Object.getPrototypeOf(Treble8vaClef)).call(this, 'treble', 1));
       }
 
       return Treble8vaClef;
@@ -5559,11 +5550,7 @@
 
       function BassClef() {
           classCallCheck(this, BassClef);
-
-          var _this5 = possibleConstructorReturn(this, (BassClef.__proto__ || Object.getPrototypeOf(BassClef)).call(this, 'bass'));
-
-          _this5.classes.push('BassClef');
-          return _this5;
+          return possibleConstructorReturn(this, (BassClef.__proto__ || Object.getPrototypeOf(BassClef)).call(this, 'bass'));
       }
 
       return BassClef;
@@ -5582,11 +5569,7 @@
 
       function AltoClef() {
           classCallCheck(this, AltoClef);
-
-          var _this6 = possibleConstructorReturn(this, (AltoClef.__proto__ || Object.getPrototypeOf(AltoClef)).call(this, 'alto'));
-
-          _this6.classes.push('AltoClef');
-          return _this6;
+          return possibleConstructorReturn(this, (AltoClef.__proto__ || Object.getPrototypeOf(AltoClef)).call(this, 'alto'));
       }
 
       return AltoClef;
@@ -5605,11 +5588,7 @@
 
       function TenorClef() {
           classCallCheck(this, TenorClef);
-
-          var _this7 = possibleConstructorReturn(this, (TenorClef.__proto__ || Object.getPrototypeOf(TenorClef)).call(this, 'tenor'));
-
-          _this7.classes.push('TenorClef');
-          return _this7;
+          return possibleConstructorReturn(this, (TenorClef.__proto__ || Object.getPrototypeOf(TenorClef)).call(this, 'tenor'));
       }
 
       return TenorClef;
@@ -5627,11 +5606,7 @@
 
       function SopranoClef() {
           classCallCheck(this, SopranoClef);
-
-          var _this8 = possibleConstructorReturn(this, (SopranoClef.__proto__ || Object.getPrototypeOf(SopranoClef)).call(this, 'soprano'));
-
-          _this8.classes.push('SopranoClef');
-          return _this8;
+          return possibleConstructorReturn(this, (SopranoClef.__proto__ || Object.getPrototypeOf(SopranoClef)).call(this, 'soprano'));
       }
 
       return SopranoClef;
@@ -5650,11 +5625,7 @@
 
       function MezzoSopranoClef() {
           classCallCheck(this, MezzoSopranoClef);
-
-          var _this9 = possibleConstructorReturn(this, (MezzoSopranoClef.__proto__ || Object.getPrototypeOf(MezzoSopranoClef)).call(this, 'mezzo-soprano'));
-
-          _this9.classes.push('MezzoSopranoClef');
-          return _this9;
+          return possibleConstructorReturn(this, (MezzoSopranoClef.__proto__ || Object.getPrototypeOf(MezzoSopranoClef)).call(this, 'mezzo-soprano'));
       }
 
       return MezzoSopranoClef;
@@ -5675,11 +5646,7 @@
 
       function PercussionClef() {
           classCallCheck(this, PercussionClef);
-
-          var _this10 = possibleConstructorReturn(this, (PercussionClef.__proto__ || Object.getPrototypeOf(PercussionClef)).call(this, 'percussion'));
-
-          _this10.classes.push('PercussionClef');
-          return _this10;
+          return possibleConstructorReturn(this, (PercussionClef.__proto__ || Object.getPrototypeOf(PercussionClef)).call(this, 'percussion'));
       }
 
       return PercussionClef;
@@ -5868,7 +5835,6 @@
 
           var _this = possibleConstructorReturn(this, (Dynamic.__proto__ || Object.getPrototypeOf(Dynamic)).call(this));
 
-          _this.classes.push('Dynamic');
           _this._value = undefined;
           _this._volumeScalar = undefined;
           _this.longName = undefined;
@@ -5975,7 +5941,6 @@
 
           var _this = possibleConstructorReturn(this, (Expression.__proto__ || Object.getPrototypeOf(Expression)).call(this));
 
-          _this.classes.push('Expression');
           _this.name = 'expression';
           _this.vexflowModifier = '';
           _this.setPosition = undefined;
@@ -6020,7 +5985,6 @@
 
           var _this2 = possibleConstructorReturn(this, (Fermata.__proto__ || Object.getPrototypeOf(Fermata)).call(this));
 
-          _this2.classes.push('Fermata');
           _this2.name = 'fermata';
           _this2.vexflowModifier = 'a@a';
           _this2.setPosition = 3;
@@ -6617,7 +6581,6 @@
 
           var _this = possibleConstructorReturn(this, (Scale.__proto__ || Object.getPrototypeOf(Scale)).call(this));
 
-          _this.classes.push('Scale');
           _this.type = 'Scale';
           return _this;
       }
@@ -6644,7 +6607,6 @@
 
           var _this2 = possibleConstructorReturn(this, (AbstractScale.__proto__ || Object.getPrototypeOf(AbstractScale)).call(this));
 
-          _this2.classes.push('AbstractScale');
           _this2._net = []; // simplified -- no IntervalNetwork, just list of intervals
           _this2.tonicDegree = 1;
           _this2.octaveDuplicating = true;
@@ -6839,7 +6801,6 @@
 
           var _this3 = possibleConstructorReturn(this, (AbstractDiatonicScale.__proto__ || Object.getPrototypeOf(AbstractDiatonicScale)).call(this));
 
-          _this3.classes.push('AbstractDiatonicScale');
           _this3.type = 'Abstract diatonic';
           _this3.tonicDegree = undefined;
           _this3.dominantDegree = undefined;
@@ -6905,7 +6866,6 @@
 
           var _this4 = possibleConstructorReturn(this, (AbstractHarmonicMinorScale.__proto__ || Object.getPrototypeOf(AbstractHarmonicMinorScale)).call(this));
 
-          _this4.classes.push('AbstractHarmonicMinorScale');
           _this4.type = 'Abstract harmonic minor';
           _this4.octaveDuplicating = true;
           _this4._buildNetwork();
@@ -6956,7 +6916,6 @@
 
           var _this5 = possibleConstructorReturn(this, (AbstractAscendingMelodicMinorScale.__proto__ || Object.getPrototypeOf(AbstractAscendingMelodicMinorScale)).call(this));
 
-          _this5.classes.push('AbstractAscendingMelodicMinorScale');
           _this5.type = 'Abstract ascending melodic minor';
           _this5.octaveDuplicating = true;
           _this5._buildNetwork();
@@ -7005,7 +6964,6 @@
 
           var _this6 = possibleConstructorReturn(this, (ConcreteScale.__proto__ || Object.getPrototypeOf(ConcreteScale)).call(this));
 
-          _this6.classes.push('ConcreteScale');
           if (typeof tonic === 'string') {
               tonic = new pitch.Pitch(tonic);
           }
@@ -7073,7 +7031,6 @@
           // a.k.a. ^2 :-)
           var _this7 = possibleConstructorReturn(this, (DiatonicScale.__proto__ || Object.getPrototypeOf(DiatonicScale)).call(this, tonic));
 
-          _this7.classes.push('DiatonicScale');
           _this7['abstract'] = new AbstractDiatonicScale();
           _this7.type = 'diatonic';
           return _this7;
@@ -7091,7 +7048,6 @@
           // a.k.a. ^2 :-)
           var _this8 = possibleConstructorReturn(this, (MajorScale.__proto__ || Object.getPrototypeOf(MajorScale)).call(this, tonic));
 
-          _this8.classes.push('MajorScale');
           _this8.type = 'major';
           _this8['abstract']._buildNetwork(_this8.type);
           return _this8;
@@ -7109,7 +7065,6 @@
           // a.k.a. ^2 :-)
           var _this9 = possibleConstructorReturn(this, (MinorScale.__proto__ || Object.getPrototypeOf(MinorScale)).call(this, tonic));
 
-          _this9.classes.push('MinorScale');
           _this9.type = 'minor';
           _this9['abstract']._buildNetwork(_this9.type);
           return _this9;
@@ -7127,7 +7082,6 @@
           // a.k.a. ^2 :-)
           var _this10 = possibleConstructorReturn(this, (HarmonicMinorScale.__proto__ || Object.getPrototypeOf(HarmonicMinorScale)).call(this, tonic));
 
-          _this10.classes.push('HarmonicMinorScale');
           _this10.type = 'harmonic minor';
           _this10['abstract'] = new AbstractHarmonicMinorScale();
           return _this10;
@@ -7145,7 +7099,6 @@
           // a.k.a. ^2 :-)
           var _this11 = possibleConstructorReturn(this, (AscendingMelodicMinorScale.__proto__ || Object.getPrototypeOf(AscendingMelodicMinorScale)).call(this, tonic));
 
-          _this11.classes.push('HarmonicMinorScale');
           _this11.type = 'harmonic minor';
           _this11['abstract'] = new AbstractAscendingMelodicMinorScale();
           return _this11;
@@ -7313,7 +7266,6 @@
 
           var _this = possibleConstructorReturn(this, (KeySignature.__proto__ || Object.getPrototypeOf(KeySignature)).call(this));
 
-          _this.classes.push('KeySignature');
           _this._sharps = sharps || 0; // if undefined
           _this._alteredPitchesCache = undefined;
 
@@ -7635,7 +7587,6 @@
 
           var _this = possibleConstructorReturn(this, (Harmony.__proto__ || Object.getPrototypeOf(Harmony)).call(this));
 
-          _this.classes.push('Harmony');
           _this._writeAsChord = false;
           _this._roman = undefined;
           _this.chordStepModifications = [];
@@ -8766,7 +8717,6 @@
 
           var _this = possibleConstructorReturn(this, (WhiteKey.__proto__ || Object.getPrototypeOf(WhiteKey)).call(this));
 
-          _this.classes.push('WhiteKey');
           _this.width = 23;
           _this.height = 120;
           _this.keyStyle = 'fill:#fffff6;stroke:black';
@@ -8792,7 +8742,6 @@
 
           var _this2 = possibleConstructorReturn(this, (BlackKey.__proto__ || Object.getPrototypeOf(BlackKey)).call(this));
 
-          _this2.classes.push('BlackKey');
           _this2.width = 13;
           _this2.height = 80;
           _this2.keyStyle = 'fill:black;stroke:black';
@@ -9319,7 +9268,6 @@
 
           var _this = possibleConstructorReturn(this, (TimeSignature.__proto__ || Object.getPrototypeOf(TimeSignature)).call(this));
 
-          _this.classes.push('TimeSignature');
           _this._numerator = 4;
           _this._denominator = 4;
           _this.beatGroups = [];
@@ -11915,7 +11863,6 @@
 
           var _this = possibleConstructorReturn(this, (Stream.__proto__ || Object.getPrototypeOf(Stream)).call(this));
 
-          _this.classes.push('Stream');
           _this.isStream = true;
           _this._duration = undefined;
 
@@ -13666,7 +13613,7 @@
 
           var _this5 = possibleConstructorReturn(this, (Voice.__proto__ || Object.getPrototypeOf(Voice)).call(this));
 
-          _this5.classes.push('Voice');
+          _this5._not_a_useless_constructor = undefined;
           return _this5;
       }
 
@@ -13687,7 +13634,6 @@
 
           var _this6 = possibleConstructorReturn(this, (Measure.__proto__ || Object.getPrototypeOf(Measure)).call(this));
 
-          _this6.classes.push('Measure');
           _this6.number = 0; // measure number
           return _this6;
       }
@@ -13711,7 +13657,6 @@
 
           var _this7 = possibleConstructorReturn(this, (Part.__proto__ || Object.getPrototypeOf(Part)).call(this));
 
-          _this7.classes.push('Part');
           _this7.systemHeight = _this7.renderOptions.naiveHeight;
           return _this7;
       }
@@ -14093,7 +14038,6 @@
 
           var _this8 = possibleConstructorReturn(this, (Score.__proto__ || Object.getPrototypeOf(Score)).call(this));
 
-          _this8.classes.push('Score');
           _this8.measureWidths = [];
           _this8.partSpacing = _this8.renderOptions.naiveHeight;
           return _this8;
@@ -14106,7 +14050,7 @@
           /**
            * Returns the measure that is at X location xPxScaled and system systemIndex.
            *
-           * Always returns the measure of the top part... 
+           * Always returns the measure of the top part...
            *
            * @memberof music21.stream.Score
            * @param {number} [xPxScaled]
@@ -14529,7 +14473,6 @@
 
           var _this = possibleConstructorReturn(this, (LayoutScore.__proto__ || Object.getPrototypeOf(LayoutScore)).call(this));
 
-          _this.classes.push('LayoutScore');
           _this.scoreLayout = undefined;
           _this.measureStart = undefined;
           _this.measureEnd = undefined;
@@ -14587,7 +14530,6 @@
 
           var _this2 = possibleConstructorReturn(this, (Page.__proto__ || Object.getPrototypeOf(Page)).call(this));
 
-          _this2.classes.push('Page');
           _this2.pageNumber = 1;
           _this2.measureStart = undefined;
           _this2.measureEnd = undefined;
@@ -14626,7 +14568,6 @@
 
           var _this3 = possibleConstructorReturn(this, (System.__proto__ || Object.getPrototypeOf(System)).call(this));
 
-          _this3.classes.push('System');
           _this3.systemNumber = 1;
           _this3.systemLayout = undefined;
           _this3.measureStart = undefined;
@@ -14667,7 +14608,6 @@
 
           var _this4 = possibleConstructorReturn(this, (Staff.__proto__ || Object.getPrototypeOf(Staff)).call(this));
 
-          _this4.classes.push('Staff');
           _this4.staffNumber = 1;
           _this4.optimized = 0;
           _this4.top = undefined;
@@ -15861,7 +15801,6 @@
 
           var _this = possibleConstructorReturn(this, (RomanNumeral.__proto__ || Object.getPrototypeOf(RomanNumeral)).call(this, figure, params));
 
-          _this.classes.push('RomanNumeral');
           _this._parsingComplete = false;
 
           // not yet used...
@@ -16294,6 +16233,7 @@
               var suffix = '';
               if (displayType === 'roman') {
                   fullChordName = this.figure;
+                  fullChordName = fullChordName.replace('/o', 'ø');
               } else if (displayType === 'nameOnly') {
                   // use only with only choice being tonicName
                   fullChordName = '';
@@ -16503,7 +16443,6 @@
 
           var _this = possibleConstructorReturn(this, (Metronome.__proto__ || Object.getPrototypeOf(Metronome)).call(this));
 
-          _this.classes.push('Metronome');
           _this._tempo = 60; // overridden by music21.tempo.baseTempo;
           if (tempoInt === undefined) {
               _this.tempo = tempo.baseTempo;
@@ -17043,7 +16982,6 @@
 
           var _this = possibleConstructorReturn(this, (VoiceLeadingQuartet.__proto__ || Object.getPrototypeOf(VoiceLeadingQuartet)).call(this));
 
-          _this.classes.push('VoiceLeadingQuartet');
           if (!intervalCache.length) {
               intervalCache.push(new interval.Interval('P1'));
               intervalCache.push(new interval.Interval('P5'));

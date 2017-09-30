@@ -100,7 +100,6 @@ duration.vexflowDurationArray = [
 export class Duration extends prebase.ProtoM21Object {
     constructor(ql) {
         super();
-        this.classes.push('Duration');
         this._quarterLength = 1.0;
         this._dots = 0;
         this._durationNumber = undefined;
@@ -346,7 +345,6 @@ export class Tuplet extends prebase.ProtoM21Object {
         durationNormal
     ) {
         super();
-        this.classes.push('Tuplet');
         this.numberNotesActual = numberNotesActual || 3;
         this.numberNotesNormal = numberNotesNormal || 2;
         this.durationActual = durationActual || new duration.Duration(0.5);

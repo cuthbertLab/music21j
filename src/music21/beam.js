@@ -47,7 +47,6 @@ beam.validBeamTypes = {
 export class Beam extends prebase.ProtoM21Object {
     constructor(type, direction) {
         super();
-        this.classes.push('Beam');
         this.type = type;
         this.direction = direction;
         this.independentAngle = undefined;
@@ -68,7 +67,6 @@ beam.Beam = Beam;
 export class Beams extends prebase.ProtoM21Object {
     constructor() {
         super();
-        this.classes.push('Beams');
         this.beamsList = [];
         this.feathered = false;
     }

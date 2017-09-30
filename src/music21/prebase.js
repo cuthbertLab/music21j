@@ -24,11 +24,36 @@ export const prebase = {};
  */
 export class ProtoM21Object {
     constructor() {
-        this.classes = ['ProtoM21Object'];
+        this._storedClasses = undefined;
         this.isProtoM21Object = true;
         this.isMusic21Object = false;
         this._cloneCallbacks = {};
     }
+
+    get classes() {
+        if (this._storedClasses !== undefined) {
+            return this._storedClasses;
+        }
+        const classList = [];
+        let thisConstructor = this.constructor;
+        let maxLinks = 20;
+        while (
+            thisConstructor !== null
+            && thisConstructor !== undefined
+            && maxLinks
+        ) {
+            maxLinks -= 1;
+            if (thisConstructor.name === '') {
+                break;
+            }
+            classList.push(thisConstructor.name);
+            thisConstructor = Object.getPrototypeOf(thisConstructor);
+        }
+        classList.push('object');
+        this._storedClasses = classList;
+        return classList;
+    }
+
     /**
      * Makes (as much as possible) a complete duplicate copy of the object called with .clone()
      *

@@ -139,7 +139,6 @@ interval.MusicOrdinals = [
 export class GenericInterval extends prebase.ProtoM21Object {
     constructor(gi) {
         super();
-        this.classes.push('GenericInterval');
         if (gi === undefined) {
             gi = 1;
         }
@@ -463,7 +462,6 @@ interval.IntervalAdjustImperf = {
 export class DiatonicInterval extends prebase.ProtoM21Object {
     constructor(specifier, generic) {
         super();
-        this.classes.push('DiatonicInterval');
 
         if (specifier === undefined) {
             specifier = 'P';
@@ -645,7 +643,6 @@ interval.DiatonicInterval = DiatonicInterval;
 export class ChromaticInterval extends prebase.ProtoM21Object {
     constructor(value) {
         super();
-        this.classes.push('ChromaticInterval');
 
         this.semitones = value;
         this.cents = Math.round(value * 100.0, 5);
@@ -761,8 +758,6 @@ interval.convertDiatonicNumberToStep = function convertDiatonicNumberToStep(
 export class Interval extends prebase.ProtoM21Object {
     constructor(...restArgs) {
         super();
-        this.classes.push('Interval');
-
         // todo: allow full range of ways of specifying as in m21p
         if (restArgs.length === 1) {
             const arg0 = restArgs[0];

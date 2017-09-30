@@ -228,7 +228,6 @@ keyboard.Key = Key;
 export class WhiteKey extends Key {
     constructor() {
         super();
-        this.classes.push('WhiteKey');
         this.width = 23;
         this.height = 120;
         this.keyStyle = 'fill:#fffff6;stroke:black';
@@ -246,7 +245,6 @@ keyboard.WhiteKey = WhiteKey;
 export class BlackKey extends Key {
     constructor() {
         super();
-        this.classes.push('BlackKey');
         this.width = 13;
         this.height = 80;
         this.keyStyle = 'fill:black;stroke:black';

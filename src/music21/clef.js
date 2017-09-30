@@ -55,7 +55,6 @@ clef.lowestLines = {
 export class Clef extends base.Music21Object {
     constructor(name, octaveChange) {
         super();
-        this.classes.push('Clef');
         if (name !== undefined) {
             name = name.toLowerCase();
             this.name = name;
@@ -112,7 +111,6 @@ clef.Clef = Clef;
 export class TrebleClef extends Clef {
     constructor() {
         super('treble');
-        this.classes.push('TrebleClef');
     }
 }
 clef.TrebleClef = TrebleClef;
@@ -128,7 +126,6 @@ clef.TrebleClef = TrebleClef;
 export class Treble8vbClef extends Clef {
     constructor() {
         super('treble', -1);
-        this.classes.push('Treble8vbClef');
     }
 }
 clef.Treble8vbClef = Treble8vbClef;
@@ -143,7 +140,6 @@ clef.Treble8vbClef = Treble8vbClef;
 export class Treble8vaClef extends Clef {
     constructor() {
         super('treble', 1);
-        this.classes.push('Treble8vaClef');
     }
 }
 clef.Treble8vaClef = Treble8vaClef;
@@ -158,7 +154,6 @@ clef.Treble8vaClef = Treble8vaClef;
 export class BassClef extends Clef {
     constructor() {
         super('bass');
-        this.classes.push('BassClef');
     }
 }
 clef.BassClef = BassClef;
@@ -173,7 +168,6 @@ clef.BassClef = BassClef;
 export class AltoClef extends Clef {
     constructor() {
         super('alto');
-        this.classes.push('AltoClef');
     }
 }
 clef.AltoClef = AltoClef;
@@ -188,7 +182,6 @@ clef.AltoClef = AltoClef;
 export class TenorClef extends Clef {
     constructor() {
         super('tenor');
-        this.classes.push('TenorClef');
     }
 }
 clef.TenorClef = TenorClef;
@@ -202,7 +195,6 @@ clef.TenorClef = TenorClef;
 export class SopranoClef extends Clef {
     constructor() {
         super('soprano');
-        this.classes.push('SopranoClef');
     }
 }
 clef.SopranoClef = SopranoClef;
@@ -217,7 +209,6 @@ clef.SopranoClef = SopranoClef;
 export class MezzoSopranoClef extends Clef {
     constructor() {
         super('mezzo-soprano');
-        this.classes.push('MezzoSopranoClef');
     }
 }
 clef.MezzoSopranoClef = MezzoSopranoClef;
@@ -234,7 +225,6 @@ clef.MezzoSopranoClef = MezzoSopranoClef;
 export class PercussionClef extends Clef {
     constructor() {
         super('percussion');
-        this.classes.push('PercussionClef');
     }
 }
 clef.PercussionClef = PercussionClef;

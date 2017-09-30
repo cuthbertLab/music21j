@@ -384,38 +384,17 @@ common.arrayEquals = function arrayEquals(a1, a2) {
     return true;
 };
 
-// common.walk = function (obj, callback, callList, seen, numSeen) {
-// if (depth == undefined) {
-// depth = 0;
-// }
-// if (depth > 20) {
-// throw "max depth reached";
-// }
-// if (callList === undefined) {
-// callList = [];
-// }
-// if (seen === undefined) {
-// seen = new Set();
-// }
-// var next, item;
-// for (item in obj) {
-// if (obj.hasOwnProperty(item)) {
-// next = obj[item];
-// var nextCallList = []
-// nextCallList.push.apply(callList);
-// nextCallList.push(item);
-// if (callback !== undefined) {
-// callback.call(this, item, next, nextCallList);
-// }
-// if (typeof next =='object' && next != null) {
-// if (seen.has(next) == false) {
-// seen.add(next);
-// common.walk(next, callback, nextCallList, seen, depth+1);
-// }
-// }
-// }
-// }
-// };
+const _singletonCounter = {};
+_singletonCounter.value = 0;
+
+export class SingletonCounter {
+    call() {
+        const post = _singletonCounter.value;
+        _singletonCounter.value += 1;
+        return post;
+    }
+}
+common.SingletonCounter = SingletonCounter;
 
 /**
  * runs a callback with either "visible" or "hidden" as the argument anytime the

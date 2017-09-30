@@ -93,12 +93,11 @@ note.stemDirectionNames = [
  * @property {string} rawText - text + any connectors
  */
 export class Lyric extends prebase.ProtoM21Object {
-    constructor(text, number, syllabic, applyRaw, identifier) {
+    constructor(text, number = 1, syllabic, applyRaw, identifier) {
         super();
-        this.classes.push('Lyric');
         this.lyricConnector = '-'; // override to place something else between two notes...
         this.text = text;
-        this._number = number || 1;
+        this._number = number;
         this.syllabic = syllabic;
         this.applyRaw = applyRaw || false;
         this.setTextAndSyllabic(this.text, this.applyRaw);
@@ -131,7 +130,7 @@ export class Lyric extends prebase.ProtoM21Object {
     set rawText(t) {
         this.setTextAndSyllabic(t, false);
     }
-    setTextAndSyllabic(rawText, applyRaw) {
+    setTextAndSyllabic(rawText, applyRaw = false) {
         if (rawText === undefined) {
             this.text = undefined;
             return this;
@@ -184,7 +183,6 @@ note.Lyric = Lyric;
 export class GeneralNote extends base.Music21Object {
     constructor(ql) {
         super();
-        this.classes.push('GeneralNote');
         this.isChord = false;
         if (ql !== undefined) {
             this.duration.quarterLength = ql;
@@ -238,8 +236,7 @@ export class GeneralNote extends base.Music21Object {
      * @param {boolean} [applyRaw=false] - if `true`, do not parse the text for cluses about syllable placement.
      * @param {string} [lyricIdentifier] - an optional identifier
      */
-    addLyric(text, lyricNumber, applyRaw, lyricIdentifier) {
-        applyRaw = applyRaw || false;
+    addLyric(text, lyricNumber, applyRaw = false, lyricIdentifier) {
         if (lyricNumber === undefined) {
             const maxLyrics = this.lyrics.length + 1;
             const newLyric = new note.Lyric(
@@ -334,12 +331,9 @@ export class GeneralNote extends base.Music21Object {
      * @param {object} [options] - other options (currently just `{instrument: {@link music21.instrument.Instrument} }`)
      * @returns {Number} - delay time in milliseconds until the next element (may be ignored)
      */
-    playMidi(tempo, nextElement, options) {
+    playMidi(tempo = 120, nextElement, options) {
         // returns the number of milliseconds to the next element in
         // case that can't be determined otherwise.
-        if (tempo === undefined) {
-            tempo = 120;
-        }
         if (options === undefined) {
             let inst;
             if (this.activeSite !== undefined) {
@@ -416,7 +410,6 @@ note.GeneralNote = GeneralNote;
 export class NotRest extends GeneralNote {
     constructor(ql) {
         super(ql);
-        this.classes.push('NotRest');
         this.notehead = 'normal';
         this.noteheadFill = 'default';
         this.noteheadColor = undefined;
@@ -461,7 +454,6 @@ note.NotRest = NotRest;
 export class Note extends NotRest {
     constructor(nn, ql) {
         super(ql);
-        this.classes.push('Note');
         this.isNote = true; // for speed
         this.isRest = false; // for speed
         if (
@@ -639,7 +631,6 @@ note.Note = Note;
 export class Rest extends GeneralNote {
     constructor(ql) {
         super(ql);
-        this.classes.push('Rest');
         this.isNote = false; // for speed
         this.isRest = true; // for speed
         this.name = 'rest'; // for note compatibility

@@ -8,7 +8,6 @@ class Harmony extends chord.Chord {
         }
 
         super();
-        this.classes.push('Harmony');
         this._writeAsChord = false;
         this._roman = undefined;
         this.chordStepModifications = [];

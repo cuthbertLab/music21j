@@ -114,7 +114,6 @@ layout.makeLayoutFromScore = function makeLayoutFromScore(
 export class LayoutScore extends stream.Score {
     constructor() {
         super();
-        this.classes.push('LayoutScore');
         this.scoreLayout = undefined;
         this.measureStart = undefined;
         this.measureEnd = undefined;
@@ -157,7 +156,6 @@ layout.LayoutScore = LayoutScore;
 export class Page extends stream.Score {
     constructor() {
         super();
-        this.classes.push('Page');
         this.pageNumber = 1;
         this.measureStart = undefined;
         this.measureEnd = undefined;
@@ -183,7 +181,6 @@ layout.Page = Page;
 export class System extends stream.Score {
     constructor() {
         super();
-        this.classes.push('System');
         this.systemNumber = 1;
         this.systemLayout = undefined;
         this.measureStart = undefined;
@@ -211,7 +208,6 @@ layout.System = System;
 export class Staff extends stream.Part {
     constructor() {
         super();
-        this.classes.push('Staff');
         this.staffNumber = 1;
         this.optimized = 0;
         this.top = undefined;

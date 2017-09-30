@@ -232,7 +232,6 @@ export class RomanNumeral extends harmony.Harmony {
         const params = { updatePitches: false, parseFigure: false };
         common.merge(params, keywords);
         super(figure, params);
-        this.classes.push('RomanNumeral');
         this._parsingComplete = false;
 
         // not yet used...

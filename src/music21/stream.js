@@ -86,7 +86,6 @@ export const stream = {};
 export class Stream extends base.Music21Object {
     constructor() {
         super();
-        this.classes.push('Stream');
         this.isStream = true;
         this._duration = undefined;
 
@@ -1801,7 +1800,7 @@ stream.Stream = Stream;
 export class Voice extends Stream {
     constructor() {
         super();
-        this.classes.push('Voice');
+        this._not_a_useless_constructor = undefined;
     }
 }
 stream.Voice = Voice;
@@ -1814,7 +1813,6 @@ stream.Voice = Voice;
 export class Measure extends Stream {
     constructor() {
         super();
-        this.classes.push('Measure');
         this.number = 0; // measure number
     }
 }
@@ -1830,7 +1828,6 @@ stream.Measure = Measure;
 export class Part extends Stream {
     constructor() {
         super();
-        this.classes.push('Part');
         this.systemHeight = this.renderOptions.naiveHeight;
     }
 
@@ -2229,7 +2226,6 @@ stream.Part = Part;
 export class Score extends Stream {
     constructor() {
         super();
-        this.classes.push('Score');
         this.measureWidths = [];
         this.partSpacing = this.renderOptions.naiveHeight;
     }
@@ -2249,7 +2245,7 @@ export class Score extends Stream {
     /**
      * Returns the measure that is at X location xPxScaled and system systemIndex.
      *
-     * Always returns the measure of the top part... 
+     * Always returns the measure of the top part...
      *
      * @memberof music21.stream.Score
      * @param {number} [xPxScaled]

@@ -18,7 +18,6 @@ const MotionType = {
 class VoiceLeadingQuartet extends Music21Object {
     constructor(v1n1, v1n2, v2n1, v2n2, analyticKey) {
         super();
-        this.classes.push('VoiceLeadingQuartet');
         if (!intervalCache.length) {
             intervalCache.push(new interval.Interval('P1'));
             intervalCache.push(new interval.Interval('P5'));

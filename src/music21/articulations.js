@@ -31,7 +31,6 @@ export const articulations = {};
 export class Articulation extends prebase.ProtoM21Object {
     constructor() {
         super();
-        this.classes.push('Articulation');
         this.name = undefined;
         this.placement = 'above';
         this.vexflowModifier = undefined;
@@ -65,7 +64,7 @@ articulations.Articulation = Articulation;
 export class LengthArticulation extends Articulation {
     constructor() {
         super();
-        this.classes.push('LengthArticulation');
+        this.name = 'length-articulation';
     }
 }
 articulations.LengthArticulation = LengthArticulation;
@@ -80,7 +79,7 @@ articulations.LengthArticulation = LengthArticulation;
 export class DynamicArticulation extends Articulation {
     constructor() {
         super();
-        this.classes.push('DynamicArticulation');
+        this.name = 'dynamic-articulation';
     }
 }
 articulations.DynamicArticulation = DynamicArticulation;
@@ -95,7 +94,7 @@ articulations.DynamicArticulation = DynamicArticulation;
 export class PitchArticulation extends Articulation {
     constructor() {
         super();
-        this.classes.push('PitchArticulation');
+        this.name = 'pitch-articulation';
     }
 }
 articulations.PitchArticulation = PitchArticulation;
@@ -110,7 +109,7 @@ articulations.PitchArticulation = PitchArticulation;
 export class TimbreArticulation extends Articulation {
     constructor() {
         super();
-        this.classes.push('TimbreArticulation');
+        this.name = 'timbre-articulation';
     }
 }
 articulations.TimbreArticulation = TimbreArticulation;
@@ -125,7 +124,6 @@ articulations.TimbreArticulation = TimbreArticulation;
 export class Accent extends DynamicArticulation {
     constructor() {
         super();
-        this.classes.push('Accent');
         this.name = 'accent';
         this.vexflowModifier = 'a>';
         this.dynamicScale = 1.5;
@@ -143,7 +141,6 @@ articulations.Accent = Accent;
 export class StrongAccent extends Accent {
     constructor() {
         super();
-        this.classes.push('StrongAccent');
         this.name = 'strong accent';
         this.vexflowModifier = 'a^';
         this.dynamicScale = 2.0;
@@ -161,7 +158,6 @@ articulations.StrongAccent = StrongAccent;
 export class Staccato extends LengthArticulation {
     constructor() {
         super();
-        this.classes.push('Staccato');
         this.name = 'staccato';
         this.vexflowModifier = 'a.';
     }
@@ -178,7 +174,6 @@ articulations.Staccato = Staccato;
 export class Staccatissimo extends Staccato {
     constructor() {
         super();
-        this.classes.push('Staccatissimo');
         this.name = 'staccatissimo';
         this.vexflowModifier = 'av';
     }
@@ -195,7 +190,6 @@ articulations.Staccatissimo = Staccatissimo;
 export class Spiccato extends Staccato {
     constructor() {
         super();
-        this.classes.push('Spiccato');
         this.name = 'spiccato';
         this.vexflowModifier = undefined;
     }
@@ -212,7 +206,6 @@ export class Marcato extends DynamicArticulation {
     constructor() {
         super();
         common.mixin(LengthArticulation, this);
-        this.classes.push('Marcato');
         this.name = 'marcato';
         this.vexflowModifier = 'a^';
         this.dynamicScale = 1.7;
@@ -228,7 +221,6 @@ articulations.Marcato = Marcato;
 export class Tenuto extends LengthArticulation {
     constructor() {
         super();
-        this.classes.push('Tenuto');
         this.name = 'tenuto';
         this.vexflowModifier = 'a-';
     }

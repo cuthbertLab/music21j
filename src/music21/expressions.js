@@ -28,7 +28,6 @@ export const expressions = {};
 export class Expression extends base.Music21Object {
     constructor() {
         super();
-        this.classes.push('Expression');
         this.name = 'expression';
         this.vexflowModifier = '';
         this.setPosition = undefined;
@@ -61,7 +60,6 @@ expressions.Expression = Expression;
 export class Fermata extends Expression {
     constructor() {
         super();
-        this.classes.push('Fermata');
         this.name = 'fermata';
         this.vexflowModifier = 'a@a';
         this.setPosition = 3;
