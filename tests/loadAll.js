@@ -1,20 +1,21 @@
-import articulations from './moduleTests/articulations';
-import beam from './moduleTests/beam';
-import chord from './moduleTests/chord';
-import clef from './moduleTests/clef';
-import common from './moduleTests/common';
-import duration from './moduleTests/duration';
-import dynamics from './moduleTests/dynamics';
-import figuredBass from './moduleTests/figuredBass';
-import interval from './moduleTests/interval';
-import key from './moduleTests/key';
-import note from './moduleTests/note';
-import pitch from './moduleTests/pitch';
-import roman from './moduleTests/roman';
-import scale from './moduleTests/scale';
-import stream from './moduleTests/stream';
-import tie from './moduleTests/tie';
-import voiceLeading from './moduleTests/voiceLeading';
+import articulations from './moduleTests/articulations.js';
+import beam from './moduleTests/beam.js';
+import chord from './moduleTests/chord.js';
+import clef from './moduleTests/clef.js';
+import common from './moduleTests/common.js';
+import duration from './moduleTests/duration.js';
+import dynamics from './moduleTests/dynamics.js';
+import figuredBass from './moduleTests/figuredBass.js';
+import interval from './moduleTests/interval.js';
+import key from './moduleTests/key.js';
+import note from './moduleTests/note.js';
+import pitch from './moduleTests/pitch.js';
+import roman from './moduleTests/roman.js';
+import scale from './moduleTests/scale.js';
+import sites from './moduleTests/sites.js';
+import stream from './moduleTests/stream.js';
+import tie from './moduleTests/tie.js';
+import voiceLeading from './moduleTests/voiceLeading.js';
 
 const allTests = {
     articulations,
@@ -31,6 +32,7 @@ const allTests = {
     pitch,
     roman,
     scale,
+    sites,
     stream,
     tie,
     voiceLeading,

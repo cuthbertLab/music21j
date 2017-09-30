@@ -1460,7 +1460,7 @@
           classCallCheck(this, SiteRef);
 
           this.isDead = false;
-          this.classString = false;
+          this.classString = undefined;
           this.globalSiteIndex = false;
           this.siteIndex = undefined;
           this.siteWeakref = new WeakMap();
@@ -1514,8 +1514,10 @@
               var _iteratorError = undefined;
 
               try {
-                  for (var _iterator = this.siteDict.items()[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-                      var siteRef = _step.value;
+                  for (var _iterator = this.siteDict[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+                      var _step$value = slicedToArray(_step.value, 2),
+                          unused_index = _step$value[0],
+                          siteRef = _step$value[1];
 
                       if (siteRef.site === checkSite) {
                           return true;
@@ -1550,9 +1552,11 @@
 
               try {
                   for (var _iterator2 = this.siteDict[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-                      var key = _step2.value;
+                      var _step2$value = slicedToArray(_step2.value, 2),
+                          key = _step2$value[0],
+                          siteRef = _step2$value[1];
 
-                      var keyVal = [this.siteDict.get(key).siteIndex, key];
+                      var keyVal = [siteRef.siteIndex, key];
                       post.push(keyVal);
                   }
               } catch (err) {
@@ -1886,7 +1890,7 @@
       }, {
           key: 'length',
           get: function get() {
-              return this.siteDict.length;
+              return this.siteDict.size;
           }
       }]);
       return Sites;
@@ -19035,6 +19039,7 @@
       renderOptions: renderOptions,
       roman: roman,
       scale: scale,
+      sites: sites,
       stream: stream,
       streamInteraction: streamInteraction,
       tempo: tempo,

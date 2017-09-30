@@ -21,7 +21,7 @@ sites.SitesException = SitesException;
 export class SiteRef {
     constructor() {
         this.isDead = false;
-        this.classString = false;
+        this.classString = undefined;
         this.globalSiteIndex = false;
         this.siteIndex = undefined;
         this.siteWeakref = new WeakMap();
@@ -62,10 +62,10 @@ export class Sites {
     }
 
     get length() {
-        return this.siteDict.length;
+        return this.siteDict.size;
     }
     includes(checkSite) {
-        for (const siteRef of this.siteDict.items()) {
+        for (const [unused_index, siteRef] of this.siteDict) {
             if (siteRef.site === checkSite) {
                 return true;
             }
@@ -75,8 +75,8 @@ export class Sites {
 
     _keysByTime(newFirst = true) {
         const post = [];
-        for (const key of this.siteDict) {
-            const keyVal = [this.siteDict.get(key).siteIndex, key];
+        for (const [key, siteRef] of this.siteDict) {
+            const keyVal = [siteRef.siteIndex, key];
             post.push(keyVal);
         }
         post.sort();

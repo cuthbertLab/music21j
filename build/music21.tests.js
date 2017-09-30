@@ -1460,7 +1460,7 @@
           classCallCheck(this, SiteRef);
 
           this.isDead = false;
-          this.classString = false;
+          this.classString = undefined;
           this.globalSiteIndex = false;
           this.siteIndex = undefined;
           this.siteWeakref = new WeakMap();
@@ -1514,8 +1514,10 @@
               var _iteratorError = undefined;
 
               try {
-                  for (var _iterator = this.siteDict.items()[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-                      var siteRef = _step.value;
+                  for (var _iterator = this.siteDict[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+                      var _step$value = slicedToArray(_step.value, 2),
+                          unused_index = _step$value[0],
+                          siteRef = _step$value[1];
 
                       if (siteRef.site === checkSite) {
                           return true;
@@ -1550,9 +1552,11 @@
 
               try {
                   for (var _iterator2 = this.siteDict[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-                      var key = _step2.value;
+                      var _step2$value = slicedToArray(_step2.value, 2),
+                          key = _step2$value[0],
+                          siteRef = _step2$value[1];
 
-                      var keyVal = [this.siteDict.get(key).siteIndex, key];
+                      var keyVal = [siteRef.siteIndex, key];
                       post.push(keyVal);
                   }
               } catch (err) {
@@ -1886,7 +1890,7 @@
       }, {
           key: 'length',
           get: function get() {
-              return this.siteDict.length;
+              return this.siteDict.size;
           }
       }]);
       return Sites;
@@ -19035,6 +19039,7 @@
       renderOptions: renderOptions,
       roman: roman,
       scale: scale,
+      sites: sites,
       stream: stream,
       streamInteraction: streamInteraction,
       tempo: tempo,
@@ -19612,6 +19617,41 @@
   }
 
   function tests$14() {
+      QUnit.test('music21.sites.SiteRef', function (assert) {
+          var sr = new music21.sites.SiteRef();
+          assert.ok(!sr.isDead);
+          assert.equal(sr.siteWeakref.ref, undefined, 'SiteRef should start undefined');
+          var st = new music21.stream.Measure();
+          sr.site = st;
+          sr.classString = st.classes[0];
+          assert.equal(sr.site, st);
+          assert.equal(sr.classString, 'Measure');
+      });
+
+      QUnit.test('music21.sites.Sites', function (assert) {
+          var s = new music21.sites.Sites();
+          assert.equal(s.length, 1, 'empty sites has length 1');
+          var st = new music21.stream.Measure();
+          st.number = 1;
+          s.add(st);
+          assert.equal(s.length, 2, 'should have two sites now');
+          assert.ok(s.includes(st));
+          var first = s._keysByTime()[0];
+          assert.equal(first, music21.sites.getId(st));
+
+          var af = void 0;
+          af = Array.from(s.yieldSites(false, st));
+          assert.equal(af.length, 2);
+          assert.equal(af[0], st);
+          af = Array.from(s.yieldSites(false, st, true));
+          assert.equal(af.length, 1);
+          assert.equal(af[0], st);
+          s.clear();
+          assert.equal(s.length, 1);
+      });
+  }
+
+  function tests$15() {
       QUnit.test('music21.stream.Stream', function (assert) {
           var s = new music21.stream.Stream();
           s.append(new music21.note.Note('C#5'));
@@ -19771,14 +19811,14 @@
       });
   }
 
-  function tests$15() {
+  function tests$16() {
       QUnit.test('music21.tie.Tie', function (assert) {
           var t = new music21.tie.Tie('start');
           assert.equal(t.type, 'start', 'Tie type is start');
       });
   }
 
-  function tests$16() {
+  function tests$17() {
       QUnit.test('music21.voiceLeading.VoiceLeadingQuartet', function (assert) {
           var VLQ = music21.voiceLeading.VoiceLeadingQuartet;
           var sc = new VLQ();
@@ -19881,9 +19921,10 @@
       pitch: tests$11,
       roman: tests$12,
       scale: tests$13,
-      stream: tests$14,
-      tie: tests$15,
-      voiceLeading: tests$16
+      sites: tests$14,
+      stream: tests$15,
+      tie: tests$16,
+      voiceLeading: tests$17
   };
   if ((typeof window === 'undefined' ? 'undefined' : _typeof(window)) !== undefined) {
       window.allTests = allTests;
