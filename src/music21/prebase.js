@@ -72,7 +72,14 @@ export class ProtoM21Object {
      * n2.duration.quarterLength == 4; // true
      * n2 === n1; // false
      */
-    clone() {
+    clone(deep = true) {
+        if (!deep) {
+            return Object.assign(
+                Object.create(Object.getPrototypeOf(this)),
+                this
+            );
+        }
+
         const ret = new this.constructor();
 
         // todo: do Arrays work?

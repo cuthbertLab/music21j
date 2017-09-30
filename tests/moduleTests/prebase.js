@@ -21,5 +21,8 @@ export default function tests() {
         const n2 = n.clone();
         n.pitch.octave = 5;
         assert.equal(n2.pitch.octave, 4);
+        const n3 = n.clone(false);
+        n.pitch.octave = 6;
+        assert.equal(n3.pitch.octave, 6);
     });
 }

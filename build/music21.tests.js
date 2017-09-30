@@ -157,6 +157,20 @@
     };
   }();
 
+  var _extends = Object.assign || function (target) {
+    for (var i = 1; i < arguments.length; i++) {
+      var source = arguments[i];
+
+      for (var key in source) {
+        if (Object.prototype.hasOwnProperty.call(source, key)) {
+          target[key] = source[key];
+        }
+      }
+    }
+
+    return target;
+  };
+
   var get = function get(object, property, receiver) {
     if (object === null) object = Function.prototype;
     var desc = Object.getOwnPropertyDescriptor(object, property);
@@ -872,6 +886,12 @@
            * n2 === n1; // false
            */
           value: function clone() {
+              var deep = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
+
+              if (!deep) {
+                  return _extends(Object.create(Object.getPrototypeOf(this)), this);
+              }
+
               var ret = new this.constructor();
 
               // todo: do Arrays work?
@@ -19517,6 +19537,9 @@
           var n2 = n.clone();
           n.pitch.octave = 5;
           assert.equal(n2.pitch.octave, 4);
+          var n3 = n.clone(false);
+          n.pitch.octave = 6;
+          assert.equal(n3.pitch.octave, 6);
       });
   }
 
