@@ -52,6 +52,10 @@ import { vfShow } from './vfShow.js';
  */
 export const stream = {};
 
+class StreamException extends Music21Exception {}
+
+stream.StreamException = StreamException;
+
 /**
  * A generic Stream class -- a holder for other music21 objects
  * Will be subclassed into {@link music21.stream.Score},
@@ -86,7 +90,12 @@ export const stream = {};
 export class Stream extends base.Music21Object {
     constructor() {
         super();
+        // class variables;
         this.isStream = true;
+        this.isMeasure = false;
+        this.classSortOrder = -20;
+        this.recursionType = 'elementsFirst';
+
         this._duration = undefined;
 
         this._elements = [];
@@ -162,31 +171,41 @@ export class Stream extends base.Music21Object {
         return highestTime;
     }
 
+    get semiFlat() {
+        return this._getFlatOrSemiFlat(true);
+    }
+
     get flat() {
-        if (this.hasSubStreams()) {
-            const tempEls = [];
-            for (let i = 0; i < this.length; i++) {
-                const el = this.get(i);
-                // console.log(i, this.length);
-                if (el.elements !== undefined) {
-                    const offsetShift = el.offset;
-                    // console.log('offsetShift', offsetShift, el.classes[el.classes.length -1]);
-                    const elFlat = el.flat;
-                    for (let j = 0; j < elFlat.length; j++) {
-                        // offset should NOT be null because already in Stream
-                        elFlat.get(j).offset += offsetShift;
-                    }
-                    tempEls.push(...elFlat._elements);
-                } else {
-                    tempEls.push(el);
-                }
-            }
-            const newSt = this.clone(false);
-            newSt.elements = tempEls;
-            return newSt;
-        } else {
+        return this._getFlatOrSemiFlat(false);
+    }
+
+    _getFlatOrSemiFlat(retainContainers) {
+        if (!this.hasSubStreams()) {
             return this;
         }
+        const tempEls = [];
+        for (let i = 0; i < this.length; i++) {
+            const el = this.get(i);
+            // console.log(i, this.length);
+            if (el.isStream) {
+                if (retainContainers) {
+                    tempEls.push(el);
+                }
+                const offsetShift = el.offset;
+                // console.log('offsetShift', offsetShift, el.classes[el.classes.length -1]);
+                const elFlat = el._getFlatOrSemiFlat(retainContainers);
+                for (let j = 0; j < elFlat.length; j++) {
+                    // offset should NOT be null because already in Stream
+                    elFlat.get(j).offset += offsetShift;
+                }
+                tempEls.push(...elFlat._elements);
+            } else {
+                tempEls.push(el);
+            }
+        }
+        const newSt = this.clone(false);
+        newSt.elements = tempEls;
+        return newSt;
     }
 
     get notes() {
@@ -418,6 +437,7 @@ export class Stream extends base.Music21Object {
             this._elementOffsets.push(elOffset);
             this._elements.push(el);
             el.offset = elOffset;
+            el.sites.add(this);
             el.activeSite = this; // would prefer weakref, but does not exist in JS.
         } catch (err) {
             console.error(
@@ -465,6 +485,7 @@ export class Stream extends base.Music21Object {
             this._elementOffsets.push(offset);
             this._elements.push(el);
             el.offset = offset;
+            el.sites.add(this);
             el.activeSite = this; // would prefer weakref, but does not exist in JS.
         } catch (err) {
             console.error(
@@ -524,6 +545,38 @@ export class Stream extends base.Music21Object {
             return el;
         }
     }
+
+    setElementOffset(el, value, addElement = false) {
+        for (let i = 0; i < this.length; i++) {
+            if (this._elements[i] === el) {
+                this._elementOffsets[i] = value;
+                return;
+            }
+        }
+        if (!addElement) {
+            throw new StreamException(
+                'Cannot set the offset for elemenet '
+                    + el.toString()
+                    + ', not in Stream'
+            );
+        } else {
+            this.insert(value, el);
+        }
+    }
+
+    elementOffset(element, stringReturns = false) {
+        for (let i = 0; i < this.length; i++) {
+            if (this._elements[i] === element) {
+                return this._elementOffsets[i];
+            }
+        }
+        throw new StreamException(
+            'An entry for this object '
+                + element.toString()
+                + ' is not stored in this Stream.'
+        );
+    }
+
     /*  --- ############# END ELEMENT FUNCTIONS ########## --- */
 
     /**
@@ -1800,7 +1853,7 @@ stream.Stream = Stream;
 export class Voice extends Stream {
     constructor() {
         super();
-        this._not_a_useless_constructor = undefined;
+        this.recursionType = 'elementsFirst';
     }
 }
 stream.Voice = Voice;
@@ -1813,6 +1866,8 @@ stream.Voice = Voice;
 export class Measure extends Stream {
     constructor() {
         super();
+        this.recursionType = 'elementsFirst';
+        this.isMeasure = true;
         this.number = 0; // measure number
     }
 }
@@ -1828,6 +1883,7 @@ stream.Measure = Measure;
 export class Part extends Stream {
     constructor() {
         super();
+        this.recursionType = 'flatten';
         this.systemHeight = this.renderOptions.naiveHeight;
     }
 
@@ -2226,6 +2282,7 @@ stream.Part = Part;
 export class Score extends Stream {
     constructor() {
         super();
+        this.recursionType = 'elementsOnly';
         this.measureWidths = [];
         this.partSpacing = this.renderOptions.naiveHeight;
     }

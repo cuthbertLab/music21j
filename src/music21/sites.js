@@ -137,12 +137,13 @@ export class Sites {
         } else if (sortByCreationTime === 'reverse') {
             keyRepository = this._keysByTime(true);
         } else {
-            keyRepository = this.siteDict.keys();
+            keyRepository = Array.from(this.siteDict.keys());
         }
         if (priorityTarget !== undefined) {
             const priorityId = sites.getId(priorityTarget);
             if (keyRepository.includes(priorityId)) {
-                keyRepository.insert(
+                keyRepository.splice(
+                    0,
                     0,
                     keyRepository.pop(keyRepository.indexOf(priorityId))
                 );
@@ -174,7 +175,7 @@ export class Sites {
         // want to be extra safe.  If you want fast, use .yieldSites
         if (priorityTarget !== undefined) {
             if (post.includes(priorityTarget)) {
-                post.insert(0, post.pop(post.indexOf(priorityTarget)));
+                post.splice(0, 0, post.pop(post.indexOf(priorityTarget)));
             }
         }
         return post;

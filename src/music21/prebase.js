@@ -137,7 +137,7 @@ export class ProtoM21Object {
             testClass = [testClass];
         }
         for (let i = 0; i < testClass.length; i++) {
-            if (this.classes.indexOf(testClass[i]) !== -1) {
+            if (this.classes.includes(testClass[i])) {
                 return true;
             }
         }

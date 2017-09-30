@@ -8,14 +8,18 @@
  * Based on music21 (=music21p), Copyright (c) 2006–16, Michael Scott Cuthbert and cuthbertLab
  *
  */
+import { common } from './common.js';
 import { duration } from './duration.js';
 import { prebase } from './prebase.js';
+import { sites } from './sites.js';
 
 /**
  * module for Music21Objects, see {@link music21.base}
  *
+ * @requires music21/common
  * @requires music21/duration
  * @requires music21/prebase
+ * @requires music21/sites
  * @exports music21/base
  */
 /**
@@ -39,7 +43,7 @@ export const base = {};
  * @property {Array} groups - An Array of strings representing group (equivalent to css classes) to assign to the object. (default [])
  * @property {boolean} isMusic21Object - true
  * @property {boolean} isStream - false
- * @property {number|null} offset - offset from the beginning of the stream (in quarterLength)
+ * @property {number} offset - offset from the beginning of the stream (in quarterLength)
  * @property {number} priority - The priority (lower = earlier or more left) for elements at the same offset. (default 0)
  */
 export class Music21Object extends prebase.ProtoM21Object {
@@ -48,9 +52,9 @@ export class Music21Object extends prebase.ProtoM21Object {
         this.classSortOrder = 20; // default;
 
         this.activeSite = undefined;
-        this.offset = null; // for now
+        this.offset = 0; // for now
+        this._naiveOffset = 0;
         // this._activeSite = undefined;
-        // this._naiveOffset = null;
         this._activeSiteStoredOffset = undefined;
 
         // this._derivation = undefined;
@@ -61,9 +65,10 @@ export class Music21Object extends prebase.ProtoM21Object {
 
         this._priority = 0; // default;
 
-        // id
+        // this.id = sites.getId(this);
+        this.groups = [];
         // groups
-        // this.sites = new sites.Sites();
+        this.sites = new sites.Sites();
 
         this.isMusic21Object = true;
         this.isStream = false;
@@ -117,14 +122,234 @@ export class Music21Object extends prebase.ProtoM21Object {
      */
     getOffsetBySite(site, stringReturns = false) {
         if (site === undefined) {
-            return this.offset;
+            return this._naiveOffset;
         }
-        for (let i = 0; i < site.length; i++) {
-            if (site._elements[i] === this) {
-                return site._elementOffsets[i];
+        return site.elementOffset(this, stringReturns);
+    }
+
+    /**
+     * setOffsetBySite - sets the offset for a given Stream
+     *
+     * @memberof music21.base.Music21Object
+     * @param  {music21.stream.Stream} site  Stream object
+     * @param  {number} value offset
+     */
+
+    setOffsetBySite(site, value) {
+        if (site !== undefined) {
+            site.setElementOffset(this, value);
+        } else {
+            this._naiveOffset = value;
+        }
+    }
+
+    // ---------- Contexts -------------
+
+    getContextByClass(className, options) {
+        const payloadExtractor = function payloadExtractor(
+            site,
+            flatten,
+            positionStart,
+            getElementMethod,
+            classList
+        ) {
+            // this should all be done as a tree...
+            let useSite = site;
+            if (flatten === true) {
+                useSite = site.flat;
+            } else if (flatten === 'semiFlat') {
+                useSite = site.semiFlat;
+            }
+            if (classList !== undefined) {
+                useSite = useSite.getElementsByClass(classList);
+            }
+            // VERY HACKY...
+            let lastElement;
+            for (let i = 0; i < useSite.length; i++) {
+                const indexOffset = useSite._elementOffsets[i];
+                if (
+                    getElementMethod.includes('Before')
+                    && indexOffset >= positionStart
+                ) {
+                    if (
+                        getElementMethod.includes('At')
+                        && lastElement === undefined
+                    ) {
+                        lastElement = useSite._elements[i];
+                        continue;
+                    } else {
+                        return lastElement;
+                    }
+                } else {
+                    lastElement = useSite._elements[i];
+                }
+                if (
+                    getElementMethod.includes('After')
+                    && indexOffset > positionStart
+                ) {
+                    return useSite._elements[i];
+                }
+            }
+            return undefined;
+        };
+
+        const params = {
+            getElementMethod: 'getElementAtOrBefore',
+            sortByCreationTime: false,
+        };
+        common.merge(params, options);
+
+        const getElementMethod = params.getElementMethod;
+        const sortByCreationTime = params.sortByCreationTime;
+
+        if (className !== undefined && !(className instanceof Array)) {
+            className = [className];
+        }
+        if (
+            getElementMethod.includes('At')
+            && this.isClassOrSubclass(className)
+        ) {
+            return this;
+        }
+
+        for (const [site, positionStart, searchType] of this.contextSites({
+            returnSortTuples: true,
+            sortByCreationTime,
+        })) {
+            if (
+                getElementMethod.includes('At')
+                && site.isClassOrSubclass(className)
+            ) {
+                return site;
+            }
+
+            if (
+                searchType === 'elementsOnly'
+                || searchType === 'elementsFirst'
+            ) {
+                const contextEl = payloadExtractor(
+                    site,
+                    false,
+                    positionStart,
+                    getElementMethod,
+                    className
+                );
+                if (contextEl !== undefined) {
+                    contextEl.activeSite = site;
+                    return contextEl;
+                }
+            } else if (searchType !== 'elementsOnly') {
+                if (
+                    getElementMethod.includes('After')
+                    && (className === undefined
+                        || site.isClassOrSubclass(className))
+                ) {
+                    if (
+                        !getElementMethod.includes('NotSelf')
+                        && this !== site
+                    ) {
+                        return site;
+                    }
+                }
+                const contextEl = payloadExtractor(
+                    site,
+                    'semiFlat',
+                    positionStart,
+                    getElementMethod,
+                    className
+                );
+                if (contextEl !== undefined) {
+                    contextEl.activeSite = site;
+                    return contextEl;
+                }
+                if (
+                    getElementMethod.includes('Before')
+                    && (className === undefined
+                        || site.isClassOrSubclass(className))
+                ) {
+                    if (
+                        !getElementMethod.includes('NotSelf')
+                        || this !== site
+                    ) {
+                        return site;
+                    }
+                }
             }
         }
+
         return undefined;
+    }
+
+    * contextSites(options) {
+        const params = {
+            callerFirst: undefined,
+            memo: [],
+            offsetAppend: 0.0,
+            sortByCreationTime: false,
+            priorityTarget: undefined,
+            returnSortTuples: false,
+            followDerivation: true,
+        };
+        common.merge(params, options);
+        const memo = params.memo;
+        if (params.callerFirst === undefined) {
+            params.callerFirst = this;
+            if (this.isStream && !(this in memo)) {
+                const recursionType = this.recursionType;
+                yield [this, 0.0, recursionType];
+            }
+            memo.push(this);
+        }
+
+        if (params.priorityTarget === undefined && !params.sortByCreationType) {
+            params.priorityTarget = this.activeSite;
+        }
+        // const topLevel = this;
+        for (const siteObj of this.sites.yieldSites(
+            params.sortByCreationTime,
+            params.priorityTarget,
+            true // excludeNone
+        )) {
+            if (memo.includes(siteObj)) {
+                continue;
+            }
+            if (siteObj.classes.includes('SpannerStorage')) {
+                continue;
+            }
+
+            // let offset = this.getOffsetBySite(siteObj);
+            // followDerivation;
+            const offsetInStream = siteObj.elementOffset(this);
+            const newOffset = offsetInStream + params.offsetAppend;
+            const positionInStream = newOffset;
+            const recursionType = siteObj.recursionType;
+            yield [siteObj, positionInStream, recursionType];
+            memo.push(siteObj);
+
+            const newParams = {
+                callerFirst: params.callerFirst,
+                memo,
+                offsetAppend: positionInStream, // .offset
+                returnSortTuples: true, // always!
+                sortByCreationTime: params.sortByCreationTime,
+            };
+            for (const [
+                topLevel,
+                inStreamPos,
+                recurType,
+            ] of siteObj.contextSites(newParams)) {
+                const inStreamOffset = inStreamPos; // .offset;
+                // const hypotheticalPosition = inStreamOffset; // more complex w/ sortTuples
+
+                if (!memo.includes(topLevel)) {
+                    // if returnSortTuples...
+                    // else
+                    yield [topLevel, inStreamOffset, recurType];
+                    memo.push(topLevel);
+                }
+            }
+        }
+        // if followDerivation...
     }
 }
 

@@ -932,7 +932,7 @@
                   testClass = [testClass];
               }
               for (var i = 0; i < testClass.length; i++) {
-                  if (this.classes.indexOf(testClass[i]) !== -1) {
+                  if (this.classes.includes(testClass[i])) {
                       return true;
                   }
               }
@@ -1430,6 +1430,470 @@
   duration.Tuplet = Tuplet;
 
   /**
+   * Objects for keeping track of relationships among Music21Objects. See {@link music21.sites} namespace
+   *
+   * Copyright 2017, Michael Scott Cuthbert and cuthbertLab
+   * License: BSD
+   */
+
+  /**
+   * @namespace music21.sites
+   * @memberof music21
+   * @requires music21/common
+   */
+  var sites = {};
+
+  var SitesException = function (_Music21Exception) {
+      inherits(SitesException, _Music21Exception);
+
+      function SitesException() {
+          classCallCheck(this, SitesException);
+          return possibleConstructorReturn(this, (SitesException.__proto__ || Object.getPrototypeOf(SitesException)).apply(this, arguments));
+      }
+
+      return SitesException;
+  }(Music21Exception);
+  sites.SitesException = SitesException;
+
+  var SiteRef = function () {
+      function SiteRef() {
+          classCallCheck(this, SiteRef);
+
+          this.isDead = false;
+          this.classString = false;
+          this.globalSiteIndex = false;
+          this.siteIndex = undefined;
+          this.siteWeakref = new WeakMap();
+          this.siteWeakref.ref = undefined;
+      }
+
+      createClass(SiteRef, [{
+          key: 'site',
+          get: function get() {
+              return this.siteWeakref.ref;
+          },
+          set: function set(newSite) {
+              this.siteWeakref.ref = newSite;
+          }
+      }]);
+      return SiteRef;
+  }();
+  sites.SiteRef = SiteRef;
+
+  var _NoneSiteRef = new SiteRef();
+  _NoneSiteRef.globalSiteIndex = -2;
+  _NoneSiteRef.siteIndex = -2;
+
+  var _singletonCounter$1 = new common.SingletonCounter();
+
+  var GLOBAL_SITE_STATE_DICT = new WeakMap();
+
+  sites.getId = function getId(obj) {
+      if (!GLOBAL_SITE_STATE_DICT.has(obj)) {
+          var newId = _singletonCounter$1.call();
+          GLOBAL_SITE_STATE_DICT.set(obj, newId);
+      }
+      return GLOBAL_SITE_STATE_DICT.get(obj);
+  };
+
+  var Sites = function () {
+      function Sites() {
+          classCallCheck(this, Sites);
+
+          this.siteDict = new Map();
+          this.siteDict.set(_NoneSiteRef.siteIndex, _NoneSiteRef);
+          this._siteIndex = 0;
+          this._lastID = -1;
+      }
+
+      createClass(Sites, [{
+          key: 'includes',
+          value: function includes(checkSite) {
+              var _iteratorNormalCompletion = true;
+              var _didIteratorError = false;
+              var _iteratorError = undefined;
+
+              try {
+                  for (var _iterator = this.siteDict.items()[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+                      var siteRef = _step.value;
+
+                      if (siteRef.site === checkSite) {
+                          return true;
+                      }
+                  }
+              } catch (err) {
+                  _didIteratorError = true;
+                  _iteratorError = err;
+              } finally {
+                  try {
+                      if (!_iteratorNormalCompletion && _iterator.return) {
+                          _iterator.return();
+                      }
+                  } finally {
+                      if (_didIteratorError) {
+                          throw _iteratorError;
+                      }
+                  }
+              }
+
+              return false;
+          }
+      }, {
+          key: '_keysByTime',
+          value: function _keysByTime() {
+              var newFirst = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
+
+              var post = [];
+              var _iteratorNormalCompletion2 = true;
+              var _didIteratorError2 = false;
+              var _iteratorError2 = undefined;
+
+              try {
+                  for (var _iterator2 = this.siteDict[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+                      var key = _step2.value;
+
+                      var keyVal = [this.siteDict.get(key).siteIndex, key];
+                      post.push(keyVal);
+                  }
+              } catch (err) {
+                  _didIteratorError2 = true;
+                  _iteratorError2 = err;
+              } finally {
+                  try {
+                      if (!_iteratorNormalCompletion2 && _iterator2.return) {
+                          _iterator2.return();
+                      }
+                  } finally {
+                      if (_didIteratorError2) {
+                          throw _iteratorError2;
+                      }
+                  }
+              }
+
+              post.sort();
+              if (newFirst) {
+                  post.reverse();
+              }
+              return post.map(function (innerList) {
+                  return innerList[1];
+              });
+          }
+      }, {
+          key: 'add',
+          value: function add(obj, idKey, classString) {
+              if (idKey === undefined && obj !== undefined) {
+                  idKey = sites.getId(obj);
+              }
+              var updateNotAdd = false;
+              if (this.siteDict.has(idKey)) {
+                  var tempSiteRef = this.siteDict.get(idKey);
+                  if (!tempSiteRef.isDead && tempSiteRef.site !== undefined) {
+                      updateNotAdd = true;
+                  }
+              }
+              if (obj !== undefined && classString === undefined) {
+                  classString = obj.classes[0];
+              }
+
+              var siteRef = void 0;
+              if (updateNotAdd) {
+                  siteRef = self.siteDict.get(idKey);
+                  siteRef.isDead = false;
+              } else {
+                  siteRef = new SiteRef();
+              }
+
+              siteRef.site = obj; // stores a weakRef;
+              siteRef.classString = classString;
+              siteRef.siteIndex = this._siteIndex;
+              this._siteIndex += 1;
+              siteRef.globalSiteIndex = _singletonCounter$1.call();
+
+              if (!updateNotAdd) {
+                  this.siteDict.set(idKey, siteRef);
+              }
+          }
+      }, {
+          key: 'clear',
+          value: function clear() {
+              this.siteDict = new Map();
+              this.siteDict.set(_NoneSiteRef.siteIndex, _NoneSiteRef);
+              this._lastID = -1;
+          }
+      }, {
+          key: 'yieldSites',
+          value: regeneratorRuntime.mark(function yieldSites() {
+              var sortByCreationTime = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
+              var priorityTarget = arguments[1];
+              var excludeNone = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+
+              var keyRepository, priorityId, _iteratorNormalCompletion3, _didIteratorError3, _iteratorError3, _iterator3, _step3, key, siteRef, obj;
+
+              return regeneratorRuntime.wrap(function yieldSites$(_context) {
+                  while (1) {
+                      switch (_context.prev = _context.next) {
+                          case 0:
+                              keyRepository = void 0;
+
+                              if (sortByCreationTime === true) {
+                                  keyRepository = this._keysByTime(false);
+                              } else if (sortByCreationTime === 'reverse') {
+                                  keyRepository = this._keysByTime(true);
+                              } else {
+                                  keyRepository = Array.from(this.siteDict.keys());
+                              }
+                              if (priorityTarget !== undefined) {
+                                  priorityId = sites.getId(priorityTarget);
+
+                                  if (keyRepository.includes(priorityId)) {
+                                      keyRepository.splice(0, 0, keyRepository.pop(keyRepository.indexOf(priorityId)));
+                                  }
+                              }
+                              _iteratorNormalCompletion3 = true;
+                              _didIteratorError3 = false;
+                              _iteratorError3 = undefined;
+                              _context.prev = 6;
+                              _iterator3 = keyRepository[Symbol.iterator]();
+
+                          case 8:
+                              if (_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done) {
+                                  _context.next = 27;
+                                  break;
+                              }
+
+                              key = _step3.value;
+                              siteRef = this.siteDict.get(key);
+
+                              if (!(siteRef === _NoneSiteRef)) {
+                                  _context.next = 17;
+                                  break;
+                              }
+
+                              if (excludeNone) {
+                                  _context.next = 15;
+                                  break;
+                              }
+
+                              _context.next = 15;
+                              return siteRef.site;
+
+                          case 15:
+                              _context.next = 24;
+                              break;
+
+                          case 17:
+                              obj = siteRef.site;
+
+                              if (!(obj === undefined)) {
+                                  _context.next = 22;
+                                  break;
+                              }
+
+                              siteRef.isDead = true;
+                              _context.next = 24;
+                              break;
+
+                          case 22:
+                              _context.next = 24;
+                              return obj;
+
+                          case 24:
+                              _iteratorNormalCompletion3 = true;
+                              _context.next = 8;
+                              break;
+
+                          case 27:
+                              _context.next = 33;
+                              break;
+
+                          case 29:
+                              _context.prev = 29;
+                              _context.t0 = _context['catch'](6);
+                              _didIteratorError3 = true;
+                              _iteratorError3 = _context.t0;
+
+                          case 33:
+                              _context.prev = 33;
+                              _context.prev = 34;
+
+                              if (!_iteratorNormalCompletion3 && _iterator3.return) {
+                                  _iterator3.return();
+                              }
+
+                          case 36:
+                              _context.prev = 36;
+
+                              if (!_didIteratorError3) {
+                                  _context.next = 39;
+                                  break;
+                              }
+
+                              throw _iteratorError3;
+
+                          case 39:
+                              return _context.finish(36);
+
+                          case 40:
+                              return _context.finish(33);
+
+                          case 41:
+                          case 'end':
+                              return _context.stop();
+                      }
+                  }
+              }, yieldSites, this, [[6, 29, 33, 41], [34,, 36, 40]]);
+          })
+      }, {
+          key: 'get',
+          value: function get() {
+              var sortByCreationTime = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
+              var priorityTarget = arguments[1];
+              var excludeNone = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+
+              var post = Array.from(this.yieldSites(sortByCreationTime, priorityTarget, excludeNone));
+
+              // we do this resorting again, because the priority target might not match id and we
+              // want to be extra safe.  If you want fast, use .yieldSites
+              if (priorityTarget !== undefined) {
+                  if (post.includes(priorityTarget)) {
+                      post.splice(0, 0, post.pop(post.indexOf(priorityTarget)));
+                  }
+              }
+              return post;
+          }
+      }, {
+          key: 'getAttrByName',
+          value: function getAttrByName(attrName) {
+              var _iteratorNormalCompletion4 = true;
+              var _didIteratorError4 = false;
+              var _iteratorError4 = undefined;
+
+              try {
+                  for (var _iterator4 = this.yieldSites('reverse')[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
+                      var obj = _step4.value;
+
+                      if (obj === undefined) {
+                          continue;
+                      }
+                      if (attrName in obj) {
+                          return obj[attrName];
+                      }
+                  }
+              } catch (err) {
+                  _didIteratorError4 = true;
+                  _iteratorError4 = err;
+              } finally {
+                  try {
+                      if (!_iteratorNormalCompletion4 && _iterator4.return) {
+                          _iterator4.return();
+                      }
+                  } finally {
+                      if (_didIteratorError4) {
+                          throw _iteratorError4;
+                      }
+                  }
+              }
+
+              return undefined;
+          }
+      }, {
+          key: 'getObjByClass',
+          value: function getObjByClass(className, options) {
+              var params = {
+                  callerFirst: this,
+                  sortByCreationTime: false,
+                  priorityTarget: undefined,
+                  getElementMethod: 'getElementAtOrBefore',
+                  memo: {}
+              };
+              common.merge(params, options);
+              var memo = params.memo;
+              var post = void 0;
+              var objs = Array.from(this.yieldSites(params.sortByCreationTime, params.priorityTarget, true // excludeNone
+              ));
+              var classNameIsStr = typeof className === 'string';
+              var _iteratorNormalCompletion5 = true;
+              var _didIteratorError5 = false;
+              var _iteratorError5 = undefined;
+
+              try {
+                  for (var _iterator5 = objs[Symbol.iterator](), _step5; !(_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done); _iteratorNormalCompletion5 = true) {
+                      var obj = _step5.value;
+
+                      if (classNameIsStr) {
+                          if (obj.classes.includes(className)) {
+                              post = obj;
+                              break;
+                          }
+                      } else if (obj instanceof className) {
+                          post = obj;
+                          break;
+                      }
+                  }
+              } catch (err) {
+                  _didIteratorError5 = true;
+                  _iteratorError5 = err;
+              } finally {
+                  try {
+                      if (!_iteratorNormalCompletion5 && _iterator5.return) {
+                          _iterator5.return();
+                      }
+                  } finally {
+                      if (_didIteratorError5) {
+                          throw _iteratorError5;
+                      }
+                  }
+              }
+
+              if (post !== undefined) {
+                  return post;
+              }
+              var _iteratorNormalCompletion6 = true;
+              var _didIteratorError6 = false;
+              var _iteratorError6 = undefined;
+
+              try {
+                  for (var _iterator6 = objs[Symbol.iterator](), _step6; !(_iteratorNormalCompletion6 = (_step6 = _iterator6.next()).done); _iteratorNormalCompletion6 = true) {
+                      var _obj = _step6.value;
+
+                      // TODO: check inside object... perhaps should not be done in m21p
+                      var objId = sites.getId(_obj);
+                      if (!(objId in memo)) {
+                          memo[objId] = _obj;
+                      }
+                      post = _obj.getContextByClass(className, params);
+                      if (post !== undefined) {
+                          break;
+                      }
+                  }
+              } catch (err) {
+                  _didIteratorError6 = true;
+                  _iteratorError6 = err;
+              } finally {
+                  try {
+                      if (!_iteratorNormalCompletion6 && _iterator6.return) {
+                          _iterator6.return();
+                      }
+                  } finally {
+                      if (_didIteratorError6) {
+                          throw _iteratorError6;
+                      }
+                  }
+              }
+
+              return post;
+          }
+      }, {
+          key: 'length',
+          get: function get() {
+              return this.siteDict.length;
+          }
+      }]);
+      return Sites;
+  }();
+  sites.Sites = Sites;
+
+  /**
    * music21j -- Javascript reimplementation of Core music21p features.
    * music21/base -- objects in base in music21p routines
    *
@@ -1442,8 +1906,10 @@
   /**
    * module for Music21Objects, see {@link music21.base}
    *
+   * @requires music21/common
    * @requires music21/duration
    * @requires music21/prebase
+   * @requires music21/sites
    * @exports music21/base
    */
   /**
@@ -1467,7 +1933,7 @@
    * @property {Array} groups - An Array of strings representing group (equivalent to css classes) to assign to the object. (default [])
    * @property {boolean} isMusic21Object - true
    * @property {boolean} isStream - false
-   * @property {number|null} offset - offset from the beginning of the stream (in quarterLength)
+   * @property {number} offset - offset from the beginning of the stream (in quarterLength)
    * @property {number} priority - The priority (lower = earlier or more left) for elements at the same offset. (default 0)
    */
   var Music21Object = function (_prebase$ProtoM21Obje) {
@@ -1481,9 +1947,9 @@
           _this.classSortOrder = 20; // default;
 
           _this.activeSite = undefined;
-          _this.offset = null; // for now
+          _this.offset = 0; // for now
+          _this._naiveOffset = 0;
           // this._activeSite = undefined;
-          // this._naiveOffset = null;
           _this._activeSiteStoredOffset = undefined;
 
           // this._derivation = undefined;
@@ -1494,9 +1960,10 @@
 
           _this._priority = 0; // default;
 
-          // id
+          // this.id = sites.getId(this);
+          _this.groups = [];
           // groups
-          // this.sites = new sites.Sites();
+          _this.sites = new sites.Sites();
 
           _this.isMusic21Object = true;
           _this.isStream = false;
@@ -1528,15 +1995,351 @@
               var stringReturns = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
 
               if (site === undefined) {
-                  return this.offset;
+                  return this._naiveOffset;
               }
-              for (var i = 0; i < site.length; i++) {
-                  if (site._elements[i] === this) {
-                      return site._elementOffsets[i];
+              return site.elementOffset(this, stringReturns);
+          }
+
+          /**
+           * setOffsetBySite - sets the offset for a given Stream
+           *
+           * @memberof music21.base.Music21Object
+           * @param  {music21.stream.Stream} site  Stream object
+           * @param  {number} value offset
+           */
+
+      }, {
+          key: 'setOffsetBySite',
+          value: function setOffsetBySite(site, value) {
+              if (site !== undefined) {
+                  site.setElementOffset(this, value);
+              } else {
+                  this._naiveOffset = value;
+              }
+          }
+
+          // ---------- Contexts -------------
+
+      }, {
+          key: 'getContextByClass',
+          value: function getContextByClass(className, options) {
+              var payloadExtractor = function payloadExtractor(site, flatten, positionStart, getElementMethod, classList) {
+                  // this should all be done as a tree...
+                  var useSite = site;
+                  if (flatten === true) {
+                      useSite = site.flat;
+                  } else if (flatten === 'semiFlat') {
+                      useSite = site.semiFlat;
+                  }
+                  if (classList !== undefined) {
+                      useSite = useSite.getElementsByClass(classList);
+                  }
+                  // VERY HACKY...
+                  var lastElement = void 0;
+                  for (var i = 0; i < useSite.length; i++) {
+                      var indexOffset = useSite._elementOffsets[i];
+                      if (getElementMethod.includes('Before') && indexOffset >= positionStart) {
+                          if (getElementMethod.includes('At') && lastElement === undefined) {
+                              lastElement = useSite._elements[i];
+                              continue;
+                          } else {
+                              return lastElement;
+                          }
+                      } else {
+                          lastElement = useSite._elements[i];
+                      }
+                      if (getElementMethod.includes('After') && indexOffset > positionStart) {
+                          return useSite._elements[i];
+                      }
+                  }
+                  return undefined;
+              };
+
+              var params = {
+                  getElementMethod: 'getElementAtOrBefore',
+                  sortByCreationTime: false
+              };
+              common.merge(params, options);
+
+              var getElementMethod = params.getElementMethod;
+              var sortByCreationTime = params.sortByCreationTime;
+
+              if (className !== undefined && !(className instanceof Array)) {
+                  className = [className];
+              }
+              if (getElementMethod.includes('At') && this.isClassOrSubclass(className)) {
+                  return this;
+              }
+
+              var _iteratorNormalCompletion = true;
+              var _didIteratorError = false;
+              var _iteratorError = undefined;
+
+              try {
+                  for (var _iterator = this.contextSites({
+                      returnSortTuples: true,
+                      sortByCreationTime: sortByCreationTime
+                  })[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+                      var _step$value = slicedToArray(_step.value, 3),
+                          site = _step$value[0],
+                          positionStart = _step$value[1],
+                          searchType = _step$value[2];
+
+                      if (getElementMethod.includes('At') && site.isClassOrSubclass(className)) {
+                          return site;
+                      }
+
+                      if (searchType === 'elementsOnly' || searchType === 'elementsFirst') {
+                          var contextEl = payloadExtractor(site, false, positionStart, getElementMethod, className);
+                          if (contextEl !== undefined) {
+                              contextEl.activeSite = site;
+                              return contextEl;
+                          }
+                      } else if (searchType !== 'elementsOnly') {
+                          if (getElementMethod.includes('After') && (className === undefined || site.isClassOrSubclass(className))) {
+                              if (!getElementMethod.includes('NotSelf') && this !== site) {
+                                  return site;
+                              }
+                          }
+                          var _contextEl = payloadExtractor(site, 'semiFlat', positionStart, getElementMethod, className);
+                          if (_contextEl !== undefined) {
+                              _contextEl.activeSite = site;
+                              return _contextEl;
+                          }
+                          if (getElementMethod.includes('Before') && (className === undefined || site.isClassOrSubclass(className))) {
+                              if (!getElementMethod.includes('NotSelf') || this !== site) {
+                                  return site;
+                              }
+                          }
+                      }
+                  }
+              } catch (err) {
+                  _didIteratorError = true;
+                  _iteratorError = err;
+              } finally {
+                  try {
+                      if (!_iteratorNormalCompletion && _iterator.return) {
+                          _iterator.return();
+                      }
+                  } finally {
+                      if (_didIteratorError) {
+                          throw _iteratorError;
+                      }
                   }
               }
+
               return undefined;
           }
+      }, {
+          key: 'contextSites',
+          value: regeneratorRuntime.mark(function contextSites(options) {
+              var params, memo, recursionType, _iteratorNormalCompletion2, _didIteratorError2, _iteratorError2, _iterator2, _step2, siteObj, offsetInStream, newOffset, positionInStream, _recursionType, newParams, _iteratorNormalCompletion3, _didIteratorError3, _iteratorError3, _iterator3, _step3, _step3$value, topLevel, inStreamPos, recurType, inStreamOffset;
+
+              return regeneratorRuntime.wrap(function contextSites$(_context) {
+                  while (1) {
+                      switch (_context.prev = _context.next) {
+                          case 0:
+                              params = {
+                                  callerFirst: undefined,
+                                  memo: [],
+                                  offsetAppend: 0.0,
+                                  sortByCreationTime: false,
+                                  priorityTarget: undefined,
+                                  returnSortTuples: false,
+                                  followDerivation: true
+                              };
+
+                              common.merge(params, options);
+                              memo = params.memo;
+
+                              if (!(params.callerFirst === undefined)) {
+                                  _context.next = 10;
+                                  break;
+                              }
+
+                              params.callerFirst = this;
+
+                              if (!(this.isStream && !(this in memo))) {
+                                  _context.next = 9;
+                                  break;
+                              }
+
+                              recursionType = this.recursionType;
+                              _context.next = 9;
+                              return [this, 0.0, recursionType];
+
+                          case 9:
+                              memo.push(this);
+
+                          case 10:
+
+                              if (params.priorityTarget === undefined && !params.sortByCreationType) {
+                                  params.priorityTarget = this.activeSite;
+                              }
+                              // const topLevel = this;
+                              _iteratorNormalCompletion2 = true;
+                              _didIteratorError2 = false;
+                              _iteratorError2 = undefined;
+                              _context.prev = 14;
+                              _iterator2 = this.sites.yieldSites(params.sortByCreationTime, params.priorityTarget, true // excludeNone
+                              )[Symbol.iterator]();
+
+                          case 16:
+                              if (_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done) {
+                                  _context.next = 62;
+                                  break;
+                              }
+
+                              siteObj = _step2.value;
+
+                              if (!memo.includes(siteObj)) {
+                                  _context.next = 20;
+                                  break;
+                              }
+
+                              return _context.abrupt('continue', 59);
+
+                          case 20:
+                              if (!siteObj.classes.includes('SpannerStorage')) {
+                                  _context.next = 22;
+                                  break;
+                              }
+
+                              return _context.abrupt('continue', 59);
+
+                          case 22:
+
+                              // let offset = this.getOffsetBySite(siteObj);
+                              // followDerivation;
+                              offsetInStream = siteObj.elementOffset(this);
+                              newOffset = offsetInStream + params.offsetAppend;
+                              positionInStream = newOffset;
+                              _recursionType = siteObj.recursionType;
+                              _context.next = 28;
+                              return [siteObj, positionInStream, _recursionType];
+
+                          case 28:
+                              memo.push(siteObj);
+
+                              newParams = {
+                                  callerFirst: params.callerFirst,
+                                  memo: memo,
+                                  offsetAppend: positionInStream, // .offset
+                                  returnSortTuples: true, // always!
+                                  sortByCreationTime: params.sortByCreationTime
+                              };
+                              _iteratorNormalCompletion3 = true;
+                              _didIteratorError3 = false;
+                              _iteratorError3 = undefined;
+                              _context.prev = 33;
+                              _iterator3 = siteObj.contextSites(newParams)[Symbol.iterator]();
+
+                          case 35:
+                              if (_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done) {
+                                  _context.next = 45;
+                                  break;
+                              }
+
+                              _step3$value = slicedToArray(_step3.value, 3), topLevel = _step3$value[0], inStreamPos = _step3$value[1], recurType = _step3$value[2];
+                              inStreamOffset = inStreamPos; // .offset;
+                              // const hypotheticalPosition = inStreamOffset; // more complex w/ sortTuples
+
+                              if (memo.includes(topLevel)) {
+                                  _context.next = 42;
+                                  break;
+                              }
+
+                              _context.next = 41;
+                              return [topLevel, inStreamOffset, recurType];
+
+                          case 41:
+                              memo.push(topLevel);
+
+                          case 42:
+                              _iteratorNormalCompletion3 = true;
+                              _context.next = 35;
+                              break;
+
+                          case 45:
+                              _context.next = 51;
+                              break;
+
+                          case 47:
+                              _context.prev = 47;
+                              _context.t0 = _context['catch'](33);
+                              _didIteratorError3 = true;
+                              _iteratorError3 = _context.t0;
+
+                          case 51:
+                              _context.prev = 51;
+                              _context.prev = 52;
+
+                              if (!_iteratorNormalCompletion3 && _iterator3.return) {
+                                  _iterator3.return();
+                              }
+
+                          case 54:
+                              _context.prev = 54;
+
+                              if (!_didIteratorError3) {
+                                  _context.next = 57;
+                                  break;
+                              }
+
+                              throw _iteratorError3;
+
+                          case 57:
+                              return _context.finish(54);
+
+                          case 58:
+                              return _context.finish(51);
+
+                          case 59:
+                              _iteratorNormalCompletion2 = true;
+                              _context.next = 16;
+                              break;
+
+                          case 62:
+                              _context.next = 68;
+                              break;
+
+                          case 64:
+                              _context.prev = 64;
+                              _context.t1 = _context['catch'](14);
+                              _didIteratorError2 = true;
+                              _iteratorError2 = _context.t1;
+
+                          case 68:
+                              _context.prev = 68;
+                              _context.prev = 69;
+
+                              if (!_iteratorNormalCompletion2 && _iterator2.return) {
+                                  _iterator2.return();
+                              }
+
+                          case 71:
+                              _context.prev = 71;
+
+                              if (!_didIteratorError2) {
+                                  _context.next = 74;
+                                  break;
+                              }
+
+                              throw _iteratorError2;
+
+                          case 74:
+                              return _context.finish(71);
+
+                          case 75:
+                              return _context.finish(68);
+
+                          case 76:
+                          case 'end':
+                              return _context.stop();
+                      }
+                  }
+              }, contextSites, this, [[14, 64, 68, 76], [33, 47, 51, 59], [52,, 54, 58], [69,, 71, 75]]);
+          })
       }, {
           key: 'priority',
           get: function get() {
@@ -11824,6 +12627,19 @@
    */
   var stream = {};
 
+  var StreamException$1 = function (_Music21Exception) {
+      inherits(StreamException, _Music21Exception);
+
+      function StreamException() {
+          classCallCheck(this, StreamException);
+          return possibleConstructorReturn(this, (StreamException.__proto__ || Object.getPrototypeOf(StreamException)).apply(this, arguments));
+      }
+
+      return StreamException;
+  }(Music21Exception);
+
+  stream.StreamException = StreamException$1;
+
   /**
    * A generic Stream class -- a holder for other music21 objects
    * Will be subclassed into {@link music21.stream.Score},
@@ -11861,30 +12677,35 @@
       function Stream() {
           classCallCheck(this, Stream);
 
-          var _this = possibleConstructorReturn(this, (Stream.__proto__ || Object.getPrototypeOf(Stream)).call(this));
+          // class variables;
+          var _this2 = possibleConstructorReturn(this, (Stream.__proto__ || Object.getPrototypeOf(Stream)).call(this));
 
-          _this.isStream = true;
-          _this._duration = undefined;
+          _this2.isStream = true;
+          _this2.isMeasure = false;
+          _this2.classSortOrder = -20;
+          _this2.recursionType = 'elementsFirst';
 
-          _this._elements = [];
-          _this._elementOffsets = [];
-          _this._clef = undefined;
-          _this.displayClef = undefined;
+          _this2._duration = undefined;
 
-          _this._keySignature = undefined; // a music21.key.KeySignature object
-          _this._timeSignature = undefined; // a music21.meter.TimeSignature object
-          _this._instrument = undefined;
+          _this2._elements = [];
+          _this2._elementOffsets = [];
+          _this2._clef = undefined;
+          _this2.displayClef = undefined;
 
-          _this._autoBeam = undefined;
-          _this.activeVFStave = undefined;
-          _this.renderOptions = new renderOptions.RenderOptions();
-          _this._tempo = undefined;
+          _this2._keySignature = undefined; // a music21.key.KeySignature object
+          _this2._timeSignature = undefined; // a music21.meter.TimeSignature object
+          _this2._instrument = undefined;
 
-          _this.staffLines = 5;
+          _this2._autoBeam = undefined;
+          _this2.activeVFStave = undefined;
+          _this2.renderOptions = new renderOptions.RenderOptions();
+          _this2._tempo = undefined;
 
-          _this._stopPlaying = false;
-          _this._allowMultipleSimultaneousPlays = true; // not implemented yet.
-          _this.changedCallbackFunction = undefined; // for editable canvases
+          _this2.staffLines = 5;
+
+          _this2._stopPlaying = false;
+          _this2._allowMultipleSimultaneousPlays = true; // not implemented yet.
+          _this2.changedCallbackFunction = undefined; // for editable canvases
           /**
            * A function bound to the current stream that
            * will changes the stream. Used in editableAccidentalCanvas, among other places.
@@ -11896,13 +12717,13 @@
            * @param {Event} e
            * @returns {music21.base.Music21Object|undefined} - returns whatever changedCallbackFunction does.
            */
-          _this.canvasChangerFunction = function (e) {
+          _this2.canvasChangerFunction = function (e) {
               var canvasElement = e.currentTarget;
 
-              var _this$findNoteForClic = _this.findNoteForClick(canvasElement, e),
-                  _this$findNoteForClic2 = slicedToArray(_this$findNoteForClic, 2),
-                  clickedDiatonicNoteNum = _this$findNoteForClic2[0],
-                  foundNote = _this$findNoteForClic2[1];
+              var _this2$findNoteForCli = _this2.findNoteForClick(canvasElement, e),
+                  _this2$findNoteForCli2 = slicedToArray(_this2$findNoteForCli, 2),
+                  clickedDiatonicNoteNum = _this2$findNoteForCli2[0],
+                  foundNote = _this2$findNoteForCli2[1];
 
               if (foundNote === undefined) {
                   if (debug) {
@@ -11910,12 +12731,42 @@
                   }
                   return undefined;
               }
-              return _this.noteChanged(clickedDiatonicNoteNum, foundNote, canvasElement);
+              return _this2.noteChanged(clickedDiatonicNoteNum, foundNote, canvasElement);
           };
-          return _this;
+          return _this2;
       }
 
       createClass(Stream, [{
+          key: '_getFlatOrSemiFlat',
+          value: function _getFlatOrSemiFlat(retainContainers) {
+              if (!this.hasSubStreams()) {
+                  return this;
+              }
+              var tempEls = [];
+              for (var i = 0; i < this.length; i++) {
+                  var el = this.get(i);
+                  // console.log(i, this.length);
+                  if (el.isStream) {
+                      if (retainContainers) {
+                          tempEls.push(el);
+                      }
+                      var offsetShift = el.offset;
+                      // console.log('offsetShift', offsetShift, el.classes[el.classes.length -1]);
+                      var elFlat = el._getFlatOrSemiFlat(retainContainers);
+                      for (var j = 0; j < elFlat.length; j++) {
+                          // offset should NOT be null because already in Stream
+                          elFlat.get(j).offset += offsetShift;
+                      }
+                      tempEls.push.apply(tempEls, toConsumableArray(elFlat._elements));
+                  } else {
+                      tempEls.push(el);
+                  }
+              }
+              var newSt = this.clone(false);
+              newSt.elements = tempEls;
+              return newSt;
+          }
+      }, {
           key: 'clone',
 
 
@@ -11985,6 +12836,7 @@
                   this._elementOffsets.push(elOffset);
                   this._elements.push(el);
                   el.offset = elOffset;
+                  el.sites.add(this);
                   el.activeSite = this; // would prefer weakref, but does not exist in JS.
               } catch (err) {
                   console.error('Cannot append element ', el, ' to stream ', this, ' : ', err);
@@ -12025,6 +12877,7 @@
                   this._elementOffsets.push(offset);
                   this._elements.push(el);
                   el.offset = offset;
+                  el.sites.add(this);
                   el.activeSite = this; // would prefer weakref, but does not exist in JS.
               } catch (err) {
                   console.error('Cannot insert element ', el, ' to stream ', this, ' : ', err);
@@ -12083,6 +12936,36 @@
                   return el;
               }
           }
+      }, {
+          key: 'setElementOffset',
+          value: function setElementOffset(el, value) {
+              var addElement = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+
+              for (var i = 0; i < this.length; i++) {
+                  if (this._elements[i] === el) {
+                      this._elementOffsets[i] = value;
+                      return;
+                  }
+              }
+              if (!addElement) {
+                  throw new StreamException$1('Cannot set the offset for elemenet ' + el.toString() + ', not in Stream');
+              } else {
+                  this.insert(value, el);
+              }
+          }
+      }, {
+          key: 'elementOffset',
+          value: function elementOffset(element) {
+              var stringReturns = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+
+              for (var i = 0; i < this.length; i++) {
+                  if (this._elements[i] === element) {
+                      return this._elementOffsets[i];
+                  }
+              }
+              throw new StreamException$1('An entry for this object ' + element.toString() + ' is not stored in this Stream.');
+          }
+
           /*  --- ############# END ELEMENT FUNCTIONS ########## --- */
 
           /**
@@ -12841,7 +13724,7 @@
       }, {
           key: 'renderScrollableCanvas',
           value: function renderScrollableCanvas(where) {
-              var _this2 = this;
+              var _this3 = this;
 
               var $where = where;
               if (where === undefined) {
@@ -12852,7 +13735,7 @@
               var $innerDiv = $$1('<div>').css('position', 'absolute');
               var c = this.appendNewCanvas($innerDiv);
               this.renderOptions.events.click = function (event) {
-                  return _this2.scrollScoreStart(c, event);
+                  return _this3.scrollScoreStart(c, event);
               };
               this.setRenderInteraction($innerDiv);
               $where.append($innerDiv);
@@ -13228,7 +14111,7 @@
       }, {
           key: 'getAccidentalToolbar',
           value: function getAccidentalToolbar(minAccidental, maxAccidental, $siblingCanvas) {
-              var _this3 = this;
+              var _this4 = this;
 
               if (minAccidental === undefined) {
                   minAccidental = -1;
@@ -13255,13 +14138,13 @@
                           return;
                       }
                   }
-                  if (_this3.activeNote !== undefined) {
-                      var n = _this3.activeNote;
+                  if (_this4.activeNote !== undefined) {
+                      var n = _this4.activeNote;
                       n.pitch.accidental = new pitch.Accidental(newAlter);
                       /* console.log(n.pitch.name); */
-                      _this3.redrawCanvas($useCanvas[0]);
-                      if (_this3.changedCallbackFunction !== undefined) {
-                          _this3.changedCallbackFunction({ canvas: $useCanvas[0] });
+                      _this4.redrawCanvas($useCanvas[0]);
+                      if (_this4.changedCallbackFunction !== undefined) {
+                          _this4.changedCallbackFunction({ canvas: $useCanvas[0] });
                       }
                   }
               };
@@ -13292,17 +14175,17 @@
       }, {
           key: 'getPlayToolbar',
           value: function getPlayToolbar() {
-              var _this4 = this;
+              var _this5 = this;
 
               var $buttonDiv = $$1('<div/>').attr('class', 'playToolbar scoreToolbar');
               var $bPlay = $$1('<button>&#9658</button>');
               $bPlay.click(function () {
-                  _this4.playStream();
+                  _this5.playStream();
               });
               $buttonDiv.append($bPlay);
               var $bStop = $$1('<button>&#9724</button>');
               $bStop.click(function () {
-                  _this4.stopPlayStream();
+                  _this5.stopPlayStream();
               });
               $buttonDiv.append($bStop);
               return $buttonDiv;
@@ -13404,32 +14287,14 @@
               return highestTime;
           }
       }, {
+          key: 'semiFlat',
+          get: function get() {
+              return this._getFlatOrSemiFlat(true);
+          }
+      }, {
           key: 'flat',
           get: function get() {
-              if (this.hasSubStreams()) {
-                  var tempEls = [];
-                  for (var i = 0; i < this.length; i++) {
-                      var el = this.get(i);
-                      // console.log(i, this.length);
-                      if (el.elements !== undefined) {
-                          var offsetShift = el.offset;
-                          // console.log('offsetShift', offsetShift, el.classes[el.classes.length -1]);
-                          var elFlat = el.flat;
-                          for (var j = 0; j < elFlat.length; j++) {
-                              // offset should NOT be null because already in Stream
-                              elFlat.get(j).offset += offsetShift;
-                          }
-                          tempEls.push.apply(tempEls, toConsumableArray(elFlat._elements));
-                      } else {
-                          tempEls.push(el);
-                      }
-                  }
-                  var newSt = this.clone(false);
-                  newSt.elements = tempEls;
-                  return newSt;
-              } else {
-                  return this;
-              }
+              return this._getFlatOrSemiFlat(false);
           }
       }, {
           key: 'notes',
@@ -13611,10 +14476,10 @@
       function Voice() {
           classCallCheck(this, Voice);
 
-          var _this5 = possibleConstructorReturn(this, (Voice.__proto__ || Object.getPrototypeOf(Voice)).call(this));
+          var _this6 = possibleConstructorReturn(this, (Voice.__proto__ || Object.getPrototypeOf(Voice)).call(this));
 
-          _this5._not_a_useless_constructor = undefined;
-          return _this5;
+          _this6.recursionType = 'elementsFirst';
+          return _this6;
       }
 
       return Voice;
@@ -13632,10 +14497,12 @@
       function Measure() {
           classCallCheck(this, Measure);
 
-          var _this6 = possibleConstructorReturn(this, (Measure.__proto__ || Object.getPrototypeOf(Measure)).call(this));
+          var _this7 = possibleConstructorReturn(this, (Measure.__proto__ || Object.getPrototypeOf(Measure)).call(this));
 
-          _this6.number = 0; // measure number
-          return _this6;
+          _this7.recursionType = 'elementsFirst';
+          _this7.isMeasure = true;
+          _this7.number = 0; // measure number
+          return _this7;
       }
 
       return Measure;
@@ -13655,10 +14522,11 @@
       function Part() {
           classCallCheck(this, Part);
 
-          var _this7 = possibleConstructorReturn(this, (Part.__proto__ || Object.getPrototypeOf(Part)).call(this));
+          var _this8 = possibleConstructorReturn(this, (Part.__proto__ || Object.getPrototypeOf(Part)).call(this));
 
-          _this7.systemHeight = _this7.renderOptions.naiveHeight;
-          return _this7;
+          _this8.recursionType = 'flatten';
+          _this8.systemHeight = _this8.renderOptions.naiveHeight;
+          return _this8;
       }
 
       /**
@@ -14036,11 +14904,12 @@
       function Score() {
           classCallCheck(this, Score);
 
-          var _this8 = possibleConstructorReturn(this, (Score.__proto__ || Object.getPrototypeOf(Score)).call(this));
+          var _this9 = possibleConstructorReturn(this, (Score.__proto__ || Object.getPrototypeOf(Score)).call(this));
 
-          _this8.measureWidths = [];
-          _this8.partSpacing = _this8.renderOptions.naiveHeight;
-          return _this8;
+          _this9.recursionType = 'elementsOnly';
+          _this9.measureWidths = [];
+          _this9.partSpacing = _this9.renderOptions.naiveHeight;
+          return _this9;
       }
 
       createClass(Score, [{
