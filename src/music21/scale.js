@@ -89,7 +89,7 @@ export class AbstractScale extends Scale {
 
         const pLast = pitchList[pitchList.length - 1];
         if (pLast.name === pitchList[0]) {
-            const p = pitchList[0].clone(true);
+            const p = pitchList[0].clone();
             if (pLast.ps > pitchList[0]) {
                 // ascending;
                 while (p.ps < pLast.ps) {
@@ -135,7 +135,7 @@ export class AbstractScale extends Scale {
         if (typeof pitchObj === 'string') {
             pitchObj = new pitch.Pitch(pitchObj);
         } else {
-            pitchObj = pitchObj.clone(true);
+            pitchObj = pitchObj.clone();
         }
         const post = [pitchObj];
         for (const intV of this._net) {

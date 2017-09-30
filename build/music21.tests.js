@@ -1034,14 +1034,14 @@
 
           var _this = possibleConstructorReturn(this, (Duration.__proto__ || Object.getPrototypeOf(Duration)).call(this));
 
-          _this._quarterLength = 1.0;
+          _this._quarterLength = 0.0;
           _this._dots = 0;
           _this._durationNumber = undefined;
-          _this._type = 'quarter';
+          _this._type = 'zero';
           _this._tuplets = [];
           if (typeof ql === 'string') {
               _this.type = ql;
-          } else {
+          } else if (ql !== undefined) {
               _this.quarterLength = ql;
           }
           _this._cloneCallbacks._tuplets = _this.cloneCallbacksTupletFunction;
@@ -1115,6 +1115,12 @@
           key: 'updateFeaturesFromQl',
           value: function updateFeaturesFromQl() {
               var ql = this._quarterLength;
+              this._tuplets = [];
+              if (ql === 0) {
+                  this._type = 'zero';
+                  this._dots = 0;
+                  return;
+              }
               var powerOfTwo = Math.floor(Math.log(ql + 0.00001) / Math.log(2));
               var typeNumber = duration.quarterTypeIndex - powerOfTwo;
               this._type = duration.ordinalTypeFromNum[typeNumber];
@@ -1138,6 +1144,7 @@
                   }
                   // console.log(ratioRat, ql, unTupletedQl);
               }
+              return;
           }
           /**
            * Add a tuplet to music21j
@@ -1516,7 +1523,7 @@
               try {
                   for (var _iterator = this.siteDict[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
                       var _step$value = slicedToArray(_step.value, 2),
-                          unused_index = _step$value[0],
+                          unused_key = _step$value[0],
                           siteRef = _step$value[1];
 
                       if (siteRef.site === checkSite) {
@@ -2027,33 +2034,42 @@
       }, {
           key: 'getContextByClass',
           value: function getContextByClass(className, options) {
-              var payloadExtractor = function payloadExtractor(site, flatten, positionStart, getElementMethod, classList) {
+              var payloadExtractor = function payloadExtractor(useSite, flatten, positionStart, getElementMethod, classList) {
                   // this should all be done as a tree...
-                  var useSite = site;
-                  if (flatten === true) {
-                      useSite = site.flat;
-                  } else if (flatten === 'semiFlat') {
-                      useSite = site.semiFlat;
-                  }
-                  if (classList !== undefined) {
-                      useSite = useSite.getElementsByClass(classList);
-                  }
+                  // do not use .flat or .semiFlat so as not
+                  // to create new sites.
+
                   // VERY HACKY...
                   var lastElement = void 0;
                   for (var i = 0; i < useSite.length; i++) {
                       var indexOffset = useSite._elementOffsets[i];
+                      var thisElement = useSite._elements[i];
+                      var matchClass = thisElement.isClassOrSubclass(classList);
+                      if (flatten === false && !matchClass) {
+                          continue;
+                      } else if (!thisElement.isStream && !matchClass) {
+                          continue;
+                      }
+                      // is a stream or an element of the appropriate class...
+                      // first check normal elements
                       if (getElementMethod.includes('Before') && indexOffset >= positionStart) {
                           if (getElementMethod.includes('At') && lastElement === undefined) {
-                              lastElement = useSite._elements[i];
-                              continue;
-                          } else {
+                              lastElement = thisElement;
+                          } else if (matchClass) {
                               return lastElement;
                           }
                       } else {
-                          lastElement = useSite._elements[i];
+                          lastElement = thisElement;
                       }
-                      if (getElementMethod.includes('After') && indexOffset > positionStart) {
-                          return useSite._elements[i];
+                      if (getElementMethod.includes('After') && indexOffset > positionStart && matchClass) {
+                          return thisElement;
+                      }
+                      // now cleck stream... already filtered out flatten == false;
+                      if (thisElement.isStream) {
+                          var potentialElement = payloadExtractor(thisElement, flatten, positionStart + indexOffset, getElementMethod, classList);
+                          if (potentialElement !== undefined) {
+                              return potentialElement;
+                          }
                       }
                   }
                   return undefined;
@@ -5085,6 +5101,8 @@
           _this2.isChord = false;
           if (ql !== undefined) {
               _this2.duration.quarterLength = ql;
+          } else {
+              _this2.duration.quarterLength = 1.0;
           }
           _this2.volume = 60;
           _this2.activeVexflowNote = undefined;
@@ -7471,7 +7489,7 @@
 
               var pLast = pitchList[pitchList.length - 1];
               if (pLast.name === pitchList[0]) {
-                  var p = pitchList[0].clone(true);
+                  var p = pitchList[0].clone();
                   if (pLast.ps > pitchList[0]) {
                       // ascending;
                       while (p.ps < pLast.ps) {
@@ -7509,7 +7527,7 @@
               if (typeof pitchObj === 'string') {
                   pitchObj = new pitch.Pitch(pitchObj);
               } else {
-                  pitchObj = pitchObj.clone(true);
+                  pitchObj = pitchObj.clone();
               }
               var post = [pitchObj];
               var _iteratorNormalCompletion2 = true;
@@ -12775,7 +12793,9 @@
 
 
           /* override protoM21Object.clone() */
-          value: function clone(deep) {
+          value: function clone() {
+              var deep = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
+
               var ret = Object.create(this.constructor.prototype);
               for (var key in this) {
                   if ({}.hasOwnProperty.call(this, key) === false) {
@@ -12967,7 +12987,7 @@
                       return this._elementOffsets[i];
                   }
               }
-              throw new StreamException$1('An entry for this object ' + element.toString() + ' is not stored in this Stream.');
+              throw new StreamException$1('An entry for this object is not stored in this Stream.');
           }
 
           /*  --- ############# END ELEMENT FUNCTIONS ########## --- */
@@ -19085,6 +19105,52 @@
   }
 
   function tests$1() {
+      QUnit.test('music21.base.Music21Object', function (assert) {
+          var m21o = new music21.base.Music21Object();
+          assert.equal(m21o.classSortOrder, 20);
+          assert.ok(m21o.duration instanceof music21.duration.Duration);
+          assert.deepEqual(m21o.classes, ['Music21Object', 'ProtoM21Object', 'object']);
+          assert.ok(m21o.sites instanceof music21.sites.Sites);
+          assert.ok(m21o.isMusic21Object);
+          assert.notOk(m21o.isStream);
+          assert.equal(m21o.priority, 0, 'priority is 0');
+          assert.equal(m21o.quarterLength, 0.0, 'default duration is 0.0');
+          m21o.quarterLength = 2.0;
+          assert.equal(m21o.quarterLength, 2.0);
+          var st = new music21.stream.Measure();
+          st.insert(3.0, m21o);
+          assert.equal(m21o.offset, 3.0);
+          assert.equal(m21o.getOffsetBySite(st), 3.0);
+          var st2 = new music21.stream.Measure();
+          st2.insert(5.0, m21o);
+          assert.equal(m21o.offset, 5.0);
+          assert.strictEqual(m21o.activeSite, st2);
+          assert.equal(m21o.getOffsetBySite(st), 3.0);
+          assert.equal(m21o.getOffsetBySite(st2), 5.0);
+          m21o.setOffsetBySite(st2, 5.5);
+          assert.equal(m21o.getOffsetBySite(st2), 5.5);
+      });
+      QUnit.test('music21.base.Music21Object Contexts', function (assert) {
+          var m21o = new music21.base.Music21Object();
+          var m = new music21.stream.Measure();
+          var p = new music21.stream.Part();
+          var sc = new music21.stream.Score();
+          m.insert(3.0, m21o);
+          p.insert(1.0, m);
+          sc.insert(0.0, p);
+          assert.strictEqual(m21o.getContextByClass('Measure'), m, 'get context by class Measure');
+          assert.strictEqual(m21o.getContextByClass('Part'), p, 'get context by class Part');
+          assert.strictEqual(m21o.getContextByClass('Score'), sc, 'get context by class Score');
+
+          var contextS = Array.from(m21o.contextSites());
+          assert.equal(contextS.length, 3);
+          assert.deepEqual(contextS[0], [m, 3, 'elementsFirst'], 'first site is m');
+          assert.deepEqual(contextS[1], [p, 4, 'flatten'], 'second site is p');
+          assert.deepEqual(contextS[2], [sc, 4.0, 'elementsOnly'], 'third site is sc');
+      });
+  }
+
+  function tests$2() {
       QUnit.test('music21.beam.Beams', function (assert) {
           var a = new music21.beam.Beams();
           a.fill('16th');
@@ -19105,7 +19171,7 @@
       });
   }
 
-  function tests$2() {
+  function tests$3() {
       QUnit.test('music21.chord.Chord', function (assert) {
           var c = new music21.chord.Chord(['C5', 'E5', 'G5']);
 
@@ -19124,7 +19190,7 @@
       });
   }
 
-  function tests$3() {
+  function tests$4() {
       QUnit.test('music21.clef.Clef', function (assert) {
           var c1 = new music21.clef.Clef();
           assert.equal(c1.isClassOrSubclass('Clef'), true, 'clef is a Clef');
@@ -19158,7 +19224,7 @@
 
   var common$1 = music21.common;
 
-  function tests$4() {
+  function tests$5() {
       QUnit.test('music21.common.posMod', function (assert) {
           assert.equal(common$1.posMod(8, 7), 1, 'positive posMod passed');
           assert.equal(common$1.posMod(-1, 7), 6, 'negative posMod passed');
@@ -19182,7 +19248,14 @@
       });
   }
 
-  function tests$5() {
+  function tests$6() {
+      QUnit.test('music21.duration.Duration 0', function (assert) {
+          var d = new music21.duration.Duration(0.0);
+          assert.equal(d.type, 'zero', 'got zero');
+          assert.equal(d.dots, 0, 'got no dots');
+          assert.equal(d.quarterLength, 0.0, 'got 0.0');
+      });
+
       QUnit.test('music21.duration.Duration', function (assert) {
           var d = new music21.duration.Duration(1.0);
           assert.equal(d.type, 'quarter', 'got quarter note from 1.0');
@@ -19301,7 +19374,7 @@
       });
   }
 
-  function tests$6() {
+  function tests$7() {
       QUnit.test('music21.dynamics.Dynamic', function (assert) {
           var dynamic = new music21.dynamics.Dynamic('pp');
           assert.equal(dynamic.value, 'pp', 'matching dynamic');
@@ -19330,7 +19403,7 @@
 
   var figuredBass$1 = music21.figuredBass;
 
-  function tests$7() {
+  function tests$8() {
       QUnit.test('music21.figuredBass.Notation', function (assert) {
           var n1 = new figuredBass$1.Notation('4+,2');
           assert.equal(n1.notationColumn, '4+,2');
@@ -19340,7 +19413,7 @@
   var interval$1 = music21.interval;
   var Interval$1 = music21.interval.Interval;
 
-  function tests$8() {
+  function tests$9() {
       QUnit.test('music21.interval.intervalFromGenericAndChromatic', function (assert) {
           var i = void 0;
           i = interval$1.intervalFromGenericAndChromatic(2, 2);
@@ -19354,7 +19427,7 @@
       });
   }
 
-  function tests$9() {
+  function tests$10() {
       QUnit.test('music21.key.convertKeyStringToMusic21KeyString', function (assert) {
           var conv = music21.key.convertKeyStringToMusic21KeyString;
           assert.equal(conv('A'), 'A', 'normal string passed');
@@ -19399,7 +19472,7 @@
       });
   }
 
-  function tests$10() {
+  function tests$11() {
       QUnit.test('music21.note.Note', function (assert) {
           var n = new music21.note.Note('D#5');
 
@@ -19409,7 +19482,7 @@
       });
   }
 
-  function tests$11() {
+  function tests$12() {
       QUnit.test('music21.pitch.Accidental', function (assert) {
           var a = new music21.pitch.Accidental('-');
           assert.equal(a.alter, -1.0, 'flat alter passed');
@@ -19431,7 +19504,23 @@
       });
   }
 
-  function tests$12() {
+  function tests$13() {
+      QUnit.test('music21.prebase.ProtoM21Object classes', function (assert) {
+          var n = new music21.note.Note();
+          assert.deepEqual(n.classes, ['Note', 'NotRest', 'GeneralNote', 'Music21Object', 'ProtoM21Object', 'object']);
+          assert.ok(n.isClassOrSubclass('Note'));
+          assert.ok(n.isClassOrSubclass('GeneralNote'));
+          assert.notOk(n.isClassOrSubclass('Rest'));
+      });
+      QUnit.test('clone', function (assert) {
+          var n = new music21.note.Note('D4');
+          var n2 = n.clone();
+          n.pitch.octave = 5;
+          assert.equal(n2.pitch.octave, 4);
+      });
+  }
+
+  function tests$14() {
       QUnit.test('music21.roman.expandShortHand', function (assert) {
           var outGroups = void 0;
           outGroups = music21.roman.expandShortHand('64');
@@ -19582,7 +19671,7 @@
       });
   }
 
-  function tests$13() {
+  function tests$15() {
       QUnit.test('music21.scale.Scale', function (assert) {
           var sc = new music21.scale.Scale();
           assert.ok(sc.classes.includes('Scale'));
@@ -19616,7 +19705,7 @@
       });
   }
 
-  function tests$14() {
+  function tests$16() {
       QUnit.test('music21.sites.SiteRef', function (assert) {
           var sr = new music21.sites.SiteRef();
           assert.ok(!sr.isDead);
@@ -19632,7 +19721,7 @@
           var s = new music21.sites.Sites();
           assert.equal(s.length, 1, 'empty sites has length 1');
           var st = new music21.stream.Measure();
-          st.number = 1;
+          st.number = 12;
           s.add(st);
           assert.equal(s.length, 2, 'should have two sites now');
           assert.ok(s.includes(st));
@@ -19642,16 +19731,24 @@
           var af = void 0;
           af = Array.from(s.yieldSites(false, st));
           assert.equal(af.length, 2);
-          assert.equal(af[0], st);
+          assert.strictEqual(af[0], st);
           af = Array.from(s.yieldSites(false, st, true));
           assert.equal(af.length, 1);
-          assert.equal(af[0], st);
+          assert.strictEqual(af[0], st);
+
+          var mNum = s.getAttrByName('number');
+          assert.equal(mNum, 12, 'measure number should be 12');
+
+          assert.strictEqual(s.getObjByClass('Measure'), st);
+          assert.strictEqual(s.getObjByClass('Stream'), st);
+          assert.notOk(s.getObjByClass('Score'));
+
           s.clear();
           assert.equal(s.length, 1);
       });
   }
 
-  function tests$15() {
+  function tests$17() {
       QUnit.test('music21.stream.Stream', function (assert) {
           var s = new music21.stream.Stream();
           s.append(new music21.note.Note('C#5'));
@@ -19811,14 +19908,14 @@
       });
   }
 
-  function tests$16() {
+  function tests$18() {
       QUnit.test('music21.tie.Tie', function (assert) {
           var t = new music21.tie.Tie('start');
           assert.equal(t.type, 'start', 'Tie type is start');
       });
   }
 
-  function tests$17() {
+  function tests$19() {
       QUnit.test('music21.voiceLeading.VoiceLeadingQuartet', function (assert) {
           var VLQ = music21.voiceLeading.VoiceLeadingQuartet;
           var sc = new VLQ();
@@ -19908,23 +20005,25 @@
 
   var allTests = {
       articulations: tests,
-      beam: tests$1,
-      chord: tests$2,
-      clef: tests$3,
-      common: tests$4,
-      duration: tests$5,
-      dynamics: tests$6,
-      figuredBass: tests$7,
-      interval: tests$8,
-      key: tests$9,
-      note: tests$10,
-      pitch: tests$11,
-      roman: tests$12,
-      scale: tests$13,
-      sites: tests$14,
-      stream: tests$15,
-      tie: tests$16,
-      voiceLeading: tests$17
+      base: tests$1,
+      beam: tests$2,
+      chord: tests$3,
+      clef: tests$4,
+      common: tests$5,
+      duration: tests$6,
+      dynamics: tests$7,
+      figuredBass: tests$8,
+      interval: tests$9,
+      key: tests$10,
+      note: tests$11,
+      pitch: tests$12,
+      prebase: tests$13,
+      roman: tests$14,
+      scale: tests$15,
+      sites: tests$16,
+      stream: tests$17,
+      tie: tests$18,
+      voiceLeading: tests$19
   };
   if ((typeof window === 'undefined' ? 'undefined' : _typeof(window)) !== undefined) {
       window.allTests = allTests;

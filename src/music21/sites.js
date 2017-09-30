@@ -65,7 +65,7 @@ export class Sites {
         return this.siteDict.size;
     }
     includes(checkSite) {
-        for (const [unused_index, siteRef] of this.siteDict) {
+        for (const [unused_key, siteRef] of this.siteDict) {
             if (siteRef.site === checkSite) {
                 return true;
             }

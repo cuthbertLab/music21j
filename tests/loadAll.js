@@ -1,4 +1,5 @@
 import articulations from './moduleTests/articulations.js';
+import base from './moduleTests/base.js';
 import beam from './moduleTests/beam.js';
 import chord from './moduleTests/chord.js';
 import clef from './moduleTests/clef.js';
@@ -10,6 +11,7 @@ import interval from './moduleTests/interval.js';
 import key from './moduleTests/key.js';
 import note from './moduleTests/note.js';
 import pitch from './moduleTests/pitch.js';
+import prebase from './moduleTests/prebase.js';
 import roman from './moduleTests/roman.js';
 import scale from './moduleTests/scale.js';
 import sites from './moduleTests/sites.js';
@@ -19,6 +21,7 @@ import voiceLeading from './moduleTests/voiceLeading.js';
 
 const allTests = {
     articulations,
+    base,
     beam,
     chord,
     clef,
@@ -30,6 +33,7 @@ const allTests = {
     key,
     note,
     pitch,
+    prebase,
     roman,
     scale,
     sites,

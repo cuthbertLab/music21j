@@ -353,7 +353,7 @@ export class Stream extends base.Music21Object {
     }
 
     /* override protoM21Object.clone() */
-    clone(deep) {
+    clone(deep = true) {
         const ret = Object.create(this.constructor.prototype);
         for (const key in this) {
             if ({}.hasOwnProperty.call(this, key) === false) {
@@ -571,9 +571,7 @@ export class Stream extends base.Music21Object {
             }
         }
         throw new StreamException(
-            'An entry for this object '
-                + element.toString()
-                + ' is not stored in this Stream.'
+            'An entry for this object is not stored in this Stream.'
         );
     }
 

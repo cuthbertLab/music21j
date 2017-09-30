@@ -21,7 +21,7 @@ export default function tests() {
         const s = new music21.sites.Sites();
         assert.equal(s.length, 1, 'empty sites has length 1');
         const st = new music21.stream.Measure();
-        st.number = 1;
+        st.number = 12;
         s.add(st);
         assert.equal(s.length, 2, 'should have two sites now');
         assert.ok(s.includes(st));
@@ -31,10 +31,18 @@ export default function tests() {
         let af;
         af = Array.from(s.yieldSites(false, st));
         assert.equal(af.length, 2);
-        assert.equal(af[0], st);
+        assert.strictEqual(af[0], st);
         af = Array.from(s.yieldSites(false, st, true));
         assert.equal(af.length, 1);
-        assert.equal(af[0], st);
+        assert.strictEqual(af[0], st);
+
+        const mNum = s.getAttrByName('number');
+        assert.equal(mNum, 12, 'measure number should be 12');
+
+        assert.strictEqual(s.getObjByClass('Measure'), st);
+        assert.strictEqual(s.getObjByClass('Stream'), st);
+        assert.notOk(s.getObjByClass('Score'));
+
         s.clear();
         assert.equal(s.length, 1);
     });

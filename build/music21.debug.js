@@ -1034,14 +1034,14 @@
 
           var _this = possibleConstructorReturn(this, (Duration.__proto__ || Object.getPrototypeOf(Duration)).call(this));
 
-          _this._quarterLength = 1.0;
+          _this._quarterLength = 0.0;
           _this._dots = 0;
           _this._durationNumber = undefined;
-          _this._type = 'quarter';
+          _this._type = 'zero';
           _this._tuplets = [];
           if (typeof ql === 'string') {
               _this.type = ql;
-          } else {
+          } else if (ql !== undefined) {
               _this.quarterLength = ql;
           }
           _this._cloneCallbacks._tuplets = _this.cloneCallbacksTupletFunction;
@@ -1115,6 +1115,12 @@
           key: 'updateFeaturesFromQl',
           value: function updateFeaturesFromQl() {
               var ql = this._quarterLength;
+              this._tuplets = [];
+              if (ql === 0) {
+                  this._type = 'zero';
+                  this._dots = 0;
+                  return;
+              }
               var powerOfTwo = Math.floor(Math.log(ql + 0.00001) / Math.log(2));
               var typeNumber = duration.quarterTypeIndex - powerOfTwo;
               this._type = duration.ordinalTypeFromNum[typeNumber];
@@ -1138,6 +1144,7 @@
                   }
                   // console.log(ratioRat, ql, unTupletedQl);
               }
+              return;
           }
           /**
            * Add a tuplet to music21j
@@ -1516,7 +1523,7 @@
               try {
                   for (var _iterator = this.siteDict[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
                       var _step$value = slicedToArray(_step.value, 2),
-                          unused_index = _step$value[0],
+                          unused_key = _step$value[0],
                           siteRef = _step$value[1];
 
                       if (siteRef.site === checkSite) {
@@ -2027,33 +2034,42 @@
       }, {
           key: 'getContextByClass',
           value: function getContextByClass(className, options) {
-              var payloadExtractor = function payloadExtractor(site, flatten, positionStart, getElementMethod, classList) {
+              var payloadExtractor = function payloadExtractor(useSite, flatten, positionStart, getElementMethod, classList) {
                   // this should all be done as a tree...
-                  var useSite = site;
-                  if (flatten === true) {
-                      useSite = site.flat;
-                  } else if (flatten === 'semiFlat') {
-                      useSite = site.semiFlat;
-                  }
-                  if (classList !== undefined) {
-                      useSite = useSite.getElementsByClass(classList);
-                  }
+                  // do not use .flat or .semiFlat so as not
+                  // to create new sites.
+
                   // VERY HACKY...
                   var lastElement = void 0;
                   for (var i = 0; i < useSite.length; i++) {
                       var indexOffset = useSite._elementOffsets[i];
+                      var thisElement = useSite._elements[i];
+                      var matchClass = thisElement.isClassOrSubclass(classList);
+                      if (flatten === false && !matchClass) {
+                          continue;
+                      } else if (!thisElement.isStream && !matchClass) {
+                          continue;
+                      }
+                      // is a stream or an element of the appropriate class...
+                      // first check normal elements
                       if (getElementMethod.includes('Before') && indexOffset >= positionStart) {
                           if (getElementMethod.includes('At') && lastElement === undefined) {
-                              lastElement = useSite._elements[i];
-                              continue;
-                          } else {
+                              lastElement = thisElement;
+                          } else if (matchClass) {
                               return lastElement;
                           }
                       } else {
-                          lastElement = useSite._elements[i];
+                          lastElement = thisElement;
                       }
-                      if (getElementMethod.includes('After') && indexOffset > positionStart) {
-                          return useSite._elements[i];
+                      if (getElementMethod.includes('After') && indexOffset > positionStart && matchClass) {
+                          return thisElement;
+                      }
+                      // now cleck stream... already filtered out flatten == false;
+                      if (thisElement.isStream) {
+                          var potentialElement = payloadExtractor(thisElement, flatten, positionStart + indexOffset, getElementMethod, classList);
+                          if (potentialElement !== undefined) {
+                              return potentialElement;
+                          }
                       }
                   }
                   return undefined;
@@ -5085,6 +5101,8 @@
           _this2.isChord = false;
           if (ql !== undefined) {
               _this2.duration.quarterLength = ql;
+          } else {
+              _this2.duration.quarterLength = 1.0;
           }
           _this2.volume = 60;
           _this2.activeVexflowNote = undefined;
@@ -7471,7 +7489,7 @@
 
               var pLast = pitchList[pitchList.length - 1];
               if (pLast.name === pitchList[0]) {
-                  var p = pitchList[0].clone(true);
+                  var p = pitchList[0].clone();
                   if (pLast.ps > pitchList[0]) {
                       // ascending;
                       while (p.ps < pLast.ps) {
@@ -7509,7 +7527,7 @@
               if (typeof pitchObj === 'string') {
                   pitchObj = new pitch.Pitch(pitchObj);
               } else {
-                  pitchObj = pitchObj.clone(true);
+                  pitchObj = pitchObj.clone();
               }
               var post = [pitchObj];
               var _iteratorNormalCompletion2 = true;
@@ -12775,7 +12793,9 @@
 
 
           /* override protoM21Object.clone() */
-          value: function clone(deep) {
+          value: function clone() {
+              var deep = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
+
               var ret = Object.create(this.constructor.prototype);
               for (var key in this) {
                   if ({}.hasOwnProperty.call(this, key) === false) {
@@ -12967,7 +12987,7 @@
                       return this._elementOffsets[i];
                   }
               }
-              throw new StreamException$1('An entry for this object ' + element.toString() + ' is not stored in this Stream.');
+              throw new StreamException$1('An entry for this object is not stored in this Stream.');
           }
 
           /*  --- ############# END ELEMENT FUNCTIONS ########## --- */

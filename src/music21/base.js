@@ -147,26 +147,29 @@ export class Music21Object extends prebase.ProtoM21Object {
 
     getContextByClass(className, options) {
         const payloadExtractor = function payloadExtractor(
-            site,
+            useSite,
             flatten,
             positionStart,
             getElementMethod,
             classList
         ) {
             // this should all be done as a tree...
-            let useSite = site;
-            if (flatten === true) {
-                useSite = site.flat;
-            } else if (flatten === 'semiFlat') {
-                useSite = site.semiFlat;
-            }
-            if (classList !== undefined) {
-                useSite = useSite.getElementsByClass(classList);
-            }
+            // do not use .flat or .semiFlat so as not
+            // to create new sites.
+
             // VERY HACKY...
             let lastElement;
             for (let i = 0; i < useSite.length; i++) {
                 const indexOffset = useSite._elementOffsets[i];
+                const thisElement = useSite._elements[i];
+                const matchClass = thisElement.isClassOrSubclass(classList);
+                if (flatten === false && !matchClass) {
+                    continue;
+                } else if (!thisElement.isStream && !matchClass) {
+                    continue;
+                }
+                // is a stream or an element of the appropriate class...
+                // first check normal elements
                 if (
                     getElementMethod.includes('Before')
                     && indexOffset >= positionStart
@@ -175,19 +178,32 @@ export class Music21Object extends prebase.ProtoM21Object {
                         getElementMethod.includes('At')
                         && lastElement === undefined
                     ) {
-                        lastElement = useSite._elements[i];
-                        continue;
-                    } else {
+                        lastElement = thisElement;
+                    } else if (matchClass) {
                         return lastElement;
                     }
                 } else {
-                    lastElement = useSite._elements[i];
+                    lastElement = thisElement;
                 }
                 if (
                     getElementMethod.includes('After')
                     && indexOffset > positionStart
+                    && matchClass
                 ) {
-                    return useSite._elements[i];
+                    return thisElement;
+                }
+                // now cleck stream... already filtered out flatten == false;
+                if (thisElement.isStream) {
+                    const potentialElement = payloadExtractor(
+                        thisElement,
+                        flatten,
+                        positionStart + indexOffset,
+                        getElementMethod,
+                        classList
+                    );
+                    if (potentialElement !== undefined) {
+                        return potentialElement;
+                    }
                 }
             }
             return undefined;

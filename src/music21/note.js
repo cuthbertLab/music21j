@@ -186,6 +186,8 @@ export class GeneralNote extends base.Music21Object {
         this.isChord = false;
         if (ql !== undefined) {
             this.duration.quarterLength = ql;
+        } else {
+            this.duration.quarterLength = 1.0;
         }
         this.volume = 60;
         this.activeVexflowNote = undefined;

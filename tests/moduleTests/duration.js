@@ -2,6 +2,13 @@ import * as QUnit from 'qunit';
 import music21 from '../../src/loadModules';
 
 export default function tests() {
+    QUnit.test('music21.duration.Duration 0', assert => {
+        const d = new music21.duration.Duration(0.0);
+        assert.equal(d.type, 'zero', 'got zero');
+        assert.equal(d.dots, 0, 'got no dots');
+        assert.equal(d.quarterLength, 0.0, 'got 0.0');
+    });
+
     QUnit.test('music21.duration.Duration', assert => {
         const d = new music21.duration.Duration(1.0);
         assert.equal(d.type, 'quarter', 'got quarter note from 1.0');

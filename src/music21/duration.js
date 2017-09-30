@@ -100,14 +100,14 @@ duration.vexflowDurationArray = [
 export class Duration extends prebase.ProtoM21Object {
     constructor(ql) {
         super();
-        this._quarterLength = 1.0;
+        this._quarterLength = 0.0;
         this._dots = 0;
         this._durationNumber = undefined;
-        this._type = 'quarter';
+        this._type = 'zero';
         this._tuplets = [];
         if (typeof ql === 'string') {
             this.type = ql;
-        } else {
+        } else if (ql !== undefined) {
             this.quarterLength = ql;
         }
         this._cloneCallbacks._tuplets = this.cloneCallbacksTupletFunction;
@@ -276,6 +276,12 @@ export class Duration extends prebase.ProtoM21Object {
     }
     updateFeaturesFromQl() {
         const ql = this._quarterLength;
+        this._tuplets = [];
+        if (ql === 0) {
+            this._type = 'zero';
+            this._dots = 0;
+            return;
+        }
         const powerOfTwo = Math.floor(Math.log(ql + 0.00001) / Math.log(2));
         let typeNumber = duration.quarterTypeIndex - powerOfTwo;
         this._type = duration.ordinalTypeFromNum[typeNumber];
@@ -307,6 +313,7 @@ export class Duration extends prebase.ProtoM21Object {
             }
             // console.log(ratioRat, ql, unTupletedQl);
         }
+        return;
     }
     /**
      * Add a tuplet to music21j
