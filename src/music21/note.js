@@ -42,6 +42,7 @@ note.noteheadTypeNames = [
     'back slashed',
     'circle dot',
     'circle-x',
+    'circled',
     'cluster',
     'cross',
     'diamond',
@@ -53,6 +54,7 @@ note.noteheadTypeNames = [
     'mi',
     'none',
     'normal',
+    'other',
     're',
     'rectangle',
     'slash',
@@ -116,6 +118,12 @@ export class Lyric extends prebase.ProtoM21Object {
     set number(n) {
         this._number = n;
     }
+
+    /**
+     * get rawText - gets the raw text.
+     *
+     * @return {string}  raw text
+     */
     get rawText() {
         if (this.syllabic === 'begin') {
             return this.text + this.lyricConnector;
@@ -128,8 +136,17 @@ export class Lyric extends prebase.ProtoM21Object {
         }
     }
     set rawText(t) {
-        this.setTextAndSyllabic(t, false);
+        this.setTextAndSyllabic(t, true);
     }
+
+    /**
+     * setTextAndSyllabic - Given a setting for rawText and applyRaw,
+     *     sets the syllabic type for a lyric based on the rawText
+     *
+     * @param  {string} rawText text
+     * @param  {boolean} applyRaw = false if hyphens should not be applied
+     * @return {undefined}
+     */
     setTextAndSyllabic(rawText, applyRaw = false) {
         if (rawText === undefined) {
             this.text = undefined;

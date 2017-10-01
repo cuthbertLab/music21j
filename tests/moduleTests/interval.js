@@ -15,5 +15,6 @@ export default function tests() {
         i = new Interval('P5');
         assert.equal(i.name, 'P5', 'name passed');
         assert.equal(i.niceName, 'Perfect Fifth', 'nice name passed');
+        assert.equal(i.generic.simpleDirected, 5);
     });
 }

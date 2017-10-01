@@ -1,5 +1,5 @@
 /**
- * music21j 0.9.0 built on  * 2017-09-30.
+ * music21j 0.9.0 built on  * 2017-10-01.
  * Copyright (c) 2013-2016 Michael Scott Cuthbert and cuthbertLab
  * BSD License, see LICENSE
  *
@@ -4190,11 +4190,15 @@
    * // false  // augmented unisons are not diatonicSteps but can't tell yet..
    * gi.isUnison
    * // false
+   * gi.simpledDirected
+   * // -7
    * gi.simpleUndirected
    * // 7
    * gi.undirectedOctaves
    * // 1
    * gi.semiSimpleUndirected
+   * // 7  -- semiSimple distinguishes between 8 and 1; that's all
+   * gi.semiSimpleDirected
    * // 7  -- semiSimple distinguishes between 8 and 1; that's all
    * gi.perfectable
    * // false
@@ -4979,7 +4983,7 @@
    */
   var note = {};
 
-  note.noteheadTypeNames = ['arrow down', 'arrow up', 'back slashed', 'circle dot', 'circle-x', 'cluster', 'cross', 'diamond', 'do', 'fa', 'inverted triangle', 'la', 'left triangle', 'mi', 'none', 'normal', 're', 'rectangle', 'slash', 'slashed', 'so', 'square', 'ti', 'triangle', 'x'];
+  note.noteheadTypeNames = ['arrow down', 'arrow up', 'back slashed', 'circle dot', 'circle-x', 'circled', 'cluster', 'cross', 'diamond', 'do', 'fa', 'inverted triangle', 'la', 'left triangle', 'mi', 'none', 'normal', 'other', 're', 'rectangle', 'slash', 'slashed', 'so', 'square', 'ti', 'triangle', 'x'];
 
   note.stemDirectionNames = ['double', 'down', 'noStem', 'none', 'unspecified', 'up'];
 
@@ -5026,6 +5030,16 @@
 
       createClass(Lyric, [{
           key: 'setTextAndSyllabic',
+
+
+          /**
+           * setTextAndSyllabic - Given a setting for rawText and applyRaw,
+           *     sets the syllabic type for a lyric based on the rawText
+           *
+           * @param  {string} rawText text
+           * @param  {boolean} applyRaw = false if hyphens should not be applied
+           * @return {undefined}
+           */
           value: function setTextAndSyllabic(rawText) {
               var applyRaw = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
 
@@ -5069,6 +5083,13 @@
           set: function set(n) {
               this._number = n;
           }
+
+          /**
+           * get rawText - gets the raw text.
+           *
+           * @return {string}  raw text
+           */
+
       }, {
           key: 'rawText',
           get: function get() {
@@ -5083,7 +5104,7 @@
               }
           },
           set: function set(t) {
-              this.setTextAndSyllabic(t, false);
+              this.setTextAndSyllabic(t, true);
           }
       }]);
       return Lyric;
@@ -19444,6 +19465,7 @@
           i = new Interval$1('P5');
           assert.equal(i.name, 'P5', 'name passed');
           assert.equal(i.niceName, 'Perfect Fifth', 'nice name passed');
+          assert.equal(i.generic.simpleDirected, 5);
       });
   }
 

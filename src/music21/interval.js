@@ -116,11 +116,15 @@ interval.MusicOrdinals = [
  * // false  // augmented unisons are not diatonicSteps but can't tell yet..
  * gi.isUnison
  * // false
+ * gi.simpledDirected
+ * // -7
  * gi.simpleUndirected
  * // 7
  * gi.undirectedOctaves
  * // 1
  * gi.semiSimpleUndirected
+ * // 7  -- semiSimple distinguishes between 8 and 1; that's all
+ * gi.semiSimpleDirected
  * // 7  -- semiSimple distinguishes between 8 and 1; that's all
  * gi.perfectable
  * // false
