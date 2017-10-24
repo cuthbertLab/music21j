@@ -66,7 +66,12 @@ export class Accidental extends prebase.ProtoM21Object {
             this._alter = 1.0;
             this._modifier = '#';
             this._unicodeModifier = '♯';
-        } else if (accName === 'flat' || accName === '-' || accName === -1) {
+        } else if (
+            accName === 'flat'
+            || accName === '-'
+            || accName === 'b'
+            || accName === -1
+        ) {
             this._name = 'flat';
             this._alter = -1.0;
             this._modifier = '-';

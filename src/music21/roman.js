@@ -6,7 +6,7 @@
  * Based on music21 (=music21p), Copyright (c) 2006–16, Michael Scott Cuthbert and cuthbertLab
  *
  */
-// import { Music21Exception } from './exceptions21.js';
+import { Music21Exception } from './exceptions21.js';
 
 import { chord } from './chord.js';
 import { common } from './common.js';
@@ -203,17 +203,6 @@ roman.romanToNumber = [undefined, 'i', 'ii', 'iii', 'iv', 'v', 'vi', 'vii'];
  * Represents a RomanNumeral.  By default, capital Roman Numerals are
  * major chords; lowercase are minor.
  *
- * see music21p's roman module for better instructions.
- *
- * current limitations:
- *
- * no inversions
- * no numeric figures except 7
- * no d7 = dominant 7
- * no frontAlterationAccidentals
- * no secondary dominants
- * no Aug6th chords
- *
  * @class RomanNumeral
  * @memberof music21.roman
  * @extends music21.chord.Chord
@@ -228,7 +217,7 @@ roman.romanToNumber = [undefined, 'i', 'ii', 'iii', 'iv', 'v', 'vi', 'vii'];
  * @property {Array<music21.pitch.Pitch>} pitches - RomanNumerals are Chord objects, so .pitches will work for them also.
  */
 export class RomanNumeral extends harmony.Harmony {
-    constructor(figure, keyStr, keywords) {
+    constructor(figure = '', keyStr, keywords) {
         const params = { updatePitches: false, parseFigure: false };
         common.merge(params, keywords);
         super(figure, params);
@@ -238,6 +227,7 @@ export class RomanNumeral extends harmony.Harmony {
         this.primaryFigure = undefined;
         this.secondaryRomanNumeral = undefined;
         this.secondaryRomanNumeralKey = undefined;
+
         this.pivotChord = undefined;
         this.scaleCardinality = 7;
         this._figure = undefined;
@@ -257,7 +247,7 @@ export class RomanNumeral extends harmony.Harmony {
         this.impliedScale = undefined;
         this.scaleOffset = undefined;
         this.useImpliedScale = false;
-        this.bracketedAlterations = undefined;
+        this.bracketedAlterations = [];
         this.omittedSteps = [];
         this.followsKeyChange = false;
         this._functionalityScore = undefined;
@@ -270,9 +260,11 @@ export class RomanNumeral extends harmony.Harmony {
         // to remove...
         this.numbers = '';
 
-        this._parseFigure();
-        this._parsingComplete = true;
-        this._updatePitches();
+        if (figure !== '') {
+            this._parseFigure();
+            this._parsingComplete = true;
+            this._updatePitches();
+        }
     }
 
     _parseFigure() {
@@ -282,12 +274,15 @@ export class RomanNumeral extends harmony.Harmony {
         if (!this.useImpliedScale) {
             useScale = this.key;
         }
-        // [workingFigure, useScale] = this._correctForSecondaryRomanNumeral
+        [workingFigure, useScale] = this._correctForSecondaryRomanNumeral(
+            useScale
+        );
         this.primaryFigure = workingFigure;
 
-        // workingFigure = this._parseOmittedSteps(workingFigure);
-        // workingFigure = this._parseBracketedAlterations(workingFigure);
-        workingFigure = workingFigure.replace(/^N/, 'bII');
+        workingFigure = this._parseOmittedSteps(workingFigure);
+        workingFigure = this._parseBracketedAlterations(workingFigure);
+        workingFigure = workingFigure.replace(/^N6/, 'bII6');
+        workingFigure = workingFigure.replace(/^N/, 'bII6');
         workingFigure = this._parseFrontAlterations(workingFigure);
         [workingFigure, useScale] = this._parseRNAloneAmidstAug6(
             workingFigure,
@@ -335,8 +330,26 @@ export class RomanNumeral extends harmony.Harmony {
         return workingFigure;
     }
 
+    _correctBracketedPitches() {
+        for (const innerAlteration of this.bracketedAlterations) {
+            const [alterNotation, chordStep] = innerAlteration;
+            const alterPitch = this.getChordStep(chordStep);
+            if (alterPitch === undefined) {
+                continue;
+            }
+            const newAccidental = new pitch.Accidental(alterNotation);
+            if (alterPitch.accidental === undefined) {
+                alterPitch.accidental = newAccidental;
+            } else {
+                alterPitch.accidental.set(
+                    alterPitch.accidental.alter + newAccidental.alter
+                );
+            }
+        }
+    }
+
     _setImpliedQualityFromString(workingFigure) {
-        let impliedQuality = 'major';
+        let impliedQuality = '';
         if (workingFigure.startsWith('o')) {
             impliedQuality = 'diminished';
             workingFigure = workingFigure.replace(/^o/, '');
@@ -401,18 +414,44 @@ export class RomanNumeral extends harmony.Harmony {
     }
 
     _parseRNAloneAmidstAug6(workingFigure, useScale) {
-        // TODO: Augmented Sixth!!!
         let romanNumeralAlone = '';
         const _romanNumeralAloneRegex = new RegExp(
             '(IV|I{1,3}|VI{0,2}|iv|i{1,3}|vi{0,2}|N)'
         );
-        // const _augmentedSixthRegex = new RegExp('(It|Ger|Fr|Sw)');
+        const _augmentedSixthRegex = new RegExp('(It|Ger|Fr|Sw)');
         const rm = _romanNumeralAloneRegex.exec(workingFigure);
-        // const a6match = _augmentedSixthRegex.exec(workingFigure);
-        romanNumeralAlone = rm[1];
-        this.scaleDegree = common.fromRoman(romanNumeralAlone);
-        workingFigure = workingFigure.replace(_romanNumeralAloneRegex, '');
-        this.romanNumeralAlone = romanNumeralAlone;
+        const a6match = _augmentedSixthRegex.exec(workingFigure);
+        if (rm === null && a6match === null) {
+            throw new Music21Exception(
+                `No roman numeral found in ${workingFigure}`
+            );
+        }
+        if (a6match !== null) {
+            if (useScale.mode === 'major') {
+                useScale = new key.Key(useScale.tonic.name, 'minor');
+                this.impliedScale = useScale;
+                this.useImpliedScale = true;
+            }
+            romanNumeralAlone = a6match[1];
+            if (['It', 'Ger'].includes(romanNumeralAlone)) {
+                this.scaleDegree = 4;
+            } else {
+                this.scaleDegree = 2;
+            }
+            workingFigure = workingFigure.replace(_augmentedSixthRegex, '');
+            this.romanNumeralAlone = romanNumeralAlone;
+            if (romanNumeralAlone !== 'Fr') {
+                this.bracketedAlterations.push(['#', 1]);
+            }
+            if (romanNumeralAlone === 'Fr' || romanNumeralAlone === 'Sw') {
+                this.bracketedAlterations.push(['#', 3]);
+            }
+        } else {
+            romanNumeralAlone = rm[1];
+            this.scaleDegree = common.fromRoman(romanNumeralAlone);
+            workingFigure = workingFigure.replace(_romanNumeralAloneRegex, '');
+            this.romanNumeralAlone = romanNumeralAlone;
+        }
         return [workingFigure, useScale];
     }
 
@@ -577,24 +616,24 @@ export class RomanNumeral extends harmony.Harmony {
 
         this.scaleOffset = this.frontAlterationTransposeInterval;
 
-        if (this.omittedSteps) {
+        if (this.omittedSteps.length) {
+            const omittedPitches = [];
+            for (const thisCS of this.omittedSteps) {
+                const p = this.getChordStep(thisCS);
+                if (p !== undefined) {
+                    omittedPitches.push(p.name);
+                }
+            }
+            const newPitches = [];
+            for (const thisPitch of pitches) {
+                if (!omittedPitches.includes(thisPitch.name)) {
+                    newPitches.push(thisPitch);
+                }
+            }
+            this.pitches = newPitches;
             // do something...
         }
-
-        // const impliedQuality = this.impliedQuality;
-        // const chordSpacing = chord.chordDefinitions[impliedQuality];
-        // const chordPitches = [this._tempRoot];
-        // let lastPitch = this._tempRoot;
-        // for (let j = 0; j < chordSpacing.length; j++) {
-        //     // console.log('got them', lastPitch);
-        //     const thisTransStr = chordSpacing[j];
-        //     const thisTrans = new interval.Interval(thisTransStr);
-        //     const nextPitch = thisTrans.transposePitch(lastPitch);
-        //     chordPitches.push(nextPitch);
-        //     lastPitch = nextPitch;
-        // }
-        // this.pitches = chordPitches;
-        // this.root(this._tempRoot);
+        this._correctBracketedPitches();
     }
 
     bassScaleDegreeFromNotation(notationObject) {
@@ -634,6 +673,9 @@ export class RomanNumeral extends harmony.Harmony {
             const thisChordStep = chordStepsToExamine[i];
             const thisCorrect = correctSemitones[i];
             const thisSemis = this.semitonesFromChordStep(thisChordStep);
+            if (thisCorrect === undefined) {
+                continue;
+            }
             if (thisSemis === undefined) {
                 continue;
             }
@@ -664,6 +706,72 @@ export class RomanNumeral extends harmony.Harmony {
                 acc.set(correctedSemis);
             }
         }
+    }
+
+    _correctForSecondaryRomanNumeral(useScale, figure) {
+        if (figure === undefined) {
+            figure = this._figure;
+        }
+        let workingFigure = figure;
+        const rx = new RegExp('(.*?)/([#a-np-zA-NP-Z].*)');
+        const match = rx.exec(figure);
+        if (match !== null) {
+            const primaryFigure = match[1];
+            const secondaryFigure = match[2];
+            const secondaryRomanNumeral = new RomanNumeral(
+                secondaryFigure,
+                useScale,
+                this.caseMatters
+            );
+            this.secondaryRomanNumeral = secondaryRomanNumeral;
+            let secondaryMode;
+            if (secondaryRomanNumeral.quality === 'minor') {
+                secondaryMode = 'minor';
+            } else if (secondaryRomanNumeral.quality === 'major') {
+                secondaryMode = 'minor';
+            } else if (secondaryRomanNumeral.semitonesFromChordStep(3) === 3) {
+                secondaryMode = 'minor';
+            } else {
+                secondaryMode = 'major';
+            }
+            this.secondaryRomanNumeralKey = new key.Key(
+                secondaryRomanNumeral.root().name,
+                secondaryMode
+            );
+            useScale = this.secondaryRomanNumeralKey;
+            workingFigure = primaryFigure;
+        }
+        return [workingFigure, useScale];
+    }
+
+    _parseOmittedSteps(workingFigure) {
+        const omittedSteps = [];
+        const rx = new RegExp(/\[no(\d+)\]s*/);
+        let match = rx.exec(workingFigure);
+        while (match !== null) {
+            let thisStep = match[1];
+            thisStep = parseInt(thisStep);
+            thisStep = thisStep % 7 || 7;
+            omittedSteps.push(thisStep);
+            workingFigure = workingFigure.replace(rx, '');
+            match = rx.exec(workingFigure);
+        }
+        this.omittedSteps = omittedSteps;
+        return workingFigure;
+    }
+
+    _parseBracketedAlterations(workingFigure) {
+        const bracketedAlterations = this.bracketedAlterations;
+        const rx = new RegExp(/\[(b+|-+|#+)(\d+)\]/);
+        let match = rx.exec(workingFigure);
+        while (match !== null) {
+            const matchAlteration = match[1];
+            const matchDegree = parseInt(match[2]);
+            bracketedAlterations.push([matchAlteration, matchDegree]);
+            workingFigure = workingFigure.replace(rx, '');
+            match = rx.exec(workingFigure);
+        }
+        return workingFigure;
     }
 
     _findSemitoneSizeForQuality(impliedQuality) {

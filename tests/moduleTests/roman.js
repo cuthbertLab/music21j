@@ -154,4 +154,168 @@ export default function tests() {
         assert.equal(rn1.pitches[3].name, 'A', 'test ii/o65 pitches[3] == A');
         assert.equal(rn1.degreeName, 'Supertonic', 'test is Supertonic');
     });
+
+    QUnit.test('music21.roman.RomanNumeral - front alterations', assert => {
+        let rn1;
+        rn1 = new music21.roman.RomanNumeral('#II', 'C');
+        assert.equal(rn1.root().name, 'D#', 'root name is D#');
+        assert.equal(rn1.bass().name, 'D#', 'bass name is D#');
+        assert.equal(rn1.pitches[1].name, 'F##', 'next pitch is F##');
+        assert.equal(rn1.pitches[2].name, 'A#', 'last pitch is A#');
+    });
+
+    QUnit.test('music21.roman.RomanNumeral - neapolitan', assert => {
+        let rn1;
+        rn1 = new music21.roman.RomanNumeral('N6', 'C');
+        assert.equal(rn1.root().name, 'D-', 'root name is D-');
+        assert.equal(rn1.bass().name, 'F', 'bass name is F');
+    });
+
+    QUnit.test('music21.roman.RomanNumeral - omittedSteps', assert => {
+        let rn1;
+        rn1 = new music21.roman.RomanNumeral('V7[no5][no3]', 'C');
+        assert.equal(rn1.omittedSteps[0], 5, '5 is omitted');
+        assert.equal(rn1.omittedSteps[1], 3, '3 is omitted');
+        assert.equal(rn1.root().name, 'G', '#1 root name is G');
+        assert.equal(rn1.pitches.length, 2, '#1 length is 2');
+        assert.equal(rn1.pitches[0].name, 'G');
+        assert.equal(rn1.pitches[1].name, 'F');
+
+        rn1 = new music21.roman.RomanNumeral('V13[no11][no9][no7]', 'C');
+        assert.equal(rn1.omittedSteps[0], 4, '4 =11 is omitted');
+        assert.equal(rn1.omittedSteps[1], 2, '2 =9 is omitted');
+        assert.equal(rn1.omittedSteps[2], 7, '7 is omitted');
+        // root of 13th is undefined...
+        // assert.equal(rn1.root().name, 'G', 'root is G');
+        assert.equal(rn1.bass().name, 'G', 'bass is G');
+        assert.equal(rn1.pitches.length, 4, '#2 length is 4');
+        assert.equal(rn1.pitches[0].name, 'G', 'first pitch is G');
+        assert.equal(rn1.pitches[1].name, 'B');
+        assert.equal(rn1.pitches[2].name, 'D');
+        assert.equal(rn1.pitches[3].name, 'E');
+    });
+
+    QUnit.test('music21.roman.RomanNumeral - bracketedAlterations', assert => {
+        let rn1;
+        rn1 = new music21.roman.RomanNumeral('V7[#5][b3]', 'C');
+        assert.deepEqual(
+            rn1.bracketedAlterations[0],
+            ['#', 5],
+            `5 is sharped: ${rn1.bracketedAlterations[0]}`
+        );
+        assert.deepEqual(
+            rn1.bracketedAlterations[1],
+            ['b', 3],
+            `3 is flattened:  ${rn1.bracketedAlterations[1]}`
+        );
+        assert.equal(rn1.root().name, 'G', '#1 root name is G');
+        assert.equal(rn1.pitches.length, 4, '#1 length is 3');
+        assert.equal(rn1.third.name, 'B-', 'third is B-');
+        assert.equal(rn1.fifth.name, 'D#', 'fifth is D#');
+    });
+
+    QUnit.test(
+        'music21.roman.RomanNumeral - vio, VI, vii, VII in minor',
+        assert => {
+            let rn1;
+            rn1 = new music21.roman.RomanNumeral('vio', 'c');
+            assert.equal(rn1.root().name, 'A', 'root name is A');
+            assert.equal(rn1.fifth.name, 'E-', 'fifth name is E-');
+
+            rn1 = new music21.roman.RomanNumeral('vi', 'c');
+            assert.equal(rn1.root().name, 'A', 'root name is A');
+            assert.equal(rn1.fifth.name, 'E', 'fifth name is E');
+
+            rn1 = new music21.roman.RomanNumeral('VI', 'c');
+            assert.equal(rn1.root().name, 'A-', 'root name is A-');
+            assert.equal(rn1.fifth.name, 'E-', 'fifth name is E-');
+
+            rn1 = new music21.roman.RomanNumeral('viio', 'c');
+            assert.equal(rn1.root().name, 'B', 'root name is B');
+            assert.equal(rn1.fifth.name, 'F', 'fifth name is F');
+
+            rn1 = new music21.roman.RomanNumeral('vii', 'c');
+            assert.equal(rn1.root().name, 'B', 'root name is B');
+            assert.equal(rn1.fifth.name, 'F#', 'fifth name is F#');
+
+            rn1 = new music21.roman.RomanNumeral('VII', 'c');
+            assert.equal(rn1.root().name, 'B-', 'root name is B-');
+            assert.equal(rn1.fifth.name, 'F', 'fifth name is F');
+        }
+    );
+
+    QUnit.test(
+        'music21.roman.RomanNumeral - secondary roman numerals',
+        assert => {
+            let rn1;
+            rn1 = new music21.roman.RomanNumeral('V/V', 'C');
+            assert.equal(rn1.root().name, 'D', 'root name is D');
+            assert.equal(rn1.bass().name, 'D', 'bass name is D');
+            assert.equal(rn1.pitches[1].name, 'F#', 'third is F#');
+
+            rn1 = new music21.roman.RomanNumeral('V65/V', 'C');
+            assert.equal(rn1.root().name, 'D', 'root name is F#');
+            assert.equal(rn1.bass().name, 'F#', 'bass name is F#');
+
+            rn1 = new music21.roman.RomanNumeral('V65/IV', 'C');
+            assert.equal(rn1.figure, 'V65/IV', 'figure is unchanged');
+            assert.equal(
+                rn1.secondaryRomanNumeral.figure,
+                'IV',
+                'secondary to IV'
+            );
+            assert.equal(rn1.secondaryRomanNumeralKey.tonic.name, 'F');
+            assert.equal(rn1.root().name, 'C', 'root name is C');
+            assert.equal(rn1.bass().name, 'E', 'bass name is E');
+            assert.equal(rn1.seventh.name, 'B-', 'seventh is B-');
+
+            rn1 = new music21.roman.RomanNumeral('V7/V/V', 'B-');
+            assert.equal(rn1.root().name, 'G');
+            assert.equal(rn1.third.name, 'B');
+            assert.equal(rn1.secondaryRomanNumeral.figure, 'V/V');
+            assert.equal(
+                rn1.secondaryRomanNumeral.secondaryRomanNumeral.figure,
+                'V'
+            );
+        }
+    );
+
+    QUnit.test('music21.roman.RomanNumeral - augmented6ths', assert => {
+        let k = new music21.key.Key('a');
+        const p = rn => {
+            const rn1 = new music21.roman.RomanNumeral(rn, k);
+            let x = '';
+            for (const pi of rn1.pitches) {
+                x += pi.nameWithOctave + ' ';
+            }
+            return x.trim();
+        };
+        const empty = new music21.roman.RomanNumeral();
+        const out = empty._parseRNAloneAmidstAug6(
+            'It6',
+            new music21.key.Key('C')
+        );
+        assert.equal(empty.useImpliedScale, true);
+        assert.equal(out[0], '6');
+        assert.equal(out[1].mode, 'minor');
+        assert.equal(empty.scaleDegree, 4);
+        assert.deepEqual(empty.bracketedAlterations[0], ['#', 1]);
+
+        assert.equal(p('V'), 'E5 G#5 B5');
+        assert.equal(p('It6'), 'F5 A5 D#6');
+        assert.equal(p('Ger65'), 'F5 A5 C6 D#6');
+        assert.equal(p('Ger6/5'), 'F5 A5 C6 D#6');
+        assert.equal(p('Fr43'), 'F5 A5 B5 D#6');
+        assert.equal(p('Fr4/3'), 'F5 A5 B5 D#6');
+        assert.equal(p('Sw43'), 'F5 A5 B#5 D#6');
+
+        k = new music21.key.Key('A');
+        assert.equal(p('V'), 'E5 G#5 B5');
+        assert.equal(p('It6'), 'F5 A5 D#6');
+        assert.equal(p('Ger65'), 'F5 A5 C6 D#6');
+        assert.equal(p('Ger6/5'), 'F5 A5 C6 D#6');
+        assert.equal(p('Fr43'), 'F5 A5 B5 D#6');
+        assert.equal(p('Fr4/3'), 'F5 A5 B5 D#6');
+        assert.equal(p('Sw43'), 'F5 A5 B#5 D#6');
+    });
 }

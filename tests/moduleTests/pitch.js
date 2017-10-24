@@ -9,6 +9,10 @@ export default function tests() {
         a.name = 'sharp';
         assert.equal(a.alter, 1.0, 'flat alter passed');
         assert.equal(a.name, 'sharp', 'flat name passed');
+
+        const b = new music21.pitch.Accidental('b');
+        assert.equal(b.alter, -1.0, 'flat alter passed');
+        assert.equal(b.name, 'flat', 'flat name passed');
     });
 
     QUnit.test('music21.pitch.Pitch', assert => {

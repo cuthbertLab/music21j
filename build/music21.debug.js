@@ -1,5 +1,5 @@
 /**
- * music21j 0.9.0 built on  * 2017-10-01.
+ * music21j 0.9.0 built on  * 2017-10-24.
  * Copyright (c) 2013-2016 Michael Scott Cuthbert and cuthbertLab
  * BSD License, see LICENSE
  *
@@ -3779,7 +3779,7 @@
                   this._alter = 1.0;
                   this._modifier = '#';
                   this._unicodeModifier = '♯';
-              } else if (accName === 'flat' || accName === '-' || accName === -1) {
+              } else if (accName === 'flat' || accName === '-' || accName === 'b' || accName === -1) {
                   this._name = 'flat';
                   this._alter = -1.0;
                   this._modifier = '-';
@@ -16495,8 +16495,6 @@
    * Based on music21 (=music21p), Copyright (c) 2006–16, Michael Scott Cuthbert and cuthbertLab
    *
    */
-  // import { Music21Exception } from './exceptions21.js';
-
   // import { debug } from './debug.js';
   /**
    * Roman numeral module. See {@link music21.roman} namespace
@@ -16700,17 +16698,6 @@
    * Represents a RomanNumeral.  By default, capital Roman Numerals are
    * major chords; lowercase are minor.
    *
-   * see music21p's roman module for better instructions.
-   *
-   * current limitations:
-   *
-   * no inversions
-   * no numeric figures except 7
-   * no d7 = dominant 7
-   * no frontAlterationAccidentals
-   * no secondary dominants
-   * no Aug6th chords
-   *
    * @class RomanNumeral
    * @memberof music21.roman
    * @extends music21.chord.Chord
@@ -16727,7 +16714,10 @@
   var RomanNumeral = function (_harmony$Harmony) {
       inherits(RomanNumeral, _harmony$Harmony);
 
-      function RomanNumeral(figure, keyStr, keywords) {
+      function RomanNumeral() {
+          var figure = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
+          var keyStr = arguments[1];
+          var keywords = arguments[2];
           classCallCheck(this, RomanNumeral);
 
           var params = { updatePitches: false, parseFigure: false };
@@ -16741,6 +16731,7 @@
           _this.primaryFigure = undefined;
           _this.secondaryRomanNumeral = undefined;
           _this.secondaryRomanNumeralKey = undefined;
+
           _this.pivotChord = undefined;
           _this.scaleCardinality = 7;
           _this._figure = undefined;
@@ -16760,7 +16751,7 @@
           _this.impliedScale = undefined;
           _this.scaleOffset = undefined;
           _this.useImpliedScale = false;
-          _this.bracketedAlterations = undefined;
+          _this.bracketedAlterations = [];
           _this.omittedSteps = [];
           _this.followsKeyChange = false;
           _this._functionalityScore = undefined;
@@ -16773,9 +16764,11 @@
           // to remove...
           _this.numbers = '';
 
-          _this._parseFigure();
-          _this._parsingComplete = true;
-          _this._updatePitches();
+          if (figure !== '') {
+              _this._parseFigure();
+              _this._parsingComplete = true;
+              _this._updatePitches();
+          }
           return _this;
       }
 
@@ -16788,12 +16781,20 @@
               if (!this.useImpliedScale) {
                   useScale = this.key;
               }
-              // [workingFigure, useScale] = this._correctForSecondaryRomanNumeral
+
+              var _correctForSecondaryR = this._correctForSecondaryRomanNumeral(useScale);
+
+              var _correctForSecondaryR2 = slicedToArray(_correctForSecondaryR, 2);
+
+              workingFigure = _correctForSecondaryR2[0];
+              useScale = _correctForSecondaryR2[1];
+
               this.primaryFigure = workingFigure;
 
-              // workingFigure = this._parseOmittedSteps(workingFigure);
-              // workingFigure = this._parseBracketedAlterations(workingFigure);
-              workingFigure = workingFigure.replace(/^N/, 'bII');
+              workingFigure = this._parseOmittedSteps(workingFigure);
+              workingFigure = this._parseBracketedAlterations(workingFigure);
+              workingFigure = workingFigure.replace(/^N6/, 'bII6');
+              workingFigure = workingFigure.replace(/^N/, 'bII6');
               workingFigure = this._parseFrontAlterations(workingFigure);
 
               var _parseRNAloneAmidstAu = this._parseRNAloneAmidstAug6(workingFigure, useScale);
@@ -16841,9 +16842,50 @@
               return workingFigure;
           }
       }, {
+          key: '_correctBracketedPitches',
+          value: function _correctBracketedPitches() {
+              var _iteratorNormalCompletion2 = true;
+              var _didIteratorError2 = false;
+              var _iteratorError2 = undefined;
+
+              try {
+                  for (var _iterator2 = this.bracketedAlterations[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+                      var innerAlteration = _step2.value;
+
+                      var _innerAlteration = slicedToArray(innerAlteration, 2),
+                          alterNotation = _innerAlteration[0],
+                          chordStep = _innerAlteration[1];
+
+                      var alterPitch = this.getChordStep(chordStep);
+                      if (alterPitch === undefined) {
+                          continue;
+                      }
+                      var newAccidental = new pitch.Accidental(alterNotation);
+                      if (alterPitch.accidental === undefined) {
+                          alterPitch.accidental = newAccidental;
+                      } else {
+                          alterPitch.accidental.set(alterPitch.accidental.alter + newAccidental.alter);
+                      }
+                  }
+              } catch (err) {
+                  _didIteratorError2 = true;
+                  _iteratorError2 = err;
+              } finally {
+                  try {
+                      if (!_iteratorNormalCompletion2 && _iterator2.return) {
+                          _iterator2.return();
+                      }
+                  } finally {
+                      if (_didIteratorError2) {
+                          throw _iteratorError2;
+                      }
+                  }
+              }
+          }
+      }, {
           key: '_setImpliedQualityFromString',
           value: function _setImpliedQualityFromString(workingFigure) {
-              var impliedQuality = 'major';
+              var impliedQuality = '';
               if (workingFigure.startsWith('o')) {
                   impliedQuality = 'diminished';
                   workingFigure = workingFigure.replace(/^o/, '');
@@ -16897,16 +16939,40 @@
       }, {
           key: '_parseRNAloneAmidstAug6',
           value: function _parseRNAloneAmidstAug6(workingFigure, useScale) {
-              // TODO: Augmented Sixth!!!
               var romanNumeralAlone = '';
               var _romanNumeralAloneRegex = new RegExp('(IV|I{1,3}|VI{0,2}|iv|i{1,3}|vi{0,2}|N)');
-              // const _augmentedSixthRegex = new RegExp('(It|Ger|Fr|Sw)');
+              var _augmentedSixthRegex = new RegExp('(It|Ger|Fr|Sw)');
               var rm = _romanNumeralAloneRegex.exec(workingFigure);
-              // const a6match = _augmentedSixthRegex.exec(workingFigure);
-              romanNumeralAlone = rm[1];
-              this.scaleDegree = common.fromRoman(romanNumeralAlone);
-              workingFigure = workingFigure.replace(_romanNumeralAloneRegex, '');
-              this.romanNumeralAlone = romanNumeralAlone;
+              var a6match = _augmentedSixthRegex.exec(workingFigure);
+              if (rm === null && a6match === null) {
+                  throw new Music21Exception('No roman numeral found in ' + workingFigure);
+              }
+              if (a6match !== null) {
+                  if (useScale.mode === 'major') {
+                      useScale = new key.Key(useScale.tonic.name, 'minor');
+                      this.impliedScale = useScale;
+                      this.useImpliedScale = true;
+                  }
+                  romanNumeralAlone = a6match[1];
+                  if (['It', 'Ger'].includes(romanNumeralAlone)) {
+                      this.scaleDegree = 4;
+                  } else {
+                      this.scaleDegree = 2;
+                  }
+                  workingFigure = workingFigure.replace(_augmentedSixthRegex, '');
+                  this.romanNumeralAlone = romanNumeralAlone;
+                  if (romanNumeralAlone !== 'Fr') {
+                      this.bracketedAlterations.push(['#', 1]);
+                  }
+                  if (romanNumeralAlone === 'Fr' || romanNumeralAlone === 'Sw') {
+                      this.bracketedAlterations.push(['#', 3]);
+                  }
+              } else {
+                  romanNumeralAlone = rm[1];
+                  this.scaleDegree = common.fromRoman(romanNumeralAlone);
+                  workingFigure = workingFigure.replace(_romanNumeralAloneRegex, '');
+                  this.romanNumeralAlone = romanNumeralAlone;
+              }
               return [workingFigure, useScale];
           }
 
@@ -16957,28 +17023,28 @@
               }
               if (this.frontAlterationTransposeInterval !== undefined) {
                   var newPitches = [];
-                  var _iteratorNormalCompletion2 = true;
-                  var _didIteratorError2 = false;
-                  var _iteratorError2 = undefined;
+                  var _iteratorNormalCompletion3 = true;
+                  var _didIteratorError3 = false;
+                  var _iteratorError3 = undefined;
 
                   try {
-                      for (var _iterator2 = pitches[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-                          var thisPitch = _step2.value;
+                      for (var _iterator3 = pitches[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+                          var thisPitch = _step3.value;
 
                           var _newPitch = this.frontAlterationTransposeInterval.transposePitch(thisPitch);
                           newPitches.push(_newPitch);
                       }
                   } catch (err) {
-                      _didIteratorError2 = true;
-                      _iteratorError2 = err;
+                      _didIteratorError3 = true;
+                      _iteratorError3 = err;
                   } finally {
                       try {
-                          if (!_iteratorNormalCompletion2 && _iterator2.return) {
-                              _iterator2.return();
+                          if (!_iteratorNormalCompletion3 && _iterator3.return) {
+                              _iterator3.return();
                           }
                       } finally {
-                          if (_didIteratorError2) {
-                              throw _iteratorError2;
+                          if (_didIteratorError3) {
+                              throw _iteratorError3;
                           }
                       }
                   }
@@ -16992,24 +17058,68 @@
 
               this.scaleOffset = this.frontAlterationTransposeInterval;
 
-              if (this.omittedSteps) {}
-              // do something...
+              if (this.omittedSteps.length) {
+                  var omittedPitches = [];
+                  var _iteratorNormalCompletion4 = true;
+                  var _didIteratorError4 = false;
+                  var _iteratorError4 = undefined;
 
+                  try {
+                      for (var _iterator4 = this.omittedSteps[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
+                          var thisCS = _step4.value;
 
-              // const impliedQuality = this.impliedQuality;
-              // const chordSpacing = chord.chordDefinitions[impliedQuality];
-              // const chordPitches = [this._tempRoot];
-              // let lastPitch = this._tempRoot;
-              // for (let j = 0; j < chordSpacing.length; j++) {
-              //     // console.log('got them', lastPitch);
-              //     const thisTransStr = chordSpacing[j];
-              //     const thisTrans = new interval.Interval(thisTransStr);
-              //     const nextPitch = thisTrans.transposePitch(lastPitch);
-              //     chordPitches.push(nextPitch);
-              //     lastPitch = nextPitch;
-              // }
-              // this.pitches = chordPitches;
-              // this.root(this._tempRoot);
+                          var p = this.getChordStep(thisCS);
+                          if (p !== undefined) {
+                              omittedPitches.push(p.name);
+                          }
+                      }
+                  } catch (err) {
+                      _didIteratorError4 = true;
+                      _iteratorError4 = err;
+                  } finally {
+                      try {
+                          if (!_iteratorNormalCompletion4 && _iterator4.return) {
+                              _iterator4.return();
+                          }
+                      } finally {
+                          if (_didIteratorError4) {
+                              throw _iteratorError4;
+                          }
+                      }
+                  }
+
+                  var _newPitches = [];
+                  var _iteratorNormalCompletion5 = true;
+                  var _didIteratorError5 = false;
+                  var _iteratorError5 = undefined;
+
+                  try {
+                      for (var _iterator5 = pitches[Symbol.iterator](), _step5; !(_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done); _iteratorNormalCompletion5 = true) {
+                          var _thisPitch = _step5.value;
+
+                          if (!omittedPitches.includes(_thisPitch.name)) {
+                              _newPitches.push(_thisPitch);
+                          }
+                      }
+                  } catch (err) {
+                      _didIteratorError5 = true;
+                      _iteratorError5 = err;
+                  } finally {
+                      try {
+                          if (!_iteratorNormalCompletion5 && _iterator5.return) {
+                              _iterator5.return();
+                          }
+                      } finally {
+                          if (_didIteratorError5) {
+                              throw _iteratorError5;
+                          }
+                      }
+                  }
+
+                  this.pitches = _newPitches;
+                  // do something...
+              }
+              this._correctBracketedPitches();
           }
       }, {
           key: 'bassScaleDegreeFromNotation',
@@ -17017,13 +17127,13 @@
               var c = new pitch.Pitch('C3');
               var cDNN = c.diatonicNoteNum; // always 22
               var pitches = [c];
-              var _iteratorNormalCompletion3 = true;
-              var _didIteratorError3 = false;
-              var _iteratorError3 = undefined;
+              var _iteratorNormalCompletion6 = true;
+              var _didIteratorError6 = false;
+              var _iteratorError6 = undefined;
 
               try {
-                  for (var _iterator3 = notationObject.numbers[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
-                      var i = _step3.value;
+                  for (var _iterator6 = notationObject.numbers[Symbol.iterator](), _step6; !(_iteratorNormalCompletion6 = (_step6 = _iterator6.next()).done); _iteratorNormalCompletion6 = true) {
+                      var i = _step6.value;
 
                       var distanceToMove = i - 1;
                       var newDiatonicNumber = cDNN + distanceToMove;
@@ -17039,16 +17149,16 @@
                       pitches.push(newPitch);
                   }
               } catch (err) {
-                  _didIteratorError3 = true;
-                  _iteratorError3 = err;
+                  _didIteratorError6 = true;
+                  _iteratorError6 = err;
               } finally {
                   try {
-                      if (!_iteratorNormalCompletion3 && _iterator3.return) {
-                          _iterator3.return();
+                      if (!_iteratorNormalCompletion6 && _iterator6.return) {
+                          _iterator6.return();
                       }
                   } finally {
-                      if (_didIteratorError3) {
-                          throw _iteratorError3;
+                      if (_didIteratorError6) {
+                          throw _iteratorError6;
                       }
                   }
               }
@@ -17071,6 +17181,9 @@
                   var thisChordStep = chordStepsToExamine[i];
                   var thisCorrect = correctSemitones[i];
                   var thisSemis = this.semitonesFromChordStep(thisChordStep);
+                  if (thisCorrect === undefined) {
+                      continue;
+                  }
                   if (thisSemis === undefined) {
                       continue;
                   }
@@ -17101,6 +17214,68 @@
                       acc.set(correctedSemis);
                   }
               }
+          }
+      }, {
+          key: '_correctForSecondaryRomanNumeral',
+          value: function _correctForSecondaryRomanNumeral(useScale, figure) {
+              if (figure === undefined) {
+                  figure = this._figure;
+              }
+              var workingFigure = figure;
+              var rx = new RegExp('(.*?)/([#a-np-zA-NP-Z].*)');
+              var match = rx.exec(figure);
+              if (match !== null) {
+                  var primaryFigure = match[1];
+                  var secondaryFigure = match[2];
+                  var secondaryRomanNumeral = new RomanNumeral(secondaryFigure, useScale, this.caseMatters);
+                  this.secondaryRomanNumeral = secondaryRomanNumeral;
+                  var secondaryMode = void 0;
+                  if (secondaryRomanNumeral.quality === 'minor') {
+                      secondaryMode = 'minor';
+                  } else if (secondaryRomanNumeral.quality === 'major') {
+                      secondaryMode = 'minor';
+                  } else if (secondaryRomanNumeral.semitonesFromChordStep(3) === 3) {
+                      secondaryMode = 'minor';
+                  } else {
+                      secondaryMode = 'major';
+                  }
+                  this.secondaryRomanNumeralKey = new key.Key(secondaryRomanNumeral.root().name, secondaryMode);
+                  useScale = this.secondaryRomanNumeralKey;
+                  workingFigure = primaryFigure;
+              }
+              return [workingFigure, useScale];
+          }
+      }, {
+          key: '_parseOmittedSteps',
+          value: function _parseOmittedSteps(workingFigure) {
+              var omittedSteps = [];
+              var rx = new RegExp(/\[no(\d+)\]s*/);
+              var match = rx.exec(workingFigure);
+              while (match !== null) {
+                  var thisStep = match[1];
+                  thisStep = parseInt(thisStep);
+                  thisStep = thisStep % 7 || 7;
+                  omittedSteps.push(thisStep);
+                  workingFigure = workingFigure.replace(rx, '');
+                  match = rx.exec(workingFigure);
+              }
+              this.omittedSteps = omittedSteps;
+              return workingFigure;
+          }
+      }, {
+          key: '_parseBracketedAlterations',
+          value: function _parseBracketedAlterations(workingFigure) {
+              var bracketedAlterations = this.bracketedAlterations;
+              var rx = new RegExp(/\[(b+|-+|#+)(\d+)\]/);
+              var match = rx.exec(workingFigure);
+              while (match !== null) {
+                  var matchAlteration = match[1];
+                  var matchDegree = parseInt(match[2]);
+                  bracketedAlterations.push([matchAlteration, matchDegree]);
+                  workingFigure = workingFigure.replace(rx, '');
+                  match = rx.exec(workingFigure);
+              }
+              return workingFigure;
           }
       }, {
           key: '_findSemitoneSizeForQuality',
