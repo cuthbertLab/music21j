@@ -691,11 +691,14 @@ export class SimpleNoteEditor {
         );
         for (let i = minAccidental; i <= maxAccidental; i++) {
             const acc = new pitch.Accidental(i);
-            $buttonDiv.append(
-                $('<button>' + acc.unicodeModifier + '</button>').click(e =>
-                    this.addAccidental(i, e, $siblingCanvas)
-                )
-            );
+            const $button = $(
+                '<button>' + acc.unicodeModifier + '</button>'
+            ).click(e => this.addAccidental(i, e, $siblingCanvas));
+            if (Math.abs(i) > 1) {
+                $button.css('font-family', 'Bravura Text');
+                $button.css('font-size', '20px');
+            }
+            $buttonDiv.append($button);
         }
         return $buttonDiv;
     }

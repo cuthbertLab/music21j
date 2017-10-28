@@ -11179,9 +11179,14 @@
 
               var _loop = function _loop(i) {
                   var acc = new pitch.Accidental(i);
-                  $buttonDiv.append($$1('<button>' + acc.unicodeModifier + '</button>').click(function (e) {
+                  var $button = $$1('<button>' + acc.unicodeModifier + '</button>').click(function (e) {
                       return _this6.addAccidental(i, e, $siblingCanvas);
-                  }));
+                  });
+                  if (Math.abs(i) > 1) {
+                      $button.css('font-family', 'Bravura Text');
+                      $button.css('font-size', '20px');
+                  }
+                  $buttonDiv.append($button);
               };
 
               for (var i = minAccidental; i <= maxAccidental; i++) {
@@ -14232,12 +14237,14 @@
 
               var _loop = function _loop(i) {
                   var acc = new pitch.Accidental(i);
-                  $buttonDiv.append($$1('<button>' + acc.unicodeModifier + '</button>').click(function (e) {
+                  var $button = $$1('<button>' + acc.unicodeModifier + '</button>').click(function (e) {
                       return addAccidental(i, e);
+                  });
+                  if (Math.abs(i) > 1) {
+                      $button.css('font-family', 'Bravura Text');
+                      $button.css('font-size', '20px');
                   }
-                  //                  .css('font-family', 'Bravura')
-                  //                  .css('font-size', '40px')
-                  ));
+                  $buttonDiv.append($button);
               };
 
               for (var i = minAccidental; i <= maxAccidental; i++) {

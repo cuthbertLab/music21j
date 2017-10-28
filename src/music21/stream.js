@@ -1754,13 +1754,14 @@ export class Stream extends base.Music21Object {
         );
         for (let i = minAccidental; i <= maxAccidental; i++) {
             const acc = new pitch.Accidental(i);
-            $buttonDiv.append(
-                $('<button>' + acc.unicodeModifier + '</button>').click(e =>
-                    addAccidental(i, e)
-                )
-                //                  .css('font-family', 'Bravura')
-                //                  .css('font-size', '40px')
-            );
+            const $button = $(
+                '<button>' + acc.unicodeModifier + '</button>'
+            ).click(e => addAccidental(i, e));
+            if (Math.abs(i) > 1) {
+                $button.css('font-family', 'Bravura Text');
+                $button.css('font-size', '20px');
+            }
+            $buttonDiv.append($button);
         }
         return $buttonDiv;
     }
