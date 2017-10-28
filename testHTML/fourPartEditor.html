@@ -49,6 +49,7 @@
     m10.insert(0, v101);
 
     const m01 = m00.clone(true);
+    m01.xyz = 1;
     const m11 = m10.clone(true);
 
     p0.append(m00);
@@ -67,6 +68,8 @@
     s.autoBeam = false; // important for not wiping out stem direction!
     // s.appendNewCanvas();
     fpe = new music21.streamInteraction.FourPartEditor(s);
+    fpe.minAccidentalEditor = -2;
+    fpe.maxAccidentalEditor = 1;
     fpe.activeMeasureIndex = 1;
     $vst = fpe.editableCanvas();
     $(document.body).append($vst);

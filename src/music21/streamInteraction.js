@@ -560,6 +560,8 @@ export class SimpleNoteEditor {
         this.activeNote = undefined;
         this.changedCallbackFunction = undefined; // for editable canvases
         this.accidentalsByStepOctave = {};
+        this.minAccidentalEditor = -1;
+        this.maxAccidentalEditor = 1;
     }
 
     /**
@@ -675,10 +677,10 @@ export class SimpleNoteEditor {
      */
     getAccidentalToolbar(minAccidental, maxAccidental, $siblingCanvas) {
         if (minAccidental === undefined) {
-            minAccidental = -1;
+            minAccidental = this.minAccidentalEditor;
         }
         if (maxAccidental === undefined) {
-            maxAccidental = 1;
+            maxAccidental = this.maxAccidentalEditor;
         }
         minAccidental = Math.round(minAccidental);
         maxAccidental = Math.round(maxAccidental);

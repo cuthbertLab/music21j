@@ -1,5 +1,5 @@
 /**
- * music21j 0.9.0 built on  * 2017-10-24.
+ * music21j 0.9.0 built on  * 2017-10-27.
  * Copyright (c) 2013-2016 Michael Scott Cuthbert and cuthbertLab
  * BSD License, see LICENSE
  *
@@ -2003,8 +2003,11 @@
           // this.sites, this.activeSites, this.offset -- not yet...
           // beat, measureNumber, etc.
           // lots to do...
-          _this._cloneCallbacks.activeSite = function Music21Object_cloneCallbacks_activeSite(p, ret, obj) {
-              ret[p] = undefined;
+          _this._cloneCallbacks.activeSite = function Music21Object_cloneCallbacks_activeSite(keyName, newObj, self) {
+              newObj[keyName] = undefined;
+          };
+          _this._cloneCallbacks.sites = function Music21Object_cloneCallbacks_sites(keyName, newObj, self) {
+              newObj[keyName] = new sites.Sites();
           };
           return _this;
       }
@@ -11031,6 +11034,8 @@
           this.activeNote = undefined;
           this.changedCallbackFunction = undefined; // for editable canvases
           this.accidentalsByStepOctave = {};
+          this.minAccidentalEditor = -1;
+          this.maxAccidentalEditor = 1;
       }
 
       /**
@@ -11162,10 +11167,10 @@
               var _this6 = this;
 
               if (minAccidental === undefined) {
-                  minAccidental = -1;
+                  minAccidental = this.minAccidentalEditor;
               }
               if (maxAccidental === undefined) {
-                  maxAccidental = 1;
+                  maxAccidental = this.maxAccidentalEditor;
               }
               minAccidental = Math.round(minAccidental);
               maxAccidental = Math.round(maxAccidental);
@@ -12864,6 +12869,15 @@
                       }
                   } else if (key === 'activeVexflowNote' || key === 'storedVexflowstave') {
                       // do nothing -- do not copy vexflowNotes -- permanent recursion
+                  } else if (key in this._cloneCallbacks) {
+                      if (this._cloneCallbacks[key] === true) {
+                          ret[key] = this[key];
+                      } else if (this._cloneCallbacks[key] === false) {
+                          ret[key] = undefined;
+                      } else {
+                          // call the cloneCallbacks function
+                          this._cloneCallbacks[key](key, ret, this);
+                      }
                   } else if (Object.getOwnPropertyDescriptor(this, key).get !== undefined || Object.getOwnPropertyDescriptor(this, key).set !== undefined) {
                       // do nothing
                   } else if (typeof this[key] === 'function') {

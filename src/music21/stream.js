@@ -390,6 +390,15 @@ export class Stream extends base.Music21Object {
                 || key === 'storedVexflowstave'
             ) {
                 // do nothing -- do not copy vexflowNotes -- permanent recursion
+            } else if (key in this._cloneCallbacks) {
+                if (this._cloneCallbacks[key] === true) {
+                    ret[key] = this[key];
+                } else if (this._cloneCallbacks[key] === false) {
+                    ret[key] = undefined;
+                } else {
+                    // call the cloneCallbacks function
+                    this._cloneCallbacks[key](key, ret, this);
+                }
             } else if (
                 Object.getOwnPropertyDescriptor(this, key).get !== undefined
                 || Object.getOwnPropertyDescriptor(this, key).set !== undefined
@@ -1415,7 +1424,8 @@ export class Stream extends base.Music21Object {
                 } else if (eventFunction !== undefined) {
                     $canvas.on(eventType, eventFunction);
                 }
-            }, this)
+            },
+            this)
         );
         return this;
     }

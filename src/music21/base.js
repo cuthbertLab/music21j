@@ -78,11 +78,18 @@ export class Music21Object extends prebase.ProtoM21Object {
         // beat, measureNumber, etc.
         // lots to do...
         this._cloneCallbacks.activeSite = function Music21Object_cloneCallbacks_activeSite(
-            p,
-            ret,
-            obj
+            keyName,
+            newObj,
+            self
         ) {
-            ret[p] = undefined;
+            newObj[keyName] = undefined;
+        };
+        this._cloneCallbacks.sites = function Music21Object_cloneCallbacks_sites(
+            keyName,
+            newObj,
+            self
+        ) {
+            newObj[keyName] = new sites.Sites();
         };
     }
     get priority() {
