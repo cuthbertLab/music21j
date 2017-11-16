@@ -452,7 +452,7 @@ interval.IntervalAdjustImperf = {
  * var di = new music21.interval.DiatonicInterval("M", 10);
  * di.generic.isClassOrSubclass('GenericInterval');
  * // true
- * di.specifier;
+ * di.specifierAbbreviation;
  * // 'M'
  * di.name;
  * // 'M10'
@@ -629,6 +629,19 @@ export class DiatonicInterval extends prebase.ProtoM21Object {
             );
         }
         return new interval.ChromaticInterval(semitones);
+    }
+
+    transposePitch(p) {
+        const fullIntervalObject = new Interval(this, this.getChromatic());
+        return fullIntervalObject.transposePitch(p);
+    }
+
+    get specifierAbbreviation() {
+        return interval.IntervalPrefixSpecs[this.specifier];
+    }
+
+    get cents() {
+        return this.getChromatic().cents;
     }
 }
 interval.DiatonicInterval = DiatonicInterval;

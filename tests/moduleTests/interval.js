@@ -17,4 +17,10 @@ export default function tests() {
         assert.equal(i.niceName, 'Perfect Fifth', 'nice name passed');
         assert.equal(i.generic.simpleDirected, 5);
     });
+    QUnit.test('music21.interval.DiatonicInterval', assert => {
+        let i;
+        i = new interval.DiatonicInterval('P', 5);
+        assert.equal(i.specifier, 1);
+        assert.equal(i.specifierAbbreviation, 'P');
+    });
 }

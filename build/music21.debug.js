@@ -1,5 +1,5 @@
 /**
- * music21j 0.9.0 built on  * 2017-10-27.
+ * music21j 0.9.0 built on  * 2017-11-15.
  * Copyright (c) 2013-2016 Michael Scott Cuthbert and cuthbertLab
  * BSD License, see LICENSE
  *
@@ -4478,7 +4478,7 @@
    * var di = new music21.interval.DiatonicInterval("M", 10);
    * di.generic.isClassOrSubclass('GenericInterval');
    * // true
-   * di.specifier;
+   * di.specifierAbbreviation;
    * // 'M'
    * di.name;
    * // 'M10'
@@ -4600,6 +4600,22 @@
                   console.log('DiatonicInterval.getChromatic -- semitones: ' + semitones);
               }
               return new interval.ChromaticInterval(semitones);
+          }
+      }, {
+          key: 'transposePitch',
+          value: function transposePitch(p) {
+              var fullIntervalObject = new Interval(this, this.getChromatic());
+              return fullIntervalObject.transposePitch(p);
+          }
+      }, {
+          key: 'specifierAbbreviation',
+          get: function get() {
+              return interval.IntervalPrefixSpecs[this.specifier];
+          }
+      }, {
+          key: 'cents',
+          get: function get() {
+              return this.getChromatic().cents;
           }
       }]);
       return DiatonicInterval;
