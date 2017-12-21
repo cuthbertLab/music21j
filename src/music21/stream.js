@@ -954,15 +954,13 @@ export class Stream extends base.Music21Object {
      * Uses {@link music21.vfShow.Renderer} to render Vexflow onto an
      * existing canvas or SVG object.
      *
-     * Sets canvas.storedStream to this
-     *
      * Runs `this.setRenderInteraction` on the canvas.
      *
      * Will be moved to vfShow eventually when converter objects are enabled...maybe.
      *
      * @memberof music21.stream.Stream
      * @param {DOMObject|JQueryDOMObject} canvasOrSVG - a canvas or SVG object
-     * @returns {music21.stream.Stream} this
+     * @returns {vfShow.Renderer}
      */
     renderVexflowOnCanvas(canvasOrSVG) {
         if (canvasOrSVG.jquery) {
@@ -977,9 +975,8 @@ export class Stream extends base.Music21Object {
             vfr.rendererType = 'svg';
         }
         vfr.render();
-        canvasOrSVG.storedStream = this;
         this.setRenderInteraction(canvasOrSVG);
-        return this;
+        return vfr;
     }
 
     /**
@@ -1410,8 +1407,6 @@ export class Stream extends base.Music21Object {
         } else if (canvasOrDiv.jquery === undefined) {
             $canvas = $(canvasOrDiv);
         }
-        // TODO: assumes that canvas has a .storedStream function? can this be done by setting
-        // a variable var storedStream = this; and thus get rid of the assumption?
         const playFunc = function playStreamBound() {
             this.playStream();
         }.bind(this);

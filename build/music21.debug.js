@@ -832,6 +832,7 @@
   /**
    * module for things that all music21-created objects, not just objects that can live in
    * Stream.elements should inherit. See the {@link music21.prebase} namespace.
+   * Copyright (c) 2013-17, Michael Scott Cuthbert and cuthbertLab
    *
    * @exports music21/prebase
    */
@@ -988,7 +989,7 @@
    * music21j -- Javascript reimplementation of Core music21 features.
    * music21/duration -- duration routines
    *
-   * Copyright (c) 2013-18, Michael Scott Cuthbert and cuthbertLab
+   * Copyright (c) 2013-16, Michael Scott Cuthbert and cuthbertLab
    * Based on music21, Copyright (c) 2006-18, Michael Scott Cuthbert and cuthbertLab
    *
    */
@@ -1930,7 +1931,7 @@
    *
    * does not load the other modules, music21/moduleLoader.js does that.
    *
-   * Copyright (c) 2013-18, Michael Scott Cuthbert and cuthbertLab
+   * Copyright (c) 2013-16, Michael Scott Cuthbert and cuthbertLab
    * Based on music21 (=music21p), Copyright (c) 2006–16, Michael Scott Cuthbert and cuthbertLab
    *
    */
@@ -3395,7 +3396,7 @@
    * music21j -- Javascript reimplementation of Core music21p features.
    * music21/beam -- Beams and Beam class
    *
-   * Copyright (c) 2013-18, Michael Scott Cuthbert and cuthbertLab
+   * Copyright (c) 2013-16, Michael Scott Cuthbert and cuthbertLab
    * Based on music21 (=music21p), Copyright (c) 2006–16, Michael Scott Cuthbert and cuthbertLab
    *
    */
@@ -3716,8 +3717,8 @@
    * music21j -- Javascript reimplementation of Core music21 features.
    * music21/pitch -- pitch routines
    *
-   * Copyright (c) 2013-18, Michael Scott Cuthbert and cuthbertLab
-   * Based on music21, Copyright (c) 2006–16, Michael Scott Cuthbert and cuthbertLab
+   * Copyright (c) 2013-17, Michael Scott Cuthbert and cuthbertLab
+   * Based on music21, Copyright (c) 2006–17, Michael Scott Cuthbert and cuthbertLab
    *
    */
   /**
@@ -4101,7 +4102,7 @@
    * music21j -- Javascript reimplementation of Core music21p features.
    * music21/interval -- Interval routines
    *
-   * Copyright (c) 2013-18, Michael Scott Cuthbert and cuthbertLab
+   * Copyright (c) 2013-16, Michael Scott Cuthbert and cuthbertLab
    * Based on music21 (=music21p), Copyright (c) 2006-18, Michael Scott Cuthbert and cuthbertLab
    *
    */
@@ -4978,8 +4979,8 @@
    * music21j -- Javascript reimplementation of Core music21p features.
    * music21/note -- Note, Rest, NotRest, GeneralNote
    *
-   * Copyright (c) 2013-18, Michael Scott Cuthbert and cuthbertLab
-   * Based on music21 (music21p), Copyright (c) 2006–16, Michael Scott Cuthbert and cuthbertLab
+   * Copyright (c) 2013-17, Michael Scott Cuthbert and cuthbertLab
+   * Based on music21 (music21p), Copyright (c) 2006–17, Michael Scott Cuthbert and cuthbertLab
    *
    */
   /**
@@ -5676,7 +5677,7 @@
    * music21j -- Javascript reimplementation of Core music21p features.
    * music21/chord -- Chord
    *
-   * Copyright (c) 2013-18, Michael Scott Cuthbert and cuthbertLab
+   * Copyright (c) 2013-16, Michael Scott Cuthbert and cuthbertLab
    * Based on music21 (=music21p), Copyright (c) 2006–16, Michael Scott Cuthbert and cuthbertLab
    *
    */
@@ -7229,7 +7230,7 @@
    * music21j -- Javascript reimplementation of Core music21p features.
    * music21/fromPython -- Conversion from music21p jsonpickle streams
    *
-   * Copyright (c) 2013-18, Michael Scott Cuthbert and cuthbertLab
+   * Copyright (c) 2013-16, Michael Scott Cuthbert and cuthbertLab
    * Based on music21 (=music21p), Copyright (c) 2006–16, Michael Scott Cuthbert and cuthbertLab
    *
    * usage:
@@ -7434,8 +7435,8 @@
    *
    * Does not implement the full range of scales from music21p
    *
-   * Copyright (c) 2013-18, Michael Scott Cuthbert and cuthbertLab
-   * Based on music21 (=music21p), Copyright (c) 2006–16, Michael Scott Cuthbert and cuthbertLab
+   * Copyright (c) 2013-17, Michael Scott Cuthbert and cuthbertLab
+   * Based on music21 (=music21p), Copyright (c) 2006–17, Michael Scott Cuthbert and cuthbertLab
    *
    */
   // const DIRECTION_BI = 'bi';
@@ -8086,7 +8087,7 @@
    * music21j -- Javascript reimplementation of Core music21p features.
    * music21/key -- KeySignature and Key objects
    *
-   * Copyright (c) 2013-18, Michael Scott Cuthbert and cuthbertLab
+   * Copyright (c) 2013-16, Michael Scott Cuthbert and cuthbertLab
    * Based on music21 (=music21p), Copyright (c) 2006–16, Michael Scott Cuthbert and cuthbertLab
    *
    */
@@ -8547,7 +8548,7 @@
    * music21j -- Javascript reimplementation of Core music21p features.
    * music21/instrument -- instrument objects
    *
-   * Copyright (c) 2013-18, Michael Scott Cuthbert and cuthbertLab
+   * Copyright (c) 2013-16, Michael Scott Cuthbert and cuthbertLab
    * Based on music21 (=music21p), Copyright (c) 2006–16, Michael Scott Cuthbert and cuthbertLab
    *
    */
@@ -8751,8 +8752,8 @@
    * music21j -- Javascript reimplementation of Core music21p features.
    * music21/miditools -- A collection of tools for midi. See the namespace {@link music21.miditools}
    *
-   * Copyright (c) 2014-16, Michael Scott Cuthbert and cuthbertLab
-   * Based on music21 (=music21p), Copyright (c) 2006–16, Michael Scott Cuthbert and cuthbertLab
+   * Copyright (c) 2014-17, Michael Scott Cuthbert and cuthbertLab
+   * Based on music21 (=music21p), Copyright (c) 2006–17, Michael Scott Cuthbert and cuthbertLab
    *
    * @author Michael Scott Cuthbert
    */
@@ -9377,7 +9378,7 @@
    * music21/keyboard -- PianoKeyboard rendering and display objects
    *
    * Copyright (c) 2013-18, Michael Scott Cuthbert and cuthbertLab
-   * Based on music21 (=music21p), Copyright (c) 2006–16, Michael Scott Cuthbert and cuthbertLab
+   * Based on music21 (=music21p), Copyright (c) 2006–17, Michael Scott Cuthbert and cuthbertLab
    *
    */
 
@@ -10113,8 +10114,8 @@
    * music21/meter -- TimeSignature objects
    *
    *
-   * Copyright (c) 2013-18, Michael Scott Cuthbert and cuthbertLab
-   * Based on music21 (=music21p), Copyright (c) 2006–16, Michael Scott Cuthbert and cuthbertLab
+   * Copyright (c) 2013-17, Michael Scott Cuthbert and cuthbertLab
+   * Based on music21 (=music21p), Copyright (c) 2006–17, Michael Scott Cuthbert and cuthbertLab
    *
    */
   /**
@@ -11513,6 +11514,15 @@
   streamInteraction.FourPartEditor = FourPartEditor;
 
   /**
+   * music21j -- Javascript reimplementation of Core music21p features.
+   * music21/vfShow -- Vexflow integration
+   *
+   * Copyright (c) 2013-17, Michael Scott Cuthbert and cuthbertLab
+   * Based on music21 (=music21p), Copyright (c) 2006–17, Michael Scott Cuthbert and cuthbertLab
+   *
+   */
+
+  /**
    * for rendering vexflow. Will eventually go to music21/converter/vexflow
    *
    * See {@link music21.vfShow} namespace for details
@@ -11621,7 +11631,7 @@
    * optional existing canvas or SVG element and a DOM
    * element where the canvas or SVG element should be placed
    * and renders the stream as Vexflow on the
-   * canvas element, placing it then in the where
+   * canvas or svg element, placing it then in the where
    * DOM.
    *
    * "s" can be any type of Stream.
@@ -12712,8 +12722,8 @@
    *
    * Does not implement the full features of music21p Streams by a long shot...
    *
-   * Copyright (c) 2013-18, Michael Scott Cuthbert and cuthbertLab
-   * Based on music21 (=music21p), Copyright (c) 2006-18, Michael Scott Cuthbert and cuthbertLab
+   * Copyright (c) 2013-17, Michael Scott Cuthbert and cuthbertLab
+   * Based on music21 (=music21p), Copyright (c) 2006-17, Michael Scott Cuthbert and cuthbertLab
    *
    */
   /**
@@ -13461,15 +13471,13 @@
            * Uses {@link music21.vfShow.Renderer} to render Vexflow onto an
            * existing canvas or SVG object.
            *
-           * Sets canvas.storedStream to this
-           *
            * Runs `this.setRenderInteraction` on the canvas.
            *
            * Will be moved to vfShow eventually when converter objects are enabled...maybe.
            *
            * @memberof music21.stream.Stream
            * @param {DOMObject|JQueryDOMObject} canvasOrSVG - a canvas or SVG object
-           * @returns {music21.stream.Stream} this
+           * @returns {vfShow.Renderer}
            */
 
       }, {
@@ -13487,9 +13495,8 @@
                   vfr.rendererType = 'svg';
               }
               vfr.render();
-              canvasOrSVG.storedStream = this;
               this.setRenderInteraction(canvasOrSVG);
-              return this;
+              return vfr;
           }
 
           /**
@@ -13942,8 +13949,6 @@
               } else if (canvasOrDiv.jquery === undefined) {
                   $canvas = $(canvasOrDiv);
               }
-              // TODO: assumes that canvas has a .storedStream function? can this be done by setting
-              // a variable var storedStream = this; and thus get rid of the assumption?
               var playFunc = function playStreamBound() {
                   this.playStream();
               }.bind(this);
@@ -15660,6 +15665,15 @@
   layout.Staff = Staff;
 
   /**
+   * music21j -- Javascript reimplementation of Core music21p features.
+   * music21/tie -- ties!
+   *
+   * Copyright (c) 2013-17, Michael Scott Cuthbert and cuthbertLab
+   * Based on music21 (=music21p), Copyright (c) 2006–17, Michael Scott Cuthbert and cuthbertLab
+   *
+   */
+
+  /**
    * Simple tie module {@link music21.tie} namespace
    *
    * @exports music21/tie
@@ -16580,8 +16594,8 @@
    * music21j -- Javascript reimplementation of Core music21p features.
    * music21/roman -- roman.RomanNumberal -- Chord subclass
    *
-   * Copyright (c) 2013-18, Michael Scott Cuthbert and cuthbertLab
-   * Based on music21 (=music21p), Copyright (c) 2006–16, Michael Scott Cuthbert and cuthbertLab
+   * Copyright (c) 2013-17, Michael Scott Cuthbert and cuthbertLab
+   * Based on music21 (=music21p), Copyright (c) 2006–17, Michael Scott Cuthbert and cuthbertLab
    *
    */
   // import { debug } from './debug.js';
@@ -17552,7 +17566,7 @@
    * music21/tempo -- tempo and (not in music21p) metronome objects
    *
    * Copyright (c) 2013-18, Michael Scott Cuthbert and cuthbertLab
-   * Based on music21, Copyright (c) 2006–16, Michael Scott Cuthbert and cuthbertLab
+   * Based on music21, Copyright (c) 2006–17, Michael Scott Cuthbert and cuthbertLab
    *
    */
   /* a Music21Object in m21p; the overhead is too high here to follow ... */
@@ -17874,8 +17888,8 @@
    * music21j -- Javascript reimplementation of Core music21p features.
    * music21/tinyNotation -- TinyNotation implementation
    *
-   * Copyright (c) 2013-18, Michael Scott Cuthbert and cuthbertLab
-   * Based on music21 (=music21p), Copyright (c) 2006–16, Michael Scott Cuthbert and cuthbertLab
+   * Copyright (c) 2013-17, Michael Scott Cuthbert and cuthbertLab
+   * Based on music21 (=music21p), Copyright (c) 2006–17, Michael Scott Cuthbert and cuthbertLab
    *
    */
   /**
@@ -18150,16 +18164,25 @@
               if ($thisTN.hasClass('noPlayback')) {
                   st.renderOptions.events.click = undefined;
               }
-              var newCanvas = st.createCanvas();
+              var newSVG = st.createCanvas();
 
               $thisTN.attr('tinynotationcontents', thisTNContents);
               $thisTN.empty();
               $thisTN.data('stream', st);
-              $thisTN.append(newCanvas);
+              $thisTN.append(newSVG);
               // console.log(thisTNContents);
           }
       }
   };
+
+  /**
+   * music21j -- Javascript reimplementation of Core music21 features.
+   * music21/voiceLeading -- voiceLeading objects
+   *
+   * Copyright (c) 2013-18, Michael Scott Cuthbert and cuthbertLab
+   * Based on music21, Copyright (c) 2006–18, Michael Scott Cuthbert and cuthbertLab
+   *
+   */
 
   var intervalCache = [];
 
@@ -18596,8 +18619,8 @@
    * http://jazz-soft.net/doc/Jazz-Plugin/Plugin.html
    * P.S. by the standards of divinity of most major religions, Sema Kachalo is a god.
    *
-   * Copyright (c) 2014-16, Michael Scott Cuthbert and cuthbertLab
-   * Based on music21 (=music21p), Copyright (c) 2006–16, Michael Scott Cuthbert and cuthbertLab
+   * Copyright (c) 2014-18, Michael Scott Cuthbert and cuthbertLab
+   * Based on music21 (=music21p), Copyright (c) 2006–18, Michael Scott Cuthbert and cuthbertLab
    *
    */
   /**
@@ -18935,9 +18958,9 @@
                   s.elements = s.elements.slice(1)
               }
               s.append(m21n);
-              var $canvasDiv = $("#canvasDiv");
-              $canvasDiv.empty();
-              var canv = s.appendNewCanvas($canvasDiv);
+              var $svgDiv = $("#svgDiv");
+              $svgDiv.empty();
+              var canv = s.appendNewCanvas($svgDiv);
           }
       }
 
@@ -18954,13 +18977,20 @@
   <div>
   MIDI Input: <div id="putMidiSelectHere" />
   </div>
-  <div id="canvasDiv">
-      <canvas />
+  <div id="svgDiv">
   </div>
   </body>
   </html>
    **/
 
+  /**
+   * music21j -- Javascript reimplementation of Core music21 features.
+   * music21/widgets -- tools for web display
+   *
+   * Copyright (c) 2013-17, Michael Scott Cuthbert and cuthbertLab
+   * Based on music21, Copyright (c) 2006–17, Michael Scott Cuthbert and cuthbertLab
+   *
+   */
   // ../ext/jquery/jquery-3.2.1.min.js';
 
   /**
@@ -18984,7 +19014,7 @@
    * @class RhythmChooser
    * @memberof music21.widgets
    * @param {music21.stream.Stream} s - to append to, etc.
-   * @param {DOMObject} c - canvas
+   * @param {DOMObject} canvasDiv - canvas or SVG
    * @property {Array<string>} values - an array of rhythmic values and editing functions.
    *           Default: ['whole', 'half','quarter','eighth','16th','dot','undo']
    * @property {Boolean} measureMode - whether to use measures when editing
