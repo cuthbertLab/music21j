@@ -88,7 +88,7 @@ vfShow.RenderStack = RenderStack;
  * optional existing canvas or SVG element and a DOM
  * element where the canvas or SVG element should be placed
  * and renders the stream as Vexflow on the
- * canvas element, placing it then in the where
+ * canvas or svg element, placing it then in the where
  * DOM.
  *
  * "s" can be any type of Stream.

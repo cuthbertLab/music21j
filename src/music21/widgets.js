@@ -33,7 +33,7 @@ export const widgets = {};
  * @class RhythmChooser
  * @memberof music21.widgets
  * @param {music21.stream.Stream} s - to append to, etc.
- * @param {DOMObject} c - canvas
+ * @param {DOMObject} canvasDiv - canvas or SVG
  * @property {Array<string>} values - an array of rhythmic values and editing functions.
  *           Default: ['whole', 'half','quarter','eighth','16th','dot','undo']
  * @property {Boolean} measureMode - whether to use measures when editing

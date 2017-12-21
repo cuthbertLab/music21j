@@ -377,9 +377,9 @@ webmidi.callBacks = miditools.callBacks;
                 s.elements = s.elements.slice(1)
             }
             s.append(m21n);
-            var $canvasDiv = $("#canvasDiv");
-            $canvasDiv.empty();
-            var canv = s.appendNewCanvas($canvasDiv);
+            var $svgDiv = $("#svgDiv");
+            $svgDiv.empty();
+            var canv = s.appendNewCanvas($svgDiv);
         }
     }
 
@@ -396,8 +396,7 @@ webmidi.callBacks = miditools.callBacks;
 <div>
 MIDI Input: <div id="putMidiSelectHere" />
 </div>
-<div id="canvasDiv">
-    <canvas />
+<div id="svgDiv">
 </div>
 </body>
 </html>

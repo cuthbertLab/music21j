@@ -298,12 +298,12 @@ tinyNotation.renderNotationDivs = function renderNotationDivs(
             if ($thisTN.hasClass('noPlayback')) {
                 st.renderOptions.events.click = undefined;
             }
-            const newCanvas = st.createCanvas();
+            const newSVG = st.createCanvas();
 
             $thisTN.attr('tinynotationcontents', thisTNContents);
             $thisTN.empty();
             $thisTN.data('stream', st);
-            $thisTN.append(newCanvas);
+            $thisTN.append(newSVG);
             // console.log(thisTNContents);
         }
     }
