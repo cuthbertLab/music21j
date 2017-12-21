@@ -129,9 +129,9 @@ export class Stream extends base.Music21Object {
          * @returns {music21.base.Music21Object|undefined} - returns whatever changedCallbackFunction does.
          */
         this.canvasChangerFunction = e => {
-            const canvasElement = e.currentTarget;
+            const canvasOrSVGElement = e.currentTarget;
             const [clickedDiatonicNoteNum, foundNote] = this.findNoteForClick(
-                canvasElement,
+                canvasOrSVGElement,
                 e
             );
             if (foundNote === undefined) {
@@ -143,7 +143,7 @@ export class Stream extends base.Music21Object {
             return this.noteChanged(
                 clickedDiatonicNoteNum,
                 foundNote,
-                canvasElement
+                canvasOrSVGElement
             );
         };
     }
@@ -952,7 +952,7 @@ export class Stream extends base.Music21Object {
 
     /**
      * Uses {@link music21.vfShow.Renderer} to render Vexflow onto an
-     * existing canvas object.
+     * existing canvas or SVG object.
      *
      * Sets canvas.storedStream to this
      *
@@ -961,17 +961,24 @@ export class Stream extends base.Music21Object {
      * Will be moved to vfShow eventually when converter objects are enabled...maybe.
      *
      * @memberof music21.stream.Stream
-     * @param {DOMObject|JQueryDOMObject} canvas - a canvas object
+     * @param {DOMObject|JQueryDOMObject} canvasOrSVG - a canvas or SVG object
      * @returns {music21.stream.Stream} this
      */
-    renderVexflowOnCanvas(canvas) {
-        if (canvas.jquery) {
-            canvas = canvas[0];
+    renderVexflowOnCanvas(canvasOrSVG) {
+        if (canvasOrSVG.jquery) {
+            canvasOrSVG = canvasOrSVG[0];
         }
-        const vfr = new vfShow.Renderer(this, canvas);
+        const tagName = canvasOrSVG.tagName.toLowerCase();
+
+        const vfr = new vfShow.Renderer(this, canvasOrSVG);
+        if (tagName === 'canvas') {
+            vfr.rendererType = 'canvas';
+        } else if (tagName === 'svg') {
+            vfr.rendererType = 'svg';
+        }
         vfr.render();
-        canvas.storedStream = this;
-        this.setRenderInteraction(canvas);
+        canvasOrSVG.storedStream = this;
+        this.setRenderInteraction(canvasOrSVG);
         return this;
     }
 
@@ -1169,7 +1176,7 @@ export class Stream extends base.Music21Object {
      */
 
     /**
-     * Creates and returns a new `&lt;canvas&gt;` object.
+     * Creates and returns a new `&lt;canvas&gt;` or `&lt;svg&gt;` object.
      *
      * Calls setSubstreamRenderOptions() first.
      *
@@ -1178,29 +1185,30 @@ export class Stream extends base.Music21Object {
      * @memberof music21.stream.Stream
      * @param {number|string|undefined} width - will use `this.estimateStaffLength()` + `this.renderOptions.staffPadding` if not given
      * @param {number|string|undefined} height - if undefined will use `this.renderOptions.height`. If still undefined, will use `this.estimateStreamHeight()`
+     * @param {string} elementType - what type of element, default = canvas
      * @returns {JQueryDOMObject} canvas in jquery.
      */
-    createNewCanvas(width, height) {
+    createNewCanvas(width, height, elementType = 'canvas') {
         if (this.hasSubStreams()) {
             this.setSubstreamRenderOptions();
         }
 
-        const newCanvas = $('<canvas/>'); // .css('border', '1px red solid');
+        const newCanvasOrSVG = $('<' + elementType + '/>'); // .css('border', '1px red solid');
 
         if (width !== undefined) {
             if (typeof width === 'string') {
                 width = common.stripPx(width);
             }
-            newCanvas.attr('width', width);
+            newCanvasOrSVG.attr('width', width);
         } else {
             const computedWidth
                 = this.estimateStaffLength()
                 + this.renderOptions.staffPadding
                 + 0;
-            newCanvas.attr('width', computedWidth);
+            newCanvasOrSVG.attr('width', computedWidth);
         }
         if (height !== undefined) {
-            newCanvas.attr('height', height);
+            newCanvasOrSVG.attr('height', height);
         } else {
             let computedHeight;
             if (this.renderOptions.height === undefined) {
@@ -1210,12 +1218,12 @@ export class Stream extends base.Music21Object {
                 computedHeight = this.renderOptions.height;
                 // console.log('computed Height: ' + computedHeight);
             }
-            newCanvas.attr(
+            newCanvasOrSVG.attr(
                 'height',
                 computedHeight * this.renderOptions.scaleFactor.y
             );
         }
-        return newCanvas;
+        return newCanvasOrSVG;
     }
 
     /**
@@ -1226,11 +1234,12 @@ export class Stream extends base.Music21Object {
      * @memberof music21.stream.Stream
      * @param {number|string|undefined} width
      * @param {number|string|undefined} height
-     * @returns {JQueryDOMObject} canvas
+     * @param {string} elementType - what type of element, default = canvas
+     * @returns {JQueryDOMObject} canvas or svg
      */
-    createPlayableCanvas(width, height) {
+    createPlayableCanvas(width, height, elementType = 'canvas') {
         this.renderOptions.events.click = 'play';
-        return this.createCanvas(width, height);
+        return this.createCanvas(width, height, elementType);
     }
 
     /**
@@ -1239,10 +1248,11 @@ export class Stream extends base.Music21Object {
      * @memberof music21.stream.Stream
      * @param {number|string|undefined} [width]
      * @param {number|string|undefined} [height]
-     * @returns {JQueryDOMObject} canvas
+     * @param {string} elementType - what type of element, default = canvas
+     * @returns {JQueryDOMObject} canvas or SVG
      */
-    createCanvas(width, height) {
-        const $newCanvas = this.createNewCanvas(width, height);
+    createCanvas(width, height, elementType = 'canvas') {
+        const $newCanvas = this.createNewCanvas(width, height, elementType);
         this.renderVexflowOnCanvas($newCanvas);
         return $newCanvas;
     }
@@ -1253,10 +1263,11 @@ export class Stream extends base.Music21Object {
      * @param {JQueryDOMObject|DOMObject} [appendElement=document.body] - where to place the canvas
      * @param {number|string} [width]
      * @param {number|string} [height]
+     * @param {string} elementType - what type of element, default = canvas
      * @returns {DOMObject} canvas (not the jQueryDOMObject -- this is a difference with other routines and should be fixed. TODO: FIX)
      *
      */
-    appendNewCanvas(appendElement, width, height) {
+    appendNewCanvas(appendElement, width, height, elementType = 'canvas') {
         if (appendElement === undefined) {
             appendElement = 'body';
         }
@@ -1273,7 +1284,7 @@ export class Stream extends base.Music21Object {
         //      width = $bodyElement.width();
         //      };
 
-        const canvasBlock = this.createCanvas(width, height);
+        const canvasBlock = this.createCanvas(width, height, elementType);
         $appendElement.append(canvasBlock);
         return canvasBlock[0];
     }
@@ -1284,11 +1295,12 @@ export class Stream extends base.Music21Object {
      * Note that if 'where' is empty, will replace all canvases on the page.
      *
      * @memberof music21.stream.Stream
-     * @param {JQueryDOMObject|DOMObject} [where] - the canvas to replace or a container holding the canvas(es) to replace.
+     * @param {JQueryDOMObject|DOMObject} [where] - the canvas or SVG to replace or a container holding the canvas(es) to replace.
      * @param {Boolean} [preserveCanvasSize=false]
+     * @param {string} elementType - what type of element, default = canvas
      * @returns {JQueryDOMObject} the canvas
      */
-    replaceCanvas(where, preserveCanvasSize) {
+    replaceCanvas(where, preserveCanvasSize, elementType = 'canvas') {
         // if called with no where, replaces all the canvases on the page...
         if (where === undefined) {
             where = 'body';
@@ -1301,10 +1313,10 @@ export class Stream extends base.Music21Object {
             where = $where[0];
         }
         let $oldCanvas;
-        if ($where.prop('tagName') === 'CANVAS') {
+        if ($where.prop('tagName') === elementType.toUpperCase()) {
             $oldCanvas = $where;
         } else {
-            $oldCanvas = $where.find('canvas');
+            $oldCanvas = $where.find(elementType);
         }
         // TODO: Max Width!
         if ($oldCanvas.length === 0) {
@@ -1321,9 +1333,9 @@ export class Stream extends base.Music21Object {
         if (preserveCanvasSize) {
             const width = $oldCanvas.width();
             const height = $oldCanvas.height();
-            canvasBlock = this.createCanvas(width, height);
+            canvasBlock = this.createCanvas(width, height, elementType);
         } else {
-            canvasBlock = this.createCanvas();
+            canvasBlock = this.createCanvas(undefined, undefined, elementType);
         }
 
         $oldCanvas.replaceWith(canvasBlock);
@@ -1337,9 +1349,10 @@ export class Stream extends base.Music21Object {
      *
      * @memberof music21.stream.Stream
      * @param {JQueryDOMObject|DOMObject} [where]
+     * @param {string} elementType - what type of element, default = canvas
      * @returns {DOMObject} canvas
      */
-    renderScrollableCanvas(where) {
+    renderScrollableCanvas(where, elementType = 'canvas') {
         let $where = where;
         if (where === undefined) {
             $where = $(document.body);
@@ -1347,7 +1360,7 @@ export class Stream extends base.Music21Object {
             $where = $(where);
         }
         const $innerDiv = $('<div>').css('position', 'absolute');
-        const c = this.appendNewCanvas($innerDiv);
+        const c = this.appendNewCanvas($innerDiv, undefined, undefined, elementType);
         this.renderOptions.events.click = event =>
             this.scrollScoreStart(c, event);
         this.setRenderInteraction($innerDiv);
@@ -1463,7 +1476,7 @@ export class Stream extends base.Music21Object {
      * find the x and y for the canvas.
      *
      * @memberof music21.stream.Stream
-     * @param {DOMObject} canvas
+     * @param {DOMObject} canvas - a canvas or SVG object
      * @param {Event} e
      * @returns {Array<number>} two-elements, [x, y] in pixels.
      */
@@ -1505,7 +1518,7 @@ export class Stream extends base.Music21Object {
      * x of 1 gives 1.42857...
      *
      * @memberof music21.stream.Stream
-     * @param {DOMObject} canvas
+     * @param {DOMObject} canvas -- a canvas or SVG object
      * @param {Event} e
      * @returns {Array<number>} [scaledX, scaledY]
      */

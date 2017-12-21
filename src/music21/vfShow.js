@@ -76,8 +76,8 @@ vfShow.RenderStack = RenderStack;
 
 /**
  * Renderer is a function that takes a stream, an
- * optional existing canvas element and a DOM
- * element where the canvas element should be placed
+ * optional existing canvas or SVG element and a DOM
+ * element where the canvas or SVG element should be placed
  * and renders the stream as Vexflow on the
  * canvas element, placing it then in the where
  * DOM.
@@ -90,17 +90,18 @@ vfShow.RenderStack = RenderStack;
  * @class Renderer
  * @memberof music21.vfShow
  * @param {music21.stream.Stream} s - main stream to render
- * @param {canvas} [canvas] - existing canvas element
+ * @param {canvas} [canvas] - existing canvas or SVG element
  * @param {DOMObject|jQueryDOMObject} [where=document.body] - where to render the stream
  * @property {Vex.Flow.Renderer} vfRenderer - a Vex.Flow.Renderer to use
  * (will create if not existing)
+ * @property {string} rendererType - canvas or svg
  * @property {Vex.Flow.Context} ctx - a Vex.Flow.Context (Canvas or Raphael [not yet]) to use.
  * @property {canvas} canvas - canvas element
  * @property {jQueryDOMObject} $canvas - jQuery canvas element
  * @property {jQueryDOMObject} $where - jQuery element to render onto
  * @property {Vex.Flow.Formatter} activeFormatter - formatter
  * @property {Array<Vex.Flow.Beam>} beamGroups - beamGroups
- * @property {Array<Vex.Flow.StaveTie>} ties - ties
+ * @property {Array<Vex.Flow.StaveTie>} vfTies - ties as instances of Vex.Flow.StaveTie
  * @property {Array<number>} systemBreakOffsets - where to break the systems
  * @property {Array<Vex.Flow.Tuplet>} vfTuplets - tuplets represented in Vexflow
  * @property {Array<music21.vfShow.RenderStack>} stacks - array of RenderStack objects
@@ -109,6 +110,7 @@ export class Renderer {
     constructor(s, canvas, where) {
         this.stream = s;
         // this.streamType = s.classes[-1];
+        this.rendererType = 'svg';
 
         this.canvas = undefined;
         this.$canvas = undefined;
@@ -119,7 +121,7 @@ export class Renderer {
         this.beamGroups = [];
         this.stacks = []; // an Array of RenderStacks: {voices: [Array of Vex.Flow.Voice objects],
         //                                           streams: [Array of Streams, usually Measures]}
-        this.ties = [];
+        this.vfTies = [];
         this.systemBreakOffsets = [];
         this.vfTuplets = [];
         // this.measureFormatters = [];
@@ -140,13 +142,21 @@ export class Renderer {
             }
         }
     }
+
     get vfRenderer() {
+        let backend;
+        if (this.rendererType === 'canvas') {
+            backend = Vex.Flow.Renderer.Backends.CANVAS;
+        } else {
+            backend = Vex.Flow.Renderer.Backends.SVG;
+        }
+
         if (this._vfRenderer !== undefined) {
             return this._vfRenderer;
         } else {
             this._vfRenderer = new Vex.Flow.Renderer(
                 this.canvas,
-                Vex.Flow.Renderer.Backends.CANVAS
+                backend
             );
             return this._vfRenderer;
         }
@@ -260,7 +270,7 @@ export class Renderer {
     /**
      *
      * Prepares a score that arrived flat... sets up
-     * stacks and ties after calling prepareFlat
+     * stacks and vfTies after calling prepareFlat
      *
      * @memberof music21.vfShow.Renderer
      * @param {music21.stream.Stream} m - a flat stream (maybe a measure or voice)
@@ -377,19 +387,19 @@ export class Renderer {
         });
     }
     /**
-     * draws the ties
+     * draws the vfTies
      *
      * @memberof music21.vfShow.Renderer
      */
     drawTies() {
         const ctx = this.ctx;
-        for (let i = 0; i < this.ties.length; i++) {
-            this.ties[i].setContext(ctx).draw();
+        for (let i = 0; i < this.vfTies.length; i++) {
+            this.vfTies[i].setContext(ctx).draw();
         }
     }
     /**
      * Finds all tied notes and creates the proper Vex.Flow.StaveTie objects in
-     * `this.ties`.
+     * `this.vfTies`.
      *
      * @memberof music21.vfShow.Renderer
      * @param {music21.stream.Part} p - a Part or similar object
@@ -422,19 +432,19 @@ export class Renderer {
                     first_indices: [0],
                     last_indices: [0],
                 });
-                this.ties.push(vfTie);
+                this.vfTies.push(vfTie);
             } else {
                 // console.log('got me a tie across systemBreaks!');
                 const vfTie1 = new Vex.Flow.StaveTie({
                     first_note: thisNote.activeVexflowNote,
                     first_indices: [0],
                 });
-                this.ties.push(vfTie1);
+                this.vfTies.push(vfTie1);
                 const vfTie2 = new Vex.Flow.StaveTie({
                     last_note: nextNote.activeVexflowNote,
                     first_indices: [0],
                 });
-                this.ties.push(vfTie2);
+                this.vfTies.push(vfTie2);
             }
         }
     }

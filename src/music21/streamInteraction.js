@@ -562,6 +562,10 @@ export class SimpleNoteEditor {
         this.accidentalsByStepOctave = {};
         this.minAccidentalEditor = -1;
         this.maxAccidentalEditor = 1;
+
+        // for active display of mouse over notes.
+        this.renderMouseOver = true;
+        this.currentNoteValue = 'quarter';
     }
 
     /**
