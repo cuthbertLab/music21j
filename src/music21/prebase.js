@@ -1,6 +1,7 @@
 /**
  * module for things that all music21-created objects, not just objects that can live in
  * Stream.elements should inherit. See the {@link music21.prebase} namespace.
+ * Copyright (c) 2013-17, Michael Scott Cuthbert and cuthbertLab
  *
  * @exports music21/prebase
  */

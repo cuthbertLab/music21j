@@ -4,8 +4,8 @@
  *
  * Does not implement the full features of music21p Streams by a long shot...
  *
- * Copyright (c) 2013-16, Michael Scott Cuthbert and cuthbertLab
- * Based on music21 (=music21p), Copyright (c) 2006-16, Michael Scott Cuthbert and cuthbertLab
+ * Copyright (c) 2013-17, Michael Scott Cuthbert and cuthbertLab
+ * Based on music21 (=music21p), Copyright (c) 2006-17, Michael Scott Cuthbert and cuthbertLab
  *
  */
 import * as $ from 'jquery';
@@ -1185,10 +1185,10 @@ export class Stream extends base.Music21Object {
      * @memberof music21.stream.Stream
      * @param {number|string|undefined} width - will use `this.estimateStaffLength()` + `this.renderOptions.staffPadding` if not given
      * @param {number|string|undefined} height - if undefined will use `this.renderOptions.height`. If still undefined, will use `this.estimateStreamHeight()`
-     * @param {string} elementType - what type of element, default = canvas
+     * @param {string} elementType - what type of element, default = svg
      * @returns {JQueryDOMObject} canvas in jquery.
      */
-    createNewCanvas(width, height, elementType = 'canvas') {
+    createNewCanvas(width, height, elementType = 'svg') {
         if (this.hasSubStreams()) {
             this.setSubstreamRenderOptions();
         }
@@ -1234,10 +1234,10 @@ export class Stream extends base.Music21Object {
      * @memberof music21.stream.Stream
      * @param {number|string|undefined} width
      * @param {number|string|undefined} height
-     * @param {string} elementType - what type of element, default = canvas
+     * @param {string} elementType - what type of element, default = svg
      * @returns {JQueryDOMObject} canvas or svg
      */
-    createPlayableCanvas(width, height, elementType = 'canvas') {
+    createPlayableCanvas(width, height, elementType = 'svg') {
         this.renderOptions.events.click = 'play';
         return this.createCanvas(width, height, elementType);
     }
@@ -1248,10 +1248,10 @@ export class Stream extends base.Music21Object {
      * @memberof music21.stream.Stream
      * @param {number|string|undefined} [width]
      * @param {number|string|undefined} [height]
-     * @param {string} elementType - what type of element, default = canvas
+     * @param {string} elementType - what type of element, default = svg
      * @returns {JQueryDOMObject} canvas or SVG
      */
-    createCanvas(width, height, elementType = 'canvas') {
+    createCanvas(width, height, elementType = 'svg') {
         const $newCanvas = this.createNewCanvas(width, height, elementType);
         this.renderVexflowOnCanvas($newCanvas);
         return $newCanvas;
@@ -1263,11 +1263,11 @@ export class Stream extends base.Music21Object {
      * @param {JQueryDOMObject|DOMObject} [appendElement=document.body] - where to place the canvas
      * @param {number|string} [width]
      * @param {number|string} [height]
-     * @param {string} elementType - what type of element, default = canvas
+     * @param {string} elementType - what type of element, default = svg
      * @returns {DOMObject} canvas (not the jQueryDOMObject -- this is a difference with other routines and should be fixed. TODO: FIX)
      *
      */
-    appendNewCanvas(appendElement, width, height, elementType = 'canvas') {
+    appendNewCanvas(appendElement, width, height, elementType = 'svg') {
         if (appendElement === undefined) {
             appendElement = 'body';
         }
@@ -1297,10 +1297,10 @@ export class Stream extends base.Music21Object {
      * @memberof music21.stream.Stream
      * @param {JQueryDOMObject|DOMObject} [where] - the canvas or SVG to replace or a container holding the canvas(es) to replace.
      * @param {Boolean} [preserveCanvasSize=false]
-     * @param {string} elementType - what type of element, default = canvas
+     * @param {string} elementType - what type of element, default = svg
      * @returns {JQueryDOMObject} the canvas
      */
-    replaceCanvas(where, preserveCanvasSize, elementType = 'canvas') {
+    replaceCanvas(where, preserveCanvasSize, elementType = 'svg') {
         // if called with no where, replaces all the canvases on the page...
         if (where === undefined) {
             where = 'body';
@@ -1349,10 +1349,10 @@ export class Stream extends base.Music21Object {
      *
      * @memberof music21.stream.Stream
      * @param {JQueryDOMObject|DOMObject} [where]
-     * @param {string} elementType - what type of element, default = canvas
+     * @param {string} elementType - what type of element, default = svg
      * @returns {DOMObject} canvas
      */
-    renderScrollableCanvas(where, elementType = 'canvas') {
+    renderScrollableCanvas(where, elementType = 'svg') {
         let $where = where;
         if (where === undefined) {
             $where = $(document.body);

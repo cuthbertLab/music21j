@@ -3,7 +3,7 @@ Music21j
 
 **Music21j: An Interactive Framework for Musical Analysis**
 
-Copyright &copy;2013-17, Michael Scott Cuthbert and cuthbertLab, some rights reserved.
+Copyright &copy;2013-18, Michael Scott Cuthbert and cuthbertLab, some rights reserved.
 
 **Music21j** is a Javascript reinterpretation of the [Music21 Python] package, 
 a toolkit for computer-aided musicology, now with intuitive HTML/Javascript

@@ -3,7 +3,7 @@
  * music21/duration -- duration routines
  *
  * Copyright (c) 2013-16, Michael Scott Cuthbert and cuthbertLab
- * Based on music21, Copyright (c) 2006-16, Michael Scott Cuthbert and cuthbertLab
+ * Based on music21, Copyright (c) 2006-18, Michael Scott Cuthbert and cuthbertLab
  *
  */
 import { Music21Exception } from './exceptions21.js';

@@ -1,3 +1,12 @@
+/**
+ * music21j -- Javascript reimplementation of Core music21 features.
+ * music21/voiceLeading -- voiceLeading objects
+ *
+ * Copyright (c) 2013-18, Michael Scott Cuthbert and cuthbertLab
+ * Based on music21, Copyright (c) 2006–18, Michael Scott Cuthbert and cuthbertLab
+ *
+ */
+
 import { interval } from './interval.js';
 import { key } from './key.js';
 import { note } from './note.js';

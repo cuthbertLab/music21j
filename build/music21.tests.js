@@ -988,8 +988,8 @@
    * music21j -- Javascript reimplementation of Core music21 features.
    * music21/duration -- duration routines
    *
-   * Copyright (c) 2013-16, Michael Scott Cuthbert and cuthbertLab
-   * Based on music21, Copyright (c) 2006-16, Michael Scott Cuthbert and cuthbertLab
+   * Copyright (c) 2013-18, Michael Scott Cuthbert and cuthbertLab
+   * Based on music21, Copyright (c) 2006-18, Michael Scott Cuthbert and cuthbertLab
    *
    */
   /**
@@ -1930,7 +1930,7 @@
    *
    * does not load the other modules, music21/moduleLoader.js does that.
    *
-   * Copyright (c) 2013-16, Michael Scott Cuthbert and cuthbertLab
+   * Copyright (c) 2013-18, Michael Scott Cuthbert and cuthbertLab
    * Based on music21 (=music21p), Copyright (c) 2006–16, Michael Scott Cuthbert and cuthbertLab
    *
    */
@@ -3395,7 +3395,7 @@
    * music21j -- Javascript reimplementation of Core music21p features.
    * music21/beam -- Beams and Beam class
    *
-   * Copyright (c) 2013-16, Michael Scott Cuthbert and cuthbertLab
+   * Copyright (c) 2013-18, Michael Scott Cuthbert and cuthbertLab
    * Based on music21 (=music21p), Copyright (c) 2006–16, Michael Scott Cuthbert and cuthbertLab
    *
    */
@@ -3716,7 +3716,7 @@
    * music21j -- Javascript reimplementation of Core music21 features.
    * music21/pitch -- pitch routines
    *
-   * Copyright (c) 2013-16, Michael Scott Cuthbert and cuthbertLab
+   * Copyright (c) 2013-18, Michael Scott Cuthbert and cuthbertLab
    * Based on music21, Copyright (c) 2006–16, Michael Scott Cuthbert and cuthbertLab
    *
    */
@@ -4101,8 +4101,8 @@
    * music21j -- Javascript reimplementation of Core music21p features.
    * music21/interval -- Interval routines
    *
-   * Copyright (c) 2013-16, Michael Scott Cuthbert and cuthbertLab
-   * Based on music21 (=music21p), Copyright (c) 2006-16, Michael Scott Cuthbert and cuthbertLab
+   * Copyright (c) 2013-18, Michael Scott Cuthbert and cuthbertLab
+   * Based on music21 (=music21p), Copyright (c) 2006-18, Michael Scott Cuthbert and cuthbertLab
    *
    */
   /**
@@ -4978,7 +4978,7 @@
    * music21j -- Javascript reimplementation of Core music21p features.
    * music21/note -- Note, Rest, NotRest, GeneralNote
    *
-   * Copyright (c) 2013-16, Michael Scott Cuthbert and cuthbertLab
+   * Copyright (c) 2013-18, Michael Scott Cuthbert and cuthbertLab
    * Based on music21 (music21p), Copyright (c) 2006–16, Michael Scott Cuthbert and cuthbertLab
    *
    */
@@ -5676,7 +5676,7 @@
    * music21j -- Javascript reimplementation of Core music21p features.
    * music21/chord -- Chord
    *
-   * Copyright (c) 2013-16, Michael Scott Cuthbert and cuthbertLab
+   * Copyright (c) 2013-18, Michael Scott Cuthbert and cuthbertLab
    * Based on music21 (=music21p), Copyright (c) 2006–16, Michael Scott Cuthbert and cuthbertLab
    *
    */
@@ -7229,7 +7229,7 @@
    * music21j -- Javascript reimplementation of Core music21p features.
    * music21/fromPython -- Conversion from music21p jsonpickle streams
    *
-   * Copyright (c) 2013-16, Michael Scott Cuthbert and cuthbertLab
+   * Copyright (c) 2013-18, Michael Scott Cuthbert and cuthbertLab
    * Based on music21 (=music21p), Copyright (c) 2006–16, Michael Scott Cuthbert and cuthbertLab
    *
    * usage:
@@ -7434,7 +7434,7 @@
    *
    * Does not implement the full range of scales from music21p
    *
-   * Copyright (c) 2013-16, Michael Scott Cuthbert and cuthbertLab
+   * Copyright (c) 2013-18, Michael Scott Cuthbert and cuthbertLab
    * Based on music21 (=music21p), Copyright (c) 2006–16, Michael Scott Cuthbert and cuthbertLab
    *
    */
@@ -8086,7 +8086,7 @@
    * music21j -- Javascript reimplementation of Core music21p features.
    * music21/key -- KeySignature and Key objects
    *
-   * Copyright (c) 2013-16, Michael Scott Cuthbert and cuthbertLab
+   * Copyright (c) 2013-18, Michael Scott Cuthbert and cuthbertLab
    * Based on music21 (=music21p), Copyright (c) 2006–16, Michael Scott Cuthbert and cuthbertLab
    *
    */
@@ -8547,7 +8547,7 @@
    * music21j -- Javascript reimplementation of Core music21p features.
    * music21/instrument -- instrument objects
    *
-   * Copyright (c) 2013-16, Michael Scott Cuthbert and cuthbertLab
+   * Copyright (c) 2013-18, Michael Scott Cuthbert and cuthbertLab
    * Based on music21 (=music21p), Copyright (c) 2006–16, Michael Scott Cuthbert and cuthbertLab
    *
    */
@@ -9376,7 +9376,7 @@
    * music21j -- Javascript reimplementation of Core music21p features.
    * music21/keyboard -- PianoKeyboard rendering and display objects
    *
-   * Copyright (c) 2013-16, Michael Scott Cuthbert and cuthbertLab
+   * Copyright (c) 2013-18, Michael Scott Cuthbert and cuthbertLab
    * Based on music21 (=music21p), Copyright (c) 2006–16, Michael Scott Cuthbert and cuthbertLab
    *
    */
@@ -10113,7 +10113,7 @@
    * music21/meter -- TimeSignature objects
    *
    *
-   * Copyright (c) 2013-16, Michael Scott Cuthbert and cuthbertLab
+   * Copyright (c) 2013-18, Michael Scott Cuthbert and cuthbertLab
    * Based on music21 (=music21p), Copyright (c) 2006–16, Michael Scott Cuthbert and cuthbertLab
    *
    */
@@ -12685,8 +12685,8 @@
    *
    * Does not implement the full features of music21p Streams by a long shot...
    *
-   * Copyright (c) 2013-16, Michael Scott Cuthbert and cuthbertLab
-   * Based on music21 (=music21p), Copyright (c) 2006-16, Michael Scott Cuthbert and cuthbertLab
+   * Copyright (c) 2013-18, Michael Scott Cuthbert and cuthbertLab
+   * Based on music21 (=music21p), Copyright (c) 2006-18, Michael Scott Cuthbert and cuthbertLab
    *
    */
   /**
@@ -16528,7 +16528,7 @@
    * music21j -- Javascript reimplementation of Core music21p features.
    * music21/roman -- roman.RomanNumberal -- Chord subclass
    *
-   * Copyright (c) 2013-16, Michael Scott Cuthbert and cuthbertLab
+   * Copyright (c) 2013-18, Michael Scott Cuthbert and cuthbertLab
    * Based on music21 (=music21p), Copyright (c) 2006–16, Michael Scott Cuthbert and cuthbertLab
    *
    */
@@ -17499,7 +17499,7 @@
    * music21j -- Javascript reimplementation of Core music21 features.
    * music21/tempo -- tempo and (not in music21p) metronome objects
    *
-   * Copyright (c) 2013-16, Michael Scott Cuthbert and cuthbertLab
+   * Copyright (c) 2013-18, Michael Scott Cuthbert and cuthbertLab
    * Based on music21, Copyright (c) 2006–16, Michael Scott Cuthbert and cuthbertLab
    *
    */
@@ -17822,7 +17822,7 @@
    * music21j -- Javascript reimplementation of Core music21p features.
    * music21/tinyNotation -- TinyNotation implementation
    *
-   * Copyright (c) 2013-16, Michael Scott Cuthbert and cuthbertLab
+   * Copyright (c) 2013-18, Michael Scott Cuthbert and cuthbertLab
    * Based on music21 (=music21p), Copyright (c) 2006–16, Michael Scott Cuthbert and cuthbertLab
    *
    */

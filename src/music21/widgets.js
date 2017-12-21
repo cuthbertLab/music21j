@@ -1,3 +1,11 @@
+/**
+ * music21j -- Javascript reimplementation of Core music21 features.
+ * music21/widgets -- tools for web display
+ *
+ * Copyright (c) 2013-17, Michael Scott Cuthbert and cuthbertLab
+ * Based on music21, Copyright (c) 2006–17, Michael Scott Cuthbert and cuthbertLab
+ *
+ */
 import * as $ from 'jquery'; // ../ext/jquery/jquery-3.2.1.min.js';
 
 import { note } from './note.js';

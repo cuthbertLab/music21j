@@ -26,14 +26,14 @@ export const streamInteraction = {};
  * @class Follower
  * @memberof music21.streamInteraction
  * @param {music21.stream.Stream} s -- Stream
- * @param {canvas} c -- canvas
+ * @param {canvasOrSvg} c -- canvas or svg
  * @property {music21.streamInteraction.PixelMapper} pixelMapper - an object that can map current pixel to notes and vice versa.
  * @property {number} [tempo=s.tempo]
  * @property {number} lastX - last X value
  * @property {Int} lastNoteIndex - index of last note played
  * @property {SVGDOMObject} barDOM - DOM object representing the scrolling bar
  * @property {SVGDOMObject} svgDOM - DOM object holding the scrolling bar (overlaid on top of canvas)
- * @property {DOMObject} canvasParent - the parent DOM object for `this.canvas`
+ * @property {DOMObject} canvasOrSvgParent - the parent DOM object for `this.canvas`
  * @property {Int} lastTimeout - a numerical reference to a timeout object created by `setTimeout`
  * @property {number} startTime - the time in ms when the scrolling started
  * @property {Int} [previousSystemIndex=0] - the last systemIndex being scrolled
@@ -45,7 +45,7 @@ export class Follower {
     constructor(s, c) {
         this.pixelMapper = new streamInteraction.PixelMapper(s);
         this.stream = s;
-        this.canvas = c;
+        this.canvasOrSvg = c;
         this.tempo = s.tempo;
 
         this.lastX = -100;
@@ -54,7 +54,7 @@ export class Follower {
 
         this.barDOM = undefined;
         this.svgDOM = undefined;
-        this.canvasParent = $(c).parent()[0];
+        this.canvasOrSvgParent = $(c).parent()[0];
         this.lastTimeout = undefined;
         this.startTime = new Date().getTime();
         this.previousSystemIndex = 0;
@@ -64,7 +64,7 @@ export class Follower {
 
         this.scaleY = this.stream.renderOptions.scaleFactor.y;
         this.eachSystemHeight
-            = this.canvas.height
+            = $(this.canvasOrSvg).attr('height')
             / (this.scaleY * (this.pixelMapper.maxSystemIndex + 1));
 
         this.newLocationCallbacks = [];
@@ -151,7 +151,7 @@ export class Follower {
     startPlaying() {
         this.savedRenderOptionClick = this.stream.renderOptions.events.click;
         this.stream.renderOptions.events.click = e => this.stopPlaying(e);
-        this.stream.setRenderInteraction(this.canvasParent);
+        this.stream.setRenderInteraction(this.canvasOrSvgParent);
         this.followScore();
     }
 
@@ -166,7 +166,7 @@ export class Follower {
         if (this.lastTimeout !== undefined) {
             clearTimeout(this.lastTimeout);
         }
-        this.stream.setRenderInteraction(this.canvasParent);
+        this.stream.setRenderInteraction(this.canvasOrSvgParent);
         if (event !== undefined) {
             event.stopPropagation();
         }
@@ -180,7 +180,7 @@ streamInteraction.Follower = Follower;
  * @class ScrollPlayer
  * @memberof music21.streamInteraction
  * @param {music21.stream.Stream} s -- Stream
- * @param {canvas} c -- canvas
+ * @param {canvasOrSvg} c -- canvas or svg
  * @property {SVGDOMObject} barDOM - DOM object representing the scrolling bar
  * @property {SVGDOMObject} svgDOM - DOM object holding the scrolling bar (overlaid on top of canvas)
  */
@@ -232,16 +232,26 @@ export class ScrollPlayer extends Follower {
      * - this.barDOM
      * - this.svgDOM
      * - this.eachSystemHeight
-     * - this.canvasParent
+     * - this.canvasOrSvgParent
      *
      * @memberof music21.streamInteraction.ScrollPlayer
      * @returns {SVGDOMObject} scroll bar
      */
     createScrollBar() {
-        const canvas = this.canvas;
+        let svgDomHeight;
+        let svgDomWidth;
+        if (this.canvasOrSvg.tagName.toLowerCase() === 'canvas') {
+            svgDomHeight = this.canvasOrSvg.height;
+            svgDomWidth = this.canvasOrSvg.width;
+        } else {
+            svgDomHeight = $(this.canvasOrSvg).attr('height');
+            svgDomWidth = $(this.canvasOrSvg).attr('width');
+        }
+
+
         const svgDOM = common.makeSVGright('svg', {
-            height: canvas.height.toString() + 'px',
-            width: canvas.width.toString() + 'px',
+            height: svgDomHeight.toString() + 'px',
+            width: svgDomWidth.toString() + 'px',
             style: 'position:absolute; top: 0px; left: 0px;',
         });
         const barDOM = common.makeSVGright('rect', {
@@ -254,7 +264,7 @@ export class ScrollPlayer extends Follower {
         barDOM.setAttribute('transform', 'scale(' + this.scaleY + ')');
         svgDOM.appendChild(barDOM);
 
-        this.canvasParent.appendChild(svgDOM);
+        this.canvasOrSvgParent.appendChild(svgDOM);
         this.barDOM = barDOM;
         this.svgDOM = svgDOM;
         return barDOM;
@@ -269,7 +279,7 @@ export class ScrollPlayer extends Follower {
     stopPlaying(event) {
         super.stopPlaying(event);
         this.barDOM.setAttribute('style', 'display:none');
-        this.canvasParent.removeChild(this.svgDOM);
+        this.canvasOrSvgParent.removeChild(this.svgDOM);
     }
 }
 streamInteraction.ScrollPlayer = ScrollPlayer;
@@ -563,6 +573,8 @@ export class SimpleNoteEditor {
         this.minAccidentalEditor = -1;
         this.maxAccidentalEditor = 1;
 
+        this.elementType = 'svg';
+
         // for active display of mouse over notes.
         this.renderMouseOver = true;
         this.currentNoteValue = 'quarter';
@@ -580,11 +592,11 @@ export class SimpleNoteEditor {
      * @returns {music21.base.Music21Object|undefined} - returns whatever changedCallbackFunction does.
      */
     changeClickedNoteFromEvent(e) {
-        const canvasElement = e.currentTarget;
+        const canvasOrSvgElement = e.currentTarget;
         const [
             clickedDiatonicNoteNum,
             foundNote,
-        ] = this.stream.findNoteForClick(canvasElement, e);
+        ] = this.stream.findNoteForClick(canvasOrSvgElement, e);
         if (foundNote === undefined) {
             if (debug) {
                 console.log('No note found');
@@ -594,7 +606,7 @@ export class SimpleNoteEditor {
         return this.noteChanged(
             clickedDiatonicNoteNum,
             foundNote,
-            canvasElement
+            canvasOrSvgElement
         );
     }
 
@@ -605,10 +617,10 @@ export class SimpleNoteEditor {
      * @memberof music21.streamInteraction.SimpleNoteEditor
      * @param {Int} clickedDiatonicNoteNum
      * @param {music21.base.Music21Object} foundNote
-     * @param {DOMObject} canvas
+     * @param {DOMObject} canvasOrSvg
      * @returns {any} output of changedCallbackFunction
      */
-    noteChanged(clickedDiatonicNoteNum, foundNote, canvas) {
+    noteChanged(clickedDiatonicNoteNum, foundNote, canvasOrSvg) {
         const n = foundNote;
         const p = new pitch.Pitch('C');
         p.diatonicNoteNum = clickedDiatonicNoteNum;
@@ -625,9 +637,9 @@ export class SimpleNoteEditor {
         n.pitch = p;
         n.stemDirection = undefined;
         this.activeNote = n;
-        this.stream.redrawCanvas(canvas);
+        this.stream.redrawCanvas(canvasOrSvg);
         if (this.changedCallbackFunction !== undefined) {
-            return this.changedCallbackFunction({ foundNote: n, canvas });
+            return this.changedCallbackFunction({ foundNote: n, canvas: canvasOrSvg });
         } else {
             return undefined;
         }
@@ -676,7 +688,7 @@ export class SimpleNoteEditor {
      * @memberof music21.streamInteraction.SimpleNoteEditor
      * @param {Int} minAccidental - alter of the min accidental (default -1)
      * @param {Int} maxAccidental - alter of the max accidental (default 1)
-     * @param {jQueryObject} $siblingCanvas - canvas to use for redrawing;
+     * @param {jQueryObject} $siblingCanvas - canvas or svg to use for redrawing;
      * @returns {jQueryObject} the accidental toolbar.
      */
     getAccidentalToolbar(minAccidental, maxAccidental, $siblingCanvas) {
@@ -708,10 +720,10 @@ export class SimpleNoteEditor {
     }
 
     /**
-     * getUseCanvasFromClickEvent - get the active canvas from the click even
+     * getUseCanvasFromClickEvent - get the active canvas or svg from the click even
      *
      * @param  {event} clickEvent
-     * @return {jQueryObject}            $canvas
+     * @return {jQueryObject}  $canvas
      */
     getUseCanvasFromClickEvent(clickEvent) {
         let $searchParent = $(clickEvent.target).parent();
@@ -720,7 +732,7 @@ export class SimpleNoteEditor {
             $searchParent !== undefined
             && ($useCanvas === undefined || $useCanvas[0] === undefined)
         ) {
-            $useCanvas = $searchParent.find('canvas');
+            $useCanvas = $searchParent.find(this.elementType);
             $searchParent = $searchParent.parent();
         }
         if ($useCanvas[0] === undefined) {

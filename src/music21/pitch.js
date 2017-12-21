@@ -2,8 +2,8 @@
  * music21j -- Javascript reimplementation of Core music21 features.
  * music21/pitch -- pitch routines
  *
- * Copyright (c) 2013-16, Michael Scott Cuthbert and cuthbertLab
- * Based on music21, Copyright (c) 2006–16, Michael Scott Cuthbert and cuthbertLab
+ * Copyright (c) 2013-17, Michael Scott Cuthbert and cuthbertLab
+ * Based on music21, Copyright (c) 2006–17, Michael Scott Cuthbert and cuthbertLab
  *
  */
 import { Music21Exception } from './exceptions21.js';

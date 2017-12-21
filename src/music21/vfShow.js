@@ -1,3 +1,12 @@
+/**
+ * music21j -- Javascript reimplementation of Core music21p features.
+ * music21/vfShow -- Vexflow integration
+ *
+ * Copyright (c) 2013-17, Michael Scott Cuthbert and cuthbertLab
+ * Based on music21 (=music21p), Copyright (c) 2006–17, Michael Scott Cuthbert and cuthbertLab
+ *
+ */
+
 import * as $ from 'jquery';
 import * as Vex from 'vexflow';
 
@@ -158,6 +167,11 @@ export class Renderer {
                 this.canvas,
                 backend
             );
+            if (this.rendererType === 'svg') {
+                this._vfRenderer.resize(this.$canvas.attr('width'),
+                                        this.$canvas.attr('height')
+                                        );
+            }
             return this._vfRenderer;
         }
     }
@@ -169,7 +183,10 @@ export class Renderer {
             return this._ctx;
         } else {
             this._ctx = this.vfRenderer.getContext();
-            if (this.stream && this.stream.renderOptions) {
+            if (this.stream
+                    && this.stream.renderOptions
+                    && this.stream.renderOptions.scaleFactor.x
+                    && this.stream.renderOptions.scaleFactor.y) {
                 this._ctx.scale(
                     this.stream.renderOptions.scaleFactor.x,
                     this.stream.renderOptions.scaleFactor.y

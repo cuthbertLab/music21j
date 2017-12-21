@@ -1,5 +1,5 @@
 /**
- * music21j 0.9.0 built on  * 2017-11-15.
+ * music21j 0.9.0 built on  * 2017-12-20.
  * Copyright (c) 2013-2016 Michael Scott Cuthbert and cuthbertLab
  * BSD License, see LICENSE
  *
@@ -988,8 +988,8 @@
    * music21j -- Javascript reimplementation of Core music21 features.
    * music21/duration -- duration routines
    *
-   * Copyright (c) 2013-16, Michael Scott Cuthbert and cuthbertLab
-   * Based on music21, Copyright (c) 2006-16, Michael Scott Cuthbert and cuthbertLab
+   * Copyright (c) 2013-18, Michael Scott Cuthbert and cuthbertLab
+   * Based on music21, Copyright (c) 2006-18, Michael Scott Cuthbert and cuthbertLab
    *
    */
   /**
@@ -1930,7 +1930,7 @@
    *
    * does not load the other modules, music21/moduleLoader.js does that.
    *
-   * Copyright (c) 2013-16, Michael Scott Cuthbert and cuthbertLab
+   * Copyright (c) 2013-18, Michael Scott Cuthbert and cuthbertLab
    * Based on music21 (=music21p), Copyright (c) 2006–16, Michael Scott Cuthbert and cuthbertLab
    *
    */
@@ -3395,7 +3395,7 @@
    * music21j -- Javascript reimplementation of Core music21p features.
    * music21/beam -- Beams and Beam class
    *
-   * Copyright (c) 2013-16, Michael Scott Cuthbert and cuthbertLab
+   * Copyright (c) 2013-18, Michael Scott Cuthbert and cuthbertLab
    * Based on music21 (=music21p), Copyright (c) 2006–16, Michael Scott Cuthbert and cuthbertLab
    *
    */
@@ -3716,7 +3716,7 @@
    * music21j -- Javascript reimplementation of Core music21 features.
    * music21/pitch -- pitch routines
    *
-   * Copyright (c) 2013-16, Michael Scott Cuthbert and cuthbertLab
+   * Copyright (c) 2013-18, Michael Scott Cuthbert and cuthbertLab
    * Based on music21, Copyright (c) 2006–16, Michael Scott Cuthbert and cuthbertLab
    *
    */
@@ -4101,8 +4101,8 @@
    * music21j -- Javascript reimplementation of Core music21p features.
    * music21/interval -- Interval routines
    *
-   * Copyright (c) 2013-16, Michael Scott Cuthbert and cuthbertLab
-   * Based on music21 (=music21p), Copyright (c) 2006-16, Michael Scott Cuthbert and cuthbertLab
+   * Copyright (c) 2013-18, Michael Scott Cuthbert and cuthbertLab
+   * Based on music21 (=music21p), Copyright (c) 2006-18, Michael Scott Cuthbert and cuthbertLab
    *
    */
   /**
@@ -4978,7 +4978,7 @@
    * music21j -- Javascript reimplementation of Core music21p features.
    * music21/note -- Note, Rest, NotRest, GeneralNote
    *
-   * Copyright (c) 2013-16, Michael Scott Cuthbert and cuthbertLab
+   * Copyright (c) 2013-18, Michael Scott Cuthbert and cuthbertLab
    * Based on music21 (music21p), Copyright (c) 2006–16, Michael Scott Cuthbert and cuthbertLab
    *
    */
@@ -5676,7 +5676,7 @@
    * music21j -- Javascript reimplementation of Core music21p features.
    * music21/chord -- Chord
    *
-   * Copyright (c) 2013-16, Michael Scott Cuthbert and cuthbertLab
+   * Copyright (c) 2013-18, Michael Scott Cuthbert and cuthbertLab
    * Based on music21 (=music21p), Copyright (c) 2006–16, Michael Scott Cuthbert and cuthbertLab
    *
    */
@@ -7229,7 +7229,7 @@
    * music21j -- Javascript reimplementation of Core music21p features.
    * music21/fromPython -- Conversion from music21p jsonpickle streams
    *
-   * Copyright (c) 2013-16, Michael Scott Cuthbert and cuthbertLab
+   * Copyright (c) 2013-18, Michael Scott Cuthbert and cuthbertLab
    * Based on music21 (=music21p), Copyright (c) 2006–16, Michael Scott Cuthbert and cuthbertLab
    *
    * usage:
@@ -7434,7 +7434,7 @@
    *
    * Does not implement the full range of scales from music21p
    *
-   * Copyright (c) 2013-16, Michael Scott Cuthbert and cuthbertLab
+   * Copyright (c) 2013-18, Michael Scott Cuthbert and cuthbertLab
    * Based on music21 (=music21p), Copyright (c) 2006–16, Michael Scott Cuthbert and cuthbertLab
    *
    */
@@ -8086,7 +8086,7 @@
    * music21j -- Javascript reimplementation of Core music21p features.
    * music21/key -- KeySignature and Key objects
    *
-   * Copyright (c) 2013-16, Michael Scott Cuthbert and cuthbertLab
+   * Copyright (c) 2013-18, Michael Scott Cuthbert and cuthbertLab
    * Based on music21 (=music21p), Copyright (c) 2006–16, Michael Scott Cuthbert and cuthbertLab
    *
    */
@@ -8547,7 +8547,7 @@
    * music21j -- Javascript reimplementation of Core music21p features.
    * music21/instrument -- instrument objects
    *
-   * Copyright (c) 2013-16, Michael Scott Cuthbert and cuthbertLab
+   * Copyright (c) 2013-18, Michael Scott Cuthbert and cuthbertLab
    * Based on music21 (=music21p), Copyright (c) 2006–16, Michael Scott Cuthbert and cuthbertLab
    *
    */
@@ -9376,7 +9376,7 @@
    * music21j -- Javascript reimplementation of Core music21p features.
    * music21/keyboard -- PianoKeyboard rendering and display objects
    *
-   * Copyright (c) 2013-16, Michael Scott Cuthbert and cuthbertLab
+   * Copyright (c) 2013-18, Michael Scott Cuthbert and cuthbertLab
    * Based on music21 (=music21p), Copyright (c) 2006–16, Michael Scott Cuthbert and cuthbertLab
    *
    */
@@ -10113,7 +10113,7 @@
    * music21/meter -- TimeSignature objects
    *
    *
-   * Copyright (c) 2013-16, Michael Scott Cuthbert and cuthbertLab
+   * Copyright (c) 2013-18, Michael Scott Cuthbert and cuthbertLab
    * Based on music21 (=music21p), Copyright (c) 2006–16, Michael Scott Cuthbert and cuthbertLab
    *
    */
@@ -10368,14 +10368,14 @@
    * @class Follower
    * @memberof music21.streamInteraction
    * @param {music21.stream.Stream} s -- Stream
-   * @param {canvas} c -- canvas
+   * @param {canvasOrSvg} c -- canvas or svg
    * @property {music21.streamInteraction.PixelMapper} pixelMapper - an object that can map current pixel to notes and vice versa.
    * @property {number} [tempo=s.tempo]
    * @property {number} lastX - last X value
    * @property {Int} lastNoteIndex - index of last note played
    * @property {SVGDOMObject} barDOM - DOM object representing the scrolling bar
    * @property {SVGDOMObject} svgDOM - DOM object holding the scrolling bar (overlaid on top of canvas)
-   * @property {DOMObject} canvasParent - the parent DOM object for `this.canvas`
+   * @property {DOMObject} canvasOrSvgParent - the parent DOM object for `this.canvas`
    * @property {Int} lastTimeout - a numerical reference to a timeout object created by `setTimeout`
    * @property {number} startTime - the time in ms when the scrolling started
    * @property {Int} [previousSystemIndex=0] - the last systemIndex being scrolled
@@ -10391,7 +10391,7 @@
 
           this.pixelMapper = new streamInteraction.PixelMapper(s);
           this.stream = s;
-          this.canvas = c;
+          this.canvasOrSvg = c;
           this.tempo = s.tempo;
 
           this.lastX = -100;
@@ -10400,7 +10400,7 @@
 
           this.barDOM = undefined;
           this.svgDOM = undefined;
-          this.canvasParent = $(c).parent()[0];
+          this.canvasOrSvgParent = $(c).parent()[0];
           this.lastTimeout = undefined;
           this.startTime = new Date().getTime();
           this.previousSystemIndex = 0;
@@ -10409,7 +10409,7 @@
           this.savedRenderOptionClick = undefined;
 
           this.scaleY = this.stream.renderOptions.scaleFactor.y;
-          this.eachSystemHeight = this.canvas.height / (this.scaleY * (this.pixelMapper.maxSystemIndex + 1));
+          this.eachSystemHeight = $(this.canvasOrSvg).attr('height') / (this.scaleY * (this.pixelMapper.maxSystemIndex + 1));
 
           this.newLocationCallbacks = [];
           this.activeElementsCallbacks = [function (elList) {
@@ -10577,7 +10577,7 @@
               this.stream.renderOptions.events.click = function (e) {
                   return _this3.stopPlaying(e);
               };
-              this.stream.setRenderInteraction(this.canvasParent);
+              this.stream.setRenderInteraction(this.canvasOrSvgParent);
               this.followScore();
           }
 
@@ -10595,7 +10595,7 @@
               if (this.lastTimeout !== undefined) {
                   clearTimeout(this.lastTimeout);
               }
-              this.stream.setRenderInteraction(this.canvasParent);
+              this.stream.setRenderInteraction(this.canvasOrSvgParent);
               if (event !== undefined) {
                   event.stopPropagation();
               }
@@ -10611,7 +10611,7 @@
    * @class ScrollPlayer
    * @memberof music21.streamInteraction
    * @param {music21.stream.Stream} s -- Stream
-   * @param {canvas} c -- canvas
+   * @param {canvasOrSvg} c -- canvas or svg
    * @property {SVGDOMObject} barDOM - DOM object representing the scrolling bar
    * @property {SVGDOMObject} svgDOM - DOM object holding the scrolling bar (overlaid on top of canvas)
    */
@@ -10676,7 +10676,7 @@
            * - this.barDOM
            * - this.svgDOM
            * - this.eachSystemHeight
-           * - this.canvasParent
+           * - this.canvasOrSvgParent
            *
            * @memberof music21.streamInteraction.ScrollPlayer
            * @returns {SVGDOMObject} scroll bar
@@ -10685,10 +10685,19 @@
       }, {
           key: 'createScrollBar',
           value: function createScrollBar() {
-              var canvas = this.canvas;
+              var svgDomHeight = void 0;
+              var svgDomWidth = void 0;
+              if (this.canvasOrSvg.tagName.toLowerCase() === 'canvas') {
+                  svgDomHeight = this.canvasOrSvg.height;
+                  svgDomWidth = this.canvasOrSvg.width;
+              } else {
+                  svgDomHeight = $(this.canvasOrSvg).attr('height');
+                  svgDomWidth = $(this.canvasOrSvg).attr('width');
+              }
+
               var svgDOM = common.makeSVGright('svg', {
-                  height: canvas.height.toString() + 'px',
-                  width: canvas.width.toString() + 'px',
+                  height: svgDomHeight.toString() + 'px',
+                  width: svgDomWidth.toString() + 'px',
                   style: 'position:absolute; top: 0px; left: 0px;'
               });
               var barDOM = common.makeSVGright('rect', {
@@ -10701,7 +10710,7 @@
               barDOM.setAttribute('transform', 'scale(' + this.scaleY + ')');
               svgDOM.appendChild(barDOM);
 
-              this.canvasParent.appendChild(svgDOM);
+              this.canvasOrSvgParent.appendChild(svgDOM);
               this.barDOM = barDOM;
               this.svgDOM = svgDOM;
               return barDOM;
@@ -10719,7 +10728,7 @@
           value: function stopPlaying(event) {
               get(ScrollPlayer.prototype.__proto__ || Object.getPrototypeOf(ScrollPlayer.prototype), 'stopPlaying', this).call(this, event);
               this.barDOM.setAttribute('style', 'display:none');
-              this.canvasParent.removeChild(this.svgDOM);
+              this.canvasOrSvgParent.removeChild(this.svgDOM);
           }
       }]);
       return ScrollPlayer;
@@ -11052,6 +11061,12 @@
           this.accidentalsByStepOctave = {};
           this.minAccidentalEditor = -1;
           this.maxAccidentalEditor = 1;
+
+          this.elementType = 'svg';
+
+          // for active display of mouse over notes.
+          this.renderMouseOver = true;
+          this.currentNoteValue = 'quarter';
       }
 
       /**
@@ -11070,9 +11085,9 @@
       createClass(SimpleNoteEditor, [{
           key: 'changeClickedNoteFromEvent',
           value: function changeClickedNoteFromEvent(e) {
-              var canvasElement = e.currentTarget;
+              var canvasOrSvgElement = e.currentTarget;
 
-              var _stream$findNoteForCl = this.stream.findNoteForClick(canvasElement, e),
+              var _stream$findNoteForCl = this.stream.findNoteForClick(canvasOrSvgElement, e),
                   _stream$findNoteForCl2 = slicedToArray(_stream$findNoteForCl, 2),
                   clickedDiatonicNoteNum = _stream$findNoteForCl2[0],
                   foundNote = _stream$findNoteForCl2[1];
@@ -11083,7 +11098,7 @@
                   }
                   return undefined;
               }
-              return this.noteChanged(clickedDiatonicNoteNum, foundNote, canvasElement);
+              return this.noteChanged(clickedDiatonicNoteNum, foundNote, canvasOrSvgElement);
           }
 
           /**
@@ -11093,13 +11108,13 @@
            * @memberof music21.streamInteraction.SimpleNoteEditor
            * @param {Int} clickedDiatonicNoteNum
            * @param {music21.base.Music21Object} foundNote
-           * @param {DOMObject} canvas
+           * @param {DOMObject} canvasOrSvg
            * @returns {any} output of changedCallbackFunction
            */
 
       }, {
           key: 'noteChanged',
-          value: function noteChanged(clickedDiatonicNoteNum, foundNote, canvas) {
+          value: function noteChanged(clickedDiatonicNoteNum, foundNote, canvasOrSvg) {
               var n = foundNote;
               var p = new pitch.Pitch('C');
               p.diatonicNoteNum = clickedDiatonicNoteNum;
@@ -11112,9 +11127,9 @@
               n.pitch = p;
               n.stemDirection = undefined;
               this.activeNote = n;
-              this.stream.redrawCanvas(canvas);
+              this.stream.redrawCanvas(canvasOrSvg);
               if (this.changedCallbackFunction !== undefined) {
-                  return this.changedCallbackFunction({ foundNote: n, canvas: canvas });
+                  return this.changedCallbackFunction({ foundNote: n, canvas: canvasOrSvg });
               } else {
                   return undefined;
               }
@@ -11173,7 +11188,7 @@
            * @memberof music21.streamInteraction.SimpleNoteEditor
            * @param {Int} minAccidental - alter of the min accidental (default -1)
            * @param {Int} maxAccidental - alter of the max accidental (default 1)
-           * @param {jQueryObject} $siblingCanvas - canvas to use for redrawing;
+           * @param {jQueryObject} $siblingCanvas - canvas or svg to use for redrawing;
            * @returns {jQueryObject} the accidental toolbar.
            */
 
@@ -11212,10 +11227,10 @@
           }
 
           /**
-           * getUseCanvasFromClickEvent - get the active canvas from the click even
+           * getUseCanvasFromClickEvent - get the active canvas or svg from the click even
            *
            * @param  {event} clickEvent
-           * @return {jQueryObject}            $canvas
+           * @return {jQueryObject}  $canvas
            */
 
       }, {
@@ -11224,7 +11239,7 @@
               var $searchParent = $(clickEvent.target).parent();
               var $useCanvas = void 0;
               while ($searchParent !== undefined && ($useCanvas === undefined || $useCanvas[0] === undefined)) {
-                  $useCanvas = $searchParent.find('canvas');
+                  $useCanvas = $searchParent.find(this.elementType);
                   $searchParent = $searchParent.parent();
               }
               if ($useCanvas[0] === undefined) {
@@ -11603,8 +11618,8 @@
 
   /**
    * Renderer is a function that takes a stream, an
-   * optional existing canvas element and a DOM
-   * element where the canvas element should be placed
+   * optional existing canvas or SVG element and a DOM
+   * element where the canvas or SVG element should be placed
    * and renders the stream as Vexflow on the
    * canvas element, placing it then in the where
    * DOM.
@@ -11617,17 +11632,18 @@
    * @class Renderer
    * @memberof music21.vfShow
    * @param {music21.stream.Stream} s - main stream to render
-   * @param {canvas} [canvas] - existing canvas element
+   * @param {canvas} [canvas] - existing canvas or SVG element
    * @param {DOMObject|jQueryDOMObject} [where=document.body] - where to render the stream
    * @property {Vex.Flow.Renderer} vfRenderer - a Vex.Flow.Renderer to use
    * (will create if not existing)
+   * @property {string} rendererType - canvas or svg
    * @property {Vex.Flow.Context} ctx - a Vex.Flow.Context (Canvas or Raphael [not yet]) to use.
    * @property {canvas} canvas - canvas element
    * @property {jQueryDOMObject} $canvas - jQuery canvas element
    * @property {jQueryDOMObject} $where - jQuery element to render onto
    * @property {Vex.Flow.Formatter} activeFormatter - formatter
    * @property {Array<Vex.Flow.Beam>} beamGroups - beamGroups
-   * @property {Array<Vex.Flow.StaveTie>} ties - ties
+   * @property {Array<Vex.Flow.StaveTie>} vfTies - ties as instances of Vex.Flow.StaveTie
    * @property {Array<number>} systemBreakOffsets - where to break the systems
    * @property {Array<Vex.Flow.Tuplet>} vfTuplets - tuplets represented in Vexflow
    * @property {Array<music21.vfShow.RenderStack>} stacks - array of RenderStack objects
@@ -11638,6 +11654,7 @@
 
           this.stream = s;
           // this.streamType = s.classes[-1];
+          this.rendererType = 'svg';
 
           this.canvas = undefined;
           this.$canvas = undefined;
@@ -11648,7 +11665,7 @@
           this.beamGroups = [];
           this.stacks = []; // an Array of RenderStacks: {voices: [Array of Vex.Flow.Voice objects],
           //                                           streams: [Array of Streams, usually Measures]}
-          this.ties = [];
+          this.vfTies = [];
           this.systemBreakOffsets = [];
           this.vfTuplets = [];
           // this.measureFormatters = [];
@@ -11768,7 +11785,7 @@
           /**
            *
            * Prepares a score that arrived flat... sets up
-           * stacks and ties after calling prepareFlat
+           * stacks and vfTies after calling prepareFlat
            *
            * @memberof music21.vfShow.Renderer
            * @param {music21.stream.Stream} m - a flat stream (maybe a measure or voice)
@@ -11903,7 +11920,7 @@
               });
           }
           /**
-           * draws the ties
+           * draws the vfTies
            *
            * @memberof music21.vfShow.Renderer
            */
@@ -11912,13 +11929,13 @@
           key: 'drawTies',
           value: function drawTies() {
               var ctx = this.ctx;
-              for (var i = 0; i < this.ties.length; i++) {
-                  this.ties[i].setContext(ctx).draw();
+              for (var i = 0; i < this.vfTies.length; i++) {
+                  this.vfTies[i].setContext(ctx).draw();
               }
           }
           /**
            * Finds all tied notes and creates the proper Vex.Flow.StaveTie objects in
-           * `this.ties`.
+           * `this.vfTies`.
            *
            * @memberof music21.vfShow.Renderer
            * @param {music21.stream.Part} p - a Part or similar object
@@ -11951,19 +11968,19 @@
                           first_indices: [0],
                           last_indices: [0]
                       });
-                      this.ties.push(vfTie);
+                      this.vfTies.push(vfTie);
                   } else {
                       // console.log('got me a tie across systemBreaks!');
                       var vfTie1 = new Vex.Flow.StaveTie({
                           first_note: thisNote.activeVexflowNote,
                           first_indices: [0]
                       });
-                      this.ties.push(vfTie1);
+                      this.vfTies.push(vfTie1);
                       var vfTie2 = new Vex.Flow.StaveTie({
                           last_note: nextNote.activeVexflowNote,
                           first_indices: [0]
                       });
-                      this.ties.push(vfTie2);
+                      this.vfTies.push(vfTie2);
                   }
               }
           }
@@ -12648,10 +12665,20 @@
       }, {
           key: 'vfRenderer',
           get: function get() {
+              var backend = void 0;
+              if (this.rendererType === 'canvas') {
+                  backend = Vex.Flow.Renderer.Backends.CANVAS;
+              } else {
+                  backend = Vex.Flow.Renderer.Backends.SVG;
+              }
+
               if (this._vfRenderer !== undefined) {
                   return this._vfRenderer;
               } else {
-                  this._vfRenderer = new Vex.Flow.Renderer(this.canvas, Vex.Flow.Renderer.Backends.CANVAS);
+                  this._vfRenderer = new Vex.Flow.Renderer(this.canvas, backend);
+                  if (this.rendererType === 'svg') {
+                      this._vfRenderer.resize(this.$canvas.attr('width'), this.$canvas.attr('height'));
+                  }
                   return this._vfRenderer;
               }
           },
@@ -12665,7 +12692,7 @@
                   return this._ctx;
               } else {
                   this._ctx = this.vfRenderer.getContext();
-                  if (this.stream && this.stream.renderOptions) {
+                  if (this.stream && this.stream.renderOptions && this.stream.renderOptions.scaleFactor.x && this.stream.renderOptions.scaleFactor.y) {
                       this._ctx.scale(this.stream.renderOptions.scaleFactor.x, this.stream.renderOptions.scaleFactor.y);
                   }
                   return this._ctx;
@@ -12685,8 +12712,8 @@
    *
    * Does not implement the full features of music21p Streams by a long shot...
    *
-   * Copyright (c) 2013-16, Michael Scott Cuthbert and cuthbertLab
-   * Based on music21 (=music21p), Copyright (c) 2006-16, Michael Scott Cuthbert and cuthbertLab
+   * Copyright (c) 2013-18, Michael Scott Cuthbert and cuthbertLab
+   * Based on music21 (=music21p), Copyright (c) 2006-18, Michael Scott Cuthbert and cuthbertLab
    *
    */
   /**
@@ -12807,9 +12834,9 @@
            * @returns {music21.base.Music21Object|undefined} - returns whatever changedCallbackFunction does.
            */
           _this2.canvasChangerFunction = function (e) {
-              var canvasElement = e.currentTarget;
+              var canvasOrSVGElement = e.currentTarget;
 
-              var _this2$findNoteForCli = _this2.findNoteForClick(canvasElement, e),
+              var _this2$findNoteForCli = _this2.findNoteForClick(canvasOrSVGElement, e),
                   _this2$findNoteForCli2 = slicedToArray(_this2$findNoteForCli, 2),
                   clickedDiatonicNoteNum = _this2$findNoteForCli2[0],
                   foundNote = _this2$findNoteForCli2[1];
@@ -12820,7 +12847,7 @@
                   }
                   return undefined;
               }
-              return _this2.noteChanged(clickedDiatonicNoteNum, foundNote, canvasElement);
+              return _this2.noteChanged(clickedDiatonicNoteNum, foundNote, canvasOrSVGElement);
           };
           return _this2;
       }
@@ -13432,7 +13459,7 @@
 
           /**
            * Uses {@link music21.vfShow.Renderer} to render Vexflow onto an
-           * existing canvas object.
+           * existing canvas or SVG object.
            *
            * Sets canvas.storedStream to this
            *
@@ -13441,20 +13468,27 @@
            * Will be moved to vfShow eventually when converter objects are enabled...maybe.
            *
            * @memberof music21.stream.Stream
-           * @param {DOMObject|JQueryDOMObject} canvas - a canvas object
+           * @param {DOMObject|JQueryDOMObject} canvasOrSVG - a canvas or SVG object
            * @returns {music21.stream.Stream} this
            */
 
       }, {
           key: 'renderVexflowOnCanvas',
-          value: function renderVexflowOnCanvas(canvas) {
-              if (canvas.jquery) {
-                  canvas = canvas[0];
+          value: function renderVexflowOnCanvas(canvasOrSVG) {
+              if (canvasOrSVG.jquery) {
+                  canvasOrSVG = canvasOrSVG[0];
               }
-              var vfr = new vfShow.Renderer(this, canvas);
+              var tagName = canvasOrSVG.tagName.toLowerCase();
+
+              var vfr = new vfShow.Renderer(this, canvasOrSVG);
+              if (tagName === 'canvas') {
+                  vfr.rendererType = 'canvas';
+              } else if (tagName === 'svg') {
+                  vfr.rendererType = 'svg';
+              }
               vfr.render();
-              canvas.storedStream = this;
-              this.setRenderInteraction(canvas);
+              canvasOrSVG.storedStream = this;
+              this.setRenderInteraction(canvasOrSVG);
               return this;
           }
 
@@ -13641,7 +13675,7 @@
            */
 
           /**
-           * Creates and returns a new `&lt;canvas&gt;` object.
+           * Creates and returns a new `&lt;canvas&gt;` or `&lt;svg&gt;` object.
            *
            * Calls setSubstreamRenderOptions() first.
            *
@@ -13650,29 +13684,32 @@
            * @memberof music21.stream.Stream
            * @param {number|string|undefined} width - will use `this.estimateStaffLength()` + `this.renderOptions.staffPadding` if not given
            * @param {number|string|undefined} height - if undefined will use `this.renderOptions.height`. If still undefined, will use `this.estimateStreamHeight()`
+           * @param {string} elementType - what type of element, default = svg
            * @returns {JQueryDOMObject} canvas in jquery.
            */
 
       }, {
           key: 'createNewCanvas',
           value: function createNewCanvas(width, height) {
+              var elementType = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'svg';
+
               if (this.hasSubStreams()) {
                   this.setSubstreamRenderOptions();
               }
 
-              var newCanvas = $('<canvas/>'); // .css('border', '1px red solid');
+              var newCanvasOrSVG = $('<' + elementType + '/>'); // .css('border', '1px red solid');
 
               if (width !== undefined) {
                   if (typeof width === 'string') {
                       width = common.stripPx(width);
                   }
-                  newCanvas.attr('width', width);
+                  newCanvasOrSVG.attr('width', width);
               } else {
                   var computedWidth = this.estimateStaffLength() + this.renderOptions.staffPadding + 0;
-                  newCanvas.attr('width', computedWidth);
+                  newCanvasOrSVG.attr('width', computedWidth);
               }
               if (height !== undefined) {
-                  newCanvas.attr('height', height);
+                  newCanvasOrSVG.attr('height', height);
               } else {
                   var computedHeight = void 0;
                   if (this.renderOptions.height === undefined) {
@@ -13682,9 +13719,9 @@
                       computedHeight = this.renderOptions.height;
                       // console.log('computed Height: ' + computedHeight);
                   }
-                  newCanvas.attr('height', computedHeight * this.renderOptions.scaleFactor.y);
+                  newCanvasOrSVG.attr('height', computedHeight * this.renderOptions.scaleFactor.y);
               }
-              return newCanvas;
+              return newCanvasOrSVG;
           }
 
           /**
@@ -13695,14 +13732,17 @@
            * @memberof music21.stream.Stream
            * @param {number|string|undefined} width
            * @param {number|string|undefined} height
-           * @returns {JQueryDOMObject} canvas
+           * @param {string} elementType - what type of element, default = svg
+           * @returns {JQueryDOMObject} canvas or svg
            */
 
       }, {
           key: 'createPlayableCanvas',
           value: function createPlayableCanvas(width, height) {
+              var elementType = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'svg';
+
               this.renderOptions.events.click = 'play';
-              return this.createCanvas(width, height);
+              return this.createCanvas(width, height, elementType);
           }
 
           /**
@@ -13711,13 +13751,16 @@
            * @memberof music21.stream.Stream
            * @param {number|string|undefined} [width]
            * @param {number|string|undefined} [height]
-           * @returns {JQueryDOMObject} canvas
+           * @param {string} elementType - what type of element, default = svg
+           * @returns {JQueryDOMObject} canvas or SVG
            */
 
       }, {
           key: 'createCanvas',
           value: function createCanvas(width, height) {
-              var $newCanvas = this.createNewCanvas(width, height);
+              var elementType = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'svg';
+
+              var $newCanvas = this.createNewCanvas(width, height, elementType);
               this.renderVexflowOnCanvas($newCanvas);
               return $newCanvas;
           }
@@ -13728,6 +13771,7 @@
            * @param {JQueryDOMObject|DOMObject} [appendElement=document.body] - where to place the canvas
            * @param {number|string} [width]
            * @param {number|string} [height]
+           * @param {string} elementType - what type of element, default = svg
            * @returns {DOMObject} canvas (not the jQueryDOMObject -- this is a difference with other routines and should be fixed. TODO: FIX)
            *
            */
@@ -13735,6 +13779,8 @@
       }, {
           key: 'appendNewCanvas',
           value: function appendNewCanvas(appendElement, width, height) {
+              var elementType = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 'svg';
+
               if (appendElement === undefined) {
                   appendElement = 'body';
               }
@@ -13751,7 +13797,7 @@
               //      width = $bodyElement.width();
               //      };
 
-              var canvasBlock = this.createCanvas(width, height);
+              var canvasBlock = this.createCanvas(width, height, elementType);
               $appendElement.append(canvasBlock);
               return canvasBlock[0];
           }
@@ -13762,14 +13808,17 @@
            * Note that if 'where' is empty, will replace all canvases on the page.
            *
            * @memberof music21.stream.Stream
-           * @param {JQueryDOMObject|DOMObject} [where] - the canvas to replace or a container holding the canvas(es) to replace.
+           * @param {JQueryDOMObject|DOMObject} [where] - the canvas or SVG to replace or a container holding the canvas(es) to replace.
            * @param {Boolean} [preserveCanvasSize=false]
+           * @param {string} elementType - what type of element, default = svg
            * @returns {JQueryDOMObject} the canvas
            */
 
       }, {
           key: 'replaceCanvas',
           value: function replaceCanvas(where, preserveCanvasSize) {
+              var elementType = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'svg';
+
               // if called with no where, replaces all the canvases on the page...
               if (where === undefined) {
                   where = 'body';
@@ -13782,10 +13831,10 @@
                   where = $where[0];
               }
               var $oldCanvas = void 0;
-              if ($where.prop('tagName') === 'CANVAS') {
+              if ($where.prop('tagName') === elementType.toUpperCase()) {
                   $oldCanvas = $where;
               } else {
-                  $oldCanvas = $where.find('canvas');
+                  $oldCanvas = $where.find(elementType);
               }
               // TODO: Max Width!
               if ($oldCanvas.length === 0) {
@@ -13802,9 +13851,9 @@
               if (preserveCanvasSize) {
                   var width = $oldCanvas.width();
                   var height = $oldCanvas.height();
-                  canvasBlock = this.createCanvas(width, height);
+                  canvasBlock = this.createCanvas(width, height, elementType);
               } else {
-                  canvasBlock = this.createCanvas();
+                  canvasBlock = this.createCanvas(undefined, undefined, elementType);
               }
 
               $oldCanvas.replaceWith(canvasBlock);
@@ -13818,6 +13867,7 @@
            *
            * @memberof music21.stream.Stream
            * @param {JQueryDOMObject|DOMObject} [where]
+           * @param {string} elementType - what type of element, default = svg
            * @returns {DOMObject} canvas
            */
 
@@ -13826,6 +13876,8 @@
           value: function renderScrollableCanvas(where) {
               var _this3 = this;
 
+              var elementType = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'svg';
+
               var $where = where;
               if (where === undefined) {
                   $where = $(document.body);
@@ -13833,7 +13885,7 @@
                   $where = $(where);
               }
               var $innerDiv = $('<div>').css('position', 'absolute');
-              var c = this.appendNewCanvas($innerDiv);
+              var c = this.appendNewCanvas($innerDiv, undefined, undefined, elementType);
               this.renderOptions.events.click = function (event) {
                   return _this3.scrollScoreStart(c, event);
               };
@@ -13944,7 +13996,7 @@
            * find the x and y for the canvas.
            *
            * @memberof music21.stream.Stream
-           * @param {DOMObject} canvas
+           * @param {DOMObject} canvas - a canvas or SVG object
            * @param {Event} e
            * @returns {Array<number>} two-elements, [x, y] in pixels.
            */
@@ -13983,7 +14035,7 @@
            * x of 1 gives 1.42857...
            *
            * @memberof music21.stream.Stream
-           * @param {DOMObject} canvas
+           * @param {DOMObject} canvas -- a canvas or SVG object
            * @param {Event} e
            * @returns {Array<number>} [scaledX, scaledY]
            */
@@ -16528,7 +16580,7 @@
    * music21j -- Javascript reimplementation of Core music21p features.
    * music21/roman -- roman.RomanNumberal -- Chord subclass
    *
-   * Copyright (c) 2013-16, Michael Scott Cuthbert and cuthbertLab
+   * Copyright (c) 2013-18, Michael Scott Cuthbert and cuthbertLab
    * Based on music21 (=music21p), Copyright (c) 2006–16, Michael Scott Cuthbert and cuthbertLab
    *
    */
@@ -17499,7 +17551,7 @@
    * music21j -- Javascript reimplementation of Core music21 features.
    * music21/tempo -- tempo and (not in music21p) metronome objects
    *
-   * Copyright (c) 2013-16, Michael Scott Cuthbert and cuthbertLab
+   * Copyright (c) 2013-18, Michael Scott Cuthbert and cuthbertLab
    * Based on music21, Copyright (c) 2006–16, Michael Scott Cuthbert and cuthbertLab
    *
    */
@@ -17822,7 +17874,7 @@
    * music21j -- Javascript reimplementation of Core music21p features.
    * music21/tinyNotation -- TinyNotation implementation
    *
-   * Copyright (c) 2013-16, Michael Scott Cuthbert and cuthbertLab
+   * Copyright (c) 2013-18, Michael Scott Cuthbert and cuthbertLab
    * Based on music21 (=music21p), Copyright (c) 2006–16, Michael Scott Cuthbert and cuthbertLab
    *
    */
