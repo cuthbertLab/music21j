@@ -109,6 +109,7 @@ export class Stream extends base.Music21Object {
 
         this._autoBeam = undefined;
         this.activeVFStave = undefined;
+        this.activeVFRenderer = undefined;
         this.renderOptions = new renderOptions.RenderOptions();
         this._tempo = undefined;
 
@@ -976,6 +977,7 @@ export class Stream extends base.Music21Object {
         }
         vfr.render();
         this.setRenderInteraction(canvasOrSVG);
+        this.activeVFRenderer = vfr;
         return vfr;
     }
 
@@ -990,7 +992,10 @@ export class Stream extends base.Music21Object {
      */
     estimateStreamHeight(ignoreSystems) {
         const staffHeight = this.renderOptions.naiveHeight;
-        const systemPadding = this.systemPadding;
+        let systemPadding = this.systemPadding;
+        if (systemPadding === undefined) {
+            systemPadding = 0;
+        }
         let numSystems;
         if (this.isClassOrSubclass('Score')) {
             const numParts = this.length;
@@ -1281,9 +1286,9 @@ export class Stream extends base.Music21Object {
         //      width = $bodyElement.width();
         //      };
 
-        const canvasBlock = this.createCanvas(width, height, elementType);
-        $appendElement.append(canvasBlock);
-        return canvasBlock[0];
+        const svgOrCanvasBlock = this.createCanvas(width, height, elementType);
+        $appendElement.append(svgOrCanvasBlock);
+        return svgOrCanvasBlock[0];
     }
 
     /**
@@ -1309,33 +1314,33 @@ export class Stream extends base.Music21Object {
             $where = where;
             where = $where[0];
         }
-        let $oldCanvas;
+        let $oldSVGOrCanvas;
         if ($where.prop('tagName') === elementType.toUpperCase()) {
-            $oldCanvas = $where;
+            $oldSVGOrCanvas = $where;
         } else {
-            $oldCanvas = $where.find(elementType);
+            $oldSVGOrCanvas = $where.find(elementType);
         }
         // TODO: Max Width!
-        if ($oldCanvas.length === 0) {
+        if ($oldSVGOrCanvas.length === 0) {
             throw new Music21Exception('No canvas defined for replaceCanvas!');
-        } else if ($oldCanvas.length > 1) {
+        } else if ($oldSVGOrCanvas.length > 1) {
             // change last canvas...
             // replacing each with canvasBlock doesn't work
             // anyhow, it just resizes the canvas but doesn't
             // draw.
-            $oldCanvas = $($oldCanvas[$oldCanvas.length - 1]);
+            $oldSVGOrCanvas = $($oldSVGOrCanvas[$oldSVGOrCanvas.length - 1]);
         }
 
         let canvasBlock;
         if (preserveCanvasSize) {
-            const width = $oldCanvas.width();
-            const height = $oldCanvas.height();
+            const width = $oldSVGOrCanvas.width();
+            const height = $oldSVGOrCanvas.attr('height'); // height manipulates
             canvasBlock = this.createCanvas(width, height, elementType);
         } else {
             canvasBlock = this.createCanvas(undefined, undefined, elementType);
         }
 
-        $oldCanvas.replaceWith(canvasBlock);
+        $oldSVGOrCanvas.replaceWith(canvasBlock);
         return canvasBlock;
     }
 
@@ -1357,7 +1362,12 @@ export class Stream extends base.Music21Object {
             $where = $(where);
         }
         const $innerDiv = $('<div>').css('position', 'absolute');
-        const c = this.appendNewCanvas($innerDiv, undefined, undefined, elementType);
+        const c = this.appendNewCanvas(
+            $innerDiv,
+            undefined,
+            undefined,
+            elementType
+        );
         this.renderOptions.events.click = event =>
             this.scrollScoreStart(c, event);
         this.setRenderInteraction($innerDiv);

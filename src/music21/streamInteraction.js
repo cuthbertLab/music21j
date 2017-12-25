@@ -248,7 +248,6 @@ export class ScrollPlayer extends Follower {
             svgDomWidth = $(this.canvasOrSvg).attr('width');
         }
 
-
         const svgDOM = common.makeSVGright('svg', {
             height: svgDomHeight.toString() + 'px',
             width: svgDomWidth.toString() + 'px',
@@ -333,9 +332,17 @@ export class PixelMapper {
             this.addNoteToMap(n);
         }
         // prepare final map.
-        const finalStave = ns.get(-1).activeVexflowNote.stave;
+        const finalNote = ns.get(-1);
+        const finalVFNote = finalNote.activeVexflowNote;
+        if (finalVFNote === undefined) {
+            throw new StreamException(
+                'Cannot make a pixel map where activeVexflowNotes are undefined. '
+                    + 'Run s.createCanvas() before constructing a PixelMapper.'
+            );
+        }
+        const finalStave = finalVFNote.stave;
         const finalX = finalStave.x + finalStave.width;
-        const endOffset = ns.get(-1).duration.quarterLength + ns.get(-1).offset;
+        const endOffset = finalNote.duration.quarterLength + finalNote.offset;
 
         const lastMap = new streamInteraction.PixelMap(this, endOffset);
         lastMap.elements = [undefined];
@@ -576,6 +583,7 @@ export class SimpleNoteEditor {
         this.elementType = 'svg';
 
         // for active display of mouse over notes.
+        // NOT used as of 2017 Dec.
         this.renderMouseOver = true;
         this.currentNoteValue = 'quarter';
     }
@@ -639,7 +647,10 @@ export class SimpleNoteEditor {
         this.activeNote = n;
         this.stream.redrawCanvas(canvasOrSvg);
         if (this.changedCallbackFunction !== undefined) {
-            return this.changedCallbackFunction({ foundNote: n, canvas: canvasOrSvg });
+            return this.changedCallbackFunction({
+                foundNote: n,
+                canvas: canvasOrSvg,
+            });
         } else {
             return undefined;
         }
@@ -893,10 +904,15 @@ export class FourPartEditor extends GrandStaffEditor {
         this.setActiveInformation(canvasElement, e);
         this.activeVoice.renderOptions.scaleFactor = this.stream.renderOptions.scaleFactor;
 
+        // the activeVoice can find the right note object but not
+        // the right DNN
         const [unused_wrong_dnn, foundNote] = this.activeVoice.findNoteForClick(
             canvasElement,
             e
         );
+
+        // conversely, the stream itself can find the right
+        // DNN but not the right note.
         const [
             clickedDiatonicNoteNum,
             unused_wrong_note,

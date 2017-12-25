@@ -421,7 +421,7 @@ note.GeneralNote = GeneralNote;
  * @param {number} [ql=1.0] - length in quarter notes
  * @property {music21.beam.Beams} beams - a link to a beam object
  * @property {string} [notehead='normal'] - notehead type
- * @property {string} [noteheadFill='default'] - notehead fill
+ * @property {string} [noteheadFill='default'] - notehead fill (to be moved to style...)
  * @property {string|undefined} [noteheadColor=undefined] - notehead color
  * @property {boolean} [noteheadParenthesis=false] - put a parenthesis around the notehead?
  * @property {string|undefined} [stemDirection=undefined] - One of ['up','down','noStem', undefined] -- 'double' not supported

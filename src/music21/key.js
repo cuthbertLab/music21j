@@ -130,21 +130,21 @@ export class KeySignature extends base.Music21Object {
         }
     }
     /**
-      * An Array of Altered Pitches in KeySignature order (i.e., for flats, Bb, Eb, etc.)
-      *
-      * @memberof music21.key.KeySignature#
-      * @var {Array<music21.pitch.Pitch>} alteredPitches
-      * @readonly
-      * @example
-      * var ks = new music21.key.KeySignature(3)
-      * var ap = ks.alteredPitches
-      * var apName = [];
-      * for (var i = 0; i < ap.length; i++) {
-      *     apName.push(ap[i].name);
-      * }
-      * apName
-      * // ["F#", "C#", "G#"]
-      */
+     * An Array of Altered Pitches in KeySignature order (i.e., for flats, Bb, Eb, etc.)
+     *
+     * @memberof music21.key.KeySignature#
+     * @var {Array<music21.pitch.Pitch>} alteredPitches
+     * @readonly
+     * @example
+     * var ks = new music21.key.KeySignature(3)
+     * var ap = ks.alteredPitches
+     * var apName = [];
+     * for (var i = 0; i < ap.length; i++) {
+     *     apName.push(ap[i].name);
+     * }
+     * apName
+     * // ["F#", "C#", "G#"]
+     */
     get alteredPitches() {
         if (this._alteredPitchesCache !== undefined) {
             return this._alteredPitchesCache;
@@ -167,15 +167,15 @@ export class KeySignature extends base.Music21Object {
         return post;
     }
     /**
-      * Return the name of the major key with this many sharps
-      *
-      * @memberof music21.key.KeySignature
-      * @returns {(string|undefined)} name of key
-      * @example
-      * var ks = new music21.key.KeySignature(-3)
-      * ks.majorName()
-      * // "E-"
-      */
+     * Return the name of the major key with this many sharps
+     *
+     * @memberof music21.key.KeySignature
+     * @returns {(string|undefined)} name of key
+     * @example
+     * var ks = new music21.key.KeySignature(-3)
+     * ks.majorName()
+     * // "E-"
+     */
     majorName() {
         if (this.sharps >= 0) {
             return this.sharpMapping[this.sharps];
@@ -184,10 +184,10 @@ export class KeySignature extends base.Music21Object {
         }
     }
     /**
-      * Return the name of the minor key with this many sharps
-      * @memberof music21.key.KeySignature
-      * @returns {(string|undefined)}
-      */
+     * Return the name of the minor key with this many sharps
+     * @memberof music21.key.KeySignature
+     * @returns {(string|undefined)}
+     */
     minorName() {
         const tempSharps = this.sharps + 3;
         if (tempSharps >= 0) {
@@ -197,26 +197,26 @@ export class KeySignature extends base.Music21Object {
         }
     }
     /**
-      * returns the vexflow name (just the `majorName()` with "b" for "-") for
-      * the key signature.  Does not create the object.
-      *
-      * Deprecated.
-      *
-      * @memberof music21.key.KeySignature
-      * @returns {string}
-      */
+     * returns the vexflow name (just the `majorName()` with "b" for "-") for
+     * the key signature.  Does not create the object.
+     *
+     * Deprecated.
+     *
+     * @memberof music21.key.KeySignature
+     * @returns {string}
+     */
     vexflow() {
         console.log('calling deprecated function KeySignature.vexflow');
         const tempName = this.majorName();
         return tempName.replace(/-/g, 'b');
     }
     /**
-      * Returns the accidental associated with a step in this key, or undefined if none.
-      *
-      * @memberof music21.key.KeySignature
-      * @param {string} step - a valid step name such as "C","D", etc., but not "C#" etc.
-      * @returns {(music21.pitch.Accidental|undefined)}
-      */
+     * Returns the accidental associated with a step in this key, or undefined if none.
+     *
+     * @memberof music21.key.KeySignature
+     * @param {string} step - a valid step name such as "C","D", etc., but not "C#" etc.
+     * @returns {(music21.pitch.Accidental|undefined)}
+     */
     accidentalByStep(step) {
         const aps = this.alteredPitches;
         for (let i = 0; i < aps.length; i++) {
@@ -231,22 +231,22 @@ export class KeySignature extends base.Music21Object {
         return undefined;
     }
     /**
-      * Takes a pitch in C major and transposes it so that it has
-      * the same step position in the current key signature.
-      *
-      * @memberof music21.key.KeySignature
-      * @returns {music21.pitch.Pitch}
-      * @example
-      * var ks = new music21.key.KeySignature(-3)
-      * var p1 = new music21.pitch.Pitch('B')
-      * var p2 = ks.transposePitchFromC(p1)
-      * p2.name
-      * // "D"
-      * var p3 = new music21.pitch.Pitch('G-')
-      * var p4 = ks.transposePitchFromC(p3)
-      * p4.name
-      * // "B--"
-      */
+     * Takes a pitch in C major and transposes it so that it has
+     * the same step position in the current key signature.
+     *
+     * @memberof music21.key.KeySignature
+     * @returns {music21.pitch.Pitch}
+     * @example
+     * var ks = new music21.key.KeySignature(-3)
+     * var p1 = new music21.pitch.Pitch('B')
+     * var p2 = ks.transposePitchFromC(p1)
+     * p2.name
+     * // "D"
+     * var p3 = new music21.pitch.Pitch('G-')
+     * var p4 = ks.transposePitchFromC(p3)
+     * p4.name
+     * // "B--"
+     */
     transposePitchFromC(p) {
         let transInterval;
         let transTimes;

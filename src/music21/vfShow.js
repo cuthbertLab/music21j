@@ -163,14 +163,12 @@ export class Renderer {
         if (this._vfRenderer !== undefined) {
             return this._vfRenderer;
         } else {
-            this._vfRenderer = new Vex.Flow.Renderer(
-                this.canvas,
-                backend
-            );
+            this._vfRenderer = new Vex.Flow.Renderer(this.canvas, backend);
             if (this.rendererType === 'svg') {
-                this._vfRenderer.resize(this.$canvas.attr('width'),
-                                        this.$canvas.attr('height')
-                                        );
+                this._vfRenderer.resize(
+                    this.$canvas.attr('width'),
+                    this.$canvas.attr('height')
+                );
             }
             return this._vfRenderer;
         }
@@ -183,10 +181,12 @@ export class Renderer {
             return this._ctx;
         } else {
             this._ctx = this.vfRenderer.getContext();
-            if (this.stream
-                    && this.stream.renderOptions
-                    && this.stream.renderOptions.scaleFactor.x
-                    && this.stream.renderOptions.scaleFactor.y) {
+            if (
+                this.stream
+                && this.stream.renderOptions
+                && this.stream.renderOptions.scaleFactor.x
+                && this.stream.renderOptions.scaleFactor.y
+            ) {
                 this._ctx.scale(
                     this.stream.renderOptions.scaleFactor.x,
                     this.stream.renderOptions.scaleFactor.y

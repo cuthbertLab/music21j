@@ -1,5 +1,5 @@
 /**
- * music21j 0.9.0 built on  * 2017-12-20.
+ * music21j 0.9.0 built on  * 2017-12-25.
  * Copyright (c) 2013-2016 Michael Scott Cuthbert and cuthbertLab
  * BSD License, see LICENSE
  *
@@ -5386,7 +5386,7 @@
    * @param {number} [ql=1.0] - length in quarter notes
    * @property {music21.beam.Beams} beams - a link to a beam object
    * @property {string} [notehead='normal'] - notehead type
-   * @property {string} [noteheadFill='default'] - notehead fill
+   * @property {string} [noteheadFill='default'] - notehead fill (to be moved to style...)
    * @property {string|undefined} [noteheadColor=undefined] - notehead color
    * @property {boolean} [noteheadParenthesis=false] - put a parenthesis around the notehead?
    * @property {string|undefined} [stemDirection=undefined] - One of ['up','down','noStem', undefined] -- 'double' not supported
@@ -8165,15 +8165,15 @@
           key: 'majorName',
 
           /**
-            * Return the name of the major key with this many sharps
-            *
-            * @memberof music21.key.KeySignature
-            * @returns {(string|undefined)} name of key
-            * @example
-            * var ks = new music21.key.KeySignature(-3)
-            * ks.majorName()
-            * // "E-"
-            */
+           * Return the name of the major key with this many sharps
+           *
+           * @memberof music21.key.KeySignature
+           * @returns {(string|undefined)} name of key
+           * @example
+           * var ks = new music21.key.KeySignature(-3)
+           * ks.majorName()
+           * // "E-"
+           */
           value: function majorName() {
               if (this.sharps >= 0) {
                   return this.sharpMapping[this.sharps];
@@ -8182,10 +8182,10 @@
               }
           }
           /**
-            * Return the name of the minor key with this many sharps
-            * @memberof music21.key.KeySignature
-            * @returns {(string|undefined)}
-            */
+           * Return the name of the minor key with this many sharps
+           * @memberof music21.key.KeySignature
+           * @returns {(string|undefined)}
+           */
 
       }, {
           key: 'minorName',
@@ -8198,14 +8198,14 @@
               }
           }
           /**
-            * returns the vexflow name (just the `majorName()` with "b" for "-") for
-            * the key signature.  Does not create the object.
-            *
-            * Deprecated.
-            *
-            * @memberof music21.key.KeySignature
-            * @returns {string}
-            */
+           * returns the vexflow name (just the `majorName()` with "b" for "-") for
+           * the key signature.  Does not create the object.
+           *
+           * Deprecated.
+           *
+           * @memberof music21.key.KeySignature
+           * @returns {string}
+           */
 
       }, {
           key: 'vexflow',
@@ -8215,12 +8215,12 @@
               return tempName.replace(/-/g, 'b');
           }
           /**
-            * Returns the accidental associated with a step in this key, or undefined if none.
-            *
-            * @memberof music21.key.KeySignature
-            * @param {string} step - a valid step name such as "C","D", etc., but not "C#" etc.
-            * @returns {(music21.pitch.Accidental|undefined)}
-            */
+           * Returns the accidental associated with a step in this key, or undefined if none.
+           *
+           * @memberof music21.key.KeySignature
+           * @param {string} step - a valid step name such as "C","D", etc., but not "C#" etc.
+           * @returns {(music21.pitch.Accidental|undefined)}
+           */
 
       }, {
           key: 'accidentalByStep',
@@ -8238,22 +8238,22 @@
               return undefined;
           }
           /**
-            * Takes a pitch in C major and transposes it so that it has
-            * the same step position in the current key signature.
-            *
-            * @memberof music21.key.KeySignature
-            * @returns {music21.pitch.Pitch}
-            * @example
-            * var ks = new music21.key.KeySignature(-3)
-            * var p1 = new music21.pitch.Pitch('B')
-            * var p2 = ks.transposePitchFromC(p1)
-            * p2.name
-            * // "D"
-            * var p3 = new music21.pitch.Pitch('G-')
-            * var p4 = ks.transposePitchFromC(p3)
-            * p4.name
-            * // "B--"
-            */
+           * Takes a pitch in C major and transposes it so that it has
+           * the same step position in the current key signature.
+           *
+           * @memberof music21.key.KeySignature
+           * @returns {music21.pitch.Pitch}
+           * @example
+           * var ks = new music21.key.KeySignature(-3)
+           * var p1 = new music21.pitch.Pitch('B')
+           * var p2 = ks.transposePitchFromC(p1)
+           * p2.name
+           * // "D"
+           * var p3 = new music21.pitch.Pitch('G-')
+           * var p4 = ks.transposePitchFromC(p3)
+           * p4.name
+           * // "B--"
+           */
 
       }, {
           key: 'transposePitchFromC',
@@ -8306,21 +8306,21 @@
               }
           }
           /**
-            * An Array of Altered Pitches in KeySignature order (i.e., for flats, Bb, Eb, etc.)
-            *
-            * @memberof music21.key.KeySignature#
-            * @var {Array<music21.pitch.Pitch>} alteredPitches
-            * @readonly
-            * @example
-            * var ks = new music21.key.KeySignature(3)
-            * var ap = ks.alteredPitches
-            * var apName = [];
-            * for (var i = 0; i < ap.length; i++) {
-            *     apName.push(ap[i].name);
-            * }
-            * apName
-            * // ["F#", "C#", "G#"]
-            */
+           * An Array of Altered Pitches in KeySignature order (i.e., for flats, Bb, Eb, etc.)
+           *
+           * @memberof music21.key.KeySignature#
+           * @var {Array<music21.pitch.Pitch>} alteredPitches
+           * @readonly
+           * @example
+           * var ks = new music21.key.KeySignature(3)
+           * var ap = ks.alteredPitches
+           * var apName = [];
+           * for (var i = 0; i < ap.length; i++) {
+           *     apName.push(ap[i].name);
+           * }
+           * apName
+           * // ["F#", "C#", "G#"]
+           */
 
       }, {
           key: 'alteredPitches',
@@ -10781,9 +10781,14 @@
                   this.addNoteToMap(n);
               }
               // prepare final map.
-              var finalStave = ns.get(-1).activeVexflowNote.stave;
+              var finalNote = ns.get(-1);
+              var finalVFNote = finalNote.activeVexflowNote;
+              if (finalVFNote === undefined) {
+                  throw new StreamException('Cannot make a pixel map where activeVexflowNotes are undefined. ' + 'Run s.createCanvas() before constructing a PixelMapper.');
+              }
+              var finalStave = finalVFNote.stave;
               var finalX = finalStave.x + finalStave.width;
-              var endOffset = ns.get(-1).duration.quarterLength + ns.get(-1).offset;
+              var endOffset = finalNote.duration.quarterLength + finalNote.offset;
 
               var lastMap = new streamInteraction.PixelMap(this, endOffset);
               lastMap.elements = [undefined];
@@ -11066,6 +11071,7 @@
           this.elementType = 'svg';
 
           // for active display of mouse over notes.
+          // NOT used as of 2017 Dec.
           this.renderMouseOver = true;
           this.currentNoteValue = 'quarter';
       }
@@ -11130,7 +11136,10 @@
               this.activeNote = n;
               this.stream.redrawCanvas(canvasOrSvg);
               if (this.changedCallbackFunction !== undefined) {
-                  return this.changedCallbackFunction({ foundNote: n, canvas: canvasOrSvg });
+                  return this.changedCallbackFunction({
+                      foundNote: n,
+                      canvas: canvasOrSvg
+                  });
               } else {
                   return undefined;
               }
@@ -11416,10 +11425,17 @@
               this.setActiveInformation(canvasElement, e);
               this.activeVoice.renderOptions.scaleFactor = this.stream.renderOptions.scaleFactor;
 
+              // the activeVoice can find the right note object but not
+              // the right DNN
+
               var _activeVoice$findNote = this.activeVoice.findNoteForClick(canvasElement, e),
                   _activeVoice$findNote2 = slicedToArray(_activeVoice$findNote, 2),
                   unused_wrong_dnn = _activeVoice$findNote2[0],
                   foundNote = _activeVoice$findNote2[1];
+
+              // conversely, the stream itself can find the right
+              // DNN but not the right note.
+
 
               var _stream$findNoteForCl3 = this.stream.findNoteForClick(canvasElement, e),
                   _stream$findNoteForCl4 = slicedToArray(_stream$findNoteForCl3, 2),
@@ -12824,6 +12840,7 @@
 
           _this2._autoBeam = undefined;
           _this2.activeVFStave = undefined;
+          _this2.activeVFRenderer = undefined;
           _this2.renderOptions = new renderOptions.RenderOptions();
           _this2._tempo = undefined;
 
@@ -13496,6 +13513,7 @@
               }
               vfr.render();
               this.setRenderInteraction(canvasOrSVG);
+              this.activeVFRenderer = vfr;
               return vfr;
           }
 
@@ -13514,6 +13532,9 @@
           value: function estimateStreamHeight(ignoreSystems) {
               var staffHeight = this.renderOptions.naiveHeight;
               var systemPadding = this.systemPadding;
+              if (systemPadding === undefined) {
+                  systemPadding = 0;
+              }
               var numSystems = void 0;
               if (this.isClassOrSubclass('Score')) {
                   var numParts = this.length;
@@ -13804,9 +13825,9 @@
               //      width = $bodyElement.width();
               //      };
 
-              var canvasBlock = this.createCanvas(width, height, elementType);
-              $appendElement.append(canvasBlock);
-              return canvasBlock[0];
+              var svgOrCanvasBlock = this.createCanvas(width, height, elementType);
+              $appendElement.append(svgOrCanvasBlock);
+              return svgOrCanvasBlock[0];
           }
 
           /**
@@ -13837,33 +13858,33 @@
                   $where = where;
                   where = $where[0];
               }
-              var $oldCanvas = void 0;
+              var $oldSVGOrCanvas = void 0;
               if ($where.prop('tagName') === elementType.toUpperCase()) {
-                  $oldCanvas = $where;
+                  $oldSVGOrCanvas = $where;
               } else {
-                  $oldCanvas = $where.find(elementType);
+                  $oldSVGOrCanvas = $where.find(elementType);
               }
               // TODO: Max Width!
-              if ($oldCanvas.length === 0) {
+              if ($oldSVGOrCanvas.length === 0) {
                   throw new Music21Exception('No canvas defined for replaceCanvas!');
-              } else if ($oldCanvas.length > 1) {
+              } else if ($oldSVGOrCanvas.length > 1) {
                   // change last canvas...
                   // replacing each with canvasBlock doesn't work
                   // anyhow, it just resizes the canvas but doesn't
                   // draw.
-                  $oldCanvas = $($oldCanvas[$oldCanvas.length - 1]);
+                  $oldSVGOrCanvas = $($oldSVGOrCanvas[$oldSVGOrCanvas.length - 1]);
               }
 
               var canvasBlock = void 0;
               if (preserveCanvasSize) {
-                  var width = $oldCanvas.width();
-                  var height = $oldCanvas.height();
+                  var width = $oldSVGOrCanvas.width();
+                  var height = $oldSVGOrCanvas.attr('height'); // height manipulates
                   canvasBlock = this.createCanvas(width, height, elementType);
               } else {
                   canvasBlock = this.createCanvas(undefined, undefined, elementType);
               }
 
-              $oldCanvas.replaceWith(canvasBlock);
+              $oldSVGOrCanvas.replaceWith(canvasBlock);
               return canvasBlock;
           }
 
