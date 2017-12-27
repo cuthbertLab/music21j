@@ -743,7 +743,7 @@ export class SimpleNoteEditor {
             $searchParent !== undefined
             && ($useCanvas === undefined || $useCanvas[0] === undefined)
         ) {
-            $useCanvas = $searchParent.find(this.elementType);
+            $useCanvas = $searchParent.find('.streamHolding');
             $searchParent = $searchParent.parent();
         }
         if ($useCanvas[0] === undefined) {

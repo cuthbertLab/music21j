@@ -5,15 +5,16 @@
 Pure ES6 tests...
 
 <script>
-require(['music21'], (music21) => {
-    const s = new music21.stream.Stream()
-    const n = new music21.note.Note()
+require(['music21'], music21 => {
+    const s = new music21.stream.Stream();
+    const n = new music21.note.Note();
     s.append(n);
     let canvas;
-    s.renderOptions.events.click = e => { 
-        n.pitch.diatonicNoteNum += 1; 
-        canvas = s.replaceCanvas(canvas); 
-    }
+    s.renderOptions.events.click = e => {
+        n.pitch.diatonicNoteNum += 1;
+        canvas = s.replaceCanvas(canvas);
+        e.stopPropagation();
+    };
     canvas = s.appendNewCanvas();
 });
 </script>

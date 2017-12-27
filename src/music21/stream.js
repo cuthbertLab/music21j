@@ -1195,22 +1195,30 @@ export class Stream extends base.Music21Object {
             this.setSubstreamRenderOptions();
         }
 
-        const newCanvasOrSVG = $('<' + elementType + '/>'); // .css('border', '1px red solid');
+        // we render SVG on a Div for Vexflow
+        let renderElementType = 'div';
+        if (elementType === 'canvas') {
+            renderElementType = 'svg';
+        }
+
+        const $newCanvasOrDIV = $('<' + renderElementType + '/>');
+        $newCanvasOrDIV.addClass('streamHolding'); // .css('border', '1px red solid');
+        $newCanvasOrDIV.css('display', 'inline-block');
 
         if (width !== undefined) {
             if (typeof width === 'string') {
                 width = common.stripPx(width);
             }
-            newCanvasOrSVG.attr('width', width);
+            $newCanvasOrDIV.attr('width', width);
         } else {
             const computedWidth
                 = this.estimateStaffLength()
                 + this.renderOptions.staffPadding
                 + 0;
-            newCanvasOrSVG.attr('width', computedWidth);
+            $newCanvasOrDIV.attr('width', computedWidth);
         }
         if (height !== undefined) {
-            newCanvasOrSVG.attr('height', height);
+            $newCanvasOrDIV.attr('height', height);
         } else {
             let computedHeight;
             if (this.renderOptions.height === undefined) {
@@ -1220,12 +1228,12 @@ export class Stream extends base.Music21Object {
                 computedHeight = this.renderOptions.height;
                 // console.log('computed Height: ' + computedHeight);
             }
-            newCanvasOrSVG.attr(
+            $newCanvasOrDIV.attr(
                 'height',
                 computedHeight * this.renderOptions.scaleFactor.y
             );
         }
-        return newCanvasOrSVG;
+        return $newCanvasOrDIV;
     }
 
     /**
@@ -1315,10 +1323,11 @@ export class Stream extends base.Music21Object {
             where = $where[0];
         }
         let $oldSVGOrCanvas;
-        if ($where.prop('tagName') === elementType.toUpperCase()) {
+
+        if ($where.hasClass('streamHolding')) {
             $oldSVGOrCanvas = $where;
         } else {
-            $oldSVGOrCanvas = $where.find(elementType);
+            $oldSVGOrCanvas = $where.find('.streamHolding');
         }
         // TODO: Max Width!
         if ($oldSVGOrCanvas.length === 0) {
@@ -1706,11 +1715,17 @@ export class Stream extends base.Music21Object {
         const d = $('<div/>')
             .css('text-align', 'left')
             .css('position', 'relative');
-        const buttonDiv = this.getAccidentalToolbar();
+
+        this.renderOptions.events.click = this.canvasChangerFunction;
+        const $svgDiv = this.createCanvas(width, height);
+        const buttonDiv = this.getAccidentalToolbar(
+            undefined,
+            undefined,
+            $svgDiv
+        );
         d.append(buttonDiv);
         d.append($("<br clear='all'/>"));
-        this.renderOptions.events.click = this.canvasChangerFunction;
-        this.appendNewCanvas(d, width, height); // var can =
+        d.append($svgDiv);
         return d;
     }
 

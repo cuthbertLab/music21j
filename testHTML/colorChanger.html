@@ -7,13 +7,18 @@
 <body>
 <script>
 function getColorCanvas(s, width, height) {
-    const $d = $('<div/>').css('text-align', 'left').css('position', 'relative');
+    const $d = $('<div/>')
+        .css('text-align', 'left')
+        .css('position', 'relative');
     const $buttonDiv = getColorToolbar(s);
     $d.append($buttonDiv);
     $d.append($("<br clear='all'/>"));
-    s.renderOptions.events.click = (e) => {
+    s.renderOptions.events.click = e => {
         const canvasElement = e.currentTarget;
-        const [clickedDiatonicNoteNum, foundNote] = s.findNoteForClick(canvasElement, e);
+        const [clickedDiatonicNoteNum, foundNote] = s.findNoteForClick(
+            canvasElement,
+            e
+        );
         if (foundNote === undefined) {
             console.log('No note found');
         } else {
@@ -21,7 +26,7 @@ function getColorCanvas(s, width, height) {
         }
     };
     s.appendNewCanvas($d, width, height); // var can =
-    return $d;    
+    return $d;
 }
 
 function getColorToolbar(s, $siblingCanvas) {
@@ -32,10 +37,11 @@ function getColorToolbar(s, $siblingCanvas) {
         let $useCanvas = $siblingCanvas;
         if ($useCanvas === undefined) {
             let $searchParent = $(clickEvent.target).parent();
-            while ($searchParent !== undefined
-                        && ($useCanvas === undefined
-                                || $useCanvas[0] === undefined)) {
-                $useCanvas = $searchParent.find('canvas');
+            while (
+                $searchParent !== undefined &&
+                ($useCanvas === undefined || $useCanvas[0] === undefined)
+            ) {
+                $useCanvas = $searchParent.find('.streamHolding');
                 $searchParent = $searchParent.parent();
             }
             if ($useCanvas[0] === undefined) {
@@ -54,18 +60,23 @@ function getColorToolbar(s, $siblingCanvas) {
         }
     };
 
-    const $buttonDiv = $('<div/>').attr('class', 'accidentalToolbar scoreToolbar');
+    const $buttonDiv = $('<div/>').attr(
+        'class',
+        'accidentalToolbar scoreToolbar'
+    );
     const info = [
-                  ['black', 'white', 'harmonic'],
-                  ['green', 'white', 'passing'],
-                  ['aqua', 'black', 'neighbor'],
-                  ['red', 'black', 'other'],
-                  ];
-    
+        ['black', 'white', 'harmonic'],
+        ['green', 'white', 'passing'],
+        ['aqua', 'black', 'neighbor'],
+        ['red', 'black', 'other'],
+    ];
+
     for (let i = 0; i < info.length; i++) {
         const [thisColor, textColor, thisFunction] = info[i];
-        const $b = $(`<button style='background-color: ${thisColor}; color: ${textColor}'>${thisFunction}</button>`);
-        $b.click(e => addColor(thisColor, e));        
+        const $b = $(
+            `<button style='background-color: ${thisColor}; color: ${textColor}'>${thisFunction}</button>`
+        );
+        $b.click(e => addColor(thisColor, e));
         $buttonDiv.append($b);
     }
     return $buttonDiv;
@@ -75,30 +86,29 @@ s = undefined;
 
 require(['music21'], music21 => {
     const k = new music21.key.Key('D');
-    
-   s = new music21.stream.Measure();
-   s.keySignature = k;
-   s.timeSignature = new music21.meter.TimeSignature('4/4');
-   const n = new music21.note.Note("G4");
-   n.duration.type = 'half';
-   s.append(n);
-   const n2 = new music21.note.Note('A4');
-   s.append(n2);
-   const n3 = new music21.note.Note('B4');
-   s.append(n3);
-   s.autoBeam = false;
-   const $d = getColorCanvas(s);
-   $('#canvasDiv').append($d);
-   
-   const sChord = new music21.stream.Measure();
-   sChord.timeSignature = new music21.meter.TimeSignature('4/4');
-   const ch = new music21.roman.RomanNumeral('IV', k);
-   ch.duration.type = 'whole';
-   sChord.keySignature = k;
-   sChord.append(ch);
-   sChord.appendNewCanvas($('#canvasDiv'));
-});
 
+    s = new music21.stream.Measure();
+    s.keySignature = k;
+    s.timeSignature = new music21.meter.TimeSignature('4/4');
+    const n = new music21.note.Note('G4');
+    n.duration.type = 'half';
+    s.append(n);
+    const n2 = new music21.note.Note('A4');
+    s.append(n2);
+    const n3 = new music21.note.Note('B4');
+    s.append(n3);
+    s.autoBeam = false;
+    const $d = getColorCanvas(s);
+    $('#canvasDiv').append($d);
+
+    const sChord = new music21.stream.Measure();
+    sChord.timeSignature = new music21.meter.TimeSignature('4/4');
+    const ch = new music21.roman.RomanNumeral('IV', k);
+    ch.duration.type = 'whole';
+    sChord.keySignature = k;
+    sChord.append(ch);
+    sChord.appendNewCanvas($('#canvasDiv'));
+});
 </script>
 <div id="canvasDiv">Canvas goes here...<br/></div>
 

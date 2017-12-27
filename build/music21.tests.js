@@ -1,5 +1,5 @@
 /**
- * music21j 0.9.0 built on  * 2017-12-21.
+ * music21j 0.9.0 built on  * 2017-12-27.
  * Copyright (c) 2013-2016 Michael Scott Cuthbert and cuthbertLab
  * BSD License, see LICENSE
  *
@@ -11249,7 +11249,7 @@
               var $searchParent = $$1(clickEvent.target).parent();
               var $useCanvas = void 0;
               while ($searchParent !== undefined && ($useCanvas === undefined || $useCanvas[0] === undefined)) {
-                  $useCanvas = $searchParent.find(this.elementType);
+                  $useCanvas = $searchParent.find('.streamHolding');
                   $searchParent = $searchParent.parent();
               }
               if ($useCanvas[0] === undefined) {
@@ -13725,19 +13725,27 @@
                   this.setSubstreamRenderOptions();
               }
 
-              var newCanvasOrSVG = $$1('<' + elementType + '/>'); // .css('border', '1px red solid');
+              // we render SVG on a Div for Vexflow
+              var renderElementType = 'div';
+              if (elementType === 'canvas') {
+                  renderElementType = 'svg';
+              }
+
+              var $newCanvasOrDIV = $$1('<' + renderElementType + '/>');
+              $newCanvasOrDIV.addClass('streamHolding'); // .css('border', '1px red solid');
+              $newCanvasOrDIV.css('display', 'inline-block');
 
               if (width !== undefined) {
                   if (typeof width === 'string') {
                       width = common.stripPx(width);
                   }
-                  newCanvasOrSVG.attr('width', width);
+                  $newCanvasOrDIV.attr('width', width);
               } else {
                   var computedWidth = this.estimateStaffLength() + this.renderOptions.staffPadding + 0;
-                  newCanvasOrSVG.attr('width', computedWidth);
+                  $newCanvasOrDIV.attr('width', computedWidth);
               }
               if (height !== undefined) {
-                  newCanvasOrSVG.attr('height', height);
+                  $newCanvasOrDIV.attr('height', height);
               } else {
                   var computedHeight = void 0;
                   if (this.renderOptions.height === undefined) {
@@ -13747,9 +13755,9 @@
                       computedHeight = this.renderOptions.height;
                       // console.log('computed Height: ' + computedHeight);
                   }
-                  newCanvasOrSVG.attr('height', computedHeight * this.renderOptions.scaleFactor.y);
+                  $newCanvasOrDIV.attr('height', computedHeight * this.renderOptions.scaleFactor.y);
               }
-              return newCanvasOrSVG;
+              return $newCanvasOrDIV;
           }
 
           /**
@@ -13825,9 +13833,9 @@
               //      width = $bodyElement.width();
               //      };
 
-              var canvasBlock = this.createCanvas(width, height, elementType);
-              $appendElement.append(canvasBlock);
-              return canvasBlock[0];
+              var svgOrCanvasBlock = this.createCanvas(width, height, elementType);
+              $appendElement.append(svgOrCanvasBlock);
+              return svgOrCanvasBlock[0];
           }
 
           /**
@@ -13858,33 +13866,34 @@
                   $where = where;
                   where = $where[0];
               }
-              var $oldCanvas = void 0;
-              if ($where.prop('tagName') === elementType.toUpperCase()) {
-                  $oldCanvas = $where;
+              var $oldSVGOrCanvas = void 0;
+
+              if ($where.hasClass('streamHolding')) {
+                  $oldSVGOrCanvas = $where;
               } else {
-                  $oldCanvas = $where.find(elementType);
+                  $oldSVGOrCanvas = $where.find('.streamHolding');
               }
               // TODO: Max Width!
-              if ($oldCanvas.length === 0) {
+              if ($oldSVGOrCanvas.length === 0) {
                   throw new Music21Exception('No canvas defined for replaceCanvas!');
-              } else if ($oldCanvas.length > 1) {
+              } else if ($oldSVGOrCanvas.length > 1) {
                   // change last canvas...
                   // replacing each with canvasBlock doesn't work
                   // anyhow, it just resizes the canvas but doesn't
                   // draw.
-                  $oldCanvas = $$1($oldCanvas[$oldCanvas.length - 1]);
+                  $oldSVGOrCanvas = $$1($oldSVGOrCanvas[$oldSVGOrCanvas.length - 1]);
               }
 
               var canvasBlock = void 0;
               if (preserveCanvasSize) {
-                  var width = $oldCanvas.width();
-                  var height = $oldCanvas.height();
+                  var width = $oldSVGOrCanvas.width();
+                  var height = $oldSVGOrCanvas.attr('height'); // height manipulates
                   canvasBlock = this.createCanvas(width, height, elementType);
               } else {
                   canvasBlock = this.createCanvas(undefined, undefined, elementType);
               }
 
-              $oldCanvas.replaceWith(canvasBlock);
+              $oldSVGOrCanvas.replaceWith(canvasBlock);
               return canvasBlock;
           }
 
@@ -14265,11 +14274,13 @@
                * Create an editable canvas with an accidental selection bar.
                */
               var d = $$1('<div/>').css('text-align', 'left').css('position', 'relative');
-              var buttonDiv = this.getAccidentalToolbar();
+
+              this.renderOptions.events.click = this.canvasChangerFunction;
+              var $svgDiv = this.createCanvas(width, height);
+              var buttonDiv = this.getAccidentalToolbar(undefined, undefined, $svgDiv);
               d.append(buttonDiv);
               d.append($$1("<br clear='all'/>"));
-              this.renderOptions.events.click = this.canvasChangerFunction;
-              this.appendNewCanvas(d, width, height); // var can =
+              d.append($svgDiv);
               return d;
           }
 

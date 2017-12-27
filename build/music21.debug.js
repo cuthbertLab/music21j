@@ -1,5 +1,5 @@
 /**
- * music21j 0.9.0 built on  * 2017-12-25.
+ * music21j 0.9.0 built on  * 2017-12-27.
  * Copyright (c) 2013-2016 Michael Scott Cuthbert and cuthbertLab
  * BSD License, see LICENSE
  *
@@ -11249,7 +11249,7 @@
               var $searchParent = $(clickEvent.target).parent();
               var $useCanvas = void 0;
               while ($searchParent !== undefined && ($useCanvas === undefined || $useCanvas[0] === undefined)) {
-                  $useCanvas = $searchParent.find(this.elementType);
+                  $useCanvas = $searchParent.find('.streamHolding');
                   $searchParent = $searchParent.parent();
               }
               if ($useCanvas[0] === undefined) {
@@ -13725,19 +13725,27 @@
                   this.setSubstreamRenderOptions();
               }
 
-              var newCanvasOrSVG = $('<' + elementType + '/>'); // .css('border', '1px red solid');
+              // we render SVG on a Div for Vexflow
+              var renderElementType = 'div';
+              if (elementType === 'canvas') {
+                  renderElementType = 'svg';
+              }
+
+              var $newCanvasOrDIV = $('<' + renderElementType + '/>');
+              $newCanvasOrDIV.addClass('streamHolding'); // .css('border', '1px red solid');
+              $newCanvasOrDIV.css('display', 'inline-block');
 
               if (width !== undefined) {
                   if (typeof width === 'string') {
                       width = common.stripPx(width);
                   }
-                  newCanvasOrSVG.attr('width', width);
+                  $newCanvasOrDIV.attr('width', width);
               } else {
                   var computedWidth = this.estimateStaffLength() + this.renderOptions.staffPadding + 0;
-                  newCanvasOrSVG.attr('width', computedWidth);
+                  $newCanvasOrDIV.attr('width', computedWidth);
               }
               if (height !== undefined) {
-                  newCanvasOrSVG.attr('height', height);
+                  $newCanvasOrDIV.attr('height', height);
               } else {
                   var computedHeight = void 0;
                   if (this.renderOptions.height === undefined) {
@@ -13747,9 +13755,9 @@
                       computedHeight = this.renderOptions.height;
                       // console.log('computed Height: ' + computedHeight);
                   }
-                  newCanvasOrSVG.attr('height', computedHeight * this.renderOptions.scaleFactor.y);
+                  $newCanvasOrDIV.attr('height', computedHeight * this.renderOptions.scaleFactor.y);
               }
-              return newCanvasOrSVG;
+              return $newCanvasOrDIV;
           }
 
           /**
@@ -13859,10 +13867,11 @@
                   where = $where[0];
               }
               var $oldSVGOrCanvas = void 0;
-              if ($where.prop('tagName') === elementType.toUpperCase()) {
+
+              if ($where.hasClass('streamHolding')) {
                   $oldSVGOrCanvas = $where;
               } else {
-                  $oldSVGOrCanvas = $where.find(elementType);
+                  $oldSVGOrCanvas = $where.find('.streamHolding');
               }
               // TODO: Max Width!
               if ($oldSVGOrCanvas.length === 0) {
@@ -14265,11 +14274,13 @@
                * Create an editable canvas with an accidental selection bar.
                */
               var d = $('<div/>').css('text-align', 'left').css('position', 'relative');
-              var buttonDiv = this.getAccidentalToolbar();
+
+              this.renderOptions.events.click = this.canvasChangerFunction;
+              var $svgDiv = this.createCanvas(width, height);
+              var buttonDiv = this.getAccidentalToolbar(undefined, undefined, $svgDiv);
               d.append(buttonDiv);
               d.append($("<br clear='all'/>"));
-              this.renderOptions.events.click = this.canvasChangerFunction;
-              this.appendNewCanvas(d, width, height); // var can =
+              d.append($svgDiv);
               return d;
           }
 

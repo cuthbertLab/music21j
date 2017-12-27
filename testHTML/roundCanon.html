@@ -11,128 +11,137 @@
 <script type="text/javascript">
 var m2;
 
-require(['music21'], function() { 
-    makeRound();    
+require(['music21'], function() {
+    makeRound();
 });
 
-fillScoreOut = function (editor, scoreOut) {
+fillScoreOut = function(editor, scoreOut) {
     scoreOutNew = new music21.stream.Score();
     scoreOutNew.timeSignature = scoreOut.timeSignature;
     scoreOutNew.clef = scoreOut.clef;
     scoreOutNew.maxSystemWidth = scoreOut.maxSystemWidth;
-    scoreOutNew.renderOptions.scaleFactor = {x: 0.5, y: 0.5};
-    
+    scoreOutNew.renderOptions.scaleFactor = { x: 0.5, y: 0.5 };
+
     var sectionLength = scoreOut.repetitionLength;
-	for (var pNum = 0; pNum < scoreOut.numParts; pNum++) {		
-		var p = new music21.stream.Part();
-		var startMusic = pNum * sectionLength;
-		var endMusic = startMusic + sectionLength * (scoreOut.numParts - 1 + scoreOut.fullRepetitions);
-		
-		console.log ("pNum: " + pNum + " start: " + startMusic + " end: " + endMusic);
-		for (var j = 0; j < scoreOut.totalMeasures; j++) {
-			// clear old score...
-			var m = new music21.stream.Measure();
-			
-			if (j < startMusic || j >= endMusic) {
-				// add a rest:
-				var r = new music21.note.Rest();
-				r.duration.type = 'whole';
-				m.append(r);
-				//console.log("Added rest to m: " + j);
-			} else {
-				var copyMeasure = editor.get((j - startMusic) % editor.length);
-				for (var l = 0; l < copyMeasure.length; l++) {
-					var copyNote = copyMeasure.get(l);
-					var n = new music21.note.Note();
-					n.pitch.name = copyNote.pitch.name;
-					n.pitch.octave = copyNote.pitch.octave;
-					n.duration.quarterLength = copyNote.duration.quarterLength;
-					m.append(n);
-				}
-			}		
-			p.append(m);
-		}
-		scoreOutNew.append(p)
-	}
-	$($('canvas')[1]).attr('height', '600'); //.attr('width', '550');
-	scoreOutNew.redrawCanvas($('canvas')[1]);
+    for (var pNum = 0; pNum < scoreOut.numParts; pNum++) {
+        var p = new music21.stream.Part();
+        var startMusic = pNum * sectionLength;
+        var endMusic =
+            startMusic +
+            sectionLength * (scoreOut.numParts - 1 + scoreOut.fullRepetitions);
+
+        console.log(
+            'pNum: ' + pNum + ' start: ' + startMusic + ' end: ' + endMusic
+        );
+        for (var j = 0; j < scoreOut.totalMeasures; j++) {
+            // clear old score...
+            var m = new music21.stream.Measure();
+
+            if (j < startMusic || j >= endMusic) {
+                // add a rest:
+                var r = new music21.note.Rest();
+                r.duration.type = 'whole';
+                m.append(r);
+                //console.log("Added rest to m: " + j);
+            } else {
+                var copyMeasure = editor.get((j - startMusic) % editor.length);
+                for (var l = 0; l < copyMeasure.length; l++) {
+                    var copyNote = copyMeasure.get(l);
+                    var n = new music21.note.Note();
+                    n.pitch.name = copyNote.pitch.name;
+                    n.pitch.octave = copyNote.pitch.octave;
+                    n.duration.quarterLength = copyNote.duration.quarterLength;
+                    m.append(n);
+                }
+            }
+            p.append(m);
+        }
+        scoreOutNew.append(p);
+    }
+    $($('.streamHolding')[1]).attr('height', '600'); //.attr('width', '550');
+    scoreOutNew.redrawCanvas($('.streamHolding')[1]);
 };
 
+makeRound = function() {
+    $('#testBank').append(
+        $(
+            '<div>Edit the pitches (sorry no rhythm here) for a 3-voice canon w/ entrances every four measures</div>'
+        )
+    );
 
-makeRound = function () {
-	$("#testBank").append($("<div>Edit the pitches (sorry no rhythm here) for a 3-voice canon w/ entrances every four measures</div>"))
+    var numParts = 3;
+    var fullRepetitions = 2;
 
-	var numParts = 3;
-	var fullRepetitions = 2;
-	
-	var notes = ['C4', 'F4', 'G4', 'C5'];
-	var scoreOut = new music21.stream.Score();
-	scoreOut.timeSignature = new music21.meter.TimeSignature('4/4');
-	scoreOut.clef = new music21.clef.Clef('treble');
-	scoreOut.numParts = numParts;
-	scoreOut.fullRepetitions = fullRepetitions;
-	scoreOut.repetitionLength = notes.length;
-	var totalMeasures = notes.length * ((numParts-1) * 2 + fullRepetitions);
-	scoreOut.totalMeasures = totalMeasures;
-	//console.log("Total Measures: " + totalMeasures);
-	for (var i = 0; i < numParts; i ++) {
-		var pOut = new music21.stream.Part();
-		for (var j = 0; j < totalMeasures; j++) {
-			var m = new music21.stream.Measure();
-			m.autoBeam = true;
-			if (i == 0 && j != 0) {
-				m.renderOptions.showMeasureNumber = true;
-			}
-			pOut.append(m);
-		}
-		scoreOut.append(pOut);
-	}
+    var notes = ['C4', 'F4', 'G4', 'C5'];
+    var scoreOut = new music21.stream.Score();
+    scoreOut.timeSignature = new music21.meter.TimeSignature('4/4');
+    scoreOut.clef = new music21.clef.Clef('treble');
+    scoreOut.numParts = numParts;
+    scoreOut.fullRepetitions = fullRepetitions;
+    scoreOut.repetitionLength = notes.length;
+    var totalMeasures = notes.length * ((numParts - 1) * 2 + fullRepetitions);
+    scoreOut.totalMeasures = totalMeasures;
+    //console.log("Total Measures: " + totalMeasures);
+    for (var i = 0; i < numParts; i++) {
+        var pOut = new music21.stream.Part();
+        for (var j = 0; j < totalMeasures; j++) {
+            var m = new music21.stream.Measure();
+            m.autoBeam = true;
+            if (i == 0 && j != 0) {
+                m.renderOptions.showMeasureNumber = true;
+            }
+            pOut.append(m);
+        }
+        scoreOut.append(pOut);
+    }
 
     pEditor = new music21.stream.Part();
     //pEditor.renderOptions.scaleFactor = {x: 1, y: 1};
-    pEditor.maxSystemWidth = $("#testBank").width() / pEditor.renderOptions.scaleFactor.x;
-	pEditor.timeSignature = new music21.meter.TimeSignature('4/4');
-	pEditor.clef = new music21.clef.Clef('treble')
+    pEditor.maxSystemWidth =
+        $('#testBank').width() / pEditor.renderOptions.scaleFactor.x;
+    pEditor.timeSignature = new music21.meter.TimeSignature('4/4');
+    pEditor.clef = new music21.clef.Clef('treble');
 
-	
-	for (var i = 0; i < notes.length * numParts; i++) {
-		var m = new music21.stream.Measure();
-		for (var j =0; j < 4; j++) {
-			//var n = new music21.note.Rest();
-			var n = new music21.note.Note(notes[i % notes.length]);
-			m.append(n);
-			m.autoBeam = false;
-		}
-		pEditor.append(m);
-	}
-	pEditor.autoBeam = false;
+    for (var i = 0; i < notes.length * numParts; i++) {
+        var m = new music21.stream.Measure();
+        for (var j = 0; j < 4; j++) {
+            //var n = new music21.note.Rest();
+            var n = new music21.note.Note(notes[i % notes.length]);
+            m.append(n);
+            m.autoBeam = false;
+        }
+        pEditor.append(m);
+    }
+    pEditor.autoBeam = false;
     //console.log(pEditor);
-	
+
     // editable canvas...
-	s2 = new music21.stream.Score();
+    s2 = new music21.stream.Score();
     //s2.renderOptions.scaleFactor = {x: 1, y: 1};
-    s2.maxSystemWidth = $("#testBank").width() / s2.renderOptions.scaleFactor.x;
+    s2.maxSystemWidth = $('#testBank').width() / s2.renderOptions.scaleFactor.x;
 
     s2.renderOptions.events['click'] = s2.canvasChangerFunction;
-	//console.log($("#testBank").width());
-	s2.changedCallbackFunction = function () { fillScoreOut(s2.elements[0], scoreOut) };
-	s2.autoBeam = false;
-	s2.append(pEditor);
-	s2.appendNewCanvas($("#testBank"));
-	
-	//pEditor.renderOptions.events['click'] = pEditor.canvasChangerFunction;
-	//pEditor.changedCallbackFunction = function () { fillScoreOut(pEditor, scoreOut) };
-	//pEditor.appendNewCanvas($("#testBank"));
-	$("#testBank").append($("<br clear='all'/>"))
-	$("#testBank").append($("<div>Your score will appear here. Click it to play!</div>"))
+    //console.log($("#testBank").width());
+    s2.changedCallbackFunction = function() {
+        fillScoreOut(s2.elements[0], scoreOut);
+    };
+    s2.autoBeam = false;
+    s2.append(pEditor);
+    s2.appendNewCanvas($('#testBank'));
 
-    scoreOut.maxSystemWidth = $("#testBank").width();
+    //pEditor.renderOptions.events['click'] = pEditor.canvasChangerFunction;
+    //pEditor.changedCallbackFunction = function () { fillScoreOut(pEditor, scoreOut) };
+    //pEditor.appendNewCanvas($("#testBank"));
+    $('#testBank').append($("<br clear='all'/>"));
+    $('#testBank').append(
+        $('<div>Your score will appear here. Click it to play!</div>')
+    );
 
-	scoreOut.appendNewCanvas($("#testBank"));
-	$("#testBank").append($("<br clear='all'/>"))
+    scoreOut.maxSystemWidth = $('#testBank').width();
 
-}
-
+    scoreOut.appendNewCanvas($('#testBank'));
+    $('#testBank').append($("<br clear='all'/>"));
+};
 </script>
 <div class="document">
   <div class="documentwrapper">
