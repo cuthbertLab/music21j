@@ -103,7 +103,7 @@ export class Sites {
 
         let siteRef;
         if (updateNotAdd) {
-            siteRef = self.siteDict.get(idKey);
+            siteRef = this.siteDict.get(idKey);
             siteRef.isDead = false;
         } else {
             siteRef = new SiteRef();

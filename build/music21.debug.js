@@ -1629,7 +1629,7 @@
 
               var siteRef = void 0;
               if (updateNotAdd) {
-                  siteRef = self.siteDict.get(idKey);
+                  siteRef = this.siteDict.get(idKey);
                   siteRef.isDead = false;
               } else {
                   siteRef = new SiteRef();
@@ -13049,7 +13049,8 @@
           }
 
           /**
-           * Remove and return the last element in the stream, or return undefined if the stream is empty
+           * Remove and return the last element in the stream, 
+           * or return undefined if the stream is empty
            *
            * @memberof music21.stream.Stream
            * @returns {music21.base.Music21Object|undefined} last element in the stream
