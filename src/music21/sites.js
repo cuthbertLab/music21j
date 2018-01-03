@@ -120,6 +120,14 @@ export class Sites {
         }
     }
 
+    remove(obj) {
+        const idKey = sites.getId(obj);
+        if (idKey === undefined) {
+            return false;
+        }
+        return this.siteDict.delete(idKey);
+    }
+    
     clear() {
         this.siteDict = new Map();
         this.siteDict.set(_NoneSiteRef.siteIndex, _NoneSiteRef);

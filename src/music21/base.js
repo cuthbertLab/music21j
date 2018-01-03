@@ -359,7 +359,7 @@ export class Music21Object extends prebase.ProtoM21Object {
             for (const [
                 topLevel,
                 inStreamPos,
-                recurType,
+                recurType
             ] of siteObj.contextSites(newParams)) {
                 const inStreamOffset = inStreamPos; // .offset;
                 // const hypotheticalPosition = inStreamOffset; // more complex w/ sortTuples

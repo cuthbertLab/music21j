@@ -8,10 +8,16 @@
         "arrow-parens": [0],
         "camelcase": [0],
         "class-methods-use-this": [0],
-        "comma-dangle": ["error", "always-multiline"],
+        "comma-dangle": ["error", {
+     	   "arrays": "only-multiline",
+           "objects": "always-multiline",
+           "imports": "always-multiline",
+           "exports": "always-multiline",
+           "functions": "ignore"
+    	   }],
         "curly": ["error", "all"],
         "dot-location": [2, "property"],
-        "dot-notation": ["error", { "allowKeywords": false }],
+        "dot-notation": ["error"],
         "indent": ["error", 4],
         "import/extensions": [0],
         "import/prefer-default-export": [0],

@@ -603,7 +603,7 @@ export class SimpleNoteEditor {
         const canvasOrSvgElement = e.currentTarget;
         const [
             clickedDiatonicNoteNum,
-            foundNote,
+            foundNote
         ] = this.stream.findNoteForClick(canvasOrSvgElement, e);
         if (foundNote === undefined) {
             if (debug) {
@@ -915,7 +915,7 @@ export class FourPartEditor extends GrandStaffEditor {
         // DNN but not the right note.
         const [
             clickedDiatonicNoteNum,
-            unused_wrong_note,
+            unused_wrong_note
         ] = this.stream.findNoteForClick(canvasElement, e);
 
         if (foundNote === undefined) {

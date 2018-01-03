@@ -256,7 +256,7 @@ export class ConcreteScale extends Scale {
             tonic = new pitch.Pitch(tonic);
         }
         this.tonic = tonic;
-        this['abstract'] = undefined;
+        this.abstract = undefined;
     }
 
     // when adding functionality here, must also be added to key.Key.
@@ -286,7 +286,7 @@ export class ConcreteScale extends Scale {
         } else {
             pitchObj = this.tonic;
         }
-        return this['abstract'].getRealization(pitchObj);
+        return this.abstract.getRealization(pitchObj);
     }
 
     pitchFromDegree(
@@ -296,9 +296,9 @@ export class ConcreteScale extends Scale {
         unused_direction,
         unused_equateTermini
     ) {
-        return this['abstract'].getPitchFromNodeDegree(
+        return this.abstract.getPitchFromNodeDegree(
             this.tonic,
-            this['abstract'].tonicDegree,
+            this.abstract.tonicDegree,
             degree
         );
     }
@@ -308,9 +308,9 @@ export class ConcreteScale extends Scale {
         unused_direction,
         unused_comparisonAttribute
     ) {
-        return this['abstract'].getRelativeNodeDegree(
+        return this.abstract.getRelativeNodeDegree(
             this.tonic,
-            this['abstract'].tonicDegree,
+            this.abstract.tonicDegree,
             pitchTarget
         );
     }
@@ -319,7 +319,7 @@ export class ConcreteScale extends Scale {
 export class DiatonicScale extends ConcreteScale {
     constructor(tonic) {
         super(tonic); // a.k.a. ^2 :-)
-        this['abstract'] = new AbstractDiatonicScale();
+        this.abstract = new AbstractDiatonicScale();
         this.type = 'diatonic';
     }
 }
@@ -328,7 +328,7 @@ export class MajorScale extends DiatonicScale {
     constructor(tonic) {
         super(tonic); // a.k.a. ^2 :-)
         this.type = 'major';
-        this['abstract']._buildNetwork(this.type);
+        this.abstract._buildNetwork(this.type);
     }
 }
 
@@ -336,7 +336,7 @@ export class MinorScale extends DiatonicScale {
     constructor(tonic) {
         super(tonic); // a.k.a. ^2 :-)
         this.type = 'minor';
-        this['abstract']._buildNetwork(this.type);
+        this.abstract._buildNetwork(this.type);
     }
 }
 
@@ -344,7 +344,7 @@ export class HarmonicMinorScale extends ConcreteScale {
     constructor(tonic) {
         super(tonic); // a.k.a. ^2 :-)
         this.type = 'harmonic minor';
-        this['abstract'] = new AbstractHarmonicMinorScale();
+        this.abstract = new AbstractHarmonicMinorScale();
     }
 }
 
@@ -352,7 +352,7 @@ export class AscendingMelodicMinorScale extends ConcreteScale {
     constructor(tonic) {
         super(tonic); // a.k.a. ^2 :-)
         this.type = 'harmonic minor';
-        this['abstract'] = new AbstractAscendingMelodicMinorScale();
+        this.abstract = new AbstractAscendingMelodicMinorScale();
     }
 }
 

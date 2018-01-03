@@ -303,7 +303,7 @@ export class RhythmChooser {
         }
         let bh = bhs[t];
         if (bh === undefined) {
-            bh = bhs['default'];
+            bh = bhs.default;
         }
         bh.apply(this, [t]);
         let s = this.stream;

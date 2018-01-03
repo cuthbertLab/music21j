@@ -511,7 +511,8 @@ export class Stream extends base.Music21Object {
     }
 
     /**
-     * Remove and return the last element in the stream, or return undefined if the stream is empty
+     * Remove and return the last element in the stream, 
+     * or return undefined if the stream is empty
      *
      * @memberof music21.stream.Stream
      * @returns {music21.base.Music21Object|undefined} last element in the stream
@@ -522,6 +523,7 @@ export class Stream extends base.Music21Object {
             const el = this.get(-1);
             this._elementOffsets.pop();
             this._elements.pop();
+            el.sites.remove(this);
             return el;
         } else {
             return undefined;
@@ -2250,7 +2252,7 @@ export class Part extends Stream {
         }
         const [
             systemIndex,
-            scaledYRelativeToSystem,
+            scaledYRelativeToSystem
         ] = this.systemIndexAndScaledY(y);
         const clickedDiatonicNoteNum = this.diatonicNoteNumFromScaledY(
             scaledYRelativeToSystem
