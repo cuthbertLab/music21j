@@ -739,10 +739,13 @@ export class SimpleNoteEditor {
     getUseCanvasFromClickEvent(clickEvent) {
         let $searchParent = $(clickEvent.target).parent();
         let $useCanvas;
+        let maxSearch = 99;
         while (
-            $searchParent !== undefined
+            maxSearch > 0
+            && $searchParent !== undefined
             && ($useCanvas === undefined || $useCanvas[0] === undefined)
         ) {
+            maxSearch -= 1;
             $useCanvas = $searchParent.find('.streamHolding');
             $searchParent = $searchParent.parent();
         }

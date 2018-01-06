@@ -1,5 +1,5 @@
 /**
- * music21j 0.9.0 built on  * 2017-12-27.
+ * music21j 0.9.0 built on  * 2018-01-05.
  * Copyright (c) 2013-2016 Michael Scott Cuthbert and cuthbertLab
  * BSD License, see LICENSE
  *
@@ -1629,7 +1629,7 @@
 
               var siteRef = void 0;
               if (updateNotAdd) {
-                  siteRef = self.siteDict.get(idKey);
+                  siteRef = this.siteDict.get(idKey);
                   siteRef.isDead = false;
               } else {
                   siteRef = new SiteRef();
@@ -1644,6 +1644,15 @@
               if (!updateNotAdd) {
                   this.siteDict.set(idKey, siteRef);
               }
+          }
+      }, {
+          key: 'remove',
+          value: function remove(obj) {
+              var idKey = sites.getId(obj);
+              if (idKey === undefined) {
+                  return false;
+              }
+              return this.siteDict.delete(idKey);
           }
       }, {
           key: 'clear',
@@ -7854,7 +7863,7 @@
               tonic = new pitch.Pitch(tonic);
           }
           _this6.tonic = tonic;
-          _this6['abstract'] = undefined;
+          _this6.abstract = undefined;
           return _this6;
       }
 
@@ -7883,17 +7892,17 @@
               } else {
                   pitchObj = this.tonic;
               }
-              return this['abstract'].getRealization(pitchObj);
+              return this.abstract.getRealization(pitchObj);
           }
       }, {
           key: 'pitchFromDegree',
           value: function pitchFromDegree(degree, unused_minPitch, unused_maxPitch, unused_direction, unused_equateTermini) {
-              return this['abstract'].getPitchFromNodeDegree(this.tonic, this['abstract'].tonicDegree, degree);
+              return this.abstract.getPitchFromNodeDegree(this.tonic, this.abstract.tonicDegree, degree);
           }
       }, {
           key: 'getScaleDegreeFromPitch',
           value: function getScaleDegreeFromPitch(pitchTarget, unused_direction, unused_comparisonAttribute) {
-              return this['abstract'].getRelativeNodeDegree(this.tonic, this['abstract'].tonicDegree, pitchTarget);
+              return this.abstract.getRelativeNodeDegree(this.tonic, this.abstract.tonicDegree, pitchTarget);
           }
       }, {
           key: 'isConcrete',
@@ -7917,7 +7926,7 @@
           // a.k.a. ^2 :-)
           var _this7 = possibleConstructorReturn(this, (DiatonicScale.__proto__ || Object.getPrototypeOf(DiatonicScale)).call(this, tonic));
 
-          _this7['abstract'] = new AbstractDiatonicScale();
+          _this7.abstract = new AbstractDiatonicScale();
           _this7.type = 'diatonic';
           return _this7;
       }
@@ -7935,7 +7944,7 @@
           var _this8 = possibleConstructorReturn(this, (MajorScale.__proto__ || Object.getPrototypeOf(MajorScale)).call(this, tonic));
 
           _this8.type = 'major';
-          _this8['abstract']._buildNetwork(_this8.type);
+          _this8.abstract._buildNetwork(_this8.type);
           return _this8;
       }
 
@@ -7952,7 +7961,7 @@
           var _this9 = possibleConstructorReturn(this, (MinorScale.__proto__ || Object.getPrototypeOf(MinorScale)).call(this, tonic));
 
           _this9.type = 'minor';
-          _this9['abstract']._buildNetwork(_this9.type);
+          _this9.abstract._buildNetwork(_this9.type);
           return _this9;
       }
 
@@ -7969,7 +7978,7 @@
           var _this10 = possibleConstructorReturn(this, (HarmonicMinorScale.__proto__ || Object.getPrototypeOf(HarmonicMinorScale)).call(this, tonic));
 
           _this10.type = 'harmonic minor';
-          _this10['abstract'] = new AbstractHarmonicMinorScale();
+          _this10.abstract = new AbstractHarmonicMinorScale();
           return _this10;
       }
 
@@ -7986,7 +7995,7 @@
           var _this11 = possibleConstructorReturn(this, (AscendingMelodicMinorScale.__proto__ || Object.getPrototypeOf(AscendingMelodicMinorScale)).call(this, tonic));
 
           _this11.type = 'harmonic minor';
-          _this11['abstract'] = new AbstractAscendingMelodicMinorScale();
+          _this11.abstract = new AbstractAscendingMelodicMinorScale();
           return _this11;
       }
 
@@ -11248,7 +11257,9 @@
           value: function getUseCanvasFromClickEvent(clickEvent) {
               var $searchParent = $$1(clickEvent.target).parent();
               var $useCanvas = void 0;
-              while ($searchParent !== undefined && ($useCanvas === undefined || $useCanvas[0] === undefined)) {
+              var maxSearch = 99;
+              while (maxSearch > 0 && $searchParent !== undefined && ($useCanvas === undefined || $useCanvas[0] === undefined)) {
+                  maxSearch -= 1;
                   $useCanvas = $searchParent.find('.streamHolding');
                   $searchParent = $searchParent.parent();
               }
@@ -13040,7 +13051,8 @@
           }
 
           /**
-           * Remove and return the last element in the stream, or return undefined if the stream is empty
+           * Remove and return the last element in the stream, 
+           * or return undefined if the stream is empty
            *
            * @memberof music21.stream.Stream
            * @returns {music21.base.Music21Object|undefined} last element in the stream
@@ -13054,6 +13066,7 @@
                   var el = this.get(-1);
                   this._elementOffsets.pop();
                   this._elements.pop();
+                  el.sites.remove(this);
                   return el;
               } else {
                   return undefined;
@@ -14318,8 +14331,10 @@
                   var $useCanvas = $siblingCanvas;
                   if ($useCanvas === undefined) {
                       var $searchParent = $$1(clickEvent.target).parent();
-                      while ($searchParent !== undefined && ($useCanvas === undefined || $useCanvas[0] === undefined)) {
-                          $useCanvas = $searchParent.find('canvas');
+                      var maxSearch = 99;
+                      while (maxSearch > 0 && $searchParent !== undefined && ($useCanvas === undefined || $useCanvas[0] === undefined)) {
+                          maxSearch -= 1;
+                          $useCanvas = $searchParent.find('.streamHolding');
                           $searchParent = $searchParent.parent();
                       }
                       if ($useCanvas[0] === undefined) {
@@ -19303,7 +19318,7 @@
               }
               var bh = bhs[t];
               if (bh === undefined) {
-                  bh = bhs['default'];
+                  bh = bhs.default;
               }
               bh.apply(this, [t]);
               var s = this.stream;

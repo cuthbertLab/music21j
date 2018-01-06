@@ -1760,11 +1760,14 @@ export class Stream extends base.Music21Object {
             let $useCanvas = $siblingCanvas;
             if ($useCanvas === undefined) {
                 let $searchParent = $(clickEvent.target).parent();
+                let maxSearch = 99;
                 while (
-                    $searchParent !== undefined
+                    maxSearch > 0
+                    && $searchParent !== undefined
                     && ($useCanvas === undefined || $useCanvas[0] === undefined)
                 ) {
-                    $useCanvas = $searchParent.find('canvas');
+                    maxSearch -= 1;
+                    $useCanvas = $searchParent.find('.streamHolding');
                     $searchParent = $searchParent.parent();
                 }
                 if ($useCanvas[0] === undefined) {

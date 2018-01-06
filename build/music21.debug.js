@@ -1,5 +1,5 @@
 /**
- * music21j 0.9.0 built on  * 2018-01-03.
+ * music21j 0.9.0 built on  * 2018-01-05.
  * Copyright (c) 2013-2016 Michael Scott Cuthbert and cuthbertLab
  * BSD License, see LICENSE
  *
@@ -11257,7 +11257,9 @@
           value: function getUseCanvasFromClickEvent(clickEvent) {
               var $searchParent = $(clickEvent.target).parent();
               var $useCanvas = void 0;
-              while ($searchParent !== undefined && ($useCanvas === undefined || $useCanvas[0] === undefined)) {
+              var maxSearch = 99;
+              while (maxSearch > 0 && $searchParent !== undefined && ($useCanvas === undefined || $useCanvas[0] === undefined)) {
+                  maxSearch -= 1;
                   $useCanvas = $searchParent.find('.streamHolding');
                   $searchParent = $searchParent.parent();
               }
@@ -14329,8 +14331,10 @@
                   var $useCanvas = $siblingCanvas;
                   if ($useCanvas === undefined) {
                       var $searchParent = $(clickEvent.target).parent();
-                      while ($searchParent !== undefined && ($useCanvas === undefined || $useCanvas[0] === undefined)) {
-                          $useCanvas = $searchParent.find('canvas');
+                      var maxSearch = 99;
+                      while (maxSearch > 0 && $searchParent !== undefined && ($useCanvas === undefined || $useCanvas[0] === undefined)) {
+                          maxSearch -= 1;
+                          $useCanvas = $searchParent.find('.streamHolding');
                           $searchParent = $searchParent.parent();
                       }
                       if ($useCanvas[0] === undefined) {
