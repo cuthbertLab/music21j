@@ -1,5 +1,5 @@
 /**
- * music21j 0.9.0 built on  * 2018-01-05.
+ * music21j 0.9.0 built on  * 2018-01-15.
  * Copyright (c) 2013-2016 Michael Scott Cuthbert and cuthbertLab
  * BSD License, see LICENSE
  *
@@ -3963,7 +3963,6 @@
           _this2._step = 'C';
           _this2._octave = 4;
           _this2._accidental = undefined;
-
           /* pn can be a nameWithOctave */
           if (typeof pn === 'number') {
               if (pn < 12) {
@@ -3981,8 +3980,54 @@
       // N.B. cannot use transpose here, because of circular import.
 
       createClass(Pitch, [{
-          key: 'vexflowName',
+          key: '_getEnharmonicHelper',
+          value: function _getEnharmonicHelper(inPlace, directionInt) {
+              // differs from Python version because
+              // cannot import interval here.
+              var octaveStored = true;
+              if (this.octave === undefined) {
+                  octaveStored = false;
+              }
+              var p = this.clone();
+              p.diatonicNoteNum += directionInt;
+              if (p.accidental === undefined) {
+                  p.accidental = new Accidental(0);
+              }
+              while (p.ps % 12 !== this.ps % 12) {
+                  // octaveless
+                  p.accidental.alter += -1 * directionInt;
+              }
 
+              if (!inPlace) {
+                  return p;
+              }
+              this.step = p.step;
+              this.accidental = p.accidental;
+              if (p.microtone === undefined) {
+                  this.microtone = p.microtone;
+              }
+              if (!octaveStored) {
+                  this.octave = undefined;
+              } else {
+                  this.octave = p.octave;
+              }
+              return p;
+          }
+      }, {
+          key: 'getHigherEnharmonic',
+          value: function getHigherEnharmonic() {
+              var inPlace = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
+
+              return this._getEnharmonicHelper(inPlace, 1);
+          }
+      }, {
+          key: 'getLowerEnharmonic',
+          value: function getLowerEnharmonic() {
+              var inPlace = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
+
+              return this._getEnharmonicHelper(inPlace, -1);
+          }
+          /* TODO: isEnharmonic, getEnharmonic, getAllCommonEnharmonics */
 
           /**
            * Returns the vexflow name for the pitch in the given clef.
@@ -3991,6 +4036,9 @@
            * @param {clef.Clef} clefObj - the active {@link music21.clef.Clef} object
            * @returns {String} - representation in vexflow
            */
+
+      }, {
+          key: 'vexflowName',
           value: function vexflowName(clefObj) {
               // returns a vexflow Key name for this pitch.
               var tempPitch = this;

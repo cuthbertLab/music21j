@@ -249,7 +249,6 @@ export class Pitch extends prebase.ProtoM21Object {
         this._step = 'C';
         this._octave = 4;
         this._accidental = undefined;
-
         /* pn can be a nameWithOctave */
         if (typeof pn === 'number') {
             if (pn < 12) {
@@ -345,7 +344,48 @@ export class Pitch extends prebase.ProtoM21Object {
         this.name = pitch.midiToName[ps % 12];
         this.octave = Math.floor(ps / 12) - 1;
     }
+    
+    _getEnharmonicHelper(inPlace, directionInt) {
+        // differs from Python version because
+        // cannot import interval here.
+        let octaveStored = true;
+        if (this.octave === undefined) {
+            octaveStored = false;
+        }
+        const p = this.clone();
+        p.diatonicNoteNum += directionInt;
+        if (p.accidental === undefined) {
+            p.accidental = new Accidental(0);
+        }
+        while (p.ps % 12 !== this.ps % 12) { // octaveless
+            p.accidental.alter += -1 * directionInt;
+        }
+        
+        if (!inPlace) {
+            return p;
+        }
+        this.step = p.step;
+        this.accidental = p.accidental;
+        if (p.microtone === undefined) {
+            this.microtone = p.microtone;
+        }
+        if (!octaveStored) {
+            this.octave = undefined;                
+        } else {
+            this.octave = p.octave;
+        }
+        return p;
+    }
+    
+    getHigherEnharmonic(inPlace = false) {
+        return this._getEnharmonicHelper(inPlace, 1);
+    }
 
+    getLowerEnharmonic(inPlace = false) {
+        return this._getEnharmonicHelper(inPlace, -1);
+    }
+    /* TODO: isEnharmonic, getEnharmonic, getAllCommonEnharmonics */
+    
     /**
      * Returns the vexflow name for the pitch in the given clef.
      *

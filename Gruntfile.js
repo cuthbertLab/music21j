@@ -167,7 +167,7 @@ module.exports = grunt => {
         watch: {
             scripts: {
                 files: ['src/*', 'src/music21/*', 'Gruntfile.js'],
-                tasks: ['rollup', 'eslint'],
+                tasks: ['eslint', 'rollup'],
                 options: {
                     interrupt: true,
                 },
@@ -206,7 +206,7 @@ module.exports = grunt => {
     grunt.loadNpmTasks('grunt-eslint');
 
     // Default task(s).
-    grunt.registerTask('default', ['rollup:files', 'uglify:build', 'eslint']);
+    grunt.registerTask('default', ['eslint', 'rollup:files', 'uglify:build']);
     grunt.registerTask('test', 'Run qunit tests', ['rollup:tests', 'qunit']);
     grunt.registerTask('publish', 'Raise the version and publish', () => {
         grunt.task.run('jsdoc');
