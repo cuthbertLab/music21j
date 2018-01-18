@@ -7,19 +7,32 @@
 
 .btButton {
     font-family: BravuraTextM21j;
-    font-size: 40pt;
     position: relative;
+    background-color: #ffff99;
+    text-align: center;
+    display: inline-block;
+
+    font-size: 40pt;
     width: 100px;
     height: 100px;
     padding-top: 10px;
     padding-left: 20px;
     padding-right: 20px;
     padding-bottom: 10px;
-    border: 2px black dashed;
-    background-color: #ffff99;
-    text-align: center;
-    display: inline-block;
     margin-right: 4px;
+    border: 2px black dashed;
+}
+
+.btButtonSm {
+    font-size: 20pt;
+    width: 50px;
+    height: 50px;
+    padding-top: 5px;
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-bottom: 5px;
+    margin-right: 2px;
+    border: 1px black dashed;
 }
 
 .loadingSoundfont {

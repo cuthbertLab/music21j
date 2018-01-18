@@ -43,9 +43,16 @@ export const widgets = {};
  * @property {DOMObject} [canvasDiv]
  */
 export class RhythmChooser {
-    constructor(streamObj, canvasDiv) {
+    constructor(streamObj, canvasDiv, size = 'normal') {
         this.stream = streamObj;
         this.canvasDiv = canvasDiv;
+        this.size = size;
+        if (this.size === 'sm' || this.size === 'small') {
+            this.sizeRatio = 0.5;
+        } else {
+            this.sizeRatio = 1.0;
+        }
+        
         this.values = [
             'whole',
             'half',
@@ -81,7 +88,7 @@ export class RhythmChooser {
             addMeasure: '&#xE031',
             dot: '&#xEB9B;&#xE1E7;',
             undo: '&#x232B;',
-            tie: '<span style="position: relative; top: -20px;">&#xE1FD</span>',
+            tie: '<span style="position: relative; top: ' + -20 * this.sizeRatio + 'px;">&#xE1FD</span>',
             rest_whole: '&#xE4F4;',
             rest_half: '&#xE4F5;',
             rest_quarter: '&#xE4E5;',
@@ -97,7 +104,7 @@ export class RhythmChooser {
          * @memberof music21.widgets.RhythmChooser
          */
         this.styles = {
-            undo: 'font-family: serif; font-size: 30pt; top: -7px;',
+            undo: 'font-family: serif; font-size: ' + 30 * this.sizeRatio + 'pt; top: -' + 8 * this.sizeRatio + 'px;',
         };
         /**
          * An object mapping a value type to a function when it is clicked
@@ -267,8 +274,12 @@ export class RhythmChooser {
         for (let i = 0; i < this.values.length; i++) {
             const value = this.values[i];
             const entity = this.valueMappings[value];
+            let sizeClass = '';
+            if (this.size === 'sm' || this.size === 'small') {
+                sizeClass = 'btButtonSm';
+            }
             const $inner = $(
-                '<button class="btButton" m21Type="'
+                '<button class="btButton ' + sizeClass + '" m21Type="'
                     + value
                     + '">'
                     + entity

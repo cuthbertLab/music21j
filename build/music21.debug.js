@@ -1,5 +1,5 @@
 /**
- * music21j 0.9.0 built on  * 2018-01-15.
+ * music21j 0.9.0 built on  * 2018-01-18.
  * Copyright (c) 2013-2016 Michael Scott Cuthbert and cuthbertLab
  * BSD License, see LICENSE
  *
@@ -19122,10 +19122,18 @@
       function RhythmChooser(streamObj, canvasDiv) {
           var _this = this;
 
+          var size = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'normal';
           classCallCheck(this, RhythmChooser);
 
           this.stream = streamObj;
           this.canvasDiv = canvasDiv;
+          this.size = size;
+          if (this.size === 'sm' || this.size === 'small') {
+              this.sizeRatio = 0.5;
+          } else {
+              this.sizeRatio = 1.0;
+          }
+
           this.values = ['whole', 'half', 'quarter', 'eighth', '16th', 'dot', 'undo'];
 
           if (this.stream.hasSubStreams()) {
@@ -19153,7 +19161,7 @@
               addMeasure: '&#xE031',
               dot: '&#xEB9B;&#xE1E7;',
               undo: '&#x232B;',
-              tie: '<span style="position: relative; top: -20px;">&#xE1FD</span>',
+              tie: '<span style="position: relative; top: ' + -20 * this.sizeRatio + 'px;">&#xE1FD</span>',
               rest_whole: '&#xE4F4;',
               rest_half: '&#xE4F5;',
               rest_quarter: '&#xE4E5;',
@@ -19169,7 +19177,7 @@
            * @memberof music21.widgets.RhythmChooser
            */
           this.styles = {
-              undo: 'font-family: serif; font-size: 30pt; top: -7px;'
+              undo: 'font-family: serif; font-size: ' + 30 * this.sizeRatio + 'pt; top: -' + 8 * this.sizeRatio + 'px;'
           };
           /**
            * An object mapping a value type to a function when it is clicked
@@ -19335,7 +19343,11 @@
               for (var i = 0; i < this.values.length; i++) {
                   var value = this.values[i];
                   var entity = this.valueMappings[value];
-                  var $inner = $('<button class="btButton" m21Type="' + value + '">' + entity + '</button>');
+                  var sizeClass = '';
+                  if (this.size === 'sm' || this.size === 'small') {
+                      sizeClass = 'btButtonSm';
+                  }
+                  var $inner = $('<button class="btButton ' + sizeClass + '" m21Type="' + value + '">' + entity + '</button>');
                   if (this.styles[value] !== undefined) {
                       $inner.attr('style', this.styles[value]);
                   }
