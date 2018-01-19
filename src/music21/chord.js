@@ -56,8 +56,10 @@ export class Chord extends note.NotRest {
         this._cache = {};
 
         this._notes = [];
-        notes.forEach(this.add, this);
+        notes.forEach(this.add, this, false);
+        this.sortPitches();
     }
+    
     get length() {
         return this._notes.length;
     }
@@ -146,13 +148,17 @@ export class Chord extends note.NotRest {
         }
         // inefficient because sorts after each add, but safe and #(p) is small
         if (runSort === true) {
-            this._notes.sort((a, b) => a.pitch.ps - b.pitch.ps);
+            this.sortPitches();
         }
         this._cache = {};
         return this;
     }
 
-    // TODO: remove
+    sortPitches() {
+        this._notes.sort((a, b) => a.pitch.ps - b.pitch.ps);        
+    }
+    
+    // TODO: add remove
 
     /**
      * Removes any pitches that appear more than once (in any octave), removing the higher ones, and returns a new Chord.

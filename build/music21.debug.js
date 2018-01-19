@@ -5787,7 +5787,8 @@
           _this._cache = {};
 
           _this._notes = [];
-          notes.forEach(_this.add, _this);
+          notes.forEach(_this.add, _this, false);
+          _this.sortPitches();
           return _this;
       }
 
@@ -5874,15 +5875,20 @@
               }
 
               if (runSort === true) {
-                  this._notes.sort(function (a, b) {
-                      return a.pitch.ps - b.pitch.ps;
-                  });
+                  this.sortPitches();
               }
               this._cache = {};
               return this;
           }
+      }, {
+          key: 'sortPitches',
+          value: function sortPitches() {
+              this._notes.sort(function (a, b) {
+                  return a.pitch.ps - b.pitch.ps;
+              });
+          }
 
-          // TODO: remove
+          // TODO: add remove
 
           /**
            * Removes any pitches that appear more than once (in any octave), removing the higher ones, and returns a new Chord.

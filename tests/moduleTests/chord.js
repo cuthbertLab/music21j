@@ -21,5 +21,12 @@ export default function tests() {
 
         c = new music21.chord.Chord(['B', 'G', 'D', 'F']);
         assert.ok(c.isDominantSeventh());
+        
+        // test is sorted:
+        c = new music21.chord.Chord('C5 E4 G3');
+        const pitches = c.pitches;
+        assert.equal(pitches[0].nameWithOctave, 'G3');
+        assert.equal(pitches[2].nameWithOctave, 'C5');
+        
     });
 }
