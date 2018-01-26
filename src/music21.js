@@ -170,7 +170,7 @@ var m21requireConfig = {
         'es6Shim': pathSimplify(m21srcPath + '/ext/es6-shim'),
         'babelPolyfill': pathSimplify(m21srcPath + '/ext/polyfill'),
 
-        'm21': pathSimplify(m21srcPath + '/../build/music21.min'),
+        'm21': pathSimplify(m21srcPath + '/../build/music21.debug'),
         'jsonpickle': pathSimplify(m21srcPath + '/ext/jsonpickle/build/jsonpickle.debug'),
 
         // formerly used Shims (IE9)
