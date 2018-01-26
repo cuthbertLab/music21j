@@ -153,7 +153,7 @@ var m21requireConfig = {
         'jquery':     pathSimplify(m21srcPath + '/ext/jquery/jquery-3.2.1.min'),
         'attrchange': pathSimplify(m21srcPath + '/ext/jqueryPlugins/attrchange'),
         'jquery-ui':  pathSimplify(m21srcPath + '/ext/jqueryPlugins/jqueryUI/jquery-ui.min'),
-        'vexflow':    pathSimplify(m21srcPath + '/ext/vexflow/vexflow-debug'),
+        'vexflow':    pathSimplify(m21srcPath + '/ext/vexflow/vexflow-min'),
         'MIDI':       pathSimplify(m21srcPath + '/ext/midijs/build/MIDI'),
         'jasmidMidifile':   pathSimplify(m21srcPath + '/ext/midijs/inc/jasmid/midifile'),
         'jasmidReplayer':   pathSimplify(m21srcPath + '/ext/midijs/inc/jasmid/replayer'),
@@ -170,7 +170,7 @@ var m21requireConfig = {
         'es6Shim': pathSimplify(m21srcPath + '/ext/es6-shim'),
         'babelPolyfill': pathSimplify(m21srcPath + '/ext/polyfill'),
 
-        'm21': pathSimplify(m21srcPath + '/../build/music21.debug'),
+        'm21': pathSimplify(m21srcPath + '/../build/music21.min'),
         'jsonpickle': pathSimplify(m21srcPath + '/ext/jsonpickle/build/jsonpickle.debug'),
 
         // formerly used Shims (IE9)

@@ -5821,9 +5821,6 @@
           /**
            * Adds a note to the chord, sorting the note array
            *
-           * TODO: allow for an Array of notes,
-           *       and make a runSort=True variable.
-           *
            * @memberof music21.chord.Chord
            * @param {string|music21.note.Note|music21.pitch.Pitch} notes - the Note or Pitch to be added or a string defining a pitch.
            * @param {boolean} runSort - Sort after running (default true)
@@ -5832,10 +5829,9 @@
 
       }, {
           key: 'add',
-          value: function add(notes, runSort) {
-              if (runSort === undefined) {
-                  runSort = true;
-              }
+          value: function add(notes) {
+              var runSort = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
+
               if (!(notes instanceof Array)) {
                   notes = [notes];
               }

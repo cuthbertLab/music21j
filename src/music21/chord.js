@@ -119,18 +119,12 @@ export class Chord extends note.NotRest {
     /**
      * Adds a note to the chord, sorting the note array
      *
-     * TODO: allow for an Array of notes,
-     *       and make a runSort=True variable.
-     *
      * @memberof music21.chord.Chord
      * @param {string|music21.note.Note|music21.pitch.Pitch} notes - the Note or Pitch to be added or a string defining a pitch.
      * @param {boolean} runSort - Sort after running (default true)
      * @returns {music21.chord.Chord} the original chord.
      */
-    add(notes, runSort) {
-        if (runSort === undefined) {
-            runSort = true;
-        }
+    add(notes, runSort = true) {
         if (!(notes instanceof Array)) {
             notes = [notes];
         }
