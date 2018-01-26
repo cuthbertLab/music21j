@@ -22,6 +22,7 @@ module.exports = grunt => {
 
     const MODULE_ENTRY = path.join(BASE_DIR, 'src/loadModules.js');
     const TARGET_RAW = path.join(BUILD_DIR, 'music21.debug.js');
+    const TARGET_RAW_MAP = TARGET_RAW + '.map';
     const TARGET_MIN = path.join(BUILD_DIR, 'music21.min.js');
     const TARGET_TESTS = path.join(BUILD_DIR, 'music21.tests.js');
 
@@ -138,6 +139,7 @@ module.exports = grunt => {
             options: {
                 banner: BANNER,
                 sourceMap: true,
+		sourceMapIn: TARGET_RAW_MAP, 
             },
             build: {
                 src: TARGET_RAW,
