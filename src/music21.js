@@ -33,16 +33,13 @@ if (typeof(m21basis) === "undefined") {
      *
      * @namespace music21
      */
-    m21basis = {VERSION: 0.9}; // update in README.md also
+    m21basis = {}; 
 }
-//console.log('hi before: ' + require.toUrl('hi'));
-//console.log('./hi before: ' + require.toUrl('./hi'));
+m21basis.VERSION = 0.9; // update in README.md also
 
 require.config({
     context: 'music21',
 });
-//console.log('hi context: ' + require.toUrl('hi'));
-//console.log('./hi context: ' + require.toUrl('./hi'));
 
 
 //must be defined before loading, jQuery, etc. because needed to see if warnBanner is defined
@@ -108,6 +105,9 @@ var getM21attribute = function (attrName) {
         var dataMain = s.getAttribute('data-main');
         if (dataMain && ((/music21/.test(dataMain)) || (/m21/.test(dataMain)))) {
             var m21Attribute = s.getAttribute(attrName);
+            if (m21Attribute === undefined) {
+                m21Attribute = s.getAttribute(attrName.toLowerCase());
+            }
             //console.log(m21Attribute);
             return m21Attribute;
         }
