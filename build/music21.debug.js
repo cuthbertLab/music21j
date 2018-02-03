@@ -11323,7 +11323,7 @@
               if ($useCanvas === undefined) {
                   $useCanvas = this.getUseCanvasFromClickEvent(clickEvent);
                   if ($useCanvas === undefined) {
-                      return;
+                      return undefined;
                   }
               }
               if (this.activeNote !== undefined) {
@@ -11332,10 +11332,14 @@
                   n.pitch.accidental = new pitch.Accidental(newAlter);
                   /* console.log(n.pitch.name); */
                   var $newSvg = this.stream.redrawCanvas($useCanvas[0]);
+                  var params = { foundNote: n, svg: $newSvg };
                   if (this.changedCallbackFunction !== undefined) {
-                      this.changedCallbackFunction({ foundNote: n, svg: $newSvg });
+                      return this.changedCallbackFunction(params);
+                  } else {
+                      return params;
                   }
               }
+              return undefined;
           }
       }]);
       return SimpleNoteEditor;
@@ -11528,11 +11532,13 @@
                   n.stemDirection = 'down';
               }
               this.activeNote = n;
-              this.stream.redrawCanvas(canvas);
+              var $newSvg = this.stream.redrawCanvas(canvas);
+              var params = { foundNote: n, svg: $newSvg };
+
               if (this.changedCallbackFunction !== undefined) {
-                  return this.changedCallbackFunction({ foundNote: n, canvas: canvas });
+                  return this.changedCallbackFunction(params);
               } else {
-                  return undefined;
+                  return params;
               }
           }
       }, {

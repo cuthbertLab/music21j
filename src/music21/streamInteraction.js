@@ -758,7 +758,7 @@ export class SimpleNoteEditor {
         if ($useCanvas === undefined) {
             $useCanvas = this.getUseCanvasFromClickEvent(clickEvent);
             if ($useCanvas === undefined) {
-                return;
+                return undefined;
             }
         }
         if (this.activeNote !== undefined) {
@@ -767,10 +767,14 @@ export class SimpleNoteEditor {
             n.pitch.accidental = new pitch.Accidental(newAlter);
             /* console.log(n.pitch.name); */
             const $newSvg = this.stream.redrawCanvas($useCanvas[0]);
+            const params = { foundNote: n, svg: $newSvg };
             if (this.changedCallbackFunction !== undefined) {
-                this.changedCallbackFunction({ foundNote: n, svg: $newSvg });
+                return this.changedCallbackFunction(params);
+            } else {
+                return params;
             }
         }
+        return undefined;
     }
 }
 
@@ -953,11 +957,13 @@ export class FourPartEditor extends GrandStaffEditor {
             n.stemDirection = 'down';
         }
         this.activeNote = n;
-        this.stream.redrawCanvas(canvas);
+        const $newSvg = this.stream.redrawCanvas(canvas);
+        const params = { foundNote: n, svg: $newSvg };
+        
         if (this.changedCallbackFunction !== undefined) {
-            return this.changedCallbackFunction({ foundNote: n, canvas });
+            return this.changedCallbackFunction(params);
         } else {
-            return undefined;
+            return params;
         }
     }
 

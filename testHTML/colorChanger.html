@@ -53,9 +53,9 @@ function getColorToolbar(s, $siblingCanvas) {
             const n = s.activeNote;
             n.noteheadColor = newColor;
             /* console.log(n.pitch.name); */
-            s.redrawCanvas($useCanvas[0]);
+            const $newSvg = s.redrawCanvas($useCanvas[0]);
             if (s.changedCallbackFunction !== undefined) {
-                s.changedCallbackFunction({ canvas: $useCanvas[0] });
+                s.changedCallbackFunction({ svg: $newSvg });
             }
         }
     };
