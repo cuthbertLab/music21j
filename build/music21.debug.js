@@ -1,5 +1,5 @@
 /**
- * music21j 0.9.0 built on  * 2018-01-29.
+ * music21j 0.9.0 built on  * 2018-02-03.
  * Copyright (c) 2013-2016 Michael Scott Cuthbert and cuthbertLab
  * BSD License, see LICENSE
  *
@@ -12909,7 +12909,7 @@
 
           _this2._stopPlaying = false;
           _this2._allowMultipleSimultaneousPlays = true; // not implemented yet.
-          _this2.changedCallbackFunction = undefined; // for editable canvases
+          _this2.changedCallbackFunction = undefined; // for editable svges
           /**
            * A function bound to the current stream that
            * will changes the stream. Used in editableAccidentalCanvas, among other places.
@@ -13776,7 +13776,7 @@
            * @param {number|string|undefined} width - will use `this.estimateStaffLength()` + `this.renderOptions.staffPadding` if not given
            * @param {number|string|undefined} height - if undefined will use `this.renderOptions.height`. If still undefined, will use `this.estimateStreamHeight()`
            * @param {string} elementType - what type of element, default = svg
-           * @returns {JQueryDOMObject} canvas in jquery.
+           * @returns {JQueryDOMObject} svg in jquery.
            */
 
       }, {
@@ -13824,7 +13824,7 @@
           }
 
           /**
-           * Creates a rendered, playable canvas where clicking plays it.
+           * Creates a rendered, playable svg where clicking plays it.
            *
            * Called from appendNewCanvas() etc.
            *
@@ -13845,7 +13845,7 @@
           }
 
           /**
-           * Creates a new canvas and renders vexflow on it
+           * Creates a new svg and renders vexflow on it
            *
            * @memberof music21.stream.Stream
            * @param {number|string|undefined} [width]
@@ -13859,19 +13859,19 @@
           value: function createCanvas(width, height) {
               var elementType = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'svg';
 
-              var $newCanvas = this.createNewCanvas(width, height, elementType);
-              this.renderVexflowOnCanvas($newCanvas);
-              return $newCanvas;
+              var $newSvg = this.createNewCanvas(width, height, elementType);
+              this.renderVexflowOnCanvas($newSvg);
+              return $newSvg;
           }
           /**
            * Creates a new canvas, renders vexflow on it, and appends it to the DOM.
            *
            * @memberof music21.stream.Stream
-           * @param {JQueryDOMObject|DOMObject} [appendElement=document.body] - where to place the canvas
+           * @param {JQueryDOMObject|DOMObject} [appendElement=document.body] - where to place the svg
            * @param {number|string} [width]
            * @param {number|string} [height]
            * @param {string} elementType - what type of element, default = svg
-           * @returns {DOMObject} canvas (not the jQueryDOMObject -- this is a difference with other routines and should be fixed. TODO: FIX)
+           * @returns {DOMObject} svg (not the jQueryDOMObject -- this is a difference with other routines and should be fixed. TODO: FIX)
            *
            */
 
@@ -13902,23 +13902,23 @@
           }
 
           /**
-           * Replaces a particular Canvas with a new rendering of one.
+           * Replaces a particular Svg with a new rendering of one.
            *
-           * Note that if 'where' is empty, will replace all canvases on the page.
+           * Note that if 'where' is empty, will replace all svges on the page.
            *
            * @memberof music21.stream.Stream
            * @param {JQueryDOMObject|DOMObject} [where] - the canvas or SVG to replace or a container holding the canvas(es) to replace.
-           * @param {Boolean} [preserveCanvasSize=false]
+           * @param {Boolean} [preserveSvgSize=false]
            * @param {string} elementType - what type of element, default = svg
-           * @returns {JQueryDOMObject} the canvas
+           * @returns {JQueryDOMObject} the svg
            */
 
       }, {
           key: 'replaceCanvas',
-          value: function replaceCanvas(where, preserveCanvasSize) {
+          value: function replaceCanvas(where, preserveSvgSize) {
               var elementType = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'svg';
 
-              // if called with no where, replaces all the canvases on the page...
+              // if called with no where, replaces all the svges on the page...
               if (where === undefined) {
                   where = 'body';
               }
@@ -13938,37 +13938,37 @@
               }
               // TODO: Max Width!
               if ($oldSVGOrCanvas.length === 0) {
-                  throw new Music21Exception('No canvas defined for replaceCanvas!');
+                  throw new Music21Exception('No svg defined for replaceCanvas!');
               } else if ($oldSVGOrCanvas.length > 1) {
-                  // change last canvas...
-                  // replacing each with canvasBlock doesn't work
-                  // anyhow, it just resizes the canvas but doesn't
+                  // change last svg...
+                  // replacing each with svgBlock doesn't work
+                  // anyhow, it just resizes the svg but doesn't
                   // draw.
                   $oldSVGOrCanvas = $($oldSVGOrCanvas[$oldSVGOrCanvas.length - 1]);
               }
 
-              var canvasBlock = void 0;
-              if (preserveCanvasSize) {
+              var svgBlock = void 0;
+              if (preserveSvgSize) {
                   var width = $oldSVGOrCanvas.width();
                   var height = $oldSVGOrCanvas.attr('height'); // height manipulates
-                  canvasBlock = this.createCanvas(width, height, elementType);
+                  svgBlock = this.createCanvas(width, height, elementType);
               } else {
-                  canvasBlock = this.createCanvas(undefined, undefined, elementType);
+                  svgBlock = this.createCanvas(undefined, undefined, elementType);
               }
 
-              $oldSVGOrCanvas.replaceWith(canvasBlock);
-              return canvasBlock;
+              $oldSVGOrCanvas.replaceWith(svgBlock);
+              return svgBlock;
           }
 
           /**
-           * Renders a canvas which has a scrollbar when clicked.
+           * Renders a svg which has a scrollbar when clicked.
            *
            * (this is a dumb way of doing this.  Expect it to disappear...)
            *
            * @memberof music21.stream.Stream
            * @param {JQueryDOMObject|DOMObject} [where]
            * @param {string} elementType - what type of element, default = svg
-           * @returns {DOMObject} canvas
+           * @returns {DOMObject} svg
            */
 
       }, {
@@ -13996,10 +13996,10 @@
 
           /**
            * Sets up a {@link music21.streamInteraction.ScrollPlayer} for this
-           * canvas.
+           * svg.
            *
            * @memberof music21.stream.Stream
-           * @param {DOMObject} c - canvas
+           * @param {DOMObject} c - svg
            * @param {Event} [event] - the event that caused the scrolling to start
            * (needed because `event.stopPropagation()` is called)
            * @returns {music21.streamInteraction.ScrollPlayer}
@@ -14017,7 +14017,7 @@
           }
 
           /**
-           * Set the type of interaction on the canvas based on
+           * Set the type of interaction on the svg based on
            *    - Stream.renderOptions.events.click
            *    - Stream.renderOptions.events.dblclick
            *    - Stream.renderOptions.events.resize
@@ -14036,24 +14036,24 @@
       }, {
           key: 'setRenderInteraction',
           value: function setRenderInteraction(canvasOrDiv) {
-              var $canvas = canvasOrDiv;
+              var $svg = canvasOrDiv;
               if (canvasOrDiv === undefined) {
                   return this;
               } else if (canvasOrDiv.jquery === undefined) {
-                  $canvas = $(canvasOrDiv);
+                  $svg = $(canvasOrDiv);
               }
               var playFunc = function playStreamBound() {
                   this.playStream();
               }.bind(this);
 
               $.each(this.renderOptions.events, $.proxy(function setRenderInteractionProxy(eventType, eventFunction) {
-                  $canvas.off(eventType);
+                  $svg.off(eventType);
                   if (typeof eventFunction === 'string' && eventFunction === 'play') {
-                      $canvas.on(eventType, playFunc);
+                      $svg.on(eventType, playFunc);
                   } else if (typeof eventFunction === 'string' && eventType === 'resize' && eventFunction === 'reflow') {
-                      this.windowReflowStart($canvas);
+                      this.windowReflowStart($svg);
                   } else if (eventFunction !== undefined) {
-                      $canvas.on(eventType, eventFunction);
+                      $svg.on(eventType, eventFunction);
                   }
               }, this));
               return this;
@@ -14091,22 +14091,22 @@
 
           /**
            * Given a mouse click, or other event with .pageX and .pageY,
-           * find the x and y for the canvas.
+           * find the x and y for the svg.
            *
            * @memberof music21.stream.Stream
-           * @param {DOMObject} canvas - a canvas or SVG object
+           * @param {DOMObject} svg - a canvas or SVG object
            * @param {Event} e
            * @returns {Array<number>} two-elements, [x, y] in pixels.
            */
 
       }, {
           key: 'getUnscaledXYforCanvas',
-          value: function getUnscaledXYforCanvas(canvas, e) {
+          value: function getUnscaledXYforCanvas(svg, e) {
               var offset = null;
-              if (canvas === undefined) {
+              if (svg === undefined) {
                   offset = { left: 0, top: 0 };
               } else {
-                  offset = $(canvas).offset();
+                  offset = $(svg).offset();
               }
               /*
                * mouse event handler code from: http://diveintohtml5.org/canvas.html
@@ -14127,21 +14127,21 @@
 
           /**
            * return a list of [scaledX, scaledY] for
-           * a canvas element.
+           * a svg element.
            *
            * xScaled refers to 1/scaleFactor.x -- for instance, scaleFactor.x = 0.7 (default)
            * x of 1 gives 1.42857...
            *
            * @memberof music21.stream.Stream
-           * @param {DOMObject} canvas -- a canvas or SVG object
+           * @param {DOMObject} svg -- a canvas or SVG object
            * @param {Event} e
            * @returns {Array<number>} [scaledX, scaledY]
            */
 
       }, {
           key: 'getScaledXYforCanvas',
-          value: function getScaledXYforCanvas(canvas, e) {
-              var _getUnscaledXYforCanv = this.getUnscaledXYforCanvas(canvas, e),
+          value: function getScaledXYforCanvas(svg, e) {
+              var _getUnscaledXYforCanv = this.getUnscaledXYforCanvas(svg, e),
                   _getUnscaledXYforCanv2 = slicedToArray(_getUnscaledXYforCanv, 2),
                   xPx = _getUnscaledXYforCanv2[0],
                   yPx = _getUnscaledXYforCanv2[1];
@@ -14242,10 +14242,10 @@
            * stream that was clicked.
            *
            * Return a list of [diatonicNoteNum, closestXNote]
-           * for an event (e) called on the canvas (canvas)
+           * for an event (e) called on the svg (svg)
            *
            * @memberof music21.stream.Stream
-           * @param {DOMObject} canvas
+           * @param {DOMObject} svg
            * @param {Event} e
            * @param {number} x
            * @param {number} y
@@ -14254,9 +14254,9 @@
 
       }, {
           key: 'findNoteForClick',
-          value: function findNoteForClick(canvas, e, x, y) {
+          value: function findNoteForClick(svg, e, x, y) {
               if (x === undefined || y === undefined) {
-                  var _getScaledXYforCanvas = this.getScaledXYforCanvas(canvas, e);
+                  var _getScaledXYforCanvas = this.getScaledXYforCanvas(svg, e);
 
                   var _getScaledXYforCanvas2 = slicedToArray(_getScaledXYforCanvas, 2);
 
@@ -14277,13 +14277,13 @@
            * @memberof music21.stream.Stream
            * @param {Int} clickedDiatonicNoteNum
            * @param {music21.base.Music21Object} foundNote
-           * @param {DOMObject} canvas
+           * @param {DOMObject} svg
            * @returns {any} output of changedCallbackFunction
            */
 
       }, {
           key: 'noteChanged',
-          value: function noteChanged(clickedDiatonicNoteNum, foundNote, canvas) {
+          value: function noteChanged(clickedDiatonicNoteNum, foundNote, svg) {
               var n = foundNote;
               var p = new pitch.Pitch('C');
               p.diatonicNoteNum = clickedDiatonicNoteNum;
@@ -14291,50 +14291,51 @@
               n.pitch = p;
               n.stemDirection = undefined;
               this.activeNote = n;
-              this.redrawCanvas(canvas);
+              var $newSvg = this.redrawCanvas(svg);
+              var params = { foundNote: n, svg: $newSvg };
               if (this.changedCallbackFunction !== undefined) {
-                  return this.changedCallbackFunction({ foundNote: n, canvas: canvas });
+                  return this.changedCallbackFunction(params);
               } else {
-                  return undefined;
+                  return params;
               }
           }
           /**
-           * Redraws a canvas, keeping the events of the previous canvas.
+           * Redraws an svgDiv, keeping the events of the previous svg.
            *
            * @memberof music21.stream.Stream
-           * @param {DOMObject} canvas
+           * @param {DOMObject} svg
            * @returns {music21.stream.Stream} this
            */
 
       }, {
           key: 'redrawCanvas',
-          value: function redrawCanvas(canvas) {
+          value: function redrawCanvas(svg) {
               // this.resetRenderOptions(true, true); // recursive, preserveEvents
               // this.setSubstreamRenderOptions();
-              var $canvas = $(canvas); // works even if canvas is already $jquery
-              var $newCanv = this.createNewCanvas(canvas.width, canvas.height);
-              this.renderVexflowOnCanvas($newCanv);
-              $canvas.replaceWith($newCanv);
+              var $svg = $(svg); // works even if svg is already $jquery
+              var $newSvg = this.createNewCanvas(svg.width, svg.height);
+              this.renderVexflowOnCanvas($newSvg);
+              $svg.replaceWith($newSvg);
               // this is no longer necessary.
-              // common.jQueryEventCopy($.event, $canvas, $newCanv); /* copy events -- using custom extension... */
-              return this;
+              // common.jQueryEventCopy($.event, $svg, $newCanv); /* copy events -- using custom extension... */
+              return $newSvg;
           }
 
           /**
-           * Renders a stream on a canvas with the ability to edit it and
+           * Renders a stream on svg with the ability to edit it and
            * a toolbar that allows the accidentals to be edited.
            *
            * @memberof music21.stream.Stream
            * @param {number} [width]
            * @param {number} [height]
-           * @returns {DOMObject} &lt;div&gt; tag around the canvas.
+           * @returns {DOMObject} &lt;div&gt; tag around the svg.
            */
 
       }, {
           key: 'editableAccidentalCanvas',
           value: function editableAccidentalCanvas(width, height) {
               /*
-               * Create an editable canvas with an accidental selection bar.
+               * Create an editable svg with an accidental selection bar.
                */
               var d = $('<div/>').css('text-align', 'left').css('position', 'relative');
 
@@ -14348,7 +14349,7 @@
           }
 
           /*
-           * Canvas toolbars...
+           * SVG toolbars...
            */
 
           /**
@@ -14356,13 +14357,13 @@
            * @memberof music21.stream.Stream
            * @param {Int} minAccidental - alter of the min accidental (default -1)
            * @param {Int} maxAccidental - alter of the max accidental (default 1)
-           * @param {jQueryObject} $siblingCanvas - canvas to use for redrawing;
+           * @param {jQueryObject} $siblingSvg - svg to use for redrawing;
            * @returns {jQueryObject} the accidental toolbar.
            */
 
       }, {
           key: 'getAccidentalToolbar',
-          value: function getAccidentalToolbar(minAccidental, maxAccidental, $siblingCanvas) {
+          value: function getAccidentalToolbar(minAccidental, maxAccidental, $siblingSvg) {
               var _this4 = this;
 
               if (minAccidental === undefined) {
@@ -14378,17 +14379,17 @@
                   /*
                    * To be called on a button...
                    */
-                  var $useCanvas = $siblingCanvas;
-                  if ($useCanvas === undefined) {
+                  var $useSvg = $siblingSvg;
+                  if ($useSvg === undefined) {
                       var $searchParent = $(clickEvent.target).parent();
                       var maxSearch = 99;
-                      while (maxSearch > 0 && $searchParent !== undefined && ($useCanvas === undefined || $useCanvas[0] === undefined)) {
+                      while (maxSearch > 0 && $searchParent !== undefined && ($useSvg === undefined || $useSvg[0] === undefined)) {
                           maxSearch -= 1;
-                          $useCanvas = $searchParent.find('.streamHolding');
+                          $useSvg = $searchParent.find('.streamHolding');
                           $searchParent = $searchParent.parent();
                       }
-                      if ($useCanvas[0] === undefined) {
-                          console.log('Could not find a canvas...');
+                      if ($useSvg[0] === undefined) {
+                          console.log('Could not find a svg...');
                           return;
                       }
                   }
@@ -14396,9 +14397,9 @@
                       var n = _this4.activeNote;
                       n.pitch.accidental = new pitch.Accidental(newAlter);
                       /* console.log(n.pitch.name); */
-                      _this4.redrawCanvas($useCanvas[0]);
+                      _this4.redrawCanvas($useSvg[0]);
                       if (_this4.changedCallbackFunction !== undefined) {
-                          _this4.changedCallbackFunction({ canvas: $useCanvas[0] });
+                          _this4.changedCallbackFunction({ svg: $useSvg[0] });
                       }
                   }
               };
@@ -14454,32 +14455,32 @@
            * new size.
            *
            * @memberof music21.stream.Stream
-           * @param {JQueryDOMObject} jCanvas
+           * @param {JQueryDOMObject} jSvg
            * @returns {music21.stream.Stream} this
            */
 
       }, {
           key: 'windowReflowStart',
-          value: function windowReflowStart(jCanvas) {
-              // set up a bunch of windowReflow bindings that affect the canvas.
+          value: function windowReflowStart(jSvg) {
+              // set up a bunch of windowReflow bindings that affect the svg.
               var callingStream = this;
-              var jCanvasNow = jCanvas;
+              var jSvgNow = jSvg;
               $(window).bind('resizeEnd', function () {
                   // do something, window hasn't changed size in 500ms
-                  var jCanvasParent = jCanvasNow.parent();
-                  var newWidth = jCanvasParent.width();
-                  var canvasWidth = newWidth;
-                  // console.log(canvasWidth);
+                  var jSvgParent = jSvgNow.parent();
+                  var newWidth = jSvgParent.width();
+                  var svgWidth = newWidth;
+                  // console.log(svgWidth);
                   console.log('resizeEnd triggered', newWidth);
                   // console.log(callingStream.renderOptions.events.click);
                   callingStream.resetRenderOptions(true, true); // recursive, preserveEvents
                   // console.log(callingStream.renderOptions.events.click);
-                  callingStream.maxSystemWidth = canvasWidth - 40;
-                  jCanvasNow.remove();
-                  var canvasObj = callingStream.appendNewCanvas(jCanvasParent);
-                  jCanvasNow = $(canvasObj);
+                  callingStream.maxSystemWidth = svgWidth - 40;
+                  jSvgNow.remove();
+                  var svgObj = callingStream.appendNewCanvas(jSvgParent);
+                  jSvgNow = $(svgObj);
               });
-              $(window).resize(function resizeCanvasTo() {
+              $(window).resize(function resizeSvgTo() {
                   if (this.resizeTO) {
                       clearTimeout(this.resizeTO);
                   }
@@ -14487,12 +14488,12 @@
                       $(this).trigger('resizeEnd');
                   }, 200);
               });
-              setTimeout(function triggerResizeOnCreateCanvas() {
+              setTimeout(function triggerResizeOnCreateSvg() {
                   var $window = $(window);
-                  var doResize = $window.data('triggerResizeOnCreateCanvas');
+                  var doResize = $window.data('triggerResizeOnCreateSvg');
                   if (doResize === undefined || doResize === true) {
                       $(this).trigger('resizeEnd');
-                      $window.data('triggerResizeOnCreateCanvas', false);
+                      $window.data('triggerResizeOnCreateSvg', false);
                   }
               }, 1000);
               return this;
@@ -15070,15 +15071,15 @@
            * by taking into account systems
            *
            * @memberof music21.stream.Part
-           * @param {DOMObject} canvas
+           * @param {DOMObject} svg
            * @param {Event} e
            * @returns {Array} [clickedDiatonicNoteNum, foundNote]
            */
 
       }, {
           key: 'findNoteForClick',
-          value: function findNoteForClick(canvas, e) {
-              var _getScaledXYforCanvas3 = this.getScaledXYforCanvas(canvas, e),
+          value: function findNoteForClick(svg, e) {
+              var _getScaledXYforCanvas3 = this.getScaledXYforCanvas(svg, e),
                   _getScaledXYforCanvas4 = slicedToArray(_getScaledXYforCanvas3, 2),
                   x = _getScaledXYforCanvas4[0],
                   y = _getScaledXYforCanvas4[1];
@@ -15087,7 +15088,7 @@
 
 
               if (debug) {
-                  console.log('this.estimateStreamHeight(): ' + this.estimateStreamHeight() + ' / $(canvas).height(): ' + $(canvas).height());
+                  console.log('this.estimateStreamHeight(): ' + this.estimateStreamHeight() + ' / $(svg).height(): ' + $(svg).height());
               }
               var systemPadding = this.renderOptions.systemPadding;
               if (systemPadding === undefined) {
@@ -15297,7 +15298,7 @@
               return this;
           }
           /*
-           * Canvas routines
+           * Svg routines
            */
           /**
            * call after setSubstreamRenderOptions
@@ -15366,15 +15367,15 @@
            * Part objects (and different Systems) given the height and possibly different Systems.
            *
            * @memberof music21.stream.Score
-           * @param {DOMObject} canvas
+           * @param {DOMObject} svg
            * @param {Event} e
            * @returns {Array} [diatonicNoteNum, m21Element]
            */
 
       }, {
           key: 'findNoteForClick',
-          value: function findNoteForClick(canvas, e) {
-              var _getScaledXYforCanvas5 = this.getScaledXYforCanvas(canvas, e),
+          value: function findNoteForClick(svg, e) {
+              var _getScaledXYforCanvas5 = this.getScaledXYforCanvas(svg, e),
                   _getScaledXYforCanvas6 = slicedToArray(_getScaledXYforCanvas5, 2),
                   x = _getScaledXYforCanvas6[0],
                   y = _getScaledXYforCanvas6[1];
