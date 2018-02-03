@@ -645,14 +645,12 @@ export class SimpleNoteEditor {
         n.pitch = p;
         n.stemDirection = undefined;
         this.activeNote = n;
-        this.stream.redrawCanvas(canvasOrSvg);
+        const $newSvg = this.stream.redrawCanvas(canvasOrSvg);
+        const params = { foundNote: n, svg: $newSvg };
         if (this.changedCallbackFunction !== undefined) {
-            return this.changedCallbackFunction({
-                foundNote: n,
-                canvas: canvasOrSvg,
-            });
+            return this.changedCallbackFunction(params);
         } else {
-            return undefined;
+            return params;
         }
     }
 
@@ -768,9 +766,9 @@ export class SimpleNoteEditor {
             n.accidentalIsFromKeySignature = false;
             n.pitch.accidental = new pitch.Accidental(newAlter);
             /* console.log(n.pitch.name); */
-            this.stream.redrawCanvas($useCanvas[0]);
+            const $newSvg = this.stream.redrawCanvas($useCanvas[0]);
             if (this.changedCallbackFunction !== undefined) {
-                this.changedCallbackFunction({ canvas: $useCanvas[0] });
+                this.changedCallbackFunction({ foundNote: n, svg: $newSvg });
             }
         }
     }

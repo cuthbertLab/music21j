@@ -11193,14 +11193,12 @@
               n.pitch = p;
               n.stemDirection = undefined;
               this.activeNote = n;
-              this.stream.redrawCanvas(canvasOrSvg);
+              var $newSvg = this.stream.redrawCanvas(canvasOrSvg);
+              var params = { foundNote: n, svg: $newSvg };
               if (this.changedCallbackFunction !== undefined) {
-                  return this.changedCallbackFunction({
-                      foundNote: n,
-                      canvas: canvasOrSvg
-                  });
+                  return this.changedCallbackFunction(params);
               } else {
-                  return undefined;
+                  return params;
               }
           }
 
@@ -11333,9 +11331,9 @@
                   n.accidentalIsFromKeySignature = false;
                   n.pitch.accidental = new pitch.Accidental(newAlter);
                   /* console.log(n.pitch.name); */
-                  this.stream.redrawCanvas($useCanvas[0]);
+                  var $newSvg = this.stream.redrawCanvas($useCanvas[0]);
                   if (this.changedCallbackFunction !== undefined) {
-                      this.changedCallbackFunction({ canvas: $useCanvas[0] });
+                      this.changedCallbackFunction({ foundNote: n, svg: $newSvg });
                   }
               }
           }
@@ -14397,9 +14395,9 @@
                       var n = _this4.activeNote;
                       n.pitch.accidental = new pitch.Accidental(newAlter);
                       /* console.log(n.pitch.name); */
-                      _this4.redrawCanvas($useSvg[0]);
+                      var $newSvg = _this4.redrawCanvas($useSvg[0]);
                       if (_this4.changedCallbackFunction !== undefined) {
-                          _this4.changedCallbackFunction({ svg: $useSvg[0] });
+                          _this4.changedCallbackFunction({ foundNote: n, svg: $newSvg });
                       }
                   }
               };

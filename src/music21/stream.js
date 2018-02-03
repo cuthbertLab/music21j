@@ -1780,9 +1780,9 @@ export class Stream extends base.Music21Object {
                 const n = this.activeNote;
                 n.pitch.accidental = new pitch.Accidental(newAlter);
                 /* console.log(n.pitch.name); */
-                this.redrawCanvas($useSvg[0]);
+                const $newSvg = this.redrawCanvas($useSvg[0]);
                 if (this.changedCallbackFunction !== undefined) {
-                    this.changedCallbackFunction({ svg: $useSvg[0] });
+                    this.changedCallbackFunction({ foundNote: n, svg: $newSvg });
                 }
             }
         };
