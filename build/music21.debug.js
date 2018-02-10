@@ -1,5 +1,5 @@
 /**
- * music21j 0.9.0 built on  * 2018-02-03.
+ * music21j 0.9.0 built on  * 2018-02-10.
  * Copyright (c) 2013-2016 Michael Scott Cuthbert and cuthbertLab
  * BSD License, see LICENSE
  *
@@ -13570,6 +13570,12 @@
               if (canvasOrSVG.jquery) {
                   canvasOrSVG = canvasOrSVG[0];
               }
+              var DOMContains = document.body.contains(canvasOrSVG);
+              if (!DOMContains) {
+                  // temporarily add to DOM so Firefox can measure it...
+                  document.body.appendChild(canvasOrSVG);
+              }
+
               var tagName = canvasOrSVG.tagName.toLowerCase();
 
               var vfr = new vfShow.Renderer(this, canvasOrSVG);
@@ -13581,6 +13587,11 @@
               vfr.render();
               this.setRenderInteraction(canvasOrSVG);
               this.activeVFRenderer = vfr;
+              if (!DOMContains) {
+                  // temporarily add to DOM so Firefox can measure it...
+                  document.body.removeChild(canvasOrSVG);
+              }
+
               return vfr;
           }
 
@@ -13864,6 +13875,8 @@
               var elementType = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'svg';
 
               var $newSvg = this.createNewCanvas(width, height, elementType);
+              // temporarily append the SVG to the document to fix a Firefox bug
+              // where nothing can be measured unless is it in the document.
               this.renderVexflowOnCanvas($newSvg);
               return $newSvg;
           }

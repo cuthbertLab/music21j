@@ -1,5 +1,5 @@
 /**
- * music21j 0.9.0 built on  * 2018-02-03.
+ * music21j 0.9.0 built on  * 2018-02-10.
  * Copyright (c) 2013-2016 Michael Scott Cuthbert and cuthbertLab
  * BSD License, see LICENSE
  *
@@ -11193,14 +11193,12 @@
               n.pitch = p;
               n.stemDirection = undefined;
               this.activeNote = n;
-              this.stream.redrawCanvas(canvasOrSvg);
+              var $newSvg = this.stream.redrawCanvas(canvasOrSvg);
+              var params = { foundNote: n, svg: $newSvg };
               if (this.changedCallbackFunction !== undefined) {
-                  return this.changedCallbackFunction({
-                      foundNote: n,
-                      canvas: canvasOrSvg
-                  });
+                  return this.changedCallbackFunction(params);
               } else {
-                  return undefined;
+                  return params;
               }
           }
 
@@ -11325,7 +11323,7 @@
               if ($useCanvas === undefined) {
                   $useCanvas = this.getUseCanvasFromClickEvent(clickEvent);
                   if ($useCanvas === undefined) {
-                      return;
+                      return undefined;
                   }
               }
               if (this.activeNote !== undefined) {
@@ -11333,11 +11331,15 @@
                   n.accidentalIsFromKeySignature = false;
                   n.pitch.accidental = new pitch.Accidental(newAlter);
                   /* console.log(n.pitch.name); */
-                  this.stream.redrawCanvas($useCanvas[0]);
+                  var $newSvg = this.stream.redrawCanvas($useCanvas[0]);
+                  var params = { foundNote: n, svg: $newSvg };
                   if (this.changedCallbackFunction !== undefined) {
-                      this.changedCallbackFunction({ canvas: $useCanvas[0] });
+                      return this.changedCallbackFunction(params);
+                  } else {
+                      return params;
                   }
               }
+              return undefined;
           }
       }]);
       return SimpleNoteEditor;
@@ -11530,11 +11532,13 @@
                   n.stemDirection = 'down';
               }
               this.activeNote = n;
-              this.stream.redrawCanvas(canvas);
+              var $newSvg = this.stream.redrawCanvas(canvas);
+              var params = { foundNote: n, svg: $newSvg };
+
               if (this.changedCallbackFunction !== undefined) {
-                  return this.changedCallbackFunction({ foundNote: n, canvas: canvas });
+                  return this.changedCallbackFunction(params);
               } else {
-                  return undefined;
+                  return params;
               }
           }
       }, {
@@ -13566,6 +13570,12 @@
               if (canvasOrSVG.jquery) {
                   canvasOrSVG = canvasOrSVG[0];
               }
+              var DOMContains = document.body.contains(canvasOrSVG);
+              if (!DOMContains) {
+                  // temporarily add to DOM so Firefox can measure it...
+                  document.body.appendChild(canvasOrSVG);
+              }
+
               var tagName = canvasOrSVG.tagName.toLowerCase();
 
               var vfr = new vfShow.Renderer(this, canvasOrSVG);
@@ -13577,6 +13587,11 @@
               vfr.render();
               this.setRenderInteraction(canvasOrSVG);
               this.activeVFRenderer = vfr;
+              if (!DOMContains) {
+                  // temporarily add to DOM so Firefox can measure it...
+                  document.body.removeChild(canvasOrSVG);
+              }
+
               return vfr;
           }
 
@@ -13860,6 +13875,8 @@
               var elementType = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'svg';
 
               var $newSvg = this.createNewCanvas(width, height, elementType);
+              // temporarily append the SVG to the document to fix a Firefox bug
+              // where nothing can be measured unless is it in the document.
               this.renderVexflowOnCanvas($newSvg);
               return $newSvg;
           }
@@ -14397,9 +14414,9 @@
                       var n = _this4.activeNote;
                       n.pitch.accidental = new pitch.Accidental(newAlter);
                       /* console.log(n.pitch.name); */
-                      _this4.redrawCanvas($useSvg[0]);
+                      var $newSvg = _this4.redrawCanvas($useSvg[0]);
                       if (_this4.changedCallbackFunction !== undefined) {
-                          _this4.changedCallbackFunction({ svg: $useSvg[0] });
+                          _this4.changedCallbackFunction({ foundNote: n, svg: $newSvg });
                       }
                   }
               };

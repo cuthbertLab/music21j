@@ -153,7 +153,7 @@ var m21requireConfig = {
         'jquery':     pathSimplify(m21srcPath + '/ext/jquery/jquery-3.2.1.min'),
         'attrchange': pathSimplify(m21srcPath + '/ext/jqueryPlugins/attrchange'),
         'jquery-ui':  pathSimplify(m21srcPath + '/ext/jqueryPlugins/jqueryUI/jquery-ui.min'),
-        'vexflow':    pathSimplify(m21srcPath + '/ext/vexflow/vexflow-min'),
+        'vexflow':    pathSimplify(m21srcPath + '/ext/vexflow/vexflow-debug'),
         'MIDI':       pathSimplify(m21srcPath + '/ext/midijs/build/MIDI'),
         'jasmidMidifile':   pathSimplify(m21srcPath + '/ext/midijs/inc/jasmid/midifile'),
         'jasmidReplayer':   pathSimplify(m21srcPath + '/ext/midijs/inc/jasmid/replayer'),

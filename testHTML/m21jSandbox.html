@@ -31,6 +31,7 @@
     </style>
 
   <script>
+  Vex = undefined;
   mainCanvas = undefined;
   var timeout;
   var msg = "";
@@ -74,20 +75,21 @@
       <p/>
       <div class="editor-error"><span class="text"></span></div>
       <p/>
-      <div class="example sandbox" example="sandbox">
+      <div class="example sandbox">
         <textarea id="sandbox" class="editor"
                   style="width: 1000px; height: 180px; ">
 var n = new music21.note.Note("C#");
-n.duration.type="whole";
+n.duration.type = "whole";
 var s = new music21.stream.Stream();
 s.append(n);
 s.replaceCanvas();
-</textarea>
+		 </textarea>
         <p/>
-        <canvas width="625" height="360" id='mainCanvas'></canvas>
+        <div class='streamHolding' id='mainCanvas'>
+	        <svg width="625" height="360"></svg>    	
+	    </div>
         <p/>
       </div>
-
   </div>
 </body>
 

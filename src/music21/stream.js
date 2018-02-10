@@ -969,6 +969,12 @@ export class Stream extends base.Music21Object {
         if (canvasOrSVG.jquery) {
             canvasOrSVG = canvasOrSVG[0];
         }
+        const DOMContains = document.body.contains(canvasOrSVG);
+        if (!DOMContains) {
+            // temporarily add to DOM so Firefox can measure it...
+            document.body.appendChild(canvasOrSVG);
+        }
+                
         const tagName = canvasOrSVG.tagName.toLowerCase();
 
         const vfr = new vfShow.Renderer(this, canvasOrSVG);
@@ -980,6 +986,11 @@ export class Stream extends base.Music21Object {
         vfr.render();
         this.setRenderInteraction(canvasOrSVG);
         this.activeVFRenderer = vfr;
+        if (!DOMContains) {
+            // temporarily add to DOM so Firefox can measure it...
+            document.body.removeChild(canvasOrSVG);
+        }
+
         return vfr;
     }
 
@@ -1265,6 +1276,8 @@ export class Stream extends base.Music21Object {
      */
     createCanvas(width, height, elementType = 'svg') {
         const $newSvg = this.createNewCanvas(width, height, elementType);
+        // temporarily append the SVG to the document to fix a Firefox bug
+        // where nothing can be measured unless is it in the document.
         this.renderVexflowOnCanvas($newSvg);
         return $newSvg;
     }
