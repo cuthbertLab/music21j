@@ -298,7 +298,7 @@ tinyNotation.renderNotationDivs = function renderNotationDivs(
             if ($thisTN.hasClass('noPlayback')) {
                 st.renderOptions.events.click = undefined;
             }
-            const newSVG = st.createCanvas();
+            const newSVG = st.createDOM();
 
             $thisTN.attr('tinynotationcontents', thisTNContents);
             $thisTN.empty();

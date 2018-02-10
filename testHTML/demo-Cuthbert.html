@@ -37,7 +37,7 @@ function drawMe() {
 	var myNote = new music21.note.Rest(4.0);
     var myStream = new music21.stream.Stream();
     myStream.append(myNote);
-	myStream.appendNewCanvas();
+	myStream.appendNewDOM();
 }
 
 function renderIt() {
@@ -51,7 +51,7 @@ function renderIt() {
        var newNote = new music21.note.Note(noteName, noteValue);
        newStream.append(newNote);
     }
-    newStream.replaceCanvas();
+    newStream.replaceDOM();
 }
 
 require(['music21'], drawMe);

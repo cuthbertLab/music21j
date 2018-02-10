@@ -33,19 +33,19 @@ export const widgets = {};
  * @class RhythmChooser
  * @memberof music21.widgets
  * @param {music21.stream.Stream} s - to append to, etc.
- * @param {DOMObject} canvasDiv - canvas or SVG
+ * @param {DOMObject} div - canvas or SVG
  * @property {Array<string>} values - an array of rhythmic values and editing functions.
  *           Default: ['whole', 'half','quarter','eighth','16th','dot','undo']
  * @property {Boolean} measureMode - whether to use measures when editing
  * @property {Boolean} tieActive - is a tie active?
  * @property {Boolean} autoAddMeasure - add a measure when one is full? default: true
  * @property {music21.stream.Stream} stream
- * @property {DOMObject} [canvasDiv]
+ * @property {DOMObject} [div]
  */
 export class RhythmChooser {
-    constructor(streamObj, canvasDiv, size = 'normal') {
+    constructor(streamObj, div, size = 'normal') {
         this.stream = streamObj;
-        this.canvasDiv = canvasDiv;
+        this.div = div;
         this.size = size;
         if (this.size === 'sm' || this.size === 'small') {
             this.sizeRatio = 0.5;
@@ -302,7 +302,7 @@ export class RhythmChooser {
         return $outer;
     }
     /**
-     * A button has been pressed! Call the appropriate handler and update the stream's canvas (if any)
+     * A button has been pressed! Call the appropriate handler and update the stream's SVG (if any)
      *
      * @memberof music21.widgets.RhythmChooser
      * @param {string} t - type of button pressed.
@@ -323,23 +323,23 @@ export class RhythmChooser {
         if (s.isClassOrSubclass('Part') && s.activeSite !== undefined) {
             s = s.activeSite;
         }
-        if (this.canvasDiv !== undefined) {
-            s.replaceCanvas(this.canvasDiv);
+        if (this.div !== undefined) {
+            s.replaceDOM(this.div);
         }
     }
 }
 widgets.RhythmChooser = RhythmChooser;
 
 export class Augmenter {
-    constructor(streamObj, canvasDiv) {
+    constructor(streamObj, div) {
         this.streamObj = streamObj;
-        this.canvasDiv = canvasDiv;
+        this.div = div;
     }
 
     performChange(amountToScale, streamObjToWorkOn) {
-        let replaceCanvas = false;
+        let replaceDOM = false;
         if (streamObjToWorkOn === undefined) {
-            replaceCanvas = true;
+            replaceDOM = true;
             streamObjToWorkOn = this.streamObj;
         }
         for (let i = 0; i < streamObjToWorkOn.length; i++) {
@@ -354,8 +354,8 @@ export class Augmenter {
             streamObjToWorkOn.timeSignature.denominator *= 1 / amountToScale;
         }
 
-        if (this.canvasDiv !== undefined && replaceCanvas === true) {
-            this.canvasDiv = streamObjToWorkOn.replaceCanvas(this.canvasDiv);
+        if (this.div !== undefined && replaceDOM === true) {
+            this.div = streamObjToWorkOn.replaceDOM(this.div);
         }
     }
 

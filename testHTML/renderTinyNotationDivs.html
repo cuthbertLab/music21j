@@ -18,7 +18,7 @@ require(['music21'], function() {
 	var s = music21.tinyNotation.TinyNotation("G2 B4 c4");
 	s.clef = new music21.clef.Clef('bass');
     var sne = new music21.streamInteraction.SimpleNoteEditor(s)
-	var d = sne.editableAccidentalCanvas();
+	var d = sne.editableAccidentalDOM();
 
 	$("#editable").append(d);
 	$("#editable").append( $("<br clear='all'/>") );
@@ -26,7 +26,7 @@ require(['music21'], function() {
 	var s2 = music21.tinyNotation.TinyNotation("a2 b4 c'4");
 	s2.clef = new music21.clef.Clef('treble');
     var sne2 = new music21.streamInteraction.SimpleNoteEditor(s2)
-	var d2 = sne2.editableAccidentalCanvas();
+	var d2 = sne2.editableAccidentalDOM();
 	$("#editable").append(d2);
 });
 

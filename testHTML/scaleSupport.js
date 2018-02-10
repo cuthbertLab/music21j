@@ -4,9 +4,9 @@ require(['music21'], () => {
         console.log(k2);
         k = new music21.key.Key(k2);
         sc = k.getScale();
-        mainCanvas = $('#mainCanvas')[0];
+        mainSVG = $('#mainSVG')[0];
         s = new music21.stream.Stream();
-        s.replaceCanvas(mainCanvas);
+        s.replaceDOM(mainSVG);
         s.append(k);
         tonic = sc.tonic;
         tonicString = tonic.name;
@@ -54,14 +54,14 @@ require(['music21'], () => {
                 n = new music21.note.Note(pn);
                 n.duration.type = 'quarter';
                 s.append(n);
-                s.replaceCanvas();
+                s.replaceDOM();
             } else {
                 p = sc[i];
                 pn = p.name;
                 n = new music21.note.Note(pn + '5');
                 n.duration.type = 'quarter';
                 s.append(n);
-                s.replaceCanvas();
+                s.replaceDOM();
             }
         }
     };

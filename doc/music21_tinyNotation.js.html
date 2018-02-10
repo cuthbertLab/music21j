@@ -124,6 +124,10 @@
 						</li>
 						
 						<li>
+							<a href="music21.sites.html">music21.sites</a>
+						</li>
+						
+						<li>
 							<a href="music21.stream.html">music21.stream</a>
 						</li>
 						
@@ -410,6 +414,10 @@
 						</li>
 						
 						<li>
+							<a href="music21.streamInteraction.Follower.html">music21.streamInteraction.Follower</a>
+						</li>
+						
+						<li>
 							<a href="music21.streamInteraction.PixelMap.html">music21.streamInteraction.PixelMap</a>
 						</li>
 						
@@ -439,6 +447,10 @@
 						
 						<li>
 							<a href="music21.widgets.RhythmChooser.html">music21.widgets.RhythmChooser</a>
+						</li>
+						
+						<li>
+							<a href="Notation.html">Notation</a>
 						</li>
 						
 						<li>
@@ -509,19 +521,19 @@
  * music21j -- Javascript reimplementation of Core music21p features.
  * music21/tinyNotation -- TinyNotation implementation
  *
- * Copyright (c) 2013-16, Michael Scott Cuthbert and cuthbertLab
- * Based on music21 (=music21p), Copyright (c) 2006–16, Michael Scott Cuthbert and cuthbertLab
+ * Copyright (c) 2013-17, Michael Scott Cuthbert and cuthbertLab
+ * Based on music21 (=music21p), Copyright (c) 2006–17, Michael Scott Cuthbert and cuthbertLab
  *
  */
 import * as $ from 'jquery';
 
-import { clef } from './clef';
-import { duration } from './duration';
-import { pitch } from './pitch';
-import { note } from './note';
-import { meter } from './meter';
-import { stream } from './stream';
-import { tie } from './tie';
+import { clef } from './clef.js';
+import { duration } from './duration.js';
+import { pitch } from './pitch.js';
+import { note } from './note.js';
+import { meter } from './meter.js';
+import { stream } from './stream.js';
+import { tie } from './tie.js';
 
 /**
  * TinyNotation module, see {@link music21.tinyNotation} namespace
@@ -556,12 +568,12 @@ tinyNotation.regularExpressions = {
     EDSHARP: /\((#+)\)/,
     EDFLAT: /\((-+)\)/,
     EDNAT: /\(n\)/,
-    SHARP: /^[A-Ga-g]+'*(#+)/,  // simple notation finds
-    FLAT: /^[A-Ga-g]+'*(-+)/,  // double sharps too
-    NAT: /^[A-Ga-g]+'*n/,  // explicit naturals
+    SHARP: /^[A-Ga-g]+'*(#+)/, // simple notation finds
+    FLAT: /^[A-Ga-g]+'*(-+)/, // double sharps too
+    NAT: /^[A-Ga-g]+'*n/, // explicit naturals
     TYPE: /(\d+)/,
     TIE: /.~/, // not preceding ties
-    PRECTIE: /~/,  // front ties
+    PRECTIE: /~/, // front ties
     ID_EL: /=([A-Za-z0-9]*)/,
     LYRIC: /_(.*)/,
     DOT: /\.+/,
@@ -649,7 +661,6 @@ tinyNotation.TinyNotation = function TinyNotation(textIn) {
             storedDict.endTupletAfterNote = true;
         }
 
-
         if (tnre.TIMESIG.exec(token)) {
             const MATCH = tnre.TIMESIG.exec(token);
             const ts = new meter.TimeSignature();
@@ -717,10 +728,14 @@ tinyNotation.TinyNotation = function TinyNotation(textIn) {
 
         if (storedDict.inTrip) {
             // console.log(noteObj.duration.quarterLength);
-            noteObj.duration.appendTuplet(new duration.Tuplet(3, 2, noteObj.duration.quarterLength));
+            noteObj.duration.appendTuplet(
+                new duration.Tuplet(3, 2, noteObj.duration.quarterLength)
+            );
         }
         if (storedDict.inQuad) {
-            noteObj.duration.appendTuplet(new duration.Tuplet(4, 3, noteObj.duration.quarterLength));
+            noteObj.duration.appendTuplet(
+                new duration.Tuplet(4, 3, noteObj.duration.quarterLength)
+            );
         }
         if (storedDict.endTupletAfterNote) {
             storedDict.inTrip = false;
@@ -764,7 +779,10 @@ tinyNotation.TinyNotation = function TinyNotation(textIn) {
  * @memberof music21.tinyNotation
  * @param {string} classTypes - a JQuery selector to find elements to replace.
  */
-tinyNotation.renderNotationDivs = function renderNotationDivs(classTypes, selector) {
+tinyNotation.renderNotationDivs = function renderNotationDivs(
+    classTypes,
+    selector
+) {
     if (classTypes === undefined) {
         classTypes = '.music21.tinyNotation';
     }
@@ -788,8 +806,10 @@ tinyNotation.renderNotationDivs = function renderNotationDivs(classTypes, select
             thisTNContents = thisTNContents.replace(/s+/g, ' '); // no line-breaks, etc.
         }
 
-        if ((String.prototype.trim !== undefined)
-                &amp;&amp; (thisTNContents !== undefined)) {
+        if (
+            String.prototype.trim !== undefined
+            &amp;&amp; thisTNContents !== undefined
+        ) {
             thisTNContents = thisTNContents.trim(); // remove leading, trailing whitespace
         }
         if (thisTNContents) {
@@ -797,12 +817,12 @@ tinyNotation.renderNotationDivs = function renderNotationDivs(classTypes, select
             if ($thisTN.hasClass('noPlayback')) {
                 st.renderOptions.events.click = undefined;
             }
-            const newCanvas = st.createCanvas();
+            const newSVG = st.createDOM();
 
             $thisTN.attr('tinynotationcontents', thisTNContents);
             $thisTN.empty();
             $thisTN.data('stream', st);
-            $thisTN.append(newCanvas);
+            $thisTN.append(newSVG);
             // console.log(thisTNContents);
         }
     }
@@ -827,8 +847,8 @@ tinyNotation.renderNotationDivs = function renderNotationDivs(classTypes, select
 					<br />
 					
 		<span class="jsdoc-message">
-		Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.4</a>
-		on Thu Aug 17th 2017 using the <a
+		Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a>
+		on Sat Feb 10th 2018 using the <a
 			href="https://github.com/terryweiss/docstrap">DocStrap template</a>.
 		</span>
 				</footer>

@@ -29,6 +29,6 @@ export default function tests() {
         const s = new music21.stream.Stream();
         s.clef = ac;
         s.append(n);
-        s.appendNewCanvas($('body'));
+        s.appendNewDOM($('body'));
     });
 }

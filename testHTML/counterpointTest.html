@@ -49,7 +49,7 @@
          //var s = music21.tinyNotation.TinyNotation("GG4 GG GG");
          s.clef = new music21.clef.Clef('bass');
          sne = new music21.streamInteraction.SimpleNoteEditor(s);
-         var d = sne.editableAccidentalCanvas();
+         var d = sne.editableAccidentalDOM();
          //console.log('d width' + d.width());
          $("#testBank").append(d);
 

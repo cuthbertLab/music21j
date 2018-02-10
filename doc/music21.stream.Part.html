@@ -124,6 +124,10 @@
 						</li>
 						
 						<li>
+							<a href="music21.sites.html">music21.sites</a>
+						</li>
+						
+						<li>
 							<a href="music21.stream.html">music21.stream</a>
 						</li>
 						
@@ -410,6 +414,10 @@
 						</li>
 						
 						<li>
+							<a href="music21.streamInteraction.Follower.html">music21.streamInteraction.Follower</a>
+						</li>
+						
+						<li>
 							<a href="music21.streamInteraction.PixelMap.html">music21.streamInteraction.PixelMap</a>
 						</li>
 						
@@ -439,6 +447,10 @@
 						
 						<li>
 							<a href="music21.widgets.RhythmChooser.html">music21.widgets.RhythmChooser</a>
+						</li>
+						
+						<li>
+							<a href="Notation.html">Notation</a>
 						</li>
 						
 						<li>
@@ -565,7 +577,7 @@
 		<ul class="dummy">
 			<li>
 				<a href="music21_stream.js.html">music21/stream.js</a>,
-				 <a href="music21_stream.js.html#sunlight-1-line-1664">line 1664</a>
+				 <a href="music21_stream.js.html#sunlight-1-line-1994">line 1994</a>
 			</li>
 		</ul>
 	</dd>
@@ -665,7 +677,7 @@
 		<ul class="dummy">
 			<li>
 				<a href="music21_stream.js.html">music21/stream.js</a>,
-				 <a href="music21_stream.js.html#sunlight-1-line-1724">line 1724</a>
+				 <a href="music21_stream.js.html#sunlight-1-line-2054">line 2054</a>
 			</li>
 		</ul>
 	</dd>
@@ -714,7 +726,7 @@
         
             
 <dt>
-    <h4 class="name" id="findNoteForClick"><span class="type-signature">&lt;static> </span>Part#findNoteForClick<span class="signature">(canvas, e)</span><span class="type-signature"> &rarr; {Array}</span></h4>
+    <h4 class="name" id="findNoteForClick"><span class="type-signature">&lt;static> </span>Part#findNoteForClick<span class="signature">(svg, e)</span><span class="type-signature"> &rarr; {Array}</span></h4>
     
     
 </dt>
@@ -756,7 +768,7 @@
 
         <tr>
             
-                <td class="name"><code>canvas</code></td>
+                <td class="name"><code>svg</code></td>
             
 
             <td class="type">
@@ -832,7 +844,7 @@
 		<ul class="dummy">
 			<li>
 				<a href="music21_stream.js.html">music21/stream.js</a>,
-				 <a href="music21_stream.js.html#sunlight-1-line-1934">line 1934</a>
+				 <a href="music21_stream.js.html#sunlight-1-line-2311">line 2311</a>
 			</li>
 		</ul>
 	</dd>
@@ -977,7 +989,7 @@
 		<ul class="dummy">
 			<li>
 				<a href="music21_stream.js.html">music21/stream.js</a>,
-				 <a href="music21_stream.js.html#sunlight-1-line-1763">line 1763</a>
+				 <a href="music21_stream.js.html#sunlight-1-line-2095">line 2095</a>
 			</li>
 		</ul>
 	</dd>
@@ -1072,7 +1084,7 @@
 		<ul class="dummy">
 			<li>
 				<a href="music21_stream.js.html">music21/stream.js</a>,
-				 <a href="music21_stream.js.html#sunlight-1-line-1703">line 1703</a>
+				 <a href="music21_stream.js.html#sunlight-1-line-2033">line 2033</a>
 			</li>
 		</ul>
 	</dd>
@@ -1121,7 +1133,7 @@
         
             
 <dt>
-    <h4 class="name" id="noteElementFromScaledX"><span class="type-signature">&lt;static> </span>Part#noteElementFromScaledX<span class="signature">(scaledX, allowablePixels, systemIndex)</span><span class="type-signature"> &rarr; {<a href="music21.base.Music21Object.html">music21.base.Music21Object</a>|undefined}</span></h4>
+    <h4 class="name" id="getStreamFromScaledXandSystemIndex"><span class="type-signature">&lt;static> </span>Part#getStreamFromScaledXandSystemIndex<span class="signature">(<span class="optional">xPxScaled</span>, <span class="optional">systemIndex</span>)</span><span class="type-signature"> &rarr; {<a href="music21.stream.Stream.html">music21.stream.Stream</a>}</span></h4>
     
     
 </dt>
@@ -1129,7 +1141,7 @@
     
     
     <div class="description">
-        <p>Override the noteElementFromScaledX for Stream<br>to take into account sub measures...</p>
+        <p>Returns the measure that is at X location xPxScaled and system systemIndex.</p>
     </div>
     
 
@@ -1151,6 +1163,8 @@
 		<th>Type</th>
 
 		
+		<th>Argument</th>
+		
 
 		
 
@@ -1163,7 +1177,7 @@
 
         <tr>
             
-                <td class="name"><code>scaledX</code></td>
+                <td class="name"><code>xPxScaled</code></td>
             
 
             <td class="type">
@@ -1176,28 +1190,15 @@
             </td>
 
             
-
-            
-
-            <td class="description last"></td>
-        </tr>
-
-	
-
-        <tr>
-            
-                <td class="name"><code>allowablePixels</code></td>
-            
-
-            <td class="type">
-            
+                <td class="attributes">
                 
-<span class="param-type">number</span>
+                    &lt;optional><br>
+                
 
+                
 
-            
-            </td>
-
+                
+                </td>
             
 
             
@@ -1215,12 +1216,22 @@
             <td class="type">
             
                 
-<span class="param-type">Int</span>
+<span class="param-type">number</span>
 
 
             
             </td>
 
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
             
 
             
@@ -1262,7 +1273,7 @@
 		<ul class="dummy">
 			<li>
 				<a href="music21_stream.js.html">music21/stream.js</a>,
-				 <a href="music21_stream.js.html#sunlight-1-line-1964">line 1964</a>
+				 <a href="music21_stream.js.html#sunlight-1-line-2352">line 2352</a>
 			</li>
 		</ul>
 	</dd>
@@ -1296,10 +1307,7 @@
 	</dt>
 	<dd>
 		
-<span class="param-type"><a href="music21.base.Music21Object.html">music21.base.Music21Object</a></span>
-|
-
-<span class="param-type">undefined</span>
+<span class="param-type"><a href="music21.stream.Stream.html">music21.stream.Stream</a></span>
 
 
 	</dd>
@@ -1361,7 +1369,7 @@
 		<ul class="dummy">
 			<li>
 				<a href="music21_stream.js.html">music21/stream.js</a>,
-				 <a href="music21_stream.js.html#sunlight-1-line-1686">line 1686</a>
+				 <a href="music21_stream.js.html#sunlight-1-line-2016">line 2016</a>
 			</li>
 		</ul>
 	</dd>
@@ -1457,7 +1465,7 @@
 		<ul class="dummy">
 			<li>
 				<a href="music21_stream.js.html">music21/stream.js</a>,
-				 <a href="music21_stream.js.html#sunlight-1-line-1863">line 1863</a>
+				 <a href="music21_stream.js.html#sunlight-1-line-2205">line 2205</a>
 			</li>
 		</ul>
 	</dd>
@@ -1480,6 +1488,142 @@
     
     
     
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="systemIndexAndScaledY"><span class="type-signature">&lt;static> </span>Part#systemIndexAndScaledY<span class="signature">(y)</span><span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        <p>systemIndexAndScaledY - given a scaled Y, return the systemIndex<br>and the scaledYRelativeToSystem</p>
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+
+		<th>Type</th>
+
+		
+
+		
+
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+
+	<tbody>
+	
+
+        <tr>
+            
+                <td class="name"><code>y</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>the scaled Y</p></td>
+        </tr>
+
+	
+	</tbody>
+</table>
+
+    
+    
+    
+<dl class="details">
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="music21_stream.js.html">music21/stream.js</a>,
+				 <a href="music21_stream.js.html#sunlight-1-line-2291">line 2291</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+    <p>Array<int, number>   systemIndex, scaledYRelativeToSystem</p>
+</div>
+
+
+
+
+        
     
     
 </dd>
@@ -1509,8 +1653,8 @@
 					<br />
 					
 		<span class="jsdoc-message">
-		Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.4</a>
-		on Thu Aug 17th 2017 using the <a
+		Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a>
+		on Sat Feb 10th 2018 using the <a
 			href="https://github.com/terryweiss/docstrap">DocStrap template</a>.
 		</span>
 				</footer>

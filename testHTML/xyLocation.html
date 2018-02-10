@@ -31,27 +31,27 @@ require(['music21'], function() {
     );
 
     g.renderOptions.events['click'] = function(e) {
-        // this = canvas...
+        // this = SVG div...
         var _ = g.findNoteForClick(this, e);
         var dNN = _[0];
         var n = _[1];
         console.log(dNN);
         console.log(n);
     };
-    g.appendNewCanvas();
+    g.appendNewDOM();
 
     music21.miditools.loadSoundfont('acoustic_grand_piano', function() {
-        var $can = $('#can');
-        //s.renderScrollableCanvas($can);
+        var $svg = $('#svg');
+        // s.renderScrollable($svg);
         var sne = new music21.streamInteraction.SimpleNoteEditor(s1.get(0));
-        $can.append(sne.editableAccidentalCanvas());
+        $svg.append(sne.editableAccidentalDOM());
 
         console.log('soundfont loaded');
         console.log(s.estimateStreamHeight());
-        $can.mousemove(function(e) {
-            var allCanvas = $(this).find('svg');
-            if (allCanvas.length > 0) {
-                var $cThis = $(allCanvas[0]);
+        $svg.mousemove(function(e) {
+            var allSVG = $(this).find('svg');
+            if (allSVG.length > 0) {
+                var $cThis = $(allSVG[0]);
                 var offset = $cThis.offset();
                 $('#xLoc').val(e.pageX);
                 $('#yLoc').val(e.pageY);
@@ -63,12 +63,12 @@ require(['music21'], function() {
 });
 </script>
 <style>
-#can { background-color: #ffffaa }
-canvas { background-color: #aaffff }
+#svg { background-color: #ffffaa }
+.streamHolding { background-color: #aaffff }
 </style>
 </head>
 <body>
-<div id='can'></div>
+<div id='svg'></div>
 <div>
 X: <input type="text" name="xLoc" id="xLoc" value="0"/>
 Y: <input type="text" name="yLoc" id="yLoc" value="0"/>

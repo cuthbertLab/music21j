@@ -7,7 +7,7 @@
         <meta http-equiv="content-type" content="text/html; charset=utf-8" />
         <script>
         require(['music21'], function() {
-    $can = $('#can');
+    $svg = $('#svg');
 
     //var s0 = music21.tinyNotation.TinyNotation("4/4 e'2 d'2 c'2 b2");
     var s1 = music21.tinyNotation.TinyNotation('4/4 C2 D2 F#2 E2');
@@ -15,7 +15,7 @@
     //s.insert(0, s0);
     s.insert(0, s1);
 
-    s.appendNewCanvas($can);
+    s.appendNewDOM($svg);
     vfr = s.activeVFRenderer;
     m2 = s.get(0).get(1);
     bassClef = m2.clef;
@@ -67,19 +67,19 @@
         vfv.draw();
         context.closeGroup();
     };
-    $can.find('svg').css('cursor', 'none');
-    $can.mousemove(e => {
-        const [realX, unused_Y] = m2.getScaledXYforCanvas($can, e);
-        const [dnn, unused_note] = m2.findNoteForClick($can, e);
+    $svg.find('svg').css('cursor', 'none');
+    $svg.mousemove(e => {
+        const [realX, unused_Y] = m2.getScaledXYforDOM($svg, e);
+        const [dnn, unused_note] = m2.findNoteForClick($svg, e);
         newNote(dnn, realX);
     });
 });
 </script>
 <style>
-#can { background-color: #ffffaa }
+#svg { background-color: #ffffaa }
 </style>
 </head>
 <body>
-<div id='can'></div>
+<div id='svg'></div>
 </body>
 </html>

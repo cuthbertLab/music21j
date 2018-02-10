@@ -8201,7 +8201,7 @@
    * s.keySignature = ks;
    * var n = new music21.note.Note('A-'); // A-flat
    * s.append(n);
-   * s.appendNewCanvas();
+   * s.appendNewDOM();
    */
   var KeySignature = function (_base$Music21Object) {
       inherits(KeySignature, _base$Music21Object);
@@ -10623,7 +10623,7 @@
            * (set this to an event on stream, or something...)
            *
            * currently called from {@link music21.stream.Stream#scrollScoreStart} via
-           * {@link music21.stream.Stream#renderScrollableCanvas}. Will change.
+           * {@link music21.stream.Stream#renderScrollable}. Will change.
            *
            * @memberof music21.streamInteraction.ScrollPlayer
            */
@@ -10673,7 +10673,7 @@
    * @param {music21.stream.Stream} s -- Stream
    * @param {canvasOrSvg} c -- canvas or svg
    * @property {SVGDOMObject} barDOM - DOM object representing the scrolling bar
-   * @property {SVGDOMObject} svgDOM - DOM object holding the scrolling bar (overlaid on top of canvas)
+   * @property {SVGDOMObject} svgDOM - DOM object holding the scrolling bar (overlaid on top of SVG)
    */
   var ScrollPlayer = function (_Follower) {
       inherits(ScrollPlayer, _Follower);
@@ -10716,7 +10716,7 @@
            * (set this to an event on stream, or something...)
            *
            * currently called from {@link music21.stream.Stream#scrollScoreStart} via
-           * {@link music21.stream.Stream#renderScrollableCanvas}. Will change.
+           * {@link music21.stream.Stream#renderScrollable}. Will change.
            *
            * @memberof music21.streamInteraction.ScrollPlayer
            */
@@ -10843,7 +10843,7 @@
               var finalNote = ns.get(-1);
               var finalVFNote = finalNote.activeVexflowNote;
               if (finalVFNote === undefined) {
-                  throw new StreamException('Cannot make a pixel map where activeVexflowNotes are undefined. ' + 'Run s.createCanvas() before constructing a PixelMapper.');
+                  throw new StreamException('Cannot make a pixel map where activeVexflowNotes are undefined. ' + 'Run s.createDOM() before constructing a PixelMapper.');
               }
               var finalStave = finalVFNote.stave;
               var finalX = finalStave.x + finalStave.width;
@@ -10912,7 +10912,7 @@
            * @returns {Array<music21.streamInteraction.PixelMap|undefined>} returns two PixelMaps; or either (but not both) can be undefined
            * @example
            * var s = new music21.tinyNotation.TinyNotation('3/4 c4 d8 e f4 g4 a4 b4');
-           * var can = s.appendNewCanvas();
+           * var can = s.appendNewDOM();
            * var pm = new music21.streamInteraction.PixelMapper(s);
            * var pmaps = pm.getPixelMapsAropundOffset(1.25);
            * var prev = pmaps[0];
@@ -10962,7 +10962,7 @@
            * @returns {number}
            * @example
            * var s = new music21.tinyNotation.TinyNotation('3/4 c4 d8 e f4 g4 a4 b4');
-           * var can = s.appendNewCanvas();
+           * var can = s.appendNewDOM();
            * var pm = new music21.streamInteraction.PixelMapper(s);
            * pm.getXAtOffset(0.0); // exact placement of a note
            * // 89.94...
@@ -11051,7 +11051,7 @@
    * @example
    * // not a particularly realistic example, since it requires so much setup...
    * var s = new music21.tinyNotation.TinyNotation('3/4 c4 d8 e f4 g4 a4 b4');
-   * var can = s.appendNewCanvas();
+   * var can = s.appendNewDOM();
    * var pmapper = new music21.streamInteraction.PixelMapper(s);
    * var pmapA = new music21.streamInteraction.PixelMap(pmapper, 2.0);
    * pmapA.elements = [s.flat.get(3)];
@@ -11122,7 +11122,7 @@
 
           this.stream = s;
           this.activeNote = undefined;
-          this.changedCallbackFunction = undefined; // for editable canvases
+          this.changedCallbackFunction = undefined; // for editable SVG
           this.accidentalsByStepOctave = {};
           this.minAccidentalEditor = -1;
           this.maxAccidentalEditor = 1;
@@ -11137,9 +11137,9 @@
 
       /**
        * A function bound to the current stream that
-       * will changes the stream. Used in editableAccidentalCanvas, among other places.
+       * will changes the stream. Used in editableAccidentalDOM, among other places.
        *
-       *      var can = s.appendNewCanvas();
+       *      var can = s.appendNewDOM();
        *      $(can).on('click', s.changeClickedNoteFromEvent);
        *
        * @memberof music21.streamInteraction.SimpleNoteEditor
@@ -11193,7 +11193,7 @@
               n.pitch = p;
               n.stemDirection = undefined;
               this.activeNote = n;
-              var $newSvg = this.stream.redrawCanvas(canvasOrSvg);
+              var $newSvg = this.stream.redrawDOM(canvasOrSvg);
               var params = { foundNote: n, svg: $newSvg };
               if (this.changedCallbackFunction !== undefined) {
                   return this.changedCallbackFunction(params);
@@ -11201,29 +11201,35 @@
                   return params;
               }
           }
+      }, {
+          key: 'editableAccidentalCanvas',
+          value: function editableAccidentalCanvas(width, height) {
+              console.warn('editableAccidentalCanvas is deprecated, use editableAccidentalDOM instead');
+              return this.editableAccidentalDOM(width, height);
+          }
 
           /**
-           * Renders a stream on a canvas with the ability to edit it and
+           * Renders a stream on a SVG with the ability to edit it and
            * a toolbar that allows the accidentals to be edited.
            *
            * @memberof music21.streamInteraction.SimpleNoteEditor
            * @param {number} [width]
            * @param {number} [height]
-           * @returns {DOMObject} &lt;div&gt; tag around the canvas.
+           * @returns {DOMObject} &lt;div&gt; tag around the canvas or streamholding SVG-div.
            */
 
       }, {
-          key: 'editableAccidentalCanvas',
-          value: function editableAccidentalCanvas(width, height) {
+          key: 'editableAccidentalDOM',
+          value: function editableAccidentalDOM(width, height) {
               /*
-               * Create an editable canvas with an accidental selection bar.
+               * Create an editable svg with an accidental selection bar.
                */
               var $d = $('<div/>').css('text-align', 'left').css('position', 'relative');
               var $buttonDiv = this.getAccidentalToolbar();
               $d.append($buttonDiv);
               $d.append($("<br clear='all'/>"));
               this.activateClick();
-              this.stream.appendNewCanvas($d, width, height);
+              this.stream.appendNewDOM($d, width, height);
               return $d;
           }
 
@@ -11255,13 +11261,13 @@
            * @memberof music21.streamInteraction.SimpleNoteEditor
            * @param {Int} minAccidental - alter of the min accidental (default -1)
            * @param {Int} maxAccidental - alter of the max accidental (default 1)
-           * @param {jQueryObject} $siblingCanvas - canvas or svg to use for redrawing;
+           * @param {jQueryObject} $siblingDOM - canvas or svg to use for redrawing;
            * @returns {jQueryObject} the accidental toolbar.
            */
 
       }, {
           key: 'getAccidentalToolbar',
-          value: function getAccidentalToolbar(minAccidental, maxAccidental, $siblingCanvas) {
+          value: function getAccidentalToolbar(minAccidental, maxAccidental, siblingDOM) {
               var _this6 = this;
 
               if (minAccidental === undefined) {
@@ -11278,7 +11284,7 @@
               var _loop = function _loop(i) {
                   var acc = new pitch.Accidental(i);
                   var $button = $('<button>' + acc.unicodeModifier + '</button>').click(function (e) {
-                      return _this6.addAccidental(i, e, $siblingCanvas);
+                      return _this6.addAccidental(i, e, siblingDOM);
                   });
                   if (Math.abs(i) > 1) {
                       $button.css('font-family', 'Bravura Text');
@@ -11292,6 +11298,12 @@
               }
               return $buttonDiv;
           }
+      }, {
+          key: 'getUseCanvasFromClickEvent',
+          value: function getUseCanvasFromClickEvent(clickEvent) {
+              console.warn('getUseCanvasFromClickEvent is deprecated, use getDOMFromClickEvent instead');
+              return this.getDOMFromClickEvent(clickEvent);
+          }
 
           /**
            * getUseCanvasFromClickEvent - get the active canvas or svg from the click even
@@ -11301,28 +11313,28 @@
            */
 
       }, {
-          key: 'getUseCanvasFromClickEvent',
-          value: function getUseCanvasFromClickEvent(clickEvent) {
+          key: 'getDOMFromClickEvent',
+          value: function getDOMFromClickEvent(clickEvent) {
               var $searchParent = $(clickEvent.target).parent();
-              var $useCanvas = void 0;
+              var $useDOM = void 0;
               var maxSearch = 99;
-              while (maxSearch > 0 && $searchParent !== undefined && ($useCanvas === undefined || $useCanvas[0] === undefined)) {
+              while (maxSearch > 0 && $searchParent !== undefined && ($useDOM === undefined || $useDOM[0] === undefined)) {
                   maxSearch -= 1;
-                  $useCanvas = $searchParent.find('.streamHolding');
+                  $useDOM = $searchParent.find('.streamHolding');
                   $searchParent = $searchParent.parent();
               }
-              if ($useCanvas[0] === undefined) {
-                  console.log('Could not find a canvas...');
+              if ($useDOM[0] === undefined) {
+                  console.log('Could not find a div or canvas...');
                   return undefined;
               }
-              return $useCanvas;
+              return $useDOM;
           }
       }, {
           key: 'addAccidental',
-          value: function addAccidental(newAlter, clickEvent, $useCanvas) {
-              if ($useCanvas === undefined) {
-                  $useCanvas = this.getUseCanvasFromClickEvent(clickEvent);
-                  if ($useCanvas === undefined) {
+          value: function addAccidental(newAlter, clickEvent, $useDOM) {
+              if ($useDOM === undefined) {
+                  $useDOM = this.getDOMFromClickEvent(clickEvent);
+                  if ($useDOM === undefined) {
                       return undefined;
                   }
               }
@@ -11331,7 +11343,7 @@
                   n.accidentalIsFromKeySignature = false;
                   n.pitch.accidental = new pitch.Accidental(newAlter);
                   /* console.log(n.pitch.name); */
-                  var $newSvg = this.stream.redrawCanvas($useCanvas[0]);
+                  var $newSvg = this.stream.redrawDOM($useDOM[0]);
                   var params = { foundNote: n, svg: $newSvg };
                   if (this.changedCallbackFunction !== undefined) {
                       return this.changedCallbackFunction(params);
@@ -11395,8 +11407,14 @@
       createClass(FourPartEditor, [{
           key: 'editableCanvas',
           value: function editableCanvas(width, height) {
+              console.warn('editableCanvas is deprecated, use editableDOM instead');
+              return this.editableDOM(width, height);
+          }
+      }, {
+          key: 'editableDOM',
+          value: function editableDOM(width, height) {
               /*
-               * Create an editable canvas with an accidental selection bar.
+               * Create an editable DOM or canvas with an accidental selection bar.
                */
               var $d = $('<div/>').css('text-align', 'left').css('position', 'relative');
               var $buttonDivPlay = this.stream.getPlayToolbar();
@@ -11419,22 +11437,22 @@
               $d.append($voiceDiv);
               $d.append($("<br clear='all'/>"));
               this.activateClick();
-              this.stream.appendNewCanvas($d, width, height);
+              this.stream.appendNewDOM($d, width, height);
               return $d;
           }
 
           /**
            * setActiveInformation - given a click event, set the active information
            *
-           * @param  {DOMObject} canvasElement canvas
+           * @param  {DOMObject} DOMElement div-surrounding-SVG or canvas
            * @param  {event} e             click event.
            * @return {undefined}
            */
 
       }, {
           key: 'setActiveInformation',
-          value: function setActiveInformation(canvasElement, e) {
-              var _stream$getScaledXYfo = this.stream.getScaledXYforCanvas(canvasElement, e),
+          value: function setActiveInformation(DOMElement, e) {
+              var _stream$getScaledXYfo = this.stream.getScaledXYforDOM(DOMElement, e),
                   _stream$getScaledXYfo2 = slicedToArray(_stream$getScaledXYfo, 2),
                   x = _stream$getScaledXYfo2[0],
                   y = _stream$getScaledXYfo2[1];
@@ -11471,9 +11489,9 @@
 
           /**
            * A function bound to the current stream that
-           * will changes the stream. Used in editableAccidentalCanvas, among other places.
+           * will changes the stream. Used in editableAccidentalDOM, among other places.
            *
-           *      var can = s.appendNewCanvas();
+           *      var can = s.appendNewDOM();
            *      $(can).on('click', s.changeClickedNoteFromEvent);
            *
            * @memberof music21.stream.Stream
@@ -11484,14 +11502,14 @@
       }, {
           key: 'changeClickedNoteFromEvent',
           value: function changeClickedNoteFromEvent(e) {
-              var canvasElement = e.currentTarget;
-              this.setActiveInformation(canvasElement, e);
+              var domElement = e.currentTarget;
+              this.setActiveInformation(domElement, e);
               this.activeVoice.renderOptions.scaleFactor = this.stream.renderOptions.scaleFactor;
 
               // the activeVoice can find the right note object but not
               // the right DNN
 
-              var _activeVoice$findNote = this.activeVoice.findNoteForClick(canvasElement, e),
+              var _activeVoice$findNote = this.activeVoice.findNoteForClick(domElement, e),
                   _activeVoice$findNote2 = slicedToArray(_activeVoice$findNote, 2),
                   unused_wrong_dnn = _activeVoice$findNote2[0],
                   foundNote = _activeVoice$findNote2[1];
@@ -11500,7 +11518,7 @@
               // DNN but not the right note.
 
 
-              var _stream$findNoteForCl3 = this.stream.findNoteForClick(canvasElement, e),
+              var _stream$findNoteForCl3 = this.stream.findNoteForClick(domElement, e),
                   _stream$findNoteForCl4 = slicedToArray(_stream$findNoteForCl3, 2),
                   clickedDiatonicNoteNum = _stream$findNoteForCl4[0],
                   unused_wrong_note = _stream$findNoteForCl4[1];
@@ -11511,11 +11529,11 @@
                   }
                   return undefined;
               }
-              return this.noteChanged(clickedDiatonicNoteNum, foundNote, canvasElement);
+              return this.noteChanged(clickedDiatonicNoteNum, foundNote, domElement);
           }
       }, {
           key: 'noteChanged',
-          value: function noteChanged(clickedDiatonicNoteNum, foundNote, canvas) {
+          value: function noteChanged(clickedDiatonicNoteNum, foundNote, domElement) {
               var n = foundNote;
               var p = new pitch.Pitch('C');
               p.diatonicNoteNum = clickedDiatonicNoteNum;
@@ -11532,7 +11550,7 @@
                   n.stemDirection = 'down';
               }
               this.activeNote = n;
-              var $newSvg = this.stream.redrawCanvas(canvas);
+              var $newSvg = this.stream.redrawDOM(domElement);
               var params = { foundNote: n, svg: $newSvg };
 
               if (this.changedCallbackFunction !== undefined) {
@@ -11717,20 +11735,20 @@
    *
    * "s" can be any type of Stream.
    *
-   * "canvas" and "where" can be either a DOM
+   * "div" and "where" can be either a DOM
    * element or a jQuery object.
    *
    * @class Renderer
    * @memberof music21.vfShow
    * @param {music21.stream.Stream} s - main stream to render
-   * @param {canvas} [canvas] - existing canvas or SVG element
+   * @param {div} [div] - existing canvas or div-surroundingSVG element
    * @param {DOMObject|jQueryDOMObject} [where=document.body] - where to render the stream
    * @property {Vex.Flow.Renderer} vfRenderer - a Vex.Flow.Renderer to use
    * (will create if not existing)
    * @property {string} rendererType - canvas or svg
-   * @property {Vex.Flow.Context} ctx - a Vex.Flow.Context (Canvas or Raphael [not yet]) to use.
-   * @property {canvas} canvas - canvas element
-   * @property {jQueryDOMObject} $canvas - jQuery canvas element
+   * @property {Vex.Flow.Context} ctx - a Vex.Flow.Context (Canvas or SVG) to use.
+   * @property {div} div - div-with-svg-or-canvas element
+   * @property {jQueryDOMObject} $div - jQuery div or canvas element
    * @property {jQueryDOMObject} $where - jQuery element to render onto
    * @property {Vex.Flow.Formatter} activeFormatter - formatter
    * @property {Array<Vex.Flow.Beam>} beamGroups - beamGroups
@@ -11740,15 +11758,15 @@
    * @property {Array<music21.vfShow.RenderStack>} stacks - array of RenderStack objects
    */
   var Renderer = function () {
-      function Renderer(s, canvas, where) {
+      function Renderer(s, div, where) {
           classCallCheck(this, Renderer);
 
           this.stream = s;
           // this.streamType = s.classes[-1];
           this.rendererType = 'svg';
 
-          this.canvas = undefined;
-          this.$canvas = undefined;
+          this.div = undefined;
+          this.$div = undefined;
           this.$where = undefined;
           this.activeFormatter = undefined;
           this._vfRenderer = undefined;
@@ -11767,13 +11785,13 @@
                   this.$where = $(where);
               }
           }
-          if (canvas !== undefined) {
-              if (canvas.jquery !== undefined) {
-                  this.$canvas = canvas;
-                  this.canvas = canvas[0];
+          if (div !== undefined) {
+              if (div.jquery !== undefined) {
+                  this.$div = div;
+                  this.div = div[0];
               } else {
-                  this.canvas = canvas;
-                  this.$canvas = $(canvas);
+                  this.div = div;
+                  this.$div = $(div);
               }
           }
       }
@@ -12651,7 +12669,7 @@
           }
 
           /**
-           * The process of putting a Stream onto a canvas affects each of the
+           * The process of putting a Stream onto a div affects each of the
            * elements in the Stream by adding pieces of information to
            * each {@link music21.base.Music21Object} -- see `applyFormatterInformationToNotes`
            *
@@ -12766,9 +12784,9 @@
               if (this._vfRenderer !== undefined) {
                   return this._vfRenderer;
               } else {
-                  this._vfRenderer = new Vex.Flow.Renderer(this.canvas, backend);
+                  this._vfRenderer = new Vex.Flow.Renderer(this.div, backend);
                   if (this.rendererType === 'svg') {
-                      this._vfRenderer.resize(this.$canvas.attr('width'), this.$canvas.attr('height'));
+                      this._vfRenderer.resize(this.$div.attr('width'), this.$div.attr('height'));
                   }
                   return this._vfRenderer;
               }
@@ -12916,16 +12934,16 @@
           _this2.changedCallbackFunction = undefined; // for editable svges
           /**
            * A function bound to the current stream that
-           * will changes the stream. Used in editableAccidentalCanvas, among other places.
+           * will changes the stream. Used in editableAccidentalDOM, among other places.
            *
-           *      var can = s.appendNewCanvas();
-           *      $(can).on('click', s.canvasChangerFunction);
+           *      var can = s.appendNewDOM();
+           *      $(can).on('click', s.DOMChangerFunction);
            *
            * @memberof music21.stream.Stream
            * @param {Event} e
            * @returns {music21.base.Music21Object|undefined} - returns whatever changedCallbackFunction does.
            */
-          _this2.canvasChangerFunction = function (e) {
+          _this2.DOMChangerFunction = function (e) {
               var canvasOrSVGElement = e.currentTarget;
 
               var _this2$findNoteForCli = _this2.findNoteForClick(canvasOrSVGElement, e),
@@ -13410,7 +13428,7 @@
                   var thisEl = this.get(i);
                   // console.warn(thisEl);
                   if (thisEl.isClassOrSubclass === undefined) {
-                      console.err('what the hell is a ', thisEl, 'doing in a Stream?');
+                      console.error('what the hell is a ', thisEl, 'doing in a Stream?');
                   } else if (thisEl.isClassOrSubclass(classList)) {
                       tempEls.push(thisEl);
                   }
@@ -13424,7 +13442,7 @@
            * pitch or pitches in the stream. If a natural needs to be displayed
            * and the Pitch does not have an accidental object yet, adds one.
            *
-           * Called automatically before appendCanvas routines are called.
+           * Called automatically before appendDOM routines are called.
            *
            * @memberof music21.stream.Stream
            * @returns {music21.stream.Stream} this
@@ -13551,6 +13569,13 @@
 
           //  * *********  VexFlow functionality
 
+      }, {
+          key: 'renderVexflowOnCanvas',
+          value: function renderVexflowOnCanvas(canvasOrSVG) {
+              console.warn('renderVexflowOnCanvas is deprecated; call renderVexflow instead');
+              return this.renderVexflow(canvasOrSVG);
+          }
+
           /**
            * Uses {@link music21.vfShow.Renderer} to render Vexflow onto an
            * existing canvas or SVG object.
@@ -13560,13 +13585,13 @@
            * Will be moved to vfShow eventually when converter objects are enabled...maybe.
            *
            * @memberof music21.stream.Stream
-           * @param {DOMObject|JQueryDOMObject} canvasOrSVG - a canvas or SVG object
+           * @param {DOMObject|JQueryDOMObject} canvasOrSVG - a canvas or the div surrounding an SVG object
            * @returns {vfShow.Renderer}
            */
 
       }, {
-          key: 'renderVexflowOnCanvas',
-          value: function renderVexflowOnCanvas(canvasOrSVG) {
+          key: 'renderVexflow',
+          value: function renderVexflow(canvasOrSVG) {
               if (canvasOrSVG.jquery) {
                   canvasOrSVG = canvasOrSVG[0];
               }
@@ -13776,16 +13801,25 @@
           }
           /* ----------------------------------------------------------------------
            *
-           *  Canvas routines -- to be factored out eventually.
+           *  SVG/Canvas DOM routines -- to be factored out eventually.
            *
            */
+
+      }, {
+          key: 'createNewCanvas',
+          value: function createNewCanvas(width, height) {
+              var elementType = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'svg';
+
+              console.warn('createNewCanvas is deprecated, use createNewDOM instead');
+              return this.createNewDOM(width, height, elementType);
+          }
 
           /**
            * Creates and returns a new `&lt;canvas&gt;` or `&lt;svg&gt;` object.
            *
            * Calls setSubstreamRenderOptions() first.
            *
-           * Does not render on canvas.
+           * Does not render on the DOM element.
            *
            * @memberof music21.stream.Stream
            * @param {number|string|undefined} width - will use `this.estimateStaffLength()` + `this.renderOptions.staffPadding` if not given
@@ -13795,8 +13829,8 @@
            */
 
       }, {
-          key: 'createNewCanvas',
-          value: function createNewCanvas(width, height) {
+          key: 'createNewDOM',
+          value: function createNewDOM(width, height) {
               var elementType = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'svg';
 
               if (this.hasSubStreams()) {
@@ -13806,7 +13840,7 @@
               // we render SVG on a Div for Vexflow
               var renderElementType = 'div';
               if (elementType === 'canvas') {
-                  renderElementType = 'svg';
+                  renderElementType = 'canvas';
               }
 
               var $newCanvasOrDIV = $('<' + renderElementType + '/>');
@@ -13837,11 +13871,19 @@
               }
               return $newCanvasOrDIV;
           }
+      }, {
+          key: 'createPlayableCanvas',
+          value: function createPlayableCanvas(width, height) {
+              var elementType = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'svg';
+
+              console.warn('createPlayableCanvas is deprecated, use createPlayableDOM instead');
+              return this.createPlayableDOM(width, height, elementType);
+          }
 
           /**
            * Creates a rendered, playable svg where clicking plays it.
            *
-           * Called from appendNewCanvas() etc.
+           * Called from appendNewDOM() etc.
            *
            * @memberof music21.stream.Stream
            * @param {number|string|undefined} width
@@ -13851,35 +13893,51 @@
            */
 
       }, {
-          key: 'createPlayableCanvas',
-          value: function createPlayableCanvas(width, height) {
+          key: 'createPlayableDOM',
+          value: function createPlayableDOM(width, height) {
               var elementType = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'svg';
 
               this.renderOptions.events.click = 'play';
-              return this.createCanvas(width, height, elementType);
+              return this.createDOM(width, height, elementType);
           }
+      }, {
+          key: 'createCanvas',
+          value: function createCanvas(width, height) {
+              var elementType = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'svg';
 
+              console.warn('createCanvas is deprecated, use createDOM');
+              return this.createDOM(width, height, elementType);
+          }
           /**
            * Creates a new svg and renders vexflow on it
            *
            * @memberof music21.stream.Stream
            * @param {number|string|undefined} [width]
            * @param {number|string|undefined} [height]
-           * @param {string} elementType - what type of element, default = svg
+           * @param {string} elementType - what type of element svg or canvas, default = svg
            * @returns {JQueryDOMObject} canvas or SVG
            */
 
       }, {
-          key: 'createCanvas',
-          value: function createCanvas(width, height) {
+          key: 'createDOM',
+          value: function createDOM(width, height) {
               var elementType = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'svg';
 
-              var $newSvg = this.createNewCanvas(width, height, elementType);
+              var $newSvg = this.createNewDOM(width, height, elementType);
               // temporarily append the SVG to the document to fix a Firefox bug
               // where nothing can be measured unless is it in the document.
-              this.renderVexflowOnCanvas($newSvg);
+              this.renderVexflow($newSvg);
               return $newSvg;
           }
+      }, {
+          key: 'appendNewCanvas',
+          value: function appendNewCanvas(appendElement, width, height) {
+              var elementType = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 'svg';
+
+              console.warn('appendNewCanvas is deprecated, use appendNewDOM instead');
+              return this.appendNewDOM(appendElement, width, height, elementType);
+          }
+
           /**
            * Creates a new canvas, renders vexflow on it, and appends it to the DOM.
            *
@@ -13893,8 +13951,8 @@
            */
 
       }, {
-          key: 'appendNewCanvas',
-          value: function appendNewCanvas(appendElement, width, height) {
+          key: 'appendNewDOM',
+          value: function appendNewDOM(appendElement, width, height) {
               var elementType = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 'svg';
 
               if (appendElement === undefined) {
@@ -13913,9 +13971,17 @@
               //      width = $bodyElement.width();
               //      };
 
-              var svgOrCanvasBlock = this.createCanvas(width, height, elementType);
+              var svgOrCanvasBlock = this.createDOM(width, height, elementType);
               $appendElement.append(svgOrCanvasBlock);
               return svgOrCanvasBlock[0];
+          }
+      }, {
+          key: 'replaceCanvas',
+          value: function replaceCanvas(where, preserveSvgSize) {
+              var elementType = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'svg';
+
+              console.warn('replaceCanvas is deprecated, use replaceDOM instead');
+              return this.replaceDOM(where, preserveSvgSize, elementType);
           }
 
           /**
@@ -13931,8 +13997,8 @@
            */
 
       }, {
-          key: 'replaceCanvas',
-          value: function replaceCanvas(where, preserveSvgSize) {
+          key: 'replaceDOM',
+          value: function replaceDOM(where, preserveSvgSize) {
               var elementType = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'svg';
 
               // if called with no where, replaces all the svges on the page...
@@ -13955,7 +14021,7 @@
               }
               // TODO: Max Width!
               if ($oldSVGOrCanvas.length === 0) {
-                  throw new Music21Exception('No svg defined for replaceCanvas!');
+                  throw new Music21Exception('No svg defined for replaceDOM!');
               } else if ($oldSVGOrCanvas.length > 1) {
                   // change last svg...
                   // replacing each with svgBlock doesn't work
@@ -13968,13 +14034,21 @@
               if (preserveSvgSize) {
                   var width = $oldSVGOrCanvas.width();
                   var height = $oldSVGOrCanvas.attr('height'); // height manipulates
-                  svgBlock = this.createCanvas(width, height, elementType);
+                  svgBlock = this.createDOM(width, height, elementType);
               } else {
-                  svgBlock = this.createCanvas(undefined, undefined, elementType);
+                  svgBlock = this.createDOM(undefined, undefined, elementType);
               }
 
               $oldSVGOrCanvas.replaceWith(svgBlock);
               return svgBlock;
+          }
+      }, {
+          key: 'renderScrollableCanvas',
+          value: function renderScrollableCanvas(where) {
+              var elementType = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'svg';
+
+              console.warn('renderScrollableCanvas is deprecated use renderScrollable instead');
+              return this.renderScrollable(where, elementType);
           }
 
           /**
@@ -13989,8 +14063,8 @@
            */
 
       }, {
-          key: 'renderScrollableCanvas',
-          value: function renderScrollableCanvas(where) {
+          key: 'renderScrollable',
+          value: function renderScrollable(where) {
               var _this3 = this;
 
               var elementType = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'svg';
@@ -14002,7 +14076,7 @@
                   $where = $(where);
               }
               var $innerDiv = $('<div>').css('position', 'absolute');
-              var c = this.appendNewCanvas($innerDiv, undefined, undefined, elementType);
+              var c = this.appendNewDOM($innerDiv, undefined, undefined, elementType);
               this.renderOptions.events.click = function (event) {
                   return _this3.scrollScoreStart(c, event);
               };
@@ -14105,6 +14179,12 @@
               }
               return storedVFStave;
           }
+      }, {
+          key: 'getUnscaledXYforCanvas',
+          value: function getUnscaledXYforCanvas(svg, e) {
+              console.warn('getUnscaledXYforCanvas is deprecated, use getUnscaledXYforDOM instead');
+              return this.getUnscaledXYforDOM(svg, e);
+          }
 
           /**
            * Given a mouse click, or other event with .pageX and .pageY,
@@ -14117,8 +14197,8 @@
            */
 
       }, {
-          key: 'getUnscaledXYforCanvas',
-          value: function getUnscaledXYforCanvas(svg, e) {
+          key: 'getUnscaledXYforDOM',
+          value: function getUnscaledXYforDOM(svg, e) {
               var offset = null;
               if (svg === undefined) {
                   offset = { left: 0, top: 0 };
@@ -14141,6 +14221,12 @@
               var yPx = yClick - offset.top;
               return [xPx, yPx];
           }
+      }, {
+          key: 'getScaledXYforCanvas',
+          value: function getScaledXYforCanvas(svg, e) {
+              console.warn('getScaledXYforCanvas is deprecated, use getScaledXYforDOM instead');
+              return this.getScaledXYforDOM(svg, e);
+          }
 
           /**
            * return a list of [scaledX, scaledY] for
@@ -14156,12 +14242,12 @@
            */
 
       }, {
-          key: 'getScaledXYforCanvas',
-          value: function getScaledXYforCanvas(svg, e) {
-              var _getUnscaledXYforCanv = this.getUnscaledXYforCanvas(svg, e),
-                  _getUnscaledXYforCanv2 = slicedToArray(_getUnscaledXYforCanv, 2),
-                  xPx = _getUnscaledXYforCanv2[0],
-                  yPx = _getUnscaledXYforCanv2[1];
+          key: 'getScaledXYforDOM',
+          value: function getScaledXYforDOM(svg, e) {
+              var _getUnscaledXYforDOM = this.getUnscaledXYforDOM(svg, e),
+                  _getUnscaledXYforDOM2 = slicedToArray(_getUnscaledXYforDOM, 2),
+                  xPx = _getUnscaledXYforDOM2[0],
+                  yPx = _getUnscaledXYforDOM2[1];
 
               var pixelScaling = this.renderOptions.scaleFactor;
 
@@ -14273,12 +14359,12 @@
           key: 'findNoteForClick',
           value: function findNoteForClick(svg, e, x, y) {
               if (x === undefined || y === undefined) {
-                  var _getScaledXYforCanvas = this.getScaledXYforCanvas(svg, e);
+                  var _getScaledXYforDOM = this.getScaledXYforDOM(svg, e);
 
-                  var _getScaledXYforCanvas2 = slicedToArray(_getScaledXYforCanvas, 2);
+                  var _getScaledXYforDOM2 = slicedToArray(_getScaledXYforDOM, 2);
 
-                  x = _getScaledXYforCanvas2[0];
-                  y = _getScaledXYforCanvas2[1];
+                  x = _getScaledXYforDOM2[0];
+                  y = _getScaledXYforDOM2[1];
               }
               var clickedDiatonicNoteNum = this.diatonicNoteNumFromScaledY(y);
               var foundNote = this.noteElementFromScaledX(x);
@@ -14308,7 +14394,7 @@
               n.pitch = p;
               n.stemDirection = undefined;
               this.activeNote = n;
-              var $newSvg = this.redrawCanvas(svg);
+              var $newSvg = this.redrawDOM(svg);
               var params = { foundNote: n, svg: $newSvg };
               if (this.changedCallbackFunction !== undefined) {
                   return this.changedCallbackFunction(params);
@@ -14316,6 +14402,13 @@
                   return params;
               }
           }
+      }, {
+          key: 'redrawCanvas',
+          value: function redrawCanvas(svg) {
+              console.warn('redrawCanvas is deprecated, use redrawDOM instead');
+              return this.redrawDOM(svg);
+          }
+
           /**
            * Redraws an svgDiv, keeping the events of the previous svg.
            *
@@ -14325,17 +14418,23 @@
            */
 
       }, {
-          key: 'redrawCanvas',
-          value: function redrawCanvas(svg) {
+          key: 'redrawDOM',
+          value: function redrawDOM(svg) {
               // this.resetRenderOptions(true, true); // recursive, preserveEvents
               // this.setSubstreamRenderOptions();
               var $svg = $(svg); // works even if svg is already $jquery
-              var $newSvg = this.createNewCanvas(svg.width, svg.height);
-              this.renderVexflowOnCanvas($newSvg);
+              var $newSvg = this.createNewDOM(svg.width, svg.height);
+              this.renderVexflow($newSvg);
               $svg.replaceWith($newSvg);
               // this is no longer necessary.
               // common.jQueryEventCopy($.event, $svg, $newCanv); /* copy events -- using custom extension... */
               return $newSvg;
+          }
+      }, {
+          key: 'editableAccidentalCanvas',
+          value: function editableAccidentalCanvas(width, height) {
+              console.warn('editableAccidentalCanvas is deprecated, use StreamInteraction instead');
+              return this.editableAccidentalDOM(width, height);
           }
 
           /**
@@ -14349,15 +14448,15 @@
            */
 
       }, {
-          key: 'editableAccidentalCanvas',
-          value: function editableAccidentalCanvas(width, height) {
+          key: 'editableAccidentalDOM',
+          value: function editableAccidentalDOM(width, height) {
               /*
                * Create an editable svg with an accidental selection bar.
                */
               var d = $('<div/>').css('text-align', 'left').css('position', 'relative');
 
-              this.renderOptions.events.click = this.canvasChangerFunction;
-              var $svgDiv = this.createCanvas(width, height);
+              this.renderOptions.events.click = this.DOMChangerFunction;
+              var $svgDiv = this.createDOM(width, height);
               var buttonDiv = this.getAccidentalToolbar(undefined, undefined, $svgDiv);
               d.append(buttonDiv);
               d.append($("<br clear='all'/>"));
@@ -14414,7 +14513,7 @@
                       var n = _this4.activeNote;
                       n.pitch.accidental = new pitch.Accidental(newAlter);
                       /* console.log(n.pitch.name); */
-                      var $newSvg = _this4.redrawCanvas($useSvg[0]);
+                      var $newSvg = _this4.redrawDOM($useSvg[0]);
                       if (_this4.changedCallbackFunction !== undefined) {
                           _this4.changedCallbackFunction({ foundNote: n, svg: $newSvg });
                       }
@@ -14494,7 +14593,7 @@
                   // console.log(callingStream.renderOptions.events.click);
                   callingStream.maxSystemWidth = svgWidth - 40;
                   jSvgNow.remove();
-                  var svgObj = callingStream.appendNewCanvas(jSvgParent);
+                  var svgObj = callingStream.appendNewDOM(jSvgParent);
                   jSvgNow = $(svgObj);
               });
               $(window).resize(function resizeSvgTo() {
@@ -15068,7 +15167,7 @@
            *
            * @memberof music21.stream.Part
            * @param  {number} y the scaled Y
-           * @return {[int, number]}   systemIndex, scaledYRelativeToSystem
+           * @return Array<int, number>   systemIndex, scaledYRelativeToSystem
            */
 
       }, {
@@ -15096,10 +15195,10 @@
       }, {
           key: 'findNoteForClick',
           value: function findNoteForClick(svg, e) {
-              var _getScaledXYforCanvas3 = this.getScaledXYforCanvas(svg, e),
-                  _getScaledXYforCanvas4 = slicedToArray(_getScaledXYforCanvas3, 2),
-                  x = _getScaledXYforCanvas4[0],
-                  y = _getScaledXYforCanvas4[1];
+              var _getScaledXYforDOM3 = this.getScaledXYforDOM(svg, e),
+                  _getScaledXYforDOM4 = slicedToArray(_getScaledXYforDOM3, 2),
+                  x = _getScaledXYforDOM4[0],
+                  y = _getScaledXYforDOM4[1];
 
               // debug = true;
 
@@ -15327,7 +15426,7 @@
            * broken it!
            *
            * @memberof music21.stream.Score
-           * @returns {Array<number>}
+           * @returns Array<number>
            */
 
       }, {
@@ -15360,7 +15459,7 @@
            *
            * @memberof music21.stream.Score
            * @param  {number} y the scaled Y
-           * @return {[int, number]}   systemIndex, scaledYRelativeToSystem
+           * @return Array<int, number>   systemIndex, scaledYRelativeToSystem
            */
 
       }, {
@@ -15392,10 +15491,10 @@
       }, {
           key: 'findNoteForClick',
           value: function findNoteForClick(svg, e) {
-              var _getScaledXYforCanvas5 = this.getScaledXYforCanvas(svg, e),
-                  _getScaledXYforCanvas6 = slicedToArray(_getScaledXYforCanvas5, 2),
-                  x = _getScaledXYforCanvas6[0],
-                  y = _getScaledXYforCanvas6[1];
+              var _getScaledXYforDOM5 = this.getScaledXYforDOM(svg, e),
+                  _getScaledXYforDOM6 = slicedToArray(_getScaledXYforDOM5, 2),
+                  x = _getScaledXYforDOM6[0],
+                  y = _getScaledXYforDOM6[1];
 
               var _systemIndexAndScaled3 = this.systemIndexAndScaledY(y),
                   _systemIndexAndScaled4 = slicedToArray(_systemIndexAndScaled3, 2),
@@ -16811,7 +16910,7 @@
    *
    * @memberof music21.roman
    * @param  {string} shorthand string of a figure w/o roman to parse
-   * @return {Array[string]}           array of shorthands
+   * @return {Array<string>}           array of shorthands
    */
 
   roman.expandShortHand = function expandShortHand(shorthand) {
@@ -18279,7 +18378,7 @@
               if ($thisTN.hasClass('noPlayback')) {
                   st.renderOptions.events.click = undefined;
               }
-              var newSVG = st.createCanvas();
+              var newSVG = st.createDOM();
 
               $thisTN.attr('tinynotationcontents', thisTNContents);
               $thisTN.empty();
@@ -19075,7 +19174,7 @@
               s.append(m21n);
               var $svgDiv = $("#svgDiv");
               $svgDiv.empty();
-              var canv = s.appendNewCanvas($svgDiv);
+              var svgDiv = s.appendNewDOM($svgDiv);
           }
       }
 
@@ -19129,24 +19228,24 @@
    * @class RhythmChooser
    * @memberof music21.widgets
    * @param {music21.stream.Stream} s - to append to, etc.
-   * @param {DOMObject} canvasDiv - canvas or SVG
+   * @param {DOMObject} div - canvas or SVG
    * @property {Array<string>} values - an array of rhythmic values and editing functions.
    *           Default: ['whole', 'half','quarter','eighth','16th','dot','undo']
    * @property {Boolean} measureMode - whether to use measures when editing
    * @property {Boolean} tieActive - is a tie active?
    * @property {Boolean} autoAddMeasure - add a measure when one is full? default: true
    * @property {music21.stream.Stream} stream
-   * @property {DOMObject} [canvasDiv]
+   * @property {DOMObject} [div]
    */
   var RhythmChooser = function () {
-      function RhythmChooser(streamObj, canvasDiv) {
+      function RhythmChooser(streamObj, div) {
           var _this = this;
 
           var size = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'normal';
           classCallCheck(this, RhythmChooser);
 
           this.stream = streamObj;
-          this.canvasDiv = canvasDiv;
+          this.div = div;
           this.size = size;
           if (this.size === 'sm' || this.size === 'small') {
               this.sizeRatio = 0.5;
@@ -19383,7 +19482,7 @@
               return $outer;
           }
           /**
-           * A button has been pressed! Call the appropriate handler and update the stream's canvas (if any)
+           * A button has been pressed! Call the appropriate handler and update the stream's SVG (if any)
            *
            * @memberof music21.widgets.RhythmChooser
            * @param {string} t - type of button pressed.
@@ -19407,8 +19506,8 @@
               if (s.isClassOrSubclass('Part') && s.activeSite !== undefined) {
                   s = s.activeSite;
               }
-              if (this.canvasDiv !== undefined) {
-                  s.replaceCanvas(this.canvasDiv);
+              if (this.div !== undefined) {
+                  s.replaceDOM(this.div);
               }
           }
       }]);
@@ -19417,19 +19516,19 @@
   widgets.RhythmChooser = RhythmChooser;
 
   var Augmenter = function () {
-      function Augmenter(streamObj, canvasDiv) {
+      function Augmenter(streamObj, div) {
           classCallCheck(this, Augmenter);
 
           this.streamObj = streamObj;
-          this.canvasDiv = canvasDiv;
+          this.div = div;
       }
 
       createClass(Augmenter, [{
           key: 'performChange',
           value: function performChange(amountToScale, streamObjToWorkOn) {
-              var replaceCanvas = false;
+              var replaceDOM = false;
               if (streamObjToWorkOn === undefined) {
-                  replaceCanvas = true;
+                  replaceDOM = true;
                   streamObjToWorkOn = this.streamObj;
               }
               for (var i = 0; i < streamObjToWorkOn.length; i++) {
@@ -19444,8 +19543,8 @@
                   streamObjToWorkOn.timeSignature.denominator *= 1 / amountToScale;
               }
 
-              if (this.canvasDiv !== undefined && replaceCanvas === true) {
-                  this.canvasDiv = streamObjToWorkOn.replaceCanvas(this.canvasDiv);
+              if (this.div !== undefined && replaceDOM === true) {
+                  this.div = streamObjToWorkOn.replaceDOM(this.div);
               }
           }
       }, {

@@ -17,7 +17,7 @@ require(['music21'], function () {
     s = new music21.stream.Measure();
     s.append(ch);
     const sne = new music21.streamInteraction.SimpleNoteEditor(s);
-    const div1 = sne.editableAccidentalCanvas();
+    const div1 = sne.editableAccidentalDOM();
     $(document.body).append(div1);
 } );
 </script>

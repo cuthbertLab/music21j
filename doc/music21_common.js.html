@@ -124,6 +124,10 @@
 						</li>
 						
 						<li>
+							<a href="music21.sites.html">music21.sites</a>
+						</li>
+						
+						<li>
 							<a href="music21.stream.html">music21.stream</a>
 						</li>
 						
@@ -410,6 +414,10 @@
 						</li>
 						
 						<li>
+							<a href="music21.streamInteraction.Follower.html">music21.streamInteraction.Follower</a>
+						</li>
+						
+						<li>
 							<a href="music21.streamInteraction.PixelMap.html">music21.streamInteraction.PixelMap</a>
 						</li>
 						
@@ -439,6 +447,10 @@
 						
 						<li>
 							<a href="music21.widgets.RhythmChooser.html">music21.widgets.RhythmChooser</a>
+						</li>
+						
+						<li>
+							<a href="Notation.html">Notation</a>
 						</li>
 						
 						<li>
@@ -516,8 +528,6 @@
  * @namespace music21.common
  * @memberof music21
  */
-import $ from 'jquery';
-
 export const common = {};
 
 /**
@@ -554,8 +564,21 @@ common.merge = function mergeRecursive(destination, source) {
     return destination;
 };
 
+common.range = function common_range(start, stop, step) {
+    if (step === undefined) {
+        step = 1;
+    }
+    if (stop === undefined) {
+        stop = start;
+        start = 0;
+    }
+
+    const count = Math.ceil((stop - start) / step);
+    return Array.apply(0, Array(count)).map((e, i) => i * step + start);
+};
+
 /**
- * Mix in another class into this class -- a form of multiple inheritance.
+ * Mix in another class into this class -- a simple form of multiple inheritance.
  * See articulations.Marcato for an example.
  *
  */
@@ -575,6 +598,61 @@ common.mixin = function common_mixin(OtherParent, thisClassOrObject) {
         proto = Object.getPrototypeOf(proto);
     }
 };
+
+/**
+ * Aggregation -- closer to true multiple inheritance -- prefers last class's functions.  See
+ * https://stackoverflow.com/questions/29879267/es6-class-multiple-inheritance
+ *
+ *  not currently used...
+ */
+
+common.aggregation = (baseClass, ...mixins) => {
+    class base extends baseClass {
+        constructor(...args) {
+            super(...args);
+            mixins.forEach(mixin => {
+                copyProps(this, new mixin());
+            });
+        }
+    }
+    let copyProps = (target, source) => {
+        // this function copies all properties and symbols, filtering out some special ones
+        Object.getOwnPropertyNames(source)
+            .concat(Object.getOwnPropertySymbols(source))
+            .forEach(prop => {
+                if (
+                    !prop.match(
+                        /^(?:constructor|prototype|arguments|caller|name|bind|call|apply|toString|length)$/
+                    )
+                ) {
+                    Object.defineProperty(
+                        target,
+                        prop,
+                        Object.getOwnPropertyDescriptor(source, prop)
+                    );
+                }
+            });
+    };
+    mixins.forEach(mixin => {
+        // outside contructor() to allow aggregation(A,B,C).staticFunction() to be called etc.
+        copyProps(base.prototype, mixin.prototype);
+        copyProps(base, mixin);
+    });
+    return base;
+};
+
+/**
+ * posMod - return a modulo value that is not negative
+ *
+ * @param  {Int} a value
+ * @param  {Int} b modulo
+ * @return {Int}   a mod b between 0 and b - 1
+ */
+
+common.posMod = function posMod(a, b) {
+    return (a % b + b) % b;
+};
+
 /**
  *
  * Returns the statistical mode (most commonly appearing element)
@@ -609,6 +687,83 @@ common.statisticalMode = function statisticalMode(a) {
 };
 
 /**
+ * fromRoman - Convert a Roman numeral (upper or lower) to an int.
+ *
+ * @param  {string} num roman numeral representation of a number
+ * @return {Int}     integer value of roman numeral;
+ */
+
+common.fromRoman = function fromRoman(num) {
+    const inputRoman = num.toUpperCase();
+    const subtractionValues = [1, 10, 100];
+    const nums = ['M', 'D', 'C', 'L', 'X', 'V', 'I'];
+    const ints = [1000, 500, 100, 50, 10, 5, 1];
+    const places = [];
+    for (const c of inputRoman) {
+        if (!nums.includes(c)) {
+            throw new Error(
+                'Value is not a valid roman numeral: ' + inputRoman
+            );
+        }
+    }
+    for (let i = 0; i &lt; inputRoman.length; i++) {
+        const c = inputRoman[i];
+        let value = ints[nums.indexOf(c)];
+        if (i &lt; inputRoman.length - 1) {
+            const nextValue = ints[nums.indexOf(inputRoman[i + 1])];
+            if (nextValue > value &amp;&amp; subtractionValues.includes(value)) {
+                value *= -1;
+            }
+        }
+        places.push(value);
+    }
+    let summation = 0;
+    for (const n of places) {
+        summation += n;
+    }
+    return summation;
+};
+
+/**
+ * toRoman - Convert a number from 1 to 3999 to a roman numeral
+ *
+ * @param  {Int} num number to convert
+ * @return {string}     as roman numeral
+ */
+
+common.toRoman = function toRoman(num) {
+    if (typeof num !== 'number') {
+        throw new Error('expected integer, got ' + typeof num);
+    }
+    if (num &lt; 0 || num > 4000) {
+        throw new Error('Argument must be between 1 and 3999');
+    }
+    const ints = [1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1];
+    const nums = [
+        'M',
+        'CM',
+        'D',
+        'CD',
+        'C',
+        'XC',
+        'L',
+        'XL',
+        'X',
+        'IX',
+        'V',
+        'IV',
+        'I',
+    ];
+    let result = '';
+    for (let i = 0; i &lt; ints.length; i++) {
+        const count = Math.floor(num / ints[i]);
+        result += nums[i].repeat(count);
+        num -= ints[i] * count;
+    }
+    return result;
+};
+
+/**
  * Creates a DOMObject of an SVG figure using the correct `document.createElementNS` call.
  *
  * @function music21.common.makeSVGright
@@ -629,7 +784,7 @@ common.makeSVGright = function makeSVGright(tag, attrs) {
 
     const el = document.createElementNS('http://www.w3.org/2000/svg', tag);
     for (const k in attrs) {
-        if (!({}.hasOwnProperty.call(attrs, k))) {
+        if (!{}.hasOwnProperty.call(attrs, k)) {
             continue;
         }
         el.setAttribute(k, attrs[k]);
@@ -649,7 +804,11 @@ common.makeSVGright = function makeSVGright(tag, attrs) {
 common.ordinalAbbreviation = function ordinalAbbreviation(value, plural) {
     let post = '';
     const valueHundreths = value % 100;
-    if (valueHundreths === 11 || valueHundreths === 12 || valueHundreths === 13) {
+    if (
+        valueHundreths === 11
+        || valueHundreths === 12
+        || valueHundreths === 13
+    ) {
         post = 'th';
     } else {
         const valueMod = value % 10;
@@ -686,7 +845,7 @@ common.rationalize = function rationalize(ql, epsilon, maxDenominator) {
         if (Math.abs(ql * i - Math.round(ql * i)) &lt; epsilon) {
             const numerator = Math.round(ql * i);
             const denominator = i;
-            return { 'numerator': numerator, 'denominator': denominator };
+            return { numerator, denominator };
         }
     }
     return undefined;
@@ -723,74 +882,38 @@ common.urlParam = function urlParam(name) {
     name = name.replace(/[[]/, '\\[').replace(/[\]]/, '\\]');
     const regex = new RegExp('[\\?&amp;]' + name + '=([^&amp;#]*)');
     const results = regex.exec(location.search);
-    return results == null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+    return results == null
+        ? ''
+        : decodeURIComponent(results[1].replace(/\+/g, ' '));
 };
 
-
-/**
- * Copies an event from one jQuery object to another.
- *
- * @function music21.common.jQueryEventCopy
- * @param {Event} eventObj - Event to copy from "from" to "to"
- * @param {jQuery|string|DOMObject} from - jQuery object to copy events from. Only uses the first matched element.
- * @param {jQuery|string|DOMObject} to - jQuery object to copy events to. Copies to all matched elements.
- * @author Brandon Aaron (brandon.aaron@gmail.com || http://brandonaaron.net)
- * @author Yannick Albert (mail@yckart.com || http://yckart.com)
- */
-common.jQueryEventCopy = function jQueryEventCopy(eventObj, from, to) {
-    from = from.jquery ? from : $(from);
-    to = to.jquery ? to : $(to);
-
-    const events = from[0].events || $.data(from[0], 'events') || $._data(from[0], 'events');
-    if (!from.length || !to.length || !events) {
-        return undefined;
+common.arrayEquals = function arrayEquals(a1, a2) {
+    if (a1.length !== a2.length) {
+        return false;
     }
-    return to.each(() => {
-        for (const type in events) {
-            if (!({}.hasOwnProperty.call(events, type))) {
-                continue;
+    for (let i = 0; i &lt; a1.length; i++) {
+        if (a1[i] instanceof Array &amp;&amp; a2[i] instanceof Array) {
+            if (!arrayEquals(a1[i], a2[i])) {
+                return false;
             }
-            for (const handler in events[type]) {
-                if (!({}.hasOwnProperty.call(events[type], handler))) {
-                    continue;
-                }
-                $.event.add(eventObj, type, events[type][handler], events[type][handler].data);
-            }
+        } else if (a1[i] !== a2[i]) {
+            return false;
         }
-    });
+    }
+    return true;
 };
-// common.walk = function (obj, callback, callList, seen, numSeen) {
-// if (depth == undefined) {
-// depth = 0;
-// }
-// if (depth > 20) {
-// throw "max depth reached";
-// }
-// if (callList === undefined) {
-// callList = [];
-// }
-// if (seen === undefined) {
-// seen = new Set();
-// }
-// var next, item;
-// for (item in obj) {
-// if (obj.hasOwnProperty(item)) {
-// next = obj[item];
-// var nextCallList = []
-// nextCallList.push.apply(callList);
-// nextCallList.push(item);
-// if (callback !== undefined) {
-// callback.call(this, item, next, nextCallList);
-// }
-// if (typeof next =='object' &amp;&amp; next != null) {
-// if (seen.has(next) == false) {
-// seen.add(next);
-// common.walk(next, callback, nextCallList, seen, depth+1);
-// }
-// }
-// }
-// }
-// };
+
+const _singletonCounter = {};
+_singletonCounter.value = 0;
+
+export class SingletonCounter {
+    call() {
+        const post = _singletonCounter.value;
+        _singletonCounter.value += 1;
+        return post;
+    }
+}
+common.SingletonCounter = SingletonCounter;
 
 /**
  * runs a callback with either "visible" or "hidden" as the argument anytime the
@@ -803,7 +926,9 @@ common.jQueryEventCopy = function jQueryEventCopy(eventObj, from, to) {
  * @function music21.common.setWindowVisibilityWatcher
  * @param {function} callback
  */
-common.setWindowVisibilityWatcher = function setWindowVisibilityWatcher(callback) {
+common.setWindowVisibilityWatcher = function setWindowVisibilityWatcher(
+    callback
+) {
     let hidden = 'hidden';
 
     // Standards:
@@ -826,12 +951,16 @@ common.setWindowVisibilityWatcher = function setWindowVisibilityWatcher(callback
     // Also catch window... -- get two calls for a tab shift, but one for window losing focus
     window.onpageshow = window.onpagehide = window.onfocus = window.onblur = windowFocusChanged;
 
-
     function windowFocusChanged(evt) {
         const v = 'visible';
         const h = 'hidden';
         const evtMap = {
-            focus: v, focusin: v, pageshow: v, blur: h, focusout: h, pagehide: h,
+            focus: v,
+            focusin: v,
+            pageshow: v,
+            blur: h,
+            focusout: h,
+            pagehide: h,
         };
 
         evt = evt || window.event;
@@ -844,8 +973,9 @@ common.setWindowVisibilityWatcher = function setWindowVisibilityWatcher(callback
         callback(callbackState, evt);
     }
     // set the initial state
-    const initialState = ((document.visibilityState === 'visible') ? 'focus' : 'blur');
-    const initialStateEvent = { 'type': initialState };
+    const initialState
+        = document.visibilityState === 'visible' ? 'focus' : 'blur';
+    const initialStateEvent = { type: initialState };
     windowFocusChanged(initialStateEvent);
 };
 
@@ -875,8 +1005,8 @@ common.urls = {
 					<br />
 					
 		<span class="jsdoc-message">
-		Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.4</a>
-		on Thu Aug 17th 2017 using the <a
+		Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a>
+		on Sat Feb 10th 2018 using the <a
 			href="https://github.com/terryweiss/docstrap">DocStrap template</a>.
 		</span>
 				</footer>

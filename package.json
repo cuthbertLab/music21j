@@ -43,7 +43,7 @@
     "grunt-release": "^0.14.0",
     "grunt-rollup": "^0.8.0",
     "js-doc": "^0.5.0",
-    "jsdoc": "^3.5.4",
+    "jsdoc": "^3.5.5",
     "npm-check-updates": "^2.12.1",
     "qunit": "^0.9.1",
     "rollup": "^0.34.13",

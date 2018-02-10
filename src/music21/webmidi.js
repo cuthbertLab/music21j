@@ -379,7 +379,7 @@ webmidi.callBacks = miditools.callBacks;
             s.append(m21n);
             var $svgDiv = $("#svgDiv");
             $svgDiv.empty();
-            var canv = s.appendNewCanvas($svgDiv);
+            var svgDiv = s.appendNewDOM($svgDiv);
         }
     }
 

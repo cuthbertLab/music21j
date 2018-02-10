@@ -124,6 +124,10 @@
 						</li>
 						
 						<li>
+							<a href="music21.sites.html">music21.sites</a>
+						</li>
+						
+						<li>
 							<a href="music21.stream.html">music21.stream</a>
 						</li>
 						
@@ -410,6 +414,10 @@
 						</li>
 						
 						<li>
+							<a href="music21.streamInteraction.Follower.html">music21.streamInteraction.Follower</a>
+						</li>
+						
+						<li>
 							<a href="music21.streamInteraction.PixelMap.html">music21.streamInteraction.PixelMap</a>
 						</li>
 						
@@ -439,6 +447,10 @@
 						
 						<li>
 							<a href="music21.widgets.RhythmChooser.html">music21.widgets.RhythmChooser</a>
+						</li>
+						
+						<li>
+							<a href="Notation.html">Notation</a>
 						</li>
 						
 						<li>
@@ -509,13 +521,13 @@
  * music21j -- Javascript reimplementation of Core music21 features.
  * music21/pitch -- pitch routines
  *
- * Copyright (c) 2013-16, Michael Scott Cuthbert and cuthbertLab
- * Based on music21, Copyright (c) 2006–16, Michael Scott Cuthbert and cuthbertLab
+ * Copyright (c) 2013-17, Michael Scott Cuthbert and cuthbertLab
+ * Based on music21, Copyright (c) 2006–17, Michael Scott Cuthbert and cuthbertLab
  *
  */
-import { Music21Exception } from './exceptions21';
+import { Music21Exception } from './exceptions21.js';
 
-import { prebase } from './prebase';
+import { prebase } from './prebase.js';
 /**
  * pitch module.  See {@link music21.pitch} namespace
  *
@@ -538,14 +550,13 @@ export const pitch = {};
 export class Accidental extends prebase.ProtoM21Object {
     constructor(accName) {
         super();
-        this.classes.push('Accidental');
         this._name = '';
         this._alter = 0.0;
         this._modifier = '';
         this._unicodeModifier = '';
         this.displayType = 'normal'; // "normal", "always" supported currently
         this.displayStatus = undefined; // true, false, undefined
-        this.init(accName);
+        this.set(accName);
     }
     /**
      * Sets a parameter of the accidental and updates name, alter, and modifier to suit.
@@ -554,12 +565,17 @@ export class Accidental extends prebase.ProtoM21Object {
      * @param {number|string} accName - the name, number, or modifier to set
      * @returns {undefined}
      */
-    init(accName) {
-        if ((accName !== undefined) &amp;&amp; (accName.toLowerCase !== undefined)) {
+    set(accName) {
+        if (accName !== undefined &amp;&amp; accName.toLowerCase !== undefined) {
             accName = accName.toLowerCase();
         }
 
-        if (accName === 'natural' || accName === 'n' || accName === 0 || accName === undefined) {
+        if (
+            accName === 'natural'
+            || accName === 'n'
+            || accName === 0
+            || accName === undefined
+        ) {
             this._name = 'natural';
             this._alter = 0.0;
             this._modifier = '';
@@ -569,27 +585,48 @@ export class Accidental extends prebase.ProtoM21Object {
             this._alter = 1.0;
             this._modifier = '#';
             this._unicodeModifier = '♯';
-        } else if (accName === 'flat' || accName === '-' || accName === -1) {
+        } else if (
+            accName === 'flat'
+            || accName === '-'
+            || accName === 'b'
+            || accName === -1
+        ) {
             this._name = 'flat';
             this._alter = -1.0;
             this._modifier = '-';
             this._unicodeModifier = '♭';
-        } else if (accName === 'double-flat' || accName === '--' || accName === -2) {
+        } else if (
+            accName === 'double-flat'
+            || accName === '--'
+            || accName === -2
+        ) {
             this._name = 'double-flat';
             this._alter = -2.0;
             this._modifier = '--';
             this._unicodeModifier = '&amp;#x1d12b;';
-        } else if (accName === 'double-sharp' || accName === '##' || accName === 2) {
+        } else if (
+            accName === 'double-sharp'
+            || accName === '##'
+            || accName === 2
+        ) {
             this._name = 'double-sharp';
             this._alter = 2.0;
             this._modifier = '##';
             this._unicodeModifier = '&amp;#x1d12a;';
-        } else if (accName === 'triple-flat' || accName === '---' || accName === -3) {
+        } else if (
+            accName === 'triple-flat'
+            || accName === '---'
+            || accName === -3
+        ) {
             this._name = 'triple-flat';
             this._alter = -3.0;
             this._modifier = '---';
             this._unicodeModifier = '♭&amp;#x1d12b;';
-        } else if (accName === 'triple-sharp' || accName === '###' || accName === 3) {
+        } else if (
+            accName === 'triple-sharp'
+            || accName === '###'
+            || accName === 3
+        ) {
             this._name = 'triple-sharp';
             this._alter = 3.0;
             this._modifier = '###';
@@ -608,7 +645,7 @@ export class Accidental extends prebase.ProtoM21Object {
         return this._name;
     }
     set name(n) {
-        this.init(n);
+        this.set(n);
     }
     /**
      * Return or set the alteration amount (-1.0 = flat; 1.0 = sharp; etc.)
@@ -622,7 +659,7 @@ export class Accidental extends prebase.ProtoM21Object {
         return this._alter;
     }
     set alter(alter) {
-        this.init(alter);
+        this.set(alter);
     }
     /**
      * Return or set the modifier ('-', '#', '')
@@ -636,7 +673,7 @@ export class Accidental extends prebase.ProtoM21Object {
         return this._modifier;
     }
     set modifier(modifier) {
-        this.init(modifier);
+        this.set(modifier);
     }
     /**
      * Returns the modifier for vexflow ('b', '#', 'n')
@@ -680,11 +717,23 @@ export class Accidental extends prebase.ProtoM21Object {
 }
 pitch.Accidental = Accidental;
 
-
-pitch.nameToMidi = { 'C': 0, 'D': 2, 'E': 4, 'F': 5, 'G': 7, 'A': 9, 'B': 11 };
-pitch.nameToSteps = { 'C': 0, 'D': 1, 'E': 2, 'F': 3, 'G': 4, 'A': 5, 'B': 6 };
+pitch.nameToMidi = { C: 0, D: 2, E: 4, F: 5, G: 7, A: 9, B: 11 };
+pitch.nameToSteps = { C: 0, D: 1, E: 2, F: 3, G: 4, A: 5, B: 6 };
 pitch.stepsToName = ['C', 'D', 'E', 'F', 'G', 'A', 'B'];
-pitch.midiToName = ['C', 'C#', 'D', 'E-', 'E', 'F', 'F#', 'G', 'A-', 'A', 'B-', 'B'];
+pitch.midiToName = [
+    'C',
+    'C#',
+    'D',
+    'E-',
+    'E',
+    'F',
+    'F#',
+    'G',
+    'A-',
+    'A',
+    'B-',
+    'B',
+];
 
 /**
  * Pitch objects are found in {@link music21.note.Note} objects, and many other places.
@@ -714,16 +763,11 @@ pitch.midiToName = ['C', 'C#', 'D', 'E-', 'E', 'F', 'F#', 'G', 'A-', 'A', 'B-', 
  * @property {string} step - letter name for the pitch (C-G, A, B), without accidental; default 'C'
  */
 export class Pitch extends prebase.ProtoM21Object {
-    constructor(pn) {
+    constructor(pn = 'C') {
         super();
-        this.classes.push('Pitch');
-        if (pn === undefined) {
-            pn = 'C';
-        }
         this._step = 'C';
         this._octave = 4;
         this._accidental = undefined;
-
         /* pn can be a nameWithOctave */
         if (typeof pn === 'number') {
             if (pn &lt; 12) {
@@ -737,14 +781,25 @@ export class Pitch extends prebase.ProtoM21Object {
         }
     }
 
+    // N.B. cannot use transpose here, because of circular import.
 
-    get step() { return this._step; }
-    set step(s) { this._step = s; }
-    get octave() { return this._octave; }
-    set octave(o) { this._octave = o; }
-    get accidental() { return this._accidental; }
+    get step() {
+        return this._step;
+    }
+    set step(s) {
+        this._step = s;
+    }
+    get octave() {
+        return this._octave;
+    }
+    set octave(o) {
+        this._octave = o;
+    }
+    get accidental() {
+        return this._accidental;
+    }
     set accidental(a) {
-        if (typeof (a) !== 'object' &amp;&amp; a !== undefined) {
+        if (typeof a !== 'object' &amp;&amp; a !== undefined) {
             a = new pitch.Accidental(a);
         }
         this._accidental = a;
@@ -759,7 +814,8 @@ export class Pitch extends prebase.ProtoM21Object {
     set name(nn) {
         this.step = nn.slice(0, 1).toUpperCase();
         const tempAccidental = nn.slice(1);
-        if (tempAccidental) { // not the empty string
+        if (tempAccidental) {
+            // not the empty string
             this.accidental = tempAccidental; // converts automatically
         } else {
             this.accidental = undefined;
@@ -779,7 +835,7 @@ export class Pitch extends prebase.ProtoM21Object {
         }
     }
     get diatonicNoteNum() {
-        return (this.octave * 7) + pitch.nameToSteps[this.step] + 1;
+        return this.octave * 7 + pitch.nameToSteps[this.step] + 1;
     }
     set diatonicNoteNum(newDNN) {
         newDNN -= 1; // makes math easier
@@ -797,13 +853,58 @@ export class Pitch extends prebase.ProtoM21Object {
         if (this.accidental !== undefined) {
             accidentalAlter = parseInt(this.accidental.alter);
         }
-        return (this.octave + 1) * 12 + pitch.nameToMidi[this.step] + accidentalAlter;
+        return (
+            (this.octave + 1) * 12
+            + pitch.nameToMidi[this.step]
+            + accidentalAlter
+        );
     }
     set ps(ps) {
         this.name = pitch.midiToName[ps % 12];
         this.octave = Math.floor(ps / 12) - 1;
     }
+    
+    _getEnharmonicHelper(inPlace, directionInt) {
+        // differs from Python version because
+        // cannot import interval here.
+        let octaveStored = true;
+        if (this.octave === undefined) {
+            octaveStored = false;
+        }
+        const p = this.clone();
+        p.diatonicNoteNum += directionInt;
+        if (p.accidental === undefined) {
+            p.accidental = new Accidental(0);
+        }
+        while (p.ps % 12 !== this.ps % 12) { // octaveless
+            p.accidental.alter += -1 * directionInt;
+        }
+        
+        if (!inPlace) {
+            return p;
+        }
+        this.step = p.step;
+        this.accidental = p.accidental;
+        if (p.microtone === undefined) {
+            this.microtone = p.microtone;
+        }
+        if (!octaveStored) {
+            this.octave = undefined;                
+        } else {
+            this.octave = p.octave;
+        }
+        return p;
+    }
+    
+    getHigherEnharmonic(inPlace = false) {
+        return this._getEnharmonicHelper(inPlace, 1);
+    }
 
+    getLowerEnharmonic(inPlace = false) {
+        return this._getEnharmonicHelper(inPlace, -1);
+    }
+    /* TODO: isEnharmonic, getEnharmonic, getAllCommonEnharmonics */
+    
     /**
      * Returns the vexflow name for the pitch in the given clef.
      *
@@ -825,7 +926,8 @@ export class Pitch extends prebase.ProtoM21Object {
         if (this.accidental !== undefined) {
             accidentalType = this.accidental.vexflowModifier;
         }
-        const outName = tempPitch.step + accidentalType + '/' + tempPitch.octave;
+        const outName
+            = tempPitch.step + accidentalType + '/' + tempPitch.octave;
         return outName;
     }
 }
@@ -850,8 +952,8 @@ pitch.Pitch = Pitch;
 					<br />
 					
 		<span class="jsdoc-message">
-		Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.4</a>
-		on Thu Aug 17th 2017 using the <a
+		Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a>
+		on Sat Feb 10th 2018 using the <a
 			href="https://github.com/terryweiss/docstrap">DocStrap template</a>.
 		</span>
 				</footer>

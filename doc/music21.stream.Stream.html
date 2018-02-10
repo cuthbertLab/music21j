@@ -124,6 +124,10 @@
 						</li>
 						
 						<li>
+							<a href="music21.sites.html">music21.sites</a>
+						</li>
+						
+						<li>
 							<a href="music21.stream.html">music21.stream</a>
 						</li>
 						
@@ -410,6 +414,10 @@
 						</li>
 						
 						<li>
+							<a href="music21.streamInteraction.Follower.html">music21.streamInteraction.Follower</a>
+						</li>
+						
+						<li>
 							<a href="music21.streamInteraction.PixelMap.html">music21.streamInteraction.PixelMap</a>
 						</li>
 						
@@ -439,6 +447,10 @@
 						
 						<li>
 							<a href="music21.widgets.RhythmChooser.html">music21.widgets.RhythmChooser</a>
+						</li>
+						
+						<li>
+							<a href="Notation.html">Notation</a>
 						</li>
 						
 						<li>
@@ -664,6 +676,41 @@
             
 
             <td class="description last"><p>the total duration of the stream's elements</p></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>highestTime</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><ul>
+<li>the highest time point in the stream's elements</li>
+</ul></td>
         </tr>
 
 	
@@ -1202,7 +1249,7 @@
 		<ul class="dummy">
 			<li>
 				<a href="music21_stream.js.html">music21/stream.js</a>,
-				 <a href="music21_stream.js.html#sunlight-1-line-55">line 55</a>
+				 <a href="music21_stream.js.html#sunlight-1-line-59">line 59</a>
 			</li>
 		</ul>
 	</dd>
@@ -1254,6 +1301,161 @@
         <h3 class="subsection-title">Methods</h3>
 
         <dl>
+            
+<dt>
+    <h4 class="name" id="changeClickedNoteFromEvent"><span class="type-signature">&lt;static> </span>FourPartEditor#changeClickedNoteFromEvent<span class="signature">(e)</span><span class="type-signature"> &rarr; {<a href="music21.base.Music21Object.html">music21.base.Music21Object</a>|undefined}</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        <p>A function bound to the current stream that<br>will changes the stream. Used in editableAccidentalDOM, among other places.</p>
+<pre class="prettyprint source"><code> var can = s.appendNewDOM();
+ $(can).on('click', s.changeClickedNoteFromEvent);</code></pre>
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+
+		<th>Type</th>
+
+		
+
+		
+
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+
+	<tbody>
+	
+
+        <tr>
+            
+                <td class="name"><code>e</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Event</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+	
+	</tbody>
+</table>
+
+    
+    
+    
+<dl class="details">
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="music21_streamInteraction.js.html">music21/streamInteraction.js</a>,
+				 <a href="music21_streamInteraction.js.html#sunlight-1-line-922">line 922</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+    <ul>
+<li>returns whatever changedCallbackFunction does.</li>
+</ul>
+</div>
+
+
+
+<dl>
+	<dt>
+		Type
+	</dt>
+	<dd>
+		
+<span class="param-type"><a href="music21.base.Music21Object.html">music21.base.Music21Object</a></span>
+|
+
+<span class="param-type">undefined</span>
+
+
+	</dd>
+</dl>
+
+
+        
+    
+    
+</dd>
+
+        
             
 <dt>
     <h4 class="name" id="append"><span class="type-signature">&lt;static> </span>Stream#append<span class="signature">(el)</span><span class="type-signature"> &rarr; {this}</span></h4>
@@ -1351,7 +1553,7 @@
 		<ul class="dummy">
 			<li>
 				<a href="music21_stream.js.html">music21/stream.js</a>,
-				 <a href="music21_stream.js.html#sunlight-1-line-380">line 380</a>
+				 <a href="music21_stream.js.html#sunlight-1-line-431">line 431</a>
 			</li>
 		</ul>
 	</dd>
@@ -1400,7 +1602,7 @@
         
             
 <dt>
-    <h4 class="name" id="appendNewCanvas"><span class="type-signature">&lt;static> </span>Stream#appendNewCanvas<span class="signature">(<span class="optional">appendElement</span>, <span class="optional">width</span>, <span class="optional">height</span>)</span><span class="type-signature"> &rarr; {DOMObject}</span></h4>
+    <h4 class="name" id="appendNewDOM"><span class="type-signature">&lt;static> </span>Stream#appendNewDOM<span class="signature">(<span class="optional">appendElement</span>, <span class="optional">width</span>, <span class="optional">height</span>, elementType)</span><span class="type-signature"> &rarr; {DOMObject}</span></h4>
     
     
 </dt>
@@ -1481,7 +1683,7 @@
                 </td>
             
 
-            <td class="description last"><p>where to place the canvas</p></td>
+            <td class="description last"><p>where to place the svg</p></td>
         </tr>
 
 	
@@ -1565,6 +1767,43 @@
         </tr>
 
 	
+
+        <tr>
+            
+                <td class="name"><code>elementType</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    svg
+                
+                </td>
+            
+
+            <td class="description last"><p>what type of element, default = svg</p></td>
+        </tr>
+
+	
 	</tbody>
 </table>
 
@@ -1598,7 +1837,7 @@
 		<ul class="dummy">
 			<li>
 				<a href="music21_stream.js.html">music21/stream.js</a>,
-				 <a href="music21_stream.js.html#sunlight-1-line-1093">line 1093</a>
+				 <a href="music21_stream.js.html#sunlight-1-line-1321">line 1321</a>
 			</li>
 		</ul>
 	</dd>
@@ -1625,7 +1864,7 @@
     
             
 <div class="param-desc">
-    <p>canvas (not the jQueryDOMObject -- this is a difference with other routines and should be fixed. TODO: FIX)</p>
+    <p>svg (not the jQueryDOMObject -- this is a difference with other routines and should be fixed. TODO: FIX)</p>
 </div>
 
 
@@ -1651,7 +1890,7 @@
         
             
 <dt>
-    <h4 class="name" id="createCanvas"><span class="type-signature">&lt;static> </span>Stream#createCanvas<span class="signature">(<span class="optional">width</span>, <span class="optional">height</span>)</span><span class="type-signature"> &rarr; {JQueryDOMObject}</span></h4>
+    <h4 class="name" id="createDOM"><span class="type-signature">&lt;static> </span>Stream#createDOM<span class="signature">(<span class="optional">width</span>, <span class="optional">height</span>, elementType)</span><span class="type-signature"> &rarr; {JQueryDOMObject}</span></h4>
     
     
 </dt>
@@ -1659,7 +1898,7 @@
     
     
     <div class="description">
-        <p>Creates a new canvas and renders vexflow on it</p>
+        <p>Creates a new svg and renders vexflow on it</p>
     </div>
     
 
@@ -1684,6 +1923,8 @@
 		<th>Argument</th>
 		
 
+		
+		<th>Default</th>
 		
 
 		<th class="last">Description</th>
@@ -1725,6 +1966,10 @@
                 </td>
             
 
+            
+                <td class="default">
+                
+                </td>
             
 
             <td class="description last"></td>
@@ -1765,8 +2010,49 @@
             
 
             
+                <td class="default">
+                
+                </td>
+            
 
             <td class="description last"></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>elementType</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    svg
+                
+                </td>
+            
+
+            <td class="description last"><p>what type of element svg or canvas, default = svg</p></td>
         </tr>
 
 	
@@ -1803,7 +2089,7 @@
 		<ul class="dummy">
 			<li>
 				<a href="music21_stream.js.html">music21/stream.js</a>,
-				 <a href="music21_stream.js.html#sunlight-1-line-1078">line 1078</a>
+				 <a href="music21_stream.js.html#sunlight-1-line-1296">line 1296</a>
 			</li>
 		</ul>
 	</dd>
@@ -1830,7 +2116,7 @@
     
             
 <div class="param-desc">
-    <p>canvas</p>
+    <p>canvas or SVG</p>
 </div>
 
 
@@ -1856,7 +2142,7 @@
         
             
 <dt>
-    <h4 class="name" id="createNewCanvas"><span class="type-signature">&lt;static> </span>Stream#createNewCanvas<span class="signature">(width, height)</span><span class="type-signature"> &rarr; {JQueryDOMObject}</span></h4>
+    <h4 class="name" id="createNewDOM"><span class="type-signature">&lt;static> </span>Stream#createNewDOM<span class="signature">(width, height, elementType)</span><span class="type-signature"> &rarr; {JQueryDOMObject}</span></h4>
     
     
 </dt>
@@ -1864,9 +2150,9 @@
     
     
     <div class="description">
-        <p>Creates and returns a new <code>&amp;lt;canvas&amp;gt;</code> object.</p>
+        <p>Creates and returns a new <code>&amp;lt;canvas&amp;gt;</code> or <code>&amp;lt;svg&amp;gt;</code> object.</p>
 <p>Calls setSubstreamRenderOptions() first.</p>
-<p>Does not render on canvas.</p>
+<p>Does not render on the DOM element.</p>
     </div>
     
 
@@ -1889,6 +2175,8 @@
 
 		
 
+		
+		<th>Default</th>
 		
 
 		<th class="last">Description</th>
@@ -1920,6 +2208,10 @@
 
             
 
+            
+                <td class="default">
+                
+                </td>
             
 
             <td class="description last"><p>will use <code>this.estimateStaffLength()</code> + <code>this.renderOptions.staffPadding</code> if not given</p></td>
@@ -1950,8 +2242,41 @@
             
 
             
+                <td class="default">
+                
+                </td>
+            
 
             <td class="description last"><p>if undefined will use <code>this.renderOptions.height</code>. If still undefined, will use <code>this.estimateStreamHeight()</code></p></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>elementType</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+                <td class="default">
+                
+                    svg
+                
+                </td>
+            
+
+            <td class="description last"><p>what type of element, default = svg</p></td>
         </tr>
 
 	
@@ -1988,7 +2313,7 @@
 		<ul class="dummy">
 			<li>
 				<a href="music21_stream.js.html">music21/stream.js</a>,
-				 <a href="music21_stream.js.html#sunlight-1-line-1023">line 1023</a>
+				 <a href="music21_stream.js.html#sunlight-1-line-1216">line 1216</a>
 			</li>
 		</ul>
 	</dd>
@@ -2015,7 +2340,7 @@
     
             
 <div class="param-desc">
-    <p>canvas in jquery.</p>
+    <p>svg in jquery.</p>
 </div>
 
 
@@ -2041,7 +2366,7 @@
         
             
 <dt>
-    <h4 class="name" id="createPlayableCanvas"><span class="type-signature">&lt;static> </span>Stream#createPlayableCanvas<span class="signature">(width, height)</span><span class="type-signature"> &rarr; {JQueryDOMObject}</span></h4>
+    <h4 class="name" id="createPlayableDOM"><span class="type-signature">&lt;static> </span>Stream#createPlayableDOM<span class="signature">(width, height, elementType)</span><span class="type-signature"> &rarr; {JQueryDOMObject}</span></h4>
     
     
 </dt>
@@ -2049,8 +2374,8 @@
     
     
     <div class="description">
-        <p>Creates a rendered, playable canvas where clicking plays it.</p>
-<p>Called from appendNewCanvas() etc.</p>
+        <p>Creates a rendered, playable svg where clicking plays it.</p>
+<p>Called from appendNewDOM() etc.</p>
     </div>
     
 
@@ -2073,6 +2398,8 @@
 
 		
 
+		
+		<th>Default</th>
 		
 
 		<th class="last">Description</th>
@@ -2105,6 +2432,10 @@
             
 
             
+                <td class="default">
+                
+                </td>
+            
 
             <td class="description last"></td>
         </tr>
@@ -2134,8 +2465,41 @@
             
 
             
+                <td class="default">
+                
+                </td>
+            
 
             <td class="description last"></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>elementType</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+                <td class="default">
+                
+                    svg
+                
+                </td>
+            
+
+            <td class="description last"><p>what type of element, default = svg</p></td>
         </tr>
 
 	
@@ -2172,7 +2536,7 @@
 		<ul class="dummy">
 			<li>
 				<a href="music21_stream.js.html">music21/stream.js</a>,
-				 <a href="music21_stream.js.html#sunlight-1-line-1065">line 1065</a>
+				 <a href="music21_stream.js.html#sunlight-1-line-1278">line 1278</a>
 			</li>
 		</ul>
 	</dd>
@@ -2199,7 +2563,7 @@
     
             
 <div class="param-desc">
-    <p>canvas</p>
+    <p>canvas or svg</p>
 </div>
 
 
@@ -2322,7 +2686,7 @@
 		<ul class="dummy">
 			<li>
 				<a href="music21_stream.js.html">music21/stream.js</a>,
-				 <a href="music21_stream.js.html#sunlight-1-line-1348">line 1348</a>
+				 <a href="music21_stream.js.html#sunlight-1-line-1620">line 1620</a>
 			</li>
 		</ul>
 	</dd>
@@ -2371,7 +2735,7 @@
         
             
 <dt>
-    <h4 class="name" id="editableAccidentalCanvas"><span class="type-signature">&lt;static> </span>Stream#editableAccidentalCanvas<span class="signature">(<span class="optional">width</span>, <span class="optional">height</span>)</span><span class="type-signature"> &rarr; {DOMObject}</span></h4>
+    <h4 class="name" id="editableAccidentalDOM"><span class="type-signature">&lt;static> </span>Stream#editableAccidentalDOM<span class="signature">(<span class="optional">width</span>, <span class="optional">height</span>)</span><span class="type-signature"> &rarr; {DOMObject}</span></h4>
     
     
 </dt>
@@ -2379,7 +2743,7 @@
     
     
     <div class="description">
-        <p>Renders a stream on a canvas with the ability to edit it and<br>a toolbar that allows the accidentals to be edited.</p>
+        <p>Renders a stream on svg with the ability to edit it and<br>a toolbar that allows the accidentals to be edited.</p>
     </div>
     
 
@@ -2511,7 +2875,7 @@
 		<ul class="dummy">
 			<li>
 				<a href="music21_stream.js.html">music21/stream.js</a>,
-				 <a href="music21_stream.js.html#sunlight-1-line-1475">line 1475</a>
+				 <a href="music21_stream.js.html#sunlight-1-line-1784">line 1784</a>
 			</li>
 		</ul>
 	</dd>
@@ -2538,7 +2902,7 @@
     
             
 <div class="param-desc">
-    <p>&lt;div&gt; tag around the canvas.</p>
+    <p>&lt;div&gt; tag around the svg.</p>
 </div>
 
 
@@ -2610,7 +2974,7 @@
 		<ul class="dummy">
 			<li>
 				<a href="music21_stream.js.html">music21/stream.js</a>,
-				 <a href="music21_stream.js.html#sunlight-1-line-894">line 894</a>
+				 <a href="music21_stream.js.html#sunlight-1-line-1059">line 1059</a>
 			</li>
 		</ul>
 	</dd>
@@ -2779,7 +3143,7 @@
 		<ul class="dummy">
 			<li>
 				<a href="music21_stream.js.html">music21/stream.js</a>,
-				 <a href="music21_stream.js.html#sunlight-1-line-857">line 857</a>
+				 <a href="music21_stream.js.html#sunlight-1-line-1011">line 1011</a>
 			</li>
 		</ul>
 	</dd>
@@ -2832,7 +3196,7 @@
         
             
 <dt>
-    <h4 class="name" id="findNoteForClick"><span class="type-signature">&lt;static> </span>Stream#findNoteForClick<span class="signature">(canvas, e, x, y)</span><span class="type-signature"> &rarr; {Array}</span></h4>
+    <h4 class="name" id="findNoteForClick"><span class="type-signature">&lt;static> </span>Stream#findNoteForClick<span class="signature">(svg, e, x, y)</span><span class="type-signature"> &rarr; {Array}</span></h4>
     
     
 </dt>
@@ -2841,7 +3205,7 @@
     
     <div class="description">
         <p>Given an event object, and an x and y location, returns a two-element array<br>of the pitch.Pitch.diatonicNoteNum that was clicked (i.e., if C4 was clicked this<br>will return 29; if D4 was clicked this will return 30) and the closest note in the<br>stream that was clicked.</p>
-<p>Return a list of [diatonicNoteNum, closestXNote]<br>for an event (e) called on the canvas (canvas)</p>
+<p>Return a list of [diatonicNoteNum, closestXNote]<br>for an event (e) called on the svg (svg)</p>
     </div>
     
 
@@ -2875,7 +3239,7 @@
 
         <tr>
             
-                <td class="name"><code>canvas</code></td>
+                <td class="name"><code>svg</code></td>
             
 
             <td class="type">
@@ -2997,7 +3361,7 @@
 		<ul class="dummy">
 			<li>
 				<a href="music21_stream.js.html">music21/stream.js</a>,
-				 <a href="music21_stream.js.html#sunlight-1-line-1412">line 1412</a>
+				 <a href="music21_stream.js.html#sunlight-1-line-1708">line 1708</a>
 			</li>
 		</ul>
 	</dd>
@@ -3145,7 +3509,7 @@
 		<ul class="dummy">
 			<li>
 				<a href="music21_stream.js.html">music21/stream.js</a>,
-				 <a href="music21_stream.js.html#sunlight-1-line-463">line 463</a>
+				 <a href="music21_stream.js.html#sunlight-1-line-541">line 541</a>
 			</li>
 		</ul>
 	</dd>
@@ -3197,7 +3561,7 @@
         
             
 <dt>
-    <h4 class="name" id="getAccidentalToolbar"><span class="type-signature">&lt;static> </span>Stream#getAccidentalToolbar<span class="signature">(minAccidental, maxAccidental, $siblingCanvas)</span><span class="type-signature"> &rarr; {jQueryObject}</span></h4>
+    <h4 class="name" id="getAccidentalToolbar"><span class="type-signature">&lt;static> </span>Stream#getAccidentalToolbar<span class="signature">(minAccidental, maxAccidental, $siblingSvg)</span><span class="type-signature"> &rarr; {jQueryObject}</span></h4>
     
     
 </dt>
@@ -3281,7 +3645,7 @@
 
         <tr>
             
-                <td class="name"><code>$siblingCanvas</code></td>
+                <td class="name"><code>$siblingSvg</code></td>
             
 
             <td class="type">
@@ -3297,7 +3661,7 @@
 
             
 
-            <td class="description last"><p>canvas to use for redrawing;</p></td>
+            <td class="description last"><p>svg to use for redrawing;</p></td>
         </tr>
 
 	
@@ -3334,7 +3698,7 @@
 		<ul class="dummy">
 			<li>
 				<a href="music21_stream.js.html">music21/stream.js</a>,
-				 <a href="music21_stream.js.html#sunlight-1-line-1501">line 1501</a>
+				 <a href="music21_stream.js.html#sunlight-1-line-1817">line 1817</a>
 			</li>
 		</ul>
 	</dd>
@@ -3485,7 +3849,7 @@
 		<ul class="dummy">
 			<li>
 				<a href="music21_stream.js.html">music21/stream.js</a>,
-				 <a href="music21_stream.js.html#sunlight-1-line-687">line 687</a>
+				 <a href="music21_stream.js.html#sunlight-1-line-801">line 801</a>
 			</li>
 		</ul>
 	</dd>
@@ -3576,7 +3940,7 @@
 		<ul class="dummy">
 			<li>
 				<a href="music21_stream.js.html">music21/stream.js</a>,
-				 <a href="music21_stream.js.html#sunlight-1-line-1557">line 1557</a>
+				 <a href="music21_stream.js.html#sunlight-1-line-1882">line 1882</a>
 			</li>
 		</ul>
 	</dd>
@@ -3629,7 +3993,7 @@
         
             
 <dt>
-    <h4 class="name" id="getScaledXYforCanvas"><span class="type-signature">&lt;static> </span>Stream#getScaledXYforCanvas<span class="signature">(canvas, e)</span><span class="type-signature"> &rarr; {Array.&lt;number>}</span></h4>
+    <h4 class="name" id="getScaledXYforDOM"><span class="type-signature">&lt;static> </span>Stream#getScaledXYforDOM<span class="signature">(svg, e)</span><span class="type-signature"> &rarr; {Array.&lt;number>}</span></h4>
     
     
 </dt>
@@ -3637,7 +4001,7 @@
     
     
     <div class="description">
-        <p>return a list of [scaledX, scaledY] for<br>a canvas element.</p>
+        <p>return a list of [scaledX, scaledY] for<br>a svg element.</p>
 <p>xScaled refers to 1/scaleFactor.x -- for instance, scaleFactor.x = 0.7 (default)<br>x of 1 gives 1.42857...</p>
     </div>
     
@@ -3672,7 +4036,7 @@
 
         <tr>
             
-                <td class="name"><code>canvas</code></td>
+                <td class="name"><code>svg</code></td>
             
 
             <td class="type">
@@ -3688,7 +4052,9 @@
 
             
 
-            <td class="description last"></td>
+            <td class="description last"><ul>
+<li>a canvas or SVG object</li>
+</ul></td>
         </tr>
 
 	
@@ -3748,7 +4114,7 @@
 		<ul class="dummy">
 			<li>
 				<a href="music21_stream.js.html">music21/stream.js</a>,
-				 <a href="music21_stream.js.html#sunlight-1-line-1328">line 1328</a>
+				 <a href="music21_stream.js.html#sunlight-1-line-1600">line 1600</a>
 			</li>
 		</ul>
 	</dd>
@@ -3801,7 +4167,7 @@
         
             
 <dt>
-    <h4 class="name" id="getUnscaledXYforCanvas"><span class="type-signature">&lt;static> </span>Stream#getUnscaledXYforCanvas<span class="signature">(canvas, e)</span><span class="type-signature"> &rarr; {Array.&lt;number>}</span></h4>
+    <h4 class="name" id="getStreamFromScaledXandSystemIndex"><span class="type-signature">&lt;static> </span>Stream#getStreamFromScaledXandSystemIndex<span class="signature">(<span class="optional">xPxScaled</span>, <span class="optional">allowablePixels</span>, <span class="optional">systemIndex</span>)</span><span class="type-signature"> &rarr; {<a href="music21.stream.Stream.html">music21.stream.Stream</a>}</span></h4>
     
     
 </dt>
@@ -3809,7 +4175,246 @@
     
     
     <div class="description">
-        <p>Given a mouse click, or other event with .pageX and .pageY,<br>find the x and y for the canvas.</p>
+        <p>Returns the stream that is at X location xPxScaled and system systemIndex.</p>
+<p>Override in subclasses, always returns this; here.</p>
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+
+		<th>Type</th>
+
+		
+		<th>Argument</th>
+		
+
+		
+		<th>Default</th>
+		
+
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+
+	<tbody>
+	
+
+        <tr>
+            
+                <td class="name"><code>xPxScaled</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>allowablePixels</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    10
+                
+                </td>
+            
+
+            <td class="description last"></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>systemIndex</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"></td>
+        </tr>
+
+	
+	</tbody>
+</table>
+
+    
+    
+    
+<dl class="details">
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="music21_stream.js.html">music21/stream.js</a>,
+				 <a href="music21_stream.js.html#sunlight-1-line-1649">line 1649</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    <h5>Returns:</h5>
+    
+            
+
+
+<dl>
+	<dt>
+		Type
+	</dt>
+	<dd>
+		
+<span class="param-type"><a href="music21.stream.Stream.html">music21.stream.Stream</a></span>
+
+
+	</dd>
+</dl>
+
+
+        
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="getUnscaledXYforDOM"><span class="type-signature">&lt;static> </span>Stream#getUnscaledXYforDOM<span class="signature">(svg, e)</span><span class="type-signature"> &rarr; {Array.&lt;number>}</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        <p>Given a mouse click, or other event with .pageX and .pageY,<br>find the x and y for the svg.</p>
     </div>
     
 
@@ -3843,7 +4448,7 @@
 
         <tr>
             
-                <td class="name"><code>canvas</code></td>
+                <td class="name"><code>svg</code></td>
             
 
             <td class="type">
@@ -3859,7 +4464,7 @@
 
             
 
-            <td class="description last"></td>
+            <td class="description last"><p>a canvas or SVG object</p></td>
         </tr>
 
 	
@@ -3919,7 +4524,7 @@
 		<ul class="dummy">
 			<li>
 				<a href="music21_stream.js.html">music21/stream.js</a>,
-				 <a href="music21_stream.js.html#sunlight-1-line-1292">line 1292</a>
+				 <a href="music21_stream.js.html#sunlight-1-line-1553">line 1553</a>
 			</li>
 		</ul>
 	</dd>
@@ -4018,7 +4623,7 @@
 		<ul class="dummy">
 			<li>
 				<a href="music21_stream.js.html">music21/stream.js</a>,
-				 <a href="music21_stream.js.html#sunlight-1-line-637">line 637</a>
+				 <a href="music21_stream.js.html#sunlight-1-line-747">line 747</a>
 			</li>
 		</ul>
 	</dd>
@@ -4113,7 +4718,7 @@
 		<ul class="dummy">
 			<li>
 				<a href="music21_stream.js.html">music21/stream.js</a>,
-				 <a href="music21_stream.js.html#sunlight-1-line-490">line 490</a>
+				 <a href="music21_stream.js.html#sunlight-1-line-598">line 598</a>
 			</li>
 		</ul>
 	</dd>
@@ -4208,7 +4813,7 @@
 		<ul class="dummy">
 			<li>
 				<a href="music21_stream.js.html">music21/stream.js</a>,
-				 <a href="music21_stream.js.html#sunlight-1-line-1621">line 1621</a>
+				 <a href="music21_stream.js.html#sunlight-1-line-1953">line 1953</a>
 			</li>
 		</ul>
 	</dd>
@@ -4375,7 +4980,7 @@
 		<ul class="dummy">
 			<li>
 				<a href="music21_stream.js.html">music21/stream.js</a>,
-				 <a href="music21_stream.js.html#sunlight-1-line-408">line 408</a>
+				 <a href="music21_stream.js.html#sunlight-1-line-473">line 473</a>
 			</li>
 		</ul>
 	</dd>
@@ -4433,7 +5038,7 @@
     
     <div class="description">
         <p>Sets Pitch.accidental.displayStatus for every element with a<br>pitch or pitches in the stream. If a natural needs to be displayed<br>and the Pitch does not have an accidental object yet, adds one.</p>
-<p>Called automatically before appendCanvas routines are called.</p>
+<p>Called automatically before appendDOM routines are called.</p>
     </div>
     
 
@@ -4471,7 +5076,7 @@
 		<ul class="dummy">
 			<li>
 				<a href="music21_stream.js.html">music21/stream.js</a>,
-				 <a href="music21_stream.js.html#sunlight-1-line-712">line 712</a>
+				 <a href="music21_stream.js.html#sunlight-1-line-830">line 830</a>
 			</li>
 		</ul>
 	</dd>
@@ -4619,7 +5224,7 @@
 		<ul class="dummy">
 			<li>
 				<a href="music21_stream.js.html">music21/stream.js</a>,
-				 <a href="music21_stream.js.html#sunlight-1-line-516">line 516</a>
+				 <a href="music21_stream.js.html#sunlight-1-line-624">line 624</a>
 			</li>
 		</ul>
 	</dd>
@@ -4668,7 +5273,7 @@
         
             
 <dt>
-    <h4 class="name" id="noteChanged"><span class="type-signature">&lt;static> </span>Stream#noteChanged<span class="signature">(clickedDiatonicNoteNum, foundNote, canvas)</span><span class="type-signature"> &rarr; {any}</span></h4>
+    <h4 class="name" id="noteChanged"><span class="type-signature">&lt;static> </span>Stream#noteChanged<span class="signature">(clickedDiatonicNoteNum, foundNote, svg)</span><span class="type-signature"> &rarr; {any}</span></h4>
     
     
 </dt>
@@ -4757,7 +5362,7 @@
 
         <tr>
             
-                <td class="name"><code>canvas</code></td>
+                <td class="name"><code>svg</code></td>
             
 
             <td class="type">
@@ -4810,7 +5415,7 @@
 		<ul class="dummy">
 			<li>
 				<a href="music21_stream.js.html">music21/stream.js</a>,
-				 <a href="music21_stream.js.html#sunlight-1-line-1433">line 1433</a>
+				 <a href="music21_stream.js.html#sunlight-1-line-1729">line 1729</a>
 			</li>
 		</ul>
 	</dd>
@@ -4863,7 +5468,7 @@
         
             
 <dt>
-    <h4 class="name" id="noteElementFromScaledX"><span class="type-signature">&lt;static> </span>Stream#noteElementFromScaledX<span class="signature">(xPxScaled, <span class="optional">allowablePixels</span>, <span class="optional">unused_systemIndex</span>)</span><span class="type-signature"> &rarr; {<a href="music21.base.Music21Object.html">music21.base.Music21Object</a>|undefined}</span></h4>
+    <h4 class="name" id="noteElementFromScaledX"><span class="type-signature">&lt;static> </span>Stream#noteElementFromScaledX<span class="signature">(xPxScaled, <span class="optional">allowablePixels</span>, <span class="optional">systemIndex</span>)</span><span class="type-signature"> &rarr; {<a href="music21.base.Music21Object.html">music21.base.Music21Object</a>|undefined}</span></h4>
     
     
 </dt>
@@ -4984,7 +5589,7 @@
 
         <tr>
             
-                <td class="name"><code>unused_systemIndex</code></td>
+                <td class="name"><code>systemIndex</code></td>
             
 
             <td class="type">
@@ -5051,7 +5656,7 @@
 		<ul class="dummy">
 			<li>
 				<a href="music21_stream.js.html">music21/stream.js</a>,
-				 <a href="music21_stream.js.html#sunlight-1-line-1375">line 1375</a>
+				 <a href="music21_stream.js.html#sunlight-1-line-1666">line 1666</a>
 			</li>
 		</ul>
 	</dd>
@@ -5149,7 +5754,7 @@
 		<ul class="dummy">
 			<li>
 				<a href="music21_stream.js.html">music21/stream.js</a>,
-				 <a href="music21_stream.js.html#sunlight-1-line-653">line 653</a>
+				 <a href="music21_stream.js.html#sunlight-1-line-763">line 763</a>
 			</li>
 		</ul>
 	</dd>
@@ -5303,7 +5908,7 @@
 		<ul class="dummy">
 			<li>
 				<a href="music21_stream.js.html">music21/stream.js</a>,
-				 <a href="music21_stream.js.html#sunlight-1-line-952">line 952</a>
+				 <a href="music21_stream.js.html#sunlight-1-line-1123">line 1123</a>
 			</li>
 		</ul>
 	</dd>
@@ -5364,7 +5969,7 @@
     
     
     <div class="description">
-        <p>Remove and return the last element in the stream, or return undefined if the stream is empty</p>
+        <p>Remove and return the last element in the stream,<br>or return undefined if the stream is empty</p>
     </div>
     
 
@@ -5402,7 +6007,7 @@
 		<ul class="dummy">
 			<li>
 				<a href="music21_stream.js.html">music21/stream.js</a>,
-				 <a href="music21_stream.js.html#sunlight-1-line-443">line 443</a>
+				 <a href="music21_stream.js.html#sunlight-1-line-520">line 520</a>
 			</li>
 		</ul>
 	</dd>
@@ -5504,7 +6109,7 @@
 		<ul class="dummy">
 			<li>
 				<a href="music21_stream.js.html">music21/stream.js</a>,
-				 <a href="music21_stream.js.html#sunlight-1-line-1263">line 1263</a>
+				 <a href="music21_stream.js.html#sunlight-1-line-1518">line 1518</a>
 			</li>
 		</ul>
 	</dd>
@@ -5556,7 +6161,7 @@
         
             
 <dt>
-    <h4 class="name" id="redrawCanvas"><span class="type-signature">&lt;static> </span>Stream#redrawCanvas<span class="signature">(canvas)</span><span class="type-signature"> &rarr; {<a href="music21.stream.Stream.html">music21.stream.Stream</a>}</span></h4>
+    <h4 class="name" id="redrawDOM"><span class="type-signature">&lt;static> </span>Stream#redrawDOM<span class="signature">(svg)</span><span class="type-signature"> &rarr; {<a href="music21.stream.Stream.html">music21.stream.Stream</a>}</span></h4>
     
     
 </dt>
@@ -5564,7 +6169,7 @@
     
     
     <div class="description">
-        <p>Redraws a canvas, keeping the events of the previous canvas.</p>
+        <p>Redraws an svgDiv, keeping the events of the previous svg.</p>
     </div>
     
 
@@ -5598,7 +6203,7 @@
 
         <tr>
             
-                <td class="name"><code>canvas</code></td>
+                <td class="name"><code>svg</code></td>
             
 
             <td class="type">
@@ -5651,7 +6256,7 @@
 		<ul class="dummy">
 			<li>
 				<a href="music21_stream.js.html">music21/stream.js</a>,
-				 <a href="music21_stream.js.html#sunlight-1-line-1455">line 1455</a>
+				 <a href="music21_stream.js.html#sunlight-1-line-1758">line 1758</a>
 			</li>
 		</ul>
 	</dd>
@@ -5704,7 +6309,7 @@
         
             
 <dt>
-    <h4 class="name" id="renderScrollableCanvas"><span class="type-signature">&lt;static> </span>Stream#renderScrollableCanvas<span class="signature">(<span class="optional">where</span>)</span><span class="type-signature"> &rarr; {DOMObject}</span></h4>
+    <h4 class="name" id="renderScrollable"><span class="type-signature">&lt;static> </span>Stream#renderScrollable<span class="signature">(<span class="optional">where</span>, elementType)</span><span class="type-signature"> &rarr; {DOMObject}</span></h4>
     
     
 </dt>
@@ -5712,326 +6317,8 @@
     
     
     <div class="description">
-        <p>Renders a canvas which has a scrollbar when clicked.</p>
+        <p>Renders a svg which has a scrollbar when clicked.</p>
 <p>(this is a dumb way of doing this.  Expect it to disappear...)</p>
-    </div>
-    
-
-    
-    
-    
-    
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params table table-striped">
-    <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-
-		<th>Type</th>
-
-		
-		<th>Argument</th>
-		
-
-		
-
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-
-	<tbody>
-	
-
-        <tr>
-            
-                <td class="name"><code>where</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">JQueryDOMObject</span>
-|
-
-<span class="param-type">DOMObject</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last"></td>
-        </tr>
-
-	
-	</tbody>
-</table>
-
-    
-    
-    
-<dl class="details">
-	
-
-	
-
-	
-
-	
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-	<dt class="tag-source">Source:</dt>
-	<dd class="tag-source">
-		<ul class="dummy">
-			<li>
-				<a href="music21_stream.js.html">music21/stream.js</a>,
-				 <a href="music21_stream.js.html#sunlight-1-line-1176">line 1176</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-    
-    
-
-    
-
-    
-    
-    
-    
-    
-    <h5>Returns:</h5>
-    
-            
-<div class="param-desc">
-    <p>canvas</p>
-</div>
-
-
-
-<dl>
-	<dt>
-		Type
-	</dt>
-	<dd>
-		
-<span class="param-type">DOMObject</span>
-
-
-	</dd>
-</dl>
-
-
-        
-    
-    
-</dd>
-
-        
-            
-<dt>
-    <h4 class="name" id="renderVexflowOnCanvas"><span class="type-signature">&lt;static> </span>Stream#renderVexflowOnCanvas<span class="signature">(canvas)</span><span class="type-signature"> &rarr; {<a href="music21.stream.Stream.html">music21.stream.Stream</a>}</span></h4>
-    
-    
-</dt>
-<dd>
-    
-    
-    <div class="description">
-        <p>Uses <a href="music21.vfShow.Renderer.html"><code>music21.vfShow.Renderer</code></a> to render Vexflow onto an<br>existing canvas object.</p>
-<p>Sets canvas.storedStream to this</p>
-<p>Runs <code>this.setRenderInteraction</code> on the canvas.</p>
-<p>Will be moved to vfShow eventually when converter objects are enabled...maybe.</p>
-    </div>
-    
-
-    
-    
-    
-    
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params table table-striped">
-    <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-
-		<th>Type</th>
-
-		
-
-		
-
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-
-	<tbody>
-	
-
-        <tr>
-            
-                <td class="name"><code>canvas</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">DOMObject</span>
-|
-
-<span class="param-type">JQueryDOMObject</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>a canvas object</p></td>
-        </tr>
-
-	
-	</tbody>
-</table>
-
-    
-    
-    
-<dl class="details">
-	
-
-	
-
-	
-
-	
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-	<dt class="tag-source">Source:</dt>
-	<dd class="tag-source">
-		<ul class="dummy">
-			<li>
-				<a href="music21_stream.js.html">music21/stream.js</a>,
-				 <a href="music21_stream.js.html#sunlight-1-line-837">line 837</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-    
-    
-
-    
-
-    
-    
-    
-    
-    
-    <h5>Returns:</h5>
-    
-            
-<div class="param-desc">
-    <p>this</p>
-</div>
-
-
-
-<dl>
-	<dt>
-		Type
-	</dt>
-	<dd>
-		
-<span class="param-type"><a href="music21.stream.Stream.html">music21.stream.Stream</a></span>
-
-
-	</dd>
-</dl>
-
-
-        
-    
-    
-</dd>
-
-        
-            
-<dt>
-    <h4 class="name" id="replaceCanvas"><span class="type-signature">&lt;static> </span>Stream#replaceCanvas<span class="signature">(<span class="optional">where</span>, <span class="optional">preserveCanvasSize</span>)</span><span class="type-signature"> &rarr; {JQueryDOMObject}</span></h4>
-    
-    
-</dt>
-<dd>
-    
-    
-    <div class="description">
-        <p>Replaces a particular Canvas with a new rendering of one.</p>
-<p>Note that if 'where' is empty, will replace all canvases on the page.</p>
     </div>
     
 
@@ -6102,20 +6389,20 @@
                 </td>
             
 
-            <td class="description last"><p>the canvas to replace or a container holding the canvas(es) to replace.</p></td>
+            <td class="description last"></td>
         </tr>
 
 	
 
         <tr>
             
-                <td class="name"><code>preserveCanvasSize</code></td>
+                <td class="name"><code>elementType</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">Boolean</span>
+<span class="param-type">string</span>
 
 
             
@@ -6123,8 +6410,6 @@
 
             
                 <td class="attributes">
-                
-                    &lt;optional><br>
                 
 
                 
@@ -6136,12 +6421,12 @@
             
                 <td class="default">
                 
-                    false
+                    svg
                 
                 </td>
             
 
-            <td class="description last"></td>
+            <td class="description last"><p>what type of element, default = svg</p></td>
         </tr>
 
 	
@@ -6178,7 +6463,7 @@
 		<ul class="dummy">
 			<li>
 				<a href="music21_stream.js.html">music21/stream.js</a>,
-				 <a href="music21_stream.js.html#sunlight-1-line-1125">line 1125</a>
+				 <a href="music21_stream.js.html#sunlight-1-line-1417">line 1417</a>
 			</li>
 		</ul>
 	</dd>
@@ -6205,7 +6490,402 @@
     
             
 <div class="param-desc">
-    <p>the canvas</p>
+    <p>svg</p>
+</div>
+
+
+
+<dl>
+	<dt>
+		Type
+	</dt>
+	<dd>
+		
+<span class="param-type">DOMObject</span>
+
+
+	</dd>
+</dl>
+
+
+        
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="renderVexflow"><span class="type-signature">&lt;static> </span>Stream#renderVexflow<span class="signature">(canvasOrSVG)</span><span class="type-signature"> &rarr; {vfShow.Renderer}</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        <p>Uses <a href="music21.vfShow.Renderer.html"><code>music21.vfShow.Renderer</code></a> to render Vexflow onto an<br>existing canvas or SVG object.</p>
+<p>Runs <code>this.setRenderInteraction</code> on the canvas.</p>
+<p>Will be moved to vfShow eventually when converter objects are enabled...maybe.</p>
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+
+		<th>Type</th>
+
+		
+
+		
+
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+
+	<tbody>
+	
+
+        <tr>
+            
+                <td class="name"><code>canvasOrSVG</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">DOMObject</span>
+|
+
+<span class="param-type">JQueryDOMObject</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>a canvas or the div surrounding an SVG object</p></td>
+        </tr>
+
+	
+	</tbody>
+</table>
+
+    
+    
+    
+<dl class="details">
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="music21_stream.js.html">music21/stream.js</a>,
+				 <a href="music21_stream.js.html#sunlight-1-line-973">line 973</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    <h5>Returns:</h5>
+    
+            
+
+
+<dl>
+	<dt>
+		Type
+	</dt>
+	<dd>
+		
+<span class="param-type">vfShow.Renderer</span>
+
+
+	</dd>
+</dl>
+
+
+        
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="replaceDOM"><span class="type-signature">&lt;static> </span>Stream#replaceDOM<span class="signature">(<span class="optional">where</span>, <span class="optional">preserveSvgSize</span>, elementType)</span><span class="type-signature"> &rarr; {JQueryDOMObject}</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        <p>Replaces a particular Svg with a new rendering of one.</p>
+<p>Note that if 'where' is empty, will replace all svges on the page.</p>
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+
+		<th>Type</th>
+
+		
+		<th>Argument</th>
+		
+
+		
+		<th>Default</th>
+		
+
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+
+	<tbody>
+	
+
+        <tr>
+            
+                <td class="name"><code>where</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">JQueryDOMObject</span>
+|
+
+<span class="param-type">DOMObject</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><p>the canvas or SVG to replace or a container holding the canvas(es) to replace.</p></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>preserveSvgSize</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Boolean</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    false
+                
+                </td>
+            
+
+            <td class="description last"></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>elementType</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    svg
+                
+                </td>
+            
+
+            <td class="description last"><p>what type of element, default = svg</p></td>
+        </tr>
+
+	
+	</tbody>
+</table>
+
+    
+    
+    
+<dl class="details">
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="music21_stream.js.html">music21/stream.js</a>,
+				 <a href="music21_stream.js.html#sunlight-1-line-1359">line 1359</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+    <p>the svg</p>
 </div>
 
 
@@ -6385,7 +7065,7 @@
 		<ul class="dummy">
 			<li>
 				<a href="music21_stream.js.html">music21/stream.js</a>,
-				 <a href="music21_stream.js.html#sunlight-1-line-802">line 802</a>
+				 <a href="music21_stream.js.html#sunlight-1-line-936">line 936</a>
 			</li>
 		</ul>
 	</dd>
@@ -6446,7 +7126,7 @@
     
     
     <div class="description">
-        <p>Sets up a <a href="music21.streamInteraction.ScrollPlayer.html"><code>music21.streamInteraction.ScrollPlayer</code></a> for this<br>canvas.</p>
+        <p>Sets up a <a href="music21.streamInteraction.ScrollPlayer.html"><code>music21.streamInteraction.ScrollPlayer</code></a> for this<br>svg.</p>
     </div>
     
 
@@ -6506,7 +7186,7 @@
 
             
 
-            <td class="description last"><p>canvas</p></td>
+            <td class="description last"><p>svg</p></td>
         </tr>
 
 	
@@ -6576,7 +7256,7 @@
 		<ul class="dummy">
 			<li>
 				<a href="music21_stream.js.html">music21/stream.js</a>,
-				 <a href="music21_stream.js.html#sunlight-1-line-1206">line 1206</a>
+				 <a href="music21_stream.js.html#sunlight-1-line-1448">line 1448</a>
 			</li>
 		</ul>
 	</dd>
@@ -6633,7 +7313,7 @@
     
     
     <div class="description">
-        <p>Set the type of interaction on the canvas based on</p>
+        <p>Set the type of interaction on the svg based on</p>
 <ul>
 <li>Stream.renderOptions.events.click</li>
 <li>Stream.renderOptions.events.dblclick</li>
@@ -6732,7 +7412,7 @@
 		<ul class="dummy">
 			<li>
 				<a href="music21_stream.js.html">music21/stream.js</a>,
-				 <a href="music21_stream.js.html#sunlight-1-line-1232">line 1232</a>
+				 <a href="music21_stream.js.html#sunlight-1-line-1473">line 1473</a>
 			</li>
 		</ul>
 	</dd>
@@ -6831,7 +7511,7 @@
 		<ul class="dummy">
 			<li>
 				<a href="music21_stream.js.html">music21/stream.js</a>,
-				 <a href="music21_stream.js.html#sunlight-1-line-789">line 789</a>
+				 <a href="music21_stream.js.html#sunlight-1-line-923">line 923</a>
 			</li>
 		</ul>
 	</dd>
@@ -6930,7 +7610,7 @@
 		<ul class="dummy">
 			<li>
 				<a href="music21_stream.js.html">music21/stream.js</a>,
-				 <a href="music21_stream.js.html#sunlight-1-line-997">line 997</a>
+				 <a href="music21_stream.js.html#sunlight-1-line-1184">line 1184</a>
 			</li>
 		</ul>
 	</dd>
@@ -6983,7 +7663,7 @@
         
             
 <dt>
-    <h4 class="name" id="windowReflowStart"><span class="type-signature">&lt;static> </span>Stream#windowReflowStart<span class="signature">(jCanvas)</span><span class="type-signature"> &rarr; {<a href="music21.stream.Stream.html">music21.stream.Stream</a>}</span></h4>
+    <h4 class="name" id="windowReflowStart"><span class="type-signature">&lt;static> </span>Stream#windowReflowStart<span class="signature">(jSvg)</span><span class="type-signature"> &rarr; {<a href="music21.stream.Stream.html">music21.stream.Stream</a>}</span></h4>
     
     
 </dt>
@@ -7025,7 +7705,7 @@
 
         <tr>
             
-                <td class="name"><code>jCanvas</code></td>
+                <td class="name"><code>jSvg</code></td>
             
 
             <td class="type">
@@ -7078,7 +7758,7 @@
 		<ul class="dummy">
 			<li>
 				<a href="music21_stream.js.html">music21/stream.js</a>,
-				 <a href="music21_stream.js.html#sunlight-1-line-1578">line 1578</a>
+				 <a href="music21_stream.js.html#sunlight-1-line-1910">line 1910</a>
 			</li>
 		</ul>
 	</dd>
@@ -7131,7 +7811,7 @@
         
             
 <dt>
-    <h4 class="name" id=".this.canvasChangerFunction"><span class="type-signature">&lt;static> </span>this.canvasChangerFunction<span class="signature">(e)</span><span class="type-signature"> &rarr; {<a href="music21.base.Music21Object.html">music21.base.Music21Object</a>|undefined}</span></h4>
+    <h4 class="name" id=".this.DOMChangerFunction"><span class="type-signature">&lt;static> </span>this.DOMChangerFunction<span class="signature">(e)</span><span class="type-signature"> &rarr; {<a href="music21.base.Music21Object.html">music21.base.Music21Object</a>|undefined}</span></h4>
     
     
 </dt>
@@ -7139,9 +7819,9 @@
     
     
     <div class="description">
-        <p>A function bound to the current stream that<br>will changes the stream. Used in editableAccidentalCanvas, among other places.</p>
-<pre class="prettyprint source"><code> var can = s.appendNewCanvas();
- $(can).on('click', s.canvasChangerFunction);</code></pre>
+        <p>A function bound to the current stream that<br>will changes the stream. Used in editableAccidentalDOM, among other places.</p>
+<pre class="prettyprint source"><code> var can = s.appendNewDOM();
+ $(can).on('click', s.DOMChangerFunction);</code></pre>
     </div>
     
 
@@ -7228,7 +7908,7 @@
 		<ul class="dummy">
 			<li>
 				<a href="music21_stream.js.html">music21/stream.js</a>,
-				 <a href="music21_stream.js.html#sunlight-1-line-122">line 122</a>
+				 <a href="music21_stream.js.html#sunlight-1-line-132">line 132</a>
 			</li>
 		</ul>
 	</dd>
@@ -7308,8 +7988,8 @@
 					<br />
 					
 		<span class="jsdoc-message">
-		Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.4</a>
-		on Thu Aug 17th 2017 using the <a
+		Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a>
+		on Sat Feb 10th 2018 using the <a
 			href="https://github.com/terryweiss/docstrap">DocStrap template</a>.
 		</span>
 				</footer>

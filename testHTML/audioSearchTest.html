@@ -11,7 +11,7 @@
        sss.clef = new music21.clef.Clef('treble');
        sss.append(nnn);
        sss.renderOptions.scaleFactor = {x: 1.5, y: 1.5};
-       sss.appendNewCanvas('#canvasDiv');
+       sss.appendNewDOM('#SVGDiv');
        $('#startListening').on('click', function () { music21.audioSearch.getUserMedia() });
        $('#stopListening').on('click', function () { window.cancelAnimationFrame(music21.audioSearch.animationFrameCallbackId); });
        $nn = $('#noteName');
@@ -21,13 +21,13 @@
            sss.clef = new music21.clef.Clef('bass');
            music21.audioSearch.minFrequency = new music21.pitch.Pitch('F2').frequency;
            music21.audioSearch.maxFrequency = new music21.pitch.Pitch('F4').frequency;       
-           sss.replaceCanvas();
+           sss.replaceDOM();
        })
        $('#trebleClef').on('click', function () {
            sss.clef = new music21.clef.Clef('treble');
            music21.audioSearch.minFrequency = new music21.pitch.Pitch('G3').frequency;
            music21.audioSearch.maxFrequency = new music21.pitch.Pitch('A5').frequency;
-           sss.replaceCanvas();
+           sss.replaceDOM();
        })
        var lastNote = 0;
        var lastLeft = 150;
@@ -46,7 +46,7 @@
 	               }
 	               name += p.octave.toString();
 	               nnn.pitch = p
-	               sss.replaceCanvas();
+	               sss.replaceDOM();
 	           }
 	           // 0 = red; 120 = green; 240 = blue
 	           var hue = ((-1 * centsOff) + 50) * 2.4;
@@ -74,7 +74,7 @@
 <button id='bassClef'>Bass</button>
 <button id='trebleClef'>Treble</button>
 
-<div id='canvasDiv' style='margin-left: 80px'></div>
+<div id='SVGDiv' style='margin-left: 80px'></div>
 <div id='counterHolder' style='position: relative; text-align: center; border: 1px solid black; width: 340px'>
     <div id='counter' style='position: relative; width: 40px; background-color: white; height: 30px'>&nbsp;</div>
 </div>

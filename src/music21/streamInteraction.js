@@ -144,7 +144,7 @@ export class Follower {
      * (set this to an event on stream, or something...)
      *
      * currently called from {@link music21.stream.Stream#scrollScoreStart} via
-     * {@link music21.stream.Stream#renderScrollableCanvas}. Will change.
+     * {@link music21.stream.Stream#renderScrollable}. Will change.
      *
      * @memberof music21.streamInteraction.ScrollPlayer
      */
@@ -182,7 +182,7 @@ streamInteraction.Follower = Follower;
  * @param {music21.stream.Stream} s -- Stream
  * @param {canvasOrSvg} c -- canvas or svg
  * @property {SVGDOMObject} barDOM - DOM object representing the scrolling bar
- * @property {SVGDOMObject} svgDOM - DOM object holding the scrolling bar (overlaid on top of canvas)
+ * @property {SVGDOMObject} svgDOM - DOM object holding the scrolling bar (overlaid on top of SVG)
  */
 export class ScrollPlayer extends Follower {
     constructor(s, c) {
@@ -215,7 +215,7 @@ export class ScrollPlayer extends Follower {
      * (set this to an event on stream, or something...)
      *
      * currently called from {@link music21.stream.Stream#scrollScoreStart} via
-     * {@link music21.stream.Stream#renderScrollableCanvas}. Will change.
+     * {@link music21.stream.Stream#renderScrollable}. Will change.
      *
      * @memberof music21.streamInteraction.ScrollPlayer
      */
@@ -337,7 +337,7 @@ export class PixelMapper {
         if (finalVFNote === undefined) {
             throw new StreamException(
                 'Cannot make a pixel map where activeVexflowNotes are undefined. '
-                    + 'Run s.createCanvas() before constructing a PixelMapper.'
+                    + 'Run s.createDOM() before constructing a PixelMapper.'
             );
         }
         const finalStave = finalVFNote.stave;
@@ -402,7 +402,7 @@ export class PixelMapper {
      * @returns {Array<music21.streamInteraction.PixelMap|undefined>} returns two PixelMaps; or either (but not both) can be undefined
      * @example
      * var s = new music21.tinyNotation.TinyNotation('3/4 c4 d8 e f4 g4 a4 b4');
-     * var can = s.appendNewCanvas();
+     * var can = s.appendNewDOM();
      * var pm = new music21.streamInteraction.PixelMapper(s);
      * var pmaps = pm.getPixelMapsAropundOffset(1.25);
      * var prev = pmaps[0];
@@ -449,7 +449,7 @@ export class PixelMapper {
      * @returns {number}
      * @example
      * var s = new music21.tinyNotation.TinyNotation('3/4 c4 d8 e f4 g4 a4 b4');
-     * var can = s.appendNewCanvas();
+     * var can = s.appendNewDOM();
      * var pm = new music21.streamInteraction.PixelMapper(s);
      * pm.getXAtOffset(0.0); // exact placement of a note
      * // 89.94...
@@ -515,7 +515,7 @@ streamInteraction.PixelMapper = PixelMapper;
  * @example
  * // not a particularly realistic example, since it requires so much setup...
  * var s = new music21.tinyNotation.TinyNotation('3/4 c4 d8 e f4 g4 a4 b4');
- * var can = s.appendNewCanvas();
+ * var can = s.appendNewDOM();
  * var pmapper = new music21.streamInteraction.PixelMapper(s);
  * var pmapA = new music21.streamInteraction.PixelMap(pmapper, 2.0);
  * pmapA.elements = [s.flat.get(3)];
@@ -575,7 +575,7 @@ export class SimpleNoteEditor {
     constructor(s) {
         this.stream = s;
         this.activeNote = undefined;
-        this.changedCallbackFunction = undefined; // for editable canvases
+        this.changedCallbackFunction = undefined; // for editable SVG
         this.accidentalsByStepOctave = {};
         this.minAccidentalEditor = -1;
         this.maxAccidentalEditor = 1;
@@ -590,9 +590,9 @@ export class SimpleNoteEditor {
 
     /**
      * A function bound to the current stream that
-     * will changes the stream. Used in editableAccidentalCanvas, among other places.
+     * will changes the stream. Used in editableAccidentalDOM, among other places.
      *
-     *      var can = s.appendNewCanvas();
+     *      var can = s.appendNewDOM();
      *      $(can).on('click', s.changeClickedNoteFromEvent);
      *
      * @memberof music21.streamInteraction.SimpleNoteEditor
@@ -645,7 +645,7 @@ export class SimpleNoteEditor {
         n.pitch = p;
         n.stemDirection = undefined;
         this.activeNote = n;
-        const $newSvg = this.stream.redrawCanvas(canvasOrSvg);
+        const $newSvg = this.stream.redrawDOM(canvasOrSvg);
         const params = { foundNote: n, svg: $newSvg };
         if (this.changedCallbackFunction !== undefined) {
             return this.changedCallbackFunction(params);
@@ -654,18 +654,23 @@ export class SimpleNoteEditor {
         }
     }
 
+    editableAccidentalCanvas(width, height) {
+        console.warn('editableAccidentalCanvas is deprecated, use editableAccidentalDOM instead');
+        return this.editableAccidentalDOM(width, height);
+    }
+    
     /**
-     * Renders a stream on a canvas with the ability to edit it and
+     * Renders a stream on a SVG with the ability to edit it and
      * a toolbar that allows the accidentals to be edited.
      *
      * @memberof music21.streamInteraction.SimpleNoteEditor
      * @param {number} [width]
      * @param {number} [height]
-     * @returns {DOMObject} &lt;div&gt; tag around the canvas.
+     * @returns {DOMObject} &lt;div&gt; tag around the canvas or streamholding SVG-div.
      */
-    editableAccidentalCanvas(width, height) {
+    editableAccidentalDOM(width, height) {
         /*
-         * Create an editable canvas with an accidental selection bar.
+         * Create an editable svg with an accidental selection bar.
          */
         const $d = $('<div/>')
             .css('text-align', 'left')
@@ -674,10 +679,10 @@ export class SimpleNoteEditor {
         $d.append($buttonDiv);
         $d.append($("<br clear='all'/>"));
         this.activateClick();
-        this.stream.appendNewCanvas($d, width, height);
+        this.stream.appendNewDOM($d, width, height);
         return $d;
-    }
-
+    }    
+    
     /**
      * activateClick - sets the stream's renderOptions to activate clickFunction.
      *
@@ -697,10 +702,10 @@ export class SimpleNoteEditor {
      * @memberof music21.streamInteraction.SimpleNoteEditor
      * @param {Int} minAccidental - alter of the min accidental (default -1)
      * @param {Int} maxAccidental - alter of the max accidental (default 1)
-     * @param {jQueryObject} $siblingCanvas - canvas or svg to use for redrawing;
+     * @param {jQueryObject} $siblingDOM - canvas or svg to use for redrawing;
      * @returns {jQueryObject} the accidental toolbar.
      */
-    getAccidentalToolbar(minAccidental, maxAccidental, $siblingCanvas) {
+    getAccidentalToolbar(minAccidental, maxAccidental, siblingDOM) {
         if (minAccidental === undefined) {
             minAccidental = this.minAccidentalEditor;
         }
@@ -718,7 +723,7 @@ export class SimpleNoteEditor {
             const acc = new pitch.Accidental(i);
             const $button = $(
                 '<button>' + acc.unicodeModifier + '</button>'
-            ).click(e => this.addAccidental(i, e, $siblingCanvas));
+            ).click(e => this.addAccidental(i, e, siblingDOM));
             if (Math.abs(i) > 1) {
                 $button.css('font-family', 'Bravura Text');
                 $button.css('font-size', '20px');
@@ -728,36 +733,41 @@ export class SimpleNoteEditor {
         return $buttonDiv;
     }
 
+    getUseCanvasFromClickEvent(clickEvent) {
+        console.warn('getUseCanvasFromClickEvent is deprecated, use getDOMFromClickEvent instead');
+        return this.getDOMFromClickEvent(clickEvent);
+    }
+    
     /**
      * getUseCanvasFromClickEvent - get the active canvas or svg from the click even
      *
      * @param  {event} clickEvent
      * @return {jQueryObject}  $canvas
      */
-    getUseCanvasFromClickEvent(clickEvent) {
+    getDOMFromClickEvent(clickEvent) {
         let $searchParent = $(clickEvent.target).parent();
-        let $useCanvas;
+        let $useDOM;
         let maxSearch = 99;
         while (
             maxSearch > 0
             && $searchParent !== undefined
-            && ($useCanvas === undefined || $useCanvas[0] === undefined)
+            && ($useDOM === undefined || $useDOM[0] === undefined)
         ) {
             maxSearch -= 1;
-            $useCanvas = $searchParent.find('.streamHolding');
+            $useDOM = $searchParent.find('.streamHolding');
             $searchParent = $searchParent.parent();
         }
-        if ($useCanvas[0] === undefined) {
-            console.log('Could not find a canvas...');
+        if ($useDOM[0] === undefined) {
+            console.log('Could not find a div or canvas...');
             return undefined;
         }
-        return $useCanvas;
+        return $useDOM;
     }
 
-    addAccidental(newAlter, clickEvent, $useCanvas) {
-        if ($useCanvas === undefined) {
-            $useCanvas = this.getUseCanvasFromClickEvent(clickEvent);
-            if ($useCanvas === undefined) {
+    addAccidental(newAlter, clickEvent, $useDOM) {
+        if ($useDOM === undefined) {
+            $useDOM = this.getDOMFromClickEvent(clickEvent);
+            if ($useDOM === undefined) {
                 return undefined;
             }
         }
@@ -766,7 +776,7 @@ export class SimpleNoteEditor {
             n.accidentalIsFromKeySignature = false;
             n.pitch.accidental = new pitch.Accidental(newAlter);
             /* console.log(n.pitch.name); */
-            const $newSvg = this.stream.redrawCanvas($useCanvas[0]);
+            const $newSvg = this.stream.redrawDOM($useDOM[0]);
             const params = { foundNote: n, svg: $newSvg };
             if (this.changedCallbackFunction !== undefined) {
                 return this.changedCallbackFunction(params);
@@ -818,8 +828,13 @@ export class FourPartEditor extends GrandStaffEditor {
     }
 
     editableCanvas(width, height) {
+        console.warn('editableCanvas is deprecated, use editableDOM instead');
+        return this.editableDOM(width, height);
+    }
+    
+    editableDOM(width, height) {
         /*
-         * Create an editable canvas with an accidental selection bar.
+         * Create an editable DOM or canvas with an accidental selection bar.
          */
         const $d = $('<div/>')
             .css('text-align', 'left')
@@ -844,20 +859,20 @@ export class FourPartEditor extends GrandStaffEditor {
         $d.append($voiceDiv);
         $d.append($("<br clear='all'/>"));
         this.activateClick();
-        this.stream.appendNewCanvas($d, width, height);
+        this.stream.appendNewDOM($d, width, height);
         return $d;
     }
 
     /**
      * setActiveInformation - given a click event, set the active information
      *
-     * @param  {DOMObject} canvasElement canvas
+     * @param  {DOMObject} DOMElement div-surrounding-SVG or canvas
      * @param  {event} e             click event.
      * @return {undefined}
      */
 
-    setActiveInformation(canvasElement, e) {
-        const [x, y] = this.stream.getScaledXYforCanvas(canvasElement, e);
+    setActiveInformation(DOMElement, e) {
+        const [x, y] = this.stream.getScaledXYforDOM(DOMElement, e);
         const systemIndex = this.stream.systemIndexAndScaledY(y)[0];
         // measureChosen will always be in the first part...
         const measureChosen = this.stream.getStreamFromScaledXandSystemIndex(
@@ -895,9 +910,9 @@ export class FourPartEditor extends GrandStaffEditor {
 
     /**
      * A function bound to the current stream that
-     * will changes the stream. Used in editableAccidentalCanvas, among other places.
+     * will changes the stream. Used in editableAccidentalDOM, among other places.
      *
-     *      var can = s.appendNewCanvas();
+     *      var can = s.appendNewDOM();
      *      $(can).on('click', s.changeClickedNoteFromEvent);
      *
      * @memberof music21.stream.Stream
@@ -905,14 +920,14 @@ export class FourPartEditor extends GrandStaffEditor {
      * @returns {music21.base.Music21Object|undefined} - returns whatever changedCallbackFunction does.
      */
     changeClickedNoteFromEvent(e) {
-        const canvasElement = e.currentTarget;
-        this.setActiveInformation(canvasElement, e);
+        const domElement = e.currentTarget;
+        this.setActiveInformation(domElement, e);
         this.activeVoice.renderOptions.scaleFactor = this.stream.renderOptions.scaleFactor;
 
         // the activeVoice can find the right note object but not
         // the right DNN
         const [unused_wrong_dnn, foundNote] = this.activeVoice.findNoteForClick(
-            canvasElement,
+                domElement,
             e
         );
 
@@ -921,7 +936,7 @@ export class FourPartEditor extends GrandStaffEditor {
         const [
             clickedDiatonicNoteNum,
             unused_wrong_note
-        ] = this.stream.findNoteForClick(canvasElement, e);
+        ] = this.stream.findNoteForClick(domElement, e);
 
         if (foundNote === undefined) {
             if (debug) {
@@ -932,11 +947,11 @@ export class FourPartEditor extends GrandStaffEditor {
         return this.noteChanged(
             clickedDiatonicNoteNum,
             foundNote,
-            canvasElement
+            domElement
         );
     }
 
-    noteChanged(clickedDiatonicNoteNum, foundNote, canvas) {
+    noteChanged(clickedDiatonicNoteNum, foundNote, domElement) {
         const n = foundNote;
         const p = new pitch.Pitch('C');
         p.diatonicNoteNum = clickedDiatonicNoteNum;
@@ -957,7 +972,7 @@ export class FourPartEditor extends GrandStaffEditor {
             n.stemDirection = 'down';
         }
         this.activeNote = n;
-        const $newSvg = this.stream.redrawCanvas(canvas);
+        const $newSvg = this.stream.redrawDOM(domElement);
         const params = { foundNote: n, svg: $newSvg };
         
         if (this.changedCallbackFunction !== undefined) {

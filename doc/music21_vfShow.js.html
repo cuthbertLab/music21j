@@ -124,6 +124,10 @@
 						</li>
 						
 						<li>
+							<a href="music21.sites.html">music21.sites</a>
+						</li>
+						
+						<li>
 							<a href="music21.stream.html">music21.stream</a>
 						</li>
 						
@@ -410,6 +414,10 @@
 						</li>
 						
 						<li>
+							<a href="music21.streamInteraction.Follower.html">music21.streamInteraction.Follower</a>
+						</li>
+						
+						<li>
 							<a href="music21.streamInteraction.PixelMap.html">music21.streamInteraction.PixelMap</a>
 						</li>
 						
@@ -439,6 +447,10 @@
 						
 						<li>
 							<a href="music21.widgets.RhythmChooser.html">music21.widgets.RhythmChooser</a>
+						</li>
+						
+						<li>
+							<a href="Notation.html">Notation</a>
 						</li>
 						
 						<li>
@@ -505,11 +517,20 @@
 <section>
 	<article>
 		<pre
-			class="sunlight-highlight-javascript linenums">import * as $ from 'jquery';
+			class="sunlight-highlight-javascript linenums">/**
+ * music21j -- Javascript reimplementation of Core music21p features.
+ * music21/vfShow -- Vexflow integration
+ *
+ * Copyright (c) 2013-17, Michael Scott Cuthbert and cuthbertLab
+ * Based on music21 (=music21p), Copyright (c) 2006–17, Michael Scott Cuthbert and cuthbertLab
+ *
+ */
+
+import * as $ from 'jquery';
 import * as Vex from 'vexflow';
 
-import { debug } from './debug';
-import { duration } from './duration';
+import { debug } from './debug.js';
+import { duration } from './duration.js';
 /**
  * for rendering vexflow. Will eventually go to music21/converter/vexflow
  *
@@ -581,45 +602,46 @@ export class RenderStack {
 }
 vfShow.RenderStack = RenderStack;
 
-
 /**
  * Renderer is a function that takes a stream, an
- * optional existing canvas element and a DOM
- * element where the canvas element should be placed
+ * optional existing canvas or SVG element and a DOM
+ * element where the canvas or SVG element should be placed
  * and renders the stream as Vexflow on the
- * canvas element, placing it then in the where
+ * canvas or svg element, placing it then in the where
  * DOM.
  *
  * "s" can be any type of Stream.
  *
- * "canvas" and "where" can be either a DOM
+ * "div" and "where" can be either a DOM
  * element or a jQuery object.
  *
  * @class Renderer
  * @memberof music21.vfShow
  * @param {music21.stream.Stream} s - main stream to render
- * @param {canvas} [canvas] - existing canvas element
+ * @param {div} [div] - existing canvas or div-surroundingSVG element
  * @param {DOMObject|jQueryDOMObject} [where=document.body] - where to render the stream
  * @property {Vex.Flow.Renderer} vfRenderer - a Vex.Flow.Renderer to use
  * (will create if not existing)
- * @property {Vex.Flow.Context} ctx - a Vex.Flow.Context (Canvas or Raphael [not yet]) to use.
- * @property {canvas} canvas - canvas element
- * @property {jQueryDOMObject} $canvas - jQuery canvas element
+ * @property {string} rendererType - canvas or svg
+ * @property {Vex.Flow.Context} ctx - a Vex.Flow.Context (Canvas or SVG) to use.
+ * @property {div} div - div-with-svg-or-canvas element
+ * @property {jQueryDOMObject} $div - jQuery div or canvas element
  * @property {jQueryDOMObject} $where - jQuery element to render onto
  * @property {Vex.Flow.Formatter} activeFormatter - formatter
  * @property {Array&lt;Vex.Flow.Beam>} beamGroups - beamGroups
- * @property {Array&lt;Vex.Flow.StaveTie>} ties - ties
+ * @property {Array&lt;Vex.Flow.StaveTie>} vfTies - ties as instances of Vex.Flow.StaveTie
  * @property {Array&lt;number>} systemBreakOffsets - where to break the systems
  * @property {Array&lt;Vex.Flow.Tuplet>} vfTuplets - tuplets represented in Vexflow
  * @property {Array&lt;music21.vfShow.RenderStack>} stacks - array of RenderStack objects
  */
 export class Renderer {
-    constructor(s, canvas, where) {
+    constructor(s, div, where) {
         this.stream = s;
         // this.streamType = s.classes[-1];
+        this.rendererType = 'svg';
 
-        this.canvas = undefined;
-        this.$canvas = undefined;
+        this.div = undefined;
+        this.$div = undefined;
         this.$where = undefined;
         this.activeFormatter = undefined;
         this._vfRenderer = undefined;
@@ -627,7 +649,7 @@ export class Renderer {
         this.beamGroups = [];
         this.stacks = []; // an Array of RenderStacks: {voices: [Array of Vex.Flow.Voice objects],
         //                                           streams: [Array of Streams, usually Measures]}
-        this.ties = [];
+        this.vfTies = [];
         this.systemBreakOffsets = [];
         this.vfTuplets = [];
         // this.measureFormatters = [];
@@ -638,23 +660,35 @@ export class Renderer {
                 this.$where = $(where);
             }
         }
-        if (canvas !== undefined) {
-            if (canvas.jquery !== undefined) {
-                this.$canvas = canvas;
-                this.canvas = canvas[0];
+        if (div !== undefined) {
+            if (div.jquery !== undefined) {
+                this.$div = div;
+                this.div = div[0];
             } else {
-                this.canvas = canvas;
-                this.$canvas = $(canvas);
+                this.div = div;
+                this.$div = $(div);
             }
         }
     }
+
     get vfRenderer() {
+        let backend;
+        if (this.rendererType === 'canvas') {
+            backend = Vex.Flow.Renderer.Backends.CANVAS;
+        } else {
+            backend = Vex.Flow.Renderer.Backends.SVG;
+        }
+
         if (this._vfRenderer !== undefined) {
             return this._vfRenderer;
         } else {
-            this._vfRenderer = new Vex.Flow.Renderer(
-                this.canvas,
-                Vex.Flow.Renderer.Backends.CANVAS);
+            this._vfRenderer = new Vex.Flow.Renderer(this.div, backend);
+            if (this.rendererType === 'svg') {
+                this._vfRenderer.resize(
+                    this.$div.attr('width'),
+                    this.$div.attr('height')
+                );
+            }
             return this._vfRenderer;
         }
     }
@@ -666,10 +700,16 @@ export class Renderer {
             return this._ctx;
         } else {
             this._ctx = this.vfRenderer.getContext();
-            if (this.stream &amp;&amp; this.stream.renderOptions) {
+            if (
+                this.stream
+                &amp;&amp; this.stream.renderOptions
+                &amp;&amp; this.stream.renderOptions.scaleFactor.x
+                &amp;&amp; this.stream.renderOptions.scaleFactor.y
+            ) {
                 this._ctx.scale(
                     this.stream.renderOptions.scaleFactor.x,
-                    this.stream.renderOptions.scaleFactor.y);
+                    this.stream.renderOptions.scaleFactor.y
+                );
             }
             return this._ctx;
         }
@@ -727,8 +767,10 @@ export class Renderer {
      */
     prepareScorelike(s) {
         // console.log('prepareScorelike called');
-        for (let i = 0; i &lt; s.length; i++) {
-            const subStream = s.get(i);
+        //
+        const parts = s.parts;
+        for (let i = 0; i &lt; parts.length; i++) {
+            const subStream = parts.get(i);
             this.preparePartlike(subStream);
         }
         this.addStaffConnectors(s);
@@ -745,12 +787,13 @@ export class Renderer {
     preparePartlike(p) {
         // console.log('preparePartlike called');
         this.systemBreakOffsets = [];
-        for (let i = 0; i &lt; p.length; i++) {
-            const subStream = p.get(i);
+        const measureList = p.measures;
+        for (let i = 0; i &lt; measureList.length; i++) {
+            const subStream = measureList.get(i);
             if (subStream.renderOptions.startNewSystem) {
                 this.systemBreakOffsets.push(subStream.offset);
             }
-            if (i === (p.length - 1)) {
+            if (i === p.length - 1) {
                 subStream.renderOptions.rightBarline = 'end';
             }
             if (this.stacks[i] === undefined) {
@@ -763,7 +806,7 @@ export class Renderer {
     /**
      *
      * Prepares a score that arrived flat... sets up
-     * stacks and ties after calling prepareFlat
+     * stacks and vfTies after calling prepareFlat
      *
      * @memberof music21.vfShow.Renderer
      * @param {music21.stream.Stream} m - a flat stream (maybe a measure or voice)
@@ -875,24 +918,24 @@ export class Renderer {
      */
     drawTuplets() {
         const ctx = this.ctx;
-        this.vfTuplets.forEach((vft) => {
+        this.vfTuplets.forEach(vft => {
             vft.setContext(ctx).draw();
         });
     }
     /**
-     * draws the ties
+     * draws the vfTies
      *
      * @memberof music21.vfShow.Renderer
      */
     drawTies() {
         const ctx = this.ctx;
-        for (let i = 0; i &lt; this.ties.length; i++) {
-            this.ties[i].setContext(ctx).draw();
+        for (let i = 0; i &lt; this.vfTies.length; i++) {
+            this.vfTies[i].setContext(ctx).draw();
         }
     }
     /**
      * Finds all tied notes and creates the proper Vex.Flow.StaveTie objects in
-     * `this.ties`.
+     * `this.vfTies`.
      *
      * @memberof music21.vfShow.Renderer
      * @param {music21.stream.Part} p - a Part or similar object
@@ -910,7 +953,10 @@ export class Renderer {
             // this.systemBreakOffsets.length will be 0 for a flat score
             for (let sbI = 0; sbI &lt; this.systemBreakOffsets.length; sbI++) {
                 const thisSystemBreak = this.systemBreakOffsets[sbI];
-                if (thisNote.offset &lt; thisSystemBreak &amp;&amp; nextNote.offset >= thisSystemBreak) {
+                if (
+                    thisNote.offset &lt; thisSystemBreak
+                    &amp;&amp; nextNote.offset >= thisSystemBreak
+                ) {
                     onSameSystem = false;
                     break;
                 }
@@ -922,19 +968,19 @@ export class Renderer {
                     first_indices: [0],
                     last_indices: [0],
                 });
-                this.ties.push(vfTie);
+                this.vfTies.push(vfTie);
             } else {
                 // console.log('got me a tie across systemBreaks!');
                 const vfTie1 = new Vex.Flow.StaveTie({
                     first_note: thisNote.activeVexflowNote,
                     first_indices: [0],
                 });
-                this.ties.push(vfTie1);
+                this.vfTies.push(vfTie1);
                 const vfTie2 = new Vex.Flow.StaveTie({
                     last_note: nextNote.activeVexflowNote,
                     first_indices: [0],
                 });
-                this.ties.push(vfTie2);
+                this.vfTies.push(vfTie2);
             }
         }
     }
@@ -1043,12 +1089,21 @@ export class Renderer {
                 // find beam groups -- n.b. this wipes out stemDirection. worth it usually...
                 const voice = voices[i];
                 let beatGroups = [new Vex.Flow.Fraction(2, 8)]; // default beam groups
-                if (measures[i] !== undefined &amp;&amp; measures[i].timeSignature !== undefined) {
-                    beatGroups = measures[i].timeSignature.vexflowBeatGroups(Vex);
+                if (
+                    measures[i] !== undefined
+                    &amp;&amp; measures[i].timeSignature !== undefined
+                ) {
+                    beatGroups = measures[i].timeSignature.vexflowBeatGroups(
+                        Vex
+                    );
                     // TODO: getContextByClass...
                     // console.log(beatGroups);
                 }
-                const beamGroups = Vex.Flow.Beam.applyAndGetBeams(voice, undefined, beatGroups);
+                const beamGroups = Vex.Flow.Beam.applyAndGetBeams(
+                    voice,
+                    undefined,
+                    beatGroups
+                );
                 this.beamGroups.push(...beamGroups);
             }
         }
@@ -1085,7 +1140,7 @@ export class Renderer {
         if (width === undefined) {
             width = s.estimateStaffLength() + rendOp.staffPadding;
         }
-        let top = rendOp.top;// * rendOp.scaleFactor.y;
+        let top = rendOp.top; // * rendOp.scaleFactor.y;
         if (top === undefined) {
             top = 0;
         }
@@ -1095,7 +1150,14 @@ export class Renderer {
         }
         // console.log('streamLength: ' + streamLength);
         if (debug) {
-            console.log('creating new stave: left:' + left + ' top: ' + top + ' width: ' + width);
+            console.log(
+                'creating new stave: left:'
+                    + left
+                    + ' top: '
+                    + top
+                    + ' width: '
+                    + width
+            );
         }
         const stave = new Vex.Flow.Stave(left, top, width);
         return stave;
@@ -1129,21 +1191,24 @@ export class Renderer {
             }
             stave.addClef(s.clef.name, size, ottava);
         }
-        if ((s.keySignature !== undefined) &amp;&amp; (rendOp.displayKeySignature)) {
-            stave.addKeySignature(s.keySignature.vexflow());
+        if (s.keySignature !== undefined &amp;&amp; rendOp.displayKeySignature) {
+            const ksVFName = s.keySignature.majorName().replace(/-/g, 'b');
+            stave.addKeySignature(ksVFName);
         }
 
-        if ((s.timeSignature !== undefined) &amp;&amp; (rendOp.displayTimeSignature)) {
+        if (s.timeSignature !== undefined &amp;&amp; rendOp.displayTimeSignature) {
             stave.addTimeSignature(
-                    s.timeSignature.numerator.toString() + '/' +
-                    s.timeSignature.denominator.toString()); // TODO: convertToVexflow...
+                s.timeSignature.numerator.toString()
+                    + '/'
+                    + s.timeSignature.denominator.toString()
+            );
         }
         if (rendOp.rightBarline !== undefined) {
             const bl = rendOp.rightBarline;
             const barlineMap = {
-                'single': 'SINGLE',
-                'double': 'DOUBLE',
-                'end': 'END',
+                single: 'SINGLE',
+                double: 'DOUBLE',
+                end: 'END',
             };
             const vxBL = barlineMap[bl];
             if (vxBL !== undefined) {
@@ -1176,21 +1241,24 @@ export class Renderer {
                     { visible: false },
                     { visible: true }, // show middle
                     { visible: false },
-                    { visible: false }];
+                    { visible: false },
+                ];
             } else if (rendOp.staffLines === 2) {
                 vexflowStave.options.line_config = [
                     { visible: false },
                     { visible: false },
                     { visible: true }, // show middle
                     { visible: true },
-                    { visible: false }];
+                    { visible: false },
+                ];
             } else if (rendOp.staffLines === 3) {
                 vexflowStave.options.line_config = [
                     { visible: false },
                     { visible: true },
                     { visible: true }, // show middle
                     { visible: true },
-                    { visible: false }];
+                    { visible: false },
+                ];
             } else {
                 vexflowStave.setNumLines(rendOp.staffLines);
             }
@@ -1220,7 +1288,10 @@ export class Renderer {
         const options = { clef: s.clef, stave };
         for (let i = 0; i &lt; s.length; i++) {
             const thisEl = s.get(i);
-            if (thisEl.isClassOrSubclass('GeneralNote') &amp;&amp; (thisEl.duration !== undefined)) {
+            if (
+                thisEl.isClassOrSubclass('GeneralNote')
+                &amp;&amp; thisEl.duration !== undefined
+            ) {
                 // sets thisEl.activeVexflowNote -- may be overwritten but not so fast...
                 const vfn = thisEl.vexflowNote(options);
                 if (vfn === undefined) {
@@ -1241,16 +1312,24 @@ export class Renderer {
                     activeTupletVexflowNotes.push(vfn);
                     activeTupletLength += thisEl.duration.quarterLength;
                     // console.log(activeTupletLength, activeTuplet.totalTupletLength());
-                    if (activeTupletLength >= activeTuplet.totalTupletLength() ||
-                            Math.abs(activeTupletLength
-                                        - activeTuplet.totalTupletLength()) &lt; 0.001) {
+                    if (
+                        activeTupletLength
+                            >= activeTuplet.totalTupletLength()
+                        || Math.abs(
+                            activeTupletLength
+                                - activeTuplet.totalTupletLength()
+                        ) &lt; 0.001
+                    ) {
                         // console.log(activeTupletVexflowNotes);
                         const tupletOptions = {
                             num_notes: activeTuplet.numberNotesActual,
-                            notes_occupied: activeTuplet.numberNotesNormal };
+                            notes_occupied: activeTuplet.numberNotesNormal,
+                        };
                         // console.log('tupletOptions', tupletOptions);
-                        const vfTuplet = new Vex.Flow.Tuplet(activeTupletVexflowNotes,
-                                tupletOptions);
+                        const vfTuplet = new Vex.Flow.Tuplet(
+                            activeTupletVexflowNotes,
+                            tupletOptions
+                        );
                         if (activeTuplet.tupletNormalShow === 'ratio') {
                             vfTuplet.setRatioed(true);
                         }
@@ -1287,7 +1366,10 @@ export class Renderer {
                 text,
                 font,
                 duration: d,
-            }).setLine(11).setStave(stave).setJustification(Vex.Flow.TextNote.Justification.LEFT);
+            })
+                .setLine(11)
+                .setStave(stave)
+                .setJustification(Vex.Flow.TextNote.Justification.LEFT);
             return t1;
         };
 
@@ -1314,7 +1396,10 @@ export class Renderer {
                 if (text === undefined) {
                     text = '';
                 }
-                if (lyricsArray[0].syllabic === 'middle' || lyricsArray[0].syllabic === 'begin') {
+                if (
+                    lyricsArray[0].syllabic === 'middle'
+                    || lyricsArray[0].syllabic === 'begin'
+                ) {
                     addConnector = ' ' + lyricsArray[0].lyricConnector;
                     const tempQl = el.duration.quarterLength / 2.0;
                     d = new duration.Duration(tempQl).vexflowDuration;
@@ -1342,42 +1427,48 @@ export class Renderer {
         let num1024 = Math.round(totalLength / (1 / 256));
         let beatValue = 1024;
 
-        if (num1024 % 512 === 0)  {
+        if (num1024 % 512 === 0) {
             beatValue = 2;
             num1024 /= 512;
-        } else if (num1024 % 256 === 0)  {
+        } else if (num1024 % 256 === 0) {
             beatValue = 4;
             num1024 /= 256;
-        } else if (num1024 % 128 === 0)  {
+        } else if (num1024 % 128 === 0) {
             beatValue = 8;
             num1024 /= 128;
-        } else if (num1024 % 64 === 0)  {
+        } else if (num1024 % 64 === 0) {
             beatValue = 16;
             num1024 /= 64;
-        } else if (num1024 % 32 === 0)  {
+        } else if (num1024 % 32 === 0) {
             beatValue = 32;
             num1024 /= 32;
-        } else if (num1024 % 16 === 0)  {
+        } else if (num1024 % 16 === 0) {
             beatValue = 64;
             num1024 /= 16;
-        } else if (num1024 % 8 === 0)  {
+        } else if (num1024 % 8 === 0) {
             beatValue = 128;
             num1024 /= 8;
-        } else if (num1024 % 4 === 0)  {
+        } else if (num1024 % 4 === 0) {
             beatValue = 256;
             num1024 /= 4;
-        } else if (num1024 % 2 === 0)  {
+        } else if (num1024 % 2 === 0) {
             beatValue = 512;
             num1024 /= 2;
         }
         // console.log('creating voice');
         if (debug) {
-            console.log('New voice, num_beats: ' + num1024.toString()
-                + ' beat_value: ' + beatValue.toString());
+            console.log(
+                'New voice, num_beats: '
+                    + num1024.toString()
+                    + ' beat_value: '
+                    + beatValue.toString()
+            );
         }
-        const vfv = new Vex.Flow.Voice({ num_beats: num1024,
+        const vfv = new Vex.Flow.Voice({
+            num_beats: num1024,
             beat_value: beatValue,
-            resolution: Vex.Flow.RESOLUTION });
+            resolution: Vex.Flow.RESOLUTION,
+        });
 
         // from vexflow/src/voice.js
         //
@@ -1392,10 +1483,10 @@ export class Renderer {
     }
     staffConnectorsMap(connectorType) {
         const connectorMap = {
-            'brace': Vex.Flow.StaveConnector.type.BRACE,
-            'single': Vex.Flow.StaveConnector.type.SINGLE,
-            'double': Vex.Flow.StaveConnector.type.DOUBLE,
-            'bracket': Vex.Flow.StaveConnector.type.BRACKET,
+            brace: Vex.Flow.StaveConnector.type.BRACE,
+            single: Vex.Flow.StaveConnector.type.SINGLE,
+            double: Vex.Flow.StaveConnector.type.DOUBLE,
+            bracket: Vex.Flow.StaveConnector.type.BRACKET,
         };
         return connectorMap[connectorType];
     }
@@ -1411,24 +1502,63 @@ export class Renderer {
         if (s === undefined) {
             s = this.stream;
         }
-        const numParts = s.length;
+        const parts = s.parts;
+        const numParts = parts.length;
         if (numParts &lt; 2) {
             return;
         }
 
-        const firstPart = s.get(0);
-        const lastPart = s.get(-1);
-        const numMeasures = firstPart.length;
+        const firstPart = parts.get(0);
+        const lastPart = parts.get(-1);
+
+        const firstPartMeasures = firstPart.measures;
+        const lastPartMeasures = lastPart.measures;
+        const numMeasures = firstPartMeasures.length;
+
         for (let mIndex = 0; mIndex &lt; numMeasures; mIndex++) {
-            const thisPartMeasure = firstPart.get(mIndex);
-            const lastPartMeasure = lastPart.get(mIndex); // only needed once per system but
+            const thisPartMeasure = firstPartMeasures.get(mIndex);
+            const lastPartMeasure = lastPartMeasures.get(mIndex); // only needed once per system but
             // good for symmetry.
             if (thisPartMeasure.renderOptions.startNewSystem) {
-                const topVFStaff = thisPartMeasure.activeVFStave;
-                const bottomVFStaff = lastPartMeasure.activeVFStave;
-                /* TODO: warning if no staves... */
-                for (let i = 0; i &lt; s.renderOptions.staffConnectors.length; i++) {
-                    const sc = new Vex.Flow.StaveConnector(topVFStaff, bottomVFStaff);
+                let topVFStaff = thisPartMeasure.activeVFStave;
+                let bottomVFStaff = lastPartMeasure.activeVFStave;
+                if (topVFStaff === undefined) {
+                    if (thisPartMeasure.hasSubStreams()) {
+                        const thisPartVoice = thisPartMeasure
+                            .getElementsByClass('Stream')
+                            .get(0);
+                        topVFStaff = thisPartVoice.activeVFStave;
+                        if (topVFStaff === undefined) {
+                            console.warn(
+                                'No active VexFlow Staves defined for at least one measure'
+                            );
+                            continue;
+                        }
+                    }
+                }
+                if (bottomVFStaff === undefined) {
+                    if (lastPartMeasure.hasSubStreams()) {
+                        const lastPartVoice = lastPartMeasure
+                            .getElementsByClass('Stream')
+                            .get(0);
+                        bottomVFStaff = lastPartVoice.activeVFStave;
+                        if (bottomVFStaff === undefined) {
+                            console.warn(
+                                'No active VexFlow Staves defined for at least one measure'
+                            );
+                            continue;
+                        }
+                    }
+                }
+                for (
+                    let i = 0;
+                    i &lt; s.renderOptions.staffConnectors.length;
+                    i++
+                ) {
+                    const sc = new Vex.Flow.StaveConnector(
+                        topVFStaff,
+                        bottomVFStaff
+                    );
                     const scTypeM21 = s.renderOptions.staffConnectors[i];
                     const scTypeVF = this.staffConnectorsMap(scTypeM21);
                     sc.setType(scTypeVF);
@@ -1440,7 +1570,7 @@ export class Renderer {
     }
 
     /**
-     * The process of putting a Stream onto a canvas affects each of the
+     * The process of putting a Stream onto a div affects each of the
      * elements in the Stream by adding pieces of information to
      * each {@link music21.base.Music21Object} -- see `applyFormatterInformationToNotes`
      *
@@ -1492,8 +1622,12 @@ export class Renderer {
         if (stave !== undefined) {
             noteOffsetLeft = stave.start_x + stave.glyph_start_x;
             if (debug) {
-                console.log('noteOffsetLeft: ' + noteOffsetLeft
-                    + ' ; stave.start_x: ' + stave.start_x);
+                console.log(
+                    'noteOffsetLeft: '
+                        + noteOffsetLeft
+                        + ' ; stave.start_x: '
+                        + stave.start_x
+                );
                 console.log('Bottom y: ' + stave.getBottomY());
             }
             // staveHeight = stave.height;
@@ -1508,7 +1642,8 @@ export class Renderer {
                     continue;
                 }
                 const nTicks = parseInt(vfn.ticks);
-                const formatterNote = formatter.tickContexts.map[String(nextTicks)];
+                const formatterNote
+                    = formatter.tickContexts.map[String(nextTicks)];
                 nextTicks += nTicks;
                 el.x = vfn.getAbsoluteX();
                 // these are a bit hacky...
@@ -1520,9 +1655,12 @@ export class Renderer {
                 }
 
                 el.width = formatterNote.width;
-                if (el.pitch !== undefined) { // note only...
-                    el.y = (stave.getBottomY() - (s.clef.lowestLine - el.pitch.diatonicNoteNum) *
-                            stave.options.spacing_between_lines_px);
+                if (el.pitch !== undefined) {
+                    // note only...
+                    el.y
+                        = stave.getBottomY()
+                        - (s.clef.lowestLine - el.pitch.diatonicNoteNum)
+                            * stave.options.spacing_between_lines_px;
                     // console.log('Note DNN: ' + el.pitch.diatonicNoteNum + " ; y: " + el.y);
                 }
             }
@@ -1531,7 +1669,13 @@ export class Renderer {
             for (let i = 0; i &lt; s.length; i++) {
                 const n = s.get(i);
                 if (n.pitch !== undefined) {
-                    console.log(n.pitch.diatonicNoteNum + ' ' + n.x + ' ' + (n.x + n.width));
+                    console.log(
+                        n.pitch.diatonicNoteNum
+                            + ' '
+                            + n.x
+                            + ' '
+                            + (n.x + n.width)
+                    );
                 }
             }
         }
@@ -1559,8 +1703,8 @@ vfShow.Renderer = Renderer;
 					<br />
 					
 		<span class="jsdoc-message">
-		Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.4</a>
-		on Thu Aug 17th 2017 using the <a
+		Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a>
+		on Sat Feb 10th 2018 using the <a
 			href="https://github.com/terryweiss/docstrap">DocStrap template</a>.
 		</span>
 				</footer>
