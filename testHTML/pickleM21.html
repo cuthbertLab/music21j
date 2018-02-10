@@ -7,8 +7,8 @@
 </head>
 <body>
 <script type="text/javascript">
-  require(['ext/jsonpickle/main', 'music21'], function (jsonpickle, music21) {
-      tags = jsonpickle.tags;
+  require(['music21'], function (music21) {
+      tags = music21.fromPython.jsonpickle.tags;
       
       Thing = function (x) {
           this.x = x;

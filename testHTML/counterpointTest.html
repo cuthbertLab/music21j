@@ -1,0 +1,73 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns = "http://www.w3.org/1999/xhtml">
+<head>
+ <title>Local Template for Music21j</title>
+ <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+     <script data-main="../src/music21" src="../ext/require/require.js"></script>
+     <script>
+     require(['music21'], function() {
+         var m2;
+
+         var m = new music21.stream.Measure();
+         m.append( new music21.note.Note('G2') );
+         m.append( new music21.note.Note('A2') );
+         m.append( new music21.note.Note('B2') );
+         m.autoBeam = false;
+         m2 = new music21.stream.Measure();
+         m2.append( new music21.note.Note('G2') );
+         m2.append( new music21.note.Note('G2') );
+         m2.append( new music21.note.Note('G2') );
+
+         var p = new music21.stream.Part();
+         for (let i = 0; i < 12; i++) {
+             p.append(m.clone(true));
+             p.append(m2.clone(true));
+         }
+
+         var m3 = new music21.stream.Measure();
+         m3.append( new music21.note.Note('G2') );
+         m3.append( new music21.note.Note('A2') );
+         m3.append( new music21.note.Note('B2') );
+         m3.autoBeam = false;
+         m4 = new music21.stream.Measure();
+         m4.append( new music21.note.Note('G2') );
+         m4.append( new music21.note.Note('G2') );
+         m4.append( new music21.note.Note('G2') );
+
+         var p2 = new music21.stream.Part();
+         for (let i = 0; i < 12; i++) {
+             p2.append(m3.clone(true));
+             p2.append(m4.clone(true));
+         }
+
+         s = new music21.stream.Score();
+         s.timeSignature = '3/4';
+         s.keySignature = new music21.key.KeySignature(2);
+         s.append(p)
+         s.append(p2)
+
+         //var s = music21.tinyNotation.TinyNotation("GG4 GG GG");
+         s.clef = new music21.clef.Clef('bass');
+         sne = new music21.streamInteraction.SimpleNoteEditor(s);
+         var d = sne.editableAccidentalCanvas();
+         //console.log('d width' + d.width());
+         $("#testBank").append(d);
+
+         $("#effectMe").fadeOut(5000);
+
+     });
+     </script>
+     <link rel="stylesheet" href="../css/m21.css" type="text/css" />
+
+</head>
+<body>
+<div class="document">
+	<div class="bodywrapper">
+	  <div class="body" id="testBank">
+	  <div id="effectMe">I will fade away...</div>
+	  </div>
+	</div>
+</div>
+
+</body>
+</html>

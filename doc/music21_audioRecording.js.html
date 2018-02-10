@@ -1,0 +1,1133 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>Music21j Source: music21/audioRecording.js</title>
+
+	<!--[if lt IE 9]>
+	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+	<link type="text/css" rel="stylesheet" href="styles/sunlight.default.css">
+
+	<link type="text/css" rel="stylesheet" href="styles/site.spruce.css">
+
+</head>
+
+<body>
+<div class="container-fluid">
+	<div class="navbar navbar-fixed-top navbar-inverse">
+		<div class="navbar-inner">
+			<a class="brand" href="index.html">Music21j</a>
+			<ul class="nav">
+				
+				<li class="dropdown">
+					<a href="namespaces.list.html" class="dropdown-toggle" data-toggle="dropdown">Namespaces<b
+						class="caret"></b></a>
+
+					<ul class="dropdown-menu ">
+						
+						<li>
+							<a href="music21.html">music21</a>
+						</li>
+						
+						<li>
+							<a href="music21.articulations.html">music21.articulations</a>
+						</li>
+						
+						<li>
+							<a href="music21.audioSearch.html">music21.audioSearch</a>
+						</li>
+						
+						<li>
+							<a href="music21.base.html">music21.base</a>
+						</li>
+						
+						<li>
+							<a href="music21.beam.html">music21.beam</a>
+						</li>
+						
+						<li>
+							<a href="music21.chord.html">music21.chord</a>
+						</li>
+						
+						<li>
+							<a href="music21.clef.html">music21.clef</a>
+						</li>
+						
+						<li>
+							<a href="music21.common.html">music21.common</a>
+						</li>
+						
+						<li>
+							<a href="music21.duration.html">music21.duration</a>
+						</li>
+						
+						<li>
+							<a href="music21.dynamics.html">music21.dynamics</a>
+						</li>
+						
+						<li>
+							<a href="music21.expressions.html">music21.expressions</a>
+						</li>
+						
+						<li>
+							<a href="music21.fromPython.html">music21.fromPython</a>
+						</li>
+						
+						<li>
+							<a href="music21.instrument.html">music21.instrument</a>
+						</li>
+						
+						<li>
+							<a href="music21.interval.html">music21.interval</a>
+						</li>
+						
+						<li>
+							<a href="music21.key.html">music21.key</a>
+						</li>
+						
+						<li>
+							<a href="music21.keyboard.html">music21.keyboard</a>
+						</li>
+						
+						<li>
+							<a href="music21.meter.html">music21.meter</a>
+						</li>
+						
+						<li>
+							<a href="music21.miditools.html">music21.miditools</a>
+						</li>
+						
+						<li>
+							<a href="music21.note.html">music21.note</a>
+						</li>
+						
+						<li>
+							<a href="music21.pitch.html">music21.pitch</a>
+						</li>
+						
+						<li>
+							<a href="music21.prebase.html">music21.prebase</a>
+						</li>
+						
+						<li>
+							<a href="music21.renderOptions.html">music21.renderOptions</a>
+						</li>
+						
+						<li>
+							<a href="music21.roman.html">music21.roman</a>
+						</li>
+						
+						<li>
+							<a href="music21.scale.html">music21.scale</a>
+						</li>
+						
+						<li>
+							<a href="music21.stream.html">music21.stream</a>
+						</li>
+						
+						<li>
+							<a href="music21.streamInteraction.html">music21.streamInteraction</a>
+						</li>
+						
+						<li>
+							<a href="music21.tempo.html">music21.tempo</a>
+						</li>
+						
+						<li>
+							<a href="music21.tie.html">music21.tie</a>
+						</li>
+						
+						<li>
+							<a href="music21.tinyNotation.html">music21.tinyNotation</a>
+						</li>
+						
+						<li>
+							<a href="music21.vfShow.html">music21.vfShow</a>
+						</li>
+						
+						<li>
+							<a href="music21.webmidi.html">music21.webmidi</a>
+						</li>
+						
+						<li>
+							<a href="music21.widgets.html">music21.widgets</a>
+						</li>
+						
+
+					</ul>
+				</li>
+				
+				<li class="dropdown">
+					<a href="classes.list.html" class="dropdown-toggle" data-toggle="dropdown">Classes<b
+						class="caret"></b></a>
+
+					<ul class="dropdown-menu ">
+						
+						<li>
+							<a href="music21.articulations.Accent.html">music21.articulations.Accent</a>
+						</li>
+						
+						<li>
+							<a href="music21.articulations.Articulation.html">music21.articulations.Articulation</a>
+						</li>
+						
+						<li>
+							<a href="music21.articulations.DynamicArticulation.html">music21.articulations.DynamicArticulation</a>
+						</li>
+						
+						<li>
+							<a href="music21.articulations.LengthArticulation.html">music21.articulations.LengthArticulation</a>
+						</li>
+						
+						<li>
+							<a href="music21.articulations.Marcato.html">music21.articulations.Marcato</a>
+						</li>
+						
+						<li>
+							<a href="music21.articulations.PitchArticulation.html">music21.articulations.PitchArticulation</a>
+						</li>
+						
+						<li>
+							<a href="music21.articulations.Spiccato.html">music21.articulations.Spiccato</a>
+						</li>
+						
+						<li>
+							<a href="music21.articulations.Staccatissimo.html">music21.articulations.Staccatissimo</a>
+						</li>
+						
+						<li>
+							<a href="music21.articulations.Staccato.html">music21.articulations.Staccato</a>
+						</li>
+						
+						<li>
+							<a href="music21.articulations.StrongAccent.html">music21.articulations.StrongAccent</a>
+						</li>
+						
+						<li>
+							<a href="music21.articulations.Tenuto.html">music21.articulations.Tenuto</a>
+						</li>
+						
+						<li>
+							<a href="music21.articulations.TimbreArticulation.html">music21.articulations.TimbreArticulation</a>
+						</li>
+						
+						<li>
+							<a href="music21.base.Music21Object.html">music21.base.Music21Object</a>
+						</li>
+						
+						<li>
+							<a href="music21.beam.Beam.html">music21.beam.Beam</a>
+						</li>
+						
+						<li>
+							<a href="music21.beam.Beams.html">music21.beam.Beams</a>
+						</li>
+						
+						<li>
+							<a href="music21.chord.Chord.html">music21.chord.Chord</a>
+						</li>
+						
+						<li>
+							<a href="music21.clef.AltoClef.html">music21.clef.AltoClef</a>
+						</li>
+						
+						<li>
+							<a href="music21.clef.BassClef.html">music21.clef.BassClef</a>
+						</li>
+						
+						<li>
+							<a href="music21.clef.Clef.html">music21.clef.Clef</a>
+						</li>
+						
+						<li>
+							<a href="music21.clef.MezzoSopranoClef.html">music21.clef.MezzoSopranoClef</a>
+						</li>
+						
+						<li>
+							<a href="music21.clef.PercussionClef.html">music21.clef.PercussionClef</a>
+						</li>
+						
+						<li>
+							<a href="music21.clef.SopranoClef.html">music21.clef.SopranoClef</a>
+						</li>
+						
+						<li>
+							<a href="music21.clef.TenorClef.html">music21.clef.TenorClef</a>
+						</li>
+						
+						<li>
+							<a href="music21.clef.Treble8vaClef.html">music21.clef.Treble8vaClef</a>
+						</li>
+						
+						<li>
+							<a href="music21.clef.Treble8vbClef.html">music21.clef.Treble8vbClef</a>
+						</li>
+						
+						<li>
+							<a href="music21.clef.TrebleClef.html">music21.clef.TrebleClef</a>
+						</li>
+						
+						<li>
+							<a href="music21.duration.Duration.html">music21.duration.Duration</a>
+						</li>
+						
+						<li>
+							<a href="music21.duration.Tuplet.html">music21.duration.Tuplet</a>
+						</li>
+						
+						<li>
+							<a href="music21.dynamics.Dynamic.html">music21.dynamics.Dynamic</a>
+						</li>
+						
+						<li>
+							<a href="music21.expressions.Expression.html">music21.expressions.Expression</a>
+						</li>
+						
+						<li>
+							<a href="music21.expressions.Fermata.html">music21.expressions.Fermata</a>
+						</li>
+						
+						<li>
+							<a href="music21.fromPython.Converter.html">music21.fromPython.Converter</a>
+						</li>
+						
+						<li>
+							<a href="music21.instrument.Instrument.html">music21.instrument.Instrument</a>
+						</li>
+						
+						<li>
+							<a href="music21.interval.ChromaticInterval.html">music21.interval.ChromaticInterval</a>
+						</li>
+						
+						<li>
+							<a href="music21.interval.DiatonicInterval.html">music21.interval.DiatonicInterval</a>
+						</li>
+						
+						<li>
+							<a href="music21.interval.GenericInterval.html">music21.interval.GenericInterval</a>
+						</li>
+						
+						<li>
+							<a href="music21.interval.Interval.html">music21.interval.Interval</a>
+						</li>
+						
+						<li>
+							<a href="music21.key.Key.html">music21.key.Key</a>
+						</li>
+						
+						<li>
+							<a href="music21.key.KeySignature.html">music21.key.KeySignature</a>
+						</li>
+						
+						<li>
+							<a href="music21.keyboard.BlackKey.html">music21.keyboard.BlackKey</a>
+						</li>
+						
+						<li>
+							<a href="music21.keyboard.Key.html">music21.keyboard.Key</a>
+						</li>
+						
+						<li>
+							<a href="music21.keyboard.Keyboard.html">music21.keyboard.Keyboard</a>
+						</li>
+						
+						<li>
+							<a href="music21.keyboard.WhiteKey.html">music21.keyboard.WhiteKey</a>
+						</li>
+						
+						<li>
+							<a href="music21.meter.TimeSignature.html">music21.meter.TimeSignature</a>
+						</li>
+						
+						<li>
+							<a href="music21.miditools.Event.html">music21.miditools.Event</a>
+						</li>
+						
+						<li>
+							<a href="music21.miditools.MidiPlayer.html">music21.miditools.MidiPlayer</a>
+						</li>
+						
+						<li>
+							<a href="music21.note.GeneralNote.html">music21.note.GeneralNote</a>
+						</li>
+						
+						<li>
+							<a href="music21.note.Lyric.html">music21.note.Lyric</a>
+						</li>
+						
+						<li>
+							<a href="music21.note.Note.html">music21.note.Note</a>
+						</li>
+						
+						<li>
+							<a href="music21.note.NotRest.html">music21.note.NotRest</a>
+						</li>
+						
+						<li>
+							<a href="music21.note.Rest.html">music21.note.Rest</a>
+						</li>
+						
+						<li>
+							<a href="music21.pitch.Accidental.html">music21.pitch.Accidental</a>
+						</li>
+						
+						<li>
+							<a href="music21.pitch.Pitch.html">music21.pitch.Pitch</a>
+						</li>
+						
+						<li>
+							<a href="music21.prebase.ProtoM21Object.html">music21.prebase.ProtoM21Object</a>
+						</li>
+						
+						<li>
+							<a href="music21.renderOptions.RenderOptions.html">music21.renderOptions.RenderOptions</a>
+						</li>
+						
+						<li>
+							<a href="music21.roman.RomanNumeral.html">music21.roman.RomanNumeral</a>
+						</li>
+						
+						<li>
+							<a href="music21.stream.Measure.html">music21.stream.Measure</a>
+						</li>
+						
+						<li>
+							<a href="music21.stream.Part.html">music21.stream.Part</a>
+						</li>
+						
+						<li>
+							<a href="music21.stream.Score.html">music21.stream.Score</a>
+						</li>
+						
+						<li>
+							<a href="music21.stream.Stream.html">music21.stream.Stream</a>
+						</li>
+						
+						<li>
+							<a href="music21.stream.Voice.html">music21.stream.Voice</a>
+						</li>
+						
+						<li>
+							<a href="music21.streamInteraction.PixelMap.html">music21.streamInteraction.PixelMap</a>
+						</li>
+						
+						<li>
+							<a href="music21.streamInteraction.PixelMapper.html">music21.streamInteraction.PixelMapper</a>
+						</li>
+						
+						<li>
+							<a href="music21.streamInteraction.ScrollPlayer.html">music21.streamInteraction.ScrollPlayer</a>
+						</li>
+						
+						<li>
+							<a href="music21.tempo.Metronome.html">music21.tempo.Metronome</a>
+						</li>
+						
+						<li>
+							<a href="music21.tie.Tie.html">music21.tie.Tie</a>
+						</li>
+						
+						<li>
+							<a href="music21.vfShow.Renderer.html">music21.vfShow.Renderer</a>
+						</li>
+						
+						<li>
+							<a href="music21.vfShow.RenderStack.html">music21.vfShow.RenderStack</a>
+						</li>
+						
+						<li>
+							<a href="music21.widgets.RhythmChooser.html">music21.widgets.RhythmChooser</a>
+						</li>
+						
+						<li>
+							<a href="Page.html">Page</a>
+						</li>
+						
+						<li>
+							<a href="Recorder.html">Recorder</a>
+						</li>
+						
+
+					</ul>
+				</li>
+				
+				<li class="dropdown">
+					<a href="global.html" class="dropdown-toggle" data-toggle="dropdown">Global<b
+						class="caret"></b></a>
+
+					<ul class="dropdown-menu ">
+						
+						<li>
+							<a href="global.html#getM21attribute">getM21attribute</a>
+						</li>
+						
+						<li>
+							<a href="global.html#layout">layout</a>
+						</li>
+						
+						<li>
+							<a href="global.html#midiNumDiffFromFrequency">midiNumDiffFromFrequency</a>
+						</li>
+						
+						<li>
+							<a href="global.html#recorderWorkerJs">recorderWorkerJs</a>
+						</li>
+						
+						<li>
+							<a href="global.html#unpickler">unpickler</a>
+						</li>
+						
+						<li>
+							<a href="global.html#warnBanner">warnBanner</a>
+						</li>
+						
+
+					</ul>
+				</li>
+				
+			</ul>
+		</div>
+	</div>
+
+	<div class="row-fluid">
+
+		
+			<div class="span12">
+				
+				<div id="main">
+					
+
+
+		<h1 class="page-title">Source: music21/audioRecording.js</h1>
+    
+<section>
+	<article>
+		<pre
+			class="sunlight-highlight-javascript linenums">import { audioSearch } from './audioSearch';
+
+/**
+ * Adopted from Matt Diamond's recorder.js code MIT License
+ */
+export class Recorder {
+    constructor(cfg) {
+        const config = cfg || {};
+        this.bufferLen = config.bufferLen || 4096;
+        this.config = config;
+        this.recording = false;
+        this.currCallback = undefined;
+        this.audioContext = audioSearch.audioContext;
+        this.frequencyCanvasInfo = {
+            id: 'frequencyAnalyser',
+            width: undefined,
+            height: undefined,
+            canvasContext: undefined,
+            animationFrameID: undefined,
+        };
+        this.waveformCanvasInfo = {
+            id: 'waveformCanvas',
+            width: undefined,
+            height: undefined,
+            canvasContext: undefined,
+        };
+        this.analyserNode = undefined;
+    }
+
+    /**
+     * Start here -- polyfills navigator, runs getUserMedia and then sends to audioStreamConnected
+     */
+    initAudio() {
+        this.polyfillNavigator();
+        navigator.getUserMedia({
+            'audio': {
+                'mandatory': {
+                    'googEchoCancellation': 'false',
+                    'googAutoGainControl': 'false',
+                    'googNoiseSuppression': 'false',
+                    'googHighpassFilter': 'false',
+                    // 'echoCancellation': false,
+                    // 'autoGainControl': false,
+                    // 'noiseSuppression': false,
+                    // 'highpassFilter': false,
+                },
+                'optional': [],
+            },
+        }, s => this.audioStreamConnected(s), error => {
+            console.log('Error getting audio -- try on google Chrome?');
+            console.log(error);
+        });
+    }
+
+    /**
+     * After the user has given permission to record, this method is called.
+     * It creates a gain point, and then connects the input source to the gain.
+     * It connects an analyserNode (fftSize 2048) to the gain.
+     *
+     * It creates a second gain of 0.0 connected to the destination, so that
+     * we're not hearing what we're playing in in an infinite loop (SUCKS to turn this off...)
+     *
+     * And it calls this.connectSource on the inputPoint so that
+     * we can do something with all these wonderful inputs.
+     */
+    audioStreamConnected(stream) {
+        const inputPoint = this.audioContext.createGain();
+
+        // Create an AudioNode from the stream.
+        const audioInput = this.audioContext.createMediaStreamSource(stream);
+        audioInput.connect(inputPoint);
+
+        const analyserNode = this.audioContext.createAnalyser();
+        analyserNode.fftSize = 2048;
+        this.analyserNode = analyserNode;
+        inputPoint.connect(analyserNode);
+
+        this.connectSource(inputPoint);
+
+        const zeroGain = this.audioContext.createGain();
+        zeroGain.gain.value = 0.0;
+        inputPoint.connect(zeroGain);
+        zeroGain.connect(this.audioContext.destination);
+    }
+
+    /**
+     * Creates a worker to receive and process all the messages asychronously.
+     */
+    connectSource(source) {
+        this.context = source.context;
+        this.setNode();
+
+        // create a Worker with inline code...
+        const workerBlob = new Blob(['(',
+            recorderWorkerJs,
+            ')()',
+        ], { type: 'application/javascript' });
+        const workerURL = URL.createObjectURL(workerBlob);
+        this.worker = new Worker(workerURL);
+        /**
+         * When worker sends a message, we just send it to the currentCallback...
+         */
+        this.worker.onmessage = e => {
+            const blob = e.data;
+            this.currCallback(blob);
+        };
+        URL.revokeObjectURL(workerURL);
+
+        this.worker.postMessage({
+            command: 'init',
+            config: {
+                sampleRate: this.context.sampleRate,
+            },
+        });
+
+        /**
+         * Whenever the ScriptProcessorNode receives enough audio to process
+         * (i.e., this.bufferLen stereo samples; default 4096), then it calls onaudioprocess
+         * which is set up to send the event's .getChannelData to the WebWorker via a
+         * postMessage.
+         *
+         * The 'record' command sends no message back.
+         */
+        this.node.onaudioprocess = e => {
+            if (!this.recording) {
+                return;
+            }
+            this.worker.postMessage({
+                command: 'record',
+                buffer: [
+                    e.inputBuffer.getChannelData(0),
+                    e.inputBuffer.getChannelData(1),
+                ],
+            });
+        };
+
+        source.connect(this.node);
+
+        /**
+         * polyfill for Chrome error.
+         *
+         * if the ScriptProcessorNode (this.node) is not connected to an output
+         * the "onaudioprocess" event is not triggered in Chrome.
+         */
+        this.node.connect(this.context.destination);
+    }
+
+    /**
+     * Creates a ScriptProcessorNode (preferably) to allow for direct audio processing.
+     *
+     * Sets it to this.node and returns it.
+     */
+    setNode() {
+        const numInputChannels = 2;
+        const numOutputChannels = 2;
+        if (!this.context.createScriptProcessor) {
+            this.node = this.context.createJavaScriptNode(
+                this.bufferLen,
+                numInputChannels,
+                numOutputChannels);
+        } else {
+            this.node = this.context.createScriptProcessor(
+                this.bufferLen,
+                numInputChannels,
+                numOutputChannels);
+        }
+        return this.node;
+    }
+
+    /**
+     * Configure from another source...
+     */
+    configure(cfg) {
+        for (const prop in cfg) {
+            if (Object.hasOwnProperty.call(cfg, prop)) {
+                this.config[prop] = cfg[prop];
+            }
+        }
+    }
+
+
+    record() {
+        this.recording = true;
+    }
+    stop() {
+        this.recording = false;
+    }
+    clear() {
+        this.worker.postMessage({ command: 'clear' });
+    }
+
+    /**
+     * Directly get the buffers from the worker and then call cb.
+     */
+    getBuffers(cb) {
+        this.currCallback = cb || this.config.callback;
+        this.worker.postMessage({ command: 'getBuffers' });
+    }
+
+    /**
+     * call exportWAV or exportMonoWAV on the worker, then call cb or (if undefined) setupDownload.
+     */
+    exportWAV(cb, type, isMono) {
+        let command = 'exportWAV';
+        if (isMono === true) { // default false
+            command = 'exportMonoWAV';
+        }
+        this.currCallback = cb || this.config.callback;
+        type = type || this.config.type || 'audio/wav';
+        if (!this.currCallback) {
+            this.currCallback = blob => {
+                this.setupDownload(blob, 'myRecording' + Date.now().toString() + '.wav');
+            };
+        }
+        this.worker.postMessage({
+            'command': command,
+            'type': type,
+        });
+    }
+
+    exportMonoWAV(cb, type) {
+        this.exportWAV(cb, type, true);
+    }
+
+    setupDownload(blob, filename, elementId) {
+        elementId = elementId || 'save';
+        const url = (window.URL || window.webkitURL).createObjectURL(blob);
+        const link = document.getElementById(elementId);
+        link.href = url;
+        link.download = filename || 'output.wav';
+    }
+
+    /**
+     * Polyfills for getUserMedia (requestAnimationFrame polyfills not needed.)
+     * As of 2016 September, only Edge support unprefixed.
+     */
+    polyfillNavigator() {
+        if (!navigator.getUserMedia) {
+            navigator.getUserMedia = navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
+        }
+    }
+
+
+    updateAnalysers(time) {
+        if (!this.frequencyCanvasInfo.canvasContext) {
+            const canvas = document.getElementById(this.frequencyCanvasInfo.id);
+            if (!canvas) {
+                return;
+            }
+            this.frequencyCanvasInfo.width = canvas.width;
+            this.frequencyCanvasInfo.height = canvas.height;
+            this.frequencyCanvasInfo.canvasContext = canvas.getContext('2d');
+        }
+
+        // analyser draw code here
+        const SPACING = 3;
+        const BAR_WIDTH = 1;
+        const numBars = Math.round(this.frequencyCanvasInfo.width / SPACING);
+        const freqByteData = new Uint8Array(this.analyserNode.frequencyBinCount);
+
+        this.analyserNode.getByteFrequencyData(freqByteData);
+
+        const canvasContext = this.frequencyCanvasInfo.canvasContext;
+        canvasContext.clearRect(0, 0, this.frequencyCanvasInfo.width, this.frequencyCanvasInfo.height);
+        canvasContext.fillStyle = '#F6D565';
+        canvasContext.lineCap = 'round';
+        const multiplier = this.analyserNode.frequencyBinCount / numBars;
+
+        // Draw rectangle for each frequency bin.
+        for (let i = 0; i &lt; numBars; ++i) {
+            let magnitude = 0;
+            const offset = Math.floor(i * multiplier);
+            for (let j = 0; j &lt; multiplier; j++) {
+                magnitude += freqByteData[offset + j];
+            }
+            magnitude = magnitude * (this.frequencyCanvasInfo.height / 256) / multiplier;
+            canvasContext.fillStyle = 'hsl( ' + Math.round((i * 360) / numBars) + ', 100%, 50%)';
+            canvasContext.fillRect(
+                i * SPACING,
+                this.frequencyCanvasInfo.height,
+                BAR_WIDTH,
+                -1 * magnitude
+            );
+        }
+
+        this.frequencyCanvasInfo.animationFrameID = window.requestAnimationFrame(t => this.updateAnalysers(t));
+    }
+
+    drawWaveformCanvas(buffers) {
+        const data = buffers[0]; // one track of stereo recording.
+        if (!this.waveformCanvasInfo.context) {
+            const canvas = document.getElementById(this.waveformCanvasInfo.id);
+            if (!canvas) {
+                return;
+            }
+            this.waveformCanvasInfo.width = canvas.width;
+            this.waveformCanvasInfo.height = canvas.height;
+            this.waveformCanvasInfo.context = canvas.getContext('2d');
+        }
+        const context = this.waveformCanvasInfo.context;
+        const step = Math.ceil(data.length / this.waveformCanvasInfo.width);
+        const amp = this.waveformCanvasInfo.height / 2;
+        context.fillStyle = 'silver';
+        context.clearRect(0, 0, this.waveformCanvasInfo.width, this.waveformCanvasInfo.height);
+        for (let i = 0; i &lt; this.waveformCanvasInfo.width; i++) {
+            let min = 1.0;
+            let max = -1.0;
+            for (let j = 0; j &lt; step; j++) {
+                const datum = data[(i * step) + j];
+                if (datum &lt; min) {
+                    min = datum;
+                }
+                if (datum > max) {
+                    max = datum;
+                }
+            }
+            context.fillRect(
+                    i,
+                    (1 + min) * amp,
+                    1,
+                    Math.max(1, (max - min) * amp)
+            );
+        }
+    }
+
+    /**
+     * set this as a callback from getBuffers.  Returns the source so that a stop() command
+     * is possible.
+     */
+    playBuffers(buffers) {
+        const channels = 2;
+        const numFrames = buffers[0].length;
+        const audioBuffer = this.context.createBuffer(channels, numFrames, this.context.sampleRate);
+        for (let channel = 0; channel &lt; channels; channel++) {
+            const thisChannelBuffer = audioBuffer.getChannelData(channel);
+            for (let i = 0; i &lt; numFrames; i++) {
+                thisChannelBuffer[i] = buffers[channel][i];
+            }
+        }
+        const source = this.context.createBufferSource();
+        source.buffer = audioBuffer;
+        source.connect(this.context.destination);
+        source.start();
+        return source;
+    }
+}
+
+/**
+ * This code does NOT go through babel, so no arrow functions, let, const, etc.
+ */
+const recorderWorkerJs = `function recorderWorkerJs() {
+    /**
+     *
+     *   Rewritten from Matt Diamond's recorderWorker -- MIT License
+     */
+    RecorderWorker = function RecorderWorker(parentContext) {
+            this.parent = parentContext;
+            this.recLength = 0;
+            this.recBuffersL = [];
+            this.recBuffersR = [];
+            this.sampleRate = undefined;
+    };
+    RecorderWorker.prototype.onmessage = function onmessage(e) {
+            switch (e.data.command) {
+            case 'init':
+                this.init(e.data.config);
+                break;
+            case 'record':
+                this.record(e.data.buffer);
+                break;
+            case 'exportWAV':
+                this.exportWAV(e.data.type);
+                break;
+            case 'exportMonoWAV':
+                this.exportMonoWAV(e.data.type);
+                break;
+            case 'getBuffers':
+                this.getBuffers();
+                break;
+            case 'clear':
+                this.clear();
+                break;
+            default:
+                break;
+            }
+   };
+   RecorderWorker.prototype.postMessage = function postMessage(msg) {
+            this.parent.postMessage(msg);
+   };
+
+   RecorderWorker.prototype.init = function init(config) {
+            this.sampleRate = config.sampleRate;
+   };
+
+   RecorderWorker.prototype.record = function record(inputBuffer) {
+            var inputBufferL = inputBuffer[0];
+            var inputBufferR = inputBuffer[1];
+            this.recBuffersL.push(inputBufferL);
+            this.recBuffersR.push(inputBufferR);
+            this.recLength += inputBufferL.length;
+   };
+
+   RecorderWorker.prototype.exportWAV = function exportWAV(type) {
+            var bufferL = this.mergeBuffers(this.recBuffersL);
+            var bufferR = this.mergeBuffers(this.recBuffersR);
+            var interleaved = this.interleave(bufferL, bufferR);
+            var dataview = this.encodeWAV(interleaved);
+            var audioBlob = new Blob([dataview], { 'type': type });
+
+            this.postMessage(audioBlob);
+   };
+
+   RecorderWorker.prototype.exportMonoWAV = function exportMonoWAV(type) {
+            var bufferL = this.mergeBuffers(this.recBuffersL);
+            var dataview = this.encodeWAV(bufferL);
+            var audioBlob = new Blob([dataview], { 'type': type });
+
+            this.postMessage(audioBlob);
+   };
+
+   RecorderWorker.prototype.mergeBuffers = function mergeBuffers(recBuffers) {
+            var result = new Float32Array(this.recLength);
+            var offset = 0;
+            for (var i = 0; i &lt; recBuffers.length; i++) {
+                result.set(recBuffers[i], offset);
+                offset += recBuffers[i].length;
+            }
+            return result;
+    };
+
+    RecorderWorker.prototype.getBuffers = function getBuffers() {
+            var buffers = [];
+            buffers.push(this.mergeBuffers(this.recBuffersL));
+            buffers.push(this.mergeBuffers(this.recBuffersR));
+            this.postMessage(buffers);
+        };
+
+    RecorderWorker.prototype.clear = function clear() {
+            this.recLength = 0;
+            this.recBuffersL = [];
+            this.recBuffersR = [];
+        }
+
+    RecorderWorker.prototype.interleave = function interleave(inputL, inputR) {
+            var combinedLength = inputL.length + inputR.length;
+            var result = new Float32Array(combinedLength);
+
+            var index = 0;
+            var inputIndex = 0;
+
+            while (index &lt; combinedLength) {
+                result[index++] = inputL[inputIndex];
+                result[index++] = inputR[inputIndex];
+                inputIndex++;
+            }
+            return result;
+        }
+    RecorderWorker.prototype.encodeWAV = function encodeWAV(samples, mono) {
+            var buffer = new ArrayBuffer(44 + (samples.length * 2));
+            var view = new DataView(buffer);
+
+            /* RIFF identifier */
+            writeString(view, 0, 'RIFF');
+
+            /* file length */
+            view.setUint32(4, 32 + samples.length * 2, true);
+
+            /* RIFF type */
+            writeString(view, 8, 'WAVE');
+
+            /* format chunk identifier */
+            writeString(view, 12, 'fmt ');
+
+            /* format chunk length */
+            view.setUint32(16, 16, true);
+
+            /* sample format (raw) */
+            view.setUint16(20, 1, true);
+
+            /* channel count */
+            view.setUint16(22, mono ? 1 : 2, true);
+
+            /* sample rate */
+            view.setUint32(24, this.sampleRate, true);
+
+            /* byte rate (sample rate * block align) */
+            view.setUint32(28, this.sampleRate * 4, true);
+
+            /* block align (channel count * bytes per sample) */
+            view.setUint16(32, 4, true);
+
+            /* bits per sample */
+            view.setUint16(34, 16, true);
+
+            /* data chunk identifier */
+            writeString(view, 36, 'data');
+
+            /* data chunk length */
+            view.setUint32(40, samples.length * 2, true);
+
+            floatTo16BitPCM(view, 44, samples);
+
+            return view;
+        }
+
+    function floatTo16BitPCM(output, offset, input) {
+        for (var i = 0; i &lt; input.length; i++, offset += 2) {
+            var s = Math.max(-1, Math.min(1, input[i]));
+            output.setInt16(offset, s &lt; 0 ? s * 0x8000 : s * 0x7FFF, true);
+        }
+    }
+
+    function writeString(view, offset, string) {
+        for (var i = 0; i &lt; string.length; i++) {
+            view.setUint8(offset + i, string.charCodeAt(i));
+        }
+    }
+
+    var recordWorker = new RecorderWorker(this);
+    this.onmessage = (function mainOnMessage(e) { recordWorker.onmessage(e) }).bind(this);
+}`;
+
+export const audioRecording = { 'Recorder': Recorder };
+export default audioRecording;
+</pre>
+	</article>
+</section>
+
+
+
+
+
+				</div>
+
+				<div class="clearfix"></div>
+				<footer>
+					
+					
+		<span class="copyright">
+		Music21j, Copyright © 2013-2016 Michael Scott Cuthbert and cuthbertLab.
+		</span>
+					<br />
+					
+		<span class="jsdoc-message">
+		Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.4</a>
+		on Thu Aug 17th 2017 using the <a
+			href="https://github.com/terryweiss/docstrap">DocStrap template</a>.
+		</span>
+				</footer>
+			</div>
+
+			
+			<br clear="both">
+		</div>
+
+	</div>
+	<!--<script src="scripts/sunlight.js"></script>-->
+	<script src="scripts/docstrap.lib.js"></script>
+	<script src="scripts/bootstrap-dropdown.js"></script>
+	<script src="scripts/toc.js"></script>
+
+	<script>
+		$( function () {
+			$( "[id*='$']" ).each( function () {
+				var $this = $( this );
+
+				$this.attr( "id", $this.attr( "id" ).replace( "$", "__" ) );
+			} );
+
+			$( "#toc" ).toc( {
+				anchorName  : function ( i, heading, prefix ) {
+					return $( heading ).attr( "id" ) || ( prefix + i );
+				},
+				selectors   : "h1,h2,h3,h4",
+				showAndHide : false,
+				scrollTo    : "100px"
+			} );
+
+			$( "#toc>ul" ).addClass( "nav nav-pills nav-stacked" );
+			$( "#main span[id^='toc']" ).addClass( "toc-shim" );
+			$( '.dropdown-toggle' ).dropdown();
+//			$( ".tutorial-section pre, .readme-section pre" ).addClass( "sunlight-highlight-javascript" ).addClass( "linenums" );
+
+			$( ".tutorial-section pre, .readme-section pre" ).each( function () {
+				var $this = $( this );
+
+				var example = $this.find( "code" );
+				exampleText = example.html();
+				var lang = /{@lang (.*?)}/.exec( exampleText );
+				if ( lang && lang[1] ) {
+					exampleText = exampleText.replace( lang[0], "" );
+					example.html( exampleText );
+					lang = lang[1];
+				} else {
+					lang = "javascript";
+				}
+
+				if ( lang ) {
+
+					$this
+						.addClass( "sunlight-highlight-" + lang )
+						.addClass( "linenums" )
+						.html( example.html() );
+
+				}
+			} );
+
+			Sunlight.highlightAll( {
+				lineNumbers : true,
+				showMenu : true,
+				enableDoclinks : true
+			} );
+		} );
+	 </script>
+
+
+
+	<!--Navigation and Symbol Display-->
+	
+
+
+	<!--Google Analytics-->
+	
+
+</body>
+</html>

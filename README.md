@@ -3,7 +3,7 @@ Music21j
 
 **Music21j: An Interactive Framework for Musical Analysis**
 
-Copyright &copy;2013-16, Michael Scott Cuthbert and cuthbertLab, some rights reserved.
+Copyright &copy;2013-18, Michael Scott Cuthbert and cuthbertLab, some rights reserved.
 
 **Music21j** is a Javascript reinterpretation of the [Music21 Python] package, 
 a toolkit for computer-aided musicology, now with intuitive HTML/Javascript
@@ -50,7 +50,12 @@ If you have `git` installed, you can use (on Mac/Unix):
 % cd ~/git
 % git clone https://github.com/cuthbertLab/music21j.git
 % cd music21j
+% ./updateGit
+% npm install
 ```
+
+if the last line (`npm install`) doesn't work, download the
+latest version of `node.js` first from https://nodejs.org/en/download/
 
 The files in music21j are best viewed by running your own
 webserver (rather than using `file:///...` links). We've
@@ -58,6 +63,7 @@ included a small script to start you up:
 
 ```sh
 % cd ~/git/music21j
+% grunt
 % python start_python_server.py
 ```
 
@@ -88,7 +94,7 @@ using the python server above).
 
 Version
 --------
-0.7 alpha
+0.9.0 alpha
 
 
 License

@@ -1,319 +1,401 @@
-define(['./common','./stream', 'jquery'], 
-        /**
-         * module with tools for working with Streams. See {@link music21.streamInteraction} namespace.
-         * 
-         * @exports music21/streamInteraction
-         */        
-        function(common, stream, $) { 
-    /**
-     * Objects that work with Streams to provide interactions
-     * 
-     * @namespace music21.streamInteraction
-     * @memberof music21
-     * @requires music21/common
-     * @requires music21/stream
-     */
-    var streamInteraction = {};
-    
-    /**
-     * Object for adding scrolling while playing.
-     * 
-     * @class ScrollPlayer
-     * @memberof music21.streamInteraction
-     * @param {music21.stream.Stream} s -- Stream
-     * @param {canvas} c -- canvas
-     * @property {music21.streamInteraction.PixelMapper} pixelMapper - an object that can map current pixel to notes and vice versa.
-     * @property {number} [tempo=s.tempo]
-     * @property {number} lastX - last X value
-     * @property {Int} lastNoteIndex - index of last note played
-     * @property {SVGDOMObject} barDOM - DOM object representing the scrolling bar
-     * @property {SVGDOMObject} svgDOM - DOM object holding the scrolling bar (overlaid on top of canvas)
-     * @property {DOMObject} canvasParent - the parent DOM object for `this.canvas`
-     * @property {Int} lastTimeout - a numerical reference to a timeout object created by `setTimeout`
-     * @property {number} startTime - the time in ms when the scrolling started
-     * @property {Int} [previousSystemIndex=0] - the last systemIndex being scrolled
-     * @property {number} [eachSystemHeight=120] - currently all systems need to have the same height.
-     * @property {Int} [timingMS=50] - amount of time between polls to scroll
-     * @property {function} savedRenderOptionClick - starting ScrollPlayer overrides the `'click'` event for the stream, switching it to Stop. this saves it for restoring later.
-     */
-    streamInteraction.ScrollPlayer = function (s, c) {
+import * as $ from 'jquery';
+
+import { common } from './common.js';
+import { debug } from './debug.js';
+import { pitch } from './pitch.js';
+import { StreamException } from './exceptions21.js';
+
+/**
+ * module with tools for working with Streams. See {@link music21.streamInteraction} namespace.
+ *
+ * @exports music21/streamInteraction
+ */
+/**
+ * Objects that work with Streams to provide interactions
+ *
+ * @namespace music21.streamInteraction
+ * @memberof music21
+ * @requires music21/common
+ * @requires music21/stream
+ */
+export const streamInteraction = {};
+
+/**
+ * Object for adding scrolling while playing.
+ *
+ * @class Follower
+ * @memberof music21.streamInteraction
+ * @param {music21.stream.Stream} s -- Stream
+ * @param {canvasOrSvg} c -- canvas or svg
+ * @property {music21.streamInteraction.PixelMapper} pixelMapper - an object that can map current pixel to notes and vice versa.
+ * @property {number} [tempo=s.tempo]
+ * @property {number} lastX - last X value
+ * @property {Int} lastNoteIndex - index of last note played
+ * @property {SVGDOMObject} barDOM - DOM object representing the scrolling bar
+ * @property {SVGDOMObject} svgDOM - DOM object holding the scrolling bar (overlaid on top of canvas)
+ * @property {DOMObject} canvasOrSvgParent - the parent DOM object for `this.canvas`
+ * @property {Int} lastTimeout - a numerical reference to a timeout object created by `setTimeout`
+ * @property {number} startTime - the time in ms when the scrolling started
+ * @property {Int} [previousSystemIndex=0] - the last systemIndex being scrolled
+ * @property {number} [eachSystemHeight=120] - currently all systems need to have the same height.
+ * @property {Int} [timingMS=50] - amount of time in milliseconds between polls to scroll
+ * @property {function} savedRenderOptionClick - starting ScrollPlayer overrides the `'click'` event for the stream, switching it to Stop. this saves it for restoring later.
+ */
+export class Follower {
+    constructor(s, c) {
         this.pixelMapper = new streamInteraction.PixelMapper(s);
         this.stream = s;
-        this.canvas = c;
+        this.canvasOrSvg = c;
         this.tempo = s.tempo;
-        this.lastX = 0;
+
+        this.lastX = -100;
+        this.lastY = -100;
         this.lastNoteIndex = -1;
+
         this.barDOM = undefined;
         this.svgDOM = undefined;
-        this.canvasParent = undefined;
+        this.canvasOrSvgParent = $(c).parent()[0];
         this.lastTimeout = undefined;
         this.startTime = new Date().getTime();
         this.previousSystemIndex = 0;
         this.eachSystemHeight = 120;
         this.timingMS = 50;
         this.savedRenderOptionClick = undefined;
-        
-        
-        /**
-         * function, bound to `this` to scroll the barDOM.
-         * 
-         * calls itself until a stop click is received or the piece ends.
-         * 
-         * @method streamInteraction.ScrollPlayer#scrollScore
-         * @memberof music21.streamInteraction.ScrollPlayer
-         */
-        this.scrollScore = (function () {
-            var timeSinceStartInMS = new Date().getTime() - this.startTime;
-            var offset = timeSinceStartInMS/1000 * this.tempo/60;
-            var pm = this.pixelMapper;
-            var systemIndex = pm.getSystemIndexAtOffset(offset);
-            
-            if (systemIndex > this.previousSystemIndex) {
-                this.lastX = -100; // arbitrary negative...
-                this.previousSystemIndex = systemIndex;
-                this.barDOM.setAttribute('y', systemIndex * this.eachSystemHeight);
+
+        this.scaleY = this.stream.renderOptions.scaleFactor.y;
+        this.eachSystemHeight
+            = $(this.canvasOrSvg).attr('height')
+            / (this.scaleY * (this.pixelMapper.maxSystemIndex + 1));
+
+        this.newLocationCallbacks = [];
+        this.activeElementsCallbacks = [elList => this.playNotes(elList)];
+    }
+
+    playNotes(elList) {
+        for (const el of elList) {
+            if (el !== undefined && el.playMidi !== undefined) {
+                el.playMidi(this.tempo);
             }
-            var x = pm.getXAtOffset(offset);
-            x = Math.floor(x);
-            
-            //console.log(x);
-            
-            if (x > this.lastX) {
-                this.barDOM.setAttribute('x', x);
-                this.lastX = x;    
+        }
+    }
+
+    /**
+     * function, bound to `this` to scroll the barDOM.
+     *
+     * calls itself until a stop click is received or the piece ends.
+     *
+     * @method streamInteraction.Follower#followScore
+     * @memberof music21.streamInteraction.Follower
+     */
+    followScore() {
+        const timeSinceStartInMS = new Date().getTime() - this.startTime;
+        const offset = timeSinceStartInMS / 1000 * this.tempo / 60;
+        const pm = this.pixelMapper;
+        const systemIndex = pm.getSystemIndexAtOffset(offset);
+        let y = this.lastY;
+
+        if (systemIndex > this.previousSystemIndex) {
+            this.lastX = -100; // arbitrary negative...
+            this.previousSystemIndex = systemIndex;
+            y = systemIndex * this.eachSystemHeight;
+        }
+        let x = pm.getXAtOffset(offset);
+        x = Math.floor(x);
+
+        // console.log(x);
+
+        for (const newLocationCallback of this.newLocationCallbacks) {
+            newLocationCallback(x, y);
+        }
+
+        this.lastX = x;
+        this.lastY = y;
+
+        // pm is a pixelMap not a Stream
+        for (let j = 0; j < pm.allMaps.length; j++) {
+            const pmOff = pm.allMaps[j].offset;
+            if (j <= this.lastNoteIndex) {
+                continue;
+            } else if (Math.abs(offset - pmOff) > 0.1) {
+                continue;
             }
-            // pm is a pixelMap not a Stream
-            for (var j = 0; j < pm.allMaps.length; j++) {
-                var pmOff = pm.allMaps[j].offset;
-                if (j <= this.lastNoteIndex)  {
-                    continue;
-                } else if (Math.abs(offset - pmOff) > .1) {
-                    continue;
-                }
-                var elList = pm.allMaps[j].elements;
-                for (var elIndex = 0; elIndex < elList.length; elIndex++) {
-                    var el = elList[elIndex];
-                    if (el !== undefined && el.playMidi !== undefined) {
-                        el.playMidi(this.tempo);
-                    }
-                }
-                this.lastNoteIndex = j;
-                
+            const elList = pm.allMaps[j].elements;
+            for (const elementCallback of this.activeElementsCallbacks) {
+                elementCallback(elList);
             }
-            //console.log(x, offset);
-            //console.log(barDOM.setAttribute);
-            var newTimeout = undefined;
-            if (x < pm.maxX || systemIndex < pm.maxSystemIndex ) {
-                //console.log(x, pm.maxX);
-                newTimeout = setTimeout( this.scrollScore, this.timingMS);                  
-                this.lastTimeout = newTimeout;
-            } else {
-                var fauxEvent = undefined;
-                this.stopPlaying(fauxEvent);
-            }
-        }).bind(this);
-    };
-    
+            this.lastNoteIndex = j;
+        }
+        // console.log(x, offset);
+        // console.log(barDOM.setAttribute);
+        let newTimeout;
+        if (x < pm.maxX || systemIndex < pm.maxSystemIndex) {
+            // console.log(x, pm.maxX);
+            newTimeout = setTimeout(() => this.followScore(), this.timingMS);
+            this.lastTimeout = newTimeout;
+        } else {
+            const fauxEvent = undefined;
+            this.stopPlaying(fauxEvent);
+        }
+    }
+
+    /**
+     * start playing! Create a scroll bar and start scrolling
+     *
+     * (set this to an event on stream, or something...)
+     *
+     * currently called from {@link music21.stream.Stream#scrollScoreStart} via
+     * {@link music21.stream.Stream#renderScrollableCanvas}. Will change.
+     *
+     * @memberof music21.streamInteraction.ScrollPlayer
+     */
+    startPlaying() {
+        this.savedRenderOptionClick = this.stream.renderOptions.events.click;
+        this.stream.renderOptions.events.click = e => this.stopPlaying(e);
+        this.stream.setRenderInteraction(this.canvasOrSvgParent);
+        this.followScore();
+    }
+
+    /**
+     * Called when the ScrollPlayer should stop playing
+     *
+     * @memberof music21.streamInteraction.ScrollPlayer
+     * @param {DOMEvent} [event]
+     */
+    stopPlaying(event) {
+        this.stream.renderOptions.events.click = this.savedRenderOptionClick;
+        if (this.lastTimeout !== undefined) {
+            clearTimeout(this.lastTimeout);
+        }
+        this.stream.setRenderInteraction(this.canvasOrSvgParent);
+        if (event !== undefined) {
+            event.stopPropagation();
+        }
+    }
+}
+streamInteraction.Follower = Follower;
+
+/**
+ * Object for adding scrolling while playing.
+ *
+ * @class ScrollPlayer
+ * @memberof music21.streamInteraction
+ * @param {music21.stream.Stream} s -- Stream
+ * @param {canvasOrSvg} c -- canvas or svg
+ * @property {SVGDOMObject} barDOM - DOM object representing the scrolling bar
+ * @property {SVGDOMObject} svgDOM - DOM object holding the scrolling bar (overlaid on top of canvas)
+ */
+export class ScrollPlayer extends Follower {
+    constructor(s, c) {
+        super(s, c);
+        this.barDOM = undefined;
+        this.svgDOM = undefined;
+        this.newLocationCallbacks.push((x, y) => this.updateBar(x, y));
+    }
+
+    /**
+     * updateBar - Update the position of the bar
+     *
+     * @param  {type} x current x position in playback
+     * @param  {type} y current y position in playback
+     * @return {undefined}
+     */
+
+    updateBar(x, y) {
+        if (x > this.lastX) {
+            this.barDOM.setAttribute('x', x);
+        }
+        if (y > this.lastY) {
+            this.barDOM.setAttribute('y', y);
+        }
+    }
+
+    /**
+     * start playing! Create a scroll bar and start scrolling
+     *
+     * (set this to an event on stream, or something...)
+     *
+     * currently called from {@link music21.stream.Stream#scrollScoreStart} via
+     * {@link music21.stream.Stream#renderScrollableCanvas}. Will change.
+     *
+     * @memberof music21.streamInteraction.ScrollPlayer
+     */
+    startPlaying() {
+        this.createScrollBar();
+        super.startPlaying();
+    }
+
     /**
      * Create the scrollbar (barDOM), the svg to place it in (svgDOM)
      * and append it over the stream.
-     * 
+     *
      * Sets as a consequence:
      * - this.barDOM
      * - this.svgDOM
      * - this.eachSystemHeight
-     * - this.canvasParent
-     * 
+     * - this.canvasOrSvgParent
+     *
      * @memberof music21.streamInteraction.ScrollPlayer
      * @returns {SVGDOMObject} scroll bar
      */
-    streamInteraction.ScrollPlayer.prototype.createScrollBar = function () {
-        var canvas = this.canvas;
-        var svgDOM = common.makeSVGright('svg', {
-            'height': canvas.height.toString() +'px',
-            'width': canvas.width.toString() + 'px',
-            'style': 'position:absolute; top: 0px; left: 0px;',
+    createScrollBar() {
+        let svgDomHeight;
+        let svgDomWidth;
+        if (this.canvasOrSvg.tagName.toLowerCase() === 'canvas') {
+            svgDomHeight = this.canvasOrSvg.height;
+            svgDomWidth = this.canvasOrSvg.width;
+        } else {
+            svgDomHeight = $(this.canvasOrSvg).attr('height');
+            svgDomWidth = $(this.canvasOrSvg).attr('width');
+        }
+
+        const svgDOM = common.makeSVGright('svg', {
+            height: svgDomHeight.toString() + 'px',
+            width: svgDomWidth.toString() + 'px',
+            style: 'position:absolute; top: 0px; left: 0px;',
         });
-        var scaleY = this.stream.renderOptions.scaleFactor.y;        
-        var eachSystemHeight = canvas.height / (scaleY * (this.pixelMapper.maxSystemIndex + 1));
-        var barDOM = common.makeSVGright('rect', {
-            width: 10, 
-            height: eachSystemHeight - 6,  // small fudge for separation
-            x: this.pixelMapper.startX, 
+        const barDOM = common.makeSVGright('rect', {
+            width: 10,
+            height: this.eachSystemHeight - 6, // small fudge for separation
+            x: this.pixelMapper.startX,
             y: 3,
-            style: 'fill: rgba(255, 255, 20, .5);stroke:white',    
-        } );
-        barDOM.setAttribute("transform", "scale(" + scaleY  + ")");        
+            style: 'fill: rgba(255, 255, 20, .5);stroke:white',
+        });
+        barDOM.setAttribute('transform', 'scale(' + this.scaleY + ')');
         svgDOM.appendChild(barDOM);
-  
-        var canvasParent = $(canvas).parent()[0];
-        canvasParent.appendChild(svgDOM);
+
+        this.canvasOrSvgParent.appendChild(svgDOM);
         this.barDOM = barDOM;
         this.svgDOM = svgDOM;
-        this.canvasParent = canvasParent;
-        this.eachSystemHeight = eachSystemHeight;
         return barDOM;
-    };
-    
-    /**
-     * start playing! Create a scroll bar and start scrolling
-     * 
-     * (set this to an event on stream, or something...)
-     * 
-     * currently called from {@link music21.stream.Stream#scrollScoreStart} via
-     * {@link music21.stream.Stream#renderScrollableCanvas}. Will change.
-     * 
-     * @memberof music21.streamInteraction.ScrollPlayer
-     */
-    streamInteraction.ScrollPlayer.prototype.startPlaying = function () {
-        this.createScrollBar();
-        
-        this.savedRenderOptionClick = this.stream.renderOptions.events.click;
-        this.stream.renderOptions.events.click = (function (e) { this.stopPlaying(e); }).bind(this);
-        this.stream.setRenderInteraction(this.canvasParent);
-        this.scrollScore(); 
-    };
+    }
 
     /**
      * Called when the ScrollPlayer should stop playing
-     * 
+     *
      * @memberof music21.streamInteraction.ScrollPlayer
      * @param {DOMEvent} [event]
      */
-    streamInteraction.ScrollPlayer.prototype.stopPlaying = function (event) {
-        this.stream.renderOptions.events.click = this.savedRenderOptionClick;
+    stopPlaying(event) {
+        super.stopPlaying(event);
         this.barDOM.setAttribute('style', 'display:none');
-        // TODO: generalize...
-        this.canvasParent.removeChild(this.svgDOM);
-        if (this.lastTimeout !== undefined) {
-            clearTimeout(this.lastTimeout);
-        }
-        this.stream.setRenderInteraction(this.canvasParent);
-        if (event !== undefined) {
-            event.stopPropagation();
-        }
-    };
-    
+        this.canvasOrSvgParent.removeChild(this.svgDOM);
+    }
+}
+streamInteraction.ScrollPlayer = ScrollPlayer;
 
-    /**
-     * A `PixelMapper` is an object that knows how to map offsets to pixels on a flat Stream.
-     * 
-     * Helper for ScrollPlayer and soon other places...
-     * 
-     * @class PixelMapper
-     * @memberof music21.streamInteraction
-     * @param {music21.stream.Stream} s - stream object
-     * @property {Array<music21.streamInteraction.PixelMap>} allMaps - a `PixelMap` object for each offset in the Stream and one additional one for the end of the Stream.
-     * @property {music21.stream.Stream} s - stream object
-     * @property {music21.stream.Stream} notesAndRests - `this.stream.flat.notesAndRests`
-     * @property {number} pixelScaling - `this.stream.renderOptions.scaleFactor.x`
-     * @property {number} startX - (readonly) starting x
-     * @property {number} maxX - (readonly) ending x
-     * @property {Int} maxSystemIndex - the index of the last system.
-     */
-    streamInteraction.PixelMapper = function (s) {
+/**
+ * A `PixelMapper` is an object that knows how to map offsets to pixels on a flat Stream.
+ *
+ * Helper for ScrollPlayer and soon other places...
+ *
+ * @class PixelMapper
+ * @memberof music21.streamInteraction
+ * @param {music21.stream.Stream} s - stream object
+ * @property {Array<music21.streamInteraction.PixelMap>} allMaps - a `PixelMap` object
+ *     for each offset in the Stream and one additional one for the end of the Stream.
+ * @property {music21.stream.Stream} s - stream object
+ * @property {music21.stream.Stream} notesAndRests - `this.stream.flat.notesAndRests`
+ * @property {number} pixelScaling - `this.stream.renderOptions.scaleFactor.x`
+ * @property {number} startX - (readonly) starting x
+ * @property {number} maxX - (readonly) ending x
+ * @property {Int} maxSystemIndex - the index of the last system.
+ */
+export class PixelMapper {
+    constructor(s) {
         this.allMaps = [];
         this.stream = s;
         this.notesAndRests = this.stream.flat.notesAndRests;
         this.pixelScaling = s.renderOptions.scaleFactor.x;
-        
-        Object.defineProperties(this, {
-            'startX': {
-                enumerable: true,
-                configurable: false,
-                get: function () {
-                    return this.allMaps[0].x;
-                },
-            },
-            'maxX': {
-               enumerable: true,
-               configurable: false,
-               get: function () {                    
-                   var m = this.allMaps[this.allMaps.length - 1];
-                   return m.x;
-               },
-            },
-            'maxSystemIndex': {
-                enumerable: true,
-                configurable: false,
-                get: function () { 
-                    return this.allMaps[this.allMaps.length - 1].systemIndex; 
-                },
-             },
-        });
         this.processStream(s);
-    };
-    
+    }
+    get startX() {
+        return this.allMaps[0].x;
+    }
+    get maxX() {
+        const m = this.allMaps[this.allMaps.length - 1];
+        return m.x;
+    }
+    get maxSystemIndex() {
+        return this.allMaps[this.allMaps.length - 1].systemIndex;
+    }
     /**
      * Creates `PixelMap` objects for every note in the stream, and an extra
      * one mapping the end of the final offset.
-     * 
+     *
      * @memberof music21.streamInteraction.PixelMapper
      * @returns {Array<music21.streamInteraction.PixelMap>}
      */
-    streamInteraction.PixelMapper.prototype.processStream = function () {
-        var ns = this.notesAndRests;
-        for (var i = 0; i < ns.length; i++) {
-            var n = ns.get(i);
+    processStream() {
+        const ns = this.notesAndRests;
+        for (let i = 0; i < ns.length; i++) {
+            const n = ns.get(i);
             this.addNoteToMap(n);
         }
         // prepare final map.
-        var finalStave =  ns.get(-1).activeVexflowNote.stave;                    
-        var finalX = (finalStave.x + finalStave.width);
-        var endOffset = ns.get(-1).duration.quarterLength + ns.get(-1).offset;
-        
-        var lastMap = new streamInteraction.PixelMap(this, endOffset);        
+        const finalNote = ns.get(-1);
+        const finalVFNote = finalNote.activeVexflowNote;
+        if (finalVFNote === undefined) {
+            throw new StreamException(
+                'Cannot make a pixel map where activeVexflowNotes are undefined. '
+                    + 'Run s.createCanvas() before constructing a PixelMapper.'
+            );
+        }
+        const finalStave = finalVFNote.stave;
+        const finalX = finalStave.x + finalStave.width;
+        const endOffset = finalNote.duration.quarterLength + finalNote.offset;
+
+        const lastMap = new streamInteraction.PixelMap(this, endOffset);
         lastMap.elements = [undefined];
         lastMap.x = finalX;
         lastMap.systemIndex = this.allMaps[this.allMaps.length - 1].systemIndex;
         this.allMaps.push(lastMap);
-        return this.allMaps;            
-    };     
+        return this.allMaps;
+    }
 
     /**
      * Adds a {@link music21.base.Music21Object}, usually a {@link music21.note.Note} object,
      * to the maps for the PixelMapper if a {@link music21.streamInteraction.PixelMap} object
      * already exists at that location, or creates a new `PixelMap` if one does not exist.
-     * 
+     *
      * @memberof music21.streamInteraction.PixelMapper
      * @param {music21.base.Music21Object} n - note or other object
      * @returns {music21.streamInteraction.PixelMap} PixelMap added to.
      */
-    streamInteraction.PixelMapper.prototype.addNoteToMap = function (n) {
-        var currentOffset = n.offset;
-        var properMap = this.findMapForExactOffset(currentOffset);
+    addNoteToMap(n) {
+        const currentOffset = n.offset;
+        const properMap = this.findMapForExactOffset(currentOffset);
         if (properMap !== undefined) {
             properMap.elements.push(n);
             return properMap;
         } else {
-            var map = new streamInteraction.PixelMap(this, currentOffset);
-            map.elements = [n];
-            this.allMaps.push(map);            
-            return map;
+            const pmap = new streamInteraction.PixelMap(this, currentOffset);
+            pmap.elements = [n];
+            this.allMaps.push(pmap);
+            return pmap;
         }
-    };
+    }
     /**
      * Finds a `PixelMap` object if one matches this exact offset. Otherwise returns undefined
-     * 
+     *
      * @memberof music21.streamInteraction.PixelMapper
      * @param {number} o offset
      * @returns {music21.streamInteraction.PixelMap|undefined}
      */
-    streamInteraction.PixelMapper.prototype.findMapForExactOffset = function (o) {
-        for (var j = this.allMaps.length - 1; j >= 0; j = j - 1) {
+    findMapForExactOffset(o) {
+        for (let j = this.allMaps.length - 1; j >= 0; j -= 1) {
             // find the last map with this offset. searches backwards for speed.
-            if (this.allMaps[j].offset == o) {
+            if (this.allMaps[j].offset === o) {
                 return this.allMaps[j];
             }
         }
         return undefined;
-    };
-    
+    }
+
     /**
      *  returns an array of two pixel maps: the previous/current one and the
-        next/current one (i.e., if the offset is exactly the offset of a pixel map
-        the prevNoteMap and nextNoteMap will be the same; similarly if the offset is
-        beyond the end of the score)
+            next/current one (i.e., if the offset is exactly the offset of a pixel map
+            the prevNoteMap and nextNoteMap will be the same; similarly if the offset is
+            beyond the end of the score)
 
      * @memberof music21.streamInteraction.PixelMapper
      * @param {number} offset
@@ -334,21 +416,21 @@ define(['./common','./stream', 'jquery'],
      * next.x
      * // 123...
      */
-    streamInteraction.PixelMapper.prototype.getPixelMapsAroundOffset = function(offset) {
-        var prevNoteMap = undefined;
-        var nextNoteMap = undefined;
-        for (var i = 0; i < this.allMaps.length; i++) {
-            thisMap = this.allMaps[i];
+    getPixelMapsAroundOffset(offset) {
+        let prevNoteMap;
+        let nextNoteMap;
+        for (let i = 0; i < this.allMaps.length; i++) {
+            const thisMap = this.allMaps[i];
             if (thisMap.offset <= offset) {
                 prevNoteMap = thisMap;
-            } 
-            if (thisMap.offset >= offset ) {
+            }
+            if (thisMap.offset >= offset) {
                 nextNoteMap = thisMap;
                 break;
             }
         }
         if (prevNoteMap === undefined && nextNoteMap === undefined) {
-            var lastNoteMap = this.allMaps[this.allMaps.length - 1];
+            const lastNoteMap = this.allMaps[this.allMaps.length - 1];
             prevNoteMap = lastNoteMap;
             nextNoteMap = lastNoteMap;
         } else if (prevNoteMap === undefined) {
@@ -357,10 +439,10 @@ define(['./common','./stream', 'jquery'],
             nextNoteMap = prevNoteMap;
         }
         return [prevNoteMap, nextNoteMap];
-    };
+    }
     /**
      * Uses the stored offsetToPixelMaps to get the pixel X for the offset.
-     * 
+     *
      * @memberof music21.streamInteraction.PixelMapper
      * @param {number} offset
      * @param {Array<music21.streamInteraction.PixelMap>} offsetToPixelMaps
@@ -374,130 +456,556 @@ define(['./common','./stream', 'jquery'],
      * pm.getXAtOffset(0.5); // between two notes
      * // 138.63...
      */
-    streamInteraction.PixelMapper.prototype.getXAtOffset = function(offset) {
-        // returns the proper 
-        var twoNoteMaps = this.getPixelMapsAroundOffset(offset);
-        var prevNoteMap = twoNoteMaps[0];
-        var nextNoteMap = twoNoteMaps[1];
-        var pixelScaling = this.pixelScaling;
-        var offsetFromPrev = offset - prevNoteMap.offset;
-        var offsetDistance = nextNoteMap.offset - prevNoteMap.offset;
-        var pixelDistance = nextNoteMap.x - prevNoteMap.x;       
-        if (nextNoteMap.systemIndex != prevNoteMap.systemIndex) {
-            var stave = prevNoteMap.elements[0].activeVexflowNote.stave;                    
-            pixelDistance = (stave.x + stave.width) * pixelScaling - prevNoteMap.x;
-        } 
-        var offsetToPixelScale = 0;
-        if (offsetDistance != 0) {
-            offsetToPixelScale = pixelDistance/offsetDistance;                    
-        } else {
-            offsetToPixelScale = 0;   
+    getXAtOffset(offset) {
+        // returns the proper
+        const twoNoteMaps = this.getPixelMapsAroundOffset(offset);
+        const prevNoteMap = twoNoteMaps[0];
+        const nextNoteMap = twoNoteMaps[1];
+        const pixelScaling = this.pixelScaling;
+        const offsetFromPrev = offset - prevNoteMap.offset;
+        const offsetDistance = nextNoteMap.offset - prevNoteMap.offset;
+        let pixelDistance = nextNoteMap.x - prevNoteMap.x;
+        if (nextNoteMap.systemIndex !== prevNoteMap.systemIndex) {
+            const stave = prevNoteMap.elements[0].activeVexflowNote.stave;
+            pixelDistance
+                = (stave.x + stave.width) * pixelScaling - prevNoteMap.x;
         }
-        var pixelsFromPrev = offsetFromPrev * offsetToPixelScale;
-        var offsetX = prevNoteMap.x + pixelsFromPrev;
+        let offsetToPixelScale = 0;
+        if (offsetDistance !== 0) {
+            offsetToPixelScale = pixelDistance / offsetDistance;
+        } else {
+            offsetToPixelScale = 0;
+        }
+        const pixelsFromPrev = offsetFromPrev * offsetToPixelScale;
+        const offsetX = prevNoteMap.x + pixelsFromPrev;
         return offsetX / pixelScaling;
-    };
+    }
 
     /**
      * Uses the stored offsetToPixelMaps to get the systemIndex active at the current time.
-     * 
+     *
      * @memberof music21.streamInteraction.PixelMapper
      * @param {number} offset
      * @returns {number} systemIndex of the offset
      */
-    streamInteraction.PixelMapper.prototype.getSystemIndexAtOffset = function (offset) {
-        var twoNoteMaps = this.getPixelMapsAroundOffset(offset);
-        var prevNoteMap = twoNoteMaps[0];
+    getSystemIndexAtOffset(offset) {
+        const twoNoteMaps = this.getPixelMapsAroundOffset(offset);
+        const prevNoteMap = twoNoteMaps[0];
         return prevNoteMap.systemIndex;
-    };
-    
-    
-    
-    /*  PIXEL MAP */
-    
-    /**
-     * A PixelMap maps one offset to one x location.
-     * 
-     * The offset does NOT have to be the offset of an element. Offsets are generally
-     * measured from the start of the flat stream.
-     * 
-     * @class PixelMap
-     * @memberof music21.streamInteraction
-     * @param {music21.streamInteraction.PixelMapper} mapper - should eventually be a weakref...
-     * @param {number} offset - the offset that is being mapped.
-     * @property {Array<music21.base.Music21Object>} elements -- elements being mapped to.
-     * @property {number} offset - the offset inputted
-     * @property {number} x - x value in pixels for this offset 
-     * @property {Int} systemIndex - the systemIndex at which this offset appears.
-     * @example
-     * // not a particularly realistic example, since it requires so much setup...
-     * var s = new music21.tinyNotation.TinyNotation('3/4 c4 d8 e f4 g4 a4 b4');
-     * var can = s.appendNewCanvas();
-     * var pmapper = new music21.streamInteraction.PixelMapper(s);
-     * var pmapA = new music21.streamInteraction.PixelMap(pmapper, 2.0);
-     * pmapA.elements = [s.flat.get(3)];
-     * pmapA.offset;
-     * // 2
-     * pmapA.x;
-     * // 149.32...
-     * pmapA.systemIndex
-     * // 0
-     */
-    streamInteraction.PixelMap = function (mapper, offset) {
+    }
+}
+streamInteraction.PixelMapper = PixelMapper;
+
+/*  PIXEL MAP */
+
+/**
+ * A PixelMap maps one offset to one x location.
+ *
+ * The offset does NOT have to be the offset of an element. Offsets are generally
+ * measured from the start of the flat stream.
+ *
+ * @class PixelMap
+ * @memberof music21.streamInteraction
+ * @param {music21.streamInteraction.PixelMapper} mapper - should eventually be a weakref...
+ * @param {number} offset - the offset that is being mapped.
+ * @property {Array<music21.base.Music21Object>} elements -- elements being mapped to.
+ * @property {number} offset - the offset inputted
+ * @property {number} x - x value in pixels for this offset
+ * @property {Int} systemIndex - the systemIndex at which this offset appears.
+ * @example
+ * // not a particularly realistic example, since it requires so much setup...
+ * var s = new music21.tinyNotation.TinyNotation('3/4 c4 d8 e f4 g4 a4 b4');
+ * var can = s.appendNewCanvas();
+ * var pmapper = new music21.streamInteraction.PixelMapper(s);
+ * var pmapA = new music21.streamInteraction.PixelMap(pmapper, 2.0);
+ * pmapA.elements = [s.flat.get(3)];
+ * pmapA.offset;
+ * // 2
+ * pmapA.x;
+ * // 149.32...
+ * pmapA.systemIndex
+ * // 0
+ */
+export class PixelMap {
+    constructor(mapper, offset) {
         this.pixelScaling = mapper.pixelScaling; // should be a Weakref...
         this.elements = [];
         this.offset = offset; // important
         this._x = undefined;
         this._systemIndex = undefined;
-        
-        Object.defineProperties(this, {
-            'x': {
-               enumerable: true,
-               configurable: true,
-               get: function() {
-                   if (this._x !== undefined) {
-                       return this._x;
-                   } else {
-                       if (this.elements.length == 0) {
-                           return 0; // error!
-                       } else {
-                           return this.elements[0].x * this.pixelScaling;
-                       }
-                   }
-               },
-               set: function(x) { this._x = x; },
-            },
-            'systemIndex': {
-                enumerable: true,
-                configurable: true,
-                get: function() {
-                    if (this._systemIndex !== undefined) {
-                        return this._systemIndex;
-                    } else {
-                        if (this.elements.length == 0) {
-                            return 0; // error!
-                        } else {
-                            return this.elements[0].systemIndex;
-                        }
-                    }
-                },
-                set: function(systemIndex) { this._systemIndex = systemIndex; },
-             },
-             
-        });
-    };
-    
-    
-    /*  NOT DONE YET */
-    streamInteraction.CursorSelect = function (s) {
+    }
+    get x() {
+        if (this._x !== undefined) {
+            return this._x;
+        } else if (this.elements.length === 0) {
+            return 0; // error!
+        } else {
+            return this.elements[0].x * this.pixelScaling;
+        }
+    }
+    set x(x) {
+        this._x = x;
+    }
+    get systemIndex() {
+        if (this._systemIndex !== undefined) {
+            return this._systemIndex;
+        } else if (this.elements.length === 0) {
+            return 0; // error!
+        } else {
+            return this.elements[0].systemIndex;
+        }
+    }
+    set systemIndex(systemIndex) {
+        this._systemIndex = systemIndex;
+    }
+}
+streamInteraction.PixelMap = PixelMap;
+
+/*  NOT DONE YET */
+/*  Will allow for selecting notes by keyboard with cursor */
+export class CursorSelect {
+    constructor(s) {
         this.stream = s;
-        this.activeElementHierarchy = [undefined];        
-    };
-    
-    
-    // end of define
-    if (typeof(music21) != "undefined") {
-        music21.streamInteraction = streamInteraction;
-    }       
-    return streamInteraction;
-});
+        this.activeElementHierarchy = [undefined];
+    }
+}
+streamInteraction.CursorSelect = CursorSelect;
+
+export class SimpleNoteEditor {
+    constructor(s) {
+        this.stream = s;
+        this.activeNote = undefined;
+        this.changedCallbackFunction = undefined; // for editable canvases
+        this.accidentalsByStepOctave = {};
+        this.minAccidentalEditor = -1;
+        this.maxAccidentalEditor = 1;
+
+        this.elementType = 'svg';
+
+        // for active display of mouse over notes.
+        // NOT used as of 2017 Dec.
+        this.renderMouseOver = true;
+        this.currentNoteValue = 'quarter';
+    }
+
+    /**
+     * A function bound to the current stream that
+     * will changes the stream. Used in editableAccidentalCanvas, among other places.
+     *
+     *      var can = s.appendNewCanvas();
+     *      $(can).on('click', s.changeClickedNoteFromEvent);
+     *
+     * @memberof music21.streamInteraction.SimpleNoteEditor
+     * @param {Event} e
+     * @returns {music21.base.Music21Object|undefined} - returns whatever changedCallbackFunction does.
+     */
+    changeClickedNoteFromEvent(e) {
+        const canvasOrSvgElement = e.currentTarget;
+        const [
+            clickedDiatonicNoteNum,
+            foundNote
+        ] = this.stream.findNoteForClick(canvasOrSvgElement, e);
+        if (foundNote === undefined) {
+            if (debug) {
+                console.log('No note found');
+            }
+            return undefined;
+        }
+        return this.noteChanged(
+            clickedDiatonicNoteNum,
+            foundNote,
+            canvasOrSvgElement
+        );
+    }
+
+    /**
+     * Change the pitch of a note given that it has been clicked and then
+     * call changedCallbackFunction
+     *
+     * @memberof music21.streamInteraction.SimpleNoteEditor
+     * @param {Int} clickedDiatonicNoteNum
+     * @param {music21.base.Music21Object} foundNote
+     * @param {DOMObject} canvasOrSvg
+     * @returns {any} output of changedCallbackFunction
+     */
+    noteChanged(clickedDiatonicNoteNum, foundNote, canvasOrSvg) {
+        const n = foundNote;
+        const p = new pitch.Pitch('C');
+        p.diatonicNoteNum = clickedDiatonicNoteNum;
+        if (
+            (n.pitch.accidental === undefined
+                || n.accidentalIsFromKeySignature === true)
+            && this.stream.keySignature !== undefined
+        ) {
+            p.accidental = this.stream.keySignature.accidentalByStep(p.step);
+            n.accidentalIsFromKeySignature = true;
+        } else if (n.accidentalIsFromKeySignature !== true) {
+            p.accidental = n.pitch.accidental;
+        }
+        n.pitch = p;
+        n.stemDirection = undefined;
+        this.activeNote = n;
+        const $newSvg = this.stream.redrawCanvas(canvasOrSvg);
+        const params = { foundNote: n, svg: $newSvg };
+        if (this.changedCallbackFunction !== undefined) {
+            return this.changedCallbackFunction(params);
+        } else {
+            return params;
+        }
+    }
+
+    /**
+     * Renders a stream on a canvas with the ability to edit it and
+     * a toolbar that allows the accidentals to be edited.
+     *
+     * @memberof music21.streamInteraction.SimpleNoteEditor
+     * @param {number} [width]
+     * @param {number} [height]
+     * @returns {DOMObject} &lt;div&gt; tag around the canvas.
+     */
+    editableAccidentalCanvas(width, height) {
+        /*
+         * Create an editable canvas with an accidental selection bar.
+         */
+        const $d = $('<div/>')
+            .css('text-align', 'left')
+            .css('position', 'relative');
+        const $buttonDiv = this.getAccidentalToolbar();
+        $d.append($buttonDiv);
+        $d.append($("<br clear='all'/>"));
+        this.activateClick();
+        this.stream.appendNewCanvas($d, width, height);
+        return $d;
+    }
+
+    /**
+     * activateClick - sets the stream's renderOptions to activate clickFunction.
+     *
+     * @memberof music21.streamInteraction.SimpleNoteEditor
+     * @param  {undefined|function} clickFunction  arrow function to be called
+     *                                              (default changeClickedNoteFromEvent)
+     * @return {undefined}
+     */
+    activateClick(clickFunction) {
+        if (clickFunction === undefined) {
+            clickFunction = e => this.changeClickedNoteFromEvent(e);
+        }
+        this.stream.renderOptions.events.click = e => clickFunction(e);
+    }
+    /**
+     *
+     * @memberof music21.streamInteraction.SimpleNoteEditor
+     * @param {Int} minAccidental - alter of the min accidental (default -1)
+     * @param {Int} maxAccidental - alter of the max accidental (default 1)
+     * @param {jQueryObject} $siblingCanvas - canvas or svg to use for redrawing;
+     * @returns {jQueryObject} the accidental toolbar.
+     */
+    getAccidentalToolbar(minAccidental, maxAccidental, $siblingCanvas) {
+        if (minAccidental === undefined) {
+            minAccidental = this.minAccidentalEditor;
+        }
+        if (maxAccidental === undefined) {
+            maxAccidental = this.maxAccidentalEditor;
+        }
+        minAccidental = Math.round(minAccidental);
+        maxAccidental = Math.round(maxAccidental);
+
+        const $buttonDiv = $('<div/>').attr(
+            'class',
+            'accidentalToolbar scoreToolbar'
+        );
+        for (let i = minAccidental; i <= maxAccidental; i++) {
+            const acc = new pitch.Accidental(i);
+            const $button = $(
+                '<button>' + acc.unicodeModifier + '</button>'
+            ).click(e => this.addAccidental(i, e, $siblingCanvas));
+            if (Math.abs(i) > 1) {
+                $button.css('font-family', 'Bravura Text');
+                $button.css('font-size', '20px');
+            }
+            $buttonDiv.append($button);
+        }
+        return $buttonDiv;
+    }
+
+    /**
+     * getUseCanvasFromClickEvent - get the active canvas or svg from the click even
+     *
+     * @param  {event} clickEvent
+     * @return {jQueryObject}  $canvas
+     */
+    getUseCanvasFromClickEvent(clickEvent) {
+        let $searchParent = $(clickEvent.target).parent();
+        let $useCanvas;
+        let maxSearch = 99;
+        while (
+            maxSearch > 0
+            && $searchParent !== undefined
+            && ($useCanvas === undefined || $useCanvas[0] === undefined)
+        ) {
+            maxSearch -= 1;
+            $useCanvas = $searchParent.find('.streamHolding');
+            $searchParent = $searchParent.parent();
+        }
+        if ($useCanvas[0] === undefined) {
+            console.log('Could not find a canvas...');
+            return undefined;
+        }
+        return $useCanvas;
+    }
+
+    addAccidental(newAlter, clickEvent, $useCanvas) {
+        if ($useCanvas === undefined) {
+            $useCanvas = this.getUseCanvasFromClickEvent(clickEvent);
+            if ($useCanvas === undefined) {
+                return undefined;
+            }
+        }
+        if (this.activeNote !== undefined) {
+            const n = this.activeNote;
+            n.accidentalIsFromKeySignature = false;
+            n.pitch.accidental = new pitch.Accidental(newAlter);
+            /* console.log(n.pitch.name); */
+            const $newSvg = this.stream.redrawCanvas($useCanvas[0]);
+            const params = { foundNote: n, svg: $newSvg };
+            if (this.changedCallbackFunction !== undefined) {
+                return this.changedCallbackFunction(params);
+            } else {
+                return params;
+            }
+        }
+        return undefined;
+    }
+}
+
+streamInteraction.SimpleNoteEditor = SimpleNoteEditor;
+
+export class GrandStaffEditor extends SimpleNoteEditor {
+    constructor(s) {
+        super(s);
+        if (s.parts.length !== 2) {
+            throw new StreamException('Stream must be a grand staff!');
+        }
+    }
+}
+
+streamInteraction.GrandStaffEditor = GrandStaffEditor;
+
+export class FourPartEditor extends GrandStaffEditor {
+    constructor(s) {
+        super(s);
+        this.parts = s.parts;
+        for (let i = 0; i < this.parts.length; i++) {
+            const thisPart = this.parts.get(i);
+            if (thisPart.measures.get(0).voices.length !== 2) {
+                throw new StreamException(
+                    'Each part must have at least one measure with two voices'
+                );
+            }
+        }
+        this.editableMeasureIndexes = common.range(
+            this.parts.get(0).measures.length
+        );
+        this.activePart = this.parts.get(0);
+        this.activeMeasureIndex = 0;
+        this.activeMeasure = this.activePart.measures.get(
+            this.activeMeasureIndex
+        );
+        this.activeVoice = this.activeMeasure.voices.get(0);
+        this.activeVoiceNumber = 0; // 0, 1, 2, 3
+        this.activeNoteIndex = 0;
+        this.buttons = [];
+    }
+
+    editableCanvas(width, height) {
+        /*
+         * Create an editable canvas with an accidental selection bar.
+         */
+        const $d = $('<div/>')
+            .css('text-align', 'left')
+            .css('position', 'relative');
+        const $buttonDivPlay = this.stream.getPlayToolbar();
+        $buttonDivPlay.addClass('inlineBlock');
+        $buttonDivPlay.css({
+            'margin-right': '12px',
+        });
+        $d.append($buttonDivPlay);
+        const $buttonDiv = this.getAccidentalToolbar();
+        $buttonDiv.addClass('inlineBlock');
+        $buttonDiv.css({
+            'margin-right': '12px',
+        });
+        $d.append($buttonDiv);
+        const $voiceDiv = this.voiceSelectionToolbar();
+        $voiceDiv.addClass('inlineBlock');
+        $voiceDiv.css({
+            'margin-right': '12px',
+        });
+        $d.append($voiceDiv);
+        $d.append($("<br clear='all'/>"));
+        this.activateClick();
+        this.stream.appendNewCanvas($d, width, height);
+        return $d;
+    }
+
+    /**
+     * setActiveInformation - given a click event, set the active information
+     *
+     * @param  {DOMObject} canvasElement canvas
+     * @param  {event} e             click event.
+     * @return {undefined}
+     */
+
+    setActiveInformation(canvasElement, e) {
+        const [x, y] = this.stream.getScaledXYforCanvas(canvasElement, e);
+        const systemIndex = this.stream.systemIndexAndScaledY(y)[0];
+        // measureChosen will always be in the first part...
+        const measureChosen = this.stream.getStreamFromScaledXandSystemIndex(
+            x,
+            systemIndex
+        );
+        let matchIndex;
+        const measuresStream = this.parts.get(0).measures;
+        for (let i = 0; i < measuresStream.length; i++) {
+            const matchMeasure = measuresStream.get(i);
+            if (matchMeasure === measureChosen) {
+                matchIndex = i;
+                break;
+            }
+        }
+        if (matchIndex === undefined) {
+            return;
+        }
+        if (!this.editableMeasureIndexes.includes(matchIndex)) {
+            return;
+        }
+        this.activeMeasureIndex = matchIndex;
+        if (this.activeVoiceNumber < 2) {
+            this.activePart = this.parts.get(0);
+        } else {
+            this.activePart = this.parts.get(1);
+        }
+        const voiceIndexInMeasure = this.activeVoiceNumber % 2;
+        this.activeMeasure = this.activePart.measures.get(
+            this.activeMeasureIndex
+        );
+        this.activeVoice = this.activeMeasure.voices.get(voiceIndexInMeasure);
+        return;
+    }
+
+    /**
+     * A function bound to the current stream that
+     * will changes the stream. Used in editableAccidentalCanvas, among other places.
+     *
+     *      var can = s.appendNewCanvas();
+     *      $(can).on('click', s.changeClickedNoteFromEvent);
+     *
+     * @memberof music21.stream.Stream
+     * @param {Event} e
+     * @returns {music21.base.Music21Object|undefined} - returns whatever changedCallbackFunction does.
+     */
+    changeClickedNoteFromEvent(e) {
+        const canvasElement = e.currentTarget;
+        this.setActiveInformation(canvasElement, e);
+        this.activeVoice.renderOptions.scaleFactor = this.stream.renderOptions.scaleFactor;
+
+        // the activeVoice can find the right note object but not
+        // the right DNN
+        const [unused_wrong_dnn, foundNote] = this.activeVoice.findNoteForClick(
+            canvasElement,
+            e
+        );
+
+        // conversely, the stream itself can find the right
+        // DNN but not the right note.
+        const [
+            clickedDiatonicNoteNum,
+            unused_wrong_note
+        ] = this.stream.findNoteForClick(canvasElement, e);
+
+        if (foundNote === undefined) {
+            if (debug) {
+                console.log('No note found');
+            }
+            return undefined;
+        }
+        return this.noteChanged(
+            clickedDiatonicNoteNum,
+            foundNote,
+            canvasElement
+        );
+    }
+
+    noteChanged(clickedDiatonicNoteNum, foundNote, canvas) {
+        const n = foundNote;
+        const p = new pitch.Pitch('C');
+        p.diatonicNoteNum = clickedDiatonicNoteNum;
+        if (
+            (n.pitch.accidental === undefined
+                || n.accidentalIsFromKeySignature === true)
+            && this.stream.keySignature !== undefined
+        ) {
+            p.accidental = this.stream.keySignature.accidentalByStep(p.step);
+            n.accidentalIsFromKeySignature = true;
+        } else if (n.accidentalIsFromKeySignature !== true) {
+            p.accidental = n.pitch.accidental;
+        }
+        n.pitch = p;
+        if (this.activeVoiceNumber % 2 === 0) {
+            n.stemDirection = 'up';
+        } else {
+            n.stemDirection = 'down';
+        }
+        this.activeNote = n;
+        const $newSvg = this.stream.redrawCanvas(canvas);
+        const params = { foundNote: n, svg: $newSvg };
+        
+        if (this.changedCallbackFunction !== undefined) {
+            return this.changedCallbackFunction(params);
+        } else {
+            return params;
+        }
+    }
+
+    voiceSelectionToolbar() {
+        this.buttons = [];
+        const $buttonDiv = $('<div/>').attr(
+            'class',
+            'voiceSelectionToolbar scoreToolbar'
+        );
+        const voiceNames = ['S', 'A', 'T', 'B'];
+        for (const i of [0, 1, 2, 3]) {
+            const $thisButton = $('<button>' + voiceNames[i] + '</button>')
+                .addClass('editorButtonNotSelected')
+                .click(() => this.changeActiveVoice(i));
+            this.buttons.push($thisButton);
+            $buttonDiv.append($thisButton);
+        }
+        this.changeActiveVoice(0);
+        return $buttonDiv;
+    }
+
+    changeActiveVoice(newVoice, $buttonDiv, clickEvent) {
+        for (const i of [0, 1, 2, 3]) {
+            this.buttons[i].removeClass('editorButtonSelected');
+            this.buttons[i].addClass('editorButtonNotSelected');
+        }
+        this.buttons[newVoice].removeClass('editorButtonNotSelected');
+        this.buttons[newVoice].addClass('editorButtonSelected');
+        this.activeVoiceNumber = newVoice;
+        if (newVoice < 2) {
+            this.activePart = this.parts.get(0);
+            this.activeVoice = this.activePart.measures
+                .get(this.activeMeasureIndex)
+                .voices.get(newVoice);
+        } else {
+            this.activePart = this.parts.get(1);
+            this.activeVoice = this.activePart.measures
+                .get(this.activeMeasureIndex)
+                .voices.get(newVoice - 2);
+        }
+        this.activeNote = this.activeVoice.notes.get(0);
+    }
+}
+
+streamInteraction.FourPartEditor = FourPartEditor;

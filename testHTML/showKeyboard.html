@@ -7,12 +7,15 @@
         <meta http-equiv="content-type" content="text/html; charset=utf-8" />
 
 		<script>
-		var m = ""; // will become Measure object soon...
-		var p = ""; // will become Part object soon...
-		var p1 = ""; // will become lower Part object soon...
-		var sc = ""; // will beceom Score object soon.
+		var m; // will become Measure object soon...
+        var m1; // will become Measure object soon...
+        var m2; // will become Measure object soon...
+		var p; // will become Part object soon...
+        var p1; // will become lower Part object soon...
+		var p2; // will become lower Part object soon...
+		var sc; // will become Score object soon.
 		
-		var metro = ""; // will become Metronome object soon...
+		var metro; // will become Metronome object soon...
 
 		function appendElement(appendObject) {
 		    appendObject = appendObject.clone();
@@ -35,19 +38,92 @@
             var canv = p.appendNewCanvas($canvasDiv);
         }
 		
+		function separatePitches(pitchList) {
+		    var treblePitches = [];
+		    var bassPitches = [];
+		    for (var i = 0; i < pitchList.length; i++) {
+		        var p = pitchList[i];
+		        if (p.ps >= 60) {
+		            treblePitches.push(p);
+		        } else {
+		            bassPitches.push(p);
+		        }
+		    }
+		    return [treblePitches, bassPitches];
+		}
+		
 		function appendElementGrandStaff(appendChord) {
-		    console.log('using GrandStaff Append!');
-		    appendElement(appendChord);
+		    var pitchList;
+		    if (appendChord.isChord) {
+		        pitchList = appendChord.pitches;
+		    } else {
+		        pitchList = [appendChord.pitch]; // note Object
+		    }
+		    
+		    var separatedPitches = separatePitches(pitchList);
+		    var treblePitches = separatedPitches[0];
+		    var bassPitches = separatedPitches[1];
+
+		    var trebleChordOrRest;
+		    if (treblePitches.length > 0) {
+		        trebleChordOrRest = new music21.chord.Chord(treblePitches);	
+		        // trebleChordOrRest.stemDirection = 'up';
+		    } else {
+		        trebleChordOrRest = new music21.note.Rest();		        
+		    }
+		    trebleChordOrRest.duration.type = 'whole';
+		    
+            var bassChordOrRest;
+            if (bassPitches.length > 0) {
+                bassChordOrRest = new music21.chord.Chord(bassPitches);             
+                // bassChordOrRest.stemDirection = 'up';
+            } else {
+                bassChordOrRest = new music21.note.Rest();                
+            }
+            bassChordOrRest.duration.type = 'whole';
+		    
+		    
+		    if (m1.length > 0) {
+                m1.elements = m1.elements.slice(1)
+            }
+            if (m2.length > 0) {
+                m2.elements = m2.elements.slice(1)
+            }
+            
+            m1.append(trebleChordOrRest);
+            m2.append(bassChordOrRest)
+            var $canvasDiv = $("#canvasDivGrandStaff");
+            $canvasDiv.empty();
+            var canv = sc.appendNewCanvas($canvasDiv);		
 		}
 		
 		
 		require(['music21'], function () { 	
 		    p = new music21.stream.Part();
-		    //p.renderOptions.width = 500;
+		    // p.renderOptions.width = 500;
 		    m = new music21.stream.Measure();
 		    p.insert(0, m);
 		    m.clef = new music21.clef.TrebleClef();
 		    p.renderOptions.scaleFactor = {x: 1.5, y: 1.5};
+
+		    // GrandStaff
+            p1 = new music21.stream.Part();
+            m1 = new music21.stream.Measure();
+            p1.insert(0, m1);
+            m1.clef = new music21.clef.TrebleClef();
+            
+            p2 = new music21.stream.Part();
+            m2 = new music21.stream.Measure();
+            p2.insert(0, m2);
+            m2.clef = new music21.clef.BassClef();
+
+            sc = new music21.stream.Score();
+            sc.insert(0, p1);
+            sc.insert(0, p2);
+            sc.partSpacing = 90;
+            sc.renderOptions.scaleFactor = {x: 1.5, y: 1.5};
+            
+            
 		    metro = new music21.tempo.Metronome();
 		    // metro.addDiv($("#metronomeDiv"));
             
@@ -65,7 +141,8 @@
             k.appendKeyboard($kd); // 25key keyboard
             
             var playSound = true;
-                        
+            music21.miditools.maxDelay = 200;
+            
             var midiCallbacksPlay = [music21.miditools.makeChords, 
                                      music21.miditools.sendToMIDIjs,
                                      music21.keyboard.jazzHighlight.bind(k)];
@@ -73,29 +150,32 @@
                                        music21.keyboard.jazzHighlight.bind(k)];
 
             music21.webmidi.createSelector($("#putMidiSelectHere"));
-            music21.webmidi.callBacks.general = midiCallbacksPlay;
-            music21.webmidi.callBacks.sendOutChord = appendElement;
+            music21.miditools.callBacks.general = midiCallbacksPlay;
 		    
             $('#markC').bind('click', function () { k.markC = this.checked; k.redrawSVG() })
             $('#showNames').bind('click', function () { k.showNames = this.checked; k.redrawSVG() })
             $('#showOctaves').bind('click', function () { k.showOctaves = this.checked; k.redrawSVG() })
             $('#playSound').bind('click', function() {
                 if (this.checked) {
-                    music21.webmidi.callBacks.general = midiCallbacksPlay;
+                    music21.miditools.callBacks.general = midiCallbacksPlay;
                 } else {
-                    music21.webmidi.callBacks.general = midiCallbacksNoPlay;
+                    music21.miditools.callBacks.general = midiCallbacksNoPlay;
                 }
             });
             $('input[type=radio][name=staffNumberSelector]').change(function() {
                 if (this.value == 'singleStaff') {
-                    music21.webmidi.callBacks.sendOutChord = appendElement;
+                    $("#canvasDiv").css('display', 'block');
+                    $("#canvasDivGrandStaff").css('display', 'none');
+                    music21.miditools.callBacks.sendOutChord = appendElement;
                 }
                 else if (this.value == 'grandStaff') {
-                    music21.webmidi.callBacks.sendOutChord = appendElementGrandStaff;
+                    $("#canvasDiv").css('display', 'none');
+                    $("#canvasDivGrandStaff").css('display', 'block');
+                    music21.miditools.callBacks.sendOutChord = appendElementGrandStaff;
                 } else {
                     console.log("What value is this? " + this.value);
                 }
-            });
+            }).trigger('change');
             
             
 		});
@@ -119,6 +199,9 @@
 	<div style='text-align: center' id='keyboardDiv'></div>
 	<div>&nbsp;</div>
     <div id="canvasDiv" style='text-align: center'>
+        <canvas></canvas>
+    </div>
+    <div id="canvasDivGrandStaff" style='text-align: center'>
         <canvas></canvas>
     </div>
 </body>

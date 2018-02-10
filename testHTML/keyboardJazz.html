@@ -20,7 +20,7 @@
                oninputempty: function () { console.log("nope") }
             };
             music21.webmidi.createSelector($("#putMidiSelectHere"), options);
-            music21.webmidi.callBacks.general = [music21.keyboard.jazzHighlight.bind(k), 
+            music21.miditools.callBacks.general = [music21.keyboard.jazzHighlight.bind(k), 
                                                   music21.miditools.sendToMIDIjs,
                                                   ];
             

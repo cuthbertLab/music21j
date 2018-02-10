@@ -11,28 +11,37 @@
 </head>
 <body>
 <script type="text/javascript">
-
 var allStream;
 
-require(['music21'], function () {
-	renderThemes();
-	allStreamScore = new music21.stream.Score();
-	allStreamScore.renderOptions.overriddenWidth = 600;
-	allStream = new music21.stream.Part();
+require(['music21'], function() {
+    renderThemes();
+    allStreamScore = new music21.stream.Score();
+    allStreamScore.renderOptions.overriddenWidth = 600;
+    allStream = new music21.stream.Part();
     allStream.renderOptions.overriddenWidth = 600;
-	allStreamScore.append(allStream);
-	var newCanvas = allStreamScore.createPlayableCanvas();
-	$('#dropDiv canvas').replaceWith(newCanvas[0]);	
-
+    allStreamScore.append(allStream);
+    var newCanvas = allStreamScore.createPlayableCanvas();
+    $('#dropDiv canvas').replaceWith(newCanvas[0]);
 });
 
-function renderThemes ()  {
-    var themes = ["c4 e g g", "c'4 g2 e4", "c2 r", "c'4 c c' r",
-    				"e4 g c' c'", "g4 e8 c g4 c", "c2. c'4",
-    				"c4 c e8 f g4", "c'4. e'8 c'4 g", "d'#4 f b8 f4.",
-    				"c4. e8 c4. g8", "c8 c e e g g c'4", "c4. g8 c'4 e'"];
+function renderThemes() {
+    var themes = [
+        'c4 e g g',
+        "c'4 g2 e4",
+        'c2 r',
+        "c'4 c c' r",
+        "e4 g c' c'",
+        'g4 e8 c g4 c',
+        "c2. c'4",
+        'c4 c e8 f g4',
+        "c'4. e'8 c'4 g",
+        "d'#4 f b8 f4.",
+        'c4. e8 c4. g8',
+        "c8 c e e g g c'4",
+        "c4. g8 c'4 e'",
+    ];
     var themeCanvases = [];
-    r = new music21.vfShow.Renderer() // should be static method;
+    r = new music21.vfShow.Renderer(); // should be static method;
 
     for (var i = 0; i < themes.length; i++) {
         var thisTheme = themes[i];
@@ -43,59 +52,61 @@ function renderThemes ()  {
         var nc = myStream.createPlayableCanvas();
         $('#themeDiv').append(nc);
         // here is where we create something!
-        nc.draggable( {
-		  containment: 'body',
-		  stack: '#themeDiv canvas',
-		  cursor: 'move',
-		  revert: true} ).data('stream', myStream);
-		nc[0].ondblclick = nc[0].onclick;  // not working right now...
-		nc[0].onclick = undefined;
+        nc
+            .draggable({
+                containment: 'body',
+                stack: '#themeDiv .streamHolding',
+                cursor: 'move',
+                revert: true,
+            })
+            .data('stream', myStream);
+        nc[0].ondblclick = nc[0].onclick; // not working right now...
+        nc[0].onclick = undefined;
         themeCanvases.push(nc[0]);
         r.removeFormatterInformation(myStream, true); // recursive.
 
         if (i % 4 == 3) {
             $('#themeDiv').append($('<br/>'));
             // alert(nc);
-		}
+        }
     }
-	$('body').append($('<br/>'))
-	$('#dropDiv').droppable( {
-      accept: '#themeDiv canvas',
-      hoverClass: 'hovered',
-      drop: handleThemeDrop
-    } );
+    $('body').append($('<br/>'));
+    $('#dropDiv').droppable({
+        accept: '#themeDiv .streamHolding',
+        hoverClass: 'hovered',
+        drop: handleThemeDrop,
+    });
 
-	// themeCanvases[0].style.display = 'none';
+    // themeCanvases[0].style.display = 'none';
 }
 
 function handleThemeDrop(event, ui) {
     var containedStream = ui.draggable.data('stream');
     var containedStreamCopy = containedStream.clone(true);
-    
+
     allStream.append(containedStreamCopy);
     allStreamScore.resetRenderOptions(true); // recursive
     for (var i = 0; i < allStream.length; i++) {
-        if ((i % 4) == 3) {
-            allStream.get(i).renderOptions.rightBarline = 'double';            
-        } 
+        if (i % 4 == 3) {
+            allStream.get(i).renderOptions.rightBarline = 'double';
+        }
     }
     var newCanvas = allStreamScore.createPlayableCanvas();
-	$('#dropDiv canvas').replaceWith(newCanvas[0]);
-	// alert(allStream.hi);
+    $('#dropDiv .streamHolding').replaceWith(newCanvas[0]);
+    // alert(allStream.hi);
 }
 
 function clearScore() {
-	allStream.elements = [];
-	var newCanvas = allStreamScore.createPlayableCanvas();
-	$('#dropDiv canvas').replaceWith(newCanvas[0]);
+    allStream.elements = [];
+    var newCanvas = allStreamScore.createPlayableCanvas();
+    $('#dropDiv .streamHolding').replaceWith(newCanvas[0]);
 }
 
 function undoAdd() {
-	allStream.elements = allStream.elements.slice(0, allStream.length - 1);
-	var newCanvas = allStreamScore.createPlayableCanvas();
-	$('#dropDiv canvas').replaceWith(newCanvas[0]);	
+    allStream.elements = allStream.elements.slice(0, allStream.length - 1);
+    var newCanvas = allStreamScore.createPlayableCanvas();
+    $('#dropDiv .streamHolding').replaceWith(newCanvas[0]);
 }
-
 </script>
 <h1>Click me to play!</h1>
 <div id="dragContent">
@@ -104,7 +115,7 @@ function undoAdd() {
 		<h1>Create an 8-measure piece by dropping fragments here! <br/>Go for a smooth pattern. Then click here to play your score.</h1>
 		<button onclick="clearScore()">Clear</button> ... <button onclick="undoAdd()">Undo</button><br></br>
 		<div style="text-align: left">
-			<canvas id="#dropCanvas" width=1000></canvas>
+			<div id="#dropCanvas" class='streamHolding' height=200 width=1000><canvas></canvas></div>
 		</div>
 	</div>
 </div>

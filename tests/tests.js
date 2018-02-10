@@ -1,29 +1,28 @@
 require.config({
     paths: {
-        'music21': '../src/music21',
-        'q-unit': '../src/ext/qUnit/qunit-1.12.0',
+        music21: '../src/music21',
+        qunit: '../tests/qUnit/qunit-2.0.1',
+        m21Tests: '../build/music21.tests',
     },
     baseUrl: '../src',
     shim: {
-        'q-unit': {
+        qunit: {
             exports: 'QUnit',
-            init: function() {
+            init() {
                 QUnit.config.autoload = false;
                 QUnit.config.autostart = false;
-            }
-        } 
-     }
+            },
+        },
+    },
 });
 
-require(['music21','q-unit'], function () {
-    for (var module in music21) {
-        if (typeof(music21[module].tests) == 'function') {
-            var testSuite = music21[module].tests;
+require(['music21', 'qunit', 'm21Tests'], (music21, QUnit, m21Tests) => {
+    for (const testModule in m21Tests) {
+        if (typeof m21Tests[testModule] === 'function') {
+            const testSuite = m21Tests[testModule];
             testSuite();
         }
     }
     QUnit.load();
     QUnit.start();
-
 });
-

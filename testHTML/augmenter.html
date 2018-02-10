@@ -1,0 +1,37 @@
+<html>
+    <head>
+        <title>I've got rhythm!</title>
+        <!-- for MSIE 10 on Windows 8 -->
+        <meta http-equiv="X-UA-Compatible" content="requiresActiveX=true"/>
+        <script data-main="../src/music21" src="../ext/require/require.js"></script>
+
+        <link rel="stylesheet" href="../css/m21.css" type="text/css" />
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+
+     </head>
+     <body>
+     <div id="hi"></div>
+     <div id="candiv"></div>
+     <div id="bye"></div>
+     <script>
+     require(['music21'], function (music21) {
+         m = new music21.stream.Measure();
+         m.append(new music21.note.Note('C4'));
+         m.timeSignature = '4/4';
+         var newCanvas = m.appendNewCanvas("#candiv");
+
+         var myAugmenter = new music21.widgets.Augmenter(m, newCanvas);
+         var $hi = $('#hi');
+         outDiv = myAugmenter.addDiv($hi);
+
+         s = music21.tinyNotation.TinyNotation('3/4 c4 d e f2. g2. r4 g8 g g g');
+         var sCanvas = s.appendNewCanvas('#bye');
+         augmenter2 = new music21.widgets.Augmenter(s, sCanvas);
+         var $hi2 = $('#bye');
+         outDiv2 = augmenter2.addDiv($hi2);
+
+     });
+     </script>
+
+     </body>
+</html>

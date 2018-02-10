@@ -4,7 +4,8 @@
  <link rel="stylesheet" href="http://web.mit.edu/music21/doc/_static/m21.css" type="text/css" />
  <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Source+Code+Pro|Open+Sans:300italic,400italic,700italic,400,300,700" type="text/css" />
    <script>
-   require(['music21', 'music21/audioSearch'], function (music21, as) {       
+   require(['music21'], function (music21) {
+       var as = music21.audioSearch;
        delayNodes = [];
        input = null;
        audioContext = null;
@@ -33,7 +34,10 @@
            music21.audioSearch.getUserMedia(undefined, delayLine); 
        });
        $('#stopListening').on('click', function () {
-           input.mediaStream.stop();
+           if (input.mediaStream !== undefined && input.mediaStream.active) {
+               var mainTrack = input.mediaStream.getTracks()[0];
+               mainTrack.stop();
+           }
        });
        $('#stopPlayback').on('click', function () {
            for (var i = 0; i < numVoices; i++) {
@@ -55,7 +59,8 @@
 <body style='text-align: left;'>
 <div style='padding-left: 20px; background-color: white'>
 <h1>A canon for Stacey</h1>
-<h2>Works on Chrome and Firefox (recent) only.</h2>
+<h2>Works on Chrome and Firefox only.</h2>
+<p>
 <div>
 <button id='startListening'>Start</button>
 <button id='stopListening'>Stop Listening</button>
