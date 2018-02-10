@@ -124,6 +124,10 @@
 						</li>
 						
 						<li>
+							<a href="music21.sites.html">music21.sites</a>
+						</li>
+						
+						<li>
 							<a href="music21.stream.html">music21.stream</a>
 						</li>
 						
@@ -410,6 +414,10 @@
 						</li>
 						
 						<li>
+							<a href="music21.streamInteraction.Follower.html">music21.streamInteraction.Follower</a>
+						</li>
+						
+						<li>
 							<a href="music21.streamInteraction.PixelMap.html">music21.streamInteraction.PixelMap</a>
 						</li>
 						
@@ -439,6 +447,10 @@
 						
 						<li>
 							<a href="music21.widgets.RhythmChooser.html">music21.widgets.RhythmChooser</a>
+						</li>
+						
+						<li>
+							<a href="Notation.html">Notation</a>
 						</li>
 						
 						<li>
@@ -519,7 +531,7 @@
     
         
 <dt>
-    <h4 class="name" id="Renderer"><span class="type-signature"></span>new Renderer<span class="signature">(s, <span class="optional">canvas</span>, <span class="optional">where</span>)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="Renderer"><span class="type-signature"></span>new Renderer<span class="signature">(s, <span class="optional">div</span>, <span class="optional">where</span>)</span><span class="type-signature"></span></h4>
     
     
 </dt>
@@ -527,9 +539,9 @@
     
     
     <div class="description">
-        <p>Renderer is a function that takes a stream, an<br>optional existing canvas element and a DOM<br>element where the canvas element should be placed<br>and renders the stream as Vexflow on the<br>canvas element, placing it then in the where<br>DOM.</p>
+        <p>Renderer is a function that takes a stream, an<br>optional existing canvas or SVG element and a DOM<br>element where the canvas or SVG element should be placed<br>and renders the stream as Vexflow on the<br>canvas or svg element, placing it then in the where<br>DOM.</p>
 <p>&quot;s&quot; can be any type of Stream.</p>
-<p>&quot;canvas&quot; and &quot;where&quot; can be either a DOM<br>element or a jQuery object.</p>
+<p>&quot;div&quot; and &quot;where&quot; can be either a DOM<br>element or a jQuery object.</p>
     </div>
     
 
@@ -602,13 +614,13 @@
 
         <tr>
             
-                <td class="name"><code>canvas</code></td>
+                <td class="name"><code>div</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">canvas</span>
+<span class="param-type">div</span>
 
 
             
@@ -632,7 +644,7 @@
                 </td>
             
 
-            <td class="description last"><p>existing canvas element</p></td>
+            <td class="description last"><p>existing canvas or div-surroundingSVG element</p></td>
         </tr>
 
 	
@@ -736,6 +748,29 @@
 
         <tr>
             
+                <td class="name"><code>rendererType</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>canvas or svg</p></td>
+        </tr>
+
+	
+
+        <tr>
+            
                 <td class="name"><code>ctx</code></td>
             
 
@@ -752,20 +787,20 @@
 
             
 
-            <td class="description last"><p>a Vex.Flow.Context (Canvas or Raphael [not yet]) to use.</p></td>
+            <td class="description last"><p>a Vex.Flow.Context (Canvas or SVG) to use.</p></td>
         </tr>
 
 	
 
         <tr>
             
-                <td class="name"><code>canvas</code></td>
+                <td class="name"><code>div</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">canvas</span>
+<span class="param-type">div</span>
 
 
             
@@ -775,14 +810,14 @@
 
             
 
-            <td class="description last"><p>canvas element</p></td>
+            <td class="description last"><p>div-with-svg-or-canvas element</p></td>
         </tr>
 
 	
 
         <tr>
             
-                <td class="name"><code>$canvas</code></td>
+                <td class="name"><code>$div</code></td>
             
 
             <td class="type">
@@ -798,7 +833,7 @@
 
             
 
-            <td class="description last"><p>jQuery canvas element</p></td>
+            <td class="description last"><p>jQuery div or canvas element</p></td>
         </tr>
 
 	
@@ -874,7 +909,7 @@
 
         <tr>
             
-                <td class="name"><code>ties</code></td>
+                <td class="name"><code>vfTies</code></td>
             
 
             <td class="type">
@@ -890,7 +925,7 @@
 
             
 
-            <td class="description last"><p>ties</p></td>
+            <td class="description last"><p>ties as instances of Vex.Flow.StaveTie</p></td>
         </tr>
 
 	
@@ -993,7 +1028,7 @@
 		<ul class="dummy">
 			<li>
 				<a href="music21_vfShow.js.html">music21/vfShow.js</a>,
-				 <a href="music21_vfShow.js.html#sunlight-1-line-78">line 78</a>
+				 <a href="music21_vfShow.js.html#sunlight-1-line-86">line 86</a>
 			</li>
 		</ul>
 	</dd>
@@ -1136,7 +1171,7 @@
 		<ul class="dummy">
 			<li>
 				<a href="music21_vfShow.js.html">music21/vfShow.js</a>,
-				 <a href="music21_vfShow.js.html#sunlight-1-line-903">line 903</a>
+				 <a href="music21_vfShow.js.html#sunlight-1-line-982">line 982</a>
 			</li>
 		</ul>
 	</dd>
@@ -1360,7 +1395,7 @@
 		<ul class="dummy">
 			<li>
 				<a href="music21_vfShow.js.html">music21/vfShow.js</a>,
-				 <a href="music21_vfShow.js.html#sunlight-1-line-979">line 979</a>
+				 <a href="music21_vfShow.js.html#sunlight-1-line-1097">line 1097</a>
 			</li>
 		</ul>
 	</dd>
@@ -1436,7 +1471,7 @@
 		<ul class="dummy">
 			<li>
 				<a href="music21_vfShow.js.html">music21/vfShow.js</a>,
-				 <a href="music21_vfShow.js.html#sunlight-1-line-555">line 555</a>
+				 <a href="music21_vfShow.js.html#sunlight-1-line-598">line 598</a>
 			</li>
 		</ul>
 	</dd>
@@ -1512,7 +1547,7 @@
 		<ul class="dummy">
 			<li>
 				<a href="music21_vfShow.js.html">music21/vfShow.js</a>,
-				 <a href="music21_vfShow.js.html#sunlight-1-line-354">line 354</a>
+				 <a href="music21_vfShow.js.html#sunlight-1-line-385">line 385</a>
 			</li>
 		</ul>
 	</dd>
@@ -1550,7 +1585,7 @@
     
     
     <div class="description">
-        <p>draws the ties</p>
+        <p>draws the vfTies</p>
     </div>
     
 
@@ -1588,7 +1623,7 @@
 		<ul class="dummy">
 			<li>
 				<a href="music21_vfShow.js.html">music21/vfShow.js</a>,
-				 <a href="music21_vfShow.js.html#sunlight-1-line-380">line 380</a>
+				 <a href="music21_vfShow.js.html#sunlight-1-line-411">line 411</a>
 			</li>
 		</ul>
 	</dd>
@@ -1664,7 +1699,7 @@
 		<ul class="dummy">
 			<li>
 				<a href="music21_vfShow.js.html">music21/vfShow.js</a>,
-				 <a href="music21_vfShow.js.html#sunlight-1-line-369">line 369</a>
+				 <a href="music21_vfShow.js.html#sunlight-1-line-400">line 400</a>
 			</li>
 		</ul>
 	</dd>
@@ -1740,7 +1775,7 @@
 		<ul class="dummy">
 			<li>
 				<a href="music21_vfShow.js.html">music21/vfShow.js</a>,
-				 <a href="music21_vfShow.js.html#sunlight-1-line-477">line 477</a>
+				 <a href="music21_vfShow.js.html#sunlight-1-line-511">line 511</a>
 			</li>
 		</ul>
 	</dd>
@@ -1920,7 +1955,7 @@
 		<ul class="dummy">
 			<li>
 				<a href="music21_vfShow.js.html">music21/vfShow.js</a>,
-				 <a href="music21_vfShow.js.html#sunlight-1-line-499">line 499</a>
+				 <a href="music21_vfShow.js.html#sunlight-1-line-533">line 533</a>
 			</li>
 		</ul>
 	</dd>
@@ -2089,7 +2124,7 @@
 		<ul class="dummy">
 			<li>
 				<a href="music21_vfShow.js.html">music21/vfShow.js</a>,
-				 <a href="music21_vfShow.js.html#sunlight-1-line-465">line 465</a>
+				 <a href="music21_vfShow.js.html#sunlight-1-line-499">line 499</a>
 			</li>
 		</ul>
 	</dd>
@@ -2291,7 +2326,7 @@
 		<ul class="dummy">
 			<li>
 				<a href="music21_vfShow.js.html">music21/vfShow.js</a>,
-				 <a href="music21_vfShow.js.html#sunlight-1-line-444">line 444</a>
+				 <a href="music21_vfShow.js.html#sunlight-1-line-478">line 478</a>
 			</li>
 		</ul>
 	</dd>
@@ -2435,7 +2470,7 @@
 		<ul class="dummy">
 			<li>
 				<a href="music21_vfShow.js.html">music21/vfShow.js</a>,
-				 <a href="music21_vfShow.js.html#sunlight-1-line-569">line 569</a>
+				 <a href="music21_vfShow.js.html#sunlight-1-line-612">line 612</a>
 			</li>
 		</ul>
 	</dd>
@@ -2492,7 +2527,7 @@
     
     
     <div class="description">
-        <p>Prepares a score that arrived flat... sets up<br>stacks and ties after calling prepareFlat</p>
+        <p>Prepares a score that arrived flat... sets up<br>stacks and vfTies after calling prepareFlat</p>
     </div>
     
 
@@ -2579,7 +2614,7 @@
 		<ul class="dummy">
 			<li>
 				<a href="music21_vfShow.js.html">music21/vfShow.js</a>,
-				 <a href="music21_vfShow.js.html#sunlight-1-line-264">line 264</a>
+				 <a href="music21_vfShow.js.html#sunlight-1-line-295">line 295</a>
 			</li>
 		</ul>
 	</dd>
@@ -2811,7 +2846,7 @@
 		<ul class="dummy">
 			<li>
 				<a href="music21_vfShow.js.html">music21/vfShow.js</a>,
-				 <a href="music21_vfShow.js.html#sunlight-1-line-306">line 306</a>
+				 <a href="music21_vfShow.js.html#sunlight-1-line-337">line 337</a>
 			</li>
 		</ul>
 	</dd>
@@ -2982,7 +3017,7 @@
 		<ul class="dummy">
 			<li>
 				<a href="music21_vfShow.js.html">music21/vfShow.js</a>,
-				 <a href="music21_vfShow.js.html#sunlight-1-line-280">line 280</a>
+				 <a href="music21_vfShow.js.html#sunlight-1-line-311">line 311</a>
 			</li>
 		</ul>
 	</dd>
@@ -3107,7 +3142,7 @@
 		<ul class="dummy">
 			<li>
 				<a href="music21_vfShow.js.html">music21/vfShow.js</a>,
-				 <a href="music21_vfShow.js.html#sunlight-1-line-238">line 238</a>
+				 <a href="music21_vfShow.js.html#sunlight-1-line-268">line 268</a>
 			</li>
 		</ul>
 	</dd>
@@ -3232,7 +3267,7 @@
 		<ul class="dummy">
 			<li>
 				<a href="music21_vfShow.js.html">music21/vfShow.js</a>,
-				 <a href="music21_vfShow.js.html#sunlight-1-line-221">line 221</a>
+				 <a href="music21_vfShow.js.html#sunlight-1-line-249">line 249</a>
 			</li>
 		</ul>
 	</dd>
@@ -3270,7 +3305,7 @@
     
     
     <div class="description">
-        <p>Finds all tied notes and creates the proper Vex.Flow.StaveTie objects in<br><code>this.ties</code>.</p>
+        <p>Finds all tied notes and creates the proper Vex.Flow.StaveTie objects in<br><code>this.vfTies</code>.</p>
     </div>
     
 
@@ -3357,7 +3392,7 @@
 		<ul class="dummy">
 			<li>
 				<a href="music21_vfShow.js.html">music21/vfShow.js</a>,
-				 <a href="music21_vfShow.js.html#sunlight-1-line-393">line 393</a>
+				 <a href="music21_vfShow.js.html#sunlight-1-line-424">line 424</a>
 			</li>
 		</ul>
 	</dd>
@@ -3395,7 +3430,7 @@
     
     
     <div class="description">
-        <p>The process of putting a Stream onto a canvas affects each of the<br>elements in the Stream by adding pieces of information to<br>each <a href="music21.base.Music21Object.html"><code>music21.base.Music21Object</code></a> -- see <code>applyFormatterInformationToNotes</code></p>
+        <p>The process of putting a Stream onto a div affects each of the<br>elements in the Stream by adding pieces of information to<br>each <a href="music21.base.Music21Object.html"><code>music21.base.Music21Object</code></a> -- see <code>applyFormatterInformationToNotes</code></p>
 <p>You might want to remove this information; this routine does that.</p>
     </div>
     
@@ -3538,7 +3573,7 @@
 		<ul class="dummy">
 			<li>
 				<a href="music21_vfShow.js.html">music21/vfShow.js</a>,
-				 <a href="music21_vfShow.js.html#sunlight-1-line-946">line 946</a>
+				 <a href="music21_vfShow.js.html#sunlight-1-line-1064">line 1064</a>
 			</li>
 		</ul>
 	</dd>
@@ -3684,7 +3719,7 @@
 		<ul class="dummy">
 			<li>
 				<a href="music21_vfShow.js.html">music21/vfShow.js</a>,
-				 <a href="music21_vfShow.js.html#sunlight-1-line-183">line 183</a>
+				 <a href="music21_vfShow.js.html#sunlight-1-line-211">line 211</a>
 			</li>
 		</ul>
 	</dd>
@@ -3867,7 +3902,7 @@
 		<ul class="dummy">
 			<li>
 				<a href="music21_vfShow.js.html">music21/vfShow.js</a>,
-				 <a href="music21_vfShow.js.html#sunlight-1-line-336">line 336</a>
+				 <a href="music21_vfShow.js.html#sunlight-1-line-367">line 367</a>
 			</li>
 		</ul>
 	</dd>
@@ -4105,7 +4140,7 @@
 		<ul class="dummy">
 			<li>
 				<a href="music21_vfShow.js.html">music21/vfShow.js</a>,
-				 <a href="music21_vfShow.js.html#sunlight-1-line-607">line 607</a>
+				 <a href="music21_vfShow.js.html#sunlight-1-line-657">line 657</a>
 			</li>
 		</ul>
 	</dd>
@@ -4254,7 +4289,7 @@
 		<ul class="dummy">
 			<li>
 				<a href="music21_vfShow.js.html">music21/vfShow.js</a>,
-				 <a href="music21_vfShow.js.html#sunlight-1-line-659">line 659</a>
+				 <a href="music21_vfShow.js.html#sunlight-1-line-712">line 712</a>
 			</li>
 		</ul>
 	</dd>
@@ -4402,7 +4437,7 @@
 		<ul class="dummy">
 			<li>
 				<a href="music21_vfShow.js.html">music21/vfShow.js</a>,
-				 <a href="music21_vfShow.js.html#sunlight-1-line-776">line 776</a>
+				 <a href="music21_vfShow.js.html#sunlight-1-line-843">line 843</a>
 			</li>
 		</ul>
 	</dd>
@@ -4602,7 +4637,7 @@
 		<ul class="dummy">
 			<li>
 				<a href="music21_vfShow.js.html">music21/vfShow.js</a>,
-				 <a href="music21_vfShow.js.html#sunlight-1-line-702">line 702</a>
+				 <a href="music21_vfShow.js.html#sunlight-1-line-758">line 758</a>
 			</li>
 		</ul>
 	</dd>
@@ -4750,7 +4785,7 @@
 		<ul class="dummy">
 			<li>
 				<a href="music21_vfShow.js.html">music21/vfShow.js</a>,
-				 <a href="music21_vfShow.js.html#sunlight-1-line-832">line 832</a>
+				 <a href="music21_vfShow.js.html#sunlight-1-line-905">line 905</a>
 			</li>
 		</ul>
 	</dd>
@@ -4821,8 +4856,8 @@
 					<br />
 					
 		<span class="jsdoc-message">
-		Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.4</a>
-		on Thu Aug 17th 2017 using the <a
+		Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a>
+		on Sat Feb 10th 2018 using the <a
 			href="https://github.com/terryweiss/docstrap">DocStrap template</a>.
 		</span>
 				</footer>

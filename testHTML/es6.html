@@ -9,13 +9,13 @@ require(['music21'], music21 => {
     const s = new music21.stream.Stream();
     const n = new music21.note.Note();
     s.append(n);
-    let canvas;
+    let svg;
     s.renderOptions.events.click = e => {
         n.pitch.diatonicNoteNum += 1;
-        canvas = s.replaceCanvas(canvas);
+        svg = s.replaceDOM(svg);
         e.stopPropagation();
     };
-    canvas = s.appendNewCanvas();
+    svg = s.appendNewDOM();
 });
 </script>
 </body>

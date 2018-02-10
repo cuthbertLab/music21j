@@ -124,6 +124,10 @@
 						</li>
 						
 						<li>
+							<a href="music21.sites.html">music21.sites</a>
+						</li>
+						
+						<li>
 							<a href="music21.stream.html">music21.stream</a>
 						</li>
 						
@@ -410,6 +414,10 @@
 						</li>
 						
 						<li>
+							<a href="music21.streamInteraction.Follower.html">music21.streamInteraction.Follower</a>
+						</li>
+						
+						<li>
 							<a href="music21.streamInteraction.PixelMap.html">music21.streamInteraction.PixelMap</a>
 						</li>
 						
@@ -439,6 +447,10 @@
 						
 						<li>
 							<a href="music21.widgets.RhythmChooser.html">music21.widgets.RhythmChooser</a>
+						</li>
+						
+						<li>
+							<a href="Notation.html">Notation</a>
 						</li>
 						
 						<li>
@@ -513,16 +525,16 @@
  * Based on music21 (=music21p), Copyright (c) 2006–16, Michael Scott Cuthbert and cuthbertLab
  *
  */
-import { Music21Exception } from './exceptions21';
+import { Music21Exception } from './exceptions21.js';
 
-import { base } from './base';
-import { debug } from './debug';
-import { interval } from './interval';
-import { pitch } from './pitch';
-import { scale } from './scale';
+import { base } from './base.js';
+// import { common } from './common.js';
+import { debug } from './debug.js';
+import { interval } from './interval.js';
+import { pitch } from './pitch.js';
+import { scale } from './scale.js';
 
-/**
- * key and keysignature module. See {@link music21.key} namespace for details
+/* key and keysignature module. See {@link music21.key} namespace for details
  *
  * @exports music21/key
  */
@@ -539,13 +551,26 @@ import { scale } from './scale';
 export const key = {};
 
 key.modeSharpsAlter = {
-    'major': 0,
-    'minor': -3,
-    'dorian': -2,
-    'phrygian': -4,
-    'lydian': 1,
-    'mixolydian': -1,
-    'locrian': -5,
+    major: 0,
+    minor: -3,
+    dorian: -2,
+    phrygian: -4,
+    lydian: 1,
+    mixolydian: -1,
+    locrian: -5,
+};
+
+key.convertKeyStringToMusic21KeyString = function convertKeyStringToMusic21KeyString(
+    textString
+) {
+    if (textString === 'bb') {
+        textString = 'b-';
+    } else if (textString === 'Bb') {
+        textString = 'B-';
+    } else if (textString.endsWith('b') &amp;&amp; !textString.startsWith('b')) {
+        textString = textString.replace(/b$/, '-');
+    }
+    return textString;
 };
 
 /**
@@ -561,22 +586,45 @@ key.modeSharpsAlter = {
  * s.keySignature = ks;
  * var n = new music21.note.Note('A-'); // A-flat
  * s.append(n);
- * s.appendNewCanvas();
+ * s.appendNewDOM();
  */
 export class KeySignature extends base.Music21Object {
     constructor(sharps) {
         super();
-        this.classes.push('KeySignature');
         this._sharps = sharps || 0; // if undefined
         this._alteredPitchesCache = undefined;
 
         // 12 flats/sharps enough for now...
         this.flatMapping = [
-            'C', 'F', 'B-', 'E-', 'A-', 'D-', 'G-',
-            'C-', 'F-', 'B--', 'E--', 'A--', 'D--'];
+            'C',
+            'F',
+            'B-',
+            'E-',
+            'A-',
+            'D-',
+            'G-',
+            'C-',
+            'F-',
+            'B--',
+            'E--',
+            'A--',
+            'D--',
+        ];
         this.sharpMapping = [
-            'C', 'G', 'D', 'A', 'E', 'B', 'F#',
-            'C#', 'G#', 'D#', 'A#', 'E#', 'B#'];
+            'C',
+            'G',
+            'D',
+            'A',
+            'E',
+            'B',
+            'F#',
+            'C#',
+            'G#',
+            'D#',
+            'A#',
+            'E#',
+            'B#',
+        ];
     }
     get sharps() {
         return this._sharps;
@@ -595,26 +643,27 @@ export class KeySignature extends base.Music21Object {
     get width() {
         if (this.sharps === 0) {
             return 0;
-        } else { // add 6 to add extra space after the KS...
+        } else {
+            // add 6 to add extra space after the KS...
             return 12 * Math.abs(this.sharps) + 6;
         }
     }
-     /**
-      * An Array of Altered Pitches in KeySignature order (i.e., for flats, Bb, Eb, etc.)
-      *
-      * @memberof music21.key.KeySignature#
-      * @var {Array&lt;music21.pitch.Pitch>} alteredPitches
-      * @readonly
-      * @example
-      * var ks = new music21.key.KeySignature(3)
-      * var ap = ks.alteredPitches
-      * var apName = [];
-      * for (var i = 0; i &lt; ap.length; i++) {
-      *     apName.push(ap[i].name);
-      * }
-      * apName
-      * // ["F#", "C#", "G#"]
-      */
+    /**
+     * An Array of Altered Pitches in KeySignature order (i.e., for flats, Bb, Eb, etc.)
+     *
+     * @memberof music21.key.KeySignature#
+     * @var {Array&lt;music21.pitch.Pitch>} alteredPitches
+     * @readonly
+     * @example
+     * var ks = new music21.key.KeySignature(3)
+     * var ap = ks.alteredPitches
+     * var apName = [];
+     * for (var i = 0; i &lt; ap.length; i++) {
+     *     apName.push(ap[i].name);
+     * }
+     * apName
+     * // ["F#", "C#", "G#"]
+     */
     get alteredPitches() {
         if (this._alteredPitchesCache !== undefined) {
             return this._alteredPitchesCache;
@@ -636,16 +685,16 @@ export class KeySignature extends base.Music21Object {
         this._alteredPitchesCache = post;
         return post;
     }
-     /**
-      * Return the name of the major key with this many sharps
-      *
-      * @memberof music21.key.KeySignature
-      * @returns {(string|undefined)} name of key
-      * @example
-      * var ks = new music21.key.KeySignature(-3)
-      * ks.majorName()
-      * // "E-"
-      */
+    /**
+     * Return the name of the major key with this many sharps
+     *
+     * @memberof music21.key.KeySignature
+     * @returns {(string|undefined)} name of key
+     * @example
+     * var ks = new music21.key.KeySignature(-3)
+     * ks.majorName()
+     * // "E-"
+     */
     majorName() {
         if (this.sharps >= 0) {
             return this.sharpMapping[this.sharps];
@@ -653,11 +702,11 @@ export class KeySignature extends base.Music21Object {
             return this.flatMapping[Math.abs(this.sharps)];
         }
     }
-     /**
-      * Return the name of the minor key with this many sharps
-      * @memberof music21.key.KeySignature
-      * @returns {(string|undefined)}
-      */
+    /**
+     * Return the name of the minor key with this many sharps
+     * @memberof music21.key.KeySignature
+     * @returns {(string|undefined)}
+     */
     minorName() {
         const tempSharps = this.sharps + 3;
         if (tempSharps >= 0) {
@@ -666,27 +715,27 @@ export class KeySignature extends base.Music21Object {
             return this.flatMapping[Math.abs(tempSharps)];
         }
     }
-     /**
-      * returns the vexflow name (just the `majorName()` with "b" for "-") for
-      * the key signature.  Does not create the object.
-      *
-      * Deprecated.
-      *
-      * @memberof music21.key.KeySignature
-      * @returns {string}
-      */
+    /**
+     * returns the vexflow name (just the `majorName()` with "b" for "-") for
+     * the key signature.  Does not create the object.
+     *
+     * Deprecated.
+     *
+     * @memberof music21.key.KeySignature
+     * @returns {string}
+     */
     vexflow() {
         console.log('calling deprecated function KeySignature.vexflow');
         const tempName = this.majorName();
         return tempName.replace(/-/g, 'b');
     }
-     /**
-      * Returns the accidental associated with a step in this key, or undefined if none.
-      *
-      * @memberof music21.key.KeySignature
-      * @param {string} step - a valid step name such as "C","D", etc., but not "C#" etc.
-      * @returns {(music21.pitch.Accidental|undefined)}
-      */
+    /**
+     * Returns the accidental associated with a step in this key, or undefined if none.
+     *
+     * @memberof music21.key.KeySignature
+     * @param {string} step - a valid step name such as "C","D", etc., but not "C#" etc.
+     * @returns {(music21.pitch.Accidental|undefined)}
+     */
     accidentalByStep(step) {
         const aps = this.alteredPitches;
         for (let i = 0; i &lt; aps.length; i++) {
@@ -694,29 +743,29 @@ export class KeySignature extends base.Music21Object {
                 if (aps[i].accidental === undefined) {
                     return undefined;
                 }
-                 // make a new accidental;
+                // make a new accidental;
                 return new pitch.Accidental(aps[i].accidental.alter);
             }
         }
         return undefined;
     }
-     /**
-      * Takes a pitch in C major and transposes it so that it has
-      * the same step position in the current key signature.
-      *
-      * @memberof music21.key.KeySignature
-      * @returns {music21.pitch.Pitch}
-      * @example
-      * var ks = new music21.key.KeySignature(-3)
-      * var p1 = new music21.pitch.Pitch('B')
-      * var p2 = ks.transposePitchFromC(p1)
-      * p2.name
-      * // "D"
-      * var p3 = new music21.pitch.Pitch('G-')
-      * var p4 = ks.transposePitchFromC(p3)
-      * p4.name
-      * // "B--"
-      */
+    /**
+     * Takes a pitch in C major and transposes it so that it has
+     * the same step position in the current key signature.
+     *
+     * @memberof music21.key.KeySignature
+     * @returns {music21.pitch.Pitch}
+     * @example
+     * var ks = new music21.key.KeySignature(-3)
+     * var p1 = new music21.pitch.Pitch('B')
+     * var p2 = ks.transposePitchFromC(p1)
+     * p2.name
+     * // "D"
+     * var p3 = new music21.pitch.Pitch('G-')
+     * var p4 = ks.transposePitchFromC(p3)
+     * p4.name
+     * // "B--"
+     */
     transposePitchFromC(p) {
         let transInterval;
         let transTimes;
@@ -732,7 +781,7 @@ export class KeySignature extends base.Music21Object {
         let newPitch = p;
         for (let i = 0; i &lt; transTimes; i++) {
             newPitch = transInterval.transposePitch(newPitch);
-            if ((i % 2) === 1) {
+            if (i % 2 === 1) {
                 newPitch.octave -= 1;
             }
         }
@@ -741,11 +790,11 @@ export class KeySignature extends base.Music21Object {
 }
 key.KeySignature = KeySignature;
 
-
 /**
  * Create a Key object. Like a KeySignature but with ideas about Tonic, Dominant, etc.
  *
  * TODO: allow keyName to be a {@link music21.pitch.Pitch}
+ * TODO: Scale mixin.
  *
  * @class Key
  * @memberof music21.key
@@ -767,7 +816,9 @@ export class Key extends KeySignature {
             }
         }
 
-        const sharpsArray = 'A-- E-- B-- F- C- G- D- A- E- B- F C G D A E B F# C# G# D# A# E# B#'.split(' ');
+        const sharpsArray = 'A-- E-- B-- F- C- G- D- A- E- B- F C G D A E B F# C# G# D# A# E# B#'.split(
+            ' '
+        );
         const sharpsIndex = sharpsArray.indexOf(keyName.toUpperCase());
         if (sharpsIndex === -1) {
             throw new Music21Exception('Cannot find the key for ' + keyName);
@@ -778,11 +829,13 @@ export class Key extends KeySignature {
             console.log('Found sharps ' + sharps + ' for key: ' + keyName);
         }
         super(sharps);
-        this.tonic = keyName;
+
+        this.tonic = new pitch.Pitch(keyName);
         this.mode = mode;
+        this._scale = this.getScale();
     }
     /**
-     * returns a {@link music21.scale.ScaleSimpleMajor} or {@link music21.scale.ScaleSimpleMinor}
+     * returns a {@link music21.scale.MajorScale} or {@link music21.scale.MinorScale}
      * object from the pitch object.
      *
      * @memberof music21.key.Key
@@ -793,12 +846,32 @@ export class Key extends KeySignature {
         if (scaleType === undefined) {
             scaleType = this.mode;
         }
-        const pitchObj = new pitch.Pitch(this.tonic);
+        const pitchObj = this.tonic;
         if (scaleType === 'major') {
-            return scale.ScaleSimpleMajor(pitchObj);
+            return new scale.MajorScale(pitchObj);
+        } else if (scaleType === 'minor') {
+            return new scale.MinorScale(pitchObj);
+        } else if (['harmonic minor', 'harmonic-minor'].includes(scaleType)) {
+            return new scale.HarmonicMinorScale(pitchObj);
+        } else if (['melodic minor', 'melodic-minor'].includes(scaleType)) {
+            return new scale.AscendingMelodicMinorScale(pitchObj);
         } else {
-            return scale.ScaleSimpleMinor(pitchObj, scaleType);
+            return new scale.ConcreteScale(pitchObj);
         }
+    }
+
+    // when scale.js adds functionality, it must be added here.
+    get isConcrete() {
+        return this._scale.isConcrete;
+    }
+    getPitches(...args) {
+        return this._scale.getPitches(...args);
+    }
+    pitchFromDegree(...args) {
+        return this._scale.pitchFromDegree(...args);
+    }
+    getScaleDegreeFromPitch(...args) {
+        return this._scale.getScaleDegreeFromPitch(...args);
     }
 }
 key.Key = Key;
@@ -822,8 +895,8 @@ key.Key = Key;
 					<br />
 					
 		<span class="jsdoc-message">
-		Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.4</a>
-		on Thu Aug 17th 2017 using the <a
+		Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a>
+		on Sat Feb 10th 2018 using the <a
 			href="https://github.com/terryweiss/docstrap">DocStrap template</a>.
 		</span>
 				</footer>

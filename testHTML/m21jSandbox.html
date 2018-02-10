@@ -5,7 +5,7 @@
   <title>Music21j Sandbox</title>
   <script data-main="../src/music21.js" src="../ext/require/require.js"></script>
   <style type="text/css">
-    canvas {
+    .streamHolding {
       background: #eed;
       padding: 10px;
       border: 10px solid #ddc;
@@ -31,13 +31,14 @@
     </style>
 
   <script>
-  mainCanvas = undefined;
+  Vex = undefined;
+  mainSVG = undefined;
   var timeout;
   var msg = "";
 
   window.onload = function () {
 	  require(['music21'], function() { 
-	     mainCanvas = $("#mainCanvas")[0];         
+	     mainSVG = $("#mainSVG")[0];         
          msg = $('div.editor-error .text');
          live_code();
 
@@ -74,20 +75,21 @@
       <p/>
       <div class="editor-error"><span class="text"></span></div>
       <p/>
-      <div class="example sandbox" example="sandbox">
+      <div class="example sandbox">
         <textarea id="sandbox" class="editor"
                   style="width: 1000px; height: 180px; ">
 var n = new music21.note.Note("C#");
-n.duration.type="whole";
+n.duration.type = "whole";
 var s = new music21.stream.Stream();
 s.append(n);
-s.replaceCanvas();
-</textarea>
+s.replaceDOM();
+		 </textarea>
         <p/>
-        <canvas width="625" height="360" id='mainCanvas'></canvas>
+        <div class='streamHolding' id='mainSVG'>
+	        <svg width="625" height="360"></svg>    	
+	    </div>
         <p/>
       </div>
-
   </div>
 </body>
 

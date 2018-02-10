@@ -67,7 +67,7 @@ key.convertKeyStringToMusic21KeyString = function convertKeyStringToMusic21KeySt
  * s.keySignature = ks;
  * var n = new music21.note.Note('A-'); // A-flat
  * s.append(n);
- * s.appendNewCanvas();
+ * s.appendNewDOM();
  */
 export class KeySignature extends base.Music21Object {
     constructor(sharps) {

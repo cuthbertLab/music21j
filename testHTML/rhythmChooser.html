@@ -19,7 +19,7 @@
             m.autoBeam = false;
             
             s.insert(0, m);
-            s.appendNewCanvas("#candiv");
+            s.appendNewDOM("#candiv");
             
             var rc = new music21.widgets.RhythmChooser(s, "#candiv");
             for (var i = 0; i < rc.values.length - 2; i++) {

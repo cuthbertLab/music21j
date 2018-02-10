@@ -124,6 +124,10 @@
 						</li>
 						
 						<li>
+							<a href="music21.sites.html">music21.sites</a>
+						</li>
+						
+						<li>
 							<a href="music21.stream.html">music21.stream</a>
 						</li>
 						
@@ -410,6 +414,10 @@
 						</li>
 						
 						<li>
+							<a href="music21.streamInteraction.Follower.html">music21.streamInteraction.Follower</a>
+						</li>
+						
+						<li>
 							<a href="music21.streamInteraction.PixelMap.html">music21.streamInteraction.PixelMap</a>
 						</li>
 						
@@ -439,6 +447,10 @@
 						
 						<li>
 							<a href="music21.widgets.RhythmChooser.html">music21.widgets.RhythmChooser</a>
+						</li>
+						
+						<li>
+							<a href="Notation.html">Notation</a>
 						</li>
 						
 						<li>
@@ -549,7 +561,7 @@
 		<ul class="dummy">
 			<li>
 				<a href="music21_roman.js.html">music21/roman.js</a>,
-				 <a href="music21_roman.js.html#sunlight-1-line-22">line 22</a>
+				 <a href="music21_roman.js.html#sunlight-1-line-25">line 25</a>
 			</li>
 		</ul>
 	</dd>
@@ -576,6 +588,12 @@
 
         <ul>
             <li>module:music21/chord</li>
+        
+            <li>module:music21/common</li>
+        
+            <li>module:music21/figuredBass</li>
+        
+            <li>module:music21/harmony</li>
         
             <li>module:music21/key</li>
         
@@ -643,7 +661,7 @@
 		<ul class="dummy">
 			<li>
 				<a href="music21_roman.js.html">music21/roman.js</a>,
-				 <a href="music21_roman.js.html#sunlight-1-line-42">line 42</a>
+				 <a href="music21_roman.js.html#sunlight-1-line-200">line 200</a>
 			</li>
 		</ul>
 	</dd>
@@ -671,6 +689,330 @@
     
 
     
+        <h3 class="subsection-title">Methods</h3>
+
+        <dl>
+            
+<dt>
+    <h4 class="name" id=".roman.correctSuffixForChordQuality"><span class="type-signature">&lt;static> </span>roman.correctSuffixForChordQuality<span class="signature">(chordObj, inversionString)</span><span class="type-signature"> &rarr; {string}</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        <p>correctSuffixForChordQuality - Correct a given inversionString suffix given a<br>    chord of various qualities.</p>
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+
+		<th>Type</th>
+
+		
+
+		
+
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+
+	<tbody>
+	
+
+        <tr>
+            
+                <td class="name"><code>chordObj</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="music21.chord.Chord.html">music21.chord.Chord</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>inversionString</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>a string like '6' to fix.</p></td>
+        </tr>
+
+	
+	</tbody>
+</table>
+
+    
+    
+    
+<dl class="details">
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="music21_roman.js.html">music21/roman.js</a>,
+				 <a href="music21_roman.js.html#sunlight-1-line-158">line 158</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+    <p>corrected inversionString</p>
+</div>
+
+
+
+<dl>
+	<dt>
+		Type
+	</dt>
+	<dd>
+		
+<span class="param-type">string</span>
+
+
+	</dd>
+</dl>
+
+
+        
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id=".roman.expandShortHand"><span class="type-signature">&lt;static> </span>roman.expandShortHand<span class="signature">(shorthand)</span><span class="type-signature"> &rarr; {Array.&lt;string>}</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        <p>expandShortHand - expand a string of numbers into an array</p>
+<p>N.B. this is NOT where abbreviations get expanded</p>
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+
+		<th>Type</th>
+
+		
+
+		
+
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+
+	<tbody>
+	
+
+        <tr>
+            
+                <td class="name"><code>shorthand</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>string of a figure w/o roman to parse</p></td>
+        </tr>
+
+	
+	</tbody>
+</table>
+
+    
+    
+    
+<dl class="details">
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="music21_roman.js.html">music21/roman.js</a>,
+				 <a href="music21_roman.js.html#sunlight-1-line-120">line 120</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+    <p>array of shorthands</p>
+</div>
+
+
+
+<dl>
+	<dt>
+		Type
+	</dt>
+	<dd>
+		
+<span class="param-type">Array.&lt;string></span>
+
+
+	</dd>
+</dl>
+
+
+        
+    
+    
+</dd>
+
+        </dl>
+    
 
     
 
@@ -694,8 +1036,8 @@
 					<br />
 					
 		<span class="jsdoc-message">
-		Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.4</a>
-		on Thu Aug 17th 2017 using the <a
+		Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a>
+		on Sat Feb 10th 2018 using the <a
 			href="https://github.com/terryweiss/docstrap">DocStrap template</a>.
 		</span>
 				</footer>

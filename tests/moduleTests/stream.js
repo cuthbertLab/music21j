@@ -117,14 +117,14 @@ export default function tests() {
         );
     });
 
-    QUnit.test('music21.stream.Stream.canvas', assert => {
+    QUnit.test('music21.stream.Stream.DOM', assert => {
         const s = new music21.stream.Stream();
         s.append(new music21.note.Note('C#5'));
         s.append(new music21.note.Note('D#5'));
         const n = new music21.note.Note('F5');
         n.duration.type = 'half';
         s.append(n);
-        const c = s.createNewCanvas(100, 50);
+        const c = s.createNewDOM(100, 50);
         assert.equal(c.attr('width'), 100, 'stored width matches');
         assert.equal(c.attr('height'), 50, 'stored height matches');
     });
@@ -172,11 +172,11 @@ export default function tests() {
         assert.equal(omo.offset, 0.5, 'omo offset should be 0.5');
         assert.equal(omo.endTime, 1.5, 'omo endTime should be 1.5');
     });
-    QUnit.test('music21.stream.Stream appendNewCanvas ', assert => {
+    QUnit.test('music21.stream.Stream appendNewDOM ', assert => {
         const n = new music21.note.Note('G3');
         const s = new music21.stream.Measure();
         s.append(n);
-        s.appendNewCanvas(document.body);
+        s.appendNewDOM(document.body);
         assert.equal(s.length, 1, 'ensure that should have one note');
         const n1 = new music21.note.Note('G3');
         const s1 = new music21.stream.Measure();
@@ -188,7 +188,7 @@ export default function tests() {
         const n4 = new music21.note.Note('G3');
         s1.append(n4);
         const sne1 = new music21.streamInteraction.SimpleNoteEditor(s1);
-        const div1 = sne1.editableAccidentalCanvas();
+        const div1 = sne1.editableAccidentalDOM();
         $(document.body).append(div1);
     });
 }

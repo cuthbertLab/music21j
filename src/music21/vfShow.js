@@ -93,20 +93,20 @@ vfShow.RenderStack = RenderStack;
  *
  * "s" can be any type of Stream.
  *
- * "canvas" and "where" can be either a DOM
+ * "div" and "where" can be either a DOM
  * element or a jQuery object.
  *
  * @class Renderer
  * @memberof music21.vfShow
  * @param {music21.stream.Stream} s - main stream to render
- * @param {canvas} [canvas] - existing canvas or SVG element
+ * @param {div} [div] - existing canvas or div-surroundingSVG element
  * @param {DOMObject|jQueryDOMObject} [where=document.body] - where to render the stream
  * @property {Vex.Flow.Renderer} vfRenderer - a Vex.Flow.Renderer to use
  * (will create if not existing)
  * @property {string} rendererType - canvas or svg
- * @property {Vex.Flow.Context} ctx - a Vex.Flow.Context (Canvas or Raphael [not yet]) to use.
- * @property {canvas} canvas - canvas element
- * @property {jQueryDOMObject} $canvas - jQuery canvas element
+ * @property {Vex.Flow.Context} ctx - a Vex.Flow.Context (Canvas or SVG) to use.
+ * @property {div} div - div-with-svg-or-canvas element
+ * @property {jQueryDOMObject} $div - jQuery div or canvas element
  * @property {jQueryDOMObject} $where - jQuery element to render onto
  * @property {Vex.Flow.Formatter} activeFormatter - formatter
  * @property {Array<Vex.Flow.Beam>} beamGroups - beamGroups
@@ -116,13 +116,13 @@ vfShow.RenderStack = RenderStack;
  * @property {Array<music21.vfShow.RenderStack>} stacks - array of RenderStack objects
  */
 export class Renderer {
-    constructor(s, canvas, where) {
+    constructor(s, div, where) {
         this.stream = s;
         // this.streamType = s.classes[-1];
         this.rendererType = 'svg';
 
-        this.canvas = undefined;
-        this.$canvas = undefined;
+        this.div = undefined;
+        this.$div = undefined;
         this.$where = undefined;
         this.activeFormatter = undefined;
         this._vfRenderer = undefined;
@@ -141,13 +141,13 @@ export class Renderer {
                 this.$where = $(where);
             }
         }
-        if (canvas !== undefined) {
-            if (canvas.jquery !== undefined) {
-                this.$canvas = canvas;
-                this.canvas = canvas[0];
+        if (div !== undefined) {
+            if (div.jquery !== undefined) {
+                this.$div = div;
+                this.div = div[0];
             } else {
-                this.canvas = canvas;
-                this.$canvas = $(canvas);
+                this.div = div;
+                this.$div = $(div);
             }
         }
     }
@@ -163,11 +163,11 @@ export class Renderer {
         if (this._vfRenderer !== undefined) {
             return this._vfRenderer;
         } else {
-            this._vfRenderer = new Vex.Flow.Renderer(this.canvas, backend);
+            this._vfRenderer = new Vex.Flow.Renderer(this.div, backend);
             if (this.rendererType === 'svg') {
                 this._vfRenderer.resize(
-                    this.$canvas.attr('width'),
-                    this.$canvas.attr('height')
+                    this.$div.attr('width'),
+                    this.$div.attr('height')
                 );
             }
             return this._vfRenderer;
@@ -1051,7 +1051,7 @@ export class Renderer {
     }
 
     /**
-     * The process of putting a Stream onto a canvas affects each of the
+     * The process of putting a Stream onto a div affects each of the
      * elements in the Stream by adding pieces of information to
      * each {@link music21.base.Music21Object} -- see `applyFormatterInformationToNotes`
      *

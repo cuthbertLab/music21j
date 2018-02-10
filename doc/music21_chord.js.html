@@ -124,6 +124,10 @@
 						</li>
 						
 						<li>
+							<a href="music21.sites.html">music21.sites</a>
+						</li>
+						
+						<li>
 							<a href="music21.stream.html">music21.stream</a>
 						</li>
 						
@@ -410,6 +414,10 @@
 						</li>
 						
 						<li>
+							<a href="music21.streamInteraction.Follower.html">music21.streamInteraction.Follower</a>
+						</li>
+						
+						<li>
 							<a href="music21.streamInteraction.PixelMap.html">music21.streamInteraction.PixelMap</a>
 						</li>
 						
@@ -439,6 +447,10 @@
 						
 						<li>
 							<a href="music21.widgets.RhythmChooser.html">music21.widgets.RhythmChooser</a>
+						</li>
+						
+						<li>
+							<a href="Notation.html">Notation</a>
 						</li>
 						
 						<li>
@@ -514,8 +526,10 @@
  *
  */
 import * as Vex from 'vexflow';
-import { Music21Exception } from './exceptions21';
-import { note } from './note';
+
+import { Music21Exception } from './exceptions21.js';
+import { interval } from './interval.js';
+import { note } from './note.js';
 
 /**
  * chord Module. See {@link music21.chord} namespace for more details
@@ -548,17 +562,23 @@ export const chord = {};
 export class Chord extends note.NotRest {
     constructor(notes) {
         super();
-        if (typeof (notes) === 'undefined') {
+        if (typeof notes === 'undefined') {
             notes = [];
+        } else if (typeof notes === 'string') {
+            notes = notes.split(/\s+/);
         }
-        this.classes.push('Chord');
         this.isChord = true; // for speed
         this.isNote = false; // for speed
         this.isRest = false; // for speed
 
+        this._overrides = {};
+        this._cache = {};
+
         this._notes = [];
-        notes.forEach(this.add, this);
+        notes.forEach(this.add, this, false);
+        this.sortPitches();
     }
+    
     get length() {
         return this._notes.length;
     }
@@ -573,7 +593,7 @@ export class Chord extends note.NotRest {
         this._notes = [];
         for (let i = 0; i &lt; tempPitches.length; i++) {
             let addNote;
-            if (typeof (tempPitches[i]) === 'string') {
+            if (typeof tempPitches[i] === 'string') {
                 addNote = new note.Note(tempPitches[i]);
             } else if (tempPitches[i].isClassOrSubclass('Pitch')) {
                 addNote = new note.Note();
@@ -582,10 +602,14 @@ export class Chord extends note.NotRest {
                 addNote = tempPitches[i];
             } else {
                 console.warn('bad pitch', tempPitches[i]);
-                throw new Music21Exception('Cannot add pitch from ' + tempPitches[i]);
+                throw new Music21Exception(
+                    'Cannot add pitch from ' + tempPitches[i]
+                );
             }
             this._notes.push(addNote);
         }
+        this._cache = {};
+        this._overrides = {};
     }
     setStemDirectionFromClef(clef) {
         if (clef === undefined) {
@@ -614,33 +638,41 @@ export class Chord extends note.NotRest {
     /**
      * Adds a note to the chord, sorting the note array
      *
-     * TODO: rename to append like music21p, allow for an Array of notes,
-     *       and make a runSort=True variable.
-     *
      * @memberof music21.chord.Chord
-     * @param {string|music21.note.Note|music21.pitch.Pitch} noteObj - the Note or Pitch to be added or a string defining a pitch.
+     * @param {string|music21.note.Note|music21.pitch.Pitch} notes - the Note or Pitch to be added or a string defining a pitch.
+     * @param {boolean} runSort - Sort after running (default true)
      * @returns {music21.chord.Chord} the original chord.
      */
-    add(noteObj, runSort) {
-        if (runSort === undefined) {
-            runSort = true;
+    add(notes, runSort = true) {
+        if (!(notes instanceof Array)) {
+            notes = [notes];
         }
-        // takes in either a note or a pitch
-        if (typeof (noteObj) === 'string') {
-            noteObj = new note.Note(noteObj);
-        } else if (noteObj.isClassOrSubclass('Pitch')) {
-            const pitchObj = noteObj;
-            const noteObj2 = new note.Note();
-            noteObj2.pitch = pitchObj;
-            noteObj = noteObj2;
+        for (let noteObj of notes) {
+            // takes in either a note or a pitch
+            if (typeof noteObj === 'string') {
+                noteObj = new note.Note(noteObj);
+            } else if (noteObj.isClassOrSubclass('Pitch')) {
+                const pitchObj = noteObj;
+                const noteObj2 = new note.Note();
+                noteObj2.pitch = pitchObj;
+                noteObj = noteObj2;
+            }
+            this._notes.push(noteObj);
         }
-        this._notes.push(noteObj);
         // inefficient because sorts after each add, but safe and #(p) is small
         if (runSort === true) {
-            this._notes.sort((a, b) => a.pitch.ps - b.pitch.ps);
+            this.sortPitches();
         }
+        this._cache = {};
         return this;
     }
+
+    sortPitches() {
+        this._notes.sort((a, b) => a.pitch.ps - b.pitch.ps);        
+    }
+    
+    // TODO: add remove
+
     /**
      * Removes any pitches that appear more than once (in any octave), removing the higher ones, and returns a new Chord.
      *
@@ -667,7 +699,21 @@ export class Chord extends note.NotRest {
      * @memberof music21.chord.Chord
      * @returns {music21.pitch.Pitch} the root of the chord.
      */
-    root() {
+    root(newroot) {
+        if (newroot !== undefined) {
+            this._overrides.root = newroot;
+            this._cache.root = newroot;
+            this._cache.inversion = undefined;
+        }
+
+        if (this._overrides.root !== undefined) {
+            return this._cache.root;
+        }
+
+        if (this._cache.root !== undefined) {
+            return this._cache.root;
+        }
+
         const closedChord = this.removeDuplicatePitches();
         /* var chordBass = closedChord.bass(); */
         const closedPitches = closedChord.pitches;
@@ -682,7 +728,10 @@ export class Chord extends note.NotRest {
             const p = closedPitches[i];
             const currentListOfThirds = [];
             for (let tsIndex = 0; tsIndex &lt; testSteps.length; tsIndex++) {
-                const chordStepPitch = closedChord.getChordStep(testSteps[tsIndex], p);
+                const chordStepPitch = closedChord.getChordStep(
+                    testSteps[tsIndex],
+                    p
+                );
                 if (chordStepPitch !== undefined) {
                     // console.log(p.name + " " + testSteps[tsIndex].toString() + " " + chordStepPitch.name);
                     currentListOfThirds.push(true);
@@ -703,7 +752,9 @@ export class Chord extends note.NotRest {
                 // should test rootedness function, etc. 13ths. etc.
             }
         }
-        return closedChord.pitches[0]; // fallback, just return the bass...
+        const newRoot = closedChord.pitches[0]; // fallback, just return the bass...
+        this._cache.root = newRoot;
+        return newRoot;
     }
     /**
      * Returns the number of semitones above the root that a given chordstep is.
@@ -762,6 +813,7 @@ export class Chord extends note.NotRest {
         const uniqueChord = this.removeDuplicatePitches();
         return uniqueChord.pitches.length;
     }
+
     /**
     *
     * @memberof music21.chord.Chord
@@ -796,8 +848,44 @@ export class Chord extends note.NotRest {
             return false;
         }
     }
+
+    isDominantSeventh() {
+        const third = this.third;
+        const fifth = this.fifth;
+        const seventh = this.seventh;
+
+        if (
+            third === undefined
+            || fifth === undefined
+            || seventh === undefined
+        ) {
+            return false;
+        }
+
+        for (const thisPitch of this.pitches) {
+            const thisInterval = new interval.Interval(this.root(), thisPitch);
+            if (![0, 4, 7, 10].includes(thisInterval.chromatic.mod12)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     /**
-     * Returns True if the chord is a major or minor triad
+     * canBeDominantV - Returns true if the chord is a Major Triad or a Dominant Seventh
+     *
+     * @return {Boolean}
+     */
+    canBeDominantV() {
+        if (this.isMajorTriad() || this.isDominantSeventh()) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Returns true if the chord is a major or minor triad
      *
      * @memberof music21.chord.Chord
      * @returns {Boolean}
@@ -809,7 +897,6 @@ export class Chord extends note.NotRest {
             return false;
         }
     }
-
 
     /**
      * Returns the inversion of the chord as a number (root-position = 0)
@@ -847,17 +934,32 @@ export class Chord extends note.NotRest {
         }
         const vfn = new Vex.Flow.StaveNote({
             keys: pitchKeys,
-            duration: this.duration.vexflowDuration });
+            duration: this.duration.vexflowDuration,
+        });
         this.vexflowAccidentalsAndDisplay(vfn, options); // clean up stuff...
         for (let i = 0; i &lt; this._notes.length; i++) {
             const tn = this._notes[i];
             if (tn.pitch.accidental !== undefined) {
-                if (tn.pitch.accidental.vexflowModifier !== 'n'
-                        &amp;&amp; tn.pitch.accidental.displayStatus !== false) {
-                    vfn.addAccidental(i, new Vex.Flow.Accidental(tn.pitch.accidental.vexflowModifier));
-                } else if (tn.pitch.accidental.displayType === 'always'
-                        || tn.pitch.accidental.displayStatus === true) {
-                    vfn.addAccidental(i, new Vex.Flow.Accidental(tn.pitch.accidental.vexflowModifier));
+                if (
+                    tn.pitch.accidental.vexflowModifier !== 'n'
+                    &amp;&amp; tn.pitch.accidental.displayStatus !== false
+                ) {
+                    vfn.addAccidental(
+                        i,
+                        new Vex.Flow.Accidental(
+                            tn.pitch.accidental.vexflowModifier
+                        )
+                    );
+                } else if (
+                    tn.pitch.accidental.displayType === 'always'
+                    || tn.pitch.accidental.displayStatus === true
+                ) {
+                    vfn.addAccidental(
+                        i,
+                        new Vex.Flow.Accidental(
+                            tn.pitch.accidental.vexflowModifier
+                        )
+                    );
                 }
             }
         }
@@ -887,7 +989,8 @@ export class Chord extends note.NotRest {
         const testRootDNN = testRoot.diatonicNoteNum;
         for (let i = 0; i &lt; thisPitches.length; i++) {
             const thisPitch = thisPitches[i];
-            let thisInterval = (thisPitch.diatonicNoteNum - testRootDNN + 1) % 7; // fast cludge
+            let thisInterval
+                = (thisPitch.diatonicNoteNum - testRootDNN + 1) % 7; // fast cludge
             if (thisInterval &lt;= 0) {
                 thisInterval += 7;
             }
@@ -897,14 +1000,24 @@ export class Chord extends note.NotRest {
         }
         return undefined;
     }
+
+    get third() {
+        return this.getChordStep(3);
+    }
+    get fifth() {
+        return this.getChordStep(5);
+    }
+    get seventh() {
+        return this.getChordStep(7);
+    }
 }
 chord.Chord = Chord;
 
 chord.chordDefinitions = {
-    'major': ['M3', 'm3'],
-    'minor': ['m3', 'M3'],
-    'diminished': ['m3', 'm3'],
-    'augmented': ['M3', 'M3'],
+    major: ['M3', 'm3'],
+    minor: ['m3', 'M3'],
+    diminished: ['m3', 'm3'],
+    augmented: ['M3', 'M3'],
     'major-seventh': ['M3', 'm3', 'M3'],
     'dominant-seventh': ['M3', 'm3', 'm3'],
     'minor-seventh': ['m3', 'M3', 'm3'],
@@ -931,8 +1044,8 @@ chord.chordDefinitions = {
 					<br />
 					
 		<span class="jsdoc-message">
-		Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.4</a>
-		on Thu Aug 17th 2017 using the <a
+		Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a>
+		on Sat Feb 10th 2018 using the <a
 			href="https://github.com/terryweiss/docstrap">DocStrap template</a>.
 		</span>
 				</footer>

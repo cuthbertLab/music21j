@@ -124,6 +124,10 @@
 						</li>
 						
 						<li>
+							<a href="music21.sites.html">music21.sites</a>
+						</li>
+						
+						<li>
 							<a href="music21.stream.html">music21.stream</a>
 						</li>
 						
@@ -410,6 +414,10 @@
 						</li>
 						
 						<li>
+							<a href="music21.streamInteraction.Follower.html">music21.streamInteraction.Follower</a>
+						</li>
+						
+						<li>
 							<a href="music21.streamInteraction.PixelMap.html">music21.streamInteraction.PixelMap</a>
 						</li>
 						
@@ -439,6 +447,10 @@
 						
 						<li>
 							<a href="music21.widgets.RhythmChooser.html">music21.widgets.RhythmChooser</a>
+						</li>
+						
+						<li>
+							<a href="Notation.html">Notation</a>
 						</li>
 						
 						<li>
@@ -508,6 +520,7 @@
 			class="sunlight-highlight-javascript linenums">/**
  * module for things that all music21-created objects, not just objects that can live in
  * Stream.elements should inherit. See the {@link music21.prebase} namespace.
+ * Copyright (c) 2013-17, Michael Scott Cuthbert and cuthbertLab
  *
  * @exports music21/prebase
  */
@@ -531,11 +544,36 @@ export const prebase = {};
  */
 export class ProtoM21Object {
     constructor() {
-        this.classes = ['ProtoM21Object'];
+        this._storedClasses = undefined;
         this.isProtoM21Object = true;
         this.isMusic21Object = false;
         this._cloneCallbacks = {};
     }
+
+    get classes() {
+        if (this._storedClasses !== undefined) {
+            return this._storedClasses;
+        }
+        const classList = [];
+        let thisConstructor = this.constructor;
+        let maxLinks = 20;
+        while (
+            thisConstructor !== null
+            &amp;&amp; thisConstructor !== undefined
+            &amp;&amp; maxLinks
+        ) {
+            maxLinks -= 1;
+            if (thisConstructor.name === '') {
+                break;
+            }
+            classList.push(thisConstructor.name);
+            thisConstructor = Object.getPrototypeOf(thisConstructor);
+        }
+        classList.push('object');
+        this._storedClasses = classList;
+        return classList;
+    }
+
     /**
      * Makes (as much as possible) a complete duplicate copy of the object called with .clone()
      *
@@ -554,11 +592,19 @@ export class ProtoM21Object {
      * n2.duration.quarterLength == 4; // true
      * n2 === n1; // false
      */
-    clone() {
+    clone(deep = true) {
+        if (!deep) {
+            return Object.assign(
+                Object.create(Object.getPrototypeOf(this)),
+                this
+            );
+        }
+
         const ret = new this.constructor();
 
         // todo: do Arrays work?
-        for (const key in this) { // not that we ONLY copy the keys in Ret -- it's easier that way.
+        for (const key in this) {
+            // not that we ONLY copy the keys in Ret -- it's easier that way.
             if ({}.hasOwnProperty.call(this, key) === false) {
                 continue;
             }
@@ -567,18 +613,22 @@ export class ProtoM21Object {
                     ret[key] = this[key];
                 } else if (this._cloneCallbacks[key] === false) {
                     ret[key] = undefined;
-                } else { // call the cloneCallbacks function
+                } else {
+                    // call the cloneCallbacks function
                     this._cloneCallbacks[key](key, ret, this);
                 }
             } else if (
-                    Object.getOwnPropertyDescriptor(this, key).get !== undefined
-                    || Object.getOwnPropertyDescriptor(this, key).set !== undefined
+                Object.getOwnPropertyDescriptor(this, key).get !== undefined
+                || Object.getOwnPropertyDescriptor(this, key).set !== undefined
             ) {
                 // do nothing
-            } else if (typeof (this[key]) === 'function') {
+            } else if (typeof this[key] === 'function') {
                 // do nothing -- events might not be copied.
-            } else if (typeof (this[key]) === 'object' &amp;&amp; this[key] !== null &amp;&amp;
-                    this[key].isProtoM21Object) {
+            } else if (
+                typeof this[key] === 'object'
+                &amp;&amp; this[key] !== null
+                &amp;&amp; this[key].isProtoM21Object
+            ) {
                 // console.log('cloning ', key);
                 ret[key] = this[key].clone();
             } else {
@@ -590,7 +640,7 @@ export class ProtoM21Object {
                         console.log('typeError:', e, key);
                         // do nothing
                     } else {
-                        throw (e);
+                        throw e;
                     }
                 }
             }
@@ -614,7 +664,7 @@ export class ProtoM21Object {
             testClass = [testClass];
         }
         for (let i = 0; i &lt; testClass.length; i++) {
-            if (this.classes.indexOf(testClass[i]) !== -1) {
+            if (this.classes.includes(testClass[i])) {
                 return true;
             }
         }
@@ -622,7 +672,6 @@ export class ProtoM21Object {
     }
 }
 prebase.ProtoM21Object = ProtoM21Object;
-
 </pre>
 	</article>
 </section>
@@ -643,8 +692,8 @@ prebase.ProtoM21Object = ProtoM21Object;
 					<br />
 					
 		<span class="jsdoc-message">
-		Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.4</a>
-		on Thu Aug 17th 2017 using the <a
+		Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a>
+		on Sat Feb 10th 2018 using the <a
 			href="https://github.com/terryweiss/docstrap">DocStrap template</a>.
 		</span>
 				</footer>

@@ -4,7 +4,7 @@ import music21 from '../../src/loadModules';
 export default function tests() {
     QUnit.test('music21.streamInteraction.PixelMapper', assert => {
         const s = music21.tinyNotation.TinyNotation('3/4 C4 D4 E4 F2. G2.');
-        const can = s.createCanvas();
+        const can = s.createDOM();
         const pm = new music21.streamInteraction.PixelMapper(s);
         assert.equal(Math.round(pm.startX), 64);
         assert.equal(Math.round(pm.maxX), 410);
@@ -41,7 +41,7 @@ export default function tests() {
         const longer = new music21.stream.Score();
         longer.append(longerPart);
         longer.renderOptions.maxSystemWidth = 400;
-        longer.createCanvas(400); // width
+        longer.createDOM(400); // width
         const pmLonger = new music21.streamInteraction.PixelMapper(longer);
         assert.equal(pmLonger.maxSystemIndex, 3);
         assert.equal(pmLonger.getSystemIndexAtOffset(31), 0);

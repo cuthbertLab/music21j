@@ -27,7 +27,7 @@ export default function tests() {
         measure.append(nBoring);
         measure.append(nBoring.clone());
         measure.append(n.clone());
-        measure.appendNewCanvas();
+        measure.appendNewDOM();
         assert.ok(true, 'something worked');
     });
 }

@@ -57,7 +57,7 @@
         sp = new music21.musicxml.ScoreParser();
         sp.scoreFromUrl(mxUrl).done(() => {
             sc = sp.stream;
-            sc.appendNewCanvas();
+            sc.appendNewDOM();
         });
     });
     </script>

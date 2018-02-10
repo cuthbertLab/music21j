@@ -33,9 +33,9 @@
             appendObject.duration.type = "whole";
             appendObject.duration.dots = 0;
             m.append(appendObject);
-            var $canvasDiv = $("#canvasDiv");
-            $canvasDiv.empty();
-            var canv = p.appendNewCanvas($canvasDiv);
+            var $svgDiv = $("#svgDiv");
+            $svgDiv.empty();
+            var svg = p.appendNewDOM($svgDiv);
         }
 		
 		function separatePitches(pitchList) {
@@ -92,9 +92,9 @@
             
             m1.append(trebleChordOrRest);
             m2.append(bassChordOrRest)
-            var $canvasDiv = $("#canvasDivGrandStaff");
-            $canvasDiv.empty();
-            var canv = sc.appendNewCanvas($canvasDiv);		
+            var $svgDiv = $("#svgDivGrandStaff");
+            $svgDiv.empty();
+            var svg = sc.appendNewDOM($svgDiv);		
 		}
 		
 		
@@ -164,13 +164,13 @@
             });
             $('input[type=radio][name=staffNumberSelector]').change(function() {
                 if (this.value == 'singleStaff') {
-                    $("#canvasDiv").css('display', 'block');
-                    $("#canvasDivGrandStaff").css('display', 'none');
+                    $("#svgDiv").css('display', 'block');
+                    $("#svgDivGrandStaff").css('display', 'none');
                     music21.miditools.callBacks.sendOutChord = appendElement;
                 }
                 else if (this.value == 'grandStaff') {
-                    $("#canvasDiv").css('display', 'none');
-                    $("#canvasDivGrandStaff").css('display', 'block');
+                    $("#svgDiv").css('display', 'none');
+                    $("#svgDivGrandStaff").css('display', 'block');
                     music21.miditools.callBacks.sendOutChord = appendElementGrandStaff;
                 } else {
                     console.log("What value is this? " + this.value);
@@ -198,11 +198,9 @@
 	<div>&nbsp;</div>
 	<div style='text-align: center' id='keyboardDiv'></div>
 	<div>&nbsp;</div>
-    <div id="canvasDiv" style='text-align: center'>
-        <canvas></canvas>
+    <div id="svgDiv" style='text-align: center' class='streamHolding'>
     </div>
-    <div id="canvasDivGrandStaff" style='text-align: center'>
-        <canvas></canvas>
+    <div id="svgDivGrandStaff" style='text-align: center' class='streamHolding'>
     </div>
 </body>
 </html>

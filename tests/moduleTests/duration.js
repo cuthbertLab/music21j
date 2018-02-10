@@ -61,7 +61,7 @@ export default function tests() {
             }
             s.append(n1);
         }
-        s.appendNewCanvas();
+        s.appendNewDOM();
         assert.ok(true, 'quarter note triplets displayed');
 
         const m6 = new music21.stream.Measure();
@@ -81,7 +81,7 @@ export default function tests() {
         m6.append(n7.clone());
         const n6clone = n6.clone();
         m6.append(n6clone);
-        m6.appendNewCanvas();
+        m6.appendNewDOM();
         assert.ok(true, 'tuplets beginning with different type than original');
         assert.equal(
             n6.duration.tuplets[0] !== n6clone.duration.tuplets[0],
@@ -126,7 +126,7 @@ export default function tests() {
         const sc = new music21.stream.Score();
         sc.insert(0, p);
         sc.insert(0, p2);
-        sc.appendNewCanvas();
+        sc.appendNewDOM();
         assert.ok(true, '5:4 tuplets in 3/2 with multiple parts');
     });
 }

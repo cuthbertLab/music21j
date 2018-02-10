@@ -18,9 +18,9 @@
             var lastNote = s.elements[s.length - 1];
         }
         s.append(appendObject);
-        var $canvasDiv = $("#canvasDiv");
-        $canvasDiv.empty();
-        var canv = s.appendNewCanvas($canvasDiv);
+        var $svgDiv = $("#svgDiv");
+        $svgDiv.empty();
+        var svg = s.appendNewDOM($svgDiv);
     }
 
     require([ 'music21' ], function() {
@@ -47,8 +47,7 @@
 	<div>
 		<i>Requires MIDI keyboard and Jazz Plugin to work.</i>
 	</div>
-	<div id="canvasDiv">
-		<canvas></canvas>
+	<div id="svgDiv" class='streamHolding'>
 	</div>
 	<div id="metronomeDiv"></div>
 </body>

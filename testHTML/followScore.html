@@ -65,7 +65,7 @@
                 s1.instrument = i;
                 lsf('oboe', function(i) { 
                     s2.instrument = i;
-                    s.renderScrollableCanvas($("#can"))
+                    s.renderScrollable($("#svgDiv"))
                     console.log('soundfont loaded');                    
                 })
             });
@@ -75,11 +75,11 @@
         
 </script>
 <style>
-.canvasDiv { background-color: #ffffee }
+#svgDiv { background-color: #ffffee }
 </style>
 </head>
 <body>
 <h1>Click, watch, and listen</h1>
-<div id='can'></div>
+<div id='svgDiv'></div>
 </body>
 </html>

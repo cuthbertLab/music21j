@@ -20,8 +20,8 @@ require(['music21'], function() {
     allStream = new music21.stream.Part();
     allStream.renderOptions.overriddenWidth = 600;
     allStreamScore.append(allStream);
-    var newCanvas = allStreamScore.createPlayableCanvas();
-    $('#dropDiv canvas').replaceWith(newCanvas[0]);
+    var newDOM = allStreamScore.createPlayableDOM();
+    $('#dropDiv div').replaceWith(newDOM[0]);
 });
 
 function renderThemes() {
@@ -40,7 +40,7 @@ function renderThemes() {
         "c8 c e e g g c'4",
         "c4. g8 c'4 e'",
     ];
-    var themeCanvases = [];
+    var themeDivs = [];
     r = new music21.vfShow.Renderer(); // should be static method;
 
     for (var i = 0; i < themes.length; i++) {
@@ -49,7 +49,7 @@ function renderThemes() {
         var myStream = new music21.stream.Measure();
         myStream.elements = myTNStream.elements;
         myStream.timeSignature = '4/4';
-        var nc = myStream.createPlayableCanvas();
+        var nc = myStream.createPlayableDOM();
         $('#themeDiv').append(nc);
         // here is where we create something!
         nc
@@ -62,7 +62,7 @@ function renderThemes() {
             .data('stream', myStream);
         nc[0].ondblclick = nc[0].onclick; // not working right now...
         nc[0].onclick = undefined;
-        themeCanvases.push(nc[0]);
+        themeDivs.push(nc[0]);
         r.removeFormatterInformation(myStream, true); // recursive.
 
         if (i % 4 == 3) {
@@ -77,7 +77,7 @@ function renderThemes() {
         drop: handleThemeDrop,
     });
 
-    // themeCanvases[0].style.display = 'none';
+    // themeDivs[0].style.display = 'none';
 }
 
 function handleThemeDrop(event, ui) {
@@ -91,21 +91,21 @@ function handleThemeDrop(event, ui) {
             allStream.get(i).renderOptions.rightBarline = 'double';
         }
     }
-    var newCanvas = allStreamScore.createPlayableCanvas();
-    $('#dropDiv .streamHolding').replaceWith(newCanvas[0]);
+    var $svgDiv = allStreamScore.createPlayableDOM();
+    $('#dropDiv .streamHolding').replaceWith($svgDiv[0]);
     // alert(allStream.hi);
 }
 
 function clearScore() {
     allStream.elements = [];
-    var newCanvas = allStreamScore.createPlayableCanvas();
-    $('#dropDiv .streamHolding').replaceWith(newCanvas[0]);
+    var $newSVG = allStreamScore.createPlayableDOM();
+    $('#dropDiv .streamHolding').replaceWith($newSVG[0]);
 }
 
 function undoAdd() {
     allStream.elements = allStream.elements.slice(0, allStream.length - 1);
-    var newCanvas = allStreamScore.createPlayableCanvas();
-    $('#dropDiv .streamHolding').replaceWith(newCanvas[0]);
+    var $newSVG = allStreamScore.createPlayableDOM();
+    $('#dropDiv .streamHolding').replaceWith($newSVG[0]);
 }
 </script>
 <h1>Click me to play!</h1>
@@ -115,7 +115,7 @@ function undoAdd() {
 		<h1>Create an 8-measure piece by dropping fragments here! <br/>Go for a smooth pattern. Then click here to play your score.</h1>
 		<button onclick="clearScore()">Clear</button> ... <button onclick="undoAdd()">Undo</button><br></br>
 		<div style="text-align: left">
-			<div id="#dropCanvas" class='streamHolding' height=200 width=1000><canvas></canvas></div>
+			<div id="dropSvg" class='streamHolding' height=200 width=1000><svg></svg></div>
 		</div>
 	</div>
 </div>

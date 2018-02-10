@@ -59,7 +59,7 @@ fillScoreOut = function(editor, scoreOut) {
         scoreOutNew.append(p);
     }
     $($('.streamHolding')[1]).attr('height', '600'); //.attr('width', '550');
-    scoreOutNew.redrawCanvas($('.streamHolding')[1]);
+    scoreOutNew.redrawDOM($('.streamHolding')[1]);
 };
 
 makeRound = function() {
@@ -115,23 +115,23 @@ makeRound = function() {
     pEditor.autoBeam = false;
     //console.log(pEditor);
 
-    // editable canvas...
+    // editable SVG...
     s2 = new music21.stream.Score();
     //s2.renderOptions.scaleFactor = {x: 1, y: 1};
     s2.maxSystemWidth = $('#testBank').width() / s2.renderOptions.scaleFactor.x;
 
-    s2.renderOptions.events['click'] = s2.canvasChangerFunction;
+    s2.renderOptions.events['click'] = s2.DOMChangerFunction;
     //console.log($("#testBank").width());
     s2.changedCallbackFunction = function() {
         fillScoreOut(s2.elements[0], scoreOut);
     };
     s2.autoBeam = false;
     s2.append(pEditor);
-    s2.appendNewCanvas($('#testBank'));
+    s2.appendNewDOM($('#testBank'));
 
-    //pEditor.renderOptions.events['click'] = pEditor.canvasChangerFunction;
-    //pEditor.changedCallbackFunction = function () { fillScoreOut(pEditor, scoreOut) };
-    //pEditor.appendNewCanvas($("#testBank"));
+    // pEditor.renderOptions.events['click'] = pEditor.DOMChangerFunction;
+    // pEditor.changedCallbackFunction = function () { fillScoreOut(pEditor, scoreOut) };
+    // pEditor.appendNewDOM($("#testBank"));
     $('#testBank').append($("<br clear='all'/>"));
     $('#testBank').append(
         $('<div>Your score will appear here. Click it to play!</div>')
@@ -139,14 +139,14 @@ makeRound = function() {
 
     scoreOut.maxSystemWidth = $('#testBank').width();
 
-    scoreOut.appendNewCanvas($('#testBank'));
+    scoreOut.appendNewDOM($('#testBank'));
     $('#testBank').append($("<br clear='all'/>"));
 };
 </script>
 <div class="document">
   <div class="documentwrapper">
 	<div class="bodywrapper">
-	  <div class="body" id="testBank" style="border: 1px black solid; height: auto">
+	  <div class="body" id="testBank" class='streamHolder' style="border: 1px black solid; height: auto">
 	  </div>
 	</div>
   </div>

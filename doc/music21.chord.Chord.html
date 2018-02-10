@@ -124,6 +124,10 @@
 						</li>
 						
 						<li>
+							<a href="music21.sites.html">music21.sites</a>
+						</li>
+						
+						<li>
 							<a href="music21.stream.html">music21.stream</a>
 						</li>
 						
@@ -410,6 +414,10 @@
 						</li>
 						
 						<li>
+							<a href="music21.streamInteraction.Follower.html">music21.streamInteraction.Follower</a>
+						</li>
+						
+						<li>
 							<a href="music21.streamInteraction.PixelMap.html">music21.streamInteraction.PixelMap</a>
 						</li>
 						
@@ -439,6 +447,10 @@
 						
 						<li>
 							<a href="music21.widgets.RhythmChooser.html">music21.widgets.RhythmChooser</a>
+						</li>
+						
+						<li>
+							<a href="Notation.html">Notation</a>
 						</li>
 						
 						<li>
@@ -836,7 +848,7 @@
 		<ul class="dummy">
 			<li>
 				<a href="music21_chord.js.html">music21/chord.js</a>,
-				 <a href="music21_chord.js.html#sunlight-1-line-27">line 27</a>
+				 <a href="music21_chord.js.html#sunlight-1-line-29">line 29</a>
 			</li>
 		</ul>
 	</dd>
@@ -890,7 +902,7 @@
         <dl>
             
 <dt>
-    <h4 class="name" id="add"><span class="type-signature">&lt;static> </span>Chord#add<span class="signature">(noteObj)</span><span class="type-signature"> &rarr; {<a href="music21.chord.Chord.html">music21.chord.Chord</a>}</span></h4>
+    <h4 class="name" id="add"><span class="type-signature">&lt;static> </span>Chord#add<span class="signature">(notes, runSort)</span><span class="type-signature"> &rarr; {<a href="music21.chord.Chord.html">music21.chord.Chord</a>}</span></h4>
     
     
 </dt>
@@ -899,7 +911,6 @@
     
     <div class="description">
         <p>Adds a note to the chord, sorting the note array</p>
-<p>TODO: rename to append like music21p, allow for an Array of notes,<br>      and make a runSort=True variable.</p>
     </div>
     
 
@@ -923,6 +934,8 @@
 		
 
 		
+		<th>Default</th>
+		
 
 		<th class="last">Description</th>
 	</tr>
@@ -933,7 +946,7 @@
 
         <tr>
             
-                <td class="name"><code>noteObj</code></td>
+                <td class="name"><code>notes</code></td>
             
 
             <td class="type">
@@ -954,8 +967,41 @@
             
 
             
+                <td class="default">
+                
+                </td>
+            
 
             <td class="description last"><p>the Note or Pitch to be added or a string defining a pitch.</p></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>runSort</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+
+            
+                <td class="default">
+                
+                    true
+                
+                </td>
+            
+
+            <td class="description last"><p>Sort after running (default true)</p></td>
         </tr>
 
 	
@@ -992,7 +1038,7 @@
 		<ul class="dummy">
 			<li>
 				<a href="music21_chord.js.html">music21/chord.js</a>,
-				 <a href="music21_chord.js.html#sunlight-1-line-117">line 117</a>
+				 <a href="music21_chord.js.html#sunlight-1-line-127">line 127</a>
 			</li>
 		</ul>
 	</dd>
@@ -1091,7 +1137,7 @@
 		<ul class="dummy">
 			<li>
 				<a href="music21_chord.js.html">music21/chord.js</a>,
-				 <a href="music21_chord.js.html#sunlight-1-line-233">line 233</a>
+				 <a href="music21_chord.js.html#sunlight-1-line-272">line 272</a>
 			</li>
 		</ul>
 	</dd>
@@ -1152,7 +1198,7 @@
     
     
     <div class="description">
-        <p>Returns True if the chord is a major or minor triad</p>
+        <p>Returns true if the chord is a major or minor triad</p>
     </div>
     
 
@@ -1190,7 +1236,7 @@
 		<ul class="dummy">
 			<li>
 				<a href="music21_chord.js.html">music21/chord.js</a>,
-				 <a href="music21_chord.js.html#sunlight-1-line-298">line 298</a>
+				 <a href="music21_chord.js.html#sunlight-1-line-374">line 374</a>
 			</li>
 		</ul>
 	</dd>
@@ -1286,7 +1332,7 @@
 		<ul class="dummy">
 			<li>
 				<a href="music21_chord.js.html">music21/chord.js</a>,
-				 <a href="music21_chord.js.html#sunlight-1-line-254">line 254</a>
+				 <a href="music21_chord.js.html#sunlight-1-line-293">line 293</a>
 			</li>
 		</ul>
 	</dd>
@@ -1474,7 +1520,7 @@
 		<ul class="dummy">
 			<li>
 				<a href="music21_chord.js.html">music21/chord.js</a>,
-				 <a href="music21_chord.js.html#sunlight-1-line-372">line 372</a>
+				 <a href="music21_chord.js.html#sunlight-1-line-462">line 462</a>
 			</li>
 		</ul>
 	</dd>
@@ -1574,7 +1620,7 @@
 		<ul class="dummy">
 			<li>
 				<a href="music21_chord.js.html">music21/chord.js</a>,
-				 <a href="music21_chord.js.html#sunlight-1-line-317">line 317</a>
+				 <a href="music21_chord.js.html#sunlight-1-line-392">line 392</a>
 			</li>
 		</ul>
 	</dd>
@@ -1665,7 +1711,7 @@
 		<ul class="dummy">
 			<li>
 				<a href="music21_chord.js.html">music21/chord.js</a>,
-				 <a href="music21_chord.js.html#sunlight-1-line-263">line 263</a>
+				 <a href="music21_chord.js.html#sunlight-1-line-303">line 303</a>
 			</li>
 		</ul>
 	</dd>
@@ -1756,7 +1802,7 @@
 		<ul class="dummy">
 			<li>
 				<a href="music21_chord.js.html">music21/chord.js</a>,
-				 <a href="music21_chord.js.html#sunlight-1-line-280">line 280</a>
+				 <a href="music21_chord.js.html#sunlight-1-line-320">line 320</a>
 			</li>
 		</ul>
 	</dd>
@@ -1851,7 +1897,7 @@
 		<ul class="dummy">
 			<li>
 				<a href="music21_chord.js.html">music21/chord.js</a>,
-				 <a href="music21_chord.js.html#sunlight-1-line-143">line 143</a>
+				 <a href="music21_chord.js.html#sunlight-1-line-163">line 163</a>
 			</li>
 		</ul>
 	</dd>
@@ -1950,7 +1996,7 @@
 		<ul class="dummy">
 			<li>
 				<a href="music21_chord.js.html">music21/chord.js</a>,
-				 <a href="music21_chord.js.html#sunlight-1-line-163">line 163</a>
+				 <a href="music21_chord.js.html#sunlight-1-line-183">line 183</a>
 			</li>
 		</ul>
 	</dd>
@@ -2142,7 +2188,7 @@
 		<ul class="dummy">
 			<li>
 				<a href="music21_chord.js.html">music21/chord.js</a>,
-				 <a href="music21_chord.js.html#sunlight-1-line-212">line 212</a>
+				 <a href="music21_chord.js.html#sunlight-1-line-251">line 251</a>
 			</li>
 		</ul>
 	</dd>
@@ -2289,7 +2335,7 @@
 		<ul class="dummy">
 			<li>
 				<a href="music21_chord.js.html">music21/chord.js</a>,
-				 <a href="music21_chord.js.html#sunlight-1-line-334">line 334</a>
+				 <a href="music21_chord.js.html#sunlight-1-line-409">line 409</a>
 			</li>
 		</ul>
 	</dd>
@@ -2360,8 +2406,8 @@
 					<br />
 					
 		<span class="jsdoc-message">
-		Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.4</a>
-		on Thu Aug 17th 2017 using the <a
+		Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a>
+		on Sat Feb 10th 2018 using the <a
 			href="https://github.com/terryweiss/docstrap">DocStrap template</a>.
 		</span>
 				</footer>

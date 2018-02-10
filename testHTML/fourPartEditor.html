@@ -65,12 +65,12 @@
     s.renderOptions.scaleFactor.y = 1.0;
 
     s.autoBeam = false; // important for not wiping out stem direction!
-    // s.appendNewCanvas();
+    // s.appendNewDOM();
     fpe = new music21.streamInteraction.FourPartEditor(s);
     fpe.minAccidentalEditor = -2;
     fpe.maxAccidentalEditor = 2;
     fpe.activeMeasureIndex = 1;
-    $vst = fpe.editableCanvas();
+    $vst = fpe.editableDOM();
     $(document.body).append($vst);
 });
 </script>

@@ -114,7 +114,7 @@ roman.functionalityScores = {
  *
  * @memberof music21.roman
  * @param  {string} shorthand string of a figure w/o roman to parse
- * @return {Array[string]}           array of shorthands
+ * @return {Array<string>}           array of shorthands
  */
 
 roman.expandShortHand = function expandShortHand(shorthand) {

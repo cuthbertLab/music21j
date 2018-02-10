@@ -6,7 +6,7 @@
 </head>
 <body>
 <script>
-function getColorCanvas(s, width, height) {
+function getColorDOM(s, width, height) {
     const $d = $('<div/>')
         .css('text-align', 'left')
         .css('position', 'relative');
@@ -14,9 +14,9 @@ function getColorCanvas(s, width, height) {
     $d.append($buttonDiv);
     $d.append($("<br clear='all'/>"));
     s.renderOptions.events.click = e => {
-        const canvasElement = e.currentTarget;
+        const SVGElement = e.currentTarget;
         const [clickedDiatonicNoteNum, foundNote] = s.findNoteForClick(
-            canvasElement,
+            SVGElement,
             e
         );
         if (foundNote === undefined) {
@@ -25,27 +25,27 @@ function getColorCanvas(s, width, height) {
             s.activeNote = foundNote;
         }
     };
-    s.appendNewCanvas($d, width, height); // var can =
+    s.appendNewDOM($d, width, height); // var can =
     return $d;
 }
 
-function getColorToolbar(s, $siblingCanvas) {
+function getColorToolbar(s, $siblingDOM) {
     const addColor = (newColor, clickEvent) => {
         /*
          * To be called on a button...
          */
-        let $useCanvas = $siblingCanvas;
-        if ($useCanvas === undefined) {
+        let $useDOM = $siblingDOM;
+        if ($useDOM === undefined) {
             let $searchParent = $(clickEvent.target).parent();
             while (
                 $searchParent !== undefined &&
-                ($useCanvas === undefined || $useCanvas[0] === undefined)
+                ($useDOM === undefined || $useDOM[0] === undefined)
             ) {
-                $useCanvas = $searchParent.find('.streamHolding');
+                $useDOM = $searchParent.find('.streamHolding');
                 $searchParent = $searchParent.parent();
             }
-            if ($useCanvas[0] === undefined) {
-                console.log('Could not find a canvas...');
+            if ($useDOM[0] === undefined) {
+                console.log('Could not find a SVG...');
                 return;
             }
         }
@@ -53,7 +53,7 @@ function getColorToolbar(s, $siblingCanvas) {
             const n = s.activeNote;
             n.noteheadColor = newColor;
             /* console.log(n.pitch.name); */
-            const $newSvg = s.redrawCanvas($useCanvas[0]);
+            const $newSvg = s.redrawDOM($useDOM[0]);
             if (s.changedCallbackFunction !== undefined) {
                 s.changedCallbackFunction({ svg: $newSvg });
             }
@@ -98,8 +98,8 @@ require(['music21'], music21 => {
     const n3 = new music21.note.Note('B4');
     s.append(n3);
     s.autoBeam = false;
-    const $d = getColorCanvas(s);
-    $('#canvasDiv').append($d);
+    const $d = getColorDOM(s);
+    $('#SVGDiv').append($d);
 
     const sChord = new music21.stream.Measure();
     sChord.timeSignature = new music21.meter.TimeSignature('4/4');
@@ -107,10 +107,10 @@ require(['music21'], music21 => {
     ch.duration.type = 'whole';
     sChord.keySignature = k;
     sChord.append(ch);
-    sChord.appendNewCanvas($('#canvasDiv'));
+    sChord.appendNewDOM($('#SVGDiv'));
 });
 </script>
-<div id="canvasDiv">Canvas goes here...<br/></div>
+<div id="SVGDiv">DOM goes here...<br/></div>
 
 </body>
 </html>
