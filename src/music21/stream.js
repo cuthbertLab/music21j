@@ -1656,14 +1656,25 @@ export class Stream extends base.Music21Object {
      * of the note.
      *
      * systemIndex element is not used on bare Stream
-
+     * 
+     * options can be a dictionary of: 'allowBackup' which gets the closest
+     * note within the window even if it's beyond allowablePixels (default: true)
+     * and 'backupMaximum' which specifies a maximum distance even for backup
+     * (default: 70);
+     * 
      * @memberof music21.stream.Stream
      * @param {number} xPxScaled
      * @param {number} [allowablePixels=10]
      * @param {number} [systemIndex]
+     * @param {object} [options]
      * @returns {music21.base.Music21Object|undefined}
      */
-    noteElementFromScaledX(xPxScaled, allowablePixels, systemIndex) {
+    noteElementFromScaledX(xPxScaled, allowablePixels, systemIndex, options) {
+        const params = {
+            allowBackup: true,
+            backupMaximum: 70,
+        };
+        common.merge(params, options);
         let foundNote;
         if (allowablePixels === undefined) {
             allowablePixels = 10;
@@ -1672,20 +1683,38 @@ export class Stream extends base.Music21Object {
             xPxScaled,
             systemIndex
         );
+        const backup = { 
+            minDistanceSoFar: params.backupMaximum, 
+            note: undefined,
+        }; // a backup in case we did not find within allowablePixels
+
         for (let i = 0; i < subStream.length; i++) {
             const n = subStream.get(i);
             /* should also
              * compensate for accidentals...
              */
-            if (
-                xPxScaled > n.x - allowablePixels
-                && xPxScaled < n.x + n.width + allowablePixels
-            ) {
+            const leftDistance = Math.abs(n.x - xPxScaled);
+            const rightDistance = Math.abs(n.x + n.width - xPxScaled);
+            const minDistance = Math.min(leftDistance, rightDistance);
+            
+            if (leftDistance < allowablePixels && rightDistance < allowablePixels) {
                 foundNote = n;
                 break; /* O(n); can be made O(log n) */
+            } else if (
+                leftDistance < params.backupMaximum 
+                && rightDistance < params.backupMaximum
+                && minDistance < backup.minDistanceSoFar
+                ) {
+                backup.note = n;
+                backup.minDistanceSoFar = minDistance;
             }
         }
-        // console.log(n.pitch.nameWithOctave);
+        // console.log('note here is: ', foundNote);
+        if (params.allowBackup && foundNote === undefined) {
+            foundNote = backup.note;
+            // console.log('used backup: closest was: ', backup.minDistanceSoFar);
+        }
+        // console.log(foundNote);
         return foundNote;
     }
 
