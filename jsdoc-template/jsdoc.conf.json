@@ -12,7 +12,7 @@
 		"outputSourcePath"      : true,
 		"systemName"            : "Music21j",
 		"footer"                : "",
-		"copyright"             : "Music21j, Copyright © 2013-2016 Michael Scott Cuthbert and cuthbertLab.",
+		"copyright"             : "Music21j, Copyright © 2013-2018 Michael Scott Cuthbert and cuthbertLab.",
 		"navType"               : "vertical",
 		"theme"                 : "spruce",
 		"linenums"              : true,

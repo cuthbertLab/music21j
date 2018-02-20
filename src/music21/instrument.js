@@ -58,7 +58,7 @@ class Instrument extends base.Music21Object {
         this.partAbbreviation = undefined;
 
         this.instrumentId = undefined;
-        this.instrumentName = undefined;
+        this.instrumentName = instrumentName;
         this.instrumentAbbreviation = undefined;
         this.midiProgram = undefined;
         this._midiChannel = undefined;
@@ -72,7 +72,7 @@ class Instrument extends base.Music21Object {
         this.soundfontFn = undefined;
 
         if (instrumentName !== undefined) {
-            instrument.find(instrumentName);
+            instrument.find(instrumentName, this);
         }
     }
     /**
