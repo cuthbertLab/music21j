@@ -1,5 +1,5 @@
 /**
- * music21j 0.9.0 built on  * 2018-02-12.
+ * music21j 0.9.0 built on  * 2018-02-20.
  * Copyright (c) 2013-2016 Michael Scott Cuthbert and cuthbertLab
  * BSD License, see LICENSE
  *
@@ -18736,6 +18736,19 @@
               return this.hiddenInterval(this.octave);
           }
 
+          // True if either note in voice 1 is lower than the corresponding voice 2 note
+
+      }, {
+          key: 'voiceCrossing',
+          value: function voiceCrossing() {
+              return this.v1n1.pitch.ps < this.v2n1.pitch.ps || this.v1n2.pitch.ps < this.v2n2.pitch.ps;
+          }
+      }, {
+          key: 'voiceOverlap',
+          value: function voiceOverlap() {
+              return this.v1n2.pitch.ps <= this.v2n1.pitch.ps || this.v2n2.pitch.ps >= this.v1n1.pitch.ps;
+          }
+
           /**
            * isProperResolution - Checks whether the voice-leading quartet resolves correctly according to standard
            *         counterpoint rules. If the first harmony is dissonant (d5, A4, or m7) it checks
@@ -18747,7 +18760,7 @@
            *         Diminished Fifth: in by contrary motion to a third, with 7 resolving up to 1 in the bass
            *         Augmented Fourth: out by contrary motion to a sixth, with chordal seventh resolving
            *         down to a third in the bass.
-           *         Minor Seventh: In to a third with a leap form 5 to 1 in the bass
+           *         Minor Seventh: Resolves to a third with a leap form 5 to 1 in the bass
            *
            * @return {boolean}  true if proper or rules do not apply; false if improper
            */
@@ -18766,6 +18779,18 @@
                   n1degree = scale.getScaleDegreeFromPitch(this.v2n1);
                   n2degree = scale.getScaleDegreeFromPitch(this.v2n2);
               }
+
+              // catches case of #7 in minor
+              if (this.key.mode === 'minor' && (n1degree === undefined || n2degree === undefined)) {
+                  var scale2 = this.key.getScale('melodic-minor'); // gets ascending form
+                  if (n1degree === undefined) {
+                      n1degree = scale2.getScaleDegreeFromPitch(this.v2n1);
+                  }
+                  if (n2degree === undefined) {
+                      n2degree = scale2.getScaleDegreeFromPitch(this.v2n2);
+                  }
+              }
+
               var firstHarmony = this.vIntervals[0].simpleName;
               var secondHarmony = this.vIntervals[1].generic.simpleUndirected;
 
@@ -18798,7 +18823,7 @@
                   if (scale !== undefined && n2degree !== 1) {
                       return false;
                   }
-                  return this.inwardContraryMotion() && secondHarmony === 3;
+                  return secondHarmony === 3;
               } else {
                   return true;
               }
