@@ -1,5 +1,5 @@
 /**
- * music21j 0.9.0 built on  * 2018-02-16.
+ * music21j 0.9.0 built on  * 2018-02-20.
  * Copyright (c) 2013-2016 Michael Scott Cuthbert and cuthbertLab
  * BSD License, see LICENSE
  *
@@ -18734,6 +18734,19 @@
           key: 'hiddenOctave',
           value: function hiddenOctave() {
               return this.hiddenInterval(this.octave);
+          }
+
+          // True if either note in voice 1 is lower than the corresponding voice 2 note
+
+      }, {
+          key: 'voiceCrossing',
+          value: function voiceCrossing() {
+              return this.v1n1.pitch.ps < this.v2n1.pitch.ps || this.v1n2.pitch.ps < this.v2n2.pitch.ps;
+          }
+      }, {
+          key: 'voiceOverlap',
+          value: function voiceOverlap() {
+              return this.v1n2.pitch.ps <= this.v2n1.pitch.ps || this.v2n2.pitch.ps >= this.v1n1.pitch.ps;
           }
 
           /**

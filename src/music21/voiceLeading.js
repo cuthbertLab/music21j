@@ -303,6 +303,17 @@ class VoiceLeadingQuartet extends Music21Object {
         return this.hiddenInterval(this.octave);
     }
 
+    // True if either note in voice 1 is lower than the corresponding voice 2 note
+    voiceCrossing() {
+        return (this.v1n1.pitch.ps < this.v2n1.pitch.ps
+                || this.v1n2.pitch.ps < this.v2n2.pitch.ps);
+    }
+
+    voiceOverlap() {
+        return (this.v1n2.pitch.ps <= this.v2n1.pitch.ps
+                || this.v2n2.pitch.ps >= this.v1n1.pitch.ps);
+    }
+
     /**
      * isProperResolution - Checks whether the voice-leading quartet resolves correctly according to standard
      *         counterpoint rules. If the first harmony is dissonant (d5, A4, or m7) it checks
