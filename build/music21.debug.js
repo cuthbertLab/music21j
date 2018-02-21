@@ -4832,8 +4832,11 @@
               var arg0 = restArgs[0];
               if (typeof arg0 === 'string') {
                   // simple...
-                  var specifier = arg0.replace(/\d+/, '');
+                  var specifier = arg0.replace(/\d+/, '').replace(/-/, '');
                   var generic = parseInt(arg0.replace(/\D+/, ''));
+                  if (arg0.includes('-')) {
+                      generic *= -1;
+                  }
                   var gI = new interval.GenericInterval(generic);
                   var dI = new interval.DiatonicInterval(specifier, gI);
                   _this4.diatonic = dI;
