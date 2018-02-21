@@ -1,5 +1,5 @@
 /**
- * music21j 0.9.0 built on  * 2018-02-20.
+ * music21j 0.9.0 built on  * 2018-02-21.
  * Copyright (c) 2013-2016 Michael Scott Cuthbert and cuthbertLab
  * BSD License, see LICENSE
  *
@@ -4832,8 +4832,8 @@
               var arg0 = restArgs[0];
               if (typeof arg0 === 'string') {
                   // simple...
-                  var specifier = arg0.slice(0, 1);
-                  var generic = parseInt(arg0.slice(1));
+                  var specifier = arg0.replace(/\d+/, '');
+                  var generic = parseInt(arg0.replace(/\D+/, ''));
                   var gI = new interval.GenericInterval(generic);
                   var dI = new interval.DiatonicInterval(specifier, gI);
                   _this4.diatonic = dI;
@@ -8667,7 +8667,7 @@
           _this.partAbbreviation = undefined;
 
           _this.instrumentId = undefined;
-          _this.instrumentName = undefined;
+          _this.instrumentName = instrumentName;
           _this.instrumentAbbreviation = undefined;
           _this.midiProgram = undefined;
           _this._midiChannel = undefined;
@@ -8681,7 +8681,7 @@
           _this.soundfontFn = undefined;
 
           if (instrumentName !== undefined) {
-              instrument.find(instrumentName);
+              instrument.find(instrumentName, _this);
           }
           return _this;
       }
@@ -9164,14 +9164,15 @@
               console.log(soundfont + ' (' + instrumentObj.midiProgram + ') loaded on ', instrumentObj.midiChannel);
           }
           if (isFirefox === false && isAudioTag === false) {
-              var c = instrumentObj.midiChannel;
-              // Firefox ignores sound volume! so don't play! as does IE and others using HTML audio tag.
-              MIDI.noteOn(c, 36, 1, 0); // if no notes have been played before then
-              MIDI.noteOff(c, 36, 1, 0.1); // the second note to be played is always
-              MIDI.noteOn(c, 48, 1, 0.2); // very clipped (on Safari at least)
-              MIDI.noteOff(c, 48, 1, 0.3); // this helps a lot.
-              MIDI.noteOn(c, 60, 1, 0.3); // chrome needs three?
-              MIDI.noteOff(c, 60, 1, 0.4);
+              // Firefox ignores sound volume! so don't play! 
+              // as does IE and others using HTML audio tag.
+              var channel = instrumentObj.midiChannel;
+              MIDI.noteOn(channel, 36, 1, 0); // if no notes have been played before then
+              MIDI.noteOff(channel, 36, 1, 0.1); // the second note to be played is always
+              MIDI.noteOn(channel, 48, 1, 0.2); // very clipped (on Safari at least)
+              MIDI.noteOff(channel, 48, 1, 0.3); // this helps a lot.
+              MIDI.noteOn(channel, 60, 1, 0.3); // chrome needs three notes?
+              MIDI.noteOff(channel, 60, 1, 0.4);
           }
       }
       if (callback !== undefined) {
@@ -9198,11 +9199,14 @@
    */
   miditools.loadSoundfont = function loadSoundfont(soundfont, callback) {
       if (miditools.loadedSoundfonts[soundfont] === true) {
+          // this soundfont has already been loaded once, so just call the callback.
           if (callback !== undefined) {
               var instrumentObj = instrument.find(soundfont);
               callback(instrumentObj);
           }
       } else if (miditools.loadedSoundfonts[soundfont] === 'loading') {
+          // we are still waiting for this instrument to load, so
+          // wait for it before calling callback.
           var waitThenCall = function waitThenCall() {
               if (miditools.loadedSoundfonts[soundfont] === true) {
                   if (debug) {
@@ -9221,6 +9225,8 @@
           };
           waitThenCall();
       } else {
+          // soundfont we have not seen before:
+          // set its status to loading and then load it.
           miditools.loadedSoundfonts[soundfont] = 'loading';
           if (debug) {
               console.log('waiting for document ready');

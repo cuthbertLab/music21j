@@ -780,8 +780,8 @@ export class Interval extends prebase.ProtoM21Object {
             const arg0 = restArgs[0];
             if (typeof arg0 === 'string') {
                 // simple...
-                const specifier = arg0.slice(0, 1);
-                const generic = parseInt(arg0.slice(1));
+                const specifier = arg0.replace(/\d+/, '');
+                const generic = parseInt(arg0.replace(/\D+/, ''));
                 const gI = new interval.GenericInterval(generic);
                 const dI = new interval.DiatonicInterval(specifier, gI);
                 this.diatonic = dI;
