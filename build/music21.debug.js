@@ -14345,6 +14345,9 @@
                   allowablePixels = 10;
               }
               var subStream = this.getStreamFromScaledXandSystemIndex(xPxScaled, systemIndex);
+              if (subStream === undefined) {
+                  return undefined;
+              }
               var backup = {
                   minDistanceSoFar: params.backupMaximum,
                   note: undefined

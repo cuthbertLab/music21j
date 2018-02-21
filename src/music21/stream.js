@@ -1683,6 +1683,9 @@ export class Stream extends base.Music21Object {
             xPxScaled,
             systemIndex
         );
+        if (subStream === undefined) {
+            return undefined;
+        }
         const backup = { 
             minDistanceSoFar: params.backupMaximum, 
             note: undefined,
