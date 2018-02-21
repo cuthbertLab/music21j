@@ -169,7 +169,7 @@ module.exports = grunt => {
         watch: {
             scripts: {
                 files: ['src/*', 'src/music21/*', 'Gruntfile.js'],
-                tasks: ['eslint', 'rollup'],
+                tasks: ['rollup', 'eslint'],
                 options: {
                     interrupt: true,
                 },

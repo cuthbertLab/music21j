@@ -623,7 +623,7 @@ export class Note extends NotRest {
             }
         }
         if (this.noteheadColor !== undefined) {
-            vfn.setKeyStyle(0, { fillStyle: this.noteheadColor });
+            vfn.setStyle({ fillStyle: this.noteheadColor, strokeStyle: this.noteheadColor });
         }
         this.activeVexflowNote = vfn;
         return vfn;
