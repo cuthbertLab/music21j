@@ -305,13 +305,17 @@ class VoiceLeadingQuartet extends Music21Object {
 
     // True if either note in voice 1 is lower than the corresponding voice 2 note
     voiceCrossing() {
-        return (this.v1n1.pitch.ps < this.v2n1.pitch.ps
-                || this.v1n2.pitch.ps < this.v2n2.pitch.ps);
+        return (
+            this.v1n1.pitch.ps < this.v2n1.pitch.ps
+            || this.v1n2.pitch.ps < this.v2n2.pitch.ps
+        );
     }
 
     voiceOverlap() {
-        return (this.v1n2.pitch.ps <= this.v2n1.pitch.ps
-                || this.v2n2.pitch.ps >= this.v1n1.pitch.ps);
+        return (
+            this.v1n2.pitch.ps <= this.v2n1.pitch.ps
+            || this.v2n2.pitch.ps >= this.v1n1.pitch.ps
+        );
     }
 
     /**
@@ -344,7 +348,11 @@ class VoiceLeadingQuartet extends Music21Object {
         }
 
         // catches case of #7 in minor
-        if (this.key.mode === 'minor' && (n1degree === undefined || n2degree === undefined)) {
+        if (
+            this.key !== undefined
+            && this.key.mode === 'minor'
+            && (n1degree === undefined || n2degree === undefined)
+        ) {
             const scale2 = this.key.getScale('melodic-minor'); // gets ascending form
             if (n1degree === undefined) {
                 n1degree = scale2.getScaleDegreeFromPitch(this.v2n1);

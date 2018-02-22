@@ -1,5 +1,5 @@
 /**
- * music21j 0.9.0 built on  * 2018-02-12.
+ * music21j 0.9.0 built on  * 2018-02-22.
  * Copyright (c) 2013-2016 Michael Scott Cuthbert and cuthbertLab
  * BSD License, see LICENSE
  *
@@ -4832,8 +4832,11 @@
               var arg0 = restArgs[0];
               if (typeof arg0 === 'string') {
                   // simple...
-                  var specifier = arg0.slice(0, 1);
-                  var generic = parseInt(arg0.slice(1));
+                  var specifier = arg0.replace(/\d+/, '').replace(/-/, '');
+                  var generic = parseInt(arg0.replace(/\D+/, ''));
+                  if (arg0.includes('-')) {
+                      generic *= -1;
+                  }
                   var gI = new interval.GenericInterval(generic);
                   var dI = new interval.DiatonicInterval(specifier, gI);
                   _this4.diatonic = dI;
@@ -5609,7 +5612,7 @@
                   }
               }
               if (this.noteheadColor !== undefined) {
-                  vfn.setKeyStyle(0, { fillStyle: this.noteheadColor });
+                  vfn.setStyle({ fillStyle: this.noteheadColor, strokeStyle: this.noteheadColor });
               }
               this.activeVexflowNote = vfn;
               return vfn;
@@ -8667,7 +8670,7 @@
           _this.partAbbreviation = undefined;
 
           _this.instrumentId = undefined;
-          _this.instrumentName = undefined;
+          _this.instrumentName = instrumentName;
           _this.instrumentAbbreviation = undefined;
           _this.midiProgram = undefined;
           _this._midiChannel = undefined;
@@ -8681,7 +8684,7 @@
           _this.soundfontFn = undefined;
 
           if (instrumentName !== undefined) {
-              instrument.find(instrumentName);
+              instrument.find(instrumentName, _this);
           }
           return _this;
       }
@@ -9164,14 +9167,15 @@
               console.log(soundfont + ' (' + instrumentObj.midiProgram + ') loaded on ', instrumentObj.midiChannel);
           }
           if (isFirefox === false && isAudioTag === false) {
-              var c = instrumentObj.midiChannel;
-              // Firefox ignores sound volume! so don't play! as does IE and others using HTML audio tag.
-              MIDI.noteOn(c, 36, 1, 0); // if no notes have been played before then
-              MIDI.noteOff(c, 36, 1, 0.1); // the second note to be played is always
-              MIDI.noteOn(c, 48, 1, 0.2); // very clipped (on Safari at least)
-              MIDI.noteOff(c, 48, 1, 0.3); // this helps a lot.
-              MIDI.noteOn(c, 60, 1, 0.3); // chrome needs three?
-              MIDI.noteOff(c, 60, 1, 0.4);
+              // Firefox ignores sound volume! so don't play! 
+              // as does IE and others using HTML audio tag.
+              var channel = instrumentObj.midiChannel;
+              MIDI.noteOn(channel, 36, 1, 0); // if no notes have been played before then
+              MIDI.noteOff(channel, 36, 1, 0.1); // the second note to be played is always
+              MIDI.noteOn(channel, 48, 1, 0.2); // very clipped (on Safari at least)
+              MIDI.noteOff(channel, 48, 1, 0.3); // this helps a lot.
+              MIDI.noteOn(channel, 60, 1, 0.3); // chrome needs three notes?
+              MIDI.noteOff(channel, 60, 1, 0.4);
           }
       }
       if (callback !== undefined) {
@@ -9198,11 +9202,14 @@
    */
   miditools.loadSoundfont = function loadSoundfont(soundfont, callback) {
       if (miditools.loadedSoundfonts[soundfont] === true) {
+          // this soundfont has already been loaded once, so just call the callback.
           if (callback !== undefined) {
               var instrumentObj = instrument.find(soundfont);
               callback(instrumentObj);
           }
       } else if (miditools.loadedSoundfonts[soundfont] === 'loading') {
+          // we are still waiting for this instrument to load, so
+          // wait for it before calling callback.
           var waitThenCall = function waitThenCall() {
               if (miditools.loadedSoundfonts[soundfont] === true) {
                   if (debug) {
@@ -9221,6 +9228,8 @@
           };
           waitThenCall();
       } else {
+          // soundfont we have not seen before:
+          // set its status to loading and then load it.
           miditools.loadedSoundfonts[soundfont] = 'loading';
           if (debug) {
               console.log('waiting for document ready');
@@ -10216,6 +10225,8 @@
           _this._numerator = 4;
           _this._denominator = 4;
           _this.beatGroups = [];
+          _this._overwrittenBeatCount = undefined;
+          _this._overwrittenBeatDuration = undefined;
           if (typeof meterString === 'string') {
               _this.ratioString = meterString;
           }
@@ -10224,6 +10235,7 @@
 
       createClass(TimeSignature, [{
           key: 'computeBeatGroups',
+
 
           /**
            * Compute the Beat Group according to this time signature.
@@ -10318,12 +10330,62 @@
               var meterList = meterString.split('/');
               this.numerator = parseInt(meterList[0]);
               this.denominator = parseInt(meterList[1]);
+              this.beatGroups = this.computeBeatGroups();
           }
       }, {
           key: 'barDuration',
           get: function get() {
               var ql = 4.0 * this._numerator / this._denominator;
               return new duration.Duration(ql);
+          }
+
+          /**
+           *  Get the beatCount from the numerator, assuming fast 6/8, etc.
+           *  unless .beatCount has been set manually.
+           */
+
+      }, {
+          key: 'beatCount',
+          get: function get() {
+              if (this._overwrittenBeatCount !== undefined) {
+                  return this._overwrittenBeatCount;
+              }
+              if (this.numerator > 3 && this.numerator % 3 === 0) {
+                  return this.numerator / 3;
+              } else {
+                  return this.numerator;
+              }
+          }
+          /**
+           *  Manually set the beatCount to an int.
+           */
+          ,
+          set: function set(overwrite) {
+              this._overwrittenBeatCount = overwrite;
+              return overwrite;
+          }
+
+          /**
+           * Gets a single duration.Duration object representing
+           * the length of a beat in this time signature (using beatCount)
+           * or, if set manually, it can return a list of Durations For
+           * asymmetrical meters.
+           */
+
+      }, {
+          key: 'beatDuration',
+          get: function get() {
+              var dur = this.barDuration;
+              dur.quarterLength /= this.beatCount;
+              return dur;
+          }
+          /**
+           * Set beatDuration to a duration.Duration object or
+           * if the client can handle it, a list of Duration objects...
+           */
+          ,
+          set: function set(overwrite) {
+              this._overwrittenBeatDuration = overwrite;
           }
       }]);
       return TimeSignature;
@@ -14336,6 +14398,9 @@
                   allowablePixels = 10;
               }
               var subStream = this.getStreamFromScaledXandSystemIndex(xPxScaled, systemIndex);
+              if (subStream === undefined) {
+                  return undefined;
+              }
               var backup = {
                   minDistanceSoFar: params.backupMaximum,
                   note: undefined
@@ -18736,6 +18801,19 @@
               return this.hiddenInterval(this.octave);
           }
 
+          // True if either note in voice 1 is lower than the corresponding voice 2 note
+
+      }, {
+          key: 'voiceCrossing',
+          value: function voiceCrossing() {
+              return this.v1n1.pitch.ps < this.v2n1.pitch.ps || this.v1n2.pitch.ps < this.v2n2.pitch.ps;
+          }
+      }, {
+          key: 'voiceOverlap',
+          value: function voiceOverlap() {
+              return this.v1n2.pitch.ps <= this.v2n1.pitch.ps || this.v2n2.pitch.ps >= this.v1n1.pitch.ps;
+          }
+
           /**
            * isProperResolution - Checks whether the voice-leading quartet resolves correctly according to standard
            *         counterpoint rules. If the first harmony is dissonant (d5, A4, or m7) it checks
@@ -18747,7 +18825,7 @@
            *         Diminished Fifth: in by contrary motion to a third, with 7 resolving up to 1 in the bass
            *         Augmented Fourth: out by contrary motion to a sixth, with chordal seventh resolving
            *         down to a third in the bass.
-           *         Minor Seventh: In to a third with a leap form 5 to 1 in the bass
+           *         Minor Seventh: Resolves to a third with a leap form 5 to 1 in the bass
            *
            * @return {boolean}  true if proper or rules do not apply; false if improper
            */
@@ -18766,6 +18844,18 @@
                   n1degree = scale.getScaleDegreeFromPitch(this.v2n1);
                   n2degree = scale.getScaleDegreeFromPitch(this.v2n2);
               }
+
+              // catches case of #7 in minor
+              if (this.key !== undefined && this.key.mode === 'minor' && (n1degree === undefined || n2degree === undefined)) {
+                  var scale2 = this.key.getScale('melodic-minor'); // gets ascending form
+                  if (n1degree === undefined) {
+                      n1degree = scale2.getScaleDegreeFromPitch(this.v2n1);
+                  }
+                  if (n2degree === undefined) {
+                      n2degree = scale2.getScaleDegreeFromPitch(this.v2n2);
+                  }
+              }
+
               var firstHarmony = this.vIntervals[0].simpleName;
               var secondHarmony = this.vIntervals[1].generic.simpleUndirected;
 
@@ -18798,7 +18888,7 @@
                   if (scale !== undefined && n2degree !== 1) {
                       return false;
                   }
-                  return this.inwardContraryMotion() && secondHarmony === 3;
+                  return secondHarmony === 3;
               } else {
                   return true;
               }
@@ -20076,6 +20166,30 @@
   }
 
   function tests$11() {
+      QUnit.test('music21.meter.TimeSignature', function (assert) {
+          var m = new music21.meter.TimeSignature('4/4');
+
+          assert.equal(m.ratioString, '4/4', 'ratioString matches');
+          assert.equal(m.barDuration.quarterLength, 4.0, 'bar lasts 4.0 ql');
+          assert.deepEqual(m.beatGroups, [[2, 8]], 'beatGroups check out');
+          assert.equal(m.beatCount, 4, 'beat count is 4');
+          assert.equal(m.beatDuration.type, 'quarter', 'beatDuration type is quarter');
+          assert.equal(m.beatDuration.dots, 0, 'beatDuration has not dots');
+      });
+
+      QUnit.test('music21.meter.TimeSignature compound', function (assert) {
+          var m = new music21.meter.TimeSignature('6/8');
+
+          assert.equal(m.ratioString, '6/8', 'ratioString matches');
+          assert.equal(m.barDuration.quarterLength, 3.0, 'bar lasts 3.0 ql');
+          assert.deepEqual(m.beatGroups, [[3, 8], [3, 8]], 'beatGroups check out');
+          assert.equal(m.beatCount, 2, 'beat count is 2');
+          assert.equal(m.beatDuration.type, 'quarter', 'beatDuration type is quarter');
+          assert.equal(m.beatDuration.dots, 1, 'beatDuration has dot');
+      });
+  }
+
+  function tests$12() {
       QUnit.test('music21.note.Note', function (assert) {
           var n = new music21.note.Note('D#5');
 
@@ -20085,7 +20199,7 @@
       });
   }
 
-  function tests$12() {
+  function tests$13() {
       QUnit.test('music21.pitch.Accidental', function (assert) {
           var a = new music21.pitch.Accidental('-');
           assert.equal(a.alter, -1.0, 'flat alter passed');
@@ -20131,7 +20245,7 @@
       });
   }
 
-  function tests$13() {
+  function tests$14() {
       QUnit.test('music21.prebase.ProtoM21Object classes', function (assert) {
           var n = new music21.note.Note();
           assert.deepEqual(n.classes, ['Note', 'NotRest', 'GeneralNote', 'Music21Object', 'ProtoM21Object', 'object']);
@@ -20150,7 +20264,7 @@
       });
   }
 
-  function tests$14() {
+  function tests$15() {
       QUnit.test('music21.roman.expandShortHand', function (assert) {
           var outGroups = void 0;
           outGroups = music21.roman.expandShortHand('64');
@@ -20463,7 +20577,7 @@
       });
   }
 
-  function tests$15() {
+  function tests$16() {
       QUnit.test('music21.scale.Scale', function (assert) {
           var sc = new music21.scale.Scale();
           assert.ok(sc.classes.includes('Scale'));
@@ -20497,7 +20611,7 @@
       });
   }
 
-  function tests$16() {
+  function tests$17() {
       QUnit.test('music21.sites.SiteRef', function (assert) {
           var sr = new music21.sites.SiteRef();
           assert.ok(!sr.isDead);
@@ -20540,7 +20654,7 @@
       });
   }
 
-  function tests$17() {
+  function tests$18() {
       QUnit.test('music21.stream.Stream', function (assert) {
           var s = new music21.stream.Stream();
           s.append(new music21.note.Note('C#5'));
@@ -20700,7 +20814,7 @@
       });
   }
 
-  function tests$18() {
+  function tests$19() {
       QUnit.test('music21.streamInteraction.PixelMapper', function (assert) {
           var s = music21.tinyNotation.TinyNotation('3/4 C4 D4 E4 F2. G2.');
           var can = s.createDOM();
@@ -20755,14 +20869,14 @@
       });
   }
 
-  function tests$19() {
+  function tests$20() {
       QUnit.test('music21.tie.Tie', function (assert) {
           var t = new music21.tie.Tie('start');
           assert.equal(t.type, 'start', 'Tie type is start');
       });
   }
 
-  function tests$20() {
+  function tests$21() {
       QUnit.test('music21.voiceLeading.VoiceLeadingQuartet', function (assert) {
           var VLQ = music21.voiceLeading.VoiceLeadingQuartet;
           var sc = new VLQ();
@@ -20862,16 +20976,17 @@
       figuredBass: tests$8,
       interval: tests$9,
       key: tests$10,
-      note: tests$11,
-      pitch: tests$12,
-      prebase: tests$13,
-      roman: tests$14,
-      scale: tests$15,
-      sites: tests$16,
-      stream: tests$17,
-      streamInteraction: tests$18,
-      tie: tests$19,
-      voiceLeading: tests$20
+      meter: tests$11,
+      note: tests$12,
+      pitch: tests$13,
+      prebase: tests$14,
+      roman: tests$15,
+      scale: tests$16,
+      sites: tests$17,
+      stream: tests$18,
+      streamInteraction: tests$19,
+      tie: tests$20,
+      voiceLeading: tests$21
   };
   if ((typeof window === 'undefined' ? 'undefined' : _typeof(window)) !== undefined) {
       window.allTests = allTests;

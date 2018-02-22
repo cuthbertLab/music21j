@@ -1,5 +1,5 @@
 /**
- * music21j 0.9.0 built on  * 2018-02-21.
+ * music21j 0.9.0 built on  * 2018-02-22.
  * Copyright (c) 2013-2016 Michael Scott Cuthbert and cuthbertLab
  * BSD License, see LICENSE
  *
@@ -10225,6 +10225,8 @@
           _this._numerator = 4;
           _this._denominator = 4;
           _this.beatGroups = [];
+          _this._overwrittenBeatCount = undefined;
+          _this._overwrittenBeatDuration = undefined;
           if (typeof meterString === 'string') {
               _this.ratioString = meterString;
           }
@@ -10233,6 +10235,7 @@
 
       createClass(TimeSignature, [{
           key: 'computeBeatGroups',
+
 
           /**
            * Compute the Beat Group according to this time signature.
@@ -10327,12 +10330,62 @@
               var meterList = meterString.split('/');
               this.numerator = parseInt(meterList[0]);
               this.denominator = parseInt(meterList[1]);
+              this.beatGroups = this.computeBeatGroups();
           }
       }, {
           key: 'barDuration',
           get: function get() {
               var ql = 4.0 * this._numerator / this._denominator;
               return new duration.Duration(ql);
+          }
+
+          /**
+           *  Get the beatCount from the numerator, assuming fast 6/8, etc.
+           *  unless .beatCount has been set manually.
+           */
+
+      }, {
+          key: 'beatCount',
+          get: function get() {
+              if (this._overwrittenBeatCount !== undefined) {
+                  return this._overwrittenBeatCount;
+              }
+              if (this.numerator > 3 && this.numerator % 3 === 0) {
+                  return this.numerator / 3;
+              } else {
+                  return this.numerator;
+              }
+          }
+          /**
+           *  Manually set the beatCount to an int.
+           */
+          ,
+          set: function set(overwrite) {
+              this._overwrittenBeatCount = overwrite;
+              return overwrite;
+          }
+
+          /**
+           * Gets a single duration.Duration object representing
+           * the length of a beat in this time signature (using beatCount)
+           * or, if set manually, it can return a list of Durations For
+           * asymmetrical meters.
+           */
+
+      }, {
+          key: 'beatDuration',
+          get: function get() {
+              var dur = this.barDuration;
+              dur.quarterLength /= this.beatCount;
+              return dur;
+          }
+          /**
+           * Set beatDuration to a duration.Duration object or
+           * if the client can handle it, a list of Duration objects...
+           */
+          ,
+          set: function set(overwrite) {
+              this._overwrittenBeatDuration = overwrite;
           }
       }]);
       return TimeSignature;
@@ -18793,7 +18846,7 @@
               }
 
               // catches case of #7 in minor
-              if (this.key.mode === 'minor' && (n1degree === undefined || n2degree === undefined)) {
+              if (this.key !== undefined && this.key.mode === 'minor' && (n1degree === undefined || n2degree === undefined)) {
                   var scale2 = this.key.getScale('melodic-minor'); // gets ascending form
                   if (n1degree === undefined) {
                       n1degree = scale2.getScaleDegreeFromPitch(this.v2n1);

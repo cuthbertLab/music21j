@@ -9,6 +9,7 @@ import dynamics from './moduleTests/dynamics.js';
 import figuredBass from './moduleTests/figuredBass.js';
 import interval from './moduleTests/interval.js';
 import key from './moduleTests/key.js';
+import meter from './moduleTests/meter.js';
 import note from './moduleTests/note.js';
 import pitch from './moduleTests/pitch.js';
 import prebase from './moduleTests/prebase.js';
@@ -32,6 +33,7 @@ const allTests = {
     figuredBass,
     interval,
     key,
+    meter,
     note,
     pitch,
     prebase,
