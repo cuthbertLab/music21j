@@ -13185,7 +13185,41 @@
           }
 
           /**
-           * Remove and return the last element in the stream, 
+           * Inserts a single element at offset, shifting elements at or after it begins
+           * later in the stream.
+           *
+           * In single argument form, assumes it is an element and takes the offset from the element.
+           *
+           * Unlike music21p, does not take a list of elements.  TODO(msc): add this.
+           */
+
+      }, {
+          key: 'insertAndShift',
+          value: function insertAndShift(offset, elementOrNone) {
+              var element = void 0;
+              if (elementOrNone === undefined) {
+                  element = offset;
+                  offset = element.offset;
+              } else {
+                  element = elementOrNone;
+              }
+              var amountToShift = element.duration.quarterLength;
+
+              var shiftingOffsets = false;
+              for (var i = 0; i < this.length; i++) {
+                  if (!shiftingOffsets && this._elementOffsets[i] >= offset) {
+                      shiftingOffsets = true;
+                  }
+                  if (shiftingOffsets) {
+                      this._elementOffsets[i] += amountToShift;
+                      this._elements[i].offset = this._elementOffsets[i];
+                  }
+              }
+              this.insert(offset, element);
+          }
+
+          /**
+           * Remove and return the last element in the stream,
            * or return undefined if the stream is empty
            *
            * @memberof music21.stream.Stream
@@ -14371,12 +14405,12 @@
            * of the note.
            *
            * systemIndex element is not used on bare Stream
-           * 
+           *
            * options can be a dictionary of: 'allowBackup' which gets the closest
            * note within the window even if it's beyond allowablePixels (default: true)
            * and 'backupMaximum' which specifies a maximum distance even for backup
            * (default: 70);
-           * 
+           *
            * @memberof music21.stream.Stream
            * @param {number} xPxScaled
            * @param {number} [allowablePixels=10]
@@ -14609,7 +14643,10 @@
                       /* console.log(n.pitch.name); */
                       var $newSvg = _this4.redrawDOM($useSvg[0]);
                       if (_this4.changedCallbackFunction !== undefined) {
-                          _this4.changedCallbackFunction({ foundNote: n, svg: $newSvg });
+                          _this4.changedCallbackFunction({
+                              foundNote: n,
+                              svg: $newSvg
+                          });
                       }
                   }
               };

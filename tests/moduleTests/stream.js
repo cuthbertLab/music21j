@@ -117,6 +117,29 @@ export default function tests() {
         );
     });
 
+    QUnit.test('music21.stream.Stream insertAndShift', assert => {
+        const s = new music21.stream.Stream();
+        s.insert(0, new music21.note.Note('C4'));
+        s.insert(1, new music21.note.Note('E4'));
+        s.insert(2, new music21.note.Note('F4'));
+        s.insertAndShift(1, new music21.note.Note('D4'));
+        const outListNames = [];
+        const outListOffsets = [];
+        for (let i = 0; i < s.length; i++) {
+            const n = s.get(i);
+            outListNames.push(n.name);
+            outListOffsets.push(n.offset);
+        }
+        assert.equal(outListNames[0], 'C');
+        assert.equal(outListOffsets[0], 0.0);
+        assert.equal(outListNames[1], 'D');
+        assert.equal(outListOffsets[1], 1.0);
+        assert.equal(outListNames[2], 'E');
+        assert.equal(outListOffsets[2], 2.0);
+        assert.equal(outListNames[3], 'F');
+        assert.equal(outListOffsets[3], 3.0);
+    });
+
     QUnit.test('music21.stream.Stream.DOM', assert => {
         const s = new music21.stream.Stream();
         s.append(new music21.note.Note('C#5'));

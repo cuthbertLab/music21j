@@ -13185,7 +13185,41 @@
           }
 
           /**
-           * Remove and return the last element in the stream, 
+           * Inserts a single element at offset, shifting elements at or after it begins
+           * later in the stream.
+           *
+           * In single argument form, assumes it is an element and takes the offset from the element.
+           *
+           * Unlike music21p, does not take a list of elements.  TODO(msc): add this.
+           */
+
+      }, {
+          key: 'insertAndShift',
+          value: function insertAndShift(offset, elementOrNone) {
+              var element = void 0;
+              if (elementOrNone === undefined) {
+                  element = offset;
+                  offset = element.offset;
+              } else {
+                  element = elementOrNone;
+              }
+              var amountToShift = element.duration.quarterLength;
+
+              var shiftingOffsets = false;
+              for (var i = 0; i < this.length; i++) {
+                  if (!shiftingOffsets && this._elementOffsets[i] >= offset) {
+                      shiftingOffsets = true;
+                  }
+                  if (shiftingOffsets) {
+                      this._elementOffsets[i] += amountToShift;
+                      this._elements[i].offset = this._elementOffsets[i];
+                  }
+              }
+              this.insert(offset, element);
+          }
+
+          /**
+           * Remove and return the last element in the stream,
            * or return undefined if the stream is empty
            *
            * @memberof music21.stream.Stream
@@ -14371,12 +14405,12 @@
            * of the note.
            *
            * systemIndex element is not used on bare Stream
-           * 
+           *
            * options can be a dictionary of: 'allowBackup' which gets the closest
            * note within the window even if it's beyond allowablePixels (default: true)
            * and 'backupMaximum' which specifies a maximum distance even for backup
            * (default: 70);
-           * 
+           *
            * @memberof music21.stream.Stream
            * @param {number} xPxScaled
            * @param {number} [allowablePixels=10]
@@ -14609,7 +14643,10 @@
                       /* console.log(n.pitch.name); */
                       var $newSvg = _this4.redrawDOM($useSvg[0]);
                       if (_this4.changedCallbackFunction !== undefined) {
-                          _this4.changedCallbackFunction({ foundNote: n, svg: $newSvg });
+                          _this4.changedCallbackFunction({
+                              foundNote: n,
+                              svg: $newSvg
+                          });
                       }
                   }
               };
@@ -20740,6 +20777,29 @@
           assert.equal(pf2.get(1).offset, 4.0, 'repeated calls do not change offset');
           var pf3 = pf2.flat;
           assert.equal(pf3.get(1).offset, 4.0, '.flat.flat does not change offset');
+      });
+
+      QUnit.test('music21.stream.Stream insertAndShift', function (assert) {
+          var s = new music21.stream.Stream();
+          s.insert(0, new music21.note.Note('C4'));
+          s.insert(1, new music21.note.Note('E4'));
+          s.insert(2, new music21.note.Note('F4'));
+          s.insertAndShift(1, new music21.note.Note('D4'));
+          var outListNames = [];
+          var outListOffsets = [];
+          for (var i = 0; i < s.length; i++) {
+              var n = s.get(i);
+              outListNames.push(n.name);
+              outListOffsets.push(n.offset);
+          }
+          assert.equal(outListNames[0], 'C');
+          assert.equal(outListOffsets[0], 0.0);
+          assert.equal(outListNames[1], 'D');
+          assert.equal(outListOffsets[1], 1.0);
+          assert.equal(outListNames[2], 'E');
+          assert.equal(outListOffsets[2], 2.0);
+          assert.equal(outListNames[3], 'F');
+          assert.equal(outListOffsets[3], 3.0);
       });
 
       QUnit.test('music21.stream.Stream.DOM', function (assert) {
