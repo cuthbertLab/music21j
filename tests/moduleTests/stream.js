@@ -210,8 +210,7 @@ export default function tests() {
         s1.append(n3);
         const n4 = new music21.note.Note('G3');
         s1.append(n4);
-        const sne1 = new music21.streamInteraction.SimpleNoteEditor(s1);
-        const div1 = sne1.editableAccidentalDOM();
+        const div1 = s1.editableAccidentalDOM();
         $(document.body).append(div1);
     });
 }

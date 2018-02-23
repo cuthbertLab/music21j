@@ -22,7 +22,6 @@ import { instrument } from './instrument.js';
 import { meter } from './meter.js';
 import { pitch } from './pitch.js';
 import { renderOptions } from './renderOptions.js';
-import { streamInteraction } from './streamInteraction.js';
 import { vfShow } from './vfShow.js';
 
 /**
@@ -47,7 +46,6 @@ import { vfShow } from './vfShow.js';
  * @requires music21/common
  * @requires music21/meter
  * @requires music21/pitch
- * @requires music21/streamInteraction
  * @requires jquery
  */
 export const stream = {};
@@ -1146,9 +1144,6 @@ export class Stream extends base.Music21Object {
      * - instrument: {@link music21.instrument.Instrument} object (default, `this.instrument`)
      * - tempo: number (default, `this.tempo`)
      *
-     * Does not have functionality for stopping etc., will be removed eventually
-     * and replaced with something better in {@link music21.streamInteraction}
-     *
      * @memberof music21.stream.Stream
      * @param {object} [options] - object of playback options
      * @returns {music21.stream.Stream} this
@@ -1433,62 +1428,6 @@ export class Stream extends base.Music21Object {
         return svgBlock;
     }
 
-    renderScrollableCanvas(where, elementType = 'svg') {
-        console.warn(
-            'renderScrollableCanvas is deprecated use renderScrollable instead'
-        );
-        return this.renderScrollable(where, elementType);
-    }
-
-    /**
-     * Renders a svg which has a scrollbar when clicked.
-     *
-     * (this is a dumb way of doing this.  Expect it to disappear...)
-     *
-     * @memberof music21.stream.Stream
-     * @param {JQueryDOMObject|DOMObject} [where]
-     * @param {string} elementType - what type of element, default = svg
-     * @returns {DOMObject} svg
-     */
-    renderScrollable(where, elementType = 'svg') {
-        let $where = where;
-        if (where === undefined) {
-            $where = $(document.body);
-        } else if (where.jquery === undefined) {
-            $where = $(where);
-        }
-        const $innerDiv = $('<div>').css('position', 'absolute');
-        const c = this.appendNewDOM(
-            $innerDiv,
-            undefined,
-            undefined,
-            elementType
-        );
-        this.renderOptions.events.click = event =>
-            this.scrollScoreStart(c, event);
-        this.setRenderInteraction($innerDiv);
-        $where.append($innerDiv);
-        return c;
-    }
-
-    /**
-     * Sets up a {@link music21.streamInteraction.ScrollPlayer} for this
-     * svg.
-     *
-     * @memberof music21.stream.Stream
-     * @param {DOMObject} c - svg
-     * @param {Event} [event] - the event that caused the scrolling to start
-     * (needed because `event.stopPropagation()` is called)
-     * @returns {music21.streamInteraction.ScrollPlayer}
-     */
-    scrollScoreStart(c, event) {
-        const scrollPlayer = new streamInteraction.ScrollPlayer(this, c);
-        scrollPlayer.startPlaying();
-        if (event !== undefined) {
-            event.stopPropagation();
-        }
-        return scrollPlayer;
-    }
 
     /**
      * Set the type of interaction on the svg based on
@@ -1513,9 +1452,9 @@ export class Stream extends base.Music21Object {
         } else if (canvasOrDiv.jquery === undefined) {
             $svg = $(canvasOrDiv);
         }
-        const playFunc = function playStreamBound() {
+        const playFunc = () => {
             this.playStream();
-        }.bind(this);
+        };
 
         $.each(
             this.renderOptions.events,
@@ -1844,7 +1783,7 @@ export class Stream extends base.Music21Object {
 
     editableAccidentalCanvas(width, height) {
         console.warn(
-            'editableAccidentalCanvas is deprecated, use StreamInteraction instead'
+            'editableAccidentalCanvas is deprecated, use editableAccidentalDOM instead'
         );
         return this.editableAccidentalDOM(width, height);
     }
@@ -2404,10 +2343,7 @@ export class Part extends Stream {
         if (systemPadding === undefined) {
             systemPadding = this.renderOptions.naiveSystemPadding;
         }
-        const [
-            systemIndex,
-            scaledYRelativeToSystem,
-        ] = this.systemIndexAndScaledY(y);
+        const [systemIndex, scaledYRelativeToSystem] = this.systemIndexAndScaledY(y);
         const clickedDiatonicNoteNum = this.diatonicNoteNumFromScaledY(
             scaledYRelativeToSystem
         );

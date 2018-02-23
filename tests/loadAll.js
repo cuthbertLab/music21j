@@ -17,7 +17,6 @@ import roman from './moduleTests/roman.js';
 import scale from './moduleTests/scale.js';
 import sites from './moduleTests/sites.js';
 import stream from './moduleTests/stream.js';
-import streamInteraction from './moduleTests/streamInteraction.js';
 import tie from './moduleTests/tie.js';
 import voiceLeading from './moduleTests/voiceLeading.js';
 
@@ -41,7 +40,6 @@ const allTests = {
     scale,
     sites,
     stream,
-    streamInteraction,
     tie,
     voiceLeading,
 };

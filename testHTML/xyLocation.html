@@ -42,9 +42,7 @@ require(['music21'], function() {
 
     music21.miditools.loadSoundfont('acoustic_grand_piano', function() {
         var $svg = $('#svg');
-        // s.renderScrollable($svg);
-        var sne = new music21.streamInteraction.SimpleNoteEditor(s1.get(0));
-        $svg.append(sne.editableAccidentalDOM());
+        $svg.append(s1.get(0).editableAccidentalDOM());
 
         console.log('soundfont loaded');
         console.log(s.estimateStreamHeight());
