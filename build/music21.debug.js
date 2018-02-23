@@ -15636,6 +15636,10 @@
               var scaledYinPart = scaledYFromSystemTop - partIndex * this.partSpacing;
               // console.log('systemIndex: ' + systemIndex + " partIndex: " + partIndex);
               var rightPart = this.get(partIndex);
+              if (rightPart === undefined) {
+                  return [undefined, undefined]; // may be too low?
+              }
+
               var clickedDiatonicNoteNum = rightPart.diatonicNoteNumFromScaledY(scaledYinPart);
 
               var foundNote = rightPart.noteElementFromScaledX(x, undefined, systemIndex);

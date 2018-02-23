@@ -2689,6 +2689,10 @@ export class Score extends Stream {
             = scaledYFromSystemTop - partIndex * this.partSpacing;
         // console.log('systemIndex: ' + systemIndex + " partIndex: " + partIndex);
         const rightPart = this.get(partIndex);
+        if (rightPart === undefined) {
+            return [undefined, undefined]; // may be too low?
+        }
+
         const clickedDiatonicNoteNum = rightPart.diatonicNoteNumFromScaledY(
             scaledYinPart
         );
