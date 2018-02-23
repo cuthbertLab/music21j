@@ -40,7 +40,6 @@ import { tinyNotation } from './music21/tinyNotation.js';
 import { voiceLeading } from './music21/voiceLeading.js';
 import { vfShow } from './music21/vfShow.js';
 import { webmidi } from './music21/webmidi.js';
-import { widgets } from './music21/widgets.js';
 
 const music21 = {
     common,
@@ -82,7 +81,6 @@ const music21 = {
     voiceLeading,
     vfShow,
     webmidi,
-    widgets,
 };
 
 music21.Music21Object = base.Music21Object;

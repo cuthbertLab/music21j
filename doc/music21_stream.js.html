@@ -151,10 +151,6 @@
 							<a href="music21.webmidi.html">music21.webmidi</a>
 						</li>
 						
-						<li>
-							<a href="music21.widgets.html">music21.widgets</a>
-						</li>
-						
 
 					</ul>
 				</li>
@@ -423,10 +419,6 @@
 						
 						<li>
 							<a href="music21.vfShow.RenderStack.html">music21.vfShow.RenderStack</a>
-						</li>
-						
-						<li>
-							<a href="music21.widgets.RhythmChooser.html">music21.widgets.RhythmChooser</a>
 						</li>
 						
 						<li>
@@ -2169,8 +2161,7 @@ export class Stream extends base.Music21Object {
             note: undefined,
         }; // a backup in case we did not find within allowablePixels
 
-        for (let i = 0; i &lt; subStream.length; i++) {
-            const n = subStream.get(i);
+        for (const n of subStream.flat.notesAndRests.elements) {
             /* should also
              * compensate for accidentals...
              */

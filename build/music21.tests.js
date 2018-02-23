@@ -13144,24 +13144,45 @@
                   note: undefined
               }; // a backup in case we did not find within allowablePixels
 
-              for (var i = 0; i < subStream.length; i++) {
-                  var n = subStream.get(i);
-                  /* should also
-                   * compensate for accidentals...
-                   */
-                  var leftDistance = Math.abs(n.x - xPxScaled);
-                  var rightDistance = Math.abs(n.x + n.width - xPxScaled);
-                  var minDistance = Math.min(leftDistance, rightDistance);
+              var _iteratorNormalCompletion = true;
+              var _didIteratorError = false;
+              var _iteratorError = undefined;
 
-                  if (leftDistance < allowablePixels && rightDistance < allowablePixels) {
-                      foundNote = n;
-                      break; /* O(n); can be made O(log n) */
-                  } else if (leftDistance < params.backupMaximum && rightDistance < params.backupMaximum && minDistance < backup.minDistanceSoFar) {
-                      backup.note = n;
-                      backup.minDistanceSoFar = minDistance;
+              try {
+                  for (var _iterator = subStream.flat.notesAndRests.elements[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+                      var n = _step.value;
+
+                      /* should also
+                       * compensate for accidentals...
+                       */
+                      var leftDistance = Math.abs(n.x - xPxScaled);
+                      var rightDistance = Math.abs(n.x + n.width - xPxScaled);
+                      var minDistance = Math.min(leftDistance, rightDistance);
+
+                      if (leftDistance < allowablePixels && rightDistance < allowablePixels) {
+                          foundNote = n;
+                          break; /* O(n); can be made O(log n) */
+                      } else if (leftDistance < params.backupMaximum && rightDistance < params.backupMaximum && minDistance < backup.minDistanceSoFar) {
+                          backup.note = n;
+                          backup.minDistanceSoFar = minDistance;
+                      }
+                  }
+                  // console.log('note here is: ', foundNote);
+              } catch (err) {
+                  _didIteratorError = true;
+                  _iteratorError = err;
+              } finally {
+                  try {
+                      if (!_iteratorNormalCompletion && _iterator.return) {
+                          _iterator.return();
+                      }
+                  } finally {
+                      if (_didIteratorError) {
+                          throw _iteratorError;
+                      }
                   }
               }
-              // console.log('note here is: ', foundNote);
+
               if (params.allowBackup && foundNote === undefined) {
                   foundNote = backup.note;
                   // console.log('used backup: closest was: ', backup.minDistanceSoFar);
@@ -14739,7 +14760,7 @@
    * @memberof music21
    * @requires music21/prebase
    */
-  var _tie = {};
+  var tie = {};
   var VALID_TIE_TYPES = ['start', 'stop', 'continue', 'let-ring', undefined];
 
   /**
@@ -14784,7 +14805,7 @@
       }]);
       return Tie;
   }(prebase.ProtoM21Object);
-  _tie.Tie = Tie;
+  tie.Tie = Tie;
 
   var DEFAULTS = {
       divisionsPerQuarter: 32 * 3 * 3 * 5 * 7
@@ -15501,7 +15522,7 @@
       }, {
           key: 'xmlToTie',
           value: function xmlToTie($mxNote) {
-              var t = new _tie.Tie();
+              var t = new tie.Tie();
               var allTies = $mxNote.children('tie');
               if (allTies.length > 1) {
                   t.type = 'continue';
@@ -17105,13 +17126,13 @@
               continue;
           }
           if (tnre.TIE.exec(token)) {
-              noteObj.tie = new _tie.Tie('start');
+              noteObj.tie = new tie.Tie('start');
               if (storedDict.lastNoteTied) {
                   noteObj.tie.type = 'continue';
               }
               storedDict.lastNoteTied = true;
           } else if (storedDict.lastNoteTied) {
-              noteObj.tie = new _tie.Tie('stop');
+              noteObj.tie = new tie.Tie('stop');
               storedDict.lastNoteTied = false;
           }
           if (tnre.SHARP.exec(token)) {
@@ -18061,394 +18082,6 @@
   </html>
    **/
 
-  /**
-   * music21j -- Javascript reimplementation of Core music21 features.
-   * music21/widgets -- tools for web display
-   *
-   * Copyright (c) 2013-17, Michael Scott Cuthbert and cuthbertLab
-   * Based on music21, Copyright (c) 2006–17, Michael Scott Cuthbert and cuthbertLab
-   *
-   */
-  // ../ext/jquery/jquery-3.2.1.min.js';
-
-  /**
-   * Widgets module -- random widgets.  See {@link music21.widgets}
-   *
-   * @exports music21/widgets
-   */
-
-  /**
-   * Widgets module -- random widgets to make streams etc. work better
-   *
-   * To be added to
-   *
-   * @namespace music21.widgets
-   * @memberof music21
-   */
-  var widgets = {};
-  /**
-   * A set of DOM Objects for choosing rhythms
-   *
-   * @class RhythmChooser
-   * @memberof music21.widgets
-   * @param {music21.stream.Stream} s - to append to, etc.
-   * @param {DOMObject} div - canvas or SVG
-   * @property {Array<string>} values - an array of rhythmic values and editing functions.
-   *           Default: ['whole', 'half','quarter','eighth','16th','dot','undo']
-   * @property {Boolean} measureMode - whether to use measures when editing
-   * @property {Boolean} tieActive - is a tie active?
-   * @property {Boolean} autoAddMeasure - add a measure when one is full? default: true
-   * @property {music21.stream.Stream} stream
-   * @property {DOMObject} [div]
-   */
-  var RhythmChooser = function () {
-      function RhythmChooser(streamObj, div) {
-          var _this = this;
-
-          var size = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'normal';
-          classCallCheck(this, RhythmChooser);
-
-          this.stream = streamObj;
-          this.div = div;
-          this.size = size;
-          if (this.size === 'sm' || this.size === 'small') {
-              this.sizeRatio = 0.5;
-          } else {
-              this.sizeRatio = 1.0;
-          }
-
-          this.values = ['whole', 'half', 'quarter', 'eighth', '16th', 'dot', 'undo'];
-
-          if (this.stream.hasSubStreams()) {
-              this.measureMode = true;
-          } else {
-              this.measureMode = false;
-          }
-          this.tieActive = false;
-          this.autoAddMeasure = true;
-          /**
-           * A mapping of a type to a string of HTML entities to display in
-           * BravuraText
-           *
-           * @name valueMappings
-           * @type {object}
-           * @memberof music21.widgets.RhythmChooser
-           */
-          this.valueMappings = {
-              whole: '&#xEB9B;&#xE1D2;',
-              half: '&#xEB9B;&#xE1D3;',
-              quarter: '&#xEB9B;&#xE1D5;',
-              eighth: '&#xEB9B;&#xE1D7;',
-              '16th': '&#xEB9B;&#xE1D9;',
-              '32nd': '&#xEB9B;&#xE1DB;', // BUG in Bravura Text
-              addMeasure: '&#xE031',
-              dot: '&#xEB9B;&#xE1E7;',
-              undo: '&#x232B;',
-              tie: '<span style="position: relative; top: ' + -20 * this.sizeRatio + 'px;">&#xE1FD</span>',
-              rest_whole: '&#xE4F4;',
-              rest_half: '&#xE4F5;',
-              rest_quarter: '&#xE4E5;',
-              rest_eighth: '&#xE4E6;',
-              rest_16th: '&#xE4E7;',
-              rest_32nd: '&#xE4E8;'
-          };
-          /**
-           * A mapping of a type to a css style
-           *
-           * @name styles
-           * @type {object}
-           * @memberof music21.widgets.RhythmChooser
-           */
-          this.styles = {
-              undo: 'font-family: serif; font-size: ' + 30 * this.sizeRatio + 'pt; top: -' + 8 * this.sizeRatio + 'px;'
-          };
-          /**
-           * An object mapping a value type to a function when it is clicked
-           *
-           * the 'default' value handles all types not otherwise given.
-           *
-           * Each function is passed the type that was clicked. Probably only
-           * useful for 'default'
-           *
-           * @name buttonHandlers
-           * @type {object}
-           * @memberof music21.widgets.RhythmChooser#
-           */
-          this.buttonHandlers = {
-              undo: function undo(unused_t) {
-                  if (_this.stream.length > 0) {
-                      return _this.stream.pop();
-                  } else {
-                      return undefined;
-                  }
-              },
-              dot: function dot(unused_t) {
-                  if (_this.stream.length > 0) {
-                      var el = _this.stream.pop();
-                      el.duration.dots += 1;
-                      _this.stream.append(el);
-                      return el;
-                  } else {
-                      return undefined;
-                  }
-              },
-              tie: function tie(unused_t) {
-                  if (_this.stream.length > 0) {
-                      var el = _this.stream.get(-1);
-                      el.tie = new _tie.Tie('start');
-                      _this.tieActive = true;
-                      return el;
-                  } else {
-                      return undefined;
-                  }
-              },
-              default: function _default(buttonM21type) {
-                  var newN = new note.Note('B4');
-                  newN.stemDirection = 'up';
-                  if (buttonM21type.indexOf('rest_') === 0) {
-                      newN = new note.Rest();
-                      buttonM21type = buttonM21type.slice('rest_'.length);
-                  }
-                  newN.duration.type = buttonM21type;
-                  if (_this.tieActive) {
-                      newN.tie = new _tie.Tie('stop');
-                      _this.tieActive = false;
-                  }
-                  _this.stream.append(newN);
-                  return newN;
-              }
-          };
-          /**
-           * An object mapping a value type to a function when it is clicked if the
-           * RhythmChooser is in measureMode
-           *
-           * the 'default' value handles all types not otherwise given.
-           *
-           * Each function is passed the type that was clicked. Probably only
-           * useful for 'default'
-           *
-           * @name measureButtonHandlers
-           * @type {object}
-           * @memberof music21.widgets.RhythmChooser#
-           */
-          this.measureButtonHandlers = {
-              undo: function undo(unused_t) {
-                  if (_this.stream.length > 0) {
-                      var lastMeasure = _this.stream.get(-1);
-                      var retValue = lastMeasure.pop();
-                      if (lastMeasure.length === 0 && _this.stream.length > 1) {
-                          _this.stream.pop();
-                      }
-                      return retValue;
-                  } else {
-                      return undefined;
-                  }
-              },
-              dot: function dot(unused_t) {
-                  if (_this.stream.length > 0) {
-                      var lastMeasure = _this.stream.get(-1);
-                      var el = lastMeasure.pop();
-                      el.duration.dots += 1;
-                      lastMeasure.append(el);
-                      return el;
-                  } else {
-                      return undefined;
-                  }
-              },
-              addMeasure: function addMeasure(unused_t) {
-                  var lastMeasure = _this.stream.get(-1);
-                  var m = new stream.Measure();
-                  m.renderOptions.staffLines = lastMeasure.renderOptions.staffLines;
-                  m.renderOptions.measureIndex = lastMeasure.renderOptions.measureIndex + 1;
-                  m.renderOptions.rightBarline = 'end';
-                  lastMeasure.renderOptions.rightBarline = 'single';
-                  m.autoBeam = lastMeasure.autoBeam;
-                  _this.stream.append(m);
-              },
-              tie: function tie(unused_t) {
-                  var lastMeasure = _this.stream.get(-1);
-                  var el = void 0;
-                  if (lastMeasure.length > 0) {
-                      el = lastMeasure.get(-1);
-                  } else {
-                      var previousMeasure = _this.stream.get(-2);
-                      if (previousMeasure) {
-                          el = previousMeasure.get(-1);
-                      }
-                  }
-                  if (el !== undefined) {
-                      var tieType = 'start';
-                      if (el.tie !== undefined) {
-                          tieType = 'continue';
-                      }
-                      el.tie = new _tie.Tie(tieType);
-                      _this.tieActive = true;
-                  }
-              },
-              default: function _default(buttonM21type) {
-                  var newN = new note.Note('B4');
-                  newN.stemDirection = 'up';
-                  if (buttonM21type.indexOf('rest_') === 0) {
-                      newN = new note.Rest();
-                      buttonM21type = buttonM21type.slice('rest_'.length);
-                  }
-                  newN.duration.type = buttonM21type;
-                  if (_this.tieActive) {
-                      newN.tie = new _tie.Tie('stop');
-                      _this.tieActive = false;
-                  }
-                  var lastMeasure = _this.stream.get(-1);
-                  if (_this.autoAddMeasure && lastMeasure.duration.quarterLength >= _this.stream.timeSignature.barDuration.quarterLength) {
-                      _this.measureButtonHandlers.addMeasure.apply(_this, [buttonM21type]);
-                      lastMeasure = _this.stream.get(-1);
-                  }
-                  lastMeasure.append(newN);
-                  return newN;
-              }
-          };
-      }
-      /**
-       * adds a RhythmChooser widget somewhere.
-       *
-       * @memberof music21.widgets.RhythmChooser
-       * @param {DOMObject|JQueryDOMObject} where
-       */
-
-
-      createClass(RhythmChooser, [{
-          key: 'addDiv',
-          value: function addDiv(where) {
-              var $where = where;
-              if (where !== undefined && where.jquery === undefined) {
-                  $where = $$1(where);
-              }
-              var $outer = $$1('<div class="rhythmButtonDiv"/>');
-              for (var i = 0; i < this.values.length; i++) {
-                  var value = this.values[i];
-                  var entity = this.valueMappings[value];
-                  var sizeClass = '';
-                  if (this.size === 'sm' || this.size === 'small') {
-                      sizeClass = 'btButtonSm';
-                  }
-                  var $inner = $$1('<button class="btButton ' + sizeClass + '" m21Type="' + value + '">' + entity + '</button>');
-                  if (this.styles[value] !== undefined) {
-                      $inner.attr('style', this.styles[value]);
-                  }
-
-                  $inner.click(function rhythmButtonDiv_click(value) {
-                      this.handleButton(value);
-                  }.bind(this, value));
-                  $outer.append($inner);
-              }
-              if (where !== undefined) {
-                  $where.append($outer);
-              }
-              return $outer;
-          }
-          /**
-           * A button has been pressed! Call the appropriate handler and update the stream's SVG (if any)
-           *
-           * @memberof music21.widgets.RhythmChooser
-           * @param {string} t - type of button pressed.
-           */
-
-      }, {
-          key: 'handleButton',
-          value: function handleButton(t) {
-              var bhs = this.buttonHandlers;
-              if (this.measureMode) {
-                  bhs = this.measureButtonHandlers;
-              }
-              var bh = bhs[t];
-              if (bh === undefined) {
-                  bh = bhs.default;
-              }
-              bh.apply(this, [t]);
-              var s = this.stream;
-
-              // redraw score if Part is part of score...
-              if (s.isClassOrSubclass('Part') && s.activeSite !== undefined) {
-                  s = s.activeSite;
-              }
-              if (this.div !== undefined) {
-                  s.replaceDOM(this.div);
-              }
-          }
-      }]);
-      return RhythmChooser;
-  }();
-  widgets.RhythmChooser = RhythmChooser;
-
-  var Augmenter = function () {
-      function Augmenter(streamObj, div) {
-          classCallCheck(this, Augmenter);
-
-          this.streamObj = streamObj;
-          this.div = div;
-      }
-
-      createClass(Augmenter, [{
-          key: 'performChange',
-          value: function performChange(amountToScale, streamObjToWorkOn) {
-              var replaceDOM = false;
-              if (streamObjToWorkOn === undefined) {
-                  replaceDOM = true;
-                  streamObjToWorkOn = this.streamObj;
-              }
-              for (var i = 0; i < streamObjToWorkOn.length; i++) {
-                  var el = streamObjToWorkOn.get(i);
-                  if (el.isStream === true) {
-                      this.performChange(amountToScale, el);
-                  } else {
-                      el.duration.quarterLength *= amountToScale;
-                  }
-              }
-              if (streamObjToWorkOn.timeSignature !== undefined) {
-                  streamObjToWorkOn.timeSignature.denominator *= 1 / amountToScale;
-              }
-
-              if (this.div !== undefined && replaceDOM === true) {
-                  this.div = streamObjToWorkOn.replaceDOM(this.div);
-              }
-          }
-      }, {
-          key: 'makeSmaller',
-          value: function makeSmaller() {
-              return this.performChange(0.5);
-          }
-      }, {
-          key: 'makeLarger',
-          value: function makeLarger() {
-              return this.performChange(2.0);
-          }
-      }, {
-          key: 'addDiv',
-          value: function addDiv($where) {
-              var _this2 = this;
-
-              var $newDiv = $$1('<div class="augmenterDiv" />');
-              var $smaller = $$1('<button class="augmenterButton">Make Smaller</button>');
-              var $larger = $$1('<button class="augmenterButton">Make Larger</button>');
-
-              $smaller.on('click', function () {
-                  _this2.makeSmaller();
-              });
-              $larger.on('click', function () {
-                  _this2.makeLarger();
-              });
-
-              $newDiv.append($smaller);
-              $newDiv.append($larger);
-
-              $where.append($newDiv);
-              return $newDiv;
-          }
-      }]);
-      return Augmenter;
-  }();
-
-  widgets.Augmenter = Augmenter;
-
   // order below doesn't matter, but good to give a sense
   // of what will be needed by almost everyone, and then
   // alphabetical.
@@ -18487,12 +18120,11 @@
       sites: sites,
       stream: stream,
       tempo: tempo,
-      tie: _tie,
+      tie: tie,
       tinyNotation: tinyNotation,
       voiceLeading: voiceLeading,
       vfShow: vfShow,
-      webmidi: webmidi,
-      widgets: widgets
+      webmidi: webmidi
   };
 
   music21.Music21Object = base.Music21Object;
