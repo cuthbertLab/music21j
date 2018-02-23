@@ -1731,8 +1731,7 @@ export class Stream extends base.Music21Object {
             note: undefined,
         }; // a backup in case we did not find within allowablePixels
 
-        for (let i = 0; i < subStream.length; i++) {
-            const n = subStream.get(i);
+        for (const n of subStream.flat.notesAndRests.elements) {
             /* should also
              * compensate for accidentals...
              */

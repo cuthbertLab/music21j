@@ -14441,24 +14441,45 @@
                   note: undefined
               }; // a backup in case we did not find within allowablePixels
 
-              for (var i = 0; i < subStream.length; i++) {
-                  var n = subStream.get(i);
-                  /* should also
-                   * compensate for accidentals...
-                   */
-                  var leftDistance = Math.abs(n.x - xPxScaled);
-                  var rightDistance = Math.abs(n.x + n.width - xPxScaled);
-                  var minDistance = Math.min(leftDistance, rightDistance);
+              var _iteratorNormalCompletion = true;
+              var _didIteratorError = false;
+              var _iteratorError = undefined;
 
-                  if (leftDistance < allowablePixels && rightDistance < allowablePixels) {
-                      foundNote = n;
-                      break; /* O(n); can be made O(log n) */
-                  } else if (leftDistance < params.backupMaximum && rightDistance < params.backupMaximum && minDistance < backup.minDistanceSoFar) {
-                      backup.note = n;
-                      backup.minDistanceSoFar = minDistance;
+              try {
+                  for (var _iterator = subStream.flat.notesAndRests.elements[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+                      var n = _step.value;
+
+                      /* should also
+                       * compensate for accidentals...
+                       */
+                      var leftDistance = Math.abs(n.x - xPxScaled);
+                      var rightDistance = Math.abs(n.x + n.width - xPxScaled);
+                      var minDistance = Math.min(leftDistance, rightDistance);
+
+                      if (leftDistance < allowablePixels && rightDistance < allowablePixels) {
+                          foundNote = n;
+                          break; /* O(n); can be made O(log n) */
+                      } else if (leftDistance < params.backupMaximum && rightDistance < params.backupMaximum && minDistance < backup.minDistanceSoFar) {
+                          backup.note = n;
+                          backup.minDistanceSoFar = minDistance;
+                      }
+                  }
+                  // console.log('note here is: ', foundNote);
+              } catch (err) {
+                  _didIteratorError = true;
+                  _iteratorError = err;
+              } finally {
+                  try {
+                      if (!_iteratorNormalCompletion && _iterator.return) {
+                          _iterator.return();
+                      }
+                  } finally {
+                      if (_didIteratorError) {
+                          throw _iteratorError;
+                      }
                   }
               }
-              // console.log('note here is: ', foundNote);
+
               if (params.allowBackup && foundNote === undefined) {
                   foundNote = backup.note;
                   // console.log('used backup: closest was: ', backup.minDistanceSoFar);
