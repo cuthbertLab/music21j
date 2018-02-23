@@ -11463,6 +11463,7 @@
           _this8.activeVoiceNumber = 0; // 0, 1, 2, 3
           _this8.activeNoteIndex = 0;
           _this8.buttons = [];
+          _this8.DOM = undefined;
           return _this8;
       }
 
@@ -11499,7 +11500,7 @@
               $d.append($voiceDiv);
               $d.append($("<br clear='all'/>"));
               this.activateClick();
-              this.stream.appendNewDOM($d, width, height);
+              this.DOM = this.stream.appendNewDOM($d, width, height);
               return $d;
           }
 

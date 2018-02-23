@@ -603,7 +603,7 @@ export class SimpleNoteEditor {
         const canvasOrSvgElement = e.currentTarget;
         const [
             clickedDiatonicNoteNum,
-            foundNote
+            foundNote,
         ] = this.stream.findNoteForClick(canvasOrSvgElement, e);
         if (foundNote === undefined) {
             if (debug) {
@@ -655,10 +655,12 @@ export class SimpleNoteEditor {
     }
 
     editableAccidentalCanvas(width, height) {
-        console.warn('editableAccidentalCanvas is deprecated, use editableAccidentalDOM instead');
+        console.warn(
+            'editableAccidentalCanvas is deprecated, use editableAccidentalDOM instead'
+        );
         return this.editableAccidentalDOM(width, height);
     }
-    
+
     /**
      * Renders a stream on a SVG with the ability to edit it and
      * a toolbar that allows the accidentals to be edited.
@@ -681,8 +683,8 @@ export class SimpleNoteEditor {
         this.activateClick();
         this.stream.appendNewDOM($d, width, height);
         return $d;
-    }    
-    
+    }
+
     /**
      * activateClick - sets the stream's renderOptions to activate clickFunction.
      *
@@ -734,10 +736,12 @@ export class SimpleNoteEditor {
     }
 
     getUseCanvasFromClickEvent(clickEvent) {
-        console.warn('getUseCanvasFromClickEvent is deprecated, use getDOMFromClickEvent instead');
+        console.warn(
+            'getUseCanvasFromClickEvent is deprecated, use getDOMFromClickEvent instead'
+        );
         return this.getDOMFromClickEvent(clickEvent);
     }
-    
+
     /**
      * getUseCanvasFromClickEvent - get the active canvas or svg from the click even
      *
@@ -825,13 +829,14 @@ export class FourPartEditor extends GrandStaffEditor {
         this.activeVoiceNumber = 0; // 0, 1, 2, 3
         this.activeNoteIndex = 0;
         this.buttons = [];
+        this.DOM = undefined;
     }
 
     editableCanvas(width, height) {
         console.warn('editableCanvas is deprecated, use editableDOM instead');
         return this.editableDOM(width, height);
     }
-    
+
     editableDOM(width, height) {
         /*
          * Create an editable DOM or canvas with an accidental selection bar.
@@ -859,7 +864,7 @@ export class FourPartEditor extends GrandStaffEditor {
         $d.append($voiceDiv);
         $d.append($("<br clear='all'/>"));
         this.activateClick();
-        this.stream.appendNewDOM($d, width, height);
+        this.DOM = this.stream.appendNewDOM($d, width, height);
         return $d;
     }
 
@@ -927,7 +932,7 @@ export class FourPartEditor extends GrandStaffEditor {
         // the activeVoice can find the right note object but not
         // the right DNN
         const [unused_wrong_dnn, foundNote] = this.activeVoice.findNoteForClick(
-                domElement,
+            domElement,
             e
         );
 
@@ -935,7 +940,7 @@ export class FourPartEditor extends GrandStaffEditor {
         // DNN but not the right note.
         const [
             clickedDiatonicNoteNum,
-            unused_wrong_note
+            unused_wrong_note,
         ] = this.stream.findNoteForClick(domElement, e);
 
         if (foundNote === undefined) {
@@ -944,11 +949,7 @@ export class FourPartEditor extends GrandStaffEditor {
             }
             return undefined;
         }
-        return this.noteChanged(
-            clickedDiatonicNoteNum,
-            foundNote,
-            domElement
-        );
+        return this.noteChanged(clickedDiatonicNoteNum, foundNote, domElement);
     }
 
     noteChanged(clickedDiatonicNoteNum, foundNote, domElement) {
@@ -974,7 +975,7 @@ export class FourPartEditor extends GrandStaffEditor {
         this.activeNote = n;
         const $newSvg = this.stream.redrawDOM(domElement);
         const params = { foundNote: n, svg: $newSvg };
-        
+
         if (this.changedCallbackFunction !== undefined) {
             return this.changedCallbackFunction(params);
         } else {
