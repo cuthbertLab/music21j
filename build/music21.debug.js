@@ -591,12 +591,12 @@
    * @memberof music21.common
    * @returns {DOMObject}
    */
-  common.makeSVGright = function makeSVGright(tag, attrs) {
+  common.makeSVGright = function makeSVGright() {
+      var tag = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'svg';
+      var attrs = arguments[1];
+
       // see http://stackoverflow.com/questions/3642035/jquerys-append-not-working-with-svg-element
       // normal JQuery does not work.
-      if (tag === undefined) {
-          tag = 'svg';
-      }
       if (attrs === undefined) {
           attrs = {};
       }
