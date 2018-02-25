@@ -1,5 +1,5 @@
 /**
- * music21j 0.9.0 built on  * 2018-02-23.
+ * music21j 0.9.0 built on  * 2018-02-25.
  * Copyright (c) 2013-2016 Michael Scott Cuthbert and cuthbertLab
  * BSD License, see LICENSE
  *
@@ -3956,7 +3956,16 @@
 
       createClass(Pitch, [{
           key: '_getEnharmonicHelper',
-          value: function _getEnharmonicHelper(inPlace, directionInt) {
+
+
+          /**
+           * @param {boolean} inPlace
+           * @param {Int} directionInt -- -1 = down, 1 = up
+           */
+          value: function _getEnharmonicHelper() {
+              var inPlace = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
+              var directionInt = arguments[1];
+
               // differs from Python version because
               // cannot import interval here.
               var octaveStored = true;

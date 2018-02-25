@@ -1,5 +1,5 @@
 /**
- * music21j 0.9.0 built on  * 2018-02-23.
+ * music21j 0.9.0 built on  * 2018-02-25.
  * Copyright (c) 2013-2016 Michael Scott Cuthbert and cuthbertLab
  * BSD License, see LICENSE
  *
@@ -3956,7 +3956,16 @@
 
       createClass(Pitch, [{
           key: '_getEnharmonicHelper',
-          value: function _getEnharmonicHelper(inPlace, directionInt) {
+
+
+          /**
+           * @param {boolean} inPlace
+           * @param {Int} directionInt -- -1 = down, 1 = up
+           */
+          value: function _getEnharmonicHelper() {
+              var inPlace = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
+              var directionInt = arguments[1];
+
               // differs from Python version because
               // cannot import interval here.
               var octaveStored = true;
@@ -18611,6 +18620,19 @@
           // inPlace
           dis.getHigherEnharmonic(true); // inPlace
           assert.equal(dis.nameWithOctave, es.nameWithOctave);
+
+          var cDblSharp = new music21.pitch.Pitch('C##5');
+          var dNatural = cDblSharp.getHigherEnharmonic();
+          assert.equal(cDblSharp.ps, dNatural.ps);
+          assert.equal(dNatural.name, 'D', 'C## higher is D');
+          assert.equal(dNatural.octave, 5, 'Octave is 5');
+          var bTripleSharp = cDblSharp.getLowerEnharmonic();
+          assert.equal(cDblSharp.ps, bTripleSharp.ps);
+          assert.equal(bTripleSharp.octave, 4, 'Octave is 4 [B###]');
+
+          var cDblFlat = new music21.pitch.Pitch('C--5');
+          var bFlat = cDblFlat.getLowerEnharmonic();
+          assert.equal(cDblFlat.ps, bFlat.ps);
 
           // once octaveless pitches exist...
           //        const octaveless = new music21.pitch.Pitch('C');

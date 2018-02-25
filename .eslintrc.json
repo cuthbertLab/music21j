@@ -6,6 +6,7 @@
     },
     "rules": {
         "arrow-parens": [0],
+        "brace-style": [0],
         "camelcase": [0],
         "class-methods-use-this": [0],
         "comma-dangle": ["error", {
@@ -21,6 +22,7 @@
         "indent": ["error", 4],
         "import/extensions": [0],
         "import/prefer-default-export": [0],
+	"import/no-named-as-default": [0],
         "import/no-named-as-default-member": [0],
         "import/no-unresolved": [0],
         "import/no-extraneous-dependencies": [0],
@@ -31,6 +33,7 @@
         "no-continue": [0],
         "no-confusing-arrow": [0],
         "no-else-return": [0],
+        "no-lonely-if": [0],
         "no-mixed-operators": [0],
         "no-multi-spaces": [0],
         "no-param-reassign": [0],
@@ -54,11 +57,12 @@
         ],
         "object-property-newline": [0],
         "operator-linebreak": ["error", "before"],
+        "padded-blocks": [0],
         "prefer-template": [0],
         "quote-props": [0],
         "radix": [0],
-        "space-before-function-paren": [2, "never"],
-        "strict": [2, "global"],
+        "space-infix-ops": [0],
+	"strict": [2, "global"],
         "yoda": [2, "never", { "exceptRange": true }]
     }
 }
