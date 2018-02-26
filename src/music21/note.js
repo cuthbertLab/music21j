@@ -105,8 +105,8 @@ export class Lyric extends prebase.ProtoM21Object {
         this.setTextAndSyllabic(this.text, this.applyRaw);
         this._identifier = identifier;
         this.style = {
-            fillColor: 'black',
-            strokeColor: 'black',
+            fillStyle: 'black',
+            strokeStyle: 'black',
         };
     }
     get identifier() {

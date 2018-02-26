@@ -5090,8 +5090,8 @@
           _this.setTextAndSyllabic(_this.text, _this.applyRaw);
           _this._identifier = identifier;
           _this.style = {
-              fillColor: 'black',
-              strokeColor: 'black'
+              fillStyle: 'black',
+              strokeStyle: 'black'
           };
           return _this;
       }
