@@ -13682,7 +13682,7 @@ var TextNote = exports.TextNote = function (_Note) {
         this.glyph.render(this.context, x + this.glyph_struct.x_shift, y + this.glyph_struct.y_shift);
       } else {
         y = this.stave.getYForLine(this.line + -3);
-        ctx.save();
+        this.applyStyle(ctx);
         ctx.setFont(this.font.family, this.font.size, this.font.weight);
         ctx.fillText(this.text, x, y);
 
@@ -13703,7 +13703,7 @@ var TextNote = exports.TextNote = function (_Note) {
           ctx.fillText(this.subscript, x + width + 2, y + height / 2.2 - 1);
         }
 
-        ctx.restore();
+        this.restoreStyle(ctx);
       }
     }
   }]);
