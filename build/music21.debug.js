@@ -5089,6 +5089,10 @@
           _this.applyRaw = applyRaw || false;
           _this.setTextAndSyllabic(_this.text, _this.applyRaw);
           _this._identifier = identifier;
+          _this.style = {
+              fillColor: 'black',
+              strokeColor: 'black'
+          };
           return _this;
       }
 
@@ -5445,7 +5449,7 @@
 
           _this3.notehead = 'normal';
           _this3.noteheadFill = 'default';
-          _this3.noteheadColor = undefined;
+          _this3.noteheadColor = 'black';
           _this3.noteheadParenthesis = false;
           _this3.volume = undefined; // not a real object yet.
           _this3.beams = new beam.Beams();
@@ -11318,13 +11322,16 @@
       }, {
           key: 'vexflowLyrics',
           value: function vexflowLyrics(s, stave) {
-              var getTextNote = function getTextNote(text, font, d) {
+              var getTextNote = function getTextNote(text, font, d, lyricObj) {
                   // console.log(text, font, d);
                   var t1 = new Vex.Flow.TextNote({
                       text: text,
                       font: font,
                       duration: d
                   }).setLine(11).setStave(stave).setJustification(Vex.Flow.TextNote.Justification.LEFT);
+                  if (lyricObj) {
+                      t1.setStyle(lyricObj.style);
+                  }
                   return t1;
               };
 
@@ -11344,20 +11351,22 @@
                   var text = void 0;
                   var d = el.duration.vexflowDuration;
                   var addConnector = false;
+                  var firstLyric = void 0;
                   if (lyricsArray.length === 0) {
                       text = '';
                   } else {
-                      text = lyricsArray[0].text;
+                      firstLyric = lyricsArray[0];
+                      text = firstLyric.text;
                       if (text === undefined) {
                           text = '';
                       }
-                      if (lyricsArray[0].syllabic === 'middle' || lyricsArray[0].syllabic === 'begin') {
-                          addConnector = ' ' + lyricsArray[0].lyricConnector;
+                      if (firstLyric.syllabic === 'middle' || firstLyric.syllabic === 'begin') {
+                          addConnector = ' ' + firstLyric.lyricConnector;
                           var tempQl = el.duration.quarterLength / 2.0;
                           d = new duration.Duration(tempQl).vexflowDuration;
                       }
                   }
-                  var t1 = getTextNote(text, font, d);
+                  var t1 = getTextNote(text, font, d, firstLyric);
                   lyricsObjects.push(t1);
                   if (addConnector !== false) {
                       var connector = getTextNote(addConnector, font, d);
