@@ -1,5 +1,5 @@
 /**
- * music21j 0.9.0 built on  * 2018-02-26.
+ * music21j 0.9.0 built on  * 2018-02-27.
  * Copyright (c) 2013-2016 Michael Scott Cuthbert and cuthbertLab
  * BSD License, see LICENSE
  *
@@ -3792,6 +3792,18 @@
                   this._alter = 3.0;
                   this._modifier = '###';
                   this._unicodeModifier = '&#x1d12a;';
+              } else if (accName === 'quadruple-flat' || accName === '----' || accName === -4) {
+                  this._name = 'quadruple-flat';
+                  this._alter = -4.0;
+                  this._modifier = '----';
+                  this._unicodeModifier = '♭&#x1d12b;';
+              } else if (accName === 'quadruple-sharp' || accName === '####' || accName === 4) {
+                  this._name = 'quadruple-sharp';
+                  this._alter = 4.0;
+                  this._modifier = '####';
+                  this._unicodeModifier = '&#x1d12a;';
+              } else {
+                  throw new Music21Exception('Accidental is not supported: ' + accName);
               }
           }
           /**
