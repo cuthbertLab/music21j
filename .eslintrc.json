@@ -54,6 +54,7 @@
         ],
         "object-property-newline": [0],
         "operator-linebreak": ["error", "before"],
+        "padded-blocks": [0],
         "prefer-template": [0],
         "quote-props": [0],
         "radix": [0],

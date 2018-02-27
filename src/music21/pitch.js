@@ -112,7 +112,28 @@ export class Accidental extends prebase.ProtoM21Object {
             this._alter = 3.0;
             this._modifier = '###';
             this._unicodeModifier = '&#x1d12a;';
+        } else if (
+            accName === 'quadruple-flat'
+            || accName === '----'
+            || accName === -4
+        ) {
+            this._name = 'quadruple-flat';
+            this._alter = -4.0;
+            this._modifier = '----';
+            this._unicodeModifier = '♭&#x1d12b;';
+        } else if (
+            accName === 'quadruple-sharp'
+            || accName === '####'
+            || accName === 4
+        ) {
+            this._name = 'quadruple-sharp';
+            this._alter = 4.0;
+            this._modifier = '####';
+            this._unicodeModifier = '&#x1d12a;';
+        } else {
+            throw new Music21Exception('Accidental is not supported: ' + accName);
         }
+
     }
     /**
      * Return or set the name of the accidental ('flat', 'sharp', 'natural', etc.);
