@@ -359,14 +359,15 @@ miditools.postLoadCallback = function postLoadCallback(soundfont, callback) {
             );
         }
         if (isFirefox === false && isAudioTag === false) {
-            const c = instrumentObj.midiChannel;
-            // Firefox ignores sound volume! so don't play! as does IE and others using HTML audio tag.
-            MIDI.noteOn(c, 36, 1, 0); // if no notes have been played before then
-            MIDI.noteOff(c, 36, 1, 0.1); // the second note to be played is always
-            MIDI.noteOn(c, 48, 1, 0.2); // very clipped (on Safari at least)
-            MIDI.noteOff(c, 48, 1, 0.3); // this helps a lot.
-            MIDI.noteOn(c, 60, 1, 0.3); // chrome needs three?
-            MIDI.noteOff(c, 60, 1, 0.4);
+            // Firefox ignores sound volume! so don't play! 
+            // as does IE and others using HTML audio tag.
+            const channel = instrumentObj.midiChannel;
+            MIDI.noteOn(channel, 36, 1, 0);    // if no notes have been played before then
+            MIDI.noteOff(channel, 36, 1, 0.1); // the second note to be played is always
+            MIDI.noteOn(channel, 48, 1, 0.2);  // very clipped (on Safari at least)
+            MIDI.noteOff(channel, 48, 1, 0.3); // this helps a lot.
+            MIDI.noteOn(channel, 60, 1, 0.3);  // chrome needs three notes?
+            MIDI.noteOff(channel, 60, 1, 0.4);
         }
     }
     if (callback !== undefined) {
@@ -393,11 +394,14 @@ miditools.postLoadCallback = function postLoadCallback(soundfont, callback) {
  */
 miditools.loadSoundfont = function loadSoundfont(soundfont, callback) {
     if (miditools.loadedSoundfonts[soundfont] === true) {
+        // this soundfont has already been loaded once, so just call the callback.
         if (callback !== undefined) {
             const instrumentObj = instrument.find(soundfont);
             callback(instrumentObj);
         }
     } else if (miditools.loadedSoundfonts[soundfont] === 'loading') {
+        // we are still waiting for this instrument to load, so
+        // wait for it before calling callback.
         const waitThenCall = () => {
             if (miditools.loadedSoundfonts[soundfont] === true) {
                 if (debug) {
@@ -418,6 +422,8 @@ miditools.loadSoundfont = function loadSoundfont(soundfont, callback) {
         };
         waitThenCall();
     } else {
+        // soundfont we have not seen before:
+        // set its status to loading and then load it.
         miditools.loadedSoundfonts[soundfont] = 'loading';
         if (debug) {
             console.log('waiting for document ready');

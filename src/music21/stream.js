@@ -22,7 +22,6 @@ import { instrument } from './instrument.js';
 import { meter } from './meter.js';
 import { pitch } from './pitch.js';
 import { renderOptions } from './renderOptions.js';
-import { streamInteraction } from './streamInteraction.js';
 import { vfShow } from './vfShow.js';
 
 /**
@@ -47,7 +46,6 @@ import { vfShow } from './vfShow.js';
  * @requires music21/common
  * @requires music21/meter
  * @requires music21/pitch
- * @requires music21/streamInteraction
  * @requires jquery
  */
 export const stream = {};
@@ -511,7 +509,38 @@ export class Stream extends base.Music21Object {
     }
 
     /**
-     * Remove and return the last element in the stream, 
+     * Inserts a single element at offset, shifting elements at or after it begins
+     * later in the stream.
+     *
+     * In single argument form, assumes it is an element and takes the offset from the element.
+     *
+     * Unlike music21p, does not take a list of elements.  TODO(msc): add this.
+     */
+    insertAndShift(offset, elementOrNone) {
+        let element;
+        if (elementOrNone === undefined) {
+            element = offset;
+            offset = element.offset;
+        } else {
+            element = elementOrNone;
+        }
+        const amountToShift = element.duration.quarterLength;
+
+        let shiftingOffsets = false;
+        for (let i = 0; i < this.length; i++) {
+            if (!shiftingOffsets && this._elementOffsets[i] >= offset) {
+                shiftingOffsets = true;
+            }
+            if (shiftingOffsets) {
+                this._elementOffsets[i] += amountToShift;
+                this._elements[i].offset = this._elementOffsets[i];
+            }
+        }
+        this.insert(offset, element);
+    }
+
+    /**
+     * Remove and return the last element in the stream,
      * or return undefined if the stream is empty
      *
      * @memberof music21.stream.Stream
@@ -954,10 +983,12 @@ export class Stream extends base.Music21Object {
     //  * *********  VexFlow functionality
 
     renderVexflowOnCanvas(canvasOrSVG) {
-        console.warn('renderVexflowOnCanvas is deprecated; call renderVexflow instead');
+        console.warn(
+            'renderVexflowOnCanvas is deprecated; call renderVexflow instead'
+        );
         return this.renderVexflow(canvasOrSVG);
     }
-    
+
     /**
      * Uses {@link music21.vfShow.Renderer} to render Vexflow onto an
      * existing canvas or SVG object.
@@ -979,7 +1010,7 @@ export class Stream extends base.Music21Object {
             // temporarily add to DOM so Firefox can measure it...
             document.body.appendChild(canvasOrSVG);
         }
-                
+
         const tagName = canvasOrSVG.tagName.toLowerCase();
 
         const vfr = new vfShow.Renderer(this, canvasOrSVG);
@@ -1113,9 +1144,6 @@ export class Stream extends base.Music21Object {
      * - instrument: {@link music21.instrument.Instrument} object (default, `this.instrument`)
      * - tempo: number (default, `this.tempo`)
      *
-     * Does not have functionality for stopping etc., will be removed eventually
-     * and replaced with something better in {@link music21.streamInteraction}
-     *
      * @memberof music21.stream.Stream
      * @param {object} [options] - object of playback options
      * @returns {music21.stream.Stream} this
@@ -1199,7 +1227,7 @@ export class Stream extends base.Music21Object {
         console.warn('createNewCanvas is deprecated, use createNewDOM instead');
         return this.createNewDOM(width, height, elementType);
     }
-    
+
     /**
      * Creates and returns a new `&lt;canvas&gt;` or `&lt;svg&gt;` object.
      *
@@ -1260,10 +1288,12 @@ export class Stream extends base.Music21Object {
     }
 
     createPlayableCanvas(width, height, elementType = 'svg') {
-        console.warn('createPlayableCanvas is deprecated, use createPlayableDOM instead');
+        console.warn(
+            'createPlayableCanvas is deprecated, use createPlayableDOM instead'
+        );
         return this.createPlayableDOM(width, height, elementType);
-    }    
-    
+    }
+
     /**
      * Creates a rendered, playable svg where clicking plays it.
      *
@@ -1301,12 +1331,11 @@ export class Stream extends base.Music21Object {
         return $newSvg;
     }
 
-    
     appendNewCanvas(appendElement, width, height, elementType = 'svg') {
         console.warn('appendNewCanvas is deprecated, use appendNewDOM instead');
         return this.appendNewDOM(appendElement, width, height, elementType);
-    }    
-    
+    }
+
     /**
      * Creates a new canvas, renders vexflow on it, and appends it to the DOM.
      *
@@ -1344,7 +1373,7 @@ export class Stream extends base.Music21Object {
         console.warn('replaceCanvas is deprecated, use replaceDOM instead');
         return this.replaceDOM(where, preserveSvgSize, elementType);
     }
-    
+
     /**
      * Replaces a particular Svg with a new rendering of one.
      *
@@ -1399,60 +1428,6 @@ export class Stream extends base.Music21Object {
         return svgBlock;
     }
 
-    renderScrollableCanvas(where, elementType = 'svg') {
-        console.warn('renderScrollableCanvas is deprecated use renderScrollable instead');
-        return this.renderScrollable(where, elementType);        
-    }
-    
-    /**
-     * Renders a svg which has a scrollbar when clicked.
-     *
-     * (this is a dumb way of doing this.  Expect it to disappear...)
-     *
-     * @memberof music21.stream.Stream
-     * @param {JQueryDOMObject|DOMObject} [where]
-     * @param {string} elementType - what type of element, default = svg
-     * @returns {DOMObject} svg
-     */
-    renderScrollable(where, elementType = 'svg') {
-        let $where = where;
-        if (where === undefined) {
-            $where = $(document.body);
-        } else if (where.jquery === undefined) {
-            $where = $(where);
-        }
-        const $innerDiv = $('<div>').css('position', 'absolute');
-        const c = this.appendNewDOM(
-            $innerDiv,
-            undefined,
-            undefined,
-            elementType
-        );
-        this.renderOptions.events.click = event =>
-            this.scrollScoreStart(c, event);
-        this.setRenderInteraction($innerDiv);
-        $where.append($innerDiv);
-        return c;
-    }
-
-    /**
-     * Sets up a {@link music21.streamInteraction.ScrollPlayer} for this
-     * svg.
-     *
-     * @memberof music21.stream.Stream
-     * @param {DOMObject} c - svg
-     * @param {Event} [event] - the event that caused the scrolling to start
-     * (needed because `event.stopPropagation()` is called)
-     * @returns {music21.streamInteraction.ScrollPlayer}
-     */
-    scrollScoreStart(c, event) {
-        const scrollPlayer = new streamInteraction.ScrollPlayer(this, c);
-        scrollPlayer.startPlaying();
-        if (event !== undefined) {
-            event.stopPropagation();
-        }
-        return scrollPlayer;
-    }
 
     /**
      * Set the type of interaction on the svg based on
@@ -1477,9 +1452,9 @@ export class Stream extends base.Music21Object {
         } else if (canvasOrDiv.jquery === undefined) {
             $svg = $(canvasOrDiv);
         }
-        const playFunc = function playStreamBound() {
+        const playFunc = () => {
             this.playStream();
-        }.bind(this);
+        };
 
         $.each(
             this.renderOptions.events,
@@ -1537,10 +1512,12 @@ export class Stream extends base.Music21Object {
     }
 
     getUnscaledXYforCanvas(svg, e) {
-        console.warn('getUnscaledXYforCanvas is deprecated, use getUnscaledXYforDOM instead');
+        console.warn(
+            'getUnscaledXYforCanvas is deprecated, use getUnscaledXYforDOM instead'
+        );
         return this.getUnscaledXYforDOM(svg, e);
     }
-    
+
     /**
      * Given a mouse click, or other event with .pageX and .pageY,
      * find the x and y for the svg.
@@ -1581,10 +1558,12 @@ export class Stream extends base.Music21Object {
     }
 
     getScaledXYforCanvas(svg, e) {
-        console.warn('getScaledXYforCanvas is deprecated, use getScaledXYforDOM instead');
+        console.warn(
+            'getScaledXYforCanvas is deprecated, use getScaledXYforDOM instead'
+        );
         return this.getScaledXYforDOM(svg, e);
     }
-    
+
     /**
      * return a list of [scaledX, scaledY] for
      * a svg element.
@@ -1656,12 +1635,12 @@ export class Stream extends base.Music21Object {
      * of the note.
      *
      * systemIndex element is not used on bare Stream
-     * 
+     *
      * options can be a dictionary of: 'allowBackup' which gets the closest
      * note within the window even if it's beyond allowablePixels (default: true)
      * and 'backupMaximum' which specifies a maximum distance even for backup
      * (default: 70);
-     * 
+     *
      * @memberof music21.stream.Stream
      * @param {number} xPxScaled
      * @param {number} [allowablePixels=10]
@@ -1683,28 +1662,33 @@ export class Stream extends base.Music21Object {
             xPxScaled,
             systemIndex
         );
-        const backup = { 
-            minDistanceSoFar: params.backupMaximum, 
+        if (subStream === undefined) {
+            return undefined;
+        }
+        const backup = {
+            minDistanceSoFar: params.backupMaximum,
             note: undefined,
         }; // a backup in case we did not find within allowablePixels
 
-        for (let i = 0; i < subStream.length; i++) {
-            const n = subStream.get(i);
+        for (const n of subStream.flat.notesAndRests.elements) {
             /* should also
              * compensate for accidentals...
              */
             const leftDistance = Math.abs(n.x - xPxScaled);
             const rightDistance = Math.abs(n.x + n.width - xPxScaled);
             const minDistance = Math.min(leftDistance, rightDistance);
-            
-            if (leftDistance < allowablePixels && rightDistance < allowablePixels) {
+
+            if (
+                leftDistance < allowablePixels
+                && rightDistance < allowablePixels
+            ) {
                 foundNote = n;
                 break; /* O(n); can be made O(log n) */
             } else if (
-                leftDistance < params.backupMaximum 
+                leftDistance < params.backupMaximum
                 && rightDistance < params.backupMaximum
                 && minDistance < backup.minDistanceSoFar
-                ) {
+            ) {
                 backup.note = n;
                 backup.minDistanceSoFar = minDistance;
             }
@@ -1775,8 +1759,8 @@ export class Stream extends base.Music21Object {
     redrawCanvas(svg) {
         console.warn('redrawCanvas is deprecated, use redrawDOM instead');
         return this.redrawDOM(svg);
-    }  
-    
+    }
+
     /**
      * Redraws an svgDiv, keeping the events of the previous svg.
      *
@@ -1797,10 +1781,12 @@ export class Stream extends base.Music21Object {
     }
 
     editableAccidentalCanvas(width, height) {
-        console.warn('editableAccidentalCanvas is deprecated, use StreamInteraction instead');
+        console.warn(
+            'editableAccidentalCanvas is deprecated, use editableAccidentalDOM instead'
+        );
         return this.editableAccidentalDOM(width, height);
-    }    
-    
+    }
+
     /**
      * Renders a stream on svg with the ability to edit it and
      * a toolbar that allows the accidentals to be edited.
@@ -1881,7 +1867,10 @@ export class Stream extends base.Music21Object {
                 /* console.log(n.pitch.name); */
                 const $newSvg = this.redrawDOM($useSvg[0]);
                 if (this.changedCallbackFunction !== undefined) {
-                    this.changedCallbackFunction({ foundNote: n, svg: $newSvg });
+                    this.changedCallbackFunction({
+                        foundNote: n,
+                        svg: $newSvg,
+                    });
                 }
             }
         };
@@ -2353,10 +2342,7 @@ export class Part extends Stream {
         if (systemPadding === undefined) {
             systemPadding = this.renderOptions.naiveSystemPadding;
         }
-        const [
-            systemIndex,
-            scaledYRelativeToSystem
-        ] = this.systemIndexAndScaledY(y);
+        const [systemIndex, scaledYRelativeToSystem] = this.systemIndexAndScaledY(y);
         const clickedDiatonicNoteNum = this.diatonicNoteNumFromScaledY(
             scaledYRelativeToSystem
         );
@@ -2638,6 +2624,10 @@ export class Score extends Stream {
             = scaledYFromSystemTop - partIndex * this.partSpacing;
         // console.log('systemIndex: ' + systemIndex + " partIndex: " + partIndex);
         const rightPart = this.get(partIndex);
+        if (rightPart === undefined) {
+            return [undefined, undefined]; // may be too low?
+        }
+
         const clickedDiatonicNoteNum = rightPart.diatonicNoteNumFromScaledY(
             scaledYinPart
         );

@@ -46,6 +46,8 @@ export class TimeSignature extends base.Music21Object {
         this._numerator = 4;
         this._denominator = 4;
         this.beatGroups = [];
+        this._overwrittenBeatCount = undefined;
+        this._overwrittenBeatDuration = undefined;
         if (typeof meterString === 'string') {
             this.ratioString = meterString;
         }
@@ -69,11 +71,54 @@ export class TimeSignature extends base.Music21Object {
         const meterList = meterString.split('/');
         this.numerator = parseInt(meterList[0]);
         this.denominator = parseInt(meterList[1]);
+        this.beatGroups = this.computeBeatGroups();
     }
     get barDuration() {
         const ql = 4.0 * this._numerator / this._denominator;
         return new duration.Duration(ql);
     }
+
+    /**
+     *  Get the beatCount from the numerator, assuming fast 6/8, etc.
+     *  unless .beatCount has been set manually.
+     */
+    get beatCount() {
+        if (this._overwrittenBeatCount !== undefined) {
+            return this._overwrittenBeatCount;
+        }
+        if (this.numerator > 3 && this.numerator % 3 === 0) {
+            return this.numerator / 3;
+        } else {
+            return this.numerator;
+        }
+    }
+    /**
+     *  Manually set the beatCount to an int.
+     */
+    set beatCount(overwrite) {
+        this._overwrittenBeatCount = overwrite;
+        return overwrite;
+    }
+
+    /**
+     * Gets a single duration.Duration object representing
+     * the length of a beat in this time signature (using beatCount)
+     * or, if set manually, it can return a list of Durations For
+     * asymmetrical meters.
+     */
+    get beatDuration() {
+        const dur = this.barDuration;
+        dur.quarterLength /= this.beatCount;
+        return dur;
+    }
+    /**
+     * Set beatDuration to a duration.Duration object or
+     * if the client can handle it, a list of Duration objects...
+     */
+    set beatDuration(overwrite) {
+        this._overwrittenBeatDuration = overwrite;
+    }
+
     /**
      * Compute the Beat Group according to this time signature.
      *

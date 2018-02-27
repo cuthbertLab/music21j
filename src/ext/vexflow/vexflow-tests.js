@@ -1,5 +1,5 @@
 /**
- * VexFlow 1.2.84 built on 2017-12-20.
+ * VexFlow 1.2.84 built on 2018-02-26.
  * Copyright (c) 2010 Mohit Muthanna Cheppudira <mohit@muthanna.com>
  *
  * http://www.vexflow.com  http://github.com/0xfe/vexflow

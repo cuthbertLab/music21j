@@ -11,7 +11,7 @@ interfaces. Some of the things music21j offers are:
 
   - The ability to visualize and hear changes in Streams quickly (using [Vexflow] and [MIDI.js])
   - Connections (via Web Midi or [JazzSoft] plugin) to MIDI devices. 
-  - A framework for easily making music theory exercises and interfaces to exploring scores.
+  - Music theory and analysis modules at the level of music21 ca. 2012
   - A repository of modules such as metronomes, keyboards, and automatic transcribers.
 
 Though it does not have all the power of [Music21 Python], music21j can help with
@@ -21,10 +21,11 @@ tab above will give introductions to some of the features of music21j. At this
 point we're focusing on documenting usage; developer docs will come 
 later.
 
-Music21j requires your users to have a relatively recent web browser -- at most one major
-version behind. 
-Safari 8+, Chrome since 2015 (v.32+), or Firefox since 2014 (v. 26+).  Internet Explorer 11+
-works well too, though timing of playback can be a bit off.  Edge works better, except
+Music21j requires your users to have a relatively recent web browser -- the project
+targets browsers no more than two years old. 
+Safari 9+, Chrome since 2015 (v.32+), Edge 14+, or Firefox since 2014 (v. 26+).  
+Internet Explorer 11+ is currently supported, though timing of playback can be a bit off, but
+support for it will be removed soon.  Microsoft Edge is the only major desktop browser for which
 there is no support for MIDI devices.
 
 Documentation
@@ -56,6 +57,9 @@ If you have `git` installed, you can use (on Mac/Unix):
 
 if the last line (`npm install`) doesn't work, download the
 latest version of `node.js` first from https://nodejs.org/en/download/
+and then run `sudo npm install -g grunt`.  
+
+A guide to installing music21j on Windows would be appreciated.
 
 The files in music21j are best viewed by running your own
 webserver (rather than using `file:///...` links). We've
@@ -119,8 +123,8 @@ Thanks to the following packages (among others) for making music21j possible:
 * [qUnit] - testing framework
 * [jsdoc] - makes this documentation possible
 
-Music21j is developed with a grant from the D'Arbeloff Fund for teaching and
-learning at [MIT]. The Python version of music21 was supported by grants from
+Music21j in the Music and Theater Arts section at [MIT]. 
+The Python version of music21 was supported by grants from
 the Seaver Institute and the National Endowment for the Humanities.
 
 
@@ -157,6 +161,3 @@ grunt jsdoc
 ```
 
 The template is specified in jsdoc-template/jsdoc.conf.json
-
-
-   

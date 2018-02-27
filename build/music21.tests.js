@@ -1,5 +1,5 @@
 /**
- * music21j 0.9.0 built on  * 2018-02-12.
+ * music21j 0.9.0 built on  * 2018-02-25.
  * Copyright (c) 2013-2016 Michael Scott Cuthbert and cuthbertLab
  * BSD License, see LICENSE
  *
@@ -169,31 +169,6 @@
     }
 
     return target;
-  };
-
-  var get = function get(object, property, receiver) {
-    if (object === null) object = Function.prototype;
-    var desc = Object.getOwnPropertyDescriptor(object, property);
-
-    if (desc === undefined) {
-      var parent = Object.getPrototypeOf(object);
-
-      if (parent === null) {
-        return undefined;
-      } else {
-        return get(parent, property, receiver);
-      }
-    } else if ("value" in desc) {
-      return desc.value;
-    } else {
-      var getter = desc.get;
-
-      if (getter === undefined) {
-        return undefined;
-      }
-
-      return getter.call(receiver);
-    }
   };
 
   var inherits = function (subClass, superClass) {
@@ -616,12 +591,12 @@
    * @memberof music21.common
    * @returns {DOMObject}
    */
-  common.makeSVGright = function makeSVGright(tag, attrs) {
+  common.makeSVGright = function makeSVGright() {
+      var tag = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'svg';
+      var attrs = arguments[1];
+
       // see http://stackoverflow.com/questions/3642035/jquerys-append-not-working-with-svg-element
       // normal JQuery does not work.
-      if (tag === undefined) {
-          tag = 'svg';
-      }
       if (attrs === undefined) {
           attrs = {};
       }
@@ -3981,7 +3956,16 @@
 
       createClass(Pitch, [{
           key: '_getEnharmonicHelper',
-          value: function _getEnharmonicHelper(inPlace, directionInt) {
+
+
+          /**
+           * @param {boolean} inPlace
+           * @param {Int} directionInt -- -1 = down, 1 = up
+           */
+          value: function _getEnharmonicHelper() {
+              var inPlace = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
+              var directionInt = arguments[1];
+
               // differs from Python version because
               // cannot import interval here.
               var octaveStored = true;
@@ -4832,8 +4816,11 @@
               var arg0 = restArgs[0];
               if (typeof arg0 === 'string') {
                   // simple...
-                  var specifier = arg0.slice(0, 1);
-                  var generic = parseInt(arg0.slice(1));
+                  var specifier = arg0.replace(/\d+/, '').replace(/-/, '');
+                  var generic = parseInt(arg0.replace(/\D+/, ''));
+                  if (arg0.includes('-')) {
+                      generic *= -1;
+                  }
                   var gI = new interval.GenericInterval(generic);
                   var dI = new interval.DiatonicInterval(specifier, gI);
                   _this4.diatonic = dI;
@@ -5102,6 +5089,10 @@
           _this.applyRaw = applyRaw || false;
           _this.setTextAndSyllabic(_this.text, _this.applyRaw);
           _this._identifier = identifier;
+          _this.style = {
+              fillStyle: 'black',
+              strokeStyle: 'black'
+          };
           return _this;
       }
 
@@ -5458,7 +5449,7 @@
 
           _this3.notehead = 'normal';
           _this3.noteheadFill = 'default';
-          _this3.noteheadColor = undefined;
+          _this3.noteheadColor = 'black';
           _this3.noteheadParenthesis = false;
           _this3.volume = undefined; // not a real object yet.
           _this3.beams = new beam.Beams();
@@ -5609,7 +5600,7 @@
                   }
               }
               if (this.noteheadColor !== undefined) {
-                  vfn.setKeyStyle(0, { fillStyle: this.noteheadColor });
+                  vfn.setStyle({ fillStyle: this.noteheadColor, strokeStyle: this.noteheadColor });
               }
               this.activeVexflowNote = vfn;
               return vfn;
@@ -8667,7 +8658,7 @@
           _this.partAbbreviation = undefined;
 
           _this.instrumentId = undefined;
-          _this.instrumentName = undefined;
+          _this.instrumentName = instrumentName;
           _this.instrumentAbbreviation = undefined;
           _this.midiProgram = undefined;
           _this._midiChannel = undefined;
@@ -8681,7 +8672,7 @@
           _this.soundfontFn = undefined;
 
           if (instrumentName !== undefined) {
-              instrument.find(instrumentName);
+              instrument.find(instrumentName, _this);
           }
           return _this;
       }
@@ -9164,14 +9155,15 @@
               console.log(soundfont + ' (' + instrumentObj.midiProgram + ') loaded on ', instrumentObj.midiChannel);
           }
           if (isFirefox === false && isAudioTag === false) {
-              var c = instrumentObj.midiChannel;
-              // Firefox ignores sound volume! so don't play! as does IE and others using HTML audio tag.
-              MIDI.noteOn(c, 36, 1, 0); // if no notes have been played before then
-              MIDI.noteOff(c, 36, 1, 0.1); // the second note to be played is always
-              MIDI.noteOn(c, 48, 1, 0.2); // very clipped (on Safari at least)
-              MIDI.noteOff(c, 48, 1, 0.3); // this helps a lot.
-              MIDI.noteOn(c, 60, 1, 0.3); // chrome needs three?
-              MIDI.noteOff(c, 60, 1, 0.4);
+              // Firefox ignores sound volume! so don't play! 
+              // as does IE and others using HTML audio tag.
+              var channel = instrumentObj.midiChannel;
+              MIDI.noteOn(channel, 36, 1, 0); // if no notes have been played before then
+              MIDI.noteOff(channel, 36, 1, 0.1); // the second note to be played is always
+              MIDI.noteOn(channel, 48, 1, 0.2); // very clipped (on Safari at least)
+              MIDI.noteOff(channel, 48, 1, 0.3); // this helps a lot.
+              MIDI.noteOn(channel, 60, 1, 0.3); // chrome needs three notes?
+              MIDI.noteOff(channel, 60, 1, 0.4);
           }
       }
       if (callback !== undefined) {
@@ -9198,11 +9190,14 @@
    */
   miditools.loadSoundfont = function loadSoundfont(soundfont, callback) {
       if (miditools.loadedSoundfonts[soundfont] === true) {
+          // this soundfont has already been loaded once, so just call the callback.
           if (callback !== undefined) {
               var instrumentObj = instrument.find(soundfont);
               callback(instrumentObj);
           }
       } else if (miditools.loadedSoundfonts[soundfont] === 'loading') {
+          // we are still waiting for this instrument to load, so
+          // wait for it before calling callback.
           var waitThenCall = function waitThenCall() {
               if (miditools.loadedSoundfonts[soundfont] === true) {
                   if (debug) {
@@ -9221,6 +9216,8 @@
           };
           waitThenCall();
       } else {
+          // soundfont we have not seen before:
+          // set its status to loading and then load it.
           miditools.loadedSoundfonts[soundfont] = 'loading';
           if (debug) {
               console.log('waiting for document ready');
@@ -10216,6 +10213,8 @@
           _this._numerator = 4;
           _this._denominator = 4;
           _this.beatGroups = [];
+          _this._overwrittenBeatCount = undefined;
+          _this._overwrittenBeatDuration = undefined;
           if (typeof meterString === 'string') {
               _this.ratioString = meterString;
           }
@@ -10224,6 +10223,7 @@
 
       createClass(TimeSignature, [{
           key: 'computeBeatGroups',
+
 
           /**
            * Compute the Beat Group according to this time signature.
@@ -10318,12 +10318,62 @@
               var meterList = meterString.split('/');
               this.numerator = parseInt(meterList[0]);
               this.denominator = parseInt(meterList[1]);
+              this.beatGroups = this.computeBeatGroups();
           }
       }, {
           key: 'barDuration',
           get: function get() {
               var ql = 4.0 * this._numerator / this._denominator;
               return new duration.Duration(ql);
+          }
+
+          /**
+           *  Get the beatCount from the numerator, assuming fast 6/8, etc.
+           *  unless .beatCount has been set manually.
+           */
+
+      }, {
+          key: 'beatCount',
+          get: function get() {
+              if (this._overwrittenBeatCount !== undefined) {
+                  return this._overwrittenBeatCount;
+              }
+              if (this.numerator > 3 && this.numerator % 3 === 0) {
+                  return this.numerator / 3;
+              } else {
+                  return this.numerator;
+              }
+          }
+          /**
+           *  Manually set the beatCount to an int.
+           */
+          ,
+          set: function set(overwrite) {
+              this._overwrittenBeatCount = overwrite;
+              return overwrite;
+          }
+
+          /**
+           * Gets a single duration.Duration object representing
+           * the length of a beat in this time signature (using beatCount)
+           * or, if set manually, it can return a list of Durations For
+           * asymmetrical meters.
+           */
+
+      }, {
+          key: 'beatDuration',
+          get: function get() {
+              var dur = this.barDuration;
+              dur.quarterLength /= this.beatCount;
+              return dur;
+          }
+          /**
+           * Set beatDuration to a duration.Duration object or
+           * if the client can handle it, a list of Duration objects...
+           */
+          ,
+          set: function set(overwrite) {
+              this._overwrittenBeatDuration = overwrite;
           }
       }]);
       return TimeSignature;
@@ -10406,1211 +10456,6 @@
       common.merge(this, defaultOptions);
   };
   renderOptions.RenderOptions = RenderOptions;
-
-  /**
-   * module with tools for working with Streams. See {@link music21.streamInteraction} namespace.
-   *
-   * @exports music21/streamInteraction
-   */
-  /**
-   * Objects that work with Streams to provide interactions
-   *
-   * @namespace music21.streamInteraction
-   * @memberof music21
-   * @requires music21/common
-   * @requires music21/stream
-   */
-  var streamInteraction = {};
-
-  /**
-   * Object for adding scrolling while playing.
-   *
-   * @class Follower
-   * @memberof music21.streamInteraction
-   * @param {music21.stream.Stream} s -- Stream
-   * @param {canvasOrSvg} c -- canvas or svg
-   * @property {music21.streamInteraction.PixelMapper} pixelMapper - an object that can map current pixel to notes and vice versa.
-   * @property {number} [tempo=s.tempo]
-   * @property {number} lastX - last X value
-   * @property {Int} lastNoteIndex - index of last note played
-   * @property {SVGDOMObject} barDOM - DOM object representing the scrolling bar
-   * @property {SVGDOMObject} svgDOM - DOM object holding the scrolling bar (overlaid on top of canvas)
-   * @property {DOMObject} canvasOrSvgParent - the parent DOM object for `this.canvas`
-   * @property {Int} lastTimeout - a numerical reference to a timeout object created by `setTimeout`
-   * @property {number} startTime - the time in ms when the scrolling started
-   * @property {Int} [previousSystemIndex=0] - the last systemIndex being scrolled
-   * @property {number} [eachSystemHeight=120] - currently all systems need to have the same height.
-   * @property {Int} [timingMS=50] - amount of time in milliseconds between polls to scroll
-   * @property {function} savedRenderOptionClick - starting ScrollPlayer overrides the `'click'` event for the stream, switching it to Stop. this saves it for restoring later.
-   */
-  var Follower = function () {
-      function Follower(s, c) {
-          var _this = this;
-
-          classCallCheck(this, Follower);
-
-          this.pixelMapper = new streamInteraction.PixelMapper(s);
-          this.stream = s;
-          this.canvasOrSvg = c;
-          this.tempo = s.tempo;
-
-          this.lastX = -100;
-          this.lastY = -100;
-          this.lastNoteIndex = -1;
-
-          this.barDOM = undefined;
-          this.svgDOM = undefined;
-          this.canvasOrSvgParent = $$1(c).parent()[0];
-          this.lastTimeout = undefined;
-          this.startTime = new Date().getTime();
-          this.previousSystemIndex = 0;
-          this.eachSystemHeight = 120;
-          this.timingMS = 50;
-          this.savedRenderOptionClick = undefined;
-
-          this.scaleY = this.stream.renderOptions.scaleFactor.y;
-          this.eachSystemHeight = $$1(this.canvasOrSvg).attr('height') / (this.scaleY * (this.pixelMapper.maxSystemIndex + 1));
-
-          this.newLocationCallbacks = [];
-          this.activeElementsCallbacks = [function (elList) {
-              return _this.playNotes(elList);
-          }];
-      }
-
-      createClass(Follower, [{
-          key: 'playNotes',
-          value: function playNotes(elList) {
-              var _iteratorNormalCompletion = true;
-              var _didIteratorError = false;
-              var _iteratorError = undefined;
-
-              try {
-                  for (var _iterator = elList[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-                      var el = _step.value;
-
-                      if (el !== undefined && el.playMidi !== undefined) {
-                          el.playMidi(this.tempo);
-                      }
-                  }
-              } catch (err) {
-                  _didIteratorError = true;
-                  _iteratorError = err;
-              } finally {
-                  try {
-                      if (!_iteratorNormalCompletion && _iterator.return) {
-                          _iterator.return();
-                      }
-                  } finally {
-                      if (_didIteratorError) {
-                          throw _iteratorError;
-                      }
-                  }
-              }
-          }
-
-          /**
-           * function, bound to `this` to scroll the barDOM.
-           *
-           * calls itself until a stop click is received or the piece ends.
-           *
-           * @method streamInteraction.Follower#followScore
-           * @memberof music21.streamInteraction.Follower
-           */
-
-      }, {
-          key: 'followScore',
-          value: function followScore() {
-              var _this2 = this;
-
-              var timeSinceStartInMS = new Date().getTime() - this.startTime;
-              var offset = timeSinceStartInMS / 1000 * this.tempo / 60;
-              var pm = this.pixelMapper;
-              var systemIndex = pm.getSystemIndexAtOffset(offset);
-              var y = this.lastY;
-
-              if (systemIndex > this.previousSystemIndex) {
-                  this.lastX = -100; // arbitrary negative...
-                  this.previousSystemIndex = systemIndex;
-                  y = systemIndex * this.eachSystemHeight;
-              }
-              var x = pm.getXAtOffset(offset);
-              x = Math.floor(x);
-
-              // console.log(x);
-
-              var _iteratorNormalCompletion2 = true;
-              var _didIteratorError2 = false;
-              var _iteratorError2 = undefined;
-
-              try {
-                  for (var _iterator2 = this.newLocationCallbacks[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-                      var newLocationCallback = _step2.value;
-
-                      newLocationCallback(x, y);
-                  }
-              } catch (err) {
-                  _didIteratorError2 = true;
-                  _iteratorError2 = err;
-              } finally {
-                  try {
-                      if (!_iteratorNormalCompletion2 && _iterator2.return) {
-                          _iterator2.return();
-                      }
-                  } finally {
-                      if (_didIteratorError2) {
-                          throw _iteratorError2;
-                      }
-                  }
-              }
-
-              this.lastX = x;
-              this.lastY = y;
-
-              // pm is a pixelMap not a Stream
-              for (var j = 0; j < pm.allMaps.length; j++) {
-                  var pmOff = pm.allMaps[j].offset;
-                  if (j <= this.lastNoteIndex) {
-                      continue;
-                  } else if (Math.abs(offset - pmOff) > 0.1) {
-                      continue;
-                  }
-                  var elList = pm.allMaps[j].elements;
-                  var _iteratorNormalCompletion3 = true;
-                  var _didIteratorError3 = false;
-                  var _iteratorError3 = undefined;
-
-                  try {
-                      for (var _iterator3 = this.activeElementsCallbacks[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
-                          var elementCallback = _step3.value;
-
-                          elementCallback(elList);
-                      }
-                  } catch (err) {
-                      _didIteratorError3 = true;
-                      _iteratorError3 = err;
-                  } finally {
-                      try {
-                          if (!_iteratorNormalCompletion3 && _iterator3.return) {
-                              _iterator3.return();
-                          }
-                      } finally {
-                          if (_didIteratorError3) {
-                              throw _iteratorError3;
-                          }
-                      }
-                  }
-
-                  this.lastNoteIndex = j;
-              }
-              // console.log(x, offset);
-              // console.log(barDOM.setAttribute);
-              var newTimeout = void 0;
-              if (x < pm.maxX || systemIndex < pm.maxSystemIndex) {
-                  // console.log(x, pm.maxX);
-                  newTimeout = setTimeout(function () {
-                      return _this2.followScore();
-                  }, this.timingMS);
-                  this.lastTimeout = newTimeout;
-              } else {
-                  var fauxEvent = undefined;
-                  this.stopPlaying(fauxEvent);
-              }
-          }
-
-          /**
-           * start playing! Create a scroll bar and start scrolling
-           *
-           * (set this to an event on stream, or something...)
-           *
-           * currently called from {@link music21.stream.Stream#scrollScoreStart} via
-           * {@link music21.stream.Stream#renderScrollable}. Will change.
-           *
-           * @memberof music21.streamInteraction.ScrollPlayer
-           */
-
-      }, {
-          key: 'startPlaying',
-          value: function startPlaying() {
-              var _this3 = this;
-
-              this.savedRenderOptionClick = this.stream.renderOptions.events.click;
-              this.stream.renderOptions.events.click = function (e) {
-                  return _this3.stopPlaying(e);
-              };
-              this.stream.setRenderInteraction(this.canvasOrSvgParent);
-              this.followScore();
-          }
-
-          /**
-           * Called when the ScrollPlayer should stop playing
-           *
-           * @memberof music21.streamInteraction.ScrollPlayer
-           * @param {DOMEvent} [event]
-           */
-
-      }, {
-          key: 'stopPlaying',
-          value: function stopPlaying(event) {
-              this.stream.renderOptions.events.click = this.savedRenderOptionClick;
-              if (this.lastTimeout !== undefined) {
-                  clearTimeout(this.lastTimeout);
-              }
-              this.stream.setRenderInteraction(this.canvasOrSvgParent);
-              if (event !== undefined) {
-                  event.stopPropagation();
-              }
-          }
-      }]);
-      return Follower;
-  }();
-  streamInteraction.Follower = Follower;
-
-  /**
-   * Object for adding scrolling while playing.
-   *
-   * @class ScrollPlayer
-   * @memberof music21.streamInteraction
-   * @param {music21.stream.Stream} s -- Stream
-   * @param {canvasOrSvg} c -- canvas or svg
-   * @property {SVGDOMObject} barDOM - DOM object representing the scrolling bar
-   * @property {SVGDOMObject} svgDOM - DOM object holding the scrolling bar (overlaid on top of SVG)
-   */
-  var ScrollPlayer = function (_Follower) {
-      inherits(ScrollPlayer, _Follower);
-
-      function ScrollPlayer(s, c) {
-          classCallCheck(this, ScrollPlayer);
-
-          var _this4 = possibleConstructorReturn(this, (ScrollPlayer.__proto__ || Object.getPrototypeOf(ScrollPlayer)).call(this, s, c));
-
-          _this4.barDOM = undefined;
-          _this4.svgDOM = undefined;
-          _this4.newLocationCallbacks.push(function (x, y) {
-              return _this4.updateBar(x, y);
-          });
-          return _this4;
-      }
-
-      /**
-       * updateBar - Update the position of the bar
-       *
-       * @param  {type} x current x position in playback
-       * @param  {type} y current y position in playback
-       * @return {undefined}
-       */
-
-      createClass(ScrollPlayer, [{
-          key: 'updateBar',
-          value: function updateBar(x, y) {
-              if (x > this.lastX) {
-                  this.barDOM.setAttribute('x', x);
-              }
-              if (y > this.lastY) {
-                  this.barDOM.setAttribute('y', y);
-              }
-          }
-
-          /**
-           * start playing! Create a scroll bar and start scrolling
-           *
-           * (set this to an event on stream, or something...)
-           *
-           * currently called from {@link music21.stream.Stream#scrollScoreStart} via
-           * {@link music21.stream.Stream#renderScrollable}. Will change.
-           *
-           * @memberof music21.streamInteraction.ScrollPlayer
-           */
-
-      }, {
-          key: 'startPlaying',
-          value: function startPlaying() {
-              this.createScrollBar();
-              get(ScrollPlayer.prototype.__proto__ || Object.getPrototypeOf(ScrollPlayer.prototype), 'startPlaying', this).call(this);
-          }
-
-          /**
-           * Create the scrollbar (barDOM), the svg to place it in (svgDOM)
-           * and append it over the stream.
-           *
-           * Sets as a consequence:
-           * - this.barDOM
-           * - this.svgDOM
-           * - this.eachSystemHeight
-           * - this.canvasOrSvgParent
-           *
-           * @memberof music21.streamInteraction.ScrollPlayer
-           * @returns {SVGDOMObject} scroll bar
-           */
-
-      }, {
-          key: 'createScrollBar',
-          value: function createScrollBar() {
-              var svgDomHeight = void 0;
-              var svgDomWidth = void 0;
-              if (this.canvasOrSvg.tagName.toLowerCase() === 'canvas') {
-                  svgDomHeight = this.canvasOrSvg.height;
-                  svgDomWidth = this.canvasOrSvg.width;
-              } else {
-                  svgDomHeight = $$1(this.canvasOrSvg).attr('height');
-                  svgDomWidth = $$1(this.canvasOrSvg).attr('width');
-              }
-
-              var svgDOM = common.makeSVGright('svg', {
-                  height: svgDomHeight.toString() + 'px',
-                  width: svgDomWidth.toString() + 'px',
-                  style: 'position:absolute; top: 0px; left: 0px;'
-              });
-              var barDOM = common.makeSVGright('rect', {
-                  width: 10,
-                  height: this.eachSystemHeight - 6, // small fudge for separation
-                  x: this.pixelMapper.startX,
-                  y: 3,
-                  style: 'fill: rgba(255, 255, 20, .5);stroke:white'
-              });
-              barDOM.setAttribute('transform', 'scale(' + this.scaleY + ')');
-              svgDOM.appendChild(barDOM);
-
-              this.canvasOrSvgParent.appendChild(svgDOM);
-              this.barDOM = barDOM;
-              this.svgDOM = svgDOM;
-              return barDOM;
-          }
-
-          /**
-           * Called when the ScrollPlayer should stop playing
-           *
-           * @memberof music21.streamInteraction.ScrollPlayer
-           * @param {DOMEvent} [event]
-           */
-
-      }, {
-          key: 'stopPlaying',
-          value: function stopPlaying(event) {
-              get(ScrollPlayer.prototype.__proto__ || Object.getPrototypeOf(ScrollPlayer.prototype), 'stopPlaying', this).call(this, event);
-              this.barDOM.setAttribute('style', 'display:none');
-              this.canvasOrSvgParent.removeChild(this.svgDOM);
-          }
-      }]);
-      return ScrollPlayer;
-  }(Follower);
-  streamInteraction.ScrollPlayer = ScrollPlayer;
-
-  /**
-   * A `PixelMapper` is an object that knows how to map offsets to pixels on a flat Stream.
-   *
-   * Helper for ScrollPlayer and soon other places...
-   *
-   * @class PixelMapper
-   * @memberof music21.streamInteraction
-   * @param {music21.stream.Stream} s - stream object
-   * @property {Array<music21.streamInteraction.PixelMap>} allMaps - a `PixelMap` object
-   *     for each offset in the Stream and one additional one for the end of the Stream.
-   * @property {music21.stream.Stream} s - stream object
-   * @property {music21.stream.Stream} notesAndRests - `this.stream.flat.notesAndRests`
-   * @property {number} pixelScaling - `this.stream.renderOptions.scaleFactor.x`
-   * @property {number} startX - (readonly) starting x
-   * @property {number} maxX - (readonly) ending x
-   * @property {Int} maxSystemIndex - the index of the last system.
-   */
-  var PixelMapper = function () {
-      function PixelMapper(s) {
-          classCallCheck(this, PixelMapper);
-
-          this.allMaps = [];
-          this.stream = s;
-          this.notesAndRests = this.stream.flat.notesAndRests;
-          this.pixelScaling = s.renderOptions.scaleFactor.x;
-          this.processStream(s);
-      }
-
-      createClass(PixelMapper, [{
-          key: 'processStream',
-
-          /**
-           * Creates `PixelMap` objects for every note in the stream, and an extra
-           * one mapping the end of the final offset.
-           *
-           * @memberof music21.streamInteraction.PixelMapper
-           * @returns {Array<music21.streamInteraction.PixelMap>}
-           */
-          value: function processStream() {
-              var ns = this.notesAndRests;
-              for (var i = 0; i < ns.length; i++) {
-                  var n = ns.get(i);
-                  this.addNoteToMap(n);
-              }
-              // prepare final map.
-              var finalNote = ns.get(-1);
-              var finalVFNote = finalNote.activeVexflowNote;
-              if (finalVFNote === undefined) {
-                  throw new StreamException('Cannot make a pixel map where activeVexflowNotes are undefined. ' + 'Run s.createDOM() before constructing a PixelMapper.');
-              }
-              var finalStave = finalVFNote.stave;
-              var finalX = finalStave.x + finalStave.width;
-              var endOffset = finalNote.duration.quarterLength + finalNote.offset;
-
-              var lastMap = new streamInteraction.PixelMap(this, endOffset);
-              lastMap.elements = [undefined];
-              lastMap.x = finalX;
-              lastMap.systemIndex = this.allMaps[this.allMaps.length - 1].systemIndex;
-              this.allMaps.push(lastMap);
-              return this.allMaps;
-          }
-
-          /**
-           * Adds a {@link music21.base.Music21Object}, usually a {@link music21.note.Note} object,
-           * to the maps for the PixelMapper if a {@link music21.streamInteraction.PixelMap} object
-           * already exists at that location, or creates a new `PixelMap` if one does not exist.
-           *
-           * @memberof music21.streamInteraction.PixelMapper
-           * @param {music21.base.Music21Object} n - note or other object
-           * @returns {music21.streamInteraction.PixelMap} PixelMap added to.
-           */
-
-      }, {
-          key: 'addNoteToMap',
-          value: function addNoteToMap(n) {
-              var currentOffset = n.offset;
-              var properMap = this.findMapForExactOffset(currentOffset);
-              if (properMap !== undefined) {
-                  properMap.elements.push(n);
-                  return properMap;
-              } else {
-                  var pmap = new streamInteraction.PixelMap(this, currentOffset);
-                  pmap.elements = [n];
-                  this.allMaps.push(pmap);
-                  return pmap;
-              }
-          }
-          /**
-           * Finds a `PixelMap` object if one matches this exact offset. Otherwise returns undefined
-           *
-           * @memberof music21.streamInteraction.PixelMapper
-           * @param {number} o offset
-           * @returns {music21.streamInteraction.PixelMap|undefined}
-           */
-
-      }, {
-          key: 'findMapForExactOffset',
-          value: function findMapForExactOffset(o) {
-              for (var j = this.allMaps.length - 1; j >= 0; j -= 1) {
-                  // find the last map with this offset. searches backwards for speed.
-                  if (this.allMaps[j].offset === o) {
-                      return this.allMaps[j];
-                  }
-              }
-              return undefined;
-          }
-
-          /**
-           *  returns an array of two pixel maps: the previous/current one and the
-                  next/current one (i.e., if the offset is exactly the offset of a pixel map
-                  the prevNoteMap and nextNoteMap will be the same; similarly if the offset is
-                  beyond the end of the score)
-            * @memberof music21.streamInteraction.PixelMapper
-           * @param {number} offset
-           * @returns {Array<music21.streamInteraction.PixelMap|undefined>} returns two PixelMaps; or either (but not both) can be undefined
-           * @example
-           * var s = new music21.tinyNotation.TinyNotation('3/4 c4 d8 e f4 g4 a4 b4');
-           * var can = s.appendNewDOM();
-           * var pm = new music21.streamInteraction.PixelMapper(s);
-           * var pmaps = pm.getPixelMapsAropundOffset(1.25);
-           * var prev = pmaps[0];
-           * var next = pmaps[1];
-           * prev.offset
-           * // 1
-           * next.offset
-           * // 1.5
-           * prev.x
-           * // 97...
-           * next.x
-           * // 123...
-           */
-
-      }, {
-          key: 'getPixelMapsAroundOffset',
-          value: function getPixelMapsAroundOffset(offset) {
-              var prevNoteMap = void 0;
-              var nextNoteMap = void 0;
-              for (var i = 0; i < this.allMaps.length; i++) {
-                  var thisMap = this.allMaps[i];
-                  if (thisMap.offset <= offset) {
-                      prevNoteMap = thisMap;
-                  }
-                  if (thisMap.offset >= offset) {
-                      nextNoteMap = thisMap;
-                      break;
-                  }
-              }
-              if (prevNoteMap === undefined && nextNoteMap === undefined) {
-                  var lastNoteMap = this.allMaps[this.allMaps.length - 1];
-                  prevNoteMap = lastNoteMap;
-                  nextNoteMap = lastNoteMap;
-              } else if (prevNoteMap === undefined) {
-                  prevNoteMap = nextNoteMap;
-              } else if (nextNoteMap === undefined) {
-                  nextNoteMap = prevNoteMap;
-              }
-              return [prevNoteMap, nextNoteMap];
-          }
-          /**
-           * Uses the stored offsetToPixelMaps to get the pixel X for the offset.
-           *
-           * @memberof music21.streamInteraction.PixelMapper
-           * @param {number} offset
-           * @param {Array<music21.streamInteraction.PixelMap>} offsetToPixelMaps
-           * @returns {number}
-           * @example
-           * var s = new music21.tinyNotation.TinyNotation('3/4 c4 d8 e f4 g4 a4 b4');
-           * var can = s.appendNewDOM();
-           * var pm = new music21.streamInteraction.PixelMapper(s);
-           * pm.getXAtOffset(0.0); // exact placement of a note
-           * // 89.94...
-           * pm.getXAtOffset(0.5); // between two notes
-           * // 138.63...
-           */
-
-      }, {
-          key: 'getXAtOffset',
-          value: function getXAtOffset(offset) {
-              // returns the proper
-              var twoNoteMaps = this.getPixelMapsAroundOffset(offset);
-              var prevNoteMap = twoNoteMaps[0];
-              var nextNoteMap = twoNoteMaps[1];
-              var pixelScaling = this.pixelScaling;
-              var offsetFromPrev = offset - prevNoteMap.offset;
-              var offsetDistance = nextNoteMap.offset - prevNoteMap.offset;
-              var pixelDistance = nextNoteMap.x - prevNoteMap.x;
-              if (nextNoteMap.systemIndex !== prevNoteMap.systemIndex) {
-                  var stave = prevNoteMap.elements[0].activeVexflowNote.stave;
-                  pixelDistance = (stave.x + stave.width) * pixelScaling - prevNoteMap.x;
-              }
-              var offsetToPixelScale = 0;
-              if (offsetDistance !== 0) {
-                  offsetToPixelScale = pixelDistance / offsetDistance;
-              } else {
-                  offsetToPixelScale = 0;
-              }
-              var pixelsFromPrev = offsetFromPrev * offsetToPixelScale;
-              var offsetX = prevNoteMap.x + pixelsFromPrev;
-              return offsetX / pixelScaling;
-          }
-
-          /**
-           * Uses the stored offsetToPixelMaps to get the systemIndex active at the current time.
-           *
-           * @memberof music21.streamInteraction.PixelMapper
-           * @param {number} offset
-           * @returns {number} systemIndex of the offset
-           */
-
-      }, {
-          key: 'getSystemIndexAtOffset',
-          value: function getSystemIndexAtOffset(offset) {
-              var twoNoteMaps = this.getPixelMapsAroundOffset(offset);
-              var prevNoteMap = twoNoteMaps[0];
-              return prevNoteMap.systemIndex;
-          }
-      }, {
-          key: 'startX',
-          get: function get() {
-              return this.allMaps[0].x;
-          }
-      }, {
-          key: 'maxX',
-          get: function get() {
-              var m = this.allMaps[this.allMaps.length - 1];
-              return m.x;
-          }
-      }, {
-          key: 'maxSystemIndex',
-          get: function get() {
-              return this.allMaps[this.allMaps.length - 1].systemIndex;
-          }
-      }]);
-      return PixelMapper;
-  }();
-  streamInteraction.PixelMapper = PixelMapper;
-
-  /*  PIXEL MAP */
-
-  /**
-   * A PixelMap maps one offset to one x location.
-   *
-   * The offset does NOT have to be the offset of an element. Offsets are generally
-   * measured from the start of the flat stream.
-   *
-   * @class PixelMap
-   * @memberof music21.streamInteraction
-   * @param {music21.streamInteraction.PixelMapper} mapper - should eventually be a weakref...
-   * @param {number} offset - the offset that is being mapped.
-   * @property {Array<music21.base.Music21Object>} elements -- elements being mapped to.
-   * @property {number} offset - the offset inputted
-   * @property {number} x - x value in pixels for this offset
-   * @property {Int} systemIndex - the systemIndex at which this offset appears.
-   * @example
-   * // not a particularly realistic example, since it requires so much setup...
-   * var s = new music21.tinyNotation.TinyNotation('3/4 c4 d8 e f4 g4 a4 b4');
-   * var can = s.appendNewDOM();
-   * var pmapper = new music21.streamInteraction.PixelMapper(s);
-   * var pmapA = new music21.streamInteraction.PixelMap(pmapper, 2.0);
-   * pmapA.elements = [s.flat.get(3)];
-   * pmapA.offset;
-   * // 2
-   * pmapA.x;
-   * // 149.32...
-   * pmapA.systemIndex
-   * // 0
-   */
-  var PixelMap = function () {
-      function PixelMap(mapper, offset) {
-          classCallCheck(this, PixelMap);
-
-          this.pixelScaling = mapper.pixelScaling; // should be a Weakref...
-          this.elements = [];
-          this.offset = offset; // important
-          this._x = undefined;
-          this._systemIndex = undefined;
-      }
-
-      createClass(PixelMap, [{
-          key: 'x',
-          get: function get() {
-              if (this._x !== undefined) {
-                  return this._x;
-              } else if (this.elements.length === 0) {
-                  return 0; // error!
-              } else {
-                  return this.elements[0].x * this.pixelScaling;
-              }
-          },
-          set: function set(x) {
-              this._x = x;
-          }
-      }, {
-          key: 'systemIndex',
-          get: function get() {
-              if (this._systemIndex !== undefined) {
-                  return this._systemIndex;
-              } else if (this.elements.length === 0) {
-                  return 0; // error!
-              } else {
-                  return this.elements[0].systemIndex;
-              }
-          },
-          set: function set(systemIndex) {
-              this._systemIndex = systemIndex;
-          }
-      }]);
-      return PixelMap;
-  }();
-  streamInteraction.PixelMap = PixelMap;
-
-  /*  NOT DONE YET */
-  /*  Will allow for selecting notes by keyboard with cursor */
-  var CursorSelect = function CursorSelect(s) {
-      classCallCheck(this, CursorSelect);
-
-      this.stream = s;
-      this.activeElementHierarchy = [undefined];
-  };
-  streamInteraction.CursorSelect = CursorSelect;
-
-  var SimpleNoteEditor = function () {
-      function SimpleNoteEditor(s) {
-          classCallCheck(this, SimpleNoteEditor);
-
-          this.stream = s;
-          this.activeNote = undefined;
-          this.changedCallbackFunction = undefined; // for editable SVG
-          this.accidentalsByStepOctave = {};
-          this.minAccidentalEditor = -1;
-          this.maxAccidentalEditor = 1;
-
-          this.elementType = 'svg';
-
-          // for active display of mouse over notes.
-          // NOT used as of 2017 Dec.
-          this.renderMouseOver = true;
-          this.currentNoteValue = 'quarter';
-      }
-
-      /**
-       * A function bound to the current stream that
-       * will changes the stream. Used in editableAccidentalDOM, among other places.
-       *
-       *      var can = s.appendNewDOM();
-       *      $(can).on('click', s.changeClickedNoteFromEvent);
-       *
-       * @memberof music21.streamInteraction.SimpleNoteEditor
-       * @param {Event} e
-       * @returns {music21.base.Music21Object|undefined} - returns whatever changedCallbackFunction does.
-       */
-
-
-      createClass(SimpleNoteEditor, [{
-          key: 'changeClickedNoteFromEvent',
-          value: function changeClickedNoteFromEvent(e) {
-              var canvasOrSvgElement = e.currentTarget;
-
-              var _stream$findNoteForCl = this.stream.findNoteForClick(canvasOrSvgElement, e),
-                  _stream$findNoteForCl2 = slicedToArray(_stream$findNoteForCl, 2),
-                  clickedDiatonicNoteNum = _stream$findNoteForCl2[0],
-                  foundNote = _stream$findNoteForCl2[1];
-
-              if (foundNote === undefined) {
-                  if (debug) {
-                      console.log('No note found');
-                  }
-                  return undefined;
-              }
-              return this.noteChanged(clickedDiatonicNoteNum, foundNote, canvasOrSvgElement);
-          }
-
-          /**
-           * Change the pitch of a note given that it has been clicked and then
-           * call changedCallbackFunction
-           *
-           * @memberof music21.streamInteraction.SimpleNoteEditor
-           * @param {Int} clickedDiatonicNoteNum
-           * @param {music21.base.Music21Object} foundNote
-           * @param {DOMObject} canvasOrSvg
-           * @returns {any} output of changedCallbackFunction
-           */
-
-      }, {
-          key: 'noteChanged',
-          value: function noteChanged(clickedDiatonicNoteNum, foundNote, canvasOrSvg) {
-              var n = foundNote;
-              var p = new pitch.Pitch('C');
-              p.diatonicNoteNum = clickedDiatonicNoteNum;
-              if ((n.pitch.accidental === undefined || n.accidentalIsFromKeySignature === true) && this.stream.keySignature !== undefined) {
-                  p.accidental = this.stream.keySignature.accidentalByStep(p.step);
-                  n.accidentalIsFromKeySignature = true;
-              } else if (n.accidentalIsFromKeySignature !== true) {
-                  p.accidental = n.pitch.accidental;
-              }
-              n.pitch = p;
-              n.stemDirection = undefined;
-              this.activeNote = n;
-              var $newSvg = this.stream.redrawDOM(canvasOrSvg);
-              var params = { foundNote: n, svg: $newSvg };
-              if (this.changedCallbackFunction !== undefined) {
-                  return this.changedCallbackFunction(params);
-              } else {
-                  return params;
-              }
-          }
-      }, {
-          key: 'editableAccidentalCanvas',
-          value: function editableAccidentalCanvas(width, height) {
-              console.warn('editableAccidentalCanvas is deprecated, use editableAccidentalDOM instead');
-              return this.editableAccidentalDOM(width, height);
-          }
-
-          /**
-           * Renders a stream on a SVG with the ability to edit it and
-           * a toolbar that allows the accidentals to be edited.
-           *
-           * @memberof music21.streamInteraction.SimpleNoteEditor
-           * @param {number} [width]
-           * @param {number} [height]
-           * @returns {DOMObject} &lt;div&gt; tag around the canvas or streamholding SVG-div.
-           */
-
-      }, {
-          key: 'editableAccidentalDOM',
-          value: function editableAccidentalDOM(width, height) {
-              /*
-               * Create an editable svg with an accidental selection bar.
-               */
-              var $d = $$1('<div/>').css('text-align', 'left').css('position', 'relative');
-              var $buttonDiv = this.getAccidentalToolbar();
-              $d.append($buttonDiv);
-              $d.append($$1("<br clear='all'/>"));
-              this.activateClick();
-              this.stream.appendNewDOM($d, width, height);
-              return $d;
-          }
-
-          /**
-           * activateClick - sets the stream's renderOptions to activate clickFunction.
-           *
-           * @memberof music21.streamInteraction.SimpleNoteEditor
-           * @param  {undefined|function} clickFunction  arrow function to be called
-           *                                              (default changeClickedNoteFromEvent)
-           * @return {undefined}
-           */
-
-      }, {
-          key: 'activateClick',
-          value: function activateClick(clickFunction) {
-              var _this5 = this;
-
-              if (clickFunction === undefined) {
-                  clickFunction = function clickFunction(e) {
-                      return _this5.changeClickedNoteFromEvent(e);
-                  };
-              }
-              this.stream.renderOptions.events.click = function (e) {
-                  return clickFunction(e);
-              };
-          }
-          /**
-           *
-           * @memberof music21.streamInteraction.SimpleNoteEditor
-           * @param {Int} minAccidental - alter of the min accidental (default -1)
-           * @param {Int} maxAccidental - alter of the max accidental (default 1)
-           * @param {jQueryObject} $siblingDOM - canvas or svg to use for redrawing;
-           * @returns {jQueryObject} the accidental toolbar.
-           */
-
-      }, {
-          key: 'getAccidentalToolbar',
-          value: function getAccidentalToolbar(minAccidental, maxAccidental, siblingDOM) {
-              var _this6 = this;
-
-              if (minAccidental === undefined) {
-                  minAccidental = this.minAccidentalEditor;
-              }
-              if (maxAccidental === undefined) {
-                  maxAccidental = this.maxAccidentalEditor;
-              }
-              minAccidental = Math.round(minAccidental);
-              maxAccidental = Math.round(maxAccidental);
-
-              var $buttonDiv = $$1('<div/>').attr('class', 'accidentalToolbar scoreToolbar');
-
-              var _loop = function _loop(i) {
-                  var acc = new pitch.Accidental(i);
-                  var $button = $$1('<button>' + acc.unicodeModifier + '</button>').click(function (e) {
-                      return _this6.addAccidental(i, e, siblingDOM);
-                  });
-                  if (Math.abs(i) > 1) {
-                      $button.css('font-family', 'Bravura Text');
-                      $button.css('font-size', '20px');
-                  }
-                  $buttonDiv.append($button);
-              };
-
-              for (var i = minAccidental; i <= maxAccidental; i++) {
-                  _loop(i);
-              }
-              return $buttonDiv;
-          }
-      }, {
-          key: 'getUseCanvasFromClickEvent',
-          value: function getUseCanvasFromClickEvent(clickEvent) {
-              console.warn('getUseCanvasFromClickEvent is deprecated, use getDOMFromClickEvent instead');
-              return this.getDOMFromClickEvent(clickEvent);
-          }
-
-          /**
-           * getUseCanvasFromClickEvent - get the active canvas or svg from the click even
-           *
-           * @param  {event} clickEvent
-           * @return {jQueryObject}  $canvas
-           */
-
-      }, {
-          key: 'getDOMFromClickEvent',
-          value: function getDOMFromClickEvent(clickEvent) {
-              var $searchParent = $$1(clickEvent.target).parent();
-              var $useDOM = void 0;
-              var maxSearch = 99;
-              while (maxSearch > 0 && $searchParent !== undefined && ($useDOM === undefined || $useDOM[0] === undefined)) {
-                  maxSearch -= 1;
-                  $useDOM = $searchParent.find('.streamHolding');
-                  $searchParent = $searchParent.parent();
-              }
-              if ($useDOM[0] === undefined) {
-                  console.log('Could not find a div or canvas...');
-                  return undefined;
-              }
-              return $useDOM;
-          }
-      }, {
-          key: 'addAccidental',
-          value: function addAccidental(newAlter, clickEvent, $useDOM) {
-              if ($useDOM === undefined) {
-                  $useDOM = this.getDOMFromClickEvent(clickEvent);
-                  if ($useDOM === undefined) {
-                      return undefined;
-                  }
-              }
-              if (this.activeNote !== undefined) {
-                  var n = this.activeNote;
-                  n.accidentalIsFromKeySignature = false;
-                  n.pitch.accidental = new pitch.Accidental(newAlter);
-                  /* console.log(n.pitch.name); */
-                  var $newSvg = this.stream.redrawDOM($useDOM[0]);
-                  var params = { foundNote: n, svg: $newSvg };
-                  if (this.changedCallbackFunction !== undefined) {
-                      return this.changedCallbackFunction(params);
-                  } else {
-                      return params;
-                  }
-              }
-              return undefined;
-          }
-      }]);
-      return SimpleNoteEditor;
-  }();
-
-  streamInteraction.SimpleNoteEditor = SimpleNoteEditor;
-
-  var GrandStaffEditor = function (_SimpleNoteEditor) {
-      inherits(GrandStaffEditor, _SimpleNoteEditor);
-
-      function GrandStaffEditor(s) {
-          classCallCheck(this, GrandStaffEditor);
-
-          var _this7 = possibleConstructorReturn(this, (GrandStaffEditor.__proto__ || Object.getPrototypeOf(GrandStaffEditor)).call(this, s));
-
-          if (s.parts.length !== 2) {
-              throw new StreamException('Stream must be a grand staff!');
-          }
-          return _this7;
-      }
-
-      return GrandStaffEditor;
-  }(SimpleNoteEditor);
-
-  streamInteraction.GrandStaffEditor = GrandStaffEditor;
-
-  var FourPartEditor = function (_GrandStaffEditor) {
-      inherits(FourPartEditor, _GrandStaffEditor);
-
-      function FourPartEditor(s) {
-          classCallCheck(this, FourPartEditor);
-
-          var _this8 = possibleConstructorReturn(this, (FourPartEditor.__proto__ || Object.getPrototypeOf(FourPartEditor)).call(this, s));
-
-          _this8.parts = s.parts;
-          for (var i = 0; i < _this8.parts.length; i++) {
-              var thisPart = _this8.parts.get(i);
-              if (thisPart.measures.get(0).voices.length !== 2) {
-                  throw new StreamException('Each part must have at least one measure with two voices');
-              }
-          }
-          _this8.editableMeasureIndexes = common.range(_this8.parts.get(0).measures.length);
-          _this8.activePart = _this8.parts.get(0);
-          _this8.activeMeasureIndex = 0;
-          _this8.activeMeasure = _this8.activePart.measures.get(_this8.activeMeasureIndex);
-          _this8.activeVoice = _this8.activeMeasure.voices.get(0);
-          _this8.activeVoiceNumber = 0; // 0, 1, 2, 3
-          _this8.activeNoteIndex = 0;
-          _this8.buttons = [];
-          return _this8;
-      }
-
-      createClass(FourPartEditor, [{
-          key: 'editableCanvas',
-          value: function editableCanvas(width, height) {
-              console.warn('editableCanvas is deprecated, use editableDOM instead');
-              return this.editableDOM(width, height);
-          }
-      }, {
-          key: 'editableDOM',
-          value: function editableDOM(width, height) {
-              /*
-               * Create an editable DOM or canvas with an accidental selection bar.
-               */
-              var $d = $$1('<div/>').css('text-align', 'left').css('position', 'relative');
-              var $buttonDivPlay = this.stream.getPlayToolbar();
-              $buttonDivPlay.addClass('inlineBlock');
-              $buttonDivPlay.css({
-                  'margin-right': '12px'
-              });
-              $d.append($buttonDivPlay);
-              var $buttonDiv = this.getAccidentalToolbar();
-              $buttonDiv.addClass('inlineBlock');
-              $buttonDiv.css({
-                  'margin-right': '12px'
-              });
-              $d.append($buttonDiv);
-              var $voiceDiv = this.voiceSelectionToolbar();
-              $voiceDiv.addClass('inlineBlock');
-              $voiceDiv.css({
-                  'margin-right': '12px'
-              });
-              $d.append($voiceDiv);
-              $d.append($$1("<br clear='all'/>"));
-              this.activateClick();
-              this.stream.appendNewDOM($d, width, height);
-              return $d;
-          }
-
-          /**
-           * setActiveInformation - given a click event, set the active information
-           *
-           * @param  {DOMObject} DOMElement div-surrounding-SVG or canvas
-           * @param  {event} e             click event.
-           * @return {undefined}
-           */
-
-      }, {
-          key: 'setActiveInformation',
-          value: function setActiveInformation(DOMElement, e) {
-              var _stream$getScaledXYfo = this.stream.getScaledXYforDOM(DOMElement, e),
-                  _stream$getScaledXYfo2 = slicedToArray(_stream$getScaledXYfo, 2),
-                  x = _stream$getScaledXYfo2[0],
-                  y = _stream$getScaledXYfo2[1];
-
-              var systemIndex = this.stream.systemIndexAndScaledY(y)[0];
-              // measureChosen will always be in the first part...
-              var measureChosen = this.stream.getStreamFromScaledXandSystemIndex(x, systemIndex);
-              var matchIndex = void 0;
-              var measuresStream = this.parts.get(0).measures;
-              for (var i = 0; i < measuresStream.length; i++) {
-                  var matchMeasure = measuresStream.get(i);
-                  if (matchMeasure === measureChosen) {
-                      matchIndex = i;
-                      break;
-                  }
-              }
-              if (matchIndex === undefined) {
-                  return;
-              }
-              if (!this.editableMeasureIndexes.includes(matchIndex)) {
-                  return;
-              }
-              this.activeMeasureIndex = matchIndex;
-              if (this.activeVoiceNumber < 2) {
-                  this.activePart = this.parts.get(0);
-              } else {
-                  this.activePart = this.parts.get(1);
-              }
-              var voiceIndexInMeasure = this.activeVoiceNumber % 2;
-              this.activeMeasure = this.activePart.measures.get(this.activeMeasureIndex);
-              this.activeVoice = this.activeMeasure.voices.get(voiceIndexInMeasure);
-              return;
-          }
-
-          /**
-           * A function bound to the current stream that
-           * will changes the stream. Used in editableAccidentalDOM, among other places.
-           *
-           *      var can = s.appendNewDOM();
-           *      $(can).on('click', s.changeClickedNoteFromEvent);
-           *
-           * @memberof music21.stream.Stream
-           * @param {Event} e
-           * @returns {music21.base.Music21Object|undefined} - returns whatever changedCallbackFunction does.
-           */
-
-      }, {
-          key: 'changeClickedNoteFromEvent',
-          value: function changeClickedNoteFromEvent(e) {
-              var domElement = e.currentTarget;
-              this.setActiveInformation(domElement, e);
-              this.activeVoice.renderOptions.scaleFactor = this.stream.renderOptions.scaleFactor;
-
-              // the activeVoice can find the right note object but not
-              // the right DNN
-
-              var _activeVoice$findNote = this.activeVoice.findNoteForClick(domElement, e),
-                  _activeVoice$findNote2 = slicedToArray(_activeVoice$findNote, 2),
-                  unused_wrong_dnn = _activeVoice$findNote2[0],
-                  foundNote = _activeVoice$findNote2[1];
-
-              // conversely, the stream itself can find the right
-              // DNN but not the right note.
-
-
-              var _stream$findNoteForCl3 = this.stream.findNoteForClick(domElement, e),
-                  _stream$findNoteForCl4 = slicedToArray(_stream$findNoteForCl3, 2),
-                  clickedDiatonicNoteNum = _stream$findNoteForCl4[0],
-                  unused_wrong_note = _stream$findNoteForCl4[1];
-
-              if (foundNote === undefined) {
-                  if (debug) {
-                      console.log('No note found');
-                  }
-                  return undefined;
-              }
-              return this.noteChanged(clickedDiatonicNoteNum, foundNote, domElement);
-          }
-      }, {
-          key: 'noteChanged',
-          value: function noteChanged(clickedDiatonicNoteNum, foundNote, domElement) {
-              var n = foundNote;
-              var p = new pitch.Pitch('C');
-              p.diatonicNoteNum = clickedDiatonicNoteNum;
-              if ((n.pitch.accidental === undefined || n.accidentalIsFromKeySignature === true) && this.stream.keySignature !== undefined) {
-                  p.accidental = this.stream.keySignature.accidentalByStep(p.step);
-                  n.accidentalIsFromKeySignature = true;
-              } else if (n.accidentalIsFromKeySignature !== true) {
-                  p.accidental = n.pitch.accidental;
-              }
-              n.pitch = p;
-              if (this.activeVoiceNumber % 2 === 0) {
-                  n.stemDirection = 'up';
-              } else {
-                  n.stemDirection = 'down';
-              }
-              this.activeNote = n;
-              var $newSvg = this.stream.redrawDOM(domElement);
-              var params = { foundNote: n, svg: $newSvg };
-
-              if (this.changedCallbackFunction !== undefined) {
-                  return this.changedCallbackFunction(params);
-              } else {
-                  return params;
-              }
-          }
-      }, {
-          key: 'voiceSelectionToolbar',
-          value: function voiceSelectionToolbar() {
-              var _this9 = this;
-
-              this.buttons = [];
-              var $buttonDiv = $$1('<div/>').attr('class', 'voiceSelectionToolbar scoreToolbar');
-              var voiceNames = ['S', 'A', 'T', 'B'];
-              var _arr = [0, 1, 2, 3];
-
-              var _loop2 = function _loop2() {
-                  var i = _arr[_i];
-                  var $thisButton = $$1('<button>' + voiceNames[i] + '</button>').addClass('editorButtonNotSelected').click(function () {
-                      return _this9.changeActiveVoice(i);
-                  });
-                  _this9.buttons.push($thisButton);
-                  $buttonDiv.append($thisButton);
-              };
-
-              for (var _i = 0; _i < _arr.length; _i++) {
-                  _loop2();
-              }
-              this.changeActiveVoice(0);
-              return $buttonDiv;
-          }
-      }, {
-          key: 'changeActiveVoice',
-          value: function changeActiveVoice(newVoice, $buttonDiv, clickEvent) {
-              var _arr2 = [0, 1, 2, 3];
-
-              for (var _i2 = 0; _i2 < _arr2.length; _i2++) {
-                  var _i3 = _arr2[_i2];
-                  this.buttons[_i3].removeClass('editorButtonSelected');
-                  this.buttons[_i3].addClass('editorButtonNotSelected');
-              }
-              this.buttons[newVoice].removeClass('editorButtonNotSelected');
-              this.buttons[newVoice].addClass('editorButtonSelected');
-              this.activeVoiceNumber = newVoice;
-              if (newVoice < 2) {
-                  this.activePart = this.parts.get(0);
-                  this.activeVoice = this.activePart.measures.get(this.activeMeasureIndex).voices.get(newVoice);
-              } else {
-                  this.activePart = this.parts.get(1);
-                  this.activeVoice = this.activePart.measures.get(this.activeMeasureIndex).voices.get(newVoice - 2);
-              }
-              this.activeNote = this.activeVoice.notes.get(0);
-          }
-      }]);
-      return FourPartEditor;
-  }(GrandStaffEditor);
-
-  streamInteraction.FourPartEditor = FourPartEditor;
 
   /**
    * music21j -- Javascript reimplementation of Core music21p features.
@@ -12477,13 +11322,16 @@
       }, {
           key: 'vexflowLyrics',
           value: function vexflowLyrics(s, stave) {
-              var getTextNote = function getTextNote(text, font, d) {
+              var getTextNote = function getTextNote(text, font, d, lyricObj) {
                   // console.log(text, font, d);
                   var t1 = new Vex.Flow.TextNote({
                       text: text,
                       font: font,
                       duration: d
                   }).setLine(11).setStave(stave).setJustification(Vex.Flow.TextNote.Justification.LEFT);
+                  if (lyricObj) {
+                      t1.setStyle(lyricObj.style);
+                  }
                   return t1;
               };
 
@@ -12503,20 +11351,22 @@
                   var text = void 0;
                   var d = el.duration.vexflowDuration;
                   var addConnector = false;
+                  var firstLyric = void 0;
                   if (lyricsArray.length === 0) {
                       text = '';
                   } else {
-                      text = lyricsArray[0].text;
+                      firstLyric = lyricsArray[0];
+                      text = firstLyric.text;
                       if (text === undefined) {
                           text = '';
                       }
-                      if (lyricsArray[0].syllabic === 'middle' || lyricsArray[0].syllabic === 'begin') {
-                          addConnector = ' ' + lyricsArray[0].lyricConnector;
+                      if (firstLyric.syllabic === 'middle' || firstLyric.syllabic === 'begin') {
+                          addConnector = ' ' + firstLyric.lyricConnector;
                           var tempQl = el.duration.quarterLength / 2.0;
                           d = new duration.Duration(tempQl).vexflowDuration;
                       }
                   }
-                  var t1 = getTextNote(text, font, d);
+                  var t1 = getTextNote(text, font, d, firstLyric);
                   lyricsObjects.push(t1);
                   if (addConnector !== false) {
                       var connector = getTextNote(addConnector, font, d);
@@ -12847,7 +11697,6 @@
    * @requires music21/common
    * @requires music21/meter
    * @requires music21/pitch
-   * @requires music21/streamInteraction
    * @requires jquery
    */
   var stream = {};
@@ -13123,7 +11972,41 @@
           }
 
           /**
-           * Remove and return the last element in the stream, 
+           * Inserts a single element at offset, shifting elements at or after it begins
+           * later in the stream.
+           *
+           * In single argument form, assumes it is an element and takes the offset from the element.
+           *
+           * Unlike music21p, does not take a list of elements.  TODO(msc): add this.
+           */
+
+      }, {
+          key: 'insertAndShift',
+          value: function insertAndShift(offset, elementOrNone) {
+              var element = void 0;
+              if (elementOrNone === undefined) {
+                  element = offset;
+                  offset = element.offset;
+              } else {
+                  element = elementOrNone;
+              }
+              var amountToShift = element.duration.quarterLength;
+
+              var shiftingOffsets = false;
+              for (var i = 0; i < this.length; i++) {
+                  if (!shiftingOffsets && this._elementOffsets[i] >= offset) {
+                      shiftingOffsets = true;
+                  }
+                  if (shiftingOffsets) {
+                      this._elementOffsets[i] += amountToShift;
+                      this._elements[i].offset = this._elementOffsets[i];
+                  }
+              }
+              this.insert(offset, element);
+          }
+
+          /**
+           * Remove and return the last element in the stream,
            * or return undefined if the stream is empty
            *
            * @memberof music21.stream.Stream
@@ -13723,9 +12606,6 @@
            * - instrument: {@link music21.instrument.Instrument} object (default, `this.instrument`)
            * - tempo: number (default, `this.tempo`)
            *
-           * Does not have functionality for stopping etc., will be removed eventually
-           * and replaced with something better in {@link music21.streamInteraction}
-           *
            * @memberof music21.stream.Stream
            * @param {object} [options] - object of playback options
            * @returns {music21.stream.Stream} this
@@ -14042,70 +12922,6 @@
               $oldSVGOrCanvas.replaceWith(svgBlock);
               return svgBlock;
           }
-      }, {
-          key: 'renderScrollableCanvas',
-          value: function renderScrollableCanvas(where) {
-              var elementType = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'svg';
-
-              console.warn('renderScrollableCanvas is deprecated use renderScrollable instead');
-              return this.renderScrollable(where, elementType);
-          }
-
-          /**
-           * Renders a svg which has a scrollbar when clicked.
-           *
-           * (this is a dumb way of doing this.  Expect it to disappear...)
-           *
-           * @memberof music21.stream.Stream
-           * @param {JQueryDOMObject|DOMObject} [where]
-           * @param {string} elementType - what type of element, default = svg
-           * @returns {DOMObject} svg
-           */
-
-      }, {
-          key: 'renderScrollable',
-          value: function renderScrollable(where) {
-              var _this3 = this;
-
-              var elementType = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'svg';
-
-              var $where = where;
-              if (where === undefined) {
-                  $where = $$1(document.body);
-              } else if (where.jquery === undefined) {
-                  $where = $$1(where);
-              }
-              var $innerDiv = $$1('<div>').css('position', 'absolute');
-              var c = this.appendNewDOM($innerDiv, undefined, undefined, elementType);
-              this.renderOptions.events.click = function (event) {
-                  return _this3.scrollScoreStart(c, event);
-              };
-              this.setRenderInteraction($innerDiv);
-              $where.append($innerDiv);
-              return c;
-          }
-
-          /**
-           * Sets up a {@link music21.streamInteraction.ScrollPlayer} for this
-           * svg.
-           *
-           * @memberof music21.stream.Stream
-           * @param {DOMObject} c - svg
-           * @param {Event} [event] - the event that caused the scrolling to start
-           * (needed because `event.stopPropagation()` is called)
-           * @returns {music21.streamInteraction.ScrollPlayer}
-           */
-
-      }, {
-          key: 'scrollScoreStart',
-          value: function scrollScoreStart(c, event) {
-              var scrollPlayer = new streamInteraction.ScrollPlayer(this, c);
-              scrollPlayer.startPlaying();
-              if (event !== undefined) {
-                  event.stopPropagation();
-              }
-              return scrollPlayer;
-          }
 
           /**
            * Set the type of interaction on the svg based on
@@ -14127,15 +12943,17 @@
       }, {
           key: 'setRenderInteraction',
           value: function setRenderInteraction(canvasOrDiv) {
+              var _this3 = this;
+
               var $svg = canvasOrDiv;
               if (canvasOrDiv === undefined) {
                   return this;
               } else if (canvasOrDiv.jquery === undefined) {
                   $svg = $$1(canvasOrDiv);
               }
-              var playFunc = function playStreamBound() {
-                  this.playStream();
-              }.bind(this);
+              var playFunc = function playFunc() {
+                  _this3.playStream();
+              };
 
               $$1.each(this.renderOptions.events, $$1.proxy(function setRenderInteractionProxy(eventType, eventFunction) {
                   $svg.off(eventType);
@@ -14309,12 +13127,12 @@
            * of the note.
            *
            * systemIndex element is not used on bare Stream
-           * 
+           *
            * options can be a dictionary of: 'allowBackup' which gets the closest
            * note within the window even if it's beyond allowablePixels (default: true)
            * and 'backupMaximum' which specifies a maximum distance even for backup
            * (default: 70);
-           * 
+           *
            * @memberof music21.stream.Stream
            * @param {number} xPxScaled
            * @param {number} [allowablePixels=10]
@@ -14336,29 +13154,53 @@
                   allowablePixels = 10;
               }
               var subStream = this.getStreamFromScaledXandSystemIndex(xPxScaled, systemIndex);
+              if (subStream === undefined) {
+                  return undefined;
+              }
               var backup = {
                   minDistanceSoFar: params.backupMaximum,
                   note: undefined
               }; // a backup in case we did not find within allowablePixels
 
-              for (var i = 0; i < subStream.length; i++) {
-                  var n = subStream.get(i);
-                  /* should also
-                   * compensate for accidentals...
-                   */
-                  var leftDistance = Math.abs(n.x - xPxScaled);
-                  var rightDistance = Math.abs(n.x + n.width - xPxScaled);
-                  var minDistance = Math.min(leftDistance, rightDistance);
+              var _iteratorNormalCompletion = true;
+              var _didIteratorError = false;
+              var _iteratorError = undefined;
 
-                  if (leftDistance < allowablePixels && rightDistance < allowablePixels) {
-                      foundNote = n;
-                      break; /* O(n); can be made O(log n) */
-                  } else if (leftDistance < params.backupMaximum && rightDistance < params.backupMaximum && minDistance < backup.minDistanceSoFar) {
-                      backup.note = n;
-                      backup.minDistanceSoFar = minDistance;
+              try {
+                  for (var _iterator = subStream.flat.notesAndRests.elements[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+                      var n = _step.value;
+
+                      /* should also
+                       * compensate for accidentals...
+                       */
+                      var leftDistance = Math.abs(n.x - xPxScaled);
+                      var rightDistance = Math.abs(n.x + n.width - xPxScaled);
+                      var minDistance = Math.min(leftDistance, rightDistance);
+
+                      if (leftDistance < allowablePixels && rightDistance < allowablePixels) {
+                          foundNote = n;
+                          break; /* O(n); can be made O(log n) */
+                      } else if (leftDistance < params.backupMaximum && rightDistance < params.backupMaximum && minDistance < backup.minDistanceSoFar) {
+                          backup.note = n;
+                          backup.minDistanceSoFar = minDistance;
+                      }
+                  }
+                  // console.log('note here is: ', foundNote);
+              } catch (err) {
+                  _didIteratorError = true;
+                  _iteratorError = err;
+              } finally {
+                  try {
+                      if (!_iteratorNormalCompletion && _iterator.return) {
+                          _iterator.return();
+                      }
+                  } finally {
+                      if (_didIteratorError) {
+                          throw _iteratorError;
+                      }
                   }
               }
-              // console.log('note here is: ', foundNote);
+
               if (params.allowBackup && foundNote === undefined) {
                   foundNote = backup.note;
                   // console.log('used backup: closest was: ', backup.minDistanceSoFar);
@@ -14462,7 +13304,7 @@
       }, {
           key: 'editableAccidentalCanvas',
           value: function editableAccidentalCanvas(width, height) {
-              console.warn('editableAccidentalCanvas is deprecated, use StreamInteraction instead');
+              console.warn('editableAccidentalCanvas is deprecated, use editableAccidentalDOM instead');
               return this.editableAccidentalDOM(width, height);
           }
 
@@ -14544,7 +13386,10 @@
                       /* console.log(n.pitch.name); */
                       var $newSvg = _this4.redrawDOM($useSvg[0]);
                       if (_this4.changedCallbackFunction !== undefined) {
-                          _this4.changedCallbackFunction({ foundNote: n, svg: $newSvg });
+                          _this4.changedCallbackFunction({
+                              foundNote: n,
+                              svg: $newSvg
+                          });
                       }
                   }
               };
@@ -15534,6 +14379,10 @@
               var scaledYinPart = scaledYFromSystemTop - partIndex * this.partSpacing;
               // console.log('systemIndex: ' + systemIndex + " partIndex: " + partIndex);
               var rightPart = this.get(partIndex);
+              if (rightPart === undefined) {
+                  return [undefined, undefined]; // may be too low?
+              }
+
               var clickedDiatonicNoteNum = rightPart.diatonicNoteNumFromScaledY(scaledYinPart);
 
               var foundNote = rightPart.noteElementFromScaledX(x, undefined, systemIndex);
@@ -15929,7 +14778,7 @@
    * @memberof music21
    * @requires music21/prebase
    */
-  var _tie = {};
+  var tie = {};
   var VALID_TIE_TYPES = ['start', 'stop', 'continue', 'let-ring', undefined];
 
   /**
@@ -15974,7 +14823,7 @@
       }]);
       return Tie;
   }(prebase.ProtoM21Object);
-  _tie.Tie = Tie;
+  tie.Tie = Tie;
 
   var DEFAULTS = {
       divisionsPerQuarter: 32 * 3 * 3 * 5 * 7
@@ -16691,7 +15540,7 @@
       }, {
           key: 'xmlToTie',
           value: function xmlToTie($mxNote) {
-              var t = new _tie.Tie();
+              var t = new tie.Tie();
               var allTies = $mxNote.children('tie');
               if (allTies.length > 1) {
                   t.type = 'continue';
@@ -18295,13 +17144,13 @@
               continue;
           }
           if (tnre.TIE.exec(token)) {
-              noteObj.tie = new _tie.Tie('start');
+              noteObj.tie = new tie.Tie('start');
               if (storedDict.lastNoteTied) {
                   noteObj.tie.type = 'continue';
               }
               storedDict.lastNoteTied = true;
           } else if (storedDict.lastNoteTied) {
-              noteObj.tie = new _tie.Tie('stop');
+              noteObj.tie = new tie.Tie('stop');
               storedDict.lastNoteTied = false;
           }
           if (tnre.SHARP.exec(token)) {
@@ -18736,6 +17585,19 @@
               return this.hiddenInterval(this.octave);
           }
 
+          // True if either note in voice 1 is lower than the corresponding voice 2 note
+
+      }, {
+          key: 'voiceCrossing',
+          value: function voiceCrossing() {
+              return this.v1n1.pitch.ps < this.v2n1.pitch.ps || this.v1n2.pitch.ps < this.v2n2.pitch.ps;
+          }
+      }, {
+          key: 'voiceOverlap',
+          value: function voiceOverlap() {
+              return this.v1n2.pitch.ps <= this.v2n1.pitch.ps || this.v2n2.pitch.ps >= this.v1n1.pitch.ps;
+          }
+
           /**
            * isProperResolution - Checks whether the voice-leading quartet resolves correctly according to standard
            *         counterpoint rules. If the first harmony is dissonant (d5, A4, or m7) it checks
@@ -18747,7 +17609,7 @@
            *         Diminished Fifth: in by contrary motion to a third, with 7 resolving up to 1 in the bass
            *         Augmented Fourth: out by contrary motion to a sixth, with chordal seventh resolving
            *         down to a third in the bass.
-           *         Minor Seventh: In to a third with a leap form 5 to 1 in the bass
+           *         Minor Seventh: Resolves to a third with a leap form 5 to 1 in the bass
            *
            * @return {boolean}  true if proper or rules do not apply; false if improper
            */
@@ -18766,6 +17628,18 @@
                   n1degree = scale.getScaleDegreeFromPitch(this.v2n1);
                   n2degree = scale.getScaleDegreeFromPitch(this.v2n2);
               }
+
+              // catches case of #7 in minor
+              if (this.key !== undefined && this.key.mode === 'minor' && (n1degree === undefined || n2degree === undefined)) {
+                  var scale2 = this.key.getScale('melodic-minor'); // gets ascending form
+                  if (n1degree === undefined) {
+                      n1degree = scale2.getScaleDegreeFromPitch(this.v2n1);
+                  }
+                  if (n2degree === undefined) {
+                      n2degree = scale2.getScaleDegreeFromPitch(this.v2n2);
+                  }
+              }
+
               var firstHarmony = this.vIntervals[0].simpleName;
               var secondHarmony = this.vIntervals[1].generic.simpleUndirected;
 
@@ -18798,7 +17672,7 @@
                   if (scale !== undefined && n2degree !== 1) {
                       return false;
                   }
-                  return this.inwardContraryMotion() && secondHarmony === 3;
+                  return secondHarmony === 3;
               } else {
                   return true;
               }
@@ -19226,394 +18100,6 @@
   </html>
    **/
 
-  /**
-   * music21j -- Javascript reimplementation of Core music21 features.
-   * music21/widgets -- tools for web display
-   *
-   * Copyright (c) 2013-17, Michael Scott Cuthbert and cuthbertLab
-   * Based on music21, Copyright (c) 2006–17, Michael Scott Cuthbert and cuthbertLab
-   *
-   */
-  // ../ext/jquery/jquery-3.2.1.min.js';
-
-  /**
-   * Widgets module -- random widgets.  See {@link music21.widgets}
-   *
-   * @exports music21/widgets
-   */
-
-  /**
-   * Widgets module -- random widgets to make streams etc. work better
-   *
-   * To be added to
-   *
-   * @namespace music21.widgets
-   * @memberof music21
-   */
-  var widgets = {};
-  /**
-   * A set of DOM Objects for choosing rhythms
-   *
-   * @class RhythmChooser
-   * @memberof music21.widgets
-   * @param {music21.stream.Stream} s - to append to, etc.
-   * @param {DOMObject} div - canvas or SVG
-   * @property {Array<string>} values - an array of rhythmic values and editing functions.
-   *           Default: ['whole', 'half','quarter','eighth','16th','dot','undo']
-   * @property {Boolean} measureMode - whether to use measures when editing
-   * @property {Boolean} tieActive - is a tie active?
-   * @property {Boolean} autoAddMeasure - add a measure when one is full? default: true
-   * @property {music21.stream.Stream} stream
-   * @property {DOMObject} [div]
-   */
-  var RhythmChooser = function () {
-      function RhythmChooser(streamObj, div) {
-          var _this = this;
-
-          var size = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'normal';
-          classCallCheck(this, RhythmChooser);
-
-          this.stream = streamObj;
-          this.div = div;
-          this.size = size;
-          if (this.size === 'sm' || this.size === 'small') {
-              this.sizeRatio = 0.5;
-          } else {
-              this.sizeRatio = 1.0;
-          }
-
-          this.values = ['whole', 'half', 'quarter', 'eighth', '16th', 'dot', 'undo'];
-
-          if (this.stream.hasSubStreams()) {
-              this.measureMode = true;
-          } else {
-              this.measureMode = false;
-          }
-          this.tieActive = false;
-          this.autoAddMeasure = true;
-          /**
-           * A mapping of a type to a string of HTML entities to display in
-           * BravuraText
-           *
-           * @name valueMappings
-           * @type {object}
-           * @memberof music21.widgets.RhythmChooser
-           */
-          this.valueMappings = {
-              whole: '&#xEB9B;&#xE1D2;',
-              half: '&#xEB9B;&#xE1D3;',
-              quarter: '&#xEB9B;&#xE1D5;',
-              eighth: '&#xEB9B;&#xE1D7;',
-              '16th': '&#xEB9B;&#xE1D9;',
-              '32nd': '&#xEB9B;&#xE1DB;', // BUG in Bravura Text
-              addMeasure: '&#xE031',
-              dot: '&#xEB9B;&#xE1E7;',
-              undo: '&#x232B;',
-              tie: '<span style="position: relative; top: ' + -20 * this.sizeRatio + 'px;">&#xE1FD</span>',
-              rest_whole: '&#xE4F4;',
-              rest_half: '&#xE4F5;',
-              rest_quarter: '&#xE4E5;',
-              rest_eighth: '&#xE4E6;',
-              rest_16th: '&#xE4E7;',
-              rest_32nd: '&#xE4E8;'
-          };
-          /**
-           * A mapping of a type to a css style
-           *
-           * @name styles
-           * @type {object}
-           * @memberof music21.widgets.RhythmChooser
-           */
-          this.styles = {
-              undo: 'font-family: serif; font-size: ' + 30 * this.sizeRatio + 'pt; top: -' + 8 * this.sizeRatio + 'px;'
-          };
-          /**
-           * An object mapping a value type to a function when it is clicked
-           *
-           * the 'default' value handles all types not otherwise given.
-           *
-           * Each function is passed the type that was clicked. Probably only
-           * useful for 'default'
-           *
-           * @name buttonHandlers
-           * @type {object}
-           * @memberof music21.widgets.RhythmChooser#
-           */
-          this.buttonHandlers = {
-              undo: function undo(unused_t) {
-                  if (_this.stream.length > 0) {
-                      return _this.stream.pop();
-                  } else {
-                      return undefined;
-                  }
-              },
-              dot: function dot(unused_t) {
-                  if (_this.stream.length > 0) {
-                      var el = _this.stream.pop();
-                      el.duration.dots += 1;
-                      _this.stream.append(el);
-                      return el;
-                  } else {
-                      return undefined;
-                  }
-              },
-              tie: function tie(unused_t) {
-                  if (_this.stream.length > 0) {
-                      var el = _this.stream.get(-1);
-                      el.tie = new _tie.Tie('start');
-                      _this.tieActive = true;
-                      return el;
-                  } else {
-                      return undefined;
-                  }
-              },
-              default: function _default(buttonM21type) {
-                  var newN = new note.Note('B4');
-                  newN.stemDirection = 'up';
-                  if (buttonM21type.indexOf('rest_') === 0) {
-                      newN = new note.Rest();
-                      buttonM21type = buttonM21type.slice('rest_'.length);
-                  }
-                  newN.duration.type = buttonM21type;
-                  if (_this.tieActive) {
-                      newN.tie = new _tie.Tie('stop');
-                      _this.tieActive = false;
-                  }
-                  _this.stream.append(newN);
-                  return newN;
-              }
-          };
-          /**
-           * An object mapping a value type to a function when it is clicked if the
-           * RhythmChooser is in measureMode
-           *
-           * the 'default' value handles all types not otherwise given.
-           *
-           * Each function is passed the type that was clicked. Probably only
-           * useful for 'default'
-           *
-           * @name measureButtonHandlers
-           * @type {object}
-           * @memberof music21.widgets.RhythmChooser#
-           */
-          this.measureButtonHandlers = {
-              undo: function undo(unused_t) {
-                  if (_this.stream.length > 0) {
-                      var lastMeasure = _this.stream.get(-1);
-                      var retValue = lastMeasure.pop();
-                      if (lastMeasure.length === 0 && _this.stream.length > 1) {
-                          _this.stream.pop();
-                      }
-                      return retValue;
-                  } else {
-                      return undefined;
-                  }
-              },
-              dot: function dot(unused_t) {
-                  if (_this.stream.length > 0) {
-                      var lastMeasure = _this.stream.get(-1);
-                      var el = lastMeasure.pop();
-                      el.duration.dots += 1;
-                      lastMeasure.append(el);
-                      return el;
-                  } else {
-                      return undefined;
-                  }
-              },
-              addMeasure: function addMeasure(unused_t) {
-                  var lastMeasure = _this.stream.get(-1);
-                  var m = new stream.Measure();
-                  m.renderOptions.staffLines = lastMeasure.renderOptions.staffLines;
-                  m.renderOptions.measureIndex = lastMeasure.renderOptions.measureIndex + 1;
-                  m.renderOptions.rightBarline = 'end';
-                  lastMeasure.renderOptions.rightBarline = 'single';
-                  m.autoBeam = lastMeasure.autoBeam;
-                  _this.stream.append(m);
-              },
-              tie: function tie(unused_t) {
-                  var lastMeasure = _this.stream.get(-1);
-                  var el = void 0;
-                  if (lastMeasure.length > 0) {
-                      el = lastMeasure.get(-1);
-                  } else {
-                      var previousMeasure = _this.stream.get(-2);
-                      if (previousMeasure) {
-                          el = previousMeasure.get(-1);
-                      }
-                  }
-                  if (el !== undefined) {
-                      var tieType = 'start';
-                      if (el.tie !== undefined) {
-                          tieType = 'continue';
-                      }
-                      el.tie = new _tie.Tie(tieType);
-                      _this.tieActive = true;
-                  }
-              },
-              default: function _default(buttonM21type) {
-                  var newN = new note.Note('B4');
-                  newN.stemDirection = 'up';
-                  if (buttonM21type.indexOf('rest_') === 0) {
-                      newN = new note.Rest();
-                      buttonM21type = buttonM21type.slice('rest_'.length);
-                  }
-                  newN.duration.type = buttonM21type;
-                  if (_this.tieActive) {
-                      newN.tie = new _tie.Tie('stop');
-                      _this.tieActive = false;
-                  }
-                  var lastMeasure = _this.stream.get(-1);
-                  if (_this.autoAddMeasure && lastMeasure.duration.quarterLength >= _this.stream.timeSignature.barDuration.quarterLength) {
-                      _this.measureButtonHandlers.addMeasure.apply(_this, [buttonM21type]);
-                      lastMeasure = _this.stream.get(-1);
-                  }
-                  lastMeasure.append(newN);
-                  return newN;
-              }
-          };
-      }
-      /**
-       * adds a RhythmChooser widget somewhere.
-       *
-       * @memberof music21.widgets.RhythmChooser
-       * @param {DOMObject|JQueryDOMObject} where
-       */
-
-
-      createClass(RhythmChooser, [{
-          key: 'addDiv',
-          value: function addDiv(where) {
-              var $where = where;
-              if (where !== undefined && where.jquery === undefined) {
-                  $where = $$1(where);
-              }
-              var $outer = $$1('<div class="rhythmButtonDiv"/>');
-              for (var i = 0; i < this.values.length; i++) {
-                  var value = this.values[i];
-                  var entity = this.valueMappings[value];
-                  var sizeClass = '';
-                  if (this.size === 'sm' || this.size === 'small') {
-                      sizeClass = 'btButtonSm';
-                  }
-                  var $inner = $$1('<button class="btButton ' + sizeClass + '" m21Type="' + value + '">' + entity + '</button>');
-                  if (this.styles[value] !== undefined) {
-                      $inner.attr('style', this.styles[value]);
-                  }
-
-                  $inner.click(function rhythmButtonDiv_click(value) {
-                      this.handleButton(value);
-                  }.bind(this, value));
-                  $outer.append($inner);
-              }
-              if (where !== undefined) {
-                  $where.append($outer);
-              }
-              return $outer;
-          }
-          /**
-           * A button has been pressed! Call the appropriate handler and update the stream's SVG (if any)
-           *
-           * @memberof music21.widgets.RhythmChooser
-           * @param {string} t - type of button pressed.
-           */
-
-      }, {
-          key: 'handleButton',
-          value: function handleButton(t) {
-              var bhs = this.buttonHandlers;
-              if (this.measureMode) {
-                  bhs = this.measureButtonHandlers;
-              }
-              var bh = bhs[t];
-              if (bh === undefined) {
-                  bh = bhs.default;
-              }
-              bh.apply(this, [t]);
-              var s = this.stream;
-
-              // redraw score if Part is part of score...
-              if (s.isClassOrSubclass('Part') && s.activeSite !== undefined) {
-                  s = s.activeSite;
-              }
-              if (this.div !== undefined) {
-                  s.replaceDOM(this.div);
-              }
-          }
-      }]);
-      return RhythmChooser;
-  }();
-  widgets.RhythmChooser = RhythmChooser;
-
-  var Augmenter = function () {
-      function Augmenter(streamObj, div) {
-          classCallCheck(this, Augmenter);
-
-          this.streamObj = streamObj;
-          this.div = div;
-      }
-
-      createClass(Augmenter, [{
-          key: 'performChange',
-          value: function performChange(amountToScale, streamObjToWorkOn) {
-              var replaceDOM = false;
-              if (streamObjToWorkOn === undefined) {
-                  replaceDOM = true;
-                  streamObjToWorkOn = this.streamObj;
-              }
-              for (var i = 0; i < streamObjToWorkOn.length; i++) {
-                  var el = streamObjToWorkOn.get(i);
-                  if (el.isStream === true) {
-                      this.performChange(amountToScale, el);
-                  } else {
-                      el.duration.quarterLength *= amountToScale;
-                  }
-              }
-              if (streamObjToWorkOn.timeSignature !== undefined) {
-                  streamObjToWorkOn.timeSignature.denominator *= 1 / amountToScale;
-              }
-
-              if (this.div !== undefined && replaceDOM === true) {
-                  this.div = streamObjToWorkOn.replaceDOM(this.div);
-              }
-          }
-      }, {
-          key: 'makeSmaller',
-          value: function makeSmaller() {
-              return this.performChange(0.5);
-          }
-      }, {
-          key: 'makeLarger',
-          value: function makeLarger() {
-              return this.performChange(2.0);
-          }
-      }, {
-          key: 'addDiv',
-          value: function addDiv($where) {
-              var _this2 = this;
-
-              var $newDiv = $$1('<div class="augmenterDiv" />');
-              var $smaller = $$1('<button class="augmenterButton">Make Smaller</button>');
-              var $larger = $$1('<button class="augmenterButton">Make Larger</button>');
-
-              $smaller.on('click', function () {
-                  _this2.makeSmaller();
-              });
-              $larger.on('click', function () {
-                  _this2.makeLarger();
-              });
-
-              $newDiv.append($smaller);
-              $newDiv.append($larger);
-
-              $where.append($newDiv);
-              return $newDiv;
-          }
-      }]);
-      return Augmenter;
-  }();
-
-  widgets.Augmenter = Augmenter;
-
   // order below doesn't matter, but good to give a sense
   // of what will be needed by almost everyone, and then
   // alphabetical.
@@ -19651,14 +18137,12 @@
       scale: scale,
       sites: sites,
       stream: stream,
-      streamInteraction: streamInteraction,
       tempo: tempo,
-      tie: _tie,
+      tie: tie,
       tinyNotation: tinyNotation,
       voiceLeading: voiceLeading,
       vfShow: vfShow,
-      webmidi: webmidi,
-      widgets: widgets
+      webmidi: webmidi
   };
 
   music21.Music21Object = base.Music21Object;
@@ -20076,6 +18560,30 @@
   }
 
   function tests$11() {
+      QUnit.test('music21.meter.TimeSignature', function (assert) {
+          var m = new music21.meter.TimeSignature('4/4');
+
+          assert.equal(m.ratioString, '4/4', 'ratioString matches');
+          assert.equal(m.barDuration.quarterLength, 4.0, 'bar lasts 4.0 ql');
+          assert.deepEqual(m.beatGroups, [[2, 8]], 'beatGroups check out');
+          assert.equal(m.beatCount, 4, 'beat count is 4');
+          assert.equal(m.beatDuration.type, 'quarter', 'beatDuration type is quarter');
+          assert.equal(m.beatDuration.dots, 0, 'beatDuration has not dots');
+      });
+
+      QUnit.test('music21.meter.TimeSignature compound', function (assert) {
+          var m = new music21.meter.TimeSignature('6/8');
+
+          assert.equal(m.ratioString, '6/8', 'ratioString matches');
+          assert.equal(m.barDuration.quarterLength, 3.0, 'bar lasts 3.0 ql');
+          assert.deepEqual(m.beatGroups, [[3, 8], [3, 8]], 'beatGroups check out');
+          assert.equal(m.beatCount, 2, 'beat count is 2');
+          assert.equal(m.beatDuration.type, 'quarter', 'beatDuration type is quarter');
+          assert.equal(m.beatDuration.dots, 1, 'beatDuration has dot');
+      });
+  }
+
+  function tests$12() {
       QUnit.test('music21.note.Note', function (assert) {
           var n = new music21.note.Note('D#5');
 
@@ -20085,7 +18593,7 @@
       });
   }
 
-  function tests$12() {
+  function tests$13() {
       QUnit.test('music21.pitch.Accidental', function (assert) {
           var a = new music21.pitch.Accidental('-');
           assert.equal(a.alter, -1.0, 'flat alter passed');
@@ -20122,6 +18630,19 @@
           dis.getHigherEnharmonic(true); // inPlace
           assert.equal(dis.nameWithOctave, es.nameWithOctave);
 
+          var cDblSharp = new music21.pitch.Pitch('C##5');
+          var dNatural = cDblSharp.getHigherEnharmonic();
+          assert.equal(cDblSharp.ps, dNatural.ps);
+          assert.equal(dNatural.name, 'D', 'C## higher is D');
+          assert.equal(dNatural.octave, 5, 'Octave is 5');
+          var bTripleSharp = cDblSharp.getLowerEnharmonic();
+          assert.equal(cDblSharp.ps, bTripleSharp.ps);
+          assert.equal(bTripleSharp.octave, 4, 'Octave is 4 [B###]');
+
+          var cDblFlat = new music21.pitch.Pitch('C--5');
+          var bFlat = cDblFlat.getLowerEnharmonic();
+          assert.equal(cDblFlat.ps, bFlat.ps);
+
           // once octaveless pitches exist...
           //        const octaveless = new music21.pitch.Pitch('C');
           //        const bsharp = octaveless.getLowerEnharmonic();
@@ -20131,7 +18652,7 @@
       });
   }
 
-  function tests$13() {
+  function tests$14() {
       QUnit.test('music21.prebase.ProtoM21Object classes', function (assert) {
           var n = new music21.note.Note();
           assert.deepEqual(n.classes, ['Note', 'NotRest', 'GeneralNote', 'Music21Object', 'ProtoM21Object', 'object']);
@@ -20150,7 +18671,7 @@
       });
   }
 
-  function tests$14() {
+  function tests$15() {
       QUnit.test('music21.roman.expandShortHand', function (assert) {
           var outGroups = void 0;
           outGroups = music21.roman.expandShortHand('64');
@@ -20463,7 +18984,7 @@
       });
   }
 
-  function tests$15() {
+  function tests$16() {
       QUnit.test('music21.scale.Scale', function (assert) {
           var sc = new music21.scale.Scale();
           assert.ok(sc.classes.includes('Scale'));
@@ -20497,7 +19018,7 @@
       });
   }
 
-  function tests$16() {
+  function tests$17() {
       QUnit.test('music21.sites.SiteRef', function (assert) {
           var sr = new music21.sites.SiteRef();
           assert.ok(!sr.isDead);
@@ -20540,7 +19061,7 @@
       });
   }
 
-  function tests$17() {
+  function tests$18() {
       QUnit.test('music21.stream.Stream', function (assert) {
           var s = new music21.stream.Stream();
           s.append(new music21.note.Note('C#5'));
@@ -20628,6 +19149,29 @@
           assert.equal(pf3.get(1).offset, 4.0, '.flat.flat does not change offset');
       });
 
+      QUnit.test('music21.stream.Stream insertAndShift', function (assert) {
+          var s = new music21.stream.Stream();
+          s.insert(0, new music21.note.Note('C4'));
+          s.insert(1, new music21.note.Note('E4'));
+          s.insert(2, new music21.note.Note('F4'));
+          s.insertAndShift(1, new music21.note.Note('D4'));
+          var outListNames = [];
+          var outListOffsets = [];
+          for (var i = 0; i < s.length; i++) {
+              var n = s.get(i);
+              outListNames.push(n.name);
+              outListOffsets.push(n.offset);
+          }
+          assert.equal(outListNames[0], 'C');
+          assert.equal(outListOffsets[0], 0.0);
+          assert.equal(outListNames[1], 'D');
+          assert.equal(outListOffsets[1], 1.0);
+          assert.equal(outListNames[2], 'E');
+          assert.equal(outListOffsets[2], 2.0);
+          assert.equal(outListNames[3], 'F');
+          assert.equal(outListOffsets[3], 3.0);
+      });
+
       QUnit.test('music21.stream.Stream.DOM', function (assert) {
           var s = new music21.stream.Stream();
           s.append(new music21.note.Note('C#5'));
@@ -20694,64 +19238,8 @@
           s1.append(n3);
           var n4 = new music21.note.Note('G3');
           s1.append(n4);
-          var sne1 = new music21.streamInteraction.SimpleNoteEditor(s1);
-          var div1 = sne1.editableAccidentalDOM();
+          var div1 = s1.editableAccidentalDOM();
           $(document.body).append(div1);
-      });
-  }
-
-  function tests$18() {
-      QUnit.test('music21.streamInteraction.PixelMapper', function (assert) {
-          var s = music21.tinyNotation.TinyNotation('3/4 C4 D4 E4 F2. G2.');
-          var can = s.createDOM();
-          var pm = new music21.streamInteraction.PixelMapper(s);
-          assert.equal(Math.round(pm.startX), 64);
-          assert.equal(Math.round(pm.maxX), 410);
-          assert.equal(pm.maxSystemIndex, 0);
-          assert.equal(pm.allMaps.length, 6); // 5 notes + end
-
-          // get a PixelMap
-          var pm0 = pm.allMaps[0];
-          assert.equal(pm0.systemIndex, 0);
-          assert.equal(Math.round(pm0.x), 64);
-          assert.equal(pm0.offset, 0);
-          var pm0els = pm0.elements;
-          assert.equal(pm0els.length, 1);
-          var pm0note = pm0.elements[0];
-          assert.equal(pm0note.pitch.name, 'C');
-
-          var pmLast = pm.allMaps[5];
-          assert.equal(pmLast.offset, 9);
-          assert.equal(pmLast.x, 410);
-          assert.equal(pmLast.elements[0], undefined);
-
-          // find maps
-          assert.strictEqual(pm.findMapForExactOffset(1.0), pm.allMaps[1]);
-          var pmsAround = pm.getPixelMapsAroundOffset(1.5);
-          assert.strictEqual(pmsAround[0], pm.allMaps[1]);
-          assert.strictEqual(pmsAround[1], pm.allMaps[2]);
-          assert.equal(Math.round(pm.getXAtOffset(0.5)), 115);
-          assert.equal(pm.getSystemIndexAtOffset(4.0), 0);
-
-          // long stream
-          var longerPart = music21.tinyNotation.TinyNotation('4/4 C1 D E F G A B C D E F G A B C D E F G A B C D E F G');
-          var longer = new music21.stream.Score();
-          longer.append(longerPart);
-          longer.renderOptions.maxSystemWidth = 400;
-          longer.createDOM(400); // width
-          var pmLonger = new music21.streamInteraction.PixelMapper(longer);
-          assert.equal(pmLonger.maxSystemIndex, 3);
-          assert.equal(pmLonger.getSystemIndexAtOffset(31), 0);
-          assert.equal(pmLonger.getSystemIndexAtOffset(33), 1);
-
-          var _pmLonger$getPixelMap = pmLonger.getPixelMapsAroundOffset(31),
-              _pmLonger$getPixelMap2 = slicedToArray(_pmLonger$getPixelMap, 2),
-              preBreak = _pmLonger$getPixelMap2[0],
-              postBreak = _pmLonger$getPixelMap2[1];
-
-          assert.equal(preBreak.systemIndex, 0);
-          assert.equal(postBreak.systemIndex, 1);
-          assert.ok(postBreak.x < preBreak.x);
       });
   }
 
@@ -20862,14 +19350,14 @@
       figuredBass: tests$8,
       interval: tests$9,
       key: tests$10,
-      note: tests$11,
-      pitch: tests$12,
-      prebase: tests$13,
-      roman: tests$14,
-      scale: tests$15,
-      sites: tests$16,
-      stream: tests$17,
-      streamInteraction: tests$18,
+      meter: tests$11,
+      note: tests$12,
+      pitch: tests$13,
+      prebase: tests$14,
+      roman: tests$15,
+      scale: tests$16,
+      sites: tests$17,
+      stream: tests$18,
       tie: tests$19,
       voiceLeading: tests$20
   };

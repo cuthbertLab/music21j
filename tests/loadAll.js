@@ -9,6 +9,7 @@ import dynamics from './moduleTests/dynamics.js';
 import figuredBass from './moduleTests/figuredBass.js';
 import interval from './moduleTests/interval.js';
 import key from './moduleTests/key.js';
+import meter from './moduleTests/meter.js';
 import note from './moduleTests/note.js';
 import pitch from './moduleTests/pitch.js';
 import prebase from './moduleTests/prebase.js';
@@ -16,7 +17,6 @@ import roman from './moduleTests/roman.js';
 import scale from './moduleTests/scale.js';
 import sites from './moduleTests/sites.js';
 import stream from './moduleTests/stream.js';
-import streamInteraction from './moduleTests/streamInteraction.js';
 import tie from './moduleTests/tie.js';
 import voiceLeading from './moduleTests/voiceLeading.js';
 
@@ -32,6 +32,7 @@ const allTests = {
     figuredBass,
     interval,
     key,
+    meter,
     note,
     pitch,
     prebase,
@@ -39,7 +40,6 @@ const allTests = {
     scale,
     sites,
     stream,
-    streamInteraction,
     tie,
     voiceLeading,
 };

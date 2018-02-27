@@ -132,10 +132,6 @@
 						</li>
 						
 						<li>
-							<a href="music21.streamInteraction.html">music21.streamInteraction</a>
-						</li>
-						
-						<li>
 							<a href="music21.tempo.html">music21.tempo</a>
 						</li>
 						
@@ -153,10 +149,6 @@
 						
 						<li>
 							<a href="music21.webmidi.html">music21.webmidi</a>
-						</li>
-						
-						<li>
-							<a href="music21.widgets.html">music21.widgets</a>
 						</li>
 						
 
@@ -414,22 +406,6 @@
 						</li>
 						
 						<li>
-							<a href="music21.streamInteraction.Follower.html">music21.streamInteraction.Follower</a>
-						</li>
-						
-						<li>
-							<a href="music21.streamInteraction.PixelMap.html">music21.streamInteraction.PixelMap</a>
-						</li>
-						
-						<li>
-							<a href="music21.streamInteraction.PixelMapper.html">music21.streamInteraction.PixelMapper</a>
-						</li>
-						
-						<li>
-							<a href="music21.streamInteraction.ScrollPlayer.html">music21.streamInteraction.ScrollPlayer</a>
-						</li>
-						
-						<li>
 							<a href="music21.tempo.Metronome.html">music21.tempo.Metronome</a>
 						</li>
 						
@@ -443,10 +419,6 @@
 						
 						<li>
 							<a href="music21.vfShow.RenderStack.html">music21.vfShow.RenderStack</a>
-						</li>
-						
-						<li>
-							<a href="music21.widgets.RhythmChooser.html">music21.widgets.RhythmChooser</a>
 						</li>
 						
 						<li>
@@ -542,11 +514,11 @@
 <ul>
 <li>The ability to visualize and hear changes in Streams quickly (using <a href="http://www.vexflow.com">Vexflow</a> and <a href="http://mudcu.be/midi-js/">MIDI.js</a>)</li>
 <li>Connections (via Web Midi or <a href="http://jazz-soft.net">JazzSoft</a> plugin) to MIDI devices. </li>
-<li>A framework for easily making music theory exercises and interfaces to exploring scores.</li>
+<li>Music theory and analysis modules at the level of music21 ca. 2012</li>
 <li>A repository of modules such as metronomes, keyboards, and automatic transcribers.</li>
 </ul>
 <p>Though it does not have all the power of <a href="http://web.mit.edu/music21/">Music21 Python</a>, music21j can help with<br>a number of research problems in music history and theory. The introduction to the<br>Python package will say more about it (it's better documented). The &quot;namespaces&quot;<br>tab above will give introductions to some of the features of music21j. At this<br>point we're focusing on documenting usage; developer docs will come<br>later.</p>
-<p>Music21j requires your users to have a relatively recent web browser -- at most one major<br>version behind.<br>Safari 8+, Chrome since 2015 (v.32+), or Firefox since 2014 (v. 26+).  Internet Explorer 11+<br>works well too, though timing of playback can be a bit off.  Edge works better, except<br>there is no support for MIDI devices.</p>
+<p>Music21j requires your users to have a relatively recent web browser -- the project<br>targets browsers no more than two years old.<br>Safari 9+, Chrome since 2015 (v.32+), Edge 14+, or Firefox since 2014 (v. 26+).<br>Internet Explorer 11+ is currently supported, though timing of playback can be a bit off, but<br>support for it will be removed soon.  Microsoft Edge is the only major desktop browser for which<br>there is no support for MIDI devices.</p>
 <h2>Documentation</h2><p>This README appears in both the GitHub home page and the documentation<br>home page; to make the following links work, go to the documentation<br>page at http://web.mit.edu/music21/music21j/doc/ .</p>
 <p>Begin at the <a href="music21.html"><code>music21</code></a> namespace (click the link or use the<br>menu above), or start with<br>a specific one such as <a href="music21.note.html"><code>music21.note</code></a> or <a href="music21.stream.html"><code>music21.stream</code></a><br>or a Class such as <a href="music21.note.Note.html"><code>music21.note.Note</code></a> or <a href="music21.stream.Stream.html"><code>music21.stream.Stream</code></a>. </p>
 <p>(Ignore &quot;Modules&quot; they're not useful and duplicate the namespace pages).</p>
@@ -556,7 +528,8 @@
 % git clone https://github.com/cuthbertLab/music21j.git
 % cd music21j
 % ./updateGit
-% npm install</code></pre><p>if the last line (<code>npm install</code>) doesn't work, download the<br>latest version of <code>node.js</code> first from https://nodejs.org/en/download/</p>
+% npm install</code></pre><p>if the last line (<code>npm install</code>) doesn't work, download the<br>latest version of <code>node.js</code> first from https://nodejs.org/en/download/<br>and then run <code>sudo npm install -g grunt</code>.  </p>
+<p>A guide to installing music21j on Windows would be appreciated.</p>
 <p>The files in music21j are best viewed by running your own<br>webserver (rather than using <code>file:///...</code> links). We've<br>included a small script to start you up:</p>
 <pre class="prettyprint source lang-sh"><code>% cd ~/git/music21j
 % grunt
@@ -590,7 +563,7 @@
 <li><a href="http://qunitjs.com">qUnit</a> - testing framework</li>
 <li><a href="http://usejsdoc.org">jsdoc</a> - makes this documentation possible</li>
 </ul>
-<p>Music21j is developed with a grant from the D'Arbeloff Fund for teaching and<br>learning at <a href="http://web.mit.edu">MIT</a>. The Python version of music21 was supported by grants from<br>the Seaver Institute and the National Endowment for the Humanities.</p>
+<p>Music21j in the Music and Theater Arts section at <a href="http://web.mit.edu">MIT</a>.<br>The Python version of music21 was supported by grants from<br>the Seaver Institute and the National Endowment for the Humanities.</p>
 <h2>Dev Notes</h2><p>Before building, every once in a while run (in the music21j directory)</p>
 <pre class="prettyprint source"><code>npm-check-updates</code></pre><p>and if it looks like something to update, run</p>
 <pre class="prettyprint source"><code>npm-check-updates --upgradeAll
@@ -611,13 +584,13 @@ npm update</code></pre><p>Build documentation with:</p>
 					
 					
 		<span class="copyright">
-		Music21j, Copyright © 2013-2016 Michael Scott Cuthbert and cuthbertLab.
+		Music21j, Copyright © 2013-2018 Michael Scott Cuthbert and cuthbertLab.
 		</span>
 					<br />
 					
 		<span class="jsdoc-message">
 		Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a>
-		on Sat Feb 10th 2018 using the <a
+		on Fri Feb 23rd 2018 using the <a
 			href="https://github.com/terryweiss/docstrap">DocStrap template</a>.
 		</span>
 				</footer>

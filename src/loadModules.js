@@ -34,14 +34,12 @@ import { roman } from './music21/roman.js';
 import { scale } from './music21/scale.js';
 import { sites } from './music21/sites.js';
 import { stream } from './music21/stream.js';
-import { streamInteraction } from './music21/streamInteraction.js';
 import { tempo } from './music21/tempo.js';
 import { tie } from './music21/tie.js';
 import { tinyNotation } from './music21/tinyNotation.js';
 import { voiceLeading } from './music21/voiceLeading.js';
 import { vfShow } from './music21/vfShow.js';
 import { webmidi } from './music21/webmidi.js';
-import { widgets } from './music21/widgets.js';
 
 const music21 = {
     common,
@@ -77,14 +75,12 @@ const music21 = {
     scale,
     sites,
     stream,
-    streamInteraction,
     tempo,
     tie,
     tinyNotation,
     voiceLeading,
     vfShow,
     webmidi,
-    widgets,
 };
 
 music21.Music21Object = base.Music21Object;

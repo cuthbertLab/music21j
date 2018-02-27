@@ -841,7 +841,7 @@ export class Renderer {
      * @returns {Array<Vex.Flow.TextNote>}
      */
     vexflowLyrics(s, stave) {
-        const getTextNote = (text, font, d) => {
+        const getTextNote = (text, font, d, lyricObj) => {
             // console.log(text, font, d);
             const t1 = new Vex.Flow.TextNote({
                 text,
@@ -851,6 +851,9 @@ export class Renderer {
                 .setLine(11)
                 .setStave(stave)
                 .setJustification(Vex.Flow.TextNote.Justification.LEFT);
+            if (lyricObj) {
+                t1.setStyle(lyricObj.style);
+            }
             return t1;
         };
 
@@ -870,23 +873,25 @@ export class Renderer {
             let text;
             let d = el.duration.vexflowDuration;
             let addConnector = false;
+            let firstLyric;
             if (lyricsArray.length === 0) {
                 text = '';
             } else {
-                text = lyricsArray[0].text;
+                firstLyric = lyricsArray[0];
+                text = firstLyric.text;
                 if (text === undefined) {
                     text = '';
                 }
                 if (
-                    lyricsArray[0].syllabic === 'middle'
-                    || lyricsArray[0].syllabic === 'begin'
+                    firstLyric.syllabic === 'middle'
+                    || firstLyric.syllabic === 'begin'
                 ) {
-                    addConnector = ' ' + lyricsArray[0].lyricConnector;
+                    addConnector = ' ' + firstLyric.lyricConnector;
                     const tempQl = el.duration.quarterLength / 2.0;
                     d = new duration.Duration(tempQl).vexflowDuration;
                 }
             }
-            const t1 = getTextNote(text, font, d);
+            const t1 = getTextNote(text, font, d, firstLyric);
             lyricsObjects.push(t1);
             if (addConnector !== false) {
                 const connector = getTextNote(addConnector, font, d);
