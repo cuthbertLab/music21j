@@ -591,12 +591,12 @@
    * @memberof music21.common
    * @returns {DOMObject}
    */
-  common.makeSVGright = function makeSVGright(tag, attrs) {
+  common.makeSVGright = function makeSVGright() {
+      var tag = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'svg';
+      var attrs = arguments[1];
+
       // see http://stackoverflow.com/questions/3642035/jquerys-append-not-working-with-svg-element
       // normal JQuery does not work.
-      if (tag === undefined) {
-          tag = 'svg';
-      }
       if (attrs === undefined) {
           attrs = {};
       }
@@ -3792,6 +3792,18 @@
                   this._alter = 3.0;
                   this._modifier = '###';
                   this._unicodeModifier = '&#x1d12a;';
+              } else if (accName === 'quadruple-flat' || accName === '----' || accName === -4) {
+                  this._name = 'quadruple-flat';
+                  this._alter = -4.0;
+                  this._modifier = '----';
+                  this._unicodeModifier = '♭&#x1d12b;';
+              } else if (accName === 'quadruple-sharp' || accName === '####' || accName === 4) {
+                  this._name = 'quadruple-sharp';
+                  this._alter = 4.0;
+                  this._modifier = '####';
+                  this._unicodeModifier = '&#x1d12a;';
+              } else {
+                  throw new Music21Exception('Accidental is not supported: ' + accName);
               }
           }
           /**
@@ -3956,7 +3968,16 @@
 
       createClass(Pitch, [{
           key: '_getEnharmonicHelper',
-          value: function _getEnharmonicHelper(inPlace, directionInt) {
+
+
+          /**
+           * @param {boolean} inPlace
+           * @param {Int} directionInt -- -1 = down, 1 = up
+           */
+          value: function _getEnharmonicHelper() {
+              var inPlace = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
+              var directionInt = arguments[1];
+
               // differs from Python version because
               // cannot import interval here.
               var octaveStored = true;
@@ -5080,6 +5101,10 @@
           _this.applyRaw = applyRaw || false;
           _this.setTextAndSyllabic(_this.text, _this.applyRaw);
           _this._identifier = identifier;
+          _this.style = {
+              fillStyle: 'black',
+              strokeStyle: 'black'
+          };
           return _this;
       }
 
@@ -5436,7 +5461,7 @@
 
           _this3.notehead = 'normal';
           _this3.noteheadFill = 'default';
-          _this3.noteheadColor = undefined;
+          _this3.noteheadColor = 'black';
           _this3.noteheadParenthesis = false;
           _this3.volume = undefined; // not a real object yet.
           _this3.beams = new beam.Beams();
@@ -11309,13 +11334,16 @@
       }, {
           key: 'vexflowLyrics',
           value: function vexflowLyrics(s, stave) {
-              var getTextNote = function getTextNote(text, font, d) {
+              var getTextNote = function getTextNote(text, font, d, lyricObj) {
                   // console.log(text, font, d);
                   var t1 = new Vex.Flow.TextNote({
                       text: text,
                       font: font,
                       duration: d
                   }).setLine(11).setStave(stave).setJustification(Vex.Flow.TextNote.Justification.LEFT);
+                  if (lyricObj) {
+                      t1.setStyle(lyricObj.style);
+                  }
                   return t1;
               };
 
@@ -11335,20 +11363,22 @@
                   var text = void 0;
                   var d = el.duration.vexflowDuration;
                   var addConnector = false;
+                  var firstLyric = void 0;
                   if (lyricsArray.length === 0) {
                       text = '';
                   } else {
-                      text = lyricsArray[0].text;
+                      firstLyric = lyricsArray[0];
+                      text = firstLyric.text;
                       if (text === undefined) {
                           text = '';
                       }
-                      if (lyricsArray[0].syllabic === 'middle' || lyricsArray[0].syllabic === 'begin') {
-                          addConnector = ' ' + lyricsArray[0].lyricConnector;
+                      if (firstLyric.syllabic === 'middle' || firstLyric.syllabic === 'begin') {
+                          addConnector = ' ' + firstLyric.lyricConnector;
                           var tempQl = el.duration.quarterLength / 2.0;
                           d = new duration.Duration(tempQl).vexflowDuration;
                       }
                   }
-                  var t1 = getTextNote(text, font, d);
+                  var t1 = getTextNote(text, font, d, firstLyric);
                   lyricsObjects.push(t1);
                   if (addConnector !== false) {
                       var connector = getTextNote(addConnector, font, d);

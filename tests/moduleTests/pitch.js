@@ -38,13 +38,27 @@ export default function tests() {
         dis.getHigherEnharmonic(true); // inPlace
         assert.equal(dis.nameWithOctave, es.nameWithOctave);
 
+        const cDblSharp = new music21.pitch.Pitch('C##5');
+        const dNatural = cDblSharp.getHigherEnharmonic();
+        assert.equal(cDblSharp.ps, dNatural.ps);
+        assert.equal(dNatural.name, 'D', 'C## higher is D');
+        assert.equal(dNatural.octave, 5, 'Octave is 5');
+        const bTripleSharp = cDblSharp.getLowerEnharmonic();
+        assert.equal(cDblSharp.ps, bTripleSharp.ps);
+        assert.equal(bTripleSharp.octave, 4, 'Octave is 4 [B###]');
+
+        const cDblFlat = new music21.pitch.Pitch('C--5');
+        const bFlat = cDblFlat.getLowerEnharmonic();
+        assert.equal(cDblFlat.ps, bFlat.ps);
+
+
         // once octaveless pitches exist...
 //        const octaveless = new music21.pitch.Pitch('C');
 //        const bsharp = octaveless.getLowerEnharmonic();
 //        assert.equal(octaveless.octave, undefined, 'octave should be undefined');
 //        assert.equal(bsharp.octave, undefined, 'octave should be undefined');
 //        assert.equal(bsharp.name, 'B#');
-        
+
     });
 
 }

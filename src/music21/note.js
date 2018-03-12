@@ -104,6 +104,10 @@ export class Lyric extends prebase.ProtoM21Object {
         this.applyRaw = applyRaw || false;
         this.setTextAndSyllabic(this.text, this.applyRaw);
         this._identifier = identifier;
+        this.style = {
+            fillStyle: 'black',
+            strokeStyle: 'black',
+        };
     }
     get identifier() {
         return this._identifier || this._number;
@@ -431,7 +435,7 @@ export class NotRest extends GeneralNote {
         super(ql);
         this.notehead = 'normal';
         this.noteheadFill = 'default';
-        this.noteheadColor = undefined;
+        this.noteheadColor = 'black';
         this.noteheadParenthesis = false;
         this.volume = undefined; // not a real object yet.
         this.beams = new beam.Beams();
