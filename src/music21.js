@@ -167,7 +167,7 @@ var m21requireConfig = {
         'webMidiApiShim': pathSimplify(m21srcPath + '/ext/midijs/inc/shim/WebMIDIAPI'), //not currently loaded/used?
         'webAudioShim': pathSimplify(m21srcPath + '/ext/midijs/inc/shim/WebAudioAPI'), // Safari prefixed to <= 9; IE <= Edge
 
-        'es6Shim': pathSimplify(m21srcPath + '/ext/es6-shim'),
+        'es6Shim': pathSimplify(m21srcPath + '/ext/es6-shim/es6-shim.min'),
         'babelPolyfill': pathSimplify(m21srcPath + '/ext/polyfill'),
 
         'm21': pathSimplify(m21srcPath + '/../build/music21.debug'),
