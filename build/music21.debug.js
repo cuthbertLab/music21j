@@ -1,5 +1,5 @@
 /**
- * music21j 0.9.0 built on  * 2018-03-11.
+ * music21j 0.9.0 built on  * 2018-03-16.
  * Copyright (c) 2013-2016 Michael Scott Cuthbert and cuthbertLab
  * BSD License, see LICENSE
  *
@@ -17083,7 +17083,7 @@
       for (var i = 0; i < tokens.length; i++) {
           // check at first so that a full measure but not over full
           // gets returned as a stream.Measure object.
-          if (m.duration.quarterLength >= currentTSBarDuration) {
+          if (m.duration.quarterLength >= currentTSBarDuration || Math.abs(m.duration.quarterLength - currentTSBarDuration) < 0.0001) {
               p.append(m);
               m = new stream.Measure();
           }
