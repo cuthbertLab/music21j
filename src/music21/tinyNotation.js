@@ -103,7 +103,8 @@ tinyNotation.TinyNotation = function TinyNotation(textIn) {
     for (let i = 0; i < tokens.length; i++) {
         // check at first so that a full measure but not over full
         // gets returned as a stream.Measure object.
-        if (m.duration.quarterLength >= currentTSBarDuration) {
+        if ((m.duration.quarterLength >= currentTSBarDuration)
+            || (Math.abs(m.duration.quarterLength - currentTSBarDuration) < 0.0001)) {
             p.append(m);
             m = new stream.Measure();
         }

@@ -785,14 +785,15 @@ export class Renderer {
 
                 // account for tuplets...
                 if (thisEl.duration.tuplets.length > 0) {
-                    // only support one tuplet -- like vexflow
-                    const m21Tuplet = thisEl.duration.tuplets[0];
+                    // only support one tuplet per note -- like vexflow
                     if (activeTuplet === undefined) {
-                        activeTuplet = m21Tuplet;
+                        activeTuplet = thisEl.duration.tuplets[0];
                     }
                     activeTupletVexflowNotes.push(vfn);
                     activeTupletLength += thisEl.duration.quarterLength;
                     // console.log(activeTupletLength, activeTuplet.totalTupletLength());
+                    //
+                    // Add tuplet when complete.
                     if (
                         activeTupletLength
                             >= activeTuplet.totalTupletLength()
@@ -846,13 +847,16 @@ export class Renderer {
             const t1 = new Vex.Flow.TextNote({
                 text,
                 font,
-                duration: d,
+                duration: d.vexflowDuration,
             })
                 .setLine(11)
                 .setStave(stave)
                 .setJustification(Vex.Flow.TextNote.Justification.LEFT);
             if (lyricObj) {
                 t1.setStyle(lyricObj.style);
+            }
+            if (d.tuplets.length > 0) {
+                t1.applyTickMultiplier(d.tuplets[0].numberNotesNormal, d.tuplets[0].numberNotesActual);
             }
             return t1;
         };
@@ -871,7 +875,7 @@ export class Renderer {
             const el = s.get(i);
             const lyricsArray = el.lyrics;
             let text;
-            let d = el.duration.vexflowDuration;
+            let d = el.duration;
             let addConnector = false;
             let firstLyric;
             if (lyricsArray.length === 0) {
@@ -888,7 +892,7 @@ export class Renderer {
                 ) {
                     addConnector = ' ' + firstLyric.lyricConnector;
                     const tempQl = el.duration.quarterLength / 2.0;
-                    d = new duration.Duration(tempQl).vexflowDuration;
+                    d = new duration.Duration(tempQl);
                 }
             }
             const t1 = getTextNote(text, font, d, firstLyric);

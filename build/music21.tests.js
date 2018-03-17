@@ -1,5 +1,5 @@
 /**
- * music21j 0.9.0 built on  * 2018-03-16.
+ * music21j 0.9.0 built on  * 2018-03-17.
  * Copyright (c) 2013-2016 Michael Scott Cuthbert and cuthbertLab
  * BSD License, see LICENSE
  *
@@ -11663,14 +11663,15 @@
 
                       // account for tuplets...
                       if (thisEl.duration.tuplets.length > 0) {
-                          // only support one tuplet -- like vexflow
-                          var m21Tuplet = thisEl.duration.tuplets[0];
+                          // only support one tuplet per note -- like vexflow
                           if (activeTuplet === undefined) {
-                              activeTuplet = m21Tuplet;
+                              activeTuplet = thisEl.duration.tuplets[0];
                           }
                           activeTupletVexflowNotes.push(vfn);
                           activeTupletLength += thisEl.duration.quarterLength;
                           // console.log(activeTupletLength, activeTuplet.totalTupletLength());
+                          //
+                          // Add tuplet when complete.
                           if (activeTupletLength >= activeTuplet.totalTupletLength() || Math.abs(activeTupletLength - activeTuplet.totalTupletLength()) < 0.001) {
                               // console.log(activeTupletVexflowNotes);
                               var tupletOptions = {
@@ -11719,10 +11720,13 @@
                   var t1 = new Vex.Flow.TextNote({
                       text: text,
                       font: font,
-                      duration: d
+                      duration: d.vexflowDuration
                   }).setLine(11).setStave(stave).setJustification(Vex.Flow.TextNote.Justification.LEFT);
                   if (lyricObj) {
                       t1.setStyle(lyricObj.style);
+                  }
+                  if (d.tuplets.length > 0) {
+                      t1.applyTickMultiplier(d.tuplets[0].numberNotesNormal, d.tuplets[0].numberNotesActual);
                   }
                   return t1;
               };
@@ -11741,7 +11745,7 @@
                   var el = s.get(i);
                   var lyricsArray = el.lyrics;
                   var text = void 0;
-                  var d = el.duration.vexflowDuration;
+                  var d = el.duration;
                   var addConnector = false;
                   var firstLyric = void 0;
                   if (lyricsArray.length === 0) {
@@ -11755,7 +11759,7 @@
                       if (firstLyric.syllabic === 'middle' || firstLyric.syllabic === 'begin') {
                           addConnector = ' ' + firstLyric.lyricConnector;
                           var tempQl = el.duration.quarterLength / 2.0;
-                          d = new duration.Duration(tempQl).vexflowDuration;
+                          d = new duration.Duration(tempQl);
                       }
                   }
                   var t1 = getTextNote(text, font, d, firstLyric);
@@ -18008,7 +18012,7 @@
       for (var i = 0; i < tokens.length; i++) {
           // check at first so that a full measure but not over full
           // gets returned as a stream.Measure object.
-          if (m.duration.quarterLength >= currentTSBarDuration) {
+          if (m.duration.quarterLength >= currentTSBarDuration || Math.abs(m.duration.quarterLength - currentTSBarDuration) < 0.0001) {
               p.append(m);
               m = new stream.Measure();
           }
