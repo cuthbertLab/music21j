@@ -1,5 +1,5 @@
 /**
- * music21j 0.9.0 built on  * 2018-03-11.
+ * music21j 0.9.0 built on  * 2018-03-16.
  * Copyright (c) 2013-2016 Michael Scott Cuthbert and cuthbertLab
  * BSD License, see LICENSE
  *
@@ -3600,6 +3600,8 @@
                       }
                   }
               }
+
+              return numbers;
           }
           /**
            * Returns the type + "-" + direction (if direction is defined)
@@ -10202,6 +10204,8 @@
    */
   var meter = {};
 
+  var beamableDurationTypes = [duration.typeFromNumDict[8], duration.typeFromNumDict[16], duration.typeFromNumDict[32], duration.typeFromNumDict[64], duration.typeFromNumDict[128], duration.typeFromNumDict[256]];
+
   /**
    * A MUCH simpler version of the music21p TimeSignature object.
    *
@@ -10216,6 +10220,229 @@
    */
   var TimeSignature = function (_base$Music21Object) {
       inherits(TimeSignature, _base$Music21Object);
+      createClass(TimeSignature, null, [{
+          key: '_naiveBeams',
+          value: function _naiveBeams(srcList) {
+              var beamsList = [];
+              var _iteratorNormalCompletion = true;
+              var _didIteratorError = false;
+              var _iteratorError = undefined;
+
+              try {
+                  for (var _iterator = srcList[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+                      var el = _step.value;
+
+                      if (!beamableDurationTypes.includes(el.duration.type)) {
+                          beamsList.push(undefined);
+                      } else if (el.isRest) {
+                          beamsList.push(undefined);
+                      } else {
+                          var b = new beam.Beams();
+                          b.fill(el.duration.type);
+                          beamsList.push(b);
+                      }
+                  }
+              } catch (err) {
+                  _didIteratorError = true;
+                  _iteratorError = err;
+              } finally {
+                  try {
+                      if (!_iteratorNormalCompletion && _iterator.return) {
+                          _iterator.return();
+                      }
+                  } finally {
+                      if (_didIteratorError) {
+                          throw _iteratorError;
+                      }
+                  }
+              }
+
+              return beamsList;
+          }
+      }, {
+          key: '_removeSandwichedUnbeamables',
+          value: function _removeSandwichedUnbeamables(beamsList) {
+              var beamLast = void 0;
+              var beamNext = void 0;
+              for (var i = 0; i < beamsList.length; i++) {
+                  if (i !== beamsList.length - 1) {
+                      beamNext = beamsList[i + 1];
+                  } else {
+                      beamNext = undefined;
+                  }
+                  if (beamLast === undefined && beamNext === undefined) {
+                      beamsList[i] = undefined;
+                  }
+                  beamLast = beamsList[i];
+              }
+              return beamsList;
+          }
+      }, {
+          key: '_sanitizePartialBeams',
+          value: function _sanitizePartialBeams(beamsList) {
+              for (var i = 0; i < beamsList.length; i++) {
+                  if (beamsList[i] === undefined) {
+                      continue;
+                  }
+                  var allTypes = beamsList[i].getTypes();
+                  if (!allTypes.includes('start') && !allTypes.includes('stop') && !allTypes.includes('continue')) {
+                      // nothing but partials;
+                      beamsList[i] = undefined;
+                      continue;
+                  }
+                  var hasStart = false;
+                  var hasStop = false;
+                  var _iteratorNormalCompletion2 = true;
+                  var _didIteratorError2 = false;
+                  var _iteratorError2 = undefined;
+
+                  try {
+                      for (var _iterator2 = beamsList[i].beamsList[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+                          var b = _step2.value;
+
+                          if (b.type === 'start') {
+                              hasStart = true;
+                              continue;
+                          }
+                          if (b.type === 'stop') {
+                              hasStop = true;
+                              continue;
+                          }
+                          if (hasStart && b.type === 'partial' && b.direction === 'left') {
+                              b.direction = 'right';
+                          } else if (hasStop && b.type === 'partial' && b.direction === 'right') {
+                              b.direction = 'left';
+                          }
+                      }
+                  } catch (err) {
+                      _didIteratorError2 = true;
+                      _iteratorError2 = err;
+                  } finally {
+                      try {
+                          if (!_iteratorNormalCompletion2 && _iterator2.return) {
+                              _iterator2.return();
+                          }
+                      } finally {
+                          if (_didIteratorError2) {
+                              throw _iteratorError2;
+                          }
+                      }
+                  }
+              }
+              return beamsList;
+          }
+      }, {
+          key: '_mergeConnectingPartialBeams',
+          value: function _mergeConnectingPartialBeams(beamsList) {
+              for (var i = 0; i < beamsList.length - 1; i++) {
+                  var bThis = beamsList[i];
+                  var bNext = beamsList[i + 1];
+                  if (!bThis || !bNext) {
+                      continue;
+                  }
+                  var bThisNum = bThis.getNumbers();
+                  if (!bThisNum || bThisNum.length === 0) {
+                      continue;
+                  }
+                  var _iteratorNormalCompletion3 = true;
+                  var _didIteratorError3 = false;
+                  var _iteratorError3 = undefined;
+
+                  try {
+                      for (var _iterator3 = bThisNum[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+                          var thisNum = _step3.value;
+
+                          var thisBeam = bThis.getByNumber(thisNum);
+                          if (thisBeam.type !== 'partial' || thisBeam.direction !== 'right') {
+                              continue;
+                          }
+                          if (!bNext.getNumbers().includes(thisNum)) {
+                              continue;
+                          }
+                          var nextBeam = bNext.getByNumber(thisNum);
+                          if (nextBeam.type === 'partial' || nextBeam.direction === 'right') {
+                              continue;
+                          }
+                          if (nextBeam.type === 'continue' || nextBeam.type === 'stop') {
+                              // should not happen.
+                              continue;
+                          }
+                          thisBeam.type = 'start';
+                          thisBeam.direction = undefined;
+                          if (nextBeam.type === 'partial') {
+                              nextBeam.type = 'stop';
+                          } else if (nextBeam.type === 'start') {
+                              nextBeam.type = 'continue';
+                          }
+                          nextBeam.direction = undefined;
+                      }
+                  } catch (err) {
+                      _didIteratorError3 = true;
+                      _iteratorError3 = err;
+                  } finally {
+                      try {
+                          if (!_iteratorNormalCompletion3 && _iterator3.return) {
+                              _iterator3.return();
+                          }
+                      } finally {
+                          if (_didIteratorError3) {
+                              throw _iteratorError3;
+                          }
+                      }
+                  }
+              }
+              // now fix partial-lefts that follow stops:
+              for (var _i = 1; _i < beamsList.length; _i++) {
+                  var _bThis = beamsList[_i];
+                  var bPrev = beamsList[_i - 1];
+                  if (!_bThis || !bPrev) {
+                      continue;
+                  }
+                  var _bThisNum = _bThis.getNumbers();
+                  if (!_bThisNum || _bThisNum.length === 0) {
+                      continue;
+                  }
+                  var _iteratorNormalCompletion4 = true;
+                  var _didIteratorError4 = false;
+                  var _iteratorError4 = undefined;
+
+                  try {
+                      for (var _iterator4 = _bThisNum[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
+                          var _thisNum = _step4.value;
+
+                          var _thisBeam = _bThis.getByNumber(_thisNum);
+                          if (_thisBeam.type !== 'partial' || _thisBeam.direction !== 'left') {
+                              continue;
+                          }
+                          if (!bPrev.getNumbers().includes(_thisNum)) {
+                              continue;
+                          }
+                          var prevBeam = bPrev.getByNumber(_thisNum);
+                          if (prevBeam.type !== 'stop') {
+                              continue;
+                          }
+                          _thisBeam.type = 'stop';
+                          _thisBeam.direction = undefined;
+                          prevBeam.type = 'continue';
+                      }
+                  } catch (err) {
+                      _didIteratorError4 = true;
+                      _iteratorError4 = err;
+                  } finally {
+                      try {
+                          if (!_iteratorNormalCompletion4 && _iterator4.return) {
+                              _iterator4.return();
+                          }
+                      } finally {
+                          if (_didIteratorError4) {
+                              throw _iteratorError4;
+                          }
+                      }
+                  }
+              }
+              return beamsList;
+          }
+      }]);
 
       function TimeSignature(meterString) {
           classCallCheck(this, TimeSignature);
@@ -10224,7 +10451,7 @@
 
           _this._numerator = 4;
           _this._denominator = 4;
-          _this.beatGroups = [];
+          _this._beatGroups = [];
           _this._overwrittenBeatCount = undefined;
           _this._overwrittenBeatDuration = undefined;
           if (typeof meterString === 'string') {
@@ -10274,6 +10501,153 @@
               }
               return tempBeatGroups;
           }
+
+          /**
+           * Return a span of [start, end] for the current beat/beam grouping
+           */
+
+      }, {
+          key: 'offsetToSpan',
+          value: function offsetToSpan(offset) {
+              var beatDuration = this.beatDuration.quarterLength;
+              var beatsFromStart = Math.floor(offset / beatDuration);
+              var start = beatsFromStart * beatDuration;
+              var end = start + beatDuration;
+              return [start, end];
+          }
+
+          /**
+           * @param {Iterable} srcStream - a stream of elements.
+           * @param {object} options - an object with measureStartOffset
+           */
+
+      }, {
+          key: 'getBeams',
+          value: function getBeams(srcStream, options) {
+              var _this2 = this;
+
+              var params = { measureStartOffset: 0.0 };
+              common.merge(params, options);
+              var measureStartOffset = params.measureStartOffset;
+              var beamsList = TimeSignature._naiveBeams(srcStream);
+              beamsList = TimeSignature._removeSandwichedUnbeamables(beamsList);
+              var fixBeamsOneElementDepth = function fixBeamsOneElementDepth(i, el, depth) {
+                  var beams = beamsList[i];
+                  if (!beams || beams === undefined) {
+                      return;
+                  }
+                  var beamNumber = depth + 1;
+                  if (!beams.getNumbers().includes(beamNumber)) {
+                      return;
+                  }
+                  var dur = el.duration;
+                  var pos = el.offset + measureStartOffset;
+
+                  var start = pos; // opFrac
+                  var end = pos + dur.quarterLength; // opFrac;
+                  var startNext = end;
+                  var isLast = i === srcStream.length - 1;
+                  var isFirst = i === 0;
+                  var beamNext = void 0;
+                  var beamPrevious = void 0;
+                  if (!isFirst) {
+                      beamPrevious = beamsList[i - 1];
+                  }
+                  if (!isLast) {
+                      beamNext = beamsList[i + 1];
+                  }
+
+                  var _offsetToSpan = _this2.offsetToSpan(start),
+                      _offsetToSpan2 = slicedToArray(_offsetToSpan, 2),
+                      archetypeSpanStart = _offsetToSpan2[0],
+                      archetypeSpanEnd = _offsetToSpan2[1];
+
+                  var archetypeSpanNextStart = 0.0;
+                  if (beamNext !== undefined) {
+                      archetypeSpanNextStart = _this2.offsetToSpan(startNext)[0];
+                  }
+                  if (start === archetypeSpanStart && end === archetypeSpanEnd) {
+                      beamsList[i] = undefined;
+                      return;
+                  }
+
+                  var beamType = void 0;
+                  if (isFirst) {
+                      beamType = 'start';
+                      if (beamNext === undefined || !beamNext.getNumbers().includes(beamNumber)) {
+                          beamType = 'partial-right';
+                      }
+                  } else if (isLast) {
+                      beamType = 'start';
+                      if (beamPrevious === undefined || !beamPrevious.getNumbers().includes(beamNumber)) {
+                          beamType = 'partial-left';
+                      }
+                  } else if (beamPrevious === undefined || !beamPrevious.getNumbers().includes(beamNumber)) {
+                      if (beamNumber === 1 && beamNext === undefined) {
+                          beamsList[i] = undefined;
+                          return;
+                      } else if (beamNext === undefined && beamNumber > 1) {
+                          beamType = 'partial-left';
+                      } else if (startNext >= archetypeSpanEnd) {
+                          beamType = 'partial-left';
+                      } else if (beamNext === undefined || !beamNext.getNumbers().includes(beamNumber)) {
+                          beamType = 'partial-right';
+                      } else {
+                          beamType = 'start';
+                      }
+                  } else if (beamPrevious !== undefined && beamPrevious.getNumbers().includes(beamNumber) && ['stop', 'partial-left'].includes(beamPrevious.getTypeByNumber(beamNumber))) {
+                      if (beamNext !== undefined) {
+                          beamType = 'start';
+                      } else {
+                          beamType = 'partial-left';
+                      }
+                  } else if (beamNext === undefined || !beamNext.getNumbers().includes(beamNumber)) {
+                      beamType = 'stop';
+                  } else if (startNext < archetypeSpanEnd) {
+                      beamType = 'continue';
+                  } else if (startNext >= archetypeSpanNextStart) {
+                      beamType = 'stop';
+                  } else {
+                      console.warn('Cannot match beamType');
+                      return;
+                  }
+                  beams.setByNumber(beamNumber, beamType);
+              };
+
+              for (var depth = 0; depth < beamableDurationTypes.length; depth++) {
+                  var i = 0;
+                  var _iteratorNormalCompletion5 = true;
+                  var _didIteratorError5 = false;
+                  var _iteratorError5 = undefined;
+
+                  try {
+                      for (var _iterator5 = srcStream[Symbol.iterator](), _step5; !(_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done); _iteratorNormalCompletion5 = true) {
+                          var el = _step5.value;
+
+                          fixBeamsOneElementDepth(i, el, depth);
+                          i += 1;
+                      }
+                  } catch (err) {
+                      _didIteratorError5 = true;
+                      _iteratorError5 = err;
+                  } finally {
+                      try {
+                          if (!_iteratorNormalCompletion5 && _iterator5.return) {
+                              _iterator5.return();
+                          }
+                      } finally {
+                          if (_didIteratorError5) {
+                              throw _iteratorError5;
+                          }
+                      }
+                  }
+              }
+
+              beamsList = TimeSignature._sanitizePartialBeams(beamsList);
+              beamsList = TimeSignature._mergeConnectingPartialBeams(beamsList);
+              return beamsList;
+          }
+
           /**
            * Compute the Beat Group according to this time signature for VexFlow. For beaming.
            *
@@ -10285,12 +10659,7 @@
       }, {
           key: 'vexflowBeatGroups',
           value: function vexflowBeatGroups() {
-              var tempBeatGroups = void 0;
-              if (this.beatGroups.length > 0) {
-                  tempBeatGroups = this.beatGroups;
-              } else {
-                  tempBeatGroups = this.computeBeatGroups();
-              }
+              var tempBeatGroups = this.beatGroups;
               // console.log(tempBeatGroups);
               var vfBeatGroups = [];
               for (var i = 0; i < tempBeatGroups.length; i++) {
@@ -10330,13 +10699,24 @@
               var meterList = meterString.split('/');
               this.numerator = parseInt(meterList[0]);
               this.denominator = parseInt(meterList[1]);
-              this.beatGroups = this.computeBeatGroups();
+              this._beatGroups = [];
           }
       }, {
           key: 'barDuration',
           get: function get() {
               var ql = 4.0 * this._numerator / this._denominator;
               return new duration.Duration(ql);
+          }
+      }, {
+          key: 'beatGroups',
+          get: function get() {
+              if (this._beatGroups.length === 0) {
+                  this._beatGroups = this.computeBeatGroups();
+              }
+              return this._beatGroups;
+          },
+          set: function set(newGroups) {
+              this._beatGroups = newGroups;
           }
 
           /**
@@ -11824,31 +12204,82 @@
       }
 
       createClass(Stream, [{
+          key: Symbol.iterator,
+          value: regeneratorRuntime.mark(function value() {
+              var i;
+              return regeneratorRuntime.wrap(function value$(_context) {
+                  while (1) {
+                      switch (_context.prev = _context.next) {
+                          case 0:
+                              i = 0;
+
+                          case 1:
+                              if (!(i < this.length)) {
+                                  _context.next = 7;
+                                  break;
+                              }
+
+                              _context.next = 4;
+                              return this.get(i);
+
+                          case 4:
+                              i++;
+                              _context.next = 1;
+                              break;
+
+                          case 7:
+                          case 'end':
+                              return _context.stop();
+                      }
+                  }
+              }, value, this);
+          })
+      }, {
           key: '_getFlatOrSemiFlat',
           value: function _getFlatOrSemiFlat(retainContainers) {
               if (!this.hasSubStreams()) {
                   return this;
               }
               var tempEls = [];
-              for (var i = 0; i < this.length; i++) {
-                  var el = this.get(i);
-                  // console.log(i, this.length);
-                  if (el.isStream) {
-                      if (retainContainers) {
+              var _iteratorNormalCompletion = true;
+              var _didIteratorError = false;
+              var _iteratorError = undefined;
+
+              try {
+                  for (var _iterator = this[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+                      var el = _step.value;
+
+                      if (el.isStream) {
+                          if (retainContainers) {
+                              tempEls.push(el);
+                          }
+                          var offsetShift = el.offset;
+                          // console.log('offsetShift', offsetShift, el.classes[el.classes.length -1]);
+                          var elFlat = el._getFlatOrSemiFlat(retainContainers);
+                          for (var j = 0; j < elFlat.length; j++) {
+                              // offset should NOT be null because already in Stream
+                              elFlat.get(j).offset += offsetShift;
+                          }
+                          tempEls.push.apply(tempEls, toConsumableArray(elFlat._elements));
+                      } else {
                           tempEls.push(el);
                       }
-                      var offsetShift = el.offset;
-                      // console.log('offsetShift', offsetShift, el.classes[el.classes.length -1]);
-                      var elFlat = el._getFlatOrSemiFlat(retainContainers);
-                      for (var j = 0; j < elFlat.length; j++) {
-                          // offset should NOT be null because already in Stream
-                          elFlat.get(j).offset += offsetShift;
+                  }
+              } catch (err) {
+                  _didIteratorError = true;
+                  _iteratorError = err;
+              } finally {
+                  try {
+                      if (!_iteratorNormalCompletion && _iterator.return) {
+                          _iterator.return();
                       }
-                      tempEls.push.apply(tempEls, toConsumableArray(elFlat._elements));
-                  } else {
-                      tempEls.push(el);
+                  } finally {
+                      if (_didIteratorError) {
+                          throw _iteratorError;
+                      }
                   }
               }
+
               var newSt = this.clone(false);
               newSt.elements = tempEls;
               return newSt;
@@ -12113,13 +12544,34 @@
           key: 'hasSubStreams',
           value: function hasSubStreams() {
               var hasSubStreams = false;
-              for (var i = 0; i < this.length; i++) {
-                  var el = this.elements[i];
-                  if (el.isClassOrSubclass('Stream')) {
-                      hasSubStreams = true;
-                      break;
+              var _iteratorNormalCompletion2 = true;
+              var _didIteratorError2 = false;
+              var _iteratorError2 = undefined;
+
+              try {
+                  for (var _iterator2 = this[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+                      var el = _step2.value;
+
+                      if (el.isClassOrSubclass('Stream')) {
+                          hasSubStreams = true;
+                          break;
+                      }
+                  }
+              } catch (err) {
+                  _didIteratorError2 = true;
+                  _iteratorError2 = err;
+              } finally {
+                  try {
+                      if (!_iteratorNormalCompletion2 && _iterator2.return) {
+                          _iterator2.return();
+                      }
+                  } finally {
+                      if (_didIteratorError2) {
+                          throw _iteratorError2;
+                      }
                   }
               }
+
               return hasSubStreams;
           }
           /**
@@ -12245,12 +12697,171 @@
                   this.elements = [];
                   // endElements
                   // elementsChanged;
-                  for (var _i2 = 0; _i2 < post.length; _i2++) {
-                      var _e = post.get(_i2);
-                      this.insert(_e.offset, _e);
+                  var _iteratorNormalCompletion3 = true;
+                  var _didIteratorError3 = false;
+                  var _iteratorError3 = undefined;
+
+                  try {
+                      for (var _iterator3 = post[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+                          var _e = _step3.value;
+
+                          this.insert(_e.offset, _e);
+                      }
+                  } catch (err) {
+                      _didIteratorError3 = true;
+                      _iteratorError3 = err;
+                  } finally {
+                      try {
+                          if (!_iteratorNormalCompletion3 && _iterator3.return) {
+                              _iterator3.return();
+                          }
+                      } finally {
+                          if (_didIteratorError3) {
+                              throw _iteratorError3;
+                          }
+                      }
                   }
+
                   return this; // javascript style;
               }
+          }
+
+          /**
+           * Return a new Stream or modify this stream
+           * to have beams.
+           * 
+           * NOT yet being called March 2018
+           */
+
+      }, {
+          key: 'makeBeams',
+          value: function makeBeams(options) {
+              var params = { inPlace: false };
+              common.merge(params, options);
+              var returnObj = this;
+              if (!params.inPlace) {
+                  returnObj = this.clone(true);
+              }
+              var mColl = void 0;
+              if (this.classes.includes('Measure')) {
+                  mColl = [returnObj];
+              } else {
+                  mColl = [];
+                  var _iteratorNormalCompletion4 = true;
+                  var _didIteratorError4 = false;
+                  var _iteratorError4 = undefined;
+
+                  try {
+                      for (var _iterator4 = returnObj.getElementsByClass('Measure').elements[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
+                          var m = _step4.value;
+
+                          mColl.push(m);
+                      }
+                  } catch (err) {
+                      _didIteratorError4 = true;
+                      _iteratorError4 = err;
+                  } finally {
+                      try {
+                          if (!_iteratorNormalCompletion4 && _iterator4.return) {
+                              _iterator4.return();
+                          }
+                      } finally {
+                          if (_didIteratorError4) {
+                              throw _iteratorError4;
+                          }
+                      }
+                  }
+              }
+              var lastTimeSignature = void 0;
+              var _iteratorNormalCompletion5 = true;
+              var _didIteratorError5 = false;
+              var _iteratorError5 = undefined;
+
+              try {
+                  for (var _iterator5 = mColl[Symbol.iterator](), _step5; !(_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done); _iteratorNormalCompletion5 = true) {
+                      var _m = _step5.value;
+
+                      if (_m.timeSignature !== undefined) {
+                          lastTimeSignature = _m.timeSignature;
+                      }
+                      if (lastTimeSignature === undefined) {
+                          throw new StreamException$1('Need a Time Signature to process beams');
+                      }
+                      // todo voices!
+                      if (_m.length <= 1) {
+                          continue; // nothing to beam.
+                      }
+                      var noteStream = _m.notesAndRests;
+                      var durList = [];
+                      var _iteratorNormalCompletion6 = true;
+                      var _didIteratorError6 = false;
+                      var _iteratorError6 = undefined;
+
+                      try {
+                          for (var _iterator6 = noteStream[Symbol.iterator](), _step6; !(_iteratorNormalCompletion6 = (_step6 = _iterator6.next()).done); _iteratorNormalCompletion6 = true) {
+                              var _n = _step6.value;
+
+                              durList.push(_n.duration);
+                          }
+                      } catch (err) {
+                          _didIteratorError6 = true;
+                          _iteratorError6 = err;
+                      } finally {
+                          try {
+                              if (!_iteratorNormalCompletion6 && _iterator6.return) {
+                                  _iterator6.return();
+                              }
+                          } finally {
+                              if (_didIteratorError6) {
+                                  throw _iteratorError6;
+                              }
+                          }
+                      }
+
+                      var durSum = durList.map(function (a) {
+                          return a.quarterLength;
+                      }).reduce(function (total, val) {
+                          return total + val;
+                      });
+                      var barQL = lastTimeSignature.barDuration.quarterLength;
+                      if (durSum > barQL) {
+                          continue;
+                      }
+                      var offset = 0.0;
+                      if (_m.paddingLeft !== 0.0 && _m.paddingLeft !== undefined) {
+                          offset = _m.paddingLeft;
+                      } else if (noteStream.highestTime < barQL) {
+                          offset = barQL - noteStream.highestTime;
+                      }
+                      var beamsList = lastTimeSignature.getBeams(noteStream, { measureStartOffset: offset });
+                      for (var i = 0; i < noteStream.length; i++) {
+                          var n = noteStream.get(i);
+                          var thisBeams = beamsList[i];
+                          if (thisBeams !== undefined) {
+                              n.beams = thisBeams;
+                          } else {
+                              n.beams = new beam.Beams();
+                          }
+                      }
+                  }
+
+                  // returnObj.streamStatus.beams = true;
+              } catch (err) {
+                  _didIteratorError5 = true;
+                  _iteratorError5 = err;
+              } finally {
+                  try {
+                      if (!_iteratorNormalCompletion5 && _iterator5.return) {
+                          _iterator5.return();
+                      }
+                  } finally {
+                      if (_didIteratorError5) {
+                          throw _iteratorError5;
+                      }
+                  }
+              }
+
+              return returnObj;
           }
 
           /**
@@ -12263,12 +12874,33 @@
       }, {
           key: 'hasLyrics',
           value: function hasLyrics() {
-              for (var i = 0; i < this.length; i++) {
-                  var el = this.elements[i];
-                  if (el.lyric !== undefined) {
-                      return true;
+              var _iteratorNormalCompletion7 = true;
+              var _didIteratorError7 = false;
+              var _iteratorError7 = undefined;
+
+              try {
+                  for (var _iterator7 = this[Symbol.iterator](), _step7; !(_iteratorNormalCompletion7 = (_step7 = _iterator7.next()).done); _iteratorNormalCompletion7 = true) {
+                      var el = _step7.value;
+
+                      if (el.lyric !== undefined) {
+                          return true;
+                      }
+                  }
+              } catch (err) {
+                  _didIteratorError7 = true;
+                  _iteratorError7 = err;
+              } finally {
+                  try {
+                      if (!_iteratorNormalCompletion7 && _iterator7.return) {
+                          _iterator7.return();
+                      }
+                  } finally {
+                      if (_didIteratorError7) {
+                          throw _iteratorError7;
+                      }
                   }
               }
+
               return false;
           }
 
@@ -12319,15 +12951,36 @@
           key: 'getElementsByClass',
           value: function getElementsByClass(classList) {
               var tempEls = [];
-              for (var i = 0; i < this.length; i++) {
-                  var thisEl = this.get(i);
-                  // console.warn(thisEl);
-                  if (thisEl.isClassOrSubclass === undefined) {
-                      console.error('what the hell is a ', thisEl, 'doing in a Stream?');
-                  } else if (thisEl.isClassOrSubclass(classList)) {
-                      tempEls.push(thisEl);
+              var _iteratorNormalCompletion8 = true;
+              var _didIteratorError8 = false;
+              var _iteratorError8 = undefined;
+
+              try {
+                  for (var _iterator8 = this[Symbol.iterator](), _step8; !(_iteratorNormalCompletion8 = (_step8 = _iterator8.next()).done); _iteratorNormalCompletion8 = true) {
+                      var thisEl = _step8.value;
+
+                      // console.warn(thisEl);
+                      if (thisEl.isClassOrSubclass === undefined) {
+                          console.error('what the hell is a ', thisEl, 'doing in a Stream?');
+                      } else if (thisEl.isClassOrSubclass(classList)) {
+                          tempEls.push(thisEl);
+                      }
+                  }
+              } catch (err) {
+                  _didIteratorError8 = true;
+                  _iteratorError8 = err;
+              } finally {
+                  try {
+                      if (!_iteratorNormalCompletion8 && _iterator8.return) {
+                          _iterator8.return();
+                      }
+                  } finally {
+                      if (_didIteratorError8) {
+                          throw _iteratorError8;
+                      }
                   }
               }
+
               var newSt = this.clone();
               newSt.elements = tempEls;
               return newSt;
@@ -12364,27 +13017,48 @@
               var lastOctaveStepList = [];
               var lastStepDict = void 0;
               var p = void 0;
-              for (var _i3 = 0; _i3 < 10; _i3++) {
+              for (var _i2 = 0; _i2 < 10; _i2++) {
                   lastStepDict = $.extend({}, extendableStepList);
                   lastOctaveStepList.push(lastStepDict);
               }
               var lastOctavelessStepDict = $.extend({}, extendableStepList); // probably unnecessary, but safe...
-              for (var _i4 = 0; _i4 < this.length; _i4++) {
-                  var el = this.get(_i4);
-                  if (el.pitch !== undefined) {
-                      // note
-                      p = el.pitch;
-                      lastStepDict = lastOctaveStepList[p.octave];
-                      this._makeAccidentalForOnePitch(p, lastStepDict, lastOctavelessStepDict);
-                  } else if (el._notes !== undefined) {
-                      // chord
-                      for (var j = 0; j < el._notes.length; j++) {
-                          p = el._notes[j].pitch;
+              var _iteratorNormalCompletion9 = true;
+              var _didIteratorError9 = false;
+              var _iteratorError9 = undefined;
+
+              try {
+                  for (var _iterator9 = this[Symbol.iterator](), _step9; !(_iteratorNormalCompletion9 = (_step9 = _iterator9.next()).done); _iteratorNormalCompletion9 = true) {
+                      var el = _step9.value;
+
+                      if (el.pitch !== undefined) {
+                          // note
+                          p = el.pitch;
                           lastStepDict = lastOctaveStepList[p.octave];
                           this._makeAccidentalForOnePitch(p, lastStepDict, lastOctavelessStepDict);
+                      } else if (el._notes !== undefined) {
+                          // chord
+                          for (var j = 0; j < el._notes.length; j++) {
+                              p = el._notes[j].pitch;
+                              lastStepDict = lastOctaveStepList[p.octave];
+                              this._makeAccidentalForOnePitch(p, lastStepDict, lastOctavelessStepDict);
+                          }
+                      }
+                  }
+              } catch (err) {
+                  _didIteratorError9 = true;
+                  _iteratorError9 = err;
+              } finally {
+                  try {
+                      if (!_iteratorNormalCompletion9 && _iterator9.return) {
+                          _iterator9.return();
+                      }
+                  } finally {
+                      if (_didIteratorError9) {
+                          throw _iteratorError9;
                       }
                   }
               }
+
               return this;
           }
 
@@ -12452,10 +13126,30 @@
               }
 
               if (recursive) {
-                  for (var i = 0; i < this.length; i++) {
-                      var el = this.get(i);
-                      if (el.isClassOrSubclass('Stream')) {
-                          el.resetRenderOptions(recursive, preserveEvents);
+                  var _iteratorNormalCompletion10 = true;
+                  var _didIteratorError10 = false;
+                  var _iteratorError10 = undefined;
+
+                  try {
+                      for (var _iterator10 = this[Symbol.iterator](), _step10; !(_iteratorNormalCompletion10 = (_step10 = _iterator10.next()).done); _iteratorNormalCompletion10 = true) {
+                          var el = _step10.value;
+
+                          if (el.isClassOrSubclass('Stream')) {
+                              el.resetRenderOptions(recursive, preserveEvents);
+                          }
+                      }
+                  } catch (err) {
+                      _didIteratorError10 = true;
+                      _iteratorError10 = err;
+                  } finally {
+                      try {
+                          if (!_iteratorNormalCompletion10 && _iterator10.return) {
+                              _iterator10.return();
+                          }
+                      } finally {
+                          if (_didIteratorError10) {
+                              throw _iteratorError10;
+                          }
                       }
                   }
               }
@@ -13174,13 +13868,13 @@
                   note: undefined
               }; // a backup in case we did not find within allowablePixels
 
-              var _iteratorNormalCompletion = true;
-              var _didIteratorError = false;
-              var _iteratorError = undefined;
+              var _iteratorNormalCompletion11 = true;
+              var _didIteratorError11 = false;
+              var _iteratorError11 = undefined;
 
               try {
-                  for (var _iterator = subStream.flat.notesAndRests.elements[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-                      var n = _step.value;
+                  for (var _iterator11 = subStream.flat.notesAndRests.elements[Symbol.iterator](), _step11; !(_iteratorNormalCompletion11 = (_step11 = _iterator11.next()).done); _iteratorNormalCompletion11 = true) {
+                      var n = _step11.value;
 
                       /* should also
                        * compensate for accidentals...
@@ -13199,16 +13893,16 @@
                   }
                   // console.log('note here is: ', foundNote);
               } catch (err) {
-                  _didIteratorError = true;
-                  _iteratorError = err;
+                  _didIteratorError11 = true;
+                  _iteratorError11 = err;
               } finally {
                   try {
-                      if (!_iteratorNormalCompletion && _iterator.return) {
-                          _iterator.return();
+                      if (!_iteratorNormalCompletion11 && _iterator11.return) {
+                          _iterator11.return();
                       }
                   } finally {
-                      if (_didIteratorError) {
-                          throw _iteratorError;
+                      if (_didIteratorError11) {
+                          throw _iteratorError11;
                       }
                   }
               }
@@ -13510,12 +14204,33 @@
       }, {
           key: 'hasVoices',
           value: function hasVoices() {
-              for (var i = 0; i < this.length; i++) {
-                  var el = this.get(i);
-                  if (el.isClassOrSubclass('Voice')) {
-                      return true;
+              var _iteratorNormalCompletion12 = true;
+              var _didIteratorError12 = false;
+              var _iteratorError12 = undefined;
+
+              try {
+                  for (var _iterator12 = this[Symbol.iterator](), _step12; !(_iteratorNormalCompletion12 = (_step12 = _iterator12.next()).done); _iteratorNormalCompletion12 = true) {
+                      var el = _step12.value;
+
+                      if (el.isClassOrSubclass('Voice')) {
+                          return true;
+                      }
+                  }
+              } catch (err) {
+                  _didIteratorError12 = true;
+                  _iteratorError12 = err;
+              } finally {
+                  try {
+                      if (!_iteratorNormalCompletion12 && _iterator12.return) {
+                          _iterator12.return();
+                      }
+                  } finally {
+                      if (_didIteratorError12) {
+                          throw _iteratorError12;
+                      }
                   }
               }
+
               return false;
           }
       }, {
@@ -13533,16 +14248,37 @@
           key: 'highestTime',
           get: function get() {
               var highestTime = 0.0;
-              for (var i = 0; i < this.length; i++) {
-                  var el = this.get(i);
-                  var endTime = el.offset;
-                  if (el.duration !== undefined) {
-                      endTime += el.duration.quarterLength;
+              var _iteratorNormalCompletion13 = true;
+              var _didIteratorError13 = false;
+              var _iteratorError13 = undefined;
+
+              try {
+                  for (var _iterator13 = this[Symbol.iterator](), _step13; !(_iteratorNormalCompletion13 = (_step13 = _iterator13.next()).done); _iteratorNormalCompletion13 = true) {
+                      var el = _step13.value;
+
+                      var endTime = el.offset;
+                      if (el.duration !== undefined) {
+                          endTime += el.duration.quarterLength;
+                      }
+                      if (endTime > highestTime) {
+                          highestTime = endTime;
+                      }
                   }
-                  if (endTime > highestTime) {
-                      highestTime = endTime;
+              } catch (err) {
+                  _didIteratorError13 = true;
+                  _iteratorError13 = err;
+              } finally {
+                  try {
+                      if (!_iteratorNormalCompletion13 && _iterator13.return) {
+                          _iterator13.return();
+                      }
+                  } finally {
+                      if (_didIteratorError13) {
+                          throw _iteratorError13;
+                      }
                   }
               }
+
               return highestTime;
           }
       }, {
@@ -13823,16 +14559,37 @@
           value: function getMeasureWidths() {
               /* call after setSubstreamRenderOptions */
               var measureWidths = [];
-              for (var i = 0; i < this.length; i++) {
-                  var el = this.get(i);
-                  if (el.isClassOrSubclass('Measure')) {
-                      var elRendOp = el.renderOptions;
-                      measureWidths[elRendOp.measureIndex] = elRendOp.width;
+              var _iteratorNormalCompletion14 = true;
+              var _didIteratorError14 = false;
+              var _iteratorError14 = undefined;
+
+              try {
+                  for (var _iterator14 = this[Symbol.iterator](), _step14; !(_iteratorNormalCompletion14 = (_step14 = _iterator14.next()).done); _iteratorNormalCompletion14 = true) {
+                      var el = _step14.value;
+
+                      if (el.isClassOrSubclass('Measure')) {
+                          var elRendOp = el.renderOptions;
+                          measureWidths[elRendOp.measureIndex] = elRendOp.width;
+                      }
+                  }
+                  /* console.log(measureWidths);
+                   *
+                   */
+              } catch (err) {
+                  _didIteratorError14 = true;
+                  _iteratorError14 = err;
+              } finally {
+                  try {
+                      if (!_iteratorNormalCompletion14 && _iterator14.return) {
+                          _iterator14.return();
+                      }
+                  } finally {
+                      if (_didIteratorError14) {
+                          throw _iteratorError14;
+                      }
                   }
               }
-              /* console.log(measureWidths);
-               *
-               */
+
               return measureWidths;
           }
           /**
@@ -13852,16 +14609,38 @@
               if (this.hasSubStreams()) {
                   // part with Measures underneath
                   var totalLength = 0;
-                  var subStreams = this.getElementsByClass('Measure');
-                  for (var i = 0; i < subStreams.length; i++) {
-                      var m = subStreams.get(i);
-                      // this looks wrong, but actually seems to be right. moving it to
-                      // after the break breaks things.
-                      totalLength += m.estimateStaffLength() + m.renderOptions.staffPadding;
-                      if (i !== 0 && m.renderOptions.startNewSystem === true) {
-                          break;
+                  var isFirst = true;
+                  var _iteratorNormalCompletion15 = true;
+                  var _didIteratorError15 = false;
+                  var _iteratorError15 = undefined;
+
+                  try {
+                      for (var _iterator15 = this.getElementsByClass('Measure')[Symbol.iterator](), _step15; !(_iteratorNormalCompletion15 = (_step15 = _iterator15.next()).done); _iteratorNormalCompletion15 = true) {
+                          var m = _step15.value;
+
+                          // this looks wrong, but actually seems to be right. moving it to
+                          // after the break breaks things.
+                          totalLength += m.estimateStaffLength() + m.renderOptions.staffPadding;
+                          if (!isFirst && m.renderOptions.startNewSystem === true) {
+                              break;
+                          }
+                          isFirst = false;
+                      }
+                  } catch (err) {
+                      _didIteratorError15 = true;
+                      _iteratorError15 = err;
+                  } finally {
+                      try {
+                          if (!_iteratorNormalCompletion15 && _iterator15.return) {
+                              _iterator15.return();
+                          }
+                      } finally {
+                          if (_didIteratorError15) {
+                              throw _iteratorError15;
+                          }
                       }
                   }
+
                   return totalLength;
               }
               // no measures found in part... treat as measure
@@ -13998,52 +14777,73 @@
               var lastKeySignature = void 0;
               var lastClef = void 0;
 
-              for (var i = 0; i < this.length; i++) {
-                  var el = this.get(i);
-                  if (el.isClassOrSubclass('Measure')) {
-                      var elRendOp = el.renderOptions;
-                      elRendOp.measureIndex = currentMeasureIndex;
-                      elRendOp.top = rendOp.top;
-                      elRendOp.partIndex = rendOp.partIndex;
-                      elRendOp.left = currentMeasureLeft;
+              var _iteratorNormalCompletion16 = true;
+              var _didIteratorError16 = false;
+              var _iteratorError16 = undefined;
 
-                      if (currentMeasureIndex === 0) {
-                          lastClef = el._clef;
-                          lastTimeSignature = el._timeSignature;
-                          lastKeySignature = el._keySignature;
+              try {
+                  for (var _iterator16 = this[Symbol.iterator](), _step16; !(_iteratorNormalCompletion16 = (_step16 = _iterator16.next()).done); _iteratorNormalCompletion16 = true) {
+                      var el = _step16.value;
 
-                          elRendOp.displayClef = true;
-                          elRendOp.displayKeySignature = true;
-                          elRendOp.displayTimeSignature = true;
-                      } else {
-                          if (el._clef !== undefined && lastClef !== undefined && el._clef.name !== lastClef.name) {
-                              console.log('changing clefs for ', elRendOp.measureIndex, ' from ', lastClef.name, ' to ', el._clef.name);
+                      if (el.isClassOrSubclass('Measure')) {
+                          var elRendOp = el.renderOptions;
+                          elRendOp.measureIndex = currentMeasureIndex;
+                          elRendOp.top = rendOp.top;
+                          elRendOp.partIndex = rendOp.partIndex;
+                          elRendOp.left = currentMeasureLeft;
+
+                          if (currentMeasureIndex === 0) {
                               lastClef = el._clef;
-                              elRendOp.displayClef = true;
-                          } else {
-                              elRendOp.displayClef = false;
-                          }
-
-                          if (el._keySignature !== undefined && lastKeySignature !== undefined && el._keySignature.sharps !== lastKeySignature.sharps) {
-                              lastKeySignature = el._keySignature;
-                              elRendOp.displayKeySignature = true;
-                          } else {
-                              elRendOp.displayKeySignature = false;
-                          }
-
-                          if (el._timeSignature !== undefined && lastTimeSignature !== undefined && el._timeSignature.ratioString !== lastTimeSignature.ratioString) {
                               lastTimeSignature = el._timeSignature;
+                              lastKeySignature = el._keySignature;
+
+                              elRendOp.displayClef = true;
+                              elRendOp.displayKeySignature = true;
                               elRendOp.displayTimeSignature = true;
                           } else {
-                              elRendOp.displayTimeSignature = false;
+                              if (el._clef !== undefined && lastClef !== undefined && el._clef.name !== lastClef.name) {
+                                  console.log('changing clefs for ', elRendOp.measureIndex, ' from ', lastClef.name, ' to ', el._clef.name);
+                                  lastClef = el._clef;
+                                  elRendOp.displayClef = true;
+                              } else {
+                                  elRendOp.displayClef = false;
+                              }
+
+                              if (el._keySignature !== undefined && lastKeySignature !== undefined && el._keySignature.sharps !== lastKeySignature.sharps) {
+                                  lastKeySignature = el._keySignature;
+                                  elRendOp.displayKeySignature = true;
+                              } else {
+                                  elRendOp.displayKeySignature = false;
+                              }
+
+                              if (el._timeSignature !== undefined && lastTimeSignature !== undefined && el._timeSignature.ratioString !== lastTimeSignature.ratioString) {
+                                  lastTimeSignature = el._timeSignature;
+                                  elRendOp.displayTimeSignature = true;
+                              } else {
+                                  elRendOp.displayTimeSignature = false;
+                              }
                           }
+                          elRendOp.width = el.estimateStaffLength() + elRendOp.staffPadding;
+                          elRendOp.height = el.estimateStreamHeight();
+                          currentMeasureLeft += elRendOp.width;
+                          currentMeasureIndex += 1;
                       }
-                      elRendOp.width = el.estimateStaffLength() + elRendOp.staffPadding;
-                      elRendOp.height = el.estimateStreamHeight();
-                      currentMeasureLeft += elRendOp.width;
-                      currentMeasureIndex += 1;
+                  }
+              } catch (err) {
+                  _didIteratorError16 = true;
+                  _iteratorError16 = err;
+              } finally {
+                  try {
+                      if (!_iteratorNormalCompletion16 && _iterator16.return) {
+                          _iterator16.return();
+                      }
+                  } finally {
+                      if (_didIteratorError16) {
+                          throw _iteratorError16;
+                      }
                   }
               }
+
               return this;
           }
 
@@ -14123,26 +14923,47 @@
           value: function getStreamFromScaledXandSystemIndex(xPxScaled, systemIndex) {
               var gotMeasure = void 0;
               var measures = this.measures;
-              for (var i = 0; i < measures.length; i++) {
-                  var m = measures.get(i);
-                  var rendOp = m.renderOptions;
-                  var left = rendOp.left;
-                  var right = left + rendOp.width;
-                  var top = rendOp.top;
-                  var bottom = top + rendOp.height;
-                  if (debug) {
-                      console.log('Searching for X:' + Math.round(xPxScaled) + ' in M ' + i + ' with boundaries L:' + left + ' R:' + right + ' T: ' + top + ' B: ' + bottom);
+              var _iteratorNormalCompletion17 = true;
+              var _didIteratorError17 = false;
+              var _iteratorError17 = undefined;
+
+              try {
+                  for (var _iterator17 = measures[Symbol.iterator](), _step17; !(_iteratorNormalCompletion17 = (_step17 = _iterator17.next()).done); _iteratorNormalCompletion17 = true) {
+                      var m = _step17.value;
+
+                      var rendOp = m.renderOptions;
+                      var left = rendOp.left;
+                      var right = left + rendOp.width;
+                      var top = rendOp.top;
+                      var bottom = top + rendOp.height;
+                      if (debug) {
+                          console.log('Searching for X:' + Math.round(xPxScaled) + ' in Measure ' + ' with boundaries L:' + left + ' R:' + right + ' T: ' + top + ' B: ' + bottom);
+                      }
+                      if (xPxScaled >= left && xPxScaled <= right) {
+                          if (systemIndex === undefined) {
+                              gotMeasure = m;
+                              break;
+                          } else if (rendOp.systemIndex === systemIndex) {
+                              gotMeasure = m;
+                              break;
+                          }
+                      }
                   }
-                  if (xPxScaled >= left && xPxScaled <= right) {
-                      if (systemIndex === undefined) {
-                          gotMeasure = m;
-                          break;
-                      } else if (rendOp.systemIndex === systemIndex) {
-                          gotMeasure = m;
-                          break;
+              } catch (err) {
+                  _didIteratorError17 = true;
+                  _iteratorError17 = err;
+              } finally {
+                  try {
+                      if (!_iteratorNormalCompletion17 && _iterator17.return) {
+                          _iterator17.return();
+                      }
+                  } finally {
+                      if (_didIteratorError17) {
+                          throw _iteratorError17;
                       }
                   }
               }
+
               return gotMeasure;
           }
       }]);
@@ -14205,26 +15026,67 @@
               var currentPartNumber = 0;
               var currentPartTop = 0;
               var partSpacing = this.partSpacing;
-              for (var i = 0; i < this.length; i++) {
-                  var el = this.get(i);
+              var _iteratorNormalCompletion18 = true;
+              var _didIteratorError18 = false;
+              var _iteratorError18 = undefined;
 
-                  if (el.isClassOrSubclass('Part')) {
-                      el.renderOptions.partIndex = currentPartNumber;
-                      el.renderOptions.top = currentPartTop;
-                      el.setSubstreamRenderOptions();
-                      currentPartTop += partSpacing;
-                      currentPartNumber += 1;
+              try {
+                  for (var _iterator18 = this[Symbol.iterator](), _step18; !(_iteratorNormalCompletion18 = (_step18 = _iterator18.next()).done); _iteratorNormalCompletion18 = true) {
+                      var el = _step18.value;
+
+                      if (el.isClassOrSubclass('Part')) {
+                          el.renderOptions.partIndex = currentPartNumber;
+                          el.renderOptions.top = currentPartTop;
+                          el.setSubstreamRenderOptions();
+                          currentPartTop += partSpacing;
+                          currentPartNumber += 1;
+                      }
+                  }
+              } catch (err) {
+                  _didIteratorError18 = true;
+                  _iteratorError18 = err;
+              } finally {
+                  try {
+                      if (!_iteratorNormalCompletion18 && _iterator18.return) {
+                          _iterator18.return();
+                      }
+                  } finally {
+                      if (_didIteratorError18) {
+                          throw _iteratorError18;
+                      }
                   }
               }
+
               this.evenPartMeasureSpacing();
               var ignoreNumSystems = true;
               var currentScoreHeight = this.estimateStreamHeight(ignoreNumSystems);
-              for (var _i5 = 0; _i5 < this.length; _i5++) {
-                  var _el = this.get(_i5);
-                  if (_el.isClassOrSubclass('Part')) {
-                      _el.fixSystemInformation(currentScoreHeight);
+              var _iteratorNormalCompletion19 = true;
+              var _didIteratorError19 = false;
+              var _iteratorError19 = undefined;
+
+              try {
+                  for (var _iterator19 = this[Symbol.iterator](), _step19; !(_iteratorNormalCompletion19 = (_step19 = _iterator19.next()).done); _iteratorNormalCompletion19 = true) {
+                      var _el = _step19.value;
+
+                      if (_el.isClassOrSubclass('Part')) {
+                          _el.fixSystemInformation(currentScoreHeight);
+                      }
+                  }
+              } catch (err) {
+                  _didIteratorError19 = true;
+                  _iteratorError19 = err;
+              } finally {
+                  try {
+                      if (!_iteratorNormalCompletion19 && _iterator19.return) {
+                          _iterator19.return();
+                      }
+                  } finally {
+                      if (_didIteratorError19) {
+                          throw _iteratorError19;
+                      }
                   }
               }
+
               this.renderOptions.height = this.estimateStreamHeight();
               return this;
           }
@@ -14243,13 +15105,34 @@
                   // console.log("Overridden staff width: " + this.renderOptions.overriddenWidth);
                   return this.renderOptions.overriddenWidth;
               }
-              for (var i = 0; i < this.length; i++) {
-                  var p = this.get(i);
-                  if (p.isClassOrSubclass('Part')) {
-                      return p.estimateStaffLength();
+              var _iteratorNormalCompletion20 = true;
+              var _didIteratorError20 = false;
+              var _iteratorError20 = undefined;
+
+              try {
+                  for (var _iterator20 = this[Symbol.iterator](), _step20; !(_iteratorNormalCompletion20 = (_step20 = _iterator20.next()).done); _iteratorNormalCompletion20 = true) {
+                      var p = _step20.value;
+
+                      if (p.isClassOrSubclass('Part')) {
+                          return p.estimateStaffLength();
+                      }
+                  }
+                  // no parts found in score... use part...
+              } catch (err) {
+                  _didIteratorError20 = true;
+                  _iteratorError20 = err;
+              } finally {
+                  try {
+                      if (!_iteratorNormalCompletion20 && _iterator20.return) {
+                          _iterator20.return();
+                      }
+                  } finally {
+                      if (_didIteratorError20) {
+                          throw _iteratorError20;
+                      }
                   }
               }
-              // no parts found in score... use part...
+
               console.log('no parts found in score');
               var tempPart = new stream.Part();
               tempPart.elements = this.elements;
@@ -14273,12 +15156,33 @@
           key: 'playStream',
           value: function playStream(params) {
               // play multiple parts in parallel...
-              for (var i = 0; i < this.length; i++) {
-                  var el = this.get(i);
-                  if (el.isClassOrSubclass('Part')) {
-                      el.playStream(params);
+              var _iteratorNormalCompletion21 = true;
+              var _didIteratorError21 = false;
+              var _iteratorError21 = undefined;
+
+              try {
+                  for (var _iterator21 = this[Symbol.iterator](), _step21; !(_iteratorNormalCompletion21 = (_step21 = _iterator21.next()).done); _iteratorNormalCompletion21 = true) {
+                      var el = _step21.value;
+
+                      if (el.isClassOrSubclass('Part')) {
+                          el.playStream(params);
+                      }
+                  }
+              } catch (err) {
+                  _didIteratorError21 = true;
+                  _iteratorError21 = err;
+              } finally {
+                  try {
+                      if (!_iteratorNormalCompletion21 && _iterator21.return) {
+                          _iterator21.return();
+                      }
+                  } finally {
+                      if (_didIteratorError21) {
+                          throw _iteratorError21;
+                      }
                   }
               }
+
               return this;
           }
           /**
@@ -14291,12 +15195,33 @@
       }, {
           key: 'stopPlayStream',
           value: function stopPlayStream() {
-              for (var i = 0; i < this.length; i++) {
-                  var el = this.get(i);
-                  if (el.isClassOrSubclass('Part')) {
-                      el.stopPlayStream();
+              var _iteratorNormalCompletion22 = true;
+              var _didIteratorError22 = false;
+              var _iteratorError22 = undefined;
+
+              try {
+                  for (var _iterator22 = this[Symbol.iterator](), _step22; !(_iteratorNormalCompletion22 = (_step22 = _iterator22.next()).done); _iteratorNormalCompletion22 = true) {
+                      var el = _step22.value;
+
+                      if (el.isClassOrSubclass('Part')) {
+                          el.stopPlayStream();
+                      }
+                  }
+              } catch (err) {
+                  _didIteratorError22 = true;
+                  _iteratorError22 = err;
+              } finally {
+                  try {
+                      if (!_iteratorNormalCompletion22 && _iterator22.return) {
+                          _iterator22.return();
+                      }
+                  } finally {
+                      if (_didIteratorError22) {
+                          throw _iteratorError22;
+                      }
                   }
               }
+
               return this;
           }
           /*

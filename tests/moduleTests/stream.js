@@ -10,6 +10,12 @@ export default function tests() {
         n.duration.type = 'half';
         s.append(n);
         assert.equal(s.length, 3, 'Simple stream length');
+        
+        // test iteration.
+        for (const n of s) {
+            const oct = n.pitch.octave;
+            assert.equal(oct, 5, 'all notes are octave 5');
+        }
     });
 
     QUnit.test('music21.stream.Stream.duration', assert => {
@@ -95,8 +101,8 @@ export default function tests() {
         n1.duration.type = 'whole';
         m1.append(n1);
         const m2 = new music21.stream.Measure();
-        n2 = new music21.note.Note('D#');
-        n2.duration.type = 'whole';
+        n2 = new music21.note.Note('D#'); 
+        n2.duration.type = 'whole'; 
         m2.append(n2);
         p.append(m1);
         p.append(m2);

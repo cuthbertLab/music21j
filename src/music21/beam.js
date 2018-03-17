@@ -167,6 +167,7 @@ export class Beams extends prebase.ProtoM21Object {
         for (const thisBeam of this.beamsList) {
             numbers.push(thisBeam.number);
         }
+        return numbers;
     }
     /**
      * Returns the type + "-" + direction (if direction is defined)

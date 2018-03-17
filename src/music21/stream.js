@@ -14,6 +14,7 @@ import * as MIDI from 'MIDI';
 import { Music21Exception } from './exceptions21.js';
 
 import { base } from './base.js';
+import { beam } from './beam.js';
 import { clef } from './clef.js';
 import { common } from './common.js';
 import { debug } from './debug.js';
@@ -146,6 +147,12 @@ export class Stream extends base.Music21Object {
             );
         };
     }
+    * [Symbol.iterator]() {
+        for (let i = 0; i < this.length; i++) {
+            yield this.get(i);
+        }
+    }
+    
     get duration() {
         if (this._duration !== undefined) {
             return this._duration;
@@ -157,8 +164,7 @@ export class Stream extends base.Music21Object {
     }
     get highestTime() {
         let highestTime = 0.0;
-        for (let i = 0; i < this.length; i++) {
-            const el = this.get(i);
+        for (const el of this) {
             let endTime = el.offset;
             if (el.duration !== undefined) {
                 endTime += el.duration.quarterLength;
@@ -183,9 +189,7 @@ export class Stream extends base.Music21Object {
             return this;
         }
         const tempEls = [];
-        for (let i = 0; i < this.length; i++) {
-            const el = this.get(i);
-            // console.log(i, this.length);
+        for (const el of this) {
             if (el.isStream) {
                 if (retainContainers) {
                     tempEls.push(el);
@@ -352,7 +356,7 @@ export class Stream extends base.Music21Object {
     }
 
     /* override protoM21Object.clone() */
-    clone(deep = true) {
+    clone(deep=true) {
         const ret = Object.create(this.constructor.prototype);
         for (const key in this) {
             if ({}.hasOwnProperty.call(this, key) === false) {
@@ -626,8 +630,7 @@ export class Stream extends base.Music21Object {
      */
     hasSubStreams() {
         let hasSubStreams = false;
-        for (let i = 0; i < this.length; i++) {
-            const el = this.elements[i];
+        for (const el of this) {
             if (el.isClassOrSubclass('Stream')) {
                 hasSubStreams = true;
                 break;
@@ -759,8 +762,7 @@ export class Stream extends base.Music21Object {
             this.elements = [];
             // endElements
             // elementsChanged;
-            for (let i = 0; i < post.length; i++) {
-                const e = post.get(i);
+            for (const e of post) {
                 this.insert(e.offset, e);
             }
             return this; // javascript style;
@@ -768,14 +770,79 @@ export class Stream extends base.Music21Object {
     }
 
     /**
+     * Return a new Stream or modify this stream
+     * to have beams.
+     * 
+     * NOT yet being called March 2018
+     */
+    makeBeams(options) {
+        const params = { inPlace: false };
+        common.merge(params, options);
+        let returnObj = this;
+        if (!params.inPlace) {
+            returnObj = this.clone(true);
+        }
+        let mColl;
+        if (this.classes.includes('Measure')) {
+            mColl = [returnObj];
+        } else {
+            mColl = [];
+            for (const m of returnObj.getElementsByClass('Measure').elements) {
+                mColl.push(m);
+            }
+        }
+        let lastTimeSignature;
+        for (const m of mColl) {
+            if (m.timeSignature !== undefined) {
+                lastTimeSignature = m.timeSignature;
+            }
+            if (lastTimeSignature === undefined) {
+                throw new StreamException('Need a Time Signature to process beams');
+            }
+            // todo voices!
+            if (m.length <= 1) {
+                continue; // nothing to beam.
+            }
+            const noteStream = m.notesAndRests;
+            const durList = [];
+            for (const n of noteStream) {
+                durList.push(n.duration);
+            }
+            const durSum = durList.map(a => a.quarterLength).reduce((total, val) => total + val);
+            const barQL = lastTimeSignature.barDuration.quarterLength;
+            if (durSum > barQL) {
+                continue;
+            }
+            let offset = 0.0;
+            if (m.paddingLeft !== 0.0 && m.paddingLeft !== undefined) {
+                offset = m.paddingLeft;
+            } else if (noteStream.highestTime < barQL) {
+                offset = barQL - noteStream.highestTime;
+            }
+            const beamsList = lastTimeSignature.getBeams(noteStream, { measureStartOffset: offset });
+            for (let i = 0; i < noteStream.length; i++) {
+                const n = noteStream.get(i);
+                const thisBeams = beamsList[i];
+                if (thisBeams !== undefined) {
+                    n.beams = thisBeams;
+                } else {
+                    n.beams = new beam.Beams();
+                }
+            } 
+        }
+        
+        // returnObj.streamStatus.beams = true;
+        return returnObj;
+    }
+    
+    /**
      * Returns true if any note in the stream has lyrics, otherwise false
      *
      * @memberof music21.stream.Stream
      * @returns {Boolean}
      */
     hasLyrics() {
-        for (let i = 0; i < this.length; i++) {
-            const el = this.elements[i];
+        for (const el of this) {
             if (el.lyric !== undefined) {
                 return true;
             }
@@ -829,8 +896,7 @@ export class Stream extends base.Music21Object {
      */
     getElementsByClass(classList) {
         const tempEls = [];
-        for (let i = 0; i < this.length; i++) {
-            const thisEl = this.get(i);
+        for (const thisEl of this) {
             // console.warn(thisEl);
             if (thisEl.isClassOrSubclass === undefined) {
                 console.error(
@@ -882,8 +948,7 @@ export class Stream extends base.Music21Object {
             lastOctaveStepList.push(lastStepDict);
         }
         const lastOctavelessStepDict = $.extend({}, extendableStepList); // probably unnecessary, but safe...
-        for (let i = 0; i < this.length; i++) {
-            const el = this.get(i);
+        for (const el of this) {
             if (el.pitch !== undefined) {
                 // note
                 p = el.pitch;
@@ -970,8 +1035,7 @@ export class Stream extends base.Music21Object {
         }
 
         if (recursive) {
-            for (let i = 0; i < this.length; i++) {
-                const el = this.get(i);
+            for (const el of this) {
                 if (el.isClassOrSubclass('Stream')) {
                     el.resetRenderOptions(recursive, preserveEvents);
                 }
@@ -1969,8 +2033,7 @@ export class Stream extends base.Music21Object {
      * @returns {Boolean}
      */
     hasVoices() {
-        for (let i = 0; i < this.length; i++) {
-            const el = this.get(i);
+        for (const el of this) {
             if (el.isClassOrSubclass('Voice')) {
                 return true;
             }
@@ -2051,8 +2114,7 @@ export class Part extends Stream {
     getMeasureWidths() {
         /* call after setSubstreamRenderOptions */
         const measureWidths = [];
-        for (let i = 0; i < this.length; i++) {
-            const el = this.get(i);
+        for (const el of this) {
             if (el.isClassOrSubclass('Measure')) {
                 const elRendOp = el.renderOptions;
                 measureWidths[elRendOp.measureIndex] = elRendOp.width;
@@ -2077,16 +2139,16 @@ export class Part extends Stream {
         if (this.hasSubStreams()) {
             // part with Measures underneath
             let totalLength = 0;
-            const subStreams = this.getElementsByClass('Measure');
-            for (let i = 0; i < subStreams.length; i++) {
-                const m = subStreams.get(i);
+            let isFirst = true;
+            for (const m of this.getElementsByClass('Measure')) {
                 // this looks wrong, but actually seems to be right. moving it to
                 // after the break breaks things.
                 totalLength
                     += m.estimateStaffLength() + m.renderOptions.staffPadding;
-                if (i !== 0 && m.renderOptions.startNewSystem === true) {
+                if (!isFirst && m.renderOptions.startNewSystem === true) {
                     break;
                 }
+                isFirst = false;
             }
             return totalLength;
         }
@@ -2228,8 +2290,7 @@ export class Part extends Stream {
         let lastKeySignature;
         let lastClef;
 
-        for (let i = 0; i < this.length; i++) {
-            const el = this.get(i);
+        for (const el of this) {
             if (el.isClassOrSubclass('Measure')) {
                 const elRendOp = el.renderOptions;
                 elRendOp.measureIndex = currentMeasureIndex;
@@ -2367,8 +2428,7 @@ export class Part extends Stream {
     getStreamFromScaledXandSystemIndex(xPxScaled, systemIndex) {
         let gotMeasure;
         const measures = this.measures;
-        for (let i = 0; i < measures.length; i++) {
-            const m = measures.get(i);
+        for (const m of measures) {
             const rendOp = m.renderOptions;
             const left = rendOp.left;
             const right = left + rendOp.width;
@@ -2378,8 +2438,7 @@ export class Part extends Stream {
                 console.log(
                     'Searching for X:'
                         + Math.round(xPxScaled)
-                        + ' in M '
-                        + i
+                        + ' in Measure '
                         + ' with boundaries L:'
                         + left
                         + ' R:'
@@ -2461,9 +2520,7 @@ export class Score extends Stream {
         let currentPartNumber = 0;
         let currentPartTop = 0;
         const partSpacing = this.partSpacing;
-        for (let i = 0; i < this.length; i++) {
-            const el = this.get(i);
-
+        for (const el of this) {
             if (el.isClassOrSubclass('Part')) {
                 el.renderOptions.partIndex = currentPartNumber;
                 el.renderOptions.top = currentPartTop;
@@ -2475,8 +2532,7 @@ export class Score extends Stream {
         this.evenPartMeasureSpacing();
         const ignoreNumSystems = true;
         const currentScoreHeight = this.estimateStreamHeight(ignoreNumSystems);
-        for (let i = 0; i < this.length; i++) {
-            const el = this.get(i);
+        for (const el of this) {
             if (el.isClassOrSubclass('Part')) {
                 el.fixSystemInformation(currentScoreHeight);
             }
@@ -2496,8 +2552,7 @@ export class Score extends Stream {
             // console.log("Overridden staff width: " + this.renderOptions.overriddenWidth);
             return this.renderOptions.overriddenWidth;
         }
-        for (let i = 0; i < this.length; i++) {
-            const p = this.get(i);
+        for (const p of this) {
             if (p.isClassOrSubclass('Part')) {
                 return p.estimateStaffLength();
             }
@@ -2523,8 +2578,7 @@ export class Score extends Stream {
      */
     playStream(params) {
         // play multiple parts in parallel...
-        for (let i = 0; i < this.length; i++) {
-            const el = this.get(i);
+        for (const el of this) {
             if (el.isClassOrSubclass('Part')) {
                 el.playStream(params);
             }
@@ -2538,8 +2592,7 @@ export class Score extends Stream {
      * @returns {music21.stream.Score} this
      */
     stopPlayStream() {
-        for (let i = 0; i < this.length; i++) {
-            const el = this.get(i);
+        for (const el of this) {
             if (el.isClassOrSubclass('Part')) {
                 el.stopPlayStream();
             }
