@@ -1,5 +1,5 @@
 /**
- * music21j 0.9.0 built on  * 2018-03-17.
+ * music21j 0.9.0 built on  * 2018-03-18.
  * Copyright (c) 2013-2016 Michael Scott Cuthbert and cuthbertLab
  * BSD License, see LICENSE
  *
@@ -3450,8 +3450,8 @@
   var Beams = function (_prebase$ProtoM21Obje2) {
       inherits(Beams, _prebase$ProtoM21Obje2);
       createClass(Beams, null, [{
-          key: '_naiveBeams',
-          value: function _naiveBeams(srcList) {
+          key: 'naiveBeams',
+          value: function naiveBeams(srcList) {
               var beamsList = [];
               var _iteratorNormalCompletion = true;
               var _didIteratorError = false;
@@ -3489,8 +3489,8 @@
               return beamsList;
           }
       }, {
-          key: '_removeSandwichedUnbeamables',
-          value: function _removeSandwichedUnbeamables(beamsList) {
+          key: 'removeSandwichedUnbeamables',
+          value: function removeSandwichedUnbeamables(beamsList) {
               var beamLast = void 0;
               var beamNext = void 0;
               for (var i = 0; i < beamsList.length; i++) {
@@ -3507,8 +3507,8 @@
               return beamsList;
           }
       }, {
-          key: '_sanitizePartialBeams',
-          value: function _sanitizePartialBeams(beamsList) {
+          key: 'sanitizePartialBeams',
+          value: function sanitizePartialBeams(beamsList) {
               for (var i = 0; i < beamsList.length; i++) {
                   if (beamsList[i] === undefined) {
                       continue;
@@ -3561,8 +3561,8 @@
               return beamsList;
           }
       }, {
-          key: '_mergeConnectingPartialBeams',
-          value: function _mergeConnectingPartialBeams(beamsList) {
+          key: 'mergeConnectingPartialBeams',
+          value: function mergeConnectingPartialBeams(beamsList) {
               for (var i = 0; i < beamsList.length - 1; i++) {
                   var bThis = beamsList[i];
                   var bNext = beamsList[i + 1];
@@ -13196,6 +13196,9 @@
 
               var tagName = canvasOrSVG.tagName.toLowerCase();
 
+              if (this.autoBeam === true) {
+                  this.makeBeams({ inPlace: true });
+              }
               var vfr = new vfShow.Renderer(this, canvasOrSVG);
               if (tagName === 'canvas') {
                   vfr.rendererType = 'canvas';
@@ -13206,7 +13209,7 @@
               this.setRenderInteraction(canvasOrSVG);
               this.activeVFRenderer = vfr;
               if (!DOMContains) {
-                  // temporarily add to DOM so Firefox can measure it...
+                  // remove the adding to DOM so that Firefox could measure it...
                   document.body.removeChild(canvasOrSVG);
               }
 

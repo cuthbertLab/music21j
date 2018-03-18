@@ -73,7 +73,7 @@ beam.Beam = Beam;
  * @property {Int} length - length of beamsList
  */
 export class Beams extends prebase.ProtoM21Object {
-    static _naiveBeams(srcList) {
+    static naiveBeams(srcList) {
         const beamsList = [];
         for (const el of srcList) {
             if (!beam.beamableDurationTypes.includes(el.duration.type)) {
@@ -89,7 +89,7 @@ export class Beams extends prebase.ProtoM21Object {
         return beamsList;
     }
     
-    static _removeSandwichedUnbeamables(beamsList) {
+    static removeSandwichedUnbeamables(beamsList) {
         let beamLast;
         let beamNext;
         for (let i = 0; i < beamsList.length; i++) {
@@ -106,7 +106,7 @@ export class Beams extends prebase.ProtoM21Object {
         return beamsList;
     }
     
-    static _sanitizePartialBeams(beamsList) {
+    static sanitizePartialBeams(beamsList) {
         for (let i = 0; i < beamsList.length; i++) {
             if (beamsList[i] === undefined) {
                 continue;
@@ -140,7 +140,7 @@ export class Beams extends prebase.ProtoM21Object {
         return beamsList;
     }
     
-    static _mergeConnectingPartialBeams(beamsList) {
+    static mergeConnectingPartialBeams(beamsList) {
         for (let i = 0; i < beamsList.length - 1; i++) {
             const bThis = beamsList[i];
             const bNext = beamsList[i + 1];
