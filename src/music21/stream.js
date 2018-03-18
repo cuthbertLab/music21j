@@ -1076,7 +1076,10 @@ export class Stream extends base.Music21Object {
         }
 
         const tagName = canvasOrSVG.tagName.toLowerCase();
-
+        
+        if (this.autoBeam === true) {
+            this.makeBeams({ inPlace: true });
+        }
         const vfr = new vfShow.Renderer(this, canvasOrSVG);
         if (tagName === 'canvas') {
             vfr.rendererType = 'canvas';
@@ -1087,7 +1090,7 @@ export class Stream extends base.Music21Object {
         this.setRenderInteraction(canvasOrSVG);
         this.activeVFRenderer = vfr;
         if (!DOMContains) {
-            // temporarily add to DOM so Firefox can measure it...
+            // remove the adding to DOM so that Firefox could measure it...
             document.body.removeChild(canvasOrSVG);
         }
 

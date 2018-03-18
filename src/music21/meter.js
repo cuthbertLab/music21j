@@ -30,13 +30,6 @@ import { duration } from './duration.js';
  */
 export const meter = {};
 
-const beamableDurationTypes = [
-    duration.typeFromNumDict[8],
-    duration.typeFromNumDict[16], duration.typeFromNumDict[32],
-    duration.typeFromNumDict[64], duration.typeFromNumDict[128],
-    duration.typeFromNumDict[256],    
-];
-
 /**
  * A MUCH simpler version of the music21p TimeSignature object.
  *
@@ -50,141 +43,6 @@ const beamableDurationTypes = [
  * @property {music21.duration.Duration} barDuration - a Duration object representing the expressed total length of the TimeSignature.
  */
 export class TimeSignature extends base.Music21Object {
-    static _naiveBeams(srcList) {
-        const beamsList = [];
-        for (const el of srcList) {
-            if (!beamableDurationTypes.includes(el.duration.type)) {
-                beamsList.push(undefined);
-            } else if (el.isRest) {
-                beamsList.push(undefined);
-            } else {
-                const b = new beam.Beams();
-                b.fill(el.duration.type);
-                beamsList.push(b);
-            }
-        }
-        return beamsList;
-    }
-    
-    static _removeSandwichedUnbeamables(beamsList) {
-        let beamLast;
-        let beamNext;
-        for (let i = 0; i < beamsList.length; i++) {
-            if (i !== beamsList.length - 1) {
-                beamNext = beamsList[i + 1];
-            } else {
-                beamNext = undefined;
-            }
-            if (beamLast === undefined && beamNext === undefined) {
-                beamsList[i] = undefined;
-            }
-            beamLast = beamsList[i];
-        }
-        return beamsList;
-    }
-    
-    static _sanitizePartialBeams(beamsList) {
-        for (let i = 0; i < beamsList.length; i++) {
-            if (beamsList[i] === undefined) {
-                continue;
-            }
-            const allTypes = beamsList[i].getTypes();
-            if (!allTypes.includes('start') 
-                    && !allTypes.includes('stop')
-                    && !allTypes.includes('continue')) {
-                // nothing but partials;
-                beamsList[i] = undefined;
-                continue;
-            }
-            let hasStart = false;
-            let hasStop = false;
-            for (const b of beamsList[i].beamsList) {
-                if (b.type === 'start') {
-                    hasStart = true;
-                    continue;
-                }
-                if (b.type === 'stop') {
-                    hasStop = true;
-                    continue;
-                }
-                if (hasStart && b.type === 'partial' && b.direction === 'left') {
-                    b.direction = 'right';
-                } else if (hasStop && b.type === 'partial' && b.direction === 'right') {
-                    b.direction = 'left';
-                }
-            }
-        }
-        return beamsList;
-    }
-    
-    static _mergeConnectingPartialBeams(beamsList) {
-        for (let i = 0; i < beamsList.length - 1; i++) {
-            const bThis = beamsList[i];
-            const bNext = beamsList[i + 1];
-            if (!bThis || !bNext) {
-                continue;
-            }
-            const bThisNum = bThis.getNumbers();
-            if (!bThisNum || bThisNum.length === 0) {
-                continue;
-            }
-            for (const thisNum of bThisNum) {
-                const thisBeam = bThis.getByNumber(thisNum);
-                if (thisBeam.type !== 'partial' || thisBeam.direction !== 'right') {
-                    continue;
-                }
-                if (!(bNext.getNumbers().includes(thisNum))) {
-                    continue;
-                }
-                const nextBeam = bNext.getByNumber(thisNum);
-                if (nextBeam.type === 'partial' || nextBeam.direction === 'right') {
-                    continue;
-                }
-                if (nextBeam.type === 'continue' || nextBeam.type === 'stop') {
-                    // should not happen.
-                    continue;
-                }
-                thisBeam.type = 'start';
-                thisBeam.direction = undefined;
-                if (nextBeam.type === 'partial') {
-                    nextBeam.type = 'stop';
-                } else if (nextBeam.type === 'start') {
-                    nextBeam.type = 'continue';
-                }
-                nextBeam.direction = undefined;
-            }
-        }
-        // now fix partial-lefts that follow stops:
-        for (let i = 1; i < beamsList.length; i++) {
-            const bThis = beamsList[i];
-            const bPrev = beamsList[i - 1];
-            if (!bThis || !bPrev) {
-                continue;
-            }
-            const bThisNum = bThis.getNumbers();
-            if (!bThisNum || bThisNum.length === 0) {
-                continue;
-            }
-            for (const thisNum of bThisNum) {
-                const thisBeam = bThis.getByNumber(thisNum);
-                if (thisBeam.type !== 'partial' || thisBeam.direction !== 'left') {
-                    continue;
-                }
-                if (!(bPrev.getNumbers().includes(thisNum))) {
-                    continue;
-                }
-                const prevBeam = bPrev.getByNumber(thisNum);
-                if (prevBeam.type !== 'stop') {
-                    continue;
-                }
-                thisBeam.type = 'stop';
-                thisBeam.direction = undefined;
-                prevBeam.type = 'continue';
-            }
-        }
-        return beamsList;
-    }
-    
     constructor(meterString) {
         super();
         this._numerator = 4;
@@ -329,8 +187,8 @@ export class TimeSignature extends base.Music21Object {
         const params = { measureStartOffset: 0.0 };
         common.merge(params, options);
         const measureStartOffset = params.measureStartOffset;
-        let beamsList = TimeSignature._naiveBeams(srcStream);
-        beamsList = TimeSignature._removeSandwichedUnbeamables(beamsList);
+        let beamsList = beam.Beams.naiveBeams(srcStream);
+        beamsList = beam.Beams.removeSandwichedUnbeamables(beamsList);
         const fixBeamsOneElementDepth = (i, el, depth) => {
             const beams = beamsList[i];
             if (!beams || beams === undefined) {
@@ -412,7 +270,7 @@ export class TimeSignature extends base.Music21Object {
             beams.setByNumber(beamNumber, beamType);
         };
         
-        for (let depth = 0; depth < beamableDurationTypes.length; depth++) {
+        for (let depth = 0; depth < beam.beamableDurationTypes.length; depth++) {
             let i = 0;
             for (const el of srcStream) {
                 fixBeamsOneElementDepth(i, el, depth);
@@ -420,8 +278,8 @@ export class TimeSignature extends base.Music21Object {
             }
         }
         
-        beamsList = TimeSignature._sanitizePartialBeams(beamsList);
-        beamsList = TimeSignature._mergeConnectingPartialBeams(beamsList);
+        beamsList = beam.Beams.sanitizePartialBeams(beamsList);
+        beamsList = beam.Beams.mergeConnectingPartialBeams(beamsList);
         return beamsList;
     }
     

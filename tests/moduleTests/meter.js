@@ -22,7 +22,7 @@ export default function tests() {
         const [start, end] = m.offsetToSpan(3.2);
         assert.equal(start, 3.0, 'beat starts at 3');
         assert.equal(end, 4.0, 'beat ends at 4');
-     
+      
     });
     
     QUnit.test('music21.meter.TimeSignature compound', assert => {
