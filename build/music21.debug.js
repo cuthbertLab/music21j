@@ -1,5 +1,5 @@
 /**
- * music21j 0.9.0 built on  * 2018-03-18.
+ * music21j 0.9.0 built on  * 2018-03-20.
  * Copyright (c) 2013-2016 Michael Scott Cuthbert and cuthbertLab
  * BSD License, see LICENSE
  *
@@ -13228,7 +13228,7 @@
                   try {
                       this.makeBeams({ inPlace: true });
                   } catch (e) {
-                      if (!e.includes('Time Signature')) {
+                      if (!e.toString().includes('Time Signature')) {
                           throw e;
                       }
                   }

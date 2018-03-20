@@ -1081,7 +1081,7 @@ export class Stream extends base.Music21Object {
             try {
                 this.makeBeams({ inPlace: true });                
             } catch (e) {
-                if (!e.includes('Time Signature')) {
+                if (!e.toString().includes('Time Signature')) {
                     throw e;
                 }
             }
