@@ -1078,7 +1078,13 @@ export class Stream extends base.Music21Object {
         const tagName = canvasOrSVG.tagName.toLowerCase();
         
         if (this.autoBeam === true) {
-            this.makeBeams({ inPlace: true });
+            try {
+                this.makeBeams({ inPlace: true });                
+            } catch (e) {
+                if (!e.includes('Time Signature')) {
+                    throw e;
+                }
+            }
         }
         const vfr = new vfShow.Renderer(this, canvasOrSVG);
         if (tagName === 'canvas') {

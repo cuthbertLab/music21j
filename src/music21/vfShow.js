@@ -46,6 +46,7 @@ export class RenderStack {
         this.voices = [];
         this.streams = [];
         this.textVoices = [];
+        this.voiceToStreamMapping = new Map();
     }
     /**
      * @memberof music21.vfShow.RenderStack
@@ -346,6 +347,7 @@ export class Renderer {
         const voice = this.getVoice(s, stave);
         stack.voices.push(voice);
         stack.streams.push(s);
+        stack.voiceToStreamMapping.set(voice, s);
 
         if (s.hasLyrics()) {
             stack.textVoices.push(this.getLyricVoice(s, stave));
@@ -565,20 +567,46 @@ export class Renderer {
             formatter.joinVoices(staveTickables);
         }
         formatter.formatToStave(allTickables, stave);
+
+//        const vf_auto_stem = false;
+//        for (const voice of voices) {            
+//            let activeBeamGroupNotes = [];
+//            for (let j = 0; j < voice.notes.length; j++) {
+//                const n = voice.notes[j];
+//                if (n.beams === undefined || !n.beams.getNumbers().includes(1)) {
+//                    continue;
+//                }
+//                const eighthNoteBeam = n.beams.getByNumber(1);
+//                if (eighthNoteBeam.type === 'start') {
+//                    activeBeamGroupNotes = [n];
+//                } else {
+//                    activeBeamGroupNotes.push(n);
+//                }
+//                if (eighthNoteBeam.type === 'stop') {
+//                    const vfBeam = new Vex.Flow.Beam(activeBeamGroupNotes, vf_auto_stem);
+//                    this.beamGroups.push(vfBeam);
+//                    activeBeamGroupNotes = []; // housekeeping, not really necessary...
+//                }
+//            }
+//        }
+        
         if (autoBeam) {
             for (let i = 0; i < voices.length; i++) {
                 // find beam groups -- n.b. this wipes out stemDirection. worth it usually...
                 const voice = voices[i];
-                let beatGroups = [new Vex.Flow.Fraction(2, 8)]; // default beam groups
+                const associatedStream = stack.voiceToStreamMapping.get(voice);
+                let beatGroups;
                 if (
-                    measures[i] !== undefined
-                    && measures[i].timeSignature !== undefined
+                    associatedStream !== undefined
+                    && associatedStream.timeSignature !== undefined
                 ) {
-                    beatGroups = measures[i].timeSignature.vexflowBeatGroups(
+                    beatGroups = associatedStream.timeSignature.vexflowBeatGroups(
                         Vex
                     );
                     // TODO: getContextByClass...
                     // console.log(beatGroups);
+                } else {
+                    beatGroups = [new Vex.Flow.Fraction(2, 8)]; // default beam groups
                 }
                 const beamGroups = Vex.Flow.Beam.applyAndGetBeams(
                     voice,
