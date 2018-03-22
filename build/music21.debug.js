@@ -1,5 +1,5 @@
 /**
- * music21j 0.9.0 built on  * 2018-03-18.
+ * music21j 0.9.0 built on  * 2018-03-22.
  * Copyright (c) 2013-2016 Michael Scott Cuthbert and cuthbertLab
  * BSD License, see LICENSE
  *
@@ -12733,7 +12733,7 @@
           /**
            * Return a new Stream or modify this stream
            * to have beams.
-           * 
+           *
            * NOT yet being called March 2018
            */
 
@@ -13625,7 +13625,7 @@
 
               var svgBlock = void 0;
               if (preserveSvgSize) {
-                  var width = $oldSVGOrCanvas.width();
+                  var width = $oldSVGOrCanvas.width() || parseInt($oldSVGOrCanvas.attr('width'));
                   var height = $oldSVGOrCanvas.attr('height'); // height manipulates
                   svgBlock = this.createDOM(width, height, elementType);
               } else {
