@@ -10894,6 +10894,7 @@
           this.voices = [];
           this.streams = [];
           this.textVoices = [];
+          this.voiceToStreamMapping = new Map();
       }
       /**
        * @memberof music21.vfShow.RenderStack
@@ -11199,6 +11200,7 @@
               var voice = this.getVoice(s, stave);
               stack.voices.push(voice);
               stack.streams.push(s);
+              stack.voiceToStreamMapping.set(voice, s);
 
               if (s.hasLyrics()) {
                   stack.textVoices.push(this.getLyricVoice(s, stave));
@@ -11464,17 +11466,43 @@
               }
 
               formatter.formatToStave(allTickables, stave);
+
+              //        const vf_auto_stem = false;
+              //        for (const voice of voices) {            
+              //            let activeBeamGroupNotes = [];
+              //            for (let j = 0; j < voice.notes.length; j++) {
+              //                const n = voice.notes[j];
+              //                if (n.beams === undefined || !n.beams.getNumbers().includes(1)) {
+              //                    continue;
+              //                }
+              //                const eighthNoteBeam = n.beams.getByNumber(1);
+              //                if (eighthNoteBeam.type === 'start') {
+              //                    activeBeamGroupNotes = [n];
+              //                } else {
+              //                    activeBeamGroupNotes.push(n);
+              //                }
+              //                if (eighthNoteBeam.type === 'stop') {
+              //                    const vfBeam = new Vex.Flow.Beam(activeBeamGroupNotes, vf_auto_stem);
+              //                    this.beamGroups.push(vfBeam);
+              //                    activeBeamGroupNotes = []; // housekeeping, not really necessary...
+              //                }
+              //            }
+              //        }
+
               if (autoBeam) {
                   for (var _i2 = 0; _i2 < voices.length; _i2++) {
                       var _beamGroups;
 
                       // find beam groups -- n.b. this wipes out stemDirection. worth it usually...
                       var voice = voices[_i2];
-                      var beatGroups = [new Vex.Flow.Fraction(2, 8)]; // default beam groups
-                      if (measures[_i2] !== undefined && measures[_i2].timeSignature !== undefined) {
-                          beatGroups = measures[_i2].timeSignature.vexflowBeatGroups(Vex);
+                      var associatedStream = stack.voiceToStreamMapping.get(voice);
+                      var beatGroups = void 0;
+                      if (associatedStream !== undefined && associatedStream.timeSignature !== undefined) {
+                          beatGroups = associatedStream.timeSignature.vexflowBeatGroups(Vex);
                           // TODO: getContextByClass...
                           // console.log(beatGroups);
+                      } else {
+                          beatGroups = [new Vex.Flow.Fraction(2, 8)]; // default beam groups
                       }
                       var beamGroups = Vex.Flow.Beam.applyAndGetBeams(voice, undefined, beatGroups);
                       (_beamGroups = this.beamGroups).push.apply(_beamGroups, toConsumableArray(beamGroups));
@@ -13197,7 +13225,13 @@
               var tagName = canvasOrSVG.tagName.toLowerCase();
 
               if (this.autoBeam === true) {
-                  this.makeBeams({ inPlace: true });
+                  try {
+                      this.makeBeams({ inPlace: true });
+                  } catch (e) {
+                      if (!e.toString().includes('Time Signature')) {
+                          throw e;
+                      }
+                  }
               }
               var vfr = new vfShow.Renderer(this, canvasOrSVG);
               if (tagName === 'canvas') {

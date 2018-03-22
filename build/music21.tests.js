@@ -1,5 +1,5 @@
 /**
- * music21j 0.9.0 built on  * 2018-03-17.
+ * music21j 0.9.0 built on  * 2018-03-18.
  * Copyright (c) 2013-2016 Michael Scott Cuthbert and cuthbertLab
  * BSD License, see LICENSE
  *
@@ -3450,8 +3450,8 @@
   var Beams = function (_prebase$ProtoM21Obje2) {
       inherits(Beams, _prebase$ProtoM21Obje2);
       createClass(Beams, null, [{
-          key: '_naiveBeams',
-          value: function _naiveBeams(srcList) {
+          key: 'naiveBeams',
+          value: function naiveBeams(srcList) {
               var beamsList = [];
               var _iteratorNormalCompletion = true;
               var _didIteratorError = false;
@@ -3489,8 +3489,8 @@
               return beamsList;
           }
       }, {
-          key: '_removeSandwichedUnbeamables',
-          value: function _removeSandwichedUnbeamables(beamsList) {
+          key: 'removeSandwichedUnbeamables',
+          value: function removeSandwichedUnbeamables(beamsList) {
               var beamLast = void 0;
               var beamNext = void 0;
               for (var i = 0; i < beamsList.length; i++) {
@@ -3507,8 +3507,8 @@
               return beamsList;
           }
       }, {
-          key: '_sanitizePartialBeams',
-          value: function _sanitizePartialBeams(beamsList) {
+          key: 'sanitizePartialBeams',
+          value: function sanitizePartialBeams(beamsList) {
               for (var i = 0; i < beamsList.length; i++) {
                   if (beamsList[i] === undefined) {
                       continue;
@@ -3561,8 +3561,8 @@
               return beamsList;
           }
       }, {
-          key: '_mergeConnectingPartialBeams',
-          value: function _mergeConnectingPartialBeams(beamsList) {
+          key: 'mergeConnectingPartialBeams',
+          value: function mergeConnectingPartialBeams(beamsList) {
               for (var i = 0; i < beamsList.length - 1; i++) {
                   var bThis = beamsList[i];
                   var bNext = beamsList[i + 1];
@@ -10894,6 +10894,7 @@
           this.voices = [];
           this.streams = [];
           this.textVoices = [];
+          this.voiceToStreamMapping = new Map();
       }
       /**
        * @memberof music21.vfShow.RenderStack
@@ -11199,6 +11200,7 @@
               var voice = this.getVoice(s, stave);
               stack.voices.push(voice);
               stack.streams.push(s);
+              stack.voiceToStreamMapping.set(voice, s);
 
               if (s.hasLyrics()) {
                   stack.textVoices.push(this.getLyricVoice(s, stave));
@@ -11464,17 +11466,43 @@
               }
 
               formatter.formatToStave(allTickables, stave);
+
+              //        const vf_auto_stem = false;
+              //        for (const voice of voices) {            
+              //            let activeBeamGroupNotes = [];
+              //            for (let j = 0; j < voice.notes.length; j++) {
+              //                const n = voice.notes[j];
+              //                if (n.beams === undefined || !n.beams.getNumbers().includes(1)) {
+              //                    continue;
+              //                }
+              //                const eighthNoteBeam = n.beams.getByNumber(1);
+              //                if (eighthNoteBeam.type === 'start') {
+              //                    activeBeamGroupNotes = [n];
+              //                } else {
+              //                    activeBeamGroupNotes.push(n);
+              //                }
+              //                if (eighthNoteBeam.type === 'stop') {
+              //                    const vfBeam = new Vex.Flow.Beam(activeBeamGroupNotes, vf_auto_stem);
+              //                    this.beamGroups.push(vfBeam);
+              //                    activeBeamGroupNotes = []; // housekeeping, not really necessary...
+              //                }
+              //            }
+              //        }
+
               if (autoBeam) {
                   for (var _i2 = 0; _i2 < voices.length; _i2++) {
                       var _beamGroups;
 
                       // find beam groups -- n.b. this wipes out stemDirection. worth it usually...
                       var voice = voices[_i2];
-                      var beatGroups = [new Vex.Flow.Fraction(2, 8)]; // default beam groups
-                      if (measures[_i2] !== undefined && measures[_i2].timeSignature !== undefined) {
-                          beatGroups = measures[_i2].timeSignature.vexflowBeatGroups(Vex);
+                      var associatedStream = stack.voiceToStreamMapping.get(voice);
+                      var beatGroups = void 0;
+                      if (associatedStream !== undefined && associatedStream.timeSignature !== undefined) {
+                          beatGroups = associatedStream.timeSignature.vexflowBeatGroups(Vex);
                           // TODO: getContextByClass...
                           // console.log(beatGroups);
+                      } else {
+                          beatGroups = [new Vex.Flow.Fraction(2, 8)]; // default beam groups
                       }
                       var beamGroups = Vex.Flow.Beam.applyAndGetBeams(voice, undefined, beatGroups);
                       (_beamGroups = this.beamGroups).push.apply(_beamGroups, toConsumableArray(beamGroups));
@@ -13196,6 +13224,15 @@
 
               var tagName = canvasOrSVG.tagName.toLowerCase();
 
+              if (this.autoBeam === true) {
+                  try {
+                      this.makeBeams({ inPlace: true });
+                  } catch (e) {
+                      if (!e.includes('Time Signature')) {
+                          throw e;
+                      }
+                  }
+              }
               var vfr = new vfShow.Renderer(this, canvasOrSVG);
               if (tagName === 'canvas') {
                   vfr.rendererType = 'canvas';
@@ -13206,7 +13243,7 @@
               this.setRenderInteraction(canvasOrSVG);
               this.activeVFRenderer = vfr;
               if (!DOMContains) {
-                  // temporarily add to DOM so Firefox can measure it...
+                  // remove the adding to DOM so that Firefox could measure it...
                   document.body.removeChild(canvasOrSVG);
               }
 
