@@ -251,8 +251,7 @@ export class Renderer {
         // console.log('prepareScorelike called');
         //
         const parts = s.parts;
-        for (let i = 0; i < parts.length; i++) {
-            const subStream = parts.get(i);
+        for (const subStream of parts) {
             this.preparePartlike(subStream);
         }
         this.addStaffConnectors(s);
@@ -795,8 +794,7 @@ export class Renderer {
         let activeTupletVexflowNotes = [];
 
         const options = { clef: s.clef, stave };
-        for (let i = 0; i < s.length; i++) {
-            const thisEl = s.get(i);
+        for (const thisEl of s) {
             if (
                 thisEl.isClassOrSubclass('GeneralNote')
                 && thisEl.duration !== undefined
@@ -899,8 +897,7 @@ export class Renderer {
         };
         // runs on a flat, gapless, no-overlap stream, returns a list of TextNote objects...
         const lyricsObjects = [];
-        for (let i = 0; i < s.length; i++) {
-            const el = s.get(i);
+        for (const el of s) {
             const lyricsArray = el.lyrics;
             let text;
             let d = el.duration;
@@ -1100,8 +1097,7 @@ export class Renderer {
      */
     removeFormatterInformation(s, recursive) {
         s.storedVexflowStave = undefined;
-        for (let i = 0; i < s.length; i++) {
-            const el = s.get(i);
+        for (const el of s) {
             el.x = undefined;
             el.y = undefined;
             el.width = undefined;
@@ -1152,8 +1148,7 @@ export class Renderer {
         }
 
         let nextTicks = 0;
-        for (let i = 0; i < s.length; i++) {
-            const el = s.get(i);
+        for (const el of s) {
             if (el.isClassOrSubclass('GeneralNote')) {
                 const vfn = el.activeVexflowNote;
                 if (vfn === undefined) {
@@ -1167,7 +1162,7 @@ export class Renderer {
                 // these are a bit hacky...
                 el.systemIndex = s.renderOptions.systemIndex;
 
-                // console.log(i + " " + el.x + " " + formatterNote.x + " " + noteOffsetLeft);
+                // console.log(el.x + " " + formatterNote.x + " " + noteOffsetLeft);
                 if (formatterNote === undefined) {
                     continue;
                 }
@@ -1184,8 +1179,7 @@ export class Renderer {
             }
         }
         if (debug) {
-            for (let i = 0; i < s.length; i++) {
-                const n = s.get(i);
+            for (const n of s) {
                 if (n.pitch !== undefined) {
                     console.log(
                         n.pitch.diatonicNoteNum

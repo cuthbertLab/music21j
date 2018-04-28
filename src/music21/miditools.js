@@ -71,7 +71,10 @@ export class Event {
      * @returns {undefined}
      */
     sendToMIDIjs() {
-        if (MIDI !== undefined) {
+        if (MIDI !== undefined && MIDI.noteOn !== undefined) {
+            // noteOn check because does not exist if no audio context
+            // or soundfont has been loaded, such as if a play event
+            // is triggered before soundfont has been loaded.
             if (this.noteOn) {
                 MIDI.noteOn(0, this.midiNote, this.velocity, 0);
             } else if (this.noteOff) {

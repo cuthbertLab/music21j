@@ -1,5 +1,5 @@
 /**
- * music21j 0.9.0 built on  * 2018-03-20.
+ * music21j 0.9.0 built on  * 2018-04-28.
  * Copyright (c) 2013-2016 Michael Scott Cuthbert and cuthbertLab
  * BSD License, see LICENSE
  *
@@ -9107,7 +9107,10 @@
       createClass(Event, [{
           key: 'sendToMIDIjs',
           value: function sendToMIDIjs() {
-              if (MIDI !== undefined) {
+              if (MIDI !== undefined && MIDI.noteOn !== undefined) {
+                  // noteOn check because does not exist if no audio context
+                  // or soundfont has been loaded, such as if a play event
+                  // is triggered before soundfont has been loaded.
                   if (this.noteOn) {
                       MIDI.noteOn(0, this.midiNote, this.velocity, 0);
                   } else if (this.noteOff) {
@@ -11092,10 +11095,31 @@
               // console.log('prepareScorelike called');
               //
               var parts = s.parts;
-              for (var i = 0; i < parts.length; i++) {
-                  var subStream = parts.get(i);
-                  this.preparePartlike(subStream);
+              var _iteratorNormalCompletion2 = true;
+              var _didIteratorError2 = false;
+              var _iteratorError2 = undefined;
+
+              try {
+                  for (var _iterator2 = parts[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+                      var subStream = _step2.value;
+
+                      this.preparePartlike(subStream);
+                  }
+              } catch (err) {
+                  _didIteratorError2 = true;
+                  _iteratorError2 = err;
+              } finally {
+                  try {
+                      if (!_iteratorNormalCompletion2 && _iterator2.return) {
+                          _iterator2.return();
+                      }
+                  } finally {
+                      if (_didIteratorError2) {
+                          throw _iteratorError2;
+                      }
+                  }
               }
+
               this.addStaffConnectors(s);
           }
           /**
@@ -11440,27 +11464,27 @@
 
               var stave = voices[0].stave; // all staves should be same length, so does not matter;
               var tickablesByStave = stack.tickablesByStave();
-              var _iteratorNormalCompletion2 = true;
-              var _didIteratorError2 = false;
-              var _iteratorError2 = undefined;
+              var _iteratorNormalCompletion3 = true;
+              var _didIteratorError3 = false;
+              var _iteratorError3 = undefined;
 
               try {
-                  for (var _iterator2 = tickablesByStave[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-                      var staveTickables = _step2.value;
+                  for (var _iterator3 = tickablesByStave[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+                      var staveTickables = _step3.value;
 
                       formatter.joinVoices(staveTickables);
                   }
               } catch (err) {
-                  _didIteratorError2 = true;
-                  _iteratorError2 = err;
+                  _didIteratorError3 = true;
+                  _iteratorError3 = err;
               } finally {
                   try {
-                      if (!_iteratorNormalCompletion2 && _iterator2.return) {
-                          _iterator2.return();
+                      if (!_iteratorNormalCompletion3 && _iterator3.return) {
+                          _iterator3.return();
                       }
                   } finally {
-                      if (_didIteratorError2) {
-                          throw _iteratorError2;
+                      if (_didIteratorError3) {
+                          throw _iteratorError3;
                       }
                   }
               }
@@ -11676,50 +11700,71 @@
               var activeTupletVexflowNotes = [];
 
               var options = { clef: s.clef, stave: stave };
-              for (var i = 0; i < s.length; i++) {
-                  var thisEl = s.get(i);
-                  if (thisEl.isClassOrSubclass('GeneralNote') && thisEl.duration !== undefined) {
-                      // sets thisEl.activeVexflowNote -- may be overwritten but not so fast...
-                      var vfn = thisEl.vexflowNote(options);
-                      if (vfn === undefined) {
-                          console.error('Cannot create a vexflowNote from: ', thisEl);
-                      }
-                      if (stave !== undefined) {
-                          vfn.setStave(stave);
-                      }
-                      notes.push(vfn);
+              var _iteratorNormalCompletion4 = true;
+              var _didIteratorError4 = false;
+              var _iteratorError4 = undefined;
 
-                      // account for tuplets...
-                      if (thisEl.duration.tuplets.length > 0) {
-                          // only support one tuplet per note -- like vexflow
-                          if (activeTuplet === undefined) {
-                              activeTuplet = thisEl.duration.tuplets[0];
+              try {
+                  for (var _iterator4 = s[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
+                      var thisEl = _step4.value;
+
+                      if (thisEl.isClassOrSubclass('GeneralNote') && thisEl.duration !== undefined) {
+                          // sets thisEl.activeVexflowNote -- may be overwritten but not so fast...
+                          var vfn = thisEl.vexflowNote(options);
+                          if (vfn === undefined) {
+                              console.error('Cannot create a vexflowNote from: ', thisEl);
                           }
-                          activeTupletVexflowNotes.push(vfn);
-                          activeTupletLength += thisEl.duration.quarterLength;
-                          // console.log(activeTupletLength, activeTuplet.totalTupletLength());
-                          //
-                          // Add tuplet when complete.
-                          if (activeTupletLength >= activeTuplet.totalTupletLength() || Math.abs(activeTupletLength - activeTuplet.totalTupletLength()) < 0.001) {
-                              // console.log(activeTupletVexflowNotes);
-                              var tupletOptions = {
-                                  num_notes: activeTuplet.numberNotesActual,
-                                  notes_occupied: activeTuplet.numberNotesNormal
-                              };
-                              // console.log('tupletOptions', tupletOptions);
-                              var vfTuplet = new Vex.Flow.Tuplet(activeTupletVexflowNotes, tupletOptions);
-                              if (activeTuplet.tupletNormalShow === 'ratio') {
-                                  vfTuplet.setRatioed(true);
-                              }
+                          if (stave !== undefined) {
+                              vfn.setStave(stave);
+                          }
+                          notes.push(vfn);
 
-                              vfTuplets.push(vfTuplet);
-                              activeTupletLength = 0.0;
-                              activeTuplet = undefined;
-                              activeTupletVexflowNotes = [];
+                          // account for tuplets...
+                          if (thisEl.duration.tuplets.length > 0) {
+                              // only support one tuplet per note -- like vexflow
+                              if (activeTuplet === undefined) {
+                                  activeTuplet = thisEl.duration.tuplets[0];
+                              }
+                              activeTupletVexflowNotes.push(vfn);
+                              activeTupletLength += thisEl.duration.quarterLength;
+                              // console.log(activeTupletLength, activeTuplet.totalTupletLength());
+                              //
+                              // Add tuplet when complete.
+                              if (activeTupletLength >= activeTuplet.totalTupletLength() || Math.abs(activeTupletLength - activeTuplet.totalTupletLength()) < 0.001) {
+                                  // console.log(activeTupletVexflowNotes);
+                                  var tupletOptions = {
+                                      num_notes: activeTuplet.numberNotesActual,
+                                      notes_occupied: activeTuplet.numberNotesNormal
+                                  };
+                                  // console.log('tupletOptions', tupletOptions);
+                                  var vfTuplet = new Vex.Flow.Tuplet(activeTupletVexflowNotes, tupletOptions);
+                                  if (activeTuplet.tupletNormalShow === 'ratio') {
+                                      vfTuplet.setRatioed(true);
+                                  }
+
+                                  vfTuplets.push(vfTuplet);
+                                  activeTupletLength = 0.0;
+                                  activeTuplet = undefined;
+                                  activeTupletVexflowNotes = [];
+                              }
                           }
                       }
                   }
+              } catch (err) {
+                  _didIteratorError4 = true;
+                  _iteratorError4 = err;
+              } finally {
+                  try {
+                      if (!_iteratorNormalCompletion4 && _iterator4.return) {
+                          _iterator4.return();
+                      }
+                  } finally {
+                      if (_didIteratorError4) {
+                          throw _iteratorError4;
+                      }
+                  }
               }
+
               if (activeTuplet !== undefined) {
                   console.warn('incomplete tuplet found in stream: ', s);
               }
@@ -11769,34 +11814,55 @@
               };
               // runs on a flat, gapless, no-overlap stream, returns a list of TextNote objects...
               var lyricsObjects = [];
-              for (var i = 0; i < s.length; i++) {
-                  var el = s.get(i);
-                  var lyricsArray = el.lyrics;
-                  var text = void 0;
-                  var d = el.duration;
-                  var addConnector = false;
-                  var firstLyric = void 0;
-                  if (lyricsArray.length === 0) {
-                      text = '';
-                  } else {
-                      firstLyric = lyricsArray[0];
-                      text = firstLyric.text;
-                      if (text === undefined) {
+              var _iteratorNormalCompletion5 = true;
+              var _didIteratorError5 = false;
+              var _iteratorError5 = undefined;
+
+              try {
+                  for (var _iterator5 = s[Symbol.iterator](), _step5; !(_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done); _iteratorNormalCompletion5 = true) {
+                      var el = _step5.value;
+
+                      var lyricsArray = el.lyrics;
+                      var text = void 0;
+                      var d = el.duration;
+                      var addConnector = false;
+                      var firstLyric = void 0;
+                      if (lyricsArray.length === 0) {
                           text = '';
+                      } else {
+                          firstLyric = lyricsArray[0];
+                          text = firstLyric.text;
+                          if (text === undefined) {
+                              text = '';
+                          }
+                          if (firstLyric.syllabic === 'middle' || firstLyric.syllabic === 'begin') {
+                              addConnector = ' ' + firstLyric.lyricConnector;
+                              var tempQl = el.duration.quarterLength / 2.0;
+                              d = new duration.Duration(tempQl);
+                          }
                       }
-                      if (firstLyric.syllabic === 'middle' || firstLyric.syllabic === 'begin') {
-                          addConnector = ' ' + firstLyric.lyricConnector;
-                          var tempQl = el.duration.quarterLength / 2.0;
-                          d = new duration.Duration(tempQl);
+                      var t1 = getTextNote(text, font, d, firstLyric);
+                      lyricsObjects.push(t1);
+                      if (addConnector !== false) {
+                          var connector = getTextNote(addConnector, font, d);
+                          lyricsObjects.push(connector);
                       }
                   }
-                  var t1 = getTextNote(text, font, d, firstLyric);
-                  lyricsObjects.push(t1);
-                  if (addConnector !== false) {
-                      var connector = getTextNote(addConnector, font, d);
-                      lyricsObjects.push(connector);
+              } catch (err) {
+                  _didIteratorError5 = true;
+                  _iteratorError5 = err;
+              } finally {
+                  try {
+                      if (!_iteratorNormalCompletion5 && _iterator5.return) {
+                          _iterator5.return();
+                      }
+                  } finally {
+                      if (_didIteratorError5) {
+                          throw _iteratorError5;
+                      }
                   }
               }
+
               return lyricsObjects;
           }
           /**
@@ -11958,15 +12024,35 @@
           key: 'removeFormatterInformation',
           value: function removeFormatterInformation(s, recursive) {
               s.storedVexflowStave = undefined;
-              for (var i = 0; i < s.length; i++) {
-                  var el = s.get(i);
-                  el.x = undefined;
-                  el.y = undefined;
-                  el.width = undefined;
-                  el.systemIndex = undefined;
-                  el.activeVexflowNote = undefined;
-                  if (recursive && el.isClassOrSubclass('Stream')) {
-                      this.removeFormatterInformation(el, recursive);
+              var _iteratorNormalCompletion6 = true;
+              var _didIteratorError6 = false;
+              var _iteratorError6 = undefined;
+
+              try {
+                  for (var _iterator6 = s[Symbol.iterator](), _step6; !(_iteratorNormalCompletion6 = (_step6 = _iterator6.next()).done); _iteratorNormalCompletion6 = true) {
+                      var el = _step6.value;
+
+                      el.x = undefined;
+                      el.y = undefined;
+                      el.width = undefined;
+                      el.systemIndex = undefined;
+                      el.activeVexflowNote = undefined;
+                      if (recursive && el.isClassOrSubclass('Stream')) {
+                          this.removeFormatterInformation(el, recursive);
+                      }
+                  }
+              } catch (err) {
+                  _didIteratorError6 = true;
+                  _iteratorError6 = err;
+              } finally {
+                  try {
+                      if (!_iteratorNormalCompletion6 && _iterator6.return) {
+                          _iterator6.return();
+                      }
+                  } finally {
+                      if (_didIteratorError6) {
+                          throw _iteratorError6;
+                      }
                   }
               }
           }
@@ -12008,38 +12094,79 @@
               }
 
               var nextTicks = 0;
-              for (var i = 0; i < s.length; i++) {
-                  var el = s.get(i);
-                  if (el.isClassOrSubclass('GeneralNote')) {
-                      var vfn = el.activeVexflowNote;
-                      if (vfn === undefined) {
-                          continue;
-                      }
-                      var nTicks = parseInt(vfn.ticks);
-                      var formatterNote = formatter.tickContexts.map[String(nextTicks)];
-                      nextTicks += nTicks;
-                      el.x = vfn.getAbsoluteX();
-                      // these are a bit hacky...
-                      el.systemIndex = s.renderOptions.systemIndex;
+              var _iteratorNormalCompletion7 = true;
+              var _didIteratorError7 = false;
+              var _iteratorError7 = undefined;
 
-                      // console.log(i + " " + el.x + " " + formatterNote.x + " " + noteOffsetLeft);
-                      if (formatterNote === undefined) {
-                          continue;
-                      }
+              try {
+                  for (var _iterator7 = s[Symbol.iterator](), _step7; !(_iteratorNormalCompletion7 = (_step7 = _iterator7.next()).done); _iteratorNormalCompletion7 = true) {
+                      var el = _step7.value;
 
-                      el.width = formatterNote.width;
-                      if (el.pitch !== undefined) {
-                          // note only...
-                          el.y = stave.getBottomY() - (s.clef.lowestLine - el.pitch.diatonicNoteNum) * stave.options.spacing_between_lines_px;
-                          // console.log('Note DNN: ' + el.pitch.diatonicNoteNum + " ; y: " + el.y);
+                      if (el.isClassOrSubclass('GeneralNote')) {
+                          var vfn = el.activeVexflowNote;
+                          if (vfn === undefined) {
+                              continue;
+                          }
+                          var nTicks = parseInt(vfn.ticks);
+                          var formatterNote = formatter.tickContexts.map[String(nextTicks)];
+                          nextTicks += nTicks;
+                          el.x = vfn.getAbsoluteX();
+                          // these are a bit hacky...
+                          el.systemIndex = s.renderOptions.systemIndex;
+
+                          // console.log(el.x + " " + formatterNote.x + " " + noteOffsetLeft);
+                          if (formatterNote === undefined) {
+                              continue;
+                          }
+
+                          el.width = formatterNote.width;
+                          if (el.pitch !== undefined) {
+                              // note only...
+                              el.y = stave.getBottomY() - (s.clef.lowestLine - el.pitch.diatonicNoteNum) * stave.options.spacing_between_lines_px;
+                              // console.log('Note DNN: ' + el.pitch.diatonicNoteNum + " ; y: " + el.y);
+                          }
+                      }
+                  }
+              } catch (err) {
+                  _didIteratorError7 = true;
+                  _iteratorError7 = err;
+              } finally {
+                  try {
+                      if (!_iteratorNormalCompletion7 && _iterator7.return) {
+                          _iterator7.return();
+                      }
+                  } finally {
+                      if (_didIteratorError7) {
+                          throw _iteratorError7;
                       }
                   }
               }
+
               if (debug) {
-                  for (var _i3 = 0; _i3 < s.length; _i3++) {
-                      var n = s.get(_i3);
-                      if (n.pitch !== undefined) {
-                          console.log(n.pitch.diatonicNoteNum + ' ' + n.x + ' ' + (n.x + n.width));
+                  var _iteratorNormalCompletion8 = true;
+                  var _didIteratorError8 = false;
+                  var _iteratorError8 = undefined;
+
+                  try {
+                      for (var _iterator8 = s[Symbol.iterator](), _step8; !(_iteratorNormalCompletion8 = (_step8 = _iterator8.next()).done); _iteratorNormalCompletion8 = true) {
+                          var n = _step8.value;
+
+                          if (n.pitch !== undefined) {
+                              console.log(n.pitch.diatonicNoteNum + ' ' + n.x + ' ' + (n.x + n.width));
+                          }
+                      }
+                  } catch (err) {
+                      _didIteratorError8 = true;
+                      _iteratorError8 = err;
+                  } finally {
+                      try {
+                          if (!_iteratorNormalCompletion8 && _iterator8.return) {
+                              _iterator8.return();
+                          }
+                      } finally {
+                          if (_didIteratorError8) {
+                              throw _iteratorError8;
+                          }
                       }
                   }
               }
@@ -12378,13 +12505,43 @@
            * Add an element to the end of the stream, setting its `.offset` accordingly
            *
            * @memberof music21.stream.Stream
-           * @param {music21.base.Music21Object} el - element to append
+           * @param {music21.base.Music21Object|Array} el - element or list of elements to append
            * @returns {this}
            */
 
       }, {
           key: 'append',
-          value: function append(el) {
+          value: function append(elOrElList) {
+              if (Array.isArray(elOrElList)) {
+                  var _iteratorNormalCompletion2 = true;
+                  var _didIteratorError2 = false;
+                  var _iteratorError2 = undefined;
+
+                  try {
+                      for (var _iterator2 = elOrElList[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+                          var _el = _step2.value;
+
+                          this.append(_el);
+                      }
+                  } catch (err) {
+                      _didIteratorError2 = true;
+                      _iteratorError2 = err;
+                  } finally {
+                      try {
+                          if (!_iteratorNormalCompletion2 && _iterator2.return) {
+                              _iterator2.return();
+                          }
+                      } finally {
+                          if (_didIteratorError2) {
+                              throw _iteratorError2;
+                          }
+                      }
+                  }
+
+                  return this;
+              }
+
+              var el = elOrElList;
               try {
                   if (el.isClassOrSubclass !== undefined && el.isClassOrSubclass('NotRest')) {
                       // set stem direction on output...;
@@ -12576,13 +12733,13 @@
           key: 'hasSubStreams',
           value: function hasSubStreams() {
               var hasSubStreams = false;
-              var _iteratorNormalCompletion2 = true;
-              var _didIteratorError2 = false;
-              var _iteratorError2 = undefined;
+              var _iteratorNormalCompletion3 = true;
+              var _didIteratorError3 = false;
+              var _iteratorError3 = undefined;
 
               try {
-                  for (var _iterator2 = this[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-                      var el = _step2.value;
+                  for (var _iterator3 = this[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+                      var el = _step3.value;
 
                       if (el.isClassOrSubclass('Stream')) {
                           hasSubStreams = true;
@@ -12590,16 +12747,16 @@
                       }
                   }
               } catch (err) {
-                  _didIteratorError2 = true;
-                  _iteratorError2 = err;
+                  _didIteratorError3 = true;
+                  _iteratorError3 = err;
               } finally {
                   try {
-                      if (!_iteratorNormalCompletion2 && _iterator2.return) {
-                          _iterator2.return();
+                      if (!_iteratorNormalCompletion3 && _iterator3.return) {
+                          _iterator3.return();
                       }
                   } finally {
-                      if (_didIteratorError2) {
-                          throw _iteratorError2;
+                      if (_didIteratorError3) {
+                          throw _iteratorError3;
                       }
                   }
               }
@@ -12729,27 +12886,27 @@
                   this.elements = [];
                   // endElements
                   // elementsChanged;
-                  var _iteratorNormalCompletion3 = true;
-                  var _didIteratorError3 = false;
-                  var _iteratorError3 = undefined;
+                  var _iteratorNormalCompletion4 = true;
+                  var _didIteratorError4 = false;
+                  var _iteratorError4 = undefined;
 
                   try {
-                      for (var _iterator3 = post[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
-                          var _e = _step3.value;
+                      for (var _iterator4 = post[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
+                          var _e = _step4.value;
 
                           this.insert(_e.offset, _e);
                       }
                   } catch (err) {
-                      _didIteratorError3 = true;
-                      _iteratorError3 = err;
+                      _didIteratorError4 = true;
+                      _iteratorError4 = err;
                   } finally {
                       try {
-                          if (!_iteratorNormalCompletion3 && _iterator3.return) {
-                              _iterator3.return();
+                          if (!_iteratorNormalCompletion4 && _iterator4.return) {
+                              _iterator4.return();
                           }
                       } finally {
-                          if (_didIteratorError3) {
-                              throw _iteratorError3;
+                          if (_didIteratorError4) {
+                              throw _iteratorError4;
                           }
                       }
                   }
@@ -12779,39 +12936,39 @@
                   mColl = [returnObj];
               } else {
                   mColl = [];
-                  var _iteratorNormalCompletion4 = true;
-                  var _didIteratorError4 = false;
-                  var _iteratorError4 = undefined;
+                  var _iteratorNormalCompletion5 = true;
+                  var _didIteratorError5 = false;
+                  var _iteratorError5 = undefined;
 
                   try {
-                      for (var _iterator4 = returnObj.getElementsByClass('Measure').elements[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
-                          var m = _step4.value;
+                      for (var _iterator5 = returnObj.getElementsByClass('Measure').elements[Symbol.iterator](), _step5; !(_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done); _iteratorNormalCompletion5 = true) {
+                          var m = _step5.value;
 
                           mColl.push(m);
                       }
                   } catch (err) {
-                      _didIteratorError4 = true;
-                      _iteratorError4 = err;
+                      _didIteratorError5 = true;
+                      _iteratorError5 = err;
                   } finally {
                       try {
-                          if (!_iteratorNormalCompletion4 && _iterator4.return) {
-                              _iterator4.return();
+                          if (!_iteratorNormalCompletion5 && _iterator5.return) {
+                              _iterator5.return();
                           }
                       } finally {
-                          if (_didIteratorError4) {
-                              throw _iteratorError4;
+                          if (_didIteratorError5) {
+                              throw _iteratorError5;
                           }
                       }
                   }
               }
               var lastTimeSignature = void 0;
-              var _iteratorNormalCompletion5 = true;
-              var _didIteratorError5 = false;
-              var _iteratorError5 = undefined;
+              var _iteratorNormalCompletion6 = true;
+              var _didIteratorError6 = false;
+              var _iteratorError6 = undefined;
 
               try {
-                  for (var _iterator5 = mColl[Symbol.iterator](), _step5; !(_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done); _iteratorNormalCompletion5 = true) {
-                      var _m = _step5.value;
+                  for (var _iterator6 = mColl[Symbol.iterator](), _step6; !(_iteratorNormalCompletion6 = (_step6 = _iterator6.next()).done); _iteratorNormalCompletion6 = true) {
+                      var _m = _step6.value;
 
                       if (_m.timeSignature !== undefined) {
                           lastTimeSignature = _m.timeSignature;
@@ -12825,27 +12982,27 @@
                       }
                       var noteStream = _m.notesAndRests;
                       var durList = [];
-                      var _iteratorNormalCompletion6 = true;
-                      var _didIteratorError6 = false;
-                      var _iteratorError6 = undefined;
+                      var _iteratorNormalCompletion7 = true;
+                      var _didIteratorError7 = false;
+                      var _iteratorError7 = undefined;
 
                       try {
-                          for (var _iterator6 = noteStream[Symbol.iterator](), _step6; !(_iteratorNormalCompletion6 = (_step6 = _iterator6.next()).done); _iteratorNormalCompletion6 = true) {
-                              var _n = _step6.value;
+                          for (var _iterator7 = noteStream[Symbol.iterator](), _step7; !(_iteratorNormalCompletion7 = (_step7 = _iterator7.next()).done); _iteratorNormalCompletion7 = true) {
+                              var _n = _step7.value;
 
                               durList.push(_n.duration);
                           }
                       } catch (err) {
-                          _didIteratorError6 = true;
-                          _iteratorError6 = err;
+                          _didIteratorError7 = true;
+                          _iteratorError7 = err;
                       } finally {
                           try {
-                              if (!_iteratorNormalCompletion6 && _iterator6.return) {
-                                  _iterator6.return();
+                              if (!_iteratorNormalCompletion7 && _iterator7.return) {
+                                  _iterator7.return();
                               }
                           } finally {
-                              if (_didIteratorError6) {
-                                  throw _iteratorError6;
+                              if (_didIteratorError7) {
+                                  throw _iteratorError7;
                               }
                           }
                       }
@@ -12879,16 +13036,16 @@
 
                   // returnObj.streamStatus.beams = true;
               } catch (err) {
-                  _didIteratorError5 = true;
-                  _iteratorError5 = err;
+                  _didIteratorError6 = true;
+                  _iteratorError6 = err;
               } finally {
                   try {
-                      if (!_iteratorNormalCompletion5 && _iterator5.return) {
-                          _iterator5.return();
+                      if (!_iteratorNormalCompletion6 && _iterator6.return) {
+                          _iterator6.return();
                       }
                   } finally {
-                      if (_didIteratorError5) {
-                          throw _iteratorError5;
+                      if (_didIteratorError6) {
+                          throw _iteratorError6;
                       }
                   }
               }
@@ -12906,29 +13063,29 @@
       }, {
           key: 'hasLyrics',
           value: function hasLyrics() {
-              var _iteratorNormalCompletion7 = true;
-              var _didIteratorError7 = false;
-              var _iteratorError7 = undefined;
+              var _iteratorNormalCompletion8 = true;
+              var _didIteratorError8 = false;
+              var _iteratorError8 = undefined;
 
               try {
-                  for (var _iterator7 = this[Symbol.iterator](), _step7; !(_iteratorNormalCompletion7 = (_step7 = _iterator7.next()).done); _iteratorNormalCompletion7 = true) {
-                      var el = _step7.value;
+                  for (var _iterator8 = this[Symbol.iterator](), _step8; !(_iteratorNormalCompletion8 = (_step8 = _iterator8.next()).done); _iteratorNormalCompletion8 = true) {
+                      var el = _step8.value;
 
                       if (el.lyric !== undefined) {
                           return true;
                       }
                   }
               } catch (err) {
-                  _didIteratorError7 = true;
-                  _iteratorError7 = err;
+                  _didIteratorError8 = true;
+                  _iteratorError8 = err;
               } finally {
                   try {
-                      if (!_iteratorNormalCompletion7 && _iterator7.return) {
-                          _iterator7.return();
+                      if (!_iteratorNormalCompletion8 && _iterator8.return) {
+                          _iterator8.return();
                       }
                   } finally {
-                      if (_didIteratorError7) {
-                          throw _iteratorError7;
+                      if (_didIteratorError8) {
+                          throw _iteratorError8;
                       }
                   }
               }
@@ -12983,13 +13140,13 @@
           key: 'getElementsByClass',
           value: function getElementsByClass(classList) {
               var tempEls = [];
-              var _iteratorNormalCompletion8 = true;
-              var _didIteratorError8 = false;
-              var _iteratorError8 = undefined;
+              var _iteratorNormalCompletion9 = true;
+              var _didIteratorError9 = false;
+              var _iteratorError9 = undefined;
 
               try {
-                  for (var _iterator8 = this[Symbol.iterator](), _step8; !(_iteratorNormalCompletion8 = (_step8 = _iterator8.next()).done); _iteratorNormalCompletion8 = true) {
-                      var thisEl = _step8.value;
+                  for (var _iterator9 = this[Symbol.iterator](), _step9; !(_iteratorNormalCompletion9 = (_step9 = _iterator9.next()).done); _iteratorNormalCompletion9 = true) {
+                      var thisEl = _step9.value;
 
                       // console.warn(thisEl);
                       if (thisEl.isClassOrSubclass === undefined) {
@@ -12999,16 +13156,16 @@
                       }
                   }
               } catch (err) {
-                  _didIteratorError8 = true;
-                  _iteratorError8 = err;
+                  _didIteratorError9 = true;
+                  _iteratorError9 = err;
               } finally {
                   try {
-                      if (!_iteratorNormalCompletion8 && _iterator8.return) {
-                          _iterator8.return();
+                      if (!_iteratorNormalCompletion9 && _iterator9.return) {
+                          _iterator9.return();
                       }
                   } finally {
-                      if (_didIteratorError8) {
-                          throw _iteratorError8;
+                      if (_didIteratorError9) {
+                          throw _iteratorError9;
                       }
                   }
               }
@@ -13034,59 +13191,100 @@
               // cheap version of music21p method
               var extendableStepList = {};
               var stepNames = ['C', 'D', 'E', 'F', 'G', 'A', 'B'];
-              for (var i = 0; i < stepNames.length; i++) {
-                  var stepName = stepNames[i];
-                  var stepAlter = 0;
-                  if (this.keySignature !== undefined) {
-                      var tempAccidental = this.keySignature.accidentalByStep(stepName);
-                      if (tempAccidental !== undefined) {
-                          stepAlter = tempAccidental.alter;
-                          // console.log(stepAlter + " " + stepName);
-                      }
-                  }
-                  extendableStepList[stepName] = stepAlter;
-              }
-              var lastOctaveStepList = [];
-              var lastStepDict = void 0;
-              var p = void 0;
-              for (var _i2 = 0; _i2 < 10; _i2++) {
-                  lastStepDict = $.extend({}, extendableStepList);
-                  lastOctaveStepList.push(lastStepDict);
-              }
-              var lastOctavelessStepDict = $.extend({}, extendableStepList); // probably unnecessary, but safe...
-              var _iteratorNormalCompletion9 = true;
-              var _didIteratorError9 = false;
-              var _iteratorError9 = undefined;
+              var _iteratorNormalCompletion10 = true;
+              var _didIteratorError10 = false;
+              var _iteratorError10 = undefined;
 
               try {
-                  for (var _iterator9 = this[Symbol.iterator](), _step9; !(_iteratorNormalCompletion9 = (_step9 = _iterator9.next()).done); _iteratorNormalCompletion9 = true) {
-                      var el = _step9.value;
+                  for (var _iterator10 = stepNames[Symbol.iterator](), _step10; !(_iteratorNormalCompletion10 = (_step10 = _iterator10.next()).done); _iteratorNormalCompletion10 = true) {
+                      var stepName = _step10.value;
+
+                      var stepAlter = 0;
+                      if (this.keySignature !== undefined) {
+                          var tempAccidental = this.keySignature.accidentalByStep(stepName);
+                          if (tempAccidental !== undefined) {
+                              stepAlter = tempAccidental.alter;
+                              // console.log(stepAlter + " " + stepName);
+                          }
+                      }
+                      extendableStepList[stepName] = stepAlter;
+                  }
+              } catch (err) {
+                  _didIteratorError10 = true;
+                  _iteratorError10 = err;
+              } finally {
+                  try {
+                      if (!_iteratorNormalCompletion10 && _iterator10.return) {
+                          _iterator10.return();
+                      }
+                  } finally {
+                      if (_didIteratorError10) {
+                          throw _iteratorError10;
+                      }
+                  }
+              }
+
+              var lastOctaveStepList = [];
+              for (var i = 0; i < 10; i++) {
+                  var tempOctaveStepDict = $.extend({}, extendableStepList);
+                  lastOctaveStepList.push(tempOctaveStepDict);
+              }
+              var lastOctavelessStepDict = $.extend({}, extendableStepList); // probably unnecessary, but safe...
+
+              var _iteratorNormalCompletion11 = true;
+              var _didIteratorError11 = false;
+              var _iteratorError11 = undefined;
+
+              try {
+                  for (var _iterator11 = this[Symbol.iterator](), _step11; !(_iteratorNormalCompletion11 = (_step11 = _iterator11.next()).done); _iteratorNormalCompletion11 = true) {
+                      var el = _step11.value;
 
                       if (el.pitch !== undefined) {
                           // note
-                          p = el.pitch;
-                          lastStepDict = lastOctaveStepList[p.octave];
+                          var p = el.pitch;
+                          var lastStepDict = lastOctaveStepList[p.octave];
                           this._makeAccidentalForOnePitch(p, lastStepDict, lastOctavelessStepDict);
                       } else if (el._notes !== undefined) {
                           // chord
-                          for (var j = 0; j < el._notes.length; j++) {
-                              p = el._notes[j].pitch;
-                              lastStepDict = lastOctaveStepList[p.octave];
-                              this._makeAccidentalForOnePitch(p, lastStepDict, lastOctavelessStepDict);
+                          var _iteratorNormalCompletion12 = true;
+                          var _didIteratorError12 = false;
+                          var _iteratorError12 = undefined;
+
+                          try {
+                              for (var _iterator12 = el._notes[Symbol.iterator](), _step12; !(_iteratorNormalCompletion12 = (_step12 = _iterator12.next()).done); _iteratorNormalCompletion12 = true) {
+                                  var chordNote = _step12.value;
+
+                                  var _p = chordNote.pitch;
+                                  var _lastStepDict = lastOctaveStepList[_p.octave];
+                                  this._makeAccidentalForOnePitch(_p, _lastStepDict, lastOctavelessStepDict);
+                              }
+                          } catch (err) {
+                              _didIteratorError12 = true;
+                              _iteratorError12 = err;
+                          } finally {
+                              try {
+                                  if (!_iteratorNormalCompletion12 && _iterator12.return) {
+                                      _iterator12.return();
+                                  }
+                              } finally {
+                                  if (_didIteratorError12) {
+                                      throw _iteratorError12;
+                                  }
+                              }
                           }
                       }
                   }
               } catch (err) {
-                  _didIteratorError9 = true;
-                  _iteratorError9 = err;
+                  _didIteratorError11 = true;
+                  _iteratorError11 = err;
               } finally {
                   try {
-                      if (!_iteratorNormalCompletion9 && _iterator9.return) {
-                          _iterator9.return();
+                      if (!_iteratorNormalCompletion11 && _iterator11.return) {
+                          _iterator11.return();
                       }
                   } finally {
-                      if (_didIteratorError9) {
-                          throw _iteratorError9;
+                      if (_didIteratorError11) {
+                          throw _iteratorError11;
                       }
                   }
               }
@@ -13099,6 +13297,10 @@
       }, {
           key: '_makeAccidentalForOnePitch',
           value: function _makeAccidentalForOnePitch(p, lastStepDict, lastOctavelessStepDict) {
+              if (lastStepDict === undefined) {
+                  // octave < 0 or > 10? -- error that appeared sometimes.
+                  lastStepDict = {};
+              }
               var newAlter = void 0;
               if (p.accidental === undefined) {
                   newAlter = 0;
@@ -13158,29 +13360,29 @@
               }
 
               if (recursive) {
-                  var _iteratorNormalCompletion10 = true;
-                  var _didIteratorError10 = false;
-                  var _iteratorError10 = undefined;
+                  var _iteratorNormalCompletion13 = true;
+                  var _didIteratorError13 = false;
+                  var _iteratorError13 = undefined;
 
                   try {
-                      for (var _iterator10 = this[Symbol.iterator](), _step10; !(_iteratorNormalCompletion10 = (_step10 = _iterator10.next()).done); _iteratorNormalCompletion10 = true) {
-                          var el = _step10.value;
+                      for (var _iterator13 = this[Symbol.iterator](), _step13; !(_iteratorNormalCompletion13 = (_step13 = _iterator13.next()).done); _iteratorNormalCompletion13 = true) {
+                          var el = _step13.value;
 
                           if (el.isClassOrSubclass('Stream')) {
                               el.resetRenderOptions(recursive, preserveEvents);
                           }
                       }
                   } catch (err) {
-                      _didIteratorError10 = true;
-                      _iteratorError10 = err;
+                      _didIteratorError13 = true;
+                      _iteratorError13 = err;
                   } finally {
                       try {
-                          if (!_iteratorNormalCompletion10 && _iterator10.return) {
-                              _iterator10.return();
+                          if (!_iteratorNormalCompletion13 && _iterator13.return) {
+                              _iterator13.return();
                           }
                       } finally {
-                          if (_didIteratorError10) {
-                              throw _iteratorError10;
+                          if (_didIteratorError13) {
+                              throw _iteratorError13;
                           }
                       }
                   }
@@ -13310,15 +13512,36 @@
               }
               if (this.hasVoices()) {
                   var maxLength = 0;
-                  for (i = 0; i < this.length; i++) {
-                      var v = this.get(i);
-                      if (v.isClassOrSubclass('Stream')) {
-                          var thisLength = v.estimateStaffLength() + v.renderOptions.staffPadding;
-                          if (thisLength > maxLength) {
-                              maxLength = thisLength;
+                  var _iteratorNormalCompletion14 = true;
+                  var _didIteratorError14 = false;
+                  var _iteratorError14 = undefined;
+
+                  try {
+                      for (var _iterator14 = this[Symbol.iterator](), _step14; !(_iteratorNormalCompletion14 = (_step14 = _iterator14.next()).done); _iteratorNormalCompletion14 = true) {
+                          var v = _step14.value;
+
+                          if (v.isClassOrSubclass('Stream')) {
+                              var thisLength = v.estimateStaffLength() + v.renderOptions.staffPadding;
+                              if (thisLength > maxLength) {
+                                  maxLength = thisLength;
+                              }
+                          }
+                      }
+                  } catch (err) {
+                      _didIteratorError14 = true;
+                      _iteratorError14 = err;
+                  } finally {
+                      try {
+                          if (!_iteratorNormalCompletion14 && _iterator14.return) {
+                              _iterator14.return();
+                          }
+                      } finally {
+                          if (_didIteratorError14) {
+                              throw _iteratorError14;
                           }
                       }
                   }
+
                   return maxLength;
               } else if (this.hasSubStreams()) {
                   // part
@@ -13909,13 +14132,13 @@
                   note: undefined
               }; // a backup in case we did not find within allowablePixels
 
-              var _iteratorNormalCompletion11 = true;
-              var _didIteratorError11 = false;
-              var _iteratorError11 = undefined;
+              var _iteratorNormalCompletion15 = true;
+              var _didIteratorError15 = false;
+              var _iteratorError15 = undefined;
 
               try {
-                  for (var _iterator11 = subStream.flat.notesAndRests.elements[Symbol.iterator](), _step11; !(_iteratorNormalCompletion11 = (_step11 = _iterator11.next()).done); _iteratorNormalCompletion11 = true) {
-                      var n = _step11.value;
+                  for (var _iterator15 = subStream.flat.notesAndRests.elements[Symbol.iterator](), _step15; !(_iteratorNormalCompletion15 = (_step15 = _iterator15.next()).done); _iteratorNormalCompletion15 = true) {
+                      var n = _step15.value;
 
                       /* should also
                        * compensate for accidentals...
@@ -13934,16 +14157,16 @@
                   }
                   // console.log('note here is: ', foundNote);
               } catch (err) {
-                  _didIteratorError11 = true;
-                  _iteratorError11 = err;
+                  _didIteratorError15 = true;
+                  _iteratorError15 = err;
               } finally {
                   try {
-                      if (!_iteratorNormalCompletion11 && _iterator11.return) {
-                          _iterator11.return();
+                      if (!_iteratorNormalCompletion15 && _iterator15.return) {
+                          _iterator15.return();
                       }
                   } finally {
-                      if (_didIteratorError11) {
-                          throw _iteratorError11;
+                      if (_didIteratorError15) {
+                          throw _iteratorError15;
                       }
                   }
               }
@@ -14245,29 +14468,29 @@
       }, {
           key: 'hasVoices',
           value: function hasVoices() {
-              var _iteratorNormalCompletion12 = true;
-              var _didIteratorError12 = false;
-              var _iteratorError12 = undefined;
+              var _iteratorNormalCompletion16 = true;
+              var _didIteratorError16 = false;
+              var _iteratorError16 = undefined;
 
               try {
-                  for (var _iterator12 = this[Symbol.iterator](), _step12; !(_iteratorNormalCompletion12 = (_step12 = _iterator12.next()).done); _iteratorNormalCompletion12 = true) {
-                      var el = _step12.value;
+                  for (var _iterator16 = this[Symbol.iterator](), _step16; !(_iteratorNormalCompletion16 = (_step16 = _iterator16.next()).done); _iteratorNormalCompletion16 = true) {
+                      var el = _step16.value;
 
                       if (el.isClassOrSubclass('Voice')) {
                           return true;
                       }
                   }
               } catch (err) {
-                  _didIteratorError12 = true;
-                  _iteratorError12 = err;
+                  _didIteratorError16 = true;
+                  _iteratorError16 = err;
               } finally {
                   try {
-                      if (!_iteratorNormalCompletion12 && _iterator12.return) {
-                          _iterator12.return();
+                      if (!_iteratorNormalCompletion16 && _iterator16.return) {
+                          _iterator16.return();
                       }
                   } finally {
-                      if (_didIteratorError12) {
-                          throw _iteratorError12;
+                      if (_didIteratorError16) {
+                          throw _iteratorError16;
                       }
                   }
               }
@@ -14289,13 +14512,13 @@
           key: 'highestTime',
           get: function get() {
               var highestTime = 0.0;
-              var _iteratorNormalCompletion13 = true;
-              var _didIteratorError13 = false;
-              var _iteratorError13 = undefined;
+              var _iteratorNormalCompletion17 = true;
+              var _didIteratorError17 = false;
+              var _iteratorError17 = undefined;
 
               try {
-                  for (var _iterator13 = this[Symbol.iterator](), _step13; !(_iteratorNormalCompletion13 = (_step13 = _iterator13.next()).done); _iteratorNormalCompletion13 = true) {
-                      var el = _step13.value;
+                  for (var _iterator17 = this[Symbol.iterator](), _step17; !(_iteratorNormalCompletion17 = (_step17 = _iterator17.next()).done); _iteratorNormalCompletion17 = true) {
+                      var el = _step17.value;
 
                       var endTime = el.offset;
                       if (el.duration !== undefined) {
@@ -14306,16 +14529,16 @@
                       }
                   }
               } catch (err) {
-                  _didIteratorError13 = true;
-                  _iteratorError13 = err;
+                  _didIteratorError17 = true;
+                  _iteratorError17 = err;
               } finally {
                   try {
-                      if (!_iteratorNormalCompletion13 && _iterator13.return) {
-                          _iterator13.return();
+                      if (!_iteratorNormalCompletion17 && _iterator17.return) {
+                          _iterator17.return();
                       }
                   } finally {
-                      if (_didIteratorError13) {
-                          throw _iteratorError13;
+                      if (_didIteratorError17) {
+                          throw _iteratorError17;
                       }
                   }
               }
@@ -14600,13 +14823,13 @@
           value: function getMeasureWidths() {
               /* call after setSubstreamRenderOptions */
               var measureWidths = [];
-              var _iteratorNormalCompletion14 = true;
-              var _didIteratorError14 = false;
-              var _iteratorError14 = undefined;
+              var _iteratorNormalCompletion18 = true;
+              var _didIteratorError18 = false;
+              var _iteratorError18 = undefined;
 
               try {
-                  for (var _iterator14 = this[Symbol.iterator](), _step14; !(_iteratorNormalCompletion14 = (_step14 = _iterator14.next()).done); _iteratorNormalCompletion14 = true) {
-                      var el = _step14.value;
+                  for (var _iterator18 = this[Symbol.iterator](), _step18; !(_iteratorNormalCompletion18 = (_step18 = _iterator18.next()).done); _iteratorNormalCompletion18 = true) {
+                      var el = _step18.value;
 
                       if (el.isClassOrSubclass('Measure')) {
                           var elRendOp = el.renderOptions;
@@ -14617,16 +14840,16 @@
                    *
                    */
               } catch (err) {
-                  _didIteratorError14 = true;
-                  _iteratorError14 = err;
+                  _didIteratorError18 = true;
+                  _iteratorError18 = err;
               } finally {
                   try {
-                      if (!_iteratorNormalCompletion14 && _iterator14.return) {
-                          _iterator14.return();
+                      if (!_iteratorNormalCompletion18 && _iterator18.return) {
+                          _iterator18.return();
                       }
                   } finally {
-                      if (_didIteratorError14) {
-                          throw _iteratorError14;
+                      if (_didIteratorError18) {
+                          throw _iteratorError18;
                       }
                   }
               }
@@ -14651,13 +14874,13 @@
                   // part with Measures underneath
                   var totalLength = 0;
                   var isFirst = true;
-                  var _iteratorNormalCompletion15 = true;
-                  var _didIteratorError15 = false;
-                  var _iteratorError15 = undefined;
+                  var _iteratorNormalCompletion19 = true;
+                  var _didIteratorError19 = false;
+                  var _iteratorError19 = undefined;
 
                   try {
-                      for (var _iterator15 = this.getElementsByClass('Measure')[Symbol.iterator](), _step15; !(_iteratorNormalCompletion15 = (_step15 = _iterator15.next()).done); _iteratorNormalCompletion15 = true) {
-                          var m = _step15.value;
+                      for (var _iterator19 = this.getElementsByClass('Measure')[Symbol.iterator](), _step19; !(_iteratorNormalCompletion19 = (_step19 = _iterator19.next()).done); _iteratorNormalCompletion19 = true) {
+                          var m = _step19.value;
 
                           // this looks wrong, but actually seems to be right. moving it to
                           // after the break breaks things.
@@ -14668,16 +14891,16 @@
                           isFirst = false;
                       }
                   } catch (err) {
-                      _didIteratorError15 = true;
-                      _iteratorError15 = err;
+                      _didIteratorError19 = true;
+                      _iteratorError19 = err;
                   } finally {
                       try {
-                          if (!_iteratorNormalCompletion15 && _iterator15.return) {
-                              _iterator15.return();
+                          if (!_iteratorNormalCompletion19 && _iterator19.return) {
+                              _iterator19.return();
                           }
                       } finally {
-                          if (_didIteratorError15) {
-                              throw _iteratorError15;
+                          if (_didIteratorError19) {
+                              throw _iteratorError19;
                           }
                       }
                   }
@@ -14818,13 +15041,13 @@
               var lastKeySignature = void 0;
               var lastClef = void 0;
 
-              var _iteratorNormalCompletion16 = true;
-              var _didIteratorError16 = false;
-              var _iteratorError16 = undefined;
+              var _iteratorNormalCompletion20 = true;
+              var _didIteratorError20 = false;
+              var _iteratorError20 = undefined;
 
               try {
-                  for (var _iterator16 = this[Symbol.iterator](), _step16; !(_iteratorNormalCompletion16 = (_step16 = _iterator16.next()).done); _iteratorNormalCompletion16 = true) {
-                      var el = _step16.value;
+                  for (var _iterator20 = this[Symbol.iterator](), _step20; !(_iteratorNormalCompletion20 = (_step20 = _iterator20.next()).done); _iteratorNormalCompletion20 = true) {
+                      var el = _step20.value;
 
                       if (el.isClassOrSubclass('Measure')) {
                           var elRendOp = el.renderOptions;
@@ -14871,16 +15094,16 @@
                       }
                   }
               } catch (err) {
-                  _didIteratorError16 = true;
-                  _iteratorError16 = err;
+                  _didIteratorError20 = true;
+                  _iteratorError20 = err;
               } finally {
                   try {
-                      if (!_iteratorNormalCompletion16 && _iterator16.return) {
-                          _iterator16.return();
+                      if (!_iteratorNormalCompletion20 && _iterator20.return) {
+                          _iterator20.return();
                       }
                   } finally {
-                      if (_didIteratorError16) {
-                          throw _iteratorError16;
+                      if (_didIteratorError20) {
+                          throw _iteratorError20;
                       }
                   }
               }
@@ -14964,13 +15187,13 @@
           value: function getStreamFromScaledXandSystemIndex(xPxScaled, systemIndex) {
               var gotMeasure = void 0;
               var measures = this.measures;
-              var _iteratorNormalCompletion17 = true;
-              var _didIteratorError17 = false;
-              var _iteratorError17 = undefined;
+              var _iteratorNormalCompletion21 = true;
+              var _didIteratorError21 = false;
+              var _iteratorError21 = undefined;
 
               try {
-                  for (var _iterator17 = measures[Symbol.iterator](), _step17; !(_iteratorNormalCompletion17 = (_step17 = _iterator17.next()).done); _iteratorNormalCompletion17 = true) {
-                      var m = _step17.value;
+                  for (var _iterator21 = measures[Symbol.iterator](), _step21; !(_iteratorNormalCompletion21 = (_step21 = _iterator21.next()).done); _iteratorNormalCompletion21 = true) {
+                      var m = _step21.value;
 
                       var rendOp = m.renderOptions;
                       var left = rendOp.left;
@@ -14991,16 +15214,16 @@
                       }
                   }
               } catch (err) {
-                  _didIteratorError17 = true;
-                  _iteratorError17 = err;
+                  _didIteratorError21 = true;
+                  _iteratorError21 = err;
               } finally {
                   try {
-                      if (!_iteratorNormalCompletion17 && _iterator17.return) {
-                          _iterator17.return();
+                      if (!_iteratorNormalCompletion21 && _iterator21.return) {
+                          _iterator21.return();
                       }
                   } finally {
-                      if (_didIteratorError17) {
-                          throw _iteratorError17;
+                      if (_didIteratorError21) {
+                          throw _iteratorError21;
                       }
                   }
               }
@@ -15067,13 +15290,13 @@
               var currentPartNumber = 0;
               var currentPartTop = 0;
               var partSpacing = this.partSpacing;
-              var _iteratorNormalCompletion18 = true;
-              var _didIteratorError18 = false;
-              var _iteratorError18 = undefined;
+              var _iteratorNormalCompletion22 = true;
+              var _didIteratorError22 = false;
+              var _iteratorError22 = undefined;
 
               try {
-                  for (var _iterator18 = this[Symbol.iterator](), _step18; !(_iteratorNormalCompletion18 = (_step18 = _iterator18.next()).done); _iteratorNormalCompletion18 = true) {
-                      var el = _step18.value;
+                  for (var _iterator22 = this[Symbol.iterator](), _step22; !(_iteratorNormalCompletion22 = (_step22 = _iterator22.next()).done); _iteratorNormalCompletion22 = true) {
+                      var el = _step22.value;
 
                       if (el.isClassOrSubclass('Part')) {
                           el.renderOptions.partIndex = currentPartNumber;
@@ -15084,16 +15307,16 @@
                       }
                   }
               } catch (err) {
-                  _didIteratorError18 = true;
-                  _iteratorError18 = err;
+                  _didIteratorError22 = true;
+                  _iteratorError22 = err;
               } finally {
                   try {
-                      if (!_iteratorNormalCompletion18 && _iterator18.return) {
-                          _iterator18.return();
+                      if (!_iteratorNormalCompletion22 && _iterator22.return) {
+                          _iterator22.return();
                       }
                   } finally {
-                      if (_didIteratorError18) {
-                          throw _iteratorError18;
+                      if (_didIteratorError22) {
+                          throw _iteratorError22;
                       }
                   }
               }
@@ -15101,29 +15324,29 @@
               this.evenPartMeasureSpacing();
               var ignoreNumSystems = true;
               var currentScoreHeight = this.estimateStreamHeight(ignoreNumSystems);
-              var _iteratorNormalCompletion19 = true;
-              var _didIteratorError19 = false;
-              var _iteratorError19 = undefined;
+              var _iteratorNormalCompletion23 = true;
+              var _didIteratorError23 = false;
+              var _iteratorError23 = undefined;
 
               try {
-                  for (var _iterator19 = this[Symbol.iterator](), _step19; !(_iteratorNormalCompletion19 = (_step19 = _iterator19.next()).done); _iteratorNormalCompletion19 = true) {
-                      var _el = _step19.value;
+                  for (var _iterator23 = this[Symbol.iterator](), _step23; !(_iteratorNormalCompletion23 = (_step23 = _iterator23.next()).done); _iteratorNormalCompletion23 = true) {
+                      var _el2 = _step23.value;
 
-                      if (_el.isClassOrSubclass('Part')) {
-                          _el.fixSystemInformation(currentScoreHeight);
+                      if (_el2.isClassOrSubclass('Part')) {
+                          _el2.fixSystemInformation(currentScoreHeight);
                       }
                   }
               } catch (err) {
-                  _didIteratorError19 = true;
-                  _iteratorError19 = err;
+                  _didIteratorError23 = true;
+                  _iteratorError23 = err;
               } finally {
                   try {
-                      if (!_iteratorNormalCompletion19 && _iterator19.return) {
-                          _iterator19.return();
+                      if (!_iteratorNormalCompletion23 && _iterator23.return) {
+                          _iterator23.return();
                       }
                   } finally {
-                      if (_didIteratorError19) {
-                          throw _iteratorError19;
+                      if (_didIteratorError23) {
+                          throw _iteratorError23;
                       }
                   }
               }
@@ -15146,13 +15369,13 @@
                   // console.log("Overridden staff width: " + this.renderOptions.overriddenWidth);
                   return this.renderOptions.overriddenWidth;
               }
-              var _iteratorNormalCompletion20 = true;
-              var _didIteratorError20 = false;
-              var _iteratorError20 = undefined;
+              var _iteratorNormalCompletion24 = true;
+              var _didIteratorError24 = false;
+              var _iteratorError24 = undefined;
 
               try {
-                  for (var _iterator20 = this[Symbol.iterator](), _step20; !(_iteratorNormalCompletion20 = (_step20 = _iterator20.next()).done); _iteratorNormalCompletion20 = true) {
-                      var p = _step20.value;
+                  for (var _iterator24 = this[Symbol.iterator](), _step24; !(_iteratorNormalCompletion24 = (_step24 = _iterator24.next()).done); _iteratorNormalCompletion24 = true) {
+                      var p = _step24.value;
 
                       if (p.isClassOrSubclass('Part')) {
                           return p.estimateStaffLength();
@@ -15160,16 +15383,16 @@
                   }
                   // no parts found in score... use part...
               } catch (err) {
-                  _didIteratorError20 = true;
-                  _iteratorError20 = err;
+                  _didIteratorError24 = true;
+                  _iteratorError24 = err;
               } finally {
                   try {
-                      if (!_iteratorNormalCompletion20 && _iterator20.return) {
-                          _iterator20.return();
+                      if (!_iteratorNormalCompletion24 && _iterator24.return) {
+                          _iterator24.return();
                       }
                   } finally {
-                      if (_didIteratorError20) {
-                          throw _iteratorError20;
+                      if (_didIteratorError24) {
+                          throw _iteratorError24;
                       }
                   }
               }
@@ -15197,29 +15420,29 @@
           key: 'playStream',
           value: function playStream(params) {
               // play multiple parts in parallel...
-              var _iteratorNormalCompletion21 = true;
-              var _didIteratorError21 = false;
-              var _iteratorError21 = undefined;
+              var _iteratorNormalCompletion25 = true;
+              var _didIteratorError25 = false;
+              var _iteratorError25 = undefined;
 
               try {
-                  for (var _iterator21 = this[Symbol.iterator](), _step21; !(_iteratorNormalCompletion21 = (_step21 = _iterator21.next()).done); _iteratorNormalCompletion21 = true) {
-                      var el = _step21.value;
+                  for (var _iterator25 = this[Symbol.iterator](), _step25; !(_iteratorNormalCompletion25 = (_step25 = _iterator25.next()).done); _iteratorNormalCompletion25 = true) {
+                      var el = _step25.value;
 
                       if (el.isClassOrSubclass('Part')) {
                           el.playStream(params);
                       }
                   }
               } catch (err) {
-                  _didIteratorError21 = true;
-                  _iteratorError21 = err;
+                  _didIteratorError25 = true;
+                  _iteratorError25 = err;
               } finally {
                   try {
-                      if (!_iteratorNormalCompletion21 && _iterator21.return) {
-                          _iterator21.return();
+                      if (!_iteratorNormalCompletion25 && _iterator25.return) {
+                          _iterator25.return();
                       }
                   } finally {
-                      if (_didIteratorError21) {
-                          throw _iteratorError21;
+                      if (_didIteratorError25) {
+                          throw _iteratorError25;
                       }
                   }
               }
@@ -15236,29 +15459,29 @@
       }, {
           key: 'stopPlayStream',
           value: function stopPlayStream() {
-              var _iteratorNormalCompletion22 = true;
-              var _didIteratorError22 = false;
-              var _iteratorError22 = undefined;
+              var _iteratorNormalCompletion26 = true;
+              var _didIteratorError26 = false;
+              var _iteratorError26 = undefined;
 
               try {
-                  for (var _iterator22 = this[Symbol.iterator](), _step22; !(_iteratorNormalCompletion22 = (_step22 = _iterator22.next()).done); _iteratorNormalCompletion22 = true) {
-                      var el = _step22.value;
+                  for (var _iterator26 = this[Symbol.iterator](), _step26; !(_iteratorNormalCompletion26 = (_step26 = _iterator26.next()).done); _iteratorNormalCompletion26 = true) {
+                      var el = _step26.value;
 
                       if (el.isClassOrSubclass('Part')) {
                           el.stopPlayStream();
                       }
                   }
               } catch (err) {
-                  _didIteratorError22 = true;
-                  _iteratorError22 = err;
+                  _didIteratorError26 = true;
+                  _iteratorError26 = err;
               } finally {
                   try {
-                      if (!_iteratorNormalCompletion22 && _iterator22.return) {
-                          _iterator22.return();
+                      if (!_iteratorNormalCompletion26 && _iterator26.return) {
+                          _iterator26.return();
                       }
                   } finally {
-                      if (_didIteratorError22) {
-                          throw _iteratorError22;
+                      if (_didIteratorError26) {
+                          throw _iteratorError26;
                       }
                   }
               }
@@ -15288,10 +15511,31 @@
               var measureWidthsArrayOfArrays = [];
               var i = void 0;
               // TODO: Do not crash on not partlike...
-              for (i = 0; i < this.length; i++) {
-                  var el = this.get(i);
-                  measureWidthsArrayOfArrays.push(el.getMeasureWidths());
+              var _iteratorNormalCompletion27 = true;
+              var _didIteratorError27 = false;
+              var _iteratorError27 = undefined;
+
+              try {
+                  for (var _iterator27 = this[Symbol.iterator](), _step27; !(_iteratorNormalCompletion27 = (_step27 = _iterator27.next()).done); _iteratorNormalCompletion27 = true) {
+                      var el = _step27.value;
+
+                      measureWidthsArrayOfArrays.push(el.getMeasureWidths());
+                  }
+              } catch (err) {
+                  _didIteratorError27 = true;
+                  _iteratorError27 = err;
+              } finally {
+                  try {
+                      if (!_iteratorNormalCompletion27 && _iterator27.return) {
+                          _iterator27.return();
+                      }
+                  } finally {
+                      if (_didIteratorError27) {
+                          throw _iteratorError27;
+                      }
+                  }
               }
+
               for (i = 0; i < measureWidthsArrayOfArrays[0].length; i++) {
                   var maxFound = 0;
                   for (var j = 0; j < this.length; j++) {
@@ -15393,27 +15637,47 @@
               var measureStacks = [];
               var currentPartNumber = 0;
               var maxMeasureWidth = [];
-              var i = void 0;
               var j = void 0;
-              for (i = 0; i < this.length; i++) {
-                  var el = this.get(i);
-                  if (el.isClassOrSubclass('Part')) {
-                      var measureWidths = el.getMeasureWidths();
-                      for (j = 0; j < measureWidths.length; j++) {
-                          var thisMeasureWidth = measureWidths[j];
-                          if (measureStacks[j] === undefined) {
-                              measureStacks[j] = [];
-                              maxMeasureWidth[j] = thisMeasureWidth;
-                          } else if (thisMeasureWidth > maxMeasureWidth[j]) {
-                              maxMeasureWidth[j] = thisMeasureWidth;
+              var _iteratorNormalCompletion28 = true;
+              var _didIteratorError28 = false;
+              var _iteratorError28 = undefined;
+
+              try {
+                  for (var _iterator28 = this[Symbol.iterator](), _step28; !(_iteratorNormalCompletion28 = (_step28 = _iterator28.next()).done); _iteratorNormalCompletion28 = true) {
+                      var el = _step28.value;
+
+                      if (el.isClassOrSubclass('Part')) {
+                          var measureWidths = el.getMeasureWidths();
+                          for (j = 0; j < measureWidths.length; j++) {
+                              var thisMeasureWidth = measureWidths[j];
+                              if (measureStacks[j] === undefined) {
+                                  measureStacks[j] = [];
+                                  maxMeasureWidth[j] = thisMeasureWidth;
+                              } else if (thisMeasureWidth > maxMeasureWidth[j]) {
+                                  maxMeasureWidth[j] = thisMeasureWidth;
+                              }
+                              measureStacks[j][currentPartNumber] = thisMeasureWidth;
                           }
-                          measureStacks[j][currentPartNumber] = thisMeasureWidth;
+                          currentPartNumber += 1;
                       }
-                      currentPartNumber += 1;
+                  }
+              } catch (err) {
+                  _didIteratorError28 = true;
+                  _iteratorError28 = err;
+              } finally {
+                  try {
+                      if (!_iteratorNormalCompletion28 && _iterator28.return) {
+                          _iterator28.return();
+                      }
+                  } finally {
+                      if (_didIteratorError28) {
+                          throw _iteratorError28;
+                      }
                   }
               }
+
               var currentLeft = 20;
-              for (i = 0; i < maxMeasureWidth.length; i++) {
+              for (var i = 0; i < maxMeasureWidth.length; i++) {
                   // TODO: do not assume, only elements in Score are Parts and in Parts are Measures...
                   var measureNewWidth = maxMeasureWidth[i];
                   for (j = 0; j < this.length; j++) {

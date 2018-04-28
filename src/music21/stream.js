@@ -427,10 +427,18 @@ export class Stream extends base.Music21Object {
      * Add an element to the end of the stream, setting its `.offset` accordingly
      *
      * @memberof music21.stream.Stream
-     * @param {music21.base.Music21Object} el - element to append
+     * @param {music21.base.Music21Object|Array} el - element or list of elements to append
      * @returns {this}
      */
-    append(el) {
+    append(elOrElList) {
+        if (Array.isArray(elOrElList)) {
+            for (const el of elOrElList) {
+                this.append(el);
+            }
+            return this;
+        }
+        
+        const el = elOrElList;
         try {
             if (
                 el.isClassOrSubclass !== undefined
@@ -926,8 +934,7 @@ export class Stream extends base.Music21Object {
         // cheap version of music21p method
         const extendableStepList = {};
         const stepNames = ['C', 'D', 'E', 'F', 'G', 'A', 'B'];
-        for (let i = 0; i < stepNames.length; i++) {
-            const stepName = stepNames[i];
+        for (const stepName of stepNames) {
             let stepAlter = 0;
             if (this.keySignature !== undefined) {
                 const tempAccidental = this.keySignature.accidentalByStep(
@@ -941,18 +948,17 @@ export class Stream extends base.Music21Object {
             extendableStepList[stepName] = stepAlter;
         }
         const lastOctaveStepList = [];
-        let lastStepDict;
-        let p;
         for (let i = 0; i < 10; i++) {
-            lastStepDict = $.extend({}, extendableStepList);
-            lastOctaveStepList.push(lastStepDict);
+            const tempOctaveStepDict = $.extend({}, extendableStepList);
+            lastOctaveStepList.push(tempOctaveStepDict);
         }
         const lastOctavelessStepDict = $.extend({}, extendableStepList); // probably unnecessary, but safe...
+
         for (const el of this) {
             if (el.pitch !== undefined) {
                 // note
-                p = el.pitch;
-                lastStepDict = lastOctaveStepList[p.octave];
+                const p = el.pitch;
+                const lastStepDict = lastOctaveStepList[p.octave];
                 this._makeAccidentalForOnePitch(
                     p,
                     lastStepDict,
@@ -960,9 +966,9 @@ export class Stream extends base.Music21Object {
                 );
             } else if (el._notes !== undefined) {
                 // chord
-                for (let j = 0; j < el._notes.length; j++) {
-                    p = el._notes[j].pitch;
-                    lastStepDict = lastOctaveStepList[p.octave];
+                for (const chordNote of el._notes) {
+                    const p = chordNote.pitch;
+                    const lastStepDict = lastOctaveStepList[p.octave];
                     this._makeAccidentalForOnePitch(
                         p,
                         lastStepDict,
@@ -976,6 +982,10 @@ export class Stream extends base.Music21Object {
 
     //  returns pitch
     _makeAccidentalForOnePitch(p, lastStepDict, lastOctavelessStepDict) {
+        if (lastStepDict === undefined) {
+            // octave < 0 or > 10? -- error that appeared sometimes.
+            lastStepDict = {};
+        }
         let newAlter;
         if (p.accidental === undefined) {
             newAlter = 0;
@@ -1169,8 +1179,7 @@ export class Stream extends base.Music21Object {
         }
         if (this.hasVoices()) {
             let maxLength = 0;
-            for (i = 0; i < this.length; i++) {
-                const v = this.get(i);
+            for (const v of this) {
                 if (v.isClassOrSubclass('Stream')) {
                     const thisLength
                         = v.estimateStaffLength() + v.renderOptions.staffPadding;
@@ -2628,8 +2637,7 @@ export class Score extends Stream {
         const measureWidthsArrayOfArrays = [];
         let i;
         // TODO: Do not crash on not partlike...
-        for (i = 0; i < this.length; i++) {
-            const el = this.get(i);
+        for (const el of this) {
             measureWidthsArrayOfArrays.push(el.getMeasureWidths());
         }
         for (i = 0; i < measureWidthsArrayOfArrays[0].length; i++) {
@@ -2724,10 +2732,8 @@ export class Score extends Stream {
         const measureStacks = [];
         let currentPartNumber = 0;
         const maxMeasureWidth = [];
-        let i;
         let j;
-        for (i = 0; i < this.length; i++) {
-            const el = this.get(i);
+        for (const el of this) {
             if (el.isClassOrSubclass('Part')) {
                 const measureWidths = el.getMeasureWidths();
                 for (j = 0; j < measureWidths.length; j++) {
@@ -2744,7 +2750,7 @@ export class Score extends Stream {
             }
         }
         let currentLeft = 20;
-        for (i = 0; i < maxMeasureWidth.length; i++) {
+        for (let i = 0; i < maxMeasureWidth.length; i++) {
             // TODO: do not assume, only elements in Score are Parts and in Parts are Measures...
             const measureNewWidth = maxMeasureWidth[i];
             for (j = 0; j < this.length; j++) {

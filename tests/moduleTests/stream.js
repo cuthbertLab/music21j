@@ -82,6 +82,22 @@ export default function tests() {
         );
     });
 
+    QUnit.test('music21.stream.Stream.append', assert => {
+        const s = new music21.stream.Stream();
+        s.append(new music21.note.Note('C4'));
+        assert.equal(s.length, 1);
+
+        const s2 = new music21.stream.Stream();
+        const n1 = new music21.note.Note('C#4');
+        const n2 = new music21.note.Note('D4');
+        const n3 = new music21.note.Note('D#4');
+        n3.duration.type = 'half';
+        const l = [n1, n2, n3];
+        s2.append(l);
+        assert.equal(s2.length, 3);
+        assert.equal(s2.duration.quarterLength, 4.0);
+    });
+    
     QUnit.test('music21.stream.Stream.insert and offsets', assert => {
         const s = new music21.stream.Stream();
         s.append(new music21.note.Note('C#5'));
@@ -131,8 +147,7 @@ export default function tests() {
         s.insertAndShift(1, new music21.note.Note('D4'));
         const outListNames = [];
         const outListOffsets = [];
-        for (let i = 0; i < s.length; i++) {
-            const n = s.get(i);
+        for (const n of s) {
             outListNames.push(n.name);
             outListOffsets.push(n.offset);
         }
@@ -218,5 +233,24 @@ export default function tests() {
         s1.append(n4);
         const div1 = s1.editableAccidentalDOM();
         $(document.body).append(div1);
+    });
+    QUnit.test('music21.stream.Stream makeAccidentals ', assert => {
+        const n = new music21.note.Note('G#3');
+        const n2 = new music21.note.Note('G#3');
+        const n3 = new music21.note.Note('C#4');
+        const c = new music21.chord.Chord(['C3', 'E-3', 'G3', 'G4']);
+        const ks = new music21.key.KeySignature(2);
+        const s = new music21.stream.Measure();        
+        s.keySignature = ks;
+        s.append([n, n2, n3, c]);
+        s.makeAccidentals();
+        assert.ok(n.pitch.accidental.displayStatus);
+        assert.notOk(n2.pitch.accidental.displayStatus);
+        assert.notOk(n3.pitch.accidental.displayStatus);
+        assert.ok(c._notes[0].pitch.accidental);
+        assert.ok(c._notes[0].pitch.accidental.displayStatus);
+        assert.ok(c._notes[1].pitch.accidental.displayStatus);
+        assert.ok(c._notes[2].pitch.accidental.displayStatus);
+        assert.notOk(c._notes[3].pitch.accidental); // perhaps should exist?
     });
 }
