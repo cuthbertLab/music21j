@@ -152,7 +152,7 @@ export class Stream extends base.Music21Object {
             yield this.get(i);
         }
     }
-    
+
     get duration() {
         if (this._duration !== undefined) {
             return this._duration;
@@ -780,7 +780,7 @@ export class Stream extends base.Music21Object {
     /**
      * Return a new Stream or modify this stream
      * to have beams.
-     * 
+     *
      * NOT yet being called March 2018
      */
     makeBeams(options) {
@@ -836,13 +836,13 @@ export class Stream extends base.Music21Object {
                 } else {
                     n.beams = new beam.Beams();
                 }
-            } 
+            }
         }
-        
+
         // returnObj.streamStatus.beams = true;
         return returnObj;
     }
-    
+
     /**
      * Returns true if any note in the stream has lyrics, otherwise false
      *
@@ -1086,7 +1086,7 @@ export class Stream extends base.Music21Object {
         }
 
         const tagName = canvasOrSVG.tagName.toLowerCase();
-        
+
         if (this.autoBeam === true) {
             try {
                 this.makeBeams({ inPlace: true });                
@@ -1499,7 +1499,7 @@ export class Stream extends base.Music21Object {
 
         let svgBlock;
         if (preserveSvgSize) {
-            const width = $oldSVGOrCanvas.width();
+            const width = $oldSVGOrCanvas.width() || parseInt($oldSVGOrCanvas.attr('width'));
             const height = $oldSVGOrCanvas.attr('height'); // height manipulates
             svgBlock = this.createDOM(width, height, elementType);
         } else {
