@@ -650,6 +650,7 @@ note.Note = Note;
  * @property {Boolean} [isRest=true]
  * @property {string} [name='rest']
  * @property {number} [lineShift=undefined] - number of lines to shift up or down from default
+ * @property {string|undefined} [color='black'] - color of the rest
  */
 export class Rest extends GeneralNote {
     constructor(ql) {
@@ -658,6 +659,7 @@ export class Rest extends GeneralNote {
         this.isRest = true; // for speed
         this.name = 'rest'; // for note compatibility
         this.lineShift = undefined;
+        this.color = 'black';
     }
     /**
      * Returns a `Vex.Flow.StaveNote` that approximates this rest.
@@ -694,6 +696,9 @@ export class Rest extends GeneralNote {
             for (let i = 0; i < this.duration.dots; i++) {
                 vfn.addDotToAll();
             }
+        }
+        if (this.color !== undefined) {
+            vfn.setStyle({ fillStyle: this.color, strokeStyle: this.color});
         }
         this.activeVexflowNote = vfn;
         return vfn;
