@@ -1,5 +1,5 @@
 /**
- * music21j 0.9.0 built on  * 2018-04-28.
+ * music21j 0.9.0 built on  * 2018-05-17.
  * Copyright (c) 2013-2016 Michael Scott Cuthbert and cuthbertLab
  * BSD License, see LICENSE
  *
@@ -5898,6 +5898,7 @@
    * @property {Boolean} [isRest=true]
    * @property {string} [name='rest']
    * @property {number} [lineShift=undefined] - number of lines to shift up or down from default
+   * @property {string|undefined} [color='black'] - color of the rest
    */
   var Rest = function (_GeneralNote2) {
       inherits(Rest, _GeneralNote2);
@@ -5911,6 +5912,7 @@
           _this5.isRest = true; // for speed
           _this5.name = 'rest'; // for note compatibility
           _this5.lineShift = undefined;
+          _this5.color = 'black';
           return _this5;
       }
       /**
@@ -5949,6 +5951,9 @@
                   for (var i = 0; i < this.duration.dots; i++) {
                       vfn.addDotToAll();
                   }
+              }
+              if (this.color !== undefined) {
+                  vfn.setStyle({ fillStyle: this.color, strokeStyle: this.color });
               }
               this.activeVexflowNote = vfn;
               return vfn;
@@ -12918,7 +12923,7 @@
           /**
            * Return a new Stream or modify this stream
            * to have beams.
-           * 
+           *
            * NOT yet being called March 2018
            */
 
@@ -13882,7 +13887,7 @@
 
               var svgBlock = void 0;
               if (preserveSvgSize) {
-                  var width = $oldSVGOrCanvas.width();
+                  var width = $oldSVGOrCanvas.width() || parseInt($oldSVGOrCanvas.attr('width'));
                   var height = $oldSVGOrCanvas.attr('height'); // height manipulates
                   svgBlock = this.createDOM(width, height, elementType);
               } else {

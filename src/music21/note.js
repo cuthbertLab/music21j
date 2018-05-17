@@ -698,7 +698,7 @@ export class Rest extends GeneralNote {
             }
         }
         if (this.color !== undefined) {
-            vfn.setStyle({ fillStyle: this.color, strokeStyle: this.color});
+            vfn.setStyle({ fillStyle: this.color, strokeStyle: this.color });
         }
         this.activeVexflowNote = vfn;
         return vfn;
