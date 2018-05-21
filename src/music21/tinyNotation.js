@@ -146,8 +146,7 @@ tinyNotation.TinyNotation = function TinyNotation(textIn) {
 
         // Modifiers
         if (tnre.LYRIC.exec(token)) {
-            token = token.split('_')[0];
-            lyric = token.split('_')[1];
+            [token, lyric] = token.split('_');
         }
 
         if (tnre.TIMESIG.exec(token)) {
