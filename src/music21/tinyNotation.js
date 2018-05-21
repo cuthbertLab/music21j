@@ -111,6 +111,7 @@ tinyNotation.TinyNotation = function TinyNotation(textIn) {
 
         let token = tokens[i];
         let noteObj;
+        let lyric;
         if (tnre.PARTBREAK.exec(token)) {
             if (m.length > 0) {
                 p.append(m);
@@ -141,6 +142,12 @@ tinyNotation.TinyNotation = function TinyNotation(textIn) {
         if (tnre.ENDBRAC.exec(token)) {
             token = token.slice(0, -1); // cut...
             storedDict.endTupletAfterNote = true;
+        }
+
+        // Modifiers
+        if (tnre.LYRIC.exec(token)) {
+            token = token.split('_')[0];
+            lyric = token.split('_')[1];
         }
 
         if (tnre.TIMESIG.exec(token)) {
@@ -176,6 +183,11 @@ tinyNotation.TinyNotation = function TinyNotation(textIn) {
         if (noteObj === undefined) {
             continue;
         }
+
+        if (lyric !== undefined) {
+            noteObj.lyric = lyric;
+        }
+
         if (tnre.TIE.exec(token)) {
             noteObj.tie = new tie.Tie('start');
             if (storedDict.lastNoteTied) {

@@ -1,5 +1,5 @@
 /**
- * music21j 0.9.0 built on  * 2018-05-17.
+ * music21j 0.9.0 built on  * 2018-05-21.
  * Copyright (c) 2013-2016 Michael Scott Cuthbert and cuthbertLab
  * BSD License, see LICENSE
  *
@@ -18325,6 +18325,7 @@
 
           var token = tokens[i];
           var noteObj = void 0;
+          var lyric = void 0;
           if (tnre.PARTBREAK.exec(token)) {
               if (m.length > 0) {
                   p.append(m);
@@ -18355,6 +18356,12 @@
           if (tnre.ENDBRAC.exec(token)) {
               token = token.slice(0, -1); // cut...
               storedDict.endTupletAfterNote = true;
+          }
+
+          // Modifiers
+          if (tnre.LYRIC.exec(token)) {
+              token = token.split('_')[0];
+              lyric = token.split('_')[1];
           }
 
           if (tnre.TIMESIG.exec(token)) {
@@ -18390,6 +18397,11 @@
           if (noteObj === undefined) {
               continue;
           }
+
+          if (lyric !== undefined) {
+              noteObj.lyric = lyric;
+          }
+
           if (tnre.TIE.exec(token)) {
               noteObj.tie = new tie.Tie('start');
               if (storedDict.lastNoteTied) {
