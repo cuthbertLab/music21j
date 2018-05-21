@@ -18360,8 +18360,12 @@
 
           // Modifiers
           if (tnre.LYRIC.exec(token)) {
-              token = token.split('_')[0];
-              lyric = token.split('_')[1];
+              var _token$split = token.split('_');
+
+              var _token$split2 = slicedToArray(_token$split, 2);
+
+              token = _token$split2[0];
+              lyric = _token$split2[1];
           }
 
           if (tnre.TIMESIG.exec(token)) {
