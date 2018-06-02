@@ -1,5 +1,5 @@
 /**
- * music21j 0.9.0 built on  * 2018-05-21.
+ * music21j 0.9.0 built on  * 2018-06-02.
  * Copyright (c) 2013-2016 Michael Scott Cuthbert and cuthbertLab
  * BSD License, see LICENSE
  *
@@ -5330,7 +5330,10 @@
           _this._identifier = identifier;
           _this.style = {
               fillStyle: 'black',
-              strokeStyle: 'black'
+              strokeStyle: 'black',
+              fontFamily: 'Serif',
+              fontSize: 12,
+              fontWeight: ''
           };
           return _this;
       }
@@ -11812,11 +11815,6 @@
               if (s === undefined) {
                   s = this.stream;
               }
-              var font = {
-                  family: 'Serif',
-                  size: 12,
-                  weight: ''
-              };
               // runs on a flat, gapless, no-overlap stream, returns a list of TextNote objects...
               var lyricsObjects = [];
               var _iteratorNormalCompletion5 = true;
@@ -11832,6 +11830,12 @@
                       var d = el.duration;
                       var addConnector = false;
                       var firstLyric = void 0;
+                      var font = {
+                          family: 'Serif',
+                          size: 12,
+                          weight: ''
+                      };
+
                       if (lyricsArray.length === 0) {
                           text = '';
                       } else {
@@ -11844,6 +11848,15 @@
                               addConnector = ' ' + firstLyric.lyricConnector;
                               var tempQl = el.duration.quarterLength / 2.0;
                               d = new duration.Duration(tempQl);
+                          }
+                          if (firstLyric.style.fontFamily) {
+                              font.family = firstLyric.style.fontFamily;
+                          }
+                          if (firstLyric.style.fontSize) {
+                              font.size = firstLyric.style.fontSize;
+                          }
+                          if (firstLyric.style.fontWeight) {
+                              font.weight = firstLyric.style.fontWeight;
                           }
                       }
                       var t1 = getTextNote(text, font, d, firstLyric);

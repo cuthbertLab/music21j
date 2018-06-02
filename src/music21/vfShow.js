@@ -890,11 +890,6 @@ export class Renderer {
         if (s === undefined) {
             s = this.stream;
         }
-        const font = {
-            family: 'Serif',
-            size: 12,
-            weight: '',
-        };
         // runs on a flat, gapless, no-overlap stream, returns a list of TextNote objects...
         const lyricsObjects = [];
         for (const el of s) {
@@ -903,6 +898,12 @@ export class Renderer {
             let d = el.duration;
             let addConnector = false;
             let firstLyric;
+            const font = {
+                family: 'Serif',
+                size: 12,
+                weight: '',
+            };
+
             if (lyricsArray.length === 0) {
                 text = '';
             } else {
@@ -918,6 +919,15 @@ export class Renderer {
                     addConnector = ' ' + firstLyric.lyricConnector;
                     const tempQl = el.duration.quarterLength / 2.0;
                     d = new duration.Duration(tempQl);
+                }
+                if (firstLyric.style.fontFamily) {
+                    font.family = firstLyric.style.fontFamily;                    
+                }
+                if (firstLyric.style.fontSize) {
+                    font.size = firstLyric.style.fontSize;                    
+                }
+                if (firstLyric.style.fontWeight) {
+                    font.weight = firstLyric.style.fontWeight;                    
                 }
             }
             const t1 = getTextNote(text, font, d, firstLyric);
