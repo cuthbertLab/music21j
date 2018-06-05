@@ -916,7 +916,7 @@ export class Stream extends base.Music21Object {
                 tempEls.push(thisEl);
             }
         }
-        const newSt = this.clone();
+        const newSt = this.clone(false);
         newSt.elements = tempEls;
         return newSt;
     }
