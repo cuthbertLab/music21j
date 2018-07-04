@@ -505,6 +505,7 @@ import * as MIDI from 'MIDI';
 import { Music21Exception } from './exceptions21.js';
 
 import { base } from './base.js';
+import { beam } from './beam.js';
 import { clef } from './clef.js';
 import { common } from './common.js';
 import { debug } from './debug.js';
@@ -637,6 +638,12 @@ export class Stream extends base.Music21Object {
             );
         };
     }
+    * [Symbol.iterator]() {
+        for (let i = 0; i &lt; this.length; i++) {
+            yield this.get(i);
+        }
+    }
+
     get duration() {
         if (this._duration !== undefined) {
             return this._duration;
@@ -648,8 +655,7 @@ export class Stream extends base.Music21Object {
     }
     get highestTime() {
         let highestTime = 0.0;
-        for (let i = 0; i &lt; this.length; i++) {
-            const el = this.get(i);
+        for (const el of this) {
             let endTime = el.offset;
             if (el.duration !== undefined) {
                 endTime += el.duration.quarterLength;
@@ -674,9 +680,7 @@ export class Stream extends base.Music21Object {
             return this;
         }
         const tempEls = [];
-        for (let i = 0; i &lt; this.length; i++) {
-            const el = this.get(i);
-            // console.log(i, this.length);
+        for (const el of this) {
             if (el.isStream) {
                 if (retainContainers) {
                     tempEls.push(el);
@@ -843,7 +847,7 @@ export class Stream extends base.Music21Object {
     }
 
     /* override protoM21Object.clone() */
-    clone(deep = true) {
+    clone(deep=true) {
         const ret = Object.create(this.constructor.prototype);
         for (const key in this) {
             if ({}.hasOwnProperty.call(this, key) === false) {
@@ -914,10 +918,18 @@ export class Stream extends base.Music21Object {
      * Add an element to the end of the stream, setting its `.offset` accordingly
      *
      * @memberof music21.stream.Stream
-     * @param {music21.base.Music21Object} el - element to append
+     * @param {music21.base.Music21Object|Array} el - element or list of elements to append
      * @returns {this}
      */
-    append(el) {
+    append(elOrElList) {
+        if (Array.isArray(elOrElList)) {
+            for (const el of elOrElList) {
+                this.append(el);
+            }
+            return this;
+        }
+        
+        const el = elOrElList;
         try {
             if (
                 el.isClassOrSubclass !== undefined
@@ -1029,6 +1041,24 @@ export class Stream extends base.Music21Object {
         }
         this.insert(offset, element);
     }
+    
+    
+    /**
+     * Return the first matched index
+     */
+    index(el) {
+        let count = 0;
+        for (const e of this._elements) {
+            if (el === e) {
+                return count;
+            }
+            count += 1;
+        }
+        // endElements
+        throw new StreamException(
+            `cannot find object (${el}) in Stream`
+            );
+    }
 
     /**
      * Remove and return the last element in the stream,
@@ -1050,6 +1080,88 @@ export class Stream extends base.Music21Object {
         }
     }
 
+    /**
+     * Remove an object from this Stream
+     */
+    remove(targetOrList, 
+            { 
+                firstMatchOnly=true, 
+                shiftOffsets=false, 
+                recurse=false,
+            } = {}) {
+        if (shiftOffsets === true) {
+            throw new StreamException('sorry cannot shiftOffsets yet');
+        }
+        if (recurse === true) {
+            throw new StreamException('sorry cannot recurse yet');
+        }
+
+        let targetList;
+        if (!Array.isArray(targetOrList)) {
+            targetList = [targetOrList];
+        } else {
+            targetList = targetOrList;
+        }
+//        if (targetList.length > 1) {
+//            sort targetList
+//        }        
+        // let shiftDur = 0.0; // for shiftOffsets
+        let i = -1;
+        for (const target of targetList) {
+            i += 1;
+            let indexInStream;
+            try {
+                indexInStream = this.index(target);
+            } catch (err) {
+                if (err instanceof StreamException) {
+                    if (recurse) {
+                        // do something
+                    }
+                    continue;
+                }
+                throw err;
+            }
+            
+            // const matchOffset = this._elementOffsets[indexInStream];
+            // let match;
+            // handle _endElements
+            // let matchedEndElement = false;
+            // let baseElementCount = this._elements.length;
+            this._elements.splice(indexInStream, 1);
+            this._elementOffsets.splice(indexInStream, 1);
+            // remove from sites if needed.
+
+//            if (shiftOffsets) {
+//                const matchDuration = target.duration.quarterLength;
+//                const shiftedRegionStart = matchOffset + matchDuration;
+//                shiftDur += matchDuration;
+//                let shiftedRegionEnd;
+//                if ((i + 1) &lt; targetList.length) {
+//                    const nextElIndex = this.index(targetList[i + 1]);
+//                    const nextElOffset = this._elementOffsets[nextElIndex];
+//                    shiftedRegionEnd = nextElOffset;
+//                } else {
+//                    shiftedRegionEnd = this.duration.quarterLength;
+//                }
+//                if (shiftDur !== 0.0) {
+//                    for (const e of this.getElementsByOffset(
+//                       shiftedRegionStart,
+//                       shiftedRegionEnd,
+//                       {
+//                           includeEndBoundary: false,
+//                           mustFinishInSpan: false,
+//                           mustBeginInSpan: false,                           
+//                       }
+//                    )) {
+//                        const elementOffset = this.elementOffset(e);
+//                        this.setElementOffset(e, elementOffset - shiftDur);
+//                    }
+//                }
+//            }
+        }
+        
+    }
+    
     /**
      * Get the `index`th element from the Stream.  Equivalent to the
      * music21p format of s[index].  Can use negative indexing to get from the end.
@@ -1117,8 +1229,7 @@ export class Stream extends base.Music21Object {
      */
     hasSubStreams() {
         let hasSubStreams = false;
-        for (let i = 0; i &lt; this.length; i++) {
-            const el = this.elements[i];
+        for (const el of this) {
             if (el.isClassOrSubclass('Stream')) {
                 hasSubStreams = true;
                 break;
@@ -1250,12 +1361,77 @@ export class Stream extends base.Music21Object {
             this.elements = [];
             // endElements
             // elementsChanged;
-            for (let i = 0; i &lt; post.length; i++) {
-                const e = post.get(i);
+            for (const e of post) {
                 this.insert(e.offset, e);
             }
             return this; // javascript style;
         }
+    }
+
+    /**
+     * Return a new Stream or modify this stream
+     * to have beams.
+     *
+     * NOT yet being called March 2018
+     */
+    makeBeams(options) {
+        const params = { inPlace: false };
+        common.merge(params, options);
+        let returnObj = this;
+        if (!params.inPlace) {
+            returnObj = this.clone(true);
+        }
+        let mColl;
+        if (this.classes.includes('Measure')) {
+            mColl = [returnObj];
+        } else {
+            mColl = [];
+            for (const m of returnObj.getElementsByClass('Measure').elements) {
+                mColl.push(m);
+            }
+        }
+        let lastTimeSignature;
+        for (const m of mColl) {
+            if (m.timeSignature !== undefined) {
+                lastTimeSignature = m.timeSignature;
+            }
+            if (lastTimeSignature === undefined) {
+                throw new StreamException('Need a Time Signature to process beams');
+            }
+            // todo voices!
+            if (m.length &lt;= 1) {
+                continue; // nothing to beam.
+            }
+            const noteStream = m.notesAndRests;
+            const durList = [];
+            for (const n of noteStream) {
+                durList.push(n.duration);
+            }
+            const durSum = durList.map(a => a.quarterLength).reduce((total, val) => total + val);
+            const barQL = lastTimeSignature.barDuration.quarterLength;
+            if (durSum > barQL) {
+                continue;
+            }
+            let offset = 0.0;
+            if (m.paddingLeft !== 0.0 &amp;&amp; m.paddingLeft !== undefined) {
+                offset = m.paddingLeft;
+            } else if (noteStream.highestTime &lt; barQL) {
+                offset = barQL - noteStream.highestTime;
+            }
+            const beamsList = lastTimeSignature.getBeams(noteStream, { measureStartOffset: offset });
+            for (let i = 0; i &lt; noteStream.length; i++) {
+                const n = noteStream.get(i);
+                const thisBeams = beamsList[i];
+                if (thisBeams !== undefined) {
+                    n.beams = thisBeams;
+                } else {
+                    n.beams = new beam.Beams();
+                }
+            }
+        }
+
+        // returnObj.streamStatus.beams = true;
+        return returnObj;
     }
 
     /**
@@ -1265,8 +1441,7 @@ export class Stream extends base.Music21Object {
      * @returns {Boolean}
      */
     hasLyrics() {
-        for (let i = 0; i &lt; this.length; i++) {
-            const el = this.elements[i];
+        for (const el of this) {
             if (el.lyric !== undefined) {
                 return true;
             }
@@ -1320,8 +1495,7 @@ export class Stream extends base.Music21Object {
      */
     getElementsByClass(classList) {
         const tempEls = [];
-        for (let i = 0; i &lt; this.length; i++) {
-            const thisEl = this.get(i);
+        for (const thisEl of this) {
             // console.warn(thisEl);
             if (thisEl.isClassOrSubclass === undefined) {
                 console.error(
@@ -1333,7 +1507,7 @@ export class Stream extends base.Music21Object {
                 tempEls.push(thisEl);
             }
         }
-        const newSt = this.clone();
+        const newSt = this.clone(false);
         newSt.elements = tempEls;
         return newSt;
     }
@@ -1351,8 +1525,7 @@ export class Stream extends base.Music21Object {
         // cheap version of music21p method
         const extendableStepList = {};
         const stepNames = ['C', 'D', 'E', 'F', 'G', 'A', 'B'];
-        for (let i = 0; i &lt; stepNames.length; i++) {
-            const stepName = stepNames[i];
+        for (const stepName of stepNames) {
             let stepAlter = 0;
             if (this.keySignature !== undefined) {
                 const tempAccidental = this.keySignature.accidentalByStep(
@@ -1366,19 +1539,17 @@ export class Stream extends base.Music21Object {
             extendableStepList[stepName] = stepAlter;
         }
         const lastOctaveStepList = [];
-        let lastStepDict;
-        let p;
         for (let i = 0; i &lt; 10; i++) {
-            lastStepDict = $.extend({}, extendableStepList);
-            lastOctaveStepList.push(lastStepDict);
+            const tempOctaveStepDict = $.extend({}, extendableStepList);
+            lastOctaveStepList.push(tempOctaveStepDict);
         }
         const lastOctavelessStepDict = $.extend({}, extendableStepList); // probably unnecessary, but safe...
-        for (let i = 0; i &lt; this.length; i++) {
-            const el = this.get(i);
+
+        for (const el of this) {
             if (el.pitch !== undefined) {
                 // note
-                p = el.pitch;
-                lastStepDict = lastOctaveStepList[p.octave];
+                const p = el.pitch;
+                const lastStepDict = lastOctaveStepList[p.octave];
                 this._makeAccidentalForOnePitch(
                     p,
                     lastStepDict,
@@ -1386,9 +1557,9 @@ export class Stream extends base.Music21Object {
                 );
             } else if (el._notes !== undefined) {
                 // chord
-                for (let j = 0; j &lt; el._notes.length; j++) {
-                    p = el._notes[j].pitch;
-                    lastStepDict = lastOctaveStepList[p.octave];
+                for (const chordNote of el._notes) {
+                    const p = chordNote.pitch;
+                    const lastStepDict = lastOctaveStepList[p.octave];
                     this._makeAccidentalForOnePitch(
                         p,
                         lastStepDict,
@@ -1402,6 +1573,10 @@ export class Stream extends base.Music21Object {
 
     //  returns pitch
     _makeAccidentalForOnePitch(p, lastStepDict, lastOctavelessStepDict) {
+        if (lastStepDict === undefined) {
+            // octave &lt; 0 or > 10? -- error that appeared sometimes.
+            lastStepDict = {};
+        }
         let newAlter;
         if (p.accidental === undefined) {
             newAlter = 0;
@@ -1461,8 +1636,7 @@ export class Stream extends base.Music21Object {
         }
 
         if (recursive) {
-            for (let i = 0; i &lt; this.length; i++) {
-                const el = this.get(i);
+            for (const el of this) {
                 if (el.isClassOrSubclass('Stream')) {
                     el.resetRenderOptions(recursive, preserveEvents);
                 }
@@ -1504,6 +1678,15 @@ export class Stream extends base.Music21Object {
 
         const tagName = canvasOrSVG.tagName.toLowerCase();
 
+        if (this.autoBeam === true) {
+            try {
+                this.makeBeams({ inPlace: true });                
+            } catch (e) {
+                if (!e.toString().includes('Time Signature')) {
+                    throw e;
+                }
+            }
+        }
         const vfr = new vfShow.Renderer(this, canvasOrSVG);
         if (tagName === 'canvas') {
             vfr.rendererType = 'canvas';
@@ -1514,7 +1697,7 @@ export class Stream extends base.Music21Object {
         this.setRenderInteraction(canvasOrSVG);
         this.activeVFRenderer = vfr;
         if (!DOMContains) {
-            // temporarily add to DOM so Firefox can measure it...
+            // remove the adding to DOM so that Firefox could measure it...
             document.body.removeChild(canvasOrSVG);
         }
 
@@ -1587,8 +1770,7 @@ export class Stream extends base.Music21Object {
         }
         if (this.hasVoices()) {
             let maxLength = 0;
-            for (i = 0; i &lt; this.length; i++) {
-                const v = this.get(i);
+            for (const v of this) {
                 if (v.isClassOrSubclass('Stream')) {
                     const thisLength
                         = v.estimateStaffLength() + v.renderOptions.staffPadding;
@@ -1714,7 +1896,7 @@ export class Stream extends base.Music21Object {
      *
      */
 
-    createNewCanvas(width, height, elementType = 'svg') {
+    createNewCanvas(width, height, elementType='svg') {
         console.warn('createNewCanvas is deprecated, use createNewDOM instead');
         return this.createNewDOM(width, height, elementType);
     }
@@ -1732,7 +1914,7 @@ export class Stream extends base.Music21Object {
      * @param {string} elementType - what type of element, default = svg
      * @returns {JQueryDOMObject} svg in jquery.
      */
-    createNewDOM(width, height, elementType = 'svg') {
+    createNewDOM(width, height, elementType='svg') {
         if (this.hasSubStreams()) {
             this.setSubstreamRenderOptions();
         }
@@ -1796,12 +1978,12 @@ export class Stream extends base.Music21Object {
      * @param {string} elementType - what type of element, default = svg
      * @returns {JQueryDOMObject} canvas or svg
      */
-    createPlayableDOM(width, height, elementType = 'svg') {
+    createPlayableDOM(width, height, elementType='svg') {
         this.renderOptions.events.click = 'play';
         return this.createDOM(width, height, elementType);
     }
 
-    createCanvas(width, height, elementType = 'svg') {
+    createCanvas(width, height, elementType='svg') {
         console.warn('createCanvas is deprecated, use createDOM');
         return this.createDOM(width, height, elementType);
     }
@@ -1814,7 +1996,7 @@ export class Stream extends base.Music21Object {
      * @param {string} elementType - what type of element svg or canvas, default = svg
      * @returns {JQueryDOMObject} canvas or SVG
      */
-    createDOM(width, height, elementType = 'svg') {
+    createDOM(width, height, elementType='svg') {
         const $newSvg = this.createNewDOM(width, height, elementType);
         // temporarily append the SVG to the document to fix a Firefox bug
         // where nothing can be measured unless is it in the document.
@@ -1908,7 +2090,7 @@ export class Stream extends base.Music21Object {
 
         let svgBlock;
         if (preserveSvgSize) {
-            const width = $oldSVGOrCanvas.width();
+            const width = $oldSVGOrCanvas.width() || parseInt($oldSVGOrCanvas.attr('width'));
             const height = $oldSVGOrCanvas.attr('height'); // height manipulates
             svgBlock = this.createDOM(width, height, elementType);
         } else {
@@ -2460,8 +2642,7 @@ export class Stream extends base.Music21Object {
      * @returns {Boolean}
      */
     hasVoices() {
-        for (let i = 0; i &lt; this.length; i++) {
-            const el = this.get(i);
+        for (const el of this) {
             if (el.isClassOrSubclass('Voice')) {
                 return true;
             }
@@ -2542,8 +2723,7 @@ export class Part extends Stream {
     getMeasureWidths() {
         /* call after setSubstreamRenderOptions */
         const measureWidths = [];
-        for (let i = 0; i &lt; this.length; i++) {
-            const el = this.get(i);
+        for (const el of this) {
             if (el.isClassOrSubclass('Measure')) {
                 const elRendOp = el.renderOptions;
                 measureWidths[elRendOp.measureIndex] = elRendOp.width;
@@ -2568,16 +2748,16 @@ export class Part extends Stream {
         if (this.hasSubStreams()) {
             // part with Measures underneath
             let totalLength = 0;
-            const subStreams = this.getElementsByClass('Measure');
-            for (let i = 0; i &lt; subStreams.length; i++) {
-                const m = subStreams.get(i);
+            let isFirst = true;
+            for (const m of this.getElementsByClass('Measure')) {
                 // this looks wrong, but actually seems to be right. moving it to
                 // after the break breaks things.
                 totalLength
                     += m.estimateStaffLength() + m.renderOptions.staffPadding;
-                if (i !== 0 &amp;&amp; m.renderOptions.startNewSystem === true) {
+                if (!isFirst &amp;&amp; m.renderOptions.startNewSystem === true) {
                     break;
                 }
+                isFirst = false;
             }
             return totalLength;
         }
@@ -2719,8 +2899,7 @@ export class Part extends Stream {
         let lastKeySignature;
         let lastClef;
 
-        for (let i = 0; i &lt; this.length; i++) {
-            const el = this.get(i);
+        for (const el of this) {
             if (el.isClassOrSubclass('Measure')) {
                 const elRendOp = el.renderOptions;
                 elRendOp.measureIndex = currentMeasureIndex;
@@ -2858,8 +3037,7 @@ export class Part extends Stream {
     getStreamFromScaledXandSystemIndex(xPxScaled, systemIndex) {
         let gotMeasure;
         const measures = this.measures;
-        for (let i = 0; i &lt; measures.length; i++) {
-            const m = measures.get(i);
+        for (const m of measures) {
             const rendOp = m.renderOptions;
             const left = rendOp.left;
             const right = left + rendOp.width;
@@ -2869,8 +3047,7 @@ export class Part extends Stream {
                 console.log(
                     'Searching for X:'
                         + Math.round(xPxScaled)
-                        + ' in M '
-                        + i
+                        + ' in Measure '
                         + ' with boundaries L:'
                         + left
                         + ' R:'
@@ -2952,9 +3129,7 @@ export class Score extends Stream {
         let currentPartNumber = 0;
         let currentPartTop = 0;
         const partSpacing = this.partSpacing;
-        for (let i = 0; i &lt; this.length; i++) {
-            const el = this.get(i);
-
+        for (const el of this) {
             if (el.isClassOrSubclass('Part')) {
                 el.renderOptions.partIndex = currentPartNumber;
                 el.renderOptions.top = currentPartTop;
@@ -2966,8 +3141,7 @@ export class Score extends Stream {
         this.evenPartMeasureSpacing();
         const ignoreNumSystems = true;
         const currentScoreHeight = this.estimateStreamHeight(ignoreNumSystems);
-        for (let i = 0; i &lt; this.length; i++) {
-            const el = this.get(i);
+        for (const el of this) {
             if (el.isClassOrSubclass('Part')) {
                 el.fixSystemInformation(currentScoreHeight);
             }
@@ -2987,8 +3161,7 @@ export class Score extends Stream {
             // console.log("Overridden staff width: " + this.renderOptions.overriddenWidth);
             return this.renderOptions.overriddenWidth;
         }
-        for (let i = 0; i &lt; this.length; i++) {
-            const p = this.get(i);
+        for (const p of this) {
             if (p.isClassOrSubclass('Part')) {
                 return p.estimateStaffLength();
             }
@@ -3014,8 +3187,7 @@ export class Score extends Stream {
      */
     playStream(params) {
         // play multiple parts in parallel...
-        for (let i = 0; i &lt; this.length; i++) {
-            const el = this.get(i);
+        for (const el of this) {
             if (el.isClassOrSubclass('Part')) {
                 el.playStream(params);
             }
@@ -3029,8 +3201,7 @@ export class Score extends Stream {
      * @returns {music21.stream.Score} this
      */
     stopPlayStream() {
-        for (let i = 0; i &lt; this.length; i++) {
-            const el = this.get(i);
+        for (const el of this) {
             if (el.isClassOrSubclass('Part')) {
                 el.stopPlayStream();
             }
@@ -3057,8 +3228,7 @@ export class Score extends Stream {
         const measureWidthsArrayOfArrays = [];
         let i;
         // TODO: Do not crash on not partlike...
-        for (i = 0; i &lt; this.length; i++) {
-            const el = this.get(i);
+        for (const el of this) {
             measureWidthsArrayOfArrays.push(el.getMeasureWidths());
         }
         for (i = 0; i &lt; measureWidthsArrayOfArrays[0].length; i++) {
@@ -3153,10 +3323,8 @@ export class Score extends Stream {
         const measureStacks = [];
         let currentPartNumber = 0;
         const maxMeasureWidth = [];
-        let i;
         let j;
-        for (i = 0; i &lt; this.length; i++) {
-            const el = this.get(i);
+        for (const el of this) {
             if (el.isClassOrSubclass('Part')) {
                 const measureWidths = el.getMeasureWidths();
                 for (j = 0; j &lt; measureWidths.length; j++) {
@@ -3173,7 +3341,7 @@ export class Score extends Stream {
             }
         }
         let currentLeft = 20;
-        for (i = 0; i &lt; maxMeasureWidth.length; i++) {
+        for (let i = 0; i &lt; maxMeasureWidth.length; i++) {
             // TODO: do not assume, only elements in Score are Parts and in Parts are Measures...
             const measureNewWidth = maxMeasureWidth[i];
             for (j = 0; j &lt; this.length; j++) {
@@ -3221,7 +3389,7 @@ stream.OffsetMap = OffsetMap;
 					
 		<span class="jsdoc-message">
 		Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a>
-		on Fri Feb 23rd 2018 using the <a
+		on Wed Jul 4th 2018 using the <a
 			href="https://github.com/terryweiss/docstrap">DocStrap template</a>.
 		</span>
 				</footer>
