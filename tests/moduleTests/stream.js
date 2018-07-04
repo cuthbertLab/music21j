@@ -17,7 +17,7 @@ export default function tests() {
             assert.equal(oct, 5, 'all notes are octave 5');
         }
     });
-    QUnit.test('music21.stream.Stream remove, index', assert => {
+    QUnit.test('music21.stream.Stream remove, index, replace', assert => {
         const s = new music21.stream.Stream();
         s.append(new music21.note.Note('C#5'));
         const d = new music21.note.Note('D#5');
@@ -31,6 +31,16 @@ export default function tests() {
         s.remove(n);
         assert.equal(s.length, 2);
         assert.throws(() => { s.index(n) }, /cannot find/, 'n is no longer in s');
+
+        assert.equal(d.offset, 1.0);
+        const r = new music21.note.Rest();
+        assert.equal(r.offset, 0.0);
+
+        s.replace(d, r);
+        assert.equal(d.offset, 0.0);
+        assert.equal(r.offset, 1.0);
+        assert.equal(s.index(r), 1.0);
+        assert.throws(() => { s.index(d) }, /cannot find/, 'd is no longer in s');        
     });
     
     QUnit.test('music21.stream.Stream.duration', assert => {

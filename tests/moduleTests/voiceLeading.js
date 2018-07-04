@@ -79,8 +79,9 @@ export default function tests() {
             assert.ok(vlq1.isProperResolution(), 'm7 resolves inward');
             // v2n2 = new N('F3');
             // vlq1 = new VLQ(v1n1, v1n2, v2n1, v2n2);
-            // okay now...
+            // Ryan believes that this is ok now...
             // assert.ok(!vlq1.isProperResolution(), 'm7 with similar motion');
+
             v2n2 = new N('F#4');
             vlq1 = new VLQ(v1n1, v1n2, v2n1, v2n2);
             vlq1.key = 'B-';

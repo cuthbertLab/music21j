@@ -672,6 +672,33 @@ export class Stream extends base.Music21Object {
     }
     
     /**
+     *  Given a `target` object, replace it with
+     *  the supplied `replacement` object.
+     *  
+     *  `recurse` and `allDerived` do not currently work.
+     *  
+     *  Does nothing if target cannot be found.
+     */    
+    replace(target, replacement, {
+        recurse=false,
+        allDerivated=true,
+    } = {}) {
+        let i;
+        try {
+            i = this.index(target);            
+        } catch (err) {
+            if (err instanceof StreamException) {
+                return;
+            } else {
+                throw err;
+            }
+        }
+        replacement.offset = this._elementOffsets[i];
+        this._elements[i] = replacement;
+        target.offset = 0.0;
+    }
+        
+    /**
      * Get the `index`th element from the Stream.  Equivalent to the
      * music21p format of s[index].  Can use negative indexing to get from the end.
      *

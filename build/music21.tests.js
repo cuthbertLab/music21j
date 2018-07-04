@@ -12827,6 +12827,39 @@
           }
 
           /**
+           *  Given a `target` object, replace it with
+           *  the supplied `replacement` object.
+           *  
+           *  `recurse` and `allDerived` do not currently work.
+           *  
+           *  Does nothing if target cannot be found.
+           */
+
+      }, {
+          key: 'replace',
+          value: function replace(target, replacement) {
+              var _ref2 = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {},
+                  _ref2$recurse = _ref2.recurse,
+                  recurse = _ref2$recurse === undefined ? false : _ref2$recurse,
+                  _ref2$allDerivated = _ref2.allDerivated,
+                  allDerivated = _ref2$allDerivated === undefined ? true : _ref2$allDerivated;
+
+              var i = void 0;
+              try {
+                  i = this.index(target);
+              } catch (err) {
+                  if (err instanceof StreamException$1) {
+                      return;
+                  } else {
+                      throw err;
+                  }
+              }
+              replacement.offset = this._elementOffsets[i];
+              this._elements[i] = replacement;
+              target.offset = 0.0;
+          }
+
+          /**
            * Get the `index`th element from the Stream.  Equivalent to the
            * music21p format of s[index].  Can use negative indexing to get from the end.
            *
@@ -20534,7 +20567,7 @@
               }
           }
       });
-      QUnit.test('music21.stream.Stream remove, index', function (assert) {
+      QUnit.test('music21.stream.Stream remove, index, replace', function (assert) {
           var s = new music21.stream.Stream();
           s.append(new music21.note.Note('C#5'));
           var d = new music21.note.Note('D#5');
@@ -20550,6 +20583,18 @@
           assert.throws(function () {
               s.index(n);
           }, /cannot find/, 'n is no longer in s');
+
+          assert.equal(d.offset, 1.0);
+          var r = new music21.note.Rest();
+          assert.equal(r.offset, 0.0);
+
+          s.replace(d, r);
+          assert.equal(d.offset, 0.0);
+          assert.equal(r.offset, 1.0);
+          assert.equal(s.index(r), 1.0);
+          assert.throws(function () {
+              s.index(d);
+          }, /cannot find/, 'd is no longer in s');
       });
 
       QUnit.test('music21.stream.Stream.duration', function (assert) {
@@ -20856,8 +20901,9 @@
           assert.ok(vlq1.isProperResolution(), 'm7 resolves inward');
           // v2n2 = new N('F3');
           // vlq1 = new VLQ(v1n1, v1n2, v2n1, v2n2);
-          // okay now...
+          // Ryan believes that this is ok now...
           // assert.ok(!vlq1.isProperResolution(), 'm7 with similar motion');
+
           v2n2 = new N('F#4');
           vlq1 = new VLQ(v1n1, v1n2, v2n1, v2n2);
           vlq1.key = 'B-';
