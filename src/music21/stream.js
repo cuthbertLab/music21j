@@ -550,6 +550,24 @@ export class Stream extends base.Music21Object {
         }
         this.insert(offset, element);
     }
+    
+    
+    /**
+     * Return the first matched index
+     */
+    index(el) {
+        let count = 0;
+        for (const e of this._elements) {
+            if (el === e) {
+                return count;
+            }
+            count += 1;
+        }
+        // endElements
+        throw new StreamException(
+            `cannot find object (${el}) in Stream`
+            );
+    }
 
     /**
      * Remove and return the last element in the stream,
@@ -571,6 +589,88 @@ export class Stream extends base.Music21Object {
         }
     }
 
+    /**
+     * Remove an object from this Stream
+     */
+    remove(targetOrList, 
+            { 
+                firstMatchOnly=true, 
+                shiftOffsets=false, 
+                recurse=false,
+            } = {}) {
+        if (shiftOffsets === true) {
+            throw new StreamException('sorry cannot shiftOffsets yet');
+        }
+        if (recurse === true) {
+            throw new StreamException('sorry cannot recurse yet');
+        }
+
+        let targetList;
+        if (!Array.isArray(targetOrList)) {
+            targetList = [targetOrList];
+        } else {
+            targetList = targetOrList;
+        }
+//        if (targetList.length > 1) {
+//            sort targetList
+//        }        
+        // let shiftDur = 0.0; // for shiftOffsets
+        let i = -1;
+        for (const target of targetList) {
+            i += 1;
+            let indexInStream;
+            try {
+                indexInStream = this.index(target);
+            } catch (err) {
+                if (err instanceof StreamException) {
+                    if (recurse) {
+                        // do something
+                    }
+                    continue;
+                }
+                throw err;
+            }
+            
+            // const matchOffset = this._elementOffsets[indexInStream];
+            // let match;
+            // handle _endElements
+            // let matchedEndElement = false;
+            // let baseElementCount = this._elements.length;
+            this._elements.splice(indexInStream, 1);
+            this._elementOffsets.splice(indexInStream, 1);
+            // remove from sites if needed.
+
+//            if (shiftOffsets) {
+//                const matchDuration = target.duration.quarterLength;
+//                const shiftedRegionStart = matchOffset + matchDuration;
+//                shiftDur += matchDuration;
+//                let shiftedRegionEnd;
+//                if ((i + 1) < targetList.length) {
+//                    const nextElIndex = this.index(targetList[i + 1]);
+//                    const nextElOffset = this._elementOffsets[nextElIndex];
+//                    shiftedRegionEnd = nextElOffset;
+//                } else {
+//                    shiftedRegionEnd = this.duration.quarterLength;
+//                }
+//                if (shiftDur !== 0.0) {
+//                    for (const e of this.getElementsByOffset(
+//                       shiftedRegionStart,
+//                       shiftedRegionEnd,
+//                       {
+//                           includeEndBoundary: false,
+//                           mustFinishInSpan: false,
+//                           mustBeginInSpan: false,                           
+//                       }
+//                    )) {
+//                        const elementOffset = this.elementOffset(e);
+//                        this.setElementOffset(e, elementOffset - shiftDur);
+//                    }
+//                }
+//            }
+        }
+        
+    }
+    
     /**
      * Get the `index`th element from the Stream.  Equivalent to the
      * music21p format of s[index].  Can use negative indexing to get from the end.
@@ -1305,7 +1405,7 @@ export class Stream extends base.Music21Object {
      *
      */
 
-    createNewCanvas(width, height, elementType = 'svg') {
+    createNewCanvas(width, height, elementType='svg') {
         console.warn('createNewCanvas is deprecated, use createNewDOM instead');
         return this.createNewDOM(width, height, elementType);
     }
@@ -1323,7 +1423,7 @@ export class Stream extends base.Music21Object {
      * @param {string} elementType - what type of element, default = svg
      * @returns {JQueryDOMObject} svg in jquery.
      */
-    createNewDOM(width, height, elementType = 'svg') {
+    createNewDOM(width, height, elementType='svg') {
         if (this.hasSubStreams()) {
             this.setSubstreamRenderOptions();
         }
@@ -1387,12 +1487,12 @@ export class Stream extends base.Music21Object {
      * @param {string} elementType - what type of element, default = svg
      * @returns {JQueryDOMObject} canvas or svg
      */
-    createPlayableDOM(width, height, elementType = 'svg') {
+    createPlayableDOM(width, height, elementType='svg') {
         this.renderOptions.events.click = 'play';
         return this.createDOM(width, height, elementType);
     }
 
-    createCanvas(width, height, elementType = 'svg') {
+    createCanvas(width, height, elementType='svg') {
         console.warn('createCanvas is deprecated, use createDOM');
         return this.createDOM(width, height, elementType);
     }
@@ -1405,7 +1505,7 @@ export class Stream extends base.Music21Object {
      * @param {string} elementType - what type of element svg or canvas, default = svg
      * @returns {JQueryDOMObject} canvas or SVG
      */
-    createDOM(width, height, elementType = 'svg') {
+    createDOM(width, height, elementType='svg') {
         const $newSvg = this.createNewDOM(width, height, elementType);
         // temporarily append the SVG to the document to fix a Firefox bug
         // where nothing can be measured unless is it in the document.
