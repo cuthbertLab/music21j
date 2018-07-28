@@ -1,5 +1,5 @@
 /**
- * music21j 0.9.0 built on  * 2018-07-04.
+ * music21j 0.9.0 built on  * 2018-07-28.
  * Copyright (c) 2013-2016 Michael Scott Cuthbert and cuthbertLab
  * BSD License, see LICENSE
  *
@@ -4285,6 +4285,16 @@
               return this._step;
           },
           set: function set(s) {
+              if (s === '') {
+                  throw new TypeError('All notes must have a step');
+              }
+              if (typeof s !== 'string') {
+                  throw new TypeError('Steps must be strings');
+              }
+              s = s.toUpperCase();
+              if (!pitch.stepsToName.includes(s)) {
+                  throw new TypeError(s + ' is not a valid step name.');
+              }
               this._step = s;
           }
       }, {
@@ -4316,7 +4326,7 @@
               }
           },
           set: function set(nn) {
-              this.step = nn.slice(0, 1).toUpperCase();
+              this.step = nn.slice(0, 1);
               var tempAccidental = nn.slice(1);
               if (tempAccidental) {
                   // not the empty string

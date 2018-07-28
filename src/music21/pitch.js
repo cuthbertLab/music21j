@@ -289,6 +289,16 @@ export class Pitch extends prebase.ProtoM21Object {
         return this._step;
     }
     set step(s) {
+        if (s === '') {
+            throw new TypeError('All notes must have a step');
+        }
+        if (typeof s !== 'string') {
+            throw new TypeError('Steps must be strings');
+        }
+        s = s.toUpperCase();
+        if (!pitch.stepsToName.includes(s)) {
+            throw new TypeError(`${s} is not a valid step name.`);
+        }
         this._step = s;
     }
     get octave() {
@@ -314,7 +324,7 @@ export class Pitch extends prebase.ProtoM21Object {
         }
     }
     set name(nn) {
-        this.step = nn.slice(0, 1).toUpperCase();
+        this.step = nn.slice(0, 1);
         const tempAccidental = nn.slice(1);
         if (tempAccidental) {
             // not the empty string
