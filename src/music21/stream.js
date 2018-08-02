@@ -1416,7 +1416,7 @@ export class Stream extends base.Music21Object {
      * Stops a stream from playing if it currently is.
      *
      * @memberof music21.stream.Stream
-     * @returns {musci21.stream.Stream} this
+     * @returns {music21.stream.Stream} this
      */
     stopPlayStream() {
         // turns off all currently playing MIDI notes (on any stream) and stops playback.
