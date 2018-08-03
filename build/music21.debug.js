@@ -1,5 +1,5 @@
 /**
- * music21j 0.9.0 built on  * 2018-07-28.
+ * music21j 0.9.0 built on  * 2018-08-03.
  * Copyright (c) 2013-2016 Michael Scott Cuthbert and cuthbertLab
  * BSD License, see LICENSE
  *
@@ -9975,6 +9975,8 @@
    */
   var Keyboard = function () {
       function Keyboard() {
+          var _this3 = this;
+
           classCallCheck(this, Keyboard);
 
           this.whiteKeyWidth = 23;
@@ -10001,14 +10003,16 @@
            *
            * default:
            *
-           * - click: this.clickhandler
+           * - click: this.clickHandler
            *
            * @name callbacks
            * @type {object}
            * @memberof music21.keyboard.Keyboard#
            */
           this.callbacks = {
-              click: this.clickhandler
+              click: function click(keyClicked) {
+                  return _this3.clickHandler(keyClicked);
+              }
           };
           //   more accurate offsets from http://www.mathpages.com/home/kmath043.htm
           this.sharpOffsets = {
@@ -10074,13 +10078,13 @@
           /**
            * Handle a click on a given SVG object
            *
-           * @method music21.keyboard.Keyboard#clickhandler
+           * @method music21.keyboard.Keyboard#clickHandler
            * @param {DOMObject} keyRect - the dom object with the keyboard.
            */
 
       }, {
-          key: 'clickhandler',
-          value: function clickhandler(keyRect) {
+          key: 'clickHandler',
+          value: function clickHandler(keyRect) {
               // to-do : integrate with jazzHighlight...
               var id = keyRect.id;
               var thisKeyObject = this.keyObjects[id];
@@ -10158,7 +10162,7 @@
                   wk.scaleFactor = this.scaleFactor;
                   wk.width = this.whiteKeyWidth;
                   wk.callbacks.click = function whitekeyCallbacksClick() {
-                      thisKeyboardObject.clickhandler(this);
+                      thisKeyboardObject.callbacks.click(this);
                   };
 
                   var wkSVG = wk.makeKey(this.whiteKeyWidth * this.scaleFactor * wki);
@@ -10174,7 +10178,7 @@
                       bk.scaleFactor = this.scaleFactor;
                       bk.width = this._defaultBlackKeyWidth * this.whiteKeyWidth / this._defaultWhiteKeyWidth;
                       bk.callbacks.click = function blackKeyClicksCallback() {
-                          thisKeyboardObject.clickhandler(this);
+                          thisKeyboardObject.callbacks.click(this);
                       };
 
                       var offsetFromWhiteKey = this.sharpOffsets[currentIndex];
@@ -10266,7 +10270,7 @@
       }, {
           key: 'wrapScrollable',
           value: function wrapScrollable(svgDOM) {
-              var _this3 = this;
+              var _this4 = this;
 
               var $wrapper = $("<div class='keyboardScrollableWrapper'></div>").css({
                   display: 'inline-block'
@@ -10275,17 +10279,17 @@
                   'font-size': Math.floor(this.scaleFactor * 15).toString() + 'px'
               }).bind('click', function () {
                   miditools.transposeOctave -= 1;
-                  _this3._startDNN -= 7;
-                  _this3._endDNN -= 7;
-                  _this3.redrawSVG();
+                  _this4._startDNN -= 7;
+                  _this4._endDNN -= 7;
+                  _this4.redrawSVG();
               });
               var $bUp = $("<button class='keyboardOctaveUp'>&gt;&gt;</button>").css({
                   'font-size': Math.floor(this.scaleFactor * 15).toString() + 'px'
               }).bind('click', function () {
                   miditools.transposeOctave += 1;
-                  _this3._startDNN += 7;
-                  _this3._endDNN += 7;
-                  _this3.redrawSVG();
+                  _this4._startDNN += 7;
+                  _this4._endDNN += 7;
+                  _this4.redrawSVG();
               });
               var $kWrapper = $("<div style='display:inline-block; vertical-align: middle' class='keyboardScrollableInnerDiv'></div>");
               $kWrapper[0].appendChild(svgDOM);
@@ -13845,7 +13849,7 @@
            * Stops a stream from playing if it currently is.
            *
            * @memberof music21.stream.Stream
-           * @returns {musci21.stream.Stream} this
+           * @returns {music21.stream.Stream} this
            */
 
       }, {
