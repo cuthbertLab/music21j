@@ -297,14 +297,14 @@ export class Keyboard {
          *
          * default:
          *
-         * - click: this.clickhandler
+         * - click: this.clickHandler
          *
          * @name callbacks
          * @type {object}
          * @memberof music21.keyboard.Keyboard#
          */
         this.callbacks = {
-            click: this.clickhandler,
+            click: (keyClicked) => this.clickHandler(keyClicked),
         };
         //   more accurate offsets from http://www.mathpages.com/home/kmath043.htm
         this.sharpOffsets = {
@@ -363,10 +363,10 @@ export class Keyboard {
     /**
      * Handle a click on a given SVG object
      *
-     * @method music21.keyboard.Keyboard#clickhandler
+     * @method music21.keyboard.Keyboard#clickHandler
      * @param {DOMObject} keyRect - the dom object with the keyboard.
      */
-    clickhandler(keyRect) {
+    clickHandler(keyRect) {
         // to-do : integrate with jazzHighlight...
         const id = keyRect.id;
         const thisKeyObject = this.keyObjects[id];
@@ -442,7 +442,7 @@ export class Keyboard {
             wk.scaleFactor = this.scaleFactor;
             wk.width = this.whiteKeyWidth;
             wk.callbacks.click = function whitekeyCallbacksClick() {
-                thisKeyboardObject.clickhandler(this);
+                thisKeyboardObject.callbacks.click(this);
             };
 
             const wkSVG = wk.makeKey(
@@ -470,7 +470,7 @@ export class Keyboard {
                     * this.whiteKeyWidth
                     / this._defaultWhiteKeyWidth;
                 bk.callbacks.click = function blackKeyClicksCallback() {
-                    thisKeyboardObject.clickhandler(this);
+                    thisKeyboardObject.callbacks.click(this);
                 };
 
                 let offsetFromWhiteKey = this.sharpOffsets[currentIndex];
