@@ -331,6 +331,17 @@ export class Chord extends note.NotRest {
     }
 
     isDominantSeventh() {
+        return this.isSeventhOfType([0, 4, 7, 10]);
+    }
+    
+    isDiminishedSeventh() {
+        return this.isSeventhOfType([0, 3, 6, 9]);        
+    }
+
+    isSeventhOfType(intervalArray) {
+        if (intervalArray === undefined) {
+            throw new Music21Exception('intervalArray is required');
+        }
         const third = this.third;
         const fifth = this.fifth;
         const seventh = this.seventh;
@@ -343,14 +354,23 @@ export class Chord extends note.NotRest {
             return false;
         }
 
+        const root = this.root();
+        
         for (const thisPitch of this.pitches) {
-            const thisInterval = new interval.Interval(this.root(), thisPitch);
-            if (![0, 4, 7, 10].includes(thisInterval.chromatic.mod12)) {
+            const thisInterval = new interval.Interval(root, thisPitch);
+            if (!intervalArray.includes(thisInterval.chromatic.mod12)) {
                 return false;
             }
+//            // check if it doesn't have any other pitches, such as C E F- G Bb != Dominant Seventh
+//            if (!ignoreSpelling && !chordalNames.includes(thisPitch.name)) {
+//                return false;
+//            }
         }
         return true;
+
+    
     }
+    
 
     /**
      * canBeDominantV - Returns true if the chord is a Major Triad or a Dominant Seventh

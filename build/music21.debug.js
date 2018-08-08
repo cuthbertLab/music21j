@@ -1,5 +1,5 @@
 /**
- * music21j 0.9.0 built on  * 2018-08-03.
+ * music21j 0.9.0 built on  * 2018-08-08.
  * Copyright (c) 2013-2016 Michael Scott Cuthbert and cuthbertLab
  * BSD License, see LICENSE
  *
@@ -6330,6 +6330,19 @@
       }, {
           key: 'isDominantSeventh',
           value: function isDominantSeventh() {
+              return this.isSeventhOfType([0, 4, 7, 10]);
+          }
+      }, {
+          key: 'isDiminishedSeventh',
+          value: function isDiminishedSeventh() {
+              return this.isSeventhOfType([0, 3, 6, 9]);
+          }
+      }, {
+          key: 'isSeventhOfType',
+          value: function isSeventhOfType(intervalArray) {
+              if (intervalArray === undefined) {
+                  throw new Music21Exception('intervalArray is required');
+              }
               var third = this.third;
               var fifth = this.fifth;
               var seventh = this.seventh;
@@ -6337,6 +6350,8 @@
               if (third === undefined || fifth === undefined || seventh === undefined) {
                   return false;
               }
+
+              var root = this.root();
 
               var _iteratorNormalCompletion2 = true;
               var _didIteratorError2 = false;
@@ -6346,10 +6361,14 @@
                   for (var _iterator2 = this.pitches[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
                       var thisPitch = _step2.value;
 
-                      var thisInterval = new interval.Interval(this.root(), thisPitch);
-                      if (![0, 4, 7, 10].includes(thisInterval.chromatic.mod12)) {
+                      var thisInterval = new interval.Interval(root, thisPitch);
+                      if (!intervalArray.includes(thisInterval.chromatic.mod12)) {
                           return false;
                       }
+                      //            // check if it doesn't have any other pitches, such as C E F- G Bb != Dominant Seventh
+                      //            if (!ignoreSpelling && !chordalNames.includes(thisPitch.name)) {
+                      //                return false;
+                      //            }
                   }
               } catch (err) {
                   _didIteratorError2 = true;
