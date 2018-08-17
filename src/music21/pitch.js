@@ -9,6 +9,8 @@
 import { Music21Exception } from './exceptions21.js';
 
 import { prebase } from './prebase.js';
+import { common } from './common.js';
+
 /**
  * pitch module.  See {@link music21.pitch} namespace
  *
@@ -265,11 +267,13 @@ pitch.midiToName = [
  * @property {string} step - letter name for the pitch (C-G, A, B), without accidental; default 'C'
  */
 export class Pitch extends prebase.ProtoM21Object {
-    constructor(pn = 'C') {
+    constructor(pn='C') {
         super();
         this._step = 'C';
         this._octave = 4;
         this._accidental = undefined;
+        this.spellingIsInferred = false;
+        
         /* pn can be a nameWithOctave */
         if (typeof pn === 'number') {
             if (pn < 12) {
@@ -300,6 +304,7 @@ export class Pitch extends prebase.ProtoM21Object {
             throw new TypeError(`${s} is not a valid step name.`);
         }
         this._step = s;
+        this.spellingIsInferred = false;
     }
     get octave() {
         return this._octave;
@@ -315,6 +320,7 @@ export class Pitch extends prebase.ProtoM21Object {
             a = new pitch.Accidental(a);
         }
         this._accidental = a;
+        this.spellingIsInferred = false;
     }
     get name() {
         if (this.accidental === undefined) {
@@ -346,6 +352,11 @@ export class Pitch extends prebase.ProtoM21Object {
             this.name = pn;
         }
     }
+    get pitchClass() {
+        const pc = common.posMod(Math.round(this.ps), 12);
+        return pc;
+    }
+    
     get diatonicNoteNum() {
         return this.octave * 7 + pitch.nameToSteps[this.step] + 1;
     }
@@ -374,8 +385,25 @@ export class Pitch extends prebase.ProtoM21Object {
     set ps(ps) {
         this.name = pitch.midiToName[ps % 12];
         this.octave = Math.floor(ps / 12) - 1;
+        this.spellingIsInferred = true;
     }
 
+    get unicodeName() {
+        if (this.accidental !== undefined) {
+            return this.step + this.accidental.unicodeModifier();
+        } else {
+            return this.step;
+        }
+    }
+    
+    get unicodeNameWithOctave() {
+        if (this.octave === undefined) {
+            return this.unicodeName;
+        } else {
+            return this.unicodeName + this.octave.toString();
+        }
+    }
+    
     /**
      * @param {boolean} inPlace
      * @param {Int} directionInt -- -1 = down, 1 = up

@@ -131,6 +131,9 @@ common.aggregation = (baseClass, ...mixins) => {
  */
 
 common.posMod = function posMod(a, b) {
+    if (a === undefined || b === undefined) {
+        throw new Error('Modulo needs two numbers');
+    }
     return (a % b + b) % b;
 };
 
@@ -463,3 +466,5 @@ common.urls = {
     midiPlayer: '/webResources/midiPlayer',
     soundfontUrl: '/src/ext/soundfonts/FluidR3_GM/',
 };
+
+export default common;

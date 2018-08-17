@@ -11,6 +11,7 @@ import * as Vex from 'vexflow';
 import { Music21Exception } from './exceptions21.js';
 import { interval } from './interval.js';
 import { note } from './note.js';
+import * as chordTables from './chordTables.js';
 
 /**
  * chord Module. See {@link music21.chord} namespace for more details
@@ -56,6 +57,9 @@ export class Chord extends note.NotRest {
         this._cache = {};
 
         this._notes = [];
+        this._chordTablesAddress = undefined;
+        this._chordTablesAddressNeedsUpdating = true; // only update when needed
+
         notes.forEach(this.add, this, false);
         this.sortPitches();
     }
@@ -92,6 +96,117 @@ export class Chord extends note.NotRest {
         this._cache = {};
         this._overrides = {};
     }
+    get orderedPitchClasses() {
+        const pcGroup = [];
+        for (const p of this.pitches) {
+            if (pcGroup.includes(p.pitchClass)) {
+                continue;
+            }
+            pcGroup.push(p.pitchClass);
+        }
+        pcGroup.sort((a, b) => a - b);
+        return pcGroup;
+    }
+    
+    get chordTablesAddress() {
+        if (this._chordTablesAddressNeedsUpdating) {
+            this._chordTablesAddress = chordTables.seekChordTablesAddress(this);
+        }
+        this._chordTablesAddressNeedsUpdating = false;
+        return this._chordTablesAddress;
+    }
+    
+    get commonName() {
+        // TODO: many more exemptions from music21p
+        const cta = this.chordTablesAddress;
+        const ctn = chordTables.addressToCommonNames(cta);
+        const forteClass = this.forteClass;
+        const enharmonicTests = {
+            '3-11A': () => this.isMinorTriad(),
+            '3-11B': () => this.isMajorTriad(),
+            '3-10': () => this.isDiminishedTriad(),
+            '3-12': () => this.isAugmentedTriad(),
+        };
+        if (enharmonicTests[forteClass] !== undefined) {
+            let out = ctn[0];
+            const test = enharmonicTests[forteClass];
+            if (!test()) {
+                out = 'enharmonic equivalent to ' + out;
+            }
+            return out;
+        }
+        
+        if (ctn === undefined) {
+            return '';            
+        } else {
+            return ctn[0];           
+        }
+    }
+    
+    get forteClass() {
+        return chordTables.addressToForteName(this.chordTablesAddress, 'tn');
+    }
+
+    get forteClassNumber() {
+        return this.chordTablesAddress.forteClass;
+    }
+    
+    get forteClassTnI() {
+        return chordTables.addressToForteName(this.chordTablesAddress, 'tni');
+    }
+    
+    areZRelations(other) {
+        const zRelationAddress = chordTables.addressToZAddress(this.chordTablesAddress);
+        if (zRelationAddress === undefined) {
+            return false;
+        }
+        for (const key of ['cardinality', 'forteClass', 'inversion']) {
+            if (other.chordTablesAddress[key] !== zRelationAddress[key]) {
+                return false;
+            }
+        }
+        return true;
+    }
+    
+    getZRelation() {
+        if (!this.hasZRelation) {
+            return undefined;
+        }
+        const chordTablesAddress = this.chordTablesAddress;
+        const v = chordTables.addressToIntervalVector(chordTablesAddress);
+        const addresses = chordTables.intervalVectorToAddress(v);
+        let other;
+        for (const thisAddress of addresses) {
+            if (thisAddress.forteClass !== chordTablesAddress.forteClass) {
+                other = thisAddress;                
+            }
+        }
+        // other should always be defined;
+        const prime = chordTables.addressToTransposedNormalForm(other);
+        return new Chord(prime);
+    }
+    
+    get hasZRelation() {
+        const post = chordTables.addressToZAddress(this.chordTablesAddress);
+        if (post !== undefined) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    
+    get intervalVector() {
+        return chordTables.addressToIntervalVector(this.chordTablesAddress);        
+    }
+    
+//    get intervalVectorString() {
+//        
+//    }
+//    
+//    static formatVectorString() {
+//        // needs pitch._convertPitchClassToStr
+//    }
+    
     setStemDirectionFromClef(clef) {
         if (clef === undefined) {
             return this;
@@ -329,7 +444,42 @@ export class Chord extends note.NotRest {
             return false;
         }
     }
+    /**
+    *
+    * @memberof music21.chord.Chord
+    * @returns {Boolean}
+    */
+    isDiminishedTriad() {
+        if (this.cardinality() !== 3) {
+            return false;
+        }
+        const thirdST = this.semitonesFromChordStep(3);
+        const fifthST = this.semitonesFromChordStep(5);
+        if (thirdST === 3 && fifthST === 6) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    /**
+    *
+    * @memberof music21.chord.Chord
+    * @returns {Boolean}
+    */
+    isAugmentedTriad() {
+        if (this.cardinality() !== 3) {
+            return false;
+        }
+        const thirdST = this.semitonesFromChordStep(3);
+        const fifthST = this.semitonesFromChordStep(5);
+        if (thirdST === 4 && fifthST === 8) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 
+    
     isDominantSeventh() {
         return this.isSeventhOfType([0, 4, 7, 10]);
     }
