@@ -238,12 +238,13 @@ tinyNotation.TinyNotation = function TinyNotation(textIn) {
         m.append(noteObj);
     }
 
+    if (m.length > 0) {
+        p.append(m);
+    }
+
     let returnObject;
 
     if (optionalScore !== undefined) {
-        if (m.length > 0) {
-            p.append(m);
-        }
         if (p.length > 0) {
             optionalScore.append(p);
         }
@@ -252,13 +253,9 @@ tinyNotation.TinyNotation = function TinyNotation(textIn) {
             innerPart.clef = clef.bestClef(innerPart);
         }
         returnObject = optionalScore;
-    } else if (p.length > 0) {
-        p.append(m);
+    } else {
         p.clef = clef.bestClef(p);
         returnObject = p;
-    } else {
-        m.clef = clef.bestClef(m);
-        returnObject = m;
     }
     return returnObject;
 };

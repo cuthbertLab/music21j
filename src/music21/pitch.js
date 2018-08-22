@@ -383,7 +383,7 @@ export class Pitch extends prebase.ProtoM21Object {
         );
     }
     set ps(ps) {
-        this.name = pitch.midiToName[ps % 12];
+        this.name = pitch.midiToName[common.posMod(ps, 12)];
         this.octave = Math.floor(ps / 12) - 1;
         this.spellingIsInferred = true;
     }

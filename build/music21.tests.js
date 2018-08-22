@@ -1,5 +1,5 @@
 /**
- * music21j 0.9.0 built on  * 2018-08-17.
+ * music21j 0.9.0 built on  * 2018-08-22.
  * Copyright (c) 2013-2016 Michael Scott Cuthbert and cuthbertLab
  * BSD License, see LICENSE
  *
@@ -4393,7 +4393,7 @@
               return (this.octave + 1) * 12 + pitch.nameToMidi[this.step] + accidentalAlter;
           },
           set: function set(ps) {
-              this.name = pitch.midiToName[ps % 12];
+              this.name = pitch.midiToName[common.posMod(ps, 12)];
               this.octave = Math.floor(ps / 12) - 1;
               this.spellingIsInferred = true;
           }
@@ -21417,12 +21417,13 @@
           m.append(noteObj);
       }
 
+      if (m.length > 0) {
+          p.append(m);
+      }
+
       var returnObject = void 0;
 
       if (optionalScore !== undefined) {
-          if (m.length > 0) {
-              p.append(m);
-          }
           if (p.length > 0) {
               optionalScore.append(p);
           }
@@ -21431,13 +21432,9 @@
               innerPart.clef = clef.bestClef(innerPart);
           }
           returnObject = optionalScore;
-      } else if (p.length > 0) {
-          p.append(m);
+      } else {
           p.clef = clef.bestClef(p);
           returnObject = p;
-      } else {
-          m.clef = clef.bestClef(m);
-          returnObject = m;
       }
       return returnObject;
   };
