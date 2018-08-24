@@ -16305,7 +16305,7 @@
               if (otherElements.length === 0) {
                   return undefined;
               } else if (otherElements.length === 1) {
-                  return otherElements[0];
+                  return otherElements.get(0);
               } else {
                   var _iteratorNormalCompletion13 = true;
                   var _didIteratorError13 = false;
@@ -16334,7 +16334,7 @@
                       }
                   }
 
-                  return otherElements[0];
+                  return otherElements.get(0);
               }
           }
 

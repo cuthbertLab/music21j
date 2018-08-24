@@ -1179,14 +1179,14 @@ export class Stream extends base.Music21Object {
         if (otherElements.length === 0) {
             return undefined;
         } else if (otherElements.length === 1) {
-            return otherElements[0];
+            return otherElements.get(0);
         } else {
             for (const thisEl of otherElements) {
                 if (el.constructor === thisEl.constructor) {
                     return thisEl;
                 }
             }
-            return otherElements[0];
+            return otherElements.get(0);
         }        
     }
     
