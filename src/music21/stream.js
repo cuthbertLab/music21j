@@ -1175,7 +1175,7 @@ export class Stream extends base.Music21Object {
             elOffset = el.offset;
         }
         
-        const otherElements = this.getElementsByOffset(elOffset, { mustBeginInSpan: false });
+        const otherElements = this.getElementsByOffset(elOffset, undefined, { mustBeginInSpan: false });
         if (otherElements.length === 0) {
             return undefined;
         } else if (otherElements.length === 1) {

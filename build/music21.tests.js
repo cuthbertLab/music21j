@@ -16301,7 +16301,7 @@
                   elOffset = el.offset;
               }
 
-              var otherElements = this.getElementsByOffset(elOffset, { mustBeginInSpan: false });
+              var otherElements = this.getElementsByOffset(elOffset, undefined, { mustBeginInSpan: false });
               if (otherElements.length === 0) {
                   return undefined;
               } else if (otherElements.length === 1) {
