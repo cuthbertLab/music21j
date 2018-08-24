@@ -1047,6 +1047,150 @@ export class Stream extends base.Music21Object {
         newSt.elements = tempEls;
         return newSt;
     }
+    
+    /**
+     * Returns a new stream [StreamIterator does not yet exist in music21j]
+     * containing all Music21Objects that are found at a certain offset or
+     * within a certain offset time range (given the offsetStart and
+     * (optional) offsetEnd values).
+     * 
+     * See music21p documentation for the effect of various parameters. 
+     */
+    getElementsByOffset(
+        offsetStart, 
+        offsetEnd, 
+        {
+            includeEndBoundary=true,
+            mustFinishInSpan=false,
+            mustBeginInSpan=true,
+            includeElementsThatEndAtStart=true,
+            classList=undefined,
+        }={}) {
+                        
+        let s = this;
+        if (classList !== undefined) {
+            s = this.getElementsByClass(classList);
+        }
+        let zeroLengthSearch = false;
+        if (offsetEnd === undefined) {
+            offsetEnd = offsetStart;
+            zeroLengthSearch = true;            
+        } else if (offsetEnd <= offsetStart) {
+            zeroLengthSearch = true;
+        }
+
+        const isElementOffsetInRange = (e, offset) => {
+            if (offset > offsetEnd) {
+                // anything that begins after the span is definitely out.
+                return false;
+            }
+            const dur = e.duration;
+            const elementEnd = offset + dur.quarterLength;
+            if (elementEnd < offsetStart) {
+                // anything that finishes before the span ends is definitely out
+                return false;
+            }
+            
+            // some part of the element is at least touching some part of span.
+            
+            let elementIsZeroLength = false;
+            if (dur.quarterLength === 0) {
+                elementIsZeroLength = true;
+            }                        
+            if (zeroLengthSearch && elementIsZeroLength) {
+                return true;
+            }
+            
+            if (mustFinishInSpan) {
+                if (elementEnd > offsetEnd) {
+                    return false;                    
+                }
+                if (!includeEndBoundary && offset === offsetEnd) {
+                    return false;
+                }
+            } 
+            
+            if (mustBeginInSpan) {
+                if (offset < offsetStart) {
+                    return false;
+                }  
+                if (!includeEndBoundary && offset === offsetEnd) {
+                    return false;
+                }
+            } else if (!elementIsZeroLength && elementEnd === offsetEnd && zeroLengthSearch) {
+                return false;
+            }
+
+            if (!includeEndBoundary && offset === offsetEnd) {
+                return false;
+            }
+            if (!includeElementsThatEndAtStart && elementEnd === offsetStart) {
+                return false;
+            }
+            return true;
+        };
+        
+        const retStream = s.clone(false);
+        retStream.elements = [];
+        for (const e of s) {
+            const offset = s.elementOffset(e);
+            if (isElementOffsetInRange(e, offset)) {
+                retStream.insert(offset, e);
+            }
+        }
+        return retStream;
+    }
+    
+    /**
+     *  Given an element (from another Stream) returns the single element
+     *  in this Stream that is sounding while the given element starts.
+     *
+     *  If there are multiple elements sounding at the moment it is
+     *  attacked, the method returns the first element of the same class
+     *  as this element, if any. If no element
+     *  is of the same class, then the first element encountered is
+     *  returned. For more complex usages, use allPlayingWhileSounding.
+     *
+     *  Returns None if no elements fit the bill.        
+     *
+     *  The optional elStream is the stream in which el is found.
+     *  If provided, el's offset
+     *  in that Stream is used.  Otherwise, the current offset in
+     *  el is used.  It is just
+     *  in case you are paranoid that el.offset might not be what
+     *  you want, because of some fancy manipulation of
+     *  el.activeSite
+     *   
+     * @memberof music21.stream.Stream
+     * @param {music21.base.Music21Object} el - object with an offset and class to search for.
+     * @param {music21.stream.Stream|undefined} elStream - a place to get el's offset from.
+     * @returns {music21.stream.Stream}
+     * @returns {music21.base.Music21Object|undefined}
+     */    
+    playingWhenAttacked(el, elStream) {
+        let elOffset;
+        if (elStream !== undefined) {
+            elOffset = el.getOffsetBySite(elStream);
+        } else {
+            elOffset = el.offset;
+        }
+        
+        const otherElements = this.getElementsByOffset(elOffset, { mustBeginInSpan: false });
+        if (otherElements.length === 0) {
+            return undefined;
+        } else if (otherElements.length === 1) {
+            return otherElements[0];
+        } else {
+            for (const thisEl of otherElements) {
+                if (el.constructor === thisEl.constructor) {
+                    return thisEl;
+                }
+            }
+            return otherElements[0];
+        }        
+    }
+    
+    
     /**
      * Sets Pitch.accidental.displayStatus for every element with a
      * pitch or pitches in the stream. If a natural needs to be displayed
@@ -1840,7 +1984,7 @@ export class Stream extends base.Music21Object {
 
     /**
      *
-     * Return the note at pixel X (or within allowablePixels [default 10])
+     * Return the note (or chord or rest) at pixel X (or within allowablePixels [default 10])
      * of the note.
      *
      * systemIndex element is not used on bare Stream
