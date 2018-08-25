@@ -46,6 +46,17 @@ export default function tests() {
         assert.equal(s.index(r), 1, 'index of r in s should be 1');
         assert.throws(() => { s.index(d) }, /cannot find/, 'd is no longer in s');        
     });
+
+    QUnit.test('music21.stream.Stream.elements from stream', assert => {
+        const s = new music21.stream.Stream();
+        s.append(new music21.note.Note('C#5'));
+        const d = new music21.note.Note('D#5');
+        s.insert(10, d);
+        const t = new music21.stream.Stream();
+        t.elements = s;
+        assert.deepEqual(t.get(1), d, 't[1] is d');
+        assert.equal(t.get(1).offset, 10, 'd offset retained');
+    });    
     
     QUnit.test('music21.stream.Stream.duration', assert => {
         const s = new music21.stream.Stream();

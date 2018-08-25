@@ -17978,10 +17978,38 @@
               var tempInsert = [];
               var i = void 0;
               var thisEl = void 0;
+              if (newElements.isStream === true) {
+                  // iterate to set active site;
+                  var _iteratorNormalCompletion23 = true;
+                  var _didIteratorError23 = false;
+                  var _iteratorError23 = undefined;
+
+                  try {
+                      for (var _iterator23 = newElements[Symbol.iterator](), _step23; !(_iteratorNormalCompletion23 = (_step23 = _iterator23.next()).done); _iteratorNormalCompletion23 = true) {
+                          var unused = _step23.value;
+                      } // eslint-disable-line no-empty
+                  } catch (err) {
+                      _didIteratorError23 = true;
+                      _iteratorError23 = err;
+                  } finally {
+                      try {
+                          if (!_iteratorNormalCompletion23 && _iterator23.return) {
+                              _iterator23.return();
+                          }
+                      } finally {
+                          if (_didIteratorError23) {
+                              throw _iteratorError23;
+                          }
+                      }
+                  }
+
+                  newElements = newElements.elements;
+              }
+
               for (i = 0; i < newElements.length; i++) {
                   thisEl = newElements[i];
                   var thisElOffset = thisEl.offset;
-                  if (thisElOffset === null || thisElOffset === highestOffsetSoFar) {
+                  if (thisElOffset === undefined || thisElOffset === highestOffsetSoFar) {
                       // append
                       this._elements.push(thisEl);
                       this.setElementOffset(thisEl, highestOffsetSoFar);
@@ -18106,13 +18134,13 @@
           value: function getMeasureWidths() {
               /* call after setSubstreamRenderOptions */
               var measureWidths = [];
-              var _iteratorNormalCompletion23 = true;
-              var _didIteratorError23 = false;
-              var _iteratorError23 = undefined;
+              var _iteratorNormalCompletion24 = true;
+              var _didIteratorError24 = false;
+              var _iteratorError24 = undefined;
 
               try {
-                  for (var _iterator23 = this[Symbol.iterator](), _step23; !(_iteratorNormalCompletion23 = (_step23 = _iterator23.next()).done); _iteratorNormalCompletion23 = true) {
-                      var el = _step23.value;
+                  for (var _iterator24 = this[Symbol.iterator](), _step24; !(_iteratorNormalCompletion24 = (_step24 = _iterator24.next()).done); _iteratorNormalCompletion24 = true) {
+                      var el = _step24.value;
 
                       if (el.isClassOrSubclass('Measure')) {
                           var elRendOp = el.renderOptions;
@@ -18123,16 +18151,16 @@
                    *
                    */
               } catch (err) {
-                  _didIteratorError23 = true;
-                  _iteratorError23 = err;
+                  _didIteratorError24 = true;
+                  _iteratorError24 = err;
               } finally {
                   try {
-                      if (!_iteratorNormalCompletion23 && _iterator23.return) {
-                          _iterator23.return();
+                      if (!_iteratorNormalCompletion24 && _iterator24.return) {
+                          _iterator24.return();
                       }
                   } finally {
-                      if (_didIteratorError23) {
-                          throw _iteratorError23;
+                      if (_didIteratorError24) {
+                          throw _iteratorError24;
                       }
                   }
               }
@@ -18157,13 +18185,13 @@
                   // part with Measures underneath
                   var totalLength = 0;
                   var isFirst = true;
-                  var _iteratorNormalCompletion24 = true;
-                  var _didIteratorError24 = false;
-                  var _iteratorError24 = undefined;
+                  var _iteratorNormalCompletion25 = true;
+                  var _didIteratorError25 = false;
+                  var _iteratorError25 = undefined;
 
                   try {
-                      for (var _iterator24 = this.getElementsByClass('Measure')[Symbol.iterator](), _step24; !(_iteratorNormalCompletion24 = (_step24 = _iterator24.next()).done); _iteratorNormalCompletion24 = true) {
-                          var m = _step24.value;
+                      for (var _iterator25 = this.getElementsByClass('Measure')[Symbol.iterator](), _step25; !(_iteratorNormalCompletion25 = (_step25 = _iterator25.next()).done); _iteratorNormalCompletion25 = true) {
+                          var m = _step25.value;
 
                           // this looks wrong, but actually seems to be right. moving it to
                           // after the break breaks things.
@@ -18174,16 +18202,16 @@
                           isFirst = false;
                       }
                   } catch (err) {
-                      _didIteratorError24 = true;
-                      _iteratorError24 = err;
+                      _didIteratorError25 = true;
+                      _iteratorError25 = err;
                   } finally {
                       try {
-                          if (!_iteratorNormalCompletion24 && _iterator24.return) {
-                              _iterator24.return();
+                          if (!_iteratorNormalCompletion25 && _iterator25.return) {
+                              _iterator25.return();
                           }
                       } finally {
-                          if (_didIteratorError24) {
-                              throw _iteratorError24;
+                          if (_didIteratorError25) {
+                              throw _iteratorError25;
                           }
                       }
                   }
@@ -18324,13 +18352,13 @@
               var lastKeySignature = void 0;
               var lastClef = void 0;
 
-              var _iteratorNormalCompletion25 = true;
-              var _didIteratorError25 = false;
-              var _iteratorError25 = undefined;
+              var _iteratorNormalCompletion26 = true;
+              var _didIteratorError26 = false;
+              var _iteratorError26 = undefined;
 
               try {
-                  for (var _iterator25 = this[Symbol.iterator](), _step25; !(_iteratorNormalCompletion25 = (_step25 = _iterator25.next()).done); _iteratorNormalCompletion25 = true) {
-                      var el = _step25.value;
+                  for (var _iterator26 = this[Symbol.iterator](), _step26; !(_iteratorNormalCompletion26 = (_step26 = _iterator26.next()).done); _iteratorNormalCompletion26 = true) {
+                      var el = _step26.value;
 
                       if (el.isClassOrSubclass('Measure')) {
                           var elRendOp = el.renderOptions;
@@ -18377,16 +18405,16 @@
                       }
                   }
               } catch (err) {
-                  _didIteratorError25 = true;
-                  _iteratorError25 = err;
+                  _didIteratorError26 = true;
+                  _iteratorError26 = err;
               } finally {
                   try {
-                      if (!_iteratorNormalCompletion25 && _iterator25.return) {
-                          _iterator25.return();
+                      if (!_iteratorNormalCompletion26 && _iterator26.return) {
+                          _iterator26.return();
                       }
                   } finally {
-                      if (_didIteratorError25) {
-                          throw _iteratorError25;
+                      if (_didIteratorError26) {
+                          throw _iteratorError26;
                       }
                   }
               }
@@ -18470,13 +18498,13 @@
           value: function getStreamFromScaledXandSystemIndex(xPxScaled, systemIndex) {
               var gotMeasure = void 0;
               var measures = this.measures;
-              var _iteratorNormalCompletion26 = true;
-              var _didIteratorError26 = false;
-              var _iteratorError26 = undefined;
+              var _iteratorNormalCompletion27 = true;
+              var _didIteratorError27 = false;
+              var _iteratorError27 = undefined;
 
               try {
-                  for (var _iterator26 = measures[Symbol.iterator](), _step26; !(_iteratorNormalCompletion26 = (_step26 = _iterator26.next()).done); _iteratorNormalCompletion26 = true) {
-                      var m = _step26.value;
+                  for (var _iterator27 = measures[Symbol.iterator](), _step27; !(_iteratorNormalCompletion27 = (_step27 = _iterator27.next()).done); _iteratorNormalCompletion27 = true) {
+                      var m = _step27.value;
 
                       var rendOp = m.renderOptions;
                       var left = rendOp.left;
@@ -18497,16 +18525,16 @@
                       }
                   }
               } catch (err) {
-                  _didIteratorError26 = true;
-                  _iteratorError26 = err;
+                  _didIteratorError27 = true;
+                  _iteratorError27 = err;
               } finally {
                   try {
-                      if (!_iteratorNormalCompletion26 && _iterator26.return) {
-                          _iterator26.return();
+                      if (!_iteratorNormalCompletion27 && _iterator27.return) {
+                          _iterator27.return();
                       }
                   } finally {
-                      if (_didIteratorError26) {
-                          throw _iteratorError26;
+                      if (_didIteratorError27) {
+                          throw _iteratorError27;
                       }
                   }
               }
@@ -18573,13 +18601,13 @@
               var currentPartNumber = 0;
               var currentPartTop = 0;
               var partSpacing = this.partSpacing;
-              var _iteratorNormalCompletion27 = true;
-              var _didIteratorError27 = false;
-              var _iteratorError27 = undefined;
+              var _iteratorNormalCompletion28 = true;
+              var _didIteratorError28 = false;
+              var _iteratorError28 = undefined;
 
               try {
-                  for (var _iterator27 = this[Symbol.iterator](), _step27; !(_iteratorNormalCompletion27 = (_step27 = _iterator27.next()).done); _iteratorNormalCompletion27 = true) {
-                      var el = _step27.value;
+                  for (var _iterator28 = this[Symbol.iterator](), _step28; !(_iteratorNormalCompletion28 = (_step28 = _iterator28.next()).done); _iteratorNormalCompletion28 = true) {
+                      var el = _step28.value;
 
                       if (el.isClassOrSubclass('Part')) {
                           el.renderOptions.partIndex = currentPartNumber;
@@ -18587,36 +18615,6 @@
                           el.setSubstreamRenderOptions();
                           currentPartTop += partSpacing;
                           currentPartNumber += 1;
-                      }
-                  }
-              } catch (err) {
-                  _didIteratorError27 = true;
-                  _iteratorError27 = err;
-              } finally {
-                  try {
-                      if (!_iteratorNormalCompletion27 && _iterator27.return) {
-                          _iterator27.return();
-                      }
-                  } finally {
-                      if (_didIteratorError27) {
-                          throw _iteratorError27;
-                      }
-                  }
-              }
-
-              this.evenPartMeasureSpacing();
-              var ignoreNumSystems = true;
-              var currentScoreHeight = this.estimateStreamHeight(ignoreNumSystems);
-              var _iteratorNormalCompletion28 = true;
-              var _didIteratorError28 = false;
-              var _iteratorError28 = undefined;
-
-              try {
-                  for (var _iterator28 = this[Symbol.iterator](), _step28; !(_iteratorNormalCompletion28 = (_step28 = _iterator28.next()).done); _iteratorNormalCompletion28 = true) {
-                      var _el3 = _step28.value;
-
-                      if (_el3.isClassOrSubclass('Part')) {
-                          _el3.fixSystemInformation(currentScoreHeight);
                       }
                   }
               } catch (err) {
@@ -18630,6 +18628,36 @@
                   } finally {
                       if (_didIteratorError28) {
                           throw _iteratorError28;
+                      }
+                  }
+              }
+
+              this.evenPartMeasureSpacing();
+              var ignoreNumSystems = true;
+              var currentScoreHeight = this.estimateStreamHeight(ignoreNumSystems);
+              var _iteratorNormalCompletion29 = true;
+              var _didIteratorError29 = false;
+              var _iteratorError29 = undefined;
+
+              try {
+                  for (var _iterator29 = this[Symbol.iterator](), _step29; !(_iteratorNormalCompletion29 = (_step29 = _iterator29.next()).done); _iteratorNormalCompletion29 = true) {
+                      var _el3 = _step29.value;
+
+                      if (_el3.isClassOrSubclass('Part')) {
+                          _el3.fixSystemInformation(currentScoreHeight);
+                      }
+                  }
+              } catch (err) {
+                  _didIteratorError29 = true;
+                  _iteratorError29 = err;
+              } finally {
+                  try {
+                      if (!_iteratorNormalCompletion29 && _iterator29.return) {
+                          _iterator29.return();
+                      }
+                  } finally {
+                      if (_didIteratorError29) {
+                          throw _iteratorError29;
                       }
                   }
               }
@@ -18652,13 +18680,13 @@
                   // console.log("Overridden staff width: " + this.renderOptions.overriddenWidth);
                   return this.renderOptions.overriddenWidth;
               }
-              var _iteratorNormalCompletion29 = true;
-              var _didIteratorError29 = false;
-              var _iteratorError29 = undefined;
+              var _iteratorNormalCompletion30 = true;
+              var _didIteratorError30 = false;
+              var _iteratorError30 = undefined;
 
               try {
-                  for (var _iterator29 = this[Symbol.iterator](), _step29; !(_iteratorNormalCompletion29 = (_step29 = _iterator29.next()).done); _iteratorNormalCompletion29 = true) {
-                      var p = _step29.value;
+                  for (var _iterator30 = this[Symbol.iterator](), _step30; !(_iteratorNormalCompletion30 = (_step30 = _iterator30.next()).done); _iteratorNormalCompletion30 = true) {
+                      var p = _step30.value;
 
                       if (p.isClassOrSubclass('Part')) {
                           return p.estimateStaffLength();
@@ -18666,16 +18694,16 @@
                   }
                   // no parts found in score... use part...
               } catch (err) {
-                  _didIteratorError29 = true;
-                  _iteratorError29 = err;
+                  _didIteratorError30 = true;
+                  _iteratorError30 = err;
               } finally {
                   try {
-                      if (!_iteratorNormalCompletion29 && _iterator29.return) {
-                          _iterator29.return();
+                      if (!_iteratorNormalCompletion30 && _iterator30.return) {
+                          _iterator30.return();
                       }
                   } finally {
-                      if (_didIteratorError29) {
-                          throw _iteratorError29;
+                      if (_didIteratorError30) {
+                          throw _iteratorError30;
                       }
                   }
               }
@@ -18703,29 +18731,29 @@
           key: 'playStream',
           value: function playStream(params) {
               // play multiple parts in parallel...
-              var _iteratorNormalCompletion30 = true;
-              var _didIteratorError30 = false;
-              var _iteratorError30 = undefined;
+              var _iteratorNormalCompletion31 = true;
+              var _didIteratorError31 = false;
+              var _iteratorError31 = undefined;
 
               try {
-                  for (var _iterator30 = this[Symbol.iterator](), _step30; !(_iteratorNormalCompletion30 = (_step30 = _iterator30.next()).done); _iteratorNormalCompletion30 = true) {
-                      var el = _step30.value;
+                  for (var _iterator31 = this[Symbol.iterator](), _step31; !(_iteratorNormalCompletion31 = (_step31 = _iterator31.next()).done); _iteratorNormalCompletion31 = true) {
+                      var el = _step31.value;
 
                       if (el.isClassOrSubclass('Part')) {
                           el.playStream(params);
                       }
                   }
               } catch (err) {
-                  _didIteratorError30 = true;
-                  _iteratorError30 = err;
+                  _didIteratorError31 = true;
+                  _iteratorError31 = err;
               } finally {
                   try {
-                      if (!_iteratorNormalCompletion30 && _iterator30.return) {
-                          _iterator30.return();
+                      if (!_iteratorNormalCompletion31 && _iterator31.return) {
+                          _iterator31.return();
                       }
                   } finally {
-                      if (_didIteratorError30) {
-                          throw _iteratorError30;
+                      if (_didIteratorError31) {
+                          throw _iteratorError31;
                       }
                   }
               }
@@ -18742,29 +18770,29 @@
       }, {
           key: 'stopPlayStream',
           value: function stopPlayStream() {
-              var _iteratorNormalCompletion31 = true;
-              var _didIteratorError31 = false;
-              var _iteratorError31 = undefined;
+              var _iteratorNormalCompletion32 = true;
+              var _didIteratorError32 = false;
+              var _iteratorError32 = undefined;
 
               try {
-                  for (var _iterator31 = this[Symbol.iterator](), _step31; !(_iteratorNormalCompletion31 = (_step31 = _iterator31.next()).done); _iteratorNormalCompletion31 = true) {
-                      var el = _step31.value;
+                  for (var _iterator32 = this[Symbol.iterator](), _step32; !(_iteratorNormalCompletion32 = (_step32 = _iterator32.next()).done); _iteratorNormalCompletion32 = true) {
+                      var el = _step32.value;
 
                       if (el.isClassOrSubclass('Part')) {
                           el.stopPlayStream();
                       }
                   }
               } catch (err) {
-                  _didIteratorError31 = true;
-                  _iteratorError31 = err;
+                  _didIteratorError32 = true;
+                  _iteratorError32 = err;
               } finally {
                   try {
-                      if (!_iteratorNormalCompletion31 && _iterator31.return) {
-                          _iterator31.return();
+                      if (!_iteratorNormalCompletion32 && _iterator32.return) {
+                          _iterator32.return();
                       }
                   } finally {
-                      if (_didIteratorError31) {
-                          throw _iteratorError31;
+                      if (_didIteratorError32) {
+                          throw _iteratorError32;
                       }
                   }
               }
@@ -18794,27 +18822,27 @@
               var measureWidthsArrayOfArrays = [];
               var i = void 0;
               // TODO: Do not crash on not partlike...
-              var _iteratorNormalCompletion32 = true;
-              var _didIteratorError32 = false;
-              var _iteratorError32 = undefined;
+              var _iteratorNormalCompletion33 = true;
+              var _didIteratorError33 = false;
+              var _iteratorError33 = undefined;
 
               try {
-                  for (var _iterator32 = this[Symbol.iterator](), _step32; !(_iteratorNormalCompletion32 = (_step32 = _iterator32.next()).done); _iteratorNormalCompletion32 = true) {
-                      var el = _step32.value;
+                  for (var _iterator33 = this[Symbol.iterator](), _step33; !(_iteratorNormalCompletion33 = (_step33 = _iterator33.next()).done); _iteratorNormalCompletion33 = true) {
+                      var el = _step33.value;
 
                       measureWidthsArrayOfArrays.push(el.getMeasureWidths());
                   }
               } catch (err) {
-                  _didIteratorError32 = true;
-                  _iteratorError32 = err;
+                  _didIteratorError33 = true;
+                  _iteratorError33 = err;
               } finally {
                   try {
-                      if (!_iteratorNormalCompletion32 && _iterator32.return) {
-                          _iterator32.return();
+                      if (!_iteratorNormalCompletion33 && _iterator33.return) {
+                          _iterator33.return();
                       }
                   } finally {
-                      if (_didIteratorError32) {
-                          throw _iteratorError32;
+                      if (_didIteratorError33) {
+                          throw _iteratorError33;
                       }
                   }
               }
@@ -18921,13 +18949,13 @@
               var currentPartNumber = 0;
               var maxMeasureWidth = [];
               var j = void 0;
-              var _iteratorNormalCompletion33 = true;
-              var _didIteratorError33 = false;
-              var _iteratorError33 = undefined;
+              var _iteratorNormalCompletion34 = true;
+              var _didIteratorError34 = false;
+              var _iteratorError34 = undefined;
 
               try {
-                  for (var _iterator33 = this[Symbol.iterator](), _step33; !(_iteratorNormalCompletion33 = (_step33 = _iterator33.next()).done); _iteratorNormalCompletion33 = true) {
-                      var el = _step33.value;
+                  for (var _iterator34 = this[Symbol.iterator](), _step34; !(_iteratorNormalCompletion34 = (_step34 = _iterator34.next()).done); _iteratorNormalCompletion34 = true) {
+                      var el = _step34.value;
 
                       if (el.isClassOrSubclass('Part')) {
                           var measureWidths = el.getMeasureWidths();
@@ -18945,16 +18973,16 @@
                       }
                   }
               } catch (err) {
-                  _didIteratorError33 = true;
-                  _iteratorError33 = err;
+                  _didIteratorError34 = true;
+                  _iteratorError34 = err;
               } finally {
                   try {
-                      if (!_iteratorNormalCompletion33 && _iterator33.return) {
-                          _iterator33.return();
+                      if (!_iteratorNormalCompletion34 && _iterator34.return) {
+                          _iterator34.return();
                       }
                   } finally {
-                      if (_didIteratorError33) {
-                          throw _iteratorError33;
+                      if (_didIteratorError34) {
+                          throw _iteratorError34;
                       }
                   }
               }

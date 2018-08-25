@@ -345,10 +345,16 @@ export class Stream extends base.Music21Object {
         const tempInsert = [];
         let i;
         let thisEl;
+        if (newElements.isStream === true) {
+            // iterate to set active site;
+            for (const unused of newElements) {} // eslint-disable-line no-empty
+            newElements = newElements.elements;
+        }
+        
         for (i = 0; i < newElements.length; i++) {
             thisEl = newElements[i];
             const thisElOffset = thisEl.offset;
-            if (thisElOffset === null || thisElOffset === highestOffsetSoFar) {
+            if (thisElOffset === undefined || thisElOffset === highestOffsetSoFar) {
                 // append
                 this._elements.push(thisEl);
                 this.setElementOffset(thisEl, highestOffsetSoFar);
