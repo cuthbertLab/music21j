@@ -11,7 +11,7 @@
 import { common } from './common.js';
 import { duration } from './duration.js';
 import { prebase } from './prebase.js';
-import { sites } from './sites.js';
+import * as sites from './sites.js';
 
 /**
  * module for Music21Objects, see {@link music21.base}
@@ -51,12 +51,9 @@ export class Music21Object extends prebase.ProtoM21Object {
         super();
         this.classSortOrder = 20; // default;
 
-        this.activeSite = undefined;
-        this.offset = 0; // for now
+        this._activeSite = undefined;
         this._naiveOffset = 0;
-        // this._activeSite = undefined;
-        this._activeSiteStoredOffset = undefined;
-
+        
         // this._derivation = undefined;
         // this._style = undefined;
         // this._editorial = undefined;
@@ -77,7 +74,7 @@ export class Music21Object extends prebase.ProtoM21Object {
         // this.sites, this.activeSites, this.offset -- not yet...
         // beat, measureNumber, etc.
         // lots to do...
-        this._cloneCallbacks.activeSite = function Music21Object_cloneCallbacks_activeSite(
+        this._cloneCallbacks._activeSite = function Music21Object_cloneCallbacks_activeSite(
             keyName,
             newObj,
             self
@@ -92,6 +89,40 @@ export class Music21Object extends prebase.ProtoM21Object {
             newObj[keyName] = new sites.Sites();
         };
     }
+    get activeSite() {
+        return this._activeSite;
+    }
+    
+    set activeSite(site) {
+        if (site === undefined) {
+            this._activeSite = undefined;
+            this._activeSiteStoredOffset = undefined;
+        } else {
+            try {
+                site.elementOffset(this);
+            } catch (e) {
+                throw new sites.SitesException(
+                        'activeSite cannot be set for an object not in the stream');
+            }
+            this._activeSite = site;
+        }
+    }
+    get offset() {
+        if (this.activeSite === undefined) {
+            return this._naiveOffset;
+        } else {
+            return this.activeSite.elementOffset(this);
+        }
+    }
+    
+    set offset(newOffset) {
+        if (this.activeSite === undefined) {
+            this._naiveOffset = newOffset;
+        } else {
+            this.activeSite.setElementOffset(this, newOffset);
+        }
+    }
+    
     get priority() {
         return this._priority;
     }
@@ -127,7 +158,7 @@ export class Music21Object extends prebase.ProtoM21Object {
      * @param {music21.stream.Stream} site
      * @returns Number|undefined
      */
-    getOffsetBySite(site, stringReturns = false) {
+    getOffsetBySite(site, stringReturns=false) {
         if (site === undefined) {
             return this._naiveOffset;
         }
@@ -167,8 +198,8 @@ export class Music21Object extends prebase.ProtoM21Object {
             // VERY HACKY...
             let lastElement;
             for (let i = 0; i < useSite.length; i++) {
-                const indexOffset = useSite._elementOffsets[i];
                 const thisElement = useSite._elements[i];
+                const indexOffset = useSite.elementOffset(thisElement);
                 const matchClass = thisElement.isClassOrSubclass(classList);
                 if (flatten === false && !matchClass) {
                     continue;

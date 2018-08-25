@@ -73,7 +73,7 @@ export class ProtoM21Object {
      * n2.duration.quarterLength == 4; // true
      * n2 === n1; // false
      */
-    clone(deep = true) {
+    clone(deep=true, memo) {
         if (!deep) {
             return Object.assign(
                 Object.create(Object.getPrototypeOf(this)),
@@ -82,7 +82,10 @@ export class ProtoM21Object {
         }
 
         const ret = new this.constructor();
-
+        if (memo === undefined) {
+            memo = new WeakMap();
+        }
+        
         // todo: do Arrays work?
         for (const key in this) {
             // not that we ONLY copy the keys in Ret -- it's easier that way.
@@ -111,7 +114,14 @@ export class ProtoM21Object {
                 && this[key].isProtoM21Object
             ) {
                 // console.log('cloning ', key);
-                ret[key] = this[key].clone();
+                const m21Obj = this[key];
+                let clonedVersion;
+                if (memo.has(m21Obj)) {
+                    clonedVersion = memo.get(m21Obj);
+                } else {
+                    clonedVersion = this[key].clone(deep, memo);
+                }
+                ret[key] = clonedVersion;
             } else {
                 try {
                     ret[key] = this[key];

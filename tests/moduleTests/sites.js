@@ -6,7 +6,7 @@ export default function tests() {
         const sr = new music21.sites.SiteRef();
         assert.ok(!sr.isDead);
         assert.equal(
-            sr.siteWeakref.ref,
+            sr.site,
             undefined,
             'SiteRef should start undefined'
         );

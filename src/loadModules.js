@@ -33,7 +33,7 @@ import { pitch } from './music21/pitch.js';
 import { renderOptions } from './music21/renderOptions.js';
 import { roman } from './music21/roman.js';
 import { scale } from './music21/scale.js';
-import { sites } from './music21/sites.js';
+import * as sites from './music21/sites.js';
 import { stream } from './music21/stream.js';
 import { tempo } from './music21/tempo.js';
 import { tie } from './music21/tie.js';

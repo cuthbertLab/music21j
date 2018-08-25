@@ -18,15 +18,19 @@ export default function tests() {
         assert.equal(m21o.quarterLength, 0.0, 'default duration is 0.0');
         m21o.quarterLength = 2.0;
         assert.equal(m21o.quarterLength, 2.0);
+
         const st = new music21.stream.Measure();
         st.insert(3.0, m21o);
         assert.equal(m21o.offset, 3.0);
         assert.equal(m21o.getOffsetBySite(st), 3.0);
+        
         const st2 = new music21.stream.Measure();
         st2.insert(5.0, m21o);
-        assert.equal(m21o.offset, 5.0);
+        assert.equal(m21o.offset, 5.0, 'after insert at 5, offset should be 5.');
+        
         assert.strictEqual(m21o.activeSite, st2);
-        assert.equal(m21o.getOffsetBySite(st), 3.0);
+        assert.equal(m21o.getOffsetBySite(st), 3.0, 'offset of site st should be 3');
+        
         assert.equal(m21o.getOffsetBySite(st2), 5.0);
         m21o.setOffsetBySite(st2, 5.5);
         assert.equal(m21o.getOffsetBySite(st2), 5.5);

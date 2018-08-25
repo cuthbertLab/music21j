@@ -21,25 +21,29 @@ export default function tests() {
         const s = new music21.stream.Stream();
         s.append(new music21.note.Note('C#5'));
         const d = new music21.note.Note('D#5');
-        s.append(d);
-        const n = new music21.note.Note('F5');
+        s.append(d); 
+        const n = new music21.note.Note('F5'); 
         s.append(n);
-        assert.equal(s.index(d), 1);
-        assert.equal(s.index(n), 2);
-        assert.equal(s.length, 3);
+        const lastN = new music21.note.Note('G5');
+        s.append(lastN);
+        
+        assert.equal(s.index(d), 1, 'index of d is 1');
+        assert.equal(s.index(n), 2, 'index of n is 2');
+        assert.equal(s.length, 4, 'stream length is 4');
         
         s.remove(n);
-        assert.equal(s.length, 2);
+        assert.equal(s.index(d), 1, 'index of d is still 1');
+        assert.equal(s.length, 3, 'stream length is 3');
         assert.throws(() => { s.index(n) }, /cannot find/, 'n is no longer in s');
 
-        assert.equal(d.offset, 1.0);
+        assert.equal(d.offset, 1.0, 'd offset is 1.0');
         const r = new music21.note.Rest();
-        assert.equal(r.offset, 0.0);
-
+        assert.equal(r.offset, 0.0, 'naiveOffset should be 0.0'); 
+        
         s.replace(d, r);
-        assert.equal(d.offset, 0.0);
-        assert.equal(r.offset, 1.0);
-        assert.equal(s.index(r), 1.0);
+        assert.equal(d.offset, 0.0, 'offset of d should now be 0.0');
+        assert.equal(r.offset, 1.0, 'offset of r should be d-old offset of 1');
+        assert.equal(s.index(r), 1, 'index of r in s should be 1');
         assert.throws(() => { s.index(d) }, /cannot find/, 'd is no longer in s');        
     });
     
@@ -128,33 +132,49 @@ export default function tests() {
         s.append(new music21.note.Note('C#5'));
         const n3 = new music21.note.Note('E5');
         s.insert(2.0, n3);
+        
         let n2 = new music21.note.Note('D#5');
         s.insert(1.0, n2);
+        
         assert.equal(s.get(0).name, 'C#');
         assert.equal(s.get(1).name, 'D#');
         assert.equal(s.get(2).name, 'E');
         assert.equal(s.get(0).offset, 0.0);
         assert.equal(s.get(1).offset, 1.0);
         assert.equal(s.get(2).offset, 2.0);
+        
+        
         const p = new music21.stream.Part();
         const m1 = new music21.stream.Measure();
         const n1 = new music21.note.Note('C#');
         n1.duration.type = 'whole';
         m1.append(n1);
+        
         const m2 = new music21.stream.Measure();
         n2 = new music21.note.Note('D#'); 
         n2.duration.type = 'whole'; 
         m2.append(n2);
         p.append(m1);
         p.append(m2);
+        
         assert.equal(p.get(0).get(0).offset, 0.0);
+        assert.notOk(p.isFlat, 'part has substreams');
         const pf = p.flat;
-        assert.equal(pf.get(1).offset, 4.0);
+        assert.equal(pf.get(0).offset, 0.0); 
+        assert.equal(pf.get(1).offset, 4.0); 
+        assert.ok(pf.isFlat, 'flat has no substremes');
+        
         const pf2 = p.flat; // repeated calls do not change
+        assert.ok(pf2.isFlat, 'flat has no substremes');
+        assert.equal(
+            pf2.get(0).offset,
+            0.0,
+            'repeated calls do not change offset 1'
+        );
         assert.equal(
             pf2.get(1).offset,
             4.0,
-            'repeated calls do not change offset'
+            'repeated calls do not change offset 2'
         );
         const pf3 = pf2.flat;
         assert.equal(

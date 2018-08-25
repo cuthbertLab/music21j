@@ -1,5 +1,5 @@
 /**
- * music21j 0.9.0 built on  * 2018-08-24.
+ * music21j 0.9.0 built on  * 2018-08-25.
  * Copyright (c) 2013-2016 Michael Scott Cuthbert and cuthbertLab
  * BSD License, see LICENSE
  *
@@ -866,12 +866,16 @@
            */
           value: function clone() {
               var deep = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
+              var memo = arguments[1];
 
               if (!deep) {
                   return _extends(Object.create(Object.getPrototypeOf(this)), this);
               }
 
               var ret = new this.constructor();
+              if (memo === undefined) {
+                  memo = new WeakMap();
+              }
 
               // todo: do Arrays work?
               for (var key in this) {
@@ -894,7 +898,14 @@
                       // do nothing -- events might not be copied.
                   } else if (_typeof(this[key]) === 'object' && this[key] !== null && this[key].isProtoM21Object) {
                       // console.log('cloning ', key);
-                      ret[key] = this[key].clone();
+                      var m21Obj = this[key];
+                      var clonedVersion = void 0;
+                      if (memo.has(m21Obj)) {
+                          clonedVersion = memo.get(m21Obj);
+                      } else {
+                          clonedVersion = this[key].clone(deep, memo);
+                      }
+                      ret[key] = clonedVersion;
                   } else {
                       try {
                           ret[key] = this[key];
@@ -1447,8 +1458,6 @@
    * @memberof music21
    * @requires music21/common
    */
-  var sites = {};
-
   var SitesException = function (_Music21Exception) {
       inherits(SitesException, _Music21Exception);
 
@@ -1459,32 +1468,29 @@
 
       return SitesException;
   }(Music21Exception);
-  sites.SitesException = SitesException;
 
-  var SiteRef = function () {
-      function SiteRef() {
-          classCallCheck(this, SiteRef);
+  /**
+   * SiteRef.site is held strongly in Javascript.  This is
+   * actually NOT a problem because of the difference between
+   * the way JS Garbage Collection works from Python (in all
+   * browsers since IE6...). They follow reference chains and
+   * find unreachable references and don't just check reference
+   * counts.  Thus circular references still allow memory to be
+   * garbage collected.  Tested in Chrome on 100000 streams, and
+   * very small additional memory usage.
+   * 
+   * https://stackoverflow.com/questions/7347203/circular-references-in-javascript-garbage-collector
+   */
 
-          this.isDead = false;
-          this.classString = undefined;
-          this.globalSiteIndex = false;
-          this.siteIndex = undefined;
-          this.siteWeakref = new WeakMap();
-          this.siteWeakref.ref = undefined;
-      }
+  var SiteRef = function SiteRef() {
+      classCallCheck(this, SiteRef);
 
-      createClass(SiteRef, [{
-          key: 'site',
-          get: function get() {
-              return this.siteWeakref.ref;
-          },
-          set: function set(newSite) {
-              this.siteWeakref.ref = newSite;
-          }
-      }]);
-      return SiteRef;
-  }();
-  sites.SiteRef = SiteRef;
+      this.isDead = false;
+      this.classString = undefined;
+      this.globalSiteIndex = false;
+      this.siteIndex = undefined;
+      this.site = undefined;
+  };
 
   var _NoneSiteRef = new SiteRef();
   _NoneSiteRef.globalSiteIndex = -2;
@@ -1494,13 +1500,13 @@
 
   var GLOBAL_SITE_STATE_DICT = new WeakMap();
 
-  sites.getId = function getId(obj) {
+  function getId(obj) {
       if (!GLOBAL_SITE_STATE_DICT.has(obj)) {
           var newId = _singletonCounter$1.call();
           GLOBAL_SITE_STATE_DICT.set(obj, newId);
       }
       return GLOBAL_SITE_STATE_DICT.get(obj);
-  };
+  }
 
   var Sites = function () {
       function Sites() {
@@ -1592,7 +1598,7 @@
           key: 'add',
           value: function add(obj, idKey, classString) {
               if (idKey === undefined && obj !== undefined) {
-                  idKey = sites.getId(obj);
+                  idKey = getId(obj);
               }
               var updateNotAdd = false;
               if (this.siteDict.has(idKey)) {
@@ -1626,7 +1632,7 @@
       }, {
           key: 'remove',
           value: function remove(obj) {
-              var idKey = sites.getId(obj);
+              var idKey = getId(obj);
               if (idKey === undefined) {
                   return false;
               }
@@ -1662,7 +1668,7 @@
                                   keyRepository = Array.from(this.siteDict.keys());
                               }
                               if (priorityTarget !== undefined) {
-                                  priorityId = sites.getId(priorityTarget);
+                                  priorityId = getId(priorityTarget);
 
                                   if (keyRepository.includes(priorityId)) {
                                       keyRepository.splice(0, 0, keyRepository.pop(keyRepository.indexOf(priorityId)));
@@ -1876,7 +1882,7 @@
                       var _obj = _step6.value;
 
                       // TODO: check inside object... perhaps should not be done in m21p
-                      var objId = sites.getId(_obj);
+                      var objId = getId(_obj);
                       if (!(objId in memo)) {
                           memo[objId] = _obj;
                       }
@@ -1910,7 +1916,15 @@
       }]);
       return Sites;
   }();
-  sites.Sites = Sites;
+
+
+
+  var sites = Object.freeze({
+      SitesException: SitesException,
+      SiteRef: SiteRef,
+      getId: getId,
+      Sites: Sites
+  });
 
   /**
    * music21j -- Javascript reimplementation of Core music21p features.
@@ -1965,11 +1979,8 @@
 
           _this.classSortOrder = 20; // default;
 
-          _this.activeSite = undefined;
-          _this.offset = 0; // for now
+          _this._activeSite = undefined;
           _this._naiveOffset = 0;
-          // this._activeSite = undefined;
-          _this._activeSiteStoredOffset = undefined;
 
           // this._derivation = undefined;
           // this._style = undefined;
@@ -1982,7 +1993,7 @@
           // this.id = sites.getId(this);
           _this.groups = [];
           // groups
-          _this.sites = new sites.Sites();
+          _this.sites = new Sites();
 
           _this.isMusic21Object = true;
           _this.isStream = false;
@@ -1991,11 +2002,11 @@
           // this.sites, this.activeSites, this.offset -- not yet...
           // beat, measureNumber, etc.
           // lots to do...
-          _this._cloneCallbacks.activeSite = function Music21Object_cloneCallbacks_activeSite(keyName, newObj, self) {
+          _this._cloneCallbacks._activeSite = function Music21Object_cloneCallbacks_activeSite(keyName, newObj, self) {
               newObj[keyName] = undefined;
           };
           _this._cloneCallbacks.sites = function Music21Object_cloneCallbacks_sites(keyName, newObj, self) {
-              newObj[keyName] = new sites.Sites();
+              newObj[keyName] = new Sites();
           };
           return _this;
       }
@@ -2053,8 +2064,8 @@
                   // VERY HACKY...
                   var lastElement = void 0;
                   for (var i = 0; i < useSite.length; i++) {
-                      var indexOffset = useSite._elementOffsets[i];
                       var thisElement = useSite._elements[i];
+                      var indexOffset = useSite.elementOffset(thisElement);
                       var matchClass = thisElement.isClassOrSubclass(classList);
                       if (flatten === false && !matchClass) {
                           continue;
@@ -2371,6 +2382,40 @@
                   }
               }, contextSites, this, [[14, 64, 68, 76], [33, 47, 51, 59], [52,, 54, 58], [69,, 71, 75]]);
           })
+      }, {
+          key: 'activeSite',
+          get: function get() {
+              return this._activeSite;
+          },
+          set: function set(site) {
+              if (site === undefined) {
+                  this._activeSite = undefined;
+                  this._activeSiteStoredOffset = undefined;
+              } else {
+                  try {
+                      site.elementOffset(this);
+                  } catch (e) {
+                      throw new SitesException('activeSite cannot be set for an object not in the stream');
+                  }
+                  this._activeSite = site;
+              }
+          }
+      }, {
+          key: 'offset',
+          get: function get() {
+              if (this.activeSite === undefined) {
+                  return this._naiveOffset;
+              } else {
+                  return this.activeSite.elementOffset(this);
+              }
+          },
+          set: function set(newOffset) {
+              if (this.activeSite === undefined) {
+                  this._naiveOffset = newOffset;
+              } else {
+                  this.activeSite.setElementOffset(this, newOffset);
+              }
+          }
       }, {
           key: 'priority',
           get: function get() {
@@ -13835,13 +13880,13 @@
 
               var isScorelike = false;
               var isPartlike = false;
-              var hasSubStreams = s.hasSubStreams();
+              var isFlat = s.isFlat;
 
               if (s.isClassOrSubclass('Score')) {
                   isScorelike = true;
-              } else if (hasSubStreams && s.get(0).hasSubStreams()) {
+              } else if (!isFlat && !s.get(0).isFlat) {
                   isScorelike = true;
-              } else if (hasSubStreams) {
+              } else if (!isFlat) {
                   isPartlike = true;
               }
               // requires organization Score -> Part -> Measure -> elements...
@@ -14765,7 +14810,7 @@
                       var topVFStaff = thisPartMeasure.activeVFStave;
                       var bottomVFStaff = lastPartMeasure.activeVFStave;
                       if (topVFStaff === undefined) {
-                          if (thisPartMeasure.hasSubStreams()) {
+                          if (!thisPartMeasure.isFlat) {
                               var thisPartVoice = thisPartMeasure.getElementsByClass('Stream').get(0);
                               topVFStaff = thisPartVoice.activeVFStave;
                               if (topVFStaff === undefined) {
@@ -14775,7 +14820,7 @@
                           }
                       }
                       if (bottomVFStaff === undefined) {
-                          if (lastPartMeasure.hasSubStreams()) {
+                          if (!lastPartMeasure.isFlat) {
                               var lastPartVoice = lastPartMeasure.getElementsByClass('Stream').get(0);
                               bottomVFStaff = lastPartVoice.activeVFStave;
                               if (bottomVFStaff === undefined) {
@@ -15101,7 +15146,12 @@
           _this2._duration = undefined;
 
           _this2._elements = [];
-          _this2._elementOffsets = [];
+          _this2._offsetDict = new WeakMap();
+
+          _this2.autoSort = true;
+          _this2.isSorted = true;
+          _this2.isFlat = true;
+
           _this2._clef = undefined;
           _this2.displayClef = undefined;
 
@@ -15158,23 +15208,27 @@
                   while (1) {
                       switch (_context.prev = _context.next) {
                           case 0:
+                              if (this.autoSort && !this.isSorted) {
+                                  this.sort();
+                              }
+
                               i = 0;
 
-                          case 1:
+                          case 2:
                               if (!(i < this.length)) {
-                                  _context.next = 7;
+                                  _context.next = 8;
                                   break;
                               }
 
-                              _context.next = 4;
+                              _context.next = 5;
                               return this.get(i);
 
-                          case 4:
+                          case 5:
                               i++;
-                              _context.next = 1;
+                              _context.next = 2;
                               break;
 
-                          case 7:
+                          case 8:
                           case 'end':
                               return _context.stop();
                       }
@@ -15184,51 +15238,76 @@
       }, {
           key: '_getFlatOrSemiFlat',
           value: function _getFlatOrSemiFlat(retainContainers) {
-              if (!this.hasSubStreams()) {
-                  return this;
-              }
-              var tempEls = [];
-              var _iteratorNormalCompletion = true;
-              var _didIteratorError = false;
-              var _iteratorError = undefined;
-
-              try {
-                  for (var _iterator = this[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-                      var el = _step.value;
-
-                      if (el.isStream) {
-                          if (retainContainers) {
-                              tempEls.push(el);
-                          }
-                          var offsetShift = el.offset;
-                          // console.log('offsetShift', offsetShift, el.classes[el.classes.length -1]);
-                          var elFlat = el._getFlatOrSemiFlat(retainContainers);
-                          for (var j = 0; j < elFlat.length; j++) {
-                              // offset should NOT be null because already in Stream
-                              elFlat.get(j).offset += offsetShift;
-                          }
-                          tempEls.push.apply(tempEls, toConsumableArray(elFlat._elements));
-                      } else {
-                          tempEls.push(el);
-                      }
-                  }
-              } catch (err) {
-                  _didIteratorError = true;
-                  _iteratorError = err;
-              } finally {
-                  try {
-                      if (!_iteratorNormalCompletion && _iterator.return) {
-                          _iterator.return();
-                      }
-                  } finally {
-                      if (_didIteratorError) {
-                          throw _iteratorError;
-                      }
-                  }
-              }
-
+              var tempEls = void 0;
               var newSt = this.clone(false);
-              newSt.elements = tempEls;
+              if (!this.isFlat) {
+                  newSt.elements = [];
+                  var _iteratorNormalCompletion = true;
+                  var _didIteratorError = false;
+                  var _iteratorError = undefined;
+
+                  try {
+                      for (var _iterator = this[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+                          var el = _step.value;
+
+                          if (el.isStream) {
+                              if (retainContainers) {
+                                  tempEls.push(el);
+                              }
+                              var offsetShift = this.elementOffset(el);
+                              // console.log('offsetShift', offsetShift, el.classes[el.classes.length -1]);
+                              var elFlat = el._getFlatOrSemiFlat(retainContainers);
+                              var _iteratorNormalCompletion2 = true;
+                              var _didIteratorError2 = false;
+                              var _iteratorError2 = undefined;
+
+                              try {
+                                  for (var _iterator2 = elFlat[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+                                      var elFlatElement = _step2.value;
+
+                                      // offset should NOT be null because already in Stream
+                                      var elFlatElementOffset = elFlat.elementOffset(elFlatElement);
+                                      newSt.insert(elFlatElementOffset + offsetShift, elFlatElement);
+                                  }
+                              } catch (err) {
+                                  _didIteratorError2 = true;
+                                  _iteratorError2 = err;
+                              } finally {
+                                  try {
+                                      if (!_iteratorNormalCompletion2 && _iterator2.return) {
+                                          _iterator2.return();
+                                      }
+                                  } finally {
+                                      if (_didIteratorError2) {
+                                          throw _iteratorError2;
+                                      }
+                                  }
+                              }
+                          } else {
+                              newSt.insert(el, this.elementOffset(el));
+                          }
+                      }
+                  } catch (err) {
+                      _didIteratorError = true;
+                      _iteratorError = err;
+                  } finally {
+                      try {
+                          if (!_iteratorNormalCompletion && _iterator.return) {
+                              _iterator.return();
+                          }
+                      } finally {
+                          if (_didIteratorError) {
+                              throw _iteratorError;
+                          }
+                      }
+                  }
+              }
+              if (!retainContainers) {
+                  newSt.isFlat = true;
+                  this.coreElementsChanged({ updateIsFlat: false });
+              } else {
+                  this.coreElementsChanged();
+              }
               return newSt;
           }
       }, {
@@ -15244,24 +15323,50 @@
                   if ({}.hasOwnProperty.call(this, key) === false) {
                       continue;
                   }
-                  if (key === 'activeSite') {
+                  if (key === '_activeSite') {
                       ret[key] = this[key];
                   } else if (key === 'renderOptions') {
                       ret[key] = common.merge({}, this[key]);
-                  } else if (deep !== true && (key === '_elements' || key === '_elementOffsets')) {
+                  } else if (deep !== true && key === '_elements') {
                       ret[key] = this[key].slice(); // shallow copy...
-                  } else if (deep && (key === '_elements' || key === '_elementOffsets')) {
+                  } else if (deep !== true && key === '_offsetDict') {
+                      ret._offsetDict = new WeakMap();
+                      var _iteratorNormalCompletion3 = true;
+                      var _didIteratorError3 = false;
+                      var _iteratorError3 = undefined;
+
+                      try {
+                          for (var _iterator3 = this.elements[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+                              var el = _step3.value;
+
+                              ret._offsetDict.set(el, this._offsetDict.get(el));
+                          }
+                      } catch (err) {
+                          _didIteratorError3 = true;
+                          _iteratorError3 = err;
+                      } finally {
+                          try {
+                              if (!_iteratorNormalCompletion3 && _iterator3.return) {
+                                  _iterator3.return();
+                              }
+                          } finally {
+                              if (_didIteratorError3) {
+                                  throw _iteratorError3;
+                              }
+                          }
+                      }
+                  } else if (deep && (key === '_elements' || key === '_offsetDict')) {
                       if (key === '_elements') {
                           // console.log('got elements for deepcopy');
                           ret._elements = [];
-                          ret._elementOffsets = [];
+                          ret._offsetDict = new WeakMap();
                           for (var j = 0; j < this._elements.length; j++) {
-                              ret._elementOffsets[j] = this._elementOffsets[j];
-                              var el = this._elements[j];
+                              var _el = this._elements[j];
                               // console.log('cloning el: ', el.name);
-                              var elCopy = el.clone(deep);
+                              var elCopy = _el.clone(deep);
                               elCopy.activeSite = ret;
                               ret._elements[j] = elCopy;
+                              ret._offsetDict.set(elCopy, this._offsetDict.get(_el));
                           }
                       }
                   } else if (key === 'activeVexflowNote' || key === 'storedVexflowstave') {
@@ -15286,7 +15391,55 @@
                       ret[key] = this[key];
                   }
               }
+              ret.coreElementsChanged();
               return ret;
+          }
+      }, {
+          key: 'coreElementsChanged',
+          value: function coreElementsChanged() {
+              var _ref = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
+                  _ref$updateIsFlat = _ref.updateIsFlat,
+                  updateIsFlat = _ref$updateIsFlat === undefined ? true : _ref$updateIsFlat,
+                  _ref$clearIsSorted = _ref.clearIsSorted,
+                  clearIsSorted = _ref$clearIsSorted === undefined ? true : _ref$clearIsSorted,
+                  _ref$memo = _ref.memo,
+                  memo = _ref$memo === undefined ? undefined : _ref$memo,
+                  _ref$keepIndex = _ref.keepIndex,
+                  keepIndex = _ref$keepIndex === undefined ? false : _ref$keepIndex;
+
+              if (clearIsSorted) {
+                  this.isSorted = false;
+              }
+              if (updateIsFlat) {
+                  this.isFlat = true;
+                  var _iteratorNormalCompletion4 = true;
+                  var _didIteratorError4 = false;
+                  var _iteratorError4 = undefined;
+
+                  try {
+                      for (var _iterator4 = this._elements[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
+                          var e = _step4.value;
+
+                          if (e.isStream) {
+                              this.isFlat = false;
+                              break;
+                          }
+                      }
+                  } catch (err) {
+                      _didIteratorError4 = true;
+                      _iteratorError4 = err;
+                  } finally {
+                      try {
+                          if (!_iteratorNormalCompletion4 && _iterator4.return) {
+                              _iterator4.return();
+                          }
+                      } finally {
+                          if (_didIteratorError4) {
+                              throw _iteratorError4;
+                          }
+                      }
+                  }
+              }
           }
 
           /**
@@ -15301,27 +15454,27 @@
           key: 'append',
           value: function append(elOrElList) {
               if (Array.isArray(elOrElList)) {
-                  var _iteratorNormalCompletion2 = true;
-                  var _didIteratorError2 = false;
-                  var _iteratorError2 = undefined;
+                  var _iteratorNormalCompletion5 = true;
+                  var _didIteratorError5 = false;
+                  var _iteratorError5 = undefined;
 
                   try {
-                      for (var _iterator2 = elOrElList[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-                          var _el = _step2.value;
+                      for (var _iterator5 = elOrElList[Symbol.iterator](), _step5; !(_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done); _iteratorNormalCompletion5 = true) {
+                          var _el2 = _step5.value;
 
-                          this.append(_el);
+                          this.append(_el2);
                       }
                   } catch (err) {
-                      _didIteratorError2 = true;
-                      _iteratorError2 = err;
+                      _didIteratorError5 = true;
+                      _iteratorError5 = err;
                   } finally {
                       try {
-                          if (!_iteratorNormalCompletion2 && _iterator2.return) {
-                              _iterator2.return();
+                          if (!_iteratorNormalCompletion5 && _iterator5.return) {
+                              _iterator5.return();
                           }
                       } finally {
-                          if (_didIteratorError2) {
-                              throw _iteratorError2;
+                          if (_didIteratorError5) {
+                              throw _iteratorError5;
                           }
                       }
                   }
@@ -15336,17 +15489,33 @@
                   }
                   var elOffset = 0.0;
                   if (this._elements.length > 0) {
-                      var lastQL = this._elements[this._elements.length - 1].duration.quarterLength;
-                      elOffset = this._elementOffsets[this._elementOffsets.length - 1] + lastQL;
+                      var lastEl = this._elements[this._elements.length - 1];
+                      var lastQL = lastEl.duration.quarterLength;
+                      elOffset = this.elementOffset(lastEl) + lastQL;
                   }
-                  this._elementOffsets.push(elOffset);
                   this._elements.push(el);
+                  this.setElementOffset(el, elOffset);
                   el.offset = elOffset;
                   el.sites.add(this);
                   el.activeSite = this; // would prefer weakref, but does not exist in JS.
               } catch (err) {
                   console.error('Cannot append element ', el, ' to stream ', this, ' : ', err);
               }
+              this.coreElementsChanged({ clearIsSorted: false });
+              return this;
+          }
+      }, {
+          key: 'sort',
+          value: function sort() {
+              var _this3 = this;
+
+              if (this.isSorted) {
+                  return this;
+              }
+              this._elements.sort(function (a, b) {
+                  return _this3._offsetDict.get(a) - _this3._offsetDict.get(b);
+              });
+              this.isSorted = true;
               return this;
           }
 
@@ -15362,29 +15531,28 @@
       }, {
           key: 'insert',
           value: function insert(offset, el) {
+              var _ref2 = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {},
+                  _ref2$ignoreSort = _ref2.ignoreSort,
+                  ignoreSort = _ref2$ignoreSort === undefined ? false : _ref2$ignoreSort,
+                  _ref2$setActiveSite = _ref2.setActiveSite,
+                  setActiveSite = _ref2$setActiveSite === undefined ? true : _ref2$setActiveSite;
+
+              if (el === undefined) {
+                  throw new StreamException$1('El must be given');
+              }
               try {
-                  if (el.isClassOrSubclass !== undefined && el.isClassOrSubclass('NotRest')) {
-                      // set stem direction on output
-                      // this.clef.setStemDirection(el);
-                  }
-                  for (var i = 0; i < this._elements.length; i++) {
-                      var testOffset = this._elementOffsets[i];
-                      if (testOffset <= offset) {
-                          continue;
-                      } else {
-                          this._elementOffsets.splice(i, 0, offset);
-                          this._elements.splice(i, 0, el);
-                          el.offset = offset;
-                          el.activeSite = this;
-                          return this;
+                  if (!ignoreSort) {
+                      if (offset <= this.highestTime) {
+                          this.isSorted = false;
                       }
                   }
-                  // no element found. insert at end;
-                  this._elementOffsets.push(offset);
                   this._elements.push(el);
-                  el.offset = offset;
+                  this.setElementOffset(el, offset);
                   el.sites.add(this);
-                  el.activeSite = this; // would prefer weakref, but does not exist in JS.
+                  if (setActiveSite) {
+                      el.activeSite = this;
+                  }
+                  this.coreElementsChanged({ clearIsSorted: false });
               } catch (err) {
                   console.error('Cannot insert element ', el, ' to stream ', this, ' : ', err);
               }
@@ -15414,12 +15582,13 @@
 
               var shiftingOffsets = false;
               for (var i = 0; i < this.length; i++) {
-                  if (!shiftingOffsets && this._elementOffsets[i] >= offset) {
+                  var existingEl = this._elements[i];
+                  var existingElOffset = this.elementOffset(existingEl);
+                  if (!shiftingOffsets && existingElOffset >= offset) {
                       shiftingOffsets = true;
                   }
                   if (shiftingOffsets) {
-                      this._elementOffsets[i] += amountToShift;
-                      this._elements[i].offset = this._elementOffsets[i];
+                      this.setElementOffset(existingEl, existingElOffset + amountToShift);
                   }
               }
               this.insert(offset, element);
@@ -15432,37 +15601,15 @@
       }, {
           key: 'index',
           value: function index(el) {
-              var count = 0;
-              var _iteratorNormalCompletion3 = true;
-              var _didIteratorError3 = false;
-              var _iteratorError3 = undefined;
-
-              try {
-                  for (var _iterator3 = this._elements[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
-                      var e = _step3.value;
-
-                      if (el === e) {
-                          return count;
-                      }
-                      count += 1;
-                  }
-                  // endElements
-              } catch (err) {
-                  _didIteratorError3 = true;
-                  _iteratorError3 = err;
-              } finally {
-                  try {
-                      if (!_iteratorNormalCompletion3 && _iterator3.return) {
-                          _iterator3.return();
-                      }
-                  } finally {
-                      if (_didIteratorError3) {
-                          throw _iteratorError3;
-                      }
-                  }
+              if (!this.isSorted && this.autoSort) {
+                  this.sort();
               }
-
-              throw new StreamException$1('cannot find object (' + el + ') in Stream');
+              var index = this._elements.indexOf(el);
+              if (index === -1) {
+                  // endElements
+                  throw new StreamException$1('cannot find object (' + el + ') in Stream');
+              }
+              return index;
           }
 
           /**
@@ -15476,12 +15623,16 @@
       }, {
           key: 'pop',
           value: function pop() {
+              if (!this.isSorted && this.autoSort) {
+                  this.sort();
+              }
               // remove last element;
               if (this.length > 0) {
                   var el = this.get(-1);
-                  this._elementOffsets.pop();
                   this._elements.pop();
+                  this._offsetDict.delete(el);
                   el.sites.remove(this);
+                  this.coreElementsChanged({ clearIsSorted: false });
                   return el;
               } else {
                   return undefined;
@@ -15489,19 +15640,17 @@
           }
 
           /**
-           * Remove an object from this Stream
+           * Remove an object from this Stream.  shiftOffsets and recurse do nothing.
            */
 
       }, {
           key: 'remove',
           value: function remove(targetOrList) {
-              var _ref = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
-                  _ref$firstMatchOnly = _ref.firstMatchOnly,
-                  firstMatchOnly = _ref$firstMatchOnly === undefined ? true : _ref$firstMatchOnly,
-                  _ref$shiftOffsets = _ref.shiftOffsets,
-                  shiftOffsets = _ref$shiftOffsets === undefined ? false : _ref$shiftOffsets,
-                  _ref$recurse = _ref.recurse,
-                  recurse = _ref$recurse === undefined ? false : _ref$recurse;
+              var _ref3 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
+                  _ref3$shiftOffsets = _ref3.shiftOffsets,
+                  shiftOffsets = _ref3$shiftOffsets === undefined ? false : _ref3$shiftOffsets,
+                  _ref3$recurse = _ref3.recurse,
+                  recurse = _ref3$recurse === undefined ? false : _ref3$recurse;
 
               if (shiftOffsets === true) {
                   throw new StreamException$1('sorry cannot shiftOffsets yet');
@@ -15521,13 +15670,13 @@
               //        }        
               // let shiftDur = 0.0; // for shiftOffsets
               var i = -1;
-              var _iteratorNormalCompletion4 = true;
-              var _didIteratorError4 = false;
-              var _iteratorError4 = undefined;
+              var _iteratorNormalCompletion6 = true;
+              var _didIteratorError6 = false;
+              var _iteratorError6 = undefined;
 
               try {
-                  for (var _iterator4 = targetList[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
-                      var target = _step4.value;
+                  for (var _iterator6 = targetList[Symbol.iterator](), _step6; !(_iteratorNormalCompletion6 = (_step6 = _iterator6.next()).done); _iteratorNormalCompletion6 = true) {
+                      var target = _step6.value;
 
                       i += 1;
                       var indexInStream = void 0;
@@ -15543,13 +15692,15 @@
                           throw err;
                       }
 
-                      // const matchOffset = this._elementOffsets[indexInStream];
+                      // const matchOffset = this._offsetDict[indexInStream];
                       // let match;
                       // handle _endElements
                       // let matchedEndElement = false;
                       // let baseElementCount = this._elements.length;
                       this._elements.splice(indexInStream, 1);
-                      this._elementOffsets.splice(indexInStream, 1);
+                      this._offsetDict.delete(target);
+                      target.activeSite = undefined;
+                      target.sites.remove(this);
                       // remove from sites if needed.
 
                       //            if (shiftOffsets) {
@@ -15559,7 +15710,7 @@
                       //                let shiftedRegionEnd;
                       //                if ((i + 1) < targetList.length) {
                       //                    const nextElIndex = this.index(targetList[i + 1]);
-                      //                    const nextElOffset = this._elementOffsets[nextElIndex];
+                      //                    const nextElOffset = this._offsetDict[nextElIndex];
                       //                    shiftedRegionEnd = nextElOffset;
                       //                } else {
                       //                    shiftedRegionEnd = this.duration.quarterLength;
@@ -15581,19 +15732,21 @@
                       //            }
                   }
               } catch (err) {
-                  _didIteratorError4 = true;
-                  _iteratorError4 = err;
+                  _didIteratorError6 = true;
+                  _iteratorError6 = err;
               } finally {
                   try {
-                      if (!_iteratorNormalCompletion4 && _iterator4.return) {
-                          _iterator4.return();
+                      if (!_iteratorNormalCompletion6 && _iterator6.return) {
+                          _iterator6.return();
                       }
                   } finally {
-                      if (_didIteratorError4) {
-                          throw _iteratorError4;
+                      if (_didIteratorError6) {
+                          throw _iteratorError6;
                       }
                   }
               }
+
+              this.coreElementsChanged({ clearIsSorted: false });
           }
 
           /**
@@ -15608,11 +15761,11 @@
       }, {
           key: 'replace',
           value: function replace(target, replacement) {
-              var _ref2 = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {},
-                  _ref2$recurse = _ref2.recurse,
-                  recurse = _ref2$recurse === undefined ? false : _ref2$recurse,
-                  _ref2$allDerivated = _ref2.allDerivated,
-                  allDerivated = _ref2$allDerivated === undefined ? true : _ref2$allDerivated;
+              var _ref4 = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {},
+                  _ref4$recurse = _ref4.recurse,
+                  recurse = _ref4$recurse === undefined ? false : _ref4$recurse,
+                  _ref4$allDerivated = _ref4.allDerivated,
+                  allDerivated = _ref4$allDerivated === undefined ? true : _ref4$allDerivated;
 
               var i = void 0;
               try {
@@ -15624,9 +15777,14 @@
                       throw err;
                   }
               }
-              replacement.offset = this._elementOffsets[i];
+              var targetOffset = this.elementOffset(target);
               this._elements[i] = replacement;
-              target.offset = 0.0;
+              this._offsetDict.set(replacement, targetOffset);
+              this._offsetDict.delete(target);
+              target.activeSite = undefined;
+              replacement.activeSite = this;
+              target.sites.remove(this);
+              this.coreElementsChanged({ clearIsSorted: false });
           }
 
           /**
@@ -15642,6 +15800,10 @@
           key: 'get',
           value: function get(index) {
               // substitute for Python stream __getitem__; supports -1 indexing, etc.
+              if (!this.isSorted) {
+                  this.sort();
+              }
+
               var el = void 0;
               if (index === undefined) {
                   return undefined;
@@ -15651,11 +15813,11 @@
                   return undefined;
               } else if (index < 0) {
                   el = this._elements[this._elements.length + index];
-                  el.offset = this._elementOffsets[this._elements.length + index];
+                  el.activeSite = this;
                   return el;
               } else {
                   el = this._elements[index];
-                  el.offset = this._elementOffsets[index];
+                  el.activeSite = this;
                   return el;
               }
           }
@@ -15664,74 +15826,31 @@
           value: function setElementOffset(el, value) {
               var addElement = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
 
-              for (var i = 0; i < this.length; i++) {
-                  if (this._elements[i] === el) {
-                      this._elementOffsets[i] = value;
+              if (!this._elements.includes(el)) {
+                  if (addElement) {
+                      this.insert(value, el);
                       return;
+                  } else {
+                      throw new StreamException$1('Cannot set the offset for elemenet ' + el.toString() + ', not in Stream');
                   }
               }
-              if (!addElement) {
-                  throw new StreamException$1('Cannot set the offset for elemenet ' + el.toString() + ', not in Stream');
-              } else {
-                  this.insert(value, el);
-              }
+              this._offsetDict.set(el, value);
+              el.activeSite = this;
           }
       }, {
           key: 'elementOffset',
           value: function elementOffset(element) {
               var stringReturns = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
 
-              for (var i = 0; i < this.length; i++) {
-                  if (this._elements[i] === element) {
-                      return this._elementOffsets[i];
-                  }
+              if (!this._offsetDict.has(element)) {
+                  throw new StreamException$1('An entry for this object ' + element.toString() + ' is not stored in this Stream.');
+              } else {
+                  return this._offsetDict.get(element);
               }
-              throw new StreamException$1('An entry for this object is not stored in this Stream.');
           }
 
           /*  --- ############# END ELEMENT FUNCTIONS ########## --- */
 
-          /**
-           * Returns Boolean about whether this stream contains any other streams.
-           *
-           * @memberof music21.stream.Stream
-           * @returns {Boolean}
-           */
-
-      }, {
-          key: 'hasSubStreams',
-          value: function hasSubStreams() {
-              var hasSubStreams = false;
-              var _iteratorNormalCompletion5 = true;
-              var _didIteratorError5 = false;
-              var _iteratorError5 = undefined;
-
-              try {
-                  for (var _iterator5 = this[Symbol.iterator](), _step5; !(_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done); _iteratorNormalCompletion5 = true) {
-                      var el = _step5.value;
-
-                      if (el.isClassOrSubclass('Stream')) {
-                          hasSubStreams = true;
-                          break;
-                      }
-                  }
-              } catch (err) {
-                  _didIteratorError5 = true;
-                  _iteratorError5 = err;
-              } finally {
-                  try {
-                      if (!_iteratorNormalCompletion5 && _iterator5.return) {
-                          _iterator5.return();
-                      }
-                  } finally {
-                      if (_didIteratorError5) {
-                          throw _iteratorError5;
-                      }
-                  }
-              }
-
-              return hasSubStreams;
-          }
           /**
            * Takes a stream and places all of its elements into
            * measures (:class:`~music21.stream.Measure` objects)
@@ -15855,27 +15974,27 @@
                   this.elements = [];
                   // endElements
                   // elementsChanged;
-                  var _iteratorNormalCompletion6 = true;
-                  var _didIteratorError6 = false;
-                  var _iteratorError6 = undefined;
+                  var _iteratorNormalCompletion7 = true;
+                  var _didIteratorError7 = false;
+                  var _iteratorError7 = undefined;
 
                   try {
-                      for (var _iterator6 = post[Symbol.iterator](), _step6; !(_iteratorNormalCompletion6 = (_step6 = _iterator6.next()).done); _iteratorNormalCompletion6 = true) {
-                          var _e = _step6.value;
+                      for (var _iterator7 = post[Symbol.iterator](), _step7; !(_iteratorNormalCompletion7 = (_step7 = _iterator7.next()).done); _iteratorNormalCompletion7 = true) {
+                          var _e = _step7.value;
 
                           this.insert(_e.offset, _e);
                       }
                   } catch (err) {
-                      _didIteratorError6 = true;
-                      _iteratorError6 = err;
+                      _didIteratorError7 = true;
+                      _iteratorError7 = err;
                   } finally {
                       try {
-                          if (!_iteratorNormalCompletion6 && _iterator6.return) {
-                              _iterator6.return();
+                          if (!_iteratorNormalCompletion7 && _iterator7.return) {
+                              _iterator7.return();
                           }
                       } finally {
-                          if (_didIteratorError6) {
-                              throw _iteratorError6;
+                          if (_didIteratorError7) {
+                              throw _iteratorError7;
                           }
                       }
                   }
@@ -15905,39 +16024,39 @@
                   mColl = [returnObj];
               } else {
                   mColl = [];
-                  var _iteratorNormalCompletion7 = true;
-                  var _didIteratorError7 = false;
-                  var _iteratorError7 = undefined;
+                  var _iteratorNormalCompletion8 = true;
+                  var _didIteratorError8 = false;
+                  var _iteratorError8 = undefined;
 
                   try {
-                      for (var _iterator7 = returnObj.getElementsByClass('Measure').elements[Symbol.iterator](), _step7; !(_iteratorNormalCompletion7 = (_step7 = _iterator7.next()).done); _iteratorNormalCompletion7 = true) {
-                          var m = _step7.value;
+                      for (var _iterator8 = returnObj.getElementsByClass('Measure').elements[Symbol.iterator](), _step8; !(_iteratorNormalCompletion8 = (_step8 = _iterator8.next()).done); _iteratorNormalCompletion8 = true) {
+                          var m = _step8.value;
 
                           mColl.push(m);
                       }
                   } catch (err) {
-                      _didIteratorError7 = true;
-                      _iteratorError7 = err;
+                      _didIteratorError8 = true;
+                      _iteratorError8 = err;
                   } finally {
                       try {
-                          if (!_iteratorNormalCompletion7 && _iterator7.return) {
-                              _iterator7.return();
+                          if (!_iteratorNormalCompletion8 && _iterator8.return) {
+                              _iterator8.return();
                           }
                       } finally {
-                          if (_didIteratorError7) {
-                              throw _iteratorError7;
+                          if (_didIteratorError8) {
+                              throw _iteratorError8;
                           }
                       }
                   }
               }
               var lastTimeSignature = void 0;
-              var _iteratorNormalCompletion8 = true;
-              var _didIteratorError8 = false;
-              var _iteratorError8 = undefined;
+              var _iteratorNormalCompletion9 = true;
+              var _didIteratorError9 = false;
+              var _iteratorError9 = undefined;
 
               try {
-                  for (var _iterator8 = mColl[Symbol.iterator](), _step8; !(_iteratorNormalCompletion8 = (_step8 = _iterator8.next()).done); _iteratorNormalCompletion8 = true) {
-                      var _m = _step8.value;
+                  for (var _iterator9 = mColl[Symbol.iterator](), _step9; !(_iteratorNormalCompletion9 = (_step9 = _iterator9.next()).done); _iteratorNormalCompletion9 = true) {
+                      var _m = _step9.value;
 
                       if (_m.timeSignature !== undefined) {
                           lastTimeSignature = _m.timeSignature;
@@ -15951,27 +16070,27 @@
                       }
                       var noteStream = _m.notesAndRests;
                       var durList = [];
-                      var _iteratorNormalCompletion9 = true;
-                      var _didIteratorError9 = false;
-                      var _iteratorError9 = undefined;
+                      var _iteratorNormalCompletion10 = true;
+                      var _didIteratorError10 = false;
+                      var _iteratorError10 = undefined;
 
                       try {
-                          for (var _iterator9 = noteStream[Symbol.iterator](), _step9; !(_iteratorNormalCompletion9 = (_step9 = _iterator9.next()).done); _iteratorNormalCompletion9 = true) {
-                              var _n = _step9.value;
+                          for (var _iterator10 = noteStream[Symbol.iterator](), _step10; !(_iteratorNormalCompletion10 = (_step10 = _iterator10.next()).done); _iteratorNormalCompletion10 = true) {
+                              var _n = _step10.value;
 
                               durList.push(_n.duration);
                           }
                       } catch (err) {
-                          _didIteratorError9 = true;
-                          _iteratorError9 = err;
+                          _didIteratorError10 = true;
+                          _iteratorError10 = err;
                       } finally {
                           try {
-                              if (!_iteratorNormalCompletion9 && _iterator9.return) {
-                                  _iterator9.return();
+                              if (!_iteratorNormalCompletion10 && _iterator10.return) {
+                                  _iterator10.return();
                               }
                           } finally {
-                              if (_didIteratorError9) {
-                                  throw _iteratorError9;
+                              if (_didIteratorError10) {
+                                  throw _iteratorError10;
                               }
                           }
                       }
@@ -16005,16 +16124,16 @@
 
                   // returnObj.streamStatus.beams = true;
               } catch (err) {
-                  _didIteratorError8 = true;
-                  _iteratorError8 = err;
+                  _didIteratorError9 = true;
+                  _iteratorError9 = err;
               } finally {
                   try {
-                      if (!_iteratorNormalCompletion8 && _iterator8.return) {
-                          _iterator8.return();
+                      if (!_iteratorNormalCompletion9 && _iterator9.return) {
+                          _iterator9.return();
                       }
                   } finally {
-                      if (_didIteratorError8) {
-                          throw _iteratorError8;
+                      if (_didIteratorError9) {
+                          throw _iteratorError9;
                       }
                   }
               }
@@ -16032,29 +16151,29 @@
       }, {
           key: 'hasLyrics',
           value: function hasLyrics() {
-              var _iteratorNormalCompletion10 = true;
-              var _didIteratorError10 = false;
-              var _iteratorError10 = undefined;
+              var _iteratorNormalCompletion11 = true;
+              var _didIteratorError11 = false;
+              var _iteratorError11 = undefined;
 
               try {
-                  for (var _iterator10 = this[Symbol.iterator](), _step10; !(_iteratorNormalCompletion10 = (_step10 = _iterator10.next()).done); _iteratorNormalCompletion10 = true) {
-                      var el = _step10.value;
+                  for (var _iterator11 = this[Symbol.iterator](), _step11; !(_iteratorNormalCompletion11 = (_step11 = _iterator11.next()).done); _iteratorNormalCompletion11 = true) {
+                      var el = _step11.value;
 
                       if (el.lyric !== undefined) {
                           return true;
                       }
                   }
               } catch (err) {
-                  _didIteratorError10 = true;
-                  _iteratorError10 = err;
+                  _didIteratorError11 = true;
+                  _iteratorError11 = err;
               } finally {
                   try {
-                      if (!_iteratorNormalCompletion10 && _iterator10.return) {
-                          _iterator10.return();
+                      if (!_iteratorNormalCompletion11 && _iterator11.return) {
+                          _iterator11.return();
                       }
                   } finally {
-                      if (_didIteratorError10) {
-                          throw _iteratorError10;
+                      if (_didIteratorError11) {
+                          throw _iteratorError11;
                       }
                   }
               }
@@ -16109,13 +16228,13 @@
           key: 'getElementsByClass',
           value: function getElementsByClass(classList) {
               var tempEls = [];
-              var _iteratorNormalCompletion11 = true;
-              var _didIteratorError11 = false;
-              var _iteratorError11 = undefined;
+              var _iteratorNormalCompletion12 = true;
+              var _didIteratorError12 = false;
+              var _iteratorError12 = undefined;
 
               try {
-                  for (var _iterator11 = this[Symbol.iterator](), _step11; !(_iteratorNormalCompletion11 = (_step11 = _iterator11.next()).done); _iteratorNormalCompletion11 = true) {
-                      var thisEl = _step11.value;
+                  for (var _iterator12 = this[Symbol.iterator](), _step12; !(_iteratorNormalCompletion12 = (_step12 = _iterator12.next()).done); _iteratorNormalCompletion12 = true) {
+                      var thisEl = _step12.value;
 
                       // console.warn(thisEl);
                       if (thisEl.isClassOrSubclass === undefined) {
@@ -16125,16 +16244,16 @@
                       }
                   }
               } catch (err) {
-                  _didIteratorError11 = true;
-                  _iteratorError11 = err;
+                  _didIteratorError12 = true;
+                  _iteratorError12 = err;
               } finally {
                   try {
-                      if (!_iteratorNormalCompletion11 && _iterator11.return) {
-                          _iterator11.return();
+                      if (!_iteratorNormalCompletion12 && _iterator12.return) {
+                          _iterator12.return();
                       }
                   } finally {
-                      if (_didIteratorError11) {
-                          throw _iteratorError11;
+                      if (_didIteratorError12) {
+                          throw _iteratorError12;
                       }
                   }
               }
@@ -16156,17 +16275,17 @@
       }, {
           key: 'getElementsByOffset',
           value: function getElementsByOffset(offsetStart, offsetEnd) {
-              var _ref3 = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {},
-                  _ref3$includeEndBound = _ref3.includeEndBoundary,
-                  includeEndBoundary = _ref3$includeEndBound === undefined ? true : _ref3$includeEndBound,
-                  _ref3$mustFinishInSpa = _ref3.mustFinishInSpan,
-                  mustFinishInSpan = _ref3$mustFinishInSpa === undefined ? false : _ref3$mustFinishInSpa,
-                  _ref3$mustBeginInSpan = _ref3.mustBeginInSpan,
-                  mustBeginInSpan = _ref3$mustBeginInSpan === undefined ? true : _ref3$mustBeginInSpan,
-                  _ref3$includeElements = _ref3.includeElementsThatEndAtStart,
-                  includeElementsThatEndAtStart = _ref3$includeElements === undefined ? true : _ref3$includeElements,
-                  _ref3$classList = _ref3.classList,
-                  classList = _ref3$classList === undefined ? undefined : _ref3$classList;
+              var _ref5 = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {},
+                  _ref5$includeEndBound = _ref5.includeEndBoundary,
+                  includeEndBoundary = _ref5$includeEndBound === undefined ? true : _ref5$includeEndBound,
+                  _ref5$mustFinishInSpa = _ref5.mustFinishInSpan,
+                  mustFinishInSpan = _ref5$mustFinishInSpa === undefined ? false : _ref5$mustFinishInSpa,
+                  _ref5$mustBeginInSpan = _ref5.mustBeginInSpan,
+                  mustBeginInSpan = _ref5$mustBeginInSpan === undefined ? true : _ref5$mustBeginInSpan,
+                  _ref5$includeElements = _ref5.includeElementsThatEndAtStart,
+                  includeElementsThatEndAtStart = _ref5$includeElements === undefined ? true : _ref5$includeElements,
+                  _ref5$classList = _ref5.classList,
+                  classList = _ref5$classList === undefined ? undefined : _ref5$classList;
 
               var s = this;
               if (classList !== undefined) {
@@ -16233,13 +16352,13 @@
 
               var retStream = s.clone(false);
               retStream.elements = [];
-              var _iteratorNormalCompletion12 = true;
-              var _didIteratorError12 = false;
-              var _iteratorError12 = undefined;
+              var _iteratorNormalCompletion13 = true;
+              var _didIteratorError13 = false;
+              var _iteratorError13 = undefined;
 
               try {
-                  for (var _iterator12 = s[Symbol.iterator](), _step12; !(_iteratorNormalCompletion12 = (_step12 = _iterator12.next()).done); _iteratorNormalCompletion12 = true) {
-                      var e = _step12.value;
+                  for (var _iterator13 = s[Symbol.iterator](), _step13; !(_iteratorNormalCompletion13 = (_step13 = _iterator13.next()).done); _iteratorNormalCompletion13 = true) {
+                      var e = _step13.value;
 
                       var offset = s.elementOffset(e);
                       if (isElementOffsetInRange(e, offset)) {
@@ -16247,16 +16366,16 @@
                       }
                   }
               } catch (err) {
-                  _didIteratorError12 = true;
-                  _iteratorError12 = err;
+                  _didIteratorError13 = true;
+                  _iteratorError13 = err;
               } finally {
                   try {
-                      if (!_iteratorNormalCompletion12 && _iterator12.return) {
-                          _iterator12.return();
+                      if (!_iteratorNormalCompletion13 && _iterator13.return) {
+                          _iterator13.return();
                       }
                   } finally {
-                      if (_didIteratorError12) {
-                          throw _iteratorError12;
+                      if (_didIteratorError13) {
+                          throw _iteratorError13;
                       }
                   }
               }
@@ -16307,29 +16426,29 @@
               } else if (otherElements.length === 1) {
                   return otherElements.get(0);
               } else {
-                  var _iteratorNormalCompletion13 = true;
-                  var _didIteratorError13 = false;
-                  var _iteratorError13 = undefined;
+                  var _iteratorNormalCompletion14 = true;
+                  var _didIteratorError14 = false;
+                  var _iteratorError14 = undefined;
 
                   try {
-                      for (var _iterator13 = otherElements[Symbol.iterator](), _step13; !(_iteratorNormalCompletion13 = (_step13 = _iterator13.next()).done); _iteratorNormalCompletion13 = true) {
-                          var thisEl = _step13.value;
+                      for (var _iterator14 = otherElements[Symbol.iterator](), _step14; !(_iteratorNormalCompletion14 = (_step14 = _iterator14.next()).done); _iteratorNormalCompletion14 = true) {
+                          var thisEl = _step14.value;
 
                           if (el.constructor === thisEl.constructor) {
                               return thisEl;
                           }
                       }
                   } catch (err) {
-                      _didIteratorError13 = true;
-                      _iteratorError13 = err;
+                      _didIteratorError14 = true;
+                      _iteratorError14 = err;
                   } finally {
                       try {
-                          if (!_iteratorNormalCompletion13 && _iterator13.return) {
-                              _iterator13.return();
+                          if (!_iteratorNormalCompletion14 && _iterator14.return) {
+                              _iterator14.return();
                           }
                       } finally {
-                          if (_didIteratorError13) {
-                              throw _iteratorError13;
+                          if (_didIteratorError14) {
+                              throw _iteratorError14;
                           }
                       }
                   }
@@ -16355,13 +16474,13 @@
               // cheap version of music21p method
               var extendableStepList = {};
               var stepNames = ['C', 'D', 'E', 'F', 'G', 'A', 'B'];
-              var _iteratorNormalCompletion14 = true;
-              var _didIteratorError14 = false;
-              var _iteratorError14 = undefined;
+              var _iteratorNormalCompletion15 = true;
+              var _didIteratorError15 = false;
+              var _iteratorError15 = undefined;
 
               try {
-                  for (var _iterator14 = stepNames[Symbol.iterator](), _step14; !(_iteratorNormalCompletion14 = (_step14 = _iterator14.next()).done); _iteratorNormalCompletion14 = true) {
-                      var stepName = _step14.value;
+                  for (var _iterator15 = stepNames[Symbol.iterator](), _step15; !(_iteratorNormalCompletion15 = (_step15 = _iterator15.next()).done); _iteratorNormalCompletion15 = true) {
+                      var stepName = _step15.value;
 
                       var stepAlter = 0;
                       if (this.keySignature !== undefined) {
@@ -16374,16 +16493,16 @@
                       extendableStepList[stepName] = stepAlter;
                   }
               } catch (err) {
-                  _didIteratorError14 = true;
-                  _iteratorError14 = err;
+                  _didIteratorError15 = true;
+                  _iteratorError15 = err;
               } finally {
                   try {
-                      if (!_iteratorNormalCompletion14 && _iterator14.return) {
-                          _iterator14.return();
+                      if (!_iteratorNormalCompletion15 && _iterator15.return) {
+                          _iterator15.return();
                       }
                   } finally {
-                      if (_didIteratorError14) {
-                          throw _iteratorError14;
+                      if (_didIteratorError15) {
+                          throw _iteratorError15;
                       }
                   }
               }
@@ -16395,13 +16514,13 @@
               }
               var lastOctavelessStepDict = $$1.extend({}, extendableStepList); // probably unnecessary, but safe...
 
-              var _iteratorNormalCompletion15 = true;
-              var _didIteratorError15 = false;
-              var _iteratorError15 = undefined;
+              var _iteratorNormalCompletion16 = true;
+              var _didIteratorError16 = false;
+              var _iteratorError16 = undefined;
 
               try {
-                  for (var _iterator15 = this[Symbol.iterator](), _step15; !(_iteratorNormalCompletion15 = (_step15 = _iterator15.next()).done); _iteratorNormalCompletion15 = true) {
-                      var el = _step15.value;
+                  for (var _iterator16 = this[Symbol.iterator](), _step16; !(_iteratorNormalCompletion16 = (_step16 = _iterator16.next()).done); _iteratorNormalCompletion16 = true) {
+                      var el = _step16.value;
 
                       if (el.pitch !== undefined) {
                           // note
@@ -16410,45 +16529,45 @@
                           this._makeAccidentalForOnePitch(p, lastStepDict, lastOctavelessStepDict);
                       } else if (el._notes !== undefined) {
                           // chord
-                          var _iteratorNormalCompletion16 = true;
-                          var _didIteratorError16 = false;
-                          var _iteratorError16 = undefined;
+                          var _iteratorNormalCompletion17 = true;
+                          var _didIteratorError17 = false;
+                          var _iteratorError17 = undefined;
 
                           try {
-                              for (var _iterator16 = el._notes[Symbol.iterator](), _step16; !(_iteratorNormalCompletion16 = (_step16 = _iterator16.next()).done); _iteratorNormalCompletion16 = true) {
-                                  var chordNote = _step16.value;
+                              for (var _iterator17 = el._notes[Symbol.iterator](), _step17; !(_iteratorNormalCompletion17 = (_step17 = _iterator17.next()).done); _iteratorNormalCompletion17 = true) {
+                                  var chordNote = _step17.value;
 
                                   var _p = chordNote.pitch;
                                   var _lastStepDict = lastOctaveStepList[_p.octave];
                                   this._makeAccidentalForOnePitch(_p, _lastStepDict, lastOctavelessStepDict);
                               }
                           } catch (err) {
-                              _didIteratorError16 = true;
-                              _iteratorError16 = err;
+                              _didIteratorError17 = true;
+                              _iteratorError17 = err;
                           } finally {
                               try {
-                                  if (!_iteratorNormalCompletion16 && _iterator16.return) {
-                                      _iterator16.return();
+                                  if (!_iteratorNormalCompletion17 && _iterator17.return) {
+                                      _iterator17.return();
                                   }
                               } finally {
-                                  if (_didIteratorError16) {
-                                      throw _iteratorError16;
+                                  if (_didIteratorError17) {
+                                      throw _iteratorError17;
                                   }
                               }
                           }
                       }
                   }
               } catch (err) {
-                  _didIteratorError15 = true;
-                  _iteratorError15 = err;
+                  _didIteratorError16 = true;
+                  _iteratorError16 = err;
               } finally {
                   try {
-                      if (!_iteratorNormalCompletion15 && _iterator15.return) {
-                          _iterator15.return();
+                      if (!_iteratorNormalCompletion16 && _iterator16.return) {
+                          _iterator16.return();
                       }
                   } finally {
-                      if (_didIteratorError15) {
-                          throw _iteratorError15;
+                      if (_didIteratorError16) {
+                          throw _iteratorError16;
                       }
                   }
               }
@@ -16524,29 +16643,29 @@
               }
 
               if (recursive) {
-                  var _iteratorNormalCompletion17 = true;
-                  var _didIteratorError17 = false;
-                  var _iteratorError17 = undefined;
+                  var _iteratorNormalCompletion18 = true;
+                  var _didIteratorError18 = false;
+                  var _iteratorError18 = undefined;
 
                   try {
-                      for (var _iterator17 = this[Symbol.iterator](), _step17; !(_iteratorNormalCompletion17 = (_step17 = _iterator17.next()).done); _iteratorNormalCompletion17 = true) {
-                          var el = _step17.value;
+                      for (var _iterator18 = this[Symbol.iterator](), _step18; !(_iteratorNormalCompletion18 = (_step18 = _iterator18.next()).done); _iteratorNormalCompletion18 = true) {
+                          var el = _step18.value;
 
                           if (el.isClassOrSubclass('Stream')) {
                               el.resetRenderOptions(recursive, preserveEvents);
                           }
                       }
                   } catch (err) {
-                      _didIteratorError17 = true;
-                      _iteratorError17 = err;
+                      _didIteratorError18 = true;
+                      _iteratorError18 = err;
                   } finally {
                       try {
-                          if (!_iteratorNormalCompletion17 && _iterator17.return) {
-                              _iterator17.return();
+                          if (!_iteratorNormalCompletion18 && _iterator18.return) {
+                              _iterator18.return();
                           }
                       } finally {
-                          if (_didIteratorError17) {
-                              throw _iteratorError17;
+                          if (_didIteratorError18) {
+                              throw _iteratorError18;
                           }
                       }
                   }
@@ -16676,13 +16795,13 @@
               }
               if (this.hasVoices()) {
                   var maxLength = 0;
-                  var _iteratorNormalCompletion18 = true;
-                  var _didIteratorError18 = false;
-                  var _iteratorError18 = undefined;
+                  var _iteratorNormalCompletion19 = true;
+                  var _didIteratorError19 = false;
+                  var _iteratorError19 = undefined;
 
                   try {
-                      for (var _iterator18 = this[Symbol.iterator](), _step18; !(_iteratorNormalCompletion18 = (_step18 = _iterator18.next()).done); _iteratorNormalCompletion18 = true) {
-                          var v = _step18.value;
+                      for (var _iterator19 = this[Symbol.iterator](), _step19; !(_iteratorNormalCompletion19 = (_step19 = _iterator19.next()).done); _iteratorNormalCompletion19 = true) {
+                          var v = _step19.value;
 
                           if (v.isClassOrSubclass('Stream')) {
                               var thisLength = v.estimateStaffLength() + v.renderOptions.staffPadding;
@@ -16692,22 +16811,22 @@
                           }
                       }
                   } catch (err) {
-                      _didIteratorError18 = true;
-                      _iteratorError18 = err;
+                      _didIteratorError19 = true;
+                      _iteratorError19 = err;
                   } finally {
                       try {
-                          if (!_iteratorNormalCompletion18 && _iterator18.return) {
-                              _iterator18.return();
+                          if (!_iteratorNormalCompletion19 && _iterator19.return) {
+                              _iterator19.return();
                           }
                       } finally {
-                          if (_didIteratorError18) {
-                              throw _iteratorError18;
+                          if (_didIteratorError19) {
+                              throw _iteratorError19;
                           }
                       }
                   }
 
                   return maxLength;
-              } else if (this.hasSubStreams()) {
+              } else if (!this.isFlat) {
                   // part
                   totalLength = 0;
                   for (i = 0; i < this.length; i++) {
@@ -16847,7 +16966,7 @@
           value: function createNewDOM(width, height) {
               var elementType = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'svg';
 
-              if (this.hasSubStreams()) {
+              if (!this.isFlat) {
                   this.setSubstreamRenderOptions();
               }
 
@@ -17077,7 +17196,7 @@
       }, {
           key: 'setRenderInteraction',
           value: function setRenderInteraction(canvasOrDiv) {
-              var _this3 = this;
+              var _this4 = this;
 
               var $svg = canvasOrDiv;
               if (canvasOrDiv === undefined) {
@@ -17086,7 +17205,7 @@
                   $svg = $$1(canvasOrDiv);
               }
               var playFunc = function playFunc() {
-                  _this3.playStream();
+                  _this4.playStream();
               };
 
               $$1.each(this.renderOptions.events, $$1.proxy(function setRenderInteractionProxy(eventType, eventFunction) {
@@ -17115,7 +17234,7 @@
           value: function recursiveGetStoredVexflowStave() {
               var storedVFStave = this.storedVexflowStave;
               if (storedVFStave === undefined) {
-                  if (!this.hasSubStreams()) {
+                  if (this.isFlat) {
                       return undefined;
                   } else {
                       var subStreams = this.getElementsByClass('Stream');
@@ -17123,7 +17242,7 @@
                       if (storedVFStave === undefined) {
                           // TODO: bad programming ... should support continuous recurse
                           // but good enough for now...
-                          if (subStreams.get(0).hasSubStreams()) {
+                          if (!subStreams.get(0).isFlat) {
                               storedVFStave = subStreams.get(0).get(0).storedVexflowStave;
                           }
                       }
@@ -17296,13 +17415,13 @@
                   note: undefined
               }; // a backup in case we did not find within allowablePixels
 
-              var _iteratorNormalCompletion19 = true;
-              var _didIteratorError19 = false;
-              var _iteratorError19 = undefined;
+              var _iteratorNormalCompletion20 = true;
+              var _didIteratorError20 = false;
+              var _iteratorError20 = undefined;
 
               try {
-                  for (var _iterator19 = subStream.flat.notesAndRests.elements[Symbol.iterator](), _step19; !(_iteratorNormalCompletion19 = (_step19 = _iterator19.next()).done); _iteratorNormalCompletion19 = true) {
-                      var n = _step19.value;
+                  for (var _iterator20 = subStream.flat.notesAndRests.elements[Symbol.iterator](), _step20; !(_iteratorNormalCompletion20 = (_step20 = _iterator20.next()).done); _iteratorNormalCompletion20 = true) {
+                      var n = _step20.value;
 
                       /* should also
                        * compensate for accidentals...
@@ -17321,16 +17440,16 @@
                   }
                   // console.log('note here is: ', foundNote);
               } catch (err) {
-                  _didIteratorError19 = true;
-                  _iteratorError19 = err;
+                  _didIteratorError20 = true;
+                  _iteratorError20 = err;
               } finally {
                   try {
-                      if (!_iteratorNormalCompletion19 && _iterator19.return) {
-                          _iterator19.return();
+                      if (!_iteratorNormalCompletion20 && _iterator20.return) {
+                          _iterator20.return();
                       }
                   } finally {
-                      if (_didIteratorError19) {
-                          throw _iteratorError19;
+                      if (_didIteratorError20) {
+                          throw _iteratorError20;
                       }
                   }
               }
@@ -17485,7 +17604,7 @@
       }, {
           key: 'getAccidentalToolbar',
           value: function getAccidentalToolbar(minAccidental, maxAccidental, $siblingSvg) {
-              var _this4 = this;
+              var _this5 = this;
 
               if (minAccidental === undefined) {
                   minAccidental = -1;
@@ -17514,13 +17633,13 @@
                           return;
                       }
                   }
-                  if (_this4.activeNote !== undefined) {
-                      var n = _this4.activeNote;
+                  if (_this5.activeNote !== undefined) {
+                      var n = _this5.activeNote;
                       n.pitch.accidental = new pitch.Accidental(newAlter);
                       /* console.log(n.pitch.name); */
-                      var $newSvg = _this4.redrawDOM($useSvg[0]);
-                      if (_this4.changedCallbackFunction !== undefined) {
-                          _this4.changedCallbackFunction({
+                      var $newSvg = _this5.redrawDOM($useSvg[0]);
+                      if (_this5.changedCallbackFunction !== undefined) {
+                          _this5.changedCallbackFunction({
                               foundNote: n,
                               svg: $newSvg
                           });
@@ -17556,17 +17675,17 @@
       }, {
           key: 'getPlayToolbar',
           value: function getPlayToolbar() {
-              var _this5 = this;
+              var _this6 = this;
 
               var $buttonDiv = $$1('<div/>').attr('class', 'playToolbar scoreToolbar');
               var $bPlay = $$1('<button>&#9658</button>');
               $bPlay.click(function () {
-                  _this5.playStream();
+                  _this6.playStream();
               });
               $buttonDiv.append($bPlay);
               var $bStop = $$1('<button>&#9724</button>');
               $bStop.click(function () {
-                  _this5.stopPlayStream();
+                  _this6.stopPlayStream();
               });
               $buttonDiv.append($bStop);
               return $buttonDiv;
@@ -17632,29 +17751,29 @@
       }, {
           key: 'hasVoices',
           value: function hasVoices() {
-              var _iteratorNormalCompletion20 = true;
-              var _didIteratorError20 = false;
-              var _iteratorError20 = undefined;
+              var _iteratorNormalCompletion21 = true;
+              var _didIteratorError21 = false;
+              var _iteratorError21 = undefined;
 
               try {
-                  for (var _iterator20 = this[Symbol.iterator](), _step20; !(_iteratorNormalCompletion20 = (_step20 = _iterator20.next()).done); _iteratorNormalCompletion20 = true) {
-                      var el = _step20.value;
+                  for (var _iterator21 = this[Symbol.iterator](), _step21; !(_iteratorNormalCompletion21 = (_step21 = _iterator21.next()).done); _iteratorNormalCompletion21 = true) {
+                      var el = _step21.value;
 
                       if (el.isClassOrSubclass('Voice')) {
                           return true;
                       }
                   }
               } catch (err) {
-                  _didIteratorError20 = true;
-                  _iteratorError20 = err;
+                  _didIteratorError21 = true;
+                  _iteratorError21 = err;
               } finally {
                   try {
-                      if (!_iteratorNormalCompletion20 && _iterator20.return) {
-                          _iterator20.return();
+                      if (!_iteratorNormalCompletion21 && _iterator21.return) {
+                          _iterator21.return();
                       }
                   } finally {
-                      if (_didIteratorError20) {
-                          throw _iteratorError20;
+                      if (_didIteratorError21) {
+                          throw _iteratorError21;
                       }
                   }
               }
@@ -17676,13 +17795,13 @@
           key: 'highestTime',
           get: function get() {
               var highestTime = 0.0;
-              var _iteratorNormalCompletion21 = true;
-              var _didIteratorError21 = false;
-              var _iteratorError21 = undefined;
+              var _iteratorNormalCompletion22 = true;
+              var _didIteratorError22 = false;
+              var _iteratorError22 = undefined;
 
               try {
-                  for (var _iterator21 = this[Symbol.iterator](), _step21; !(_iteratorNormalCompletion21 = (_step21 = _iterator21.next()).done); _iteratorNormalCompletion21 = true) {
-                      var el = _step21.value;
+                  for (var _iterator22 = this[Symbol.iterator](), _step22; !(_iteratorNormalCompletion22 = (_step22 = _iterator22.next()).done); _iteratorNormalCompletion22 = true) {
+                      var el = _step22.value;
 
                       var endTime = el.offset;
                       if (el.duration !== undefined) {
@@ -17693,16 +17812,16 @@
                       }
                   }
               } catch (err) {
-                  _didIteratorError21 = true;
-                  _iteratorError21 = err;
+                  _didIteratorError22 = true;
+                  _iteratorError22 = err;
               } finally {
                   try {
-                      if (!_iteratorNormalCompletion21 && _iterator21.return) {
-                          _iterator21.return();
+                      if (!_iteratorNormalCompletion22 && _iterator22.return) {
+                          _iterator22.return();
                       }
                   } finally {
-                      if (_didIteratorError21) {
-                          throw _iteratorError21;
+                      if (_didIteratorError22) {
+                          throw _iteratorError22;
                       }
                   }
               }
@@ -17855,7 +17974,7 @@
           set: function set(newElements) {
               var highestOffsetSoFar = 0.0;
               this._elements = [];
-              this._elementOffsets = [];
+              this._offsetDict = new WeakMap();
               var tempInsert = [];
               var i = void 0;
               var thisEl = void 0;
@@ -17865,8 +17984,7 @@
                   if (thisElOffset === null || thisElOffset === highestOffsetSoFar) {
                       // append
                       this._elements.push(thisEl);
-                      thisEl.offset = highestOffsetSoFar;
-                      this._elementOffsets.push(highestOffsetSoFar);
+                      this.setElementOffset(thisEl, highestOffsetSoFar);
                       if (thisEl.duration === undefined) {
                           console.error('No duration for ', thisEl, ' in ', this);
                       }
@@ -17881,6 +17999,7 @@
                   thisEl = tempInsert[i];
                   this.insert(thisEl.offset, thisEl);
               }
+              this.coreElementsChanged(); // would be called already if newElements != [];
           }
       }]);
       return Stream;
@@ -17899,10 +18018,10 @@
       function Voice() {
           classCallCheck(this, Voice);
 
-          var _this6 = possibleConstructorReturn(this, (Voice.__proto__ || Object.getPrototypeOf(Voice)).call(this));
+          var _this7 = possibleConstructorReturn(this, (Voice.__proto__ || Object.getPrototypeOf(Voice)).call(this));
 
-          _this6.recursionType = 'elementsFirst';
-          return _this6;
+          _this7.recursionType = 'elementsFirst';
+          return _this7;
       }
 
       return Voice;
@@ -17920,12 +18039,12 @@
       function Measure() {
           classCallCheck(this, Measure);
 
-          var _this7 = possibleConstructorReturn(this, (Measure.__proto__ || Object.getPrototypeOf(Measure)).call(this));
+          var _this8 = possibleConstructorReturn(this, (Measure.__proto__ || Object.getPrototypeOf(Measure)).call(this));
 
-          _this7.recursionType = 'elementsFirst';
-          _this7.isMeasure = true;
-          _this7.number = 0; // measure number
-          return _this7;
+          _this8.recursionType = 'elementsFirst';
+          _this8.isMeasure = true;
+          _this8.number = 0; // measure number
+          return _this8;
       }
 
       return Measure;
@@ -17945,11 +18064,11 @@
       function Part() {
           classCallCheck(this, Part);
 
-          var _this8 = possibleConstructorReturn(this, (Part.__proto__ || Object.getPrototypeOf(Part)).call(this));
+          var _this9 = possibleConstructorReturn(this, (Part.__proto__ || Object.getPrototypeOf(Part)).call(this));
 
-          _this8.recursionType = 'flatten';
-          _this8.systemHeight = _this8.renderOptions.naiveHeight;
-          return _this8;
+          _this9.recursionType = 'flatten';
+          _this9.systemHeight = _this9.renderOptions.naiveHeight;
+          return _this9;
       }
 
       /**
@@ -17987,13 +18106,13 @@
           value: function getMeasureWidths() {
               /* call after setSubstreamRenderOptions */
               var measureWidths = [];
-              var _iteratorNormalCompletion22 = true;
-              var _didIteratorError22 = false;
-              var _iteratorError22 = undefined;
+              var _iteratorNormalCompletion23 = true;
+              var _didIteratorError23 = false;
+              var _iteratorError23 = undefined;
 
               try {
-                  for (var _iterator22 = this[Symbol.iterator](), _step22; !(_iteratorNormalCompletion22 = (_step22 = _iterator22.next()).done); _iteratorNormalCompletion22 = true) {
-                      var el = _step22.value;
+                  for (var _iterator23 = this[Symbol.iterator](), _step23; !(_iteratorNormalCompletion23 = (_step23 = _iterator23.next()).done); _iteratorNormalCompletion23 = true) {
+                      var el = _step23.value;
 
                       if (el.isClassOrSubclass('Measure')) {
                           var elRendOp = el.renderOptions;
@@ -18004,16 +18123,16 @@
                    *
                    */
               } catch (err) {
-                  _didIteratorError22 = true;
-                  _iteratorError22 = err;
+                  _didIteratorError23 = true;
+                  _iteratorError23 = err;
               } finally {
                   try {
-                      if (!_iteratorNormalCompletion22 && _iterator22.return) {
-                          _iterator22.return();
+                      if (!_iteratorNormalCompletion23 && _iterator23.return) {
+                          _iterator23.return();
                       }
                   } finally {
-                      if (_didIteratorError22) {
-                          throw _iteratorError22;
+                      if (_didIteratorError23) {
+                          throw _iteratorError23;
                       }
                   }
               }
@@ -18034,17 +18153,17 @@
                   // console.log("Overridden staff width: " + this.renderOptions.overriddenWidth);
                   return this.renderOptions.overriddenWidth;
               }
-              if (this.hasSubStreams()) {
+              if (!this.isFlat) {
                   // part with Measures underneath
                   var totalLength = 0;
                   var isFirst = true;
-                  var _iteratorNormalCompletion23 = true;
-                  var _didIteratorError23 = false;
-                  var _iteratorError23 = undefined;
+                  var _iteratorNormalCompletion24 = true;
+                  var _didIteratorError24 = false;
+                  var _iteratorError24 = undefined;
 
                   try {
-                      for (var _iterator23 = this.getElementsByClass('Measure')[Symbol.iterator](), _step23; !(_iteratorNormalCompletion23 = (_step23 = _iterator23.next()).done); _iteratorNormalCompletion23 = true) {
-                          var m = _step23.value;
+                      for (var _iterator24 = this.getElementsByClass('Measure')[Symbol.iterator](), _step24; !(_iteratorNormalCompletion24 = (_step24 = _iterator24.next()).done); _iteratorNormalCompletion24 = true) {
+                          var m = _step24.value;
 
                           // this looks wrong, but actually seems to be right. moving it to
                           // after the break breaks things.
@@ -18055,16 +18174,16 @@
                           isFirst = false;
                       }
                   } catch (err) {
-                      _didIteratorError23 = true;
-                      _iteratorError23 = err;
+                      _didIteratorError24 = true;
+                      _iteratorError24 = err;
                   } finally {
                       try {
-                          if (!_iteratorNormalCompletion23 && _iterator23.return) {
-                              _iterator23.return();
+                          if (!_iteratorNormalCompletion24 && _iterator24.return) {
+                              _iterator24.return();
                           }
                       } finally {
-                          if (_didIteratorError23) {
-                              throw _iteratorError23;
+                          if (_didIteratorError24) {
+                              throw _iteratorError24;
                           }
                       }
                   }
@@ -18205,13 +18324,13 @@
               var lastKeySignature = void 0;
               var lastClef = void 0;
 
-              var _iteratorNormalCompletion24 = true;
-              var _didIteratorError24 = false;
-              var _iteratorError24 = undefined;
+              var _iteratorNormalCompletion25 = true;
+              var _didIteratorError25 = false;
+              var _iteratorError25 = undefined;
 
               try {
-                  for (var _iterator24 = this[Symbol.iterator](), _step24; !(_iteratorNormalCompletion24 = (_step24 = _iterator24.next()).done); _iteratorNormalCompletion24 = true) {
-                      var el = _step24.value;
+                  for (var _iterator25 = this[Symbol.iterator](), _step25; !(_iteratorNormalCompletion25 = (_step25 = _iterator25.next()).done); _iteratorNormalCompletion25 = true) {
+                      var el = _step25.value;
 
                       if (el.isClassOrSubclass('Measure')) {
                           var elRendOp = el.renderOptions;
@@ -18258,16 +18377,16 @@
                       }
                   }
               } catch (err) {
-                  _didIteratorError24 = true;
-                  _iteratorError24 = err;
+                  _didIteratorError25 = true;
+                  _iteratorError25 = err;
               } finally {
                   try {
-                      if (!_iteratorNormalCompletion24 && _iterator24.return) {
-                          _iterator24.return();
+                      if (!_iteratorNormalCompletion25 && _iterator25.return) {
+                          _iterator25.return();
                       }
                   } finally {
-                      if (_didIteratorError24) {
-                          throw _iteratorError24;
+                      if (_didIteratorError25) {
+                          throw _iteratorError25;
                       }
                   }
               }
@@ -18351,13 +18470,13 @@
           value: function getStreamFromScaledXandSystemIndex(xPxScaled, systemIndex) {
               var gotMeasure = void 0;
               var measures = this.measures;
-              var _iteratorNormalCompletion25 = true;
-              var _didIteratorError25 = false;
-              var _iteratorError25 = undefined;
+              var _iteratorNormalCompletion26 = true;
+              var _didIteratorError26 = false;
+              var _iteratorError26 = undefined;
 
               try {
-                  for (var _iterator25 = measures[Symbol.iterator](), _step25; !(_iteratorNormalCompletion25 = (_step25 = _iterator25.next()).done); _iteratorNormalCompletion25 = true) {
-                      var m = _step25.value;
+                  for (var _iterator26 = measures[Symbol.iterator](), _step26; !(_iteratorNormalCompletion26 = (_step26 = _iterator26.next()).done); _iteratorNormalCompletion26 = true) {
+                      var m = _step26.value;
 
                       var rendOp = m.renderOptions;
                       var left = rendOp.left;
@@ -18378,16 +18497,16 @@
                       }
                   }
               } catch (err) {
-                  _didIteratorError25 = true;
-                  _iteratorError25 = err;
+                  _didIteratorError26 = true;
+                  _iteratorError26 = err;
               } finally {
                   try {
-                      if (!_iteratorNormalCompletion25 && _iterator25.return) {
-                          _iterator25.return();
+                      if (!_iteratorNormalCompletion26 && _iterator26.return) {
+                          _iterator26.return();
                       }
                   } finally {
-                      if (_didIteratorError25) {
-                          throw _iteratorError25;
+                      if (_didIteratorError26) {
+                          throw _iteratorError26;
                       }
                   }
               }
@@ -18412,12 +18531,12 @@
       function Score() {
           classCallCheck(this, Score);
 
-          var _this9 = possibleConstructorReturn(this, (Score.__proto__ || Object.getPrototypeOf(Score)).call(this));
+          var _this10 = possibleConstructorReturn(this, (Score.__proto__ || Object.getPrototypeOf(Score)).call(this));
 
-          _this9.recursionType = 'elementsOnly';
-          _this9.measureWidths = [];
-          _this9.partSpacing = _this9.renderOptions.naiveHeight;
-          return _this9;
+          _this10.recursionType = 'elementsOnly';
+          _this10.measureWidths = [];
+          _this10.partSpacing = _this10.renderOptions.naiveHeight;
+          return _this10;
       }
 
       createClass(Score, [{
@@ -18454,13 +18573,13 @@
               var currentPartNumber = 0;
               var currentPartTop = 0;
               var partSpacing = this.partSpacing;
-              var _iteratorNormalCompletion26 = true;
-              var _didIteratorError26 = false;
-              var _iteratorError26 = undefined;
+              var _iteratorNormalCompletion27 = true;
+              var _didIteratorError27 = false;
+              var _iteratorError27 = undefined;
 
               try {
-                  for (var _iterator26 = this[Symbol.iterator](), _step26; !(_iteratorNormalCompletion26 = (_step26 = _iterator26.next()).done); _iteratorNormalCompletion26 = true) {
-                      var el = _step26.value;
+                  for (var _iterator27 = this[Symbol.iterator](), _step27; !(_iteratorNormalCompletion27 = (_step27 = _iterator27.next()).done); _iteratorNormalCompletion27 = true) {
+                      var el = _step27.value;
 
                       if (el.isClassOrSubclass('Part')) {
                           el.renderOptions.partIndex = currentPartNumber;
@@ -18468,36 +18587,6 @@
                           el.setSubstreamRenderOptions();
                           currentPartTop += partSpacing;
                           currentPartNumber += 1;
-                      }
-                  }
-              } catch (err) {
-                  _didIteratorError26 = true;
-                  _iteratorError26 = err;
-              } finally {
-                  try {
-                      if (!_iteratorNormalCompletion26 && _iterator26.return) {
-                          _iterator26.return();
-                      }
-                  } finally {
-                      if (_didIteratorError26) {
-                          throw _iteratorError26;
-                      }
-                  }
-              }
-
-              this.evenPartMeasureSpacing();
-              var ignoreNumSystems = true;
-              var currentScoreHeight = this.estimateStreamHeight(ignoreNumSystems);
-              var _iteratorNormalCompletion27 = true;
-              var _didIteratorError27 = false;
-              var _iteratorError27 = undefined;
-
-              try {
-                  for (var _iterator27 = this[Symbol.iterator](), _step27; !(_iteratorNormalCompletion27 = (_step27 = _iterator27.next()).done); _iteratorNormalCompletion27 = true) {
-                      var _el2 = _step27.value;
-
-                      if (_el2.isClassOrSubclass('Part')) {
-                          _el2.fixSystemInformation(currentScoreHeight);
                       }
                   }
               } catch (err) {
@@ -18511,6 +18600,36 @@
                   } finally {
                       if (_didIteratorError27) {
                           throw _iteratorError27;
+                      }
+                  }
+              }
+
+              this.evenPartMeasureSpacing();
+              var ignoreNumSystems = true;
+              var currentScoreHeight = this.estimateStreamHeight(ignoreNumSystems);
+              var _iteratorNormalCompletion28 = true;
+              var _didIteratorError28 = false;
+              var _iteratorError28 = undefined;
+
+              try {
+                  for (var _iterator28 = this[Symbol.iterator](), _step28; !(_iteratorNormalCompletion28 = (_step28 = _iterator28.next()).done); _iteratorNormalCompletion28 = true) {
+                      var _el3 = _step28.value;
+
+                      if (_el3.isClassOrSubclass('Part')) {
+                          _el3.fixSystemInformation(currentScoreHeight);
+                      }
+                  }
+              } catch (err) {
+                  _didIteratorError28 = true;
+                  _iteratorError28 = err;
+              } finally {
+                  try {
+                      if (!_iteratorNormalCompletion28 && _iterator28.return) {
+                          _iterator28.return();
+                      }
+                  } finally {
+                      if (_didIteratorError28) {
+                          throw _iteratorError28;
                       }
                   }
               }
@@ -18533,13 +18652,13 @@
                   // console.log("Overridden staff width: " + this.renderOptions.overriddenWidth);
                   return this.renderOptions.overriddenWidth;
               }
-              var _iteratorNormalCompletion28 = true;
-              var _didIteratorError28 = false;
-              var _iteratorError28 = undefined;
+              var _iteratorNormalCompletion29 = true;
+              var _didIteratorError29 = false;
+              var _iteratorError29 = undefined;
 
               try {
-                  for (var _iterator28 = this[Symbol.iterator](), _step28; !(_iteratorNormalCompletion28 = (_step28 = _iterator28.next()).done); _iteratorNormalCompletion28 = true) {
-                      var p = _step28.value;
+                  for (var _iterator29 = this[Symbol.iterator](), _step29; !(_iteratorNormalCompletion29 = (_step29 = _iterator29.next()).done); _iteratorNormalCompletion29 = true) {
+                      var p = _step29.value;
 
                       if (p.isClassOrSubclass('Part')) {
                           return p.estimateStaffLength();
@@ -18547,16 +18666,16 @@
                   }
                   // no parts found in score... use part...
               } catch (err) {
-                  _didIteratorError28 = true;
-                  _iteratorError28 = err;
+                  _didIteratorError29 = true;
+                  _iteratorError29 = err;
               } finally {
                   try {
-                      if (!_iteratorNormalCompletion28 && _iterator28.return) {
-                          _iterator28.return();
+                      if (!_iteratorNormalCompletion29 && _iterator29.return) {
+                          _iterator29.return();
                       }
                   } finally {
-                      if (_didIteratorError28) {
-                          throw _iteratorError28;
+                      if (_didIteratorError29) {
+                          throw _iteratorError29;
                       }
                   }
               }
@@ -18584,29 +18703,29 @@
           key: 'playStream',
           value: function playStream(params) {
               // play multiple parts in parallel...
-              var _iteratorNormalCompletion29 = true;
-              var _didIteratorError29 = false;
-              var _iteratorError29 = undefined;
+              var _iteratorNormalCompletion30 = true;
+              var _didIteratorError30 = false;
+              var _iteratorError30 = undefined;
 
               try {
-                  for (var _iterator29 = this[Symbol.iterator](), _step29; !(_iteratorNormalCompletion29 = (_step29 = _iterator29.next()).done); _iteratorNormalCompletion29 = true) {
-                      var el = _step29.value;
+                  for (var _iterator30 = this[Symbol.iterator](), _step30; !(_iteratorNormalCompletion30 = (_step30 = _iterator30.next()).done); _iteratorNormalCompletion30 = true) {
+                      var el = _step30.value;
 
                       if (el.isClassOrSubclass('Part')) {
                           el.playStream(params);
                       }
                   }
               } catch (err) {
-                  _didIteratorError29 = true;
-                  _iteratorError29 = err;
+                  _didIteratorError30 = true;
+                  _iteratorError30 = err;
               } finally {
                   try {
-                      if (!_iteratorNormalCompletion29 && _iterator29.return) {
-                          _iterator29.return();
+                      if (!_iteratorNormalCompletion30 && _iterator30.return) {
+                          _iterator30.return();
                       }
                   } finally {
-                      if (_didIteratorError29) {
-                          throw _iteratorError29;
+                      if (_didIteratorError30) {
+                          throw _iteratorError30;
                       }
                   }
               }
@@ -18623,29 +18742,29 @@
       }, {
           key: 'stopPlayStream',
           value: function stopPlayStream() {
-              var _iteratorNormalCompletion30 = true;
-              var _didIteratorError30 = false;
-              var _iteratorError30 = undefined;
+              var _iteratorNormalCompletion31 = true;
+              var _didIteratorError31 = false;
+              var _iteratorError31 = undefined;
 
               try {
-                  for (var _iterator30 = this[Symbol.iterator](), _step30; !(_iteratorNormalCompletion30 = (_step30 = _iterator30.next()).done); _iteratorNormalCompletion30 = true) {
-                      var el = _step30.value;
+                  for (var _iterator31 = this[Symbol.iterator](), _step31; !(_iteratorNormalCompletion31 = (_step31 = _iterator31.next()).done); _iteratorNormalCompletion31 = true) {
+                      var el = _step31.value;
 
                       if (el.isClassOrSubclass('Part')) {
                           el.stopPlayStream();
                       }
                   }
               } catch (err) {
-                  _didIteratorError30 = true;
-                  _iteratorError30 = err;
+                  _didIteratorError31 = true;
+                  _iteratorError31 = err;
               } finally {
                   try {
-                      if (!_iteratorNormalCompletion30 && _iterator30.return) {
-                          _iterator30.return();
+                      if (!_iteratorNormalCompletion31 && _iterator31.return) {
+                          _iterator31.return();
                       }
                   } finally {
-                      if (_didIteratorError30) {
-                          throw _iteratorError30;
+                      if (_didIteratorError31) {
+                          throw _iteratorError31;
                       }
                   }
               }
@@ -18675,27 +18794,27 @@
               var measureWidthsArrayOfArrays = [];
               var i = void 0;
               // TODO: Do not crash on not partlike...
-              var _iteratorNormalCompletion31 = true;
-              var _didIteratorError31 = false;
-              var _iteratorError31 = undefined;
+              var _iteratorNormalCompletion32 = true;
+              var _didIteratorError32 = false;
+              var _iteratorError32 = undefined;
 
               try {
-                  for (var _iterator31 = this[Symbol.iterator](), _step31; !(_iteratorNormalCompletion31 = (_step31 = _iterator31.next()).done); _iteratorNormalCompletion31 = true) {
-                      var el = _step31.value;
+                  for (var _iterator32 = this[Symbol.iterator](), _step32; !(_iteratorNormalCompletion32 = (_step32 = _iterator32.next()).done); _iteratorNormalCompletion32 = true) {
+                      var el = _step32.value;
 
                       measureWidthsArrayOfArrays.push(el.getMeasureWidths());
                   }
               } catch (err) {
-                  _didIteratorError31 = true;
-                  _iteratorError31 = err;
+                  _didIteratorError32 = true;
+                  _iteratorError32 = err;
               } finally {
                   try {
-                      if (!_iteratorNormalCompletion31 && _iterator31.return) {
-                          _iterator31.return();
+                      if (!_iteratorNormalCompletion32 && _iterator32.return) {
+                          _iterator32.return();
                       }
                   } finally {
-                      if (_didIteratorError31) {
-                          throw _iteratorError31;
+                      if (_didIteratorError32) {
+                          throw _iteratorError32;
                       }
                   }
               }
@@ -18802,13 +18921,13 @@
               var currentPartNumber = 0;
               var maxMeasureWidth = [];
               var j = void 0;
-              var _iteratorNormalCompletion32 = true;
-              var _didIteratorError32 = false;
-              var _iteratorError32 = undefined;
+              var _iteratorNormalCompletion33 = true;
+              var _didIteratorError33 = false;
+              var _iteratorError33 = undefined;
 
               try {
-                  for (var _iterator32 = this[Symbol.iterator](), _step32; !(_iteratorNormalCompletion32 = (_step32 = _iterator32.next()).done); _iteratorNormalCompletion32 = true) {
-                      var el = _step32.value;
+                  for (var _iterator33 = this[Symbol.iterator](), _step33; !(_iteratorNormalCompletion33 = (_step33 = _iterator33.next()).done); _iteratorNormalCompletion33 = true) {
+                      var el = _step33.value;
 
                       if (el.isClassOrSubclass('Part')) {
                           var measureWidths = el.getMeasureWidths();
@@ -18826,16 +18945,16 @@
                       }
                   }
               } catch (err) {
-                  _didIteratorError32 = true;
-                  _iteratorError32 = err;
+                  _didIteratorError33 = true;
+                  _iteratorError33 = err;
               } finally {
                   try {
-                      if (!_iteratorNormalCompletion32 && _iterator32.return) {
-                          _iterator32.return();
+                      if (!_iteratorNormalCompletion33 && _iterator33.return) {
+                          _iterator33.return();
                       }
                   } finally {
-                      if (_didIteratorError32) {
-                          throw _iteratorError32;
+                      if (_didIteratorError33) {
+                          throw _iteratorError33;
                       }
                   }
               }
@@ -22611,15 +22730,19 @@
           assert.equal(m21o.quarterLength, 0.0, 'default duration is 0.0');
           m21o.quarterLength = 2.0;
           assert.equal(m21o.quarterLength, 2.0);
+
           var st = new music21.stream.Measure();
           st.insert(3.0, m21o);
           assert.equal(m21o.offset, 3.0);
           assert.equal(m21o.getOffsetBySite(st), 3.0);
+
           var st2 = new music21.stream.Measure();
           st2.insert(5.0, m21o);
-          assert.equal(m21o.offset, 5.0);
+          assert.equal(m21o.offset, 5.0, 'after insert at 5, offset should be 5.');
+
           assert.strictEqual(m21o.activeSite, st2);
-          assert.equal(m21o.getOffsetBySite(st), 3.0);
+          assert.equal(m21o.getOffsetBySite(st), 3.0, 'offset of site st should be 3');
+
           assert.equal(m21o.getOffsetBySite(st2), 5.0);
           m21o.setOffsetBySite(st2, 5.5);
           assert.equal(m21o.getOffsetBySite(st2), 5.5);
@@ -23454,7 +23577,7 @@
       QUnit.test('music21.sites.SiteRef', function (assert) {
           var sr = new music21.sites.SiteRef();
           assert.ok(!sr.isDead);
-          assert.equal(sr.siteWeakref.ref, undefined, 'SiteRef should start undefined');
+          assert.equal(sr.site, undefined, 'SiteRef should start undefined');
           var st = new music21.stream.Measure();
           sr.site = st;
           sr.classString = st.classes[0];
@@ -23537,24 +23660,28 @@
           s.append(d);
           var n = new music21.note.Note('F5');
           s.append(n);
-          assert.equal(s.index(d), 1);
-          assert.equal(s.index(n), 2);
-          assert.equal(s.length, 3);
+          var lastN = new music21.note.Note('G5');
+          s.append(lastN);
+
+          assert.equal(s.index(d), 1, 'index of d is 1');
+          assert.equal(s.index(n), 2, 'index of n is 2');
+          assert.equal(s.length, 4, 'stream length is 4');
 
           s.remove(n);
-          assert.equal(s.length, 2);
+          assert.equal(s.index(d), 1, 'index of d is still 1');
+          assert.equal(s.length, 3, 'stream length is 3');
           assert.throws(function () {
               s.index(n);
           }, /cannot find/, 'n is no longer in s');
 
-          assert.equal(d.offset, 1.0);
+          assert.equal(d.offset, 1.0, 'd offset is 1.0');
           var r = new music21.note.Rest();
-          assert.equal(r.offset, 0.0);
+          assert.equal(r.offset, 0.0, 'naiveOffset should be 0.0');
 
           s.replace(d, r);
-          assert.equal(d.offset, 0.0);
-          assert.equal(r.offset, 1.0);
-          assert.equal(s.index(r), 1.0);
+          assert.equal(d.offset, 0.0, 'offset of d should now be 0.0');
+          assert.equal(r.offset, 1.0, 'offset of r should be d-old offset of 1');
+          assert.equal(s.index(r), 1, 'index of r in s should be 1');
           assert.throws(function () {
               s.index(d);
           }, /cannot find/, 'd is no longer in s');
@@ -23625,30 +23752,41 @@
           s.append(new music21.note.Note('C#5'));
           var n3 = new music21.note.Note('E5');
           s.insert(2.0, n3);
+
           var n2 = new music21.note.Note('D#5');
           s.insert(1.0, n2);
+
           assert.equal(s.get(0).name, 'C#');
           assert.equal(s.get(1).name, 'D#');
           assert.equal(s.get(2).name, 'E');
           assert.equal(s.get(0).offset, 0.0);
           assert.equal(s.get(1).offset, 1.0);
           assert.equal(s.get(2).offset, 2.0);
+
           var p = new music21.stream.Part();
           var m1 = new music21.stream.Measure();
           var n1 = new music21.note.Note('C#');
           n1.duration.type = 'whole';
           m1.append(n1);
+
           var m2 = new music21.stream.Measure();
           n2 = new music21.note.Note('D#');
           n2.duration.type = 'whole';
           m2.append(n2);
           p.append(m1);
           p.append(m2);
+
           assert.equal(p.get(0).get(0).offset, 0.0);
+          assert.notOk(p.isFlat, 'part has substreams');
           var pf = p.flat;
+          assert.equal(pf.get(0).offset, 0.0);
           assert.equal(pf.get(1).offset, 4.0);
+          assert.ok(pf.isFlat, 'flat has no substremes');
+
           var pf2 = p.flat; // repeated calls do not change
-          assert.equal(pf2.get(1).offset, 4.0, 'repeated calls do not change offset');
+          assert.ok(pf2.isFlat, 'flat has no substremes');
+          assert.equal(pf2.get(0).offset, 0.0, 'repeated calls do not change offset 1');
+          assert.equal(pf2.get(1).offset, 4.0, 'repeated calls do not change offset 2');
           var pf3 = pf2.flat;
           assert.equal(pf3.get(1).offset, 4.0, '.flat.flat does not change offset');
       });

@@ -98,7 +98,12 @@ export class Stream extends base.Music21Object {
         this._duration = undefined;
 
         this._elements = [];
-        this._elementOffsets = [];
+        this._offsetDict = new WeakMap();
+        
+        this.autoSort = true;
+        this.isSorted = true;
+        this.isFlat = true;
+        
         this._clef = undefined;
         this.displayClef = undefined;
 
@@ -148,6 +153,10 @@ export class Stream extends base.Music21Object {
         };
     }
     * [Symbol.iterator]() {
+        if (this.autoSort && !this.isSorted) {
+            this.sort();
+        }
+        
         for (let i = 0; i < this.length; i++) {
             yield this.get(i);
         }
@@ -185,29 +194,34 @@ export class Stream extends base.Music21Object {
     }
 
     _getFlatOrSemiFlat(retainContainers) {
-        if (!this.hasSubStreams()) {
-            return this;
-        }
-        const tempEls = [];
-        for (const el of this) {
-            if (el.isStream) {
-                if (retainContainers) {
-                    tempEls.push(el);
+        let tempEls;
+        const newSt = this.clone(false);
+        if (!this.isFlat) {
+            newSt.elements = [];
+            for (const el of this) {
+                if (el.isStream) {
+                    if (retainContainers) {
+                        tempEls.push(el);
+                    }
+                    const offsetShift = this.elementOffset(el);
+                    // console.log('offsetShift', offsetShift, el.classes[el.classes.length -1]);
+                    const elFlat = el._getFlatOrSemiFlat(retainContainers);
+                    for (const elFlatElement of elFlat) {
+                        // offset should NOT be null because already in Stream
+                        const elFlatElementOffset = elFlat.elementOffset(elFlatElement);
+                        newSt.insert(elFlatElementOffset + offsetShift, elFlatElement);
+                    }
+                } else {
+                    newSt.insert(el, this.elementOffset(el));
                 }
-                const offsetShift = el.offset;
-                // console.log('offsetShift', offsetShift, el.classes[el.classes.length -1]);
-                const elFlat = el._getFlatOrSemiFlat(retainContainers);
-                for (let j = 0; j < elFlat.length; j++) {
-                    // offset should NOT be null because already in Stream
-                    elFlat.get(j).offset += offsetShift;
-                }
-                tempEls.push(...elFlat._elements);
-            } else {
-                tempEls.push(el);
             }
         }
-        const newSt = this.clone(false);
-        newSt.elements = tempEls;
+        if (!retainContainers) {
+            newSt.isFlat = true;
+            this.coreElementsChanged({ updateIsFlat: false });
+        } else {
+            this.coreElementsChanged();
+        }
         return newSt;
     }
 
@@ -327,7 +341,7 @@ export class Stream extends base.Music21Object {
     set elements(newElements) {
         let highestOffsetSoFar = 0.0;
         this._elements = [];
-        this._elementOffsets = [];
+        this._offsetDict = new WeakMap();
         const tempInsert = [];
         let i;
         let thisEl;
@@ -337,8 +351,7 @@ export class Stream extends base.Music21Object {
             if (thisElOffset === null || thisElOffset === highestOffsetSoFar) {
                 // append
                 this._elements.push(thisEl);
-                thisEl.offset = highestOffsetSoFar;
-                this._elementOffsets.push(highestOffsetSoFar);
+                this.setElementOffset(thisEl, highestOffsetSoFar);
                 if (thisEl.duration === undefined) {
                     console.error('No duration for ', thisEl, ' in ', this);
                 }
@@ -352,7 +365,8 @@ export class Stream extends base.Music21Object {
         for (i = 0; i < tempInsert.length; i++) {
             thisEl = tempInsert[i];
             this.insert(thisEl.offset, thisEl);
-        }
+        } 
+        this.coreElementsChanged(); // would be called already if newElements != [];
     }
 
     /* override protoM21Object.clone() */
@@ -362,30 +376,35 @@ export class Stream extends base.Music21Object {
             if ({}.hasOwnProperty.call(this, key) === false) {
                 continue;
             }
-            if (key === 'activeSite') {
+            if (key === '_activeSite') {
                 ret[key] = this[key];
             } else if (key === 'renderOptions') {
                 ret[key] = common.merge({}, this[key]);
             } else if (
                 deep !== true
-                && (key === '_elements' || key === '_elementOffsets')
+                && (key === '_elements')
             ) {
                 ret[key] = this[key].slice(); // shallow copy...
+            } else if (deep !== true && key === '_offsetDict') {
+                ret._offsetDict = new WeakMap();
+                for (const el of this.elements) {
+                    ret._offsetDict.set(el, this._offsetDict.get(el));
+                }
             } else if (
                 deep
-                && (key === '_elements' || key === '_elementOffsets')
+                && (key === '_elements' || key === '_offsetDict')
             ) {
                 if (key === '_elements') {
                     // console.log('got elements for deepcopy');
                     ret._elements = [];
-                    ret._elementOffsets = [];
+                    ret._offsetDict = new WeakMap();
                     for (let j = 0; j < this._elements.length; j++) {
-                        ret._elementOffsets[j] = this._elementOffsets[j];
                         const el = this._elements[j];
                         // console.log('cloning el: ', el.name);
                         const elCopy = el.clone(deep);
                         elCopy.activeSite = ret;
                         ret._elements[j] = elCopy;
+                        ret._offsetDict.set(elCopy, this._offsetDict.get(el));
                     }
                 }
             } else if (
@@ -420,7 +439,28 @@ export class Stream extends base.Music21Object {
                 ret[key] = this[key];
             }
         }
+        ret.coreElementsChanged();
         return ret;
+    }
+    
+    coreElementsChanged({ 
+        updateIsFlat=true,
+        clearIsSorted=true,
+        memo=undefined, // unused
+        keepIndex=false, // unused
+    }={}) {
+        if (clearIsSorted) {
+            this.isSorted = false;
+        }
+        if (updateIsFlat) {
+            this.isFlat = true;
+            for (const e of this._elements) {
+                if (e.isStream) {
+                    this.isFlat = false;
+                    break;
+                }
+            }
+        }
     }
 
     /**
@@ -448,14 +488,12 @@ export class Stream extends base.Music21Object {
             }
             let elOffset = 0.0;
             if (this._elements.length > 0) {
-                const lastQL = this._elements[this._elements.length - 1]
-                    .duration.quarterLength;
-                elOffset
-                    = this._elementOffsets[this._elementOffsets.length - 1]
-                    + lastQL;
+                const lastEl = this._elements[this._elements.length - 1];
+                const lastQL = lastEl.duration.quarterLength;
+                elOffset = this.elementOffset(lastEl) + lastQL;
             }
-            this._elementOffsets.push(elOffset);
             this._elements.push(el);
+            this.setElementOffset(el, elOffset);
             el.offset = elOffset;
             el.sites.add(this);
             el.activeSite = this; // would prefer weakref, but does not exist in JS.
@@ -469,6 +507,16 @@ export class Stream extends base.Music21Object {
                 err
             );
         }
+        this.coreElementsChanged({ clearIsSorted: false });
+        return this;
+    }
+    
+    sort() {
+        if (this.isSorted) {
+            return this;
+        }
+        this._elements.sort((a, b) => this._offsetDict.get(a) - this._offsetDict.get(b));
+        this.isSorted = true;
         return this;
     }
 
@@ -480,33 +528,23 @@ export class Stream extends base.Music21Object {
      * @param {music21.base.Music21Object} el - element to append
      * @returns {this}
      */
-    insert(offset, el) {
+    insert(offset, el, { ignoreSort=false, setActiveSite=true }={}) {
+        if (el === undefined) {
+            throw new StreamException('El must be given');
+        }
         try {
-            if (
-                el.isClassOrSubclass !== undefined
-                && el.isClassOrSubclass('NotRest')
-            ) {
-                // set stem direction on output
-                // this.clef.setStemDirection(el);
-            }
-            for (let i = 0; i < this._elements.length; i++) {
-                const testOffset = this._elementOffsets[i];
-                if (testOffset <= offset) {
-                    continue;
-                } else {
-                    this._elementOffsets.splice(i, 0, offset);
-                    this._elements.splice(i, 0, el);
-                    el.offset = offset;
-                    el.activeSite = this;
-                    return this;
+            if (!ignoreSort) {
+                if (offset <= this.highestTime) {
+                    this.isSorted = false;
                 }
             }
-            // no element found. insert at end;
-            this._elementOffsets.push(offset);
             this._elements.push(el);
-            el.offset = offset;
+            this.setElementOffset(el, offset);
             el.sites.add(this);
-            el.activeSite = this; // would prefer weakref, but does not exist in JS.
+            if (setActiveSite) {
+                el.activeSite = this;                    
+            }
+            this.coreElementsChanged({ clearIsSorted: false });
         } catch (err) {
             console.error(
                 'Cannot insert element ',
@@ -540,12 +578,13 @@ export class Stream extends base.Music21Object {
 
         let shiftingOffsets = false;
         for (let i = 0; i < this.length; i++) {
-            if (!shiftingOffsets && this._elementOffsets[i] >= offset) {
+            const existingEl = this._elements[i];
+            const existingElOffset = this.elementOffset(existingEl);
+            if (!shiftingOffsets && existingElOffset >= offset) {
                 shiftingOffsets = true;
             }
             if (shiftingOffsets) {
-                this._elementOffsets[i] += amountToShift;
-                this._elements[i].offset = this._elementOffsets[i];
+                this.setElementOffset(existingEl, existingElOffset + amountToShift);
             }
         }
         this.insert(offset, element);
@@ -556,17 +595,17 @@ export class Stream extends base.Music21Object {
      * Return the first matched index
      */
     index(el) {
-        let count = 0;
-        for (const e of this._elements) {
-            if (el === e) {
-                return count;
-            }
-            count += 1;
+        if (!this.isSorted && this.autoSort) {
+            this.sort();
+        }        
+        const index = this._elements.indexOf(el);
+        if (index === -1) {
+            // endElements
+            throw new StreamException(
+                `cannot find object (${el}) in Stream`
+                );            
         }
-        // endElements
-        throw new StreamException(
-            `cannot find object (${el}) in Stream`
-            );
+        return index;
     }
 
     /**
@@ -577,12 +616,16 @@ export class Stream extends base.Music21Object {
      * @returns {music21.base.Music21Object|undefined} last element in the stream
      */
     pop() {
+        if (!this.isSorted && this.autoSort) {
+            this.sort();
+        }        
         // remove last element;
         if (this.length > 0) {
             const el = this.get(-1);
-            this._elementOffsets.pop();
             this._elements.pop();
+            this._offsetDict.delete(el);
             el.sites.remove(this);
+            this.coreElementsChanged({ clearIsSorted: false });            
             return el;
         } else {
             return undefined;
@@ -590,11 +633,10 @@ export class Stream extends base.Music21Object {
     }
 
     /**
-     * Remove an object from this Stream
+     * Remove an object from this Stream.  shiftOffsets and recurse do nothing.
      */
     remove(targetOrList, 
             { 
-                firstMatchOnly=true, 
                 shiftOffsets=false, 
                 recurse=false,
             } = {}) {
@@ -631,13 +673,15 @@ export class Stream extends base.Music21Object {
                 throw err;
             }
             
-            // const matchOffset = this._elementOffsets[indexInStream];
+            // const matchOffset = this._offsetDict[indexInStream];
             // let match;
             // handle _endElements
             // let matchedEndElement = false;
             // let baseElementCount = this._elements.length;
             this._elements.splice(indexInStream, 1);
-            this._elementOffsets.splice(indexInStream, 1);
+            this._offsetDict.delete(target);
+            target.activeSite = undefined;
+            target.sites.remove(this);
             // remove from sites if needed.
 
 //            if (shiftOffsets) {
@@ -647,7 +691,7 @@ export class Stream extends base.Music21Object {
 //                let shiftedRegionEnd;
 //                if ((i + 1) < targetList.length) {
 //                    const nextElIndex = this.index(targetList[i + 1]);
-//                    const nextElOffset = this._elementOffsets[nextElIndex];
+//                    const nextElOffset = this._offsetDict[nextElIndex];
 //                    shiftedRegionEnd = nextElOffset;
 //                } else {
 //                    shiftedRegionEnd = this.duration.quarterLength;
@@ -668,7 +712,7 @@ export class Stream extends base.Music21Object {
 //                }
 //            }
         }
-        
+        this.coreElementsChanged({ clearIsSorted: false });                    
     }
     
     /**
@@ -693,9 +737,14 @@ export class Stream extends base.Music21Object {
                 throw err;
             }
         }
-        replacement.offset = this._elementOffsets[i];
+        const targetOffset = this.elementOffset(target);
         this._elements[i] = replacement;
-        target.offset = 0.0;
+        this._offsetDict.set(replacement, targetOffset);
+        this._offsetDict.delete(target);
+        target.activeSite = undefined;
+        replacement.activeSite = this;
+        target.sites.remove(this);
+        this.coreElementsChanged({ clearIsSorted: false });
     }
         
     /**
@@ -708,6 +757,10 @@ export class Stream extends base.Music21Object {
      */
     get(index) {
         // substitute for Python stream __getitem__; supports -1 indexing, etc.
+        if (!this.isSorted) {
+            this.sort();
+        }
+        
         let el;
         if (index === undefined) {
             return undefined;
@@ -717,62 +770,44 @@ export class Stream extends base.Music21Object {
             return undefined;
         } else if (index < 0) {
             el = this._elements[this._elements.length + index];
-            el.offset = this._elementOffsets[this._elements.length + index];
+            el.activeSite = this;
             return el;
         } else {
             el = this._elements[index];
-            el.offset = this._elementOffsets[index];
+            el.activeSite = this;
             return el;
         }
     }
 
-    setElementOffset(el, value, addElement = false) {
-        for (let i = 0; i < this.length; i++) {
-            if (this._elements[i] === el) {
-                this._elementOffsets[i] = value;
+    setElementOffset(el, value, addElement=false) {
+        if (!this._elements.includes(el)) {
+            if (addElement) {
+                this.insert(value, el);
                 return;
+            } else {
+                throw new StreamException(
+                        'Cannot set the offset for elemenet '
+                            + el.toString()
+                            + ', not in Stream'
+                );                
             }
         }
-        if (!addElement) {
-            throw new StreamException(
-                'Cannot set the offset for elemenet '
-                    + el.toString()
-                    + ', not in Stream'
-            );
-        } else {
-            this.insert(value, el);
-        }
+        this._offsetDict.set(el, value);
+        el.activeSite = this;
     }
 
-    elementOffset(element, stringReturns = false) {
-        for (let i = 0; i < this.length; i++) {
-            if (this._elements[i] === element) {
-                return this._elementOffsets[i];
-            }
+    elementOffset(element, stringReturns=false) {
+        if (!this._offsetDict.has(element)) {
+            throw new StreamException(
+                'An entry for this object ' + element.toString() + ' is not stored in this Stream.'
+            );
+        } else { 
+            return this._offsetDict.get(element);
         }
-        throw new StreamException(
-            'An entry for this object is not stored in this Stream.'
-        );
     }
 
     /*  --- ############# END ELEMENT FUNCTIONS ########## --- */
 
-    /**
-     * Returns Boolean about whether this stream contains any other streams.
-     *
-     * @memberof music21.stream.Stream
-     * @returns {Boolean}
-     */
-    hasSubStreams() {
-        let hasSubStreams = false;
-        for (const el of this) {
-            if (el.isClassOrSubclass('Stream')) {
-                hasSubStreams = true;
-                break;
-            }
-        }
-        return hasSubStreams;
-    }
     /**
      * Takes a stream and places all of its elements into
      * measures (:class:`~music21.stream.Measure` objects)
@@ -1460,7 +1495,7 @@ export class Stream extends base.Music21Object {
                 }
             }
             return maxLength;
-        } else if (this.hasSubStreams()) {
+        } else if (!this.isFlat) {
             // part
             totalLength = 0;
             for (i = 0; i < this.length; i++) {
@@ -1595,7 +1630,7 @@ export class Stream extends base.Music21Object {
      * @returns {JQueryDOMObject} svg in jquery.
      */
     createNewDOM(width, height, elementType='svg') {
-        if (this.hasSubStreams()) {
+        if (!this.isFlat) {
             this.setSubstreamRenderOptions();
         }
 
@@ -1846,7 +1881,7 @@ export class Stream extends base.Music21Object {
     recursiveGetStoredVexflowStave() {
         let storedVFStave = this.storedVexflowStave;
         if (storedVFStave === undefined) {
-            if (!this.hasSubStreams()) {
+            if (this.isFlat) {
                 return undefined;
             } else {
                 const subStreams = this.getElementsByClass('Stream');
@@ -1854,7 +1889,7 @@ export class Stream extends base.Music21Object {
                 if (storedVFStave === undefined) {
                     // TODO: bad programming ... should support continuous recurse
                     // but good enough for now...
-                    if (subStreams.get(0).hasSubStreams()) {
+                    if (!subStreams.get(0).isFlat) {
                         storedVFStave = subStreams.get(0).get(0)
                             .storedVexflowStave;
                     }
@@ -2425,7 +2460,7 @@ export class Part extends Stream {
             // console.log("Overridden staff width: " + this.renderOptions.overriddenWidth);
             return this.renderOptions.overriddenWidth;
         }
-        if (this.hasSubStreams()) {
+        if (!this.isFlat) {
             // part with Measures underneath
             let totalLength = 0;
             let isFirst = true;

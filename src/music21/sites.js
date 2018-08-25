@@ -13,10 +13,20 @@ import { Music21Exception } from './exceptions21';
  * @memberof music21
  * @requires music21/common
  */
-export const sites = {};
-
 export class SitesException extends Music21Exception {}
-sites.SitesException = SitesException;
+
+/**
+ * SiteRef.site is held strongly in Javascript.  This is
+ * actually NOT a problem because of the difference between
+ * the way JS Garbage Collection works from Python (in all
+ * browsers since IE6...). They follow reference chains and
+ * find unreachable references and don't just check reference
+ * counts.  Thus circular references still allow memory to be
+ * garbage collected.  Tested in Chrome on 100000 streams, and
+ * very small additional memory usage.
+ * 
+ * https://stackoverflow.com/questions/7347203/circular-references-in-javascript-garbage-collector
+ */
 
 export class SiteRef {
     constructor() {
@@ -24,18 +34,9 @@ export class SiteRef {
         this.classString = undefined;
         this.globalSiteIndex = false;
         this.siteIndex = undefined;
-        this.siteWeakref = new WeakMap();
-        this.siteWeakref.ref = undefined;
-    }
-    get site() {
-        return this.siteWeakref.ref;
-    }
-
-    set site(newSite) {
-        this.siteWeakref.ref = newSite;
+        this.site = undefined;
     }
 }
-sites.SiteRef = SiteRef;
 
 const _NoneSiteRef = new SiteRef();
 _NoneSiteRef.globalSiteIndex = -2;
@@ -45,13 +46,13 @@ const _singletonCounter = new common.SingletonCounter();
 
 const GLOBAL_SITE_STATE_DICT = new WeakMap();
 
-sites.getId = function getId(obj) {
+export function getId(obj) {
     if (!GLOBAL_SITE_STATE_DICT.has(obj)) {
         const newId = _singletonCounter.call();
         GLOBAL_SITE_STATE_DICT.set(obj, newId);
     }
     return GLOBAL_SITE_STATE_DICT.get(obj);
-};
+}
 
 export class Sites {
     constructor() {
@@ -88,7 +89,7 @@ export class Sites {
 
     add(obj, idKey, classString) {
         if (idKey === undefined && obj !== undefined) {
-            idKey = sites.getId(obj);
+            idKey = getId(obj);
         }
         let updateNotAdd = false;
         if (this.siteDict.has(idKey)) {
@@ -121,7 +122,7 @@ export class Sites {
     }
 
     remove(obj) {
-        const idKey = sites.getId(obj);
+        const idKey = getId(obj);
         if (idKey === undefined) {
             return false;
         }
@@ -148,7 +149,7 @@ export class Sites {
             keyRepository = Array.from(this.siteDict.keys());
         }
         if (priorityTarget !== undefined) {
-            const priorityId = sites.getId(priorityTarget);
+            const priorityId = getId(priorityTarget);
             if (keyRepository.includes(priorityId)) {
                 keyRepository.splice(
                     0,
@@ -174,7 +175,7 @@ export class Sites {
         }
     }
 
-    get(sortByCreationTime = false, priorityTarget, excludeNone = false) {
+    get(sortByCreationTime=false, priorityTarget, excludeNone=false) {
         const post = Array.from(
             this.yieldSites(sortByCreationTime, priorityTarget, excludeNone)
         );
@@ -235,7 +236,7 @@ export class Sites {
         }
         for (const obj of objs) {
             // TODO: check inside object... perhaps should not be done in m21p
-            const objId = sites.getId(obj);
+            const objId = getId(obj);
             if (!(objId in memo)) {
                 memo[objId] = obj;
             }
@@ -247,4 +248,3 @@ export class Sites {
         return post;
     }
 }
-sites.Sites = Sites;

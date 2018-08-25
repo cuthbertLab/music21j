@@ -216,13 +216,13 @@ export class Renderer {
 
         let isScorelike = false;
         let isPartlike = false;
-        const hasSubStreams = s.hasSubStreams();
+        const isFlat = s.isFlat;
 
         if (s.isClassOrSubclass('Score')) {
             isScorelike = true;
-        } else if (hasSubStreams && s.get(0).hasSubStreams()) {
+        } else if (!isFlat && !s.get(0).isFlat) {
             isScorelike = true;
-        } else if (hasSubStreams) {
+        } else if (!isFlat) {
             isPartlike = true;
         }
         // requires organization Score -> Part -> Measure -> elements...
@@ -1048,7 +1048,7 @@ export class Renderer {
                 let topVFStaff = thisPartMeasure.activeVFStave;
                 let bottomVFStaff = lastPartMeasure.activeVFStave;
                 if (topVFStaff === undefined) {
-                    if (thisPartMeasure.hasSubStreams()) {
+                    if (!thisPartMeasure.isFlat) {
                         const thisPartVoice = thisPartMeasure
                             .getElementsByClass('Stream')
                             .get(0);
@@ -1062,7 +1062,7 @@ export class Renderer {
                     }
                 }
                 if (bottomVFStaff === undefined) {
-                    if (lastPartMeasure.hasSubStreams()) {
+                    if (!lastPartMeasure.isFlat) {
                         const lastPartVoice = lastPartMeasure
                             .getElementsByClass('Stream')
                             .get(0);
