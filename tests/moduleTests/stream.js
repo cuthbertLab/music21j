@@ -17,6 +17,24 @@ export default function tests() {
             assert.equal(oct, 5, 'all notes are octave 5');
         }
     });
+    QUnit.test('music21.stream.Stream clone', assert => {
+        const s = new music21.stream.Stream();
+        s.append(new music21.note.Note('C#5'));
+        s.append(new music21.note.Note('D#5'));
+        const n = new music21.note.Note('F5');
+        n.duration.type = 'half';
+        s.insert(5.0, n);
+        const t = s.clone(true);     
+        assert.equal(t.length, s.length);
+        for (let i = 0; i < t.length; i++) {
+            const tEl = t.get(i);
+            const sEl = s.get(i);
+            assert.equal(tEl.offset, sEl.offset);
+            assert.equal(tEl.pitch.name, sEl.pitch.name);
+        }
+    });    
+    
+    
     QUnit.test('music21.stream.Stream remove, index, replace', assert => {
         const s = new music21.stream.Stream();
         s.append(new music21.note.Note('C#5'));

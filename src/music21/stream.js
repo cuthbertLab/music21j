@@ -408,9 +408,9 @@ export class Stream extends base.Music21Object {
                         const el = this._elements[j];
                         // console.log('cloning el: ', el.name);
                         const elCopy = el.clone(deep);
-                        elCopy.activeSite = ret;
                         ret._elements[j] = elCopy;
                         ret._offsetDict.set(elCopy, this._offsetDict.get(el));
+                        elCopy.activeSite = ret;
                     }
                 }
             } else if (

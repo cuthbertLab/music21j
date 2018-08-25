@@ -15364,9 +15364,9 @@
                               var _el = this._elements[j];
                               // console.log('cloning el: ', el.name);
                               var elCopy = _el.clone(deep);
-                              elCopy.activeSite = ret;
                               ret._elements[j] = elCopy;
                               ret._offsetDict.set(elCopy, this._offsetDict.get(_el));
+                              elCopy.activeSite = ret;
                           }
                       }
                   } else if (key === 'activeVexflowNote' || key === 'storedVexflowstave') {
