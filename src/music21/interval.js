@@ -8,6 +8,7 @@
  */
 import { common } from './common.js';
 import { debug } from './debug.js';
+import { note } from './note.js';
 import { prebase } from './prebase.js';
 import { pitch } from './pitch.js';
 
@@ -776,6 +777,8 @@ export class Interval extends prebase.ProtoM21Object {
     constructor(...restArgs) {
         super();
         // todo: allow full range of ways of specifying as in m21p
+        let noteStart;
+        let noteEnd;
         if (restArgs.length === 1) {
             const arg0 = restArgs[0];
             if (typeof arg0 === 'string') {
@@ -804,15 +807,30 @@ export class Interval extends prebase.ProtoM21Object {
                 this.diatonic = restArgs[0];
                 this.chromatic = restArgs[1];
             } else {
-                const n1 = restArgs[0];
-                const n2 = restArgs[1];
+                let n1 = restArgs[0];
+                let n2 = restArgs[1];
+                if (n1.classes !== undefined && n1.classes.includes('Pitch')) {
+                    const p1 = n1;
+                    n1 = new note.Note();
+                    n1.pitch = p1;
+                }
+                if (n2.classes !== undefined && n2.classes.includes('Pitch')) {
+                    const p2 = n2;
+                    n2 = new note.Note();
+                    n2.pitch = p2;
+                }
                 const gInt = interval.notesToGeneric(n1, n2);
                 const cInt = interval.notesToChromatic(n1, n2);
 
                 this.diatonic = interval.intervalsToDiatonic(gInt, cInt);
                 this.chromatic = cInt;
+                
+                noteStart = n1;
+                noteEnd = n2;
             }
         }
+        this._noteStart = noteStart;
+        this._noteEnd = noteEnd;
         this.reinit();
     }
     get complement() {
@@ -847,6 +865,31 @@ export class Interval extends prebase.ProtoM21Object {
         this.isStep = this.isChromaticStep || this.isDiatonicStep;
     }
 
+    get noteStart() {
+        return this._noteStart;
+    }
+    
+    set noteStart(n) {
+        this._noteStart = n;
+        const p1 = n.pitch;
+        const p2 = this.transposePitch(p1);
+        this._noteEnd = n.clone();
+        this._noteEnd.pitch = p2;
+    }
+
+    get noteEnd() {
+        return this._noteEnd;
+    }
+    
+    set noteEnd(n) {
+        this._noteEnd = n;
+        const p1 = n.pitch;
+        const p2 = this.transposePitch(p1, true);
+        this._noteStart = n.clone();
+        this._noteStart.pitch = p2;
+    }
+
+    
     /**
      * @memberof music21.interval.Interval
      * @returns {Boolean}
@@ -863,13 +906,13 @@ export class Interval extends prebase.ProtoM21Object {
 
     //  todo general: microtones
     /**
+     * TODO: maxAccidental
+     * 
      * @memberof music21.interval.Interval
      * @param {music21.pitch.Pitch} p - pitch to transpose
      * @returns {music21.pitch.Pitch}
      */
-    transposePitch(p) {
-        // todo: reverse, clearAccidentalDisplay, maxAccidental;
-
+    transposePitch(p, { reverse=false, maxAccidental=4 }={}) {
         /*
         var useImplicitOctave = false;
         if (p.octave === undefined) {
@@ -879,8 +922,12 @@ export class Interval extends prebase.ProtoM21Object {
         const pitch2 = this.diatonic.generic.transposePitch(p);
         pitch2.accidental = undefined;
         // step and octave are right now, but not necessarily accidental
-        const halfStepsToFix
-            = this.chromatic.semitones - parseInt(pitch2.ps - p.ps);
+        let halfStepsToFix;
+        if (!reverse) {
+            halfStepsToFix = this.chromatic.semitones - parseInt(pitch2.ps - p.ps);
+        } else {
+            halfStepsToFix = (-1 * this.chromatic.semitones) - parseInt(pitch2.ps - p.ps);
+        }
         if (halfStepsToFix !== 0) {
             pitch2.accidental = new pitch.Accidental(halfStepsToFix);
         }

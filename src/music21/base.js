@@ -71,7 +71,7 @@ export class Music21Object extends prebase.ProtoM21Object {
         this.isStream = false;
 
         this.groups = []; // custom object in m21p
-        // this.sites, this.activeSites, this.offset -- not yet...
+        
         // beat, measureNumber, etc.
         // lots to do...
         this._cloneCallbacks._activeSite = function Music21Object_cloneCallbacks_activeSite(
@@ -92,7 +92,7 @@ export class Music21Object extends prebase.ProtoM21Object {
     get activeSite() {
         return this._activeSite;
     }
-    
+        
     set activeSite(site) {
         if (site === undefined) {
             this._activeSite = undefined;
@@ -107,6 +107,20 @@ export class Music21Object extends prebase.ProtoM21Object {
             this._activeSite = site;
         }
     }
+    
+    get measureNumber() {
+        if (this.activeSite !== undefined && this.activeSite.classes.includes('Measure')) {
+            return this.activeSite.number;
+        } else {
+            const m = this.sites.getObjByClass('Measure');
+            if (m !== undefined) {
+                return m.number;
+            } else {
+                return undefined;
+            }            
+        }
+    }
+    
     get offset() {
         if (this.activeSite === undefined) {
             return this._naiveOffset;
