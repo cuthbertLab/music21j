@@ -408,7 +408,7 @@ export class Stream extends base.Music21Object {
             ) {
                 if (key === '_elements') {
                     // console.log('got elements for deepcopy');
-                    ret.clear()
+                    ret.clear();
                     for (let j = 0; j < this._elements.length; j++) {
                         const el = this._elements[j];
                         // console.log('cloning el: ', el.name);
@@ -760,7 +760,9 @@ export class Stream extends base.Music21Object {
         
     /**
      * Get the `index`th element from the Stream.  Equivalent to the
-     * music21p format of s[index].  Can use negative indexing to get from the end.
+     * music21p format of s[index] using __getitem__.  Can use negative indexing to get from the end.
+     *
+     * Once Proxy objects are supported by all operating systems for 
      *
      * @memberof music21.stream.Stream
      * @param {Int} index - can be -1, -2, to index from the end, like python
@@ -789,6 +791,19 @@ export class Stream extends base.Music21Object {
             return el;
         }
     }
+    
+    /**
+     * 
+     */    
+    set(index, newEl) {
+        const replaceEl = this.get(index);
+        if (replaceEl === undefined) {
+            throw new StreamException(`Cannot set element at index ${index}.`);
+        }
+        this.replace(replaceEl, newEl);
+        return this;
+    }
+    
 
     setElementOffset(el, value, addElement=false) {
         if (!this._elements.includes(el)) {

@@ -35,9 +35,10 @@ export default function tests() {
     });    
     
     
-    QUnit.test('music21.stream.Stream remove, index, replace', assert => {
+    QUnit.test('music21.stream.Stream remove, index, replace, set', assert => {
         const s = new music21.stream.Stream();
-        s.append(new music21.note.Note('C#5'));
+        const cs = new music21.note.Note('C#5');
+        s.append(cs);
         const d = new music21.note.Note('D#5');
         s.append(d); 
         const n = new music21.note.Note('F5'); 
@@ -63,6 +64,13 @@ export default function tests() {
         assert.equal(r.offset, 1.0, 'offset of r should be d-old offset of 1');
         assert.equal(s.index(r), 1, 'index of r in s should be 1');
         assert.throws(() => { s.index(d) }, /cannot find/, 'd is no longer in s');        
+        
+        const r2 = new music21.note.Rest();
+        r2.offset = 10; // ignored
+        s.set(0, r2);
+        assert.deepEqual(s.get(0), r2);
+        assert.equal(s.get(0).offset, 0.0, 'offset is now position in stream.'); 
+        assert.throws(() => { cs.getOffsetBySite(s) }, /not stored/, 'cs is no longer in s');        
     });
 
     QUnit.test('music21.stream.Stream.elements from stream', assert => {

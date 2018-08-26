@@ -1,5 +1,5 @@
 /**
- * music21j 0.9.0 built on  * 2018-08-25.
+ * music21j 0.9.0 built on  * 2018-08-26.
  * Copyright (c) 2013-2016 Michael Scott Cuthbert and cuthbertLab
  * BSD License, see LICENSE
  *
@@ -15796,7 +15796,9 @@
 
           /**
            * Get the `index`th element from the Stream.  Equivalent to the
-           * music21p format of s[index].  Can use negative indexing to get from the end.
+           * music21p format of s[index] using __getitem__.  Can use negative indexing to get from the end.
+           *
+           * Once Proxy objects are supported by all operating systems for 
            *
            * @memberof music21.stream.Stream
            * @param {Int} index - can be -1, -2, to index from the end, like python
@@ -15827,6 +15829,21 @@
                   el.activeSite = this;
                   return el;
               }
+          }
+
+          /**
+           * 
+           */
+
+      }, {
+          key: 'set',
+          value: function set(index, newEl) {
+              var replaceEl = this.get(index);
+              if (replaceEl === undefined) {
+                  throw new StreamException$1('Cannot set element at index ' + index + '.');
+              }
+              this.replace(replaceEl, newEl);
+              return this;
           }
       }, {
           key: 'setElementOffset',
@@ -23704,9 +23721,10 @@
           }
       });
 
-      QUnit.test('music21.stream.Stream remove, index, replace', function (assert) {
+      QUnit.test('music21.stream.Stream remove, index, replace, set', function (assert) {
           var s = new music21.stream.Stream();
-          s.append(new music21.note.Note('C#5'));
+          var cs = new music21.note.Note('C#5');
+          s.append(cs);
           var d = new music21.note.Note('D#5');
           s.append(d);
           var n = new music21.note.Note('F5');
@@ -23736,6 +23754,15 @@
           assert.throws(function () {
               s.index(d);
           }, /cannot find/, 'd is no longer in s');
+
+          var r2 = new music21.note.Rest();
+          r2.offset = 10; // ignored
+          s.set(0, r2);
+          assert.deepEqual(s.get(0), r2);
+          assert.equal(s.get(0).offset, 0.0, 'offset is now position in stream.');
+          assert.throws(function () {
+              cs.getOffsetBySite(s);
+          }, /not stored/, 'cs is no longer in s');
       });
 
       QUnit.test('music21.stream.Stream.elements from stream', function (assert) {
