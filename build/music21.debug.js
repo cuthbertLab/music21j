@@ -5631,6 +5631,7 @@
           _this2.perfectable = generic.perfectable;
           _this2.isDiatonicStep = generic.isDiatonicStep;
           _this2.isStep = generic.isStep;
+          _this2.isSkip = generic.isSkip;
 
           // generate inversions
           if (_this2.perfectable) {
@@ -5947,6 +5948,7 @@
               this.intervalClass = this.chromatic.intervalClass;
               this.cents = this.chromatic.cents;
               this.isStep = this.isChromaticStep || this.isDiatonicStep;
+              this.isSkip = this.diatonic.isSkip;
           }
       }, {
           key: 'isConsonant',

@@ -542,6 +542,7 @@ export class DiatonicInterval extends prebase.ProtoM21Object {
         this.perfectable = generic.perfectable;
         this.isDiatonicStep = generic.isDiatonicStep;
         this.isStep = generic.isStep;
+        this.isSkip = generic.isSkip;
 
         // generate inversions
         if (this.perfectable) {
@@ -863,6 +864,7 @@ export class Interval extends prebase.ProtoM21Object {
         this.intervalClass = this.chromatic.intervalClass;
         this.cents = this.chromatic.cents;
         this.isStep = this.isChromaticStep || this.isDiatonicStep;
+        this.isSkip = this.diatonic.isSkip;
     }
 
     get noteStart() {
