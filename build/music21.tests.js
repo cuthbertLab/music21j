@@ -15311,10 +15311,18 @@
               return newSt;
           }
       }, {
-          key: 'clone',
-
+          key: 'clear',
+          value: function clear() {
+              this._elements = [];
+              this._offsetDict = new WeakMap();
+              this.isFlat = true;
+              this.isSorted = true;
+          }
 
           /* override protoM21Object.clone() */
+
+      }, {
+          key: 'clone',
           value: function clone() {
               var deep = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
 
@@ -15358,8 +15366,7 @@
                   } else if (deep && (key === '_elements' || key === '_offsetDict')) {
                       if (key === '_elements') {
                           // console.log('got elements for deepcopy');
-                          ret._elements = [];
-                          ret._offsetDict = new WeakMap();
+                          ret.clear();
                           for (var j = 0; j < this._elements.length; j++) {
                               var _el = this._elements[j];
                               // console.log('cloning el: ', el.name);
@@ -17973,8 +17980,7 @@
           },
           set: function set(newElements) {
               var highestOffsetSoFar = 0.0;
-              this._elements = [];
-              this._offsetDict = new WeakMap();
+              this.clear();
               var tempInsert = [];
               var i = void 0;
               var thisEl = void 0;

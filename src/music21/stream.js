@@ -340,8 +340,7 @@ export class Stream extends base.Music21Object {
     }
     set elements(newElements) {
         let highestOffsetSoFar = 0.0;
-        this._elements = [];
-        this._offsetDict = new WeakMap();
+        this.clear();
         const tempInsert = [];
         let i;
         let thisEl;
@@ -375,6 +374,13 @@ export class Stream extends base.Music21Object {
         this.coreElementsChanged(); // would be called already if newElements != [];
     }
 
+    clear() {
+        this._elements = [];
+        this._offsetDict = new WeakMap();
+        this.isFlat = true;
+        this.isSorted = true;
+    }
+    
     /* override protoM21Object.clone() */
     clone(deep=true) {
         const ret = Object.create(this.constructor.prototype);
@@ -402,8 +408,7 @@ export class Stream extends base.Music21Object {
             ) {
                 if (key === '_elements') {
                     // console.log('got elements for deepcopy');
-                    ret._elements = [];
-                    ret._offsetDict = new WeakMap();
+                    ret.clear()
                     for (let j = 0; j < this._elements.length; j++) {
                         const el = this._elements[j];
                         // console.log('cloning el: ', el.name);
