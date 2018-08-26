@@ -21735,7 +21735,7 @@
 
       var p = new stream.Part();
       var m = new stream.Measure();
-      m.measureNumber = 1;
+      m.number = 1;
       var currentTSBarDuration = 4.0;
       var lastDurationQL = 1.0;
       var storedDict = {

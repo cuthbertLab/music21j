@@ -91,7 +91,7 @@ tinyNotation.TinyNotation = function TinyNotation(textIn) {
 
     let p = new stream.Part();
     let m = new stream.Measure();
-    m.measureNumber = 1;
+    m.number = 1;
     let currentTSBarDuration = 4.0;
     let lastDurationQL = 1.0;
     const storedDict = {
