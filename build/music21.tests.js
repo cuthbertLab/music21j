@@ -21735,6 +21735,7 @@
 
       var p = new stream.Part();
       var m = new stream.Measure();
+      m.measureNumber = 1;
       var currentTSBarDuration = 4.0;
       var lastDurationQL = 1.0;
       var storedDict = {
@@ -21744,12 +21745,15 @@
           endTupletAfterNote: false
       };
       var tnre = tinyNotation.regularExpressions; // faster typing
+      var measureNumber = 1;
       for (var i = 0; i < tokens.length; i++) {
           // check at first so that a full measure but not over full
           // gets returned as a stream.Measure object.
           if (m.duration.quarterLength >= currentTSBarDuration || Math.abs(m.duration.quarterLength - currentTSBarDuration) < 0.0001) {
               p.append(m);
+              measureNumber += 1;
               m = new stream.Measure();
+              m.number = measureNumber;
           }
 
           var token = tokens[i];

@@ -91,6 +91,7 @@ tinyNotation.TinyNotation = function TinyNotation(textIn) {
 
     let p = new stream.Part();
     let m = new stream.Measure();
+    m.measureNumber = 1;
     let currentTSBarDuration = 4.0;
     let lastDurationQL = 1.0;
     const storedDict = {
@@ -100,13 +101,16 @@ tinyNotation.TinyNotation = function TinyNotation(textIn) {
         endTupletAfterNote: false,
     };
     const tnre = tinyNotation.regularExpressions; // faster typing
+    let measureNumber = 1;
     for (let i = 0; i < tokens.length; i++) {
         // check at first so that a full measure but not over full
         // gets returned as a stream.Measure object.
         if ((m.duration.quarterLength >= currentTSBarDuration)
             || (Math.abs(m.duration.quarterLength - currentTSBarDuration) < 0.0001)) {
             p.append(m);
+            measureNumber += 1;
             m = new stream.Measure();
+            m.number = measureNumber;
         }
 
         let token = tokens[i];
