@@ -161,6 +161,18 @@ export class Stream extends base.Music21Object {
             yield this.get(i);
         }
     }
+    
+    forEach(callback, thisArg) {
+        if (thisArg !== undefined) {
+            callback = callback.bind(thisArg);
+        }
+        let i = 0;
+        for (const el of this) {
+            callback(el, i, this);
+            i += 1;
+        }
+    }
+    
 
     get duration() {
         if (this._duration !== undefined) {

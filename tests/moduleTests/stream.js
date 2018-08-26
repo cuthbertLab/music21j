@@ -35,6 +35,23 @@ export default function tests() {
     });    
     
     
+    QUnit.test('music21.stream.Stream iterate and forEach', assert => {        
+        const s = new music21.stream.Stream();
+        s.append(new music21.note.Note('C#5'));
+        s.append(new music21.note.Note('D#5'));
+        const names = [];
+        const indexes = [];
+        const lengths = [];        
+        s.forEach((el, i, stream) => {
+            names.push(el.name);
+            indexes.push(i);
+            lengths.push(stream.length);
+        });
+        assert.deepEqual(names, ['C#', 'D#']);
+        assert.deepEqual(indexes, [0, 1]);
+        assert.deepEqual(lengths, [2, 2]);        
+    });
+    
     QUnit.test('music21.stream.Stream remove, index, replace, set', assert => {
         const s = new music21.stream.Stream();
         const cs = new music21.note.Note('C#5');
