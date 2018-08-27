@@ -1,5 +1,5 @@
 /**
- * music21j 0.9.0 built on  * 2018-08-26.
+ * music21j 0.9.0 built on  * 2018-08-27.
  * Copyright (c) 2013-2016 Michael Scott Cuthbert and cuthbertLab
  * BSD License, see LICENSE
  *
@@ -17671,13 +17671,13 @@
           key: 'redrawDOM',
           value: function redrawDOM(svg) {
               // this.resetRenderOptions(true, true); // recursive, preserveEvents
-              // this.setSubstreamRenderOptions();
+              if (!this.isFlat) {
+                  this.setSubstreamRenderOptions();
+              }
               var $svg = $(svg); // works even if svg is already $jquery
               var $newSvg = this.createNewDOM(svg.width, svg.height);
               this.renderVexflow($newSvg);
               $svg.replaceWith($newSvg);
-              // this is no longer necessary.
-              // common.jQueryEventCopy($.event, $svg, $newCanv); /* copy events -- using custom extension... */
               return $newSvg;
           }
       }, {
@@ -18805,19 +18805,20 @@
                   // console.log("Overridden staff width: " + this.renderOptions.overriddenWidth);
                   return this.renderOptions.overriddenWidth;
               }
+              var maxWidth = -1;
               var _iteratorNormalCompletion31 = true;
               var _didIteratorError31 = false;
               var _iteratorError31 = undefined;
 
               try {
-                  for (var _iterator31 = this[Symbol.iterator](), _step31; !(_iteratorNormalCompletion31 = (_step31 = _iterator31.next()).done); _iteratorNormalCompletion31 = true) {
+                  for (var _iterator31 = this.parts[Symbol.iterator](), _step31; !(_iteratorNormalCompletion31 = (_step31 = _iterator31.next()).done); _iteratorNormalCompletion31 = true) {
                       var p = _step31.value;
 
-                      if (p.isClassOrSubclass('Part')) {
-                          return p.estimateStaffLength();
+                      var pWidth = p.estimateStaffLength();
+                      if (pWidth > maxWidth) {
+                          maxWidth = pWidth;
                       }
                   }
-                  // no parts found in score... use part...
               } catch (err) {
                   _didIteratorError31 = true;
                   _iteratorError31 = err;
@@ -18833,9 +18834,14 @@
                   }
               }
 
+              if (maxWidth > -1) {
+                  return maxWidth;
+              }
+
+              // no parts found in score... use part...
               console.log('no parts found in score');
               var tempPart = new stream.Part();
-              tempPart.elements = this.elements;
+              tempPart.elements = this;
               return tempPart.estimateStaffLength();
           }
 
@@ -18952,10 +18958,10 @@
               var _iteratorError34 = undefined;
 
               try {
-                  for (var _iterator34 = this[Symbol.iterator](), _step34; !(_iteratorNormalCompletion34 = (_step34 = _iterator34.next()).done); _iteratorNormalCompletion34 = true) {
-                      var el = _step34.value;
+                  for (var _iterator34 = this.parts[Symbol.iterator](), _step34; !(_iteratorNormalCompletion34 = (_step34 = _iterator34.next()).done); _iteratorNormalCompletion34 = true) {
+                      var p = _step34.value;
 
-                      measureWidthsArrayOfArrays.push(el.getMeasureWidths());
+                      measureWidthsArrayOfArrays.push(p.getMeasureWidths());
                   }
               } catch (err) {
                   _didIteratorError34 = true;
@@ -19072,30 +19078,28 @@
           value: function evenPartMeasureSpacing() {
               var measureStacks = [];
               var currentPartNumber = 0;
-              var maxMeasureWidth = [];
+              var maxMeasureWidth = []; // the maximum measure width among all parts
               var j = void 0;
               var _iteratorNormalCompletion35 = true;
               var _didIteratorError35 = false;
               var _iteratorError35 = undefined;
 
               try {
-                  for (var _iterator35 = this[Symbol.iterator](), _step35; !(_iteratorNormalCompletion35 = (_step35 = _iterator35.next()).done); _iteratorNormalCompletion35 = true) {
-                      var el = _step35.value;
+                  for (var _iterator35 = this.parts[Symbol.iterator](), _step35; !(_iteratorNormalCompletion35 = (_step35 = _iterator35.next()).done); _iteratorNormalCompletion35 = true) {
+                      var p = _step35.value;
 
-                      if (el.isClassOrSubclass('Part')) {
-                          var measureWidths = el.getMeasureWidths();
-                          for (j = 0; j < measureWidths.length; j++) {
-                              var thisMeasureWidth = measureWidths[j];
-                              if (measureStacks[j] === undefined) {
-                                  measureStacks[j] = [];
-                                  maxMeasureWidth[j] = thisMeasureWidth;
-                              } else if (thisMeasureWidth > maxMeasureWidth[j]) {
-                                  maxMeasureWidth[j] = thisMeasureWidth;
-                              }
-                              measureStacks[j][currentPartNumber] = thisMeasureWidth;
+                      var measureWidths = p.getMeasureWidths();
+                      for (j = 0; j < measureWidths.length; j++) {
+                          var thisMeasureWidth = measureWidths[j];
+                          if (measureStacks[j] === undefined) {
+                              measureStacks[j] = [];
+                              maxMeasureWidth[j] = thisMeasureWidth;
+                          } else if (thisMeasureWidth > maxMeasureWidth[j]) {
+                              maxMeasureWidth[j] = thisMeasureWidth;
                           }
-                          currentPartNumber += 1;
+                          measureStacks[j][currentPartNumber] = thisMeasureWidth;
                       }
+                      currentPartNumber += 1;
                   }
               } catch (err) {
                   _didIteratorError35 = true;
@@ -19116,13 +19120,34 @@
               for (var i = 0; i < maxMeasureWidth.length; i++) {
                   // TODO: do not assume, only elements in Score are Parts and in Parts are Measures...
                   var measureNewWidth = maxMeasureWidth[i];
-                  for (j = 0; j < this.length; j++) {
-                      var part = this.get(j);
-                      var measure = part.get(i);
-                      var rendOp = measure.renderOptions;
-                      rendOp.width = measureNewWidth;
-                      rendOp.left = currentLeft;
+                  var _iteratorNormalCompletion36 = true;
+                  var _didIteratorError36 = false;
+                  var _iteratorError36 = undefined;
+
+                  try {
+                      for (var _iterator36 = this.parts[Symbol.iterator](), _step36; !(_iteratorNormalCompletion36 = (_step36 = _iterator36.next()).done); _iteratorNormalCompletion36 = true) {
+                          var part = _step36.value;
+
+                          var measure = part.getElementsByClass('Measure').get(i);
+                          var rendOp = measure.renderOptions;
+                          rendOp.width = measureNewWidth;
+                          rendOp.left = currentLeft;
+                      }
+                  } catch (err) {
+                      _didIteratorError36 = true;
+                      _iteratorError36 = err;
+                  } finally {
+                      try {
+                          if (!_iteratorNormalCompletion36 && _iterator36.return) {
+                              _iterator36.return();
+                          }
+                      } finally {
+                          if (_didIteratorError36) {
+                              throw _iteratorError36;
+                          }
+                      }
                   }
+
                   currentLeft += measureNewWidth;
               }
               return this;
@@ -19165,6 +19190,8 @@
   // import { renderOptions } from './renderOptions.js';
   // import { common } from './common.js';
   /**
+   * 
+   * THIS IS CURRENTLY UNUSUED
    * Does not work yet, so not documented
    *
    */
@@ -19186,8 +19213,8 @@
       var parts = score.parts;
       // console.log(parts);
       var numParts = parts.length;
-      var partZero = parts[0];
-      var numMeasures = partZero.length;
+      var partZero = parts.get(0);
+      var numMeasures = partZero.getElementsByClass('Measure').length;
 
       var measureWidths = partZero.getMeasureWidths();
       var maxSystemWidth = containerWidth || score.maxSystemWidth; /* of course fix! */

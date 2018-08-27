@@ -318,6 +318,7 @@ export class Stream extends base.Music21Object {
     set autoBeam(ab) {
         this._autoBeam = ab;
     }
+    
     get maxSystemWidth() {
         let baseMaxSystemWidth = 750;
         if (
@@ -334,6 +335,7 @@ export class Stream extends base.Music21Object {
         this.renderOptions.maxSystemWidth
             = newSW * this.renderOptions.scaleFactor.x;
     }
+    
     get parts() {
         return this.getElementsByClass('Part');
     }
@@ -2196,13 +2198,13 @@ export class Stream extends base.Music21Object {
      */
     redrawDOM(svg) {
         // this.resetRenderOptions(true, true); // recursive, preserveEvents
-        // this.setSubstreamRenderOptions();
+        if (!this.isFlat) {
+            this.setSubstreamRenderOptions();
+        }
         const $svg = $(svg); // works even if svg is already $jquery
         const $newSvg = this.createNewDOM(svg.width, svg.height);
         this.renderVexflow($newSvg);
         $svg.replaceWith($newSvg);
-        // this is no longer necessary.
-        // common.jQueryEventCopy($.event, $svg, $newCanv); /* copy events -- using custom extension... */
         return $newSvg;
     }
 
@@ -2914,15 +2916,21 @@ export class Score extends Stream {
             // console.log("Overridden staff width: " + this.renderOptions.overriddenWidth);
             return this.renderOptions.overriddenWidth;
         }
-        for (const p of this) {
-            if (p.isClassOrSubclass('Part')) {
-                return p.estimateStaffLength();
+        let maxWidth = -1;
+        for (const p of this.parts) {
+            const pWidth = p.estimateStaffLength();
+            if (pWidth > maxWidth) {
+                maxWidth = pWidth;
             }
         }
+        if (maxWidth > -1) {
+            return maxWidth; 
+        }
+        
         // no parts found in score... use part...
         console.log('no parts found in score');
         const tempPart = new stream.Part();
-        tempPart.elements = this.elements;
+        tempPart.elements = this;
         return tempPart.estimateStaffLength();
     }
 
@@ -2981,8 +2989,8 @@ export class Score extends Stream {
         const measureWidthsArrayOfArrays = [];
         let i;
         // TODO: Do not crash on not partlike...
-        for (const el of this) {
-            measureWidthsArrayOfArrays.push(el.getMeasureWidths());
+        for (const p of this.parts) {
+            measureWidthsArrayOfArrays.push(p.getMeasureWidths());
         }
         for (i = 0; i < measureWidthsArrayOfArrays[0].length; i++) {
             let maxFound = 0;
@@ -3075,31 +3083,28 @@ export class Score extends Stream {
     evenPartMeasureSpacing() {
         const measureStacks = [];
         let currentPartNumber = 0;
-        const maxMeasureWidth = [];
+        const maxMeasureWidth = []; // the maximum measure width among all parts
         let j;
-        for (const el of this) {
-            if (el.isClassOrSubclass('Part')) {
-                const measureWidths = el.getMeasureWidths();
-                for (j = 0; j < measureWidths.length; j++) {
-                    const thisMeasureWidth = measureWidths[j];
-                    if (measureStacks[j] === undefined) {
-                        measureStacks[j] = [];
-                        maxMeasureWidth[j] = thisMeasureWidth;
-                    } else if (thisMeasureWidth > maxMeasureWidth[j]) {
-                        maxMeasureWidth[j] = thisMeasureWidth;
-                    }
-                    measureStacks[j][currentPartNumber] = thisMeasureWidth;
+        for (const p of this.parts) {
+            const measureWidths = p.getMeasureWidths();
+            for (j = 0; j < measureWidths.length; j++) {
+                const thisMeasureWidth = measureWidths[j];
+                if (measureStacks[j] === undefined) {
+                    measureStacks[j] = [];
+                    maxMeasureWidth[j] = thisMeasureWidth;
+                } else if (thisMeasureWidth > maxMeasureWidth[j]) {
+                    maxMeasureWidth[j] = thisMeasureWidth;
                 }
-                currentPartNumber += 1;
+                measureStacks[j][currentPartNumber] = thisMeasureWidth;
             }
+            currentPartNumber += 1;
         }
         let currentLeft = 20;
         for (let i = 0; i < maxMeasureWidth.length; i++) {
             // TODO: do not assume, only elements in Score are Parts and in Parts are Measures...
             const measureNewWidth = maxMeasureWidth[i];
-            for (j = 0; j < this.length; j++) {
-                const part = this.get(j);
-                const measure = part.get(i);
+            for (const part of this.parts) {
+                const measure = part.getElementsByClass('Measure').get(i);
                 const rendOp = measure.renderOptions;
                 rendOp.width = measureNewWidth;
                 rendOp.left = currentLeft;

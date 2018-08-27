@@ -7,6 +7,8 @@
 import { stream } from './stream.js';
 // import { common } from './common.js';
 /**
+ * 
+ * THIS IS CURRENTLY UNUSUED
  * Does not work yet, so not documented
  *
  */
@@ -31,8 +33,8 @@ layout.makeLayoutFromScore = function makeLayoutFromScore(
     const parts = score.parts;
     // console.log(parts);
     const numParts = parts.length;
-    const partZero = parts[0];
-    const numMeasures = partZero.length;
+    const partZero = parts.get(0);
+    const numMeasures = partZero.getElementsByClass('Measure').length;
 
     const measureWidths = partZero.getMeasureWidths();
     const maxSystemWidth
