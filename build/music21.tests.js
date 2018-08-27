@@ -15317,9 +15317,9 @@
 
               try {
                   for (var _iterator = this[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-                      var _el = _step.value;
+                      var el = _step.value;
 
-                      callback(_el, i, this);
+                      callback(el, i, this);
                       i += 1;
                   }
               } catch (err) {
@@ -15350,15 +15350,15 @@
 
                   try {
                       for (var _iterator2 = this[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-                          var _el2 = _step2.value;
+                          var el = _step2.value;
 
-                          if (_el2.isStream) {
+                          if (el.isStream) {
                               if (retainContainers) {
-                                  tempEls.push(_el2);
+                                  tempEls.push(el);
                               }
-                              var offsetShift = this.elementOffset(_el2);
+                              var offsetShift = this.elementOffset(el);
                               // console.log('offsetShift', offsetShift, el.classes[el.classes.length -1]);
-                              var elFlat = _el2._getFlatOrSemiFlat(retainContainers);
+                              var elFlat = el._getFlatOrSemiFlat(retainContainers);
                               var _iteratorNormalCompletion3 = true;
                               var _didIteratorError3 = false;
                               var _iteratorError3 = undefined;
@@ -15386,7 +15386,7 @@
                                   }
                               }
                           } else {
-                              newSt.insert(_el2, this.elementOffset(_el2));
+                              newSt.insert(el, this.elementOffset(el));
                           }
                       }
                   } catch (err) {
@@ -15447,9 +15447,9 @@
 
                       try {
                           for (var _iterator4 = this.elements[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
-                              var _el3 = _step4.value;
+                              var el = _step4.value;
 
-                              ret._offsetDict.set(_el3, this._offsetDict.get(_el3));
+                              ret._offsetDict.set(el, this._offsetDict.get(el));
                           }
                       } catch (err) {
                           _didIteratorError4 = true;
@@ -15470,11 +15470,11 @@
                           // console.log('got elements for deepcopy');
                           ret.clear();
                           for (var j = 0; j < this._elements.length; j++) {
-                              var _el4 = this._elements[j];
+                              var _el = this._elements[j];
                               // console.log('cloning el: ', el.name);
-                              var elCopy = _el4.clone(deep);
+                              var elCopy = _el.clone(deep);
                               ret._elements[j] = elCopy;
-                              ret._offsetDict.set(elCopy, this._offsetDict.get(_el4));
+                              ret._offsetDict.set(elCopy, this._offsetDict.get(_el));
                               elCopy.activeSite = ret;
                           }
                       }
@@ -15569,9 +15569,9 @@
 
                   try {
                       for (var _iterator6 = elOrElList[Symbol.iterator](), _step6; !(_iteratorNormalCompletion6 = (_step6 = _iterator6.next()).done); _iteratorNormalCompletion6 = true) {
-                          var _el5 = _step6.value;
+                          var _el2 = _step6.value;
 
-                          this.append(_el5);
+                          this.append(_el2);
                       }
                   } catch (err) {
                       _didIteratorError6 = true;
@@ -15737,12 +15737,12 @@
               }
               // remove last element;
               if (this.length > 0) {
-                  var _el6 = this.get(-1);
+                  var el = this.get(-1);
                   this._elements.pop();
-                  this._offsetDict.delete(_el6);
-                  _el6.sites.remove(this);
+                  this._offsetDict.delete(el);
+                  el.sites.remove(this);
                   this.coreElementsChanged({ clearIsSorted: false });
-                  return _el6;
+                  return el;
               } else {
                   return undefined;
               }
@@ -16283,9 +16283,9 @@
 
               try {
                   for (var _iterator12 = this[Symbol.iterator](), _step12; !(_iteratorNormalCompletion12 = (_step12 = _iterator12.next()).done); _iteratorNormalCompletion12 = true) {
-                      var _el7 = _step12.value;
+                      var el = _step12.value;
 
-                      if (_el7.lyric !== undefined) {
+                      if (el.lyric !== undefined) {
                           return true;
                       }
                   }
@@ -16646,21 +16646,21 @@
 
               try {
                   for (var _iterator17 = this[Symbol.iterator](), _step17; !(_iteratorNormalCompletion17 = (_step17 = _iterator17.next()).done); _iteratorNormalCompletion17 = true) {
-                      var _el8 = _step17.value;
+                      var el = _step17.value;
 
-                      if (_el8.pitch !== undefined) {
+                      if (el.pitch !== undefined) {
                           // note
-                          var p = _el8.pitch;
+                          var p = el.pitch;
                           var lastStepDict = lastOctaveStepList[p.octave];
                           this._makeAccidentalForOnePitch(p, lastStepDict, lastOctavelessStepDict);
-                      } else if (_el8._notes !== undefined) {
+                      } else if (el._notes !== undefined) {
                           // chord
                           var _iteratorNormalCompletion18 = true;
                           var _didIteratorError18 = false;
                           var _iteratorError18 = undefined;
 
                           try {
-                              for (var _iterator18 = _el8._notes[Symbol.iterator](), _step18; !(_iteratorNormalCompletion18 = (_step18 = _iterator18.next()).done); _iteratorNormalCompletion18 = true) {
+                              for (var _iterator18 = el._notes[Symbol.iterator](), _step18; !(_iteratorNormalCompletion18 = (_step18 = _iterator18.next()).done); _iteratorNormalCompletion18 = true) {
                                   var chordNote = _step18.value;
 
                                   var _p = chordNote.pitch;
@@ -16775,10 +16775,10 @@
 
                   try {
                       for (var _iterator19 = this[Symbol.iterator](), _step19; !(_iteratorNormalCompletion19 = (_step19 = _iterator19.next()).done); _iteratorNormalCompletion19 = true) {
-                          var _el9 = _step19.value;
+                          var el = _step19.value;
 
-                          if (_el9.isClassOrSubclass('Stream')) {
-                              _el9.resetRenderOptions(recursive, preserveEvents);
+                          if (el.isClassOrSubclass('Stream')) {
+                              el.resetRenderOptions(recursive, preserveEvents);
                           }
                       }
                   } catch (err) {
@@ -17012,22 +17012,22 @@
 
               var playNext = function playNext(elements, params) {
                   if (currentNoteIndex <= lastNoteIndex && !thisStream._stopPlaying) {
-                      var _el10 = elements[currentNoteIndex];
+                      var el = elements[currentNoteIndex];
                       var nextNote = void 0;
                       var playDuration = void 0;
                       if (currentNoteIndex < lastNoteIndex) {
                           nextNote = elements[currentNoteIndex + 1];
-                          playDuration = nextNote.offset - _el10.offset;
+                          playDuration = nextNote.offset - el.offset;
                       } else {
-                          playDuration = _el10.duration.quarterLength;
+                          playDuration = el.duration.quarterLength;
                       }
                       var milliseconds = playDuration * 1000 * 60 / params.tempo;
                       if (debug) {
-                          console.log('playing: ', _el10, playDuration, milliseconds, params.tempo);
+                          console.log('playing: ', el, playDuration, milliseconds, params.tempo);
                       }
 
-                      if (_el10.playMidi !== undefined) {
-                          _el10.playMidi(params.tempo, nextNote, params);
+                      if (el.playMidi !== undefined) {
+                          el.playMidi(params.tempo, nextNote, params);
                       }
                       currentNoteIndex += 1;
                       setTimeout(function () {
@@ -17883,9 +17883,9 @@
 
               try {
                   for (var _iterator22 = this[Symbol.iterator](), _step22; !(_iteratorNormalCompletion22 = (_step22 = _iterator22.next()).done); _iteratorNormalCompletion22 = true) {
-                      var _el11 = _step22.value;
+                      var el = _step22.value;
 
-                      if (_el11.isClassOrSubclass('Voice')) {
+                      if (el.isClassOrSubclass('Voice')) {
                           return true;
                       }
                   }
@@ -17927,11 +17927,11 @@
 
               try {
                   for (var _iterator23 = this[Symbol.iterator](), _step23; !(_iteratorNormalCompletion23 = (_step23 = _iterator23.next()).done); _iteratorNormalCompletion23 = true) {
-                      var _el12 = _step23.value;
+                      var el = _step23.value;
 
-                      var endTime = _el12.offset;
-                      if (_el12.duration !== undefined) {
-                          endTime += _el12.duration.quarterLength;
+                      var endTime = el.offset;
+                      if (el.duration !== undefined) {
+                          endTime += el.duration.quarterLength;
                       }
                       if (endTime > highestTime) {
                           highestTime = endTime;
@@ -18265,10 +18265,10 @@
 
               try {
                   for (var _iterator25 = this[Symbol.iterator](), _step25; !(_iteratorNormalCompletion25 = (_step25 = _iterator25.next()).done); _iteratorNormalCompletion25 = true) {
-                      var _el13 = _step25.value;
+                      var el = _step25.value;
 
-                      if (_el13.isClassOrSubclass('Measure')) {
-                          var elRendOp = _el13.renderOptions;
+                      if (el.isClassOrSubclass('Measure')) {
+                          var elRendOp = el.renderOptions;
                           measureWidths[elRendOp.measureIndex] = elRendOp.width;
                       }
                   }
@@ -18764,7 +18764,7 @@
                   for (var _iterator30 = this.parts[Symbol.iterator](), _step30; !(_iteratorNormalCompletion30 = (_step30 = _iterator30.next()).done); _iteratorNormalCompletion30 = true) {
                       var _p2 = _step30.value;
 
-                      el.fixSystemInformation(currentScoreHeight);
+                      _p2.fixSystemInformation(currentScoreHeight);
                   }
                   // fixing the systemInformation means that the partMeasureSpacing
                   // needs to be fixed again...
@@ -18865,10 +18865,10 @@
 
               try {
                   for (var _iterator32 = this[Symbol.iterator](), _step32; !(_iteratorNormalCompletion32 = (_step32 = _iterator32.next()).done); _iteratorNormalCompletion32 = true) {
-                      var _el14 = _step32.value;
+                      var el = _step32.value;
 
-                      if (_el14.isClassOrSubclass('Part')) {
-                          _el14.playStream(params);
+                      if (el.isClassOrSubclass('Part')) {
+                          el.playStream(params);
                       }
                   }
               } catch (err) {
@@ -18904,10 +18904,10 @@
 
               try {
                   for (var _iterator33 = this[Symbol.iterator](), _step33; !(_iteratorNormalCompletion33 = (_step33 = _iterator33.next()).done); _iteratorNormalCompletion33 = true) {
-                      var _el15 = _step33.value;
+                      var el = _step33.value;
 
-                      if (_el15.isClassOrSubclass('Part')) {
-                          _el15.stopPlayStream();
+                      if (el.isClassOrSubclass('Part')) {
+                          el.stopPlayStream();
                       }
                   }
               } catch (err) {

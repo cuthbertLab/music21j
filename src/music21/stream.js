@@ -2893,7 +2893,7 @@ export class Score extends Stream {
         const ignoreNumSystems = true;
         const currentScoreHeight = this.estimateStreamHeight(ignoreNumSystems);
         for (const p of this.parts) {
-            el.fixSystemInformation(currentScoreHeight);
+            p.fixSystemInformation(currentScoreHeight);
         }
         // fixing the systemInformation means that the partMeasureSpacing
         // needs to be fixed again...
