@@ -2654,71 +2654,69 @@ export class Part extends Stream {
         let lastKeySignature;
         let lastClef;
 
-        for (const el of this) {
-            if (el.isClassOrSubclass('Measure')) {
-                const elRendOp = el.renderOptions;
-                elRendOp.measureIndex = currentMeasureIndex;
-                elRendOp.top = rendOp.top;
-                elRendOp.partIndex = rendOp.partIndex;
-                elRendOp.left = currentMeasureLeft;
+        for (const m of this.getElementsByClass('Measure')) {
+            const mRendOp = m.renderOptions;
+            mRendOp.measureIndex = currentMeasureIndex;
+            mRendOp.top = rendOp.top;
+            mRendOp.partIndex = rendOp.partIndex;
+            mRendOp.left = currentMeasureLeft;
 
-                if (currentMeasureIndex === 0) {
-                    lastClef = el._clef;
-                    lastTimeSignature = el._timeSignature;
-                    lastKeySignature = el._keySignature;
+            if (currentMeasureIndex === 0) {
+                lastClef = m._clef;
+                lastTimeSignature = m._timeSignature;
+                lastKeySignature = m._keySignature;
 
-                    elRendOp.displayClef = true;
-                    elRendOp.displayKeySignature = true;
-                    elRendOp.displayTimeSignature = true;
+                mRendOp.displayClef = true;
+                mRendOp.displayKeySignature = true;
+                mRendOp.displayTimeSignature = true;
+            } else {
+                if (
+                    m._clef !== undefined
+                    && lastClef !== undefined
+                    && m._clef.name !== lastClef.name
+                ) {
+                    console.log(
+                        'changing clefs for ',
+                        mRendOp.measureIndex,
+                        ' from ',
+                        lastClef.name,
+                        ' to ',
+                        m._clef.name
+                    );
+                    lastClef = m._clef;
+                    mRendOp.displayClef = true;
                 } else {
-                    if (
-                        el._clef !== undefined
-                        && lastClef !== undefined
-                        && el._clef.name !== lastClef.name
-                    ) {
-                        console.log(
-                            'changing clefs for ',
-                            elRendOp.measureIndex,
-                            ' from ',
-                            lastClef.name,
-                            ' to ',
-                            el._clef.name
-                        );
-                        lastClef = el._clef;
-                        elRendOp.displayClef = true;
-                    } else {
-                        elRendOp.displayClef = false;
-                    }
-
-                    if (
-                        el._keySignature !== undefined
-                        && lastKeySignature !== undefined
-                        && el._keySignature.sharps !== lastKeySignature.sharps
-                    ) {
-                        lastKeySignature = el._keySignature;
-                        elRendOp.displayKeySignature = true;
-                    } else {
-                        elRendOp.displayKeySignature = false;
-                    }
-
-                    if (
-                        el._timeSignature !== undefined
-                        && lastTimeSignature !== undefined
-                        && el._timeSignature.ratioString
-                            !== lastTimeSignature.ratioString
-                    ) {
-                        lastTimeSignature = el._timeSignature;
-                        elRendOp.displayTimeSignature = true;
-                    } else {
-                        elRendOp.displayTimeSignature = false;
-                    }
+                    mRendOp.displayClef = false;
                 }
-                elRendOp.width
-                    = el.estimateStaffLength() + elRendOp.staffPadding;
-                elRendOp.height = el.estimateStreamHeight();
-                currentMeasureLeft += elRendOp.width;
-                currentMeasureIndex += 1;
+
+                if (
+                    m._keySignature !== undefined
+                    && lastKeySignature !== undefined
+                    && m._keySignature.sharps !== lastKeySignature.sharps
+                ) {
+                    lastKeySignature = m._keySignature;
+                    mRendOp.displayKeySignature = true;
+                } else {
+                    mRendOp.displayKeySignature = false;
+                }
+
+                if (
+                    m._timeSignature !== undefined
+                    && lastTimeSignature !== undefined
+                    && m._timeSignature.ratioString
+                        !== lastTimeSignature.ratioString
+                ) {
+                    lastTimeSignature = m._timeSignature;
+                    mRendOp.displayTimeSignature = true;
+                } else {
+                    mRendOp.displayTimeSignature = false;
+                }
             }
+            mRendOp.width
+                = m.estimateStaffLength() + mRendOp.staffPadding;
+            mRendOp.height = m.estimateStreamHeight();
+            currentMeasureLeft += mRendOp.width;
+            currentMeasureIndex += 1;        
         }
         return this;
     }
@@ -2884,23 +2882,22 @@ export class Score extends Stream {
         let currentPartNumber = 0;
         let currentPartTop = 0;
         const partSpacing = this.partSpacing;
-        for (const el of this) {
-            if (el.isClassOrSubclass('Part')) {
-                el.renderOptions.partIndex = currentPartNumber;
-                el.renderOptions.top = currentPartTop;
-                el.setSubstreamRenderOptions();
-                currentPartTop += partSpacing;
-                currentPartNumber += 1;
-            }
+        for (const p of this.parts) {
+            p.renderOptions.partIndex = currentPartNumber;
+            p.renderOptions.top = currentPartTop;
+            p.setSubstreamRenderOptions();
+            currentPartTop += partSpacing;
+            currentPartNumber += 1;
         }
         this.evenPartMeasureSpacing();
         const ignoreNumSystems = true;
         const currentScoreHeight = this.estimateStreamHeight(ignoreNumSystems);
-        for (const el of this) {
-            if (el.isClassOrSubclass('Part')) {
-                el.fixSystemInformation(currentScoreHeight);
-            }
+        for (const p of this.parts) {
+            el.fixSystemInformation(currentScoreHeight);
         }
+        // fixing the systemInformation means that the partMeasureSpacing
+        // needs to be fixed again...
+        this.evenPartMeasureSpacing();        
         this.renderOptions.height = this.estimateStreamHeight();
         return this;
     }
@@ -3101,7 +3098,6 @@ export class Score extends Stream {
         }
         let currentLeft = 20;
         for (let i = 0; i < maxMeasureWidth.length; i++) {
-            // TODO: do not assume, only elements in Score are Parts and in Parts are Measures...
             const measureNewWidth = maxMeasureWidth[i];
             for (const part of this.parts) {
                 const measure = part.getElementsByClass('Measure').get(i);
