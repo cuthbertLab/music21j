@@ -2589,12 +2589,22 @@ export class Part extends Stream {
             if (systemBreakIndexes.indexOf(i - 1) !== -1) {
                 /* first measure of new System */
                 const oldWidth = m.renderOptions.width;
+                const oldEstimate = m.estimateStaffLength() + m.renderOptions.staffPadding;
+                const offsetFromEstimate = oldWidth - oldEstimate;
+                // we look at the offset from the current estimate to see how much
+                // the staff length may have been adjusted to compensate for other
+                // parts with different lengths.                
+                
+                // but setting these options is bound to change something
                 m.renderOptions.displayClef = true;
                 m.renderOptions.displayKeySignature = true;
                 m.renderOptions.startNewSystem = true;
 
-                const newWidth
-                    = m.estimateStaffLength() + m.renderOptions.staffPadding;
+                // so we get a new estimate.
+                const newEstimate = m.estimateStaffLength() + m.renderOptions.staffPadding;
+
+                // and adjust it for the change.
+                const newWidth = newEstimate + offsetFromEstimate;
                 m.renderOptions.width = newWidth;
                 leftSubtract = currentLeft - 20;
                 // after this one, we'll have a new left subtract...
@@ -2895,9 +2905,6 @@ export class Score extends Stream {
         for (const p of this.parts) {
             p.fixSystemInformation(currentScoreHeight);
         }
-        // fixing the systemInformation means that the partMeasureSpacing
-        // needs to be fixed again...
-        this.evenPartMeasureSpacing();        
         this.renderOptions.height = this.estimateStreamHeight();
         return this;
     }
@@ -3077,7 +3084,7 @@ export class Score extends Stream {
      * @memberof music21.stream.Score
      * @returns {music21.stream.Score} this
      */
-    evenPartMeasureSpacing() {
+    evenPartMeasureSpacing({ setLeft=true }={}) {
         const measureStacks = [];
         let currentPartNumber = 0;
         const maxMeasureWidth = []; // the maximum measure width among all parts
@@ -3103,7 +3110,9 @@ export class Score extends Stream {
                 const measure = part.getElementsByClass('Measure').get(i);
                 const rendOp = measure.renderOptions;
                 rendOp.width = measureNewWidth;
-                rendOp.left = currentLeft;
+                if (setLeft) {
+                    rendOp.left = currentLeft;                    
+                }
             }
             currentLeft += measureNewWidth;
         }

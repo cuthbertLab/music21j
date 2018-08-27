@@ -18417,11 +18417,22 @@
                   if (systemBreakIndexes.indexOf(i - 1) !== -1) {
                       /* first measure of new System */
                       var oldWidth = m.renderOptions.width;
+                      var oldEstimate = m.estimateStaffLength() + m.renderOptions.staffPadding;
+                      var offsetFromEstimate = oldWidth - oldEstimate;
+                      // we look at the offset from the current estimate to see how much
+                      // the staff length may have been adjusted to compensate for other
+                      // parts with different lengths.                
+
+                      // but setting these options is bound to change something
                       m.renderOptions.displayClef = true;
                       m.renderOptions.displayKeySignature = true;
                       m.renderOptions.startNewSystem = true;
 
-                      var newWidth = m.estimateStaffLength() + m.renderOptions.staffPadding;
+                      // so we get a new estimate.
+                      var newEstimate = m.estimateStaffLength() + m.renderOptions.staffPadding;
+
+                      // and adjust it for the change.
+                      var newWidth = newEstimate + offsetFromEstimate;
                       m.renderOptions.width = newWidth;
                       leftSubtract = currentLeft - 20;
                       // after this one, we'll have a new left subtract...
@@ -18766,8 +18777,6 @@
 
                       _p2.fixSystemInformation(currentScoreHeight);
                   }
-                  // fixing the systemInformation means that the partMeasureSpacing
-                  // needs to be fixed again...
               } catch (err) {
                   _didIteratorError30 = true;
                   _iteratorError30 = err;
@@ -18783,7 +18792,6 @@
                   }
               }
 
-              this.evenPartMeasureSpacing();
               this.renderOptions.height = this.estimateStreamHeight();
               return this;
           }
@@ -19073,6 +19081,10 @@
       }, {
           key: 'evenPartMeasureSpacing',
           value: function evenPartMeasureSpacing() {
+              var _ref6 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
+                  _ref6$setLeft = _ref6.setLeft,
+                  setLeft = _ref6$setLeft === undefined ? true : _ref6$setLeft;
+
               var measureStacks = [];
               var currentPartNumber = 0;
               var maxMeasureWidth = []; // the maximum measure width among all parts
@@ -19127,7 +19139,9 @@
                           var measure = part.getElementsByClass('Measure').get(i);
                           var rendOp = measure.renderOptions;
                           rendOp.width = measureNewWidth;
-                          rendOp.left = currentLeft;
+                          if (setLeft) {
+                              rendOp.left = currentLeft;
+                          }
                       }
                   } catch (err) {
                       _didIteratorError36 = true;
