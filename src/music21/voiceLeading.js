@@ -313,8 +313,8 @@ class VoiceLeadingQuartet extends Music21Object {
 
     voiceOverlap() {
         return (
-            this.v1n2.pitch.ps <= this.v2n1.pitch.ps
-            || this.v2n2.pitch.ps >= this.v1n1.pitch.ps
+            this.v1n2.pitch.ps < this.v2n1.pitch.ps
+            || this.v2n2.pitch.ps > this.v1n1.pitch.ps
         );
     }
 

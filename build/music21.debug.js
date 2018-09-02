@@ -1,5 +1,5 @@
 /**
- * music21j 0.9.0 built on  * 2018-08-27.
+ * music21j 0.9.0 built on  * 2018-09-02.
  * Copyright (c) 2013-2016 Michael Scott Cuthbert and cuthbertLab
  * BSD License, see LICENSE
  *
@@ -22327,7 +22327,7 @@
       }, {
           key: 'voiceOverlap',
           value: function voiceOverlap() {
-              return this.v1n2.pitch.ps <= this.v2n1.pitch.ps || this.v2n2.pitch.ps >= this.v1n1.pitch.ps;
+              return this.v1n2.pitch.ps < this.v2n1.pitch.ps || this.v2n2.pitch.ps > this.v1n1.pitch.ps;
           }
 
           /**
