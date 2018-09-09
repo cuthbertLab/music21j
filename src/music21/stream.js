@@ -792,12 +792,8 @@ export class Stream extends base.Music21Object {
             }
         }
         const targetOffset = this.elementOffset(target);
-        this._elements[i] = replacement;
-        this._offsetDict.set(replacement, targetOffset);
-        this._offsetDict.delete(target);
-        target.activeSite = undefined;
-        replacement.activeSite = this;
-        target.sites.remove(this);
+        this.remove(target);
+        this.insert(targetOffset, replacement);
         this.coreElementsChanged({ clearIsSorted: false });
     }
 
