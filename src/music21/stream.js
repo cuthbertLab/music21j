@@ -25,6 +25,12 @@ import { pitch } from './pitch.js';
 import { renderOptions } from './renderOptions.js';
 import { vfShow } from './vfShow.js';
 
+import * as filters from './stream/filters.js';
+import * as iterator from './stream/iterator.js';
+
+export { filters };
+export { iterator };
+
 /**
  * powerful stream module, See {@link music21.stream} namespace
  * @exports music21/stream
@@ -49,7 +55,10 @@ import { vfShow } from './vfShow.js';
  * @requires music21/pitch
  * @requires jquery
  */
-export const stream = {};
+export const stream = {
+    filters,
+    iterator,
+};
 
 class StreamException extends Music21Exception {}
 
@@ -99,11 +108,11 @@ export class Stream extends base.Music21Object {
 
         this._elements = [];
         this._offsetDict = new WeakMap();
-        
+
         this.autoSort = true;
         this.isSorted = true;
         this.isFlat = true;
-        
+
         this._clef = undefined;
         this.displayClef = undefined;
 
@@ -156,12 +165,12 @@ export class Stream extends base.Music21Object {
         if (this.autoSort && !this.isSorted) {
             this.sort();
         }
-        
+
         for (let i = 0; i < this.length; i++) {
             yield this.get(i);
         }
     }
-    
+
     forEach(callback, thisArg) {
         if (thisArg !== undefined) {
             callback = callback.bind(thisArg);
@@ -172,7 +181,7 @@ export class Stream extends base.Music21Object {
             i += 1;
         }
     }
-    
+
 
     get duration() {
         if (this._duration !== undefined) {
@@ -318,7 +327,7 @@ export class Stream extends base.Music21Object {
     set autoBeam(ab) {
         this._autoBeam = ab;
     }
-    
+
     get maxSystemWidth() {
         let baseMaxSystemWidth = 750;
         if (
@@ -335,7 +344,7 @@ export class Stream extends base.Music21Object {
         this.renderOptions.maxSystemWidth
             = newSW * this.renderOptions.scaleFactor.x;
     }
-    
+
     get parts() {
         return this.getElementsByClass('Part');
     }
@@ -363,7 +372,7 @@ export class Stream extends base.Music21Object {
             for (const unused of newElements) {} // eslint-disable-line no-empty
             newElements = newElements.elements;
         }
-        
+
         for (i = 0; i < newElements.length; i++) {
             thisEl = newElements[i];
             const thisElOffset = thisEl.offset;
@@ -384,7 +393,7 @@ export class Stream extends base.Music21Object {
         for (i = 0; i < tempInsert.length; i++) {
             thisEl = tempInsert[i];
             this.insert(thisEl.offset, thisEl);
-        } 
+        }
         this.coreElementsChanged(); // would be called already if newElements != [];
     }
 
@@ -394,7 +403,7 @@ export class Stream extends base.Music21Object {
         this.isFlat = true;
         this.isSorted = true;
     }
-    
+
     /* override protoM21Object.clone() */
     clone(deep=true) {
         const ret = Object.create(this.constructor.prototype);
@@ -467,8 +476,8 @@ export class Stream extends base.Music21Object {
         ret.coreElementsChanged();
         return ret;
     }
-    
-    coreElementsChanged({ 
+
+    coreElementsChanged({
         updateIsFlat=true,
         clearIsSorted=true,
         memo=undefined, // unused
@@ -488,6 +497,26 @@ export class Stream extends base.Music21Object {
         }
     }
 
+    recurse({
+        streamsOnly=false,
+        restoreActiveSites=true,
+        classFilter=undefined,
+        skipSelf=true,
+    }={}) {
+        const includeSelf = !skipSelf;
+        const ri = new iterator.RecursiveIterator(this,
+            {
+                streamsOnly,
+                restoreActiveSites,
+                includeSelf,
+            }
+        );
+        if (classFilter !== undefined) {
+            ri.addFilter(new filters.ClassFilter(classFilter));
+        }
+        return ri;
+    }
+
     /**
      * Add an element to the end of the stream, setting its `.offset` accordingly
      *
@@ -502,7 +531,7 @@ export class Stream extends base.Music21Object {
             }
             return this;
         }
-        
+
         const el = elOrElList;
         try {
             if (
@@ -535,7 +564,7 @@ export class Stream extends base.Music21Object {
         this.coreElementsChanged({ clearIsSorted: false });
         return this;
     }
-    
+
     sort() {
         if (this.isSorted) {
             return this;
@@ -567,7 +596,7 @@ export class Stream extends base.Music21Object {
             this.setElementOffset(el, offset);
             el.sites.add(this);
             if (setActiveSite) {
-                el.activeSite = this;                    
+                el.activeSite = this;
             }
             this.coreElementsChanged({ clearIsSorted: false });
         } catch (err) {
@@ -614,21 +643,21 @@ export class Stream extends base.Music21Object {
         }
         this.insert(offset, element);
     }
-    
-    
+
+
     /**
      * Return the first matched index
      */
     index(el) {
         if (!this.isSorted && this.autoSort) {
             this.sort();
-        }        
+        }
         const index = this._elements.indexOf(el);
         if (index === -1) {
             // endElements
             throw new StreamException(
                 `cannot find object (${el}) in Stream`
-                );            
+                );
         }
         return index;
     }
@@ -643,14 +672,14 @@ export class Stream extends base.Music21Object {
     pop() {
         if (!this.isSorted && this.autoSort) {
             this.sort();
-        }        
+        }
         // remove last element;
         if (this.length > 0) {
             const el = this.get(-1);
             this._elements.pop();
             this._offsetDict.delete(el);
             el.sites.remove(this);
-            this.coreElementsChanged({ clearIsSorted: false });            
+            this.coreElementsChanged({ clearIsSorted: false });
             return el;
         } else {
             return undefined;
@@ -660,9 +689,9 @@ export class Stream extends base.Music21Object {
     /**
      * Remove an object from this Stream.  shiftOffsets and recurse do nothing.
      */
-    remove(targetOrList, 
-            { 
-                shiftOffsets=false, 
+    remove(targetOrList,
+            {
+                shiftOffsets=false,
                 recurse=false,
             } = {}) {
         if (shiftOffsets === true) {
@@ -680,7 +709,7 @@ export class Stream extends base.Music21Object {
         }
 //        if (targetList.length > 1) {
 //            sort targetList
-//        }        
+//        }
         // let shiftDur = 0.0; // for shiftOffsets
         let i = -1;
         for (const target of targetList) {
@@ -697,7 +726,7 @@ export class Stream extends base.Music21Object {
                 }
                 throw err;
             }
-            
+
             // const matchOffset = this._offsetDict[indexInStream];
             // let match;
             // handle _endElements
@@ -728,7 +757,7 @@ export class Stream extends base.Music21Object {
 //                       {
 //                           includeEndBoundary: false,
 //                           mustFinishInSpan: false,
-//                           mustBeginInSpan: false,                           
+//                           mustBeginInSpan: false,
 //                       }
 //                    )) {
 //                        const elementOffset = this.elementOffset(e);
@@ -737,24 +766,24 @@ export class Stream extends base.Music21Object {
 //                }
 //            }
         }
-        this.coreElementsChanged({ clearIsSorted: false });                    
+        this.coreElementsChanged({ clearIsSorted: false });
     }
-    
+
     /**
      *  Given a `target` object, replace it with
      *  the supplied `replacement` object.
-     *  
+     *
      *  `recurse` and `allDerived` do not currently work.
-     *  
+     *
      *  Does nothing if target cannot be found.
-     */    
+     */
     replace(target, replacement, {
         recurse=false,
         allDerivated=true,
     } = {}) {
         let i;
         try {
-            i = this.index(target);            
+            i = this.index(target);
         } catch (err) {
             if (err instanceof StreamException) {
                 return;
@@ -771,12 +800,12 @@ export class Stream extends base.Music21Object {
         target.sites.remove(this);
         this.coreElementsChanged({ clearIsSorted: false });
     }
-        
+
     /**
      * Get the `index`th element from the Stream.  Equivalent to the
      * music21p format of s[index] using __getitem__.  Can use negative indexing to get from the end.
      *
-     * Once Proxy objects are supported by all operating systems for 
+     * Once Proxy objects are supported by all operating systems for
      *
      * @memberof music21.stream.Stream
      * @param {Int} index - can be -1, -2, to index from the end, like python
@@ -787,7 +816,7 @@ export class Stream extends base.Music21Object {
         if (!this.isSorted) {
             this.sort();
         }
-        
+
         let el;
         if (index === undefined) {
             return undefined;
@@ -805,10 +834,10 @@ export class Stream extends base.Music21Object {
             return el;
         }
     }
-    
+
     /**
-     * 
-     */    
+     *
+     */
     set(index, newEl) {
         const replaceEl = this.get(index);
         if (replaceEl === undefined) {
@@ -817,7 +846,7 @@ export class Stream extends base.Music21Object {
         this.replace(replaceEl, newEl);
         return this;
     }
-    
+
 
     setElementOffset(el, value, addElement=false) {
         if (!this._elements.includes(el)) {
@@ -829,7 +858,7 @@ export class Stream extends base.Music21Object {
                         'Cannot set the offset for elemenet '
                             + el.toString()
                             + ', not in Stream'
-                );                
+                );
             }
         }
         this._offsetDict.set(el, value);
@@ -841,7 +870,7 @@ export class Stream extends base.Music21Object {
             throw new StreamException(
                 'An entry for this object ' + element.toString() + ' is not stored in this Stream.'
             );
-        } else { 
+        } else {
             return this._offsetDict.get(element);
         }
     }
@@ -978,6 +1007,24 @@ export class Stream extends base.Music21Object {
             return this; // javascript style;
         }
     }
+
+    containerInHierarchy(el, { setActiveSite=true }={}) {
+        const elSites = el.sites;
+        for (const s of this.recurse({
+            skipSelf: false,
+            streamOnly: true,
+            restoreActiveSites: false,
+        })) {
+            if (elSites.includes(s)) {
+                if (setActiveSite) {
+                    el.activeSite = s;
+                }
+                return s;
+            }
+        }
+        return undefined;
+    }
+
 
     /**
      * Return a new Stream or modify this stream
@@ -1122,18 +1169,18 @@ export class Stream extends base.Music21Object {
         newSt.elements = tempEls;
         return newSt;
     }
-    
+
     /**
      * Returns a new stream [StreamIterator does not yet exist in music21j]
      * containing all Music21Objects that are found at a certain offset or
      * within a certain offset time range (given the offsetStart and
      * (optional) offsetEnd values).
-     * 
-     * See music21p documentation for the effect of various parameters. 
+     *
+     * See music21p documentation for the effect of various parameters.
      */
     getElementsByOffset(
-        offsetStart, 
-        offsetEnd, 
+        offsetStart,
+        offsetEnd,
         {
             includeEndBoundary=true,
             mustFinishInSpan=false,
@@ -1141,7 +1188,7 @@ export class Stream extends base.Music21Object {
             includeElementsThatEndAtStart=true,
             classList=undefined,
         }={}) {
-                        
+
         let s = this;
         if (classList !== undefined) {
             s = this.getElementsByClass(classList);
@@ -1149,7 +1196,7 @@ export class Stream extends base.Music21Object {
         let zeroLengthSearch = false;
         if (offsetEnd === undefined) {
             offsetEnd = offsetStart;
-            zeroLengthSearch = true;            
+            zeroLengthSearch = true;
         } else if (offsetEnd <= offsetStart) {
             zeroLengthSearch = true;
         }
@@ -1165,30 +1212,30 @@ export class Stream extends base.Music21Object {
                 // anything that finishes before the span ends is definitely out
                 return false;
             }
-            
+
             // some part of the element is at least touching some part of span.
-            
+
             let elementIsZeroLength = false;
             if (dur.quarterLength === 0) {
                 elementIsZeroLength = true;
-            }                        
+            }
             if (zeroLengthSearch && elementIsZeroLength) {
                 return true;
             }
-            
+
             if (mustFinishInSpan) {
                 if (elementEnd > offsetEnd) {
-                    return false;                    
+                    return false;
                 }
                 if (!includeEndBoundary && offset === offsetEnd) {
                     return false;
                 }
-            } 
-            
+            }
+
             if (mustBeginInSpan) {
                 if (offset < offsetStart) {
                     return false;
-                }  
+                }
                 if (!includeEndBoundary && offset === offsetEnd) {
                     return false;
                 }
@@ -1204,7 +1251,7 @@ export class Stream extends base.Music21Object {
             }
             return true;
         };
-        
+
         const retStream = s.clone(false);
         retStream.elements = [];
         for (const e of s) {
@@ -1215,7 +1262,7 @@ export class Stream extends base.Music21Object {
         }
         return retStream;
     }
-    
+
     /**
      *  Given an element (from another Stream) returns the single element
      *  in this Stream that is sounding while the given element starts.
@@ -1226,7 +1273,7 @@ export class Stream extends base.Music21Object {
      *  is of the same class, then the first element encountered is
      *  returned. For more complex usages, use allPlayingWhileSounding.
      *
-     *  Returns None if no elements fit the bill.        
+     *  Returns None if no elements fit the bill.
      *
      *  The optional elStream is the stream in which el is found.
      *  If provided, el's offset
@@ -1235,13 +1282,13 @@ export class Stream extends base.Music21Object {
      *  in case you are paranoid that el.offset might not be what
      *  you want, because of some fancy manipulation of
      *  el.activeSite
-     *   
+     *
      * @memberof music21.stream.Stream
      * @param {music21.base.Music21Object} el - object with an offset and class to search for.
      * @param {music21.stream.Stream|undefined} elStream - a place to get el's offset from.
      * @returns {music21.stream.Stream}
      * @returns {music21.base.Music21Object|undefined}
-     */    
+     */
     playingWhenAttacked(el, elStream) {
         let elOffset;
         if (elStream !== undefined) {
@@ -1249,7 +1296,7 @@ export class Stream extends base.Music21Object {
         } else {
             elOffset = el.offset;
         }
-        
+
         const otherElements = this.getElementsByOffset(elOffset, elOffset, { mustBeginInSpan: false });
         if (otherElements.length === 0) {
             return undefined;
@@ -1262,10 +1309,10 @@ export class Stream extends base.Music21Object {
                 }
             }
             return otherElements.get(0);
-        }        
+        }
     }
-    
-    
+
+
     /**
      * Sets Pitch.accidental.displayStatus for every element with a
      * pitch or pitches in the stream. If a natural needs to be displayed
@@ -1435,7 +1482,7 @@ export class Stream extends base.Music21Object {
 
         if (this.autoBeam === true) {
             try {
-                this.makeBeams({ inPlace: true });                
+                this.makeBeams({ inPlace: true });
             } catch (e) {
                 if (!e.toString().includes('Time Signature')) {
                     throw e;
@@ -2593,8 +2640,8 @@ export class Part extends Stream {
                 const offsetFromEstimate = oldWidth - oldEstimate;
                 // we look at the offset from the current estimate to see how much
                 // the staff length may have been adjusted to compensate for other
-                // parts with different lengths.                
-                
+                // parts with different lengths.
+
                 // but setting these options is bound to change something
                 m.renderOptions.displayClef = true;
                 m.renderOptions.displayKeySignature = true;
@@ -2726,7 +2773,7 @@ export class Part extends Stream {
                 = m.estimateStaffLength() + mRendOp.staffPadding;
             mRendOp.height = m.estimateStreamHeight();
             currentMeasureLeft += mRendOp.width;
-            currentMeasureIndex += 1;        
+            currentMeasureIndex += 1;
         }
         return this;
     }
@@ -2928,9 +2975,9 @@ export class Score extends Stream {
             }
         }
         if (maxWidth > -1) {
-            return maxWidth; 
+            return maxWidth;
         }
-        
+
         // no parts found in score... use part...
         console.log('no parts found in score');
         const tempPart = new stream.Part();
@@ -3111,7 +3158,7 @@ export class Score extends Stream {
                 const rendOp = measure.renderOptions;
                 rendOp.width = measureNewWidth;
                 if (setLeft) {
-                    rendOp.left = currentLeft;                    
+                    rendOp.left = currentLeft;
                 }
             }
             currentLeft += measureNewWidth;

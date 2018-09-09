@@ -1,5 +1,5 @@
 /**
- * music21j 0.9.0 built on  * 2018-09-02.
+ * music21j 0.9.0 built on  * 2018-09-09.
  * Copyright (c) 2013-2016 Michael Scott Cuthbert and cuthbertLab
  * BSD License, see LICENSE
  *
@@ -169,6 +169,31 @@
     }
 
     return target;
+  };
+
+  var get = function get(object, property, receiver) {
+    if (object === null) object = Function.prototype;
+    var desc = Object.getOwnPropertyDescriptor(object, property);
+
+    if (desc === undefined) {
+      var parent = Object.getPrototypeOf(object);
+
+      if (parent === null) {
+        return undefined;
+      } else {
+        return get(parent, property, receiver);
+      }
+    } else if ("value" in desc) {
+      return desc.value;
+    } else {
+      var getter = desc.get;
+
+      if (getter === undefined) {
+        return undefined;
+      }
+
+      return getter.call(receiver);
+    }
   };
 
   var inherits = function (subClass, superClass) {
@@ -2018,6 +2043,8 @@
            * Return the offset of this element in a given site -- use .offset if you are sure that
            * site === activeSite.
            *
+           * Raises an Error if not in site.
+           *
            * Does not change activeSite or .offset
            *
            * @memberof music21.base.Music21Object
@@ -2049,6 +2076,58 @@
               } else {
                   this._naiveOffset = value;
               }
+          }
+
+          /**
+           * For an element which may not be in site, but might be in a Stream
+           * in site (or further in streams), find the cumulative offset of the
+           * clement in that site.
+           *
+           * See also music21.stream.iterator.RecursiveIterator.currentHierarchyOffset for
+           * a method that is about 10x faster when running through a recursed stream.
+           *
+           * @memberof music21.base.Music21Object
+           * @param {music21.stream.Stream} site
+           * @returns Number|undefined
+           */
+
+      }, {
+          key: 'getOffsetInHierarchy',
+          value: function getOffsetInHierarchy(site) {
+              try {
+                  return this.getOffsetBySite(site);
+              } catch (e) {} // eslint-disable-line no-empty
+              var _iteratorNormalCompletion = true;
+              var _didIteratorError = false;
+              var _iteratorError = undefined;
+
+              try {
+                  for (var _iterator = this.contextSites()[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+                      var _step$value = slicedToArray(_step.value, 3),
+                          csSite = _step$value[0],
+                          csOffset = _step$value[1],
+                          unused_csRecursionType = _step$value[2];
+
+                      if (csSite === site) {
+                          return csOffset;
+                      }
+                  }
+              } catch (err) {
+                  _didIteratorError = true;
+                  _iteratorError = err;
+              } finally {
+                  try {
+                      if (!_iteratorNormalCompletion && _iterator.return) {
+                          _iterator.return();
+                      }
+                  } finally {
+                      if (_didIteratorError) {
+                          throw _iteratorError;
+                      }
+                  }
+              }
+
+              throw new Error('Element ' + this + ' is not in hierarchy of ' + site);
           }
 
           // ---------- Contexts -------------
@@ -2113,19 +2192,19 @@
                   return this;
               }
 
-              var _iteratorNormalCompletion = true;
-              var _didIteratorError = false;
-              var _iteratorError = undefined;
+              var _iteratorNormalCompletion2 = true;
+              var _didIteratorError2 = false;
+              var _iteratorError2 = undefined;
 
               try {
-                  for (var _iterator = this.contextSites({
+                  for (var _iterator2 = this.contextSites({
                       returnSortTuples: true,
                       sortByCreationTime: sortByCreationTime
-                  })[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-                      var _step$value = slicedToArray(_step.value, 3),
-                          site = _step$value[0],
-                          positionStart = _step$value[1],
-                          searchType = _step$value[2];
+                  })[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+                      var _step2$value = slicedToArray(_step2.value, 3),
+                          site = _step2$value[0],
+                          positionStart = _step2$value[1],
+                          searchType = _step2$value[2];
 
                       if (getElementMethod.includes('At') && site.isClassOrSubclass(className)) {
                           return site;
@@ -2156,16 +2235,16 @@
                       }
                   }
               } catch (err) {
-                  _didIteratorError = true;
-                  _iteratorError = err;
+                  _didIteratorError2 = true;
+                  _iteratorError2 = err;
               } finally {
                   try {
-                      if (!_iteratorNormalCompletion && _iterator.return) {
-                          _iterator.return();
+                      if (!_iteratorNormalCompletion2 && _iterator2.return) {
+                          _iterator2.return();
                       }
                   } finally {
-                      if (_didIteratorError) {
-                          throw _iteratorError;
+                      if (_didIteratorError2) {
+                          throw _iteratorError2;
                       }
                   }
               }
@@ -2175,7 +2254,7 @@
       }, {
           key: 'contextSites',
           value: regeneratorRuntime.mark(function contextSites(options) {
-              var params, memo, recursionType, _iteratorNormalCompletion2, _didIteratorError2, _iteratorError2, _iterator2, _step2, siteObj, offsetInStream, newOffset, positionInStream, _recursionType, newParams, _iteratorNormalCompletion3, _didIteratorError3, _iteratorError3, _iterator3, _step3, _step3$value, topLevel, inStreamPos, recurType, inStreamOffset;
+              var params, memo, recursionType, _iteratorNormalCompletion3, _didIteratorError3, _iteratorError3, _iterator3, _step3, siteObj, offsetInStream, newOffset, positionInStream, _recursionType, newParams, _iteratorNormalCompletion4, _didIteratorError4, _iteratorError4, _iterator4, _step4, _step4$value, topLevel, inStreamPos, recurType, inStreamOffset;
 
               return regeneratorRuntime.wrap(function contextSites$(_context) {
                   while (1) {
@@ -2219,20 +2298,20 @@
                                   params.priorityTarget = this.activeSite;
                               }
                               // const topLevel = this;
-                              _iteratorNormalCompletion2 = true;
-                              _didIteratorError2 = false;
-                              _iteratorError2 = undefined;
+                              _iteratorNormalCompletion3 = true;
+                              _didIteratorError3 = false;
+                              _iteratorError3 = undefined;
                               _context.prev = 14;
-                              _iterator2 = this.sites.yieldSites(params.sortByCreationTime, params.priorityTarget, true // excludeNone
+                              _iterator3 = this.sites.yieldSites(params.sortByCreationTime, params.priorityTarget, true // excludeNone
                               )[Symbol.iterator]();
 
                           case 16:
-                              if (_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done) {
+                              if (_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done) {
                                   _context.next = 62;
                                   break;
                               }
 
-                              siteObj = _step2.value;
+                              siteObj = _step3.value;
 
                               if (!memo.includes(siteObj)) {
                                   _context.next = 20;
@@ -2270,19 +2349,19 @@
                                   returnSortTuples: true, // always!
                                   sortByCreationTime: params.sortByCreationTime
                               };
-                              _iteratorNormalCompletion3 = true;
-                              _didIteratorError3 = false;
-                              _iteratorError3 = undefined;
+                              _iteratorNormalCompletion4 = true;
+                              _didIteratorError4 = false;
+                              _iteratorError4 = undefined;
                               _context.prev = 33;
-                              _iterator3 = siteObj.contextSites(newParams)[Symbol.iterator]();
+                              _iterator4 = siteObj.contextSites(newParams)[Symbol.iterator]();
 
                           case 35:
-                              if (_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done) {
+                              if (_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done) {
                                   _context.next = 45;
                                   break;
                               }
 
-                              _step3$value = slicedToArray(_step3.value, 3), topLevel = _step3$value[0], inStreamPos = _step3$value[1], recurType = _step3$value[2];
+                              _step4$value = slicedToArray(_step4.value, 3), topLevel = _step4$value[0], inStreamPos = _step4$value[1], recurType = _step4$value[2];
                               inStreamOffset = inStreamPos; // .offset;
                               // const hypotheticalPosition = inStreamOffset; // more complex w/ sortTuples
 
@@ -2298,7 +2377,7 @@
                               memo.push(topLevel);
 
                           case 42:
-                              _iteratorNormalCompletion3 = true;
+                              _iteratorNormalCompletion4 = true;
                               _context.next = 35;
                               break;
 
@@ -2309,26 +2388,26 @@
                           case 47:
                               _context.prev = 47;
                               _context.t0 = _context['catch'](33);
-                              _didIteratorError3 = true;
-                              _iteratorError3 = _context.t0;
+                              _didIteratorError4 = true;
+                              _iteratorError4 = _context.t0;
 
                           case 51:
                               _context.prev = 51;
                               _context.prev = 52;
 
-                              if (!_iteratorNormalCompletion3 && _iterator3.return) {
-                                  _iterator3.return();
+                              if (!_iteratorNormalCompletion4 && _iterator4.return) {
+                                  _iterator4.return();
                               }
 
                           case 54:
                               _context.prev = 54;
 
-                              if (!_didIteratorError3) {
+                              if (!_didIteratorError4) {
                                   _context.next = 57;
                                   break;
                               }
 
-                              throw _iteratorError3;
+                              throw _iteratorError4;
 
                           case 57:
                               return _context.finish(54);
@@ -2337,7 +2416,7 @@
                               return _context.finish(51);
 
                           case 59:
-                              _iteratorNormalCompletion2 = true;
+                              _iteratorNormalCompletion3 = true;
                               _context.next = 16;
                               break;
 
@@ -2348,26 +2427,26 @@
                           case 64:
                               _context.prev = 64;
                               _context.t1 = _context['catch'](14);
-                              _didIteratorError2 = true;
-                              _iteratorError2 = _context.t1;
+                              _didIteratorError3 = true;
+                              _iteratorError3 = _context.t1;
 
                           case 68:
                               _context.prev = 68;
                               _context.prev = 69;
 
-                              if (!_iteratorNormalCompletion2 && _iterator2.return) {
-                                  _iterator2.return();
+                              if (!_iteratorNormalCompletion3 && _iterator3.return) {
+                                  _iterator3.return();
                               }
 
                           case 71:
                               _context.prev = 71;
 
-                              if (!_didIteratorError2) {
+                              if (!_didIteratorError3) {
                                   _context.next = 74;
                                   break;
                               }
 
-                              throw _iteratorError2;
+                              throw _iteratorError3;
 
                           case 74:
                               return _context.finish(71);
@@ -15118,6 +15197,874 @@
   }();
   vfShow.Renderer = Renderer;
 
+  // import common from '../common.js';
+  var FilterException = function (_Music21Exception) {
+      inherits(FilterException, _Music21Exception);
+
+      function FilterException() {
+          classCallCheck(this, FilterException);
+          return possibleConstructorReturn(this, (FilterException.__proto__ || Object.getPrototypeOf(FilterException)).apply(this, arguments));
+      }
+
+      return FilterException;
+  }(Music21Exception);
+
+  var _StopIteration = function _StopIteration() {
+      classCallCheck(this, _StopIteration);
+  };
+
+  var StopIterationSingleton = new _StopIteration();
+
+  var StreamFilter = function () {
+      function StreamFilter() {
+          classCallCheck(this, StreamFilter);
+      }
+
+      createClass(StreamFilter, [{
+          key: 'reset',
+          value: function reset() {}
+      }, {
+          key: 'call',
+          value: function call(item, iterator) {
+              return true;
+          }
+      }], [{
+          key: 'derivationStr',
+          get: function get() {
+              return 'streamFilter';
+          }
+      }]);
+      return StreamFilter;
+  }();
+
+  var IsFilter = function (_StreamFilter) {
+      inherits(IsFilter, _StreamFilter);
+      createClass(IsFilter, null, [{
+          key: 'derivationStr',
+          get: function get() {
+              return 'is';
+          }
+      }]);
+
+      function IsFilter() {
+          var target = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
+          classCallCheck(this, IsFilter);
+
+          var _this2 = possibleConstructorReturn(this, (IsFilter.__proto__ || Object.getPrototypeOf(IsFilter)).call(this));
+
+          if (!Array.isArray(target)) {
+              target = [target];
+          }
+          _this2.target = target;
+          _this2.numToFind = target.length;
+          return _this2;
+      }
+
+      createClass(IsFilter, [{
+          key: 'reset',
+          value: function reset() {
+              this.numToFind = this.target.length;
+          }
+      }, {
+          key: 'call',
+          value: function call(item, iterator) {
+              if (this.numToFind === 0) {
+                  return StopIterationSingleton;
+              }
+              if (this.target.includes(item)) {
+                  this.numToFind -= 1;
+                  return true;
+              } else {
+                  return false;
+              }
+          }
+      }]);
+      return IsFilter;
+  }(StreamFilter);
+
+  var IsNotFilter = function (_IsFilter) {
+      inherits(IsNotFilter, _IsFilter);
+      createClass(IsNotFilter, null, [{
+          key: 'derivationStr',
+          get: function get() {
+              return 'IsNot';
+          }
+      }]);
+
+      function IsNotFilter(target) {
+          classCallCheck(this, IsNotFilter);
+
+          var _this3 = possibleConstructorReturn(this, (IsNotFilter.__proto__ || Object.getPrototypeOf(IsNotFilter)).call(this, target));
+
+          _this3.numToFind = Number.MAX_SAFE_INTEGER;
+          return _this3;
+      }
+
+      createClass(IsNotFilter, [{
+          key: 'reset',
+          value: function reset() {}
+      }, {
+          key: 'call',
+          value: function call(item, iterator) {
+              var ret = get(IsNotFilter.prototype.__proto__ || Object.getPrototypeOf(IsNotFilter.prototype), 'call', this).call(this, item, iterator);
+              if (ret === StopIterationSingleton) {
+                  return ret;
+              } else {
+                  return !ret;
+              }
+          }
+      }]);
+      return IsNotFilter;
+  }(IsFilter);
+
+  // TODO(msc): IdFilter
+
+  var ClassFilter = function (_StreamFilter2) {
+      inherits(ClassFilter, _StreamFilter2);
+      createClass(ClassFilter, null, [{
+          key: 'derivationStr',
+          get: function get() {
+              return 'getElementsByClass';
+          }
+      }]);
+
+      function ClassFilter() {
+          var classList = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
+          classCallCheck(this, ClassFilter);
+
+          var _this4 = possibleConstructorReturn(this, (ClassFilter.__proto__ || Object.getPrototypeOf(ClassFilter)).call(this));
+
+          if (!Array.isArray(classList)) {
+              classList = [classList];
+          }
+          _this4.classList = classList;
+          return _this4;
+      }
+      // TODO: __eq__
+
+      createClass(ClassFilter, [{
+          key: 'call',
+          value: function call(item, iterator) {
+              return item.isClassOrSubclass(this.classList);
+          }
+      }]);
+      return ClassFilter;
+  }(StreamFilter);
+
+  var ClassNotFilter = function (_ClassFilter) {
+      inherits(ClassNotFilter, _ClassFilter);
+
+      function ClassNotFilter() {
+          classCallCheck(this, ClassNotFilter);
+          return possibleConstructorReturn(this, (ClassNotFilter.__proto__ || Object.getPrototypeOf(ClassNotFilter)).apply(this, arguments));
+      }
+
+      createClass(ClassNotFilter, [{
+          key: 'call',
+          value: function call(item, iterator) {
+              return !get(ClassNotFilter.prototype.__proto__ || Object.getPrototypeOf(ClassNotFilter.prototype), 'call', this).call(this, item, iterator);
+          }
+      }], [{
+          key: 'derivationStr',
+          get: function get() {
+              return 'getElementsNotOfClass';
+          }
+      }]);
+      return ClassNotFilter;
+  }(ClassFilter);
+
+  // TODO: GroupFilter
+  // TODO: OffsetFilter (high priority)
+  // TODO: OffsetHierarchyFilter
+
+
+
+  var filters = Object.freeze({
+      FilterException: FilterException,
+      StopIterationSingleton: StopIterationSingleton,
+      StreamFilter: StreamFilter,
+      IsFilter: IsFilter,
+      IsNotFilter: IsNotFilter,
+      ClassFilter: ClassFilter,
+      ClassNotFilter: ClassNotFilter
+  });
+
+  // import common from '../common.js';
+  var StopIterationSingleton$1 = StopIterationSingleton;
+
+  var StreamIteratorException = function (_StreamException) {
+      inherits(StreamIteratorException, _StreamException);
+
+      function StreamIteratorException() {
+          classCallCheck(this, StreamIteratorException);
+          return possibleConstructorReturn(this, (StreamIteratorException.__proto__ || Object.getPrototypeOf(StreamIteratorException)).apply(this, arguments));
+      }
+
+      return StreamIteratorException;
+  }(StreamException);
+
+  var StreamIterator = function () {
+      function StreamIterator(srcStream) {
+          var _ref = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
+              _ref$filterList = _ref.filterList,
+              filterList = _ref$filterList === undefined ? [] : _ref$filterList,
+              _ref$restoreActiveSit = _ref.restoreActiveSites,
+              restoreActiveSites = _ref$restoreActiveSit === undefined ? true : _ref$restoreActiveSit,
+              _ref$activeInformatio = _ref.activeInformation,
+              activeInformation = _ref$activeInformatio === undefined ? undefined : _ref$activeInformatio,
+              _ref$ignoreSorting = _ref.ignoreSorting,
+              ignoreSorting = _ref$ignoreSorting === undefined ? false : _ref$ignoreSorting;
+
+          classCallCheck(this, StreamIterator);
+
+          if (!ignoreSorting && !srcStream.isSorted && srcStream.autoSort) {
+              srcStream.sort();
+          }
+          this.srcStream = srcStream;
+          this.index = 0;
+
+          this.srcStreamElements = srcStream.elements;
+          this.streamLength = this.srcStreamElements.length;
+
+          this.iterSection = '_elements';
+
+          this.cleanupOnStop = false;
+          this.restoreActiveSites = restoreActiveSites;
+          this.overrideDerivation = undefined;
+          if (!Array.isArray(filterList)) {
+              filterList = [filterList];
+          }
+          this.filters = filterList;
+          this._len = undefined;
+          this._matchingElements = undefined;
+
+          if (activeInformation === undefined) {
+              this.activeInformation = {};
+              this.updateActiveInformation();
+          } else {
+              this.activeInformation = activeInformation;
+          }
+      }
+
+      createClass(StreamIterator, [{
+          key: Symbol.iterator,
+          value: regeneratorRuntime.mark(function value() {
+              var e, matches;
+              return regeneratorRuntime.wrap(function value$(_context) {
+                  while (1) {
+                      switch (_context.prev = _context.next) {
+                          case 0:
+                              this.reset();
+
+                          case 1:
+                              if (!(this.index < this.streamLength)) {
+                                  _context.next = 22;
+                                  break;
+                              }
+
+                              this.index += 1;
+                              e = void 0;
+                              _context.prev = 4;
+
+                              e = this.srcStreamElements[this.index - 1];
+                              _context.next = 11;
+                              break;
+
+                          case 8:
+                              _context.prev = 8;
+                              _context.t0 = _context['catch'](4);
+                              return _context.abrupt('continue', 1);
+
+                          case 11:
+                              matches = this.matchesFilters(e);
+
+                              if (!(matches === false)) {
+                                  _context.next = 14;
+                                  break;
+                              }
+
+                              return _context.abrupt('continue', 1);
+
+                          case 14:
+                              if (!(matches === StopIterationSingleton$1)) {
+                                  _context.next = 16;
+                                  break;
+                              }
+
+                              return _context.abrupt('break', 22);
+
+                          case 16:
+                              if (this.restoreActiveSites) {
+                                  e.activeSite = this.srcStream;
+                              }
+                              this.updateActiveInformation();
+                              _context.next = 20;
+                              return e;
+
+                          case 20:
+                              _context.next = 1;
+                              break;
+
+                          case 22:
+                              this.cleanup();
+
+                          case 23:
+                          case 'end':
+                              return _context.stop();
+                      }
+                  }
+              }, value, this, [[4, 8]]);
+          })
+      }, {
+          key: 'get',
+          value: function get(k) {
+              var fe = this.matchingElements();
+              if (k < 0) {
+                  k = fe.length + k;
+              }
+              return fe[k];
+          }
+      }, {
+          key: 'updateActiveInformation',
+          value: function updateActiveInformation() {
+              var ai = this.activeInformation;
+              ai.stream = this.srcStream;
+              ai.index = this.index - 1;
+              ai.iterSection = this.iterSection;
+              ai.sectionIndex = this.sectionIndex;
+          }
+      }, {
+          key: 'reset',
+          value: function reset() {
+              this.index = 0;
+              this.iterSection = '_elements';
+              this.updateActiveInformation();
+              for (var f in this.filters) {
+                  if (f.reset !== undefined) {
+                      f.reset();
+                  }
+              }
+          }
+      }, {
+          key: 'resetCaches',
+          value: function resetCaches() {
+              this._len = undefined;
+              this._matchingElements = undefined;
+          }
+      }, {
+          key: 'cleanup',
+          value: function cleanup() {
+              if (this.cleanupOnStep) {
+                  this.reset();
+                  this.srcStream = undefined;
+                  this.srcStreamElements = [];
+              }
+          }
+      }, {
+          key: 'matchingElements',
+          value: function matchingElements() {
+              if (this._matchingElements !== undefined) {
+                  return this._matchingElements;
+              }
+
+              var savedIndex = this.index;
+              var savedRestoreActiveSites = this.restoreActiveSites;
+              this.restoreActiveSites = true;
+
+              var me = []; // matching elements
+              var _iteratorNormalCompletion = true;
+              var _didIteratorError = false;
+              var _iteratorError = undefined;
+
+              try {
+                  for (var _iterator = this[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+                      var e = _step.value;
+
+                      me.push(e);
+                  }
+              } catch (err) {
+                  _didIteratorError = true;
+                  _iteratorError = err;
+              } finally {
+                  try {
+                      if (!_iteratorNormalCompletion && _iterator.return) {
+                          _iterator.return();
+                      }
+                  } finally {
+                      if (_didIteratorError) {
+                          throw _iteratorError;
+                      }
+                  }
+              }
+
+              this.reset();
+              this.index = savedIndex;
+              this.restoreActiveSites = savedRestoreActiveSites;
+              this._matchingElements = me;
+              return me;
+          }
+      }, {
+          key: 'matchesFilters',
+          value: function matchesFilters(e) {
+              var _iteratorNormalCompletion2 = true;
+              var _didIteratorError2 = false;
+              var _iteratorError2 = undefined;
+
+              try {
+                  for (var _iterator2 = this.filters[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+                      var f = _step2.value;
+
+                      var ret = f.call(e, this);
+                      if (ret === false) {
+                          return false; // must === false;
+                      }
+                      if (ret === StopIterationSingleton$1) {
+                          return ret;
+                      }
+                  }
+              } catch (err) {
+                  _didIteratorError2 = true;
+                  _iteratorError2 = err;
+              } finally {
+                  try {
+                      if (!_iteratorNormalCompletion2 && _iterator2.return) {
+                          _iterator2.return();
+                      }
+                  } finally {
+                      if (_didIteratorError2) {
+                          throw _iteratorError2;
+                      }
+                  }
+              }
+
+              return true;
+          }
+      }, {
+          key: 'stream',
+          value: function stream() {
+              var ss = this.srcStream;
+              // let clearIsSorted = false;
+
+              var found = ss.clone(false);
+              found.elements = [];
+              // derivation;
+              var fe = this.matchingElements();
+              var _iteratorNormalCompletion3 = true;
+              var _didIteratorError3 = false;
+              var _iteratorError3 = undefined;
+
+              try {
+                  for (var _iterator3 = fe[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+                      var e = _step3.value;
+
+                      var o = ss.elementOffset(e, { stringReturns: true });
+                      // try: getOffsetInHierarchy...
+                      // string returns;
+                      found.insert(o, e);
+                  }
+                  // if (fe.length) {
+                  //     found.coreElementsChanged()
+                  // }
+              } catch (err) {
+                  _didIteratorError3 = true;
+                  _iteratorError3 = err;
+              } finally {
+                  try {
+                      if (!_iteratorNormalCompletion3 && _iterator3.return) {
+                          _iterator3.return();
+                      }
+                  } finally {
+                      if (_didIteratorError3) {
+                          throw _iteratorError3;
+                      }
+                  }
+              }
+
+              return found;
+          }
+      }, {
+          key: 'addFilter',
+          value: function addFilter(newFilter) {
+              var _iteratorNormalCompletion4 = true;
+              var _didIteratorError4 = false;
+              var _iteratorError4 = undefined;
+
+              try {
+                  for (var _iterator4 = this.filters[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
+                      var f = _step4.value;
+
+                      if (newFilter === f) {
+                          return this; // will not work... because == overrides.
+                      }
+                  }
+              } catch (err) {
+                  _didIteratorError4 = true;
+                  _iteratorError4 = err;
+              } finally {
+                  try {
+                      if (!_iteratorNormalCompletion4 && _iterator4.return) {
+                          _iterator4.return();
+                      }
+                  } finally {
+                      if (_didIteratorError4) {
+                          throw _iteratorError4;
+                      }
+                  }
+              }
+
+              this.filters.push(newFilter);
+              this.resetCaches();
+              return this;
+          }
+      }, {
+          key: 'removeFilter',
+          value: function removeFilter(oldFilter) {
+              var index = this.filters.indexOf(oldFilter);
+              if (index !== -1) {
+                  this.filters.splice(index, 1);
+              }
+              this.resetCaches();
+              return this;
+          }
+
+          // getElementById(elementId) {
+          //
+          // }
+
+      }, {
+          key: 'getElementsByClass',
+          value: function getElementsByClass(classFilterList) {
+              return this.addFilter(new ClassFilter(classFilterList));
+          }
+      }, {
+          key: 'getElementsNotOfClass',
+          value: function getElementsNotOfClass(classFilterList) {
+              return this.addFilter(new ClassNotFilter(classFilterList));
+          }
+
+          // getElementsByGroup;
+          // getElementsByOffset;
+          //
+
+      }, {
+          key: 'length',
+          get: function get() {
+              if (this._len !== undefined) {
+                  return this._len;
+              }
+              this._len = this.matchingElements().length;
+              this.reset();
+              return this._len;
+          }
+      }, {
+          key: 'activeElementList',
+          get: function get() {
+              return this.activeInformation.stream[this.activeInformation.iterSection];
+          }
+      }, {
+          key: 'notes',
+          get: function get() {
+              return this.addFilter(new ClassFilter('NotRest'));
+          }
+      }, {
+          key: 'notesAndRests',
+          get: function get() {
+              return this.addFilter(new ClassFilter('GeneralNote'));
+          }
+      }, {
+          key: 'parts',
+          get: function get() {
+              return this.addFilter(new ClassFilter('Part'));
+          }
+      }, {
+          key: 'spanners',
+          get: function get() {
+              return this.addFilter(new ClassFilter('Spanner'));
+          }
+      }, {
+          key: 'voices',
+          get: function get() {
+              return this.addFilter(new ClassFilter('Voice'));
+          }
+      }]);
+      return StreamIterator;
+  }();
+
+  // OffsetIterator
+
+  var RecursiveIterator = function (_StreamIterator) {
+      inherits(RecursiveIterator, _StreamIterator);
+
+      function RecursiveIterator(srcStream) {
+          var _ref2 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
+              filterList = _ref2.filterList,
+              restoreActiveSites = _ref2.restoreActiveSites,
+              activeInformation = _ref2.activeInformation,
+              _ref2$streamsOnly = _ref2.streamsOnly,
+              streamsOnly = _ref2$streamsOnly === undefined ? false : _ref2$streamsOnly,
+              _ref2$includeSelf = _ref2.includeSelf,
+              includeSelf = _ref2$includeSelf === undefined ? false : _ref2$includeSelf,
+              ignoreSorting = _ref2.ignoreSorting;
+
+          classCallCheck(this, RecursiveIterator);
+
+          var _this2 = possibleConstructorReturn(this, (RecursiveIterator.__proto__ || Object.getPrototypeOf(RecursiveIterator)).call(this, srcStream, {
+              filterList: filterList,
+              restoreActiveSites: restoreActiveSites,
+              activeInformation: activeInformation,
+              ignoreSorting: ignoreSorting
+          }));
+
+          _this2.returnSelf = includeSelf;
+          _this2.includeSelf = includeSelf;
+          _this2.ignoreSorting = ignoreSorting;
+          _this2.iteratorStartOffsetInHierarchy = 0.0;
+          if (streamsOnly) {
+              _this2.filters.push(new ClassFilter('Stream'));
+          }
+          _this2.childRecursiveIterator = undefined;
+          return _this2;
+      }
+
+      createClass(RecursiveIterator, [{
+          key: 'reset',
+          value: function reset() {
+              this.returnSelf = this.includeSelf;
+              this.childRecursiveIterator = undefined;
+              this.activeInformation.lastYielded = undefined;
+              get(RecursiveIterator.prototype.__proto__ || Object.getPrototypeOf(RecursiveIterator.prototype), 'reset', this).call(this);
+          }
+      }, {
+          key: Symbol.iterator,
+          value: regeneratorRuntime.mark(function value() {
+              var e, newStartOffset, _iteratorNormalCompletion5, _didIteratorError5, _iteratorError5, _iterator5, _step5, _e;
+
+              return regeneratorRuntime.wrap(function value$(_context2) {
+                  while (1) {
+                      switch (_context2.prev = _context2.next) {
+                          case 0:
+                              this.reset(); // in __iter__.
+
+                              if (!(this.returnSelf && this.matchesFilters(this.srcStream))) {
+                                  _context2.next = 10;
+                                  break;
+                              }
+
+                              this.activeInformation.stream = undefined;
+                              this.activeInformation.index = -1;
+                              this.activeInformation.lastYielded = this.srcStream;
+                              this.returnSelf = false;
+                              _context2.next = 8;
+                              return this.srcStream;
+
+                          case 8:
+                              _context2.next = 11;
+                              break;
+
+                          case 10:
+                              if (this.returnSelf) {
+                                  // did not match filters...
+                                  this.returnSelf = false;
+                              }
+
+                          case 11:
+                              if (!(this.index < this.streamLength)) {
+                                  _context2.next = 55;
+                                  break;
+                              }
+
+                              this.index += 1;
+                              e = this.srcStreamElements[this.index - 1];
+
+                              if (!(e === undefined)) {
+                                  _context2.next = 16;
+                                  break;
+                              }
+
+                              return _context2.abrupt('continue', 11);
+
+                          case 16:
+                              if (!this.matchesFilters(e)) {
+                                  _context2.next = 22;
+                                  break;
+                              }
+
+                              if (this.restoreActiveSites) {
+                                  e.activeSite = this.srcStream;
+                              }
+                              this.updateActiveInformation();
+                              this.activeInformation.lastYielded = e;
+                              _context2.next = 22;
+                              return e;
+
+                          case 22:
+                              if (!e.isStream) {
+                                  _context2.next = 53;
+                                  break;
+                              }
+
+                              this.childRecursiveIterator = new RecursiveIterator(e, {
+                                  restoreActiveSites: this.restoreActiveSites,
+                                  filterList: this.filters, // shared list
+                                  activeInformation: this.activeInformation, // shared
+                                  includeSelf: false,
+                                  ignoreSorting: this.ignoreSorting
+                                  // parentIterator: this,
+                                  //
+                              });
+                              newStartOffset = this.iteratorStartOffsetInHierarchy + this.srcStream.elementOffset(e);
+
+                              this.childRecursiveIterator.iteratorStartOffsetInHierarchy = newStartOffset;
+                              _iteratorNormalCompletion5 = true;
+                              _didIteratorError5 = false;
+                              _iteratorError5 = undefined;
+                              _context2.prev = 29;
+                              _iterator5 = this.childRecursiveIterator[Symbol.iterator]();
+
+                          case 31:
+                              if (_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done) {
+                                  _context2.next = 38;
+                                  break;
+                              }
+
+                              _e = _step5.value;
+                              _context2.next = 35;
+                              return _e;
+
+                          case 35:
+                              _iteratorNormalCompletion5 = true;
+                              _context2.next = 31;
+                              break;
+
+                          case 38:
+                              _context2.next = 44;
+                              break;
+
+                          case 40:
+                              _context2.prev = 40;
+                              _context2.t0 = _context2['catch'](29);
+                              _didIteratorError5 = true;
+                              _iteratorError5 = _context2.t0;
+
+                          case 44:
+                              _context2.prev = 44;
+                              _context2.prev = 45;
+
+                              if (!_iteratorNormalCompletion5 && _iterator5.return) {
+                                  _iterator5.return();
+                              }
+
+                          case 47:
+                              _context2.prev = 47;
+
+                              if (!_didIteratorError5) {
+                                  _context2.next = 50;
+                                  break;
+                              }
+
+                              throw _iteratorError5;
+
+                          case 50:
+                              return _context2.finish(47);
+
+                          case 51:
+                              return _context2.finish(44);
+
+                          case 52:
+                              this.childRecursiveIterator = undefined;
+
+                          case 53:
+                              _context2.next = 11;
+                              break;
+
+                          case 55:
+                              this.activeInformation.lastYielded = undefined;
+                              this.cleanup();
+
+                          case 57:
+                          case 'end':
+                              return _context2.stop();
+                      }
+                  }
+              }, value, this, [[29, 40, 44, 52], [45,, 47, 51]]);
+          })
+      }, {
+          key: 'matchingElements',
+          value: function matchingElements() {
+              // none of this may be necessary in JavaScript,
+              // but perhaps if called during iteration.
+              var savedRecursiveIterator = this.childRecursiveIterator;
+              var fe = get(RecursiveIterator.prototype.__proto__ || Object.getPrototypeOf(RecursiveIterator.prototype), 'matchingElements', this).call(this);
+              this.childRecursiveIterator = savedRecursiveIterator;
+              return fe;
+          }
+
+          /**
+           *   Returns a stack of RecursiveIterators at this point in the iteration.
+           *   Last is most recent.
+           */
+
+      }, {
+          key: 'iteratorStack',
+          value: function iteratorStack() {
+              var iterStack = [this];
+              var x = this;
+              while (x.childRecursiveIterator !== undefined) {
+                  x = x.childRecursiveIterator;
+                  iterStack.push(x);
+              }
+              return iterStack;
+          }
+
+          /**
+           *   Returns a stack of Streams at this point.  Last is most recent.
+           */
+
+      }, {
+          key: 'streamStack',
+          value: function streamStack() {
+              return this.iteratorStack().map(function (iter) {
+                  return iter.srcStream;
+              });
+          }
+
+          /**
+           *  Called on the current iterator, returns the current offset
+           *  in the hierarchy. or undefined if we are not currently iterating.
+           */
+
+      }, {
+          key: 'currentHierarchyOffset',
+          value: function currentHierarchyOffset() {
+              var lastYield = this.activeInformation.lastYielded;
+              if (lastYield === undefined) {
+                  return undefined;
+              }
+
+              var iteratorStack = this.iteratorStack();
+              var newestIterator = iteratorStack[iteratorStack.length - 1];
+              var lastStream = newestIterator.srcStream;
+              var lastStartOffset = newestIterator.iteratorStartOffsetInHierarchy;
+              if (lastYield === lastStream) {
+                  return lastStartOffset;
+              } else {
+                  return lastStartOffset + lastStream.elementOffset(lastYield);
+              }
+          }
+          // TODO(msc): getElementsByOffsetInHierarchy
+
+      }]);
+      return RecursiveIterator;
+  }(StreamIterator);
+
+
+
+  var iterator = Object.freeze({
+      StreamIteratorException: StreamIteratorException,
+      StreamIterator: StreamIterator,
+      RecursiveIterator: RecursiveIterator
+  });
+
   /**
    * music21j -- Javascript reimplementation of Core music21p features.
    * music21/stream -- Streams -- objects that hold other Music21Objects
@@ -15152,7 +16099,10 @@
    * @requires music21/pitch
    * @requires jquery
    */
-  var stream = {};
+  var stream = {
+      filters: filters,
+      iterator: iterator
+  };
 
   var StreamException$1 = function (_Music21Exception) {
       inherits(StreamException, _Music21Exception);
@@ -15550,6 +16500,30 @@
                   }
               }
           }
+      }, {
+          key: 'recurse',
+          value: function recurse() {
+              var _ref2 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
+                  _ref2$streamsOnly = _ref2.streamsOnly,
+                  streamsOnly = _ref2$streamsOnly === undefined ? false : _ref2$streamsOnly,
+                  _ref2$restoreActiveSi = _ref2.restoreActiveSites,
+                  restoreActiveSites = _ref2$restoreActiveSi === undefined ? true : _ref2$restoreActiveSi,
+                  _ref2$classFilter = _ref2.classFilter,
+                  classFilter = _ref2$classFilter === undefined ? undefined : _ref2$classFilter,
+                  _ref2$skipSelf = _ref2.skipSelf,
+                  skipSelf = _ref2$skipSelf === undefined ? true : _ref2$skipSelf;
+
+              var includeSelf = !skipSelf;
+              var ri = new RecursiveIterator(this, {
+                  streamsOnly: streamsOnly,
+                  restoreActiveSites: restoreActiveSites,
+                  includeSelf: includeSelf
+              });
+              if (classFilter !== undefined) {
+                  ri.addFilter(new ClassFilter(classFilter));
+              }
+              return ri;
+          }
 
           /**
            * Add an element to the end of the stream, setting its `.offset` accordingly
@@ -15640,11 +16614,11 @@
       }, {
           key: 'insert',
           value: function insert(offset, el) {
-              var _ref2 = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {},
-                  _ref2$ignoreSort = _ref2.ignoreSort,
-                  ignoreSort = _ref2$ignoreSort === undefined ? false : _ref2$ignoreSort,
-                  _ref2$setActiveSite = _ref2.setActiveSite,
-                  setActiveSite = _ref2$setActiveSite === undefined ? true : _ref2$setActiveSite;
+              var _ref3 = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {},
+                  _ref3$ignoreSort = _ref3.ignoreSort,
+                  ignoreSort = _ref3$ignoreSort === undefined ? false : _ref3$ignoreSort,
+                  _ref3$setActiveSite = _ref3.setActiveSite,
+                  setActiveSite = _ref3$setActiveSite === undefined ? true : _ref3$setActiveSite;
 
               if (el === undefined) {
                   throw new StreamException$1('El must be given');
@@ -15755,11 +16729,11 @@
       }, {
           key: 'remove',
           value: function remove(targetOrList) {
-              var _ref3 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
-                  _ref3$shiftOffsets = _ref3.shiftOffsets,
-                  shiftOffsets = _ref3$shiftOffsets === undefined ? false : _ref3$shiftOffsets,
-                  _ref3$recurse = _ref3.recurse,
-                  recurse = _ref3$recurse === undefined ? false : _ref3$recurse;
+              var _ref4 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
+                  _ref4$shiftOffsets = _ref4.shiftOffsets,
+                  shiftOffsets = _ref4$shiftOffsets === undefined ? false : _ref4$shiftOffsets,
+                  _ref4$recurse = _ref4.recurse,
+                  recurse = _ref4$recurse === undefined ? false : _ref4$recurse;
 
               if (shiftOffsets === true) {
                   throw new StreamException$1('sorry cannot shiftOffsets yet');
@@ -15776,7 +16750,7 @@
               }
               //        if (targetList.length > 1) {
               //            sort targetList
-              //        }        
+              //        }
               // let shiftDur = 0.0; // for shiftOffsets
               var i = -1;
               var _iteratorNormalCompletion7 = true;
@@ -15831,7 +16805,7 @@
                       //                       {
                       //                           includeEndBoundary: false,
                       //                           mustFinishInSpan: false,
-                      //                           mustBeginInSpan: false,                           
+                      //                           mustBeginInSpan: false,
                       //                       }
                       //                    )) {
                       //                        const elementOffset = this.elementOffset(e);
@@ -15861,20 +16835,20 @@
           /**
            *  Given a `target` object, replace it with
            *  the supplied `replacement` object.
-           *  
+           *
            *  `recurse` and `allDerived` do not currently work.
-           *  
+           *
            *  Does nothing if target cannot be found.
            */
 
       }, {
           key: 'replace',
           value: function replace(target, replacement) {
-              var _ref4 = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {},
-                  _ref4$recurse = _ref4.recurse,
-                  recurse = _ref4$recurse === undefined ? false : _ref4$recurse,
-                  _ref4$allDerivated = _ref4.allDerivated,
-                  allDerivated = _ref4$allDerivated === undefined ? true : _ref4$allDerivated;
+              var _ref5 = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {},
+                  _ref5$recurse = _ref5.recurse,
+                  recurse = _ref5$recurse === undefined ? false : _ref5$recurse,
+                  _ref5$allDerivated = _ref5.allDerivated,
+                  allDerivated = _ref5$allDerivated === undefined ? true : _ref5$allDerivated;
 
               var i = void 0;
               try {
@@ -15900,7 +16874,7 @@
            * Get the `index`th element from the Stream.  Equivalent to the
            * music21p format of s[index] using __getitem__.  Can use negative indexing to get from the end.
            *
-           * Once Proxy objects are supported by all operating systems for 
+           * Once Proxy objects are supported by all operating systems for
            *
            * @memberof music21.stream.Stream
            * @param {Int} index - can be -1, -2, to index from the end, like python
@@ -15934,7 +16908,7 @@
           }
 
           /**
-           * 
+           *
            */
 
       }, {
@@ -16128,6 +17102,50 @@
                   return this; // javascript style;
               }
           }
+      }, {
+          key: 'containerInHierarchy',
+          value: function containerInHierarchy(el) {
+              var _ref6 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
+                  _ref6$setActiveSite = _ref6.setActiveSite,
+                  setActiveSite = _ref6$setActiveSite === undefined ? true : _ref6$setActiveSite;
+
+              var elSites = el.sites;
+              var _iteratorNormalCompletion9 = true;
+              var _didIteratorError9 = false;
+              var _iteratorError9 = undefined;
+
+              try {
+                  for (var _iterator9 = this.recurse({
+                      skipSelf: false,
+                      streamOnly: true,
+                      restoreActiveSites: false
+                  })[Symbol.iterator](), _step9; !(_iteratorNormalCompletion9 = (_step9 = _iterator9.next()).done); _iteratorNormalCompletion9 = true) {
+                      var s = _step9.value;
+
+                      if (elSites.includes(s)) {
+                          if (setActiveSite) {
+                              el.activeSite = s;
+                          }
+                          return s;
+                      }
+                  }
+              } catch (err) {
+                  _didIteratorError9 = true;
+                  _iteratorError9 = err;
+              } finally {
+                  try {
+                      if (!_iteratorNormalCompletion9 && _iterator9.return) {
+                          _iterator9.return();
+                      }
+                  } finally {
+                      if (_didIteratorError9) {
+                          throw _iteratorError9;
+                      }
+                  }
+              }
+
+              return undefined;
+          }
 
           /**
            * Return a new Stream or modify this stream
@@ -16150,39 +17168,39 @@
                   mColl = [returnObj];
               } else {
                   mColl = [];
-                  var _iteratorNormalCompletion9 = true;
-                  var _didIteratorError9 = false;
-                  var _iteratorError9 = undefined;
+                  var _iteratorNormalCompletion10 = true;
+                  var _didIteratorError10 = false;
+                  var _iteratorError10 = undefined;
 
                   try {
-                      for (var _iterator9 = returnObj.getElementsByClass('Measure').elements[Symbol.iterator](), _step9; !(_iteratorNormalCompletion9 = (_step9 = _iterator9.next()).done); _iteratorNormalCompletion9 = true) {
-                          var m = _step9.value;
+                      for (var _iterator10 = returnObj.getElementsByClass('Measure').elements[Symbol.iterator](), _step10; !(_iteratorNormalCompletion10 = (_step10 = _iterator10.next()).done); _iteratorNormalCompletion10 = true) {
+                          var m = _step10.value;
 
                           mColl.push(m);
                       }
                   } catch (err) {
-                      _didIteratorError9 = true;
-                      _iteratorError9 = err;
+                      _didIteratorError10 = true;
+                      _iteratorError10 = err;
                   } finally {
                       try {
-                          if (!_iteratorNormalCompletion9 && _iterator9.return) {
-                              _iterator9.return();
+                          if (!_iteratorNormalCompletion10 && _iterator10.return) {
+                              _iterator10.return();
                           }
                       } finally {
-                          if (_didIteratorError9) {
-                              throw _iteratorError9;
+                          if (_didIteratorError10) {
+                              throw _iteratorError10;
                           }
                       }
                   }
               }
               var lastTimeSignature = void 0;
-              var _iteratorNormalCompletion10 = true;
-              var _didIteratorError10 = false;
-              var _iteratorError10 = undefined;
+              var _iteratorNormalCompletion11 = true;
+              var _didIteratorError11 = false;
+              var _iteratorError11 = undefined;
 
               try {
-                  for (var _iterator10 = mColl[Symbol.iterator](), _step10; !(_iteratorNormalCompletion10 = (_step10 = _iterator10.next()).done); _iteratorNormalCompletion10 = true) {
-                      var _m = _step10.value;
+                  for (var _iterator11 = mColl[Symbol.iterator](), _step11; !(_iteratorNormalCompletion11 = (_step11 = _iterator11.next()).done); _iteratorNormalCompletion11 = true) {
+                      var _m = _step11.value;
 
                       if (_m.timeSignature !== undefined) {
                           lastTimeSignature = _m.timeSignature;
@@ -16196,27 +17214,27 @@
                       }
                       var noteStream = _m.notesAndRests;
                       var durList = [];
-                      var _iteratorNormalCompletion11 = true;
-                      var _didIteratorError11 = false;
-                      var _iteratorError11 = undefined;
+                      var _iteratorNormalCompletion12 = true;
+                      var _didIteratorError12 = false;
+                      var _iteratorError12 = undefined;
 
                       try {
-                          for (var _iterator11 = noteStream[Symbol.iterator](), _step11; !(_iteratorNormalCompletion11 = (_step11 = _iterator11.next()).done); _iteratorNormalCompletion11 = true) {
-                              var _n = _step11.value;
+                          for (var _iterator12 = noteStream[Symbol.iterator](), _step12; !(_iteratorNormalCompletion12 = (_step12 = _iterator12.next()).done); _iteratorNormalCompletion12 = true) {
+                              var _n = _step12.value;
 
                               durList.push(_n.duration);
                           }
                       } catch (err) {
-                          _didIteratorError11 = true;
-                          _iteratorError11 = err;
+                          _didIteratorError12 = true;
+                          _iteratorError12 = err;
                       } finally {
                           try {
-                              if (!_iteratorNormalCompletion11 && _iterator11.return) {
-                                  _iterator11.return();
+                              if (!_iteratorNormalCompletion12 && _iterator12.return) {
+                                  _iterator12.return();
                               }
                           } finally {
-                              if (_didIteratorError11) {
-                                  throw _iteratorError11;
+                              if (_didIteratorError12) {
+                                  throw _iteratorError12;
                               }
                           }
                       }
@@ -16250,16 +17268,16 @@
 
                   // returnObj.streamStatus.beams = true;
               } catch (err) {
-                  _didIteratorError10 = true;
-                  _iteratorError10 = err;
+                  _didIteratorError11 = true;
+                  _iteratorError11 = err;
               } finally {
                   try {
-                      if (!_iteratorNormalCompletion10 && _iterator10.return) {
-                          _iterator10.return();
+                      if (!_iteratorNormalCompletion11 && _iterator11.return) {
+                          _iterator11.return();
                       }
                   } finally {
-                      if (_didIteratorError10) {
-                          throw _iteratorError10;
+                      if (_didIteratorError11) {
+                          throw _iteratorError11;
                       }
                   }
               }
@@ -16277,29 +17295,29 @@
       }, {
           key: 'hasLyrics',
           value: function hasLyrics() {
-              var _iteratorNormalCompletion12 = true;
-              var _didIteratorError12 = false;
-              var _iteratorError12 = undefined;
+              var _iteratorNormalCompletion13 = true;
+              var _didIteratorError13 = false;
+              var _iteratorError13 = undefined;
 
               try {
-                  for (var _iterator12 = this[Symbol.iterator](), _step12; !(_iteratorNormalCompletion12 = (_step12 = _iterator12.next()).done); _iteratorNormalCompletion12 = true) {
-                      var el = _step12.value;
+                  for (var _iterator13 = this[Symbol.iterator](), _step13; !(_iteratorNormalCompletion13 = (_step13 = _iterator13.next()).done); _iteratorNormalCompletion13 = true) {
+                      var el = _step13.value;
 
                       if (el.lyric !== undefined) {
                           return true;
                       }
                   }
               } catch (err) {
-                  _didIteratorError12 = true;
-                  _iteratorError12 = err;
+                  _didIteratorError13 = true;
+                  _iteratorError13 = err;
               } finally {
                   try {
-                      if (!_iteratorNormalCompletion12 && _iterator12.return) {
-                          _iterator12.return();
+                      if (!_iteratorNormalCompletion13 && _iterator13.return) {
+                          _iterator13.return();
                       }
                   } finally {
-                      if (_didIteratorError12) {
-                          throw _iteratorError12;
+                      if (_didIteratorError13) {
+                          throw _iteratorError13;
                       }
                   }
               }
@@ -16354,13 +17372,13 @@
           key: 'getElementsByClass',
           value: function getElementsByClass(classList) {
               var tempEls = [];
-              var _iteratorNormalCompletion13 = true;
-              var _didIteratorError13 = false;
-              var _iteratorError13 = undefined;
+              var _iteratorNormalCompletion14 = true;
+              var _didIteratorError14 = false;
+              var _iteratorError14 = undefined;
 
               try {
-                  for (var _iterator13 = this[Symbol.iterator](), _step13; !(_iteratorNormalCompletion13 = (_step13 = _iterator13.next()).done); _iteratorNormalCompletion13 = true) {
-                      var thisEl = _step13.value;
+                  for (var _iterator14 = this[Symbol.iterator](), _step14; !(_iteratorNormalCompletion14 = (_step14 = _iterator14.next()).done); _iteratorNormalCompletion14 = true) {
+                      var thisEl = _step14.value;
 
                       // console.warn(thisEl);
                       if (thisEl.isClassOrSubclass === undefined) {
@@ -16370,16 +17388,16 @@
                       }
                   }
               } catch (err) {
-                  _didIteratorError13 = true;
-                  _iteratorError13 = err;
+                  _didIteratorError14 = true;
+                  _iteratorError14 = err;
               } finally {
                   try {
-                      if (!_iteratorNormalCompletion13 && _iterator13.return) {
-                          _iterator13.return();
+                      if (!_iteratorNormalCompletion14 && _iterator14.return) {
+                          _iterator14.return();
                       }
                   } finally {
-                      if (_didIteratorError13) {
-                          throw _iteratorError13;
+                      if (_didIteratorError14) {
+                          throw _iteratorError14;
                       }
                   }
               }
@@ -16394,24 +17412,24 @@
            * containing all Music21Objects that are found at a certain offset or
            * within a certain offset time range (given the offsetStart and
            * (optional) offsetEnd values).
-           * 
-           * See music21p documentation for the effect of various parameters. 
+           *
+           * See music21p documentation for the effect of various parameters.
            */
 
       }, {
           key: 'getElementsByOffset',
           value: function getElementsByOffset(offsetStart, offsetEnd) {
-              var _ref5 = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {},
-                  _ref5$includeEndBound = _ref5.includeEndBoundary,
-                  includeEndBoundary = _ref5$includeEndBound === undefined ? true : _ref5$includeEndBound,
-                  _ref5$mustFinishInSpa = _ref5.mustFinishInSpan,
-                  mustFinishInSpan = _ref5$mustFinishInSpa === undefined ? false : _ref5$mustFinishInSpa,
-                  _ref5$mustBeginInSpan = _ref5.mustBeginInSpan,
-                  mustBeginInSpan = _ref5$mustBeginInSpan === undefined ? true : _ref5$mustBeginInSpan,
-                  _ref5$includeElements = _ref5.includeElementsThatEndAtStart,
-                  includeElementsThatEndAtStart = _ref5$includeElements === undefined ? true : _ref5$includeElements,
-                  _ref5$classList = _ref5.classList,
-                  classList = _ref5$classList === undefined ? undefined : _ref5$classList;
+              var _ref7 = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {},
+                  _ref7$includeEndBound = _ref7.includeEndBoundary,
+                  includeEndBoundary = _ref7$includeEndBound === undefined ? true : _ref7$includeEndBound,
+                  _ref7$mustFinishInSpa = _ref7.mustFinishInSpan,
+                  mustFinishInSpan = _ref7$mustFinishInSpa === undefined ? false : _ref7$mustFinishInSpa,
+                  _ref7$mustBeginInSpan = _ref7.mustBeginInSpan,
+                  mustBeginInSpan = _ref7$mustBeginInSpan === undefined ? true : _ref7$mustBeginInSpan,
+                  _ref7$includeElements = _ref7.includeElementsThatEndAtStart,
+                  includeElementsThatEndAtStart = _ref7$includeElements === undefined ? true : _ref7$includeElements,
+                  _ref7$classList = _ref7.classList,
+                  classList = _ref7$classList === undefined ? undefined : _ref7$classList;
 
               var s = this;
               if (classList !== undefined) {
@@ -16478,13 +17496,13 @@
 
               var retStream = s.clone(false);
               retStream.elements = [];
-              var _iteratorNormalCompletion14 = true;
-              var _didIteratorError14 = false;
-              var _iteratorError14 = undefined;
+              var _iteratorNormalCompletion15 = true;
+              var _didIteratorError15 = false;
+              var _iteratorError15 = undefined;
 
               try {
-                  for (var _iterator14 = s[Symbol.iterator](), _step14; !(_iteratorNormalCompletion14 = (_step14 = _iterator14.next()).done); _iteratorNormalCompletion14 = true) {
-                      var e = _step14.value;
+                  for (var _iterator15 = s[Symbol.iterator](), _step15; !(_iteratorNormalCompletion15 = (_step15 = _iterator15.next()).done); _iteratorNormalCompletion15 = true) {
+                      var e = _step15.value;
 
                       var offset = s.elementOffset(e);
                       if (isElementOffsetInRange(e, offset)) {
@@ -16492,16 +17510,16 @@
                       }
                   }
               } catch (err) {
-                  _didIteratorError14 = true;
-                  _iteratorError14 = err;
+                  _didIteratorError15 = true;
+                  _iteratorError15 = err;
               } finally {
                   try {
-                      if (!_iteratorNormalCompletion14 && _iterator14.return) {
-                          _iterator14.return();
+                      if (!_iteratorNormalCompletion15 && _iterator15.return) {
+                          _iterator15.return();
                       }
                   } finally {
-                      if (_didIteratorError14) {
-                          throw _iteratorError14;
+                      if (_didIteratorError15) {
+                          throw _iteratorError15;
                       }
                   }
               }
@@ -16519,7 +17537,7 @@
            *  is of the same class, then the first element encountered is
            *  returned. For more complex usages, use allPlayingWhileSounding.
            *
-           *  Returns None if no elements fit the bill.        
+           *  Returns None if no elements fit the bill.
            *
            *  The optional elStream is the stream in which el is found.
            *  If provided, el's offset
@@ -16528,7 +17546,7 @@
            *  in case you are paranoid that el.offset might not be what
            *  you want, because of some fancy manipulation of
            *  el.activeSite
-           *   
+           *
            * @memberof music21.stream.Stream
            * @param {music21.base.Music21Object} el - object with an offset and class to search for.
            * @param {music21.stream.Stream|undefined} elStream - a place to get el's offset from.
@@ -16552,29 +17570,29 @@
               } else if (otherElements.length === 1) {
                   return otherElements.get(0);
               } else {
-                  var _iteratorNormalCompletion15 = true;
-                  var _didIteratorError15 = false;
-                  var _iteratorError15 = undefined;
+                  var _iteratorNormalCompletion16 = true;
+                  var _didIteratorError16 = false;
+                  var _iteratorError16 = undefined;
 
                   try {
-                      for (var _iterator15 = otherElements[Symbol.iterator](), _step15; !(_iteratorNormalCompletion15 = (_step15 = _iterator15.next()).done); _iteratorNormalCompletion15 = true) {
-                          var thisEl = _step15.value;
+                      for (var _iterator16 = otherElements[Symbol.iterator](), _step16; !(_iteratorNormalCompletion16 = (_step16 = _iterator16.next()).done); _iteratorNormalCompletion16 = true) {
+                          var thisEl = _step16.value;
 
                           if (el.constructor === thisEl.constructor) {
                               return thisEl;
                           }
                       }
                   } catch (err) {
-                      _didIteratorError15 = true;
-                      _iteratorError15 = err;
+                      _didIteratorError16 = true;
+                      _iteratorError16 = err;
                   } finally {
                       try {
-                          if (!_iteratorNormalCompletion15 && _iterator15.return) {
-                              _iterator15.return();
+                          if (!_iteratorNormalCompletion16 && _iterator16.return) {
+                              _iterator16.return();
                           }
                       } finally {
-                          if (_didIteratorError15) {
-                              throw _iteratorError15;
+                          if (_didIteratorError16) {
+                              throw _iteratorError16;
                           }
                       }
                   }
@@ -16600,13 +17618,13 @@
               // cheap version of music21p method
               var extendableStepList = {};
               var stepNames = ['C', 'D', 'E', 'F', 'G', 'A', 'B'];
-              var _iteratorNormalCompletion16 = true;
-              var _didIteratorError16 = false;
-              var _iteratorError16 = undefined;
+              var _iteratorNormalCompletion17 = true;
+              var _didIteratorError17 = false;
+              var _iteratorError17 = undefined;
 
               try {
-                  for (var _iterator16 = stepNames[Symbol.iterator](), _step16; !(_iteratorNormalCompletion16 = (_step16 = _iterator16.next()).done); _iteratorNormalCompletion16 = true) {
-                      var stepName = _step16.value;
+                  for (var _iterator17 = stepNames[Symbol.iterator](), _step17; !(_iteratorNormalCompletion17 = (_step17 = _iterator17.next()).done); _iteratorNormalCompletion17 = true) {
+                      var stepName = _step17.value;
 
                       var stepAlter = 0;
                       if (this.keySignature !== undefined) {
@@ -16619,16 +17637,16 @@
                       extendableStepList[stepName] = stepAlter;
                   }
               } catch (err) {
-                  _didIteratorError16 = true;
-                  _iteratorError16 = err;
+                  _didIteratorError17 = true;
+                  _iteratorError17 = err;
               } finally {
                   try {
-                      if (!_iteratorNormalCompletion16 && _iterator16.return) {
-                          _iterator16.return();
+                      if (!_iteratorNormalCompletion17 && _iterator17.return) {
+                          _iterator17.return();
                       }
                   } finally {
-                      if (_didIteratorError16) {
-                          throw _iteratorError16;
+                      if (_didIteratorError17) {
+                          throw _iteratorError17;
                       }
                   }
               }
@@ -16640,13 +17658,13 @@
               }
               var lastOctavelessStepDict = $.extend({}, extendableStepList); // probably unnecessary, but safe...
 
-              var _iteratorNormalCompletion17 = true;
-              var _didIteratorError17 = false;
-              var _iteratorError17 = undefined;
+              var _iteratorNormalCompletion18 = true;
+              var _didIteratorError18 = false;
+              var _iteratorError18 = undefined;
 
               try {
-                  for (var _iterator17 = this[Symbol.iterator](), _step17; !(_iteratorNormalCompletion17 = (_step17 = _iterator17.next()).done); _iteratorNormalCompletion17 = true) {
-                      var el = _step17.value;
+                  for (var _iterator18 = this[Symbol.iterator](), _step18; !(_iteratorNormalCompletion18 = (_step18 = _iterator18.next()).done); _iteratorNormalCompletion18 = true) {
+                      var el = _step18.value;
 
                       if (el.pitch !== undefined) {
                           // note
@@ -16655,45 +17673,45 @@
                           this._makeAccidentalForOnePitch(p, lastStepDict, lastOctavelessStepDict);
                       } else if (el._notes !== undefined) {
                           // chord
-                          var _iteratorNormalCompletion18 = true;
-                          var _didIteratorError18 = false;
-                          var _iteratorError18 = undefined;
+                          var _iteratorNormalCompletion19 = true;
+                          var _didIteratorError19 = false;
+                          var _iteratorError19 = undefined;
 
                           try {
-                              for (var _iterator18 = el._notes[Symbol.iterator](), _step18; !(_iteratorNormalCompletion18 = (_step18 = _iterator18.next()).done); _iteratorNormalCompletion18 = true) {
-                                  var chordNote = _step18.value;
+                              for (var _iterator19 = el._notes[Symbol.iterator](), _step19; !(_iteratorNormalCompletion19 = (_step19 = _iterator19.next()).done); _iteratorNormalCompletion19 = true) {
+                                  var chordNote = _step19.value;
 
                                   var _p = chordNote.pitch;
                                   var _lastStepDict = lastOctaveStepList[_p.octave];
                                   this._makeAccidentalForOnePitch(_p, _lastStepDict, lastOctavelessStepDict);
                               }
                           } catch (err) {
-                              _didIteratorError18 = true;
-                              _iteratorError18 = err;
+                              _didIteratorError19 = true;
+                              _iteratorError19 = err;
                           } finally {
                               try {
-                                  if (!_iteratorNormalCompletion18 && _iterator18.return) {
-                                      _iterator18.return();
+                                  if (!_iteratorNormalCompletion19 && _iterator19.return) {
+                                      _iterator19.return();
                                   }
                               } finally {
-                                  if (_didIteratorError18) {
-                                      throw _iteratorError18;
+                                  if (_didIteratorError19) {
+                                      throw _iteratorError19;
                                   }
                               }
                           }
                       }
                   }
               } catch (err) {
-                  _didIteratorError17 = true;
-                  _iteratorError17 = err;
+                  _didIteratorError18 = true;
+                  _iteratorError18 = err;
               } finally {
                   try {
-                      if (!_iteratorNormalCompletion17 && _iterator17.return) {
-                          _iterator17.return();
+                      if (!_iteratorNormalCompletion18 && _iterator18.return) {
+                          _iterator18.return();
                       }
                   } finally {
-                      if (_didIteratorError17) {
-                          throw _iteratorError17;
+                      if (_didIteratorError18) {
+                          throw _iteratorError18;
                       }
                   }
               }
@@ -16769,29 +17787,29 @@
               }
 
               if (recursive) {
-                  var _iteratorNormalCompletion19 = true;
-                  var _didIteratorError19 = false;
-                  var _iteratorError19 = undefined;
+                  var _iteratorNormalCompletion20 = true;
+                  var _didIteratorError20 = false;
+                  var _iteratorError20 = undefined;
 
                   try {
-                      for (var _iterator19 = this[Symbol.iterator](), _step19; !(_iteratorNormalCompletion19 = (_step19 = _iterator19.next()).done); _iteratorNormalCompletion19 = true) {
-                          var el = _step19.value;
+                      for (var _iterator20 = this[Symbol.iterator](), _step20; !(_iteratorNormalCompletion20 = (_step20 = _iterator20.next()).done); _iteratorNormalCompletion20 = true) {
+                          var el = _step20.value;
 
                           if (el.isClassOrSubclass('Stream')) {
                               el.resetRenderOptions(recursive, preserveEvents);
                           }
                       }
                   } catch (err) {
-                      _didIteratorError19 = true;
-                      _iteratorError19 = err;
+                      _didIteratorError20 = true;
+                      _iteratorError20 = err;
                   } finally {
                       try {
-                          if (!_iteratorNormalCompletion19 && _iterator19.return) {
-                              _iterator19.return();
+                          if (!_iteratorNormalCompletion20 && _iterator20.return) {
+                              _iterator20.return();
                           }
                       } finally {
-                          if (_didIteratorError19) {
-                              throw _iteratorError19;
+                          if (_didIteratorError20) {
+                              throw _iteratorError20;
                           }
                       }
                   }
@@ -16921,13 +17939,13 @@
               }
               if (this.hasVoices()) {
                   var maxLength = 0;
-                  var _iteratorNormalCompletion20 = true;
-                  var _didIteratorError20 = false;
-                  var _iteratorError20 = undefined;
+                  var _iteratorNormalCompletion21 = true;
+                  var _didIteratorError21 = false;
+                  var _iteratorError21 = undefined;
 
                   try {
-                      for (var _iterator20 = this[Symbol.iterator](), _step20; !(_iteratorNormalCompletion20 = (_step20 = _iterator20.next()).done); _iteratorNormalCompletion20 = true) {
-                          var v = _step20.value;
+                      for (var _iterator21 = this[Symbol.iterator](), _step21; !(_iteratorNormalCompletion21 = (_step21 = _iterator21.next()).done); _iteratorNormalCompletion21 = true) {
+                          var v = _step21.value;
 
                           if (v.isClassOrSubclass('Stream')) {
                               var thisLength = v.estimateStaffLength() + v.renderOptions.staffPadding;
@@ -16937,16 +17955,16 @@
                           }
                       }
                   } catch (err) {
-                      _didIteratorError20 = true;
-                      _iteratorError20 = err;
+                      _didIteratorError21 = true;
+                      _iteratorError21 = err;
                   } finally {
                       try {
-                          if (!_iteratorNormalCompletion20 && _iterator20.return) {
-                              _iterator20.return();
+                          if (!_iteratorNormalCompletion21 && _iterator21.return) {
+                              _iterator21.return();
                           }
                       } finally {
-                          if (_didIteratorError20) {
-                              throw _iteratorError20;
+                          if (_didIteratorError21) {
+                              throw _iteratorError21;
                           }
                       }
                   }
@@ -17541,13 +18559,13 @@
                   note: undefined
               }; // a backup in case we did not find within allowablePixels
 
-              var _iteratorNormalCompletion21 = true;
-              var _didIteratorError21 = false;
-              var _iteratorError21 = undefined;
+              var _iteratorNormalCompletion22 = true;
+              var _didIteratorError22 = false;
+              var _iteratorError22 = undefined;
 
               try {
-                  for (var _iterator21 = subStream.flat.notesAndRests.elements[Symbol.iterator](), _step21; !(_iteratorNormalCompletion21 = (_step21 = _iterator21.next()).done); _iteratorNormalCompletion21 = true) {
-                      var n = _step21.value;
+                  for (var _iterator22 = subStream.flat.notesAndRests.elements[Symbol.iterator](), _step22; !(_iteratorNormalCompletion22 = (_step22 = _iterator22.next()).done); _iteratorNormalCompletion22 = true) {
+                      var n = _step22.value;
 
                       /* should also
                        * compensate for accidentals...
@@ -17566,16 +18584,16 @@
                   }
                   // console.log('note here is: ', foundNote);
               } catch (err) {
-                  _didIteratorError21 = true;
-                  _iteratorError21 = err;
+                  _didIteratorError22 = true;
+                  _iteratorError22 = err;
               } finally {
                   try {
-                      if (!_iteratorNormalCompletion21 && _iterator21.return) {
-                          _iterator21.return();
+                      if (!_iteratorNormalCompletion22 && _iterator22.return) {
+                          _iterator22.return();
                       }
                   } finally {
-                      if (_didIteratorError21) {
-                          throw _iteratorError21;
+                      if (_didIteratorError22) {
+                          throw _iteratorError22;
                       }
                   }
               }
@@ -17877,29 +18895,29 @@
       }, {
           key: 'hasVoices',
           value: function hasVoices() {
-              var _iteratorNormalCompletion22 = true;
-              var _didIteratorError22 = false;
-              var _iteratorError22 = undefined;
+              var _iteratorNormalCompletion23 = true;
+              var _didIteratorError23 = false;
+              var _iteratorError23 = undefined;
 
               try {
-                  for (var _iterator22 = this[Symbol.iterator](), _step22; !(_iteratorNormalCompletion22 = (_step22 = _iterator22.next()).done); _iteratorNormalCompletion22 = true) {
-                      var el = _step22.value;
+                  for (var _iterator23 = this[Symbol.iterator](), _step23; !(_iteratorNormalCompletion23 = (_step23 = _iterator23.next()).done); _iteratorNormalCompletion23 = true) {
+                      var el = _step23.value;
 
                       if (el.isClassOrSubclass('Voice')) {
                           return true;
                       }
                   }
               } catch (err) {
-                  _didIteratorError22 = true;
-                  _iteratorError22 = err;
+                  _didIteratorError23 = true;
+                  _iteratorError23 = err;
               } finally {
                   try {
-                      if (!_iteratorNormalCompletion22 && _iterator22.return) {
-                          _iterator22.return();
+                      if (!_iteratorNormalCompletion23 && _iterator23.return) {
+                          _iterator23.return();
                       }
                   } finally {
-                      if (_didIteratorError22) {
-                          throw _iteratorError22;
+                      if (_didIteratorError23) {
+                          throw _iteratorError23;
                       }
                   }
               }
@@ -17921,13 +18939,13 @@
           key: 'highestTime',
           get: function get() {
               var highestTime = 0.0;
-              var _iteratorNormalCompletion23 = true;
-              var _didIteratorError23 = false;
-              var _iteratorError23 = undefined;
+              var _iteratorNormalCompletion24 = true;
+              var _didIteratorError24 = false;
+              var _iteratorError24 = undefined;
 
               try {
-                  for (var _iterator23 = this[Symbol.iterator](), _step23; !(_iteratorNormalCompletion23 = (_step23 = _iterator23.next()).done); _iteratorNormalCompletion23 = true) {
-                      var el = _step23.value;
+                  for (var _iterator24 = this[Symbol.iterator](), _step24; !(_iteratorNormalCompletion24 = (_step24 = _iterator24.next()).done); _iteratorNormalCompletion24 = true) {
+                      var el = _step24.value;
 
                       var endTime = el.offset;
                       if (el.duration !== undefined) {
@@ -17938,16 +18956,16 @@
                       }
                   }
               } catch (err) {
-                  _didIteratorError23 = true;
-                  _iteratorError23 = err;
+                  _didIteratorError24 = true;
+                  _iteratorError24 = err;
               } finally {
                   try {
-                      if (!_iteratorNormalCompletion23 && _iterator23.return) {
-                          _iterator23.return();
+                      if (!_iteratorNormalCompletion24 && _iterator24.return) {
+                          _iterator24.return();
                       }
                   } finally {
-                      if (_didIteratorError23) {
-                          throw _iteratorError23;
+                      if (_didIteratorError24) {
+                          throw _iteratorError24;
                       }
                   }
               }
@@ -18105,25 +19123,25 @@
               var thisEl = void 0;
               if (newElements.isStream === true) {
                   // iterate to set active site;
-                  var _iteratorNormalCompletion24 = true;
-                  var _didIteratorError24 = false;
-                  var _iteratorError24 = undefined;
+                  var _iteratorNormalCompletion25 = true;
+                  var _didIteratorError25 = false;
+                  var _iteratorError25 = undefined;
 
                   try {
-                      for (var _iterator24 = newElements[Symbol.iterator](), _step24; !(_iteratorNormalCompletion24 = (_step24 = _iterator24.next()).done); _iteratorNormalCompletion24 = true) {
-                          var unused = _step24.value;
+                      for (var _iterator25 = newElements[Symbol.iterator](), _step25; !(_iteratorNormalCompletion25 = (_step25 = _iterator25.next()).done); _iteratorNormalCompletion25 = true) {
+                          var unused = _step25.value;
                       } // eslint-disable-line no-empty
                   } catch (err) {
-                      _didIteratorError24 = true;
-                      _iteratorError24 = err;
+                      _didIteratorError25 = true;
+                      _iteratorError25 = err;
                   } finally {
                       try {
-                          if (!_iteratorNormalCompletion24 && _iterator24.return) {
-                              _iterator24.return();
+                          if (!_iteratorNormalCompletion25 && _iterator25.return) {
+                              _iterator25.return();
                           }
                       } finally {
-                          if (_didIteratorError24) {
-                              throw _iteratorError24;
+                          if (_didIteratorError25) {
+                              throw _iteratorError25;
                           }
                       }
                   }
@@ -18259,13 +19277,13 @@
           value: function getMeasureWidths() {
               /* call after setSubstreamRenderOptions */
               var measureWidths = [];
-              var _iteratorNormalCompletion25 = true;
-              var _didIteratorError25 = false;
-              var _iteratorError25 = undefined;
+              var _iteratorNormalCompletion26 = true;
+              var _didIteratorError26 = false;
+              var _iteratorError26 = undefined;
 
               try {
-                  for (var _iterator25 = this[Symbol.iterator](), _step25; !(_iteratorNormalCompletion25 = (_step25 = _iterator25.next()).done); _iteratorNormalCompletion25 = true) {
-                      var el = _step25.value;
+                  for (var _iterator26 = this[Symbol.iterator](), _step26; !(_iteratorNormalCompletion26 = (_step26 = _iterator26.next()).done); _iteratorNormalCompletion26 = true) {
+                      var el = _step26.value;
 
                       if (el.isClassOrSubclass('Measure')) {
                           var elRendOp = el.renderOptions;
@@ -18276,16 +19294,16 @@
                    *
                    */
               } catch (err) {
-                  _didIteratorError25 = true;
-                  _iteratorError25 = err;
+                  _didIteratorError26 = true;
+                  _iteratorError26 = err;
               } finally {
                   try {
-                      if (!_iteratorNormalCompletion25 && _iterator25.return) {
-                          _iterator25.return();
+                      if (!_iteratorNormalCompletion26 && _iterator26.return) {
+                          _iterator26.return();
                       }
                   } finally {
-                      if (_didIteratorError25) {
-                          throw _iteratorError25;
+                      if (_didIteratorError26) {
+                          throw _iteratorError26;
                       }
                   }
               }
@@ -18310,13 +19328,13 @@
                   // part with Measures underneath
                   var totalLength = 0;
                   var isFirst = true;
-                  var _iteratorNormalCompletion26 = true;
-                  var _didIteratorError26 = false;
-                  var _iteratorError26 = undefined;
+                  var _iteratorNormalCompletion27 = true;
+                  var _didIteratorError27 = false;
+                  var _iteratorError27 = undefined;
 
                   try {
-                      for (var _iterator26 = this.getElementsByClass('Measure')[Symbol.iterator](), _step26; !(_iteratorNormalCompletion26 = (_step26 = _iterator26.next()).done); _iteratorNormalCompletion26 = true) {
-                          var m = _step26.value;
+                      for (var _iterator27 = this.getElementsByClass('Measure')[Symbol.iterator](), _step27; !(_iteratorNormalCompletion27 = (_step27 = _iterator27.next()).done); _iteratorNormalCompletion27 = true) {
+                          var m = _step27.value;
 
                           // this looks wrong, but actually seems to be right. moving it to
                           // after the break breaks things.
@@ -18327,16 +19345,16 @@
                           isFirst = false;
                       }
                   } catch (err) {
-                      _didIteratorError26 = true;
-                      _iteratorError26 = err;
+                      _didIteratorError27 = true;
+                      _iteratorError27 = err;
                   } finally {
                       try {
-                          if (!_iteratorNormalCompletion26 && _iterator26.return) {
-                              _iterator26.return();
+                          if (!_iteratorNormalCompletion27 && _iterator27.return) {
+                              _iterator27.return();
                           }
                       } finally {
-                          if (_didIteratorError26) {
-                              throw _iteratorError26;
+                          if (_didIteratorError27) {
+                              throw _iteratorError27;
                           }
                       }
                   }
@@ -18421,7 +19439,7 @@
                       var offsetFromEstimate = oldWidth - oldEstimate;
                       // we look at the offset from the current estimate to see how much
                       // the staff length may have been adjusted to compensate for other
-                      // parts with different lengths.                
+                      // parts with different lengths.
 
                       // but setting these options is bound to change something
                       m.renderOptions.displayClef = true;
@@ -18488,13 +19506,13 @@
               var lastKeySignature = void 0;
               var lastClef = void 0;
 
-              var _iteratorNormalCompletion27 = true;
-              var _didIteratorError27 = false;
-              var _iteratorError27 = undefined;
+              var _iteratorNormalCompletion28 = true;
+              var _didIteratorError28 = false;
+              var _iteratorError28 = undefined;
 
               try {
-                  for (var _iterator27 = this.getElementsByClass('Measure')[Symbol.iterator](), _step27; !(_iteratorNormalCompletion27 = (_step27 = _iterator27.next()).done); _iteratorNormalCompletion27 = true) {
-                      var m = _step27.value;
+                  for (var _iterator28 = this.getElementsByClass('Measure')[Symbol.iterator](), _step28; !(_iteratorNormalCompletion28 = (_step28 = _iterator28.next()).done); _iteratorNormalCompletion28 = true) {
+                      var m = _step28.value;
 
                       var mRendOp = m.renderOptions;
                       mRendOp.measureIndex = currentMeasureIndex;
@@ -18539,16 +19557,16 @@
                       currentMeasureIndex += 1;
                   }
               } catch (err) {
-                  _didIteratorError27 = true;
-                  _iteratorError27 = err;
+                  _didIteratorError28 = true;
+                  _iteratorError28 = err;
               } finally {
                   try {
-                      if (!_iteratorNormalCompletion27 && _iterator27.return) {
-                          _iterator27.return();
+                      if (!_iteratorNormalCompletion28 && _iterator28.return) {
+                          _iterator28.return();
                       }
                   } finally {
-                      if (_didIteratorError27) {
-                          throw _iteratorError27;
+                      if (_didIteratorError28) {
+                          throw _iteratorError28;
                       }
                   }
               }
@@ -18632,13 +19650,13 @@
           value: function getStreamFromScaledXandSystemIndex(xPxScaled, systemIndex) {
               var gotMeasure = void 0;
               var measures = this.measures;
-              var _iteratorNormalCompletion28 = true;
-              var _didIteratorError28 = false;
-              var _iteratorError28 = undefined;
+              var _iteratorNormalCompletion29 = true;
+              var _didIteratorError29 = false;
+              var _iteratorError29 = undefined;
 
               try {
-                  for (var _iterator28 = measures[Symbol.iterator](), _step28; !(_iteratorNormalCompletion28 = (_step28 = _iterator28.next()).done); _iteratorNormalCompletion28 = true) {
-                      var m = _step28.value;
+                  for (var _iterator29 = measures[Symbol.iterator](), _step29; !(_iteratorNormalCompletion29 = (_step29 = _iterator29.next()).done); _iteratorNormalCompletion29 = true) {
+                      var m = _step29.value;
 
                       var rendOp = m.renderOptions;
                       var left = rendOp.left;
@@ -18659,16 +19677,16 @@
                       }
                   }
               } catch (err) {
-                  _didIteratorError28 = true;
-                  _iteratorError28 = err;
+                  _didIteratorError29 = true;
+                  _iteratorError29 = err;
               } finally {
                   try {
-                      if (!_iteratorNormalCompletion28 && _iterator28.return) {
-                          _iterator28.return();
+                      if (!_iteratorNormalCompletion29 && _iterator29.return) {
+                          _iterator29.return();
                       }
                   } finally {
-                      if (_didIteratorError28) {
-                          throw _iteratorError28;
+                      if (_didIteratorError29) {
+                          throw _iteratorError29;
                       }
                   }
               }
@@ -18735,47 +19753,19 @@
               var currentPartNumber = 0;
               var currentPartTop = 0;
               var partSpacing = this.partSpacing;
-              var _iteratorNormalCompletion29 = true;
-              var _didIteratorError29 = false;
-              var _iteratorError29 = undefined;
-
-              try {
-                  for (var _iterator29 = this.parts[Symbol.iterator](), _step29; !(_iteratorNormalCompletion29 = (_step29 = _iterator29.next()).done); _iteratorNormalCompletion29 = true) {
-                      var p = _step29.value;
-
-                      p.renderOptions.partIndex = currentPartNumber;
-                      p.renderOptions.top = currentPartTop;
-                      p.setSubstreamRenderOptions();
-                      currentPartTop += partSpacing;
-                      currentPartNumber += 1;
-                  }
-              } catch (err) {
-                  _didIteratorError29 = true;
-                  _iteratorError29 = err;
-              } finally {
-                  try {
-                      if (!_iteratorNormalCompletion29 && _iterator29.return) {
-                          _iterator29.return();
-                      }
-                  } finally {
-                      if (_didIteratorError29) {
-                          throw _iteratorError29;
-                      }
-                  }
-              }
-
-              this.evenPartMeasureSpacing();
-              var ignoreNumSystems = true;
-              var currentScoreHeight = this.estimateStreamHeight(ignoreNumSystems);
               var _iteratorNormalCompletion30 = true;
               var _didIteratorError30 = false;
               var _iteratorError30 = undefined;
 
               try {
                   for (var _iterator30 = this.parts[Symbol.iterator](), _step30; !(_iteratorNormalCompletion30 = (_step30 = _iterator30.next()).done); _iteratorNormalCompletion30 = true) {
-                      var _p2 = _step30.value;
+                      var p = _step30.value;
 
-                      _p2.fixSystemInformation(currentScoreHeight);
+                      p.renderOptions.partIndex = currentPartNumber;
+                      p.renderOptions.top = currentPartTop;
+                      p.setSubstreamRenderOptions();
+                      currentPartTop += partSpacing;
+                      currentPartNumber += 1;
                   }
               } catch (err) {
                   _didIteratorError30 = true;
@@ -18788,6 +19778,34 @@
                   } finally {
                       if (_didIteratorError30) {
                           throw _iteratorError30;
+                      }
+                  }
+              }
+
+              this.evenPartMeasureSpacing();
+              var ignoreNumSystems = true;
+              var currentScoreHeight = this.estimateStreamHeight(ignoreNumSystems);
+              var _iteratorNormalCompletion31 = true;
+              var _didIteratorError31 = false;
+              var _iteratorError31 = undefined;
+
+              try {
+                  for (var _iterator31 = this.parts[Symbol.iterator](), _step31; !(_iteratorNormalCompletion31 = (_step31 = _iterator31.next()).done); _iteratorNormalCompletion31 = true) {
+                      var _p2 = _step31.value;
+
+                      _p2.fixSystemInformation(currentScoreHeight);
+                  }
+              } catch (err) {
+                  _didIteratorError31 = true;
+                  _iteratorError31 = err;
+              } finally {
+                  try {
+                      if (!_iteratorNormalCompletion31 && _iterator31.return) {
+                          _iterator31.return();
+                      }
+                  } finally {
+                      if (_didIteratorError31) {
+                          throw _iteratorError31;
                       }
                   }
               }
@@ -18811,13 +19829,13 @@
                   return this.renderOptions.overriddenWidth;
               }
               var maxWidth = -1;
-              var _iteratorNormalCompletion31 = true;
-              var _didIteratorError31 = false;
-              var _iteratorError31 = undefined;
+              var _iteratorNormalCompletion32 = true;
+              var _didIteratorError32 = false;
+              var _iteratorError32 = undefined;
 
               try {
-                  for (var _iterator31 = this.parts[Symbol.iterator](), _step31; !(_iteratorNormalCompletion31 = (_step31 = _iterator31.next()).done); _iteratorNormalCompletion31 = true) {
-                      var p = _step31.value;
+                  for (var _iterator32 = this.parts[Symbol.iterator](), _step32; !(_iteratorNormalCompletion32 = (_step32 = _iterator32.next()).done); _iteratorNormalCompletion32 = true) {
+                      var p = _step32.value;
 
                       var pWidth = p.estimateStaffLength();
                       if (pWidth > maxWidth) {
@@ -18825,16 +19843,16 @@
                       }
                   }
               } catch (err) {
-                  _didIteratorError31 = true;
-                  _iteratorError31 = err;
+                  _didIteratorError32 = true;
+                  _iteratorError32 = err;
               } finally {
                   try {
-                      if (!_iteratorNormalCompletion31 && _iterator31.return) {
-                          _iterator31.return();
+                      if (!_iteratorNormalCompletion32 && _iterator32.return) {
+                          _iterator32.return();
                       }
                   } finally {
-                      if (_didIteratorError31) {
-                          throw _iteratorError31;
+                      if (_didIteratorError32) {
+                          throw _iteratorError32;
                       }
                   }
               }
@@ -18867,29 +19885,29 @@
           key: 'playStream',
           value: function playStream(params) {
               // play multiple parts in parallel...
-              var _iteratorNormalCompletion32 = true;
-              var _didIteratorError32 = false;
-              var _iteratorError32 = undefined;
+              var _iteratorNormalCompletion33 = true;
+              var _didIteratorError33 = false;
+              var _iteratorError33 = undefined;
 
               try {
-                  for (var _iterator32 = this[Symbol.iterator](), _step32; !(_iteratorNormalCompletion32 = (_step32 = _iterator32.next()).done); _iteratorNormalCompletion32 = true) {
-                      var el = _step32.value;
+                  for (var _iterator33 = this[Symbol.iterator](), _step33; !(_iteratorNormalCompletion33 = (_step33 = _iterator33.next()).done); _iteratorNormalCompletion33 = true) {
+                      var el = _step33.value;
 
                       if (el.isClassOrSubclass('Part')) {
                           el.playStream(params);
                       }
                   }
               } catch (err) {
-                  _didIteratorError32 = true;
-                  _iteratorError32 = err;
+                  _didIteratorError33 = true;
+                  _iteratorError33 = err;
               } finally {
                   try {
-                      if (!_iteratorNormalCompletion32 && _iterator32.return) {
-                          _iterator32.return();
+                      if (!_iteratorNormalCompletion33 && _iterator33.return) {
+                          _iterator33.return();
                       }
                   } finally {
-                      if (_didIteratorError32) {
-                          throw _iteratorError32;
+                      if (_didIteratorError33) {
+                          throw _iteratorError33;
                       }
                   }
               }
@@ -18906,29 +19924,29 @@
       }, {
           key: 'stopPlayStream',
           value: function stopPlayStream() {
-              var _iteratorNormalCompletion33 = true;
-              var _didIteratorError33 = false;
-              var _iteratorError33 = undefined;
+              var _iteratorNormalCompletion34 = true;
+              var _didIteratorError34 = false;
+              var _iteratorError34 = undefined;
 
               try {
-                  for (var _iterator33 = this[Symbol.iterator](), _step33; !(_iteratorNormalCompletion33 = (_step33 = _iterator33.next()).done); _iteratorNormalCompletion33 = true) {
-                      var el = _step33.value;
+                  for (var _iterator34 = this[Symbol.iterator](), _step34; !(_iteratorNormalCompletion34 = (_step34 = _iterator34.next()).done); _iteratorNormalCompletion34 = true) {
+                      var el = _step34.value;
 
                       if (el.isClassOrSubclass('Part')) {
                           el.stopPlayStream();
                       }
                   }
               } catch (err) {
-                  _didIteratorError33 = true;
-                  _iteratorError33 = err;
+                  _didIteratorError34 = true;
+                  _iteratorError34 = err;
               } finally {
                   try {
-                      if (!_iteratorNormalCompletion33 && _iterator33.return) {
-                          _iterator33.return();
+                      if (!_iteratorNormalCompletion34 && _iterator34.return) {
+                          _iterator34.return();
                       }
                   } finally {
-                      if (_didIteratorError33) {
-                          throw _iteratorError33;
+                      if (_didIteratorError34) {
+                          throw _iteratorError34;
                       }
                   }
               }
@@ -18958,27 +19976,27 @@
               var measureWidthsArrayOfArrays = [];
               var i = void 0;
               // TODO: Do not crash on not partlike...
-              var _iteratorNormalCompletion34 = true;
-              var _didIteratorError34 = false;
-              var _iteratorError34 = undefined;
+              var _iteratorNormalCompletion35 = true;
+              var _didIteratorError35 = false;
+              var _iteratorError35 = undefined;
 
               try {
-                  for (var _iterator34 = this.parts[Symbol.iterator](), _step34; !(_iteratorNormalCompletion34 = (_step34 = _iterator34.next()).done); _iteratorNormalCompletion34 = true) {
-                      var p = _step34.value;
+                  for (var _iterator35 = this.parts[Symbol.iterator](), _step35; !(_iteratorNormalCompletion35 = (_step35 = _iterator35.next()).done); _iteratorNormalCompletion35 = true) {
+                      var p = _step35.value;
 
                       measureWidthsArrayOfArrays.push(p.getMeasureWidths());
                   }
               } catch (err) {
-                  _didIteratorError34 = true;
-                  _iteratorError34 = err;
+                  _didIteratorError35 = true;
+                  _iteratorError35 = err;
               } finally {
                   try {
-                      if (!_iteratorNormalCompletion34 && _iterator34.return) {
-                          _iterator34.return();
+                      if (!_iteratorNormalCompletion35 && _iterator35.return) {
+                          _iterator35.return();
                       }
                   } finally {
-                      if (_didIteratorError34) {
-                          throw _iteratorError34;
+                      if (_didIteratorError35) {
+                          throw _iteratorError35;
                       }
                   }
               }
@@ -19081,21 +20099,21 @@
       }, {
           key: 'evenPartMeasureSpacing',
           value: function evenPartMeasureSpacing() {
-              var _ref6 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
-                  _ref6$setLeft = _ref6.setLeft,
-                  setLeft = _ref6$setLeft === undefined ? true : _ref6$setLeft;
+              var _ref8 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
+                  _ref8$setLeft = _ref8.setLeft,
+                  setLeft = _ref8$setLeft === undefined ? true : _ref8$setLeft;
 
               var measureStacks = [];
               var currentPartNumber = 0;
               var maxMeasureWidth = []; // the maximum measure width among all parts
               var j = void 0;
-              var _iteratorNormalCompletion35 = true;
-              var _didIteratorError35 = false;
-              var _iteratorError35 = undefined;
+              var _iteratorNormalCompletion36 = true;
+              var _didIteratorError36 = false;
+              var _iteratorError36 = undefined;
 
               try {
-                  for (var _iterator35 = this.parts[Symbol.iterator](), _step35; !(_iteratorNormalCompletion35 = (_step35 = _iterator35.next()).done); _iteratorNormalCompletion35 = true) {
-                      var p = _step35.value;
+                  for (var _iterator36 = this.parts[Symbol.iterator](), _step36; !(_iteratorNormalCompletion36 = (_step36 = _iterator36.next()).done); _iteratorNormalCompletion36 = true) {
+                      var p = _step36.value;
 
                       var measureWidths = p.getMeasureWidths();
                       for (j = 0; j < measureWidths.length; j++) {
@@ -19111,16 +20129,16 @@
                       currentPartNumber += 1;
                   }
               } catch (err) {
-                  _didIteratorError35 = true;
-                  _iteratorError35 = err;
+                  _didIteratorError36 = true;
+                  _iteratorError36 = err;
               } finally {
                   try {
-                      if (!_iteratorNormalCompletion35 && _iterator35.return) {
-                          _iterator35.return();
+                      if (!_iteratorNormalCompletion36 && _iterator36.return) {
+                          _iterator36.return();
                       }
                   } finally {
-                      if (_didIteratorError35) {
-                          throw _iteratorError35;
+                      if (_didIteratorError36) {
+                          throw _iteratorError36;
                       }
                   }
               }
@@ -19128,13 +20146,13 @@
               var currentLeft = 20;
               for (var i = 0; i < maxMeasureWidth.length; i++) {
                   var measureNewWidth = maxMeasureWidth[i];
-                  var _iteratorNormalCompletion36 = true;
-                  var _didIteratorError36 = false;
-                  var _iteratorError36 = undefined;
+                  var _iteratorNormalCompletion37 = true;
+                  var _didIteratorError37 = false;
+                  var _iteratorError37 = undefined;
 
                   try {
-                      for (var _iterator36 = this.parts[Symbol.iterator](), _step36; !(_iteratorNormalCompletion36 = (_step36 = _iterator36.next()).done); _iteratorNormalCompletion36 = true) {
-                          var part = _step36.value;
+                      for (var _iterator37 = this.parts[Symbol.iterator](), _step37; !(_iteratorNormalCompletion37 = (_step37 = _iterator37.next()).done); _iteratorNormalCompletion37 = true) {
+                          var part = _step37.value;
 
                           var measure = part.getElementsByClass('Measure').get(i);
                           var rendOp = measure.renderOptions;
@@ -19144,16 +20162,16 @@
                           }
                       }
                   } catch (err) {
-                      _didIteratorError36 = true;
-                      _iteratorError36 = err;
+                      _didIteratorError37 = true;
+                      _iteratorError37 = err;
                   } finally {
                       try {
-                          if (!_iteratorNormalCompletion36 && _iterator36.return) {
-                              _iterator36.return();
+                          if (!_iteratorNormalCompletion37 && _iterator37.return) {
+                              _iterator37.return();
                           }
                       } finally {
-                          if (_didIteratorError36) {
-                              throw _iteratorError36;
+                          if (_didIteratorError37) {
+                              throw _iteratorError37;
                           }
                       }
                   }

@@ -53,7 +53,7 @@ export class Music21Object extends prebase.ProtoM21Object {
 
         this._activeSite = undefined;
         this._naiveOffset = 0;
-        
+
         // this._derivation = undefined;
         // this._style = undefined;
         // this._editorial = undefined;
@@ -71,7 +71,7 @@ export class Music21Object extends prebase.ProtoM21Object {
         this.isStream = false;
 
         this.groups = []; // custom object in m21p
-        
+
         // beat, measureNumber, etc.
         // lots to do...
         this._cloneCallbacks._activeSite = function Music21Object_cloneCallbacks_activeSite(
@@ -92,7 +92,7 @@ export class Music21Object extends prebase.ProtoM21Object {
     get activeSite() {
         return this._activeSite;
     }
-        
+
     set activeSite(site) {
         if (site === undefined) {
             this._activeSite = undefined;
@@ -107,7 +107,7 @@ export class Music21Object extends prebase.ProtoM21Object {
             this._activeSite = site;
         }
     }
-    
+
     get measureNumber() {
         if (this.activeSite !== undefined && this.activeSite.classes.includes('Measure')) {
             return this.activeSite.number;
@@ -117,10 +117,10 @@ export class Music21Object extends prebase.ProtoM21Object {
                 return m.number;
             } else {
                 return undefined;
-            }            
+            }
         }
     }
-    
+
     get offset() {
         if (this.activeSite === undefined) {
             return this._naiveOffset;
@@ -128,7 +128,7 @@ export class Music21Object extends prebase.ProtoM21Object {
             return this.activeSite.elementOffset(this);
         }
     }
-    
+
     set offset(newOffset) {
         if (this.activeSite === undefined) {
             this._naiveOffset = newOffset;
@@ -136,7 +136,7 @@ export class Music21Object extends prebase.ProtoM21Object {
             this.activeSite.setElementOffset(this, newOffset);
         }
     }
-    
+
     get priority() {
         return this._priority;
     }
@@ -166,6 +166,8 @@ export class Music21Object extends prebase.ProtoM21Object {
      * Return the offset of this element in a given site -- use .offset if you are sure that
      * site === activeSite.
      *
+     * Raises an Error if not in site.
+     *
      * Does not change activeSite or .offset
      *
      * @memberof music21.base.Music21Object
@@ -193,6 +195,31 @@ export class Music21Object extends prebase.ProtoM21Object {
         } else {
             this._naiveOffset = value;
         }
+    }
+
+
+    /**
+     * For an element which may not be in site, but might be in a Stream
+     * in site (or further in streams), find the cumulative offset of the
+     * clement in that site.
+     *
+     * See also music21.stream.iterator.RecursiveIterator.currentHierarchyOffset for
+     * a method that is about 10x faster when running through a recursed stream.
+     *
+     * @memberof music21.base.Music21Object
+     * @param {music21.stream.Stream} site
+     * @returns Number|undefined
+     */
+    getOffsetInHierarchy(site) {
+        try {
+            return this.getOffsetBySite(site);
+        } catch (e) {} // eslint-disable-line no-empty
+        for (const [csSite, csOffset, unused_csRecursionType] of this.contextSites()) {
+            if (csSite === site) {
+                return csOffset;
+            }
+        }
+        throw new Error(`Element ${this} is not in hierarchy of ${site}`);
     }
 
     // ---------- Contexts -------------

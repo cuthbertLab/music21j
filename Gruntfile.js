@@ -26,7 +26,7 @@ module.exports = grunt => {
     const TARGET_MIN = path.join(BUILD_DIR, 'music21.min.js');
     const TARGET_TESTS = path.join(BUILD_DIR, 'music21.tests.js');
 
-    const SOURCES = ['src/loadModules.js', 'src/music21/*.js'];
+    const SOURCES = ['src/loadModules.js', 'src/music21/*.js', 'src/music21/*/*.js'];
 
     const TEST_ENTRY = path.join(TEST_DIR, 'loadAll.js');
     const TEST_SOURCES = ['tests/loadAll.js', 'tests/moduleTests/*.js'];
@@ -139,7 +139,7 @@ module.exports = grunt => {
             options: {
                 banner: BANNER,
                 sourceMap: true,
-		sourceMapIn: TARGET_RAW_MAP, 
+		sourceMapIn: TARGET_RAW_MAP,
             },
             build: {
                 src: TARGET_RAW,
@@ -149,7 +149,7 @@ module.exports = grunt => {
 
         jsdoc: {
             dist: {
-                src: ['src/*.js', 'src/music21/*.js', 'README.md'],
+                src: ['src/*.js', 'src/music21/*.js', 'src/music21/*/*.js', 'README.md'],
                 options: {
                     destination: DOC_DIR,
                     template: 'jsdoc-template',
@@ -168,14 +168,14 @@ module.exports = grunt => {
         },
         watch: {
             scripts: {
-                files: ['src/*', 'src/music21/*', 'Gruntfile.js'],
+                files: ['src/*', 'src/music21/*', 'src/music21/*/*.js', 'Gruntfile.js'],
                 tasks: ['rollup', 'eslint'],
                 options: {
                     interrupt: true,
                 },
             },
             test: {
-                files: ['tests/*', 'tests/moduleTests/*.js'],
+                files: ['tests/*', 'tests/moduleTests/*.js', 'tests/moduleTests/*/*.js'],
                 tasks: ['test'],
                 options: {
                     interrupt: true,
