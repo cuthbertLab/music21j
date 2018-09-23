@@ -15843,7 +15843,7 @@
               // const contextClef = this.getContextByClass('Clef');
               var context = this.getContextByClass('Stream', { getElementMethod: 'getElementBefore' });
               var contextObj = void 0;
-              if (context !== undefined && contextObj !== this) {
+              if (context !== undefined && context !== this) {
                   contextObj = context[attr];
               }
               return contextObj;
