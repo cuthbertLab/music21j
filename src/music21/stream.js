@@ -301,7 +301,7 @@ export class Stream extends base.Music21Object {
         // const contextClef = this.getContextByClass('Clef');
         const context = this.getContextByClass('Stream', { getElementMethod: 'getElementBefore' });
         let contextObj;
-        if (context !== undefined) {
+        if (context !== undefined && contextObj !== this) {
             contextObj = context[attr];
         }
         return contextObj;
