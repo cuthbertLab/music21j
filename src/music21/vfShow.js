@@ -10,8 +10,12 @@
 import * as $ from 'jquery';
 import * as Vex from 'vexflow';
 
+import { clef } from './clef.js';
 import { debug } from './debug.js';
 import { duration } from './duration.js';
+
+const _clefSingleton = new clef.TrebleClef();
+
 /**
  * for rendering vexflow. Will eventually go to music21/converter/vexflow
  *
@@ -685,6 +689,8 @@ export class Renderer {
         if (rendOp === undefined) {
             rendOp = s.renderOptions;
         }
+        const sClef = s.clef || _clefSingleton;
+        
         this.setStafflines(s, stave);
         if (rendOp.showMeasureNumber) {
             stave.setMeasure(rendOp.measureIndex + 1);
@@ -692,12 +698,12 @@ export class Renderer {
         if (rendOp.displayClef) {
             let ottava;
             const size = 'default';
-            if (s.clef.octaveChange === 1) {
+            if (sClef.octaveChange === 1) {
                 ottava = '8va';
-            } else if (s.clef.octaveChange === -1) {
+            } else if (sClef.octaveChange === -1) {
                 ottava = '8vb';
             }
-            stave.addClef(s.clef.name, size, ottava);
+            stave.addClef(sClef.name, size, ottava);
         }
         if (s.keySignature !== undefined && rendOp.displayKeySignature) {
             const ksVFName = s.keySignature.majorName().replace(/-/g, 'b');
@@ -792,8 +798,8 @@ export class Renderer {
         let activeTuplet;
         let activeTupletLength = 0.0;
         let activeTupletVexflowNotes = [];
-
-        const options = { clef: s.clef, stave };
+        const sClef = s.clef || _clefSingleton;
+        const options = { clef: sClef, stave };
         for (const thisEl of s) {
             if (
                 thisEl.isClassOrSubclass('GeneralNote')
@@ -1144,6 +1150,7 @@ export class Renderer {
         if (s === undefined) {
             s = this.stream;
         }
+        const sClef = s.clef || _clefSingleton;
         let noteOffsetLeft = 0;
         // var staveHeight = 80;
         if (stave !== undefined) {
@@ -1185,7 +1192,7 @@ export class Renderer {
                     // note only...
                     el.y
                         = stave.getBottomY()
-                        - (s.clef.lowestLine - el.pitch.diatonicNoteNum)
+                        - (sClef.lowestLine - el.pitch.diatonicNoteNum)
                             * stave.options.spacing_between_lines_px;
                     // console.log('Note DNN: ' + el.pitch.diatonicNoteNum + " ; y: " + el.y);
                 }

@@ -11692,6 +11692,8 @@
    *
    */
 
+  var _clefSingleton = new clef.TrebleClef();
+
   /**
    * for rendering vexflow. Will eventually go to music21/converter/vexflow
    *
@@ -12435,6 +12437,8 @@
               if (rendOp === undefined) {
                   rendOp = s.renderOptions;
               }
+              var sClef = s.clef || _clefSingleton;
+
               this.setStafflines(s, stave);
               if (rendOp.showMeasureNumber) {
                   stave.setMeasure(rendOp.measureIndex + 1);
@@ -12442,12 +12446,12 @@
               if (rendOp.displayClef) {
                   var ottava = void 0;
                   var size = 'default';
-                  if (s.clef.octaveChange === 1) {
+                  if (sClef.octaveChange === 1) {
                       ottava = '8va';
-                  } else if (s.clef.octaveChange === -1) {
+                  } else if (sClef.octaveChange === -1) {
                       ottava = '8vb';
                   }
-                  stave.addClef(s.clef.name, size, ottava);
+                  stave.addClef(sClef.name, size, ottava);
               }
               if (s.keySignature !== undefined && rendOp.displayKeySignature) {
                   var ksVFName = s.keySignature.majorName().replace(/-/g, 'b');
@@ -12529,8 +12533,8 @@
               var activeTuplet = void 0;
               var activeTupletLength = 0.0;
               var activeTupletVexflowNotes = [];
-
-              var options = { clef: s.clef, stave: stave };
+              var sClef = s.clef || _clefSingleton;
+              var options = { clef: sClef, stave: stave };
               var _iteratorNormalCompletion4 = true;
               var _didIteratorError4 = false;
               var _iteratorError4 = undefined;
@@ -12926,6 +12930,7 @@
               if (s === undefined) {
                   s = this.stream;
               }
+              var sClef = s.clef || _clefSingleton;
               var noteOffsetLeft = 0;
               // var staveHeight = 80;
               if (stave !== undefined) {
@@ -12966,7 +12971,7 @@
                           el.width = formatterNote.width;
                           if (el.pitch !== undefined) {
                               // note only...
-                              el.y = stave.getBottomY() - (s.clef.lowestLine - el.pitch.diatonicNoteNum) * stave.options.spacing_between_lines_px;
+                              el.y = stave.getBottomY() - (sClef.lowestLine - el.pitch.diatonicNoteNum) * stave.options.spacing_between_lines_px;
                               // console.log('Note DNN: ' + el.pitch.diatonicNoteNum + " ; y: " + el.y);
                           }
                       }
@@ -18695,7 +18700,7 @@
               if (contextClef !== undefined) {
                   return contextClef;
               } else {
-                  return new clef.TrebleClef();
+                  return undefined;
               }
           },
           set: function set(newClef) {
