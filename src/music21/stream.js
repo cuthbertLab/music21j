@@ -26,6 +26,8 @@ import { pitch } from './pitch.js';
 import { renderOptions } from './renderOptions.js';
 import { vfShow } from './vfShow.js';
 
+import { GeneralObjectExporter } from './musicxml/m21ToXml.js';
+
 import * as filters from './stream/filters.js';
 import * as iterator from './stream/iterator.js';
 
@@ -64,6 +66,11 @@ export const stream = {
 class StreamException extends Music21Exception {}
 
 stream.StreamException = StreamException;
+
+function _exportMusicXMLAsText(s) {
+    const gox = new GeneralObjectExporter(s);
+    return gox.parse();
+}
 
 /**
  * A generic Stream class -- a holder for other music21 objects
@@ -652,8 +659,7 @@ export class Stream extends base.Music21Object {
         }
         this.insert(offset, element);
     }
-
-
+    
     /**
      * Return the first matched index
      */
@@ -1584,6 +1590,11 @@ export class Stream extends base.Music21Object {
         return this.renderVexflow(canvasOrSVG);
     }
 
+    write(format='musicxml') {
+        return _exportMusicXMLAsText(this);
+    }
+    
+    
     /**
      * Uses {@link music21.vfShow.Renderer} to render Vexflow onto an
      * existing canvas or SVG object.

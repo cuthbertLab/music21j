@@ -1,6 +1,6 @@
 import { clef } from '../clef.js';
 import { common } from '../common.js';
-import { stream } from '../stream.js';
+import { Stream, Measure, Part, Score } from '../stream.js';
 
 import { Music21Exception } from '../exceptions21.js';
 
@@ -138,7 +138,7 @@ export class GeneralObjectExporter {
         if (p.isFlat) {
             p = p.makeMeasures();
         }
-        const s = new stream.Score();
+        const s = new Score();
         s.insert(0, p);
         // metadata...;
         return this.fromScore(s);
@@ -149,14 +149,14 @@ export class GeneralObjectExporter {
         if (m.clef === undefined) {
             mCopy.clef = clef.bestClef(mCopy, { recurse: true });
         }
-        const p = new stream.Part();
+        const p = new Part();
         p.append(mCopy);
         // TODO(msc): metadata;
         return this.fromPart(p);
     }
     
     fromVoice(v) {
-        const m = new stream.Measure();
+        const m = new Measure();
         m.number = 1;
         m.insert(0, v);
         return this.fromMeasure(m);
@@ -172,7 +172,7 @@ export class GeneralObjectExporter {
     fromGeneralNote(n) {
         const nCopy = n.clone(true);
         // makeTupletBrackets;
-        const out = new stream.Measure();
+        const out = new Measure();
         out.number = 1;
         out.append(nCopy);
         
@@ -335,7 +335,7 @@ export class ScoreExporter extends XMLExporterBase {
     constructor(score) {
         super();
         if (score === undefined) {
-            this.stream = new stream.Score();
+            this.stream = new Score();
         } else {
             this.stream = score;
         }
@@ -461,7 +461,7 @@ export class PartExporter extends XMLExporterBase {
         this.parent = parent;
         this.xmlRoot = this.doc.createElement('part');
         if (parent === undefined) {
-            this.meterStream = new stream.Stream();
+            this.meterStream = new Stream();
             this.refStreamOrTimeRange = [0.0, 0.0];
             this.midiChannelList = [];
         } else {

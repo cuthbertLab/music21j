@@ -14,6 +14,7 @@ import { beam } from './music21/beam.js';
 import { chord } from './music21/chord.js';
 import * as chordTables from './music21/chordTables.js';
 import { clef } from './music21/clef.js';
+import * as converter from './music21/converter.js';
 import { duration } from './music21/duration.js';
 import { dynamics } from './music21/dynamics.js';
 import { expressions } from './music21/expressions.js';
@@ -53,8 +54,9 @@ const music21 = {
     audioSearch,
     beam,
     chord,
-    chordTables,
+    chordTables,    
     clef,
+    converter,
     dynamics,
     duration,
     exceptions21,
