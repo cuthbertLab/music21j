@@ -299,12 +299,18 @@ export class Stream extends base.Music21Object {
         
         // should be:
         // const contextClef = this.getContextByClass('Clef');
-        const context = this.getContextByClass('Stream', { getElementMethod: 'getElementBefore' });
-        let contextObj;
-        if (context !== undefined && context !== this) {
-            contextObj = context[attr];
+//        const context = this.getContextByClass('Stream', { getElementMethod: 'getElementBefore' });
+//        let contextObj;
+//        if (context !== undefined && context !== this) {
+//            contextObj = context[privAttr];
+//        }
+        for (const site of this.sites.yieldSites()) {
+            const contextObj = site[attr];
+            if (contextObj !== undefined) {
+                return contextObj;
+            }
         }
-        return contextObj;
+        return undefined;
     }
     
     get clef() {
