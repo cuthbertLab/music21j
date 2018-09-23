@@ -51,7 +51,7 @@ export class StreamIterator {
             let e;
             try {
                 e = this.srcStreamElements[this.index - 1];
-            } catch (e) {
+            } catch (exc) {
                 continue;
             }
             const matches = this.matchesFilters(e);
@@ -233,7 +233,74 @@ export class StreamIterator {
     }
 }
 
-// OffsetIterator
+export class OffsetIterator extends StreamIterator {
+    constructor(srcStream, options={}) {
+        super(srcStream, options);
+        this.nextToYield = [];
+        this.nextOffsetToYield = undefined;
+    }
+
+    * [Symbol.iterator]() {
+        this.reset();
+        this.sort();
+
+        while (this.index < this.streamLength) {            
+            this.index += 1;
+            let e;
+            try {
+                e = this.srcStreamElements[this.index - 1];
+            } catch (exc) {
+                continue;
+            }
+            const matches = this.matchesFilters(e);
+            if (matches === false) {
+                continue;
+            }
+            if (matches === StopIterationSingleton) {
+                break;
+            }
+            const yieldEls = [e];
+            const eOffset = this.elementOffset(e);
+            
+            for (let forwardIndex = this.index; forwardIndex < this.streamLength; forwardIndex++) {
+                let nextE;
+                try {
+                    nextE = this.srcStreamElements[this.index - 1];
+                } catch (exc) {
+                    continue;
+                }
+                const nextOffset = this.elementOffset(nextE);
+                if (nextOffset !== eOffset) {
+                    this.nextToYield = [nextE];
+                    this.nextOffsetToYield = nextOffset;
+                    break;
+                }
+                if (!this.matchesFilters(nextE)) {
+                    continue;
+                }
+                
+                yieldEls.push(e);
+                this.index = forwardIndex;
+            }
+            
+            if (this.restoreActiveSites) {
+                for (const el of yieldEls) {
+                    el.activeSite = this.srcStream;                    
+                }
+            }
+            this.updateActiveInformation();
+            yield yieldEls;
+        }
+        this.cleanup();
+    }
+    
+    reset() {
+        super.reset();
+        this.nextToYield = [];
+        this.nextOffsetToYield = undefined;        
+    }
+}
+
 
 export class RecursiveIterator extends StreamIterator {
     constructor(srcStream, {

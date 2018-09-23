@@ -21,6 +21,7 @@ import { debug } from './debug.js';
 import { duration } from './duration.js';
 import { instrument } from './instrument.js';
 import { meter } from './meter.js';
+import { note } from './note.js';
 import { pitch } from './pitch.js';
 import { renderOptions } from './renderOptions.js';
 import { vfShow } from './vfShow.js';
@@ -1021,7 +1022,107 @@ export class Stream extends base.Music21Object {
         return undefined;
     }
 
+    /**
+     * chordify does not yet work...
+     */
+    chordify({
+        addTies=true,
+        addPartIdAsGroup=true,
+        removeRedundantPitches=true,
+        toSoundingPitch=true,
+    }={}) {
+        const workObj = this;
+        let templateStream;
+        if (this.hasPartLikeStreams()) {
+            templateStream = workObj.getElementsByClass('Stream').get(0);
+        } else {
+            templateStream = workObj;
+        }
+        const template = templateStream.template({
+            fillWithRests: false,
+            removeClasses: ['GeneralNote'],
+            retainVoices: false,
+        });
+        return template;
+    }
+    
+    template({
+        fillWithRests=true,
+        removeClasses=[],
+        retainVoices=true,
+    }={}) {
+        const out = this.cloneEmpty('template');
+        const restInfo = {
+            offset: undefined,
+            endTime: undefined,
+        };
+        const optionalAddRest = function optionalAddRest() {
+            if (!fillWithRests) {
+                return;
+            }
+            if (restInfo.offset === undefined) {
+                return;
+            }
+            const restQL = restInfo.endTime - restInfo.offset;
+            const restObj = new note.Rest();
+            restObj.duration.quarterLength = restQL;
+            out.insert(restInfo.offset, restObj);
+            restInfo.offset = undefined;
+            restInfo.endTime = undefined;
+        };
+        for (const el of stream) {
+            if (el.isStream
+                    && (retainVoices || el.classes.includes('Voice'))) {                
+                optionalAddRest();
+                const outEl = el.template({
+                    fillWithRests,
+                    removeClasses,
+                    retainVoices,
+                });
+                out.insert(el.offset, outEl);
+            }
+        }
+    }
 
+    cloneEmpty(derivationMethod) {
+        const returnObj = this.constructor();
+        // TODO(msc): derivation
+        returnObj.mergeAttributes(this);
+        return returnObj;
+    }
+    
+    mergeAttributes(other) {
+        super.mergeAttributes(other);
+        for (const attr of [
+            'autoSort',
+            'isSorted',
+            'definesExplicitSystemBreaks',
+            'definesEExplicitPageeBreaks',
+            '_atSoundingPitch',
+            '_mutable',
+        ]) {
+            if (Object.prototype.hasOwnProperty.call(other, attr)) {
+                this[attr] = other[attr];                
+            }
+        }
+    }
+    
+    
+    /**
+     * makeNotation does not do anything yet, but it is a placeholder
+     * so it can start to be called. 
+     */
+    makeNotation({ inPlace=false }={}) {
+        let out;
+        if (inPlace) {
+            out = this;
+        } else {
+            out = this.clone(true);
+        }
+        return out;
+    }
+    
+    
     /**
      * Return a new Stream or modify this stream
      * to have beams.
@@ -1089,6 +1190,28 @@ export class Stream extends base.Music21Object {
     }
 
     /**
+     * Returns a boolean value showing if this 
+     * Stream contains any Parts or Part-like
+     * sub-Streams.
+     * 
+     * Will deal with Part-like sub-streams later
+     * for now just checks for real Part objects.
+     * 
+     * Part-like sub-streams are Streams that
+     * contain Measures or Notes. And where no
+     * sub-stream begins at an offset besides zero.
+     */
+    hasPartLikeStreams() {
+        for (const el of this) {
+            if (el.classes.includes('Part')) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    
+    /**
      * Returns true if any note in the stream has lyrics, otherwise false
      *
      * @memberof music21.stream.Stream
@@ -1125,7 +1248,7 @@ export class Stream extends base.Music21Object {
             for (let j = 0; j < group.length; j++) {
                 const e = group.get(j);
                 const dur = e.duration.quarterLength;
-                const offset = e.offset; // TODO: getOffsetBySite(group)
+                const offset = group.elementOffset(e);
                 const endTime = offset + dur;
                 const thisOffsetMap = new stream.OffsetMap(
                     e,
@@ -2475,6 +2598,11 @@ export class Measure extends Stream {
         this.recursionType = 'elementsFirst';
         this.isMeasure = true;
         this.number = 0; // measure number
+        this.numberSuffix = '';
+    }
+    
+    measureNumberWithSuffix() {
+        return this.number.toString() + this.numberSuffix;
     }
 }
 stream.Measure = Measure;

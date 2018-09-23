@@ -162,6 +162,12 @@ export class Music21Object extends prebase.ProtoM21Object {
     set quarterLength(ql) {
         this.duration.quarterLength = ql;
     }
+    
+    mergeAttributes(other) {
+        // id;
+        this.groups = other.groups.slice();
+    }
+    
     /**
      * Return the offset of this element in a given site -- use .offset if you are sure that
      * site === activeSite.

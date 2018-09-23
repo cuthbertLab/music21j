@@ -238,7 +238,7 @@ clef.PercussionClef = PercussionClef;
  * @param {music21.stream.Stream} st
  * @returns {music21.clef.Clef}
  */
-clef.bestClef = function bestClef(st) {
+clef.bestClef = function bestClef(st, { recurse=true }={}) {
     // console.log('calling flat on stream: ', st.elements.length, st.classes[st.classes.length - 1]);
     const stFlat = st.flat;
     let totalNotes = 0;

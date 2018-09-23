@@ -467,4 +467,17 @@ common.urls = {
     soundfontUrl: '/src/ext/soundfonts/FluidR3_GM/',
 };
 
+common.hyphenToCamelCase = function hyphenToCamelCase(usrStr) {
+    return usrStr.replace(/-([a-zA-Z])/, (all, match) => match.toUpperCase());
+};
+
+common.numToIntOrFloat = function numToIntOrFloat(value) {
+    const intVal = Math.round(value);
+    if (Math.abs(value - intVal) < 0.000001) {
+        return intVal;
+    } else {
+        return value;
+    }
+};
+
 export default common;

@@ -312,6 +312,15 @@ export class Pitch extends prebase.ProtoM21Object {
     set octave(o) {
         this._octave = o;
     }
+    get implicitOctave() {
+        const o = this._octave;
+        if (o === undefined) {
+            return 4; // TODO(msc): get from defaults.
+        } else {
+            return o;
+        }        
+    }
+    
     get accidental() {
         return this._accidental;
     }
