@@ -305,6 +305,9 @@ export class Stream extends base.Music21Object {
 //            contextObj = context[privAttr];
 //        }
         for (const site of this.sites.yieldSites()) {
+            if (site === undefined) {
+                continue;
+            }
             const contextObj = site[attr];
             if (contextObj !== undefined) {
                 return contextObj;

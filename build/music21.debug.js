@@ -15854,6 +15854,9 @@
                   for (var _iterator4 = this.sites.yieldSites()[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
                       var site = _step4.value;
 
+                      if (site === undefined) {
+                          continue;
+                      }
                       var contextObj = site[attr];
                       if (contextObj !== undefined) {
                           return contextObj;
