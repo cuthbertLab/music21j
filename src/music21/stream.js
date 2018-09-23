@@ -302,7 +302,7 @@ export class Stream extends base.Music21Object {
         const context = this.getContextByClass('Stream', { getElementMethod: 'getElementBefore' });
         let contextObj;
         if (context !== undefined) {
-            contextObj = context[privAttr];
+            contextObj = context[attr];
         }
         return contextObj;
     }

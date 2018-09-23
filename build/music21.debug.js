@@ -15844,7 +15844,7 @@
               var context = this.getContextByClass('Stream', { getElementMethod: 'getElementBefore' });
               var contextObj = void 0;
               if (context !== undefined) {
-                  contextObj = context[privAttr];
+                  contextObj = context[attr];
               }
               return contextObj;
           }
