@@ -15,7 +15,6 @@ import { Music21Exception } from './exceptions21.js';
 
 import { base } from './base.js';
 import { beam } from './beam.js';
-import { clef } from './clef.js';
 import { common } from './common.js';
 import { debug } from './debug.js';
 import { duration } from './duration.js';
@@ -313,7 +312,7 @@ export class Stream extends base.Music21Object {
         if (contextClef !== undefined) {
             return contextClef;
         } else {
-            return new clef.TrebleClef();            
+            return undefined;            
         }
     }
     set clef(newClef) {

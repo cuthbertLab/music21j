@@ -18695,7 +18695,7 @@
               if (contextClef !== undefined) {
                   return contextClef;
               } else {
-                  return new clef.TrebleClef();
+                  return undefined;
               }
           },
           set: function set(newClef) {
