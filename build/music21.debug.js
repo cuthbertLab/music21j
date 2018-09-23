@@ -8782,6 +8782,46 @@
       }
 
       createClass(Chord, [{
+          key: 'get',
+          value: function get(i) {
+              if (typeof i === 'number') {
+                  return this._notes[i];
+              } else {
+                  return undefined; // TODO(msc): add other get methods.
+              }
+          }
+      }, {
+          key: Symbol.iterator,
+          value: regeneratorRuntime.mark(function value() {
+              var i;
+              return regeneratorRuntime.wrap(function value$(_context) {
+                  while (1) {
+                      switch (_context.prev = _context.next) {
+                          case 0:
+                              i = 0;
+
+                          case 1:
+                              if (!(i < this.length)) {
+                                  _context.next = 7;
+                                  break;
+                              }
+
+                              _context.next = 4;
+                              return this.get(i);
+
+                          case 4:
+                              i++;
+                              _context.next = 1;
+                              break;
+
+                          case 7:
+                          case 'end':
+                              return _context.stop();
+                      }
+                  }
+              }, value, this);
+          })
+      }, {
           key: 'areZRelations',
           value: function areZRelations(other) {
               var zRelationAddress = addressToZAddress(this.chordTablesAddress);
@@ -9602,6 +9642,8 @@
 
           var _this = possibleConstructorReturn(this, (Clef.__proto__ || Object.getPrototypeOf(Clef)).call(this));
 
+          _this.sign = undefined;
+          _this.line = 1;
           if (name !== undefined) {
               name = name.toLowerCase();
               _this.name = name;
@@ -9666,7 +9708,12 @@
 
       function TrebleClef() {
           classCallCheck(this, TrebleClef);
-          return possibleConstructorReturn(this, (TrebleClef.__proto__ || Object.getPrototypeOf(TrebleClef)).call(this, 'treble'));
+
+          var _this2 = possibleConstructorReturn(this, (TrebleClef.__proto__ || Object.getPrototypeOf(TrebleClef)).call(this, 'treble'));
+
+          _this2.sign = 'G';
+          _this2.line = 2;
+          return _this2;
       }
 
       return TrebleClef;
@@ -9724,7 +9771,12 @@
 
       function BassClef() {
           classCallCheck(this, BassClef);
-          return possibleConstructorReturn(this, (BassClef.__proto__ || Object.getPrototypeOf(BassClef)).call(this, 'bass'));
+
+          var _this5 = possibleConstructorReturn(this, (BassClef.__proto__ || Object.getPrototypeOf(BassClef)).call(this, 'bass'));
+
+          _this5.sign = 'F';
+          _this5.line = 4;
+          return _this5;
       }
 
       return BassClef;
@@ -9743,7 +9795,12 @@
 
       function AltoClef() {
           classCallCheck(this, AltoClef);
-          return possibleConstructorReturn(this, (AltoClef.__proto__ || Object.getPrototypeOf(AltoClef)).call(this, 'alto'));
+
+          var _this6 = possibleConstructorReturn(this, (AltoClef.__proto__ || Object.getPrototypeOf(AltoClef)).call(this, 'alto'));
+
+          _this6.sign = 'C';
+          _this6.line = 3;
+          return _this6;
       }
 
       return AltoClef;
@@ -9762,7 +9819,12 @@
 
       function TenorClef() {
           classCallCheck(this, TenorClef);
-          return possibleConstructorReturn(this, (TenorClef.__proto__ || Object.getPrototypeOf(TenorClef)).call(this, 'tenor'));
+
+          var _this7 = possibleConstructorReturn(this, (TenorClef.__proto__ || Object.getPrototypeOf(TenorClef)).call(this, 'tenor'));
+
+          _this7.sign = 'C';
+          _this7.line = 4;
+          return _this7;
       }
 
       return TenorClef;
@@ -9780,7 +9842,12 @@
 
       function SopranoClef() {
           classCallCheck(this, SopranoClef);
-          return possibleConstructorReturn(this, (SopranoClef.__proto__ || Object.getPrototypeOf(SopranoClef)).call(this, 'soprano'));
+
+          var _this8 = possibleConstructorReturn(this, (SopranoClef.__proto__ || Object.getPrototypeOf(SopranoClef)).call(this, 'soprano'));
+
+          _this8.sign = 'C';
+          _this8.line = 1;
+          return _this8;
       }
 
       return SopranoClef;
@@ -9799,7 +9866,12 @@
 
       function MezzoSopranoClef() {
           classCallCheck(this, MezzoSopranoClef);
-          return possibleConstructorReturn(this, (MezzoSopranoClef.__proto__ || Object.getPrototypeOf(MezzoSopranoClef)).call(this, 'mezzo-soprano'));
+
+          var _this9 = possibleConstructorReturn(this, (MezzoSopranoClef.__proto__ || Object.getPrototypeOf(MezzoSopranoClef)).call(this, 'mezzo-soprano'));
+
+          _this9.sign = 'C';
+          _this9.line = 2;
+          return _this9;
       }
 
       return MezzoSopranoClef;
@@ -9820,7 +9892,12 @@
 
       function PercussionClef() {
           classCallCheck(this, PercussionClef);
-          return possibleConstructorReturn(this, (PercussionClef.__proto__ || Object.getPrototypeOf(PercussionClef)).call(this, 'percussion'));
+
+          var _this10 = possibleConstructorReturn(this, (PercussionClef.__proto__ || Object.getPrototypeOf(PercussionClef)).call(this, 'percussion'));
+
+          _this10.sign = 'percussion';
+          _this10.line = 3;
+          return _this10;
       }
 
       return PercussionClef;
@@ -9885,7 +9962,7 @@
 
       if (xnStr.length === 2) {
           thisType = xnStr[0].toUpperCase();
-          lineNum = xnStr[1];
+          lineNum = parseInt(xnStr[1]);
       } else if (xnStr.length === 1) {
           thisType = xnStr[0].toUpperCase();
           if (thisType === 'G') {
@@ -14214,13 +14291,13 @@
            * @param {object} [optional_renderOp] - render options.
            * Passed to {@link music21.vfShow.Renderer#renderStave}
            * @returns {Vex.Flow.Stave} staff to return too
-           * (also changes the `stack` parameter and runs `makeAccidentals` on s)
+           * (also changes the `stack` parameter and runs `makeNotation` on s)
            */
 
       }, {
           key: 'prepareFlat',
           value: function prepareFlat(s, stack, optionalStave, optional_renderOp) {
-              s.makeAccidentals();
+              s.makeNotation();
               var stave = void 0;
               if (optionalStave !== undefined) {
                   stave = optionalStave;
@@ -14825,6 +14902,9 @@
                       var el = _step5.value;
 
                       var lyricsArray = el.lyrics;
+                      if (lyricsArray === undefined) {
+                          continue;
+                      }
                       var text = void 0;
                       var d = el.duration;
                       var addConnector = false;
@@ -16593,6 +16673,27 @@
               return newSt;
           }
       }, {
+          key: '_specialContext',
+          value: function _specialContext(attr) {
+              var privAttr = '_' + attr;
+              if (this[privAttr] !== undefined) {
+                  return this[privAttr];
+              }
+              var firstElements = this.getElementsByOffset(0.0).getElementsByClass(attr.charAt(0).toUpperCase() + attr.slice(1));
+              if (firstElements.length) {
+                  return firstElements.get(0);
+              }
+
+              // should be:
+              // const contextClef = this.getContextByClass('Clef');
+              var context = this.getContextByClass('Stream', { getElementMethod: 'getElementBefore' });
+              var contextObj = void 0;
+              if (context !== undefined) {
+                  contextObj = context[privAttr];
+              }
+              return contextObj;
+          }
+      }, {
           key: 'clear',
           value: function clear() {
               this._elements = [];
@@ -17506,6 +17607,7 @@
               } else {
                   out = this.clone(true);
               }
+              this.makeAccidentals();
               return out;
           }
 
@@ -19432,12 +19534,11 @@
       }, {
           key: 'clef',
           get: function get() {
-              if (this._clef === undefined && this.activeSite === undefined) {
-                  return new clef.Clef('treble');
-              } else if (this._clef === undefined) {
-                  return this.activeSite.clef;
+              var contextClef = this._specialContext('clef');
+              if (contextClef !== undefined) {
+                  return contextClef;
               } else {
-                  return this._clef;
+                  return new clef.TrebleClef();
               }
           },
           set: function set(newClef) {
@@ -19446,11 +19547,7 @@
       }, {
           key: 'keySignature',
           get: function get() {
-              if (this._keySignature === undefined && this.activeSite !== undefined) {
-                  return this.activeSite.keySignature;
-              } else {
-                  return this._keySignature;
-              }
+              return this._specialContext('keySignature');
           },
           set: function set(newKeySignature) {
               this._keySignature = newKeySignature;
@@ -19458,11 +19555,7 @@
       }, {
           key: 'timeSignature',
           get: function get() {
-              if (this._timeSignature === undefined && this.activeSite !== undefined) {
-                  return this.activeSite.timeSignature;
-              } else {
-                  return this._timeSignature;
-              }
+              return this._specialContext('timeSignature');
           },
           set: function set(newTimeSignature) {
               if (typeof newTimeSignature === 'string') {
@@ -19473,13 +19566,7 @@
       }, {
           key: 'autoBeam',
           get: function get() {
-              if (this._autoBeam === undefined && this.activeSite !== undefined) {
-                  return this.activeSite.autoBeam;
-              } else if (this._autoBeam !== undefined) {
-                  return this._autoBeam;
-              } else {
-                  return true; // default...
-              }
+              return this._specialContext('autoBeam');
           },
           set: function set(ab) {
               this._autoBeam = ab;
@@ -20913,7 +21000,7 @@
       }
 
       return MusicXMLExportException;
-  }(Music21Exception());
+  }(Music21Exception);
 
   function typeToMusicXMLType(value) {
       if (value === 'longa') {
@@ -21057,6 +21144,7 @@
               if (outObj === undefined) {
                   throw new MusicXMLExportException('Cannot translate the object ' + obj + ' to a complete musicXML document; put it in a Stream first!');
               }
+              return outObj;
           }
       }, {
           key: 'fromScore',
@@ -21140,7 +21228,7 @@
 
               var out = this.xmlHeader();
               var oSerializer = new XMLSerializer();
-              out += oSerializer.serializeToString(this.doc);
+              out += oSerializer.serializeToString(this.xmlRoot);
               return out;
           }
 
@@ -21154,14 +21242,12 @@
 
           /**
            * Note: this is not a method in music21p, but it needs access to this.doc in music21j
-           * Also attributeName is in the options here.
            */
 
       }, {
           key: '_setTagTextFromAttribute',
-          value: function _setTagTextFromAttribute(m21El, xmlEl, tag) {
-              var _ref2 = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {},
-                  attributeName = _ref2.attributeName,
+          value: function _setTagTextFromAttribute(m21El, xmlEl, tag, attributeName) {
+              var _ref2 = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : {},
                   transform = _ref2.transform,
                   _ref2$forceEmpty = _ref2.forceEmpty,
                   forceEmpty = _ref2$forceEmpty === undefined ? false : _ref2$forceEmpty;
@@ -21177,7 +21263,7 @@
               if ((value === undefined || value === '') && !forceEmpty) {
                   return undefined;
               }
-              var subElement = this.subElement(tag);
+              var subElement = this.subElement(xmlEl, tag);
               if (value !== undefined) {
                   subElement.innerHTML = value;
               }
@@ -21290,10 +21376,23 @@
                   mxName = a.name;
                   // check other accidentals here.
               }
-              var mxAccidental = this.doc.createChild('accidental');
+              var mxAccidental = this.doc.createElement('accidental');
               mxAccidental.innerHTML = mxName;
               // TODO(msc): parentheses, bracket, setPrintStyle
               return mxAccidental;
+          }
+      }, {
+          key: 'getRandomId',
+          value: function getRandomId() {
+              // hack to get random ids.
+              var text = '';
+              var possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+
+              for (var i = 0; i < 6; i++) {
+                  text += possible.charAt(Math.floor(Math.random() * possible.length));
+              }
+
+              return text;
           }
       }]);
       return XMLExporterBase;
@@ -21579,19 +21678,6 @@
 
               return this.xmlRoot;
           }
-      }, {
-          key: 'getRandomId',
-          value: function getRandomId() {
-              // hack to get random ids.
-              var text = '';
-              var possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
-
-              for (var i = 0; i < 6; i++) {
-                  text += possible.charAt(Math.floor(Math.random() * possible.length));
-              }
-
-              return text;
-          }
 
           // TODO(msc): instrumentSetup
           // TODO(msc): fixupNotationFlat -- might be redundant
@@ -21725,6 +21811,9 @@
               var voiceId = void 0;
               if (m.classes.includes('Voice')) {
                   voiceId = m.id;
+                  if (voiceId === undefined) {
+                      voiceId = this.getRandomId();
+                  }
               }
               this.currentVoiceId = voiceId;
 
@@ -21935,17 +22024,25 @@
               if (this.currentVoiceId !== undefined) {
                   var mxVoice = this.subElement(mxNote, 'voice');
                   var vId = void 0;
-                  try {
+                  if (typeof vId === 'number') {
                       vId = this.currentVoiceId + 1;
-                  } catch (exc) {
+                  } else {
                       // not a number;
                       vId = this.currentVoiceId;
                   }
                   mxVoice.innerHTML = vId.toString();
               }
-              // zero duration
+
+              var mxType = this.subElement(mxNote, 'type');
+              mxType.innerHTML = typeToMusicXMLType(d.type);
+              // set styleAttributes
+              // set noteSize
+              for (var _ = 0; _ < d.dots; _++) {
+                  this.subElement(mxNote, 'dot');
+              }
+
               // components.
-              if (n.pitch !== undefined && n.pitch.accidental !== undefined && ![true, undefined].includes(n.pitch.accidental.displayStatus)) {
+              if (n.pitch !== undefined && n.pitch.accidental !== undefined && n.pitch.accidental.displayStatus !== false) {
                   var mxAccidental = this.accidentalToMx(n.pitch.accidental);
                   mxNote.appendChild(mxAccidental);
               }
@@ -22032,7 +22129,7 @@
                           i = _step12$value[0],
                           n = _step12$value[1];
 
-                      var mxNote = this.noteToXml(n, i, { chordParent: c });
+                      var mxNote = this.noteToXml(n, { noteIndexInChord: i, chordParent: c });
                       mxNoteList.push(mxNote);
                   }
               } catch (err) {
@@ -22056,7 +22153,7 @@
           key: 'durationXml',
           value: function durationXml(dur) {
               var mxDuration = this.doc.createElement('duration');
-              mxDuration.text = Math.round(this.currentDivisions * dur.quarterLength).toString();
+              mxDuration.innerHTML = Math.round(this.currentDivisions * dur.quarterLength).toString();
               return mxDuration;
           }
       }, {
@@ -22069,6 +22166,7 @@
                   mxAlter.innerHTML = common.numToIntOrFloat(p.accidental.alter).toString();
               }
               this._setTagTextFromAttribute(p, mxPitch, 'octave', 'implicitOctave');
+              return mxPitch;
           }
           // TODO(msc): fretNoteToXml
           // TODO(msc): fretBoardToXml
@@ -22190,17 +22288,17 @@
                   appendToRoot = true;
               }
               if (m.classes.includes('Measure')) {
-                  if (m.keySignature !== undefined) {
-                      mxAttributes.appendChild(this.keySignatureToXml(m.keySignature));
+                  if (m._keySignature !== undefined) {
+                      mxAttributes.appendChild(this.keySignatureToXml(m._keySignature));
                       appendToRoot = true;
                   }
-                  if (m.timeSignature !== undefined) {
-                      mxAttributes.appendChild(this.timeSignatureToXml(m.timeSignature));
+                  if (m._timeSignature !== undefined) {
+                      mxAttributes.appendChild(this.timeSignatureToXml(m._timeSignature));
                       appendToRoot = true;
                   }
                   // todo SenzaMisura...
-                  if (m.clef !== undefined) {
-                      mxAttributes.appendChild(this.clefToXml(m.clef));
+                  if (m._clef !== undefined) {
+                      mxAttributes.appendChild(this.clefToXml(m._clef));
                       appendToRoot = true;
                   }
               }
@@ -22584,6 +22682,7 @@
               // atSoundingPitch;
               // spannerBundles
               // partStaves;
+              this.stream.clef = this.lastClefs[0];
           }
       }, {
           key: 'parseXmlScorePart',
@@ -22854,8 +22953,10 @@
               var n = void 0;
 
               if (isChord) {
+                  var _$mxLyricList;
+
                   this.$mxNoteList.push($mxNote);
-                  // chord lyrics
+                  (_$mxLyricList = this.$mxLyricList).push.apply(_$mxLyricList, toConsumableArray($mxNote.children('lyric')));
               } else if (!isChord && !isRest) {
                   // normal note
                   this.restAndNoteCount.note += 1;
@@ -22866,16 +22967,16 @@
               }
 
               if (!isChord) {
-                  // update lyrics
+                  this.updateLyricsFromList(n, $mxNote.children('lyric'));
                   // add to staffReference
                   this.insertInMeasureOrVoice($mxNote, n);
                   offsetIncrement = n.duration.quarterLength;
                   this.nLast = n;
               }
 
-              if (this.$mxNoteList && !nextNoteIsChord) {
+              if (this.$mxNoteList.length && !nextNoteIsChord) {
                   var c = this.xmlToChord(this.$mxNoteList);
-                  // update lyrics
+                  this.updateLyricsFromList(c, this.$mxLyricList);
                   // addToStaffRest;
 
                   // voices;
@@ -22965,18 +23066,18 @@
               seta(p, $mxPitch, 'octave', undefined, parseInt);
               var $mxAlter = $mxPitch.children('alter');
               var accAlter = void 0;
-              if ($mxAlter) {
+              if ($mxAlter.length) {
                   accAlter = parseFloat($mxAlter.text().trim());
               }
 
               var $mxAccidental = $mxNote.children('accidental');
               // dropping support for musescore 0.9 errors...
-              if ($mxAccidental.length > 0) {
+              if ($mxAccidental.length) {
                   var accObj = this.xmlToAccidental($mxAccidental);
                   p.accidental = accObj;
                   p.accidental.displayStatus = true;
                   // independent accidental from alter
-              } else if (accAlter !== undefined) {
+              } else if (accAlter !== undefined && !isNaN(accAlter)) {
                   p.accidental = new pitch.Accidental(accAlter);
                   p.accidental.displayStatus = false;
               }
@@ -22988,6 +23089,10 @@
               var acc = new pitch.Accidental();
               // to-do m21/musicxml accidental name differences;
               var name = $($mxAccidental[0]).text().trim().toLowerCase();
+              if (name === 'flat-flat') {
+                  name = 'double-flat';
+              }
+
               acc.set(name);
 
               // set print style
@@ -23086,6 +23191,85 @@
               // style
               return t;
           }
+
+          // xmlToTuplets
+
+      }, {
+          key: 'updateLyricsFromList',
+          value: function updateLyricsFromList(n, lyricList) {
+              var currentLyricNumber = 1;
+              var _iteratorNormalCompletion7 = true;
+              var _didIteratorError7 = false;
+              var _iteratorError7 = undefined;
+
+              try {
+                  for (var _iterator7 = lyricList[Symbol.iterator](), _step7; !(_iteratorNormalCompletion7 = (_step7 = _iterator7.next()).done); _iteratorNormalCompletion7 = true) {
+                      var mxLyric = _step7.value;
+
+                      var lyricObj = this.xmlToLyric($(mxLyric));
+                      if (lyricObj === undefined) {
+                          continue;
+                      }
+                      if (lyricObj.number === 0) {
+                          lyricObj.number = currentLyricNumber;
+                      }
+                      n.lyrics.push(lyricObj);
+                      currentLyricNumber += 1;
+                  }
+              } catch (err) {
+                  _didIteratorError7 = true;
+                  _iteratorError7 = err;
+              } finally {
+                  try {
+                      if (!_iteratorNormalCompletion7 && _iterator7.return) {
+                          _iterator7.return();
+                      }
+                  } finally {
+                      if (_didIteratorError7) {
+                          throw _iteratorError7;
+                      }
+                  }
+              }
+          }
+      }, {
+          key: 'xmlToLyric',
+          value: function xmlToLyric($mxLyric, inputM21) {
+              var l = inputM21;
+              if (inputM21 === undefined) {
+                  l = new note.Lyric();
+              }
+              try {
+                  l.text = $mxLyric.children('text').text().trim();
+              } catch (exc) {
+                  return undefined; // sometimes there are empty lyrics.
+              }
+              var number = $mxLyric.attr('number');
+              try {
+                  number = parseInt(number);
+                  l.number = number;
+              } catch (exc) {
+                  l.number = 0;
+                  if (number !== undefined) {
+                      l.identifier = number;
+                  }
+              }
+              var identifier = $mxLyric.get('name');
+              if (identifier !== undefined) {
+                  l.identifier = identifier;
+              }
+
+              var $mxSyllabic = $mxLyric.children('syllabic');
+              if ($mxSyllabic.length) {
+                  l.syllabic = $mxSyllabic.text().trim();
+              }
+              // setStyleAttributes
+              // setColor
+              // setPosition
+              if (inputM21 === undefined) {
+                  return l;
+              }
+              return undefined;
+          }
       }, {
           key: 'insertIntoMeasureOrVoice',
           value: function insertIntoMeasureOrVoice($mxElement, el) {
@@ -23113,13 +23297,13 @@
           value: function parseAttributesTag($mxAttributes) {
               this.attributesAreInternal = false;
               this.$activeAttributes = $mxAttributes;
-              var _iteratorNormalCompletion7 = true;
-              var _didIteratorError7 = false;
-              var _iteratorError7 = undefined;
+              var _iteratorNormalCompletion8 = true;
+              var _didIteratorError8 = false;
+              var _iteratorError8 = undefined;
 
               try {
-                  for (var _iterator7 = $mxAttributes[Symbol.iterator](), _step7; !(_iteratorNormalCompletion7 = (_step7 = _iterator7.next()).done); _iteratorNormalCompletion7 = true) {
-                      var mxSub = _step7.value;
+                  for (var _iterator8 = $mxAttributes.children()[Symbol.iterator](), _step8; !(_iteratorNormalCompletion8 = (_step8 = _iterator8.next()).done); _iteratorNormalCompletion8 = true) {
+                      var mxSub = _step8.value;
 
                       var tag = mxSub.tagName;
                       var $mxSub = $(mxSub);
@@ -23134,16 +23318,16 @@
                       // transpose;
                   }
               } catch (err) {
-                  _didIteratorError7 = true;
-                  _iteratorError7 = err;
+                  _didIteratorError8 = true;
+                  _iteratorError8 = err;
               } finally {
                   try {
-                      if (!_iteratorNormalCompletion7 && _iterator7.return) {
-                          _iterator7.return();
+                      if (!_iteratorNormalCompletion8 && _iterator8.return) {
+                          _iterator8.return();
                       }
                   } finally {
-                      if (_didIteratorError7) {
-                          throw _iteratorError7;
+                      if (_didIteratorError8) {
+                          throw _iteratorError8;
                       }
                   }
               }
@@ -23175,8 +23359,12 @@
           key: 'handleClef',
           value: function handleClef($mxClef) {
               var clefObj = this.xmlToClef($mxClef);
+              this.stream.clef = clefObj;
               this.insertIntoMeasureOrVoice($mxClef, clefObj);
               this.lastClefs[0] = clefObj;
+              //        if (this.parent !== undefined) {
+              //            this.parent.lastClefs[0] = clefObj.clone(true);
+              //        }
           }
       }, {
           key: 'xmlToClef',
@@ -24567,7 +24755,7 @@
       EDFLAT: /\((-+)\)/,
       EDNAT: /\(n\)/,
       SHARP: /^[A-Ga-g]+'*(#+)/, // simple notation finds
-      FLAT: /^[A-Ga-g]+'*(-+)/, // double sharps too
+      FLAT: /^[A-Ga-g]+'*(-+)/, //   double accidentals too
       NAT: /^[A-Ga-g]+'*n/, // explicit naturals
       TYPE: /(\d+)/,
       TIE: /.~/, // not preceding ties
@@ -24723,9 +24911,11 @@
               storedDict.lastNoteTied = false;
           }
           if (tnre.SHARP.exec(token)) {
-              noteObj.pitch.accidental = new pitch.Accidental('sharp');
+              var _MATCH6 = tnre.SHARP.exec(token); // sharp
+              noteObj.pitch.accidental = new pitch.Accidental(_MATCH6[1].length);
           } else if (tnre.FLAT.exec(token)) {
-              noteObj.pitch.accidental = new pitch.Accidental('flat');
+              var _MATCH7 = tnre.FLAT.exec(token); // sharp
+              noteObj.pitch.accidental = new pitch.Accidental(-1 * _MATCH7[1].length);
           } else if (tnre.NAT.exec(token)) {
               noteObj.pitch.accidental = new pitch.Accidental('natural');
               noteObj.pitch.accidental.displayType = 'always';
@@ -24772,10 +24962,12 @@
           for (var _i = 0; _i < optionalScore.length; _i++) {
               var innerPart = optionalScore.get(_i);
               innerPart.clef = clef.bestClef(innerPart);
+              innerPart.getElementsByClass('Measure').get(0).clef = innerPart.clef;
           }
           returnObject = optionalScore;
       } else {
           p.clef = clef.bestClef(p);
+          p.getElementsByClass('Measure').get(0).clef = p.clef;
           returnObject = p;
       }
       return returnObject;

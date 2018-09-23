@@ -278,37 +278,50 @@ export class Stream extends base.Music21Object {
         }
         this._instrument = newInstrument;
     }
+    
+    _specialContext(attr) {
+        const privAttr = '_' + attr;
+        if (this[privAttr] !== undefined) {
+            return this[privAttr];
+        }
+        const firstElements = this
+            .getElementsByOffset(0.0)
+            .getElementsByClass(attr.charAt(0).toUpperCase() + attr.slice(1));
+        if (firstElements.length) {
+            return firstElements.get(0);
+        }
+        
+        // should be:
+        // const contextClef = this.getContextByClass('Clef');
+        const context = this.getContextByClass('Stream', { getElementMethod: 'getElementBefore' });
+        let contextObj;
+        if (context !== undefined) {
+            contextObj = context[privAttr];
+        }
+        return contextObj;
+    }
+    
     get clef() {
-        if (this._clef === undefined && this.activeSite === undefined) {
-            return new clef.Clef('treble');
-        } else if (this._clef === undefined) {
-            return this.activeSite.clef;
+        const contextClef = this._specialContext('clef');
+        if (contextClef !== undefined) {
+            return contextClef;
         } else {
-            return this._clef;
+            return new clef.TrebleClef();            
         }
     }
     set clef(newClef) {
         this._clef = newClef;
     }
+    
     get keySignature() {
-        if (this._keySignature === undefined && this.activeSite !== undefined) {
-            return this.activeSite.keySignature;
-        } else {
-            return this._keySignature;
-        }
+        return this._specialContext('keySignature');
     }
     set keySignature(newKeySignature) {
         this._keySignature = newKeySignature;
     }
+    
     get timeSignature() {
-        if (
-            this._timeSignature === undefined
-            && this.activeSite !== undefined
-        ) {
-            return this.activeSite.timeSignature;
-        } else {
-            return this._timeSignature;
-        }
+        return this._specialContext('timeSignature');
     }
     set timeSignature(newTimeSignature) {
         if (typeof newTimeSignature === 'string') {
@@ -316,14 +329,9 @@ export class Stream extends base.Music21Object {
         }
         this._timeSignature = newTimeSignature;
     }
+    
     get autoBeam() {
-        if (this._autoBeam === undefined && this.activeSite !== undefined) {
-            return this.activeSite.autoBeam;
-        } else if (this._autoBeam !== undefined) {
-            return this._autoBeam;
-        } else {
-            return true; // default...
-        }
+        return this._specialContext('autoBeam');
     }
     set autoBeam(ab) {
         this._autoBeam = ab;
@@ -1119,6 +1127,7 @@ export class Stream extends base.Music21Object {
         } else {
             out = this.clone(true);
         }
+        this.makeAccidentals();
         return out;
     }
     

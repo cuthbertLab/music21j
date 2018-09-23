@@ -155,6 +155,21 @@ export class Chord extends note.NotRest {
         return chordTables.addressToForteName(this.chordTablesAddress, 'tni');
     }
     
+    get(i) {
+        if (typeof i === 'number') {
+            return this._notes[i];
+        } else {
+            return undefined; // TODO(msc): add other get methods.
+        }
+    }
+    
+    * [Symbol.iterator]() {
+        for (let i = 0; i < this.length; i++) {
+            yield this.get(i);
+        }
+    }
+    
+    
     areZRelations(other) {
         const zRelationAddress = chordTables.addressToZAddress(this.chordTablesAddress);
         if (zRelationAddress === undefined) {

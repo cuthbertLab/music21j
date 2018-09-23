@@ -4,7 +4,7 @@ import { stream } from '../stream.js';
 
 import { Music21Exception } from '../exceptions21.js';
 
-class MusicXMLExportException extends Music21Exception() {
+class MusicXMLExportException extends Music21Exception {
     
 }
 
@@ -126,6 +126,7 @@ export class GeneralObjectExporter {
         if (outObj === undefined) {
             throw new MusicXMLExportException(`Cannot translate the object ${obj} to a complete musicXML document; put it in a Stream first!`);
         }
+        return outObj;
     }
     
     fromScore(sc) {
@@ -192,7 +193,7 @@ export class XMLExporterBase {
     asBytes({ noCopy=true }={}) {
         let out = this.xmlHeader();
         const oSerializer = new XMLSerializer();
-        out += oSerializer.serializeToString(this.doc);
+        out += oSerializer.serializeToString(this.xmlRoot);
         return out;
     }
     
@@ -206,9 +207,8 @@ export class XMLExporterBase {
     
     /**
      * Note: this is not a method in music21p, but it needs access to this.doc in music21j
-     * Also attributeName is in the options here.
      */
-    _setTagTextFromAttribute(m21El, xmlEl, tag, { attributeName, transform, forceEmpty=false }={}) {
+    _setTagTextFromAttribute(m21El, xmlEl, tag, attributeName, { transform, forceEmpty=false }={}) {
         if (attributeName === undefined) {
             attributeName = common.hyphenToCamelCase(tag);
         }
@@ -220,7 +220,7 @@ export class XMLExporterBase {
         if ((value === undefined || value === '') && !forceEmpty) {
             return undefined;
         }
-        const subElement = this.subElement(tag);
+        const subElement = this.subElement(xmlEl, tag);
         if (value !== undefined) {
             subElement.innerHTML = value;
         }
@@ -311,11 +311,24 @@ export class XMLExporterBase {
             mxName = a.name;
             // check other accidentals here.
         }
-        const mxAccidental = this.doc.createChild('accidental');
+        const mxAccidental = this.doc.createElement('accidental');
         mxAccidental.innerHTML = mxName;
         // TODO(msc): parentheses, bracket, setPrintStyle
         return mxAccidental;
     }    
+
+    getRandomId() {
+        // hack to get random ids.
+        let text = '';
+        const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+
+        for (let i = 0; i < 6; i++) {
+            text += possible.charAt(Math.floor(Math.random() * possible.length));
+        }
+
+        return text;
+    }
+
 }
 
 export class ScoreExporter extends XMLExporterBase {
@@ -479,19 +492,7 @@ export class PartExporter extends XMLExporterBase {
         }
         return this.xmlRoot;
     }
-    
-    getRandomId() {
-        // hack to get random ids.
-        let text = '';
-        const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
-
-        for (let i = 0; i < 6; i++) {
-            text += possible.charAt(Math.floor(Math.random() * possible.length));
-        }
-
-        return text;
-    }
-    
+        
     // TODO(msc): instrumentSetup
     // TODO(msc): fixupNotationFlat -- might be redundant
     // TODO(msc): fixupNotationMeasured
@@ -588,6 +589,9 @@ export class MeasureExporter extends XMLExporterBase {
         let voiceId;
         if (m.classes.includes('Voice')) {
             voiceId = m.id;
+            if (voiceId === undefined) {
+                voiceId = this.getRandomId();
+            }
         }
         this.currentVoiceId = voiceId;
         
@@ -691,19 +695,27 @@ export class MeasureExporter extends XMLExporterBase {
         if (this.currentVoiceId !== undefined) {
             const mxVoice = this.subElement(mxNote, 'voice');
             let vId;
-            try {
+            if (typeof vId === 'number') {
                 vId = this.currentVoiceId + 1;
-            } catch (exc) {
+            } else {
                 // not a number;
                 vId = this.currentVoiceId;
             }
             mxVoice.innerHTML = vId.toString();
         }
-        // zero duration
+        
+        const mxType = this.subElement(mxNote, 'type');
+        mxType.innerHTML = typeToMusicXMLType(d.type);
+        // set styleAttributes
+        // set noteSize
+        for (let _ = 0; _ < d.dots; _++) {
+            this.subElement(mxNote, 'dot');
+        }
+        
         // components.
         if (n.pitch !== undefined 
                 && n.pitch.accidental !== undefined 
-                && ![true, undefined].includes(n.pitch.accidental.displayStatus)) {
+                && n.pitch.accidental.displayStatus !== false) {
             const mxAccidental = this.accidentalToMx(n.pitch.accidental);
             mxNote.appendChild(mxAccidental);
         }
@@ -760,7 +772,7 @@ export class MeasureExporter extends XMLExporterBase {
     chordToXml(c) {
         const mxNoteList = [];
         for (const [i, n] of Array.from(c).entries()) {
-            const mxNote = this.noteToXml(n, i, { chordParent: c });
+            const mxNote = this.noteToXml(n, { noteIndexInChord: i, chordParent: c });
             mxNoteList.push(mxNote);
         }
         return mxNoteList;
@@ -768,7 +780,7 @@ export class MeasureExporter extends XMLExporterBase {
     
     durationXml(dur) {
         const mxDuration = this.doc.createElement('duration');
-        mxDuration.text = Math.round(this.currentDivisions * dur.quarterLength).toString();
+        mxDuration.innerHTML = Math.round(this.currentDivisions * dur.quarterLength).toString();
         return mxDuration;
     }
     
@@ -780,6 +792,7 @@ export class MeasureExporter extends XMLExporterBase {
             mxAlter.innerHTML = common.numToIntOrFloat(p.accidental.alter).toString();
         }
         this._setTagTextFromAttribute(p, mxPitch, 'octave', 'implicitOctave');
+        return mxPitch;
     }
     // TODO(msc): fretNoteToXml
     // TODO(msc): fretBoardToXml
@@ -892,17 +905,17 @@ export class MeasureExporter extends XMLExporterBase {
             appendToRoot = true;
         }
         if (m.classes.includes('Measure')) {
-            if (m.keySignature !== undefined) {
-                mxAttributes.appendChild(this.keySignatureToXml(m.keySignature));
+            if (m._keySignature !== undefined) {
+                mxAttributes.appendChild(this.keySignatureToXml(m._keySignature));
                 appendToRoot = true;
             }
-            if (m.timeSignature !== undefined) {
-                mxAttributes.appendChild(this.timeSignatureToXml(m.timeSignature));
+            if (m._timeSignature !== undefined) {
+                mxAttributes.appendChild(this.timeSignatureToXml(m._timeSignature));
                 appendToRoot = true;
             }
             // todo SenzaMisura...
-            if (m.clef !== undefined) {
-                mxAttributes.appendChild(this.clefToXml(m.clef));
+            if (m._clef !== undefined) {
+                mxAttributes.appendChild(this.clefToXml(m._clef));
                 appendToRoot = true;
             }
         }

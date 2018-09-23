@@ -332,10 +332,10 @@ export class Renderer {
      * @param {object} [optional_renderOp] - render options.
      * Passed to {@link music21.vfShow.Renderer#renderStave}
      * @returns {Vex.Flow.Stave} staff to return too
-     * (also changes the `stack` parameter and runs `makeAccidentals` on s)
+     * (also changes the `stack` parameter and runs `makeNotation` on s)
      */
     prepareFlat(s, stack, optionalStave, optional_renderOp) {
-        s.makeAccidentals();
+        s.makeNotation();
         let stave;
         if (optionalStave !== undefined) {
             stave = optionalStave;
@@ -894,6 +894,9 @@ export class Renderer {
         const lyricsObjects = [];
         for (const el of s) {
             const lyricsArray = el.lyrics;
+            if (lyricsArray === undefined) {
+                continue;
+            }
             let text;
             let d = el.duration;
             let addConnector = false;

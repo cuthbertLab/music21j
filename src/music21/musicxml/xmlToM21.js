@@ -177,6 +177,7 @@ export class PartParser {
         // atSoundingPitch;
         // spannerBundles
         // partStaves;
+        this.stream.clef = this.lastClefs[0];
     }
 
     parseXmlScorePart() {
@@ -374,7 +375,7 @@ export class MeasureParser {
 
         if (isChord) {
             this.$mxNoteList.push($mxNote);
-            // chord lyrics
+            this.$mxLyricList.push(...$mxNote.children('lyric'));
         } else if (!isChord && !isRest) {
             // normal note
             this.restAndNoteCount.note += 1;
@@ -385,16 +386,16 @@ export class MeasureParser {
         }
 
         if (!isChord) {
-            // update lyrics
+            this.updateLyricsFromList(n, $mxNote.children('lyric'));
             // add to staffReference
             this.insertInMeasureOrVoice($mxNote, n);
             offsetIncrement = n.duration.quarterLength;
             this.nLast = n;
         }
 
-        if (this.$mxNoteList && !nextNoteIsChord) {
+        if (this.$mxNoteList.length && !nextNoteIsChord) {
             const c = this.xmlToChord(this.$mxNoteList);
-            // update lyrics
+            this.updateLyricsFromList(c, this.$mxLyricList);
             // addToStaffRest;
 
             // voices;
@@ -458,18 +459,18 @@ export class MeasureParser {
         seta(p, $mxPitch, 'octave', undefined, parseInt);
         const $mxAlter = $mxPitch.children('alter');
         let accAlter;
-        if ($mxAlter) {
+        if ($mxAlter.length) {
             accAlter = parseFloat($mxAlter.text().trim());
         }
 
         const $mxAccidental = $mxNote.children('accidental');
         // dropping support for musescore 0.9 errors...
-        if ($mxAccidental.length > 0) {
+        if ($mxAccidental.length) {
             const accObj = this.xmlToAccidental($mxAccidental);
             p.accidental = accObj;
             p.accidental.displayStatus = true;
             // independent accidental from alter
-        } else if (accAlter !== undefined) {
+        } else if (accAlter !== undefined && !isNaN(accAlter)) {
             p.accidental = new pitch.Accidental(accAlter);
             p.accidental.displayStatus = false;
         }
@@ -479,10 +480,14 @@ export class MeasureParser {
     xmlToAccidental($mxAccidental) {
         const acc = new pitch.Accidental();
         // to-do m21/musicxml accidental name differences;
-        const name = $($mxAccidental[0])
+        let name = $($mxAccidental[0])
             .text()
             .trim()
             .toLowerCase();
+        if (name === 'flat-flat') {
+            name = 'double-flat';
+        }
+        
         acc.set(name);
 
         // set print style
@@ -583,6 +588,61 @@ export class MeasureParser {
         return t;
     }
 
+    // xmlToTuplets
+    updateLyricsFromList(n, lyricList) {
+        let currentLyricNumber = 1;
+        for (const mxLyric of lyricList) {
+            const lyricObj = this.xmlToLyric($(mxLyric));
+            if (lyricObj === undefined) {
+                continue;
+            }
+            if (lyricObj.number === 0) {
+                lyricObj.number = currentLyricNumber;
+            }
+            n.lyrics.push(lyricObj);
+            currentLyricNumber += 1;
+        }        
+    }
+    
+    xmlToLyric($mxLyric, inputM21) {
+        let l = inputM21;
+        if (inputM21 === undefined) {
+            l = new note.Lyric();
+        }
+        try {
+            l.text = $mxLyric.children('text').text().trim();
+        } catch (exc) {
+            return undefined; // sometimes there are empty lyrics.
+        }
+        let number = $mxLyric.attr('number');
+        try {
+            number = parseInt(number);
+            l.number = number;
+        } catch (exc) {
+            l.number = 0;
+            if (number !== undefined) {
+                l.identifier = number;
+            }
+        }
+        const identifier = $mxLyric.get('name');
+        if (identifier !== undefined) {
+            l.identifier = identifier;
+        }
+        
+        const $mxSyllabic = $mxLyric.children('syllabic');
+        if ($mxSyllabic.length) {
+            l.syllabic = $mxSyllabic.text().trim();
+        }
+        // setStyleAttributes
+        // setColor
+        // setPosition
+        if (inputM21 === undefined) {
+            return l;
+        }
+        return undefined;
+    }
+    
+    
     insertIntoMeasureOrVoice($mxElement, el) {
         this.stream.insert(this.offsetMeasureNote, el);
     }
@@ -605,7 +665,7 @@ export class MeasureParser {
     parseAttributesTag($mxAttributes) {
         this.attributesAreInternal = false;
         this.$activeAttributes = $mxAttributes;
-        for (const mxSub of $mxAttributes) {
+        for (const mxSub of $mxAttributes.children()) {
             const tag = mxSub.tagName;
             const $mxSub = $(mxSub);
             const methName = this.attributeTagsToMethods[tag];
@@ -645,8 +705,12 @@ export class MeasureParser {
 
     handleClef($mxClef) {
         const clefObj = this.xmlToClef($mxClef);
+        this.stream.clef = clefObj;
         this.insertIntoMeasureOrVoice($mxClef, clefObj);
         this.lastClefs[0] = clefObj;
+//        if (this.parent !== undefined) {
+//            this.parent.lastClefs[0] = clefObj.clone(true);
+//        }
     }
 
     xmlToClef($mxClef) {

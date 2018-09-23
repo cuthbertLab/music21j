@@ -50,7 +50,7 @@ tinyNotation.regularExpressions = {
     EDFLAT: /\((-+)\)/,
     EDNAT: /\(n\)/,
     SHARP: /^[A-Ga-g]+'*(#+)/, // simple notation finds
-    FLAT: /^[A-Ga-g]+'*(-+)/, // double sharps too
+    FLAT: /^[A-Ga-g]+'*(-+)/, //   double accidentals too
     NAT: /^[A-Ga-g]+'*n/, // explicit naturals
     TYPE: /(\d+)/,
     TIE: /.~/, // not preceding ties
@@ -202,9 +202,11 @@ tinyNotation.TinyNotation = function TinyNotation(textIn) {
             storedDict.lastNoteTied = false;
         }
         if (tnre.SHARP.exec(token)) {
-            noteObj.pitch.accidental = new pitch.Accidental('sharp');
+            const MATCH = tnre.SHARP.exec(token); // sharp
+            noteObj.pitch.accidental = new pitch.Accidental(MATCH[1].length);
         } else if (tnre.FLAT.exec(token)) {
-            noteObj.pitch.accidental = new pitch.Accidental('flat');
+            const MATCH = tnre.FLAT.exec(token); // sharp
+            noteObj.pitch.accidental = new pitch.Accidental(-1 * MATCH[1].length);
         } else if (tnre.NAT.exec(token)) {
             noteObj.pitch.accidental = new pitch.Accidental('natural');
             noteObj.pitch.accidental.displayType = 'always';
@@ -255,10 +257,12 @@ tinyNotation.TinyNotation = function TinyNotation(textIn) {
         for (let i = 0; i < optionalScore.length; i++) {
             const innerPart = optionalScore.get(i);
             innerPart.clef = clef.bestClef(innerPart);
+            innerPart.getElementsByClass('Measure').get(0).clef = innerPart.clef;
         }
         returnObject = optionalScore;
     } else {
         p.clef = clef.bestClef(p);
+        p.getElementsByClass('Measure').get(0).clef = p.clef;
         returnObject = p;
     }
     return returnObject;

@@ -55,6 +55,8 @@ clef.lowestLines = {
 export class Clef extends base.Music21Object {
     constructor(name, octaveChange) {
         super();
+        this.sign = undefined;
+        this.line = 1;
         if (name !== undefined) {
             name = name.toLowerCase();
             this.name = name;
@@ -111,6 +113,8 @@ clef.Clef = Clef;
 export class TrebleClef extends Clef {
     constructor() {
         super('treble');
+        this.sign = 'G';
+        this.line = 2;
     }
 }
 clef.TrebleClef = TrebleClef;
@@ -154,9 +158,12 @@ clef.Treble8vaClef = Treble8vaClef;
 export class BassClef extends Clef {
     constructor() {
         super('bass');
+        this.sign = 'F';
+        this.line = 4;
     }
 }
 clef.BassClef = BassClef;
+
 
 /**
  * An AltoClef (same as new music21.clef.Clef('alto')
@@ -167,7 +174,9 @@ clef.BassClef = BassClef;
  */
 export class AltoClef extends Clef {
     constructor() {
-        super('alto');
+        super('alto');        
+        this.sign = 'C';
+        this.line = 3;
     }
 }
 clef.AltoClef = AltoClef;
@@ -182,6 +191,8 @@ clef.AltoClef = AltoClef;
 export class TenorClef extends Clef {
     constructor() {
         super('tenor');
+        this.sign = 'C';
+        this.line = 4;
     }
 }
 clef.TenorClef = TenorClef;
@@ -195,6 +206,8 @@ clef.TenorClef = TenorClef;
 export class SopranoClef extends Clef {
     constructor() {
         super('soprano');
+        this.sign = 'C';
+        this.line = 1;
     }
 }
 clef.SopranoClef = SopranoClef;
@@ -209,6 +222,8 @@ clef.SopranoClef = SopranoClef;
 export class MezzoSopranoClef extends Clef {
     constructor() {
         super('mezzo-soprano');
+        this.sign = 'C';
+        this.line = 2;
     }
 }
 clef.MezzoSopranoClef = MezzoSopranoClef;
@@ -225,6 +240,8 @@ clef.MezzoSopranoClef = MezzoSopranoClef;
 export class PercussionClef extends Clef {
     constructor() {
         super('percussion');
+        this.sign = 'percussion';
+        this.line = 3;
     }
 }
 clef.PercussionClef = PercussionClef;
@@ -283,7 +300,7 @@ clef.clefFromString = function clefFromString(clefString, octaveShift) {
 
     if (xnStr.length === 2) {
         thisType = xnStr[0].toUpperCase();
-        lineNum = xnStr[1];
+        lineNum = parseInt(xnStr[1]);
     } else if (xnStr.length === 1) {
         thisType = xnStr[0].toUpperCase();
         if (thisType === 'G') {

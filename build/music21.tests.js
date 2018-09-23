@@ -1,5 +1,5 @@
 /**
- * music21j 0.9.0 built on  * 2018-09-09.
+ * music21j 0.9.0 built on  * 2018-09-23.
  * Copyright (c) 2013-2016 Michael Scott Cuthbert and cuthbertLab
  * BSD License, see LICENSE
  *
@@ -830,6 +830,21 @@
       webResources: '/webResources',
       midiPlayer: '/webResources/midiPlayer',
       soundfontUrl: '/src/ext/soundfonts/FluidR3_GM/'
+  };
+
+  common.hyphenToCamelCase = function hyphenToCamelCase(usrStr) {
+      return usrStr.replace(/-([a-zA-Z])/, function (all, match) {
+          return match.toUpperCase();
+      });
+  };
+
+  common.numToIntOrFloat = function numToIntOrFloat(value) {
+      var intVal = Math.round(value);
+      if (Math.abs(value - intVal) < 0.000001) {
+          return intVal;
+      } else {
+          return value;
+      }
   };
 
   /**
@@ -2037,7 +2052,11 @@
       }
 
       createClass(Music21Object, [{
-          key: 'getOffsetBySite',
+          key: 'mergeAttributes',
+          value: function mergeAttributes(other) {
+              // id;
+              this.groups = other.groups.slice();
+          }
 
           /**
            * Return the offset of this element in a given site -- use .offset if you are sure that
@@ -2051,6 +2070,9 @@
            * @param {music21.stream.Stream} site
            * @returns Number|undefined
            */
+
+      }, {
+          key: 'getOffsetBySite',
           value: function getOffsetBySite(site) {
               var stringReturns = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
 
@@ -4448,6 +4470,16 @@
           },
           set: function set(o) {
               this._octave = o;
+          }
+      }, {
+          key: 'implicitOctave',
+          get: function get() {
+              var o = this._octave;
+              if (o === undefined) {
+                  return 4; // TODO(msc): get from defaults.
+              } else {
+                  return o;
+              }
           }
       }, {
           key: 'accidental',
@@ -8750,6 +8782,46 @@
       }
 
       createClass(Chord, [{
+          key: 'get',
+          value: function get(i) {
+              if (typeof i === 'number') {
+                  return this._notes[i];
+              } else {
+                  return undefined; // TODO(msc): add other get methods.
+              }
+          }
+      }, {
+          key: Symbol.iterator,
+          value: regeneratorRuntime.mark(function value() {
+              var i;
+              return regeneratorRuntime.wrap(function value$(_context) {
+                  while (1) {
+                      switch (_context.prev = _context.next) {
+                          case 0:
+                              i = 0;
+
+                          case 1:
+                              if (!(i < this.length)) {
+                                  _context.next = 7;
+                                  break;
+                              }
+
+                              _context.next = 4;
+                              return this.get(i);
+
+                          case 4:
+                              i++;
+                              _context.next = 1;
+                              break;
+
+                          case 7:
+                          case 'end':
+                              return _context.stop();
+                      }
+                  }
+              }, value, this);
+          })
+      }, {
           key: 'areZRelations',
           value: function areZRelations(other) {
               var zRelationAddress = addressToZAddress(this.chordTablesAddress);
@@ -9570,6 +9642,8 @@
 
           var _this = possibleConstructorReturn(this, (Clef.__proto__ || Object.getPrototypeOf(Clef)).call(this));
 
+          _this.sign = undefined;
+          _this.line = 1;
           if (name !== undefined) {
               name = name.toLowerCase();
               _this.name = name;
@@ -9634,7 +9708,12 @@
 
       function TrebleClef() {
           classCallCheck(this, TrebleClef);
-          return possibleConstructorReturn(this, (TrebleClef.__proto__ || Object.getPrototypeOf(TrebleClef)).call(this, 'treble'));
+
+          var _this2 = possibleConstructorReturn(this, (TrebleClef.__proto__ || Object.getPrototypeOf(TrebleClef)).call(this, 'treble'));
+
+          _this2.sign = 'G';
+          _this2.line = 2;
+          return _this2;
       }
 
       return TrebleClef;
@@ -9692,7 +9771,12 @@
 
       function BassClef() {
           classCallCheck(this, BassClef);
-          return possibleConstructorReturn(this, (BassClef.__proto__ || Object.getPrototypeOf(BassClef)).call(this, 'bass'));
+
+          var _this5 = possibleConstructorReturn(this, (BassClef.__proto__ || Object.getPrototypeOf(BassClef)).call(this, 'bass'));
+
+          _this5.sign = 'F';
+          _this5.line = 4;
+          return _this5;
       }
 
       return BassClef;
@@ -9711,7 +9795,12 @@
 
       function AltoClef() {
           classCallCheck(this, AltoClef);
-          return possibleConstructorReturn(this, (AltoClef.__proto__ || Object.getPrototypeOf(AltoClef)).call(this, 'alto'));
+
+          var _this6 = possibleConstructorReturn(this, (AltoClef.__proto__ || Object.getPrototypeOf(AltoClef)).call(this, 'alto'));
+
+          _this6.sign = 'C';
+          _this6.line = 3;
+          return _this6;
       }
 
       return AltoClef;
@@ -9730,7 +9819,12 @@
 
       function TenorClef() {
           classCallCheck(this, TenorClef);
-          return possibleConstructorReturn(this, (TenorClef.__proto__ || Object.getPrototypeOf(TenorClef)).call(this, 'tenor'));
+
+          var _this7 = possibleConstructorReturn(this, (TenorClef.__proto__ || Object.getPrototypeOf(TenorClef)).call(this, 'tenor'));
+
+          _this7.sign = 'C';
+          _this7.line = 4;
+          return _this7;
       }
 
       return TenorClef;
@@ -9748,7 +9842,12 @@
 
       function SopranoClef() {
           classCallCheck(this, SopranoClef);
-          return possibleConstructorReturn(this, (SopranoClef.__proto__ || Object.getPrototypeOf(SopranoClef)).call(this, 'soprano'));
+
+          var _this8 = possibleConstructorReturn(this, (SopranoClef.__proto__ || Object.getPrototypeOf(SopranoClef)).call(this, 'soprano'));
+
+          _this8.sign = 'C';
+          _this8.line = 1;
+          return _this8;
       }
 
       return SopranoClef;
@@ -9767,7 +9866,12 @@
 
       function MezzoSopranoClef() {
           classCallCheck(this, MezzoSopranoClef);
-          return possibleConstructorReturn(this, (MezzoSopranoClef.__proto__ || Object.getPrototypeOf(MezzoSopranoClef)).call(this, 'mezzo-soprano'));
+
+          var _this9 = possibleConstructorReturn(this, (MezzoSopranoClef.__proto__ || Object.getPrototypeOf(MezzoSopranoClef)).call(this, 'mezzo-soprano'));
+
+          _this9.sign = 'C';
+          _this9.line = 2;
+          return _this9;
       }
 
       return MezzoSopranoClef;
@@ -9788,7 +9892,12 @@
 
       function PercussionClef() {
           classCallCheck(this, PercussionClef);
-          return possibleConstructorReturn(this, (PercussionClef.__proto__ || Object.getPrototypeOf(PercussionClef)).call(this, 'percussion'));
+
+          var _this10 = possibleConstructorReturn(this, (PercussionClef.__proto__ || Object.getPrototypeOf(PercussionClef)).call(this, 'percussion'));
+
+          _this10.sign = 'percussion';
+          _this10.line = 3;
+          return _this10;
       }
 
       return PercussionClef;
@@ -9805,6 +9914,10 @@
    * @returns {music21.clef.Clef}
    */
   clef.bestClef = function bestClef(st) {
+      var _ref = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
+          _ref$recurse = _ref.recurse,
+          recurse = _ref$recurse === undefined ? true : _ref$recurse;
+
       // console.log('calling flat on stream: ', st.elements.length, st.classes[st.classes.length - 1]);
       var stFlat = st.flat;
       var totalNotes = 0;
@@ -9849,7 +9962,7 @@
 
       if (xnStr.length === 2) {
           thisType = xnStr[0].toUpperCase();
-          lineNum = xnStr[1];
+          lineNum = parseInt(xnStr[1]);
       } else if (xnStr.length === 1) {
           thisType = xnStr[0].toUpperCase();
           if (thisType === 'G') {
@@ -14178,13 +14291,13 @@
            * @param {object} [optional_renderOp] - render options.
            * Passed to {@link music21.vfShow.Renderer#renderStave}
            * @returns {Vex.Flow.Stave} staff to return too
-           * (also changes the `stack` parameter and runs `makeAccidentals` on s)
+           * (also changes the `stack` parameter and runs `makeNotation` on s)
            */
 
       }, {
           key: 'prepareFlat',
           value: function prepareFlat(s, stack, optionalStave, optional_renderOp) {
-              s.makeAccidentals();
+              s.makeNotation();
               var stave = void 0;
               if (optionalStave !== undefined) {
                   stave = optionalStave;
@@ -14789,6 +14902,9 @@
                       var el = _step5.value;
 
                       var lyricsArray = el.lyrics;
+                      if (lyricsArray === undefined) {
+                          continue;
+                      }
                       var text = void 0;
                       var d = el.duration;
                       var addConnector = false;
@@ -15790,10 +15906,203 @@
       return StreamIterator;
   }();
 
-  // OffsetIterator
+  var OffsetIterator = function (_StreamIterator) {
+      inherits(OffsetIterator, _StreamIterator);
 
-  var RecursiveIterator = function (_StreamIterator) {
-      inherits(RecursiveIterator, _StreamIterator);
+      function OffsetIterator(srcStream) {
+          var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+          classCallCheck(this, OffsetIterator);
+
+          var _this2 = possibleConstructorReturn(this, (OffsetIterator.__proto__ || Object.getPrototypeOf(OffsetIterator)).call(this, srcStream, options));
+
+          _this2.nextToYield = [];
+          _this2.nextOffsetToYield = undefined;
+          return _this2;
+      }
+
+      createClass(OffsetIterator, [{
+          key: Symbol.iterator,
+          value: regeneratorRuntime.mark(function value() {
+              var e, matches, yieldEls, eOffset, forwardIndex, nextE, nextOffset, _iteratorNormalCompletion5, _didIteratorError5, _iteratorError5, _iterator5, _step5, el;
+
+              return regeneratorRuntime.wrap(function value$(_context2) {
+                  while (1) {
+                      switch (_context2.prev = _context2.next) {
+                          case 0:
+                              this.reset();
+                              this.sort();
+
+                          case 2:
+                              if (!(this.index < this.streamLength)) {
+                                  _context2.next = 66;
+                                  break;
+                              }
+
+                              this.index += 1;
+                              e = void 0;
+                              _context2.prev = 5;
+
+                              e = this.srcStreamElements[this.index - 1];
+                              _context2.next = 12;
+                              break;
+
+                          case 9:
+                              _context2.prev = 9;
+                              _context2.t0 = _context2['catch'](5);
+                              return _context2.abrupt('continue', 2);
+
+                          case 12:
+                              matches = this.matchesFilters(e);
+
+                              if (!(matches === false)) {
+                                  _context2.next = 15;
+                                  break;
+                              }
+
+                              return _context2.abrupt('continue', 2);
+
+                          case 15:
+                              if (!(matches === StopIterationSingleton$1)) {
+                                  _context2.next = 17;
+                                  break;
+                              }
+
+                              return _context2.abrupt('break', 66);
+
+                          case 17:
+                              yieldEls = [e];
+                              eOffset = this.elementOffset(e);
+                              forwardIndex = this.index;
+
+                          case 20:
+                              if (!(forwardIndex < this.streamLength)) {
+                                  _context2.next = 41;
+                                  break;
+                              }
+
+                              nextE = void 0;
+                              _context2.prev = 22;
+
+                              nextE = this.srcStreamElements[this.index - 1];
+                              _context2.next = 29;
+                              break;
+
+                          case 26:
+                              _context2.prev = 26;
+                              _context2.t1 = _context2['catch'](22);
+                              return _context2.abrupt('continue', 38);
+
+                          case 29:
+                              nextOffset = this.elementOffset(nextE);
+
+                              if (!(nextOffset !== eOffset)) {
+                                  _context2.next = 34;
+                                  break;
+                              }
+
+                              this.nextToYield = [nextE];
+                              this.nextOffsetToYield = nextOffset;
+                              return _context2.abrupt('break', 41);
+
+                          case 34:
+                              if (this.matchesFilters(nextE)) {
+                                  _context2.next = 36;
+                                  break;
+                              }
+
+                              return _context2.abrupt('continue', 38);
+
+                          case 36:
+
+                              yieldEls.push(e);
+                              this.index = forwardIndex;
+
+                          case 38:
+                              forwardIndex++;
+                              _context2.next = 20;
+                              break;
+
+                          case 41:
+                              if (!this.restoreActiveSites) {
+                                  _context2.next = 61;
+                                  break;
+                              }
+
+                              _iteratorNormalCompletion5 = true;
+                              _didIteratorError5 = false;
+                              _iteratorError5 = undefined;
+                              _context2.prev = 45;
+
+                              for (_iterator5 = yieldEls[Symbol.iterator](); !(_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done); _iteratorNormalCompletion5 = true) {
+                                  el = _step5.value;
+
+                                  el.activeSite = this.srcStream;
+                              }
+                              _context2.next = 53;
+                              break;
+
+                          case 49:
+                              _context2.prev = 49;
+                              _context2.t2 = _context2['catch'](45);
+                              _didIteratorError5 = true;
+                              _iteratorError5 = _context2.t2;
+
+                          case 53:
+                              _context2.prev = 53;
+                              _context2.prev = 54;
+
+                              if (!_iteratorNormalCompletion5 && _iterator5.return) {
+                                  _iterator5.return();
+                              }
+
+                          case 56:
+                              _context2.prev = 56;
+
+                              if (!_didIteratorError5) {
+                                  _context2.next = 59;
+                                  break;
+                              }
+
+                              throw _iteratorError5;
+
+                          case 59:
+                              return _context2.finish(56);
+
+                          case 60:
+                              return _context2.finish(53);
+
+                          case 61:
+                              this.updateActiveInformation();
+                              _context2.next = 64;
+                              return yieldEls;
+
+                          case 64:
+                              _context2.next = 2;
+                              break;
+
+                          case 66:
+                              this.cleanup();
+
+                          case 67:
+                          case 'end':
+                              return _context2.stop();
+                      }
+                  }
+              }, value, this, [[5, 9], [22, 26], [45, 49, 53, 61], [54,, 56, 60]]);
+          })
+      }, {
+          key: 'reset',
+          value: function reset() {
+              get(OffsetIterator.prototype.__proto__ || Object.getPrototypeOf(OffsetIterator.prototype), 'reset', this).call(this);
+              this.nextToYield = [];
+              this.nextOffsetToYield = undefined;
+          }
+      }]);
+      return OffsetIterator;
+  }(StreamIterator);
+
+  var RecursiveIterator = function (_StreamIterator2) {
+      inherits(RecursiveIterator, _StreamIterator2);
 
       function RecursiveIterator(srcStream) {
           var _ref2 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
@@ -15808,22 +16117,22 @@
 
           classCallCheck(this, RecursiveIterator);
 
-          var _this2 = possibleConstructorReturn(this, (RecursiveIterator.__proto__ || Object.getPrototypeOf(RecursiveIterator)).call(this, srcStream, {
+          var _this3 = possibleConstructorReturn(this, (RecursiveIterator.__proto__ || Object.getPrototypeOf(RecursiveIterator)).call(this, srcStream, {
               filterList: filterList,
               restoreActiveSites: restoreActiveSites,
               activeInformation: activeInformation,
               ignoreSorting: ignoreSorting
           }));
 
-          _this2.returnSelf = includeSelf;
-          _this2.includeSelf = includeSelf;
-          _this2.ignoreSorting = ignoreSorting;
-          _this2.iteratorStartOffsetInHierarchy = 0.0;
+          _this3.returnSelf = includeSelf;
+          _this3.includeSelf = includeSelf;
+          _this3.ignoreSorting = ignoreSorting;
+          _this3.iteratorStartOffsetInHierarchy = 0.0;
           if (streamsOnly) {
-              _this2.filters.push(new ClassFilter('Stream'));
+              _this3.filters.push(new ClassFilter('Stream'));
           }
-          _this2.childRecursiveIterator = undefined;
-          return _this2;
+          _this3.childRecursiveIterator = undefined;
+          return _this3;
       }
 
       createClass(RecursiveIterator, [{
@@ -15837,16 +16146,16 @@
       }, {
           key: Symbol.iterator,
           value: regeneratorRuntime.mark(function value() {
-              var e, newStartOffset, _iteratorNormalCompletion5, _didIteratorError5, _iteratorError5, _iterator5, _step5, _e;
+              var e, newStartOffset, _iteratorNormalCompletion6, _didIteratorError6, _iteratorError6, _iterator6, _step6, _e;
 
-              return regeneratorRuntime.wrap(function value$(_context2) {
+              return regeneratorRuntime.wrap(function value$(_context3) {
                   while (1) {
-                      switch (_context2.prev = _context2.next) {
+                      switch (_context3.prev = _context3.next) {
                           case 0:
                               this.reset(); // in __iter__.
 
                               if (!(this.returnSelf && this.matchesFilters(this.srcStream))) {
-                                  _context2.next = 10;
+                                  _context3.next = 10;
                                   break;
                               }
 
@@ -15854,11 +16163,11 @@
                               this.activeInformation.index = -1;
                               this.activeInformation.lastYielded = this.srcStream;
                               this.returnSelf = false;
-                              _context2.next = 8;
+                              _context3.next = 8;
                               return this.srcStream;
 
                           case 8:
-                              _context2.next = 11;
+                              _context3.next = 11;
                               break;
 
                           case 10:
@@ -15869,7 +16178,7 @@
 
                           case 11:
                               if (!(this.index < this.streamLength)) {
-                                  _context2.next = 55;
+                                  _context3.next = 55;
                                   break;
                               }
 
@@ -15877,15 +16186,15 @@
                               e = this.srcStreamElements[this.index - 1];
 
                               if (!(e === undefined)) {
-                                  _context2.next = 16;
+                                  _context3.next = 16;
                                   break;
                               }
 
-                              return _context2.abrupt('continue', 11);
+                              return _context3.abrupt('continue', 11);
 
                           case 16:
                               if (!this.matchesFilters(e)) {
-                                  _context2.next = 22;
+                                  _context3.next = 22;
                                   break;
                               }
 
@@ -15894,12 +16203,12 @@
                               }
                               this.updateActiveInformation();
                               this.activeInformation.lastYielded = e;
-                              _context2.next = 22;
+                              _context3.next = 22;
                               return e;
 
                           case 22:
                               if (!e.isStream) {
-                                  _context2.next = 53;
+                                  _context3.next = 53;
                                   break;
                               }
 
@@ -15915,66 +16224,66 @@
                               newStartOffset = this.iteratorStartOffsetInHierarchy + this.srcStream.elementOffset(e);
 
                               this.childRecursiveIterator.iteratorStartOffsetInHierarchy = newStartOffset;
-                              _iteratorNormalCompletion5 = true;
-                              _didIteratorError5 = false;
-                              _iteratorError5 = undefined;
-                              _context2.prev = 29;
-                              _iterator5 = this.childRecursiveIterator[Symbol.iterator]();
+                              _iteratorNormalCompletion6 = true;
+                              _didIteratorError6 = false;
+                              _iteratorError6 = undefined;
+                              _context3.prev = 29;
+                              _iterator6 = this.childRecursiveIterator[Symbol.iterator]();
 
                           case 31:
-                              if (_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done) {
-                                  _context2.next = 38;
+                              if (_iteratorNormalCompletion6 = (_step6 = _iterator6.next()).done) {
+                                  _context3.next = 38;
                                   break;
                               }
 
-                              _e = _step5.value;
-                              _context2.next = 35;
+                              _e = _step6.value;
+                              _context3.next = 35;
                               return _e;
 
                           case 35:
-                              _iteratorNormalCompletion5 = true;
-                              _context2.next = 31;
+                              _iteratorNormalCompletion6 = true;
+                              _context3.next = 31;
                               break;
 
                           case 38:
-                              _context2.next = 44;
+                              _context3.next = 44;
                               break;
 
                           case 40:
-                              _context2.prev = 40;
-                              _context2.t0 = _context2['catch'](29);
-                              _didIteratorError5 = true;
-                              _iteratorError5 = _context2.t0;
+                              _context3.prev = 40;
+                              _context3.t0 = _context3['catch'](29);
+                              _didIteratorError6 = true;
+                              _iteratorError6 = _context3.t0;
 
                           case 44:
-                              _context2.prev = 44;
-                              _context2.prev = 45;
+                              _context3.prev = 44;
+                              _context3.prev = 45;
 
-                              if (!_iteratorNormalCompletion5 && _iterator5.return) {
-                                  _iterator5.return();
+                              if (!_iteratorNormalCompletion6 && _iterator6.return) {
+                                  _iterator6.return();
                               }
 
                           case 47:
-                              _context2.prev = 47;
+                              _context3.prev = 47;
 
-                              if (!_didIteratorError5) {
-                                  _context2.next = 50;
+                              if (!_didIteratorError6) {
+                                  _context3.next = 50;
                                   break;
                               }
 
-                              throw _iteratorError5;
+                              throw _iteratorError6;
 
                           case 50:
-                              return _context2.finish(47);
+                              return _context3.finish(47);
 
                           case 51:
-                              return _context2.finish(44);
+                              return _context3.finish(44);
 
                           case 52:
                               this.childRecursiveIterator = undefined;
 
                           case 53:
-                              _context2.next = 11;
+                              _context3.next = 11;
                               break;
 
                           case 55:
@@ -15983,7 +16292,7 @@
 
                           case 57:
                           case 'end':
-                              return _context2.stop();
+                              return _context3.stop();
                       }
                   }
               }, value, this, [[29, 40, 44, 52], [45,, 47, 51]]);
@@ -16062,6 +16371,7 @@
   var iterator = Object.freeze({
       StreamIteratorException: StreamIteratorException,
       StreamIterator: StreamIterator,
+      OffsetIterator: OffsetIterator,
       RecursiveIterator: RecursiveIterator
   });
 
@@ -16361,6 +16671,27 @@
                   this.coreElementsChanged();
               }
               return newSt;
+          }
+      }, {
+          key: '_specialContext',
+          value: function _specialContext(attr) {
+              var privAttr = '_' + attr;
+              if (this[privAttr] !== undefined) {
+                  return this[privAttr];
+              }
+              var firstElements = this.getElementsByOffset(0.0).getElementsByClass(attr.charAt(0).toUpperCase() + attr.slice(1));
+              if (firstElements.length) {
+                  return firstElements.get(0);
+              }
+
+              // should be:
+              // const contextClef = this.getContextByClass('Clef');
+              var context = this.getContextByClass('Stream', { getElementMethod: 'getElementBefore' });
+              var contextObj = void 0;
+              if (context !== undefined) {
+                  contextObj = context[privAttr];
+              }
+              return contextObj;
           }
       }, {
           key: 'clear',
@@ -16861,12 +17192,8 @@
                   }
               }
               var targetOffset = this.elementOffset(target);
-              this._elements[i] = replacement;
-              this._offsetDict.set(replacement, targetOffset);
-              this._offsetDict.delete(target);
-              target.activeSite = undefined;
-              replacement.activeSite = this;
-              target.sites.remove(this);
+              this.remove(target);
+              this.insert(targetOffset, replacement);
               this.coreElementsChanged({ clearIsSorted: false });
           }
 
@@ -17148,6 +17475,143 @@
           }
 
           /**
+           * chordify does not yet work...
+           */
+
+      }, {
+          key: 'chordify',
+          value: function chordify() {
+              var _ref7 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
+                  _ref7$addTies = _ref7.addTies,
+                  addTies = _ref7$addTies === undefined ? true : _ref7$addTies,
+                  _ref7$addPartIdAsGrou = _ref7.addPartIdAsGroup,
+                  addPartIdAsGroup = _ref7$addPartIdAsGrou === undefined ? true : _ref7$addPartIdAsGrou,
+                  _ref7$removeRedundant = _ref7.removeRedundantPitches,
+                  removeRedundantPitches = _ref7$removeRedundant === undefined ? true : _ref7$removeRedundant,
+                  _ref7$toSoundingPitch = _ref7.toSoundingPitch,
+                  toSoundingPitch = _ref7$toSoundingPitch === undefined ? true : _ref7$toSoundingPitch;
+
+              var workObj = this;
+              var templateStream = void 0;
+              if (this.hasPartLikeStreams()) {
+                  templateStream = workObj.getElementsByClass('Stream').get(0);
+              } else {
+                  templateStream = workObj;
+              }
+              var template = templateStream.template({
+                  fillWithRests: false,
+                  removeClasses: ['GeneralNote'],
+                  retainVoices: false
+              });
+              return template;
+          }
+      }, {
+          key: 'template',
+          value: function template() {
+              var _ref8 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
+                  _ref8$fillWithRests = _ref8.fillWithRests,
+                  fillWithRests = _ref8$fillWithRests === undefined ? true : _ref8$fillWithRests,
+                  _ref8$removeClasses = _ref8.removeClasses,
+                  removeClasses = _ref8$removeClasses === undefined ? [] : _ref8$removeClasses,
+                  _ref8$retainVoices = _ref8.retainVoices,
+                  retainVoices = _ref8$retainVoices === undefined ? true : _ref8$retainVoices;
+
+              var out = this.cloneEmpty('template');
+              var restInfo = {
+                  offset: undefined,
+                  endTime: undefined
+              };
+              var optionalAddRest = function optionalAddRest() {
+                  if (!fillWithRests) {
+                      return;
+                  }
+                  if (restInfo.offset === undefined) {
+                      return;
+                  }
+                  var restQL = restInfo.endTime - restInfo.offset;
+                  var restObj = new note.Rest();
+                  restObj.duration.quarterLength = restQL;
+                  out.insert(restInfo.offset, restObj);
+                  restInfo.offset = undefined;
+                  restInfo.endTime = undefined;
+              };
+              var _iteratorNormalCompletion10 = true;
+              var _didIteratorError10 = false;
+              var _iteratorError10 = undefined;
+
+              try {
+                  for (var _iterator10 = stream[Symbol.iterator](), _step10; !(_iteratorNormalCompletion10 = (_step10 = _iterator10.next()).done); _iteratorNormalCompletion10 = true) {
+                      var el = _step10.value;
+
+                      if (el.isStream && (retainVoices || el.classes.includes('Voice'))) {
+                          optionalAddRest();
+                          var outEl = el.template({
+                              fillWithRests: fillWithRests,
+                              removeClasses: removeClasses,
+                              retainVoices: retainVoices
+                          });
+                          out.insert(el.offset, outEl);
+                      }
+                  }
+              } catch (err) {
+                  _didIteratorError10 = true;
+                  _iteratorError10 = err;
+              } finally {
+                  try {
+                      if (!_iteratorNormalCompletion10 && _iterator10.return) {
+                          _iterator10.return();
+                      }
+                  } finally {
+                      if (_didIteratorError10) {
+                          throw _iteratorError10;
+                      }
+                  }
+              }
+          }
+      }, {
+          key: 'cloneEmpty',
+          value: function cloneEmpty(derivationMethod) {
+              var returnObj = this.constructor();
+              // TODO(msc): derivation
+              returnObj.mergeAttributes(this);
+              return returnObj;
+          }
+      }, {
+          key: 'mergeAttributes',
+          value: function mergeAttributes(other) {
+              get(Stream.prototype.__proto__ || Object.getPrototypeOf(Stream.prototype), 'mergeAttributes', this).call(this, other);
+              var _arr = ['autoSort', 'isSorted', 'definesExplicitSystemBreaks', 'definesEExplicitPageeBreaks', '_atSoundingPitch', '_mutable'];
+              for (var _i2 = 0; _i2 < _arr.length; _i2++) {
+                  var attr = _arr[_i2];
+                  if (Object.prototype.hasOwnProperty.call(other, attr)) {
+                      this[attr] = other[attr];
+                  }
+              }
+          }
+
+          /**
+           * makeNotation does not do anything yet, but it is a placeholder
+           * so it can start to be called. 
+           */
+
+      }, {
+          key: 'makeNotation',
+          value: function makeNotation() {
+              var _ref9 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
+                  _ref9$inPlace = _ref9.inPlace,
+                  inPlace = _ref9$inPlace === undefined ? false : _ref9$inPlace;
+
+              var out = void 0;
+              if (inPlace) {
+                  out = this;
+              } else {
+                  out = this.clone(true);
+              }
+              this.makeAccidentals();
+              return out;
+          }
+
+          /**
            * Return a new Stream or modify this stream
            * to have beams.
            *
@@ -17168,39 +17632,39 @@
                   mColl = [returnObj];
               } else {
                   mColl = [];
-                  var _iteratorNormalCompletion10 = true;
-                  var _didIteratorError10 = false;
-                  var _iteratorError10 = undefined;
+                  var _iteratorNormalCompletion11 = true;
+                  var _didIteratorError11 = false;
+                  var _iteratorError11 = undefined;
 
                   try {
-                      for (var _iterator10 = returnObj.getElementsByClass('Measure').elements[Symbol.iterator](), _step10; !(_iteratorNormalCompletion10 = (_step10 = _iterator10.next()).done); _iteratorNormalCompletion10 = true) {
-                          var m = _step10.value;
+                      for (var _iterator11 = returnObj.getElementsByClass('Measure').elements[Symbol.iterator](), _step11; !(_iteratorNormalCompletion11 = (_step11 = _iterator11.next()).done); _iteratorNormalCompletion11 = true) {
+                          var m = _step11.value;
 
                           mColl.push(m);
                       }
                   } catch (err) {
-                      _didIteratorError10 = true;
-                      _iteratorError10 = err;
+                      _didIteratorError11 = true;
+                      _iteratorError11 = err;
                   } finally {
                       try {
-                          if (!_iteratorNormalCompletion10 && _iterator10.return) {
-                              _iterator10.return();
+                          if (!_iteratorNormalCompletion11 && _iterator11.return) {
+                              _iterator11.return();
                           }
                       } finally {
-                          if (_didIteratorError10) {
-                              throw _iteratorError10;
+                          if (_didIteratorError11) {
+                              throw _iteratorError11;
                           }
                       }
                   }
               }
               var lastTimeSignature = void 0;
-              var _iteratorNormalCompletion11 = true;
-              var _didIteratorError11 = false;
-              var _iteratorError11 = undefined;
+              var _iteratorNormalCompletion12 = true;
+              var _didIteratorError12 = false;
+              var _iteratorError12 = undefined;
 
               try {
-                  for (var _iterator11 = mColl[Symbol.iterator](), _step11; !(_iteratorNormalCompletion11 = (_step11 = _iterator11.next()).done); _iteratorNormalCompletion11 = true) {
-                      var _m = _step11.value;
+                  for (var _iterator12 = mColl[Symbol.iterator](), _step12; !(_iteratorNormalCompletion12 = (_step12 = _iterator12.next()).done); _iteratorNormalCompletion12 = true) {
+                      var _m = _step12.value;
 
                       if (_m.timeSignature !== undefined) {
                           lastTimeSignature = _m.timeSignature;
@@ -17214,27 +17678,27 @@
                       }
                       var noteStream = _m.notesAndRests;
                       var durList = [];
-                      var _iteratorNormalCompletion12 = true;
-                      var _didIteratorError12 = false;
-                      var _iteratorError12 = undefined;
+                      var _iteratorNormalCompletion13 = true;
+                      var _didIteratorError13 = false;
+                      var _iteratorError13 = undefined;
 
                       try {
-                          for (var _iterator12 = noteStream[Symbol.iterator](), _step12; !(_iteratorNormalCompletion12 = (_step12 = _iterator12.next()).done); _iteratorNormalCompletion12 = true) {
-                              var _n = _step12.value;
+                          for (var _iterator13 = noteStream[Symbol.iterator](), _step13; !(_iteratorNormalCompletion13 = (_step13 = _iterator13.next()).done); _iteratorNormalCompletion13 = true) {
+                              var _n = _step13.value;
 
                               durList.push(_n.duration);
                           }
                       } catch (err) {
-                          _didIteratorError12 = true;
-                          _iteratorError12 = err;
+                          _didIteratorError13 = true;
+                          _iteratorError13 = err;
                       } finally {
                           try {
-                              if (!_iteratorNormalCompletion12 && _iterator12.return) {
-                                  _iterator12.return();
+                              if (!_iteratorNormalCompletion13 && _iterator13.return) {
+                                  _iterator13.return();
                               }
                           } finally {
-                              if (_didIteratorError12) {
-                                  throw _iteratorError12;
+                              if (_didIteratorError13) {
+                                  throw _iteratorError13;
                               }
                           }
                       }
@@ -17268,21 +17732,67 @@
 
                   // returnObj.streamStatus.beams = true;
               } catch (err) {
-                  _didIteratorError11 = true;
-                  _iteratorError11 = err;
+                  _didIteratorError12 = true;
+                  _iteratorError12 = err;
               } finally {
                   try {
-                      if (!_iteratorNormalCompletion11 && _iterator11.return) {
-                          _iterator11.return();
+                      if (!_iteratorNormalCompletion12 && _iterator12.return) {
+                          _iterator12.return();
                       }
                   } finally {
-                      if (_didIteratorError11) {
-                          throw _iteratorError11;
+                      if (_didIteratorError12) {
+                          throw _iteratorError12;
                       }
                   }
               }
 
               return returnObj;
+          }
+
+          /**
+           * Returns a boolean value showing if this 
+           * Stream contains any Parts or Part-like
+           * sub-Streams.
+           * 
+           * Will deal with Part-like sub-streams later
+           * for now just checks for real Part objects.
+           * 
+           * Part-like sub-streams are Streams that
+           * contain Measures or Notes. And where no
+           * sub-stream begins at an offset besides zero.
+           */
+
+      }, {
+          key: 'hasPartLikeStreams',
+          value: function hasPartLikeStreams() {
+              var _iteratorNormalCompletion14 = true;
+              var _didIteratorError14 = false;
+              var _iteratorError14 = undefined;
+
+              try {
+                  for (var _iterator14 = this[Symbol.iterator](), _step14; !(_iteratorNormalCompletion14 = (_step14 = _iterator14.next()).done); _iteratorNormalCompletion14 = true) {
+                      var el = _step14.value;
+
+                      if (el.classes.includes('Part')) {
+                          return true;
+                      }
+                  }
+              } catch (err) {
+                  _didIteratorError14 = true;
+                  _iteratorError14 = err;
+              } finally {
+                  try {
+                      if (!_iteratorNormalCompletion14 && _iterator14.return) {
+                          _iterator14.return();
+                      }
+                  } finally {
+                      if (_didIteratorError14) {
+                          throw _iteratorError14;
+                      }
+                  }
+              }
+
+              return false;
           }
 
           /**
@@ -17295,29 +17805,29 @@
       }, {
           key: 'hasLyrics',
           value: function hasLyrics() {
-              var _iteratorNormalCompletion13 = true;
-              var _didIteratorError13 = false;
-              var _iteratorError13 = undefined;
+              var _iteratorNormalCompletion15 = true;
+              var _didIteratorError15 = false;
+              var _iteratorError15 = undefined;
 
               try {
-                  for (var _iterator13 = this[Symbol.iterator](), _step13; !(_iteratorNormalCompletion13 = (_step13 = _iterator13.next()).done); _iteratorNormalCompletion13 = true) {
-                      var el = _step13.value;
+                  for (var _iterator15 = this[Symbol.iterator](), _step15; !(_iteratorNormalCompletion15 = (_step15 = _iterator15.next()).done); _iteratorNormalCompletion15 = true) {
+                      var el = _step15.value;
 
                       if (el.lyric !== undefined) {
                           return true;
                       }
                   }
               } catch (err) {
-                  _didIteratorError13 = true;
-                  _iteratorError13 = err;
+                  _didIteratorError15 = true;
+                  _iteratorError15 = err;
               } finally {
                   try {
-                      if (!_iteratorNormalCompletion13 && _iterator13.return) {
-                          _iterator13.return();
+                      if (!_iteratorNormalCompletion15 && _iterator15.return) {
+                          _iterator15.return();
                       }
                   } finally {
-                      if (_didIteratorError13) {
-                          throw _iteratorError13;
+                      if (_didIteratorError15) {
+                          throw _iteratorError15;
                       }
                   }
               }
@@ -17350,7 +17860,7 @@
                   for (var j = 0; j < group.length; j++) {
                       var e = group.get(j);
                       var dur = e.duration.quarterLength;
-                      var offset = e.offset; // TODO: getOffsetBySite(group)
+                      var offset = group.elementOffset(e);
                       var endTime = offset + dur;
                       var thisOffsetMap = new stream.OffsetMap(e, offset, endTime, voiceIndex);
                       offsetMap.push(thisOffsetMap);
@@ -17372,13 +17882,13 @@
           key: 'getElementsByClass',
           value: function getElementsByClass(classList) {
               var tempEls = [];
-              var _iteratorNormalCompletion14 = true;
-              var _didIteratorError14 = false;
-              var _iteratorError14 = undefined;
+              var _iteratorNormalCompletion16 = true;
+              var _didIteratorError16 = false;
+              var _iteratorError16 = undefined;
 
               try {
-                  for (var _iterator14 = this[Symbol.iterator](), _step14; !(_iteratorNormalCompletion14 = (_step14 = _iterator14.next()).done); _iteratorNormalCompletion14 = true) {
-                      var thisEl = _step14.value;
+                  for (var _iterator16 = this[Symbol.iterator](), _step16; !(_iteratorNormalCompletion16 = (_step16 = _iterator16.next()).done); _iteratorNormalCompletion16 = true) {
+                      var thisEl = _step16.value;
 
                       // console.warn(thisEl);
                       if (thisEl.isClassOrSubclass === undefined) {
@@ -17388,16 +17898,16 @@
                       }
                   }
               } catch (err) {
-                  _didIteratorError14 = true;
-                  _iteratorError14 = err;
+                  _didIteratorError16 = true;
+                  _iteratorError16 = err;
               } finally {
                   try {
-                      if (!_iteratorNormalCompletion14 && _iterator14.return) {
-                          _iterator14.return();
+                      if (!_iteratorNormalCompletion16 && _iterator16.return) {
+                          _iterator16.return();
                       }
                   } finally {
-                      if (_didIteratorError14) {
-                          throw _iteratorError14;
+                      if (_didIteratorError16) {
+                          throw _iteratorError16;
                       }
                   }
               }
@@ -17419,17 +17929,17 @@
       }, {
           key: 'getElementsByOffset',
           value: function getElementsByOffset(offsetStart, offsetEnd) {
-              var _ref7 = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {},
-                  _ref7$includeEndBound = _ref7.includeEndBoundary,
-                  includeEndBoundary = _ref7$includeEndBound === undefined ? true : _ref7$includeEndBound,
-                  _ref7$mustFinishInSpa = _ref7.mustFinishInSpan,
-                  mustFinishInSpan = _ref7$mustFinishInSpa === undefined ? false : _ref7$mustFinishInSpa,
-                  _ref7$mustBeginInSpan = _ref7.mustBeginInSpan,
-                  mustBeginInSpan = _ref7$mustBeginInSpan === undefined ? true : _ref7$mustBeginInSpan,
-                  _ref7$includeElements = _ref7.includeElementsThatEndAtStart,
-                  includeElementsThatEndAtStart = _ref7$includeElements === undefined ? true : _ref7$includeElements,
-                  _ref7$classList = _ref7.classList,
-                  classList = _ref7$classList === undefined ? undefined : _ref7$classList;
+              var _ref10 = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {},
+                  _ref10$includeEndBoun = _ref10.includeEndBoundary,
+                  includeEndBoundary = _ref10$includeEndBoun === undefined ? true : _ref10$includeEndBoun,
+                  _ref10$mustFinishInSp = _ref10.mustFinishInSpan,
+                  mustFinishInSpan = _ref10$mustFinishInSp === undefined ? false : _ref10$mustFinishInSp,
+                  _ref10$mustBeginInSpa = _ref10.mustBeginInSpan,
+                  mustBeginInSpan = _ref10$mustBeginInSpa === undefined ? true : _ref10$mustBeginInSpa,
+                  _ref10$includeElement = _ref10.includeElementsThatEndAtStart,
+                  includeElementsThatEndAtStart = _ref10$includeElement === undefined ? true : _ref10$includeElement,
+                  _ref10$classList = _ref10.classList,
+                  classList = _ref10$classList === undefined ? undefined : _ref10$classList;
 
               var s = this;
               if (classList !== undefined) {
@@ -17496,13 +18006,13 @@
 
               var retStream = s.clone(false);
               retStream.elements = [];
-              var _iteratorNormalCompletion15 = true;
-              var _didIteratorError15 = false;
-              var _iteratorError15 = undefined;
+              var _iteratorNormalCompletion17 = true;
+              var _didIteratorError17 = false;
+              var _iteratorError17 = undefined;
 
               try {
-                  for (var _iterator15 = s[Symbol.iterator](), _step15; !(_iteratorNormalCompletion15 = (_step15 = _iterator15.next()).done); _iteratorNormalCompletion15 = true) {
-                      var e = _step15.value;
+                  for (var _iterator17 = s[Symbol.iterator](), _step17; !(_iteratorNormalCompletion17 = (_step17 = _iterator17.next()).done); _iteratorNormalCompletion17 = true) {
+                      var e = _step17.value;
 
                       var offset = s.elementOffset(e);
                       if (isElementOffsetInRange(e, offset)) {
@@ -17510,16 +18020,16 @@
                       }
                   }
               } catch (err) {
-                  _didIteratorError15 = true;
-                  _iteratorError15 = err;
+                  _didIteratorError17 = true;
+                  _iteratorError17 = err;
               } finally {
                   try {
-                      if (!_iteratorNormalCompletion15 && _iterator15.return) {
-                          _iterator15.return();
+                      if (!_iteratorNormalCompletion17 && _iterator17.return) {
+                          _iterator17.return();
                       }
                   } finally {
-                      if (_didIteratorError15) {
-                          throw _iteratorError15;
+                      if (_didIteratorError17) {
+                          throw _iteratorError17;
                       }
                   }
               }
@@ -17570,29 +18080,29 @@
               } else if (otherElements.length === 1) {
                   return otherElements.get(0);
               } else {
-                  var _iteratorNormalCompletion16 = true;
-                  var _didIteratorError16 = false;
-                  var _iteratorError16 = undefined;
+                  var _iteratorNormalCompletion18 = true;
+                  var _didIteratorError18 = false;
+                  var _iteratorError18 = undefined;
 
                   try {
-                      for (var _iterator16 = otherElements[Symbol.iterator](), _step16; !(_iteratorNormalCompletion16 = (_step16 = _iterator16.next()).done); _iteratorNormalCompletion16 = true) {
-                          var thisEl = _step16.value;
+                      for (var _iterator18 = otherElements[Symbol.iterator](), _step18; !(_iteratorNormalCompletion18 = (_step18 = _iterator18.next()).done); _iteratorNormalCompletion18 = true) {
+                          var thisEl = _step18.value;
 
                           if (el.constructor === thisEl.constructor) {
                               return thisEl;
                           }
                       }
                   } catch (err) {
-                      _didIteratorError16 = true;
-                      _iteratorError16 = err;
+                      _didIteratorError18 = true;
+                      _iteratorError18 = err;
                   } finally {
                       try {
-                          if (!_iteratorNormalCompletion16 && _iterator16.return) {
-                              _iterator16.return();
+                          if (!_iteratorNormalCompletion18 && _iterator18.return) {
+                              _iterator18.return();
                           }
                       } finally {
-                          if (_didIteratorError16) {
-                              throw _iteratorError16;
+                          if (_didIteratorError18) {
+                              throw _iteratorError18;
                           }
                       }
                   }
@@ -17618,13 +18128,13 @@
               // cheap version of music21p method
               var extendableStepList = {};
               var stepNames = ['C', 'D', 'E', 'F', 'G', 'A', 'B'];
-              var _iteratorNormalCompletion17 = true;
-              var _didIteratorError17 = false;
-              var _iteratorError17 = undefined;
+              var _iteratorNormalCompletion19 = true;
+              var _didIteratorError19 = false;
+              var _iteratorError19 = undefined;
 
               try {
-                  for (var _iterator17 = stepNames[Symbol.iterator](), _step17; !(_iteratorNormalCompletion17 = (_step17 = _iterator17.next()).done); _iteratorNormalCompletion17 = true) {
-                      var stepName = _step17.value;
+                  for (var _iterator19 = stepNames[Symbol.iterator](), _step19; !(_iteratorNormalCompletion19 = (_step19 = _iterator19.next()).done); _iteratorNormalCompletion19 = true) {
+                      var stepName = _step19.value;
 
                       var stepAlter = 0;
                       if (this.keySignature !== undefined) {
@@ -17637,16 +18147,16 @@
                       extendableStepList[stepName] = stepAlter;
                   }
               } catch (err) {
-                  _didIteratorError17 = true;
-                  _iteratorError17 = err;
+                  _didIteratorError19 = true;
+                  _iteratorError19 = err;
               } finally {
                   try {
-                      if (!_iteratorNormalCompletion17 && _iterator17.return) {
-                          _iterator17.return();
+                      if (!_iteratorNormalCompletion19 && _iterator19.return) {
+                          _iterator19.return();
                       }
                   } finally {
-                      if (_didIteratorError17) {
-                          throw _iteratorError17;
+                      if (_didIteratorError19) {
+                          throw _iteratorError19;
                       }
                   }
               }
@@ -17658,13 +18168,13 @@
               }
               var lastOctavelessStepDict = $$1.extend({}, extendableStepList); // probably unnecessary, but safe...
 
-              var _iteratorNormalCompletion18 = true;
-              var _didIteratorError18 = false;
-              var _iteratorError18 = undefined;
+              var _iteratorNormalCompletion20 = true;
+              var _didIteratorError20 = false;
+              var _iteratorError20 = undefined;
 
               try {
-                  for (var _iterator18 = this[Symbol.iterator](), _step18; !(_iteratorNormalCompletion18 = (_step18 = _iterator18.next()).done); _iteratorNormalCompletion18 = true) {
-                      var el = _step18.value;
+                  for (var _iterator20 = this[Symbol.iterator](), _step20; !(_iteratorNormalCompletion20 = (_step20 = _iterator20.next()).done); _iteratorNormalCompletion20 = true) {
+                      var el = _step20.value;
 
                       if (el.pitch !== undefined) {
                           // note
@@ -17673,45 +18183,45 @@
                           this._makeAccidentalForOnePitch(p, lastStepDict, lastOctavelessStepDict);
                       } else if (el._notes !== undefined) {
                           // chord
-                          var _iteratorNormalCompletion19 = true;
-                          var _didIteratorError19 = false;
-                          var _iteratorError19 = undefined;
+                          var _iteratorNormalCompletion21 = true;
+                          var _didIteratorError21 = false;
+                          var _iteratorError21 = undefined;
 
                           try {
-                              for (var _iterator19 = el._notes[Symbol.iterator](), _step19; !(_iteratorNormalCompletion19 = (_step19 = _iterator19.next()).done); _iteratorNormalCompletion19 = true) {
-                                  var chordNote = _step19.value;
+                              for (var _iterator21 = el._notes[Symbol.iterator](), _step21; !(_iteratorNormalCompletion21 = (_step21 = _iterator21.next()).done); _iteratorNormalCompletion21 = true) {
+                                  var chordNote = _step21.value;
 
                                   var _p = chordNote.pitch;
                                   var _lastStepDict = lastOctaveStepList[_p.octave];
                                   this._makeAccidentalForOnePitch(_p, _lastStepDict, lastOctavelessStepDict);
                               }
                           } catch (err) {
-                              _didIteratorError19 = true;
-                              _iteratorError19 = err;
+                              _didIteratorError21 = true;
+                              _iteratorError21 = err;
                           } finally {
                               try {
-                                  if (!_iteratorNormalCompletion19 && _iterator19.return) {
-                                      _iterator19.return();
+                                  if (!_iteratorNormalCompletion21 && _iterator21.return) {
+                                      _iterator21.return();
                                   }
                               } finally {
-                                  if (_didIteratorError19) {
-                                      throw _iteratorError19;
+                                  if (_didIteratorError21) {
+                                      throw _iteratorError21;
                                   }
                               }
                           }
                       }
                   }
               } catch (err) {
-                  _didIteratorError18 = true;
-                  _iteratorError18 = err;
+                  _didIteratorError20 = true;
+                  _iteratorError20 = err;
               } finally {
                   try {
-                      if (!_iteratorNormalCompletion18 && _iterator18.return) {
-                          _iterator18.return();
+                      if (!_iteratorNormalCompletion20 && _iterator20.return) {
+                          _iterator20.return();
                       }
                   } finally {
-                      if (_didIteratorError18) {
-                          throw _iteratorError18;
+                      if (_didIteratorError20) {
+                          throw _iteratorError20;
                       }
                   }
               }
@@ -17787,29 +18297,29 @@
               }
 
               if (recursive) {
-                  var _iteratorNormalCompletion20 = true;
-                  var _didIteratorError20 = false;
-                  var _iteratorError20 = undefined;
+                  var _iteratorNormalCompletion22 = true;
+                  var _didIteratorError22 = false;
+                  var _iteratorError22 = undefined;
 
                   try {
-                      for (var _iterator20 = this[Symbol.iterator](), _step20; !(_iteratorNormalCompletion20 = (_step20 = _iterator20.next()).done); _iteratorNormalCompletion20 = true) {
-                          var el = _step20.value;
+                      for (var _iterator22 = this[Symbol.iterator](), _step22; !(_iteratorNormalCompletion22 = (_step22 = _iterator22.next()).done); _iteratorNormalCompletion22 = true) {
+                          var el = _step22.value;
 
                           if (el.isClassOrSubclass('Stream')) {
                               el.resetRenderOptions(recursive, preserveEvents);
                           }
                       }
                   } catch (err) {
-                      _didIteratorError20 = true;
-                      _iteratorError20 = err;
+                      _didIteratorError22 = true;
+                      _iteratorError22 = err;
                   } finally {
                       try {
-                          if (!_iteratorNormalCompletion20 && _iterator20.return) {
-                              _iterator20.return();
+                          if (!_iteratorNormalCompletion22 && _iterator22.return) {
+                              _iterator22.return();
                           }
                       } finally {
-                          if (_didIteratorError20) {
-                              throw _iteratorError20;
+                          if (_didIteratorError22) {
+                              throw _iteratorError22;
                           }
                       }
                   }
@@ -17939,13 +18449,13 @@
               }
               if (this.hasVoices()) {
                   var maxLength = 0;
-                  var _iteratorNormalCompletion21 = true;
-                  var _didIteratorError21 = false;
-                  var _iteratorError21 = undefined;
+                  var _iteratorNormalCompletion23 = true;
+                  var _didIteratorError23 = false;
+                  var _iteratorError23 = undefined;
 
                   try {
-                      for (var _iterator21 = this[Symbol.iterator](), _step21; !(_iteratorNormalCompletion21 = (_step21 = _iterator21.next()).done); _iteratorNormalCompletion21 = true) {
-                          var v = _step21.value;
+                      for (var _iterator23 = this[Symbol.iterator](), _step23; !(_iteratorNormalCompletion23 = (_step23 = _iterator23.next()).done); _iteratorNormalCompletion23 = true) {
+                          var v = _step23.value;
 
                           if (v.isClassOrSubclass('Stream')) {
                               var thisLength = v.estimateStaffLength() + v.renderOptions.staffPadding;
@@ -17955,16 +18465,16 @@
                           }
                       }
                   } catch (err) {
-                      _didIteratorError21 = true;
-                      _iteratorError21 = err;
+                      _didIteratorError23 = true;
+                      _iteratorError23 = err;
                   } finally {
                       try {
-                          if (!_iteratorNormalCompletion21 && _iterator21.return) {
-                              _iterator21.return();
+                          if (!_iteratorNormalCompletion23 && _iterator23.return) {
+                              _iterator23.return();
                           }
                       } finally {
-                          if (_didIteratorError21) {
-                              throw _iteratorError21;
+                          if (_didIteratorError23) {
+                              throw _iteratorError23;
                           }
                       }
                   }
@@ -18559,13 +19069,13 @@
                   note: undefined
               }; // a backup in case we did not find within allowablePixels
 
-              var _iteratorNormalCompletion22 = true;
-              var _didIteratorError22 = false;
-              var _iteratorError22 = undefined;
+              var _iteratorNormalCompletion24 = true;
+              var _didIteratorError24 = false;
+              var _iteratorError24 = undefined;
 
               try {
-                  for (var _iterator22 = subStream.flat.notesAndRests.elements[Symbol.iterator](), _step22; !(_iteratorNormalCompletion22 = (_step22 = _iterator22.next()).done); _iteratorNormalCompletion22 = true) {
-                      var n = _step22.value;
+                  for (var _iterator24 = subStream.flat.notesAndRests.elements[Symbol.iterator](), _step24; !(_iteratorNormalCompletion24 = (_step24 = _iterator24.next()).done); _iteratorNormalCompletion24 = true) {
+                      var n = _step24.value;
 
                       /* should also
                        * compensate for accidentals...
@@ -18584,16 +19094,16 @@
                   }
                   // console.log('note here is: ', foundNote);
               } catch (err) {
-                  _didIteratorError22 = true;
-                  _iteratorError22 = err;
+                  _didIteratorError24 = true;
+                  _iteratorError24 = err;
               } finally {
                   try {
-                      if (!_iteratorNormalCompletion22 && _iterator22.return) {
-                          _iterator22.return();
+                      if (!_iteratorNormalCompletion24 && _iterator24.return) {
+                          _iterator24.return();
                       }
                   } finally {
-                      if (_didIteratorError22) {
-                          throw _iteratorError22;
+                      if (_didIteratorError24) {
+                          throw _iteratorError24;
                       }
                   }
               }
@@ -18895,29 +19405,29 @@
       }, {
           key: 'hasVoices',
           value: function hasVoices() {
-              var _iteratorNormalCompletion23 = true;
-              var _didIteratorError23 = false;
-              var _iteratorError23 = undefined;
+              var _iteratorNormalCompletion25 = true;
+              var _didIteratorError25 = false;
+              var _iteratorError25 = undefined;
 
               try {
-                  for (var _iterator23 = this[Symbol.iterator](), _step23; !(_iteratorNormalCompletion23 = (_step23 = _iterator23.next()).done); _iteratorNormalCompletion23 = true) {
-                      var el = _step23.value;
+                  for (var _iterator25 = this[Symbol.iterator](), _step25; !(_iteratorNormalCompletion25 = (_step25 = _iterator25.next()).done); _iteratorNormalCompletion25 = true) {
+                      var el = _step25.value;
 
                       if (el.isClassOrSubclass('Voice')) {
                           return true;
                       }
                   }
               } catch (err) {
-                  _didIteratorError23 = true;
-                  _iteratorError23 = err;
+                  _didIteratorError25 = true;
+                  _iteratorError25 = err;
               } finally {
                   try {
-                      if (!_iteratorNormalCompletion23 && _iterator23.return) {
-                          _iterator23.return();
+                      if (!_iteratorNormalCompletion25 && _iterator25.return) {
+                          _iterator25.return();
                       }
                   } finally {
-                      if (_didIteratorError23) {
-                          throw _iteratorError23;
+                      if (_didIteratorError25) {
+                          throw _iteratorError25;
                       }
                   }
               }
@@ -18939,13 +19449,13 @@
           key: 'highestTime',
           get: function get() {
               var highestTime = 0.0;
-              var _iteratorNormalCompletion24 = true;
-              var _didIteratorError24 = false;
-              var _iteratorError24 = undefined;
+              var _iteratorNormalCompletion26 = true;
+              var _didIteratorError26 = false;
+              var _iteratorError26 = undefined;
 
               try {
-                  for (var _iterator24 = this[Symbol.iterator](), _step24; !(_iteratorNormalCompletion24 = (_step24 = _iterator24.next()).done); _iteratorNormalCompletion24 = true) {
-                      var el = _step24.value;
+                  for (var _iterator26 = this[Symbol.iterator](), _step26; !(_iteratorNormalCompletion26 = (_step26 = _iterator26.next()).done); _iteratorNormalCompletion26 = true) {
+                      var el = _step26.value;
 
                       var endTime = el.offset;
                       if (el.duration !== undefined) {
@@ -18956,16 +19466,16 @@
                       }
                   }
               } catch (err) {
-                  _didIteratorError24 = true;
-                  _iteratorError24 = err;
+                  _didIteratorError26 = true;
+                  _iteratorError26 = err;
               } finally {
                   try {
-                      if (!_iteratorNormalCompletion24 && _iterator24.return) {
-                          _iterator24.return();
+                      if (!_iteratorNormalCompletion26 && _iterator26.return) {
+                          _iterator26.return();
                       }
                   } finally {
-                      if (_didIteratorError24) {
-                          throw _iteratorError24;
+                      if (_didIteratorError26) {
+                          throw _iteratorError26;
                       }
                   }
               }
@@ -19024,12 +19534,11 @@
       }, {
           key: 'clef',
           get: function get() {
-              if (this._clef === undefined && this.activeSite === undefined) {
-                  return new clef.Clef('treble');
-              } else if (this._clef === undefined) {
-                  return this.activeSite.clef;
+              var contextClef = this._specialContext('clef');
+              if (contextClef !== undefined) {
+                  return contextClef;
               } else {
-                  return this._clef;
+                  return new clef.TrebleClef();
               }
           },
           set: function set(newClef) {
@@ -19038,11 +19547,7 @@
       }, {
           key: 'keySignature',
           get: function get() {
-              if (this._keySignature === undefined && this.activeSite !== undefined) {
-                  return this.activeSite.keySignature;
-              } else {
-                  return this._keySignature;
-              }
+              return this._specialContext('keySignature');
           },
           set: function set(newKeySignature) {
               this._keySignature = newKeySignature;
@@ -19050,11 +19555,7 @@
       }, {
           key: 'timeSignature',
           get: function get() {
-              if (this._timeSignature === undefined && this.activeSite !== undefined) {
-                  return this.activeSite.timeSignature;
-              } else {
-                  return this._timeSignature;
-              }
+              return this._specialContext('timeSignature');
           },
           set: function set(newTimeSignature) {
               if (typeof newTimeSignature === 'string') {
@@ -19065,13 +19566,7 @@
       }, {
           key: 'autoBeam',
           get: function get() {
-              if (this._autoBeam === undefined && this.activeSite !== undefined) {
-                  return this.activeSite.autoBeam;
-              } else if (this._autoBeam !== undefined) {
-                  return this._autoBeam;
-              } else {
-                  return true; // default...
-              }
+              return this._specialContext('autoBeam');
           },
           set: function set(ab) {
               this._autoBeam = ab;
@@ -19123,25 +19618,25 @@
               var thisEl = void 0;
               if (newElements.isStream === true) {
                   // iterate to set active site;
-                  var _iteratorNormalCompletion25 = true;
-                  var _didIteratorError25 = false;
-                  var _iteratorError25 = undefined;
+                  var _iteratorNormalCompletion27 = true;
+                  var _didIteratorError27 = false;
+                  var _iteratorError27 = undefined;
 
                   try {
-                      for (var _iterator25 = newElements[Symbol.iterator](), _step25; !(_iteratorNormalCompletion25 = (_step25 = _iterator25.next()).done); _iteratorNormalCompletion25 = true) {
-                          var unused = _step25.value;
+                      for (var _iterator27 = newElements[Symbol.iterator](), _step27; !(_iteratorNormalCompletion27 = (_step27 = _iterator27.next()).done); _iteratorNormalCompletion27 = true) {
+                          var unused = _step27.value;
                       } // eslint-disable-line no-empty
                   } catch (err) {
-                      _didIteratorError25 = true;
-                      _iteratorError25 = err;
+                      _didIteratorError27 = true;
+                      _iteratorError27 = err;
                   } finally {
                       try {
-                          if (!_iteratorNormalCompletion25 && _iterator25.return) {
-                              _iterator25.return();
+                          if (!_iteratorNormalCompletion27 && _iterator27.return) {
+                              _iterator27.return();
                           }
                       } finally {
-                          if (_didIteratorError25) {
-                              throw _iteratorError25;
+                          if (_didIteratorError27) {
+                              throw _iteratorError27;
                           }
                       }
                   }
@@ -19215,9 +19710,16 @@
           _this8.recursionType = 'elementsFirst';
           _this8.isMeasure = true;
           _this8.number = 0; // measure number
+          _this8.numberSuffix = '';
           return _this8;
       }
 
+      createClass(Measure, [{
+          key: 'measureNumberWithSuffix',
+          value: function measureNumberWithSuffix() {
+              return this.number.toString() + this.numberSuffix;
+          }
+      }]);
       return Measure;
   }(Stream);
   stream.Measure = Measure;
@@ -19277,13 +19779,13 @@
           value: function getMeasureWidths() {
               /* call after setSubstreamRenderOptions */
               var measureWidths = [];
-              var _iteratorNormalCompletion26 = true;
-              var _didIteratorError26 = false;
-              var _iteratorError26 = undefined;
+              var _iteratorNormalCompletion28 = true;
+              var _didIteratorError28 = false;
+              var _iteratorError28 = undefined;
 
               try {
-                  for (var _iterator26 = this[Symbol.iterator](), _step26; !(_iteratorNormalCompletion26 = (_step26 = _iterator26.next()).done); _iteratorNormalCompletion26 = true) {
-                      var el = _step26.value;
+                  for (var _iterator28 = this[Symbol.iterator](), _step28; !(_iteratorNormalCompletion28 = (_step28 = _iterator28.next()).done); _iteratorNormalCompletion28 = true) {
+                      var el = _step28.value;
 
                       if (el.isClassOrSubclass('Measure')) {
                           var elRendOp = el.renderOptions;
@@ -19294,16 +19796,16 @@
                    *
                    */
               } catch (err) {
-                  _didIteratorError26 = true;
-                  _iteratorError26 = err;
+                  _didIteratorError28 = true;
+                  _iteratorError28 = err;
               } finally {
                   try {
-                      if (!_iteratorNormalCompletion26 && _iterator26.return) {
-                          _iterator26.return();
+                      if (!_iteratorNormalCompletion28 && _iterator28.return) {
+                          _iterator28.return();
                       }
                   } finally {
-                      if (_didIteratorError26) {
-                          throw _iteratorError26;
+                      if (_didIteratorError28) {
+                          throw _iteratorError28;
                       }
                   }
               }
@@ -19328,13 +19830,13 @@
                   // part with Measures underneath
                   var totalLength = 0;
                   var isFirst = true;
-                  var _iteratorNormalCompletion27 = true;
-                  var _didIteratorError27 = false;
-                  var _iteratorError27 = undefined;
+                  var _iteratorNormalCompletion29 = true;
+                  var _didIteratorError29 = false;
+                  var _iteratorError29 = undefined;
 
                   try {
-                      for (var _iterator27 = this.getElementsByClass('Measure')[Symbol.iterator](), _step27; !(_iteratorNormalCompletion27 = (_step27 = _iterator27.next()).done); _iteratorNormalCompletion27 = true) {
-                          var m = _step27.value;
+                      for (var _iterator29 = this.getElementsByClass('Measure')[Symbol.iterator](), _step29; !(_iteratorNormalCompletion29 = (_step29 = _iterator29.next()).done); _iteratorNormalCompletion29 = true) {
+                          var m = _step29.value;
 
                           // this looks wrong, but actually seems to be right. moving it to
                           // after the break breaks things.
@@ -19345,16 +19847,16 @@
                           isFirst = false;
                       }
                   } catch (err) {
-                      _didIteratorError27 = true;
-                      _iteratorError27 = err;
+                      _didIteratorError29 = true;
+                      _iteratorError29 = err;
                   } finally {
                       try {
-                          if (!_iteratorNormalCompletion27 && _iterator27.return) {
-                              _iterator27.return();
+                          if (!_iteratorNormalCompletion29 && _iterator29.return) {
+                              _iterator29.return();
                           }
                       } finally {
-                          if (_didIteratorError27) {
-                              throw _iteratorError27;
+                          if (_didIteratorError29) {
+                              throw _iteratorError29;
                           }
                       }
                   }
@@ -19506,13 +20008,13 @@
               var lastKeySignature = void 0;
               var lastClef = void 0;
 
-              var _iteratorNormalCompletion28 = true;
-              var _didIteratorError28 = false;
-              var _iteratorError28 = undefined;
+              var _iteratorNormalCompletion30 = true;
+              var _didIteratorError30 = false;
+              var _iteratorError30 = undefined;
 
               try {
-                  for (var _iterator28 = this.getElementsByClass('Measure')[Symbol.iterator](), _step28; !(_iteratorNormalCompletion28 = (_step28 = _iterator28.next()).done); _iteratorNormalCompletion28 = true) {
-                      var m = _step28.value;
+                  for (var _iterator30 = this.getElementsByClass('Measure')[Symbol.iterator](), _step30; !(_iteratorNormalCompletion30 = (_step30 = _iterator30.next()).done); _iteratorNormalCompletion30 = true) {
+                      var m = _step30.value;
 
                       var mRendOp = m.renderOptions;
                       mRendOp.measureIndex = currentMeasureIndex;
@@ -19557,16 +20059,16 @@
                       currentMeasureIndex += 1;
                   }
               } catch (err) {
-                  _didIteratorError28 = true;
-                  _iteratorError28 = err;
+                  _didIteratorError30 = true;
+                  _iteratorError30 = err;
               } finally {
                   try {
-                      if (!_iteratorNormalCompletion28 && _iterator28.return) {
-                          _iterator28.return();
+                      if (!_iteratorNormalCompletion30 && _iterator30.return) {
+                          _iterator30.return();
                       }
                   } finally {
-                      if (_didIteratorError28) {
-                          throw _iteratorError28;
+                      if (_didIteratorError30) {
+                          throw _iteratorError30;
                       }
                   }
               }
@@ -19650,13 +20152,13 @@
           value: function getStreamFromScaledXandSystemIndex(xPxScaled, systemIndex) {
               var gotMeasure = void 0;
               var measures = this.measures;
-              var _iteratorNormalCompletion29 = true;
-              var _didIteratorError29 = false;
-              var _iteratorError29 = undefined;
+              var _iteratorNormalCompletion31 = true;
+              var _didIteratorError31 = false;
+              var _iteratorError31 = undefined;
 
               try {
-                  for (var _iterator29 = measures[Symbol.iterator](), _step29; !(_iteratorNormalCompletion29 = (_step29 = _iterator29.next()).done); _iteratorNormalCompletion29 = true) {
-                      var m = _step29.value;
+                  for (var _iterator31 = measures[Symbol.iterator](), _step31; !(_iteratorNormalCompletion31 = (_step31 = _iterator31.next()).done); _iteratorNormalCompletion31 = true) {
+                      var m = _step31.value;
 
                       var rendOp = m.renderOptions;
                       var left = rendOp.left;
@@ -19677,16 +20179,16 @@
                       }
                   }
               } catch (err) {
-                  _didIteratorError29 = true;
-                  _iteratorError29 = err;
+                  _didIteratorError31 = true;
+                  _iteratorError31 = err;
               } finally {
                   try {
-                      if (!_iteratorNormalCompletion29 && _iterator29.return) {
-                          _iterator29.return();
+                      if (!_iteratorNormalCompletion31 && _iterator31.return) {
+                          _iterator31.return();
                       }
                   } finally {
-                      if (_didIteratorError29) {
-                          throw _iteratorError29;
+                      if (_didIteratorError31) {
+                          throw _iteratorError31;
                       }
                   }
               }
@@ -19753,13 +20255,13 @@
               var currentPartNumber = 0;
               var currentPartTop = 0;
               var partSpacing = this.partSpacing;
-              var _iteratorNormalCompletion30 = true;
-              var _didIteratorError30 = false;
-              var _iteratorError30 = undefined;
+              var _iteratorNormalCompletion32 = true;
+              var _didIteratorError32 = false;
+              var _iteratorError32 = undefined;
 
               try {
-                  for (var _iterator30 = this.parts[Symbol.iterator](), _step30; !(_iteratorNormalCompletion30 = (_step30 = _iterator30.next()).done); _iteratorNormalCompletion30 = true) {
-                      var p = _step30.value;
+                  for (var _iterator32 = this.parts[Symbol.iterator](), _step32; !(_iteratorNormalCompletion32 = (_step32 = _iterator32.next()).done); _iteratorNormalCompletion32 = true) {
+                      var p = _step32.value;
 
                       p.renderOptions.partIndex = currentPartNumber;
                       p.renderOptions.top = currentPartTop;
@@ -19768,16 +20270,16 @@
                       currentPartNumber += 1;
                   }
               } catch (err) {
-                  _didIteratorError30 = true;
-                  _iteratorError30 = err;
+                  _didIteratorError32 = true;
+                  _iteratorError32 = err;
               } finally {
                   try {
-                      if (!_iteratorNormalCompletion30 && _iterator30.return) {
-                          _iterator30.return();
+                      if (!_iteratorNormalCompletion32 && _iterator32.return) {
+                          _iterator32.return();
                       }
                   } finally {
-                      if (_didIteratorError30) {
-                          throw _iteratorError30;
+                      if (_didIteratorError32) {
+                          throw _iteratorError32;
                       }
                   }
               }
@@ -19785,27 +20287,27 @@
               this.evenPartMeasureSpacing();
               var ignoreNumSystems = true;
               var currentScoreHeight = this.estimateStreamHeight(ignoreNumSystems);
-              var _iteratorNormalCompletion31 = true;
-              var _didIteratorError31 = false;
-              var _iteratorError31 = undefined;
+              var _iteratorNormalCompletion33 = true;
+              var _didIteratorError33 = false;
+              var _iteratorError33 = undefined;
 
               try {
-                  for (var _iterator31 = this.parts[Symbol.iterator](), _step31; !(_iteratorNormalCompletion31 = (_step31 = _iterator31.next()).done); _iteratorNormalCompletion31 = true) {
-                      var _p2 = _step31.value;
+                  for (var _iterator33 = this.parts[Symbol.iterator](), _step33; !(_iteratorNormalCompletion33 = (_step33 = _iterator33.next()).done); _iteratorNormalCompletion33 = true) {
+                      var _p2 = _step33.value;
 
                       _p2.fixSystemInformation(currentScoreHeight);
                   }
               } catch (err) {
-                  _didIteratorError31 = true;
-                  _iteratorError31 = err;
+                  _didIteratorError33 = true;
+                  _iteratorError33 = err;
               } finally {
                   try {
-                      if (!_iteratorNormalCompletion31 && _iterator31.return) {
-                          _iterator31.return();
+                      if (!_iteratorNormalCompletion33 && _iterator33.return) {
+                          _iterator33.return();
                       }
                   } finally {
-                      if (_didIteratorError31) {
-                          throw _iteratorError31;
+                      if (_didIteratorError33) {
+                          throw _iteratorError33;
                       }
                   }
               }
@@ -19829,13 +20331,13 @@
                   return this.renderOptions.overriddenWidth;
               }
               var maxWidth = -1;
-              var _iteratorNormalCompletion32 = true;
-              var _didIteratorError32 = false;
-              var _iteratorError32 = undefined;
+              var _iteratorNormalCompletion34 = true;
+              var _didIteratorError34 = false;
+              var _iteratorError34 = undefined;
 
               try {
-                  for (var _iterator32 = this.parts[Symbol.iterator](), _step32; !(_iteratorNormalCompletion32 = (_step32 = _iterator32.next()).done); _iteratorNormalCompletion32 = true) {
-                      var p = _step32.value;
+                  for (var _iterator34 = this.parts[Symbol.iterator](), _step34; !(_iteratorNormalCompletion34 = (_step34 = _iterator34.next()).done); _iteratorNormalCompletion34 = true) {
+                      var p = _step34.value;
 
                       var pWidth = p.estimateStaffLength();
                       if (pWidth > maxWidth) {
@@ -19843,16 +20345,16 @@
                       }
                   }
               } catch (err) {
-                  _didIteratorError32 = true;
-                  _iteratorError32 = err;
+                  _didIteratorError34 = true;
+                  _iteratorError34 = err;
               } finally {
                   try {
-                      if (!_iteratorNormalCompletion32 && _iterator32.return) {
-                          _iterator32.return();
+                      if (!_iteratorNormalCompletion34 && _iterator34.return) {
+                          _iterator34.return();
                       }
                   } finally {
-                      if (_didIteratorError32) {
-                          throw _iteratorError32;
+                      if (_didIteratorError34) {
+                          throw _iteratorError34;
                       }
                   }
               }
@@ -19885,29 +20387,29 @@
           key: 'playStream',
           value: function playStream(params) {
               // play multiple parts in parallel...
-              var _iteratorNormalCompletion33 = true;
-              var _didIteratorError33 = false;
-              var _iteratorError33 = undefined;
+              var _iteratorNormalCompletion35 = true;
+              var _didIteratorError35 = false;
+              var _iteratorError35 = undefined;
 
               try {
-                  for (var _iterator33 = this[Symbol.iterator](), _step33; !(_iteratorNormalCompletion33 = (_step33 = _iterator33.next()).done); _iteratorNormalCompletion33 = true) {
-                      var el = _step33.value;
+                  for (var _iterator35 = this[Symbol.iterator](), _step35; !(_iteratorNormalCompletion35 = (_step35 = _iterator35.next()).done); _iteratorNormalCompletion35 = true) {
+                      var el = _step35.value;
 
                       if (el.isClassOrSubclass('Part')) {
                           el.playStream(params);
                       }
                   }
               } catch (err) {
-                  _didIteratorError33 = true;
-                  _iteratorError33 = err;
+                  _didIteratorError35 = true;
+                  _iteratorError35 = err;
               } finally {
                   try {
-                      if (!_iteratorNormalCompletion33 && _iterator33.return) {
-                          _iterator33.return();
+                      if (!_iteratorNormalCompletion35 && _iterator35.return) {
+                          _iterator35.return();
                       }
                   } finally {
-                      if (_didIteratorError33) {
-                          throw _iteratorError33;
+                      if (_didIteratorError35) {
+                          throw _iteratorError35;
                       }
                   }
               }
@@ -19924,29 +20426,29 @@
       }, {
           key: 'stopPlayStream',
           value: function stopPlayStream() {
-              var _iteratorNormalCompletion34 = true;
-              var _didIteratorError34 = false;
-              var _iteratorError34 = undefined;
+              var _iteratorNormalCompletion36 = true;
+              var _didIteratorError36 = false;
+              var _iteratorError36 = undefined;
 
               try {
-                  for (var _iterator34 = this[Symbol.iterator](), _step34; !(_iteratorNormalCompletion34 = (_step34 = _iterator34.next()).done); _iteratorNormalCompletion34 = true) {
-                      var el = _step34.value;
+                  for (var _iterator36 = this[Symbol.iterator](), _step36; !(_iteratorNormalCompletion36 = (_step36 = _iterator36.next()).done); _iteratorNormalCompletion36 = true) {
+                      var el = _step36.value;
 
                       if (el.isClassOrSubclass('Part')) {
                           el.stopPlayStream();
                       }
                   }
               } catch (err) {
-                  _didIteratorError34 = true;
-                  _iteratorError34 = err;
+                  _didIteratorError36 = true;
+                  _iteratorError36 = err;
               } finally {
                   try {
-                      if (!_iteratorNormalCompletion34 && _iterator34.return) {
-                          _iterator34.return();
+                      if (!_iteratorNormalCompletion36 && _iterator36.return) {
+                          _iterator36.return();
                       }
                   } finally {
-                      if (_didIteratorError34) {
-                          throw _iteratorError34;
+                      if (_didIteratorError36) {
+                          throw _iteratorError36;
                       }
                   }
               }
@@ -19976,27 +20478,27 @@
               var measureWidthsArrayOfArrays = [];
               var i = void 0;
               // TODO: Do not crash on not partlike...
-              var _iteratorNormalCompletion35 = true;
-              var _didIteratorError35 = false;
-              var _iteratorError35 = undefined;
+              var _iteratorNormalCompletion37 = true;
+              var _didIteratorError37 = false;
+              var _iteratorError37 = undefined;
 
               try {
-                  for (var _iterator35 = this.parts[Symbol.iterator](), _step35; !(_iteratorNormalCompletion35 = (_step35 = _iterator35.next()).done); _iteratorNormalCompletion35 = true) {
-                      var p = _step35.value;
+                  for (var _iterator37 = this.parts[Symbol.iterator](), _step37; !(_iteratorNormalCompletion37 = (_step37 = _iterator37.next()).done); _iteratorNormalCompletion37 = true) {
+                      var p = _step37.value;
 
                       measureWidthsArrayOfArrays.push(p.getMeasureWidths());
                   }
               } catch (err) {
-                  _didIteratorError35 = true;
-                  _iteratorError35 = err;
+                  _didIteratorError37 = true;
+                  _iteratorError37 = err;
               } finally {
                   try {
-                      if (!_iteratorNormalCompletion35 && _iterator35.return) {
-                          _iterator35.return();
+                      if (!_iteratorNormalCompletion37 && _iterator37.return) {
+                          _iterator37.return();
                       }
                   } finally {
-                      if (_didIteratorError35) {
-                          throw _iteratorError35;
+                      if (_didIteratorError37) {
+                          throw _iteratorError37;
                       }
                   }
               }
@@ -20099,21 +20601,21 @@
       }, {
           key: 'evenPartMeasureSpacing',
           value: function evenPartMeasureSpacing() {
-              var _ref8 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
-                  _ref8$setLeft = _ref8.setLeft,
-                  setLeft = _ref8$setLeft === undefined ? true : _ref8$setLeft;
+              var _ref11 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
+                  _ref11$setLeft = _ref11.setLeft,
+                  setLeft = _ref11$setLeft === undefined ? true : _ref11$setLeft;
 
               var measureStacks = [];
               var currentPartNumber = 0;
               var maxMeasureWidth = []; // the maximum measure width among all parts
               var j = void 0;
-              var _iteratorNormalCompletion36 = true;
-              var _didIteratorError36 = false;
-              var _iteratorError36 = undefined;
+              var _iteratorNormalCompletion38 = true;
+              var _didIteratorError38 = false;
+              var _iteratorError38 = undefined;
 
               try {
-                  for (var _iterator36 = this.parts[Symbol.iterator](), _step36; !(_iteratorNormalCompletion36 = (_step36 = _iterator36.next()).done); _iteratorNormalCompletion36 = true) {
-                      var p = _step36.value;
+                  for (var _iterator38 = this.parts[Symbol.iterator](), _step38; !(_iteratorNormalCompletion38 = (_step38 = _iterator38.next()).done); _iteratorNormalCompletion38 = true) {
+                      var p = _step38.value;
 
                       var measureWidths = p.getMeasureWidths();
                       for (j = 0; j < measureWidths.length; j++) {
@@ -20129,16 +20631,16 @@
                       currentPartNumber += 1;
                   }
               } catch (err) {
-                  _didIteratorError36 = true;
-                  _iteratorError36 = err;
+                  _didIteratorError38 = true;
+                  _iteratorError38 = err;
               } finally {
                   try {
-                      if (!_iteratorNormalCompletion36 && _iterator36.return) {
-                          _iterator36.return();
+                      if (!_iteratorNormalCompletion38 && _iterator38.return) {
+                          _iterator38.return();
                       }
                   } finally {
-                      if (_didIteratorError36) {
-                          throw _iteratorError36;
+                      if (_didIteratorError38) {
+                          throw _iteratorError38;
                       }
                   }
               }
@@ -20146,13 +20648,13 @@
               var currentLeft = 20;
               for (var i = 0; i < maxMeasureWidth.length; i++) {
                   var measureNewWidth = maxMeasureWidth[i];
-                  var _iteratorNormalCompletion37 = true;
-                  var _didIteratorError37 = false;
-                  var _iteratorError37 = undefined;
+                  var _iteratorNormalCompletion39 = true;
+                  var _didIteratorError39 = false;
+                  var _iteratorError39 = undefined;
 
                   try {
-                      for (var _iterator37 = this.parts[Symbol.iterator](), _step37; !(_iteratorNormalCompletion37 = (_step37 = _iterator37.next()).done); _iteratorNormalCompletion37 = true) {
-                          var part = _step37.value;
+                      for (var _iterator39 = this.parts[Symbol.iterator](), _step39; !(_iteratorNormalCompletion39 = (_step39 = _iterator39.next()).done); _iteratorNormalCompletion39 = true) {
+                          var part = _step39.value;
 
                           var measure = part.getElementsByClass('Measure').get(i);
                           var rendOp = measure.renderOptions;
@@ -20162,16 +20664,16 @@
                           }
                       }
                   } catch (err) {
-                      _didIteratorError37 = true;
-                      _iteratorError37 = err;
+                      _didIteratorError39 = true;
+                      _iteratorError39 = err;
                   } finally {
                       try {
-                          if (!_iteratorNormalCompletion37 && _iterator37.return) {
-                              _iterator37.return();
+                          if (!_iteratorNormalCompletion39 && _iterator39.return) {
+                              _iterator39.return();
                           }
                       } finally {
-                          if (_didIteratorError37) {
-                              throw _iteratorError37;
+                          if (_didIteratorError39) {
+                              throw _iteratorError39;
                           }
                       }
                   }
@@ -20489,6 +20991,1404 @@
 
   layout.Staff = Staff;
 
+  var MusicXMLExportException = function (_Music21Exception) {
+      inherits(MusicXMLExportException, _Music21Exception);
+
+      function MusicXMLExportException() {
+          classCallCheck(this, MusicXMLExportException);
+          return possibleConstructorReturn(this, (MusicXMLExportException.__proto__ || Object.getPrototypeOf(MusicXMLExportException)).apply(this, arguments));
+      }
+
+      return MusicXMLExportException;
+  }(Music21Exception);
+
+  function typeToMusicXMLType(value) {
+      if (value === 'longa') {
+          return 'long';
+      } else if (value === '2048th') {
+          throw new MusicXMLExportException('Cannot convert "2048th" duration to MusicXML (too short).');
+      } else {
+          return value;
+      }
+  }
+
+  function normalizeColor(color) {
+      var colors = {
+          'aliceblue': '#f0f8ff', 'antiquewhite': '#faebd7', 'aqua': '#00ffff',
+          'aquamarine': '#7fffd4', 'azure': '#f0ffff',
+          'beige': '#f5f5dc', 'bisque': '#ffe4c4', 'black': '#000000',
+          'blanchedalmond': '#ffebcd', 'blue': '#0000ff', 'blueviolet': '#8a2be2',
+          'brown': '#a52a2a', 'burlywood': '#deb887',
+          'cadetblue': '#5f9ea0', 'chartreuse': '#7fff00', 'chocolate': '#d2691e',
+          'coral': '#ff7f50', 'cornflowerblue': '#6495ed', 'cornsilk': '#fff8dc',
+          'crimson': '#dc143c', 'cyan': '#00ffff',
+          'darkblue': '#00008b', 'darkcyan': '#008b8b', 'darkgoldenrod': '#b8860b',
+          'darkgray': '#a9a9a9', 'darkgreen': '#006400', 'darkkhaki': '#bdb76b',
+          'darkmagenta': '#8b008b', 'darkolivegreen': '#556b2f',
+          'darkorange': '#ff8c00', 'darkorchid': '#9932cc', 'darkred': '#8b0000',
+          'darksalmon': '#e9967a', 'darkseagreen': '#8fbc8f', 'darkslateblue': '#483d8b',
+          'darkslategray': '#2f4f4f', 'darkturquoise': '#00ced1',
+          'darkviolet': '#9400d3', 'deeppink': '#ff1493', 'deepskyblue': '#00bfff',
+          'dimgray': '#696969', 'dodgerblue': '#1e90ff',
+          'firebrick': '#b22222', 'floralwhite': '#fffaf0', 'forestgreen': '#228b22',
+          'fuchsia': '#ff00ff',
+          'gainsboro': '#dcdcdc', 'ghostwhite': '#f8f8ff', 'gold': '#ffd700',
+          'goldenrod': '#daa520', 'gray': '#808080', 'green': '#008000',
+          'greenyellow': '#adff2f',
+          'honeydew': '#f0fff0', 'hotpink': '#ff69b4',
+          'indianred ': '#cd5c5c', 'indigo': '#4b0082', 'ivory': '#fffff0',
+          'khaki': '#f0e68c',
+          'lavender': '#e6e6fa', 'lavenderblush': '#fff0f5', 'lawngreen': '#7cfc00',
+          'lemonchiffon': '#fffacd', 'lightblue': '#add8e6', 'lightcoral': '#f08080',
+          'lightcyan': '#e0ffff', 'lightgoldenrodyellow': '#fafad2',
+          'lightgrey': '#d3d3d3', 'lightgreen': '#90ee90', 'lightpink': '#ffb6c1',
+          'lightsalmon': '#ffa07a', 'lightseagreen': '#20b2aa', 'lightskyblue': '#87cefa',
+          'lightslategray': '#778899', 'lightsteelblue': '#b0c4de',
+          'lightyellow': '#ffffe0', 'lime': '#00ff00', 'limegreen': '#32cd32',
+          'linen': '#faf0e6',
+          'magenta': '#ff00ff', 'maroon': '#800000', 'mediumaquamarine': '#66cdaa',
+          'mediumblue': '#0000cd', 'mediumorchid': '#ba55d3', 'mediumpurple': '#9370d8',
+          'mediumseagreen': '#3cb371', 'mediumslateblue': '#7b68ee',
+          'mediumspringgreen': '#00fa9a', 'mediumturquoise': '#48d1cc',
+          'mediumvioletred': '#c71585', 'midnightblue': '#191970', 'mintcream': '#f5fffa',
+          'mistyrose': '#ffe4e1', 'moccasin': '#ffe4b5',
+          'navajowhite': '#ffdead', 'navy': '#000080',
+          'oldlace': '#fdf5e6', 'olive': '#808000', 'olivedrab': '#6b8e23',
+          'orange': '#ffa500', 'orangered': '#ff4500', 'orchid': '#da70d6',
+          'palegoldenrod': '#eee8aa', 'palegreen': '#98fb98', 'paleturquoise': '#afeeee',
+          'palevioletred': '#d87093', 'papayawhip': '#ffefd5', 'peachpuff': '#ffdab9',
+          'peru': '#cd853f', 'pink': '#ffc0cb', 'plum': '#dda0dd', 'powderblue': '#b0e0e6',
+          'purple': '#800080',
+          'rebeccapurple': '#663399', 'red': '#ff0000', 'rosybrown': '#bc8f8f',
+          'royalblue': '#4169e1',
+          'saddlebrown': '#8b4513', 'salmon': '#fa8072', 'sandybrown': '#f4a460',
+          'seagreen': '#2e8b57', 'seashell': '#fff5ee', 'sienna': '#a0522d',
+          'silver': '#c0c0c0', 'skyblue': '#87ceeb', 'slateblue': '#6a5acd',
+          'slategray': '#708090', 'snow': '#fffafa', 'springgreen': '#00ff7f',
+          'steelblue': '#4682b4',
+          'tan': '#d2b48c', 'teal': '#008080', 'thistle': '#d8bfd8', 'tomato': '#ff6347',
+          'turquoise': '#40e0d0',
+          'violet': '#ee82ee',
+          'wheat': '#f5deb3', 'white': '#ffffff', 'whitesmoke': '#f5f5f5',
+          'yellow': '#ffff00', 'yellowgreen': '#9acd32'
+      };
+      if (color === undefined || color === '') {
+          return color;
+      } else if (!color.startsWith('#')) {
+          return colors[color].toUpperCase();
+      } else {
+          return color.toUpperCase();
+      }
+  }
+
+  var _classMapping = ['Score', 'Part', 'Measure', 'Voice', // 'Stream', 
+  'GeneralNote'];
+
+  var GeneralObjectExporter = function () {
+      function GeneralObjectExporter(obj) {
+          classCallCheck(this, GeneralObjectExporter);
+
+          this.generalObj = obj;
+      }
+
+      createClass(GeneralObjectExporter, [{
+          key: 'parse',
+          value: function parse(obj) {
+              if (obj === undefined) {
+                  obj = this.generalObj;
+              }
+              var outObj = this.fromGeneralObj(obj);
+              return this.parseWellformedObject(outObj);
+          }
+      }, {
+          key: 'parseWellformedObject',
+          value: function parseWellformedObject(sc) {
+              var scoreExporter = new ScoreExporter(sc);
+              scoreExporter.parse();
+              return scoreExporter.asBytes();
+          }
+      }, {
+          key: 'fromGeneralObj',
+          value: function fromGeneralObj(obj) {
+              var classes = obj.classes;
+              var outObj = void 0;
+              var _iteratorNormalCompletion = true;
+              var _didIteratorError = false;
+              var _iteratorError = undefined;
+
+              try {
+                  for (var _iterator = _classMapping[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+                      var cM = _step.value;
+
+                      if (classes.includes(cM)) {
+                          var methName = 'from' + cM;
+                          outObj = this[methName](obj);
+                          break;
+                      }
+                  }
+              } catch (err) {
+                  _didIteratorError = true;
+                  _iteratorError = err;
+              } finally {
+                  try {
+                      if (!_iteratorNormalCompletion && _iterator.return) {
+                          _iterator.return();
+                      }
+                  } finally {
+                      if (_didIteratorError) {
+                          throw _iteratorError;
+                      }
+                  }
+              }
+
+              if (outObj === undefined) {
+                  throw new MusicXMLExportException('Cannot translate the object ' + obj + ' to a complete musicXML document; put it in a Stream first!');
+              }
+              return outObj;
+          }
+      }, {
+          key: 'fromScore',
+          value: function fromScore(sc) {
+              var scOut = sc.makeNotation({ inPlace: false });
+              return scOut;
+          }
+      }, {
+          key: 'fromPart',
+          value: function fromPart(p) {
+              if (p.isFlat) {
+                  p = p.makeMeasures();
+              }
+              var s = new stream.Score();
+              s.insert(0, p);
+              // metadata...;
+              return this.fromScore(s);
+          }
+      }, {
+          key: 'fromMeasure',
+          value: function fromMeasure(m) {
+              var mCopy = m.makeNotation();
+              if (m.clef === undefined) {
+                  mCopy.clef = clef.bestClef(mCopy, { recurse: true });
+              }
+              var p = new stream.Part();
+              p.append(mCopy);
+              // TODO(msc): metadata;
+              return this.fromPart(p);
+          }
+      }, {
+          key: 'fromVoice',
+          value: function fromVoice(v) {
+              var m = new stream.Measure();
+              m.number = 1;
+              m.insert(0, v);
+              return this.fromMeasure(m);
+          }
+
+          // TODO(msc): fromStream
+          // TODO(msc): fromDuration
+          // TODO(msc): fromDynamic
+          // TODO(msc): fromScale
+          // TODO(msc): fromDiatonicScale
+          // TODO(msc): fromMusic21Object
+
+      }, {
+          key: 'fromGeneralNote',
+          value: function fromGeneralNote(n) {
+              var nCopy = n.clone(true);
+              // makeTupletBrackets;
+              var out = new stream.Measure();
+              out.number = 1;
+              out.append(nCopy);
+
+              return this.fromMeasure(out);
+          }
+
+          // TODO(msc): fromPitch
+
+      }]);
+      return GeneralObjectExporter;
+  }();
+
+  var _musicxmlVersion = '3.0';
+
+  var XMLExporterBase = function () {
+      function XMLExporterBase() {
+          classCallCheck(this, XMLExporterBase);
+
+          this.doc = document.implementation.createDocument('', '', null);
+          this.xmlRoot = undefined;
+      }
+
+      createClass(XMLExporterBase, [{
+          key: 'asBytes',
+          value: function asBytes() {
+              var _ref = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
+                  _ref$noCopy = _ref.noCopy,
+                  noCopy = _ref$noCopy === undefined ? true : _ref$noCopy;
+
+              var out = this.xmlHeader();
+              var oSerializer = new XMLSerializer();
+              out += oSerializer.serializeToString(this.xmlRoot);
+              return out;
+          }
+
+          // no indentation :-(
+
+      }, {
+          key: 'xmlHeader',
+          value: function xmlHeader() {
+              return '<?xml version="1.0" encoding="utf-8"?>\n        <!DOCTYPE score-partwise PUBLIC "-//Recordare//DTD MusicXML ' + _musicxmlVersion + '  Partwise//EN" "http://www.musicxml.org/dtds/partwise.dtd">\n        ';
+          }
+
+          /**
+           * Note: this is not a method in music21p, but it needs access to this.doc in music21j
+           */
+
+      }, {
+          key: '_setTagTextFromAttribute',
+          value: function _setTagTextFromAttribute(m21El, xmlEl, tag, attributeName) {
+              var _ref2 = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : {},
+                  transform = _ref2.transform,
+                  _ref2$forceEmpty = _ref2.forceEmpty,
+                  forceEmpty = _ref2$forceEmpty === undefined ? false : _ref2$forceEmpty;
+
+              if (attributeName === undefined) {
+                  attributeName = common.hyphenToCamelCase(tag);
+              }
+
+              var value = m21El[attributeName];
+              if (transform !== undefined) {
+                  value = transform(value);
+              }
+              if ((value === undefined || value === '') && !forceEmpty) {
+                  return undefined;
+              }
+              var subElement = this.subElement(xmlEl, tag);
+              if (value !== undefined) {
+                  subElement.innerHTML = value;
+              }
+              return subElement;
+          }
+      }, {
+          key: 'seta',
+          value: function seta(m21El, xmlEl, tag, options) {
+              return this._setTagTextFromAttribute(m21El, xmlEl, tag, options);
+          }
+      }, {
+          key: '_setAttributeFromAttribute',
+          value: function _setAttributeFromAttribute(m21El, xmlEl, xmlAttributeName) {
+              var _ref3 = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {},
+                  attributeName = _ref3.attributeName,
+                  transform = _ref3.transform;
+
+              if (attributeName === undefined) {
+                  attributeName = common.hyphenToCamelCase(xmlAttributeName);
+              }
+              var value = m21El[attributeName];
+              if (value === undefined) {
+                  return;
+              }
+              if (transform !== undefined) {
+                  value = transform(value);
+              }
+              xmlEl.setAttribute(xmlAttributeName, value.toString());
+          }
+      }, {
+          key: 'setb',
+          value: function setb(m21El, xmlEl, xmlAttributeName, options) {
+              return this._setAttributeFromAttribute(m21El, xmlEl, xmlAttributeName, options);
+          }
+          // TODO(msc): _synchronizeIds;
+
+      }, {
+          key: '_synchronizeIds',
+          value: function _synchronizeIds(element, m21Object) {
+              return;
+          }
+      }, {
+          key: 'addDividerComment',
+          value: function addDividerComment() {
+              var comment = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
+
+              var commentLength = comment.length;
+              if (commentLength > 60) {
+                  commentLength = 60;
+              }
+              var spacerLengthLow = Math.floor((60 - commentLength) / 2);
+              var spacerLengthHigh = Math.ceil((60 - commentLength) / 2);
+              var commentText = '='.repeat(spacerLengthLow) + ' ' + comment + ' ' + '='.repeat(spacerLengthHigh);
+              var divider = this.doc.createComment(commentText);
+              this.xmlRoot.appendChild(divider);
+          }
+
+          // TODO(msc): dump
+
+          /**
+           * Helper method since SubElement does not exist in javascript document.implementation
+           */
+
+      }, {
+          key: 'subElement',
+          value: function subElement(el, tag) {
+              var subElement = this.doc.createElement(tag);
+              el.appendChild(subElement);
+              return subElement;
+          }
+
+          // TODO(msc): setStyleAttributes
+          // TODO(msc): setTextFormatting
+          // TODO(msc): setPrintStyleAlign
+          // TODO(msc): setPrintStyle
+          // TODO(msc): setPrintObject
+
+      }, {
+          key: 'setColor',
+          value: function setColor(mxObject, m21Object) {
+              if (m21Object.color !== undefined) {
+                  mxObject.setAttribute('color', normalizeColor(m21Object.color));
+              } else if (m21Object.style !== undefined && m21Object.style.color !== undefined) {
+                  mxObject.setAttribute('color', normalizeColor(m21Object.style.color));
+              }
+          }
+
+          // TODO(msc): setFont
+          // TODO(msc): setPosition
+          // TODO(msc): setEditorial
+
+      }, {
+          key: 'setEditorial',
+          value: function setEditorial(mxEl, el) {}
+
+          // TODO(msc): pageLayoutToXmlPrint
+          // TODO(msc): pageLayoutToXmlPageLayout
+          // TODO(msc): systemLayoutToXmlPrint
+          // TODO(msc): systemLayoutToXmlSystemLayout
+          // TODO(msc): staffLayoutToXmlStaffLayout
+
+      }, {
+          key: 'accidentalToMx',
+          value: function accidentalToMx(a) {
+              // TODO(msc): v 3.0 and v3.1 accidentals; microtone;
+              var mxName = void 0;
+              if (a.name === 'double-flat') {
+                  mxName = 'flat-flat';
+              } else {
+                  mxName = a.name;
+                  // check other accidentals here.
+              }
+              var mxAccidental = this.doc.createElement('accidental');
+              mxAccidental.innerHTML = mxName;
+              // TODO(msc): parentheses, bracket, setPrintStyle
+              return mxAccidental;
+          }
+      }, {
+          key: 'getRandomId',
+          value: function getRandomId() {
+              // hack to get random ids.
+              var text = '';
+              var possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+
+              for (var i = 0; i < 6; i++) {
+                  text += possible.charAt(Math.floor(Math.random() * possible.length));
+              }
+
+              return text;
+          }
+      }]);
+      return XMLExporterBase;
+  }();
+
+  var ScoreExporter = function (_XMLExporterBase) {
+      inherits(ScoreExporter, _XMLExporterBase);
+
+      function ScoreExporter(score) {
+          classCallCheck(this, ScoreExporter);
+
+          var _this2 = possibleConstructorReturn(this, (ScoreExporter.__proto__ || Object.getPrototypeOf(ScoreExporter)).call(this));
+
+          if (score === undefined) {
+              _this2.stream = new stream.Score();
+          } else {
+              _this2.stream = score;
+          }
+          _this2.xmlRoot = _this2.doc.createElement('score-partwise');
+          _this2.xmlRoot.setAttribute('version', _musicxmlVersion);
+          _this2.xmIdentification = undefined;
+          _this2.scoreMetadata = undefined;
+          _this2.spannerBundle = undefined;
+          _this2.meterStream = undefined;
+          _this2.scoreLayouts = undefined;
+          _this2.firstScoreLayout = undefined;
+          _this2.highestTime = 0.0;
+          _this2.refStreamOrTimeRange = [0.0, _this2.highestTime];
+          _this2.partExporterList = [];
+          _this2.instrumentList = [];
+          _this2.midiChannelList = [];
+          _this2.parts = [];
+          return _this2;
+      }
+
+      createClass(ScoreExporter, [{
+          key: 'parse',
+          value: function parse() {
+              var s = this.stream;
+              if (s.length === 0) {
+                  return this.emptyObject();
+              }
+              this.scorePreliminaries();
+              this.parsePartlikeScore(); // does not have parseFlatScore... 
+              this.postPartProcess();
+              this.partExporterList = [];
+              return this.xmlRoot;
+          }
+      }, {
+          key: 'emptyObject',
+          value: function emptyObject() {
+              // TODO(msc): do this.
+              return this.xmlRoot;
+          }
+      }, {
+          key: 'scorePreliminaries',
+          value: function scorePreliminaries() {
+              // this.setScoreLayouts();
+              // this.setMeterStream();
+              this.setPartsAndRefStream();
+              // this.textBoxes = ...;
+              this.highestTime = 0.0;
+              // spannerBundle
+          }
+      }, {
+          key: 'setPartsAndRefStream',
+          value: function setPartsAndRefStream() {
+              var s = this.stream;
+              var streamOfStreams = s.getElementsByClass('Stream');
+              var _iteratorNormalCompletion2 = true;
+              var _didIteratorError2 = false;
+              var _iteratorError2 = undefined;
+
+              try {
+                  for (var _iterator2 = streamOfStreams[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+                      var innerStream = _step2.value;
+
+                      // innerStream.transferOffsetToElements(); // only needed for appended Parts
+                      var ht = innerStream.highestTime;
+                      if (ht > this.highestTime) {
+                          this.highestTime = ht;
+                      }
+                      this.refStreamOrTimeRange = [0.0, this.highestTime];
+                  }
+              } catch (err) {
+                  _didIteratorError2 = true;
+                  _iteratorError2 = err;
+              } finally {
+                  try {
+                      if (!_iteratorNormalCompletion2 && _iterator2.return) {
+                          _iterator2.return();
+                      }
+                  } finally {
+                      if (_didIteratorError2) {
+                          throw _iteratorError2;
+                      }
+                  }
+              }
+
+              this.parts = streamOfStreams;
+          }
+
+          // TODO(msc): setMeterStream
+          // TODO(msc): setScoreLayouts
+
+      }, {
+          key: 'parsePartlikeScore',
+          value: function parsePartlikeScore() {
+              // makeRests
+              var _iteratorNormalCompletion3 = true;
+              var _didIteratorError3 = false;
+              var _iteratorError3 = undefined;
+
+              try {
+                  for (var _iterator3 = this.parts[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+                      var innerStream = _step3.value;
+
+                      var pp = new PartExporter(innerStream, { parent: this });
+                      // spanner bundle.
+                      pp.parse();
+                      this.partExporterList.push(pp);
+                  }
+              } catch (err) {
+                  _didIteratorError3 = true;
+                  _iteratorError3 = err;
+              } finally {
+                  try {
+                      if (!_iteratorNormalCompletion3 && _iterator3.return) {
+                          _iterator3.return();
+                      }
+                  } finally {
+                      if (_didIteratorError3) {
+                          throw _iteratorError3;
+                      }
+                  }
+              }
+          }
+
+          // TODO(msc): parseFlatScore
+
+      }, {
+          key: 'postPartProcess',
+          value: function postPartProcess() {
+              this.setScoreHeader();
+              for (var i = 0; i < this.partExporterList.length; i++) {
+                  var pex = this.partExporterList[i];
+                  this.addDividerComment('Part ' + i.toString());
+                  this.xmlRoot.appendChild(pex.xmlRoot);
+              }
+          }
+      }, {
+          key: 'setScoreHeader',
+          value: function setScoreHeader() {
+              // const s = this.stream;
+              // scoreMeatadata
+              // titles
+              // identification
+              // setDefaults
+              // textBoxes
+              this.setPartList();
+          }
+
+          // TODO(msc): textBoxToXmlCredit
+          // TODO(msc): setDefaults
+          // TODO(msc): addStyleToXmlDefaults
+          // TODO(msc): styleToXmlAppearance
+
+      }, {
+          key: 'setPartList',
+          value: function setPartList() {
+              // const spannerBundle = this.spannerBundle; // for now, always undefined;
+              var mxPartList = this.subElement(this.xmlRoot, 'part-list');
+              // staffGroups are non-existent
+              var _iteratorNormalCompletion4 = true;
+              var _didIteratorError4 = false;
+              var _iteratorError4 = undefined;
+
+              try {
+                  for (var _iterator4 = this.partExporterList[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
+                      var pex = _step4.value;
+
+                      // const p = pex.stream;
+                      var mxScorePart = pex.getXmlScorePart();
+                      mxPartList.appendChild(mxScorePart);
+                  }
+              } catch (err) {
+                  _didIteratorError4 = true;
+                  _iteratorError4 = err;
+              } finally {
+                  try {
+                      if (!_iteratorNormalCompletion4 && _iterator4.return) {
+                          _iterator4.return();
+                      }
+                  } finally {
+                      if (_didIteratorError4) {
+                          throw _iteratorError4;
+                      }
+                  }
+              }
+
+              return mxPartList;
+          }
+          // TODO(msc): staffGroupToXmlPartGroup;
+          // TODO(msc): setIdentification
+          // TODO(msc): metadataToMiscellaneous
+          // TODO(msc): setEncoding
+          // TODO(msc): getSupports
+          // TODO(msc): setTitles
+          // TODO(msc): contributorToXmlCreator    
+
+      }]);
+      return ScoreExporter;
+  }(XMLExporterBase);
+
+  var PartExporter = function (_XMLExporterBase2) {
+      inherits(PartExporter, _XMLExporterBase2);
+
+      function PartExporter(partObj) {
+          var _ref4 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
+              parent = _ref4.parent;
+
+          classCallCheck(this, PartExporter);
+
+          var _this3 = possibleConstructorReturn(this, (PartExporter.__proto__ || Object.getPrototypeOf(PartExporter)).call(this));
+
+          _this3.stream = partObj;
+          _this3.parent = parent;
+          _this3.xmlRoot = _this3.doc.createElement('part');
+          if (parent === undefined) {
+              _this3.meterStream = new stream.Stream();
+              _this3.refStreamOrTimeRange = [0.0, 0.0];
+              _this3.midiChannelList = [];
+          } else {
+              _this3.meterStream = parent.meterStream;
+              _this3.refStreamOrTimeRange = parent.refStreamOrTimeRange;
+              _this3.midiChannelList = parent.midiChannelList;
+          }
+          _this3.instrumentStream = undefined;
+          _this3.firstInstrumentObject = undefined;
+
+          _this3.lastDivisions = undefined;
+          _this3.spannerBundle = partObj.spannerBundle;
+          _this3.xmlPartId = _this3.getRandomId(); // hacky
+          return _this3;
+      }
+
+      createClass(PartExporter, [{
+          key: 'parse',
+          value: function parse() {
+              // this.instrumentSetup();
+              this.xmlRoot.setAttribute('id', this.xmlPartId);
+              var measureStream = this.stream.getElementsByClass('Stream');
+              // fixupNotation;
+              // setIdLocals on spannerBundle;
+              var _iteratorNormalCompletion5 = true;
+              var _didIteratorError5 = false;
+              var _iteratorError5 = undefined;
+
+              try {
+                  for (var _iterator5 = measureStream[Symbol.iterator](), _step5; !(_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done); _iteratorNormalCompletion5 = true) {
+                      var m = _step5.value;
+
+                      this.addDividerComment('Measure ' + m.number.toString());
+                      var measureExporter = new MeasureExporter(m, { parent: this });
+                      measureExporter.spannerBundle = this.spannerBundle;
+                      var mxMeasure = measureExporter.parse();
+                      this.xmlRoot.appendChild(mxMeasure);
+                  }
+              } catch (err) {
+                  _didIteratorError5 = true;
+                  _iteratorError5 = err;
+              } finally {
+                  try {
+                      if (!_iteratorNormalCompletion5 && _iterator5.return) {
+                          _iterator5.return();
+                      }
+                  } finally {
+                      if (_didIteratorError5) {
+                          throw _iteratorError5;
+                      }
+                  }
+              }
+
+              return this.xmlRoot;
+          }
+
+          // TODO(msc): instrumentSetup
+          // TODO(msc): fixupNotationFlat -- might be redundant
+          // TODO(msc): fixupNotationMeasured
+
+      }, {
+          key: 'getXmlScorePart',
+          value: function getXmlScorePart() {
+              // const part = this.stream;
+              var mxScorePart = this.doc.createElement('score-part');
+              mxScorePart.setAttribute('id', this.xmlPartId);
+              // partName
+              // partAbbreviation
+              // instrument
+              return mxScorePart;
+          }
+          // TODO(msc): instrumentToXmlScoreInstrument
+          // TODO(msc): instrumentToXmlMidiInstrument
+
+      }]);
+      return PartExporter;
+  }(XMLExporterBase);
+
+  var _classesToMeasureMethods = [['Note', 'noteToXml'],
+  // NoChord
+  // ChordWithFretBoard
+  // ChordSymbol
+  ['Chord', 'chordToXml'], ['Rest', 'restToXml']];
+
+  var _wrapAttributeMethodClasses = [['Clef', 'clefToXml'], ['KeySignature', 'keySignatureToXml'], ['TimeSignature', 'timeSignatureToXml']];
+
+  var _ignoreOnParseClasses = ['LayoutBase', 'Barline'];
+
+  var divisionsPerQuarter = 32 * 3 * 3 * 5 * 7; // TODO(msc): create defaults.js
+
+  var MeasureExporter = function (_XMLExporterBase3) {
+      inherits(MeasureExporter, _XMLExporterBase3);
+
+      function MeasureExporter(measureObj) {
+          var _ref5 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
+              parent = _ref5.parent;
+
+          classCallCheck(this, MeasureExporter);
+
+          var _this4 = possibleConstructorReturn(this, (MeasureExporter.__proto__ || Object.getPrototypeOf(MeasureExporter)).call(this));
+
+          _this4.stream = measureObj;
+          _this4.parent = parent;
+          _this4.xmlRoot = _this4.doc.createElement('measure');
+          _this4.currentDivisions = divisionsPerQuarter;
+          _this4.transpositionInterval = undefined;
+          _this4.mxTranspose = undefined;
+          _this4.measureOffsetStart = 0.0;
+          _this4.offsetInMeasure = 0.0;
+          _this4.currentVoiceId = undefined;
+
+          _this4.rbSpanners = [];
+          _this4.spannerBundle = parent.spannerBundle;
+
+          _this4.objectSpannerBundle = _this4.spannerBundle;
+          return _this4;
+      }
+
+      createClass(MeasureExporter, [{
+          key: 'parse',
+          value: function parse() {
+              // TODO(msc): setTranspose
+              // TODO(msc): setRbSpanners
+              this.setMxAttributes();
+              // TODO(msc): setMxPrint
+              this.setMxAttributesObjectForStartOfMeasure();
+              // TODO(msc): setLeftBarline
+
+              // THE BIG ONE
+              this.mainElementsParse();
+
+              // TODO(msc): setRightBarline
+              return this.xmlRoot;
+          }
+      }, {
+          key: 'mainElementsParse',
+          value: function mainElementsParse() {
+              var m = this.stream;
+              if (!m.hasVoices()) {
+                  this.parseFlatElements(m, { backupAfterwards: false });
+                  return;
+              }
+              // TODO(msc): parse elements outside of Voices...needs getElementsNotOfClass
+              var allVoices = Array.from(m.voices);
+              var _iteratorNormalCompletion6 = true;
+              var _didIteratorError6 = false;
+              var _iteratorError6 = undefined;
+
+              try {
+                  for (var _iterator6 = allVoices.entries()[Symbol.iterator](), _step6; !(_iteratorNormalCompletion6 = (_step6 = _iterator6.next()).done); _iteratorNormalCompletion6 = true) {
+                      var _step6$value = slicedToArray(_step6.value, 2),
+                          i = _step6$value[0],
+                          v = _step6$value[1];
+
+                      var backupAfterwards = true;
+                      if (i === allVoices.length - 1) {
+                          backupAfterwards = false;
+                      }
+                      this.parseFlatElements(v, { backupAfterwards: backupAfterwards });
+                  }
+              } catch (err) {
+                  _didIteratorError6 = true;
+                  _iteratorError6 = err;
+              } finally {
+                  try {
+                      if (!_iteratorNormalCompletion6 && _iterator6.return) {
+                          _iterator6.return();
+                      }
+                  } finally {
+                      if (_didIteratorError6) {
+                          throw _iteratorError6;
+                      }
+                  }
+              }
+          }
+      }, {
+          key: 'parseFlatElements',
+          value: function parseFlatElements(m) {
+              var _ref6 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
+                  _ref6$backupAfterward = _ref6.backupAfterwards,
+                  backupAfterwards = _ref6$backupAfterward === undefined ? false : _ref6$backupAfterward;
+
+              var root = this.xmlRoot;
+              var divisions = this.currentDivisions;
+              this.offsetInMeasure = 0.0;
+              var voiceId = void 0;
+              if (m.classes.includes('Voice')) {
+                  voiceId = m.id;
+                  if (voiceId === undefined) {
+                      voiceId = this.getRandomId();
+                  }
+              }
+              this.currentVoiceId = voiceId;
+
+              var _iteratorNormalCompletion7 = true;
+              var _didIteratorError7 = false;
+              var _iteratorError7 = undefined;
+
+              try {
+                  for (var _iterator7 = m[Symbol.iterator](), _step7; !(_iteratorNormalCompletion7 = (_step7 = _iterator7.next()).done); _iteratorNormalCompletion7 = true) {
+                      var el = _step7.value;
+
+                      this.parseOneElement(el);
+                  }
+              } catch (err) {
+                  _didIteratorError7 = true;
+                  _iteratorError7 = err;
+              } finally {
+                  try {
+                      if (!_iteratorNormalCompletion7 && _iterator7.return) {
+                          _iterator7.return();
+                      }
+                  } finally {
+                      if (_didIteratorError7) {
+                          throw _iteratorError7;
+                      }
+                  }
+              }
+
+              if (backupAfterwards) {
+                  var amountToBackup = Math.round(divisions * this.offsetInMeasure);
+                  if (amountToBackup > 0) {
+                      var mxBackup = this.doc.createElement('backup');
+                      var mxDuration = this.subElement(mxBackup, 'duration');
+                      mxDuration.innerHTML = amountToBackup.toString();
+                      root.appendChild(mxBackup);
+                  }
+              }
+              this.currentVoiceId = undefined;
+          }
+      }, {
+          key: 'parseOneElement',
+          value: function parseOneElement(obj) {
+              var _this5 = this;
+
+              // const root = this.xmlRoot;
+              // spanners...
+              var classes = obj.classes;
+              if (classes.includes('GeneralNote')) {
+                  this.offsetInMeasure += obj.duration.quarterLength;
+              }
+              // odd durations...
+
+              var parsedObject = false;
+
+              var _iteratorNormalCompletion8 = true;
+              var _didIteratorError8 = false;
+              var _iteratorError8 = undefined;
+
+              try {
+                  for (var _iterator8 = _classesToMeasureMethods[Symbol.iterator](), _step8; !(_iteratorNormalCompletion8 = (_step8 = _iterator8.next()).done); _iteratorNormalCompletion8 = true) {
+                      var _step8$value = slicedToArray(_step8.value, 2),
+                          className = _step8$value[0],
+                          methName = _step8$value[1];
+
+                      if (classes.includes(className)) {
+                          this[methName](obj);
+                          parsedObject = true;
+                          break;
+                      }
+                  }
+              } catch (err) {
+                  _didIteratorError8 = true;
+                  _iteratorError8 = err;
+              } finally {
+                  try {
+                      if (!_iteratorNormalCompletion8 && _iterator8.return) {
+                          _iterator8.return();
+                      }
+                  } finally {
+                      if (_didIteratorError8) {
+                          throw _iteratorError8;
+                      }
+                  }
+              }
+
+              var _iteratorNormalCompletion9 = true;
+              var _didIteratorError9 = false;
+              var _iteratorError9 = undefined;
+
+              try {
+                  var _loop = function _loop() {
+                      var _step9$value = slicedToArray(_step9.value, 2),
+                          className = _step9$value[0],
+                          methName = _step9$value[1];
+
+                      if (classes.includes(className)) {
+                          var meth = function meth(o) {
+                              return _this5[methName](o);
+                          };
+                          _this5.wrapObjectInAttributes(obj, meth);
+                          parsedObject = true;
+                          return 'break';
+                      }
+                  };
+
+                  for (var _iterator9 = _wrapAttributeMethodClasses[Symbol.iterator](), _step9; !(_iteratorNormalCompletion9 = (_step9 = _iterator9.next()).done); _iteratorNormalCompletion9 = true) {
+                      var _ret = _loop();
+
+                      if (_ret === 'break') break;
+                  }
+
+                  // deal with skipped objects.
+              } catch (err) {
+                  _didIteratorError9 = true;
+                  _iteratorError9 = err;
+              } finally {
+                  try {
+                      if (!_iteratorNormalCompletion9 && _iterator9.return) {
+                          _iterator9.return();
+                      }
+                  } finally {
+                      if (_didIteratorError9) {
+                          throw _iteratorError9;
+                      }
+                  }
+              }
+
+              if (!parsedObject && !_ignoreOnParseClasses.includes(obj.classes[0])) {
+                  console.warn('skipped object of class ' + obj.classes[0]);
+              }
+
+              // postSpanners.
+          }
+
+          // TODO(msc): prePostObjectSpanners
+          // TODO(msc): _spannerStartParameters
+          // TODO(msc): _spannerEndParameters
+          // TODO(msc): objectAttachedSpaners
+
+      }, {
+          key: 'noteToXml',
+          value: function noteToXml(n) {
+              var _ref7 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
+                  _ref7$noteIndexInChor = _ref7.noteIndexInChord,
+                  noteIndexInChord = _ref7$noteIndexInChor === undefined ? 0 : _ref7$noteIndexInChor,
+                  chordParent = _ref7.chordParent;
+
+              var addChordTag = noteIndexInChord !== 0;
+              var chordOrN = void 0;
+              if (chordParent === undefined) {
+                  chordOrN = n;
+              } else {
+                  chordOrN = chordParent;
+              }
+              var mxNote = this.doc.createElement('note');
+              // setPrintStyle
+              // volumeInformation
+              this.setColor(mxNote, n);
+              // _synchronizeId;
+              var d = chordOrN.duration;
+              // grace;
+              // setColor chord
+              // setPrintObject
+              // hideObject
+              // articulation pizz:
+              if (addChordTag) {
+                  this.subElement(mxNote, 'chord');
+              }
+              if (n.pitch !== undefined) {
+                  var mxPitch = this.pitchToXml(n.pitch);
+                  mxNote.appendChild(mxPitch);
+              } else {
+                  this.subElement(mxNote, 'rest');
+              }
+              if (d.isGrace !== true) {
+                  var mxDuration = this.durationXml(d);
+                  mxNote.appendChild(mxDuration);
+              }
+              if (n.tie !== undefined) {
+                  var mxTieList = this.tieToXmlTie(n.tie);
+                  var _iteratorNormalCompletion10 = true;
+                  var _didIteratorError10 = false;
+                  var _iteratorError10 = undefined;
+
+                  try {
+                      for (var _iterator10 = mxTieList[Symbol.iterator](), _step10; !(_iteratorNormalCompletion10 = (_step10 = _iterator10.next()).done); _iteratorNormalCompletion10 = true) {
+                          var t = _step10.value;
+
+                          mxNote.appendChild(t);
+                      }
+                  } catch (err) {
+                      _didIteratorError10 = true;
+                      _iteratorError10 = err;
+                  } finally {
+                      try {
+                          if (!_iteratorNormalCompletion10 && _iterator10.return) {
+                              _iterator10.return();
+                          }
+                      } finally {
+                          if (_didIteratorError10) {
+                              throw _iteratorError10;
+                          }
+                      }
+                  }
+              }
+              // instrument
+              this.setEditorial(mxNote, n);
+              if (this.currentVoiceId !== undefined) {
+                  var mxVoice = this.subElement(mxNote, 'voice');
+                  var vId = void 0;
+                  if (typeof vId === 'number') {
+                      vId = this.currentVoiceId + 1;
+                  } else {
+                      // not a number;
+                      vId = this.currentVoiceId;
+                  }
+                  mxVoice.innerHTML = vId.toString();
+              }
+
+              var mxType = this.subElement(mxNote, 'type');
+              mxType.innerHTML = typeToMusicXMLType(d.type);
+              // set styleAttributes
+              // set noteSize
+              for (var _ = 0; _ < d.dots; _++) {
+                  this.subElement(mxNote, 'dot');
+              }
+
+              // components.
+              if (n.pitch !== undefined && n.pitch.accidental !== undefined && n.pitch.accidental.displayStatus !== false) {
+                  var mxAccidental = this.accidentalToMx(n.pitch.accidental);
+                  mxNote.appendChild(mxAccidental);
+              }
+              if (d.tuplets.length > 0) {
+                  // todo--nested tuplets;
+                  var mxTimeModification = this.tupletToTimeModification(d.tuplets[0]);
+                  mxNote.appendChild(mxTimeModification);
+              }
+
+              var stemDirection = void 0;
+              if (!addChordTag && ![undefined, 'unspecified'].includes(chordOrN.stemDirection)) {
+                  stemDirection = chordOrN.stemDirection;
+              } else if (chordOrN !== n && ![undefined, 'unspecified'].includes(n.stemDirection)) {
+                  stemDirection = n.stemDirection;
+              }
+              if (stemDirection !== undefined) {
+                  var mxStem = this.subElement(mxNote, 'stem');
+                  var sdtext = stemDirection;
+                  if (sdtext === 'noStem') {
+                      sdtext = 'none';
+                  }
+                  mxStem.innerHTML = sdtext;
+                  // TODO: stemStyle
+              }
+
+              // dealWithNotehead
+              // beams
+              // staff
+              // notations
+              // tuplet display
+              // notations
+              if (!addChordTag) {
+                  var _iteratorNormalCompletion11 = true;
+                  var _didIteratorError11 = false;
+                  var _iteratorError11 = undefined;
+
+                  try {
+                      for (var _iterator11 = chordOrN.lyrics[Symbol.iterator](), _step11; !(_iteratorNormalCompletion11 = (_step11 = _iterator11.next()).done); _iteratorNormalCompletion11 = true) {
+                          var lyricObj = _step11.value;
+
+                          if (lyricObj.text === undefined) {
+                              continue;
+                          }
+                          var mxLyric = this.lyricToXml(lyricObj);
+                          mxNote.appendChild(mxLyric);
+                      }
+                  } catch (err) {
+                      _didIteratorError11 = true;
+                      _iteratorError11 = err;
+                  } finally {
+                      try {
+                          if (!_iteratorNormalCompletion11 && _iterator11.return) {
+                              _iterator11.return();
+                          }
+                      } finally {
+                          if (_didIteratorError11) {
+                              throw _iteratorError11;
+                          }
+                      }
+                  }
+              }
+
+              this.xmlRoot.appendChild(mxNote);
+              return mxNote;
+          }
+      }, {
+          key: 'restToXml',
+          value: function restToXml(r) {
+              return this.noteToXml(r);
+              // full measure
+              // display-step, display-octave, etc.
+          }
+      }, {
+          key: 'chordToXml',
+          value: function chordToXml(c) {
+              var mxNoteList = [];
+              var _iteratorNormalCompletion12 = true;
+              var _didIteratorError12 = false;
+              var _iteratorError12 = undefined;
+
+              try {
+                  for (var _iterator12 = Array.from(c).entries()[Symbol.iterator](), _step12; !(_iteratorNormalCompletion12 = (_step12 = _iterator12.next()).done); _iteratorNormalCompletion12 = true) {
+                      var _step12$value = slicedToArray(_step12.value, 2),
+                          i = _step12$value[0],
+                          n = _step12$value[1];
+
+                      var mxNote = this.noteToXml(n, { noteIndexInChord: i, chordParent: c });
+                      mxNoteList.push(mxNote);
+                  }
+              } catch (err) {
+                  _didIteratorError12 = true;
+                  _iteratorError12 = err;
+              } finally {
+                  try {
+                      if (!_iteratorNormalCompletion12 && _iterator12.return) {
+                          _iterator12.return();
+                      }
+                  } finally {
+                      if (_didIteratorError12) {
+                          throw _iteratorError12;
+                      }
+                  }
+              }
+
+              return mxNoteList;
+          }
+      }, {
+          key: 'durationXml',
+          value: function durationXml(dur) {
+              var mxDuration = this.doc.createElement('duration');
+              mxDuration.innerHTML = Math.round(this.currentDivisions * dur.quarterLength).toString();
+              return mxDuration;
+          }
+      }, {
+          key: 'pitchToXml',
+          value: function pitchToXml(p) {
+              var mxPitch = this.doc.createElement('pitch');
+              this._setTagTextFromAttribute(p, mxPitch, 'step');
+              if (p.accidental !== undefined) {
+                  var mxAlter = this.subElement(mxPitch, 'alter');
+                  mxAlter.innerHTML = common.numToIntOrFloat(p.accidental.alter).toString();
+              }
+              this._setTagTextFromAttribute(p, mxPitch, 'octave', 'implicitOctave');
+              return mxPitch;
+          }
+          // TODO(msc): fretNoteToXml
+          // TODO(msc): fretBoardToXml
+          // TODO(msc): chordWithFretBoardToXml
+
+      }, {
+          key: 'tupletToTimeModification',
+          value: function tupletToTimeModification(tup) {
+              var mxTimeModification = this.doc.createElement('time-modification');
+              this._setTagTextFromAttribute(tup, mxTimeModification, 'actual-notes', 'numberNotesActual');
+              this._setTagTextFromAttribute(tup, mxTimeModification, 'normal-notes', 'numberNotesNormal');
+              if (tup.durationNormal !== undefined) {
+                  var mxNormalType = this.subElement(mxTimeModification, 'normal-type');
+                  mxNormalType.innerHTML = typeToMusicXMLType(tup.durationNormal.type);
+                  if (tup.durationNormal.dots > 0) {
+                      for (var i = 0; i < tup.durationNormal.dots; i++) {
+                          this.subElement(mxTimeModification, 'normal-dot');
+                      }
+                  }
+              }
+              return mxTimeModification;
+          }
+
+          // TODO(msc): dealWithNotehead
+          // TODO(msc): noteheadToXml
+          // TODO(msc): noteToNotations
+
+      }, {
+          key: 'tieToXmlTie',
+          value: function tieToXmlTie(t) {
+              var mxTieList = [];
+              var musicxmlTieType = t.type;
+              if (t.type === 'continue') {
+                  musicxmlTieType = 'stop';
+              }
+              var mxTie = this.doc.createElement('tie');
+              mxTie.setAttribute('type', musicxmlTieType);
+              mxTieList.push(mxTie);
+
+              if (t.type === 'continue') {
+                  var _mxTie = this.doc.createElement('tie');
+                  _mxTie.setAttribute('type', 'start');
+                  mxTieList.push(_mxTie);
+              }
+              return mxTieList;
+          }
+
+          // TODO(msc): tieToXmlTied -- needs notations
+          // TODO(msc): tupletToXmlTuplet
+          // TODO(msc): expressionToXml
+          // TODO(msc): articulationToXmlArticulation
+          // TODO(msc): setLineStyle
+          // TODO(msc): articulationToXmlTechnical
+          // TODO(msc): setHarmonic
+          // TODO(msc): noChordToXml
+          // TODO(msc): chordSymbolToXml
+          // TODO(msc): setOffsetOptional
+          // TODO(msc): placeInDirection
+          // TODO(msc): dynamicToXml
+          // TODO(msc): segnoToXml
+          // TODO(msc): codaToXml
+          // TODO(msc): tempoIndicationToXml
+          // TODO(msc): rehearsalMarkToXml
+          // TODO(msc): textExpressionToXml
+
+      }, {
+          key: 'wrapObjectInAttributes',
+          value: function wrapObjectInAttributes(objectToWrap, methodToMx) {
+              if (this.offsetInMeasure === 0.0) {
+                  return undefined;
+              }
+
+              var mxAttributes = this.doc.createElement('attributes');
+              var mxObj = methodToMx(objectToWrap);
+              mxAttributes.appendChild(mxObj);
+              this.xmlRoot.appendChild(mxAttributes);
+              return mxAttributes;
+          }
+      }, {
+          key: 'lyricToXml',
+          value: function lyricToXml(l) {
+              var mxLyric = this.doc.createElement('lyric');
+              this._setTagTextFromAttribute(l, mxLyric, 'syllabic');
+              this._setTagTextFromAttribute(l, mxLyric, 'text', 'text', { forceEmpty: true });
+              if (l.identifier !== undefined) {
+                  mxLyric.setAttribute('name', l.identifier.toString());
+              }
+
+              if (l.number !== undefined) {
+                  mxLyric.setAttribute('number', l.number.toString());
+              } else if (l.identifier !== undefined) {
+                  mxLyric.setAttribute('number', l.identifier.toString());
+              }
+              // setStyleAttributes
+              // setPrintObject
+              // setColor
+              // setPosition
+              return mxLyric;
+          }
+          // TODO(msc): beamsToXml
+          // TODO(msc): beamToXml
+          // TODO(msc): setRightBarline
+          // TODO(msc): setLeftBarline
+          // TODO(msc): setBarline
+          // TODO(msc): barlineToXml
+          // TODO(msc): repeatToXml
+
+      }, {
+          key: 'setMxAttributesObjectForStartOfMeasure',
+          value: function setMxAttributesObjectForStartOfMeasure() {
+              var m = this.stream;
+              var mxAttributes = this.doc.createElement('attributes');
+              var appendToRoot = false;
+              this.currentDivisions = divisionsPerQuarter;
+              if (this.parent === undefined || this.currentDivisions !== this.parent.lastDivisions) {
+                  var mxDivisions = this.subElement(mxAttributes, 'divisions');
+                  mxDivisions.innerHTML = this.currentDivisions.toString();
+                  this.parent.lastDivisions = this.currentDivisions;
+                  appendToRoot = true;
+              }
+              if (m.classes.includes('Measure')) {
+                  if (m._keySignature !== undefined) {
+                      mxAttributes.appendChild(this.keySignatureToXml(m._keySignature));
+                      appendToRoot = true;
+                  }
+                  if (m._timeSignature !== undefined) {
+                      mxAttributes.appendChild(this.timeSignatureToXml(m._timeSignature));
+                      appendToRoot = true;
+                  }
+                  // todo SenzaMisura...
+                  if (m._clef !== undefined) {
+                      mxAttributes.appendChild(this.clefToXml(m._clef));
+                      appendToRoot = true;
+                  }
+              }
+
+              // staffLayout
+              // transpositionInterval
+              // measureStyle
+              if (appendToRoot) {
+                  this.xmlRoot.appendChild(mxAttributes);
+              }
+              return mxAttributes;
+          }
+          // TODO(msc): measureStyle
+          // TODO(msc): staffLayoutToXmlStaffDetails
+
+      }, {
+          key: 'timeSignatureToXml',
+          value: function timeSignatureToXml(ts) {
+              var mxTime = this.doc.createElement('time');
+              // synchronizeIds
+              // senzaMisura
+              // summed denominators, compound etc.
+              var mxBeats = this.subElement(mxTime, 'beats');
+              mxBeats.innerHTML = ts.numerator.toString();
+              var mxBeatType = this.subElement(mxTime, 'beat-type');
+              mxBeatType.innerHTML = ts.denominator.toString();
+              // symbolizeDenominator
+              // separator
+              // style
+              return mxTime;
+          }
+      }, {
+          key: 'keySignatureToXml',
+          value: function keySignatureToXml(keyOrKeySignature) {
+              var mxKey = this.doc.createElement('key');
+              // synchronizeIds
+              // number
+              // printStyle, print-object
+              this.seta(keyOrKeySignature, mxKey, 'fifths', 'sharps');
+              if (keyOrKeySignature.mode !== undefined) {
+                  this.seta(keyOrKeySignature, mxKey, 'mode');
+              }
+              // non-traditional
+              // altered pitches
+              return mxKey;
+          }
+      }, {
+          key: 'clefToXml',
+          value: function clefToXml(clefObj) {
+              var mxClef = this.doc.createElement('clef');
+              // printstyle
+              var sign = clefObj.sign || 'G';
+              var mxSign = this.subElement(mxClef, 'sign');
+              mxSign.innerHTML = sign;
+              this.seta(clefObj, mxClef, 'line');
+              if (clefObj.octaveChange !== undefined && clefObj.octaveChange !== 0) {
+                  this.seta(clefObj, mxClef, 'clef-octave-change', 'octaveChange');
+              }
+              return mxClef;
+          }
+
+          // intervalToXmlTranspose
+          // setMxPrint
+          // staffLayoutToXmlPrint
+
+      }, {
+          key: 'setMxAttributes',
+          value: function setMxAttributes() {
+              var m = this.stream;
+              this.xmlRoot.setAttribute('number', m.measureNumberWithSuffix());
+              // layoutWidth
+          }
+
+          // setRbSpanners
+          // transpose
+
+      }]);
+      return MeasureExporter;
+  }(XMLExporterBase);
+
+
+
+  var m21ToXml = Object.freeze({
+      GeneralObjectExporter: GeneralObjectExporter,
+      XMLExporterBase: XMLExporterBase,
+      ScoreExporter: ScoreExporter,
+      PartExporter: PartExporter,
+      MeasureExporter: MeasureExporter
+  });
+
   /**
    * music21j -- Javascript reimplementation of Core music21p features.
    * music21/tie -- ties!
@@ -20782,6 +22682,7 @@
               // atSoundingPitch;
               // spannerBundles
               // partStaves;
+              this.stream.clef = this.lastClefs[0];
           }
       }, {
           key: 'parseXmlScorePart',
@@ -21052,8 +22953,10 @@
               var n = void 0;
 
               if (isChord) {
+                  var _$mxLyricList;
+
                   this.$mxNoteList.push($mxNote);
-                  // chord lyrics
+                  (_$mxLyricList = this.$mxLyricList).push.apply(_$mxLyricList, toConsumableArray($mxNote.children('lyric')));
               } else if (!isChord && !isRest) {
                   // normal note
                   this.restAndNoteCount.note += 1;
@@ -21064,16 +22967,16 @@
               }
 
               if (!isChord) {
-                  // update lyrics
+                  this.updateLyricsFromList(n, $mxNote.children('lyric'));
                   // add to staffReference
                   this.insertInMeasureOrVoice($mxNote, n);
                   offsetIncrement = n.duration.quarterLength;
                   this.nLast = n;
               }
 
-              if (this.$mxNoteList && !nextNoteIsChord) {
+              if (this.$mxNoteList.length && !nextNoteIsChord) {
                   var c = this.xmlToChord(this.$mxNoteList);
-                  // update lyrics
+                  this.updateLyricsFromList(c, this.$mxLyricList);
                   // addToStaffRest;
 
                   // voices;
@@ -21163,18 +23066,18 @@
               seta(p, $mxPitch, 'octave', undefined, parseInt);
               var $mxAlter = $mxPitch.children('alter');
               var accAlter = void 0;
-              if ($mxAlter) {
+              if ($mxAlter.length) {
                   accAlter = parseFloat($mxAlter.text().trim());
               }
 
               var $mxAccidental = $mxNote.children('accidental');
               // dropping support for musescore 0.9 errors...
-              if ($mxAccidental.length > 0) {
+              if ($mxAccidental.length) {
                   var accObj = this.xmlToAccidental($mxAccidental);
                   p.accidental = accObj;
                   p.accidental.displayStatus = true;
                   // independent accidental from alter
-              } else if (accAlter !== undefined) {
+              } else if (accAlter !== undefined && !isNaN(accAlter)) {
                   p.accidental = new pitch.Accidental(accAlter);
                   p.accidental.displayStatus = false;
               }
@@ -21186,6 +23089,10 @@
               var acc = new pitch.Accidental();
               // to-do m21/musicxml accidental name differences;
               var name = $$1($mxAccidental[0]).text().trim().toLowerCase();
+              if (name === 'flat-flat') {
+                  name = 'double-flat';
+              }
+
               acc.set(name);
 
               // set print style
@@ -21284,6 +23191,85 @@
               // style
               return t;
           }
+
+          // xmlToTuplets
+
+      }, {
+          key: 'updateLyricsFromList',
+          value: function updateLyricsFromList(n, lyricList) {
+              var currentLyricNumber = 1;
+              var _iteratorNormalCompletion7 = true;
+              var _didIteratorError7 = false;
+              var _iteratorError7 = undefined;
+
+              try {
+                  for (var _iterator7 = lyricList[Symbol.iterator](), _step7; !(_iteratorNormalCompletion7 = (_step7 = _iterator7.next()).done); _iteratorNormalCompletion7 = true) {
+                      var mxLyric = _step7.value;
+
+                      var lyricObj = this.xmlToLyric($$1(mxLyric));
+                      if (lyricObj === undefined) {
+                          continue;
+                      }
+                      if (lyricObj.number === 0) {
+                          lyricObj.number = currentLyricNumber;
+                      }
+                      n.lyrics.push(lyricObj);
+                      currentLyricNumber += 1;
+                  }
+              } catch (err) {
+                  _didIteratorError7 = true;
+                  _iteratorError7 = err;
+              } finally {
+                  try {
+                      if (!_iteratorNormalCompletion7 && _iterator7.return) {
+                          _iterator7.return();
+                      }
+                  } finally {
+                      if (_didIteratorError7) {
+                          throw _iteratorError7;
+                      }
+                  }
+              }
+          }
+      }, {
+          key: 'xmlToLyric',
+          value: function xmlToLyric($mxLyric, inputM21) {
+              var l = inputM21;
+              if (inputM21 === undefined) {
+                  l = new note.Lyric();
+              }
+              try {
+                  l.text = $mxLyric.children('text').text().trim();
+              } catch (exc) {
+                  return undefined; // sometimes there are empty lyrics.
+              }
+              var number = $mxLyric.attr('number');
+              try {
+                  number = parseInt(number);
+                  l.number = number;
+              } catch (exc) {
+                  l.number = 0;
+                  if (number !== undefined) {
+                      l.identifier = number;
+                  }
+              }
+              var identifier = $mxLyric.get('name');
+              if (identifier !== undefined) {
+                  l.identifier = identifier;
+              }
+
+              var $mxSyllabic = $mxLyric.children('syllabic');
+              if ($mxSyllabic.length) {
+                  l.syllabic = $mxSyllabic.text().trim();
+              }
+              // setStyleAttributes
+              // setColor
+              // setPosition
+              if (inputM21 === undefined) {
+                  return l;
+              }
+              return undefined;
+          }
       }, {
           key: 'insertIntoMeasureOrVoice',
           value: function insertIntoMeasureOrVoice($mxElement, el) {
@@ -21311,13 +23297,13 @@
           value: function parseAttributesTag($mxAttributes) {
               this.attributesAreInternal = false;
               this.$activeAttributes = $mxAttributes;
-              var _iteratorNormalCompletion7 = true;
-              var _didIteratorError7 = false;
-              var _iteratorError7 = undefined;
+              var _iteratorNormalCompletion8 = true;
+              var _didIteratorError8 = false;
+              var _iteratorError8 = undefined;
 
               try {
-                  for (var _iterator7 = $mxAttributes[Symbol.iterator](), _step7; !(_iteratorNormalCompletion7 = (_step7 = _iterator7.next()).done); _iteratorNormalCompletion7 = true) {
-                      var mxSub = _step7.value;
+                  for (var _iterator8 = $mxAttributes.children()[Symbol.iterator](), _step8; !(_iteratorNormalCompletion8 = (_step8 = _iterator8.next()).done); _iteratorNormalCompletion8 = true) {
+                      var mxSub = _step8.value;
 
                       var tag = mxSub.tagName;
                       var $mxSub = $$1(mxSub);
@@ -21332,16 +23318,16 @@
                       // transpose;
                   }
               } catch (err) {
-                  _didIteratorError7 = true;
-                  _iteratorError7 = err;
+                  _didIteratorError8 = true;
+                  _iteratorError8 = err;
               } finally {
                   try {
-                      if (!_iteratorNormalCompletion7 && _iterator7.return) {
-                          _iterator7.return();
+                      if (!_iteratorNormalCompletion8 && _iterator8.return) {
+                          _iterator8.return();
                       }
                   } finally {
-                      if (_didIteratorError7) {
-                          throw _iteratorError7;
+                      if (_didIteratorError8) {
+                          throw _iteratorError8;
                       }
                   }
               }
@@ -21373,8 +23359,12 @@
           key: 'handleClef',
           value: function handleClef($mxClef) {
               var clefObj = this.xmlToClef($mxClef);
+              this.stream.clef = clefObj;
               this.insertIntoMeasureOrVoice($mxClef, clefObj);
               this.lastClefs[0] = clefObj;
+              //        if (this.parent !== undefined) {
+              //            this.parent.lastClefs[0] = clefObj.clone(true);
+              //        }
           }
       }, {
           key: 'xmlToClef',
@@ -21409,10 +23399,24 @@
       return MeasureParser;
   }();
 
-  var musicxml = {
+  var musicxml$1 = {
       ScoreParser: ScoreParser,
       PartParser: PartParser,
       MeasureParser: MeasureParser
+  };
+
+
+
+  var xmlToM21 = Object.freeze({
+      ScoreParser: ScoreParser,
+      PartParser: PartParser,
+      MeasureParser: MeasureParser,
+      default: musicxml$1
+  });
+
+  var musicxml = {
+      m21ToXml: m21ToXml,
+      xmlToM21: xmlToM21
   };
 
   /**
@@ -22751,7 +24755,7 @@
       EDFLAT: /\((-+)\)/,
       EDNAT: /\(n\)/,
       SHARP: /^[A-Ga-g]+'*(#+)/, // simple notation finds
-      FLAT: /^[A-Ga-g]+'*(-+)/, // double sharps too
+      FLAT: /^[A-Ga-g]+'*(-+)/, //   double accidentals too
       NAT: /^[A-Ga-g]+'*n/, // explicit naturals
       TYPE: /(\d+)/,
       TIE: /.~/, // not preceding ties
@@ -22907,9 +24911,11 @@
               storedDict.lastNoteTied = false;
           }
           if (tnre.SHARP.exec(token)) {
-              noteObj.pitch.accidental = new pitch.Accidental('sharp');
+              var _MATCH6 = tnre.SHARP.exec(token); // sharp
+              noteObj.pitch.accidental = new pitch.Accidental(_MATCH6[1].length);
           } else if (tnre.FLAT.exec(token)) {
-              noteObj.pitch.accidental = new pitch.Accidental('flat');
+              var _MATCH7 = tnre.FLAT.exec(token); // sharp
+              noteObj.pitch.accidental = new pitch.Accidental(-1 * _MATCH7[1].length);
           } else if (tnre.NAT.exec(token)) {
               noteObj.pitch.accidental = new pitch.Accidental('natural');
               noteObj.pitch.accidental.displayType = 'always';
@@ -22956,10 +24962,12 @@
           for (var _i = 0; _i < optionalScore.length; _i++) {
               var innerPart = optionalScore.get(_i);
               innerPart.clef = clef.bestClef(innerPart);
+              innerPart.getElementsByClass('Measure').get(0).clef = innerPart.clef;
           }
           returnObject = optionalScore;
       } else {
           p.clef = clef.bestClef(p);
+          p.getElementsByClass('Measure').get(0).clef = p.clef;
           returnObject = p;
       }
       return returnObject;
