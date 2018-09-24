@@ -1297,9 +1297,9 @@ export class Stream extends base.Music21Object {
      * @param {Array<string>|string} classList - a list of classes to find
      * @returns {music21.stream.Stream}
      */
-     getElementsByClass(classList) {
-         return this.iter.getElementsByClass(classList);
-     }
+    getElementsByClass(classList) {
+        return this.iter.getElementsByClass(classList);
+    }
 //    getElementsByClass(classList) {
 //        const tempEls = [];
 //        for (const thisEl of this) {
