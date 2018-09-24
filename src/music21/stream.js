@@ -1134,7 +1134,7 @@ export class Stream extends base.Music21Object {
      * makeNotation does not do anything yet, but it is a placeholder
      * so it can start to be called. 
      */
-    makeNotation({ inPlace=false }={}) {
+    makeNotation({ inPlace=true }={}) {
         let out;
         if (inPlace) {
             out = this;

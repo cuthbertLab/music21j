@@ -16785,7 +16785,7 @@
           value: function makeNotation() {
               var _ref9 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
                   _ref9$inPlace = _ref9.inPlace,
-                  inPlace = _ref9$inPlace === undefined ? false : _ref9$inPlace;
+                  inPlace = _ref9$inPlace === undefined ? true : _ref9$inPlace;
 
               var out = void 0;
               if (inPlace) {
