@@ -17314,6 +17314,7 @@
               // cheap version of music21p method
               var extendableStepList = {};
               var stepNames = ['C', 'D', 'E', 'F', 'G', 'A', 'B'];
+              var ks = this.keySignature;
               var _iteratorNormalCompletion20 = true;
               var _didIteratorError20 = false;
               var _iteratorError20 = undefined;
@@ -17323,8 +17324,8 @@
                       var stepName = _step20.value;
 
                       var stepAlter = 0;
-                      if (this.keySignature !== undefined) {
-                          var tempAccidental = this.keySignature.accidentalByStep(stepName);
+                      if (ks !== undefined) {
+                          var tempAccidental = ks.accidentalByStep(stepName);
                           if (tempAccidental !== undefined) {
                               stepAlter = tempAccidental.alter;
                               // console.log(stepAlter + " " + stepName);

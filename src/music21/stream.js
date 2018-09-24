@@ -1469,10 +1469,11 @@ export class Stream extends base.Music21Object {
         // cheap version of music21p method
         const extendableStepList = {};
         const stepNames = ['C', 'D', 'E', 'F', 'G', 'A', 'B'];
+        const ks = this.keySignature;
         for (const stepName of stepNames) {
             let stepAlter = 0;
-            if (this.keySignature !== undefined) {
-                const tempAccidental = this.keySignature.accidentalByStep(
+            if (ks !== undefined) {
+                const tempAccidental = ks.accidentalByStep(
                     stepName
                 );
                 if (tempAccidental !== undefined) {
