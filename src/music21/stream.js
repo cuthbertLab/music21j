@@ -1285,6 +1285,10 @@ export class Stream extends base.Music21Object {
         return offsetMap;
     }
 
+    get iter() {
+        return new iterator.StreamIterator(this);
+    }
+    
     /**
      * Find all elements with a certain class; if an Array is given, then any
      * matching class will work.
@@ -1293,24 +1297,27 @@ export class Stream extends base.Music21Object {
      * @param {Array<string>|string} classList - a list of classes to find
      * @returns {music21.stream.Stream}
      */
-    getElementsByClass(classList) {
-        const tempEls = [];
-        for (const thisEl of this) {
-            // console.warn(thisEl);
-            if (thisEl.isClassOrSubclass === undefined) {
-                console.error(
-                    'what the hell is a ',
-                    thisEl,
-                    'doing in a Stream?'
-                );
-            } else if (thisEl.isClassOrSubclass(classList)) {
-                tempEls.push(thisEl);
-            }
-        }
-        const newSt = this.clone(false);
-        newSt.elements = tempEls;
-        return newSt;
-    }
+     getElementsByClass(classList) {
+         return this.iter.getElementsByClass(classList);
+     }
+//    getElementsByClass(classList) {
+//        const tempEls = [];
+//        for (const thisEl of this) {
+//            // console.warn(thisEl);
+//            if (thisEl.isClassOrSubclass === undefined) {
+//                console.error(
+//                    'what the hell is a ',
+//                    thisEl,
+//                    'doing in a Stream?'
+//                );
+//            } else if (thisEl.isClassOrSubclass(classList)) {
+//                tempEls.push(thisEl);
+//            }
+//        }
+//        const newSt = this.clone(false);
+//        newSt.elements = tempEls;
+//        return newSt;
+//    }
 
     /**
      * Returns a new stream [StreamIterator does not yet exist in music21j]
