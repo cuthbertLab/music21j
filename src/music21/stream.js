@@ -284,7 +284,7 @@ export class Stream extends base.Music21Object {
         }
         this._instrument = newInstrument;
     }
-    
+
     _specialContext(attr) {
         const privAttr = '_' + attr;
         if (this[privAttr] !== undefined) {
@@ -296,7 +296,7 @@ export class Stream extends base.Music21Object {
         if (firstElements.length) {
             return firstElements.get(0);
         }
-        
+
         // should be:
         // const contextClef = this.getContextByClass('Clef');
 //        const context = this.getContextByClass('Stream', { getElementMethod: 'getElementBefore' });
@@ -315,26 +315,26 @@ export class Stream extends base.Music21Object {
         }
         return undefined;
     }
-    
+
     get clef() {
         const contextClef = this._specialContext('clef');
         if (contextClef !== undefined) {
             return contextClef;
         } else {
-            return undefined;            
+            return undefined;
         }
     }
     set clef(newClef) {
         this._clef = newClef;
     }
-    
+
     get keySignature() {
         return this._specialContext('keySignature');
     }
     set keySignature(newKeySignature) {
         this._keySignature = newKeySignature;
     }
-    
+
     get timeSignature() {
         return this._specialContext('timeSignature');
     }
@@ -344,7 +344,7 @@ export class Stream extends base.Music21Object {
         }
         this._timeSignature = newTimeSignature;
     }
-    
+
     get autoBeam() {
         return this._specialContext('autoBeam');
     }
@@ -667,7 +667,7 @@ export class Stream extends base.Music21Object {
         }
         this.insert(offset, element);
     }
-    
+
     /**
      * Return the first matched index
      */
@@ -1067,7 +1067,7 @@ export class Stream extends base.Music21Object {
         });
         return template;
     }
-    
+
     template({
         fillWithRests=true,
         removeClasses=[],
@@ -1094,7 +1094,7 @@ export class Stream extends base.Music21Object {
         };
         for (const el of stream) {
             if (el.isStream
-                    && (retainVoices || el.classes.includes('Voice'))) {                
+                    && (retainVoices || el.classes.includes('Voice'))) {
                 optionalAddRest();
                 const outEl = el.template({
                     fillWithRests,
@@ -1112,7 +1112,7 @@ export class Stream extends base.Music21Object {
         returnObj.mergeAttributes(this);
         return returnObj;
     }
-    
+
     mergeAttributes(other) {
         super.mergeAttributes(other);
         for (const attr of [
@@ -1124,15 +1124,15 @@ export class Stream extends base.Music21Object {
             '_mutable',
         ]) {
             if (Object.prototype.hasOwnProperty.call(other, attr)) {
-                this[attr] = other[attr];                
+                this[attr] = other[attr];
             }
         }
     }
-    
-    
+
+
     /**
      * makeNotation does not do anything yet, but it is a placeholder
-     * so it can start to be called. 
+     * so it can start to be called.
      */
     makeNotation({ inPlace=true }={}) {
         let out;
@@ -1144,8 +1144,8 @@ export class Stream extends base.Music21Object {
         this.makeAccidentals();
         return out;
     }
-    
-    
+
+
     /**
      * Return a new Stream or modify this stream
      * to have beams.
@@ -1213,13 +1213,13 @@ export class Stream extends base.Music21Object {
     }
 
     /**
-     * Returns a boolean value showing if this 
+     * Returns a boolean value showing if this
      * Stream contains any Parts or Part-like
      * sub-Streams.
-     * 
+     *
      * Will deal with Part-like sub-streams later
      * for now just checks for real Part objects.
-     * 
+     *
      * Part-like sub-streams are Streams that
      * contain Measures or Notes. And where no
      * sub-stream begins at an offset besides zero.
@@ -1232,8 +1232,8 @@ export class Stream extends base.Music21Object {
         }
         return false;
     }
-    
-    
+
+
     /**
      * Returns true if any note in the stream has lyrics, otherwise false
      *
@@ -1288,7 +1288,7 @@ export class Stream extends base.Music21Object {
     get iter() {
         return new iterator.StreamIterator(this);
     }
-    
+
     /**
      * Find all elements with a certain class; if an Array is given, then any
      * matching class will work.
@@ -1609,8 +1609,8 @@ export class Stream extends base.Music21Object {
     write(format='musicxml') {
         return _exportMusicXMLAsText(this);
     }
-    
-    
+
+
     /**
      * Uses {@link music21.vfShow.Renderer} to render Vexflow onto an
      * existing canvas or SVG object.
@@ -2300,7 +2300,7 @@ export class Stream extends base.Music21Object {
             note: undefined,
         }; // a backup in case we did not find within allowablePixels
 
-        for (const n of subStream.flat.notesAndRests.elements) {
+        for (const n of subStream.flat.notesAndRests) {
             /* should also
              * compensate for accidentals...
              */
@@ -2636,7 +2636,7 @@ export class Measure extends Stream {
         this.number = 0; // measure number
         this.numberSuffix = '';
     }
-    
+
     measureNumberWithSuffix() {
         return this.number.toString() + this.numberSuffix;
     }

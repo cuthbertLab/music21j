@@ -16777,7 +16777,7 @@
 
           /**
            * makeNotation does not do anything yet, but it is a placeholder
-           * so it can start to be called. 
+           * so it can start to be called.
            */
 
       }, {
@@ -16936,13 +16936,13 @@
           }
 
           /**
-           * Returns a boolean value showing if this 
+           * Returns a boolean value showing if this
            * Stream contains any Parts or Part-like
            * sub-Streams.
-           * 
+           *
            * Will deal with Part-like sub-streams later
            * for now just checks for real Part objects.
-           * 
+           *
            * Part-like sub-streams are Streams that
            * contain Measures or Notes. And where no
            * sub-stream begins at an offset besides zero.
@@ -18253,7 +18253,7 @@
               var _iteratorError24 = undefined;
 
               try {
-                  for (var _iterator24 = subStream.flat.notesAndRests.elements[Symbol.iterator](), _step24; !(_iteratorNormalCompletion24 = (_step24 = _iterator24.next()).done); _iteratorNormalCompletion24 = true) {
+                  for (var _iterator24 = subStream.flat.notesAndRests[Symbol.iterator](), _step24; !(_iteratorNormalCompletion24 = (_step24 = _iterator24.next()).done); _iteratorNormalCompletion24 = true) {
                       var n = _step24.value;
 
                       /* should also
