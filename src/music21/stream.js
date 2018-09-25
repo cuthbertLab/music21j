@@ -15,6 +15,7 @@ import { Music21Exception } from './exceptions21.js';
 
 import { base } from './base.js';
 import { beam } from './beam.js';
+import { clef } from './clef.js';
 import { common } from './common.js';
 import { debug } from './debug.js';
 import { duration } from './duration.js';
@@ -1164,7 +1165,7 @@ export class Stream extends base.Music21Object {
             mColl = [returnObj];
         } else {
             mColl = [];
-            for (const m of returnObj.getElementsByClass('Measure').elements) {
+            for (const m of returnObj.getElementsByClass('Measure')) {
                 mColl.push(m);
             }
         }
@@ -1259,7 +1260,7 @@ export class Stream extends base.Music21Object {
         const offsetMap = [];
         let groups = [];
         if (this.hasVoices()) {
-            $.each(this.getElementsByClass('Voice').elements, (i, v) => {
+            $.each(this.getElementsByClass('Voice'), (i, v) => {
                 groups.push([v.flat, i]);
             });
         } else {
@@ -1337,79 +1338,20 @@ export class Stream extends base.Music21Object {
             includeElementsThatEndAtStart=true,
             classList=undefined,
         }={}) {
-
-        let s = this;
+        
+        let s;
         if (classList !== undefined) {
-            s = this.getElementsByClass(classList);
+            s = this.iter.getElementsByClass(classList);
+        } else {
+            s = this.iter;
         }
-        let zeroLengthSearch = false;
-        if (offsetEnd === undefined) {
-            offsetEnd = offsetStart;
-            zeroLengthSearch = true;
-        } else if (offsetEnd <= offsetStart) {
-            zeroLengthSearch = true;
-        }
-
-        const isElementOffsetInRange = (e, offset) => {
-            if (offset > offsetEnd) {
-                // anything that begins after the span is definitely out.
-                return false;
-            }
-            const dur = e.duration;
-            const elementEnd = offset + dur.quarterLength;
-            if (elementEnd < offsetStart) {
-                // anything that finishes before the span ends is definitely out
-                return false;
-            }
-
-            // some part of the element is at least touching some part of span.
-
-            let elementIsZeroLength = false;
-            if (dur.quarterLength === 0) {
-                elementIsZeroLength = true;
-            }
-            if (zeroLengthSearch && elementIsZeroLength) {
-                return true;
-            }
-
-            if (mustFinishInSpan) {
-                if (elementEnd > offsetEnd) {
-                    return false;
-                }
-                if (!includeEndBoundary && offset === offsetEnd) {
-                    return false;
-                }
-            }
-
-            if (mustBeginInSpan) {
-                if (offset < offsetStart) {
-                    return false;
-                }
-                if (!includeEndBoundary && offset === offsetEnd) {
-                    return false;
-                }
-            } else if (!elementIsZeroLength && elementEnd === offsetEnd && zeroLengthSearch) {
-                return false;
-            }
-
-            if (!includeEndBoundary && offset === offsetEnd) {
-                return false;
-            }
-            if (!includeElementsThatEndAtStart && elementEnd === offsetStart) {
-                return false;
-            }
-            return true;
-        };
-
-        const retStream = s.clone(false);
-        retStream.elements = [];
-        for (const e of s) {
-            const offset = s.elementOffset(e);
-            if (isElementOffsetInRange(e, offset)) {
-                retStream.insert(offset, e);
-            }
-        }
-        return retStream;
+        s.getElementsByOffset(offsetStart, offsetEnd, {
+            includeEndBoundary,
+            mustFinishInSpan,
+            mustBeginInSpan,
+            includeElementsThatEndAtStart,
+        });
+        return s;        
     }
 
     /**
@@ -2231,6 +2173,8 @@ export class Stream extends base.Music21Object {
         // for (var i = -10; i < 10; i++) {
         //    console.log("line: " + i + " y: " + storedVFStave.getYForLine(i));
         // }
+        const lowestLine = (this.clef !== undefined) ? this.clef.lowestLine : 31;
+        
         const lineSpacing = storedVFStave.options.spacing_between_lines_px;
         const linesAboveStaff = storedVFStave.options.space_above_staff_ln;
 
@@ -2238,8 +2182,7 @@ export class Stream extends base.Music21Object {
         const notesAboveLowestLine
             = (storedVFStave.options.num_lines - 1 + linesAboveStaff) * 2
             - notesFromTop;
-        const clickedDiatonicNoteNum
-            = this.clef.lowestLine + Math.round(notesAboveLowestLine);
+        const clickedDiatonicNoteNum = lowestLine + Math.round(notesAboveLowestLine);
         return clickedDiatonicNoteNum;
     }
 
@@ -2725,7 +2668,7 @@ export class Part extends Stream {
         }
         // no measures found in part... treat as measure
         const tempM = new stream.Measure();
-        tempM.elements = this.elements;
+        tempM.elements = this;
         return tempM.estimateStaffLength();
     }
     /**
@@ -3057,6 +3000,16 @@ export class Score extends Stream {
         this.measureWidths = [];
         this.partSpacing = this.renderOptions.naiveHeight;
     }
+    
+    get clef() {
+        const c = super.clef;
+        if (c === undefined) {
+            return new clef.TrebleClef();
+        } else {
+            return c;
+        }
+    }
+    
     get systemPadding() {
         const numParts = this.parts.length;
         let systemPadding = this.renderOptions.systemPadding;

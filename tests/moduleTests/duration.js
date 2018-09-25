@@ -33,7 +33,7 @@ export default function tests() {
 
     QUnit.test('music21.duration.Tuplet', assert => {
         const d = new music21.duration.Duration(0.5);
-        const t = new music21.duration.Tuplet(5, 4);
+        const t = new music21.duration.Tuplet(5, 4);        
         assert.equal(t.tupletMultiplier(), 0.8, 'tuplet multiplier');
         d.appendTuplet(t);
         assert.equal(t.frozen, true, 'tuplet is frozen');

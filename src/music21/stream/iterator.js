@@ -210,7 +210,10 @@ export class StreamIterator {
 
     // getElementsByGroup;
     // getElementsByOffset;
-    //
+    getElementsByOffset(...args) {
+        return this.addFilter(new filters.OffsetFilter(...args));
+    }
+    
 
     get notes() {
         return this.addFilter(new filters.ClassFilter('NotRest'));
