@@ -809,6 +809,7 @@ export class Renderer {
                 const vfn = thisEl.vexflowNote(options);
                 if (vfn === undefined) {
                     console.error('Cannot create a vexflowNote from: ', thisEl);
+                    continue;
                 }
                 if (stave !== undefined) {
                     vfn.setStave(stave);
