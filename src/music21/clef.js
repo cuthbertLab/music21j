@@ -38,6 +38,27 @@ clef.lowestLines = {
     bass: 19,
     percussion: 31,
 };
+
+clef.nameToLine = {
+    treble: 2,
+    soprano: 1,
+    'mezzo-soprano': 2,
+    alto: 3,
+    tenor: 4,
+    bass: 4,
+    percussion: 3,
+};
+
+clef.nameToSign = {
+    treble: 'G',
+    soprano: 'C',
+    'mezzo-soprano': 'C',
+    alto: 'C',
+    tenor: 'C',
+    bass: 'F',
+    percussion: 'percussion',
+};
+
 /**
  * Clefname can be one of
  * "treble", "bass", "soprano", "mezzo-soprano", "alto", "tenor", "percussion"
@@ -55,12 +76,16 @@ clef.lowestLines = {
 export class Clef extends base.Music21Object {
     constructor(name, octaveChange) {
         super();
+        this.classSortOrder = 0;
+
         this.sign = undefined;
         this.line = 1;
         if (name !== undefined) {
             name = name.toLowerCase();
             this.name = name;
             this.lowestLine = clef.lowestLines[name];
+            this.sign = clef.nameToSign[name];
+            this.line = clef.nameToLine[name] || 1;
             this.lowestLineTrebleOffset
                 = clef.lowestLines.treble - this.lowestLine;
         } else {
@@ -174,7 +199,7 @@ clef.BassClef = BassClef;
  */
 export class AltoClef extends Clef {
     constructor() {
-        super('alto');        
+        super('alto');
         this.sign = 'C';
         this.line = 3;
     }

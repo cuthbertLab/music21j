@@ -241,7 +241,7 @@ export class Stream extends base.Music21Object {
                         newSt.insert(elFlatElementOffset + offsetShift, elFlatElement);
                     }
                 } else {
-                    newSt.insert(el, this.elementOffset(el));
+                    newSt.insert(this.elementOffset(el), el);
                 }
             }
         }
@@ -291,13 +291,6 @@ export class Stream extends base.Music21Object {
         if (this[privAttr] !== undefined) {
             return this[privAttr];
         }
-        const firstElements = this
-            .getElementsByOffset(0.0)
-            .getElementsByClass(attr.charAt(0).toUpperCase() + attr.slice(1));
-        if (firstElements.length) {
-            return firstElements.get(0);
-        }
-
         // should be:
         // const contextClef = this.getContextByClass('Clef');
 //        const context = this.getContextByClass('Stream', { getElementMethod: 'getElementBefore' });
@@ -309,7 +302,7 @@ export class Stream extends base.Music21Object {
             if (site === undefined) {
                 continue;
             }
-            const contextObj = site[attr];
+            const contextObj = site._firstElementContext('attr') || site._specialContext('attr');
             if (contextObj !== undefined) {
                 return contextObj;
             }
@@ -317,31 +310,55 @@ export class Stream extends base.Music21Object {
         return undefined;
     }
 
-    get clef() {
-        const contextClef = this._specialContext('clef');
-        if (contextClef !== undefined) {
-            return contextClef;
+    _firstElementContext(attr) {
+        const firstElements = this
+            .getElementsByOffset(0.0)
+            .getElementsByClass(attr.charAt(0).toUpperCase() + attr.slice(1));
+        if (firstElements.length) {
+            return firstElements.get(0);
         } else {
             return undefined;
         }
     }
+
+    get clef() {
+        return this.getSpecialContext('clef', true);
+    }
     set clef(newClef) {
+        const oldClef = this._firstElementContext('clef');
+        if (oldClef !== undefined) {
+            this.replace(oldClef, newClef);
+        } else {
+            this.insert(0.0, newClef);
+        }
         this._clef = newClef;
     }
 
     get keySignature() {
-        return this._specialContext('keySignature');
+        return this.getSpecialContext('keySignature', true);
     }
     set keySignature(newKeySignature) {
+        const oldKS = this._firstElementContext('keySignature');
+        if (oldKS !== undefined) {
+            this.replace(oldKS, newKeySignature);
+        } else {
+            this.insert(0.0, newKeySignature);
+        }
         this._keySignature = newKeySignature;
     }
 
     get timeSignature() {
-        return this._specialContext('timeSignature');
+        return this.getSpecialContext('timeSignature', true);
     }
     set timeSignature(newTimeSignature) {
         if (typeof newTimeSignature === 'string') {
             newTimeSignature = new meter.TimeSignature(newTimeSignature);
+        }
+        const oldTS = this._firstElementContext('timeSignature');
+        if (oldTS !== undefined) {
+            this.replace(oldTS, newTimeSignature);
+        } else {
+            this.insert(0.0, newTimeSignature);
         }
         this._timeSignature = newTimeSignature;
     }
@@ -420,6 +437,30 @@ export class Stream extends base.Music21Object {
             this.insert(thisEl.offset, thisEl);
         }
         this.coreElementsChanged(); // would be called already if newElements != [];
+    }
+
+    /**
+     * getSpecialContext is a transitional replacement for
+     * .clef, .keySignature, .timeSignature that looks
+     * for context to get the appropriate element as ._clef, etc.
+     * as a way of making the older music21j attributes still work while
+     * transitioning to a more music21p-like approach.
+     *
+     * May be removed
+     */
+    getSpecialContext(context, warnOnCall=false) {
+        const first_el = this._firstElementContext(context);
+        if (first_el !== undefined) {
+            return first_el;
+        }
+        const special_context = this._specialContext(context);
+        if (special_context === undefined) {
+            return undefined;
+        }
+        if (warnOnCall) {
+            console.warn(`Calling special context ${context}!`);
+        }
+        return special_context;
     }
 
     clear() {
@@ -594,7 +635,10 @@ export class Stream extends base.Music21Object {
         if (this.isSorted) {
             return this;
         }
-        this._elements.sort((a, b) => this._offsetDict.get(a) - this._offsetDict.get(b));
+        this._elements.sort((a, b) => this._offsetDict.get(a) - this._offsetDict.get(b)
+            || a.priority - b.priority
+            || a.classSortOrder - b.classSortOrder
+        );
         this.isSorted = true;
         return this;
     }
@@ -935,7 +979,7 @@ export class Stream extends base.Music21Object {
             meterStream.append(this.timeSignature);
         }
         // getContextByClass('Clef')
-        const clefObj = this.clef;
+        const clefObj = this.getSpecialContext('clef') || this.getContextByClass('Clef');
         const offsetMap = this.offsetMap();
         let oMax = 0;
         for (let i = 0; i < offsetMap.length; i++) {
@@ -990,8 +1034,9 @@ export class Stream extends base.Music21Object {
             lastTimeSignature = undefined;
             for (let j = 0; j < post.length; j++) {
                 m = post.get(j); // nothing but measures...
-                if (m.timeSignature !== undefined) {
-                    lastTimeSignature = m.timeSignature;
+                const foundTS = m.getSpecialContext('timeSignature');
+                if (foundTS !== undefined) {
+                    lastTimeSignature = foundTS;
                 }
                 mStart = m.getOffsetBySite(post);
                 const mEnd
@@ -1301,6 +1346,11 @@ export class Stream extends base.Music21Object {
     getElementsByClass(classList) {
         return this.iter.getElementsByClass(classList);
     }
+
+    getElementsNotOfClass(classList) {
+        return this.iter.getElementsNotOfClass(classList);
+    }
+
 //    getElementsByClass(classList) {
 //        const tempEls = [];
 //        for (const thisEl of this) {
@@ -1338,7 +1388,7 @@ export class Stream extends base.Music21Object {
             includeElementsThatEndAtStart=true,
             classList=undefined,
         }={}) {
-        
+
         let s;
         if (classList !== undefined) {
             s = this.iter.getElementsByClass(classList);
@@ -1351,7 +1401,7 @@ export class Stream extends base.Music21Object {
             mustBeginInSpan,
             includeElementsThatEndAtStart,
         });
-        return s;        
+        return s;
     }
 
     /**
@@ -1698,8 +1748,8 @@ export class Stream extends base.Music21Object {
             totalLength = 30 * this.length;
             totalLength += rendOp.displayClef ? 30 : 0;
             totalLength
-                += rendOp.displayKeySignature && this.keySignature
-                    ? this.keySignature.width
+                += rendOp.displayKeySignature && this.getSpecialContext('keySignature')
+                    ? this.getSpecialContext('keySignature').width
                     : 0;
             totalLength += rendOp.displayTimeSignature ? 30 : 0;
             // totalLength += rendOp.staffPadding;
@@ -2063,21 +2113,14 @@ export class Stream extends base.Music21Object {
      * @returns {Vex.Flow.Stave|undefined}
      */
     recursiveGetStoredVexflowStave() {
-        let storedVFStave = this.storedVexflowStave;
+        const storedVFStave = this.storedVexflowStave;
         if (storedVFStave === undefined) {
             if (this.isFlat) {
                 return undefined;
             } else {
                 const subStreams = this.getElementsByClass('Stream');
-                storedVFStave = subStreams.get(0).storedVexflowStave;
-                if (storedVFStave === undefined) {
-                    // TODO: bad programming ... should support continuous recurse
-                    // but good enough for now...
-                    if (!subStreams.get(0).isFlat) {
-                        storedVFStave = subStreams.get(0).get(0)
-                            .storedVexflowStave;
-                    }
-                }
+                const first_subStream = subStreams.get(0);
+                return first_subStream.recursiveGetStoredVexflowStave();
             }
         }
         return storedVFStave;
@@ -2170,11 +2213,15 @@ export class Stream extends base.Music21Object {
      */
     diatonicNoteNumFromScaledY(yPxScaled) {
         const storedVFStave = this.recursiveGetStoredVexflowStave();
+        if (storedVFStave === undefined) {
+            throw new StreamException('Could not find vexflowStave for getting size');
+        }
+
         // for (var i = -10; i < 10; i++) {
         //    console.log("line: " + i + " y: " + storedVFStave.getYForLine(i));
         // }
         const lowestLine = (this.clef !== undefined) ? this.clef.lowestLine : 31;
-        
+
         const lineSpacing = storedVFStave.options.spacing_between_lines_px;
         const linesAboveStaff = storedVFStave.options.space_above_staff_ln;
 
@@ -3000,7 +3047,7 @@ export class Score extends Stream {
         this.measureWidths = [];
         this.partSpacing = this.renderOptions.naiveHeight;
     }
-    
+
     get clef() {
         const c = super.clef;
         if (c === undefined) {
@@ -3009,7 +3056,7 @@ export class Score extends Stream {
             return c;
         }
     }
-    
+
     get systemPadding() {
         const numParts = this.parts.length;
         let systemPadding = this.renderOptions.systemPadding;
@@ -3209,7 +3256,7 @@ export class Score extends Stream {
         const scaledYinPart
             = scaledYFromSystemTop - partIndex * this.partSpacing;
         // console.log('systemIndex: ' + systemIndex + " partIndex: " + partIndex);
-        const rightPart = this.get(partIndex);
+        const rightPart = this.parts.get(partIndex);
         if (rightPart === undefined) {
             return [undefined, undefined]; // may be too low?
         }

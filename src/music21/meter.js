@@ -45,6 +45,8 @@ export const meter = {};
 export class TimeSignature extends base.Music21Object {
     constructor(meterString) {
         super();
+        this.classSortOrder = 4;
+        
         this._numerator = 4;
         this._denominator = 4;
         this._beatGroups = [];
@@ -167,7 +169,7 @@ export class TimeSignature extends base.Music21Object {
         }
         return tempBeatGroups;
     }
-    
+
     /**
      * Return a span of [start, end] for the current beat/beam grouping
      */
@@ -178,7 +180,7 @@ export class TimeSignature extends base.Music21Object {
         const end = start + beatDuration;
         return [start, end];
     }
-    
+
     /**
      * @param {Iterable} srcStream - a stream of elements.
      * @param {object} options - an object with measureStartOffset
@@ -200,7 +202,7 @@ export class TimeSignature extends base.Music21Object {
             }
             const dur = el.duration;
             const pos = el.offset + measureStartOffset;
-            
+
             const start = pos; // opFrac
             const end = pos + dur.quarterLength; // opFrac;
             const startNext = end;
@@ -223,7 +225,7 @@ export class TimeSignature extends base.Music21Object {
                 beamsList[i] = undefined;
                 return;
             }
-            
+
             let beamType;
             if (isFirst) {
                 beamType = 'start';
@@ -248,14 +250,14 @@ export class TimeSignature extends base.Music21Object {
                 } else {
                     beamType = 'start';
                 }
-            } else if (beamPrevious !== undefined 
+            } else if (beamPrevious !== undefined
                         && beamPrevious.getNumbers().includes(beamNumber)
                         && ['stop', 'partial-left'].includes(beamPrevious.getTypeByNumber(beamNumber))
                        ) {
                 if (beamNext !== undefined) {
-                    beamType = 'start';                    
+                    beamType = 'start';
                 } else {
-                    beamType = 'partial-left'; 
+                    beamType = 'partial-left';
                 }
             } else if (beamNext === undefined || !beamNext.getNumbers().includes(beamNumber)) {
                 beamType = 'stop';
@@ -269,7 +271,7 @@ export class TimeSignature extends base.Music21Object {
             }
             beams.setByNumber(beamNumber, beamType);
         };
-        
+
         for (let depth = 0; depth < beam.beamableDurationTypes.length; depth++) {
             let i = 0;
             for (const el of srcStream) {
@@ -277,12 +279,12 @@ export class TimeSignature extends base.Music21Object {
                 i += 1;
             }
         }
-        
+
         beamsList = beam.Beams.sanitizePartialBeams(beamsList);
         beamsList = beam.Beams.mergeConnectingPartialBeams(beamsList);
         return beamsList;
     }
-    
+
     /**
      * Compute the Beat Group according to this time signature for VexFlow. For beaming.
      *

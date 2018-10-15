@@ -72,6 +72,8 @@ key.convertKeyStringToMusic21KeyString = function convertKeyStringToMusic21KeySt
 export class KeySignature extends base.Music21Object {
     constructor(sharps) {
         super();
+        this.classSortOrder = 2;
+        
         this._sharps = sharps || 0; // if undefined
         this._alteredPitchesCache = undefined;
 

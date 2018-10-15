@@ -9,6 +9,7 @@
  *
  */
 import { common } from './common.js';
+import * as derivation from './derivation.js';
 import { duration } from './duration.js';
 import { prebase } from './prebase.js';
 import * as sites from './sites.js';
@@ -59,6 +60,7 @@ export class Music21Object extends prebase.ProtoM21Object {
         // this._editorial = undefined;
 
         this._duration = new duration.Duration();
+        this._derivation = undefined; // avoid making extra objects...
 
         this._priority = 0; // default;
 
@@ -81,6 +83,17 @@ export class Music21Object extends prebase.ProtoM21Object {
         ) {
             newObj[keyName] = undefined;
         };
+        this._cloneCallbacks._derivation = function Music21Music21Object_cloneCallbacks_derivation(
+            keyName,
+            newObj,
+            self
+        ) {
+            const newDerivation = new derivation.Derivation(newObj);
+            newDerivation.origin = self;
+            newDerivation.method = 'clone';
+            newObj[keyName] = newDerivation;
+        };
+
         this._cloneCallbacks.sites = function Music21Object_cloneCallbacks_sites(
             keyName,
             newObj,
@@ -107,6 +120,17 @@ export class Music21Object extends prebase.ProtoM21Object {
             this._activeSite = site;
         }
     }
+
+    get derivation() {
+        if (this._derivation === undefined) {
+            this._derivation = new derivation.Derivation(this);
+        }
+        return this._derivation;
+    }
+    set derivation(newDerivation) {
+        this._derivation = newDerivation;
+    }
+
 
     get measureNumber() {
         if (this.activeSite !== undefined && this.activeSite.classes.includes('Measure')) {
@@ -162,12 +186,12 @@ export class Music21Object extends prebase.ProtoM21Object {
     set quarterLength(ql) {
         this.duration.quarterLength = ql;
     }
-    
+
     mergeAttributes(other) {
         // id;
         this.groups = other.groups.slice();
     }
-    
+
     /**
      * Return the offset of this element in a given site -- use .offset if you are sure that
      * site === activeSite.
@@ -264,6 +288,11 @@ export class Music21Object extends prebase.ProtoM21Object {
                         && lastElement === undefined
                     ) {
                         lastElement = thisElement;
+                        try {
+                            lastElement.activeSite = useSite;
+                        } catch (e) {
+                            // do nothing... should not happen.
+                        }
                     } else if (matchClass) {
                         return lastElement;
                     }
@@ -291,7 +320,11 @@ export class Music21Object extends prebase.ProtoM21Object {
                     }
                 }
             }
-            return undefined;
+            if (lastElement !== undefined && lastElement.isClassOrSubclass(classList)) {
+                return lastElement;
+            } else {
+                return undefined;
+            }
         };
 
         const params = {
@@ -336,7 +369,11 @@ export class Music21Object extends prebase.ProtoM21Object {
                     className
                 );
                 if (contextEl !== undefined) {
-                    contextEl.activeSite = site;
+                    try {
+                        contextEl.activeSite = site;
+                    } catch (e) {
+                        // do nothing.
+                    }
                     return contextEl;
                 }
             } else if (searchType !== 'elementsOnly') {
@@ -360,7 +397,11 @@ export class Music21Object extends prebase.ProtoM21Object {
                     className
                 );
                 if (contextEl !== undefined) {
-                    contextEl.activeSite = site;
+                    try {
+                        contextEl.activeSite = site;
+                    } catch (e) {
+                        // do nothing.
+                    }
                     return contextEl;
                 }
                 if (
@@ -405,7 +446,7 @@ export class Music21Object extends prebase.ProtoM21Object {
         if (params.priorityTarget === undefined && !params.sortByCreationType) {
             params.priorityTarget = this.activeSite;
         }
-        // const topLevel = this;
+        const topLevel = this;
         for (const siteObj of this.sites.yieldSites(
             params.sortByCreationTime,
             params.priorityTarget,
@@ -435,22 +476,36 @@ export class Music21Object extends prebase.ProtoM21Object {
                 sortByCreationTime: params.sortByCreationTime,
             };
             for (const [
-                topLevel,
+                topLevelInner,
                 inStreamPos,
                 recurType
             ] of siteObj.contextSites(newParams)) {
                 const inStreamOffset = inStreamPos; // .offset;
                 // const hypotheticalPosition = inStreamOffset; // more complex w/ sortTuples
 
-                if (!memo.includes(topLevel)) {
+                if (!memo.includes(topLevelInner)) {
                     // if returnSortTuples...
                     // else
-                    yield [topLevel, inStreamOffset, recurType];
-                    memo.push(topLevel);
+                    yield [topLevelInner, inStreamOffset, recurType];
+                    memo.push(topLevelInner);
                 }
             }
         }
         // if followDerivation...
+        if (params.followDerivation) {
+            for (const derivatedObject of topLevel.derivation.chain()) {
+                for (const [derivedSite, derivedOffset, derivedRecurseType] of derivatedObject.contextSites({
+                    callerFirst: undefined,
+                    memo,
+                    offsetAppend: 0.0,
+                    returnSortTuples: true,
+                    sortByCreationTime: params.sortByCreationTime,
+                })) {
+                    const offsetAdjustedCsTuple = [derivedSite, derivedOffset + params.offsetAppend, derivedRecurseType];
+                    yield offsetAdjustedCsTuple;
+                }
+            }
+        }
     }
 }
 

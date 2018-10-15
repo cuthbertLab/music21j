@@ -1,5 +1,5 @@
 /**
- * music21j 0.9.0 built on  * 2018-09-25.
+ * music21j 0.9.0 built on  * 2018-10-14.
  * Copyright (c) 2013-2016 Michael Scott Cuthbert and cuthbertLab
  * BSD License, see LICENSE
  *
@@ -1014,6 +1014,74 @@
   }();
   prebase.ProtoM21Object = ProtoM21Object;
 
+  var Derivation = function () {
+      function Derivation(client) {
+          classCallCheck(this, Derivation);
+
+          this.client = client;
+          this.method = undefined;
+          this.origin = undefined;
+      }
+
+      createClass(Derivation, [{
+          key: "clone",
+          value: function clone() {
+              var newThing = new Derivation();
+              newThing.client = this.client;
+              newThing.origin = this.origin;
+          }
+      }, {
+          key: "chain",
+          value: regeneratorRuntime.mark(function chain() {
+              var origin;
+              return regeneratorRuntime.wrap(function chain$(_context) {
+                  while (1) {
+                      switch (_context.prev = _context.next) {
+                          case 0:
+                              origin = this.origin;
+
+                          case 1:
+                              if (!(origin !== undefined)) {
+                                  _context.next = 7;
+                                  break;
+                              }
+
+                              _context.next = 4;
+                              return origin;
+
+                          case 4:
+                              origin = origin.derivation.origin;
+                              _context.next = 1;
+                              break;
+
+                          case 7:
+                          case "end":
+                              return _context.stop();
+                      }
+                  }
+              }, chain, this);
+          })
+      }, {
+          key: "rootDerivation",
+          value: function rootDerivation() {
+              var derivationChain = Array.from(this.chain());
+              if (derivationChain.length) {
+                  return derivationChain[derivationChain.length - 1];
+              } else {
+                  return undefined;
+              }
+          }
+      }]);
+      return Derivation;
+  }();
+
+
+
+  var derivation = Object.freeze({
+      Derivation: Derivation,
+      default: Derivation
+  });
+
   /**
    * music21j -- Javascript reimplementation of Core music21 features.
    * music21/duration -- duration routines
@@ -2027,6 +2095,7 @@
           // this._editorial = undefined;
 
           _this._duration = new duration.Duration();
+          _this._derivation = undefined; // avoid making extra objects...
 
           _this._priority = 0; // default;
 
@@ -2045,6 +2114,13 @@
           _this._cloneCallbacks._activeSite = function Music21Object_cloneCallbacks_activeSite(keyName, newObj, self) {
               newObj[keyName] = undefined;
           };
+          _this._cloneCallbacks._derivation = function Music21Music21Object_cloneCallbacks_derivation(keyName, newObj, self) {
+              var newDerivation = new Derivation(newObj);
+              newDerivation.origin = self;
+              newDerivation.method = 'clone';
+              newObj[keyName] = newDerivation;
+          };
+
           _this._cloneCallbacks.sites = function Music21Object_cloneCallbacks_sites(keyName, newObj, self) {
               newObj[keyName] = new Sites();
           };
@@ -2178,6 +2254,11 @@
                       if (getElementMethod.includes('Before') && indexOffset >= positionStart) {
                           if (getElementMethod.includes('At') && lastElement === undefined) {
                               lastElement = thisElement;
+                              try {
+                                  lastElement.activeSite = useSite;
+                              } catch (e) {
+                                  // do nothing... should not happen.
+                              }
                           } else if (matchClass) {
                               return lastElement;
                           }
@@ -2195,7 +2276,11 @@
                           }
                       }
                   }
-                  return undefined;
+                  if (lastElement !== undefined && lastElement.isClassOrSubclass(classList)) {
+                      return lastElement;
+                  } else {
+                      return undefined;
+                  }
               };
 
               var params = {
@@ -2235,7 +2320,11 @@
                       if (searchType === 'elementsOnly' || searchType === 'elementsFirst') {
                           var contextEl = payloadExtractor(site, false, positionStart, getElementMethod, className);
                           if (contextEl !== undefined) {
-                              contextEl.activeSite = site;
+                              try {
+                                  contextEl.activeSite = site;
+                              } catch (e) {
+                                  // do nothing.
+                              }
                               return contextEl;
                           }
                       } else if (searchType !== 'elementsOnly') {
@@ -2246,7 +2335,11 @@
                           }
                           var _contextEl = payloadExtractor(site, 'semiFlat', positionStart, getElementMethod, className);
                           if (_contextEl !== undefined) {
-                              _contextEl.activeSite = site;
+                              try {
+                                  _contextEl.activeSite = site;
+                              } catch (e) {
+                                  // do nothing.
+                              }
                               return _contextEl;
                           }
                           if (getElementMethod.includes('Before') && (className === undefined || site.isClassOrSubclass(className))) {
@@ -2276,7 +2369,7 @@
       }, {
           key: 'contextSites',
           value: regeneratorRuntime.mark(function contextSites(options) {
-              var params, memo, recursionType, _iteratorNormalCompletion3, _didIteratorError3, _iteratorError3, _iterator3, _step3, siteObj, offsetInStream, newOffset, positionInStream, _recursionType, newParams, _iteratorNormalCompletion4, _didIteratorError4, _iteratorError4, _iterator4, _step4, _step4$value, topLevel, inStreamPos, recurType, inStreamOffset;
+              var params, memo, recursionType, topLevel, _iteratorNormalCompletion3, _didIteratorError3, _iteratorError3, _iterator3, _step3, siteObj, offsetInStream, newOffset, positionInStream, _recursionType, newParams, _iteratorNormalCompletion6, _didIteratorError6, _iteratorError6, _iterator6, _step6, _step6$value, topLevelInner, inStreamPos, recurType, inStreamOffset, _iteratorNormalCompletion4, _didIteratorError4, _iteratorError4, _iterator4, _step4, derivatedObject, _iteratorNormalCompletion5, _didIteratorError5, _iteratorError5, _iterator5, _step5, _step5$value, derivedSite, derivedOffset, derivedRecurseType, offsetAdjustedCsTuple;
 
               return regeneratorRuntime.wrap(function contextSites$(_context) {
                   while (1) {
@@ -2319,38 +2412,38 @@
                               if (params.priorityTarget === undefined && !params.sortByCreationType) {
                                   params.priorityTarget = this.activeSite;
                               }
-                              // const topLevel = this;
+                              topLevel = this;
                               _iteratorNormalCompletion3 = true;
                               _didIteratorError3 = false;
                               _iteratorError3 = undefined;
-                              _context.prev = 14;
+                              _context.prev = 15;
                               _iterator3 = this.sites.yieldSites(params.sortByCreationTime, params.priorityTarget, true // excludeNone
                               )[Symbol.iterator]();
 
-                          case 16:
+                          case 17:
                               if (_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done) {
-                                  _context.next = 62;
+                                  _context.next = 63;
                                   break;
                               }
 
                               siteObj = _step3.value;
 
                               if (!memo.includes(siteObj)) {
-                                  _context.next = 20;
+                                  _context.next = 21;
                                   break;
                               }
 
-                              return _context.abrupt('continue', 59);
+                              return _context.abrupt('continue', 60);
 
-                          case 20:
+                          case 21:
                               if (!siteObj.classes.includes('SpannerStorage')) {
-                                  _context.next = 22;
+                                  _context.next = 23;
                                   break;
                               }
 
-                              return _context.abrupt('continue', 59);
+                              return _context.abrupt('continue', 60);
 
-                          case 22:
+                          case 23:
 
                               // let offset = this.getOffsetBySite(siteObj);
                               // followDerivation;
@@ -2358,10 +2451,10 @@
                               newOffset = offsetInStream + params.offsetAppend;
                               positionInStream = newOffset;
                               _recursionType = siteObj.recursionType;
-                              _context.next = 28;
+                              _context.next = 29;
                               return [siteObj, positionInStream, _recursionType];
 
-                          case 28:
+                          case 29:
                               memo.push(siteObj);
 
                               newParams = {
@@ -2371,117 +2464,237 @@
                                   returnSortTuples: true, // always!
                                   sortByCreationTime: params.sortByCreationTime
                               };
-                              _iteratorNormalCompletion4 = true;
-                              _didIteratorError4 = false;
-                              _iteratorError4 = undefined;
-                              _context.prev = 33;
-                              _iterator4 = siteObj.contextSites(newParams)[Symbol.iterator]();
+                              _iteratorNormalCompletion6 = true;
+                              _didIteratorError6 = false;
+                              _iteratorError6 = undefined;
+                              _context.prev = 34;
+                              _iterator6 = siteObj.contextSites(newParams)[Symbol.iterator]();
 
-                          case 35:
-                              if (_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done) {
-                                  _context.next = 45;
+                          case 36:
+                              if (_iteratorNormalCompletion6 = (_step6 = _iterator6.next()).done) {
+                                  _context.next = 46;
                                   break;
                               }
 
-                              _step4$value = slicedToArray(_step4.value, 3), topLevel = _step4$value[0], inStreamPos = _step4$value[1], recurType = _step4$value[2];
+                              _step6$value = slicedToArray(_step6.value, 3), topLevelInner = _step6$value[0], inStreamPos = _step6$value[1], recurType = _step6$value[2];
                               inStreamOffset = inStreamPos; // .offset;
                               // const hypotheticalPosition = inStreamOffset; // more complex w/ sortTuples
 
-                              if (memo.includes(topLevel)) {
-                                  _context.next = 42;
+                              if (memo.includes(topLevelInner)) {
+                                  _context.next = 43;
                                   break;
                               }
 
-                              _context.next = 41;
-                              return [topLevel, inStreamOffset, recurType];
-
-                          case 41:
-                              memo.push(topLevel);
+                              _context.next = 42;
+                              return [topLevelInner, inStreamOffset, recurType];
 
                           case 42:
-                              _iteratorNormalCompletion4 = true;
-                              _context.next = 35;
+                              memo.push(topLevelInner);
+
+                          case 43:
+                              _iteratorNormalCompletion6 = true;
+                              _context.next = 36;
                               break;
 
-                          case 45:
-                              _context.next = 51;
+                          case 46:
+                              _context.next = 52;
                               break;
 
-                          case 47:
-                              _context.prev = 47;
-                              _context.t0 = _context['catch'](33);
-                              _didIteratorError4 = true;
-                              _iteratorError4 = _context.t0;
+                          case 48:
+                              _context.prev = 48;
+                              _context.t0 = _context['catch'](34);
+                              _didIteratorError6 = true;
+                              _iteratorError6 = _context.t0;
 
-                          case 51:
-                              _context.prev = 51;
+                          case 52:
                               _context.prev = 52;
+                              _context.prev = 53;
 
-                              if (!_iteratorNormalCompletion4 && _iterator4.return) {
-                                  _iterator4.return();
+                              if (!_iteratorNormalCompletion6 && _iterator6.return) {
+                                  _iterator6.return();
                               }
 
-                          case 54:
-                              _context.prev = 54;
+                          case 55:
+                              _context.prev = 55;
 
-                              if (!_didIteratorError4) {
-                                  _context.next = 57;
+                              if (!_didIteratorError6) {
+                                  _context.next = 58;
                                   break;
                               }
 
-                              throw _iteratorError4;
-
-                          case 57:
-                              return _context.finish(54);
+                              throw _iteratorError6;
 
                           case 58:
-                              return _context.finish(51);
+                              return _context.finish(55);
 
                           case 59:
+                              return _context.finish(52);
+
+                          case 60:
                               _iteratorNormalCompletion3 = true;
-                              _context.next = 16;
+                              _context.next = 17;
                               break;
 
-                          case 62:
-                              _context.next = 68;
+                          case 63:
+                              _context.next = 69;
                               break;
 
-                          case 64:
-                              _context.prev = 64;
-                              _context.t1 = _context['catch'](14);
+                          case 65:
+                              _context.prev = 65;
+                              _context.t1 = _context['catch'](15);
                               _didIteratorError3 = true;
                               _iteratorError3 = _context.t1;
 
-                          case 68:
-                              _context.prev = 68;
+                          case 69:
                               _context.prev = 69;
+                              _context.prev = 70;
 
                               if (!_iteratorNormalCompletion3 && _iterator3.return) {
                                   _iterator3.return();
                               }
 
-                          case 71:
-                              _context.prev = 71;
+                          case 72:
+                              _context.prev = 72;
 
                               if (!_didIteratorError3) {
-                                  _context.next = 74;
+                                  _context.next = 75;
                                   break;
                               }
 
                               throw _iteratorError3;
 
-                          case 74:
-                              return _context.finish(71);
-
                           case 75:
-                              return _context.finish(68);
+                              return _context.finish(72);
 
                           case 76:
+                              return _context.finish(69);
+
+                          case 77:
+                              if (!params.followDerivation) {
+                                  _context.next = 129;
+                                  break;
+                              }
+
+                              _iteratorNormalCompletion4 = true;
+                              _didIteratorError4 = false;
+                              _iteratorError4 = undefined;
+                              _context.prev = 81;
+                              _iterator4 = topLevel.derivation.chain()[Symbol.iterator]();
+
+                          case 83:
+                              if (_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done) {
+                                  _context.next = 115;
+                                  break;
+                              }
+
+                              derivatedObject = _step4.value;
+                              _iteratorNormalCompletion5 = true;
+                              _didIteratorError5 = false;
+                              _iteratorError5 = undefined;
+                              _context.prev = 88;
+                              _iterator5 = derivatedObject.contextSites({
+                                  callerFirst: undefined,
+                                  memo: memo,
+                                  offsetAppend: 0.0,
+                                  returnSortTuples: true,
+                                  sortByCreationTime: params.sortByCreationTime
+                              })[Symbol.iterator]();
+
+                          case 90:
+                              if (_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done) {
+                                  _context.next = 98;
+                                  break;
+                              }
+
+                              _step5$value = slicedToArray(_step5.value, 3), derivedSite = _step5$value[0], derivedOffset = _step5$value[1], derivedRecurseType = _step5$value[2];
+                              offsetAdjustedCsTuple = [derivedSite, derivedOffset + params.offsetAppend, derivedRecurseType];
+                              _context.next = 95;
+                              return offsetAdjustedCsTuple;
+
+                          case 95:
+                              _iteratorNormalCompletion5 = true;
+                              _context.next = 90;
+                              break;
+
+                          case 98:
+                              _context.next = 104;
+                              break;
+
+                          case 100:
+                              _context.prev = 100;
+                              _context.t2 = _context['catch'](88);
+                              _didIteratorError5 = true;
+                              _iteratorError5 = _context.t2;
+
+                          case 104:
+                              _context.prev = 104;
+                              _context.prev = 105;
+
+                              if (!_iteratorNormalCompletion5 && _iterator5.return) {
+                                  _iterator5.return();
+                              }
+
+                          case 107:
+                              _context.prev = 107;
+
+                              if (!_didIteratorError5) {
+                                  _context.next = 110;
+                                  break;
+                              }
+
+                              throw _iteratorError5;
+
+                          case 110:
+                              return _context.finish(107);
+
+                          case 111:
+                              return _context.finish(104);
+
+                          case 112:
+                              _iteratorNormalCompletion4 = true;
+                              _context.next = 83;
+                              break;
+
+                          case 115:
+                              _context.next = 121;
+                              break;
+
+                          case 117:
+                              _context.prev = 117;
+                              _context.t3 = _context['catch'](81);
+                              _didIteratorError4 = true;
+                              _iteratorError4 = _context.t3;
+
+                          case 121:
+                              _context.prev = 121;
+                              _context.prev = 122;
+
+                              if (!_iteratorNormalCompletion4 && _iterator4.return) {
+                                  _iterator4.return();
+                              }
+
+                          case 124:
+                              _context.prev = 124;
+
+                              if (!_didIteratorError4) {
+                                  _context.next = 127;
+                                  break;
+                              }
+
+                              throw _iteratorError4;
+
+                          case 127:
+                              return _context.finish(124);
+
+                          case 128:
+                              return _context.finish(121);
+
+                          case 129:
                           case 'end':
                               return _context.stop();
                       }
                   }
-              }, contextSites, this, [[14, 64, 68, 76], [33, 47, 51, 59], [52,, 54, 58], [69,, 71, 75]]);
+              }, contextSites, this, [[15, 65, 69, 77], [34, 48, 52, 60], [53,, 55, 59], [70,, 72, 76], [81, 117, 121, 129], [88, 100, 104, 112], [105,, 107, 111], [122,, 124, 128]]);
           })
       }, {
           key: 'activeSite',
@@ -2500,6 +2713,17 @@
                   }
                   this._activeSite = site;
               }
+          }
+      }, {
+          key: 'derivation',
+          get: function get() {
+              if (this._derivation === undefined) {
+                  this._derivation = new Derivation(this);
+              }
+              return this._derivation;
+          },
+          set: function set(newDerivation) {
+              this._derivation = newDerivation;
           }
       }, {
           key: 'measureNumber',
@@ -9620,6 +9844,27 @@
       bass: 19,
       percussion: 31
   };
+
+  clef.nameToLine = {
+      treble: 2,
+      soprano: 1,
+      'mezzo-soprano': 2,
+      alto: 3,
+      tenor: 4,
+      bass: 4,
+      percussion: 3
+  };
+
+  clef.nameToSign = {
+      treble: 'G',
+      soprano: 'C',
+      'mezzo-soprano': 'C',
+      alto: 'C',
+      tenor: 'C',
+      bass: 'F',
+      percussion: 'percussion'
+  };
+
   /**
    * Clefname can be one of
    * "treble", "bass", "soprano", "mezzo-soprano", "alto", "tenor", "percussion"
@@ -9642,12 +9887,16 @@
 
           var _this = possibleConstructorReturn(this, (Clef.__proto__ || Object.getPrototypeOf(Clef)).call(this));
 
+          _this.classSortOrder = 0;
+
           _this.sign = undefined;
           _this.line = 1;
           if (name !== undefined) {
               name = name.toLowerCase();
               _this.name = name;
               _this.lowestLine = clef.lowestLines[name];
+              _this.sign = clef.nameToSign[name];
+              _this.line = clef.nameToLine[name] || 1;
               _this.lowestLineTrebleOffset = clef.lowestLines.treble - _this.lowestLine;
           } else {
               _this.name = undefined;
@@ -10725,6 +10974,8 @@
 
           var _this = possibleConstructorReturn(this, (KeySignature.__proto__ || Object.getPrototypeOf(KeySignature)).call(this));
 
+          _this.classSortOrder = 2;
+
           _this._sharps = sharps || 0; // if undefined
           _this._alteredPitchesCache = undefined;
 
@@ -11078,6 +11329,8 @@
           classCallCheck(this, TimeSignature);
 
           var _this = possibleConstructorReturn(this, (TimeSignature.__proto__ || Object.getPrototypeOf(TimeSignature)).call(this));
+
+          _this.classSortOrder = 4;
 
           _this._numerator = 4;
           _this._denominator = 4;
@@ -12020,12 +12273,68 @@
               if (m.hasVoices === undefined || m.hasVoices() === false) {
                   this.prepareFlat(m, stack);
               } else {
-                  // TODO: don't assume that all elements are Voices;
-                  var stave = void 0;
+                  // get elements outside of voices;
+                  var firstVoiceCopy = m.getElementsByClass('Voice').get(0).clone(false);
+                  var _iteratorNormalCompletion3 = true;
+                  var _didIteratorError3 = false;
+                  var _iteratorError3 = undefined;
+
+                  try {
+                      for (var _iterator3 = m.getElementsNotOfClass('Voice')[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+                          var el = _step3.value;
+
+                          firstVoiceCopy.insert(el.offset, el);
+                      }
+                  } catch (err) {
+                      _didIteratorError3 = true;
+                      _iteratorError3 = err;
+                  } finally {
+                      try {
+                          if (!_iteratorNormalCompletion3 && _iterator3.return) {
+                              _iterator3.return();
+                          }
+                      } finally {
+                          if (_didIteratorError3) {
+                              throw _iteratorError3;
+                          }
+                      }
+                  }
+
                   var rendOp = m.renderOptions; // get render options from Measure;
-                  for (var voiceIndex = 0; voiceIndex < m.length; voiceIndex++) {
-                      var voiceStream = m.get(voiceIndex);
-                      stave = this.prepareFlat(voiceStream, stack, stave, rendOp);
+                  var stave = void 0;
+                  var _iteratorNormalCompletion4 = true;
+                  var _didIteratorError4 = false;
+                  var _iteratorError4 = undefined;
+
+                  try {
+                      for (var _iterator4 = Array.from(m.getElementsByClass('Voice')).entries()[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
+                          var _step4$value = slicedToArray(_step4.value, 2),
+                              i = _step4$value[0],
+                              voiceStream = _step4$value[1];
+
+                          var voiceToRender = voiceStream;
+                          if (i === 0) {
+                              voiceToRender = firstVoiceCopy;
+                          }
+                          stave = this.prepareFlat(voiceToRender, stack, stave, rendOp);
+                          if (i === 0) {
+                              voiceStream.activeVFStave = voiceToRender.activeVFStave;
+                              voiceStream.storedVexflowStave = voiceToRender.activeVFStave;
+                          }
+                      }
+                  } catch (err) {
+                      _didIteratorError4 = true;
+                      _iteratorError4 = err;
+                  } finally {
+                      try {
+                          if (!_iteratorNormalCompletion4 && _iterator4.return) {
+                              _iterator4.return();
+                          }
+                      } finally {
+                          if (_didIteratorError4) {
+                              throw _iteratorError4;
+                          }
+                      }
                   }
               }
               return stack;
@@ -12054,10 +12363,10 @@
                   stave = this.renderStave(s, optional_renderOp);
               }
               s.activeVFStave = stave;
-              var voice = this.getVoice(s, stave);
-              stack.voices.push(voice);
+              var vf_voice = this.getVoice(s, stave);
+              stack.voices.push(vf_voice);
               stack.streams.push(s);
-              stack.voiceToStreamMapping.set(voice, s);
+              stack.voiceToStreamMapping.set(vf_voice, s);
 
               if (s.hasLyrics()) {
                   stack.textVoices.push(this.getLyricVoice(s, stave));
@@ -12245,12 +12554,12 @@
               // adds formats the voices, then adds the formatter information to every note in a voice...
               for (var i = 0; i < this.stacks.length; i++) {
                   var stack = this.stacks[i];
-                  var voices = stack.voices;
-                  var measures = stack.streams;
+                  var vf_voices = stack.voices;
+                  var measuresOrVoices = stack.streams;
                   var formatter = this.formatVoiceGroup(stack);
-                  for (var j = 0; j < measures.length; j++) {
-                      var m = measures[j];
-                      var v = voices[j];
+                  for (var j = 0; j < measuresOrVoices.length; j++) {
+                      var m = measuresOrVoices[j];
+                      var v = vf_voices[j];
                       this.applyFormatterInformationToNotes(v.stave, m, formatter);
                   }
               }
@@ -12271,16 +12580,16 @@
               // if autoBeam is true then it will apply beams for each voice and put them in
               // this.beamGroups;
               var allTickables = stack.allTickables();
-              var voices = stack.voices;
-              var measures = stack.streams;
+              var vf_voices = stack.voices;
+              var measuresOrVoices = stack.streams;
               if (autoBeam === undefined) {
-                  autoBeam = measures[0].autoBeam;
+                  autoBeam = measuresOrVoices[0].autoBeam;
               }
 
               var formatter = new Vex.Flow.Formatter();
               // var minLength = formatter.preCalculateMinTotalWidth([voices]);
               // console.log(minLength);
-              if (voices.length === 0) {
+              if (vf_voices.length === 0) {
                   return formatter;
               }
               var maxGlyphStart = 0; // find the stave with the farthest start point -- diff key sig, etc.
@@ -12295,29 +12604,29 @@
               }
               // TODO: should do the same for end_x -- for key sig changes, etc...
 
-              var stave = voices[0].stave; // all staves should be same length, so does not matter;
+              var stave = vf_voices[0].stave; // all staves should be same length, so does not matter;
               var tickablesByStave = stack.tickablesByStave();
-              var _iteratorNormalCompletion3 = true;
-              var _didIteratorError3 = false;
-              var _iteratorError3 = undefined;
+              var _iteratorNormalCompletion5 = true;
+              var _didIteratorError5 = false;
+              var _iteratorError5 = undefined;
 
               try {
-                  for (var _iterator3 = tickablesByStave[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
-                      var staveTickables = _step3.value;
+                  for (var _iterator5 = tickablesByStave[Symbol.iterator](), _step5; !(_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done); _iteratorNormalCompletion5 = true) {
+                      var staveTickables = _step5.value;
 
                       formatter.joinVoices(staveTickables);
                   }
               } catch (err) {
-                  _didIteratorError3 = true;
-                  _iteratorError3 = err;
+                  _didIteratorError5 = true;
+                  _iteratorError5 = err;
               } finally {
                   try {
-                      if (!_iteratorNormalCompletion3 && _iterator3.return) {
-                          _iterator3.return();
+                      if (!_iteratorNormalCompletion5 && _iterator5.return) {
+                          _iterator5.return();
                       }
                   } finally {
-                      if (_didIteratorError3) {
-                          throw _iteratorError3;
+                      if (_didIteratorError5) {
+                          throw _iteratorError5;
                       }
                   }
               }
@@ -12325,7 +12634,7 @@
               formatter.formatToStave(allTickables, stave);
 
               //        const vf_auto_stem = false;
-              //        for (const voice of voices) {            
+              //        for (const voice of voices) {
               //            let activeBeamGroupNotes = [];
               //            for (let j = 0; j < voice.notes.length; j++) {
               //                const n = voice.notes[j];
@@ -12347,21 +12656,21 @@
               //        }
 
               if (autoBeam) {
-                  for (var _i2 = 0; _i2 < voices.length; _i2++) {
+                  for (var _i2 = 0; _i2 < vf_voices.length; _i2++) {
                       var _beamGroups;
 
                       // find beam groups -- n.b. this wipes out stemDirection. worth it usually...
-                      var voice = voices[_i2];
-                      var associatedStream = stack.voiceToStreamMapping.get(voice);
+                      var vf_voice = vf_voices[_i2];
+                      var associatedStream = stack.voiceToStreamMapping.get(vf_voice);
                       var beatGroups = void 0;
-                      if (associatedStream !== undefined && associatedStream.timeSignature !== undefined) {
-                          beatGroups = associatedStream.timeSignature.vexflowBeatGroups(Vex);
+                      if (associatedStream !== undefined && associatedStream.getSpecialContext('timeSignature') !== undefined) {
+                          beatGroups = associatedStream.getSpecialContext('timeSignature').vexflowBeatGroups(Vex);
                           // TODO: getContextByClass...
                           // console.log(beatGroups);
                       } else {
                           beatGroups = [new Vex.Flow.Fraction(2, 8)]; // default beam groups
                       }
-                      var beamGroups = Vex.Flow.Beam.applyAndGetBeams(voice, undefined, beatGroups);
+                      var beamGroups = Vex.Flow.Beam.applyAndGetBeams(vf_voice, undefined, beatGroups);
                       (_beamGroups = this.beamGroups).push.apply(_beamGroups, toConsumableArray(beamGroups));
                   }
               }
@@ -12437,7 +12746,14 @@
               if (rendOp === undefined) {
                   rendOp = s.renderOptions;
               }
-              var sClef = s.clef || _clefSingleton;
+
+              var sClef = s.getSpecialContext('clef') || s.getContextByClass('Clef');
+              if (sClef === undefined && s.length) {
+                  // the clef context might be from something else in the stream...
+                  var firstEl = s.get(0);
+                  sClef = firstEl.getContextByClass('Clef');
+              }
+              sClef = sClef || _clefSingleton;
 
               this.setStafflines(s, stave);
               if (rendOp.showMeasureNumber) {
@@ -12453,13 +12769,15 @@
                   }
                   stave.addClef(sClef.name, size, ottava);
               }
-              if (s.keySignature !== undefined && rendOp.displayKeySignature) {
-                  var ksVFName = s.keySignature.majorName().replace(/-/g, 'b');
+              var context_ks = s.getSpecialContext('keySignature') || s.getContextByClass('KeySignature');
+              if (context_ks !== undefined && rendOp.displayKeySignature) {
+                  var ksVFName = context_ks.majorName().replace(/-/g, 'b');
                   stave.addKeySignature(ksVFName);
               }
 
-              if (s.timeSignature !== undefined && rendOp.displayTimeSignature) {
-                  stave.addTimeSignature(s.timeSignature.numerator.toString() + '/' + s.timeSignature.denominator.toString());
+              var context_ts = s.getSpecialContext('timeSignature');
+              if (context_ts !== undefined && rendOp.displayTimeSignature) {
+                  stave.addTimeSignature(context_ts.numerator.toString() + '/' + context_ts.denominator.toString());
               }
               if (rendOp.rightBarline !== undefined) {
                   var bl = rendOp.rightBarline;
@@ -12533,21 +12851,31 @@
               var activeTuplet = void 0;
               var activeTupletLength = 0.0;
               var activeTupletVexflowNotes = [];
-              var sClef = s.clef || _clefSingleton;
+              var sClef = s.getSpecialContext('clef') || s.getContextByClass('Clef');
+              if (sClef === undefined && s.length) {
+                  // TODO: follow Derivation...
+                  var firstEl = s.get(0);
+                  sClef = firstEl.getContextByClass('Clef');
+              }
+              if (sClef === undefined) {
+                  sClef = _clefSingleton;
+              }
+
               var options = { clef: sClef, stave: stave };
-              var _iteratorNormalCompletion4 = true;
-              var _didIteratorError4 = false;
-              var _iteratorError4 = undefined;
+              var _iteratorNormalCompletion6 = true;
+              var _didIteratorError6 = false;
+              var _iteratorError6 = undefined;
 
               try {
-                  for (var _iterator4 = s[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
-                      var thisEl = _step4.value;
+                  for (var _iterator6 = s[Symbol.iterator](), _step6; !(_iteratorNormalCompletion6 = (_step6 = _iterator6.next()).done); _iteratorNormalCompletion6 = true) {
+                      var thisEl = _step6.value;
 
                       if (thisEl.isClassOrSubclass('GeneralNote') && thisEl.duration !== undefined) {
                           // sets thisEl.activeVexflowNote -- may be overwritten but not so fast...
                           var vfn = thisEl.vexflowNote(options);
                           if (vfn === undefined) {
                               console.error('Cannot create a vexflowNote from: ', thisEl);
+                              continue;
                           }
                           if (stave !== undefined) {
                               vfn.setStave(stave);
@@ -12586,16 +12914,16 @@
                       }
                   }
               } catch (err) {
-                  _didIteratorError4 = true;
-                  _iteratorError4 = err;
+                  _didIteratorError6 = true;
+                  _iteratorError6 = err;
               } finally {
                   try {
-                      if (!_iteratorNormalCompletion4 && _iterator4.return) {
-                          _iterator4.return();
+                      if (!_iteratorNormalCompletion6 && _iterator6.return) {
+                          _iterator6.return();
                       }
                   } finally {
-                      if (_didIteratorError4) {
-                          throw _iteratorError4;
+                      if (_didIteratorError6) {
+                          throw _iteratorError6;
                       }
                   }
               }
@@ -12644,13 +12972,13 @@
               }
               // runs on a flat, gapless, no-overlap stream, returns a list of TextNote objects...
               var lyricsObjects = [];
-              var _iteratorNormalCompletion5 = true;
-              var _didIteratorError5 = false;
-              var _iteratorError5 = undefined;
+              var _iteratorNormalCompletion7 = true;
+              var _didIteratorError7 = false;
+              var _iteratorError7 = undefined;
 
               try {
-                  for (var _iterator5 = s[Symbol.iterator](), _step5; !(_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done); _iteratorNormalCompletion5 = true) {
-                      var el = _step5.value;
+                  for (var _iterator7 = s[Symbol.iterator](), _step7; !(_iteratorNormalCompletion7 = (_step7 = _iterator7.next()).done); _iteratorNormalCompletion7 = true) {
+                      var el = _step7.value;
 
                       var lyricsArray = el.lyrics;
                       if (lyricsArray === undefined) {
@@ -12697,16 +13025,16 @@
                       }
                   }
               } catch (err) {
-                  _didIteratorError5 = true;
-                  _iteratorError5 = err;
+                  _didIteratorError7 = true;
+                  _iteratorError7 = err;
               } finally {
                   try {
-                      if (!_iteratorNormalCompletion5 && _iterator5.return) {
-                          _iterator5.return();
+                      if (!_iteratorNormalCompletion7 && _iterator7.return) {
+                          _iterator7.return();
                       }
                   } finally {
-                      if (_didIteratorError5) {
-                          throw _iteratorError5;
+                      if (_didIteratorError7) {
+                          throw _iteratorError7;
                       }
                   }
               }
@@ -12872,13 +13200,13 @@
           key: 'removeFormatterInformation',
           value: function removeFormatterInformation(s, recursive) {
               s.storedVexflowStave = undefined;
-              var _iteratorNormalCompletion6 = true;
-              var _didIteratorError6 = false;
-              var _iteratorError6 = undefined;
+              var _iteratorNormalCompletion8 = true;
+              var _didIteratorError8 = false;
+              var _iteratorError8 = undefined;
 
               try {
-                  for (var _iterator6 = s[Symbol.iterator](), _step6; !(_iteratorNormalCompletion6 = (_step6 = _iterator6.next()).done); _iteratorNormalCompletion6 = true) {
-                      var el = _step6.value;
+                  for (var _iterator8 = s[Symbol.iterator](), _step8; !(_iteratorNormalCompletion8 = (_step8 = _iterator8.next()).done); _iteratorNormalCompletion8 = true) {
+                      var el = _step8.value;
 
                       el.x = undefined;
                       el.y = undefined;
@@ -12890,16 +13218,16 @@
                       }
                   }
               } catch (err) {
-                  _didIteratorError6 = true;
-                  _iteratorError6 = err;
+                  _didIteratorError8 = true;
+                  _iteratorError8 = err;
               } finally {
                   try {
-                      if (!_iteratorNormalCompletion6 && _iterator6.return) {
-                          _iterator6.return();
+                      if (!_iteratorNormalCompletion8 && _iterator8.return) {
+                          _iterator8.return();
                       }
                   } finally {
-                      if (_didIteratorError6) {
-                          throw _iteratorError6;
+                      if (_didIteratorError8) {
+                          throw _iteratorError8;
                       }
                   }
               }
@@ -12930,7 +13258,7 @@
               if (s === undefined) {
                   s = this.stream;
               }
-              var sClef = s.clef || _clefSingleton;
+              var sClef = s.getSpecialContext('clef') || s.getContextByClass('Clef') || _clefSingleton;
               var noteOffsetLeft = 0;
               // var staveHeight = 80;
               if (stave !== undefined) {
@@ -12943,13 +13271,13 @@
               }
 
               var nextTicks = 0;
-              var _iteratorNormalCompletion7 = true;
-              var _didIteratorError7 = false;
-              var _iteratorError7 = undefined;
+              var _iteratorNormalCompletion9 = true;
+              var _didIteratorError9 = false;
+              var _iteratorError9 = undefined;
 
               try {
-                  for (var _iterator7 = s[Symbol.iterator](), _step7; !(_iteratorNormalCompletion7 = (_step7 = _iterator7.next()).done); _iteratorNormalCompletion7 = true) {
-                      var el = _step7.value;
+                  for (var _iterator9 = s[Symbol.iterator](), _step9; !(_iteratorNormalCompletion9 = (_step9 = _iterator9.next()).done); _iteratorNormalCompletion9 = true) {
+                      var el = _step9.value;
 
                       if (el.isClassOrSubclass('GeneralNote')) {
                           var vfn = el.activeVexflowNote;
@@ -12977,44 +13305,44 @@
                       }
                   }
               } catch (err) {
-                  _didIteratorError7 = true;
-                  _iteratorError7 = err;
+                  _didIteratorError9 = true;
+                  _iteratorError9 = err;
               } finally {
                   try {
-                      if (!_iteratorNormalCompletion7 && _iterator7.return) {
-                          _iterator7.return();
+                      if (!_iteratorNormalCompletion9 && _iterator9.return) {
+                          _iterator9.return();
                       }
                   } finally {
-                      if (_didIteratorError7) {
-                          throw _iteratorError7;
+                      if (_didIteratorError9) {
+                          throw _iteratorError9;
                       }
                   }
               }
 
               if (debug) {
-                  var _iteratorNormalCompletion8 = true;
-                  var _didIteratorError8 = false;
-                  var _iteratorError8 = undefined;
+                  var _iteratorNormalCompletion10 = true;
+                  var _didIteratorError10 = false;
+                  var _iteratorError10 = undefined;
 
                   try {
-                      for (var _iterator8 = s[Symbol.iterator](), _step8; !(_iteratorNormalCompletion8 = (_step8 = _iterator8.next()).done); _iteratorNormalCompletion8 = true) {
-                          var n = _step8.value;
+                      for (var _iterator10 = s[Symbol.iterator](), _step10; !(_iteratorNormalCompletion10 = (_step10 = _iterator10.next()).done); _iteratorNormalCompletion10 = true) {
+                          var n = _step10.value;
 
                           if (n.pitch !== undefined) {
                               console.log(n.pitch.diatonicNoteNum + ' ' + n.x + ' ' + (n.x + n.width));
                           }
                       }
                   } catch (err) {
-                      _didIteratorError8 = true;
-                      _iteratorError8 = err;
+                      _didIteratorError10 = true;
+                      _iteratorError10 = err;
                   } finally {
                       try {
-                          if (!_iteratorNormalCompletion8 && _iterator8.return) {
-                              _iterator8.return();
+                          if (!_iteratorNormalCompletion10 && _iterator10.return) {
+                              _iterator10.return();
                           }
                       } finally {
-                          if (_didIteratorError8) {
-                              throw _iteratorError8;
+                          if (_didIteratorError10) {
+                              throw _iteratorError10;
                           }
                       }
                   }
@@ -15914,7 +16242,7 @@
                                   }
                               }
                           } else {
-                              newSt.insert(el, this.elementOffset(el));
+                              newSt.insert(this.elementOffset(el), el);
                           }
                       }
                   } catch (err) {
@@ -15947,11 +16275,6 @@
               if (this[privAttr] !== undefined) {
                   return this[privAttr];
               }
-              var firstElements = this.getElementsByOffset(0.0).getElementsByClass(attr.charAt(0).toUpperCase() + attr.slice(1));
-              if (firstElements.length) {
-                  return firstElements.get(0);
-              }
-
               // should be:
               // const contextClef = this.getContextByClass('Clef');
               //        const context = this.getContextByClass('Stream', { getElementMethod: 'getElementBefore' });
@@ -15970,7 +16293,7 @@
                       if (site === undefined) {
                           continue;
                       }
-                      var contextObj = site[attr];
+                      var contextObj = site._firstElementContext('attr') || site._specialContext('attr');
                       if (contextObj !== undefined) {
                           return contextObj;
                       }
@@ -15991,6 +16314,45 @@
               }
 
               return undefined;
+          }
+      }, {
+          key: '_firstElementContext',
+          value: function _firstElementContext(attr) {
+              var firstElements = this.getElementsByOffset(0.0).getElementsByClass(attr.charAt(0).toUpperCase() + attr.slice(1));
+              if (firstElements.length) {
+                  return firstElements.get(0);
+              } else {
+                  return undefined;
+              }
+          }
+      }, {
+          key: 'getSpecialContext',
+
+
+          /**
+           * getSpecialContext is a transitional replacement for
+           * .clef, .keySignature, .timeSignature that looks
+           * for context to get the appropriate element as ._clef, etc.
+           * as a way of making the older music21j attributes still work while
+           * transitioning to a more music21p-like approach.
+           *
+           * May be removed
+           */
+          value: function getSpecialContext(context) {
+              var warnOnCall = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+
+              var first_el = this._firstElementContext(context);
+              if (first_el !== undefined) {
+                  return first_el;
+              }
+              var special_context = this._specialContext(context);
+              if (special_context === undefined) {
+                  return undefined;
+              }
+              if (warnOnCall) {
+                  console.warn('Calling special context ' + context + '!');
+              }
+              return special_context;
           }
       }, {
           key: 'clear',
@@ -16226,7 +16588,7 @@
                   return this;
               }
               this._elements.sort(function (a, b) {
-                  return _this3._offsetDict.get(a) - _this3._offsetDict.get(b);
+                  return _this3._offsetDict.get(a) - _this3._offsetDict.get(b) || a.priority - b.priority || a.classSortOrder - b.classSortOrder;
               });
               this.isSorted = true;
               return this;
@@ -16616,7 +16978,7 @@
                   meterStream.append(this.timeSignature);
               }
               // getContextByClass('Clef')
-              var clefObj = this.clef;
+              var clefObj = this.getSpecialContext('clef') || this.getContextByClass('Clef');
               var offsetMap = this.offsetMap();
               var oMax = 0;
               for (var i = 0; i < offsetMap.length; i++) {
@@ -16670,8 +17032,9 @@
                   lastTimeSignature = undefined;
                   for (var j = 0; j < post.length; j++) {
                       m = post.get(j); // nothing but measures...
-                      if (m.timeSignature !== undefined) {
-                          lastTimeSignature = m.timeSignature;
+                      var foundTS = m.getSpecialContext('timeSignature');
+                      if (foundTS !== undefined) {
+                          lastTimeSignature = foundTS;
                       }
                       mStart = m.getOffsetBySite(post);
                       var mEnd = mStart + lastTimeSignature.barDuration.quarterLength;
@@ -17182,6 +17545,12 @@
           value: function getElementsByClass(classList) {
               return this.iter.getElementsByClass(classList);
           }
+      }, {
+          key: 'getElementsNotOfClass',
+          value: function getElementsNotOfClass(classList) {
+              return this.iter.getElementsNotOfClass(classList);
+          }
+
           //    getElementsByClass(classList) {
           //        const tempEls = [];
           //        for (const thisEl of this) {
@@ -17708,7 +18077,7 @@
                   var rendOp = this.renderOptions;
                   totalLength = 30 * this.length;
                   totalLength += rendOp.displayClef ? 30 : 0;
-                  totalLength += rendOp.displayKeySignature && this.keySignature ? this.keySignature.width : 0;
+                  totalLength += rendOp.displayKeySignature && this.getSpecialContext('keySignature') ? this.getSpecialContext('keySignature').width : 0;
                   totalLength += rendOp.displayTimeSignature ? 30 : 0;
                   // totalLength += rendOp.staffPadding;
                   return totalLength;
@@ -18103,14 +18472,8 @@
                       return undefined;
                   } else {
                       var subStreams = this.getElementsByClass('Stream');
-                      storedVFStave = subStreams.get(0).storedVexflowStave;
-                      if (storedVFStave === undefined) {
-                          // TODO: bad programming ... should support continuous recurse
-                          // but good enough for now...
-                          if (!subStreams.get(0).isFlat) {
-                              storedVFStave = subStreams.get(0).get(0).storedVexflowStave;
-                          }
-                      }
+                      var first_subStream = subStreams.get(0);
+                      return first_subStream.recursiveGetStoredVexflowStave();
                   }
               }
               return storedVFStave;
@@ -18208,6 +18571,10 @@
           key: 'diatonicNoteNumFromScaledY',
           value: function diatonicNoteNumFromScaledY(yPxScaled) {
               var storedVFStave = this.recursiveGetStoredVexflowStave();
+              if (storedVFStave === undefined) {
+                  throw new StreamException$1('Could not find vexflowStave for getting size');
+              }
+
               // for (var i = -10; i < 10; i++) {
               //    console.log("line: " + i + " y: " + storedVFStave.getYForLine(i));
               // }
@@ -18747,32 +19114,45 @@
       }, {
           key: 'clef',
           get: function get() {
-              var contextClef = this._specialContext('clef');
-              if (contextClef !== undefined) {
-                  return contextClef;
-              } else {
-                  return undefined;
-              }
+              return this.getSpecialContext('clef', true);
           },
           set: function set(newClef) {
+              var oldClef = this._firstElementContext('clef');
+              if (oldClef !== undefined) {
+                  this.replace(oldClef, newClef);
+              } else {
+                  this.insert(0.0, newClef);
+              }
               this._clef = newClef;
           }
       }, {
           key: 'keySignature',
           get: function get() {
-              return this._specialContext('keySignature');
+              return this.getSpecialContext('keySignature', true);
           },
           set: function set(newKeySignature) {
+              var oldKS = this._firstElementContext('keySignature');
+              if (oldKS !== undefined) {
+                  this.replace(oldKS, newKeySignature);
+              } else {
+                  this.insert(0.0, newKeySignature);
+              }
               this._keySignature = newKeySignature;
           }
       }, {
           key: 'timeSignature',
           get: function get() {
-              return this._specialContext('timeSignature');
+              return this.getSpecialContext('timeSignature', true);
           },
           set: function set(newTimeSignature) {
               if (typeof newTimeSignature === 'string') {
                   newTimeSignature = new meter.TimeSignature(newTimeSignature);
+              }
+              var oldTS = this._firstElementContext('timeSignature');
+              if (oldTS !== undefined) {
+                  this.replace(oldTS, newTimeSignature);
+              } else {
+                  this.insert(0.0, newTimeSignature);
               }
               this._timeSignature = newTimeSignature;
           }
@@ -19785,7 +20165,7 @@
               var partIndex = Math.floor(scaledYFromSystemTop / this.partSpacing);
               var scaledYinPart = scaledYFromSystemTop - partIndex * this.partSpacing;
               // console.log('systemIndex: ' + systemIndex + " partIndex: " + partIndex);
-              var rightPart = this.get(partIndex);
+              var rightPart = this.parts.get(partIndex);
               if (rightPart === undefined) {
                   return [undefined, undefined]; // may be too low?
               }
@@ -25967,6 +26347,7 @@ var converter = Object.freeze({
       chordTables: chordTables,
       clef: clef,
       converter: converter,
+      derivation: derivation,
       dynamics: dynamics,
       duration: duration,
       exceptions21: exceptions21,
