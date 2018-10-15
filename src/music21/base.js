@@ -293,8 +293,10 @@ export class Music21Object extends prebase.ProtoM21Object {
                         } catch (e) {
                             // do nothing... should not happen.
                         }
-                    } else if (matchClass) {
+                    } else if (lastElement.isClassOrSubclass(classList)) {
                         return lastElement;
+                    } else if (matchClass) {
+                        return thisElement;
                     }
                 } else {
                     lastElement = thisElement;

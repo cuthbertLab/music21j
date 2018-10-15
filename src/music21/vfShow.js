@@ -704,11 +704,15 @@ export class Renderer {
 
         let sClef = s.getSpecialContext('clef')
             || s.getContextByClass('Clef');
+
+        // this should not be necessary now that derivation is
+        // checked, but does not hurt.
         if (sClef === undefined && s.length) {
             // the clef context might be from something else in the stream...
             const firstEl = s.get(0);
             sClef = firstEl.getContextByClass('Clef');
         }
+        // last resort
         sClef = sClef || _clefSingleton;
 
         this.setStafflines(s, stave);
@@ -731,7 +735,7 @@ export class Renderer {
             stave.addKeySignature(ksVFName);
         }
 
-        const context_ts = s.getSpecialContext('timeSignature');
+        const context_ts = s.getSpecialContext('timeSignature') || s.getContextByClass('TimeSignature');
         if (context_ts !== undefined && rendOp.displayTimeSignature) {
             stave.addTimeSignature(
                 context_ts.numerator.toString()

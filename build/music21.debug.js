@@ -2259,8 +2259,10 @@
                               } catch (e) {
                                   // do nothing... should not happen.
                               }
-                          } else if (matchClass) {
+                          } else if (lastElement.isClassOrSubclass(classList)) {
                               return lastElement;
+                          } else if (matchClass) {
+                              return thisElement;
                           }
                       } else {
                           lastElement = thisElement;
@@ -12748,11 +12750,15 @@
               }
 
               var sClef = s.getSpecialContext('clef') || s.getContextByClass('Clef');
+
+              // this should not be necessary now that derivation is
+              // checked, but does not hurt.
               if (sClef === undefined && s.length) {
                   // the clef context might be from something else in the stream...
                   var firstEl = s.get(0);
                   sClef = firstEl.getContextByClass('Clef');
               }
+              // last resort
               sClef = sClef || _clefSingleton;
 
               this.setStafflines(s, stave);
@@ -12775,7 +12781,7 @@
                   stave.addKeySignature(ksVFName);
               }
 
-              var context_ts = s.getSpecialContext('timeSignature');
+              var context_ts = s.getSpecialContext('timeSignature') || s.getContextByClass('TimeSignature');
               if (context_ts !== undefined && rendOp.displayTimeSignature) {
                   stave.addTimeSignature(context_ts.numerator.toString() + '/' + context_ts.denominator.toString());
               }
@@ -17700,7 +17706,7 @@
               // cheap version of music21p method
               var extendableStepList = {};
               var stepNames = ['C', 'D', 'E', 'F', 'G', 'A', 'B'];
-              var ks = this.keySignature;
+              var ks = this.keySignature || this.getContextByClass('KeySignature');
               var _iteratorNormalCompletion18 = true;
               var _didIteratorError18 = false;
               var _iteratorError18 = undefined;
@@ -17989,7 +17995,7 @@
               }
               var numSystems = void 0;
               if (this.isClassOrSubclass('Score')) {
-                  var numParts = this.length;
+                  var numParts = this.parts.length;
                   numSystems = this.numSystems();
                   if (numSystems === undefined || ignoreSystems) {
                       numSystems = 1;
@@ -18075,7 +18081,7 @@
                   return totalLength;
               } else {
                   var rendOp = this.renderOptions;
-                  totalLength = 30 * this.length;
+                  totalLength = 30 * this.notesAndRests.length;
                   totalLength += rendOp.displayClef ? 30 : 0;
                   totalLength += rendOp.displayKeySignature && this.getSpecialContext('keySignature') ? this.getSpecialContext('keySignature').width : 0;
                   totalLength += rendOp.displayTimeSignature ? 30 : 0;
@@ -18578,7 +18584,8 @@
               // for (var i = -10; i < 10; i++) {
               //    console.log("line: " + i + " y: " + storedVFStave.getYForLine(i));
               // }
-              var lowestLine = this.clef !== undefined ? this.clef.lowestLine : 31;
+              var thisClef = this.clef || this.getContextByClass('Clef');
+              var lowestLine = thisClef !== undefined ? thisClef.lowestLine : 31;
 
               var lineSpacing = storedVFStave.options.spacing_between_lines_px;
               var linesAboveStaff = storedVFStave.options.space_above_staff_ln;

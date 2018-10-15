@@ -1468,7 +1468,7 @@ export class Stream extends base.Music21Object {
         // cheap version of music21p method
         const extendableStepList = {};
         const stepNames = ['C', 'D', 'E', 'F', 'G', 'A', 'B'];
-        const ks = this.keySignature;
+        const ks = this.keySignature || this.getContextByClass('KeySignature');
         for (const stepName of stepNames) {
             let stepAlter = 0;
             if (ks !== undefined) {
@@ -1670,7 +1670,7 @@ export class Stream extends base.Music21Object {
         }
         let numSystems;
         if (this.isClassOrSubclass('Score')) {
-            const numParts = this.length;
+            const numParts = this.parts.length;
             numSystems = this.numSystems();
             if (numSystems === undefined || ignoreSystems) {
                 numSystems = 1;
@@ -1745,7 +1745,7 @@ export class Stream extends base.Music21Object {
             return totalLength;
         } else {
             const rendOp = this.renderOptions;
-            totalLength = 30 * this.length;
+            totalLength = 30 * this.notesAndRests.length;
             totalLength += rendOp.displayClef ? 30 : 0;
             totalLength
                 += rendOp.displayKeySignature && this.getSpecialContext('keySignature')
@@ -2220,7 +2220,8 @@ export class Stream extends base.Music21Object {
         // for (var i = -10; i < 10; i++) {
         //    console.log("line: " + i + " y: " + storedVFStave.getYForLine(i));
         // }
-        const lowestLine = (this.clef !== undefined) ? this.clef.lowestLine : 31;
+        const thisClef = this.clef || this.getContextByClass('Clef');
+        const lowestLine = (thisClef !== undefined) ? thisClef.lowestLine : 31;
 
         const lineSpacing = storedVFStave.options.spacing_between_lines_px;
         const linesAboveStaff = storedVFStave.options.space_above_staff_ln;
