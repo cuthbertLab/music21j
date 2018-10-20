@@ -606,12 +606,7 @@ export class Stream extends base.Music21Object {
             ) {
                 // set stem direction on output...;
             }
-            let elOffset = 0.0;
-            if (this._elements.length > 0) {
-                const lastEl = this._elements[this._elements.length - 1];
-                const lastQL = lastEl.duration.quarterLength;
-                elOffset = this.elementOffset(lastEl) + lastQL;
-            }
+            const elOffset = this.highestTime;
             this._elements.push(el);
             this.setElementOffset(el, elOffset);
             el.offset = elOffset;
@@ -3049,13 +3044,16 @@ export class Score extends Stream {
         this.partSpacing = this.renderOptions.naiveHeight;
     }
 
-    get clef() {
+    get clef() { // TODO: remove -- this is unlike m21p
         const c = super.clef;
         if (c === undefined) {
             return new clef.TrebleClef();
         } else {
             return c;
         }
+    }
+    set clef(newClef) {
+        super.clef = newClef;
     }
 
     get systemPadding() {

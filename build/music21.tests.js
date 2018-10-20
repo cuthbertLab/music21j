@@ -1,5 +1,5 @@
 /**
- * music21j 0.9.0 built on  * 2018-10-14.
+ * music21j 0.9.0 built on  * 2018-10-20.
  * Copyright (c) 2013-2016 Michael Scott Cuthbert and cuthbertLab
  * BSD License, see LICENSE
  *
@@ -218,6 +218,28 @@
     }
 
     return call && (typeof call === "object" || typeof call === "function") ? call : self;
+  };
+
+  var set = function set(object, property, value, receiver) {
+    var desc = Object.getOwnPropertyDescriptor(object, property);
+
+    if (desc === undefined) {
+      var parent = Object.getPrototypeOf(object);
+
+      if (parent !== null) {
+        set(parent, property, value, receiver);
+      }
+    } else if ("value" in desc && desc.writable) {
+      desc.value = value;
+    } else {
+      var setter = desc.set;
+
+      if (setter !== undefined) {
+        setter.call(receiver, value);
+      }
+    }
+
+    return value;
   };
 
   var slicedToArray = function () {
@@ -16568,12 +16590,7 @@
                   if (el.isClassOrSubclass !== undefined && el.isClassOrSubclass('NotRest')) {
                       // set stem direction on output...;
                   }
-                  var elOffset = 0.0;
-                  if (this._elements.length > 0) {
-                      var lastEl = this._elements[this._elements.length - 1];
-                      var lastQL = lastEl.duration.quarterLength;
-                      elOffset = this.elementOffset(lastEl) + lastQL;
-                  }
+                  var elOffset = this.highestTime;
                   this._elements.push(el);
                   this.setElementOffset(el, elOffset);
                   el.offset = elOffset;
@@ -20290,12 +20307,16 @@
       }, {
           key: 'clef',
           get: function get$$() {
+              // TODO: remove -- this is unlike m21p
               var c = get(Score.prototype.__proto__ || Object.getPrototypeOf(Score.prototype), 'clef', this);
               if (c === undefined) {
                   return new clef.TrebleClef();
               } else {
                   return c;
               }
+          },
+          set: function set$$(newClef) {
+              set(Score.prototype.__proto__ || Object.getPrototypeOf(Score.prototype), 'clef', newClef, this);
           }
       }, {
           key: 'systemPadding',
