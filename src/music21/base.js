@@ -64,7 +64,7 @@ export class Music21Object extends prebase.ProtoM21Object {
 
         this._priority = 0; // default;
 
-        // this.id = sites.getId(this);
+        this.id = sites.getId(this);
         this.groups = [];
         // groups
         this.sites = new sites.Sites();

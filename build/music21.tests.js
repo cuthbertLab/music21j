@@ -1,5 +1,5 @@
 /**
- * music21j 0.9.0 built on  * 2018-10-20.
+ * music21j 0.9.0 built on  * 2018-10-21.
  * Copyright (c) 2013-2016 Michael Scott Cuthbert and cuthbertLab
  * BSD License, see LICENSE
  *
@@ -2121,7 +2121,7 @@
 
           _this._priority = 0; // default;
 
-          // this.id = sites.getId(this);
+          _this.id = getId(_this);
           _this.groups = [];
           // groups
           _this.sites = new Sites();
@@ -11246,18 +11246,18 @@
           _this2._scale = _this2.getScale();
           return _this2;
       }
-      /**
-       * returns a {@link music21.scale.MajorScale} or {@link music21.scale.MinorScale}
-       * object from the pitch object.
-       *
-       * @memberof music21.key.Key
-       * @param {string|undefined} [scaleType=this.mode] - the type of scale, or the mode.
-       * @returns {object} A music21.scale.Scale subclass.
-       */
-
 
       createClass(Key, [{
           key: 'getScale',
+
+          /**
+           * returns a {@link music21.scale.MajorScale} or {@link music21.scale.MinorScale}
+           * object from the pitch object.
+           *
+           * @memberof music21.key.Key
+           * @param {string|undefined} [scaleType=this.mode] - the type of scale, or the mode.
+           * @returns {object} A music21.scale.Scale subclass.
+           */
           value: function getScale(scaleType) {
               if (scaleType === undefined) {
                   scaleType = this.mode;
@@ -11298,6 +11298,17 @@
               var _scale3;
 
               return (_scale3 = this._scale).getScaleDegreeFromPitch.apply(_scale3, arguments);
+          }
+      }, {
+          key: 'tonicPitchNameWithCase',
+          get: function get() {
+              var tonicName = this.tonic.name;
+              if (this.mode === 'major') {
+                  tonicName = tonicName.toUpperCase();
+              } else if (this.mode === 'minor') {
+                  tonicName = tonicName.toLowerCase();
+              }
+              return tonicName;
           }
       }, {
           key: 'isConcrete',

@@ -73,7 +73,7 @@ export class KeySignature extends base.Music21Object {
     constructor(sharps) {
         super();
         this.classSortOrder = 2;
-        
+
         this._sharps = sharps || 0; // if undefined
         this._alteredPitchesCache = undefined;
 
@@ -316,6 +316,16 @@ export class Key extends KeySignature {
         this.tonic = new pitch.Pitch(keyName);
         this.mode = mode;
         this._scale = this.getScale();
+    }
+
+    get tonicPitchNameWithCase() {
+        let tonicName = this.tonic.name;
+        if (this.mode === 'major') {
+            tonicName = tonicName.toUpperCase();
+        } else if (this.mode === 'minor') {
+            tonicName = tonicName.toLowerCase();
+        }
+        return tonicName;
     }
     /**
      * returns a {@link music21.scale.MajorScale} or {@link music21.scale.MinorScale}
