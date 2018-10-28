@@ -1,5 +1,5 @@
 /**
- * music21j 0.9.0 built on  * 2018-10-21.
+ * music21j 0.9.0 built on  * 2018-10-28.
  * Copyright (c) 2013-2016 Michael Scott Cuthbert and cuthbertLab
  * BSD License, see LICENSE
  *
@@ -9025,6 +9025,9 @@
           _this._chordTablesAddressNeedsUpdating = true; // only update when needed
 
           notes.forEach(_this.add, _this, false);
+          if (notes.length > 0 && notes[0].duration !== undefined && notes[0].duration.quarterLength !== _this.duration.quarterLength) {
+              _this.duration = notes[0].duration;
+          }
           _this.sortPitches();
           return _this;
       }
@@ -9131,9 +9134,9 @@
 
 
           //    get intervalVectorString() {
-          //        
+          //
           //    }
-          //    
+          //
           //    static formatVectorString() {
           //        // needs pitch._convertPitchClassToStr
           //    }
@@ -21363,6 +21366,7 @@
               seta(ks, $mxKey, 'fifths', 'sharps', parseInt);
               // mode!
               // non-standard and key-octaves
+              ks._alteredPitchesCache = undefined; // TODO: remove private access...
               return ks;
           }
       }]);

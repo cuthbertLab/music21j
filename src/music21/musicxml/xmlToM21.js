@@ -487,7 +487,7 @@ export class MeasureParser {
         if (name === 'flat-flat') {
             name = 'double-flat';
         }
-        
+
         acc.set(name);
 
         // set print style
@@ -601,9 +601,9 @@ export class MeasureParser {
             }
             n.lyrics.push(lyricObj);
             currentLyricNumber += 1;
-        }        
+        }
     }
-    
+
     xmlToLyric($mxLyric, inputM21) {
         let l = inputM21;
         if (inputM21 === undefined) {
@@ -628,7 +628,7 @@ export class MeasureParser {
         if (identifier !== undefined) {
             l.identifier = identifier;
         }
-        
+
         const $mxSyllabic = $mxLyric.children('syllabic');
         if ($mxSyllabic.length) {
             l.syllabic = $mxSyllabic.text().trim();
@@ -641,8 +641,8 @@ export class MeasureParser {
         }
         return undefined;
     }
-    
-    
+
+
     insertIntoMeasureOrVoice($mxElement, el) {
         this.stream.insert(this.offsetMeasureNote, el);
     }
@@ -744,6 +744,7 @@ export class MeasureParser {
         seta(ks, $mxKey, 'fifths', 'sharps', parseInt);
         // mode!
         // non-standard and key-octaves
+        ks._alteredPitchesCache = undefined; // TODO: remove private access...
         return ks;
     }
 }

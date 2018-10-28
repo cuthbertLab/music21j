@@ -61,9 +61,15 @@ export class Chord extends note.NotRest {
         this._chordTablesAddressNeedsUpdating = true; // only update when needed
 
         notes.forEach(this.add, this, false);
+        if (notes.length > 0
+            && notes[0].duration !== undefined
+            && notes[0].duration.quarterLength !== this.duration.quarterLength
+        ) {
+            this.duration = notes[0].duration;
+        }
         this.sortPitches();
     }
-    
+
     get length() {
         return this._notes.length;
     }
@@ -107,7 +113,7 @@ export class Chord extends note.NotRest {
         pcGroup.sort((a, b) => a - b);
         return pcGroup;
     }
-    
+
     get chordTablesAddress() {
         if (this._chordTablesAddressNeedsUpdating) {
             this._chordTablesAddress = chordTables.seekChordTablesAddress(this);
@@ -115,7 +121,7 @@ export class Chord extends note.NotRest {
         this._chordTablesAddressNeedsUpdating = false;
         return this._chordTablesAddress;
     }
-    
+
     get commonName() {
         // TODO: many more exemptions from music21p
         const cta = this.chordTablesAddress;
@@ -135,14 +141,14 @@ export class Chord extends note.NotRest {
             }
             return out;
         }
-        
+
         if (ctn === undefined) {
-            return '';            
+            return '';
         } else {
-            return ctn[0];           
+            return ctn[0];
         }
     }
-    
+
     get forteClass() {
         return chordTables.addressToForteName(this.chordTablesAddress, 'tn');
     }
@@ -150,11 +156,11 @@ export class Chord extends note.NotRest {
     get forteClassNumber() {
         return this.chordTablesAddress.forteClass;
     }
-    
+
     get forteClassTnI() {
         return chordTables.addressToForteName(this.chordTablesAddress, 'tni');
     }
-    
+
     get(i) {
         if (typeof i === 'number') {
             return this._notes[i];
@@ -162,14 +168,14 @@ export class Chord extends note.NotRest {
             return undefined; // TODO(msc): add other get methods.
         }
     }
-    
+
     * [Symbol.iterator]() {
         for (let i = 0; i < this.length; i++) {
             yield this.get(i);
         }
     }
-    
-    
+
+
     areZRelations(other) {
         const zRelationAddress = chordTables.addressToZAddress(this.chordTablesAddress);
         if (zRelationAddress === undefined) {
@@ -182,7 +188,7 @@ export class Chord extends note.NotRest {
         }
         return true;
     }
-    
+
     getZRelation() {
         if (!this.hasZRelation) {
             return undefined;
@@ -193,14 +199,14 @@ export class Chord extends note.NotRest {
         let other;
         for (const thisAddress of addresses) {
             if (thisAddress.forteClass !== chordTablesAddress.forteClass) {
-                other = thisAddress;                
+                other = thisAddress;
             }
         }
         // other should always be defined;
         const prime = chordTables.addressToTransposedNormalForm(other);
         return new Chord(prime);
     }
-    
+
     get hasZRelation() {
         const post = chordTables.addressToZAddress(this.chordTablesAddress);
         if (post !== undefined) {
@@ -209,19 +215,19 @@ export class Chord extends note.NotRest {
             return false;
         }
     }
-    
+
     get intervalVector() {
-        return chordTables.addressToIntervalVector(this.chordTablesAddress);        
+        return chordTables.addressToIntervalVector(this.chordTablesAddress);
     }
-    
+
 //    get intervalVectorString() {
-//        
+//
 //    }
-//    
+//
 //    static formatVectorString() {
 //        // needs pitch._convertPitchClassToStr
 //    }
-    
+
     setStemDirectionFromClef(clef) {
         if (clef === undefined) {
             return this;
@@ -279,9 +285,9 @@ export class Chord extends note.NotRest {
     }
 
     sortPitches() {
-        this._notes.sort((a, b) => a.pitch.ps - b.pitch.ps);        
+        this._notes.sort((a, b) => a.pitch.ps - b.pitch.ps);
     }
-    
+
     // TODO: add remove
 
     /**
@@ -494,13 +500,13 @@ export class Chord extends note.NotRest {
         }
     }
 
-    
+
     isDominantSeventh() {
         return this.isSeventhOfType([0, 4, 7, 10]);
     }
-    
+
     isDiminishedSeventh() {
-        return this.isSeventhOfType([0, 3, 6, 9]);        
+        return this.isSeventhOfType([0, 3, 6, 9]);
     }
 
     isSeventhOfType(intervalArray) {
@@ -520,7 +526,7 @@ export class Chord extends note.NotRest {
         }
 
         const root = this.root();
-        
+
         for (const thisPitch of this.pitches) {
             const thisInterval = new interval.Interval(root, thisPitch);
             if (!intervalArray.includes(thisInterval.chromatic.mod12)) {
@@ -533,9 +539,9 @@ export class Chord extends note.NotRest {
         }
         return true;
 
-    
+
     }
-    
+
 
     /**
      * canBeDominantV - Returns true if the chord is a Major Triad or a Dominant Seventh
