@@ -103,6 +103,12 @@ export default function tests() {
         assert.equal(rn1.pitches[2].name, 'F#', 'test pitches[2] == F#');
         assert.equal(rn1.figureAndKey, '#IV in F major');
         assert.equal(rn1.degreeName, 'Subdominant', 'test is Subdominant');
+
+        rn1 = new music21.roman.RomanNumeral('Cad64', 'c');
+        assert.equal(rn1.scaleDegree, 1, 'test scale dgree of Cad64');
+        assert.equal(rn1.root().name, 'C', 'test root of Cad64');
+        assert.equal(rn1.bass().name, 'G', 'test bass of Cad64');
+        assert.equal(rn1.third.name, 'E-', 'test third of Cad64');
     });
 
     QUnit.test('music21.roman.RomanNumeral - inversions', assert => {

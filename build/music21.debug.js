@@ -24236,6 +24236,15 @@ var converter = Object.freeze({
               workingFigure = _correctForSecondaryR2[0];
               useScale = _correctForSecondaryR2[1];
 
+
+              if (workingFigure === 'Cad64') {
+                  if (useScale.mode === 'minor') {
+                      workingFigure = 'i64';
+                  } else {
+                      workingFigure = 'I64';
+                  }
+              }
+
               this.primaryFigure = workingFigure;
 
               workingFigure = this._parseOmittedSteps(workingFigure);
