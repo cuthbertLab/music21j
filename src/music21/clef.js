@@ -337,6 +337,23 @@ clef.clefFromString = function clefFromString(clefString, octaveShift) {
         } else {
             lineNum = 0;
         }
+    } else if (xnStr.length > 2) {
+        // try to get any clef in the module
+        const searchLower = xnStr.toLowerCase();
+        for (const clefKey of Object.keys(clef)) { // TODO(msc): fix when we get rid of clef = {}
+            if (!clefKey.includes('Clef')) {
+                continue;
+            }
+            const clefLower = clefKey.toLowerCase();
+            const potentialClass = clef[clefKey];
+            if (typeof potentialClass !== 'function') {
+                continue;
+            }
+            if (clefLower !== searchLower && clefLower !== searchLower + 'clef') {
+                continue;
+            }
+            return new potentialClass();
+        }
     }
 
     const arrayEqual = (a, b) =>

@@ -24,12 +24,12 @@ module.exports = grunt => {
     const TARGET_RAW = path.join(BUILD_DIR, 'music21.debug.js');
     const TARGET_RAW_MAP = TARGET_RAW + '.map';
     const TARGET_MIN = path.join(BUILD_DIR, 'music21.min.js');
-    const TARGET_TESTS = path.join(BUILD_DIR, 'music21.tests.js');
 
     const SOURCES = ['src/loadModules.js', 'src/music21/*.js', 'src/music21/*/*.js'];
 
     const TEST_ENTRY = path.join(TEST_DIR, 'loadAll.js');
     const TEST_SOURCES = ['tests/loadAll.js', 'tests/moduleTests/*.js'];
+    const TARGET_TESTS = path.join(BUILD_DIR, 'music21.tests.js');
 
     //  function webpackConfig(target, preset) {
     //  return {
@@ -112,7 +112,7 @@ module.exports = grunt => {
                 ],
                 paths: {
                     vexflow: './src/ext/vexflow/vexflow-min.js',
-                    qunit: './tests/qQnit/quint-2.0.1.js',
+                    qunit: './tests/qQunit/qunit-2.0.1.js',
                     eventjs: './src/ext/midijs/examples/inc/event.js',
                 },
             },

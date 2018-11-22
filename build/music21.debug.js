@@ -1,5 +1,5 @@
 /**
- * music21j 0.9.0 built on  * 2018-10-28.
+ * music21j 0.9.0 built on  * 2018-11-22.
  * Copyright (c) 2013-2016 Michael Scott Cuthbert and cuthbertLab
  * BSD License, see LICENSE
  *
@@ -10249,6 +10249,44 @@
               lineNum = 3;
           } else {
               lineNum = 0;
+          }
+      } else if (xnStr.length > 2) {
+          // try to get any clef in the module
+          var searchLower = xnStr.toLowerCase();
+          var _iteratorNormalCompletion = true;
+          var _didIteratorError = false;
+          var _iteratorError = undefined;
+
+          try {
+              for (var _iterator = Object.keys(clef)[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+                  var clefKey = _step.value;
+                  // TODO(msc): fix when we get rid of clef = {}
+                  if (!clefKey.includes('Clef')) {
+                      continue;
+                  }
+                  var clefLower = clefKey.toLowerCase();
+                  var potentialClass = clef[clefKey];
+                  if (typeof potentialClass !== 'function') {
+                      continue;
+                  }
+                  if (clefLower !== searchLower && clefLower !== searchLower + 'clef') {
+                      continue;
+                  }
+                  return new potentialClass();
+              }
+          } catch (err) {
+              _didIteratorError = true;
+              _iteratorError = err;
+          } finally {
+              try {
+                  if (!_iteratorNormalCompletion && _iterator.return) {
+                      _iterator.return();
+                  }
+              } finally {
+                  if (_didIteratorError) {
+                      throw _iteratorError;
+                  }
+              }
           }
       }
 

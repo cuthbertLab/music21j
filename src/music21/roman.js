@@ -862,8 +862,7 @@ export class RomanNumeral extends harmony.Harmony {
         if (mode === 'minor') {
             tonicDisplay = tonicDisplay.toLowerCase();
         }
-        const chordStr
-            = fullChordName
+        const chordStr = fullChordName
             + inversionName
             + connector
             + tonicDisplay

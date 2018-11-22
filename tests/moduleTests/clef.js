@@ -4,7 +4,7 @@ import music21 from '../../src/loadModules';
 export default function tests() {
     QUnit.test('music21.clef.Clef', assert => {
         const c1 = new music21.clef.Clef();
-        assert.equal(c1.isClassOrSubclass('Clef'), true, 'clef is a Clef');
+        assert.ok(c1.isClassOrSubclass('Clef'), 'clef is a Clef');
 
         const ac = new music21.clef.AltoClef();
         assert.equal(ac.lowestLine, 25, 'first line set');
@@ -30,5 +30,13 @@ export default function tests() {
         s.clef = ac;
         s.append(n);
         s.appendNewDOM($('body'));
+    });
+    QUnit.test('music21.clef clefFromString', assert => {
+        const tc = music21.clef.clefFromString('treble');
+        assert.ok(tc.isClassOrSubclass('TrebleClef'), 'tc is TrebleClef');
+        const tc2 = music21.clef.clefFromString('treble8va');
+        assert.ok(tc2.isClassOrSubclass('Treble8vaClef'), 'tc2 is Treble8vaClef');
+        const bc = music21.clef.clefFromString('F4');
+        assert.ok(bc.isClassOrSubclass('BassClef'), 'bc is BassClef');    
     });
 }
