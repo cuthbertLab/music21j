@@ -1,5 +1,5 @@
 /**
- * music21j 0.9.0 built on  * 2018-11-22.
+ * music21j 0.9.0 built on  * 2018-12-25.
  * Copyright (c) 2013-2016 Michael Scott Cuthbert and cuthbertLab
  * BSD License, see LICENSE
  *
@@ -378,7 +378,7 @@
           }
           try {
               // Property in destination object set; update its value.
-              if (source[p].constructor === Object) {
+              if (source[p] && source[p].constructor === Object) {
                   destination[p] = mergeRecursive(destination[p], source[p]);
               } else {
                   destination[p] = source[p];
@@ -16688,7 +16688,7 @@
                   setActiveSite = _ref3$setActiveSite === undefined ? true : _ref3$setActiveSite;
 
               if (el === undefined) {
-                  throw new StreamException$1('El must be given');
+                  throw new StreamException$1('Cannot insert without an element.');
               }
               try {
                   if (!ignoreSort) {

@@ -32,7 +32,7 @@ common.merge = function mergeRecursive(destination, source) {
         }
         try {
             // Property in destination object set; update its value.
-            if (source[p].constructor === Object) {
+            if (source[p] && source[p].constructor === Object) {
                 destination[p] = mergeRecursive(destination[p], source[p]);
             } else {
                 destination[p] = source[p];

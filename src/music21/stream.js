@@ -648,7 +648,7 @@ export class Stream extends base.Music21Object {
      */
     insert(offset, el, { ignoreSort=false, setActiveSite=true }={}) {
         if (el === undefined) {
-            throw new StreamException('El must be given');
+            throw new StreamException('Cannot insert without an element.');
         }
         try {
             if (!ignoreSort) {
