@@ -599,7 +599,7 @@ export class Note extends NotRest {
         common.merge(params, options);
         const clef = params.clef;
 
-        let useStemDirection = 'up';
+        let useStemDirection = this.stemDirection;
         
         // fixup stem direction -- must happen before Vex.Flow.Note is created...
         if (

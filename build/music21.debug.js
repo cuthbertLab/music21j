@@ -5514,7 +5514,7 @@
               common.merge(params, options);
               var clef = params.clef;
 
-              var useStemDirection = 'up';
+              var useStemDirection = this.stemDirection;
 
               // fixup stem direction -- must happen before Vex.Flow.Note is created...
               if (this.activeSite !== undefined && this.activeSite.renderOptions.stemDirection !== undefined && note.stemDirectionNames.includes(this.activeSite.renderOptions.stemDirection)) {
