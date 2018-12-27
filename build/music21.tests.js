@@ -1,5 +1,5 @@
 /**
- * music21j 0.9.0 built on  * 2018-11-22.
+ * music21j 0.9.0 built on  * 2018-12-27.
  * Copyright (c) 2013-2016 Michael Scott Cuthbert and cuthbertLab
  * BSD License, see LICENSE
  *
@@ -378,7 +378,7 @@
           }
           try {
               // Property in destination object set; update its value.
-              if (source[p].constructor === Object) {
+              if (source[p] && source[p].constructor === Object) {
                   destination[p] = mergeRecursive(destination[p], source[p]);
               } else {
                   destination[p] = source[p];
@@ -3789,6 +3789,99 @@
 
   /**
    * music21j -- Javascript reimplementation of Core music21p features.
+   * music21/bar -- Barline objects
+   *
+   * Copyright (c) 2013-19, Michael Scott Cuthbert and cuthbertLab
+   * Based on music21 (=music21p), Copyright (c) 2006–19, Michael Scott Cuthbert and cuthbertLab
+   *
+   */
+  var barStyleList = ['regular', 'dotted', 'dashed', 'heavy', 'double', 'final', 'heavy-light', 'heavy-heavy', 'tick', 'short', 'none'];
+  var barStyleDict = {
+      'light-light': 'double',
+      'light-heavy': 'final'
+  };
+
+  var reverseBarStyleDict = {
+      'double': 'light-light',
+      'final': 'light-heavy'
+  };
+
+  var BarException = function (_Music21Exception) {
+      inherits(BarException, _Music21Exception);
+
+      function BarException() {
+          classCallCheck(this, BarException);
+          return possibleConstructorReturn(this, (BarException.__proto__ || Object.getPrototypeOf(BarException)).apply(this, arguments));
+      }
+
+      return BarException;
+  }(Music21Exception);
+
+  function styleToMusicXMLBarStyle(value) {
+      if (reverseBarStyleDict[value] !== undefined) {
+          return reverseBarStyleDict[value];
+      } else {
+          return value;
+      }
+  }
+
+  function standardizeBarStyle(value) {
+      if (value === undefined) {
+          return 'regular';
+      }
+      value = value.toLowerCase();
+
+      if (barStyleList.includes(value)) {
+          return value;
+      }
+      if (barStyleDict[value] !== undefined) {
+          return barStyleDict[value];
+      }
+      throw new BarException('cannot process style: ' + value);
+  }
+
+  var Barline = function (_base$Music21Object) {
+      inherits(Barline, _base$Music21Object);
+
+      function Barline(type, location) {
+          classCallCheck(this, Barline);
+
+          var _this2 = possibleConstructorReturn(this, (Barline.__proto__ || Object.getPrototypeOf(Barline)).call(this));
+
+          _this2._type = undefined;
+
+          _this2.type = type;
+          _this2.location = location; // left, right, middle, None
+          return _this2;
+      }
+
+      createClass(Barline, [{
+          key: 'musicXMLBarStyle',
+          value: function musicXMLBarStyle() {
+              return styleToMusicXMLBarStyle(this.type);
+          }
+      }, {
+          key: 'type',
+          get: function get() {
+              return this._type;
+          },
+          set: function set(v) {
+              this._type = standardizeBarStyle(v);
+          }
+      }]);
+      return Barline;
+  }(base.Music21Object);
+
+
+
+  var bar = Object.freeze({
+      BarException: BarException,
+      Barline: Barline,
+      default: Barline
+  });
+
+  /**
+   * music21j -- Javascript reimplementation of Core music21p features.
    * music21/beam -- Beams and Beam class
    *
    * Copyright (c) 2013-16, Michael Scott Cuthbert and cuthbertLab
@@ -4866,6 +4959,18 @@
    */
   var note = {};
 
+  var NotRestException = function (_Music21Exception) {
+      inherits(NotRestException, _Music21Exception);
+
+      function NotRestException() {
+          classCallCheck(this, NotRestException);
+          return possibleConstructorReturn(this, (NotRestException.__proto__ || Object.getPrototypeOf(NotRestException)).apply(this, arguments));
+      }
+
+      return NotRestException;
+  }(Music21Exception);
+  note.NotRestException = NotRestException;
+
   note.noteheadTypeNames = ['arrow down', 'arrow up', 'back slashed', 'circle dot', 'circle-x', 'circled', 'cluster', 'cross', 'diamond', 'do', 'fa', 'inverted triangle', 'la', 'left triangle', 'mi', 'none', 'normal', 'other', 're', 'rectangle', 'slash', 'slashed', 'so', 'square', 'ti', 'triangle', 'x'];
 
   note.stemDirectionNames = ['double', 'down', 'noStem', 'none', 'unspecified', 'up'];
@@ -4899,23 +5004,23 @@
           var identifier = arguments[4];
           classCallCheck(this, Lyric);
 
-          var _this = possibleConstructorReturn(this, (Lyric.__proto__ || Object.getPrototypeOf(Lyric)).call(this));
+          var _this2 = possibleConstructorReturn(this, (Lyric.__proto__ || Object.getPrototypeOf(Lyric)).call(this));
 
-          _this.lyricConnector = '-'; // override to place something else between two notes...
-          _this.text = text;
-          _this._number = number;
-          _this.syllabic = syllabic;
-          _this.applyRaw = applyRaw || false;
-          _this.setTextAndSyllabic(_this.text, _this.applyRaw);
-          _this._identifier = identifier;
-          _this.style = {
+          _this2.lyricConnector = '-'; // override to place something else between two notes...
+          _this2.text = text;
+          _this2._number = number;
+          _this2.syllabic = syllabic;
+          _this2.applyRaw = applyRaw || false;
+          _this2.setTextAndSyllabic(_this2.text, _this2.applyRaw);
+          _this2._identifier = identifier;
+          _this2.style = {
               fillStyle: 'black',
               strokeStyle: 'black',
               fontFamily: 'Serif',
               fontSize: 12,
               fontWeight: ''
           };
-          return _this;
+          return _this2;
       }
 
       createClass(Lyric, [{
@@ -5027,23 +5132,23 @@
       function GeneralNote(ql) {
           classCallCheck(this, GeneralNote);
 
-          var _this2 = possibleConstructorReturn(this, (GeneralNote.__proto__ || Object.getPrototypeOf(GeneralNote)).call(this));
+          var _this3 = possibleConstructorReturn(this, (GeneralNote.__proto__ || Object.getPrototypeOf(GeneralNote)).call(this));
 
-          _this2.isChord = false;
+          _this3.isChord = false;
           if (ql !== undefined) {
-              _this2.duration.quarterLength = ql;
+              _this3.duration.quarterLength = ql;
           } else {
-              _this2.duration.quarterLength = 1.0;
+              _this3.duration.quarterLength = 1.0;
           }
-          _this2.volume = 60;
-          _this2.activeVexflowNote = undefined;
-          _this2.expressions = [];
-          _this2.articulations = [];
-          _this2.lyrics = [];
-          _this2.tie = undefined;
+          _this3.volume = 60;
+          _this3.activeVexflowNote = undefined;
+          _this3.expressions = [];
+          _this3.articulations = [];
+          _this3.lyrics = [];
+          _this3.tie = undefined;
           /* TODO: editorial objects, color, addLyric, insertLyric, hasLyrics */
           /* Later: augmentOrDiminish, getGrace, */
-          return _this2;
+          return _this3;
       }
 
       createClass(GeneralNote, [{
@@ -5095,6 +5200,12 @@
           value: function setStemDirectionFromClef(clef) {
               return undefined;
           }
+      }, {
+          key: 'getStemDirectionFromClef',
+          value: function getStemDirectionFromClef(clef) {
+              return undefined;
+          }
+
           /**
            * Sets the vexflow accidentals (if any), the dots, and the stem direction
            *
@@ -5267,20 +5378,36 @@
       function NotRest(ql) {
           classCallCheck(this, NotRest);
 
-          var _this3 = possibleConstructorReturn(this, (NotRest.__proto__ || Object.getPrototypeOf(NotRest)).call(this, ql));
+          var _this4 = possibleConstructorReturn(this, (NotRest.__proto__ || Object.getPrototypeOf(NotRest)).call(this, ql));
 
-          _this3.notehead = 'normal';
-          _this3.noteheadFill = 'default';
-          _this3.noteheadColor = 'black';
-          _this3.noteheadParenthesis = false;
-          _this3.volume = undefined; // not a real object yet.
-          _this3.beams = new beam.Beams();
+          _this4.notehead = 'normal';
+          _this4.noteheadFill = 'default';
+          _this4.noteheadColor = 'black';
+          _this4.noteheadParenthesis = false;
+          _this4.volume = undefined; // not a real object yet.
+          _this4.beams = new beam.Beams();
           /* TODO: this.duration.linkage -- need durationUnits */
-          _this3.stemDirection = undefined;
-          /* TODO: check stemDirection, notehead, noteheadFill, noteheadParentheses */
-          return _this3;
+          _this4._stemDirection = 'unspecified';
+          /* TODO: check notehead, noteheadFill, noteheadParentheses */
+          return _this4;
       }
 
+      createClass(NotRest, [{
+          key: 'stemDirection',
+          get: function get() {
+              return this._stemDirection;
+          },
+          set: function set(direction) {
+              if (direction === undefined) {
+                  direction = 'unspecified';
+              } else if (direction === 'none') {
+                  direction = 'noStem';
+              } else if (!note.stemDirectionNames.includes(direction)) {
+                  throw new NotRestException('not a valid stem direction name: ' + direction);
+              }
+              this._stemDirection = direction;
+          }
+      }]);
       return NotRest;
   }(GeneralNote);
   note.NotRest = NotRest;
@@ -5298,7 +5425,7 @@
    * and {@link music21.prebase.ProtoM21Object} (or in general, the **extends** list below) for other
    * things you can do with a `Note` object.
    *
-   * Missing from music21p: `microtone, pitchClass, pitchClassString, transpose(), fullName`.
+   * Missing from music21p: `transpose(), fullName`.  Transpose cannot be added because of circular imports
    *
    * @class Note
    * @memberof music21.note
@@ -5319,22 +5446,24 @@
       function Note(nn, ql) {
           classCallCheck(this, Note);
 
-          var _this4 = possibleConstructorReturn(this, (Note.__proto__ || Object.getPrototypeOf(Note)).call(this, ql));
+          var _this5 = possibleConstructorReturn(this, (Note.__proto__ || Object.getPrototypeOf(Note)).call(this, ql));
 
-          _this4.isNote = true; // for speed
-          _this4.isRest = false; // for speed
+          _this5.isNote = true; // for speed
+          _this5.isRest = false; // for speed
           if (nn !== undefined && nn.isClassOrSubclass !== undefined && nn.isClassOrSubclass('Pitch') === true) {
-              _this4.pitch = nn;
+              _this5.pitch = nn;
           } else {
-              _this4.pitch = new pitch.Pitch(nn);
+              _this5.pitch = new pitch.Pitch(nn);
           }
-          return _this4;
+          return _this5;
       }
 
       createClass(Note, [{
           key: 'setStemDirectionFromClef',
 
-          /* TODO: transpose, fullName, microtone, pitchclass, pitchClassString */
+
+          /* TODO: transpose, fullName */
+
           /**
            * Change stem direction according to clef.
            *
@@ -5343,20 +5472,32 @@
            * @returns {music21.note.Note} Original object, for chaining methods
            */
           value: function setStemDirectionFromClef(clef) {
+              if (clef !== undefined) {
+                  this.stemDirection = this.getStemDirectionFromClef(clef);
+              }
+              return this;
+          }
+
+          /**
+           * Same as setStemDirectionFromClef, but do not set the note, just return it.
+           */
+
+      }, {
+          key: 'getStemDirectionFromClef',
+          value: function getStemDirectionFromClef(clef) {
               if (clef === undefined) {
-                  return this;
+                  return undefined;
+              }
+              var midLine = clef.lowestLine + 4;
+              var DNNfromCenter = this.pitch.diatonicNoteNum - midLine;
+              // console.log(DNNfromCenter, this.pitch.nameWithOctave);
+              if (DNNfromCenter >= 0) {
+                  return 'down';
               } else {
-                  var midLine = clef.lowestLine + 4;
-                  var DNNfromCenter = this.pitch.diatonicNoteNum - midLine;
-                  // console.log(DNNfromCenter, this.pitch.nameWithOctave);
-                  if (DNNfromCenter >= 0) {
-                      this.stemDirection = 'down';
-                  } else {
-                      this.stemDirection = 'up';
-                  }
-                  return this;
+                  return 'up';
               }
           }
+
           /**
            * Returns a `Vex.Flow.StaveNote` that approximates this note.
            *
@@ -5373,11 +5514,13 @@
               common.merge(params, options);
               var clef = params.clef;
 
+              var useStemDirection = 'up';
+
               // fixup stem direction -- must happen before Vex.Flow.Note is created...
               if (this.activeSite !== undefined && this.activeSite.renderOptions.stemDirection !== undefined && note.stemDirectionNames.includes(this.activeSite.renderOptions.stemDirection)) {
-                  this.stemDirection = this.activeSite.renderOptions.stemDirection;
-              } else if (this.stemDirection === undefined && options.clef !== undefined) {
-                  this.setStemDirectionFromClef(options.clef);
+                  useStemDirection = this.activeSite.renderOptions.stemDirection;
+              } else if ([undefined, 'unspecified'].includes(this.stemDirection) && options.clef !== undefined) {
+                  useStemDirection = this.getStemDirectionFromClef(options.clef);
               }
 
               if (this.duration === undefined) {
@@ -5390,9 +5533,9 @@
               }
               var vexflowKey = this.pitch.vexflowName(clef);
 
-              var vfnStemDirection = this.stemDirection === 'down' ? Vex.Flow.StaveNote.STEM_DOWN : Vex.Flow.StaveNote.STEM_UP;
+              // Not supported: Double;  None is done elsewhere?
+              var vfnStemDirection = useStemDirection === 'down' ? Vex.Flow.StaveNote.STEM_DOWN : Vex.Flow.StaveNote.STEM_UP;
 
-              //        const vfnStemDirection = -1;
               var vfn = new Vex.Flow.StaveNote({
                   keys: [vexflowKey],
                   duration: vfd,
@@ -5451,8 +5594,6 @@
           set: function set(nn) {
               this.pitch.step = nn;
           }
-          // no Frequency
-
       }, {
           key: 'octave',
           get: function get() {
@@ -5460,6 +5601,15 @@
           },
           set: function set(nn) {
               this.pitch.octave = nn;
+          }
+      }, {
+          key: 'pitches',
+          get: function get() {
+              return [this.pitch];
+          },
+          set: function set(value) {
+              this.pitch = value[0];
+              // TODO: raise NoteException on index error.
           }
       }]);
       return Note;
@@ -5489,14 +5639,14 @@
       function Rest(ql) {
           classCallCheck(this, Rest);
 
-          var _this5 = possibleConstructorReturn(this, (Rest.__proto__ || Object.getPrototypeOf(Rest)).call(this, ql));
+          var _this6 = possibleConstructorReturn(this, (Rest.__proto__ || Object.getPrototypeOf(Rest)).call(this, ql));
 
-          _this5.isNote = false; // for speed
-          _this5.isRest = true; // for speed
-          _this5.name = 'rest'; // for note compatibility
-          _this5.lineShift = undefined;
-          _this5.color = 'black';
-          return _this5;
+          _this6.isNote = false; // for speed
+          _this6.isRest = true; // for speed
+          _this6.name = 'rest'; // for note compatibility
+          _this6.lineShift = undefined;
+          _this6.color = 'black';
+          return _this6;
       }
       /**
        * Returns a `Vex.Flow.StaveNote` that approximates this rest.
@@ -9838,10 +9988,8 @@
    * music21j -- Javascript reimplementation of Core music21p features.
    * music21/clef -- Clef objects
    *
-   * note: only defines a single Clef object for now
-   *
-   * Copyright (c) 2013-14, Michael Scott Cuthbert and cuthbertLab
-   * Based on music21 (=music21p), Copyright (c) 2006–14, Michael Scott Cuthbert and cuthbertLab
+   * Copyright (c) 2013-19, Michael Scott Cuthbert and cuthbertLab
+   * Based on music21 (=music21p), Copyright (c) 2006–19, Michael Scott Cuthbert and cuthbertLab
    *
    */
   /**
@@ -16688,7 +16836,7 @@
                   setActiveSite = _ref3$setActiveSite === undefined ? true : _ref3$setActiveSite;
 
               if (el === undefined) {
-                  throw new StreamException$1('El must be given');
+                  throw new StreamException$1('Cannot insert without an element.');
               }
               try {
                   if (!ignoreSort) {
@@ -26432,6 +26580,7 @@ var converter = Object.freeze({
       articulations: articulations,
       audioRecording: audioRecording,
       audioSearch: audioSearch,
+      bar: bar,
       beam: beam,
       chord: chord,
       chordTables: chordTables,

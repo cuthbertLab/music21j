@@ -15,6 +15,7 @@ import { debug } from './debug.js';
 import { pitch } from './pitch.js';
 import { beam } from './beam.js';
 import { common } from './common.js';
+import { Music21Exception } from './exceptions21.js';
 
 /**
  * Module for note classes. See the namespace {@link music21.note}
@@ -35,6 +36,11 @@ import { common } from './common.js';
  * @property {Array} stemDirectionNames - an Array of allowable stemDirection names.
  */
 export const note = {};
+
+export class NotRestException extends Music21Exception {
+    // no need
+}
+note.NotRestException = NotRestException;
 
 note.noteheadTypeNames = [
     'arrow down',
@@ -305,6 +311,10 @@ export class GeneralNote extends base.Music21Object {
     setStemDirectionFromClef(clef) {
         return undefined;
     }
+    getStemDirectionFromClef(clef) {
+        return undefined;
+    }
+    
     /**
      * Sets the vexflow accidentals (if any), the dots, and the stem direction
      *
@@ -357,7 +367,7 @@ export class GeneralNote extends base.Music21Object {
      * @param {object} [options] - other options (currently just `{instrument: {@link music21.instrument.Instrument} }`)
      * @returns {Number} - delay time in milliseconds until the next element (may be ignored)
      */
-    playMidi(tempo = 120, nextElement, options) {
+    playMidi(tempo=120, nextElement, options) {
         // returns the number of milliseconds to the next element in
         // case that can't be determined otherwise.
         if (options === undefined) {
@@ -443,9 +453,25 @@ export class NotRest extends GeneralNote {
         this.volume = undefined; // not a real object yet.
         this.beams = new beam.Beams();
         /* TODO: this.duration.linkage -- need durationUnits */
-        this.stemDirection = undefined;
-        /* TODO: check stemDirection, notehead, noteheadFill, noteheadParentheses */
+        this._stemDirection = 'unspecified';
+        /* TODO: check notehead, noteheadFill, noteheadParentheses */
     }
+    
+    get stemDirection() {
+        return this._stemDirection;
+    }
+    
+    set stemDirection(direction) {
+        if (direction === undefined) {
+            direction = 'unspecified';
+        } else if (direction === 'none') {
+            direction = 'noStem';
+        } else if (!note.stemDirectionNames.includes(direction)) {
+            throw new NotRestException(`not a valid stem direction name: ${direction}`);
+        }
+        this._stemDirection = direction; 
+    }
+    
 }
 note.NotRest = NotRest;
 
@@ -462,7 +488,7 @@ note.NotRest = NotRest;
  * and {@link music21.prebase.ProtoM21Object} (or in general, the **extends** list below) for other
  * things you can do with a `Note` object.
  *
- * Missing from music21p: `microtone, pitchClass, pitchClassString, transpose(), fullName`.
+ * Missing from music21p: `transpose(), fullName`.  Transpose cannot be added because of circular imports
  *
  * @class Note
  * @memberof music21.note
@@ -510,14 +536,25 @@ export class Note extends NotRest {
     set step(nn) {
         this.pitch.step = nn;
     }
-    // no Frequency
     get octave() {
         return this.pitch.octave;
     }
     set octave(nn) {
         this.pitch.octave = nn;
     }
-    /* TODO: transpose, fullName, microtone, pitchclass, pitchClassString */
+    
+    get pitches() {
+        return [this.pitch];
+    }
+    set pitches(value) {
+        this.pitch = value[0];
+        // TODO: raise NoteException on index error.
+    }
+    
+    
+    /* TODO: transpose, fullName */
+    
+    
     /**
      * Change stem direction according to clef.
      *
@@ -526,20 +563,29 @@ export class Note extends NotRest {
      * @returns {music21.note.Note} Original object, for chaining methods
      */
     setStemDirectionFromClef(clef) {
+        if (clef !== undefined) {
+            this.stemDirection = this.getStemDirectionFromClef(clef);
+        }
+        return this;        
+    }
+    
+    /**
+     * Same as setStemDirectionFromClef, but do not set the note, just return it.
+     */
+    getStemDirectionFromClef(clef) {
         if (clef === undefined) {
-            return this;
+            return undefined;
+        }
+        const midLine = clef.lowestLine + 4;
+        const DNNfromCenter = this.pitch.diatonicNoteNum - midLine;
+        // console.log(DNNfromCenter, this.pitch.nameWithOctave);
+        if (DNNfromCenter >= 0) {
+            return 'down';
         } else {
-            const midLine = clef.lowestLine + 4;
-            const DNNfromCenter = this.pitch.diatonicNoteNum - midLine;
-            // console.log(DNNfromCenter, this.pitch.nameWithOctave);
-            if (DNNfromCenter >= 0) {
-                this.stemDirection = 'down';
-            } else {
-                this.stemDirection = 'up';
-            }
-            return this;
+            return 'up';
         }
     }
+    
     /**
      * Returns a `Vex.Flow.StaveNote` that approximates this note.
      *
@@ -553,6 +599,8 @@ export class Note extends NotRest {
         common.merge(params, options);
         const clef = params.clef;
 
+        let useStemDirection = 'up';
+        
         // fixup stem direction -- must happen before Vex.Flow.Note is created...
         if (
             this.activeSite !== undefined
@@ -561,12 +609,12 @@ export class Note extends NotRest {
                 this.activeSite.renderOptions.stemDirection
             )
         ) {
-            this.stemDirection = this.activeSite.renderOptions.stemDirection;
+            useStemDirection = this.activeSite.renderOptions.stemDirection;
         } else if (
-            this.stemDirection === undefined
+            [undefined, 'unspecified'].includes(this.stemDirection)
             && options.clef !== undefined
         ) {
-            this.setStemDirectionFromClef(options.clef);
+            useStemDirection = this.getStemDirectionFromClef(options.clef);
         }
 
         if (this.duration === undefined) {
@@ -579,12 +627,12 @@ export class Note extends NotRest {
         }
         const vexflowKey = this.pitch.vexflowName(clef);
 
+        // Not supported: Double;  None is done elsewhere?
         const vfnStemDirection
-            = this.stemDirection === 'down'
+            = useStemDirection === 'down'
                 ? Vex.Flow.StaveNote.STEM_DOWN
                 : Vex.Flow.StaveNote.STEM_UP;
 
-        //        const vfnStemDirection = -1;
         const vfn = new Vex.Flow.StaveNote({
             keys: [vexflowKey],
             duration: vfd,
