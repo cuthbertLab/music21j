@@ -1,5 +1,5 @@
 /**
- * music21j 0.9.0 built on  * 2018-12-25.
+ * music21j 0.9.0 built on  * 2018-12-27.
  * Copyright (c) 2013-2016 Michael Scott Cuthbert and cuthbertLab
  * BSD License, see LICENSE
  *
@@ -3786,6 +3786,99 @@
   var recorderWorkerJs = 'function recorderWorkerJs() {\n    /**\n     *\n     *   Rewritten from Matt Diamond\'s recorderWorker -- MIT License\n     */\n    RecorderWorker = function RecorderWorker(parentContext) {\n            this.parent = parentContext;\n            this.recLength = 0;\n            this.recBuffersL = [];\n            this.recBuffersR = [];\n            this.sampleRate = undefined;\n    };\n    RecorderWorker.prototype.onmessage = function onmessage(e) {\n            switch (e.data.command) {\n            case \'init\':\n                this.init(e.data.config);\n                break;\n            case \'record\':\n                this.record(e.data.buffer);\n                break;\n            case \'exportWAV\':\n                this.exportWAV(e.data.type);\n                break;\n            case \'exportMonoWAV\':\n                this.exportMonoWAV(e.data.type);\n                break;\n            case \'getBuffers\':\n                this.getBuffers();\n                break;\n            case \'clear\':\n                this.clear();\n                break;\n            default:\n                break;\n            }\n   };\n   RecorderWorker.prototype.postMessage = function postMessage(msg) {\n            this.parent.postMessage(msg);\n   };\n\n   RecorderWorker.prototype.init = function init(config) {\n            this.sampleRate = config.sampleRate;\n   };\n\n   RecorderWorker.prototype.record = function record(inputBuffer) {\n            var inputBufferL = inputBuffer[0];\n            var inputBufferR = inputBuffer[1];\n            this.recBuffersL.push(inputBufferL);\n            this.recBuffersR.push(inputBufferR);\n            this.recLength += inputBufferL.length;\n   };\n\n   RecorderWorker.prototype.exportWAV = function exportWAV(type) {\n            var bufferL = this.mergeBuffers(this.recBuffersL);\n            var bufferR = this.mergeBuffers(this.recBuffersR);\n            var interleaved = this.interleave(bufferL, bufferR);\n            var dataview = this.encodeWAV(interleaved);\n            var audioBlob = new Blob([dataview], { \'type\': type });\n\n            this.postMessage(audioBlob);\n   };\n\n   RecorderWorker.prototype.exportMonoWAV = function exportMonoWAV(type) {\n            var bufferL = this.mergeBuffers(this.recBuffersL);\n            var dataview = this.encodeWAV(bufferL);\n            var audioBlob = new Blob([dataview], { \'type\': type });\n\n            this.postMessage(audioBlob);\n   };\n\n   RecorderWorker.prototype.mergeBuffers = function mergeBuffers(recBuffers) {\n            var result = new Float32Array(this.recLength);\n            var offset = 0;\n            for (var i = 0; i < recBuffers.length; i++) {\n                result.set(recBuffers[i], offset);\n                offset += recBuffers[i].length;\n            }\n            return result;\n    };\n\n    RecorderWorker.prototype.getBuffers = function getBuffers() {\n            var buffers = [];\n            buffers.push(this.mergeBuffers(this.recBuffersL));\n            buffers.push(this.mergeBuffers(this.recBuffersR));\n            this.postMessage(buffers);\n        };\n\n    RecorderWorker.prototype.clear = function clear() {\n            this.recLength = 0;\n            this.recBuffersL = [];\n            this.recBuffersR = [];\n        }\n\n    RecorderWorker.prototype.interleave = function interleave(inputL, inputR) {\n            var combinedLength = inputL.length + inputR.length;\n            var result = new Float32Array(combinedLength);\n\n            var index = 0;\n            var inputIndex = 0;\n\n            while (index < combinedLength) {\n                result[index++] = inputL[inputIndex];\n                result[index++] = inputR[inputIndex];\n                inputIndex++;\n            }\n            return result;\n        }\n    RecorderWorker.prototype.encodeWAV = function encodeWAV(samples, mono) {\n            var buffer = new ArrayBuffer(44 + (samples.length * 2));\n            var view = new DataView(buffer);\n\n            /* RIFF identifier */\n            writeString(view, 0, \'RIFF\');\n\n            /* file length */\n            view.setUint32(4, 32 + samples.length * 2, true);\n\n            /* RIFF type */\n            writeString(view, 8, \'WAVE\');\n\n            /* format chunk identifier */\n            writeString(view, 12, \'fmt \');\n\n            /* format chunk length */\n            view.setUint32(16, 16, true);\n\n            /* sample format (raw) */\n            view.setUint16(20, 1, true);\n\n            /* channel count */\n            view.setUint16(22, mono ? 1 : 2, true);\n\n            /* sample rate */\n            view.setUint32(24, this.sampleRate, true);\n\n            /* byte rate (sample rate * block align) */\n            view.setUint32(28, this.sampleRate * 4, true);\n\n            /* block align (channel count * bytes per sample) */\n            view.setUint16(32, 4, true);\n\n            /* bits per sample */\n            view.setUint16(34, 16, true);\n\n            /* data chunk identifier */\n            writeString(view, 36, \'data\');\n\n            /* data chunk length */\n            view.setUint32(40, samples.length * 2, true);\n\n            floatTo16BitPCM(view, 44, samples);\n\n            return view;\n        }\n\n    function floatTo16BitPCM(output, offset, input) {\n        for (var i = 0; i < input.length; i++, offset += 2) {\n            var s = Math.max(-1, Math.min(1, input[i]));\n            output.setInt16(offset, s < 0 ? s * 0x8000 : s * 0x7FFF, true);\n        }\n    }\n\n    function writeString(view, offset, string) {\n        for (var i = 0; i < string.length; i++) {\n            view.setUint8(offset + i, string.charCodeAt(i));\n        }\n    }\n\n    var recordWorker = new RecorderWorker(this);\n    this.onmessage = (function mainOnMessage(e) { recordWorker.onmessage(e) }).bind(this);\n}';
 
   var audioRecording = { Recorder: Recorder };
+
+  /**
+   * music21j -- Javascript reimplementation of Core music21p features.
+   * music21/bar -- Barline objects
+   *
+   * Copyright (c) 2013-19, Michael Scott Cuthbert and cuthbertLab
+   * Based on music21 (=music21p), Copyright (c) 2006–19, Michael Scott Cuthbert and cuthbertLab
+   *
+   */
+  var barStyleList = ['regular', 'dotted', 'dashed', 'heavy', 'double', 'final', 'heavy-light', 'heavy-heavy', 'tick', 'short', 'none'];
+  var barStyleDict = {
+      'light-light': 'double',
+      'light-heavy': 'final'
+  };
+
+  var reverseBarStyleDict = {
+      'double': 'light-light',
+      'final': 'light-heavy'
+  };
+
+  var BarException = function (_Music21Exception) {
+      inherits(BarException, _Music21Exception);
+
+      function BarException() {
+          classCallCheck(this, BarException);
+          return possibleConstructorReturn(this, (BarException.__proto__ || Object.getPrototypeOf(BarException)).apply(this, arguments));
+      }
+
+      return BarException;
+  }(Music21Exception);
+
+  function styleToMusicXMLBarStyle(value) {
+      if (reverseBarStyleDict[value] !== undefined) {
+          return reverseBarStyleDict[value];
+      } else {
+          return value;
+      }
+  }
+
+  function standardizeBarStyle(value) {
+      if (value === undefined) {
+          return 'regular';
+      }
+      value = value.toLowerCase();
+
+      if (barStyleList.includes(value)) {
+          return value;
+      }
+      if (barStyleDict[value] !== undefined) {
+          return barStyleDict[value];
+      }
+      throw new BarException('cannot process style: ' + value);
+  }
+
+  var Barline = function (_base$Music21Object) {
+      inherits(Barline, _base$Music21Object);
+
+      function Barline(type, location) {
+          classCallCheck(this, Barline);
+
+          var _this2 = possibleConstructorReturn(this, (Barline.__proto__ || Object.getPrototypeOf(Barline)).call(this));
+
+          _this2._type = undefined;
+
+          _this2.type = type;
+          _this2.location = location; // left, right, middle, None
+          return _this2;
+      }
+
+      createClass(Barline, [{
+          key: 'musicXMLBarStyle',
+          value: function musicXMLBarStyle() {
+              return styleToMusicXMLBarStyle(this.type);
+          }
+      }, {
+          key: 'type',
+          get: function get() {
+              return this._type;
+          },
+          set: function set(v) {
+              this._type = standardizeBarStyle(v);
+          }
+      }]);
+      return Barline;
+  }(base.Music21Object);
+
+
+
+  var bar = Object.freeze({
+      BarException: BarException,
+      Barline: Barline,
+      default: Barline
+  });
 
   /**
    * music21j -- Javascript reimplementation of Core music21p features.
@@ -9838,10 +9931,8 @@
    * music21j -- Javascript reimplementation of Core music21p features.
    * music21/clef -- Clef objects
    *
-   * note: only defines a single Clef object for now
-   *
-   * Copyright (c) 2013-14, Michael Scott Cuthbert and cuthbertLab
-   * Based on music21 (=music21p), Copyright (c) 2006–14, Michael Scott Cuthbert and cuthbertLab
+   * Copyright (c) 2013-19, Michael Scott Cuthbert and cuthbertLab
+   * Based on music21 (=music21p), Copyright (c) 2006–19, Michael Scott Cuthbert and cuthbertLab
    *
    */
   /**
@@ -26432,6 +26523,7 @@ var converter = Object.freeze({
       articulations: articulations,
       audioRecording: audioRecording,
       audioSearch: audioSearch,
+      bar: bar,
       beam: beam,
       chord: chord,
       chordTables: chordTables,

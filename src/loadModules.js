@@ -10,6 +10,7 @@ import { base } from './music21/base.js';
 import { articulations } from './music21/articulations.js';
 import { audioRecording } from './music21/audioRecording.js';
 import { audioSearch } from './music21/audioSearch.js';
+import * as bar from './music21/bar.js';
 import { beam } from './music21/beam.js';
 import { chord } from './music21/chord.js';
 import * as chordTables from './music21/chordTables.js';
@@ -53,6 +54,7 @@ const music21 = {
     articulations,
     audioRecording,
     audioSearch,
+    bar,
     beam,
     chord,
     chordTables,
