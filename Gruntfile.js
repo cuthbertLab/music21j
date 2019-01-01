@@ -10,7 +10,7 @@ module.exports = grunt => {
         = '/**\n'
         + ' * music21j <%= pkg.version %> built on '
         + ' * <%= grunt.template.today("yyyy-mm-dd") %>.\n'
-        + ' * Copyright (c) 2013-2016 Michael Scott Cuthbert and cuthbertLab\n'
+        + ' * Copyright (c) 2013-2019 Michael Scott Cuthbert and cuthbertLab\n'
         + ' * BSD License, see LICENSE\n'
         + ' *\n'
         + ' * http://github.com/cuthbertLab/music21j\n'

@@ -3,14 +3,14 @@ Music21j
 
 **Music21j: An Interactive Framework for Musical Analysis**
 
-Copyright &copy;2013-18, Michael Scott Cuthbert and cuthbertLab, some rights reserved.
+Copyright &copy;2013-19, Michael Scott Cuthbert and cuthbertLab, some rights reserved.
 
-**Music21j** is a Javascript reinterpretation of the [Music21 Python] package, 
+**Music21j** is a Javascript reinterpretation of the [Music21 Python] package,
 a toolkit for computer-aided musicology, now with intuitive HTML/Javascript
 interfaces. Some of the things music21j offers are:
 
   - The ability to visualize and hear changes in Streams quickly (using [Vexflow] and [MIDI.js])
-  - Connections (via Web Midi or [JazzSoft] plugin) to MIDI devices. 
+  - Connections (via Web Midi or [JazzSoft] plugin) to MIDI devices.
   - Music theory and analysis modules at the level of music21 ca. 2012
   - A repository of modules such as metronomes, keyboards, and automatic transcribers.
 
@@ -18,11 +18,11 @@ Though it does not have all the power of [Music21 Python], music21j can help wit
 a number of research problems in music history and theory. The introduction to the
 Python package will say more about it (it's better documented). The "namespaces"
 tab above will give introductions to some of the features of music21j. At this
-point we're focusing on documenting usage; developer docs will come 
+point we're focusing on documenting usage; developer docs will come
 later.
 
 Music21j requires your users to have a relatively recent web browser -- the project
-targets browsers no more than two years old. 
+targets browsers no more than two years old.
 Safari 9+, Chrome since 2015 (v.32+), Edge 14+, or Firefox since 2014 (v. 26+).  
 Internet Explorer 11+ is currently supported, though timing of playback can be a bit off, but
 support for it will be removed soon.  Microsoft Edge is the only major desktop browser for which
@@ -30,14 +30,14 @@ there is no support for MIDI devices.
 
 Documentation
 -------------
-This README appears in both the GitHub home page and the documentation 
+This README appears in both the GitHub home page and the documentation
 home page; to make the following links work, go to the documentation
 page at http://web.mit.edu/music21/music21j/doc/ .
 
 Begin at the {@link music21} namespace (click the link or use the
 menu above), or start with
 a specific one such as {@link music21.note} or {@link music21.stream}
-or a Class such as {@link music21.note.Note} or {@link music21.stream.Stream}. 
+or a Class such as {@link music21.note.Note} or {@link music21.stream.Stream}.
 
 (Ignore "Modules" they're not useful and duplicate the namespace pages).
 
@@ -79,7 +79,7 @@ using the python server above).
 ```html
 <html>
 <head>
-   <script data-main="/src/music21" src="/ext/require/require.js"> 
+   <script data-main="/src/music21" src="/ext/require/require.js">
    </script>
    <script>
    require(['music21'], function () {
@@ -123,7 +123,7 @@ Thanks to the following packages (among others) for making music21j possible:
 * [qUnit] - testing framework
 * [jsdoc] - makes this documentation possible
 
-Music21j in the Music and Theater Arts section at [MIT]. 
+Music21j in the Music and Theater Arts section at [MIT].
 The Python version of music21 was supported by grants from
 the Seaver Institute and the National Endowment for the Humanities.
 
@@ -146,7 +146,7 @@ Before building, every once in a while run (in the music21j directory)
 ```
 npm-check-updates
 ```
-   
+
 and if it looks like something to update, run
 
 ```

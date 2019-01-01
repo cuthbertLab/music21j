@@ -12,9 +12,9 @@ if (typeof(m21basis) === "undefined") {
      *
      * See http://web.mit.edu/music21/ for more details.
      *
-     * Copyright (c) 2013-18, Michael Scott Cuthbert and cuthbertLab
+     * Copyright (c) 2013-19, Michael Scott Cuthbert and cuthbertLab
      *
-     * Based on music21, Copyright (c) 2006-18, Michael Scott Cuthbert and cuthbertLab
+     * Based on music21, Copyright (c) 2006-19, Michael Scott Cuthbert and cuthbertLab
      * The plan is to implement all core music21 features as Javascript and to expose
      * more sophisticated features via server-side connections to remote servers running the
      * python music21 (music21p).
@@ -33,7 +33,7 @@ if (typeof(m21basis) === "undefined") {
      *
      * @namespace music21
      */
-    m21basis = {}; 
+    m21basis = {};
 }
 m21basis.VERSION = 0.9; // update in README.md also
 
