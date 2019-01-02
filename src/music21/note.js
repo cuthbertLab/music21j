@@ -413,15 +413,23 @@ export class GeneralNote extends base.Music21Object {
             // console.log(this.tie);
             if (this.tie === undefined || this.tie.type === 'start') {
                 // console.log(volume);
-                MIDI.noteOn(channel, midNum, volume, 0);
-                MIDI.noteOff(channel, midNum, stopTime);
+                try {
+                    MIDI.noteOn(channel, midNum, volume, 0);
+                    MIDI.noteOff(channel, midNum, stopTime);                    
+                } catch (e) {
+                    // do nothing -- might not have an output channel because of audio not connected
+                }
             } // else { console.log ('not going to play ', this.nameWithOctave); }
         } else if (this.isClassOrSubclass('Chord')) {
             // TODO: Tied Chords.
             for (let j = 0; j < this._notes.length; j++) {
                 midNum = this._notes[j].pitch.midi;
-                MIDI.noteOn(channel, midNum, volume, 0);
-                MIDI.noteOff(channel, midNum, milliseconds / 1000);
+                try {
+                    MIDI.noteOn(channel, midNum, volume, 0);
+                    MIDI.noteOff(channel, midNum, milliseconds / 1000);                    
+                } catch (e) {
+                    // do nothing -- might not have an output channel because of audio not connected                    
+                }
             }
         } // it's a note.Rest -- do nothing -- milliseconds takes care of it...
         return milliseconds;

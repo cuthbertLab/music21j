@@ -1,6 +1,6 @@
 /**
- * music21j 0.9.0 built on  * 2018-12-27.
- * Copyright (c) 2013-2016 Michael Scott Cuthbert and cuthbertLab
+ * music21j 0.9.0 built on  * 2019-01-01.
+ * Copyright (c) 2013-2019 Michael Scott Cuthbert and cuthbertLab
  * BSD License, see LICENSE
  *
  * http://github.com/cuthbertLab/music21j
@@ -5305,15 +5305,23 @@
                   // console.log(this.tie);
                   if (this.tie === undefined || this.tie.type === 'start') {
                       // console.log(volume);
-                      MIDI.noteOn(channel, midNum, volume, 0);
-                      MIDI.noteOff(channel, midNum, stopTime);
+                      try {
+                          MIDI.noteOn(channel, midNum, volume, 0);
+                          MIDI.noteOff(channel, midNum, stopTime);
+                      } catch (e) {
+                          // do nothing -- might not have an output channel because of audio not connected
+                      }
                   } // else { console.log ('not going to play ', this.nameWithOctave); }
               } else if (this.isClassOrSubclass('Chord')) {
                   // TODO: Tied Chords.
                   for (var j = 0; j < this._notes.length; j++) {
                       midNum = this._notes[j].pitch.midi;
-                      MIDI.noteOn(channel, midNum, volume, 0);
-                      MIDI.noteOff(channel, midNum, milliseconds / 1000);
+                      try {
+                          MIDI.noteOn(channel, midNum, volume, 0);
+                          MIDI.noteOff(channel, midNum, milliseconds / 1000);
+                      } catch (e) {
+                          // do nothing -- might not have an output channel because of audio not connected                    
+                      }
                   }
               } // it's a note.Rest -- do nothing -- milliseconds takes care of it...
               return milliseconds;
