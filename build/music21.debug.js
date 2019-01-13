@@ -1,5 +1,5 @@
 /**
- * music21j 0.9.0 built on  * 2019-01-01.
+ * music21j 0.9.0 built on  * 2019-01-13.
  * Copyright (c) 2013-2019 Michael Scott Cuthbert and cuthbertLab
  * BSD License, see LICENSE
  *
@@ -18226,6 +18226,11 @@
                       numSystems = 1;
                   }
                   var scoreHeight = numSystems * staffHeight * numParts + (numSystems - 1) * systemPadding;
+                  if (numSystems > 1) {
+                      // needs a little extra padding for some reason...
+                      scoreHeight += systemPadding / 2;
+                  }
+
                   // console.log('scoreHeight of ' + scoreHeight);
                   return scoreHeight;
               } else if (this.isClassOrSubclass('Part')) {
