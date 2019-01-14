@@ -1,5 +1,5 @@
 /**
- * music21j 0.9.0 built on  * 2019-01-13.
+ * music21j 0.9.0 built on  * 2019-01-14.
  * Copyright (c) 2013-2019 Michael Scott Cuthbert and cuthbertLab
  * BSD License, see LICENSE
  *
@@ -1011,6 +1011,20 @@
               return false;
           }
       }, {
+          key: 'toString',
+          value: function toString() {
+              var si = this.stringInfo();
+              if (si !== '') {
+                  si = ' ' + si;
+              }
+              return '<' + this.classes[0] + si + '>';
+          }
+      }, {
+          key: 'stringInfo',
+          value: function stringInfo() {
+              return '';
+          }
+      }, {
           key: 'classes',
           get: function get() {
               if (this._storedClasses !== undefined) {
@@ -1187,24 +1201,30 @@
           _this._cloneCallbacks._tuplets = _this.cloneCallbacksTupletFunction;
           return _this;
       }
-      /**
-       * Read or sets the number of dots on the duration.
-       *
-       * Updates the quarterLength
-       *
-       * @type Number
-       * @instance
-       * @default 0
-       * @memberof music21.duration.Duration
-       * @example
-       * var d = new music21.duration.Duration(2);
-       * d.dots === 0; // true
-       * d.dots = 1;
-       * d.quarterLength == 3; // true;
-       */
-
 
       createClass(Duration, [{
+          key: 'stringInfo',
+          value: function stringInfo() {
+              return this.quarterLength.toString();
+          }
+
+          /**
+           * Read or sets the number of dots on the duration.
+           *
+           * Updates the quarterLength
+           *
+           * @type Number
+           * @instance
+           * @default 0
+           * @memberof music21.duration.Duration
+           * @example
+           * var d = new music21.duration.Duration(2);
+           * d.dots === 0; // true
+           * d.dots = 1;
+           * d.quarterLength == 3; // true;
+           */
+
+      }, {
           key: 'cloneCallbacksTupletFunction',
           value: function cloneCallbacksTupletFunction(tupletKey, ret, obj) {
               // make sure that tuplets clone properly
@@ -2150,6 +2170,15 @@
       }
 
       createClass(Music21Object, [{
+          key: 'stringInfo',
+          value: function stringInfo() {
+              var id16 = this.id.toString(16);
+              while (id16.length < 4) {
+                  id16 = '0' + id16;
+              }
+              return '0x' + id16;
+          }
+      }, {
           key: 'mergeAttributes',
           value: function mergeAttributes(other) {
               // id;
@@ -4472,16 +4501,22 @@
           _this.set(accName);
           return _this;
       }
-      /**
-       * Sets a parameter of the accidental and updates name, alter, and modifier to suit.
-       *
-       * @memberof music21.pitch.Accidental
-       * @param {number|string} accName - the name, number, or modifier to set
-       * @returns {undefined}
-       */
-
 
       createClass(Accidental, [{
+          key: 'stringInfo',
+          value: function stringInfo() {
+              return this.name;
+          }
+
+          /**
+           * Sets a parameter of the accidental and updates name, alter, and modifier to suit.
+           *
+           * @memberof music21.pitch.Accidental
+           * @param {number|string} accName - the name, number, or modifier to set
+           * @returns {undefined}
+           */
+
+      }, {
           key: 'set',
           value: function set(accName) {
               if (accName !== undefined && accName.toLowerCase !== undefined) {
@@ -4697,9 +4732,15 @@
           return _this2;
       }
 
-      // N.B. cannot use transpose here, because of circular import.
-
       createClass(Pitch, [{
+          key: 'stringInfo',
+          value: function stringInfo() {
+              return this.nameWithOctave;
+          }
+
+          // N.B. cannot use transpose here, because of circular import.
+
+      }, {
           key: '_getEnharmonicHelper',
 
 
@@ -5467,6 +5508,11 @@
       }
 
       createClass(Note, [{
+          key: 'stringInfo',
+          value: function stringInfo() {
+              return this.name;
+          }
+      }, {
           key: 'setStemDirectionFromClef',
 
 
@@ -5656,16 +5702,22 @@
           _this6.color = 'black';
           return _this6;
       }
-      /**
-       * Returns a `Vex.Flow.StaveNote` that approximates this rest.
-       * Corrects for bug in VexFlow that renders a whole rest too low.
-       *
-       * @memberof music21.note.Rest
-       * @returns {Vex.Flow.StaveNote}
-       */
-
 
       createClass(Rest, [{
+          key: 'stringInfo',
+          value: function stringInfo() {
+              return this.duration.quarterLength.toString();
+          }
+
+          /**
+           * Returns a `Vex.Flow.StaveNote` that approximates this rest.
+           * Corrects for bug in VexFlow that renders a whole rest too low.
+           *
+           * @memberof music21.note.Rest
+           * @returns {Vex.Flow.StaveNote}
+           */
+
+      }, {
           key: 'vexflowNote',
           value: function vexflowNote(options) {
               var keyLine = 'b/4';
@@ -9191,6 +9243,14 @@
       }
 
       createClass(Chord, [{
+          key: 'stringInfo',
+          value: function stringInfo() {
+              var info = this.pitches.map(function (x) {
+                  return x.nameWithOctave;
+              });
+              return info.join(' ');
+          }
+      }, {
           key: 'get',
           value: function get(i) {
               if (typeof i === 'number') {
@@ -10095,20 +10155,25 @@
           }
           return _this;
       }
-      /**
-       * returns a new pitch object if the clef name is not Treble
-       * designed so it would look the same as it would in treble clef.
-       * for instance, bass-clef 2nd-space C# becomes treble clef 2nd-space A#
-       * used for Vex.Flow which requires all pitches to be input as if they
-       * are in treble clef.
-       *
-       * @memberof music21.clef.Clef
-       * @param {music21.pitch.Pitch} p
-       * @returns {music21.pitch.Pitch} new pitch
-       */
-
 
       createClass(Clef, [{
+          key: 'stringInfo',
+          value: function stringInfo() {
+              return '';
+          }
+          /**
+           * returns a new pitch object if the clef name is not Treble
+           * designed so it would look the same as it would in treble clef.
+           * for instance, bass-clef 2nd-space C# becomes treble clef 2nd-space A#
+           * used for Vex.Flow which requires all pitches to be input as if they
+           * are in treble clef.
+           *
+           * @memberof music21.clef.Clef
+           * @param {music21.pitch.Pitch} p
+           * @returns {music21.pitch.Pitch} new pitch
+           */
+
+      }, {
           key: 'convertPitchToTreble',
           value: function convertPitchToTreble(p) {
               if (this.lowestLine === undefined) {
@@ -11207,6 +11272,21 @@
       }
 
       createClass(KeySignature, [{
+          key: 'stringInfo',
+          value: function stringInfo() {
+              if (this.sharps === 0) {
+                  return 'of no sharps or flats';
+              } else if (this.sharps === -1) {
+                  return 'of 1 flat';
+              } else if (this.sharps === 1) {
+                  return 'of 1 sharp';
+              } else if (this.sharps < 0) {
+                  return 'of ' + Math.abs(this.sharps) + ' flats';
+              } else {
+                  return 'of ' + this.sharps + ' sharps';
+              }
+          }
+      }, {
           key: 'majorName',
 
           /**
@@ -11445,6 +11525,11 @@
       }
 
       createClass(Key, [{
+          key: 'stringInfo',
+          value: function stringInfo() {
+              return this.tonicPitchNameWithCase + ' ' + this.mode;
+          }
+      }, {
           key: 'getScale',
 
           /**
@@ -19550,6 +19635,11 @@
       }
 
       createClass(Measure, [{
+          key: 'stringInfo',
+          value: function stringInfo() {
+              return this.measureNumberWithSuffix() + ' offset=' + this.offset.toString();
+          }
+      }, {
           key: 'measureNumberWithSuffix',
           value: function measureNumberWithSuffix() {
               return this.number.toString() + this.numberSuffix;
@@ -20615,6 +20705,11 @@
       }
 
       createClass(Tie, [{
+          key: 'stringInfo',
+          value: function stringInfo() {
+              return this.type;
+          }
+      }, {
           key: 'type',
           get: function get() {
               return this._type;
@@ -24419,6 +24514,11 @@ var converter = Object.freeze({
       }
 
       createClass(RomanNumeral, [{
+          key: 'stringInfo',
+          value: function stringInfo() {
+              return this.figure + ' in ' + this.key.stringInfo();
+          }
+      }, {
           key: '_parseFigure',
           value: function _parseFigure() {
               var workingFigure = this.figure;

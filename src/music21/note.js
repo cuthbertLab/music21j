@@ -526,6 +526,11 @@ export class Note extends NotRest {
             this.pitch = new pitch.Pitch(nn);
         }
     }
+    
+    stringInfo() {
+        return this.name;
+    }    
+    
     get name() {
         return this.pitch.name;
     }
@@ -720,6 +725,12 @@ export class Rest extends GeneralNote {
         this.lineShift = undefined;
         this.color = 'black';
     }
+    
+    stringInfo() {
+        return this.duration.quarterLength.toString();
+    }
+    
+    
     /**
      * Returns a `Vex.Flow.StaveNote` that approximates this rest.
      * Corrects for bug in VexFlow that renders a whole rest too low.

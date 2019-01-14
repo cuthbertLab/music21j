@@ -41,6 +41,12 @@ export class Accidental extends prebase.ProtoM21Object {
         this.displayStatus = undefined; // true, false, undefined
         this.set(accName);
     }
+    
+    stringInfo() {
+        return this.name;
+    }    
+    
+    
     /**
      * Sets a parameter of the accidental and updates name, alter, and modifier to suit.
      *
@@ -287,6 +293,10 @@ export class Pitch extends prebase.ProtoM21Object {
         }
     }
 
+    stringInfo() {
+        return this.nameWithOctave;
+    }    
+    
     // N.B. cannot use transpose here, because of circular import.
 
     get step() {

@@ -102,6 +102,15 @@ export class Music21Object extends prebase.ProtoM21Object {
             newObj[keyName] = new sites.Sites();
         };
     }
+    
+    stringInfo() {
+        let id16 = this.id.toString(16);
+        while (id16.length < 4) {
+            id16 = '0' + id16;
+        }
+        return '0x' + id16;
+    }
+    
     get activeSite() {
         return this._activeSite;
     }

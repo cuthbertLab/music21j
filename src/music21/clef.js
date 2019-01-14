@@ -99,6 +99,10 @@ export class Clef extends base.Music21Object {
             this.lowestLineTrebleOffset -= 7 * octaveChange;
         }
     }
+    
+    stringInfo() {
+        return '';
+    }
     /**
      * returns a new pitch object if the clef name is not Treble
      * designed so it would look the same as it would in treble clef.

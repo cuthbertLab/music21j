@@ -109,6 +109,21 @@ export class KeySignature extends base.Music21Object {
             'B#',
         ];
     }
+    
+    stringInfo() {
+        if (this.sharps === 0) {
+            return 'of no sharps or flats';
+        } else if (this.sharps === -1) { 
+            return 'of 1 flat';
+        } else if (this.sharps === 1) {
+            return 'of 1 sharp';            
+        } else if (this.sharps < 0) {
+            return `of ${Math.abs(this.sharps)} flats`;            
+        } else {
+            return `of ${this.sharps} sharps`;
+        }
+    }
+    
     get sharps() {
         return this._sharps;
     }
@@ -318,6 +333,10 @@ export class Key extends KeySignature {
         this._scale = this.getScale();
     }
 
+    stringInfo() {
+        return this.tonicPitchNameWithCase + ' ' + this.mode;
+    }
+    
     get tonicPitchNameWithCase() {
         let tonicName = this.tonic.name;
         if (this.mode === 'major') {

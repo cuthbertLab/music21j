@@ -2628,6 +2628,10 @@ export class Measure extends Stream {
         this.numberSuffix = '';
     }
 
+    stringInfo() {
+        return this.measureNumberWithSuffix() + ' offset=' + this.offset.toString();
+    }
+    
     measureNumberWithSuffix() {
         return this.number.toString() + this.numberSuffix;
     }

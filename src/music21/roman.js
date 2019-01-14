@@ -267,6 +267,10 @@ export class RomanNumeral extends harmony.Harmony {
         }
     }
 
+    stringInfo() {
+        return this.figure + ' in ' + this.key.stringInfo();
+    }    
+
     _parseFigure() {
         let workingFigure = this.figure;
 

@@ -161,5 +161,17 @@ export class ProtoM21Object {
         }
         return false;
     }
+    
+    toString() { 
+        let si = this.stringInfo();
+        if (si !== '') {
+            si = ' ' + si;
+        }
+        return `<${this.classes[0]}${si}>`;
+    }
+    
+    stringInfo() {
+        return '';
+    }
 }
 prebase.ProtoM21Object = ProtoM21Object;

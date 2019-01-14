@@ -69,6 +69,12 @@ export class Chord extends note.NotRest {
         }
         this.sortPitches();
     }
+    
+    stringInfo() {
+        const info = this.pitches.map(x => x.nameWithOctave);
+        return info.join(' ');
+    }
+    
 
     get length() {
         return this._notes.length;

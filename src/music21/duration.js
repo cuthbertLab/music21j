@@ -112,6 +112,11 @@ export class Duration extends prebase.ProtoM21Object {
         }
         this._cloneCallbacks._tuplets = this.cloneCallbacksTupletFunction;
     }
+    
+    stringInfo() {
+        return this.quarterLength.toString();
+    }
+    
     /**
      * Read or sets the number of dots on the duration.
      *
