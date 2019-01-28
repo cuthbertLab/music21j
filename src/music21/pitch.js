@@ -487,7 +487,11 @@ export class Pitch extends prebase.ProtoM21Object {
         }
         let accidentalType = 'n';
         if (this.accidental !== undefined) {
-            accidentalType = this.accidental.vexflowModifier;
+            if ([0, -1, -2, 1, 2].includes(this.accidental.alter)) {
+                accidentalType = this.accidental.vexflowModifier;                
+            } else {
+                console.warn('unsupported accidental: ' + this.accidental);
+            }
         }
         const outName
             = tempPitch.step + accidentalType + '/' + tempPitch.octave;

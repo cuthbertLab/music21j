@@ -826,7 +826,7 @@ export class RomanNumeral extends harmony.Harmony {
 
         // specifying inversion is for backwards compatibility only.
         if (inversion === undefined) {
-            inversion = 0;
+            inversion = this.inversion();
         }
         let inversionName = '';
         if (inversion === 1) {
@@ -856,11 +856,11 @@ export class RomanNumeral extends harmony.Harmony {
         } else if (displayType === 'bassName') {
             fullChordName = this.bass().name.replace(/-/, 'b');
         } else {
-            // "default" submediant, etc...
+            // "default" or "degreeName" submediant, etc...
             fullChordName = this.degreeName;
             if (this.numbers !== undefined) {
                 fullChordName += ' ' + this.numbers.toString();
-            }
+            }            
         }
         let tonicDisplay = tonicName.replace(/-/, 'b');
         if (mode === 'minor') {

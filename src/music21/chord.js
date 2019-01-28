@@ -14,7 +14,7 @@ import { note } from './note.js';
 import * as chordTables from './chordTables.js';
 
 /**
- * chord Module. See {@link music21.chord} namespace for more details
+ * chord Module. See {@link music21.chord} namespace for more details.
  *
  * @exports music21/chord
  */

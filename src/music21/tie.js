@@ -24,7 +24,7 @@ import { Music21Exception } from './exceptions21.js';
  * @requires music21/prebase
  */
 export const tie = {};
-const VALID_TIE_TYPES = ['start', 'stop', 'continue', 'let-ring', undefined];
+const VALID_TIE_TYPES = ['start', 'stop', 'continue', 'let-ring', 'continue-let-ring'];
 
 /**
  * Tie class. Found in {@link music21.note.GeneralNote} `.tie`.
@@ -40,7 +40,7 @@ const VALID_TIE_TYPES = ['start', 'stop', 'continue', 'let-ring', undefined];
  * @property {string|undefined} placement - undefined = unknown or above/below. (NB curently does nothing)
  */
 export class Tie extends prebase.ProtoM21Object {
-    constructor(type) {
+    constructor(type='start') {
         super();
         this._type = undefined;
         this.style = 'normal';
@@ -58,7 +58,7 @@ export class Tie extends prebase.ProtoM21Object {
     set type(newType) {
         if (!VALID_TIE_TYPES.includes(newType)) {
             throw new Music21Exception(
-                'Tie type must be one of "start", "stop", "continue", "let-ring"'
+                `Type must be one of ${VALID_TIE_TYPES}, not ${newType}`
             );
         }
         this._type = newType;

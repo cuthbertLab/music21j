@@ -1,5 +1,5 @@
 /**
- * music21j 0.9.0 built on  * 2019-01-14.
+ * music21j 0.9.0 built on  * 2019-01-28.
  * Copyright (c) 2013-2019 Michael Scott Cuthbert and cuthbertLab
  * BSD License, see LICENSE
  *
@@ -4821,7 +4821,11 @@
               }
               var accidentalType = 'n';
               if (this.accidental !== undefined) {
-                  accidentalType = this.accidental.vexflowModifier;
+                  if ([0, -1, -2, 1, 2].includes(this.accidental.alter)) {
+                      accidentalType = this.accidental.vexflowModifier;
+                  } else {
+                      console.warn('unsupported accidental: ' + this.accidental);
+                  }
               }
               var outName = tempPitch.step + accidentalType + '/' + tempPitch.octave;
               return outName;
@@ -9183,7 +9187,7 @@
    *
    */
   /**
-   * chord Module. See {@link music21.chord} namespace for more details
+   * chord Module. See {@link music21.chord} namespace for more details.
    *
    * @exports music21/chord
    */
@@ -11661,6 +11665,11 @@
       }
 
       createClass(TimeSignature, [{
+          key: 'stringInfo',
+          value: function stringInfo() {
+              return this.ratioString;
+          }
+      }, {
           key: 'computeBeatGroups',
 
 
@@ -20674,7 +20683,7 @@
    * @requires music21/prebase
    */
   var tie = {};
-  var VALID_TIE_TYPES = ['start', 'stop', 'continue', 'let-ring', undefined];
+  var VALID_TIE_TYPES = ['start', 'stop', 'continue', 'let-ring', 'continue-let-ring'];
 
   /**
    * Tie class. Found in {@link music21.note.GeneralNote} `.tie`.
@@ -20692,7 +20701,8 @@
   var Tie = function (_prebase$ProtoM21Obje) {
       inherits(Tie, _prebase$ProtoM21Obje);
 
-      function Tie(type) {
+      function Tie() {
+          var type = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'start';
           classCallCheck(this, Tie);
 
           var _this = possibleConstructorReturn(this, (Tie.__proto__ || Object.getPrototypeOf(Tie)).call(this));
@@ -20716,7 +20726,7 @@
           },
           set: function set(newType) {
               if (!VALID_TIE_TYPES.includes(newType)) {
-                  throw new Music21Exception('Tie type must be one of "start", "stop", "continue", "let-ring"');
+                  throw new Music21Exception('Type must be one of ' + VALID_TIE_TYPES + ', not ' + newType);
               }
               this._type = newType;
           }
@@ -25076,7 +25086,7 @@ var converter = Object.freeze({
 
               // specifying inversion is for backwards compatibility only.
               if (inversion === undefined) {
-                  inversion = 0;
+                  inversion = this.inversion();
               }
               var inversionName = '';
               if (inversion === 1) {
@@ -25106,7 +25116,7 @@ var converter = Object.freeze({
               } else if (displayType === 'bassName') {
                   fullChordName = this.bass().name.replace(/-/, 'b');
               } else {
-                  // "default" submediant, etc...
+                  // "default" or "degreeName" submediant, etc...
                   fullChordName = this.degreeName;
                   if (this.numbers !== undefined) {
                       fullChordName += ' ' + this.numbers.toString();

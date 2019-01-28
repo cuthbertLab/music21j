@@ -56,6 +56,11 @@ export class TimeSignature extends base.Music21Object {
             this.ratioString = meterString;
         }
     }
+    
+    stringInfo() {
+        return this.ratioString;
+    }
+    
     get numerator() {
         return this._numerator;
     }
