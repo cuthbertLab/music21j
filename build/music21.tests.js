@@ -1,5 +1,5 @@
 /**
- * music21j 0.9.0 built on  * 2019-01-21.
+ * music21j 0.9.0 built on  * 2019-01-29.
  * Copyright (c) 2013-2019 Michael Scott Cuthbert and cuthbertLab
  * BSD License, see LICENSE
  *
@@ -4821,7 +4821,11 @@
               }
               var accidentalType = 'n';
               if (this.accidental !== undefined) {
-                  accidentalType = this.accidental.vexflowModifier;
+                  if ([0, -1, -2, 1, 2].includes(this.accidental.alter)) {
+                      accidentalType = this.accidental.vexflowModifier;
+                  } else {
+                      console.warn('unsupported accidental: ' + this.accidental);
+                  }
               }
               var outName = tempPitch.step + accidentalType + '/' + tempPitch.octave;
               return outName;
@@ -4921,9 +4925,10 @@
               return this.octave * 7 + pitch.nameToSteps[this.step] + 1;
           },
           set: function set(newDNN) {
-              newDNN -= 1; // makes math easier
+              newDNN -= 1; // makes math easier        
               this.octave = Math.floor(newDNN / 7);
-              this.step = pitch.stepsToName[newDNN % 7];
+              var mod7DNN = common.posMod(Math.round(newDNN), 7);
+              this.step = pitch.stepsToName[mod7DNN];
           }
       }, {
           key: 'frequency',

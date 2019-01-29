@@ -380,9 +380,10 @@ export class Pitch extends prebase.ProtoM21Object {
         return this.octave * 7 + pitch.nameToSteps[this.step] + 1;
     }
     set diatonicNoteNum(newDNN) {
-        newDNN -= 1; // makes math easier
+        newDNN -= 1; // makes math easier        
         this.octave = Math.floor(newDNN / 7);
-        this.step = pitch.stepsToName[newDNN % 7];
+        const mod7DNN = common.posMod(Math.round(newDNN), 7);
+        this.step = pitch.stepsToName[mod7DNN];
     }
     get frequency() {
         return 440 * Math.pow(2, (this.ps - 69) / 12);
