@@ -60,3 +60,9 @@ nosetests.xml
 node_modules/grunt/package.json
 
 node_modules/grunt-contrib-uglify/package.json
+.idea/encodings.xml
+.idea/misc.xml
+.idea/modules.xml
+.idea/music21j.iml
+.idea/vcs.xml
+.idea/workspace.xml
