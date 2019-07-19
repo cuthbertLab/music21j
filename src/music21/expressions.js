@@ -23,7 +23,7 @@ export const expressions = {};
  * @extends music21.base.Music21Object
  * @property {string} name
  * @property {string} vexflowModifier
- * @property {Int} setPosition
+ * @property {int} setPosition
  */
 export class Expression extends base.Music21Object {
     constructor() {

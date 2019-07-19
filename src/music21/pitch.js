@@ -426,7 +426,7 @@ export class Pitch extends prebase.ProtoM21Object {
     
     /**
      * @param {boolean} inPlace
-     * @param {Int} directionInt -- -1 = down, 1 = up
+     * @param {int} directionInt -- -1 = down, 1 = up
      */
     _getEnharmonicHelper(inPlace=false, directionInt) {
         // differs from Python version because

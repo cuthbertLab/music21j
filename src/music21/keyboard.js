@@ -48,7 +48,7 @@ export const keyboard = {};
  * @property {Array<function>} callbacks - called when key is clicked/selected
  * @property {number} [scaleFactor=1]
  * @property {music21.keyboard.Keyboard|undefined} parent
- * @property {Int} id - midinumber associated with the key.
+ * @property {int} id - midinumber associated with the key.
  * @property {music21.pitch.Pitch|undefined} pitchObj
  * @property {DOMObject|undefined} svgObj - SVG representing the drawing of the key
  * @property {DOMObject|undefined} noteNameSvgObj - SVG representing the note name drawn on the key

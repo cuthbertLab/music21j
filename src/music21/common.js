@@ -125,9 +125,9 @@ common.aggregation = (baseClass, ...mixins) => {
 /**
  * posMod - return a modulo value that is not negative
  *
- * @param  {Int} a value
- * @param  {Int} b modulo
- * @return {Int}   a mod b between 0 and b - 1
+ * @param  {int} a value
+ * @param  {int} b modulo
+ * @return {int}   a mod b between 0 and b - 1
  */
 
 common.posMod = function posMod(a, b) {
@@ -174,7 +174,7 @@ common.statisticalMode = function statisticalMode(a) {
  * fromRoman - Convert a Roman numeral (upper or lower) to an int.
  *
  * @param  {string} num roman numeral representation of a number
- * @return {Int}     integer value of roman numeral;
+ * @return {int}     integer value of roman numeral;
  */
 
 common.fromRoman = function fromRoman(num) {
@@ -211,7 +211,7 @@ common.fromRoman = function fromRoman(num) {
 /**
  * toRoman - Convert a number from 1 to 3999 to a roman numeral
  *
- * @param  {Int} num number to convert
+ * @param  {int} num number to convert
  * @return {string}     as roman numeral
  */
 
@@ -278,7 +278,7 @@ common.makeSVGright = function makeSVGright(tag='svg', attrs) {
  * (for "32nd") etc.
  *
  * @function music21.common.ordinalAbbreviation
- * @param {Int} value
+ * @param {int} value
  * @param {Boolean} [plural=false] - make plural (note that "21st" plural is "21st")
  * @return {string}
  */
@@ -315,7 +315,7 @@ common.ordinalAbbreviation = function ordinalAbbreviation(value, plural) {
  * @function music21.common.rationalize
  * @param {number} ql - number to rationalize
  * @param {number} [epsilon=0.001] - how close to get
- * @param {Int} [maxDenominator=50] - maximum denominator
+ * @param {int} [maxDenominator=50] - maximum denominator
  * @returns {object|undefined} {'numerator: numerator, 'denominator': denominator}
  */
 common.rationalize = function rationalize(ql, epsilon, maxDenominator) {
@@ -340,7 +340,7 @@ common.rationalize = function rationalize(ql, epsilon, maxDenominator) {
  *
  * @function music21.common.stripPx
  * @param {Int|string} str -- string that might have 'px' at the end or not
- * @returns {Int} a number to use
+ * @returns {int} a number to use
  */
 common.stripPx = function stripPx(str) {
     if (typeof str === 'string') {

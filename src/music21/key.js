@@ -58,8 +58,8 @@ key.convertKeyStringToMusic21KeyString = function convertKeyStringToMusic21KeySt
  * @class KeySignature
  * @memberof music21.key
  * @description Represents a key signature
- * @param {Int} [sharps=0] -- the number of sharps (negative for flats)
- * @property {Int} [sharps=0] -- number of sharps (negative for flats)
+ * @param {int} [sharps=0] -- the number of sharps (negative for flats)
+ * @property {int} [sharps=0] -- number of sharps (negative for flats)
  * @extends music21.base.Music21Object
  * @example
  * var ks = new music21.key.KeySignature(-3); //E-flat major or c minor

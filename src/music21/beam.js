@@ -70,7 +70,7 @@ beam.Beam = Beam;
  * @extends music21.prebase.ProtoM21Object
  * @property {Array<music21.beam.Beam>} beamsList - a list of Beam objects
  * @property {Boolean} [feathered=false] - is this a feathered beam.
- * @property {Int} length - length of beamsList
+ * @property {int} length - length of beamsList
  */
 export class Beams extends prebase.ProtoM21Object {
     static naiveBeams(srcList) {
@@ -286,7 +286,7 @@ export class Beams extends prebase.ProtoM21Object {
      * Get the beam with the given number or throw an exception.
      *
      * @memberof music21.beam.Beams
-     * @param {Int} number - the beam number to retrieve (usually one less than the position in `.beamsList`)
+     * @param {int} number - the beam number to retrieve (usually one less than the position in `.beamsList`)
      * @returns {music21.beam.Beam|undefined}
      */
     getByNumber(number) {
@@ -304,7 +304,7 @@ export class Beams extends prebase.ProtoM21Object {
      * Get an Array of all the numbers for the beams
      *
      * @memberof music21.beam.Beams
-     * @returns {Array<Int>} all the numbers
+     * @returns {Array<int>} all the numbers
      */
     getNumbers() {
         const numbers = [];
@@ -317,7 +317,7 @@ export class Beams extends prebase.ProtoM21Object {
      * Returns the type + "-" + direction (if direction is defined)
      * for the beam with the given number.
      *
-     * @param {Int} number
+     * @param {int} number
      * @returns {music21.beam.Beam|undefined}
      */
     getTypeByNumber(number) {
@@ -365,7 +365,7 @@ export class Beams extends prebase.ProtoM21Object {
      * Set the {@link music21.beam.Beam} object specified by `number` to a given type/direction
      *
      * @memberof music21.beam.Beams
-     * @param {Int} number
+     * @param {int} number
      * @param {string} type
      * @param {string} [direction]
      * @returns {this}

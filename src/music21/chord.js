@@ -652,7 +652,7 @@ export class Chord extends note.NotRest {
      * the first one in `.pitches` is returned.
      *
      * @memberof music21.chord.Chord
-     * @param {Int} chordStep a positive integer representing the chord step
+     * @param {int} chordStep a positive integer representing the chord step
      * @param {music21.pitch.Pitch} [testRoot] - the Pitch to use as a temporary root
      * @returns {music21.pitch.Pitch|undefined}
      */

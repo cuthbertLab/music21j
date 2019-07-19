@@ -537,11 +537,11 @@ clef.lowestLines = {
  * @memberof music21.clef
  * @extends music21.base.Music21Object
  * @param {string} name - clef name
- * @param {Int} [octaveChange=0] - ottava
+ * @param {int} [octaveChange=0] - ottava
  * @property {string|undefined} name
- * @property {Int} lowestLine - diatonicNoteNum (C4 = 29) for the lowest line (in a five-line staff)
- * @property {Int} lowestLineTrebleOffset - difference between the first line of this staff and the first line in treble clef
- * @property {Int} octaveChange
+ * @property {int} lowestLine - diatonicNoteNum (C4 = 29) for the lowest line (in a five-line staff)
+ * @property {int} lowestLineTrebleOffset - difference between the first line of this staff and the first line in treble clef
+ * @property {int} octaveChange
  */
 export class Clef extends base.Music21Object {
     constructor(name, octaveChange) {

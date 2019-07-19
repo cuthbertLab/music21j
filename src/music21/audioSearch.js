@@ -278,7 +278,7 @@ audioSearch.autoCorrelate = function autoCorrelate(
  *
  * @function midiNumDiffFromFrequency
  * @param {Number} frequency
- * @returns {Array<Int>} [miniNumber, centsOff]
+ * @returns {Array<int>} [miniNumber, centsOff]
  */
 audioSearch.midiNumDiffFromFrequency = function midiNumDiffFromFrequency(
     frequency

@@ -83,7 +83,7 @@ class Instrument extends base.Music21Object {
      * Skips 10 unless this.inGMPercMap is true
      *
      * @memberof music21.instrument.Instrument
-     * @param {Array<Int>} [usedChannels]
+     * @param {Array<int>} [usedChannels]
      * @returns {Number}
      */
     autoAssignMidiChannel(usedChannels) {

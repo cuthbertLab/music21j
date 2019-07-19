@@ -572,13 +572,13 @@ tempo.baseTempo = 60;
  * @extends music21.prebase.ProtoM21Object
  * @param {number} [tempo=music21.tempo.baseTempo] - the tempo of the metronome to start
  * @property {number} tempo
- * @property {Int} [numBeatsPerMeasure=4]
+ * @property {int} [numBeatsPerMeasure=4]
  * @property {number} [minTempo=10]
  * @property {number} [maxTempo=600]
  * @property {bool} [flash=false] - flash the tempo
  * @property {bool} [silent=false] - play silently
- * @property {Int} beat - current beat number
- * @property {Int} chirpTimeout - an index of a timeout object for chirping
+ * @property {int} beat - current beat number
+ * @property {int} chirpTimeout - an index of a timeout object for chirping
  */
 export class Metronome extends prebase.ProtoM21Object {
     constructor(tempoInt) {
@@ -675,7 +675,7 @@ export class Metronome extends prebase.ProtoM21Object {
      * To change the tempo, just set this.tempo = n
      *
      * @memberof music21.tempo.Metronome
-     * @param {Int} n - number of clicks to the right
+     * @param {int} n - number of clicks to the right
      * @returns {number} new tempo
      */
     increaseSpeed(n) {
@@ -706,7 +706,7 @@ export class Metronome extends prebase.ProtoM21Object {
      * To change the tempo, just set this.tempo = n
      *
      * @memberof music21.tempo.Metronome
-     * @param {Int} n - number of clicks to the left
+     * @param {int} n - number of clicks to the left
      * @returns {number} new tempo
      */
     decreaseSpeed(n) {

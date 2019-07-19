@@ -482,9 +482,9 @@
   /**
    * posMod - return a modulo value that is not negative
    *
-   * @param  {Int} a value
-   * @param  {Int} b modulo
-   * @return {Int}   a mod b between 0 and b - 1
+   * @param  {int} a value
+   * @param  {int} b modulo
+   * @return {int}   a mod b between 0 and b - 1
    */
 
   common.posMod = function posMod(a, b) {
@@ -531,7 +531,7 @@
    * fromRoman - Convert a Roman numeral (upper or lower) to an int.
    *
    * @param  {string} num roman numeral representation of a number
-   * @return {Int}     integer value of roman numeral;
+   * @return {int}     integer value of roman numeral;
    */
 
   common.fromRoman = function fromRoman(num) {
@@ -610,7 +610,7 @@
   /**
    * toRoman - Convert a number from 1 to 3999 to a roman numeral
    *
-   * @param  {Int} num number to convert
+   * @param  {int} num number to convert
    * @return {string}     as roman numeral
    */
 
@@ -666,7 +666,7 @@
    * (for "32nd") etc.
    *
    * @function music21.common.ordinalAbbreviation
-   * @param {Int} value
+   * @param {int} value
    * @param {Boolean} [plural=false] - make plural (note that "21st" plural is "21st")
    * @return {string}
    */
@@ -699,7 +699,7 @@
    * @function music21.common.rationalize
    * @param {number} ql - number to rationalize
    * @param {number} [epsilon=0.001] - how close to get
-   * @param {Int} [maxDenominator=50] - maximum denominator
+   * @param {int} [maxDenominator=50] - maximum denominator
    * @returns {object|undefined} {'numerator: numerator, 'denominator': denominator}
    */
   common.rationalize = function rationalize(ql, epsilon, maxDenominator) {
@@ -724,7 +724,7 @@
    *
    * @function music21.common.stripPx
    * @param {Int|string} str -- string that might have 'px' at the end or not
-   * @returns {Int} a number to use
+   * @returns {int} a number to use
    */
   common.stripPx = function stripPx(str) {
       if (typeof str === 'string') {
@@ -3413,7 +3413,7 @@
    *
    * @function midiNumDiffFromFrequency
    * @param {Number} frequency
-   * @returns {Array<Int>} [miniNumber, centsOff]
+   * @returns {Array<int>} [miniNumber, centsOff]
    */
   audioSearch.midiNumDiffFromFrequency = function midiNumDiffFromFrequency(frequency) {
       var midiNumFloat = 12 * (Math.log(frequency / 440) / Math.log(2)) + 69;
@@ -3978,7 +3978,7 @@
    * @extends music21.prebase.ProtoM21Object
    * @property {Array<music21.beam.Beam>} beamsList - a list of Beam objects
    * @property {Boolean} [feathered=false] - is this a feathered beam.
-   * @property {Int} length - length of beamsList
+   * @property {int} length - length of beamsList
    */
   var Beams = function (_prebase$ProtoM21Obje2) {
       inherits(Beams, _prebase$ProtoM21Obje2);
@@ -4284,7 +4284,7 @@
            * Get the beam with the given number or throw an exception.
            *
            * @memberof music21.beam.Beams
-           * @param {Int} number - the beam number to retrieve (usually one less than the position in `.beamsList`)
+           * @param {int} number - the beam number to retrieve (usually one less than the position in `.beamsList`)
            * @returns {music21.beam.Beam|undefined}
            */
 
@@ -4327,7 +4327,7 @@
            * Get an Array of all the numbers for the beams
            *
            * @memberof music21.beam.Beams
-           * @returns {Array<Int>} all the numbers
+           * @returns {Array<int>} all the numbers
            */
 
       }, {
@@ -4365,7 +4365,7 @@
            * Returns the type + "-" + direction (if direction is defined)
            * for the beam with the given number.
            *
-           * @param {Int} number
+           * @param {int} number
            * @returns {music21.beam.Beam|undefined}
            */
 
@@ -4422,7 +4422,7 @@
            * Set the {@link music21.beam.Beam} object specified by `number` to a given type/direction
            *
            * @memberof music21.beam.Beams
-           * @param {Int} number
+           * @param {int} number
            * @param {string} type
            * @param {string} [direction]
            * @returns {this}
@@ -4746,7 +4746,7 @@
 
           /**
            * @param {boolean} inPlace
-           * @param {Int} directionInt -- -1 = down, 1 = up
+           * @param {int} directionInt -- -1 = down, 1 = up
            */
           value: function _getEnharmonicHelper() {
               var inPlace = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
@@ -5840,7 +5840,7 @@
    *
    * @class GenericInterval
    * @memberof music21.interval
-   * @param {Int} [gi=1] - generic interval (1 or higher, or -2 or lower)
+   * @param {int} [gi=1] - generic interval (1 or higher, or -2 or lower)
    * @example
    * var gi = new music21.interval.GenericInterval(-14)
    * gi.value
@@ -6384,8 +6384,8 @@
   /**
    * @function music21.interval.convertDiatonicNumberToStep
    * @memberof music21.interval
-   * @param {Int} dn - diatonic number, where 29 = C4, C#4 etc.
-   * @returns {Array} two element array of {string} stepName and {Int} octave
+   * @param {int} dn - diatonic number, where 29 = C4, C#4 etc.
+   * @returns {Array} two element array of {string} stepName and {int} octave
    */
   interval.convertDiatonicNumberToStep = function convertDiatonicNumberToStep(dn) {
       var stepNumber = void 0;
@@ -9849,7 +9849,7 @@
            * the first one in `.pitches` is returned.
            *
            * @memberof music21.chord.Chord
-           * @param {Int} chordStep a positive integer representing the chord step
+           * @param {int} chordStep a positive integer representing the chord step
            * @param {music21.pitch.Pitch} [testRoot] - the Pitch to use as a temporary root
            * @returns {music21.pitch.Pitch|undefined}
            */
@@ -10121,11 +10121,11 @@
    * @memberof music21.clef
    * @extends music21.base.Music21Object
    * @param {string} name - clef name
-   * @param {Int} [octaveChange=0] - ottava
+   * @param {int} [octaveChange=0] - ottava
    * @property {string|undefined} name
-   * @property {Int} lowestLine - diatonicNoteNum (C4 = 29) for the lowest line (in a five-line staff)
-   * @property {Int} lowestLineTrebleOffset - difference between the first line of this staff and the first line in treble clef
-   * @property {Int} octaveChange
+   * @property {int} lowestLine - diatonicNoteNum (C4 = 29) for the lowest line (in a five-line staff)
+   * @property {int} lowestLineTrebleOffset - difference between the first line of this staff and the first line in treble clef
+   * @property {int} octaveChange
    */
   var Clef = function (_base$Music21Object) {
       inherits(Clef, _base$Music21Object);
@@ -11246,8 +11246,8 @@
    * @class KeySignature
    * @memberof music21.key
    * @description Represents a key signature
-   * @param {Int} [sharps=0] -- the number of sharps (negative for flats)
-   * @property {Int} [sharps=0] -- number of sharps (negative for flats)
+   * @param {int} [sharps=0] -- the number of sharps (negative for flats)
+   * @property {int} [sharps=0] -- number of sharps (negative for flats)
    * @extends music21.base.Music21Object
    * @example
    * var ks = new music21.key.KeySignature(-3); //E-flat major or c minor
@@ -11638,9 +11638,9 @@
    * @class TimeSignature
    * @memberof music21.meter
    * @param {string} meterString - a string ("4/4", "3/8" etc.) to initialize the TimeSignature.
-   * @property {Int} [numerator=4]
-   * @property {Int} [denominator=4]
-   * @property {Array<Array<Int>>} beatGroups - groupings of beats; inner arrays are numerator, denominator
+   * @property {int} [numerator=4]
+   * @property {int} [denominator=4]
+   * @property {Array<Array<int>>} beatGroups - groupings of beats; inner arrays are numerator, denominator
    * @property {string} ratioString - a string like "4/4"
    * @property {music21.duration.Duration} barDuration - a Duration object representing the expressed total length of the TimeSignature.
    */
@@ -11678,7 +11678,7 @@
            * Compute the Beat Group according to this time signature.
            *
            * @memberof music21.meter.TimeSignature
-           * @returns {Array<Array<Int>>} a list of numerator and denominators, find a list of beat groups.
+           * @returns {Array<Array<int>>} a list of numerator and denominators, find a list of beat groups.
            */
           value: function computeBeatGroups() {
               var tempBeatGroups = [];
@@ -12073,7 +12073,7 @@
        * Skips 10 unless this.inGMPercMap is true
        *
        * @memberof music21.instrument.Instrument
-       * @param {Array<Int>} [usedChannels]
+       * @param {Array<int>} [usedChannels]
        * @returns {Number}
        */
 
@@ -16366,7 +16366,7 @@
    * @extends music21.base.Music21Object
    *
    * @property {Array<music21.base.Music21Object>} elements - the elements in the stream. DO NOT MODIFY individual components (consider it like a Python tuple)
-   * @property {Int} length - (readonly) the number of elements in the stream.
+   * @property {int} length - (readonly) the number of elements in the stream.
    * @property {music21.duration.Duration} duration - the total duration of the stream's elements
    * @property {number} highestTime -- the highest time point in the stream's elements
    * @property {music21.clef.Clef} clef - the clef for the Stream (if there is one; if there are multiple, then the first clef)
@@ -16381,7 +16381,7 @@
    * @property {number} tempo - tempo in beats per minute (will become more sophisticated later, but for now the whole stream has one tempo
    * @property {music21.instrument.Instrument|undefined} instrument - an instrument object associated with the stream (can be set with a string also, but will return an `Instrument` object)
    * @property {Boolean} autoBeam - whether the notes should be beamed automatically or not (will be moved to `renderOptions` soon)
-   * @property {Int} [staffLines=5] - number of staff lines
+   * @property {int} [staffLines=5] - number of staff lines
    * @property {function|undefined} changedCallbackFunction - function to call when the Stream changes through a standard interface
    * @property {number} maxSystemWidth - confusing... should be in renderOptions
    */
@@ -17191,7 +17191,7 @@
            * Once Proxy objects are supported by all operating systems for
            *
            * @memberof music21.stream.Stream
-           * @param {Int} index - can be -1, -2, to index from the end, like python
+           * @param {int} index - can be -1, -2, to index from the end, like python
            * @returns {music21.base.Music21Object|undefined}
            */
 
@@ -18895,7 +18895,7 @@
            *
            * @memberof music21.stream.Stream
            * @param {number} yPxScaled
-           * @returns {Int}
+           * @returns {int}
            */
 
       }, {
@@ -19068,7 +19068,7 @@
            * To be removed...
            *
            * @memberof music21.stream.Stream
-           * @param {Int} clickedDiatonicNoteNum
+           * @param {int} clickedDiatonicNoteNum
            * @param {music21.base.Music21Object} foundNote
            * @param {DOMObject} svg
            * @returns {any} output of changedCallbackFunction
@@ -19161,8 +19161,8 @@
           /**
            *
            * @memberof music21.stream.Stream
-           * @param {Int} minAccidental - alter of the min accidental (default -1)
-           * @param {Int} maxAccidental - alter of the max accidental (default 1)
+           * @param {int} minAccidental - alter of the min accidental (default -1)
+           * @param {int} maxAccidental - alter of the max accidental (default 1)
            * @param {jQueryObject} $siblingSvg - svg to use for redrawing;
            * @returns {jQueryObject} the accidental toolbar.
            */
@@ -20517,7 +20517,7 @@
            * How many systems are there? Calls numSystems() on the first part.
            *
            * @memberof music21.stream.Score
-           * @returns {Int}
+           * @returns {int}
            */
 
       }, {
@@ -21886,7 +21886,7 @@ var converter = Object.freeze({
    * @extends music21.base.Music21Object
    * @property {string} name
    * @property {string} vexflowModifier
-   * @property {Int} setPosition
+   * @property {int} setPosition
    */
   var Expression = function (_base$Music21Object) {
       inherits(Expression, _base$Music21Object);
@@ -23258,7 +23258,7 @@ var converter = Object.freeze({
    * @property {Array<function>} callbacks - called when key is clicked/selected
    * @property {number} [scaleFactor=1]
    * @property {music21.keyboard.Keyboard|undefined} parent
-   * @property {Int} id - midinumber associated with the key.
+   * @property {int} id - midinumber associated with the key.
    * @property {music21.pitch.Pitch|undefined} pitchObj
    * @property {DOMObject|undefined} svgObj - SVG representing the drawing of the key
    * @property {DOMObject|undefined} noteNameSvgObj - SVG representing the note name drawn on the key
@@ -24459,7 +24459,7 @@ var converter = Object.freeze({
    * @property {music21.key.Key} key - the key associated with the RomanNumeral (not allowed to be undefined yet)
    * @property {string} figure - the figure as passed in
    * @property {string} degreeName - the name associated with the scale degree, such as "mediant" etc., scale 7 will be "leading tone" or "subtonic" appropriately
-   * @property {Int} scaleDegree
+   * @property {int} scaleDegree
    * @property {string} impliedQuality - "major", "minor", "diminished", "augmented"
    * @property {Array<music21.pitch.Pitch>} pitches - RomanNumerals are Chord objects, so .pitches will work for them also.
    */
@@ -25074,7 +25074,7 @@ var converter = Object.freeze({
            *
            * @memberof music21.roman.RomanNumeral
            * @param {string} displayType - ['roman', 'bassName', 'nameOnly', other]
-           * @param {Int} [inversion=0]
+           * @param {int} [inversion=0]
            * @returns {String}
            */
 
@@ -25302,13 +25302,13 @@ var converter = Object.freeze({
    * @extends music21.prebase.ProtoM21Object
    * @param {number} [tempo=music21.tempo.baseTempo] - the tempo of the metronome to start
    * @property {number} tempo
-   * @property {Int} [numBeatsPerMeasure=4]
+   * @property {int} [numBeatsPerMeasure=4]
    * @property {number} [minTempo=10]
    * @property {number} [maxTempo=600]
    * @property {bool} [flash=false] - flash the tempo
    * @property {bool} [silent=false] - play silently
-   * @property {Int} beat - current beat number
-   * @property {Int} chirpTimeout - an index of a timeout object for chirping
+   * @property {int} beat - current beat number
+   * @property {int} chirpTimeout - an index of a timeout object for chirping
    */
   var Metronome = function (_prebase$ProtoM21Obje) {
       inherits(Metronome, _prebase$ProtoM21Obje);
@@ -25401,7 +25401,7 @@ var converter = Object.freeze({
            * To change the tempo, just set this.tempo = n
            *
            * @memberof music21.tempo.Metronome
-           * @param {Int} n - number of clicks to the right
+           * @param {int} n - number of clicks to the right
            * @returns {number} new tempo
            */
 
@@ -25435,7 +25435,7 @@ var converter = Object.freeze({
            * To change the tempo, just set this.tempo = n
            *
            * @memberof music21.tempo.Metronome
-           * @param {Int} n - number of clicks to the left
+           * @param {int} n - number of clicks to the left
            * @returns {number} new tempo
            */
 

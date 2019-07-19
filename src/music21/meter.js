@@ -36,9 +36,9 @@ export const meter = {};
  * @class TimeSignature
  * @memberof music21.meter
  * @param {string} meterString - a string ("4/4", "3/8" etc.) to initialize the TimeSignature.
- * @property {Int} [numerator=4]
- * @property {Int} [denominator=4]
- * @property {Array<Array<Int>>} beatGroups - groupings of beats; inner arrays are numerator, denominator
+ * @property {int} [numerator=4]
+ * @property {int} [denominator=4]
+ * @property {Array<Array<int>>} beatGroups - groupings of beats; inner arrays are numerator, denominator
  * @property {string} ratioString - a string like "4/4"
  * @property {music21.duration.Duration} barDuration - a Duration object representing the expressed total length of the TimeSignature.
  */
@@ -141,7 +141,7 @@ export class TimeSignature extends base.Music21Object {
      * Compute the Beat Group according to this time signature.
      *
      * @memberof music21.meter.TimeSignature
-     * @returns {Array<Array<Int>>} a list of numerator and denominators, find a list of beat groups.
+     * @returns {Array<Array<int>>} a list of numerator and denominators, find a list of beat groups.
      */
     computeBeatGroups() {
         const tempBeatGroups = [];

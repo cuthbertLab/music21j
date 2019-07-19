@@ -3413,7 +3413,7 @@
    *
    * @function midiNumDiffFromFrequency
    * @param {Number} frequency
-   * @returns {Array<Int>} [miniNumber, centsOff]
+   * @returns {Array<int>} [miniNumber, centsOff]
    */
   audioSearch.midiNumDiffFromFrequency = function midiNumDiffFromFrequency(frequency) {
       var midiNumFloat = 12 * (Math.log(frequency / 440) / Math.log(2)) + 69;
@@ -4327,7 +4327,7 @@
            * Get an Array of all the numbers for the beams
            *
            * @memberof music21.beam.Beams
-           * @returns {Array<Int>} all the numbers
+           * @returns {Array<int>} all the numbers
            */
 
       }, {
@@ -11640,7 +11640,7 @@
    * @param {string} meterString - a string ("4/4", "3/8" etc.) to initialize the TimeSignature.
    * @property {Int} [numerator=4]
    * @property {Int} [denominator=4]
-   * @property {Array<Array<Int>>} beatGroups - groupings of beats; inner arrays are numerator, denominator
+   * @property {Array<Array<int>>} beatGroups - groupings of beats; inner arrays are numerator, denominator
    * @property {string} ratioString - a string like "4/4"
    * @property {music21.duration.Duration} barDuration - a Duration object representing the expressed total length of the TimeSignature.
    */
@@ -11678,7 +11678,7 @@
            * Compute the Beat Group according to this time signature.
            *
            * @memberof music21.meter.TimeSignature
-           * @returns {Array<Array<Int>>} a list of numerator and denominators, find a list of beat groups.
+           * @returns {Array<Array<int>>} a list of numerator and denominators, find a list of beat groups.
            */
           value: function computeBeatGroups() {
               var tempBeatGroups = [];
@@ -12073,7 +12073,7 @@
        * Skips 10 unless this.inGMPercMap is true
        *
        * @memberof music21.instrument.Instrument
-       * @param {Array<Int>} [usedChannels]
+       * @param {Array<int>} [usedChannels]
        * @returns {Number}
        */
 

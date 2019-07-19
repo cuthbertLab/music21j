@@ -703,7 +703,7 @@ roman.romanToNumber = [undefined, 'i', 'ii', 'iii', 'iv', 'v', 'vi', 'vii'];
  * @property {music21.key.Key} key - the key associated with the RomanNumeral (not allowed to be undefined yet)
  * @property {string} figure - the figure as passed in
  * @property {string} degreeName - the name associated with the scale degree, such as "mediant" etc., scale 7 will be "leading tone" or "subtonic" appropriately
- * @property {Int} scaleDegree
+ * @property {int} scaleDegree
  * @property {string} impliedQuality - "major", "minor", "diminished", "augmented"
  * @property {Array&lt;music21.pitch.Pitch>} pitches - RomanNumerals are Chord objects, so .pitches will work for them also.
  */
@@ -1294,7 +1294,7 @@ export class RomanNumeral extends harmony.Harmony {
      *
      * @memberof music21.roman.RomanNumeral
      * @param {string} displayType - ['roman', 'bassName', 'nameOnly', other]
-     * @param {Int} [inversion=0]
+     * @param {int} [inversion=0]
      * @returns {String}
      */
     asString(displayType, inversion) {

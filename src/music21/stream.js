@@ -587,7 +587,7 @@ export class Stream extends base.Music21Object {
      * Add an element to the end of the stream, setting its `.offset` accordingly
      *
      * @memberof music21.stream.Stream
-     * @param {music21.base.Music21Object|Array} el - element or list of elements to append
+     * @param {music21.base.Music21Object|Array} elOrElList - element or list of elements to append
      * @returns {this}
      */
     append(elOrElList) {
@@ -2358,7 +2358,7 @@ export class Stream extends base.Music21Object {
      * @param {number} clickedDiatonicNoteNum
      * @param {music21.base.Music21Object} foundNote
      * @param {DOMObject} svg
-     * @returns {any} output of changedCallbackFunction
+     * @returns {*} output of changedCallbackFunction
      */
     noteChanged(clickedDiatonicNoteNum, foundNote, svg) {
         const n = foundNote;
@@ -2445,8 +2445,8 @@ export class Stream extends base.Music21Object {
     /**
      *
      * @memberof music21.stream.Stream
-     * @param {Int} minAccidental - alter of the min accidental (default -1)
-     * @param {Int} maxAccidental - alter of the max accidental (default 1)
+     * @param {int} minAccidental - alter of the min accidental (default -1)
+     * @param {int} maxAccidental - alter of the max accidental (default 1)
      * @param {jQueryObject} $siblingSvg - svg to use for redrawing;
      * @returns {jQueryObject} the accidental toolbar.
      */
@@ -3285,7 +3285,7 @@ export class Score extends Stream {
      * How many systems are there? Calls numSystems() on the first part.
      *
      * @memberof music21.stream.Score
-     * @returns {Int}
+     * @returns {int}
      */
     numSystems() {
         return this.getElementsByClass('Part')

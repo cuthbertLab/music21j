@@ -558,7 +558,7 @@ stream.StreamException = StreamException;
  * @extends music21.base.Music21Object
  *
  * @property {Array&lt;music21.base.Music21Object>} elements - the elements in the stream. DO NOT MODIFY individual components (consider it like a Python tuple)
- * @property {Int} length - (readonly) the number of elements in the stream.
+ * @property {int} length - (readonly) the number of elements in the stream.
  * @property {music21.duration.Duration} duration - the total duration of the stream's elements
  * @property {number} highestTime -- the highest time point in the stream's elements
  * @property {music21.clef.Clef} clef - the clef for the Stream (if there is one; if there are multiple, then the first clef)
@@ -573,7 +573,7 @@ stream.StreamException = StreamException;
  * @property {number} tempo - tempo in beats per minute (will become more sophisticated later, but for now the whole stream has one tempo
  * @property {music21.instrument.Instrument|undefined} instrument - an instrument object associated with the stream (can be set with a string also, but will return an `Instrument` object)
  * @property {Boolean} autoBeam - whether the notes should be beamed automatically or not (will be moved to `renderOptions` soon)
- * @property {Int} [staffLines=5] - number of staff lines
+ * @property {int} [staffLines=5] - number of staff lines
  * @property {function|undefined} changedCallbackFunction - function to call when the Stream changes through a standard interface
  * @property {number} maxSystemWidth - confusing... should be in renderOptions
  */
@@ -1167,7 +1167,7 @@ export class Stream extends base.Music21Object {
      * music21p format of s[index].  Can use negative indexing to get from the end.
      *
      * @memberof music21.stream.Stream
-     * @param {Int} index - can be -1, -2, to index from the end, like python
+     * @param {int} index - can be -1, -2, to index from the end, like python
      * @returns {music21.base.Music21Object|undefined}
      */
     get(index) {
@@ -2267,7 +2267,7 @@ export class Stream extends base.Music21Object {
      *
      * @memberof music21.stream.Stream
      * @param {number} yPxScaled
-     * @returns {Int}
+     * @returns {int}
      */
     diatonicNoteNumFromScaledY(yPxScaled) {
         const storedVFStave = this.recursiveGetStoredVexflowStave();
@@ -2407,7 +2407,7 @@ export class Stream extends base.Music21Object {
      * To be removed...
      *
      * @memberof music21.stream.Stream
-     * @param {Int} clickedDiatonicNoteNum
+     * @param {int} clickedDiatonicNoteNum
      * @param {music21.base.Music21Object} foundNote
      * @param {DOMObject} svg
      * @returns {any} output of changedCallbackFunction
@@ -2497,8 +2497,8 @@ export class Stream extends base.Music21Object {
     /**
      *
      * @memberof music21.stream.Stream
-     * @param {Int} minAccidental - alter of the min accidental (default -1)
-     * @param {Int} maxAccidental - alter of the max accidental (default 1)
+     * @param {int} minAccidental - alter of the min accidental (default -1)
+     * @param {int} maxAccidental - alter of the max accidental (default 1)
      * @param {jQueryObject} $siblingSvg - svg to use for redrawing;
      * @returns {jQueryObject} the accidental toolbar.
      */
@@ -3305,7 +3305,7 @@ export class Score extends Stream {
      * How many systems are there? Calls numSystems() on the first part.
      *
      * @memberof music21.stream.Score
-     * @returns {Int}
+     * @returns {int}
      */
     numSystems() {
         return this.getElementsByClass('Part')
