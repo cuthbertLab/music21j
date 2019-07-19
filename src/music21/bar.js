@@ -9,41 +9,41 @@
 import { base } from './base.js';
 import { Music21Exception } from './exceptions21.js';
 
-const barStyleList = [
+const barTypeList = [
     'regular', 'dotted', 'dashed', 'heavy', 'double', 'final',
     'heavy-light', 'heavy-heavy', 'tick', 'short', 'none',
 ];
-const barStyleDict = {
+const barTypeDict = {
     'light-light': 'double',
     'light-heavy': 'final', 
 };
 
-const reverseBarStyleDict = {
+const reverseBarTypeDict = {
     'double': 'light-light',
     'final': 'light-heavy',
 };
 
 export class BarException extends Music21Exception {}
 
-function styleToMusicXMLBarStyle(value) {
-    if (reverseBarStyleDict[value] !== undefined) {
-        return reverseBarStyleDict[value];
+function typeToMusicXMLBarStyle(value) {
+    if (reverseBarTypeDict[value] !== undefined) {
+        return reverseBarTypeDict[value];
     } else {
         return value;
     }
 }
 
-function standardizeBarStyle(value) {
+function standardizeBarType(value) {
     if (value === undefined) {
         return 'regular';
     }
     value = value.toLowerCase();
 
-    if (barStyleList.includes(value)) {
+    if (barTypeList.includes(value)) {
         return value;
     }
-    if (barStyleDict[value] !== undefined) {
-        return barStyleDict[value];
+    if (barTypeDict[value] !== undefined) {
+        return barTypeDict[value];
     }
     throw new BarException(`cannot process style: ${value}`);
 }
@@ -62,11 +62,11 @@ export class Barline extends base.Music21Object {
     }
     
     set type(v) {
-        this._type = standardizeBarStyle(v);        
+        this._type = standardizeBarType(v);
     }
     
     musicXMLBarStyle() {
-        return styleToMusicXMLBarStyle(this.type);
+        return typeToMusicXMLBarStyle(this.type);
     }
 }
 

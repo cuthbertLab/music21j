@@ -84,7 +84,7 @@ function _exportMusicXMLAsText(s) {
  * @extends music21.base.Music21Object
  *
  * @property {Array<music21.base.Music21Object>} elements - the elements in the stream. DO NOT MODIFY individual components (consider it like a Python tuple)
- * @property {Int} length - (readonly) the number of elements in the stream.
+ * @property {number} length - (readonly) the number of elements in the stream.
  * @property {music21.duration.Duration} duration - the total duration of the stream's elements
  * @property {number} highestTime -- the highest time point in the stream's elements
  * @property {music21.clef.Clef} clef - the clef for the Stream (if there is one; if there are multiple, then the first clef)
@@ -99,7 +99,7 @@ function _exportMusicXMLAsText(s) {
  * @property {number} tempo - tempo in beats per minute (will become more sophisticated later, but for now the whole stream has one tempo
  * @property {music21.instrument.Instrument|undefined} instrument - an instrument object associated with the stream (can be set with a string also, but will return an `Instrument` object)
  * @property {Boolean} autoBeam - whether the notes should be beamed automatically or not (will be moved to `renderOptions` soon)
- * @property {Int} [staffLines=5] - number of staff lines
+ * @property {int} [staffLines=5] - number of staff lines
  * @property {function|undefined} changedCallbackFunction - function to call when the Stream changes through a standard interface
  * @property {number} maxSystemWidth - confusing... should be in renderOptions
  */
@@ -867,7 +867,7 @@ export class Stream extends base.Music21Object {
      * Once Proxy objects are supported by all operating systems for
      *
      * @memberof music21.stream.Stream
-     * @param {Int} index - can be -1, -2, to index from the end, like python
+     * @param {int} index - can be -1, -2, to index from the end, like python
      * @returns {music21.base.Music21Object|undefined}
      */
     get(index) {
@@ -877,7 +877,7 @@ export class Stream extends base.Music21Object {
         }
 
         let el;
-        if (index === undefined) {
+        if (index === undefined || isNaN(index)) {
             return undefined;
         } else if (Math.abs(index) > this._elements.length) {
             return undefined;
@@ -2209,7 +2209,7 @@ export class Stream extends base.Music21Object {
      *
      * @memberof music21.stream.Stream
      * @param {number} yPxScaled
-     * @returns {Int}
+     * @returns {number}
      */
     diatonicNoteNumFromScaledY(yPxScaled) {
         const storedVFStave = this.recursiveGetStoredVexflowStave();
@@ -2355,7 +2355,7 @@ export class Stream extends base.Music21Object {
      * To be removed...
      *
      * @memberof music21.stream.Stream
-     * @param {Int} clickedDiatonicNoteNum
+     * @param {number} clickedDiatonicNoteNum
      * @param {music21.base.Music21Object} foundNote
      * @param {DOMObject} svg
      * @returns {any} output of changedCallbackFunction
