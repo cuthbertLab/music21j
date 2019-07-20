@@ -249,7 +249,7 @@ common.toRoman = function toRoman(num) {
 };
 
 /**
- * Creates a DOMObject of an SVG figure using the correct `document.createElementNS` call.
+ * Creates an SVGElement of an SVG figure using the correct `document.createElementNS` call.
  *
  * @function music21.common.makeSVGright
  * @param {string} [tag='svg'] - a tag, such as 'rect', 'circle', 'text', or 'svg'

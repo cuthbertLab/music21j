@@ -50,8 +50,8 @@ export const keyboard = {};
  * @property {music21.keyboard.Keyboard|undefined} parent
  * @property {int} id - midinumber associated with the key.
  * @property {music21.pitch.Pitch|undefined} pitchObj
- * @property {DOMObject|undefined} svgObj - SVG representing the drawing of the key
- * @property {DOMObject|undefined} noteNameSvgObj - SVG representing the note name drawn on the key
+ * @property {SVGElement|undefined} svgObj - SVG representing the drawing of the key
+ * @property {SVGElement|undefined} noteNameSvgObj - SVG representing the note name drawn on the key
  * @property {string} keyStyle='' - css style information for the key
  * @property {string} keyClass='' - css class information for the key ("keyboardkey" + this is the class)
  * @property {number} width - width of key
@@ -76,7 +76,7 @@ export class Key {
      * Gets an SVG object for the key
      *
      * @param {number} startX - X position in pixels from left of keyboard to draw key at
-     * @returns {DOMObject} a SVG rectangle for the key
+     * @returns {SVGElement} a SVG rectangle for the key
      */
     makeKey(startX) {
         const keyattrs = {
@@ -104,7 +104,7 @@ export class Key {
      *
      * @method music21.keyboard.Key#addCircle
      * @param {string} [strokeColor='red']
-     * @returns {DOMObject}
+     * @returns {SVGElement}
      */
     addCircle(strokeColor) {
         if (
@@ -140,7 +140,7 @@ export class Key {
      *
      * @method music21.keyboard.Key#addNoteName
      * @param {Boolean} [labelOctaves=false] - use octave numbers too?
-     * @returns {DOMObject}
+     * @returns {this}
      */
     addNoteName(labelOctaves) {
         if (
@@ -260,7 +260,7 @@ keyboard.BlackKey = BlackKey;
  * @property {number} whiteKeyWidth - default 23
  * @property {number} scaleFactor - default 1
  * @property {Object} keyObjects - a mapping of id to {@link music21.keyboard.Key} objects
- * @property {DOMObject} svgObj - the SVG object of the keyboard
+ * @property {SVGElement} svgObj - the SVG object of the keyboard
  * @property {Boolean} markC - default true
  * @property {Boolean} showNames - default false
  * @property {Boolean} showOctaves - default false
@@ -317,7 +317,7 @@ export class Keyboard {
      * Redraws the SVG associated with this Keyboard
      *
      * @method music21.keyboard.Keyboard#redrawSVG
-     * @returns {DOMObject} new svgDOM
+     * @returns {SVGElement} new svgDOM
      */
     redrawSVG() {
         if (this.svgObj === undefined) {
@@ -334,7 +334,7 @@ export class Keyboard {
      * Appends a keyboard to the `where` parameter
      *
      * @method music21.keyboard.Keyboard#appendKeyboard
-     * @param {JQueryDOMObject|DOMObject} [where]
+     * @param {jQuery|Node} [where]
      * @returns {music21.keyboard.Keyboard} this
      */
     appendKeyboard(where) {
@@ -362,7 +362,7 @@ export class Keyboard {
      * Handle a click on a given SVG object
      *
      * @method music21.keyboard.Keyboard#clickHandler
-     * @param {DOMObject} keyRect - the dom object with the keyboard.
+     * @param {Node} keyRect - the dom object with the keyboard.
      */
     clickHandler(keyRect) {
         // to-do : integrate with jazzHighlight...
@@ -390,7 +390,7 @@ export class Keyboard {
      * Draws the SVG associated with this Keyboard
      *
      * @method music21.keyboard.Keyboard#createSVG
-     * @returns {DOMObject} new svgDOM
+     * @returns {SVGElement} new svgDOM
      */
     createSVG() {
         // DNN = pitch.diatonicNoteNum;
@@ -550,8 +550,8 @@ export class Keyboard {
      * scrollable property on the keyboard to True.
      *
      * @method music21.keyboard.Keyboard#wrapScrollable
-     * @param {DOMObject} svgDOM
-     * @returns {JQueryDOMObject}
+     * @param {SVGElement} svgDOM
+     * @returns {jQuery}
      */
     wrapScrollable(svgDOM) {
         const $wrapper = $(
@@ -595,8 +595,8 @@ export class Keyboard {
      * hideable property on the keyboard to True.
      *
      * @method music21.keyboard.Keyboard#appendHideableKeyboard
-     * @param {DOMObject} where
-     * @param {DOMObject} keyboardSVG
+     * @param {Node} where
+     * @param {SVGElement} keyboardSVG
      */
     appendHideableKeyboard(where, keyboardSVG) {
         const $container = $("<div class='keyboardHideableContainer'/>");
@@ -627,7 +627,7 @@ export class Keyboard {
         });
         $b.append($explain);
         $container.append($b);
-        $container[0].appendChild(keyboardSVG); // svg must use appendChild, not append.
+        $container[0].appendChild(keyboardSVG); // svg must use appendChild, not $.append.
         $(where).append($container);
         return $container;
     }

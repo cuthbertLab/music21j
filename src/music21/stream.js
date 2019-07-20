@@ -1957,13 +1957,13 @@ export class Stream extends base.Music21Object {
      * @param {number|string} [width]
      * @param {number|string} [height]
      * @param {string} elementType - what type of element, default = svg
-     * @returns {SVGAElement|Node} svg (not the jQueryDOMObject --
+     * @returns {SVGElement|Node} svg (not the jQuery object --
      * this is a difference with other routines and should be fixed. TODO: FIX)
      *
      */
     appendNewDOM(appendElement, width, height, elementType='svg') {
         if (appendElement === undefined) {
-            appendElement = 'body';
+            appendElement = document.body;
         }
         let $appendElement = appendElement;
         if (appendElement.jquery === undefined) {
@@ -1999,7 +1999,7 @@ export class Stream extends base.Music21Object {
      * @returns {jQuery} the svg
      */
     replaceDOM(where, preserveSvgSize, elementType='svg') {
-        // if called with no where, replaces all the svges on the page...
+        // if called with no where, replaces all the svgs on the page...
         if (where === undefined) {
             where = document.body;
         }

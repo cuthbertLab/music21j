@@ -634,7 +634,7 @@
   };
 
   /**
-   * Creates a DOMObject of an SVG figure using the correct `document.createElementNS` call.
+   * Creates an SVGElement of an SVG figure using the correct `document.createElementNS` call.
    *
    * @function music21.common.makeSVGright
    * @param {string} [tag='svg'] - a tag, such as 'rect', 'circle', 'text', or 'svg'
@@ -18733,7 +18733,7 @@
            * @param {number|string} [width]
            * @param {number|string} [height]
            * @param {string} elementType - what type of element, default = svg
-           * @returns {SVGAElement|Node} svg (not the jQueryDOMObject --
+           * @returns {SVGElement|Node} svg (not the jQuery object --
            * this is a difference with other routines and should be fixed. TODO: FIX)
            *
            */
@@ -18744,7 +18744,7 @@
               var elementType = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 'svg';
 
               if (appendElement === undefined) {
-                  appendElement = 'body';
+                  appendElement = document.body;
               }
               var $appendElement = appendElement;
               if (appendElement.jquery === undefined) {
@@ -18788,7 +18788,7 @@
           value: function replaceDOM(where, preserveSvgSize) {
               var elementType = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'svg';
 
-              // if called with no where, replaces all the svges on the page...
+              // if called with no where, replaces all the svgs on the page...
               if (where === undefined) {
                   where = document.body;
               }
@@ -23116,7 +23116,7 @@ var converter = Object.freeze({
    * @class MidiPlayer
    * @memberOf music21.miditools
    * @property {number} speed - playback speed scaling (1=default).
-   * @property {JQueryDOMObject|undefined} $playDiv - div holding the player,
+   * @property {jQuery|undefined} $playDiv - div holding the player,
    */
   var MidiPlayer = function () {
       function MidiPlayer() {
@@ -23127,8 +23127,8 @@ var converter = Object.freeze({
           this.$playDiv = undefined;
       }
       /**
-       * @param where
-       * @returns DOMElement
+       * @param {jQuery|Node} where
+       * @returns {Node}
        */
 
 
@@ -23144,8 +23144,8 @@ var converter = Object.freeze({
               }
               var $playDiv = $('<div class="midiPlayer">');
               var $controls = $('<div class="positionControls">');
-              var $playPause = $('<input type="image" src="' + this.playPng() + '" align="absmiddle" value="play" class="playPause">');
-              var $stop = $('<input type="image" src="' + this.stopPng() + '" align="absmiddle" value="stop" class="stopButton">');
+              var $playPause = $('<input type="image" alt="play" src="' + this.playPng() + '" align="absmiddle" value="play" class="playPause">');
+              var $stop = $('<input type="image" alt="stop" src="' + this.stopPng() + '" align="absmiddle" value="stop" class="stopButton">');
 
               $playPause.on('click', this.pausePlayStop.bind(this));
               $stop.on('click', this.stopButton.bind(this));
@@ -23347,8 +23347,8 @@ var converter = Object.freeze({
    * @property {music21.keyboard.Keyboard|undefined} parent
    * @property {int} id - midinumber associated with the key.
    * @property {music21.pitch.Pitch|undefined} pitchObj
-   * @property {DOMObject|undefined} svgObj - SVG representing the drawing of the key
-   * @property {DOMObject|undefined} noteNameSvgObj - SVG representing the note name drawn on the key
+   * @property {SVGElement|undefined} svgObj - SVG representing the drawing of the key
+   * @property {SVGElement|undefined} noteNameSvgObj - SVG representing the note name drawn on the key
    * @property {string} keyStyle='' - css style information for the key
    * @property {string} keyClass='' - css class information for the key ("keyboardkey" + this is the class)
    * @property {number} width - width of key
@@ -23375,7 +23375,7 @@ var converter = Object.freeze({
        * Gets an SVG object for the key
        *
        * @param {number} startX - X position in pixels from left of keyboard to draw key at
-       * @returns {DOMObject} a SVG rectangle for the key
+       * @returns {SVGElement} a SVG rectangle for the key
        */
 
 
@@ -23407,7 +23407,7 @@ var converter = Object.freeze({
            *
            * @method music21.keyboard.Key#addCircle
            * @param {string} [strokeColor='red']
-           * @returns {DOMObject}
+           * @returns {SVGElement}
            */
 
       }, {
@@ -23442,7 +23442,7 @@ var converter = Object.freeze({
            *
            * @method music21.keyboard.Key#addNoteName
            * @param {Boolean} [labelOctaves=false] - use octave numbers too?
-           * @returns {DOMObject}
+           * @returns {this}
            */
 
       }, {
@@ -23575,7 +23575,7 @@ var converter = Object.freeze({
    * @property {number} whiteKeyWidth - default 23
    * @property {number} scaleFactor - default 1
    * @property {Object} keyObjects - a mapping of id to {@link music21.keyboard.Key} objects
-   * @property {DOMObject} svgObj - the SVG object of the keyboard
+   * @property {SVGElement} svgObj - the SVG object of the keyboard
    * @property {Boolean} markC - default true
    * @property {Boolean} showNames - default false
    * @property {Boolean} showOctaves - default false
@@ -23638,7 +23638,7 @@ var converter = Object.freeze({
        * Redraws the SVG associated with this Keyboard
        *
        * @method music21.keyboard.Keyboard#redrawSVG
-       * @returns {DOMObject} new svgDOM
+       * @returns {SVGElement} new svgDOM
        */
 
 
@@ -23659,7 +23659,7 @@ var converter = Object.freeze({
            * Appends a keyboard to the `where` parameter
            *
            * @method music21.keyboard.Keyboard#appendKeyboard
-           * @param {JQueryDOMObject|DOMObject} [where]
+           * @param {jQuery|Node} [where]
            * @returns {music21.keyboard.Keyboard} this
            */
 
@@ -23690,7 +23690,7 @@ var converter = Object.freeze({
            * Handle a click on a given SVG object
            *
            * @method music21.keyboard.Keyboard#clickHandler
-           * @param {DOMObject} keyRect - the dom object with the keyboard.
+           * @param {Node} keyRect - the dom object with the keyboard.
            */
 
       }, {
@@ -23721,7 +23721,7 @@ var converter = Object.freeze({
            * Draws the SVG associated with this Keyboard
            *
            * @method music21.keyboard.Keyboard#createSVG
-           * @returns {DOMObject} new svgDOM
+           * @returns {SVGElement} new svgDOM
            */
 
       }, {
@@ -23874,8 +23874,8 @@ var converter = Object.freeze({
            * scrollable property on the keyboard to True.
            *
            * @method music21.keyboard.Keyboard#wrapScrollable
-           * @param {DOMObject} svgDOM
-           * @returns {JQueryDOMObject}
+           * @param {SVGElement} svgDOM
+           * @returns {jQuery}
            */
 
       }, {
@@ -23916,8 +23916,8 @@ var converter = Object.freeze({
            * hideable property on the keyboard to True.
            *
            * @method music21.keyboard.Keyboard#appendHideableKeyboard
-           * @param {DOMObject} where
-           * @param {DOMObject} keyboardSVG
+           * @param {Node} where
+           * @param {SVGElement} keyboardSVG
            */
 
       }, {
@@ -23946,7 +23946,7 @@ var converter = Object.freeze({
               });
               $b.append($explain);
               $container.append($b);
-              $container[0].appendChild(keyboardSVG); // svg must use appendChild, not append.
+              $container[0].appendChild(keyboardSVG); // svg must use appendChild, not $.append.
               $(where).append($container);
               return $container;
           }

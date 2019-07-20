@@ -459,7 +459,7 @@ miditools.loadSoundfont = function loadSoundfont(soundfont, callback) {
  * @class MidiPlayer
  * @memberOf music21.miditools
  * @property {number} speed - playback speed scaling (1=default).
- * @property {JQueryDOMObject|undefined} $playDiv - div holding the player,
+ * @property {jQuery|undefined} $playDiv - div holding the player,
  */
 export class MidiPlayer {
     constructor() {
@@ -468,8 +468,8 @@ export class MidiPlayer {
         this.$playDiv = undefined;
     }
     /**
-     * @param where
-     * @returns DOMElement
+     * @param {jQuery|Node} where
+     * @returns {Node}
      */
     addPlayer(where) {
         let $where = where;
@@ -482,12 +482,12 @@ export class MidiPlayer {
         const $playDiv = $('<div class="midiPlayer">');
         const $controls = $('<div class="positionControls">');
         const $playPause = $(
-            '<input type="image" src="'
+            '<input type="image" alt="play" src="'
                 + this.playPng()
                 + '" align="absmiddle" value="play" class="playPause">'
         );
         const $stop = $(
-            '<input type="image" src="'
+            '<input type="image" alt="stop" src="'
                 + this.stopPng()
                 + '" align="absmiddle" value="stop" class="stopButton">'
         );
