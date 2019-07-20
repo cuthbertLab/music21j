@@ -62,9 +62,9 @@ tinyNotation.regularExpressions = {
 
     PARTBREAK: /partBreak/, // nonstandard...fix later...
 
-    TRIP: /trip\{/,
-    QUAD: /quad\{/,
-    ENDBRAC: /\}$/,
+    TRIP: /trip{/,
+    QUAD: /quad{/,
+    ENDBRAC: /}$/,
 };
 /**
  * Function, not class.
@@ -276,6 +276,7 @@ tinyNotation.TinyNotation = function TinyNotation(textIn) {
  *
  * @memberof music21.tinyNotation
  * @param {string} classTypes - a JQuery selector to find elements to replace.
+ * @param {Node|jQuery} [selector]
  */
 tinyNotation.renderNotationDivs = function renderNotationDivs(
     classTypes,

@@ -12,6 +12,12 @@ class Harmony extends chord.Chord {
         this._roman = undefined;
         this.chordStepModifications = [];
         this._degreesList = [];
+
+        /**
+         *
+         * @type {music21.key.Key|undefined}
+         * @private
+         */
         this._key = undefined;
         // this._updateBasedOnXMLInput(keywords);
         this._figure = figure;
@@ -72,9 +78,7 @@ class Harmony extends chord.Chord {
         }
     }
 
-    findFigure() {
-        return;
-    }
+    findFigure() {}
 }
 
 export const harmony = {

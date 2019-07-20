@@ -100,7 +100,17 @@ dynamics.dynamicStrToScalar = {
 export class Dynamic extends base.Music21Object {
     constructor(value) {
         super();
+        /**
+         *
+         * @type {string|undefined}
+         * @private
+         */
         this._value = undefined;
+        /**
+         *
+         * @type {number|undefined}
+         * @private
+         */
         this._volumeScalar = undefined;
         this.longName = undefined;
         this.englishName = undefined;

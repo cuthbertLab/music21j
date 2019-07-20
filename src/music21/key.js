@@ -60,6 +60,8 @@ key.convertKeyStringToMusic21KeyString = function convertKeyStringToMusic21KeySt
  * @description Represents a key signature
  * @param {int} [sharps=0] -- the number of sharps (negative for flats)
  * @property {int} [sharps=0] -- number of sharps (negative for flats)
+ * @property {string[]} flatMapping -- flat signatures 0-12 flats
+ * @property {string[]} sharpMapping -- sharp signatures 0-12 sharps
  * @extends music21.base.Music21Object
  * @example
  * var ks = new music21.key.KeySignature(-3); //E-flat major or c minor
@@ -75,6 +77,10 @@ export class KeySignature extends base.Music21Object {
         this.classSortOrder = 2;
 
         this._sharps = sharps || 0; // if undefined
+
+        /**
+         * @type [pitch.Pitch[]]
+         */
         this._alteredPitchesCache = undefined;
 
         // 12 flats/sharps enough for now...
@@ -109,7 +115,10 @@ export class KeySignature extends base.Music21Object {
             'B#',
         ];
     }
-    
+
+    /**
+     * @return string
+     */
     stringInfo() {
         if (this.sharps === 0) {
             return 'of no sharps or flats';
@@ -123,7 +132,10 @@ export class KeySignature extends base.Music21Object {
             return `of ${this.sharps} sharps`;
         }
     }
-    
+
+    /**
+     * @return int
+     */
     get sharps() {
         return this._sharps;
     }
@@ -186,7 +198,6 @@ export class KeySignature extends base.Music21Object {
     /**
      * Return the name of the major key with this many sharps
      *
-     * @memberof music21.key.KeySignature
      * @returns {(string|undefined)} name of key
      * @example
      * var ks = new music21.key.KeySignature(-3)
@@ -202,7 +213,6 @@ export class KeySignature extends base.Music21Object {
     }
     /**
      * Return the name of the minor key with this many sharps
-     * @memberof music21.key.KeySignature
      * @returns {(string|undefined)}
      */
     minorName() {
@@ -219,7 +229,6 @@ export class KeySignature extends base.Music21Object {
      *
      * Deprecated.
      *
-     * @memberof music21.key.KeySignature
      * @returns {string}
      */
     vexflow() {
@@ -230,7 +239,6 @@ export class KeySignature extends base.Music21Object {
     /**
      * Returns the accidental associated with a step in this key, or undefined if none.
      *
-     * @memberof music21.key.KeySignature
      * @param {string} step - a valid step name such as "C","D", etc., but not "C#" etc.
      * @returns {(music21.pitch.Accidental|undefined)}
      */
@@ -251,7 +259,6 @@ export class KeySignature extends base.Music21Object {
      * Takes a pitch in C major and transposes it so that it has
      * the same step position in the current key signature.
      *
-     * @memberof music21.key.KeySignature
      * @returns {music21.pitch.Pitch}
      * @example
      * var ks = new music21.key.KeySignature(-3)
@@ -350,9 +357,8 @@ export class Key extends KeySignature {
      * returns a {@link music21.scale.MajorScale} or {@link music21.scale.MinorScale}
      * object from the pitch object.
      *
-     * @memberof music21.key.Key
      * @param {string|undefined} [scaleType=this.mode] - the type of scale, or the mode.
-     * @returns {object} A music21.scale.Scale subclass.
+     * @returns {Object} A music21.scale.Scale subclass.
      */
     getScale(scaleType) {
         if (scaleType === undefined) {

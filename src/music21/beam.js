@@ -49,7 +49,7 @@ beam.beamableDurationTypes = [
  * @extends music21.prebase.ProtoM21Object
  * @param {string} type - "start", "stop", "continue", "partial"
  * @param {string} direction - only needed for partial beams: "left" or "right"
- * @property {Int|undefined} number - which beam line does this refer to; 8th = 1, 16th = 2, etc.
+ * @property {int|undefined} number - which beam line does this refer to; 8th = 1, 16th = 2, etc.
  * @property {number|undefined} independentAngle - the angle of this beam if it is different than others (feathered beams)
  */
 export class Beam extends prebase.ProtoM21Object {
@@ -221,7 +221,6 @@ export class Beams extends prebase.ProtoM21Object {
      * Append a new {@link music21.beam.Beam} object to this Beams, automatically creating the Beam
      *   object and incrementing the number count.
      *
-     * @memberof music21.beam.Beams
      * @param {string} type - the type (passed to {@link music21.beam.Beam})
      * @param {string} [direction=undefined] - the direction if type is "partial"
      * @returns {music21.beam.Beam} newly appended object
@@ -245,8 +244,7 @@ export class Beams extends prebase.ProtoM21Object {
      * Both "eighth" and "8th" work.  Adding more than six beams (i.e. things
             like 512th notes) raises an error.
 
-     * @memberof music21.beam.Beams
-     * @param {string|Int} level - either a string like "eighth" or a number like 1 (="eighth")
+     * @param {string|int} level - either a string like "eighth" or a number like 1 (="eighth")
      * @param {string} type - type to fill all beams to.
      * @returns {this}
      */
@@ -285,7 +283,6 @@ export class Beams extends prebase.ProtoM21Object {
     /**
      * Get the beam with the given number or throw an exception.
      *
-     * @memberof music21.beam.Beams
      * @param {int} number - the beam number to retrieve (usually one less than the position in `.beamsList`)
      * @returns {music21.beam.Beam|undefined}
      */
@@ -303,7 +300,6 @@ export class Beams extends prebase.ProtoM21Object {
     /**
      * Get an Array of all the numbers for the beams
      *
-     * @memberof music21.beam.Beams
      * @returns {Array<int>} all the numbers
      */
     getNumbers() {
@@ -332,7 +328,6 @@ export class Beams extends prebase.ProtoM21Object {
     /**
      * Get an Array of all the types for the beams
      *
-     * @memberof music21.beam.Beams
      * @returns {Array<string>} all the types
      */
     getTypes() {
@@ -345,7 +340,6 @@ export class Beams extends prebase.ProtoM21Object {
     /**
      * Set all the {@link music21.beam.Beam} objects to a given type/direction
      *
-     * @memberof music21.beam.Beams
      * @param {string} type - beam type
      * @param {string} [direction] - beam direction
      * @returns {this}
@@ -364,7 +358,6 @@ export class Beams extends prebase.ProtoM21Object {
     /**
      * Set the {@link music21.beam.Beam} object specified by `number` to a given type/direction
      *
-     * @memberof music21.beam.Beams
      * @param {int} number
      * @param {string} type
      * @param {string} [direction]

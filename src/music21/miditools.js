@@ -67,7 +67,6 @@ export class Event {
      * Calls MIDI.noteOn or MIDI.noteOff for the note
      * represented by the Event (if appropriate)
      *
-     * @memberof music21.miditools.Event
      * @returns {undefined}
      */
     sendToMIDIjs() {
@@ -87,7 +86,6 @@ export class Event {
     /**
      * Makes a {@link music21.note.Note} object from the event's midiNote number.
      *
-     * @memberof music21.miditools.Event
      * @returns {music21.note.Note} - the {@link music21.note.Note} object represented by Event.midiNote
      */
     music21Note() {
@@ -325,7 +323,7 @@ miditools.sendToMIDIjs = midiEvent => {
  * a mapping of soundfont text names to true, false, or "loading".
  *
  * @memberof music21.miditools
- * @type {object}
+ * @type {Object}
  */
 miditools.loadedSoundfonts = {};
 

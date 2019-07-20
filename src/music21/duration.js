@@ -32,7 +32,7 @@ export const duration = {};
  * Object mapping int to name, as in `{1: 'whole'}` etc.
  *
  * @memberof music21.duration
- * @type {object}
+ * @type {Object}
  */
 duration.typeFromNumDict = {
     1: 'whole',
@@ -125,7 +125,6 @@ export class Duration extends prebase.ProtoM21Object {
      * @type Number
      * @instance
      * @default 0
-     * @memberof music21.duration.Duration
      * @example
      * var d = new music21.duration.Duration(2);
      * d.dots === 0; // true
@@ -147,7 +146,6 @@ export class Duration extends prebase.ProtoM21Object {
      * @type Number
      * @instance
      * @default 1.0
-     * @memberof music21.duration.Duration
      * @example
      * var d = new music21.duration.Duration(2);
      * d.quarterLength == 2.0; // true;
@@ -173,7 +171,6 @@ export class Duration extends prebase.ProtoM21Object {
      * @type String
      * @instance
      * @default 'quarter'
-     * @memberof music21.duration.Duration
      * @example
      * var d = new music21.duration.Duration(2);
      * d.type == 'half; // true
@@ -205,7 +202,6 @@ export class Duration extends prebase.ProtoM21Object {
      * @type Array<music21.duration.Tuplet>
      * @instance
      * @default []
-     * @memberof music21.duration.Duration
      */
     get tuplets() {
         return this._tuplets;
@@ -216,7 +212,6 @@ export class Duration extends prebase.ProtoM21Object {
      * @type String
      * @instance
      * @default 'd'
-     * @memberof music21.duration.Duration
      * @example
      * var d = new music21.duration.Duration(2);
      * d.vexflowDuration == 'h'; // true;
@@ -318,12 +313,10 @@ export class Duration extends prebase.ProtoM21Object {
             }
             // console.log(ratioRat, ql, unTupletedQl);
         }
-        return;
     }
     /**
      * Add a tuplet to music21j
      *
-     * @memberof music21.duration.Duration
      * @param {music21.duration.Tuplet} newTuplet - tuplet to add to `.tuplets`
      * @param {boolean} [skipUpdateQl=false] - update the quarterLength afterwards?
      */
@@ -400,7 +393,6 @@ export class Tuplet extends prebase.ProtoM21Object {
      * @type String
      * @instance
      * @readonly
-     * @memberof music21.duration.Tuplet
      */
     get fullName() {
         // actual is what is presented to viewer
@@ -426,7 +418,6 @@ export class Tuplet extends prebase.ProtoM21Object {
     /**
      * Set both durationActual and durationNormal for the tuplet.
      *
-     * @memberof music21.duration.Tuplet
      * @param {string} type - a duration type, such as `half`, `quarter`
      * @returns {music21.duration.Duration} A converted {@link music21.duration.Duration} matching `type`
      */
@@ -443,7 +434,6 @@ export class Tuplet extends prebase.ProtoM21Object {
     /**
      * Sets the tuplet ratio.
      *
-     * @memberof music21.duration.Tuplet
      * @param {Number} actual - number of notes in actual (e.g., 3)
      * @param {Number} normal - number of notes in normal (e.g., 2)
      * @returns {undefined}
@@ -461,7 +451,6 @@ export class Tuplet extends prebase.ProtoM21Object {
      * Get the quarterLength corresponding to the total length that
      * the completed tuplet (i.e., 3 notes in a triplet) would occupy.
      *
-     * @memberof music21.duration.Tuplet
      * @returns {Number} A quarter length.
      */
     totalTupletLength() {
@@ -471,7 +460,6 @@ export class Tuplet extends prebase.ProtoM21Object {
      * The amount by which each quarter length is multiplied to get
      * the tuplet. For instance, in a normal triplet, this is 0.666
      *
-     * @memberof music21.duration.Tuplet
      * @returns {Number} A float of the multiplier
      */
     tupletMultiplier() {

@@ -55,7 +55,7 @@ Object.defineProperties(audioSearch, {
  *
  * @function music21.audioSearch.getUserMedia
  * @memberof music21.audioSearch
- * @param {object} dictionary - optional dictionary to fill
+ * @param {Object} dictionary - optional dictionary to fill
  * @param {function} callback - callback on success
  * @param {function} error - callback on error
  */

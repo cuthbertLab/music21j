@@ -637,7 +637,7 @@ webmidi.createPlugin = function createPlugin(appendElement, override) {
  *
  * @function music21.webmidi.createJazzSelector
  * @param {JQueryDOMObject|DOMObject} [midiSelectDiv=document.body] - object to append the select to
- * @param {object} [options] - see createSelector for details
+ * @param {Object} [options] - see createSelector for details
  * @returns {DOMObject|undefined} DOM object containing the select tag, or undefined if Jazz cannot be loaded.
  */
 webmidi.createJazzSelector = function createJazzSelector($newSelect, options) {
@@ -749,7 +749,7 @@ webmidi.selectionChanged = function selectionChanged() {
  *
  * @function music21.webmidi.createSelector
  * @param {JQueryDOMObject|DOMObject} [$midiSelectDiv=$('body')] - object to append the select to
- * @param {object} [options] - see above.
+ * @param {Object} [options] - see above.
  * @returns {DOMObject|undefined} DOM object containing the select tag, or undefined if Jazz cannot be loaded.
  */
 webmidi.createSelector = function createSelector($midiSelectDiv, options) {

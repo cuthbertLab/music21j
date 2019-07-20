@@ -98,7 +98,7 @@ interval.MusicOrdinals = [
  *
  * @class GenericInterval
  * @memberof music21.interval
- * @param {Int} [gi=1] - generic interval (1 or higher, or -2 or lower)
+ * @param {number} [gi=1] - generic interval (1 or higher, or -2 or lower)
  * @example
  * var gi = new music21.interval.GenericInterval(-14)
  * gi.value
@@ -249,7 +249,6 @@ export class GenericInterval extends prebase.ProtoM21Object {
     /**
      * Returns a new GenericInterval which is the mod7inversion; 3rds (and 10ths etc.) to 6ths, etc.
      *
-     * @memberof music21.interval.GenericInterval
      * @returns {music21.interval.GenericInterval}
      */
     complement() {
@@ -257,9 +256,9 @@ export class GenericInterval extends prebase.ProtoM21Object {
     }
 
     /**
-     * Returns a new GenericInterval which has the opposite direction (descending becomes ascending, etc.)
+     * Returns a new GenericInterval which has the opposite direction
+     * (descending becomes ascending, etc.)
      *
-     * @memberof music21.interval.GenericInterval
      * @returns {music21.interval.GenericInterval}
      */
     reverse() {
@@ -274,8 +273,7 @@ export class GenericInterval extends prebase.ProtoM21Object {
     /**
      * Given a specifier, return a new DiatonicInterval with this generic.
      *
-     * @memberof music21.interval.GenericInterval
-     * @param {string|Int} specifier - a specifier such as "P","m","M","A","dd" etc.
+     * @param {string|number} specifier - a specifier such as "P", "m", "M", "A", "dd" etc.
      * @returns {music21.interval.DiatonicInterval}
      */
     getDiatonic(specifier) {
@@ -285,7 +283,6 @@ export class GenericInterval extends prebase.ProtoM21Object {
     /**
      * Transpose a pitch by this generic interval, maintaining accidentals
      *
-     * @memberof music21.interval.GenericInterval
      * @param {music21.pitch.Pitch} p
      * @returns {music21.pitch.Pitch}
      */
@@ -447,8 +444,9 @@ interval.IntervalAdjustImperf = {
  *
  * @class DiatonicInterval
  * @memberof music21.interval
- * @param {string|Int|undefined} [specifier='P'] - a specifier such as "P", "d", "m", "M" etc.
- * @param {music21.interval.GenericInterval|Int} [generic=1] - a `GenericInterval` object or a number to be converted to one
+ * @param {string|number|undefined} [specifier='P'] - a specifier such as "P", "d", "m", "M" etc.
+ * @param {music21.interval.GenericInterval|number} [generic=1] - a `GenericInterval`
+ *              object or a number to be converted to one
  * @example
  * var di = new music21.interval.DiatonicInterval("M", 10);
  * di.generic.isClassOrSubclass('GenericInterval');
@@ -481,7 +479,8 @@ export class DiatonicInterval extends prebase.ProtoM21Object {
         if (typeof specifier === 'number') {
             this.specifier = specifier;
         } else {
-            this.specifier = interval.IntervalPrefixSpecs.indexOf(specifier); // todo: convertSpecifier();
+            this.specifier = interval.IntervalPrefixSpecs.indexOf(specifier);
+            // TODO: convertSpecifier();
         }
         this.generic = generic;
 
@@ -586,7 +585,6 @@ export class DiatonicInterval extends prebase.ProtoM21Object {
     /**
      * Returns a ChromaticInterval object of the same size.
      *
-     * @memberof music21.interval.DiatonicInterval
      * @returns {music21.interval.ChromaticInterval}
      */
     getChromatic() {
@@ -706,7 +704,6 @@ export class ChromaticInterval extends prebase.ProtoM21Object {
     /**
      * Transposes pitches but does not maintain accidentals, etc.
      *
-     * @memberof music21.interval.ChromaticInterval
      * @property {music21.pitch.Pitch} p - pitch to transpose
      * @returns {music21.pitch.Pitch}
      */
@@ -732,7 +729,7 @@ interval.IntervalStepNames = ['C', 'D', 'E', 'F', 'G', 'A', 'B'];
 /**
  * @function music21.interval.convertDiatonicNumberToStep
  * @memberof music21.interval
- * @param {Int} dn - diatonic number, where 29 = C4, C#4 etc.
+ * @param {int} dn - diatonic number, where 29 = C4, C#4 etc.
  * @returns {Array} two element array of {string} stepName and {Int} octave
  */
 interval.convertDiatonicNumberToStep = function convertDiatonicNumberToStep(
@@ -893,7 +890,6 @@ export class Interval extends prebase.ProtoM21Object {
 
     
     /**
-     * @memberof music21.interval.Interval
      * @returns {Boolean}
      */
     isConsonant() {
@@ -910,8 +906,10 @@ export class Interval extends prebase.ProtoM21Object {
     /**
      * TODO: maxAccidental
      * 
-     * @memberof music21.interval.Interval
      * @param {music21.pitch.Pitch} p - pitch to transpose
+     * @param {Object} config - configuration
+     * @param {boolean} [config.reverse=false] -- reverse direction
+     * @param {number} [config.maxAccidental=4] -- maximum accidentals to retain (unused)
      * @returns {music21.pitch.Pitch}
      */
     transposePitch(p, { reverse=false, maxAccidental=4 }={}) {
@@ -926,9 +924,9 @@ export class Interval extends prebase.ProtoM21Object {
         // step and octave are right now, but not necessarily accidental
         let halfStepsToFix;
         if (!reverse) {
-            halfStepsToFix = this.chromatic.semitones - parseInt(pitch2.ps - p.ps);
+            halfStepsToFix = this.chromatic.semitones - Math.floor(pitch2.ps - p.ps);
         } else {
-            halfStepsToFix = (-1 * this.chromatic.semitones) - parseInt(pitch2.ps - p.ps);
+            halfStepsToFix = (-1 * this.chromatic.semitones) - Math.floor(pitch2.ps - p.ps);
         }
         if (halfStepsToFix !== 0) {
             pitch2.accidental = new pitch.Accidental(halfStepsToFix);
@@ -939,7 +937,7 @@ export class Interval extends prebase.ProtoM21Object {
                 'Interval.transposePitch -- new octave ' + pitch2.octave
             );
             console.log(
-                'Interval.transposePitch -- fixing halfsteps for '
+                'Interval.transposePitch -- fixing half steps for '
                     + halfStepsToFix
             );
         }

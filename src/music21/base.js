@@ -38,7 +38,7 @@ export const base = {};
  * @class Music21Object
  * @memberof music21.base
  * @extends music21.prebase.ProtoM21Object
- * @property {object} activeSite - hardlink to a {@link music21.stream.Stream} containing the element.
+ * @property {Object} activeSite - hardlink to a {@link music21.stream.Stream} containing the element.
  * @property {number} classSortOrder - Default sort order for this class (default 20; override in other classes). Lower numbered objects will sort before other objects in the staff if priority and offset are the same.
  * @property {music21.duration.Duration} duration - the duration (object) for the element. (can be set with a quarterLength also)
  * @property {Array} groups - An Array of strings representing group (equivalent to css classes) to assign to the object. (default [])
@@ -76,6 +76,7 @@ export class Music21Object extends prebase.ProtoM21Object {
 
         // beat, measureNumber, etc.
         // lots to do...
+        // noinspection JSUnusedLocalSymbols
         this._cloneCallbacks._activeSite = function Music21Object_cloneCallbacks_activeSite(
             keyName,
             newObj,
@@ -94,6 +95,7 @@ export class Music21Object extends prebase.ProtoM21Object {
             newObj[keyName] = newDerivation;
         };
 
+        // noinspection JSUnusedLocalSymbols
         this._cloneCallbacks.sites = function Music21Object_cloneCallbacks_sites(
             keyName,
             newObj,
@@ -104,11 +106,15 @@ export class Music21Object extends prebase.ProtoM21Object {
     }
     
     stringInfo() {
-        let id16 = this.id.toString(16);
-        while (id16.length < 4) {
-            id16 = '0' + id16;
+        let id16 = this.id;
+        if (typeof id16 === 'number') {
+            id16 = id16.toString(16);
+            while (id16.length < 4) {
+                id16 = '0' + id16;
+            }
+            id16 = '0x' + id16;
         }
-        return '0x' + id16;
+        return id16;
     }
     
     get activeSite() {
@@ -209,8 +215,8 @@ export class Music21Object extends prebase.ProtoM21Object {
      *
      * Does not change activeSite or .offset
      *
-     * @memberof music21.base.Music21Object
      * @param {music21.stream.Stream} site
+     * @param {boolean} [stringReturns=false] -- allow strings to be returned
      * @returns Number|undefined
      */
     getOffsetBySite(site, stringReturns=false) {
@@ -223,7 +229,6 @@ export class Music21Object extends prebase.ProtoM21Object {
     /**
      * setOffsetBySite - sets the offset for a given Stream
      *
-     * @memberof music21.base.Music21Object
      * @param  {music21.stream.Stream} site  Stream object
      * @param  {number} value offset
      */
@@ -245,7 +250,6 @@ export class Music21Object extends prebase.ProtoM21Object {
      * See also music21.stream.iterator.RecursiveIterator.currentHierarchyOffset for
      * a method that is about 10x faster when running through a recursed stream.
      *
-     * @memberof music21.base.Music21Object
      * @param {music21.stream.Stream} site
      * @returns Number|undefined
      */
@@ -302,7 +306,8 @@ export class Music21Object extends prebase.ProtoM21Object {
                         } catch (e) {
                             // do nothing... should not happen.
                         }
-                    } else if (lastElement.isClassOrSubclass(classList)) {
+                    } else if (lastElement !== undefined
+                                && lastElement.isClassOrSubclass(classList)) {
                         return lastElement;
                     } else if (matchClass) {
                         return thisElement;
@@ -317,7 +322,7 @@ export class Music21Object extends prebase.ProtoM21Object {
                 ) {
                     return thisElement;
                 }
-                // now cleck stream... already filtered out flatten == false;
+                // now check stream... already filtered out flatten == false;
                 if (thisElement.isStream) {
                     const potentialElement = payloadExtractor(
                         thisElement,

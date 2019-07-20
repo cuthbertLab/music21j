@@ -1,4 +1,11 @@
 export class Derivation {
+
+    /**
+     *
+     * @param {music21.base.Music21Object} [client]
+     * @property {str} [method]
+     * @property {music21.base.Music21Object} [origin]
+     */
     constructor(client) {
         this.client = client;
         this.method = undefined;
@@ -6,8 +13,8 @@ export class Derivation {
     }
 
     clone() {
-        const newThing = new Derivation();
-        newThing.client = this.client;
+        const newThing = new Derivation(this.client);
+        newThing.method = this.method;
         newThing.origin = this.origin;
     }
 

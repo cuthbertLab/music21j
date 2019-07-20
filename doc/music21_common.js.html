@@ -508,10 +508,10 @@ export const common = {};
  * recursive parts used in .clone()
  *
  * @function music21.common.merge
- * @param {object} destination - object to have attributes placed into
- * @param {object} source - object to take attributes from.
+ * @param {Object} destination - object to have attributes placed into
+ * @param {Object} source - object to take attributes from.
  * @memberof music21.common
- * @returns {object} destination
+ * @returns {Object} destination
  */
 common.merge = function mergeRecursive(destination, source) {
     if (source === undefined || source === null) {
@@ -635,7 +635,7 @@ common.posMod = function posMod(a, b) {
  *
  * @function music21.common.statisticalMode
  * @param {Array} a - an array to analyze
- * @returns {object} element with the highest frequency in a
+ * @returns {Object} element with the highest frequency in a
  */
 common.statisticalMode = function statisticalMode(a) {
     if (a.length === 0) {
@@ -740,7 +740,7 @@ common.toRoman = function toRoman(num) {
  *
  * @function music21.common.makeSVGright
  * @param {string} [tag='svg'] - a tag, such as 'rect', 'circle', 'text', or 'svg'
- * @param {object} [attrs] - attributes to pass to the tag.
+ * @param {Object} [attrs] - attributes to pass to the tag.
  * @memberof music21.common
  * @returns {DOMObject}
  */

@@ -17,10 +17,10 @@ export const common = {};
  * recursive parts used in .clone()
  *
  * @function music21.common.merge
- * @param {object} destination - object to have attributes placed into
- * @param {object} source - object to take attributes from.
+ * @param {Object} destination - object to have attributes placed into
+ * @param {Object} source - object to take attributes from.
  * @memberof music21.common
- * @returns {object} destination
+ * @returns {Object} destination
  */
 common.merge = function mergeRecursive(destination, source) {
     if (source === undefined || source === null) {
@@ -98,6 +98,7 @@ common.aggregation = (baseClass, ...mixins) => {
     }
     let copyProps = (target, source) => {
         // this function copies all properties and symbols, filtering out some special ones
+        // noinspection JSUnresolvedFunction
         Object.getOwnPropertyNames(source)
             .concat(Object.getOwnPropertySymbols(source))
             .forEach(prop => {
@@ -115,7 +116,7 @@ common.aggregation = (baseClass, ...mixins) => {
             });
     };
     mixins.forEach(mixin => {
-        // outside contructor() to allow aggregation(A,B,C).staticFunction() to be called etc.
+        // outside constructor() to allow aggregation(A,B,C).staticFunction() to be called etc.
         copyProps(base.prototype, mixin.prototype);
         copyProps(base, mixin);
     });
@@ -146,8 +147,8 @@ common.posMod = function posMod(a, b) {
  * number of occurrences.
  *
  * @function music21.common.statisticalMode
- * @param {Array} a - an array to analyze
- * @returns {object} element with the highest frequency in a
+ * @param {Array<*>} a - an array to analyze
+ * @returns {Object} element with the highest frequency in a
  */
 common.statisticalMode = function statisticalMode(a) {
     if (a.length === 0) {
@@ -252,9 +253,9 @@ common.toRoman = function toRoman(num) {
  *
  * @function music21.common.makeSVGright
  * @param {string} [tag='svg'] - a tag, such as 'rect', 'circle', 'text', or 'svg'
- * @param {object} [attrs] - attributes to pass to the tag.
+ * @param {Object} [attrs] - attributes to pass to the tag.
  * @memberof music21.common
- * @returns {DOMObject}
+ * @returns {SVGElement}
  */
 common.makeSVGright = function makeSVGright(tag='svg', attrs) {
     // see http://stackoverflow.com/questions/3642035/jquerys-append-not-working-with-svg-element
@@ -339,8 +340,8 @@ common.rationalize = function rationalize(ql, epsilon, maxDenominator) {
  * "400px" -> 400
  *
  * @function music21.common.stripPx
- * @param {Int|string} str -- string that might have 'px' at the end or not
- * @returns {int} a number to use
+ * @param {number|string} str -- string that might have 'px' at the end or not
+ * @returns {number} a number to use
  */
 common.stripPx = function stripPx(str) {
     if (typeof str === 'string') {
@@ -426,10 +427,12 @@ common.setWindowVisibilityWatcher = function setWindowVisibilityWatcher(
         document.addEventListener('msvisibilitychange', windowFocusChanged);
     } else if ('onfocusin' in document) {
         // IE 9 and lower:
-        document.onfocusin = document.onfocusout = windowFocusChanged;
+        document.onfocusin = windowFocusChanged;
+        document.onfocusout = windowFocusChanged;
     }
 
     // Also catch window... -- get two calls for a tab shift, but one for window losing focus
+    // noinspection AssignmentResultUsedJS
     window.onpageshow = window.onpagehide = window.onfocus = window.onblur = windowFocusChanged;
 
     function windowFocusChanged(evt) {
@@ -444,6 +447,7 @@ common.setWindowVisibilityWatcher = function setWindowVisibilityWatcher(
             pagehide: h,
         };
 
+        // noinspection JSDeprecatedSymbols
         evt = evt || window.event;
         let callbackState = '';
         if (evt.type in evtMap) {

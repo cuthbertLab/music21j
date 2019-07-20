@@ -37,7 +37,6 @@ export class Expression extends base.Music21Object {
      *
      * (this is not right for all cases)
      *
-     * @memberof music21.expressions.Expression
      * @returns {Vex.Flow.Articulation}
      */
     vexflow() {

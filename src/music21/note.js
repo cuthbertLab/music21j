@@ -32,8 +32,8 @@ import { Music21Exception } from './exceptions21.js';
  *
  * @namespace music21.note
  * @memberof music21
- * @property {Array} noteheadTypeNames - an Array of allowable notehead names.
- * @property {Array} stemDirectionNames - an Array of allowable stemDirection names.
+ * @property {string[]} noteheadTypeNames - an Array of allowable notehead names.
+ * @property {string[]} stemDirectionNames - an Array of allowable stemDirection names.
  */
 export const note = {};
 
@@ -158,7 +158,7 @@ export class Lyric extends prebase.ProtoM21Object {
      *
      * @param  {string} rawText text
      * @param  {boolean} applyRaw = false if hyphens should not be applied
-     * @return {undefined}
+     * @return {this}
      */
     setTextAndSyllabic(rawText, applyRaw = false) {
         if (rawText === undefined) {
@@ -201,7 +201,7 @@ note.Lyric = Lyric;
  * @param {(number|undefined)} [ql=1.0] - quarterLength of the note
  * @property {boolean} [isChord=false] - is this a chord
  * @property {number} quarterLength - shortcut to `.duration.quarterLength`
- * @property {object} activeVexflowNote - most recent Vex.Flow.StaveNote object to be made from this note (could change); default, undefined
+ * @property {Object} activeVexflowNote - most recent Vex.Flow.StaveNote object to be made from this note (could change); default, undefined
  * @property {Array<music21.expressions.Expression>} expressions - array of attached expressions
  * @property {Array<music21.articulations.Articulation>} articulations - array of attached articulations
  * @property {string} lyric - the text of the first {@link music21.note.Lyric} object; can also set one.
@@ -262,7 +262,6 @@ export class GeneralNote extends base.Music21Object {
     /**
      * Add a {@link music21.note.Lyric} object to the Note
      *
-     * @memberof music21.note.GeneralNote
      * @param {string} text - text to be added
      * @param {number} [lyricNumber] - integer specifying lyric (defaults to the current `.lyrics.length` + 1)
      * @param {boolean} [applyRaw=false] - if `true`, do not parse the text for cluses about syllable placement.
@@ -304,7 +303,6 @@ export class GeneralNote extends base.Music21Object {
     /**
      * Change stem direction according to clef. Does nothing for GeneralNote; overridden in subclasses.
      *
-     * @memberof music21.note.GeneralNote
      * @param {music21.clef.Clef} [clef] - clef to set the stem direction of.
      * @returns {undefined}
      */
@@ -318,9 +316,8 @@ export class GeneralNote extends base.Music21Object {
     /**
      * Sets the vexflow accidentals (if any), the dots, and the stem direction
      *
-     * @memberof music21.note.GeneralNote
      * @param {Vex.Flow.StaveNote} vfn - a Vex.Flow note
-     * @param {object
+     * @param {Object} options -- a set of Vex Flow options
      */
     vexflowAccidentalsAndDisplay(vfn, options) {
         if (this.duration.dots > 0) {
@@ -361,10 +358,9 @@ export class GeneralNote extends base.Music21Object {
     /**
      * Play the current element as a MIDI note.
      *
-     * @memberof music21.note.GeneralNote
      * @param {number} [tempo=120] - tempo in bpm
-     * @param {(base.Music21Object)} [nextElement] - for determining the length to play in case of tied notes, etc.
-     * @param {object} [options] - other options (currently just `{instrument: {@link music21.instrument.Instrument} }`)
+     * @param {music21.base.Music21Object} [nextElement] - for determining the length to play in case of tied notes, etc.
+     * @param {Object} [options] - other options (currently just `{instrument: {@link music21.instrument.Instrument} }`)
      * @returns {Number} - delay time in milliseconds until the next element (may be ignored)
      */
     playMidi(tempo=120, nextElement, options) {
@@ -380,12 +376,11 @@ export class GeneralNote extends base.Music21Object {
 
         const volume = this.midiVolume;
         let channel = 0;
-        if (options !== undefined && options.instrument !== undefined) {
+        if (options.instrument !== undefined) {
             channel = options.instrument.midiChannel;
         }
-        let milliseconds = 60 * 1000 / tempo;
         const ql = this.duration.quarterLength;
-        milliseconds = 60 * ql * 1000 / tempo;
+        const milliseconds = 60 * ql * 1000 / tempo;
         let midNum;
         if (this.isClassOrSubclass('Note')) {
             // Note, not rest
@@ -407,7 +402,7 @@ export class GeneralNote extends base.Music21Object {
                 }
             } else if (nextElement === undefined) {
                 // let last note ring an extra beat...
-                stopTime += 60 * 1 / tempo;
+                stopTime += 60 / tempo;
             }
             // console.log(stopTime);
             // console.log(this.tie);
@@ -571,7 +566,6 @@ export class Note extends NotRest {
     /**
      * Change stem direction according to clef.
      *
-     * @memberof music21.note.Note
      * @param {music21.clef.Clef} [clef] - clef to set the stem direction of.
      * @returns {music21.note.Note} Original object, for chaining methods
      */
@@ -602,8 +596,7 @@ export class Note extends NotRest {
     /**
      * Returns a `Vex.Flow.StaveNote` that approximates this note.
      *
-     * @memberof music21.note.Note
-     * @param {object} [options={}] - `{clef: {@link music21.clef.Clef} }`
+     * @param {Object} [options={}] - `{clef: {@link music21.clef.Clef} }`
      * clef to set the stem direction of.
      * @returns {Vex.Flow.StaveNote}
      */
@@ -735,7 +728,7 @@ export class Rest extends GeneralNote {
      * Returns a `Vex.Flow.StaveNote` that approximates this rest.
      * Corrects for bug in VexFlow that renders a whole rest too low.
      *
-     * @memberof music21.note.Rest
+     * @param {Object} options -- vexflow options
      * @returns {Vex.Flow.StaveNote}
      */
     vexflowNote(options) {

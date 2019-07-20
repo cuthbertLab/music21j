@@ -686,7 +686,7 @@ note.Lyric = Lyric;
  * @param {(number|undefined)} [ql=1.0] - quarterLength of the note
  * @property {boolean} [isChord=false] - is this a chord
  * @property {number} quarterLength - shortcut to `.duration.quarterLength`
- * @property {object} activeVexflowNote - most recent Vex.Flow.StaveNote object to be made from this note (could change); default, undefined
+ * @property {Object} activeVexflowNote - most recent Vex.Flow.StaveNote object to be made from this note (could change); default, undefined
  * @property {Array&lt;music21.expressions.Expression>} expressions - array of attached expressions
  * @property {Array&lt;music21.articulations.Articulation>} articulations - array of attached articulations
  * @property {string} lyric - the text of the first {@link music21.note.Lyric} object; can also set one.
@@ -845,7 +845,7 @@ export class GeneralNote extends base.Music21Object {
      * @memberof music21.note.GeneralNote
      * @param {number} [tempo=120] - tempo in bpm
      * @param {(base.Music21Object)} [nextElement] - for determining the length to play in case of tied notes, etc.
-     * @param {object} [options] - other options (currently just `{instrument: {@link music21.instrument.Instrument} }`)
+     * @param {Object} [options] - other options (currently just `{instrument: {@link music21.instrument.Instrument} }`)
      * @returns {Number} - delay time in milliseconds until the next element (may be ignored)
      */
     playMidi(tempo = 120, nextElement, options) {
@@ -1035,7 +1035,7 @@ export class Note extends NotRest {
      * Returns a `Vex.Flow.StaveNote` that approximates this note.
      *
      * @memberof music21.note.Note
-     * @param {object} [options={}] - `{clef: {@link music21.clef.Clef} }`
+     * @param {Object} [options={}] - `{clef: {@link music21.clef.Clef} }`
      * clef to set the stem direction of.
      * @returns {Vex.Flow.StaveNote}
      */

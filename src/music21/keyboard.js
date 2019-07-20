@@ -75,8 +75,6 @@ export class Key {
     /**
      * Gets an SVG object for the key
      *
-     * @method music21.keyboard.Key#makeKey
-     * @memberof music21.keyboard.Key
      * @param {number} startX - X position in pixels from left of keyboard to draw key at
      * @returns {DOMObject} a SVG rectangle for the key
      */
@@ -261,7 +259,7 @@ keyboard.BlackKey = BlackKey;
  * @memberof music21.keyboard
  * @property {number} whiteKeyWidth - default 23
  * @property {number} scaleFactor - default 1
- * @property {object} keyObjects - a mapping of id to {@link music21.keyboard.Key} objects
+ * @property {Object} keyObjects - a mapping of id to {@link music21.keyboard.Key} objects
  * @property {DOMObject} svgObj - the SVG object of the keyboard
  * @property {Boolean} markC - default true
  * @property {Boolean} showNames - default false
@@ -300,7 +298,7 @@ export class Keyboard {
          * - click: this.clickHandler
          *
          * @name callbacks
-         * @type {object}
+         * @type {Object}
          * @memberof music21.keyboard.Keyboard#
          */
         this.callbacks = {

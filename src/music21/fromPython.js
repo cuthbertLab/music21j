@@ -47,7 +47,9 @@ export const fromPython = {};
  * @memberof music21.fromPython
  * @property {boolean} debug
  * @property {Array<string>} knownUnparsables - list of classes that cannot be parsed
- * @property {object} handlers - object mapping string names of classes to a set of function calls to perform when restoring or post-restoring. (too complicated to explain; read the code)
+ * @property {Object} handlers - object mapping string names of classes to a set of
+ * function calls to perform when restoring or post-restoring.
+ * (too complicated to explain; read the code)
  */
 export class Converter {
     constructor() {
@@ -111,8 +113,6 @@ export class Converter {
     /**
      * Fixes up some references that cannot be unpacked from jsonpickle.
      *
-     * @method music21.fromPython.Converter#streamPostRestore
-     * @memberof music21.fromPython.Converter
      * @param {music21.stream.Stream} s - stream after unpacking from jsonpickle
      * @returns {music21.stream.Stream}
      */
@@ -196,8 +196,6 @@ export class Converter {
     /**
      * Run the main decoder
      *
-     * @method music21.fromPython.Converter#run
-     * @memberof music21.fromPython.Converter
      * @param {string} jss - stream encoded as JSON
      * @returns {music21.stream.Stream}
      */

@@ -18,10 +18,17 @@ const shorthandNotation = {
  */
 
 class Notation {
-    constructor(notationColumn) {
-        if (notationColumn === undefined) {
-            notationColumn = '';
-        }
+    /**
+     *
+     * @param {string} [notationColumn='']
+     * @property {string[]} figureStrings
+     * @property {int[]} origNumbers
+     * @property {int[]} numbers
+     * @property {string[]} modifierStrings
+     * @property {Modifier[]} modifiers
+     * @property {Figure[]} figures
+     */
+    constructor(notationColumn='') {
         this.notationColumn = notationColumn;
         this.figureStrings = undefined;
         this.origNumbers = undefined;

@@ -36,7 +36,7 @@ export const chord = {};
  * (see {@link music21.pitch.Pitch} for valid formats), note.Note, or pitch.Pitch objects.
  * @extends music21.note.NotRest
  * @property {number} length - the number of pitches in the Chord (readonly)
- * @property {Array<music21.pitch.Pitch>} pitches - an Array of Pitch objects in the chord. (Consider the Array read only and pass in a new Array to change)
+ * @property {music21.pitch.Pitch[]} pitches - an Array of Pitch objects in the chord. (Consider the Array read only and pass in a new Array to change)
  * @property {Boolean} [isChord=true]
  * @property {Boolean} [isNote=false]
  * @property {Boolean} [isRest=false]
@@ -57,10 +57,15 @@ export class Chord extends note.NotRest {
         this._cache = {};
 
         this._notes = [];
+        /**
+         *
+         * @type {Object|undefined}
+         * @private
+         */
         this._chordTablesAddress = undefined;
         this._chordTablesAddressNeedsUpdating = true; // only update when needed
 
-        notes.forEach(this.add, this, false);
+        notes.forEach(x => this.add(x, false), this);
         if (notes.length > 0
             && notes[0].duration !== undefined
             && notes[0].duration.quarterLength !== this.duration.quarterLength
@@ -261,12 +266,11 @@ export class Chord extends note.NotRest {
     /**
      * Adds a note to the chord, sorting the note array
      *
-     * @memberof music21.chord.Chord
-     * @param {string|music21.note.Note|music21.pitch.Pitch} notes - the Note or Pitch to be added or a string defining a pitch.
+     * @param {string|string[]|music21.note.Note[]|music21.pitch.Pitch[]} notes - the Note or Pitch to be added or a string defining a pitch.
      * @param {boolean} runSort - Sort after running (default true)
      * @returns {music21.chord.Chord} the original chord.
      */
-    add(notes, runSort = true) {
+    add(notes, runSort=true) {
         if (!(notes instanceof Array)) {
             notes = [notes];
         }
@@ -299,7 +303,6 @@ export class Chord extends note.NotRest {
     /**
      * Removes any pitches that appear more than once (in any octave), removing the higher ones, and returns a new Chord.
      *
-     * @memberof music21.chord.Chord
      * @returns {music21.chord.Chord} A new Chord object with duplicate pitches removed.
      */
     removeDuplicatePitches() {
@@ -319,7 +322,7 @@ export class Chord extends note.NotRest {
     /**
      * Finds the Root of the chord.
      *
-     * @memberof music21.chord.Chord
+     * @param {music21.pitch.Pitch} [newroot]
      * @returns {music21.pitch.Pitch} the root of the chord.
      */
     root(newroot) {
@@ -345,7 +348,7 @@ export class Chord extends note.NotRest {
         } else if (closedPitches.length === 1) {
             return this.pitches[0];
         }
-        const indexOfPitchesWithPerfectlyStackedThirds = [];
+        // const indexOfPitchesWithPerfectlyStackedThirds = [];
         const testSteps = [3, 5, 7, 2, 4, 6];
         for (let i = 0; i < closedPitches.length; i++) {
             const p = closedPitches[i];
@@ -370,7 +373,7 @@ export class Chord extends note.NotRest {
                 }
             }
             if (hasFalse === false) {
-                indexOfPitchesWithPerfectlyStackedThirds.push(i);
+                // indexOfPitchesWithPerfectlyStackedThirds.push(i);
                 return closedChord.pitches[i]; // should do more, but fine...
                 // should test rootedness function, etc. 13ths. etc.
             }
@@ -385,7 +388,6 @@ export class Chord extends note.NotRest {
      * For instance, in a G dominant 7th chord (G, B, D, F), would
      * return 4 for chordStep=3, since the third of the chord (B) is four semitones above G.
      *
-     * @memberof music21.chord.Chord
      * @param {number} chordStep - the step to find, e.g., 1, 2, 3, etc.
      * @param {music21.pitch.Pitch} [testRoot] - the pitch to temporarily consider the root.
      * @returns {number|undefined} Number of semitones above the root for this chord step or undefined if no pitch matches that chord step.
@@ -408,7 +410,6 @@ export class Chord extends note.NotRest {
     /**
      * Gets the lowest note (based on .ps not name) in the chord.
      *
-     * @memberof music21.chord.Chord
      * @returns {music21.pitch.Pitch} bass pitch
      */
     bass() {
@@ -418,8 +419,10 @@ export class Chord extends note.NotRest {
             const p = pitches[i];
             if (lowest === undefined) {
                 lowest = p;
-            } else if (p.ps < lowest.ps) {
-                lowest = p;
+            } else { // noinspection JSUnusedAssignment
+                if (p.ps < lowest.ps) {
+                    lowest = p;
+                }
             }
         }
         return lowest;
@@ -429,7 +432,6 @@ export class Chord extends note.NotRest {
      *
      * Call after "closedPosition()" to get Forte style cardinality disregarding octave.
      *
-     * @memberof music21.chord.Chord
      * @returns {number}
      */
     cardinality() {
@@ -439,7 +441,6 @@ export class Chord extends note.NotRest {
 
     /**
     *
-    * @memberof music21.chord.Chord
     * @returns {Boolean}
     */
     isMajorTriad() {
@@ -456,7 +457,6 @@ export class Chord extends note.NotRest {
     }
     /**
     *
-    * @memberof music21.chord.Chord
     * @returns {Boolean}
     */
     isMinorTriad() {
@@ -473,7 +473,6 @@ export class Chord extends note.NotRest {
     }
     /**
     *
-    * @memberof music21.chord.Chord
     * @returns {Boolean}
     */
     isDiminishedTriad() {
@@ -490,7 +489,6 @@ export class Chord extends note.NotRest {
     }
     /**
     *
-    * @memberof music21.chord.Chord
     * @returns {Boolean}
     */
     isAugmentedTriad() {
@@ -565,7 +563,6 @@ export class Chord extends note.NotRest {
     /**
      * Returns true if the chord is a major or minor triad
      *
-     * @memberof music21.chord.Chord
      * @returns {Boolean}
      */
     canBeTonic() {
@@ -583,7 +580,6 @@ export class Chord extends note.NotRest {
      *
      * TODO: add.
      *
-     * @memberof music21.chord.Chord
      * @returns {number}
      */
     inversion() {
@@ -599,8 +595,7 @@ export class Chord extends note.NotRest {
         return undefined;
     }
     /**
-     * @memberof music21.chord.Chord
-     * @param {object} options - a dictionary of options `{clef: {@music21.clef.Clef} }` is especially important
+     * @param {Object} options - a dictionary of options `{clef: {@music21.clef.Clef} }` is especially important
      * @returns {Vex.Flow.StaveNote}
      */
     vexflowNote(options) {
@@ -651,7 +646,6 @@ export class Chord extends note.NotRest {
      * In case there is more that one note with that designation (e.g., `[A-C-C#-E].getChordStep(3)`)
      * the first one in `.pitches` is returned.
      *
-     * @memberof music21.chord.Chord
      * @param {int} chordStep a positive integer representing the chord step
      * @param {music21.pitch.Pitch} [testRoot] - the Pitch to use as a temporary root
      * @returns {music21.pitch.Pitch|undefined}

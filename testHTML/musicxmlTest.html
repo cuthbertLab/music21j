@@ -24,9 +24,7 @@
           <part-name />
         </score-part>
       </part-list>
-      <!--=========================== Part 1 ===========================-->
       <part id="P920cace3b0bddaa7c71d37374e3d2a14">
-        <!--========================= Measure 1 ==========================-->
         <measure number="1">
           <attributes>
             <divisions>10080</divisions>
@@ -54,7 +52,7 @@
 
     mxUrl = 'bachOut.xml';
     require(['music21'], function () {
-        sp = new music21.musicxml.ScoreParser();
+        sp = new music21.musicxml.xmlToM21.ScoreParser();
         sp.scoreFromUrl(mxUrl).done(() => {
             sc = sp.stream;
             sc.appendNewDOM();

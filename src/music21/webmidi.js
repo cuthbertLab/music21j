@@ -81,7 +81,7 @@ webmidi.jazzMidiInArrived = function jazzMidiInArrived(t, a, b, c) {
  * midiMessageEvent should be an object with two keys: timeStamp (int) and data (array of three int values)
  *
  * @memberof music21.webmidi
- * @param {MidiMessageEvent} midiMessageEvent - midi Information
+ * @param {Object} midiMessageEvent - midi Information
  */
 webmidi.midiInArrived = function midiInArrived(midiMessageEvent) {
     const t = midiMessageEvent.timeStamp;
@@ -108,7 +108,7 @@ webmidi.midiInArrived = function midiInArrived(midiMessageEvent) {
  * It will return the plugin if it can or undefined if it cannot. Caches it in webmidi.storedPlugin.
  *
  * @function music21.webmidi.createPlugin
- * @param {DOMObject} [appendElement=document.body] - where to place this hidden object (does not really matter)
+ * @param {Node} [appendElement=document.body] - where to place this hidden object (does not really matter)
  * @param {Boolean} [override=false] - if this method has been called successfully before return the storedPlugin unless override is true.
  * @returns {Jazz|undefined} Jazz MIDI plugin object
  */
@@ -145,9 +145,9 @@ webmidi.createPlugin = function createPlugin(appendElement, override) {
  * Creates a &lt;select&gt; object for selecting among the MIDI choices in Jazz
  *
  * @function music21.webmidi.createJazzSelector
- * @param {JQueryDOMObject|DOMObject} [midiSelectDiv=document.body] - object to append the select to
- * @param {object} [options] - see createSelector for details
- * @returns {DOMObject|undefined} DOM object containing the select tag, or undefined if Jazz cannot be loaded.
+ * @param {jQuery|Node} [$newSelect=document.body] - object to append the select to
+ * @param {Object} [options] - see createSelector for details
+ * @returns {Node|undefined} DOM object containing the select tag, or undefined if Jazz cannot be loaded.
  */
 webmidi.createJazzSelector = function createJazzSelector($newSelect, options) {
     const params = {};
@@ -257,9 +257,9 @@ webmidi.selectionChanged = function selectionChanged() {
  * {bool} existingMidiSelect -- is there already a select tag for MIDI?
  *
  * @function music21.webmidi.createSelector
- * @param {JQueryDOMObject|DOMObject} [$midiSelectDiv=$('body')] - object to append the select to
- * @param {object} [options] - see above.
- * @returns {DOMObject|undefined} DOM object containing the select tag, or undefined if Jazz cannot be loaded.
+ * @param {jQuery|Node} [$midiSelectDiv=$('body')] - object to append the select to
+ * @param {Object} [options] - see above.
+ * @returns {Node|undefined} DOM object containing the select tag, or undefined if Jazz cannot be loaded.
  */
 webmidi.createSelector = function createSelector($midiSelectDiv, options) {
     const params = {

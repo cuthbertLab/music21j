@@ -33,8 +33,20 @@ export class StreamIterator {
             filterList = [filterList];
         }
         this.filters = filterList;
+
+        /**
+         *
+         * @type {number|undefined}
+         * @private
+         */
         this._len = undefined;
+        /**
+         *
+         * @type {music21.base.Music21Object[]|undefined}
+         * @private
+         */
         this._matchingElements = undefined;
+        this.sectionIndex = 0;  // no endElements yet...
 
         if (activeInformation === undefined) {
             this.activeInformation = {};
@@ -99,7 +111,7 @@ export class StreamIterator {
         this.index = 0;
         this.iterSection = '_elements';
         this.updateActiveInformation();
-        for (const f in this.filters) {
+        for (const f of this.filters) {
             if (f.reset !== undefined) {
                 f.reset();
             }
@@ -112,7 +124,7 @@ export class StreamIterator {
     }
 
     cleanup() {
-        if (this.cleanupOnStep) {
+        if (this.cleanupOnStop) {
             this.reset();
             this.srcStream = undefined;
             this.srcStreamElements = [];
@@ -327,6 +339,10 @@ export class RecursiveIterator extends StreamIterator {
         if (streamsOnly) {
             this.filters.push(new filters.ClassFilter('Stream'));
         }
+        /**
+         *
+         * @type {RecursiveIterator|undefined}
+         */
         this.childRecursiveIterator = undefined;
     }
 
@@ -407,8 +423,14 @@ export class RecursiveIterator extends StreamIterator {
     /**
      *   Returns a stack of RecursiveIterators at this point in the iteration.
      *   Last is most recent.
+     *
+     *   @returns {RecursiveIterator[]}
      */
     iteratorStack() {
+        /**
+         *
+         * @type {RecursiveIterator[]}
+         */
         const iterStack = [this];
         let x  = this;
         while (x.childRecursiveIterator !== undefined) {

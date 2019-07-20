@@ -132,7 +132,7 @@ export class OffsetFilter extends StreamFilter {
         
         this.zeroLengthSearch = false;
         if (offsetEnd === undefined) {
-            offsetEnd = offsetStart;
+            self.offsetEnd = offsetStart;
             this.zeroLengthSearch = true;
         } else if (offsetEnd <= offsetStart) {
             this.zeroLengthSearch = true;

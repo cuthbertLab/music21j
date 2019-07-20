@@ -60,6 +60,7 @@ roman.figureShorthands = {
     b7b5b3: '/o7',
 };
 
+// noinspection SpellCheckingInspection
 roman.functionalityScores = {
     I: 100,
     i: 90,
@@ -213,11 +214,19 @@ roman.romanToNumber = [undefined, 'i', 'ii', 'iii', 'iv', 'v', 'vi', 'vii'];
  * @property {string} figure - the figure as passed in
  * @property {string} degreeName - the name associated with the scale degree, such as "mediant" etc., scale 7 will be "leading tone" or "subtonic" appropriately
  * @property {int} scaleDegree
- * @property {string} impliedQuality - "major", "minor", "diminished", "augmented"
+ * @property {string|undefined} impliedQuality - "major", "minor", "diminished", "augmented"
+ * @property {music21.roman.RomanNumeral|undefined} secondaryRomanNumeral
+ * @property {music21.key.Key|undefined} secondaryRomanNumeralKey
+ * @property {string|undefined} frontAlterationString
+ * @property {music21.interval.Interval|undefined} frontAlterationTransposeInterval
+ * @property {music21.pitch.Accidental|undefined} frontAlterationAccidental
+ * @property {string|undefined} romanNumeralAlone
+ * @property {scale.Scale|boolean|undefined} impliedScale
+ * @property {music21.interval.Interval|undefined} scaleOffset
  * @property {Array<music21.pitch.Pitch>} pitches - RomanNumerals are Chord objects, so .pitches will work for them also.
  */
 export class RomanNumeral extends harmony.Harmony {
-    constructor(figure = '', keyStr, keywords) {
+    constructor(figure='', keyStr, keywords) {
         const params = { updatePitches: false, parseFigure: false };
         common.merge(params, keywords);
         super(figure, params);
@@ -252,7 +261,12 @@ export class RomanNumeral extends harmony.Harmony {
         this.followsKeyChange = false;
         this._functionalityScore = undefined;
 
-        this._scale = undefined; // the key
+        /**
+         *
+         * @type {music21.key.Key|music21.scale.Scale|undefined}
+         * @private
+         */
+        this._scale = undefined; // the Key or Scale
 
         this.figure = figure;
         this.key = keyStr;
@@ -272,8 +286,7 @@ export class RomanNumeral extends harmony.Harmony {
     }    
 
     _parseFigure() {
-        let workingFigure = this.figure;
-
+        let workingFigure;
         let useScale = this.impliedScale;
         if (!this.useImpliedScale) {
             useScale = this.key;
@@ -312,6 +325,7 @@ export class RomanNumeral extends harmony.Harmony {
 
         const numbersArr = workingFigure.match(/\d+/);
         if (numbersArr != null) {
+            // noinspection JSUnusedAssignment
             workingFigure = workingFigure.replace(/\d+/, '');
             this.numbers = parseInt(numbersArr[0]);
         }
@@ -422,8 +436,6 @@ export class RomanNumeral extends harmony.Harmony {
         this._tempRoot = this.frontAlterationTransposeInterval.transposePitch(
             this._tempRoot
         );
-
-        return;
     }
 
     _parseRNAloneAmidstAug6(workingFigure, useScale) {
@@ -569,7 +581,6 @@ export class RomanNumeral extends harmony.Harmony {
     /**
      * Update the .pitches array.  Called at instantiation, but not automatically afterwards.
      *
-     * @memberof music21.roman.RomanNumeral
      */
     _updatePitches() {
         let useScale;
@@ -759,7 +770,7 @@ export class RomanNumeral extends harmony.Harmony {
 
     _parseOmittedSteps(workingFigure) {
         const omittedSteps = [];
-        const rx = new RegExp(/\[no(\d+)\]s*/);
+        const rx = new RegExp(/\[no(\d+)]s*/);
         let match = rx.exec(workingFigure);
         while (match !== null) {
             let thisStep = match[1];
@@ -775,7 +786,7 @@ export class RomanNumeral extends harmony.Harmony {
 
     _parseBracketedAlterations(workingFigure) {
         const bracketedAlterations = this.bracketedAlterations;
-        const rx = new RegExp(/\[(b+|-+|#+)(\d+)\]/);
+        const rx = new RegExp(/\[(b+|-+|#+)(\d+)]/);
         let match = rx.exec(workingFigure);
         while (match !== null) {
             const matchAlteration = match[1];
@@ -814,10 +825,9 @@ export class RomanNumeral extends harmony.Harmony {
      *
      * Inverting 7th chords does not work.
      *
-     * @memberof music21.roman.RomanNumeral
      * @param {string} displayType - ['roman', 'bassName', 'nameOnly', other]
      * @param {int} [inversion=0]
-     * @returns {String}
+     * @returns {string}
      */
     asString(displayType, inversion) {
         const keyObj = this.key;

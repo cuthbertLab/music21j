@@ -820,7 +820,7 @@ export class Renderer {
      * @param {music21.stream.Stream} s - a flat stream object
      * @param {music21.vfShow.RenderStack} stack - a RenderStack object to prepare into.
      * @param {Vex.Flow.Stave} [optionalStave] - an optional existing stave.
-     * @param {object} [optional_renderOp] - render options.
+     * @param {Object} [optional_renderOp] - render options.
      * Passed to {@link music21.vfShow.Renderer#renderStave}
      * @returns {Vex.Flow.Stave} staff to return too
      * (also changes the `stack` parameter and runs `makeAccidentals` on s)
@@ -852,7 +852,7 @@ export class Renderer {
      *
      * @memberof music21.vfShow.Renderer
      * @param {music21.stream.Stream} [m=this.stream] - a flat stream
-     * @param {object} [optional_rendOp] - render options, passed
+     * @param {Object} [optional_rendOp] - render options, passed
      * to {@link music21.vfShow.Renderer#newStave} and {@link music21.vfShow.Renderer#setClefEtc}
      * @returns {Vex.Flow.Stave} stave
      */
@@ -1168,7 +1168,7 @@ export class Renderer {
      * @memberof music21.vfShow.Renderer
      * @param {music21.stream.Stream} s
      * @param {Vex.Flow.Stave} stave
-     * @param {object} [rendOp=s.renderOptions] - a {@link music21.renderOptions.RenderOptions}
+     * @param {Object} [rendOp=s.renderOptions] - a {@link music21.renderOptions.RenderOptions}
      * object that might have
      * `{showMeasureNumber: boolean, rightBarLine: string&lt;{'single', 'double', 'end'}>}`
      */

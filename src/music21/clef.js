@@ -65,11 +65,11 @@ clef.nameToSign = {
  * @memberof music21.clef
  * @extends music21.base.Music21Object
  * @param {string} name - clef name
- * @param {Int} [octaveChange=0] - ottava
- * @property {string|undefined} name
- * @property {Int} lowestLine - diatonicNoteNum (C4 = 29) for the lowest line (in a five-line staff)
- * @property {Int} lowestLineTrebleOffset - difference between the first line of this staff and the first line in treble clef
- * @property {Int} octaveChange
+ * @param {int} [octaveChange=0] - ottava
+ * @property {string} [name]
+ * @property {int} lowestLine - diatonicNoteNum (C4 = 29) for the lowest line (in a five-line staff)
+ * @property {int} lowestLineTrebleOffset - difference between the first line of this staff and the first line in treble clef
+ * @property {int} octaveChange
  */
 export class Clef extends base.Music21Object {
     constructor(name, octaveChange) {
@@ -110,7 +110,6 @@ export class Clef extends base.Music21Object {
      * used for Vex.Flow which requires all pitches to be input as if they
      * are in treble clef.
      *
-     * @memberof music21.clef.Clef
      * @param {music21.pitch.Pitch} p
      * @returns {music21.pitch.Pitch} new pitch
      */
@@ -131,7 +130,7 @@ export class Clef extends base.Music21Object {
 clef.Clef = Clef;
 
 /**
- * A TrebleClef (same as new music21.clef.Clef('treble')
+ * A TrebleClef (same as new music21.clef.Clef('treble'))
  *
  * @class TrebleClef
  * @memberof music21.clef
@@ -146,7 +145,7 @@ export class TrebleClef extends Clef {
 }
 clef.TrebleClef = TrebleClef;
 /**
- * A TrebleClef down an octave (same as new music21.clef.Clef('treble', -1)
+ * A TrebleClef down an octave (same as new music21.clef.Clef('treble', -1))
  *
  * Unlike music21p, currently not a subclass of TrebleClef.
  *
@@ -162,7 +161,7 @@ export class Treble8vbClef extends Clef {
 clef.Treble8vbClef = Treble8vbClef;
 
 /**
- * A TrebleClef up an octave (same as new music21.clef.Clef('treble', 1)
+ * A TrebleClef up an octave (same as new music21.clef.Clef('treble', 1))
  *
  * @class Treble8vaClef
  * @memberof music21.clef
@@ -176,7 +175,7 @@ export class Treble8vaClef extends Clef {
 clef.Treble8vaClef = Treble8vaClef;
 
 /**
- * A BassClef (same as new music21.clef.Clef('bass')
+ * A BassClef (same as new music21.clef.Clef('bass'))
  *
  * @class BassClef
  * @memberof music21.clef
@@ -191,9 +190,24 @@ export class BassClef extends Clef {
 }
 clef.BassClef = BassClef;
 
+/**
+ * A BassClef down an octave (same as new music21.clef.Clef('bass', -1))
+ *
+ * @class Bass8vbClef
+ * @memberof music21.clef
+ * @extends music21.clef.Clef
+ */
+export class Bass8vbClef extends Clef {
+    constructor() {
+        super('bass', -1);
+        this.sign = 'F';
+        this.line = 4;
+    }
+}
+clef.Bass8vbClef = Bass8vbClef;
 
 /**
- * An AltoClef (same as new music21.clef.Clef('alto')
+ * An AltoClef (same as new music21.clef.Clef('alto'))
  *
  * @class AltoClef
  * @memberof music21.clef
@@ -209,7 +223,7 @@ export class AltoClef extends Clef {
 clef.AltoClef = AltoClef;
 
 /**
- * A Tenor Clef (same as new music21.clef.Clef('tenor')
+ * A Tenor Clef (same as new music21.clef.Clef('tenor'))
  *
  * @class TenorClef
  * @memberof music21.clef
@@ -224,7 +238,7 @@ export class TenorClef extends Clef {
 }
 clef.TenorClef = TenorClef;
 /**
- * A Soprano Clef (same as new music21.clef.Clef('soprano')
+ * A Soprano Clef (same as new music21.clef.Clef('soprano'))
  *
  * @class SopranoClef
  * @memberof music21.clef
@@ -240,7 +254,7 @@ export class SopranoClef extends Clef {
 clef.SopranoClef = SopranoClef;
 
 /**
- * A Mezzo-Soprano Clef (same as new music21.clef.Clef('mezzo-soprano')
+ * A Mezzo-Soprano Clef (same as new music21.clef.Clef('mezzo-soprano'))
  *
  * @class MezzoSopranoClef
  * @memberof music21.clef
@@ -256,7 +270,7 @@ export class MezzoSopranoClef extends Clef {
 clef.MezzoSopranoClef = MezzoSopranoClef;
 
 /**
- * A Percussion Clef (same as new music21.clef.Clef('percussion')
+ * A Percussion Clef (same as new music21.clef.Clef('percussion'))
  *
  * First line is treated as if it's treble clef. Not available as "bestClef"
  *
@@ -280,11 +294,18 @@ clef.PercussionClef = PercussionClef;
  * @function music21.clef.bestClef
  * @memberof music21.clef
  * @param {music21.stream.Stream} st
+ * @param {Object} [options]
+ * @param {boolean} [options.recurse=true]
  * @returns {music21.clef.Clef}
  */
 clef.bestClef = function bestClef(st, { recurse=true }={}) {
     // console.log('calling flat on stream: ', st.elements.length, st.classes[st.classes.length - 1]);
-    const stFlat = st.flat;
+    let stFlat;
+    if (recurse) {
+        stFlat = st.flat;
+    } else {
+        stFlat = st;
+    }
     let totalNotes = 0;
     let totalPitch = 0.0;
     for (let i = 0; i < stFlat.length; i++) {

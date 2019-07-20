@@ -27,8 +27,14 @@ export class SitesException extends Music21Exception {}
  * 
  * https://stackoverflow.com/questions/7347203/circular-references-in-javascript-garbage-collector
  */
-
 export class SiteRef {
+    /**
+     * @property {boolean} isDead
+     * @property {string|undefined} classString
+     * @property {boolean|number} globalSiteIndex
+     * @property {number|undefined} siteIndex
+     * @property {music21.stream.Stream|undefined} site
+     */
     constructor() {
         this.isDead = false;
         this.classString = undefined;
@@ -66,6 +72,7 @@ export class Sites {
         return this.siteDict.size;
     }
     includes(checkSite) {
+        // noinspection JSUnusedLocalSymbols
         for (const [unused_key, siteRef] of this.siteDict) {
             if (siteRef.site === checkSite) {
                 return true;
@@ -135,10 +142,17 @@ export class Sites {
         this._lastID = -1;
     }
 
+    /**
+     *
+     * @param {boolean|string} [sortByCreationTime=false]
+     * @param {music21.stream.Stream|undefined} [priorityTarget]
+     * @param {boolean} [excludeNone=false]
+     * @returns {IterableIterator<*>}
+     */
     * yieldSites(
-        sortByCreationTime = false,
-        priorityTarget,
-        excludeNone = false
+        sortByCreationTime=false,
+        priorityTarget=undefined,
+        excludeNone=false
     ) {
         let keyRepository;
         if (sortByCreationTime === true) {

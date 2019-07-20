@@ -38,10 +38,10 @@ export const instrument = {};
  * @property {string|undefined} instrumentId
  * @property {string|undefined} instrumentName
  * @property {string|undefined} instrumentAbbreviation
- * @property {Int|undefined} midiProgram
- * @property {Int|undefined} midiChannel
- * @property {Int|undefined} lowestNote
- * @property {Int|undefined} highestNote
+ * @property {int|undefined} midiProgram
+ * @property {int|undefined} midiChannel
+ * @property {int|undefined} lowestNote
+ * @property {int|undefined} highestNote
  * @property {music21.interval.Interval|undefined} transposition
  * @property {Boolean} inGMPercMap=false
  * @property {string|undefined} soundfontFn
@@ -82,9 +82,8 @@ class Instrument extends base.Music21Object {
      * if not given.  Assigns up to `music21.instrument.maxMidi` channels (16)
      * Skips 10 unless this.inGMPercMap is true
      *
-     * @memberof music21.instrument.Instrument
-     * @param {Array<int>} [usedChannels]
-     * @returns {Number}
+     * @param {int[]} [usedChannels]
+     * @returns {number|undefined}
      */
     autoAssignMidiChannel(usedChannels) {
         if (usedChannels === undefined) {
@@ -110,7 +109,7 @@ class Instrument extends base.Music21Object {
         // TODO: no channels! throw exception!
         return undefined;
     }
-    get oggSounfont() {
+    get oggSoundfont() {
         return this.soundfontFn + '-ogg.js';
     }
     get mp3Soundfont() {

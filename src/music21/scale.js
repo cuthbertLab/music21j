@@ -118,6 +118,7 @@ export class AbstractScale extends Scale {
         return this._net.length;
     }
 
+    // noinspection JSUnusedLocalSymbols
     getRealization(
         pitchObj,
         unused_stepOfPitch,
@@ -154,6 +155,7 @@ export class AbstractScale extends Scale {
         return pitchReference;
     }
 
+    // noinspection JSUnusedLocalSymbols
     getRelativeNodeDegree(
         pitchReference,
         unused_nodeName,
@@ -185,6 +187,14 @@ export class AbstractScale extends Scale {
 }
 
 export class AbstractDiatonicScale extends AbstractScale {
+    /**
+     *
+     * @param {string} [mode]
+     * @property {string} type
+     * @property {number|undefined} tonicDegree
+     * @property {number|undefined} dominantDegree
+     * @property {boolean} octaveDuplicating
+     */
     constructor(mode) {
         super();
         this.type = 'Abstract diatonic';
@@ -279,6 +289,7 @@ export class ConcreteScale extends Scale {
     //     return new roman.RomanNumeral(degree, this);
     // }
 
+    // noinspection JSUnusedLocalSymbols
     getPitches(unused_minPitch, unused_maxPitch, unused_direction) {
         let pitchObj;
         if (this.tonic === undefined) {
@@ -289,6 +300,7 @@ export class ConcreteScale extends Scale {
         return this.abstract.getRealization(pitchObj);
     }
 
+    // noinspection JSUnusedLocalSymbols
     pitchFromDegree(
         degree,
         unused_minPitch,
@@ -303,6 +315,7 @@ export class ConcreteScale extends Scale {
         );
     }
 
+    // noinspection JSUnusedLocalSymbols
     getScaleDegreeFromPitch(
         pitchTarget,
         unused_direction,

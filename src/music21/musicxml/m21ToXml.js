@@ -249,9 +249,7 @@ export class XMLExporterBase {
         return this._setAttributeFromAttribute(m21El, xmlEl, xmlAttributeName, options);
     }
     // TODO(msc): _synchronizeIds;
-    _synchronizeIds(element, m21Object) {
-        return;
-    }
+    _synchronizeIds(element, m21Object) {}
     
     addDividerComment(comment='') {
         let commentLength = comment.length;

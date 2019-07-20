@@ -140,7 +140,6 @@ export class TimeSignature extends base.Music21Object {
     /**
      * Compute the Beat Group according to this time signature.
      *
-     * @memberof music21.meter.TimeSignature
      * @returns {Array<Array<int>>} a list of numerator and denominators, find a list of beat groups.
      */
     computeBeatGroups() {
@@ -188,7 +187,7 @@ export class TimeSignature extends base.Music21Object {
 
     /**
      * @param {Iterable} srcStream - a stream of elements.
-     * @param {object} options - an object with measureStartOffset
+     * @param {Object} options - an object with measureStartOffset
      */
     getBeams(srcStream, options) {
         const params = { measureStartOffset: 0.0 };
@@ -293,7 +292,6 @@ export class TimeSignature extends base.Music21Object {
     /**
      * Compute the Beat Group according to this time signature for VexFlow. For beaming.
      *
-     * @memberof music21.meter.TimeSignature
      * @param {Vex} Vex - a reference to the Vex object
      * @returns {Array<Vex.Flow.Fraction>} a list of numerator and denominator groups, for VexFlow
      */

@@ -28,14 +28,32 @@ export const pitch = {};
  * @class Accidental
  * @memberof music21.pitch
  * @param {string|number} accName - an accidental name
+ * @property {number} alter
+ * @property {string} displayType
+ * @property {boolean|undefined} displayStatus
  * @extends music21.prebase.ProtoM21Object
  */
 export class Accidental extends prebase.ProtoM21Object {
     constructor(accName) {
         super();
         this._name = '';
+        /**
+         *
+         * @type {number}
+         * @private
+         */
         this._alter = 0.0;
+        /**
+         *
+         * @type {string}
+         * @private
+         */
         this._modifier = '';
+        /**
+         *
+         * @type {string}
+         * @private
+         */
         this._unicodeModifier = '';
         this.displayType = 'normal'; // "normal", "always" supported currently
         this.displayStatus = undefined; // true, false, undefined
@@ -50,7 +68,6 @@ export class Accidental extends prebase.ProtoM21Object {
     /**
      * Sets a parameter of the accidental and updates name, alter, and modifier to suit.
      *
-     * @memberof music21.pitch.Accidental
      * @param {number|string} accName - the name, number, or modifier to set
      * @returns {undefined}
      */
@@ -157,8 +174,9 @@ export class Accidental extends prebase.ProtoM21Object {
     set name(n) {
         this.set(n);
     }
+
     /**
-     * Return or set the alteration amount (-1.0 = flat; 1.0 = sharp; etc.)
+     * Return or set the alter of the accidental
      *
      * When set, updates name and modifier.
      *
@@ -372,8 +390,7 @@ export class Pitch extends prebase.ProtoM21Object {
         }
     }
     get pitchClass() {
-        const pc = common.posMod(Math.round(this.ps), 12);
-        return pc;
+        return common.posMod(Math.round(this.ps), 12);
     }
     
     get diatonicNoteNum() {
@@ -394,7 +411,7 @@ export class Pitch extends prebase.ProtoM21Object {
     get ps() {
         let accidentalAlter = 0;
         if (this.accidental !== undefined) {
-            accidentalAlter = parseInt(this.accidental.alter);
+            accidentalAlter = this.accidental.alter;
         }
         return (
             (this.octave + 1) * 12
@@ -473,8 +490,8 @@ export class Pitch extends prebase.ProtoM21Object {
      * Returns the vexflow name for the pitch in the given clef.
      *
      * @memberof music21.pitch.Pitch#
-     * @param {clef.Clef} clefObj - the active {@link music21.clef.Clef} object
-     * @returns {String} - representation in vexflow
+     * @param {music21.clef.Clef} clefObj - the active {@link music21.clef.Clef} object
+     * @returns {string} - representation in vexflow
      */
     vexflowName(clefObj) {
         // returns a vexflow Key name for this pitch.

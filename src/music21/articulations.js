@@ -24,7 +24,7 @@ export const articulations = {};
  * @extends music21.prebase.ProtoM21Object
  * @property {string} name
  * @property {string} [placement='above']
- * @property {string} vexflowModifier - the string code to get this accidental in Vexflow
+ * @property {string|undefined} vexflowModifier - the string code to get this accidental in Vexflow
  * @property {number} [dynamicScale=1.0] - multiplier for the dynamic of a note that this is attached to
  * @property {number} [lengthScale=1.0] - multiplier for the length of a note that this is attached to.
  */
@@ -42,7 +42,6 @@ export class Articulation extends prebase.ProtoM21Object {
     /**
      * Generates a Vex.Flow.Articulation for this articulation.
      *
-     * @memberof music21.articulations.Articulation
      * @returns {Vex.Flow.Articulation}
      */
     vexflow() {

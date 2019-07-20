@@ -83,7 +83,7 @@ function _exportMusicXMLAsText(s) {
  * @memberof music21.stream
  * @extends music21.base.Music21Object
  *
- * @property {Array<music21.base.Music21Object>} elements - the elements in the stream. DO NOT MODIFY individual components (consider it like a Python tuple)
+ * @property {music21.base.Music21Object[]} elements - the elements in the stream. DO NOT MODIFY individual components (consider it like a Python tuple)
  * @property {number} length - (readonly) the number of elements in the stream.
  * @property {music21.duration.Duration} duration - the total duration of the stream's elements
  * @property {number} highestTime -- the highest time point in the stream's elements
@@ -99,6 +99,8 @@ function _exportMusicXMLAsText(s) {
  * @property {number} tempo - tempo in beats per minute (will become more sophisticated later, but for now the whole stream has one tempo
  * @property {music21.instrument.Instrument|undefined} instrument - an instrument object associated with the stream (can be set with a string also, but will return an `Instrument` object)
  * @property {Boolean} autoBeam - whether the notes should be beamed automatically or not (will be moved to `renderOptions` soon)
+ * @property {Vex.Flow.Stave|undefined} activeVFStave - the current Stave object for the Stream
+ * @property {music21.vfShow.Renderer|undefined} activeVFRenderer - the current vfShow.Renderer object for the Stream
  * @property {int} [staffLines=5] - number of staff lines
  * @property {function|undefined} changedCallbackFunction - function to call when the Stream changes through a standard interface
  * @property {number} maxSystemWidth - confusing... should be in renderOptions
@@ -146,7 +148,6 @@ export class Stream extends base.Music21Object {
          *      var can = s.appendNewDOM();
          *      $(can).on('click', s.DOMChangerFunction);
          *
-         * @memberof music21.stream.Stream
          * @param {Event} e
          * @returns {music21.base.Music21Object|undefined} - returns whatever changedCallbackFunction does.
          */
@@ -223,14 +224,13 @@ export class Stream extends base.Music21Object {
     }
 
     _getFlatOrSemiFlat(retainContainers) {
-        let tempEls;
         const newSt = this.clone(false);
         if (!this.isFlat) {
             newSt.elements = [];
             for (const el of this) {
                 if (el.isStream) {
                     if (retainContainers) {
-                        tempEls.push(el);
+                        newSt.append(el);
                     }
                     const offsetShift = this.elementOffset(el);
                     // console.log('offsetShift', offsetShift, el.classes[el.classes.length -1]);
@@ -586,7 +586,6 @@ export class Stream extends base.Music21Object {
     /**
      * Add an element to the end of the stream, setting its `.offset` accordingly
      *
-     * @memberof music21.stream.Stream
      * @param {music21.base.Music21Object|Array} elOrElList - element or list of elements to append
      * @returns {this}
      */
@@ -641,9 +640,11 @@ export class Stream extends base.Music21Object {
     /**
      * Add an element to the specified place in the stream, setting its `.offset` accordingly
      *
-     * @memberof music21.stream.Stream
      * @param {number} offset - offset to place.
      * @param {music21.base.Music21Object} el - element to append
+     * @param {Object} [config] -- configuration options
+     * @param {boolean} [config.ignoreSort=false] -- do not sort
+     * @param {boolean} [config.setActiveSite=true] -- set the active site for the inserted element.
      * @returns {this}
      */
     insert(offset, el, { ignoreSort=false, setActiveSite=true }={}) {
@@ -683,6 +684,10 @@ export class Stream extends base.Music21Object {
      * In single argument form, assumes it is an element and takes the offset from the element.
      *
      * Unlike music21p, does not take a list of elements.  TODO(msc): add this.
+     *
+     * @param {number|music21.base.Music21Object} offset -- offset of the item to insert
+     * @param {music21.base.Music21Object} [elementOrNone] -- element.
+     * @return this
      */
     insertAndShift(offset, elementOrNone) {
         let element;
@@ -706,6 +711,7 @@ export class Stream extends base.Music21Object {
             }
         }
         this.insert(offset, element);
+        return this;
     }
 
     /**
@@ -729,7 +735,6 @@ export class Stream extends base.Music21Object {
      * Remove and return the last element in the stream,
      * or return undefined if the stream is empty
      *
-     * @memberof music21.stream.Stream
      * @returns {music21.base.Music21Object|undefined} last element in the stream
      */
     pop() {
@@ -844,9 +849,8 @@ export class Stream extends base.Music21Object {
         recurse=false,
         allDerivated=true,
     } = {}) {
-        let i;
         try {
-            i = this.index(target);
+            this.index(target);
         } catch (err) {
             if (err instanceof StreamException) {
                 return;
@@ -866,7 +870,6 @@ export class Stream extends base.Music21Object {
      *
      * Once Proxy objects are supported by all operating systems for
      *
-     * @memberof music21.stream.Stream
      * @param {int} index - can be -1, -2, to index from the end, like python
      * @returns {music21.base.Music21Object|undefined}
      */
@@ -947,8 +950,7 @@ export class Stream extends base.Music21Object {
      * If `options.inPlace` is true, the original Stream is modified and lost
      * if `options.inPlace` is False, this returns a modified deep copy.
 
-     * @memberof music21.stream.Stream
-     * @param {object} options
+     * @param {Object} [options]
      * @returns {music21.stream.Stream}
      */
     makeMeasures(options) {
@@ -1278,7 +1280,6 @@ export class Stream extends base.Music21Object {
     /**
      * Returns true if any note in the stream has lyrics, otherwise false
      *
-     * @memberof music21.stream.Stream
      * @returns {Boolean}
      */
     hasLyrics() {
@@ -1293,7 +1294,6 @@ export class Stream extends base.Music21Object {
     /**
      * Returns a list of OffsetMap objects
      *
-     * @memberof music21.stream.Stream
      * @returns [music21.stream.OffsetMap]
      */
     offsetMap() {
@@ -1334,14 +1334,20 @@ export class Stream extends base.Music21Object {
      * Find all elements with a certain class; if an Array is given, then any
      * matching class will work.
      *
-     * @memberof music21.stream.Stream
-     * @param {Array<string>|string} classList - a list of classes to find
+     * @param {string[]|string} classList - a list of classes to find
      * @returns {music21.stream.Stream}
      */
     getElementsByClass(classList) {
         return this.iter.getElementsByClass(classList);
     }
 
+    /**
+     * Find all elements NOT with a certain class; if an Array is given, then any
+     * matching class will work.
+     *
+     * @param {string[]|string} classList - a list of classes to find
+     * @returns {music21.stream.Stream}
+     */
     getElementsNotOfClass(classList) {
         return this.iter.getElementsNotOfClass(classList);
     }
@@ -1419,10 +1425,8 @@ export class Stream extends base.Music21Object {
      *  you want, because of some fancy manipulation of
      *  el.activeSite
      *
-     * @memberof music21.stream.Stream
      * @param {music21.base.Music21Object} el - object with an offset and class to search for.
      * @param {music21.stream.Stream|undefined} elStream - a place to get el's offset from.
-     * @returns {music21.stream.Stream}
      * @returns {music21.base.Music21Object|undefined}
      */
     playingWhenAttacked(el, elStream) {
@@ -1456,8 +1460,7 @@ export class Stream extends base.Music21Object {
      *
      * Called automatically before appendDOM routines are called.
      *
-     * @memberof music21.stream.Stream
-     * @returns {music21.stream.Stream} this
+     * @returns {this}
      */
     makeAccidentals() {
         // cheap version of music21p method
@@ -1551,8 +1554,7 @@ export class Stream extends base.Music21Object {
      * in systems, etc.) DOES NOTHING for music21.stream.Stream, but is
      * overridden in subclasses.
      *
-     * @memberof music21.stream.Stream
-     * @returns {music21.stream.Stream} this
+     * @returns {this}
      */
     setSubstreamRenderOptions() {
         /* does nothing for standard streams ... */
@@ -1562,10 +1564,9 @@ export class Stream extends base.Music21Object {
      * Resets all the RenderOptions back to defaults. Can run recursively
      * and can also preserve the `RenderOptions.events` object.
      *
-     * @memberof music21.stream.Stream
      * @param {Boolean} [recursive=false]
      * @param {Boolean} [preserveEvents=false]
-     * @returns {music21.stream.Stream} this
+     * @returns {this}
      */
     resetRenderOptions(recursive, preserveEvents) {
         const oldEvents = this.renderOptions.events;
@@ -1606,8 +1607,7 @@ export class Stream extends base.Music21Object {
      *
      * Will be moved to vfShow eventually when converter objects are enabled...maybe.
      *
-     * @memberof music21.stream.Stream
-     * @param {DOMObject|JQueryDOMObject} canvasOrSVG - a canvas or the div surrounding an SVG object
+     * @param {Node|jQuery} canvasOrSVG - a canvas or the div surrounding an SVG object
      * @returns {vfShow.Renderer}
      */
     renderVexflow(canvasOrSVG) {
@@ -1653,7 +1653,6 @@ export class Stream extends base.Music21Object {
      *
      * If there are systems they will be incorporated into the height unless `ignoreSystems` is `true`.
      *
-     * @memberof music21.stream.Stream
      * @param {Boolean} [ignoreSystems=false]
      * @returns {number} height in pixels
      */
@@ -1707,7 +1706,6 @@ export class Stream extends base.Music21Object {
     /**
      * Estimates the length of the Stream in pixels.
      *
-     * @memberof music21.stream.Stream
      * @returns {number} length in pixels
      */
     estimateStaffLength() {
@@ -1766,9 +1764,8 @@ export class Stream extends base.Music21Object {
      * - instrument: {@link music21.instrument.Instrument} object (default, `this.instrument`)
      * - tempo: number (default, `this.tempo`)
      *
-     * @memberof music21.stream.Stream
-     * @param {object} [options] - object of playback options
-     * @returns {music21.stream.Stream} this
+     * @param {Object} [options] - object of playback options
+     * @returns {this}
      */
     playStream(options) {
         const params = {
@@ -1828,8 +1825,7 @@ export class Stream extends base.Music21Object {
     /**
      * Stops a stream from playing if it currently is.
      *
-     * @memberof music21.stream.Stream
-     * @returns {music21.stream.Stream} this
+     * @returns {this}
      */
     stopPlayStream() {
         // turns off all currently playing MIDI notes (on any stream) and stops playback.
@@ -1857,11 +1853,10 @@ export class Stream extends base.Music21Object {
      *
      * Does not render on the DOM element.
      *
-     * @memberof music21.stream.Stream
      * @param {number|string|undefined} width - will use `this.estimateStaffLength()` + `this.renderOptions.staffPadding` if not given
      * @param {number|string|undefined} height - if undefined will use `this.renderOptions.height`. If still undefined, will use `this.estimateStreamHeight()`
      * @param {string} elementType - what type of element, default = svg
-     * @returns {JQueryDOMObject} svg in jquery.
+     * @returns {jQuery} svg in jquery.
      */
     createNewDOM(width, height, elementType='svg') {
         if (!this.isFlat) {
@@ -1886,8 +1881,7 @@ export class Stream extends base.Music21Object {
         } else {
             const computedWidth
                 = this.estimateStaffLength()
-                + this.renderOptions.staffPadding
-                + 0;
+                + this.renderOptions.staffPadding;
             $newCanvasOrDIV.attr('width', computedWidth);
         }
         if (height !== undefined) {
@@ -1921,11 +1915,10 @@ export class Stream extends base.Music21Object {
      *
      * Called from appendNewDOM() etc.
      *
-     * @memberof music21.stream.Stream
      * @param {number|string|undefined} width
      * @param {number|string|undefined} height
      * @param {string} elementType - what type of element, default = svg
-     * @returns {JQueryDOMObject} canvas or svg
+     * @returns {jQuery} canvas or svg
      */
     createPlayableDOM(width, height, elementType='svg') {
         this.renderOptions.events.click = 'play';
@@ -1939,11 +1932,10 @@ export class Stream extends base.Music21Object {
     /**
      * Creates a new svg and renders vexflow on it
      *
-     * @memberof music21.stream.Stream
      * @param {number|string|undefined} [width]
      * @param {number|string|undefined} [height]
      * @param {string} elementType - what type of element svg or canvas, default = svg
-     * @returns {JQueryDOMObject} canvas or SVG
+     * @returns {jQuery} canvas or SVG
      */
     createDOM(width, height, elementType='svg') {
         const $newSvg = this.createNewDOM(width, height, elementType);
@@ -1953,7 +1945,7 @@ export class Stream extends base.Music21Object {
         return $newSvg;
     }
 
-    appendNewCanvas(appendElement, width, height, elementType = 'svg') {
+    appendNewCanvas(appendElement, width, height, elementType='svg') {
         console.warn('appendNewCanvas is deprecated, use appendNewDOM instead');
         return this.appendNewDOM(appendElement, width, height, elementType);
     }
@@ -1961,15 +1953,15 @@ export class Stream extends base.Music21Object {
     /**
      * Creates a new canvas, renders vexflow on it, and appends it to the DOM.
      *
-     * @memberof music21.stream.Stream
-     * @param {JQueryDOMObject|DOMObject} [appendElement=document.body] - where to place the svg
+     * @param {jQuery|Node} [appendElement=document.body] - where to place the svg
      * @param {number|string} [width]
      * @param {number|string} [height]
      * @param {string} elementType - what type of element, default = svg
-     * @returns {DOMObject} svg (not the jQueryDOMObject -- this is a difference with other routines and should be fixed. TODO: FIX)
+     * @returns {SVGAElement|Node} svg (not the jQueryDOMObject --
+     * this is a difference with other routines and should be fixed. TODO: FIX)
      *
      */
-    appendNewDOM(appendElement, width, height, elementType = 'svg') {
+    appendNewDOM(appendElement, width, height, elementType='svg') {
         if (appendElement === undefined) {
             appendElement = 'body';
         }
@@ -1999,25 +1991,24 @@ export class Stream extends base.Music21Object {
     /**
      * Replaces a particular Svg with a new rendering of one.
      *
-     * Note that if 'where' is empty, will replace all svges on the page.
+     * Note that if 'where' is empty, will replace all svg elements on the page.
      *
-     * @memberof music21.stream.Stream
-     * @param {JQueryDOMObject|DOMObject} [where] - the canvas or SVG to replace or a container holding the canvas(es) to replace.
+     * @param {jQuery|Node} [where] - the canvas or SVG to replace or a container holding the canvas(es) to replace.
      * @param {Boolean} [preserveSvgSize=false]
      * @param {string} elementType - what type of element, default = svg
-     * @returns {JQueryDOMObject} the svg
+     * @returns {jQuery} the svg
      */
-    replaceDOM(where, preserveSvgSize, elementType = 'svg') {
+    replaceDOM(where, preserveSvgSize, elementType='svg') {
         // if called with no where, replaces all the svges on the page...
         if (where === undefined) {
-            where = 'body';
+            where = document.body;
         }
         let $where;
         if (where.jquery === undefined) {
             $where = $(where);
         } else {
             $where = where;
-            where = $where[0];
+            // where = $where[0];
         }
         let $oldSVGOrCanvas;
 
@@ -2063,9 +2054,9 @@ export class Stream extends base.Music21Object {
      *    - customFunction (will receive event as a first variable; should set up a way to
      *                    find the original stream; var s = this; var f = function () { s...}
      *                   )
-     * @memberof music21.stream.Stream
-     * @param {DOMObject} canvasOrDiv - canvas or the Div surrounding it.
-     * @returns {music21.stream.Stream} this
+     *
+     * @param {Node} canvasOrDiv - canvas or the Div surrounding it.
+     * @returns {this}
      */
     setRenderInteraction(canvasOrDiv) {
         let $svg = canvasOrDiv;
@@ -2109,7 +2100,6 @@ export class Stream extends base.Music21Object {
      *
      * Recursively search downward for the closest storedVexflowStave...
      *
-     * @memberof music21.stream.Stream
      * @returns {Vex.Flow.Stave|undefined}
      */
     recursiveGetStoredVexflowStave() {
@@ -2137,8 +2127,7 @@ export class Stream extends base.Music21Object {
      * Given a mouse click, or other event with .pageX and .pageY,
      * find the x and y for the svg.
      *
-     * @memberof music21.stream.Stream
-     * @param {DOMObject} svg - a canvas or SVG object
+     * @param {Node|SVGElement} svg - a canvas or SVG object
      * @param {Event} e
      * @returns {Array<number>} two-elements, [x, y] in pixels.
      */
@@ -2186,8 +2175,7 @@ export class Stream extends base.Music21Object {
      * xScaled refers to 1/scaleFactor.x -- for instance, scaleFactor.x = 0.7 (default)
      * x of 1 gives 1.42857...
      *
-     * @memberof music21.stream.Stream
-     * @param {DOMObject} svg -- a canvas or SVG object
+     * @param {Node|SVGElement} svg -- a canvas or SVG object
      * @param {Event} e
      * @returns {Array<number>} [scaledX, scaledY]
      */
@@ -2207,7 +2195,6 @@ export class Stream extends base.Music21Object {
      *
      * Y position must be offset from the start of the stave...
      *
-     * @memberof music21.stream.Stream
      * @param {number} yPxScaled
      * @returns {number}
      */
@@ -2239,11 +2226,9 @@ export class Stream extends base.Music21Object {
      *
      * Override in subclasses, always returns this; here.
      *
-     * @memberof music21.stream.Stream
      * @param {number} [xPxScaled]
-     * @param {number} [allowablePixels=10]
      * @param {number} [systemIndex]
-     * @returns {music21.stream.Stream}
+     * @returns {this}
      *
      */
     getStreamFromScaledXandSystemIndex(xPxScaled, systemIndex) {
@@ -2262,11 +2247,10 @@ export class Stream extends base.Music21Object {
      * and 'backupMaximum' which specifies a maximum distance even for backup
      * (default: 70);
      *
-     * @memberof music21.stream.Stream
      * @param {number} xPxScaled
      * @param {number} [allowablePixels=10]
      * @param {number} [systemIndex]
-     * @param {object} [options]
+     * @param {Object} [options]
      * @returns {music21.base.Music21Object|undefined}
      */
     noteElementFromScaledX(xPxScaled, allowablePixels, systemIndex, options) {
@@ -2332,8 +2316,7 @@ export class Stream extends base.Music21Object {
      * Return a list of [diatonicNoteNum, closestXNote]
      * for an event (e) called on the svg (svg)
      *
-     * @memberof music21.stream.Stream
-     * @param {DOMObject} svg
+     * @param {Node|SVGElement} svg
      * @param {Event} e
      * @param {number} x
      * @param {number} y
@@ -2354,10 +2337,9 @@ export class Stream extends base.Music21Object {
      *
      * To be removed...
      *
-     * @memberof music21.stream.Stream
      * @param {number} clickedDiatonicNoteNum
      * @param {music21.base.Music21Object} foundNote
-     * @param {DOMObject} svg
+     * @param {Node} svg
      * @returns {*} output of changedCallbackFunction
      */
     noteChanged(clickedDiatonicNoteNum, foundNote, svg) {
@@ -2385,9 +2367,8 @@ export class Stream extends base.Music21Object {
     /**
      * Redraws an svgDiv, keeping the events of the previous svg.
      *
-     * @memberof music21.stream.Stream
-     * @param {DOMObject} svg
-     * @returns {music21.stream.Stream} this
+     * @param {Node} svg
+     * @returns {this}
      */
     redrawDOM(svg) {
         // this.resetRenderOptions(true, true); // recursive, preserveEvents
@@ -2412,10 +2393,9 @@ export class Stream extends base.Music21Object {
      * Renders a stream on svg with the ability to edit it and
      * a toolbar that allows the accidentals to be edited.
      *
-     * @memberof music21.stream.Stream
      * @param {number} [width]
      * @param {number} [height]
-     * @returns {DOMObject} &lt;div&gt; tag around the svg.
+     * @returns {Node} the div tag around the svg.
      */
     editableAccidentalDOM(width, height) {
         /*
@@ -2444,11 +2424,10 @@ export class Stream extends base.Music21Object {
 
     /**
      *
-     * @memberof music21.stream.Stream
      * @param {int} minAccidental - alter of the min accidental (default -1)
      * @param {int} maxAccidental - alter of the max accidental (default 1)
-     * @param {jQueryObject} $siblingSvg - svg to use for redrawing;
-     * @returns {jQueryObject} the accidental toolbar.
+     * @param {jQuery} $siblingSvg - svg to use for redrawing;
+     * @returns {jQuery} the accidental toolbar.
      */
     getAccidentalToolbar(minAccidental, maxAccidental, $siblingSvg) {
         if (minAccidental === undefined) {
@@ -2515,8 +2494,7 @@ export class Stream extends base.Music21Object {
     }
     /**
      *
-     * @memberof music21.stream.Stream
-     * @returns {jQueryObject} a Div containing two buttons -- play and stop
+     * @returns {jQuery} a Div containing two buttons -- play and stop
      */
     getPlayToolbar() {
         const $buttonDiv = $('<div/>').attr(
@@ -2542,9 +2520,8 @@ export class Stream extends base.Music21Object {
      * so that on resizing the stream is redrawn and reflowed to the
      * new size.
      *
-     * @memberof music21.stream.Stream
-     * @param {JQueryDOMObject} jSvg
-     * @returns {music21.stream.Stream} this
+     * @param {jQuery} jSvg
+     * @returns {this}
      */
     windowReflowStart(jSvg) {
         // set up a bunch of windowReflow bindings that affect the svg.
@@ -2586,7 +2563,6 @@ export class Stream extends base.Music21Object {
     /**
      * Does this stream have a {@link music21.stream.Voice} inside it?
      *
-     * @memberof music21.stream.Stream
      * @returns {Boolean}
      */
     hasVoices() {
@@ -2657,7 +2633,6 @@ export class Part extends Stream {
      *
      * Does not change any reflow information, so by default it's always 1.
      *
-     * @memberof music21.stream.Part
      * @returns {Number}
      */
     numSystems() {
@@ -2674,7 +2649,6 @@ export class Part extends Stream {
     /**
      * Find the width of every measure in the Part.
      *
-     * @memberof music21.stream.Part
      * @returns {Array<number>}
      */
     getMeasureWidths() {
@@ -2694,7 +2668,6 @@ export class Part extends Stream {
     /**
      * Overrides the default music21.stream.Stream#estimateStaffLength
      *
-     * @memberof music21.stream.Part
      * @returns {number}
      */
     estimateStaffLength() {
@@ -2734,8 +2707,7 @@ export class Part extends Stream {
      * will come to the same result for each part.  Opportunity
      * for making more efficient through this...
      *
-     * @memberof music21.stream.Part
-     * @param systemHeight
+     * @param {number} systemHeight
      * @returns {Array}
      */
     fixSystemInformation(systemHeight) {
@@ -2856,7 +2828,6 @@ export class Part extends Stream {
      *
      * figures out the `.left` and `.top` attributes for all contained measures
      *
-     * @memberof music21.stream.Part
      */
     setSubstreamRenderOptions() {
         let currentMeasureIndex = 0; /* 0 indexed for now */
@@ -2937,9 +2908,8 @@ export class Part extends Stream {
      * systemIndexAndScaledY - given a scaled Y, return the systemIndex
      * and the scaledYRelativeToSystem
      *
-     * @memberof music21.stream.Part
      * @param  {number} y the scaled Y
-     * @return Array<int, number>   systemIndex, scaledYRelativeToSystem
+     * @return {number[]}  systemIndex, scaledYRelativeToSystem
      */
     systemIndexAndScaledY(y) {
         let systemPadding = this.renderOptions.systemPadding;
@@ -2956,14 +2926,16 @@ export class Part extends Stream {
      * Overrides the default music21.stream.Stream#findNoteForClick
      * by taking into account systems
      *
-     * @memberof music21.stream.Part
-     * @param {DOMObject} svg
+     * @param {Node} svg
      * @param {Event} e
+     * @param {number} x
+     * @param {number} y
      * @returns {Array} [clickedDiatonicNoteNum, foundNote]
      */
-    findNoteForClick(svg, e) {
-        const [x, y] = this.getScaledXYforDOM(svg, e);
-
+    findNoteForClick(svg, e, x, y) {
+        if (x === undefined || y === undefined) {
+            [x, y] = this.getScaledXYforDOM(svg, e);
+        }
         // debug = true;
         if (debug) {
             console.log(
@@ -2973,10 +2945,11 @@ export class Part extends Stream {
                     + $(svg).height()
             );
         }
-        let systemPadding = this.renderOptions.systemPadding;
-        if (systemPadding === undefined) {
-            systemPadding = this.renderOptions.naiveSystemPadding;
-        }
+        // TODO(msc) -- systemPadding was never used -- should it be?
+        // let systemPadding = this.renderOptions.systemPadding;
+        // if (systemPadding === undefined) {
+        //     systemPadding = this.renderOptions.naiveSystemPadding;
+        // }
         const [systemIndex, scaledYRelativeToSystem] = this.systemIndexAndScaledY(y);
         const clickedDiatonicNoteNum = this.diatonicNoteNumFromScaledY(
             scaledYRelativeToSystem
@@ -2993,7 +2966,6 @@ export class Part extends Stream {
     /**
      * Returns the measure that is at X location xPxScaled and system systemIndex.
      *
-     * @memberof music21.stream.Part
      * @param {number} [xPxScaled]
      * @param {number} [systemIndex]
      * @returns {music21.stream.Stream}
@@ -3083,7 +3055,6 @@ export class Score extends Stream {
      *
      * Always returns the measure of the top part...
      *
-     * @memberof music21.stream.Score
      * @param {number} [xPxScaled]
      * @param {number} [systemIndex]
      * @returns {music21.stream.Stream} usually a Measure
@@ -3100,8 +3071,7 @@ export class Score extends Stream {
      *
      * figures out the `.left` and `.top` attributes for all contained parts
      *
-     * @memberof music21.stream.Score
-     * @returns {music21.stream.Score} this
+     * @returns {this} this
      */
     setSubstreamRenderOptions() {
         let currentPartNumber = 0;
@@ -3126,7 +3096,6 @@ export class Score extends Stream {
     /**
      * Overrides the default music21.stream.Stream#estimateStaffLength
      *
-     * @memberof music21.stream.Score
      * @returns {number}
      */
     estimateStaffLength() {
@@ -3161,9 +3130,8 @@ export class Score extends Stream {
      *
      * Render scrollable score works better...
      *
-     * @memberof music21.stream.Score
-     * @param {object} params -- passed to each part
-     * @returns {music21.stream.Score} this
+     * @param {Object} params -- passed to each part
+     * @returns {this}
      */
     playStream(params) {
         // play multiple parts in parallel...
@@ -3177,8 +3145,7 @@ export class Score extends Stream {
     /**
      * Overrides the default music21.stream.Stream#stopPlayScore()
      *
-     * @memberof music21.stream.Score
-     * @returns {music21.stream.Score} this
+     * @returns {this}
      */
     stopPlayStream() {
         for (const el of this) {
@@ -3200,7 +3167,6 @@ export class Score extends Stream {
      * Does this work? I found a bug in this and fixed it that should have
      * broken it!
      *
-     * @memberof music21.stream.Score
      * @returns Array<number>
      */
     getMaxMeasureWidths() {
@@ -3228,15 +3194,15 @@ export class Score extends Stream {
      * systemIndexAndScaledY - given a scaled Y, return the systemIndex
      * and the scaledYRelativeToSystem
      *
-     * @memberof music21.stream.Score
      * @param  {number} y the scaled Y
-     * @return Array<int, number>   systemIndex, scaledYRelativeToSystem
+     * @return Array<number>   systemIndex, scaledYRelativeToSystem
      */
     systemIndexAndScaledY(y) {
-        let systemPadding = this.renderOptions.systemPadding;
-        if (systemPadding === undefined) {
-            systemPadding = this.renderOptions.naiveSystemPadding;
-        }
+        // TODO(msc) -- systemPadding was not being used; should it be?
+        // let systemPadding = this.renderOptions.systemPadding;
+        // if (systemPadding === undefined) {
+        //     systemPadding = this.renderOptions.naiveSystemPadding;
+        // }
 
         const numParts = this.parts.length;
         const systemHeight = numParts * this.partSpacing + this.systemPadding;
@@ -3250,13 +3216,16 @@ export class Score extends Stream {
      * click event, taking into account that the note will be in different
      * Part objects (and different Systems) given the height and possibly different Systems.
      *
-     * @memberof music21.stream.Score
-     * @param {DOMObject} svg
+     * @param {Node} svg
      * @param {Event} e
+     * @param {number} x
+     * @param {number} y
      * @returns {Array} [diatonicNoteNum, m21Element]
      */
-    findNoteForClick(svg, e) {
-        const [x, y] = this.getScaledXYforDOM(svg, e);
+    findNoteForClick(svg, e, x, y) {
+        if (x === undefined || y === undefined) {
+            [x, y] = this.getScaledXYforDOM(svg, e);
+        }
         const [systemIndex, scaledYFromSystemTop] = this.systemIndexAndScaledY(
             y
         );
@@ -3284,7 +3253,6 @@ export class Score extends Stream {
     /**
      * How many systems are there? Calls numSystems() on the first part.
      *
-     * @memberof music21.stream.Score
      * @returns {int}
      */
     numSystems() {
@@ -3296,8 +3264,9 @@ export class Score extends Stream {
     /**
      * Fixes the part measure spacing for all parts.
      *
-     * @memberof music21.stream.Score
-     * @returns {music21.stream.Score} this
+     * @param {Object} options
+     * @param {Boolean} [options.setLeft=true]
+     * @returns {this}
      */
     evenPartMeasureSpacing({ setLeft=true }={}) {
         const measureStacks = [];

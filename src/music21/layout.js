@@ -136,19 +136,19 @@ export class LayoutScore extends stream.Score {
             return undefined;
         }
     }
-    /**
-     * return a tuple of (top, bottom) for a staff, specified by a given pageId,
-     * systemId, and staffId in PIXELS.
-
-     * @param pageId
-     * @param systemId
-     * @param staffId
-     * @param units -- "pixels" or "tenths" (not supported)
-     */
-
-    getPositionForStaff(pageId, systemId, staffId, units) {
-        units = units || 'pixels';
-    }
+    // /**
+    //  * return a tuple of (top, bottom) for a staff, specified by a given pageId,
+    //  * systemId, and staffId in PIXELS.
+    //
+    //  * @param pageId
+    //  * @param systemId
+    //  * @param staffId
+    //  * @param units -- "pixels" or "tenths" (not supported)
+    //  */
+    //
+    // getPositionForStaff(pageId, systemId, staffId, units) {
+    //     units = units || 'pixels';
+    // }
 }
 layout.LayoutScore = LayoutScore;
 

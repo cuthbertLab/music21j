@@ -1,8 +1,68 @@
 <component name="ProjectDictionaryState">
   <dictionary name="cuthbert">
     <words>
+      <w>allegrissimo</w>
+      <w>andantino</w>
       <w>barline</w>
+      <w>barlines</w>
       <w>cuthbert</w>
+      <w>decachord</w>
+      <w>diad</w>
+      <w>dodecachord</w>
+      <w>enharmonics</w>
+      <w>fati</w>
+      <w>fermata</w>
+      <w>gright</w>
+      <w>hexachord</w>
+      <w>intv</w>
+      <w>jsonpickle</w>
+      <w>langsam</w>
+      <w>largamente</w>
+      <w>larghetto</w>
+      <w>larghissimo</w>
+      <w>longa</w>
+      <w>maestoso</w>
+      <w>marcato</w>
+      <w>maxima</w>
+      <w>memberof</w>
+      <w>miditools</w>
+      <w>mixins</w>
+      <w>moderato</w>
+      <w>molto</w>
+      <w>musicxml</w>
+      <w>newroot</w>
+      <w>nexts</w>
+      <w>nonachord</w>
+      <w>notehead</w>
+      <w>octachord</w>
+      <w>octaveless</w>
+      <w>ottava</w>
+      <w>pentachord</w>
+      <w>prebase</w>
+      <w>prestissimo</w>
+      <w>reflowed</w>
+      <w>rootedness</w>
+      <w>schnell</w>
+      <w>septachord</w>
+      <w>soundfont</w>
+      <w>soundfonts</w>
+      <w>struct</w>
+      <w>substream</w>
+      <w>tetrachord</w>
+      <w>tnre</w>
+      <w>trichord</w>
+      <w>très</w>
+      <w>tuplet</w>
+      <w>tupleted</w>
+      <w>tuplets</w>
+      <w>undecachord</w>
+      <w>unparsable</w>
+      <w>unparsables</w>
+      <w>vexflow</w>
+      <w>vivacissimo</w>
+      <w>webmidi</w>
+      <w>xand</w>
+      <w>yfor</w>
     </words>
   </dictionary>
 </component>

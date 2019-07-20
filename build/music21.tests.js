@@ -1,5 +1,5 @@
 /**
- * music21j 0.9.0 built on  * 2019-01-29.
+ * music21j 0.9.0 built on  * 2019-07-20.
  * Copyright (c) 2013-2019 Michael Scott Cuthbert and cuthbertLab
  * BSD License, see LICENSE
  *
@@ -363,10 +363,10 @@
    * recursive parts used in .clone()
    *
    * @function music21.common.merge
-   * @param {object} destination - object to have attributes placed into
-   * @param {object} source - object to take attributes from.
+   * @param {Object} destination - object to have attributes placed into
+   * @param {Object} source - object to take attributes from.
    * @memberof music21.common
-   * @returns {object} destination
+   * @returns {Object} destination
    */
   common.merge = function mergeRecursive(destination, source) {
       if (source === undefined || source === null) {
@@ -465,6 +465,7 @@
 
       var copyProps = function copyProps(target, source) {
           // this function copies all properties and symbols, filtering out some special ones
+          // noinspection JSUnresolvedFunction
           Object.getOwnPropertyNames(source).concat(Object.getOwnPropertySymbols(source)).forEach(function (prop) {
               if (!prop.match(/^(?:constructor|prototype|arguments|caller|name|bind|call|apply|toString|length)$/)) {
                   Object.defineProperty(target, prop, Object.getOwnPropertyDescriptor(source, prop));
@@ -472,7 +473,7 @@
           });
       };
       mixins.forEach(function (mixin) {
-          // outside contructor() to allow aggregation(A,B,C).staticFunction() to be called etc.
+          // outside constructor() to allow aggregation(A,B,C).staticFunction() to be called etc.
           copyProps(base.prototype, mixin.prototype);
           copyProps(base, mixin);
       });
@@ -482,9 +483,9 @@
   /**
    * posMod - return a modulo value that is not negative
    *
-   * @param  {Int} a value
-   * @param  {Int} b modulo
-   * @return {Int}   a mod b between 0 and b - 1
+   * @param  {int} a value
+   * @param  {int} b modulo
+   * @return {int}   a mod b between 0 and b - 1
    */
 
   common.posMod = function posMod(a, b) {
@@ -503,8 +504,8 @@
    * number of occurrences.
    *
    * @function music21.common.statisticalMode
-   * @param {Array} a - an array to analyze
-   * @returns {object} element with the highest frequency in a
+   * @param {Array<*>} a - an array to analyze
+   * @returns {Object} element with the highest frequency in a
    */
   common.statisticalMode = function statisticalMode(a) {
       if (a.length === 0) {
@@ -531,7 +532,7 @@
    * fromRoman - Convert a Roman numeral (upper or lower) to an int.
    *
    * @param  {string} num roman numeral representation of a number
-   * @return {Int}     integer value of roman numeral;
+   * @return {int}     integer value of roman numeral;
    */
 
   common.fromRoman = function fromRoman(num) {
@@ -610,7 +611,7 @@
   /**
    * toRoman - Convert a number from 1 to 3999 to a roman numeral
    *
-   * @param  {Int} num number to convert
+   * @param  {int} num number to convert
    * @return {string}     as roman numeral
    */
 
@@ -637,9 +638,9 @@
    *
    * @function music21.common.makeSVGright
    * @param {string} [tag='svg'] - a tag, such as 'rect', 'circle', 'text', or 'svg'
-   * @param {object} [attrs] - attributes to pass to the tag.
+   * @param {Object} [attrs] - attributes to pass to the tag.
    * @memberof music21.common
-   * @returns {DOMObject}
+   * @returns {SVGElement}
    */
   common.makeSVGright = function makeSVGright() {
       var tag = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'svg';
@@ -666,7 +667,7 @@
    * (for "32nd") etc.
    *
    * @function music21.common.ordinalAbbreviation
-   * @param {Int} value
+   * @param {int} value
    * @param {Boolean} [plural=false] - make plural (note that "21st" plural is "21st")
    * @return {string}
    */
@@ -699,7 +700,7 @@
    * @function music21.common.rationalize
    * @param {number} ql - number to rationalize
    * @param {number} [epsilon=0.001] - how close to get
-   * @param {Int} [maxDenominator=50] - maximum denominator
+   * @param {int} [maxDenominator=50] - maximum denominator
    * @returns {object|undefined} {'numerator: numerator, 'denominator': denominator}
    */
   common.rationalize = function rationalize(ql, epsilon, maxDenominator) {
@@ -723,8 +724,8 @@
    * "400px" -> 400
    *
    * @function music21.common.stripPx
-   * @param {Int|string} str -- string that might have 'px' at the end or not
-   * @returns {Int} a number to use
+   * @param {number|string} str -- string that might have 'px' at the end or not
+   * @returns {number} a number to use
    */
   common.stripPx = function stripPx(str) {
       if (typeof str === 'string') {
@@ -814,10 +815,12 @@
           document.addEventListener('msvisibilitychange', windowFocusChanged);
       } else if ('onfocusin' in document) {
           // IE 9 and lower:
-          document.onfocusin = document.onfocusout = windowFocusChanged;
+          document.onfocusin = windowFocusChanged;
+          document.onfocusout = windowFocusChanged;
       }
 
       // Also catch window... -- get two calls for a tab shift, but one for window losing focus
+      // noinspection AssignmentResultUsedJS
       window.onpageshow = window.onpagehide = window.onfocus = window.onblur = windowFocusChanged;
 
       function windowFocusChanged(evt) {
@@ -832,6 +835,7 @@
               pagehide: h
           };
 
+          // noinspection JSDeprecatedSymbols
           evt = evt || window.event;
           var callbackState = '';
           if (evt.type in evtMap) {
@@ -898,6 +902,11 @@
       function ProtoM21Object() {
           classCallCheck(this, ProtoM21Object);
 
+          /**
+           *
+           * @type {[string[]]}
+           * @private
+           */
           this._storedClasses = undefined;
           this.isProtoM21Object = true;
           this.isMusic21Object = false;
@@ -917,8 +926,7 @@
            * to handle custom clone cases.  See, for instance, {@link music21.base.Music21Object} which
            * uses a custom callback to NOT clone the `.activeSite` attribute.
            *
-           * @returns {object}
-           * @memberof music21.prebase.ProtoM21Object
+           * @returns {music21.prebase.ProtoM21Object}
            * @example
            * var n1 = new music21.note.Note("C#");
            * n1.duration.quarterLength = 4;
@@ -987,7 +995,6 @@
           /**
            * Check to see if an object is of this class or subclass.
            *
-           * @memberof music21.prebase.ProtoM21Object
            * @param {(string|string[])} testClass - a class or Array of classes to test
            * @returns {Boolean}
            * @example
@@ -1051,6 +1058,13 @@
   prebase.ProtoM21Object = ProtoM21Object;
 
   var Derivation = function () {
+
+      /**
+       *
+       * @param {music21.base.Music21Object} [client]
+       * @property {str} [method]
+       * @property {music21.base.Music21Object} [origin]
+       */
       function Derivation(client) {
           classCallCheck(this, Derivation);
 
@@ -1062,8 +1076,8 @@
       createClass(Derivation, [{
           key: "clone",
           value: function clone() {
-              var newThing = new Derivation();
-              newThing.client = this.client;
+              var newThing = new Derivation(this.client);
+              newThing.method = this.method;
               newThing.origin = this.origin;
           }
       }, {
@@ -1147,7 +1161,7 @@
    * Object mapping int to name, as in `{1: 'whole'}` etc.
    *
    * @memberof music21.duration
-   * @type {object}
+   * @type {Object}
    */
   duration.typeFromNumDict = {
       1: 'whole',
@@ -1216,7 +1230,6 @@
            * @type Number
            * @instance
            * @default 0
-           * @memberof music21.duration.Duration
            * @example
            * var d = new music21.duration.Duration(2);
            * d.dots === 0; // true
@@ -1304,12 +1317,10 @@
                   }
                   // console.log(ratioRat, ql, unTupletedQl);
               }
-              return;
           }
           /**
            * Add a tuplet to music21j
            *
-           * @memberof music21.duration.Duration
            * @param {music21.duration.Tuplet} newTuplet - tuplet to add to `.tuplets`
            * @param {boolean} [skipUpdateQl=false] - update the quarterLength afterwards?
            */
@@ -1340,7 +1351,6 @@
            * @type Number
            * @instance
            * @default 1.0
-           * @memberof music21.duration.Duration
            * @example
            * var d = new music21.duration.Duration(2);
            * d.quarterLength == 2.0; // true;
@@ -1369,7 +1379,6 @@
            * @type String
            * @instance
            * @default 'quarter'
-           * @memberof music21.duration.Duration
            * @example
            * var d = new music21.duration.Duration(2);
            * d.type == 'half; // true
@@ -1404,7 +1413,6 @@
            * @type Array<music21.duration.Tuplet>
            * @instance
            * @default []
-           * @memberof music21.duration.Duration
            */
 
       }, {
@@ -1418,7 +1426,6 @@
            * @type String
            * @instance
            * @default 'd'
-           * @memberof music21.duration.Duration
            * @example
            * var d = new music21.duration.Duration(2);
            * d.vexflowDuration == 'h'; // true;
@@ -1507,7 +1514,6 @@
        * @type String
        * @instance
        * @readonly
-       * @memberof music21.duration.Tuplet
        */
 
 
@@ -1517,7 +1523,6 @@
           /**
            * Set both durationActual and durationNormal for the tuplet.
            *
-           * @memberof music21.duration.Tuplet
            * @param {string} type - a duration type, such as `half`, `quarter`
            * @returns {music21.duration.Duration} A converted {@link music21.duration.Duration} matching `type`
            */
@@ -1532,7 +1537,6 @@
           /**
            * Sets the tuplet ratio.
            *
-           * @memberof music21.duration.Tuplet
            * @param {Number} actual - number of notes in actual (e.g., 3)
            * @param {Number} normal - number of notes in normal (e.g., 2)
            * @returns {undefined}
@@ -1551,7 +1555,6 @@
            * Get the quarterLength corresponding to the total length that
            * the completed tuplet (i.e., 3 notes in a triplet) would occupy.
            *
-           * @memberof music21.duration.Tuplet
            * @returns {Number} A quarter length.
            */
 
@@ -1564,7 +1567,6 @@
            * The amount by which each quarter length is multiplied to get
            * the tuplet. For instance, in a normal triplet, this is 0.666
            *
-           * @memberof music21.duration.Tuplet
            * @returns {Number} A float of the multiplier
            */
 
@@ -1631,8 +1633,15 @@
    * 
    * https://stackoverflow.com/questions/7347203/circular-references-in-javascript-garbage-collector
    */
-
-  var SiteRef = function SiteRef() {
+  var SiteRef =
+  /**
+   * @property {boolean} isDead
+   * @property {string|undefined} classString
+   * @property {boolean|number} globalSiteIndex
+   * @property {number|undefined} siteIndex
+   * @property {music21.stream.Stream|undefined} site
+   */
+  function SiteRef() {
       classCallCheck(this, SiteRef);
 
       this.isDead = false;
@@ -1671,6 +1680,7 @@
       createClass(Sites, [{
           key: 'includes',
           value: function includes(checkSite) {
+              // noinspection JSUnusedLocalSymbols
               var _iteratorNormalCompletion = true;
               var _didIteratorError = false;
               var _iteratorError = undefined;
@@ -1795,11 +1805,20 @@
               this.siteDict.set(_NoneSiteRef.siteIndex, _NoneSiteRef);
               this._lastID = -1;
           }
+
+          /**
+           *
+           * @param {boolean|string} [sortByCreationTime=false]
+           * @param {music21.stream.Stream|undefined} [priorityTarget]
+           * @param {boolean} [excludeNone=false]
+           * @returns {IterableIterator<*>}
+           */
+
       }, {
           key: 'yieldSites',
           value: regeneratorRuntime.mark(function yieldSites() {
               var sortByCreationTime = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
-              var priorityTarget = arguments[1];
+              var priorityTarget = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
               var excludeNone = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
 
               var keyRepository, priorityId, _iteratorNormalCompletion3, _didIteratorError3, _iteratorError3, _iterator3, _step3, key, siteRef, obj;
@@ -2110,7 +2129,7 @@
    * @class Music21Object
    * @memberof music21.base
    * @extends music21.prebase.ProtoM21Object
-   * @property {object} activeSite - hardlink to a {@link music21.stream.Stream} containing the element.
+   * @property {Object} activeSite - hardlink to a {@link music21.stream.Stream} containing the element.
    * @property {number} classSortOrder - Default sort order for this class (default 20; override in other classes). Lower numbered objects will sort before other objects in the staff if priority and offset are the same.
    * @property {music21.duration.Duration} duration - the duration (object) for the element. (can be set with a quarterLength also)
    * @property {Array} groups - An Array of strings representing group (equivalent to css classes) to assign to the object. (default [])
@@ -2153,6 +2172,7 @@
 
           // beat, measureNumber, etc.
           // lots to do...
+          // noinspection JSUnusedLocalSymbols
           _this._cloneCallbacks._activeSite = function Music21Object_cloneCallbacks_activeSite(keyName, newObj, self) {
               newObj[keyName] = undefined;
           };
@@ -2163,6 +2183,7 @@
               newObj[keyName] = newDerivation;
           };
 
+          // noinspection JSUnusedLocalSymbols
           _this._cloneCallbacks.sites = function Music21Object_cloneCallbacks_sites(keyName, newObj, self) {
               newObj[keyName] = new Sites();
           };
@@ -2172,11 +2193,15 @@
       createClass(Music21Object, [{
           key: 'stringInfo',
           value: function stringInfo() {
-              var id16 = this.id.toString(16);
-              while (id16.length < 4) {
-                  id16 = '0' + id16;
+              var id16 = this.id;
+              if (typeof id16 === 'number') {
+                  id16 = id16.toString(16);
+                  while (id16.length < 4) {
+                      id16 = '0' + id16;
+                  }
+                  id16 = '0x' + id16;
               }
-              return '0x' + id16;
+              return id16;
           }
       }, {
           key: 'mergeAttributes',
@@ -2193,8 +2218,8 @@
            *
            * Does not change activeSite or .offset
            *
-           * @memberof music21.base.Music21Object
            * @param {music21.stream.Stream} site
+           * @param {boolean} [stringReturns=false] -- allow strings to be returned
            * @returns Number|undefined
            */
 
@@ -2212,7 +2237,6 @@
           /**
            * setOffsetBySite - sets the offset for a given Stream
            *
-           * @memberof music21.base.Music21Object
            * @param  {music21.stream.Stream} site  Stream object
            * @param  {number} value offset
            */
@@ -2235,7 +2259,6 @@
            * See also music21.stream.iterator.RecursiveIterator.currentHierarchyOffset for
            * a method that is about 10x faster when running through a recursed stream.
            *
-           * @memberof music21.base.Music21Object
            * @param {music21.stream.Stream} site
            * @returns Number|undefined
            */
@@ -2310,7 +2333,7 @@
                               } catch (e) {
                                   // do nothing... should not happen.
                               }
-                          } else if (lastElement.isClassOrSubclass(classList)) {
+                          } else if (lastElement !== undefined && lastElement.isClassOrSubclass(classList)) {
                               return lastElement;
                           } else if (matchClass) {
                               return thisElement;
@@ -2321,7 +2344,7 @@
                       if (getElementMethod.includes('After') && indexOffset > positionStart && matchClass) {
                           return thisElement;
                       }
-                      // now cleck stream... already filtered out flatten == false;
+                      // now check stream... already filtered out flatten == false;
                       if (thisElement.isStream) {
                           var potentialElement = payloadExtractor(thisElement, flatten, positionStart + indexOffset, getElementMethod, classList);
                           if (potentialElement !== undefined) {
@@ -2866,7 +2889,7 @@
    * @extends music21.prebase.ProtoM21Object
    * @property {string} name
    * @property {string} [placement='above']
-   * @property {string} vexflowModifier - the string code to get this accidental in Vexflow
+   * @property {string|undefined} vexflowModifier - the string code to get this accidental in Vexflow
    * @property {number} [dynamicScale=1.0] - multiplier for the dynamic of a note that this is attached to
    * @property {number} [lengthScale=1.0] - multiplier for the length of a note that this is attached to.
    */
@@ -2890,7 +2913,6 @@
       /**
        * Generates a Vex.Flow.Articulation for this articulation.
        *
-       * @memberof music21.articulations.Articulation
        * @returns {Vex.Flow.Articulation}
        */
 
@@ -3217,7 +3239,7 @@
    *
    * @function music21.audioSearch.getUserMedia
    * @memberof music21.audioSearch
-   * @param {object} dictionary - optional dictionary to fill
+   * @param {Object} dictionary - optional dictionary to fill
    * @param {function} callback - callback on success
    * @param {function} error - callback on error
    */
@@ -3824,13 +3846,13 @@
    * Based on music21 (=music21p), Copyright (c) 2006–19, Michael Scott Cuthbert and cuthbertLab
    *
    */
-  var barStyleList = ['regular', 'dotted', 'dashed', 'heavy', 'double', 'final', 'heavy-light', 'heavy-heavy', 'tick', 'short', 'none'];
-  var barStyleDict = {
+  var barTypeList = ['regular', 'dotted', 'dashed', 'heavy', 'double', 'final', 'heavy-light', 'heavy-heavy', 'tick', 'short', 'none'];
+  var barTypeDict = {
       'light-light': 'double',
       'light-heavy': 'final'
   };
 
-  var reverseBarStyleDict = {
+  var reverseBarTypeDict = {
       'double': 'light-light',
       'final': 'light-heavy'
   };
@@ -3846,25 +3868,25 @@
       return BarException;
   }(Music21Exception);
 
-  function styleToMusicXMLBarStyle(value) {
-      if (reverseBarStyleDict[value] !== undefined) {
-          return reverseBarStyleDict[value];
+  function typeToMusicXMLBarStyle(value) {
+      if (reverseBarTypeDict[value] !== undefined) {
+          return reverseBarTypeDict[value];
       } else {
           return value;
       }
   }
 
-  function standardizeBarStyle(value) {
+  function standardizeBarType(value) {
       if (value === undefined) {
           return 'regular';
       }
       value = value.toLowerCase();
 
-      if (barStyleList.includes(value)) {
+      if (barTypeList.includes(value)) {
           return value;
       }
-      if (barStyleDict[value] !== undefined) {
-          return barStyleDict[value];
+      if (barTypeDict[value] !== undefined) {
+          return barTypeDict[value];
       }
       throw new BarException('cannot process style: ' + value);
   }
@@ -3887,7 +3909,7 @@
       createClass(Barline, [{
           key: 'musicXMLBarStyle',
           value: function musicXMLBarStyle() {
-              return styleToMusicXMLBarStyle(this.type);
+              return typeToMusicXMLBarStyle(this.type);
           }
       }, {
           key: 'type',
@@ -3895,7 +3917,7 @@
               return this._type;
           },
           set: function set(v) {
-              this._type = standardizeBarStyle(v);
+              this._type = standardizeBarType(v);
           }
       }]);
       return Barline;
@@ -3949,7 +3971,7 @@
    * @extends music21.prebase.ProtoM21Object
    * @param {string} type - "start", "stop", "continue", "partial"
    * @param {string} direction - only needed for partial beams: "left" or "right"
-   * @property {Int|undefined} number - which beam line does this refer to; 8th = 1, 16th = 2, etc.
+   * @property {int|undefined} number - which beam line does this refer to; 8th = 1, 16th = 2, etc.
    * @property {number|undefined} independentAngle - the angle of this beam if it is different than others (feathered beams)
    */
   var Beam = function (_prebase$ProtoM21Obje) {
@@ -3978,7 +4000,7 @@
    * @extends music21.prebase.ProtoM21Object
    * @property {Array<music21.beam.Beam>} beamsList - a list of Beam objects
    * @property {Boolean} [feathered=false] - is this a feathered beam.
-   * @property {Int} length - length of beamsList
+   * @property {int} length - length of beamsList
    */
   var Beams = function (_prebase$ProtoM21Obje2) {
       inherits(Beams, _prebase$ProtoM21Obje2);
@@ -4223,7 +4245,6 @@
            * Append a new {@link music21.beam.Beam} object to this Beams, automatically creating the Beam
            *   object and incrementing the number count.
            *
-           * @memberof music21.beam.Beams
            * @param {string} type - the type (passed to {@link music21.beam.Beam})
            * @param {string} [direction=undefined] - the direction if type is "partial"
            * @returns {music21.beam.Beam} newly appended object
@@ -4244,8 +4265,7 @@
                   object afterwards.
             * Both "eighth" and "8th" work.  Adding more than six beams (i.e. things
                   like 512th notes) raises an error.
-            * @memberof music21.beam.Beams
-           * @param {string|Int} level - either a string like "eighth" or a number like 1 (="eighth")
+            * @param {string|int} level - either a string like "eighth" or a number like 1 (="eighth")
            * @param {string} type - type to fill all beams to.
            * @returns {this}
            */
@@ -4283,8 +4303,7 @@
           /**
            * Get the beam with the given number or throw an exception.
            *
-           * @memberof music21.beam.Beams
-           * @param {Int} number - the beam number to retrieve (usually one less than the position in `.beamsList`)
+           * @param {int} number - the beam number to retrieve (usually one less than the position in `.beamsList`)
            * @returns {music21.beam.Beam|undefined}
            */
 
@@ -4326,7 +4345,6 @@
           /**
            * Get an Array of all the numbers for the beams
            *
-           * @memberof music21.beam.Beams
            * @returns {Array<int>} all the numbers
            */
 
@@ -4365,7 +4383,7 @@
            * Returns the type + "-" + direction (if direction is defined)
            * for the beam with the given number.
            *
-           * @param {Int} number
+           * @param {int} number
            * @returns {music21.beam.Beam|undefined}
            */
 
@@ -4383,7 +4401,6 @@
           /**
            * Get an Array of all the types for the beams
            *
-           * @memberof music21.beam.Beams
            * @returns {Array<string>} all the types
            */
 
@@ -4399,7 +4416,6 @@
           /**
            * Set all the {@link music21.beam.Beam} objects to a given type/direction
            *
-           * @memberof music21.beam.Beams
            * @param {string} type - beam type
            * @param {string} [direction] - beam direction
            * @returns {this}
@@ -4421,8 +4437,7 @@
           /**
            * Set the {@link music21.beam.Beam} object specified by `number` to a given type/direction
            *
-           * @memberof music21.beam.Beams
-           * @param {Int} number
+           * @param {int} number
            * @param {string} type
            * @param {string} [direction]
            * @returns {this}
@@ -4482,6 +4497,9 @@
    * @class Accidental
    * @memberof music21.pitch
    * @param {string|number} accName - an accidental name
+   * @property {number} alter
+   * @property {string} displayType
+   * @property {boolean|undefined} displayStatus
    * @extends music21.prebase.ProtoM21Object
    */
   var Accidental = function (_prebase$ProtoM21Obje) {
@@ -4493,8 +4511,23 @@
           var _this = possibleConstructorReturn(this, (Accidental.__proto__ || Object.getPrototypeOf(Accidental)).call(this));
 
           _this._name = '';
+          /**
+           *
+           * @type {number}
+           * @private
+           */
           _this._alter = 0.0;
+          /**
+           *
+           * @type {string}
+           * @private
+           */
           _this._modifier = '';
+          /**
+           *
+           * @type {string}
+           * @private
+           */
           _this._unicodeModifier = '';
           _this.displayType = 'normal'; // "normal", "always" supported currently
           _this.displayStatus = undefined; // true, false, undefined
@@ -4511,7 +4544,6 @@
           /**
            * Sets a parameter of the accidental and updates name, alter, and modifier to suit.
            *
-           * @memberof music21.pitch.Accidental
            * @param {number|string} accName - the name, number, or modifier to set
            * @returns {undefined}
            */
@@ -4589,8 +4621,9 @@
           set: function set(n) {
               this.set(n);
           }
+
           /**
-           * Return or set the alteration amount (-1.0 = flat; 1.0 = sharp; etc.)
+           * Return or set the alter of the accidental
            *
            * When set, updates name and modifier.
            *
@@ -4746,7 +4779,7 @@
 
           /**
            * @param {boolean} inPlace
-           * @param {Int} directionInt -- -1 = down, 1 = up
+           * @param {int} directionInt -- -1 = down, 1 = up
            */
           value: function _getEnharmonicHelper() {
               var inPlace = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
@@ -4803,8 +4836,8 @@
            * Returns the vexflow name for the pitch in the given clef.
            *
            * @memberof music21.pitch.Pitch#
-           * @param {clef.Clef} clefObj - the active {@link music21.clef.Clef} object
-           * @returns {String} - representation in vexflow
+           * @param {music21.clef.Clef} clefObj - the active {@link music21.clef.Clef} object
+           * @returns {string} - representation in vexflow
            */
 
       }, {
@@ -4916,8 +4949,7 @@
       }, {
           key: 'pitchClass',
           get: function get() {
-              var pc = common.posMod(Math.round(this.ps), 12);
-              return pc;
+              return common.posMod(Math.round(this.ps), 12);
           }
       }, {
           key: 'diatonicNoteNum',
@@ -4945,7 +4977,7 @@
           get: function get() {
               var accidentalAlter = 0;
               if (this.accidental !== undefined) {
-                  accidentalAlter = parseInt(this.accidental.alter);
+                  accidentalAlter = this.accidental.alter;
               }
               return (this.octave + 1) * 12 + pitch.nameToMidi[this.step] + accidentalAlter;
           },
@@ -5000,8 +5032,8 @@
    *
    * @namespace music21.note
    * @memberof music21
-   * @property {Array} noteheadTypeNames - an Array of allowable notehead names.
-   * @property {Array} stemDirectionNames - an Array of allowable stemDirection names.
+   * @property {string[]} noteheadTypeNames - an Array of allowable notehead names.
+   * @property {string[]} stemDirectionNames - an Array of allowable stemDirection names.
    */
   var note = {};
 
@@ -5079,7 +5111,7 @@
            *
            * @param  {string} rawText text
            * @param  {boolean} applyRaw = false if hyphens should not be applied
-           * @return {undefined}
+           * @return {this}
            */
           value: function setTextAndSyllabic(rawText) {
               var applyRaw = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
@@ -5163,7 +5195,7 @@
    * @param {(number|undefined)} [ql=1.0] - quarterLength of the note
    * @property {boolean} [isChord=false] - is this a chord
    * @property {number} quarterLength - shortcut to `.duration.quarterLength`
-   * @property {object} activeVexflowNote - most recent Vex.Flow.StaveNote object to be made from this note (could change); default, undefined
+   * @property {Object} activeVexflowNote - most recent Vex.Flow.StaveNote object to be made from this note (could change); default, undefined
    * @property {Array<music21.expressions.Expression>} expressions - array of attached expressions
    * @property {Array<music21.articulations.Articulation>} articulations - array of attached articulations
    * @property {string} lyric - the text of the first {@link music21.note.Lyric} object; can also set one.
@@ -5203,7 +5235,6 @@
           /**
            * Add a {@link music21.note.Lyric} object to the Note
            *
-           * @memberof music21.note.GeneralNote
            * @param {string} text - text to be added
            * @param {number} [lyricNumber] - integer specifying lyric (defaults to the current `.lyrics.length` + 1)
            * @param {boolean} [applyRaw=false] - if `true`, do not parse the text for cluses about syllable placement.
@@ -5236,7 +5267,6 @@
           /**
            * Change stem direction according to clef. Does nothing for GeneralNote; overridden in subclasses.
            *
-           * @memberof music21.note.GeneralNote
            * @param {music21.clef.Clef} [clef] - clef to set the stem direction of.
            * @returns {undefined}
            */
@@ -5255,9 +5285,8 @@
           /**
            * Sets the vexflow accidentals (if any), the dots, and the stem direction
            *
-           * @memberof music21.note.GeneralNote
            * @param {Vex.Flow.StaveNote} vfn - a Vex.Flow note
-           * @param {object
+           * @param {Object} options -- a set of Vex Flow options
            */
 
       }, {
@@ -5298,10 +5327,9 @@
           /**
            * Play the current element as a MIDI note.
            *
-           * @memberof music21.note.GeneralNote
            * @param {number} [tempo=120] - tempo in bpm
-           * @param {(base.Music21Object)} [nextElement] - for determining the length to play in case of tied notes, etc.
-           * @param {object} [options] - other options (currently just `{instrument: {@link music21.instrument.Instrument} }`)
+           * @param {music21.base.Music21Object} [nextElement] - for determining the length to play in case of tied notes, etc.
+           * @param {Object} [options] - other options (currently just `{instrument: {@link music21.instrument.Instrument} }`)
            * @returns {Number} - delay time in milliseconds until the next element (may be ignored)
            */
 
@@ -5324,12 +5352,11 @@
 
               var volume = this.midiVolume;
               var channel = 0;
-              if (options !== undefined && options.instrument !== undefined) {
+              if (options.instrument !== undefined) {
                   channel = options.instrument.midiChannel;
               }
-              var milliseconds = 60 * 1000 / tempo;
               var ql = this.duration.quarterLength;
-              milliseconds = 60 * ql * 1000 / tempo;
+              var milliseconds = 60 * ql * 1000 / tempo;
               var midNum = void 0;
               if (this.isClassOrSubclass('Note')) {
                   // Note, not rest
@@ -5345,7 +5372,7 @@
                       }
                   } else if (nextElement === undefined) {
                       // let last note ring an extra beat...
-                      stopTime += 60 * 1 / tempo;
+                      stopTime += 60 / tempo;
                   }
                   // console.log(stopTime);
                   // console.log(this.tie);
@@ -5526,7 +5553,6 @@
           /**
            * Change stem direction according to clef.
            *
-           * @memberof music21.note.Note
            * @param {music21.clef.Clef} [clef] - clef to set the stem direction of.
            * @returns {music21.note.Note} Original object, for chaining methods
            */
@@ -5560,8 +5586,7 @@
           /**
            * Returns a `Vex.Flow.StaveNote` that approximates this note.
            *
-           * @memberof music21.note.Note
-           * @param {object} [options={}] - `{clef: {@link music21.clef.Clef} }`
+           * @param {Object} [options={}] - `{clef: {@link music21.clef.Clef} }`
            * clef to set the stem direction of.
            * @returns {Vex.Flow.StaveNote}
            */
@@ -5718,7 +5743,7 @@
            * Returns a `Vex.Flow.StaveNote` that approximates this rest.
            * Corrects for bug in VexFlow that renders a whole rest too low.
            *
-           * @memberof music21.note.Rest
+           * @param {Object} options -- vexflow options
            * @returns {Vex.Flow.StaveNote}
            */
 
@@ -5840,7 +5865,7 @@
    *
    * @class GenericInterval
    * @memberof music21.interval
-   * @param {Int} [gi=1] - generic interval (1 or higher, or -2 or lower)
+   * @param {number} [gi=1] - generic interval (1 or higher, or -2 or lower)
    * @example
    * var gi = new music21.interval.GenericInterval(-14)
    * gi.value
@@ -5992,7 +6017,6 @@
       /**
        * Returns a new GenericInterval which is the mod7inversion; 3rds (and 10ths etc.) to 6ths, etc.
        *
-       * @memberof music21.interval.GenericInterval
        * @returns {music21.interval.GenericInterval}
        */
 
@@ -6004,9 +6028,9 @@
           }
 
           /**
-           * Returns a new GenericInterval which has the opposite direction (descending becomes ascending, etc.)
+           * Returns a new GenericInterval which has the opposite direction
+           * (descending becomes ascending, etc.)
            *
-           * @memberof music21.interval.GenericInterval
            * @returns {music21.interval.GenericInterval}
            */
 
@@ -6022,8 +6046,7 @@
           /**
            * Given a specifier, return a new DiatonicInterval with this generic.
            *
-           * @memberof music21.interval.GenericInterval
-           * @param {string|Int} specifier - a specifier such as "P","m","M","A","dd" etc.
+           * @param {string|number} specifier - a specifier such as "P", "m", "M", "A", "dd" etc.
            * @returns {music21.interval.DiatonicInterval}
            */
 
@@ -6036,7 +6059,6 @@
           /**
            * Transpose a pitch by this generic interval, maintaining accidentals
            *
-           * @memberof music21.interval.GenericInterval
            * @param {music21.pitch.Pitch} p
            * @returns {music21.pitch.Pitch}
            */
@@ -6138,8 +6160,9 @@
    *
    * @class DiatonicInterval
    * @memberof music21.interval
-   * @param {string|Int|undefined} [specifier='P'] - a specifier such as "P", "d", "m", "M" etc.
-   * @param {music21.interval.GenericInterval|Int} [generic=1] - a `GenericInterval` object or a number to be converted to one
+   * @param {string|number|undefined} [specifier='P'] - a specifier such as "P", "d", "m", "M" etc.
+   * @param {music21.interval.GenericInterval|number} [generic=1] - a `GenericInterval`
+   *              object or a number to be converted to one
    * @example
    * var di = new music21.interval.DiatonicInterval("M", 10);
    * di.generic.isClassOrSubclass('GenericInterval');
@@ -6176,7 +6199,8 @@
           if (typeof specifier === 'number') {
               _this2.specifier = specifier;
           } else {
-              _this2.specifier = interval.IntervalPrefixSpecs.indexOf(specifier); // todo: convertSpecifier();
+              _this2.specifier = interval.IntervalPrefixSpecs.indexOf(specifier);
+              // TODO: convertSpecifier();
           }
           _this2.generic = generic;
 
@@ -6233,7 +6257,6 @@
       /**
        * Returns a ChromaticInterval object of the same size.
        *
-       * @memberof music21.interval.DiatonicInterval
        * @returns {music21.interval.ChromaticInterval}
        */
 
@@ -6353,7 +6376,6 @@
           /**
            * Transposes pitches but does not maintain accidentals, etc.
            *
-           * @memberof music21.interval.ChromaticInterval
            * @property {music21.pitch.Pitch} p - pitch to transpose
            * @returns {music21.pitch.Pitch}
            */
@@ -6384,7 +6406,7 @@
   /**
    * @function music21.interval.convertDiatonicNumberToStep
    * @memberof music21.interval
-   * @param {Int} dn - diatonic number, where 29 = C4, C#4 etc.
+   * @param {int} dn - diatonic number, where 29 = C4, C#4 etc.
    * @returns {Array} two element array of {string} stepName and {Int} octave
    */
   interval.convertDiatonicNumberToStep = function convertDiatonicNumberToStep(dn) {
@@ -6529,7 +6551,6 @@
 
 
           /**
-           * @memberof music21.interval.Interval
            * @returns {Boolean}
            */
           value: function isConsonant() {
@@ -6546,8 +6567,10 @@
           /**
            * TODO: maxAccidental
            * 
-           * @memberof music21.interval.Interval
            * @param {music21.pitch.Pitch} p - pitch to transpose
+           * @param {Object} config - configuration
+           * @param {boolean} [config.reverse=false] -- reverse direction
+           * @param {number} [config.maxAccidental=4] -- maximum accidentals to retain (unused)
            * @returns {music21.pitch.Pitch}
            */
 
@@ -6571,9 +6594,9 @@
               // step and octave are right now, but not necessarily accidental
               var halfStepsToFix = void 0;
               if (!reverse) {
-                  halfStepsToFix = this.chromatic.semitones - parseInt(pitch2.ps - p.ps);
+                  halfStepsToFix = this.chromatic.semitones - Math.floor(pitch2.ps - p.ps);
               } else {
-                  halfStepsToFix = -1 * this.chromatic.semitones - parseInt(pitch2.ps - p.ps);
+                  halfStepsToFix = -1 * this.chromatic.semitones - Math.floor(pitch2.ps - p.ps);
               }
               if (halfStepsToFix !== 0) {
                   pitch2.accidental = new pitch.Accidental(halfStepsToFix);
@@ -6581,7 +6604,7 @@
               if (debug) {
                   console.log('Interval.transposePitch -- new step ' + pitch2.step);
                   console.log('Interval.transposePitch -- new octave ' + pitch2.octave);
-                  console.log('Interval.transposePitch -- fixing halfsteps for ' + halfStepsToFix);
+                  console.log('Interval.transposePitch -- fixing half steps for ' + halfStepsToFix);
               }
               return pitch2;
           }
@@ -8957,6 +8980,7 @@
   }
 
   function addressToZAddress(address) {
+      // noinspection JSUnusedLocalSymbols
       var _validateAddress8 = _validateAddress(address),
           _validateAddress9 = slicedToArray(_validateAddress8, 3),
           card = _validateAddress9[0],
@@ -9210,7 +9234,7 @@
    * (see {@link music21.pitch.Pitch} for valid formats), note.Note, or pitch.Pitch objects.
    * @extends music21.note.NotRest
    * @property {number} length - the number of pitches in the Chord (readonly)
-   * @property {Array<music21.pitch.Pitch>} pitches - an Array of Pitch objects in the chord. (Consider the Array read only and pass in a new Array to change)
+   * @property {music21.pitch.Pitch[]} pitches - an Array of Pitch objects in the chord. (Consider the Array read only and pass in a new Array to change)
    * @property {Boolean} [isChord=true]
    * @property {Boolean} [isNote=false]
    * @property {Boolean} [isRest=false]
@@ -9236,10 +9260,17 @@
           _this._cache = {};
 
           _this._notes = [];
+          /**
+           *
+           * @type {Object|undefined}
+           * @private
+           */
           _this._chordTablesAddress = undefined;
           _this._chordTablesAddressNeedsUpdating = true; // only update when needed
 
-          notes.forEach(_this.add, _this, false);
+          notes.forEach(function (x) {
+              return _this.add(x, false);
+          }, _this);
           if (notes.length > 0 && notes[0].duration !== undefined && notes[0].duration.quarterLength !== _this.duration.quarterLength) {
               _this.duration = notes[0].duration;
           }
@@ -9391,8 +9422,7 @@
           /**
            * Adds a note to the chord, sorting the note array
            *
-           * @memberof music21.chord.Chord
-           * @param {string|music21.note.Note|music21.pitch.Pitch} notes - the Note or Pitch to be added or a string defining a pitch.
+           * @param {string|string[]|music21.note.Note[]|music21.pitch.Pitch[]} notes - the Note or Pitch to be added or a string defining a pitch.
            * @param {boolean} runSort - Sort after running (default true)
            * @returns {music21.chord.Chord} the original chord.
            */
@@ -9459,7 +9489,6 @@
           /**
            * Removes any pitches that appear more than once (in any octave), removing the higher ones, and returns a new Chord.
            *
-           * @memberof music21.chord.Chord
            * @returns {music21.chord.Chord} A new Chord object with duplicate pitches removed.
            */
 
@@ -9482,7 +9511,7 @@
           /**
            * Finds the Root of the chord.
            *
-           * @memberof music21.chord.Chord
+           * @param {music21.pitch.Pitch} [newroot]
            * @returns {music21.pitch.Pitch} the root of the chord.
            */
 
@@ -9511,7 +9540,7 @@
               } else if (closedPitches.length === 1) {
                   return this.pitches[0];
               }
-              var indexOfPitchesWithPerfectlyStackedThirds = [];
+              // const indexOfPitchesWithPerfectlyStackedThirds = [];
               var testSteps = [3, 5, 7, 2, 4, 6];
               for (var i = 0; i < closedPitches.length; i++) {
                   var p = closedPitches[i];
@@ -9533,7 +9562,7 @@
                       }
                   }
                   if (hasFalse === false) {
-                      indexOfPitchesWithPerfectlyStackedThirds.push(i);
+                      // indexOfPitchesWithPerfectlyStackedThirds.push(i);
                       return closedChord.pitches[i]; // should do more, but fine...
                       // should test rootedness function, etc. 13ths. etc.
                   }
@@ -9548,7 +9577,6 @@
            * For instance, in a G dominant 7th chord (G, B, D, F), would
            * return 4 for chordStep=3, since the third of the chord (B) is four semitones above G.
            *
-           * @memberof music21.chord.Chord
            * @param {number} chordStep - the step to find, e.g., 1, 2, 3, etc.
            * @param {music21.pitch.Pitch} [testRoot] - the pitch to temporarily consider the root.
            * @returns {number|undefined} Number of semitones above the root for this chord step or undefined if no pitch matches that chord step.
@@ -9574,7 +9602,6 @@
           /**
            * Gets the lowest note (based on .ps not name) in the chord.
            *
-           * @memberof music21.chord.Chord
            * @returns {music21.pitch.Pitch} bass pitch
            */
 
@@ -9587,8 +9614,11 @@
                   var p = pitches[i];
                   if (lowest === undefined) {
                       lowest = p;
-                  } else if (p.ps < lowest.ps) {
-                      lowest = p;
+                  } else {
+                      // noinspection JSUnusedAssignment
+                      if (p.ps < lowest.ps) {
+                          lowest = p;
+                      }
                   }
               }
               return lowest;
@@ -9598,7 +9628,6 @@
            *
            * Call after "closedPosition()" to get Forte style cardinality disregarding octave.
            *
-           * @memberof music21.chord.Chord
            * @returns {number}
            */
 
@@ -9611,7 +9640,6 @@
 
           /**
           *
-          * @memberof music21.chord.Chord
           * @returns {Boolean}
           */
 
@@ -9631,7 +9659,6 @@
           }
           /**
           *
-          * @memberof music21.chord.Chord
           * @returns {Boolean}
           */
 
@@ -9651,7 +9678,6 @@
           }
           /**
           *
-          * @memberof music21.chord.Chord
           * @returns {Boolean}
           */
 
@@ -9671,7 +9697,6 @@
           }
           /**
           *
-          * @memberof music21.chord.Chord
           * @returns {Boolean}
           */
 
@@ -9769,7 +9794,6 @@
           /**
            * Returns true if the chord is a major or minor triad
            *
-           * @memberof music21.chord.Chord
            * @returns {Boolean}
            */
 
@@ -9790,7 +9814,6 @@
            *
            * TODO: add.
            *
-           * @memberof music21.chord.Chord
            * @returns {number}
            */
 
@@ -9809,8 +9832,7 @@
               return undefined;
           }
           /**
-           * @memberof music21.chord.Chord
-           * @param {object} options - a dictionary of options `{clef: {@music21.clef.Clef} }` is especially important
+           * @param {Object} options - a dictionary of options `{clef: {@music21.clef.Clef} }` is especially important
            * @returns {Vex.Flow.StaveNote}
            */
 
@@ -9848,8 +9870,7 @@
            * In case there is more that one note with that designation (e.g., `[A-C-C#-E].getChordStep(3)`)
            * the first one in `.pitches` is returned.
            *
-           * @memberof music21.chord.Chord
-           * @param {Int} chordStep a positive integer representing the chord step
+           * @param {int} chordStep a positive integer representing the chord step
            * @param {music21.pitch.Pitch} [testRoot] - the Pitch to use as a temporary root
            * @returns {music21.pitch.Pitch|undefined}
            */
@@ -10121,11 +10142,11 @@
    * @memberof music21.clef
    * @extends music21.base.Music21Object
    * @param {string} name - clef name
-   * @param {Int} [octaveChange=0] - ottava
-   * @property {string|undefined} name
-   * @property {Int} lowestLine - diatonicNoteNum (C4 = 29) for the lowest line (in a five-line staff)
-   * @property {Int} lowestLineTrebleOffset - difference between the first line of this staff and the first line in treble clef
-   * @property {Int} octaveChange
+   * @param {int} [octaveChange=0] - ottava
+   * @property {string} [name]
+   * @property {int} lowestLine - diatonicNoteNum (C4 = 29) for the lowest line (in a five-line staff)
+   * @property {int} lowestLineTrebleOffset - difference between the first line of this staff and the first line in treble clef
+   * @property {int} octaveChange
    */
   var Clef = function (_base$Music21Object) {
       inherits(Clef, _base$Music21Object);
@@ -10173,7 +10194,6 @@
            * used for Vex.Flow which requires all pitches to be input as if they
            * are in treble clef.
            *
-           * @memberof music21.clef.Clef
            * @param {music21.pitch.Pitch} p
            * @returns {music21.pitch.Pitch} new pitch
            */
@@ -10199,7 +10219,7 @@
   clef.Clef = Clef;
 
   /**
-   * A TrebleClef (same as new music21.clef.Clef('treble')
+   * A TrebleClef (same as new music21.clef.Clef('treble'))
    *
    * @class TrebleClef
    * @memberof music21.clef
@@ -10222,7 +10242,7 @@
   }(Clef);
   clef.TrebleClef = TrebleClef;
   /**
-   * A TrebleClef down an octave (same as new music21.clef.Clef('treble', -1)
+   * A TrebleClef down an octave (same as new music21.clef.Clef('treble', -1))
    *
    * Unlike music21p, currently not a subclass of TrebleClef.
    *
@@ -10243,7 +10263,7 @@
   clef.Treble8vbClef = Treble8vbClef;
 
   /**
-   * A TrebleClef up an octave (same as new music21.clef.Clef('treble', 1)
+   * A TrebleClef up an octave (same as new music21.clef.Clef('treble', 1))
    *
    * @class Treble8vaClef
    * @memberof music21.clef
@@ -10262,7 +10282,7 @@
   clef.Treble8vaClef = Treble8vaClef;
 
   /**
-   * A BassClef (same as new music21.clef.Clef('bass')
+   * A BassClef (same as new music21.clef.Clef('bass'))
    *
    * @class BassClef
    * @memberof music21.clef
@@ -10286,23 +10306,47 @@
   clef.BassClef = BassClef;
 
   /**
-   * An AltoClef (same as new music21.clef.Clef('alto')
+   * A BassClef down an octave (same as new music21.clef.Clef('bass', -1))
+   *
+   * @class Bass8vbClef
+   * @memberof music21.clef
+   * @extends music21.clef.Clef
+   */
+  var Bass8vbClef = function (_Clef5) {
+      inherits(Bass8vbClef, _Clef5);
+
+      function Bass8vbClef() {
+          classCallCheck(this, Bass8vbClef);
+
+          var _this6 = possibleConstructorReturn(this, (Bass8vbClef.__proto__ || Object.getPrototypeOf(Bass8vbClef)).call(this, 'bass', -1));
+
+          _this6.sign = 'F';
+          _this6.line = 4;
+          return _this6;
+      }
+
+      return Bass8vbClef;
+  }(Clef);
+  clef.Bass8vbClef = Bass8vbClef;
+
+  /**
+   * An AltoClef (same as new music21.clef.Clef('alto'))
    *
    * @class AltoClef
    * @memberof music21.clef
    * @extends music21.clef.Clef
    */
-  var AltoClef = function (_Clef5) {
-      inherits(AltoClef, _Clef5);
+  var AltoClef = function (_Clef6) {
+      inherits(AltoClef, _Clef6);
 
       function AltoClef() {
           classCallCheck(this, AltoClef);
 
-          var _this6 = possibleConstructorReturn(this, (AltoClef.__proto__ || Object.getPrototypeOf(AltoClef)).call(this, 'alto'));
+          var _this7 = possibleConstructorReturn(this, (AltoClef.__proto__ || Object.getPrototypeOf(AltoClef)).call(this, 'alto'));
 
-          _this6.sign = 'C';
-          _this6.line = 3;
-          return _this6;
+          _this7.sign = 'C';
+          _this7.line = 3;
+          return _this7;
       }
 
       return AltoClef;
@@ -10310,46 +10354,46 @@
   clef.AltoClef = AltoClef;
 
   /**
-   * A Tenor Clef (same as new music21.clef.Clef('tenor')
+   * A Tenor Clef (same as new music21.clef.Clef('tenor'))
    *
    * @class TenorClef
    * @memberof music21.clef
    * @extends music21.clef.Clef
    */
-  var TenorClef = function (_Clef6) {
-      inherits(TenorClef, _Clef6);
+  var TenorClef = function (_Clef7) {
+      inherits(TenorClef, _Clef7);
 
       function TenorClef() {
           classCallCheck(this, TenorClef);
 
-          var _this7 = possibleConstructorReturn(this, (TenorClef.__proto__ || Object.getPrototypeOf(TenorClef)).call(this, 'tenor'));
+          var _this8 = possibleConstructorReturn(this, (TenorClef.__proto__ || Object.getPrototypeOf(TenorClef)).call(this, 'tenor'));
 
-          _this7.sign = 'C';
-          _this7.line = 4;
-          return _this7;
+          _this8.sign = 'C';
+          _this8.line = 4;
+          return _this8;
       }
 
       return TenorClef;
   }(Clef);
   clef.TenorClef = TenorClef;
   /**
-   * A Soprano Clef (same as new music21.clef.Clef('soprano')
+   * A Soprano Clef (same as new music21.clef.Clef('soprano'))
    *
    * @class SopranoClef
    * @memberof music21.clef
    * @extends music21.clef.Clef
    */
-  var SopranoClef = function (_Clef7) {
-      inherits(SopranoClef, _Clef7);
+  var SopranoClef = function (_Clef8) {
+      inherits(SopranoClef, _Clef8);
 
       function SopranoClef() {
           classCallCheck(this, SopranoClef);
 
-          var _this8 = possibleConstructorReturn(this, (SopranoClef.__proto__ || Object.getPrototypeOf(SopranoClef)).call(this, 'soprano'));
+          var _this9 = possibleConstructorReturn(this, (SopranoClef.__proto__ || Object.getPrototypeOf(SopranoClef)).call(this, 'soprano'));
 
-          _this8.sign = 'C';
-          _this8.line = 1;
-          return _this8;
+          _this9.sign = 'C';
+          _this9.line = 1;
+          return _this9;
       }
 
       return SopranoClef;
@@ -10357,23 +10401,23 @@
   clef.SopranoClef = SopranoClef;
 
   /**
-   * A Mezzo-Soprano Clef (same as new music21.clef.Clef('mezzo-soprano')
+   * A Mezzo-Soprano Clef (same as new music21.clef.Clef('mezzo-soprano'))
    *
    * @class MezzoSopranoClef
    * @memberof music21.clef
    * @extends music21.clef.Clef
    */
-  var MezzoSopranoClef = function (_Clef8) {
-      inherits(MezzoSopranoClef, _Clef8);
+  var MezzoSopranoClef = function (_Clef9) {
+      inherits(MezzoSopranoClef, _Clef9);
 
       function MezzoSopranoClef() {
           classCallCheck(this, MezzoSopranoClef);
 
-          var _this9 = possibleConstructorReturn(this, (MezzoSopranoClef.__proto__ || Object.getPrototypeOf(MezzoSopranoClef)).call(this, 'mezzo-soprano'));
+          var _this10 = possibleConstructorReturn(this, (MezzoSopranoClef.__proto__ || Object.getPrototypeOf(MezzoSopranoClef)).call(this, 'mezzo-soprano'));
 
-          _this9.sign = 'C';
-          _this9.line = 2;
-          return _this9;
+          _this10.sign = 'C';
+          _this10.line = 2;
+          return _this10;
       }
 
       return MezzoSopranoClef;
@@ -10381,7 +10425,7 @@
   clef.MezzoSopranoClef = MezzoSopranoClef;
 
   /**
-   * A Percussion Clef (same as new music21.clef.Clef('percussion')
+   * A Percussion Clef (same as new music21.clef.Clef('percussion'))
    *
    * First line is treated as if it's treble clef. Not available as "bestClef"
    *
@@ -10389,17 +10433,17 @@
    * @memberof music21.clef
    * @extends music21.clef.Clef
    */
-  var PercussionClef = function (_Clef9) {
-      inherits(PercussionClef, _Clef9);
+  var PercussionClef = function (_Clef10) {
+      inherits(PercussionClef, _Clef10);
 
       function PercussionClef() {
           classCallCheck(this, PercussionClef);
 
-          var _this10 = possibleConstructorReturn(this, (PercussionClef.__proto__ || Object.getPrototypeOf(PercussionClef)).call(this, 'percussion'));
+          var _this11 = possibleConstructorReturn(this, (PercussionClef.__proto__ || Object.getPrototypeOf(PercussionClef)).call(this, 'percussion'));
 
-          _this10.sign = 'percussion';
-          _this10.line = 3;
-          return _this10;
+          _this11.sign = 'percussion';
+          _this11.line = 3;
+          return _this11;
       }
 
       return PercussionClef;
@@ -10413,6 +10457,8 @@
    * @function music21.clef.bestClef
    * @memberof music21.clef
    * @param {music21.stream.Stream} st
+   * @param {Object} [options]
+   * @param {boolean} [options.recurse=true]
    * @returns {music21.clef.Clef}
    */
   clef.bestClef = function bestClef(st) {
@@ -10421,7 +10467,12 @@
           recurse = _ref$recurse === undefined ? true : _ref$recurse;
 
       // console.log('calling flat on stream: ', st.elements.length, st.classes[st.classes.length - 1]);
-      var stFlat = st.flat;
+      var stFlat = void 0;
+      if (recurse) {
+          stFlat = st.flat;
+      } else {
+          stFlat = st;
+      }
       var totalNotes = 0;
       var totalPitch = 0.0;
       for (var i = 0; i < stFlat.length; i++) {
@@ -10689,6 +10740,9 @@
           value: function getDegreeMaxUnique() {
               return this._net.length;
           }
+
+          // noinspection JSUnusedLocalSymbols
+
       }, {
           key: 'getRealization',
           value: function getRealization(pitchObj, unused_stepOfPitch, unused_minPitch, unused_maxPitch, unused_direction, unused_reverse) {
@@ -10742,6 +10796,9 @@
               }
               return pitchReference;
           }
+
+          // noinspection JSUnusedLocalSymbols
+
       }, {
           key: 'getRelativeNodeDegree',
           value: function getRelativeNodeDegree(pitchReference, unused_nodeName, pitchTarget, unused_comparisonAttribute, unused_direction) {
@@ -10795,6 +10852,14 @@
   var AbstractDiatonicScale = function (_AbstractScale) {
       inherits(AbstractDiatonicScale, _AbstractScale);
 
+      /**
+       *
+       * @param {string} [mode]
+       * @property {string} type
+       * @property {number|undefined} tonicDegree
+       * @property {number|undefined} dominantDegree
+       * @property {boolean} octaveDuplicating
+       */
       function AbstractDiatonicScale(mode) {
           classCallCheck(this, AbstractDiatonicScale);
 
@@ -10987,6 +11052,8 @@
           //     return new roman.RomanNumeral(degree, this);
           // }
 
+          // noinspection JSUnusedLocalSymbols
+
       }, {
           key: 'getPitches',
           value: function getPitches(unused_minPitch, unused_maxPitch, unused_direction) {
@@ -10998,11 +11065,17 @@
               }
               return this.abstract.getRealization(pitchObj);
           }
+
+          // noinspection JSUnusedLocalSymbols
+
       }, {
           key: 'pitchFromDegree',
           value: function pitchFromDegree(degree, unused_minPitch, unused_maxPitch, unused_direction, unused_equateTermini) {
               return this.abstract.getPitchFromNodeDegree(this.tonic, this.abstract.tonicDegree, degree);
           }
+
+          // noinspection JSUnusedLocalSymbols
+
       }, {
           key: 'getScaleDegreeFromPitch',
           value: function getScaleDegreeFromPitch(pitchTarget, unused_direction, unused_comparisonAttribute) {
@@ -11246,8 +11319,10 @@
    * @class KeySignature
    * @memberof music21.key
    * @description Represents a key signature
-   * @param {Int} [sharps=0] -- the number of sharps (negative for flats)
-   * @property {Int} [sharps=0] -- number of sharps (negative for flats)
+   * @param {int} [sharps=0] -- the number of sharps (negative for flats)
+   * @property {int} [sharps=0] -- number of sharps (negative for flats)
+   * @property {string[]} flatMapping -- flat signatures 0-12 flats
+   * @property {string[]} sharpMapping -- sharp signatures 0-12 sharps
    * @extends music21.base.Music21Object
    * @example
    * var ks = new music21.key.KeySignature(-3); //E-flat major or c minor
@@ -11268,6 +11343,10 @@
           _this.classSortOrder = 2;
 
           _this._sharps = sharps || 0; // if undefined
+
+          /**
+           * @type [pitch.Pitch[]]
+           */
           _this._alteredPitchesCache = undefined;
 
           // 12 flats/sharps enough for now...
@@ -11275,6 +11354,11 @@
           _this.sharpMapping = ['C', 'G', 'D', 'A', 'E', 'B', 'F#', 'C#', 'G#', 'D#', 'A#', 'E#', 'B#'];
           return _this;
       }
+
+      /**
+       * @return string
+       */
+
 
       createClass(KeySignature, [{
           key: 'stringInfo',
@@ -11291,13 +11375,17 @@
                   return 'of ' + this.sharps + ' sharps';
               }
           }
+
+          /**
+           * @return int
+           */
+
       }, {
           key: 'majorName',
 
           /**
            * Return the name of the major key with this many sharps
            *
-           * @memberof music21.key.KeySignature
            * @returns {(string|undefined)} name of key
            * @example
            * var ks = new music21.key.KeySignature(-3)
@@ -11313,7 +11401,6 @@
           }
           /**
            * Return the name of the minor key with this many sharps
-           * @memberof music21.key.KeySignature
            * @returns {(string|undefined)}
            */
 
@@ -11333,7 +11420,6 @@
            *
            * Deprecated.
            *
-           * @memberof music21.key.KeySignature
            * @returns {string}
            */
 
@@ -11347,7 +11433,6 @@
           /**
            * Returns the accidental associated with a step in this key, or undefined if none.
            *
-           * @memberof music21.key.KeySignature
            * @param {string} step - a valid step name such as "C","D", etc., but not "C#" etc.
            * @returns {(music21.pitch.Accidental|undefined)}
            */
@@ -11371,7 +11456,6 @@
            * Takes a pitch in C major and transposes it so that it has
            * the same step position in the current key signature.
            *
-           * @memberof music21.key.KeySignature
            * @returns {music21.pitch.Pitch}
            * @example
            * var ks = new music21.key.KeySignature(-3)
@@ -11541,9 +11625,8 @@
            * returns a {@link music21.scale.MajorScale} or {@link music21.scale.MinorScale}
            * object from the pitch object.
            *
-           * @memberof music21.key.Key
            * @param {string|undefined} [scaleType=this.mode] - the type of scale, or the mode.
-           * @returns {object} A music21.scale.Scale subclass.
+           * @returns {Object} A music21.scale.Scale subclass.
            */
           value: function getScale(scaleType) {
               if (scaleType === undefined) {
@@ -11638,8 +11721,8 @@
    * @class TimeSignature
    * @memberof music21.meter
    * @param {string} meterString - a string ("4/4", "3/8" etc.) to initialize the TimeSignature.
-   * @property {Int} [numerator=4]
-   * @property {Int} [denominator=4]
+   * @property {int} [numerator=4]
+   * @property {int} [denominator=4]
    * @property {Array<Array<int>>} beatGroups - groupings of beats; inner arrays are numerator, denominator
    * @property {string} ratioString - a string like "4/4"
    * @property {music21.duration.Duration} barDuration - a Duration object representing the expressed total length of the TimeSignature.
@@ -11677,7 +11760,6 @@
           /**
            * Compute the Beat Group according to this time signature.
            *
-           * @memberof music21.meter.TimeSignature
            * @returns {Array<Array<int>>} a list of numerator and denominators, find a list of beat groups.
            */
           value: function computeBeatGroups() {
@@ -11728,7 +11810,7 @@
 
           /**
            * @param {Iterable} srcStream - a stream of elements.
-           * @param {object} options - an object with measureStartOffset
+           * @param {Object} options - an object with measureStartOffset
            */
 
       }, {
@@ -11861,7 +11943,6 @@
           /**
            * Compute the Beat Group according to this time signature for VexFlow. For beaming.
            *
-           * @memberof music21.meter.TimeSignature
            * @param {Vex} Vex - a reference to the Vex object
            * @returns {Array<Vex.Flow.Fraction>} a list of numerator and denominator groups, for VexFlow
            */
@@ -12021,10 +12102,10 @@
    * @property {string|undefined} instrumentId
    * @property {string|undefined} instrumentName
    * @property {string|undefined} instrumentAbbreviation
-   * @property {Int|undefined} midiProgram
-   * @property {Int|undefined} midiChannel
-   * @property {Int|undefined} lowestNote
-   * @property {Int|undefined} highestNote
+   * @property {int|undefined} midiProgram
+   * @property {int|undefined} midiChannel
+   * @property {int|undefined} lowestNote
+   * @property {int|undefined} highestNote
    * @property {music21.interval.Interval|undefined} transposition
    * @property {Boolean} inGMPercMap=false
    * @property {string|undefined} soundfontFn
@@ -12072,9 +12153,8 @@
        * if not given.  Assigns up to `music21.instrument.maxMidi` channels (16)
        * Skips 10 unless this.inGMPercMap is true
        *
-       * @memberof music21.instrument.Instrument
-       * @param {Array<int>} [usedChannels]
-       * @returns {Number}
+       * @param {int[]} [usedChannels]
+       * @returns {number|undefined}
        */
 
 
@@ -12102,7 +12182,7 @@
               return undefined;
           }
       }, {
-          key: 'oggSounfont',
+          key: 'oggSoundfont',
           get: function get() {
               return this.soundfontFn + '-ogg.js';
           }
@@ -12313,7 +12393,6 @@
           this.voiceToStreamMapping = new Map();
       }
       /**
-       * @memberof music21.vfShow.RenderStack
        * @returns {Array} this.voices and this.textVoices as one array
        */
 
@@ -12327,7 +12406,6 @@
               return t;
           }
           /**
-           * @memberof music21.vfShow.RenderStack
            * @returns {Array<Array>} each array represents one staff....
            * where this.voices and this.textVoices are all in that staff...
            */
@@ -12396,14 +12474,14 @@
    * @memberof music21.vfShow
    * @param {music21.stream.Stream} s - main stream to render
    * @param {div} [div] - existing canvas or div-surroundingSVG element
-   * @param {DOMObject|jQueryDOMObject} [where=document.body] - where to render the stream
+   * @param {Node|jQuery} [where=document.body] - where to render the stream
    * @property {Vex.Flow.Renderer} vfRenderer - a Vex.Flow.Renderer to use
    * (will create if not existing)
    * @property {string} rendererType - canvas or svg
    * @property {Vex.Flow.Context} ctx - a Vex.Flow.Context (Canvas or SVG) to use.
    * @property {div} div - div-with-svg-or-canvas element
-   * @property {jQueryDOMObject} $div - jQuery div or canvas element
-   * @property {jQueryDOMObject} $where - jQuery element to render onto
+   * @property {jQuery} $div - jQuery div or canvas element
+   * @property {jQuery} $where - jQuery element to render onto
    * @property {Vex.Flow.Formatter} activeFormatter - formatter
    * @property {Array<Vex.Flow.Beam>} beamGroups - beamGroups
    * @property {Array<Vex.Flow.StaveTie>} vfTies - ties as instances of Vex.Flow.StaveTie
@@ -12460,7 +12538,6 @@
            * if s is undefined, uses the stored Stream from
            * the constructor object.
            *
-           * @memberof music21.vfShow.Renderer
            * @param {music21.stream.Stream} [s=this.stream]
            */
           value: function render(s) {
@@ -12498,7 +12575,6 @@
            * Streams that should be rendered vertically like parts)
            * for rendering and adds Staff Connectors
            *
-           * @memberof music21.vfShow.Renderer
            * @param {music21.stream.Score} s - prepare a stream of parts (i.e., Score)
            */
 
@@ -12541,7 +12617,6 @@
            * or substreams that should be considered like Measures)
            * for rendering.
            *
-           * @memberof music21.vfShow.Renderer
            * @param {music21.stream.Part} p
            */
 
@@ -12571,7 +12646,6 @@
            * Prepares a score that arrived flat... sets up
            * stacks and vfTies after calling prepareFlat
            *
-           * @memberof music21.vfShow.Renderer
            * @param {music21.stream.Stream} m - a flat stream (maybe a measure or voice)
            */
 
@@ -12589,7 +12663,6 @@
            * associates a Vex.Flow.Stave with the stream and
            * returns a vexflow Voice object
            *
-           * @memberof music21.vfShow.Renderer
            * @param {music21.stream.Measure} m - a measure object (w or w/o voices)
            * @param {music21.vfShow.RenderStack} stack - a RenderStack object to prepare into.
            */
@@ -12669,11 +12742,10 @@
           /**
            * Main internal routine to prepare a flat stream
            *
-           * @memberof music21.vfShow.Renderer
            * @param {music21.stream.Stream} s - a flat stream object
            * @param {music21.vfShow.RenderStack} stack - a RenderStack object to prepare into.
            * @param {Vex.Flow.Stave} [optionalStave] - an optional existing stave.
-           * @param {object} [optional_renderOp] - render options.
+           * @param {Object} [optional_renderOp] - render options.
            * Passed to {@link music21.vfShow.Renderer#renderStave}
            * @returns {Vex.Flow.Stave} staff to return too
            * (also changes the `stack` parameter and runs `makeNotation` on s)
@@ -12706,9 +12778,8 @@
            *
            * Just draws the stave, not the notes, etc.
            *
-           * @memberof music21.vfShow.Renderer
            * @param {music21.stream.Stream} [m=this.stream] - a flat stream
-           * @param {object} [optional_rendOp] - render options, passed
+           * @param {Object} [optional_rendOp] - render options, passed
            * to {@link music21.vfShow.Renderer#newStave} and {@link music21.vfShow.Renderer#setClefEtc}
            * @returns {Vex.Flow.Stave} stave
            */
@@ -12731,7 +12802,6 @@
           /**
            * Draws the Voices (music and text) from `this.stacks`
            *
-           * @memberof music21.vfShow.Renderer
            */
 
       }, {
@@ -12749,7 +12819,6 @@
           /**
            * draws the tuplets.
            *
-           * @memberof music21.vfShow.Renderer
            */
 
       }, {
@@ -12763,7 +12832,6 @@
           /**
            * draws the vfTies
            *
-           * @memberof music21.vfShow.Renderer
            */
 
       }, {
@@ -12778,7 +12846,6 @@
            * Finds all tied notes and creates the proper Vex.Flow.StaveTie objects in
            * `this.vfTies`.
            *
-           * @memberof music21.vfShow.Renderer
            * @param {music21.stream.Part} p - a Part or similar object
            */
 
@@ -12830,7 +12897,6 @@
            *
            * Does not draw it...
            *
-           * @memberof music21.vfShow.Renderer
            * @param {music21.stream.Stream} [s=this.stream] -- usually a Measure or Voice
            * @param {Vex.Flow.Stave} stave - not optional (would never fly in Python...)
            * @returns {Vex.Flow.Voice}
@@ -12854,7 +12920,6 @@
           /**
            * Returns a Vex.Flow.Voice with the lyrics set to render in the proper place.
            *
-           * @memberof music21.vfShow.Renderer
            * @param {music21.stream.Stream} s -- usually a Measure or Voice
            * @param {Vex.Flow.Stave} stave
            * @returns {Vex.Flow.Voice}
@@ -12872,7 +12937,6 @@
           /**
            * Aligns all of `this.stacks` (after they've been prepared) so they align properly.
            *
-           * @memberof music21.vfShow.Renderer
            */
 
       }, {
@@ -12894,7 +12958,6 @@
           /**
            * Formats a single voice group from a stack.
            *
-           * @memberof music21.vfShow.Renderer
            * @param {music21.vfShow.RenderStack} stack
            * @param {Boolean} [autoBeam=measures[0].autoBeam]
            * @returns {Vex.Flow.Formatter}
@@ -13006,7 +13069,6 @@
           /**
            * Draws the beam groups.
            *
-           * @memberof music21.vfShow.Renderer
            */
 
       }, {
@@ -13021,8 +13083,8 @@
            * Return a new Vex.Flow.Stave object, which represents
            * a single MEASURE of notation in m21j
            *
-           * @memberof music21.vfShow.Renderer
            * @param {music21.stream.Stream} s
+           * @param {Object} [rendOp]
            * @returns {Vex.Flow.Stave}
            */
 
@@ -13059,10 +13121,9 @@
            * Sets the number of stafflines, puts the clef on the Stave,
            * adds keySignature, timeSignature, and rightBarline
            *
-           * @memberof music21.vfShow.Renderer
            * @param {music21.stream.Stream} s
            * @param {Vex.Flow.Stave} stave
-           * @param {object} [rendOp=s.renderOptions] - a {@link music21.renderOptions.RenderOptions}
+           * @param {Object} [rendOp=s.renderOptions] - a {@link music21.renderOptions.RenderOptions}
            * object that might have
            * `{showMeasureNumber: boolean, rightBarLine: string<{'single', 'double', 'end'}>}`
            */
@@ -13130,7 +13191,6 @@
            * if the number of lines is 0 or >=4, because the default in VexFlow is
            * to show the bottom(top?), not middle, lines and that looks bad.
            *
-           * @memberof music21.vfShow.Renderer
            * @param {music21.stream.Stream} s - stream to get the `.staffLines`
            * from `s.renderOptions` from -- should allow for overriding.
            * @param {Vex.Flow.Stave} vexflowStave - stave to set the staff lines for.
@@ -13164,7 +13224,6 @@
            *
            * Also changes `this.vfTuplets`.
            *
-           * @memberof music21.vfShow.Renderer
            * @param {music21.stream.Stream} [s=this.stream] - flat stream to find notes in
            * @param {Vex.Flow.Stave} stave - Vex.Flow.Stave to render notes on to.
            * @returns {Array<Vex.Flow.StaveNote>} notes to return
@@ -13273,7 +13332,6 @@
           /**
            * Gets an Array of `Vex.Flow.TextNote` objects from any lyrics found in s
            *
-           * @memberof music21.vfShow.Renderer
            * @param {music21.stream.Stream} s - flat stream to search.
            * @param {Vex.Flow.Stave} stave
            * @returns {Array<Vex.Flow.TextNote>}
@@ -13375,7 +13433,6 @@
           /**
            * Creates a Vex.Flow.Voice of the appropriate length given a Stream.
            *
-           * @memberof music21.vfShow.Renderer
            * @param {music21.stream.Stream} s
            * @returns {Vex.Flow.Voice}
            */
@@ -13453,7 +13510,6 @@
            * If a stream has parts (NOT CHECKED HERE) create and
            * draw an appropriate Vex.Flow.StaveConnector
            *
-           * @memberof music21.vfShow.Renderer
            * @param {music21.stream.Score} s
            */
 
@@ -13522,7 +13578,6 @@
            *
            * You might want to remove this information; this routine does that.
            *
-           * @memberof music21.vfShow.Renderer
            * @param {music21.stream.Stream} s - can have parts, measures, etc.
            * @param {boolean} [recursive=false]
            */
@@ -13577,7 +13632,6 @@
            *
            * Also sets s.storedVexflowStave to stave.
            *
-           * @memberof music21.vfShow.Renderer
            * @param {Vex.Flow.Stave} stave
            * @param {music21.stream.Stream} [s=this.stream]
            * @param {Vex.Flow.Formatter} formatter
@@ -14035,9 +14089,7 @@
 
       }, {
           key: '_synchronizeIds',
-          value: function _synchronizeIds(element, m21Object) {
-              return;
-          }
+          value: function _synchronizeIds(element, m21Object) {}
       }, {
           key: 'addDividerComment',
           value: function addDividerComment() {
@@ -15333,7 +15385,7 @@
 
           _this6.zeroLengthSearch = false;
           if (offsetEnd === undefined) {
-              offsetEnd = offsetStart;
+              self.offsetEnd = offsetStart;
               _this6.zeroLengthSearch = true;
           } else if (offsetEnd <= offsetStart) {
               _this6.zeroLengthSearch = true;
@@ -15465,8 +15517,20 @@
               filterList = [filterList];
           }
           this.filters = filterList;
+
+          /**
+           *
+           * @type {number|undefined}
+           * @private
+           */
           this._len = undefined;
+          /**
+           *
+           * @type {music21.base.Music21Object[]|undefined}
+           * @private
+           */
           this._matchingElements = undefined;
+          this.sectionIndex = 0; // no endElements yet...
 
           if (activeInformation === undefined) {
               this.activeInformation = {};
@@ -15569,9 +15633,30 @@
               this.index = 0;
               this.iterSection = '_elements';
               this.updateActiveInformation();
-              for (var f in this.filters) {
-                  if (f.reset !== undefined) {
-                      f.reset();
+              var _iteratorNormalCompletion = true;
+              var _didIteratorError = false;
+              var _iteratorError = undefined;
+
+              try {
+                  for (var _iterator = this.filters[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+                      var f = _step.value;
+
+                      if (f.reset !== undefined) {
+                          f.reset();
+                      }
+                  }
+              } catch (err) {
+                  _didIteratorError = true;
+                  _iteratorError = err;
+              } finally {
+                  try {
+                      if (!_iteratorNormalCompletion && _iterator.return) {
+                          _iterator.return();
+                      }
+                  } finally {
+                      if (_didIteratorError) {
+                          throw _iteratorError;
+                      }
                   }
               }
           }
@@ -15584,7 +15669,7 @@
       }, {
           key: 'cleanup',
           value: function cleanup() {
-              if (this.cleanupOnStep) {
+              if (this.cleanupOnStop) {
                   this.reset();
                   this.srcStream = undefined;
                   this.srcStreamElements = [];
@@ -15602,55 +15687,15 @@
               this.restoreActiveSites = true;
 
               var me = []; // matching elements
-              var _iteratorNormalCompletion = true;
-              var _didIteratorError = false;
-              var _iteratorError = undefined;
-
-              try {
-                  for (var _iterator = this[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-                      var e = _step.value;
-
-                      me.push(e);
-                  }
-              } catch (err) {
-                  _didIteratorError = true;
-                  _iteratorError = err;
-              } finally {
-                  try {
-                      if (!_iteratorNormalCompletion && _iterator.return) {
-                          _iterator.return();
-                      }
-                  } finally {
-                      if (_didIteratorError) {
-                          throw _iteratorError;
-                      }
-                  }
-              }
-
-              this.reset();
-              this.index = savedIndex;
-              this.restoreActiveSites = savedRestoreActiveSites;
-              this._matchingElements = me;
-              return me;
-          }
-      }, {
-          key: 'matchesFilters',
-          value: function matchesFilters(e) {
               var _iteratorNormalCompletion2 = true;
               var _didIteratorError2 = false;
               var _iteratorError2 = undefined;
 
               try {
-                  for (var _iterator2 = this.filters[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-                      var f = _step2.value;
+                  for (var _iterator2 = this[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+                      var e = _step2.value;
 
-                      var ret = f.call(e, this);
-                      if (ret === false) {
-                          return false; // must === false;
-                      }
-                      if (ret === StopIterationSingleton$1) {
-                          return ret;
-                      }
+                      me.push(e);
                   }
               } catch (err) {
                   _didIteratorError2 = true;
@@ -15667,34 +15712,31 @@
                   }
               }
 
-              return true;
+              this.reset();
+              this.index = savedIndex;
+              this.restoreActiveSites = savedRestoreActiveSites;
+              this._matchingElements = me;
+              return me;
           }
       }, {
-          key: 'stream',
-          value: function stream() {
-              var ss = this.srcStream;
-              // let clearIsSorted = false;
-
-              var found = ss.clone(false);
-              found.elements = [];
-              // derivation;
-              var fe = this.matchingElements();
+          key: 'matchesFilters',
+          value: function matchesFilters(e) {
               var _iteratorNormalCompletion3 = true;
               var _didIteratorError3 = false;
               var _iteratorError3 = undefined;
 
               try {
-                  for (var _iterator3 = fe[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
-                      var e = _step3.value;
+                  for (var _iterator3 = this.filters[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+                      var f = _step3.value;
 
-                      var o = ss.elementOffset(e, { stringReturns: true });
-                      // try: getOffsetInHierarchy...
-                      // string returns;
-                      found.insert(o, e);
+                      var ret = f.call(e, this);
+                      if (ret === false) {
+                          return false; // must === false;
+                      }
+                      if (ret === StopIterationSingleton$1) {
+                          return ret;
+                      }
                   }
-                  // if (fe.length) {
-                  //     found.coreElementsChanged()
-                  // }
               } catch (err) {
                   _didIteratorError3 = true;
                   _iteratorError3 = err;
@@ -15710,23 +15752,34 @@
                   }
               }
 
-              return found;
+              return true;
           }
       }, {
-          key: 'addFilter',
-          value: function addFilter(newFilter) {
+          key: 'stream',
+          value: function stream() {
+              var ss = this.srcStream;
+              // let clearIsSorted = false;
+
+              var found = ss.clone(false);
+              found.elements = [];
+              // derivation;
+              var fe = this.matchingElements();
               var _iteratorNormalCompletion4 = true;
               var _didIteratorError4 = false;
               var _iteratorError4 = undefined;
 
               try {
-                  for (var _iterator4 = this.filters[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
-                      var f = _step4.value;
+                  for (var _iterator4 = fe[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
+                      var e = _step4.value;
 
-                      if (newFilter === f) {
-                          return this; // will not work... because == overrides.
-                      }
+                      var o = ss.elementOffset(e, { stringReturns: true });
+                      // try: getOffsetInHierarchy...
+                      // string returns;
+                      found.insert(o, e);
                   }
+                  // if (fe.length) {
+                  //     found.coreElementsChanged()
+                  // }
               } catch (err) {
                   _didIteratorError4 = true;
                   _iteratorError4 = err;
@@ -15738,6 +15791,38 @@
                   } finally {
                       if (_didIteratorError4) {
                           throw _iteratorError4;
+                      }
+                  }
+              }
+
+              return found;
+          }
+      }, {
+          key: 'addFilter',
+          value: function addFilter(newFilter) {
+              var _iteratorNormalCompletion5 = true;
+              var _didIteratorError5 = false;
+              var _iteratorError5 = undefined;
+
+              try {
+                  for (var _iterator5 = this.filters[Symbol.iterator](), _step5; !(_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done); _iteratorNormalCompletion5 = true) {
+                      var f = _step5.value;
+
+                      if (newFilter === f) {
+                          return this; // will not work... because == overrides.
+                      }
+                  }
+              } catch (err) {
+                  _didIteratorError5 = true;
+                  _iteratorError5 = err;
+              } finally {
+                  try {
+                      if (!_iteratorNormalCompletion5 && _iterator5.return) {
+                          _iterator5.return();
+                      }
+                  } finally {
+                      if (_didIteratorError5) {
+                          throw _iteratorError5;
                       }
                   }
               }
@@ -15845,7 +15930,7 @@
       createClass(OffsetIterator, [{
           key: Symbol.iterator,
           value: regeneratorRuntime.mark(function value() {
-              var e, matches, yieldEls, eOffset, forwardIndex, nextE, nextOffset, _iteratorNormalCompletion5, _didIteratorError5, _iteratorError5, _iterator5, _step5, el;
+              var e, matches, yieldEls, eOffset, forwardIndex, nextE, nextOffset, _iteratorNormalCompletion6, _didIteratorError6, _iteratorError6, _iterator6, _step6, el;
 
               return regeneratorRuntime.wrap(function value$(_context2) {
                   while (1) {
@@ -15950,13 +16035,13 @@
                                   break;
                               }
 
-                              _iteratorNormalCompletion5 = true;
-                              _didIteratorError5 = false;
-                              _iteratorError5 = undefined;
+                              _iteratorNormalCompletion6 = true;
+                              _didIteratorError6 = false;
+                              _iteratorError6 = undefined;
                               _context2.prev = 45;
 
-                              for (_iterator5 = yieldEls[Symbol.iterator](); !(_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done); _iteratorNormalCompletion5 = true) {
-                                  el = _step5.value;
+                              for (_iterator6 = yieldEls[Symbol.iterator](); !(_iteratorNormalCompletion6 = (_step6 = _iterator6.next()).done); _iteratorNormalCompletion6 = true) {
+                                  el = _step6.value;
 
                                   el.activeSite = this.srcStream;
                               }
@@ -15966,26 +16051,26 @@
                           case 49:
                               _context2.prev = 49;
                               _context2.t2 = _context2['catch'](45);
-                              _didIteratorError5 = true;
-                              _iteratorError5 = _context2.t2;
+                              _didIteratorError6 = true;
+                              _iteratorError6 = _context2.t2;
 
                           case 53:
                               _context2.prev = 53;
                               _context2.prev = 54;
 
-                              if (!_iteratorNormalCompletion5 && _iterator5.return) {
-                                  _iterator5.return();
+                              if (!_iteratorNormalCompletion6 && _iterator6.return) {
+                                  _iterator6.return();
                               }
 
                           case 56:
                               _context2.prev = 56;
 
-                              if (!_didIteratorError5) {
+                              if (!_didIteratorError6) {
                                   _context2.next = 59;
                                   break;
                               }
 
-                              throw _iteratorError5;
+                              throw _iteratorError6;
 
                           case 59:
                               return _context2.finish(56);
@@ -16053,6 +16138,10 @@
           if (streamsOnly) {
               _this3.filters.push(new ClassFilter('Stream'));
           }
+          /**
+           *
+           * @type {RecursiveIterator|undefined}
+           */
           _this3.childRecursiveIterator = undefined;
           return _this3;
       }
@@ -16068,7 +16157,7 @@
       }, {
           key: Symbol.iterator,
           value: regeneratorRuntime.mark(function value() {
-              var e, newStartOffset, _iteratorNormalCompletion6, _didIteratorError6, _iteratorError6, _iterator6, _step6, _e;
+              var e, newStartOffset, _iteratorNormalCompletion7, _didIteratorError7, _iteratorError7, _iterator7, _step7, _e;
 
               return regeneratorRuntime.wrap(function value$(_context3) {
                   while (1) {
@@ -16146,24 +16235,24 @@
                               newStartOffset = this.iteratorStartOffsetInHierarchy + this.srcStream.elementOffset(e);
 
                               this.childRecursiveIterator.iteratorStartOffsetInHierarchy = newStartOffset;
-                              _iteratorNormalCompletion6 = true;
-                              _didIteratorError6 = false;
-                              _iteratorError6 = undefined;
+                              _iteratorNormalCompletion7 = true;
+                              _didIteratorError7 = false;
+                              _iteratorError7 = undefined;
                               _context3.prev = 29;
-                              _iterator6 = this.childRecursiveIterator[Symbol.iterator]();
+                              _iterator7 = this.childRecursiveIterator[Symbol.iterator]();
 
                           case 31:
-                              if (_iteratorNormalCompletion6 = (_step6 = _iterator6.next()).done) {
+                              if (_iteratorNormalCompletion7 = (_step7 = _iterator7.next()).done) {
                                   _context3.next = 38;
                                   break;
                               }
 
-                              _e = _step6.value;
+                              _e = _step7.value;
                               _context3.next = 35;
                               return _e;
 
                           case 35:
-                              _iteratorNormalCompletion6 = true;
+                              _iteratorNormalCompletion7 = true;
                               _context3.next = 31;
                               break;
 
@@ -16174,26 +16263,26 @@
                           case 40:
                               _context3.prev = 40;
                               _context3.t0 = _context3['catch'](29);
-                              _didIteratorError6 = true;
-                              _iteratorError6 = _context3.t0;
+                              _didIteratorError7 = true;
+                              _iteratorError7 = _context3.t0;
 
                           case 44:
                               _context3.prev = 44;
                               _context3.prev = 45;
 
-                              if (!_iteratorNormalCompletion6 && _iterator6.return) {
-                                  _iterator6.return();
+                              if (!_iteratorNormalCompletion7 && _iterator7.return) {
+                                  _iterator7.return();
                               }
 
                           case 47:
                               _context3.prev = 47;
 
-                              if (!_didIteratorError6) {
+                              if (!_didIteratorError7) {
                                   _context3.next = 50;
                                   break;
                               }
 
-                              throw _iteratorError6;
+                              throw _iteratorError7;
 
                           case 50:
                               return _context3.finish(47);
@@ -16233,11 +16322,17 @@
           /**
            *   Returns a stack of RecursiveIterators at this point in the iteration.
            *   Last is most recent.
+           *
+           *   @returns {RecursiveIterator[]}
            */
 
       }, {
           key: 'iteratorStack',
           value: function iteratorStack() {
+              /**
+               *
+               * @type {RecursiveIterator[]}
+               */
               var iterStack = [this];
               var x = this;
               while (x.childRecursiveIterator !== undefined) {
@@ -16365,8 +16460,8 @@
    * @memberof music21.stream
    * @extends music21.base.Music21Object
    *
-   * @property {Array<music21.base.Music21Object>} elements - the elements in the stream. DO NOT MODIFY individual components (consider it like a Python tuple)
-   * @property {Int} length - (readonly) the number of elements in the stream.
+   * @property {music21.base.Music21Object[]} elements - the elements in the stream. DO NOT MODIFY individual components (consider it like a Python tuple)
+   * @property {number} length - (readonly) the number of elements in the stream.
    * @property {music21.duration.Duration} duration - the total duration of the stream's elements
    * @property {number} highestTime -- the highest time point in the stream's elements
    * @property {music21.clef.Clef} clef - the clef for the Stream (if there is one; if there are multiple, then the first clef)
@@ -16381,7 +16476,9 @@
    * @property {number} tempo - tempo in beats per minute (will become more sophisticated later, but for now the whole stream has one tempo
    * @property {music21.instrument.Instrument|undefined} instrument - an instrument object associated with the stream (can be set with a string also, but will return an `Instrument` object)
    * @property {Boolean} autoBeam - whether the notes should be beamed automatically or not (will be moved to `renderOptions` soon)
-   * @property {Int} [staffLines=5] - number of staff lines
+   * @property {Vex.Flow.Stave|undefined} activeVFStave - the current Stave object for the Stream
+   * @property {music21.vfShow.Renderer|undefined} activeVFRenderer - the current vfShow.Renderer object for the Stream
+   * @property {int} [staffLines=5] - number of staff lines
    * @property {function|undefined} changedCallbackFunction - function to call when the Stream changes through a standard interface
    * @property {number} maxSystemWidth - confusing... should be in renderOptions
    */
@@ -16433,7 +16530,6 @@
            *      var can = s.appendNewDOM();
            *      $(can).on('click', s.DOMChangerFunction);
            *
-           * @memberof music21.stream.Stream
            * @param {Event} e
            * @returns {music21.base.Music21Object|undefined} - returns whatever changedCallbackFunction does.
            */
@@ -16527,7 +16623,6 @@
       }, {
           key: '_getFlatOrSemiFlat',
           value: function _getFlatOrSemiFlat(retainContainers) {
-              var tempEls = void 0;
               var newSt = this.clone(false);
               if (!this.isFlat) {
                   newSt.elements = [];
@@ -16541,7 +16636,7 @@
 
                           if (el.isStream) {
                               if (retainContainers) {
-                                  tempEls.push(el);
+                                  newSt.append(el);
                               }
                               var offsetShift = this.elementOffset(el);
                               // console.log('offsetShift', offsetShift, el.classes[el.classes.length -1]);
@@ -16851,8 +16946,7 @@
           /**
            * Add an element to the end of the stream, setting its `.offset` accordingly
            *
-           * @memberof music21.stream.Stream
-           * @param {music21.base.Music21Object|Array} el - element or list of elements to append
+           * @param {music21.base.Music21Object|Array} elOrElList - element or list of elements to append
            * @returns {this}
            */
 
@@ -16923,9 +17017,11 @@
           /**
            * Add an element to the specified place in the stream, setting its `.offset` accordingly
            *
-           * @memberof music21.stream.Stream
            * @param {number} offset - offset to place.
            * @param {music21.base.Music21Object} el - element to append
+           * @param {Object} [config] -- configuration options
+           * @param {boolean} [config.ignoreSort=false] -- do not sort
+           * @param {boolean} [config.setActiveSite=true] -- set the active site for the inserted element.
            * @returns {this}
            */
 
@@ -16967,6 +17063,10 @@
            * In single argument form, assumes it is an element and takes the offset from the element.
            *
            * Unlike music21p, does not take a list of elements.  TODO(msc): add this.
+           *
+           * @param {number|music21.base.Music21Object} offset -- offset of the item to insert
+           * @param {music21.base.Music21Object} [elementOrNone] -- element.
+           * @return this
            */
 
       }, {
@@ -16993,6 +17093,7 @@
                   }
               }
               this.insert(offset, element);
+              return this;
           }
 
           /**
@@ -17017,7 +17118,6 @@
            * Remove and return the last element in the stream,
            * or return undefined if the stream is empty
            *
-           * @memberof music21.stream.Stream
            * @returns {music21.base.Music21Object|undefined} last element in the stream
            */
 
@@ -17168,9 +17268,8 @@
                   _ref5$allDerivated = _ref5.allDerivated,
                   allDerivated = _ref5$allDerivated === undefined ? true : _ref5$allDerivated;
 
-              var i = void 0;
               try {
-                  i = this.index(target);
+                  this.index(target);
               } catch (err) {
                   if (err instanceof StreamException$1) {
                       return;
@@ -17190,8 +17289,7 @@
            *
            * Once Proxy objects are supported by all operating systems for
            *
-           * @memberof music21.stream.Stream
-           * @param {Int} index - can be -1, -2, to index from the end, like python
+           * @param {int} index - can be -1, -2, to index from the end, like python
            * @returns {music21.base.Music21Object|undefined}
            */
 
@@ -17204,7 +17302,7 @@
               }
 
               var el = void 0;
-              if (index === undefined) {
+              if (index === undefined || isNaN(index)) {
                   return undefined;
               } else if (Math.abs(index) > this._elements.length) {
                   return undefined;
@@ -17274,8 +17372,7 @@
            * stream, a default of 4/4 is used.
             * If `options.inPlace` is true, the original Stream is modified and lost
            * if `options.inPlace` is False, this returns a modified deep copy.
-            * @memberof music21.stream.Stream
-           * @param {object} options
+            * @param {Object} [options]
            * @returns {music21.stream.Stream}
            */
 
@@ -17786,7 +17883,6 @@
           /**
            * Returns true if any note in the stream has lyrics, otherwise false
            *
-           * @memberof music21.stream.Stream
            * @returns {Boolean}
            */
 
@@ -17826,7 +17922,6 @@
           /**
            * Returns a list of OffsetMap objects
            *
-           * @memberof music21.stream.Stream
            * @returns [music21.stream.OffsetMap]
            */
 
@@ -17864,13 +17959,21 @@
            * Find all elements with a certain class; if an Array is given, then any
            * matching class will work.
            *
-           * @memberof music21.stream.Stream
-           * @param {Array<string>|string} classList - a list of classes to find
+           * @param {string[]|string} classList - a list of classes to find
            * @returns {music21.stream.Stream}
            */
           value: function getElementsByClass(classList) {
               return this.iter.getElementsByClass(classList);
           }
+
+          /**
+           * Find all elements NOT with a certain class; if an Array is given, then any
+           * matching class will work.
+           *
+           * @param {string[]|string} classList - a list of classes to find
+           * @returns {music21.stream.Stream}
+           */
+
       }, {
           key: 'getElementsNotOfClass',
           value: function getElementsNotOfClass(classList) {
@@ -17955,10 +18058,8 @@
            *  you want, because of some fancy manipulation of
            *  el.activeSite
            *
-           * @memberof music21.stream.Stream
            * @param {music21.base.Music21Object} el - object with an offset and class to search for.
            * @param {music21.stream.Stream|undefined} elStream - a place to get el's offset from.
-           * @returns {music21.stream.Stream}
            * @returns {music21.base.Music21Object|undefined}
            */
 
@@ -18016,8 +18117,7 @@
            *
            * Called automatically before appendDOM routines are called.
            *
-           * @memberof music21.stream.Stream
-           * @returns {music21.stream.Stream} this
+           * @returns {this}
            */
 
       }, {
@@ -18166,8 +18266,7 @@
            * in systems, etc.) DOES NOTHING for music21.stream.Stream, but is
            * overridden in subclasses.
            *
-           * @memberof music21.stream.Stream
-           * @returns {music21.stream.Stream} this
+           * @returns {this}
            */
 
       }, {
@@ -18180,10 +18279,9 @@
            * Resets all the RenderOptions back to defaults. Can run recursively
            * and can also preserve the `RenderOptions.events` object.
            *
-           * @memberof music21.stream.Stream
            * @param {Boolean} [recursive=false]
            * @param {Boolean} [preserveEvents=false]
-           * @returns {music21.stream.Stream} this
+           * @returns {this}
            */
 
       }, {
@@ -18250,8 +18348,7 @@
            *
            * Will be moved to vfShow eventually when converter objects are enabled...maybe.
            *
-           * @memberof music21.stream.Stream
-           * @param {DOMObject|JQueryDOMObject} canvasOrSVG - a canvas or the div surrounding an SVG object
+           * @param {Node|jQuery} canvasOrSVG - a canvas or the div surrounding an SVG object
            * @returns {vfShow.Renderer}
            */
 
@@ -18300,7 +18397,6 @@
            *
            * If there are systems they will be incorporated into the height unless `ignoreSystems` is `true`.
            *
-           * @memberof music21.stream.Stream
            * @param {Boolean} [ignoreSystems=false]
            * @returns {number} height in pixels
            */
@@ -18345,7 +18441,6 @@
           /**
            * Estimates the length of the Stream in pixels.
            *
-           * @memberof music21.stream.Stream
            * @returns {number} length in pixels
            */
 
@@ -18424,9 +18519,8 @@
            * - instrument: {@link music21.instrument.Instrument} object (default, `this.instrument`)
            * - tempo: number (default, `this.tempo`)
            *
-           * @memberof music21.stream.Stream
-           * @param {object} [options] - object of playback options
-           * @returns {music21.stream.Stream} this
+           * @param {Object} [options] - object of playback options
+           * @returns {this}
            */
 
       }, {
@@ -18483,8 +18577,7 @@
           /**
            * Stops a stream from playing if it currently is.
            *
-           * @memberof music21.stream.Stream
-           * @returns {music21.stream.Stream} this
+           * @returns {this}
            */
 
       }, {
@@ -18519,11 +18612,10 @@
            *
            * Does not render on the DOM element.
            *
-           * @memberof music21.stream.Stream
            * @param {number|string|undefined} width - will use `this.estimateStaffLength()` + `this.renderOptions.staffPadding` if not given
            * @param {number|string|undefined} height - if undefined will use `this.renderOptions.height`. If still undefined, will use `this.estimateStreamHeight()`
            * @param {string} elementType - what type of element, default = svg
-           * @returns {JQueryDOMObject} svg in jquery.
+           * @returns {jQuery} svg in jquery.
            */
 
       }, {
@@ -18551,7 +18643,7 @@
                   }
                   $newCanvasOrDIV.attr('width', width);
               } else {
-                  var computedWidth = this.estimateStaffLength() + this.renderOptions.staffPadding + 0;
+                  var computedWidth = this.estimateStaffLength() + this.renderOptions.staffPadding;
                   $newCanvasOrDIV.attr('width', computedWidth);
               }
               if (height !== undefined) {
@@ -18583,11 +18675,10 @@
            *
            * Called from appendNewDOM() etc.
            *
-           * @memberof music21.stream.Stream
            * @param {number|string|undefined} width
            * @param {number|string|undefined} height
            * @param {string} elementType - what type of element, default = svg
-           * @returns {JQueryDOMObject} canvas or svg
+           * @returns {jQuery} canvas or svg
            */
 
       }, {
@@ -18609,11 +18700,10 @@
           /**
            * Creates a new svg and renders vexflow on it
            *
-           * @memberof music21.stream.Stream
            * @param {number|string|undefined} [width]
            * @param {number|string|undefined} [height]
            * @param {string} elementType - what type of element svg or canvas, default = svg
-           * @returns {JQueryDOMObject} canvas or SVG
+           * @returns {jQuery} canvas or SVG
            */
 
       }, {
@@ -18639,12 +18729,12 @@
           /**
            * Creates a new canvas, renders vexflow on it, and appends it to the DOM.
            *
-           * @memberof music21.stream.Stream
-           * @param {JQueryDOMObject|DOMObject} [appendElement=document.body] - where to place the svg
+           * @param {jQuery|Node} [appendElement=document.body] - where to place the svg
            * @param {number|string} [width]
            * @param {number|string} [height]
            * @param {string} elementType - what type of element, default = svg
-           * @returns {DOMObject} svg (not the jQueryDOMObject -- this is a difference with other routines and should be fixed. TODO: FIX)
+           * @returns {SVGAElement|Node} svg (not the jQueryDOMObject --
+           * this is a difference with other routines and should be fixed. TODO: FIX)
            *
            */
 
@@ -18685,13 +18775,12 @@
           /**
            * Replaces a particular Svg with a new rendering of one.
            *
-           * Note that if 'where' is empty, will replace all svges on the page.
+           * Note that if 'where' is empty, will replace all svg elements on the page.
            *
-           * @memberof music21.stream.Stream
-           * @param {JQueryDOMObject|DOMObject} [where] - the canvas or SVG to replace or a container holding the canvas(es) to replace.
+           * @param {jQuery|Node} [where] - the canvas or SVG to replace or a container holding the canvas(es) to replace.
            * @param {Boolean} [preserveSvgSize=false]
            * @param {string} elementType - what type of element, default = svg
-           * @returns {JQueryDOMObject} the svg
+           * @returns {jQuery} the svg
            */
 
       }, {
@@ -18701,14 +18790,14 @@
 
               // if called with no where, replaces all the svges on the page...
               if (where === undefined) {
-                  where = 'body';
+                  where = document.body;
               }
               var $where = void 0;
               if (where.jquery === undefined) {
                   $where = $$1(where);
               } else {
                   $where = where;
-                  where = $where[0];
+                  // where = $where[0];
               }
               var $oldSVGOrCanvas = void 0;
 
@@ -18753,9 +18842,9 @@
            *    - customFunction (will receive event as a first variable; should set up a way to
            *                    find the original stream; var s = this; var f = function () { s...}
            *                   )
-           * @memberof music21.stream.Stream
-           * @param {DOMObject} canvasOrDiv - canvas or the Div surrounding it.
-           * @returns {music21.stream.Stream} this
+           *
+           * @param {Node} canvasOrDiv - canvas or the Div surrounding it.
+           * @returns {this}
            */
 
       }, {
@@ -18790,7 +18879,6 @@
            *
            * Recursively search downward for the closest storedVexflowStave...
            *
-           * @memberof music21.stream.Stream
            * @returns {Vex.Flow.Stave|undefined}
            */
 
@@ -18820,8 +18908,7 @@
            * Given a mouse click, or other event with .pageX and .pageY,
            * find the x and y for the svg.
            *
-           * @memberof music21.stream.Stream
-           * @param {DOMObject} svg - a canvas or SVG object
+           * @param {Node|SVGElement} svg - a canvas or SVG object
            * @param {Event} e
            * @returns {Array<number>} two-elements, [x, y] in pixels.
            */
@@ -18865,8 +18952,7 @@
            * xScaled refers to 1/scaleFactor.x -- for instance, scaleFactor.x = 0.7 (default)
            * x of 1 gives 1.42857...
            *
-           * @memberof music21.stream.Stream
-           * @param {DOMObject} svg -- a canvas or SVG object
+           * @param {Node|SVGElement} svg -- a canvas or SVG object
            * @param {Event} e
            * @returns {Array<number>} [scaledX, scaledY]
            */
@@ -18893,9 +18979,8 @@
            *
            * Y position must be offset from the start of the stave...
            *
-           * @memberof music21.stream.Stream
            * @param {number} yPxScaled
-           * @returns {Int}
+           * @returns {number}
            */
 
       }, {
@@ -18926,11 +19011,9 @@
            *
            * Override in subclasses, always returns this; here.
            *
-           * @memberof music21.stream.Stream
            * @param {number} [xPxScaled]
-           * @param {number} [allowablePixels=10]
            * @param {number} [systemIndex]
-           * @returns {music21.stream.Stream}
+           * @returns {this}
            *
            */
 
@@ -18952,11 +19035,10 @@
            * and 'backupMaximum' which specifies a maximum distance even for backup
            * (default: 70);
            *
-           * @memberof music21.stream.Stream
            * @param {number} xPxScaled
            * @param {number} [allowablePixels=10]
            * @param {number} [systemIndex]
-           * @param {object} [options]
+           * @param {Object} [options]
            * @returns {music21.base.Music21Object|undefined}
            */
 
@@ -19037,8 +19119,7 @@
            * Return a list of [diatonicNoteNum, closestXNote]
            * for an event (e) called on the svg (svg)
            *
-           * @memberof music21.stream.Stream
-           * @param {DOMObject} svg
+           * @param {Node|SVGElement} svg
            * @param {Event} e
            * @param {number} x
            * @param {number} y
@@ -19067,11 +19148,10 @@
            *
            * To be removed...
            *
-           * @memberof music21.stream.Stream
-           * @param {Int} clickedDiatonicNoteNum
+           * @param {number} clickedDiatonicNoteNum
            * @param {music21.base.Music21Object} foundNote
-           * @param {DOMObject} svg
-           * @returns {any} output of changedCallbackFunction
+           * @param {Node} svg
+           * @returns {*} output of changedCallbackFunction
            */
 
       }, {
@@ -19102,9 +19182,8 @@
           /**
            * Redraws an svgDiv, keeping the events of the previous svg.
            *
-           * @memberof music21.stream.Stream
-           * @param {DOMObject} svg
-           * @returns {music21.stream.Stream} this
+           * @param {Node} svg
+           * @returns {this}
            */
 
       }, {
@@ -19131,10 +19210,9 @@
            * Renders a stream on svg with the ability to edit it and
            * a toolbar that allows the accidentals to be edited.
            *
-           * @memberof music21.stream.Stream
            * @param {number} [width]
            * @param {number} [height]
-           * @returns {DOMObject} &lt;div&gt; tag around the svg.
+           * @returns {Node} the div tag around the svg.
            */
 
       }, {
@@ -19160,11 +19238,10 @@
 
           /**
            *
-           * @memberof music21.stream.Stream
-           * @param {Int} minAccidental - alter of the min accidental (default -1)
-           * @param {Int} maxAccidental - alter of the max accidental (default 1)
-           * @param {jQueryObject} $siblingSvg - svg to use for redrawing;
-           * @returns {jQueryObject} the accidental toolbar.
+           * @param {int} minAccidental - alter of the min accidental (default -1)
+           * @param {int} maxAccidental - alter of the max accidental (default 1)
+           * @param {jQuery} $siblingSvg - svg to use for redrawing;
+           * @returns {jQuery} the accidental toolbar.
            */
 
       }, {
@@ -19234,8 +19311,7 @@
           }
           /**
            *
-           * @memberof music21.stream.Stream
-           * @returns {jQueryObject} a Div containing two buttons -- play and stop
+           * @returns {jQuery} a Div containing two buttons -- play and stop
            */
 
       }, {
@@ -19263,9 +19339,8 @@
            * so that on resizing the stream is redrawn and reflowed to the
            * new size.
            *
-           * @memberof music21.stream.Stream
-           * @param {JQueryDOMObject} jSvg
-           * @returns {music21.stream.Stream} this
+           * @param {jQuery} jSvg
+           * @returns {this}
            */
 
       }, {
@@ -19310,7 +19385,6 @@
           /**
            * Does this stream have a {@link music21.stream.Voice} inside it?
            *
-           * @memberof music21.stream.Stream
            * @returns {Boolean}
            */
 
@@ -19684,7 +19758,6 @@
        *
        * Does not change any reflow information, so by default it's always 1.
        *
-       * @memberof music21.stream.Part
        * @returns {Number}
        */
 
@@ -19705,7 +19778,6 @@
           /**
            * Find the width of every measure in the Part.
            *
-           * @memberof music21.stream.Part
            * @returns {Array<number>}
            */
 
@@ -19750,7 +19822,6 @@
           /**
            * Overrides the default music21.stream.Stream#estimateStaffLength
            *
-           * @memberof music21.stream.Part
            * @returns {number}
            */
 
@@ -19814,8 +19885,7 @@
            * will come to the same result for each part.  Opportunity
            * for making more efficient through this...
            *
-           * @memberof music21.stream.Part
-           * @param systemHeight
+           * @param {number} systemHeight
            * @returns {Array}
            */
 
@@ -19930,7 +20000,6 @@
            *
            * figures out the `.left` and `.top` attributes for all contained measures
            *
-           * @memberof music21.stream.Part
            */
 
       }, {
@@ -20015,9 +20084,8 @@
            * systemIndexAndScaledY - given a scaled Y, return the systemIndex
            * and the scaledYRelativeToSystem
            *
-           * @memberof music21.stream.Part
            * @param  {number} y the scaled Y
-           * @return Array<int, number>   systemIndex, scaledYRelativeToSystem
+           * @return {number[]}  systemIndex, scaledYRelativeToSystem
            */
 
       }, {
@@ -20036,30 +20104,33 @@
            * Overrides the default music21.stream.Stream#findNoteForClick
            * by taking into account systems
            *
-           * @memberof music21.stream.Part
-           * @param {DOMObject} svg
+           * @param {Node} svg
            * @param {Event} e
+           * @param {number} x
+           * @param {number} y
            * @returns {Array} [clickedDiatonicNoteNum, foundNote]
            */
 
       }, {
           key: 'findNoteForClick',
-          value: function findNoteForClick(svg, e) {
-              var _getScaledXYforDOM3 = this.getScaledXYforDOM(svg, e),
-                  _getScaledXYforDOM4 = slicedToArray(_getScaledXYforDOM3, 2),
-                  x = _getScaledXYforDOM4[0],
+          value: function findNoteForClick(svg, e, x, y) {
+              if (x === undefined || y === undefined) {
+                  var _getScaledXYforDOM3 = this.getScaledXYforDOM(svg, e);
+
+                  var _getScaledXYforDOM4 = slicedToArray(_getScaledXYforDOM3, 2);
+
+                  x = _getScaledXYforDOM4[0];
                   y = _getScaledXYforDOM4[1];
-
+              }
               // debug = true;
-
-
               if (debug) {
                   console.log('this.estimateStreamHeight(): ' + this.estimateStreamHeight() + ' / $(svg).height(): ' + $$1(svg).height());
               }
-              var systemPadding = this.renderOptions.systemPadding;
-              if (systemPadding === undefined) {
-                  systemPadding = this.renderOptions.naiveSystemPadding;
-              }
+              // TODO(msc) -- systemPadding was never used -- should it be?
+              // let systemPadding = this.renderOptions.systemPadding;
+              // if (systemPadding === undefined) {
+              //     systemPadding = this.renderOptions.naiveSystemPadding;
+              // }
 
               var _systemIndexAndScaled = this.systemIndexAndScaledY(y),
                   _systemIndexAndScaled2 = slicedToArray(_systemIndexAndScaled, 2),
@@ -20075,7 +20146,6 @@
           /**
            * Returns the measure that is at X location xPxScaled and system systemIndex.
            *
-           * @memberof music21.stream.Part
            * @param {number} [xPxScaled]
            * @param {number} [systemIndex]
            * @returns {music21.stream.Stream}
@@ -20165,7 +20235,6 @@
            *
            * Always returns the measure of the top part...
            *
-           * @memberof music21.stream.Score
            * @param {number} [xPxScaled]
            * @param {number} [systemIndex]
            * @returns {music21.stream.Stream} usually a Measure
@@ -20180,8 +20249,7 @@
            *
            * figures out the `.left` and `.top` attributes for all contained parts
            *
-           * @memberof music21.stream.Score
-           * @returns {music21.stream.Score} this
+           * @returns {this} this
            */
 
       }, {
@@ -20253,7 +20321,6 @@
           /**
            * Overrides the default music21.stream.Stream#estimateStaffLength
            *
-           * @memberof music21.stream.Score
            * @returns {number}
            */
 
@@ -20313,9 +20380,8 @@
            *
            * Render scrollable score works better...
            *
-           * @memberof music21.stream.Score
-           * @param {object} params -- passed to each part
-           * @returns {music21.stream.Score} this
+           * @param {Object} params -- passed to each part
+           * @returns {this}
            */
 
       }, {
@@ -20354,8 +20420,7 @@
           /**
            * Overrides the default music21.stream.Stream#stopPlayScore()
            *
-           * @memberof music21.stream.Score
-           * @returns {music21.stream.Score} this
+           * @returns {this}
            */
 
       }, {
@@ -20402,7 +20467,6 @@
            * Does this work? I found a bug in this and fixed it that should have
            * broken it!
            *
-           * @memberof music21.stream.Score
            * @returns Array<number>
            */
 
@@ -20455,18 +20519,18 @@
            * systemIndexAndScaledY - given a scaled Y, return the systemIndex
            * and the scaledYRelativeToSystem
            *
-           * @memberof music21.stream.Score
            * @param  {number} y the scaled Y
-           * @return Array<int, number>   systemIndex, scaledYRelativeToSystem
+           * @return Array<number>   systemIndex, scaledYRelativeToSystem
            */
 
       }, {
           key: 'systemIndexAndScaledY',
           value: function systemIndexAndScaledY(y) {
-              var systemPadding = this.renderOptions.systemPadding;
-              if (systemPadding === undefined) {
-                  systemPadding = this.renderOptions.naiveSystemPadding;
-              }
+              // TODO(msc) -- systemPadding was not being used; should it be?
+              // let systemPadding = this.renderOptions.systemPadding;
+              // if (systemPadding === undefined) {
+              //     systemPadding = this.renderOptions.naiveSystemPadding;
+              // }
 
               var numParts = this.parts.length;
               var systemHeight = numParts * this.partSpacing + this.systemPadding;
@@ -20480,19 +20544,24 @@
            * click event, taking into account that the note will be in different
            * Part objects (and different Systems) given the height and possibly different Systems.
            *
-           * @memberof music21.stream.Score
-           * @param {DOMObject} svg
+           * @param {Node} svg
            * @param {Event} e
+           * @param {number} x
+           * @param {number} y
            * @returns {Array} [diatonicNoteNum, m21Element]
            */
 
       }, {
           key: 'findNoteForClick',
-          value: function findNoteForClick(svg, e) {
-              var _getScaledXYforDOM5 = this.getScaledXYforDOM(svg, e),
-                  _getScaledXYforDOM6 = slicedToArray(_getScaledXYforDOM5, 2),
-                  x = _getScaledXYforDOM6[0],
+          value: function findNoteForClick(svg, e, x, y) {
+              if (x === undefined || y === undefined) {
+                  var _getScaledXYforDOM5 = this.getScaledXYforDOM(svg, e);
+
+                  var _getScaledXYforDOM6 = slicedToArray(_getScaledXYforDOM5, 2);
+
+                  x = _getScaledXYforDOM6[0];
                   y = _getScaledXYforDOM6[1];
+              }
 
               var _systemIndexAndScaled3 = this.systemIndexAndScaledY(y),
                   _systemIndexAndScaled4 = slicedToArray(_systemIndexAndScaled3, 2),
@@ -20516,8 +20585,7 @@
           /**
            * How many systems are there? Calls numSystems() on the first part.
            *
-           * @memberof music21.stream.Score
-           * @returns {Int}
+           * @returns {int}
            */
 
       }, {
@@ -20529,8 +20597,9 @@
           /**
            * Fixes the part measure spacing for all parts.
            *
-           * @memberof music21.stream.Score
-           * @returns {music21.stream.Score} this
+           * @param {Object} options
+           * @param {Boolean} [options.setLeft=true]
+           * @returns {this}
            */
 
       }, {
@@ -20697,7 +20766,8 @@
    * @param {string} type - 'start', 'stop', 'continue', or 'let-ring'
    * @property {string} type - the tie type
    * @property {string} style - only supports 'normal' for now.
-   * @property {string|undefined} placement - undefined = unknown or above/below. (NB curently does nothing)
+   * @property {string|undefined} placement - undefined = unknown or above/below.
+   * (NB currently does nothing)
    */
   var Tie = function (_prebase$ProtoM21Obje) {
       inherits(Tie, _prebase$ProtoM21Obje);
@@ -21788,9 +21858,19 @@ var converter = Object.freeze({
       function Dynamic(value) {
           classCallCheck(this, Dynamic);
 
+          /**
+           *
+           * @type {string|undefined}
+           * @private
+           */
           var _this = possibleConstructorReturn(this, (Dynamic.__proto__ || Object.getPrototypeOf(Dynamic)).call(this));
 
           _this._value = undefined;
+          /**
+           *
+           * @type {number|undefined}
+           * @private
+           */
           _this._volumeScalar = undefined;
           _this.longName = undefined;
           _this.englishName = undefined;
@@ -21886,7 +21966,7 @@ var converter = Object.freeze({
    * @extends music21.base.Music21Object
    * @property {string} name
    * @property {string} vexflowModifier
-   * @property {Int} setPosition
+   * @property {int} setPosition
    */
   var Expression = function (_base$Music21Object) {
       inherits(Expression, _base$Music21Object);
@@ -21906,7 +21986,6 @@ var converter = Object.freeze({
        *
        * (this is not right for all cases)
        *
-       * @memberof music21.expressions.Expression
        * @returns {Vex.Flow.Articulation}
        */
 
@@ -21968,12 +22047,20 @@ var converter = Object.freeze({
    */
 
   var Notation = function () {
-      function Notation(notationColumn) {
+      /**
+       *
+       * @param {string} [notationColumn='']
+       * @property {string[]} figureStrings
+       * @property {int[]} origNumbers
+       * @property {int[]} numbers
+       * @property {string[]} modifierStrings
+       * @property {Modifier[]} modifiers
+       * @property {Figure[]} figures
+       */
+      function Notation() {
+          var notationColumn = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
           classCallCheck(this, Notation);
 
-          if (notationColumn === undefined) {
-              notationColumn = '';
-          }
           this.notationColumn = notationColumn;
           this.figureStrings = undefined;
           this.origNumbers = undefined;
@@ -22342,7 +22429,9 @@ var converter = Object.freeze({
    * @memberof music21.fromPython
    * @property {boolean} debug
    * @property {Array<string>} knownUnparsables - list of classes that cannot be parsed
-   * @property {object} handlers - object mapping string names of classes to a set of function calls to perform when restoring or post-restoring. (too complicated to explain; read the code)
+   * @property {Object} handlers - object mapping string names of classes to a set of
+   * function calls to perform when restoring or post-restoring.
+   * (too complicated to explain; read the code)
    */
   var Converter = function () {
       function Converter() {
@@ -22401,8 +22490,6 @@ var converter = Object.freeze({
       /**
        * Fixes up some references that cannot be unpacked from jsonpickle.
        *
-       * @method music21.fromPython.Converter#streamPostRestore
-       * @memberof music21.fromPython.Converter
        * @param {music21.stream.Stream} s - stream after unpacking from jsonpickle
        * @returns {music21.stream.Stream}
        */
@@ -22481,8 +22568,6 @@ var converter = Object.freeze({
           /**
            * Run the main decoder
            *
-           * @method music21.fromPython.Converter#run
-           * @memberof music21.fromPython.Converter
            * @param {string} jss - stream encoded as JSON
            * @returns {music21.stream.Stream}
            */
@@ -22514,6 +22599,12 @@ var converter = Object.freeze({
           _this._roman = undefined;
           _this.chordStepModifications = [];
           _this._degreesList = [];
+
+          /**
+           *
+           * @type {music21.key.Key|undefined}
+           * @private
+           */
           _this._key = undefined;
           // this._updateBasedOnXMLInput(keywords);
           _this._figure = figure;
@@ -22541,9 +22632,7 @@ var converter = Object.freeze({
           value: function _updatePitches() {}
       }, {
           key: 'findFigure',
-          value: function findFigure() {
-              return;
-          }
+          value: function findFigure() {}
       }, {
           key: 'figure',
           get: function get() {
@@ -22643,7 +22732,6 @@ var converter = Object.freeze({
        * Calls MIDI.noteOn or MIDI.noteOff for the note
        * represented by the Event (if appropriate)
        *
-       * @memberof music21.miditools.Event
        * @returns {undefined}
        */
 
@@ -22667,7 +22755,6 @@ var converter = Object.freeze({
           /**
            * Makes a {@link music21.note.Note} object from the event's midiNote number.
            *
-           * @memberof music21.miditools.Event
            * @returns {music21.note.Note} - the {@link music21.note.Note} object represented by Event.midiNote
            */
 
@@ -22912,7 +22999,7 @@ var converter = Object.freeze({
    * a mapping of soundfont text names to true, false, or "loading".
    *
    * @memberof music21.miditools
-   * @type {object}
+   * @type {Object}
    */
   miditools.loadedSoundfonts = {};
 
@@ -23258,7 +23345,7 @@ var converter = Object.freeze({
    * @property {Array<function>} callbacks - called when key is clicked/selected
    * @property {number} [scaleFactor=1]
    * @property {music21.keyboard.Keyboard|undefined} parent
-   * @property {Int} id - midinumber associated with the key.
+   * @property {int} id - midinumber associated with the key.
    * @property {music21.pitch.Pitch|undefined} pitchObj
    * @property {DOMObject|undefined} svgObj - SVG representing the drawing of the key
    * @property {DOMObject|undefined} noteNameSvgObj - SVG representing the note name drawn on the key
@@ -23287,8 +23374,6 @@ var converter = Object.freeze({
       /**
        * Gets an SVG object for the key
        *
-       * @method music21.keyboard.Key#makeKey
-       * @memberof music21.keyboard.Key
        * @param {number} startX - X position in pixels from left of keyboard to draw key at
        * @returns {DOMObject} a SVG rectangle for the key
        */
@@ -23489,7 +23574,7 @@ var converter = Object.freeze({
    * @memberof music21.keyboard
    * @property {number} whiteKeyWidth - default 23
    * @property {number} scaleFactor - default 1
-   * @property {object} keyObjects - a mapping of id to {@link music21.keyboard.Key} objects
+   * @property {Object} keyObjects - a mapping of id to {@link music21.keyboard.Key} objects
    * @property {DOMObject} svgObj - the SVG object of the keyboard
    * @property {Boolean} markC - default true
    * @property {Boolean} showNames - default false
@@ -23532,7 +23617,7 @@ var converter = Object.freeze({
            * - click: this.clickHandler
            *
            * @name callbacks
-           * @type {object}
+           * @type {Object}
            * @memberof music21.keyboard.Keyboard#
            */
           this.callbacks = {
@@ -24082,21 +24167,6 @@ var converter = Object.freeze({
       }
 
       createClass(LayoutScore, [{
-          key: 'getPositionForStaff',
-
-          /**
-           * return a tuple of (top, bottom) for a staff, specified by a given pageId,
-           * systemId, and staffId in PIXELS.
-            * @param pageId
-           * @param systemId
-           * @param staffId
-           * @param units -- "pixels" or "tenths" (not supported)
-           */
-
-          value: function getPositionForStaff(pageId, systemId, staffId, units) {
-              units = units || 'pixels';
-          }
-      }, {
           key: 'pages',
           get: function get() {
               return this.getElementsByClass('Page');
@@ -24112,6 +24182,20 @@ var converter = Object.freeze({
                   return undefined;
               }
           }
+          // /**
+          //  * return a tuple of (top, bottom) for a staff, specified by a given pageId,
+          //  * systemId, and staffId in PIXELS.
+          //
+          //  * @param pageId
+          //  * @param systemId
+          //  * @param staffId
+          //  * @param units -- "pixels" or "tenths" (not supported)
+          //  */
+          //
+          // getPositionForStaff(pageId, systemId, staffId, units) {
+          //     units = units || 'pixels';
+          // }
+
       }]);
       return LayoutScore;
   }(stream.Score);
@@ -24291,6 +24375,7 @@ var converter = Object.freeze({
       b7b5b3: '/o7'
   };
 
+  // noinspection SpellCheckingInspection
   roman.functionalityScores = {
       I: 100,
       i: 90,
@@ -24459,8 +24544,16 @@ var converter = Object.freeze({
    * @property {music21.key.Key} key - the key associated with the RomanNumeral (not allowed to be undefined yet)
    * @property {string} figure - the figure as passed in
    * @property {string} degreeName - the name associated with the scale degree, such as "mediant" etc., scale 7 will be "leading tone" or "subtonic" appropriately
-   * @property {Int} scaleDegree
-   * @property {string} impliedQuality - "major", "minor", "diminished", "augmented"
+   * @property {int} scaleDegree
+   * @property {string|undefined} impliedQuality - "major", "minor", "diminished", "augmented"
+   * @property {music21.roman.RomanNumeral|undefined} secondaryRomanNumeral
+   * @property {music21.key.Key|undefined} secondaryRomanNumeralKey
+   * @property {string|undefined} frontAlterationString
+   * @property {music21.interval.Interval|undefined} frontAlterationTransposeInterval
+   * @property {music21.pitch.Accidental|undefined} frontAlterationAccidental
+   * @property {string|undefined} romanNumeralAlone
+   * @property {scale.Scale|boolean|undefined} impliedScale
+   * @property {music21.interval.Interval|undefined} scaleOffset
    * @property {Array<music21.pitch.Pitch>} pitches - RomanNumerals are Chord objects, so .pitches will work for them also.
    */
   var RomanNumeral = function (_harmony$Harmony) {
@@ -24508,7 +24601,12 @@ var converter = Object.freeze({
           _this.followsKeyChange = false;
           _this._functionalityScore = undefined;
 
-          _this._scale = undefined; // the key
+          /**
+           *
+           * @type {music21.key.Key|music21.scale.Scale|undefined}
+           * @private
+           */
+          _this._scale = undefined; // the Key or Scale
 
           _this.figure = figure;
           _this.key = keyStr;
@@ -24532,8 +24630,7 @@ var converter = Object.freeze({
       }, {
           key: '_parseFigure',
           value: function _parseFigure() {
-              var workingFigure = this.figure;
-
+              var workingFigure = void 0;
               var useScale = this.impliedScale;
               if (!this.useImpliedScale) {
                   useScale = this.key;
@@ -24579,6 +24676,7 @@ var converter = Object.freeze({
 
               var numbersArr = workingFigure.match(/\d+/);
               if (numbersArr != null) {
+                  // noinspection JSUnusedAssignment
                   workingFigure = workingFigure.replace(/\d+/, '');
                   this.numbers = parseInt(numbersArr[0]);
               }
@@ -24699,8 +24797,6 @@ var converter = Object.freeze({
               }
 
               this._tempRoot = this.frontAlterationTransposeInterval.transposePitch(this._tempRoot);
-
-              return;
           }
       }, {
           key: '_parseRNAloneAmidstAug6',
@@ -24755,7 +24851,6 @@ var converter = Object.freeze({
           /**
            * Update the .pitches array.  Called at instantiation, but not automatically afterwards.
            *
-           * @memberof music21.roman.RomanNumeral
            */
           value: function _updatePitches() {
               var useScale = void 0;
@@ -25015,7 +25110,7 @@ var converter = Object.freeze({
           key: '_parseOmittedSteps',
           value: function _parseOmittedSteps(workingFigure) {
               var omittedSteps = [];
-              var rx = new RegExp(/\[no(\d+)\]s*/);
+              var rx = new RegExp(/\[no(\d+)]s*/);
               var match = rx.exec(workingFigure);
               while (match !== null) {
                   var thisStep = match[1];
@@ -25032,7 +25127,7 @@ var converter = Object.freeze({
           key: '_parseBracketedAlterations',
           value: function _parseBracketedAlterations(workingFigure) {
               var bracketedAlterations = this.bracketedAlterations;
-              var rx = new RegExp(/\[(b+|-+|#+)(\d+)\]/);
+              var rx = new RegExp(/\[(b+|-+|#+)(\d+)]/);
               var match = rx.exec(workingFigure);
               while (match !== null) {
                   var matchAlteration = match[1];
@@ -25072,10 +25167,9 @@ var converter = Object.freeze({
            *
            * Inverting 7th chords does not work.
            *
-           * @memberof music21.roman.RomanNumeral
            * @param {string} displayType - ['roman', 'bassName', 'nameOnly', other]
-           * @param {Int} [inversion=0]
-           * @returns {String}
+           * @param {int} [inversion=0]
+           * @returns {string}
            */
 
       }, {
@@ -25250,6 +25344,7 @@ var converter = Object.freeze({
    */
   var tempo = {};
 
+  // noinspection JSNonASCIINames,NonAsciiCharacters
   /**
    * Object mapping names to tempo values
    *
@@ -25302,13 +25397,13 @@ var converter = Object.freeze({
    * @extends music21.prebase.ProtoM21Object
    * @param {number} [tempo=music21.tempo.baseTempo] - the tempo of the metronome to start
    * @property {number} tempo
-   * @property {Int} [numBeatsPerMeasure=4]
+   * @property {int} [numBeatsPerMeasure=4]
    * @property {number} [minTempo=10]
    * @property {number} [maxTempo=600]
    * @property {bool} [flash=false] - flash the tempo
    * @property {bool} [silent=false] - play silently
-   * @property {Int} beat - current beat number
-   * @property {Int} chirpTimeout - an index of a timeout object for chirping
+   * @property {int} beat - current beat number
+   * @property {int} chirpTimeout - an index of a timeout object for chirping
    */
   var Metronome = function (_prebase$ProtoM21Obje) {
       inherits(Metronome, _prebase$ProtoM21Obje);
@@ -25339,15 +25434,13 @@ var converter = Object.freeze({
       createClass(Metronome, [{
           key: '_silentFlash',
           value: function _silentFlash(flashColor) {
-              this.$metronomeDiv.find('.metroFlash').css('background-color', flashColor).fadeOut(this.beatLength * 1000 * 1 / 4, function silentFadeOut() {
+              this.$metronomeDiv.find('.metroFlash').css('background-color', flashColor).fadeOut(this.beatLength * 1000 / 4, function silentFadeOut() {
                   $$1(this).css('background-color', '#ffffff').fadeIn(1);
               });
           }
 
           /**
            * Play a note (a higher one on the downbeat) and start the metronome chirping.
-           *
-           * @memberof music21.tempo.Metronome
            */
 
       }, {
@@ -25380,8 +25473,6 @@ var converter = Object.freeze({
 
           /**
            * Stop the metronome from chirping.
-           *
-           * @memberof music21.tempo.Metronome
            */
 
       }, {
@@ -25400,18 +25491,16 @@ var converter = Object.freeze({
            *
            * To change the tempo, just set this.tempo = n
            *
-           * @memberof music21.tempo.Metronome
-           * @param {Int} n - number of clicks to the right
+           * @param {int} [n=1 - number of clicks to the right
            * @returns {number} new tempo
            */
 
       }, {
           key: 'increaseSpeed',
-          value: function increaseSpeed(n) {
+          value: function increaseSpeed() {
+              var n = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
+
               // increase by one metronome 'click' for every n
-              if (n === undefined) {
-                  n = 1;
-              }
               for (var i = 0; i < n; i++) {
                   var t = this.tempo;
                   for (var tr = 0; tr < this.tempoRanges.length; tr++) {
@@ -25434,17 +25523,15 @@ var converter = Object.freeze({
            *
            * To change the tempo, just set this.tempo = n
            *
-           * @memberof music21.tempo.Metronome
-           * @param {Int} n - number of clicks to the left
+           * @param {int} [n=1] - number of clicks to the left
            * @returns {number} new tempo
            */
 
       }, {
           key: 'decreaseSpeed',
-          value: function decreaseSpeed(n) {
-              if (n === undefined) {
-                  n = 1;
-              }
+          value: function decreaseSpeed() {
+              var n = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
+
               for (var i = 0; i < n; i++) {
                   var t = this.tempo;
                   var trL = this.tempoRanges.length;
@@ -25465,9 +25552,8 @@ var converter = Object.freeze({
           /**
            * add a Metronome interface onto the DOM at where
            *
-           * @memberof music21.tempo.Metronome
-           * @param {JQueryDOMObject|DOMObject} [where='body']
-           * @returns {JQueryDOMObject} - a div holding the metronome.
+           * @param {jQuery|Node} [where='body']
+           * @returns {jQuery} - a div holding the metronome.
            */
 
       }, {
@@ -25601,9 +25687,9 @@ var converter = Object.freeze({
 
       PARTBREAK: /partBreak/, // nonstandard...fix later...
 
-      TRIP: /trip\{/,
-      QUAD: /quad\{/,
-      ENDBRAC: /\}$/
+      TRIP: /trip{/,
+      QUAD: /quad{/,
+      ENDBRAC: /}$/
   };
   /**
    * Function, not class.
@@ -25815,6 +25901,7 @@ var converter = Object.freeze({
    *
    * @memberof music21.tinyNotation
    * @param {string} classTypes - a JQuery selector to find elements to replace.
+   * @param {Node|jQuery} [selector]
    */
   tinyNotation.renderNotationDivs = function renderNotationDivs(classTypes, selector) {
       if (classTypes === undefined) {
@@ -26398,7 +26485,7 @@ var converter = Object.freeze({
    * midiMessageEvent should be an object with two keys: timeStamp (int) and data (array of three int values)
    *
    * @memberof music21.webmidi
-   * @param {MidiMessageEvent} midiMessageEvent - midi Information
+   * @param {Object} midiMessageEvent - midi Information
    */
   webmidi.midiInArrived = function midiInArrived(midiMessageEvent) {
       var t = midiMessageEvent.timeStamp;
@@ -26425,7 +26512,7 @@ var converter = Object.freeze({
    * It will return the plugin if it can or undefined if it cannot. Caches it in webmidi.storedPlugin.
    *
    * @function music21.webmidi.createPlugin
-   * @param {DOMObject} [appendElement=document.body] - where to place this hidden object (does not really matter)
+   * @param {Node} [appendElement=document.body] - where to place this hidden object (does not really matter)
    * @param {Boolean} [override=false] - if this method has been called successfully before return the storedPlugin unless override is true.
    * @returns {Jazz|undefined} Jazz MIDI plugin object
    */
@@ -26460,9 +26547,9 @@ var converter = Object.freeze({
    * Creates a &lt;select&gt; object for selecting among the MIDI choices in Jazz
    *
    * @function music21.webmidi.createJazzSelector
-   * @param {JQueryDOMObject|DOMObject} [midiSelectDiv=document.body] - object to append the select to
-   * @param {object} [options] - see createSelector for details
-   * @returns {DOMObject|undefined} DOM object containing the select tag, or undefined if Jazz cannot be loaded.
+   * @param {jQuery|Node} [$newSelect=document.body] - object to append the select to
+   * @param {Object} [options] - see createSelector for details
+   * @returns {Node|undefined} DOM object containing the select tag, or undefined if Jazz cannot be loaded.
    */
   webmidi.createJazzSelector = function createJazzSelector($newSelect, options) {
       var params = {};
@@ -26558,9 +26645,9 @@ var converter = Object.freeze({
    * {bool} existingMidiSelect -- is there already a select tag for MIDI?
    *
    * @function music21.webmidi.createSelector
-   * @param {JQueryDOMObject|DOMObject} [$midiSelectDiv=$('body')] - object to append the select to
-   * @param {object} [options] - see above.
-   * @returns {DOMObject|undefined} DOM object containing the select tag, or undefined if Jazz cannot be loaded.
+   * @param {jQuery|Node} [$midiSelectDiv=$('body')] - object to append the select to
+   * @param {Object} [options] - see above.
+   * @returns {Node|undefined} DOM object containing the select tag, or undefined if Jazz cannot be loaded.
    */
   webmidi.createSelector = function createSelector($midiSelectDiv, options) {
       var params = {

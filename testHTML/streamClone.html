@@ -13,49 +13,48 @@
 <body>
 <script type="text/javascript">
 
-var allStream;
+let allStream;
 
 require(['music21'], function (music21) {
-    var $b = $('body');
+    const $b = $('body');
     $b.append("<div>s = one measure tinyNotation</div>");
     
-    var s = music21.tinyNotation.TinyNotation('3/4 C4 D2');
+    const s = music21.tinyNotation.TinyNotation('3/4 C4 D2');
     s.appendNewDOM();
     $b.append("<div>clone and change step from C to E</div>");
     
-    var y = s.clone(true);
-    y.get(0).pitch.step = 'E';
-    y.get(0).stemDirection = undefined;
+    const y = s.clone(true);
+    y.flat.notes.get(0).pitch.step = 'E';
+    y.flat.notes.get(0).stemDirection = undefined;
     y.appendNewDOM();
     $b.append("<div>s (original) unchanged?</div>");
     s.appendNewDOM();
     
     $b.append("<div><h1>three measure tiny notation Part</h1></div>");
-    var s2 = music21.tinyNotation.TinyNotation('3/4 b2. a2. g2.');
+    const s2 = music21.tinyNotation.TinyNotation('3/4 b2. a2. g2.');
     s2.appendNewDOM();
     $b.append("<div>cloned right?</div>");
-    var y2 = s2.clone(true);
+    const y2 = s2.clone(true);
     y2.appendNewDOM();
     
     $b.append("<div>s3 = three measure tiny notation Part (s.clone(), s.clone([D=A]), s.clone())</div>");
-    var s3 = new music21.stream.Part();
+    const s3 = new music21.stream.Part();
     s3.append(s.clone(true));
-    var sScrewy = s.clone(true);
-    sScrewy.get(1).pitch.step = 'A';
-    sScrewy.get(1).stemDirection = undefined;
+    const sScrewy = s.clone(true);
+    sScrewy.flat.notes.get(1).pitch.step = 'A';
+    sScrewy.flat.notes.get(1).stemDirection = undefined;
     s3.append(sScrewy);
     s3.append(s.clone(true));
     s3.appendNewDOM();    
 
     $b.append("<h1>Score</h1><div>s4 = three parts (s3.clone(), s3.clone()-inverted, s3.clone()</div>");
 
-    var s4 = new music21.stream.Score();
+    const s4 = new music21.stream.Score();
     s4.insert(0, s3.clone(true));
     
-    var s3Second = s3.clone(true);
-    var s3SecondFlat = s3Second.flat;
-    for (var i = 0; i < s3SecondFlat.length; i++) {
-        var n = s3SecondFlat.get(i);
+    const s3Second = s3.clone(true);
+    const s3SecondFlat = s3Second.flat;
+    for (const n of s3SecondFlat.flat.notes) {
         n.stemDirection = undefined;
         n.pitch.diatonicNoteNum = 22 + (29 - n.pitch.diatonicNoteNum); 
     }

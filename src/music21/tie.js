@@ -37,7 +37,8 @@ const VALID_TIE_TYPES = ['start', 'stop', 'continue', 'let-ring', 'continue-let-
  * @param {string} type - 'start', 'stop', 'continue', or 'let-ring'
  * @property {string} type - the tie type
  * @property {string} style - only supports 'normal' for now.
- * @property {string|undefined} placement - undefined = unknown or above/below. (NB curently does nothing)
+ * @property {string|undefined} placement - undefined = unknown or above/below.
+ * (NB currently does nothing)
  */
 export class Tie extends prebase.ProtoM21Object {
     constructor(type='start') {

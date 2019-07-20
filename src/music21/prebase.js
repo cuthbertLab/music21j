@@ -25,6 +25,11 @@ export const prebase = {};
  */
 export class ProtoM21Object {
     constructor() {
+        /**
+         *
+         * @type {[string[]]}
+         * @private
+         */
         this._storedClasses = undefined;
         this.isProtoM21Object = true;
         this.isMusic21Object = false;
@@ -64,8 +69,7 @@ export class ProtoM21Object {
      * to handle custom clone cases.  See, for instance, {@link music21.base.Music21Object} which
      * uses a custom callback to NOT clone the `.activeSite` attribute.
      *
-     * @returns {object}
-     * @memberof music21.prebase.ProtoM21Object
+     * @returns {music21.prebase.ProtoM21Object}
      * @example
      * var n1 = new music21.note.Note("C#");
      * n1.duration.quarterLength = 4;
@@ -141,7 +145,6 @@ export class ProtoM21Object {
     /**
      * Check to see if an object is of this class or subclass.
      *
-     * @memberof music21.prebase.ProtoM21Object
      * @param {(string|string[])} testClass - a class or Array of classes to test
      * @returns {Boolean}
      * @example
@@ -169,7 +172,7 @@ export class ProtoM21Object {
         }
         return `<${this.classes[0]}${si}>`;
     }
-    
+
     stringInfo() {
         return '';
     }

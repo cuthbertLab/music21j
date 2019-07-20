@@ -2623,6 +2623,7 @@ export function intervalVectorToAddress(vector) {
 }
     
 export function addressToZAddress(address) {
+    // noinspection JSUnusedLocalSymbols
     const [card, index, unused_inversion] = _validateAddress(address);
     const z = FORTE[card][index][3];
     if (z === 0) {

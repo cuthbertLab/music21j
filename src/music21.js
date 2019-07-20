@@ -60,7 +60,7 @@ var pathSimplify = function (path) {
         console.log('cross-site split', pPrefix, path);
     }
     var ps = path.split('/');
-    var addSlash = (path.slice(path.length - 1, path.length) === '/') ? true : false;
+    var addSlash = (path.slice(path.length - 1, path.length) === '/');
     var pout = [];
     for (var i = 0; i < ps.length; i++) {
         var el = ps[i];
@@ -117,7 +117,7 @@ var getM21attribute = function (attrName) {
 /**
  *  Should we warn about obsolete web browsers? default Yes.
  */
-var warnBanner = (getM21attribute('warnBanner') !== 'no' ) ? true : false;
+var warnBanner = (getM21attribute('warnBanner') !== 'no' );
 
 //get scriptConfig
 if (typeof m21conf === 'undefined') {

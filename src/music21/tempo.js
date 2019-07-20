@@ -29,6 +29,7 @@ import { prebase } from './prebase.js';
  */
 export const tempo = {};
 
+// noinspection JSNonASCIINames,NonAsciiCharacters
 /**
  * Object mapping names to tempo values
  *
@@ -126,7 +127,7 @@ export class Metronome extends prebase.ProtoM21Object {
         this.$metronomeDiv
             .find('.metroFlash')
             .css('background-color', flashColor)
-            .fadeOut(this.beatLength * 1000 * 1 / 4, function silentFadeOut() {
+            .fadeOut(this.beatLength * 1000 / 4, function silentFadeOut() {
                 $(this)
                     .css('background-color', '#ffffff')
                     .fadeIn(1);
@@ -135,8 +136,6 @@ export class Metronome extends prebase.ProtoM21Object {
 
     /**
      * Play a note (a higher one on the downbeat) and start the metronome chirping.
-     *
-     * @memberof music21.tempo.Metronome
      */
     chirp() {
         this.beat += 1;
@@ -166,8 +165,6 @@ export class Metronome extends prebase.ProtoM21Object {
 
     /**
      * Stop the metronome from chirping.
-     *
-     * @memberof music21.tempo.Metronome
      */
     stopChirp() {
         if (this.chirpTimeout !== undefined) {
@@ -183,15 +180,11 @@ export class Metronome extends prebase.ProtoM21Object {
      *
      * To change the tempo, just set this.tempo = n
      *
-     * @memberof music21.tempo.Metronome
-     * @param {int} n - number of clicks to the right
+     * @param {int} [n=1 - number of clicks to the right
      * @returns {number} new tempo
      */
-    increaseSpeed(n) {
+    increaseSpeed(n=1) {
         // increase by one metronome 'click' for every n
-        if (n === undefined) {
-            n = 1;
-        }
         for (let i = 0; i < n; i++) {
             let t = this.tempo;
             for (let tr = 0; tr < this.tempoRanges.length; tr++) {
@@ -214,14 +207,10 @@ export class Metronome extends prebase.ProtoM21Object {
      *
      * To change the tempo, just set this.tempo = n
      *
-     * @memberof music21.tempo.Metronome
-     * @param {int} n - number of clicks to the left
+     * @param {int} [n=1] - number of clicks to the left
      * @returns {number} new tempo
      */
-    decreaseSpeed(n) {
-        if (n === undefined) {
-            n = 1;
-        }
+    decreaseSpeed(n=1) {
         for (let i = 0; i < n; i++) {
             let t = this.tempo;
             const trL = this.tempoRanges.length;
@@ -242,9 +231,8 @@ export class Metronome extends prebase.ProtoM21Object {
     /**
      * add a Metronome interface onto the DOM at where
      *
-     * @memberof music21.tempo.Metronome
-     * @param {JQueryDOMObject|DOMObject} [where='body']
-     * @returns {JQueryDOMObject} - a div holding the metronome.
+     * @param {jQuery|Node} [where='body']
+     * @returns {jQuery} - a div holding the metronome.
      */
     addDiv(where) {
         let jWhere;
