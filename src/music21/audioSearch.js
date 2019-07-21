@@ -1,4 +1,4 @@
-import MIDI from 'MIDI';
+import * as MIDI from '../ext/midijs/build/MIDI.min.js';
 
 import { common } from './common.js';
 

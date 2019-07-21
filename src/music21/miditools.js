@@ -8,8 +8,7 @@
  * @author Michael Scott Cuthbert
  */
 import * as $ from 'jquery';
-import * as eventjs from 'eventjs'; // drag handler...
-import * as MIDI from 'MIDI';
+import * as MIDI from '../ext/midijs/build/MIDI.min.js';
 
 import { chord } from './chord.js';
 import { common } from './common.js';
@@ -332,7 +331,7 @@ miditools.loadedSoundfonts = {};
  * rather than overriding this important method.
  *
  * @memberof music21.miditools
- * @param {String} soundfont The name of the soundfont that was just loaded
+ * @param {string} soundfont The name of the soundfont that was just loaded
  * @param {function} callback A function to be called after the soundfont is loaded.
  */
 miditools.postLoadCallback = function postLoadCallback(soundfont, callback) {
@@ -439,6 +438,7 @@ miditools.loadSoundfont = function loadSoundfont(soundfont, callback) {
                         + 'audio will begin when this message disappears.</div>'
                 )
             );
+            console.log(MIDI);
             MIDI.loadPlugin({
                 soundfontUrl: common.urls.soundfontUrl,
                 instrument: soundfont,
@@ -492,8 +492,8 @@ export class MidiPlayer {
                 + '" align="absmiddle" value="stop" class="stopButton">'
         );
 
-        $playPause.on('click', this.pausePlayStop.bind(this));
-        $stop.on('click', this.stopButton.bind(this));
+        $playPause.on('click', () => this.pausePlayStop());
+        $stop.on('click', () => this.stopButton());
         $controls.append($playPause);
         $controls.append($stop);
         $playDiv.append($controls);
@@ -594,10 +594,8 @@ export class MidiPlayer {
         const timeCursor = $d.find('.cursor')[0];
         const $capsule = $d.find('.capsule');
         //
-        eventjs.add($capsule[0], 'drag', (event, self) => {
-            eventjs.cancel(event);
-            const player = this.player;
-            player.currentTime = self.x / 420 * player.endTime;
+        $capsule.on('dragstart', e => {
+            player.currentTime = (e.pageX - $capsule.left) / 420 * player.endTime;
             if (player.currentTime < 0) {
                 player.currentTime = 0;
             }
@@ -611,14 +609,14 @@ export class MidiPlayer {
             }
         });
         //
-        function timeFormatting(n) {
+        const timeFormatting = n => {
             const minutes = (n / 60) >> 0;
             let seconds = String((n - minutes * 60) >> 0);
             if (seconds.length === 1) {
                 seconds = '0' + seconds;
             }
             return minutes + ':' + seconds;
-        }
+        };
 
         player.setAnimation(data => {
             const percent = data.now / data.end;

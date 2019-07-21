@@ -6,8 +6,8 @@
  * Based on music21 (music21p), Copyright (c) 2006–17, Michael Scott Cuthbert and cuthbertLab
  *
  */
-import * as MIDI from 'MIDI';
 import * as Vex from 'vexflow';
+import * as MIDI from '../ext/midijs/build/MIDI.min.js';
 
 import { prebase } from './prebase.js';
 import { base } from './base.js';

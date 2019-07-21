@@ -31,39 +31,40 @@ module.exports = grunt => {
     const TEST_SOURCES = ['tests/loadAll.js', 'tests/moduleTests/*.js'];
     const TARGET_TESTS = path.join(BUILD_DIR, 'music21.tests.js');
 
-    //  function webpackConfig(target, preset) {
-    //  return {
-    //  entry: MODULE_ENTRY,
-    //  output: {
-    //  path: '/',
-    //  filename: target,
-    //  library: 'Music21',
-    //  libraryTarget: 'umd',
-    //  },
-    //  externals: {
-    //  'jquery': 'JQuery',
-    //  'midi': 'MIDI',
-    //  'vexflow': 'Vex'
-    //  },
-    //  devtool: 'source-map',
-    //  module: {
-    //  loaders: [
-    //  {
-    //  test: /\.js?$/,
-    //  exclude: /(node_modules|bower_components|soundfont|soundfonts|midijs|ext|src\/ext)/,
-    //  loader: 'babel',
-    //  query: {
-    //  presets: [preset],
-    //  'plugins': ['add-module-exports', 'transform-object-assign'],
-    //  },
-    //  },
-    //  ],
-    //  },
-    //  };
-    //  }
+    function webpackConfig(target, preset) {
+         return {
+             entry: './src/loadModules.js',  // MODULE_ENTRY,
+             output: {
+                 path: BUILD_DIR,
+                 filename: target,
+                 library: 'Music21',
+                 libraryTarget: 'umd',
+             },
+             devtool: 'source-map',
+             module: {
+                 rules: [
+                     {
+                      test: /\.js?$/,
+                      exclude: /(node_modules|bower_components|soundfont|soundfonts|midijs|src\/ext)/,
+                      use: [{
+                          loader: 'babel-loader',
+                          options: {
+                              presets: ['@babel/preset-env'],
+                              plugins: ['@babel/plugin-transform-object-assign'],
+                              // plugins: ['add-module-exports', 'transform-object-assign'],
+                          },
+                      }],
+                    },
+                 ],
+             },
+         };
+    }
 
-    //  const webpackCommon = webpackConfig(TARGET_RAW, 'es2015');
-    // console.log(webpackCommon);
+    const webpackCommon = webpackConfig(
+        'music21.debug.js',  // TARGET_RAW,
+        'es2015'
+    );
+    console.log(webpackCommon);
 
     // Project configuration.
     grunt.initConfig({
@@ -93,27 +94,17 @@ module.exports = grunt => {
                     ];
                 },
                 globals: {
-                    eventjs: 'eventjs',
-                    jquery: '$',
-                    jqueryResolved: '$',
                     jsonpickle: 'jsonpickle',
                     MIDI: 'MIDI',
-                    vexflow: 'Vex',
                     qunit: 'QUnit',
                 },
                 external: [
-                    'eventjs',
-                    'jquery',
-                    jqueryResolved,
                     'jsonpickle',
                     'MIDI',
-                    'vexflow',
                     'qunit',
                 ],
                 paths: {
-                    vexflow: './src/ext/vexflow/vexflow-min.js',
                     qunit: './tests/qQunit/qunit-2.0.1.js',
-                    eventjs: './src/ext/midijs/examples/inc/event.js',
                 },
             },
             files: {
@@ -125,15 +116,15 @@ module.exports = grunt => {
                 dest: TARGET_TESTS,
             },
         },
-        //      webpack: {
-        //      build: webpackCommon,
-        //      watch: Object.assign({}, webpackCommon, {
-        //      watch: true,
-        //      keepalive: true,
-        //      failOnError: false,
-        //      watchDelay: 0,
-        //      }),
-        //      },
+        webpack: {
+             build: webpackCommon,
+             watch: Object.assign({}, webpackCommon, {
+                 watch: true,
+                 keepalive: true,
+                 failOnError: false,
+                 watchDelay: 0,
+             }),
+         },
 
         uglify: {
             options: {
@@ -196,9 +187,9 @@ module.exports = grunt => {
 
     grunt.loadNpmTasks('grunt-rollup');
     grunt.loadNpmTasks('grunt-contrib-concat');
+    grunt.loadNpmTasks('grunt-webpack');
 
     // Load the plugin that provides the "uglify" task.
-    grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-contrib-qunit');
 
@@ -208,7 +199,7 @@ module.exports = grunt => {
     grunt.loadNpmTasks('grunt-eslint');
 
     // Default task(s).
-    grunt.registerTask('default', ['eslint', 'rollup:files', 'uglify:build']);
+    grunt.registerTask('default', ['eslint', 'webpack:build']);
     grunt.registerTask('test', 'Run qunit tests', ['rollup:tests', 'qunit']);
     grunt.registerTask('publish', 'Raise the version and publish', () => {
         grunt.task.run('jsdoc');

@@ -9,7 +9,7 @@
  *
  */
 import * as $ from 'jquery';
-import * as MIDI from 'MIDI';
+import * as MIDI from '../ext/midijs/build/MIDI.min.js';
 
 import { Music21Exception } from './exceptions21.js';
 
