@@ -7,7 +7,7 @@
  *
  */
 import * as Vex from 'vexflow';
-import * as MIDI from '../ext/midijs/build/MIDI.min.js';
+// import * as MIDI from '../ext/midijs/build/MIDI.min.js';
 
 import { prebase } from './prebase.js';
 import { base } from './base.js';
@@ -16,6 +16,8 @@ import { pitch } from './pitch.js';
 import { beam } from './beam.js';
 import { common } from './common.js';
 import { Music21Exception } from './exceptions21.js';
+
+const MIDI = window.MIDI;
 
 /**
  * Module for note classes. See the namespace {@link music21.note}

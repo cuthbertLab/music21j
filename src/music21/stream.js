@@ -9,7 +9,7 @@
  *
  */
 import * as $ from 'jquery';
-import * as MIDI from '../ext/midijs/build/MIDI.min.js';
+// import * as MIDI from '../ext/midijs/build/MIDI.min.js';
 
 import { Music21Exception } from './exceptions21.js';
 
@@ -33,6 +33,8 @@ import * as iterator from './stream/iterator.js';
 
 export { filters };
 export { iterator };
+
+const MIDI = window.MIDI;
 
 /**
  * powerful stream module, See {@link music21.stream} namespace

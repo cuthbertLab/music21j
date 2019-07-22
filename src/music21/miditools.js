@@ -8,7 +8,7 @@
  * @author Michael Scott Cuthbert
  */
 import * as $ from 'jquery';
-import * as MIDI from '../ext/midijs/build/MIDI.min.js';
+import { MIDI } from '../ext/midijs2';
 
 import { chord } from './chord.js';
 import { common } from './common.js';
@@ -28,7 +28,7 @@ import { note } from './note.js';
  * @namespace music21.miditools
  * @memberof music21
  */
-export const miditools = {};
+export const miditools = {MIDI};
 
 /**
  * Number of octaves to transpose all incoming midi signals

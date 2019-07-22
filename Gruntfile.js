@@ -1,6 +1,8 @@
 // Gruntfile for music21j
 // Copyright Michael Scott Cuthbert (cuthbert@mit.edu), BSD License
 const path = require('path');
+const webpack = require('webpack');
+
 jqueryResolved = path.resolve('./src/ext/jquery/jquery/jquery-3.2.1.min.js');
 
 module.exports = grunt => {
@@ -33,24 +35,36 @@ module.exports = grunt => {
 
     function webpackConfig(target, preset) {
          return {
-             entry: './src/loadModules.js',  // MODULE_ENTRY,
+             entry: './src/music21_modules.js',  // MODULE_ENTRY,
              output: {
                  path: BUILD_DIR,
                  filename: target,
-                 library: 'Music21',
+                 library: 'music21',
                  libraryTarget: 'umd',
+                 umdNamedDefine: true,
              },
              devtool: 'source-map',
              module: {
                  rules: [
+                     {
+                        test: /js\/midi\/.*\.js/,
+                         use: 'exports-loader?MIDI=MIDI',
+                     },
+                     {
+                        test: /midijs\/build\/MIDI.*\.js/,
+                         use: 'exports-loader?MIDI=MIDI',
+                     },
                      {
                       test: /\.js?$/,
                       exclude: /(node_modules|bower_components|soundfont|soundfonts|midijs|src\/ext)/,
                       use: [{
                           loader: 'babel-loader',
                           options: {
-                              presets: ['@babel/preset-env'],
-                              plugins: ['@babel/plugin-transform-object-assign'],
+                              presets: [preset],
+                              plugins: [
+                                  '@babel/plugin-transform-object-assign',
+                                  '@babel/plugin-proposal-export-namespace-from',
+                              ],
                               // plugins: ['add-module-exports', 'transform-object-assign'],
                           },
                       }],
@@ -62,7 +76,7 @@ module.exports = grunt => {
 
     const webpackCommon = webpackConfig(
         'music21.debug.js',  // TARGET_RAW,
-        'es2015'
+        '@babel/preset-env'
     );
     console.log(webpackCommon);
 
@@ -120,9 +134,10 @@ module.exports = grunt => {
              build: webpackCommon,
              watch: Object.assign({}, webpackCommon, {
                  watch: true,
-                 keepalive: true,
-                 failOnError: false,
-                 watchDelay: 0,
+                 watchOptions: {
+                     keepalive: true,
+                     failOnError: false,
+                 },
              }),
          },
 

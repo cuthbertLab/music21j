@@ -19,7 +19,7 @@
  *
  *
  */
-import * as jsonpickle from 'jsonpickle';
+import jsonpickle from '../ext/jsonpickle/main.js';
 
 const jp = jsonpickle;
 /**
