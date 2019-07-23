@@ -21797,9 +21797,9 @@ function (_base$Music21Object) {
      *
      * Called from appendNewDOM() etc.
      *
-     * @param {number|string|undefined} width
-     * @param {number|string|undefined} height
-     * @param {string} elementType - what type of element, default = svg
+     * @param {number|string|undefined} [width]
+     * @param {number|string|undefined} [height]
+     * @param {string} [elementType='svg'] - what type of element, default = svg
      * @returns {jQuery} canvas or svg
      */
 
@@ -24700,6 +24700,7 @@ var meter = {};
  *
  * @class TimeSignature
  * @memberof music21.meter
+ * @extends music21.base.Music21Object
  * @param {string} meterString - a string ("4/4", "3/8" etc.) to initialize the TimeSignature.
  * @property {int} [numerator=4]
  * @property {int} [denominator=4]

@@ -21,8 +21,8 @@ require(['music21'], function(music21) {
     allStream = new music21.stream.Part();
     allStream.renderOptions.overriddenWidth = 600;
     allStreamScore.append(allStream);
-    var newDOM = allStreamScore.createPlayableDOM();
-    $('#dropDiv div').replaceWith(newDOM[0]);
+    const $newDOM = allStreamScore.createPlayableDOM();
+    $('#dropDiv div').replaceWith($newDOM);
 });
 
 function renderThemes() {
@@ -48,12 +48,12 @@ function renderThemes() {
         var thisTheme = themes[i];
         var myTNStream = music21.tinyNotation.TinyNotation(thisTheme);
         var myStream = new music21.stream.Measure();
-        myStream.elements = myTNStream.elements;
+        myStream.elements = myTNStream.getElementsByClass('Measure').get(0).elements;
         myStream.timeSignature = '4/4';
-        var nc = myStream.createPlayableDOM();
-        $('#themeDiv').append(nc);
+        const $nc = myStream.createPlayableDOM();
+        $('#themeDiv').append($nc);
         // here is where we create something!
-        nc
+        $nc
             .draggable({
                 containment: 'body',
                 stack: '#themeDiv .streamHolding',
@@ -61,12 +61,12 @@ function renderThemes() {
                 revert: true,
             })
             .data('stream', myStream);
-        nc[0].ondblclick = nc[0].onclick; // not working right now...
-        nc[0].onclick = undefined;
-        themeDivs.push(nc[0]);
+        $nc[0].ondblclick = $nc[0].onclick; // not working right now...
+        $nc[0].onclick = undefined;
+        themeDivs.push($nc);
         r.removeFormatterInformation(myStream, true); // recursive.
 
-        if (i % 4 == 3) {
+        if (i % 4 === 3) {
             $('#themeDiv').append($('<br/>'));
             // alert(nc);
         }
@@ -88,12 +88,11 @@ function handleThemeDrop(event, ui) {
     allStream.append(containedStreamCopy);
     allStreamScore.resetRenderOptions(true); // recursive
     for (var i = 0; i < allStream.length; i++) {
-        if (i % 4 == 3) {
+        if (i % 4 === 3) {
             allStream.get(i).renderOptions.rightBarline = 'double';
         }
     }
-    var $svgDiv = allStreamScore.createPlayableDOM();
-    $('#dropDiv .streamHolding').replaceWith($svgDiv[0]);
+    var $svgDiv = allStreamScore.replaceDOM($('#dropDiv .streamHolding'));
     // alert(allStream.hi);
 }
 

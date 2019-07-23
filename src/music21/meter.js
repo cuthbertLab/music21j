@@ -35,6 +35,7 @@ export const meter = {};
  *
  * @class TimeSignature
  * @memberof music21.meter
+ * @extends music21.base.Music21Object
  * @param {string} meterString - a string ("4/4", "3/8" etc.) to initialize the TimeSignature.
  * @property {int} [numerator=4]
  * @property {int} [denominator=4]

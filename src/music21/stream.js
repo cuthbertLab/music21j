@@ -1915,9 +1915,9 @@ export class Stream extends base.Music21Object {
      *
      * Called from appendNewDOM() etc.
      *
-     * @param {number|string|undefined} width
-     * @param {number|string|undefined} height
-     * @param {string} elementType - what type of element, default = svg
+     * @param {number|string|undefined} [width]
+     * @param {number|string|undefined} [height]
+     * @param {string} [elementType='svg'] - what type of element, default = svg
      * @returns {jQuery} canvas or svg
      */
     createPlayableDOM(width, height, elementType='svg') {

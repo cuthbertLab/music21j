@@ -38,6 +38,7 @@
 
   window.onload = function () {
 	  require(['music21'], function(music21) {
+	     window.music21 = music21;
 	     mainSVG = $("#mainSVG")[0];         
          msg = $('div.editor-error .text');
          live_code();
