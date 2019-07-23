@@ -2,14 +2,13 @@
 <head>
  <title>Hi</title>
     <link rel="stylesheet" href="../css/m21.css" type="text/css" />
-
- <script data-main="../src/music21" 
+    <script data-main="../src/music21"
+            loadSoundFont="violin"
          src="../ext/require/require.js"></script>
 </head>
 <body>
 <script>
-require(['music21'], function () {
-    
+require(['music21'], function (music21) {
     var ch = new music21.chord.Chord(["C#", "E", "F#5"]);
     ch.duration.type="whole";
     ch.duration.dots = 1;
@@ -17,7 +16,7 @@ require(['music21'], function () {
     s = new music21.stream.Measure();
     s.append(ch);
     s.appendNewDOM();
-} );
+});
 </script>
 </body>
 </html>

@@ -23,7 +23,7 @@ import { Music21Exception } from './exceptions21.js';
  * @memberof music21
  * @requires music21/prebase
  */
-export const tie = {};
+
 const VALID_TIE_TYPES = ['start', 'stop', 'continue', 'let-ring', 'continue-let-ring'];
 
 /**
@@ -65,4 +65,4 @@ export class Tie extends prebase.ProtoM21Object {
         this._type = newType;
     }
 }
-tie.Tie = Tie;
+

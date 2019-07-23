@@ -51,7 +51,7 @@
     `;
 
     mxUrl = 'bachOut.xml';
-    require(['music21'], function () {
+    require(['music21'], function (music21) {
         sp = new music21.musicxml.xmlToM21.ScoreParser();
         sp.scoreFromUrl(mxUrl).done(() => {
             sc = sp.stream;

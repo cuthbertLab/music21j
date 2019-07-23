@@ -6,7 +6,7 @@
  * Based on music21 (=music21p), Copyright (c) 2006–16, Michael Scott Cuthbert and cuthbertLab
  *
  */
-import * as Vex from 'vexflow';
+import Vex from 'vexflow';
 
 import { Music21Exception } from './exceptions21.js';
 import { interval } from './interval.js';

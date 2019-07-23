@@ -1,4 +1,3 @@
-// import common from '../common.js';
 import { Music21Exception } from '../exceptions21.js';
 
 export class FilterException extends Music21Exception {

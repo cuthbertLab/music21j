@@ -22,12 +22,12 @@ module.exports = grunt => {
     const DOC_DIR = path.join(BASE_DIR, 'doc');
     const TEST_DIR = path.join(BASE_DIR, 'tests');
 
-    const MODULE_ENTRY = path.join(BASE_DIR, 'src/loadModules.js');
+    const MODULE_ENTRY = path.join(BASE_DIR, 'src/music21_modules.js');
     const TARGET_RAW = path.join(BUILD_DIR, 'music21.debug.js');
     const TARGET_RAW_MAP = TARGET_RAW + '.map';
     const TARGET_MIN = path.join(BUILD_DIR, 'music21.min.js');
 
-    const SOURCES = ['src/loadModules.js', 'src/music21/*.js', 'src/music21/*/*.js'];
+    const SOURCES = ['src/music21_modules.js', 'src/music21/*.js', 'src/music21/*/*.js'];
 
     const TEST_ENTRY = path.join(TEST_DIR, 'loadAll.js');
     const TEST_SOURCES = ['tests/loadAll.js', 'tests/moduleTests/*.js'];
@@ -47,16 +47,8 @@ module.exports = grunt => {
              module: {
                  rules: [
                      {
-                        test: /js\/midi\/.*\.js/,
-                         use: 'exports-loader?MIDI=MIDI',
-                     },
-                     {
-                        test: /midijs\/build\/MIDI.*\.js/,
-                         use: 'exports-loader?MIDI=MIDI',
-                     },
-                     {
                       test: /\.js?$/,
-                      exclude: /(node_modules|bower_components|soundfont|soundfonts|midijs|src\/ext)/,
+                      exclude: /(node_modules|bower_components|soundfont|soundfonts|src\/ext)/,
                       use: [{
                           loader: 'babel-loader',
                           options: {

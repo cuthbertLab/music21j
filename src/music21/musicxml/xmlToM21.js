@@ -8,7 +8,7 @@ import { meter } from '../meter.js';
 import { note } from '../note.js';
 import { pitch } from '../pitch.js';
 import { stream } from '../stream.js';
-import { tie } from '../tie.js';
+import * as tie from '../tie.js';
 
 const DEFAULTS = {
     divisionsPerQuarter: 32 * 3 * 3 * 5 * 7,
@@ -244,6 +244,11 @@ export class PartParser {
 }
 
 export class MeasureParser {
+    /**
+     *
+     * @param {jQuery} $mxMeasure
+     * @param {PartParser} [parent]
+     */
     constructor($mxMeasure, parent) {
         this.$mxMeasure = $mxMeasure;
         this.$mxMeasureElements = [];
@@ -259,9 +264,21 @@ export class MeasureParser {
         this.voicesById = {};
         this.voiceIndices = new Set();
         this.staves = 1;
+        /**
+         *
+         * @type {jQuery|undefined}
+         */
         this.$activeAttributes = undefined;
         this.attributesAreInternal = true;
+        /**
+         *
+         * @type {number|undefined}
+         */
         this.measureNumber = undefined;
+        /**
+         *
+         * @type {string|undefined}
+         */
         this.numberSuffix = undefined;
 
         if (parent !== undefined) {
@@ -505,10 +522,7 @@ export class MeasureParser {
         return this.xmlNoteToGeneralNoteHelper(r, $mxRest);
     }
 
-    xmlNoteToGeneralNoteHelper(n, $mxNote, freeSpanners) {
-        if (freeSpanners === undefined) {
-            freeSpanners = true;
-        }
+    xmlNoteToGeneralNoteHelper(n, $mxNote, freeSpanners=true) {
         // spanners
         // setPrintStyle
         // print-object
@@ -575,6 +589,11 @@ export class MeasureParser {
     // xmlToTremolo
     // xmlOneSpanner
 
+    /**
+     *
+     * @param {jQuery} $mxNote
+     * @returns {music21.tie.Tie}
+     */
     xmlToTie($mxNote) {
         const t = new tie.Tie();
         const allTies = $mxNote.children('tie');
@@ -604,6 +623,12 @@ export class MeasureParser {
         }
     }
 
+    /**
+     *
+     * @param {jQuery} $mxLyric
+     * @param {music21.note.Lyric} [inputM21]
+     * @returns {*|music21.note.Lyric|undefined}
+     */
     xmlToLyric($mxLyric, inputM21) {
         let l = inputM21;
         if (inputM21 === undefined) {
@@ -643,6 +668,11 @@ export class MeasureParser {
     }
 
 
+    /**
+     *
+     * @param {jQuery} $mxElement
+     * @param {music21.base.Music21Object} el
+     */
     insertIntoMeasureOrVoice($mxElement, el) {
         this.stream.insert(this.offsetMeasureNote, el);
     }

@@ -14,7 +14,7 @@ import { pitch } from './pitch.js';
 import { note } from './note.js';
 import { meter } from './meter.js';
 import { stream } from './stream.js';
-import { tie } from './tie.js';
+import * as tie from './tie.js';
 
 /**
  * TinyNotation module, see {@link music21.tinyNotation} namespace
@@ -275,16 +275,13 @@ tinyNotation.TinyNotation = function TinyNotation(textIn) {
  * Called automatically when music21 is loaded.
  *
  * @memberof music21.tinyNotation
- * @param {string} classTypes - a JQuery selector to find elements to replace.
+ * @param {string} [classTypes='.music21.tinyNotation'] - a JQuery selector to find elements to replace.
  * @param {Node|jQuery} [selector]
  */
 tinyNotation.renderNotationDivs = function renderNotationDivs(
-    classTypes,
+    classTypes='.music21.tinyNotation',
     selector
 ) {
-    if (classTypes === undefined) {
-        classTypes = '.music21.tinyNotation';
-    }
     let allRender = [];
     if (selector === undefined) {
         allRender = $(classTypes);

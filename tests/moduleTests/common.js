@@ -1,5 +1,5 @@
 import * as QUnit from 'qunit';
-import music21 from '../../src/loadModules';
+import music21 from '../../build/music21.debug.js';
 
 const common = music21.common;
 

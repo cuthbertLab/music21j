@@ -1,24 +1,33 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns = "http://www.w3.org/1999/xhtml">
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
 <head>
+ <title>First music21j demo</title>
  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
- <script src="../build/music21.debug.js"></script>
 </head>
 <body>
-<script type="text/javascript">
 
+This was the oldest/first experiment with music21j, from summer 2013.  Updated so it still works.<br/>
+Only for historical nostalgia...
+<form action="">
+<input type="button" onclick="playNote(60)" value="clickMe" />
+<input type="button" onclick="refreshMe()" value="playSeventy" /><br />
+<label for="textId">Note/QL</label><input type="text" value="E_2 F_1.5 G_.5 E_2" id="textId" onchange="renderIt()"/>
+</form>
 
+<script src="../build/music21.debug.js" type="application/javascript"></script>
+<script type="application/javascript">
+ <!--
 function playNote(midiNum) {
     MIDI.noteOn(0, midiNum, 100, 0);
     MIDI.noteOff(0, midiNum, .35);
 
 }
 
-var stopIntervalId;
-var numPlays = 0;
-var playedNote = 70;
+let stopIntervalId;
+let numPlays = 0;
+let playedNote = 70;
 
-playSeventy = function () {
+playSeventy = function() {
     playNote(playedNote + numPlays);
     numPlays += 1;
     if (numPlays >= 30) {
@@ -26,40 +35,36 @@ playSeventy = function () {
        MIDI.noteOff(0, playedNote + numPlays, .1);
        clearInterval(stopIntervalId);
     }
-}
+};
 
 function refreshMe() {
     stopIntervalId = setInterval(playSeventy, 100);
 }
 
 function drawMe() {
-	var myNote = new music21.note.Rest(4.0);
-    var myStream = new music21.stream.Stream();
+	const myNote = new music21.note.Rest(4.0);
+    const myStream = new music21.stream.Stream();
     myStream.append(myNote);
 	myStream.appendNewDOM();
 }
 
 function renderIt() {
-    var valueur = document.getElementById("textId").value;
-    var notes = valueur.split(" ");
-    var newStream = new music21.stream.Stream();
-    for (var i = 0; i < notes.length; i++) {
-       var noteContent = notes[i].split("_");
-       var noteName = noteContent[0];
-       var noteValue = parseFloat(noteContent[1]);
-       var newNote = new music21.note.Note(noteName, noteValue);
+    const valueur = document.getElementById("textId").value;
+    let notes = valueur.split(" ");
+    const newStream = new music21.stream.Stream();
+    for (let i = 0; i < notes.length; i++) {
+       const noteContent = notes[i].split("_");
+       const noteName = noteContent[0];
+       const noteValue = parseFloat(noteContent[1]);
+       const newNote = new music21.note.Note(noteName, noteValue);
        newStream.append(newNote);
     }
     newStream.replaceDOM();
 }
 
 drawMe();
-
+-->
 </script>
+
 </body>
-This was the oldest/first experiment with music21j, from summer 2013.  Updated so it still works.<br/>
-Only for historical nostalgia...
-<input type="button" onclick="playNote(60)" value="clickMe" />
-<input type="button" onclick="refreshMe()" value="playSeventy" /><br />
-<input type="text" value="E_2 F_1.5 G_.5 E_2" id="textId" onchange="renderIt()"/>
 </html>

@@ -7,11 +7,9 @@
  *
  */
 import * as $ from 'jquery';
-// import * as MIDI from '../ext/midijs/build/MIDI.min.js';
+import * as MIDI from 'midicube';
 
 import { prebase } from './prebase.js';
-
-const MIDI = window.MIDI;
 
 /* a Music21Object in m21p; the overhead is too high here to follow ... */
 /**

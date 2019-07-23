@@ -6,8 +6,8 @@
  * Based on music21 (music21p), Copyright (c) 2006–17, Michael Scott Cuthbert and cuthbertLab
  *
  */
-import * as Vex from 'vexflow';
-// import * as MIDI from '../ext/midijs/build/MIDI.min.js';
+import Vex from 'vexflow';
+import * as MIDI from 'midicube';
 
 import { prebase } from './prebase.js';
 import { base } from './base.js';
@@ -16,8 +16,6 @@ import { pitch } from './pitch.js';
 import { beam } from './beam.js';
 import { common } from './common.js';
 import { Music21Exception } from './exceptions21.js';
-
-const MIDI = window.MIDI;
 
 /**
  * Module for note classes. See the namespace {@link music21.note}
@@ -210,7 +208,7 @@ note.Lyric = Lyric;
  * @property {Array<music21.note.Lyric>} lyrics - array of attached lyrics
  * @property {number} [volume=60] - how loud is this note, 0-127, before articulations
  * @property {number} midiVolume - how loud is this note, taking into account articulations
- * @property {music21.note.Tie|undefined} [tie=undefined] - a tie object
+ * @property {music21.tie.Tie|undefined} [tie=undefined] - a tie object
  */
 export class GeneralNote extends base.Music21Object {
     constructor(ql) {

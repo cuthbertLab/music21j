@@ -17,13 +17,12 @@
 // k.scaleFactor = 1.2;  // default 1
 // k.whiteKeyWidth = 40; // default 23
 import * as $ from 'jquery';
-// import * as MIDI from '../ext/midijs/build/MIDI.min.js';
+import * as MIDI from 'midicube';
 
 import { common } from './common.js';
 import { miditools } from './miditools.js';
 import { pitch } from './pitch.js';
 
-const MIDI = window.MIDI;
 
 /**
  * Keyboard module, see {@link music21.keyboard} namespace

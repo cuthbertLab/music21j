@@ -13,7 +13,8 @@
 <script type="text/javascript">
 var allStream;
 
-require(['music21'], function() {
+require(['music21'], function(music21) {
+	window.music21 = music21;
     renderThemes();
     allStreamScore = new music21.stream.Score();
     allStreamScore.renderOptions.overriddenWidth = 600;

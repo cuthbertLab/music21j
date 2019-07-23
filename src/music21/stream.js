@@ -9,7 +9,7 @@
  *
  */
 import * as $ from 'jquery';
-// import * as MIDI from '../ext/midijs/build/MIDI.min.js';
+import * as MIDI from 'midicube';
 
 import { Music21Exception } from './exceptions21.js';
 
@@ -33,8 +33,6 @@ import * as iterator from './stream/iterator.js';
 
 export { filters };
 export { iterator };
-
-const MIDI = window.MIDI;
 
 /**
  * powerful stream module, See {@link music21.stream} namespace
@@ -588,7 +586,7 @@ export class Stream extends base.Music21Object {
     /**
      * Add an element to the end of the stream, setting its `.offset` accordingly
      *
-     * @param {music21.base.Music21Object|Array} elOrElList - element or list of elements to append
+     * @param {music21.base.Music21Object|base.Music21Object|Array} elOrElList - element or list of elements to append
      * @returns {this}
      */
     append(elOrElList) {
@@ -2320,8 +2318,8 @@ export class Stream extends base.Music21Object {
      *
      * @param {Node|SVGElement} svg
      * @param {Event} e
-     * @param {number} x
-     * @param {number} y
+     * @param {number} [x]
+     * @param {number} [y]
      * @returns {Array} [diatonicNoteNum, closestXNote]
      */
     findNoteForClick(svg, e, x, y) {
@@ -2930,8 +2928,8 @@ export class Part extends Stream {
      *
      * @param {Node} svg
      * @param {Event} e
-     * @param {number} x
-     * @param {number} y
+     * @param {number} [x]
+     * @param {number} [y]
      * @returns {Array} [clickedDiatonicNoteNum, foundNote]
      */
     findNoteForClick(svg, e, x, y) {
@@ -3220,8 +3218,8 @@ export class Score extends Stream {
      *
      * @param {Node} svg
      * @param {Event} e
-     * @param {number} x
-     * @param {number} y
+     * @param {number} [x]
+     * @param {number} [y]
      * @returns {Array} [diatonicNoteNum, m21Element]
      */
     findNoteForClick(svg, e, x, y) {

@@ -1,5 +1,5 @@
 import * as QUnit from 'qunit';
-import music21 from '../../src/loadModules';
+import music21 from '../../build/music21.debug.js';
 
 const interval = music21.interval;
 const Interval = music21.interval.Interval;

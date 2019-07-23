@@ -1,4 +1,4 @@
-import * as Vex from 'vexflow';
+import Vex from 'vexflow';
 
 import { common } from './common.js';
 import { prebase } from './prebase.js';

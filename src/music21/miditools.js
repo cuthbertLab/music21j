@@ -8,13 +8,16 @@
  * @author Michael Scott Cuthbert
  */
 import * as $ from 'jquery';
-import { MIDI } from '../ext/midijs2';
+import * as MIDI from 'midicube';
 
 import { chord } from './chord.js';
 import { common } from './common.js';
 import { debug } from './debug.js';
 import { instrument } from './instrument.js';
 import { note } from './note.js';
+
+// expose midicube's MIDI to window for soundfonts to load.
+window.MIDI = MIDI;
 
 /**
  * A collection of tools for midi. See the namespace {@link music21.miditools}
@@ -345,7 +348,7 @@ miditools.postLoadCallback = function postLoadCallback(soundfont, callback) {
     $('.loadingSoundfont').remove();
 
     const isFirefox = typeof InstallTrigger !== 'undefined'; // Firefox 1.0+
-    const isAudioTag = MIDI.technology === 'HTML Audio Tag';
+    const isAudioTag = MIDI.config.api === 'audiotag';
     const instrumentObj = instrument.find(soundfont);
     if (instrumentObj !== undefined) {
         MIDI.programChange(
@@ -382,7 +385,7 @@ miditools.postLoadCallback = function postLoadCallback(soundfont, callback) {
  *
  * @memberof music21.miditools
  * @param {String} soundfont The name of the soundfont that was just loaded
- * @param {function} callback A function to be called after the soundfont is loaded.
+ * @param {function} [callback] A function to be called after the soundfont is loaded.
  * @example
  * s = new music21.stream.Stream();
  * music21.miditools.loadSoundfont(
@@ -463,7 +466,7 @@ miditools.loadSoundfont = function loadSoundfont(soundfont, callback) {
  */
 export class MidiPlayer {
     constructor() {
-        this.player = new MIDI.Players.PlayInstance();
+        this.player = new MIDI.Player();
         this.speed = 1.0;
         this.$playDiv = undefined;
     }

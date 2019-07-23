@@ -8,7 +8,7 @@
         <script>
         var k = ""; // will become keyboard.Keyboard object        
         
-        require(['music21'], function () { 
+        require(['music21'], function (music21) {
             k = new music21.keyboard.Keyboard();
             var kd = document.getElementById('keyboardDiv');
             k.startPitch = 18;
@@ -26,4 +26,3 @@
     <div id="keyboardDiv"></div>
 </body>
 </html>
-        

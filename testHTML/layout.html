@@ -9,7 +9,7 @@
         s = ""; // will become score
         ls = "";
         
-        require(['music21'], function () { 
+        require(['music21'], function (music21) {
             s = new music21.stream.Score();
             p = music21.tinyNotation.TinyNotation('2/4 c2 d4 e f g a2 c2 d4 e f g a2 c2 d4 e f g a2 c2 d4 e f g a2 c2 d4 e f g a2 c2 d4 e f g a2');
             p2 = music21.tinyNotation.TinyNotation('2/4 a2 c2 d4 e f g a2 c2 d4 e f g a2 c2 d4 e f g a2 c2 d4 e f g a2 c2 d4 e f g a2 b2 b2 c2');
@@ -27,4 +27,3 @@
     <div id="scoreDiv"></div>
 </body>
 </html>
-        

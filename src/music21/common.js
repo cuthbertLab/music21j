@@ -484,4 +484,47 @@ common.numToIntOrFloat = function numToIntOrFloat(value) {
     }
 };
 
+/**
+ *
+ * @param {string} path
+ * @returns {string}
+ */
+common.pathSimplify = path => {
+    let pPrefix = "";
+    if (path.indexOf('//') === 0) {
+        pPrefix = '//'; //cdn loading;
+        path = path.slice(2);
+        console.log('cdn load: ', pPrefix, " into ", path);
+    } else if (path.indexOf('://') !== -1) { // for cross site requests...
+        const protoSpace = path.indexOf('://');
+        pPrefix = path.slice(0, protoSpace + 3);
+        path = path.slice(protoSpace + 3);
+        console.log('cross-site split', pPrefix, path);
+    }
+    const ps = path.split('/');
+    const addSlash = (path.slice(path.length - 1, path.length) === '/') ? true : false;
+    const pout = [];
+    for (const el of ps) {
+        if (el === '..') {
+            if (pout.length > 0) {
+                if (pout[pout.length - 1] !== '..') {
+                    pout.pop();
+                } else {
+                    pout.push('..');
+                }
+            } else {
+                pout.push('..');
+            }
+        } else {
+            pout.push(el);
+        }
+    }
+    let pnew = pout.join('/');
+    if (addSlash) {
+        pnew += '/';
+    }
+    pnew = pPrefix + pnew;
+    return pnew;
+};
+
 export default common;

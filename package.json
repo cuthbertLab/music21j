@@ -1,6 +1,6 @@
 {
   "name": "music21j",
-  "version": "0.9.0",
+  "version": "0.9.5",
   "description": "A toolkit for computer-aided musicology, Javascript version",
   "main": "src/music21",
   "files": [
@@ -10,6 +10,8 @@
   "dependencies": {
     "es6-shim": "^0.35.5",
     "jquery": "^3.4.1",
+    "jquery-ui-bundle": "^1.12.1-migrate",
+    "midicube": "^0.5.2",
     "vexflow": "^1.2.89"
   },
   "devDependencies": {

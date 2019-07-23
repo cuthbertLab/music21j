@@ -1,8 +1,6 @@
-// import * as MIDI from '../ext/midijs/build/MIDI.min.js';
+import * as MIDI from 'midicube';
 
 import { common } from './common.js';
-
-const MIDI = window.MIDI;
 
 /**
  * audioSearch module. See {@link music21.audioSearch} namespace
