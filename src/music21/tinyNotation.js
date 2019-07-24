@@ -254,10 +254,11 @@ tinyNotation.TinyNotation = function TinyNotation(textIn) {
         if (p.length > 0) {
             optionalScore.append(p);
         }
-        for (let i = 0; i < optionalScore.length; i++) {
-            const innerPart = optionalScore.get(i);
+        for (let i = 0; i < optionalScore.parts.length; i++) {
+            const innerPart = optionalScore.parts.get(i);
             innerPart.clef = clef.bestClef(innerPart);
-            innerPart.getElementsByClass('Measure').get(0).clef = innerPart.clef;
+            const innerMeasure = innerPart.getElementsByClass('Measure').get(0);
+            innerMeasure.clef = innerPart.clef;
         }
         returnObject = optionalScore;
     } else {

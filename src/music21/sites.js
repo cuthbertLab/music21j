@@ -168,7 +168,7 @@ export class Sites {
                 keyRepository.splice(
                     0,
                     0,
-                    keyRepository.pop(keyRepository.indexOf(priorityId))
+                    keyRepository.splice(keyRepository.indexOf(priorityId), 1)
                 );
             }
         }
@@ -198,7 +198,7 @@ export class Sites {
         // want to be extra safe.  If you want fast, use .yieldSites
         if (priorityTarget !== undefined) {
             if (post.includes(priorityTarget)) {
-                post.splice(0, 0, post.pop(post.indexOf(priorityTarget)));
+                post.splice(0, 0, post.splice(post.indexOf(priorityTarget), 1));
             }
         }
         return post;

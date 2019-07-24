@@ -61,6 +61,7 @@ export class ScoreParser {
 
     scoreFromUrl(url) {
         this.xmlUrl = url;
+        // noinspection JSUnusedLocalSymbols
         return $.get(url, {}, (xmlDoc, textStatus) =>
             this.scoreFromDOMTree(xmlDoc)
         );
@@ -68,6 +69,8 @@ export class ScoreParser {
 
     scoreFromText(xmlText) {
         this.xmlText = xmlText;
+        // Not sure why this is not being found in jQuery
+        // noinspection JSUnresolvedFunction
         const xmlDoc = $.parseXML(xmlText);
         return this.scoreFromDOMTree(xmlDoc);
     }
@@ -131,8 +134,14 @@ export class ScoreParser {
     }
 }
 
+/**
+ * @property {MeasureParser|undefined} lastMeasureParser
+ * @property {music21.meter.TimeSignature|undefined} lastTimeSignature
+ * @property {jQuery|undefined} $activeAttributes
+ */
 export class PartParser {
     constructor($mxPart, $mxScorePart, parent) {
+        this.parent = parent;
         this.$mxPart = $mxPart;
         this.$mxScorePart = $mxScorePart;
         // ignore parent for now
@@ -248,6 +257,8 @@ export class MeasureParser {
      *
      * @param {jQuery} $mxMeasure
      * @param {PartParser} [parent]
+     * @property {music21.note.GeneralNote|undefined} nLast
+     * @property {jQuery|undefined} $activeAttributes
      */
     constructor($mxMeasure, parent) {
         this.$mxMeasure = $mxMeasure;
@@ -264,10 +275,6 @@ export class MeasureParser {
         this.voicesById = {};
         this.voiceIndices = new Set();
         this.staves = 1;
-        /**
-         *
-         * @type {jQuery|undefined}
-         */
         this.$activeAttributes = undefined;
         this.attributesAreInternal = true;
         /**
@@ -522,6 +529,7 @@ export class MeasureParser {
         return this.xmlNoteToGeneralNoteHelper(r, $mxRest);
     }
 
+    // noinspection JSUnusedLocalSymbols
     xmlNoteToGeneralNoteHelper(n, $mxNote, freeSpanners=true) {
         // spanners
         // setPrintStyle

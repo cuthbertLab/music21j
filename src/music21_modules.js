@@ -17,8 +17,6 @@
  * All interfaces are alpha and may change radically from day to day and release to release.
  * Do not use this in production code yet.
  *
- * See src/moduleLoader.js for version and version history.
- *
  * music21j acknowledges VexFlow, MIDI.js in particular for their great efforts without which
  * this module would not be possible.
  *
@@ -34,7 +32,7 @@ import '@babel/polyfill';
 import * as MIDIIn from 'midicube';  // to be removed when export * from is okay.
 import * as $ from 'jquery';
 
-// attrchange, jquery-ui
+// TODO: add attrchange
 
 export const MIDI = MIDIIn;
 window.$ = $;

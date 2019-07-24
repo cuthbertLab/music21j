@@ -9,8 +9,10 @@ import { tinyNotation } from './tinyNotation.js';
 
 export function runConfiguration() {
     let conf;
-    if (typeof m21conf !== 'undefined') {
-        conf = m21conf;
+    // noinspection JSUnresolvedVariable
+    if (typeof window.m21conf !== 'undefined') {
+        // noinspection JSUnresolvedVariable
+        conf = window.m21conf;
     } else {
         conf = loadConfiguration();
     }
@@ -44,7 +46,7 @@ export function fixUrls(conf) {
     if (!conf.m21basePath) {
         return;
     }
-    for (let u in common.urls) {
+    for (let u in Object.keys(common.urls)) {
         common.urls[u] = common.pathSimplify(conf.m21basePath + common.urls[u]);
     }
 }

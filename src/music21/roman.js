@@ -1,9 +1,9 @@
 /**
  * music21j -- Javascript reimplementation of Core music21p features.
- * music21/roman -- roman.RomanNumberal -- Chord subclass
+ * music21/roman -- roman.RomanNumeral -- Chord subclass
  *
- * Copyright (c) 2013-17, Michael Scott Cuthbert and cuthbertLab
- * Based on music21 (=music21p), Copyright (c) 2006–17, Michael Scott Cuthbert and cuthbertLab
+ * Copyright (c) 2013-19, Michael Scott Cuthbert and cuthbertLab
+ * Based on music21 (=music21p), Copyright (c) 2006–19, Michael Scott Cuthbert and cuthbertLab
  *
  */
 import { Music21Exception } from './exceptions21.js';
@@ -252,6 +252,9 @@ export class RomanNumeral extends harmony.Harmony {
         this.frontAlterationAccidental = undefined;
         this.romanNumeralAlone = undefined;
 
+        // TODO(msc) -- this is never defined.
+        this.quality = undefined;
+
         this.impliedQuality = undefined;
         this.impliedScale = undefined;
         this.scaleOffset = undefined;
@@ -260,7 +263,6 @@ export class RomanNumeral extends harmony.Harmony {
         this.omittedSteps = [];
         this.followsKeyChange = false;
         this._functionalityScore = undefined;
-
         /**
          *
          * @type {music21.key.Key|music21.scale.Scale|undefined}

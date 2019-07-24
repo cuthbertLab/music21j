@@ -103,7 +103,6 @@ export class Key {
     /**
      * Adds a circle (red) on the key (to mark middle C etc.)
      *
-     * @method music21.keyboard.Key#addCircle
      * @param {string} [strokeColor='red']
      * @returns {SVGElement}
      */
@@ -139,7 +138,6 @@ export class Key {
     /**
      * Adds the note name on the key
      *
-     * @method music21.keyboard.Key#addNoteName
      * @param {Boolean} [labelOctaves=false] - use octave numbers too?
      * @returns {this}
      */
@@ -195,7 +193,6 @@ export class Key {
     /**
      * Removes the note name from the key (if exists)
      *
-     * @method music21.keyboard.Key#removeNoteName
      * @returns {undefined}
      */
     removeNoteName() {
@@ -300,7 +297,6 @@ export class Keyboard {
          *
          * @name callbacks
          * @type {Object}
-         * @memberof music21.keyboard.Keyboard#
          */
         this.callbacks = {
             click: (keyClicked) => this.clickHandler(keyClicked),
@@ -317,7 +313,6 @@ export class Keyboard {
     /**
      * Redraws the SVG associated with this Keyboard
      *
-     * @method music21.keyboard.Keyboard#redrawSVG
      * @returns {SVGElement} new svgDOM
      */
     redrawSVG() {
@@ -334,15 +329,16 @@ export class Keyboard {
     /**
      * Appends a keyboard to the `where` parameter
      *
-     * @method music21.keyboard.Keyboard#appendKeyboard
      * @param {jQuery|Node} [where]
      * @returns {music21.keyboard.Keyboard} this
      */
     appendKeyboard(where) {
         if (where === undefined) {
             where = document.body;
-        } else if (where.jquery !== undefined) {
-            where = where[0];
+        } else { // noinspection JSUnresolvedVariable
+            if (typeof where.jquery !== 'undefined') {
+                        where = where[0];
+                    }
         }
 
         let svgDOM = this.createSVG();
@@ -362,8 +358,7 @@ export class Keyboard {
     /**
      * Handle a click on a given SVG object
      *
-     * @method music21.keyboard.Keyboard#clickHandler
-     * @param {Node} keyRect - the dom object with the keyboard.
+     * @param {SVGElement} keyRect - the dom object with the keyboard.
      */
     clickHandler(keyRect) {
         // to-do : integrate with jazzHighlight...
@@ -390,7 +385,6 @@ export class Keyboard {
     /**
      * Draws the SVG associated with this Keyboard
      *
-     * @method music21.keyboard.Keyboard#createSVG
      * @returns {SVGElement} new svgDOM
      */
     createSVG() {
@@ -505,7 +499,6 @@ export class Keyboard {
     /**
      * Puts a circle on middle c.
      *
-     * @method music21.keyboard.Keyboard#markMiddleC
      * @param {string} [strokeColor='red']
      */
     markMiddleC(strokeColor) {
@@ -517,7 +510,6 @@ export class Keyboard {
     /**
      * Puts note names on every white key.
      *
-     * @method music21.keyboard.Keyboard#markNoteNames
      * @param {Boolean} [labelOctaves=false]
      */
     markNoteNames(labelOctaves) {
@@ -533,7 +525,7 @@ export class Keyboard {
     /**
      * Remove note names on the keys, if they exist
      *
-     * @method music21.keyboard.Keyboard#removeNoteNames
+     * @returns {this}
      */
     removeNoteNames() {
         for (const midi in this.keyObjects) {
@@ -542,6 +534,7 @@ export class Keyboard {
                 keyObj.removeNoteName();
             }
         }
+        return this
     }
 
     /**
@@ -550,7 +543,6 @@ export class Keyboard {
      * Do not call this directly, just use createSVG after changing the
      * scrollable property on the keyboard to True.
      *
-     * @method music21.keyboard.Keyboard#wrapScrollable
      * @param {SVGElement} svgDOM
      * @returns {jQuery}
      */
@@ -595,7 +587,6 @@ export class Keyboard {
      * Do not call this directly, just use createSVG after changing the
      * hideable property on the keyboard to True.
      *
-     * @method music21.keyboard.Keyboard#appendHideableKeyboard
      * @param {Node} where
      * @param {SVGElement} keyboardSVG
      */
@@ -634,13 +625,14 @@ export class Keyboard {
     }
 }
 
+// noinspection JSUnusedLocalSymbols
 /**
  * triggerToggleShow -- event for keyboard is shown or hidden.
  *
  * @function music21.keyboard.triggerToggleShow
- * @param {Event} e
+ * @param {Event} [e]
  */
-keyboard.triggerToggleShow = function triggerToggleShow(e) {
+keyboard.triggerToggleShow = e => {
     // "this" refers to the object clicked
     // e -- event is not used.
     const $t = $(this);
@@ -676,7 +668,7 @@ keyboard.triggerToggleShow = function triggerToggleShow(e) {
  * highlight the keyboard stored in "this" appropriately
  *
  * @function music21.keyboard.jazzHighlight
- * @param {Event} e
+ * @param {music21.miditools.Event} e
  * @example
  * var midiCallbacksPlay = [music21.miditools.makeChords,
  *                          music21.miditools.sendToMIDIjs,

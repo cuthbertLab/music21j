@@ -502,7 +502,7 @@ common.pathSimplify = path => {
         console.log('cross-site split', pPrefix, path);
     }
     const ps = path.split('/');
-    const addSlash = (path.slice(path.length - 1, path.length) === '/') ? true : false;
+    const addSlash = (path.slice(path.length - 1, path.length) === '/');
     const pout = [];
     for (const el of ps) {
         if (el === '..') {

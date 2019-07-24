@@ -40,9 +40,21 @@ export class RenderOptions {
             scaleFactor: { x: 0.7, y: 0.7 },
 
             top: 0,
+            /**
+             * @type {number|undefined}
+             */
             left: undefined,
+            /**
+             * @type {number|undefined}
+             */
             width: undefined,
+            /**
+             * @type {number|undefined}
+             */
             overriddenWidth: undefined,
+            /**
+             * @type {number|undefined}
+             */
             height: undefined,
             naiveHeight: 120,
 
@@ -51,11 +63,17 @@ export class RenderOptions {
             measureIndex: 0,
 
             systemMeasureIndex: 0,
+            /**
+             * @type {number|undefined}
+             */
             systemPadding: undefined,
             naiveSystemPadding: 40,
 
             stemDirection: undefined,
 
+            /**
+             * @type {number|undefined}
+             */
             maxSystemWidth: undefined,
             rightBarline: undefined,
             staffLines: 5,
@@ -68,6 +86,9 @@ export class RenderOptions {
             },
             startNewSystem: false,
             startNewPage: false,
+            /**
+             * @type {boolean|undefined}
+             */
             showMeasureNumber: undefined,
         };
         common.merge(this, defaultOptions);

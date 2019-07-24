@@ -8,7 +8,7 @@ import { stream } from './stream.js';
 // import { common } from './common.js';
 /**
  * 
- * THIS IS CURRENTLY UNUSUED
+ * THIS IS CURRENTLY UNUSED
  * Does not work yet, so not documented
  *
  */
@@ -62,8 +62,11 @@ layout.makeLayoutFromScore = function makeLayoutFromScore(
     };
     staffMaker(currentStaves, numParts, 1);
 
+    // noinspection JSMismatchedCollectionQueryUpdate
     const systemCurrentWidths = [];
+    // noinspection JSMismatchedCollectionQueryUpdate
     const systemBreakIndexes = [];
+
     let lastSystemBreak = 0; /* needed to ensure each line has at least one measure */
     const startLeft = 20; /* TODO: make it obtained elsewhere */
     let currentLeft = startLeft;
@@ -113,12 +116,23 @@ layout.makeLayoutFromScore = function makeLayoutFromScore(
     return layoutScore;
 };
 
+/**
+ * @property {number|undefined} measureStart
+ * @property {number|undefined} measureEnd
+ * @property {number|undefined} width
+ * @property {number|undefined} height
+ */
 export class LayoutScore extends stream.Score {
     constructor() {
         super();
         this.scoreLayout = undefined;
         this.measureStart = undefined;
         this.measureEnd = undefined;
+        /**
+         *
+         * @type {number|undefined}
+         * @private
+         */
         this._width = undefined;
         this.height = undefined;
         this.top = 0;
@@ -154,6 +168,11 @@ layout.LayoutScore = LayoutScore;
 
 /**
  * All music must currently be on page 1.
+ *
+ * @property {number|undefined} measureStart
+ * @property {number|undefined} measureEnd
+ * @property {number|undefined} systemStart
+ * @property {number|undefined} systemEnd
  */
 export class Page extends stream.Score {
     constructor() {
@@ -180,6 +199,14 @@ export class Page extends stream.Score {
 }
 layout.Page = Page;
 
+/**
+ * @property {number|undefined} measureStart
+ * @property {number|undefined} measureEnd
+ * @property {number|undefined} width
+ * @property {number|undefined} height
+ * @property {number|undefined} top
+ * @property {number|undefined} left
+ */
 export class System extends stream.Score {
     constructor() {
         super();
@@ -187,6 +214,11 @@ export class System extends stream.Score {
         this.systemLayout = undefined;
         this.measureStart = undefined;
         this.measureEnd = undefined;
+        /**
+         *
+         * @type {number|undefined}
+         * @private
+         */
         this._width = undefined;
         this.height = undefined;
         this.top = undefined;

@@ -4,6 +4,10 @@ import { audioSearch } from './audioSearch.js';
  * Adopted from Matt Diamond's recorder.js code MIT License
  */
 export class Recorder {
+    /**
+     *
+     * @param {Object} [cfg]
+     */
     constructor(cfg) {
         const config = cfg || {};
         this.bufferLen = config.bufferLen || 4096;
@@ -25,6 +29,12 @@ export class Recorder {
             canvasContext: undefined,
         };
         this.analyserNode = undefined;
+        /**
+         *
+         * @type {BaseAudioContext|undefined}
+         */
+        this.context = undefined;
+
     }
 
     /**
@@ -32,6 +42,8 @@ export class Recorder {
      */
     initAudio() {
         this.polyfillNavigator();
+        // not sure what function signature this wants.
+        // noinspection JSCheckFunctionSignatures
         navigator.getUserMedia(
             {
                 audio: {
@@ -68,6 +80,10 @@ export class Recorder {
      * we can do something with all these wonderful inputs.
      */
     audioStreamConnected(stream) {
+        /**
+         *
+         * @type {GainNode}
+         */
         const inputPoint = this.audioContext.createGain();
 
         // Create an AudioNode from the stream.
@@ -88,10 +104,17 @@ export class Recorder {
     }
 
     /**
-     * Creates a worker to receive and process all the messages asychronously.
+     * Creates a worker to receive and process all the messages asynchronously.
+     *
+     * @param {GainNode} source;
      */
     connectSource(source) {
-        this.context = source.context;
+        /**
+         *
+          * @type {BaseAudioContext}
+         */
+        const context = source.context;
+        this.context = context;
         this.setNode();
 
         // create a Worker with inline code...
@@ -157,6 +180,8 @@ export class Recorder {
         const numInputChannels = 2;
         const numOutputChannels = 2;
         if (!this.context.createScriptProcessor) {
+            // Old style BaseAudioContext -- not used anymore.
+            // noinspection JSUnresolvedFunction
             this.node = this.context.createJavaScriptNode(
                 this.bufferLen,
                 numInputChannels,
@@ -244,6 +269,8 @@ export class Recorder {
      */
     polyfillNavigator() {
         if (!navigator.getUserMedia) {
+            // polyfill...
+            // noinspection JSUnresolvedVariable
             navigator.getUserMedia
                 = navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
         }
@@ -259,6 +286,11 @@ export class Recorder {
         }
     }
 
+    /**
+     * Update the Analysers.
+     *
+     * @param {number} [time]
+     */
     updateAnalysers(time) {
         if (!this.frequencyCanvasInfo.canvasContext) {
             const canvas = document.getElementById(this.frequencyCanvasInfo.id);
@@ -317,6 +349,10 @@ export class Recorder {
         );
     }
 
+    /**
+     *
+     * @param {number[][]} buffers
+     */
     drawWaveformCanvas(buffers) {
         const data = buffers[0]; // one track of stereo recording.
         if (!this.waveformCanvasInfo.context) {

@@ -2,10 +2,10 @@
  * music21j -- Javascript reimplementation of Core music21p features.
  * music21/base -- objects in base in music21p routines
  *
- * does not load the other modules, music21/moduleLoader.js does that.
+ * does not load the other modules.
  *
- * Copyright (c) 2013-16, Michael Scott Cuthbert and cuthbertLab
- * Based on music21 (=music21p), Copyright (c) 2006–16, Michael Scott Cuthbert and cuthbertLab
+ * Copyright (c) 2013-19, Michael Scott Cuthbert and cuthbertLab
+ * Based on music21 (=music21p), Copyright (c) 2006–19, Michael Scott Cuthbert and cuthbertLab
  *
  */
 import { common } from './common.js';
@@ -24,8 +24,7 @@ import * as sites from './sites.js';
  * @exports music21/base
  */
 /**
- * Module for Music21Objects.  Does not load other modules, see {@link music21.moduleLoader}
- * for this functionality.
+ * Module for Music21Objects.  Does not load other modules.
  *
  * @namespace music21.base
  * @memberof music21
@@ -49,7 +48,7 @@ export const base = {};
  */
 export class Music21Object extends prebase.ProtoM21Object {
     constructor(keywords) {
-        super();
+        super(keywords);
         this.classSortOrder = 20; // default;
 
         this._activeSite = undefined;
@@ -60,6 +59,11 @@ export class Music21Object extends prebase.ProtoM21Object {
         // this._editorial = undefined;
 
         this._duration = new duration.Duration();
+        /**
+         *
+         * @type {music21.derivation.Derivation|undefined}
+         * @private
+         */
         this._derivation = undefined; // avoid making extra objects...
 
         this._priority = 0; // default;
@@ -182,6 +186,11 @@ export class Music21Object extends prebase.ProtoM21Object {
     set priority(p) {
         this._priority = p;
     }
+
+    /**
+     * @param {*} newDuration
+     * @returns {music21.duration.Duration}
+     */
     get duration() {
         return this._duration;
     }
@@ -257,6 +266,7 @@ export class Music21Object extends prebase.ProtoM21Object {
         try {
             return this.getOffsetBySite(site);
         } catch (e) {} // eslint-disable-line no-empty
+        // noinspection JSUnusedLocalSymbols
         for (const [csSite, csOffset, unused_csRecursionType] of this.contextSites()) {
             if (csSite === site) {
                 return csOffset;
@@ -459,7 +469,7 @@ export class Music21Object extends prebase.ProtoM21Object {
             memo.push(this);
         }
 
-        if (params.priorityTarget === undefined && !params.sortByCreationType) {
+        if (params.priorityTarget === undefined && !params.sortByCreationTime) {
             params.priorityTarget = this.activeSite;
         }
         const topLevel = this;

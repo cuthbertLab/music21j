@@ -39,7 +39,7 @@ export const meter = {};
  * @param {string} meterString - a string ("4/4", "3/8" etc.) to initialize the TimeSignature.
  * @property {int} [numerator=4]
  * @property {int} [denominator=4]
- * @property {Array<Array<int>>} beatGroups - groupings of beats; inner arrays are numerator, denominator
+ * @property {int[][]} beatGroups - groupings of beats; inner arrays are numerator, denominator
  * @property {string} ratioString - a string like "4/4"
  * @property {music21.duration.Duration} barDuration - a Duration object representing the expressed total length of the TimeSignature.
  */
@@ -187,7 +187,7 @@ export class TimeSignature extends base.Music21Object {
     }
 
     /**
-     * @param {Iterable} srcStream - a stream of elements.
+     * @param {music21.stream.Stream} srcStream - a stream of elements.
      * @param {Object} options - an object with measureStartOffset
      */
     getBeams(srcStream, options) {
@@ -198,7 +198,7 @@ export class TimeSignature extends base.Music21Object {
         beamsList = beam.Beams.removeSandwichedUnbeamables(beamsList);
         const fixBeamsOneElementDepth = (i, el, depth) => {
             const beams = beamsList[i];
-            if (!beams || beams === undefined) {
+            if (!beams) {
                 return;
             }
             const beamNumber = depth + 1;
@@ -255,7 +255,7 @@ export class TimeSignature extends base.Music21Object {
                 } else {
                     beamType = 'start';
                 }
-            } else if (beamPrevious !== undefined
+            } else if (beamPrevious
                         && beamPrevious.getNumbers().includes(beamNumber)
                         && ['stop', 'partial-left'].includes(beamPrevious.getTypeByNumber(beamNumber))
                        ) {
@@ -293,7 +293,6 @@ export class TimeSignature extends base.Music21Object {
     /**
      * Compute the Beat Group according to this time signature for VexFlow. For beaming.
      *
-     * @param {Vex} Vex - a reference to the Vex object
      * @returns {Array<Vex.Flow.Fraction>} a list of numerator and denominator groups, for VexFlow
      */
     vexflowBeatGroups() {
