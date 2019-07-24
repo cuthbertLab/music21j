@@ -46,7 +46,7 @@ export function fixUrls(conf) {
     if (!conf.m21basePath) {
         return;
     }
-    for (let u in Object.keys(common.urls)) {
+    for (const u of Object.keys(common.urls)) {
         common.urls[u] = common.pathSimplify(conf.m21basePath + common.urls[u]);
     }
 }
@@ -67,7 +67,7 @@ export function renderHTML() {
 
 export function loadDefaultSoundfont(conf) {
     if (!conf.loadSoundfont || (['no', 'false'].includes(conf.loadSoundfont))) {
-        return;
+        return undefined;
     }
     let instrument;
     if (conf.loadSoundfont === true) {
@@ -100,12 +100,13 @@ export function getM21attribute(attribute='m21conf') {
     for (const s of Array.from(scripts)) {
         const scriptName = s.getAttribute('data-main') || s.getAttribute('src');
         if (scriptName && /music21/.test(scriptName)) {
-            let thisValue = s.getAttribute(attribute) || s.getAttribute(attribute.toLowerCase());
+            const thisValue = s.getAttribute(attribute) || s.getAttribute(attribute.toLowerCase());
             if (thisValue !== undefined) {
                 return thisValue;
             }
         }
     }
+    return undefined;
 }
 
 export function warnBanner() {

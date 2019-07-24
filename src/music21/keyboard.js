@@ -337,8 +337,8 @@ export class Keyboard {
             where = document.body;
         } else { // noinspection JSUnresolvedVariable
             if (typeof where.jquery !== 'undefined') {
-                        where = where[0];
-                    }
+                where = where[0];
+            }
         }
 
         let svgDOM = this.createSVG();
@@ -534,7 +534,7 @@ export class Keyboard {
                 keyObj.removeNoteName();
             }
         }
-        return this
+        return this;
     }
 
     /**

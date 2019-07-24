@@ -2,6 +2,7 @@
 // Copyright Michael Scott Cuthbert (cuthbert@mit.edu), BSD License
 const path = require('path');
 const webpack = require('webpack');
+// new webpack.BannerPlugin('hi!**********************************hi!');
 
 jqueryResolved = path.resolve('./src/ext/jquery/jquery/jquery-3.2.1.min.js');
 
@@ -43,7 +44,7 @@ module.exports = grunt => {
                  libraryTarget: 'umd',
                  umdNamedDefine: true,
              },
-             devtool: 'source-map',
+             devtool: 'inline-source-map',
              module: {
                  rules: [
                      {

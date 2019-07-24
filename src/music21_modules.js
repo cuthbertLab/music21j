@@ -31,37 +31,37 @@ import '@babel/polyfill';
 
 import * as MIDIIn from 'midicube';  // to be removed when export * from is okay.
 import * as $ from 'jquery';
+import 'jquery-ui-bundle';
 
 // TODO: add attrchange
-
-export const MIDI = MIDIIn;
-window.$ = $;
-window.jQuery = $;
-
-export const VERSION = '0.9.5';
 
 
 // order below doesn't matter, but good to give a sense
 // of what will be needed by almost everyone, and then
 // alphabetical.
+
 import * as exceptions21 from './music21/exceptions21.js';
+import * as bar from './music21/bar.js';
+import * as chordTables from './music21/chordTables.js';
+import * as converter from './music21/converter.js';
+import * as derivation from './music21/derivation.js';
+import * as parseLoader from './music21/parseLoader.js';
+import * as sites from './music21/sites.js';
+import * as tie from './music21/tie.js';
+
+// these below need to be rewritten to be like above...
+
 export { debug } from './music21/debug.js';
 export { common } from './music21/common.js';
 export { prebase } from './music21/prebase.js';
 export { base } from './music21/base.js';
 
-export { exceptions21 };
-
 export { articulations } from './music21/articulations.js';
 export { audioRecording } from './music21/audioRecording.js';
 export { audioSearch } from './music21/audioSearch.js';
-import * as bar from './music21/bar.js';
 export { beam } from './music21/beam.js';
 export { chord } from './music21/chord.js';
-import * as chordTables from './music21/chordTables.js';
 export { clef } from './music21/clef.js';
-import * as converter from './music21/converter.js';
-import * as derivation from './music21/derivation.js';
 export { duration } from './music21/duration.js';
 export { dynamics } from './music21/dynamics.js';
 export { expressions } from './music21/expressions.js';
@@ -77,21 +77,20 @@ export { meter } from './music21/meter.js';
 export { miditools } from './music21/miditools.js';
 export { musicxml } from './music21/musicxml.js';
 export { note } from './music21/note.js';
-import * as parseLoader from './music21/parseLoader.js';
 export { pitch } from './music21/pitch.js';
 export { renderOptions } from './music21/renderOptions.js';
 export { roman } from './music21/roman.js';
 export { scale } from './music21/scale.js';
-import * as sites from './music21/sites.js';
 export { stream } from './music21/stream.js';
 export { tempo } from './music21/tempo.js';
-import * as tie from './music21/tie.js';
 export { tinyNotation } from './music21/tinyNotation.js';
 export { voiceLeading } from './music21/voiceLeading.js';
 export { vfShow } from './music21/vfShow.js';
 export { webmidi } from './music21/webmidi.js';
 
 export {
+    exceptions21,
+
     bar,
     chordTables,
     converter,
@@ -101,6 +100,10 @@ export {
     tie,
 };
 
-import 'jquery-ui-bundle';
+export const MIDI = MIDIIn;
+export const VERSION = '0.9.5';
+
+window.$ = $;
+window.jQuery = $;
 
 parseLoader.runConfiguration();
