@@ -1,17 +1,31 @@
 {
   "name": "music21j",
-  "version": "0.9.5",
+  "version": "0.9.7",
   "description": "A toolkit for computer-aided musicology, Javascript version",
   "main": "src/music21",
   "files": [
-    "src/*.js",
-    "src/music21/*.js"
+    ".editorconfig",
+    ".eslintignore",
+    ".eslintrc.json",
+    ".gitignore",
+    ".jshintrc",
+    "Gruntfile.js",
+    "/css",
+    "/ext",
+    "/releases",
+    "/scripts",
+    "/src/ext/jsonpickle",
+    "/src/music21",
+    "/src/*.js",
+    "/testHTML",
+    "/tests",
+    "/webResources"
   ],
   "dependencies": {
     "es6-shim": "^0.35.5",
     "jquery": "^3.4.1",
     "jquery-ui-bundle": "^1.12.1-migrate",
-    "midicube": "^0.5.2",
+    "midicube": "^0.5.3",
     "vexflow": "^1.2.89"
   },
   "devDependencies": {
@@ -23,6 +37,7 @@
     "babel-loader": "^8.0.6",
     "browserify": "^13.1.0",
     "chalk": "^1.1.3",
+    "css-loader": "^3.1.0",
     "eslint": "^3.19.0",
     "eslint-config-airbnb-base": "^5.0.3",
     "eslint-plugin-import": "^1.14.0",
@@ -47,12 +62,14 @@
     "qunit": "^2.9.2",
     "rollup": "^0.34.13",
     "rollup-plugin-babel": "^2.6.1",
+    "style-loader": "^0.23.1",
     "webpack": "^2.7.0"
   },
   "directories": {
     "test": "tests"
   },
   "scripts": {
+    "postinstall": "sh scripts/postinstall.sh",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {

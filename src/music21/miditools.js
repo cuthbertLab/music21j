@@ -10,6 +10,8 @@
 import * as $ from 'jquery';
 import * as MIDI from 'midicube';
 
+import '../../css/midiPlayer.css';
+
 import { chord } from './chord.js';
 import { common } from './common.js';
 import { debug } from './debug.js';
@@ -72,7 +74,7 @@ export class Event {
      * @returns {undefined}
      */
     sendToMIDIjs() {
-        if (MIDI !== undefined && MIDI.noteOn !== undefined) {
+        if (MIDI.config.connected_plugin !== undefined) {
             // noteOn check because does not exist if no audio context
             // or soundfont has been loaded, such as if a play event
             // is triggered before soundfont has been loaded.
@@ -82,7 +84,7 @@ export class Event {
                 MIDI.noteOff(0, this.midiNote, 0);
             }
         } else {
-            console.warn('could not playback note because no MIDIout defined');
+            console.warn('could not playback note because no MIDI connection defined');
         }
     }
     /**
@@ -477,8 +479,8 @@ export class MidiPlayer {
         this.$playDiv = undefined;
     }
     /**
-     * @param {jQuery|Node} where
-     * @returns {Node}
+     * @param {jQuery|Node} [where]
+     * @returns {jQuery}
      */
     addPlayer(where) {
         let $where = where;
@@ -494,12 +496,12 @@ export class MidiPlayer {
         const $playPause = $(
             '<input type="image" alt="play" src="'
                 + this.playPng()
-                + '" align="absmiddle" value="play" class="playPause">'
+                + '" value="play" class="playPause">'
         );
         const $stop = $(
             '<input type="image" alt="stop" src="'
                 + this.stopPng()
-                + '" align="absmiddle" value="stop" class="stopButton">'
+                + '" value="stop" class="stopButton">'
         );
 
         $playPause.on('click', () => this.pausePlayStop());

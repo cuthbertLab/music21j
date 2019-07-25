@@ -62,6 +62,10 @@ module.exports = grunt => {
                           },
                       }],
                     },
+                    {
+                        test: /\.css$/i,
+                        use: ['style-loader', 'css-loader'],
+                    },
                  ],
              },
          };
@@ -71,7 +75,7 @@ module.exports = grunt => {
         'music21.debug.js',  // TARGET_RAW,
         '@babel/preset-env'
     );
-    console.log(webpackCommon);
+    // console.log(webpackCommon);
 
     // Project configuration.
     grunt.initConfig({
