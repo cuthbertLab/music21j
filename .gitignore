@@ -53,7 +53,7 @@ nosetests.xml
 # Mr Developer
 .mr.developer.cfg
 
-
+soundfonts/*
 
 
 

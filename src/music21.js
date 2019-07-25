@@ -1,1 +1,1 @@
-../build/music21.debug.js
+../releases/music21.debug.js

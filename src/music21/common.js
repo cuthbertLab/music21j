@@ -468,7 +468,7 @@ common.urls = {
     css: '/css',
     webResources: '/webResources',
     midiPlayer: '/webResources/midiPlayer',
-    soundfontUrl: '/src/ext/soundfonts/FluidR3_GM/',
+    soundfontUrl: '/soundfonts/FluidR3_GM/',
 };
 
 common.hyphenToCamelCase = function hyphenToCamelCase(usrStr) {

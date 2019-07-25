@@ -2,7 +2,6 @@
 // Copyright Michael Scott Cuthbert (cuthbert@mit.edu), BSD License
 const path = require('path');
 const webpack = require('webpack');
-// new webpack.BannerPlugin('hi!**********************************hi!');
 
 jqueryResolved = path.resolve('./src/ext/jquery/jquery/jquery-3.2.1.min.js');
 
@@ -11,9 +10,8 @@ module.exports = grunt => {
 
     const BANNER
         = '/**\n'
-        + ' * music21j <%= pkg.version %> built on '
-        + ' * <%= grunt.template.today("yyyy-mm-dd") %>.\n'
-        + ' * Copyright (c) 2013-2019 Michael Scott Cuthbert and cuthbertLab\n'
+        + ' * music21j <%= pkg.version %> built on <%= grunt.template.today("yyyy-mm-dd") %>.\n'
+        + ' * Copyright (c) 2013-<%= grunt.template.today("yyyy") %> Michael Scott Cuthbert and cuthbertLab\n'
         + ' * BSD License, see LICENSE\n'
         + ' *\n'
         + ' * http://github.com/cuthbertLab/music21j\n'
@@ -68,6 +66,9 @@ module.exports = grunt => {
                     },
                  ],
              },
+             plugins: [
+                new webpack.BannerPlugin({banner: BANNER}),
+             ],
          };
     }
 

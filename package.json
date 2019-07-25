@@ -1,6 +1,6 @@
 {
   "name": "music21j",
-  "version": "0.9.7",
+  "version": "0.9.8",
   "description": "A toolkit for computer-aided musicology, Javascript version",
   "main": "src/music21",
   "files": [
