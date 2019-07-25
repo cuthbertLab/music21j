@@ -19,7 +19,7 @@
  *
  *
  */
-import jsonpickle from '../ext/jsonpickle/main.js';
+import * as jsonpickle from 'jsonpickle';
 
 const jp = jsonpickle;
 /**
@@ -33,13 +33,13 @@ const unpickler = jp.unpickler;
  *
  * Very very alpha.  See music21(p).vexflow modules to see how it works.
  *
- * Requires Cuthbert's jsonpickle.js port (included in music21j)
+ * Requires Cuthbert's jsonpickle.js port.
  *
  * @namespace music21.fromPython
  * @extends music21
  * @requires jsonpickle
  */
-export const fromPython = {};
+export const fromPython = {jsonpickle: jp};
 
 /**
  *

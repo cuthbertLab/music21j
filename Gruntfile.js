@@ -2,11 +2,9 @@
 // Copyright Michael Scott Cuthbert (cuthbert@mit.edu), BSD License
 const path = require('path');
 const webpack = require('webpack');
-
-jqueryResolved = path.resolve('./src/ext/jquery/jquery/jquery-3.2.1.min.js');
+const babel = require('rollup-plugin-babel');
 
 module.exports = grunt => {
-    const babel = require('rollup-plugin-babel');
 
     const BANNER
         = '/**\n'
@@ -33,43 +31,44 @@ module.exports = grunt => {
     const TARGET_TESTS = path.join(BUILD_DIR, 'music21.tests.js');
 
     function webpackConfig(target, preset) {
-         return {
-             entry: './src/music21_modules.js',  // MODULE_ENTRY,
-             output: {
-                 path: BUILD_DIR,
-                 filename: target,
-                 library: 'music21',
-                 libraryTarget: 'umd',
-                 umdNamedDefine: true,
-             },
-             devtool: 'inline-source-map',
-             module: {
-                 rules: [
-                     {
-                      test: /\.js?$/,
-                      exclude: /(node_modules|bower_components|soundfont|soundfonts|src\/ext)/,
-                      use: [{
-                          loader: 'babel-loader',
-                          options: {
-                              presets: [preset],
-                              plugins: [
-                                  '@babel/plugin-transform-object-assign',
-                                  '@babel/plugin-proposal-export-namespace-from',
-                              ],
-                              // plugins: ['add-module-exports', 'transform-object-assign'],
-                          },
-                      }],
+        return {
+            entry: './src/music21_modules.js',  // MODULE_ENTRY,
+            output: {
+                path: BUILD_DIR,
+                filename: target,
+                library: 'music21',
+                libraryTarget: 'umd',
+                umdNamedDefine: true,
+            },
+            mode: 'development',
+            devtool: 'inline-source-map',
+            module: {
+                rules: [
+                    {
+                        test: /\.js?$/,
+                        exclude: /(node_modules|bower_components|soundfont|soundfonts|src\/ext)/,
+                        use: [{
+                            loader: 'babel-loader',
+                            options: {
+                                presets: [preset],
+                                plugins: [
+                                    '@babel/plugin-transform-object-assign',
+                                    '@babel/plugin-proposal-export-namespace-from',
+                                ],
+                                // plugins: ['add-module-exports', 'transform-object-assign'],
+                            },
+                        }],
                     },
                     {
                         test: /\.css$/i,
                         use: ['style-loader', 'css-loader'],
                     },
                  ],
-             },
-             plugins: [
+            },
+            plugins: [
                 new webpack.BannerPlugin({banner: BANNER, raw: true}),
-             ],
-         };
+            ],
+        };
     }
 
     const webpackCommon = webpackConfig(
@@ -132,10 +131,6 @@ module.exports = grunt => {
              build: webpackCommon,
              watch: Object.assign({}, webpackCommon, {
                  watch: true,
-                 watchOptions: {
-                     keepalive: true,
-                     failOnError: false,
-                 },
              }),
          },
 
