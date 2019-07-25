@@ -8,7 +8,7 @@
  */
 
 import * as $ from 'jquery';
-import * as Vex from 'vexflow';
+import Vex from 'vexflow';
 
 import { clef } from './clef.js';
 import { debug } from './debug.js';

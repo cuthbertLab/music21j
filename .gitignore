@@ -2,6 +2,9 @@
 node_modules/
 node_modules/grunt/package.json
 
+build/*.js
+build/*.map
+
 *.py[cod]
 .buildpath
 
@@ -53,7 +56,7 @@ nosetests.xml
 # Mr Developer
 .mr.developer.cfg
 
-
+soundfonts/*
 
 
 

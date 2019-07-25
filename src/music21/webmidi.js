@@ -33,7 +33,7 @@ import { miditools } from './miditools.js';
  * @memberof music21
  * @requires music21/miditools
  * @requires jquery
- * @property {JazzObject|undefined} storedPlugin - reference to the Jazz object from the plugin; cached from `createPlugin`.
+ * @property {Jazz|undefined} storedPlugin - reference to the Jazz object from the plugin; cached from `createPlugin`.
  * @property {string} selectedJazzInterface - the currently connected interface (note that we can only use one right now)
  */
 export const webmidi = {};

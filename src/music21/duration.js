@@ -100,6 +100,7 @@ duration.vexflowDurationArray = [
 export class Duration extends prebase.ProtoM21Object {
     constructor(ql) {
         super();
+        this.isGrace = false;
         this._quarterLength = 0.0;
         this._dots = 0;
         this._durationNumber = undefined;

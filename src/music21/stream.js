@@ -4,12 +4,12 @@
  *
  * Does not implement the full features of music21p Streams by a long shot...
  *
- * Copyright (c) 2013-17, Michael Scott Cuthbert and cuthbertLab
- * Based on music21 (=music21p), Copyright (c) 2006-17, Michael Scott Cuthbert and cuthbertLab
+ * Copyright (c) 2013-19, Michael Scott Cuthbert and cuthbertLab
+ * Based on music21 (=music21p), Copyright (c) 2006-19, Michael Scott Cuthbert and cuthbertLab
  *
  */
 import * as $ from 'jquery';
-import * as MIDI from 'MIDI';
+import * as MIDI from 'midicube';
 
 import { Music21Exception } from './exceptions21.js';
 
@@ -586,7 +586,7 @@ export class Stream extends base.Music21Object {
     /**
      * Add an element to the end of the stream, setting its `.offset` accordingly
      *
-     * @param {music21.base.Music21Object|Array} elOrElList - element or list of elements to append
+     * @param {music21.base.Music21Object|base.Music21Object|Array} elOrElList - element or list of elements to append
      * @returns {this}
      */
     append(elOrElList) {
@@ -1020,6 +1020,7 @@ export class Stream extends base.Music21Object {
             post.insert(o, m);
             o += oneMeasureLength;
             measureCount += 1;
+            lastTimeSignature = thisTimeSignature;
         }
         for (let i = 0; i < offsetMap.length; i++) {
             const ob = offsetMap[i];
@@ -1036,8 +1037,13 @@ export class Stream extends base.Music21Object {
                     lastTimeSignature = foundTS;
                 }
                 mStart = m.getOffsetBySite(post);
-                const mEnd
-                    = mStart + lastTimeSignature.barDuration.quarterLength;
+                let mEnd;
+                if (lastTimeSignature !== undefined) {
+                    mEnd
+                        = mStart + lastTimeSignature.barDuration.quarterLength;
+                } else {
+                    mEnd = mStart + 4.0;
+                }
                 if (start >= mStart && start < mEnd) {
                     break;
                 }
@@ -1300,6 +1306,7 @@ export class Stream extends base.Music21Object {
         const offsetMap = [];
         let groups = [];
         if (this.hasVoices()) {
+            // TODO(msc) -- remove jQuery each...
             $.each(this.getElementsByClass('Voice'), (i, v) => {
                 groups.push([v.flat, i]);
             });
@@ -1915,9 +1922,9 @@ export class Stream extends base.Music21Object {
      *
      * Called from appendNewDOM() etc.
      *
-     * @param {number|string|undefined} width
-     * @param {number|string|undefined} height
-     * @param {string} elementType - what type of element, default = svg
+     * @param {number|string|undefined} [width]
+     * @param {number|string|undefined} [height]
+     * @param {string} [elementType='svg'] - what type of element, default = svg
      * @returns {jQuery} canvas or svg
      */
     createPlayableDOM(width, height, elementType='svg') {
@@ -2055,7 +2062,7 @@ export class Stream extends base.Music21Object {
      *                    find the original stream; var s = this; var f = function () { s...}
      *                   )
      *
-     * @param {Node} canvasOrDiv - canvas or the Div surrounding it.
+     * @param {jQuery|Node} canvasOrDiv - canvas or the Div surrounding it.
      * @returns {this}
      */
     setRenderInteraction(canvasOrDiv) {
@@ -2069,30 +2076,23 @@ export class Stream extends base.Music21Object {
             this.playStream();
         };
 
-        $.each(
-            this.renderOptions.events,
-            $.proxy(function setRenderInteractionProxy(
-                eventType,
-                eventFunction
+        for (const [eventType, eventFunction] of Object.entries(this.renderOptions.events)) {
+            $svg.off(eventType);
+            if (
+                typeof eventFunction === 'string'
+                && eventFunction === 'play'
             ) {
-                $svg.off(eventType);
-                if (
-                    typeof eventFunction === 'string'
-                    && eventFunction === 'play'
-                ) {
-                    $svg.on(eventType, playFunc);
-                } else if (
-                    typeof eventFunction === 'string'
-                    && eventType === 'resize'
-                    && eventFunction === 'reflow'
-                ) {
-                    this.windowReflowStart($svg);
-                } else if (eventFunction !== undefined) {
-                    $svg.on(eventType, eventFunction);
-                }
-            },
-            this)
-        );
+                $svg.on(eventType, playFunc);
+            } else if (
+                typeof eventFunction === 'string'
+                && eventType === 'resize'
+                && eventFunction === 'reflow'
+            ) {
+                this.windowReflowStart($svg);
+            } else if (eventFunction !== undefined) {
+                $svg.on(eventType, eventFunction);
+            }
+        }
         return this;
     }
 
@@ -2318,8 +2318,8 @@ export class Stream extends base.Music21Object {
      *
      * @param {Node|SVGElement} svg
      * @param {Event} e
-     * @param {number} x
-     * @param {number} y
+     * @param {number} [x]
+     * @param {number} [y]
      * @returns {Array} [diatonicNoteNum, closestXNote]
      */
     findNoteForClick(svg, e, x, y) {
@@ -2338,7 +2338,7 @@ export class Stream extends base.Music21Object {
      * To be removed...
      *
      * @param {number} clickedDiatonicNoteNum
-     * @param {music21.base.Music21Object} foundNote
+     * @param {music21.note.Note} foundNote
      * @param {Node} svg
      * @returns {*} output of changedCallbackFunction
      */
@@ -2367,8 +2367,8 @@ export class Stream extends base.Music21Object {
     /**
      * Redraws an svgDiv, keeping the events of the previous svg.
      *
-     * @param {Node} svg
-     * @returns {this}
+     * @param {jQuery|Node} svg
+     * @returns {jQuery}
      */
     redrawDOM(svg) {
         // this.resetRenderOptions(true, true); // recursive, preserveEvents
@@ -2928,8 +2928,8 @@ export class Part extends Stream {
      *
      * @param {Node} svg
      * @param {Event} e
-     * @param {number} x
-     * @param {number} y
+     * @param {number} [x]
+     * @param {number} [y]
      * @returns {Array} [clickedDiatonicNoteNum, foundNote]
      */
     findNoteForClick(svg, e, x, y) {
@@ -3218,8 +3218,8 @@ export class Score extends Stream {
      *
      * @param {Node} svg
      * @param {Event} e
-     * @param {number} x
-     * @param {number} y
+     * @param {number} [x]
+     * @param {number} [y]
      * @returns {Array} [diatonicNoteNum, m21Element]
      */
     findNoteForClick(svg, e, x, y) {

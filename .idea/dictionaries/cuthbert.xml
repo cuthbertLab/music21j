@@ -26,6 +26,8 @@
       <w>marcato</w>
       <w>maxima</w>
       <w>memberof</w>
+      <w>midicube</w>
+      <w>midijs</w>
       <w>miditools</w>
       <w>mixins</w>
       <w>moderato</w>
@@ -41,6 +43,7 @@
       <w>pentachord</w>
       <w>prebase</w>
       <w>prestissimo</w>
+      <w>quantizes</w>
       <w>reflowed</w>
       <w>resizes</w>
       <w>rootedness</w>
@@ -50,6 +53,7 @@
       <w>soundfonts</w>
       <w>struct</w>
       <w>substream</w>
+      <w>symlinking</w>
       <w>tetrachord</w>
       <w>tnre</w>
       <w>trichord</w>

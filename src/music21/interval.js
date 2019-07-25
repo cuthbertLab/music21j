@@ -2,8 +2,8 @@
  * music21j -- Javascript reimplementation of Core music21p features.
  * music21/interval -- Interval routines
  *
- * Copyright (c) 2013-16, Michael Scott Cuthbert and cuthbertLab
- * Based on music21 (=music21p), Copyright (c) 2006-18, Michael Scott Cuthbert and cuthbertLab
+ * Copyright (c) 2013-19, Michael Scott Cuthbert and cuthbertLab
+ * Based on music21 (=music21p), Copyright (c) 2006-19, Michael Scott Cuthbert and cuthbertLab
  *
  */
 import { common } from './common.js';
@@ -181,7 +181,7 @@ export class GenericInterval extends prebase.ProtoM21Object {
         }
 
         let tempSteps = common.posMod(this.undirected, 7);
-        let tempOctaves = parseInt(this.undirected / 7);
+        let tempOctaves = Math.floor(this.undirected / 7);
         if (tempSteps === 0) {
             tempOctaves -= 1;
             tempSteps = 7;
@@ -321,7 +321,7 @@ interval.IntervalSpecifiersEnum = {
     TRPAUG: 8,
     TRPDIM: 9,
     QUADAUG: 10,
-    QUADDIM: 11,
+    QUADDMIN: 11,
 };
 
 interval.IntervalNiceSpecNames = [
@@ -536,7 +536,7 @@ export class DiatonicInterval extends prebase.ProtoM21Object {
             = interval.IntervalPrefixSpecs[this.specifier]
             + generic.semiSimpleDirected.toString();
         this.directedSemiSimpleNiceName
-            = diatonicDirectionNiceName + ' ' + this.semiSimpleNameName;
+            = diatonicDirectionNiceName + ' ' + this.semiSimpleNiceName;
         this.specificName = interval.IntervalNiceSpecNames[this.specifier];
         this.perfectable = generic.perfectable;
         this.isDiatonicStep = generic.isDiatonicStep;
@@ -662,7 +662,7 @@ export class ChromaticInterval extends prebase.ProtoM21Object {
         super();
 
         this.semitones = value;
-        this.cents = Math.round(value * 100.0, 5);
+        this.cents = Math.round(value * 100.0);
         this.directed = value;
         this.undirected = Math.abs(value);
 
@@ -883,7 +883,7 @@ export class Interval extends prebase.ProtoM21Object {
     set noteEnd(n) {
         this._noteEnd = n;
         const p1 = n.pitch;
-        const p2 = this.transposePitch(p1, true);
+        const p2 = this.transposePitch(p1, {reverse: true});
         this._noteStart = n.clone();
         this._noteStart.pitch = p2;
     }
@@ -903,6 +903,7 @@ export class Interval extends prebase.ProtoM21Object {
     }
 
     //  todo general: microtones
+    // noinspection JSUnusedLocalSymbols
     /**
      * TODO: maxAccidental
      * 

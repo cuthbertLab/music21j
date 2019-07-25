@@ -180,8 +180,8 @@ export class Accidental extends prebase.ProtoM21Object {
      *
      * When set, updates name and modifier.
      *
-     * @memberof music21.pitch.Accidental#
-     * @var {number} alter
+     * @type {number} alter
+     * @returns {number}
      */
     get alter() {
         return this._alter;

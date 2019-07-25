@@ -14,7 +14,7 @@ import { pitch } from './pitch.js';
 import { note } from './note.js';
 import { meter } from './meter.js';
 import { stream } from './stream.js';
-import { tie } from './tie.js';
+import * as tie from './tie.js';
 
 /**
  * TinyNotation module, see {@link music21.tinyNotation} namespace
@@ -254,10 +254,11 @@ tinyNotation.TinyNotation = function TinyNotation(textIn) {
         if (p.length > 0) {
             optionalScore.append(p);
         }
-        for (let i = 0; i < optionalScore.length; i++) {
-            const innerPart = optionalScore.get(i);
+        for (let i = 0; i < optionalScore.parts.length; i++) {
+            const innerPart = optionalScore.parts.get(i);
             innerPart.clef = clef.bestClef(innerPart);
-            innerPart.getElementsByClass('Measure').get(0).clef = innerPart.clef;
+            const innerMeasure = innerPart.getElementsByClass('Measure').get(0);
+            innerMeasure.clef = innerPart.clef;
         }
         returnObject = optionalScore;
     } else {
@@ -275,16 +276,13 @@ tinyNotation.TinyNotation = function TinyNotation(textIn) {
  * Called automatically when music21 is loaded.
  *
  * @memberof music21.tinyNotation
- * @param {string} classTypes - a JQuery selector to find elements to replace.
+ * @param {string} [classTypes='.music21.tinyNotation'] - a JQuery selector to find elements to replace.
  * @param {Node|jQuery} [selector]
  */
 tinyNotation.renderNotationDivs = function renderNotationDivs(
-    classTypes,
+    classTypes='.music21.tinyNotation',
     selector
 ) {
-    if (classTypes === undefined) {
-        classTypes = '.music21.tinyNotation';
-    }
     let allRender = [];
     if (selector === undefined) {
         allRender = $(classTypes);

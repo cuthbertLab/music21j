@@ -17,9 +17,16 @@ let allStream;
 
 require(['music21'], function (music21) {
     const $b = $('body');
-    $b.append("<div>s = one measure tinyNotation</div>");
+    $b.append("<div>s = one measure</div>");
     
-    const s = music21.tinyNotation.TinyNotation('3/4 C4 D2');
+    const s = new music21.stream.Measure();
+    s.append(new music21.clef.BassClef());
+    s.append(new music21.meter.TimeSignature('3/4'));
+    const n1 = new music21.note.Note('C3');
+    const n2 = new music21.note.Note('D3');
+    n2.duration.type = 'half';
+    s.append(n1);
+    s.append(n2);
     s.appendNewDOM();
     $b.append("<div>clone and change step from C to E</div>");
     

@@ -81,7 +81,13 @@ export class Sites {
         return false;
     }
 
-    _keysByTime(newFirst = true) {
+    /**
+     *
+     * @param {boolean} [newFirst=true]
+     * @returns {*[]}
+     * @private
+     */
+    _keysByTime(newFirst=true) {
         const post = [];
         for (const [key, siteRef] of this.siteDict) {
             const keyVal = [siteRef.siteIndex, key];
@@ -147,7 +153,7 @@ export class Sites {
      * @param {boolean|string} [sortByCreationTime=false]
      * @param {music21.stream.Stream|undefined} [priorityTarget]
      * @param {boolean} [excludeNone=false]
-     * @returns {IterableIterator<*>}
+     * @returns {IterableIterator<music21.stream.Stream|undefined>}
      */
     * yieldSites(
         sortByCreationTime=false,
@@ -165,11 +171,9 @@ export class Sites {
         if (priorityTarget !== undefined) {
             const priorityId = getId(priorityTarget);
             if (keyRepository.includes(priorityId)) {
-                keyRepository.splice(
-                    0,
-                    0,
-                    keyRepository.pop(keyRepository.indexOf(priorityId))
-                );
+                const priorityIndex = keyRepository.indexOf(priorityId);
+                keyRepository.splice(priorityIndex, 1);
+                keyRepository.unshift(priorityId);
             }
         }
         for (const key of keyRepository) {
@@ -198,7 +202,9 @@ export class Sites {
         // want to be extra safe.  If you want fast, use .yieldSites
         if (priorityTarget !== undefined) {
             if (post.includes(priorityTarget)) {
-                post.splice(0, 0, post.pop(post.indexOf(priorityTarget)));
+                const priorityIndex = post.indexOf(priorityTarget);
+                post.splice(priorityIndex, 1);
+                post.unshift(priorityTarget);
             }
         }
         return post;

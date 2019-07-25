@@ -2,12 +2,12 @@
  * music21j -- Javascript reimplementation of Core music21p features.
  * music21/note -- Note, Rest, NotRest, GeneralNote
  *
- * Copyright (c) 2013-17, Michael Scott Cuthbert and cuthbertLab
- * Based on music21 (music21p), Copyright (c) 2006–17, Michael Scott Cuthbert and cuthbertLab
+ * Copyright (c) 2013-19, Michael Scott Cuthbert and cuthbertLab
+ * Based on music21 (music21p), Copyright (c) 2006–19, Michael Scott Cuthbert and cuthbertLab
  *
  */
-import * as MIDI from 'MIDI';
-import * as Vex from 'vexflow';
+import Vex from 'vexflow';
+import * as MIDI from 'midicube';
 
 import { prebase } from './prebase.js';
 import { base } from './base.js';
@@ -208,7 +208,7 @@ note.Lyric = Lyric;
  * @property {Array<music21.note.Lyric>} lyrics - array of attached lyrics
  * @property {number} [volume=60] - how loud is this note, 0-127, before articulations
  * @property {number} midiVolume - how loud is this note, taking into account articulations
- * @property {music21.note.Tie|undefined} [tie=undefined] - a tie object
+ * @property {music21.tie.Tie|undefined} [tie=undefined] - a tie object
  */
 export class GeneralNote extends base.Music21Object {
     constructor(ql) {
@@ -304,10 +304,10 @@ export class GeneralNote extends base.Music21Object {
      * Change stem direction according to clef. Does nothing for GeneralNote; overridden in subclasses.
      *
      * @param {music21.clef.Clef} [clef] - clef to set the stem direction of.
-     * @returns {undefined}
+     * @returns {this}
      */
     setStemDirectionFromClef(clef) {
-        return undefined;
+        return this;
     }
     getStemDirectionFromClef(clef) {
         return undefined;
@@ -567,7 +567,7 @@ export class Note extends NotRest {
      * Change stem direction according to clef.
      *
      * @param {music21.clef.Clef} [clef] - clef to set the stem direction of.
-     * @returns {music21.note.Note} Original object, for chaining methods
+     * @returns {this} Original object, for chaining methods
      */
     setStemDirectionFromClef(clef) {
         if (clef !== undefined) {
@@ -584,9 +584,9 @@ export class Note extends NotRest {
             return undefined;
         }
         const midLine = clef.lowestLine + 4;
-        const DNNfromCenter = this.pitch.diatonicNoteNum - midLine;
-        // console.log(DNNfromCenter, this.pitch.nameWithOctave);
-        if (DNNfromCenter >= 0) {
+        const DNNFromCenter = this.pitch.diatonicNoteNum - midLine;
+        // console.log(DNNFromCenter, this.pitch.nameWithOctave);
+        if (DNNFromCenter >= 0) {
             return 'down';
         } else {
             return 'up';

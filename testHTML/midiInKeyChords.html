@@ -23,7 +23,7 @@
         var canv = s.appendNewDOM($svgDiv);
     }
 
-    require([ 'music21' ], function() {
+    require([ 'music21' ], function(music21) {
         s = new music21.stream.Measure();
         s.clef = new music21.clef.TrebleClef();
         s.renderOptions.staffLines = 5;

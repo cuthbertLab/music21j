@@ -10,8 +10,10 @@
 <body>
 <script type="text/javascript">
 var m2;
+var music21;
 
-require(['music21'], function() {
+require(['music21'], function(m21) {
+    music21 = m21;
     makeRound();
 });
 

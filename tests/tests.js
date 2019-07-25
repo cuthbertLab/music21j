@@ -17,6 +17,8 @@ require.config({
 });
 
 require(['music21', 'qunit', 'm21Tests'], (music21, QUnit, m21Tests) => {
+    const globalThis = typeof window !== 'undefined' ? window : global;
+    globalThis.music21 = music21;
     for (const testModule in m21Tests) {
         if (typeof m21Tests[testModule] === 'function') {
             const testSuite = m21Tests[testModule];

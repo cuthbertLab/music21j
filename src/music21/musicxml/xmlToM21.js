@@ -8,7 +8,7 @@ import { meter } from '../meter.js';
 import { note } from '../note.js';
 import { pitch } from '../pitch.js';
 import { stream } from '../stream.js';
-import { tie } from '../tie.js';
+import * as tie from '../tie.js';
 
 const DEFAULTS = {
     divisionsPerQuarter: 32 * 3 * 3 * 5 * 7,
@@ -61,6 +61,7 @@ export class ScoreParser {
 
     scoreFromUrl(url) {
         this.xmlUrl = url;
+        // noinspection JSUnusedLocalSymbols
         return $.get(url, {}, (xmlDoc, textStatus) =>
             this.scoreFromDOMTree(xmlDoc)
         );
@@ -68,6 +69,8 @@ export class ScoreParser {
 
     scoreFromText(xmlText) {
         this.xmlText = xmlText;
+        // Not sure why this is not being found in jQuery
+        // noinspection JSUnresolvedFunction
         const xmlDoc = $.parseXML(xmlText);
         return this.scoreFromDOMTree(xmlDoc);
     }
@@ -131,8 +134,14 @@ export class ScoreParser {
     }
 }
 
+/**
+ * @property {MeasureParser|undefined} lastMeasureParser
+ * @property {music21.meter.TimeSignature|undefined} lastTimeSignature
+ * @property {jQuery|undefined} $activeAttributes
+ */
 export class PartParser {
     constructor($mxPart, $mxScorePart, parent) {
+        this.parent = parent;
         this.$mxPart = $mxPart;
         this.$mxScorePart = $mxScorePart;
         // ignore parent for now
@@ -244,6 +253,13 @@ export class PartParser {
 }
 
 export class MeasureParser {
+    /**
+     *
+     * @param {jQuery} $mxMeasure
+     * @param {PartParser} [parent]
+     * @property {music21.note.GeneralNote|undefined} nLast
+     * @property {jQuery|undefined} $activeAttributes
+     */
     constructor($mxMeasure, parent) {
         this.$mxMeasure = $mxMeasure;
         this.$mxMeasureElements = [];
@@ -261,7 +277,15 @@ export class MeasureParser {
         this.staves = 1;
         this.$activeAttributes = undefined;
         this.attributesAreInternal = true;
+        /**
+         *
+         * @type {number|undefined}
+         */
         this.measureNumber = undefined;
+        /**
+         *
+         * @type {string|undefined}
+         */
         this.numberSuffix = undefined;
 
         if (parent !== undefined) {
@@ -505,10 +529,8 @@ export class MeasureParser {
         return this.xmlNoteToGeneralNoteHelper(r, $mxRest);
     }
 
-    xmlNoteToGeneralNoteHelper(n, $mxNote, freeSpanners) {
-        if (freeSpanners === undefined) {
-            freeSpanners = true;
-        }
+    // noinspection JSUnusedLocalSymbols
+    xmlNoteToGeneralNoteHelper(n, $mxNote, freeSpanners=true) {
         // spanners
         // setPrintStyle
         // print-object
@@ -575,6 +597,11 @@ export class MeasureParser {
     // xmlToTremolo
     // xmlOneSpanner
 
+    /**
+     *
+     * @param {jQuery} $mxNote
+     * @returns {music21.tie.Tie}
+     */
     xmlToTie($mxNote) {
         const t = new tie.Tie();
         const allTies = $mxNote.children('tie');
@@ -604,6 +631,12 @@ export class MeasureParser {
         }
     }
 
+    /**
+     *
+     * @param {jQuery} $mxLyric
+     * @param {music21.note.Lyric} [inputM21]
+     * @returns {*|music21.note.Lyric|undefined}
+     */
     xmlToLyric($mxLyric, inputM21) {
         let l = inputM21;
         if (inputM21 === undefined) {
@@ -643,6 +676,11 @@ export class MeasureParser {
     }
 
 
+    /**
+     *
+     * @param {jQuery} $mxElement
+     * @param {music21.base.Music21Object} el
+     */
     insertIntoMeasureOrVoice($mxElement, el) {
         this.stream.insert(this.offsetMeasureNote, el);
     }

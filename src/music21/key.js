@@ -15,7 +15,7 @@ import { interval } from './interval.js';
 import { pitch } from './pitch.js';
 import { scale } from './scale.js';
 
-/* key and keysignature module. See {@link music21.key} namespace for details
+/* key and key signature module. See {@link music21.key} namespace for details
  *
  * @exports music21/key
  */

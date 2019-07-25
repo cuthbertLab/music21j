@@ -2,8 +2,8 @@
  * music21j -- Javascript reimplementation of Core music21p features.
  * music21/beam -- Beams and Beam class
  *
- * Copyright (c) 2013-16, Michael Scott Cuthbert and cuthbertLab
- * Based on music21 (=music21p), Copyright (c) 2006–16, Michael Scott Cuthbert and cuthbertLab
+ * Copyright (c) 2013-19, Michael Scott Cuthbert and cuthbertLab
+ * Based on music21 (=music21p), Copyright (c) 2006–19, Michael Scott Cuthbert and cuthbertLab
  *
  */
 import { Music21Exception } from './exceptions21.js';
@@ -245,7 +245,7 @@ export class Beams extends prebase.ProtoM21Object {
             like 512th notes) raises an error.
 
      * @param {string|int} level - either a string like "eighth" or a number like 1 (="eighth")
-     * @param {string} type - type to fill all beams to.
+     * @param {string} [type] - type to fill all beams to.
      * @returns {this}
      */
     fill(level, type) {

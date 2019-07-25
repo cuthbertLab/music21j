@@ -649,7 +649,14 @@ export class MeasureExporter extends XMLExporterBase {
     // TODO(msc): _spannerStartParameters
     // TODO(msc): _spannerEndParameters
     // TODO(msc): objectAttachedSpaners
-    
+
+    /**
+     *
+     * @param {music21.note.GeneralNote} n
+     * @param noteIndexInChord
+     * @param chordParent
+     * @returns {HTMLElement}
+     */
     noteToXml(n, { noteIndexInChord=0, chordParent }={}) {
         const addChordTag = (noteIndexInChord !== 0);
         let chordOrN;

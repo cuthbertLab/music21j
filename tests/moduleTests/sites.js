@@ -1,5 +1,5 @@
 import * as QUnit from 'qunit';
-import music21 from '../../src/loadModules';
+import music21 from '../../build/music21.debug.js';
 
 export default function tests() {
     QUnit.test('music21.sites.SiteRef', assert => {

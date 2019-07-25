@@ -6,8 +6,8 @@
  * Based on music21, Copyright (c) 2006–17, Michael Scott Cuthbert and cuthbertLab
  *
  */
-import * as MIDI from 'MIDI';
 import * as $ from 'jquery';
+import * as MIDI from 'midicube';
 
 import { prebase } from './prebase.js';
 

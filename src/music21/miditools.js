@@ -2,20 +2,24 @@
  * music21j -- Javascript reimplementation of Core music21p features.
  * music21/miditools -- A collection of tools for midi. See the namespace {@link music21.miditools}
  *
- * Copyright (c) 2014-17, Michael Scott Cuthbert and cuthbertLab
- * Based on music21 (=music21p), Copyright (c) 2006–17, Michael Scott Cuthbert and cuthbertLab
+ * Copyright (c) 2014-19, Michael Scott Cuthbert and cuthbertLab
+ * Based on music21 (=music21p), Copyright (c) 2006–19, Michael Scott Cuthbert and cuthbertLab
  *
  * @author Michael Scott Cuthbert
  */
 import * as $ from 'jquery';
-import * as eventjs from 'eventjs'; // drag handler...
-import * as MIDI from 'MIDI';
+import * as MIDI from 'midicube';
+
+import '../../css/midiPlayer.css';
 
 import { chord } from './chord.js';
 import { common } from './common.js';
 import { debug } from './debug.js';
 import { instrument } from './instrument.js';
 import { note } from './note.js';
+
+// expose midicube's MIDI to window for soundfonts to load.
+window.MIDI = MIDI;
 
 /**
  * A collection of tools for midi. See the namespace {@link music21.miditools}
@@ -29,7 +33,7 @@ import { note } from './note.js';
  * @namespace music21.miditools
  * @memberof music21
  */
-export const miditools = {};
+export const miditools = {MIDI};
 
 /**
  * Number of octaves to transpose all incoming midi signals
@@ -70,7 +74,7 @@ export class Event {
      * @returns {undefined}
      */
     sendToMIDIjs() {
-        if (MIDI !== undefined && MIDI.noteOn !== undefined) {
+        if (MIDI.config.connected_plugin !== undefined) {
             // noteOn check because does not exist if no audio context
             // or soundfont has been loaded, such as if a play event
             // is triggered before soundfont has been loaded.
@@ -80,7 +84,7 @@ export class Event {
                 MIDI.noteOff(0, this.midiNote, 0);
             }
         } else {
-            console.warn('could not playback note because no MIDIout defined');
+            console.warn('could not playback note because no MIDI connection defined');
         }
     }
     /**
@@ -247,10 +251,12 @@ miditools.sendOutChord = function sendOutChord(chordNoteList) {
 /* ----------- callbacks --------- */
 // TODO: all callbacks (incl. raw, sendOutChord) should be able to be a function or an array of functions
 
+
+// noinspection JSUnusedLocalSymbols
 /**
 * callBacks is an object with three keys:
 *
-* - raw: function (t, a, b,c) to call when any midievent arrives. Default: `function (t, a, b, c) { return new miditools.Event(t, a, b, c); }`
+* - raw: function (t, a, b,c) to call when any midi event arrives. Default: `function (t, a, b, c) { return new miditools.Event(t, a, b, c); }`
 * - general: function ( miditools.Event() ) to call when an Event object has been created. Default: `[miditools.sendToMIDIjs, miditools.quantizeLastNote]`
 * - sendOutChord: function (array_of_note.Note_objects) to call when a sufficient time has passed to build a chord from input. Default: empty function.
 *
@@ -270,7 +276,7 @@ miditools.callBacks = {
  * Quantizes the lastElement (passed in) or music21.miditools.lastElement.
  *
  * @memberof music21.miditools
- * @param {music21.note.GeneralNote} lastElement - A {@link music21.note.Note} to be quantized
+ * @param {music21.note.GeneralNote} [lastElement] - A {@link music21.note.Note} to be quantized
  * @returns {music21.note.GeneralNote} The same {@link music21.note.Note} object passed in with
  * duration quantized
  */
@@ -281,7 +287,10 @@ miditools.quantizeLastNote = function quantizeLastNote(lastElement) {
             return undefined;
         }
     }
-    lastElement.stemDirection = undefined;
+    // noinspection JSUnresolvedVariable
+    if (typeof lastElement.stemDirection !== 'undefined') {
+        lastElement.stemDirection = undefined;
+    }
     const nowInMS = Date.now();
     const msSinceLastNote = nowInMS - this.timeOfLastNote;
     this.timeOfLastNote = nowInMS;
@@ -332,7 +341,7 @@ miditools.loadedSoundfonts = {};
  * rather than overriding this important method.
  *
  * @memberof music21.miditools
- * @param {String} soundfont The name of the soundfont that was just loaded
+ * @param {string} soundfont The name of the soundfont that was just loaded
  * @param {function} callback A function to be called after the soundfont is loaded.
  */
 miditools.postLoadCallback = function postLoadCallback(soundfont, callback) {
@@ -345,8 +354,9 @@ miditools.postLoadCallback = function postLoadCallback(soundfont, callback) {
     }
     $('.loadingSoundfont').remove();
 
+    // noinspection JSUnresolvedVariable
     const isFirefox = typeof InstallTrigger !== 'undefined'; // Firefox 1.0+
-    const isAudioTag = MIDI.technology === 'HTML Audio Tag';
+    const isAudioTag = MIDI.config.api === 'audiotag';
     const instrumentObj = instrument.find(soundfont);
     if (instrumentObj !== undefined) {
         MIDI.programChange(
@@ -383,7 +393,7 @@ miditools.postLoadCallback = function postLoadCallback(soundfont, callback) {
  *
  * @memberof music21.miditools
  * @param {String} soundfont The name of the soundfont that was just loaded
- * @param {function} callback A function to be called after the soundfont is loaded.
+ * @param {function} [callback] A function to be called after the soundfont is loaded.
  * @example
  * s = new music21.stream.Stream();
  * music21.miditools.loadSoundfont(
@@ -439,6 +449,7 @@ miditools.loadSoundfont = function loadSoundfont(soundfont, callback) {
                         + 'audio will begin when this message disappears.</div>'
                 )
             );
+            console.log(MIDI);
             MIDI.loadPlugin({
                 soundfontUrl: common.urls.soundfontUrl,
                 instrument: soundfont,
@@ -463,19 +474,20 @@ miditools.loadSoundfont = function loadSoundfont(soundfont, callback) {
  */
 export class MidiPlayer {
     constructor() {
-        this.player = new MIDI.Players.PlayInstance();
+        this.player = new MIDI.Player();
         this.speed = 1.0;
         this.$playDiv = undefined;
     }
     /**
-     * @param {jQuery|Node} where
-     * @returns {Node}
+     * @param {jQuery|Node} [where]
+     * @returns {jQuery}
      */
     addPlayer(where) {
         let $where = where;
         if (where === undefined) {
             where = document.body;
         }
+        // noinspection JSUnresolvedVariable
         if (where.jquery === undefined) {
             $where = $(where);
         }
@@ -484,16 +496,16 @@ export class MidiPlayer {
         const $playPause = $(
             '<input type="image" alt="play" src="'
                 + this.playPng()
-                + '" align="absmiddle" value="play" class="playPause">'
+                + '" value="play" class="playPause">'
         );
         const $stop = $(
             '<input type="image" alt="stop" src="'
                 + this.stopPng()
-                + '" align="absmiddle" value="stop" class="stopButton">'
+                + '" value="stop" class="stopButton">'
         );
 
-        $playPause.on('click', this.pausePlayStop.bind(this));
-        $stop.on('click', this.stopButton.bind(this));
+        $playPause.on('click', () => this.pausePlayStop());
+        $stop.on('click', () => this.stopButton());
         $controls.append($playPause);
         $controls.append($stop);
         $playDiv.append($controls);
@@ -594,10 +606,8 @@ export class MidiPlayer {
         const timeCursor = $d.find('.cursor')[0];
         const $capsule = $d.find('.capsule');
         //
-        eventjs.add($capsule[0], 'drag', (event, self) => {
-            eventjs.cancel(event);
-            const player = this.player;
-            player.currentTime = self.x / 420 * player.endTime;
+        $capsule.on('dragstart', e => {
+            player.currentTime = (e.pageX - $capsule.left) / 420 * player.endTime;
             if (player.currentTime < 0) {
                 player.currentTime = 0;
             }
@@ -611,14 +621,14 @@ export class MidiPlayer {
             }
         });
         //
-        function timeFormatting(n) {
+        const timeFormatting = n => {
             const minutes = (n / 60) >> 0;
             let seconds = String((n - minutes * 60) >> 0);
             if (seconds.length === 1) {
                 seconds = '0' + seconds;
             }
             return minutes + ':' + seconds;
-        }
+        };
 
         player.setAnimation(data => {
             const percent = data.now / data.end;

@@ -1,9 +1,13 @@
-export class Derivation {
 
+/**
+ * @namespace music21.derivation
+ * @memberOf music21.derivation
+ */
+export class Derivation {
     /**
      *
      * @param {music21.base.Music21Object} [client]
-     * @property {str} [method]
+     * @property {string} [method]
      * @property {music21.base.Music21Object} [origin]
      */
     constructor(client) {

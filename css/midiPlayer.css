@@ -1,0 +1,90 @@
+/* midi player */
+/* adapted from MIDI.js css MIT License*/
+
+.midiPlayer {
+    background-image: linear-gradient(
+        to bottom,
+        rgba(66, 66, 66, 1),
+        rgba(22, 22, 22, 1)
+    );
+    padding: 15px 20px;
+    border: 1px solid #000;
+    box-shadow: 0 0 10px #fff;
+    border-radius: 10px;
+    color: #ffffff;
+    color: rgba(255, 255, 255, 0.8);
+    text-shadow: 1px 1px 2px #000;
+    margin-bottom: 15px;
+    height: 42px;
+    max-width: 700px;
+    min-height: 70px;
+}
+
+.midiPlayer .capsule {
+    border: 1px solid #000;
+    box-shadow: 0 0 10px #555;
+    background: #000;
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.5), #333 0);
+    overflow: hidden;
+    border-radius: 5px;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    width: 420px;
+    display: inline-block;
+    height: 30px;
+}
+
+.midiPlayer .capsule .cursor {
+    border-radius: 5px;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    background: #003b96;
+    background: linear-gradient(to bottom, #0088e9, #003b96 100%);
+    width: 0;
+    display: inline-block;
+    height: 100%;
+}
+
+.midiPlayer .timePlayed,
+.midiPlayer .timeRemaining {
+    position: relative;
+    top: -9px;
+    padding: 0 10px;
+    width: 40px;
+    display: inline-block;
+    text-align: right;
+}
+
+.midiPlayer .timeRemaining {
+    text-align: left;
+}
+
+.midiPlayer .timeControls {
+    width: 560px;
+    margin: 0;
+    float: left;
+    position: relative;
+    top: 5px;
+}
+
+.midiPlayer .positionControls {
+    position: relative;
+    top: 5px;
+    margin: 0 auto;
+    width: 80px;
+    float: right;
+}
+
+.midiPlayer .positionControls input[type='image']:hover {
+    opacity: 1;
+}
+
+.midiPlayer .positionControls input[type='image']:active {
+    opacity: 0.85;
+}
+
+.midiPlayer .positionControls input[type='image'] {
+    opacity: 0.7;
+    outline: none;
+    vertical-align: middle;
+}

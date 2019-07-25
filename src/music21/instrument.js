@@ -130,6 +130,7 @@ instrument.Instrument = Instrument;
 instrument.usedChannels = []; // differs from m21p -- stored midiProgram numbers
 instrument.maxMidi = 16;
 
+// noinspection SpellCheckingInspection
 instrument.info = [
     { fn: 'acoustic_grand_piano', name: 'Acoustic Grand Piano', midiNumber: 0 },
     {

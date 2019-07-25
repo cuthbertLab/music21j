@@ -2,44 +2,44 @@
 <html xmlns = "http://www.w3.org/1999/xhtml">
 <head>
  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-  <script data-main="../src/music21" src="../ext/require/require.js"></script>
-
 </head>
 <body>
+<script src="../build/music21.debug.js" type="application/javascript"></script>
 <script type="text/javascript">
-  require(['music21'], function (music21) {
-      tags = music21.fromPython.jsonpickle.tags;
-      
-      Thing = function (x) {
-          this.x = x;
-          this[tags.PY_CLASS] = '__main__.Thing';
-          this.subThing = undefined;
-      }
-      t = new Thing(5);
-      st = new Thing('hello');
-      st.subThing = t;      
-      t.subThing = st;
-      t.subThing2 = st;
-      m21Note = new music21.note.Note('C#5')
-      m21Note[tags.PY_CLASS] = 'music21.note.Note';
-      d = m21Note.duration;
-      d[tags.PY_CLASS] = 'music21.duration.Duration';
-      b = m21Note.beams;
-      b[tags.PY_CLASS] = 'music21.beam.Beams';
-      p = m21Note.pitch;
-      p.accidental[tags.PY_CLASS] = 'music21.pitch.Accidental';
-      p[tags.PY_CLASS] = 'music21.pitch.Pitch';
-      o = jsonpickle.encode(m21Note);
-      console.log(o);
-      console.log('-------');
-      nOut = jsonpickle.decode(o);
-      console.log(nOut);
-      s = new music21.stream.Stream();
-      s.append(nOut)
-      s.appendNewDOM();
-  });
+ fromPython = music21.fromPython;
+ jsonpickle = fromPython.jsonpickle;
+ tags = jsonpickle.tags;
+
+ Thing = function (x) {
+     this.x = x;
+     this[tags.PY_CLASS] = '__main__.Thing';
+     this.subThing = undefined;
+ };
+
+ t = new Thing(5);
+ st = new Thing('hello');
+ st.subThing = t;
+ t.subThing = st;
+ t.subThing2 = st;
+ m21Note = new music21.note.Note('C#5');
+ m21Note[tags.PY_CLASS] = 'music21.note.Note';
+ d = m21Note.duration;
+ d[tags.PY_CLASS] = 'music21.duration.Duration';
+ b = m21Note.beams;
+ b[tags.PY_CLASS] = 'music21.beam.Beams';
+ p = m21Note.pitch;
+ p.accidental[tags.PY_CLASS] = 'music21.pitch.Accidental';
+ p[tags.PY_CLASS] = 'music21.pitch.Pitch';
+ o = jsonpickle.encode(m21Note);
+ console.log(o);
+ console.log('-------');
+ nOut = jsonpickle.decode(o);
+ console.log(nOut);
+ s = new music21.stream.Stream();
+ s.append(nOut);
+ s.appendNewDOM();
 </script>
 <h1>A test of pickling and unpickling with jsonpickleJS</h1>
 </body>
-</html> 
+</html>
 

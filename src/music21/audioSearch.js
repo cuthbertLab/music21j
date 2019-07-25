@@ -1,4 +1,4 @@
-import MIDI from 'MIDI';
+import * as MIDI from 'midicube';
 
 import { common } from './common.js';
 
@@ -20,6 +20,8 @@ export const audioSearch = {};
 
 audioSearch.fftSize = 2048;
 
+// polyfill
+// noinspection JSUnresolvedVariable
 audioSearch.AudioContextCaller
     = window.AudioContext || window.webkitAudioContext;
 audioSearch._audioContext = null;
@@ -75,6 +77,7 @@ audioSearch.getUserMedia = function getUserMedia(dictionary, callback, error) {
     }
     const n = navigator;
     // need to polyfill navigator, or binding problems are hard...
+    // noinspection JSUnresolvedVariable
     n.getUserMedia
         = n.getUserMedia
         || n.webkitGetUserMedia
@@ -116,7 +119,7 @@ audioSearch.userMediaStarted = function userMediaStarted(audioStream) {
 
 audioSearch.minFrequency = 55;
 audioSearch.maxFrequency = 1050;
-audioSearch.animateLoop = function animateLoop(time) {
+audioSearch.animateLoop = () => {
     audioSearch.currentAnalyser.getFloatTimeDomainData(
         audioSearch.sampleBuffer
     );
@@ -128,6 +131,8 @@ audioSearch.animateLoop = function animateLoop(time) {
         audioSearch.maxFrequency
     );
     const retValue = audioSearch.sampleCallback(frequencyDetected);
+    // callback can be anything.
+    // noinspection JSIncompatibleTypesComparison
     if (retValue !== -1) {
         audioSearch.animationFrameCallbackId = window.requestAnimationFrame(
             audioSearch.animateLoop
@@ -190,6 +195,7 @@ audioSearch.smoothPitchExtraction = function smoothPitchExtraction(frequency) {
 };
 
 audioSearch.sampleCallback = function sampleCallback(frequency) {
+    // noinspection JSUnusedLocalSymbols
     const [unused_midiNum, unused_centsOff] = audioSearch.smoothPitchExtraction(
         frequency
     );

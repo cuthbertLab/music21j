@@ -9,7 +9,7 @@
         <link rel="stylesheet" href="../css/m21.css" type="text/css" />
 
 		<script>
-		require(['music21'], function () { 
+		require(['music21'], function (music21) {
 		    music21.webmidi.createSelector($("#putMidiSelectHere"));
 		    music21.miditools.callBacks.general = music21.miditools.sendToMIDIjs;
 		});			
