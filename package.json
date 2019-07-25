@@ -1,6 +1,6 @@
 {
   "name": "music21j",
-  "version": "0.9.8",
+  "version": "0.9.9",
   "description": "A toolkit for computer-aided musicology, Javascript version",
   "main": "src/music21",
   "files": [
@@ -69,7 +69,7 @@
     "test": "tests"
   },
   "scripts": {
-    "postinstall": "sh scripts/postinstall.sh",
+    "postinstall": "sh scripts/postinstall.bash",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
