@@ -1,8 +1,8 @@
 {
   "name": "music21j",
-  "version": "0.9.9",
+  "version": "0.9.11",
   "description": "A toolkit for computer-aided musicology, Javascript version",
-  "main": "src/music21",
+  "main": "releases/music21.debug.js",
   "files": [
     ".editorconfig",
     ".eslintignore",
@@ -25,7 +25,7 @@
     "es6-shim": "^0.35.5",
     "jquery": "^3.4.1",
     "jquery-ui-bundle": "^1.12.1-migrate",
-    "midicube": "^0.5.3",
+    "midicube": "^0.5.5",
     "vexflow": "^1.2.89"
   },
   "devDependencies": {
@@ -69,6 +69,7 @@
     "test": "tests"
   },
   "scripts": {
+    "prepublishOnly": "cp build/* releases/",
     "postinstall": "sh scripts/postinstall.bash",
     "test": "echo \"Error: no test specified\" && exit 1"
   },

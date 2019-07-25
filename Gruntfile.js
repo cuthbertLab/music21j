@@ -67,7 +67,7 @@ module.exports = grunt => {
                  ],
              },
              plugins: [
-                new webpack.BannerPlugin({banner: BANNER}),
+                new webpack.BannerPlugin({banner: BANNER, raw: true}),
              ],
          };
     }

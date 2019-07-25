@@ -45,20 +45,14 @@ Example
 --------
 Install by downloading a copy of the music21 code to your own webserver.
 
-If you have `git` installed, you can use (on Mac/Unix):
-
 ```sh
-% cd ~/git
-% git clone https://github.com/cuthbertLab/music21j.git
-% cd music21j
-% ./updateGit
-% npm install
+% npm install music21j
 ```
 
-if the last line (`npm install`) doesn't work, download the
-latest version of `node.js` first from https://nodejs.org/en/download/
-and then run `sudo npm install -g grunt`.  
 
+If this line (`npm install`) doesn't work, download the
+latest version of `node.js` from https://nodejs.org/en/download/
+  
 A guide to installing music21j on Windows would be appreciated.
 
 The files in music21j are best viewed by running your own
@@ -67,7 +61,7 @@ included a small script to start you up:
 
 ```sh
 % cd ~/git/music21j
-% grunt
+% grunt webpack
 % python start_python_server.py
 ```
 
@@ -77,28 +71,27 @@ To use music21j in your own page, place in a html page like this (this assumes t
 using the python server above).
 
 ```html
-<html>
+<html lang="en">
 <head>
-   <script data-main="/src/music21" src="/ext/require/require.js">
+<title>music21 test</title>
+</head>
+<body>
+   <script src="/node_modules/music21j/releases/music21.debug.js">
    </script>
    <script>
-   require(['music21'], function () {
-       // your code goes here.  For instance...
-       var n = new music21.note.Note("F#");
-       var s = new music21.stream.Stream();
-       s.append(n);
-       s.appendNewCanvas();
-   });
+   const n = new music21.note.Note('F#');
+   const s = new music21.stream.Stream();
+   s.append(n);
+   s.appendNewDOM();
    </script>
-</head>
-<body></body>
+</body>
 </html>
 ```
 
 
 Version
 --------
-0.9.5 alpha
+0.9.10 alpha
 
 
 License
@@ -116,9 +109,8 @@ Thanks
 Thanks to the following packages (among others) for making music21j possible:
 
 * [Vexflow] - music notation in HTML5
-* [MIDI.js] - audio processing of MIDI
+* [midicube] - audio processing of MIDI based on [MIDI.js]
 * [Jazzsoft] - plug-in for accessing MIDI in the browser in the absence of WebMIDI Api.
-* [require.js] - method for loading multiple modules in the browser and managing dependencies.
 * [jQuery] - easy manipulation of HTML DOM.
 * [qUnit] - testing framework
 * [jsdoc] - makes this documentation possible
@@ -130,10 +122,10 @@ the Seaver Institute and the National Endowment for the Humanities.
 
 [MIT]:http://web.mit.edu
 [music21 python]:http://web.mit.edu/music21/
+[midicube]:https://github.com/mscuthbert/midicube
 [Vexflow]:http://www.vexflow.com
 [MIDI.js]:http://mudcu.be/midi-js/
 [Jazzsoft]:http://jazz-soft.net
-[require.js]:http://requirejs.org
 [jQuery]:http://jquery.com
 [qUnit]:http://qunitjs.com
 [jsdoc]:http://usejsdoc.org
@@ -141,6 +133,12 @@ the Seaver Institute and the National Endowment for the Humanities.
 
 Dev Notes
 ----------------
+Build with
+
+```sh
+$ grunt webpack
+```
+
 Before building, every once in a while run (in the music21j directory)
 
 ```
@@ -161,3 +159,7 @@ grunt jsdoc
 ```
 
 The template is specified in jsdoc-template/jsdoc.conf.json
+
+These docs will be changing as we are moving from rollup to grunt in preparation
+for v. 1.0 release.
+
