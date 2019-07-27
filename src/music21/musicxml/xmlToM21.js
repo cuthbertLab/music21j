@@ -15,8 +15,9 @@ const DEFAULTS = {
 };
 
 function hyphenToCamelCase(tag) {
-    return tag.replace(/-([a-z])/g, firstLetter =>
-        firstLetter[1].toUpperCase()
+    return tag.replace(
+        /-([a-z])/g,
+        firstLetter => firstLetter[1].toUpperCase()
     );
 }
 
@@ -62,9 +63,7 @@ export class ScoreParser {
     scoreFromUrl(url) {
         this.xmlUrl = url;
         // noinspection JSUnusedLocalSymbols
-        return $.get(url, {}, (xmlDoc, textStatus) =>
-            this.scoreFromDOMTree(xmlDoc)
-        );
+        return $.get(url, {}, (xmlDoc, textStatus) => this.scoreFromDOMTree(xmlDoc));
     }
 
     scoreFromText(xmlText) {
@@ -494,7 +493,7 @@ export class MeasureParser {
             p.accidental = accObj;
             p.accidental.displayStatus = true;
             // independent accidental from alter
-        } else if (accAlter !== undefined && !isNaN(accAlter)) {
+        } else if (accAlter !== undefined && !Number.isNaN(Number(accAlter))) {
             p.accidental = new pitch.Accidental(accAlter);
             p.accidental.displayStatus = false;
         }
@@ -746,9 +745,9 @@ export class MeasureParser {
         this.stream.clef = clefObj;
         this.insertIntoMeasureOrVoice($mxClef, clefObj);
         this.lastClefs[0] = clefObj;
-//        if (this.parent !== undefined) {
-//            this.parent.lastClefs[0] = clefObj.clone(true);
-//        }
+        // if (this.parent !== undefined) {
+        //     this.parent.lastClefs[0] = clefObj.clone(true);
+        // }
     }
 
     xmlToClef($mxClef) {

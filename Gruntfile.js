@@ -2,7 +2,6 @@
 // Copyright Michael Scott Cuthbert (cuthbert@mit.edu), BSD License
 const path = require('path');
 const webpack = require('webpack');
-const babel = require('rollup-plugin-babel');
 
 module.exports = grunt => {
 
@@ -30,7 +29,7 @@ module.exports = grunt => {
     const TEST_SOURCES = ['tests/loadAll.js', 'tests/moduleTests/*.js'];
     const TARGET_TESTS = path.join(BUILD_DIR, 'music21.tests.js');
 
-    function webpackConfig(target, preset) {
+    const webpackConfig = (target, preset) => {
         return {
             entry: './src/music21_modules.js',  // MODULE_ENTRY,
             output: {
@@ -46,7 +45,7 @@ module.exports = grunt => {
                 rules: [
                     {
                         test: /\.js?$/,
-                        exclude: /(node_modules|bower_components|soundfont|soundfonts|src\/ext)/,
+                        exclude: /(node_modules|bower_components|src\/ext)/,
                         use: [{
                             loader: 'babel-loader',
                             options: {
@@ -80,72 +79,12 @@ module.exports = grunt => {
     // Project configuration.
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
-        concat: {
-            options: {
-                banner: BANNER,
-                sourceMap: true,
-            },
-            tests: {
-                src: TEST_SOURCES,
-                dest: TARGET_TESTS,
-            },
-        },
-        rollup: {
-            options: {
-                banner: BANNER,
-                format: 'umd',
-                moduleName: 'music21',
-                sourceMap: true,
-                sourceMapFile: TARGET_RAW,
-                plugins() {
-                    return [
-                        babel({
-                            exclude: './node_modules/**',
-                        }),
-                    ];
-                },
-                globals: {
-                    jsonpickle: 'jsonpickle',
-                    MIDI: 'MIDI',
-                    qunit: 'QUnit',
-                },
-                external: [
-                    'jsonpickle',
-                    'MIDI',
-                    'qunit',
-                ],
-                paths: {
-                    qunit: './tests/qQunit/qunit-2.0.1.js',
-                },
-            },
-            files: {
-                src: MODULE_ENTRY,
-                dest: TARGET_RAW,
-            },
-            tests: {
-                src: TEST_ENTRY,
-                dest: TARGET_TESTS,
-            },
-        },
         webpack: {
-             build: webpackCommon,
-             watch: Object.assign({}, webpackCommon, {
-                 watch: true,
-             }),
-         },
-
-        uglify: {
-            options: {
-                banner: BANNER,
-                sourceMap: true,
-		sourceMapIn: TARGET_RAW_MAP,
-            },
-            build: {
-                src: TARGET_RAW,
-                dest: TARGET_MIN,
-            },
+            build: webpackCommon,
+            watch: Object.assign({}, webpackCommon, {
+                watch: true,
+            }),
         },
-
         jsdoc: {
             dist: {
                 src: ['src/*.js', 'src/music21/*.js', 'src/music21/*/*.js', 'README.md'],
@@ -193,11 +132,8 @@ module.exports = grunt => {
         },
     });
 
-    grunt.loadNpmTasks('grunt-rollup');
-    grunt.loadNpmTasks('grunt-contrib-concat');
     grunt.loadNpmTasks('grunt-webpack');
 
-    // Load the plugin that provides the "uglify" task.
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-contrib-qunit');
 
@@ -208,7 +144,7 @@ module.exports = grunt => {
 
     // Default task(s).
     grunt.registerTask('default', ['eslint', 'webpack:build']);
-    grunt.registerTask('test', 'Run qunit tests', ['rollup:tests', 'qunit']);
+    grunt.registerTask('test', 'Run qunit tests', ['webpack:build', 'qunit']);
     grunt.registerTask('publish', 'Raise the version and publish', () => {
         grunt.task.run('jsdoc');
         grunt.task.run('bump');

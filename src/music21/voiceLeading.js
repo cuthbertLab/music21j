@@ -80,24 +80,31 @@ class VoiceLeadingQuartet extends Music21Object {
     get v1n1() {
         return this._v1n1;
     }
+
     set v1n1(value) {
         this._setVoiceNote(value, '_v1n1');
     }
+
     get v1n2() {
         return this._v1n2;
     }
+
     set v1n2(value) {
         this._setVoiceNote(value, '_v1n2');
     }
+
     get v2n1() {
         return this._v2n1;
     }
+
     set v2n1(value) {
         this._setVoiceNote(value, '_v2n1');
     }
+
     get v2n2() {
         return this._v2n2;
     }
+
     set v2n2(value) {
         this._setVoiceNote(value, '_v2n2');
     }
@@ -105,6 +112,7 @@ class VoiceLeadingQuartet extends Music21Object {
     get key() {
         return this._key;
     }
+
     set key(keyValue) {
         if (typeof keyValue === 'string') {
             keyValue = new key.Key(

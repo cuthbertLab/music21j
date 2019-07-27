@@ -1,11 +1,13 @@
 import { clef } from '../clef.js';
 import { common } from '../common.js';
-import { Stream, Measure, Part, Score } from '../stream.js';
+import {
+    Stream, Measure, Part, Score,
+} from '../stream.js';
 
 import { Music21Exception } from '../exceptions21.js';
 
 class MusicXMLExportException extends Music21Exception {
-    
+
 }
 
 function typeToMusicXMLType(value) {
@@ -20,59 +22,59 @@ function typeToMusicXMLType(value) {
 
 function normalizeColor(color) {
     const colors = {
-        'aliceblue': '#f0f8ff', 'antiquewhite': '#faebd7', 'aqua': '#00ffff', 
+        'aliceblue': '#f0f8ff', 'antiquewhite': '#faebd7', 'aqua': '#00ffff',
         'aquamarine': '#7fffd4', 'azure': '#f0ffff',
-        'beige': '#f5f5dc', 'bisque': '#ffe4c4', 'black': '#000000', 
-        'blanchedalmond': '#ffebcd', 'blue': '#0000ff', 'blueviolet': '#8a2be2', 
+        'beige': '#f5f5dc', 'bisque': '#ffe4c4', 'black': '#000000',
+        'blanchedalmond': '#ffebcd', 'blue': '#0000ff', 'blueviolet': '#8a2be2',
         'brown': '#a52a2a', 'burlywood': '#deb887',
-        'cadetblue': '#5f9ea0', 'chartreuse': '#7fff00', 'chocolate': '#d2691e', 
-        'coral': '#ff7f50', 'cornflowerblue': '#6495ed', 'cornsilk': '#fff8dc', 
+        'cadetblue': '#5f9ea0', 'chartreuse': '#7fff00', 'chocolate': '#d2691e',
+        'coral': '#ff7f50', 'cornflowerblue': '#6495ed', 'cornsilk': '#fff8dc',
         'crimson': '#dc143c', 'cyan': '#00ffff',
-        'darkblue': '#00008b', 'darkcyan': '#008b8b', 'darkgoldenrod': '#b8860b', 
-        'darkgray': '#a9a9a9', 'darkgreen': '#006400', 'darkkhaki': '#bdb76b', 
+        'darkblue': '#00008b', 'darkcyan': '#008b8b', 'darkgoldenrod': '#b8860b',
+        'darkgray': '#a9a9a9', 'darkgreen': '#006400', 'darkkhaki': '#bdb76b',
         'darkmagenta': '#8b008b', 'darkolivegreen': '#556b2f',
-        'darkorange': '#ff8c00', 'darkorchid': '#9932cc', 'darkred': '#8b0000', 
-        'darksalmon': '#e9967a', 'darkseagreen': '#8fbc8f', 'darkslateblue': '#483d8b', 
+        'darkorange': '#ff8c00', 'darkorchid': '#9932cc', 'darkred': '#8b0000',
+        'darksalmon': '#e9967a', 'darkseagreen': '#8fbc8f', 'darkslateblue': '#483d8b',
         'darkslategray': '#2f4f4f', 'darkturquoise': '#00ced1',
-        'darkviolet': '#9400d3', 'deeppink': '#ff1493', 'deepskyblue': '#00bfff', 
+        'darkviolet': '#9400d3', 'deeppink': '#ff1493', 'deepskyblue': '#00bfff',
         'dimgray': '#696969', 'dodgerblue': '#1e90ff',
-        'firebrick': '#b22222', 'floralwhite': '#fffaf0', 'forestgreen': '#228b22', 
+        'firebrick': '#b22222', 'floralwhite': '#fffaf0', 'forestgreen': '#228b22',
         'fuchsia': '#ff00ff',
-        'gainsboro': '#dcdcdc', 'ghostwhite': '#f8f8ff', 'gold': '#ffd700', 
-        'goldenrod': '#daa520', 'gray': '#808080', 'green': '#008000', 
+        'gainsboro': '#dcdcdc', 'ghostwhite': '#f8f8ff', 'gold': '#ffd700',
+        'goldenrod': '#daa520', 'gray': '#808080', 'green': '#008000',
         'greenyellow': '#adff2f',
         'honeydew': '#f0fff0', 'hotpink': '#ff69b4',
-        'indianred ': '#cd5c5c', 'indigo': '#4b0082', 'ivory': '#fffff0', 
+        'indianred ': '#cd5c5c', 'indigo': '#4b0082', 'ivory': '#fffff0',
         'khaki': '#f0e68c',
-        'lavender': '#e6e6fa', 'lavenderblush': '#fff0f5', 'lawngreen': '#7cfc00', 
-        'lemonchiffon': '#fffacd', 'lightblue': '#add8e6', 'lightcoral': '#f08080', 
+        'lavender': '#e6e6fa', 'lavenderblush': '#fff0f5', 'lawngreen': '#7cfc00',
+        'lemonchiffon': '#fffacd', 'lightblue': '#add8e6', 'lightcoral': '#f08080',
         'lightcyan': '#e0ffff', 'lightgoldenrodyellow': '#fafad2',
-        'lightgrey': '#d3d3d3', 'lightgreen': '#90ee90', 'lightpink': '#ffb6c1', 
-        'lightsalmon': '#ffa07a', 'lightseagreen': '#20b2aa', 'lightskyblue': '#87cefa', 
+        'lightgrey': '#d3d3d3', 'lightgreen': '#90ee90', 'lightpink': '#ffb6c1',
+        'lightsalmon': '#ffa07a', 'lightseagreen': '#20b2aa', 'lightskyblue': '#87cefa',
         'lightslategray': '#778899', 'lightsteelblue': '#b0c4de',
-        'lightyellow': '#ffffe0', 'lime': '#00ff00', 'limegreen': '#32cd32', 
+        'lightyellow': '#ffffe0', 'lime': '#00ff00', 'limegreen': '#32cd32',
         'linen': '#faf0e6',
-        'magenta': '#ff00ff', 'maroon': '#800000', 'mediumaquamarine': '#66cdaa', 
-        'mediumblue': '#0000cd', 'mediumorchid': '#ba55d3', 'mediumpurple': '#9370d8', 
+        'magenta': '#ff00ff', 'maroon': '#800000', 'mediumaquamarine': '#66cdaa',
+        'mediumblue': '#0000cd', 'mediumorchid': '#ba55d3', 'mediumpurple': '#9370d8',
         'mediumseagreen': '#3cb371', 'mediumslateblue': '#7b68ee',
-        'mediumspringgreen': '#00fa9a', 'mediumturquoise': '#48d1cc', 
-        'mediumvioletred': '#c71585', 'midnightblue': '#191970', 'mintcream': '#f5fffa', 
+        'mediumspringgreen': '#00fa9a', 'mediumturquoise': '#48d1cc',
+        'mediumvioletred': '#c71585', 'midnightblue': '#191970', 'mintcream': '#f5fffa',
         'mistyrose': '#ffe4e1', 'moccasin': '#ffe4b5',
         'navajowhite': '#ffdead', 'navy': '#000080',
-        'oldlace': '#fdf5e6', 'olive': '#808000', 'olivedrab': '#6b8e23', 
+        'oldlace': '#fdf5e6', 'olive': '#808000', 'olivedrab': '#6b8e23',
         'orange': '#ffa500', 'orangered': '#ff4500', 'orchid': '#da70d6',
-        'palegoldenrod': '#eee8aa', 'palegreen': '#98fb98', 'paleturquoise': '#afeeee', 
-        'palevioletred': '#d87093', 'papayawhip': '#ffefd5', 'peachpuff': '#ffdab9', 
-        'peru': '#cd853f', 'pink': '#ffc0cb', 'plum': '#dda0dd', 'powderblue': '#b0e0e6', 
+        'palegoldenrod': '#eee8aa', 'palegreen': '#98fb98', 'paleturquoise': '#afeeee',
+        'palevioletred': '#d87093', 'papayawhip': '#ffefd5', 'peachpuff': '#ffdab9',
+        'peru': '#cd853f', 'pink': '#ffc0cb', 'plum': '#dda0dd', 'powderblue': '#b0e0e6',
         'purple': '#800080',
-        'rebeccapurple': '#663399', 'red': '#ff0000', 'rosybrown': '#bc8f8f', 
+        'rebeccapurple': '#663399', 'red': '#ff0000', 'rosybrown': '#bc8f8f',
         'royalblue': '#4169e1',
-        'saddlebrown': '#8b4513', 'salmon': '#fa8072', 'sandybrown': '#f4a460', 
-        'seagreen': '#2e8b57', 'seashell': '#fff5ee', 'sienna': '#a0522d', 
-        'silver': '#c0c0c0', 'skyblue': '#87ceeb', 'slateblue': '#6a5acd', 
-        'slategray': '#708090', 'snow': '#fffafa', 'springgreen': '#00ff7f', 
+        'saddlebrown': '#8b4513', 'salmon': '#fa8072', 'sandybrown': '#f4a460',
+        'seagreen': '#2e8b57', 'seashell': '#fff5ee', 'sienna': '#a0522d',
+        'silver': '#c0c0c0', 'skyblue': '#87ceeb', 'slateblue': '#6a5acd',
+        'slategray': '#708090', 'snow': '#fffafa', 'springgreen': '#00ff7f',
         'steelblue': '#4682b4',
-        'tan': '#d2b48c', 'teal': '#008080', 'thistle': '#d8bfd8', 'tomato': '#ff6347', 
+        'tan': '#d2b48c', 'teal': '#008080', 'thistle': '#d8bfd8', 'tomato': '#ff6347',
         'turquoise': '#40e0d0',
         'violet': '#ee82ee',
         'wheat': '#f5deb3', 'white': '#ffffff', 'whitesmoke': '#f5f5f5',
@@ -89,7 +91,7 @@ function normalizeColor(color) {
 
 
 const _classMapping = [
-    'Score', 'Part', 'Measure', 'Voice', // 'Stream', 
+    'Score', 'Part', 'Measure', 'Voice', // 'Stream',
     'GeneralNote', // 'Pitch', 'Duration', 'Dynamic', 'DiatonicScale', 'Scale',
     // 'Music21Object',
 ];
@@ -98,7 +100,7 @@ export class GeneralObjectExporter {
     constructor(obj) {
         this.generalObj = obj;
     }
-    
+
     parse(obj) {
         if (obj === undefined) {
             obj = this.generalObj;
@@ -106,13 +108,13 @@ export class GeneralObjectExporter {
         const outObj = this.fromGeneralObj(obj);
         return this.parseWellformedObject(outObj);
     }
-    
+
     parseWellformedObject(sc) {
         const scoreExporter = new ScoreExporter(sc);
         scoreExporter.parse();
         return scoreExporter.asBytes();
     }
-    
+
     fromGeneralObj(obj) {
         const classes = obj.classes;
         let outObj;
@@ -122,18 +124,18 @@ export class GeneralObjectExporter {
                 outObj = this[methName](obj);
                 break;
             }
-        }        
+        }
         if (outObj === undefined) {
             throw new MusicXMLExportException(`Cannot translate the object ${obj} to a complete musicXML document; put it in a Stream first!`);
         }
         return outObj;
     }
-    
+
     fromScore(sc) {
         const scOut = sc.makeNotation({ inPlace: false });
         return scOut;
     }
-    
+
     fromPart(p) {
         if (p.isFlat) {
             p = p.makeMeasures();
@@ -143,7 +145,7 @@ export class GeneralObjectExporter {
         // metadata...;
         return this.fromScore(s);
     }
-    
+
     fromMeasure(m) {
         const mCopy = m.makeNotation();
         if (m.clef === undefined) {
@@ -154,31 +156,31 @@ export class GeneralObjectExporter {
         // TODO(msc): metadata;
         return this.fromPart(p);
     }
-    
+
     fromVoice(v) {
         const m = new Measure();
         m.number = 1;
         m.insert(0, v);
         return this.fromMeasure(m);
     }
-    
+
     // TODO(msc): fromStream
     // TODO(msc): fromDuration
     // TODO(msc): fromDynamic
     // TODO(msc): fromScale
     // TODO(msc): fromDiatonicScale
     // TODO(msc): fromMusic21Object
-    
+
     fromGeneralNote(n) {
         const nCopy = n.clone(true);
         // makeTupletBrackets;
         const out = new Measure();
         out.number = 1;
         out.append(nCopy);
-        
+
         return this.fromMeasure(out);
     }
-    
+
     // TODO(msc): fromPitch
 }
 
@@ -189,22 +191,22 @@ export class XMLExporterBase {
         this.doc = document.implementation.createDocument('', '', null);
         this.xmlRoot = undefined;
     }
-    
+
     asBytes({ noCopy=true }={}) {
         let out = this.xmlHeader();
         const oSerializer = new XMLSerializer();
         out += oSerializer.serializeToString(this.xmlRoot);
         return out;
     }
-    
+
     // no indentation :-(
-    
+
     xmlHeader() {
         return `<?xml version="1.0" encoding="utf-8"?>
         <!DOCTYPE score-partwise PUBLIC "-//Recordare//DTD MusicXML ${_musicxmlVersion}  Partwise//EN" "http://www.musicxml.org/dtds/partwise.dtd">
         `;
     }
-    
+
     /**
      * Note: this is not a method in music21p, but it needs access to this.doc in music21j
      */
@@ -212,7 +214,7 @@ export class XMLExporterBase {
         if (attributeName === undefined) {
             attributeName = common.hyphenToCamelCase(tag);
         }
-        
+
         let value = m21El[attributeName];
         if (transform !== undefined) {
             value = transform(value);
@@ -226,11 +228,11 @@ export class XMLExporterBase {
         }
         return subElement;
     }
-    
+
     seta(m21El, xmlEl, tag, options) {
         return this._setTagTextFromAttribute(m21El, xmlEl, tag, options);
     }
-    
+
     _setAttributeFromAttribute(m21El, xmlEl, xmlAttributeName, { attributeName, transform }={}) {
         if (attributeName === undefined) {
             attributeName = common.hyphenToCamelCase(xmlAttributeName);
@@ -244,13 +246,14 @@ export class XMLExporterBase {
         }
         xmlEl.setAttribute(xmlAttributeName, value.toString());
     }
-    
+
     setb(m21El, xmlEl, xmlAttributeName, options) {
         return this._setAttributeFromAttribute(m21El, xmlEl, xmlAttributeName, options);
     }
+
     // TODO(msc): _synchronizeIds;
     _synchronizeIds(element, m21Object) {}
-    
+
     addDividerComment(comment='') {
         let commentLength = comment.length;
         if (commentLength > 60) {
@@ -262,9 +265,9 @@ export class XMLExporterBase {
         const divider = this.doc.createComment(commentText);
         this.xmlRoot.appendChild(divider);
     }
-    
+
     // TODO(msc): dump
-    
+
     /**
      * Helper method since SubElement does not exist in javascript document.implementation
      */
@@ -273,7 +276,7 @@ export class XMLExporterBase {
         el.appendChild(subElement);
         return subElement;
     }
-    
+
     // TODO(msc): setStyleAttributes
     // TODO(msc): setTextFormatting
     // TODO(msc): setPrintStyleAlign
@@ -286,20 +289,20 @@ export class XMLExporterBase {
             mxObject.setAttribute('color', normalizeColor(m21Object.style.color));
         }
     }
-    
+
     // TODO(msc): setFont
     // TODO(msc): setPosition
     // TODO(msc): setEditorial
     setEditorial(mxEl, el) {
-        
+
     }
-    
+
     // TODO(msc): pageLayoutToXmlPrint
     // TODO(msc): pageLayoutToXmlPageLayout
     // TODO(msc): systemLayoutToXmlPrint
     // TODO(msc): systemLayoutToXmlSystemLayout
     // TODO(msc): staffLayoutToXmlStaffLayout
-    
+
     accidentalToMx(a) {
         // TODO(msc): v 3.0 and v3.1 accidentals; microtone;
         let mxName;
@@ -313,7 +316,7 @@ export class XMLExporterBase {
         mxAccidental.innerHTML = mxName;
         // TODO(msc): parentheses, bracket, setPrintStyle
         return mxAccidental;
-    }    
+    }
 
     getRandomId() {
         // hack to get random ids.
@@ -352,24 +355,24 @@ export class ScoreExporter extends XMLExporterBase {
         this.midiChannelList = [];
         this.parts = [];
     }
-    
+
     parse() {
         const s = this.stream;
         if (s.length === 0) {
             return this.emptyObject();
         }
         this.scorePreliminaries();
-        this.parsePartlikeScore(); // does not have parseFlatScore... 
+        this.parsePartlikeScore(); // does not have parseFlatScore...
         this.postPartProcess();
         this.partExporterList = [];
         return this.xmlRoot;
     }
-    
+
     emptyObject() {
         // TODO(msc): do this.
         return this.xmlRoot;
     }
-    
+
     scorePreliminaries() {
         // this.setScoreLayouts();
         // this.setMeterStream();
@@ -378,7 +381,7 @@ export class ScoreExporter extends XMLExporterBase {
         this.highestTime = 0.0;
         // spannerBundle
     }
-    
+
     setPartsAndRefStream() {
         const s = this.stream;
         const streamOfStreams = s.getElementsByClass('Stream');
@@ -392,10 +395,10 @@ export class ScoreExporter extends XMLExporterBase {
         }
         this.parts = streamOfStreams;
     }
-    
+
     // TODO(msc): setMeterStream
     // TODO(msc): setScoreLayouts
-    
+
     parsePartlikeScore() {
         // makeRests
         for (const innerStream of this.parts) {
@@ -405,9 +408,9 @@ export class ScoreExporter extends XMLExporterBase {
             this.partExporterList.push(pp);
         }
     }
-    
+
     // TODO(msc): parseFlatScore
-    
+
     postPartProcess() {
         this.setScoreHeader();
         for (let i = 0; i < this.partExporterList.length; i++) {
@@ -416,7 +419,7 @@ export class ScoreExporter extends XMLExporterBase {
             this.xmlRoot.appendChild(pex.xmlRoot);
         }
     }
-    
+
     setScoreHeader() {
         // const s = this.stream;
         // scoreMeatadata
@@ -426,12 +429,12 @@ export class ScoreExporter extends XMLExporterBase {
         // textBoxes
         this.setPartList();
     }
-    
+
     // TODO(msc): textBoxToXmlCredit
     // TODO(msc): setDefaults
     // TODO(msc): addStyleToXmlDefaults
     // TODO(msc): styleToXmlAppearance
-    
+
     setPartList() {
         // const spannerBundle = this.spannerBundle; // for now, always undefined;
         const mxPartList = this.subElement(this.xmlRoot, 'part-list');
@@ -449,7 +452,7 @@ export class ScoreExporter extends XMLExporterBase {
     // TODO(msc): setEncoding
     // TODO(msc): getSupports
     // TODO(msc): setTitles
-    // TODO(msc): contributorToXmlCreator    
+    // TODO(msc): contributorToXmlCreator
 }
 
 export class PartExporter extends XMLExporterBase {
@@ -469,12 +472,12 @@ export class PartExporter extends XMLExporterBase {
         }
         this.instrumentStream = undefined;
         this.firstInstrumentObject = undefined;
-        
+
         this.lastDivisions = undefined;
         this.spannerBundle = partObj.spannerBundle;
         this.xmlPartId = this.getRandomId(); // hacky
     }
-    
+
     parse() {
         // this.instrumentSetup();
         this.xmlRoot.setAttribute('id', this.xmlPartId);
@@ -490,11 +493,11 @@ export class PartExporter extends XMLExporterBase {
         }
         return this.xmlRoot;
     }
-        
+
     // TODO(msc): instrumentSetup
     // TODO(msc): fixupNotationFlat -- might be redundant
     // TODO(msc): fixupNotationMeasured
-    
+
     getXmlScorePart() {
         // const part = this.stream;
         const mxScorePart = this.doc.createElement('score-part');
@@ -541,13 +544,13 @@ export class MeasureExporter extends XMLExporterBase {
         this.measureOffsetStart = 0.0;
         this.offsetInMeasure = 0.0;
         this.currentVoiceId = undefined;
-        
+
         this.rbSpanners = [];
         this.spannerBundle = parent.spannerBundle;
-        
+
         this.objectSpannerBundle = this.spannerBundle;
     }
-    
+
     parse() {
         // TODO(msc): setTranspose
         // TODO(msc): setRbSpanners
@@ -555,14 +558,14 @@ export class MeasureExporter extends XMLExporterBase {
         // TODO(msc): setMxPrint
         this.setMxAttributesObjectForStartOfMeasure();
         // TODO(msc): setLeftBarline
-        
+
         // THE BIG ONE
         this.mainElementsParse();
-        
+
         // TODO(msc): setRightBarline
         return this.xmlRoot;
     }
-    
+
     mainElementsParse() {
         const m = this.stream;
         if (!m.hasVoices()) {
@@ -577,9 +580,9 @@ export class MeasureExporter extends XMLExporterBase {
                 backupAfterwards = false;
             }
             this.parseFlatElements(v, { backupAfterwards });
-        }        
+        }
     }
-    
+
     parseFlatElements(m, { backupAfterwards=false }={}) {
         const root = this.xmlRoot;
         const divisions = this.currentDivisions;
@@ -592,11 +595,11 @@ export class MeasureExporter extends XMLExporterBase {
             }
         }
         this.currentVoiceId = voiceId;
-        
+
         for (const el of m) {
             this.parseOneElement(el);
         }
-        
+
         if (backupAfterwards) {
             const amountToBackup = Math.round(divisions * this.offsetInMeasure);
             if (amountToBackup > 0) {
@@ -608,7 +611,7 @@ export class MeasureExporter extends XMLExporterBase {
         }
         this.currentVoiceId = undefined;
     }
-    
+
     parseOneElement(obj) {
         // const root = this.xmlRoot;
         // spanners...
@@ -617,9 +620,9 @@ export class MeasureExporter extends XMLExporterBase {
             this.offsetInMeasure += obj.duration.quarterLength;
         }
         // odd durations...
-        
+
         let parsedObject = false;
-        
+
         for (const [className, methName] of _classesToMeasureMethods) {
             if (classes.includes(className)) {
                 this[methName](obj);
@@ -627,7 +630,7 @@ export class MeasureExporter extends XMLExporterBase {
                 break;
             }
         }
-        
+
         for (const [className, methName] of _wrapAttributeMethodClasses) {
             if (classes.includes(className)) {
                 const meth = o => this[methName](o);
@@ -636,15 +639,15 @@ export class MeasureExporter extends XMLExporterBase {
                 break;
             }
         }
-        
+
         // deal with skipped objects.
         if (!parsedObject && !_ignoreOnParseClasses.includes(obj.classes[0])) {
             console.warn('skipped object of class ' + obj.classes[0]);
         }
-        
+
         // postSpanners.
     }
-    
+
     // TODO(msc): prePostObjectSpanners
     // TODO(msc): _spannerStartParameters
     // TODO(msc): _spannerEndParameters
@@ -708,7 +711,7 @@ export class MeasureExporter extends XMLExporterBase {
             }
             mxVoice.innerHTML = vId.toString();
         }
-        
+
         const mxType = this.subElement(mxNote, 'type');
         mxType.innerHTML = typeToMusicXMLType(d.type);
         // set styleAttributes
@@ -716,10 +719,10 @@ export class MeasureExporter extends XMLExporterBase {
         for (let _ = 0; _ < d.dots; _++) {
             this.subElement(mxNote, 'dot');
         }
-        
+
         // components.
-        if (n.pitch !== undefined 
-                && n.pitch.accidental !== undefined 
+        if (n.pitch !== undefined
+                && n.pitch.accidental !== undefined
                 && n.pitch.accidental.displayStatus !== false) {
             const mxAccidental = this.accidentalToMx(n.pitch.accidental);
             mxNote.appendChild(mxAccidental);
@@ -729,12 +732,12 @@ export class MeasureExporter extends XMLExporterBase {
             const mxTimeModification = this.tupletToTimeModification(d.tuplets[0]);
             mxNote.appendChild(mxTimeModification);
         }
-        
+
         let stemDirection;
-        if (!addChordTag 
+        if (!addChordTag
                 && ![undefined, 'unspecified'].includes(chordOrN.stemDirection)) {
             stemDirection = chordOrN.stemDirection;
-        } else if (chordOrN !== n 
+        } else if (chordOrN !== n
                 && ![undefined, 'unspecified'].includes(n.stemDirection)) {
             stemDirection = n.stemDirection;
         }
@@ -747,7 +750,7 @@ export class MeasureExporter extends XMLExporterBase {
             mxStem.innerHTML = sdtext;
             // TODO: stemStyle
         }
-        
+
         // dealWithNotehead
         // beams
         // staff
@@ -763,17 +766,17 @@ export class MeasureExporter extends XMLExporterBase {
                 mxNote.appendChild(mxLyric);
             }
         }
-        
+
         this.xmlRoot.appendChild(mxNote);
         return mxNote;
     }
-    
+
     restToXml(r) {
         return this.noteToXml(r);
         // full measure
         // display-step, display-octave, etc.
     }
-    
+
     chordToXml(c) {
         const mxNoteList = [];
         for (const [i, n] of Array.from(c).entries()) {
@@ -782,13 +785,13 @@ export class MeasureExporter extends XMLExporterBase {
         }
         return mxNoteList;
     }
-    
+
     durationXml(dur) {
         const mxDuration = this.doc.createElement('duration');
         mxDuration.innerHTML = Math.round(this.currentDivisions * dur.quarterLength).toString();
         return mxDuration;
     }
-    
+
     pitchToXml(p) {
         const mxPitch = this.doc.createElement('pitch');
         this._setTagTextFromAttribute(p, mxPitch, 'step');
@@ -802,7 +805,7 @@ export class MeasureExporter extends XMLExporterBase {
     // TODO(msc): fretNoteToXml
     // TODO(msc): fretBoardToXml
     // TODO(msc): chordWithFretBoardToXml
-    
+
     tupletToTimeModification(tup) {
         const mxTimeModification = this.doc.createElement('time-modification');
         this._setTagTextFromAttribute(tup, mxTimeModification, 'actual-notes', 'numberNotesActual');
@@ -818,11 +821,11 @@ export class MeasureExporter extends XMLExporterBase {
         }
         return mxTimeModification;
     }
-    
+
     // TODO(msc): dealWithNotehead
     // TODO(msc): noteheadToXml
     // TODO(msc): noteToNotations
-    
+
     tieToXmlTie(t) {
         const mxTieList = [];
         let musicxmlTieType = t.type;
@@ -832,15 +835,15 @@ export class MeasureExporter extends XMLExporterBase {
         const mxTie = this.doc.createElement('tie');
         mxTie.setAttribute('type', musicxmlTieType);
         mxTieList.push(mxTie);
-        
+
         if (t.type === 'continue') {
             const mxTie = this.doc.createElement('tie');
             mxTie.setAttribute('type', 'start');
-            mxTieList.push(mxTie);            
+            mxTieList.push(mxTie);
         }
         return mxTieList;
     }
-    
+
     // TODO(msc): tieToXmlTied -- needs notations
     // TODO(msc): tupletToXmlTuplet
     // TODO(msc): expressionToXml
@@ -858,19 +861,19 @@ export class MeasureExporter extends XMLExporterBase {
     // TODO(msc): tempoIndicationToXml
     // TODO(msc): rehearsalMarkToXml
     // TODO(msc): textExpressionToXml
-    
+
     wrapObjectInAttributes(objectToWrap, methodToMx) {
         if (this.offsetInMeasure === 0.0) {
             return undefined;
         }
-        
+
         const mxAttributes = this.doc.createElement('attributes');
         const mxObj = methodToMx(objectToWrap);
         mxAttributes.appendChild(mxObj);
         this.xmlRoot.appendChild(mxAttributes);
         return mxAttributes;
     }
-    
+
     lyricToXml(l) {
         const mxLyric = this.doc.createElement('lyric');
         this._setTagTextFromAttribute(l, mxLyric, 'syllabic');
@@ -888,7 +891,7 @@ export class MeasureExporter extends XMLExporterBase {
         // setPrintObject
         // setColor
         // setPosition
-        return mxLyric;             
+        return mxLyric;
     }
     // TODO(msc): beamsToXml
     // TODO(msc): beamToXml
@@ -897,7 +900,7 @@ export class MeasureExporter extends XMLExporterBase {
     // TODO(msc): setBarline
     // TODO(msc): barlineToXml
     // TODO(msc): repeatToXml
-    
+
     setMxAttributesObjectForStartOfMeasure() {
         const m = this.stream;
         const mxAttributes = this.doc.createElement('attributes');
@@ -924,7 +927,7 @@ export class MeasureExporter extends XMLExporterBase {
                 appendToRoot = true;
             }
         }
-        
+
         // staffLayout
         // transpositionInterval
         // measureStyle
@@ -935,7 +938,7 @@ export class MeasureExporter extends XMLExporterBase {
     }
     // TODO(msc): measureStyle
     // TODO(msc): staffLayoutToXmlStaffDetails
-    
+
     timeSignatureToXml(ts) {
         const mxTime = this.doc.createElement('time');
         // synchronizeIds
@@ -950,7 +953,7 @@ export class MeasureExporter extends XMLExporterBase {
         // style
         return mxTime;
     }
-    
+
     keySignatureToXml(keyOrKeySignature) {
         const mxKey = this.doc.createElement('key');
         // synchronizeIds
@@ -958,13 +961,13 @@ export class MeasureExporter extends XMLExporterBase {
         // printStyle, print-object
         this.seta(keyOrKeySignature, mxKey, 'fifths', 'sharps');
         if (keyOrKeySignature.mode !== undefined) {
-            this.seta(keyOrKeySignature, mxKey, 'mode');            
+            this.seta(keyOrKeySignature, mxKey, 'mode');
         }
         // non-traditional
         // altered pitches
         return mxKey;
     }
-    
+
     clefToXml(clefObj) {
         const mxClef = this.doc.createElement('clef');
         // printstyle
@@ -977,7 +980,7 @@ export class MeasureExporter extends XMLExporterBase {
         }
         return mxClef;
     }
-    
+
     // intervalToXmlTranspose
     // setMxPrint
     // staffLayoutToXmlPrint
@@ -986,7 +989,7 @@ export class MeasureExporter extends XMLExporterBase {
         this.xmlRoot.setAttribute('number', m.measureNumberWithSuffix());
         // layoutWidth
     }
-    
+
     // setRbSpanners
     // transpose
 }

@@ -110,7 +110,7 @@ export class OffsetFilter extends StreamFilter {
     static get derivationStr() {
         return 'getElementsByOffset';
     }
-    
+
     constructor(
         offsetStart,
         offsetEnd,
@@ -119,7 +119,8 @@ export class OffsetFilter extends StreamFilter {
             mustFinishInSpan=false,
             mustBeginInSpan=true,
             includeElementsThatEndAtStart=true,
-        }={}) {
+        }={}
+    ) {
         super();
         this.offsetStart = offsetStart;
         this.offsetEnd = offsetEnd;
@@ -128,22 +129,22 @@ export class OffsetFilter extends StreamFilter {
         this.mustBeginInSpan = mustBeginInSpan;
         this.includeElementsThatEndAtStart = includeElementsThatEndAtStart;
 
-        
+
         this.zeroLengthSearch = false;
         if (offsetEnd === undefined) {
-            self.offsetEnd = offsetStart;
+            this.offsetEnd = offsetStart;
             this.zeroLengthSearch = true;
         } else if (offsetEnd <= offsetStart) {
             this.zeroLengthSearch = true;
         }
 
-    
+
     }
-    
+
     call(item, iterator) {
         return this.isElementOffsetInRange(item, item.offset);
     }
-    
+
     isElementOffsetInRange(e, offset) {
         if (offset > this.offsetEnd) {
             // anything that begins after the span is definitely out.
@@ -193,7 +194,7 @@ export class OffsetFilter extends StreamFilter {
             return false;
         }
         return true;
-    }    
+    }
 }
 
 // TODO: OffsetFilter (high priority)
