@@ -203,6 +203,7 @@ export class AbstractDiatonicScale extends AbstractScale {
         this.octaveDuplicating = true;
         this._buildNetwork(mode);
     }
+
     _buildNetwork(mode) {
         const srcList = ['M2', 'M2', 'm2', 'M2', 'M2', 'M2', 'm2'];
         let intervalList;
@@ -232,6 +233,7 @@ export class AbstractHarmonicMinorScale extends AbstractScale {
         this.octaveDuplicating = true;
         this._buildNetwork();
     }
+
     _buildNetwork() {
         const intervalList = ['M2', 'm2', 'M2', 'M2', 'm2', 'A2', 'm2'];
         this._net = [];
@@ -250,6 +252,7 @@ export class AbstractAscendingMelodicMinorScale extends AbstractScale {
         this.octaveDuplicating = true;
         this._buildNetwork();
     }
+
     _buildNetwork() {
         const intervalList = ['M2', 'm2', 'M2', 'M2', 'M2', 'M2', 'm2'];
         this._net = [];

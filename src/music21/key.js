@@ -139,10 +139,12 @@ export class KeySignature extends base.Music21Object {
     get sharps() {
         return this._sharps;
     }
+
     set sharps(s) {
         this._alteredPitchesCache = [];
         this._sharps = s;
     }
+
     /**
      * Gives the width in pixels necessary to represent the key signature.
      *
@@ -158,6 +160,7 @@ export class KeySignature extends base.Music21Object {
             return 12 * Math.abs(this.sharps) + 6;
         }
     }
+
     /**
      * An Array of Altered Pitches in KeySignature order (i.e., for flats, Bb, Eb, etc.)
      *
@@ -195,6 +198,7 @@ export class KeySignature extends base.Music21Object {
         this._alteredPitchesCache = post;
         return post;
     }
+
     /**
      * Return the name of the major key with this many sharps
      *
@@ -211,6 +215,7 @@ export class KeySignature extends base.Music21Object {
             return this.flatMapping[Math.abs(this.sharps)];
         }
     }
+
     /**
      * Return the name of the minor key with this many sharps
      * @returns {(string|undefined)}
@@ -223,6 +228,7 @@ export class KeySignature extends base.Music21Object {
             return this.flatMapping[Math.abs(tempSharps)];
         }
     }
+
     /**
      * returns the vexflow name (just the `majorName()` with "b" for "-") for
      * the key signature.  Does not create the object.
@@ -236,6 +242,7 @@ export class KeySignature extends base.Music21Object {
         const tempName = this.majorName();
         return tempName.replace(/-/g, 'b');
     }
+
     /**
      * Returns the accidental associated with a step in this key, or undefined if none.
      *
@@ -255,6 +262,7 @@ export class KeySignature extends base.Music21Object {
         }
         return undefined;
     }
+
     /**
      * Takes a pitch in C major and transposes it so that it has
      * the same step position in the current key signature.
@@ -353,6 +361,7 @@ export class Key extends KeySignature {
         }
         return tonicName;
     }
+
     /**
      * returns a {@link music21.scale.MajorScale} or {@link music21.scale.MinorScale}
      * object from the pitch object.
@@ -382,12 +391,15 @@ export class Key extends KeySignature {
     get isConcrete() {
         return this._scale.isConcrete;
     }
+
     getPitches(...args) {
         return this._scale.getPitches(...args);
     }
+
     pitchFromDegree(...args) {
         return this._scale.pitchFromDegree(...args);
     }
+
     getScaleDegreeFromPitch(...args) {
         return this._scale.getScaleDegreeFromPitch(...args);
     }

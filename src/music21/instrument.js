@@ -75,6 +75,7 @@ class Instrument extends base.Music21Object {
             instrument.find(instrumentName, this);
         }
     }
+
     /**
      * Assign an instrument to an unused midi channel.
      *
@@ -109,18 +110,22 @@ class Instrument extends base.Music21Object {
         // TODO: no channels! throw exception!
         return undefined;
     }
+
     get oggSoundfont() {
         return this.soundfontFn + '-ogg.js';
     }
+
     get mp3Soundfont() {
         return this.soundfontFn + '-mp3.js';
     }
+
     get midiChannel() {
         if (this._midiChannel === undefined) {
             this.autoAssignMidiChannel();
         }
         return this._midiChannel;
     }
+
     set midiChannel(ch) {
         this._midiChannel = ch;
     }

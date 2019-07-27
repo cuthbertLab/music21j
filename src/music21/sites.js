@@ -71,6 +71,7 @@ export class Sites {
     get length() {
         return this.siteDict.size;
     }
+
     includes(checkSite) {
         // noinspection JSUnusedLocalSymbols
         for (const [unused_key, siteRef] of this.siteDict) {
@@ -209,6 +210,7 @@ export class Sites {
         }
         return post;
     }
+
     getAttrByName(attrName) {
         for (const obj of this.yieldSites('reverse')) {
             if (obj === undefined) {

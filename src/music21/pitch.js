@@ -160,6 +160,7 @@ export class Accidental extends prebase.ProtoM21Object {
         }
 
     }
+
     /**
      * Return or set the name of the accidental ('flat', 'sharp', 'natural', etc.);
      *
@@ -171,6 +172,7 @@ export class Accidental extends prebase.ProtoM21Object {
     get name() {
         return this._name;
     }
+
     set name(n) {
         this.set(n);
     }
@@ -186,9 +188,11 @@ export class Accidental extends prebase.ProtoM21Object {
     get alter() {
         return this._alter;
     }
+
     set alter(alter) {
         this.set(alter);
     }
+
     /**
      * Return or set the modifier ('-', '#', '')
      *
@@ -200,9 +204,11 @@ export class Accidental extends prebase.ProtoM21Object {
     get modifier() {
         return this._modifier;
     }
+
     set modifier(modifier) {
         this.set(modifier);
     }
+
     /**
      * Returns the modifier for vexflow ('b', '#', 'n')
      *
@@ -231,6 +237,7 @@ export class Accidental extends prebase.ProtoM21Object {
             throw new Music21Exception('Vexflow does not support: ' + m);
         }
     }
+
     /**
      * Returns the modifier in unicode or
      * for double and triple accidentals, as a hex escape
@@ -245,8 +252,12 @@ export class Accidental extends prebase.ProtoM21Object {
 }
 pitch.Accidental = Accidental;
 
-pitch.nameToMidi = { C: 0, D: 2, E: 4, F: 5, G: 7, A: 9, B: 11 };
-pitch.nameToSteps = { C: 0, D: 1, E: 2, F: 3, G: 4, A: 5, B: 6 };
+pitch.nameToMidi = {
+    C: 0, D: 2, E: 4, F: 5, G: 7, A: 9, B: 11, 
+};
+pitch.nameToSteps = {
+    C: 0, D: 1, E: 2, F: 3, G: 4, A: 5, B: 6, 
+};
 pitch.stepsToName = ['C', 'D', 'E', 'F', 'G', 'A', 'B'];
 pitch.midiToName = [
     'C',
@@ -320,6 +331,7 @@ export class Pitch extends prebase.ProtoM21Object {
     get step() {
         return this._step;
     }
+
     set step(s) {
         if (s === '') {
             throw new TypeError('All notes must have a step');
@@ -334,12 +346,15 @@ export class Pitch extends prebase.ProtoM21Object {
         this._step = s;
         this.spellingIsInferred = false;
     }
+
     get octave() {
         return this._octave;
     }
+
     set octave(o) {
         this._octave = o;
     }
+
     get implicitOctave() {
         const o = this._octave;
         if (o === undefined) {
@@ -352,6 +367,7 @@ export class Pitch extends prebase.ProtoM21Object {
     get accidental() {
         return this._accidental;
     }
+
     set accidental(a) {
         if (typeof a !== 'object' && a !== undefined) {
             a = new pitch.Accidental(a);
@@ -359,6 +375,7 @@ export class Pitch extends prebase.ProtoM21Object {
         this._accidental = a;
         this.spellingIsInferred = false;
     }
+
     get name() {
         if (this.accidental === undefined) {
             return this.step;
@@ -366,6 +383,7 @@ export class Pitch extends prebase.ProtoM21Object {
             return this.step + this.accidental.modifier;
         }
     }
+
     set name(nn) {
         this.step = nn.slice(0, 1);
         const tempAccidental = nn.slice(1);
@@ -376,9 +394,11 @@ export class Pitch extends prebase.ProtoM21Object {
             this.accidental = undefined;
         }
     }
+
     get nameWithOctave() {
         return this.name + this.octave.toString();
     }
+
     set nameWithOctave(pn) {
         const storedOctave = pn.match(/\d+/);
         if (storedOctave !== undefined) {
@@ -389,6 +409,7 @@ export class Pitch extends prebase.ProtoM21Object {
             this.name = pn;
         }
     }
+
     get pitchClass() {
         return common.posMod(Math.round(this.ps), 12);
     }
@@ -396,18 +417,22 @@ export class Pitch extends prebase.ProtoM21Object {
     get diatonicNoteNum() {
         return this.octave * 7 + pitch.nameToSteps[this.step] + 1;
     }
+
     set diatonicNoteNum(newDNN) {
         newDNN -= 1; // makes math easier        
         this.octave = Math.floor(newDNN / 7);
         const mod7DNN = common.posMod(Math.round(newDNN), 7);
         this.step = pitch.stepsToName[mod7DNN];
     }
+
     get frequency() {
         return 440 * Math.pow(2, (this.ps - 69) / 12);
     }
+
     get midi() {
         return Math.floor(this.ps);
     }
+
     get ps() {
         let accidentalAlter = 0;
         if (this.accidental !== undefined) {
@@ -419,6 +444,7 @@ export class Pitch extends prebase.ProtoM21Object {
             + accidentalAlter
         );
     }
+
     set ps(ps) {
         this.name = pitch.midiToName[common.posMod(ps, 12)];
         this.octave = Math.floor(ps / 12) - 1;

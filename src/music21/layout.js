@@ -138,9 +138,11 @@ export class LayoutScore extends stream.Score {
         this.top = 0;
         this.left = 0;
     }
+
     get pages() {
         return this.getElementsByClass('Page');
     }
+
     get width() {
         if (this._width) {
             return this._width;
@@ -184,9 +186,11 @@ export class Page extends stream.Score {
         this.systemEnd = undefined;
         this.pageLayout = undefined;
     }
+
     get systems() {
         return this.getElementsByClass('System');
     }
+
     get width() {
         if (this._width) {
             return this._width;
@@ -224,9 +228,11 @@ export class System extends stream.Score {
         this.top = undefined;
         this.left = undefined;
     }
+
     get staves() {
         return this.getElementsByClass('Staff');
     }
+
     get width() {
         if (this._width) {
             return this._width;
@@ -251,6 +257,7 @@ export class Staff extends stream.Part {
         this.inheritedHeight = undefined;
         this.staffLayout = undefined;
     }
+
     get width() {
         if (this._width) {
             return this._width;

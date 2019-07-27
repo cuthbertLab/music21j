@@ -506,9 +506,11 @@ export class RomanNumeral extends harmony.Harmony {
             return this._scale;
         }
     }
+
     get key() {
         return this._scale;
     }
+
     set key(keyOrScale) {
         if (typeof keyOrScale === 'string') {
             this._scale = new key.Key(keyOrScale);
@@ -532,6 +534,7 @@ export class RomanNumeral extends harmony.Harmony {
     get figure() {
         return this._figure;
     }
+
     set figure(newFigure) {
         this._figure = newFigure;
         if (this._parsingComplete) {

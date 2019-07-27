@@ -118,16 +118,20 @@ export class Lyric extends prebase.ProtoM21Object {
             fontWeight: '',
         };
     }
+
     get identifier() {
         return this._identifier || this._number;
     }
+
     set identifier(i) {
         this._identifier = i;
     }
+
     // a property just to match m21p
     get number() {
         return this._number;
     }
+
     set number(n) {
         this._number = n;
     }
@@ -148,6 +152,7 @@ export class Lyric extends prebase.ProtoM21Object {
             return this.text;
         }
     }
+
     set rawText(t) {
         this.setTextAndSyllabic(t, true);
     }
@@ -228,6 +233,7 @@ export class GeneralNote extends base.Music21Object {
         /* TODO: editorial objects, color, addLyric, insertLyric, hasLyrics */
         /* Later: augmentOrDiminish, getGrace, */
     }
+
     get lyric() {
         if (this.lyrics.length > 0) {
             return this.lyrics[0].text;
@@ -235,12 +241,14 @@ export class GeneralNote extends base.Music21Object {
             return undefined;
         }
     }
+
     set lyric(value) {
         this.lyrics = [];
         if (value !== undefined && value !== false) {
             this.lyrics.push(new note.Lyric(value));
         }
     }
+
     get midiVolume() {
         let volume = this.volume;
         if (volume === undefined) {
@@ -259,6 +267,7 @@ export class GeneralNote extends base.Music21Object {
         volume = Math.floor(volume);
         return volume;
     }
+
     /**
      * Add a {@link music21.note.Lyric} object to the Note
      *
@@ -300,6 +309,7 @@ export class GeneralNote extends base.Music21Object {
             }
         }
     }
+
     /**
      * Change stem direction according to clef. Does nothing for GeneralNote; overridden in subclasses.
      *
@@ -309,6 +319,7 @@ export class GeneralNote extends base.Music21Object {
     setStemDirectionFromClef(clef) {
         return this;
     }
+
     getStemDirectionFromClef(clef) {
         return undefined;
     }
@@ -355,6 +366,7 @@ export class GeneralNote extends base.Music21Object {
             }
         }
     }
+
     /**
      * Play the current element as a MIDI note.
      *
@@ -529,24 +541,31 @@ export class Note extends NotRest {
     get name() {
         return this.pitch.name;
     }
+
     set name(nn) {
         this.pitch.name = nn;
     }
+
     get nameWithOctave() {
         return this.pitch.nameWithOctave;
     }
+
     set nameWithOctave(nn) {
         this.pitch.nameWithOctave = nn;
     }
+
     get step() {
         return this.pitch.step;
     }
+
     set step(nn) {
         this.pitch.step = nn;
     }
+
     get octave() {
         return this.pitch.octave;
     }
+
     set octave(nn) {
         this.pitch.octave = nn;
     }
@@ -554,6 +573,7 @@ export class Note extends NotRest {
     get pitches() {
         return [this.pitch];
     }
+
     set pitches(value) {
         this.pitch = value[0];
         // TODO: raise NoteException on index error.

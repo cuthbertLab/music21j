@@ -52,6 +52,7 @@ export class RenderStack {
         this.textVoices = [];
         this.voiceToStreamMapping = new Map();
     }
+
     /**
      * @returns {Array} this.voices and this.textVoices as one array
      */
@@ -61,6 +62,7 @@ export class RenderStack {
         t.push(...this.textVoices);
         return t;
     }
+
     /**
      * @returns {Array<Array>} each array represents one staff....
      * where this.voices and this.textVoices are all in that staff...
@@ -176,9 +178,11 @@ export class Renderer {
             return this._vfRenderer;
         }
     }
+
     set vfRenderer(vfr) {
         this._vfRenderer = vfr;
     }
+
     get ctx() {
         if (this._ctx !== undefined) {
             return this._ctx;
@@ -198,9 +202,11 @@ export class Renderer {
             return this._ctx;
         }
     }
+
     set ctx(ctx) {
         this._ctx = ctx;
     }
+
     /**
      *
      * main function to render a Stream.
@@ -240,6 +246,7 @@ export class Renderer {
         this.drawBeamGroups();
         this.drawTuplets();
     }
+
     /**
      * Prepares a scorelike stream (i.e., one with parts or
      * Streams that should be rendered vertically like parts)
@@ -256,6 +263,7 @@ export class Renderer {
         }
         this.addStaffConnectors(s);
     }
+
     /**
      *
      * Prepares a Partlike stream (that is one with Measures
@@ -283,6 +291,7 @@ export class Renderer {
         }
         this.prepareTies(p);
     }
+
     /**
      *
      * Prepares a score that arrived flat... sets up
@@ -296,6 +305,7 @@ export class Renderer {
         this.stacks[0] = stack;
         this.prepareTies(m);
     }
+
     /**
      *
      * Prepares a measure (w/ or w/o voices) or generic Stream -- makes accidentals,
@@ -330,6 +340,7 @@ export class Renderer {
         }
         return stack;
     }
+
     /**
      * Main internal routine to prepare a flat stream
      *
@@ -361,6 +372,7 @@ export class Renderer {
 
         return stave;
     }
+
     /**
      * Render the Vex.Flow.Stave from a flat stream and draws it.
      *
@@ -384,6 +396,7 @@ export class Renderer {
         stave.draw();
         return stave;
     }
+
     /**
      * Draws the Voices (music and text) from `this.stacks`
      *
@@ -398,6 +411,7 @@ export class Renderer {
             }
         }
     }
+
     /**
      * draws the tuplets.
      *
@@ -408,6 +422,7 @@ export class Renderer {
             vft.setContext(ctx).draw();
         });
     }
+
     /**
      * draws the vfTies
      *
@@ -418,6 +433,7 @@ export class Renderer {
             this.vfTies[i].setContext(ctx).draw();
         }
     }
+
     /**
      * Finds all tied notes and creates the proper Vex.Flow.StaveTie objects in
      * `this.vfTies`.
@@ -468,6 +484,7 @@ export class Renderer {
             }
         }
     }
+
     /**
      * Returns a Vex.Flow.Voice object with all the tickables (i.e., Notes, Voices, etc.)
      *
@@ -490,6 +507,7 @@ export class Renderer {
         voice.addTickables(notes);
         return voice;
     }
+
     /**
      * Returns a Vex.Flow.Voice with the lyrics set to render in the proper place.
      *
@@ -504,6 +522,7 @@ export class Renderer {
         textVoice.addTickables(lyrics);
         return textVoice;
     }
+
     /**
      * Aligns all of `this.stacks` (after they've been prepared) so they align properly.
      *
@@ -522,6 +541,7 @@ export class Renderer {
             }
         }
     }
+
     /**
      * Formats a single voice group from a stack.
      *
@@ -565,27 +585,27 @@ export class Renderer {
         }
         formatter.formatToStave(allTickables, stave);
 
-//        const vf_auto_stem = false;
-//        for (const voice of voices) {
-//            let activeBeamGroupNotes = [];
-//            for (let j = 0; j < voice.notes.length; j++) {
-//                const n = voice.notes[j];
-//                if (n.beams === undefined || !n.beams.getNumbers().includes(1)) {
-//                    continue;
-//                }
-//                const eighthNoteBeam = n.beams.getByNumber(1);
-//                if (eighthNoteBeam.type === 'start') {
-//                    activeBeamGroupNotes = [n];
-//                } else {
-//                    activeBeamGroupNotes.push(n);
-//                }
-//                if (eighthNoteBeam.type === 'stop') {
-//                    const vfBeam = new Vex.Flow.Beam(activeBeamGroupNotes, vf_auto_stem);
-//                    this.beamGroups.push(vfBeam);
-//                    activeBeamGroupNotes = []; // housekeeping, not really necessary...
-//                }
-//            }
-//        }
+        //        const vf_auto_stem = false;
+        //        for (const voice of voices) {
+        //            let activeBeamGroupNotes = [];
+        //            for (let j = 0; j < voice.notes.length; j++) {
+        //                const n = voice.notes[j];
+        //                if (n.beams === undefined || !n.beams.getNumbers().includes(1)) {
+        //                    continue;
+        //                }
+        //                const eighthNoteBeam = n.beams.getByNumber(1);
+        //                if (eighthNoteBeam.type === 'start') {
+        //                    activeBeamGroupNotes = [n];
+        //                } else {
+        //                    activeBeamGroupNotes.push(n);
+        //                }
+        //                if (eighthNoteBeam.type === 'stop') {
+        //                    const vfBeam = new Vex.Flow.Beam(activeBeamGroupNotes, vf_auto_stem);
+        //                    this.beamGroups.push(vfBeam);
+        //                    activeBeamGroupNotes = []; // housekeeping, not really necessary...
+        //                }
+        //            }
+        //        }
 
         if (autoBeam) {
             for (let i = 0; i < vf_voices.length; i++) {
@@ -615,6 +635,7 @@ export class Renderer {
         }
         return formatter;
     }
+
     /**
      * Draws the beam groups.
      *
@@ -625,6 +646,7 @@ export class Renderer {
             this.beamGroups[i].setContext(ctx).draw();
         }
     }
+
     /**
      * Return a new Vex.Flow.Stave object, which represents
      * a single MEASURE of notation in m21j
@@ -667,6 +689,7 @@ export class Renderer {
         const stave = new Vex.Flow.Stave(left, top, width);
         return stave;
     }
+
     /**
      * Sets the number of stafflines, puts the clef on the Stave,
      * adds keySignature, timeSignature, and rightBarline
@@ -737,6 +760,7 @@ export class Renderer {
             }
         }
     }
+
     /**
      * Sets the number of stafflines properly for the Stave object.
      *
@@ -784,6 +808,7 @@ export class Renderer {
             }
         }
     }
+
     /**
      * Gets the Vex.Flow.StaveNote objects from a Stream.
      *
@@ -962,6 +987,7 @@ export class Renderer {
         }
         return lyricsObjects;
     }
+
     /**
      * Creates a Vex.Flow.Voice of the appropriate length given a Stream.
      *
@@ -1028,6 +1054,7 @@ export class Renderer {
         vfv.setMode(Vex.Flow.Voice.Mode.SOFT);
         return vfv;
     }
+
     staffConnectorsMap(connectorType) {
         const connectorMap = {
             brace: Vex.Flow.StaveConnector.type.BRACE,

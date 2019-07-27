@@ -32,6 +32,7 @@ export class Expression extends base.Music21Object {
         this.vexflowModifier = '';
         this.setPosition = undefined;
     }
+
     /**
      * Renders this Expression as a Vex.Flow.Articulation
      *

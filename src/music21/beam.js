@@ -214,9 +214,11 @@ export class Beams extends prebase.ProtoM21Object {
         this.beamsList = [];
         this.feathered = false;
     }
+
     get length() {
         return this.beamsList.length;
     }
+
     /**
      * Append a new {@link music21.beam.Beam} object to this Beams, automatically creating the Beam
      *   object and incrementing the number count.
@@ -231,6 +233,7 @@ export class Beams extends prebase.ProtoM21Object {
         this.beamsList.push(obj);
         return obj;
     }
+
     /**
      * A quick way of setting the beams list for a particular duration, for
             instance, fill("16th") will clear the current list of beams in the
@@ -280,6 +283,7 @@ export class Beams extends prebase.ProtoM21Object {
         }
         return this;
     }
+
     /**
      * Get the beam with the given number or throw an exception.
      *
@@ -297,6 +301,7 @@ export class Beams extends prebase.ProtoM21Object {
         }
         return undefined;
     }
+
     /**
      * Get an Array of all the numbers for the beams
      *
@@ -309,6 +314,7 @@ export class Beams extends prebase.ProtoM21Object {
         }
         return numbers;
     }
+
     /**
      * Returns the type + "-" + direction (if direction is defined)
      * for the beam with the given number.
@@ -325,6 +331,7 @@ export class Beams extends prebase.ProtoM21Object {
             return x;
         }
     }
+
     /**
      * Get an Array of all the types for the beams
      *
@@ -337,6 +344,7 @@ export class Beams extends prebase.ProtoM21Object {
         }
         return types;
     }
+
     /**
      * Set all the {@link music21.beam.Beam} objects to a given type/direction
      *
@@ -355,6 +363,7 @@ export class Beams extends prebase.ProtoM21Object {
         }
         return this;
     }
+
     /**
      * Set the {@link music21.beam.Beam} object specified by `number` to a given type/direction
      *

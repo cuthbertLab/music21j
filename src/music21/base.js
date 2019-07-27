@@ -134,7 +134,8 @@ export class Music21Object extends prebase.ProtoM21Object {
                 site.elementOffset(this);
             } catch (e) {
                 throw new sites.SitesException(
-                        'activeSite cannot be set for an object not in the stream');
+                    'activeSite cannot be set for an object not in the stream'
+                );
             }
             this._activeSite = site;
         }
@@ -146,6 +147,7 @@ export class Music21Object extends prebase.ProtoM21Object {
         }
         return this._derivation;
     }
+
     set derivation(newDerivation) {
         this._derivation = newDerivation;
     }
@@ -183,6 +185,7 @@ export class Music21Object extends prebase.ProtoM21Object {
     get priority() {
         return this._priority;
     }
+
     set priority(p) {
         this._priority = p;
     }
@@ -194,6 +197,7 @@ export class Music21Object extends prebase.ProtoM21Object {
     get duration() {
         return this._duration;
     }
+
     set duration(newDuration) {
         if (typeof newDuration === 'object') {
             this._duration = newDuration;
@@ -204,9 +208,11 @@ export class Music21Object extends prebase.ProtoM21Object {
             this._duration.type = newDuration;
         }
     }
+
     get quarterLength() {
         return this.duration.quarterLength;
     }
+
     set quarterLength(ql) {
         this.duration.quarterLength = ql;
     }

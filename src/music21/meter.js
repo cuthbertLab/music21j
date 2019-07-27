@@ -65,34 +65,42 @@ export class TimeSignature extends base.Music21Object {
     get numerator() {
         return this._numerator;
     }
+
     set numerator(s) {
         this._numerator = s;
     }
+
     get denominator() {
         return this._denominator;
     }
+
     set denominator(s) {
         this._denominator = s;
     }
+
     get ratioString() {
         return this.numerator.toString() + '/' + this.denominator.toString();
     }
+
     set ratioString(meterString) {
         const meterList = meterString.split('/');
         this.numerator = parseInt(meterList[0]);
         this.denominator = parseInt(meterList[1]);
         this._beatGroups = [];
     }
+
     get barDuration() {
         const ql = 4.0 * this._numerator / this._denominator;
         return new duration.Duration(ql);
     }
+
     get beatGroups() {
         if (this._beatGroups.length === 0) {
             this._beatGroups = this.computeBeatGroups();
         }
         return this._beatGroups;
     }
+
     set beatGroups(newGroups) {
         this._beatGroups = newGroups;
     }
@@ -111,6 +119,7 @@ export class TimeSignature extends base.Music21Object {
             return this.numerator;
         }
     }
+
     /**
      *  Manually set the beatCount to an int.
      */
@@ -130,6 +139,7 @@ export class TimeSignature extends base.Music21Object {
         dur.quarterLength /= this.beatCount;
         return dur;
     }
+
     /**
      * Set beatDuration to a duration.Duration object or
      * if the client can handle it, a list of Duration objects...
@@ -258,7 +268,7 @@ export class TimeSignature extends base.Music21Object {
             } else if (beamPrevious
                         && beamPrevious.getNumbers().includes(beamNumber)
                         && ['stop', 'partial-left'].includes(beamPrevious.getTypeByNumber(beamNumber))
-                       ) {
+            ) {
                 if (beamNext !== undefined) {
                     beamType = 'start';
                 } else {

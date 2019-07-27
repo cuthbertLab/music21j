@@ -170,6 +170,7 @@ export class Stream extends base.Music21Object {
             );
         };
     }
+
     * [Symbol.iterator]() {
         if (this.autoSort && !this.isSorted) {
             this.sort();
@@ -198,9 +199,11 @@ export class Stream extends base.Music21Object {
         }
         return new duration.Duration(this.highestTime);
     }
+
     set duration(newDuration) {
         this._duration = newDuration;
     }
+
     get highestTime() {
         let highestTime = 0.0;
         for (const el of this) {
@@ -257,9 +260,11 @@ export class Stream extends base.Music21Object {
     get notes() {
         return this.getElementsByClass(['Note', 'Chord']);
     }
+
     get notesAndRests() {
         return this.getElementsByClass('GeneralNote');
     }
+
     get tempo() {
         if (this._tempo === undefined && this.activeSite !== undefined) {
             return this.activeSite.tempo;
@@ -269,9 +274,11 @@ export class Stream extends base.Music21Object {
             return this._tempo;
         }
     }
+
     set tempo(newTempo) {
         this._tempo = newTempo;
     }
+
     get instrument() {
         if (this._instrument === undefined && this.activeSite !== undefined) {
             return this.activeSite.instrument;
@@ -279,6 +286,7 @@ export class Stream extends base.Music21Object {
             return this._instrument;
         }
     }
+
     set instrument(newInstrument) {
         if (typeof newInstrument === 'string') {
             newInstrument = new instrument.Instrument(newInstrument);
@@ -293,11 +301,11 @@ export class Stream extends base.Music21Object {
         }
         // should be:
         // const contextClef = this.getContextByClass('Clef');
-//        const context = this.getContextByClass('Stream', { getElementMethod: 'getElementBefore' });
-//        let contextObj;
-//        if (context !== undefined && context !== this) {
-//            contextObj = context[privAttr];
-//        }
+        //        const context = this.getContextByClass('Stream', { getElementMethod: 'getElementBefore' });
+        //        let contextObj;
+        //        if (context !== undefined && context !== this) {
+        //            contextObj = context[privAttr];
+        //        }
         for (const site of this.sites.yieldSites()) {
             if (site === undefined) {
                 continue;
@@ -324,6 +332,7 @@ export class Stream extends base.Music21Object {
     get clef() {
         return this.getSpecialContext('clef', true);
     }
+
     set clef(newClef) {
         const oldClef = this._firstElementContext('clef');
         if (oldClef !== undefined) {
@@ -337,6 +346,7 @@ export class Stream extends base.Music21Object {
     get keySignature() {
         return this.getSpecialContext('keySignature', true);
     }
+
     set keySignature(newKeySignature) {
         const oldKS = this._firstElementContext('keySignature');
         if (oldKS !== undefined) {
@@ -350,6 +360,7 @@ export class Stream extends base.Music21Object {
     get timeSignature() {
         return this.getSpecialContext('timeSignature', true);
     }
+
     set timeSignature(newTimeSignature) {
         if (typeof newTimeSignature === 'string') {
             newTimeSignature = new meter.TimeSignature(newTimeSignature);
@@ -366,6 +377,7 @@ export class Stream extends base.Music21Object {
     get autoBeam() {
         return this._specialContext('autoBeam');
     }
+
     set autoBeam(ab) {
         this._autoBeam = ab;
     }
@@ -382,6 +394,7 @@ export class Stream extends base.Music21Object {
         }
         return baseMaxSystemWidth / this.renderOptions.scaleFactor.x;
     }
+
     set maxSystemWidth(newSW) {
         this.renderOptions.maxSystemWidth
             = newSW * this.renderOptions.scaleFactor.x;
@@ -390,9 +403,11 @@ export class Stream extends base.Music21Object {
     get parts() {
         return this.getElementsByClass('Part');
     }
+
     get measures() {
         return this.getElementsByClass('Measure');
     }
+
     get voices() {
         return this.getElementsByClass('Voice');
     }
@@ -400,9 +415,11 @@ export class Stream extends base.Music21Object {
     get length() {
         return this._elements.length;
     }
+
     get elements() {
         return this._elements;
     }
+
     set elements(newElements) {
         let highestOffsetSoFar = 0.0;
         this.clear();
@@ -575,8 +592,7 @@ export class Stream extends base.Music21Object {
                 streamsOnly,
                 restoreActiveSites,
                 includeSelf,
-            }
-        );
+            });
         if (classFilter !== undefined) {
             ri.addFilter(new filters.ClassFilter(classFilter));
         }
@@ -631,8 +647,7 @@ export class Stream extends base.Music21Object {
         }
         this._elements.sort((a, b) => this._offsetDict.get(a) - this._offsetDict.get(b)
             || a.priority - b.priority
-            || a.classSortOrder - b.classSortOrder
-        );
+            || a.classSortOrder - b.classSortOrder);
         this.isSorted = true;
         return this;
     }
@@ -726,7 +741,7 @@ export class Stream extends base.Music21Object {
             // endElements
             throw new StreamException(
                 `cannot find object (${el}) in Stream`
-                );
+            );
         }
         return index;
     }
@@ -758,10 +773,10 @@ export class Stream extends base.Music21Object {
      * Remove an object from this Stream.  shiftOffsets and recurse do nothing.
      */
     remove(targetOrList,
-            {
-                shiftOffsets=false,
-                recurse=false,
-            } = {}) {
+        {
+            shiftOffsets=false,
+            recurse=false,
+        } = {}) {
         if (shiftOffsets === true) {
             throw new StreamException('sorry cannot shiftOffsets yet');
         }
@@ -775,9 +790,9 @@ export class Stream extends base.Music21Object {
         } else {
             targetList = targetOrList;
         }
-//        if (targetList.length > 1) {
-//            sort targetList
-//        }
+        //        if (targetList.length > 1) {
+        //            sort targetList
+        //        }
         // let shiftDur = 0.0; // for shiftOffsets
         let i = -1;
         for (const target of targetList) {
@@ -806,33 +821,33 @@ export class Stream extends base.Music21Object {
             target.sites.remove(this);
             // remove from sites if needed.
 
-//            if (shiftOffsets) {
-//                const matchDuration = target.duration.quarterLength;
-//                const shiftedRegionStart = matchOffset + matchDuration;
-//                shiftDur += matchDuration;
-//                let shiftedRegionEnd;
-//                if ((i + 1) < targetList.length) {
-//                    const nextElIndex = this.index(targetList[i + 1]);
-//                    const nextElOffset = this._offsetDict[nextElIndex];
-//                    shiftedRegionEnd = nextElOffset;
-//                } else {
-//                    shiftedRegionEnd = this.duration.quarterLength;
-//                }
-//                if (shiftDur !== 0.0) {
-//                    for (const e of this.getElementsByOffset(
-//                       shiftedRegionStart,
-//                       shiftedRegionEnd,
-//                       {
-//                           includeEndBoundary: false,
-//                           mustFinishInSpan: false,
-//                           mustBeginInSpan: false,
-//                       }
-//                    )) {
-//                        const elementOffset = this.elementOffset(e);
-//                        this.setElementOffset(e, elementOffset - shiftDur);
-//                    }
-//                }
-//            }
+            //            if (shiftOffsets) {
+            //                const matchDuration = target.duration.quarterLength;
+            //                const shiftedRegionStart = matchOffset + matchDuration;
+            //                shiftDur += matchDuration;
+            //                let shiftedRegionEnd;
+            //                if ((i + 1) < targetList.length) {
+            //                    const nextElIndex = this.index(targetList[i + 1]);
+            //                    const nextElOffset = this._offsetDict[nextElIndex];
+            //                    shiftedRegionEnd = nextElOffset;
+            //                } else {
+            //                    shiftedRegionEnd = this.duration.quarterLength;
+            //                }
+            //                if (shiftDur !== 0.0) {
+            //                    for (const e of this.getElementsByOffset(
+            //                       shiftedRegionStart,
+            //                       shiftedRegionEnd,
+            //                       {
+            //                           includeEndBoundary: false,
+            //                           mustFinishInSpan: false,
+            //                           mustBeginInSpan: false,
+            //                       }
+            //                    )) {
+            //                        const elementOffset = this.elementOffset(e);
+            //                        this.setElementOffset(e, elementOffset - shiftDur);
+            //                    }
+            //                }
+            //            }
         }
         this.coreElementsChanged({ clearIsSorted: false });
     }
@@ -917,7 +932,7 @@ export class Stream extends base.Music21Object {
                 return;
             } else {
                 throw new StreamException(
-                        'Cannot set the offset for elemenet '
+                    'Cannot set the offset for elemenet '
                             + el.toString()
                             + ', not in Stream'
                 );
@@ -1359,24 +1374,24 @@ export class Stream extends base.Music21Object {
         return this.iter.getElementsNotOfClass(classList);
     }
 
-//    getElementsByClass(classList) {
-//        const tempEls = [];
-//        for (const thisEl of this) {
-//            // console.warn(thisEl);
-//            if (thisEl.isClassOrSubclass === undefined) {
-//                console.error(
-//                    'what the hell is a ',
-//                    thisEl,
-//                    'doing in a Stream?'
-//                );
-//            } else if (thisEl.isClassOrSubclass(classList)) {
-//                tempEls.push(thisEl);
-//            }
-//        }
-//        const newSt = this.clone(false);
-//        newSt.elements = tempEls;
-//        return newSt;
-//    }
+    //    getElementsByClass(classList) {
+    //        const tempEls = [];
+    //        for (const thisEl of this) {
+    //            // console.warn(thisEl);
+    //            if (thisEl.isClassOrSubclass === undefined) {
+    //                console.error(
+    //                    'what the hell is a ',
+    //                    thisEl,
+    //                    'doing in a Stream?'
+    //                );
+    //            } else if (thisEl.isClassOrSubclass(classList)) {
+    //                tempEls.push(thisEl);
+    //            }
+    //        }
+    //        const newSt = this.clone(false);
+    //        newSt.elements = tempEls;
+    //        return newSt;
+    //    }
 
     /**
      * Returns a new stream [StreamIterator does not yet exist in music21j]
@@ -1395,7 +1410,8 @@ export class Stream extends base.Music21Object {
             mustBeginInSpan=true,
             includeElementsThatEndAtStart=true,
             classList=undefined,
-        }={}) {
+        }={}
+    ) {
 
         let s;
         if (classList !== undefined) {
@@ -1567,6 +1583,7 @@ export class Stream extends base.Music21Object {
         /* does nothing for standard streams ... */
         return this;
     }
+
     /**
      * Resets all the RenderOptions back to defaults. Can run recursively
      * and can also preserve the `RenderOptions.events` object.
@@ -1936,6 +1953,7 @@ export class Stream extends base.Music21Object {
         console.warn('createCanvas is deprecated, use createDOM');
         return this.createDOM(width, height, elementType);
     }
+
     /**
      * Creates a new svg and renders vexflow on it
      *
@@ -2187,6 +2205,7 @@ export class Stream extends base.Music21Object {
         const xPxScaled = xPx / pixelScaling.x;
         return [xPxScaled, yPxScaled];
     }
+
     /**
      *
      * Given a Y position find the diatonicNoteNum that a note at that position would have.
@@ -2492,6 +2511,7 @@ export class Stream extends base.Music21Object {
         }
         return $buttonDiv;
     }
+
     /**
      *
      * @returns {jQuery} a Div containing two buttons -- play and stop
@@ -2560,6 +2580,7 @@ export class Stream extends base.Music21Object {
         }, 1000);
         return this;
     }
+
     /**
      * Does this stream have a {@link music21.stream.Voice} inside it?
      *
@@ -2665,6 +2686,7 @@ export class Part extends Stream {
          */
         return measureWidths;
     }
+
     /**
      * Overrides the default music21.stream.Stream#estimateStaffLength
      *
@@ -2696,6 +2718,7 @@ export class Part extends Stream {
         tempM.elements = this;
         return tempM.estimateStaffLength();
     }
+
     /**
      * Divide a part up into systems and fix the measure
      * widths so that they are all even.
@@ -2823,6 +2846,7 @@ export class Part extends Stream {
 
         return systemCurrentWidths;
     }
+
     /**
      * overrides music21.stream.Stream#setSubstreamRenderOptions
      *
@@ -3033,6 +3057,7 @@ export class Score extends Stream {
             return c;
         }
     }
+
     set clef(newClef) {
         super.clef = newClef;
     }
@@ -3066,6 +3091,7 @@ export class Score extends Stream {
             .get(0)
             .getStreamFromScaledXandSystemIndex(xPxScaled, systemIndex);
     }
+
     /**
      * overrides music21.stream.Stream#setSubstreamRenderOptions
      *
@@ -3093,6 +3119,7 @@ export class Score extends Stream {
         this.renderOptions.height = this.estimateStreamHeight();
         return this;
     }
+
     /**
      * Overrides the default music21.stream.Stream#estimateStaffLength
      *
@@ -3142,6 +3169,7 @@ export class Score extends Stream {
         }
         return this;
     }
+
     /**
      * Overrides the default music21.stream.Stream#stopPlayScore()
      *
@@ -3155,6 +3183,7 @@ export class Score extends Stream {
         }
         return this;
     }
+
     /*
      * Svg routines
      */

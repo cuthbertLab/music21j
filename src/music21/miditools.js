@@ -67,6 +67,7 @@ export class Event {
             this.velocity = this.data3;
         }
     }
+
     /**
      * Calls MIDI.noteOn or MIDI.noteOff for the note
      * represented by the Event (if appropriate)
@@ -87,6 +88,7 @@ export class Event {
             console.warn('could not playback note because no MIDI connection defined');
         }
     }
+
     /**
      * Makes a {@link music21.note.Note} object from the event's midiNote number.
      *
@@ -478,6 +480,7 @@ export class MidiPlayer {
         this.speed = 1.0;
         this.$playDiv = undefined;
     }
+
     /**
      * @param {jQuery|Node} [where]
      * @returns {jQuery}
@@ -533,9 +536,11 @@ export class MidiPlayer {
     playPng() {
         return common.urls.midiPlayer + '/play.png';
     }
+
     pausePng() {
         return common.urls.midiPlayer + '/pause.png';
     }
+
     stopPng() {
         return common.urls.midiPlayer + '/stop.png';
     }

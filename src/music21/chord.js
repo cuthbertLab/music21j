@@ -84,6 +84,7 @@ export class Chord extends note.NotRest {
     get length() {
         return this._notes.length;
     }
+
     get pitches() {
         const tempPitches = [];
         for (let i = 0; i < this._notes.length; i++) {
@@ -91,6 +92,7 @@ export class Chord extends note.NotRest {
         }
         return tempPitches;
     }
+
     set pitches(tempPitches) {
         this._notes = [];
         for (let i = 0; i < tempPitches.length; i++) {
@@ -113,6 +115,7 @@ export class Chord extends note.NotRest {
         this._cache = {};
         this._overrides = {};
     }
+
     get orderedPitchClasses() {
         const pcGroup = [];
         for (const p of this.pitches) {
@@ -231,13 +234,13 @@ export class Chord extends note.NotRest {
         return chordTables.addressToIntervalVector(this.chordTablesAddress);
     }
 
-//    get intervalVectorString() {
-//
-//    }
-//
-//    static formatVectorString() {
-//        // needs pitch._convertPitchClassToStr
-//    }
+    //    get intervalVectorString() {
+    //
+    //    }
+    //
+    //    static formatVectorString() {
+    //        // needs pitch._convertPitchClassToStr
+    //    }
 
     setStemDirectionFromClef(clef) {
         if (clef === undefined) {
@@ -263,6 +266,7 @@ export class Chord extends note.NotRest {
             return this;
         }
     }
+
     /**
      * Adds a note to the chord, sorting the note array
      *
@@ -319,6 +323,7 @@ export class Chord extends note.NotRest {
         const closedChord = new chord.Chord(nonDuplicatingPitches);
         return closedChord;
     }
+
     /**
      * Finds the Root of the chord.
      *
@@ -382,6 +387,7 @@ export class Chord extends note.NotRest {
         this._cache.root = newRoot;
         return newRoot;
     }
+
     /**
      * Returns the number of semitones above the root that a given chordstep is.
      *
@@ -407,6 +413,7 @@ export class Chord extends note.NotRest {
             return semitones;
         }
     }
+
     /**
      * Gets the lowest note (based on .ps not name) in the chord.
      *
@@ -427,6 +434,7 @@ export class Chord extends note.NotRest {
         }
         return lowest;
     }
+
     /**
      * Counts the number of non-duplicate pitch MIDI Numbers in the chord.
      *
@@ -455,6 +463,7 @@ export class Chord extends note.NotRest {
             return false;
         }
     }
+
     /**
     *
     * @returns {Boolean}
@@ -471,6 +480,7 @@ export class Chord extends note.NotRest {
             return false;
         }
     }
+
     /**
     *
     * @returns {Boolean}
@@ -487,6 +497,7 @@ export class Chord extends note.NotRest {
             return false;
         }
     }
+
     /**
     *
     * @returns {Boolean}
@@ -536,10 +547,10 @@ export class Chord extends note.NotRest {
             if (!intervalArray.includes(thisInterval.chromatic.mod12)) {
                 return false;
             }
-//            // check if it doesn't have any other pitches, such as C E F- G Bb != Dominant Seventh
-//            if (!ignoreSpelling && !chordalNames.includes(thisPitch.name)) {
-//                return false;
-//            }
+            //            // check if it doesn't have any other pitches, such as C E F- G Bb != Dominant Seventh
+            //            if (!ignoreSpelling && !chordalNames.includes(thisPitch.name)) {
+            //                return false;
+            //            }
         }
         return true;
 
@@ -594,6 +605,7 @@ export class Chord extends note.NotRest {
         }
         return undefined;
     }
+
     /**
      * @param {Object} options - a dictionary of options `{clef: {@music21.clef.Clef} }` is especially important
      * @returns {Vex.Flow.StaveNote}
@@ -639,6 +651,7 @@ export class Chord extends note.NotRest {
         this.activeVexflowNote = vfn;
         return vfn;
     }
+
     /**
      * Returns the Pitch object that is a Generic interval (2, 3, 4, etc., but not 9, 10, etc.) above
      * the `.root()`
@@ -676,9 +689,11 @@ export class Chord extends note.NotRest {
     get third() {
         return this.getChordStep(3);
     }
+
     get fifth() {
         return this.getChordStep(5);
     }
+
     get seventh() {
         return this.getChordStep(7);
     }

@@ -56,6 +56,7 @@ export class Tie extends prebase.ProtoM21Object {
     get type() {
         return this._type;
     }
+
     set type(newType) {
         if (!VALID_TIE_TYPES.includes(newType)) {
             throw new Music21Exception(

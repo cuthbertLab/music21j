@@ -103,6 +103,7 @@ export class Clef extends base.Music21Object {
     stringInfo() {
         return '';
     }
+
     /**
      * returns a new pitch object if the clef name is not Treble
      * designed so it would look the same as it would in treble clef.
@@ -379,8 +380,7 @@ clef.clefFromString = function clefFromString(clefString, octaveShift) {
         }
     }
 
-    const arrayEqual = (a, b) =>
-        a.length === b.length && a.every((el, ix) => el === b[ix]);
+    const arrayEqual = (a, b) => a.length === b.length && a.every((el, ix) => el === b[ix]);
 
     const params = [thisType, lineNum, octaveShift];
     if (arrayEqual(params, ['G', 2, 0])) {

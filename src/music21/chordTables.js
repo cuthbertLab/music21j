@@ -321,16 +321,18 @@ export const FORTE = [undefined, monad, diad, trichord, tetrachord, pentachord, 
 //-------------------------------------------------------------------------------
 
 // cardinality 1
-const card_1 ={ '1,0': [FORTE[1][1][0], // 1
-    FORTE[1][1][2], // var
-    FORTE[1][1][1], //icv
-],
+const card_1 ={
+    '1,0': [FORTE[1][1][0], // 1
+        FORTE[1][1][2], // var
+        FORTE[1][1][1], //icv
+    ],
 };
 // cardinality 2
-const card_2 ={ '1,0': [FORTE[2][1][0], // 2
-    FORTE[2][1][2], // var
-    FORTE[2][1][1], //icv
-],
+const card_2 ={
+    '1,0': [FORTE[2][1][0], // 2
+        FORTE[2][1][2], // var
+        FORTE[2][1][1], //icv
+    ],
     '2,0': [FORTE[2][2][0], // 3
         FORTE[2][2][2], // var
         FORTE[2][2][1], //icv
@@ -353,10 +355,11 @@ const card_2 ={ '1,0': [FORTE[2][1][0], // 2
     ],
 };
 // cardinality 3
-const card_3 ={ '1,0': [FORTE[3][1][0], // 8
-    FORTE[3][1][2], // var
-    FORTE[3][1][1], //icv
-],
+const card_3 ={
+    '1,0': [FORTE[3][1][0], // 8
+        FORTE[3][1][2], // var
+        FORTE[3][1][1], //icv
+    ],
     '2,1': [FORTE[3][2][0], // 9
         FORTE[3][2][2], // var
         FORTE[3][2][1], //icv
@@ -431,10 +434,11 @@ const card_3 ={ '1,0': [FORTE[3][1][0], // 8
     ],
 };
 // cardinality 4
-const card_4 ={ '1,0': [FORTE[4][1][0], // 27
-    FORTE[4][1][2], // var
-    FORTE[4][1][1], //icv
-],
+const card_4 ={
+    '1,0': [FORTE[4][1][0], // 27
+        FORTE[4][1][2], // var
+        FORTE[4][1][1], //icv
+    ],
     '2,1': [FORTE[4][2][0], // 28
         FORTE[4][2][2], // var
         FORTE[4][2][1], //icv
@@ -605,10 +609,11 @@ const card_4 ={ '1,0': [FORTE[4][1][0], // 27
     ],
 };
 // cardinality 5
-const card_5 ={ '1,0': [FORTE[5][1][0], // 70
-    FORTE[5][1][2], // var
-    FORTE[5][1][1], //icv
-],
+const card_5 ={
+    '1,0': [FORTE[5][1][0], // 70
+        FORTE[5][1][2], // var
+        FORTE[5][1][1], //icv
+    ],
     '2,1': [FORTE[5][2][0], // 71
         FORTE[5][2][2], // var
         FORTE[5][2][1], //icv
@@ -871,10 +876,11 @@ const card_5 ={ '1,0': [FORTE[5][1][0], // 70
     ],
 };
 // cardinality 6
-const card_6 ={ '1,0': [FORTE[6][1][0], // 136
-    FORTE[6][1][2], // var
-    FORTE[6][1][1], //icv
-],
+const card_6 ={
+    '1,0': [FORTE[6][1][0], // 136
+        FORTE[6][1][2], // var
+        FORTE[6][1][1], //icv
+    ],
     '2,1': [FORTE[6][2][0], // 137
         FORTE[6][2][2], // var
         FORTE[6][2][1], //icv
@@ -1193,10 +1199,11 @@ const card_6 ={ '1,0': [FORTE[6][1][0], // 136
     ],
 };
 // cardinality 7
-const card_7 ={ '1,0': [FORTE[7][1][0], // 216
-    FORTE[7][1][2], // var
-    FORTE[7][1][1], //icv
-],
+const card_7 ={
+    '1,0': [FORTE[7][1][0], // 216
+        FORTE[7][1][2], // var
+        FORTE[7][1][1], //icv
+    ],
     '2,1': [FORTE[7][2][0], // 217
         FORTE[7][2][2], // var
         FORTE[7][2][1], //icv
@@ -1459,10 +1466,11 @@ const card_7 ={ '1,0': [FORTE[7][1][0], // 216
     ],
 };
 // cardinality 8
-const card_8 ={ '1,0': [FORTE[8][1][0], // 282
-    FORTE[8][1][2], // var
-    FORTE[8][1][1], //icv
-],
+const card_8 ={
+    '1,0': [FORTE[8][1][0], // 282
+        FORTE[8][1][2], // var
+        FORTE[8][1][1], //icv
+    ],
     '2,1': [FORTE[8][2][0], // 283
         FORTE[8][2][2], // var
         FORTE[8][2][1], //icv
@@ -1633,10 +1641,11 @@ const card_8 ={ '1,0': [FORTE[8][1][0], // 282
     ],
 };
 // cardinality 9
-const card_9 ={ '1,0': [FORTE[9][1][0], // 325
-    FORTE[9][1][2], // var
-    FORTE[9][1][1], //icv
-],
+const card_9 ={
+    '1,0': [FORTE[9][1][0], // 325
+        FORTE[9][1][2], // var
+        FORTE[9][1][1], //icv
+    ],
     '2,1': [FORTE[9][2][0], // 326
         FORTE[9][2][2], // var
         FORTE[9][2][1], //icv
@@ -1711,10 +1720,11 @@ const card_9 ={ '1,0': [FORTE[9][1][0], // 325
     ],
 };
 // cardinality 10
-const card_10 ={ '1,0': [FORTE[10][1][0], // 344
-    FORTE[10][1][2], // var
-    FORTE[10][1][1], //icv
-],
+const card_10 ={
+    '1,0': [FORTE[10][1][0], // 344
+        FORTE[10][1][2], // var
+        FORTE[10][1][1], //icv
+    ],
     '2,0': [FORTE[10][2][0], // 345
         FORTE[10][2][2], // var
         FORTE[10][2][1], //icv
@@ -1737,20 +1747,23 @@ const card_10 ={ '1,0': [FORTE[10][1][0], // 344
     ],
 };
 // cardinality 11
-const card_11 ={ '1,0': [FORTE[11][1][0], // 350
-    FORTE[11][1][2], // var
-    FORTE[11][1][1], //icv
-],
+const card_11 ={
+    '1,0': [FORTE[11][1][0], // 350
+        FORTE[11][1][2], // var
+        FORTE[11][1][1], //icv
+    ],
 };
 // cardinality 12
-const card_12 ={ '1,0': [FORTE[12][1][0], // 351
-    FORTE[12][1][2], // var
-    FORTE[12][1][1], //icv
-],
+const card_12 ={
+    '1,0': [FORTE[12][1][0], // 351
+        FORTE[12][1][2], // var
+        FORTE[12][1][1], //icv
+    ],
 };
 
 //-------------------------------------------------------------------------------
-export const SCDICT = { 1: card_1,
+export const SCDICT = {
+    1: card_1,
     2: card_2,
     3: card_3,
     4: card_4,
@@ -1766,13 +1779,18 @@ export const SCDICT = { 1: card_1,
 
 //-------------------------------------------------------------------------------
 // thes dicts provide index max fr cardinality key
-export const TNMAX = { 0: 1, 1: 1, 2: 6, 3: 19, 4: 43, 5: 66, 6: 80,
-    7: 66, 8: 43, 9: 19, 10: 6, 11: 1, 12: 1 };
-export const TNIMAX = { 0: 1, 1: 1, 2: 6, 3: 12, 4: 29, 5: 38, 6: 50,
-    7: 38, 8: 29, 9: 12, 10: 6, 11: 1, 12: 1 };
+export const TNMAX = {
+    0: 1, 1: 1, 2: 6, 3: 19, 4: 43, 5: 66, 6: 80,
+    7: 66, 8: 43, 9: 19, 10: 6, 11: 1, 12: 1, 
+};
+export const TNIMAX = {
+    0: 1, 1: 1, 2: 6, 3: 12, 4: 29, 5: 38, 6: 50,
+    7: 38, 8: 29, 9: 12, 10: 6, 11: 1, 12: 1, 
+};
 
 // used to find TnI index numbers under Tn classification
-export const TNREF = {  '1,1,0': 1,
+export const TNREF = {
+    '1,1,0': 1,
     '2,1,0': 1,
     '2,2,0': 2,
     '2,3,0': 3,
@@ -2142,10 +2160,14 @@ export const TNREF = {  '1,1,0': 1,
 
 export const SCREF = {
     '1,1,0': { 'name': ['unison', 'monad', 'singleton'] },
-    '2,1,0': { 'name': ['interval class 1', 'minor second', 'm2', 
-        'half step', 'semitone'] },
-    '2,2,0': { 'name': ['interval class 2', 'major second', 'M2', 
-        'whole step', 'whole tone'] },
+    '2,1,0': {
+        'name': ['interval class 1', 'minor second', 'm2', 
+            'half step', 'semitone'], 
+    },
+    '2,2,0': {
+        'name': ['interval class 2', 'major second', 'M2', 
+            'whole step', 'whole tone'], 
+    },
     '2,3,0': { 'name': ['interval class 3', 'minor third', 'm3'] },
     '2,4,0': { 'name': ['interval class 4', 'major third', 'M3'] },
     '2,5,0': { 'name': ['interval class 5', 'perfect fourth', 'P4'] },
@@ -2208,8 +2230,10 @@ export const SCREF = {
     '4,25,0': { 'name': ["Messiaen's truncated mode 6", 'French augmented sixth chord'] },
     '4,26,0': { 'name': ['minor seventh chord'] },
     '4,27,1': { 'name': ['half-diminished seventh chord'] },
-    '4,27,-1': { 'name': ['dominant seventh chord',
-        'major minor seventh chord', 'German augmented sixth chord', 'Swiss augmented sixth chord'] },
+    '4,27,-1': {
+        'name': ['dominant seventh chord',
+            'major minor seventh chord', 'German augmented sixth chord', 'Swiss augmented sixth chord'], 
+    },
     '4,28,0': { 'name': ['diminished seventh chord', 'equal 4-part octave division'] },
     '4,29,1': { 'name': ['all-interval tetrachord'] },
     '4,29,-1': { 'name': ['all-interval tetrachord'] },
@@ -2246,11 +2270,15 @@ export const SCREF = {
     '5,18,-1': { 'name': ['Roma [Gypsy] pentachord'] },
     '5,19,1': { 'name': ['Javanese pentachord'] },
     '5,19,-1': { 'name': ['Balinese pentachord'] },
-    '5,20,1': { 'name': ['Balinese Pelog pentatonic', 
-        'quasi raga Bhupala', 'quasi raga Bibhas'] },
+    '5,20,1': {
+        'name': ['Balinese Pelog pentatonic', 
+            'quasi raga Bhupala', 'quasi raga Bibhas'], 
+    },
     '5,20,-1': { 'name': ['Hirajoshi pentatonic', 'Iwato', 'Sakura', 'quasi raga Saveri'] },
-    '5,21,1': { 'name': ['major-augmented ninth chord', 'Syrian pentatonic',
-        'quasi raga Megharanji'] },
+    '5,21,1': {
+        'name': ['major-augmented ninth chord', 'Syrian pentatonic',
+            'quasi raga Megharanji'], 
+    },
     '5,21,-1': { 'name': ['Lebanese pentachord', 'augmented-minor chord'] },
     '5,22,0': { 'name': ['Persian pentamirror', 'quasi raga Ramkali'] },
     '5,23,1': { 'name': ['dorian pentachord', 'minor pentachord'] },
@@ -2274,17 +2302,23 @@ export const SCREF = {
     '5,32,1': { 'name': ['Neapolitan pentachord'] },
     '5,32,-1': { 'name': ['Neapolitan pentachord'] },
     '5,33,0': { 'name': ['whole-tone pentachord'] },
-    '5,34,0': { 'name': ['dominant-ninth', 'major-minor', 'Prometheus pentamirror',
-        'dominant pentatonic'] },
-    '5,35,0': { 'name': ['major pentatonic', 'black-key scale', 'blues pentatonic',
-        'slendro', 'quartal pentamirror'] },
+    '5,34,0': {
+        'name': ['dominant-ninth', 'major-minor', 'Prometheus pentamirror',
+            'dominant pentatonic'], 
+    },
+    '5,35,0': {
+        'name': ['major pentatonic', 'black-key scale', 'blues pentatonic',
+            'slendro', 'quartal pentamirror'], 
+    },
     '5,36,1': { 'name': ['major-seventh pentacluster'] },
     '5,36,-1': { 'name': ['minor-seventh pentacluster'] },
     '5,37,0': { 'name': ['center-cluster pentamirror'] },
     '5,38,1': { 'name': ['diminished pentacluster'] },
     '5,38,-1': { 'name': ['diminished pentacluster'] },
-    '6,1,0': { 'name': ['A all combinatorial [P6, I11, RI5, RI11]', 'chromatic hexamirror',
-        'first-order all-combinatorial'] },
+    '6,1,0': {
+        'name': ['A all combinatorial [P6, I11, RI5, RI11]', 'chromatic hexamirror',
+            'first-order all-combinatorial'], 
+    },
     '6,2,1': { 'name': ['combinatorial I [I11]'] },
     '6,2,-1': { 'name': ['combinatorial I [I1]'] },
     '6,3,1': {},
@@ -2293,9 +2327,11 @@ export const SCREF = {
     '6,5,1': { 'name': ['combinatorial I [I11]'] },
     '6,5,-1': { 'name': ['combinatorial I [I3]'] },
     '6,6,0': { 'name': ['double cluster hexamirror'] },
-    '6,7,0': { 'name': ['B all combinatorial [P3, P9, I5, R6, R12, R8]', 
-        "Messiaen's mode 5",
-        'second-order all combinatorial'] },
+    '6,7,0': {
+        'name': ['B all combinatorial [P3, P9, I5, R6, R12, R8]', 
+            "Messiaen's mode 5",
+            'second-order all combinatorial'], 
+    },
     '6,8,0': { 'name': ['D all combinatorial [P6, I1, RI7]'] },
     '6,9,1': { 'name': ['combinatorial I [I11]'] },
     '6,9,-1': { 'name': ['combinatorial I [I3]'] },
@@ -2318,10 +2354,12 @@ export const SCREF = {
     '6,18,-1': { 'name': ['combinatorial I [I5]'] },
     '6,19,1': {},
     '6,19,-1': {},
-    '6,20,0': { 'name': 
+    '6,20,0': {
+        'name': 
     ['E all combinatorial [P2, P6, P10, I3, I7, R4, R8, RI1, RI5, RI9]',
         "Messiaen's truncated mode 3", 'Genus tertium',
-        'third-order all combinatorial'] },
+        'third-order all combinatorial'], 
+    },
     '6,21,1': { 'name': ['combinatorial I [I1]'] },
     '6,21,-1': { 'name': ['combinatorial I [I3]'] },
     '6,22,1': { 'name': ['combinatorial I [I11]'] },
@@ -2336,26 +2374,38 @@ export const SCREF = {
     '6,27,-1': { 'name': ['combinatorial I [I1]', 'pyramid hexachord'] },
     '6,28,0': { 'name': ['double-phrygian heachord', 'combinatorial RI [RI6]'] },
     '6,29,0': { 'name': ['combinatorial RI [RI9]'] },
-    '6,30,1': { 'name': ["Messiaen's truncated mode 2", 'minor-bitonal hexachord',
-        'combinatorial R [R6]', 'combinatorial I [I1, I7]'] },
-    '6,30,-1': { 'name': ["Stravinsky's Petrouchka-chord", "Messiaen's truncated mode 2",
-        'major-bitonal hexachord', 'combinatorial R [R6]',
-        'combinatorial I [I1, I7]'] },
+    '6,30,1': {
+        'name': ["Messiaen's truncated mode 2", 'minor-bitonal hexachord',
+            'combinatorial R [R6]', 'combinatorial I [I1, I7]'], 
+    },
+    '6,30,-1': {
+        'name': ["Stravinsky's Petrouchka-chord", "Messiaen's truncated mode 2",
+            'major-bitonal hexachord', 'combinatorial R [R6]',
+            'combinatorial I [I1, I7]'], 
+    },
     '6,31,1': { 'name': ['combinatorial I [I7]'] },
     '6,31,-1': { 'name': ['combinatorial I [I11]'] },
-    '6,32,0': { 'name': ['C all combinatorial [P6, I3, RI9]', 'Guidon/Arezzo',
-        'Arezzo major diatonic', 'major hexamirror', 'quartal hexamirror',
-        'first-order all combinatorial'] },
+    '6,32,0': {
+        'name': ['C all combinatorial [P6, I3, RI9]', 'Guidon/Arezzo',
+            'Arezzo major diatonic', 'major hexamirror', 'quartal hexamirror',
+            'first-order all combinatorial'], 
+    },
     '6,33,1': { 'name': ['dorian hexachord', 'combinatorial I [I6]'] },
     '6,33,-1': { 'name': ['dominant-eleventh', 'lydian hexachord', 'combinatorial I [I1]'] },
-    '6,34,1': { 'name': ["Scriabin's Mystic-chord", 'Prometheus hexachord',
-        'combinatorial I [I11]'] },
-    '6,34,-1': { 'name': ['augmented-eleventh', 'harmonic hexachord', 
-        'combinatorial I [I7]'] },
-    '6,35,0': { 'name': ['whole tone scale', '6 equal part division',
-        'F all-combinatorial [P1, P3, P5, P7, P9, P11, I1, I3, I5, I7, '
+    '6,34,1': {
+        'name': ["Scriabin's Mystic-chord", 'Prometheus hexachord',
+            'combinatorial I [I11]'], 
+    },
+    '6,34,-1': {
+        'name': ['augmented-eleventh', 'harmonic hexachord', 
+            'combinatorial I [I7]'], 
+    },
+    '6,35,0': {
+        'name': ['whole tone scale', '6 equal part division',
+            'F all-combinatorial [P1, P3, P5, P7, P9, P11, I1, I3, I5, I7, '
                               + 'I9, I11, R2, R4, R6, R8, R10, RI2, RI4, RI6, RI8, RI10]',
-        "Messiaen's mode 1", 'sixth-order all combinatorial'] },
+            "Messiaen's mode 1", 'sixth-order all combinatorial'], 
+    },
     '6,36,1': {},
     '6,36,-1': {},
     '6,37,0': { 'name': ['combinatorial RI [RI4]'] },
@@ -2413,13 +2463,17 @@ export const SCREF = {
     '7,19,1': {},
     '7,19,-1': {},
     '7,20,1': { 'name': ['chromatic phrygian inverse'] },
-    '7,20,-1': { 'name': ['Greek chromatic', 'chromatic mixolydian', 'chromatic dorian',
-        'quasi raga Pantuvarali', 'mela Kanakangi'] },
+    '7,20,-1': {
+        'name': ['Greek chromatic', 'chromatic mixolydian', 'chromatic dorian',
+            'quasi raga Pantuvarali', 'mela Kanakangi'], 
+    },
     '7,21,1': {},
     '7,21,-1': { 'name': ['Gypsy [Roma] hexatonic'] },
-    '7,22,0': { 'name': ['double harmonic scale', 'Persian', 'major Gypsy [Roma]',
-        'Hungarian minor', 'double harmonic scale', 'Asian',
-        'quasi raga Mayamdavagaula'] },
+    '7,22,0': {
+        'name': ['double harmonic scale', 'Persian', 'major Gypsy [Roma]',
+            'Hungarian minor', 'double harmonic scale', 'Asian',
+            'quasi raga Mayamdavagaula'], 
+    },
     '7,23,1': {},
     '7,23,-1': { 'name': ['tritone major heptachord'] },
     '7,24,1': {},
@@ -2439,13 +2493,19 @@ export const SCREF = {
     '7,31,1': { 'name': ['alternating heptachord', 'Hungarian major mode'] },
     '7,31,-1': { 'name': ['diminished scale', 'alternating heptachord'] },
     '7,32,1': { 'name': ['harmonic minor scale', 'Spanish Gypsy', 'mela Kiravani'] },
-    '7,32,-1': { 'name': ['harmonic major scale', 'harmonic minor inverse', 'mela Cakravana',
-        'quasi raga Ahir Bhairav'] },
+    '7,32,-1': {
+        'name': ['harmonic major scale', 'harmonic minor inverse', 'mela Cakravana',
+            'quasi raga Ahir Bhairav'], 
+    },
     '7,33,0': { 'name': ['Neapolitan-major mode', 'leading-whole-tone mode'] },
-    '7,34,0': { 'name': ['melodic minor ascending scale', 'jazz minor',
-        'augmented thirteenth heptamirror', 'harmonic/super-locrian'] },
-    '7,35,0': { 'name': ['major scale', 'major diatonic heptachord', 'natural minor scale',
-        'dominant thirteenth', 'locrian', 'phrygian', 'major inverse'] },
+    '7,34,0': {
+        'name': ['melodic minor ascending scale', 'jazz minor',
+            'augmented thirteenth heptamirror', 'harmonic/super-locrian'], 
+    },
+    '7,35,0': {
+        'name': ['major scale', 'major diatonic heptachord', 'natural minor scale',
+            'dominant thirteenth', 'locrian', 'phrygian', 'major inverse'], 
+    },
     '7,36,1': {},
     '7,36,-1': {},
     '7,37,0': {},
@@ -2491,9 +2551,11 @@ export const SCREF = {
     '8,26,0': { 'name': ['blues', 'Spanish phrygian'] },
     '8,27,1': {},
     '8,27,-1': {},
-    '8,28,0': { 'name': ['octatonic scale', "Messiaen's mode 2", 
-        'alternating octatonic scale',
-        'diminished scale'] },
+    '8,28,0': {
+        'name': ['octatonic scale', "Messiaen's mode 2", 
+            'alternating octatonic scale',
+            'diminished scale'], 
+    },
     '8,29,1': {},
     '8,29,-1': {},
     '9,1,0': { 'name': ['chromatic nonamirror'] },
@@ -2522,8 +2584,10 @@ export const SCREF = {
     '10,5,0': { 'name': ['major-minor mixed'] },
     '10,6,0': { 'name': ["Messiaen's mode 7"] },
     '11,1,0': { 'name': ['chromatic undecamirror'] },
-    '12,1,0': { 'name': ['aggregate', 'dodecachord', 'twelve-tone chromatic',
-        'chromatic scale', 'dodecamirror'] },
+    '12,1,0': {
+        'name': ['aggregate', 'dodecachord', 'twelve-tone chromatic',
+            'chromatic scale', 'dodecamirror'], 
+    },
 };
 
 export function forteIndexToInversionsAvailable(card, index) {

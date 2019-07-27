@@ -142,6 +142,7 @@ export class ProtoM21Object {
         }
         return ret;
     }
+
     /**
      * Check to see if an object is of this class or subclass.
      *

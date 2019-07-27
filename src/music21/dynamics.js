@@ -116,9 +116,11 @@ export class Dynamic extends base.Music21Object {
         this.englishName = undefined;
         this.value = value;
     }
+
     get value() {
         return this._value;
     }
+
     set value(value) {
         if (typeof value !== 'string') {
             // assume number
@@ -159,6 +161,7 @@ export class Dynamic extends base.Music21Object {
             this.englishName = undefined;
         }
     }
+
     get volumeScalar() {
         if (this._volumeScalar !== undefined) {
             return this._volumeScalar;
@@ -168,6 +171,7 @@ export class Dynamic extends base.Music21Object {
             return undefined;
         }
     }
+
     set volumeScalar(value) {
         if (typeof value === 'number' && value <= 1 && value >= 0) {
             this._volumeScalar = value;

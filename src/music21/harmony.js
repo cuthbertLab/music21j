@@ -47,6 +47,7 @@ class Harmony extends chord.Chord {
             this.root(this.bass());
         }
     }
+
     _parseFigure() {}
 
     _updatePitches() {}
@@ -58,6 +59,7 @@ class Harmony extends chord.Chord {
             return this._figure;
         }
     }
+
     set figure(newFigure) {
         this._figure = newFigure;
         if (this._figure !== undefined) {
@@ -69,6 +71,7 @@ class Harmony extends chord.Chord {
     get key() {
         return this._key;
     }
+
     set key(keyOrScale) {
         if (typeof keyOrScale === 'string') {
             this._key = new key.Key(keyOrScale);

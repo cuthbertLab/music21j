@@ -109,9 +109,11 @@ export class Metronome extends prebase.ProtoM21Object {
         this.tempoRanges = [0, 40, 60, 72, 120, 144, 240, 999];
         this.tempoIncreases = [0, 1, 2, 3, 4, 6, 8, 15, 100];
     }
+
     get tempo() {
         return this._tempo;
     }
+
     set tempo(t) {
         this._tempo = t;
         if (this._tempo > this.maxTempo) {
@@ -120,9 +122,11 @@ export class Metronome extends prebase.ProtoM21Object {
             this._tempo = this.minTempo;
         }
     }
+
     get beatLength() {
         return 60.0 / this.tempo;
     }
+
     _silentFlash(flashColor) {
         this.$metronomeDiv
             .find('.metroFlash')

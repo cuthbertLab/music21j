@@ -211,9 +211,11 @@ export class Recorder {
     record() {
         this.recording = true;
     }
+
     stop() {
         this.recording = false;
     }
+
     clear() {
         this.worker.postMessage({ command: 'clear' });
     }

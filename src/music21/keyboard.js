@@ -73,6 +73,7 @@ export class Key {
         this.keyStyle = '';
         this.keyClass = '';
     }
+
     /**
      * Gets an SVG object for the key
      *
@@ -100,6 +101,7 @@ export class Key {
         this.svgObj = keyDOM;
         return keyDOM;
     }
+
     /**
      * Adds a circle (red) on the key (to mark middle C etc.)
      *
@@ -135,6 +137,7 @@ export class Key {
         // console.log(circleDom);
         return circleDom;
     }
+
     /**
      * Adds the note name on the key
      *
@@ -190,6 +193,7 @@ export class Key {
         this.parent.svgObj.appendChild(textDom);
         return this;
     }
+
     /**
      * Removes the note name from the key (if exists)
      *
@@ -310,6 +314,7 @@ export class Keyboard {
             5: 19.75,
         };
     }
+
     /**
      * Redraws the SVG associated with this Keyboard
      *
@@ -326,6 +331,7 @@ export class Keyboard {
         svgParent.replaceChild(svgDOM, oldSVG);
         return svgDOM;
     }
+
     /**
      * Appends a keyboard to the `where` parameter
      *
@@ -355,6 +361,7 @@ export class Keyboard {
         }
         return this;
     }
+
     /**
      * Handle a click on a given SVG object
      *
@@ -507,6 +514,7 @@ export class Keyboard {
             midC.addCircle('red');
         }
     }
+
     /**
      * Puts note names on every white key.
      *
@@ -581,6 +589,7 @@ export class Keyboard {
         $wrapper.append($bUp);
         return $wrapper;
     }
+
     /**
      * Puts a hideable keyboard inside a Div with the proper controls.
      *

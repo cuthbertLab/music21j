@@ -270,6 +270,7 @@ export class GenericInterval extends prebase.ProtoM21Object {
             );
         }
     }
+
     /**
      * Given a specifier, return a new DiatonicInterval with this generic.
      *
@@ -693,6 +694,7 @@ export class ChromaticInterval extends prebase.ProtoM21Object {
             this.isChromaticStep = false;
         }
     }
+
     reverse() {
         return new interval.ChromaticInterval(
             this.undirected * (-1 * this.direction)
@@ -831,9 +833,11 @@ export class Interval extends prebase.ProtoM21Object {
         this._noteEnd = noteEnd;
         this.reinit();
     }
+
     get complement() {
         return new interval.Interval(this.diatonic.mod7inversion);
     }
+
     reinit() {
         this.direction = this.chromatic.direction;
         this.specifier = this.diatonic.specifier;

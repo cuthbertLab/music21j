@@ -135,10 +135,12 @@ export class Duration extends prebase.ProtoM21Object {
     get dots() {
         return this._dots;
     }
+
     set dots(numDots) {
         this._dots = numDots;
         this.updateQlFromFeatures();
     }
+
     /**
      * Read or sets the quarterLength of the Duration
      *
@@ -157,6 +159,7 @@ export class Duration extends prebase.ProtoM21Object {
     get quarterLength() {
         return this._quarterLength;
     }
+
     set quarterLength(ql) {
         if (ql === undefined) {
             ql = 1.0;
@@ -164,6 +167,7 @@ export class Duration extends prebase.ProtoM21Object {
         this._quarterLength = ql;
         this.updateFeaturesFromQl();
     }
+
     /**
      * Read or sets the type of the duration.
      *
@@ -184,6 +188,7 @@ export class Duration extends prebase.ProtoM21Object {
     get type() {
         return this._type;
     }
+
     set type(typeIn) {
         const typeNumber = duration.ordinalTypeFromNum.indexOf(typeIn);
         if (typeNumber === -1) {
@@ -193,6 +198,7 @@ export class Duration extends prebase.ProtoM21Object {
         this._type = typeIn;
         this.updateQlFromFeatures();
     }
+
     /**
      * Reads the tuplet Array for the duration.
      *
@@ -207,6 +213,7 @@ export class Duration extends prebase.ProtoM21Object {
     get tuplets() {
         return this._tuplets;
     }
+
     /**
      * Read-only: the duration expressed for VexFlow
      *
@@ -229,6 +236,7 @@ export class Duration extends prebase.ProtoM21Object {
         }
         return vd;
     }
+
     cloneCallbacksTupletFunction(tupletKey, ret, obj) {
         // make sure that tuplets clone properly
         const newTuplets = [];
@@ -239,6 +247,7 @@ export class Duration extends prebase.ProtoM21Object {
         }
         ret[tupletKey] = newTuplets;
     }
+
     _findDots(ql) {
         if (ql === 0) {
             return 0;
@@ -260,6 +269,7 @@ export class Duration extends prebase.ProtoM21Object {
         }
         return 0;
     }
+
     updateQlFromFeatures() {
         const typeNumber = duration.ordinalTypeFromNum.indexOf(this._type); // must be set property
         const undottedQuarterLength = Math.pow(
@@ -275,6 +285,7 @@ export class Duration extends prebase.ProtoM21Object {
         });
         this._quarterLength = tupletCorrectedQl;
     }
+
     updateFeaturesFromQl() {
         const ql = this._quarterLength;
         this._tuplets = [];
@@ -315,6 +326,7 @@ export class Duration extends prebase.ProtoM21Object {
             // console.log(ratioRat, ql, unTupletedQl);
         }
     }
+
     /**
      * Add a tuplet to music21j
      *
@@ -388,6 +400,7 @@ export class Tuplet extends prebase.ProtoM21Object {
         this.tupletActualShow = 'number';
         this.tupletNormalShow = undefined; // undefined, 'ratio' for ratios, 'type' for ratioed notes (does not work)
     }
+
     /**
      * A nice name for the tuplet.
      *
@@ -416,6 +429,7 @@ export class Tuplet extends prebase.ProtoM21Object {
             + ordStr
         );
     }
+
     /**
      * Set both durationActual and durationNormal for the tuplet.
      *
@@ -432,6 +446,7 @@ export class Tuplet extends prebase.ProtoM21Object {
         this.durationNormal = this.durationActual;
         return this.durationActual;
     }
+
     /**
      * Sets the tuplet ratio.
      *
@@ -448,6 +463,7 @@ export class Tuplet extends prebase.ProtoM21Object {
         this.numberNotesActual = actual || 3;
         this.numberNotesNormal = normal || 2;
     }
+
     /**
      * Get the quarterLength corresponding to the total length that
      * the completed tuplet (i.e., 3 notes in a triplet) would occupy.
@@ -457,6 +473,7 @@ export class Tuplet extends prebase.ProtoM21Object {
     totalTupletLength() {
         return this.numberNotesNormal * this.durationNormal.quarterLength;
     }
+
     /**
      * The amount by which each quarter length is multiplied to get
      * the tuplet. For instance, in a normal triplet, this is 0.666
