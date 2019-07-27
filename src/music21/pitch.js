@@ -59,12 +59,12 @@ export class Accidental extends prebase.ProtoM21Object {
         this.displayStatus = undefined; // true, false, undefined
         this.set(accName);
     }
-    
+
     stringInfo() {
         return this.name;
-    }    
-    
-    
+    }
+
+
     /**
      * Sets a parameter of the accidental and updates name, alter, and modifier to suit.
      *
@@ -253,10 +253,10 @@ export class Accidental extends prebase.ProtoM21Object {
 pitch.Accidental = Accidental;
 
 pitch.nameToMidi = {
-    C: 0, D: 2, E: 4, F: 5, G: 7, A: 9, B: 11, 
+    C: 0, D: 2, E: 4, F: 5, G: 7, A: 9, B: 11,
 };
 pitch.nameToSteps = {
-    C: 0, D: 1, E: 2, F: 3, G: 4, A: 5, B: 6, 
+    C: 0, D: 1, E: 2, F: 3, G: 4, A: 5, B: 6,
 };
 pitch.stepsToName = ['C', 'D', 'E', 'F', 'G', 'A', 'B'];
 pitch.midiToName = [
@@ -308,7 +308,7 @@ export class Pitch extends prebase.ProtoM21Object {
         this._octave = 4;
         this._accidental = undefined;
         this.spellingIsInferred = false;
-        
+
         /* pn can be a nameWithOctave */
         if (typeof pn === 'number') {
             if (pn < 12) {
@@ -324,8 +324,8 @@ export class Pitch extends prebase.ProtoM21Object {
 
     stringInfo() {
         return this.nameWithOctave;
-    }    
-    
+    }
+
     // N.B. cannot use transpose here, because of circular import.
 
     get step() {
@@ -361,9 +361,9 @@ export class Pitch extends prebase.ProtoM21Object {
             return 4; // TODO(msc): get from defaults.
         } else {
             return o;
-        }        
+        }
     }
-    
+
     get accidental() {
         return this._accidental;
     }
@@ -413,20 +413,20 @@ export class Pitch extends prebase.ProtoM21Object {
     get pitchClass() {
         return common.posMod(Math.round(this.ps), 12);
     }
-    
+
     get diatonicNoteNum() {
         return this.octave * 7 + pitch.nameToSteps[this.step] + 1;
     }
 
     set diatonicNoteNum(newDNN) {
-        newDNN -= 1; // makes math easier        
+        newDNN -= 1; // makes math easier
         this.octave = Math.floor(newDNN / 7);
         const mod7DNN = common.posMod(Math.round(newDNN), 7);
         this.step = pitch.stepsToName[mod7DNN];
     }
 
     get frequency() {
-        return 440 * Math.pow(2, (this.ps - 69) / 12);
+        return 440 * (2 ** (this.ps - 69) / 12);
     }
 
     get midi() {
@@ -458,7 +458,7 @@ export class Pitch extends prebase.ProtoM21Object {
             return this.step;
         }
     }
-    
+
     get unicodeNameWithOctave() {
         if (this.octave === undefined) {
             return this.unicodeName;
@@ -466,7 +466,7 @@ export class Pitch extends prebase.ProtoM21Object {
             return this.unicodeName + this.octave.toString();
         }
     }
-    
+
     /**
      * @param {boolean} inPlace
      * @param {int} directionInt -- -1 = down, 1 = up
@@ -532,7 +532,7 @@ export class Pitch extends prebase.ProtoM21Object {
         let accidentalType = 'n';
         if (this.accidental !== undefined) {
             if ([0, -1, -2, 1, 2].includes(this.accidental.alter)) {
-                accidentalType = this.accidental.vexflowModifier;                
+                accidentalType = this.accidental.vexflowModifier;
             } else {
                 console.warn('unsupported accidental: ' + this.accidental);
             }

@@ -895,7 +895,7 @@ export class Stream extends base.Music21Object {
         }
 
         let el;
-        if (index === undefined || isNaN(index)) {
+        if (index === undefined || Number.isNaN(index)) {
             return undefined;
         } else if (Math.abs(index) > this._elements.length) {
             return undefined;
@@ -2628,7 +2628,7 @@ export class Measure extends Stream {
     stringInfo() {
         return this.measureNumberWithSuffix() + ' offset=' + this.offset.toString();
     }
-    
+
     measureNumberWithSuffix() {
         return this.number.toString() + this.numberSuffix;
     }

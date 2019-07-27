@@ -219,7 +219,7 @@ tinyNotation.TinyNotation = function TinyNotation(textIn) {
         MATCH = tnre.DOT.exec(token);
         if (MATCH) {
             const numDots = MATCH[0].length;
-            const multiplier = 1 + (1 - Math.pow(0.5, numDots));
+            const multiplier = 1 + (1 - 0.5 ** numDots);
             noteObj.duration.quarterLength *= multiplier;
         }
         lastDurationQL = noteObj.duration.quarterLength;

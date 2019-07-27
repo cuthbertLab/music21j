@@ -573,11 +573,12 @@ export class DiatonicInterval extends prebase.ProtoM21Object {
 
         this.mod7inversion
             = this.invertedOrderedSpecifier + generic.mod7inversion.toString();
-        /* ( if (this.direction == interval.Direction.DESCENDING) {
-			this.mod7 = this.mod7inversion;
-		} else {
-			this.mod7 = this.simpleName;
-		} */
+        // if (this.direction == interval.Direction.DESCENDING) {
+        //     this.mod7 = this.mod7inversion;
+        // } else {
+        //    this.mod7 = this.simpleName;
+        // }
+
 
         // TODO: reverse()
         // TODO: property cents
@@ -824,7 +825,7 @@ export class Interval extends prebase.ProtoM21Object {
 
                 this.diatonic = interval.intervalsToDiatonic(gInt, cInt);
                 this.chromatic = cInt;
-                
+
                 noteStart = n1;
                 noteEnd = n2;
             }
@@ -871,7 +872,7 @@ export class Interval extends prebase.ProtoM21Object {
     get noteStart() {
         return this._noteStart;
     }
-    
+
     set noteStart(n) {
         this._noteStart = n;
         const p1 = n.pitch;
@@ -883,7 +884,7 @@ export class Interval extends prebase.ProtoM21Object {
     get noteEnd() {
         return this._noteEnd;
     }
-    
+
     set noteEnd(n) {
         this._noteEnd = n;
         const p1 = n.pitch;
@@ -892,7 +893,7 @@ export class Interval extends prebase.ProtoM21Object {
         this._noteStart.pitch = p2;
     }
 
-    
+
     /**
      * @returns {Boolean}
      */
@@ -910,7 +911,7 @@ export class Interval extends prebase.ProtoM21Object {
     // noinspection JSUnusedLocalSymbols
     /**
      * TODO: maxAccidental
-     * 
+     *
      * @param {music21.pitch.Pitch} p - pitch to transpose
      * @param {Object} config - configuration
      * @param {boolean} [config.reverse=false] -- reverse direction

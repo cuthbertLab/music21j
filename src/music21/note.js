@@ -259,7 +259,7 @@ export class GeneralNote extends base.Music21Object {
                 volume *= a.dynamicScale;
                 if (volume > 127) {
                     volume = 127;
-                } else if (isNaN(volume)) {
+                } else if (Number.isNaN(volume)) {
                     volume = 60;
                 }
             });
@@ -323,7 +323,7 @@ export class GeneralNote extends base.Music21Object {
     getStemDirectionFromClef(clef) {
         return undefined;
     }
-    
+
     /**
      * Sets the vexflow accidentals (if any), the dots, and the stem direction
      *
@@ -422,7 +422,7 @@ export class GeneralNote extends base.Music21Object {
                 // console.log(volume);
                 try {
                     MIDI.noteOn(channel, midNum, volume, 0);
-                    MIDI.noteOff(channel, midNum, stopTime);                    
+                    MIDI.noteOff(channel, midNum, stopTime);
                 } catch (e) {
                     // do nothing -- might not have an output channel because of audio not connected
                 }
@@ -433,9 +433,9 @@ export class GeneralNote extends base.Music21Object {
                 midNum = this._notes[j].pitch.midi;
                 try {
                     MIDI.noteOn(channel, midNum, volume, 0);
-                    MIDI.noteOff(channel, midNum, milliseconds / 1000);                    
+                    MIDI.noteOff(channel, midNum, milliseconds / 1000);
                 } catch (e) {
-                    // do nothing -- might not have an output channel because of audio not connected                    
+                    // do nothing -- might not have an output channel because of audio not connected
                 }
             }
         } // it's a note.Rest -- do nothing -- milliseconds takes care of it...
@@ -471,11 +471,11 @@ export class NotRest extends GeneralNote {
         this._stemDirection = 'unspecified';
         /* TODO: check notehead, noteheadFill, noteheadParentheses */
     }
-    
+
     get stemDirection() {
         return this._stemDirection;
     }
-    
+
     set stemDirection(direction) {
         if (direction === undefined) {
             direction = 'unspecified';
@@ -484,9 +484,9 @@ export class NotRest extends GeneralNote {
         } else if (!note.stemDirectionNames.includes(direction)) {
             throw new NotRestException(`not a valid stem direction name: ${direction}`);
         }
-        this._stemDirection = direction; 
+        this._stemDirection = direction;
     }
-    
+
 }
 note.NotRest = NotRest;
 
@@ -533,11 +533,11 @@ export class Note extends NotRest {
             this.pitch = new pitch.Pitch(nn);
         }
     }
-    
+
     stringInfo() {
         return this.name;
-    }    
-    
+    }
+
     get name() {
         return this.pitch.name;
     }
@@ -569,7 +569,7 @@ export class Note extends NotRest {
     set octave(nn) {
         this.pitch.octave = nn;
     }
-    
+
     get pitches() {
         return [this.pitch];
     }
@@ -578,11 +578,11 @@ export class Note extends NotRest {
         this.pitch = value[0];
         // TODO: raise NoteException on index error.
     }
-    
-    
+
+
     /* TODO: transpose, fullName */
-    
-    
+
+
     /**
      * Change stem direction according to clef.
      *
@@ -593,9 +593,9 @@ export class Note extends NotRest {
         if (clef !== undefined) {
             this.stemDirection = this.getStemDirectionFromClef(clef);
         }
-        return this;        
+        return this;
     }
-    
+
     /**
      * Same as setStemDirectionFromClef, but do not set the note, just return it.
      */
@@ -612,7 +612,7 @@ export class Note extends NotRest {
             return 'up';
         }
     }
-    
+
     /**
      * Returns a `Vex.Flow.StaveNote` that approximates this note.
      *
@@ -626,7 +626,7 @@ export class Note extends NotRest {
         const clef = params.clef;
 
         let useStemDirection = this.stemDirection;
-        
+
         // fixup stem direction -- must happen before Vex.Flow.Note is created...
         if (
             this.activeSite !== undefined
@@ -738,12 +738,12 @@ export class Rest extends GeneralNote {
         this.lineShift = undefined;
         this.color = 'black';
     }
-    
+
     stringInfo() {
         return this.duration.quarterLength.toString();
     }
-    
-    
+
+
     /**
      * Returns a `Vex.Flow.StaveNote` that approximates this rest.
      * Corrects for bug in VexFlow that renders a whole rest too low.

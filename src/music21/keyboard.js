@@ -172,7 +172,7 @@ export class Key {
             fontSize = 12;
             x -= 2;
         }
-        fontSize = Math.floor(fontSize * parent.scaleFactor);
+        fontSize = Math.floor(fontSize * this.parent.scaleFactor);
 
         let textfill = 'white';
         if (this.keyClass === 'whitekey') {

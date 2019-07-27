@@ -56,8 +56,7 @@ export class Event {
         this.data1 = a;
         this.data2 = b;
         this.data3 = c;
-        this.midiCommand = a >> 4;
-
+        this.midiCommand = a >> 4;  // eslint-disable-line no-bitwise
         this.noteOff = this.midiCommand === 8;
         this.noteOn = this.midiCommand === 9;
 
@@ -372,7 +371,7 @@ miditools.postLoadCallback = function postLoadCallback(soundfont, callback) {
             );
         }
         if (isFirefox === false && isAudioTag === false) {
-            // Firefox ignores sound volume! so don't play! 
+            // Firefox ignores sound volume! so don't play!
             // as does IE and others using HTML audio tag.
             const channel = instrumentObj.midiChannel;
             MIDI.noteOn(channel, 36, 1, 0);    // if no notes have been played before then
@@ -627,8 +626,8 @@ export class MidiPlayer {
         });
         //
         const timeFormatting = n => {
-            const minutes = (n / 60) >> 0;
-            let seconds = String((n - minutes * 60) >> 0);
+            const minutes = Math.floor(n / 60);
+            let seconds = String(Math.floor(n - minutes * 60));
             if (seconds.length === 1) {
                 seconds = '0' + seconds;
             }
@@ -637,8 +636,8 @@ export class MidiPlayer {
 
         player.setAnimation(data => {
             const percent = data.now / data.end;
-            const now = data.now >> 0; // where we are now
-            const end = data.end >> 0; // end of song
+            const now = Math.floor(data.now); // where we are now
+            const end = Math.foor(data.end); // end of song
             if (now === end) {
                 // go to next song
                 self.songFinished();
