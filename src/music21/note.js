@@ -5,6 +5,20 @@
  * Copyright (c) 2013-19, Michael Scott Cuthbert and cuthbertLab
  * Based on music21 (music21p), Copyright (c) 2006–19, Michael Scott Cuthbert and cuthbertLab
  *
+ * Module for note classes. See the namespace {@link music21.note}
+ *
+ * @requires music21/common
+ * @requires music21/prebase
+ * @requires music21/base
+ * @requires music21/pitch
+ * @requires music21/beam
+ * @exports music21/note
+ * Namespace for notes (single pitch) or rests, and some things like Lyrics that go on notes.
+ *
+ * @namespace music21.note
+ * @memberof music21
+ * @property {string[]} noteheadTypeNames - an Array of allowable notehead names.
+ * @property {string[]} stemDirectionNames - an Array of allowable stemDirection names.
  */
 import Vex from 'vexflow';
 import * as MIDI from 'midicube';
@@ -17,34 +31,11 @@ import { beam } from './beam.js';
 import { common } from './common.js';
 import { Music21Exception } from './exceptions21.js';
 
-/**
- * Module for note classes. See the namespace {@link music21.note}
- *
- * @requires music21/common
- * @requires music21/prebase
- * @requires music21/base
- * @requires music21/pitch
- * @requires music21/beam
- * @exports music21/note
- */
-/**
- * Namespace for notes (single pitch) or rests, and some things like Lyrics that go on notes.
- *
- * @namespace music21.note
- * @memberof music21
- * @property {string[]} noteheadTypeNames - an Array of allowable notehead names.
- * @property {string[]} stemDirectionNames - an Array of allowable stemDirection names.
- */
-export const note = {};
-
-/**
- */
 export class NotRestException extends Music21Exception {
     // no need
 }
-note.NotRestException = NotRestException;
 
-note.noteheadTypeNames = [
+export const noteheadTypeNames = [
     'arrow down',
     'arrow up',
     'back slashed',
@@ -74,7 +65,7 @@ note.noteheadTypeNames = [
     'x',
 ];
 
-note.stemDirectionNames = [
+export const stemDirectionNames = [
     'double',
     'down',
     'noStem',
@@ -195,7 +186,6 @@ export class Lyric extends prebase.ProtoM21Object {
         return this;
     }
 }
-note.Lyric = Lyric;
 
 /* Notes and rests etc... */
 
@@ -247,7 +237,7 @@ export class GeneralNote extends base.Music21Object {
     set lyric(value) {
         this.lyrics = [];
         if (value !== undefined && value !== false) {
-            this.lyrics.push(new note.Lyric(value));
+            this.lyrics.push(new Lyric(value));
         }
     }
 
@@ -281,7 +271,7 @@ export class GeneralNote extends base.Music21Object {
     addLyric(text, lyricNumber, applyRaw = false, lyricIdentifier) {
         if (lyricNumber === undefined) {
             const maxLyrics = this.lyrics.length + 1;
-            const newLyric = new note.Lyric(
+            const newLyric = new Lyric(
                 text,
                 maxLyrics,
                 undefined,
@@ -300,7 +290,7 @@ export class GeneralNote extends base.Music21Object {
                 }
             }
             if (foundLyric === false) {
-                const newLyric = new note.Lyric(
+                const newLyric = new Lyric(
                     text,
                     lyricNumber,
                     undefined,
@@ -443,7 +433,6 @@ export class GeneralNote extends base.Music21Object {
         return milliseconds;
     }
 }
-note.GeneralNote = GeneralNote;
 
 /**
  * Specifies that a GeneralNote is not a rest (Unpitched, Note, Chord).
@@ -482,14 +471,13 @@ export class NotRest extends GeneralNote {
             direction = 'unspecified';
         } else if (direction === 'none') {
             direction = 'noStem';
-        } else if (!note.stemDirectionNames.includes(direction)) {
+        } else if (!stemDirectionNames.includes(direction)) {
             throw new NotRestException(`not a valid stem direction name: ${direction}`);
         }
         this._stemDirection = direction;
     }
 
 }
-note.NotRest = NotRest;
 
 /* ------- Note ----------- */
 /**
@@ -655,7 +643,7 @@ export class Note extends NotRest {
         if (
             this.activeSite !== undefined
             && this.activeSite.renderOptions.stemDirection !== undefined
-            && note.stemDirectionNames.includes(
+            && stemDirectionNames.includes(
                 this.activeSite.renderOptions.stemDirection
             )
         ) {
@@ -734,7 +722,6 @@ export class Note extends NotRest {
         return vfn;
     }
 }
-note.Note = Note;
 
 /* ------ TODO: Unpitched ------ */
 
@@ -815,6 +802,5 @@ export class Rest extends GeneralNote {
         return vfn;
     }
 }
-note.Rest = Rest;
 
-/* ------ SpacerRest ------ */
+/* ------ TODO(msc): SpacerRest  or remove from music21p ------ */

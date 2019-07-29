@@ -8,7 +8,7 @@
  */
 import { common } from './common.js';
 import { debug } from './debug.js';
-import { note } from './note.js';
+import * as note from './note.js';
 import * as prebase from './prebase.js';
 import * as pitch from './pitch.js';
 

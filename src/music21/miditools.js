@@ -16,7 +16,7 @@ import { chord } from './chord.js';
 import { common } from './common.js';
 import { debug } from './debug.js';
 import { instrument } from './instrument.js';
-import { note } from './note.js';
+import * as note from './note.js';
 
 // expose midicube's MIDI to window for soundfonts to load.
 window.MIDI = MIDI;

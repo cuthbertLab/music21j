@@ -21,7 +21,7 @@ import { debug } from './debug.js';
 import * as duration from './duration.js';
 import { instrument } from './instrument.js';
 import { meter } from './meter.js';
-import { note } from './note.js';
+import * as note from './note.js';
 import * as pitch from './pitch.js';
 import { renderOptions } from './renderOptions.js';
 import * as vfShow from './vfShow.js';

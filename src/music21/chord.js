@@ -10,7 +10,7 @@ import Vex from 'vexflow';
 
 import { Music21Exception } from './exceptions21.js';
 import { interval } from './interval.js';
-import { note } from './note.js';
+import * as note from './note.js';
 import * as chordTables from './chordTables.js';
 
 /**

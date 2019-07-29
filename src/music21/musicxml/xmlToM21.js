@@ -5,7 +5,7 @@ import { clef } from '../clef.js';
 import * as duration from '../duration.js';
 import { key } from '../key.js';
 import { meter } from '../meter.js';
-import { note } from '../note.js';
+import * as note from '../note.js';
 import * as pitch from '../pitch.js';
 import { stream } from '../stream.js';
 import * as tie from '../tie.js';

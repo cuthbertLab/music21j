@@ -10,7 +10,7 @@
 
 import { interval } from './interval.js';
 import { key } from './key.js';
-import { note } from './note.js';
+import * as note from './note.js';
 
 import { Music21Object } from './base.js';
 
