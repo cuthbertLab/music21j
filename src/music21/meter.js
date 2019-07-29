@@ -6,6 +6,15 @@
  * Copyright (c) 2013-17, Michael Scott Cuthbert and cuthbertLab
  * Based on music21 (=music21p), Copyright (c) 2006–17, Michael Scott Cuthbert and cuthbertLab
  *
+ * meter module. See {@link music21.meter} namespace for details.
+ * Meter and TimeSignature Classes (esp. {@link music21.meter.TimeSignature} ) and methods.
+ *
+ * @exports music21/meter
+ *
+ * @namespace music21.meter
+ * @memberof music21
+ * @requires music21/base
+ * @requires music21/duration
  */
 import Vex from 'vexflow';
 
@@ -13,22 +22,6 @@ import * as base from './base.js';
 import * as beam from './beam.js';
 import * as common from './common.js';
 import * as duration from './duration.js';
-
-/**
- * meter module. See {@link music21.meter} namespace for details.
- *
- * @exports music21/meter
- */
-
-/**
- * Meter and TimeSignature Classes (esp. {@link music21.meter.TimeSignature} ) and methods.
- *
- * @namespace music21.meter
- * @memberof music21
- * @requires music21/base
- * @requires music21/duration
- */
-export const meter = {};
 
 /**
  * A MUCH simpler version of the music21p TimeSignature object.
@@ -343,5 +336,3 @@ export class TimeSignature extends base.Music21Object {
         //  }
     }
 }
-
-meter.TimeSignature = TimeSignature;

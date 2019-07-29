@@ -25,7 +25,7 @@ import * as clef from './clef.js';
 import * as duration from './duration.js';
 import * as pitch from './pitch.js';
 import * as note from './note.js';
-import { meter } from './meter.js';
+import * as meter from './meter.js';
 import { stream } from './stream.js';
 import * as tie from './tie.js';
 

@@ -1,19 +1,16 @@
+/**
+ * articulations module. See {@link music21.articulations} namespace
+ *
+ * @namespace music21.articulations
+ * @memberof music21
+ * @requires music21/prebase
+ * @requires vexflow
+ * @requires music21/common
+ */
 import Vex from 'vexflow';
 
 import * as common from './common.js';
 import * as prebase from './prebase.js';
-
-/**
- * articulations module. See {@link music21.articulations} namespace
- *
- */
-
-/**
- * @namespace music21.articulations
- * @memberof music21
- * @requires music21/prebase, Vexflow
- */
-export const articulations = {};
 
 /**
  * Represents a single articulation, usually in the `.articulations` Array
@@ -52,7 +49,7 @@ export class Articulation extends prebase.ProtoM21Object {
         return vfa;
     }
 }
-articulations.Articulation = Articulation;
+
 /**
  * base class for articulations that change the length of a note...
  *
@@ -66,7 +63,6 @@ export class LengthArticulation extends Articulation {
         this.name = 'length-articulation';
     }
 }
-articulations.LengthArticulation = LengthArticulation;
 
 /**
  * base class for articulations that change the dynamic of a note...
@@ -81,7 +77,6 @@ export class DynamicArticulation extends Articulation {
         this.name = 'dynamic-articulation';
     }
 }
-articulations.DynamicArticulation = DynamicArticulation;
 
 /**
  * base class for articulations that change the pitch of a note...
@@ -96,7 +91,6 @@ export class PitchArticulation extends Articulation {
         this.name = 'pitch-articulation';
     }
 }
-articulations.PitchArticulation = PitchArticulation;
 
 /**
  * base class for articulations that change the timbre of a note...
@@ -111,7 +105,6 @@ export class TimbreArticulation extends Articulation {
         this.name = 'timbre-articulation';
     }
 }
-articulations.TimbreArticulation = TimbreArticulation;
 
 /**
  * 50% louder than usual
@@ -128,7 +121,6 @@ export class Accent extends DynamicArticulation {
         this.dynamicScale = 1.5;
     }
 }
-articulations.Accent = Accent;
 
 /**
  * 100% louder than usual
@@ -145,7 +137,6 @@ export class StrongAccent extends Accent {
         this.dynamicScale = 2.0;
     }
 }
-articulations.StrongAccent = StrongAccent;
 
 /**
  * no playback for now.
@@ -161,7 +152,6 @@ export class Staccato extends LengthArticulation {
         this.vexflowModifier = 'a.';
     }
 }
-articulations.Staccato = Staccato;
 
 /**
  * no playback for now.
@@ -177,7 +167,6 @@ export class Staccatissimo extends Staccato {
         this.vexflowModifier = 'av';
     }
 }
-articulations.Staccatissimo = Staccatissimo;
 
 /**
  * no playback or display for now.
@@ -193,7 +182,6 @@ export class Spiccato extends Staccato {
         this.vexflowModifier = undefined;
     }
 }
-articulations.Spiccato = Spiccato;
 
 /**
  * @class Marcato
@@ -210,7 +198,6 @@ export class Marcato extends DynamicArticulation {
         this.dynamicScale = 1.7;
     }
 }
-articulations.Marcato = Marcato;
 
 /**
  * @class Tenuto
@@ -224,4 +211,3 @@ export class Tenuto extends LengthArticulation {
         this.vexflowModifier = 'a-';
     }
 }
-articulations.Tenuto = Tenuto;

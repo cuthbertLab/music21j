@@ -1,19 +1,15 @@
-import Vex from 'vexflow';
-
-import * as base from './base.js';
 /**
  * Expressions module.  See {@link music21.expressions}
- *
- * @exports music21/expressions
- */
-/**
  * Expressions can be note attached (`music21.note.Note.expressions[]`) or floating...
  *
+ * @exports music21/expressions
  * @namespace music21.expressions
  * @memberof music21
  * @requires music21/expressions
  */
-export const expressions = {};
+
+import Vex from 'vexflow';
+import * as base from './base.js';
 
 /**
  * Expressions can be note attached (`music21.note.Note.expressions[]`) or floating...
@@ -48,7 +44,6 @@ export class Expression extends base.Music21Object {
         return vfe;
     }
 }
-expressions.Expression = Expression;
 
 /**
  * A fermata...
@@ -65,4 +60,3 @@ export class Fermata extends Expression {
         this.setPosition = 3;
     }
 }
-expressions.Fermata = Fermata;

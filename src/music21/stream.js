@@ -20,7 +20,7 @@ import * as clef from './clef.js';
 import * as common from './common.js';
 import * as duration from './duration.js';
 import { instrument } from './instrument.js';
-import { meter } from './meter.js';
+import * as meter from './meter.js';
 import * as note from './note.js';
 import * as pitch from './pitch.js';
 import * as renderOptions from './renderOptions.js';
@@ -57,7 +57,7 @@ export { iterator };
  * @requires music21/common
  * @requires music21/meter
  * @requires music21/pitch
- * @requires jquery
+ * @requires jQuery
  */
 export const stream = {
     filters,

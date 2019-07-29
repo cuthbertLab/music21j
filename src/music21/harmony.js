@@ -3,7 +3,7 @@
  */
 
 import { chord } from './chord.js';
-import { key } from './key.js';
+import * as key from './key.js';
 
 /**
  * @memberOf music21.harmony

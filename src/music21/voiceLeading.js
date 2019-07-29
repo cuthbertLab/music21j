@@ -9,7 +9,7 @@
  */
 
 import * as interval from './interval.js';
-import { key } from './key.js';
+import * as key from './key.js';
 import * as note from './note.js';
 
 import { Music21Object } from './base.js';

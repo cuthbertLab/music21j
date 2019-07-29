@@ -7,30 +7,21 @@
  *
  * Copyright (c) 2013-14, Michael Scott Cuthbert and cuthbertLab
  * Based on music21 (=music21p), Copyright (c) 2006–14, Michael Scott Cuthbert and cuthbertLab
- *
- */
-import * as base from './base.js';
-
-/**
  * dynamics Module. See {@link music21.dynamics} for namespace
  *
- * @exports music21/dynamics
- */
-/**
  * Dynamics related objects.
- *
- * N.B. Firefox completely ignores dynamics on playback!
  *
  * Currently do not export to Vexflow.  :-(
  *
+ * @exports music21/dynamics
  * @namespace music21.dynamics
  * @memberof music21
  * @requires music21/base
  */
-export const dynamics = {};
+import * as base from './base.js';
 
 // noinspection SpellCheckingInspection
-dynamics.shortNames = [
+export const shortNames = [
     'pppppp',
     'ppppp',
     'pppp',
@@ -50,7 +41,7 @@ dynamics.shortNames = [
 ];
 
 // noinspection SpellCheckingInspection
-dynamics.longNames = {
+export const longNames = {
     ppp: ['pianississimo'],
     pp: ['pianissimo'],
     p: ['piano'],
@@ -62,7 +53,8 @@ dynamics.longNames = {
     ff: ['fortissimo'],
     fff: ['fortississimo'],
 };
-dynamics.englishNames = {
+
+export const englishNames = {
     ppp: ['extremely soft'],
     pp: ['very soft'],
     p: ['soft'],
@@ -72,7 +64,8 @@ dynamics.englishNames = {
     ff: ['very loud'],
     fff: ['extremely loud'],
 };
-dynamics.dynamicStrToScalar = {
+
+export const dynamicStrToScalar = {
     None: [0.5], // default value
     n: [0.0],
     pppp: [0.1],
@@ -154,25 +147,25 @@ export class Dynamic extends base.Music21Object {
             this._value = value;
             this._volumeScalar = undefined;
         }
-        if (this._value in dynamics.longNames) {
-            this.longName = dynamics.longNames[this._value][0];
+        if (this._value in longNames) {
+            this.longName = longNames[this._value][0];
         } else {
-            this.longName = undefined;
+            this.longName = '';
         }
-        if (this._value in dynamics.englishNames) {
-            this.englishName = dynamics.englishNames[this._value][0];
+        if (this._value in englishNames) {
+            this.englishName = englishNames[this._value][0];
         } else {
-            this.englishName = undefined;
+            this.englishName = '';
         }
     }
 
     get volumeScalar() {
         if (this._volumeScalar !== undefined) {
             return this._volumeScalar;
-        } else if (this._value in dynamics.dynamicStrToScalar) {
-            return dynamics.dynamicStrToScalar[this._value][0];
+        } else if (this._value in dynamicStrToScalar) {
+            return dynamicStrToScalar[this._value][0];
         } else {
-            return undefined;
+            return 0.5;
         }
     }
 
@@ -182,4 +175,3 @@ export class Dynamic extends base.Music21Object {
         }
     }
 }
-dynamics.Dynamic = Dynamic;

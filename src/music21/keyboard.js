@@ -5,31 +5,10 @@
  * Copyright (c) 2013-18, Michael Scott Cuthbert and cuthbertLab
  * Based on music21 (=music21p), Copyright (c) 2006–17, Michael Scott Cuthbert and cuthbertLab
  *
- */
-
-// Minimum usage:
-
-// var kd = document.getElementById('keyboardDiv');
-// k = new music21.keyboard.Keyboard();
-// k.appendKeyboard(kd, 6, 57); // 88 key keyboard
-
-// configurable:
-// k.scaleFactor = 1.2;  // default 1
-// k.whiteKeyWidth = 40; // default 23
-import * as $ from 'jquery';
-import * as MIDI from 'midicube';
-
-import * as common from './common.js';
-import { miditools } from './miditools.js';
-import * as pitch from './pitch.js';
-
-
-/**
  * Keyboard module, see {@link music21.keyboard} namespace
  *
  * @exports music21/keyboard
- */
-/**
+ *
  * keyboard namespace -- tools for creating an onscreen keyboard and interacting with it.
  *
  * @namespace music21.keyboard
@@ -39,8 +18,24 @@ import * as pitch from './pitch.js';
  * @requires music21/miditools
  * @requires jquery
  * @requires MIDI
+ *
+ * @example Minimum usage:
+ * const kd = document.getElementById('keyboardDiv');
+ * const k = new music21.keyboard.Keyboard();
+ * k.appendKeyboard(kd, 6, 57); // 88 key keyboard
+ *
+ * // configurable:
+ * k.scaleFactor = 1.2;  // default 1
+ * k.whiteKeyWidth = 40; // default 23
+ *
  */
-export const keyboard = {};
+import * as $ from 'jquery';
+import * as MIDI from 'midicube';
+
+import * as common from './common.js';
+import { miditools } from './miditools.js';
+import * as pitch from './pitch.js';
+
 /**
  * Represents a single Key
  *
@@ -49,7 +44,7 @@ export const keyboard = {};
  * @property {Array<function>} callbacks - called when key is clicked/selected
  * @property {number} [scaleFactor=1]
  * @property {music21.keyboard.Keyboard|undefined} parent
- * @property {int} id - midinumber associated with the key.
+ * @property {int} id - midi number associated with the key.
  * @property {music21.pitch.Pitch|undefined} pitchObj
  * @property {SVGElement|undefined} svgObj - SVG representing the drawing of the key
  * @property {SVGElement|undefined} noteNameSvgObj - SVG representing the note name drawn on the key
@@ -81,7 +76,7 @@ export class Key {
      * @returns {SVGElement} a SVG rectangle for the key
      */
     makeKey(startX) {
-        const keyattrs = {
+        const keyAttrs = {
             style: this.keyStyle,
             x: startX,
             y: 0,
@@ -92,7 +87,7 @@ export class Key {
             rx: 3,
             ry: 3,
         };
-        const keyDOM = common.makeSVGright('rect', keyattrs);
+        const keyDOM = common.makeSVGright('rect', keyAttrs);
         for (const x in this.callbacks) {
             if ({}.hasOwnProperty.call(this.callbacks, x)) {
                 keyDOM.addEventListener(x, this.callbacks[x], false);
@@ -216,7 +211,6 @@ export class Key {
         this.noteNameSvgObj = undefined;
     }
 }
-keyboard.Key = Key;
 
 /**
  * Defaults for a WhiteKey (width, height, keyStyle, keyClass)
@@ -234,7 +228,7 @@ export class WhiteKey extends Key {
         this.keyClass = 'whitekey';
     }
 }
-keyboard.WhiteKey = WhiteKey;
+
 /**
  * Defaults for a BlackKey (width, height, keyStyle, keyClass)
  *
@@ -251,8 +245,6 @@ export class BlackKey extends Key {
         this.keyClass = 'blackkey';
     }
 }
-
-keyboard.BlackKey = BlackKey;
 
 /**
  * A Class representing a whole Keyboard full of keys.
@@ -435,7 +427,7 @@ export class Keyboard {
 
         for (let wki = 0; wki < keyboardDiatonicLength; wki++) {
             movingPitch.diatonicNoteNum = this._startDNN + wki;
-            const wk = new keyboard.WhiteKey();
+            const wk = new WhiteKey();
             wk.id = movingPitch.midi;
             wk.parent = this;
             this.keyObjects[movingPitch.midi] = wk;
@@ -458,8 +450,8 @@ export class Keyboard {
                     || currentIndex === 5)
                 && wki !== keyboardDiatonicLength - 1
             ) {
-                // create but do not append blackkey to the right of whitekey
-                const bk = new keyboard.BlackKey();
+                // create but do not append BlackKey to the right of WhiteKey
+                const bk = new BlackKey();
                 bk.id = movingPitch.midi + 1;
                 this.keyObjects[movingPitch.midi + 1] = bk;
                 bk.parent = this;
@@ -617,7 +609,7 @@ export class Keyboard {
             $container.find('.keyboardSVG').css('display')
         );
         $b.data('state', 'down');
-        $b.click(keyboard.triggerToggleShow);
+        $b.click(triggerToggleShow);
         const $explain = $(
             "<div class='keyboardExplain'>Show keyboard</div>"
         ).css({
@@ -641,7 +633,7 @@ export class Keyboard {
  * @function music21.keyboard.triggerToggleShow
  * @param {Event} [e]
  */
-keyboard.triggerToggleShow = e => {
+export const triggerToggleShow = e => {
     // "this" refers to the object clicked
     // e -- event is not used.
     const $t = $(this);
@@ -683,7 +675,7 @@ keyboard.triggerToggleShow = e => {
  *                          music21.miditools.sendToMIDIjs,
  *                          music21.keyboard.jazzHighlight.bind(k)];
  */
-keyboard.jazzHighlight = function jazzHighlight(e) {
+export function jazzHighlight(e) {
     // e is a miditools.event object -- call with this = keyboard.Keyboard object via bind...
     if (e === undefined) {
         return;
@@ -722,6 +714,4 @@ keyboard.jazzHighlight = function jazzHighlight(e) {
             svgObj.setAttribute('style', keyObj.keyStyle);
         }
     }
-}; // call this with a bind(keyboard.Keyboard object)...
-
-keyboard.Keyboard = Keyboard;
+} // call this with a bind(keyboard.Keyboard object)...

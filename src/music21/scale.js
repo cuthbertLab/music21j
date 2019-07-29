@@ -8,13 +8,13 @@
  * Based on music21 (=music21p), Copyright (c) 2006–17, Michael Scott Cuthbert and cuthbertLab
  *
  */
+import { Music21Exception } from './exceptions21.js';
+import { debug } from './debug.js';
+
 import * as base from './base.js';
 import * as common from './common.js';
-import { debug } from './debug.js';
 import * as interval from './interval.js';
 import * as pitch from './pitch.js';
-
-import { Music21Exception } from './exceptions21.js';
 
 // const DIRECTION_BI = 'bi';
 // const DIRECTION_DESCENDING = 'descending';
@@ -491,21 +491,3 @@ export function ScaleSimpleMinor(tonic, minorType) {
     }
     return SimpleDiatonicScale(tonic, scaleSteps);
 }
-
-export const scale = {
-    Scale,
-    AbstractScale,
-    AbstractDiatonicScale,
-    AbstractHarmonicMinorScale,
-    AbstractAscendingMelodicMinorScale,
-    ConcreteScale,
-    DiatonicScale,
-    MajorScale,
-    MinorScale,
-    HarmonicMinorScale,
-    AscendingMelodicMinorScale,
-
-    ScaleSimpleMinor,
-    ScaleSimpleMajor,
-    SimpleDiatonicScale,
-};

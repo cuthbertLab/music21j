@@ -15,6 +15,7 @@
       <w>bhupala</w>
       <w>bibhas</w>
       <w>bitonal</w>
+      <w>blackkey</w>
       <w>cakravana</w>
       <w>cuthbert</w>
       <w>dddd</w>
@@ -44,6 +45,8 @@
       <w>jsonpickle</w>
       <w>kanakangi</w>
       <w>keyboardkey</w>
+      <w>keyboardkeyannotation</w>
+      <w>keyboardkeyname</w>
       <w>kiravani</w>
       <w>kumoi</w>
       <w>ladma</w>
@@ -166,6 +169,7 @@
       <w>vivacissimo</w>
       <w>webkitvisibilitychange</w>
       <w>webmidi</w>
+      <w>whitekey</w>
       <w>xand</w>
       <w>yfor</w>
     </words>

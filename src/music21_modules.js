@@ -43,6 +43,7 @@ import * as prebase from './music21/prebase.js';
 import * as base from './music21/base.js';
 import * as common from './music21/common.js';
 
+import * as articulations from './music21/articulations.js';
 import * as bar from './music21/bar.js';
 import * as beam from './music21/beam.js';
 import * as chordTables from './music21/chordTables.js';
@@ -50,15 +51,22 @@ import * as clef from './music21/clef.js';
 import * as converter from './music21/converter.js';
 import * as derivation from './music21/derivation.js';
 import * as duration from './music21/duration.js';
+import * as dynamics from './music21/dynamics.js';
+import * as expressions from './music21/expressions.js';
 import * as figuredBass from './music21/figuredBass.js';
 import * as harmony from './music21/harmony.js';
 import * as interval from './music21/interval.js';
+import * as key from './music21/key.js';
+import * as keyboard from './music21/keyboard.js';
+import * as layout from './music21/layout.js';
+import * as meter from './music21/meter.js';
 import * as musicxml from './music21/musicxml.js';
 import * as note from './music21/note.js';
 import * as parseLoader from './music21/parseLoader.js';
 import * as pitch from './music21/pitch.js';
 import * as renderOptions from './music21/renderOptions.js';
 import * as roman from './music21/roman.js';
+import * as scale from './music21/scale.js';
 import * as sites from './music21/sites.js';
 import * as tempo from './music21/tempo.js';
 import * as tie from './music21/tie.js';
@@ -71,20 +79,12 @@ export { debug } from './music21/debug.js';
 
 // these below need to be rewritten to be like above...
 
-export { articulations } from './music21/articulations.js';
 export { audioRecording } from './music21/audioRecording.js';
 export { audioSearch } from './music21/audioSearch.js';
 export { chord } from './music21/chord.js';
-export { dynamics } from './music21/dynamics.js';
-export { expressions } from './music21/expressions.js';
 export { fromPython } from './music21/fromPython.js';
 export { instrument } from './music21/instrument.js';
-export { key } from './music21/key.js';
-export { keyboard } from './music21/keyboard.js';
-export { layout } from './music21/layout.js';
-export { meter } from './music21/meter.js';
 export { miditools } from './music21/miditools.js';
-export { scale } from './music21/scale.js';
 export { stream } from './music21/stream.js';
 
 export {
@@ -95,6 +95,7 @@ export {
     prebase,
     common,
 
+    articulations,
     bar,
     beam,
     chordTables,
@@ -102,15 +103,22 @@ export {
     converter,
     derivation,
     duration,
+    dynamics,
+    expressions,
     figuredBass,
     harmony,
     interval,
+    key,
+    keyboard,
+    layout,
+    meter,
     musicxml,
     note,
     parseLoader,
     pitch,
     renderOptions,
     roman,
+    scale,
     sites,
     tempo,
     tie,

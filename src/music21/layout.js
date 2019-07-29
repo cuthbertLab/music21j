@@ -1,32 +1,38 @@
+/**
+ *
+ * THIS IS CURRENTLY UNUSED
+ * Does not work yet, so not documented
+ *
+ * @namespace music21.layout
+ */
 // future -- rewrite of Score and Part to Page, System, SystemPart
 // not currently used
 // import * as $ from 'jquery';
 //
 // import { base } from './base.js';
 // import { renderOptions } from './renderOptions.js';
+
 import { stream } from './stream.js';
+
 /**
+ * Divide a part up into systems and fix the measure
+ * widths so that they are all even.
  *
- * THIS IS CURRENTLY UNUSED
- * Does not work yet, so not documented
+ * Note that this is done on the part level even though
+ * the measure widths need to be consistent across parts.
  *
+ * This is possible because the system is deterministic and
+ * will come to the same result for each part.  Opportunity
+ * for making more efficient through this...
+ *
+ * @param {music21.stream.Score} score
+ * @param {number} containerWidth
+ * @returns {LayoutScore}
  */
-export const layout = {};
-layout.makeLayoutFromScore = function makeLayoutFromScore(
+export function makeLayoutFromScore(
     score,
     containerWidth
 ) {
-    /*
-     * Divide a part up into systems and fix the measure
-     * widths so that they are all even.
-     *
-     * Note that this is done on the part level even though
-     * the measure widths need to be consistent across parts.
-     *
-     * This is possible because the system is deterministic and
-     * will come to the same result for each part.  Opportunity
-     * for making more efficient through this...
-     */
     // var systemHeight = score.systemHeight; /* part.show() called... */
     // var systemPadding = score.systemPadding;
     const parts = score.parts;
@@ -39,21 +45,21 @@ layout.makeLayoutFromScore = function makeLayoutFromScore(
     const maxSystemWidth
         = containerWidth || score.maxSystemWidth; /* of course fix! */
 
-    const layoutScore = new layout.LayoutScore();
-    const currentPage = new layout.Page(); // to-do multiple pages...
+    const layoutScore = new LayoutScore();
+    const currentPage = new Page(); // to-do multiple pages...
     currentPage.measureStart = 1;
     currentPage.measureEnd = numMeasures;
 
     layoutScore.insert(0, currentPage);
 
-    let currentSystem = new layout.System();
+    let currentSystem = new System();
     let currentSystemNumber = 1;
     currentSystem.measureStart = 1;
     let currentStaves = [];
 
     const staffMaker = (staffHolder, numParts, measureStart) => {
         for (let pNum = 0; pNum < numParts; pNum++) {
-            const staff = new layout.Staff();
+            const staff = new Staff();
             staff.measureStart = measureStart;
             staff.staffNumber = pNum + 1;
             staffHolder.push(staff);
@@ -89,7 +95,7 @@ layout.makeLayoutFromScore = function makeLayoutFromScore(
             currentSystem.measureEnd = i;
             currentPage.insert(0, currentSystem);
             currentSystemNumber += 1;
-            currentSystem = new layout.System();
+            currentSystem = new System();
             currentSystem.measureStart = i + 1;
             currentSystem.systemNumber = currentSystemNumber;
 
@@ -113,7 +119,7 @@ layout.makeLayoutFromScore = function makeLayoutFromScore(
     }
     currentPage.insert(0, currentSystem);
     return layoutScore;
-};
+}
 
 /**
  * @extends music21.stream.Score
@@ -166,7 +172,6 @@ export class LayoutScore extends stream.Score {
     //     units = units || 'pixels';
     // }
 }
-layout.LayoutScore = LayoutScore;
 
 /**
  * All music must currently be on page 1.
@@ -202,7 +207,6 @@ export class Page extends stream.Score {
         }
     }
 }
-layout.Page = Page;
 
 /**
  * @extends music21.stream.Score
@@ -245,7 +249,6 @@ export class System extends stream.Score {
         }
     }
 }
-layout.System = System;
 
 /**
  * @extends music21.stream.Score
@@ -274,5 +277,3 @@ export class Staff extends stream.Part {
         }
     }
 }
-
-layout.Staff = Staff;

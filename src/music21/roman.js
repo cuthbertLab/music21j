@@ -26,9 +26,9 @@ import * as common from './common.js';
 import * as figuredBass from './figuredBass.js';
 import * as harmony from './harmony.js';
 import * as interval from './interval.js';
-import { key } from './key.js';
+import * as key from './key.js';
 import * as pitch from './pitch.js';
-import { scale } from './scale.js';
+import * as scale from './scale.js';
 
 export const figureShorthands = {
     '53': '',

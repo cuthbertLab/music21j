@@ -5,21 +5,10 @@
  * Copyright (c) 2013-16, Michael Scott Cuthbert and cuthbertLab
  * Based on music21 (=music21p), Copyright (c) 2006–16, Michael Scott Cuthbert and cuthbertLab
  *
- */
-import { Music21Exception } from './exceptions21.js';
-
-import * as base from './base.js';
-import { debug } from './debug.js';
-import * as interval from './interval.js';
-import * as pitch from './pitch.js';
-import { scale } from './scale.js';
-
-/* key and key signature module. See {@link music21.key} namespace for details
+ * key and key signature module. See {@link music21.key} namespace for details
+ * Key and KeySignature related objects and methods
  *
  * @exports music21/key
- */
-/**
- * Key and KeySignature related objects and methods
  *
  * @namespace music21.key
  * @memberof music21
@@ -28,9 +17,15 @@ import { scale } from './scale.js';
  * @requires music21/interval
  * @requires music21/scale
  */
-export const key = {};
+import { Music21Exception } from './exceptions21.js';
+import { debug } from './debug.js';
 
-key.modeSharpsAlter = {
+import * as base from './base.js';
+import * as interval from './interval.js';
+import * as pitch from './pitch.js';
+import * as scale from './scale.js';
+
+export const modeSharpsAlter = {
     major: 0,
     minor: -3,
     dorian: -2,
@@ -40,9 +35,12 @@ key.modeSharpsAlter = {
     locrian: -5,
 };
 
-key.convertKeyStringToMusic21KeyString = function convertKeyStringToMusic21KeyString(
-    textString
-) {
+/**
+ *
+ * @param {string} textString
+ * @returns {string}
+ */
+export function convertKeyStringToMusic21KeyString(textString) {
     if (textString === 'bb') {
         textString = 'b-';
     } else if (textString === 'Bb') {
@@ -51,7 +49,7 @@ key.convertKeyStringToMusic21KeyString = function convertKeyStringToMusic21KeySt
         textString = textString.replace(/b$/, '-');
     }
     return textString;
-};
+}
 
 /**
  * @class KeySignature
@@ -304,7 +302,6 @@ export class KeySignature extends base.Music21Object {
         return newPitch;
     }
 }
-key.KeySignature = KeySignature;
 
 /**
  * Create a Key object. Like a KeySignature but with ideas about Tonic, Dominant, etc.
@@ -339,7 +336,7 @@ export class Key extends KeySignature {
         if (sharpsIndex === -1) {
             throw new Music21Exception('Cannot find the key for ' + keyName);
         }
-        const modeShift = key.modeSharpsAlter[mode] || 0;
+        const modeShift = modeSharpsAlter[mode] || 0;
         const sharps = sharpsIndex + modeShift - 11;
         if (debug) {
             console.log('Found sharps ' + sharps + ' for key: ' + keyName);
@@ -407,4 +404,4 @@ export class Key extends KeySignature {
         return this._scale.getScaleDegreeFromPitch(...args);
     }
 }
-key.Key = Key;
+
