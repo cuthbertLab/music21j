@@ -23,7 +23,7 @@ import * as $ from 'jquery';
 
 import { clef } from './clef.js';
 import * as duration from './duration.js';
-import { pitch } from './pitch.js';
+import * as pitch from './pitch.js';
 import { note } from './note.js';
 import { meter } from './meter.js';
 import { stream } from './stream.js';

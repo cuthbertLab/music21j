@@ -10,7 +10,7 @@ import { common } from './common.js';
 import { debug } from './debug.js';
 import { note } from './note.js';
 import * as prebase from './prebase.js';
-import { pitch } from './pitch.js';
+import * as pitch from './pitch.js';
 
 /**
  * interval module. See {@link music21.interval} for namespace

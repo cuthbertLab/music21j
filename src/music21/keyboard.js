@@ -21,7 +21,7 @@ import * as MIDI from 'midicube';
 
 import { common } from './common.js';
 import { miditools } from './miditools.js';
-import { pitch } from './pitch.js';
+import * as pitch from './pitch.js';
 
 
 /**

@@ -12,7 +12,7 @@ import * as base from './base.js';
 // import { common } from './common.js';
 import { debug } from './debug.js';
 import { interval } from './interval.js';
-import { pitch } from './pitch.js';
+import * as pitch from './pitch.js';
 import { scale } from './scale.js';
 
 /* key and key signature module. See {@link music21.key} namespace for details

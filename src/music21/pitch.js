@@ -5,25 +5,19 @@
  * Copyright (c) 2013-17, Michael Scott Cuthbert and cuthbertLab
  * Based on music21, Copyright (c) 2006–17, Michael Scott Cuthbert and cuthbertLab
  *
+ * pitch module.  See {@link music21.pitch} namespace
+ * Pitch related objects and methods
+ *
+ * @exports music21/pitch
+ * @namespace music21.pitch
+ * @memberof music21
+ * @requires music21/prebase
  */
 import { Music21Exception } from './exceptions21.js';
 
 import * as prebase from './prebase.js';
 import { common } from './common.js';
 
-/**
- * pitch module.  See {@link music21.pitch} namespace
- *
- * @exports music21/pitch
- */
-/**
- * Pitch related objects and methods
- *
- * @namespace music21.pitch
- * @memberof music21
- * @requires music21/prebase
- */
-export const pitch = {};
 /**
  * @class Accidental
  * @memberof music21.pitch
@@ -249,13 +243,12 @@ export class Accidental extends prebase.ProtoM21Object {
         return this._unicodeModifier;
     }
 }
-pitch.Accidental = Accidental;
 
 /**
  *
  * @type {{A: number, B: number, C: number, D: number, E: number, F: number, G: number}}
  */
-pitch.nameToMidi = {
+export const nameToMidi = {
     C: 0, D: 2, E: 4, F: 5, G: 7, A: 9, B: 11,
 };
 
@@ -263,7 +256,7 @@ pitch.nameToMidi = {
  *
  * @type {{A: number, B: number, C: number, D: number, E: number, F: number, G: number}}
  */
-pitch.nameToSteps = {
+export const nameToSteps = {
     C: 0, D: 1, E: 2, F: 3, G: 4, A: 5, B: 6,
 };
 
@@ -271,13 +264,13 @@ pitch.nameToSteps = {
  *
  * @type {string[]}
  */
-pitch.stepsToName = ['C', 'D', 'E', 'F', 'G', 'A', 'B'];
+export const stepsToName = ['C', 'D', 'E', 'F', 'G', 'A', 'B'];
 
 /**
  *
  * @type {string[]}
  */
-pitch.midiToName = [
+export const midiToName = [
     'C',
     'C#',
     'D',
@@ -371,7 +364,7 @@ export class Pitch extends prebase.ProtoM21Object {
             throw new TypeError('Steps must be strings');
         }
         s = s.toUpperCase();
-        if (!pitch.stepsToName.includes(s)) {
+        if (!stepsToName.includes(s)) {
             throw new TypeError(`${s} is not a valid step name.`);
         }
         this._step = s;
@@ -413,7 +406,7 @@ export class Pitch extends prebase.ProtoM21Object {
 
     set accidental(a) {
         if (typeof a !== 'object' && a !== undefined) {
-            a = new pitch.Accidental(a);
+            a = new Accidental(a);
         }
         this._accidental = a;
         this.spellingIsInferred = false;
@@ -474,14 +467,14 @@ export class Pitch extends prebase.ProtoM21Object {
      * @type {number}
      */
     get diatonicNoteNum() {
-        return this.octave * 7 + pitch.nameToSteps[this.step] + 1;
+        return this.octave * 7 + nameToSteps[this.step] + 1;
     }
 
     set diatonicNoteNum(newDNN) {
         newDNN -= 1; // makes math easier
         this.octave = Math.floor(newDNN / 7);
         const mod7DNN = common.posMod(Math.round(newDNN), 7);
-        this.step = pitch.stepsToName[mod7DNN];
+        this.step = stepsToName[mod7DNN];
     }
 
     /**
@@ -513,13 +506,13 @@ export class Pitch extends prebase.ProtoM21Object {
         }
         return (
             (this.octave + 1) * 12
-            + pitch.nameToMidi[this.step]
+            + nameToMidi[this.step]
             + accidentalAlter
         );
     }
 
     set ps(ps) {
-        this.name = pitch.midiToName[common.posMod(ps, 12)];
+        this.name = midiToName[common.posMod(ps, 12)];
         this.octave = Math.floor(ps / 12) - 1;
         this.spellingIsInferred = true;
     }
@@ -633,5 +626,3 @@ export class Pitch extends prebase.ProtoM21Object {
         return outName;
     }
 }
-
-pitch.Pitch = Pitch;

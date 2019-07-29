@@ -11,11 +11,11 @@ import { Music21Exception } from './exceptions21.js';
 import { chord } from './chord.js';
 import { common } from './common.js';
 // import { debug } from './debug.js';
-import { figuredBass } from './figuredBass.js';
+import * as figuredBass from './figuredBass.js';
 import { harmony } from './harmony.js';
 import { interval } from './interval.js';
 import { key } from './key.js';
-import { pitch } from './pitch.js';
+import * as pitch from './pitch.js';
 import { scale } from './scale.js';
 /**
  * Roman numeral module. See {@link music21.roman} namespace

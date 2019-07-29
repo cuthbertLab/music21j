@@ -1,4 +1,8 @@
-import { pitch } from './pitch.js';
+/**
+ * @namespace music21.figuredBass
+ * @exports music21/figuredBass
+ */
+import * as pitch from './pitch.js';
 
 const shorthandNotation = {
     '': [5, 3],
@@ -17,7 +21,11 @@ const shorthandNotation = {
  * In music21p is in figuredBass.notation -- eventually to be moved there.
  */
 
-class Notation {
+
+/**
+ * @memberof music21.figuredBass
+ */
+export class Notation {
     /**
      *
      * @param {string} [notationColumn='']
@@ -153,7 +161,10 @@ class Notation {
     }
 }
 
-class Figure {
+/**
+ * @memberOf music21.figuredBass
+ */
+export class Figure {
     constructor(number, modifierString) {
         this.number = number;
         this.modifierString = modifierString;
@@ -174,7 +185,10 @@ const specialModifiers = {
     '++++': '####',
 };
 
-class Modifier {
+/**
+ * @memberOf music21.figuredBass
+ */
+export class Modifier {
     constructor(modifierString) {
         this.modifierString = modifierString;
         this.accidental = this._toAccidental();
@@ -224,8 +238,3 @@ class Modifier {
     }
 }
 
-export const figuredBass = {
-    Notation,
-    Figure,
-    Modifier,
-};

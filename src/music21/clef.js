@@ -7,7 +7,7 @@
  *
  */
 import * as base from './base.js';
-import { pitch } from './pitch.js';
+import * as pitch from './pitch.js';
 
 /**
  * Clef module, see {@link music21.clef} for namespace

@@ -47,7 +47,9 @@ import * as chordTables from './music21/chordTables.js';
 import * as converter from './music21/converter.js';
 import * as derivation from './music21/derivation.js';
 import * as duration from './music21/duration.js';
+import * as figuredBass from './music21/figuredBass.js';
 import * as parseLoader from './music21/parseLoader.js';
+import * as pitch from './music21/pitch.js';
 import * as sites from './music21/sites.js';
 import * as tempo from './music21/tempo.js';
 import * as tie from './music21/tie.js';
@@ -69,7 +71,6 @@ export { chord } from './music21/chord.js';
 export { clef } from './music21/clef.js';
 export { dynamics } from './music21/dynamics.js';
 export { expressions } from './music21/expressions.js';
-export { figuredBass } from './music21/figuredBass.js';
 export { fromPython } from './music21/fromPython.js';
 export { harmony } from './music21/harmony.js';
 export { instrument } from './music21/instrument.js';
@@ -81,7 +82,6 @@ export { meter } from './music21/meter.js';
 export { miditools } from './music21/miditools.js';
 export { musicxml } from './music21/musicxml.js';
 export { note } from './music21/note.js';
-export { pitch } from './music21/pitch.js';
 export { renderOptions } from './music21/renderOptions.js';
 export { roman } from './music21/roman.js';
 export { scale } from './music21/scale.js';
@@ -99,7 +99,9 @@ export {
     converter,
     derivation,
     duration,
+    figuredBass,
     parseLoader,
+    pitch,
     sites,
     tempo,
     tie,
