@@ -3,6 +3,7 @@
     <words>
       <w>allegrissimo</w>
       <w>andantino</w>
+      <w>attrchange</w>
       <w>barline</w>
       <w>barlines</w>
       <w>bbbb</w>
@@ -77,6 +78,7 @@
       <w>symlinking</w>
       <w>tenuto</w>
       <w>tetrachord</w>
+      <w>tickables</w>
       <w>tinynotationcontents</w>
       <w>tnimax</w>
       <w>tnmax</w>

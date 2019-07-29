@@ -12,7 +12,7 @@ import Vex from 'vexflow';
 import { base } from './base.js';
 import { beam } from './beam.js';
 import { common } from './common.js';
-import { duration } from './duration.js';
+import * as duration from './duration.js';
 
 /**
  * meter module. See {@link music21.meter} namespace for details.

@@ -5,23 +5,9 @@
  * Copyright (c) 2013-17, Michael Scott Cuthbert and cuthbertLab
  * Based on music21 (=music21p), Copyright (c) 2006–17, Michael Scott Cuthbert and cuthbertLab
  *
- */
-import * as $ from 'jquery';
-
-import { clef } from './clef.js';
-import { duration } from './duration.js';
-import { pitch } from './pitch.js';
-import { note } from './note.js';
-import { meter } from './meter.js';
-import { stream } from './stream.js';
-import * as tie from './tie.js';
-
-/**
  * TinyNotation module, see {@link music21.tinyNotation} namespace
  *
- * @exports music21/tinyNotation
- */
-/**
+ * @exports music21.tinyNotation
  * @namespace music21.tinyNotation
  * @memberof music21
  * @requires music21/base
@@ -33,14 +19,22 @@ import * as tie from './tie.js';
  * @requires music21/stream
  * @requires music21/tie
  */
-export const tinyNotation = {};
+import * as $ from 'jquery';
+
+import { clef } from './clef.js';
+import * as duration from './duration.js';
+import { pitch } from './pitch.js';
+import { note } from './note.js';
+import { meter } from './meter.js';
+import { stream } from './stream.js';
+import * as tie from './tie.js';
 
 /**
  * Regular expressions object
  *
  * @memberof music21.tinyNotation
  */
-tinyNotation.regularExpressions = {
+const regularExpressions = {
     REST: /r/,
     OCTAVE2: /([A-G])[A-G]+/,
     OCTAVE3: /([A-G])/,
@@ -66,8 +60,9 @@ tinyNotation.regularExpressions = {
     QUAD: /quad{/,
     ENDBRAC: /}$/,
 };
+
 /**
- * Function, not class.
+ * **Function, not class**.
  *
  * Converts a TinyNotation String into a music21 Stream
  *
@@ -83,7 +78,7 @@ tinyNotation.regularExpressions = {
  * p.duration.quarterLength;
  * // 6.0
  */
-tinyNotation.TinyNotation = function TinyNotation(textIn) {
+export function TinyNotation(textIn) {
     textIn = textIn.trim();
     const tokens = textIn.split(' ');
 
@@ -100,7 +95,7 @@ tinyNotation.TinyNotation = function TinyNotation(textIn) {
         inQuad: false,
         endTupletAfterNote: false,
     };
-    const tnre = tinyNotation.regularExpressions; // faster typing
+    const tnre = regularExpressions; // faster typing
     let measureNumber = 1;
     for (let i = 0; i < tokens.length; i++) {
         // check at first so that a full measure but not over full
@@ -270,7 +265,7 @@ tinyNotation.TinyNotation = function TinyNotation(textIn) {
         returnObject = p;
     }
     return returnObject;
-};
+}
 
 // render notation divs in HTML
 /**
@@ -282,7 +277,7 @@ tinyNotation.TinyNotation = function TinyNotation(textIn) {
  * @param {string} [classTypes='.music21.tinyNotation'] - a JQuery selector to find elements to replace.
  * @param {HTMLElement|jQuery} [selector]
  */
-tinyNotation.renderNotationDivs = function renderNotationDivs(
+export function renderNotationDivs(
     classTypes='.music21.tinyNotation',
     selector
 ) {
@@ -324,7 +319,7 @@ tinyNotation.renderNotationDivs = function renderNotationDivs(
             thisTNContents = thisTNContents.trim(); // remove leading, trailing whitespace
         }
         if (thisTNContents) {
-            const st = tinyNotation.TinyNotation(thisTNContents);
+            const st = TinyNotation(thisTNContents);
             if ($thisTN.hasClass('noPlayback')) {
                 st.renderOptions.events.click = undefined;
             }
@@ -337,4 +332,4 @@ tinyNotation.renderNotationDivs = function renderNotationDivs(
             // console.log(thisTNContents);
         }
     }
-};
+}

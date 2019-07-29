@@ -10,8 +10,8 @@
  */
 import { common } from './common.js';
 import * as derivation from './derivation.js';
-import { duration } from './duration.js';
-import { prebase } from './prebase.js';
+import * as duration from './duration.js';
+import * as prebase from './prebase.js';
 import * as sites from './sites.js';
 
 /**

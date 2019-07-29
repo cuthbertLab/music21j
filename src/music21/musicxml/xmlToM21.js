@@ -2,7 +2,7 @@ import * as $ from 'jquery';
 
 import { chord } from '../chord.js';
 import { clef } from '../clef.js';
-import { duration } from '../duration.js';
+import * as duration from '../duration.js';
 import { key } from '../key.js';
 import { meter } from '../meter.js';
 import { note } from '../note.js';

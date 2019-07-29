@@ -486,7 +486,7 @@ export class MidiPlayer {
             where = document.body;
         }
 
-        if (!(where instanceof jQuery)) {
+        if (!(where instanceof $)) {
             $where = $(where);
         } else {
             $where = where;

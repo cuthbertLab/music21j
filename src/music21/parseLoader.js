@@ -5,7 +5,7 @@
 import { debug } from './debug.js';
 import { common } from './common.js';
 import { miditools } from './miditools.js';
-import { tinyNotation } from './tinyNotation.js';
+import * as tinyNotation from './tinyNotation.js';
 
 export function runConfiguration() {
     let conf;

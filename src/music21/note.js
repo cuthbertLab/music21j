@@ -9,7 +9,7 @@
 import Vex from 'vexflow';
 import * as MIDI from 'midicube';
 
-import { prebase } from './prebase.js';
+import * as prebase from './prebase.js';
 import { base } from './base.js';
 import { debug } from './debug.js';
 import { pitch } from './pitch.js';

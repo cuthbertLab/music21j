@@ -9,7 +9,7 @@
 import { common } from './common.js';
 import { debug } from './debug.js';
 import { note } from './note.js';
-import { prebase } from './prebase.js';
+import * as prebase from './prebase.js';
 import { pitch } from './pitch.js';
 
 /**

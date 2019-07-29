@@ -5,21 +5,9 @@
  * Copyright (c) 2013-18, Michael Scott Cuthbert and cuthbertLab
  * Based on music21, Copyright (c) 2006–17, Michael Scott Cuthbert and cuthbertLab
  *
- */
-import * as $ from 'jquery';
-import * as MIDI from 'midicube';
-
-import { prebase } from './prebase.js';
-
-/* a Music21Object in m21p; the overhead is too high here to follow ... */
-/**
  * tempo module, see {@link music21.tempo}
  *
  * @exports music21/tempo
- */
-/**
- * tempo namespace
- *
  * @namespace music21.tempo
  * @memberof music21
  * @requires music21/prebase
@@ -27,7 +15,15 @@ import { prebase } from './prebase.js';
  * @requires MIDI
  * @property {number} [baseTempo=60] - basic tempo
  */
-export const tempo = {};
+import * as $ from 'jquery';
+import * as MIDI from 'midicube';
+
+import * as prebase from './prebase.js';
+
+/**
+ * The tempo object itself is a full object in music21p -- TODO(msc): make it one here too.
+ * (MetronomeMark)
+ */
 
 // noinspection JSNonASCIINames,NonAsciiCharacters
 /**
@@ -39,7 +35,7 @@ export const tempo = {};
  * music21.tempo.defaultTempoValues.grave
  * // 40
  */
-tempo.defaultTempoValues = {
+export const defaultTempoValues = {
     larghissimo: 16,
     largamente: 32,
     grave: 40,
@@ -72,7 +68,7 @@ tempo.defaultTempoValues = {
     prestissimo: 208,
 };
 
-tempo.baseTempo = 60;
+export const baseTempo = 60;
 
 /* --------- metronome ---------- */
 /**
@@ -95,7 +91,7 @@ export class Metronome extends prebase.ProtoM21Object {
         super();
         this._tempo = 60; // overridden by music21.tempo.baseTempo;
         if (tempoInt === undefined) {
-            this.tempo = tempo.baseTempo;
+            this.tempo = baseTempo;
         } else {
             this.tempo = tempoInt;
         }
@@ -251,9 +247,9 @@ export class Metronome extends prebase.ProtoM21Object {
          * @type {jQuery}
          */
         let $where;
-        if (where !== undefined && where instanceof jQuery) {
+        if (where !== undefined && where instanceof $) {
             $where = where;
-        } else if (where !== undefined && !(where instanceof jQuery)) {
+        } else if (where !== undefined && !(where instanceof $)) {
             $where = $(where);
         } else {
             $where = $('body');
@@ -340,4 +336,3 @@ export class Metronome extends prebase.ProtoM21Object {
         return $newDiv;
     }
 }
-tempo.Metronome = Metronome;

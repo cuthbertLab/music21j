@@ -8,8 +8,8 @@
  */
 import { Music21Exception } from './exceptions21.js';
 
-import { prebase } from './prebase.js';
-import { duration } from './duration.js';
+import * as prebase from './prebase.js';
+import * as duration from './duration.js';
 
 /**
  * Module holding beam materials. See {@link music21.beam} namespace.

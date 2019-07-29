@@ -8,7 +8,7 @@
  */
 import { Music21Exception } from './exceptions21.js';
 
-import { prebase } from './prebase.js';
+import * as prebase from './prebase.js';
 import { common } from './common.js';
 
 /**

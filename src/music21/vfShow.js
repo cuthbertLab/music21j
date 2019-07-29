@@ -5,6 +5,15 @@
  * Copyright (c) 2013-17, Michael Scott Cuthbert and cuthbertLab
  * Based on music21 (=music21p), Copyright (c) 2006–17, Michael Scott Cuthbert and cuthbertLab
  *
+ * for rendering vexflow. Will eventually go to music21/converter/vexflow
+ *
+ * See {@link music21.vfShow} namespace for details
+ *
+ * @namespace music21.vfShow
+ * @memberof music21
+ * @requires music21.common
+ * @requires vexflow
+ * @exports music21.vfShow
  */
 
 import * as $ from 'jquery';
@@ -12,26 +21,9 @@ import Vex from 'vexflow';
 
 import { clef } from './clef.js';
 import { debug } from './debug.js';
-import { duration } from './duration.js';
+import * as duration from './duration.js';
 
 const _clefSingleton = new clef.TrebleClef();
-
-/**
- * for rendering vexflow. Will eventually go to music21/converter/vexflow
- *
- * See {@link music21.vfShow} namespace for details
- *
- * @exports music21/vfShow
- */
-/**
- * Vexflow display related objects and methods.
- *
- * @namespace music21.vfShow
- * @memberof music21
- * @requires music21/common
- * @requires vexflow
- */
-export const vfShow = {};
 
 /**
  * Represents a stack of objects that need to be rendered together.
@@ -86,7 +78,6 @@ export class RenderStack {
         return tickablesByStave;
     }
 }
-vfShow.RenderStack = RenderStack;
 
 /**
  * Renderer is a function that takes a stream, an
@@ -285,7 +276,7 @@ export class Renderer {
                 subStream.renderOptions.rightBarline = 'end';
             }
             if (this.stacks[i] === undefined) {
-                this.stacks[i] = new vfShow.RenderStack();
+                this.stacks[i] = new RenderStack();
             }
             this.prepareMeasure(subStream, this.stacks[i]);
         }
@@ -300,7 +291,7 @@ export class Renderer {
      * @param {music21.stream.Stream} m - a flat stream (maybe a measure or voice)
      */
     prepareArrivedFlat(m) {
-        const stack = new vfShow.RenderStack();
+        const stack = new RenderStack();
         this.prepareMeasure(m, stack);
         this.stacks[0] = stack;
         this.prepareTies(m);
@@ -1251,4 +1242,3 @@ export class Renderer {
         s.storedVexflowStave = stave;
     }
 }
-vfShow.Renderer = Renderer;

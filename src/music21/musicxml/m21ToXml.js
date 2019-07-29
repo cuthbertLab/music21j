@@ -3,7 +3,7 @@
  */
 import { clef } from '../clef.js';
 import { common } from '../common.js';
-import {
+import {  // eslint-disable-line import/no-cycle
     Stream, Measure, Part, Score,
 } from '../stream.js';
 

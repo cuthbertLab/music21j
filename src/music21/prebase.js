@@ -4,15 +4,11 @@
  * Copyright (c) 2013-17, Michael Scott Cuthbert and cuthbertLab
  *
  * @exports music21/prebase
- */
-/**
- * module for things that all music21-created objects, not just objects that can live in
- * Stream.elements should inherit
- *
  * @namespace music21.prebase
  * @memberof music21
  */
-export const prebase = {};
+
+
 /**
  * Class for pseudo-m21 objects to inherit from. The most important attributes that nearly
  * everything in music21 should inherit from are given below.
@@ -189,4 +185,3 @@ export class ProtoM21Object {
         return '';
     }
 }
-prebase.ProtoM21Object = ProtoM21Object;

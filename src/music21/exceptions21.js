@@ -13,11 +13,7 @@ class ExtendableError extends Error {
         // restore prototype chain
         const actualProto = new.target.prototype;
 
-        if (Object.setPrototypeOf) {
-            Object.setPrototypeOf(this, actualProto);
-        } else {
-            this.__proto__ = actualProto;
-        }
+        Object.setPrototypeOf(this, actualProto);
         this.name = this.constructor.name;
         this.message = message;
         if (typeof Error.captureStackTrace === 'function') {

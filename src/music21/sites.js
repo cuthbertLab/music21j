@@ -1,17 +1,18 @@
 /**
  * Objects for keeping track of relationships among Music21Objects. See {@link music21.sites} namespace
  *
- * Copyright 2017, Michael Scott Cuthbert and cuthbertLab
+ * Copyright 2017-2019, Michael Scott Cuthbert and cuthbertLab
  * License: BSD
+ *
+ * @namespace music21.sites
+ * @memberof music21
+ * @requires music21/common
  */
 
 import { common } from './common.js';
 import { Music21Exception } from './exceptions21';
 
 /**
- * @namespace music21.sites
- * @memberof music21
- * @requires music21/common
  */
 export class SitesException extends Music21Exception {}
 

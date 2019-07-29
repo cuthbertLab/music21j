@@ -18,14 +18,15 @@ import { beam } from './beam.js';
 import { clef } from './clef.js';
 import { common } from './common.js';
 import { debug } from './debug.js';
-import { duration } from './duration.js';
+import * as duration from './duration.js';
 import { instrument } from './instrument.js';
 import { meter } from './meter.js';
 import { note } from './note.js';
 import { pitch } from './pitch.js';
 import { renderOptions } from './renderOptions.js';
-import { vfShow } from './vfShow.js';
+import * as vfShow from './vfShow.js';
 
+// eslint-disable-next-line import/no-cycle
 import { GeneralObjectExporter } from './musicxml/m21ToXml.js';
 
 import * as filters from './stream/filters.js';
@@ -154,7 +155,7 @@ export class Stream extends base.Music21Object {
         this.DOMChangerFunction = e => {
             const canvasOrSVGElement = e.currentTarget;
             if (!(canvasOrSVGElement instanceof HTMLElement) && !(canvasOrSVGElement instanceof SVGElement)) {
-                return;
+                return undefined;
             }
 
             const [clickedDiatonicNoteNum, foundNote] = this.findNoteForClick(
@@ -623,7 +624,7 @@ export class Stream extends base.Music21Object {
 
         const el = elOrElList;
         if (!(el instanceof base.Music21Object)) {
-            throw new Music21Exception('Can only append a music21 object.')
+            throw new Music21Exception('Can only append a music21 object.');
         }
 
         try {
