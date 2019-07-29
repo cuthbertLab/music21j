@@ -6,7 +6,7 @@
  * Based on music21 (=music21p), Copyright (c) 2006–19, Michael Scott Cuthbert and cuthbertLab
  *
  */
-import { base } from './base.js';
+import * as base from './base.js';
 import { Music21Exception } from './exceptions21.js';
 
 const barTypeList = [
@@ -15,7 +15,7 @@ const barTypeList = [
 ];
 const barTypeDict = {
     'light-light': 'double',
-    'light-heavy': 'final', 
+    'light-heavy': 'final',
 };
 
 const reverseBarTypeDict = {
@@ -52,19 +52,19 @@ export class Barline extends base.Music21Object {
     constructor(type, location) {
         super();
         this._type = undefined;
-        
+
         this.type = type;
         this.location = location; // left, right, middle, None
     }
-    
+
     get type() {
         return this._type;
     }
-    
+
     set type(v) {
         this._type = standardizeBarType(v);
     }
-    
+
     musicXMLBarStyle() {
         return typeToMusicXMLBarStyle(this.type);
     }

@@ -7,14 +7,6 @@
  * Copyright (c) 2013-19, Michael Scott Cuthbert and cuthbertLab
  * Based on music21 (=music21p), Copyright (c) 2006–19, Michael Scott Cuthbert and cuthbertLab
  *
- */
-import { common } from './common.js';
-import * as derivation from './derivation.js';
-import * as duration from './duration.js';
-import * as prebase from './prebase.js';
-import * as sites from './sites.js';
-
-/**
  * module for Music21Objects, see {@link music21.base}
  *
  * @requires music21/common
@@ -22,14 +14,15 @@ import * as sites from './sites.js';
  * @requires music21/prebase
  * @requires music21/sites
  * @exports music21/base
- */
-/**
- * Module for Music21Objects.  Does not load other modules.
- *
  * @namespace music21.base
  * @memberof music21
  */
-export const base = {};
+import { common } from './common.js';
+import * as derivation from './derivation.js';
+import * as duration from './duration.js';
+import * as prebase from './prebase.js';
+import * as sites from './sites.js';
+
 
 /**
  * Base class for any object that can be placed in a {@link music21.stream.Stream}.
@@ -552,4 +545,5 @@ export class Music21Object extends prebase.ProtoM21Object {
     }
 }
 
-base.Music21Object = Music21Object;
+// TODO(msc) -- ElementWrapper
+

@@ -40,6 +40,7 @@ import 'jquery-ui-bundle';
 
 import * as exceptions21 from './music21/exceptions21.js';
 import * as prebase from './music21/prebase.js';
+import * as base from './music21/base.js';
 
 import * as bar from './music21/bar.js';
 import * as chordTables from './music21/chordTables.js';
@@ -59,7 +60,6 @@ import * as webmidi from './music21/webmidi.js';
 
 export { debug } from './music21/debug.js';
 export { common } from './music21/common.js';
-export { base } from './music21/base.js';
 
 export { articulations } from './music21/articulations.js';
 export { audioRecording } from './music21/audioRecording.js';
@@ -91,6 +91,8 @@ export {
     MIDI,
 
     exceptions21,
+    base,
+    prebase,
 
     bar,
     chordTables,
@@ -98,7 +100,6 @@ export {
     derivation,
     duration,
     parseLoader,
-    prebase,
     sites,
     tempo,
     tie,

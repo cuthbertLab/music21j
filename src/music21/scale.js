@@ -8,7 +8,7 @@
  * Based on music21 (=music21p), Copyright (c) 2006–17, Michael Scott Cuthbert and cuthbertLab
  *
  */
-import { base } from './base.js';
+import * as base from './base.js';
 import { common } from './common.js';
 import { debug } from './debug.js';
 import { interval } from './interval.js';

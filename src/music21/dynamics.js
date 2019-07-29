@@ -9,7 +9,7 @@
  * Based on music21 (=music21p), Copyright (c) 2006–14, Michael Scott Cuthbert and cuthbertLab
  *
  */
-import { base } from './base.js';
+import * as base from './base.js';
 
 /**
  * dynamics Module. See {@link music21.dynamics} for namespace

@@ -6,7 +6,7 @@
  * Based on music21 (=music21p), Copyright (c) 2006–16, Michael Scott Cuthbert and cuthbertLab
  *
  */
-import { base } from './base.js';
+import * as base from './base.js';
 
 /**
  * Instrument module, see {@link music21.instrument}

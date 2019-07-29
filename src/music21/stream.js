@@ -13,7 +13,7 @@ import * as MIDI from 'midicube';
 
 import { Music21Exception } from './exceptions21.js';
 
-import { base } from './base.js';
+import * as base from './base.js';
 import { beam } from './beam.js';
 import { clef } from './clef.js';
 import { common } from './common.js';

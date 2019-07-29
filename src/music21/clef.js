@@ -6,7 +6,7 @@
  * Based on music21 (=music21p), Copyright (c) 2006–19, Michael Scott Cuthbert and cuthbertLab
  *
  */
-import { base } from './base.js';
+import * as base from './base.js';
 import { pitch } from './pitch.js';
 
 /**
