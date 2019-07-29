@@ -206,7 +206,7 @@ roman.romanToNumber = [undefined, 'i', 'ii', 'iii', 'iv', 'v', 'vi', 'vii'];
  *
  * @class RomanNumeral
  * @memberof music21.roman
- * @extends music21.chord.Chord
+ * @extends music21.harmony.Harmony
  * @param {string} figure - the roman numeral as a string, e.g., 'IV', 'viio', 'V7'
  * @param {string|music21.key.Key} [keyStr='C']
  * @property {Array<music21.pitch.Pitch>} scale - (readonly) returns the scale associated with the roman numeral
@@ -285,7 +285,7 @@ export class RomanNumeral extends harmony.Harmony {
 
     stringInfo() {
         return this.figure + ' in ' + this.key.stringInfo();
-    }    
+    }
 
     _parseFigure() {
         let workingFigure;
@@ -296,7 +296,7 @@ export class RomanNumeral extends harmony.Harmony {
         [workingFigure, useScale] = this._correctForSecondaryRomanNumeral(
             useScale
         );
-        
+
         if (workingFigure === 'Cad64') {
             if (useScale.mode === 'minor') {
                 workingFigure = 'i64';
@@ -875,7 +875,7 @@ export class RomanNumeral extends harmony.Harmony {
             fullChordName = this.degreeName;
             if (this.numbers !== undefined) {
                 fullChordName += ' ' + this.numbers.toString();
-            }            
+            }
         }
         let tonicDisplay = tonicName.replace(/-/, 'b');
         if (mode === 'minor') {

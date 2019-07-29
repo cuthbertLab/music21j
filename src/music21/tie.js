@@ -48,11 +48,19 @@ export class Tie extends prebase.ProtoM21Object {
         this.type = type;
         this.placement = undefined;
     }
-    
+
+    /**
+     *
+     * @returns {string}
+     */
     stringInfo() {
         return this.type;
     }
-    
+
+    /**
+     *
+     * @type {string}
+     */
     get type() {
         return this._type;
     }

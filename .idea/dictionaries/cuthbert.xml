@@ -5,6 +5,7 @@
       <w>andantino</w>
       <w>barline</w>
       <w>barlines</w>
+      <w>bbbb</w>
       <w>cuthbert</w>
       <w>decachord</w>
       <w>diad</w>
@@ -12,11 +13,15 @@
       <w>enharmonics</w>
       <w>fati</w>
       <w>fermata</w>
+      <w>ffff</w>
       <w>gright</w>
+      <w>hacky</w>
       <w>hexachord</w>
+      <w>inexpressable</w>
       <w>intv</w>
       <w>jsonpickle</w>
       <w>keyboardkey</w>
+      <w>ladma</w>
       <w>langsam</w>
       <w>largamente</w>
       <w>larghetto</w>
@@ -25,7 +30,10 @@
       <w>maestoso</w>
       <w>marcato</w>
       <w>maxima</w>
+      <w>mediant</w>
       <w>memberof</w>
+      <w>meth</w>
+      <w>microtones</w>
       <w>midicube</w>
       <w>midijs</w>
       <w>miditools</w>
@@ -42,30 +50,51 @@
       <w>octaveless</w>
       <w>ottava</w>
       <w>pentachord</w>
+      <w>perc</w>
+      <w>pppp</w>
       <w>prebase</w>
       <w>prestissimo</w>
       <w>quantizes</w>
+      <w>ratioed</w>
+      <w>recursed</w>
       <w>reflowed</w>
+      <w>reinit</w>
       <w>resizes</w>
       <w>rootedness</w>
+      <w>scdict</w>
       <w>schnell</w>
       <w>septachord</w>
       <w>soundfont</w>
       <w>soundfonts</w>
+      <w>spiccato</w>
+      <w>staccatissimo</w>
       <w>struct</w>
+      <w>subdominant</w>
+      <w>submediant</w>
       <w>substream</w>
+      <w>subtonic</w>
+      <w>supertonic</w>
       <w>symlinking</w>
+      <w>tenuto</w>
       <w>tetrachord</w>
+      <w>tinynotationcontents</w>
+      <w>tnimax</w>
+      <w>tnmax</w>
       <w>tnre</w>
+      <w>tnref</w>
       <w>trichord</w>
       <w>très</w>
       <w>tuplet</w>
       <w>tupleted</w>
       <w>tuplets</w>
+      <w>unbeamables</w>
       <w>undecachord</w>
+      <w>undotted</w>
       <w>unparsable</w>
       <w>unparsables</w>
       <w>vexflow</w>
+      <w>viio</w>
+      <w>viioo</w>
       <w>vivacissimo</w>
       <w>webmidi</w>
       <w>xand</w>

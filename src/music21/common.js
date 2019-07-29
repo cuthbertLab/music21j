@@ -363,7 +363,7 @@ common.stripPx = function stripPx(str) {
 common.urlParam = function urlParam(name) {
     name = name.replace(/[[]/, '\\[').replace(/[\]]/, '\\]');
     const regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
-    const results = regex.exec(location.search);
+    const results = regex.exec(window.location.search);
     return results == null
         ? ''
         : decodeURIComponent(results[1].replace(/\+/g, ' '));
@@ -411,30 +411,6 @@ common.SingletonCounter = SingletonCounter;
 common.setWindowVisibilityWatcher = function setWindowVisibilityWatcher(
     callback
 ) {
-    let hidden = 'hidden';
-
-    // Standards:
-    if (hidden in document) {
-        document.addEventListener('visibilitychange', windowFocusChanged);
-    } else if ('mozHidden' in document) {
-        hidden = 'mozHidden';
-        document.addEventListener('mozvisibilitychange', windowFocusChanged);
-    } else if ('webkitHidden' in document) {
-        hidden = 'webkitHidden';
-        document.addEventListener('webkitvisibilitychange', windowFocusChanged);
-    } else if ('msHidden' in document) {
-        hidden = 'msHidden';
-        document.addEventListener('msvisibilitychange', windowFocusChanged);
-    } else if ('onfocusin' in document) {
-        // IE 9 and lower:
-        document.onfocusin = windowFocusChanged;
-        document.onfocusout = windowFocusChanged;
-    }
-
-    // Also catch window... -- get two calls for a tab shift, but one for window losing focus
-    // noinspection AssignmentResultUsedJS
-    window.onpageshow = window.onpagehide = window.onfocus = window.onblur = windowFocusChanged;
-
     function windowFocusChanged(evt) {
         const v = 'visible';
         const h = 'hidden';
@@ -457,6 +433,33 @@ common.setWindowVisibilityWatcher = function setWindowVisibilityWatcher(
         }
         callback(callbackState, evt);
     }
+    let hidden = 'hidden';
+
+    // Standards:
+    if (hidden in document) {
+        document.addEventListener('visibilitychange', windowFocusChanged);
+    } else if ('mozHidden' in document) {
+        hidden = 'mozHidden';
+        document.addEventListener('mozvisibilitychange', windowFocusChanged);
+    } else if ('webkitHidden' in document) {
+        hidden = 'webkitHidden';
+        document.addEventListener('webkitvisibilitychange', windowFocusChanged);
+    } else if ('msHidden' in document) {
+        hidden = 'msHidden';
+        document.addEventListener('msvisibilitychange', windowFocusChanged);
+    } else if ('onfocusin' in document) {
+        // IE 9 and lower:
+        document.onfocusin = windowFocusChanged;
+        document.onfocusout = windowFocusChanged;
+    }
+
+    // Also catch window... -- get two calls for a tab shift, but one for window losing focus
+    // noinspection AssignmentResultUsedJS
+    window.onpageshow = windowFocusChanged;
+    window.onpagehide = windowFocusChanged;
+    window.onfocus = windowFocusChanged;
+    window.onblur = windowFocusChanged;
+
     // set the initial state
     const initialState
         = document.visibilityState === 'visible' ? 'focus' : 'blur';

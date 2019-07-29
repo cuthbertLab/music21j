@@ -438,7 +438,7 @@ export class Renderer {
      * Finds all tied notes and creates the proper Vex.Flow.StaveTie objects in
      * `this.vfTies`.
      *
-     * @param {music21.stream.Part} p - a Part or similar object
+     * @param {music21.stream.Stream} p - a Part or similar object
      */
     prepareTies(p) {
         const pf = p.flat.notesAndRests;

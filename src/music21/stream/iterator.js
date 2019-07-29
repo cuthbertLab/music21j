@@ -8,6 +8,9 @@ export class StreamIteratorException extends StreamException {
 
 }
 
+/**
+ * @memberof music21.stream.iterator
+ */
 export class StreamIterator {
     constructor(srcStream, {
         filterList=[],
@@ -225,7 +228,7 @@ export class StreamIterator {
     getElementsByOffset(...args) {
         return this.addFilter(new filters.OffsetFilter(...args));
     }
-    
+
 
     get notes() {
         return this.addFilter(new filters.ClassFilter('NotRest'));
@@ -248,6 +251,9 @@ export class StreamIterator {
     }
 }
 
+/**
+ * @extends music21.stream.iterator.StreamIterator
+ */
 export class OffsetIterator extends StreamIterator {
     constructor(srcStream, options={}) {
         super(srcStream, options);
@@ -259,7 +265,7 @@ export class OffsetIterator extends StreamIterator {
         this.reset();
         this.sort();
 
-        while (this.index < this.streamLength) {            
+        while (this.index < this.streamLength) {
             this.index += 1;
             let e;
             try {
@@ -276,7 +282,7 @@ export class OffsetIterator extends StreamIterator {
             }
             const yieldEls = [e];
             const eOffset = this.elementOffset(e);
-            
+
             for (let forwardIndex = this.index; forwardIndex < this.streamLength; forwardIndex++) {
                 let nextE;
                 try {
@@ -293,14 +299,14 @@ export class OffsetIterator extends StreamIterator {
                 if (!this.matchesFilters(nextE)) {
                     continue;
                 }
-                
+
                 yieldEls.push(e);
                 this.index = forwardIndex;
             }
-            
+
             if (this.restoreActiveSites) {
                 for (const el of yieldEls) {
-                    el.activeSite = this.srcStream;                    
+                    el.activeSite = this.srcStream;
                 }
             }
             this.updateActiveInformation();
@@ -308,15 +314,17 @@ export class OffsetIterator extends StreamIterator {
         }
         this.cleanup();
     }
-    
+
     reset() {
         super.reset();
         this.nextToYield = [];
-        this.nextOffsetToYield = undefined;        
+        this.nextOffsetToYield = undefined;
     }
 }
 
-
+/**
+ * @extends music21.stream.iterator.StreamIterator
+ */
 export class RecursiveIterator extends StreamIterator {
     constructor(srcStream, {
         filterList,

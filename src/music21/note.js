@@ -37,6 +37,8 @@ import { Music21Exception } from './exceptions21.js';
  */
 export const note = {};
 
+/**
+ */
 export class NotRestException extends Music21Exception {
     // no need
 }
@@ -206,7 +208,7 @@ note.Lyric = Lyric;
  * @param {(number|undefined)} [ql=1.0] - quarterLength of the note
  * @property {boolean} [isChord=false] - is this a chord
  * @property {number} quarterLength - shortcut to `.duration.quarterLength`
- * @property {Object} activeVexflowNote - most recent Vex.Flow.StaveNote object to be made from this note (could change); default, undefined
+ * @property {Vex.Flow.StaveNote} [activeVexflowNote] - most recent Vex.Flow.StaveNote object to be made from this note (could change); default, undefined
  * @property {Array<music21.expressions.Expression>} expressions - array of attached expressions
  * @property {Array<music21.articulations.Articulation>} articulations - array of attached articulations
  * @property {string} lyric - the text of the first {@link music21.note.Lyric} object; can also set one.
@@ -398,10 +400,10 @@ export class GeneralNote extends base.Music21Object {
             // Note, not rest
             midNum = this.pitch.midi;
             let stopTime = milliseconds / 1000;
-            if (
-                nextElement !== undefined
+            if (nextElement instanceof base.Music21Object
                 && nextElement.isClassOrSubclass('Note')
             ) {
+                nextElement.
                 if (nextElement.pitch.midi !== this.pitch.midi) {
                     stopTime += 60 * 0.25 / tempo; // legato -- play 16th note longer
                 } else if (
@@ -508,36 +510,43 @@ note.NotRest = NotRest;
  * @class Note
  * @memberof music21.note
  * @extends music21.note.NotRest
- * @param {(string|music21.pitch.Pitch|undefined)} [nn='C4'] - pitch name ("C", "D#", "E-") w/ or w/o octave ("C#4"), or a pitch.Pitch object
- * @param {(number|undefined)} [ql=1.0] - length in quarter notes
- * @property {Boolean} [isNote=true] - is it a Note? Yes!
- * @property {Boolean} [isRest=false] - is it a Rest? No!
- * @property {music21.pitch.Pitch} pitch - the {@link music21.pitch.Pitch} associated with the Note.
- * @property {string} name - shortcut to `.pitch.name`
- * @property {string} nameWithOctave - shortcut to `.pitch.nameWithOctave`
- * @property {string} step - shortcut to `.pitch.step`
- * @property {number} octave - shortcut to `.pitch.octave`
  */
 export class Note extends NotRest {
+    /**
+     *
+     * @param {(string|music21.pitch.Pitch|undefined)} [nn='C4'] - pitch name ("C", "D#", "E-") w/ or w/o octave ("C#4"), or a pitch.Pitch object
+     * @param {(number|undefined)} [ql=1.0] - length in quarter notes
+     * @property {Boolean} [isNote=true] - is it a Note? Yes!
+     * @property {Boolean} [isRest=false] - is it a Rest? No!
+     * @property {music21.pitch.Pitch} pitch - the {@link music21.pitch.Pitch} associated with the Note.
+     * @property {string} name - shortcut to `.pitch.name`
+     * @property {string} nameWithOctave - shortcut to `.pitch.nameWithOctave`
+     * @property {string} step - shortcut to `.pitch.step`
+     * @property {number} octave - shortcut to `.pitch.octave`
+     */
     constructor(nn, ql) {
         super(ql);
         this.isNote = true; // for speed
         this.isRest = false; // for speed
-        if (
-            nn !== undefined
-            && nn.isClassOrSubclass !== undefined
-            && nn.isClassOrSubclass('Pitch') === true
-        ) {
+        if (nn instanceof pitch.Pitch) {
             this.pitch = nn;
         } else {
             this.pitch = new pitch.Pitch(nn);
         }
     }
 
+    /**
+     *
+     * @returns {string}
+     */
     stringInfo() {
         return this.name;
     }
 
+    /**
+     *
+     * @type {string}
+     */
     get name() {
         return this.pitch.name;
     }
@@ -546,6 +555,10 @@ export class Note extends NotRest {
         this.pitch.name = nn;
     }
 
+    /**
+     *
+     * @type {string}
+     */
     get nameWithOctave() {
         return this.pitch.nameWithOctave;
     }
@@ -554,6 +567,10 @@ export class Note extends NotRest {
         this.pitch.nameWithOctave = nn;
     }
 
+    /**
+     *
+     * @type {string}
+     */
     get step() {
         return this.pitch.step;
     }
@@ -562,6 +579,10 @@ export class Note extends NotRest {
         this.pitch.step = nn;
     }
 
+    /**
+     *
+     * @type {number}
+     */
     get octave() {
         return this.pitch.octave;
     }
@@ -570,6 +591,10 @@ export class Note extends NotRest {
         this.pitch.octave = nn;
     }
 
+    /**
+     *
+     * @returns {music21.pitch.Pitch[]}
+     */
     get pitches() {
         return [this.pitch];
     }
@@ -739,6 +764,10 @@ export class Rest extends GeneralNote {
         this.color = 'black';
     }
 
+    /**
+     *
+     * @returns {string}
+     */
     stringInfo() {
         return this.duration.quarterLength.toString();
     }

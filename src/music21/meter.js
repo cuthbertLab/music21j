@@ -47,7 +47,7 @@ export class TimeSignature extends base.Music21Object {
     constructor(meterString) {
         super();
         this.classSortOrder = 4;
-        
+
         this._numerator = 4;
         this._denominator = 4;
         this._beatGroups = [];
@@ -57,11 +57,19 @@ export class TimeSignature extends base.Music21Object {
             this.ratioString = meterString;
         }
     }
-    
+
+    /**
+     *
+     * @returns {string}
+     */
     stringInfo() {
         return this.ratioString;
     }
-    
+
+    /**
+     *
+     * @type {number}
+     */
     get numerator() {
         return this._numerator;
     }
@@ -70,6 +78,10 @@ export class TimeSignature extends base.Music21Object {
         this._numerator = s;
     }
 
+    /**
+     *
+     * @type {number}
+     */
     get denominator() {
         return this._denominator;
     }
@@ -78,6 +90,10 @@ export class TimeSignature extends base.Music21Object {
         this._denominator = s;
     }
 
+    /**
+     *
+     * @type {string}
+     */
     get ratioString() {
         return this.numerator.toString() + '/' + this.denominator.toString();
     }
@@ -89,6 +105,10 @@ export class TimeSignature extends base.Music21Object {
         this._beatGroups = [];
     }
 
+    /**
+     *
+     * @type {music21.duration.Duration}
+     */
     get barDuration() {
         const ql = 4.0 * this._numerator / this._denominator;
         return new duration.Duration(ql);
@@ -108,6 +128,7 @@ export class TimeSignature extends base.Music21Object {
     /**
      *  Get the beatCount from the numerator, assuming fast 6/8, etc.
      *  unless .beatCount has been set manually.
+     *  @type {number}
      */
     get beatCount() {
         if (this._overwrittenBeatCount !== undefined) {

@@ -46,4 +46,5 @@ const allTests = {
 if (typeof window !== undefined) {
     window.allTests = allTests;
 }
+// noinspection JSUnusedGlobalSymbols
 export default allTests;

@@ -1,3 +1,6 @@
+/**
+ * @namespace music21.musicxml.m21ToXml
+ */
 import { clef } from '../clef.js';
 import { common } from '../common.js';
 import {
@@ -186,6 +189,9 @@ export class GeneralObjectExporter {
 
 const _musicxmlVersion = '3.0';
 
+/**
+ * @memberOf music21.musicxml.m21ToXml
+ */
 export class XMLExporterBase {
     constructor() {
         this.doc = document.implementation.createDocument('', '', null);
@@ -332,6 +338,9 @@ export class XMLExporterBase {
 
 }
 
+/**
+ * @extends music21.musicxml.m21ToXml.XMLExporterBase
+ */
 export class ScoreExporter extends XMLExporterBase {
     constructor(score) {
         super();
@@ -455,6 +464,9 @@ export class ScoreExporter extends XMLExporterBase {
     // TODO(msc): contributorToXmlCreator
 }
 
+/**
+ * @extends music21.musicxml.m21ToXml.XMLExporterBase
+ */
 export class PartExporter extends XMLExporterBase {
     constructor(partObj, { parent }={}) {
         super();
@@ -532,6 +544,9 @@ const _ignoreOnParseClasses = ['LayoutBase', 'Barline'];
 
 const divisionsPerQuarter = 32 * 3 * 3 * 5 * 7; // TODO(msc): create defaults.js
 
+/**
+ * @extends music21.musicxml.m21ToXml.XMLExporterBase
+ */
 export class MeasureExporter extends XMLExporterBase {
     constructor(measureObj, { parent }={}) {
         super();
@@ -658,7 +673,7 @@ export class MeasureExporter extends XMLExporterBase {
      * @param {music21.note.GeneralNote} n
      * @param noteIndexInChord
      * @param chordParent
-     * @returns {HTMLElement}
+     * @returns {Node}
      */
     noteToXml(n, { noteIndexInChord=0, chordParent }={}) {
         const addChordTag = (noteIndexInChord !== 0);

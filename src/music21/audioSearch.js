@@ -186,7 +186,7 @@ audioSearch.smoothPitchExtraction = function smoothPitchExtraction(frequency) {
     let totalSamplePoints = 0;
     let totalSample = 0;
     for (let j = 0; j < centsMatchingClass.length; j++) {
-        const weight = Math.pow(j, 2) + 1;
+        const weight = (j ** 2) + 1;
         totalSample += weight * centsMatchingClass[j];
         totalSamplePoints += weight;
     }

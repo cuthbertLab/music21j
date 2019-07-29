@@ -79,7 +79,7 @@ export class KeySignature extends base.Music21Object {
         this._sharps = sharps || 0; // if undefined
 
         /**
-         * @type [pitch.Pitch[]]
+         * @type {music21.pitch.Pitch[]}
          */
         this._alteredPitchesCache = undefined;
 
@@ -122,19 +122,19 @@ export class KeySignature extends base.Music21Object {
     stringInfo() {
         if (this.sharps === 0) {
             return 'of no sharps or flats';
-        } else if (this.sharps === -1) { 
+        } else if (this.sharps === -1) {
             return 'of 1 flat';
         } else if (this.sharps === 1) {
-            return 'of 1 sharp';            
+            return 'of 1 sharp';
         } else if (this.sharps < 0) {
-            return `of ${Math.abs(this.sharps)} flats`;            
+            return `of ${Math.abs(this.sharps)} flats`;
         } else {
             return `of ${this.sharps} sharps`;
         }
     }
 
     /**
-     * @return int
+     * @type {int}
      */
     get sharps() {
         return this._sharps;
@@ -148,8 +148,7 @@ export class KeySignature extends base.Music21Object {
     /**
      * Gives the width in pixels necessary to represent the key signature.
      *
-     * @memberof music21.key.KeySignature#
-     * @var {number} width
+     * @type {number} width
      * @readonly
      */
     get width() {
@@ -164,8 +163,7 @@ export class KeySignature extends base.Music21Object {
     /**
      * An Array of Altered Pitches in KeySignature order (i.e., for flats, Bb, Eb, etc.)
      *
-     * @memberof music21.key.KeySignature#
-     * @var {Array<music21.pitch.Pitch>} alteredPitches
+     * @type {music21.pitch.Pitch[]} alteredPitches
      * @readonly
      * @example
      * var ks = new music21.key.KeySignature(3)
@@ -351,7 +349,7 @@ export class Key extends KeySignature {
     stringInfo() {
         return this.tonicPitchNameWithCase + ' ' + this.mode;
     }
-    
+
     get tonicPitchNameWithCase() {
         let tonicName = this.tonic.name;
         if (this.mode === 'major') {

@@ -6,23 +6,22 @@
   <link rel="stylesheet" href="qUnit/qunit-2.0.1.css">
   <script src="qUnit/qunit-2.0.1.js"></script>
   <script src="../build/music21.debug.js" charset="utf-8"></script>
-  <script src="../build/music21.tests.js" charset="utf-8"></script>
   <script>
   QUnit.start();
   QUnit.test( "hello test", function(assert) {
       assert.equal(1, 1, "Passed!" );
-  });    
-  for (var testModule in allTests) {
+  });
+  for (let testModule in allTests) {
       if (typeof(allTests[testModule]) == 'function') {
-          var testSuite = allTests[testModule];
+          const testSuite = allTests[testModule];
           testSuite();
-      }        
+      }
   }
   </script>
 </head>
 
 <body>
   <div id="qunit"></div>
-  <div id="qunit-fixture"></div>  
+  <div id="qunit-fixture"></div>
 </body>
 </html>

@@ -8,6 +8,9 @@ class _StopIteration {}
 
 export const StopIterationSingleton = new _StopIteration();
 
+/**
+ * @memberof music21.stream.filters
+ */
 export class StreamFilter {
     static get derivationStr() {
         return 'streamFilter';
@@ -20,6 +23,9 @@ export class StreamFilter {
     }
 }
 
+/**
+ * @extends music21.stream.filters.StreamFilter
+ */
 export class IsFilter extends StreamFilter {
     static get derivationStr() {
         return 'is';
@@ -51,6 +57,9 @@ export class IsFilter extends StreamFilter {
     }
 }
 
+/**
+ * @extends music21.stream.filters.StreamFilter
+ */
 export class IsNotFilter extends IsFilter {
     static get derivationStr() {
         return 'IsNot';
@@ -75,6 +84,9 @@ export class IsNotFilter extends IsFilter {
 
 // TODO(msc): IdFilter
 
+/**
+ * @extends music21.stream.filters.StreamFilter
+ */
 export class ClassFilter extends StreamFilter {
     static get derivationStr() {
         return 'getElementsByClass';
@@ -94,6 +106,9 @@ export class ClassFilter extends StreamFilter {
     }
 }
 
+/**
+ * @extends music21.stream.filters.StreamFilter
+ */
 export class ClassNotFilter extends ClassFilter {
     static get derivationStr() {
         return 'getElementsNotOfClass';
@@ -106,6 +121,9 @@ export class ClassNotFilter extends ClassFilter {
 
 // TODO: GroupFilter
 
+/**
+ * @extends music21.stream.filters.StreamFilter
+ */
 export class OffsetFilter extends StreamFilter {
     static get derivationStr() {
         return 'getElementsByOffset';

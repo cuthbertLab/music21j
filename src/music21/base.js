@@ -37,10 +37,10 @@ export const base = {};
  * @class Music21Object
  * @memberof music21.base
  * @extends music21.prebase.ProtoM21Object
- * @property {Object} activeSite - hardlink to a {@link music21.stream.Stream} containing the element.
+ * @property {music21.stream.Stream} [activeSite] - hardlink to a {@link music21.stream.Stream} containing the element.
  * @property {number} classSortOrder - Default sort order for this class (default 20; override in other classes). Lower numbered objects will sort before other objects in the staff if priority and offset are the same.
  * @property {music21.duration.Duration} duration - the duration (object) for the element. (can be set with a quarterLength also)
- * @property {Array} groups - An Array of strings representing group (equivalent to css classes) to assign to the object. (default [])
+ * @property {string[]} groups - An Array of strings representing group (equivalent to css classes) to assign to the object. (default [])
  * @property {boolean} isMusic21Object - true
  * @property {boolean} isStream - false
  * @property {number} offset - offset from the beginning of the stream (in quarterLength)
@@ -108,11 +108,15 @@ export class Music21Object extends prebase.ProtoM21Object {
             newObj[keyName] = new sites.Sites();
         };
     }
-    
+
     stringInfo() {
         let id16 = this.id;
         if (typeof id16 === 'number') {
-            id16 = id16.toString(16);
+            /**
+             * @type {number}
+             */
+            const idNumber = id16;
+            id16 = idNumber.toString(16);
             while (id16.length < 4) {
                 id16 = '0' + id16;
             }
@@ -120,7 +124,7 @@ export class Music21Object extends prebase.ProtoM21Object {
         }
         return id16;
     }
-    
+
     get activeSite() {
         return this._activeSite;
     }
@@ -191,8 +195,7 @@ export class Music21Object extends prebase.ProtoM21Object {
     }
 
     /**
-     * @param {*} newDuration
-     * @returns {music21.duration.Duration}
+     * @type {music21.duration.Duration}
      */
     get duration() {
         return this._duration;
@@ -209,6 +212,9 @@ export class Music21Object extends prebase.ProtoM21Object {
         }
     }
 
+    /**
+     * @type {number}
+     */
     get quarterLength() {
         return this.duration.quarterLength;
     }
@@ -217,9 +223,15 @@ export class Music21Object extends prebase.ProtoM21Object {
         this.duration.quarterLength = ql;
     }
 
+    /**
+     *
+     * @param {music21.base.Music21Object} other
+     * @returns {this}
+     */
     mergeAttributes(other) {
         // id;
         this.groups = other.groups.slice();
+        return this;
     }
 
     /**
@@ -232,7 +244,7 @@ export class Music21Object extends prebase.ProtoM21Object {
      *
      * @param {music21.stream.Stream} site
      * @param {boolean} [stringReturns=false] -- allow strings to be returned
-     * @returns Number|undefined
+     * @returns {number|undefined}
      */
     getOffsetBySite(site, stringReturns=false) {
         if (site === undefined) {
@@ -244,10 +256,9 @@ export class Music21Object extends prebase.ProtoM21Object {
     /**
      * setOffsetBySite - sets the offset for a given Stream
      *
-     * @param  {music21.stream.Stream} site  Stream object
-     * @param  {number} value offset
+     * @param {music21.stream.Stream} site Stream object
+     * @param {number} value offset
      */
-
     setOffsetBySite(site, value) {
         if (site !== undefined) {
             site.setElementOffset(this, value);
@@ -266,7 +277,7 @@ export class Music21Object extends prebase.ProtoM21Object {
      * a method that is about 10x faster when running through a recursed stream.
      *
      * @param {music21.stream.Stream} site
-     * @returns Number|undefined
+     * @returns {Number|undefined}
      */
     getOffsetInHierarchy(site) {
         try {
@@ -525,8 +536,8 @@ export class Music21Object extends prebase.ProtoM21Object {
         }
         // if followDerivation...
         if (params.followDerivation) {
-            for (const derivatedObject of topLevel.derivation.chain()) {
-                for (const [derivedSite, derivedOffset, derivedRecurseType] of derivatedObject.contextSites({
+            for (const derivedObject of topLevel.derivation.chain()) {
+                for (const [derivedSite, derivedOffset, derivedRecurseType] of derivedObject.contextSites({
                     callerFirst: undefined,
                     memo,
                     offsetAppend: 0.0,

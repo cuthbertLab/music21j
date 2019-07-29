@@ -24,7 +24,7 @@ export class SitesException extends Music21Exception {}
  * counts.  Thus circular references still allow memory to be
  * garbage collected.  Tested in Chrome on 100000 streams, and
  * very small additional memory usage.
- * 
+ *
  * https://stackoverflow.com/questions/7347203/circular-references-in-javascript-garbage-collector
  */
 export class SiteRef {
@@ -52,6 +52,11 @@ const _singletonCounter = new common.SingletonCounter();
 
 const GLOBAL_SITE_STATE_DICT = new WeakMap();
 
+/**
+ * @memberOf music21.sites
+ * @param {*} obj
+ * @returns {number|string}
+ */
 export function getId(obj) {
     if (!GLOBAL_SITE_STATE_DICT.has(obj)) {
         const newId = _singletonCounter.call();
@@ -60,6 +65,9 @@ export function getId(obj) {
     return GLOBAL_SITE_STATE_DICT.get(obj);
 }
 
+/**
+ * @memberOf music21.sites
+ */
 export class Sites {
     constructor() {
         this.siteDict = new Map();
@@ -68,10 +76,19 @@ export class Sites {
         this._lastID = -1;
     }
 
+    /**
+     *
+     * @returns {number}
+     */
     get length() {
         return this.siteDict.size;
     }
 
+    /**
+     *
+     * @param {music21.stream.Stream} [checkSite]
+     * @returns {boolean}
+     */
     includes(checkSite) {
         // noinspection JSUnusedLocalSymbols
         for (const [unused_key, siteRef] of this.siteDict) {
@@ -135,6 +152,11 @@ export class Sites {
         }
     }
 
+    /**
+     *
+     * @param obj
+     * @returns {boolean}
+     */
     remove(obj) {
         const idKey = getId(obj);
         if (idKey === undefined) {
@@ -142,7 +164,7 @@ export class Sites {
         }
         return this.siteDict.delete(idKey);
     }
-    
+
     clear() {
         this.siteDict = new Map();
         this.siteDict.set(_NoneSiteRef.siteIndex, _NoneSiteRef);
@@ -194,6 +216,13 @@ export class Sites {
         }
     }
 
+    /**
+     *
+     * @param {boolean} [sortByCreationTime=false]
+     * @param {music21.stream.Stream} [priorityTarget]
+     * @param {boolean=false} excludeNone
+     * @returns {(music21.stream.Stream|undefined)[]}
+     */
     get(sortByCreationTime=false, priorityTarget, excludeNone=false) {
         const post = Array.from(
             this.yieldSites(sortByCreationTime, priorityTarget, excludeNone)
@@ -211,6 +240,11 @@ export class Sites {
         return post;
     }
 
+    /**
+     *
+     * @param {string} attrName
+     * @returns {undefined|*}
+     */
     getAttrByName(attrName) {
         for (const obj of this.yieldSites('reverse')) {
             if (obj === undefined) {
@@ -223,6 +257,12 @@ export class Sites {
         return undefined;
     }
 
+    /**
+     *
+     * @param {string} className
+     * @param {Object} [options]
+     * @returns {music21.stream.Stream}
+     */
     getObjByClass(className, options) {
         const params = {
             callerFirst: this,

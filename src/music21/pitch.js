@@ -60,6 +60,10 @@ export class Accidental extends prebase.ProtoM21Object {
         this.set(accName);
     }
 
+    /**
+     *
+     * @returns {string}
+     */
     stringInfo() {
         return this.name;
     }
@@ -166,8 +170,7 @@ export class Accidental extends prebase.ProtoM21Object {
      *
      * When set, updates alter and modifier.
      *
-     * @memberof music21.pitch.Accidental#
-     * @var {string} name
+     * @type {string} name
      */
     get name() {
         return this._name;
@@ -183,7 +186,6 @@ export class Accidental extends prebase.ProtoM21Object {
      * When set, updates name and modifier.
      *
      * @type {number} alter
-     * @returns {number}
      */
     get alter() {
         return this._alter;
@@ -197,9 +199,8 @@ export class Accidental extends prebase.ProtoM21Object {
      * Return or set the modifier ('-', '#', '')
      *
      * When set, updates alter and name.
-
-     * @memberof music21.pitch.Accidental#
-     * @var {string} modifier
+     *
+     * @type {string} modifier
      */
     get modifier() {
         return this._modifier;
@@ -212,8 +213,7 @@ export class Accidental extends prebase.ProtoM21Object {
     /**
      * Returns the modifier for vexflow ('b', '#', 'n')
      *
-     * @memberof music21.pitch.Accidental#
-     * @var {string} vexflowModifier
+     * @type {string} vexflowModifier
      * @readonly
      */
     get vexflowModifier() {
@@ -242,8 +242,7 @@ export class Accidental extends prebase.ProtoM21Object {
      * Returns the modifier in unicode or
      * for double and triple accidentals, as a hex escape
      *
-     * @memberof music21.pitch.Accidental#
-     * @var {string} unicodeModifier
+     * @type {string} unicodeModifier
      * @readonly
      */
     get unicodeModifier() {
@@ -252,13 +251,32 @@ export class Accidental extends prebase.ProtoM21Object {
 }
 pitch.Accidental = Accidental;
 
+/**
+ *
+ * @type {{A: number, B: number, C: number, D: number, E: number, F: number, G: number}}
+ */
 pitch.nameToMidi = {
     C: 0, D: 2, E: 4, F: 5, G: 7, A: 9, B: 11,
 };
+
+/**
+ *
+ * @type {{A: number, B: number, C: number, D: number, E: number, F: number, G: number}}
+ */
 pitch.nameToSteps = {
     C: 0, D: 1, E: 2, F: 3, G: 4, A: 5, B: 6,
 };
+
+/**
+ *
+ * @type {string[]}
+ */
 pitch.stepsToName = ['C', 'D', 'E', 'F', 'G', 'A', 'B'];
+
+/**
+ *
+ * @type {string[]}
+ */
 pitch.midiToName = [
     'C',
     'C#',
@@ -306,6 +324,11 @@ export class Pitch extends prebase.ProtoM21Object {
         super();
         this._step = 'C';
         this._octave = 4;
+        /**
+         *
+         * @type {music21.pitch.Accidental|undefined}
+         * @private
+         */
         this._accidental = undefined;
         this.spellingIsInferred = false;
 
@@ -322,12 +345,20 @@ export class Pitch extends prebase.ProtoM21Object {
         }
     }
 
+    /**
+     *
+     * @returns {string}
+     */
     stringInfo() {
         return this.nameWithOctave;
     }
 
     // N.B. cannot use transpose here, because of circular import.
 
+    /**
+     *
+     * @type {string}
+     */
     get step() {
         return this._step;
     }
@@ -347,6 +378,10 @@ export class Pitch extends prebase.ProtoM21Object {
         this.spellingIsInferred = false;
     }
 
+    /**
+     *
+     * @type {number}
+     */
     get octave() {
         return this._octave;
     }
@@ -355,6 +390,10 @@ export class Pitch extends prebase.ProtoM21Object {
         this._octave = o;
     }
 
+    /**
+     *
+     * @type {number}
+     */
     get implicitOctave() {
         const o = this._octave;
         if (o === undefined) {
@@ -364,6 +403,10 @@ export class Pitch extends prebase.ProtoM21Object {
         }
     }
 
+    /**
+     *
+     * @type {music21.pitch.Accidental|undefined}
+     */
     get accidental() {
         return this._accidental;
     }
@@ -376,6 +419,10 @@ export class Pitch extends prebase.ProtoM21Object {
         this.spellingIsInferred = false;
     }
 
+    /**
+     *
+      * @type {string}
+     */
     get name() {
         if (this.accidental === undefined) {
             return this.step;
@@ -395,6 +442,9 @@ export class Pitch extends prebase.ProtoM21Object {
         }
     }
 
+    /**
+     * @type {string}
+     */
     get nameWithOctave() {
         return this.name + this.octave.toString();
     }
@@ -410,10 +460,19 @@ export class Pitch extends prebase.ProtoM21Object {
         }
     }
 
+    /**
+     *
+     * @type {number}
+     * @readonly
+     */
     get pitchClass() {
         return common.posMod(Math.round(this.ps), 12);
     }
 
+    /**
+     *
+     * @type {number}
+     */
     get diatonicNoteNum() {
         return this.octave * 7 + pitch.nameToSteps[this.step] + 1;
     }
@@ -425,14 +484,28 @@ export class Pitch extends prebase.ProtoM21Object {
         this.step = pitch.stepsToName[mod7DNN];
     }
 
+    /**
+     *
+     * @type {number}
+     * @readonly
+     */
     get frequency() {
         return 440 * (2 ** (this.ps - 69) / 12);
     }
 
+    /**
+     *
+     * @type {number}
+     * @readonly
+     */
     get midi() {
         return Math.floor(this.ps);
     }
 
+    /**
+     *
+     * @type {number}
+     */
     get ps() {
         let accidentalAlter = 0;
         if (this.accidental !== undefined) {
@@ -451,6 +524,10 @@ export class Pitch extends prebase.ProtoM21Object {
         this.spellingIsInferred = true;
     }
 
+    /**
+     * @type {string}
+     * @readonly
+     */
     get unicodeName() {
         if (this.accidental !== undefined) {
             return this.step + this.accidental.unicodeModifier();
@@ -459,6 +536,10 @@ export class Pitch extends prebase.ProtoM21Object {
         }
     }
 
+    /**
+     * @type {string}
+     * @readonly
+     */
     get unicodeNameWithOctave() {
         if (this.octave === undefined) {
             return this.unicodeName;
@@ -470,6 +551,7 @@ export class Pitch extends prebase.ProtoM21Object {
     /**
      * @param {boolean} inPlace
      * @param {int} directionInt -- -1 = down, 1 = up
+     * @returns {music21.pitch.Pitch}
      */
     _getEnharmonicHelper(inPlace=false, directionInt) {
         // differs from Python version because
@@ -503,10 +585,20 @@ export class Pitch extends prebase.ProtoM21Object {
         return p;
     }
 
+    /**
+     *
+     * @param {boolean} [inPlace=false]
+     * @returns {music21.pitch.Pitch}
+     */
     getHigherEnharmonic(inPlace=false) {
         return this._getEnharmonicHelper(inPlace, 1);
     }
 
+    /**
+     *
+     * @param {boolean} [inPlace=false]
+     * @returns {music21.pitch.Pitch}
+     */
     getLowerEnharmonic(inPlace=false) {
         return this._getEnharmonicHelper(inPlace, -1);
     }
@@ -515,8 +607,7 @@ export class Pitch extends prebase.ProtoM21Object {
     /**
      * Returns the vexflow name for the pitch in the given clef.
      *
-     * @memberof music21.pitch.Pitch#
-     * @param {music21.clef.Clef} clefObj - the active {@link music21.clef.Clef} object
+     * @param {music21.clef.Clef} [clefObj] - the active {@link music21.clef.Clef} object
      * @returns {string} - representation in vexflow
      */
     vexflowName(clefObj) {
@@ -542,4 +633,5 @@ export class Pitch extends prebase.ProtoM21Object {
         return outName;
     }
 }
+
 pitch.Pitch = Pitch;

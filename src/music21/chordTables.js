@@ -12,7 +12,7 @@ let t7;
 let t8;
 let t9;
 let t10;
-let t11; 
+let t11;
 let t12;
 let t13;
 let t14;
@@ -22,7 +22,7 @@ let t17;
 let t18;
 let t19;
 let t20;
-let t21; 
+let t21;
 let t22;
 let t23;
 let t24;
@@ -32,7 +32,7 @@ let t27;
 let t28;
 let t29;
 let t30;
-let t31; 
+let t31;
 let t32;
 let t33;
 let t34;
@@ -1781,11 +1781,11 @@ export const SCDICT = {
 // thes dicts provide index max fr cardinality key
 export const TNMAX = {
     0: 1, 1: 1, 2: 6, 3: 19, 4: 43, 5: 66, 6: 80,
-    7: 66, 8: 43, 9: 19, 10: 6, 11: 1, 12: 1, 
+    7: 66, 8: 43, 9: 19, 10: 6, 11: 1, 12: 1,
 };
 export const TNIMAX = {
     0: 1, 1: 1, 2: 6, 3: 12, 4: 29, 5: 38, 6: 50,
-    7: 38, 8: 29, 9: 12, 10: 6, 11: 1, 12: 1, 
+    7: 38, 8: 29, 9: 12, 10: 6, 11: 1, 12: 1,
 };
 
 // used to find TnI index numbers under Tn classification
@@ -2155,18 +2155,18 @@ export const TNREF = {
 // http://www.sweb.cz/vladimir_ladma/english/music/structs/mus_rot.htm
 // Vladimir Ladma, Czech Republic
 
-// some changes: unison prefered to monad
+// some changes: unison preferred to monad
 
 
 export const SCREF = {
     '1,1,0': { 'name': ['unison', 'monad', 'singleton'] },
     '2,1,0': {
-        'name': ['interval class 1', 'minor second', 'm2', 
-            'half step', 'semitone'], 
+        'name': ['interval class 1', 'minor second', 'm2',
+            'half step', 'semitone'],
     },
     '2,2,0': {
-        'name': ['interval class 2', 'major second', 'M2', 
-            'whole step', 'whole tone'], 
+        'name': ['interval class 2', 'major second', 'M2',
+            'whole step', 'whole tone'],
     },
     '2,3,0': { 'name': ['interval class 3', 'minor third', 'm3'] },
     '2,4,0': { 'name': ['interval class 4', 'major third', 'M3'] },
@@ -2232,7 +2232,7 @@ export const SCREF = {
     '4,27,1': { 'name': ['half-diminished seventh chord'] },
     '4,27,-1': {
         'name': ['dominant seventh chord',
-            'major minor seventh chord', 'German augmented sixth chord', 'Swiss augmented sixth chord'], 
+            'major minor seventh chord', 'German augmented sixth chord', 'Swiss augmented sixth chord'],
     },
     '4,28,0': { 'name': ['diminished seventh chord', 'equal 4-part octave division'] },
     '4,29,1': { 'name': ['all-interval tetrachord'] },
@@ -2271,13 +2271,13 @@ export const SCREF = {
     '5,19,1': { 'name': ['Javanese pentachord'] },
     '5,19,-1': { 'name': ['Balinese pentachord'] },
     '5,20,1': {
-        'name': ['Balinese Pelog pentatonic', 
-            'quasi raga Bhupala', 'quasi raga Bibhas'], 
+        'name': ['Balinese Pelog pentatonic',
+            'quasi raga Bhupala', 'quasi raga Bibhas'],
     },
     '5,20,-1': { 'name': ['Hirajoshi pentatonic', 'Iwato', 'Sakura', 'quasi raga Saveri'] },
     '5,21,1': {
         'name': ['major-augmented ninth chord', 'Syrian pentatonic',
-            'quasi raga Megharanji'], 
+            'quasi raga Megharanji'],
     },
     '5,21,-1': { 'name': ['Lebanese pentachord', 'augmented-minor chord'] },
     '5,22,0': { 'name': ['Persian pentamirror', 'quasi raga Ramkali'] },
@@ -2304,11 +2304,11 @@ export const SCREF = {
     '5,33,0': { 'name': ['whole-tone pentachord'] },
     '5,34,0': {
         'name': ['dominant-ninth', 'major-minor', 'Prometheus pentamirror',
-            'dominant pentatonic'], 
+            'dominant pentatonic'],
     },
     '5,35,0': {
         'name': ['major pentatonic', 'black-key scale', 'blues pentatonic',
-            'slendro', 'quartal pentamirror'], 
+            'slendro', 'quartal pentamirror'],
     },
     '5,36,1': { 'name': ['major-seventh pentacluster'] },
     '5,36,-1': { 'name': ['minor-seventh pentacluster'] },
@@ -2317,7 +2317,7 @@ export const SCREF = {
     '5,38,-1': { 'name': ['diminished pentacluster'] },
     '6,1,0': {
         'name': ['A all combinatorial [P6, I11, RI5, RI11]', 'chromatic hexamirror',
-            'first-order all-combinatorial'], 
+            'first-order all-combinatorial'],
     },
     '6,2,1': { 'name': ['combinatorial I [I11]'] },
     '6,2,-1': { 'name': ['combinatorial I [I1]'] },
@@ -2328,9 +2328,9 @@ export const SCREF = {
     '6,5,-1': { 'name': ['combinatorial I [I3]'] },
     '6,6,0': { 'name': ['double cluster hexamirror'] },
     '6,7,0': {
-        'name': ['B all combinatorial [P3, P9, I5, R6, R12, R8]', 
+        'name': ['B all combinatorial [P3, P9, I5, R6, R12, R8]',
             "Messiaen's mode 5",
-            'second-order all combinatorial'], 
+            'second-order all combinatorial'],
     },
     '6,8,0': { 'name': ['D all combinatorial [P6, I1, RI7]'] },
     '6,9,1': { 'name': ['combinatorial I [I11]'] },
@@ -2355,10 +2355,10 @@ export const SCREF = {
     '6,19,1': {},
     '6,19,-1': {},
     '6,20,0': {
-        'name': 
+        'name':
     ['E all combinatorial [P2, P6, P10, I3, I7, R4, R8, RI1, RI5, RI9]',
         "Messiaen's truncated mode 3", 'Genus tertium',
-        'third-order all combinatorial'], 
+        'third-order all combinatorial'],
     },
     '6,21,1': { 'name': ['combinatorial I [I1]'] },
     '6,21,-1': { 'name': ['combinatorial I [I3]'] },
@@ -2376,35 +2376,35 @@ export const SCREF = {
     '6,29,0': { 'name': ['combinatorial RI [RI9]'] },
     '6,30,1': {
         'name': ["Messiaen's truncated mode 2", 'minor-bitonal hexachord',
-            'combinatorial R [R6]', 'combinatorial I [I1, I7]'], 
+            'combinatorial R [R6]', 'combinatorial I [I1, I7]'],
     },
     '6,30,-1': {
         'name': ["Stravinsky's Petrouchka-chord", "Messiaen's truncated mode 2",
             'major-bitonal hexachord', 'combinatorial R [R6]',
-            'combinatorial I [I1, I7]'], 
+            'combinatorial I [I1, I7]'],
     },
     '6,31,1': { 'name': ['combinatorial I [I7]'] },
     '6,31,-1': { 'name': ['combinatorial I [I11]'] },
     '6,32,0': {
         'name': ['C all combinatorial [P6, I3, RI9]', 'Guidon/Arezzo',
             'Arezzo major diatonic', 'major hexamirror', 'quartal hexamirror',
-            'first-order all combinatorial'], 
+            'first-order all combinatorial'],
     },
     '6,33,1': { 'name': ['dorian hexachord', 'combinatorial I [I6]'] },
     '6,33,-1': { 'name': ['dominant-eleventh', 'lydian hexachord', 'combinatorial I [I1]'] },
     '6,34,1': {
         'name': ["Scriabin's Mystic-chord", 'Prometheus hexachord',
-            'combinatorial I [I11]'], 
+            'combinatorial I [I11]'],
     },
     '6,34,-1': {
-        'name': ['augmented-eleventh', 'harmonic hexachord', 
-            'combinatorial I [I7]'], 
+        'name': ['augmented-eleventh', 'harmonic hexachord',
+            'combinatorial I [I7]'],
     },
     '6,35,0': {
         'name': ['whole tone scale', '6 equal part division',
             'F all-combinatorial [P1, P3, P5, P7, P9, P11, I1, I3, I5, I7, '
                               + 'I9, I11, R2, R4, R6, R8, R10, RI2, RI4, RI6, RI8, RI10]',
-            "Messiaen's mode 1", 'sixth-order all combinatorial'], 
+            "Messiaen's mode 1", 'sixth-order all combinatorial'],
     },
     '6,36,1': {},
     '6,36,-1': {},
@@ -2465,14 +2465,14 @@ export const SCREF = {
     '7,20,1': { 'name': ['chromatic phrygian inverse'] },
     '7,20,-1': {
         'name': ['Greek chromatic', 'chromatic mixolydian', 'chromatic dorian',
-            'quasi raga Pantuvarali', 'mela Kanakangi'], 
+            'quasi raga Pantuvarali', 'mela Kanakangi'],
     },
     '7,21,1': {},
     '7,21,-1': { 'name': ['Gypsy [Roma] hexatonic'] },
     '7,22,0': {
         'name': ['double harmonic scale', 'Persian', 'major Gypsy [Roma]',
             'Hungarian minor', 'double harmonic scale', 'Asian',
-            'quasi raga Mayamdavagaula'], 
+            'quasi raga Mayamdavagaula'],
     },
     '7,23,1': {},
     '7,23,-1': { 'name': ['tritone major heptachord'] },
@@ -2495,16 +2495,16 @@ export const SCREF = {
     '7,32,1': { 'name': ['harmonic minor scale', 'Spanish Gypsy', 'mela Kiravani'] },
     '7,32,-1': {
         'name': ['harmonic major scale', 'harmonic minor inverse', 'mela Cakravana',
-            'quasi raga Ahir Bhairav'], 
+            'quasi raga Ahir Bhairav'],
     },
     '7,33,0': { 'name': ['Neapolitan-major mode', 'leading-whole-tone mode'] },
     '7,34,0': {
         'name': ['melodic minor ascending scale', 'jazz minor',
-            'augmented thirteenth heptamirror', 'harmonic/super-locrian'], 
+            'augmented thirteenth heptamirror', 'harmonic/super-locrian'],
     },
     '7,35,0': {
         'name': ['major scale', 'major diatonic heptachord', 'natural minor scale',
-            'dominant thirteenth', 'locrian', 'phrygian', 'major inverse'], 
+            'dominant thirteenth', 'locrian', 'phrygian', 'major inverse'],
     },
     '7,36,1': {},
     '7,36,-1': {},
@@ -2552,9 +2552,9 @@ export const SCREF = {
     '8,27,1': {},
     '8,27,-1': {},
     '8,28,0': {
-        'name': ['octatonic scale', "Messiaen's mode 2", 
+        'name': ['octatonic scale', "Messiaen's mode 2",
             'alternating octatonic scale',
-            'diminished scale'], 
+            'diminished scale'],
     },
     '8,29,1': {},
     '8,29,-1': {},
@@ -2586,7 +2586,7 @@ export const SCREF = {
     '11,1,0': { 'name': ['chromatic undecamirror'] },
     '12,1,0': {
         'name': ['aggregate', 'dodecachord', 'twelve-tone chromatic',
-            'chromatic scale', 'dodecamirror'], 
+            'chromatic scale', 'dodecamirror'],
     },
 };
 
@@ -2620,7 +2620,7 @@ function _validateAddress(address) {
         // got an object...
         address = [address.cardinality, address.forteClass, address.inversion, address.pcOriginal];
     }
-    
+
     const [card, index] = address.slice(0, 2);
     let inversion;
     if (address.length >= 3 && address[2] !== undefined) {
@@ -2685,7 +2685,7 @@ export function intervalVectorToAddress(vector) {
     }
     return post;
 }
-    
+
 export function addressToZAddress(address) {
     // noinspection JSUnusedLocalSymbols
     const [card, index, unused_inversion] = _validateAddress(address);
@@ -2731,7 +2731,7 @@ export function seekChordTablesAddress(c) {
         throw new Error(
             'cannot access chord tables address for Chord with no pitches'
         );
-    } 
+    }
     const card = pcSet.length;
     if (card === 1) { // its a singleton: return
         return _chordTableAddress(1, 1, 0, pcSet[0]);
@@ -2743,7 +2743,7 @@ export function seekChordTablesAddress(c) {
     for (let rot = 0; rot < card; rot++) {
         const testSetOrig = pcSet.slice(rot);
         for (let rotRemainder = 0; rotRemainder < rot; rotRemainder++) {
-            testSetOrig.push(pcSet[rotRemainder]);   
+            testSetOrig.push(pcSet[rotRemainder]);
         }
         // transpose to lead with zero
         const testSetOriginalPC = testSetOrig[0];
@@ -2759,13 +2759,13 @@ export function seekChordTablesAddress(c) {
         }
         testSetInvert.reverse(); // reverse order (first steps now last)
         // transpose all steps (were last) to zero, mod 12
-        const testSetInvertOriginalPC = testSetInvert[0];        
+        const testSetInvertOriginalPC = testSetInvert[0];
         for (let i = 0; i < testSetInvert.length; i++) {
             testSetInvert[i] = posMod(testSetInvert[i] + (12 - testSetInvertOriginalPC), 12);
         }
         const candidateTuple = [testSet, testSetInvert, testSetOriginalPC];
         candidates.push(candidateTuple);
-    }    
+    }
     // compare sets to those in table
     let match = false;
     let matchedPCOriginal;

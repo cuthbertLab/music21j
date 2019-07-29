@@ -74,17 +74,27 @@ export class Chord extends note.NotRest {
         }
         this.sortPitches();
     }
-    
+
+    /**
+     *
+     * @returns {string}
+     */
     stringInfo() {
         const info = this.pitches.map(x => x.nameWithOctave);
         return info.join(' ');
     }
-    
 
+    /**
+     *
+     * @returns {number}
+     */
     get length() {
         return this._notes.length;
     }
 
+    /**
+     * @type {music21.pitch.Pitch[]}
+     */
     get pitches() {
         const tempPitches = [];
         for (let i = 0; i < this._notes.length; i++) {
@@ -115,6 +125,7 @@ export class Chord extends note.NotRest {
         this._cache = {};
         this._overrides = {};
     }
+
 
     get orderedPitchClasses() {
         const pcGroup = [];

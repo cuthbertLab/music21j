@@ -29,6 +29,7 @@ import { Music21Exception } from './exceptions21.js';
  * Scale namespace.  Right now only supports very simple scales.
  *
  * @namespace music21.scale
+ * @extends music21.base.Music21Object
  * @memberof music21
  * @requires music21/base
  * @requires music21/common
@@ -51,6 +52,10 @@ export class Scale extends base.Music21Object {
     }
 }
 
+/**
+ * @extends music21.scale.Scale
+ *
+ */
 export class AbstractScale extends Scale {
     constructor() {
         super();
@@ -186,6 +191,10 @@ export class AbstractScale extends Scale {
     }
 }
 
+/**
+ * @extends music21.scale.AbstractScale
+ *
+ */
 export class AbstractDiatonicScale extends AbstractScale {
     /**
      *
@@ -226,6 +235,10 @@ export class AbstractDiatonicScale extends AbstractScale {
     }
 }
 
+/**
+ * @extends music21.scale.AbstractScale
+ *
+ */
 export class AbstractHarmonicMinorScale extends AbstractScale {
     constructor() {
         super();
@@ -245,6 +258,9 @@ export class AbstractHarmonicMinorScale extends AbstractScale {
 
 // temporary, until bidirectional scales are created
 // no need for descending, since minor takes care of that.
+/**
+ * @extends music21.scale.AbstractScale
+ */
 export class AbstractAscendingMelodicMinorScale extends AbstractScale {
     constructor() {
         super();
@@ -262,6 +278,9 @@ export class AbstractAscendingMelodicMinorScale extends AbstractScale {
     }
 }
 
+/**
+ * @extends music21.scale.Scale
+ */
 export class ConcreteScale extends Scale {
     constructor(tonic) {
         super();
@@ -332,6 +351,9 @@ export class ConcreteScale extends Scale {
     }
 }
 
+/**
+ * @extends music21.scale.ConcreteScale
+ */
 export class DiatonicScale extends ConcreteScale {
     constructor(tonic) {
         super(tonic); // a.k.a. ^2 :-)
@@ -340,6 +362,9 @@ export class DiatonicScale extends ConcreteScale {
     }
 }
 
+/**
+ * @extends music21.scale.DiatonicScale
+ */
 export class MajorScale extends DiatonicScale {
     constructor(tonic) {
         super(tonic); // a.k.a. ^2 :-)
@@ -348,6 +373,10 @@ export class MajorScale extends DiatonicScale {
     }
 }
 
+
+/**
+ * @extends music21.scale.DiatonicScale
+ */
 export class MinorScale extends DiatonicScale {
     constructor(tonic) {
         super(tonic); // a.k.a. ^2 :-)
@@ -356,6 +385,9 @@ export class MinorScale extends DiatonicScale {
     }
 }
 
+/**
+ * @extends music21.scale.ConcreteScale
+ */
 export class HarmonicMinorScale extends ConcreteScale {
     constructor(tonic) {
         super(tonic); // a.k.a. ^2 :-)
@@ -364,6 +396,9 @@ export class HarmonicMinorScale extends ConcreteScale {
     }
 }
 
+/**
+ * @extends music21.scale.ConcreteScale
+ */
 export class AscendingMelodicMinorScale extends ConcreteScale {
     constructor(tonic) {
         super(tonic); // a.k.a. ^2 :-)
@@ -376,7 +411,7 @@ export class AscendingMelodicMinorScale extends ConcreteScale {
  * Function, not class
  *
  * @function music21.scale.SimpleDiatonicScale
- * @param {music21.pitch.Pitch} tonic
+ * @param {music21.pitch.Pitch} [tonic]
  * @param {Array<string>} scaleSteps - an array of diatonic prefixes,
  *     generally 'M' (major) or 'm' (minor) describing the seconds.
  * @returns {Array<music21.pitch.Pitch>} an octave of scale objects.

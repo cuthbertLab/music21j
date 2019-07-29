@@ -633,15 +633,28 @@ export class DiatonicInterval extends prebase.ProtoM21Object {
         return new interval.ChromaticInterval(semitones);
     }
 
+    /**
+     *
+     * @param {music21.pitch.Pitch} p
+     * @returns {music21.pitch.Pitch}
+     */
     transposePitch(p) {
         const fullIntervalObject = new Interval(this, this.getChromatic());
         return fullIntervalObject.transposePitch(p);
     }
 
+    /**
+     *
+     * @type {string}
+     */
     get specifierAbbreviation() {
         return interval.IntervalPrefixSpecs[this.specifier];
     }
 
+    /**
+     *
+     * @returns {number}
+     */
     get cents() {
         return this.getChromatic().cents;
     }
@@ -696,6 +709,10 @@ export class ChromaticInterval extends prebase.ProtoM21Object {
         }
     }
 
+    /**
+     *
+     * @returns {music21.interval.ChromaticInterval}
+     */
     reverse() {
         return new interval.ChromaticInterval(
             this.undirected * (-1 * this.direction)
@@ -835,6 +852,10 @@ export class Interval extends prebase.ProtoM21Object {
         this.reinit();
     }
 
+    /**
+     *
+     * @returns {music21.interval.Interval}
+     */
     get complement() {
         return new interval.Interval(this.diatonic.mod7inversion);
     }
@@ -869,6 +890,10 @@ export class Interval extends prebase.ProtoM21Object {
         this.isSkip = this.diatonic.isSkip;
     }
 
+    /**
+     *
+     * @type {music21.note.Note|undefined}
+     */
     get noteStart() {
         return this._noteStart;
     }
@@ -881,6 +906,10 @@ export class Interval extends prebase.ProtoM21Object {
         this._noteEnd.pitch = p2;
     }
 
+    /**
+     *
+     * @type {music21.note.Note|undefined}
+     */
     get noteEnd() {
         return this._noteEnd;
     }

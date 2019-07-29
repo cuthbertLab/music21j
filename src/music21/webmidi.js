@@ -145,9 +145,9 @@ webmidi.createPlugin = function createPlugin(appendElement, override) {
  * Creates a &lt;select&gt; object for selecting among the MIDI choices in Jazz
  *
  * @function music21.webmidi.createJazzSelector
- * @param {jQuery|Node} [$newSelect=document.body] - object to append the select to
+ * @param {jQuery|HTMLElement} [$newSelect=document.body] - object to append the select to
  * @param {Object} [options] - see createSelector for details
- * @returns {Node|undefined} DOM object containing the select tag, or undefined if Jazz cannot be loaded.
+ * @returns {HTMLElement|undefined} DOM object containing the select tag, or undefined if Jazz cannot be loaded.
  */
 webmidi.createJazzSelector = function createJazzSelector($newSelect, options) {
     const params = {};

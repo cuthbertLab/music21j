@@ -31,6 +31,7 @@ export const instrument = {};
  *
  * @class Instrument
  * @memberof music21.instrument
+ * @extends music21.base.Music21Object
  * @param {string} instrumentName
  * @property {string|undefined} partId
  * @property {string|undefined} partName

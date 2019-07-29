@@ -114,6 +114,9 @@ tinyNotation.TinyNotation = function TinyNotation(textIn) {
         }
 
         let token = tokens[i];
+        /**
+         * @type {music21.note.GeneralNote|undefined}
+         */
         let noteObj;
         let lyric;
         if (tnre.PARTBREAK.exec(token)) {
@@ -277,20 +280,31 @@ tinyNotation.TinyNotation = function TinyNotation(textIn) {
  *
  * @memberof music21.tinyNotation
  * @param {string} [classTypes='.music21.tinyNotation'] - a JQuery selector to find elements to replace.
- * @param {Node|jQuery} [selector]
+ * @param {HTMLElement|jQuery} [selector]
  */
 tinyNotation.renderNotationDivs = function renderNotationDivs(
     classTypes='.music21.tinyNotation',
     selector
 ) {
+    /**
+     *
+     * @type {jQuery[]}
+     */
     let allRender = [];
+
     if (selector === undefined) {
         allRender = $(classTypes);
     } else {
-        if (selector.jquery === undefined) {
-            selector = $(selector);
+        /**
+         * @type {jQuery}
+         */
+        let $selector;
+        if (!selector instanceof $) {
+            $selector = $(selector);
+        } else {
+            $selector = selector;
         }
-        allRender = selector.find(classTypes);
+        allRender = $selector.find(classTypes);
     }
     for (let i = 0; i < allRender.length; i++) {
         const thisTN = allRender[i];

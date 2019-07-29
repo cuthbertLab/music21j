@@ -123,8 +123,7 @@ export class Duration extends prebase.ProtoM21Object {
      *
      * Updates the quarterLength
      *
-     * @type Number
-     * @instance
+     * @type {number}
      * @default 0
      * @example
      * var d = new music21.duration.Duration(2);
@@ -146,8 +145,7 @@ export class Duration extends prebase.ProtoM21Object {
      *
      * Updates the type, dots, tuplets(?)
      *
-     * @type Number
-     * @instance
+     * @type {number}
      * @default 1.0
      * @example
      * var d = new music21.duration.Duration(2);
@@ -173,8 +171,7 @@ export class Duration extends prebase.ProtoM21Object {
      *
      * Updates the quarterLength
      *
-     * @type String
-     * @instance
+     * @type {string}
      * @default 'quarter'
      * @example
      * var d = new music21.duration.Duration(2);
@@ -206,8 +203,7 @@ export class Duration extends prebase.ProtoM21Object {
      * Use {@link music21.duration.Duration#appendTuplet} to
      * add a tuplet (no way to remove yet)
      *
-     * @type Array<music21.duration.Tuplet>
-     * @instance
+     * @type {music21.duration.Tuplet[]}
      * @default []
      */
     get tuplets() {
@@ -217,9 +213,9 @@ export class Duration extends prebase.ProtoM21Object {
     /**
      * Read-only: the duration expressed for VexFlow
      *
-     * @type String
-     * @instance
+     * @type {string}
      * @default 'd'
+     * @readonly
      * @example
      * var d = new music21.duration.Duration(2);
      * d.vexflowDuration == 'h'; // true;
@@ -248,6 +244,12 @@ export class Duration extends prebase.ProtoM21Object {
         ret[tupletKey] = newTuplets;
     }
 
+    /**
+     *
+     * @param {number} ql
+     * @returns {number}
+     * @private
+     */
     _findDots(ql) {
         if (ql === 0) {
             return 0;
@@ -330,6 +332,7 @@ export class Duration extends prebase.ProtoM21Object {
      *
      * @param {music21.duration.Tuplet} newTuplet - tuplet to add to `.tuplets`
      * @param {boolean} [skipUpdateQl=false] - update the quarterLength afterwards?
+     * @returns {this}
      */
     appendTuplet(newTuplet, skipUpdateQl) {
         newTuplet.frozen = true;
@@ -337,6 +340,7 @@ export class Duration extends prebase.ProtoM21Object {
         if (skipUpdateQl !== true) {
             this.updateQlFromFeatures();
         }
+        return this;
     }
 }
 
@@ -402,8 +406,7 @@ export class Tuplet extends prebase.ProtoM21Object {
     /**
      * A nice name for the tuplet.
      *
-     * @type String
-     * @instance
+     * @type {string}
      * @readonly
      */
     get fullName() {

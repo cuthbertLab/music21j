@@ -283,13 +283,10 @@ miditools.callBacks = {
  */
 miditools.quantizeLastNote = function quantizeLastNote(lastElement) {
     if (lastElement === undefined) {
-        lastElement = this.lastElement;
-        if (lastElement === undefined) {
-            return undefined;
-        }
+        return undefined;
     }
-    // noinspection JSUnresolvedVariable
-    if (typeof lastElement.stemDirection !== 'undefined') {
+
+    if (lastElement instanceof note.GeneralNote) {
         lastElement.stemDirection = undefined;
     }
     const nowInMS = Date.now();
@@ -393,7 +390,7 @@ miditools.postLoadCallback = function postLoadCallback(soundfont, callback) {
  * to load first.
  *
  * @memberof music21.miditools
- * @param {String} soundfont The name of the soundfont that was just loaded
+ * @param {string} soundfont The name of the soundfont that was just loaded
  * @param {function} [callback] A function to be called after the soundfont is loaded.
  * @example
  * s = new music21.stream.Stream();
@@ -481,25 +478,45 @@ export class MidiPlayer {
     }
 
     /**
-     * @param {jQuery|Node} [where]
+     * @param {jQuery|HTMLElement} [where]
      * @returns {jQuery}
      */
     addPlayer(where) {
-        let $where = where;
+        let $where;
         if (where === undefined) {
             where = document.body;
         }
-        // noinspection JSUnresolvedVariable
-        if (where.jquery === undefined) {
+
+        if (!where instanceof jQuery) {
             $where = $(where);
+        } else {
+            $where = where;
         }
+
+        /**
+         *
+         * @type {jQuery}
+         */
         const $playDiv = $('<div class="midiPlayer">');
+        /**
+         *
+         * @type {jQuery}
+         */
         const $controls = $('<div class="positionControls">');
+        /**
+         *
+         * @type {jQuery}
+         */
         const $playPause = $(
             '<input type="image" alt="play" src="'
                 + this.playPng()
                 + '" value="play" class="playPause">'
         );
+
+        /**
+         *
+         * @type {jQuery}
+         */
         const $stop = $(
             '<input type="image" alt="stop" src="'
                 + this.stopPng()
@@ -512,11 +529,27 @@ export class MidiPlayer {
         $controls.append($stop);
         $playDiv.append($controls);
 
+        /**
+         *
+         * @type {jQuery}
+         */
         const $time = $('<div class="timeControls">');
+        /**
+         *
+         * @type {jQuery}
+         */
         const $timePlayed = $('<span class="timePlayed">0:00</span>');
+        /**
+         *
+         * @type {jQuery}
+         */
         const $capsule = $(
             '<span class="capsule"><span class="cursor"></span></span>'
         );
+        /**
+         *
+         * @type {jQuery}
+         */
         const $timeRemaining = $('<span class="timeRemaining">-0:00</span>');
         $time.append($timePlayed);
         $time.append($capsule);
@@ -532,14 +565,26 @@ export class MidiPlayer {
         this.pausePlayStop('yes');
     }
 
+    /**
+     *
+     * @returns {string}
+     */
     playPng() {
         return common.urls.midiPlayer + '/play.png';
     }
 
+    /**
+     *
+     * @returns {string}
+     */
     pausePng() {
         return common.urls.midiPlayer + '/pause.png';
     }
 
+    /**
+     *
+     * @returns {string}
+     */
     stopPng() {
         return common.urls.midiPlayer + '/stop.png';
     }
@@ -567,13 +612,13 @@ export class MidiPlayer {
         const player = this.player;
         player.timeWarp = this.speed;
 
-        const m21midiplayer = this;
+        const m21MidiPlayer = this;
         miditools.loadSoundfont('acoustic_grand_piano', () => {
             player.loadFile(
                 b64data,
                 () => {
                     // success
-                    m21midiplayer.fileLoaded();
+                    m21MidiPlayer.fileLoaded();
                 },
                 undefined, // loading
                 e => {
@@ -637,7 +682,7 @@ export class MidiPlayer {
         player.setAnimation(data => {
             const percent = data.now / data.end;
             const now = Math.floor(data.now); // where we are now
-            const end = Math.foor(data.end); // end of song
+            const end = Math.floor(data.end); // end of song
             if (now === end) {
                 // go to next song
                 self.songFinished();

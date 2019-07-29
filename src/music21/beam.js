@@ -37,7 +37,7 @@ beam.beamableDurationTypes = [
     duration.typeFromNumDict[8],
     duration.typeFromNumDict[16], duration.typeFromNumDict[32],
     duration.typeFromNumDict[64], duration.typeFromNumDict[128],
-    duration.typeFromNumDict[256],    
+    duration.typeFromNumDict[256],
 ];
 
 
@@ -88,7 +88,7 @@ export class Beams extends prebase.ProtoM21Object {
         }
         return beamsList;
     }
-    
+
     static removeSandwichedUnbeamables(beamsList) {
         let beamLast;
         let beamNext;
@@ -105,14 +105,14 @@ export class Beams extends prebase.ProtoM21Object {
         }
         return beamsList;
     }
-    
+
     static sanitizePartialBeams(beamsList) {
         for (let i = 0; i < beamsList.length; i++) {
             if (beamsList[i] === undefined) {
                 continue;
             }
             const allTypes = beamsList[i].getTypes();
-            if (!allTypes.includes('start') 
+            if (!allTypes.includes('start')
                     && !allTypes.includes('stop')
                     && !allTypes.includes('continue')) {
                 // nothing but partials;
@@ -139,7 +139,7 @@ export class Beams extends prebase.ProtoM21Object {
         }
         return beamsList;
     }
-    
+
     static mergeConnectingPartialBeams(beamsList) {
         for (let i = 0; i < beamsList.length - 1; i++) {
             const bThis = beamsList[i];
@@ -207,7 +207,7 @@ export class Beams extends prebase.ProtoM21Object {
         }
         return beamsList;
     }
-    
+
 
     constructor() {
         super();
@@ -374,9 +374,9 @@ export class Beams extends prebase.ProtoM21Object {
      */
     setByNumber(number, type, direction) {
         if (direction === undefined) {
-            const splitit = type.split('-');
-            type = splitit[0];
-            direction = splitit[1]; // can be undefined...
+            const splitIt = type.split('-');
+            type = splitIt[0];
+            direction = splitIt[1]; // not unpacking because. can be undefined...
         }
         if (beam.validBeamTypes[type] === undefined) {
             throw new Music21Exception('invalid beam type: ' + type);

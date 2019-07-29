@@ -7,7 +7,7 @@
 import { stream } from './stream.js';
 // import { common } from './common.js';
 /**
- * 
+ *
  * THIS IS CURRENTLY UNUSED
  * Does not work yet, so not documented
  *
@@ -117,6 +117,7 @@ layout.makeLayoutFromScore = function makeLayoutFromScore(
 };
 
 /**
+ * @extends music21.stream.Score
  * @property {number|undefined} measureStart
  * @property {number|undefined} measureEnd
  * @property {number|undefined} width
@@ -171,6 +172,7 @@ layout.LayoutScore = LayoutScore;
 /**
  * All music must currently be on page 1.
  *
+ * @extends music21.stream.Score
  * @property {number|undefined} measureStart
  * @property {number|undefined} measureEnd
  * @property {number|undefined} systemStart
@@ -204,6 +206,7 @@ export class Page extends stream.Score {
 layout.Page = Page;
 
 /**
+ * @extends music21.stream.Score
  * @property {number|undefined} measureStart
  * @property {number|undefined} measureEnd
  * @property {number|undefined} width
@@ -245,6 +248,10 @@ export class System extends stream.Score {
 }
 layout.System = System;
 
+/**
+ * @extends music21.stream.Score
+ *
+ */
 export class Staff extends stream.Part {
     constructor() {
         super();

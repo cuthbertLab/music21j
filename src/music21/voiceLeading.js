@@ -24,6 +24,9 @@ const MotionType = {
     similar: 'Similar',
 };
 
+/**
+ * @extends music21.base.Music21Object
+ */
 class VoiceLeadingQuartet extends Music21Object {
     constructor(v1n1, v1n2, v2n1, v2n2, analyticKey) {
         super();

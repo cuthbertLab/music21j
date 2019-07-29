@@ -51,6 +51,9 @@ export function fixUrls(conf) {
     }
 }
 
+/**
+ * @returns undefined
+ */
 export function renderHTML() {
     if (!document) {
         return;
@@ -78,6 +81,10 @@ export function loadDefaultSoundfont(conf) {
     return miditools.loadSoundfont(instrument);
 }
 
+/**
+ *
+ * @returns {{}}
+ */
 export function loadConfiguration() {
     const rawConf = getM21attribute('m21conf');
     if (!rawConf) {
@@ -94,6 +101,11 @@ export function loadConfiguration() {
     return m21conf;
 }
 
+/**
+ *
+ * @param {string} [attribute=m21conf]
+ * @returns {undefined|*|string}
+ */
 export function getM21attribute(attribute='m21conf') {
     // this is case insensitive.
     const scripts = document.getElementsByTagName('script');
@@ -109,6 +121,10 @@ export function getM21attribute(attribute='m21conf') {
     return undefined;
 }
 
+/**
+ *
+ * @returns {boolean}
+ */
 export function warnBanner() {
     return getM21attribute('warnBanner') !== 'no';
 }

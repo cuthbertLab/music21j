@@ -24,7 +24,7 @@ import { pitch } from './pitch.js';
  */
 export const clef = {};
 /*  music21.Clef
-	must be defined before Stream since Stream subclasses call new music21.Clef...
+    must be defined before Stream since Stream subclasses call new music21.Clef...
  */
 // TODO: Fix to newest Vexflow format...
 clef.lowestLines = {
@@ -99,7 +99,7 @@ export class Clef extends base.Music21Object {
             this.lowestLineTrebleOffset -= 7 * octaveChange;
         }
     }
-    
+
     stringInfo() {
         return '';
     }

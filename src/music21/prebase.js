@@ -27,7 +27,7 @@ export class ProtoM21Object {
     constructor() {
         /**
          *
-         * @type {[string[]]}
+         * @type {string[]|undefined}
          * @private
          */
         this._storedClasses = undefined;
@@ -36,6 +36,10 @@ export class ProtoM21Object {
         this._cloneCallbacks = {};
     }
 
+    /**
+     *
+     * @returns {string[]}
+     */
     get classes() {
         if (this._storedClasses !== undefined) {
             return this._storedClasses;
@@ -44,8 +48,7 @@ export class ProtoM21Object {
         let thisConstructor = this.constructor;
         let maxLinks = 20;
         while (
-            thisConstructor !== null
-            && thisConstructor !== undefined
+            thisConstructor !== undefined
             && maxLinks
         ) {
             maxLinks -= 1;
@@ -89,7 +92,7 @@ export class ProtoM21Object {
         if (memo === undefined) {
             memo = new WeakMap();
         }
-        
+
         // todo: do Arrays work?
         for (const key in this) {
             // not that we ONLY copy the keys in Ret -- it's easier that way.
@@ -146,7 +149,7 @@ export class ProtoM21Object {
     /**
      * Check to see if an object is of this class or subclass.
      *
-     * @param {(string|string[])} testClass - a class or Array of classes to test
+     * @param {string|string[]} testClass - a class or Array of classes to test
      * @returns {Boolean}
      * @example
      * var n = new music21.note.Note();
@@ -155,7 +158,7 @@ export class ProtoM21Object {
      * n.isClassOrSubclass(['Duration', 'NotRest']); // true // NotRest
      */
     isClassOrSubclass(testClass) {
-        if (testClass instanceof Array === false) {
+        if (!testClass instanceof Array) {
             testClass = [testClass];
         }
         for (let i = 0; i < testClass.length; i++) {
@@ -165,8 +168,12 @@ export class ProtoM21Object {
         }
         return false;
     }
-    
-    toString() { 
+
+    /**
+     *
+     * @returns {string}
+     */
+    toString() {
         let si = this.stringInfo();
         if (si !== '') {
             si = ' ' + si;
@@ -174,6 +181,10 @@ export class ProtoM21Object {
         return `<${this.classes[0]}${si}>`;
     }
 
+    /**
+     *
+     * @returns {string}
+     */
     stringInfo() {
         return '';
     }

@@ -3,6 +3,10 @@ import * as xmlToM21 from './musicxml/xmlToM21.js';
 
 export { m21ToXml, xmlToM21 };
 
+/**
+ *
+ * @type {{m21ToXml: *, xmlToM21: *}}
+ */
 export const musicxml = {
     m21ToXml,
     xmlToM21,

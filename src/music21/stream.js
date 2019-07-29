@@ -148,11 +148,15 @@ export class Stream extends base.Music21Object {
          *      var can = s.appendNewDOM();
          *      $(can).on('click', s.DOMChangerFunction);
          *
-         * @param {Event} e
+         * @param {MouseEvent|TouchEvent} e
          * @returns {music21.base.Music21Object|undefined} - returns whatever changedCallbackFunction does.
          */
         this.DOMChangerFunction = e => {
             const canvasOrSVGElement = e.currentTarget;
+            if (!(canvasOrSVGElement instanceof HTMLElement) && !(canvasOrSVGElement instanceof SVGElement)) {
+                return;
+            }
+
             const [clickedDiatonicNoteNum, foundNote] = this.findNoteForClick(
                 canvasOrSVGElement,
                 e
@@ -171,6 +175,10 @@ export class Stream extends base.Music21Object {
         };
     }
 
+    /**
+     *
+     * @returns {IterableIterator<music21.base.Music21Object>}
+     */
     * [Symbol.iterator]() {
         if (this.autoSort && !this.isSorted) {
             this.sort();
@@ -614,6 +622,10 @@ export class Stream extends base.Music21Object {
         }
 
         const el = elOrElList;
+        if (!(el instanceof base.Music21Object)) {
+            throw new Music21Exception('Can only append a music21 object.')
+        }
+
         try {
             if (
                 el.isClassOrSubclass !== undefined
@@ -626,7 +638,7 @@ export class Stream extends base.Music21Object {
             this.setElementOffset(el, elOffset);
             el.offset = elOffset;
             el.sites.add(this);
-            el.activeSite = this; // would prefer weakref, but does not exist in JS.
+            el.activeSite = this;
         } catch (err) {
             console.error(
                 'Cannot append element ',
@@ -698,11 +710,11 @@ export class Stream extends base.Music21Object {
      *
      * In single argument form, assumes it is an element and takes the offset from the element.
      *
-     * Unlike music21p, does not take a list of elements.  TODO(msc): add this.
+     * Unlike music21p, does not take a list of elements.  TODO(msc): add this feature.
      *
      * @param {number|music21.base.Music21Object} offset -- offset of the item to insert
      * @param {music21.base.Music21Object} [elementOrNone] -- element.
-     * @return this
+     * @return {this}
      */
     insertAndShift(offset, elementOrNone) {
         let element;
@@ -1505,10 +1517,10 @@ export class Stream extends base.Music21Object {
         }
         const lastOctaveStepList = [];
         for (let i = 0; i < 10; i++) {
-            const tempOctaveStepDict = $.extend({}, extendableStepList);
+            const tempOctaveStepDict = {...extendableStepList};  // clone
             lastOctaveStepList.push(tempOctaveStepDict);
         }
-        const lastOctavelessStepDict = $.extend({}, extendableStepList); // probably unnecessary, but safe...
+        const lastOctavelessStepDict = {...extendableStepList};  // probably unnecessary, but safe...
 
         for (const el of this) {
             if (el.pitch !== undefined) {
@@ -1631,19 +1643,24 @@ export class Stream extends base.Music21Object {
      *
      * Will be moved to vfShow eventually when converter objects are enabled...maybe.
      *
-     * @param {Node|jQuery} canvasOrSVG - a canvas or the div surrounding an SVG object
+     * @param {jQuery|HTMLElement} $canvasOrSVG - a canvas or the div surrounding an SVG object
      * @returns {vfShow.Renderer}
      */
-    renderVexflow(canvasOrSVG) {
-        if (canvasOrSVG.jquery) {
-            canvasOrSVG = canvasOrSVG[0];
+    renderVexflow($canvasOrSVG) {
+        /**
+         * @type {HTMLElement|undefined}
+         */
+        let canvasOrSVG;
+        if ($canvasOrSVG instanceof $) {
+            canvasOrSVG = $canvasOrSVG[0];
+        } else {
+            canvasOrSVG = $canvasOrSVG;
         }
         const DOMContains = document.body.contains(canvasOrSVG);
         if (!DOMContains) {
             // temporarily add to DOM so Firefox can measure it...
             document.body.appendChild(canvasOrSVG);
         }
-
         const tagName = canvasOrSVG.tagName.toLowerCase();
 
         if (this.autoBeam === true) {
@@ -1978,11 +1995,11 @@ export class Stream extends base.Music21Object {
     /**
      * Creates a new canvas, renders vexflow on it, and appends it to the DOM.
      *
-     * @param {jQuery|Node} [appendElement=document.body] - where to place the svg
+     * @param {jQuery|HTMLElement} [appendElement=document.body] - where to place the svg
      * @param {number|string} [width]
      * @param {number|string} [height]
      * @param {string} elementType - what type of element, default = svg
-     * @returns {SVGElement|Node} svg (not the jQuery object --
+     * @returns {SVGElement|HTMLElement} svg (not the jQuery object --
      * this is a difference with other routines and should be fixed. TODO: FIX)
      *
      */
@@ -1991,13 +2008,13 @@ export class Stream extends base.Music21Object {
             appendElement = document.body;
         }
         let $appendElement = appendElement;
-        if (appendElement.jquery === undefined) {
+        if (!(appendElement instanceof $)) {
             $appendElement = $(appendElement);
         }
 
         //      if (width === undefined && this.renderOptions.maxSystemWidth === undefined) {
         //      var $bodyElement = bodyElement;
-        //      if (bodyElement.jquery === undefined) {
+        //      if (!(bodyElement instanceof $) {
         //      $bodyElement = $(bodyElement);
         //      }
         //      width = $bodyElement.width();
@@ -2018,7 +2035,7 @@ export class Stream extends base.Music21Object {
      *
      * Note that if 'where' is empty, will replace all svg elements on the page.
      *
-     * @param {jQuery|Node} [where] - the canvas or SVG to replace or a container holding the canvas(es) to replace.
+     * @param {jQuery|HTMLElement} [where] - the canvas or SVG to replace or a container holding the canvas(es) to replace.
      * @param {Boolean} [preserveSvgSize=false]
      * @param {string} elementType - what type of element, default = svg
      * @returns {jQuery} the svg
@@ -2029,7 +2046,7 @@ export class Stream extends base.Music21Object {
             where = document.body;
         }
         let $where;
-        if (where.jquery === undefined) {
+        if (!(where instanceof $)) {
             $where = $(where);
         } else {
             $where = where;
@@ -2080,14 +2097,14 @@ export class Stream extends base.Music21Object {
      *                    find the original stream; var s = this; var f = function () { s...}
      *                   )
      *
-     * @param {jQuery|Node} canvasOrDiv - canvas or the Div surrounding it.
+     * @param {jQuery|HTMLElement} canvasOrDiv - canvas or the Div surrounding it.
      * @returns {this}
      */
     setRenderInteraction(canvasOrDiv) {
         let $svg = canvasOrDiv;
         if (canvasOrDiv === undefined) {
             return this;
-        } else if (canvasOrDiv.jquery === undefined) {
+        } else if (!(canvasOrDiv instanceof $)) {
             $svg = $(canvasOrDiv);
         }
         const playFunc = () => {
@@ -2145,8 +2162,8 @@ export class Stream extends base.Music21Object {
      * Given a mouse click, or other event with .pageX and .pageY,
      * find the x and y for the svg.
      *
-     * @param {Node|SVGElement} svg - a canvas or SVG object
-     * @param {Event} e
+     * @param {HTMLElement|SVGElement} svg - a canvas or SVG object
+     * @param {MouseEvent|TouchEvent} e
      * @returns {Array<number>} two-elements, [x, y] in pixels.
      */
     getUnscaledXYforDOM(svg, e) {
@@ -2335,8 +2352,8 @@ export class Stream extends base.Music21Object {
      * Return a list of [diatonicNoteNum, closestXNote]
      * for an event (e) called on the svg (svg)
      *
-     * @param {Node|SVGElement} svg
-     * @param {Event} e
+     * @param {HTMLElement|SVGElement} svg
+     * @param {MouseEvent|TouchEvent} e
      * @param {number} [x]
      * @param {number} [y]
      * @returns {Array} [diatonicNoteNum, closestXNote]
@@ -2432,7 +2449,7 @@ export class Stream extends base.Music21Object {
             $svgDiv
         );
         d.append(buttonDiv);
-        d.append($("<br clear='all'/>"));
+        d.append($("<br style='clear: both;' />"));
         d.append($svgDiv);
         return d;
     }
@@ -2950,8 +2967,8 @@ export class Part extends Stream {
      * Overrides the default music21.stream.Stream#findNoteForClick
      * by taking into account systems
      *
-     * @param {Node} svg
-     * @param {Event} e
+     * @param {HTMLElement | SVGElement} svg
+     * @param {MouseEvent|TouchEvent} e
      * @param {number} [x]
      * @param {number} [y]
      * @returns {Array} [clickedDiatonicNoteNum, foundNote]
@@ -3245,8 +3262,8 @@ export class Score extends Stream {
      * click event, taking into account that the note will be in different
      * Part objects (and different Systems) given the height and possibly different Systems.
      *
-     * @param {Node} svg
-     * @param {Event} e
+     * @param {HTMLElement|SVGElement} svg
+     * @param {MouseEvent|TouchEvent} e
      * @param {number} [x]
      * @param {number} [y]
      * @returns {Array} [diatonicNoteNum, m21Element]

@@ -110,6 +110,9 @@ export class Metronome extends prebase.ProtoM21Object {
         this.tempoIncreases = [0, 1, 2, 3, 4, 6, 8, 15, 100];
     }
 
+    /**
+     * @type {number}
+     */
     get tempo() {
         return this._tempo;
     }
@@ -123,6 +126,10 @@ export class Metronome extends prebase.ProtoM21Object {
         }
     }
 
+    /**
+     *
+     * @returns {number}
+     */
     get beatLength() {
         return 60.0 / this.tempo;
     }
@@ -230,45 +237,70 @@ export class Metronome extends prebase.ProtoM21Object {
             // console.log(t);
             this.tempo = t;
         }
+        return this.tempo;
     }
 
     /**
      * add a Metronome interface onto the DOM at where
      *
-     * @param {jQuery|Node} [where='body']
+     * @param {jQuery|HTMLElement} [where]
      * @returns {jQuery} - a div holding the metronome.
      */
     addDiv(where) {
-        let jWhere;
-        if (where !== undefined && where.jquery !== undefined) {
-            jWhere = where;
-        } else if (where !== undefined) {
-            jWhere = $(where);
+        /**
+         * @type {jQuery}
+         */
+        let $where;
+        if (where !== undefined && where instanceof jQuery) {
+            $where = where;
+        } else if (where !== undefined && !where instanceof jQuery) {
+            $where = $(where);
         } else {
-            jWhere = $('body');
+            $where = $('body');
         }
         const metroThis = this;
-        const tempoHolder = $(
+        /**
+         *
+         * @type {jQuery}
+         */
+        const $tempoHolder = $(
             '<span class="tempoHolder">' + this.tempo.toString() + '</span>'
         );
-        tempoHolder.css({
+        $tempoHolder.css({
             'font-size': '24px',
             'padding-left': '10px',
             'padding-right': '10px',
         });
-        const newDiv = $('<div class="metronomeRendered"></div>');
-        newDiv.append(tempoHolder);
+        /**
+         *
+         * @type {jQuery}
+         */
+        const $newDiv = $('<div class="metronomeRendered"></div>');
+        $newDiv.append($tempoHolder);
 
+        /**
+         *
+         * @type {jQuery}
+         */
         const b1 = $('<button>start</button>');
         b1.on('click', () => {
             metroThis.chirp();
         });
+
+        /**
+         *
+         * @type {jQuery}
+         */
         const b2 = $('<button>stop</button>');
         b2.on('click', () => {
             metroThis.stopChirp();
         });
-        newDiv.prepend(b2);
-        newDiv.prepend(b1);
+        $newDiv.prepend(b2);
+        $newDiv.prepend(b1);
+        /**
+         *
+         * @type {jQuery}
+         */
         const b3 = $('<button>up</button>');
         b3.on('click', function increaseSpeedButton() {
             metroThis.increaseSpeed();
@@ -276,6 +308,10 @@ export class Metronome extends prebase.ProtoM21Object {
                 .prevAll('.tempoHolder')
                 .html(metroThis.tempo.toString());
         });
+        /**
+         *
+         * @type {jQuery}
+         */
         const b4 = $('<button>down</button>');
         b4.on('click', function decreaseSpeedButton() {
             metroThis.decreaseSpeed();
@@ -283,8 +319,12 @@ export class Metronome extends prebase.ProtoM21Object {
                 .prevAll('.tempoHolder')
                 .html(metroThis.tempo.toString());
         });
-        newDiv.append(b3);
-        newDiv.append(b4);
+        $newDiv.append(b3);
+        $newDiv.append(b4);
+        /**
+         *
+         * @type {jQuery}
+         */
         const $flash = $(
             '<span class="metroFlash">'
                 + '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>'
@@ -292,12 +332,12 @@ export class Metronome extends prebase.ProtoM21Object {
         $flash.css('margin-left', '40px');
         $flash.css('height', '40px');
 
-        newDiv.append($flash);
+        $newDiv.append($flash);
 
-        jWhere.append(newDiv);
+        $where.append($newDiv);
 
-        this.$metronomeDiv = newDiv;
-        return newDiv;
+        this.$metronomeDiv = $newDiv;
+        return $newDiv;
     }
 }
 tempo.Metronome = Metronome;

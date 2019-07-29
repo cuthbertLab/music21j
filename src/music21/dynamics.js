@@ -19,7 +19,7 @@ import { base } from './base.js';
 /**
  * Dynamics related objects.
  *
- * N.B. Firefox completely ignores dyanmics on playback!
+ * N.B. Firefox completely ignores dynamics on playback!
  *
  * Currently do not export to Vexflow.  :-(
  *
@@ -28,6 +28,8 @@ import { base } from './base.js';
  * @requires music21/base
  */
 export const dynamics = {};
+
+// noinspection SpellCheckingInspection
 dynamics.shortNames = [
     'pppppp',
     'ppppp',
@@ -46,6 +48,8 @@ dynamics.shortNames = [
     'fffff',
     'ffffff',
 ];
+
+// noinspection SpellCheckingInspection
 dynamics.longNames = {
     ppp: ['pianississimo'],
     pp: ['pianissimo'],

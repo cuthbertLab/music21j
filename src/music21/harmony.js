@@ -1,6 +1,14 @@
+/**
+ * @namespace music21.harmony
+ */
+
 import { chord } from './chord.js';
 import { key } from './key.js';
 
+/**
+ * @memberOf music21.harmony
+ * @extends music21.chord.Chord
+ */
 class Harmony extends chord.Chord {
     constructor(figure, keywords) {
         if (keywords === undefined) {
