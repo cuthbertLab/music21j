@@ -106,7 +106,7 @@ export class ScoreParser {
         }
         // partGroups;
         // spanners;
-        // definesExplicitSystemreaks, etc.
+        // definesExplicitSystemBreaks, etc.
         // sort
         return s;
     }
@@ -523,7 +523,7 @@ export class MeasureParser {
     xmlToRest($mxRest) {
         const r = new note.Rest();
         // full measure rest
-        // apply multimeasure rest
+        // apply multi-measure rest
         // display-step, octave, etc.
         return this.xmlNoteToGeneralNoteHelper(r, $mxRest);
     }
@@ -534,7 +534,7 @@ export class MeasureParser {
         // setPrintStyle
         // print-object
         // dynamics
-        // pizzacato
+        // pizzicato
         // grace
         this.xmlToDuration($mxNote, n.duration);
         // type styles

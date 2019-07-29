@@ -291,9 +291,15 @@ export class KeySignature extends base.Music21Object {
         }
         let newPitch = p;
         for (let i = 0; i < transTimes; i++) {
+            /**
+             *
+             * @type {music21.pitch.Pitch}
+             */
             newPitch = transInterval.transposePitch(newPitch);
             if (i % 2 === 1) {
-                newPitch.octave -= 1;
+                // for some reason PyCharm/Jetbrains chokes in -= 1 here
+                // eslint-disable-next-line operator-assignment
+                newPitch.octave = newPitch.octave - 1;
             }
         }
         return newPitch;

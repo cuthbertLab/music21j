@@ -20,6 +20,7 @@
       <w>hexachord</w>
       <w>inexpressable</w>
       <w>intv</w>
+      <w>jianpu</w>
       <w>jsonpickle</w>
       <w>keyboardkey</w>
       <w>ladma</w>
@@ -27,6 +28,7 @@
       <w>largamente</w>
       <w>larghetto</w>
       <w>larghissimo</w>
+      <w>locrian</w>
       <w>longa</w>
       <w>maestoso</w>
       <w>marcato</w>
@@ -38,7 +40,9 @@
       <w>midicube</w>
       <w>midijs</w>
       <w>miditools</w>
+      <w>misura</w>
       <w>mixins</w>
+      <w>mixolydian</w>
       <w>moderato</w>
       <w>molto</w>
       <w>musescore</w>
@@ -47,11 +51,14 @@
       <w>nexts</w>
       <w>nonachord</w>
       <w>notehead</w>
+      <w>noteheads</w>
       <w>octachord</w>
       <w>octaveless</w>
       <w>ottava</w>
+      <w>partwise</w>
       <w>pentachord</w>
       <w>perc</w>
+      <w>phrygian</w>
       <w>pppp</w>
       <w>prebase</w>
       <w>prestissimo</w>
@@ -64,11 +71,14 @@
       <w>rootedness</w>
       <w>scdict</w>
       <w>schnell</w>
+      <w>senza</w>
       <w>septachord</w>
+      <w>seta</w>
       <w>soundfont</w>
       <w>soundfonts</w>
       <w>spiccato</w>
       <w>staccatissimo</w>
+      <w>staves</w>
       <w>struct</w>
       <w>subdominant</w>
       <w>submediant</w>

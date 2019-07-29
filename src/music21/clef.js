@@ -58,7 +58,7 @@ clef.nameToSign = {
 };
 
 /**
- * Clefname can be one of
+ * Clef name can be one of
  * "treble", "bass", "soprano", "mezzo-soprano", "alto", "tenor", "percussion"
  *
  * @class Clef

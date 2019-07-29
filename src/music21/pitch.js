@@ -305,7 +305,7 @@ export const midiToName = [
  * @extends music21.prebase.ProtoM21Object
  * @property {music21.pitch.Accidental|undefined} accidental - link to an accidental
  * @property {number} diatonicNoteNum - diatonic number of the pitch, where 29 = C4, C#4, C-4, etc.; 30 = D-4, D4, D#4, etc. updates other properties.
- * @property {number} midi - midi number of the pitch (C4 = 60); readonly. See {@link music21.pitch.Pitch#ps} for setable version.
+ * @property {number} midi - midi number of the pitch (C4 = 60); readonly. See {@link music21.pitch.Pitch#ps} for settable version.
  * @property {string} name - letter name of pitch + accidental modifier; e.g., B-flat = 'B-'; changes automatically w/ step and accidental
  * @property {string} nameWithOctave - letter name of pitch + accidental modifier + octave; changes automatically w/ step, accidental, and octave
  * @property {number} octave - number for the octave, where middle C = C4, and octaves change between B and C; default 4
@@ -316,6 +316,11 @@ export class Pitch extends prebase.ProtoM21Object {
     constructor(pn='C') {
         super();
         this._step = 'C';
+        /**
+         *
+         * @type {number}
+         * @private
+         */
         this._octave = 4;
         /**
          *
@@ -523,7 +528,7 @@ export class Pitch extends prebase.ProtoM21Object {
      */
     get unicodeName() {
         if (this.accidental !== undefined) {
-            return this.step + this.accidental.unicodeModifier();
+            return this.step + this.accidental.unicodeModifier;
         } else {
             return this.step;
         }
@@ -559,7 +564,9 @@ export class Pitch extends prebase.ProtoM21Object {
             p.accidental = new Accidental(0);
         }
         while (p.ps % 12 !== this.ps % 12) { // octaveless
-            p.accidental.alter += -1 * directionInt;
+            // again a JSDoc choke
+            // eslint-disable-next-line operator-assignment
+            p.accidental.alter = p.accidental.alter + (-1 * directionInt);
         }
 
         if (!inPlace) {

@@ -430,6 +430,10 @@ export function SimpleDiatonicScale(tonic, scaleSteps) {
         scaleSteps = ['M', 'M', 'm', 'M', 'M', 'M', 'm'];
     }
     const gi = new interval.GenericInterval(2);
+    /**
+     *
+     * @type {music21.pitch.Pitch[]}
+     */
     const pitches = [tonic];
     let lastPitch = tonic;
     for (let i = 0; i < scaleSteps.length; i++) {

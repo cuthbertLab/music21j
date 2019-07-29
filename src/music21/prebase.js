@@ -68,7 +68,7 @@ export class ProtoM21Object {
      * to handle custom clone cases.  See, for instance, {@link music21.base.Music21Object} which
      * uses a custom callback to NOT clone the `.activeSite` attribute.
      *
-     * @returns {music21.prebase.ProtoM21Object}
+     * @returns {this} note: not really the same object, but a new object of the same type
      * @example
      * var n1 = new music21.note.Note("C#");
      * n1.duration.quarterLength = 4;
