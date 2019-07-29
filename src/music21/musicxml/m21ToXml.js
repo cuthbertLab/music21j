@@ -1,7 +1,7 @@
 /**
  * @namespace music21.musicxml.m21ToXml
  */
-import { clef } from '../clef.js';
+import * as clef from '../clef.js';
 import * as common from '../common.js';
 import {  // eslint-disable-line import/no-cycle
     Stream, Measure, Part, Score,

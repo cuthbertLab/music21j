@@ -15,7 +15,7 @@ import { Music21Exception } from './exceptions21.js';
 
 import * as base from './base.js';
 import * as beam from './beam.js';
-import { clef } from './clef.js';
+import * as clef from './clef.js';
 import * as common from './common.js';
 import { debug } from './debug.js';
 import * as duration from './duration.js';
@@ -23,7 +23,7 @@ import { instrument } from './instrument.js';
 import { meter } from './meter.js';
 import * as note from './note.js';
 import * as pitch from './pitch.js';
-import { renderOptions } from './renderOptions.js';
+import * as renderOptions from './renderOptions.js';
 import * as vfShow from './vfShow.js';
 
 // eslint-disable-next-line import/no-cycle

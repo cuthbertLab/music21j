@@ -5,29 +5,29 @@
  * Copyright (c) 2013-19, Michael Scott Cuthbert and cuthbertLab
  * Based on music21 (=music21p), Copyright (c) 2006–19, Michael Scott Cuthbert and cuthbertLab
  *
- */
-import * as base from './base.js';
-import * as pitch from './pitch.js';
-
-/**
  * Clef module, see {@link music21.clef} for namespace
- *
- * @exports music21/clef
- */
-/**
  * Clef related objects and properties
  *
+ * @exports music21/clef
  * @namespace music21.clef
  * @memberof music21
  * @requires music21/base
  * @requires music21/pitch
  */
-export const clef = {};
+import * as base from './base.js';
+import * as pitch from './pitch.js';
+
 /*  music21.Clef
     must be defined before Stream since Stream subclasses call new music21.Clef...
  */
+
 // TODO: Fix to newest Vexflow format...
-clef.lowestLines = {
+
+/**
+ *
+ * @type {{bass: number, soprano: number, tenor: number, percussion: number, 'mezzo-soprano': number, alto: number, treble: number}}
+ */
+export const lowestLines = {
     treble: 31,
     soprano: 29,
     'mezzo-soprano': 27,
@@ -37,7 +37,11 @@ clef.lowestLines = {
     percussion: 31,
 };
 
-clef.nameToLine = {
+/**
+ *
+ * @type {{bass: number, soprano: number, tenor: number, percussion: number, 'mezzo-soprano': number, alto: number, treble: number}}
+ */
+export const nameToLine = {
     treble: 2,
     soprano: 1,
     'mezzo-soprano': 2,
@@ -47,7 +51,11 @@ clef.nameToLine = {
     percussion: 3,
 };
 
-clef.nameToSign = {
+/**
+ *
+ * @type {{bass: string, soprano: string, tenor: string, percussion: string, 'mezzo-soprano': string, alto: string, treble: string}}
+ */
+export const nameToSign = {
     treble: 'G',
     soprano: 'C',
     'mezzo-soprano': 'C',
@@ -81,14 +89,14 @@ export class Clef extends base.Music21Object {
         if (name !== undefined) {
             name = name.toLowerCase();
             this.name = name;
-            this.lowestLine = clef.lowestLines[name];
-            this.sign = clef.nameToSign[name];
-            this.line = clef.nameToLine[name] || 1;
+            this.lowestLine = lowestLines[name];
+            this.sign = nameToSign[name];
+            this.line = nameToLine[name] || 1;
             this.lowestLineTrebleOffset
-                = clef.lowestLines.treble - this.lowestLine;
+                = lowestLines.treble - this.lowestLine;
         } else {
             this.name = undefined;
-            this.lowestLine = clef.lowestLines.treble;
+            this.lowestLine = lowestLines.treble;
             this.lowestLineTrebleOffset = 0;
         }
         if (octaveChange === undefined) {
@@ -128,8 +136,6 @@ export class Clef extends base.Music21Object {
     }
 }
 
-clef.Clef = Clef;
-
 /**
  * A TrebleClef (same as new music21.clef.Clef('treble'))
  *
@@ -144,7 +150,7 @@ export class TrebleClef extends Clef {
         this.line = 2;
     }
 }
-clef.TrebleClef = TrebleClef;
+
 /**
  * A TrebleClef down an octave (same as new music21.clef.Clef('treble', -1))
  *
@@ -159,7 +165,6 @@ export class Treble8vbClef extends Clef {
         super('treble', -1);
     }
 }
-clef.Treble8vbClef = Treble8vbClef;
 
 /**
  * A TrebleClef up an octave (same as new music21.clef.Clef('treble', 1))
@@ -173,7 +178,6 @@ export class Treble8vaClef extends Clef {
         super('treble', 1);
     }
 }
-clef.Treble8vaClef = Treble8vaClef;
 
 /**
  * A BassClef (same as new music21.clef.Clef('bass'))
@@ -189,7 +193,6 @@ export class BassClef extends Clef {
         this.line = 4;
     }
 }
-clef.BassClef = BassClef;
 
 /**
  * A BassClef down an octave (same as new music21.clef.Clef('bass', -1))
@@ -205,7 +208,6 @@ export class Bass8vbClef extends Clef {
         this.line = 4;
     }
 }
-clef.Bass8vbClef = Bass8vbClef;
 
 /**
  * An AltoClef (same as new music21.clef.Clef('alto'))
@@ -221,7 +223,6 @@ export class AltoClef extends Clef {
         this.line = 3;
     }
 }
-clef.AltoClef = AltoClef;
 
 /**
  * A Tenor Clef (same as new music21.clef.Clef('tenor'))
@@ -237,7 +238,7 @@ export class TenorClef extends Clef {
         this.line = 4;
     }
 }
-clef.TenorClef = TenorClef;
+
 /**
  * A Soprano Clef (same as new music21.clef.Clef('soprano'))
  *
@@ -252,7 +253,6 @@ export class SopranoClef extends Clef {
         this.line = 1;
     }
 }
-clef.SopranoClef = SopranoClef;
 
 /**
  * A Mezzo-Soprano Clef (same as new music21.clef.Clef('mezzo-soprano'))
@@ -268,7 +268,6 @@ export class MezzoSopranoClef extends Clef {
         this.line = 2;
     }
 }
-clef.MezzoSopranoClef = MezzoSopranoClef;
 
 /**
  * A Percussion Clef (same as new music21.clef.Clef('percussion'))
@@ -286,7 +285,19 @@ export class PercussionClef extends Clef {
         this.line = 3;
     }
 }
-clef.PercussionClef = PercussionClef;
+
+export const all_clefs = {
+    TrebleClef,
+    Treble8vbClef,
+    Treble8vaClef,
+    BassClef,
+    Bass8vbClef,
+    AltoClef,
+    TenorClef,
+    SopranoClef,
+    MezzoSopranoClef,
+    PercussionClef,
+};
 
 /**
  * Looks at the pitches in a Stream and returns the best clef
@@ -299,7 +310,7 @@ clef.PercussionClef = PercussionClef;
  * @param {boolean} [options.recurse=true]
  * @returns {music21.clef.Clef}
  */
-clef.bestClef = function bestClef(st, { recurse=true }={}) {
+export function bestClef(st, { recurse=true }={}) {
     // console.log('calling flat on stream: ', st.elements.length, st.classes[st.classes.length - 1]);
     let stFlat;
     if (recurse) {
@@ -330,21 +341,24 @@ clef.bestClef = function bestClef(st, { recurse=true }={}) {
     // console.log('bestClef: average height', averageHeight);
     if (averageHeight > 28) {
         // 29 = c4
-        return new clef.TrebleClef();
+        return new TrebleClef();
     } else {
-        return new clef.BassClef();
+        return new BassClef();
     }
-};
+}
 
-clef.clefFromString = function clefFromString(clefString, octaveShift) {
-    if (octaveShift === undefined) {
-        octaveShift = 0;
-    }
+/**
+ *
+ * @param {string} clefString
+ * @param {number} [octaveShift=0]
+ * @returns {music21.clef.Clef}
+ */
+export function clefFromString(clefString, octaveShift=0) {
     const xnStr = clefString.trim();
     let thisType;
     let lineNum;
     if (xnStr.toLowerCase() === 'percussion') {
-        return new clef.PercussionClef(clefString, octaveShift);
+        return new PercussionClef(clefString, octaveShift);
     } // todo: tab, none, jianpu
 
     if (xnStr.length === 2) {
@@ -364,12 +378,9 @@ clef.clefFromString = function clefFromString(clefString, octaveShift) {
     } else if (xnStr.length > 2) {
         // try to get any clef in the module
         const searchLower = xnStr.toLowerCase();
-        for (const clefKey of Object.keys(clef)) { // TODO(msc): fix when we get rid of clef = {}
-            if (!clefKey.includes('Clef')) {
-                continue;
-            }
+        for (const clefKey of Object.keys(all_clefs)) {
             const clefLower = clefKey.toLowerCase();
-            const potentialClass = clef[clefKey];
+            const potentialClass = all_clefs[clefKey];
             if (typeof potentialClass !== 'function') {
                 continue;
             }
@@ -384,20 +395,20 @@ clef.clefFromString = function clefFromString(clefString, octaveShift) {
 
     const params = [thisType, lineNum, octaveShift];
     if (arrayEqual(params, ['G', 2, 0])) {
-        return new clef.TrebleClef();
+        return new TrebleClef();
     } else if (arrayEqual(params, ['G', 2, -1])) {
-        return new clef.Treble8vbClef();
+        return new Treble8vbClef();
     } else if (arrayEqual(params, ['G', 2, 1])) {
-        return new clef.Treble8vaClef();
+        return new Treble8vaClef();
     } else if (arrayEqual(params, ['F', 4, 0])) {
-        return new clef.BassClef();
+        return new BassClef();
     } else if (arrayEqual(params, ['F', 4, -1])) {
-        return new clef.Bass8vbClef();
+        return new Bass8vbClef();
     } else if (arrayEqual(params, ['C', 3, 0])) {
-        return new clef.AltoClef();
+        return new AltoClef();
     } else if (arrayEqual(params, ['C', 4, 0])) {
-        return new clef.TenorClef();
+        return new TenorClef();
     } else {
-        return new clef.Clef(xnStr, octaveShift);
+        return new Clef(xnStr, octaveShift);
     }
-};
+}

@@ -21,7 +21,7 @@
  */
 import * as $ from 'jquery';
 
-import { clef } from './clef.js';
+import * as clef from './clef.js';
 import * as duration from './duration.js';
 import * as pitch from './pitch.js';
 import * as note from './note.js';

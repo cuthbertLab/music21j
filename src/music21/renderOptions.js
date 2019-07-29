@@ -2,25 +2,19 @@
  * music21j -- Javascript reimplementation of Core music21p features.
  * music21/renderOptions -- an object that defines the render options for a Stream
  *
- * note: no parallel in music21p
+ * note: no parallel in music21p except Style
  *
- * Copyright (c) 2013-14, Michael Scott Cuthbert and cuthbertLab
- * Based on music21 (=music21p), Copyright (c) 2006–14, Michael Scott Cuthbert and cuthbertLab
+ * Copyright (c) 2013-19, Michael Scott Cuthbert and cuthbertLab
+ * Based on music21 (=music21p), Copyright (c) 2006–19, Michael Scott Cuthbert and cuthbertLab
  *
- */
-import * as common from './common.js';
-/**
  * renderOptions module, see {@link music21.renderOptions}
- *
- * @exports music21/renderOptions
- */
-/**
  * Options for rendering a stream
  *
+ * @exports music21/renderOptions
  * @namespace music21.renderOptions
  * @memberof music21
  */
-export const renderOptions = {};
+import * as common from './common.js';
 
 /**
  * An object that contains information on rendering the current stream
@@ -94,4 +88,3 @@ export class RenderOptions {
         common.merge(this, defaultOptions);
     }
 }
-renderOptions.RenderOptions = RenderOptions;

@@ -19,8 +19,8 @@
 import * as $ from 'jquery';
 import Vex from 'vexflow';
 
-import { clef } from './clef.js';
 import { debug } from './debug.js';
+import * as clef from './clef.js';
 import * as duration from './duration.js';
 
 const _clefSingleton = new clef.TrebleClef();
