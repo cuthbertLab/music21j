@@ -45,6 +45,8 @@
       <w>mixolydian</w>
       <w>moderato</w>
       <w>molto</w>
+      <w>mozvisibilitychange</w>
+      <w>msvisibilitychange</w>
       <w>musescore</w>
       <w>musicxml</w>
       <w>newroot</w>
@@ -107,7 +109,9 @@
       <w>vexflow</w>
       <w>viio</w>
       <w>viioo</w>
+      <w>visibilitychange</w>
       <w>vivacissimo</w>
+      <w>webkitvisibilitychange</w>
       <w>webmidi</w>
       <w>xand</w>
       <w>yfor</w>

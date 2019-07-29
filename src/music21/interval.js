@@ -6,7 +6,7 @@
  * Based on music21 (=music21p), Copyright (c) 2006-19, Michael Scott Cuthbert and cuthbertLab
  *
  */
-import { common } from './common.js';
+import * as common from './common.js';
 import { debug } from './debug.js';
 import * as note from './note.js';
 import * as prebase from './prebase.js';

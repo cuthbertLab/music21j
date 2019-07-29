@@ -9,7 +9,7 @@
 import { Music21Exception } from './exceptions21.js';
 
 import { chord } from './chord.js';
-import { common } from './common.js';
+import * as common from './common.js';
 // import { debug } from './debug.js';
 import * as figuredBass from './figuredBass.js';
 import { harmony } from './harmony.js';

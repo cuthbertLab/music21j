@@ -19,7 +19,7 @@
 import * as $ from 'jquery';
 import * as MIDI from 'midicube';
 
-import { common } from './common.js';
+import * as common from './common.js';
 import { miditools } from './miditools.js';
 import * as pitch from './pitch.js';
 

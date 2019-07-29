@@ -19,7 +19,7 @@
  */
 import { Music21Exception } from './exceptions21.js';
 
-import { common } from './common.js';
+import * as common from './common.js';
 import { debug } from './debug.js';
 import * as prebase from './prebase.js';
 

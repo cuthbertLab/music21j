@@ -13,7 +13,7 @@ import * as MIDI from 'midicube';
 import '../../css/midiPlayer.css';
 
 import { chord } from './chord.js';
-import { common } from './common.js';
+import * as common from './common.js';
 import { debug } from './debug.js';
 import { instrument } from './instrument.js';
 import * as note from './note.js';

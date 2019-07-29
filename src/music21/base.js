@@ -17,7 +17,7 @@
  * @namespace music21.base
  * @memberof music21
  */
-import { common } from './common.js';
+import * as common from './common.js';
 import * as derivation from './derivation.js';
 import * as duration from './duration.js';
 import * as prebase from './prebase.js';

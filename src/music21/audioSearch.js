@@ -1,6 +1,6 @@
 import * as MIDI from 'midicube';
 
-import { common } from './common.js';
+import * as common from './common.js';
 
 /**
  * audioSearch module. See {@link music21.audioSearch} namespace

@@ -1,15 +1,11 @@
 /**
  * common functions
- *
- * @exports music21/common
- */
-/**
  * functions that are useful everywhere...
  *
+ * @exports music21/common
  * @namespace music21.common
  * @memberof music21
  */
-export const common = {};
 
 /**
  * concept borrowed from Vex.Flow.Merge, though here the source can be undefined;
@@ -22,7 +18,7 @@ export const common = {};
  * @memberof music21.common
  * @returns {Object} destination
  */
-common.merge = function mergeRecursive(destination, source) {
+export function merge(destination, source) {
     if (source === undefined || source === null) {
         return destination;
     }
@@ -33,7 +29,7 @@ common.merge = function mergeRecursive(destination, source) {
         try {
             // Property in destination object set; update its value.
             if (source[p] && source[p].constructor === Object) {
-                destination[p] = mergeRecursive(destination[p], source[p]);
+                destination[p] = merge(destination[p], source[p]);
             } else {
                 destination[p] = source[p];
             }
@@ -43,9 +39,9 @@ common.merge = function mergeRecursive(destination, source) {
         }
     }
     return destination;
-};
+}
 
-common.range = function common_range(start, stop, step) {
+export function range(start, stop, step) {
     if (step === undefined) {
         step = 1;
     }
@@ -56,14 +52,14 @@ common.range = function common_range(start, stop, step) {
 
     const count = Math.ceil((stop - start) / step);
     return Array.apply(0, Array(count)).map((e, i) => i * step + start);
-};
+}
 
 /**
  * Mix in another class into this class -- a simple form of multiple inheritance.
  * See articulations.Marcato for an example.
  *
  */
-common.mixin = function common_mixin(OtherParent, thisClassOrObject) {
+export function mixin(OtherParent, thisClassOrObject) {
     let proto = Object.getPrototypeOf(OtherParent);
     const classProto = Object.getPrototypeOf(thisClassOrObject);
 
@@ -78,7 +74,7 @@ common.mixin = function common_mixin(OtherParent, thisClassOrObject) {
         }
         proto = Object.getPrototypeOf(proto);
     }
-};
+}
 
 /**
  * Aggregation -- closer to true multiple inheritance -- prefers last class's functions.  See
@@ -87,7 +83,7 @@ common.mixin = function common_mixin(OtherParent, thisClassOrObject) {
  *  not currently used...
  */
 
-common.aggregation = (baseClass, ...mixins) => {
+export const aggregation = (baseClass, ...mixins) => {
     class base extends baseClass {
         constructor(...args) {
             super(...args);
@@ -98,7 +94,7 @@ common.aggregation = (baseClass, ...mixins) => {
     }
     let copyProps = (target, source) => {
         // this function copies all properties and symbols, filtering out some special ones
-        // noinspection JSUnresolvedFunction
+        // noinspection JSUnresolvedFunction,JSCheckFunctionSignatures
         Object.getOwnPropertyNames(source)
             .concat(Object.getOwnPropertySymbols(source))
             .forEach(prop => {
@@ -123,6 +119,7 @@ common.aggregation = (baseClass, ...mixins) => {
     return base;
 };
 
+
 /**
  * posMod - return a modulo value that is not negative
  *
@@ -131,12 +128,12 @@ common.aggregation = (baseClass, ...mixins) => {
  * @return {int}   a mod b between 0 and b - 1
  */
 
-common.posMod = function posMod(a, b) {
+export function posMod(a, b) {
     if (a === undefined || b === undefined) {
         throw new Error('Modulo needs two numbers');
     }
     return (a % b + b) % b;
-};
+}
 
 /**
  *
@@ -150,7 +147,7 @@ common.posMod = function posMod(a, b) {
  * @param {Array<*>} a - an array to analyze
  * @returns {Object} element with the highest frequency in a
  */
-common.statisticalMode = function statisticalMode(a) {
+export function statisticalMode(a) {
     if (a.length === 0) {
         return null;
     }
@@ -169,7 +166,7 @@ common.statisticalMode = function statisticalMode(a) {
         }
     }
     return maxEl;
-};
+}
 
 /**
  * fromRoman - Convert a Roman numeral (upper or lower) to an int.
@@ -178,7 +175,7 @@ common.statisticalMode = function statisticalMode(a) {
  * @return {int}     integer value of roman numeral;
  */
 
-common.fromRoman = function fromRoman(num) {
+export function fromRoman(num) {
     const inputRoman = num.toUpperCase();
     const subtractionValues = [1, 10, 100];
     const nums = ['M', 'D', 'C', 'L', 'X', 'V', 'I'];
@@ -207,7 +204,7 @@ common.fromRoman = function fromRoman(num) {
         summation += n;
     }
     return summation;
-};
+}
 
 /**
  * toRoman - Convert a number from 1 to 3999 to a roman numeral
@@ -216,7 +213,7 @@ common.fromRoman = function fromRoman(num) {
  * @return {string}     as roman numeral
  */
 
-common.toRoman = function toRoman(num) {
+export function toRoman(num) {
     if (typeof num !== 'number') {
         throw new Error('expected integer, got ' + typeof num);
     }
@@ -246,7 +243,7 @@ common.toRoman = function toRoman(num) {
         num -= ints[i] * count;
     }
     return result;
-};
+}
 
 /**
  * Creates an SVGElement of an SVG figure using the correct `document.createElementNS` call.
@@ -257,7 +254,7 @@ common.toRoman = function toRoman(num) {
  * @memberof music21.common
  * @returns {SVGElement}
  */
-common.makeSVGright = function makeSVGright(tag='svg', attrs) {
+export function makeSVGright(tag='svg', attrs) {
     // see http://stackoverflow.com/questions/3642035/jquerys-append-not-working-with-svg-element
     // normal JQuery does not work.
     if (attrs === undefined) {
@@ -272,7 +269,7 @@ common.makeSVGright = function makeSVGright(tag='svg', attrs) {
         el.setAttribute(k, attrs[k]);
     }
     return el;
-};
+}
 
 /**
  * Take a number such as 32 and return a string such as "nd"
@@ -283,13 +280,13 @@ common.makeSVGright = function makeSVGright(tag='svg', attrs) {
  * @param {Boolean} [plural=false] - make plural (note that "21st" plural is "21st")
  * @return {string}
  */
-common.ordinalAbbreviation = function ordinalAbbreviation(value, plural) {
+export function ordinalAbbreviation(value, plural) {
     let post = '';
-    const valueHundreths = value % 100;
+    const valueHundredths = value % 100;
     if (
-        valueHundreths === 11
-        || valueHundreths === 12
-        || valueHundreths === 13
+        valueHundredths === 11
+        || valueHundredths === 12
+        || valueHundredths === 13
     ) {
         post = 'th';
     } else {
@@ -308,7 +305,7 @@ common.ordinalAbbreviation = function ordinalAbbreviation(value, plural) {
         post += 's';
     }
     return post;
-};
+}
 
 /**
  * Find a rational number approximation of this floating point.
@@ -319,7 +316,7 @@ common.ordinalAbbreviation = function ordinalAbbreviation(value, plural) {
  * @param {int} [maxDenominator=50] - maximum denominator
  * @returns {object|undefined} {'numerator: numerator, 'denominator': denominator}
  */
-common.rationalize = function rationalize(ql, epsilon, maxDenominator) {
+export function rationalize(ql, epsilon, maxDenominator) {
     epsilon = epsilon || 0.001;
     maxDenominator = maxDenominator || 50;
 
@@ -331,7 +328,7 @@ common.rationalize = function rationalize(ql, epsilon, maxDenominator) {
         }
     }
     return undefined;
-};
+}
 
 /**
  * Change something that could be a string or number and might
@@ -343,7 +340,7 @@ common.rationalize = function rationalize(ql, epsilon, maxDenominator) {
  * @param {number|string} str -- string that might have 'px' at the end or not
  * @returns {number} a number to use
  */
-common.stripPx = function stripPx(str) {
+export function stripPx(str) {
     if (typeof str === 'string') {
         const pxIndex = str.indexOf('px');
         str = str.slice(0, pxIndex);
@@ -351,7 +348,7 @@ common.stripPx = function stripPx(str) {
     } else {
         return str;
     }
-};
+}
 
 /**
  * Find name in the query string (?name=value) and return value.
@@ -360,16 +357,16 @@ common.stripPx = function stripPx(str) {
  * @param {string} name - url parameter to find
  * @returns {string} may be "" if empty.
  */
-common.urlParam = function urlParam(name) {
+export function urlParam(name) {
     name = name.replace(/[[]/, '\\[').replace(/[\]]/, '\\]');
     const regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
     const results = regex.exec(window.location.search);
     return results == null
         ? ''
         : decodeURIComponent(results[1].replace(/\+/g, ' '));
-};
+}
 
-common.arrayEquals = function arrayEquals(a1, a2) {
+export function arrayEquals(a1, a2) {
     if (a1.length !== a2.length) {
         return false;
     }
@@ -383,7 +380,7 @@ common.arrayEquals = function arrayEquals(a1, a2) {
         }
     }
     return true;
-};
+}
 
 const _singletonCounter = {};
 _singletonCounter.value = 0;
@@ -395,7 +392,6 @@ export class SingletonCounter {
         return post;
     }
 }
-common.SingletonCounter = SingletonCounter;
 
 /**
  * runs a callback with either "visible" or "hidden" as the argument anytime the
@@ -408,7 +404,7 @@ common.SingletonCounter = SingletonCounter;
  * @function music21.common.setWindowVisibilityWatcher
  * @param {function} callback
  */
-common.setWindowVisibilityWatcher = function setWindowVisibilityWatcher(
+export function setWindowVisibilityWatcher(
     callback
 ) {
     function windowFocusChanged(evt) {
@@ -465,34 +461,34 @@ common.setWindowVisibilityWatcher = function setWindowVisibilityWatcher(
         = document.visibilityState === 'visible' ? 'focus' : 'blur';
     const initialStateEvent = { type: initialState };
     windowFocusChanged(initialStateEvent);
-};
+}
 
-common.urls = {
+export const urls = {
     css: '/css',
     webResources: '/webResources',
     midiPlayer: '/webResources/midiPlayer',
     soundfontUrl: '/soundfonts/midi-js-soundfonts-master/FluidR3_GM/',
 };
 
-common.hyphenToCamelCase = function hyphenToCamelCase(usrStr) {
+export function hyphenToCamelCase(usrStr) {
     return usrStr.replace(/-([a-zA-Z])/, (all, match) => match.toUpperCase());
-};
+}
 
-common.numToIntOrFloat = function numToIntOrFloat(value) {
+export function numToIntOrFloat(value) {
     const intVal = Math.round(value);
     if (Math.abs(value - intVal) < 0.000001) {
         return intVal;
     } else {
         return value;
     }
-};
+}
 
 /**
  *
  * @param {string} path
  * @returns {string}
  */
-common.pathSimplify = path => {
+export const pathSimplify = path => {
     let pPrefix = '';
     if (path.indexOf('//') === 0) {
         pPrefix = '//'; //cdn loading;
@@ -522,12 +518,10 @@ common.pathSimplify = path => {
             pout.push(el);
         }
     }
-    let pnew = pout.join('/');
+    let pNew = pout.join('/');
     if (addSlash) {
-        pnew += '/';
+        pNew += '/';
     }
-    pnew = pPrefix + pnew;
-    return pnew;
+    pNew = pPrefix + pNew;
+    return pNew;
 };
-
-export default common;

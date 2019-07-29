@@ -9,7 +9,7 @@
  *
  */
 import * as base from './base.js';
-import { common } from './common.js';
+import * as common from './common.js';
 import { debug } from './debug.js';
 import { interval } from './interval.js';
 import * as pitch from './pitch.js';

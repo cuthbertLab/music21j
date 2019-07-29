@@ -8,7 +8,7 @@
  * Based on music21 (=music21p), Copyright (c) 2006–14, Michael Scott Cuthbert and cuthbertLab
  *
  */
-import { common } from './common.js';
+import * as common from './common.js';
 /**
  * renderOptions module, see {@link music21.renderOptions}
  *

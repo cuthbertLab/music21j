@@ -16,7 +16,7 @@ import { Music21Exception } from './exceptions21.js';
 import * as base from './base.js';
 import { beam } from './beam.js';
 import { clef } from './clef.js';
-import { common } from './common.js';
+import * as common from './common.js';
 import { debug } from './debug.js';
 import * as duration from './duration.js';
 import { instrument } from './instrument.js';
