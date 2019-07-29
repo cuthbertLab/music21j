@@ -1,7 +1,13 @@
-import { audioSearch } from './audioSearch.js';
+/**
+ * @namespace music21.audioRecording
+ */
+
+import * as audioSearch from './audioSearch.js';
 
 /**
  * Adopted from Matt Diamond's recorder.js code MIT License
+ *
+ * @memberOf music21.audioRecording
  */
 export class Recorder {
     /**
@@ -14,7 +20,7 @@ export class Recorder {
         this.config = config;
         this.recording = false;
         this.currCallback = undefined;
-        this.audioContext = audioSearch.audioContext;
+        this.audioContext = audioSearch.config.audioContext;
         this.frequencyCanvasInfo = {
             id: 'frequencyAnalyser',
             width: undefined,
@@ -91,7 +97,7 @@ export class Recorder {
         audioInput.connect(inputPoint);
 
         const analyserNode = this.audioContext.createAnalyser();
-        analyserNode.fftSize = 2048;
+        analyserNode.fftSize = audioSearch.config.fftSize;
         this.analyserNode = analyserNode;
         inputPoint.connect(analyserNode);
 
@@ -597,6 +603,3 @@ const recorderWorkerJs = `function recorderWorkerJs() {
     var recordWorker = new RecorderWorker(this);
     this.onmessage = (function mainOnMessage(e) { recordWorker.onmessage(e) }).bind(this);
 }`;
-
-export const audioRecording = { Recorder };
-export default audioRecording;

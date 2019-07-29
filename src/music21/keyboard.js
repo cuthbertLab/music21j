@@ -33,7 +33,7 @@ import * as $ from 'jquery';
 import * as MIDI from 'midicube';
 
 import * as common from './common.js';
-import { miditools } from './miditools.js';
+import * as miditools from './miditools.js';
 import * as pitch from './pitch.js';
 
 /**

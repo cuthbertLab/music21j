@@ -1,37 +1,61 @@
-import * as MIDI from 'midicube';
-
-import * as common from './common.js';
-
 /**
  * audioSearch module. See {@link music21.audioSearch} namespace
  *
  * @exports music21/audioSearch
- */
-/**
  * @namespace music21.audioSearch
  * @memberof music21
  * @requires music21/pitch
  * @requires music21/common
  */
+import * as MIDI from 'midicube';
+import * as common from './common.js';
 
-export const audioSearch = {};
 // functions based on the prototype created by Chris Wilson's MIT License version
 // and on Jordi Bartolome Guillen's audioSearch module for music21
 
-audioSearch.fftSize = 2048;
+// TODO(msc): Rewrite as a class -- config is just a class in disguise
 
-// polyfill
 // noinspection JSUnresolvedVariable
-audioSearch.AudioContextCaller
-    = window.AudioContext || window.webkitAudioContext;
-audioSearch._audioContext = null;
-audioSearch.animationFrameCallbackId = null;
+/**
+ *
+ * @type {
+ *     {
+ *     _audioContext: null,
+ *     lastCentsDeviationsDetected: [],
+ *     sampleBuffer: (Float32Array|null),
+ *     maxFrequency: number,
+ *     lastPitchesDetected: [],
+ *     fftSize: number,
+ *     animationFrameCallbackId: number,
+ *     AudioContextCaller: *,
+ *     currentAnalyser: null,
+ *     pitchSmoothingSize: number,
+ *     minFrequency: number,
+ *     lastPitchClassesDetected: []
+ *     }
+ * }
+ */
+export const config = {
+    fftSize: 2048,
+    AudioContextCaller: window.AudioContext || window.webkitAudioContext,
+    _audioContext: null,
+    animationFrameCallbackId: -1,
+    sampleBuffer: null,
+    currentAnalyser: null,
+    minFrequency: 55,
+    maxFrequency: 1050,
+    pitchSmoothingSize: 40,
+    lastPitchClassesDetected: [],
+    lastPitchesDetected: [],
+    lastCentsDeviationsDetected: [],
 
-Object.defineProperties(audioSearch, {
+};
+
+Object.defineProperties(config, {
     audioContext: {
         get: () => {
-            if (audioSearch._audioContext !== null) {
-                return audioSearch._audioContext;
+            if (config._audioContext !== null) {
+                return config._audioContext;
             } else {
                 // AudioContext should be a singleton, but MIDI reports loaded before it is!
                 if (
@@ -41,14 +65,14 @@ Object.defineProperties(audioSearch, {
                 ) {
                     window.globalAudioContext = MIDI.WebAudio.getContext();
                 } else if (typeof window.globalAudioContext === 'undefined') {
-                    window.globalAudioContext = new audioSearch.AudioContextCaller();
+                    window.globalAudioContext = new config.AudioContextCaller();
                 }
-                audioSearch._audioContext = window.globalAudioContext;
-                return audioSearch._audioContext;
+                config._audioContext = window.globalAudioContext;
+                return config._audioContext;
             }
         },
         set: ac => {
-            audioSearch._audioContext = ac;
+            config._audioContext = ac;
         },
     },
 });
@@ -61,7 +85,7 @@ Object.defineProperties(audioSearch, {
  * @param {function} callback - callback on success
  * @param {function} error - callback on error
  */
-audioSearch.getUserMedia = function getUserMedia(dictionary, callback, error) {
+export function getUserMedia(dictionary, callback, error) {
     if (error === undefined) {
         /* eslint no-alert: "off"*/
         error = () => {
@@ -72,7 +96,7 @@ audioSearch.getUserMedia = function getUserMedia(dictionary, callback, error) {
     }
     if (callback === undefined) {
         callback = mediaStream => {
-            audioSearch.userMediaStarted(mediaStream);
+            userMediaStarted(mediaStream);
         };
     }
     const n = navigator;
@@ -96,88 +120,78 @@ audioSearch.getUserMedia = function getUserMedia(dictionary, callback, error) {
         };
     }
     n.getUserMedia(dictionary, callback, error);
-};
+}
 
-audioSearch.sampleBuffer = null;
-audioSearch.currentAnalyser = null;
-
-audioSearch.userMediaStarted = function userMediaStarted(audioStream) {
+export function userMediaStarted(audioStream) {
     /**
      * This function which patches Safari requires some time to get started
      * so we call it on object creation.
      */
-    audioSearch.sampleBuffer = new Float32Array(audioSearch.fftSize / 2);
-    const mediaStreamSource = audioSearch.audioContext.createMediaStreamSource(
+    config.sampleBuffer = new Float32Array(config.fftSize / 2);
+    const mediaStreamSource = config.audioContext.createMediaStreamSource(
         audioStream
     );
-    const analyser = audioSearch.audioContext.createAnalyser();
-    analyser.fftSize = audioSearch.fftSize;
+    const analyser = config.audioContext.createAnalyser();
+    analyser.fftSize = config.fftSize;
     mediaStreamSource.connect(analyser);
-    audioSearch.currentAnalyser = analyser;
-    audioSearch.animateLoop();
-};
+    config.currentAnalyser = analyser;
+    animateLoop();
+}
 
-audioSearch.minFrequency = 55;
-audioSearch.maxFrequency = 1050;
-audioSearch.animateLoop = () => {
-    audioSearch.currentAnalyser.getFloatTimeDomainData(
-        audioSearch.sampleBuffer
+export const animateLoop = () => {
+    config.currentAnalyser.getFloatTimeDomainData(
+        config.sampleBuffer
     );
     // returns best frequency or -1
-    const frequencyDetected = audioSearch.autoCorrelate(
-        audioSearch.sampleBuffer,
-        audioSearch.audioContext.sampleRate,
-        audioSearch.minFrequency,
-        audioSearch.maxFrequency
+    const frequencyDetected = autoCorrelate(
+        config.sampleBuffer,
+        config.audioContext.sampleRate,
+        config.minFrequency,
+        config.maxFrequency
     );
-    const retValue = audioSearch.sampleCallback(frequencyDetected);
+    const retValue = sampleCallback(frequencyDetected);
     // callback can be anything.
     // noinspection JSIncompatibleTypesComparison
     if (retValue !== -1) {
-        audioSearch.animationFrameCallbackId = window.requestAnimationFrame(
-            audioSearch.animateLoop
+        config.animationFrameCallbackId = window.requestAnimationFrame(
+            animateLoop
         );
     }
 };
 
-audioSearch.pitchSmoothingSize = 40;
-audioSearch.lastPitchClassesDetected = [];
-audioSearch.lastPitchesDetected = [];
-audioSearch.lastCentsDeviationsDetected = [];
-
-audioSearch.smoothPitchExtraction = function smoothPitchExtraction(frequency) {
+export function smoothPitchExtraction(frequency) {
     if (frequency === -1) {
-        audioSearch.lastPitchClassesDetected.shift();
-        audioSearch.lastPitchesDetected.shift();
-        audioSearch.lastCentsDeviationsDetected.shift();
+        config.lastPitchClassesDetected.shift();
+        config.lastPitchesDetected.shift();
+        config.lastCentsDeviationsDetected.shift();
     } else {
-        const [midiNum, centsOff] = audioSearch.midiNumDiffFromFrequency(
+        const [midiNum, centsOff] = midiNumDiffFromFrequency(
             frequency
         );
         if (
-            audioSearch.lastPitchClassesDetected.length
-            > audioSearch.pitchSmoothingSize
+            config.lastPitchClassesDetected.length
+            > config.pitchSmoothingSize
         ) {
-            audioSearch.lastPitchClassesDetected.shift();
-            audioSearch.lastPitchesDetected.shift();
-            audioSearch.lastCentsDeviationsDetected.shift();
+            config.lastPitchClassesDetected.shift();
+            config.lastPitchesDetected.shift();
+            config.lastCentsDeviationsDetected.shift();
         }
-        audioSearch.lastPitchClassesDetected.push(midiNum % 12);
-        audioSearch.lastPitchesDetected.push(midiNum);
-        audioSearch.lastCentsDeviationsDetected.push(centsOff);
+        config.lastPitchClassesDetected.push(midiNum % 12);
+        config.lastPitchesDetected.push(midiNum);
+        config.lastCentsDeviationsDetected.push(centsOff);
     }
     const mostCommonPitchClass = common.statisticalMode(
-        audioSearch.lastPitchClassesDetected
+        config.lastPitchClassesDetected
     );
     if (mostCommonPitchClass === null) {
         return [-1, 0];
     }
     const pitchesMatchingClass = [];
     const centsMatchingClass = [];
-    for (let i = 0; i < audioSearch.lastPitchClassesDetected.length; i++) {
-        if (audioSearch.lastPitchClassesDetected[i] === mostCommonPitchClass) {
-            pitchesMatchingClass.push(audioSearch.lastPitchesDetected[i]);
-            centsMatchingClass.push(audioSearch.lastCentsDeviationsDetected[i]);
+    for (let i = 0; i < config.lastPitchClassesDetected.length; i++) {
+        if (config.lastPitchClassesDetected[i] === mostCommonPitchClass) {
+            pitchesMatchingClass.push(config.lastPitchesDetected[i]);
+            centsMatchingClass.push(config.lastCentsDeviationsDetected[i]);
         }
     }
     const mostCommonPitch = common.statisticalMode(pitchesMatchingClass);
@@ -192,17 +206,17 @@ audioSearch.smoothPitchExtraction = function smoothPitchExtraction(frequency) {
     }
     const centsOff = Math.floor(totalSample / totalSamplePoints);
     return [mostCommonPitch, centsOff];
-};
+}
 
-audioSearch.sampleCallback = function sampleCallback(frequency) {
+export function sampleCallback(frequency) {
     // noinspection JSUnusedLocalSymbols
-    const [unused_midiNum, unused_centsOff] = audioSearch.smoothPitchExtraction(
+    const [unused_midiNum, unused_centsOff] = smoothPitchExtraction(
         frequency
     );
-};
+}
 
 // from Chris Wilson. Replace with Jordi's
-audioSearch.autoCorrelate = function autoCorrelate(
+export function autoCorrelate(
     buf,
     sampleRate,
     minFrequency,
@@ -278,7 +292,7 @@ audioSearch.autoCorrelate = function autoCorrelate(
     }
     return -1;
     //  var best_frequency = sampleRate/best_offset;
-};
+}
 
 /**
  *
@@ -286,11 +300,11 @@ audioSearch.autoCorrelate = function autoCorrelate(
  * @param {Number} frequency
  * @returns {Array<int>} [miniNumber, centsOff]
  */
-audioSearch.midiNumDiffFromFrequency = function midiNumDiffFromFrequency(
+export function midiNumDiffFromFrequency(
     frequency
 ) {
     const midiNumFloat = 12 * (Math.log(frequency / 440) / Math.log(2)) + 69;
     const midiNum = Math.round(midiNumFloat);
     const centsOff = Math.round(100 * (midiNumFloat - midiNum));
     return [midiNum, centsOff];
-};
+}

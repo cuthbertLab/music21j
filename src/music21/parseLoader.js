@@ -4,7 +4,7 @@
  */
 import { debug } from './debug.js';
 import * as common from './common.js';
-import { miditools } from './miditools.js';
+import * as miditools from './miditools.js';
 import * as tinyNotation from './tinyNotation.js';
 
 export function runConfiguration() {

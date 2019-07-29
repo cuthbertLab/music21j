@@ -6,6 +6,16 @@
  * Based on music21 (=music21p), Copyright (c) 2006–19, Michael Scott Cuthbert and cuthbertLab
  *
  * @author Michael Scott Cuthbert
+ *
+ * A collection of tools for midi. See the namespace {@link music21.miditools}
+ *
+ * Module that holds **music21j** tools for connecting with MIDI.js and somewhat with the
+ * events from the Jazz plugin or the WebMIDI protocol.
+ *
+ *
+ * @exports music21/miditools
+ * @namespace music21.miditools
+ * @memberof music21
  */
 import * as $ from 'jquery';
 import * as MIDI from 'midicube';
@@ -21,27 +31,14 @@ import * as note from './note.js';
 // expose midicube's MIDI to window for soundfonts to load.
 window.MIDI = MIDI;
 
-/**
- * A collection of tools for midi. See the namespace {@link music21.miditools}
- *
- * @exports music21/miditools
- */
-/**
- * Module that holds **music21** tools for connecting with MIDI.js and somewhat with the
- * events from the Jazz plugin or the WebMIDI protocol.
- *
- * @namespace music21.miditools
- * @memberof music21
- */
-export const miditools = {MIDI};
-
+export const config = {};
 /**
  * Number of octaves to transpose all incoming midi signals
  *
  * @type {number}
  * @default 0
  */
-miditools.transposeOctave = 0;
+config.transposeOctave = 0;
 /**
  * @class Event
  * @memberof music21.miditools
@@ -62,7 +59,7 @@ export class Event {
 
         this.midiNote = undefined;
         if (this.noteOn || this.noteOff) {
-            this.midiNote = this.data2 + 12 * miditools.transposeOctave;
+            this.midiNote = this.data2 + 12 * config.transposeOctave;
             this.velocity = this.data3;
         }
     }
@@ -99,49 +96,60 @@ export class Event {
         return m21n;
     }
 }
-miditools.Event = Event;
 
 /**
  * How long to wait in milliseconds before deciding that a note belongs to another chord. Default 100ms
  *
- * @memberof music21.miditools
+ * @memberof music21.miditools.config
  * @type {number}
  */
-miditools.maxDelay = 100; // in ms
+config.maxDelay = 100; // in ms
 /**
  * At what time (in ms since Epoch) the chord started.
  *
- * @memberof music21.miditools
+ * @memberof music21.miditools.config
  * @type {number}
  */
-miditools.heldChordTime = 0;
+config.heldChordTime = 0;
 /**
  * An Array (or undefined) of currently held chords that have not been sent out yet.
  *
- * @memberof music21.miditools
+ * @memberof music21.miditools.config
  * @type {Array|undefined}
  */
-miditools.heldChordNotes = undefined;
+config.heldChordNotes = undefined;
 
 /**
  * When, in MS since Jan 1, 1970, was the last {@link music21.note.Note} played.
  * Defaults to the time that the module was loaded.
  *
- * @memberof music21.miditools
+ * @memberof music21.miditools.config
  * @type {number}
  */
-miditools.timeOfLastNote = Date.now(); // in ms
+config.timeOfLastNote = Date.now(); // in ms
 
-miditools._baseTempo = 60;
+/**
+ * The last Note or Chord to be sent out from miditools.  This is an important semi-global
+ * attribute, since the last element may need to be quantized by quantizeLastNote() to
+ * determine its length, since the note may need to be placed into a staff before its total
+ * length can be determined.
+ *
+ * @memberof music21.miditools.config
+ * @type {music21.chord.Chord|music21.note.Note|undefined}
+ */
+config.lastElement = undefined;
+
+
+config._baseTempo = 60;
 /**
  * Assign (or query) a Metronome object to run all timing information.
  *
- * @memberof music21.miditools
+ * @memberof music21.miditools.config
  * @type {music21.tempo.Metronome}
  */
-miditools.metronome = undefined;
+config.metronome = undefined;
 
-Object.defineProperties(miditools, {
+Object.defineProperties(config, {
     tempo: {
         enumerable: true,
         get() {
@@ -161,6 +169,16 @@ Object.defineProperties(miditools, {
     },
 });
 
+/**
+ * a mapping of soundfont text names to true, false, or "loading".
+ *
+ * @memberof music21.miditools
+ * @type {Object}
+ */
+export const loadedSoundfonts = {};
+
+
+
 /* --------- chords ------------- */
 /**
  *  Clears chords that are older than miditools.heldChordTime
@@ -170,19 +188,19 @@ Object.defineProperties(miditools, {
  *
  *  @memberof music21.miditools
  */
-miditools.clearOldChords = function clearOldChords() {
+export function clearOldChords() {
     // clear out notes that may be a chord...
     const nowInMs = Date.now(); // in ms
-    if (miditools.heldChordTime + miditools.maxDelay < nowInMs) {
-        miditools.heldChordTime = nowInMs;
-        if (miditools.heldChordNotes !== undefined) {
+    if (config.heldChordTime + config.maxDelay < nowInMs) {
+        config.heldChordTime = nowInMs;
+        if (config.heldChordNotes !== undefined) {
             // console.log('to send out chords');
-            miditools.sendOutChord(miditools.heldChordNotes);
-            miditools.heldChordNotes = undefined;
+            sendOutChord(config.heldChordNotes);
+            config.heldChordNotes = undefined;
         }
     }
-    setTimeout(miditools.clearOldChords, miditools.maxDelay);
-};
+    setTimeout(clearOldChords, config.maxDelay);
+}
 /**
  *  Take a series of jEvent noteOn objects and convert them to a single Chord object
  *  so long as they are all sounded within miditools.maxDelay milliseconds of each other.
@@ -192,34 +210,23 @@ miditools.clearOldChords = function clearOldChords() {
  *  @memberof music21.miditools
  *  @returns undefined
  */
-miditools.makeChords = function makeChords(jEvent) {
+export function makeChords(jEvent) {
     // jEvent is a miditools.Event object
     if (jEvent.noteOn) {
         const m21n = jEvent.music21Note();
-        if (miditools.heldChordNotes === undefined) {
-            miditools.heldChordNotes = [m21n];
+        if (config.heldChordNotes === undefined) {
+            config.heldChordNotes = [m21n];
         } else {
-            for (let i = 0; i < miditools.heldChordNotes.length; i++) {
-                const foundNote = miditools.heldChordNotes[i];
+            for (let i = 0; i < config.heldChordNotes.length; i++) {
+                const foundNote = config.heldChordNotes[i];
                 if (foundNote.pitch.ps === m21n.pitch.ps) {
                     return; // no duplicates
                 }
             }
-            miditools.heldChordNotes.push(m21n);
+            config.heldChordNotes.push(m21n);
         }
     }
-};
-
-/**
- * The last Note or Chord to be sent out from miditools.  This is an important semi-global
- * attribute, since the last element may need to be quantized by quantizeLastNote() to
- * determine its length, since the note may need to be placed into a staff before its total
- * length can be determined.
- *
- * @memberof music21.miditools
- * @type {music21.chord.Chord|music21.note.Note|undefined}
- */
-miditools.lastElement = undefined;
+}
 
 /**
  * Take the list of Notes and makes a chord out of it, if appropriate and call
@@ -230,7 +237,7 @@ miditools.lastElement = undefined;
  * @returns {(music21.note.Note|music21.chord.Chord|undefined)} A {@link music21.chord.Chord} object,
  * most likely, but maybe a {@link music21.note.Note} object)
  */
-miditools.sendOutChord = function sendOutChord(chordNoteList) {
+export function sendOutChord(chordNoteList) {
     let appendObject;
     if (chordNoteList.length > 1) {
         // console.log(chordNoteList[0].name, chordNoteList[1].name);
@@ -241,37 +248,18 @@ miditools.sendOutChord = function sendOutChord(chordNoteList) {
         return undefined;
     }
     appendObject.stemDirection = 'noStem';
-    miditools.quantizeLastNote();
-    miditools.lastElement = appendObject;
-    if (miditools.callBacks.sendOutChord !== undefined) {
-        miditools.callBacks.sendOutChord(appendObject);
+    quantizeLastNote();
+    config.lastElement = appendObject;
+    if (callBacks.sendOutChord !== undefined) {
+        callBacks.sendOutChord(appendObject);
     }
     return appendObject;
-};
+}
 
 /* ----------- callbacks --------- */
 // TODO: all callbacks (incl. raw, sendOutChord) should be able to be a function or an array of functions
 
 
-// noinspection JSUnusedLocalSymbols
-/**
-* callBacks is an object with three keys:
-*
-* - raw: function (t, a, b,c) to call when any midi event arrives. Default: `function (t, a, b, c) { return new miditools.Event(t, a, b, c); }`
-* - general: function ( miditools.Event() ) to call when an Event object has been created. Default: `[miditools.sendToMIDIjs, miditools.quantizeLastNote]`
-* - sendOutChord: function (array_of_note.Note_objects) to call when a sufficient time has passed to build a chord from input. Default: empty function.
-*
-* At present, only "general" can take an Array of event listening functions, but I hope to change that for sendOutChord also.
-*
-* "general" is usually the callback list to play around with.
-*
-* @memberof music21.miditools
-*/
-miditools.callBacks = {
-    raw: (t, a, b, c) => new miditools.Event(t, a, b, c),
-    general: [miditools.sendToMIDIjs, miditools.quantizeLastNote],
-    sendOutChord: arrayOfNotes => {},
-};
 
 /**
  * Quantizes the lastElement (passed in) or music21.miditools.lastElement.
@@ -281,7 +269,7 @@ miditools.callBacks = {
  * @returns {music21.note.GeneralNote} The same {@link music21.note.Note} object passed in with
  * duration quantized
  */
-miditools.quantizeLastNote = function quantizeLastNote(lastElement) {
+export function quantizeLastNote(lastElement) {
     if (lastElement === undefined) {
         return undefined;
     }
@@ -292,7 +280,7 @@ miditools.quantizeLastNote = function quantizeLastNote(lastElement) {
     const nowInMS = Date.now();
     const msSinceLastNote = nowInMS - this.timeOfLastNote;
     this.timeOfLastNote = nowInMS;
-    const normalQuarterNoteLength = 1000 * 60 / this.tempo;
+    const normalQuarterNoteLength = 1000 * 60 / config.tempo;
     const numQuarterNotes = msSinceLastNote / normalQuarterNoteLength;
     let roundedQuarterLength = Math.round(4 * numQuarterNotes) / 4;
     if (roundedQuarterLength >= 4) {
@@ -310,7 +298,7 @@ miditools.quantizeLastNote = function quantizeLastNote(lastElement) {
     }
     lastElement.duration.quarterLength = roundedQuarterLength;
     return lastElement;
-};
+}
 
 /* ----------- callbacks --------- */
 /**
@@ -320,19 +308,11 @@ miditools.quantizeLastNote = function quantizeLastNote(lastElement) {
  * @param {music21.miditools.Event} midiEvent - event to send out.
  * @returns undefined
  */
-miditools.sendToMIDIjs = midiEvent => {
+export const sendToMIDIjs = midiEvent => {
     midiEvent.sendToMIDIjs();
 };
 
 /* ------------ MIDI.js ----------- */
-
-/**
- * a mapping of soundfont text names to true, false, or "loading".
- *
- * @memberof music21.miditools
- * @type {Object}
- */
-miditools.loadedSoundfonts = {};
 
 /**
  * Called after a soundfont has been loaded. The callback is better to be specified elsewhere
@@ -342,7 +322,7 @@ miditools.loadedSoundfonts = {};
  * @param {string} soundfont The name of the soundfont that was just loaded
  * @param {function} callback A function to be called after the soundfont is loaded.
  */
-miditools.postLoadCallback = function postLoadCallback(soundfont, callback) {
+export function postLoadCallback(soundfont, callback) {
     // this should be bound to MIDI
     if (debug) {
         console.log('soundfont loaded about to execute callback.');
@@ -382,8 +362,8 @@ miditools.postLoadCallback = function postLoadCallback(soundfont, callback) {
     if (callback !== undefined) {
         callback(instrumentObj);
     }
-    miditools.loadedSoundfonts[soundfont] = true;
-};
+    loadedSoundfonts[soundfont] = true;
+}
 
 /**
  * method to load soundfonts while waiting for other processes that need them
@@ -401,18 +381,18 @@ miditools.postLoadCallback = function postLoadCallback(soundfont, callback) {
  *         s.instrument = i;
  * });
  */
-miditools.loadSoundfont = function loadSoundfont(soundfont, callback) {
-    if (miditools.loadedSoundfonts[soundfont] === true) {
+export function loadSoundfont(soundfont, callback) {
+    if (loadedSoundfonts[soundfont] === true) {
         // this soundfont has already been loaded once, so just call the callback.
         if (callback !== undefined) {
             const instrumentObj = instrument.find(soundfont);
             callback(instrumentObj);
         }
-    } else if (miditools.loadedSoundfonts[soundfont] === 'loading') {
+    } else if (loadedSoundfonts[soundfont] === 'loading') {
         // we are still waiting for this instrument to load, so
         // wait for it before calling callback.
         const waitThenCall = () => {
-            if (miditools.loadedSoundfonts[soundfont] === true) {
+            if (loadedSoundfonts[soundfont] === true) {
                 if (debug) {
                     console.log(
                         'other process has finished loading; calling callback'
@@ -433,7 +413,7 @@ miditools.loadSoundfont = function loadSoundfont(soundfont, callback) {
     } else {
         // soundfont we have not seen before:
         // set its status to loading and then load it.
-        miditools.loadedSoundfonts[soundfont] = 'loading';
+        loadedSoundfonts[soundfont] = 'loading';
         if (debug) {
             console.log('waiting for document ready');
         }
@@ -450,7 +430,7 @@ miditools.loadSoundfont = function loadSoundfont(soundfont, callback) {
             MIDI.loadPlugin({
                 soundfontUrl: common.urls.soundfontUrl,
                 instrument: soundfont,
-                onsuccess: miditools.postLoadCallback.bind(
+                onsuccess: postLoadCallback.bind(
                     MIDI,
                     soundfont,
                     callback
@@ -458,7 +438,7 @@ miditools.loadSoundfont = function loadSoundfont(soundfont, callback) {
             });
         });
     }
-};
+}
 
 /**
  * MidiPlayer -- an embedded midi player including the ability to create a
@@ -612,7 +592,7 @@ export class MidiPlayer {
         player.timeWarp = this.speed;
 
         const m21MidiPlayer = this;
-        miditools.loadSoundfont('acoustic_grand_piano', () => {
+        loadSoundfont('acoustic_grand_piano', () => {
             player.loadFile(
                 b64data,
                 () => {
@@ -693,4 +673,22 @@ export class MidiPlayer {
         });
     }
 }
-miditools.MidiPlayer = MidiPlayer;
+
+/**
+* callBacks is an object with three keys:
+*
+* - raw: function (t, a, b,c) to call when any midi event arrives. Default: `function (t, a, b, c) { return new miditools.Event(t, a, b, c); }`
+* - general: function ( miditools.Event() ) to call when an Event object has been created. Default: `[miditools.sendToMIDIjs, miditools.quantizeLastNote]`
+* - sendOutChord: function (array_of_note.Note_objects) to call when a sufficient time has passed to build a chord from input. Default: empty function.
+*
+* At present, only "general" can take an Array of event listening functions, but I hope to change that for sendOutChord also.
+*
+* "general" is usually the callback list to play around with.
+*
+* @memberof music21.miditools
+*/
+export const callBacks = {
+    raw: (t, a, b, c) => new Event(t, a, b, c),
+    general: [sendToMIDIjs, quantizeLastNote],
+    sendOutChord: arrayOfNotes => {},
+};

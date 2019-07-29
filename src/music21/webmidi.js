@@ -61,8 +61,9 @@ MIDI Input: <div id="putMidiSelectHere" />
 
 import * as $ from 'jquery';
 import { debug } from './debug.js';
+
 import * as common from './common.js';
-import { miditools } from './miditools.js';
+import * as miditools from './miditools.js';
 
 
 /**
@@ -352,7 +353,7 @@ export function createSelector(midiSelectDiv, options) {
         navigator.requestMIDIAccess().then(
             access => {
                 webmidi.access = access;
-                webmidi.populateSelect();
+                populateSelect();
                 if (params.autoUpdate) {
                     access.onstatechange = populateSelect;
                 }
