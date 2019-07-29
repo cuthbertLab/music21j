@@ -1,6 +1,4 @@
-import common from './common.js';
-
-const posMod = common.posMod;
+import { posMod, arrayEquals } from './common.js';
 
 let t1;
 let t2;
@@ -1778,7 +1776,7 @@ export const SCDICT = {
 };
 
 //-------------------------------------------------------------------------------
-// thes dicts provide index max fr cardinality key
+// these dicts provide index max fr cardinality key
 export const TNMAX = {
     0: 1, 1: 1, 2: 6, 3: 19, 4: 43, 5: 66, 6: 80,
     7: 66, 8: 43, 9: 19, 10: 6, 11: 1, 12: 1,
@@ -2198,7 +2196,7 @@ export const SCREF = {
     '4,4,1': { 'name': ['minor third tetracluster'] },
     '4,4,-1': { 'name': ['minor third tetracluster'] },
     '4,5,1': { 'name': ['major third tetracluster'] },
-    '4,5,-1': { 'name': ['major third testacluster'] },
+    '4,5,-1': { 'name': ['major third tetracluster'] },
     '4,6,0': { 'name': ['perfect fourth tetramirror'] },
     '4,7,0': { 'name': ['Arabian tetramirror'] },
     '4,8,0': { 'name': ['double-fourth tetramirror'] },
@@ -2207,7 +2205,7 @@ export const SCREF = {
     '4,11,1': { 'name': ['phrygian tetrachord'] },
     '4,11,-1': { 'name': ['lydian tetrachord', 'major tetrachord'] },
     '4,12,1': { 'name': ['harmonic minor tetrachord'] },
-    '4,12,-1': { 'name': ['major-third diminished terachord'] },
+    '4,12,-1': { 'name': ['major-third diminished tetrachord'] },
     '4,13,1': { 'name': ['minor-second diminished tetrachord'] },
     '4,13,-1': { 'name': ['perfect-fourth diminished tetrachord'] },
     '4,14,1': { 'name': ['major-second minor tetrachord'] },
@@ -2262,7 +2260,7 @@ export const SCREF = {
     '5,13,-1': { 'name': ['augmented pentacluster'] },
     '5,14,1': { 'name': ['double-seconds triple-fourth pentachord'] },
     '5,14,-1': { 'name': ['double-seconds triple-fourth pentachord'] },
-    '5,15,0': { 'name': ['asssymetric pentamirror'] },
+    '5,15,0': { 'name': ['asymmetric pentamirror'] },
     '5,16,1': { 'name': ['major-minor-diminished pentachord'] },
     '5,16,-1': { 'name': ['major-minor diminished pentachord'] },
     '5,17,0': { 'name': ['minor-major ninth chord'] },
@@ -2364,7 +2362,7 @@ export const SCREF = {
     '6,21,-1': { 'name': ['combinatorial I [I3]'] },
     '6,22,1': { 'name': ['combinatorial I [I11]'] },
     '6,22,-1': { 'name': ['combinatorial I [I5]'] },
-    '6,23,0': { 'name': ['combinatorial RI [RI8]', 'super-locrian hexa mirror'] },
+    '6,23,0': { 'name': ['combinatorial RI [RI8]', 'super-locrian hexamirror'] },
     '6,24,1': {},
     '6,24,-1': { 'name': ['melodic-minor hexachord'] },
     '6,25,1': { 'name': ['locrian hexachord'] },
@@ -2372,14 +2370,14 @@ export const SCREF = {
     '6,26,0': { 'name': ['phrygian hexamirror', 'combinatorial RI [RI8]'] },
     '6,27,1': { 'name': ['combinatorial I [I11]'] },
     '6,27,-1': { 'name': ['combinatorial I [I1]', 'pyramid hexachord'] },
-    '6,28,0': { 'name': ['double-phrygian heachord', 'combinatorial RI [RI6]'] },
+    '6,28,0': { 'name': ['double-phrygian hexachord', 'combinatorial RI [RI6]'] },
     '6,29,0': { 'name': ['combinatorial RI [RI9]'] },
     '6,30,1': {
         'name': ["Messiaen's truncated mode 2", 'minor-bitonal hexachord',
             'combinatorial R [R6]', 'combinatorial I [I1, I7]'],
     },
     '6,30,-1': {
-        'name': ["Stravinsky's Petrouchka-chord", "Messiaen's truncated mode 2",
+        'name': ["Stravinsky's Petrushka-chord", "Messiaen's truncated mode 2",
             'major-bitonal hexachord', 'combinatorial R [R6]',
             'combinatorial I [I1, I7]'],
     },
@@ -2468,7 +2466,7 @@ export const SCREF = {
             'quasi raga Pantuvarali', 'mela Kanakangi'],
     },
     '7,21,1': {},
-    '7,21,-1': { 'name': ['Gypsy [Roma] hexatonic'] },
+    '7,21,-1': { 'name': ['Gypsy [Roma] hepatonic'] },
     '7,22,0': {
         'name': ['double harmonic scale', 'Persian', 'major Gypsy [Roma]',
             'Hungarian minor', 'double harmonic scale', 'Asian',
@@ -2477,7 +2475,7 @@ export const SCREF = {
     '7,23,1': {},
     '7,23,-1': { 'name': ['tritone major heptachord'] },
     '7,24,1': {},
-    '7,24,-1': { 'name': ['mystic heptaachord', 'Enigmatic heptatonic'] },
+    '7,24,-1': { 'name': ['mystic heptachord', 'Enigmatic heptatonic'] },
     '7,25,1': {},
     '7,25,-1': {},
     '7,26,1': {},
@@ -2558,6 +2556,7 @@ export const SCREF = {
     },
     '8,29,1': {},
     '8,29,-1': {},
+
     '9,1,0': { 'name': ['chromatic nonamirror'] },
     '9,2,1': {},
     '9,2,-1': {},
@@ -2577,12 +2576,14 @@ export const SCREF = {
     '9,11,1': {},
     '9,11,-1': { 'name': ['diminishing nonachord'] },
     '9,12,0': { 'name': ["Messiaen's mode 3", 'Tsjerepnin'] },
+
     '10,1,0': { 'name': ['chromatic decamirror'] },
     '10,2,0': {},
     '10,3,0': {},
     '10,4,0': {},
     '10,5,0': { 'name': ['major-minor mixed'] },
     '10,6,0': { 'name': ["Messiaen's mode 7"] },
+
     '11,1,0': { 'name': ['chromatic undecamirror'] },
     '12,1,0': {
         'name': ['aggregate', 'dodecachord', 'twelve-tone chromatic',
@@ -2597,7 +2598,7 @@ export function forteIndexToInversionsAvailable(card, index) {
     if (index < 1 || index > TNMAX[card]) {
         throw new Error(`index ${index} is invalid`);
     }
-    // get morris invaraince vector
+    // get morris invariance vector
     const morris = FORTE[card][index][2];
     if (morris[1] > 0) { // second value stored inversion status
         return [0];
@@ -2629,7 +2630,7 @@ function _validateAddress(address) {
     if (card < 1 || card > 13) {
         throw new Error(`cardinality ${card} not valid`);
     }
-    // using TN mode for all comparions
+    // using TN mode for all comparisons
     if (index < 1 || index > TNMAX[card]) {
         throw new Error(`index ${index} not valid`);
     }
@@ -2677,7 +2678,7 @@ export function intervalVectorToAddress(vector) {
                 continue; // first, used for spacing
             }
             // index 1 is vector
-            if (common.arrayEquals(sc[1], vector)) {
+            if (arrayEquals(sc[1], vector)) {
                 post.push(_chordTableAddress(card, num));
             }
             num += 1;
@@ -2780,7 +2781,7 @@ export function seekChordTablesAddress(c) {
         const dataLinePcs = dataLine[0];
         const inversionsAvailable = forteIndexToInversionsAvailable(card, indexCandidate);
         for (const [candidate, candidateInversion, candidateOriginalPC] of candidates) {
-            if (common.arrayEquals(dataLinePcs, candidate)) {
+            if (arrayEquals(dataLinePcs, candidate)) {
                 index = indexCandidate;
                 if (inversionsAvailable.includes(0)) {
                     inversion = 0;
@@ -2790,7 +2791,7 @@ export function seekChordTablesAddress(c) {
                 matchedPCOriginal = candidateOriginalPC;
                 match = true;
                 break;
-            } else if (common.arrayEquals(dataLinePcs, candidateInversion)) {
+            } else if (arrayEquals(dataLinePcs, candidateInversion)) {
                 index = indexCandidate;
                 if (inversionsAvailable.includes(0)) {
                     inversion = 0;

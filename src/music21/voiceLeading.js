@@ -8,7 +8,7 @@
  * @namespace music21.voiceLeading
  */
 
-import { interval } from './interval.js';
+import * as interval from './interval.js';
 import { key } from './key.js';
 import * as note from './note.js';
 

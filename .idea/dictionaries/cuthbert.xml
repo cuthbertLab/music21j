@@ -1,28 +1,51 @@
 <component name="ProjectDictionaryState">
   <dictionary name="cuthbert">
     <words>
+      <w>aaaa</w>
+      <w>ahir</w>
       <w>allegrissimo</w>
       <w>andantino</w>
+      <w>arezzo</w>
       <w>attrchange</w>
       <w>barline</w>
       <w>barlines</w>
+      <w>bauli</w>
       <w>bbbb</w>
+      <w>bhairav</w>
+      <w>bhupala</w>
+      <w>bibhas</w>
+      <w>bitonal</w>
+      <w>cakravana</w>
       <w>cuthbert</w>
+      <w>dddd</w>
       <w>decachord</w>
+      <w>decamirror</w>
       <w>diad</w>
       <w>dodecachord</w>
+      <w>dodecamirror</w>
       <w>enharmonics</w>
       <w>fati</w>
       <w>fermata</w>
       <w>ffff</w>
       <w>gright</w>
+      <w>guidon</w>
       <w>hacky</w>
+      <w>hepatonic</w>
+      <w>heptachord</w>
+      <w>heptamirror</w>
+      <w>heptatonic</w>
       <w>hexachord</w>
+      <w>hexamirror</w>
+      <w>hirajoshi</w>
       <w>inexpressable</w>
       <w>intv</w>
+      <w>iwato</w>
       <w>jianpu</w>
       <w>jsonpickle</w>
+      <w>kanakangi</w>
       <w>keyboardkey</w>
+      <w>kiravani</w>
+      <w>kumoi</w>
       <w>ladma</w>
       <w>langsam</w>
       <w>largamente</w>
@@ -33,7 +56,10 @@
       <w>maestoso</w>
       <w>marcato</w>
       <w>maxima</w>
+      <w>mayamdavagaula</w>
       <w>mediant</w>
+      <w>megha</w>
+      <w>megharanji</w>
       <w>memberof</w>
       <w>meth</w>
       <w>microtones</w>
@@ -49,33 +75,51 @@
       <w>msvisibilitychange</w>
       <w>musescore</w>
       <w>musicxml</w>
+      <w>nabhomani</w>
       <w>newroot</w>
       <w>nexts</w>
       <w>nonachord</w>
+      <w>nonamirror</w>
+      <w>nonatonic</w>
       <w>notehead</w>
       <w>noteheads</w>
       <w>octachord</w>
+      <w>octad</w>
+      <w>octamirror</w>
+      <w>octatonic</w>
       <w>octaveless</w>
       <w>ottava</w>
+      <w>pantuvarali</w>
       <w>partwise</w>
+      <w>pelog</w>
       <w>pentachord</w>
+      <w>pentacluster</w>
+      <w>pentamirror</w>
       <w>perc</w>
+      <w>petrushka</w>
       <w>phrygian</w>
       <w>pppp</w>
       <w>prebase</w>
       <w>prestissimo</w>
       <w>quantizes</w>
+      <w>quartal</w>
+      <w>ramkali</w>
+      <w>ranjaniraga</w>
       <w>ratioed</w>
       <w>recursed</w>
       <w>reflowed</w>
       <w>reinit</w>
       <w>resizes</w>
       <w>rootedness</w>
+      <w>sakura</w>
+      <w>saveri</w>
       <w>scdict</w>
       <w>schnell</w>
+      <w>scref</w>
       <w>senza</w>
       <w>septachord</w>
       <w>seta</w>
+      <w>slendro</w>
       <w>soundfont</w>
       <w>soundfonts</w>
       <w>spiccato</w>
@@ -89,7 +133,10 @@
       <w>supertonic</w>
       <w>symlinking</w>
       <w>tenuto</w>
+      <w>tertium</w>
       <w>tetrachord</w>
+      <w>tetracluster</w>
+      <w>tetramirror</w>
       <w>tickables</w>
       <w>tinynotationcontents</w>
       <w>tnimax</w>
@@ -97,15 +144,21 @@
       <w>tnre</w>
       <w>tnref</w>
       <w>trichord</w>
+      <w>trimirror</w>
+      <w>tritone</w>
       <w>très</w>
+      <w>tsjerepnin</w>
       <w>tuplet</w>
       <w>tupleted</w>
       <w>tuplets</w>
       <w>unbeamables</w>
       <w>undecachord</w>
+      <w>undecamirror</w>
       <w>undotted</w>
+      <w>unisons</w>
       <w>unparsable</w>
       <w>unparsables</w>
+      <w>vals</w>
       <w>vexflow</w>
       <w>viio</w>
       <w>viioo</w>

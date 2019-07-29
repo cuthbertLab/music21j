@@ -49,6 +49,7 @@ import * as converter from './music21/converter.js';
 import * as derivation from './music21/derivation.js';
 import * as duration from './music21/duration.js';
 import * as figuredBass from './music21/figuredBass.js';
+import * as interval from './music21/interval.js';
 import * as note from './music21/note.js';
 import * as parseLoader from './music21/parseLoader.js';
 import * as pitch from './music21/pitch.js';
@@ -60,9 +61,9 @@ import * as vfShow from './music21/vfShow.js';
 import * as voiceLeading from './music21/voiceLeading.js';
 import * as webmidi from './music21/webmidi.js';
 
-// these below need to be rewritten to be like above...
-
 export { debug } from './music21/debug.js';
+
+// these below need to be rewritten to be like above...
 
 export { articulations } from './music21/articulations.js';
 export { audioRecording } from './music21/audioRecording.js';
@@ -75,7 +76,6 @@ export { expressions } from './music21/expressions.js';
 export { fromPython } from './music21/fromPython.js';
 export { harmony } from './music21/harmony.js';
 export { instrument } from './music21/instrument.js';
-export { interval } from './music21/interval.js';
 export { key } from './music21/key.js';
 export { keyboard } from './music21/keyboard.js';
 export { layout } from './music21/layout.js';
@@ -101,6 +101,7 @@ export {
     derivation,
     duration,
     figuredBass,
+    interval,
     note,
     parseLoader,
     pitch,

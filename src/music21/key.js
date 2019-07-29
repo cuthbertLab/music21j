@@ -10,7 +10,7 @@ import { Music21Exception } from './exceptions21.js';
 
 import * as base from './base.js';
 import { debug } from './debug.js';
-import { interval } from './interval.js';
+import * as interval from './interval.js';
 import * as pitch from './pitch.js';
 import { scale } from './scale.js';
 

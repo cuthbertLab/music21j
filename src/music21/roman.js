@@ -10,10 +10,9 @@ import { Music21Exception } from './exceptions21.js';
 
 import { chord } from './chord.js';
 import * as common from './common.js';
-// import { debug } from './debug.js';
 import * as figuredBass from './figuredBass.js';
 import { harmony } from './harmony.js';
-import { interval } from './interval.js';
+import * as interval from './interval.js';
 import { key } from './key.js';
 import * as pitch from './pitch.js';
 import { scale } from './scale.js';

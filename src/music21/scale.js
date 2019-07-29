@@ -11,7 +11,7 @@
 import * as base from './base.js';
 import * as common from './common.js';
 import { debug } from './debug.js';
-import { interval } from './interval.js';
+import * as interval from './interval.js';
 import * as pitch from './pitch.js';
 
 import { Music21Exception } from './exceptions21.js';
