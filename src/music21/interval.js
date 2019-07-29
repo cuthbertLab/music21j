@@ -1072,3 +1072,17 @@ export function _getSpecifierFromGenericChromatic(
     }
     return specifier;
 }
+
+/**
+ *
+ * @param {music21.interval.Interval[]} intervalList
+ * @returns {music21.interval.Interval}
+ */
+export function add(intervalList) {
+    const p1 = new pitch.Pitch('C4');
+    let p2 = new pitch.Pitch('C4');
+    for (const i of intervalList) {
+        p2 = i.transposePitch(p2);
+    }
+    return new Interval(p1, p2);
+}

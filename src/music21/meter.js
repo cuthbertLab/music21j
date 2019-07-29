@@ -10,7 +10,7 @@
 import Vex from 'vexflow';
 
 import * as base from './base.js';
-import { beam } from './beam.js';
+import * as beam from './beam.js';
 import * as common from './common.js';
 import * as duration from './duration.js';
 

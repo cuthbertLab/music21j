@@ -5,35 +5,28 @@
  * Copyright (c) 2013-19, Michael Scott Cuthbert and cuthbertLab
  * Based on music21 (=music21p), Copyright (c) 2006–19, Michael Scott Cuthbert and cuthbertLab
  *
+ * Module holding beam materials. See {@link music21.beam} namespace.
+ * {@link music21.beam.Beam} and {music21.beam.Beams} objects
+ *
+ * @exports music21/beam
+ * @namespace music21.beam
+ * @memberof music21
+ * @requires music21/prebase
+ * @requires music21/duration
  */
 import { Music21Exception } from './exceptions21.js';
 
 import * as prebase from './prebase.js';
 import * as duration from './duration.js';
 
-/**
- * Module holding beam materials. See {@link music21.beam} namespace.
- *
- * @exports music21/beam
- */
-/**
- * {@link music21.beam.Beam} and {music21.beam.Beams} objects
- *
- * @namespace music21.beam
- * @memberof music21
- * @requires music21/prebase
- * @requires music21/duration
- */
-export const beam = {};
-
-beam.validBeamTypes = {
+export const validBeamTypes = {
     start: true,
     stop: true,
     continue: true,
     partial: true,
 };
 
-beam.beamableDurationTypes = [
+export const beamableDurationTypes = [
     duration.typeFromNumDict[8],
     duration.typeFromNumDict[16], duration.typeFromNumDict[32],
     duration.typeFromNumDict[64], duration.typeFromNumDict[128],
@@ -61,7 +54,7 @@ export class Beam extends prebase.ProtoM21Object {
         this.number = undefined;
     }
 }
-beam.Beam = Beam;
+
 /**
  * Object representing a collection of Beams
  *
@@ -76,12 +69,12 @@ export class Beams extends prebase.ProtoM21Object {
     static naiveBeams(srcList) {
         const beamsList = [];
         for (const el of srcList) {
-            if (!beam.beamableDurationTypes.includes(el.duration.type)) {
+            if (!beamableDurationTypes.includes(el.duration.type)) {
                 beamsList.push(undefined);
             } else if (el.isRest) {
                 beamsList.push(undefined);
             } else {
-                const b = new beam.Beams();
+                const b = new Beams();
                 b.fill(el.duration.type);
                 beamsList.push(b);
             }
@@ -228,7 +221,7 @@ export class Beams extends prebase.ProtoM21Object {
      * @returns {music21.beam.Beam} newly appended object
      */
     append(type, direction) {
-        const obj = new beam.Beam(type, direction);
+        const obj = new Beam(type, direction);
         obj.number = this.beamsList.length + 1;
         this.beamsList.push(obj);
         return obj;
@@ -274,7 +267,7 @@ export class Beams extends prebase.ProtoM21Object {
             throw new Music21Exception('cannot fill beams for level ' + level);
         }
         for (let i = 1; i <= count; i++) {
-            const obj = new beam.Beam();
+            const obj = new Beam();
             obj.number = i;
             this.beamsList.push(obj);
         }
@@ -353,7 +346,7 @@ export class Beams extends prebase.ProtoM21Object {
      * @returns {this}
      */
     setAll(type, direction) {
-        if (beam.validBeamTypes[type] === undefined) {
+        if (validBeamTypes[type] === undefined) {
             throw new Music21Exception('invalid beam type: ' + type);
         }
         for (let i = 0; i < this.length; i++) {
@@ -378,7 +371,7 @@ export class Beams extends prebase.ProtoM21Object {
             type = splitIt[0];
             direction = splitIt[1]; // not unpacking because. can be undefined...
         }
-        if (beam.validBeamTypes[type] === undefined) {
+        if (validBeamTypes[type] === undefined) {
             throw new Music21Exception('invalid beam type: ' + type);
         }
         for (let i = 0; i < this.length; i++) {
@@ -390,4 +383,3 @@ export class Beams extends prebase.ProtoM21Object {
         return this;
     }
 }
-beam.Beams = Beams;
