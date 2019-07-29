@@ -5,6 +5,15 @@
  * Copyright (c) 2013-16, Michael Scott Cuthbert and cuthbertLab
  * Based on music21 (=music21p), Copyright (c) 2006–16, Michael Scott Cuthbert and cuthbertLab
  *
+ * chord Module. See {@link music21.chord} namespace for more details.
+ * Chord related objects (esp. {@link music21.chord.Chord}) and methods.
+ *
+ * @exports music21/chord
+ * @namespace music21.chord
+ * @memberof music21
+ * @requires vexflow
+ * @requires music21/interval
+ * @requires music21/note
  */
 import Vex from 'vexflow';
 
@@ -13,19 +22,7 @@ import * as interval from './interval.js';
 import * as note from './note.js';
 import * as chordTables from './chordTables.js';
 
-/**
- * chord Module. See {@link music21.chord} namespace for more details.
- *
- * @exports music21/chord
- */
-/**
- * Chord related objects (esp. {@link music21.chord.Chord}) and methods.
- *
- * @namespace music21.chord
- * @memberof music21
- * @requires music21/note
- */
-export const chord = {};
+export { chordTables };
 
 /**
  * Chord related objects (esp. {@link music21.chord.Chord}) and methods.
@@ -331,7 +328,7 @@ export class Chord extends note.NotRest {
                 nonDuplicatingPitches.push(p);
             }
         }
-        const closedChord = new chord.Chord(nonDuplicatingPitches);
+        const closedChord = new Chord(nonDuplicatingPitches);
         return closedChord;
     }
 
@@ -709,9 +706,8 @@ export class Chord extends note.NotRest {
         return this.getChordStep(7);
     }
 }
-chord.Chord = Chord;
 
-chord.chordDefinitions = {
+export const chordDefinitions = {
     major: ['M3', 'm3'],
     minor: ['m3', 'M3'],
     diminished: ['m3', 'm3'],

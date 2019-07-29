@@ -2,7 +2,7 @@
  * @namespace music21.harmony
  */
 
-import { chord } from './chord.js';
+import * as chord from './chord.js';
 import * as key from './key.js';
 
 /**

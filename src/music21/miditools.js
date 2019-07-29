@@ -10,12 +10,12 @@
 import * as $ from 'jquery';
 import * as MIDI from 'midicube';
 
+import { debug } from './debug.js';
 import '../../css/midiPlayer.css';
 
-import { chord } from './chord.js';
+import * as chord from './chord.js';
 import * as common from './common.js';
-import { debug } from './debug.js';
-import { instrument } from './instrument.js';
+import * as instrument from './instrument.js';
 import * as note from './note.js';
 
 // expose midicube's MIDI to window for soundfonts to load.

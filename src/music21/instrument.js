@@ -5,139 +5,33 @@
  * Copyright (c) 2013-16, Michael Scott Cuthbert and cuthbertLab
  * Based on music21 (=music21p), Copyright (c) 2006–16, Michael Scott Cuthbert and cuthbertLab
  *
- */
-import * as base from './base.js';
-
-/**
  * Instrument module, see {@link music21.instrument}
+ * Looking for the {@link music21.instrument.Instrument} object? :-)
  *
  * @exports music21/instrument
- */
-
-/**
- * Looking for the {@link music21.instrument.Instrument} object? :-)
  *
  * @namespace music21.instrument
  * @memberof music21
  * @requires music21/base
  */
-export const instrument = {};
+import * as base from './base.js';
 
 /**
- * Represents an instrument.  instrumentNames are found in the ext/soundfonts directory
  *
- * See {@link music21.miditools} and esp. `loadSoundfont` for a way of loading soundfonts into
- * instruments.
- *
- * @class Instrument
- * @memberof music21.instrument
- * @extends music21.base.Music21Object
- * @param {string} instrumentName
- * @property {string|undefined} partId
- * @property {string|undefined} partName
- * @property {string|undefined} partAbbreviation
- * @property {string|undefined} instrumentId
- * @property {string|undefined} instrumentName
- * @property {string|undefined} instrumentAbbreviation
- * @property {int|undefined} midiProgram
- * @property {int|undefined} midiChannel
- * @property {int|undefined} lowestNote
- * @property {int|undefined} highestNote
- * @property {music21.interval.Interval|undefined} transposition
- * @property {Boolean} inGMPercMap=false
- * @property {string|undefined} soundfontFn
- * @property {string|undefined} oggSoundfont - url of oggSoundfont for this instrument
- * @property {string|undefined} mp3Soundfont - url of mp3Soundfont for this instrument
+ * @type {number[]}
  */
-class Instrument extends base.Music21Object {
-    constructor(instrumentName) {
-        super();
-        this.classSortOrder = -25;
+export const global_usedChannels = []; // differs from m21p -- stored midiProgram numbers
+/**
+ *
+ * @type {number}
+ */
+export const maxMidi = 16;
 
-        this.partId = undefined;
-        this.partName = undefined;
-        this.partAbbreviation = undefined;
-
-        this.instrumentId = undefined;
-        this.instrumentName = instrumentName;
-        this.instrumentAbbreviation = undefined;
-        this.midiProgram = undefined;
-        this._midiChannel = undefined;
-
-        this.lowestNote = undefined;
-        this.highestNote = undefined;
-
-        this.transpostion = undefined;
-
-        this.inGMPercMap = false;
-        this.soundfontFn = undefined;
-
-        if (instrumentName !== undefined) {
-            instrument.find(instrumentName, this);
-        }
-    }
-
-    /**
-     * Assign an instrument to an unused midi channel.
-     *
-     * Will use the global list of used channels (`music21.instrument.Instrument.usedChannels`)
-     * if not given.  Assigns up to `music21.instrument.maxMidi` channels (16)
-     * Skips 10 unless this.inGMPercMap is true
-     *
-     * @param {int[]} [usedChannels]
-     * @returns {number|undefined}
-     */
-    autoAssignMidiChannel(usedChannels) {
-        if (usedChannels === undefined) {
-            usedChannels = instrument.usedChannels;
-        }
-        let startChannel = 0;
-        if (this.inGMPercMap) {
-            startChannel = 10;
-        }
-        for (let ch = startChannel; ch < instrument.maxMidi; ch++) {
-            if (ch % 16 === 10 && this.inGMPercMap !== true) {
-                continue; // skip 10 / percussion.
-            }
-            if (
-                usedChannels[ch] === undefined
-                || usedChannels[ch] === this.midiProgram
-            ) {
-                usedChannels[ch] = this.midiProgram;
-                this.midiChannel = ch;
-                return ch;
-            }
-        }
-        // TODO: no channels! throw exception!
-        return undefined;
-    }
-
-    get oggSoundfont() {
-        return this.soundfontFn + '-ogg.js';
-    }
-
-    get mp3Soundfont() {
-        return this.soundfontFn + '-mp3.js';
-    }
-
-    get midiChannel() {
-        if (this._midiChannel === undefined) {
-            this.autoAssignMidiChannel();
-        }
-        return this._midiChannel;
-    }
-
-    set midiChannel(ch) {
-        this._midiChannel = ch;
-    }
-}
-instrument.Instrument = Instrument;
-
-instrument.usedChannels = []; // differs from m21p -- stored midiProgram numbers
-instrument.maxMidi = 16;
-
-// noinspection SpellCheckingInspection
-instrument.info = [
+/**
+ *
+ * @type {{fn: string, name: string, midiNumber: number}[]}
+ */
+export const info = [
     { fn: 'acoustic_grand_piano', name: 'Acoustic Grand Piano', midiNumber: 0 },
     {
         fn: 'bright_acoustic_piano',
@@ -296,6 +190,116 @@ instrument.info = [
     { fn: 'gunshot', name: 'Gunshot', midiNumber: 127 },
 ];
 
+
+/**
+ * Represents an instrument.  instrumentNames are found in the ext/soundfonts directory
+ *
+ * See {@link music21.miditools} and esp. `loadSoundfont` for a way of loading soundfonts into
+ * instruments.
+ *
+ * @class Instrument
+ * @memberof music21.instrument
+ * @extends music21.base.Music21Object
+ * @param {string} instrumentName
+ * @property {string|undefined} partId
+ * @property {string|undefined} partName
+ * @property {string|undefined} partAbbreviation
+ * @property {string|undefined} instrumentId
+ * @property {string|undefined} instrumentName
+ * @property {string|undefined} instrumentAbbreviation
+ * @property {int|undefined} midiProgram
+ * @property {int|undefined} midiChannel
+ * @property {int|undefined} lowestNote
+ * @property {int|undefined} highestNote
+ * @property {music21.interval.Interval|undefined} transposition
+ * @property {Boolean} inGMPercMap=false
+ * @property {string|undefined} soundfontFn
+ * @property {string|undefined} oggSoundfont - url of oggSoundfont for this instrument
+ * @property {string|undefined} mp3Soundfont - url of mp3Soundfont for this instrument
+ */
+export class Instrument extends base.Music21Object {
+    constructor(instrumentName) {
+        super();
+        this.classSortOrder = -25;
+
+        this.partId = undefined;
+        this.partName = undefined;
+        this.partAbbreviation = undefined;
+
+        this.instrumentId = undefined;
+        this.instrumentName = instrumentName;
+        this.instrumentAbbreviation = undefined;
+        this.midiProgram = undefined;
+        this._midiChannel = undefined;
+
+        this.lowestNote = undefined;
+        this.highestNote = undefined;
+
+        this.transpostion = undefined;
+
+        this.inGMPercMap = false;
+        this.soundfontFn = undefined;
+
+        if (instrumentName !== undefined) {
+            find(instrumentName, this);
+        }
+    }
+
+    /**
+     * Assign an instrument to an unused midi channel.
+     *
+     * Will use the global list of used channels (`music21.instrument.Instrument.usedChannels`)
+     * if not given.  Assigns up to `music21.instrument.maxMidi` channels (16)
+     * Skips 10 unless this.inGMPercMap is true
+     *
+     * @param {int[]} [usedChannels]
+     * @returns {number|undefined}
+     */
+    autoAssignMidiChannel(usedChannels) {
+        if (usedChannels === undefined) {
+            usedChannels = global_usedChannels;
+        }
+        let startChannel = 0;
+        if (this.inGMPercMap) {
+            startChannel = 10;
+        }
+        for (let ch = startChannel; ch < maxMidi; ch++) {
+            if (ch % 16 === 10 && this.inGMPercMap !== true) {
+                continue; // skip 10 / percussion.
+            }
+            if (
+                usedChannels[ch] === undefined
+                || usedChannels[ch] === this.midiProgram
+            ) {
+                usedChannels[ch] = this.midiProgram;
+                this.midiChannel = ch;
+                return ch;
+            }
+        }
+        // TODO: no channels! throw exception!
+        return undefined;
+    }
+
+    get oggSoundfont() {
+        return this.soundfontFn + '-ogg.js';
+    }
+
+    get mp3Soundfont() {
+        return this.soundfontFn + '-mp3.js';
+    }
+
+    get midiChannel() {
+        if (this._midiChannel === undefined) {
+            this.autoAssignMidiChannel();
+        }
+        return this._midiChannel;
+    }
+
+    set midiChannel(ch) {
+        this._midiChannel = ch;
+    }
+}
+
 /**
  * Find information for a given instrument (by filename or name)
  * and load it into an instrument object.
@@ -306,18 +310,17 @@ instrument.info = [
  * @param {music21.instrument.Instrument} [inst] - instrument object to load into
  * @returns {music21.instrument.Instrument|undefined}
  */
-instrument.find = function instrument_find(fn, inst) {
+export function find(fn, inst) {
     if (inst === undefined) {
-        inst = new instrument.Instrument();
+        inst = new Instrument();
     }
-    for (let i = 0; i < instrument.info.length; i++) {
-        const info = instrument.info[i];
-        if (info.fn === fn || info.name === fn) {
-            inst.soundfontFn = info.fn;
-            inst.instrumentName = info.name;
-            inst.midiProgram = info.midiNumber;
+    for (const innerInfo of info) {
+        if (innerInfo.fn === fn || innerInfo.name === fn) {
+            inst.soundfontFn = innerInfo.fn;
+            inst.instrumentName = innerInfo.name;
+            inst.midiProgram = innerInfo.midiNumber;
             return inst;
         }
     }
     return undefined;
-};
+}

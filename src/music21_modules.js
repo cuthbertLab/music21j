@@ -46,6 +46,7 @@ import * as common from './music21/common.js';
 import * as articulations from './music21/articulations.js';
 import * as bar from './music21/bar.js';
 import * as beam from './music21/beam.js';
+import * as chord from './music21/chord.js';
 import * as chordTables from './music21/chordTables.js';
 import * as clef from './music21/clef.js';
 import * as converter from './music21/converter.js';
@@ -54,7 +55,9 @@ import * as duration from './music21/duration.js';
 import * as dynamics from './music21/dynamics.js';
 import * as expressions from './music21/expressions.js';
 import * as figuredBass from './music21/figuredBass.js';
+import * as fromPython from './music21/fromPython.js';
 import * as harmony from './music21/harmony.js';
+import * as instrument from './music21/instrument.js';
 import * as interval from './music21/interval.js';
 import * as key from './music21/key.js';
 import * as keyboard from './music21/keyboard.js';
@@ -81,9 +84,6 @@ export { debug } from './music21/debug.js';
 
 export { audioRecording } from './music21/audioRecording.js';
 export { audioSearch } from './music21/audioSearch.js';
-export { chord } from './music21/chord.js';
-export { fromPython } from './music21/fromPython.js';
-export { instrument } from './music21/instrument.js';
 export { miditools } from './music21/miditools.js';
 export { stream } from './music21/stream.js';
 
@@ -98,6 +98,7 @@ export {
     articulations,
     bar,
     beam,
+    chord,
     chordTables,
     clef,
     converter,
@@ -106,7 +107,9 @@ export {
     dynamics,
     expressions,
     figuredBass,
+    fromPython,
     harmony,
+    instrument,
     interval,
     key,
     keyboard,

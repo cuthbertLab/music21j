@@ -2,6 +2,8 @@
   <dictionary name="cuthbert">
     <words>
       <w>aaaa</w>
+      <w>aahs</w>
+      <w>agogo</w>
       <w>ahir</w>
       <w>allegrissimo</w>
       <w>andantino</w>
@@ -17,6 +19,10 @@
       <w>bitonal</w>
       <w>blackkey</w>
       <w>cakravana</w>
+      <w>charang</w>
+      <w>chiff</w>
+      <w>clavinet</w>
+      <w>contrabass</w>
       <w>cuthbert</w>
       <w>dddd</w>
       <w>decachord</w>
@@ -24,10 +30,12 @@
       <w>diad</w>
       <w>dodecachord</w>
       <w>dodecamirror</w>
+      <w>drawbar</w>
       <w>enharmonics</w>
       <w>fati</w>
       <w>fermata</w>
       <w>ffff</w>
+      <w>fretless</w>
       <w>gright</w>
       <w>guidon</w>
       <w>hacky</w>
@@ -38,16 +46,19 @@
       <w>hexachord</w>
       <w>hexamirror</w>
       <w>hirajoshi</w>
+      <w>honkytonk</w>
       <w>inexpressable</w>
       <w>intv</w>
       <w>iwato</w>
       <w>jianpu</w>
       <w>jsonpickle</w>
+      <w>kalimba</w>
       <w>kanakangi</w>
       <w>keyboardkey</w>
       <w>keyboardkeyannotation</w>
       <w>keyboardkeyname</w>
       <w>kiravani</w>
+      <w>koto</w>
       <w>kumoi</w>
       <w>ladma</w>
       <w>langsam</w>
@@ -92,6 +103,7 @@
       <w>octatonic</w>
       <w>octaveless</w>
       <w>ottava</w>
+      <w>overdriven</w>
       <w>pantuvarali</w>
       <w>partwise</w>
       <w>pelog</w>
@@ -101,6 +113,7 @@
       <w>perc</w>
       <w>petrushka</w>
       <w>phrygian</w>
+      <w>polysynth</w>
       <w>pppp</w>
       <w>prebase</w>
       <w>prestissimo</w>
@@ -118,10 +131,14 @@
       <w>saveri</w>
       <w>scdict</w>
       <w>schnell</w>
+      <w>scifi</w>
       <w>scref</w>
       <w>senza</w>
       <w>septachord</w>
       <w>seta</w>
+      <w>shakuhachi</w>
+      <w>shamisen</w>
+      <w>shanai</w>
       <w>slendro</w>
       <w>soundfont</w>
       <w>soundfonts</w>
@@ -135,6 +152,8 @@
       <w>subtonic</w>
       <w>supertonic</w>
       <w>symlinking</w>
+      <w>synth</w>
+      <w>taiko</w>
       <w>tenuto</w>
       <w>tertium</w>
       <w>tetrachord</w>
@@ -146,6 +165,7 @@
       <w>tnmax</w>
       <w>tnre</w>
       <w>tnref</w>
+      <w>tonk</w>
       <w>trichord</w>
       <w>trimirror</w>
       <w>tritone</w>

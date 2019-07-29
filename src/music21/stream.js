@@ -19,7 +19,7 @@ import * as beam from './beam.js';
 import * as clef from './clef.js';
 import * as common from './common.js';
 import * as duration from './duration.js';
-import { instrument } from './instrument.js';
+import * as instrument from './instrument.js';
 import * as meter from './meter.js';
 import * as note from './note.js';
 import * as pitch from './pitch.js';

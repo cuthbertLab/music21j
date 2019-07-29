@@ -5,29 +5,8 @@
  * Copyright (c) 2013-16, Michael Scott Cuthbert and cuthbertLab
  * Based on music21 (=music21p), Copyright (c) 2006–16, Michael Scott Cuthbert and cuthbertLab
  *
- * usage:
- *
- * in python:
- *
- * s = corpus.parse('bwv66.6')
- * stringRepresentingM21JsonPickle = s.freezeStream('jsonpickle')
- *
- * in js:
- *
- * pyConv = new music21.fromPython.Converter();
- * s = pyConv.run(stringRepresentingM21JsonPickle);
- *
- *
- */
-import * as jsonpickle from 'jsonpickle';
-
-const jp = jsonpickle;
-/**
  * fromPython module -- see {@link music21.fromPython}
- */
-const unpickler = jp.unpickler;
-
-/**
+ *
  * Converter for taking a Python-encoded jsonpickle music21p stream
  * and loading it into music21j
  *
@@ -38,8 +17,22 @@ const unpickler = jp.unpickler;
  * @namespace music21.fromPython
  * @extends music21
  * @requires jsonpickle
+ * @example
+ * in python:
+ *
+ * s = corpus.parse('bwv66.6')
+ * stringRepresentingM21JsonPickle = s.freezeStream('jsonpickle')
+ *
+ * in js:
+ *
+ * pyConv = new music21.fromPython.Converter();
+ * s = pyConv.run(stringRepresentingM21JsonPickle);
+ *
  */
-export const fromPython = {jsonpickle: jp};
+import * as jsonpickle from 'jsonpickle';
+
+const jp = jsonpickle;
+const unpickler = jp.unpickler;
 
 /**
  *
@@ -204,4 +197,3 @@ export class Converter {
         return outStruct.stream;
     }
 }
-fromPython.Converter = Converter;

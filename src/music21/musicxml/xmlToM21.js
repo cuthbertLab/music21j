@@ -1,6 +1,6 @@
 import * as $ from 'jquery';
 
-import { chord } from '../chord.js';
+import * as chord from '../chord.js';
 import * as clef from '../clef.js';
 import * as duration from '../duration.js';
 import * as key from '../key.js';
