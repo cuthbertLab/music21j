@@ -11,7 +11,7 @@ import { Music21Exception } from './exceptions21.js';
 import { chord } from './chord.js';
 import * as common from './common.js';
 import * as figuredBass from './figuredBass.js';
-import { harmony } from './harmony.js';
+import * as harmony from './harmony.js';
 import * as interval from './interval.js';
 import { key } from './key.js';
 import * as pitch from './pitch.js';

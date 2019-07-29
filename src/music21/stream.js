@@ -12,12 +12,12 @@ import * as $ from 'jquery';
 import * as MIDI from 'midicube';
 
 import { Music21Exception } from './exceptions21.js';
+import { debug } from './debug.js';
 
 import * as base from './base.js';
 import * as beam from './beam.js';
 import * as clef from './clef.js';
 import * as common from './common.js';
-import { debug } from './debug.js';
 import * as duration from './duration.js';
 import { instrument } from './instrument.js';
 import { meter } from './meter.js';

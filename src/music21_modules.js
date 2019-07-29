@@ -51,6 +51,7 @@ import * as converter from './music21/converter.js';
 import * as derivation from './music21/derivation.js';
 import * as duration from './music21/duration.js';
 import * as figuredBass from './music21/figuredBass.js';
+import * as harmony from './music21/harmony.js';
 import * as interval from './music21/interval.js';
 import * as note from './music21/note.js';
 import * as parseLoader from './music21/parseLoader.js';
@@ -75,7 +76,6 @@ export { chord } from './music21/chord.js';
 export { dynamics } from './music21/dynamics.js';
 export { expressions } from './music21/expressions.js';
 export { fromPython } from './music21/fromPython.js';
-export { harmony } from './music21/harmony.js';
 export { instrument } from './music21/instrument.js';
 export { key } from './music21/key.js';
 export { keyboard } from './music21/keyboard.js';
@@ -103,6 +103,7 @@ export {
     derivation,
     duration,
     figuredBass,
+    harmony,
     interval,
     note,
     parseLoader,

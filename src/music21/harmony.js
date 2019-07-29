@@ -9,7 +9,7 @@ import { key } from './key.js';
  * @memberOf music21.harmony
  * @extends music21.chord.Chord
  */
-class Harmony extends chord.Chord {
+export class Harmony extends chord.Chord {
     constructor(figure, keywords) {
         if (keywords === undefined) {
             keywords = {};
@@ -91,7 +91,3 @@ class Harmony extends chord.Chord {
 
     findFigure() {}
 }
-
-export const harmony = {
-    Harmony,
-};
