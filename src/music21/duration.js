@@ -255,12 +255,12 @@ export class Duration extends prebase.ProtoM21Object {
             return 0;
         } // zero length stream probably;
         const typeNumber = duration.ordinalTypeFromNum.indexOf(this._type);
-        const powerOfTwo = 2 ** duration.quarterTypeIndex - typeNumber;
+        const powerOfTwo = 2 ** (duration.quarterTypeIndex - typeNumber);
         // alert(undottedQL * 1.5 + " " + ql)
         // console.log('find dots called on ql: ', ql, typeNumber, powerOfTwo);
         for (let dotsNum = 0; dotsNum <= 4; dotsNum++) {
             const dotMultiplier
-                = (2 ** dotsNum - 1.0) / 2 ** dotsNum;
+                = ((2 ** dotsNum) - 1.0) / 2 ** dotsNum;
             const durationMultiplier = 1 + dotMultiplier;
             if (Math.abs(powerOfTwo * durationMultiplier - ql) < 0.0001) {
                 return dotsNum;
@@ -275,10 +275,10 @@ export class Duration extends prebase.ProtoM21Object {
     updateQlFromFeatures() {
         const typeNumber = duration.ordinalTypeFromNum.indexOf(this._type); // must be set property
         const undottedQuarterLength = (
-            2 ** duration.quarterTypeIndex - typeNumber
+            2 ** (duration.quarterTypeIndex - typeNumber)
         );
         const dottedMultiplier
-            = 1 + (2 ** this._dots - 1) / (2 ** this._dots);
+            = 1 + ((2 ** this._dots) - 1.0) / (2 ** this._dots);
         const unTupletedQl = undottedQuarterLength * dottedMultiplier;
         let tupletCorrectedQl = unTupletedQl;
         this._tuplets.forEach(tuplet => {
@@ -302,7 +302,7 @@ export class Duration extends prebase.ProtoM21Object {
         this._dots = this._findDots(ql);
 
         const undottedQuarterLength = (
-            2 ** duration.quarterTypeIndex - typeNumber
+            2 ** (duration.quarterTypeIndex - typeNumber)
         );
         const dottedMultiplier
             = 1 + (2 **  this._dots - 1) / 2 ** this._dots;

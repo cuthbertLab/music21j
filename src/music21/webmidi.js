@@ -10,43 +10,96 @@
  * Based on music21 (=music21p), Copyright (c) 2006–18, Michael Scott Cuthbert and cuthbertLab
  *
  */
+/**
+ * webmidi -- for connecting with external midi devices
+ *
+ * Uses either the webmidi API or the Jazz plugin
+ * See {@link music21.webmidi}
+ *
+ * @namespace music21.webmidi
+ * @memberof music21
+ * @requires music21/miditools
+ * @requires jQuery
+ * @exports music21/webmidi
+ * @example smallest usage of the webmidi toolkit.  see testHTML/midiInRequire.html
+
+<html>
+<head>
+    <title>MIDI In/Jazz Test for Music21j</title>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+</head>
+<body>
+<div>
+MIDI Input: <div id="putMidiSelectHere" />
+</div>
+<div id="svgDiv">
+</div>
+<script src='music21j.js'></script>
+<script>
+    s = new music21.stream.Stream();
+    music21.webmidi.createSelector($("#putMidiSelectHere"));
+
+    function displayStream(midiEvent) {
+        midiEvent.sendToMIDIjs();
+        if (midiEvent.noteOn) {
+            var m21n = midiEvent.music21Note();
+            if (s.length > 7) {
+                s.elements = s.elements.slice(1)
+            }
+            s.append(m21n);
+            var $svgDiv = $("#svgDiv");
+            $svgDiv.empty();
+            var svgDiv = s.appendNewDOM($svgDiv);
+        }
+    }
+    music21.miditools.callBacks.general = displayStream;
+
+</script>
+</body>
+</html>
+ */
+
 import * as $ from 'jquery';
 import { debug } from './debug.js';
 import { common } from './common.js';
 import { miditools } from './miditools.js';
 
+
 /**
- * webmidi -- for connecting with external midi devices
+ * @typedef {Object} Jazz
+ * @extends HTMLObjectElement
+ * @property {boolean} isJazz
+ * @property {function} MidiInOpen
+ * @property {function} MidiInClose
+ * @property {function} MidiInList
  *
- * Uses either the webmidi API or the Jazz plugin
- *
- * See {@link music21.webmidi}
- *
- * @exports music21/webmidi
  */
+
 /**
- * webmidi -- for connecting with external midi devices
  *
- * Uses either the webmidi API or the Jazz plugin
- *
- * @namespace music21.webmidi
- * @memberof music21
- * @requires music21/miditools
- * @requires jquery
- * @property {Jazz|undefined} storedPlugin - reference to the Jazz object from the plugin; cached from `createPlugin`.
- * @property {string} selectedJazzInterface - the currently connected interface (note that we can only use one right now)
+ * @type {
+ *     {
+ *     selectedInputPort: *,
+ *     access: *,
+ *     jazzDownloadUrl: string,
+ *     selectedOutputPort: *,
+ *     storedPlugin: *,
+ *     selectedJazzInterface: *,
+ *     $select: [jQuery]
+ *     }
+ * }
  */
-export const webmidi = {};
+export const webmidi = {
+    selectedOutputPort: undefined,
+    selectedInputPort: undefined,
 
-webmidi.selectedOutputPort = undefined;
-webmidi.selectedInputPort = undefined;
+    access: undefined,
+    $select: undefined,
 
-webmidi.access = undefined;
-webmidi.$selectDiv = undefined;
-
-webmidi.jazzDownloadUrl = 'http://jazz-soft.net/download/Jazz-Plugin/';
-webmidi.storedPlugin = undefined;
-webmidi.selectedJazzInterface = undefined; // not the same as "" etc. uses last selected interface by default.
+    jazzDownloadUrl: 'http://jazz-soft.net/download/Jazz-Plugin/',
+    storedPlugin: undefined,
+    selectedJazzInterface: undefined, // not the same as "" etc. uses last selected interface by default.
+};
 
 /**
  * Called by Jazz MIDI plugin when an event arrives.
@@ -61,13 +114,13 @@ webmidi.selectedJazzInterface = undefined; // not the same as "" etc. uses last 
  * @param {byte} b - data 2
  * @param {byte} c - data 3
  */
-webmidi.jazzMidiInArrived = function jazzMidiInArrived(t, a, b, c) {
+export function jazzMidiInArrived(t, a, b, c) {
     const webmidiEvent = {
         timestamp: t,
         data: [a, b, c],
     };
-    return webmidi.midiInArrived(webmidiEvent);
-};
+    return midiInArrived(webmidiEvent);
+}
 
 /**
  * Called directly when a MIDI event arrives from the WebMIDI API, or via a Shim (jazzMidiInArrived)
@@ -83,7 +136,7 @@ webmidi.jazzMidiInArrived = function jazzMidiInArrived(t, a, b, c) {
  * @memberof music21.webmidi
  * @param {Object} midiMessageEvent - midi Information
  */
-webmidi.midiInArrived = function midiInArrived(midiMessageEvent) {
+export function midiInArrived(midiMessageEvent) {
     const t = midiMessageEvent.timeStamp;
     const a = midiMessageEvent.data[0];
     const b = midiMessageEvent.data[1];
@@ -98,7 +151,7 @@ webmidi.midiInArrived = function midiInArrived(midiMessageEvent) {
     } else {
         return undefined;
     }
-};
+}
 
 /**
  * Create a hidden tiny, &lt;object&gt; tag in the DOM with the
@@ -112,7 +165,7 @@ webmidi.midiInArrived = function midiInArrived(midiMessageEvent) {
  * @param {Boolean} [override=false] - if this method has been called successfully before return the storedPlugin unless override is true.
  * @returns {Jazz|undefined} Jazz MIDI plugin object
  */
-webmidi.createPlugin = function createPlugin(appendElement, override) {
+export function createPlugin(appendElement, override) {
     if (webmidi.storedPlugin && override !== true) {
         return webmidi.storedPlugin;
     }
@@ -139,7 +192,7 @@ webmidi.createPlugin = function createPlugin(appendElement, override) {
         );
         return undefined;
     }
-};
+}
 
 /**
  * Creates a &lt;select&gt; object for selecting among the MIDI choices in Jazz
@@ -149,11 +202,11 @@ webmidi.createPlugin = function createPlugin(appendElement, override) {
  * @param {Object} [options] - see createSelector for details
  * @returns {HTMLElement|undefined} DOM object containing the select tag, or undefined if Jazz cannot be loaded.
  */
-webmidi.createJazzSelector = function createJazzSelector($newSelect, options) {
+export function createJazzSelector($newSelect, options) {
     const params = {};
     common.merge(params, options);
 
-    const Jazz = webmidi.createPlugin();
+    const Jazz = createPlugin();
     if (Jazz === undefined) {
         return undefined;
     }
@@ -163,7 +216,7 @@ webmidi.createJazzSelector = function createJazzSelector($newSelect, options) {
         if (selectedInput !== 'None selected') {
             webmidi.selectedJazzInterface = Jazz.MidiInOpen(
                 selectedInput,
-                webmidi.jazzMidiInArrived
+                jazzMidiInArrived
             );
         } else {
             Jazz.MidiInClose();
@@ -201,7 +254,7 @@ webmidi.createJazzSelector = function createJazzSelector($newSelect, options) {
         allAppendOptions[0].attr('selected', true);
         webmidi.selectedJazzInterface = Jazz.MidiInOpen(
             midiOptions[0],
-            webmidi.jazzMidiInArrived
+            jazzMidiInArrived
         );
         anySelected = true;
     } else {
@@ -216,13 +269,13 @@ webmidi.createJazzSelector = function createJazzSelector($newSelect, options) {
         params.oninputempty();
     }
     return $newSelect;
-};
+}
 
 /**
  * Function to be called if the webmidi-api selection changes. (not jazz)
  *
  */
-webmidi.selectionChanged = function selectionChanged() {
+export function selectionChanged() {
     const selectedInput = webmidi.$select.val();
     if (selectedInput === webmidi.selectedInputPort) {
         return false;
@@ -236,43 +289,48 @@ webmidi.selectionChanged = function selectionChanged() {
 
     webmidi.access.inputs.forEach(port => {
         if (port.name === selectedInput) {
-            port.onmidimessage = webmidi.midiInArrived;
+            port.onmidimessage = midiInArrived;
         } else {
             port.close();
         }
     });
     webmidi.access.onstatechange = storedStateChange;
     return false;
-};
+}
 
 /**
  * Creates a &lt;select&gt; object for selecting among the MIDI choices in Jazz
  *
  * The options object has several parameters:
  *
- * {bool} autoupdate -- should this auto update?
- * {function} onsuccess -- function to call on all successful port queries
- * {function} oninputsuccess -- function to call if successful and at least one input device is found
- * {function} oninputempty -- function to call if successful but no input devices are found.
- * {bool} existingMidiSelect -- is there already a select tag for MIDI?
  *
  * @function music21.webmidi.createSelector
- * @param {jQuery|Node} [$midiSelectDiv=$('body')] - object to append the select to
+ * @param {jQuery|HTMLElement} [midiSelectDiv=$('body')] - object to append the select to
  * @param {Object} [options] - see above.
- * @returns {Node|undefined} DOM object containing the select tag, or undefined if Jazz cannot be loaded.
+ * @param {boolean} options.autoupdate -- should this auto update?
+ * @param {function} options.onsuccess -- function to call on all successful port queries
+ * @param {function} options.oninputsuccess -- function to call if successful and at least one input device is found
+ * @param {function} options.oninputempty -- function to call if successful but no input devices are found.
+ * @param {boolean} options.existingMidiSelect -- is there already a select tag for MIDI?
+ * @returns {jQuery|undefined} DOM object containing the select tag, or undefined if Jazz cannot be loaded.
  */
-webmidi.createSelector = function createSelector($midiSelectDiv, options) {
+export function createSelector(midiSelectDiv, options) {
     const params = {
         autoUpdate: true,
         existingMidiSelect: false,
     };
     common.merge(params, options);
 
+    /**
+     * @type {jQuery}
+     */
+    let $midiSelectDiv;
     if (typeof $midiSelectDiv === 'undefined') {
         $midiSelectDiv = $('body');
-    }
-    if ($midiSelectDiv.jquery === undefined) {
-        $midiSelectDiv = $($midiSelectDiv);
+    } else if (!(midiSelectDiv instanceof $)) {
+        $midiSelectDiv = $(midiSelectDiv);
+    } else {
+        $midiSelectDiv = midiSelectDiv;
     }
     let $newSelect;
     const foundMidiSelects = $midiSelectDiv.find('select#midiInSelect');
@@ -286,17 +344,17 @@ webmidi.createSelector = function createSelector($midiSelectDiv, options) {
     webmidi.$select = $newSelect;
 
     if (navigator.requestMIDIAccess === undefined) {
-        webmidi.createJazzSelector($newSelect, params);
+        createJazzSelector($newSelect, params);
     } else {
         if (params.existingMidiSelect !== true) {
-            $newSelect.change(webmidi.selectionChanged);
+            $newSelect.change(selectionChanged);
         }
         navigator.requestMIDIAccess().then(
             access => {
                 webmidi.access = access;
                 webmidi.populateSelect();
                 if (params.autoUpdate) {
-                    access.onstatechange = webmidi.populateSelect;
+                    access.onstatechange = populateSelect;
                 }
                 webmidi.$select.change();
                 if (params.onsuccess !== undefined) {
@@ -321,9 +379,9 @@ webmidi.createSelector = function createSelector($midiSelectDiv, options) {
     }
     miditools.clearOldChords(); // starts the chord checking process.
     return $newSelect;
-};
+}
 
-webmidi.populateSelect = function populateSelect() {
+export function populateSelect() {
     const inputs = webmidi.access.inputs;
     webmidi.$select.empty();
 
@@ -351,53 +409,4 @@ webmidi.populateSelect = function populateSelect() {
         $noneAppendOption.attr('selected', true);
     }
     webmidi.$select.change();
-};
-
-// this allows for the deprecated webmidi.callBacks to still work for now.
-webmidi.callBacks = miditools.callBacks;
-
-/**
- * Example smallest usage of the webmidi toolkit.  see testHTML/midiInRequire.html
-
-<html>
-<head>
-    <title>MIDI In/Jazz Test for Music21j</title>
-    <!-- for MSIE 10 on Windows 8 -->
-    <meta http-equiv="X-UA-Compatible" content="requiresActiveX=true"/>
-    <script data-main="../src/music21.js" src="../ext/require/require.js"></script>
-    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-
-    <script>
-    var s = "";
-    function displayStream(me) {
-        me.sendToMIDIjs();
-        if (me.noteOn) {
-            var m21n = me.music21Note();
-            if (s.length > 7) {
-                s.elements = s.elements.slice(1)
-            }
-            s.append(m21n);
-            var $svgDiv = $("#svgDiv");
-            $svgDiv.empty();
-            var svgDiv = s.appendNewDOM($svgDiv);
-        }
-    }
-
-    require(['music21'], function () {
-        s = new music21.stream.Stream();
-        music21.webmidi.createSelector($("#putMidiSelectHere"));
-        music21.miditools.callBacks.general = displayStream;
-    });
-
-
-    </script>
-</head>
-<body>
-<div>
-MIDI Input: <div id="putMidiSelectHere" />
-</div>
-<div id="svgDiv">
-</div>
-</body>
-</html>
- **/
+}

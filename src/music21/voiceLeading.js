@@ -5,6 +5,7 @@
  * Copyright (c) 2013-18, Michael Scott Cuthbert and cuthbertLab
  * Based on music21, Copyright (c) 2006–18, Michael Scott Cuthbert and cuthbertLab
  *
+ * @namespace music21.voiceLeading
  */
 
 import { interval } from './interval.js';
@@ -15,7 +16,7 @@ import { Music21Object } from './base.js';
 
 const intervalCache = [];
 
-const MotionType = {
+export const MotionType = {
     antiParallel: 'Anti-Parallel',
     contrary: 'Contrary',
     noMotion: 'No Motion',
@@ -25,6 +26,7 @@ const MotionType = {
 };
 
 /**
+ * @memberOf music21.voiceLeading
  * @extends music21.base.Music21Object
  */
 class VoiceLeadingQuartet extends Music21Object {
@@ -411,7 +413,3 @@ class VoiceLeadingQuartet extends Music21Object {
         }
     }
 }
-
-export const voiceLeading = {
-    VoiceLeadingQuartet,
-};

@@ -29,7 +29,7 @@
 import 'es6-shim';
 import '@babel/polyfill';
 
-import * as MIDIIn from 'midicube';  // to be removed when export * from is okay.
+import * as MIDI from 'midicube';  // to be removed when export * from is okay.
 import * as $ from 'jquery';
 import 'jquery-ui-bundle';
 
@@ -48,6 +48,8 @@ import * as derivation from './music21/derivation.js';
 import * as parseLoader from './music21/parseLoader.js';
 import * as sites from './music21/sites.js';
 import * as tie from './music21/tie.js';
+import * as voiceLeading from './music21/voiceLeading.js';
+import * as webmidi from './music21/webmidi.js';
 
 // these below need to be rewritten to be like above...
 
@@ -84,11 +86,11 @@ export { scale } from './music21/scale.js';
 export { stream } from './music21/stream.js';
 export { tempo } from './music21/tempo.js';
 export { tinyNotation } from './music21/tinyNotation.js';
-export { voiceLeading } from './music21/voiceLeading.js';
 export { vfShow } from './music21/vfShow.js';
-export { webmidi } from './music21/webmidi.js';
 
 export {
+    MIDI,
+
     exceptions21,
 
     bar,
@@ -98,9 +100,10 @@ export {
     parseLoader,
     sites,
     tie,
+    voiceLeading,
+    webmidi,
 };
 
-export const MIDI = MIDIIn;
 export const VERSION = '0.9.5';
 
 window.$ = $;

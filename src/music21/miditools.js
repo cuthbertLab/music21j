@@ -447,7 +447,6 @@ miditools.loadSoundfont = function loadSoundfont(soundfont, callback) {
                         + 'audio will begin when this message disappears.</div>'
                 )
             );
-            console.log(MIDI);
             MIDI.loadPlugin({
                 soundfontUrl: common.urls.soundfontUrl,
                 instrument: soundfont,
@@ -487,7 +486,7 @@ export class MidiPlayer {
             where = document.body;
         }
 
-        if (!where instanceof jQuery) {
+        if (!(where instanceof jQuery)) {
             $where = $(where);
         } else {
             $where = where;

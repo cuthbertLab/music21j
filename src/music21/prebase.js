@@ -158,7 +158,7 @@ export class ProtoM21Object {
      * n.isClassOrSubclass(['Duration', 'NotRest']); // true // NotRest
      */
     isClassOrSubclass(testClass) {
-        if (!testClass instanceof Array) {
+        if (!(testClass instanceof Array)) {
             testClass = [testClass];
         }
         for (let i = 0; i < testClass.length; i++) {

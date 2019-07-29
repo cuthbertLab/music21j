@@ -253,7 +253,7 @@ export class Metronome extends prebase.ProtoM21Object {
         let $where;
         if (where !== undefined && where instanceof jQuery) {
             $where = where;
-        } else if (where !== undefined && !where instanceof jQuery) {
+        } else if (where !== undefined && !(where instanceof jQuery)) {
             $where = $(where);
         } else {
             $where = $('body');

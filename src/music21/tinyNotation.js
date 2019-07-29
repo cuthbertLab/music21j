@@ -299,7 +299,7 @@ tinyNotation.renderNotationDivs = function renderNotationDivs(
          * @type {jQuery}
          */
         let $selector;
-        if (!selector instanceof $) {
+        if (!(selector instanceof $)) {
             $selector = $(selector);
         } else {
             $selector = selector;

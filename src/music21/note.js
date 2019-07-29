@@ -403,7 +403,6 @@ export class GeneralNote extends base.Music21Object {
             if (nextElement instanceof base.Music21Object
                 && nextElement.isClassOrSubclass('Note')
             ) {
-                nextElement.
                 if (nextElement.pitch.midi !== this.pitch.midi) {
                     stopTime += 60 * 0.25 / tempo; // legato -- play 16th note longer
                 } else if (
