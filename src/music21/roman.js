@@ -5,6 +5,19 @@
  * Copyright (c) 2013-19, Michael Scott Cuthbert and cuthbertLab
  * Based on music21 (=music21p), Copyright (c) 2006–19, Michael Scott Cuthbert and cuthbertLab
  *
+ * Roman numeral module. See {@link music21.roman} namespace
+ * music21.roman -- namespace for dealing with RomanNumeral analysis.
+ *
+ * @exports music21/roman
+ * @namespace music21.roman
+ * @memberof music21
+ * @requires music21/chord
+ * @requires music21/common
+ * @requires music21/figuredBass
+ * @requires music21/harmony
+ * @requires music21/key
+ * @requires music21/pitch
+ * @requires music21/interval
  */
 import { Music21Exception } from './exceptions21.js';
 
@@ -16,27 +29,8 @@ import * as interval from './interval.js';
 import { key } from './key.js';
 import * as pitch from './pitch.js';
 import { scale } from './scale.js';
-/**
- * Roman numeral module. See {@link music21.roman} namespace
- *
- * @exports music21/roman
- */
-/**
- * music21.roman -- namespace for dealing with RomanNumeral analysis.
- *
- * @namespace music21.roman
- * @memberof music21
- * @requires music21/chord
- * @requires music21/common
- * @requires music21/figuredBass
- * @requires music21/harmony
- * @requires music21/key
- * @requires music21/pitch
- * @requires music21/interval
- */
-export const roman = {};
 
-roman.figureShorthands = {
+export const figureShorthands = {
     '53': '',
     '3': '',
     '63': '6',
@@ -60,7 +54,7 @@ roman.figureShorthands = {
 };
 
 // noinspection SpellCheckingInspection
-roman.functionalityScores = {
+export const functionalityScores = {
     I: 100,
     i: 90,
     V7: 80,
@@ -116,8 +110,7 @@ roman.functionalityScores = {
  * @param  {string} shorthand string of a figure w/o roman to parse
  * @return {Array<string>}           array of shorthands
  */
-
-roman.expandShortHand = function expandShortHand(shorthand) {
+export function expandShortHand(shorthand) {
     shorthand = shorthand.replace('/', '');
     if (shorthand.match(/[b-]$/)) {
         shorthand += '3';
@@ -143,7 +136,7 @@ roman.expandShortHand = function expandShortHand(shorthand) {
         shGroupOut.push(sh);
     }
     return shGroupOut;
-};
+}
 
 /**
  * correctSuffixForChordQuality - Correct a given inversionString suffix given a
@@ -154,8 +147,7 @@ roman.expandShortHand = function expandShortHand(shorthand) {
  * @param  {string} inversionString a string like '6' to fix.
  * @return {string}           corrected inversionString
   */
-
-roman.correctSuffixForChordQuality = function correctSuffixForChordQuality(
+export function correctSuffixForChordQuality(
     chordObj,
     inversionString
 ) {
@@ -187,7 +179,7 @@ roman.correctSuffixForChordQuality = function correctSuffixForChordQuality(
         }
     }
     return qualityName + inversionString;
-};
+}
 
 /**
  * maps an index number to a roman numeral in lowercase
@@ -197,7 +189,7 @@ roman.correctSuffixForChordQuality = function correctSuffixForChordQuality(
  * music21.roman.romanToNumber[4]
  * // 'iv'
  */
-roman.romanToNumber = [undefined, 'i', 'ii', 'iii', 'iv', 'v', 'vi', 'vii'];
+export const romanToNumber = [undefined, 'i', 'ii', 'iii', 'iv', 'v', 'vi', 'vii'];
 
 /**
  * Represents a RomanNumeral.  By default, capital Roman Numerals are
@@ -319,7 +311,7 @@ export class RomanNumeral extends harmony.Harmony {
 
         this._tempRoot = useScale.pitchFromDegree(this.scaleDegree);
         this._fixMinorVIandVII(useScale);
-        const expandedFigure = roman.expandShortHand(workingFigure);
+        const expandedFigure = expandShortHand(workingFigure);
         this.figuresNotationObj = new figuredBass.Notation(
             expandedFigure.toString()
         );
@@ -890,4 +882,3 @@ export class RomanNumeral extends harmony.Harmony {
         return chordStr;
     }
 }
-roman.RomanNumeral = RomanNumeral;

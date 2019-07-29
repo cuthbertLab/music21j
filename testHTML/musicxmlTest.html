@@ -1,7 +1,9 @@
 <html>
-<body>
-    <script data-main="../src/music21.js" src="../ext/require/require.js"></script>
+<head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+</head>
+<body>
+    <script src="../build/music21.debug.js"></script>
     <script>
     mxl = `<!DOCTYPE score-partwise  PUBLIC "-//Recordare//DTD MusicXML 3.0 Partwise//EN" "http://www.musicxml.org/dtds/partwise.dtd">
     <score-partwise version="3.0">
@@ -51,12 +53,10 @@
     `;
 
     mxUrl = 'bachOut.xml';
-    require(['music21'], function (music21) {
-        sp = new music21.musicxml.xmlToM21.ScoreParser();
-        sp.scoreFromUrl(mxUrl).done(() => {
-            sc = sp.stream;
-            sc.appendNewDOM();
-        });
+    sp = new music21.musicxml.xmlToM21.ScoreParser();
+    sp.scoreFromUrl(mxUrl).done(() => {
+        sc = sp.stream;
+        sc.appendNewDOM();
     });
     </script>
 </body>

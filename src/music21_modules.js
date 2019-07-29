@@ -53,10 +53,12 @@ import * as duration from './music21/duration.js';
 import * as figuredBass from './music21/figuredBass.js';
 import * as harmony from './music21/harmony.js';
 import * as interval from './music21/interval.js';
+import * as musicxml from './music21/musicxml.js';
 import * as note from './music21/note.js';
 import * as parseLoader from './music21/parseLoader.js';
 import * as pitch from './music21/pitch.js';
 import * as renderOptions from './music21/renderOptions.js';
+import * as roman from './music21/roman.js';
 import * as sites from './music21/sites.js';
 import * as tempo from './music21/tempo.js';
 import * as tie from './music21/tie.js';
@@ -82,8 +84,6 @@ export { keyboard } from './music21/keyboard.js';
 export { layout } from './music21/layout.js';
 export { meter } from './music21/meter.js';
 export { miditools } from './music21/miditools.js';
-export { musicxml } from './music21/musicxml.js';
-export { roman } from './music21/roman.js';
 export { scale } from './music21/scale.js';
 export { stream } from './music21/stream.js';
 
@@ -105,10 +105,12 @@ export {
     figuredBass,
     harmony,
     interval,
+    musicxml,
     note,
     parseLoader,
     pitch,
     renderOptions,
+    roman,
     sites,
     tempo,
     tie,
