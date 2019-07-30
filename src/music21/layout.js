@@ -12,7 +12,7 @@
 // import { base } from './base.js';
 // import { renderOptions } from './renderOptions.js';
 
-import { stream } from './stream.js';
+import * as stream from './stream.js';
 
 /**
  * Divide a part up into systems and fix the measure

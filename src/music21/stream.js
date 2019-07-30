@@ -7,6 +7,28 @@
  * Copyright (c) 2013-19, Michael Scott Cuthbert and cuthbertLab
  * Based on music21 (=music21p), Copyright (c) 2006-19, Michael Scott Cuthbert and cuthbertLab
  *
+ * powerful stream module, See {@link music21.stream} namespace
+ * @exports music21/stream
+ *
+ * Streams are powerful music21 objects that hold Music21Object collections,
+ * such as {@link music21.note.Note} or {@link music21.chord.Chord} objects.
+ *
+ * Understanding the {@link music21.stream.Stream} object is of fundamental
+ * importance for using music21.  Definitely read the music21(python) tutorial
+ * on using Streams before proceeding
+ *
+ * @namespace music21.stream
+ * @memberof music21
+ * @requires music21/base
+ * @requires music21/renderOptions
+ * @requires music21/clef
+ * @requires music21/vfShow
+ * @requires music21/duration
+ * @requires music21/common
+ * @requires music21/meter
+ * @requires music21/pitch
+ * @requires jQuery
+ *
  */
 import * as $ from 'jquery';
 import * as MIDI from 'midicube';
@@ -35,38 +57,7 @@ import * as iterator from './stream/iterator.js';
 export { filters };
 export { iterator };
 
-/**
- * powerful stream module, See {@link music21.stream} namespace
- * @exports music21/stream
- */
-/**
- * Streams are powerful music21 objects that hold Music21Object collections,
- * such as {@link music21.note.Note} or {@link music21.chord.Chord} objects.
- *
- * Understanding the {@link music21.stream.Stream} object is of fundamental
- * importance for using music21.  Definitely read the music21(python) tutorial
- * on using Streams before proceeding
- *
- * @namespace music21.stream
- * @memberof music21
- * @requires music21/base
- * @requires music21/renderOptions
- * @requires music21/clef
- * @requires music21/vfShow
- * @requires music21/duration
- * @requires music21/common
- * @requires music21/meter
- * @requires music21/pitch
- * @requires jQuery
- */
-export const stream = {
-    filters,
-    iterator,
-};
-
-class StreamException extends Music21Exception {}
-
-stream.StreamException = StreamException;
+export class StreamException extends Music21Exception {}
 
 function _exportMusicXMLAsText(s) {
     const gox = new GeneralObjectExporter(s);
@@ -1021,7 +1012,7 @@ export class Stream extends base.Music21Object {
         let m;
         let mStart;
         while (measureCount === 0 || o < oMax) {
-            m = new stream.Measure();
+            m = new Measure();
             m.number = measureCount + 1;
             // var thisTimeSignature = meterStream.getElementAtOrBefore(o);
             const thisTimeSignature = this.timeSignature;
@@ -1041,7 +1032,7 @@ export class Stream extends base.Music21Object {
             m.timeSignature = thisTimeSignature.clone();
 
             for (let voiceIndex = 0; voiceIndex < voiceCount; voiceIndex++) {
-                const v = new stream.Voice();
+                const v = new Voice();
                 v.id = voiceIndex;
                 m.insert(0, v);
             }
@@ -1169,7 +1160,7 @@ export class Stream extends base.Music21Object {
             restInfo.offset = undefined;
             restInfo.endTime = undefined;
         };
-        for (const el of stream) {
+        for (const el of this) {
             if (el.isStream
                     && (retainVoices || el.classes.includes('Voice'))) {
                 optionalAddRest();
@@ -1190,13 +1181,18 @@ export class Stream extends base.Music21Object {
         return returnObj;
     }
 
+    /**
+     *
+     * @param {this} other
+     * @returns {this}
+     */
     mergeAttributes(other) {
         super.mergeAttributes(other);
         for (const attr of [
             'autoSort',
             'isSorted',
             'definesExplicitSystemBreaks',
-            'definesEExplicitPageeBreaks',
+            'definesExplicitPageBreaks',
             '_atSoundingPitch',
             '_mutable',
         ]) {
@@ -1204,6 +1200,7 @@ export class Stream extends base.Music21Object {
                 this[attr] = other[attr];
             }
         }
+        return this;
     }
 
 
@@ -1349,7 +1346,7 @@ export class Stream extends base.Music21Object {
                 const dur = e.duration.quarterLength;
                 const offset = group.elementOffset(e);
                 const endTime = offset + dur;
-                const thisOffsetMap = new stream.OffsetMap(
+                const thisOffsetMap = new OffsetMap(
                     e,
                     offset,
                     endTime,
@@ -2613,7 +2610,6 @@ export class Stream extends base.Music21Object {
         return false;
     }
 }
-stream.Stream = Stream;
 
 /**
  *
@@ -2627,7 +2623,6 @@ export class Voice extends Stream {
         this.recursionType = 'elementsFirst';
     }
 }
-stream.Voice = Voice;
 
 /**
  * @class Measure
@@ -2651,7 +2646,6 @@ export class Measure extends Stream {
         return this.number.toString() + this.numberSuffix;
     }
 }
-stream.Measure = Measure;
 
 /**
  * Part -- specialized to handle Measures inside it
@@ -2732,7 +2726,7 @@ export class Part extends Stream {
             return totalLength;
         }
         // no measures found in part... treat as measure
-        const tempM = new stream.Measure();
+        const tempM = new Measure();
         tempM.elements = this;
         return tempM.estimateStaffLength();
     }
@@ -3050,7 +3044,6 @@ export class Part extends Stream {
         return gotMeasure;
     }
 }
-stream.Part = Part;
 
 /**
  * Scores with multiple parts
@@ -3162,7 +3155,7 @@ export class Score extends Stream {
 
         // no parts found in score... use part...
         console.log('no parts found in score');
-        const tempPart = new stream.Part();
+        const tempPart = new Part();
         tempPart.elements = this;
         return tempPart.estimateStaffLength();
     }
@@ -3350,7 +3343,8 @@ export class Score extends Stream {
         return this;
     }
 }
-stream.Score = Score;
+
+// TODO(msc) -- Opus
 
 // small Class; a namedtuple in music21p
 export class OffsetMap {
@@ -3361,4 +3355,3 @@ export class OffsetMap {
         this.voiceIndex = voiceIndex;
     }
 }
-stream.OffsetMap = OffsetMap;

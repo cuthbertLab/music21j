@@ -218,7 +218,7 @@ export class Music21Object extends prebase.ProtoM21Object {
 
     /**
      *
-     * @param {music21.base.Music21Object} other
+     * @param {this} other
      * @returns {this}
      */
     mergeAttributes(other) {

@@ -557,7 +557,7 @@ export class Keyboard {
                 'font-size': Math.floor(this.scaleFactor * 15).toString() + 'px',
             })
             .bind('click', () => {
-                miditools.transposeOctave -= 1;
+                miditools.config.transposeOctave -= 1;
                 this._startDNN -= 7;
                 this._endDNN -= 7;
                 this.redrawSVG();
@@ -567,7 +567,7 @@ export class Keyboard {
                 'font-size': Math.floor(this.scaleFactor * 15).toString() + 'px',
             })
             .bind('click', () => {
-                miditools.transposeOctave += 1;
+                miditools.config.transposeOctave += 1;
                 this._startDNN += 7;
                 this._endDNN += 7;
                 this.redrawSVG();

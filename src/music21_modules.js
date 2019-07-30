@@ -74,6 +74,7 @@ import * as renderOptions from './music21/renderOptions.js';
 import * as roman from './music21/roman.js';
 import * as scale from './music21/scale.js';
 import * as sites from './music21/sites.js';
+import * as stream from './music21/stream.js';
 import * as tempo from './music21/tempo.js';
 import * as tie from './music21/tie.js';
 import * as tinyNotation from './music21/tinyNotation.js';
@@ -85,7 +86,6 @@ export { debug } from './music21/debug.js';
 
 // these below need to be rewritten to be like above...
 
-export { stream } from './music21/stream.js';
 
 export {
     MIDI,
@@ -126,6 +126,7 @@ export {
     roman,
     scale,
     sites,
+    stream,
     tempo,
     tie,
     tinyNotation,

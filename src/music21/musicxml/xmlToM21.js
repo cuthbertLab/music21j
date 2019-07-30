@@ -7,7 +7,7 @@ import * as key from '../key.js';
 import * as meter from '../meter.js';
 import * as note from '../note.js';
 import * as pitch from '../pitch.js';
-import { stream } from '../stream.js';
+import * as stream from '../stream.js';
 import * as tie from '../tie.js';
 
 const DEFAULTS = {
