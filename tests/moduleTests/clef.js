@@ -1,5 +1,5 @@
-import * as QUnit from 'qunit';
-import music21 from '../../build/music21.debug.js';
+import * as QUnit from '../../node_modules/qunit/qunit/qunit.js';
+import * as music21 from '../../src/music21_modules.js';
 
 export default function tests() {
     QUnit.test('music21.clef.Clef', assert => {
@@ -10,7 +10,7 @@ export default function tests() {
         assert.equal(ac.lowestLine, 25, 'first line set');
         const n = new music21.note.Note('C#4');
         n.setStemDirectionFromClef(ac);
-        assert.equal(n.stemDirection, 'down', 'stem direction set');
+        assert.equal(n.stemDirection, 'down', 'stem direction set to down');
         n.pitch.diatonicNoteNum -= 1;
         n.setStemDirectionFromClef(ac);
         assert.equal(n.stemDirection, 'up', 'stem direction set');
@@ -37,6 +37,6 @@ export default function tests() {
         const tc2 = music21.clef.clefFromString('treble8va');
         assert.ok(tc2.isClassOrSubclass('Treble8vaClef'), 'tc2 is Treble8vaClef');
         const bc = music21.clef.clefFromString('F4');
-        assert.ok(bc.isClassOrSubclass('BassClef'), 'bc is BassClef');    
+        assert.ok(bc.isClassOrSubclass('BassClef'), 'bc is BassClef');
     });
 }

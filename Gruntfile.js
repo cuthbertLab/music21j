@@ -24,9 +24,10 @@ module.exports = grunt => {
     const TARGET_MIN = path.join(BUILD_DIR, 'music21.min.js');
 
     const SOURCES = ['src/music21_modules.js', 'src/music21/*.js', 'src/music21/*/*.js'];
+    const WATCH_SOURCES = SOURCES.concat(['Gruntfile.js']);
 
     const TEST_ENTRY = path.join(TEST_DIR, 'loadAll.js');
-    const TEST_SOURCES = ['tests/loadAll.js', 'tests/moduleTests/*.js'];
+    const TEST_SOURCES = ['tests/loadAll.js', 'tests/moduleTests/*.js', 'tests/moduleTests/*/*.js'];
     const TARGET_TESTS = path.join(BUILD_DIR, 'music21.tests.js');
 
     const webpackConfig = (target, preset) => {
@@ -72,18 +73,24 @@ module.exports = grunt => {
 
     const webpackCommon = webpackConfig(
         'music21.debug.js',  // TARGET_RAW,
-        '@babel/preset-env'
+        '@babel/preset-env',
     );
-    // console.log(webpackCommon);
+    const webpackTests = webpackConfig(
+        'music21.tests.js',
+        '@babel/preset-env',
+    );
+    webpackTests.entry = './tests/loadAll.js';
+    webpackTests.output.path = TEST_DIR;
+    webpackTests.output.library = 'm21Tests';
+    // webpackTests.cache = true;
 
     // Project configuration.
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
         webpack: {
             build: webpackCommon,
-            watch: Object.assign({}, webpackCommon, {
-                watch: true,
-            }),
+            dev: Object.assign({ watch: true }, webpackCommon),
+            test: webpackTests,
         },
         jsdoc: {
             dist: {
@@ -102,19 +109,19 @@ module.exports = grunt => {
             },
         },
         qunit: {
-            files: ['tests/gruntTest.html'],
+            files: ['tests/gruntTest.html']
         },
         watch: {
             scripts: {
-                files: ['src/*', 'src/music21/*', 'src/music21/*/*.js', 'Gruntfile.js'],
-                tasks: ['rollup', 'eslint'],
+                files: WATCH_SOURCES,
+                tasks: ['webpack:build', 'eslint'],
                 options: {
                     interrupt: true,
                 },
             },
             test: {
-                files: ['tests/*', 'tests/moduleTests/*.js', 'tests/moduleTests/*/*.js'],
-                tasks: ['test'],
+                files: TEST_SOURCES.concat(WATCH_SOURCES),
+                tasks: ['test_no_watch'],
                 options: {
                     interrupt: true,
                 },
@@ -144,7 +151,8 @@ module.exports = grunt => {
 
     // Default task(s).
     grunt.registerTask('default', ['eslint', 'webpack:build']);
-    grunt.registerTask('test', 'Run qunit tests', ['webpack:build', 'qunit']);
+    grunt.registerTask('test', 'Watch qunit tests', ['watch:test']);
+    grunt.registerTask('test_no_watch', 'Watch qunit tests', ['webpack:test', 'qunit']);
     grunt.registerTask('publish', 'Raise the version and publish', () => {
         grunt.task.run('jsdoc');
         grunt.task.run('bump');

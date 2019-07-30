@@ -361,6 +361,8 @@ export class Tuplet extends prebase.ProtoM21Object {
         durationNormal
     ) {
         super();
+        this.numberNotesActual = numberNotesActual;
+        this.numberNotesNormal = numberNotesNormal;
         this.durationActual = durationActual || new Duration(0.5);
         if (typeof this.durationActual === 'number') {
             this.durationActual = new Duration(this.durationActual);

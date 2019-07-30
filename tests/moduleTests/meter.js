@@ -1,5 +1,5 @@
-import * as QUnit from 'qunit';
-import music21 from '../../build/music21.debug.js';
+import * as QUnit from '../../node_modules/qunit/qunit/qunit.js';
+import * as music21 from '../../src/music21_modules.js';
 
 export default function tests() {
     QUnit.test('music21.meter.TimeSignature', assert => {
@@ -22,9 +22,9 @@ export default function tests() {
         const [start, end] = m.offsetToSpan(3.2);
         assert.equal(start, 3.0, 'beat starts at 3');
         assert.equal(end, 4.0, 'beat ends at 4');
-      
+
     });
-    
+
     QUnit.test('music21.meter.TimeSignature compound', assert => {
         const m = new music21.meter.TimeSignature('6/8');
 

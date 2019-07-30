@@ -3,11 +3,23 @@
 <head>
   <meta charset="utf-8">
   <title>Music21 QUnit Tests</title>
-  <link rel="stylesheet" href="qUnit/qunit-2.0.1.css">
+  <link rel="stylesheet" href="../node_modules/qunit/qunit/qunit.css">
 </head>
 <body>
   <div id="qunit"></div>
   <div id="qunit-fixture"></div>
-  <script data-main="tests" src="../ext/require/require.js"></script>
+  <script src="./music21.tests.js"></script>
+  <script>
+  QUnit.config.autoload = false;
+  QUnit.config.autostart = false;
+  for (const testModule in m21Tests.default) {
+      if (typeof m21Tests.default[testModule] === 'function') {
+          const testSuite = m21Tests.default[testModule];
+          testSuite();
+      }
+  }
+  QUnit.load();
+  QUnit.start();
+  </script>
 </body>
 </html>

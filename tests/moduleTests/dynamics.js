@@ -1,5 +1,5 @@
-import * as QUnit from 'qunit';
-import music21 from '../../build/music21.debug.js';
+import * as QUnit from '../../node_modules/qunit/qunit/qunit.js';
+import * as music21 from '../../src/music21_modules.js';
 
 export default function tests() {
     QUnit.test('music21.dynamics.Dynamic', assert => {
@@ -20,12 +20,12 @@ export default function tests() {
         assert.equal(dynamic.value, 'other', 'record non standard dynamic');
         assert.equal(
             dynamic.longName,
-            undefined,
+            '',
             'no long name for non standard dynamic'
         );
         assert.equal(
             dynamic.englishName,
-            undefined,
+            '',
             'no english name for non standard dynamic'
         );
 
@@ -37,12 +37,12 @@ export default function tests() {
         assert.equal(dynamic.value, 'other', 'change to non standard');
         assert.equal(
             dynamic.longName,
-            undefined,
+            '',
             'change to non standard dynamic'
         );
         assert.equal(
             dynamic.englishName,
-            undefined,
+            '',
             'change to non standard dynamic'
         );
     });

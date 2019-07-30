@@ -1,5 +1,5 @@
-import * as QUnit from 'qunit';
-import music21 from '../../build/music21.debug.js';
+import * as QUnit from '../../node_modules/qunit/qunit/qunit.js';
+import * as music21 from '../../src/music21_modules.js';
 
 export default function tests() {
     QUnit.test('music21.duration.Duration 0', assert => {
@@ -33,8 +33,8 @@ export default function tests() {
 
     QUnit.test('music21.duration.Tuplet', assert => {
         const d = new music21.duration.Duration(0.5);
-        const t = new music21.duration.Tuplet(5, 4);        
-        assert.equal(t.tupletMultiplier(), 0.8, 'tuplet multiplier');
+        const t = new music21.duration.Tuplet(5, 4);
+        assert.equal(t.tupletMultiplier(), 0.8, 'tuplet multiplier should be 0.8');
         d.appendTuplet(t);
         assert.equal(t.frozen, true, 'tuplet is frozen');
         assert.equal(d._tuplets[0], t, 'tuplet appended');
