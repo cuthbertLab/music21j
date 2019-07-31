@@ -29,7 +29,7 @@ export const maxMidi = 16;
 
 /**
  *
- * @type {{fn: string, name: string, midiNumber: number}[]}
+ * @type {Array<{fn: string, name: string, midiNumber: number}>}
  */
 export const info = [
     { fn: 'acoustic_grand_piano', name: 'Acoustic Grand Piano', midiNumber: 0 },

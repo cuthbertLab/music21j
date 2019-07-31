@@ -145,7 +145,7 @@ export class KeySignature extends base.Music21Object {
     /**
      * Gives the width in pixels necessary to represent the key signature.
      *
-     * @type {number} width
+     * @type {number}
      * @readonly
      */
     get width() {
@@ -160,7 +160,7 @@ export class KeySignature extends base.Music21Object {
     /**
      * An Array of Altered Pitches in KeySignature order (i.e., for flats, Bb, Eb, etc.)
      *
-     * @type {music21.pitch.Pitch[]} alteredPitches
+     * @type {music21.pitch.Pitch[]}
      * @readonly
      * @example
      * var ks = new music21.key.KeySignature(3)

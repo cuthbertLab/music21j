@@ -103,7 +103,7 @@ export class Sites {
     /**
      *
      * @param {boolean} [newFirst=true]
-     * @returns {*[]}
+     * @returns {Array<*>}
      * @private
      */
     _keysByTime(newFirst=true) {
@@ -221,8 +221,8 @@ export class Sites {
      *
      * @param {boolean} [sortByCreationTime=false]
      * @param {music21.stream.Stream} [priorityTarget]
-     * @param {boolean=false} excludeNone
-     * @returns {(music21.stream.Stream|undefined)[]}
+     * @param {boolean} [excludeNone=false]
+     * @returns {Array<(music21.stream.Stream|undefined)>}
      */
     get(sortByCreationTime=false, priorityTarget, excludeNone=false) {
         const post = Array.from(

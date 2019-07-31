@@ -11,6 +11,7 @@
  *
  * Duration module. See {@link music21.duration}
  *
+ * @module music21/duration
  * @namespace music21.duration
  * @memberof music21
  * @requires music21/common
@@ -345,7 +346,6 @@ export class Duration extends prebase.ProtoM21Object {
 /**
  * Represents a Tuplet; found in {@link music21.duration.Duration#tuplets}
  *
- * @class Tuplet
  * @memberof music21.duration
  * @extends music21.prebase.ProtoM21Object
  * @param {number} [numberNotesActual=3] - numerator of the tuplet

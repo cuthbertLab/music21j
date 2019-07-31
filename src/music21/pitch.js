@@ -164,7 +164,7 @@ export class Accidental extends prebase.ProtoM21Object {
      *
      * When set, updates alter and modifier.
      *
-     * @type {string} name
+     * @type {string}
      */
     get name() {
         return this._name;
@@ -179,7 +179,7 @@ export class Accidental extends prebase.ProtoM21Object {
      *
      * When set, updates name and modifier.
      *
-     * @type {number} alter
+     * @type {number}
      */
     get alter() {
         return this._alter;
@@ -194,7 +194,7 @@ export class Accidental extends prebase.ProtoM21Object {
      *
      * When set, updates alter and name.
      *
-     * @type {string} modifier
+     * @type {string}
      */
     get modifier() {
         return this._modifier;
@@ -207,7 +207,7 @@ export class Accidental extends prebase.ProtoM21Object {
     /**
      * Returns the modifier for vexflow ('b', '#', 'n')
      *
-     * @type {string} vexflowModifier
+     * @type {string}
      * @readonly
      */
     get vexflowModifier() {
@@ -236,7 +236,7 @@ export class Accidental extends prebase.ProtoM21Object {
      * Returns the modifier in unicode or
      * for double and triple accidentals, as a hex escape
      *
-     * @type {string} unicodeModifier
+     * @type {string}
      * @readonly
      */
     get unicodeModifier() {

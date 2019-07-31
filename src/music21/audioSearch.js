@@ -21,17 +21,17 @@ import * as common from './common.js';
  * @type {
  *     {
  *     _audioContext: null,
- *     lastCentsDeviationsDetected: [],
+ *     lastCentsDeviationsDetected: Array<number>,
  *     sampleBuffer: (Float32Array|null),
  *     maxFrequency: number,
- *     lastPitchesDetected: [],
+ *     lastPitchesDetected: number[],
  *     fftSize: number,
  *     animationFrameCallbackId: number,
  *     AudioContextCaller: *,
  *     currentAnalyser: null,
  *     pitchSmoothingSize: number,
  *     minFrequency: number,
- *     lastPitchClassesDetected: []
+ *     lastPitchClassesDetected: number[]
  *     }
  * }
  */

@@ -86,7 +86,7 @@ import * as miditools from './miditools.js';
  *     selectedOutputPort: *,
  *     storedPlugin: *,
  *     selectedJazzInterface: *,
- *     $select: [jQuery]
+ *     $select: jQuery|undefined
  *     }
  * }
  */

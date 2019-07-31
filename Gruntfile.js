@@ -94,11 +94,12 @@ module.exports = grunt => {
         },
         jsdoc: {
             dist: {
-                src: ['src/*.js', 'src/music21/*.js', 'src/music21/*/*.js', 'README.md'],
+                src: ['src/music21_modules.js', 'src/music21/*.js', 'src/music21/*/*.js', 'README.md'],
                 options: {
                     destination: DOC_DIR,
                     template: 'jsdoc-template',
                     configure: 'jsdoc-template/jsdoc.conf.json',
+                    // that json document has most of the config options
                 },
             },
         },

@@ -1,4 +1,8 @@
 /**
+ * Scale module. See {@link music21.scale} namespace
+ * @module music21/scale
+ */
+/**
  * music21j -- Javascript reimplementation of Core music21p features.
  * music21/scale -- Scales
  *
@@ -7,6 +11,16 @@
  * Copyright (c) 2013-17, Michael Scott Cuthbert and cuthbertLab
  * Based on music21 (=music21p), Copyright (c) 2006–17, Michael Scott Cuthbert and cuthbertLab
  *
+ *
+ *
+ * Scale namespace.  Right now only supports very simple scales.
+ *
+ * @namespace music21.scale
+ * @requires music21.base
+ * @requires music21.common
+ * @requires music21.debug
+ * @requires music21.interval
+ * @requires music21.pitch
  */
 import { Music21Exception } from './exceptions21.js';
 import { debug } from './debug.js';
@@ -20,43 +34,45 @@ import * as pitch from './pitch.js';
 // const DIRECTION_DESCENDING = 'descending';
 // const DIRECTION_ASCENDING = 'ascending';
 
+export
 /**
- * Scale module. See {@link music21.scale} namespace
+ * A generalized Scale object.
  *
- * @exports music21/scale
- */
-/**
- * Scale namespace.  Right now only supports very simple scales.
- *
- * @namespace music21.scale
+ * @memberOf music21.scale
  * @extends music21.base.Music21Object
- * @memberof music21
- * @requires music21/base
- * @requires music21/common
- * @requires music21/debug
- * @requires music21/interval
- * @requires music21/pitch
  */
-export class Scale extends base.Music21Object {
+class Scale extends base.Music21Object {
     constructor() {
         super();
         this.type = 'Scale';
     }
 
+    /**
+     *
+     * @returns {string}
+     * @readonly
+     */
     get name() {
         return this.type;
     }
 
+    /**
+     * @readonly
+     * @returns {boolean}
+     */
     get isConcrete() {
         return false;
     }
 }
 
+export
 /**
- * @extends music21.scale.Scale
+ * An Abstract Scale
  *
+ * @memberOf music21.scale
+ * @extends music21.scale.Scale
  */
-export class AbstractScale extends Scale {
+class AbstractScale extends Scale {
     constructor() {
         super();
         this._net = []; // simplified -- no IntervalNetwork, just list of intervals
@@ -67,6 +83,12 @@ export class AbstractScale extends Scale {
         this._oneOctaveRealizationCache = undefined;
     }
 
+    /**
+     * One scale equals another
+     *
+     * @param {music21.scale.AbstractScale} other - the scale compared to.
+     * @returns {boolean}
+     */
     equals(other) {
         if (
             common.arrayEquals(this.classes, other.classes)
@@ -192,6 +214,7 @@ export class AbstractScale extends Scale {
 }
 
 /**
+ * @memberOf music21.scale
  * @extends music21.scale.AbstractScale
  *
  */
@@ -236,6 +259,7 @@ export class AbstractDiatonicScale extends AbstractScale {
 }
 
 /**
+ * @memberOf music21.scale
  * @extends music21.scale.AbstractScale
  *
  */
@@ -259,6 +283,7 @@ export class AbstractHarmonicMinorScale extends AbstractScale {
 // temporary, until bidirectional scales are created
 // no need for descending, since minor takes care of that.
 /**
+ * @memberOf music21.scale
  * @extends music21.scale.AbstractScale
  */
 export class AbstractAscendingMelodicMinorScale extends AbstractScale {
@@ -279,6 +304,7 @@ export class AbstractAscendingMelodicMinorScale extends AbstractScale {
 }
 
 /**
+ * @memberOf music21.scale
  * @extends music21.scale.Scale
  */
 export class ConcreteScale extends Scale {
@@ -352,6 +378,7 @@ export class ConcreteScale extends Scale {
 }
 
 /**
+ * @memberOf music21.scale
  * @extends music21.scale.ConcreteScale
  */
 export class DiatonicScale extends ConcreteScale {
@@ -363,6 +390,7 @@ export class DiatonicScale extends ConcreteScale {
 }
 
 /**
+ * @memberOf music21.scale
  * @extends music21.scale.DiatonicScale
  */
 export class MajorScale extends DiatonicScale {
@@ -375,6 +403,7 @@ export class MajorScale extends DiatonicScale {
 
 
 /**
+ * @memberOf music21.scale
  * @extends music21.scale.DiatonicScale
  */
 export class MinorScale extends DiatonicScale {
@@ -386,6 +415,7 @@ export class MinorScale extends DiatonicScale {
 }
 
 /**
+ * @memberOf music21.scale
  * @extends music21.scale.ConcreteScale
  */
 export class HarmonicMinorScale extends ConcreteScale {
@@ -397,6 +427,7 @@ export class HarmonicMinorScale extends ConcreteScale {
 }
 
 /**
+ * @memberOf music21.scale
  * @extends music21.scale.ConcreteScale
  */
 export class AscendingMelodicMinorScale extends ConcreteScale {
@@ -410,6 +441,7 @@ export class AscendingMelodicMinorScale extends ConcreteScale {
 /**
  * Function, not class
  *
+ * @memberOf music21.scale
  * @function music21.scale.SimpleDiatonicScale
  * @param {music21.pitch.Pitch} [tonic]
  * @param {Array<string>} scaleSteps - an array of diatonic prefixes,
@@ -452,6 +484,7 @@ export function SimpleDiatonicScale(tonic, scaleSteps) {
 /**
  * One octave of a major scale
  *
+ * @memberOf music21.scale
  * @function music21.scale.ScaleSimpleMajor
  * @param {music21.pitch.Pitch} tonic
  * @returns {Array<music21.pitch.Pitch>} an octave of scale objects.
@@ -464,6 +497,7 @@ export function ScaleSimpleMajor(tonic) {
 /**
  * One octave of a minor scale
  *
+ * @memberOf music21.scale
  * @function music21.scale.ScaleSimpleMinor
  * @param {music21.pitch.Pitch} tonic
  * @param {string} [minorType='natural'] - 'harmonic', 'harmonic-minor',
