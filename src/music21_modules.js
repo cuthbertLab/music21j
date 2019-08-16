@@ -23,11 +23,8 @@
  * @exports music21
  */
 
-
 // webpack loader for music21j.
-import 'es6-shim';
-import '@babel/polyfill';
-
+import 'regenerator-runtime/runtime';
 import * as MIDI from 'midicube';  // to be removed when export * from is okay.
 import * as $ from 'jquery';
 import 'jquery-ui-bundle';
