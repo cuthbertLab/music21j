@@ -1529,10 +1529,10 @@ export class Stream extends base.Music21Object {
         }
         const lastOctaveStepList = [];
         for (let i = 0; i < 10; i++) {
-            const tempOctaveStepDict = {...extendableStepList};  // clone
+            const tempOctaveStepDict = Object.assign({}, extendableStepList);  // clone
             lastOctaveStepList.push(tempOctaveStepDict);
         }
-        const lastOctavelessStepDict = {...extendableStepList};  // probably unnecessary, but safe...
+        const lastOctavelessStepDict = Object.assign({}, extendableStepList);  // probably unnecessary, but safe...
 
         for (const el of this) {
             if (el.pitch !== undefined) {
