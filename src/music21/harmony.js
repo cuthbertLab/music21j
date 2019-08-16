@@ -10,6 +10,8 @@ import * as key from './key.js';
  * @extends music21.chord.Chord
  */
 export class Harmony extends chord.Chord {
+    static get className() { return 'music21.harmony.Harmony'; }
+
     constructor(figure, keywords) {
         if (keywords === undefined) {
             keywords = {};

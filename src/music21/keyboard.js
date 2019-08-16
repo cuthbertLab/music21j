@@ -258,8 +258,8 @@ export class BlackKey extends Key {
  * @property {Boolean} markC - default true
  * @property {Boolean} showNames - default false
  * @property {Boolean} showOctaves - default false
- * @property {string} startPitch - default "C3"
- * @property {string} endPitch - default "C5"
+ * @property {string|number} startPitch - default "C3" (a pitch string or midi number)
+ * @property {string|number} endPitch - default "C5" (a pitch string or midi number)
  * @property {Boolean} hideable - default false -- add a way to hide and show keyboard
  * @property {Boolean} scrollable - default false -- add scroll bars to change octave
  */

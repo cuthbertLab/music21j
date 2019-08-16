@@ -28,6 +28,8 @@ import * as common from './common.js';
  * @extends music21.prebase.ProtoM21Object
  */
 export class Accidental extends prebase.ProtoM21Object {
+    static get className() { return 'music21.pitch.Accidental'; }
+
     constructor(accName) {
         super();
         this._name = '';
@@ -313,6 +315,8 @@ export const midiToName = [
  * @property {string} step - letter name for the pitch (C-G, A, B), without accidental; default 'C'
  */
 export class Pitch extends prebase.ProtoM21Object {
+    static get className() { return 'music21.pitch.Pitch'; }
+
     constructor(pn='C') {
         super();
         this._step = 'C';

@@ -41,6 +41,8 @@ const VALID_TIE_TYPES = ['start', 'stop', 'continue', 'let-ring', 'continue-let-
  * (NB currently does nothing)
  */
 export class Tie extends prebase.ProtoM21Object {
+    static get className() { return 'music21.tie.Tie'; }
+
     constructor(type='start') {
         super();
         this._type = undefined;

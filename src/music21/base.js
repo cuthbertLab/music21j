@@ -40,6 +40,8 @@ import * as sites from './sites.js';
  * @property {number} priority - The priority (lower = earlier or more left) for elements at the same offset. (default 0)
  */
 export class Music21Object extends prebase.ProtoM21Object {
+    static get className() { return 'music21.base.Music21Object'; }
+
     constructor(keywords) {
         super(keywords);
         this.classSortOrder = 20; // default;

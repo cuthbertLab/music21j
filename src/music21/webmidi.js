@@ -326,7 +326,7 @@ export function createSelector(midiSelectDiv, options) {
      * @type {jQuery}
      */
     let $midiSelectDiv;
-    if (typeof $midiSelectDiv === 'undefined') {
+    if (typeof midiSelectDiv === 'undefined') {
         $midiSelectDiv = $('body');
     } else if (!(midiSelectDiv instanceof $)) {
         $midiSelectDiv = $(midiSelectDiv);

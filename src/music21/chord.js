@@ -39,6 +39,8 @@ export { chordTables };
  * @property {Boolean} [isRest=false]
  */
 export class Chord extends note.NotRest {
+    static get className() { return 'music21.chord.Chord'; }
+
     constructor(notes) {
         super();
         if (typeof notes === 'undefined') {
@@ -278,7 +280,7 @@ export class Chord extends note.NotRest {
     /**
      * Adds a note to the chord, sorting the note array
      *
-     * @param {string|string[]|music21.note.Note[]|music21.pitch.Pitch[]} notes - the Note or Pitch to be added or a string defining a pitch.
+     * @param {string|string[]|music21.note.Note|music21.pitch.Pitch|music21.note.Note[]|music21.pitch.Pitch[]} notes - the Note or Pitch to be added or a string defining a pitch.
      * @param {boolean} runSort - Sort after running (default true)
      * @returns {music21.chord.Chord} the original chord.
      */

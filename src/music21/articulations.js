@@ -26,6 +26,8 @@ import * as prebase from './prebase.js';
  * @property {number} [lengthScale=1.0] - multiplier for the length of a note that this is attached to.
  */
 export class Articulation extends prebase.ProtoM21Object {
+    static get className() { return 'music21.articulation.Articulation'; }
+
     constructor() {
         super();
         this.name = undefined;
@@ -58,6 +60,8 @@ export class Articulation extends prebase.ProtoM21Object {
  * @extends music21.articulations.Articulation
  */
 export class LengthArticulation extends Articulation {
+    static get className() { return 'music21.articulation.LengthArticulation'; }
+
     constructor() {
         super();
         this.name = 'length-articulation';
@@ -72,6 +76,8 @@ export class LengthArticulation extends Articulation {
  * @extends music21.articulations.Articulation
  */
 export class DynamicArticulation extends Articulation {
+    static get className() { return 'music21.articulation.DynamicArticulation'; }
+
     constructor() {
         super();
         this.name = 'dynamic-articulation';
@@ -86,6 +92,8 @@ export class DynamicArticulation extends Articulation {
  * @extends music21.articulations.Articulation
  */
 export class PitchArticulation extends Articulation {
+    static get className() { return 'music21.articulation.PitchArticulation'; }
+
     constructor() {
         super();
         this.name = 'pitch-articulation';
@@ -100,6 +108,8 @@ export class PitchArticulation extends Articulation {
  * @extends music21.articulations.Articulation
  */
 export class TimbreArticulation extends Articulation {
+    static get className() { return 'music21.articulation.TimbreArticulation'; }
+
     constructor() {
         super();
         this.name = 'timbre-articulation';
@@ -114,6 +124,8 @@ export class TimbreArticulation extends Articulation {
  * @extends music21.articulations.DynamicArticulation
  */
 export class Accent extends DynamicArticulation {
+    static get className() { return 'music21.articulation.Accent'; }
+
     constructor() {
         super();
         this.name = 'accent';
@@ -130,6 +142,8 @@ export class Accent extends DynamicArticulation {
  * @extends music21.articulations.Accent
  */
 export class StrongAccent extends Accent {
+    static get className() { return 'music21.articulation.StrongAccent'; }
+
     constructor() {
         super();
         this.name = 'strong accent';
@@ -146,6 +160,8 @@ export class StrongAccent extends Accent {
  * @extends music21.articulations.LengthArticulation
  */
 export class Staccato extends LengthArticulation {
+    static get className() { return 'music21.articulation.Staccato'; }
+
     constructor() {
         super();
         this.name = 'staccato';
@@ -161,6 +177,8 @@ export class Staccato extends LengthArticulation {
  * @extends music21.articulations.Staccato
  */
 export class Staccatissimo extends Staccato {
+    static get className() { return 'music21.articulation.Staccatissimo'; }
+
     constructor() {
         super();
         this.name = 'staccatissimo';
@@ -176,6 +194,8 @@ export class Staccatissimo extends Staccato {
  * @extends music21.articulations.Staccato
  */
 export class Spiccato extends Staccato {
+    static get className() { return 'music21.articulation.Spiccato'; }
+
     constructor() {
         super();
         this.name = 'spiccato';
@@ -190,6 +210,8 @@ export class Spiccato extends Staccato {
  * @extends music21.articulations.LengthArticulation
  */
 export class Marcato extends DynamicArticulation {
+    static get className() { return 'music21.articulation.Marcato'; }
+
     constructor() {
         super();
         common.mixin(LengthArticulation, this);
@@ -205,6 +227,8 @@ export class Marcato extends DynamicArticulation {
  * @extends music21.articulations.LengthArticulation
  */
 export class Tenuto extends LengthArticulation {
+    static get className() { return 'music21.articulation.Tenuto'; }
+
     constructor() {
         super();
         this.name = 'tenuto';

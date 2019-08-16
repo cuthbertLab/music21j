@@ -80,6 +80,8 @@ export const nameToSign = {
  * @property {int} octaveChange
  */
 export class Clef extends base.Music21Object {
+    static get className() { return 'music21.clef.Clef'; }
+
     constructor(name, octaveChange) {
         super();
         this.classSortOrder = 0;
@@ -144,6 +146,8 @@ export class Clef extends base.Music21Object {
  * @extends music21.clef.Clef
  */
 export class TrebleClef extends Clef {
+    static get className() { return 'music21.clef.TrebleClef'; }
+
     constructor() {
         super('treble');
         this.sign = 'G';
@@ -161,6 +165,8 @@ export class TrebleClef extends Clef {
  * @extends music21.clef.Clef
  */
 export class Treble8vbClef extends Clef {
+    static get className() { return 'music21.clef.Treble8vbClef'; }
+
     constructor() {
         super('treble', -1);
     }
@@ -174,6 +180,8 @@ export class Treble8vbClef extends Clef {
  * @extends music21.clef.Clef
  */
 export class Treble8vaClef extends Clef {
+    static get className() { return 'music21.clef.Treble8vaClef'; }
+
     constructor() {
         super('treble', 1);
     }
@@ -187,6 +195,8 @@ export class Treble8vaClef extends Clef {
  * @extends music21.clef.Clef
  */
 export class BassClef extends Clef {
+    static get className() { return 'music21.clef.BassClef'; }
+
     constructor() {
         super('bass');
         this.sign = 'F';
@@ -202,6 +212,8 @@ export class BassClef extends Clef {
  * @extends music21.clef.Clef
  */
 export class Bass8vbClef extends Clef {
+    static get className() { return 'music21.clef.Bass8vbClef'; }
+
     constructor() {
         super('bass', -1);
         this.sign = 'F';
@@ -217,6 +229,8 @@ export class Bass8vbClef extends Clef {
  * @extends music21.clef.Clef
  */
 export class AltoClef extends Clef {
+    static get className() { return 'music21.clef.AltoClef'; }
+
     constructor() {
         super('alto');
         this.sign = 'C';
@@ -232,6 +246,8 @@ export class AltoClef extends Clef {
  * @extends music21.clef.Clef
  */
 export class TenorClef extends Clef {
+    static get className() { return 'music21.clef.TenorClef'; }
+
     constructor() {
         super('tenor');
         this.sign = 'C';
@@ -247,6 +263,8 @@ export class TenorClef extends Clef {
  * @extends music21.clef.Clef
  */
 export class SopranoClef extends Clef {
+    static get className() { return 'music21.clef.SopranoClef'; }
+
     constructor() {
         super('soprano');
         this.sign = 'C';
@@ -262,6 +280,8 @@ export class SopranoClef extends Clef {
  * @extends music21.clef.Clef
  */
 export class MezzoSopranoClef extends Clef {
+    static get className() { return 'music21.clef.MezzoSopranoClef'; }
+
     constructor() {
         super('mezzo-soprano');
         this.sign = 'C';
@@ -279,6 +299,8 @@ export class MezzoSopranoClef extends Clef {
  * @extends music21.clef.Clef
  */
 export class PercussionClef extends Clef {
+    static get className() { return 'music21.clef.PercussionClef'; }
+
     constructor() {
         super('percussion');
         this.sign = 'percussion';

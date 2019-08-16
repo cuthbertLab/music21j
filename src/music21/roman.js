@@ -217,6 +217,8 @@ export const romanToNumber = [undefined, 'i', 'ii', 'iii', 'iv', 'v', 'vi', 'vii
  * @property {Array<music21.pitch.Pitch>} pitches - RomanNumerals are Chord objects, so .pitches will work for them also.
  */
 export class RomanNumeral extends harmony.Harmony {
+    static get className() { return 'music21.roman.RomanNumeral'; }
+
     constructor(figure='', keyStr, keywords) {
         const params = { updatePitches: false, parseFigure: false };
         common.merge(params, keywords);

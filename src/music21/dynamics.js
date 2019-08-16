@@ -95,6 +95,8 @@ export const dynamicStrToScalar = {
  * @property {number} volumeScalar - a number between 0 and 1.
  */
 export class Dynamic extends base.Music21Object {
+    static get className() { return 'music21.dynamics.Dynamic'; }
+
     constructor(value) {
         super();
         /**

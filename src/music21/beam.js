@@ -46,6 +46,8 @@ export const beamableDurationTypes = [
  * @property {number|undefined} independentAngle - the angle of this beam if it is different than others (feathered beams)
  */
 export class Beam extends prebase.ProtoM21Object {
+    static get className() { return 'music21.beam.Beam'; }
+
     constructor(type, direction) {
         super();
         this.type = type;
@@ -66,6 +68,8 @@ export class Beam extends prebase.ProtoM21Object {
  * @property {int} length - length of beamsList
  */
 export class Beams extends prebase.ProtoM21Object {
+    static get className() { return 'music21.beam.Beams'; }
+
     static naiveBeams(srcList) {
         const beamsList = [];
         for (const el of srcList) {

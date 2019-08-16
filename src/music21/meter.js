@@ -37,6 +37,8 @@ import * as duration from './duration.js';
  * @property {music21.duration.Duration} barDuration - a Duration object representing the expressed total length of the TimeSignature.
  */
 export class TimeSignature extends base.Music21Object {
+    static get className() { return 'music21.meter.TimeSignature'; }
+
     constructor(meterString) {
         super();
         this.classSortOrder = 4;

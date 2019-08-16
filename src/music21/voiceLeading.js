@@ -30,6 +30,8 @@ export const MotionType = {
  * @extends music21.base.Music21Object
  */
 export class VoiceLeadingQuartet extends Music21Object {
+    static get className() { return 'music21.voiceLeading.VoiceLeadingQuartet'; }
+
     constructor(v1n1, v1n2, v2n1, v2n2, analyticKey) {
         super();
         if (!intervalCache.length) {

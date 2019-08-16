@@ -42,6 +42,8 @@ export
  * @extends music21.base.Music21Object
  */
 class Scale extends base.Music21Object {
+    static get className() { return 'music21.scale.Scale'; }
+
     constructor() {
         super();
         this.type = 'Scale';
@@ -73,6 +75,8 @@ export
  * @extends music21.scale.Scale
  */
 class AbstractScale extends Scale {
+    static get className() { return 'music21.scale.AbstractScale'; }
+
     constructor() {
         super();
         this._net = []; // simplified -- no IntervalNetwork, just list of intervals
@@ -219,6 +223,8 @@ class AbstractScale extends Scale {
  *
  */
 export class AbstractDiatonicScale extends AbstractScale {
+    static get className() { return 'music21.scale.AbstractDiatonicScale'; }
+
     /**
      *
      * @param {string} [mode]
@@ -264,6 +270,8 @@ export class AbstractDiatonicScale extends AbstractScale {
  *
  */
 export class AbstractHarmonicMinorScale extends AbstractScale {
+    static get className() { return 'music21.scale.AbstractHarmonicMinorScale'; }
+
     constructor() {
         super();
         this.type = 'Abstract harmonic minor';
@@ -287,6 +295,8 @@ export class AbstractHarmonicMinorScale extends AbstractScale {
  * @extends music21.scale.AbstractScale
  */
 export class AbstractAscendingMelodicMinorScale extends AbstractScale {
+    static get className() { return 'music21.scale.AbstractAscendingMelodicMinorScale'; }
+
     constructor() {
         super();
         this.type = 'Abstract ascending melodic minor';
@@ -308,6 +318,8 @@ export class AbstractAscendingMelodicMinorScale extends AbstractScale {
  * @extends music21.scale.Scale
  */
 export class ConcreteScale extends Scale {
+    static get className() { return 'music21.scale.ConcreteScale'; }
+
     constructor(tonic) {
         super();
         if (typeof tonic === 'string') {
@@ -382,6 +394,8 @@ export class ConcreteScale extends Scale {
  * @extends music21.scale.ConcreteScale
  */
 export class DiatonicScale extends ConcreteScale {
+    static get className() { return 'music21.scale.DiatonicScale'; }
+
     constructor(tonic) {
         super(tonic); // a.k.a. ^2 :-)
         this.abstract = new AbstractDiatonicScale();
@@ -394,6 +408,8 @@ export class DiatonicScale extends ConcreteScale {
  * @extends music21.scale.DiatonicScale
  */
 export class MajorScale extends DiatonicScale {
+    static get className() { return 'music21.scale.MajorScale'; }
+
     constructor(tonic) {
         super(tonic); // a.k.a. ^2 :-)
         this.type = 'major';
@@ -407,6 +423,8 @@ export class MajorScale extends DiatonicScale {
  * @extends music21.scale.DiatonicScale
  */
 export class MinorScale extends DiatonicScale {
+    static get className() { return 'music21.scale.MinorScale'; }
+
     constructor(tonic) {
         super(tonic); // a.k.a. ^2 :-)
         this.type = 'minor';
@@ -419,6 +437,8 @@ export class MinorScale extends DiatonicScale {
  * @extends music21.scale.ConcreteScale
  */
 export class HarmonicMinorScale extends ConcreteScale {
+    static get className() { return 'music21.scale.HarmonicMinorScale'; }
+
     constructor(tonic) {
         super(tonic); // a.k.a. ^2 :-)
         this.type = 'harmonic minor';
@@ -431,6 +451,8 @@ export class HarmonicMinorScale extends ConcreteScale {
  * @extends music21.scale.ConcreteScale
  */
 export class AscendingMelodicMinorScale extends ConcreteScale {
+    static get className() { return 'music21.scale.AscendingMelodicMinorScale'; }
+
     constructor(tonic) {
         super(tonic); // a.k.a. ^2 :-)
         this.type = 'harmonic minor';

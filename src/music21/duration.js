@@ -97,6 +97,8 @@ export const vexflowDurationArray = [
  * @param {(number|undefined)} ql - quarterLength (default 1.0)
  */
 export class Duration extends prebase.ProtoM21Object {
+    static get className() { return 'music21.duration.Duration'; }
+
     constructor(ql) {
         super();
         this.isGrace = false;
@@ -354,6 +356,8 @@ export class Duration extends prebase.ProtoM21Object {
  * @param {(music21.duration.Duration|number)} [durationNormal] - unused; see music21p for description
  */
 export class Tuplet extends prebase.ProtoM21Object {
+    static get className() { return 'music21.duration.Tuplet'; }
+
     constructor(
         numberNotesActual=3,
         numberNotesNormal=2,

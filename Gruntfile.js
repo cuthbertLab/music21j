@@ -73,11 +73,27 @@ module.exports = grunt => {
 
     const webpackCommon = webpackConfig(
         'music21.debug.js',  // TARGET_RAW,
-        '@babel/preset-env',
+        ['@babel/preset-env', { 
+		debug: true,
+		modules: false,
+		targets: {
+		    browsers: [
+			       'last 4 years',
+			       'not < 0.04% in US',
+			       'not firefox < 39',
+			       'not safari < 10',
+			       'not ios <= 10',
+			       'not samsung <= 4',
+			       'not ie <= 12', // all versions -- edge is separate
+			       ],
+		},
+		useBuiltIns: 'usage',
+		corejs: 3, 
+         }],
     );
     const webpackTests = webpackConfig(
         'music21.tests.js',
-        '@babel/preset-env',
+        ['@babel/preset-env'],
     );
     webpackTests.entry = './tests/loadAll.js';
     webpackTests.output.path = TEST_DIR;

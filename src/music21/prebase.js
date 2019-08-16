@@ -15,11 +15,16 @@
  *
  * @class ProtoM21Object
  * @memberof music21.prebase
- * @property {Array<string>} classes - An Array of strings of classes that the object belongs to (default ['ProtoM21Object'])
- * @property {Boolean} isProtoM21Object - Does this object descend from {@link music21.prebase.ProtoM21Object}: obviously true.
- * @property {Boolean} isMusic21Object - Does this object descend from {@link music21.base.Music21Object}; default false.
+ * @property {Array<string>} classes - An Array of strings of classes
+ * that the object belongs to (default ['ProtoM21Object'])
+ * @property {Boolean} isProtoM21Object - Does this object descend
+ * from {@link music21.prebase.ProtoM21Object}: obviously true.
+ * @property {Boolean} isMusic21Object - Does this object descend
+ * from {@link music21.base.Music21Object}; default false.
  */
 export class ProtoM21Object {
+    static get className() { return 'music21.prebase.ProtoM21Object'; }
+
     constructor() {
         /**
          *
@@ -27,19 +32,51 @@ export class ProtoM21Object {
          * @private
          */
         this._storedClasses = undefined;
+        /**
+         *
+         * @type {Set<*>|undefined}
+         * @private
+         */
+        this._storedClassSet = undefined;
         this.isProtoM21Object = true;
         this.isMusic21Object = false;
         this._cloneCallbacks = {};
     }
 
     /**
+     * @type {Set<*>}
+     * @readonly
+     */
+    get classSet() {
+        if (this._storedClassSet !== undefined) {
+            return this._storedClassSet;
+        }
+        this._populateClassCaches();
+        return this._storedClassSet;
+    }
+
+    /**
+     * Gets all classes.  Note that because of webpack mangling of class names,
+     * we need to specify `className` as a static property on each class.
      *
      * @returns {string[]}
+     * @readonly
      */
     get classes() {
         if (this._storedClasses !== undefined) {
             return this._storedClasses;
         }
+        this._populateClassCaches();
+        return this._storedClasses;
+    }
+
+    /**
+     * Populates the class caches (.classes and .classSet)
+     *
+     * @private
+     */
+    _populateClassCaches() {
+        const classSet = new Set();
         const classList = [];
         let thisConstructor = this.constructor;
         let maxLinks = 20;
@@ -48,15 +85,20 @@ export class ProtoM21Object {
             && maxLinks
         ) {
             maxLinks -= 1;
-            if (thisConstructor.name === '') {
+            const constructorName = thisConstructor.className;
+            if (constructorName === undefined || constructorName === '') {
                 break;
             }
-            classList.push(thisConstructor.name);
+            const constructorNameShort = constructorName.slice(constructorName.lastIndexOf('.') + 1);
+            classList.push(constructorNameShort);
+            classSet.add(thisConstructor);
+            classSet.add(constructorName);
+            classSet.add(constructorNameShort);
             thisConstructor = Object.getPrototypeOf(thisConstructor);
         }
         classList.push('object');
         this._storedClasses = classList;
-        return classList;
+        this._storedClassSet = classSet;
     }
 
     /**
@@ -150,15 +192,17 @@ export class ProtoM21Object {
      * @example
      * var n = new music21.note.Note();
      * n.isClassOrSubclass('Note'); // true
-     * n.isClassOrSubclass('Music21Object'); // true
+     * n.isClassOrSubclass('music21.base.Music21Object'); // true
+     * n.isClassOrSubclass(music21.note.GeneralNote); // true
+     * n.isClassOrSubclass(['Note', 'Rest']); // true
      * n.isClassOrSubclass(['Duration', 'NotRest']); // true // NotRest
      */
     isClassOrSubclass(testClass) {
         if (!(testClass instanceof Array)) {
             testClass = [testClass];
         }
-        for (let i = 0; i < testClass.length; i++) {
-            if (this.classes.includes(testClass[i])) {
+        for (const thisTestClass of testClass) {
+            if (this.classSet.has(thisTestClass)) {
                 return true;
             }
         }

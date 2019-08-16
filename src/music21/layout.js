@@ -129,6 +129,8 @@ export function makeLayoutFromScore(
  * @property {number|undefined} height
  */
 export class LayoutScore extends stream.Score {
+    static get className() { return 'music21.layout.LayoutScore'; }
+
     constructor() {
         super();
         this.scoreLayout = undefined;
@@ -183,6 +185,8 @@ export class LayoutScore extends stream.Score {
  * @property {number|undefined} systemEnd
  */
 export class Page extends stream.Score {
+    static get className() { return 'music21.layout.Page'; }
+
     constructor() {
         super();
         this.pageNumber = 1;
@@ -218,6 +222,8 @@ export class Page extends stream.Score {
  * @property {number|undefined} left
  */
 export class System extends stream.Score {
+    static get className() { return 'music21.layout.System'; }
+
     constructor() {
         super();
         this.systemNumber = 1;
@@ -255,6 +261,8 @@ export class System extends stream.Score {
  *
  */
 export class Staff extends stream.Part {
+    static get className() { return 'music21.layout.Staff'; }
+
     constructor() {
         super();
         this.staffNumber = 1;

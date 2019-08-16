@@ -21,7 +21,6 @@ import * as common from './common.js';
  *
  * Found on every Stream as `.renderOptions`
  *
- * @class RenderOptions
  * @memberof music21.renderOptions
  */
 export class RenderOptions {

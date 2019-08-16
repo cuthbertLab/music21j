@@ -282,14 +282,8 @@ export class Sites {
                 true // excludeNone
             )
         );
-        const classNameIsStr = typeof className === 'string';
         for (const obj of objs) {
-            if (classNameIsStr) {
-                if (obj.classes.includes(className)) {
-                    post = obj;
-                    break;
-                }
-            } else if (obj instanceof className) {
+            if (obj.isClassOrSubclass(className)) {
                 post = obj;
                 break;
             }

@@ -218,6 +218,8 @@ export const info = [
  * @property {string|undefined} mp3Soundfont - url of mp3Soundfont for this instrument
  */
 export class Instrument extends base.Music21Object {
+    static get className() { return 'music21.instrument.Instrument'; }
+
     constructor(instrumentName) {
         super();
         this.classSortOrder = -25;

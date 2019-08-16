@@ -22,6 +22,8 @@ import * as base from './base.js';
  * @property {int} setPosition
  */
 export class Expression extends base.Music21Object {
+    static get className() { return 'music21.expressions.Expression'; }
+
     constructor() {
         super();
         this.name = 'expression';
@@ -53,6 +55,8 @@ export class Expression extends base.Music21Object {
  * @extends music21.expressions.Expression
  */
 export class Fermata extends Expression {
+    static get className() { return 'music21.expressions.Fermata'; }
+
     constructor() {
         super();
         this.name = 'fermata';

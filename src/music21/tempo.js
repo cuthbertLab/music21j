@@ -87,6 +87,8 @@ export const baseTempo = 60;
  * @property {int} chirpTimeout - an index of a timeout object for chirping
  */
 export class Metronome extends prebase.ProtoM21Object {
+    static get className() { return 'music21.tempo.Metronome'; }
+
     constructor(tempoInt) {
         super();
         this._tempo = 60; // overridden by music21.tempo.baseTempo;

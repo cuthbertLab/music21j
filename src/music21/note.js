@@ -95,6 +95,8 @@ export const stemDirectionNames = [
  * @property {string} rawText - text + any connectors
  */
 export class Lyric extends prebase.ProtoM21Object {
+    static get className() { return 'music21.note.Lyric'; }
+
     constructor(text, number = 1, syllabic, applyRaw, identifier) {
         super();
         this.lyricConnector = '-'; // override to place something else between two notes...
@@ -209,6 +211,8 @@ export class Lyric extends prebase.ProtoM21Object {
  * @property {music21.tie.Tie|undefined} [tie=undefined] - a tie object
  */
 export class GeneralNote extends base.Music21Object {
+    static get className() { return 'music21.note.GeneralNote'; }
+
     constructor(ql) {
         super();
         this.isChord = false;
@@ -450,6 +454,8 @@ export class GeneralNote extends base.Music21Object {
  * @property {string|undefined} [stemDirection=undefined] - One of ['up','down','noStem', undefined] -- 'double' not supported
  */
 export class NotRest extends GeneralNote {
+    static get className() { return 'music21.note.NotRest'; }
+
     constructor(ql) {
         super(ql);
         this.notehead = 'normal';
@@ -500,6 +506,8 @@ export class NotRest extends GeneralNote {
  * @extends music21.note.NotRest
  */
 export class Note extends NotRest {
+    static get className() { return 'music21.note.Note'; }
+
     /**
      *
      * @param {(string|music21.pitch.Pitch|undefined)} [nn='C4'] - pitch name ("C", "D#", "E-") w/ or w/o octave ("C#4"), or a pitch.Pitch object
@@ -742,6 +750,8 @@ export class Note extends NotRest {
  * @property {string|undefined} [color='black'] - color of the rest
  */
 export class Rest extends GeneralNote {
+    static get className() { return 'music21.note.Rest'; }
+
     constructor(ql) {
         super(ql);
         this.isNote = false; // for speed

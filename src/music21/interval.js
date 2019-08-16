@@ -137,6 +137,8 @@ export const MusicOrdinals = [
  *
  */
 export class GenericInterval extends prebase.ProtoM21Object {
+    static get className() { return 'music21.interval.GenericInterval'; }
+
     constructor(gi) {
         super();
         if (gi === undefined) {
@@ -460,6 +462,8 @@ export const IntervalAdjustImperf = {
  * // See music21p for more possibilities.
  */
 export class DiatonicInterval extends prebase.ProtoM21Object {
+    static get className() { return 'music21.interval.DiatonicInterval'; }
+
     constructor(specifier, generic) {
         super();
 
@@ -668,6 +672,8 @@ export class DiatonicInterval extends prebase.ProtoM21Object {
  *
  */
 export class ChromaticInterval extends prebase.ProtoM21Object {
+    static get className() { return 'music21.interval.ChromaticInterval'; }
+
     constructor(value) {
         super();
 
@@ -786,6 +792,8 @@ export function convertDiatonicNumberToStep(
  * // "Augmented Eleventh"
  */
 export class Interval extends prebase.ProtoM21Object {
+    static get className() { return 'music21.interval.Interval'; }
+
     constructor(...restArgs) {
         super();
         // todo: allow full range of ways of specifying as in m21p

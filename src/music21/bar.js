@@ -49,6 +49,8 @@ function standardizeBarType(value) {
 }
 
 export class Barline extends base.Music21Object {
+    static get className() { return 'music21.bar.Barline'; }
+
     constructor(type, location) {
         super();
         this._type = undefined;

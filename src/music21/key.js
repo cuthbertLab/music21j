@@ -69,6 +69,8 @@ export function convertKeyStringToMusic21KeyString(textString) {
  * s.appendNewDOM();
  */
 export class KeySignature extends base.Music21Object {
+    static get className() { return 'music21.key.KeySignature'; }
+
     constructor(sharps) {
         super();
         this.classSortOrder = 2;
@@ -316,6 +318,8 @@ export class KeySignature extends base.Music21Object {
  * @param {string} [mode] -- if not given then the CASE of the keyName will be used ("C" => "major", "c" => "minor")
  */
 export class Key extends KeySignature {
+    static get className() { return 'music21.key.Key'; }
+
     constructor(keyName, mode) {
         if (keyName === undefined) {
             keyName = 'C';

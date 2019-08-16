@@ -98,6 +98,8 @@ function _exportMusicXMLAsText(s) {
  * @property {number} maxSystemWidth - confusing... should be in renderOptions
  */
 export class Stream extends base.Music21Object {
+    static get className() { return 'music21.stream.Stream'; }
+
     constructor() {
         super();
         // class variables;
@@ -488,7 +490,7 @@ export class Stream extends base.Music21Object {
     }
 
     /* override protoM21Object.clone() */
-    clone(deep=true) {
+    clone(deep=true, memo) {
         const ret = Object.create(this.constructor.prototype);
         for (const key in this) {
             if ({}.hasOwnProperty.call(this, key) === false) {
@@ -518,7 +520,7 @@ export class Stream extends base.Music21Object {
                     for (let j = 0; j < this._elements.length; j++) {
                         const el = this._elements[j];
                         // console.log('cloning el: ', el.name);
-                        const elCopy = el.clone(deep);
+                        const elCopy = el.clone(deep, memo);
                         ret._elements[j] = elCopy;
                         ret._offsetDict.set(elCopy, this._offsetDict.get(el));
                         elCopy.activeSite = ret;
@@ -526,7 +528,7 @@ export class Stream extends base.Music21Object {
                 }
             } else if (
                 key === 'activeVexflowNote'
-                || key === 'storedVexflowstave'
+                || key === 'storedVexflowStave'
             ) {
                 // do nothing -- do not copy vexflowNotes -- permanent recursion
             } else if (key in this._cloneCallbacks) {
@@ -602,7 +604,8 @@ export class Stream extends base.Music21Object {
     /**
      * Add an element to the end of the stream, setting its `.offset` accordingly
      *
-     * @param {music21.base.Music21Object|base.Music21Object|Array} elOrElList - element or list of elements to append
+     * @param {music21.base.Music21Object|Array<music21.base.Music21Object>} elOrElList - element
+     * or list of elements to append
      * @returns {this}
      */
     append(elOrElList) {
@@ -613,6 +616,10 @@ export class Stream extends base.Music21Object {
             return this;
         }
 
+        /**
+         *
+         * @type {music21.base.Music21Object}
+         */
         const el = elOrElList;
         if (!(el instanceof base.Music21Object)) {
             throw new Music21Exception('Can only append a music21 object.');
@@ -666,7 +673,14 @@ export class Stream extends base.Music21Object {
      * @param {boolean} [config.setActiveSite=true] -- set the active site for the inserted element.
      * @returns {this}
      */
-    insert(offset, el, { ignoreSort=false, setActiveSite=true }={}) {
+    insert(
+        offset,
+        el,
+        {
+            ignoreSort=false,
+            setActiveSite=true,
+        }={}
+    ) {
         if (el === undefined) {
             throw new StreamException('Cannot insert without an element.');
         }
@@ -705,7 +719,7 @@ export class Stream extends base.Music21Object {
      * Unlike music21p, does not take a list of elements.  TODO(msc): add this feature.
      *
      * @param {number|music21.base.Music21Object} offset -- offset of the item to insert
-     * @param {music21.base.Music21Object} [elementOrNone] -- element.
+     * @param {music21.base.Music21Object|undefined} [elementOrNone] -- element.
      * @return {this}
      */
     insertAndShift(offset, elementOrNone) {
@@ -1459,7 +1473,7 @@ export class Stream extends base.Music21Object {
      *  el.activeSite
      *
      * @param {music21.base.Music21Object} el - object with an offset and class to search for.
-     * @param {music21.stream.Stream|undefined} elStream - a place to get el's offset from.
+     * @param {music21.stream.Stream} [elStream] - a place to get el's offset from.
      * @returns {music21.base.Music21Object|undefined}
      */
     playingWhenAttacked(el, elStream) {
@@ -1642,7 +1656,7 @@ export class Stream extends base.Music21Object {
      * Will be moved to vfShow eventually when converter objects are enabled...maybe.
      *
      * @param {jQuery|HTMLElement} $canvasOrSVG - a canvas or the div surrounding an SVG object
-     * @returns {vfShow.Renderer}
+     * @returns {music21.vfShow.Renderer}
      */
     renderVexflow($canvasOrSVG) {
         /**
@@ -2209,7 +2223,7 @@ export class Stream extends base.Music21Object {
      * x of 1 gives 1.42857...
      *
      * @param {Node|SVGElement} svg -- a canvas or SVG object
-     * @param {Event} e
+     * @param {MouseEvent|TouchEvent} e
      * @returns {Array<number>} [scaledX, scaledY]
      */
     getScaledXYforDOM(svg, e) {
@@ -2618,6 +2632,8 @@ export class Stream extends base.Music21Object {
  * @extends music21.stream.Stream
  */
 export class Voice extends Stream {
+    static get className() { return 'music21.stream.Voice'; }
+
     constructor() {
         super();
         this.recursionType = 'elementsFirst';
@@ -2630,6 +2646,8 @@ export class Voice extends Stream {
  * @extends music21.stream.Stream
  */
 export class Measure extends Stream {
+    static get className() { return 'music21.stream.Measure'; }
+
     constructor() {
         super();
         this.recursionType = 'elementsFirst';
@@ -2655,6 +2673,8 @@ export class Measure extends Stream {
  * @extends music21.stream.Stream
  */
 export class Part extends Stream {
+    static get className() { return 'music21.stream.Part'; }
+
     constructor() {
         super();
         this.recursionType = 'flatten';
@@ -3053,6 +3073,8 @@ export class Part extends Stream {
  * @extends music21.stream.Stream
  */
 export class Score extends Stream {
+    static get className() { return 'music21.stream.Score'; }
+
     constructor() {
         super();
         this.recursionType = 'elementsOnly';
