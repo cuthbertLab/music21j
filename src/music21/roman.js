@@ -50,7 +50,7 @@ export const figureShorthands = {
     bb7b5b3: 'o7',
     bb7b53: 'o7',
     // '6b5bb3': 'o65',
-    b7b5b3: '/o7',
+    b7b5b3: 'ø7',
 };
 
 // noinspection SpellCheckingInspection
@@ -161,7 +161,10 @@ export function correctSuffixForChordQuality(
 
     if (
         inversionString !== undefined
-        && (inversionString.startsWith('o') || inversionString.startsWith('/o'))
+        && (inversionString.startsWith('o')
+            || inversionString.startsWith('/o')
+            || inversionString.startsWith('ø')
+        )
     ) {
         if (qualityName === 'o') {
             // don't call viio7, viioo7.
@@ -173,7 +176,7 @@ export function correctSuffixForChordQuality(
     if (seventhType !== undefined && fifthType === 6) {
         // there is a seventh and this is a diminished 5
         if (seventhType === 10 && qualityName === 'o') {
-            qualityName = '/o';
+            qualityName = 'ø';
         } else if (seventhType !== 9) {
             // do something for very odd chords built on diminished triad.
         }
@@ -222,6 +225,10 @@ export class RomanNumeral extends harmony.Harmony {
     constructor(figure='', keyStr, keywords) {
         const params = { updatePitches: false, parseFigure: false };
         common.merge(params, keywords);
+
+        if (typeof figure === 'string') {
+            figure = figure.replace('/o', 'ø');
+        }
         super(figure, params);
         this._parsingComplete = false;
 
@@ -378,6 +385,9 @@ export class RomanNumeral extends harmony.Harmony {
         } else if (workingFigure.startsWith('/o')) {
             impliedQuality = 'half-diminished';
             workingFigure = workingFigure.replace(/^\/o/, '');
+        } else if (workingFigure.startsWith('ø')) {
+            impliedQuality = 'half-diminished';
+            workingFigure = workingFigure.replace(/^ø/, '');
         } else if (workingFigure.startsWith('+')) {
             impliedQuality = 'augmented';
             workingFigure = workingFigure.replace(/^\+/, '');

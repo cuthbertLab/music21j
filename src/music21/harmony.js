@@ -12,11 +12,12 @@ import * as key from './key.js';
 export class Harmony extends chord.Chord {
     static get className() { return 'music21.harmony.Harmony'; }
 
-    constructor(figure, keywords) {
-        if (keywords === undefined) {
-            keywords = {};
-        }
-
+    /**
+     *
+     * @param {string} figure
+     * @param {Object} keywords
+     */
+    constructor(figure, keywords={}) {
         super();
         this._writeAsChord = false;
         this._roman = undefined;
@@ -30,6 +31,7 @@ export class Harmony extends chord.Chord {
          */
         this._key = undefined;
         // this._updateBasedOnXMLInput(keywords);
+        figure = figure.replace('/o', 'ø');
         this._figure = figure;
         if (keywords.parseFigure !== false && this._figure !== undefined) {
             this._parseFigure();
