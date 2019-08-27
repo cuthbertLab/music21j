@@ -1,10 +1,10 @@
-import * as QUnit from '../../node_modules/qunit/qunit/qunit.js';
+import * as QUnit from 'qunit';
 import * as music21 from '../../src/music21_modules.js';
 
-window.music21 = music21;
+const { test } = QUnit;
 
 export default function tests() {
-    QUnit.test('music21.articulations.Articulation', assert => {
+    test('music21.articulations.Articulation', assert => {
         const acc = new music21.articulations.Accent();
         assert.equal(acc.name, 'accent', 'matching names for accent');
         const ten = new music21.articulations.Tenuto();
@@ -16,7 +16,7 @@ export default function tests() {
         assert.equal(n.articulations[1].name, 'tenuto', 'tenuto in array');
     });
 
-    QUnit.test('music21.articulations.Articulation display', assert => {
+    test('music21.articulations.Articulation display', assert => {
         // Marcato is a pseudo multiple inheritance
         const marc = new music21.articulations.Marcato();
         assert.equal(marc.name, 'marcato', 'matching names for marcato');

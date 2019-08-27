@@ -1,8 +1,10 @@
-import * as QUnit from '../../node_modules/qunit/qunit/qunit.js';
+import * as QUnit from 'qunit';
 import * as music21 from '../../src/music21_modules.js';
 
+const { test } = QUnit;
+
 export default function tests() {
-    QUnit.test('music21.voiceLeading.VoiceLeadingQuartet', assert => {
+    test('music21.voiceLeading.VoiceLeadingQuartet', assert => {
         const VLQ = music21.voiceLeading.VoiceLeadingQuartet;
         const sc = new VLQ();
         assert.ok(sc.classes.includes('VoiceLeadingQuartet'));
@@ -36,7 +38,7 @@ export default function tests() {
         const vlq3 = new VLQ('C4', 'D4', 'A3', 'F3');
         assert.ok(vlq3.contraryMotion(), 'contrary motion set w/ strings');
     });
-    QUnit.test(
+    test(
         'music21.voiceLeading.VoiceLeadingQuartet proper resolution',
         assert => {
             const VLQ = music21.voiceLeading.VoiceLeadingQuartet;

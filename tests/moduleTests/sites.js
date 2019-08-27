@@ -1,8 +1,11 @@
-import * as QUnit from '../../node_modules/qunit/qunit/qunit.js';
+import * as QUnit from 'qunit';
 import * as music21 from '../../src/music21_modules.js';
 
+const { test } = QUnit;
+
+
 export default function tests() {
-    QUnit.test('music21.sites.SiteRef', assert => {
+    test('music21.sites.SiteRef', assert => {
         const sr = new music21.sites.SiteRef();
         assert.ok(!sr.isDead);
         assert.equal(
@@ -17,7 +20,7 @@ export default function tests() {
         assert.equal(sr.classString, 'Measure');
     });
 
-    QUnit.test('music21.sites.Sites', assert => {
+    test('music21.sites.Sites', assert => {
         const s = new music21.sites.Sites();
         assert.equal(s.length, 1, 'empty sites has length 1');
         const st = new music21.stream.Measure();

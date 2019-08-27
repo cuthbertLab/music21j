@@ -1,8 +1,11 @@
-import * as QUnit from '../../node_modules/qunit/qunit/qunit.js';
+import * as QUnit from 'qunit';
 import * as music21 from '../../src/music21_modules.js';
 
+const { test } = QUnit;
+
+
 export default function tests() {
-    QUnit.test('music21.pitch.Accidental', assert => {
+    test('music21.pitch.Accidental', assert => {
         const a = new music21.pitch.Accidental('-');
         assert.equal(a.alter, -1.0, 'flat alter passed');
         assert.equal(a.name, 'flat', 'flat name passed');
@@ -15,7 +18,7 @@ export default function tests() {
         assert.equal(b.name, 'flat', 'flat name passed');
     });
 
-    QUnit.test('music21.pitch.Pitch', assert => {
+    test('music21.pitch.Pitch', assert => {
         const p = new music21.pitch.Pitch('D#5');
         assert.equal(p.name, 'D#', 'Pitch Name set to D#');
         assert.equal(p.step, 'D', 'Pitch Step set to D');
@@ -26,7 +29,7 @@ export default function tests() {
         assert.equal(vfn, 'C#/6', 'Vexflow name set');
     });
 
-    QUnit.test('music21.pitch.Pitch enharmonics', assert => {
+    test('music21.pitch.Pitch enharmonics', assert => {
         const es = new music21.pitch.Pitch('E-5');
         const dis = es.getLowerEnharmonic();
         assert.equal(es.name, 'E-', 'Original Pitch Name unchanged');
@@ -52,12 +55,12 @@ export default function tests() {
         assert.equal(cDblFlat.ps, bFlat.ps);
 
 
-        // once octaveless pitches exist...
-//        const octaveless = new music21.pitch.Pitch('C');
-//        const bsharp = octaveless.getLowerEnharmonic();
-//        assert.equal(octaveless.octave, undefined, 'octave should be undefined');
-//        assert.equal(bsharp.octave, undefined, 'octave should be undefined');
-//        assert.equal(bsharp.name, 'B#');
+    // once octaveless pitches exist...
+    //        const octaveless = new music21.pitch.Pitch('C');
+    //        const bSharp = octaveless.getLowerEnharmonic();
+    //        assert.equal(octaveless.octave, undefined, 'octave should be undefined');
+    //        assert.equal(bSharp.octave, undefined, 'octave should be undefined');
+    //        assert.equal(bSharp.name, 'B#');
 
     });
 

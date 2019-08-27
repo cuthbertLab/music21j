@@ -1,8 +1,11 @@
-import * as QUnit from '../../node_modules/qunit/qunit/qunit.js';
+import * as QUnit from 'qunit';
 import * as music21 from '../../src/music21_modules.js';
 
+const { test } = QUnit;
+
+
 export default function tests() {
-    QUnit.test('music21.base.Music21Object', assert => {
+    test('music21.base.Music21Object', assert => {
         const m21o = new music21.base.Music21Object();
         assert.equal(m21o.classSortOrder, 20);
         assert.ok(m21o.duration instanceof music21.duration.Duration);
@@ -35,7 +38,8 @@ export default function tests() {
         m21o.setOffsetBySite(st2, 5.5);
         assert.equal(m21o.getOffsetBySite(st2), 5.5);
     });
-    QUnit.test('music21.base.Music21Object Contexts', assert => {
+
+    test('music21.base.Music21Object Contexts', assert => {
         const m21o = new music21.base.Music21Object();
         const m = new music21.stream.Measure();
         const p = new music21.stream.Part();

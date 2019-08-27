@@ -1,13 +1,21 @@
-import * as QUnit from '../../node_modules/qunit/qunit/qunit.js';
+import * as QUnit from 'qunit';
 import * as music21 from '../../src/music21_modules.js';
 
+const { test } = QUnit;
+
+function get_stream_and_note() {
+    const s = new music21.stream.Stream();
+    s.append(new music21.note.Note('C#5'));
+    s.append(new music21.note.Note('D#5'));
+    const n = new music21.note.Note('F5');
+    n.duration.type = 'half';
+    return [s, n];
+}
+
+
 export default function tests() {
-    QUnit.test('music21.stream.Stream', assert => {
-        const s = new music21.stream.Stream();
-        s.append(new music21.note.Note('C#5'));
-        s.append(new music21.note.Note('D#5'));
-        const n = new music21.note.Note('F5');
-        n.duration.type = 'half';
+    test('music21.stream.Stream', assert => {
+        const [s, n] = get_stream_and_note();
         s.append(n);
         assert.equal(s.length, 3, 'Simple stream length = 3');
 
@@ -17,12 +25,8 @@ export default function tests() {
             assert.equal(oct, 5, 'all notes are octave 5.');
         }
     });
-    QUnit.test('music21.stream.Stream clone', assert => {
-        const s = new music21.stream.Stream();
-        s.append(new music21.note.Note('C#5'));
-        s.append(new music21.note.Note('D#5'));
-        const n = new music21.note.Note('F5');
-        n.duration.type = 'half';
+    test('music21.stream.Stream clone', assert => {
+        const [s, n] = get_stream_and_note();
         s.insert(5.0, n);
         const t = s.clone(true);
         assert.equal(t.length, s.length);

@@ -1,15 +1,17 @@
-import * as QUnit from '../../node_modules/qunit/qunit/qunit.js';
+import * as QUnit from 'qunit';
 import * as music21 from '../../src/music21_modules.js';
 
+const { test } = QUnit;
+
 export default function tests() {
-    QUnit.test('music21.duration.Duration 0', assert => {
+    test('music21.duration.Duration 0', assert => {
         const d = new music21.duration.Duration(0.0);
         assert.equal(d.type, 'zero', 'got zero');
         assert.equal(d.dots, 0, 'got no dots');
         assert.equal(d.quarterLength, 0.0, 'got 0.0');
     });
 
-    QUnit.test('music21.duration.Duration', assert => {
+    test('music21.duration.Duration', assert => {
         const d = new music21.duration.Duration(1.0);
         assert.equal(d.type, 'quarter', 'got quarter note from 1.0');
         assert.equal(d.dots, 0, 'got no dots');
@@ -31,7 +33,7 @@ export default function tests() {
         assert.equal(d.dots, 4, 'got four dots from 7.75');
     });
 
-    QUnit.test('music21.duration.Tuplet', assert => {
+    test('music21.duration.Tuplet', assert => {
         const d = new music21.duration.Duration(0.5);
         const t = new music21.duration.Tuplet(5, 4);
         assert.equal(t.tupletMultiplier(), 0.8, 'tuplet multiplier should be 0.8');
@@ -89,7 +91,7 @@ export default function tests() {
             'tuplet should not be the same object after clone'
         );
     });
-    QUnit.test('music21.duration.Tuplet multiple parts', assert => {
+    test('music21.duration.Tuplet multiple parts', assert => {
         const s2 = new music21.stream.Measure();
         s2.timeSignature = new music21.meter.TimeSignature('3/2');
         const na1 = new music21.note.Note('F4');

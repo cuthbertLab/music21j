@@ -71,7 +71,7 @@ export class Event {
      * @returns {undefined}
      */
     sendToMIDIjs() {
-        if (MIDI.config.connected_plugin !== undefined) {
+        if (MIDI.config.is_connected) {
             // noteOn check because does not exist if no audio context
             // or soundfont has been loaded, such as if a play event
             // is triggered before soundfont has been loaded.

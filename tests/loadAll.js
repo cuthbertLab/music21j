@@ -1,3 +1,5 @@
+import * as QUnit from 'qunit';
+
 import articulations from './moduleTests/articulations.js';
 import base from './moduleTests/base.js';
 import beam from './moduleTests/beam.js';
@@ -19,6 +21,7 @@ import sites from './moduleTests/sites.js';
 import stream from './moduleTests/stream.js';
 import tie from './moduleTests/tie.js';
 import voiceLeading from './moduleTests/voiceLeading.js';
+import * as music21 from '../src/music21_modules';
 
 const allTests = {
     articulations,
@@ -45,6 +48,8 @@ const allTests = {
 };
 if (typeof window !== undefined) {
     window.allTests = allTests;
+    window.music21 = music21;
+    window.QUnit = QUnit;
 }
 // noinspection JSUnusedGlobalSymbols
 export default allTests;

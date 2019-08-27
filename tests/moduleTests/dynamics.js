@@ -1,8 +1,10 @@
-import * as QUnit from '../../node_modules/qunit/qunit/qunit.js';
+import * as QUnit from 'qunit';
 import * as music21 from '../../src/music21_modules.js';
 
+const { test } = QUnit;
+
 export default function tests() {
-    QUnit.test('music21.dynamics.Dynamic', assert => {
+    test('music21.dynamics.Dynamic', assert => {
         let dynamic = new music21.dynamics.Dynamic('pp');
         assert.equal(dynamic.value, 'pp', 'matching dynamic');
 

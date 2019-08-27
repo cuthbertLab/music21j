@@ -1,8 +1,11 @@
-import * as QUnit from '../../node_modules/qunit/qunit/qunit.js';
+import * as QUnit from 'qunit';
 import * as music21 from '../../src/music21_modules.js';
 
+const { test } = QUnit;
+
+
 export default function tests() {
-    QUnit.test('music21.beam.Beams', assert => {
+    test('music21.beam.Beams', assert => {
         const a = new music21.beam.Beams();
         a.fill('16th');
         a.setAll('start');

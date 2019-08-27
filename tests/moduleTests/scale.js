@@ -1,12 +1,14 @@
-import * as QUnit from '../../node_modules/qunit/qunit/qunit.js';
+import * as QUnit from 'qunit';
 import * as music21 from '../../src/music21_modules.js';
 
+const { test } = QUnit;
+
 export default function tests() {
-    QUnit.test('music21.scale.Scale', assert => {
+    test('music21.scale.Scale', assert => {
         const sc = new music21.scale.Scale();
         assert.ok(sc.classes.includes('Scale'));
     });
-    QUnit.test('music21.scale.AbstractDiatonicScale', assert => {
+    test('music21.scale.AbstractDiatonicScale', assert => {
         const sc = new music21.scale.AbstractDiatonicScale('major');
         const net = sc._net;
         assert.equal(net.length, 7);
@@ -18,7 +20,7 @@ export default function tests() {
         assert.equal(sc.getPitchFromNodeDegree(p, undefined, 4).name, 'D-');
     });
 
-    QUnit.test('music21.scale.MajorScale', assert => {
+    test('music21.scale.MajorScale', assert => {
         const sc = new music21.scale.MajorScale('F');
         assert.equal(sc.tonic.name, 'F');
         const pitches = sc.getPitches();

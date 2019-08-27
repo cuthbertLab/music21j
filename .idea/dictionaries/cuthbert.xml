@@ -3,12 +3,18 @@
     <words>
       <w>aaaa</w>
       <w>aahs</w>
+      <w>adsr</w>
+      <w>aeppli</w>
       <w>agogo</w>
       <w>ahir</w>
       <w>allegrissimo</w>
       <w>andantino</w>
       <w>arezzo</w>
+      <w>arraybuffer</w>
       <w>attrchange</w>
+      <w>audiobuffer</w>
+      <w>audiotag</w>
+      <w>bainbridge</w>
       <w>barline</w>
       <w>barlines</w>
       <w>bauli</w>
@@ -19,6 +25,7 @@
       <w>bitonal</w>
       <w>blackkey</w>
       <w>cakravana</w>
+      <w>castel</w>
       <w>charang</w>
       <w>chiff</w>
       <w>clavinet</w>
@@ -36,7 +43,9 @@
       <w>fati</w>
       <w>fermata</w>
       <w>ffff</w>
+      <w>foffset</w>
       <w>fretless</w>
+      <w>gerstner</w>
       <w>gright</w>
       <w>guidon</w>
       <w>hacky</w>
@@ -82,12 +91,14 @@
       <w>midicube</w>
       <w>midijs</w>
       <w>miditools</w>
+      <w>miranet</w>
       <w>misura</w>
       <w>mixins</w>
       <w>mixolydian</w>
       <w>moderato</w>
       <w>molto</w>
       <w>mozvisibilitychange</w>
+      <w>mpeg</w>
       <w>msvisibilitychange</w>
       <w>musescore</w>
       <w>musicxml</w>
@@ -97,6 +108,7 @@
       <w>nonachord</w>
       <w>nonamirror</w>
       <w>nonatonic</w>
+      <w>nostrand</w>
       <w>notehead</w>
       <w>noteheads</w>
       <w>octachord</w>
@@ -128,6 +140,7 @@
       <w>reflowed</w>
       <w>reinit</w>
       <w>resizes</w>
+      <w>rimington</w>
       <w>rootedness</w>
       <w>sakura</w>
       <w>samsung</w>
@@ -136,6 +149,7 @@
       <w>schnell</w>
       <w>scifi</w>
       <w>scref</w>
+      <w>seemann</w>
       <w>senza</w>
       <w>septachord</w>
       <w>seta</w>
@@ -143,6 +157,8 @@
       <w>shamisen</w>
       <w>shanai</w>
       <w>slendro</w>
+      <w>soundbank</w>
+      <w>soundbanks</w>
       <w>soundfont</w>
       <w>soundfonts</w>
       <w>spiccato</w>
@@ -155,6 +171,7 @@
       <w>subtonic</w>
       <w>supertonic</w>
       <w>symlinking</w>
+      <w>synesthesia</w>
       <w>synth</w>
       <w>taiko</w>
       <w>tenuto</w>
@@ -190,11 +207,15 @@
       <w>viioo</w>
       <w>visibilitychange</w>
       <w>vivacissimo</w>
+      <w>vorbis</w>
+      <w>webaudio</w>
       <w>webkitvisibilitychange</w>
       <w>webmidi</w>
+      <w>wheatman</w>
       <w>whitekey</w>
       <w>xand</w>
       <w>yfor</w>
+      <w>zieverink</w>
     </words>
   </dictionary>
 </component>

@@ -1,8 +1,10 @@
-import * as QUnit from '../../node_modules/qunit/qunit/qunit.js';
+import * as QUnit from 'qunit';
 import * as music21 from '../../src/music21_modules.js';
 
+const { test } = QUnit;
+
 export default function tests() {
-    QUnit.test('music21.note.Note', assert => {
+    test('music21.note.Note', assert => {
         const n = new music21.note.Note('D#5');
 
         assert.equal(n.pitch.name, 'D#', 'Pitch Name set to D#');

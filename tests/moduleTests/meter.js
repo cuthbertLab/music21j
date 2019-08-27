@@ -1,8 +1,11 @@
-import * as QUnit from '../../node_modules/qunit/qunit/qunit.js';
+import * as QUnit from 'qunit';
 import * as music21 from '../../src/music21_modules.js';
 
+const { test } = QUnit;
+
+
 export default function tests() {
-    QUnit.test('music21.meter.TimeSignature', assert => {
+    test('music21.meter.TimeSignature', assert => {
         const m = new music21.meter.TimeSignature('4/4');
 
         assert.equal(m.ratioString, '4/4', 'ratioString matches');
@@ -17,7 +20,7 @@ export default function tests() {
         assert.equal(m.beatDuration.dots, 0, 'beatDuration has not dots');
     });
 
-    QUnit.test('music21.meter.TimeSignature beams', assert => {
+    test('music21.meter.TimeSignature beams', assert => {
         const m = new music21.meter.TimeSignature('4/4');
         const [start, end] = m.offsetToSpan(3.2);
         assert.equal(start, 3.0, 'beat starts at 3');
@@ -25,7 +28,7 @@ export default function tests() {
 
     });
 
-    QUnit.test('music21.meter.TimeSignature compound', assert => {
+    test('music21.meter.TimeSignature compound', assert => {
         const m = new music21.meter.TimeSignature('6/8');
 
         assert.equal(m.ratioString, '6/8', 'ratioString matches');

@@ -1,8 +1,11 @@
-import * as QUnit from '../../node_modules/qunit/qunit/qunit.js';
+import * as QUnit from 'qunit';
 import * as music21 from '../../src/music21_modules.js';
 
+const { test } = QUnit;
+
+
 export default function tests() {
-    QUnit.test('music21.clef.Clef', assert => {
+    test('music21.clef.Clef', assert => {
         const c1 = new music21.clef.Clef();
         assert.ok(c1.isClassOrSubclass('Clef'), 'clef is a Clef');
 
@@ -18,7 +21,7 @@ export default function tests() {
         const p2 = ac.convertPitchToTreble(n.pitch);
         assert.equal(p2.nameWithOctave, 'B#4', 'converted to treble');
     });
-    QUnit.test('music21.clef.Clef 8va', assert => {
+    test('music21.clef.Clef 8va', assert => {
         const ac = new music21.clef.Treble8vaClef();
         assert.equal(ac.lowestLine, 38, 'first line set');
         const n = new music21.note.Note('C#5');
@@ -31,7 +34,7 @@ export default function tests() {
         s.append(n);
         s.appendNewDOM($('body'));
     });
-    QUnit.test('music21.clef clefFromString', assert => {
+    test('music21.clef clefFromString', assert => {
         const tc = music21.clef.clefFromString('treble');
         assert.ok(tc.isClassOrSubclass('TrebleClef'), 'tc is TrebleClef');
         const tc2 = music21.clef.clefFromString('treble8va');

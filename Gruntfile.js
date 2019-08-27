@@ -73,7 +73,7 @@ module.exports = grunt => {
 
     const babel_preset = ['@babel/preset-env', {
 		debug: false,
-		modules: false,
+		modules: false,  // do not transform modules; let webpack do it
 		targets: {
 		    browsers: [
 			       'last 4 years',
@@ -98,7 +98,7 @@ module.exports = grunt => {
         'music21.tests.js',
         babel_preset,
     );
-    webpackTests.entry = './tests/loadAll.js';
+    webpackTests.entry = TEST_ENTRY;
     webpackTests.output.path = TEST_DIR;
     webpackTests.output.library = 'm21Tests';
     // webpackTests.cache = true;
@@ -172,7 +172,7 @@ module.exports = grunt => {
     // Default task(s).
     grunt.registerTask('default', ['eslint', 'webpack:build']);
     grunt.registerTask('test', 'Watch qunit tests', ['watch:test']);
-    grunt.registerTask('test_no_watch', 'Watch qunit tests', ['webpack:test', 'qunit']);
+    grunt.registerTask('test_no_watch', 'Run qunit tests', ['webpack:test', 'qunit']);
     grunt.registerTask('publish', 'Raise the version and publish', () => {
         grunt.task.run('jsdoc');
         grunt.task.run('bump');

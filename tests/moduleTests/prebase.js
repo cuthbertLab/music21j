@@ -1,8 +1,10 @@
-import * as QUnit from '../../node_modules/qunit/qunit/qunit.js';
+import * as QUnit from 'qunit';
 import * as music21 from '../../src/music21_modules.js';
 
+const { test } = QUnit;
+
 export default function tests() {
-    QUnit.test('music21.prebase.ProtoM21Object.classes', assert => {
+    test('music21.prebase.ProtoM21Object.classes', assert => {
         const n = new music21.note.Note();
         assert.deepEqual(n.classes, [
             'Note',
@@ -13,7 +15,7 @@ export default function tests() {
             'object',
         ]);
     });
-    QUnit.test('music21.prebase.ProtoM21Object.isClassOrSubclass', assert => {
+    test('music21.prebase.ProtoM21Object.isClassOrSubclass', assert => {
         const n = new music21.note.Note();
         assert.ok(n.isClassOrSubclass('Note'));
         assert.ok(n.isClassOrSubclass('GeneralNote'));
@@ -22,7 +24,7 @@ export default function tests() {
         assert.ok(n.isClassOrSubclass(['Rest', music21.note.Note]));
         assert.notOk(n.isClassOrSubclass('Rest'));
     });
-    QUnit.test('music21.prebase.ProtoM21Object.classSet', assert => {
+    test('music21.prebase.ProtoM21Object.classSet', assert => {
         const n = new music21.note.Note();
         assert.ok(n.classSet.has('Note'));
         assert.ok(n.classSet.has('GeneralNote'));
@@ -31,7 +33,7 @@ export default function tests() {
         assert.notOk(n.classSet.has('Rest'));
     });
 
-    QUnit.test('clone', assert => {
+    test('clone', assert => {
         const n = new music21.note.Note('D4');
         const n2 = n.clone();
         n.pitch.octave = 5;

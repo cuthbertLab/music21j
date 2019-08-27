@@ -1,8 +1,10 @@
-import * as QUnit from '../../node_modules/qunit/qunit/qunit.js';
+import * as QUnit from 'qunit';
 import * as music21 from '../../src/music21_modules.js';
 
+const { test } = QUnit;
+
 export default function tests() {
-    QUnit.test('music21.chord.Chord', assert => {
+    test('music21.chord.Chord', assert => {
         let c = new music21.chord.Chord(['C5', 'E5', 'G5']);
 
         assert.equal(c.length, 3, 'Checking length of Chord');
