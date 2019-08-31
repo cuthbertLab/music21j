@@ -23,7 +23,7 @@
   "dependencies": {
     "jquery": "^3.4.1",
     "jquery-ui-bundle": "^1.12.1-migrate",
-    "jsonpickle": "^1.1.1",
+    "jsonpickle": "^1.1.2",
     "midicube": "^0.6.0",
     "regenerator-runtime": "^0.13.3",
     "vexflow": "^1.2.89"
