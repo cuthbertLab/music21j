@@ -3129,8 +3129,6 @@ export class Score extends Stream {
      * overrides music21.stream.Stream#setSubstreamRenderOptions
      *
      * figures out the `.left` and `.top` attributes for all contained parts
-     *
-     * @returns {this} this
      */
     setSubstreamRenderOptions() {
         let currentPartNumber = 0;
