@@ -18,17 +18,32 @@ module.exports = grunt => {
     const DOC_DIR = path.join(BASE_DIR, 'doc');
     const TEST_DIR = path.join(BASE_DIR, 'tests');
 
-    const MODULE_ENTRY = path.join(BASE_DIR, 'src/music21_modules.js');
-    const TARGET_RAW = path.join(BUILD_DIR, 'music21.debug.js');
-    const TARGET_RAW_MAP = TARGET_RAW + '.map';
-    const TARGET_MIN = path.join(BUILD_DIR, 'music21.min.js');
+    // const MODULE_ENTRY = path.join(BASE_DIR, 'src/music21_modules.js');
+    // const TARGET_RAW = path.join(BUILD_DIR, 'music21.debug.js');
+    // const TARGET_RAW_MAP = TARGET_RAW + '.map';
+    // const TARGET_MIN = path.join(BUILD_DIR, 'music21.min.js');
 
     const SOURCES = ['src/music21_modules.js', 'src/music21/*.js', 'src/music21/*/*.js'];
     const WATCH_SOURCES = SOURCES.concat(['Gruntfile.js']);
 
     const TEST_ENTRY = path.join(TEST_DIR, 'loadAll.js');
     const TEST_SOURCES = ['tests/loadAll.js', 'tests/moduleTests/*.js', 'tests/moduleTests/*/*.js'];
-    const TARGET_TESTS = path.join(BUILD_DIR, 'music21.tests.js');
+    // const TARGET_TESTS = path.join(BUILD_DIR, 'music21.tests.js');
+
+    const babel_loader = babel_presets => {
+        return {
+            loader: 'babel-loader',
+            options: {
+                presets: babel_presets,
+                plugins: [
+                    '@babel/plugin-transform-object-assign',
+                    '@babel/plugin-proposal-export-namespace-from',
+                    '@babel/plugin-proposal-class-properties',
+                ],
+            },
+        };
+    };
+
 
     const webpackConfig = (target, preset) => {
         return {
@@ -42,22 +57,25 @@ module.exports = grunt => {
             },
             mode: 'development',
             devtool: 'inline-source-map',
+            resolve: {
+                // Add '.ts' as resolvable extension.
+                extensions: ['.ts', '.js'],
+            },
             module: {
                 rules: [
                     {
                         test: /\.js?$/,
-                        exclude: /(node_modules|bower_components|src\/ext)/,
-                        use: [{
-                            loader: 'babel-loader',
-                            options: {
-                                presets: [preset],
-                                plugins: [
-                                    '@babel/plugin-transform-object-assign',
-                                    '@babel/plugin-proposal-export-namespace-from',
-                                ],
-                                // plugins: ['add-module-exports', 'transform-object-assign'],
-                            },
-                        }],
+                        exclude: /(node_modules|src\/ext)/,
+                        use: [babel_loader(preset)],
+                    },
+                    {   // typescript --> transpile to es6 using ts-loader,
+                        // then babel to our target
+                        test: /\.ts$/,
+                        exclude: /node_modules/,
+                        use: [
+                            babel_loader(preset),
+                            { loader: 'ts-loader' },
+                        ],
                     },
                     {
                         test: /\.css$/i,
@@ -69,26 +87,27 @@ module.exports = grunt => {
                 new webpack.BannerPlugin({banner: BANNER, raw: true}),
             ],
         };
-    }
+    };
 
-    const babel_preset = ['@babel/preset-env', {
-		debug: false,
+    const babel_preset = [['@babel/preset-env', {
+        debug: false,
 		modules: false,  // do not transform modules; let webpack do it
 		targets: {
 		    browsers: [
-			       'last 4 years',
-			       'not < 0.04% in US',
-			       'not firefox < 39',
-			       'not safari < 10',
-			       'not ios <= 10',
-			       'not samsung <= 4',
-			       'not ie <= 12', // all versions -- edge is separate
-			       ],
+    	        'last 4 years',
+                'not < 0.04% in US',
+                'not firefox < 39',
+                'not safari < 10',
+                'not android < 80', // bug in browserslist
+                'not ios <= 10',
+                'not samsung <= 4',
+                'not ie <= 12', // all versions -- edge is separate
+            ],
 		},
 		useBuiltIns: 'usage',
 		corejs: 3,
         },
-    ];
+    ]];
 
     const webpackCommon = webpackConfig(
         'music21.debug.js',  // TARGET_RAW,
@@ -104,6 +123,7 @@ module.exports = grunt => {
     // webpackTests.cache = true;
 
     // Project configuration.
+    // noinspection JSUnresolvedFunction
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
         webpack: {
@@ -113,7 +133,14 @@ module.exports = grunt => {
         },
         jsdoc: {
             dist: {
-                src: ['src/music21_modules.js', 'src/music21/*.js', 'src/music21/*/*.js', 'README.md'],
+                src: [
+                    'src/music21_modules.js',
+                    'src/music21/*.js',
+                    'src/music21/*/*.js',
+                    'src/music21/*.ts',
+                    'src/music21/*/*.ts',
+                    'README.md',
+                ],
                 options: {
                     destination: DOC_DIR,
                     template: 'jsdoc-template',

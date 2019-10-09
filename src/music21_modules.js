@@ -35,53 +35,51 @@ import 'jquery-ui-bundle';
 // of what will be needed by almost everyone, and then
 // alphabetical.
 
-import * as exceptions21 from './music21/exceptions21.js';
-import * as prebase from './music21/prebase.js';
-import * as base from './music21/base.js';
-import * as common from './music21/common.js';
+import * as exceptions21 from './music21/exceptions21';
+import * as prebase from './music21/prebase';
+import * as base from './music21/base';
+import * as common from './music21/common';
 
-import * as articulations from './music21/articulations.js';
-import * as audioRecording from './music21/audioRecording.js';
-import * as audioSearch from './music21/audioSearch.js';
-import * as bar from './music21/bar.js';
-import * as beam from './music21/beam.js';
-import * as chord from './music21/chord.js';
-import * as chordTables from './music21/chordTables.js';
-import * as clef from './music21/clef.js';
-import * as converter from './music21/converter.js';
-import * as derivation from './music21/derivation.js';
-import * as duration from './music21/duration.js';
-import * as dynamics from './music21/dynamics.js';
-import * as expressions from './music21/expressions.js';
-import * as figuredBass from './music21/figuredBass.js';
-import * as fromPython from './music21/fromPython.js';
-import * as harmony from './music21/harmony.js';
-import * as instrument from './music21/instrument.js';
-import * as interval from './music21/interval.js';
-import * as key from './music21/key.js';
-import * as keyboard from './music21/keyboard.js';
-import * as layout from './music21/layout.js';
-import * as meter from './music21/meter.js';
-import * as miditools from './music21/miditools.js';
-import * as musicxml from './music21/musicxml.js';
-import * as note from './music21/note.js';
-import * as parseLoader from './music21/parseLoader.js';
-import * as pitch from './music21/pitch.js';
-import * as renderOptions from './music21/renderOptions.js';
-import * as roman from './music21/roman.js';
-import * as scale from './music21/scale.js';
-import * as sites from './music21/sites.js';
-import * as stream from './music21/stream.js';
-import * as tempo from './music21/tempo.js';
-import * as tie from './music21/tie.js';
-import * as tinyNotation from './music21/tinyNotation.js';
-import * as vfShow from './music21/vfShow.js';
-import * as voiceLeading from './music21/voiceLeading.js';
-import * as webmidi from './music21/webmidi.js';
+import * as articulations from './music21/articulations';
+import * as audioRecording from './music21/audioRecording';
+import * as audioSearch from './music21/audioSearch';
+import * as bar from './music21/bar';
+import * as beam from './music21/beam';
+import * as chord from './music21/chord';
+import * as chordTables from './music21/chordTables';
+import * as clef from './music21/clef';
+import * as converter from './music21/converter';
+import * as derivation from './music21/derivation';
+import * as duration from './music21/duration';
+import * as dynamics from './music21/dynamics';
+import * as expressions from './music21/expressions';
+import * as figuredBass from './music21/figuredBass';
+import * as fromPython from './music21/fromPython';
+import * as harmony from './music21/harmony';
+import * as instrument from './music21/instrument';
+import * as interval from './music21/interval';
+import * as key from './music21/key';
+import * as keyboard from './music21/keyboard';
+import * as layout from './music21/layout';
+import * as meter from './music21/meter';
+import * as miditools from './music21/miditools';
+import * as musicxml from './music21/musicxml';
+import * as note from './music21/note';
+import * as parseLoader from './music21/parseLoader';
+import * as pitch from './music21/pitch';
+import * as renderOptions from './music21/renderOptions';
+import * as roman from './music21/roman';
+import * as scale from './music21/scale';
+import * as sites from './music21/sites';
+import * as stream from './music21/stream';
+import * as tempo from './music21/tempo';
+import * as tie from './music21/tie';
+import * as tinyNotation from './music21/tinyNotation';
+import * as vfShow from './music21/vfShow';
+import * as voiceLeading from './music21/voiceLeading';
+import * as webmidi from './music21/webmidi';
 
-export { debug } from './music21/debug.js';
-
-// these below need to be rewritten to be like above...
+import { debug } from './music21/debug.js';
 
 
 export {
@@ -91,6 +89,8 @@ export {
     base,
     prebase,
     common,
+
+    debug,
 
     articulations,
     audioRecording,
