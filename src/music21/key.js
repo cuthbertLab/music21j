@@ -264,6 +264,8 @@ export class KeySignature extends base.Music21Object {
      * Takes a pitch in C major and transposes it so that it has
      * the same step position in the current key signature.
      *
+     * Does not support inPlace unlike music21p v6.
+     *
      * @returns {music21.pitch.Pitch}
      * @example
      * var ks = new music21.key.KeySignature(-3)
@@ -277,6 +279,7 @@ export class KeySignature extends base.Music21Object {
      * // "B--"
      */
     transposePitchFromC(p) {
+        const originalOctave = p.octave;
         let transInterval;
         let transTimes;
         if (this.sharps === 0) {
@@ -295,12 +298,8 @@ export class KeySignature extends base.Music21Object {
              * @type {music21.pitch.Pitch}
              */
             newPitch = transInterval.transposePitch(newPitch);
-            if (i % 2 === 1) {
-                // for some reason PyCharm/Jetbrains chokes in -= 1 here
-                // eslint-disable-next-line operator-assignment
-                newPitch.octave = newPitch.octave - 1;
-            }
         }
+        newPitch.octave = originalOctave;
         return newPitch;
     }
 }
