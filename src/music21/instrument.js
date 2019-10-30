@@ -14,7 +14,7 @@
  * @memberof music21
  * @requires music21/base
  */
-import * as base from './base.js';
+import * as base from './base';
 
 /**
  *

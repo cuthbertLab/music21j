@@ -17,19 +17,21 @@
  * @namespace music21.base
  * @memberof music21
  */
-import * as common from './common.js';
-import * as derivation from './derivation.js';
-import * as duration from './duration.js';
-import * as prebase from './prebase.js';
-import * as sites from './sites.js';
+import * as common from './common';
+import * as derivation from './derivation';
+import * as duration from './duration';
+import * as editorial from './editorial';
+import * as prebase from './prebase';
+import * as sites from './sites';
 
+
+declare interface StreamRecursionLike {
+    recursionType: string;
+}
 
 /**
  * Base class for any object that can be placed in a {@link music21.stream.Stream}.
  *
- * @class Music21Object
- * @memberof music21.base
- * @extends music21.prebase.ProtoM21Object
  * @property {music21.stream.Stream} [activeSite] - hardlink to a {@link music21.stream.Stream} containing the element.
  * @property {number} classSortOrder - Default sort order for this class (default 20; override in other classes). Lower numbered objects will sort before other objects in the staff if priority and offset are the same.
  * @property {music21.duration.Duration} duration - the duration (object) for the element. (can be set with a quarterLength also)
@@ -42,39 +44,29 @@ import * as sites from './sites.js';
 export class Music21Object extends prebase.ProtoM21Object {
     static get className() { return 'music21.base.Music21Object'; }
 
-    constructor(keywords) {
-        super(keywords);
-        this.classSortOrder = 20; // default;
-
-        this._activeSite = undefined;
-        this._naiveOffset = 0;
-
-        // this._derivation = undefined;
-        // this._style = undefined;
-        // this._editorial = undefined;
-
-        this._duration = new duration.Duration();
-        /**
-         *
-         * @type {music21.derivation.Derivation|undefined}
-         * @private
-         */
-        this._derivation = undefined; // avoid making extra objects...
-
-        this._priority = 0; // default;
-
-        this.id = sites.getId(this);
-        this.groups = [];
-        // groups
-        this.sites = new sites.Sites();
-
-        this.isMusic21Object = true;
-        this.isStream = false;
-
-        this.groups = []; // custom object in m21p
-
+    classSortOrder: number = 20; // default;
+    protected _activeSite: any;
+    protected _activeSiteStoredOffset: number = 0;
+    protected _naiveOffset: number = 0;
+    // _derivation = undefined;
+    // _style = undefined;
+    protected _editorial: editorial.Editorial;
+    protected _duration: duration.Duration;
+    protected _derivation: derivation.Derivation;
+    protected _priority: number = 0;
+    id: number|string = 0;
+    groups: string[] = []; // custom object in m21p
+    sites: sites.Sites;
+    isMusic21Object: boolean = true;
+    isStream: boolean = false;
         // beat, measureNumber, etc.
         // lots to do...
+
+    constructor(keywords={}) {
+        super();
+        this._duration = new duration.Duration();
+        this.id = sites.getId(this);
+        this.sites = new sites.Sites();
         // noinspection JSUnusedLocalSymbols
         this._cloneCallbacks._activeSite = function Music21Object_cloneCallbacks_activeSite(
             keyName,
@@ -104,14 +96,11 @@ export class Music21Object extends prebase.ProtoM21Object {
         };
     }
 
-    stringInfo() {
+    stringInfo(): string {
         let id16 = this.id;
         if (typeof id16 === 'number') {
-            /**
-             * @type {number}
-             */
-            const idNumber = id16;
-            id16 = idNumber.toString(16);
+            const idNumber = <number> id16;
+            id16 = <string> idNumber.toString(16);
             while (id16.length < 4) {
                 id16 = '0' + id16;
             }
@@ -129,28 +118,44 @@ export class Music21Object extends prebase.ProtoM21Object {
             this._activeSite = undefined;
             this._activeSiteStoredOffset = undefined;
         } else {
+            let offset: number;
             try {
-                site.elementOffset(this);
+                offset = site.elementOffset(this);
             } catch (e) {
                 throw new sites.SitesException(
                     'activeSite cannot be set for an object not in the stream'
                 );
             }
             this._activeSite = site;
+            this._activeSiteStoredOffset = offset;
         }
     }
 
-    get derivation() {
+    get derivation(): derivation.Derivation {
         if (this._derivation === undefined) {
             this._derivation = new derivation.Derivation(this);
         }
         return this._derivation;
     }
 
-    set derivation(newDerivation) {
+    set derivation(newDerivation: derivation.Derivation) {
         this._derivation = newDerivation;
     }
 
+    get editorial(): editorial.Editorial {
+        if (this._editorial === undefined) {
+            this._editorial = new editorial.Editorial();
+        }
+        return this._editorial;
+    }
+
+    set editorial(newEditorial: editorial.Editorial) {
+        this._editorial = newEditorial;
+    }
+
+    get hasEditorialInformation() : boolean {
+        return (this._editorial !== undefined);
+    }
 
     get measureNumber() {
         if (this.activeSite !== undefined && this.activeSite.classes.includes('Measure')) {
@@ -165,7 +170,7 @@ export class Music21Object extends prebase.ProtoM21Object {
         }
     }
 
-    get offset() {
+    get offset(): number {
         if (this.activeSite === undefined) {
             return this._naiveOffset;
         } else {
@@ -173,7 +178,7 @@ export class Music21Object extends prebase.ProtoM21Object {
         }
     }
 
-    set offset(newOffset) {
+    set offset(newOffset: number) {
         if (this.activeSite === undefined) {
             this._naiveOffset = newOffset;
         } else {
@@ -181,22 +186,19 @@ export class Music21Object extends prebase.ProtoM21Object {
         }
     }
 
-    get priority() {
+    get priority(): number {
         return this._priority;
     }
 
-    set priority(p) {
+    set priority(p: number) {
         this._priority = p;
     }
 
-    /**
-     * @type {music21.duration.Duration}
-     */
-    get duration() {
+    get duration(): duration.Duration {
         return this._duration;
     }
 
-    set duration(newDuration) {
+    set duration(newDuration: duration.Duration) {
         if (typeof newDuration === 'object') {
             this._duration = newDuration;
             // common errors below...
@@ -207,22 +209,14 @@ export class Music21Object extends prebase.ProtoM21Object {
         }
     }
 
-    /**
-     * @type {number}
-     */
-    get quarterLength() {
+    get quarterLength(): number {
         return this.duration.quarterLength;
     }
 
-    set quarterLength(ql) {
+    set quarterLength(ql: number) {
         this.duration.quarterLength = ql;
     }
 
-    /**
-     *
-     * @param {this} other
-     * @returns {this}
-     */
     mergeAttributes(other) {
         // id;
         this.groups = other.groups.slice();
@@ -239,9 +233,9 @@ export class Music21Object extends prebase.ProtoM21Object {
      *
      * @param {music21.stream.Stream} site
      * @param {boolean} [stringReturns=false] -- allow strings to be returned
-     * @returns {number|undefined}
+     * @returns {number|string|undefined}
      */
-    getOffsetBySite(site, stringReturns=false) {
+    getOffsetBySite(site, stringReturns: boolean=false): number|string|undefined {
         if (site === undefined) {
             return this._naiveOffset;
         }
@@ -460,10 +454,10 @@ export class Music21Object extends prebase.ProtoM21Object {
         return undefined;
     }
 
-    * contextSites(options) {
+    * contextSites(options={}) {
         const params = {
             callerFirst: undefined,
-            memo: [],
+            memo: new Map(),
             offsetAppend: 0.0,
             sortByCreationTime: false,
             priorityTarget: undefined,
@@ -474,11 +468,12 @@ export class Music21Object extends prebase.ProtoM21Object {
         const memo = params.memo;
         if (params.callerFirst === undefined) {
             params.callerFirst = this;
-            if (this.isStream && !(this in memo)) {
-                const recursionType = this.recursionType;
+            if (this.isStream && !(memo.has(this))) {
+                const streamThis = <StreamRecursionLike><unknown> this;
+                const recursionType = streamThis.recursionType;
                 yield [this, 0.0, recursionType];
             }
-            memo.push(this);
+            memo.set(this, true);
         }
 
         if (params.priorityTarget === undefined && !params.sortByCreationTime) {
@@ -490,7 +485,7 @@ export class Music21Object extends prebase.ProtoM21Object {
             params.priorityTarget,
             true // excludeNone
         )) {
-            if (memo.includes(siteObj)) {
+            if (memo.has(siteObj)) {
                 continue;
             }
             if (siteObj.classes.includes('SpannerStorage')) {
@@ -504,7 +499,7 @@ export class Music21Object extends prebase.ProtoM21Object {
             const positionInStream = newOffset;
             const recursionType = siteObj.recursionType;
             yield [siteObj, positionInStream, recursionType];
-            memo.push(siteObj);
+            memo.set(siteObj, true);
 
             const newParams = {
                 callerFirst: params.callerFirst,
@@ -521,11 +516,11 @@ export class Music21Object extends prebase.ProtoM21Object {
                 const inStreamOffset = inStreamPos; // .offset;
                 // const hypotheticalPosition = inStreamOffset; // more complex w/ sortTuples
 
-                if (!memo.includes(topLevelInner)) {
+                if (!memo.has(topLevelInner)) {
                     // if returnSortTuples...
                     // else
                     yield [topLevelInner, inStreamOffset, recurType];
-                    memo.push(topLevelInner);
+                    memo.set(topLevelInner, true);
                 }
             }
         }

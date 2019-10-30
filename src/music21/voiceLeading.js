@@ -12,7 +12,7 @@ import * as interval from './interval.js';
 import * as key from './key.js';
 import * as note from './note.js';
 
-import { Music21Object } from './base.js';
+import { Music21Object } from './base';
 
 const intervalCache = [];
 

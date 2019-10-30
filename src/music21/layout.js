@@ -9,7 +9,7 @@
 // not currently used
 // import * as $ from 'jquery';
 //
-// import { base } from './base.js';
+// import { base } from './base';
 // import { renderOptions } from './renderOptions.js';
 
 import * as stream from './stream.js';
