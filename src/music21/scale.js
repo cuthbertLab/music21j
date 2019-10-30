@@ -25,7 +25,7 @@
 import { Music21Exception } from './exceptions21.js';
 import { debug } from './debug.js';
 
-import * as base from './base.js';
+import * as base from './base';
 import * as common from './common.js';
 import * as interval from './interval.js';
 import * as pitch from './pitch.js';

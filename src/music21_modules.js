@@ -52,6 +52,7 @@ import * as converter from './music21/converter';
 import * as derivation from './music21/derivation';
 import * as duration from './music21/duration';
 import * as dynamics from './music21/dynamics';
+import * as editorial from './music21/editorial';
 import * as expressions from './music21/expressions';
 import * as figuredBass from './music21/figuredBass';
 import * as fromPython from './music21/fromPython';
@@ -104,6 +105,7 @@ export {
     derivation,
     duration,
     dynamics,
+    editorial,
     expressions,
     figuredBass,
     fromPython,

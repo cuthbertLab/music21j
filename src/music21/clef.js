@@ -14,7 +14,7 @@
  * @requires music21/base
  * @requires music21/pitch
  */
-import * as base from './base.js';
+import * as base from './base';
 import * as pitch from './pitch.js';
 
 /*  music21.Clef

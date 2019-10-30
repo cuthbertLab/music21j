@@ -36,7 +36,7 @@ import * as MIDI from 'midicube';
 import { Music21Exception } from './exceptions21.js';
 import { debug } from './debug.js';
 
-import * as base from './base.js';
+import * as base from './base';
 import * as beam from './beam.js';
 import * as clef from './clef.js';
 import * as common from './common.js';

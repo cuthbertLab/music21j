@@ -9,7 +9,7 @@
  */
 
 import Vex from 'vexflow';
-import * as base from './base.js';
+import * as base from './base';
 
 /**
  * Expressions can be note attached (`music21.note.Note.expressions[]`) or floating...
