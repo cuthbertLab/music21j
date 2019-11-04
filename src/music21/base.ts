@@ -32,14 +32,20 @@ declare interface StreamRecursionLike {
 /**
  * Base class for any object that can be placed in a {@link music21.stream.Stream}.
  *
- * @property {music21.stream.Stream} [activeSite] - hardlink to a {@link music21.stream.Stream} containing the element.
- * @property {number} classSortOrder - Default sort order for this class (default 20; override in other classes). Lower numbered objects will sort before other objects in the staff if priority and offset are the same.
- * @property {music21.duration.Duration} duration - the duration (object) for the element. (can be set with a quarterLength also)
- * @property {string[]} groups - An Array of strings representing group (equivalent to css classes) to assign to the object. (default [])
+ * @property {music21.stream.Stream} [activeSite] - hardlink to a
+ *     {@link music21.stream.Stream} containing the element.
+ * @property {number} classSortOrder - Default sort order for this class
+ *     (default 20; override in other classes). Lower numbered objects will sort
+ *     before other objects in the staff if priority and offset are the same.
+ * @property {music21.duration.Duration} duration - the duration (object) for
+ *     the element. (can be set with a quarterLength also)
+ * @property {string[]} groups - An Array of strings representing group
+ *     (equivalent to css classes) to assign to the object. (default [])
  * @property {boolean} isMusic21Object - true
  * @property {boolean} isStream - false
  * @property {number} offset - offset from the beginning of the stream (in quarterLength)
- * @property {number} priority - The priority (lower = earlier or more left) for elements at the same offset. (default 0)
+ * @property {number} priority - The priority (lower = earlier or more left) for
+ *     elements at the same offset. (default 0)
  */
 export class Music21Object extends prebase.ProtoM21Object {
     static get className() { return 'music21.base.Music21Object'; }
@@ -59,8 +65,8 @@ export class Music21Object extends prebase.ProtoM21Object {
     sites: sites.Sites;
     isMusic21Object: boolean = true;
     isStream: boolean = false;
-        // beat, measureNumber, etc.
-        // lots to do...
+    // beat, measureNumber, etc.
+    // lots to do...
 
     constructor(keywords={}) {
         super();
@@ -527,14 +533,19 @@ export class Music21Object extends prebase.ProtoM21Object {
         // if followDerivation...
         if (params.followDerivation) {
             for (const derivedObject of topLevel.derivation.chain()) {
-                for (const [derivedSite, derivedOffset, derivedRecurseType] of derivedObject.contextSites({
-                    callerFirst: undefined,
-                    memo,
-                    offsetAppend: 0.0,
-                    returnSortTuples: true,
-                    sortByCreationTime: params.sortByCreationTime,
-                })) {
-                    const offsetAdjustedCsTuple = [derivedSite, derivedOffset + params.offsetAppend, derivedRecurseType];
+                for (const [derivedSite, derivedOffset, derivedRecurseType]
+                    of derivedObject.contextSites({
+                        callerFirst: undefined,
+                        memo,
+                        offsetAppend: 0.0,
+                        returnSortTuples: true,
+                        sortByCreationTime: params.sortByCreationTime,
+                    })) {
+                    const offsetAdjustedCsTuple = [
+                        derivedSite,
+                        derivedOffset + params.offsetAppend,
+                        derivedRecurseType,
+                    ];
                     yield offsetAdjustedCsTuple;
                 }
             }

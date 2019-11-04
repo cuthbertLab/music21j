@@ -75,26 +75,39 @@ function _exportMusicXMLAsText(s) {
  * @memberof music21.stream
  * @extends music21.base.Music21Object
  *
- * @property {music21.base.Music21Object[]} elements - the elements in the stream. DO NOT MODIFY individual components (consider it like a Python tuple)
+ * @property {music21.base.Music21Object[]} elements - the elements in the stream.
+ *     DO NOT MODIFY individual components (consider it like a Python tuple)
  * @property {number} length - (readonly) the number of elements in the stream.
  * @property {music21.duration.Duration} duration - the total duration of the stream's elements
  * @property {number} highestTime -- the highest time point in the stream's elements
- * @property {music21.clef.Clef} clef - the clef for the Stream (if there is one; if there are multiple, then the first clef)
+ * @property {music21.clef.Clef} clef - the clef for the Stream (if there is
+ *     one; if there are multiple, then the first clef)
  * @property {music21.meter.TimeSignature} timeSignature - the first TimeSignature of the Stream
  * @property {music21.key.KeySignature} keySignature - the first KeySignature for the Stream
- * @property {music21.renderOptions.RenderOptions} renderOptions - an object specifying how to render the stream
+ * @property {music21.renderOptions.RenderOptions} renderOptions - an object
+ *     specifying how to render the stream
  * @property {music21.stream.Stream} flat - (readonly) a flattened representation of the Stream
- * @property {music21.stream.Stream} notes - (readonly) the stream with only {@link music21.note.Note} and {@link music21.chord.Chord} objects included
- * @property {music21.stream.Stream} notesAndRests - (readonly) like notes but also with {@link music21.note.Rest} objects included
- * @property {music21.stream.Stream} parts - (readonly) a filter on the Stream to just get the parts (NON-recursive)
- * @property {music21.stream.Stream} measures - (readonly) a filter on the Stream to just get the measures (NON-recursive)
- * @property {number} tempo - tempo in beats per minute (will become more sophisticated later, but for now the whole stream has one tempo
- * @property {music21.instrument.Instrument|undefined} instrument - an instrument object associated with the stream (can be set with a string also, but will return an `Instrument` object)
- * @property {Boolean} autoBeam - whether the notes should be beamed automatically or not (will be moved to `renderOptions` soon)
+ * @property {music21.stream.Stream} notes - (readonly) the stream with
+ *     only {@link music21.note.Note} and {@link music21.chord.Chord} objects included
+ * @property {music21.stream.Stream} notesAndRests - (readonly) like notes but
+ *     also with {@link music21.note.Rest} objects included
+ * @property {music21.stream.Stream} parts - (readonly) a filter on the Stream
+ *     to just get the parts (NON-recursive)
+ * @property {music21.stream.Stream} measures - (readonly) a filter on the
+ *     Stream to just get the measures (NON-recursive)
+ * @property {number} tempo - tempo in beats per minute (will become more
+ *     sophisticated later, but for now the whole stream has one tempo
+ * @property {music21.instrument.Instrument|undefined} instrument - an
+ *     instrument object associated with the stream (can be set with a
+ *     string also, but will return an `Instrument` object)
+ * @property {Boolean} autoBeam - whether the notes should be beamed automatically
+ *    or not (will be moved to `renderOptions` soon)
  * @property {Vex.Flow.Stave|undefined} activeVFStave - the current Stave object for the Stream
- * @property {music21.vfShow.Renderer|undefined} activeVFRenderer - the current vfShow.Renderer object for the Stream
+ * @property {music21.vfShow.Renderer|undefined} activeVFRenderer - the current
+ *     vfShow.Renderer object for the Stream
  * @property {int} [staffLines=5] - number of staff lines
- * @property {function|undefined} changedCallbackFunction - function to call when the Stream changes through a standard interface
+ * @property {function|undefined} changedCallbackFunction - function to
+ *     call when the Stream changes through a standard interface
  * @property {number} maxSystemWidth - confusing... should be in renderOptions
  */
 export class Stream extends base.Music21Object {
@@ -1529,10 +1542,10 @@ export class Stream extends base.Music21Object {
         }
         const lastOctaveStepList = [];
         for (let i = 0; i < 10; i++) {
-            const tempOctaveStepDict = Object.assign({}, extendableStepList);  // clone
+            const tempOctaveStepDict = {...extendableStepList};  // clone
             lastOctaveStepList.push(tempOctaveStepDict);
         }
-        const lastOctavelessStepDict = Object.assign({}, extendableStepList);  // probably unnecessary, but safe...
+        const lastOctavelessStepDict = {...extendableStepList};  // probably unnecessary, but safe...
 
         for (const el of this) {
             if (el.pitch !== undefined) {
@@ -1906,8 +1919,12 @@ export class Stream extends base.Music21Object {
      *
      * Does not render on the DOM element.
      *
-     * @param {number|string|undefined} width - will use `this.estimateStaffLength()` + `this.renderOptions.staffPadding` if not given
-     * @param {number|string|undefined} height - if undefined will use `this.renderOptions.height`. If still undefined, will use `this.estimateStreamHeight()`
+     * @param {number|string|undefined} width - will use
+     *     `this.estimateStaffLength()`
+     *     + `this.renderOptions.staffPadding` if not given
+     * @param {number|string|undefined} height - if undefined will use
+     *     `this.renderOptions.height`. If still undefined, will use
+     *     `this.estimateStreamHeight()`
      * @param {string} elementType - what type of element, default = svg
      * @returns {jQuery} svg in jquery.
      */
@@ -2047,7 +2064,8 @@ export class Stream extends base.Music21Object {
      *
      * Note that if 'where' is empty, will replace all svg elements on the page.
      *
-     * @param {jQuery|HTMLElement} [where] - the canvas or SVG to replace or a container holding the canvas(es) to replace.
+     * @param {jQuery|HTMLElement} [where] - the canvas or SVG to replace or
+     *     a container holding the canvas(es) to replace.
      * @param {Boolean} [preserveSvgSize=false]
      * @param {string} elementType - what type of element, default = svg
      * @returns {jQuery} the svg
@@ -2854,7 +2872,8 @@ export class Part extends Stream {
                 const currentSystemWidth
                     = systemCurrentWidths[currentSystemIndex];
                 currentSystemMultiplier = maxSystemWidth / currentSystemWidth;
-                // console.log('systemMultiplier: ' + currentSystemMultiplier + ' max: ' + maxSystemWidth + ' current: ' + currentSystemWidth);
+                // console.log('systemMultiplier: ' + currentSystemMultiplier
+                // + ' max: ' + maxSystemWidth + ' current: ' + currentSystemWidth);
             }
             /* might make a small gap? fix? */
             const newLeft = currentLeft - leftSubtract;

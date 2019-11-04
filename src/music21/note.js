@@ -23,7 +23,7 @@
 import Vex from 'vexflow';
 import * as MIDI from 'midicube';
 
-import * as prebase from './prebase.js';
+import * as prebase from './prebase';
 import * as base from './base';
 import * as pitch from './pitch.js';
 import * as beam from './beam.js';
@@ -83,10 +83,13 @@ export const stemDirectionNames = [
  * @extends music21.prebase.ProtoM21Object
  * @param {string} text - the text of the lyric
  * @param {number} number=1 - the lyric number
- * @param {string} syllabic=undefined - placement of the syllable ('begin', 'middle', 'end', 'single'); undefined = interpret from text
- * @param {boolean} applyRaw=false - true = display the text exactly as it is or, false = use "-" etc. to determine syllabic
+ * @param {string} syllabic=undefined - placement of the syllable
+ *     ('begin', 'middle', 'end', 'single'); undefined = interpret from text
+ * @param {boolean} applyRaw=false - true = display the text exactly as it
+ *     is or, false = use "-" etc. to determine syllabic
  * @param {string} identifier=undefined - identifier for the lyric.
- * @property {string} lyricConnector='-' - what to place between two lyrics that are syllabic.
+ * @property {string} lyricConnector='-' - what to place between two
+ *     lyrics that are syllabic.
  * @property {string} text - the text of the lyric syllable.
  * @property {string} syllabic - see above
  * @property {boolean} applyRaw - see above
@@ -201,13 +204,20 @@ export class Lyric extends prebase.ProtoM21Object {
  * @param {(number|undefined)} [ql=1.0] - quarterLength of the note
  * @property {boolean} [isChord=false] - is this a chord
  * @property {number} quarterLength - shortcut to `.duration.quarterLength`
- * @property {Vex.Flow.StaveNote} [activeVexflowNote] - most recent Vex.Flow.StaveNote object to be made from this note (could change); default, undefined
- * @property {Array<music21.expressions.Expression>} expressions - array of attached expressions
- * @property {Array<music21.articulations.Articulation>} articulations - array of attached articulations
- * @property {string} lyric - the text of the first {@link music21.note.Lyric} object; can also set one.
+ * @property {Vex.Flow.StaveNote} [activeVexflowNote] - most recent
+ *     Vex.Flow.StaveNote object to be made from this note (could change);
+ *     default: undefined
+ * @property {Array<music21.expressions.Expression>} expressions - array
+ *     of attached expressions
+ * @property {Array<music21.articulations.Articulation>} articulations - array
+ *     of attached articulations
+ * @property {string} lyric - the text of the first
+ *     {@link music21.note.Lyric} object; can also set one.
  * @property {Array<music21.note.Lyric>} lyrics - array of attached lyrics
- * @property {number} [volume=60] - how loud is this note, 0-127, before articulations
- * @property {number} midiVolume - how loud is this note, taking into account articulations
+ * @property {number} [volume=60] - how loud is this note, 0-127, before
+ *     articulations
+ * @property {number} midiVolume - how loud is this note, taking into
+ *     account articulations
  * @property {music21.tie.Tie|undefined} [tie=undefined] - a tie object
  */
 export class GeneralNote extends base.Music21Object {
@@ -368,8 +378,10 @@ export class GeneralNote extends base.Music21Object {
      * Play the current element as a MIDI note.
      *
      * @param {number} [tempo=120] - tempo in bpm
-     * @param {music21.base.Music21Object} [nextElement] - for determining the length to play in case of tied notes, etc.
-     * @param {Object} [options] - other options (currently just `{instrument: {@link music21.instrument.Instrument} }`)
+     * @param {base.Music21Object} [nextElement] - for determining
+     *     the length to play in case of tied notes, etc.
+     * @param {Object} [options] - other options (currently just
+     *     `{instrument: {@link music21.instrument.Instrument} }`)
      * @returns {Number} - delay time in milliseconds until the next element (may be ignored)
      */
     playMidi(tempo=120, nextElement, options) {
@@ -451,7 +463,8 @@ export class GeneralNote extends base.Music21Object {
  * @property {string} [noteheadFill='default'] - notehead fill (to be moved to style...)
  * @property {string|undefined} [noteheadColor=undefined] - notehead color
  * @property {boolean} [noteheadParenthesis=false] - put a parenthesis around the notehead?
- * @property {string|undefined} [stemDirection=undefined] - One of ['up','down','noStem', undefined] -- 'double' not supported
+ * @property {string|undefined} [stemDirection=undefined] - One of
+ *     ['up','down','noStem', undefined] -- 'double' not supported
  */
 export class NotRest extends GeneralNote {
     static get className() { return 'music21.note.NotRest'; }
@@ -495,7 +508,8 @@ export class NotRest extends GeneralNote {
  * Together with {@link music21.stream.Stream} one of the two most important
  * classes in `music21`.
  *
- * See {@link music21.note.NotRest}, {@link music21.note.GeneralNote}, {@link music21.base.Music21Object}
+ * See {@link music21.note.NotRest}, {@link music21.note.GeneralNote},
+ * {@link base.Music21Object}
  * and {@link music21.prebase.ProtoM21Object} (or in general, the **extends** list below) for other
  * things you can do with a `Note` object.
  *
@@ -510,7 +524,8 @@ export class Note extends NotRest {
 
     /**
      *
-     * @param {(string|music21.pitch.Pitch|undefined)} [nn='C4'] - pitch name ("C", "D#", "E-") w/ or w/o octave ("C#4"), or a pitch.Pitch object
+     * @param {(string|music21.pitch.Pitch|undefined)} [nn='C4'] - pitch
+     *     name ("C", "D#", "E-") w/ or w/o octave ("C#4"), or a pitch.Pitch object
      * @param {(number|undefined)} [ql=1.0] - length in quarter notes
      * @property {Boolean} [isNote=true] - is it a Note? Yes!
      * @property {Boolean} [isRest=false] - is it a Rest? No!

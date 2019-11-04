@@ -10,7 +10,7 @@
 import Vex from 'vexflow';
 
 import * as common from './common.js';
-import * as prebase from './prebase.js';
+import * as prebase from './prebase';
 
 /**
  * Represents a single articulation, usually in the `.articulations` Array

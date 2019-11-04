@@ -18,7 +18,7 @@
 import * as $ from 'jquery';
 import * as MIDI from 'midicube';
 
-import * as prebase from './prebase.js';
+import * as prebase from './prebase';
 
 /**
  * The tempo object itself is a full object in music21p -- TODO(msc): make it one here too.

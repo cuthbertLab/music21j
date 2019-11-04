@@ -17,7 +17,11 @@ export function runConfiguration() {
         conf = loadConfiguration();
     }
     conf.warnBanner = (conf.warnBanner !== undefined) ? conf.warnBanner : warnBanner();
-    conf.loadSoundfont = (conf.loadSoundfont !== undefined) ? conf.loadSoundfont : getM21attribute('loadSoundFont') || true;
+    conf.loadSoundfont = (
+        conf.loadSoundfont !== undefined
+            ? conf.loadSoundfont
+            : getM21attribute('loadSoundFont') || true
+    );
     conf.renderHTML = (conf.renderHTML !== undefined) ? conf.renderHTML : getM21attribute('renderHTML');
     if (conf.renderHTML === undefined) {
         conf.renderHTML = true;

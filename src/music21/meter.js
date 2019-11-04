@@ -34,7 +34,8 @@ import * as duration from './duration.js';
  * @property {int} [denominator=4]
  * @property {int[][]} beatGroups - groupings of beats; inner arrays are numerator, denominator
  * @property {string} ratioString - a string like "4/4"
- * @property {music21.duration.Duration} barDuration - a Duration object representing the expressed total length of the TimeSignature.
+ * @property {music21.duration.Duration} barDuration - a Duration object
+ *     representing the expressed total length of the TimeSignature.
  */
 export class TimeSignature extends base.Music21Object {
     static get className() { return 'music21.meter.TimeSignature'; }

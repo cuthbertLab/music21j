@@ -2,8 +2,8 @@
  * music21j -- Javascript reimplementation of Core music21p features.
  * music21/chord -- Chord
  *
- * Copyright (c) 2013-16, Michael Scott Cuthbert and cuthbertLab
- * Based on music21 (=music21p), Copyright (c) 2006–16, Michael Scott Cuthbert and cuthbertLab
+ * Copyright (c) 2013-19, Michael Scott Cuthbert and cuthbertLab
+ * Based on music21 (=music21p), Copyright (c) 2006–19, Michael Scott Cuthbert and cuthbertLab
  *
  * chord Module. See {@link music21.chord} namespace for more details.
  * Chord related objects (esp. {@link music21.chord.Chord}) and methods.
@@ -29,11 +29,14 @@ export { chordTables };
  *
  * @class Chord
  * @memberof music21.chord
- * @param {Array<string|music21.note.Note|music21.pitch.Pitch>} [notes] - an Array of strings
- * (see {@link music21.pitch.Pitch} for valid formats), note.Note, or pitch.Pitch objects.
+ * @param {Array<string|music21.note.Note|music21.pitch.Pitch>} [notes] -
+ *     an Array of strings
+ *     (see {@link music21.pitch.Pitch} for valid formats), note.Note,
+ *     or pitch.Pitch objects.
  * @extends music21.note.NotRest
  * @property {number} length - the number of pitches in the Chord (readonly)
- * @property {music21.pitch.Pitch[]} pitches - an Array of Pitch objects in the chord. (Consider the Array read only and pass in a new Array to change)
+ * @property {music21.pitch.Pitch[]} pitches - an Array of Pitch objects in the
+ *     chord. (Consider the Array read only and pass in a new Array to change)
  * @property {Boolean} [isChord=true]
  * @property {Boolean} [isNote=false]
  * @property {Boolean} [isRest=false]
@@ -280,7 +283,10 @@ export class Chord extends note.NotRest {
     /**
      * Adds a note to the chord, sorting the note array
      *
-     * @param {string|string[]|music21.note.Note|music21.pitch.Pitch|music21.note.Note[]|music21.pitch.Pitch[]} notes - the Note or Pitch to be added or a string defining a pitch.
+     * @param {
+     *     string|string[]|music21.note.Note|music21.pitch.Pitch|
+     *     music21.note.Note[]|music21.pitch.Pitch[]} notes - the
+     *     Note or Pitch to be added or a string defining a pitch.
      * @param {boolean} runSort - Sort after running (default true)
      * @returns {music21.chord.Chord} the original chord.
      */
@@ -315,7 +321,8 @@ export class Chord extends note.NotRest {
     // TODO: add remove
 
     /**
-     * Removes any pitches that appear more than once (in any octave), removing the higher ones, and returns a new Chord.
+     * Removes any pitches that appear more than once (in any octave),
+     * removing the higher ones, and returns a new Chord.
      *
      * @returns {music21.chord.Chord} A new Chord object with duplicate pitches removed.
      */
@@ -406,7 +413,8 @@ export class Chord extends note.NotRest {
      *
      * @param {number} chordStep - the step to find, e.g., 1, 2, 3, etc.
      * @param {music21.pitch.Pitch} [testRoot] - the pitch to temporarily consider the root.
-     * @returns {number|undefined} Number of semitones above the root for this chord step or undefined if no pitch matches that chord step.
+     * @returns {number|undefined} Number of semitones above the root for this
+     *     chord step or undefined if no pitch matches that chord step.
      */
     semitonesFromChordStep(chordStep, testRoot) {
         if (testRoot === undefined) {

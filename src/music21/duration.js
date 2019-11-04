@@ -22,7 +22,7 @@ import { Music21Exception } from './exceptions21.js';
 
 import * as common from './common.js';
 import { debug } from './debug.js';
-import * as prebase from './prebase.js';
+import * as prebase from './prebase';
 
 /**
  * Object mapping int to name, as in `{1: 'whole'}` etc.
@@ -352,8 +352,10 @@ export class Duration extends prebase.ProtoM21Object {
  * @extends music21.prebase.ProtoM21Object
  * @param {number} [numberNotesActual=3] - numerator of the tuplet
  * @param {number} [numberNotesNormal=2] - denominator of the tuplet
- * @param {(music21.duration.Duration|number)} [durationActual] - duration or quarterLength of duration type, default music21.duration.Duration(0.5)
- * @param {(music21.duration.Duration|number)} [durationNormal] - unused; see music21p for description
+ * @param {(music21.duration.Duration|number)} [durationActual] - duration or
+ *     quarterLength of duration type, default music21.duration.Duration(0.5)
+ * @param {(music21.duration.Duration|number)} [durationNormal] - unused;
+ *     see music21p for description
  */
 export class Tuplet extends prebase.ProtoM21Object {
     static get className() { return 'music21.duration.Tuplet'; }

@@ -203,10 +203,14 @@ export const romanToNumber = [undefined, 'i', 'ii', 'iii', 'iv', 'v', 'vi', 'vii
  * @extends music21.harmony.Harmony
  * @param {string} figure - the roman numeral as a string, e.g., 'IV', 'viio', 'V7'
  * @param {string|music21.key.Key} [keyStr='C']
- * @property {Array<music21.pitch.Pitch>} scale - (readonly) returns the scale associated with the roman numeral
- * @property {music21.key.Key} key - the key associated with the RomanNumeral (not allowed to be undefined yet)
+ * @property {Array<music21.pitch.Pitch>} scale - (readonly) returns the scale
+ *     associated with the roman numeral
+ * @property {music21.key.Key} key - the key associated with the
+ *     RomanNumeral (not allowed to be undefined yet)
  * @property {string} figure - the figure as passed in
- * @property {string} degreeName - the name associated with the scale degree, such as "mediant" etc., scale 7 will be "leading tone" or "subtonic" appropriately
+ * @property {string} degreeName - the name associated with the scale degree,
+ *     such as "mediant" etc., scale 7 will be "leading tone" or
+ *     "subtonic" appropriately
  * @property {int} scaleDegree
  * @property {string|undefined} impliedQuality - "major", "minor", "diminished", "augmented"
  * @property {music21.roman.RomanNumeral|undefined} secondaryRomanNumeral
@@ -217,7 +221,8 @@ export const romanToNumber = [undefined, 'i', 'ii', 'iii', 'iv', 'v', 'vi', 'vii
  * @property {string|undefined} romanNumeralAlone
  * @property {scale.Scale|boolean|undefined} impliedScale
  * @property {music21.interval.Interval|undefined} scaleOffset
- * @property {Array<music21.pitch.Pitch>} pitches - RomanNumerals are Chord objects, so .pitches will work for them also.
+ * @property {Array<music21.pitch.Pitch>} pitches - RomanNumerals
+ *     are Chord objects, so .pitches will work for them also.
  */
 export class RomanNumeral extends harmony.Harmony {
     static get className() { return 'music21.roman.RomanNumeral'; }

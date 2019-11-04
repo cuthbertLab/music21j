@@ -8,6 +8,13 @@
  * @memberof music21
  */
 
+declare interface ProtoM21ObjectConstructorInterface extends Function {
+    className: string;
+}
+
+declare interface Constructable<T> {
+    new() : T;
+}
 
 /**
  * Class for pseudo-m21 objects to inherit from. The most important attributes that nearly
@@ -20,34 +27,17 @@
  * @property {Boolean} isProtoM21Object - Does this object descend
  * from {@link music21.prebase.ProtoM21Object}: obviously true.
  * @property {Boolean} isMusic21Object - Does this object descend
- * from {@link music21.base.Music21Object}; default false.
+ * from Music21Object; default false.
  */
 export class ProtoM21Object {
     static get className() { return 'music21.prebase.ProtoM21Object'; }
+    protected _storedClasses: string[];
+    protected _storedClassSet: Set<any>;
+    isProtoM21Object: boolean = true;
+    isMusic21Object: boolean = false;
+    protected _cloneCallbacks: any = {};
 
-    constructor() {
-        /**
-         *
-         * @type {string[]|undefined}
-         * @private
-         */
-        this._storedClasses = undefined;
-        /**
-         *
-         * @type {Set<*>|undefined}
-         * @private
-         */
-        this._storedClassSet = undefined;
-        this.isProtoM21Object = true;
-        this.isMusic21Object = false;
-        this._cloneCallbacks = {};
-    }
-
-    /**
-     * @type {Set<*>}
-     * @readonly
-     */
-    get classSet() {
+    get classSet(): Set<any> {
         if (this._storedClassSet !== undefined) {
             return this._storedClassSet;
         }
@@ -58,11 +48,8 @@ export class ProtoM21Object {
     /**
      * Gets all classes.  Note that because of webpack mangling of class names,
      * we need to specify `className` as a static property on each class.
-     *
-     * @returns {string[]}
-     * @readonly
      */
-    get classes() {
+    get classes(): string[] {
         if (this._storedClasses !== undefined) {
             return this._storedClasses;
         }
@@ -72,13 +59,11 @@ export class ProtoM21Object {
 
     /**
      * Populates the class caches (.classes and .classSet)
-     *
-     * @private
      */
-    _populateClassCaches() {
+    private _populateClassCaches() {
         const classSet = new Set();
         const classList = [];
-        let thisConstructor = this.constructor;
+        let thisConstructor = <ProtoM21ObjectConstructorInterface> this.constructor;
         let maxLinks = 20;
         while (
             thisConstructor !== undefined
@@ -106,11 +91,11 @@ export class ProtoM21Object {
      *
      * Works similarly to Python's copy.deepcopy().
      *
-     * Every ProtoM21Object has a `._cloneCallbacks` object which maps `{attribute: callbackFunction}`
-     * to handle custom clone cases.  See, for instance, {@link music21.base.Music21Object} which
+     * Every ProtoM21Object has a `._cloneCallbacks` object which maps
+     * `{attribute: callbackFunction}`
+     * to handle custom clone cases.  See, for instance, Music21Object which
      * uses a custom callback to NOT clone the `.activeSite` attribute.
      *
-     * @returns {this} note: not really the same object, but a new object of the same type
      * @example
      * var n1 = new music21.note.Note("C#");
      * n1.duration.quarterLength = 4;
@@ -118,7 +103,7 @@ export class ProtoM21Object {
      * n2.duration.quarterLength == 4; // true
      * n2 === n1; // false
      */
-    clone(deep=true, memo) {
+    clone(deep=true, memo=undefined) {
         if (!deep) {
             return Object.assign(
                 Object.create(Object.getPrototypeOf(this)),
@@ -126,7 +111,8 @@ export class ProtoM21Object {
             );
         }
 
-        const ret = new this.constructor();
+        const classConstructor = <Constructable<ProtoM21Object>> this.constructor;
+        const ret = <Record<string, any>> new classConstructor();
         if (memo === undefined) {
             memo = new WeakMap();
         }
@@ -156,15 +142,15 @@ export class ProtoM21Object {
             } else if (
                 typeof this[key] === 'object'
                 && this[key] !== null
-                && this[key].isProtoM21Object
+                && (<ProtoM21Object><unknown> this[key]).isProtoM21Object
             ) {
                 // console.log('cloning ', key);
-                const m21Obj = this[key];
+                const m21Obj = <ProtoM21Object><unknown> this[key];
                 let clonedVersion;
                 if (memo.has(m21Obj)) {
                     clonedVersion = memo.get(m21Obj);
                 } else {
-                    clonedVersion = this[key].clone(deep, memo);
+                    clonedVersion = m21Obj.clone(deep, memo);
                 }
                 ret[key] = clonedVersion;
             } else {

@@ -19,7 +19,7 @@ import { debug } from './debug.js';
 
 import * as common from './common.js';
 import * as note from './note.js';
-import * as prebase from './prebase.js';
+import * as prebase from './prebase';
 import * as pitch from './pitch.js';
 
 /**
@@ -1057,7 +1057,8 @@ export function _getSpecifierFromGenericChromatic(
         && gInt.direction !== Direction.OBLIQUE
         && cInt.direction !== Direction.OBLIQUE
     ) {
-        // intervals like d2 and dd2 etc. (the last test doesn't matter, since -1*0 === 0, but in theory it should be there)
+        // intervals like d2 and dd2 etc. (the last test doesn't matter,
+        // since -1 * 0 === 0, but in theory it should be there)
         theseSemis = -1 * cInt.undirected;
     } else if (gInt.undirected === 1) {
         theseSemis = cInt.directed; // matters for unison

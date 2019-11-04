@@ -92,7 +92,7 @@ export const aggregation = (baseClass, ...mixins) => {
             });
         }
     }
-    let copyProps = (target, source) => {
+    const copyProps = (target, source) => {
         // this function copies all properties and symbols, filtering out some special ones
         // noinspection JSUnresolvedFunction,JSCheckFunctionSignatures
         Object.getOwnPropertyNames(source)

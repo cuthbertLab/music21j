@@ -25,7 +25,9 @@ import * as pitch from './pitch.js';
 
 /**
  *
- * @type {{bass: number, soprano: number, tenor: number, percussion: number, 'mezzo-soprano': number, alto: number, treble: number}}
+ * @type {
+ *     {bass: number, soprano: number, tenor: number, percussion: number,
+ *     'mezzo-soprano': number, alto: number, treble: number}}
  */
 export const lowestLines = {
     treble: 31,
@@ -39,7 +41,9 @@ export const lowestLines = {
 
 /**
  *
- * @type {{bass: number, soprano: number, tenor: number, percussion: number, 'mezzo-soprano': number, alto: number, treble: number}}
+ * @type {
+ *     {bass: number, soprano: number, tenor: number, percussion: number,
+ *     'mezzo-soprano': number, alto: number, treble: number}}
  */
 export const nameToLine = {
     treble: 2,
@@ -53,7 +57,9 @@ export const nameToLine = {
 
 /**
  *
- * @type {{bass: string, soprano: string, tenor: string, percussion: string, 'mezzo-soprano': string, alto: string, treble: string}}
+ * @type {
+ *     {bass: string, soprano: string, tenor: string, percussion: string,
+ *     'mezzo-soprano': string, alto: string, treble: string}}
  */
 export const nameToSign = {
     treble: 'G',
@@ -75,8 +81,10 @@ export const nameToSign = {
  * @param {string} name - clef name
  * @param {int} [octaveChange=0] - ottava
  * @property {string} [name]
- * @property {int} lowestLine - diatonicNoteNum (C4 = 29) for the lowest line (in a five-line staff)
- * @property {int} lowestLineTrebleOffset - difference between the first line of this staff and the first line in treble clef
+ * @property {int} lowestLine - diatonicNoteNum (C4 = 29) for the
+ *     lowest line (in a five-line staff)
+ * @property {int} lowestLineTrebleOffset - difference between the first line
+ *     of this staff and the first line in treble clef
  * @property {int} octaveChange
  */
 export class Clef extends base.Music21Object {

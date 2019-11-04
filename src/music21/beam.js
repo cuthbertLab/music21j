@@ -16,7 +16,7 @@
  */
 import { Music21Exception } from './exceptions21.js';
 
-import * as prebase from './prebase.js';
+import * as prebase from './prebase';
 import * as duration from './duration.js';
 
 export const validBeamTypes = {
@@ -42,8 +42,10 @@ export const beamableDurationTypes = [
  * @extends music21.prebase.ProtoM21Object
  * @param {string} type - "start", "stop", "continue", "partial"
  * @param {string} direction - only needed for partial beams: "left" or "right"
- * @property {int|undefined} number - which beam line does this refer to; 8th = 1, 16th = 2, etc.
- * @property {number|undefined} independentAngle - the angle of this beam if it is different than others (feathered beams)
+ * @property {int|undefined} number - which beam line does this refer to;
+ *     8th = 1, 16th = 2, etc.
+ * @property {number|undefined} independentAngle - the angle of this beam
+ *     if it is different than others (feathered beams)
  */
 export class Beam extends prebase.ProtoM21Object {
     static get className() { return 'music21.beam.Beam'; }

@@ -15,7 +15,7 @@
  */
 import { Music21Exception } from './exceptions21.js';
 
-import * as prebase from './prebase.js';
+import * as prebase from './prebase';
 import * as common from './common.js';
 
 /**
@@ -297,8 +297,10 @@ export const midiToName = [
  * - "C", "D', etc. ("B" = American B; "H" is not allowed)
  * - "C#", "C-" (C-flat; do not use "b" for flat), "C##", "C###", "C--" etc.
  * - Octave may be specified after the name + accidental: "C#4" etc.
- * - Octave can be arbitrarily high ("C10") but only as low as "C0" because "C-1" would be interpreted as C-flat octave 1; shift octave later for very low notes.
- * - If octave is not specified, the system will usually use octave 4, but might adjust according to context. If you do not like this behavior, give an octave always.
+ * - Octave can be arbitrarily high ("C10") but only as low as "C0" because
+ *     "C-1" would be interpreted as C-flat octave 1; shift octave later for very low notes.
+ * - If octave is not specified, the system will usually use octave 4, but might
+ *     adjust according to context. If you do not like this behavior, give an octave always.
  * - Microtones are not supported in music21j (they are in music21p)
  *
  * @class Pitch
@@ -306,13 +308,20 @@ export const midiToName = [
  * @param {string} pn - name of the pitch, with or without octave, see above.
  * @extends music21.prebase.ProtoM21Object
  * @property {music21.pitch.Accidental|undefined} accidental - link to an accidental
- * @property {number} diatonicNoteNum - diatonic number of the pitch, where 29 = C4, C#4, C-4, etc.; 30 = D-4, D4, D#4, etc. updates other properties.
- * @property {number} midi - midi number of the pitch (C4 = 60); readonly. See {@link music21.pitch.Pitch#ps} for settable version.
- * @property {string} name - letter name of pitch + accidental modifier; e.g., B-flat = 'B-'; changes automatically w/ step and accidental
- * @property {string} nameWithOctave - letter name of pitch + accidental modifier + octave; changes automatically w/ step, accidental, and octave
- * @property {number} octave - number for the octave, where middle C = C4, and octaves change between B and C; default 4
- * @property {number} ps - pitch space number, like midi number but floating point and w/ no restriction on range. C4 = 60.0
- * @property {string} step - letter name for the pitch (C-G, A, B), without accidental; default 'C'
+ * @property {number} diatonicNoteNum - diatonic number of the pitch,
+ *     where 29 = C4, C#4, C-4, etc.; 30 = D-4, D4, D#4, etc. updates other properties.
+ * @property {number} midi - midi number of the pitch (C4 = 60); readonly.
+ *     See {@link music21.pitch.Pitch#ps} for settable version.
+ * @property {string} name - letter name of pitch + accidental modifier;
+ *     e.g., B-flat = 'B-'; changes automatically w/ step and accidental
+ * @property {string} nameWithOctave - letter name of pitch + accidental
+ *     modifier + octave; changes automatically w/ step, accidental, and octave
+ * @property {number} octave - number for the octave, where middle C = C4, and
+ *     octaves change between B and C; default 4
+ * @property {number} ps - pitch space number, like midi number but floating
+ *     point and w/ no restriction on range. C4 = 60.0
+ * @property {string} step - letter name for the pitch (C-G, A, B),
+ *     without accidental; default 'C'
  */
 export class Pitch extends prebase.ProtoM21Object {
     static get className() { return 'music21.pitch.Pitch'; }

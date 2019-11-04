@@ -23,11 +23,23 @@ module.exports = grunt => {
     // const TARGET_RAW_MAP = TARGET_RAW + '.map';
     // const TARGET_MIN = path.join(BUILD_DIR, 'music21.min.js');
 
-    const SOURCES = ['src/music21_modules.js', 'src/music21/*.js', 'src/music21/*/*.js'];
+    const SOURCES = [
+        'src/music21_modules.js',
+        'src/music21/*.js',
+        'src/music21/*/*.js',
+        'src/music21/*.ts',
+        'src/music21/*/*.ts',
+    ];
     const WATCH_SOURCES = SOURCES.concat(['Gruntfile.js']);
 
     const TEST_ENTRY = path.join(TEST_DIR, 'loadAll.js');
-    const TEST_SOURCES = ['tests/loadAll.js', 'tests/moduleTests/*.js', 'tests/moduleTests/*/*.js'];
+    const TEST_SOURCES = [
+        'tests/loadAll.js',
+        'tests/moduleTests/*.js',
+        'tests/moduleTests/*/*.js',
+        'tests/moduleTests/*.ts',
+        'tests/moduleTests/*/*.ts',
+    ];
     // const TARGET_TESTS = path.join(BUILD_DIR, 'music21.tests.js');
 
     const babel_loader = babel_presets => {
@@ -56,17 +68,21 @@ module.exports = grunt => {
                 umdNamedDefine: true,
             },
             mode: 'development',
-            devtool: 'inline-source-map',
+            devtool: 'source-map',
+            watch: true,
             resolve: {
-                // Add '.ts' as resolvable extension.
                 extensions: ['.ts', '.js'],
             },
             module: {
                 rules: [
-                    {
-                        test: /\.js?$/,
-                        exclude: /(node_modules|src\/ext)/,
-                        use: [babel_loader(preset)],
+                    { // eslint -- + @typescript-eslint in eslintrc.json
+                        enforce: 'pre',
+                        test: /\.(js|ts)$/,
+                        exclude: /(node_modules|bower_components|src\/ext)/,
+                        loader: 'eslint-loader',
+                        options: {
+                            failOnError: true,
+                        },
                     },
                     {   // typescript --> transpile to es6 using ts-loader,
                         // then babel to our target
@@ -75,6 +91,13 @@ module.exports = grunt => {
                         use: [
                             babel_loader(preset),
                             { loader: 'ts-loader' },
+                        ],
+                    },
+                    {
+                        test: /\.js$/,
+                        exclude: /(node_modules|src\/ext)/,
+                        use: [
+                            babel_loader(preset)
                         ],
                     },
                     {
@@ -161,7 +184,7 @@ module.exports = grunt => {
         watch: {
             scripts: {
                 files: WATCH_SOURCES,
-                tasks: ['webpack:build', 'eslint'],
+                tasks: ['webpack:build'],
                 options: {
                     interrupt: true,
                 },
@@ -197,7 +220,7 @@ module.exports = grunt => {
     grunt.loadNpmTasks('grunt-eslint');
 
     // Default task(s).
-    grunt.registerTask('default', ['eslint', 'webpack:build']);
+    grunt.registerTask('default', ['webpack:build']);
     grunt.registerTask('test', 'Watch qunit tests', ['watch:test']);
     grunt.registerTask('test_no_watch', 'Run qunit tests', ['webpack:test', 'qunit']);
     grunt.registerTask('publish', 'Raise the version and publish', () => {

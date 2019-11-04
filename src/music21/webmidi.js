@@ -163,7 +163,8 @@ export function midiInArrived(midiMessageEvent) {
  *
  * @function music21.webmidi.createPlugin
  * @param {Node} [appendElement=document.body] - where to place this hidden object (does not really matter)
- * @param {Boolean} [override=false] - if this method has been called successfully before return the storedPlugin unless override is true.
+ * @param {Boolean} [override=false] - if this method has been called
+ *     successfully before return the storedPlugin unless override is true.
  * @returns {Jazz|undefined} Jazz MIDI plugin object
  */
 export function createPlugin(appendElement, override) {

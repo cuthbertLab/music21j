@@ -675,18 +675,24 @@ export class MidiPlayer {
 }
 
 /**
-* callBacks is an object with three keys:
-*
-* - raw: function (t, a, b,c) to call when any midi event arrives. Default: `function (t, a, b, c) { return new miditools.Event(t, a, b, c); }`
-* - general: function ( miditools.Event() ) to call when an Event object has been created. Default: `[miditools.sendToMIDIjs, miditools.quantizeLastNote]`
-* - sendOutChord: function (array_of_note.Note_objects) to call when a sufficient time has passed to build a chord from input. Default: empty function.
-*
-* At present, only "general" can take an Array of event listening functions, but I hope to change that for sendOutChord also.
-*
-* "general" is usually the callback list to play around with.
-*
-* @memberof music21.miditools
-*/
+ * callBacks is an object with three keys:
+ *
+ * - raw: function (t, a, b,c) to call when any midi event arrives.
+ *     Default: `function (t, a, b, c) { return new miditools.Event(t, a, b, c); }`
+ * - general: function ( miditools.Event() ) to call when an Event object
+ *     has been created. Default:
+ *     `[miditools.sendToMIDIjs, miditools.quantizeLastNote]`
+ * - sendOutChord: function (note.Note[]) to call
+ *     when a sufficient time has passed to build a chord from input.
+ *     Default: empty function.
+ *
+ * At present, only "general" can take an Array of event listening functions,
+ * but I hope to change that for sendOutChord also.
+ *
+ * "general" is usually the callback list to play around with.
+ *
+ * @memberof music21.miditools
+ */
 export const callBacks = {
     raw: (t, a, b, c) => new Event(t, a, b, c),
     general: [sendToMIDIjs, quantizeLastNote],
