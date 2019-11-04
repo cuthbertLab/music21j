@@ -60,10 +60,10 @@ MIDI Input: <div id="putMidiSelectHere" />
  */
 
 import * as $ from 'jquery';
-import { debug } from './debug.js';
+import { debug } from './debug';
 
-import * as common from './common.js';
-import * as miditools from './miditools.js';
+import * as common from './common';
+import * as miditools from './miditools';
 
 
 /**

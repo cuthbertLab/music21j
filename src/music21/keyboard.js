@@ -32,9 +32,9 @@
 import * as $ from 'jquery';
 import * as MIDI from 'midicube';
 
-import * as common from './common.js';
-import * as miditools from './miditools.js';
-import * as pitch from './pitch.js';
+import * as common from './common';
+import * as miditools from './miditools';
+import * as pitch from './pitch';
 
 /**
  * Represents a single Key

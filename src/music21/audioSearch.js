@@ -8,7 +8,7 @@
  * @requires music21/common
  */
 import * as MIDI from 'midicube';
-import * as common from './common.js';
+import * as common from './common';
 
 // functions based on the prototype created by Chris Wilson's MIT License version
 // and on Jordi Bartolome Guillen's audioSearch module for music21

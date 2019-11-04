@@ -19,16 +19,16 @@
  * @requires music21/pitch
  * @requires music21/interval
  */
-import { Music21Exception } from './exceptions21.js';
+import { Music21Exception } from './exceptions21';
 
-import * as chord from './chord.js';
-import * as common from './common.js';
-import * as figuredBass from './figuredBass.js';
-import * as harmony from './harmony.js';
-import * as interval from './interval.js';
-import * as key from './key.js';
-import * as pitch from './pitch.js';
-import * as scale from './scale.js';
+import * as chord from './chord';
+import * as common from './common';
+import * as figuredBass from './figuredBass';
+import * as harmony from './harmony';
+import * as interval from './interval';
+import * as key from './key';
+import * as pitch from './pitch';
+import * as scale from './scale';
 
 export const figureShorthands = {
     '53': '',

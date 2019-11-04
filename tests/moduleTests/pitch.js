@@ -1,5 +1,5 @@
 import * as QUnit from 'qunit';
-import * as music21 from '../../src/music21_modules.js';
+import * as music21 from '../../src/music21_modules';
 
 const { test } = QUnit;
 
@@ -55,12 +55,12 @@ export default function tests() {
         assert.equal(cDblFlat.ps, bFlat.ps);
 
 
-    // once octaveless pitches exist...
-    //        const octaveless = new music21.pitch.Pitch('C');
-    //        const bSharp = octaveless.getLowerEnharmonic();
-    //        assert.equal(octaveless.octave, undefined, 'octave should be undefined');
-    //        assert.equal(bSharp.octave, undefined, 'octave should be undefined');
-    //        assert.equal(bSharp.name, 'B#');
+        // once octaveless pitches exist...
+        // const octaveless = new music21.pitch.Pitch('C');
+        // const bSharp = octaveless.getLowerEnharmonic();
+        // assert.equal(octaveless.octave, undefined, 'octave should be undefined');
+        // assert.equal(bSharp.octave, undefined, 'octave should be undefined');
+        // assert.equal(bSharp.name, 'B#');
 
     });
 

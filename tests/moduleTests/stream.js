@@ -1,5 +1,5 @@
 import * as QUnit from 'qunit';
-import * as music21 from '../../src/music21_modules.js';
+import * as music21 from '../../src/music21_modules';
 
 const { test } = QUnit;
 
@@ -74,7 +74,7 @@ export default function tests() {
         s.remove(n);
         assert.equal(s.index(d), 1, 'index of d is still 1');
         assert.equal(s.length, 3, 'stream length is 3');
-        assert.throws(() => { s.index(n) }, /cannot find/, 'n is no longer in s');
+        assert.throws(() => { s.index(n); }, /cannot find/, 'n is no longer in s');
 
         assert.equal(d.offset, 1.0, 'd offset is 1.0');
         const r = new music21.note.Rest();
@@ -84,14 +84,14 @@ export default function tests() {
         assert.equal(d.offset, 0.0, 'offset of d should now be 0.0');
         assert.equal(r.offset, 1.0, 'offset of r should be d-old offset of 1');
         assert.equal(s.index(r), 1, 'index of r in s should be 1');
-        assert.throws(() => { s.index(d) }, /cannot find/, 'd is no longer in s');
+        assert.throws(() => { s.index(d); }, /cannot find/, 'd is no longer in s');
 
         const r2 = new music21.note.Rest();
         r2.offset = 10; // ignored
         s.set(0, r2);
         assert.deepEqual(s.get(0), r2);
         assert.equal(s.get(0).offset, 0.0, 'offset is now position in stream.');
-        assert.throws(() => { cs.getOffsetBySite(s) }, /not stored/, 'cs is no longer in s');
+        assert.throws(() => { cs.getOffsetBySite(s); }, /not stored/, 'cs is no longer in s');
     });
 
     QUnit.test('music21.stream.Stream.elements from stream', assert => {
@@ -335,7 +335,7 @@ export default function tests() {
         const n4 = new music21.note.Note('G3');
         s1.append(n4);
         const div1 = s1.editableAccidentalDOM();
-        $(document.body).append(div1);
+        window.$(document.body).append(div1);
     });
     QUnit.test('music21.stream.Stream makeAccidentals ', assert => {
         const n = new music21.note.Note('G#3');

@@ -14,10 +14,10 @@
  * @requires music21/prebase
  * @requires music21/duration
  */
-import { Music21Exception } from './exceptions21.js';
+import { Music21Exception } from './exceptions21';
 
 import * as prebase from './prebase';
-import * as duration from './duration.js';
+import * as duration from './duration';
 
 export const validBeamTypes = {
     start: true,

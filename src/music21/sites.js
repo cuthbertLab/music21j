@@ -9,7 +9,7 @@
  * @requires music21/common
  */
 
-import * as common from './common.js';
+import * as common from './common';
 import { Music21Exception } from './exceptions21';
 
 /**

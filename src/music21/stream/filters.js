@@ -1,4 +1,4 @@
-import { Music21Exception } from '../exceptions21.js';
+import { Music21Exception } from '../exceptions21';
 
 export class FilterException extends Music21Exception {
 

@@ -18,10 +18,10 @@
  * @requires music21/prebase
  * @exports music21/duration
  */
-import { Music21Exception } from './exceptions21.js';
+import { Music21Exception } from './exceptions21';
 
-import * as common from './common.js';
-import { debug } from './debug.js';
+import * as common from './common';
+import { debug } from './debug';
 import * as prebase from './prebase';
 
 /**

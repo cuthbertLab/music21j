@@ -1,5 +1,5 @@
 import * as QUnit from 'qunit';
-import * as music21 from '../../src/music21_modules.js';
+import * as music21 from '../../src/music21_modules';
 
 const { test } = QUnit;
 
@@ -166,8 +166,7 @@ export default function tests() {
     });
 
     test('music21.roman.RomanNumeral - front alterations', assert => {
-        let rn1;
-        rn1 = new music21.roman.RomanNumeral('#II', 'C');
+        const rn1 = new music21.roman.RomanNumeral('#II', 'C');
         assert.equal(rn1.root().name, 'D#', 'root name is D#');
         assert.equal(rn1.bass().name, 'D#', 'bass name is D#');
         assert.equal(rn1.pitches[1].name, 'F##', 'next pitch is F##');
@@ -175,8 +174,7 @@ export default function tests() {
     });
 
     test('music21.roman.RomanNumeral - neapolitan', assert => {
-        let rn1;
-        rn1 = new music21.roman.RomanNumeral('N6', 'C');
+        const rn1 = new music21.roman.RomanNumeral('N6', 'C');
         assert.equal(rn1.root().name, 'D-', 'root name is D-');
         assert.equal(rn1.bass().name, 'F', 'bass name is F');
     });
@@ -206,8 +204,7 @@ export default function tests() {
     });
 
     test('music21.roman.RomanNumeral - bracketedAlterations', assert => {
-        let rn1;
-        rn1 = new music21.roman.RomanNumeral('V7[#5][b3]', 'C');
+        const rn1 = new music21.roman.RomanNumeral('V7[#5][b3]', 'C');
         assert.deepEqual(
             rn1.bracketedAlterations[0],
             ['#', 5],

@@ -10,9 +10,9 @@
 // import * as $ from 'jquery';
 //
 // import { base } from './base';
-// import { renderOptions } from './renderOptions.js';
+// import { renderOptions } from './renderOptions';
 
-import * as stream from './stream.js';
+import * as stream from './stream';
 
 /**
  * Divide a part up into systems and fix the measure

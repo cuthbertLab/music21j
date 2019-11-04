@@ -2,7 +2,7 @@
  * @namespace music21.audioRecording
  */
 
-import * as audioSearch from './audioSearch.js';
+import * as audioSearch from './audioSearch';
 
 /**
  * Adopted from Matt Diamond's recorder.js code MIT License

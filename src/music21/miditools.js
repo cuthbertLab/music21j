@@ -20,13 +20,13 @@
 import * as $ from 'jquery';
 import * as MIDI from 'midicube';
 
-import { debug } from './debug.js';
+import { debug } from './debug';
 import '../../css/midiPlayer.css';
 
-import * as chord from './chord.js';
-import * as common from './common.js';
-import * as instrument from './instrument.js';
-import * as note from './note.js';
+import * as chord from './chord';
+import * as common from './common';
+import * as instrument from './instrument';
+import * as note from './note';
 
 // expose midicube's MIDI to window for soundfonts to load.
 window.MIDI = MIDI;

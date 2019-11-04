@@ -48,7 +48,7 @@ const allTests = {
     tie,
     voiceLeading,
 };
-if (typeof window !== undefined) {
+if (typeof window !== 'undefined') {
     window.allTests = allTests;
     window.music21 = music21;
     window.QUnit = QUnit;

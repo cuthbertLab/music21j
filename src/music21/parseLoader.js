@@ -2,10 +2,10 @@
  * Parses loading options -- called by music21_modules.js
  *
  */
-import { debug } from './debug.js';
-import * as common from './common.js';
-import * as miditools from './miditools.js';
-import * as tinyNotation from './tinyNotation.js';
+import { debug } from './debug';
+import * as common from './common';
+import * as miditools from './miditools';
+import * as tinyNotation from './tinyNotation';
 
 export function runConfiguration() {
     let conf;

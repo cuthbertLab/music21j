@@ -9,7 +9,7 @@
  */
 import Vex from 'vexflow';
 
-import * as common from './common.js';
+import * as common from './common';
 import * as prebase from './prebase';
 
 /**

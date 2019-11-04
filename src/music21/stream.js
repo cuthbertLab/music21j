@@ -33,26 +33,26 @@
 import * as $ from 'jquery';
 import * as MIDI from 'midicube';
 
-import { Music21Exception } from './exceptions21.js';
-import { debug } from './debug.js';
+import { Music21Exception } from './exceptions21';
+import { debug } from './debug';
 
 import * as base from './base';
-import * as beam from './beam.js';
-import * as clef from './clef.js';
-import * as common from './common.js';
-import * as duration from './duration.js';
-import * as instrument from './instrument.js';
-import * as meter from './meter.js';
-import * as note from './note.js';
-import * as pitch from './pitch.js';
-import * as renderOptions from './renderOptions.js';
-import * as vfShow from './vfShow.js';
+import * as beam from './beam';
+import * as clef from './clef';
+import * as common from './common';
+import * as duration from './duration';
+import * as instrument from './instrument';
+import * as meter from './meter';
+import * as note from './note';
+import * as pitch from './pitch';
+import * as renderOptions from './renderOptions';
+import * as vfShow from './vfShow';
 
 // eslint-disable-next-line import/no-cycle
-import { GeneralObjectExporter } from './musicxml/m21ToXml.js';
+import { GeneralObjectExporter } from './musicxml/m21ToXml';
 
-import * as filters from './stream/filters.js';
-import * as iterator from './stream/iterator.js';
+import * as filters from './stream/filters';
+import * as iterator from './stream/iterator';
 
 export { filters };
 export { iterator };

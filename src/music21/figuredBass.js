@@ -2,7 +2,7 @@
  * @namespace music21.figuredBass
  * @exports music21/figuredBass
  */
-import * as pitch from './pitch.js';
+import * as pitch from './pitch';
 
 const shorthandNotation = {
     '': [5, 3],

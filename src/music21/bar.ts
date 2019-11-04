@@ -51,7 +51,7 @@ export class Barline extends base.Music21Object {
 
     static get className() { return 'music21.bar.Barline'; }
 
-    constructor(type, location) {
+    constructor(type='regular', location='right') {
         super();
 
         this.type = type;

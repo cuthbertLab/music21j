@@ -1,5 +1,5 @@
-import { StreamException } from '../exceptions21.js';
-import * as filters from './filters.js';
+import { StreamException } from '../exceptions21';
+import * as filters from './filters';
 
 const StopIterationSingleton = filters.StopIterationSingleton;
 

@@ -1,14 +1,14 @@
 import * as $ from 'jquery';
 
-import * as chord from '../chord.js';
-import * as clef from '../clef.js';
-import * as duration from '../duration.js';
-import * as key from '../key.js';
-import * as meter from '../meter.js';
-import * as note from '../note.js';
-import * as pitch from '../pitch.js';
-import * as stream from '../stream.js';
-import * as tie from '../tie.js';
+import * as chord from '../chord';
+import * as clef from '../clef';
+import * as duration from '../duration';
+import * as key from '../key';
+import * as meter from '../meter';
+import * as note from '../note';
+import * as pitch from '../pitch';
+import * as stream from '../stream';
+import * as tie from '../tie';
 
 const DEFAULTS = {
     divisionsPerQuarter: 32 * 3 * 3 * 5 * 7,

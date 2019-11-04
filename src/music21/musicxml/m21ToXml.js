@@ -1,13 +1,13 @@
 /**
  * @namespace music21.musicxml.m21ToXml
  */
-import * as clef from '../clef.js';
-import * as common from '../common.js';
+import * as clef from '../clef';
+import * as common from '../common';
 import {  // eslint-disable-line import/no-cycle
     Stream, Measure, Part, Score,
-} from '../stream.js';
+} from '../stream';
 
-import { Music21Exception } from '../exceptions21.js';
+import { Music21Exception } from '../exceptions21';
 
 class MusicXMLExportException extends Music21Exception {
 

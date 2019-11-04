@@ -1,4 +1,4 @@
-import { posMod, arrayEquals } from './common.js';
+import { posMod, arrayEquals } from './common';
 
 let t1;
 let t2;

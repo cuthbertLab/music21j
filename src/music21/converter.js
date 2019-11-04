@@ -1,4 +1,4 @@
-import { ScoreParser as MusicXMLScoreParser } from './musicxml/xmlToM21.js';
+import { ScoreParser as MusicXMLScoreParser } from './musicxml/xmlToM21';
 
 export function parse(txt) {
     const sp = new MusicXMLScoreParser();

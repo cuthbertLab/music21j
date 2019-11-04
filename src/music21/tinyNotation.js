@@ -21,13 +21,13 @@
  */
 import * as $ from 'jquery';
 
-import * as clef from './clef.js';
-import * as duration from './duration.js';
-import * as pitch from './pitch.js';
-import * as note from './note.js';
-import * as meter from './meter.js';
-import * as stream from './stream.js';
-import * as tie from './tie.js';
+import * as clef from './clef';
+import * as duration from './duration';
+import * as pitch from './pitch';
+import * as note from './note';
+import * as meter from './meter';
+import * as stream from './stream';
+import * as tie from './tie';
 
 /**
  * Regular expressions object

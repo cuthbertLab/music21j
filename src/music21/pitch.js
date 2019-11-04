@@ -13,10 +13,10 @@
  * @memberof music21
  * @requires music21/prebase
  */
-import { Music21Exception } from './exceptions21.js';
+import { Music21Exception } from './exceptions21';
 
 import * as prebase from './prebase';
-import * as common from './common.js';
+import * as common from './common';
 
 /**
  * @class Accidental

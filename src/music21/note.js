@@ -25,12 +25,12 @@ import * as MIDI from 'midicube';
 
 import * as prebase from './prebase';
 import * as base from './base';
-import * as pitch from './pitch.js';
-import * as beam from './beam.js';
-import * as common from './common.js';
+import * as pitch from './pitch';
+import * as beam from './beam';
+import * as common from './common';
 
-import { debug } from './debug.js';
-import { Music21Exception } from './exceptions21.js';
+import { debug } from './debug';
+import { Music21Exception } from './exceptions21';
 
 export class NotRestException extends Music21Exception {
     // no need

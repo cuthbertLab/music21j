@@ -15,7 +15,7 @@
  * @requires music21/pitch
  */
 import * as base from './base';
-import * as pitch from './pitch.js';
+import * as pitch from './pitch';
 
 /*  music21.Clef
     must be defined before Stream since Stream subclasses call new music21.Clef...

@@ -15,12 +15,12 @@
  * @requires music21/prebase
  * @requires music21/pitch
  */
-import { debug } from './debug.js';
+import { debug } from './debug';
 
-import * as common from './common.js';
-import * as note from './note.js';
+import * as common from './common';
+import * as note from './note';
 import * as prebase from './prebase';
-import * as pitch from './pitch.js';
+import * as pitch from './pitch';
 
 /**
  * Interval Directions as an Object/map

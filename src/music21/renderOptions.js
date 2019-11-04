@@ -14,7 +14,7 @@
  * @namespace music21.renderOptions
  * @memberof music21
  */
-import * as common from './common.js';
+import * as common from './common';
 
 /**
  * An object that contains information on rendering the current stream

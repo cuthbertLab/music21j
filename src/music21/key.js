@@ -17,13 +17,13 @@
  * @requires music21/interval
  * @requires music21/scale
  */
-import { Music21Exception } from './exceptions21.js';
-import { debug } from './debug.js';
+import { Music21Exception } from './exceptions21';
+import { debug } from './debug';
 
 import * as base from './base';
-import * as interval from './interval.js';
-import * as pitch from './pitch.js';
-import * as scale from './scale.js';
+import * as interval from './interval';
+import * as pitch from './pitch';
+import * as scale from './scale';
 
 export const modeSharpsAlter = {
     major: 0,

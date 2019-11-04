@@ -80,7 +80,7 @@ import * as vfShow from './music21/vfShow';
 import * as voiceLeading from './music21/voiceLeading';
 import * as webmidi from './music21/webmidi';
 
-import { debug } from './music21/debug.js';
+import { debug } from './music21/debug';
 
 
 export {

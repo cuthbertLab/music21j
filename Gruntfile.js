@@ -143,6 +143,7 @@ module.exports = grunt => {
     webpackTests.entry = TEST_ENTRY;
     webpackTests.output.path = TEST_DIR;
     webpackTests.output.library = 'm21Tests';
+    webpackTests.watch = false;
     // webpackTests.cache = true;
 
     // Project configuration.
