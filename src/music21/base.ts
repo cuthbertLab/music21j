@@ -554,4 +554,3 @@ export class Music21Object extends prebase.ProtoM21Object {
 }
 
 // TODO(msc) -- ElementWrapper
-

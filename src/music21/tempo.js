@@ -12,6 +12,7 @@
  * @memberof music21
  * @requires music21/prebase
  * @requires music21/base
+ * @requires music21/duration
  * @requires MIDI
  * @property {number} [baseTempo=60] - basic tempo
  */
@@ -19,11 +20,12 @@ import * as $ from 'jquery';
 import * as MIDI from 'midicube';
 
 import * as prebase from './prebase';
+import * as base from './base';
+import * as duration from './duration';
 
-/**
- * The tempo object itself is a full object in music21p -- TODO(msc): make it one here too.
- * (MetronomeMark)
- */
+import { Music21Exception } from './exceptions21';
+
+export class TempoException extends Music21Exception {}
 
 // noinspection JSNonASCIINames,NonAsciiCharacters
 /**
@@ -336,5 +338,155 @@ export class Metronome extends prebase.ProtoM21Object {
 
         this.$metronomeDiv = $newDiv;
         return $newDiv;
+    }
+}
+
+class TempoText {
+    constructor(text) {
+        this.text = text;
+    }
+}
+
+/**
+ *
+ * @class MetronomeMark
+ * @memberof music21.tempo
+ * @extends music21.base.M21Object
+ * @param {Object} metronome - metronome
+ * @param {string} metronome.text - tempo text
+ * @param {number} metronome.number - beats per minute
+ * @param {number|music21.duration.Duration} metronome.referent - duration value of tempo
+ * @param {bool} metronome.parentheses - ???
+ * @property {string} text - tempo text
+ * @property {number} number - beats per minute
+ * @property {music21.duration.Duration} referent - duration value of tempo
+ */
+export class MetronomeMark extends base.Music21Object {
+    static get className() { return 'music21.tempo.MetronomeMark'; }
+
+    constructor({
+        text,
+        number,
+        referent,
+        parentheses,
+    } = {}) {
+        super();
+
+        this._number = number;
+        this.numberImplicit = undefined;
+        if (this._number !== undefined) {
+            this.numberImplicit = false;
+        }
+
+        this._tempoText = undefined;
+        this.textImplicit = undefined;
+        this.text = text;
+
+        this._referent = undefined;
+        this.referent = referent;
+
+        this.parentheses = parentheses;
+
+        this._updateNumberFromText();
+        this._updateTextFromNumber();
+    }
+
+    _updateNumberFromText() {
+        if (this._number === undefined && this._tempoText !== undefined) {
+            this._number = this._getDefaultNumber(this._tempoText);
+            if (this._number !== undefined) {
+                this.numberImplicit = true;
+            }
+        }
+    }
+
+    _updateTextFromNumber() {
+        if (this._tempoText === undefined && this._number !== undefined) {
+            this.text = this._getDefaultText(this._number);
+            if (this.text !== undefined) {
+                this.textImplicit = true;
+            }
+        }
+    }
+
+    get text() {
+        if (this._tempoText === undefined) {
+            return undefined;
+        }
+        return this._tempoText.text;
+    }
+
+    set text(value) {
+        if (value === undefined) {
+            this._tempoText = undefined;
+        } else if (value instanceof TempoText) {
+            this._tempoText = value;
+            this.textImplicit = false;
+        } else {
+            this._tempoText = new TempoText(value);
+            if (this.hasStyleInformation) { // TODO: where is this?
+                this._tempoText.style = this.style;
+            } else {
+                this.style = this._tempoText.style;
+            }
+            this.textImplicit = false;
+        }
+    }
+
+    get number() {
+        return this._number;
+    }
+
+    set number(value) {
+        if (typeof value !== 'number') {
+            throw new TempoException('cannot set number to a string');
+        }
+        this._number = value;
+        this.numberImplicit = false;
+    }
+
+    get referent() {
+        return this._referent;
+    }
+
+    set referent(value) {
+        if (value === undefined) {
+            this._referent = new duration.Duration(1);
+        } else if (['number', 'string'].includes(typeof value)) {
+            this._referent = new duration.Duration(value);
+        } else if (value.classes.includes('Duration')) {
+            this._referent = value;
+        } else if (value.duration) {
+            this._referent = value.duration;
+        } else {
+            throw new TempoException(`Cannot get a Duration from the supplied object: ${value}`);
+        }
+    }
+
+    _getDefaultNumber(tempoText) {
+        const tempoStr = tempoText instanceof TempoText ? tempoText.text : tempoText;
+        let post = null;
+        const tempoNames = Object.keys(defaultTempoValues);
+        if (tempoNames.includes(tempoStr.toLowerCase())) {
+            post = defaultTempoValues[tempoStr.toLowerCase()];
+        } else if (tempoNames.includes(tempoStr)) {
+            post = defaultTempoValues[tempoStr];
+        } else {
+            for (const word of tempoStr.split(' ')) {
+                if (tempoNames.includes(word.toLowerCase())) {
+                    post = defaultTempoValues[tempoStr.toLowerCase()];
+                }
+            }
+        }
+        return post;
+    }
+
+    _getDefaultText(number, spread=2) {
+        const tempoNumber = typeof number === 'number' ? number : parseFloat(number);
+        return Object.keys(defaultTempoValues).find(tempoName => {
+            const tempoValue = defaultTempoValues[tempoName];
+            return ((tempoValue - spread) <= tempoNumber
+                && (tempoValue + spread) >= tempoNumber);
+        });
     }
 }

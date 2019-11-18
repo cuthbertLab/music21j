@@ -46,6 +46,7 @@ import * as meter from './meter';
 import * as note from './note';
 import * as pitch from './pitch';
 import * as renderOptions from './renderOptions';
+import * as tempo from './tempo';
 import * as vfShow from './vfShow';
 
 // eslint-disable-next-line import/no-cycle
@@ -95,8 +96,7 @@ function _exportMusicXMLAsText(s) {
  *     to just get the parts (NON-recursive)
  * @property {music21.stream.Stream} measures - (readonly) a filter on the
  *     Stream to just get the measures (NON-recursive)
- * @property {number} tempo - tempo in beats per minute (will become more
- *     sophisticated later, but for now the whole stream has one tempo
+ * @property {music21.tempo.MetronomeMark} tempo - the first MetronomeMark for the Stream
  * @property {music21.instrument.Instrument|undefined} instrument - an
  *     instrument object associated with the stream (can be set with a
  *     string also, but will return an `Instrument` object)
@@ -141,7 +141,7 @@ export class Stream extends base.Music21Object {
         this.activeVFStave = undefined;
         this.activeVFRenderer = undefined;
         this.renderOptions = new renderOptions.RenderOptions();
-        this._tempo = undefined;
+        this._tempo = undefined; // a music21.tempo.MetronomeMark object
 
         this.staffLines = 5;
 
@@ -281,17 +281,90 @@ export class Stream extends base.Music21Object {
     }
 
     get tempo() {
-        if (this._tempo === undefined && this.activeSite !== undefined) {
-            return this.activeSite.tempo;
-        } else if (this._tempo === undefined) {
-            return 150;
-        } else {
-            return this._tempo;
-        }
+        return this.getSpecialContext('metronomeMark', true);
     }
 
     set tempo(newTempo) {
+        const oldTempo = this._firstElementContext('metronomeMark');
+        if (oldTempo !== undefined) {
+            this.replace(oldTempo, newTempo);
+        } else {
+            this.insert(0.0, newTempo);
+        }
         this._tempo = newTempo;
+    }
+
+    /**
+     * Return an array of the outer bounds of each MetronomeMark in the stream.
+     * [offsetStart, offsetEnd, tempo.MetronomeMark]
+     *
+     * @returns {Array<number|music21.tempo.MetronomeMark>}
+     */
+    _metronomeMarkBoundaries() {
+        const mmBoundaries = [];
+        const thisFlat = this.flat;
+        const metronomeMarks = thisFlat.getElementsByClass('MetronomeMark');
+
+        const highestTime = thisFlat.highestTime;
+        const lowestOffset = 0;
+
+        const mmDefault = new tempo.MetronomeMark({ number: 120 });
+
+        if (!metronomeMarks.length) {
+            mmBoundaries.push([lowestOffset, highestTime, mmDefault]);
+        } else if (metronomeMarks.length === 1) {
+            const metronomeMark = metronomeMarks.get(0);
+            const offset = metronomeMark.getOffsetBySite(thisFlat);
+            if (offset > lowestOffset) {
+                mmBoundaries.push([lowestOffset, offset, mmDefault]);
+                mmBoundaries.push([offset, highestTime, metronomeMark]);
+            } else {
+                mmBoundaries.push([lowestOffset, highestTime, metronomeMark]);
+            }
+        } else {
+            const offsetPairs = [];
+            for (let i = 0; i < metronomeMarks.length; i++) {
+                const metronomeMark = metronomeMarks.get(i);
+                offsetPairs.push([
+                    metronomeMark.getOffsetBySite(thisFlat),
+                    metronomeMark
+                ]);
+            }
+            if (offsetPairs[0][0] > lowestOffset) {
+                mmBoundaries.push([lowestOffset, offsetPairs[0][0], mmDefault]);
+            }
+            offsetPairs.forEach((offsetPair, i) => {
+                if (i === offsetPairs.length - 1) {
+                    mmBoundaries.push([offsetPair[0], highestTime, offsetPair[1]]);
+                } else {
+                    mmBoundaries.push([offsetPair[0], offsetPairs[i + 1][0], offsetPair[1]]);
+                }
+            });
+        }
+        return mmBoundaries;
+    }
+
+    /**
+     * Return the average tempo within the span indicated by offset start and end.
+     *
+     * @param {number} oStart - offset start
+     * @param {number} oEnd - offset end
+     * @returns {number}
+     */
+    _averageTempo(oStart, oEnd) {
+        const overallDuration = oEnd - oStart;
+        return this._metronomeMarkBoundaries().reduce((tempo, mm) => {
+            if (mm[0] >= oStart && mm[0] < oEnd) {
+                const overlapDur = mm[1] <= oEnd ? mm[1] - mm[0] : oEnd - mm[0];
+                tempo += (overlapDur / overallDuration) * mm[2].number;
+            } else if (mm[1] > oStart && mm[1] <= oEnd) {
+                const overlapDur = mm[0] >= oStart ? mm[1] - mm[0] : mm[1] - oStart;
+                tempo += (overlapDur / overallDuration) * mm[2].number;
+            } else if (mm[0] <= oStart && mm[1] >= oEnd) {
+                tempo = mm[2].number;
+            }
+            return tempo;
+        }, 0);
     }
 
     get instrument() {
@@ -1828,7 +1901,6 @@ export class Stream extends base.Music21Object {
      *
      * `options` can be an object containing:
      * - instrument: {@link music21.instrument.Instrument} object (default, `this.instrument`)
-     * - tempo: number (default, `this.tempo`)
      *
      * @param {Object} [options] - object of playback options
      * @returns {this}
@@ -1836,45 +1908,48 @@ export class Stream extends base.Music21Object {
     playStream(options) {
         const params = {
             instrument: this.instrument,
-            tempo: this.tempo,
             done: undefined,
             startNote: undefined,
         };
+
         common.merge(params, options);
         const startNoteIndex = params.startNote;
         let currentNoteIndex = 0;
         if (startNoteIndex !== undefined) {
             currentNoteIndex = startNoteIndex;
         }
-        const flatEls = this.flat.elements;
+        const flatEls = this.flat.notes;
         const lastNoteIndex = flatEls.length - 1;
         this._stopPlaying = false;
         const thisStream = this;
 
         const playNext = function playNext(elements, params) {
             if (currentNoteIndex <= lastNoteIndex && !thisStream._stopPlaying) {
-                const el = elements[currentNoteIndex];
+                const el = elements.get(currentNoteIndex);
                 let nextNote;
                 let playDuration;
                 if (currentNoteIndex < lastNoteIndex) {
-                    nextNote = elements[currentNoteIndex + 1];
+                    nextNote = elements.get(currentNoteIndex + 1);
                     playDuration = nextNote.offset - el.offset;
                 } else {
                     playDuration = el.duration.quarterLength;
                 }
-                const milliseconds = playDuration * 1000 * 60 / params.tempo;
+
+                const nextOffset = nextNote ? nextNote.offset : el.offset + el.duration.quarterLength;
+                const tempo = thisStream._averageTempo(el.offset, nextOffset);
+                const milliseconds = playDuration * 1000 * 60 / tempo;
                 if (debug) {
                     console.log(
                         'playing: ',
                         el,
                         playDuration,
                         milliseconds,
-                        params.tempo
+                        tempo
                     );
                 }
 
                 if (el.playMidi !== undefined) {
-                    el.playMidi(params.tempo, nextNote, params);
+                    el.playMidi(tempo, nextNote, params);
                 }
                 currentNoteIndex += 1;
                 setTimeout(() => {

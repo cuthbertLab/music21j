@@ -1,5 +1,5 @@
 /**
- * music21j 0.9.32 built on 2019-11-04.
+ * music21j 0.9.33 built on 2019-11-17.
  * Copyright (c) 2013-2019 Michael Scott Cuthbert and cuthbertLab
  * BSD License, see LICENSE
  *
@@ -37014,12 +37014,12 @@ return jQuery;
 /***/ (function(module, exports, __webpack_require__) {
 
 /*!
- *
+ * 
  * jsonpickle.js 1.1.2 built on 2019-08-31
  * Copyright (c) 2013-2019 Michael Scott Cuthbert and cuthbertLab. BSD License
- *
+ * 
  * http://github.com/cuthbertLab/jsonpickleJS
- *
+ * 
  */
 !function(t,e){ true?module.exports=e():undefined}(window,function(){return function(t){var e={};function r(n){if(e[n])return e[n].exports;var o=e[n]={i:n,l:!1,exports:{}};return t[n].call(o.exports,o,o.exports,r),o.l=!0,o.exports}return r.m=t,r.c=e,r.d=function(t,e,n){r.o(t,e)||Object.defineProperty(t,e,{enumerable:!0,get:n})},r.r=function(t){"undefined"!=typeof Symbol&&Symbol.toStringTag&&Object.defineProperty(t,Symbol.toStringTag,{value:"Module"}),Object.defineProperty(t,"__esModule",{value:!0})},r.t=function(t,e){if(1&e&&(t=r(t)),8&e)return t;if(4&e&&"object"==typeof t&&t&&t.__esModule)return t;var n=Object.create(null);if(r.r(n),Object.defineProperty(n,"default",{enumerable:!0,value:t}),2&e&&"string"!=typeof t)for(var o in t)r.d(n,o,function(e){return t[e]}.bind(null,o));return n},r.n=function(t){var e=t&&t.__esModule?function(){return t.default}:function(){return t};return r.d(e,"a",e),e},r.o=function(t,e){return Object.prototype.hasOwnProperty.call(t,e)},r.p="",r(r.s=1)}([function(t,e,r){var n=function(t){"use strict";var e,r=Object.prototype,n=r.hasOwnProperty,o="function"==typeof Symbol?Symbol:{},i=o.iterator||"@@iterator",u=o.asyncIterator||"@@asyncIterator",a=o.toStringTag||"@@toStringTag";function s(t,e,r,n){var o=e&&e.prototype instanceof y?e:y,i=Object.create(o.prototype),u=new O(n||[]);return i._invoke=function(t,e,r){var n=f;return function(o,i){if(n===h)throw new Error("Generator is already running");if(n===_){if("throw"===o)throw i;return L()}for(r.method=o,r.arg=i;;){var u=r.delegate;if(u){var a=w(u,r);if(a){if(a===p)continue;return a}}if("next"===r.method)r.sent=r._sent=r.arg;else if("throw"===r.method){if(n===f)throw n=_,r.arg;r.dispatchException(r.arg)}else"return"===r.method&&r.abrupt("return",r.arg);n=h;var s=c(t,e,r);if("normal"===s.type){if(n=r.done?_:l,s.arg===p)continue;return{value:s.arg,done:r.done}}"throw"===s.type&&(n=_,r.method="throw",r.arg=s.arg)}}}(t,r,u),i}function c(t,e,r){try{return{type:"normal",arg:t.call(e,r)}}catch(t){return{type:"throw",arg:t}}}t.wrap=s;var f="suspendedStart",l="suspendedYield",h="executing",_="completed",p={};function y(){}function d(){}function v(){}var b={};b[i]=function(){return this};var m=Object.getPrototypeOf,k=m&&m(m(T([])));k&&k!==r&&n.call(k,i)&&(b=k);var g=v.prototype=y.prototype=Object.create(b);function E(t){["next","throw","return"].forEach(function(e){t[e]=function(t){return this._invoke(e,t)}})}function S(t){var e;this._invoke=function(r,o){function i(){return new Promise(function(e,i){!function e(r,o,i,u){var a=c(t[r],t,o);if("throw"!==a.type){var s=a.arg,f=s.value;return f&&"object"==typeof f&&n.call(f,"__await")?Promise.resolve(f.__await).then(function(t){e("next",t,i,u)},function(t){e("throw",t,i,u)}):Promise.resolve(f).then(function(t){s.value=t,i(s)},function(t){return e("throw",t,i,u)})}u(a.arg)}(r,o,e,i)})}return e=e?e.then(i,i):i()}}function w(t,r){var n=t.iterator[r.method];if(n===e){if(r.delegate=null,"throw"===r.method){if(t.iterator.return&&(r.method="return",r.arg=e,w(t,r),"throw"===r.method))return p;r.method="throw",r.arg=new TypeError("The iterator does not provide a 'throw' method")}return p}var o=c(n,t.iterator,r.arg);if("throw"===o.type)return r.method="throw",r.arg=o.arg,r.delegate=null,p;var i=o.arg;return i?i.done?(r[t.resultName]=i.value,r.next=t.nextLoc,"return"!==r.method&&(r.method="next",r.arg=e),r.delegate=null,p):i:(r.method="throw",r.arg=new TypeError("iterator result is not an object"),r.delegate=null,p)}function j(t){var e={tryLoc:t[0]};1 in t&&(e.catchLoc=t[1]),2 in t&&(e.finallyLoc=t[2],e.afterLoc=t[3]),this.tryEntries.push(e)}function x(t){var e=t.completion||{};e.type="normal",delete e.arg,t.completion=e}function O(t){this.tryEntries=[{tryLoc:"root"}],t.forEach(j,this),this.reset(!0)}function T(t){if(t){var r=t[i];if(r)return r.call(t);if("function"==typeof t.next)return t;if(!isNaN(t.length)){var o=-1,u=function r(){for(;++o<t.length;)if(n.call(t,o))return r.value=t[o],r.done=!1,r;return r.value=e,r.done=!0,r};return u.next=u}}return{next:L}}function L(){return{value:e,done:!0}}return d.prototype=g.constructor=v,v.constructor=d,v[a]=d.displayName="GeneratorFunction",t.isGeneratorFunction=function(t){var e="function"==typeof t&&t.constructor;return!!e&&(e===d||"GeneratorFunction"===(e.displayName||e.name))},t.mark=function(t){return Object.setPrototypeOf?Object.setPrototypeOf(t,v):(t.__proto__=v,a in t||(t[a]="GeneratorFunction")),t.prototype=Object.create(g),t},t.awrap=function(t){return{__await:t}},E(S.prototype),S.prototype[u]=function(){return this},t.AsyncIterator=S,t.async=function(e,r,n,o){var i=new S(s(e,r,n,o));return t.isGeneratorFunction(r)?i:i.next().then(function(t){return t.done?t.value:i.next()})},E(g),g[a]="Generator",g[i]=function(){return this},g.toString=function(){return"[object Generator]"},t.keys=function(t){var e=[];for(var r in t)e.push(r);return e.reverse(),function r(){for(;e.length;){var n=e.pop();if(n in t)return r.value=n,r.done=!1,r}return r.done=!0,r}},t.values=T,O.prototype={constructor:O,reset:function(t){if(this.prev=0,this.next=0,this.sent=this._sent=e,this.done=!1,this.delegate=null,this.method="next",this.arg=e,this.tryEntries.forEach(x),!t)for(var r in this)"t"===r.charAt(0)&&n.call(this,r)&&!isNaN(+r.slice(1))&&(this[r]=e)},stop:function(){this.done=!0;var t=this.tryEntries[0].completion;if("throw"===t.type)throw t.arg;return this.rval},dispatchException:function(t){if(this.done)throw t;var r=this;function o(n,o){return a.type="throw",a.arg=t,r.next=n,o&&(r.method="next",r.arg=e),!!o}for(var i=this.tryEntries.length-1;i>=0;--i){var u=this.tryEntries[i],a=u.completion;if("root"===u.tryLoc)return o("end");if(u.tryLoc<=this.prev){var s=n.call(u,"catchLoc"),c=n.call(u,"finallyLoc");if(s&&c){if(this.prev<u.catchLoc)return o(u.catchLoc,!0);if(this.prev<u.finallyLoc)return o(u.finallyLoc)}else if(s){if(this.prev<u.catchLoc)return o(u.catchLoc,!0)}else{if(!c)throw new Error("try statement without catch or finally");if(this.prev<u.finallyLoc)return o(u.finallyLoc)}}}},abrupt:function(t,e){for(var r=this.tryEntries.length-1;r>=0;--r){var o=this.tryEntries[r];if(o.tryLoc<=this.prev&&n.call(o,"finallyLoc")&&this.prev<o.finallyLoc){var i=o;break}}i&&("break"===t||"continue"===t)&&i.tryLoc<=e&&e<=i.finallyLoc&&(i=null);var u=i?i.completion:{};return u.type=t,u.arg=e,i?(this.method="next",this.next=i.finallyLoc,p):this.complete(u)},complete:function(t,e){if("throw"===t.type)throw t.arg;return"break"===t.type||"continue"===t.type?this.next=t.arg:"return"===t.type?(this.rval=this.arg=t.arg,this.method="return",this.next="end"):"normal"===t.type&&e&&(this.next=e),p},finish:function(t){for(var e=this.tryEntries.length-1;e>=0;--e){var r=this.tryEntries[e];if(r.finallyLoc===t)return this.complete(r.completion,r.afterLoc),x(r),p}},catch:function(t){for(var e=this.tryEntries.length-1;e>=0;--e){var r=this.tryEntries[e];if(r.tryLoc===t){var n=r.completion;if("throw"===n.type){var o=n.arg;x(r)}return o}}throw new Error("illegal catch attempt")},delegateYield:function(t,r,n){return this.delegate={iterator:T(t),resultName:r,nextLoc:n},"next"===this.method&&(this.arg=e),p}},t}(t.exports);try{regeneratorRuntime=n}catch(t){Function("r","regeneratorRuntime = r")(n)}},function(t,e,r){"use strict";r.r(e);var n={};r.r(n),r.d(n,"merge",function(){return s}),r.d(n,"PRIMITIVES",function(){return c}),r.d(n,"is_type",function(){return f}),r.d(n,"is_object",function(){return l}),r.d(n,"is_primitive",function(){return h}),r.d(n,"is_dictionary",function(){return _}),r.d(n,"is_sequence",function(){return p}),r.d(n,"is_list",function(){return y}),r.d(n,"is_set",function(){return d}),r.d(n,"is_tuple",function(){return v}),r.d(n,"is_dictionary_subclass",function(){return b}),r.d(n,"is_sequence_subclass",function(){return m}),r.d(n,"is_noncomplex",function(){return k}),r.d(n,"is_function",function(){return g}),r.d(n,"is_module",function(){return E}),r.d(n,"is_picklable",function(){return S}),r.d(n,"is_installed",function(){return w}),r.d(n,"is_list_like",function(){return j});var o={};r.r(o),r.d(o,"decode",function(){return L}),r.d(o,"Unpickler",function(){return P}),r.d(o,"getargs",function(){return R}),r.d(o,"loadclass",function(){return Y}),r.d(o,"has_tag",function(){return A}),r.d(o,"construct",function(){return C});var i={};r.r(i),r.d(i,"encode",function(){return I}),r.d(i,"Pickler",function(){return F});r(0);var u={ID:"py/id",OBJECT:"py/object",TYPE:"py/type",REPR:"py/repr",REF:"py/ref",TUPLE:"py/tuple",SET:"py/set",SEQ:"py/seq",STATE:"py/state",JSON_KEY:"json://"};function a(t){return(a="function"==typeof Symbol&&"symbol"==typeof Symbol.iterator?function(t){return typeof t}:function(t){return t&&"function"==typeof Symbol&&t.constructor===Symbol&&t!==Symbol.prototype?"symbol":typeof t})(t)}function s(t,e){if(void 0===e)return t;for(var r in e)({}).hasOwnProperty.call(e,r)&&(t[r]=e[r]);return t}u.RESERVED=[u.ID,u.OBJECT,u.TYPE,u.REPR,u.REF,u.TUPLE,u.SET,u.SEQ,u.STATE,u.JSON_KEY],u.PY_CLASS="_py_class";var c=["string","number","boolean"],f=function(t){return!1},l=function(t){return _(t)},h=function(t){return void 0===t||null==t||-1!==c.indexOf(a(t))},_=function(t){return"object"===a(t)&&null!==t},p=function(t){return y(t)||d(t)||v(t)},y=function(t){return t instanceof Array},d=function(t){return!1},v=function(t){return!1},b=function(t){return!1},m=function(t){return!1},k=function(t){return!1},g=function(t){return"function"==typeof t},E=function(t){return!1},S=function(t,e){return-1===u.RESERVED.indexOf(t)&&!g(e)},w=function(t){return!0},j=function(t){return y(t)},x={"fractions.Fraction":{restore:function(t){return t._numerator/t._denominator}}};function O(t){return(O="function"==typeof Symbol&&"symbol"==typeof Symbol.iterator?function(t){return typeof t}:function(t){return t&&"function"==typeof Symbol&&t.constructor===Symbol&&t!==Symbol.prototype?"symbol":typeof t})(t)}function T(t,e){for(var r=0;r<e.length;r++){var n=e[r];n.enumerable=n.enumerable||!1,n.configurable=!0,"value"in n&&(n.writable=!0),Object.defineProperty(t,n.key,n)}}function L(t,e,r){var n={keys:!1,safe:!1,reset:!0,backend:JSON};s(n,r);var o,i={};if(s(i,x),s(i,e),void 0===n.context){var u={keys:n.keys,backend:n.backend,safe:n.safe};o=new P(u,i)}else o=n.context;var a=n.backend.parse(t);return o.restore(a,n.reset)}var P=function(){function t(e,r){!function(t,e){if(!(t instanceof e))throw new TypeError("Cannot call a class as a function")}(this,t);var n={keys:!1,safe:!1};s(n,e),this.keys=n.keys,this.safe=n.safe,this.handlers=r,this._namestack=[],this._obj_to_idx={},this._objs=[]}var e,r,n;return e=t,(r=[{key:"reset",value:function(){this._namestack=[],this._obj_to_idx={},this._objs=[]}},{key:"restore",value:function(t,e){return e&&this.reset(),this._restore(t)}},{key:"_restore",value:function(t){var e=function(t){return t};return A(t,u.ID)?e=this._restore_id.bind(this):A(t,u.REF)||(A(t,u.TYPE)?e=this._restore_type.bind(this):A(t,u.REPR)||(A(t,u.OBJECT)?e=this._restore_object.bind(this):A(t,u.TUPLE)?e=this._restore_tuple.bind(this):A(t,u.SET)?e=this._restore_set.bind(this):y(t)?e=this._restore_list.bind(this):_(t)&&(e=this._restore_dict.bind(this)))),e(t)}},{key:"_restore_id",value:function(t){return this._objs[t[u.ID]]}},{key:"_restore_type",value:function(t){var e=Y(t[u.TYPE]);return void 0===e?t:e}},{key:"_restore_object",value:function(t){var e=t[u.OBJECT],r=this.handlers[e];if(void 0!==r&&void 0!==r.restore){var n=r.restore(t);try{n[u.PY_CLASS]=e}catch(t){}return this._mkref(n)}var o=Y(e);if(void 0===o)return t[u.PY_CLASS]=e,this._mkref(t);var i=this._restore_object_instance(t,o);return i[u.PY_CLASS]=e,void 0!==r&&void 0!==r.post_restore?r.post_restore(i):i}},{key:"_loadfactory",value:function(t){var e=t.default_factory;return void 0===e?void 0:(t.default_factory=void 0,this._restore(e))}},{key:"_restore_object_instance",value:function(t,e){var r=R(t);r.length>0&&(r=this._restore(r));var n=C(e,r);return this._mkref(n),this._restore_object_instance_variables(t,n)}},{key:"_restore_object_instance_variables",value:function(t,e){var r=this._restore_key_fn(),n=[];for(var o in t)({}).hasOwnProperty.call(t,o)&&n.push(o);n.sort();for(var i=0;i<n.length;i++){var a=n[i];if(-1===u.RESERVED.indexOf(a)){var s=t[a];this._namestack.push(a),a=r(a);var c=void 0;null!=s&&(c=this._restore(s)),e[a]=c,this._namestack.pop()}}if(A(t,u.SEQ)&&void 0!==e.push)for(var f in t[u.SEQ])({}).hasOwnProperty.call(t[u.SEQ],f)&&e.push(this._restore(f));return A(t,u.STATE)&&(e=this._restore_state(t,e)),e}},{key:"_restore_state",value:function(t,e){if(void 0!==e.__setstate__){var r=this._restore(t[u.STATE]);e.__setstate__(r)}else e=this._restore_object_instance_variables(t[u.STATE],e);return e}},{key:"_restore_list",value:function(t){var e=[];this._mkref(e);for(var r=[],n=0;n<t.length;n++){var o=t[n],i=this._restore(o);r.push(i)}return e.push.apply(e,r),e}},{key:"_restore_tuple",value:function(t){for(var e=[],r=t[u.TUPLE],n=0;n<r.length;n++)e.push(this._restore(r[n]));return e}},{key:"_restore_set",value:function(t){for(var e=[],r=t[u.SET],n=0;n<r.length;n++)e.push(this._restore(r[n]));return e}},{key:"_restore_dict",value:function(t){var e={},r=[];for(var n in t)({}).hasOwnProperty.call(t,n)&&r.push(n);r.sort();for(var o=0;o<r.length;o++){var i=r[o],u=t[i];this._namestack.push(i),e[i]=this._restore(u),this._namestack.pop()}return e}},{key:"_restore_key_fn",value:function(){var t=this;return this.keys?function(e){return 0===e.indexOf(u.JSON_KEY)?e=L(e.slice(u.JSON_KEY.length),t.handlers,{context:t,keys:t.keys,reset:!1}):e}:function(t){return t}}},{key:"_mkref",value:function(t){return this._objs.push(t),t}}])&&T(e.prototype,r),n&&T(e,n),t}();function R(t){var e=t[u.SEQ],r=t[u.OBJECT];if(void 0===e||void 0===r)return[];var n=Y(r);return void 0===n?[]:void 0!==n._fields&&n._fields.length===e.length?e:[]}function Y(t){0===t.indexOf("__main__.")&&(t=t.slice("__main__.".length));for(var e=window,r=t.split("."),n=0;n<r.length;n++){if(void 0===(e=e[r[n]]))return e}return e}function A(t,e){return"object"===O(t)&&null!==t&&void 0!==t[e]}function C(t,e){function r(){return t.apply(this,e)}return r.prototype=t.prototype,new r}function N(t){return(N="function"==typeof Symbol&&"symbol"==typeof Symbol.iterator?function(t){return typeof t}:function(t){return t&&"function"==typeof Symbol&&t.constructor===Symbol&&t!==Symbol.prototype?"symbol":typeof t})(t)}function J(t,e){for(var r=0;r<e.length;r++){var n=e[r];n.enumerable=n.enumerable||!1,n.configurable=!0,"value"in n&&(n.writable=!0),Object.defineProperty(t,n.key,n)}}function I(t,e){var r={unpicklable:!1,make_refs:!0,keys:!1,max_depth:void 0,reset:!0,backend:void 0,context:void 0};if(s(r,e),void 0===r.context){var n={unpicklable:r.unpicklable,make_refs:r.make_refs,keys:r.keys,backend:r.backend,max_depth:r.max_depth};r.context=new F(n);var o=r.context.flatten(t,r.reset);return JSON.stringify(o)}}var F=function(){function t(e){!function(t,e){if(!(t instanceof e))throw new TypeError("Cannot call a class as a function")}(this,t);var r={unpicklable:!0,make_refs:!0,max_depth:void 0,backend:void 0,keys:!1};s(r,e),this.unpicklable=r.unpicklable,this.make_refs=r.make_refs,this.backend=r.backend,this.keys=r.keys,this._depth=-1,this._max_depth=r.max_depth,this._objs=[],this._seen=[]}var e,r,n;return e=t,(r=[{key:"reset",value:function(){this._objs=[],this._depth=-1,this._seen=[]}},{key:"_push",value:function(){this._depth+=1}},{key:"_pop",value:function(t){return this._depth-=1,-1===this._depth&&this.reset(),t}},{key:"_mkref",value:function(t){return-1===this._get_id_in_objs(t)&&(this._objs.push(t),!0)}},{key:"_get_id_in_objs",value:function(t){for(var e=this._objs.length,r=0;r<e;r++)if(t===this._objs[r])return r;return-1}},{key:"_getref",value:function(t){var e={};return e[u.ID]=this._get_id_in_objs(t),e}},{key:"flatten",value:function(t,e){return void 0===e&&(e=!0),e&&this.reset(),this._flatten(t)}},{key:"_flatten",value:function(t){return this._push(),this._pop(this._flatten_obj(t))}},{key:"_flatten_obj",value:function(t){return this._seen.push(t),this._depth===this._max_depth||!1===this.make_refs&&-1!==this._get_id_in_objs(t)?t.toString():this._get_flattener(t).call(this,t)}},{key:"_list_recurse",value:function(t){for(var e=[],r=0;r<t.length;r++)e.push(this._flatten(t[r]));return e}},{key:"_get_flattener",value:function(t){var e=this;return h(t)?function(t){return t}:y(t)?this._mkref(t)?this._list_recurse:(this._push(),this._getref):v(t)?this.unpicklable?function(t){({})[u.TUPLE]=e._list_recurse(t)}:this._list_recurse:d(t)?this.unpicklable?function(t){({})[u.SET]=e._list_recurse(t)}:this._list_recurse:l(t)?this._ref_obj_instance:void console.log("no flattener for ",t," of type ",N(t))}},{key:"_ref_obj_instance",value:function(t){return this._mkref(t)?this._flatten_obj_instance(t):this._getref(t)}},{key:"_flatten_obj_instance",value:function(t){var e={},r=void 0!==t[u.PY_CLASS],n=void 0!==t.__getstate__;if(r&&!1===E(t)){var o=this._getclassdetail(t);this.unpicklable&&(e[u.OBJECT]=o);var i=x[o];void 0!==i&&i.flatten(t,e)}return E(t),b(t),m(t),n?this._getstate(t,e):this._flatten_dict_obj(t,e)}},{key:"_flatten_dict_obj",value:function(t,e){void 0===e&&(e=new t.prototype.constructor);var r=[];for(var n in t)({}).hasOwnProperty.call(t,n)&&r.push(n);for(var o=0;o<r.length;o++){var i=r[o],a=t[i];i!==u.PY_CLASS&&this._flatten_key_value_pair(i,a,e)}return e}},{key:"_flatten_key_value_pair",value:function(t,e,r){return!1===S(t,e)?r:(r[t]=this._flatten(e),r)}},{key:"_getstate",value:function(t,e){var r=this._flatten_obj(t.__getstate__());return this.unpicklable?e[u.STATE]=r:e=r,e}},{key:"_getclassdetail",value:function(t){return t[u.PY_CLASS]}}])&&J(e.prototype,r),n&&J(e,n),t}();function D(t){return I(t,{unpicklable:!(arguments.length>1&&void 0!==arguments[1])||arguments[1],make_refs:!(arguments.length>2&&void 0!==arguments[2])||arguments[2],keys:arguments.length>3&&void 0!==arguments[3]&&arguments[3],max_depth:arguments.length>4?arguments[4]:void 0,backend:arguments.length>5?arguments[5]:void 0})}function G(t,e){return L(t,e,arguments.length>2&&void 0!==arguments[2]&&arguments[2])}r.d(e,"encode",function(){return D}),r.d(e,"decode",function(){return G}),r.d(e,"pickler",function(){return i}),r.d(e,"unpickler",function(){return o}),r.d(e,"util",function(){return n}),r.d(e,"tags",function(){return u}),r.d(e,"handlers",function(){return x})}])});
 //# sourceMappingURL=jsonpickle.min.js.map
@@ -37034,9 +37034,9 @@ return jQuery;
 /***/ (function(module, exports, __webpack_require__) {
 
 /*!
- *
+ * 
  * midicube 0.6.0 built on 2019-08-31.
- *
+ * 
  */
 !function(t,e){ true?module.exports=e():undefined}(window,function(){return function(t){var e={};function r(n){if(e[n])return e[n].exports;var o=e[n]={i:n,l:!1,exports:{}};return t[n].call(o.exports,o,o.exports,r),o.l=!0,o.exports}return r.m=t,r.c=e,r.d=function(t,e,n){r.o(t,e)||Object.defineProperty(t,e,{enumerable:!0,get:n})},r.r=function(t){"undefined"!=typeof Symbol&&Symbol.toStringTag&&Object.defineProperty(t,Symbol.toStringTag,{value:"Module"}),Object.defineProperty(t,"__esModule",{value:!0})},r.t=function(t,e){if(1&e&&(t=r(t)),8&e)return t;if(4&e&&"object"==typeof t&&t&&t.__esModule)return t;var n=Object.create(null);if(r.r(n),Object.defineProperty(n,"default",{enumerable:!0,value:t}),2&e&&"string"!=typeof t)for(var o in t)r.d(n,o,function(e){return t[e]}.bind(null,o));return n},r.n=function(t){var e=t&&t.__esModule?function(){return t.default}:function(){return t};return r.d(e,"a",e),e},r.o=function(t,e){return Object.prototype.hasOwnProperty.call(t,e)},r.p="",r(r.s=164)}([function(t,e,r){"use strict";var n,o=r(5),i=r(1),a=r(11),u=r(8),c=r(51),s=r(9),f=r(13),l=r(7).f,p=r(50),d=r(37),h=r(4),v=r(44),y=i.DataView,g=y&&y.prototype,_=i.Int8Array,m=_&&_.prototype,b=i.Uint8ClampedArray,A=b&&b.prototype,E=_&&p(_),w=m&&p(m),x=Object.prototype,S=x.isPrototypeOf,T=h("toStringTag"),O=v("TYPED_ARRAY_TAG"),I=!(!i.ArrayBuffer||!y),k=I&&!!d&&"Opera"!==c(i.opera),M=!1,C={Int8Array:1,Uint8Array:1,Uint8ClampedArray:1,Int16Array:2,Uint16Array:2,Int32Array:4,Uint32Array:4,Float32Array:4,Float64Array:8},q=function(t){return a(t)&&u(C,c(t))};for(n in C)i[n]||(k=!1);if((!k||"function"!=typeof E||E===Function.prototype)&&(E=function(){throw TypeError("Incorrect invocation")},k))for(n in C)i[n]&&d(i[n],E);if((!k||!w||w===x)&&(w=E.prototype,k))for(n in C)i[n]&&d(i[n].prototype,w);if(k&&p(A)!==w&&d(A,w),o&&!u(w,T))for(n in M=!0,l(w,T,{get:function(){return a(this)?this[O]:void 0}}),C)i[n]&&s(i[n],O,n);I&&d&&p(g)!==x&&d(g,x),t.exports={NATIVE_ARRAY_BUFFER:I,NATIVE_ARRAY_BUFFER_VIEWS:k,TYPED_ARRAY_TAG:M&&O,aTypedArray:function(t){if(q(t))return t;throw TypeError("Target is not a typed array")},aTypedArrayConstructor:function(t){if(d){if(S.call(E,t))return t}else for(var e in C)if(u(C,n)){var r=i[e];if(r&&(t===r||S.call(r,t)))return t}throw TypeError("Target is not a typed array constructor")},exportProto:function(t,e,r){if(o){if(r)for(var n in C){var a=i[n];a&&u(a.prototype,t)&&delete a.prototype[t]}w[t]&&!r||f(w,t,r?e:k&&m[t]||e)}},exportStatic:function(t,e,r){var n,a;if(o){if(d){if(r)for(n in C)(a=i[n])&&u(a,t)&&delete a[t];if(E[t]&&!r)return;try{return f(E,t,r?e:k&&_[t]||e)}catch(t){}}for(n in C)!(a=i[n])||a[t]&&!r||f(a,t,e)}},isView:function(t){var e=c(t);return"DataView"===e||u(C,e)},isTypedArray:q,TypedArray:E,TypedArrayPrototype:w}},function(t,e,r){(function(e){var r="object",n=function(t){return t&&t.Math==Math&&t};t.exports=n(typeof globalThis==r&&globalThis)||n(typeof window==r&&window)||n(typeof self==r&&self)||n(typeof e==r&&e)||Function("return this")()}).call(this,r(100))},function(t,e,r){var n=r(1),o=r(33).f,i=r(9),a=r(13),u=r(55),c=r(71),s=r(75);t.exports=function(t,e){var r,f,l,p,d,h=t.target,v=t.global,y=t.stat;if(r=v?n:y?n[h]||u(h,{}):(n[h]||{}).prototype)for(f in e){if(p=e[f],l=t.noTargetGet?(d=o(r,f))&&d.value:r[f],!s(v?f:h+(y?".":"#")+f,t.forced)&&void 0!==l){if(typeof p==typeof l)continue;c(p,l)}(t.sham||l&&l.sham)&&i(p,"sham",!0),a(r,f,p,t)}}},function(t,e){t.exports=function(t){try{return!!t()}catch(t){return!0}}},function(t,e,r){var n=r(1),o=r(34),i=r(44),a=r(76),u=n.Symbol,c=o("wks");t.exports=function(t){return c[t]||(c[t]=a&&u[t]||(a?u:i)("Symbol."+t))}},function(t,e,r){var n=r(3);t.exports=!n(function(){return 7!=Object.defineProperty({},"a",{get:function(){return 7}}).a})},function(t,e,r){var n=r(17),o=Math.min;t.exports=function(t){return t>0?o(n(t),9007199254740991):0}},function(t,e,r){var n=r(5),o=r(68),i=r(10),a=r(24),u=Object.defineProperty;e.f=n?u:function(t,e,r){if(i(t),e=a(e,!0),i(r),o)try{return u(t,e,r)}catch(t){}if("get"in r||"set"in r)throw TypeError("Accessors not supported");return"value"in r&&(t[e]=r.value),t}},function(t,e){var r={}.hasOwnProperty;t.exports=function(t,e){return r.call(t,e)}},function(t,e,r){var n=r(5),o=r(7),i=r(21);t.exports=n?function(t,e,r){return o.f(t,e,i(1,r))}:function(t,e,r){return t[e]=r,t}},function(t,e,r){var n=r(11);t.exports=function(t){if(!n(t))throw TypeError(String(t)+" is not an object");return t}},function(t,e){t.exports=function(t){return"object"==typeof t?null!==t:"function"==typeof t}},function(t,e,r){var n=r(23);t.exports=function(t){return Object(n(t))}},function(t,e,r){var n=r(1),o=r(34),i=r(9),a=r(8),u=r(55),c=r(70),s=r(25),f=s.get,l=s.enforce,p=String(c).split("toString");o("inspectSource",function(t){return c.call(t)}),(t.exports=function(t,e,r,o){var c=!!o&&!!o.unsafe,s=!!o&&!!o.enumerable,f=!!o&&!!o.noTargetGet;"function"==typeof r&&("string"!=typeof e||a(r,"name")||i(r,"name",e),l(r).source=p.join("string"==typeof e?e:"")),t!==n?(c?!f&&t[e]&&(s=!0):delete t[e],s?t[e]=r:i(t,e,r)):s?t[e]=r:u(e,r)})(Function.prototype,"toString",function(){return"function"==typeof this&&f(this).source||c.call(this)})},function(t,e,r){var n=r(41),o=r(23);t.exports=function(t){return n(o(t))}},function(t,e,r){var n=r(58),o=r(41),i=r(12),a=r(6),u=r(106),c=[].push,s=function(t){var e=1==t,r=2==t,s=3==t,f=4==t,l=6==t,p=5==t||l;return function(d,h,v,y){for(var g,_,m=i(d),b=o(m),A=n(h,v,3),E=a(b.length),w=0,x=y||u,S=e?x(d,E):r?x(d,0):void 0;E>w;w++)if((p||w in b)&&(_=A(g=b[w],w,m),t))if(e)S[w]=_;else if(_)switch(t){case 3:return!0;case 5:return g;case 6:return w;case 2:c.call(S,g)}else if(f)return!1;return l?-1:s||f?f:S}};t.exports={forEach:s(0),map:s(1),filter:s(2),some:s(3),every:s(4),find:s(5),findIndex:s(6)}},function(t,e,r){"use strict";var n=r(14),o=r(107),i=r(36),a=r(25),u=r(79),c=a.set,s=a.getterFor("Array Iterator");t.exports=u(Array,"Array",function(t,e){c(this,{type:"Array Iterator",target:n(t),index:0,kind:e})},function(){var t=s(this),e=t.target,r=t.kind,n=t.index++;return!e||n>=e.length?(t.target=void 0,{value:void 0,done:!0}):"keys"==r?{value:n,done:!1}:"values"==r?{value:e[n],done:!1}:{value:[n,e[n]],done:!1}},"values"),i.Arguments=i.Array,o("keys"),o("values"),o("entries")},function(t,e){var r=Math.ceil,n=Math.floor;t.exports=function(t){return isNaN(t=+t)?0:(t>0?n:r)(t)}},function(t,e,r){var n=r(13),o=r(113),i=Object.prototype;o!==i.toString&&n(i,"toString",o,{unsafe:!0})},function(t,e,r){"use strict";var n=r(82).charAt,o=r(25),i=r(79),a=o.set,u=o.getterFor("String Iterator");i(String,"String",function(t){a(this,{type:"String Iterator",string:String(t),index:0})},function(){var t,e=u(this),r=e.string,o=e.index;return o>=r.length?{value:void 0,done:!0}:(t=n(r,o),e.index+=t.length,{value:t,done:!1})})},function(t,e,r){"use strict";var n=r(2),o=r(1),i=r(42),a=r(5),u=r(76),c=r(3),s=r(8),f=r(57),l=r(11),p=r(10),d=r(12),h=r(14),v=r(24),y=r(21),g=r(27),_=r(48),m=r(26),b=r(105),A=r(74),E=r(33),w=r(7),x=r(54),S=r(9),T=r(13),O=r(34),I=r(43),k=r(45),M=r(44),C=r(4),q=r(77),B=r(78),P=r(49),F=r(25),R=r(15).forEach,D=I("hidden"),L=C("toPrimitive"),j=F.set,U=F.getterFor("Symbol"),W=Object.prototype,K=o.Symbol,N=o.JSON,G=N&&N.stringify,V=E.f,Y=w.f,H=b.f,J=x.f,Z=O("symbols"),X=O("op-symbols"),Q=O("string-to-symbol-registry"),z=O("symbol-to-string-registry"),$=O("wks"),tt=o.QObject,et=!tt||!tt.prototype||!tt.prototype.findChild,rt=a&&c(function(){return 7!=g(Y({},"a",{get:function(){return Y(this,"a",{value:7}).a}})).a})?function(t,e,r){var n=V(W,e);n&&delete W[e],Y(t,e,r),n&&t!==W&&Y(W,e,n)}:Y,nt=function(t,e){var r=Z[t]=g(K.prototype);return j(r,{type:"Symbol",tag:t,description:e}),a||(r.description=e),r},ot=u&&"symbol"==typeof K.iterator?function(t){return"symbol"==typeof t}:function(t){return Object(t)instanceof K},it=function(t,e,r){t===W&&it(X,e,r),p(t);var n=v(e,!0);return p(r),s(Z,n)?(r.enumerable?(s(t,D)&&t[D][n]&&(t[D][n]=!1),r=g(r,{enumerable:y(0,!1)})):(s(t,D)||Y(t,D,y(1,{})),t[D][n]=!0),rt(t,n,r)):Y(t,n,r)},at=function(t,e){p(t);var r=h(e),n=_(r).concat(ft(r));return R(n,function(e){a&&!ut.call(r,e)||it(t,e,r[e])}),t},ut=function(t){var e=v(t,!0),r=J.call(this,e);return!(this===W&&s(Z,e)&&!s(X,e))&&(!(r||!s(this,e)||!s(Z,e)||s(this,D)&&this[D][e])||r)},ct=function(t,e){var r=h(t),n=v(e,!0);if(r!==W||!s(Z,n)||s(X,n)){var o=V(r,n);return!o||!s(Z,n)||s(r,D)&&r[D][n]||(o.enumerable=!0),o}},st=function(t){var e=H(h(t)),r=[];return R(e,function(t){s(Z,t)||s(k,t)||r.push(t)}),r},ft=function(t){var e=t===W,r=H(e?X:h(t)),n=[];return R(r,function(t){!s(Z,t)||e&&!s(W,t)||n.push(Z[t])}),n};u||(T((K=function(){if(this instanceof K)throw TypeError("Symbol is not a constructor");var t=arguments.length&&void 0!==arguments[0]?String(arguments[0]):void 0,e=M(t),r=function(t){this===W&&r.call(X,t),s(this,D)&&s(this[D],e)&&(this[D][e]=!1),rt(this,e,y(1,t))};return a&&et&&rt(W,e,{configurable:!0,set:r}),nt(e,t)}).prototype,"toString",function(){return U(this).tag}),x.f=ut,w.f=it,E.f=ct,m.f=b.f=st,A.f=ft,a&&(Y(K.prototype,"description",{configurable:!0,get:function(){return U(this).description}}),i||T(W,"propertyIsEnumerable",ut,{unsafe:!0})),q.f=function(t){return nt(C(t),t)}),n({global:!0,wrap:!0,forced:!u,sham:!u},{Symbol:K}),R(_($),function(t){B(t)}),n({target:"Symbol",stat:!0,forced:!u},{for:function(t){var e=String(t);if(s(Q,e))return Q[e];var r=K(e);return Q[e]=r,z[r]=e,r},keyFor:function(t){if(!ot(t))throw TypeError(t+" is not a symbol");if(s(z,t))return z[t]},useSetter:function(){et=!0},useSimple:function(){et=!1}}),n({target:"Object",stat:!0,forced:!u,sham:!a},{create:function(t,e){return void 0===e?g(t):at(g(t),e)},defineProperty:it,defineProperties:at,getOwnPropertyDescriptor:ct}),n({target:"Object",stat:!0,forced:!u},{getOwnPropertyNames:st,getOwnPropertySymbols:ft}),n({target:"Object",stat:!0,forced:c(function(){A.f(1)})},{getOwnPropertySymbols:function(t){return A.f(d(t))}}),N&&n({target:"JSON",stat:!0,forced:!u||c(function(){var t=K();return"[null]"!=G([t])||"{}"!=G({a:t})||"{}"!=G(Object(t))})},{stringify:function(t){for(var e,r,n=[t],o=1;arguments.length>o;)n.push(arguments[o++]);if(r=e=n[1],(l(e)||void 0!==t)&&!ot(t))return f(e)||(e=function(t,e){if("function"==typeof r&&(e=r.call(this,t,e)),!ot(e))return e}),n[1]=e,G.apply(N,n)}}),K.prototype[L]||S(K.prototype,L,K.prototype.valueOf),P(K,"Symbol"),k[D]=!0},function(t,e){t.exports=function(t,e){return{enumerable:!(1&t),configurable:!(2&t),writable:!(4&t),value:e}}},function(t,e){var r={}.toString;t.exports=function(t){return r.call(t).slice(8,-1)}},function(t,e){t.exports=function(t){if(null==t)throw TypeError("Can't call method on "+t);return t}},function(t,e,r){var n=r(11);t.exports=function(t,e){if(!n(t))return t;var r,o;if(e&&"function"==typeof(r=t.toString)&&!n(o=r.call(t)))return o;if("function"==typeof(r=t.valueOf)&&!n(o=r.call(t)))return o;if(!e&&"function"==typeof(r=t.toString)&&!n(o=r.call(t)))return o;throw TypeError("Can't convert object to primitive value")}},function(t,e,r){var n,o,i,a=r(101),u=r(1),c=r(11),s=r(9),f=r(8),l=r(43),p=r(45),d=u.WeakMap;if(a){var h=new d,v=h.get,y=h.has,g=h.set;n=function(t,e){return g.call(h,t,e),e},o=function(t){return v.call(h,t)||{}},i=function(t){return y.call(h,t)}}else{var _=l("state");p[_]=!0,n=function(t,e){return s(t,_,e),e},o=function(t){return f(t,_)?t[_]:{}},i=function(t){return f(t,_)}}t.exports={set:n,get:o,has:i,enforce:function(t){return i(t)?o(t):n(t,{})},getterFor:function(t){return function(e){var r;if(!c(e)||(r=o(e)).type!==t)throw TypeError("Incompatible receiver, "+t+" required");return r}}}},function(t,e,r){var n=r(73),o=r(56).concat("length","prototype");e.f=Object.getOwnPropertyNames||function(t){return n(t,o)}},function(t,e,r){var n=r(10),o=r(103),i=r(56),a=r(45),u=r(104),c=r(69),s=r(43)("IE_PROTO"),f=function(){},l=function(){var t,e=c("iframe"),r=i.length;for(e.style.display="none",u.appendChild(e),e.src=String("javascript:"),(t=e.contentWindow.document).open(),t.write("<script>document.F=Object<\/script>"),t.close(),l=t.F;r--;)delete l.prototype[i[r]];return l()};t.exports=Object.create||function(t,e){var r;return null!==t?(f.prototype=n(t),r=new f,f.prototype=null,r[s]=t):r=l(),void 0===e?r:o(r,e)},a[s]=!0},function(t,e,r){"use strict";var n=r(2),o=r(5),i=r(1),a=r(8),u=r(11),c=r(7).f,s=r(71),f=i.Symbol;if(o&&"function"==typeof f&&(!("description"in f.prototype)||void 0!==f().description)){var l={},p=function(){var t=arguments.length<1||void 0===arguments[0]?void 0:String(arguments[0]),e=this instanceof p?new f(t):void 0===t?f():f(t);return""===t&&(l[e]=!0),e};s(p,f);var d=p.prototype=f.prototype;d.constructor=p;var h=d.toString,v="Symbol(test)"==String(f("test")),y=/^Symbol\((.*)\)[^)]+$/;c(d,"description",{configurable:!0,get:function(){var t=u(this)?this.valueOf():this,e=h.call(t);if(a(l,t))return"";var r=v?e.slice(7,-1):e.replace(y,"$1");return""===r?void 0:r}}),n({global:!0,forced:!0},{Symbol:p})}},function(t,e,r){r(78)("iterator")},function(t,e,r){var n=r(1),o=r(114),i=r(16),a=r(9),u=r(4),c=u("iterator"),s=u("toStringTag"),f=i.values;for(var l in o){var p=n[l],d=p&&p.prototype;if(d){if(d[c]!==f)try{a(d,c,f)}catch(t){d[c]=f}if(d[s]||a(d,s,l),o[l])for(var h in i)if(d[h]!==i[h])try{a(d,h,i[h])}catch(t){d[h]=i[h]}}}},function(t,e,r){"use strict";var n=r(2),o=r(52);n({target:"RegExp",proto:!0,forced:/./.exec!==o},{exec:o})},function(t,e,r){var n=r(10),o=r(59),i=r(4)("species");t.exports=function(t,e){var r,a=n(t).constructor;return void 0===a||null==(r=n(a)[i])?e:o(r)}},function(t,e,r){var n=r(5),o=r(54),i=r(21),a=r(14),u=r(24),c=r(8),s=r(68),f=Object.getOwnPropertyDescriptor;e.f=n?f:function(t,e){if(t=a(t),e=u(e,!0),s)try{return f(t,e)}catch(t){}if(c(t,e))return i(!o.f.call(t,e),t[e])}},function(t,e,r){var n=r(1),o=r(55),i=r(42),a=n["__core-js_shared__"]||o("__core-js_shared__",{});(t.exports=function(t,e){return a[t]||(a[t]=void 0!==e?e:{})})("versions",[]).push({version:"3.2.1",mode:i?"pure":"global",copyright:"© 2019 Denis Pushkarev (zloirock.ru)"})},function(t,e,r){var n=r(17),o=Math.max,i=Math.min;t.exports=function(t,e){var r=n(t);return r<0?o(r+e,0):i(r,e)}},function(t,e){t.exports={}},function(t,e,r){var n=r(10),o=r(109);t.exports=Object.setPrototypeOf||("__proto__"in{}?function(){var t,e=!1,r={};try{(t=Object.getOwnPropertyDescriptor(Object.prototype,"__proto__").set).call(r,[]),e=r instanceof Array}catch(t){}return function(r,i){return n(r),o(i),e?t.call(r,i):r.__proto__=i,r}}():void 0)},function(t,e,r){var n=r(2),o=r(5);n({target:"Object",stat:!0,forced:!o,sham:!o},{defineProperty:r(7).f})},function(t,e,r){"use strict";var n=r(2),o=r(47).indexOf,i=r(60),a=[].indexOf,u=!!a&&1/[1].indexOf(1,-0)<0,c=i("indexOf");n({target:"Array",proto:!0,forced:u||c},{indexOf:function(t){return u?a.apply(this,arguments)||0:o(this,t,arguments.length>1?arguments[1]:void 0)}})},function(t,e,r){var n=r(2),o=r(1),i=r(122),a=[].slice,u=function(t){return function(e,r){var n=arguments.length>2,o=n?a.call(arguments,2):void 0;return t(n?function(){("function"==typeof e?e:Function(e)).apply(this,o)}:e,r)}};n({global:!0,bind:!0,forced:/MSIE .\./.test(i)},{setTimeout:u(o.setTimeout),setInterval:u(o.setInterval)})},function(t,e,r){var n=r(3),o=r(22),i="".split;t.exports=n(function(){return!Object("z").propertyIsEnumerable(0)})?function(t){return"String"==o(t)?i.call(t,""):Object(t)}:Object},function(t,e){t.exports=!1},function(t,e,r){var n=r(34),o=r(44),i=n("keys");t.exports=function(t){return i[t]||(i[t]=o(t))}},function(t,e){var r=0,n=Math.random();t.exports=function(t){return"Symbol("+String(void 0===t?"":t)+")_"+(++r+n).toString(36)}},function(t,e){t.exports={}},function(t,e,r){var n=r(72),o=r(1),i=function(t){return"function"==typeof t?t:void 0};t.exports=function(t,e){return arguments.length<2?i(n[t])||i(o[t]):n[t]&&n[t][e]||o[t]&&o[t][e]}},function(t,e,r){var n=r(14),o=r(6),i=r(35),a=function(t){return function(e,r,a){var u,c=n(e),s=o(c.length),f=i(a,s);if(t&&r!=r){for(;s>f;)if((u=c[f++])!=u)return!0}else for(;s>f;f++)if((t||f in c)&&c[f]===r)return t||f||0;return!t&&-1}};t.exports={includes:a(!0),indexOf:a(!1)}},function(t,e,r){var n=r(73),o=r(56);t.exports=Object.keys||function(t){return n(t,o)}},function(t,e,r){var n=r(7).f,o=r(8),i=r(4)("toStringTag");t.exports=function(t,e,r){t&&!o(t=r?t:t.prototype,i)&&n(t,i,{configurable:!0,value:e})}},function(t,e,r){var n=r(8),o=r(12),i=r(43),a=r(81),u=i("IE_PROTO"),c=Object.prototype;t.exports=a?Object.getPrototypeOf:function(t){return t=o(t),n(t,u)?t[u]:"function"==typeof t.constructor&&t instanceof t.constructor?t.constructor.prototype:t instanceof Object?c:null}},function(t,e,r){var n=r(22),o=r(4)("toStringTag"),i="Arguments"==n(function(){return arguments}());t.exports=function(t){var e,r,a;return void 0===t?"Undefined":null===t?"Null":"string"==typeof(r=function(t,e){try{return t[e]}catch(t){}}(e=Object(t),o))?r:i?n(e):"Object"==(a=n(e))&&"function"==typeof e.callee?"Arguments":a}},function(t,e,r){"use strict";var n,o,i=r(86),a=RegExp.prototype.exec,u=String.prototype.replace,c=a,s=(n=/a/,o=/b*/g,a.call(n,"a"),a.call(o,"a"),0!==n.lastIndex||0!==o.lastIndex),f=void 0!==/()??/.exec("")[1];(s||f)&&(c=function(t){var e,r,n,o,c=this;return f&&(r=new RegExp("^"+c.source+"$(?!\\s)",i.call(c))),s&&(e=c.lastIndex),n=a.call(c,t),s&&n&&(c.lastIndex=c.global?n.index+n[0].length:e),f&&n&&n.length>1&&u.call(n[0],r,function(){for(o=1;o<arguments.length-2;o++)void 0===arguments[o]&&(n[o]=void 0)}),n}),t.exports=c},function(t,e,r){"use strict";var n=r(88),o=r(121),i=r(10),a=r(23),u=r(32),c=r(89),s=r(6),f=r(90),l=r(52),p=r(3),d=[].push,h=Math.min,v=!p(function(){return!RegExp(4294967295,"y")});n("split",2,function(t,e,r){var n;return n="c"=="abbc".split(/(b)*/)[1]||4!="test".split(/(?:)/,-1).length||2!="ab".split(/(?:ab)*/).length||4!=".".split(/(.?)(.?)/).length||".".split(/()()/).length>1||"".split(/.?/).length?function(t,r){var n=String(a(this)),i=void 0===r?4294967295:r>>>0;if(0===i)return[];if(void 0===t)return[n];if(!o(t))return e.call(n,t,i);for(var u,c,s,f=[],p=(t.ignoreCase?"i":"")+(t.multiline?"m":"")+(t.unicode?"u":"")+(t.sticky?"y":""),h=0,v=new RegExp(t.source,p+"g");(u=l.call(v,n))&&!((c=v.lastIndex)>h&&(f.push(n.slice(h,u.index)),u.length>1&&u.index<n.length&&d.apply(f,u.slice(1)),s=u[0].length,h=c,f.length>=i));)v.lastIndex===u.index&&v.lastIndex++;return h===n.length?!s&&v.test("")||f.push(""):f.push(n.slice(h)),f.length>i?f.slice(0,i):f}:"0".split(void 0,0).length?function(t,r){return void 0===t&&0===r?[]:e.call(this,t,r)}:e,[function(e,r){var o=a(this),i=null==e?void 0:e[t];return void 0!==i?i.call(e,o,r):n.call(String(o),e,r)},function(t,o){var a=r(n,t,this,o,n!==e);if(a.done)return a.value;var l=i(t),p=String(this),d=u(l,RegExp),y=l.unicode,g=(l.ignoreCase?"i":"")+(l.multiline?"m":"")+(l.unicode?"u":"")+(v?"y":"g"),_=new d(v?l:"^(?:"+l.source+")",g),m=void 0===o?4294967295:o>>>0;if(0===m)return[];if(0===p.length)return null===f(_,p)?[p]:[];for(var b=0,A=0,E=[];A<p.length;){_.lastIndex=v?A:0;var w,x=f(_,v?p:p.slice(A));if(null===x||(w=h(s(_.lastIndex+(v?0:A)),p.length))===b)A=c(p,A,y);else{if(E.push(p.slice(b,A)),E.length===m)return E;for(var S=1;S<=x.length-1;S++)if(E.push(x[S]),E.length===m)return E;A=b=w}}return E.push(p.slice(b)),E}]},!v)},function(t,e,r){"use strict";var n={}.propertyIsEnumerable,o=Object.getOwnPropertyDescriptor,i=o&&!n.call({1:2},1);e.f=i?function(t){var e=o(this,t);return!!e&&e.enumerable}:n},function(t,e,r){var n=r(1),o=r(9);t.exports=function(t,e){try{o(n,t,e)}catch(r){n[t]=e}return e}},function(t,e){t.exports=["constructor","hasOwnProperty","isPrototypeOf","propertyIsEnumerable","toLocaleString","toString","valueOf"]},function(t,e,r){var n=r(22);t.exports=Array.isArray||function(t){return"Array"==n(t)}},function(t,e,r){var n=r(59);t.exports=function(t,e,r){if(n(t),void 0===e)return t;switch(r){case 0:return function(){return t.call(e)};case 1:return function(r){return t.call(e,r)};case 2:return function(r,n){return t.call(e,r,n)};case 3:return function(r,n,o){return t.call(e,r,n,o)}}return function(){return t.apply(e,arguments)}}},function(t,e){t.exports=function(t){if("function"!=typeof t)throw TypeError(String(t)+" is not a function");return t}},function(t,e,r){"use strict";var n=r(3);t.exports=function(t,e){var r=[][t];return!r||!n(function(){r.call(null,e||function(){throw 1},1)})}},function(t,e,r){var n=r(13),o=Date.prototype,i=o.toString,a=o.getTime;new Date(NaN)+""!="Invalid Date"&&n(o,"toString",function(){var t=a.call(this);return t==t?i.call(this):"Invalid Date"})},function(t,e,r){var n=r(2),o=r(12),i=r(48);n({target:"Object",stat:!0,forced:r(3)(function(){i(1)})},{keys:function(t){return i(o(t))}})},function(t,e,r){var n=r(2),o=r(124);n({global:!0,forced:parseInt!=o},{parseInt:o})},function(t,e,r){var n=r(23),o="["+r(65)+"]",i=RegExp("^"+o+o+"*"),a=RegExp(o+o+"*$"),u=function(t){return function(e){var r=String(n(e));return 1&t&&(r=r.replace(i,"")),2&t&&(r=r.replace(a,"")),r}};t.exports={start:u(1),end:u(2),trim:u(3)}},function(t,e){t.exports="\t\n\v\f\r                　\u2028\u2029\ufeff"},function(t,e,r){"use strict";var n=r(1),o=r(5),i=r(0).NATIVE_ARRAY_BUFFER,a=r(9),u=r(126),c=r(3),s=r(94),f=r(17),l=r(6),p=r(95),d=r(26).f,h=r(7).f,v=r(96),y=r(49),g=r(25),_=g.get,m=g.set,b=n.ArrayBuffer,A=b,E=n.DataView,w=n.Math,x=n.RangeError,S=w.abs,T=w.pow,O=w.floor,I=w.log,k=w.LN2,M=function(t,e,r){var n,o,i,a=new Array(r),u=8*r-e-1,c=(1<<u)-1,s=c>>1,f=23===e?T(2,-24)-T(2,-77):0,l=t<0||0===t&&1/t<0?1:0,p=0;for((t=S(t))!=t||t===1/0?(o=t!=t?1:0,n=c):(n=O(I(t)/k),t*(i=T(2,-n))<1&&(n--,i*=2),(t+=n+s>=1?f/i:f*T(2,1-s))*i>=2&&(n++,i/=2),n+s>=c?(o=0,n=c):n+s>=1?(o=(t*i-1)*T(2,e),n+=s):(o=t*T(2,s-1)*T(2,e),n=0));e>=8;a[p++]=255&o,o/=256,e-=8);for(n=n<<e|o,u+=e;u>0;a[p++]=255&n,n/=256,u-=8);return a[--p]|=128*l,a},C=function(t,e){var r,n=t.length,o=8*n-e-1,i=(1<<o)-1,a=i>>1,u=o-7,c=n-1,s=t[c--],f=127&s;for(s>>=7;u>0;f=256*f+t[c],c--,u-=8);for(r=f&(1<<-u)-1,f>>=-u,u+=e;u>0;r=256*r+t[c],c--,u-=8);if(0===f)f=1-a;else{if(f===i)return r?NaN:s?-1/0:1/0;r+=T(2,e),f-=a}return(s?-1:1)*r*T(2,f-e)},q=function(t){return t[3]<<24|t[2]<<16|t[1]<<8|t[0]},B=function(t){return[255&t]},P=function(t){return[255&t,t>>8&255]},F=function(t){return[255&t,t>>8&255,t>>16&255,t>>24&255]},R=function(t){return M(t,23,4)},D=function(t){return M(t,52,8)},L=function(t,e){h(t.prototype,e,{get:function(){return _(this)[e]}})},j=function(t,e,r,n){var o=p(+r),i=_(t);if(o+e>i.byteLength)throw x("Wrong index");var a=_(i.buffer).bytes,u=o+i.byteOffset,c=a.slice(u,u+e);return n?c:c.reverse()},U=function(t,e,r,n,o,i){var a=p(+r),u=_(t);if(a+e>u.byteLength)throw x("Wrong index");for(var c=_(u.buffer).bytes,s=a+u.byteOffset,f=n(+o),l=0;l<e;l++)c[s+l]=f[i?l:e-l-1]};if(i){if(!c(function(){b(1)})||!c(function(){new b(-1)})||c(function(){return new b,new b(1.5),new b(NaN),"ArrayBuffer"!=b.name})){for(var W,K=(A=function(t){return s(this,A),new b(p(t))}).prototype=b.prototype,N=d(b),G=0;N.length>G;)(W=N[G++])in A||a(A,W,b[W]);K.constructor=A}var V=new E(new A(2)),Y=E.prototype.setInt8;V.setInt8(0,2147483648),V.setInt8(1,2147483649),!V.getInt8(0)&&V.getInt8(1)||u(E.prototype,{setInt8:function(t,e){Y.call(this,t,e<<24>>24)},setUint8:function(t,e){Y.call(this,t,e<<24>>24)}},{unsafe:!0})}else A=function(t){s(this,A,"ArrayBuffer");var e=p(t);m(this,{bytes:v.call(new Array(e),0),byteLength:e}),o||(this.byteLength=e)},E=function(t,e,r){s(this,E,"DataView"),s(t,A,"DataView");var n=_(t).byteLength,i=f(e);if(i<0||i>n)throw x("Wrong offset");if(i+(r=void 0===r?n-i:l(r))>n)throw x("Wrong length");m(this,{buffer:t,byteLength:r,byteOffset:i}),o||(this.buffer=t,this.byteLength=r,this.byteOffset=i)},o&&(L(A,"byteLength"),L(E,"buffer"),L(E,"byteLength"),L(E,"byteOffset")),u(E.prototype,{getInt8:function(t){return j(this,1,t)[0]<<24>>24},getUint8:function(t){return j(this,1,t)[0]},getInt16:function(t){var e=j(this,2,t,arguments.length>1?arguments[1]:void 0);return(e[1]<<8|e[0])<<16>>16},getUint16:function(t){var e=j(this,2,t,arguments.length>1?arguments[1]:void 0);return e[1]<<8|e[0]},getInt32:function(t){return q(j(this,4,t,arguments.length>1?arguments[1]:void 0))},getUint32:function(t){return q(j(this,4,t,arguments.length>1?arguments[1]:void 0))>>>0},getFloat32:function(t){return C(j(this,4,t,arguments.length>1?arguments[1]:void 0),23)},getFloat64:function(t){return C(j(this,8,t,arguments.length>1?arguments[1]:void 0),52)},setInt8:function(t,e){U(this,1,t,B,e)},setUint8:function(t,e){U(this,1,t,B,e)},setInt16:function(t,e){U(this,2,t,P,e,arguments.length>2?arguments[2]:void 0)},setUint16:function(t,e){U(this,2,t,P,e,arguments.length>2?arguments[2]:void 0)},setInt32:function(t,e){U(this,4,t,F,e,arguments.length>2?arguments[2]:void 0)},setUint32:function(t,e){U(this,4,t,F,e,arguments.length>2?arguments[2]:void 0)},setFloat32:function(t,e){U(this,4,t,R,e,arguments.length>2?arguments[2]:void 0)},setFloat64:function(t,e){U(this,8,t,D,e,arguments.length>2?arguments[2]:void 0)}});y(A,"ArrayBuffer"),y(E,"DataView"),e.ArrayBuffer=A,e.DataView=E},function(module,__webpack_exports__,__webpack_require__){"use strict";__webpack_require__.d(__webpack_exports__,"a",function(){return Color});var core_js_modules_es_symbol__WEBPACK_IMPORTED_MODULE_0__=__webpack_require__(20),core_js_modules_es_symbol__WEBPACK_IMPORTED_MODULE_0___default=__webpack_require__.n(core_js_modules_es_symbol__WEBPACK_IMPORTED_MODULE_0__),core_js_modules_es_symbol_description__WEBPACK_IMPORTED_MODULE_1__=__webpack_require__(28),core_js_modules_es_symbol_description__WEBPACK_IMPORTED_MODULE_1___default=__webpack_require__.n(core_js_modules_es_symbol_description__WEBPACK_IMPORTED_MODULE_1__),core_js_modules_es_symbol_iterator__WEBPACK_IMPORTED_MODULE_2__=__webpack_require__(29),core_js_modules_es_symbol_iterator__WEBPACK_IMPORTED_MODULE_2___default=__webpack_require__.n(core_js_modules_es_symbol_iterator__WEBPACK_IMPORTED_MODULE_2__),core_js_modules_es_array_index_of__WEBPACK_IMPORTED_MODULE_3__=__webpack_require__(39),core_js_modules_es_array_index_of__WEBPACK_IMPORTED_MODULE_3___default=__webpack_require__.n(core_js_modules_es_array_index_of__WEBPACK_IMPORTED_MODULE_3__),core_js_modules_es_array_iterator__WEBPACK_IMPORTED_MODULE_4__=__webpack_require__(16),core_js_modules_es_array_iterator__WEBPACK_IMPORTED_MODULE_4___default=__webpack_require__.n(core_js_modules_es_array_iterator__WEBPACK_IMPORTED_MODULE_4__),core_js_modules_es_date_to_string__WEBPACK_IMPORTED_MODULE_5__=__webpack_require__(61),core_js_modules_es_date_to_string__WEBPACK_IMPORTED_MODULE_5___default=__webpack_require__.n(core_js_modules_es_date_to_string__WEBPACK_IMPORTED_MODULE_5__),core_js_modules_es_object_to_string__WEBPACK_IMPORTED_MODULE_6__=__webpack_require__(18),core_js_modules_es_object_to_string__WEBPACK_IMPORTED_MODULE_6___default=__webpack_require__.n(core_js_modules_es_object_to_string__WEBPACK_IMPORTED_MODULE_6__),core_js_modules_es_parse_float__WEBPACK_IMPORTED_MODULE_7__=__webpack_require__(162),core_js_modules_es_parse_float__WEBPACK_IMPORTED_MODULE_7___default=__webpack_require__.n(core_js_modules_es_parse_float__WEBPACK_IMPORTED_MODULE_7__),core_js_modules_es_parse_int__WEBPACK_IMPORTED_MODULE_8__=__webpack_require__(63),core_js_modules_es_parse_int__WEBPACK_IMPORTED_MODULE_8___default=__webpack_require__.n(core_js_modules_es_parse_int__WEBPACK_IMPORTED_MODULE_8__),core_js_modules_es_regexp_exec__WEBPACK_IMPORTED_MODULE_9__=__webpack_require__(31),core_js_modules_es_regexp_exec__WEBPACK_IMPORTED_MODULE_9___default=__webpack_require__.n(core_js_modules_es_regexp_exec__WEBPACK_IMPORTED_MODULE_9__),core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_10__=__webpack_require__(87),core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_10___default=__webpack_require__.n(core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_10__),core_js_modules_es_string_iterator__WEBPACK_IMPORTED_MODULE_11__=__webpack_require__(19),core_js_modules_es_string_iterator__WEBPACK_IMPORTED_MODULE_11___default=__webpack_require__.n(core_js_modules_es_string_iterator__WEBPACK_IMPORTED_MODULE_11__),core_js_modules_es_string_split__WEBPACK_IMPORTED_MODULE_12__=__webpack_require__(53),core_js_modules_es_string_split__WEBPACK_IMPORTED_MODULE_12___default=__webpack_require__.n(core_js_modules_es_string_split__WEBPACK_IMPORTED_MODULE_12__),core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_13__=__webpack_require__(30),core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_13___default=__webpack_require__.n(core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_13__);function _typeof(t){return(_typeof="function"==typeof Symbol&&"symbol"==typeof Symbol.iterator?function(t){return typeof t}:function(t){return t&&"function"==typeof Symbol&&t.constructor===Symbol&&t!==Symbol.prototype?"symbol":typeof t})(t)}var Color={Space:{}};!function(){var useEval=!1,functions={},shortcuts={"HEX24>HSL":"HEX24>RGB>HSL","HEX32>HSLA":"HEX32>RGBA>HSLA","HEX24>CMYK":"HEX24>RGB>CMY>CMYK","RGB>CMYK":"RGB>CMY>CMYK"},root=Color.Space=function(color,route){shortcuts[route]&&(route=shortcuts[route]);var r=route.split(">");if("object"===_typeof(color)&&color[0]>=0){for(var type=r[0],tmp={},i=0;i<type.length;i++){var str=type.substr(i,1);tmp[str]=color[i]}color=tmp}if(functions[route])return functions[route](color);for(var f="color",pos=1,key=r[0];pos<r.length;pos++)pos>1&&(key=key.substr(key.indexOf("_")+1)),key+=(0===pos?"":"_")+r[pos],color=root[key](color),useEval&&(f="Color.Space."+key+"("+f+")");return useEval&&(functions[route]=eval("(function(color) { return "+f+" })")),color};root.RGB_W3=function(t){return"rgb("+(t.R>>0)+","+(t.G>>0)+","+(t.B>>0)+")"},root.RGBA_W3=function(t){var e="number"==typeof t.A?t.A/255:1;return"rgba("+(t.R>>0)+","+(t.G>>0)+","+(t.B>>0)+","+e+")"},root.W3_RGB=function(t){t=t.substr(4,t.length-5).split(",");return{R:parseInt(t[0]),G:parseInt(t[1]),B:parseInt(t[2])}},root.W3_RGBA=function(t){t=t.substr(5,t.length-6).split(",");return{R:parseInt(t[0]),G:parseInt(t[1]),B:parseInt(t[2]),A:255*parseFloat(t[3])}},root.HSL_W3=function(t){return"hsl("+(t.H+.5>>0)+","+(t.S+.5>>0)+"%,"+(t.L+.5>>0)+"%)"},root.HSLA_W3=function(t){var e="number"==typeof t.A?t.A/255:1;return"hsla("+(t.H+.5>>0)+","+(t.S+.5>>0)+"%,"+(t.L+.5>>0)+"%,"+e+")"},root.W3_HSL=function(t){t=t.substr(4,t.length-5).split(",");return{H:parseInt(t[0]),S:parseInt(t[1]),L:parseInt(t[2])}},root.W3_HSLA=function(t){t=t.substr(5,t.length-6).split(",");return{H:parseInt(t[0]),S:parseInt(t[1]),L:parseInt(t[2]),A:255*parseFloat(t[3])}},root.W3_HEX=root.W3_HEX24=function(t){return"#"===t.substr(0,1)&&(t=t.substr(1)),3===t.length&&(t=t[0]+t[0]+t[1]+t[1]+t[2]+t[2]),parseInt("0x"+t)},root.W3_HEX32=function(t){return"#"===t.substr(0,1)&&(t=t.substr(1)),6===t.length?parseInt("0xFF"+t):parseInt("0x"+t)},root.HEX_W3=root.HEX24_W3=function(t,e){e||(e=6),t||(t=0);for(var r=t.toString(16),n=r.length;n<e;)r="0"+r,n++;for(n=r.length;n>e;)r=r.substr(1),n--;return"#"+r},root.HEX32_W3=function(t){return root.HEX_W3(t,8)},root.HEX_RGB=root.HEX24_RGB=function(t){return{R:t>>16,G:t>>8&255,B:255&t}},root.HEX32_RGBA=function(t){return{R:t>>>16&255,G:t>>>8&255,B:255&t,A:t>>>24}},root.RGBA_HEX32=function(t){return(t.A<<24|t.R<<16|t.G<<8|t.B)>>>0},root.RGB_HEX24=root.RGB_HEX=function(t){return t.R<0&&(t.R=0),t.G<0&&(t.G=0),t.B<0&&(t.B=0),t.R>255&&(t.R=255),t.G>255&&(t.G=255),t.B>255&&(t.B=255),t.R<<16|t.G<<8|t.B},root.RGB_CMY=function(t){return{C:1-t.R/255,M:1-t.G/255,Y:1-t.B/255}},root.RGBA_HSLA=root.RGB_HSL=function(t){var e,r,n=t.R/255,o=t.G/255,i=t.B/255,a=Math.min(n,o,i),u=Math.max(n,o,i),c=u-a,s=(u+a)/2;if(0===c)e=0,r=0;else{r=s<.5?c/(u+a):c/(2-u-a);var f=((u-n)/6+c/2)/c,l=((u-o)/6+c/2)/c,p=((u-i)/6+c/2)/c;n===u?e=p-l:o===u?e=1/3+f-p:i===u&&(e=2/3+l-f),e<0&&(e+=1),e>1&&(e-=1)}return{H:360*e,S:100*r,L:100*s,A:t.A}},root.RGBA_HSVA=root.RGB_HSV=function(t){var e,r,n=t.R/255,o=t.G/255,i=t.B/255,a=Math.min(n,o,i),u=Math.max(n,o,i),c=u-a;if(0===c)e=0,r=0;else{r=c/u;var s=((u-n)/6+c/2)/c,f=((u-o)/6+c/2)/c,l=((u-i)/6+c/2)/c;n===u?e=l-f:o===u?e=1/3+s-l:i===u&&(e=2/3+f-s),e<0&&(e+=1),e>1&&(e-=1)}return{H:360*e,S:100*r,V:100*u,A:t.A}},root.CMY_RGB=function(t){return{R:Math.max(0,255*(1-t.C)),G:Math.max(0,255*(1-t.M)),B:Math.max(0,255*(1-t.Y))}},root.CMY_CMYK=function(t){var e=t.C,r=t.M,n=t.Y,o=Math.min(n,Math.min(r,Math.min(e,1)));return{C:e=Math.round((e-o)/(1-o)*100),M:r=Math.round((r-o)/(1-o)*100),Y:n=Math.round((n-o)/(1-o)*100),K:o=Math.round(100*o)}},root.CMYK_CMY=function(t){return{C:t.C*(1-t.K)+t.K,M:t.M*(1-t.K)+t.K,Y:t.Y*(1-t.K)+t.K}},root.HSLA_RGBA=root.HSL_RGB=function(t){var e,r,n,o,i,a,u=t.H/360,c=t.S/100,s=t.L/100;return 0===c?e=r=n=s:(o=2*s-(i=s<.5?s*(1+c):s+c-c*s),(a=u+1/3)<0&&(a+=1),a>1&&(a-=1),e=6*a<1?o+6*(i-o)*a:2*a<1?i:3*a<2?o+(i-o)*(2/3-a)*6:o,(a=u)<0&&(a+=1),a>1&&(a-=1),r=6*a<1?o+6*(i-o)*a:2*a<1?i:3*a<2?o+(i-o)*(2/3-a)*6:o,(a=u-1/3)<0&&(a+=1),a>1&&(a-=1),n=6*a<1?o+6*(i-o)*a:2*a<1?i:3*a<2?o+(i-o)*(2/3-a)*6:o),{R:255*e,G:255*r,B:255*n,A:t.A}},root.HSVA_RGBA=root.HSV_RGB=function(t){var e,r,n,o,i,a,u=t.H/360,c=t.S/100,s=t.V/100;if(0===c)e=r=n=Math.round(255*s);else switch(u>=1&&(u=0),o=(u*=6)-Math.floor(u),i=Math.round(255*s*(1-c)),n=Math.round(255*s*(1-c*o)),a=Math.round(255*s*(1-c*(1-o))),s=Math.round(255*s),Math.floor(u)){case 0:e=s,r=a,n=i;break;case 1:e=n,r=s,n=i;break;case 2:e=i,r=s,n=a;break;case 3:e=i,r=n,n=s;break;case 4:e=a,r=i,n=s;break;case 5:e=s,r=i,n=n}return{R:e,G:r,B:n,A:t.A}}}()},function(t,e,r){var n=r(5),o=r(3),i=r(69);t.exports=!n&&!o(function(){return 7!=Object.defineProperty(i("div"),"a",{get:function(){return 7}}).a})},function(t,e,r){var n=r(1),o=r(11),i=n.document,a=o(i)&&o(i.createElement);t.exports=function(t){return a?i.createElement(t):{}}},function(t,e,r){var n=r(34);t.exports=n("native-function-to-string",Function.toString)},function(t,e,r){var n=r(8),o=r(102),i=r(33),a=r(7);t.exports=function(t,e){for(var r=o(e),u=a.f,c=i.f,s=0;s<r.length;s++){var f=r[s];n(t,f)||u(t,f,c(e,f))}}},function(t,e,r){t.exports=r(1)},function(t,e,r){var n=r(8),o=r(14),i=r(47).indexOf,a=r(45);t.exports=function(t,e){var r,u=o(t),c=0,s=[];for(r in u)!n(a,r)&&n(u,r)&&s.push(r);for(;e.length>c;)n(u,r=e[c++])&&(~i(s,r)||s.push(r));return s}},function(t,e){e.f=Object.getOwnPropertySymbols},function(t,e,r){var n=r(3),o=/#|\.prototype\./,i=function(t,e){var r=u[a(t)];return r==s||r!=c&&("function"==typeof e?n(e):!!e)},a=i.normalize=function(t){return String(t).replace(o,".").toLowerCase()},u=i.data={},c=i.NATIVE="N",s=i.POLYFILL="P";t.exports=i},function(t,e,r){var n=r(3);t.exports=!!Object.getOwnPropertySymbols&&!n(function(){return!String(Symbol())})},function(t,e,r){e.f=r(4)},function(t,e,r){var n=r(72),o=r(8),i=r(77),a=r(7).f;t.exports=function(t){var e=n.Symbol||(n.Symbol={});o(e,t)||a(e,t,{value:i.f(t)})}},function(t,e,r){"use strict";var n=r(2),o=r(108),i=r(50),a=r(37),u=r(49),c=r(9),s=r(13),f=r(4),l=r(42),p=r(36),d=r(80),h=d.IteratorPrototype,v=d.BUGGY_SAFARI_ITERATORS,y=f("iterator"),g=function(){return this};t.exports=function(t,e,r,f,d,_,m){o(r,e,f);var b,A,E,w=function(t){if(t===d&&I)return I;if(!v&&t in T)return T[t];switch(t){case"keys":case"values":case"entries":return function(){return new r(this,t)}}return function(){return new r(this)}},x=e+" Iterator",S=!1,T=t.prototype,O=T[y]||T["@@iterator"]||d&&T[d],I=!v&&O||w(d),k="Array"==e&&T.entries||O;if(k&&(b=i(k.call(new t)),h!==Object.prototype&&b.next&&(l||i(b)===h||(a?a(b,h):"function"!=typeof b[y]&&c(b,y,g)),u(b,x,!0,!0),l&&(p[x]=g))),"values"==d&&O&&"values"!==O.name&&(S=!0,I=function(){return O.call(this)}),l&&!m||T[y]===I||c(T,y,I),p[e]=I,d)if(A={values:w("values"),keys:_?I:w("keys"),entries:w("entries")},m)for(E in A)!v&&!S&&E in T||s(T,E,A[E]);else n({target:e,proto:!0,forced:v||S},A);return A}},function(t,e,r){"use strict";var n,o,i,a=r(50),u=r(9),c=r(8),s=r(4),f=r(42),l=s("iterator"),p=!1;[].keys&&("next"in(i=[].keys())?(o=a(a(i)))!==Object.prototype&&(n=o):p=!0),null==n&&(n={}),f||c(n,l)||u(n,l,function(){return this}),t.exports={IteratorPrototype:n,BUGGY_SAFARI_ITERATORS:p}},function(t,e,r){var n=r(3);t.exports=!n(function(){function t(){}return t.prototype.constructor=null,Object.getPrototypeOf(new t)!==t.prototype})},function(t,e,r){var n=r(17),o=r(23),i=function(t){return function(e,r){var i,a,u=String(o(e)),c=n(r),s=u.length;return c<0||c>=s?t?"":void 0:(i=u.charCodeAt(c))<55296||i>56319||c+1===s||(a=u.charCodeAt(c+1))<56320||a>57343?t?u.charAt(c):i:t?u.slice(c,c+2):a-56320+(i-55296<<10)+65536}};t.exports={codeAt:i(!1),charAt:i(!0)}},function(t,e,r){var n=r(4),o=r(36),i=n("iterator"),a=Array.prototype;t.exports=function(t){return void 0!==t&&(o.Array===t||a[i]===t)}},function(t,e,r){var n=r(51),o=r(36),i=r(4)("iterator");t.exports=function(t){if(null!=t)return t[i]||t["@@iterator"]||o[n(t)]}},function(t,e,r){var n=r(4)("iterator"),o=!1;try{var i=0,a={next:function(){return{done:!!i++}},return:function(){o=!0}};a[n]=function(){return this},Array.from(a,function(){throw 2})}catch(t){}t.exports=function(t,e){if(!e&&!o)return!1;var r=!1;try{var i={};i[n]=function(){return{next:function(){return{done:r=!0}}}},t(i)}catch(t){}return r}},function(t,e,r){"use strict";var n=r(10);t.exports=function(){var t=n(this),e="";return t.global&&(e+="g"),t.ignoreCase&&(e+="i"),t.multiline&&(e+="m"),t.dotAll&&(e+="s"),t.unicode&&(e+="u"),t.sticky&&(e+="y"),e}},function(t,e,r){"use strict";var n=r(13),o=r(10),i=r(3),a=r(86),u=RegExp.prototype,c=u.toString,s=i(function(){return"/a/b"!=c.call({source:"a",flags:"b"})}),f="toString"!=c.name;(s||f)&&n(RegExp.prototype,"toString",function(){var t=o(this),e=String(t.source),r=t.flags;return"/"+e+"/"+String(void 0===r&&t instanceof RegExp&&!("flags"in u)?a.call(t):r)},{unsafe:!0})},function(t,e,r){"use strict";var n=r(9),o=r(13),i=r(3),a=r(4),u=r(52),c=a("species"),s=!i(function(){var t=/./;return t.exec=function(){var t=[];return t.groups={a:"7"},t},"7"!=="".replace(t,"$<a>")}),f=!i(function(){var t=/(?:)/,e=t.exec;t.exec=function(){return e.apply(this,arguments)};var r="ab".split(t);return 2!==r.length||"a"!==r[0]||"b"!==r[1]});t.exports=function(t,e,r,l){var p=a(t),d=!i(function(){var e={};return e[p]=function(){return 7},7!=""[t](e)}),h=d&&!i(function(){var e=!1,r=/a/;return r.exec=function(){return e=!0,null},"split"===t&&(r.constructor={},r.constructor[c]=function(){return r}),r[p](""),!e});if(!d||!h||"replace"===t&&!s||"split"===t&&!f){var v=/./[p],y=r(p,""[t],function(t,e,r,n,o){return e.exec===u?d&&!o?{done:!0,value:v.call(e,r,n)}:{done:!0,value:t.call(r,e,n)}:{done:!1}}),g=y[0],_=y[1];o(String.prototype,t,g),o(RegExp.prototype,p,2==e?function(t,e){return _.call(t,this,e)}:function(t){return _.call(t,this)}),l&&n(RegExp.prototype[p],"sham",!0)}}},function(t,e,r){"use strict";var n=r(82).charAt;t.exports=function(t,e,r){return e+(r?n(t,e).length:1)}},function(t,e,r){var n=r(22),o=r(52);t.exports=function(t,e){var r=t.exec;if("function"==typeof r){var i=r.call(t,e);if("object"!=typeof i)throw TypeError("RegExp exec method returned something other than an Object or null");return i}if("RegExp"!==n(t))throw TypeError("RegExp#exec called on incompatible receiver");return o.call(t,e)}},function(t,e,r){r(2)({target:"Array",stat:!0},{isArray:r(57)})},function(t,e,r){var n=r(2),o=r(123).entries;n({target:"Object",stat:!0},{entries:function(t){return o(t)}})},function(t,e,r){"use strict";var n=r(88),o=r(10),i=r(12),a=r(6),u=r(17),c=r(23),s=r(89),f=r(90),l=Math.max,p=Math.min,d=Math.floor,h=/\$([$&'`]|\d\d?|<[^>]*>)/g,v=/\$([$&'`]|\d\d?)/g;n("replace",2,function(t,e,r){return[function(r,n){var o=c(this),i=null==r?void 0:r[t];return void 0!==i?i.call(r,o,n):e.call(String(o),r,n)},function(t,i){var c=r(e,t,this,i);if(c.done)return c.value;var d=o(t),h=String(this),v="function"==typeof i;v||(i=String(i));var y=d.global;if(y){var g=d.unicode;d.lastIndex=0}for(var _=[];;){var m=f(d,h);if(null===m)break;if(_.push(m),!y)break;""===String(m[0])&&(d.lastIndex=s(h,a(d.lastIndex),g))}for(var b,A="",E=0,w=0;w<_.length;w++){m=_[w];for(var x=String(m[0]),S=l(p(u(m.index),h.length),0),T=[],O=1;O<m.length;O++)T.push(void 0===(b=m[O])?b:String(b));var I=m.groups;if(v){var k=[x].concat(T,S,h);void 0!==I&&k.push(I);var M=String(i.apply(void 0,k))}else M=n(x,h,S,T,I,i);S>=E&&(A+=h.slice(E,S)+M,E=S+x.length)}return A+h.slice(E)}];function n(t,r,n,o,a,u){var c=n+t.length,s=o.length,f=v;return void 0!==a&&(a=i(a),f=h),e.call(u,f,function(e,i){var u;switch(i.charAt(0)){case"$":return"$";case"&":return t;case"`":return r.slice(0,n);case"'":return r.slice(c);case"<":u=a[i.slice(1,-1)];break;default:var f=+i;if(0===f)return e;if(f>s){var l=d(f/10);return 0===l?e:l<=s?void 0===o[l-1]?i.charAt(1):o[l-1]+i.charAt(1):e}u=o[f-1]}return void 0===u?"":u})}})},function(t,e){t.exports=function(t,e,r){if(!(t instanceof e))throw TypeError("Incorrect "+(r?r+" ":"")+"invocation");return t}},function(t,e,r){var n=r(17),o=r(6);t.exports=function(t){if(void 0===t)return 0;var e=n(t),r=o(e);if(e!==r)throw RangeError("Wrong length or index");return r}},function(t,e,r){"use strict";var n=r(12),o=r(35),i=r(6);t.exports=function(t){for(var e=n(this),r=i(e.length),a=arguments.length,u=o(a>1?arguments[1]:void 0,r),c=a>2?arguments[2]:void 0,s=void 0===c?r:o(c,r);s>u;)e[u++]=t;return e}},function(t,e,r){"use strict";var n=r(46),o=r(7),i=r(4),a=r(5),u=i("species");t.exports=function(t){var e=n(t),r=o.f;a&&e&&!e[u]&&r(e,u,{configurable:!0,get:function(){return this}})}},function(t,e,r){var n=r(17);t.exports=function(t,e){var r=n(t);if(r<0||r%e)throw RangeError("Wrong offset");return r}},function(t,e,r){var n=r(59),o=r(12),i=r(41),a=r(6),u=function(t){return function(e,r,u,c){n(r);var s=o(e),f=i(s),l=a(s.length),p=t?l-1:0,d=t?-1:1;if(u<2)for(;;){if(p in f){c=f[p],p+=d;break}if(p+=d,t?p<0:l<=p)throw TypeError("Reduce of empty array with no initial value")}for(;t?p>=0:l>p;p+=d)p in f&&(c=r(c,f[p],p,s));return c}};t.exports={left:u(!1),right:u(!0)}},function(t,e){var r;r=function(){return this}();try{r=r||new Function("return this")()}catch(t){"object"==typeof window&&(r=window)}t.exports=r},function(t,e,r){var n=r(1),o=r(70),i=n.WeakMap;t.exports="function"==typeof i&&/native code/.test(o.call(i))},function(t,e,r){var n=r(46),o=r(26),i=r(74),a=r(10);t.exports=n("Reflect","ownKeys")||function(t){var e=o.f(a(t)),r=i.f;return r?e.concat(r(t)):e}},function(t,e,r){var n=r(5),o=r(7),i=r(10),a=r(48);t.exports=n?Object.defineProperties:function(t,e){i(t);for(var r,n=a(e),u=n.length,c=0;u>c;)o.f(t,r=n[c++],e[r]);return t}},function(t,e,r){var n=r(46);t.exports=n("document","documentElement")},function(t,e,r){var n=r(14),o=r(26).f,i={}.toString,a="object"==typeof window&&window&&Object.getOwnPropertyNames?Object.getOwnPropertyNames(window):[];t.exports.f=function(t){return a&&"[object Window]"==i.call(t)?function(t){try{return o(t)}catch(t){return a.slice()}}(t):o(n(t))}},function(t,e,r){var n=r(11),o=r(57),i=r(4)("species");t.exports=function(t,e){var r;return o(t)&&("function"!=typeof(r=t.constructor)||r!==Array&&!o(r.prototype)?n(r)&&null===(r=r[i])&&(r=void 0):r=void 0),new(void 0===r?Array:r)(0===e?0:e)}},function(t,e,r){var n=r(4),o=r(27),i=r(9),a=n("unscopables"),u=Array.prototype;null==u[a]&&i(u,a,o(null)),t.exports=function(t){u[a][t]=!0}},function(t,e,r){"use strict";var n=r(80).IteratorPrototype,o=r(27),i=r(21),a=r(49),u=r(36),c=function(){return this};t.exports=function(t,e,r){var s=e+" Iterator";return t.prototype=o(n,{next:i(1,r)}),a(t,s,!1,!0),u[s]=c,t}},function(t,e,r){var n=r(11);t.exports=function(t){if(!n(t)&&null!==t)throw TypeError("Can't set "+String(t)+" as a prototype");return t}},function(t,e,r){r(2)({target:"Object",stat:!0,sham:!r(5)},{create:r(27)})},function(t,e,r){var n=r(2),o=r(3),i=r(12),a=r(50),u=r(81);n({target:"Object",stat:!0,forced:o(function(){a(1)}),sham:!u},{getPrototypeOf:function(t){return a(i(t))}})},function(t,e,r){r(2)({target:"Object",stat:!0},{setPrototypeOf:r(37)})},function(t,e,r){"use strict";var n=r(51),o={};o[r(4)("toStringTag")]="z",t.exports="[object z]"!==String(o)?function(){return"[object "+n(this)+"]"}:o.toString},function(t,e){t.exports={CSSRuleList:0,CSSStyleDeclaration:0,CSSValueList:0,ClientRectList:0,DOMRectList:0,DOMStringList:0,DOMTokenList:1,DataTransferItemList:0,FileList:0,HTMLAllCollection:0,HTMLCollection:0,HTMLFormElement:0,HTMLSelectElement:0,MediaList:0,MimeTypeArray:0,NamedNodeMap:0,NodeList:1,PaintRequestList:0,Plugin:0,PluginArray:0,SVGLengthList:0,SVGNumberList:0,SVGPathSegList:0,SVGPointList:0,SVGStringList:0,SVGTransformList:0,SourceBufferList:0,StyleSheetList:0,TextTrackCueList:0,TextTrackList:0,TouchList:0}},function(t,e,r){var n=function(t){"use strict";var e,r=Object.prototype,n=r.hasOwnProperty,o="function"==typeof Symbol?Symbol:{},i=o.iterator||"@@iterator",a=o.asyncIterator||"@@asyncIterator",u=o.toStringTag||"@@toStringTag";function c(t,e,r,n){var o=e&&e.prototype instanceof v?e:v,i=Object.create(o.prototype),a=new O(n||[]);return i._invoke=function(t,e,r){var n=f;return function(o,i){if(n===p)throw new Error("Generator is already running");if(n===d){if("throw"===o)throw i;return k()}for(r.method=o,r.arg=i;;){var a=r.delegate;if(a){var u=x(a,r);if(u){if(u===h)continue;return u}}if("next"===r.method)r.sent=r._sent=r.arg;else if("throw"===r.method){if(n===f)throw n=d,r.arg;r.dispatchException(r.arg)}else"return"===r.method&&r.abrupt("return",r.arg);n=p;var c=s(t,e,r);if("normal"===c.type){if(n=r.done?d:l,c.arg===h)continue;return{value:c.arg,done:r.done}}"throw"===c.type&&(n=d,r.method="throw",r.arg=c.arg)}}}(t,r,a),i}function s(t,e,r){try{return{type:"normal",arg:t.call(e,r)}}catch(t){return{type:"throw",arg:t}}}t.wrap=c;var f="suspendedStart",l="suspendedYield",p="executing",d="completed",h={};function v(){}function y(){}function g(){}var _={};_[i]=function(){return this};var m=Object.getPrototypeOf,b=m&&m(m(I([])));b&&b!==r&&n.call(b,i)&&(_=b);var A=g.prototype=v.prototype=Object.create(_);function E(t){["next","throw","return"].forEach(function(e){t[e]=function(t){return this._invoke(e,t)}})}function w(t){var e;this._invoke=function(r,o){function i(){return new Promise(function(e,i){!function e(r,o,i,a){var u=s(t[r],t,o);if("throw"!==u.type){var c=u.arg,f=c.value;return f&&"object"==typeof f&&n.call(f,"__await")?Promise.resolve(f.__await).then(function(t){e("next",t,i,a)},function(t){e("throw",t,i,a)}):Promise.resolve(f).then(function(t){c.value=t,i(c)},function(t){return e("throw",t,i,a)})}a(u.arg)}(r,o,e,i)})}return e=e?e.then(i,i):i()}}function x(t,r){var n=t.iterator[r.method];if(n===e){if(r.delegate=null,"throw"===r.method){if(t.iterator.return&&(r.method="return",r.arg=e,x(t,r),"throw"===r.method))return h;r.method="throw",r.arg=new TypeError("The iterator does not provide a 'throw' method")}return h}var o=s(n,t.iterator,r.arg);if("throw"===o.type)return r.method="throw",r.arg=o.arg,r.delegate=null,h;var i=o.arg;return i?i.done?(r[t.resultName]=i.value,r.next=t.nextLoc,"return"!==r.method&&(r.method="next",r.arg=e),r.delegate=null,h):i:(r.method="throw",r.arg=new TypeError("iterator result is not an object"),r.delegate=null,h)}function S(t){var e={tryLoc:t[0]};1 in t&&(e.catchLoc=t[1]),2 in t&&(e.finallyLoc=t[2],e.afterLoc=t[3]),this.tryEntries.push(e)}function T(t){var e=t.completion||{};e.type="normal",delete e.arg,t.completion=e}function O(t){this.tryEntries=[{tryLoc:"root"}],t.forEach(S,this),this.reset(!0)}function I(t){if(t){var r=t[i];if(r)return r.call(t);if("function"==typeof t.next)return t;if(!isNaN(t.length)){var o=-1,a=function r(){for(;++o<t.length;)if(n.call(t,o))return r.value=t[o],r.done=!1,r;return r.value=e,r.done=!0,r};return a.next=a}}return{next:k}}function k(){return{value:e,done:!0}}return y.prototype=A.constructor=g,g.constructor=y,g[u]=y.displayName="GeneratorFunction",t.isGeneratorFunction=function(t){var e="function"==typeof t&&t.constructor;return!!e&&(e===y||"GeneratorFunction"===(e.displayName||e.name))},t.mark=function(t){return Object.setPrototypeOf?Object.setPrototypeOf(t,g):(t.__proto__=g,u in t||(t[u]="GeneratorFunction")),t.prototype=Object.create(A),t},t.awrap=function(t){return{__await:t}},E(w.prototype),w.prototype[a]=function(){return this},t.AsyncIterator=w,t.async=function(e,r,n,o){var i=new w(c(e,r,n,o));return t.isGeneratorFunction(r)?i:i.next().then(function(t){return t.done?t.value:i.next()})},E(A),A[u]="Generator",A[i]=function(){return this},A.toString=function(){return"[object Generator]"},t.keys=function(t){var e=[];for(var r in t)e.push(r);return e.reverse(),function r(){for(;e.length;){var n=e.pop();if(n in t)return r.value=n,r.done=!1,r}return r.done=!0,r}},t.values=I,O.prototype={constructor:O,reset:function(t){if(this.prev=0,this.next=0,this.sent=this._sent=e,this.done=!1,this.delegate=null,this.method="next",this.arg=e,this.tryEntries.forEach(T),!t)for(var r in this)"t"===r.charAt(0)&&n.call(this,r)&&!isNaN(+r.slice(1))&&(this[r]=e)},stop:function(){this.done=!0;var t=this.tryEntries[0].completion;if("throw"===t.type)throw t.arg;return this.rval},dispatchException:function(t){if(this.done)throw t;var r=this;function o(n,o){return u.type="throw",u.arg=t,r.next=n,o&&(r.method="next",r.arg=e),!!o}for(var i=this.tryEntries.length-1;i>=0;--i){var a=this.tryEntries[i],u=a.completion;if("root"===a.tryLoc)return o("end");if(a.tryLoc<=this.prev){var c=n.call(a,"catchLoc"),s=n.call(a,"finallyLoc");if(c&&s){if(this.prev<a.catchLoc)return o(a.catchLoc,!0);if(this.prev<a.finallyLoc)return o(a.finallyLoc)}else if(c){if(this.prev<a.catchLoc)return o(a.catchLoc,!0)}else{if(!s)throw new Error("try statement without catch or finally");if(this.prev<a.finallyLoc)return o(a.finallyLoc)}}}},abrupt:function(t,e){for(var r=this.tryEntries.length-1;r>=0;--r){var o=this.tryEntries[r];if(o.tryLoc<=this.prev&&n.call(o,"finallyLoc")&&this.prev<o.finallyLoc){var i=o;break}}i&&("break"===t||"continue"===t)&&i.tryLoc<=e&&e<=i.finallyLoc&&(i=null);var a=i?i.completion:{};return a.type=t,a.arg=e,i?(this.method="next",this.next=i.finallyLoc,h):this.complete(a)},complete:function(t,e){if("throw"===t.type)throw t.arg;return"break"===t.type||"continue"===t.type?this.next=t.arg:"return"===t.type?(this.rval=this.arg=t.arg,this.method="return",this.next="end"):"normal"===t.type&&e&&(this.next=e),h},finish:function(t){for(var e=this.tryEntries.length-1;e>=0;--e){var r=this.tryEntries[e];if(r.finallyLoc===t)return this.complete(r.completion,r.afterLoc),T(r),h}},catch:function(t){for(var e=this.tryEntries.length-1;e>=0;--e){var r=this.tryEntries[e];if(r.tryLoc===t){var n=r.completion;if("throw"===n.type){var o=n.arg;T(r)}return o}}throw new Error("illegal catch attempt")},delegateYield:function(t,r,n){return this.delegate={iterator:I(t),resultName:r,nextLoc:n},"next"===this.method&&(this.arg=e),h}},t}(t.exports);try{regeneratorRuntime=n}catch(t){Function("r","regeneratorRuntime = r")(n)}},function(t,e,r){var n=r(2),o=r(117);n({target:"Array",stat:!0,forced:!r(85)(function(t){Array.from(t)})},{from:o})},function(t,e,r){"use strict";var n=r(58),o=r(12),i=r(118),a=r(83),u=r(6),c=r(119),s=r(84);t.exports=function(t){var e,r,f,l,p=o(t),d="function"==typeof this?this:Array,h=arguments.length,v=h>1?arguments[1]:void 0,y=void 0!==v,g=0,_=s(p);if(y&&(v=n(v,h>2?arguments[2]:void 0,2)),null==_||d==Array&&a(_))for(r=new d(e=u(p.length));e>g;g++)c(r,g,y?v(p[g],g):p[g]);else for(l=_.call(p),r=new d;!(f=l.next()).done;g++)c(r,g,y?i(l,v,[f.value,g],!0):f.value);return r.length=g,r}},function(t,e,r){var n=r(10);t.exports=function(t,e,r,o){try{return o?e(n(r)[0],r[1]):e(r)}catch(e){var i=t.return;throw void 0!==i&&n(i.call(t)),e}}},function(t,e,r){"use strict";var n=r(24),o=r(7),i=r(21);t.exports=function(t,e,r){var a=n(e);a in t?o.f(t,a,i(0,r)):t[a]=r}},function(t,e,r){var n=r(5),o=r(7).f,i=Function.prototype,a=i.toString,u=/^\s*function ([^ (]*)/;!n||"name"in i||o(i,"name",{configurable:!0,get:function(){try{return a.call(this).match(u)[1]}catch(t){return""}}})},function(t,e,r){var n=r(11),o=r(22),i=r(4)("match");t.exports=function(t){var e;return n(t)&&(void 0!==(e=t[i])?!!e:"RegExp"==o(t))}},function(t,e,r){var n=r(46);t.exports=n("navigator","userAgent")||""},function(t,e,r){var n=r(5),o=r(48),i=r(14),a=r(54).f,u=function(t){return function(e){for(var r,u=i(e),c=o(u),s=c.length,f=0,l=[];s>f;)r=c[f++],n&&!a.call(u,r)||l.push(t?[r,u[r]]:u[r]);return l}};t.exports={entries:u(!0),values:u(!1)}},function(t,e,r){var n=r(1),o=r(64).trim,i=r(65),a=n.parseInt,u=/^[+-]?0[Xx]/,c=8!==a(i+"08")||22!==a(i+"0x16");t.exports=c?function(t,e){var r=o(String(t));return a(r,e>>>0||(u.test(r)?16:10))}:a},function(t,e,r){"use strict";var n=r(2),o=r(1),i=r(66),a=r(97),u=i.ArrayBuffer;n({global:!0,forced:o.ArrayBuffer!==u},{ArrayBuffer:u}),a("ArrayBuffer")},function(t,e,r){var n=r(13);t.exports=function(t,e,r){for(var o in e)n(t,o,e[o],r);return t}},function(t,e,r){"use strict";var n=r(2),o=r(3),i=r(66),a=r(10),u=r(35),c=r(6),s=r(32),f=i.ArrayBuffer,l=i.DataView,p=f.prototype.slice;n({target:"ArrayBuffer",proto:!0,unsafe:!0,forced:o(function(){return!new f(2).slice(1,void 0).byteLength})},{slice:function(t,e){if(void 0!==p&&void 0===e)return p.call(a(this),t);for(var r=a(this).byteLength,n=u(t,r),o=u(void 0===e?r:e,r),i=new(s(this,f))(c(o-n)),d=new l(this),h=new l(i),v=0;n<o;)h.setUint8(v++,d.getUint8(n++));return i}})},function(t,e,r){r(129)("Uint8",1,function(t){return function(e,r,n){return t(this,e,r,n)}})},function(t,e,r){"use strict";var n=r(2),o=r(1),i=r(5),a=r(130),u=r(0),c=r(66),s=r(94),f=r(21),l=r(9),p=r(6),d=r(95),h=r(98),v=r(24),y=r(8),g=r(51),_=r(11),m=r(27),b=r(37),A=r(26).f,E=r(131),w=r(15).forEach,x=r(97),S=r(7),T=r(33),O=r(25),I=O.get,k=O.set,M=S.f,C=T.f,q=Math.round,B=o.RangeError,P=c.ArrayBuffer,F=c.DataView,R=u.NATIVE_ARRAY_BUFFER_VIEWS,D=u.TYPED_ARRAY_TAG,L=u.TypedArray,j=u.TypedArrayPrototype,U=u.aTypedArrayConstructor,W=u.isTypedArray,K=function(t,e){for(var r=0,n=e.length,o=new(U(t))(n);n>r;)o[r]=e[r++];return o},N=function(t,e){M(t,e,{get:function(){return I(this)[e]}})},G=function(t){var e;return t instanceof P||"ArrayBuffer"==(e=g(t))||"SharedArrayBuffer"==e},V=function(t,e){return W(t)&&"symbol"!=typeof e&&e in t&&String(+e)==String(e)},Y=function(t,e){return V(t,e=v(e,!0))?f(2,t[e]):C(t,e)},H=function(t,e,r){return!(V(t,e=v(e,!0))&&_(r)&&y(r,"value"))||y(r,"get")||y(r,"set")||r.configurable||y(r,"writable")&&!r.writable||y(r,"enumerable")&&!r.enumerable?M(t,e,r):(t[e]=r.value,t)};i?(R||(T.f=Y,S.f=H,N(j,"buffer"),N(j,"byteOffset"),N(j,"byteLength"),N(j,"length")),n({target:"Object",stat:!0,forced:!R},{getOwnPropertyDescriptor:Y,defineProperty:H}),t.exports=function(t,e,r,i){var u=t+(i?"Clamped":"")+"Array",c="get"+t,f="set"+t,v=o[u],y=v,g=y&&y.prototype,S={},T=function(t,r){M(t,r,{get:function(){return function(t,r){var n=I(t);return n.view[c](r*e+n.byteOffset,!0)}(this,r)},set:function(t){return function(t,r,n){var o=I(t);i&&(n=(n=q(n))<0?0:n>255?255:255&n),o.view[f](r*e+o.byteOffset,n,!0)}(this,r,t)},enumerable:!0})};R?a&&(y=r(function(t,r,n,o){return s(t,y,u),_(r)?G(r)?void 0!==o?new v(r,h(n,e),o):void 0!==n?new v(r,h(n,e)):new v(r):W(r)?K(y,r):E.call(y,r):new v(d(r))}),b&&b(y,L),w(A(v),function(t){t in y||l(y,t,v[t])}),y.prototype=g):(y=r(function(t,r,n,o){s(t,y,u);var i,a,c,f=0,l=0;if(_(r)){if(!G(r))return W(r)?K(y,r):E.call(y,r);i=r,l=h(n,e);var v=r.byteLength;if(void 0===o){if(v%e)throw B("Wrong length");if((a=v-l)<0)throw B("Wrong length")}else if((a=p(o)*e)+l>v)throw B("Wrong length");c=a/e}else c=d(r),i=new P(a=c*e);for(k(t,{buffer:i,byteOffset:l,byteLength:a,length:c,view:new F(i)});f<c;)T(t,f++)}),b&&b(y,L),g=y.prototype=m(j)),g.constructor!==y&&l(g,"constructor",y),D&&l(g,D,u),S[u]=y,n({global:!0,forced:y!=v,sham:!R},S),"BYTES_PER_ELEMENT"in y||l(y,"BYTES_PER_ELEMENT",e),"BYTES_PER_ELEMENT"in g||l(g,"BYTES_PER_ELEMENT",e),x(u)}):t.exports=function(){}},function(t,e,r){var n=r(1),o=r(3),i=r(85),a=r(0).NATIVE_ARRAY_BUFFER_VIEWS,u=n.ArrayBuffer,c=n.Int8Array;t.exports=!a||!o(function(){c(1)})||!o(function(){new c(-1)})||!i(function(t){new c,new c(null),new c(1.5),new c(t)},!0)||o(function(){return 1!==new c(new u(2),1,void 0).length})},function(t,e,r){var n=r(12),o=r(6),i=r(84),a=r(83),u=r(58),c=r(0).aTypedArrayConstructor;t.exports=function(t){var e,r,s,f,l,p=n(t),d=arguments.length,h=d>1?arguments[1]:void 0,v=void 0!==h,y=i(p);if(null!=y&&!a(y))for(l=y.call(p),p=[];!(f=l.next()).done;)p.push(f.value);for(v&&d>2&&(h=u(h,arguments[2],2)),r=o(p.length),s=new(c(this))(r),e=0;r>e;e++)s[e]=v?h(p[e],e):p[e];return s}},function(t,e,r){"use strict";var n=r(0),o=r(133),i=n.aTypedArray;n.exportProto("copyWithin",function(t,e){return o.call(i(this),t,e,arguments.length>2?arguments[2]:void 0)})},function(t,e,r){"use strict";var n=r(12),o=r(35),i=r(6),a=Math.min;t.exports=[].copyWithin||function(t,e){var r=n(this),u=i(r.length),c=o(t,u),s=o(e,u),f=arguments.length>2?arguments[2]:void 0,l=a((void 0===f?u:o(f,u))-s,u-c),p=1;for(s<c&&c<s+l&&(p=-1,s+=l-1,c+=l-1);l-- >0;)s in r?r[c]=r[s]:delete r[c],c+=p,s+=p;return r}},function(t,e,r){"use strict";var n=r(0),o=r(15).every,i=n.aTypedArray;n.exportProto("every",function(t){return o(i(this),t,arguments.length>1?arguments[1]:void 0)})},function(t,e,r){"use strict";var n=r(0),o=r(96),i=n.aTypedArray;n.exportProto("fill",function(t){return o.apply(i(this),arguments)})},function(t,e,r){"use strict";var n=r(0),o=r(15).filter,i=r(32),a=n.aTypedArray,u=n.aTypedArrayConstructor;n.exportProto("filter",function(t){for(var e=o(a(this),t,arguments.length>1?arguments[1]:void 0),r=i(this,this.constructor),n=0,c=e.length,s=new(u(r))(c);c>n;)s[n]=e[n++];return s})},function(t,e,r){"use strict";var n=r(0),o=r(15).find,i=n.aTypedArray;n.exportProto("find",function(t){return o(i(this),t,arguments.length>1?arguments[1]:void 0)})},function(t,e,r){"use strict";var n=r(0),o=r(15).findIndex,i=n.aTypedArray;n.exportProto("findIndex",function(t){return o(i(this),t,arguments.length>1?arguments[1]:void 0)})},function(t,e,r){"use strict";var n=r(0),o=r(15).forEach,i=n.aTypedArray;n.exportProto("forEach",function(t){o(i(this),t,arguments.length>1?arguments[1]:void 0)})},function(t,e,r){"use strict";var n=r(0),o=r(47).includes,i=n.aTypedArray;n.exportProto("includes",function(t){return o(i(this),t,arguments.length>1?arguments[1]:void 0)})},function(t,e,r){"use strict";var n=r(0),o=r(47).indexOf,i=n.aTypedArray;n.exportProto("indexOf",function(t){return o(i(this),t,arguments.length>1?arguments[1]:void 0)})},function(t,e,r){"use strict";var n=r(1),o=r(0),i=r(16),a=r(4)("iterator"),u=n.Uint8Array,c=i.values,s=i.keys,f=i.entries,l=o.aTypedArray,p=o.exportProto,d=u&&u.prototype[a],h=!!d&&("values"==d.name||null==d.name),v=function(){return c.call(l(this))};p("entries",function(){return f.call(l(this))}),p("keys",function(){return s.call(l(this))}),p("values",v,!h),p(a,v,!h)},function(t,e,r){"use strict";var n=r(0),o=n.aTypedArray,i=[].join;n.exportProto("join",function(t){return i.apply(o(this),arguments)})},function(t,e,r){"use strict";var n=r(0),o=r(145),i=n.aTypedArray;n.exportProto("lastIndexOf",function(t){return o.apply(i(this),arguments)})},function(t,e,r){"use strict";var n=r(14),o=r(17),i=r(6),a=r(60),u=Math.min,c=[].lastIndexOf,s=!!c&&1/[1].lastIndexOf(1,-0)<0,f=a("lastIndexOf");t.exports=s||f?function(t){if(s)return c.apply(this,arguments)||0;var e=n(this),r=i(e.length),a=r-1;for(arguments.length>1&&(a=u(a,o(arguments[1]))),a<0&&(a=r+a);a>=0;a--)if(a in e&&e[a]===t)return a||0;return-1}:c},function(t,e,r){"use strict";var n=r(0),o=r(15).map,i=r(32),a=n.aTypedArray,u=n.aTypedArrayConstructor;n.exportProto("map",function(t){return o(a(this),t,arguments.length>1?arguments[1]:void 0,function(t,e){return new(u(i(t,t.constructor)))(e)})})},function(t,e,r){"use strict";var n=r(0),o=r(99).left,i=n.aTypedArray;n.exportProto("reduce",function(t){return o(i(this),t,arguments.length,arguments.length>1?arguments[1]:void 0)})},function(t,e,r){"use strict";var n=r(0),o=r(99).right,i=n.aTypedArray;n.exportProto("reduceRight",function(t){return o(i(this),t,arguments.length,arguments.length>1?arguments[1]:void 0)})},function(t,e,r){"use strict";var n=r(0),o=n.aTypedArray,i=Math.floor;n.exportProto("reverse",function(){for(var t,e=o(this).length,r=i(e/2),n=0;n<r;)t=this[n],this[n++]=this[--e],this[e]=t;return this})},function(t,e,r){"use strict";var n=r(0),o=r(6),i=r(98),a=r(12),u=r(3),c=n.aTypedArray,s=u(function(){new Int8Array(1).set({})});n.exportProto("set",function(t){c(this);var e=i(arguments.length>1?arguments[1]:void 0,1),r=this.length,n=a(t),u=o(n.length),s=0;if(u+e>r)throw RangeError("Wrong length");for(;s<u;)this[e+s]=n[s++]},s)},function(t,e,r){"use strict";var n=r(0),o=r(32),i=r(3),a=n.aTypedArray,u=n.aTypedArrayConstructor,c=[].slice,s=i(function(){new Int8Array(1).slice()});n.exportProto("slice",function(t,e){for(var r=c.call(a(this),t,e),n=o(this,this.constructor),i=0,s=r.length,f=new(u(n))(s);s>i;)f[i]=r[i++];return f},s)},function(t,e,r){"use strict";var n=r(0),o=r(15).some,i=n.aTypedArray;n.exportProto("some",function(t){return o(i(this),t,arguments.length>1?arguments[1]:void 0)})},function(t,e,r){"use strict";var n=r(0),o=n.aTypedArray,i=[].sort;n.exportProto("sort",function(t){return i.call(o(this),t)})},function(t,e,r){"use strict";var n=r(0),o=r(6),i=r(35),a=r(32),u=n.aTypedArray;n.exportProto("subarray",function(t,e){var r=u(this),n=r.length,c=i(t,n);return new(a(r,r.constructor))(r.buffer,r.byteOffset+c*r.BYTES_PER_ELEMENT,o((void 0===e?n:i(e,n))-c))})},function(t,e,r){"use strict";var n=r(1),o=r(0),i=r(3),a=n.Int8Array,u=o.aTypedArray,c=[].toLocaleString,s=[].slice,f=!!a&&i(function(){c.call(new a(1))}),l=i(function(){return[1,2].toLocaleString()!=new a([1,2]).toLocaleString()})||!i(function(){a.prototype.toLocaleString.call([1,2])});o.exportProto("toLocaleString",function(){return c.apply(f?s.call(u(this)):u(this),arguments)},l)},function(t,e,r){"use strict";var n=r(1),o=r(0),i=r(3),a=n.Uint8Array,u=a&&a.prototype,c=[].toString,s=[].join;i(function(){c.call({})})&&(c=function(){return s.call(this)}),o.exportProto("toString",c,(u||{}).toString!=c)},function(t,e,r){"use strict";var n=r(2),o=r(41),i=r(14),a=r(60),u=[].join,c=o!=Object,s=a("join",",");n({target:"Array",proto:!0,forced:c||s},{join:function(t){return u.call(i(this),void 0===t?",":t)}})},function(t,e,r){r(2)({target:"Date",stat:!0},{now:function(){return(new Date).getTime()}})},function(t,e,r){"use strict";var n=r(5),o=r(1),i=r(75),a=r(13),u=r(8),c=r(22),s=r(160),f=r(24),l=r(3),p=r(27),d=r(26).f,h=r(33).f,v=r(7).f,y=r(64).trim,g=o.Number,_=g.prototype,m="Number"==c(p(_)),b=function(t){var e,r,n,o,i,a,u,c,s=f(t,!1);if("string"==typeof s&&s.length>2)if(43===(e=(s=y(s)).charCodeAt(0))||45===e){if(88===(r=s.charCodeAt(2))||120===r)return NaN}else if(48===e){switch(s.charCodeAt(1)){case 66:case 98:n=2,o=49;break;case 79:case 111:n=8,o=55;break;default:return+s}for(a=(i=s.slice(2)).length,u=0;u<a;u++)if((c=i.charCodeAt(u))<48||c>o)return NaN;return parseInt(i,n)}return+s};if(i("Number",!g(" 0o1")||!g("0b1")||g("+0x1"))){for(var A,E=function(t){var e=arguments.length<1?0:t,r=this;return r instanceof E&&(m?l(function(){_.valueOf.call(r)}):"Number"!=c(r))?s(new g(b(e)),r,E):b(e)},w=n?d(g):"MAX_VALUE,MIN_VALUE,NaN,NEGATIVE_INFINITY,POSITIVE_INFINITY,EPSILON,isFinite,isInteger,isNaN,isSafeInteger,MAX_SAFE_INTEGER,MIN_SAFE_INTEGER,parseFloat,parseInt,isInteger".split(","),x=0;w.length>x;x++)u(g,A=w[x])&&!u(E,A)&&v(E,A,h(g,A));E.prototype=_,_.constructor=E,a(o,"Number",E)}},function(t,e,r){var n=r(11),o=r(37);t.exports=function(t,e,r){var i,a;return o&&"function"==typeof(i=e.constructor)&&i!==r&&n(a=i.prototype)&&a!==r.prototype&&o(t,a),t}},function(t,e,r){r(2)({target:"Number",stat:!0},{isNaN:function(t){return t!=t}})},function(t,e,r){var n=r(2),o=r(163);n({global:!0,forced:parseFloat!=o},{parseFloat:o})},function(t,e,r){var n=r(1),o=r(64).trim,i=r(65),a=n.parseFloat,u=1/a(i+"-0")!=-1/0;t.exports=u?function(t){var e=o(String(t)),r=a(e);return 0===r&&"-"==e.charAt(0)?-0:r}:a},function(t,e,r){"use strict";r.r(e);var n={};r.r(n),r.d(n,"api",function(){return v}),r.d(n,"shared_root_info",function(){return y}),r.d(n,"connect",function(){return x}),r.d(n,"send",function(){return S}),r.d(n,"setController",function(){return T}),r.d(n,"pitchBend",function(){return O}),r.d(n,"setEffects",function(){return I}),r.d(n,"getContext",function(){return k}),r.d(n,"setContext",function(){return M}),r.d(n,"playChannel",function(){return C}),r.d(n,"stopChannel",function(){return q}),r.d(n,"setVolume",function(){return B}),r.d(n,"programChange",function(){return P}),r.d(n,"noteOn",function(){return F}),r.d(n,"noteOff",function(){return R}),r.d(n,"chordOn",function(){return D}),r.d(n,"chordOff",function(){return L}),r.d(n,"stopAllNotes",function(){return j});var o={};r.r(o),r.d(o,"api",function(){return G}),r.d(o,"shared_root_info",function(){return V}),r.d(o,"connect",function(){return X}),r.d(o,"playChannel",function(){return Q}),r.d(o,"stopChannel",function(){return z}),r.d(o,"send",function(){return $}),r.d(o,"setController",function(){return tt}),r.d(o,"setVolume",function(){return et}),r.d(o,"programChange",function(){return rt}),r.d(o,"pitchBend",function(){return nt}),r.d(o,"noteOn",function(){return ot}),r.d(o,"noteOff",function(){return it}),r.d(o,"chordOn",function(){return at}),r.d(o,"chordOff",function(){return ut}),r.d(o,"stopAllNotes",function(){return ct}),r.d(o,"setEffects",function(){return st}),r.d(o,"getContext",function(){return ft}),r.d(o,"setContext",function(){return lt}),r.d(o,"loadAudio",function(){return pt}),r.d(o,"createAudioContext",function(){return dt});var i={};r.r(i),r.d(i,"api",function(){return ht}),r.d(i,"shared_root_info",function(){return vt}),r.d(i,"connect",function(){return gt}),r.d(i,"playChannel",function(){return _t}),r.d(i,"stopChannel",function(){return mt}),r.d(i,"setEffects",function(){return bt}),r.d(i,"getContext",function(){return At}),r.d(i,"setContext",function(){return Et}),r.d(i,"send",function(){return wt}),r.d(i,"setController",function(){return xt}),r.d(i,"setVolume",function(){return St}),r.d(i,"programChange",function(){return Tt}),r.d(i,"pitchBend",function(){return Ot}),r.d(i,"noteOn",function(){return It}),r.d(i,"noteOff",function(){return kt}),r.d(i,"chordOn",function(){return Mt}),r.d(i,"chordOff",function(){return Ct}),r.d(i,"stopAllNotes",function(){return qt});var a={};r.r(a),r.d(a,"data",function(){return Nt}),r.d(a,"map",function(){return Gt});r(20),r(28),r(29),r(16),r(110),r(38),r(111),r(112),r(18),r(19),r(30),r(115),r(116),r(39),r(61),r(120),r(31),r(87),r(53),r(40);var u={},c=0,s=function(t){c+=1;var e=document.body,r=new Audio,n=t.split(";")[0];r.id="audio",r.setAttribute("preload","auto"),r.setAttribute("audiobuffer","true"),r.addEventListener("error",function(){e.removeChild(r),u[n]=!1,c-=1},!1),r.addEventListener("canplaythrough",function(){e.removeChild(r),u[n]=!0,c-=1},!1),r.src="data:"+t,e.appendChild(r)};r(62),r(91),r(92),r(63),r(93);function f(t,e){return function(t){if(Array.isArray(t))return t}(t)||function(t,e){var r=[],n=!0,o=!1,i=void 0;try{for(var a,u=t[Symbol.iterator]();!(n=(a=u.next()).done)&&(r.push(a.value),!e||r.length!==e);n=!0);}catch(t){o=!0,i=t}finally{try{n||null==u.return||u.return()}finally{if(o)throw i}}return r}(t,e)||function(){throw new TypeError("Invalid attempt to destructure non-iterable instance")}()}var l=function(t){for(var e=function(t){return t.replace(/[^a-z0-9 ]/gi,"").replace(/[ ]/g,"_").toLowerCase()},r={byName:{},byId:{},byCategory:{}},n=0,o=Object.entries(t);n<o.length;n++){var i=f(o[n],2),a=i[0],u=i[1],c=!0,s=!1,l=void 0;try{for(var p,d=u[Symbol.iterator]();!(c=(p=d.next()).done);c=!0){var h=p.value;if(h){var v=parseInt(h.substr(0,h.indexOf(" ")),10),y=v-1,g=h.replace(v+" ",""),_=e(g),m=e(a),b={id:_,name:g,program:y,category:a};r.byId[y]=b,r.byName[_]=b,r.byCategory[m]=r.byCategory[m]||[],r.byCategory[m].push(b)}}}catch(t){s=!0,l=t}finally{try{c||null==d.return||d.return()}finally{if(s)throw l}}}return r}({Piano:["1 Acoustic Grand Piano","2 Bright Acoustic Piano","3 Electric Grand Piano","4 Honky-tonk Piano","5 Electric Piano 1","6 Electric Piano 2","7 Harpsichord","8 Clavinet"],"Chromatic Percussion":["9 Celesta","10 Glockenspiel","11 Music Box","12 Vibraphone","13 Marimba","14 Xylophone","15 Tubular Bells","16 Dulcimer"],Organ:["17 Drawbar Organ","18 Percussive Organ","19 Rock Organ","20 Church Organ","21 Reed Organ","22 Accordion","23 Harmonica","24 Tango Accordion"],Guitar:["25 Acoustic Guitar (nylon)","26 Acoustic Guitar (steel)","27 Electric Guitar (jazz)","28 Electric Guitar (clean)","29 Electric Guitar (muted)","30 Overdriven Guitar","31 Distortion Guitar","32 Guitar Harmonics"],Bass:["33 Acoustic Bass","34 Electric Bass (finger)","35 Electric Bass (pick)","36 Fretless Bass","37 Slap Bass 1","38 Slap Bass 2","39 Synth Bass 1","40 Synth Bass 2"],Strings:["41 Violin","42 Viola","43 Cello","44 Contrabass","45 Tremolo Strings","46 Pizzicato Strings","47 Orchestral Harp","48 Timpani"],Ensemble:["49 String Ensemble 1","50 String Ensemble 2","51 Synth Strings 1","52 Synth Strings 2","53 Choir Aahs","54 Voice Oohs","55 Synth Choir","56 Orchestra Hit"],Brass:["57 Trumpet","58 Trombone","59 Tuba","60 Muted Trumpet","61 French Horn","62 Brass Section","63 Synth Brass 1","64 Synth Brass 2"],Reed:["65 Soprano Sax","66 Alto Sax","67 Tenor Sax","68 Baritone Sax","69 Oboe","70 English Horn","71 Bassoon","72 Clarinet"],Pipe:["73 Piccolo","74 Flute","75 Recorder","76 Pan Flute","77 Blown Bottle","78 Shakuhachi","79 Whistle","80 Ocarina"],"Synth Lead":["81 Lead 1 (square)","82 Lead 2 (sawtooth)","83 Lead 3 (calliope)","84 Lead 4 (chiff)","85 Lead 5 (charang)","86 Lead 6 (voice)","87 Lead 7 (fifths)","88 Lead 8 (bass + lead)"],"Synth Pad":["89 Pad 1 (new age)","90 Pad 2 (warm)","91 Pad 3 (polysynth)","92 Pad 4 (choir)","93 Pad 5 (bowed)","94 Pad 6 (metallic)","95 Pad 7 (halo)","96 Pad 8 (sweep)"],"Synth Effects":["97 FX 1 (rain)","98 FX 2 (soundtrack)","99 FX 3 (crystal)","100 FX 4 (atmosphere)","101 FX 5 (brightness)","102 FX 6 (goblins)","103 FX 7 (echoes)","104 FX 8 (sci-fi)"],Ethnic:["105 Sitar","106 Banjo","107 Shamisen","108 Koto","109 Kalimba","110 Bagpipe","111 Fiddle","112 Shanai"],Percussive:["113 Tinkle Bell","114 Agogo","115 Steel Drums","116 Woodblock","117 Taiko Drum","118 Melodic Tom","119 Synth Drum"],"Sound effects":["120 Reverse Cymbal","121 Guitar Fret Noise","122 Breath Noise","123 Seashore","124 Bird Tweet","125 Telephone Ring","126 Helicopter","127 Applause","128 Gunshot"]}),p=function(){for(var t={},e=0;e<16;e++)t[e]={program:e,pitchBend:0,mute:!1,mono:!1,omni:!1,solo:!1};return t}(),d={},h={};!function(){for(var t=["C","Db","D","Eb","E","F","Gb","G","Ab","A","Bb","B"],e=21;e<=108;e++){var r=Math.floor((e-12)/12),n=t[e%12]+r;d[n]=e,h[e]=n}}();for(var v="audiotag",y={},g=[],_=0;_<16;_++)g[_]=127;for(var m=-1,b=[],A={},E=[],w=0;w<12;w++)E[w]=new Audio;var x=function(t){for(var e=0,r=Object.keys(d);e<r.length;e++){var n=r[e];A[n]={id:n}}t.onsuccess&&t.onsuccess()},S=function(t,e){},T=function(t,e,r,n){},O=function(t,e,r){},I=function(){},k=function(){},M=function(){},C=function(t,e){if(p[t]){var r=p[t].program,n=l.byId[r].id,o=A[e];if(o){var i=n+""+o.id,a=(m+1)%E.length,u=E[a];if(b[a]=i,!y.Soundfont[n])return void 0;u.src=y.Soundfont[n][o.id],u.volume=g[t]/127,u.play(),m=a}}},q=function(t,e){if(p[t]){var r=p[t].program,n=l.byId[r].id,o=A[e];if(o)for(var i=n+""+o.id,a=0,u=E.length;a<u;a++){var c=(a+m+1)%u,s=b[c];if(s&&s===i)return E[c].pause(),void(b[c]=null)}}},B=function(t,e){g[t]=e},P=function(t,e){p[t].instrument=e},F=function(t,e,r,n){var o=h[e];return!!A[o]&&(n?setTimeout(function(){g[t]=r,C(t,o)},1e3*n):(g[t]=r,C(t,o),!0))},R=function(t,e,r){},D=function(t,e,r,n){for(var o=function(r){var o=e[r],i=h[o];if(!A[i])return"continue";n?setTimeout(function(){C(t,i)},1e3*n):C(t,i)},i=0;i<e.length;i++)o(i)},L=function(t,e,r){for(var n=function(n){var o=e[n],i=h[o];if(!A[i])return"continue";r?setTimeout(function(){q(t,i)},1e3*r):q(t,i)},o=0;o<e.length;o++)n(o)},j=function(){for(var t=0,e=E.length;t<e;t++)E[t].pause()},U=(r(125),r(127),r(128),r(132),r(134),r(135),r(136),r(137),r(138),r(139),r(140),r(141),r(142),r(143),r(144),r(146),r(147),r(148),r(149),r(150),r(151),r(152),r(153),r(154),r(155),r(156),"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=");function W(t){var e=Math.ceil(3*t.length/4),r=new ArrayBuffer(e);return function(t,e){var r,n,o,i,a,u,c,s,f=U.indexOf(t.charAt(t.length-1)),l=U.indexOf(t.charAt(t.length-1)),p=Math.ceil(3*t.length/4);64===f&&p--;64===l&&p--;var d=0;r=e?new Uint8Array(e):new Uint8Array(p);t=t.replace(/[^A-Za-z0-9+\/=]/g,"");for(var h=0;h<p;h+=3)a=U.indexOf(t.charAt(d++)),u=U.indexOf(t.charAt(d++)),c=U.indexOf(t.charAt(d++)),s=U.indexOf(t.charAt(d++)),n=a<<2|u>>4,o=(15&u)<<4|c>>2,i=(3&c)<<6|s,r[h]=n,64!==c&&(r[h+1]=o),64!==s&&(r[h+2]=i)}(t,r),r}function K(t,e){return function(t){if(Array.isArray(t))return t}(t)||function(t,e){var r=[],n=!0,o=!1,i=void 0;try{for(var a,u=t[Symbol.iterator]();!(n=(a=u.next()).done)&&(r.push(a.value),!e||r.length!==e);n=!0);}catch(t){o=!0,i=t}finally{try{n||null==u.return||u.return()}finally{if(o)throw i}}return r}(t,e)||function(){throw new TypeError("Invalid attempt to destructure non-iterable instance")}()}var N,G="webaudio",V={},Y={},H={},J=127,Z={},X=function(t){lt(N||dt(),t.onsuccess)},Q=function(){},z=function(){},$=function(t,e){},tt=function(t,e,r,n){},et=function(t,e,r){r?setTimeout(function(){J=e},1e3*r):J=e},rt=function(t,e,r){var n=p[t];n&&(n.program=e)},nt=function(t,e,r){var n=p[t];n&&(r?setTimeout(function(){n.pitchBend=e},r):n.pitchBend=e)},ot=function(t,e,r){var n=arguments.length>3&&void 0!==arguments[3]?arguments[3]:0,o=p[t],i=o.program,a=i+"x"+e,u=Z[a];if(u&&N){var c;if(n<N.currentTime&&(n+=N.currentTime),(c=N.createBufferSource()).buffer=u,H)for(var s=c,f=0,l=Object.keys(H);f<l.length;f++){var d=l[f];s.connect(H[d].input),s=H[d]}var h=r/127*(J/127)*2-1;return c.connect(N.destination),c.playbackRate.value=1,c.gainNode=N.createGain(),c.gainNode.connect(N.destination),c.gainNode.gain.value=Math.min(1,Math.max(-1,h)),c.connect(c.gainNode),c.start(n||0),Y[t+"x"+e]=c,c}},it=function(t,e){var r=arguments.length>2&&void 0!==arguments[2]?arguments[2]:0,n=p[t],o=n.program,i=o+"x"+e,a=Z[i];if(N&&a){r<N.currentTime&&(r+=N.currentTime);var u=Y[t+"x"+e];if(u){if(u.gainNode){var c=u.gainNode.gain;c.linearRampToValueAtTime(c.value,r),c.linearRampToValueAtTime(-1,r+.3)}return u.noteOff?u.noteOff(r+.5):u.stop(r+.5),delete Y[t+"x"+e],u}}},at=function(t,e,r,n){var o={},i=!0,a=!1,u=void 0;try{for(var c,s=e[Symbol.iterator]();!(i=(c=s.next()).done);i=!0){var f=c.value;o[f]=ot(t,f,r,n)}}catch(t){a=!0,u=t}finally{try{i||null==s.return||s.return()}finally{if(a)throw u}}return o},ut=function(t,e,r){var n={},o=!0,i=!1,a=void 0;try{for(var u,c=e[Symbol.iterator]();!(o=(u=c.next()).done);o=!0){var s=u.value;n[s]=it(t,s,r)}}catch(t){i=!0,a=t}finally{try{o||null==c.return||c.return()}finally{if(i)throw a}}return n},ct=function(){if(N)for(var t=0,e=Object.keys(Y);t<e.length;t++){var r=e[t],n=0;n<N.currentTime&&(n+=N.currentTime);var o=Y[r];o.gain.linearRampToValueAtTime(1,n),o.gain.linearRampToValueAtTime(0,n+.3),o.noteOff?o.noteOff(n+.3):o.stop(n+.3),delete Y[r]}},st=function(t){if(N&&N.tunajs){var e=!0,r=!1,n=void 0;try{for(var o,i=t[Symbol.iterator]();!(e=(o=i.next()).done);e=!0){var a=o.value,u=new N.tunajs[a.type](a);u.connect(N.destination),H[a.type]=u}}catch(t){r=!0,n=t}finally{try{e||null==i.return||i.return()}finally{if(r)throw n}}}else console.log("Effects module not installed.")},ft=function(){return N},lt=function(t,e,r,n){N=t,"undefined"==typeof Tuna||N.tunajs instanceof Tuna||(N.tunajs=new Tuna(N));for(var o=[],i=0,a=Object.keys(d);i<a.length;i++){var u=a[i];o.push(u)}for(var c=function(t){for(var r=0,n=Object.keys(f);r<n.length;r++){var o=n[r];if(f[o])return}e&&(e(),e=null)},s=function(t,e,r,n){var o=t[n];o&&(f[e]+=1,pt(o,function(r){r.id=n;var o=d[n];if(Z[e+"x"+o]=r,f[e]-=1,0===f[e]){0,t.isLoaded=!0,c()}},function(t){console.log(t)}))},f={},p=0,h=Object.entries(V.Soundfont);p<h.length;p++){var v=K(h[p],2),y=v[0],g=v[1];if(!g.isLoaded){var _=l.byName[y];if(_){var m=_.program;f[m]=0;for(var b=0;b<o.length;b++){s(g,m,0,o[b])}}}}setTimeout(c,1)},pt=function(t,e,r){if(0===t.indexOf("data:audio")){var n=W(t.split(",")[1]);return N.decodeAudioData(n,e,r)}var o=new XMLHttpRequest;return o.open("GET",t,!0),o.responseType="arraybuffer",o.onsuccess=function(){return N.decodeAudioData(o.response,e,r)},void o.send()},dt=function(){return new(window.AudioContext||window.webkitAudioContext)},ht="webmidi",vt={},yt=null,gt=function(t){var e=function(e){console.error("Could not connect to web midi! Falling back to WebAudio:",e),vt.webaudio_backup_connect&&(vt.config.api="webaudio",vt.webaudio_backup_connect(t))};navigator.requestMIDIAccess().then(function(r){var n=r.outputs;return void 0===(yt="function"==typeof n?n()[0]:n[0])?e("No outputs defined"):t.onsuccess&&t.onsuccess()},e)},_t=function(){},mt=function(){},bt=function(){},At=function(){},Et=function(){},wt=function(t,e){yt.send(t,1e3*e)},xt=function(t,e,r,n){yt.send([t,e,r],1e3*n)},St=function(t,e,r){yt.send([176+t,7,e],1e3*r)},Tt=function(t,e,r){yt.send([192+t,e],1e3*r)},Ot=function(t,e,r){yt.send([224+t,e],1e3*r)},It=function(t,e,r,n){yt.send([144+t,e,r],1e3*n)},kt=function(t,e,r){yt.send([128+t,e,0],1e3*r)},Mt=function(t,e,r,n){var o=!0,i=!1,a=void 0;try{for(var u,c=e[Symbol.iterator]();!(o=(u=c.next()).done);o=!0){var s=u.value;yt.send([144+t,s,r],1e3*n)}}catch(t){i=!0,a=t}finally{try{o||null==c.return||c.return()}finally{if(i)throw a}}},Ct=function(t,e,r){var n=!0,o=!1,i=void 0;try{for(var a,u=e[Symbol.iterator]();!(n=(a=u.next()).done);n=!0){var c=a.value;yt.send([128+t,c,0],1e3*r)}}catch(t){o=!0,i=t}finally{try{n||null==u.return||u.return()}finally{if(o)throw i}}},qt=function(){yt.cancel();for(var t=0;t<16;t++)yt.send([176+t,123,0])};r(157),r(158),r(159),r(161);function Bt(t,e){for(var r=0;r<e.length;r++){var n=e[r];n.enumerable=n.enumerable||!1,n.configurable=!0,"value"in n&&(n.writable=!0),Object.defineProperty(t,n.key,n)}}var Pt=function(){function t(e){!function(t,e){if(!(t instanceof e))throw new TypeError("Cannot call a class as a function")}(this,t),this.str=e,this.position=0}var e,r,n;return e=t,(r=[{key:"read",value:function(t){var e=this.str.substr(this.position,t);return this.position+=t,e}},{key:"readInt32",value:function(){var t=(this.str.charCodeAt(this.position)<<24)+(this.str.charCodeAt(this.position+1)<<16)+(this.str.charCodeAt(this.position+2)<<8)+this.str.charCodeAt(this.position+3);return this.position+=4,t}},{key:"readInt16",value:function(){var t=(this.str.charCodeAt(this.position)<<8)+this.str.charCodeAt(this.position+1);return this.position+=2,t}},{key:"readInt8",value:function(t){var e=this.str.charCodeAt(this.position);return t&&e>127&&(e-=256),this.position+=1,e}},{key:"eof",value:function(){return this.position>=this.str.length}},{key:"readVarInt",value:function(){for(var t=0;;){var e=this.readInt8();if(!(128&e))return t+e;t+=127&e,t<<=7}}}])&&Bt(e.prototype,r),n&&Bt(e,n),t}();function Ft(t,e){for(var r=0;r<e.length;r++){var n=e[r];n.enumerable=n.enumerable||!1,n.configurable=!0,"value"in n&&(n.writable=!0),Object.defineProperty(t,n.key,n)}}var Rt=function(){function t(e){!function(t,e){if(!(t instanceof e))throw new TypeError("Cannot call a class as a function")}(this,t),this.data=e,this.stream=new Pt(e),this.lastEventTypeByte=void 0}var e,r,n;return e=t,(r=[{key:"readChunk",value:function(t){var e=t.read(4),r=t.readInt32();return{id:e,length:r,data:t.read(r)}}},{key:"readEvent",value:function(t){var e={};e.deltaTime=t.readVarInt();var r=t.readInt8();if(240==(240&r)){if(255!==r){if(240===r){e.type="sysEx";var n=t.readVarInt();return e.data=t.read(n),e}if(247===r){e.type="dividedSysEx";var o=t.readVarInt();return e.data=t.read(o),e}throw"Unrecognised MIDI event type byte: "+r}e.type="meta";var i=t.readInt8(),a=t.readVarInt();switch(i){case 0:if(e.subtype="sequenceNumber",2!==a)throw"Expected length for sequenceNumber event is 2, got "+a;return e.number=t.readInt16(),e;case 1:return e.subtype="text",e.text=t.read(a),e;case 2:return e.subtype="copyrightNotice",e.text=t.read(a),e;case 3:return e.subtype="trackName",e.text=t.read(a),e;case 4:return e.subtype="instrumentName",e.text=t.read(a),e;case 5:return e.subtype="lyrics",e.text=t.read(a),e;case 6:return e.subtype="marker",e.text=t.read(a),e;case 7:return e.subtype="cuePoint",e.text=t.read(a),e;case 32:if(e.subtype="midiChannelPrefix",1!==a)throw"Expected length for midiChannelPrefix event is 1, got "+a;return e.channel=t.readInt8(),e;case 47:if(e.subtype="endOfTrack",0!==a)throw"Expected length for endOfTrack event is 0, got "+a;return e;case 81:if(e.subtype="setTempo",3!==a)throw"Expected length for setTempo event is 3, got "+a;return e.microsecondsPerBeat=(t.readInt8()<<16)+(t.readInt8()<<8)+t.readInt8(),e;case 84:if(e.subtype="smpteOffset",5!==a)throw"Expected length for smpteOffset event is 5, got "+a;var u=t.readInt8();return e.frameRate={0:24,32:25,64:29,96:30}[96&u],e.hour=31&u,e.min=t.readInt8(),e.sec=t.readInt8(),e.frame=t.readInt8(),e.subframe=t.readInt8(),e;case 88:if(e.subtype="timeSignature",4!==a)throw"Expected length for timeSignature event is 4, got "+a;return e.numerator=t.readInt8(),e.denominator=Math.pow(2,t.readInt8()),e.metronome=t.readInt8(),e.thirtyseconds=t.readInt8(),e;case 89:if(e.subtype="keySignature",2!==a)throw"Expected length for keySignature event is 2, got "+a;return e.key=t.readInt8(!0),e.scale=t.readInt8(),e;case 127:return e.subtype="sequencerSpecific",e.data=t.read(a),e;default:return e.subtype="unknown",e.data=t.read(a),e}}else{var c;0==(128&r)?(c=r,r=this.lastEventTypeByte):(c=t.readInt8(),this.lastEventTypeByte=r);var s=r>>4;switch(e.channel=15&r,e.type="channel",s){case 8:return e.subtype="noteOff",e.noteNumber=c,e.velocity=t.readInt8(),e;case 9:return e.noteNumber=c,e.velocity=t.readInt8(),0===e.velocity?e.subtype="noteOff":e.subtype="noteOn",e;case 10:return e.subtype="noteAftertouch",e.noteNumber=c,e.amount=t.readInt8(),e;case 11:return e.subtype="controller",e.controllerType=c,e.value=t.readInt8(),e;case 12:return e.subtype="programChange",e.programNumber=c,e;case 13:return e.subtype="channelAftertouch",e.amount=c,e;case 14:return e.subtype="pitchBend",e.value=c+(t.readInt8()<<7),e;default:throw"Unrecognised MIDI event type: "+s}}}},{key:"parseAndReturn",value:function(){var t=this.stream,e=this.readChunk(t);if("MThd"!==e.id||6!==e.length)throw"Bad .mid file - header not found";var r=new Pt(e.data),n=r.readInt16(),o=r.readInt16(),i=r.readInt16();if(32768&i)throw"Expressing time division in SMTPE frames is not supported yet";for(var a={formatType:n,trackCount:o,ticksPerBeat:i},u=[],c=0;c<a.trackCount;c++){u[c]=[];var s=this.readChunk(t);if("MTrk"!==s.id)throw"Unexpected chunk - expected MTrk, got "+s.id;for(var f=new Pt(s.data);!f.eof();){var l=this.readEvent(f);u[c].push(l)}}return{header:a,tracks:u}}}])&&Ft(e.prototype,r),n&&Ft(e,n),t}();function Dt(t,e){for(var r=0;r<e.length;r++){var n=e[r];n.enumerable=n.enumerable||!1,n.configurable=!0,"value"in n&&(n.writable=!0),Object.defineProperty(t,n.key,n)}}function Lt(t){return(Lt="function"==typeof Symbol&&"symbol"==typeof Symbol.iterator?function(t){return typeof t}:function(t){return t&&"function"==typeof Symbol&&t.constructor===Symbol&&t!==Symbol.prototype?"symbol":typeof t})(t)}var jt=function(){function t(e,r,n,o){!function(t,e){if(!(t instanceof e))throw new TypeError("Cannot call a class as a function")}(this,t),this.midiFile=e,this.timeWarp=r,this.eventProcessor=n,this.trackStates=[],this.beatsPerMinute=o||120,this.bpmOverride=!!o,this.ticksPerBeat=e.header.ticksPerBeat;for(var i=0;i<e.tracks.length;i++)this.trackStates[i]={nextEventIndex:0,ticksToNextEvent:e.tracks[i].length?e.tracks[i][0].deltaTime:null};this.temporal=[],this.processEvents()}var e,r,n;return e=t,(r=[{key:"getNextEvent",value:function(){for(var t=null,e=null,r=null,n=0;n<this.trackStates.length;n++)null!=this.trackStates[n].ticksToNextEvent&&(null==t||this.trackStates[n].ticksToNextEvent<t)&&(t=this.trackStates[n].ticksToNextEvent,e=n,r=this.trackStates[n].nextEventIndex);if(null!=e){var o=this.midiFile.tracks[e][r];this.midiFile.tracks[e][r+1]?this.trackStates[e].ticksToNextEvent+=this.midiFile.tracks[e][r+1].deltaTime:this.trackStates[e].ticksToNextEvent=null,this.trackStates[e].nextEventIndex+=1;for(var i=0;i<this.trackStates.length;i++)null!=this.trackStates[i].ticksToNextEvent&&(this.trackStates[i].ticksToNextEvent-=t);return{ticksToEvent:t,event:o,track:e}}return null}},{key:"processEvents",value:function(){for(var t=this.getNextEvent();t;){this.bpmOverride||"meta"!==t.event.type||"setTempo"!==t.event.subtype||(this.beatsPerMinute=6e7/t.event.microsecondsPerBeat);var e=0;t.ticksToEvent>0&&(e=t.ticksToEvent/this.ticksPerBeat/(this.beatsPerMinute/60));var r=1e3*e*this.timeWarp||0;this.temporal.push([t,r]),t=this.getNextEvent()}}},{key:"getData",value:function(){return function t(e){if("object"!=Lt(e))return e;if(null==e)return e;var r="number"==typeof e.length?[]:{};for(var n in e)r[n]=t(e[n]);return r}(this.temporal)}}])&&Dt(e.prototype,r),n&&Dt(e,n),t}();function Ut(t,e){for(var r=0;r<e.length;r++){var n=e[r];n.enumerable=n.enumerable||!1,n.configurable=!0,"value"in n&&(n.writable=!0),Object.defineProperty(t,n.key,n)}}var Wt=function(){function t(e){!function(t,e){if(!(t instanceof e))throw new TypeError("Cannot call a class as a function")}(this,t),this.plugin=e,this.currentTime=0,this.endTime=0,this.restart=0,this.playing=!1,this.timeWarp=1,this.startDelay=0,this.BPM=120,this.data=[],this.eventQueue=[],this.queuedTime=0,this.startTime=0,this.noteRegistrar={},this.onMidiEvent=void 0,this.MIDIOffset=0,this.frame=void 0,this.__now=void 0}var e,r,n;return e=t,(r=[{key:"start",value:function(t){this.currentTime<-1&&(this.currentTime=-1),this.startAudio(this.currentTime,null,t)}},{key:"resume",value:function(t){return this.start(t)}},{key:"pause",value:function(){var t=this.restart;this.stopAudio(),this.restart=t}},{key:"stop",value:function(){this.stopAudio(),this.restart=0,this.currentTime=0}},{key:"addListener",value:function(t){this.onMidiEvent=t}},{key:"removeListener",value:function(){this.onMidiEvent=void 0}},{key:"clearAnimation",value:function(){this.animationFrameId&&cancelAnimationFrame(this.animationFrameId)}},{key:"setAnimation",value:function(t){var e=this,r=0,n=0,o=0;this.clearAnimation(),this.frame=function(){if(e.animationFrameId=requestAnimationFrame(e.frame),0!==e.endTime){e.playing?(r=o===e.currentTime?n-Date.now():0,r=0===e.currentTime?0:e.currentTime-r,o!==e.currentTime&&(n=Date.now(),o=e.currentTime)):r=e.currentTime;var i=e.endTime,a=r/1e3,u=a/60,c=60*u+(a-60*u),s=i/1e3;s-c<-1||t({now:c,end:s,events:e.noteRegistrar})}},requestAnimationFrame(this.frame)}},{key:"loadMidiFile",value:function(t,e,r){try{this.replayer=new jt((n=this.currentData,new Rt(n).parseAndReturn()),this.timeWarp,null,this.BPM),this.data=this.replayer.getData(),this.endTime=this.getLength(),this.loadPlugin({onsuccess:t,onprogress:e,onerror:r})}catch(t){r&&r(t)}var n}},{key:"loadPlugin",value:function(){}},{key:"loadFile",value:function(t,e,r,n){var o=this;if(this.stop(),-1!==t.indexOf("base64,"))this.currentData=atob(t.split(",")[1]),this.loadMidiFile(e,r,n);else{var i=new XMLHttpRequest;i.open("GET",t),i.overrideMimeType("text/plain; charset=x-user-defined"),i.onreadystatechange=function(){if(4===i.readyState)if(200===i.status){for(var t=i.responseText||"",a=[],u=t.length,c=String.fromCharCode,s=0;s<u;s++)a[s]=c(255&t.charCodeAt(s));o.currentData=a.join(""),o.loadMidiFile(e,r,n)}else n&&n("Unable to load MIDI file")},i.send()}}},{key:"getFileInstruments",value:function(){for(var t={},e={},r=0;r<this.data.length;r++){var n=this.data[r][0].event;if("channel"===n.type){var o=n.channel;switch(n.subtype){case"controller":break;case"programChange":e[o]=n.programNumber;break;case"noteOn":var i=e[o],a=Number.isNaN(parseInt(i))?o:i;t[l.byId[a].id]=!0}}}for(var u=[],c=0,s=Object.keys(t);c<s.length;c++){var f=s[c];u.push(f)}return u}},{key:"scheduleTracking",value:function(t,e,r,n,o,i,a){var u=this;return setTimeout(function(){var n={channel:t,note:e,now:r,end:u.endTime,message:o,velocity:i};128===o?delete u.noteRegistrar[e]:u.noteRegistrar[e]=n,u.onMidiEvent&&u.onMidiEvent(n),u.currentTime=r,u.eventQueue.shift(),u.eventQueue.length<1e3?u.startAudio(u.queuedTime,!0):u.currentTime===u.queuedTime&&u.queuedTime<u.endTime&&u.startAudio(u.queuedTime,!0)},r-n)}},{key:"getContext",value:function(){return"webaudio"===this.plugin.api?this.plugin.getContext():(this.ctx={currentTime:0},this.ctx)}},{key:"getLength",value:function(){for(var t=this.data,e=t.length,r=.5,n=0;n<e;n++)r+=t[n][1];return r}},{key:"getNow",value:function(){return window.performance&&window.performance.now?window.performance.now():Date.now()}},{key:"startAudio",value:function(t,e,r){if(this.replayer){var n;e||(void 0===t&&(t=this.restart),this.playing&&this.stopAudio(),this.playing=!0,this.data=this.replayer.getData(),this.endTime=this.getLength());var o=0,i=0,a=this.data,u=this.getContext(),c=a.length;this.queuedTime=.5;var s=t-this.currentTime;if("webaudio"!==this.plugin.api){var f=this.getNow();this.__now=this.__now||f,u.currentTime=(f-this.__now)/1e3}this.startTime=u.currentTime;for(var l=0;l<c&&i<100;l++){var d=a[l];if(this.queuedTime+=d[1],this.queuedTime<=t)o=this.queuedTime;else{t=this.queuedTime-o;var h=d[0].event;if("channel"===h.type){var v=h.channel,y=p[v],g=u.currentTime+(t+s+this.startDelay)/1e3,_=this.queuedTime-o+this.startDelay;switch(h.subtype){case"controller":this.plugin.setController(v,h.controllerType,h.value,g);break;case"programChange":this.plugin.programChange(v,h.programNumber,g);break;case"pitchBend":this.plugin.pitchBend(v,h.value,g);break;case"noteOn":if(y.mute)break;n=h.noteNumber-(this.MIDIOffset||0),this.eventQueue.push({event:h,time:_,source:this.plugin.noteOn(v,h.noteNumber,h.velocity,g),interval:this.scheduleTracking(v,n,this.queuedTime+this.startDelay,o-s,144,h.velocity)}),i+=1;break;case"noteOff":if(y.mute)break;n=h.noteNumber-(this.MIDIOffset||0),this.eventQueue.push({event:h,time:_,source:this.plugin.noteOff(v,h.noteNumber,g),interval:this.scheduleTracking(v,n,this.queuedTime,o-s,128,0)})}}}}r&&r(this.eventQueue)}}},{key:"stopAudio",value:function(){var t=this.getContext();for(this.playing=!1,this.restart+=1e3*(t.currentTime-this.startTime);this.eventQueue.length;){var e=this.eventQueue.pop();window.clearInterval(e.interval),e.source&&("number"==typeof e.source?window.clearTimeout(e.source):e.source.disconnect(0))}for(var r=0,n=Object.keys(this.noteRegistrar);r<n.length;r++){var o=n[r],i=this.noteRegistrar[o];144===this.noteRegistrar[o].message&&this.onMidiEvent&&this.onMidiEvent({channel:i.channel,note:i.note,now:i.now,end:i.end,message:128,velocity:i.velocity})}this.noteRegistrar={}}}])&&Ut(e.prototype,r),n&&Ut(e,n),t}(),Kt=r(67),Nt={"Isaac Newton (1704)":{format:"HSL",ref:"Gerstner, p.167",english:["red",null,"orange",null,"yellow","green",null,"blue",null,"indigo",null,"violet"],0:[0,96,51],1:[0,0,0],2:[29,94,52],3:[0,0,0],4:[60,90,60],5:[135,76,32],6:[0,0,0],7:[248,82,28],8:[0,0,0],9:[302,88,26],10:[0,0,0],11:[325,84,46]},"Louis Bertrand Castel (1734)":{format:"HSL",ref:"Peacock, p.400",english:["blue","blue-green","green","olive green","yellow","yellow-orange","orange","red","crimson","violet","agate","indigo"],0:[248,82,28],1:[172,68,34],2:[135,76,32],3:[79,59,36],4:[60,90,60],5:[49,90,60],6:[29,94,52],7:[360,96,51],8:[1,89,33],9:[325,84,46],10:[273,80,27],11:[302,88,26]},"George Field (1816)":{format:"HSL",ref:"Klein, p.69",english:["blue",null,"purple",null,"red","orange",null,"yellow",null,"yellow green",null,"green"],0:[248,82,28],1:[0,0,0],2:[302,88,26],3:[0,0,0],4:[360,96,51],5:[29,94,52],6:[0,0,0],7:[60,90,60],8:[0,0,0],9:[79,59,36],10:[0,0,0],11:[135,76,32]},"D. D. Jameson (1844)":{format:"HSL",ref:"Jameson, p.12",english:["red","red-orange","orange","orange-yellow","yellow","green","green-blue","blue","blue-purple","purple","purple-violet","violet"],0:[360,96,51],1:[14,91,51],2:[29,94,52],3:[49,90,60],4:[60,90,60],5:[135,76,32],6:[172,68,34],7:[248,82,28],8:[273,80,27],9:[302,88,26],10:[313,78,37],11:[325,84,46]},"Theodor Seemann (1881)":{format:"HSL",ref:"Klein, p.86",english:["carmine","scarlet","orange","yellow-orange","yellow","green","green blue","blue","indigo","violet","brown","black"],0:[0,58,26],1:[360,96,51],2:[29,94,52],3:[49,90,60],4:[60,90,60],5:[135,76,32],6:[172,68,34],7:[248,82,28],8:[302,88,26],9:[325,84,46],10:[0,58,26],11:[0,0,3]},"A. Wallace Rimington (1893)":{format:"HSL",ref:"Peacock, p.402",english:["deep red","crimson","orange-crimson","orange","yellow","yellow-green","green","blueish green","blue-green","indigo","deep blue","violet"],0:[360,96,51],1:[1,89,33],2:[14,91,51],3:[29,94,52],4:[60,90,60],5:[79,59,36],6:[135,76,32],7:[163,62,40],8:[172,68,34],9:[302,88,26],10:[248,82,28],11:[325,84,46]},"Bainbridge Bishop (1893)":{format:"HSL",ref:"Bishop, p.11",english:["red","orange-red or scarlet","orange","gold or yellow-orange","yellow or green-gold","yellow-green","green","greenish-blue or aquamarine","blue","indigo or violet-blue","violet","violet-red","red"],0:[360,96,51],1:[1,89,33],2:[29,94,52],3:[50,93,52],4:[60,90,60],5:[73,73,55],6:[135,76,32],7:[163,62,40],8:[302,88,26],9:[325,84,46],10:[343,79,47],11:[360,96,51]},"H. von Helmholtz (1910)":{format:"HSL",ref:"Helmholtz, p.22",english:["yellow","green","greenish blue","cyan-blue","indigo blue","violet","end of red","red","red","red","red orange","orange"],0:[60,90,60],1:[135,76,32],2:[172,68,34],3:[211,70,37],4:[302,88,26],5:[325,84,46],6:[330,84,34],7:[360,96,51],8:[10,91,43],9:[10,91,43],10:[8,93,51],11:[28,89,50]},"Alexander Scriabin (1911)":{format:"HSL",ref:"Jones, p.104",english:["red","violet","yellow","steely with the glint of metal","pearly blue the shimmer of moonshine","dark red","bright blue","rosy orange","purple","green","steely with a glint of metal","pearly blue the shimmer of moonshine"],0:[360,96,51],1:[325,84,46],2:[60,90,60],3:[245,21,43],4:[211,70,37],5:[1,89,33],6:[248,82,28],7:[29,94,52],8:[302,88,26],9:[135,76,32],10:[245,21,43],11:[211,70,37]},"Adrian Bernard Klein (1930)":{format:"HSL",ref:"Klein, p.209",english:["dark red","red","red orange","orange","yellow","yellow green","green","blue-green","blue","blue violet","violet","dark violet"],0:[0,91,40],1:[360,96,51],2:[14,91,51],3:[29,94,52],4:[60,90,60],5:[73,73,55],6:[135,76,32],7:[172,68,34],8:[248,82,28],9:[292,70,31],10:[325,84,46],11:[330,84,34]},"August Aeppli (1940)":{format:"HSL",ref:"Gerstner, p.169",english:["red",null,"orange",null,"yellow",null,"green","blue-green",null,"ultramarine blue","violet","purple"],0:[0,96,51],1:[0,0,0],2:[29,94,52],3:[0,0,0],4:[60,90,60],5:[0,0,0],6:[135,76,32],7:[172,68,34],8:[0,0,0],9:[211,70,37],10:[273,80,27],11:[302,88,26]},"I. J. Belmont (1944)":{ref:"Belmont, p.226",english:["red","red-orange","orange","yellow-orange","yellow","yellow-green","green","blue-green","blue","blue-violet","violet","red-violet"],0:[360,96,51],1:[14,91,51],2:[29,94,52],3:[50,93,52],4:[60,90,60],5:[73,73,55],6:[135,76,32],7:[172,68,34],8:[248,82,28],9:[313,78,37],10:[325,84,46],11:[338,85,37]},"Steve Zieverink (2004)":{format:"HSL",ref:"Cincinnati Contemporary Art Center",english:["yellow-green","green","blue-green","blue","indigo","violet","ultra violet","infra red","red","orange","yellow-white","yellow"],0:[73,73,55],1:[135,76,32],2:[172,68,34],3:[248,82,28],4:[302,88,26],5:[325,84,46],6:[326,79,24],7:[1,89,33],8:[360,96,51],9:[29,94,52],10:[62,78,74],11:[60,90,60]},"Circle of Fifths (Johnston 2003)":{format:"RGB",ref:"Joseph Johnston",english:["yellow","blue","orange","teal","red","green","purple","light orange","light blue","dark orange","dark green","violet"],0:[255,255,0],1:[50,0,255],2:[255,150,0],3:[0,210,180],4:[255,0,0],5:[130,255,0],6:[150,0,200],7:[255,195,0],8:[30,130,255],9:[255,100,0],10:[0,200,0],11:[225,0,225]},"Circle of Fifths (Wheatman 2002)":{format:"HEX",ref:"Stuart Wheatman",english:[],data:["#122400","#2E002E","#002914","#470000","#002142","#2E2E00","#290052","#003D00","#520029","#003D3D","#522900","#000080","#244700","#570057","#004D26","#7A0000","#003B75","#4C4D00","#47008F","#006100","#850042","#005C5C","#804000","#0000C7","#366B00","#80007F","#00753B","#B80000","#0057AD","#6B6B00","#6600CC","#008A00","#B8005C","#007F80","#B35900","#2424FF","#478F00","#AD00AD","#00994D","#F00000","#0073E6","#8F8F00","#8A14FF","#00AD00","#EB0075","#00A3A3","#E07000","#6B6BFF","#5CB800","#DB00DB","#00C261","#FF5757","#3399FF","#ADAD00","#B56BFF","#00D600","#FF57AB","#00C7C7","#FF9124","#9999FF","#6EDB00","#FF29FF","#00E070","#FF9999","#7ABDFF","#D1D100","#D1A3FF","#00FA00","#FFA3D1","#00E5E6","#FFC285","#C2C2FF","#80FF00","#FFA8FF","#00E070","#FFCCCC","#C2E0FF","#F0F000","#EBD6FF","#ADFFAD","#FFD6EB","#8AFFFF","#FFEBD6","#EBEBFF","#E0FFC2","#FFEBFF","#E5FFF2","#FFF5F5"]}},Gt=function(t){for(var e,r,n,o,i,a={},u=Nt,c=u[t]||u["D. D. Jameson (1844)"],s=c[3],f=0;f<=88;f++)if(c.data)a[f]={hsl:c.data[f],hex:c.data[f]};else{var l=c[(f+9)%12];"RGB"===c.format?(l=Kt.a.Space(l,"RGB>HSL"),e=Math.floor(l.H),r=Math.floor(l.S),n=Math.floor(l.L)):(e=l[0],r=l[1],n=l[2]),e===r&&r===n&&(o=s,i=c[(f+10)%12],l=[Math.floor(.5*o[0]+.5*i[0]+.5),Math.floor(.5*o[1]+.5*i[1]+.5),Math.floor(.5*o[2]+.5*i[2]+.5)]),a[f]={hsl:"hsla("+e+","+r+"%,"+n+"%, 1)",hex:Kt.a.Space({H:e,S:r,L:n},"HSL>RGB>HEX>W3")},s=l}return a};function Vt(t,e){for(var r=0;r<e.length;r++){var n=e[r];n.enumerable=n.enumerable||!1,n.configurable=!0,"value"in n&&(n.writable=!0),Object.defineProperty(t,n.key,n)}}function Yt(t,e){return!e||"object"!==Zt(e)&&"function"!=typeof e?function(t){if(void 0===t)throw new ReferenceError("this hasn't been initialised - super() hasn't been called");return t}(t):e}function Ht(t){return(Ht=Object.setPrototypeOf?Object.getPrototypeOf:function(t){return t.__proto__||Object.getPrototypeOf(t)})(t)}function Jt(t,e){return(Jt=Object.setPrototypeOf||function(t,e){return t.__proto__=e,t})(t,e)}function Zt(t){return(Zt="function"==typeof Symbol&&"symbol"==typeof Symbol.iterator?function(t){return typeof t}:function(t){return t&&"function"==typeof Symbol&&t.constructor===Symbol&&t!==Symbol.prototype?"symbol":typeof t})(t)}r.d(e,"Soundfont",function(){return Xt}),r.d(e,"audio_contexts",function(){return Qt}),r.d(e,"config",function(){return zt}),r.d(e,"loadPlugin",function(){return $t}),r.d(e,"loadProgram",function(){return te}),r.d(e,"requestQueue",function(){return ne}),r.d(e,"sendRequest",function(){return oe}),r.d(e,"playChannel",function(){return ie}),r.d(e,"stopChannel",function(){return ae}),r.d(e,"send",function(){return ue}),r.d(e,"setController",function(){return ce}),r.d(e,"setVolume",function(){return se}),r.d(e,"programChange",function(){return fe}),r.d(e,"pitchBend",function(){return le}),r.d(e,"noteOn",function(){return pe}),r.d(e,"noteOff",function(){return de}),r.d(e,"chordOn",function(){return he}),r.d(e,"chordOff",function(){return ve}),r.d(e,"stopAllNotes",function(){return ye}),r.d(e,"setEffects",function(){return ge}),r.d(e,"getContext",function(){return _e}),r.d(e,"setContext",function(){return me}),r.d(e,"Player",function(){return be}),r.d(e,"GM",function(){return l}),r.d(e,"noteToKey",function(){return h}),r.d(e,"keyToNote",function(){return d}),r.d(e,"channels",function(){return p}),r.d(e,"AudioTag",function(){return n}),r.d(e,"WebAudio",function(){return o}),r.d(e,"WebMIDI",function(){return i}),r.d(e,"Synesthesia",function(){return a});var Xt={},Qt={AudioTag:n,WebAudio:o,WebMIDI:i},zt={soundfontUrl:"./soundfont/",api:"",audioFormat:"",supports:{},connected_plugin:o,is_connected:!1},$t=function(t){"function"==typeof t&&(t={onsuccess:t}),t.onprogress=t.onprogress||void 0,t.api=t.api||"",t.targetFormat=t.targetFormat||"",t.instrument=t.instrument||"acoustic_grand_piano",t.instruments=t.instruments||void 0,t.apiPrecedence=t.apiPrecedence||["webaudio","webmidi","audiotag"],zt.soundfontUrl=t.soundfontUrl||zt.soundfontUrl,function(t){if("undefined"!=typeof navigator&&navigator.requestMIDIAccess)if(Function.prototype.toString.call(navigator.requestMIDIAccess).indexOf("[native code]"))u.webmidi=!0;else if("undefined"!=typeof navigator&&void 0!==navigator.plugins)for(var e=0,r=Array.from(navigator.plugins);e<r.length;e++)r[e].name.indexOf("Jazz-Plugin")>=0&&(u.webmidi=!0);if("undefined"==typeof Audio)return t({});u.audiotag=!0;var n=window.AudioContext||window.webkitAudioContext;n&&n.prototype.createGain&&(u.webaudio=!0);var o=new Audio;if(void 0===o.canPlayType)return t(u);var i=o.canPlayType('audio/ogg; codecs="vorbis"'),a="probably"===i||"maybe"===i,f=o.canPlayType("audio/mpeg"),l="probably"===f||"maybe"===f;if(u.ogg_mp3_precedence="probably"===i?"ogg":"probably"===f?"mp3":"ogg",!a&&!l)return t(u);a&&s("audio/ogg;base64,T2dnUwACAAAAAAAAAADqnjMlAAAAAOyyzPIBHgF2b3JiaXMAAAAAAUAfAABAHwAAQB8AAEAfAACZAU9nZ1MAAAAAAAAAAAAA6p4zJQEAAAANJGeqCj3//////////5ADdm9yYmlzLQAAAFhpcGguT3JnIGxpYlZvcmJpcyBJIDIwMTAxMTAxIChTY2hhdWZlbnVnZ2V0KQAAAAABBXZvcmJpcw9CQ1YBAAABAAxSFCElGVNKYwiVUlIpBR1jUFtHHWPUOUYhZBBTiEkZpXtPKpVYSsgRUlgpRR1TTFNJlVKWKUUdYxRTSCFT1jFloXMUS4ZJCSVsTa50FkvomWOWMUYdY85aSp1j1jFFHWNSUkmhcxg6ZiVkFDpGxehifDA6laJCKL7H3lLpLYWKW4q91xpT6y2EGEtpwQhhc+211dxKasUYY4wxxsXiUyiC0JBVAAABAABABAFCQ1YBAAoAAMJQDEVRgNCQVQBABgCAABRFcRTHcRxHkiTLAkJDVgEAQAAAAgAAKI7hKJIjSZJkWZZlWZameZaouaov+64u667t6roOhIasBACAAAAYRqF1TCqDEEPKQ4QUY9AzoxBDDEzGHGNONKQMMogzxZAyiFssLqgQBKEhKwKAKAAAwBjEGGIMOeekZFIi55iUTkoDnaPUUcoolRRLjBmlEluJMYLOUeooZZRCjKXFjFKJscRUAABAgAMAQICFUGjIigAgCgCAMAYphZRCjCnmFHOIMeUcgwwxxiBkzinoGJNOSuWck85JiRhjzjEHlXNOSuekctBJyaQTAAAQ4AAAEGAhFBqyIgCIEwAwSJKmWZomipamiaJniqrqiaKqWp5nmp5pqqpnmqpqqqrrmqrqypbnmaZnmqrqmaaqiqbquqaquq6nqrZsuqoum65q267s+rZru77uqapsm6or66bqyrrqyrbuurbtS56nqqKquq5nqq6ruq5uq65r25pqyq6purJtuq4tu7Js664s67pmqq5suqotm64s667s2rYqy7ovuq5uq7Ks+6os+75s67ru2rrwi65r66os674qy74x27bwy7ouHJMnqqqnqq7rmarrqq5r26rr2rqmmq5suq4tm6or26os67Yry7aumaosm64r26bryrIqy77vyrJui67r66Ys67oqy8Lu6roxzLat+6Lr6roqy7qvyrKuu7ru+7JuC7umqrpuyrKvm7Ks+7auC8us27oxuq7vq7It/KosC7+u+8Iy6z5jdF1fV21ZGFbZ9n3d95Vj1nVhWW1b+V1bZ7y+bgy7bvzKrQvLstq2scy6rSyvrxvDLux8W/iVmqratum6um7Ksq/Lui60dd1XRtf1fdW2fV+VZd+3hV9pG8OwjK6r+6os68Jry8ov67qw7MIvLKttK7+r68ow27qw3L6wLL/uC8uq277v6rrStXVluX2fsSu38QsAABhwAAAIMKEMFBqyIgCIEwBAEHIOKQahYgpCCKGkEEIqFWNSMuakZM5JKaWUFEpJrWJMSuaclMwxKaGUlkopqYRSWiqlxBRKaS2l1mJKqcVQSmulpNZKSa2llGJMrcUYMSYlc05K5pyUklJrJZXWMucoZQ5K6iCklEoqraTUYuacpA46Kx2E1EoqMZWUYgupxFZKaq2kFGMrMdXUWo4hpRhLSrGVlFptMdXWWqs1YkxK5pyUzDkqJaXWSiqtZc5J6iC01DkoqaTUYiopxco5SR2ElDLIqJSUWiupxBJSia20FGMpqcXUYq4pxRZDSS2WlFosqcTWYoy1tVRTJ6XFklKMJZUYW6y5ttZqDKXEVkqLsaSUW2sx1xZjjqGkFksrsZWUWmy15dhayzW1VGNKrdYWY40x5ZRrrT2n1mJNMdXaWqy51ZZbzLXnTkprpZQWS0oxttZijTHmHEppraQUWykpxtZara3FXEMpsZXSWiypxNhirLXFVmNqrcYWW62ltVprrb3GVlsurdXcYqw9tZRrrLXmWFNtBQAADDgAAASYUAYKDVkJAEQBAADGMMYYhEYpx5yT0ijlnHNSKucghJBS5hyEEFLKnINQSkuZcxBKSSmUklJqrYVSUmqttQIAAAocAAACbNCUWByg0JCVAEAqAIDBcTRNFFXVdX1fsSxRVFXXlW3jVyxNFFVVdm1b+DVRVFXXtW3bFn5NFFVVdmXZtoWiqrqybduybgvDqKqua9uybeuorqvbuq3bui9UXVmWbVu3dR3XtnXd9nVd+Bmzbeu2buu+8CMMR9/4IeTj+3RCCAAAT3AAACqwYXWEk6KxwEJDVgIAGQAAgDFKGYUYM0gxphhjTDHGmAAAgAEHAIAAE8pAoSErAoAoAADAOeecc84555xzzjnnnHPOOeecc44xxhhjjDHGGGOMMcYYY4wxxhhjjDHGGGOMMcYYY0wAwE6EA8BOhIVQaMhKACAcAABACCEpKaWUUkoRU85BSSmllFKqFIOMSkoppZRSpBR1lFJKKaWUIqWgpJJSSimllElJKaWUUkoppYw6SimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaVUSimllFJKKaWUUkoppRQAYPLgAACVYOMMK0lnhaPBhYasBAByAwAAhRiDEEJpraRUUkolVc5BKCWUlEpKKZWUUqqYgxBKKqmlklJKKbXSQSihlFBKKSWUUkooJYQQSgmhlFRCK6mEUkoHoYQSQimhhFRKKSWUzkEoIYUOQkmllNRCSB10VFIpIZVSSiklpZQ6CKGUklJLLZVSWkqpdBJSKamV1FJqqbWSUgmhpFZKSSWl0lpJJbUSSkklpZRSSymFVFJJJYSSUioltZZaSqm11lJIqZWUUkqppdRSSiWlkEpKqZSSUmollZRSaiGVlEpJKaTUSimlpFRCSamlUlpKLbWUSkmptFRSSaWUlEpJKaVSSksppRJKSqmllFpJKYWSUkoplZJSSyW1VEoKJaWUUkmptJRSSymVklIBAEAHDgAAAUZUWoidZlx5BI4oZJiAAgAAQABAgAkgMEBQMApBgDACAQAAAADAAAAfAABHARAR0ZzBAUKCwgJDg8MDAAAAAAAAAAAAAACAT2dnUwAEAAAAAAAAAADqnjMlAgAAADzQPmcBAQA="),l&&s("audio/mpeg;base64,/+MYxAAAAANIAUAAAASEEB/jwOFM/0MM/90b/+RhST//w4NFwOjf///PZu////9lns5GFDv//l9GlUIEEIAAAgIg8Ir/JGq3/+MYxDsLIj5QMYcoAP0dv9HIjUcH//yYSg+CIbkGP//8w0bLVjUP///3Z0x5QCAv/yLjwtGKTEFNRTMuOTeqqqqqqqqqqqqq/+MYxEkNmdJkUYc4AKqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq");var p=(new Date).getTime(),d=window.setInterval(function(){var e=(new Date).getTime();c&&!(e-p>5e3)||(window.clearInterval(d),t(u))},1)}(function(e){var r=window.location.hash,n="";if(e[t.api])n=t.api;else if(e[r.substr(1)])n=r.substr(1);else{var o=!0,i=!1,a=void 0;try{for(var u,c=t.apiPrecedence[Symbol.iterator]();!(o=(u=c.next()).done);o=!0){var s=u.value;if(e[s]){n=s;break}}}catch(t){i=!0,a=t}finally{try{o||null==c.return||c.return()}finally{if(i)throw a}}}if(ee[n]){var f="",l=e["audio/ogg"],p=e["audio/mpeg"],d=e.ogg_mp3_precedence;t.targetFormat?f=t.targetFormat:l&&"ogg"===d?f="ogg":p&&"mp3"===d?f="mp3":l?f="ogg":p?f="mp3":"webmidi"!==n&&(console.warn("no supporting playback formats...will try mp3 but unlikely"),f="mp3"),zt.api=n,zt.audioFormat=f,zt.supports=e,te(t)}})},te=function(t){var e=t.instruments||t.instrument||"acoustic_grand_piano";"object"!==Zt(e)&&(e=e||0===e?[e]:[]);for(var r=0;r<e.length;r++){var n=e[r];n===n+0&&l.byId[n]&&(e[r]=l.byId[n].id)}t.format=zt.audioFormat,t.instruments=e,ee[zt.api](t)},ee={webmidi:function(t){re(i,t),gt(t),zt.is_connected=!0},audiotag:function(t){re(n,t),ne(t,"AudioTag")},webaudio:function(t){re(o,t),ne(t,"WebAudio")}},re=function(t,e){zt.connected_plugin=t,t.shared_root_info.Soundfont=Xt,t.shared_root_info.config=zt,t.shared_root_info.webaudio_backup_connect=function(t){return ee.webaudio(t)}},ne=function(t,e){var r=t.format,n=t.instruments,o=t.onprogress,i=t.onerror,a=Qt[e]||e.WebAudio,u=n.length,c=u,s=function(){(c-=1)||(a.connect(t),zt.is_connected=!0,o&&o("load",1))},f=!0,l=!1,p=void 0;try{for(var d,h=function(){var t=d.value;if(Xt[t])s();else{oe(t,r,function(e,r){return function(t,e,r){o&&o("load",e/u+(u-c)/u,r)}(0,r,t)},function(){return s()},i)}},v=n[Symbol.iterator]();!(f=(d=v.next()).done);f=!0)h()}catch(t){l=!0,p=t}finally{try{f||null==v.return||v.return()}finally{if(l)throw p}}},oe=function(t,e,r,n,o){var i=zt.soundfontUrl+t+"-"+e+".js",a=new XMLHttpRequest;a.open("GET",i),a.setRequestHeader("Content-Type","text/plain"),a.onload=function(){if(200===a.status){var t=document.createElement("script");t.language="javascript",t.type="text/javascript",t.text=a.responseText,document.body.appendChild(t),n()}else o?o():console.error("Could not load soundfont; path was ".concat(i))},a.send()},ie=function(){var t;if(zt.is_connected)return(t=zt.connected_plugin).playChannel.apply(t,arguments);console.error("Connect before calling")},ae=function(){var t;if(zt.is_connected)return(t=zt.connected_plugin).stopChannel.apply(t,arguments);console.error("Connect before calling")},ue=function(){var t;if(zt.is_connected)return(t=zt.connected_plugin).send.apply(t,arguments);console.error("Connect before calling")},ce=function(){var t;if(zt.is_connected)return(t=zt.connected_plugin).setController.apply(t,arguments);console.error("Connect before calling")},se=function(){var t;if(zt.is_connected)return(t=zt.connected_plugin).setVolume.apply(t,arguments);console.error("Connect before calling")},fe=function(){var t;if(zt.is_connected)return(t=zt.connected_plugin).programChange.apply(t,arguments);console.error("Connect before calling")},le=function(){var t;if(zt.is_connected)return(t=zt.connected_plugin).pitchBend.apply(t,arguments);console.error("Connect before calling")},pe=function(){var t;if(zt.is_connected)return(t=zt.connected_plugin).noteOn.apply(t,arguments);console.error("Connect before calling")},de=function(){var t;if(zt.is_connected)return(t=zt.connected_plugin).noteOff.apply(t,arguments);console.error("Connect before calling")},he=function(){var t;if(zt.is_connected)return(t=zt.connected_plugin).chordOn.apply(t,arguments);console.error("Connect before calling")},ve=function(){var t;if(zt.is_connected)return(t=zt.connected_plugin).chordOff.apply(t,arguments);console.error("Connect before calling")},ye=function(){var t;if(zt.is_connected)return(t=zt.connected_plugin).stopAllNotes.apply(t,arguments);console.error("Connect before calling")},ge=function(){if(zt.is_connected)return zt.connected_plugin.setEffects();console.error("Connect before calling")},_e=function(){if(zt.is_connected)return zt.connected_plugin.getContext();console.error("Connect before calling")},me=function(){var t;if(zt.is_connected)return(t=zt.connected_plugin).setContext.apply(t,arguments);console.error("Connect before calling")},be=function(t){function e(){return function(t,e){if(!(t instanceof e))throw new TypeError("Cannot call a class as a function")}(this,e),Yt(this,Ht(e).call(this,zt.connected_plugin))}var r,n,o;return function(t,e){if("function"!=typeof e&&null!==e)throw new TypeError("Super expression must either be null or a function");t.prototype=Object.create(e&&e.prototype,{constructor:{value:t,writable:!0,configurable:!0}}),e&&Jt(t,e)}(e,Wt),r=e,(n=[{key:"loadPlugin",value:function(){return $t.apply(void 0,arguments)}}])&&Vt(r.prototype,n),o&&Vt(r,o),e}()}])});
 //# sourceMappingURL=midicube.js.map
@@ -39617,9 +39617,9 @@ process.umask = function() { return 0; };
       /**
         `finally` will be invoked regardless of the promise's fate just as native
         try/catch/finally behaves
-
+      
         Synchronous example:
-
+      
         ```js
         findAuthor() {
           if (Math.random() > 0.5) {
@@ -39627,7 +39627,7 @@ process.umask = function() { return 0; };
           }
           return new Author();
         }
-
+      
         try {
           return findAuthor(); // succeed or fail
         } catch(error) {
@@ -39637,9 +39637,9 @@ process.umask = function() { return 0; };
           // doesn't affect the return value
         }
         ```
-
+      
         Asynchronous example:
-
+      
         ```js
         findAuthor().catch(function(reason){
           return findOtherAuther();
@@ -39647,7 +39647,7 @@ process.umask = function() { return 0; };
           // author was either found, or not
         });
         ```
-
+      
         @method finally
         @param {Function} callback
         @return {Promise}
@@ -44854,7 +44854,7 @@ function addStyle (obj, options) {
 	// If a transform function was defined, run it on the css
 	if (options.transform && obj.css) {
 	    result = typeof options.transform === 'function'
-		 ? options.transform(obj.css)
+		 ? options.transform(obj.css) 
 		 : options.transform.default(obj.css);
 
 	    if (result) {
@@ -45200,7 +45200,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Tenuto", function() { return Tenuto; });
 /* harmony import */ var vexflow__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vexflow */ "./node_modules/vexflow/releases/vexflow-debug.js");
 /* harmony import */ var vexflow__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(vexflow__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _common_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./common.js */ "./src/music21/common.js");
+/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./common */ "./src/music21/common.js");
 /* harmony import */ var _prebase__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./prebase */ "./src/music21/prebase.ts");
 /**
  * articulations module. See {@link music21.articulations} namespace
@@ -45452,7 +45452,7 @@ class Marcato extends DynamicArticulation {
 
   constructor() {
     super();
-    _common_js__WEBPACK_IMPORTED_MODULE_1__["mixin"](LengthArticulation, this);
+    _common__WEBPACK_IMPORTED_MODULE_1__["mixin"](LengthArticulation, this);
     this.name = 'marcato';
     this.vexflowModifier = 'a^';
     this.dynamicScale = 1.7;
@@ -45506,7 +45506,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_6__);
 /* harmony import */ var core_js_modules_web_url__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! core-js/modules/web.url */ "./node_modules/core-js/modules/web.url.js");
 /* harmony import */ var core_js_modules_web_url__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_url__WEBPACK_IMPORTED_MODULE_7__);
-/* harmony import */ var _audioSearch_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./audioSearch.js */ "./src/music21/audioSearch.js");
+/* harmony import */ var _audioSearch__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./audioSearch */ "./src/music21/audioSearch.js");
 
 
 
@@ -45537,7 +45537,7 @@ class Recorder {
     this.config = config;
     this.recording = false;
     this.currCallback = undefined;
-    this.audioContext = _audioSearch_js__WEBPACK_IMPORTED_MODULE_8__["config"].audioContext;
+    this.audioContext = _audioSearch__WEBPACK_IMPORTED_MODULE_8__["config"].audioContext;
     this.frequencyCanvasInfo = {
       id: 'frequencyAnalyser',
       width: undefined,
@@ -45610,7 +45610,7 @@ class Recorder {
     var audioInput = this.audioContext.createMediaStreamSource(stream);
     audioInput.connect(inputPoint);
     var analyserNode = this.audioContext.createAnalyser();
-    analyserNode.fftSize = _audioSearch_js__WEBPACK_IMPORTED_MODULE_8__["config"].fftSize;
+    analyserNode.fftSize = _audioSearch__WEBPACK_IMPORTED_MODULE_8__["config"].fftSize;
     this.analyserNode = analyserNode;
     inputPoint.connect(analyserNode);
     this.connectSource(inputPoint);
@@ -45970,7 +45970,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_6__);
 /* harmony import */ var midicube__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! midicube */ "./node_modules/midicube/releases/midicube.js");
 /* harmony import */ var midicube__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(midicube__WEBPACK_IMPORTED_MODULE_7__);
-/* harmony import */ var _common_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./common.js */ "./src/music21/common.js");
+/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./common */ "./src/music21/common.js");
 
 
 
@@ -46147,7 +46147,7 @@ function smoothPitchExtraction(frequency) {
     config.lastCentsDeviationsDetected.push(_centsOff);
   }
 
-  var mostCommonPitchClass = _common_js__WEBPACK_IMPORTED_MODULE_8__["statisticalMode"](config.lastPitchClassesDetected);
+  var mostCommonPitchClass = _common__WEBPACK_IMPORTED_MODULE_8__["statisticalMode"](config.lastPitchClassesDetected);
 
   if (mostCommonPitchClass === null) {
     return [-1, 0];
@@ -46163,7 +46163,7 @@ function smoothPitchExtraction(frequency) {
     }
   }
 
-  var mostCommonPitch = _common_js__WEBPACK_IMPORTED_MODULE_8__["statisticalMode"](pitchesMatchingClass); // find cents difference; weighing more recent samples more...
+  var mostCommonPitch = _common__WEBPACK_IMPORTED_MODULE_8__["statisticalMode"](pitchesMatchingClass); // find cents difference; weighing more recent samples more...
 
   var totalSamplePoints = 0;
   var totalSample = 0;
@@ -46296,7 +46296,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var core_js_modules_es_array_includes__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es.array.includes */ "./node_modules/core-js/modules/es.array.includes.js");
 /* harmony import */ var core_js_modules_es_array_includes__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_includes__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _base__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./base */ "./src/music21/base.ts");
-/* harmony import */ var _exceptions21__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./exceptions21 */ "./src/music21/exceptions21.js");
+/* harmony import */ var _exceptions21__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./exceptions21 */ "./src/music21/exceptions21.ts");
 
 
 /**
@@ -47249,9 +47249,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var core_js_modules_es_string_split__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_split__WEBPACK_IMPORTED_MODULE_4__);
 /* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! core-js/modules/web.dom-collections.iterator */ "./node_modules/core-js/modules/web.dom-collections.iterator.js");
 /* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_5__);
-/* harmony import */ var _exceptions21_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./exceptions21.js */ "./src/music21/exceptions21.js");
+/* harmony import */ var _exceptions21__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./exceptions21 */ "./src/music21/exceptions21.ts");
 /* harmony import */ var _prebase__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./prebase */ "./src/music21/prebase.ts");
-/* harmony import */ var _duration_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./duration.js */ "./src/music21/duration.js");
+/* harmony import */ var _duration__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./duration */ "./src/music21/duration.js");
 
 
 
@@ -47284,7 +47284,7 @@ var validBeamTypes = {
   continue: true,
   partial: true
 };
-var beamableDurationTypes = [_duration_js__WEBPACK_IMPORTED_MODULE_8__["typeFromNumDict"][8], _duration_js__WEBPACK_IMPORTED_MODULE_8__["typeFromNumDict"][16], _duration_js__WEBPACK_IMPORTED_MODULE_8__["typeFromNumDict"][32], _duration_js__WEBPACK_IMPORTED_MODULE_8__["typeFromNumDict"][64], _duration_js__WEBPACK_IMPORTED_MODULE_8__["typeFromNumDict"][128], _duration_js__WEBPACK_IMPORTED_MODULE_8__["typeFromNumDict"][256]];
+var beamableDurationTypes = [_duration__WEBPACK_IMPORTED_MODULE_8__["typeFromNumDict"][8], _duration__WEBPACK_IMPORTED_MODULE_8__["typeFromNumDict"][16], _duration__WEBPACK_IMPORTED_MODULE_8__["typeFromNumDict"][32], _duration__WEBPACK_IMPORTED_MODULE_8__["typeFromNumDict"][64], _duration__WEBPACK_IMPORTED_MODULE_8__["typeFromNumDict"][128], _duration__WEBPACK_IMPORTED_MODULE_8__["typeFromNumDict"][256]];
 /**
  * Object representing a single beam (e.g., a 16th note that is beamed needs two)
  *
@@ -47624,20 +47624,20 @@ class Beams extends _prebase__WEBPACK_IMPORTED_MODULE_7__["ProtoM21Object"] {
     this.beamsList = [];
     var count = 1;
 
-    if (level === 1 || level === '8th' || level === _duration_js__WEBPACK_IMPORTED_MODULE_8__["typeFromNumDict"][8]) {
+    if (level === 1 || level === '8th' || level === _duration__WEBPACK_IMPORTED_MODULE_8__["typeFromNumDict"][8]) {
       count = 1;
-    } else if (level === 2 || level === _duration_js__WEBPACK_IMPORTED_MODULE_8__["typeFromNumDict"][16]) {
+    } else if (level === 2 || level === _duration__WEBPACK_IMPORTED_MODULE_8__["typeFromNumDict"][16]) {
       count = 2;
-    } else if (level === 3 || level === _duration_js__WEBPACK_IMPORTED_MODULE_8__["typeFromNumDict"][32]) {
+    } else if (level === 3 || level === _duration__WEBPACK_IMPORTED_MODULE_8__["typeFromNumDict"][32]) {
       count = 3;
-    } else if (level === 4 || level === _duration_js__WEBPACK_IMPORTED_MODULE_8__["typeFromNumDict"][64]) {
+    } else if (level === 4 || level === _duration__WEBPACK_IMPORTED_MODULE_8__["typeFromNumDict"][64]) {
       count = 4;
-    } else if (level === 5 || level === _duration_js__WEBPACK_IMPORTED_MODULE_8__["typeFromNumDict"][128]) {
+    } else if (level === 5 || level === _duration__WEBPACK_IMPORTED_MODULE_8__["typeFromNumDict"][128]) {
       count = 5;
-    } else if (level === 6 || level === _duration_js__WEBPACK_IMPORTED_MODULE_8__["typeFromNumDict"][256]) {
+    } else if (level === 6 || level === _duration__WEBPACK_IMPORTED_MODULE_8__["typeFromNumDict"][256]) {
       count = 6;
     } else {
-      throw new _exceptions21_js__WEBPACK_IMPORTED_MODULE_6__["Music21Exception"]('cannot fill beams for level ' + level);
+      throw new _exceptions21__WEBPACK_IMPORTED_MODULE_6__["Music21Exception"]('cannot fill beams for level ' + level);
     }
 
     for (var i = 1; i <= count; i++) {
@@ -47662,7 +47662,7 @@ class Beams extends _prebase__WEBPACK_IMPORTED_MODULE_7__["ProtoM21Object"] {
 
   getByNumber(number) {
     if (!this.getNumbers().includes(number)) {
-      throw new _exceptions21_js__WEBPACK_IMPORTED_MODULE_6__["Music21Exception"]('beam number error: ' + number);
+      throw new _exceptions21__WEBPACK_IMPORTED_MODULE_6__["Music21Exception"]('beam number error: ' + number);
     }
 
     var _iteratorNormalCompletion5 = true;
@@ -47775,7 +47775,7 @@ class Beams extends _prebase__WEBPACK_IMPORTED_MODULE_7__["ProtoM21Object"] {
 
   setAll(type, direction) {
     if (validBeamTypes[type] === undefined) {
-      throw new _exceptions21_js__WEBPACK_IMPORTED_MODULE_6__["Music21Exception"]('invalid beam type: ' + type);
+      throw new _exceptions21__WEBPACK_IMPORTED_MODULE_6__["Music21Exception"]('invalid beam type: ' + type);
     }
 
     for (var i = 0; i < this.length; i++) {
@@ -47804,7 +47804,7 @@ class Beams extends _prebase__WEBPACK_IMPORTED_MODULE_7__["ProtoM21Object"] {
     }
 
     if (validBeamTypes[type] === undefined) {
-      throw new _exceptions21_js__WEBPACK_IMPORTED_MODULE_6__["Music21Exception"]('invalid beam type: ' + type);
+      throw new _exceptions21__WEBPACK_IMPORTED_MODULE_6__["Music21Exception"]('invalid beam type: ' + type);
     }
 
     for (var i = 0; i < this.length; i++) {
@@ -47856,11 +47856,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var regenerator_runtime_runtime__WEBPACK_IMPORTED_MODULE_10___default = /*#__PURE__*/__webpack_require__.n(regenerator_runtime_runtime__WEBPACK_IMPORTED_MODULE_10__);
 /* harmony import */ var vexflow__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! vexflow */ "./node_modules/vexflow/releases/vexflow-debug.js");
 /* harmony import */ var vexflow__WEBPACK_IMPORTED_MODULE_11___default = /*#__PURE__*/__webpack_require__.n(vexflow__WEBPACK_IMPORTED_MODULE_11__);
-/* harmony import */ var _exceptions21_js__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./exceptions21.js */ "./src/music21/exceptions21.js");
-/* harmony import */ var _interval_js__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./interval.js */ "./src/music21/interval.js");
-/* harmony import */ var _note_js__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./note.js */ "./src/music21/note.js");
-/* harmony import */ var _chordTables_js__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./chordTables.js */ "./src/music21/chordTables.js");
-/* harmony reexport (module object) */ __webpack_require__.d(__webpack_exports__, "chordTables", function() { return _chordTables_js__WEBPACK_IMPORTED_MODULE_15__; });
+/* harmony import */ var _exceptions21__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./exceptions21 */ "./src/music21/exceptions21.ts");
+/* harmony import */ var _interval__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./interval */ "./src/music21/interval.js");
+/* harmony import */ var _note__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./note */ "./src/music21/note.js");
+/* harmony import */ var _chordTables__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./chordTables */ "./src/music21/chordTables.js");
+/* harmony reexport (module object) */ __webpack_require__.d(__webpack_exports__, "chordTables", function() { return _chordTables__WEBPACK_IMPORTED_MODULE_15__; });
 
 
 
@@ -47914,7 +47914,7 @@ __webpack_require__.r(__webpack_exports__);
  * @property {Boolean} [isRest=false]
  */
 
-class Chord extends _note_js__WEBPACK_IMPORTED_MODULE_14__["NotRest"] {
+class Chord extends _note__WEBPACK_IMPORTED_MODULE_14__["NotRest"] {
   static get className() {
     return 'music21.chord.Chord';
   }
@@ -47995,15 +47995,15 @@ class Chord extends _note_js__WEBPACK_IMPORTED_MODULE_14__["NotRest"] {
       var addNote = void 0;
 
       if (typeof tempPitches[i] === 'string') {
-        addNote = new _note_js__WEBPACK_IMPORTED_MODULE_14__["Note"](tempPitches[i]);
+        addNote = new _note__WEBPACK_IMPORTED_MODULE_14__["Note"](tempPitches[i]);
       } else if (tempPitches[i].isClassOrSubclass('Pitch')) {
-        addNote = new _note_js__WEBPACK_IMPORTED_MODULE_14__["Note"]();
+        addNote = new _note__WEBPACK_IMPORTED_MODULE_14__["Note"]();
         addNote.pitch = tempPitches[i];
       } else if (tempPitches[i].isClassOrSubclass('Note')) {
         addNote = tempPitches[i];
       } else {
         console.warn('bad pitch', tempPitches[i]);
-        throw new _exceptions21_js__WEBPACK_IMPORTED_MODULE_12__["Music21Exception"]('Cannot add pitch from ' + tempPitches[i]);
+        throw new _exceptions21__WEBPACK_IMPORTED_MODULE_12__["Music21Exception"]('Cannot add pitch from ' + tempPitches[i]);
       }
 
       this._notes.push(addNote);
@@ -48050,7 +48050,7 @@ class Chord extends _note_js__WEBPACK_IMPORTED_MODULE_14__["NotRest"] {
 
   get chordTablesAddress() {
     if (this._chordTablesAddressNeedsUpdating) {
-      this._chordTablesAddress = _chordTables_js__WEBPACK_IMPORTED_MODULE_15__["seekChordTablesAddress"](this);
+      this._chordTablesAddress = _chordTables__WEBPACK_IMPORTED_MODULE_15__["seekChordTablesAddress"](this);
     }
 
     this._chordTablesAddressNeedsUpdating = false;
@@ -48060,7 +48060,7 @@ class Chord extends _note_js__WEBPACK_IMPORTED_MODULE_14__["NotRest"] {
   get commonName() {
     // TODO: many more exemptions from music21p
     var cta = this.chordTablesAddress;
-    var ctn = _chordTables_js__WEBPACK_IMPORTED_MODULE_15__["addressToCommonNames"](cta);
+    var ctn = _chordTables__WEBPACK_IMPORTED_MODULE_15__["addressToCommonNames"](cta);
     var forteClass = this.forteClass;
     var enharmonicTests = {
       '3-11A': () => this.isMinorTriad(),
@@ -48088,7 +48088,7 @@ class Chord extends _note_js__WEBPACK_IMPORTED_MODULE_14__["NotRest"] {
   }
 
   get forteClass() {
-    return _chordTables_js__WEBPACK_IMPORTED_MODULE_15__["addressToForteName"](this.chordTablesAddress, 'tn');
+    return _chordTables__WEBPACK_IMPORTED_MODULE_15__["addressToForteName"](this.chordTablesAddress, 'tn');
   }
 
   get forteClassNumber() {
@@ -48096,7 +48096,7 @@ class Chord extends _note_js__WEBPACK_IMPORTED_MODULE_14__["NotRest"] {
   }
 
   get forteClassTnI() {
-    return _chordTables_js__WEBPACK_IMPORTED_MODULE_15__["addressToForteName"](this.chordTablesAddress, 'tni');
+    return _chordTables__WEBPACK_IMPORTED_MODULE_15__["addressToForteName"](this.chordTablesAddress, 'tni');
   }
 
   get(i) {
@@ -48145,7 +48145,7 @@ class Chord extends _note_js__WEBPACK_IMPORTED_MODULE_14__["NotRest"] {
   }
 
   areZRelations(other) {
-    var zRelationAddress = _chordTables_js__WEBPACK_IMPORTED_MODULE_15__["addressToZAddress"](this.chordTablesAddress);
+    var zRelationAddress = _chordTables__WEBPACK_IMPORTED_MODULE_15__["addressToZAddress"](this.chordTablesAddress);
 
     if (zRelationAddress === undefined) {
       return false;
@@ -48168,8 +48168,8 @@ class Chord extends _note_js__WEBPACK_IMPORTED_MODULE_14__["NotRest"] {
     }
 
     var chordTablesAddress = this.chordTablesAddress;
-    var v = _chordTables_js__WEBPACK_IMPORTED_MODULE_15__["addressToIntervalVector"](chordTablesAddress);
-    var addresses = _chordTables_js__WEBPACK_IMPORTED_MODULE_15__["intervalVectorToAddress"](v);
+    var v = _chordTables__WEBPACK_IMPORTED_MODULE_15__["addressToIntervalVector"](chordTablesAddress);
+    var addresses = _chordTables__WEBPACK_IMPORTED_MODULE_15__["intervalVectorToAddress"](v);
     var other;
     var _iteratorNormalCompletion2 = true;
     var _didIteratorError2 = false;
@@ -48199,12 +48199,12 @@ class Chord extends _note_js__WEBPACK_IMPORTED_MODULE_14__["NotRest"] {
       }
     }
 
-    var prime = _chordTables_js__WEBPACK_IMPORTED_MODULE_15__["addressToTransposedNormalForm"](other);
+    var prime = _chordTables__WEBPACK_IMPORTED_MODULE_15__["addressToTransposedNormalForm"](other);
     return new Chord(prime);
   }
 
   get hasZRelation() {
-    var post = _chordTables_js__WEBPACK_IMPORTED_MODULE_15__["addressToZAddress"](this.chordTablesAddress);
+    var post = _chordTables__WEBPACK_IMPORTED_MODULE_15__["addressToZAddress"](this.chordTablesAddress);
 
     if (post !== undefined) {
       return true;
@@ -48214,7 +48214,7 @@ class Chord extends _note_js__WEBPACK_IMPORTED_MODULE_14__["NotRest"] {
   }
 
   get intervalVector() {
-    return _chordTables_js__WEBPACK_IMPORTED_MODULE_15__["addressToIntervalVector"](this.chordTablesAddress);
+    return _chordTables__WEBPACK_IMPORTED_MODULE_15__["addressToIntervalVector"](this.chordTablesAddress);
   } //    get intervalVectorString() {
   //
   //    }
@@ -48280,10 +48280,10 @@ class Chord extends _note_js__WEBPACK_IMPORTED_MODULE_14__["NotRest"] {
 
         // takes in either a note or a pitch
         if (typeof noteObj === 'string') {
-          noteObj = new _note_js__WEBPACK_IMPORTED_MODULE_14__["Note"](noteObj);
+          noteObj = new _note__WEBPACK_IMPORTED_MODULE_14__["Note"](noteObj);
         } else if (noteObj.isClassOrSubclass('Pitch')) {
           var pitchObj = noteObj;
-          var noteObj2 = new _note_js__WEBPACK_IMPORTED_MODULE_14__["Note"]();
+          var noteObj2 = new _note__WEBPACK_IMPORTED_MODULE_14__["Note"]();
           noteObj2.pitch = pitchObj;
           noteObj = noteObj2;
         }
@@ -48372,7 +48372,7 @@ class Chord extends _note_js__WEBPACK_IMPORTED_MODULE_14__["NotRest"] {
     var closedPitches = closedChord.pitches;
 
     if (closedPitches.length === 0) {
-      throw new _exceptions21_js__WEBPACK_IMPORTED_MODULE_12__["Music21Exception"]('No notes in Chord!');
+      throw new _exceptions21__WEBPACK_IMPORTED_MODULE_12__["Music21Exception"]('No notes in Chord!');
     } else if (closedPitches.length === 1) {
       return this.pitches[0];
     } // const indexOfPitchesWithPerfectlyStackedThirds = [];
@@ -48578,7 +48578,7 @@ class Chord extends _note_js__WEBPACK_IMPORTED_MODULE_14__["NotRest"] {
 
   isSeventhOfType(intervalArray) {
     if (intervalArray === undefined) {
-      throw new _exceptions21_js__WEBPACK_IMPORTED_MODULE_12__["Music21Exception"]('intervalArray is required');
+      throw new _exceptions21__WEBPACK_IMPORTED_MODULE_12__["Music21Exception"]('intervalArray is required');
     }
 
     var third = this.third;
@@ -48597,7 +48597,7 @@ class Chord extends _note_js__WEBPACK_IMPORTED_MODULE_14__["NotRest"] {
     try {
       for (var _iterator4 = this.pitches[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
         var thisPitch = _step4.value;
-        var thisInterval = new _interval_js__WEBPACK_IMPORTED_MODULE_13__["Interval"](root, thisPitch);
+        var thisInterval = new _interval__WEBPACK_IMPORTED_MODULE_13__["Interval"](root, thisPitch);
 
         if (!intervalArray.includes(thisInterval.chromatic.mod12)) {
           return false;
@@ -48819,7 +48819,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var core_js_modules_es_string_includes__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_includes__WEBPACK_IMPORTED_MODULE_5__);
 /* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! core-js/modules/web.dom-collections.iterator */ "./node_modules/core-js/modules/web.dom-collections.iterator.js");
 /* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_6__);
-/* harmony import */ var _common_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./common.js */ "./src/music21/common.js");
+/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./common */ "./src/music21/common.js");
 
 
 
@@ -51776,7 +51776,7 @@ function intervalVectorToAddress(vector) {
         } // index 1 is vector
 
 
-        if (Object(_common_js__WEBPACK_IMPORTED_MODULE_7__["arrayEquals"])(sc[1], vector)) {
+        if (Object(_common__WEBPACK_IMPORTED_MODULE_7__["arrayEquals"])(sc[1], vector)) {
           post.push(_chordTableAddress(card, num));
         }
 
@@ -51893,7 +51893,7 @@ function seekChordTablesAddress(c) {
     try {
       for (var _iterator2 = testSetOrig[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
         var x = _step2.value;
-        var zeroTransposed = Object(_common_js__WEBPACK_IMPORTED_MODULE_7__["posMod"])(x - testSetOriginalPC, 12);
+        var zeroTransposed = Object(_common__WEBPACK_IMPORTED_MODULE_7__["posMod"])(x - testSetOriginalPC, 12);
         testSet.push(zeroTransposed);
       } // create inversion; first take difference from 12 mod 12
 
@@ -51916,7 +51916,7 @@ function seekChordTablesAddress(c) {
 
     for (var _i2 = 0, _testSet = testSet; _i2 < _testSet.length; _i2++) {
       var _x = _testSet[_i2];
-      testSetInvert.push(Object(_common_js__WEBPACK_IMPORTED_MODULE_7__["posMod"])(12 - _x, 12));
+      testSetInvert.push(Object(_common__WEBPACK_IMPORTED_MODULE_7__["posMod"])(12 - _x, 12));
     }
 
     testSetInvert.reverse(); // reverse order (first steps now last)
@@ -51925,7 +51925,7 @@ function seekChordTablesAddress(c) {
     var testSetInvertOriginalPC = testSetInvert[0];
 
     for (var i = 0; i < testSetInvert.length; i++) {
-      testSetInvert[i] = Object(_common_js__WEBPACK_IMPORTED_MODULE_7__["posMod"])(testSetInvert[i] + (12 - testSetInvertOriginalPC), 12);
+      testSetInvert[i] = Object(_common__WEBPACK_IMPORTED_MODULE_7__["posMod"])(testSetInvert[i] + (12 - testSetInvertOriginalPC), 12);
     }
 
     var candidateTuple = [testSet, testSetInvert, testSetOriginalPC];
@@ -51954,7 +51954,7 @@ function seekChordTablesAddress(c) {
           candidateInversion = _candidates$_i[1],
           candidateOriginalPC = _candidates$_i[2];
 
-      if (Object(_common_js__WEBPACK_IMPORTED_MODULE_7__["arrayEquals"])(dataLinePcs, candidate)) {
+      if (Object(_common__WEBPACK_IMPORTED_MODULE_7__["arrayEquals"])(dataLinePcs, candidate)) {
         index = indexCandidate;
 
         if (inversionsAvailable.includes(0)) {
@@ -51966,7 +51966,7 @@ function seekChordTablesAddress(c) {
         matchedPCOriginal = candidateOriginalPC;
         match = true;
         break;
-      } else if (Object(_common_js__WEBPACK_IMPORTED_MODULE_7__["arrayEquals"])(dataLinePcs, candidateInversion)) {
+      } else if (Object(_common__WEBPACK_IMPORTED_MODULE_7__["arrayEquals"])(dataLinePcs, candidateInversion)) {
         index = indexCandidate;
 
         if (inversionsAvailable.includes(0)) {
@@ -52024,7 +52024,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var core_js_modules_es_string_trim__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! core-js/modules/es.string.trim */ "./node_modules/core-js/modules/es.string.trim.js");
 /* harmony import */ var core_js_modules_es_string_trim__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_trim__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var _base__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./base */ "./src/music21/base.ts");
-/* harmony import */ var _pitch_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./pitch.js */ "./src/music21/pitch.js");
+/* harmony import */ var _pitch__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./pitch */ "./src/music21/pitch.js");
 
 
 
@@ -52172,7 +52172,7 @@ class Clef extends _base__WEBPACK_IMPORTED_MODULE_3__["Music21Object"] {
     }
 
     var lowestLineDifference = this.lowestLineTrebleOffset;
-    var tempPitch = new _pitch_js__WEBPACK_IMPORTED_MODULE_4__["Pitch"](p.step);
+    var tempPitch = new _pitch__WEBPACK_IMPORTED_MODULE_4__["Pitch"](p.step);
     tempPitch.octave = p.octave;
     tempPitch.diatonicNoteNum += lowestLineDifference;
     tempPitch.accidental = p.accidental;
@@ -53199,10 +53199,10 @@ var pathSimplify = path => {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "parse", function() { return parse; });
-/* harmony import */ var _musicxml_xmlToM21_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./musicxml/xmlToM21.js */ "./src/music21/musicxml/xmlToM21.js");
+/* harmony import */ var _musicxml_xmlToM21__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./musicxml/xmlToM21 */ "./src/music21/musicxml/xmlToM21.js");
 
 function parse(txt) {
-  var sp = new _musicxml_xmlToM21_js__WEBPACK_IMPORTED_MODULE_0__["ScoreParser"]();
+  var sp = new _musicxml_xmlToM21__WEBPACK_IMPORTED_MODULE_0__["ScoreParser"]();
   return sp.scoreFromText(txt);
 }
 
@@ -53335,9 +53335,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var core_js_modules_web_dom_collections_for_each__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! core-js/modules/web.dom-collections.for-each */ "./node_modules/core-js/modules/web.dom-collections.for-each.js");
 /* harmony import */ var core_js_modules_web_dom_collections_for_each__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_for_each__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _exceptions21_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./exceptions21.js */ "./src/music21/exceptions21.js");
-/* harmony import */ var _common_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./common.js */ "./src/music21/common.js");
-/* harmony import */ var _debug_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./debug.js */ "./src/music21/debug.js");
+/* harmony import */ var _exceptions21__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./exceptions21 */ "./src/music21/exceptions21.ts");
+/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./common */ "./src/music21/common.js");
+/* harmony import */ var _debug__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./debug */ "./src/music21/debug.js");
 /* harmony import */ var _prebase__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./prebase */ "./src/music21/prebase.ts");
 
 
@@ -53510,7 +53510,7 @@ class Duration extends _prebase__WEBPACK_IMPORTED_MODULE_6__["ProtoM21Object"] {
 
     if (typeNumber === -1) {
       console.log('invalid type ' + typeIn);
-      throw new _exceptions21_js__WEBPACK_IMPORTED_MODULE_3__["Music21Exception"]('invalid type ' + typeIn);
+      throw new _exceptions21__WEBPACK_IMPORTED_MODULE_3__["Music21Exception"]('invalid type ' + typeIn);
     }
 
     this._type = typeIn;
@@ -53597,7 +53597,7 @@ class Duration extends _prebase__WEBPACK_IMPORTED_MODULE_6__["ProtoM21Object"] {
       }
     }
 
-    if (_debug_js__WEBPACK_IMPORTED_MODULE_5__["debug"]) {
+    if (_debug__WEBPACK_IMPORTED_MODULE_5__["debug"]) {
       console.log('no dots available for ql; probably a tuplet', ql);
     }
 
@@ -53644,7 +53644,7 @@ class Duration extends _prebase__WEBPACK_IMPORTED_MODULE_6__["ProtoM21Object"] {
 
       unTupletedQl *= 2;
       var tupletRatio = ql / unTupletedQl;
-      var ratioRat = _common_js__WEBPACK_IMPORTED_MODULE_4__["rationalize"](tupletRatio);
+      var ratioRat = _common__WEBPACK_IMPORTED_MODULE_4__["rationalize"](tupletRatio);
 
       if (ratioRat === undefined) {// probably a Stream with a length that is inexpressable;
       } else {
@@ -53758,7 +53758,7 @@ class Tuplet extends _prebase__WEBPACK_IMPORTED_MODULE_6__["ProtoM21Object"] {
       return 'Sextuplet';
     }
 
-    var ordStr = _common_js__WEBPACK_IMPORTED_MODULE_4__["ordinalAbbreviation"](numNormal, true); // plural
+    var ordStr = _common__WEBPACK_IMPORTED_MODULE_4__["ordinalAbbreviation"](numNormal, true); // plural
 
     return 'Tuplet of ' + numActual.toString() + '/' + numNormal.toString() + ordStr;
   }
@@ -53772,7 +53772,7 @@ class Tuplet extends _prebase__WEBPACK_IMPORTED_MODULE_6__["ProtoM21Object"] {
 
   setDurationType(type) {
     if (this.frozen === true) {
-      throw new _exceptions21_js__WEBPACK_IMPORTED_MODULE_3__["Music21Exception"]('A frozen tuplet (or one attached to a duration) is immutable');
+      throw new _exceptions21__WEBPACK_IMPORTED_MODULE_3__["Music21Exception"]('A frozen tuplet (or one attached to a duration) is immutable');
     }
 
     this.durationActual = new Duration(type);
@@ -53790,7 +53790,7 @@ class Tuplet extends _prebase__WEBPACK_IMPORTED_MODULE_6__["ProtoM21Object"] {
 
   setRatio(actual, normal) {
     if (this.frozen === true) {
-      throw new _exceptions21_js__WEBPACK_IMPORTED_MODULE_3__["Music21Exception"]('A frozen tuplet (or one attached to a duration) is immutable');
+      throw new _exceptions21__WEBPACK_IMPORTED_MODULE_3__["Music21Exception"]('A frozen tuplet (or one attached to a duration) is immutable');
     }
 
     this.numberNotesActual = actual || 3;
@@ -54061,9 +54061,9 @@ class Editorial extends _prebase__WEBPACK_IMPORTED_MODULE_2__["ProtoM21Object"] 
 
 /***/ }),
 
-/***/ "./src/music21/exceptions21.js":
+/***/ "./src/music21/exceptions21.ts":
 /*!*************************************!*\
-  !*** ./src/music21/exceptions21.js ***!
+  !*** ./src/music21/exceptions21.ts ***!
   \*************************************/
 /*! exports provided: Music21Exception, StreamException */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -54072,14 +54072,7 @@ class Editorial extends _prebase__WEBPACK_IMPORTED_MODULE_2__["ProtoM21Object"] 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Music21Exception", function() { return Music21Exception; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "StreamException", function() { return StreamException; });
-/**
- * @namespace music21.exceptions21
- */
 // this is not completely working properly...
-
-/**
- * @memberof music21.exceptions21
- */
 class ExtendableError extends Error {
   constructor(message) {
     super(); // restore prototype chain
@@ -54088,25 +54081,17 @@ class ExtendableError extends Error {
     Object.setPrototypeOf(this, actualProto);
     this.name = this.constructor.name;
     this.message = message;
-
-    if (typeof Error.captureStackTrace === 'function') {
-      Error.captureStackTrace(this, this.constructor);
-    } else {
-      this.stack = new Error(message).stack;
-    }
+    this.stack = new Error(message).stack; // until this lands in Node
+    // if (typeof Error.captureStackTrace === 'function') {
+    //     Error.captureStackTrace(this, this.constructor);
+    // } else {
+    //     this.stack = new Error(message).stack;
+    // }
   }
 
 }
-/**
- * @memberof music21.exceptions21
- */
-
 
 class Music21Exception extends ExtendableError {}
-/**
- * @memberof music21.exceptions21
- */
-
 class StreamException extends Music21Exception {}
 
 /***/ }),
@@ -54234,7 +54219,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var core_js_modules_es_string_trim__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_trim__WEBPACK_IMPORTED_MODULE_8__);
 /* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! core-js/modules/web.dom-collections.iterator */ "./node_modules/core-js/modules/web.dom-collections.iterator.js");
 /* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_9___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_9__);
-/* harmony import */ var _pitch_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./pitch.js */ "./src/music21/pitch.js");
+/* harmony import */ var _pitch__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./pitch */ "./src/music21/pitch.js");
 
 
 
@@ -54570,7 +54555,7 @@ class Modifier {
       return undefined;
     }
 
-    var a = new _pitch_js__WEBPACK_IMPORTED_MODULE_10__["Accidental"]();
+    var a = new _pitch__WEBPACK_IMPORTED_MODULE_10__["Accidental"]();
 
     if (specialModifiers[modStr] !== undefined) {
       modStr = specialModifiers[modStr];
@@ -54581,7 +54566,7 @@ class Modifier {
   }
 
   modifyPitchName(pitchNameToAlter) {
-    var pitchToAlter = new _pitch_js__WEBPACK_IMPORTED_MODULE_10__["Pitch"](pitchNameToAlter);
+    var pitchToAlter = new _pitch__WEBPACK_IMPORTED_MODULE_10__["Pitch"](pitchNameToAlter);
     this.modifyPitch(pitchToAlter, true);
     return pitchToAlter.name;
   }
@@ -54598,7 +54583,7 @@ class Modifier {
     if (this.accidental.alter === 0.0 || pitchToAlter.accidental === undefined) {
       pitchToAlter.accidental = this.accidental.clone();
     } else {
-      var newAccidental = new _pitch_js__WEBPACK_IMPORTED_MODULE_10__["Accidental"]();
+      var newAccidental = new _pitch__WEBPACK_IMPORTED_MODULE_10__["Accidental"]();
       var newAlter = pitchToAlter.accidental.alter + this.accidental.alter;
       newAccidental.set(newAlter);
       pitchToAlter.accidental = newAccidental;
@@ -54840,8 +54825,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var core_js_modules_es_array_index_of__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_index_of__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var core_js_modules_es_string_replace__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! core-js/modules/es.string.replace */ "./node_modules/core-js/modules/es.string.replace.js");
 /* harmony import */ var core_js_modules_es_string_replace__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_replace__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _chord_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./chord.js */ "./src/music21/chord.js");
-/* harmony import */ var _key_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./key.js */ "./src/music21/key.js");
+/* harmony import */ var _chord__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./chord */ "./src/music21/chord.js");
+/* harmony import */ var _key__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./key */ "./src/music21/key.js");
 
 
 
@@ -54855,7 +54840,7 @@ __webpack_require__.r(__webpack_exports__);
  * @extends music21.chord.Chord
  */
 
-class Harmony extends _chord_js__WEBPACK_IMPORTED_MODULE_2__["Chord"] {
+class Harmony extends _chord__WEBPACK_IMPORTED_MODULE_2__["Chord"] {
   static get className() {
     return 'music21.harmony.Harmony';
   }
@@ -54930,7 +54915,7 @@ class Harmony extends _chord_js__WEBPACK_IMPORTED_MODULE_2__["Chord"] {
 
   set key(keyOrScale) {
     if (typeof keyOrScale === 'string') {
-      this._key = new _key_js__WEBPACK_IMPORTED_MODULE_3__["Key"](keyOrScale);
+      this._key = new _key__WEBPACK_IMPORTED_MODULE_3__["Key"](keyOrScale);
     } else {
       this._key = keyOrScale;
       this._roman = undefined;
@@ -55704,11 +55689,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var core_js_modules_es_string_replace__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_replace__WEBPACK_IMPORTED_MODULE_6__);
 /* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! core-js/modules/web.dom-collections.iterator */ "./node_modules/core-js/modules/web.dom-collections.iterator.js");
 /* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_7__);
-/* harmony import */ var _debug_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./debug.js */ "./src/music21/debug.js");
-/* harmony import */ var _common_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./common.js */ "./src/music21/common.js");
-/* harmony import */ var _note_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./note.js */ "./src/music21/note.js");
+/* harmony import */ var _debug__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./debug */ "./src/music21/debug.js");
+/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./common */ "./src/music21/common.js");
+/* harmony import */ var _note__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./note */ "./src/music21/note.js");
 /* harmony import */ var _prebase__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./prebase */ "./src/music21/prebase.ts");
-/* harmony import */ var _pitch_js__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./pitch.js */ "./src/music21/pitch.js");
+/* harmony import */ var _pitch__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./pitch */ "./src/music21/pitch.js");
 
 
 
@@ -55892,7 +55877,7 @@ class GenericInterval extends _prebase__WEBPACK_IMPORTED_MODULE_11__["ProtoM21Ob
       this.isUnison = false;
     }
 
-    var tempSteps = _common_js__WEBPACK_IMPORTED_MODULE_9__["posMod"](this.undirected, 7);
+    var tempSteps = _common__WEBPACK_IMPORTED_MODULE_9__["posMod"](this.undirected, 7);
     var tempOctaves = Math.floor(this.undirected / 7);
 
     if (tempSteps === 0) {
@@ -56003,7 +55988,7 @@ class GenericInterval extends _prebase__WEBPACK_IMPORTED_MODULE_11__["ProtoM21Ob
 
 
   transposePitch(p) {
-    var pitch2 = new _pitch_js__WEBPACK_IMPORTED_MODULE_12__["Pitch"]();
+    var pitch2 = new _pitch__WEBPACK_IMPORTED_MODULE_12__["Pitch"]();
     pitch2.step = p.step;
     pitch2.octave = p.octave;
     var oldDiatonicNum = p.diatonicNoteNum;
@@ -56020,7 +56005,7 @@ class GenericInterval extends _prebase__WEBPACK_IMPORTED_MODULE_11__["ProtoM21Ob
     pitch2.octave = newOctave;
 
     if (p.accidental !== undefined) {
-      pitch2.accidental = new _pitch_js__WEBPACK_IMPORTED_MODULE_12__["Accidental"](p.accidental.name);
+      pitch2.accidental = new _pitch__WEBPACK_IMPORTED_MODULE_12__["Accidental"](p.accidental.name);
     }
 
     return pitch2;
@@ -56205,7 +56190,7 @@ class DiatonicInterval extends _prebase__WEBPACK_IMPORTED_MODULE_11__["ProtoM21O
       semitones *= -1;
     }
 
-    if (_debug_js__WEBPACK_IMPORTED_MODULE_8__["debug"]) {
+    if (_debug__WEBPACK_IMPORTED_MODULE_8__["debug"]) {
       console.log('DiatonicInterval.getChromatic -- octaveOffset: ' + octaveOffset);
       console.log('DiatonicInterval.getChromatic -- semitonesStart: ' + semitonesStart);
       console.log('DiatonicInterval.getChromatic -- specName: ' + specName);
@@ -56278,8 +56263,8 @@ class ChromaticInterval extends _prebase__WEBPACK_IMPORTED_MODULE_11__["ProtoM21
       this.direction = Direction.DESCENDING;
     }
 
-    this.mod12 = _common_js__WEBPACK_IMPORTED_MODULE_9__["posMod"](this.semitones, 12);
-    this.simpleUndirected = _common_js__WEBPACK_IMPORTED_MODULE_9__["posMod"](this.undirected, 12);
+    this.mod12 = _common__WEBPACK_IMPORTED_MODULE_9__["posMod"](this.semitones, 12);
+    this.simpleUndirected = _common__WEBPACK_IMPORTED_MODULE_9__["posMod"](this.undirected, 12);
 
     if (this.direction === Direction.DESCENDING) {
       this.simpleDirected = -1 * this.simpleUndirected;
@@ -56326,7 +56311,7 @@ class ChromaticInterval extends _prebase__WEBPACK_IMPORTED_MODULE_11__["ProtoM21
     }
 
     var pps = p.ps;
-    var newPitch = new _pitch_js__WEBPACK_IMPORTED_MODULE_12__["Pitch"]();
+    var newPitch = new _pitch__WEBPACK_IMPORTED_MODULE_12__["Pitch"]();
     newPitch.ps = pps + this.semitones;
 
     if (useImplicitOctave) {
@@ -56432,13 +56417,13 @@ class Interval extends _prebase__WEBPACK_IMPORTED_MODULE_11__["ProtoM21Object"] 
 
         if (n1.classes !== undefined && n1.classes.includes('Pitch')) {
           var p1 = n1;
-          n1 = new _note_js__WEBPACK_IMPORTED_MODULE_10__["Note"]();
+          n1 = new _note__WEBPACK_IMPORTED_MODULE_10__["Note"]();
           n1.pitch = p1;
         }
 
         if (n2.classes !== undefined && n2.classes.includes('Pitch')) {
           var p2 = n2;
-          n2 = new _note_js__WEBPACK_IMPORTED_MODULE_10__["Note"]();
+          n2 = new _note__WEBPACK_IMPORTED_MODULE_10__["Note"]();
           n2.pitch = p2;
         }
 
@@ -56579,10 +56564,10 @@ class Interval extends _prebase__WEBPACK_IMPORTED_MODULE_11__["ProtoM21Object"] 
     }
 
     if (halfStepsToFix !== 0) {
-      pitch2.accidental = new _pitch_js__WEBPACK_IMPORTED_MODULE_12__["Accidental"](halfStepsToFix);
+      pitch2.accidental = new _pitch__WEBPACK_IMPORTED_MODULE_12__["Accidental"](halfStepsToFix);
     }
 
-    if (_debug_js__WEBPACK_IMPORTED_MODULE_8__["debug"]) {
+    if (_debug__WEBPACK_IMPORTED_MODULE_8__["debug"]) {
       console.log('Interval.transposePitch -- new step ' + pitch2.step);
       console.log('Interval.transposePitch -- new octave ' + pitch2.octave);
       console.log('Interval.transposePitch -- fixing half steps for ' + halfStepsToFix);
@@ -56691,8 +56676,8 @@ function _getSpecifierFromGenericChromatic(gInt, cInt) {
  */
 
 function add(intervalList) {
-  var p1 = new _pitch_js__WEBPACK_IMPORTED_MODULE_12__["Pitch"]('C4');
-  var p2 = new _pitch_js__WEBPACK_IMPORTED_MODULE_12__["Pitch"]('C4');
+  var p1 = new _pitch__WEBPACK_IMPORTED_MODULE_12__["Pitch"]('C4');
+  var p2 = new _pitch__WEBPACK_IMPORTED_MODULE_12__["Pitch"]('C4');
   var _iteratorNormalCompletion = true;
   var _didIteratorError = false;
   var _iteratorError = undefined;
@@ -56751,12 +56736,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var core_js_modules_es_string_starts_with__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_starts_with__WEBPACK_IMPORTED_MODULE_6__);
 /* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! core-js/modules/web.dom-collections.iterator */ "./node_modules/core-js/modules/web.dom-collections.iterator.js");
 /* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_7__);
-/* harmony import */ var _exceptions21_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./exceptions21.js */ "./src/music21/exceptions21.js");
-/* harmony import */ var _debug_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./debug.js */ "./src/music21/debug.js");
+/* harmony import */ var _exceptions21__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./exceptions21 */ "./src/music21/exceptions21.ts");
+/* harmony import */ var _debug__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./debug */ "./src/music21/debug.js");
 /* harmony import */ var _base__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./base */ "./src/music21/base.ts");
-/* harmony import */ var _interval_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./interval.js */ "./src/music21/interval.js");
-/* harmony import */ var _pitch_js__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./pitch.js */ "./src/music21/pitch.js");
-/* harmony import */ var _scale_js__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./scale.js */ "./src/music21/scale.js");
+/* harmony import */ var _interval__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./interval */ "./src/music21/interval.js");
+/* harmony import */ var _pitch__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./pitch */ "./src/music21/pitch.js");
+/* harmony import */ var _scale__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./scale */ "./src/music21/scale.js");
 
 
 
@@ -56931,9 +56916,9 @@ class KeySignature extends _base__WEBPACK_IMPORTED_MODULE_10__["Music21Object"] 
       startPitch = 'F';
     }
 
-    var transInterval = new _interval_js__WEBPACK_IMPORTED_MODULE_11__["Interval"](transStr);
+    var transInterval = new _interval__WEBPACK_IMPORTED_MODULE_11__["Interval"](transStr);
     var post = [];
-    var pKeep = new _pitch_js__WEBPACK_IMPORTED_MODULE_12__["Pitch"](startPitch);
+    var pKeep = new _pitch__WEBPACK_IMPORTED_MODULE_12__["Pitch"](startPitch);
 
     for (var i = 0; i < Math.abs(this.sharps); i++) {
       pKeep = transInterval.transposePitch(pKeep);
@@ -57010,7 +56995,7 @@ class KeySignature extends _base__WEBPACK_IMPORTED_MODULE_10__["Music21Object"] 
         } // make a new accidental;
 
 
-        return new _pitch_js__WEBPACK_IMPORTED_MODULE_12__["Accidental"](aps[i].accidental.alter);
+        return new _pitch__WEBPACK_IMPORTED_MODULE_12__["Accidental"](aps[i].accidental.alter);
       }
     }
 
@@ -57042,13 +57027,13 @@ class KeySignature extends _base__WEBPACK_IMPORTED_MODULE_10__["Music21Object"] 
     var transTimes;
 
     if (this.sharps === 0) {
-      return new _pitch_js__WEBPACK_IMPORTED_MODULE_12__["Pitch"](p.nameWithOctave);
+      return new _pitch__WEBPACK_IMPORTED_MODULE_12__["Pitch"](p.nameWithOctave);
     } else if (this.sharps < 0) {
       transTimes = Math.abs(this.sharps);
-      transInterval = new _interval_js__WEBPACK_IMPORTED_MODULE_11__["Interval"]('P4');
+      transInterval = new _interval__WEBPACK_IMPORTED_MODULE_11__["Interval"]('P4');
     } else {
       transTimes = this.sharps;
-      transInterval = new _interval_js__WEBPACK_IMPORTED_MODULE_11__["Interval"]('P5');
+      transInterval = new _interval__WEBPACK_IMPORTED_MODULE_11__["Interval"]('P5');
     }
 
     var newPitch = p;
@@ -57103,18 +57088,18 @@ class Key extends KeySignature {
     var sharpsIndex = sharpsArray.indexOf(keyName.toUpperCase());
 
     if (sharpsIndex === -1) {
-      throw new _exceptions21_js__WEBPACK_IMPORTED_MODULE_8__["Music21Exception"]('Cannot find the key for ' + keyName);
+      throw new _exceptions21__WEBPACK_IMPORTED_MODULE_8__["Music21Exception"]('Cannot find the key for ' + keyName);
     }
 
     var modeShift = modeSharpsAlter[mode] || 0;
     var sharps = sharpsIndex + modeShift - 11;
 
-    if (_debug_js__WEBPACK_IMPORTED_MODULE_9__["debug"]) {
+    if (_debug__WEBPACK_IMPORTED_MODULE_9__["debug"]) {
       console.log('Found sharps ' + sharps + ' for key: ' + keyName);
     }
 
     super(sharps);
-    this.tonic = new _pitch_js__WEBPACK_IMPORTED_MODULE_12__["Pitch"](keyName);
+    this.tonic = new _pitch__WEBPACK_IMPORTED_MODULE_12__["Pitch"](keyName);
     this.mode = mode;
     this._scale = this.getScale();
   }
@@ -57151,15 +57136,15 @@ class Key extends KeySignature {
     var pitchObj = this.tonic;
 
     if (scaleType === 'major') {
-      return new _scale_js__WEBPACK_IMPORTED_MODULE_13__["MajorScale"](pitchObj);
+      return new _scale__WEBPACK_IMPORTED_MODULE_13__["MajorScale"](pitchObj);
     } else if (scaleType === 'minor') {
-      return new _scale_js__WEBPACK_IMPORTED_MODULE_13__["MinorScale"](pitchObj);
+      return new _scale__WEBPACK_IMPORTED_MODULE_13__["MinorScale"](pitchObj);
     } else if (['harmonic minor', 'harmonic-minor'].includes(scaleType)) {
-      return new _scale_js__WEBPACK_IMPORTED_MODULE_13__["HarmonicMinorScale"](pitchObj);
+      return new _scale__WEBPACK_IMPORTED_MODULE_13__["HarmonicMinorScale"](pitchObj);
     } else if (['melodic minor', 'melodic-minor'].includes(scaleType)) {
-      return new _scale_js__WEBPACK_IMPORTED_MODULE_13__["AscendingMelodicMinorScale"](pitchObj);
+      return new _scale__WEBPACK_IMPORTED_MODULE_13__["AscendingMelodicMinorScale"](pitchObj);
     } else {
-      return new _scale_js__WEBPACK_IMPORTED_MODULE_13__["ConcreteScale"](pitchObj);
+      return new _scale__WEBPACK_IMPORTED_MODULE_13__["ConcreteScale"](pitchObj);
     }
   } // when scale.js adds functionality, it must be added here.
 
@@ -57205,9 +57190,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(jquery__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var midicube__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! midicube */ "./node_modules/midicube/releases/midicube.js");
 /* harmony import */ var midicube__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(midicube__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _common_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./common.js */ "./src/music21/common.js");
-/* harmony import */ var _miditools_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./miditools.js */ "./src/music21/miditools.js");
-/* harmony import */ var _pitch_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./pitch.js */ "./src/music21/pitch.js");
+/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./common */ "./src/music21/common.js");
+/* harmony import */ var _miditools__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./miditools */ "./src/music21/miditools.js");
+/* harmony import */ var _pitch__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./pitch */ "./src/music21/pitch.js");
 
 
 /**
@@ -57300,7 +57285,7 @@ class Key {
       rx: 3,
       ry: 3
     };
-    var keyDOM = _common_js__WEBPACK_IMPORTED_MODULE_3__["makeSVGright"]('rect', keyAttrs);
+    var keyDOM = _common__WEBPACK_IMPORTED_MODULE_3__["makeSVGright"]('rect', keyAttrs);
 
     for (var x in this.callbacks) {
       if ({}.hasOwnProperty.call(this.callbacks, x)) {
@@ -57340,7 +57325,7 @@ class Key {
       class: 'keyboardkeyannotation',
       r: this.width * this.parent.scaleFactor / 4
     };
-    var circleDom = _common_js__WEBPACK_IMPORTED_MODULE_3__["makeSVGright"]('circle', keyattrs);
+    var circleDom = _common__WEBPACK_IMPORTED_MODULE_3__["makeSVGright"]('circle', keyattrs);
     this.parent.svgObj.appendChild(circleDom); // console.log(circleDom);
 
     return circleDom;
@@ -57361,7 +57346,7 @@ class Key {
     if (this.id === 0 && this.pitchObj === undefined) {
       return this;
     } else if (this.pitchObj === undefined) {
-      this.pitchObj = new _pitch_js__WEBPACK_IMPORTED_MODULE_5__["Pitch"]();
+      this.pitchObj = new _pitch__WEBPACK_IMPORTED_MODULE_5__["Pitch"]();
       this.pitchObj.ps = this.id;
     }
 
@@ -57393,7 +57378,7 @@ class Key {
       class: 'keyboardkeyname',
       'font-size': fontSize
     };
-    var textDom = _common_js__WEBPACK_IMPORTED_MODULE_3__["makeSVGright"]('text', textattrs);
+    var textDom = _common__WEBPACK_IMPORTED_MODULE_3__["makeSVGright"]('text', textattrs);
     var textNode = document.createTextNode(idStr);
     textDom.appendChild(textNode);
     this.noteNameSvgObj = textDom; // store for removing...
@@ -57597,7 +57582,7 @@ class Keyboard {
     }
 
     keyRect.setAttribute('style', 'fill:' + fillColor + ';stroke:black');
-    _miditools_js__WEBPACK_IMPORTED_MODULE_4__["loadSoundfont"]('acoustic_grand_piano', i => {
+    _miditools__WEBPACK_IMPORTED_MODULE_4__["loadSoundfont"]('acoustic_grand_piano', i => {
       midicube__WEBPACK_IMPORTED_MODULE_2__["noteOn"](i.midiChannel, id, 100, 0);
       midicube__WEBPACK_IMPORTED_MODULE_2__["noteOff"](i.midiChannel, id, 500);
     });
@@ -57618,7 +57603,7 @@ class Keyboard {
     // 6, 57 gives a standard 88-key keyboard;
     if (this._startDNN === undefined) {
       if (typeof this.startPitch === 'string') {
-        var tempP = new _pitch_js__WEBPACK_IMPORTED_MODULE_5__["Pitch"](this.startPitch);
+        var tempP = new _pitch__WEBPACK_IMPORTED_MODULE_5__["Pitch"](this.startPitch);
         this._startDNN = tempP.diatonicNoteNum;
       } else {
         this._startDNN = this.startPitch;
@@ -57627,7 +57612,7 @@ class Keyboard {
 
     if (this._endDNN === undefined) {
       if (typeof this.endPitch === 'string') {
-        var _tempP = new _pitch_js__WEBPACK_IMPORTED_MODULE_5__["Pitch"](this.endPitch);
+        var _tempP = new _pitch__WEBPACK_IMPORTED_MODULE_5__["Pitch"](this.endPitch);
 
         this._endDNN = _tempP.diatonicNoteNum;
       } else {
@@ -57641,13 +57626,13 @@ class Keyboard {
     var totalWidth = this.whiteKeyWidth * this.scaleFactor * keyboardDiatonicLength;
     var height = 120 * this.scaleFactor;
     var heightString = height.toString() + 'px';
-    var svgDOM = _common_js__WEBPACK_IMPORTED_MODULE_3__["makeSVGright"]('svg', {
+    var svgDOM = _common__WEBPACK_IMPORTED_MODULE_3__["makeSVGright"]('svg', {
       'xml:space': 'preserve',
       height: heightString,
       width: totalWidth.toString() + 'px',
       class: 'keyboardSVG'
     });
-    var movingPitch = new _pitch_js__WEBPACK_IMPORTED_MODULE_5__["Pitch"]('C4');
+    var movingPitch = new _pitch__WEBPACK_IMPORTED_MODULE_5__["Pitch"]('C4');
     var blackKeys = [];
     var thisKeyboardObject = this;
 
@@ -57773,7 +57758,7 @@ class Keyboard {
     var $bDown = jquery__WEBPACK_IMPORTED_MODULE_1__("<button class='keyboardOctaveDown'>&lt;&lt;</button>").css({
       'font-size': Math.floor(this.scaleFactor * 15).toString() + 'px'
     }).bind('click', () => {
-      _miditools_js__WEBPACK_IMPORTED_MODULE_4__["config"].transposeOctave -= 1;
+      _miditools__WEBPACK_IMPORTED_MODULE_4__["config"].transposeOctave -= 1;
       this._startDNN -= 7;
       this._endDNN -= 7;
       this.redrawSVG();
@@ -57781,7 +57766,7 @@ class Keyboard {
     var $bUp = jquery__WEBPACK_IMPORTED_MODULE_1__("<button class='keyboardOctaveUp'>&gt;&gt;</button>").css({
       'font-size': Math.floor(this.scaleFactor * 15).toString() + 'px'
     }).bind('click', () => {
-      _miditools_js__WEBPACK_IMPORTED_MODULE_4__["config"].transposeOctave += 1;
+      _miditools__WEBPACK_IMPORTED_MODULE_4__["config"].transposeOctave += 1;
       this._startDNN += 7;
       this._endDNN += 7;
       this.redrawSVG();
@@ -57948,7 +57933,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Page", function() { return Page; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "System", function() { return System; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Staff", function() { return Staff; });
-/* harmony import */ var _stream_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./stream.js */ "./src/music21/stream.js");
+/* harmony import */ var _stream__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./stream */ "./src/music21/stream.js");
 /**
  *
  * THIS IS CURRENTLY UNUSED
@@ -58077,7 +58062,7 @@ function makeLayoutFromScore(score, containerWidth) {
  * @property {number|undefined} height
  */
 
-class LayoutScore extends _stream_js__WEBPACK_IMPORTED_MODULE_0__["Score"] {
+class LayoutScore extends _stream__WEBPACK_IMPORTED_MODULE_0__["Score"] {
   static get className() {
     return 'music21.layout.LayoutScore';
   }
@@ -58137,7 +58122,7 @@ class LayoutScore extends _stream_js__WEBPACK_IMPORTED_MODULE_0__["Score"] {
  * @property {number|undefined} systemEnd
  */
 
-class Page extends _stream_js__WEBPACK_IMPORTED_MODULE_0__["Score"] {
+class Page extends _stream__WEBPACK_IMPORTED_MODULE_0__["Score"] {
   static get className() {
     return 'music21.layout.Page';
   }
@@ -58177,7 +58162,7 @@ class Page extends _stream_js__WEBPACK_IMPORTED_MODULE_0__["Score"] {
  * @property {number|undefined} left
  */
 
-class System extends _stream_js__WEBPACK_IMPORTED_MODULE_0__["Score"] {
+class System extends _stream__WEBPACK_IMPORTED_MODULE_0__["Score"] {
   static get className() {
     return 'music21.layout.System';
   }
@@ -58220,7 +58205,7 @@ class System extends _stream_js__WEBPACK_IMPORTED_MODULE_0__["Score"] {
  *
  */
 
-class Staff extends _stream_js__WEBPACK_IMPORTED_MODULE_0__["Part"] {
+class Staff extends _stream__WEBPACK_IMPORTED_MODULE_0__["Part"] {
   static get className() {
     return 'music21.layout.Staff';
   }
@@ -58278,9 +58263,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var vexflow__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! vexflow */ "./node_modules/vexflow/releases/vexflow-debug.js");
 /* harmony import */ var vexflow__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(vexflow__WEBPACK_IMPORTED_MODULE_7__);
 /* harmony import */ var _base__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./base */ "./src/music21/base.ts");
-/* harmony import */ var _beam_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./beam.js */ "./src/music21/beam.js");
-/* harmony import */ var _common_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./common.js */ "./src/music21/common.js");
-/* harmony import */ var _duration_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./duration.js */ "./src/music21/duration.js");
+/* harmony import */ var _beam__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./beam */ "./src/music21/beam.js");
+/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./common */ "./src/music21/common.js");
+/* harmony import */ var _duration__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./duration */ "./src/music21/duration.js");
 
 
 
@@ -58412,7 +58397,7 @@ class TimeSignature extends _base__WEBPACK_IMPORTED_MODULE_8__["Music21Object"] 
 
   get barDuration() {
     var ql = 4.0 * this._numerator / this._denominator;
-    return new _duration_js__WEBPACK_IMPORTED_MODULE_11__["Duration"](ql);
+    return new _duration__WEBPACK_IMPORTED_MODULE_11__["Duration"](ql);
   }
 
   get beatGroups() {
@@ -58539,10 +58524,10 @@ class TimeSignature extends _base__WEBPACK_IMPORTED_MODULE_8__["Music21Object"] 
     var params = {
       measureStartOffset: 0.0
     };
-    _common_js__WEBPACK_IMPORTED_MODULE_10__["merge"](params, options);
+    _common__WEBPACK_IMPORTED_MODULE_10__["merge"](params, options);
     var measureStartOffset = params.measureStartOffset;
-    var beamsList = _beam_js__WEBPACK_IMPORTED_MODULE_9__["Beams"].naiveBeams(srcStream);
-    beamsList = _beam_js__WEBPACK_IMPORTED_MODULE_9__["Beams"].removeSandwichedUnbeamables(beamsList);
+    var beamsList = _beam__WEBPACK_IMPORTED_MODULE_9__["Beams"].naiveBeams(srcStream);
+    beamsList = _beam__WEBPACK_IMPORTED_MODULE_9__["Beams"].removeSandwichedUnbeamables(beamsList);
 
     var fixBeamsOneElementDepth = (i, el, depth) => {
       var beams = beamsList[i];
@@ -58640,7 +58625,7 @@ class TimeSignature extends _base__WEBPACK_IMPORTED_MODULE_8__["Music21Object"] 
       beams.setByNumber(beamNumber, beamType);
     };
 
-    for (var depth = 0; depth < _beam_js__WEBPACK_IMPORTED_MODULE_9__["beamableDurationTypes"].length; depth++) {
+    for (var depth = 0; depth < _beam__WEBPACK_IMPORTED_MODULE_9__["beamableDurationTypes"].length; depth++) {
       var i = 0;
       var _iteratorNormalCompletion = true;
       var _didIteratorError = false;
@@ -58668,8 +58653,8 @@ class TimeSignature extends _base__WEBPACK_IMPORTED_MODULE_8__["Music21Object"] 
       }
     }
 
-    beamsList = _beam_js__WEBPACK_IMPORTED_MODULE_9__["Beams"].sanitizePartialBeams(beamsList);
-    beamsList = _beam_js__WEBPACK_IMPORTED_MODULE_9__["Beams"].mergeConnectingPartialBeams(beamsList);
+    beamsList = _beam__WEBPACK_IMPORTED_MODULE_9__["Beams"].sanitizePartialBeams(beamsList);
+    beamsList = _beam__WEBPACK_IMPORTED_MODULE_9__["Beams"].mergeConnectingPartialBeams(beamsList);
     return beamsList;
   }
   /**
@@ -58725,13 +58710,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(jquery__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var midicube__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! midicube */ "./node_modules/midicube/releases/midicube.js");
 /* harmony import */ var midicube__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(midicube__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _debug_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./debug.js */ "./src/music21/debug.js");
+/* harmony import */ var _debug__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./debug */ "./src/music21/debug.js");
 /* harmony import */ var _css_midiPlayer_css__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../css/midiPlayer.css */ "./css/midiPlayer.css");
 /* harmony import */ var _css_midiPlayer_css__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_css_midiPlayer_css__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var _chord_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./chord.js */ "./src/music21/chord.js");
-/* harmony import */ var _common_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./common.js */ "./src/music21/common.js");
-/* harmony import */ var _instrument_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./instrument.js */ "./src/music21/instrument.js");
-/* harmony import */ var _note_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./note.js */ "./src/music21/note.js");
+/* harmony import */ var _chord__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./chord */ "./src/music21/chord.js");
+/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./common */ "./src/music21/common.js");
+/* harmony import */ var _instrument__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./instrument */ "./src/music21/instrument.js");
+/* harmony import */ var _note__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./note */ "./src/music21/note.js");
 /**
  * music21j -- Javascript reimplementation of Core music21p features.
  * music21/miditools -- A collection of tools for midi. See the namespace {@link music21.miditools}
@@ -58826,7 +58811,7 @@ class Event {
 
 
   music21Note() {
-    var m21n = new _note_js__WEBPACK_IMPORTED_MODULE_7__["Note"]();
+    var m21n = new _note__WEBPACK_IMPORTED_MODULE_7__["Note"]();
     m21n.pitch.ps = this.midiNote;
     return m21n;
   }
@@ -58989,7 +58974,7 @@ function sendOutChord(chordNoteList) {
 
   if (chordNoteList.length > 1) {
     // console.log(chordNoteList[0].name, chordNoteList[1].name);
-    appendObject = new _chord_js__WEBPACK_IMPORTED_MODULE_4__["Chord"](chordNoteList);
+    appendObject = new _chord__WEBPACK_IMPORTED_MODULE_4__["Chord"](chordNoteList);
   } else if (chordNoteList.length === 1) {
     appendObject = chordNoteList[0]; // note object
   } else {
@@ -59023,7 +59008,7 @@ function quantizeLastNote(lastElement) {
     return undefined;
   }
 
-  if (lastElement instanceof _note_js__WEBPACK_IMPORTED_MODULE_7__["GeneralNote"]) {
+  if (lastElement instanceof _note__WEBPACK_IMPORTED_MODULE_7__["GeneralNote"]) {
     lastElement.stemDirection = undefined;
   }
 
@@ -59077,7 +59062,7 @@ var sendToMIDIjs = midiEvent => {
 
 function postLoadCallback(soundfont, callback) {
   // this should be bound to MIDI
-  if (_debug_js__WEBPACK_IMPORTED_MODULE_2__["debug"]) {
+  if (_debug__WEBPACK_IMPORTED_MODULE_2__["debug"]) {
     console.log('soundfont loaded about to execute callback.');
     console.log('first playing two notes very softly -- seems to flush the buffer.');
   }
@@ -59087,12 +59072,12 @@ function postLoadCallback(soundfont, callback) {
   var isFirefox = typeof InstallTrigger !== 'undefined'; // Firefox 1.0+
 
   var isAudioTag = midicube__WEBPACK_IMPORTED_MODULE_1__["config"].api === 'audiotag';
-  var instrumentObj = _instrument_js__WEBPACK_IMPORTED_MODULE_6__["find"](soundfont);
+  var instrumentObj = _instrument__WEBPACK_IMPORTED_MODULE_6__["find"](soundfont);
 
   if (instrumentObj !== undefined) {
     midicube__WEBPACK_IMPORTED_MODULE_1__["programChange"](instrumentObj.midiChannel, instrumentObj.midiProgram);
 
-    if (_debug_js__WEBPACK_IMPORTED_MODULE_2__["debug"]) {
+    if (_debug__WEBPACK_IMPORTED_MODULE_2__["debug"]) {
       console.log(soundfont + ' (' + instrumentObj.midiProgram + ') loaded on ', instrumentObj.midiChannel);
     }
 
@@ -59141,7 +59126,7 @@ function loadSoundfont(soundfont, callback) {
   if (loadedSoundfonts[soundfont] === true) {
     // this soundfont has already been loaded once, so just call the callback.
     if (callback !== undefined) {
-      var instrumentObj = _instrument_js__WEBPACK_IMPORTED_MODULE_6__["find"](soundfont);
+      var instrumentObj = _instrument__WEBPACK_IMPORTED_MODULE_6__["find"](soundfont);
       callback(instrumentObj);
     }
   } else if (loadedSoundfonts[soundfont] === 'loading') {
@@ -59149,17 +59134,17 @@ function loadSoundfont(soundfont, callback) {
     // wait for it before calling callback.
     var waitThenCall = () => {
       if (loadedSoundfonts[soundfont] === true) {
-        if (_debug_js__WEBPACK_IMPORTED_MODULE_2__["debug"]) {
+        if (_debug__WEBPACK_IMPORTED_MODULE_2__["debug"]) {
           console.log('other process has finished loading; calling callback');
         }
 
         if (callback !== undefined) {
-          var _instrumentObj = _instrument_js__WEBPACK_IMPORTED_MODULE_6__["find"](soundfont);
+          var _instrumentObj = _instrument__WEBPACK_IMPORTED_MODULE_6__["find"](soundfont);
 
           callback(_instrumentObj);
         }
       } else {
-        if (_debug_js__WEBPACK_IMPORTED_MODULE_2__["debug"]) {
+        if (_debug__WEBPACK_IMPORTED_MODULE_2__["debug"]) {
           console.log('waiting for other process load');
         }
 
@@ -59173,18 +59158,18 @@ function loadSoundfont(soundfont, callback) {
     // set its status to loading and then load it.
     loadedSoundfonts[soundfont] = 'loading';
 
-    if (_debug_js__WEBPACK_IMPORTED_MODULE_2__["debug"]) {
+    if (_debug__WEBPACK_IMPORTED_MODULE_2__["debug"]) {
       console.log('waiting for document ready');
     }
 
     jquery__WEBPACK_IMPORTED_MODULE_0__(document).ready(() => {
-      if (_debug_js__WEBPACK_IMPORTED_MODULE_2__["debug"]) {
+      if (_debug__WEBPACK_IMPORTED_MODULE_2__["debug"]) {
         console.log('document ready, waiting to load soundfont');
       }
 
       jquery__WEBPACK_IMPORTED_MODULE_0__(document.body).append(jquery__WEBPACK_IMPORTED_MODULE_0__("<div class='loadingSoundfont'><b>Loading MIDI Instrument</b>: " + 'audio will begin when this message disappears.</div>'));
       midicube__WEBPACK_IMPORTED_MODULE_1__["loadPlugin"]({
-        soundfontUrl: _common_js__WEBPACK_IMPORTED_MODULE_5__["urls"].soundfontUrl,
+        soundfontUrl: _common__WEBPACK_IMPORTED_MODULE_5__["urls"].soundfontUrl,
         instrument: soundfont,
         onsuccess: postLoadCallback.bind(midicube__WEBPACK_IMPORTED_MODULE_1__, soundfont, callback)
       });
@@ -59298,7 +59283,7 @@ class MidiPlayer {
 
 
   playPng() {
-    return _common_js__WEBPACK_IMPORTED_MODULE_5__["urls"].midiPlayer + '/play.png';
+    return _common__WEBPACK_IMPORTED_MODULE_5__["urls"].midiPlayer + '/play.png';
   }
   /**
    *
@@ -59307,7 +59292,7 @@ class MidiPlayer {
 
 
   pausePng() {
-    return _common_js__WEBPACK_IMPORTED_MODULE_5__["urls"].midiPlayer + '/pause.png';
+    return _common__WEBPACK_IMPORTED_MODULE_5__["urls"].midiPlayer + '/pause.png';
   }
   /**
    *
@@ -59316,7 +59301,7 @@ class MidiPlayer {
 
 
   stopPng() {
-    return _common_js__WEBPACK_IMPORTED_MODULE_5__["urls"].midiPlayer + '/stop.png';
+    return _common__WEBPACK_IMPORTED_MODULE_5__["urls"].midiPlayer + '/stop.png';
   }
 
   pausePlayStop(stop) {
@@ -59471,10 +59456,10 @@ var callBacks = {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _musicxml_m21ToXml_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./musicxml/m21ToXml.js */ "./src/music21/musicxml/m21ToXml.js");
-/* harmony reexport (module object) */ __webpack_require__.d(__webpack_exports__, "m21ToXml", function() { return _musicxml_m21ToXml_js__WEBPACK_IMPORTED_MODULE_0__; });
-/* harmony import */ var _musicxml_xmlToM21_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./musicxml/xmlToM21.js */ "./src/music21/musicxml/xmlToM21.js");
-/* harmony reexport (module object) */ __webpack_require__.d(__webpack_exports__, "xmlToM21", function() { return _musicxml_xmlToM21_js__WEBPACK_IMPORTED_MODULE_1__; });
+/* harmony import */ var _musicxml_m21ToXml__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./musicxml/m21ToXml */ "./src/music21/musicxml/m21ToXml.js");
+/* harmony reexport (module object) */ __webpack_require__.d(__webpack_exports__, "m21ToXml", function() { return _musicxml_m21ToXml__WEBPACK_IMPORTED_MODULE_0__; });
+/* harmony import */ var _musicxml_xmlToM21__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./musicxml/xmlToM21 */ "./src/music21/musicxml/xmlToM21.js");
+/* harmony reexport (module object) */ __webpack_require__.d(__webpack_exports__, "xmlToM21", function() { return _musicxml_xmlToM21__WEBPACK_IMPORTED_MODULE_1__; });
 /**
  * @namespace music21.musicxml
  */
@@ -59514,10 +59499,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var core_js_modules_es_string_starts_with__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_starts_with__WEBPACK_IMPORTED_MODULE_6__);
 /* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! core-js/modules/web.dom-collections.iterator */ "./node_modules/core-js/modules/web.dom-collections.iterator.js");
 /* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_7__);
-/* harmony import */ var _clef_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../clef.js */ "./src/music21/clef.js");
-/* harmony import */ var _common_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../common.js */ "./src/music21/common.js");
-/* harmony import */ var _stream_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../stream.js */ "./src/music21/stream.js");
-/* harmony import */ var _exceptions21_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../exceptions21.js */ "./src/music21/exceptions21.js");
+/* harmony import */ var _clef__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../clef */ "./src/music21/clef.js");
+/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../common */ "./src/music21/common.js");
+/* harmony import */ var _stream__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../stream */ "./src/music21/stream.js");
+/* harmony import */ var _exceptions21__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../exceptions21 */ "./src/music21/exceptions21.ts");
 
 
 
@@ -59543,7 +59528,7 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
 
 
-class MusicXMLExportException extends _exceptions21_js__WEBPACK_IMPORTED_MODULE_11__["Music21Exception"] {}
+class MusicXMLExportException extends _exceptions21__WEBPACK_IMPORTED_MODULE_11__["Music21Exception"] {}
 
 function typeToMusicXMLType(value) {
   if (value === 'longa') {
@@ -59764,7 +59749,7 @@ class GeneralObjectExporter {
       p = p.makeMeasures();
     }
 
-    var s = new _stream_js__WEBPACK_IMPORTED_MODULE_10__["Score"]();
+    var s = new _stream__WEBPACK_IMPORTED_MODULE_10__["Score"]();
     s.insert(0, p); // metadata...;
 
     return this.fromScore(s);
@@ -59774,19 +59759,19 @@ class GeneralObjectExporter {
     var mCopy = m.makeNotation();
 
     if (m.clef === undefined) {
-      mCopy.clef = _clef_js__WEBPACK_IMPORTED_MODULE_8__["bestClef"](mCopy, {
+      mCopy.clef = _clef__WEBPACK_IMPORTED_MODULE_8__["bestClef"](mCopy, {
         recurse: true
       });
     }
 
-    var p = new _stream_js__WEBPACK_IMPORTED_MODULE_10__["Part"]();
+    var p = new _stream__WEBPACK_IMPORTED_MODULE_10__["Part"]();
     p.append(mCopy); // TODO(msc): metadata;
 
     return this.fromPart(p);
   }
 
   fromVoice(v) {
-    var m = new _stream_js__WEBPACK_IMPORTED_MODULE_10__["Measure"]();
+    var m = new _stream__WEBPACK_IMPORTED_MODULE_10__["Measure"]();
     m.number = 1;
     m.insert(0, v);
     return this.fromMeasure(m);
@@ -59801,7 +59786,7 @@ class GeneralObjectExporter {
   fromGeneralNote(n) {
     var nCopy = n.clone(true); // makeTupletBrackets;
 
-    var out = new _stream_js__WEBPACK_IMPORTED_MODULE_10__["Measure"]();
+    var out = new _stream__WEBPACK_IMPORTED_MODULE_10__["Measure"]();
     out.number = 1;
     out.append(nCopy);
     return this.fromMeasure(out);
@@ -59847,7 +59832,7 @@ class XMLExporterBase {
         forceEmpty = _ref2$forceEmpty === void 0 ? false : _ref2$forceEmpty;
 
     if (attributeName === undefined) {
-      attributeName = _common_js__WEBPACK_IMPORTED_MODULE_9__["hyphenToCamelCase"](tag);
+      attributeName = _common__WEBPACK_IMPORTED_MODULE_9__["hyphenToCamelCase"](tag);
     }
 
     var value = m21El[attributeName];
@@ -59879,7 +59864,7 @@ class XMLExporterBase {
         transform = _ref3.transform;
 
     if (attributeName === undefined) {
-      attributeName = _common_js__WEBPACK_IMPORTED_MODULE_9__["hyphenToCamelCase"](xmlAttributeName);
+      attributeName = _common__WEBPACK_IMPORTED_MODULE_9__["hyphenToCamelCase"](xmlAttributeName);
     }
 
     var value = m21El[attributeName];
@@ -59989,7 +59974,7 @@ class ScoreExporter extends XMLExporterBase {
     super();
 
     if (score === undefined) {
-      this.stream = new _stream_js__WEBPACK_IMPORTED_MODULE_10__["Score"]();
+      this.stream = new _stream__WEBPACK_IMPORTED_MODULE_10__["Score"]();
     } else {
       this.stream = score;
     }
@@ -60190,7 +60175,7 @@ class PartExporter extends XMLExporterBase {
     this.xmlRoot = this.doc.createElement('part');
 
     if (parent === undefined) {
-      this.meterStream = new _stream_js__WEBPACK_IMPORTED_MODULE_10__["Stream"]();
+      this.meterStream = new _stream__WEBPACK_IMPORTED_MODULE_10__["Stream"]();
       this.refStreamOrTimeRange = [0.0, 0.0];
       this.midiChannelList = [];
     } else {
@@ -60698,7 +60683,7 @@ class MeasureExporter extends XMLExporterBase {
 
     if (p.accidental !== undefined) {
       var mxAlter = this.subElement(mxPitch, 'alter');
-      mxAlter.innerHTML = _common_js__WEBPACK_IMPORTED_MODULE_9__["numToIntOrFloat"](p.accidental.alter).toString();
+      mxAlter.innerHTML = _common__WEBPACK_IMPORTED_MODULE_9__["numToIntOrFloat"](p.accidental.alter).toString();
     }
 
     this._setTagTextFromAttribute(p, mxPitch, 'octave', 'implicitOctave');
@@ -60947,15 +60932,15 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_5__);
 /* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
 /* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(jquery__WEBPACK_IMPORTED_MODULE_6__);
-/* harmony import */ var _chord_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../chord.js */ "./src/music21/chord.js");
-/* harmony import */ var _clef_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../clef.js */ "./src/music21/clef.js");
-/* harmony import */ var _duration_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../duration.js */ "./src/music21/duration.js");
-/* harmony import */ var _key_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../key.js */ "./src/music21/key.js");
-/* harmony import */ var _meter_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../meter.js */ "./src/music21/meter.js");
-/* harmony import */ var _note_js__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ../note.js */ "./src/music21/note.js");
-/* harmony import */ var _pitch_js__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ../pitch.js */ "./src/music21/pitch.js");
-/* harmony import */ var _stream_js__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ../stream.js */ "./src/music21/stream.js");
-/* harmony import */ var _tie_js__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ../tie.js */ "./src/music21/tie.js");
+/* harmony import */ var _chord__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../chord */ "./src/music21/chord.js");
+/* harmony import */ var _clef__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../clef */ "./src/music21/clef.js");
+/* harmony import */ var _duration__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../duration */ "./src/music21/duration.js");
+/* harmony import */ var _key__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../key */ "./src/music21/key.js");
+/* harmony import */ var _meter__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../meter */ "./src/music21/meter.js");
+/* harmony import */ var _note__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ../note */ "./src/music21/note.js");
+/* harmony import */ var _pitch__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ../pitch */ "./src/music21/pitch.js");
+/* harmony import */ var _stream__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ../stream */ "./src/music21/stream.js");
+/* harmony import */ var _tie__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ../tie */ "./src/music21/tie.js");
 
 
 
@@ -61009,7 +60994,7 @@ class ScoreParser {
     this.xmlText = undefined;
     this.xmlUrl = undefined;
     this.$xmlRoot = undefined;
-    this.stream = new _stream_js__WEBPACK_IMPORTED_MODULE_14__["Score"]();
+    this.stream = new _stream__WEBPACK_IMPORTED_MODULE_14__["Score"]();
     this.definesExplicitSystemBreaks = false;
     this.definesExplicitPageBreaks = false;
     this.mxScorePartDict = {};
@@ -61043,7 +61028,7 @@ class ScoreParser {
     var s = inputM21;
 
     if (inputM21 === undefined) {
-      s = new _stream_js__WEBPACK_IMPORTED_MODULE_14__["Score"]();
+      s = new _stream__WEBPACK_IMPORTED_MODULE_14__["Score"]();
     } // version
     // defaults
     // credit
@@ -61155,14 +61140,14 @@ class PartParser {
     } // spannerBundles
 
 
-    this.stream = new _stream_js__WEBPACK_IMPORTED_MODULE_14__["Part"]();
+    this.stream = new _stream__WEBPACK_IMPORTED_MODULE_14__["Part"]();
     this.atSoundingPitch = true;
     this.staffReferenceList = [];
     this.lastTimeSignature = undefined;
     this.lastMeasureWasShort = false;
     this.lastMeasureOffset = 0.0;
     this.lastClefs = {
-      0: new _clef_js__WEBPACK_IMPORTED_MODULE_8__["TrebleClef"]()
+      0: new _clef__WEBPACK_IMPORTED_MODULE_8__["TrebleClef"]()
     };
     this.activeTuplets = [];
     this.activeTuplets.length = 7;
@@ -61259,7 +61244,7 @@ class PartParser {
     if (m.timeSignature !== undefined) {
       this.lastTimeSignature = m.timeSignature;
     } else if (this.lastTimeSignature === undefined) {
-      this.lastTimeSignature = new _meter_js__WEBPACK_IMPORTED_MODULE_11__["TimeSignature"]('4/4');
+      this.lastTimeSignature = new _meter__WEBPACK_IMPORTED_MODULE_11__["TimeSignature"]('4/4');
     }
   }
 
@@ -61314,7 +61299,7 @@ class MeasureParser {
     }
 
     this.staffLayoutObjects = [];
-    this.stream = new _stream_js__WEBPACK_IMPORTED_MODULE_14__["Measure"]();
+    this.stream = new _stream__WEBPACK_IMPORTED_MODULE_14__["Measure"]();
     this.$mxNoteList = [];
     this.$mxLyricList = [];
     this.nLast = undefined;
@@ -61517,7 +61502,7 @@ class MeasureParser {
       }
     }
 
-    var c = new _chord_js__WEBPACK_IMPORTED_MODULE_7__["Chord"](notes); // move beams from first note;
+    var c = new _chord__WEBPACK_IMPORTED_MODULE_7__["Chord"](notes); // move beams from first note;
     // move articulations;
     // move expressions;
     // move spanners;
@@ -61526,7 +61511,7 @@ class MeasureParser {
   }
 
   xmlToSimpleNote($mxNote, freeSpanners) {
-    var n = new _note_js__WEBPACK_IMPORTED_MODULE_12__["Note"]();
+    var n = new _note__WEBPACK_IMPORTED_MODULE_12__["Note"]();
     this.xmlToPitch($mxNote, n.pitch); // beams;
     // stems;
     // noteheads
@@ -61541,7 +61526,7 @@ class MeasureParser {
     var p = inputM21;
 
     if (inputM21 === undefined) {
-      p = new _pitch_js__WEBPACK_IMPORTED_MODULE_13__["Pitch"]();
+      p = new _pitch__WEBPACK_IMPORTED_MODULE_13__["Pitch"]();
     }
 
     var $mxPitch;
@@ -61573,7 +61558,7 @@ class MeasureParser {
       p.accidental = accObj;
       p.accidental.displayStatus = true; // independent accidental from alter
     } else if (accAlter !== undefined && !Number.isNaN(Number(accAlter))) {
-      p.accidental = new _pitch_js__WEBPACK_IMPORTED_MODULE_13__["Accidental"](accAlter);
+      p.accidental = new _pitch__WEBPACK_IMPORTED_MODULE_13__["Accidental"](accAlter);
       p.accidental.displayStatus = false;
     }
 
@@ -61581,7 +61566,7 @@ class MeasureParser {
   }
 
   xmlToAccidental($mxAccidental) {
-    var acc = new _pitch_js__WEBPACK_IMPORTED_MODULE_13__["Accidental"](); // to-do m21/musicxml accidental name differences;
+    var acc = new _pitch__WEBPACK_IMPORTED_MODULE_13__["Accidental"](); // to-do m21/musicxml accidental name differences;
 
     var name = jquery__WEBPACK_IMPORTED_MODULE_6__($mxAccidental[0]).text().trim().toLowerCase();
 
@@ -61598,7 +61583,7 @@ class MeasureParser {
   }
 
   xmlToRest($mxRest) {
-    var r = new _note_js__WEBPACK_IMPORTED_MODULE_12__["Rest"](); // full measure rest
+    var r = new _note__WEBPACK_IMPORTED_MODULE_12__["Rest"](); // full measure rest
     // apply multi-measure rest
     // display-step, octave, etc.
 
@@ -61632,7 +61617,7 @@ class MeasureParser {
     var d = inputM21;
 
     if (inputM21 === undefined) {
-      d = new _duration_js__WEBPACK_IMPORTED_MODULE_9__["Duration"]();
+      d = new _duration__WEBPACK_IMPORTED_MODULE_9__["Duration"]();
     }
 
     var divisions = this.divisions;
@@ -61678,7 +61663,7 @@ class MeasureParser {
 
 
   xmlToTie($mxNote) {
-    var t = new _tie_js__WEBPACK_IMPORTED_MODULE_15__["Tie"]();
+    var t = new _tie__WEBPACK_IMPORTED_MODULE_15__["Tie"]();
     var allTies = $mxNote.children('tie');
 
     if (allTies.length > 1) {
@@ -61742,7 +61727,7 @@ class MeasureParser {
     var l = inputM21;
 
     if (inputM21 === undefined) {
-      l = new _note_js__WEBPACK_IMPORTED_MODULE_12__["Lyric"]();
+      l = new _note__WEBPACK_IMPORTED_MODULE_12__["Lyric"]();
     }
 
     try {
@@ -61868,7 +61853,7 @@ class MeasureParser {
     // simple time signature only;
     var numerator = jquery__WEBPACK_IMPORTED_MODULE_6__($mxTime.children('beats')[0]).text().trim();
     var denominator = jquery__WEBPACK_IMPORTED_MODULE_6__($mxTime.children('beat-type')[0]).text().trim();
-    return new _meter_js__WEBPACK_IMPORTED_MODULE_11__["TimeSignature"](numerator + '/' + denominator); // symbol
+    return new _meter__WEBPACK_IMPORTED_MODULE_11__["TimeSignature"](numerator + '/' + denominator); // symbol
   }
 
   handleClef($mxClef) {
@@ -61891,7 +61876,7 @@ class MeasureParser {
       clefOctaveChange = parseInt(jquery__WEBPACK_IMPORTED_MODULE_6__($coc[0]).text().trim());
     }
 
-    return _clef_js__WEBPACK_IMPORTED_MODULE_8__["clefFromString"](sign + line, clefOctaveChange);
+    return _clef__WEBPACK_IMPORTED_MODULE_8__["clefFromString"](sign + line, clefOctaveChange);
   }
 
   handleKeySignature($mxKey) {
@@ -61900,7 +61885,7 @@ class MeasureParser {
   }
 
   xmlToKeySignature($mxKey) {
-    var ks = new _key_js__WEBPACK_IMPORTED_MODULE_10__["KeySignature"]();
+    var ks = new _key__WEBPACK_IMPORTED_MODULE_10__["KeySignature"]();
     seta(ks, $mxKey, 'fifths', 'sharps', parseInt); // mode!
     // non-standard and key-octaves
 
@@ -61952,11 +61937,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var midicube__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(midicube__WEBPACK_IMPORTED_MODULE_6__);
 /* harmony import */ var _prebase__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./prebase */ "./src/music21/prebase.ts");
 /* harmony import */ var _base__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./base */ "./src/music21/base.ts");
-/* harmony import */ var _pitch_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./pitch.js */ "./src/music21/pitch.js");
-/* harmony import */ var _beam_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./beam.js */ "./src/music21/beam.js");
-/* harmony import */ var _common_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./common.js */ "./src/music21/common.js");
-/* harmony import */ var _debug_js__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./debug.js */ "./src/music21/debug.js");
-/* harmony import */ var _exceptions21_js__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./exceptions21.js */ "./src/music21/exceptions21.js");
+/* harmony import */ var _pitch__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./pitch */ "./src/music21/pitch.js");
+/* harmony import */ var _beam__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./beam */ "./src/music21/beam.js");
+/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./common */ "./src/music21/common.js");
+/* harmony import */ var _debug__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./debug */ "./src/music21/debug.js");
+/* harmony import */ var _exceptions21__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./exceptions21 */ "./src/music21/exceptions21.ts");
 
 
 
@@ -61994,7 +61979,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-class NotRestException extends _exceptions21_js__WEBPACK_IMPORTED_MODULE_13__["Music21Exception"] {// no need
+class NotRestException extends _exceptions21__WEBPACK_IMPORTED_MODULE_13__["Music21Exception"] {// no need
 }
 var noteheadTypeNames = ['arrow down', 'arrow up', 'back slashed', 'circle dot', 'circle-x', 'circled', 'cluster', 'cross', 'diamond', 'do', 'fa', 'inverted triangle', 'la', 'left triangle', 'mi', 'none', 'normal', 'other', 're', 'rectangle', 'slash', 'slashed', 'so', 'square', 'ti', 'triangle', 'x'];
 var stemDirectionNames = ['double', 'down', 'noStem', 'none', 'unspecified', 'up'];
@@ -62286,7 +62271,7 @@ class GeneralNote extends _base__WEBPACK_IMPORTED_MODULE_8__["Music21Object"] {
       }
     }
 
-    if (_debug_js__WEBPACK_IMPORTED_MODULE_12__["debug"]) {
+    if (_debug__WEBPACK_IMPORTED_MODULE_12__["debug"]) {
       console.log(this.stemDirection);
     }
 
@@ -62432,7 +62417,7 @@ class NotRest extends GeneralNote {
     this.noteheadParenthesis = false;
     this.volume = undefined; // not a real object yet.
 
-    this.beams = new _beam_js__WEBPACK_IMPORTED_MODULE_10__["Beams"]();
+    this.beams = new _beam__WEBPACK_IMPORTED_MODULE_10__["Beams"]();
     /* TODO: this.duration.linkage -- need durationUnits */
 
     this._stemDirection = 'unspecified';
@@ -62503,10 +62488,10 @@ class Note extends NotRest {
 
     this.isRest = false; // for speed
 
-    if (nn instanceof _pitch_js__WEBPACK_IMPORTED_MODULE_9__["Pitch"]) {
+    if (nn instanceof _pitch__WEBPACK_IMPORTED_MODULE_9__["Pitch"]) {
       this.pitch = nn;
     } else {
-      this.pitch = new _pitch_js__WEBPACK_IMPORTED_MODULE_9__["Pitch"](nn);
+      this.pitch = new _pitch__WEBPACK_IMPORTED_MODULE_9__["Pitch"](nn);
     }
   }
   /**
@@ -62630,7 +62615,7 @@ class Note extends NotRest {
 
   vexflowNote(options) {
     var params = {};
-    _common_js__WEBPACK_IMPORTED_MODULE_11__["merge"](params, options);
+    _common__WEBPACK_IMPORTED_MODULE_11__["merge"](params, options);
     var clef = params.clef;
     var useStemDirection = this.stemDirection; // fixup stem direction -- must happen before Vex.Flow.Note is created...
 
@@ -62759,7 +62744,7 @@ class Rest extends GeneralNote {
     }
 
     if (this.lineShift !== undefined) {
-      var p = new _pitch_js__WEBPACK_IMPORTED_MODULE_9__["Pitch"]('B4');
+      var p = new _pitch__WEBPACK_IMPORTED_MODULE_9__["Pitch"]('B4');
       var ls = this.lineShift;
 
       if (this.duration.type === 'whole') {
@@ -62820,10 +62805,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var core_js_modules_es_array_includes__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_includes__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! core-js/modules/es.regexp.to-string */ "./node_modules/core-js/modules/es.regexp.to-string.js");
 /* harmony import */ var core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _debug_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./debug.js */ "./src/music21/debug.js");
-/* harmony import */ var _common_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./common.js */ "./src/music21/common.js");
-/* harmony import */ var _miditools_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./miditools.js */ "./src/music21/miditools.js");
-/* harmony import */ var _tinyNotation_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./tinyNotation.js */ "./src/music21/tinyNotation.js");
+/* harmony import */ var _debug__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./debug */ "./src/music21/debug.js");
+/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./common */ "./src/music21/common.js");
+/* harmony import */ var _miditools__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./miditools */ "./src/music21/miditools.js");
+/* harmony import */ var _tinyNotation__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./tinyNotation */ "./src/music21/tinyNotation.js");
 
 
 
@@ -62866,9 +62851,9 @@ function getBasePath() {
     m21jsPath = getM21attribute('src');
   }
 
-  var m21basePath = _common_js__WEBPACK_IMPORTED_MODULE_4__["pathSimplify"](m21jsPath + '/../..');
+  var m21basePath = _common__WEBPACK_IMPORTED_MODULE_4__["pathSimplify"](m21jsPath + '/../..');
 
-  if (_debug_js__WEBPACK_IMPORTED_MODULE_3__["debug"]) {
+  if (_debug__WEBPACK_IMPORTED_MODULE_3__["debug"]) {
     console.log('Music21 paths: base: ', m21basePath, '; js: ', m21jsPath);
   }
 
@@ -62879,9 +62864,9 @@ function fixUrls(conf) {
     return;
   }
 
-  for (var _i = 0, _Object$keys = Object.keys(_common_js__WEBPACK_IMPORTED_MODULE_4__["urls"]); _i < _Object$keys.length; _i++) {
+  for (var _i = 0, _Object$keys = Object.keys(_common__WEBPACK_IMPORTED_MODULE_4__["urls"]); _i < _Object$keys.length; _i++) {
     var u = _Object$keys[_i];
-    _common_js__WEBPACK_IMPORTED_MODULE_4__["urls"][u] = _common_js__WEBPACK_IMPORTED_MODULE_4__["pathSimplify"](conf.m21basePath + _common_js__WEBPACK_IMPORTED_MODULE_4__["urls"][u]);
+    _common__WEBPACK_IMPORTED_MODULE_4__["urls"][u] = _common__WEBPACK_IMPORTED_MODULE_4__["pathSimplify"](conf.m21basePath + _common__WEBPACK_IMPORTED_MODULE_4__["urls"][u]);
   }
 }
 /**
@@ -62894,10 +62879,10 @@ function renderHTML() {
   }
 
   if (document.readyState === 'complete') {
-    _tinyNotation_js__WEBPACK_IMPORTED_MODULE_6__["renderNotationDivs"]();
+    _tinyNotation__WEBPACK_IMPORTED_MODULE_6__["renderNotationDivs"]();
   } else {
     window.addEventListener('load', () => {
-      _tinyNotation_js__WEBPACK_IMPORTED_MODULE_6__["renderNotationDivs"]();
+      _tinyNotation__WEBPACK_IMPORTED_MODULE_6__["renderNotationDivs"]();
     });
   }
 }
@@ -62914,7 +62899,7 @@ function loadDefaultSoundfont(conf) {
     instrument = conf.loadSoundfont;
   }
 
-  return _miditools_js__WEBPACK_IMPORTED_MODULE_5__["loadSoundfont"](instrument);
+  return _miditools__WEBPACK_IMPORTED_MODULE_5__["loadSoundfont"](instrument);
 }
 /**
  *
@@ -63001,9 +62986,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var core_js_modules_es_string_match__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_match__WEBPACK_IMPORTED_MODULE_3__);
 /* harmony import */ var core_js_modules_es_string_replace__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! core-js/modules/es.string.replace */ "./node_modules/core-js/modules/es.string.replace.js");
 /* harmony import */ var core_js_modules_es_string_replace__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_replace__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var _exceptions21_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./exceptions21.js */ "./src/music21/exceptions21.js");
+/* harmony import */ var _exceptions21__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./exceptions21 */ "./src/music21/exceptions21.ts");
 /* harmony import */ var _prebase__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./prebase */ "./src/music21/prebase.ts");
-/* harmony import */ var _common_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./common.js */ "./src/music21/common.js");
+/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./common */ "./src/music21/common.js");
 
 
 
@@ -63141,7 +63126,7 @@ class Accidental extends _prebase__WEBPACK_IMPORTED_MODULE_6__["ProtoM21Object"]
       this._modifier = '####';
       this._unicodeModifier = '&#x1d12a;';
     } else {
-      throw new _exceptions21_js__WEBPACK_IMPORTED_MODULE_5__["Music21Exception"]('Accidental is not supported: ' + accName);
+      throw new _exceptions21__WEBPACK_IMPORTED_MODULE_5__["Music21Exception"]('Accidental is not supported: ' + accName);
     }
   }
   /**
@@ -63219,7 +63204,7 @@ class Accidental extends _prebase__WEBPACK_IMPORTED_MODULE_6__["ProtoM21Object"]
     } else if (m === '---') {
       return 'bbb';
     } else {
-      throw new _exceptions21_js__WEBPACK_IMPORTED_MODULE_5__["Music21Exception"]('Vexflow does not support: ' + m);
+      throw new _exceptions21__WEBPACK_IMPORTED_MODULE_5__["Music21Exception"]('Vexflow does not support: ' + m);
     }
   }
   /**
@@ -63488,7 +63473,7 @@ class Pitch extends _prebase__WEBPACK_IMPORTED_MODULE_6__["ProtoM21Object"] {
 
 
   get pitchClass() {
-    return _common_js__WEBPACK_IMPORTED_MODULE_7__["posMod"](Math.round(this.ps), 12);
+    return _common__WEBPACK_IMPORTED_MODULE_7__["posMod"](Math.round(this.ps), 12);
   }
   /**
    *
@@ -63504,7 +63489,7 @@ class Pitch extends _prebase__WEBPACK_IMPORTED_MODULE_6__["ProtoM21Object"] {
     newDNN -= 1; // makes math easier
 
     this.octave = Math.floor(newDNN / 7);
-    var mod7DNN = _common_js__WEBPACK_IMPORTED_MODULE_7__["posMod"](Math.round(newDNN), 7);
+    var mod7DNN = _common__WEBPACK_IMPORTED_MODULE_7__["posMod"](Math.round(newDNN), 7);
     this.step = stepsToName[mod7DNN];
   }
   /**
@@ -63544,7 +63529,7 @@ class Pitch extends _prebase__WEBPACK_IMPORTED_MODULE_6__["ProtoM21Object"] {
   }
 
   set ps(ps) {
-    this.name = midiToName[_common_js__WEBPACK_IMPORTED_MODULE_7__["posMod"](ps, 12)];
+    this.name = midiToName[_common__WEBPACK_IMPORTED_MODULE_7__["posMod"](ps, 12)];
     this.octave = Math.floor(ps / 12) - 1;
     this.spellingIsInferred = true;
   }
@@ -63980,7 +63965,7 @@ class ProtoM21Object {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "RenderOptions", function() { return RenderOptions; });
-/* harmony import */ var _common_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./common.js */ "./src/music21/common.js");
+/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./common */ "./src/music21/common.js");
 /**
  * music21j -- Javascript reimplementation of Core music21p features.
  * music21/renderOptions -- an object that defines the render options for a Stream
@@ -64072,7 +64057,7 @@ class RenderOptions {
        */
       showMeasureNumber: undefined
     };
-    _common_js__WEBPACK_IMPORTED_MODULE_0__["merge"](this, defaultOptions);
+    _common__WEBPACK_IMPORTED_MODULE_0__["merge"](this, defaultOptions);
   }
 
 }
@@ -64114,15 +64099,15 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var core_js_modules_es_string_starts_with__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_starts_with__WEBPACK_IMPORTED_MODULE_8__);
 /* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! core-js/modules/web.dom-collections.iterator */ "./node_modules/core-js/modules/web.dom-collections.iterator.js");
 /* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_9___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_9__);
-/* harmony import */ var _exceptions21_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./exceptions21.js */ "./src/music21/exceptions21.js");
-/* harmony import */ var _chord_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./chord.js */ "./src/music21/chord.js");
-/* harmony import */ var _common_js__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./common.js */ "./src/music21/common.js");
-/* harmony import */ var _figuredBass_js__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./figuredBass.js */ "./src/music21/figuredBass.js");
-/* harmony import */ var _harmony_js__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./harmony.js */ "./src/music21/harmony.js");
-/* harmony import */ var _interval_js__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./interval.js */ "./src/music21/interval.js");
-/* harmony import */ var _key_js__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ./key.js */ "./src/music21/key.js");
-/* harmony import */ var _pitch_js__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ./pitch.js */ "./src/music21/pitch.js");
-/* harmony import */ var _scale_js__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ./scale.js */ "./src/music21/scale.js");
+/* harmony import */ var _exceptions21__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./exceptions21 */ "./src/music21/exceptions21.ts");
+/* harmony import */ var _chord__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./chord */ "./src/music21/chord.js");
+/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./common */ "./src/music21/common.js");
+/* harmony import */ var _figuredBass__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./figuredBass */ "./src/music21/figuredBass.js");
+/* harmony import */ var _harmony__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./harmony */ "./src/music21/harmony.js");
+/* harmony import */ var _interval__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./interval */ "./src/music21/interval.js");
+/* harmony import */ var _key__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ./key */ "./src/music21/key.js");
+/* harmony import */ var _pitch__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ./pitch */ "./src/music21/pitch.js");
+/* harmony import */ var _scale__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ./scale */ "./src/music21/scale.js");
 
 
 
@@ -64375,7 +64360,7 @@ var romanToNumber = [undefined, 'i', 'ii', 'iii', 'iv', 'v', 'vi', 'vii'];
  *     are Chord objects, so .pitches will work for them also.
  */
 
-class RomanNumeral extends _harmony_js__WEBPACK_IMPORTED_MODULE_14__["Harmony"] {
+class RomanNumeral extends _harmony__WEBPACK_IMPORTED_MODULE_14__["Harmony"] {
   static get className() {
     return 'music21.roman.RomanNumeral';
   }
@@ -64388,7 +64373,7 @@ class RomanNumeral extends _harmony_js__WEBPACK_IMPORTED_MODULE_14__["Harmony"] 
       updatePitches: false,
       parseFigure: false
     };
-    _common_js__WEBPACK_IMPORTED_MODULE_12__["merge"](params, keywords);
+    _common__WEBPACK_IMPORTED_MODULE_12__["merge"](params, keywords);
 
     if (typeof figure === 'string') {
       figure = figure.replace('/o', 'ø');
@@ -64492,7 +64477,7 @@ class RomanNumeral extends _harmony_js__WEBPACK_IMPORTED_MODULE_14__["Harmony"] 
     this._fixMinorVIandVII(useScale);
 
     var expandedFigure = expandShortHand(workingFigure);
-    this.figuresNotationObj = new _figuredBass_js__WEBPACK_IMPORTED_MODULE_13__["Notation"](expandedFigure.toString());
+    this.figuresNotationObj = new _figuredBass__WEBPACK_IMPORTED_MODULE_13__["Notation"](expandedFigure.toString());
     var numbersArr = workingFigure.match(/\d+/);
 
     if (numbersArr != null) {
@@ -64519,8 +64504,8 @@ class RomanNumeral extends _harmony_js__WEBPACK_IMPORTED_MODULE_14__["Harmony"] 
         alteration *= -1;
       }
 
-      frontAlterationTransposeInterval = _interval_js__WEBPACK_IMPORTED_MODULE_15__["intervalFromGenericAndChromatic"](1, alteration);
-      frontAlterationAccidental = new _pitch_js__WEBPACK_IMPORTED_MODULE_17__["Accidental"](alteration);
+      frontAlterationTransposeInterval = _interval__WEBPACK_IMPORTED_MODULE_15__["intervalFromGenericAndChromatic"](1, alteration);
+      frontAlterationAccidental = new _pitch__WEBPACK_IMPORTED_MODULE_17__["Accidental"](alteration);
       frontAlterationString = group;
       workingFigure = workingFigure.replace(_alterationRegex, '');
     }
@@ -64550,7 +64535,7 @@ class RomanNumeral extends _harmony_js__WEBPACK_IMPORTED_MODULE_14__["Harmony"] 
           continue;
         }
 
-        var newAccidental = new _pitch_js__WEBPACK_IMPORTED_MODULE_17__["Accidental"](alterNotation);
+        var newAccidental = new _pitch__WEBPACK_IMPORTED_MODULE_17__["Accidental"](alterNotation);
 
         if (alterPitch.accidental === undefined) {
           alterPitch.accidental = newAccidental;
@@ -64622,12 +64607,12 @@ class RomanNumeral extends _harmony_js__WEBPACK_IMPORTED_MODULE_14__["Harmony"] 
     var fati = this.frontAlterationTransposeInterval;
 
     if (fati !== undefined) {
-      var newFati = _interval_js__WEBPACK_IMPORTED_MODULE_15__["add"]([fati, new _interval_js__WEBPACK_IMPORTED_MODULE_15__["Interval"]('A1')]);
+      var newFati = _interval__WEBPACK_IMPORTED_MODULE_15__["add"]([fati, new _interval__WEBPACK_IMPORTED_MODULE_15__["Interval"]('A1')]);
       this.frontAlterationTransposeInterval = newFati;
       this.frontAlterationAccidental.alter = this.frontAlterationAccidental.alter + 1;
     } else {
-      this.frontAlterationTransposeInterval = new _interval_js__WEBPACK_IMPORTED_MODULE_15__["Interval"]('A1');
-      this.frontAlterationAccidental = new _pitch_js__WEBPACK_IMPORTED_MODULE_17__["Accidental"](1);
+      this.frontAlterationTransposeInterval = new _interval__WEBPACK_IMPORTED_MODULE_15__["Interval"]('A1');
+      this.frontAlterationAccidental = new _pitch__WEBPACK_IMPORTED_MODULE_17__["Accidental"](1);
     }
 
     this._tempRoot = this.frontAlterationTransposeInterval.transposePitch(this._tempRoot);
@@ -64645,12 +64630,12 @@ class RomanNumeral extends _harmony_js__WEBPACK_IMPORTED_MODULE_14__["Harmony"] 
     var a6match = _augmentedSixthRegex.exec(workingFigure);
 
     if (rm === null && a6match === null) {
-      throw new _exceptions21_js__WEBPACK_IMPORTED_MODULE_10__["Music21Exception"]("No roman numeral found in ".concat(workingFigure));
+      throw new _exceptions21__WEBPACK_IMPORTED_MODULE_10__["Music21Exception"]("No roman numeral found in ".concat(workingFigure));
     }
 
     if (a6match !== null) {
       if (useScale.mode === 'major') {
-        useScale = new _key_js__WEBPACK_IMPORTED_MODULE_16__["Key"](useScale.tonic.name, 'minor');
+        useScale = new _key__WEBPACK_IMPORTED_MODULE_16__["Key"](useScale.tonic.name, 'minor');
         this.impliedScale = useScale;
         this.useImpliedScale = true;
       }
@@ -64675,7 +64660,7 @@ class RomanNumeral extends _harmony_js__WEBPACK_IMPORTED_MODULE_14__["Harmony"] 
       }
     } else {
       romanNumeralAlone = rm[1];
-      this.scaleDegree = _common_js__WEBPACK_IMPORTED_MODULE_12__["fromRoman"](romanNumeralAlone);
+      this.scaleDegree = _common__WEBPACK_IMPORTED_MODULE_12__["fromRoman"](romanNumeralAlone);
       workingFigure = workingFigure.replace(_romanNumeralAloneRegex, '');
       this.romanNumeralAlone = romanNumeralAlone;
     }
@@ -64712,16 +64697,16 @@ class RomanNumeral extends _harmony_js__WEBPACK_IMPORTED_MODULE_14__["Harmony"] 
 
   set key(keyOrScale) {
     if (typeof keyOrScale === 'string') {
-      this._scale = new _key_js__WEBPACK_IMPORTED_MODULE_16__["Key"](keyOrScale);
+      this._scale = new _key__WEBPACK_IMPORTED_MODULE_16__["Key"](keyOrScale);
     } else if (typeof keyOrScale === 'undefined') {
-      this._scale = new _key_js__WEBPACK_IMPORTED_MODULE_16__["Key"]('C');
+      this._scale = new _key__WEBPACK_IMPORTED_MODULE_16__["Key"]('C');
     } else {
       this._scale = keyOrScale;
     }
 
     if (keyOrScale === undefined) {
       this.useImpliedScale = true;
-      this.impliedScale = new _scale_js__WEBPACK_IMPORTED_MODULE_18__["MajorScale"]('C');
+      this.impliedScale = new _scale__WEBPACK_IMPORTED_MODULE_18__["MajorScale"]('C');
     } else {
       this.useImpliedScale = false;
       this.impliedScale = false;
@@ -64811,7 +64796,7 @@ class RomanNumeral extends _harmony_js__WEBPACK_IMPORTED_MODULE_14__["Harmony"] 
       var thisScaleDegree = bassScaleDegree + this.figuresNotationObj.numbers[i] - 1;
       var newPitch = useScale.pitchFromDegree(thisScaleDegree, 'ascending');
       var pitchName = this.figuresNotationObj.modifiers[i].modifyPitchName(newPitch.name);
-      var newNewPitch = new _pitch_js__WEBPACK_IMPORTED_MODULE_17__["Pitch"](pitchName);
+      var newNewPitch = new _pitch__WEBPACK_IMPORTED_MODULE_17__["Pitch"](pitchName);
       newNewPitch.octave = newPitch.octave;
 
       if (newNewPitch.ps < lastPitch.ps) {
@@ -64889,7 +64874,7 @@ class RomanNumeral extends _harmony_js__WEBPACK_IMPORTED_MODULE_14__["Harmony"] 
   }
 
   bassScaleDegreeFromNotation(notationObject) {
-    var c = new _pitch_js__WEBPACK_IMPORTED_MODULE_17__["Pitch"]('C3');
+    var c = new _pitch__WEBPACK_IMPORTED_MODULE_17__["Pitch"]('C3');
     var cDNN = c.diatonicNoteNum; // always 22
 
     var pitches = [c];
@@ -64903,12 +64888,12 @@ class RomanNumeral extends _harmony_js__WEBPACK_IMPORTED_MODULE_14__["Harmony"] 
         var distanceToMove = i - 1;
         var newDiatonicNumber = cDNN + distanceToMove;
 
-        var _interval$convertDiat = _interval_js__WEBPACK_IMPORTED_MODULE_15__["convertDiatonicNumberToStep"](newDiatonicNumber),
+        var _interval$convertDiat = _interval__WEBPACK_IMPORTED_MODULE_15__["convertDiatonicNumberToStep"](newDiatonicNumber),
             _interval$convertDiat2 = _slicedToArray(_interval$convertDiat, 2),
             newStep = _interval$convertDiat2[0],
             newOctave = _interval$convertDiat2[1];
 
-        var newPitch = new _pitch_js__WEBPACK_IMPORTED_MODULE_17__["Pitch"]('C3');
+        var newPitch = new _pitch__WEBPACK_IMPORTED_MODULE_17__["Pitch"]('C3');
         newPitch.step = newStep;
         newPitch.octave = newOctave;
         pitches.push(newPitch);
@@ -64928,10 +64913,10 @@ class RomanNumeral extends _harmony_js__WEBPACK_IMPORTED_MODULE_14__["Harmony"] 
       }
     }
 
-    var tempChord = new _chord_js__WEBPACK_IMPORTED_MODULE_11__["Chord"](pitches);
+    var tempChord = new _chord__WEBPACK_IMPORTED_MODULE_11__["Chord"](pitches);
     var rootDNN = tempChord.root().diatonicNoteNum;
     var staffDistanceFromBassToRoot = rootDNN - cDNN;
-    var bassSD = _common_js__WEBPACK_IMPORTED_MODULE_12__["posMod"](this.scaleDegree - staffDistanceFromBassToRoot, 7);
+    var bassSD = _common__WEBPACK_IMPORTED_MODULE_12__["posMod"](this.scaleDegree - staffDistanceFromBassToRoot, 7);
 
     if (bassSD === 0) {
       bassSD = 7;
@@ -64973,7 +64958,7 @@ class RomanNumeral extends _harmony_js__WEBPACK_IMPORTED_MODULE_14__["Harmony"] 
       var faultyPitch = this.getChordStep(thisChordStep); // TODO: check for faultyPitch is undefined
 
       if (faultyPitch.accidental === undefined) {
-        faultyPitch.accidental = new _pitch_js__WEBPACK_IMPORTED_MODULE_17__["Accidental"](correctedSemis);
+        faultyPitch.accidental = new _pitch__WEBPACK_IMPORTED_MODULE_17__["Accidental"](correctedSemis);
       } else {
         var acc = faultyPitch.accidental;
         correctedSemis += acc.alter;
@@ -65015,7 +65000,7 @@ class RomanNumeral extends _harmony_js__WEBPACK_IMPORTED_MODULE_14__["Harmony"] 
         secondaryMode = 'major';
       }
 
-      this.secondaryRomanNumeralKey = new _key_js__WEBPACK_IMPORTED_MODULE_16__["Key"](secondaryRomanNumeral.root().name, secondaryMode);
+      this.secondaryRomanNumeralKey = new _key__WEBPACK_IMPORTED_MODULE_16__["Key"](secondaryRomanNumeral.root().name, secondaryMode);
       useScale = this.secondaryRomanNumeralKey;
       workingFigure = primaryFigure;
     }
@@ -65191,12 +65176,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var core_js_modules_es_string_replace__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_replace__WEBPACK_IMPORTED_MODULE_6__);
 /* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! core-js/modules/web.dom-collections.iterator */ "./node_modules/core-js/modules/web.dom-collections.iterator.js");
 /* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_7__);
-/* harmony import */ var _exceptions21_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./exceptions21.js */ "./src/music21/exceptions21.js");
-/* harmony import */ var _debug_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./debug.js */ "./src/music21/debug.js");
+/* harmony import */ var _exceptions21__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./exceptions21 */ "./src/music21/exceptions21.ts");
+/* harmony import */ var _debug__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./debug */ "./src/music21/debug.js");
 /* harmony import */ var _base__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./base */ "./src/music21/base.ts");
-/* harmony import */ var _common_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./common.js */ "./src/music21/common.js");
-/* harmony import */ var _interval_js__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./interval.js */ "./src/music21/interval.js");
-/* harmony import */ var _pitch_js__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./pitch.js */ "./src/music21/pitch.js");
+/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./common */ "./src/music21/common.js");
+/* harmony import */ var _interval__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./interval */ "./src/music21/interval.js");
+/* harmony import */ var _pitch__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./pitch */ "./src/music21/pitch.js");
 
 
 
@@ -65294,7 +65279,7 @@ class AbstractScale extends Scale {
 
 
   equals(other) {
-    if (_common_js__WEBPACK_IMPORTED_MODULE_11__["arrayEquals"](this.classes, other.classes) && this.tonicDegree === other.tonicDegree && _common_js__WEBPACK_IMPORTED_MODULE_11__["arrayEquals"](this._net, other._net)) {
+    if (_common__WEBPACK_IMPORTED_MODULE_11__["arrayEquals"](this.classes, other.classes) && this.tonicDegree === other.tonicDegree && _common__WEBPACK_IMPORTED_MODULE_11__["arrayEquals"](this._net, other._net)) {
       return true;
     } else {
       return false;
@@ -65312,7 +65297,7 @@ class AbstractScale extends Scale {
         var _p = _step.value;
 
         if (typeof _p === 'string') {
-          pitchListReal.push(new _pitch_js__WEBPACK_IMPORTED_MODULE_13__["Pitch"](_p));
+          pitchListReal.push(new _pitch__WEBPACK_IMPORTED_MODULE_13__["Pitch"](_p));
         } else if (_p.classes.includes('Note')) {
           pitchListReal.push(_p.pitch);
         } else {
@@ -65357,7 +65342,7 @@ class AbstractScale extends Scale {
     var intervalList = [];
 
     for (var i = 0; i < pitchList.length - 1; i++) {
-      var thisInterval = new _interval_js__WEBPACK_IMPORTED_MODULE_12__["Interval"](pitchList[i], pitchList[i + 1]);
+      var thisInterval = new _interval__WEBPACK_IMPORTED_MODULE_12__["Interval"](pitchList[i], pitchList[i + 1]);
       intervalList.push(thisInterval);
     }
 
@@ -65377,7 +65362,7 @@ class AbstractScale extends Scale {
     //     stepOfPitch = 1;
     // }
     if (typeof pitchObj === 'string') {
-      pitchObj = new _pitch_js__WEBPACK_IMPORTED_MODULE_13__["Pitch"](pitchObj);
+      pitchObj = new _pitch__WEBPACK_IMPORTED_MODULE_13__["Pitch"](pitchObj);
     } else {
       pitchObj = pitchObj.clone();
     }
@@ -65425,7 +65410,7 @@ class AbstractScale extends Scale {
 
   getRelativeNodeDegree(pitchReference, unused_nodeName, pitchTarget, unused_comparisonAttribute, unused_direction) {
     if (typeof pitchTarget === 'string') {
-      pitchTarget = new _pitch_js__WEBPACK_IMPORTED_MODULE_13__["Pitch"](pitchTarget);
+      pitchTarget = new _pitch__WEBPACK_IMPORTED_MODULE_13__["Pitch"](pitchTarget);
     }
 
     var realizedPitches;
@@ -65528,7 +65513,7 @@ class AbstractDiatonicScale extends AbstractScale {
       for (var _iterator4 = intervalList[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
         var intVStr = _step4.value;
 
-        this._net.push(new _interval_js__WEBPACK_IMPORTED_MODULE_12__["Interval"](intVStr));
+        this._net.push(new _interval__WEBPACK_IMPORTED_MODULE_12__["Interval"](intVStr));
       }
     } catch (err) {
       _didIteratorError4 = true;
@@ -65573,7 +65558,7 @@ class AbstractHarmonicMinorScale extends AbstractScale {
     for (var _i = 0, _intervalList = intervalList; _i < _intervalList.length; _i++) {
       var intVStr = _intervalList[_i];
 
-      this._net.push(new _interval_js__WEBPACK_IMPORTED_MODULE_12__["Interval"](intVStr));
+      this._net.push(new _interval__WEBPACK_IMPORTED_MODULE_12__["Interval"](intVStr));
     }
   }
 
@@ -65605,7 +65590,7 @@ class AbstractAscendingMelodicMinorScale extends AbstractScale {
     for (var _i2 = 0, _intervalList2 = intervalList; _i2 < _intervalList2.length; _i2++) {
       var intVStr = _intervalList2[_i2];
 
-      this._net.push(new _interval_js__WEBPACK_IMPORTED_MODULE_12__["Interval"](intVStr));
+      this._net.push(new _interval__WEBPACK_IMPORTED_MODULE_12__["Interval"](intVStr));
     }
   }
 
@@ -65624,7 +65609,7 @@ class ConcreteScale extends Scale {
     super();
 
     if (typeof tonic === 'string') {
-      tonic = new _pitch_js__WEBPACK_IMPORTED_MODULE_13__["Pitch"](tonic);
+      tonic = new _pitch__WEBPACK_IMPORTED_MODULE_13__["Pitch"](tonic);
     }
 
     this.tonic = tonic;
@@ -65655,7 +65640,7 @@ class ConcreteScale extends Scale {
     var pitchObj;
 
     if (this.tonic === undefined) {
-      pitchObj = new _pitch_js__WEBPACK_IMPORTED_MODULE_13__["Pitch"]('C4');
+      pitchObj = new _pitch__WEBPACK_IMPORTED_MODULE_13__["Pitch"]('C4');
     } else {
       pitchObj = this.tonic;
     }
@@ -65779,16 +65764,16 @@ class AscendingMelodicMinorScale extends ConcreteScale {
 
 function SimpleDiatonicScale(tonic, scaleSteps) {
   if (tonic === undefined) {
-    tonic = new _pitch_js__WEBPACK_IMPORTED_MODULE_13__["Pitch"]('C4');
-  } else if (!(tonic instanceof _pitch_js__WEBPACK_IMPORTED_MODULE_13__["Pitch"])) {
-    throw new _exceptions21_js__WEBPACK_IMPORTED_MODULE_8__["Music21Exception"]('Cannot make a scale not from ' + 'a music21.pitch.Pitch object: ' + tonic);
+    tonic = new _pitch__WEBPACK_IMPORTED_MODULE_13__["Pitch"]('C4');
+  } else if (!(tonic instanceof _pitch__WEBPACK_IMPORTED_MODULE_13__["Pitch"])) {
+    throw new _exceptions21__WEBPACK_IMPORTED_MODULE_8__["Music21Exception"]('Cannot make a scale not from ' + 'a music21.pitch.Pitch object: ' + tonic);
   }
 
   if (scaleSteps === undefined) {
     scaleSteps = ['M', 'M', 'm', 'M', 'M', 'M', 'm'];
   }
 
-  var gi = new _interval_js__WEBPACK_IMPORTED_MODULE_12__["GenericInterval"](2);
+  var gi = new _interval__WEBPACK_IMPORTED_MODULE_12__["GenericInterval"](2);
   /**
    *
    * @type {music21.pitch.Pitch[]}
@@ -65798,11 +65783,11 @@ function SimpleDiatonicScale(tonic, scaleSteps) {
   var lastPitch = tonic;
 
   for (var i = 0; i < scaleSteps.length; i++) {
-    var di = new _interval_js__WEBPACK_IMPORTED_MODULE_12__["DiatonicInterval"](scaleSteps[i], gi);
-    var ii = new _interval_js__WEBPACK_IMPORTED_MODULE_12__["Interval"](di);
+    var di = new _interval__WEBPACK_IMPORTED_MODULE_12__["DiatonicInterval"](scaleSteps[i], gi);
+    var ii = new _interval__WEBPACK_IMPORTED_MODULE_12__["Interval"](di);
     var newPitch = ii.transposePitch(lastPitch);
 
-    if (_debug_js__WEBPACK_IMPORTED_MODULE_9__["debug"]) {
+    if (_debug__WEBPACK_IMPORTED_MODULE_9__["debug"]) {
       console.log('ScaleSimpleMajor -- adding pitch: ' + newPitch.name);
     }
 
@@ -65897,8 +65882,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_11___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_11__);
 /* harmony import */ var regenerator_runtime_runtime__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! regenerator-runtime/runtime */ "./node_modules/regenerator-runtime/runtime.js");
 /* harmony import */ var regenerator_runtime_runtime__WEBPACK_IMPORTED_MODULE_12___default = /*#__PURE__*/__webpack_require__.n(regenerator_runtime_runtime__WEBPACK_IMPORTED_MODULE_12__);
-/* harmony import */ var _common_js__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./common.js */ "./src/music21/common.js");
-/* harmony import */ var _exceptions21__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./exceptions21 */ "./src/music21/exceptions21.js");
+/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./common */ "./src/music21/common.js");
+/* harmony import */ var _exceptions21__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./exceptions21 */ "./src/music21/exceptions21.ts");
 
 
 
@@ -65973,7 +65958,7 @@ var _NoneSiteRef = new SiteRef();
 _NoneSiteRef.globalSiteIndex = -2;
 _NoneSiteRef.siteIndex = -2;
 
-var _singletonCounter = new _common_js__WEBPACK_IMPORTED_MODULE_13__["SingletonCounter"]();
+var _singletonCounter = new _common__WEBPACK_IMPORTED_MODULE_13__["SingletonCounter"]();
 
 var GLOBAL_SITE_STATE_DICT = new WeakMap();
 /**
@@ -66383,7 +66368,7 @@ class Sites {
       getElementMethod: 'getElementAtOrBefore',
       memo: {}
     };
-    _common_js__WEBPACK_IMPORTED_MODULE_13__["merge"](params, options);
+    _common__WEBPACK_IMPORTED_MODULE_13__["merge"](params, options);
     var memo = params.memo;
     var post;
     var objs = Array.from(this.yieldSites(params.sortByCreationTime, params.priorityTarget, true // excludeNone
@@ -66485,24 +66470,25 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_20___default = /*#__PURE__*/__webpack_require__.n(jquery__WEBPACK_IMPORTED_MODULE_20__);
 /* harmony import */ var midicube__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(/*! midicube */ "./node_modules/midicube/releases/midicube.js");
 /* harmony import */ var midicube__WEBPACK_IMPORTED_MODULE_21___default = /*#__PURE__*/__webpack_require__.n(midicube__WEBPACK_IMPORTED_MODULE_21__);
-/* harmony import */ var _exceptions21_js__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__(/*! ./exceptions21.js */ "./src/music21/exceptions21.js");
-/* harmony import */ var _debug_js__WEBPACK_IMPORTED_MODULE_23__ = __webpack_require__(/*! ./debug.js */ "./src/music21/debug.js");
+/* harmony import */ var _exceptions21__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__(/*! ./exceptions21 */ "./src/music21/exceptions21.ts");
+/* harmony import */ var _debug__WEBPACK_IMPORTED_MODULE_23__ = __webpack_require__(/*! ./debug */ "./src/music21/debug.js");
 /* harmony import */ var _base__WEBPACK_IMPORTED_MODULE_24__ = __webpack_require__(/*! ./base */ "./src/music21/base.ts");
-/* harmony import */ var _beam_js__WEBPACK_IMPORTED_MODULE_25__ = __webpack_require__(/*! ./beam.js */ "./src/music21/beam.js");
-/* harmony import */ var _clef_js__WEBPACK_IMPORTED_MODULE_26__ = __webpack_require__(/*! ./clef.js */ "./src/music21/clef.js");
-/* harmony import */ var _common_js__WEBPACK_IMPORTED_MODULE_27__ = __webpack_require__(/*! ./common.js */ "./src/music21/common.js");
-/* harmony import */ var _duration_js__WEBPACK_IMPORTED_MODULE_28__ = __webpack_require__(/*! ./duration.js */ "./src/music21/duration.js");
-/* harmony import */ var _instrument_js__WEBPACK_IMPORTED_MODULE_29__ = __webpack_require__(/*! ./instrument.js */ "./src/music21/instrument.js");
-/* harmony import */ var _meter_js__WEBPACK_IMPORTED_MODULE_30__ = __webpack_require__(/*! ./meter.js */ "./src/music21/meter.js");
-/* harmony import */ var _note_js__WEBPACK_IMPORTED_MODULE_31__ = __webpack_require__(/*! ./note.js */ "./src/music21/note.js");
-/* harmony import */ var _pitch_js__WEBPACK_IMPORTED_MODULE_32__ = __webpack_require__(/*! ./pitch.js */ "./src/music21/pitch.js");
-/* harmony import */ var _renderOptions_js__WEBPACK_IMPORTED_MODULE_33__ = __webpack_require__(/*! ./renderOptions.js */ "./src/music21/renderOptions.js");
-/* harmony import */ var _vfShow_js__WEBPACK_IMPORTED_MODULE_34__ = __webpack_require__(/*! ./vfShow.js */ "./src/music21/vfShow.js");
-/* harmony import */ var _musicxml_m21ToXml_js__WEBPACK_IMPORTED_MODULE_35__ = __webpack_require__(/*! ./musicxml/m21ToXml.js */ "./src/music21/musicxml/m21ToXml.js");
-/* harmony import */ var _stream_filters_js__WEBPACK_IMPORTED_MODULE_36__ = __webpack_require__(/*! ./stream/filters.js */ "./src/music21/stream/filters.js");
-/* harmony reexport (module object) */ __webpack_require__.d(__webpack_exports__, "filters", function() { return _stream_filters_js__WEBPACK_IMPORTED_MODULE_36__; });
-/* harmony import */ var _stream_iterator_js__WEBPACK_IMPORTED_MODULE_37__ = __webpack_require__(/*! ./stream/iterator.js */ "./src/music21/stream/iterator.js");
-/* harmony reexport (module object) */ __webpack_require__.d(__webpack_exports__, "iterator", function() { return _stream_iterator_js__WEBPACK_IMPORTED_MODULE_37__; });
+/* harmony import */ var _beam__WEBPACK_IMPORTED_MODULE_25__ = __webpack_require__(/*! ./beam */ "./src/music21/beam.js");
+/* harmony import */ var _clef__WEBPACK_IMPORTED_MODULE_26__ = __webpack_require__(/*! ./clef */ "./src/music21/clef.js");
+/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_27__ = __webpack_require__(/*! ./common */ "./src/music21/common.js");
+/* harmony import */ var _duration__WEBPACK_IMPORTED_MODULE_28__ = __webpack_require__(/*! ./duration */ "./src/music21/duration.js");
+/* harmony import */ var _instrument__WEBPACK_IMPORTED_MODULE_29__ = __webpack_require__(/*! ./instrument */ "./src/music21/instrument.js");
+/* harmony import */ var _meter__WEBPACK_IMPORTED_MODULE_30__ = __webpack_require__(/*! ./meter */ "./src/music21/meter.js");
+/* harmony import */ var _note__WEBPACK_IMPORTED_MODULE_31__ = __webpack_require__(/*! ./note */ "./src/music21/note.js");
+/* harmony import */ var _pitch__WEBPACK_IMPORTED_MODULE_32__ = __webpack_require__(/*! ./pitch */ "./src/music21/pitch.js");
+/* harmony import */ var _renderOptions__WEBPACK_IMPORTED_MODULE_33__ = __webpack_require__(/*! ./renderOptions */ "./src/music21/renderOptions.js");
+/* harmony import */ var _tempo__WEBPACK_IMPORTED_MODULE_34__ = __webpack_require__(/*! ./tempo */ "./src/music21/tempo.js");
+/* harmony import */ var _vfShow__WEBPACK_IMPORTED_MODULE_35__ = __webpack_require__(/*! ./vfShow */ "./src/music21/vfShow.js");
+/* harmony import */ var _musicxml_m21ToXml__WEBPACK_IMPORTED_MODULE_36__ = __webpack_require__(/*! ./musicxml/m21ToXml */ "./src/music21/musicxml/m21ToXml.js");
+/* harmony import */ var _stream_filters__WEBPACK_IMPORTED_MODULE_37__ = __webpack_require__(/*! ./stream/filters */ "./src/music21/stream/filters.js");
+/* harmony reexport (module object) */ __webpack_require__.d(__webpack_exports__, "filters", function() { return _stream_filters__WEBPACK_IMPORTED_MODULE_37__; });
+/* harmony import */ var _stream_iterator__WEBPACK_IMPORTED_MODULE_38__ = __webpack_require__(/*! ./stream/iterator */ "./src/music21/stream/iterator.js");
+/* harmony reexport (module object) */ __webpack_require__.d(__webpack_exports__, "iterator", function() { return _stream_iterator__WEBPACK_IMPORTED_MODULE_38__; });
 
 
 
@@ -66584,6 +66570,7 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
 
 
+
  // eslint-disable-next-line import/no-cycle
 
 
@@ -66591,10 +66578,10 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
 
 
-class StreamException extends _exceptions21_js__WEBPACK_IMPORTED_MODULE_22__["Music21Exception"] {}
+class StreamException extends _exceptions21__WEBPACK_IMPORTED_MODULE_22__["Music21Exception"] {}
 
 function _exportMusicXMLAsText(s) {
-  var gox = new _musicxml_m21ToXml_js__WEBPACK_IMPORTED_MODULE_35__["GeneralObjectExporter"](s);
+  var gox = new _musicxml_m21ToXml__WEBPACK_IMPORTED_MODULE_36__["GeneralObjectExporter"](s);
   return gox.parse();
 }
 /**
@@ -66628,8 +66615,7 @@ function _exportMusicXMLAsText(s) {
  *     to just get the parts (NON-recursive)
  * @property {music21.stream.Stream} measures - (readonly) a filter on the
  *     Stream to just get the measures (NON-recursive)
- * @property {number} tempo - tempo in beats per minute (will become more
- *     sophisticated later, but for now the whole stream has one tempo
+ * @property {music21.tempo.MetronomeMark} tempo - the first MetronomeMark for the Stream
  * @property {music21.instrument.Instrument|undefined} instrument - an
  *     instrument object associated with the stream (can be set with a
  *     string also, but will return an `Instrument` object)
@@ -66673,8 +66659,9 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
     this._autoBeam = undefined;
     this.activeVFStave = undefined;
     this.activeVFRenderer = undefined;
-    this.renderOptions = new _renderOptions_js__WEBPACK_IMPORTED_MODULE_33__["RenderOptions"]();
-    this._tempo = undefined;
+    this.renderOptions = new _renderOptions__WEBPACK_IMPORTED_MODULE_33__["RenderOptions"]();
+    this._tempo = undefined; // a music21.tempo.MetronomeMark object
+
     this.staffLines = 5;
     this._stopPlaying = false;
     this._allowMultipleSimultaneousPlays = true; // not implemented yet.
@@ -66705,7 +66692,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
           foundNote = _this$findNoteForClic2[1];
 
       if (foundNote === undefined) {
-        if (_debug_js__WEBPACK_IMPORTED_MODULE_23__["debug"]) {
+        if (_debug__WEBPACK_IMPORTED_MODULE_23__["debug"]) {
           console.log('No note found');
         }
 
@@ -66799,7 +66786,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
       return this._duration;
     }
 
-    return new _duration_js__WEBPACK_IMPORTED_MODULE_28__["Duration"](this.highestTime);
+    return new _duration__WEBPACK_IMPORTED_MODULE_28__["Duration"](this.highestTime);
   }
 
   set duration(newDuration) {
@@ -66939,17 +66926,99 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
   }
 
   get tempo() {
-    if (this._tempo === undefined && this.activeSite !== undefined) {
-      return this.activeSite.tempo;
-    } else if (this._tempo === undefined) {
-      return 150;
-    } else {
-      return this._tempo;
-    }
+    return this.getSpecialContext('metronomeMark', true);
   }
 
   set tempo(newTempo) {
+    var oldTempo = this._firstElementContext('metronomeMark');
+
+    if (oldTempo !== undefined) {
+      this.replace(oldTempo, newTempo);
+    } else {
+      this.insert(0.0, newTempo);
+    }
+
     this._tempo = newTempo;
+  }
+  /**
+   * Return an array of the outer bounds of each MetronomeMark in the stream.
+   * [offsetStart, offsetEnd, tempo.MetronomeMark]
+   *
+   * @returns {Array<number|music21.tempo.MetronomeMark>}
+   */
+
+
+  _metronomeMarkBoundaries() {
+    var mmBoundaries = [];
+    var thisFlat = this.flat;
+    var metronomeMarks = thisFlat.getElementsByClass('MetronomeMark');
+    var highestTime = thisFlat.highestTime;
+    var lowestOffset = 0;
+    var mmDefault = new _tempo__WEBPACK_IMPORTED_MODULE_34__["MetronomeMark"]({
+      number: 120
+    });
+
+    if (!metronomeMarks.length) {
+      mmBoundaries.push([lowestOffset, highestTime, mmDefault]);
+    } else if (metronomeMarks.length === 1) {
+      var metronomeMark = metronomeMarks.get(0);
+      var offset = metronomeMark.getOffsetBySite(thisFlat);
+
+      if (offset > lowestOffset) {
+        mmBoundaries.push([lowestOffset, offset, mmDefault]);
+        mmBoundaries.push([offset, highestTime, metronomeMark]);
+      } else {
+        mmBoundaries.push([lowestOffset, highestTime, metronomeMark]);
+      }
+    } else {
+      var offsetPairs = [];
+
+      for (var i = 0; i < metronomeMarks.length; i++) {
+        var _metronomeMark = metronomeMarks.get(i);
+
+        offsetPairs.push([_metronomeMark.getOffsetBySite(thisFlat), _metronomeMark]);
+      }
+
+      if (offsetPairs[0][0] > lowestOffset) {
+        mmBoundaries.push([lowestOffset, offsetPairs[0][0], mmDefault]);
+      }
+
+      offsetPairs.forEach((offsetPair, i) => {
+        if (i === offsetPairs.length - 1) {
+          mmBoundaries.push([offsetPair[0], highestTime, offsetPair[1]]);
+        } else {
+          mmBoundaries.push([offsetPair[0], offsetPairs[i + 1][0], offsetPair[1]]);
+        }
+      });
+    }
+
+    return mmBoundaries;
+  }
+  /**
+   * Return the average tempo within the span indicated by offset start and end.
+   *
+   * @param {number} oStart - offset start
+   * @param {number} oEnd - offset end
+   * @returns {number}
+   */
+
+
+  _averageTempo(oStart, oEnd) {
+    var overallDuration = oEnd - oStart;
+    return this._metronomeMarkBoundaries().reduce((tempo, mm) => {
+      if (mm[0] >= oStart && mm[0] < oEnd) {
+        var overlapDur = mm[1] <= oEnd ? mm[1] - mm[0] : oEnd - mm[0];
+        tempo += overlapDur / overallDuration * mm[2].number;
+      } else if (mm[1] > oStart && mm[1] <= oEnd) {
+        var _overlapDur = mm[0] >= oStart ? mm[1] - mm[0] : mm[1] - oStart;
+
+        tempo += _overlapDur / overallDuration * mm[2].number;
+      } else if (mm[0] <= oStart && mm[1] >= oEnd) {
+        tempo = mm[2].number;
+      }
+
+      return tempo;
+    }, 0);
   }
 
   get instrument() {
@@ -66962,7 +67031,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
 
   set instrument(newInstrument) {
     if (typeof newInstrument === 'string') {
-      newInstrument = new _instrument_js__WEBPACK_IMPORTED_MODULE_29__["Instrument"](newInstrument);
+      newInstrument = new _instrument__WEBPACK_IMPORTED_MODULE_29__["Instrument"](newInstrument);
     }
 
     this._instrument = newInstrument;
@@ -67066,7 +67135,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
 
   set timeSignature(newTimeSignature) {
     if (typeof newTimeSignature === 'string') {
-      newTimeSignature = new _meter_js__WEBPACK_IMPORTED_MODULE_30__["TimeSignature"](newTimeSignature);
+      newTimeSignature = new _meter__WEBPACK_IMPORTED_MODULE_30__["TimeSignature"](newTimeSignature);
     }
 
     var oldTS = this._firstElementContext('timeSignature');
@@ -67244,7 +67313,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
       if (key === '_activeSite') {
         ret[key] = this[key];
       } else if (key === 'renderOptions') {
-        ret[key] = _common_js__WEBPACK_IMPORTED_MODULE_27__["merge"]({}, this[key]);
+        ret[key] = _common__WEBPACK_IMPORTED_MODULE_27__["merge"]({}, this[key]);
       } else if (deep !== true && key === '_elements') {
         ret[key] = this[key].slice(); // shallow copy...
       } else if (deep !== true && key === '_offsetDict') {
@@ -67373,14 +67442,14 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
         skipSelf = _ref2$skipSelf === void 0 ? true : _ref2$skipSelf;
 
     var includeSelf = !skipSelf;
-    var ri = new _stream_iterator_js__WEBPACK_IMPORTED_MODULE_37__["RecursiveIterator"](this, {
+    var ri = new _stream_iterator__WEBPACK_IMPORTED_MODULE_38__["RecursiveIterator"](this, {
       streamsOnly,
       restoreActiveSites,
       includeSelf
     });
 
     if (classFilter !== undefined) {
-      ri.addFilter(new _stream_filters_js__WEBPACK_IMPORTED_MODULE_36__["ClassFilter"](classFilter));
+      ri.addFilter(new _stream_filters__WEBPACK_IMPORTED_MODULE_37__["ClassFilter"](classFilter));
     }
 
     return ri;
@@ -67431,7 +67500,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
     var el = elOrElList;
 
     if (!(el instanceof _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"])) {
-      throw new _exceptions21_js__WEBPACK_IMPORTED_MODULE_22__["Music21Exception"]('Can only append a music21 object.');
+      throw new _exceptions21__WEBPACK_IMPORTED_MODULE_22__["Music21Exception"]('Can only append a music21 object.');
     }
 
     try {
@@ -67857,7 +67926,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
       bestClef: false,
       inPlace: false
     };
-    _common_js__WEBPACK_IMPORTED_MODULE_27__["merge"](params, options);
+    _common__WEBPACK_IMPORTED_MODULE_27__["merge"](params, options);
     var voiceCount;
 
     if (this.hasVoices()) {
@@ -68115,7 +68184,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
       }
 
       var restQL = restInfo.endTime - restInfo.offset;
-      var restObj = new _note_js__WEBPACK_IMPORTED_MODULE_31__["Rest"]();
+      var restObj = new _note__WEBPACK_IMPORTED_MODULE_31__["Rest"]();
       restObj.duration.quarterLength = restQL;
       out.insert(restInfo.offset, restObj);
       restInfo.offset = undefined;
@@ -68216,7 +68285,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
     var params = {
       inPlace: false
     };
-    _common_js__WEBPACK_IMPORTED_MODULE_27__["merge"](params, options);
+    _common__WEBPACK_IMPORTED_MODULE_27__["merge"](params, options);
     var returnObj = this;
 
     if (!params.inPlace) {
@@ -68328,7 +68397,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
           if (thisBeams !== undefined) {
             n.beams = thisBeams;
           } else {
-            n.beams = new _beam_js__WEBPACK_IMPORTED_MODULE_25__["Beams"]();
+            n.beams = new _beam__WEBPACK_IMPORTED_MODULE_25__["Beams"]();
           }
         }
       } // returnObj.streamStatus.beams = true;
@@ -68469,7 +68538,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
   }
 
   get iter() {
-    return new _stream_iterator_js__WEBPACK_IMPORTED_MODULE_37__["StreamIterator"](this);
+    return new _stream_iterator__WEBPACK_IMPORTED_MODULE_38__["StreamIterator"](this);
   }
   /**
    * Find all elements with a certain class; if an Array is given, then any
@@ -68750,7 +68819,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
 
     if (lastStepDict[p.step] !== newAlter || lastOctavelessStepDict[p.step] !== newAlter) {
       if (p.accidental === undefined) {
-        p.accidental = new _pitch_js__WEBPACK_IMPORTED_MODULE_32__["Accidental"]('natural');
+        p.accidental = new _pitch__WEBPACK_IMPORTED_MODULE_32__["Accidental"]('natural');
       }
 
       p.accidental.displayStatus = true; // console.log("setting displayStatus to true");
@@ -68790,7 +68859,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
 
   resetRenderOptions(recursive, preserveEvents) {
     var oldEvents = this.renderOptions.events;
-    this.renderOptions = new _renderOptions_js__WEBPACK_IMPORTED_MODULE_33__["RenderOptions"]();
+    this.renderOptions = new _renderOptions__WEBPACK_IMPORTED_MODULE_33__["RenderOptions"]();
 
     if (preserveEvents) {
       this.renderOptions.events = oldEvents;
@@ -68884,7 +68953,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
       }
     }
 
-    var vfr = new _vfShow_js__WEBPACK_IMPORTED_MODULE_34__["Renderer"](this, canvasOrSVG);
+    var vfr = new _vfShow__WEBPACK_IMPORTED_MODULE_35__["Renderer"](this, canvasOrSVG);
 
     if (tagName === 'canvas') {
       vfr.rendererType = 'canvas';
@@ -68947,7 +69016,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
         numSystems = this.numSystems();
       }
 
-      if (_debug_js__WEBPACK_IMPORTED_MODULE_23__["debug"]) {
+      if (_debug__WEBPACK_IMPORTED_MODULE_23__["debug"]) {
         console.log('estimateStreamHeight for Part: numSystems [' + numSystems + '] * staffHeight [' + staffHeight + '] + (numSystems [' + numSystems + '] - 1) * systemPadding [' + systemPadding + '].');
       }
 
@@ -69039,7 +69108,6 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
    *
    * `options` can be an object containing:
    * - instrument: {@link music21.instrument.Instrument} object (default, `this.instrument`)
-   * - tempo: number (default, `this.tempo`)
    *
    * @param {Object} [options] - object of playback options
    * @returns {this}
@@ -69049,11 +69117,10 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
   playStream(options) {
     var params = {
       instrument: this.instrument,
-      tempo: this.tempo,
       done: undefined,
       startNote: undefined
     };
-    _common_js__WEBPACK_IMPORTED_MODULE_27__["merge"](params, options);
+    _common__WEBPACK_IMPORTED_MODULE_27__["merge"](params, options);
     var startNoteIndex = params.startNote;
     var currentNoteIndex = 0;
 
@@ -69061,32 +69128,36 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
       currentNoteIndex = startNoteIndex;
     }
 
-    var flatEls = this.flat.elements;
+    var flatEls = this.flat.notes;
     var lastNoteIndex = flatEls.length - 1;
     this._stopPlaying = false;
     var thisStream = this;
 
     var playNext = function playNext(elements, params) {
       if (currentNoteIndex <= lastNoteIndex && !thisStream._stopPlaying) {
-        var el = elements[currentNoteIndex];
+        var el = elements.get(currentNoteIndex);
         var nextNote;
         var playDuration;
 
         if (currentNoteIndex < lastNoteIndex) {
-          nextNote = elements[currentNoteIndex + 1];
+          nextNote = elements.get(currentNoteIndex + 1);
           playDuration = nextNote.offset - el.offset;
         } else {
           playDuration = el.duration.quarterLength;
         }
 
-        var milliseconds = playDuration * 1000 * 60 / params.tempo;
+        var nextOffset = nextNote ? nextNote.offset : el.offset + el.duration.quarterLength;
 
-        if (_debug_js__WEBPACK_IMPORTED_MODULE_23__["debug"]) {
-          console.log('playing: ', el, playDuration, milliseconds, params.tempo);
+        var _tempo = thisStream._averageTempo(el.offset, nextOffset);
+
+        var milliseconds = playDuration * 1000 * 60 / _tempo;
+
+        if (_debug__WEBPACK_IMPORTED_MODULE_23__["debug"]) {
+          console.log('playing: ', el, playDuration, milliseconds, _tempo);
         }
 
         if (el.playMidi !== undefined) {
-          el.playMidi(params.tempo, nextNote, params);
+          el.playMidi(_tempo, nextNote, params);
         }
 
         currentNoteIndex += 1;
@@ -69169,7 +69240,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
 
     if (width !== undefined) {
       if (typeof width === 'string') {
-        width = _common_js__WEBPACK_IMPORTED_MODULE_27__["stripPx"](width);
+        width = _common__WEBPACK_IMPORTED_MODULE_27__["stripPx"](width);
       }
 
       $newCanvasOrDIV.attr('width', width);
@@ -69329,7 +69400,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
 
 
     if ($oldSVGOrCanvas.length === 0) {
-      throw new _exceptions21_js__WEBPACK_IMPORTED_MODULE_22__["Music21Exception"]('No svg defined for replaceDOM!');
+      throw new _exceptions21__WEBPACK_IMPORTED_MODULE_22__["Music21Exception"]('No svg defined for replaceDOM!');
     } else if ($oldSVGOrCanvas.length > 1) {
       // change last svg...
       // replacing each with svgBlock doesn't work
@@ -69571,7 +69642,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
       allowBackup: true,
       backupMaximum: 70
     };
-    _common_js__WEBPACK_IMPORTED_MODULE_27__["merge"](params, options);
+    _common__WEBPACK_IMPORTED_MODULE_27__["merge"](params, options);
     var foundNote;
 
     if (allowablePixels === undefined) {
@@ -69682,7 +69753,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
 
   noteChanged(clickedDiatonicNoteNum, foundNote, svg) {
     var n = foundNote;
-    var p = new _pitch_js__WEBPACK_IMPORTED_MODULE_32__["Pitch"]('C');
+    var p = new _pitch__WEBPACK_IMPORTED_MODULE_32__["Pitch"]('C');
     p.diatonicNoteNum = clickedDiatonicNoteNum;
     p.accidental = n.pitch.accidental;
     n.pitch = p;
@@ -69803,7 +69874,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
 
       if (this.activeNote !== undefined) {
         var n = this.activeNote;
-        n.pitch.accidental = new _pitch_js__WEBPACK_IMPORTED_MODULE_32__["Accidental"](newAlter);
+        n.pitch.accidental = new _pitch__WEBPACK_IMPORTED_MODULE_32__["Accidental"](newAlter);
         /* console.log(n.pitch.name); */
 
         var $newSvg = this.redrawDOM($useSvg[0]);
@@ -69820,7 +69891,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
     var $buttonDiv = jquery__WEBPACK_IMPORTED_MODULE_20__('<div/>').attr('class', 'accidentalToolbar scoreToolbar');
 
     var _loop = function _loop(i) {
-      var acc = new _pitch_js__WEBPACK_IMPORTED_MODULE_32__["Accidental"](i);
+      var acc = new _pitch__WEBPACK_IMPORTED_MODULE_32__["Accidental"](i);
       var $button = jquery__WEBPACK_IMPORTED_MODULE_20__('<button>' + acc.unicodeModifier + '</button>').click(e => addAccidental(i, e));
 
       if (Math.abs(i) > 1) {
@@ -70157,7 +70228,7 @@ class Part extends Stream {
     if (systemHeight === undefined) {
       systemHeight = this.systemHeight;
       /* part.show() called... */
-    } else if (_debug_js__WEBPACK_IMPORTED_MODULE_23__["debug"]) {
+    } else if (_debug__WEBPACK_IMPORTED_MODULE_23__["debug"]) {
       console.log('overridden systemHeight: ' + systemHeight);
     }
 
@@ -70397,7 +70468,7 @@ class Part extends Stream {
     } // debug = true;
 
 
-    if (_debug_js__WEBPACK_IMPORTED_MODULE_23__["debug"]) {
+    if (_debug__WEBPACK_IMPORTED_MODULE_23__["debug"]) {
       console.log('this.estimateStreamHeight(): ' + this.estimateStreamHeight() + ' / $(svg).height(): ' + jquery__WEBPACK_IMPORTED_MODULE_20__(svg).height());
     } // TODO(msc) -- systemPadding was never used -- should it be?
     // let systemPadding = this.renderOptions.systemPadding;
@@ -70441,7 +70512,7 @@ class Part extends Stream {
         var top = rendOp.top;
         var bottom = top + rendOp.height;
 
-        if (_debug_js__WEBPACK_IMPORTED_MODULE_23__["debug"]) {
+        if (_debug__WEBPACK_IMPORTED_MODULE_23__["debug"]) {
           console.log('Searching for X:' + Math.round(xPxScaled) + ' in Measure ' + ' with boundaries L:' + left + ' R:' + right + ' T: ' + top + ' B: ' + bottom);
         }
 
@@ -70499,7 +70570,7 @@ class Score extends Stream {
     var c = super.clef;
 
     if (c === undefined) {
-      return new _clef_js__WEBPACK_IMPORTED_MODULE_26__["TrebleClef"]();
+      return new _clef__WEBPACK_IMPORTED_MODULE_26__["TrebleClef"]();
     } else {
       return c;
     }
@@ -71011,11 +71082,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var core_js_modules_es_array_includes__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_includes__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var core_js_modules_es_string_includes__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! core-js/modules/es.string.includes */ "./node_modules/core-js/modules/es.string.includes.js");
 /* harmony import */ var core_js_modules_es_string_includes__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_includes__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _exceptions21_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../exceptions21.js */ "./src/music21/exceptions21.js");
+/* harmony import */ var _exceptions21__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../exceptions21 */ "./src/music21/exceptions21.ts");
 
 
 
-class FilterException extends _exceptions21_js__WEBPACK_IMPORTED_MODULE_2__["Music21Exception"] {}
+class FilterException extends _exceptions21__WEBPACK_IMPORTED_MODULE_2__["Music21Exception"] {}
 
 class _StopIteration {}
 
@@ -71277,8 +71348,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_6__);
 /* harmony import */ var regenerator_runtime_runtime__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! regenerator-runtime/runtime */ "./node_modules/regenerator-runtime/runtime.js");
 /* harmony import */ var regenerator_runtime_runtime__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(regenerator_runtime_runtime__WEBPACK_IMPORTED_MODULE_7__);
-/* harmony import */ var _exceptions21_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../exceptions21.js */ "./src/music21/exceptions21.js");
-/* harmony import */ var _filters_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./filters.js */ "./src/music21/stream/filters.js");
+/* harmony import */ var _exceptions21__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../exceptions21 */ "./src/music21/exceptions21.ts");
+/* harmony import */ var _filters__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./filters */ "./src/music21/stream/filters.js");
 
 
 
@@ -71289,8 +71360,8 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-var StopIterationSingleton = _filters_js__WEBPACK_IMPORTED_MODULE_9__["StopIterationSingleton"];
-class StreamIteratorException extends _exceptions21_js__WEBPACK_IMPORTED_MODULE_8__["StreamException"] {}
+var StopIterationSingleton = _filters__WEBPACK_IMPORTED_MODULE_9__["StopIterationSingleton"];
+class StreamIteratorException extends _exceptions21__WEBPACK_IMPORTED_MODULE_8__["StreamException"] {}
 /**
  * @memberof music21.stream.iterator
  */
@@ -71669,11 +71740,11 @@ class StreamIterator {
 
 
   getElementsByClass(classFilterList) {
-    return this.addFilter(new _filters_js__WEBPACK_IMPORTED_MODULE_9__["ClassFilter"](classFilterList));
+    return this.addFilter(new _filters__WEBPACK_IMPORTED_MODULE_9__["ClassFilter"](classFilterList));
   }
 
   getElementsNotOfClass(classFilterList) {
-    return this.addFilter(new _filters_js__WEBPACK_IMPORTED_MODULE_9__["ClassNotFilter"](classFilterList));
+    return this.addFilter(new _filters__WEBPACK_IMPORTED_MODULE_9__["ClassNotFilter"](classFilterList));
   } // getElementsByGroup;
   // getElementsByOffset;
 
@@ -71683,27 +71754,27 @@ class StreamIterator {
       args[_key] = arguments[_key];
     }
 
-    return this.addFilter(new _filters_js__WEBPACK_IMPORTED_MODULE_9__["OffsetFilter"](...args));
+    return this.addFilter(new _filters__WEBPACK_IMPORTED_MODULE_9__["OffsetFilter"](...args));
   }
 
   get notes() {
-    return this.addFilter(new _filters_js__WEBPACK_IMPORTED_MODULE_9__["ClassFilter"]('NotRest'));
+    return this.addFilter(new _filters__WEBPACK_IMPORTED_MODULE_9__["ClassFilter"]('NotRest'));
   }
 
   get notesAndRests() {
-    return this.addFilter(new _filters_js__WEBPACK_IMPORTED_MODULE_9__["ClassFilter"]('GeneralNote'));
+    return this.addFilter(new _filters__WEBPACK_IMPORTED_MODULE_9__["ClassFilter"]('GeneralNote'));
   }
 
   get parts() {
-    return this.addFilter(new _filters_js__WEBPACK_IMPORTED_MODULE_9__["ClassFilter"]('Part'));
+    return this.addFilter(new _filters__WEBPACK_IMPORTED_MODULE_9__["ClassFilter"]('Part'));
   }
 
   get spanners() {
-    return this.addFilter(new _filters_js__WEBPACK_IMPORTED_MODULE_9__["ClassFilter"]('Spanner'));
+    return this.addFilter(new _filters__WEBPACK_IMPORTED_MODULE_9__["ClassFilter"]('Spanner'));
   }
 
   get voices() {
-    return this.addFilter(new _filters_js__WEBPACK_IMPORTED_MODULE_9__["ClassFilter"]('Voice'));
+    return this.addFilter(new _filters__WEBPACK_IMPORTED_MODULE_9__["ClassFilter"]('Voice'));
   }
 
 }
@@ -71887,7 +71958,7 @@ class RecursiveIterator extends StreamIterator {
     this.iteratorStartOffsetInHierarchy = 0.0;
 
     if (streamsOnly) {
-      this.filters.push(new _filters_js__WEBPACK_IMPORTED_MODULE_9__["ClassFilter"]('Stream'));
+      this.filters.push(new _filters__WEBPACK_IMPORTED_MODULE_9__["ClassFilter"]('Stream'));
     }
     /**
      *
@@ -72143,21 +72214,44 @@ class RecursiveIterator extends StreamIterator {
 /*!******************************!*\
   !*** ./src/music21/tempo.js ***!
   \******************************/
-/*! exports provided: defaultTempoValues, baseTempo, Metronome */
+/*! exports provided: TempoException, defaultTempoValues, baseTempo, Metronome, MetronomeMark */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "TempoException", function() { return TempoException; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "defaultTempoValues", function() { return defaultTempoValues; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "baseTempo", function() { return baseTempo; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Metronome", function() { return Metronome; });
-/* harmony import */ var core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es.regexp.to-string */ "./node_modules/core-js/modules/es.regexp.to-string.js");
-/* harmony import */ var core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
-/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(jquery__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var midicube__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! midicube */ "./node_modules/midicube/releases/midicube.js");
-/* harmony import */ var midicube__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(midicube__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _prebase__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./prebase */ "./src/music21/prebase.ts");
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "MetronomeMark", function() { return MetronomeMark; });
+/* harmony import */ var core_js_modules_es_symbol_description__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es.symbol.description */ "./node_modules/core-js/modules/es.symbol.description.js");
+/* harmony import */ var core_js_modules_es_symbol_description__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_symbol_description__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var core_js_modules_es_array_includes__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! core-js/modules/es.array.includes */ "./node_modules/core-js/modules/es.array.includes.js");
+/* harmony import */ var core_js_modules_es_array_includes__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_includes__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var core_js_modules_es_array_iterator__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! core-js/modules/es.array.iterator */ "./node_modules/core-js/modules/es.array.iterator.js");
+/* harmony import */ var core_js_modules_es_array_iterator__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_iterator__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! core-js/modules/es.regexp.to-string */ "./node_modules/core-js/modules/es.regexp.to-string.js");
+/* harmony import */ var core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var core_js_modules_es_string_includes__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! core-js/modules/es.string.includes */ "./node_modules/core-js/modules/es.string.includes.js");
+/* harmony import */ var core_js_modules_es_string_includes__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_includes__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var core_js_modules_es_string_split__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! core-js/modules/es.string.split */ "./node_modules/core-js/modules/es.string.split.js");
+/* harmony import */ var core_js_modules_es_string_split__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_split__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! core-js/modules/web.dom-collections.iterator */ "./node_modules/core-js/modules/web.dom-collections.iterator.js");
+/* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_6__);
+/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
+/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(jquery__WEBPACK_IMPORTED_MODULE_7__);
+/* harmony import */ var midicube__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! midicube */ "./node_modules/midicube/releases/midicube.js");
+/* harmony import */ var midicube__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(midicube__WEBPACK_IMPORTED_MODULE_8__);
+/* harmony import */ var _prebase__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./prebase */ "./src/music21/prebase.ts");
+/* harmony import */ var _base__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./base */ "./src/music21/base.ts");
+/* harmony import */ var _duration__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./duration */ "./src/music21/duration.js");
+/* harmony import */ var _exceptions21__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./exceptions21 */ "./src/music21/exceptions21.ts");
+
+
+
+
+
+
 
 
 /**
@@ -72174,17 +72268,17 @@ __webpack_require__.r(__webpack_exports__);
  * @memberof music21
  * @requires music21/prebase
  * @requires music21/base
+ * @requires music21/duration
  * @requires MIDI
  * @property {number} [baseTempo=60] - basic tempo
  */
 
 
 
-/**
- * The tempo object itself is a full object in music21p -- TODO(msc): make it one here too.
- * (MetronomeMark)
- */
-// noinspection JSNonASCIINames,NonAsciiCharacters
+
+
+
+class TempoException extends _exceptions21__WEBPACK_IMPORTED_MODULE_12__["Music21Exception"] {} // noinspection JSNonASCIINames,NonAsciiCharacters
 
 /**
  * Object mapping names to tempo values
@@ -72247,7 +72341,7 @@ var baseTempo = 60;
  * @property {int} chirpTimeout - an index of a timeout object for chirping
  */
 
-class Metronome extends _prebase__WEBPACK_IMPORTED_MODULE_3__["ProtoM21Object"] {
+class Metronome extends _prebase__WEBPACK_IMPORTED_MODULE_9__["ProtoM21Object"] {
   static get className() {
     return 'music21.tempo.Metronome';
   }
@@ -72302,7 +72396,7 @@ class Metronome extends _prebase__WEBPACK_IMPORTED_MODULE_3__["ProtoM21Object"] 
 
   _silentFlash(flashColor) {
     this.$metronomeDiv.find('.metroFlash').css('background-color', flashColor).fadeOut(this.beatLength * 1000 / 4, function silentFadeOut() {
-      jquery__WEBPACK_IMPORTED_MODULE_1__(this).css('background-color', '#ffffff').fadeIn(1);
+      jquery__WEBPACK_IMPORTED_MODULE_7__(this).css('background-color', '#ffffff').fadeIn(1);
     });
   }
   /**
@@ -72317,8 +72411,8 @@ class Metronome extends _prebase__WEBPACK_IMPORTED_MODULE_3__["ProtoM21Object"] 
       this.beat = 1;
 
       if (this.silent !== true) {
-        midicube__WEBPACK_IMPORTED_MODULE_2__["noteOn"](0, 96, 100, 0);
-        midicube__WEBPACK_IMPORTED_MODULE_2__["noteOff"](0, 96, 0.1);
+        midicube__WEBPACK_IMPORTED_MODULE_8__["noteOn"](0, 96, 100, 0);
+        midicube__WEBPACK_IMPORTED_MODULE_8__["noteOff"](0, 96, 0.1);
       }
 
       if (this.flash === true) {
@@ -72326,8 +72420,8 @@ class Metronome extends _prebase__WEBPACK_IMPORTED_MODULE_3__["ProtoM21Object"] 
       }
     } else {
       if (this.silent !== true) {
-        midicube__WEBPACK_IMPORTED_MODULE_2__["noteOn"](0, 84, 70, 0);
-        midicube__WEBPACK_IMPORTED_MODULE_2__["noteOff"](0, 84, 0.1);
+        midicube__WEBPACK_IMPORTED_MODULE_8__["noteOn"](0, 84, 70, 0);
+        midicube__WEBPACK_IMPORTED_MODULE_8__["noteOff"](0, 84, 0.1);
       }
 
       if (this.flash === true) {
@@ -72435,12 +72529,12 @@ class Metronome extends _prebase__WEBPACK_IMPORTED_MODULE_3__["ProtoM21Object"] 
      */
     var $where;
 
-    if (where !== undefined && where instanceof jquery__WEBPACK_IMPORTED_MODULE_1__) {
+    if (where !== undefined && where instanceof jquery__WEBPACK_IMPORTED_MODULE_7__) {
       $where = where;
-    } else if (where !== undefined && !(where instanceof jquery__WEBPACK_IMPORTED_MODULE_1__)) {
-      $where = jquery__WEBPACK_IMPORTED_MODULE_1__(where);
+    } else if (where !== undefined && !(where instanceof jquery__WEBPACK_IMPORTED_MODULE_7__)) {
+      $where = jquery__WEBPACK_IMPORTED_MODULE_7__(where);
     } else {
-      $where = jquery__WEBPACK_IMPORTED_MODULE_1__('body');
+      $where = jquery__WEBPACK_IMPORTED_MODULE_7__('body');
     }
 
     var metroThis = this;
@@ -72449,7 +72543,7 @@ class Metronome extends _prebase__WEBPACK_IMPORTED_MODULE_3__["ProtoM21Object"] 
      * @type {jQuery}
      */
 
-    var $tempoHolder = jquery__WEBPACK_IMPORTED_MODULE_1__('<span class="tempoHolder">' + this.tempo.toString() + '</span>');
+    var $tempoHolder = jquery__WEBPACK_IMPORTED_MODULE_7__('<span class="tempoHolder">' + this.tempo.toString() + '</span>');
     $tempoHolder.css({
       'font-size': '24px',
       'padding-left': '10px',
@@ -72460,14 +72554,14 @@ class Metronome extends _prebase__WEBPACK_IMPORTED_MODULE_3__["ProtoM21Object"] 
      * @type {jQuery}
      */
 
-    var $newDiv = jquery__WEBPACK_IMPORTED_MODULE_1__('<div class="metronomeRendered"></div>');
+    var $newDiv = jquery__WEBPACK_IMPORTED_MODULE_7__('<div class="metronomeRendered"></div>');
     $newDiv.append($tempoHolder);
     /**
      *
      * @type {jQuery}
      */
 
-    var b1 = jquery__WEBPACK_IMPORTED_MODULE_1__('<button>start</button>');
+    var b1 = jquery__WEBPACK_IMPORTED_MODULE_7__('<button>start</button>');
     b1.on('click', () => {
       metroThis.chirp();
     });
@@ -72476,7 +72570,7 @@ class Metronome extends _prebase__WEBPACK_IMPORTED_MODULE_3__["ProtoM21Object"] 
      * @type {jQuery}
      */
 
-    var b2 = jquery__WEBPACK_IMPORTED_MODULE_1__('<button>stop</button>');
+    var b2 = jquery__WEBPACK_IMPORTED_MODULE_7__('<button>stop</button>');
     b2.on('click', () => {
       metroThis.stopChirp();
     });
@@ -72487,20 +72581,20 @@ class Metronome extends _prebase__WEBPACK_IMPORTED_MODULE_3__["ProtoM21Object"] 
      * @type {jQuery}
      */
 
-    var b3 = jquery__WEBPACK_IMPORTED_MODULE_1__('<button>up</button>');
+    var b3 = jquery__WEBPACK_IMPORTED_MODULE_7__('<button>up</button>');
     b3.on('click', function increaseSpeedButton() {
       metroThis.increaseSpeed();
-      jquery__WEBPACK_IMPORTED_MODULE_1__(this).prevAll('.tempoHolder').html(metroThis.tempo.toString());
+      jquery__WEBPACK_IMPORTED_MODULE_7__(this).prevAll('.tempoHolder').html(metroThis.tempo.toString());
     });
     /**
      *
      * @type {jQuery}
      */
 
-    var b4 = jquery__WEBPACK_IMPORTED_MODULE_1__('<button>down</button>');
+    var b4 = jquery__WEBPACK_IMPORTED_MODULE_7__('<button>down</button>');
     b4.on('click', function decreaseSpeedButton() {
       metroThis.decreaseSpeed();
-      jquery__WEBPACK_IMPORTED_MODULE_1__(this).prevAll('.tempoHolder').html(metroThis.tempo.toString());
+      jquery__WEBPACK_IMPORTED_MODULE_7__(this).prevAll('.tempoHolder').html(metroThis.tempo.toString());
     });
     $newDiv.append(b3);
     $newDiv.append(b4);
@@ -72509,13 +72603,198 @@ class Metronome extends _prebase__WEBPACK_IMPORTED_MODULE_3__["ProtoM21Object"] 
      * @type {jQuery}
      */
 
-    var $flash = jquery__WEBPACK_IMPORTED_MODULE_1__('<span class="metroFlash">' + '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>');
+    var $flash = jquery__WEBPACK_IMPORTED_MODULE_7__('<span class="metroFlash">' + '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>');
     $flash.css('margin-left', '40px');
     $flash.css('height', '40px');
     $newDiv.append($flash);
     $where.append($newDiv);
     this.$metronomeDiv = $newDiv;
     return $newDiv;
+  }
+
+}
+
+class TempoText {
+  constructor(text) {
+    this.text = text;
+  }
+
+}
+/**
+ *
+ * @class MetronomeMark
+ * @memberof music21.tempo
+ * @extends music21.base.M21Object
+ * @param {Object} metronome - metronome
+ * @param {string} metronome.text - tempo text
+ * @param {number} metronome.number - beats per minute
+ * @param {number|music21.duration.Duration} metronome.referent - duration value of tempo
+ * @param {bool} metronome.parentheses - ???
+ * @property {string} text - tempo text
+ * @property {number} number - beats per minute
+ * @property {music21.duration.Duration} referent - duration value of tempo
+ */
+
+
+class MetronomeMark extends _base__WEBPACK_IMPORTED_MODULE_10__["Music21Object"] {
+  static get className() {
+    return 'music21.tempo.MetronomeMark';
+  }
+
+  constructor() {
+    var _ref = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
+        text = _ref.text,
+        number = _ref.number,
+        referent = _ref.referent,
+        parentheses = _ref.parentheses;
+
+    super();
+    this._number = number;
+    this.numberImplicit = undefined;
+
+    if (this._number !== undefined) {
+      this.numberImplicit = false;
+    }
+
+    this._tempoText = undefined;
+    this.textImplicit = undefined;
+    this.text = text;
+    this._referent = undefined;
+    this.referent = referent;
+    this.parentheses = parentheses;
+
+    this._updateNumberFromText();
+
+    this._updateTextFromNumber();
+  }
+
+  _updateNumberFromText() {
+    if (this._number === undefined && this._tempoText !== undefined) {
+      this._number = this._getDefaultNumber(this._tempoText);
+
+      if (this._number !== undefined) {
+        this.numberImplicit = true;
+      }
+    }
+  }
+
+  _updateTextFromNumber() {
+    if (this._tempoText === undefined && this._number !== undefined) {
+      this.text = this._getDefaultText(this._number);
+
+      if (this.text !== undefined) {
+        this.textImplicit = true;
+      }
+    }
+  }
+
+  get text() {
+    if (this._tempoText === undefined) {
+      return undefined;
+    }
+
+    return this._tempoText.text;
+  }
+
+  set text(value) {
+    if (value === undefined) {
+      this._tempoText = undefined;
+    } else if (value instanceof TempoText) {
+      this._tempoText = value;
+      this.textImplicit = false;
+    } else {
+      this._tempoText = new TempoText(value);
+
+      if (this.hasStyleInformation) {
+        // TODO: where is this?
+        this._tempoText.style = this.style;
+      } else {
+        this.style = this._tempoText.style;
+      }
+
+      this.textImplicit = false;
+    }
+  }
+
+  get number() {
+    return this._number;
+  }
+
+  set number(value) {
+    if (typeof value !== 'number') {
+      throw new TempoException('cannot set number to a string');
+    }
+
+    this._number = value;
+    this.numberImplicit = false;
+  }
+
+  get referent() {
+    return this._referent;
+  }
+
+  set referent(value) {
+    if (value === undefined) {
+      this._referent = new _duration__WEBPACK_IMPORTED_MODULE_11__["Duration"](1);
+    } else if (['number', 'string'].includes(typeof value)) {
+      this._referent = new _duration__WEBPACK_IMPORTED_MODULE_11__["Duration"](value);
+    } else if (value.classes.includes('Duration')) {
+      this._referent = value;
+    } else if (value.duration) {
+      this._referent = value.duration;
+    } else {
+      throw new TempoException("Cannot get a Duration from the supplied object: ".concat(value));
+    }
+  }
+
+  _getDefaultNumber(tempoText) {
+    var tempoStr = tempoText instanceof TempoText ? tempoText.text : tempoText;
+    var post = null;
+    var tempoNames = Object.keys(defaultTempoValues);
+
+    if (tempoNames.includes(tempoStr.toLowerCase())) {
+      post = defaultTempoValues[tempoStr.toLowerCase()];
+    } else if (tempoNames.includes(tempoStr)) {
+      post = defaultTempoValues[tempoStr];
+    } else {
+      var _iteratorNormalCompletion = true;
+      var _didIteratorError = false;
+      var _iteratorError = undefined;
+
+      try {
+        for (var _iterator = tempoStr.split(' ')[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+          var word = _step.value;
+
+          if (tempoNames.includes(word.toLowerCase())) {
+            post = defaultTempoValues[tempoStr.toLowerCase()];
+          }
+        }
+      } catch (err) {
+        _didIteratorError = true;
+        _iteratorError = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion && _iterator.return != null) {
+            _iterator.return();
+          }
+        } finally {
+          if (_didIteratorError) {
+            throw _iteratorError;
+          }
+        }
+      }
+    }
+
+    return post;
+  }
+
+  _getDefaultText(number) {
+    var spread = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 2;
+    var tempoNumber = typeof number === 'number' ? number : parseFloat(number);
+    return Object.keys(defaultTempoValues).find(tempoName => {
+      var tempoValue = defaultTempoValues[tempoName];
+      return tempoValue - spread <= tempoNumber && tempoValue + spread >= tempoNumber;
+    });
   }
 
 }
@@ -72535,7 +72814,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var core_js_modules_es_array_includes__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es.array.includes */ "./node_modules/core-js/modules/es.array.includes.js");
 /* harmony import */ var core_js_modules_es_array_includes__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_includes__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _prebase__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./prebase */ "./src/music21/prebase.ts");
-/* harmony import */ var _exceptions21_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./exceptions21.js */ "./src/music21/exceptions21.js");
+/* harmony import */ var _exceptions21__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./exceptions21 */ "./src/music21/exceptions21.ts");
 
 
 /**
@@ -72612,7 +72891,7 @@ class Tie extends _prebase__WEBPACK_IMPORTED_MODULE_1__["ProtoM21Object"] {
 
   set type(newType) {
     if (!VALID_TIE_TYPES.includes(newType)) {
-      throw new _exceptions21_js__WEBPACK_IMPORTED_MODULE_2__["Music21Exception"]("Type must be one of ".concat(VALID_TIE_TYPES, ", not ").concat(newType));
+      throw new _exceptions21__WEBPACK_IMPORTED_MODULE_2__["Music21Exception"]("Type must be one of ".concat(VALID_TIE_TYPES, ", not ").concat(newType));
     }
 
     this._type = newType;
@@ -72649,13 +72928,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_6__);
 /* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
 /* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(jquery__WEBPACK_IMPORTED_MODULE_7__);
-/* harmony import */ var _clef_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./clef.js */ "./src/music21/clef.js");
-/* harmony import */ var _duration_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./duration.js */ "./src/music21/duration.js");
-/* harmony import */ var _pitch_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./pitch.js */ "./src/music21/pitch.js");
-/* harmony import */ var _note_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./note.js */ "./src/music21/note.js");
-/* harmony import */ var _meter_js__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./meter.js */ "./src/music21/meter.js");
-/* harmony import */ var _stream_js__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./stream.js */ "./src/music21/stream.js");
-/* harmony import */ var _tie_js__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./tie.js */ "./src/music21/tie.js");
+/* harmony import */ var _clef__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./clef */ "./src/music21/clef.js");
+/* harmony import */ var _duration__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./duration */ "./src/music21/duration.js");
+/* harmony import */ var _pitch__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./pitch */ "./src/music21/pitch.js");
+/* harmony import */ var _note__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./note */ "./src/music21/note.js");
+/* harmony import */ var _meter__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./meter */ "./src/music21/meter.js");
+/* harmony import */ var _stream__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./stream */ "./src/music21/stream.js");
+/* harmony import */ var _tie__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./tie */ "./src/music21/tie.js");
 
 
 
@@ -72759,8 +73038,8 @@ function TinyNotation(textIn) {
   textIn = textIn.trim();
   var tokens = textIn.split(' ');
   var optionalScore;
-  var p = new _stream_js__WEBPACK_IMPORTED_MODULE_13__["Part"]();
-  var m = new _stream_js__WEBPACK_IMPORTED_MODULE_13__["Measure"]();
+  var p = new _stream__WEBPACK_IMPORTED_MODULE_13__["Part"]();
+  var m = new _stream__WEBPACK_IMPORTED_MODULE_13__["Measure"]();
   m.number = 1;
   var currentTSBarDuration = 4.0;
   var lastDurationQL = 1.0;
@@ -72780,7 +73059,7 @@ function TinyNotation(textIn) {
     if (m.duration.quarterLength >= currentTSBarDuration || Math.abs(m.duration.quarterLength - currentTSBarDuration) < 0.0001) {
       p.append(m);
       measureNumber += 1;
-      m = new _stream_js__WEBPACK_IMPORTED_MODULE_13__["Measure"]();
+      m = new _stream__WEBPACK_IMPORTED_MODULE_13__["Measure"]();
       m.number = measureNumber;
     }
 
@@ -72795,15 +73074,15 @@ function TinyNotation(textIn) {
     if (tnre.PARTBREAK.exec(token)) {
       if (m.length > 0) {
         p.append(m);
-        m = new _stream_js__WEBPACK_IMPORTED_MODULE_13__["Measure"]();
+        m = new _stream__WEBPACK_IMPORTED_MODULE_13__["Measure"]();
       }
 
       if (optionalScore === undefined) {
-        optionalScore = new _stream_js__WEBPACK_IMPORTED_MODULE_13__["Score"]();
+        optionalScore = new _stream__WEBPACK_IMPORTED_MODULE_13__["Score"]();
       }
 
       optionalScore.insert(0, p);
-      p = new _stream_js__WEBPACK_IMPORTED_MODULE_13__["Part"]();
+      p = new _stream__WEBPACK_IMPORTED_MODULE_13__["Part"]();
       storedDict.lastNoteTied = false;
       storedDict.inTrip = false;
       storedDict.inQuad = false;
@@ -72842,7 +73121,7 @@ function TinyNotation(textIn) {
     if (tnre.TIMESIG.exec(token)) {
       var _MATCH = tnre.TIMESIG.exec(token);
 
-      var ts = new _meter_js__WEBPACK_IMPORTED_MODULE_12__["TimeSignature"]();
+      var ts = new _meter__WEBPACK_IMPORTED_MODULE_12__["TimeSignature"]();
       ts.numerator = parseInt(_MATCH[1]);
       ts.denominator = parseInt(_MATCH[2]);
       m.timeSignature = ts;
@@ -72850,27 +73129,27 @@ function TinyNotation(textIn) {
 
       continue;
     } else if (tnre.REST.exec(token)) {
-      noteObj = new _note_js__WEBPACK_IMPORTED_MODULE_11__["Rest"](lastDurationQL);
+      noteObj = new _note__WEBPACK_IMPORTED_MODULE_11__["Rest"](lastDurationQL);
     } else if (tnre.OCTAVE2.exec(token)) {
       var _MATCH2 = tnre.OCTAVE2.exec(token);
 
-      noteObj = new _note_js__WEBPACK_IMPORTED_MODULE_11__["Note"](_MATCH2[1], lastDurationQL);
+      noteObj = new _note__WEBPACK_IMPORTED_MODULE_11__["Note"](_MATCH2[1], lastDurationQL);
       noteObj.pitch.octave = 4 - _MATCH2[0].length;
     } else if (tnre.OCTAVE3.exec(token)) {
       var _MATCH3 = tnre.OCTAVE3.exec(token);
 
-      noteObj = new _note_js__WEBPACK_IMPORTED_MODULE_11__["Note"](_MATCH3[1], lastDurationQL);
+      noteObj = new _note__WEBPACK_IMPORTED_MODULE_11__["Note"](_MATCH3[1], lastDurationQL);
       noteObj.pitch.octave = 3;
     } else if (tnre.OCTAVE5.exec(token)) {
       // must match octave 5 before 4
       var _MATCH4 = tnre.OCTAVE5.exec(token);
 
-      noteObj = new _note_js__WEBPACK_IMPORTED_MODULE_11__["Note"](_MATCH4[1].toUpperCase(), lastDurationQL);
+      noteObj = new _note__WEBPACK_IMPORTED_MODULE_11__["Note"](_MATCH4[1].toUpperCase(), lastDurationQL);
       noteObj.pitch.octave = 3 + _MATCH4[0].length;
     } else if (tnre.OCTAVE4.exec(token)) {
       var _MATCH5 = tnre.OCTAVE4.exec(token);
 
-      noteObj = new _note_js__WEBPACK_IMPORTED_MODULE_11__["Note"](_MATCH5[1].toUpperCase(), lastDurationQL);
+      noteObj = new _note__WEBPACK_IMPORTED_MODULE_11__["Note"](_MATCH5[1].toUpperCase(), lastDurationQL);
       noteObj.pitch.octave = 4;
     }
 
@@ -72883,7 +73162,7 @@ function TinyNotation(textIn) {
     }
 
     if (tnre.TIE.exec(token)) {
-      noteObj.tie = new _tie_js__WEBPACK_IMPORTED_MODULE_14__["Tie"]('start');
+      noteObj.tie = new _tie__WEBPACK_IMPORTED_MODULE_14__["Tie"]('start');
 
       if (storedDict.lastNoteTied) {
         noteObj.tie.type = 'continue';
@@ -72891,7 +73170,7 @@ function TinyNotation(textIn) {
 
       storedDict.lastNoteTied = true;
     } else if (storedDict.lastNoteTied) {
-      noteObj.tie = new _tie_js__WEBPACK_IMPORTED_MODULE_14__["Tie"]('stop');
+      noteObj.tie = new _tie__WEBPACK_IMPORTED_MODULE_14__["Tie"]('stop');
       storedDict.lastNoteTied = false;
     }
 
@@ -72899,14 +73178,14 @@ function TinyNotation(textIn) {
       var _MATCH6 = tnre.SHARP.exec(token); // sharp
 
 
-      noteObj.pitch.accidental = new _pitch_js__WEBPACK_IMPORTED_MODULE_10__["Accidental"](_MATCH6[1].length);
+      noteObj.pitch.accidental = new _pitch__WEBPACK_IMPORTED_MODULE_10__["Accidental"](_MATCH6[1].length);
     } else if (tnre.FLAT.exec(token)) {
       var _MATCH7 = tnre.FLAT.exec(token); // sharp
 
 
-      noteObj.pitch.accidental = new _pitch_js__WEBPACK_IMPORTED_MODULE_10__["Accidental"](-1 * _MATCH7[1].length);
+      noteObj.pitch.accidental = new _pitch__WEBPACK_IMPORTED_MODULE_10__["Accidental"](-1 * _MATCH7[1].length);
     } else if (tnre.NAT.exec(token)) {
-      noteObj.pitch.accidental = new _pitch_js__WEBPACK_IMPORTED_MODULE_10__["Accidental"]('natural');
+      noteObj.pitch.accidental = new _pitch__WEBPACK_IMPORTED_MODULE_10__["Accidental"]('natural');
       noteObj.pitch.accidental.displayType = 'always';
     }
 
@@ -72929,11 +73208,11 @@ function TinyNotation(textIn) {
 
     if (storedDict.inTrip) {
       // console.log(noteObj.duration.quarterLength);
-      noteObj.duration.appendTuplet(new _duration_js__WEBPACK_IMPORTED_MODULE_9__["Tuplet"](3, 2, noteObj.duration.quarterLength));
+      noteObj.duration.appendTuplet(new _duration__WEBPACK_IMPORTED_MODULE_9__["Tuplet"](3, 2, noteObj.duration.quarterLength));
     }
 
     if (storedDict.inQuad) {
-      noteObj.duration.appendTuplet(new _duration_js__WEBPACK_IMPORTED_MODULE_9__["Tuplet"](4, 3, noteObj.duration.quarterLength));
+      noteObj.duration.appendTuplet(new _duration__WEBPACK_IMPORTED_MODULE_9__["Tuplet"](4, 3, noteObj.duration.quarterLength));
     }
 
     if (storedDict.endTupletAfterNote) {
@@ -72958,14 +73237,14 @@ function TinyNotation(textIn) {
 
     for (var _i2 = 0; _i2 < optionalScore.parts.length; _i2++) {
       var innerPart = optionalScore.parts.get(_i2);
-      innerPart.clef = _clef_js__WEBPACK_IMPORTED_MODULE_8__["bestClef"](innerPart);
+      innerPart.clef = _clef__WEBPACK_IMPORTED_MODULE_8__["bestClef"](innerPart);
       var innerMeasure = innerPart.getElementsByClass('Measure').get(0);
       innerMeasure.clef = innerPart.clef;
     }
 
     returnObject = optionalScore;
   } else {
-    p.clef = _clef_js__WEBPACK_IMPORTED_MODULE_8__["bestClef"](p);
+    p.clef = _clef__WEBPACK_IMPORTED_MODULE_8__["bestClef"](p);
     p.getElementsByClass('Measure').get(0).clef = p.clef;
     returnObject = p;
   }
@@ -73083,9 +73362,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_12___default = /*#__PURE__*/__webpack_require__.n(jquery__WEBPACK_IMPORTED_MODULE_12__);
 /* harmony import */ var vexflow__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! vexflow */ "./node_modules/vexflow/releases/vexflow-debug.js");
 /* harmony import */ var vexflow__WEBPACK_IMPORTED_MODULE_13___default = /*#__PURE__*/__webpack_require__.n(vexflow__WEBPACK_IMPORTED_MODULE_13__);
-/* harmony import */ var _debug_js__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./debug.js */ "./src/music21/debug.js");
-/* harmony import */ var _clef_js__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./clef.js */ "./src/music21/clef.js");
-/* harmony import */ var _duration_js__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ./duration.js */ "./src/music21/duration.js");
+/* harmony import */ var _debug__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./debug */ "./src/music21/debug.js");
+/* harmony import */ var _clef__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./clef */ "./src/music21/clef.js");
+/* harmony import */ var _duration__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ./duration */ "./src/music21/duration.js");
 
 
 
@@ -73130,7 +73409,7 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
 
 
-var _clefSingleton = new _clef_js__WEBPACK_IMPORTED_MODULE_15__["TrebleClef"]();
+var _clefSingleton = new _clef__WEBPACK_IMPORTED_MODULE_15__["TrebleClef"]();
 /**
  * Represents a stack of objects that need to be rendered together.
  *
@@ -73925,7 +74204,7 @@ class Renderer {
     } // console.log('streamLength: ' + streamLength);
 
 
-    if (_debug_js__WEBPACK_IMPORTED_MODULE_14__["debug"]) {
+    if (_debug__WEBPACK_IMPORTED_MODULE_14__["debug"]) {
       console.log('creating new stave: left:' + left + ' top: ' + top + ' width: ' + width);
     }
 
@@ -74260,7 +74539,7 @@ class Renderer {
           if (firstLyric.syllabic === 'middle' || firstLyric.syllabic === 'begin') {
             addConnector = ' ' + firstLyric.lyricConnector;
             var tempQl = el.duration.quarterLength / 2.0;
-            d = new _duration_js__WEBPACK_IMPORTED_MODULE_16__["Duration"](tempQl);
+            d = new _duration__WEBPACK_IMPORTED_MODULE_16__["Duration"](tempQl);
           }
 
           if (firstLyric.style.fontFamily) {
@@ -74344,7 +74623,7 @@ class Renderer {
     } // console.log('creating voice');
 
 
-    if (_debug_js__WEBPACK_IMPORTED_MODULE_14__["debug"]) {
+    if (_debug__WEBPACK_IMPORTED_MODULE_14__["debug"]) {
       console.log('New voice, num_beats: ' + num1024.toString() + ' beat_value: ' + beatValue.toString());
     }
 
@@ -74521,7 +74800,7 @@ class Renderer {
     if (stave !== undefined) {
       noteOffsetLeft = stave.start_x + stave.glyph_start_x;
 
-      if (_debug_js__WEBPACK_IMPORTED_MODULE_14__["debug"]) {
+      if (_debug__WEBPACK_IMPORTED_MODULE_14__["debug"]) {
         console.log('noteOffsetLeft: ' + noteOffsetLeft + ' ; stave.start_x: ' + stave.start_x);
         console.log('Bottom y: ' + stave.getBottomY());
       } // staveHeight = stave.height;
@@ -74578,7 +74857,7 @@ class Renderer {
       }
     }
 
-    if (_debug_js__WEBPACK_IMPORTED_MODULE_14__["debug"]) {
+    if (_debug__WEBPACK_IMPORTED_MODULE_14__["debug"]) {
       var _iteratorNormalCompletion10 = true;
       var _didIteratorError10 = false;
       var _iteratorError10 = undefined;
@@ -74635,9 +74914,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var core_js_modules_es_string_includes__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_includes__WEBPACK_IMPORTED_MODULE_3__);
 /* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! core-js/modules/web.dom-collections.iterator */ "./node_modules/core-js/modules/web.dom-collections.iterator.js");
 /* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var _interval_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./interval.js */ "./src/music21/interval.js");
-/* harmony import */ var _key_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./key.js */ "./src/music21/key.js");
-/* harmony import */ var _note_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./note.js */ "./src/music21/note.js");
+/* harmony import */ var _interval__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./interval */ "./src/music21/interval.js");
+/* harmony import */ var _key__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./key */ "./src/music21/key.js");
+/* harmony import */ var _note__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./note */ "./src/music21/note.js");
 /* harmony import */ var _base__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./base */ "./src/music21/base.ts");
 
 
@@ -74681,9 +74960,9 @@ class VoiceLeadingQuartet extends _base__WEBPACK_IMPORTED_MODULE_8__["Music21Obj
     super();
 
     if (!intervalCache.length) {
-      intervalCache.push(new _interval_js__WEBPACK_IMPORTED_MODULE_5__["Interval"]('P1'));
-      intervalCache.push(new _interval_js__WEBPACK_IMPORTED_MODULE_5__["Interval"]('P5'));
-      intervalCache.push(new _interval_js__WEBPACK_IMPORTED_MODULE_5__["Interval"]('P8'));
+      intervalCache.push(new _interval__WEBPACK_IMPORTED_MODULE_5__["Interval"]('P1'));
+      intervalCache.push(new _interval__WEBPACK_IMPORTED_MODULE_5__["Interval"]('P5'));
+      intervalCache.push(new _interval__WEBPACK_IMPORTED_MODULE_5__["Interval"]('P8'));
     }
 
     this.unison = intervalCache[0];
@@ -74714,11 +74993,11 @@ class VoiceLeadingQuartet extends _base__WEBPACK_IMPORTED_MODULE_8__["Music21Obj
     if (value === undefined) {
       this[which] = value;
     } else if (typeof value === 'string') {
-      this[which] = new _note_js__WEBPACK_IMPORTED_MODULE_7__["Note"](value);
+      this[which] = new _note__WEBPACK_IMPORTED_MODULE_7__["Note"](value);
     } else if (value.classes.includes('Note')) {
       this[which] = value;
     } else {
-      var n = new _note_js__WEBPACK_IMPORTED_MODULE_7__["Note"](value.nameWithOctave);
+      var n = new _note__WEBPACK_IMPORTED_MODULE_7__["Note"](value.nameWithOctave);
       n.duration.quarterLength = 0.0;
       this[which] = n;
     }
@@ -74762,17 +75041,17 @@ class VoiceLeadingQuartet extends _base__WEBPACK_IMPORTED_MODULE_8__["Music21Obj
 
   set key(keyValue) {
     if (typeof keyValue === 'string') {
-      keyValue = new _key_js__WEBPACK_IMPORTED_MODULE_6__["Key"](_key_js__WEBPACK_IMPORTED_MODULE_6__["convertKeyStringToMusic21KeyString"](keyValue));
+      keyValue = new _key__WEBPACK_IMPORTED_MODULE_6__["Key"](_key__WEBPACK_IMPORTED_MODULE_6__["convertKeyStringToMusic21KeyString"](keyValue));
     }
 
     this._key = keyValue;
   }
 
   _findIntervals() {
-    this.vIntervals.push(new _interval_js__WEBPACK_IMPORTED_MODULE_5__["Interval"](this.v1n1, this.v2n1));
-    this.vIntervals.push(new _interval_js__WEBPACK_IMPORTED_MODULE_5__["Interval"](this.v1n2, this.v2n2));
-    this.hIntervals.push(new _interval_js__WEBPACK_IMPORTED_MODULE_5__["Interval"](this.v1n1, this.v1n2));
-    this.hIntervals.push(new _interval_js__WEBPACK_IMPORTED_MODULE_5__["Interval"](this.v2n1, this.v2n2));
+    this.vIntervals.push(new _interval__WEBPACK_IMPORTED_MODULE_5__["Interval"](this.v1n1, this.v2n1));
+    this.vIntervals.push(new _interval__WEBPACK_IMPORTED_MODULE_5__["Interval"](this.v1n2, this.v2n2));
+    this.hIntervals.push(new _interval__WEBPACK_IMPORTED_MODULE_5__["Interval"](this.v1n1, this.v1n2));
+    this.hIntervals.push(new _interval__WEBPACK_IMPORTED_MODULE_5__["Interval"](this.v2n1, this.v2n2));
   }
 
   motionType() {
@@ -74885,7 +75164,7 @@ class VoiceLeadingQuartet extends _base__WEBPACK_IMPORTED_MODULE_8__["Music21Obj
     }
 
     if (typeof requiredInterval === 'string') {
-      requiredInterval = new _interval_js__WEBPACK_IMPORTED_MODULE_5__["Interval"](requiredInterval);
+      requiredInterval = new _interval__WEBPACK_IMPORTED_MODULE_5__["Interval"](requiredInterval);
     }
 
     if (this.vIntervals[0].simpleName === requiredInterval.simpleName) {
@@ -74912,11 +75191,11 @@ class VoiceLeadingQuartet extends _base__WEBPACK_IMPORTED_MODULE_8__["Music21Obj
   }
 
   outwardContraryMotion() {
-    return this.contraryMotion() && this.hIntervals[0].direction === _interval_js__WEBPACK_IMPORTED_MODULE_5__["Direction"].ASCENDING;
+    return this.contraryMotion() && this.hIntervals[0].direction === _interval__WEBPACK_IMPORTED_MODULE_5__["Direction"].ASCENDING;
   }
 
   inwardContraryMotion() {
-    return this.contraryMotion() && this.hIntervals[0].direction === _interval_js__WEBPACK_IMPORTED_MODULE_5__["Direction"].DESCENDING;
+    return this.contraryMotion() && this.hIntervals[0].direction === _interval__WEBPACK_IMPORTED_MODULE_5__["Direction"].DESCENDING;
   }
 
   antiParallelMotion(simpleName) {
@@ -74951,7 +75230,7 @@ class VoiceLeadingQuartet extends _base__WEBPACK_IMPORTED_MODULE_8__["Music21Obj
     }
 
     if (typeof thisInterval === 'string') {
-      thisInterval = new _interval_js__WEBPACK_IMPORTED_MODULE_5__["Interval"](thisInterval);
+      thisInterval = new _interval__WEBPACK_IMPORTED_MODULE_5__["Interval"](thisInterval);
     }
 
     if (this.vIntervals[0].semiSimpleName === thisInterval.semiSimpleName) {
@@ -74987,7 +75266,7 @@ class VoiceLeadingQuartet extends _base__WEBPACK_IMPORTED_MODULE_8__["Music21Obj
     }
 
     if (typeof thisInterval === 'string') {
-      thisInterval = new _interval_js__WEBPACK_IMPORTED_MODULE_5__["Interval"](thisInterval);
+      thisInterval = new _interval__WEBPACK_IMPORTED_MODULE_5__["Interval"](thisInterval);
     }
 
     if (this.vIntervals[1].simpleName === thisInterval.simpleName) {
@@ -75127,9 +75406,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var core_js_modules_web_dom_collections_for_each__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_for_each__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
 /* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(jquery__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _debug_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./debug.js */ "./src/music21/debug.js");
-/* harmony import */ var _common_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./common.js */ "./src/music21/common.js");
-/* harmony import */ var _miditools_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./miditools.js */ "./src/music21/miditools.js");
+/* harmony import */ var _debug__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./debug */ "./src/music21/debug.js");
+/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./common */ "./src/music21/common.js");
+/* harmony import */ var _miditools__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./miditools */ "./src/music21/miditools.js");
 
 
 /**
@@ -75273,14 +75552,14 @@ function midiInArrived(midiMessageEvent) {
   var a = midiMessageEvent.data[0];
   var b = midiMessageEvent.data[1];
   var c = midiMessageEvent.data[2];
-  var eventObject = _miditools_js__WEBPACK_IMPORTED_MODULE_4__["callBacks"].raw(t, a, b, c);
+  var eventObject = _miditools__WEBPACK_IMPORTED_MODULE_4__["callBacks"].raw(t, a, b, c);
 
-  if (_miditools_js__WEBPACK_IMPORTED_MODULE_4__["callBacks"].general instanceof Array) {
-    return _miditools_js__WEBPACK_IMPORTED_MODULE_4__["callBacks"].general.forEach((el, index, array) => {
+  if (_miditools__WEBPACK_IMPORTED_MODULE_4__["callBacks"].general instanceof Array) {
+    return _miditools__WEBPACK_IMPORTED_MODULE_4__["callBacks"].general.forEach((el, index, array) => {
       el(eventObject);
     });
-  } else if (_miditools_js__WEBPACK_IMPORTED_MODULE_4__["callBacks"].general !== undefined) {
-    return _miditools_js__WEBPACK_IMPORTED_MODULE_4__["callBacks"].general(eventObject);
+  } else if (_miditools__WEBPACK_IMPORTED_MODULE_4__["callBacks"].general !== undefined) {
+    return _miditools__WEBPACK_IMPORTED_MODULE_4__["callBacks"].general(eventObject);
   } else {
     return undefined;
   }
@@ -75340,7 +75619,7 @@ function createPlugin(appendElement, override) {
 
 function createJazzSelector($newSelect, options) {
   var params = {};
-  _common_js__WEBPACK_IMPORTED_MODULE_3__["merge"](params, options);
+  _common__WEBPACK_IMPORTED_MODULE_3__["merge"](params, options);
   var Jazz = createPlugin();
 
   if (Jazz === undefined) {
@@ -75356,7 +75635,7 @@ function createJazzSelector($newSelect, options) {
       Jazz.MidiInClose();
     }
 
-    if (_debug_js__WEBPACK_IMPORTED_MODULE_2__["debug"]) {
+    if (_debug__WEBPACK_IMPORTED_MODULE_2__["debug"]) {
       console.log('current input changed to: ' + webmidi.selectedInterface);
     }
   });
@@ -75416,7 +75695,7 @@ function selectionChanged() {
 
   webmidi.access.onstatechange = () => {};
 
-  if (_debug_js__WEBPACK_IMPORTED_MODULE_2__["debug"]) {
+  if (_debug__WEBPACK_IMPORTED_MODULE_2__["debug"]) {
     console.log('current input changed to: ' + selectedInput);
   }
 
@@ -75453,7 +75732,7 @@ function createSelector(midiSelectDiv, options) {
     autoUpdate: true,
     existingMidiSelect: false
   };
-  _common_js__WEBPACK_IMPORTED_MODULE_3__["merge"](params, options);
+  _common__WEBPACK_IMPORTED_MODULE_3__["merge"](params, options);
   /**
    * @type {jQuery}
    */
@@ -75512,7 +75791,7 @@ function createSelector(midiSelectDiv, options) {
     });
   }
 
-  _miditools_js__WEBPACK_IMPORTED_MODULE_4__["clearOldChords"](); // starts the chord checking process.
+  _miditools__WEBPACK_IMPORTED_MODULE_4__["clearOldChords"](); // starts the chord checking process.
 
   return $newSelect;
 }
@@ -75564,7 +75843,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(jquery__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var jquery_ui_bundle__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! jquery-ui-bundle */ "./node_modules/jquery-ui-bundle/jquery-ui.js");
 /* harmony import */ var jquery_ui_bundle__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(jquery_ui_bundle__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var _music21_exceptions21__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./music21/exceptions21 */ "./src/music21/exceptions21.js");
+/* harmony import */ var _music21_exceptions21__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./music21/exceptions21 */ "./src/music21/exceptions21.ts");
 /* harmony reexport (module object) */ __webpack_require__.d(__webpack_exports__, "exceptions21", function() { return _music21_exceptions21__WEBPACK_IMPORTED_MODULE_4__; });
 /* harmony import */ var _music21_prebase__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./music21/prebase */ "./src/music21/prebase.ts");
 /* harmony reexport (module object) */ __webpack_require__.d(__webpack_exports__, "prebase", function() { return _music21_prebase__WEBPACK_IMPORTED_MODULE_5__; });
@@ -75650,8 +75929,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony reexport (module object) */ __webpack_require__.d(__webpack_exports__, "voiceLeading", function() { return _music21_voiceLeading__WEBPACK_IMPORTED_MODULE_45__; });
 /* harmony import */ var _music21_webmidi__WEBPACK_IMPORTED_MODULE_46__ = __webpack_require__(/*! ./music21/webmidi */ "./src/music21/webmidi.js");
 /* harmony reexport (module object) */ __webpack_require__.d(__webpack_exports__, "webmidi", function() { return _music21_webmidi__WEBPACK_IMPORTED_MODULE_46__; });
-/* harmony import */ var _music21_debug_js__WEBPACK_IMPORTED_MODULE_47__ = __webpack_require__(/*! ./music21/debug.js */ "./src/music21/debug.js");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "debug", function() { return _music21_debug_js__WEBPACK_IMPORTED_MODULE_47__["debug"]; });
+/* harmony import */ var _music21_debug__WEBPACK_IMPORTED_MODULE_47__ = __webpack_require__(/*! ./music21/debug */ "./src/music21/debug.js");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "debug", function() { return _music21_debug__WEBPACK_IMPORTED_MODULE_47__["debug"]; });
 
 /**
  * **music21j**: Javascript reimplementation of Core music21 features.
@@ -75770,9 +76049,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _moduleTests_scale__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ./moduleTests/scale */ "./tests/moduleTests/scale.js");
 /* harmony import */ var _moduleTests_sites__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! ./moduleTests/sites */ "./tests/moduleTests/sites.js");
 /* harmony import */ var _moduleTests_stream__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(/*! ./moduleTests/stream */ "./tests/moduleTests/stream.js");
-/* harmony import */ var _moduleTests_tie__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(/*! ./moduleTests/tie */ "./tests/moduleTests/tie.js");
-/* harmony import */ var _moduleTests_voiceLeading__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__(/*! ./moduleTests/voiceLeading */ "./tests/moduleTests/voiceLeading.js");
-/* harmony import */ var _src_music21_modules__WEBPACK_IMPORTED_MODULE_23__ = __webpack_require__(/*! ../src/music21_modules */ "./src/music21_modules.js");
+/* harmony import */ var _moduleTests_tempo__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(/*! ./moduleTests/tempo */ "./tests/moduleTests/tempo.js");
+/* harmony import */ var _moduleTests_tie__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__(/*! ./moduleTests/tie */ "./tests/moduleTests/tie.js");
+/* harmony import */ var _moduleTests_voiceLeading__WEBPACK_IMPORTED_MODULE_23__ = __webpack_require__(/*! ./moduleTests/voiceLeading */ "./tests/moduleTests/voiceLeading.js");
+/* harmony import */ var _src_music21_modules__WEBPACK_IMPORTED_MODULE_24__ = __webpack_require__(/*! ../src/music21_modules */ "./src/music21_modules.js");
+
 
 
 
@@ -75818,13 +76099,14 @@ var allTests = {
   scale: _moduleTests_scale__WEBPACK_IMPORTED_MODULE_18__["default"],
   sites: _moduleTests_sites__WEBPACK_IMPORTED_MODULE_19__["default"],
   stream: _moduleTests_stream__WEBPACK_IMPORTED_MODULE_20__["default"],
-  tie: _moduleTests_tie__WEBPACK_IMPORTED_MODULE_21__["default"],
-  voiceLeading: _moduleTests_voiceLeading__WEBPACK_IMPORTED_MODULE_22__["default"]
+  tempo: _moduleTests_tempo__WEBPACK_IMPORTED_MODULE_21__["default"],
+  tie: _moduleTests_tie__WEBPACK_IMPORTED_MODULE_22__["default"],
+  voiceLeading: _moduleTests_voiceLeading__WEBPACK_IMPORTED_MODULE_23__["default"]
 };
 
 if (typeof window !== 'undefined') {
   window.allTests = allTests;
-  window.music21 = _src_music21_modules__WEBPACK_IMPORTED_MODULE_23__;
+  window.music21 = _src_music21_modules__WEBPACK_IMPORTED_MODULE_24__;
   window.QUnit = qunit__WEBPACK_IMPORTED_MODULE_0__;
 } // noinspection JSUnusedGlobalSymbols
 
@@ -75845,17 +76127,17 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return tests; });
 /* harmony import */ var qunit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! qunit */ "./node_modules/qunit/qunit/qunit.js");
 /* harmony import */ var qunit__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(qunit__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../src/music21_modules.js */ "./src/music21_modules.js");
+/* harmony import */ var _src_music21_modules__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../src/music21_modules */ "./src/music21_modules.js");
 
 
 var test = qunit__WEBPACK_IMPORTED_MODULE_0__["test"];
 function tests() {
   test('music21.articulations.Articulation', assert => {
-    var acc = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_1__["articulations"].Accent();
+    var acc = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_1__["articulations"].Accent();
     assert.equal(acc.name, 'accent', 'matching names for accent');
-    var ten = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_1__["articulations"].Tenuto();
+    var ten = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_1__["articulations"].Tenuto();
     assert.equal(ten.name, 'tenuto', 'matching names for tenuto');
-    var n = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_1__["note"].Note('C');
+    var n = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_1__["note"].Note('C');
     n.articulations.push(acc);
     n.articulations.push(ten);
     assert.equal(n.articulations[0].name, 'accent', 'accent in array');
@@ -75863,12 +76145,12 @@ function tests() {
   });
   test('music21.articulations.Articulation display', assert => {
     // Marcato is a pseudo multiple inheritance
-    var marc = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_1__["articulations"].Marcato();
+    var marc = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_1__["articulations"].Marcato();
     assert.equal(marc.name, 'marcato', 'matching names for marcato');
-    var n = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_1__["note"].Note('D#5');
+    var n = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_1__["note"].Note('D#5');
     n.articulations.push(marc);
-    var nBoring = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_1__["note"].Note('D#5');
-    var measure = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_1__["stream"].Measure();
+    var nBoring = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_1__["note"].Note('D#5');
+    var measure = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_1__["stream"].Measure();
     measure.append(n);
     measure.append(nBoring);
     measure.append(nBoring.clone());
@@ -75894,29 +76176,29 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var core_js_modules_es_array_from__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_from__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var qunit__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! qunit */ "./node_modules/qunit/qunit/qunit.js");
 /* harmony import */ var qunit__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(qunit__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../src/music21_modules.js */ "./src/music21_modules.js");
+/* harmony import */ var _src_music21_modules__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../src/music21_modules */ "./src/music21_modules.js");
 
 
 
 var test = qunit__WEBPACK_IMPORTED_MODULE_1__["test"];
 function tests() {
   test('music21.base.Music21Object', assert => {
-    var m21o = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_2__["base"].Music21Object();
+    var m21o = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_2__["base"].Music21Object();
     assert.equal(m21o.classSortOrder, 20);
-    assert.ok(m21o.duration instanceof _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_2__["duration"].Duration);
+    assert.ok(m21o.duration instanceof _src_music21_modules__WEBPACK_IMPORTED_MODULE_2__["duration"].Duration);
     assert.deepEqual(m21o.classes, ['Music21Object', 'ProtoM21Object', 'object']);
-    assert.ok(m21o.sites instanceof _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_2__["sites"].Sites);
+    assert.ok(m21o.sites instanceof _src_music21_modules__WEBPACK_IMPORTED_MODULE_2__["sites"].Sites);
     assert.ok(m21o.isMusic21Object);
     assert.notOk(m21o.isStream);
     assert.equal(m21o.priority, 0, 'priority is 0');
     assert.equal(m21o.quarterLength, 0.0, 'default duration is 0.0');
     m21o.quarterLength = 2.0;
     assert.equal(m21o.quarterLength, 2.0);
-    var st = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_2__["stream"].Measure();
+    var st = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_2__["stream"].Measure();
     st.insert(3.0, m21o);
     assert.equal(m21o.offset, 3.0);
     assert.equal(m21o.getOffsetBySite(st), 3.0);
-    var st2 = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_2__["stream"].Measure();
+    var st2 = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_2__["stream"].Measure();
     st2.insert(5.0, m21o);
     assert.equal(m21o.offset, 5.0, 'after insert at 5, offset should be 5.');
     assert.strictEqual(m21o.activeSite, st2);
@@ -75926,10 +76208,10 @@ function tests() {
     assert.equal(m21o.getOffsetBySite(st2), 5.5);
   });
   test('music21.base.Music21Object Contexts', assert => {
-    var m21o = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_2__["base"].Music21Object();
-    var m = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_2__["stream"].Measure();
-    var p = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_2__["stream"].Part();
-    var sc = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_2__["stream"].Score();
+    var m21o = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_2__["base"].Music21Object();
+    var m = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_2__["stream"].Measure();
+    var p = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_2__["stream"].Part();
+    var sc = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_2__["stream"].Score();
     m.insert(3.0, m21o);
     p.insert(1.0, m);
     sc.insert(0.0, p);
@@ -75958,18 +76240,18 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return tests; });
 /* harmony import */ var qunit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! qunit */ "./node_modules/qunit/qunit/qunit.js");
 /* harmony import */ var qunit__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(qunit__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../src/music21_modules.js */ "./src/music21_modules.js");
+/* harmony import */ var _src_music21_modules__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../src/music21_modules */ "./src/music21_modules.js");
 
 
 var test = qunit__WEBPACK_IMPORTED_MODULE_0__["test"];
 function tests() {
   test('music21.beam.Beams', assert => {
-    var a = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_1__["beam"].Beams();
+    var a = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_1__["beam"].Beams();
     a.fill('16th');
     a.setAll('start');
     assert.equal(a.getTypes()[0], 'start');
     assert.equal(a.getTypes()[1], 'start');
-    var b = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_1__["beam"].Beams();
+    var b = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_1__["beam"].Beams();
     b.fill('16th');
     b.setAll('start');
     b.setByNumber(1, 'continue');
@@ -75996,25 +76278,25 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return tests; });
 /* harmony import */ var qunit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! qunit */ "./node_modules/qunit/qunit/qunit.js");
 /* harmony import */ var qunit__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(qunit__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../src/music21_modules.js */ "./src/music21_modules.js");
+/* harmony import */ var _src_music21_modules__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../src/music21_modules */ "./src/music21_modules.js");
 
 
 var test = qunit__WEBPACK_IMPORTED_MODULE_0__["test"];
 function tests() {
   test('music21.chord.Chord', assert => {
-    var c = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_1__["chord"].Chord(['C5', 'E5', 'G5']);
+    var c = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_1__["chord"].Chord(['C5', 'E5', 'G5']);
     assert.equal(c.length, 3, 'Checking length of Chord');
     assert.ok(c.isMajorTriad(), 'C E G should be a major triad');
     assert.equal(c.isMinorTriad(), false, 'C E G should not be minor triad');
     assert.equal(c.canBeTonic(), true, 'C E G can be a tonic'); // string construction
 
-    c = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_1__["chord"].Chord('C5 E5 G5');
+    c = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_1__["chord"].Chord('C5 E5 G5');
     assert.equal(c.length, 3, 'Checking length of Chord');
     assert.ok(c.isMajorTriad(), 'test chord construction from string');
-    c = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_1__["chord"].Chord(['B', 'G', 'D', 'F']);
+    c = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_1__["chord"].Chord(['B', 'G', 'D', 'F']);
     assert.ok(c.isDominantSeventh()); // test is sorted:
 
-    c = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_1__["chord"].Chord('C5 E4 G3');
+    c = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_1__["chord"].Chord('C5 E4 G3');
     var pitches = c.pitches;
     assert.equal(pitches[0].nameWithOctave, 'G3');
     assert.equal(pitches[2].nameWithOctave, 'C5');
@@ -76035,17 +76317,17 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return tests; });
 /* harmony import */ var qunit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! qunit */ "./node_modules/qunit/qunit/qunit.js");
 /* harmony import */ var qunit__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(qunit__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../src/music21_modules.js */ "./src/music21_modules.js");
+/* harmony import */ var _src_music21_modules__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../src/music21_modules */ "./src/music21_modules.js");
 
 
 var test = qunit__WEBPACK_IMPORTED_MODULE_0__["test"];
 function tests() {
   test('music21.clef.Clef', assert => {
-    var c1 = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_1__["clef"].Clef();
+    var c1 = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_1__["clef"].Clef();
     assert.ok(c1.isClassOrSubclass('Clef'), 'clef is a Clef');
-    var ac = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_1__["clef"].AltoClef();
+    var ac = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_1__["clef"].AltoClef();
     assert.equal(ac.lowestLine, 25, 'first line set');
-    var n = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_1__["note"].Note('C#4');
+    var n = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_1__["note"].Note('C#4');
     n.setStemDirectionFromClef(ac);
     assert.equal(n.stemDirection, 'down', 'stem direction set to down');
     n.pitch.diatonicNoteNum -= 1;
@@ -76056,24 +76338,24 @@ function tests() {
     assert.equal(p2.nameWithOctave, 'B#4', 'converted to treble');
   });
   test('music21.clef.Clef 8va', assert => {
-    var ac = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_1__["clef"].Treble8vaClef();
+    var ac = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_1__["clef"].Treble8vaClef();
     assert.equal(ac.lowestLine, 38, 'first line set');
-    var n = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_1__["note"].Note('C#5');
+    var n = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_1__["note"].Note('C#5');
     n.setStemDirectionFromClef(ac);
     assert.equal(n.stemDirection, 'up', 'stem direction set');
     var p2 = ac.convertPitchToTreble(n.pitch);
     assert.equal(p2.nameWithOctave, 'C#4', 'converted to treble');
-    var s = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_1__["stream"].Stream();
+    var s = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_1__["stream"].Stream();
     s.clef = ac;
     s.append(n);
     s.appendNewDOM(window.$('body'));
   });
   test('music21.clef clefFromString', assert => {
-    var tc = _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_1__["clef"].clefFromString('treble');
+    var tc = _src_music21_modules__WEBPACK_IMPORTED_MODULE_1__["clef"].clefFromString('treble');
     assert.ok(tc.isClassOrSubclass('TrebleClef'), 'tc is TrebleClef');
-    var tc2 = _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_1__["clef"].clefFromString('treble8va');
+    var tc2 = _src_music21_modules__WEBPACK_IMPORTED_MODULE_1__["clef"].clefFromString('treble8va');
     assert.ok(tc2.isClassOrSubclass('Treble8vaClef'), 'tc2 is Treble8vaClef');
-    var bc = _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_1__["clef"].clefFromString('F4');
+    var bc = _src_music21_modules__WEBPACK_IMPORTED_MODULE_1__["clef"].clefFromString('F4');
     assert.ok(bc.isClassOrSubclass('BassClef'), 'bc is BassClef');
   });
 }
@@ -76092,10 +76374,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return tests; });
 /* harmony import */ var qunit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! qunit */ "./node_modules/qunit/qunit/qunit.js");
 /* harmony import */ var qunit__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(qunit__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../src/music21_modules.js */ "./src/music21_modules.js");
+/* harmony import */ var _src_music21_modules__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../src/music21_modules */ "./src/music21_modules.js");
 
 
-var common = _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_1__["common"];
+var common = _src_music21_modules__WEBPACK_IMPORTED_MODULE_1__["common"];
 var test = qunit__WEBPACK_IMPORTED_MODULE_0__["test"];
 function tests() {
   test('music21.common.posMod', assert => {
@@ -76133,19 +76415,19 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return tests; });
 /* harmony import */ var qunit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! qunit */ "./node_modules/qunit/qunit/qunit.js");
 /* harmony import */ var qunit__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(qunit__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../src/music21_modules.js */ "./src/music21_modules.js");
+/* harmony import */ var _src_music21_modules__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../src/music21_modules */ "./src/music21_modules.js");
 
 
 var test = qunit__WEBPACK_IMPORTED_MODULE_0__["test"];
 function tests() {
   test('music21.duration.Duration 0', assert => {
-    var d = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_1__["duration"].Duration(0.0);
+    var d = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_1__["duration"].Duration(0.0);
     assert.equal(d.type, 'zero', 'got zero');
     assert.equal(d.dots, 0, 'got no dots');
     assert.equal(d.quarterLength, 0.0, 'got 0.0');
   });
   test('music21.duration.Duration', assert => {
-    var d = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_1__["duration"].Duration(1.0);
+    var d = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_1__["duration"].Duration(1.0);
     assert.equal(d.type, 'quarter', 'got quarter note from 1.0');
     assert.equal(d.dots, 0, 'got no dots');
     assert.equal(d.quarterLength, 1.0, 'got 1.0 from 1.0');
@@ -76165,14 +76447,14 @@ function tests() {
     assert.equal(d.dots, 4, 'got four dots from 7.75');
   });
   test('music21.duration.Tuplet', assert => {
-    var d = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_1__["duration"].Duration(0.5);
-    var t = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_1__["duration"].Tuplet(5, 4);
+    var d = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_1__["duration"].Duration(0.5);
+    var t = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_1__["duration"].Tuplet(5, 4);
     assert.equal(t.tupletMultiplier(), 0.8, 'tuplet multiplier should be 0.8');
     d.appendTuplet(t);
     assert.equal(t.frozen, true, 'tuplet is frozen');
     assert.equal(d._tuplets[0], t, 'tuplet appended');
     assert.equal(d.quarterLength, 0.4, 'quarterLength Updated');
-    var d2 = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_1__["duration"].Duration(1 / 3);
+    var d2 = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_1__["duration"].Duration(1 / 3);
     assert.equal(d2.type, 'eighth', 'got eighth note from 1/3');
     assert.equal(d2.dots, 0, 'got no dots');
     assert.equal(d2.quarterLength, 1 / 3, 'got 1/3 from 1/3');
@@ -76182,15 +76464,15 @@ function tests() {
     assert.equal(t2.durationActual.quarterLength, 0.5);
     assert.equal(t2.tupletMultiplier(), 2 / 3, '2/3 tuplet multiplier');
     assert.equal(t2.totalTupletLength(), 1.0, 'total tuplet == 1.0');
-    var s = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_1__["stream"].Stream();
-    s.timeSignature = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_1__["meter"].TimeSignature('2/2');
+    var s = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_1__["stream"].Stream();
+    s.timeSignature = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_1__["meter"].TimeSignature('2/2');
 
     for (var i = 0; i < 6; i++) {
-      var n1 = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_1__["note"].Note('C4');
+      var n1 = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_1__["note"].Note('C4');
       n1.duration.quarterLength = 2 / 3;
 
       if (i % 3 === 0) {
-        n1.articulations.push(new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_1__["articulations"].Accent());
+        n1.articulations.push(new _src_music21_modules__WEBPACK_IMPORTED_MODULE_1__["articulations"].Accent());
       }
 
       s.append(n1);
@@ -76198,14 +76480,14 @@ function tests() {
 
     s.appendNewDOM();
     assert.ok(true, 'quarter note triplets displayed');
-    var m6 = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_1__["stream"].Measure();
+    var m6 = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_1__["stream"].Measure();
     m6.renderOptions.staffLines = 1;
-    m6.timeSignature = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_1__["meter"].TimeSignature('2/4');
-    var n6 = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_1__["note"].Note('B4');
+    m6.timeSignature = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_1__["meter"].TimeSignature('2/4');
+    var n6 = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_1__["note"].Note('B4');
     n6.duration.quarterLength = 2 / 3;
     n6.duration.tuplets[0].durationNormal.type = 'eighth';
     n6.duration.tuplets[0].tupletNormalShow = 'ratio';
-    var n7 = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_1__["note"].Note('B4');
+    var n7 = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_1__["note"].Note('B4');
     n7.duration.quarterLength = 1 / 3;
     n7.duration.tuplets[0].tupletNormalShow = 'ratio';
     m6.append(n6);
@@ -76218,42 +76500,42 @@ function tests() {
     assert.equal(n6.duration.tuplets[0] !== n6clone.duration.tuplets[0], true, 'tuplet should not be the same object after clone');
   });
   test('music21.duration.Tuplet multiple parts', assert => {
-    var s2 = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_1__["stream"].Measure();
-    s2.timeSignature = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_1__["meter"].TimeSignature('3/2');
-    var na1 = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_1__["note"].Note('F4');
-    var na2 = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_1__["note"].Note('E4');
+    var s2 = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_1__["stream"].Measure();
+    s2.timeSignature = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_1__["meter"].TimeSignature('3/2');
+    var na1 = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_1__["note"].Note('F4');
+    var na2 = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_1__["note"].Note('E4');
     s2.append(na1);
     s2.append(na2);
 
     for (var i = 0; i < 10; i++) {
-      var n1 = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_1__["note"].Note('F4');
+      var n1 = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_1__["note"].Note('F4');
       n1.pitch.diatonicNoteNum += i;
       n1.duration.quarterLength = 2 / 5;
       n1.duration.tuplets[0].tupletNormalShow = 'ratio';
 
       if (i % 5 === 0) {
-        n1.articulations.push(new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_1__["articulations"].Accent());
+        n1.articulations.push(new _src_music21_modules__WEBPACK_IMPORTED_MODULE_1__["articulations"].Accent());
       }
 
       s2.append(n1);
     }
 
-    var s3 = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_1__["stream"].Measure();
-    s3.timeSignature = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_1__["meter"].TimeSignature('3/2');
-    s3.append(new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_1__["note"].Note('B5', 6.0));
-    var p = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_1__["stream"].Part();
+    var s3 = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_1__["stream"].Measure();
+    s3.timeSignature = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_1__["meter"].TimeSignature('3/2');
+    s3.append(new _src_music21_modules__WEBPACK_IMPORTED_MODULE_1__["note"].Note('B5', 6.0));
+    var p = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_1__["stream"].Part();
     p.append(s2);
     p.append(s3);
-    var m4 = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_1__["stream"].Measure();
-    m4.timeSignature = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_1__["meter"].TimeSignature('3/2');
-    m4.append(new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_1__["note"].Note('B3', 6.0));
-    var m5 = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_1__["stream"].Measure();
-    m5.timeSignature = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_1__["meter"].TimeSignature('3/2');
-    m5.append(new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_1__["note"].Note('B3', 6.0));
-    var p2 = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_1__["stream"].Part();
+    var m4 = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_1__["stream"].Measure();
+    m4.timeSignature = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_1__["meter"].TimeSignature('3/2');
+    m4.append(new _src_music21_modules__WEBPACK_IMPORTED_MODULE_1__["note"].Note('B3', 6.0));
+    var m5 = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_1__["stream"].Measure();
+    m5.timeSignature = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_1__["meter"].TimeSignature('3/2');
+    m5.append(new _src_music21_modules__WEBPACK_IMPORTED_MODULE_1__["note"].Note('B3', 6.0));
+    var p2 = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_1__["stream"].Part();
     p2.append(m4);
     p2.append(m5);
-    var sc = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_1__["stream"].Score();
+    var sc = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_1__["stream"].Score();
     sc.insert(0, p);
     sc.insert(0, p2);
     sc.appendNewDOM();
@@ -76346,10 +76628,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return tests; });
 /* harmony import */ var qunit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! qunit */ "./node_modules/qunit/qunit/qunit.js");
 /* harmony import */ var qunit__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(qunit__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../src/music21_modules.js */ "./src/music21_modules.js");
+/* harmony import */ var _src_music21_modules__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../src/music21_modules */ "./src/music21_modules.js");
 
 
-var figuredBass = _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_1__["figuredBass"];
+var figuredBass = _src_music21_modules__WEBPACK_IMPORTED_MODULE_1__["figuredBass"];
 var test = qunit__WEBPACK_IMPORTED_MODULE_0__["test"];
 function tests() {
   test('music21.figuredBass.Notation', assert => {
@@ -76372,11 +76654,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return tests; });
 /* harmony import */ var qunit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! qunit */ "./node_modules/qunit/qunit/qunit.js");
 /* harmony import */ var qunit__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(qunit__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../src/music21_modules.js */ "./src/music21_modules.js");
+/* harmony import */ var _src_music21_modules__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../src/music21_modules */ "./src/music21_modules.js");
 
 
-var interval = _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_1__["interval"];
-var Interval = _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_1__["interval"].Interval;
+var interval = _src_music21_modules__WEBPACK_IMPORTED_MODULE_1__["interval"];
+var Interval = _src_music21_modules__WEBPACK_IMPORTED_MODULE_1__["interval"].Interval;
 var test = qunit__WEBPACK_IMPORTED_MODULE_0__["test"];
 function tests() {
   test('music21.interval.intervalFromGenericAndChromatic', assert => {
@@ -76410,13 +76692,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return tests; });
 /* harmony import */ var qunit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! qunit */ "./node_modules/qunit/qunit/qunit.js");
 /* harmony import */ var qunit__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(qunit__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../src/music21_modules.js */ "./src/music21_modules.js");
+/* harmony import */ var _src_music21_modules__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../src/music21_modules */ "./src/music21_modules.js");
 
 
 var test = qunit__WEBPACK_IMPORTED_MODULE_0__["test"];
 function tests() {
   test('music21.key.convertKeyStringToMusic21KeyString', assert => {
-    var conv = _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_1__["key"].convertKeyStringToMusic21KeyString;
+    var conv = _src_music21_modules__WEBPACK_IMPORTED_MODULE_1__["key"].convertKeyStringToMusic21KeyString;
     assert.equal(conv('A'), 'A', 'normal string passed');
     assert.equal(conv('a-'), 'a-', 'normal string passed');
     assert.equal(conv('Bb'), 'B-', 'Bb passed');
@@ -76436,7 +76718,7 @@ function tests() {
       var givenKeyName = thisTest[2];
       var givenMode = thisTest[3];
 
-      var _k = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_1__["key"].Key(givenKeyName, givenMode);
+      var _k = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_1__["key"].Key(givenKeyName, givenMode);
 
       var foundSharps = _k.sharps;
       var foundMode = _k.mode;
@@ -76444,7 +76726,7 @@ function tests() {
       assert.equal(foundMode, expectedMode, 'Test mode: ' + givenKeyName + ' (mode: ' + givenMode + ') ');
     }
 
-    var k = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_1__["key"].Key('f#');
+    var k = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_1__["key"].Key('f#');
     var s = k.getScale().getPitches();
     assert.equal(s[2].nameWithOctave, 'A4', 'test minor scale');
     assert.equal(s[6].nameWithOctave, 'E5');
@@ -76479,7 +76761,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var qunit__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! qunit */ "./node_modules/qunit/qunit/qunit.js");
 /* harmony import */ var qunit__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(qunit__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../src/music21_modules.js */ "./src/music21_modules.js");
+/* harmony import */ var _src_music21_modules__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../src/music21_modules */ "./src/music21_modules.js");
 
 
 
@@ -76497,7 +76779,7 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 var test = qunit__WEBPACK_IMPORTED_MODULE_3__["test"];
 function tests() {
   test('music21.meter.TimeSignature', assert => {
-    var m = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_4__["meter"].TimeSignature('4/4');
+    var m = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_4__["meter"].TimeSignature('4/4');
     assert.equal(m.ratioString, '4/4', 'ratioString matches');
     assert.equal(m.barDuration.quarterLength, 4.0, 'bar lasts 4.0 ql');
     assert.deepEqual(m.beatGroups, [[2, 8]], 'beatGroups check out');
@@ -76506,7 +76788,7 @@ function tests() {
     assert.equal(m.beatDuration.dots, 0, 'beatDuration has not dots');
   });
   test('music21.meter.TimeSignature beams', assert => {
-    var m = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_4__["meter"].TimeSignature('4/4');
+    var m = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_4__["meter"].TimeSignature('4/4');
 
     var _m$offsetToSpan = m.offsetToSpan(3.2),
         _m$offsetToSpan2 = _slicedToArray(_m$offsetToSpan, 2),
@@ -76517,7 +76799,7 @@ function tests() {
     assert.equal(end, 4.0, 'beat ends at 4');
   });
   test('music21.meter.TimeSignature compound', assert => {
-    var m = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_4__["meter"].TimeSignature('6/8');
+    var m = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_4__["meter"].TimeSignature('6/8');
     assert.equal(m.ratioString, '6/8', 'ratioString matches');
     assert.equal(m.barDuration.quarterLength, 3.0, 'bar lasts 3.0 ql');
     assert.deepEqual(m.beatGroups, [[3, 8], [3, 8]], 'beatGroups check out');
@@ -76541,13 +76823,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return tests; });
 /* harmony import */ var qunit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! qunit */ "./node_modules/qunit/qunit/qunit.js");
 /* harmony import */ var qunit__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(qunit__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../src/music21_modules.js */ "./src/music21_modules.js");
+/* harmony import */ var _src_music21_modules__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../src/music21_modules */ "./src/music21_modules.js");
 
 
 var test = qunit__WEBPACK_IMPORTED_MODULE_0__["test"];
 function tests() {
   test('music21.note.Note', assert => {
-    var n = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_1__["note"].Note('D#5');
+    var n = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_1__["note"].Note('D#5');
     assert.equal(n.pitch.name, 'D#', 'Pitch Name set to D#');
     assert.equal(n.pitch.step, 'D', 'Pitch Step set to D');
     assert.equal(n.pitch.octave, 5, 'Pitch octave set to 5');
@@ -76568,34 +76850,34 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return tests; });
 /* harmony import */ var qunit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! qunit */ "./node_modules/qunit/qunit/qunit.js");
 /* harmony import */ var qunit__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(qunit__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../src/music21_modules.js */ "./src/music21_modules.js");
+/* harmony import */ var _src_music21_modules__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../src/music21_modules */ "./src/music21_modules.js");
 
 
 var test = qunit__WEBPACK_IMPORTED_MODULE_0__["test"];
 function tests() {
   test('music21.pitch.Accidental', assert => {
-    var a = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_1__["pitch"].Accidental('-');
+    var a = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_1__["pitch"].Accidental('-');
     assert.equal(a.alter, -1.0, 'flat alter passed');
     assert.equal(a.name, 'flat', 'flat name passed');
     a.name = 'sharp';
     assert.equal(a.alter, 1.0, 'flat alter passed');
     assert.equal(a.name, 'sharp', 'flat name passed');
-    var b = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_1__["pitch"].Accidental('b');
+    var b = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_1__["pitch"].Accidental('b');
     assert.equal(b.alter, -1.0, 'flat alter passed');
     assert.equal(b.name, 'flat', 'flat name passed');
   });
   test('music21.pitch.Pitch', assert => {
-    var p = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_1__["pitch"].Pitch('D#5');
+    var p = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_1__["pitch"].Pitch('D#5');
     assert.equal(p.name, 'D#', 'Pitch Name set to D#');
     assert.equal(p.step, 'D', 'Pitch Step set to D');
     assert.equal(p.octave, 5, 'Pitch octave set to 5');
     assert.equal(p.nameWithOctave, 'D#5', 'Name with octave');
-    var c = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_1__["clef"].AltoClef();
+    var c = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_1__["clef"].AltoClef();
     var vfn = p.vexflowName(c);
     assert.equal(vfn, 'C#/6', 'Vexflow name set');
   });
   test('music21.pitch.Pitch enharmonics', assert => {
-    var es = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_1__["pitch"].Pitch('E-5');
+    var es = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_1__["pitch"].Pitch('E-5');
     var dis = es.getLowerEnharmonic();
     assert.equal(es.name, 'E-', 'Original Pitch Name unchanged');
     assert.equal(dis.name, 'D#', 'Pitch Name set to D#');
@@ -76605,7 +76887,7 @@ function tests() {
     dis.getHigherEnharmonic(true); // inPlace
 
     assert.equal(dis.nameWithOctave, es.nameWithOctave);
-    var cDblSharp = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_1__["pitch"].Pitch('C##5');
+    var cDblSharp = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_1__["pitch"].Pitch('C##5');
     var dNatural = cDblSharp.getHigherEnharmonic();
     assert.equal(cDblSharp.ps, dNatural.ps);
     assert.equal(dNatural.name, 'D', 'C## higher is D');
@@ -76613,7 +76895,7 @@ function tests() {
     var bTripleSharp = cDblSharp.getLowerEnharmonic();
     assert.equal(cDblSharp.ps, bTripleSharp.ps);
     assert.equal(bTripleSharp.octave, 4, 'Octave is 4 [B###]');
-    var cDblFlat = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_1__["pitch"].Pitch('C--5');
+    var cDblFlat = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_1__["pitch"].Pitch('C--5');
     var bFlat = cDblFlat.getLowerEnharmonic();
     assert.equal(cDblFlat.ps, bFlat.ps); // once octaveless pitches exist...
     // const octaveless = new music21.pitch.Pitch('C');
@@ -76638,34 +76920,34 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return tests; });
 /* harmony import */ var qunit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! qunit */ "./node_modules/qunit/qunit/qunit.js");
 /* harmony import */ var qunit__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(qunit__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../src/music21_modules.js */ "./src/music21_modules.js");
+/* harmony import */ var _src_music21_modules__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../src/music21_modules */ "./src/music21_modules.js");
 
 
 var test = qunit__WEBPACK_IMPORTED_MODULE_0__["test"];
 function tests() {
   test('music21.prebase.ProtoM21Object.classes', assert => {
-    var n = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_1__["note"].Note();
+    var n = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_1__["note"].Note();
     assert.deepEqual(n.classes, ['Note', 'NotRest', 'GeneralNote', 'Music21Object', 'ProtoM21Object', 'object']);
   });
   test('music21.prebase.ProtoM21Object.isClassOrSubclass', assert => {
-    var n = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_1__["note"].Note();
+    var n = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_1__["note"].Note();
     assert.ok(n.isClassOrSubclass('Note'));
     assert.ok(n.isClassOrSubclass('GeneralNote'));
     assert.ok(n.isClassOrSubclass('music21.note.Note'));
-    assert.ok(n.isClassOrSubclass(_src_music21_modules_js__WEBPACK_IMPORTED_MODULE_1__["note"].Note));
-    assert.ok(n.isClassOrSubclass(['Rest', _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_1__["note"].Note]));
+    assert.ok(n.isClassOrSubclass(_src_music21_modules__WEBPACK_IMPORTED_MODULE_1__["note"].Note));
+    assert.ok(n.isClassOrSubclass(['Rest', _src_music21_modules__WEBPACK_IMPORTED_MODULE_1__["note"].Note]));
     assert.notOk(n.isClassOrSubclass('Rest'));
   });
   test('music21.prebase.ProtoM21Object.classSet', assert => {
-    var n = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_1__["note"].Note();
+    var n = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_1__["note"].Note();
     assert.ok(n.classSet.has('Note'));
     assert.ok(n.classSet.has('GeneralNote'));
     assert.ok(n.classSet.has('music21.note.GeneralNote'));
-    assert.ok(n.classSet.has(_src_music21_modules_js__WEBPACK_IMPORTED_MODULE_1__["note"].GeneralNote));
+    assert.ok(n.classSet.has(_src_music21_modules__WEBPACK_IMPORTED_MODULE_1__["note"].GeneralNote));
     assert.notOk(n.classSet.has('Rest'));
   });
   test('clone', assert => {
-    var n = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_1__["note"].Note('D4');
+    var n = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_1__["note"].Note('D4');
     var n2 = n.clone();
     n.pitch.octave = 5;
     assert.equal(n2.pitch.octave, 4);
@@ -76705,7 +76987,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_7__);
 /* harmony import */ var qunit__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! qunit */ "./node_modules/qunit/qunit/qunit.js");
 /* harmony import */ var qunit__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(qunit__WEBPACK_IMPORTED_MODULE_8__);
-/* harmony import */ var _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../../src/music21_modules.js */ "./src/music21_modules.js");
+/* harmony import */ var _src_music21_modules__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../../src/music21_modules */ "./src/music21_modules.js");
 
 
 
@@ -76720,38 +77002,38 @@ var test = qunit__WEBPACK_IMPORTED_MODULE_8__["test"];
 function tests() {
   test('music21.roman.expandShortHand', assert => {
     var outGroups;
-    outGroups = _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_9__["roman"].expandShortHand('64');
+    outGroups = _src_music21_modules__WEBPACK_IMPORTED_MODULE_9__["roman"].expandShortHand('64');
     assert.equal(outGroups.length, 2);
     assert.equal(outGroups[0], 6);
     assert.equal(outGroups[1], 4);
-    outGroups = _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_9__["roman"].expandShortHand('973');
+    outGroups = _src_music21_modules__WEBPACK_IMPORTED_MODULE_9__["roman"].expandShortHand('973');
     assert.equal(outGroups.toString(), '9,7,3');
-    outGroups = _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_9__["roman"].expandShortHand('11b3');
+    outGroups = _src_music21_modules__WEBPACK_IMPORTED_MODULE_9__["roman"].expandShortHand('11b3');
     assert.equal(outGroups.toString(), '11,b3');
-    outGroups = _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_9__["roman"].expandShortHand('b13#9-6');
+    outGroups = _src_music21_modules__WEBPACK_IMPORTED_MODULE_9__["roman"].expandShortHand('b13#9-6');
     assert.equal(outGroups.toString(), 'b13,#9,-6');
-    outGroups = _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_9__["roman"].expandShortHand('-');
+    outGroups = _src_music21_modules__WEBPACK_IMPORTED_MODULE_9__["roman"].expandShortHand('-');
     assert.equal(outGroups.toString(), '5,-3');
-    outGroups = _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_9__["roman"].expandShortHand('6/4');
+    outGroups = _src_music21_modules__WEBPACK_IMPORTED_MODULE_9__["roman"].expandShortHand('6/4');
     assert.equal(outGroups.toString(), '6,4'); // no shorthand expansion here
 
-    outGroups = _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_9__["roman"].expandShortHand('7');
+    outGroups = _src_music21_modules__WEBPACK_IMPORTED_MODULE_9__["roman"].expandShortHand('7');
     assert.equal(outGroups.toString(), '7');
-    outGroups = _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_9__["roman"].expandShortHand('4/3');
+    outGroups = _src_music21_modules__WEBPACK_IMPORTED_MODULE_9__["roman"].expandShortHand('4/3');
     assert.equal(outGroups.toString(), '4,3');
-    outGroups = _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_9__["roman"].expandShortHand('6');
+    outGroups = _src_music21_modules__WEBPACK_IMPORTED_MODULE_9__["roman"].expandShortHand('6');
     assert.equal(outGroups.toString(), '6');
   });
   test('music21.roman.correctSuffixForChordQuality', assert => {
     var c;
-    c = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_9__["chord"].Chord('E3 C4 G4');
-    assert.equal(_src_music21_modules_js__WEBPACK_IMPORTED_MODULE_9__["roman"].correctSuffixForChordQuality(c, '6'), '6');
-    c = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_9__["chord"].Chord('E3 C4 G-4');
-    assert.equal(_src_music21_modules_js__WEBPACK_IMPORTED_MODULE_9__["roman"].correctSuffixForChordQuality(c, '6'), 'o6');
+    c = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_9__["chord"].Chord('E3 C4 G4');
+    assert.equal(_src_music21_modules__WEBPACK_IMPORTED_MODULE_9__["roman"].correctSuffixForChordQuality(c, '6'), '6');
+    c = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_9__["chord"].Chord('E3 C4 G-4');
+    assert.equal(_src_music21_modules__WEBPACK_IMPORTED_MODULE_9__["roman"].correctSuffixForChordQuality(c, '6'), 'o6');
   });
   test('music21.roman.RomanNumeral', assert => {
     var t1 = 'IV';
-    var rn1 = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_9__["roman"].RomanNumeral(t1, 'F');
+    var rn1 = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_9__["roman"].RomanNumeral(t1, 'F');
     assert.equal(rn1.scaleDegree, 4, 'test scale degree of F IV');
     var rnKey = rn1.key;
     assert.equal(rnKey.tonic.name, 'F', 'test scale is F');
@@ -76766,7 +77048,7 @@ function tests() {
     var t2;
     t2 = 'viio7';
     assert.equal(t2, 'viio7', 'beginning viio7 test');
-    rn1 = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_9__["roman"].RomanNumeral(t2, 'a');
+    rn1 = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_9__["roman"].RomanNumeral(t2, 'a');
     assert.equal(rn1.scaleDegree, 7, 'test scale degree of A viio7');
     assert.equal(rn1.root().name, 'G#', 'test root name == G#');
     assert.equal(rn1.impliedQuality, 'diminished', 'implied quality');
@@ -76777,7 +77059,7 @@ function tests() {
     assert.equal(rn1.degreeName, 'Leading-tone', 'test is Leading-tone');
     assert.equal(rn1.figureAndKey, 'viio7 in a minor');
     t2 = 'V7';
-    rn1 = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_9__["roman"].RomanNumeral(t2, 'a');
+    rn1 = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_9__["roman"].RomanNumeral(t2, 'a');
     assert.equal(rn1.scaleDegree, 5, 'test scale degree of a V7');
     assert.equal(rn1.romanNumeralAlone, 'V', 'test romanNumeralAlone');
     assert.equal(rn1.root().name, 'E', 'root name is E');
@@ -76788,7 +77070,7 @@ function tests() {
     assert.equal(rn1.pitches[3].name, 'D', 'test pitches[3] == D');
     assert.equal(rn1.degreeName, 'Dominant', 'test is Dominant');
     t2 = 'VII';
-    rn1 = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_9__["roman"].RomanNumeral(t2, 'f#');
+    rn1 = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_9__["roman"].RomanNumeral(t2, 'f#');
     assert.equal(rn1.scaleDegree, 7, 'test scale degree of a VII');
     assert.equal(rn1.root().name, 'E', 'root name is E');
     assert.equal(rn1.impliedQuality, 'major', 'implied quality major');
@@ -76797,7 +77079,7 @@ function tests() {
     assert.equal(rn1.pitches[2].name, 'B', 'test pitches[2] == B');
     assert.equal(rn1.degreeName, 'Subtonic', 'test is Subtonic');
     t2 = '#IV';
-    rn1 = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_9__["roman"].RomanNumeral(t2, 'F');
+    rn1 = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_9__["roman"].RomanNumeral(t2, 'F');
     assert.equal(rn1.scaleDegree, 4, 'test scale dgree of F #IV');
     assert.equal(rn1.root().name, 'B', 'test root of F #IV');
     assert.equal(rn1.impliedQuality, 'major', 'test quality is major');
@@ -76807,7 +77089,7 @@ function tests() {
     assert.equal(rn1.pitches[2].name, 'F#', 'test pitches[2] == F#');
     assert.equal(rn1.figureAndKey, '#IV in F major');
     assert.equal(rn1.degreeName, 'Subdominant', 'test is Subdominant');
-    rn1 = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_9__["roman"].RomanNumeral('Cad64', 'c');
+    rn1 = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_9__["roman"].RomanNumeral('Cad64', 'c');
     assert.equal(rn1.scaleDegree, 1, 'test scale dgree of Cad64');
     assert.equal(rn1.root().name, 'C', 'test root of Cad64');
     assert.equal(rn1.bass().name, 'G', 'test bass of Cad64');
@@ -76816,7 +77098,7 @@ function tests() {
   test('music21.roman.RomanNumeral - inversions', assert => {
     var t1 = 'IV6';
     var rn1;
-    rn1 = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_9__["roman"].RomanNumeral(t1, 'F');
+    rn1 = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_9__["roman"].RomanNumeral(t1, 'F');
     assert.equal(rn1.scaleDegree, 4, 'test scale degree of F IV6');
     var rnKey = rn1.key;
     assert.equal(rnKey.tonic.name, 'F', 'test scale is F');
@@ -76828,7 +77110,7 @@ function tests() {
     assert.ok(rn1.pitches.map(p => p.name).includes('F'), 'F in pitches');
     assert.equal(rn1.degreeName, 'Subdominant', 'test is Subdominant');
     var t2 = 'V43';
-    rn1 = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_9__["roman"].RomanNumeral(t2, 'a');
+    rn1 = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_9__["roman"].RomanNumeral(t2, 'a');
     assert.equal(rn1.scaleDegree, 5, 'test scale degree of a V43');
     assert.equal(rn1.romanNumeralAlone, 'V', 'test romanNumeralAlone');
     assert.equal(rn1.root().name, 'E', 'root name is E');
@@ -76840,7 +77122,7 @@ function tests() {
     assert.equal(rn1.pitches[3].name, 'G#', 'test pitches[3] == G#');
     assert.equal(rn1.degreeName, 'Dominant', 'test is Dominant');
     t2 = 'ii/o65';
-    rn1 = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_9__["roman"].RomanNumeral(t2, 'g');
+    rn1 = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_9__["roman"].RomanNumeral(t2, 'g');
     assert.equal(rn1.figure, 'iiø65', 'test figure is changed');
     assert.equal(rn1.scaleDegree, 2, 'test scale degree of a iiø65');
     assert.equal(rn1.romanNumeralAlone, 'ii', 'test romanNumeralAlone is ii');
@@ -76854,27 +77136,27 @@ function tests() {
     assert.equal(rn1.degreeName, 'Supertonic', 'test is Supertonic');
   });
   test('music21.roman.RomanNumeral - front alterations', assert => {
-    var rn1 = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_9__["roman"].RomanNumeral('#II', 'C');
+    var rn1 = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_9__["roman"].RomanNumeral('#II', 'C');
     assert.equal(rn1.root().name, 'D#', 'root name is D#');
     assert.equal(rn1.bass().name, 'D#', 'bass name is D#');
     assert.equal(rn1.pitches[1].name, 'F##', 'next pitch is F##');
     assert.equal(rn1.pitches[2].name, 'A#', 'last pitch is A#');
   });
   test('music21.roman.RomanNumeral - neapolitan', assert => {
-    var rn1 = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_9__["roman"].RomanNumeral('N6', 'C');
+    var rn1 = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_9__["roman"].RomanNumeral('N6', 'C');
     assert.equal(rn1.root().name, 'D-', 'root name is D-');
     assert.equal(rn1.bass().name, 'F', 'bass name is F');
   });
   test('music21.roman.RomanNumeral - omittedSteps', assert => {
     var rn1;
-    rn1 = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_9__["roman"].RomanNumeral('V7[no5][no3]', 'C');
+    rn1 = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_9__["roman"].RomanNumeral('V7[no5][no3]', 'C');
     assert.equal(rn1.omittedSteps[0], 5, '5 is omitted');
     assert.equal(rn1.omittedSteps[1], 3, '3 is omitted');
     assert.equal(rn1.root().name, 'G', '#1 root name is G');
     assert.equal(rn1.pitches.length, 2, '#1 length is 2');
     assert.equal(rn1.pitches[0].name, 'G');
     assert.equal(rn1.pitches[1].name, 'F');
-    rn1 = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_9__["roman"].RomanNumeral('V13[no11][no9][no7]', 'C');
+    rn1 = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_9__["roman"].RomanNumeral('V13[no11][no9][no7]', 'C');
     assert.equal(rn1.omittedSteps[0], 4, '4 =11 is omitted');
     assert.equal(rn1.omittedSteps[1], 2, '2 =9 is omitted');
     assert.equal(rn1.omittedSteps[2], 7, '7 is omitted'); // root of 13th is undefined...
@@ -76888,7 +77170,7 @@ function tests() {
     assert.equal(rn1.pitches[3].name, 'E');
   });
   test('music21.roman.RomanNumeral - bracketedAlterations', assert => {
-    var rn1 = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_9__["roman"].RomanNumeral('V7[#5][b3]', 'C');
+    var rn1 = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_9__["roman"].RomanNumeral('V7[#5][b3]', 'C');
     assert.deepEqual(rn1.bracketedAlterations[0], ['#', 5], "5 is sharped: ".concat(rn1.bracketedAlterations[0]));
     assert.deepEqual(rn1.bracketedAlterations[1], ['b', 3], "3 is flattened:  ".concat(rn1.bracketedAlterations[1]));
     assert.equal(rn1.root().name, 'G', '#1 root name is G');
@@ -76898,52 +77180,52 @@ function tests() {
   });
   test('music21.roman.RomanNumeral - vio, VI, vii, VII in minor', assert => {
     var rn1;
-    rn1 = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_9__["roman"].RomanNumeral('vio', 'c');
+    rn1 = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_9__["roman"].RomanNumeral('vio', 'c');
     assert.equal(rn1.root().name, 'A', 'root name is A');
     assert.equal(rn1.fifth.name, 'E-', 'fifth name is E-');
-    rn1 = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_9__["roman"].RomanNumeral('vi', 'c');
+    rn1 = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_9__["roman"].RomanNumeral('vi', 'c');
     assert.equal(rn1.root().name, 'A', 'root name is A');
     assert.equal(rn1.fifth.name, 'E', 'fifth name is E');
-    rn1 = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_9__["roman"].RomanNumeral('VI', 'c');
+    rn1 = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_9__["roman"].RomanNumeral('VI', 'c');
     assert.equal(rn1.root().name, 'A-', 'root name is A-');
     assert.equal(rn1.fifth.name, 'E-', 'fifth name is E-');
-    rn1 = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_9__["roman"].RomanNumeral('viio', 'c');
+    rn1 = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_9__["roman"].RomanNumeral('viio', 'c');
     assert.equal(rn1.root().name, 'B', 'root name is B');
     assert.equal(rn1.fifth.name, 'F', 'fifth name is F');
-    rn1 = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_9__["roman"].RomanNumeral('vii', 'c');
+    rn1 = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_9__["roman"].RomanNumeral('vii', 'c');
     assert.equal(rn1.root().name, 'B', 'root name is B');
     assert.equal(rn1.fifth.name, 'F#', 'fifth name is F#');
-    rn1 = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_9__["roman"].RomanNumeral('VII', 'c');
+    rn1 = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_9__["roman"].RomanNumeral('VII', 'c');
     assert.equal(rn1.root().name, 'B-', 'root name is B-');
     assert.equal(rn1.fifth.name, 'F', 'fifth name is F');
   });
   test('music21.roman.RomanNumeral - secondary roman numerals', assert => {
     var rn1;
-    rn1 = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_9__["roman"].RomanNumeral('V/V', 'C');
+    rn1 = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_9__["roman"].RomanNumeral('V/V', 'C');
     assert.equal(rn1.root().name, 'D', 'root name is D');
     assert.equal(rn1.bass().name, 'D', 'bass name is D');
     assert.equal(rn1.pitches[1].name, 'F#', 'third is F#');
-    rn1 = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_9__["roman"].RomanNumeral('V65/V', 'C');
+    rn1 = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_9__["roman"].RomanNumeral('V65/V', 'C');
     assert.equal(rn1.root().name, 'D', 'root name is F#');
     assert.equal(rn1.bass().name, 'F#', 'bass name is F#');
-    rn1 = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_9__["roman"].RomanNumeral('V65/IV', 'C');
+    rn1 = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_9__["roman"].RomanNumeral('V65/IV', 'C');
     assert.equal(rn1.figure, 'V65/IV', 'figure is unchanged');
     assert.equal(rn1.secondaryRomanNumeral.figure, 'IV', 'secondary to IV');
     assert.equal(rn1.secondaryRomanNumeralKey.tonic.name, 'F');
     assert.equal(rn1.root().name, 'C', 'root name is C');
     assert.equal(rn1.bass().name, 'E', 'bass name is E');
     assert.equal(rn1.seventh.name, 'B-', 'seventh is B-');
-    rn1 = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_9__["roman"].RomanNumeral('V7/V/V', 'B-');
+    rn1 = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_9__["roman"].RomanNumeral('V7/V/V', 'B-');
     assert.equal(rn1.root().name, 'G');
     assert.equal(rn1.third.name, 'B');
     assert.equal(rn1.secondaryRomanNumeral.figure, 'V/V');
     assert.equal(rn1.secondaryRomanNumeral.secondaryRomanNumeral.figure, 'V');
   });
   test('music21.roman.RomanNumeral - augmented6ths', assert => {
-    var k = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_9__["key"].Key('a');
+    var k = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_9__["key"].Key('a');
 
     var p = rn => {
-      var rn1 = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_9__["roman"].RomanNumeral(rn, k);
+      var rn1 = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_9__["roman"].RomanNumeral(rn, k);
       var x = '';
       var _iteratorNormalCompletion = true;
       var _didIteratorError = false;
@@ -76972,9 +77254,9 @@ function tests() {
       return x.trim();
     };
 
-    var empty = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_9__["roman"].RomanNumeral();
+    var empty = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_9__["roman"].RomanNumeral();
 
-    var out = empty._parseRNAloneAmidstAug6('It6', new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_9__["key"].Key('C'));
+    var out = empty._parseRNAloneAmidstAug6('It6', new _src_music21_modules__WEBPACK_IMPORTED_MODULE_9__["key"].Key('C'));
 
     assert.equal(empty.useImpliedScale, true);
     assert.equal(out[0], '6');
@@ -76988,7 +77270,7 @@ function tests() {
     assert.equal(p('Fr43'), 'F5 A5 B5 D#6');
     assert.equal(p('Fr4/3'), 'F5 A5 B5 D#6');
     assert.equal(p('Sw43'), 'F5 A5 B#5 D#6');
-    k = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_9__["key"].Key('A');
+    k = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_9__["key"].Key('A');
     assert.equal(p('V'), 'E5 G#5 B5');
     assert.equal(p('It6'), 'F5 A5 D#6');
     assert.equal(p('Ger65'), 'F5 A5 C6 D#6');
@@ -77017,7 +77299,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var core_js_modules_es_string_includes__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_includes__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var qunit__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! qunit */ "./node_modules/qunit/qunit/qunit.js");
 /* harmony import */ var qunit__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(qunit__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../src/music21_modules.js */ "./src/music21_modules.js");
+/* harmony import */ var _src_music21_modules__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../src/music21_modules */ "./src/music21_modules.js");
 
 
 
@@ -77025,22 +77307,22 @@ __webpack_require__.r(__webpack_exports__);
 var test = qunit__WEBPACK_IMPORTED_MODULE_2__["test"];
 function tests() {
   test('music21.scale.Scale', assert => {
-    var sc = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_3__["scale"].Scale();
+    var sc = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_3__["scale"].Scale();
     assert.ok(sc.classes.includes('Scale'));
   });
   test('music21.scale.AbstractDiatonicScale', assert => {
-    var sc = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_3__["scale"].AbstractDiatonicScale('major');
+    var sc = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_3__["scale"].AbstractDiatonicScale('major');
     var net = sc._net;
     assert.equal(net.length, 7);
     assert.equal(net[0].name, 'M2');
-    var p = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_3__["pitch"].Pitch('A-');
+    var p = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_3__["pitch"].Pitch('A-');
     var pitches = sc.getRealization(p);
     assert.equal(pitches.length, 8);
     assert.equal(pitches[3].name, 'D-');
     assert.equal(sc.getPitchFromNodeDegree(p, undefined, 4).name, 'D-');
   });
   test('music21.scale.MajorScale', assert => {
-    var sc = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_3__["scale"].MajorScale('F');
+    var sc = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_3__["scale"].MajorScale('F');
     assert.equal(sc.tonic.name, 'F');
     var pitches = sc.getPitches();
     assert.equal(pitches[0].name, 'F');
@@ -77076,7 +77358,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var core_js_modules_es_string_includes__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_includes__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var qunit__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! qunit */ "./node_modules/qunit/qunit/qunit.js");
 /* harmony import */ var qunit__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(qunit__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../src/music21_modules.js */ "./src/music21_modules.js");
+/* harmony import */ var _src_music21_modules__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../src/music21_modules */ "./src/music21_modules.js");
 
 
 
@@ -77085,19 +77367,19 @@ __webpack_require__.r(__webpack_exports__);
 var test = qunit__WEBPACK_IMPORTED_MODULE_3__["test"];
 function tests() {
   test('music21.sites.SiteRef', assert => {
-    var sr = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_4__["sites"].SiteRef();
+    var sr = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_4__["sites"].SiteRef();
     assert.ok(!sr.isDead);
     assert.equal(sr.site, undefined, 'SiteRef should start undefined');
-    var st = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_4__["stream"].Measure();
+    var st = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_4__["stream"].Measure();
     sr.site = st;
     sr.classString = st.classes[0];
     assert.equal(sr.site, st);
     assert.equal(sr.classString, 'Measure');
   });
   test('music21.sites.Sites', assert => {
-    var s = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_4__["sites"].Sites();
+    var s = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_4__["sites"].Sites();
     assert.equal(s.length, 1, 'empty sites has length 1');
-    var st = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_4__["stream"].Measure();
+    var st = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_4__["stream"].Measure();
     st.number = 12;
     s.add(st);
     assert.equal(s.length, 2, 'should have two sites now');
@@ -77105,7 +77387,7 @@ function tests() {
 
     var first = s._keysByTime()[0];
 
-    assert.equal(first, _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_4__["sites"].getId(st));
+    assert.equal(first, _src_music21_modules__WEBPACK_IMPORTED_MODULE_4__["sites"].getId(st));
     var af;
     af = Array.from(s.yieldSites(false, st));
     assert.equal(af.length, 2);
@@ -77151,7 +77433,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_6__);
 /* harmony import */ var qunit__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! qunit */ "./node_modules/qunit/qunit/qunit.js");
 /* harmony import */ var qunit__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(qunit__WEBPACK_IMPORTED_MODULE_7__);
-/* harmony import */ var _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../../src/music21_modules.js */ "./src/music21_modules.js");
+/* harmony import */ var _src_music21_modules__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../../src/music21_modules */ "./src/music21_modules.js");
 
 
 
@@ -77173,10 +77455,10 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 var test = qunit__WEBPACK_IMPORTED_MODULE_7__["test"];
 
 function get_stream_and_note() {
-  var s = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_8__["stream"].Stream();
-  s.append(new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_8__["note"].Note('C#5'));
-  s.append(new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_8__["note"].Note('D#5'));
-  var n = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_8__["note"].Note('F5');
+  var s = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_8__["stream"].Stream();
+  s.append(new _src_music21_modules__WEBPACK_IMPORTED_MODULE_8__["note"].Note('C#5'));
+  s.append(new _src_music21_modules__WEBPACK_IMPORTED_MODULE_8__["note"].Note('D#5'));
+  var n = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_8__["note"].Note('F5');
   n.duration.type = 'half';
   return [s, n];
 }
@@ -77234,9 +77516,9 @@ function tests() {
     }
   });
   qunit__WEBPACK_IMPORTED_MODULE_7__["test"]('music21.stream.Stream iterate and forEach', assert => {
-    var s = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_8__["stream"].Stream();
-    s.append(new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_8__["note"].Note('C#5'));
-    s.append(new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_8__["note"].Note('D#5'));
+    var s = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_8__["stream"].Stream();
+    s.append(new _src_music21_modules__WEBPACK_IMPORTED_MODULE_8__["note"].Note('C#5'));
+    s.append(new _src_music21_modules__WEBPACK_IMPORTED_MODULE_8__["note"].Note('D#5'));
     var names = [];
     var indexes = [];
     var lengths = [];
@@ -77250,14 +77532,14 @@ function tests() {
     assert.deepEqual(lengths, [2, 2]);
   });
   qunit__WEBPACK_IMPORTED_MODULE_7__["test"]('music21.stream.Stream remove, index, replace, set', assert => {
-    var s = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_8__["stream"].Stream();
-    var cs = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_8__["note"].Note('C#5');
+    var s = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_8__["stream"].Stream();
+    var cs = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_8__["note"].Note('C#5');
     s.append(cs);
-    var d = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_8__["note"].Note('D#5');
+    var d = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_8__["note"].Note('D#5');
     s.append(d);
-    var n = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_8__["note"].Note('F5');
+    var n = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_8__["note"].Note('F5');
     s.append(n);
-    var lastN = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_8__["note"].Note('G5');
+    var lastN = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_8__["note"].Note('G5');
     s.append(lastN);
     assert.equal(s.index(d), 1, 'index of d is 1');
     assert.equal(s.index(n), 2, 'index of n is 2');
@@ -77269,7 +77551,7 @@ function tests() {
       s.index(n);
     }, /cannot find/, 'n is no longer in s');
     assert.equal(d.offset, 1.0, 'd offset is 1.0');
-    var r = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_8__["note"].Rest();
+    var r = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_8__["note"].Rest();
     assert.equal(r.offset, 0.0, 'naiveOffset should be 0.0');
     s.replace(d, r);
     assert.equal(d.offset, 0.0, 'offset of d should now be 0.0');
@@ -77278,7 +77560,7 @@ function tests() {
     assert.throws(() => {
       s.index(d);
     }, /cannot find/, 'd is no longer in s');
-    var r2 = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_8__["note"].Rest();
+    var r2 = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_8__["note"].Rest();
     r2.offset = 10; // ignored
 
     s.set(0, r2);
@@ -77289,43 +77571,43 @@ function tests() {
     }, /not stored/, 'cs is no longer in s');
   });
   qunit__WEBPACK_IMPORTED_MODULE_7__["test"]('music21.stream.Stream.elements from stream', assert => {
-    var s = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_8__["stream"].Stream();
-    s.append(new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_8__["note"].Note('C#5'));
-    var d = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_8__["note"].Note('D#5');
+    var s = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_8__["stream"].Stream();
+    s.append(new _src_music21_modules__WEBPACK_IMPORTED_MODULE_8__["note"].Note('C#5'));
+    var d = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_8__["note"].Note('D#5');
     s.insert(10, d);
-    var t = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_8__["stream"].Stream();
+    var t = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_8__["stream"].Stream();
     t.elements = s;
     assert.deepEqual(t.get(1), d, 't[1] is d');
     assert.equal(t.get(1).offset, 10, 'd offset retained');
   });
   qunit__WEBPACK_IMPORTED_MODULE_7__["test"]('music21.stream.Stream.duration', assert => {
-    var s = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_8__["stream"].Stream();
+    var s = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_8__["stream"].Stream();
     assert.equal(s.duration.quarterLength, 0, 'EmptyString QuarterLength');
-    s.append(new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_8__["note"].Note('C#5'));
+    s.append(new _src_music21_modules__WEBPACK_IMPORTED_MODULE_8__["note"].Note('C#5'));
     assert.equal(s.duration.quarterLength, 1.0, '1 quarter QuarterLength');
-    var n = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_8__["note"].Note('F5');
+    var n = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_8__["note"].Note('F5');
     n.duration.type = 'half';
     s.append(n);
     assert.equal(s.highestTime, 3.0);
     assert.equal(s.duration.quarterLength, 3.0, '3 quarter QuarterLength');
-    s.duration = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_8__["duration"].Duration(3.0);
-    s.append(new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_8__["note"].Note('D#5'));
+    s.duration = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_8__["duration"].Duration(3.0);
+    s.append(new _src_music21_modules__WEBPACK_IMPORTED_MODULE_8__["note"].Note('D#5'));
     assert.equal(s.duration.quarterLength, 3.0, 'overridden duration -- remains');
-    var sc = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_8__["stream"].Score();
-    var p1 = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_8__["stream"].Part();
-    var p2 = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_8__["stream"].Part();
-    var m1 = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_8__["stream"].Measure();
-    var m2 = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_8__["stream"].Measure();
-    var n11 = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_8__["note"].Note();
-    var n12 = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_8__["note"].Note();
+    var sc = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_8__["stream"].Score();
+    var p1 = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_8__["stream"].Part();
+    var p2 = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_8__["stream"].Part();
+    var m1 = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_8__["stream"].Measure();
+    var m2 = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_8__["stream"].Measure();
+    var n11 = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_8__["note"].Note();
+    var n12 = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_8__["note"].Note();
     n12.duration.type = 'half';
-    var n13 = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_8__["note"].Note();
+    var n13 = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_8__["note"].Note();
     n13.duration.type = 'eighth'; // incomplete measure
 
     m1.append(n11);
     m1.append(n12);
     m1.append(n13);
-    var n21 = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_8__["note"].Note();
+    var n21 = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_8__["note"].Note();
     n21.duration.type = 'whole';
     m2.append(n21);
     p1.append(m1);
@@ -77339,13 +77621,13 @@ function tests() {
     assert.equal(sc.flat.duration.quarterLength, 3.5, 'new music21.duration of flat stream');
   });
   qunit__WEBPACK_IMPORTED_MODULE_7__["test"]('music21.stream.Stream.append', assert => {
-    var s = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_8__["stream"].Stream();
-    s.append(new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_8__["note"].Note('C4'));
+    var s = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_8__["stream"].Stream();
+    s.append(new _src_music21_modules__WEBPACK_IMPORTED_MODULE_8__["note"].Note('C4'));
     assert.equal(s.length, 1);
-    var s2 = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_8__["stream"].Stream();
-    var n1 = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_8__["note"].Note('C#4');
-    var n2 = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_8__["note"].Note('D4');
-    var n3 = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_8__["note"].Note('D#4');
+    var s2 = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_8__["stream"].Stream();
+    var n1 = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_8__["note"].Note('C#4');
+    var n2 = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_8__["note"].Note('D4');
+    var n3 = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_8__["note"].Note('D#4');
     n3.duration.type = 'half';
     var l = [n1, n2, n3];
     s2.append(l);
@@ -77353,11 +77635,11 @@ function tests() {
     assert.equal(s2.duration.quarterLength, 4.0);
   });
   qunit__WEBPACK_IMPORTED_MODULE_7__["test"]('music21.stream.Stream.insert and offsets', assert => {
-    var s = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_8__["stream"].Stream();
-    s.append(new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_8__["note"].Note('C#5'));
-    var n3 = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_8__["note"].Note('E5');
+    var s = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_8__["stream"].Stream();
+    s.append(new _src_music21_modules__WEBPACK_IMPORTED_MODULE_8__["note"].Note('C#5'));
+    var n3 = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_8__["note"].Note('E5');
     s.insert(2.0, n3);
-    var n2 = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_8__["note"].Note('D#5');
+    var n2 = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_8__["note"].Note('D#5');
     s.insert(1.0, n2);
     assert.equal(s.get(0).name, 'C#');
     assert.equal(s.get(1).name, 'D#');
@@ -77365,13 +77647,13 @@ function tests() {
     assert.equal(s.get(0).offset, 0.0);
     assert.equal(s.get(1).offset, 1.0);
     assert.equal(s.get(2).offset, 2.0);
-    var p = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_8__["stream"].Part();
-    var m1 = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_8__["stream"].Measure();
-    var n1 = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_8__["note"].Note('C#');
+    var p = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_8__["stream"].Part();
+    var m1 = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_8__["stream"].Measure();
+    var n1 = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_8__["note"].Note('C#');
     n1.duration.type = 'whole';
     m1.append(n1);
-    var m2 = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_8__["stream"].Measure();
-    n2 = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_8__["note"].Note('D#');
+    var m2 = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_8__["stream"].Measure();
+    n2 = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_8__["note"].Note('D#');
     n2.duration.type = 'whole';
     m2.append(n2);
     p.append(m1);
@@ -77391,11 +77673,11 @@ function tests() {
     assert.equal(pf3.get(1).offset, 4.0, '.flat.flat does not change offset');
   });
   qunit__WEBPACK_IMPORTED_MODULE_7__["test"]('music21.stream.Stream insertAndShift', assert => {
-    var s = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_8__["stream"].Stream();
-    s.insert(0, new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_8__["note"].Note('C4'));
-    s.insert(1, new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_8__["note"].Note('E4'));
-    s.insert(2, new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_8__["note"].Note('F4'));
-    s.insertAndShift(1, new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_8__["note"].Note('D4'));
+    var s = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_8__["stream"].Stream();
+    s.insert(0, new _src_music21_modules__WEBPACK_IMPORTED_MODULE_8__["note"].Note('C4'));
+    s.insert(1, new _src_music21_modules__WEBPACK_IMPORTED_MODULE_8__["note"].Note('E4'));
+    s.insert(2, new _src_music21_modules__WEBPACK_IMPORTED_MODULE_8__["note"].Note('F4'));
+    s.insertAndShift(1, new _src_music21_modules__WEBPACK_IMPORTED_MODULE_8__["note"].Note('D4'));
     var outListNames = [];
     var outListOffsets = [];
     var _iteratorNormalCompletion2 = true;
@@ -77433,10 +77715,10 @@ function tests() {
     assert.equal(outListOffsets[3], 3.0);
   });
   qunit__WEBPACK_IMPORTED_MODULE_7__["test"]('music21.stream.Stream.DOM', assert => {
-    var s = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_8__["stream"].Stream();
-    s.append(new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_8__["note"].Note('C#5'));
-    s.append(new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_8__["note"].Note('D#5'));
-    var n = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_8__["note"].Note('F5');
+    var s = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_8__["stream"].Stream();
+    s.append(new _src_music21_modules__WEBPACK_IMPORTED_MODULE_8__["note"].Note('C#5'));
+    s.append(new _src_music21_modules__WEBPACK_IMPORTED_MODULE_8__["note"].Note('D#5'));
+    var n = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_8__["note"].Note('F5');
     n.duration.type = 'half';
     s.append(n);
     var c = s.createNewDOM(100, 50);
@@ -77444,11 +77726,11 @@ function tests() {
     assert.equal(c.attr('height'), 50, 'stored height matches');
   });
   qunit__WEBPACK_IMPORTED_MODULE_7__["test"]('music21.stream.Stream.getElementsByClass', assert => {
-    var s = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_8__["stream"].Stream();
-    var n1 = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_8__["note"].Note('C#5');
-    var n2 = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_8__["note"].Note('D#5');
-    var r = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_8__["note"].Rest();
-    var tc = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_8__["clef"].TrebleClef();
+    var s = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_8__["stream"].Stream();
+    var n1 = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_8__["note"].Note('C#5');
+    var n2 = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_8__["note"].Note('D#5');
+    var r = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_8__["note"].Rest();
+    var tc = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_8__["clef"].TrebleClef();
     s.append(tc);
     s.append(n1);
     s.append(r);
@@ -77465,9 +77747,9 @@ function tests() {
     assert.equal(c.length, 3, 'got multiple subclasses');
   });
   qunit__WEBPACK_IMPORTED_MODULE_7__["test"]('music21.stream.offsetMap', assert => {
-    var n = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_8__["note"].Note('G3');
-    var o = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_8__["note"].Note('A3');
-    var s = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_8__["stream"].Measure();
+    var n = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_8__["note"].Note('G3');
+    var o = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_8__["note"].Note('A3');
+    var s = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_8__["stream"].Measure();
     s.insert(0, n);
     s.insert(0.5, o);
     var om = s.offsetMap();
@@ -77483,30 +77765,30 @@ function tests() {
     assert.equal(omo.endTime, 1.5, 'omo endTime should be 1.5');
   });
   qunit__WEBPACK_IMPORTED_MODULE_7__["test"]('music21.stream.Stream appendNewDOM ', assert => {
-    var n = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_8__["note"].Note('G3');
-    var s = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_8__["stream"].Measure();
+    var n = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_8__["note"].Note('G3');
+    var s = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_8__["stream"].Measure();
     s.append(n);
     s.appendNewDOM(document.body);
     assert.equal(s.length, 1, 'ensure that should have one note');
-    var n1 = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_8__["note"].Note('G3');
-    var s1 = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_8__["stream"].Measure();
+    var n1 = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_8__["note"].Note('G3');
+    var s1 = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_8__["stream"].Measure();
     s1.append(n1);
-    var n2 = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_8__["note"].Note('G3');
+    var n2 = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_8__["note"].Note('G3');
     s1.append(n2);
-    var n3 = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_8__["note"].Note('G3');
+    var n3 = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_8__["note"].Note('G3');
     s1.append(n3);
-    var n4 = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_8__["note"].Note('G3');
+    var n4 = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_8__["note"].Note('G3');
     s1.append(n4);
     var div1 = s1.editableAccidentalDOM();
     window.$(document.body).append(div1);
   });
   qunit__WEBPACK_IMPORTED_MODULE_7__["test"]('music21.stream.Stream makeAccidentals ', assert => {
-    var n = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_8__["note"].Note('G#3');
-    var n2 = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_8__["note"].Note('G#3');
-    var n3 = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_8__["note"].Note('C#4');
-    var c = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_8__["chord"].Chord(['C3', 'E-3', 'G3', 'G4']);
-    var ks = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_8__["key"].KeySignature(2);
-    var s = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_8__["stream"].Measure();
+    var n = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_8__["note"].Note('G#3');
+    var n2 = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_8__["note"].Note('G#3');
+    var n3 = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_8__["note"].Note('C#4');
+    var c = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_8__["chord"].Chord(['C3', 'E-3', 'G3', 'G4']);
+    var ks = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_8__["key"].KeySignature(2);
+    var s = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_8__["stream"].Measure();
     s.keySignature = ks;
     s.append([n, n2, n3, c]);
     s.makeAccidentals();
@@ -77518,6 +77800,66 @@ function tests() {
     assert.ok(c._notes[1].pitch.accidental.displayStatus);
     assert.ok(c._notes[2].pitch.accidental.displayStatus);
     assert.notOk(c._notes[3].pitch.accidental); // perhaps should exist?
+  });
+}
+
+/***/ }),
+
+/***/ "./tests/moduleTests/tempo.js":
+/*!************************************!*\
+  !*** ./tests/moduleTests/tempo.js ***!
+  \************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return tests; });
+/* harmony import */ var qunit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! qunit */ "./node_modules/qunit/qunit/qunit.js");
+/* harmony import */ var qunit__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(qunit__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _src_music21_modules__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../src/music21_modules */ "./src/music21_modules.js");
+
+
+var test = qunit__WEBPACK_IMPORTED_MODULE_0__["test"];
+function tests() {
+  test('music21.tempo.MetronomeMark', assert => {
+    var mark;
+    mark = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_1__["tempo"].MetronomeMark();
+    assert.strictEqual(mark.text, undefined);
+    assert.strictEqual(mark.number, undefined);
+    assert.strictEqual(mark.referent.quarterLength, 1);
+    mark = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_1__["tempo"].MetronomeMark({
+      text: 'andante'
+    });
+    assert.equal(mark.text, 'andante');
+    assert.ok(mark.numberImplicit);
+    assert.notOk(mark.textImplicit);
+    assert.equal(mark.number, 72);
+    mark = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_1__["tempo"].MetronomeMark({
+      number: 40
+    });
+    assert.equal(mark.text, 'grave');
+    assert.notOk(mark.numberImplicit);
+    assert.ok(mark.textImplicit);
+    assert.equal(mark.number, 40);
+    mark = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_1__["tempo"].MetronomeMark({
+      referent: 2
+    });
+    assert.strictEqual(mark.referent.quarterLength, 2);
+    mark = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_1__["tempo"].MetronomeMark({
+      referent: new _src_music21_modules__WEBPACK_IMPORTED_MODULE_1__["duration"].Duration(2)
+    });
+    assert.strictEqual(mark.referent.quarterLength, 2);
+    mark = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_1__["tempo"].MetronomeMark({
+      text: 'grave',
+      number: 42,
+      referent: 2
+    });
+    assert.equal(mark.text, 'grave');
+    assert.notOk(mark.numberImplicit);
+    assert.notOk(mark.textImplicit);
+    assert.equal(mark.number, 42);
+    assert.equal(mark.referent.quarterLength, 2);
   });
 }
 
@@ -77535,13 +77877,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return tests; });
 /* harmony import */ var qunit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! qunit */ "./node_modules/qunit/qunit/qunit.js");
 /* harmony import */ var qunit__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(qunit__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../src/music21_modules.js */ "./src/music21_modules.js");
+/* harmony import */ var _src_music21_modules__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../src/music21_modules */ "./src/music21_modules.js");
 
 
 var test = qunit__WEBPACK_IMPORTED_MODULE_0__["test"];
 function tests() {
   test('music21.tie.Tie', assert => {
-    var t = new _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_1__["tie"].Tie('start');
+    var t = new _src_music21_modules__WEBPACK_IMPORTED_MODULE_1__["tie"].Tie('start');
     assert.equal(t.type, 'start', 'Tie type is start');
   });
 }
@@ -77564,7 +77906,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var core_js_modules_es_string_includes__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_includes__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var qunit__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! qunit */ "./node_modules/qunit/qunit/qunit.js");
 /* harmony import */ var qunit__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(qunit__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../src/music21_modules.js */ "./src/music21_modules.js");
+/* harmony import */ var _src_music21_modules__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../src/music21_modules */ "./src/music21_modules.js");
 
 
 
@@ -77572,10 +77914,10 @@ __webpack_require__.r(__webpack_exports__);
 var test = qunit__WEBPACK_IMPORTED_MODULE_2__["test"];
 function tests() {
   test('music21.voiceLeading.VoiceLeadingQuartet', assert => {
-    var VLQ = _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_3__["voiceLeading"].VoiceLeadingQuartet;
+    var VLQ = _src_music21_modules__WEBPACK_IMPORTED_MODULE_3__["voiceLeading"].VoiceLeadingQuartet;
     var sc = new VLQ();
     assert.ok(sc.classes.includes('VoiceLeadingQuartet'));
-    var N = _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_3__["note"].Note;
+    var N = _src_music21_modules__WEBPACK_IMPORTED_MODULE_3__["note"].Note;
     var v1n1 = new N('C4');
     var v1n2 = new N('B3');
     var v2n1 = new N('F3');
@@ -77605,10 +77947,10 @@ function tests() {
     assert.ok(vlq3.contraryMotion(), 'contrary motion set w/ strings');
   });
   test('music21.voiceLeading.VoiceLeadingQuartet proper resolution', assert => {
-    var VLQ = _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_3__["voiceLeading"].VoiceLeadingQuartet;
+    var VLQ = _src_music21_modules__WEBPACK_IMPORTED_MODULE_3__["voiceLeading"].VoiceLeadingQuartet;
     var sc = new VLQ();
     assert.ok(sc.classes.includes('VoiceLeadingQuartet'));
-    var N = _src_music21_modules_js__WEBPACK_IMPORTED_MODULE_3__["note"].Note;
+    var N = _src_music21_modules__WEBPACK_IMPORTED_MODULE_3__["note"].Note;
     var v1n1 = new N('B-4');
     var v1n2 = new N('A4');
     var v2n1 = new N('E4');
