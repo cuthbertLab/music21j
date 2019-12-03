@@ -1,5 +1,7 @@
 Music21j may be distributed according to the terms of either the
-BSD license or the GNU Lesser General Public License, described below:
+BSD license or the GNU Lesser General Public License, described below.
+Distributions that do not specify a license are assumed to be under the
+BSD license.
 
 ---
 BSD License

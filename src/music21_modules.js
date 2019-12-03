@@ -1,9 +1,13 @@
-/**
+/**!
  * **music21j**: Javascript reimplementation of Core music21 features.
  *
  * See http://web.mit.edu/music21/ for more details.
  *
  * Copyright (c) 2013-19, Michael Scott Cuthbert and cuthbertLab
+ * Released under a BSD-3-clause license
+ *
+ */
+/**
  *
  * Based on music21, Copyright (c) 2006-19, Michael Scott Cuthbert and cuthbertLab
  * The plan is to implement all core music21 features as Javascript and to expose
