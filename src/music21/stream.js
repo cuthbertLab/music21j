@@ -5,7 +5,8 @@
  * Does not implement the full features of music21p Streams by a long shot...
  *
  * Copyright (c) 2013-19, Michael Scott Cuthbert and cuthbertLab
- * Based on music21 (=music21p), Copyright (c) 2006-19, Michael Scott Cuthbert and cuthbertLab
+ * Based on music21 (=music21p), Copyright (c) 2006-19, Michael Scott Cuthbert
+ *     and cuthbertLab
  *
  * powerful stream module, See {@link music21.stream} namespace
  * @exports music21/stream
@@ -73,7 +74,6 @@ function _exportMusicXMLAsText(s) {
  *
  * @class Stream
  * @memberof music21.stream
- * @extends music21.base.Music21Object
  *
  * @property {music21.base.Music21Object[]} elements - the elements in the stream.
  *     DO NOT MODIFY individual components (consider it like a Python tuple)
@@ -100,7 +100,7 @@ function _exportMusicXMLAsText(s) {
  * @property {music21.instrument.Instrument|undefined} instrument - an
  *     instrument object associated with the stream (can be set with a
  *     string also, but will return an `Instrument` object)
- * @property {Boolean} autoBeam - whether the notes should be beamed automatically
+ * @property {boolean} autoBeam - whether the notes should be beamed automatically
  *    or not (will be moved to `renderOptions` soon)
  * @property {Vex.Flow.Stave|undefined} activeVFStave - the current Stave object for the Stream
  * @property {music21.vfShow.Renderer|undefined} activeVFRenderer - the current
@@ -325,7 +325,10 @@ export class Stream extends base.Music21Object {
             if (site === undefined) {
                 continue;
             }
-            const contextObj = site._firstElementContext('attr') || site._specialContext('attr');
+            let contextObj = site._firstElementContext(attr);
+            if (contextObj === undefined) {
+                contextObj = site._specialContext(attr);
+            }
             if (contextObj !== undefined) {
                 return contextObj;
             }
@@ -333,6 +336,15 @@ export class Stream extends base.Music21Object {
         return undefined;
     }
 
+    /**
+     * Get an attribute like 'keySignature' from an element with the
+     * same class name (except 'KeySignature' instead of 'keySignature')
+     * in the stream at position 0.
+     *
+     * @param attr
+     * @returns {music21.base.Music21Object|undefined}
+     * @private
+     */
     _firstElementContext(attr) {
         const firstElements = this
             .getElementsByOffset(0.0)
@@ -1234,6 +1246,8 @@ export class Stream extends base.Music21Object {
     /**
      * makeNotation does not do anything yet, but it is a placeholder
      * so it can start to be called.
+     *
+     * TODO: move call to makeBeams from renderVexflow to here.
      */
     makeNotation({ inPlace=true }={}) {
         let out;
@@ -1251,13 +1265,11 @@ export class Stream extends base.Music21Object {
      * Return a new Stream or modify this stream
      * to have beams.
      *
-     * NOT yet being called March 2018
+     * Called from renderVexflow()
      */
-    makeBeams(options) {
-        const params = { inPlace: false };
-        common.merge(params, options);
+    makeBeams({ inPlace=false }={}) {
         let returnObj = this;
-        if (!params.inPlace) {
+        if (!inPlace) {
             returnObj = this.clone(true);
         }
         let mColl;
@@ -2197,7 +2209,7 @@ export class Stream extends base.Music21Object {
      * @returns {Array<number>} two-elements, [x, y] in pixels.
      */
     getUnscaledXYforDOM(svg, e) {
-        let offset = null;
+        let offset;
         if (svg === undefined) {
             offset = { left: 0, top: 0 };
         } else {
@@ -3126,6 +3138,24 @@ export class Score extends Stream {
         }
         return systemPadding;
     }
+
+    /**
+     * Override main stream makeBeams to call on each part.
+     *
+     * @param {boolean} [inPlace=false]
+     */
+    makeBeams({ inPlace=false }={}) {
+        let returnObj = this;
+        if (!inPlace) {
+            returnObj = this.clone(true);
+        }
+        for (const p of returnObj.parts) {
+            p.makeBeams({inPlace: true});
+        }
+        // returnObj.streamStatus.beams = true;
+        return returnObj;
+    }
+
 
     /**
      * Returns the measure that is at X location xPxScaled and system systemIndex.

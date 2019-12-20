@@ -1,97 +1,92 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-  <title>Music21j Sandbox</title>
-  <script data-main="../src/music21.js" src="../ext/require/require.js"></script>
-  <style type="text/css">
-    .streamHolding {
-      background: #eed;
-      padding: 10px;
-      border: 10px solid #ddc;
-    }
-    div.egcode {
-      font-family: Courier;
-      font-size: 12px;
-    }
-    .editor {
-      background: #cfc;
-      border: 10px solid #afa;
-      font-family: Courier;
-      font-size: 14px;
-    }
-    div.editor-error .text {
-      background: #faa;
-      border: 5px solid #f88;
-      font-family: Courier;
-      font-size: 14px;
-      padding: 3px;
-      display: none;
-    }
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>Music21j Sandbox</title>
+    <script src="../build/music21.debug.js"></script>
+    <style type="text/css">
+        .streamHolding {
+            background: #eed;
+            padding: 10px;
+            border: 10px solid #ddc;
+        }
+        .editor {
+            background: #cfc;
+            border: 10px solid #afa;
+            font-family: "Courier", monospace;
+            font-size: 14px;
+            width: 1000px;
+            height: 180px;
+        }
+        div.editor-error .text {
+            background: #faa;
+            border: 5px solid #f88;
+            font-family: "Courier", monospace;
+            font-size: 14px;
+            padding: 3px;
+            display: none;
+        }
     </style>
-
-  <script>
-  Vex = undefined;
-  mainSVG = undefined;
-  var timeout;
-  var msg = "";
-
-  window.onload = function () {
-	  require(['music21'], function(music21) {
-	     window.music21 = music21;
-	     mainSVG = $("#mainSVG")[0];         
-         msg = $('div.editor-error .text');
-         live_code();
-
-         $('#sandbox').on('blur keyup paste', function() {
-           if (timeout) clearTimeout(timeout);
-           timeout = setTimeout(live_code, 200);
-         });
-	  });
-  };
-  function live_code() {
-      var code = $("#sandbox").val();
-
-      try {
-        eval(code);
-        msg.html('').hide();
-      } catch (e) {
-        msg.html(e.toString()).show();
-      }
-
-  }
-  </script>
 </head>
 
 <body>
-  <div class="header">
+<div class="header">
     <h1>Music21j Sandbox</h1>
     <div class="main">
-      <b>A live editor for experimenting with Music21j and Vexflow, based on the Vexflow Sandbox</b>
+        <label for="sandbox">
+            <b>A live editor for experimenting with Music21j and Vexflow, based on the Vexflow Sandbox</b>
+        </label>
     </div>
-  </div>
+</div>
 
-  <div class="content">
+<div class="content">
     <div class="description sandbox">
-      <p/>
-      <div class="editor-error"><span class="text"></span></div>
-      <p/>
-      <div class="example sandbox">
-        <textarea id="sandbox" class="editor"
-                  style="width: 1000px; height: 180px; ">
+        <p></p>
+        <div class="editor-error"><span class="text"></span></div>
+        <p></p>
+        <div class="example sandbox">
+            <textarea id="sandbox" class="editor">
 var n = new music21.note.Note("C#");
 n.duration.type = "whole";
 var s = new music21.stream.Stream();
 s.append(n);
 s.replaceDOM();
-		 </textarea>
-        <p/>
-        <div class='streamHolding' id='mainSVG'>
-	        <svg width="625" height="360"></svg>    	
-	    </div>
-        <p/>
-      </div>
-  </div>
-</body>
+            </textarea>
+            <p></p>
+            <div class='streamHolding' id='mainSVG'>
+                <svg width="625" height="360"></svg>
+            </div>
+            <p></p>
+        </div>
+    </div>
+</div>
+<script>
+    Vex = undefined;
+    mainSVG = undefined;
+    let timeout;
+    let msg = "";
 
+    mainSVG = $("#mainSVG")[0];
+    msg = $('div.editor-error .text');
+    live_code();
+
+    $('#sandbox').on('blur keyup paste', function() {
+        if (timeout) {
+            clearTimeout(timeout)
+        };
+        timeout = setTimeout(live_code, 200);
+    });
+    function live_code() {
+        let code = $("#sandbox").val();
+
+        try {
+            eval(code);
+            msg.html('').hide();
+        } catch (e) {
+            msg.html(e.toString()).show();
+        }
+
+    }
+</script>
+</body>
 </html>

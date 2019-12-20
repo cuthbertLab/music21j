@@ -5,6 +5,9 @@ node_modules/grunt/package.json
 build/*.js
 build/*.map
 
+tests/music21.tests.js
+tests/music21.tests.js.map
+
 *.py[cod]
 .buildpath
 
@@ -58,9 +61,6 @@ nosetests.xml
 
 soundfonts/*
 
-
-
-node_modules/grunt/package.json
 
 node_modules/grunt-contrib-uglify/package.json
 .idea/encodings.xml
