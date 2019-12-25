@@ -3,6 +3,7 @@ import * as filters from './filters';
 
 const StopIterationSingleton = filters.StopIterationSingleton;
 
+// noinspection JSUnusedGlobalSymbols
 export class StreamIteratorException extends StreamException {
 
 }
@@ -11,24 +12,37 @@ export class StreamIteratorException extends StreamException {
  * @memberof music21.stream.iterator
  */
 export class StreamIterator {
-    constructor(srcStream, {
-        filterList=[],
-        restoreActiveSites=true,
-        activeInformation=undefined,
-        ignoreSorting=false,
-    }={}) {
+    srcStream;  // should be Stream
+    index: number = 0;
+    srcStreamElements: any[];  // should be Music21Object[]
+    streamLength: number;
+    iterSection: string = '_elements';
+    cleanupOnStop: boolean = false;
+    restoreActiveSites: boolean;
+    overrideDerivation;
+    filters: any[];
+
+    protected _len: number;
+    protected _matchingElements: any[];  // should be Music21Object[]
+
+    sectionIndex: number = 0;
+    activeInformation: any;
+
+    constructor(
+        srcStream,
+        {
+            filterList = [],
+            restoreActiveSites=true,
+            activeInformation=undefined,
+            ignoreSorting=false,
+        }={}) {
         if (!ignoreSorting && !srcStream.isSorted && srcStream.autoSort) {
             srcStream.sort();
         }
         this.srcStream = srcStream;
-        this.index = 0;
-
         this.srcStreamElements = srcStream.elements;
         this.streamLength = this.srcStreamElements.length;
 
-        this.iterSection = '_elements';
-
-        this.cleanupOnStop = false;
         this.restoreActiveSites = restoreActiveSites;
         this.overrideDerivation = undefined;
         if (!Array.isArray(filterList)) {
@@ -36,18 +50,6 @@ export class StreamIterator {
         }
         this.filters = filterList;
 
-        /**
-         *
-         * @type {number|undefined}
-         * @private
-         */
-        this._len = undefined;
-        /**
-         *
-         * @type {music21.base.Music21Object[]|undefined}
-         * @private
-         */
-        this._matchingElements = undefined;
         this.sectionIndex = 0;  // no endElements yet...
 
         if (activeInformation === undefined) {
@@ -61,6 +63,7 @@ export class StreamIterator {
     * [Symbol.iterator]() {
         this.reset();
         while (this.index < this.streamLength) {
+            // noinspection DuplicatedCode
             this.index += 1;
             let e;
             try {
@@ -186,6 +189,7 @@ export class StreamIterator {
         return found;
     }
 
+    // noinspection JSUnusedGlobalSymbols
     get activeElementList() {
         return this.activeInformation.stream[this.activeInformation.iterSection];
     }
@@ -201,6 +205,7 @@ export class StreamIterator {
         return this;
     }
 
+    // noinspection JSUnusedGlobalSymbols
     removeFilter(oldFilter) {
         const index = this.filters.indexOf(oldFilter);
         if (index !== -1) {
@@ -224,8 +229,8 @@ export class StreamIterator {
 
     // getElementsByGroup;
     // getElementsByOffset;
-    getElementsByOffset(...args) {
-        return this.addFilter(new filters.OffsetFilter(...args));
+    getElementsByOffset(offsetStart, ...args) {
+        return this.addFilter(new filters.OffsetFilter(offsetStart, ...args));
     }
 
 
@@ -241,6 +246,7 @@ export class StreamIterator {
         return this.addFilter(new filters.ClassFilter('Part'));
     }
 
+    // noinspection JSUnusedGlobalSymbols
     get spanners() {
         return this.addFilter(new filters.ClassFilter('Spanner'));
     }
@@ -250,21 +256,21 @@ export class StreamIterator {
     }
 }
 
-/**
- * @extends music21.stream.iterator.StreamIterator
- */
 export class OffsetIterator extends StreamIterator {
+    nextToYield: any[];  // should be Music21Object[]
+    nextOffsetToYield: number;
+
     constructor(srcStream, options={}) {
         super(srcStream, options);
         this.nextToYield = [];
-        this.nextOffsetToYield = undefined;
     }
 
     * [Symbol.iterator]() {
         this.reset();
-        this.sort();
+        // this.sort();
 
         while (this.index < this.streamLength) {
+            // noinspection DuplicatedCode
             this.index += 1;
             let e;
             try {
@@ -280,7 +286,7 @@ export class OffsetIterator extends StreamIterator {
                 break;
             }
             const yieldEls = [e];
-            const eOffset = this.elementOffset(e);
+            const eOffset = this.srcStream.elementOffset(e);
 
             for (let forwardIndex = this.index; forwardIndex < this.streamLength; forwardIndex++) {
                 let nextE;
@@ -289,7 +295,7 @@ export class OffsetIterator extends StreamIterator {
                 } catch (exc) {
                     continue;
                 }
-                const nextOffset = this.elementOffset(nextE);
+                const nextOffset = this.srcStream.elementOffset(nextE);
                 if (nextOffset !== eOffset) {
                     this.nextToYield = [nextE];
                     this.nextOffsetToYield = nextOffset;
@@ -321,10 +327,13 @@ export class OffsetIterator extends StreamIterator {
     }
 }
 
-/**
- * @extends music21.stream.iterator.StreamIterator
- */
 export class RecursiveIterator extends StreamIterator {
+    returnSelf: boolean;
+    includeSelf: boolean;
+    ignoreSorting: boolean;
+    iteratorStartOffsetInHierarchy: number = 0.0;
+    childRecursiveIterator: RecursiveIterator;
+
     constructor(srcStream, {
         filterList=[],
         restoreActiveSites=true,
@@ -342,14 +351,9 @@ export class RecursiveIterator extends StreamIterator {
         this.returnSelf = includeSelf;
         this.includeSelf = includeSelf;
         this.ignoreSorting = ignoreSorting;
-        this.iteratorStartOffsetInHierarchy = 0.0;
         if (streamsOnly) {
             this.filters.push(new filters.ClassFilter('Stream'));
         }
-        /**
-         *
-         * @type {RecursiveIterator|undefined}
-         */
         this.childRecursiveIterator = undefined;
     }
 
@@ -430,16 +434,10 @@ export class RecursiveIterator extends StreamIterator {
     /**
      *   Returns a stack of RecursiveIterators at this point in the iteration.
      *   Last is most recent.
-     *
-     *   @returns {RecursiveIterator[]}
      */
-    iteratorStack() {
-        /**
-         *
-         * @type {RecursiveIterator[]}
-         */
-        const iterStack = [this];
-        let x  = this;
+    iteratorStack(): RecursiveIterator[] {
+        const iterStack: RecursiveIterator[] = [this];
+        let x: RecursiveIterator = this;
         while (x.childRecursiveIterator !== undefined) {
             x = x.childRecursiveIterator;
             iterStack.push(x);
@@ -447,6 +445,7 @@ export class RecursiveIterator extends StreamIterator {
         return iterStack;
     }
 
+    // noinspection JSUnusedGlobalSymbols
     /**
      *   Returns a stack of Streams at this point.  Last is most recent.
      */
@@ -454,6 +453,7 @@ export class RecursiveIterator extends StreamIterator {
         return this.iteratorStack().map(iter => iter.srcStream);
     }
 
+    // noinspection JSUnusedGlobalSymbols
     /**
      *  Called on the current iterator, returns the current offset
      *  in the hierarchy. or undefined if we are not currently iterating.

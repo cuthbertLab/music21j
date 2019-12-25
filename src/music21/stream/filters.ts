@@ -1,8 +1,7 @@
 import { Music21Exception } from '../exceptions21';
 
-export class FilterException extends Music21Exception {
-
-}
+// noinspection JSUnusedGlobalSymbols
+export class FilterException extends Music21Exception {}
 
 class _StopIteration {}
 
@@ -18,20 +17,20 @@ export class StreamFilter {
 
     reset() {}
 
-    call(item, iterator) {
+    call(item, iterator): boolean|_StopIteration {
         return true;
     }
 }
 
-/**
- * @extends music21.stream.filters.StreamFilter
- */
 export class IsFilter extends StreamFilter {
     static get derivationStr() {
         return 'is';
     }
 
-    constructor(target=[]) {
+    target: any[];
+    numToFind: number;
+
+    constructor(target: any|any[] =[]) {
         super();
         if (!Array.isArray(target)) {
             target = [target];
@@ -44,7 +43,7 @@ export class IsFilter extends StreamFilter {
         this.numToFind = this.target.length;
     }
 
-    call(item, iterator) {
+    call(item, iterator): boolean|_StopIteration {
         if (this.numToFind === 0) {
             return StopIterationSingleton;
         }
@@ -57,9 +56,6 @@ export class IsFilter extends StreamFilter {
     }
 }
 
-/**
- * @extends music21.stream.filters.StreamFilter
- */
 export class IsNotFilter extends IsFilter {
     static get derivationStr() {
         return 'IsNot';
@@ -84,15 +80,14 @@ export class IsNotFilter extends IsFilter {
 
 // TODO(msc): IdFilter
 
-/**
- * @extends music21.stream.filters.StreamFilter
- */
 export class ClassFilter extends StreamFilter {
     static get derivationStr() {
         return 'getElementsByClass';
     }
 
-    constructor(classList=[]) {
+    classList: string[];
+
+    constructor(classList: string|string[] =[]) {
         super();
         if (!Array.isArray(classList)) {
             classList = [classList];
@@ -106,9 +101,6 @@ export class ClassFilter extends StreamFilter {
     }
 }
 
-/**
- * @extends music21.stream.filters.StreamFilter
- */
 export class ClassNotFilter extends ClassFilter {
     static get derivationStr() {
         return 'getElementsNotOfClass';
@@ -121,17 +113,22 @@ export class ClassNotFilter extends ClassFilter {
 
 // TODO: GroupFilter
 
-/**
- * @extends music21.stream.filters.StreamFilter
- */
 export class OffsetFilter extends StreamFilter {
     static get derivationStr() {
         return 'getElementsByOffset';
     }
 
+    offsetStart: number;
+    offsetEnd: number;
+    includeEndBoundary: boolean;
+    mustFinishInSpan: boolean;
+    mustBeginInSpan: boolean;
+    includeElementsThatEndAtStart: boolean;
+    zeroLengthSearch: boolean = false;
+
     constructor(
-        offsetStart,
-        offsetEnd,
+        offsetStart: number,
+        offsetEnd=undefined,
         {
             includeEndBoundary=true,
             mustFinishInSpan=false,
@@ -147,8 +144,6 @@ export class OffsetFilter extends StreamFilter {
         this.mustBeginInSpan = mustBeginInSpan;
         this.includeElementsThatEndAtStart = includeElementsThatEndAtStart;
 
-
-        this.zeroLengthSearch = false;
         if (offsetEnd === undefined) {
             this.offsetEnd = offsetStart;
             this.zeroLengthSearch = true;
