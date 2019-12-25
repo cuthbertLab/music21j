@@ -73,14 +73,7 @@ export class Music21Object extends prebase.ProtoM21Object {
         this._duration = new duration.Duration();
         this.id = sites.getId(this);
         this.sites = new sites.Sites();
-        // noinspection JSUnusedLocalSymbols
-        this._cloneCallbacks._activeSite = function Music21Object_cloneCallbacks_activeSite(
-            keyName,
-            newObj,
-            self
-        ) {
-            newObj[keyName] = undefined;
-        };
+        this._cloneCallbacks._activeSite = false;
         this._cloneCallbacks._derivation = function Music21Music21Object_cloneCallbacks_derivation(
             keyName,
             newObj,
@@ -98,7 +91,7 @@ export class Music21Object extends prebase.ProtoM21Object {
             newObj,
             self
         ) {
-            newObj[keyName] = new sites.Sites();
+            newObj.sites = new sites.Sites();
         };
     }
 

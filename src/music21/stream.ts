@@ -62,6 +62,11 @@ export { iterator };
 
 export class StreamException extends Music21Exception {}
 
+declare interface Constructable<T> {
+    new() : T;
+}
+
+
 function _exportMusicXMLAsText(s) {
     const gox = new GeneralObjectExporter(s);
     return gox.parse();
@@ -71,10 +76,10 @@ function _exportMusicXMLAsText(s) {
 
 /**
  * A generic Stream class -- a holder for other music21 objects
- * Will be subclassed into {@link music21.stream.Score},
- * {@link music21.stream.Part},
- * {@link music21.stream.Measure},
- * {@link music21.stream.Voice}, but most functions will be found here.
+ * Will be subclassed into {@link Score},
+ * {@link Part},
+ * {@link Measure},
+ * {@link Voice}, but most functions will be found here.
  *
  * @property {base.Music21Object[]} elements - the elements in the stream.
  *     DO NOT MODIFY individual components (consider it like a Python tuple)
@@ -85,16 +90,16 @@ function _exportMusicXMLAsText(s) {
  *     one; if there are multiple, then the first clef)
  * @property {music21.meter.TimeSignature} timeSignature - the first TimeSignature of the Stream
  * @property {music21.key.KeySignature} keySignature - the first KeySignature for the Stream
- * @property {music21.renderOptions.RenderOptions} renderOptions - an object
+ * @property {renderOptions.RenderOptions} renderOptions - an object
  *     specifying how to render the stream
- * @property {music21.stream.Stream} flat - (readonly) a flattened representation of the Stream
- * @property {music21.stream.Stream} notes - (readonly) the stream with
+ * @property {Stream} flat - (readonly) a flattened representation of the Stream
+ * @property {iterator.StreamIterator} notes - (readonly) the stream with
  *     only {@link music21.note.Note} and {@link music21.chord.Chord} objects included
- * @property {music21.stream.Stream} notesAndRests - (readonly) like notes but
+ * @property {iterator.StreamIterator} notesAndRests - (readonly) like notes but
  *     also with {@link music21.note.Rest} objects included
- * @property {music21.stream.Stream} parts - (readonly) a filter on the Stream
+ * @property {iterator.StreamIterator} parts - (readonly) a filter on the Stream
  *     to just get the parts (NON-recursive)
- * @property {music21.stream.Stream} measures - (readonly) a filter on the
+ * @property {iterator.StreamIterator} measures - (readonly) a filter on the
  *     Stream to just get the measures (NON-recursive)
  * @property {number} tempo - tempo in beats per minute (will become more
  *     sophisticated later, but for now the whole stream has one tempo
@@ -169,6 +174,34 @@ export class Stream extends base.Music21Object {
 
     constructor() {
         super();
+        this._cloneCallbacks.activeVexflowNote = false;
+        this._cloneCallbacks.storedVexflowStave = false;
+        this._cloneCallbacks._offsetDict = false;
+        this._cloneCallbacks._renderOptions = function cloneRenderOptions(
+            keyName,
+            newObj,
+            self
+        ) {
+            newObj[keyName] = common.merge({}, self.renderOptions);
+        };
+
+        this._cloneCallbacks.elements = function cloneElements(
+            keyName,
+            newObj,
+            self
+        ) {
+            newObj.clear();
+            for (let j = 0; j < self._elements.length; j++) {
+                const el = self._elements[j];
+                // console.log('cloning el: ', el.name);
+                // TODO: get memo back here somehow.
+                const elCopy = el.clone(true);
+                newObj._elements[j] = elCopy;
+                newObj._offsetDict.set(elCopy, self._offsetDict.get(el));
+                elCopy.activeSite = newObj;
+            }
+        };
+
         this.DOMChangerFunction = (e: MouseEvent|TouchEvent) => {
             const canvasOrSVGElement = e.currentTarget;
             if (!(canvasOrSVGElement instanceof HTMLElement)
@@ -615,73 +648,21 @@ export class Stream extends base.Music21Object {
 
     /* override protoM21Object.clone() */
     clone(deep=true, memo=undefined) {
-        const ret = Object.create(this.constructor.prototype);
-        for (const key in this) {
-            if ({}.hasOwnProperty.call(this, key) === false) {
-                continue;
+        if (!deep) {
+            const post = Object.assign(
+                Object.create(Object.getPrototypeOf(this)),
+                this
+            );
+            post.elements = this.elements;
+            post._offsetDict = new WeakMap();
+            post.renderOptions = common.merge({}, this.renderOptions);
+            for (const el of this. elements) {
+                post._offsetDict.set(el, this._offsetDict.get(el));
             }
-            if (key === '_activeSite') {
-                ret[key] = this[key];
-            } else if (key === 'renderOptions') {
-                ret[key] = common.merge({}, this[key]);
-            } else if (
-                deep !== true
-                && (key === '_elements')
-            ) {
-                ret[key] = this[key].slice(); // shallow copy...
-            } else if (deep !== true && key === '_offsetDict') {
-                ret._offsetDict = new WeakMap();
-                for (const el of this.elements) {
-                    ret._offsetDict.set(el, this._offsetDict.get(el));
-                }
-            } else if (
-                deep
-                && (key === '_elements' || key === '_offsetDict')
-            ) {
-                if (key === '_elements') {
-                    // console.log('got elements for deepcopy');
-                    ret.clear();
-                    for (let j = 0; j < this._elements.length; j++) {
-                        const el = this._elements[j];
-                        // console.log('cloning el: ', el.name);
-                        const elCopy = el.clone(deep, memo);
-                        ret._elements[j] = elCopy;
-                        ret._offsetDict.set(elCopy, this._offsetDict.get(el));
-                        elCopy.activeSite = ret;
-                    }
-                }
-            } else if (
-                key === 'activeVexflowNote'
-                || key === 'storedVexflowStave'
-            ) {
-                // do nothing -- do not copy vexflowNotes -- permanent recursion
-            } else if (key in this._cloneCallbacks) {
-                if (this._cloneCallbacks[key] === true) {
-                    ret[key] = this[key];
-                } else if (this._cloneCallbacks[key] === false) {
-                    ret[key] = undefined;
-                } else {
-                    // call the cloneCallbacks function
-                    this._cloneCallbacks[key](key, ret, this);
-                }
-            } else if (
-                Object.getOwnPropertyDescriptor(this, key).get !== undefined
-                || Object.getOwnPropertyDescriptor(this, key).set !== undefined
-            ) {
-                // do nothing
-            } else if (typeof this[key] === 'function') {
-                // do nothing -- events might not be copied.
-            } else if (
-                this[key] !== null
-                && this[key] !== undefined
-                && this[key].isMusic21Object === true
-            ) {
-                // console.log('cloning...', key);
-                ret[key] = this[key].clone(deep);
-            } else {
-                ret[key] = this[key];
-            }
+            return post;
         }
+
+        const ret = super.clone(deep, memo);
         ret.coreElementsChanged();
         return ret;
     }
@@ -1140,8 +1121,10 @@ export class Stream extends base.Music21Object {
                 oMax = offsetMap[i].endTime;
             }
         }
-        // console.log('oMax: ', oMax);
-        const post = new this.constructor();
+
+        const classConstructor = <Constructable<Stream>> this.constructor;
+        const post = <Stream> new classConstructor();
+
         // derivation
         let o = 0.0;
         let measureCount = 0;
@@ -2046,9 +2029,13 @@ export class Stream extends base.Music21Object {
      *     `this.renderOptions.height`. If still undefined, will use
      *     `this.estimateStreamHeight()`
      * @param {string} elementType - what type of element, default = svg
-     * @returns {jQuery} svg in jquery.
+     * @returns {JQuery} svg in jquery.
      */
-    createNewDOM(width, height, elementType='svg') {
+    createNewDOM(
+        width: number|string|undefined = undefined,
+        height: number|string|undefined = undefined,
+        elementType='svg'
+    ): JQuery {
         if (!this.isFlat) {
             this.setSubstreamRenderOptions();
         }
@@ -2108,9 +2095,13 @@ export class Stream extends base.Music21Object {
      * @param {number|string|undefined} [width]
      * @param {number|string|undefined} [height]
      * @param {string} [elementType='svg'] - what type of element, default = svg
-     * @returns {jQuery} canvas or svg
+     * @returns {JQuery} canvas or svg
      */
-    createPlayableDOM(width, height, elementType='svg') {
+    createPlayableDOM(
+        width: number|string|undefined = undefined,
+        height: number|string|undefined = undefined,
+        elementType='svg'
+    ): JQuery {
         this.renderOptions.events.click = 'play';
         return this.createDOM(width, height, elementType);
     }
@@ -2126,9 +2117,13 @@ export class Stream extends base.Music21Object {
      * @param {number|string|undefined} [width]
      * @param {number|string|undefined} [height]
      * @param {string} elementType - what type of element svg or canvas, default = svg
-     * @returns {jQuery} canvas or SVG
+     * @returns {JQuery} canvas or SVG
      */
-    createDOM(width, height, elementType='svg') {
+    createDOM(
+        width: number|string|undefined = undefined,
+        height: number|string|undefined = undefined,
+        elementType: string = 'svg'
+    ): JQuery {
         const $newSvg = this.createNewDOM(width, height, elementType);
         // temporarily append the SVG to the document to fix a Firefox bug
         // where nothing can be measured unless is it in the document.
@@ -2144,7 +2139,7 @@ export class Stream extends base.Music21Object {
     /**
      * Creates a new canvas, renders vexflow on it, and appends it to the DOM.
      *
-     * @param {jQuery|HTMLElement} [appendElement=document.body] - where to place the svg
+     * @param {JQuery|HTMLElement} [appendElement=document.body] - where to place the svg
      * @param {number|string} [width]
      * @param {number|string} [height]
      * @param {string} elementType - what type of element, default = svg
@@ -2152,12 +2147,21 @@ export class Stream extends base.Music21Object {
      * this is a difference with other routines and should be fixed. TODO: FIX)
      *
      */
-    appendNewDOM(appendElement, width, height, elementType='svg') {
+    appendNewDOM(
+        appendElement: JQuery|HTMLElement,
+        width: number|string = undefined,
+        height: number|string = undefined,
+        elementType: string = 'svg'
+    ) {
         if (appendElement === undefined) {
             appendElement = document.body;
         }
-        let $appendElement = appendElement;
-        if (!(appendElement instanceof $)) {
+
+        // noinspection JSMismatchedCollectionQueryUpdate
+        let $appendElement: JQuery<HTMLElement>;
+        if (appendElement instanceof $) {
+            $appendElement = <JQuery<HTMLElement>><any> appendElement;
+        } else {
             $appendElement = $(appendElement);
         }
 
@@ -2169,9 +2173,9 @@ export class Stream extends base.Music21Object {
         //      width = $bodyElement.width();
         //      };
 
-        const svgOrCanvasBlock = this.createDOM(width, height, elementType);
-        $appendElement.append(svgOrCanvasBlock);
-        return svgOrCanvasBlock[0];
+        const $svgOrCanvasBlock = this.createDOM(width, height, elementType);
+        $appendElement.append($svgOrCanvasBlock);
+        return $svgOrCanvasBlock[0];
     }
 
     replaceCanvas(where, preserveSvgSize, elementType = 'svg') {
@@ -2515,7 +2519,7 @@ export class Stream extends base.Music21Object {
         e: MouseEvent|TouchEvent,
         x: number = undefined,
         y: number = undefined
-    ): [number, number] {
+    ): [number, note.Note] {
         if (x === undefined || y === undefined) {
             [x, y] = this.getScaledXYforDOM(svg, e);
         }
@@ -2528,14 +2532,16 @@ export class Stream extends base.Music21Object {
      * Change the pitch of a note given that it has been clicked and then
      * call changedCallbackFunction
      *
-     * To be removed...
-     *
      * @param {number} clickedDiatonicNoteNum
      * @param {music21.note.Note} foundNote
-     * @param {Node} svg
+     * @param {SVGElement|HTMLElement} svg
      * @returns {*} output of changedCallbackFunction
      */
-    noteChanged(clickedDiatonicNoteNum, foundNote, svg) {
+    noteChanged(
+        clickedDiatonicNoteNum: number,
+        foundNote: note.Note,
+        svg: SVGElement|HTMLElement
+    ) {
         const n = foundNote;
         const p = new pitch.Pitch('C');
         p.diatonicNoteNum = clickedDiatonicNoteNum;
@@ -2560,8 +2566,8 @@ export class Stream extends base.Music21Object {
     /**
      * Redraws an svgDiv, keeping the events of the previous svg.
      *
-     * @param {jQuery|Node} svg
-     * @returns {jQuery}
+     * @param {JQuery|HTMLElement} svg
+     * @returns {JQuery}
      */
     redrawDOM(svg) {
         // this.resetRenderOptions(true, true); // recursive, preserveEvents
@@ -2654,7 +2660,7 @@ export class Stream extends base.Music21Object {
                     return;
                 }
             }
-            if (this.activeNote !== undefined) {
+            if (this.activeNote !== undefined && this.activeNote instanceof note.Note) {
                 const n = this.activeNote;
                 n.pitch.accidental = new pitch.Accidental(newAlter);
                 /* console.log(n.pitch.name); */
@@ -2714,14 +2720,14 @@ export class Stream extends base.Music21Object {
      * so that on resizing the stream is redrawn and reflowed to the
      * new size.
      *
-     * @param {jQuery} jSvg
+     * @param {JQuery} jSvg
      * @returns {this}
      */
     windowReflowStart(jSvg) {
         // set up a bunch of windowReflow bindings that affect the svg.
         const callingStream = this;
         let jSvgNow = jSvg;
-        $(window).bind('resizeEnd', () => {
+        const resizeEnd = () => {
             // do something, window hasn't changed size in 500ms
             const jSvgParent = jSvgNow.parent();
             const newWidth = jSvgParent.width();
@@ -2729,26 +2735,26 @@ export class Stream extends base.Music21Object {
             // console.log(svgWidth);
             console.log('resizeEnd triggered', newWidth);
             // console.log(callingStream.renderOptions.events.click);
-            callingStream.resetRenderOptions(true, true); // recursive, preserveEvents
+            this.resetRenderOptions(true, true); // recursive, preserveEvents
             // console.log(callingStream.renderOptions.events.click);
-            callingStream.maxSystemWidth = svgWidth - 40;
+            this.maxSystemWidth = svgWidth - 40;
             jSvgNow.remove();
-            const svgObj = callingStream.appendNewDOM(jSvgParent);
+            const svgObj = this.appendNewDOM(jSvgParent);
             jSvgNow = $(svgObj);
-        });
-        $(window).resize(function resizeSvgTo() {
-            if (this.resizeTO) {
-                clearTimeout(this.resizeTO);
+        };
+        let resizeTimeout: number = 0;
+
+        $(window).on('resize', () => {
+            if (resizeTimeout) {
+                clearTimeout(resizeTimeout);
             }
-            this.resizeTO = setTimeout(function resizeToTimeout() {
-                $(this).trigger('resizeEnd');
-            }, 200);
+            resizeTimeout = setTimeout(() => resizeEnd(), 200);
         });
-        setTimeout(function triggerResizeOnCreateSvg() {
+        setTimeout(() => {
             const $window = $(window);
             const doResize = $window.data('triggerResizeOnCreateSvg');
             if (doResize === undefined || doResize === true) {
-                $(this).trigger('resizeEnd');
+                resizeEnd();
                 $window.data('triggerResizeOnCreateSvg', false);
             }
         }, 1000);
@@ -2756,11 +2762,9 @@ export class Stream extends base.Music21Object {
     }
 
     /**
-     * Does this stream have a {@link music21.stream.Voice} inside it?
-     *
-     * @returns {boolean}
+     * Does this stream have a {@link Voice} inside it?
      */
-    hasVoices() {
+    hasVoices(): boolean {
         for (const el of this) {
             if (el.isClassOrSubclass('Voice')) {
                 return true;
@@ -2793,19 +2797,16 @@ export class Voice extends Stream {
 export class Measure extends Stream {
     static get className() { return 'music21.stream.Measure'; }
 
-    constructor() {
-        super();
-        this.recursionType = 'elementsFirst';
-        this.isMeasure = true;
-        this.number = 0; // measure number
-        this.numberSuffix = '';
-    }
+    recursionType: string = 'elementsFirst';
+    isMeasure: boolean = true;
+    number: number = 0;
+    numberSuffix: string = '';
 
-    stringInfo() {
+    stringInfo(): string {
         return this.measureNumberWithSuffix() + ' offset=' + this.offset.toString();
     }
 
-    measureNumberWithSuffix() {
+    measureNumberWithSuffix(): string {
         return this.number.toString() + this.numberSuffix;
     }
 }
@@ -2815,14 +2816,15 @@ export class Measure extends Stream {
  *
  * @class Part
  * @memberof music21.stream
- * @extends music21.stream.Stream
  */
 export class Part extends Stream {
     static get className() { return 'music21.stream.Part'; }
 
+    recursionType: string = 'flatten';
+    systemHeight: number;
+
     constructor() {
         super();
-        this.recursionType = 'flatten';
         this.systemHeight = this.renderOptions.naiveHeight;
     }
 
@@ -2830,10 +2832,8 @@ export class Part extends Stream {
      * How many systems does this Part have?
      *
      * Does not change any reflow information, so by default it's always 1.
-     *
-     * @returns {Number}
      */
-    numSystems() {
+    numSystems(): number {
         let numSystems = 1;
         const subStreams = this.getElementsByClass('Stream');
         for (let i = 1; i < subStreams.length; i++) {
@@ -2846,10 +2846,8 @@ export class Part extends Stream {
 
     /**
      * Find the width of every measure in the Part.
-     *
-     * @returns {Array<number>}
      */
-    getMeasureWidths() {
+    getMeasureWidths(): number[] {
         /* call after setSubstreamRenderOptions */
         const measureWidths = [];
         for (const el of this) {
@@ -2866,10 +2864,8 @@ export class Part extends Stream {
 
     /**
      * Overrides the default music21.stream.Stream#estimateStaffLength
-     *
-     * @returns {number}
      */
-    estimateStaffLength() {
+    estimateStaffLength(): number {
         if (this.renderOptions.overriddenWidth !== undefined) {
             // console.log("Overridden staff width: " + this.renderOptions.overriddenWidth);
             return this.renderOptions.overriddenWidth;
@@ -3128,13 +3124,18 @@ export class Part extends Stream {
      * Overrides the default music21.stream.Stream#findNoteForClick
      * by taking into account systems
      *
-     * @param {HTMLElement | SVGElement} svg
+     * @param {HTMLElement|SVGElement} svg
      * @param {MouseEvent|TouchEvent} e
      * @param {number} [x]
      * @param {number} [y]
      * @returns {Array} [clickedDiatonicNoteNum, foundNote]
      */
-    findNoteForClick(svg, e, x, y) {
+    findNoteForClick(
+        svg: HTMLElement|SVGElement,
+        e: MouseEvent|TouchEvent,
+        x: number = undefined,
+        y: number = undefined
+    ): [number, note.Note] {
         if (x === undefined || y === undefined) {
             [x, y] = this.getScaledXYforDOM(svg, e);
         }
@@ -3221,10 +3222,12 @@ export class Part extends Stream {
 export class Score extends Stream {
     static get className() { return 'music21.stream.Score'; }
 
+    recursionType = 'elementsOnly';
+    measureWidths: number[] = [];
+    partSpacing: number;
+
     constructor() {
         super();
-        this.recursionType = 'elementsOnly';
-        this.measureWidths = [];
         this.partSpacing = this.renderOptions.naiveHeight;
     }
 
@@ -3277,12 +3280,15 @@ export class Score extends Stream {
      *
      * Always returns the measure of the top part...
      *
-     * @param {number} [xPxScaled]
+     * @param {number} xPxScaled
      * @param {number} [systemIndex]
-     * @returns {music21.stream.Stream} usually a Measure
+     * @returns {Stream} usually a Measure
      *
      */
-    getStreamFromScaledXandSystemIndex(xPxScaled, systemIndex=undefined) {
+    getStreamFromScaledXandSystemIndex(
+        xPxScaled,
+        systemIndex: number = undefined
+    ) {
         const parts = this.parts;
         return parts
             .get(0)
@@ -3446,7 +3452,12 @@ export class Score extends Stream {
      * @param {number} [y]
      * @returns {Array} [diatonicNoteNum, m21Element]
      */
-    findNoteForClick(svg, e, x, y) {
+    findNoteForClick(
+        svg: HTMLElement|SVGElement,
+        e: MouseEvent|TouchEvent,
+        x: number = undefined,
+        y: number = undefined
+    ): [number, note.Note] {
         if (x === undefined || y === undefined) {
             [x, y] = this.getScaledXYforDOM(svg, e);
         }
@@ -3476,10 +3487,8 @@ export class Score extends Stream {
 
     /**
      * How many systems are there? Calls numSystems() on the first part.
-     *
-     * @returns {int}
      */
-    numSystems() {
+    numSystems(): number {
         return this.getElementsByClass('Part')
             .get(0)
             .numSystems();
@@ -3532,7 +3541,17 @@ export class Score extends Stream {
 
 // small Class; a namedtuple in music21p
 export class OffsetMap {
-    constructor(element, offset, endTime, voiceIndex) {
+    element: base.Music21Object;
+    offset: number;
+    endTime: number;
+    voiceIndex: number;
+
+    constructor(
+        element: base.Music21Object,
+        offset: number,
+        endTime: number,
+        voiceIndex: number
+    ) {
         this.element = element;
         this.offset = offset;
         this.endTime = endTime;

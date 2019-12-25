@@ -92,9 +92,9 @@ export class ProtoM21Object {
      * Works similarly to Python's copy.deepcopy().
      *
      * Every ProtoM21Object has a `._cloneCallbacks` object which maps
-     * `{attribute: callbackFunction}`
+     * `{attribute: callbackFunction|boolean}`
      * to handle custom clone cases.  See, for instance, Music21Object which
-     * uses a custom callback to NOT clone the `.activeSite` attribute.
+     * uses a custom callback to NOT clone the `.derivation` attribute directly.
      *
      * @example
      * var n1 = new music21.note.Note("C#");

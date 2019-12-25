@@ -14,8 +14,12 @@
  * @namespace music21.renderOptions
  * @memberof music21
  */
-import * as common from './common';
 
+interface EventInterface {
+    click: string|Function|undefined,
+    dblclick: string|Function|undefined,
+    resize?: string|Function|undefined,
+}
 
 
 /**
@@ -46,7 +50,6 @@ export class RenderOptions {
     partIndex: number = 0;
     measureIndex: number = 0;
 
-    systemMeasureIndex: number = 0;
     systemPadding: number = undefined;
     naiveSystemPadding: number = 40;
 
@@ -57,12 +60,13 @@ export class RenderOptions {
     staffLines: number = 5;
     staffConnectors: string[] = ['single', 'brace'];
     staffPadding: number = 60; // width...
-    events = {
+    events: EventInterface = {
         click: 'play',
         dblclick: undefined,
         // resize
     };
     startNewSystem: boolean = false;
+    // noinspection JSUnusedGlobalSymbols
     startNewPage: boolean = false;
     showMeasureNumber: boolean = undefined;
 }
