@@ -309,6 +309,14 @@ export class Stream extends base.Music21Object {
         this._instrument = newInstrument;
     }
 
+    /**
+     * specialContext gets from a private attribute or from zero-position
+     * or from site's first or special context.
+     *
+     * @param attr
+     * @returns {music21.base.Music21Object|undefined|*}
+     * @private
+     */
     _specialContext(attr) {
         const privAttr = '_' + attr;
         if (this[privAttr] !== undefined) {
