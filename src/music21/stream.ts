@@ -48,6 +48,7 @@ import * as meter from './meter';
 import * as note from './note';
 import * as pitch from './pitch';
 import * as renderOptions from './renderOptions';
+import * as tempo from './tempo';
 import * as vfShow from './vfShow';
 
 // eslint-disable-next-line import/no-cycle
@@ -302,6 +303,80 @@ export class Stream extends base.Music21Object {
         this._tempo = newTempo;
     }
 
+    /**
+     * Return an array of the outer bounds of each MetronomeMark in the stream.
+     * [offsetStart, offsetEnd, tempo.MetronomeMark]
+     *
+     * @returns {Array<number|music21.tempo.MetronomeMark>}
+     */
+    _metronomeMarkBoundaries() {
+        const mmBoundaries = [];
+        const thisFlat = this.flat;
+        const metronomeMarks = thisFlat.getElementsByClass('MetronomeMark');
+
+        const highestTime = thisFlat.highestTime;
+        const lowestOffset = 0;
+
+        const mmDefault = new tempo.MetronomeMark({ number: 120 });
+
+        if (!metronomeMarks.length) {
+            mmBoundaries.push([lowestOffset, highestTime, mmDefault]);
+        } else if (metronomeMarks.length === 1) {
+            const metronomeMark = metronomeMarks.get(0);
+            const offset = metronomeMark.getOffsetBySite(thisFlat);
+            if (offset > lowestOffset) {
+                mmBoundaries.push([lowestOffset, offset, mmDefault]);
+                mmBoundaries.push([offset, highestTime, metronomeMark]);
+            } else {
+                mmBoundaries.push([lowestOffset, highestTime, metronomeMark]);
+            }
+        } else {
+            const offsetPairs = [];
+            for (let i = 0; i < metronomeMarks.length; i++) {
+                const metronomeMark = metronomeMarks.get(i);
+                offsetPairs.push([
+                    metronomeMark.getOffsetBySite(thisFlat),
+                    metronomeMark
+                ]);
+            }
+            if (offsetPairs[0][0] > lowestOffset) {
+                mmBoundaries.push([lowestOffset, offsetPairs[0][0], mmDefault]);
+            }
+            offsetPairs.forEach((offsetPair, i) => {
+                if (i === offsetPairs.length - 1) {
+                    mmBoundaries.push([offsetPair[0], highestTime, offsetPair[1]]);
+                } else {
+                    mmBoundaries.push([offsetPair[0], offsetPairs[i + 1][0], offsetPair[1]]);
+                }
+            });
+        }
+        return mmBoundaries;
+    }
+
+    /**
+     * Return the average tempo within the span indicated by offset start and end.
+     *
+     * @param {number} oStart - offset start
+     * @param {number} oEnd - offset end
+     * @returns {number}
+     */
+    _averageTempo(oStart, oEnd) {
+        const overallDuration = oEnd - oStart;
+        return this._metronomeMarkBoundaries().reduce((tempo, mm) => {
+            if (mm[0] >= oStart && mm[0] < oEnd) {
+                const overlapDur = mm[1] <= oEnd ? mm[1] - mm[0] : oEnd - mm[0];
+                tempo += (overlapDur / overallDuration) * mm[2].number;
+            } else if (mm[1] > oStart && mm[1] <= oEnd) {
+                const overlapDur = mm[0] >= oStart ? mm[1] - mm[0] : mm[1] - oStart;
+                tempo += (overlapDur / overallDuration) * mm[2].number;
+            } else if (mm[0] <= oStart && mm[1] >= oEnd) {
+                tempo = mm[2].number;
+            }
+            return tempo;
+        }, 0);
+    }
+
+
     get instrument() {
         if (this._instrument === undefined && this.activeSite !== undefined) {
             return this.activeSite.instrument;
@@ -531,7 +606,7 @@ export class Stream extends base.Music21Object {
     }
 
     /* override protoM21Object.clone() */
-    clone(deep=true, memo) {
+    clone(deep=true, memo=undefined) {
         const ret = Object.create(this.constructor.prototype);
         for (const key in this) {
             if ({}.hasOwnProperty.call(this, key) === false) {
