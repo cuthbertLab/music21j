@@ -33,6 +33,7 @@
  */
 import * as $ from 'jquery';
 import * as MIDI from 'midicube';
+import Vex from 'vexflow';
 
 import { Music21Exception } from './exceptions21';
 import { debug } from './debug';
@@ -65,6 +66,31 @@ function _exportMusicXMLAsText(s) {
     return gox.parse();
 }
 
+const defaultDOMChangerFunction = (e: MouseEvent|TouchEvent) => {
+    const canvasOrSVGElement = e.currentTarget;
+    if (!(canvasOrSVGElement instanceof HTMLElement)
+        && !(canvasOrSVGElement instanceof SVGElement)) {
+        return undefined;
+    }
+
+    const [clickedDiatonicNoteNum, foundNote] = this.findNoteForClick(
+        canvasOrSVGElement,
+        e
+    );
+    if (foundNote === undefined) {
+        if (debug) {
+            console.log('No note found');
+        }
+        return undefined;
+    }
+    return this.noteChanged(
+        clickedDiatonicNoteNum,
+        foundNote,
+        canvasOrSVGElement
+    );
+};
+
+
 /**
  * A generic Stream class -- a holder for other music21 objects
  * Will be subclassed into {@link music21.stream.Score},
@@ -75,7 +101,7 @@ function _exportMusicXMLAsText(s) {
  * @class Stream
  * @memberof music21.stream
  *
- * @property {music21.base.Music21Object[]} elements - the elements in the stream.
+ * @property {base.Music21Object[]} elements - the elements in the stream.
  *     DO NOT MODIFY individual components (consider it like a Python tuple)
  * @property {number} length - (readonly) the number of elements in the stream.
  * @property {music21.duration.Duration} duration - the total duration of the stream's elements
@@ -113,78 +139,60 @@ function _exportMusicXMLAsText(s) {
 export class Stream extends base.Music21Object {
     static get className() { return 'music21.stream.Stream'; }
 
-    constructor() {
-        super();
-        // class variables;
-        this.isStream = true;
-        this.isMeasure = false;
-        this.classSortOrder = -20;
-        this.recursionType = 'elementsFirst';
+    // from music21p's core.py
+    _offsetDict: WeakMap<base.Music21Object, number> = new WeakMap();
+    _elements: base.Music21Object[] = [];
+    // TODO(msc): endElements
+    isSorted: boolean = true;
 
-        this._duration = undefined;
+    // from music21p's __init__.py
+    // class attributes.
+    isStream: boolean = true;
+    isMeasure: boolean = false;
+    classSortOrder: number = -20;
+    recursionType: string = 'elementsFirst';  // this may change to an enum
+    // TODO(msc): _styleClass
 
-        this._elements = [];
-        this._offsetDict = new WeakMap();
+    // individual instance attributes
+    // TODO(msc): StreamStatus
+    // TODO(msc): _unlinkedDuration
+    autoSort: boolean = true;
+    isFlat: boolean = true;
+    // TODO(msc): definesExplicitSystemBreaks
+    // TODO(msc): definesExplicitPageBreaks
+    // TODO(msc): _atSoundingPitch
+    // TODO(msc): _mutable -- experimental
 
-        this.autoSort = true;
-        this.isSorted = true;
-        this.isFlat = true;
+    // music21j specific attributes NOT to remove:
+    activeVFStave: Vex.Flow.Stave = undefined;
+    activeVFRenderer: vfShow.Renderer = undefined;
+    changedCallbackFunction: Function = undefined; // for editable svges
+    /**
+     * A function bound to the current stream that
+     * will change the stream. Used in editableAccidentalDOM, among other places.
+     *
+     *      var can = s.appendNewDOM();
+     *      $(can).on('click', s.DOMChangerFunction);
+     */
+    DOMChangerFunction:
+        (e: MouseEvent|TouchEvent) => base.Music21Object|undefined = defaultDOMChangerFunction;
 
-        this._clef = undefined;
-        this.displayClef = undefined;
+    // music21j specific attributes eventually to remove:
+    _clef = undefined;
+    displayClef = undefined;
+    _keySignature = undefined; // a music21.key.KeySignature object
+    _timeSignature = undefined; // a music21.meter.TimeSignature object
+    _instrument = undefined;
+    _autoBeam = undefined;
+    renderOptions = new renderOptions.RenderOptions();
+    _tempo = undefined;
+    staffLines = 5;
+    _stopPlaying = false;
 
-        this._keySignature = undefined; // a music21.key.KeySignature object
-        this._timeSignature = undefined; // a music21.meter.TimeSignature object
-        this._instrument = undefined;
-
-        this._autoBeam = undefined;
-        this.activeVFStave = undefined;
-        this.activeVFRenderer = undefined;
-        this.renderOptions = new renderOptions.RenderOptions();
-        this._tempo = undefined;
-
-        this.staffLines = 5;
-
-        this._stopPlaying = false;
-        this._allowMultipleSimultaneousPlays = true; // not implemented yet.
-        this.changedCallbackFunction = undefined; // for editable svges
-        /**
-         * A function bound to the current stream that
-         * will changes the stream. Used in editableAccidentalDOM, among other places.
-         *
-         *      var can = s.appendNewDOM();
-         *      $(can).on('click', s.DOMChangerFunction);
-         *
-         * @param {MouseEvent|TouchEvent} e
-         * @returns {music21.base.Music21Object|undefined} - returns whatever changedCallbackFunction does.
-         */
-        this.DOMChangerFunction = e => {
-            const canvasOrSVGElement = e.currentTarget;
-            if (!(canvasOrSVGElement instanceof HTMLElement) && !(canvasOrSVGElement instanceof SVGElement)) {
-                return undefined;
-            }
-
-            const [clickedDiatonicNoteNum, foundNote] = this.findNoteForClick(
-                canvasOrSVGElement,
-                e
-            );
-            if (foundNote === undefined) {
-                if (debug) {
-                    console.log('No note found');
-                }
-                return undefined;
-            }
-            return this.noteChanged(
-                clickedDiatonicNoteNum,
-                foundNote,
-                canvasOrSVGElement
-            );
-        };
-    }
 
     /**
      *
-     * @returns {IterableIterator<music21.base.Music21Object>}
+     * @returns {IterableIterator<base.Music21Object>}
      */
     * [Symbol.iterator]() {
         if (this.autoSort && !this.isSorted) {
