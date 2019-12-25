@@ -326,12 +326,12 @@ export class OffsetIterator extends StreamIterator {
  */
 export class RecursiveIterator extends StreamIterator {
     constructor(srcStream, {
-        filterList,
-        restoreActiveSites,
-        activeInformation,
+        filterList=[],
+        restoreActiveSites=true,
+        activeInformation=undefined,
         streamsOnly=false,
         includeSelf=false,
-        ignoreSorting,
+        ignoreSorting=false,
     }={}) {
         super(srcStream, {
             filterList,

@@ -67,29 +67,6 @@ function _exportMusicXMLAsText(s) {
     return gox.parse();
 }
 
-const defaultDOMChangerFunction = (e: MouseEvent|TouchEvent) => {
-    const canvasOrSVGElement = e.currentTarget;
-    if (!(canvasOrSVGElement instanceof HTMLElement)
-        && !(canvasOrSVGElement instanceof SVGElement)) {
-        return undefined;
-    }
-
-    const [clickedDiatonicNoteNum, foundNote] = this.findNoteForClick(
-        canvasOrSVGElement,
-        e
-    );
-    if (foundNote === undefined) {
-        if (debug) {
-            console.log('No note found');
-        }
-        return undefined;
-    }
-    return this.noteChanged(
-        clickedDiatonicNoteNum,
-        foundNote,
-        canvasOrSVGElement
-    );
-};
 
 
 /**
@@ -98,9 +75,6 @@ const defaultDOMChangerFunction = (e: MouseEvent|TouchEvent) => {
  * {@link music21.stream.Part},
  * {@link music21.stream.Measure},
  * {@link music21.stream.Voice}, but most functions will be found here.
- *
- * @class Stream
- * @memberof music21.stream
  *
  * @property {base.Music21Object[]} elements - the elements in the stream.
  *     DO NOT MODIFY individual components (consider it like a Python tuple)
@@ -167,7 +141,7 @@ export class Stream extends base.Music21Object {
     // music21j specific attributes NOT to remove:
     activeVFStave: Vex.Flow.Stave = undefined;
     activeVFRenderer: vfShow.Renderer = undefined;
-    changedCallbackFunction: Function = undefined; // for editable svges
+    changedCallbackFunction: Function = undefined; // for editable svg objects
     /**
      * A function bound to the current stream that
      * will change the stream. Used in editableAccidentalDOM, among other places.
@@ -176,9 +150,11 @@ export class Stream extends base.Music21Object {
      *      $(can).on('click', s.DOMChangerFunction);
      */
     DOMChangerFunction:
-        (e: MouseEvent|TouchEvent) => base.Music21Object|undefined = defaultDOMChangerFunction;
-
+        (e: MouseEvent|TouchEvent) => base.Music21Object|undefined;
     // music21j specific attributes eventually to remove:
+    storedVexflowStave: Vex.Flow.Stave = undefined;  // cannot figure out diff w/ activeVFStave
+
+    activeNote: note.GeneralNote = undefined;
     _clef = undefined;
     displayClef = undefined;
     _keySignature = undefined; // a music21.key.KeySignature object
@@ -190,6 +166,33 @@ export class Stream extends base.Music21Object {
     staffLines = 5;
     _stopPlaying = false;
 
+
+    constructor() {
+        super();
+        this.DOMChangerFunction = (e: MouseEvent|TouchEvent) => {
+            const canvasOrSVGElement = e.currentTarget;
+            if (!(canvasOrSVGElement instanceof HTMLElement)
+                && !(canvasOrSVGElement instanceof SVGElement)) {
+                return undefined;
+            }
+
+            const [clickedDiatonicNoteNum, foundNote] = this.findNoteForClick(
+                canvasOrSVGElement,
+                e
+            );
+            if (foundNote === undefined) {
+                if (debug) {
+                    console.log('No note found');
+                }
+                return undefined;
+            }
+            return this.noteChanged(
+                clickedDiatonicNoteNum,
+                foundNote,
+                canvasOrSVGElement
+            );
+        };
+    }
 
     /**
      *
@@ -534,17 +537,22 @@ export class Stream extends base.Music21Object {
         return this._elements.length;
     }
 
-    get elements() {
+    /**
+     * Note that a Stream is never returned from .elements,
+     * but TypeScript requires getter and setters to have the same
+     * function signature.
+     */
+    get elements(): base.Music21Object[]|Stream {
         return this._elements;
     }
 
-    set elements(newElements) {
+    set elements(newElements: base.Music21Object[]|Stream) {
         let highestOffsetSoFar = 0.0;
         this.clear();
         const tempInsert = [];
         let i;
         let thisEl;
-        if (newElements.isStream === true) {
+        if (newElements instanceof Stream) {
             // iterate to set active site;
             for (const unused of newElements) {} // eslint-disable-line no-empty
             newElements = newElements.elements;
@@ -705,7 +713,8 @@ export class Stream extends base.Music21Object {
         skipSelf=true,
     }={}) {
         const includeSelf = !skipSelf;
-        const ri = new iterator.RecursiveIterator(this,
+        const ri = new iterator.RecursiveIterator(
+            this,
             {
                 streamsOnly,
                 restoreActiveSites,
@@ -720,11 +729,11 @@ export class Stream extends base.Music21Object {
     /**
      * Add an element to the end of the stream, setting its `.offset` accordingly
      *
-     * @param {music21.base.Music21Object|Array<music21.base.Music21Object>} elOrElList - element
+     * @param elOrElList - element
      * or list of elements to append
      * @returns {this}
      */
-    append(elOrElList) {
+    append(elOrElList: base.Music21Object|base.Music21Object[]) {
         if (Array.isArray(elOrElList)) {
             for (const el of elOrElList) {
                 this.append(el);
@@ -732,11 +741,7 @@ export class Stream extends base.Music21Object {
             return this;
         }
 
-        /**
-         *
-         * @type {music21.base.Music21Object}
-         */
-        const el = elOrElList;
+        const el: base.Music21Object = elOrElList;
         if (!(el instanceof base.Music21Object)) {
             throw new Music21Exception('Can only append a music21 object.');
         }
@@ -1119,11 +1124,13 @@ export class Stream extends base.Music21Object {
         } else {
             voiceCount = 0;
         }
-        // meterStream
-        const meterStream = this.getElementsByClass('TimeSignature');
-        if (meterStream.length === 0) {
-            meterStream.append(this.timeSignature);
-        }
+        // MSC 2019 -- this was not working or even being used.
+        // // meterStream
+        // const meterStream = this.getElementsByClass('TimeSignature');
+        // if (meterStream.length === 0) {
+        //     meterStream.append(this.timeSignature);
+        // }
+
         // getContextByClass('Clef')
         const clefObj = this.getSpecialContext('clef') || this.getContextByClass('Clef');
         const offsetMap = this.offsetMap();
@@ -1229,7 +1236,7 @@ export class Stream extends base.Music21Object {
         const elSites = el.sites;
         for (const s of this.recurse({
             skipSelf: false,
-            streamOnly: true,
+            streamsOnly: true,
             restoreActiveSites: false,
         })) {
             if (elSites.includes(s)) {
@@ -1441,7 +1448,7 @@ export class Stream extends base.Music21Object {
     /**
      * Returns true if any note in the stream has lyrics, otherwise false
      *
-     * @returns {Boolean}
+     * @returns {boolean}
      */
     hasLyrics() {
         for (const el of this) {
@@ -1542,8 +1549,8 @@ export class Stream extends base.Music21Object {
      * See music21p documentation for the effect of various parameters.
      */
     getElementsByOffset(
-        offsetStart,
-        offsetEnd,
+        offsetStart: number,
+        offsetEnd: number = undefined,
         {
             includeEndBoundary=true,
             mustFinishInSpan=false,
@@ -1559,12 +1566,16 @@ export class Stream extends base.Music21Object {
         } else {
             s = this.iter;
         }
-        s.getElementsByOffset(offsetStart, offsetEnd, {
-            includeEndBoundary,
-            mustFinishInSpan,
-            mustBeginInSpan,
-            includeElementsThatEndAtStart,
-        });
+        s.getElementsByOffset(
+            offsetStart,
+            offsetEnd,
+            {
+                includeEndBoundary,
+                mustFinishInSpan,
+                mustBeginInSpan,
+                includeElementsThatEndAtStart,
+            }
+        );
         return s;
     }
 
@@ -1728,8 +1739,8 @@ export class Stream extends base.Music21Object {
      * Resets all the RenderOptions back to defaults. Can run recursively
      * and can also preserve the `RenderOptions.events` object.
      *
-     * @param {Boolean} [recursive=false]
-     * @param {Boolean} [preserveEvents=false]
+     * @param {boolean} [recursive=false]
+     * @param {boolean} [preserveEvents=false]
      * @returns {this}
      */
     resetRenderOptions(recursive, preserveEvents) {
@@ -1822,17 +1833,17 @@ export class Stream extends base.Music21Object {
      *
      * If there are systems they will be incorporated into the height unless `ignoreSystems` is `true`.
      *
-     * @param {Boolean} [ignoreSystems=false]
+     * @param {boolean} [ignoreSystems=false]
      * @returns {number} height in pixels
      */
-    estimateStreamHeight(ignoreSystems) {
+    estimateStreamHeight(ignoreSystems=false) {
         const staffHeight = this.renderOptions.naiveHeight;
-        let systemPadding = this.systemPadding;
-        if (systemPadding === undefined) {
-            systemPadding = 0;
+        let systemPadding = 0;
+        if (this instanceof Score) {
+            systemPadding = this.systemPadding;
         }
         let numSystems;
-        if (this.isClassOrSubclass('Score')) {
+        if (this instanceof Score) {
             const numParts = this.parts.length;
             numSystems = this.numSystems();
             if (numSystems === undefined || ignoreSystems) {
@@ -1848,7 +1859,7 @@ export class Stream extends base.Music21Object {
 
             // console.log('scoreHeight of ' + scoreHeight);
             return scoreHeight;
-        } else if (this.isClassOrSubclass('Part')) {
+        } else if (this instanceof Part) {
             numSystems = 1;
             if (!ignoreSystems) {
                 numSystems = this.numSystems();
@@ -1936,7 +1947,7 @@ export class Stream extends base.Music21Object {
      * @param {Object} [options] - object of playback options
      * @returns {this}
      */
-    playStream(options) {
+    playStream(options={}) {
         const params = {
             instrument: this.instrument,
             tempo: this.tempo,
@@ -1966,6 +1977,12 @@ export class Stream extends base.Music21Object {
                     playDuration = el.duration.quarterLength;
                 }
                 const milliseconds = playDuration * 1000 * 60 / params.tempo;
+
+                // when we're ready to do full-on tempo marks:  from JV.
+                // const nextOffset = nextNote ? nextNote.offset : el.offset + el.duration.quarterLength;
+                // const tempo = thisStream._averageTempo(el.offset, nextOffset);
+                // const milliseconds = playDuration * 1000 * 60 / tempo;
+
                 if (debug) {
                     console.log(
                         'playing: ',
@@ -2169,7 +2186,7 @@ export class Stream extends base.Music21Object {
      *
      * @param {jQuery|HTMLElement} [where] - the canvas or SVG to replace or
      *     a container holding the canvas(es) to replace.
-     * @param {Boolean} [preserveSvgSize=false]
+     * @param {boolean} [preserveSvgSize=false]
      * @param {string} elementType - what type of element, default = svg
      * @returns {jQuery} the svg
      */
@@ -2271,8 +2288,8 @@ export class Stream extends base.Music21Object {
      * @returns {Vex.Flow.Stave|undefined}
      */
     recursiveGetStoredVexflowStave() {
-        const storedVFStave = this.storedVexflowStave;
-        if (storedVFStave === undefined) {
+        const storedVexflowStave = this.storedVexflowStave;
+        if (storedVexflowStave === undefined) {
             if (this.isFlat) {
                 return undefined;
             } else {
@@ -2281,7 +2298,7 @@ export class Stream extends base.Music21Object {
                 return first_subStream.recursiveGetStoredVexflowStave();
             }
         }
-        return storedVFStave;
+        return storedVexflowStave;
     }
 
     getUnscaledXYforCanvas(svg, e) {
@@ -2368,23 +2385,23 @@ export class Stream extends base.Music21Object {
      * @returns {number}
      */
     diatonicNoteNumFromScaledY(yPxScaled) {
-        const storedVFStave = this.recursiveGetStoredVexflowStave();
-        if (storedVFStave === undefined) {
+        const storedVexflowStave = this.recursiveGetStoredVexflowStave();
+        if (storedVexflowStave === undefined) {
             throw new StreamException('Could not find vexflowStave for getting size');
         }
 
         // for (var i = -10; i < 10; i++) {
-        //    console.log("line: " + i + " y: " + storedVFStave.getYForLine(i));
+        //    console.log("line: " + i + " y: " + storedVexflowStave.getYForLine(i));
         // }
         const thisClef = this.clef || this.getContextByClass('Clef');
         const lowestLine = (thisClef !== undefined) ? thisClef.lowestLine : 31;
 
-        const lineSpacing = storedVFStave.options.spacing_between_lines_px;
-        const linesAboveStaff = storedVFStave.options.space_above_staff_ln;
+        const lineSpacing = storedVexflowStave.options.spacing_between_lines_px;
+        const linesAboveStaff = storedVexflowStave.options.space_above_staff_ln;
 
         const notesFromTop = yPxScaled * 2 / lineSpacing;
         const notesAboveLowestLine
-            = (storedVFStave.options.num_lines - 1 + linesAboveStaff) * 2
+            = (storedVexflowStave.options.num_lines - 1 + linesAboveStaff) * 2
             - notesFromTop;
         const clickedDiatonicNoteNum = lowestLine + Math.round(notesAboveLowestLine);
         return clickedDiatonicNoteNum;
@@ -2395,12 +2412,12 @@ export class Stream extends base.Music21Object {
      *
      * Override in subclasses, always returns this; here.
      *
-     * @param {number} [xPxScaled]
+     * @param {number} xPxScaled
      * @param {number} [systemIndex]
      * @returns {this}
      *
      */
-    getStreamFromScaledXandSystemIndex(xPxScaled, systemIndex) {
+    getStreamFromScaledXandSystemIndex(xPxScaled, systemIndex=0) {
         return this;
     }
 
@@ -2422,16 +2439,18 @@ export class Stream extends base.Music21Object {
      * @param {Object} [options]
      * @returns {music21.base.Music21Object|undefined}
      */
-    noteElementFromScaledX(xPxScaled, allowablePixels, systemIndex, options) {
+    noteElementFromScaledX(
+        xPxScaled,
+        allowablePixels=10,
+        systemIndex=undefined,
+        options={},
+    ) {
         const params = {
             allowBackup: true,
             backupMaximum: 70,
         };
         common.merge(params, options);
         let foundNote;
-        if (allowablePixels === undefined) {
-            allowablePixels = 10;
-        }
         const subStream = this.getStreamFromScaledXandSystemIndex(
             xPxScaled,
             systemIndex
@@ -2491,7 +2510,12 @@ export class Stream extends base.Music21Object {
      * @param {number} [y]
      * @returns {Array} [diatonicNoteNum, closestXNote]
      */
-    findNoteForClick(svg, e, x, y) {
+    findNoteForClick(
+        svg: HTMLElement|SVGElement,
+        e: MouseEvent|TouchEvent,
+        x: number = undefined,
+        y: number = undefined
+    ): [number, number] {
         if (x === undefined || y === undefined) {
             [x, y] = this.getScaledXYforDOM(svg, e);
         }
@@ -2734,7 +2758,7 @@ export class Stream extends base.Music21Object {
     /**
      * Does this stream have a {@link music21.stream.Voice} inside it?
      *
-     * @returns {Boolean}
+     * @returns {boolean}
      */
     hasVoices() {
         for (const el of this) {
@@ -3149,7 +3173,7 @@ export class Part extends Stream {
      * @returns {music21.stream.Stream}
      *
      */
-    getStreamFromScaledXandSystemIndex(xPxScaled, systemIndex) {
+    getStreamFromScaledXandSystemIndex(xPxScaled, systemIndex=undefined) {
         let gotMeasure;
         const measures = this.measures;
         for (const m of measures) {
@@ -3258,7 +3282,7 @@ export class Score extends Stream {
      * @returns {music21.stream.Stream} usually a Measure
      *
      */
-    getStreamFromScaledXandSystemIndex(xPxScaled, systemIndex) {
+    getStreamFromScaledXandSystemIndex(xPxScaled, systemIndex=undefined) {
         const parts = this.parts;
         return parts
             .get(0)
@@ -3465,7 +3489,7 @@ export class Score extends Stream {
      * Fixes the part measure spacing for all parts.
      *
      * @param {Object} options
-     * @param {Boolean} [options.setLeft=true]
+     * @param {boolean} [options.setLeft=true]
      * @returns {this}
      */
     evenPartMeasureSpacing({ setLeft=true }={}) {

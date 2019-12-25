@@ -537,7 +537,7 @@ export class Renderer {
      * Formats a single voice group from a stack.
      *
      * @param {music21.vfShow.RenderStack} stack
-     * @param {Boolean} [autoBeam=measures[0].autoBeam]
+     * @param {boolean} [autoBeam=measures[0].autoBeam]
      * @returns {Vex.Flow.Formatter}
      */
     formatVoiceGroup(stack, autoBeam) {

@@ -527,8 +527,8 @@ export class Note extends NotRest {
      * @param {(string|music21.pitch.Pitch|undefined)} [nn='C4'] - pitch
      *     name ("C", "D#", "E-") w/ or w/o octave ("C#4"), or a pitch.Pitch object
      * @param {(number|undefined)} [ql=1.0] - length in quarter notes
-     * @property {Boolean} [isNote=true] - is it a Note? Yes!
-     * @property {Boolean} [isRest=false] - is it a Rest? No!
+     * @property {boolean} [isNote=true] - is it a Note? Yes!
+     * @property {boolean} [isRest=false] - is it a Rest? No!
      * @property {music21.pitch.Pitch} pitch - the {@link music21.pitch.Pitch} associated with the Note.
      * @property {string} name - shortcut to `.pitch.name`
      * @property {string} nameWithOctave - shortcut to `.pitch.nameWithOctave`

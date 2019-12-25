@@ -289,7 +289,10 @@ export class Music21Object extends prebase.ProtoM21Object {
 
     // ---------- Contexts -------------
 
-    getContextByClass(className, options) {
+    getContextByClass(
+        className,
+        options={}
+    ) {
         const payloadExtractor = function payloadExtractor(
             useSite,
             flatten,
@@ -302,11 +305,11 @@ export class Music21Object extends prebase.ProtoM21Object {
             // to create new sites.
 
             // VERY HACKY...
-            let lastElement;
+            let lastElement = undefined;
             for (let i = 0; i < useSite.length; i++) {
                 const thisElement = useSite._elements[i];
                 const indexOffset = useSite.elementOffset(thisElement);
-                const matchClass = thisElement.isClassOrSubclass(classList);
+                const matchClass: boolean = thisElement.isClassOrSubclass(classList);
                 if (flatten === false && !matchClass) {
                     continue;
                 } else if (!thisElement.isStream && !matchClass) {
