@@ -37,9 +37,9 @@ export default function tests() {
             number: 42,
             referent: 2,
         });
-        assert.equal(mark.text, 'grave');
-        assert.notOk(mark.numberImplicit);
-        assert.notOk(mark.textImplicit);
+        assert.equal(mark.text, 'grave', 'Expected to find set text');
+        assert.notOk(mark.numberImplicit, 'Expected .numberImplicit to be false');
+        assert.notOk(mark.textImplicit, 'Expected .textImplicit to be false');
         assert.equal(mark.number, 42);
         assert.equal(mark.referent.quarterLength, 2);
 

@@ -29,7 +29,12 @@ export default function tests() {
         const [s, n] = get_stream_and_note();
         s.insert(5.0, n);
         const t = s.clone(true);
-        assert.equal(t.length, s.length);
+        assert.ok(t instanceof music21.stream.Stream);
+        assert.equal(s.length, 3);
+        assert.equal(t.length, 3);
+        assert.equal(t.length, s.length, 't.length should equal s.length');
+        const t0 = t.get(0);
+        assert.equal(t0.pitch.name, 'C#');
         for (let i = 0; i < t.length; i++) {
             const tEl = t.get(i);
             const sEl = s.get(i);
@@ -109,7 +114,9 @@ export default function tests() {
         const s = new music21.stream.Stream();
         assert.equal(s.duration.quarterLength, 0, 'EmptyString QuarterLength');
 
-        s.append(new music21.note.Note('C#5'));
+        const n0 = new music21.note.Note('C#5');
+        s.append(n0);
+        assert.equal(n0.duration.quarterLength, 1.0, 'sanity that note duration works');
         assert.equal(s.duration.quarterLength, 1.0, '1 quarter QuarterLength');
 
         const n = new music21.note.Note('F5');

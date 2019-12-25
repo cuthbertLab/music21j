@@ -27,7 +27,6 @@ import * as prebase from './prebase';
 import * as base from './base';
 import * as pitch from './pitch';
 import * as beam from './beam';
-import * as common from './common';
 
 import { debug } from './debug';
 import { Music21Exception } from './exceptions21';
@@ -736,11 +735,10 @@ export class Note extends NotRest {
         if (channel === undefined) {
             channel = this.activeChannel();
         }
-        let midNum;
         const volume = this.midiVolume;
 
         // Note, not rest
-        midNum = this.pitch.midi;
+        const midNum = this.pitch.midi;
         let stopTime = milliseconds / 1000;
         if (nextElement instanceof Note) {
             if (nextElement.pitch.midi !== this.pitch.midi) {

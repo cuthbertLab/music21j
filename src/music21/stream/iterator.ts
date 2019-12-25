@@ -8,9 +8,6 @@ export class StreamIteratorException extends StreamException {
 
 }
 
-/**
- * @memberof music21.stream.iterator
- */
 export class StreamIterator {
     srcStream;  // should be Stream
     index: number = 0;
@@ -35,7 +32,8 @@ export class StreamIterator {
             restoreActiveSites=true,
             activeInformation=undefined,
             ignoreSorting=false,
-        }={}) {
+        }={}
+    ) {
         if (!ignoreSorting && !srcStream.isSorted && srcStream.autoSort) {
             srcStream.sort();
         }

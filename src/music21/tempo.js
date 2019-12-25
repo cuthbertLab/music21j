@@ -24,6 +24,7 @@ import * as base from './base';
 import * as duration from './duration';
 
 import { Music21Exception } from './exceptions21';
+
 export class TempoException extends Music21Exception {}
 
 // noinspection JSNonASCIINames,NonAsciiCharacters
@@ -364,7 +365,7 @@ export class MetronomeMark extends base.Music21Object {
     static get className() { return 'music21.tempo.MetronomeMark'; }
 
     constructor({
-        text='',
+        text=undefined,
         number=undefined,
         referent=undefined,
         parentheses=false,
@@ -464,7 +465,7 @@ export class MetronomeMark extends base.Music21Object {
 
     _getDefaultNumber(tempoText) {
         const tempoStr = tempoText instanceof TempoText ? tempoText.text : tempoText;
-        let post = undefined;
+        let post;
         const tempoNames = Object.keys(defaultTempoValues);
         if (tempoNames.includes(tempoStr.toLowerCase())) {
             post = defaultTempoValues[tempoStr.toLowerCase()];

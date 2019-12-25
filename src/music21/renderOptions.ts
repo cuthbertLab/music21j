@@ -65,6 +65,7 @@ export class RenderOptions {
         dblclick: undefined,
         // resize
     };
+
     startNewSystem: boolean = false;
     // noinspection JSUnusedGlobalSymbols
     startNewPage: boolean = false;

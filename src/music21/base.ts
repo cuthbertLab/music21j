@@ -298,7 +298,7 @@ export class Music21Object extends prebase.ProtoM21Object {
             // to create new sites.
 
             // VERY HACKY...
-            let lastElement = undefined;
+            let lastElement;
             for (let i = 0; i < useSite.length; i++) {
                 const thisElement = useSite._elements[i];
                 const indexOffset = useSite.elementOffset(thisElement);

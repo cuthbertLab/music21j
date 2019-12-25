@@ -156,6 +156,7 @@ export class Stream extends base.Music21Object {
      */
     DOMChangerFunction:
         (e: MouseEvent|TouchEvent) => base.Music21Object|undefined;
+
     // music21j specific attributes eventually to remove:
     storedVexflowStave: Vex.Flow.Stave = undefined;  // cannot figure out diff w/ activeVFStave
 
@@ -185,7 +186,7 @@ export class Stream extends base.Music21Object {
             newObj[keyName] = common.merge({}, self.renderOptions);
         };
 
-        this._cloneCallbacks.elements = function cloneElements(
+        this._cloneCallbacks._elements = function cloneElements(
             keyName,
             newObj,
             self
@@ -225,6 +226,7 @@ export class Stream extends base.Music21Object {
                 canvasOrSVGElement
             );
         };
+        this._duration = undefined;
     }
 
     /**
@@ -255,6 +257,7 @@ export class Stream extends base.Music21Object {
 
     get duration() {
         if (this._duration !== undefined) {
+            // return new duration.Duration(32.0);
             return this._duration;
         }
         return new duration.Duration(this.highestTime);
@@ -656,7 +659,7 @@ export class Stream extends base.Music21Object {
             post.elements = this.elements;
             post._offsetDict = new WeakMap();
             post.renderOptions = common.merge({}, this.renderOptions);
-            for (const el of this. elements) {
+            for (const el of this._elements) {
                 post._offsetDict.set(el, this._offsetDict.get(el));
             }
             return post;
@@ -700,7 +703,8 @@ export class Stream extends base.Music21Object {
                 streamsOnly,
                 restoreActiveSites,
                 includeSelf,
-            });
+            }
+        );
         if (classFilter !== undefined) {
             ri.addFilter(new filters.ClassFilter(classFilter));
         }
@@ -2725,7 +2729,6 @@ export class Stream extends base.Music21Object {
      */
     windowReflowStart(jSvg) {
         // set up a bunch of windowReflow bindings that affect the svg.
-        const callingStream = this;
         let jSvgNow = jSvg;
         const resizeEnd = () => {
             // do something, window hasn't changed size in 500ms
