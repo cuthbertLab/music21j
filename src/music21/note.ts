@@ -36,6 +36,7 @@ export class NotRestException extends Music21Exception {
     // no need
 }
 
+// noinspection JSUnusedGlobalSymbols
 export const noteheadTypeNames = [
     'arrow down',
     'arrow up',
@@ -76,11 +77,10 @@ export const stemDirectionNames = [
 ];
 
 /**
- * Class for a single Lyric attached to a {@link music21.note.GeneralNote}
+ * Class for a single Lyric attached to a {@link GeneralNote}
  *
  * @class Lyric
  * @memberOf music21.note
- * @extends music21.prebase.ProtoM21Object
  * @param {string} text - the text of the lyric
  * @param {number} number=1 - the lyric number
  * @param {string} syllabic=undefined - placement of the syllable
@@ -100,13 +100,26 @@ export const stemDirectionNames = [
 export class Lyric extends prebase.ProtoM21Object {
     static get className() { return 'music21.note.Lyric'; }
 
-    constructor(text, number = 1, syllabic, applyRaw, identifier) {
+    lyricConnector: string = '-';  // override to place something else between two notes...
+    text: string;
+    protected _number: number;
+    protected _identifier: string|number;
+    syllabic: string;
+    applyRaw: boolean;
+    style;
+
+    constructor(
+        text: string,
+        number: number = 1,
+        syllabic=undefined,
+        applyRaw: boolean = undefined,
+        identifier: string|number =undefined
+    ) {
         super();
-        this.lyricConnector = '-'; // override to place something else between two notes...
         this.text = text;
         this._number = number;
         this.syllabic = syllabic;
-        this.applyRaw = applyRaw || false;
+        this.applyRaw = applyRaw ?? false;
         this.setTextAndSyllabic(this.text, this.applyRaw);
         this._identifier = identifier;
         this.style = {
@@ -135,12 +148,13 @@ export class Lyric extends prebase.ProtoM21Object {
         this._number = n;
     }
 
+    // noinspection JSUnusedGlobalSymbols
     /**
      * get rawText - gets the raw text.
      *
      * @return {string}  raw text
      */
-    get rawText() {
+    get rawText(): string {
         if (this.syllabic === 'begin') {
             return this.text + this.lyricConnector;
         } else if (this.syllabic === 'middle') {
@@ -152,7 +166,8 @@ export class Lyric extends prebase.ProtoM21Object {
         }
     }
 
-    set rawText(t) {
+    // noinspection JSUnusedGlobalSymbols
+    set rawText(t: string) {
         this.setTextAndSyllabic(t, true);
     }
 
@@ -200,7 +215,6 @@ export class Lyric extends prebase.ProtoM21Object {
  *
  * @class GeneralNote
  * @memberof music21.note
- * @extends music21.base.Music21Object
  * @param {(number|undefined)} [ql=1.0] - quarterLength of the note
  * @property {boolean} [isChord=false] - is this a chord
  * @property {number} quarterLength - shortcut to `.duration.quarterLength`
@@ -212,8 +226,8 @@ export class Lyric extends prebase.ProtoM21Object {
  * @property {Array<music21.articulations.Articulation>} articulations - array
  *     of attached articulations
  * @property {string} lyric - the text of the first
- *     {@link music21.note.Lyric} object; can also set one.
- * @property {Array<music21.note.Lyric>} lyrics - array of attached lyrics
+ *     {@link Lyric} object; can also set one.
+ * @property {Array<Lyric>} lyrics - array of attached lyrics
  * @property {number} [volume=60] - how loud is this note, 0-127, before
  *     articulations
  * @property {number} midiVolume - how loud is this note, taking into
@@ -223,21 +237,19 @@ export class Lyric extends prebase.ProtoM21Object {
 export class GeneralNote extends base.Music21Object {
     static get className() { return 'music21.note.GeneralNote'; }
 
-    constructor(ql) {
+    isChord: boolean = false;
+    volume: number = 60;
+    expressions = [];
+    articulations = [];
+    lyrics: Lyric[] = [];
+    tie;
+
+    activeVexflowNote: Vex.Flow.Note;
+
+    constructor(ql=1.0) {
         super();
-        this.isChord = false;
-        if (ql !== undefined) {
-            this.duration.quarterLength = ql;
-        } else {
-            this.duration.quarterLength = 1.0;
-        }
-        this.volume = 60;
-        this.activeVexflowNote = undefined;
-        this.expressions = [];
-        this.articulations = [];
-        this.lyrics = [];
-        this.tie = undefined;
-        /* TODO: editorial objects, color, addLyric, insertLyric, hasLyrics */
+        this.duration.quarterLength = ql;
+        /* TODO: editorial objects, style(color), addLyric, insertLyric, hasLyrics */
         /* Later: augmentOrDiminish, getGrace, */
     }
 
@@ -251,7 +263,7 @@ export class GeneralNote extends base.Music21Object {
 
     set lyric(value) {
         this.lyrics = [];
-        if (value !== undefined && value !== false) {
+        if (value !== undefined) {
             this.lyrics.push(new Lyric(value));
         }
     }
@@ -275,8 +287,9 @@ export class GeneralNote extends base.Music21Object {
         return volume;
     }
 
+    // noinspection JSUnusedGlobalSymbols
     /**
-     * Add a {@link music21.note.Lyric} object to the Note
+     * Add a {@link Lyric} object to the Note
      *
      * @param {string} text - text to be added
      * @param {number} [lyricNumber] - integer specifying lyric (defaults to the current `.lyrics.length` + 1)
@@ -337,41 +350,29 @@ export class GeneralNote extends base.Music21Object {
      * @param {Vex.Flow.StaveNote} vfn - a Vex.Flow note
      * @param {Object} options -- a set of Vex Flow options
      */
-    vexflowAccidentalsAndDisplay(vfn, options) {
+    vexflowAccidentalsAndDisplay(vfn, options={}) {
         if (this.duration.dots > 0) {
             for (let i = 0; i < this.duration.dots; i++) {
                 vfn.addDotToAll();
             }
         }
-        if (debug) {
-            console.log(this.stemDirection);
-        }
-        if (this.stemDirection === 'noStem') {
-            vfn.hasStem = () => false; // need to override...
-            // vfn.render_options.stem_height = 0;
-        } else {
-            // correct VexFlow stem length for notes far from the center line;
-            let staveDNNSpacing = 5;
-            if (options.stave) {
-                staveDNNSpacing = Math.floor(
-                    options.stave.options.spacing_between_lines_px / 2
-                );
-            }
-            if (options.clef !== undefined && this.pitch !== undefined) {
-                const midLine = options.clef.lowestLine + 4;
-                // console.log(midLine);
-                const absDNNfromCenter = Math.abs(
-                    this.pitch.diatonicNoteNum - midLine
-                );
-                const absOverOctave = absDNNfromCenter - 7;
-                // console.log(absOverOctave);
-                if (absOverOctave > 0 && vfn.getStemLength !== undefined) {
-                    const stemHeight
-                        = absOverOctave * staveDNNSpacing + vfn.getStemLength();
-                    vfn.setStemLength(stemHeight);
-                }
+    }
+
+    /**
+     * Return the active channel for the instrument or activeSite's instrument
+     * @param instrument
+     */
+    activeChannel(instrument=undefined): number {
+        if (instrument === undefined) {
+            if (this.activeSite !== undefined) {
+                instrument = this.activeSite.instrument;
             }
         }
+        let channel: number = 0;
+        if (instrument !== undefined) {
+            channel = instrument.midiChannel;
+        }
+        return channel;
     }
 
     /**
@@ -382,71 +383,17 @@ export class GeneralNote extends base.Music21Object {
      *     the length to play in case of tied notes, etc.
      * @param {Object} [options] - other options (currently just
      *     `{instrument: {@link music21.instrument.Instrument} }`)
-     * @returns {Number} - delay time in milliseconds until the next element (may be ignored)
+     * @returns {number} - delay time in milliseconds until the next element (may be ignored)
      */
-    playMidi(tempo=120, nextElement, options) {
+    playMidi(
+        tempo=120,
+        nextElement,
+        { instrument=undefined, channel=undefined } = {}
+    ): number {
         // returns the number of milliseconds to the next element in
         // case that can't be determined otherwise.
-        if (options === undefined) {
-            let inst;
-            if (this.activeSite !== undefined) {
-                inst = this.activeSite.instrument;
-            }
-            options = { instrument: inst };
-        }
-
-        const volume = this.midiVolume;
-        let channel = 0;
-        if (options.instrument !== undefined) {
-            channel = options.instrument.midiChannel;
-        }
         const ql = this.duration.quarterLength;
         const milliseconds = 60 * ql * 1000 / tempo;
-        let midNum;
-        if (this.isClassOrSubclass('Note')) {
-            // Note, not rest
-            midNum = this.pitch.midi;
-            let stopTime = milliseconds / 1000;
-            if (nextElement instanceof base.Music21Object
-                && nextElement.isClassOrSubclass('Note')
-            ) {
-                if (nextElement.pitch.midi !== this.pitch.midi) {
-                    stopTime += 60 * 0.25 / tempo; // legato -- play 16th note longer
-                } else if (
-                    this.tie !== undefined
-                    && (this.tie.type === 'start' || this.tie.type === 'continue')
-                ) {
-                    stopTime += 60 * nextElement.duration.quarterLength / tempo;
-                    // this does not take into account 3 or more notes tied.
-                    // TODO: look ahead at next nexts, etc.
-                }
-            } else if (nextElement === undefined) {
-                // let last note ring an extra beat...
-                stopTime += 60 / tempo;
-            }
-            // console.log(stopTime);
-            // console.log(this.tie);
-            if (this.tie === undefined || this.tie.type === 'start') {
-                // console.log(volume);
-                try {
-                    MIDI.noteOn(channel, midNum, volume, 0);
-                    MIDI.noteOff(channel, midNum, stopTime);
-                } catch (e) {
-                    // do nothing -- might not have an output channel because of audio not connected
-                }
-            } // else { console.log ('not going to play ', this.nameWithOctave); }
-        } else if (this.isClassOrSubclass('Chord')) {
-            // TODO: Tied Chords.
-            for (let j = 0; j < this._notes.length; j++) {
-                midNum = this._notes[j].pitch.midi;
-                try {
-                    MIDI.noteOn(channel, midNum, volume, 0);
-                    MIDI.noteOff(channel, midNum, milliseconds / 1000);
-                } catch (e) {
-                    // do nothing -- might not have an output channel because of audio not connected
-                }
-            }
-        } // it's a note.Rest -- do nothing -- milliseconds takes care of it...
         return milliseconds;
     }
 }
@@ -454,9 +401,6 @@ export class GeneralNote extends base.Music21Object {
 /**
  * Specifies that a GeneralNote is not a rest (Unpitched, Note, Chord).
  *
- * @class NotRest
- * @memberof music21.note
- * @extends music21.note.GeneralNote
  * @param {number} [ql=1.0] - length in quarter notes
  * @property {music21.beam.Beams} beams - a link to a beam object
  * @property {string} [notehead='normal'] - notehead type
@@ -468,17 +412,20 @@ export class GeneralNote extends base.Music21Object {
  */
 export class NotRest extends GeneralNote {
     static get className() { return 'music21.note.NotRest'; }
+    // noinspection JSUnusedGlobalSymbols
+    notehead: string = 'normal';
+    // noinspection JSUnusedGlobalSymbols
+    noteheadFill: string = 'default';
+    noteheadColor: string = 'black';
+    noteheadParenthesis: boolean = false;
+    volume: number = undefined; // not a real object yet.
+    beams: beam.Beams;
+    protected _stemDirection: string = 'unspecified';
 
-    constructor(ql) {
+    constructor(ql: number = 1.0) {
         super(ql);
-        this.notehead = 'normal';
-        this.noteheadFill = 'default';
-        this.noteheadColor = 'black';
-        this.noteheadParenthesis = false;
-        this.volume = undefined; // not a real object yet.
         this.beams = new beam.Beams();
         /* TODO: this.duration.linkage -- need durationUnits */
-        this._stemDirection = 'unspecified';
         /* TODO: check notehead, noteheadFill, noteheadParentheses */
     }
 
@@ -505,22 +452,26 @@ export class NotRest extends GeneralNote {
  * object to describe pitch (highness/lowness) with a {@link music21.duration.Duration} object
  * that defines length, with additional features for drawing the Note, playing it back, etc.
  *
- * Together with {@link music21.stream.Stream} one of the two most important
+ * Together with {@link Stream} one of the two most important
  * classes in `music21`.
  *
- * See {@link music21.note.NotRest}, {@link music21.note.GeneralNote},
+ * See {@link NotRest}, {@link GeneralNote},
  * {@link base.Music21Object}
- * and {@link music21.prebase.ProtoM21Object} (or in general, the **extends** list below) for other
+ * and {@link prebase.ProtoM21Object} (or in general, the **extends** list below) for other
  * things you can do with a `Note` object.
  *
  * Missing from music21p: `transpose(), fullName`.  Transpose cannot be added because of circular imports
  *
  * @class Note
  * @memberof music21.note
- * @extends music21.note.NotRest
  */
 export class Note extends NotRest {
     static get className() { return 'music21.note.Note'; }
+
+    // noinspection JSUnusedGlobalSymbols
+    isNote: boolean = true;
+    isRest: boolean = false;
+    pitch: pitch.Pitch;
 
     /**
      *
@@ -535,10 +486,8 @@ export class Note extends NotRest {
      * @property {string} step - shortcut to `.pitch.step`
      * @property {number} octave - shortcut to `.pitch.octave`
      */
-    constructor(nn, ql) {
+    constructor(nn: string|pitch.Pitch = 'C4', ql: number=1.0) {
         super(ql);
-        this.isNote = true; // for speed
-        this.isRest = false; // for speed
         if (nn instanceof pitch.Pitch) {
             this.pitch = nn;
         } else {
@@ -649,6 +598,39 @@ export class Note extends NotRest {
         }
     }
 
+    vexflowAccidentalsAndDisplay(vfn, { stave=undefined, clef=undefined }={}) {
+        super.vexflowAccidentalsAndDisplay(vfn, { stave, clef });
+        if (debug) {
+            console.log(this.stemDirection);
+        }
+        if (this.stemDirection === 'noStem') {
+            vfn.hasStem = () => false; // need to override...
+            // vfn.render_options.stem_height = 0;
+        } else {
+            // correct VexFlow stem length for notes far from the center line;
+            let staveDNNSpacing = 5;
+            if (stave !== undefined) {
+                staveDNNSpacing = Math.floor(
+                    stave.options.spacing_between_lines_px / 2
+                );
+            }
+            if (clef !== undefined && this.pitch !== undefined) {
+                const midLine = clef.lowestLine + 4;
+                // console.log(midLine);
+                const absDNNFromCenter = Math.abs(
+                    this.pitch.diatonicNoteNum - midLine
+                );
+                const absOverOctave = absDNNFromCenter - 7;
+                // console.log(absOverOctave);
+                if (absOverOctave > 0 && vfn.getStemLength !== undefined) {
+                    const stemHeight
+                        = absOverOctave * staveDNNSpacing + vfn.getStemLength();
+                    vfn.setStemLength(stemHeight);
+                }
+            }
+        }
+    }
+
     /**
      * Returns a `Vex.Flow.StaveNote` that approximates this note.
      *
@@ -656,11 +638,7 @@ export class Note extends NotRest {
      * clef to set the stem direction of.
      * @returns {Vex.Flow.StaveNote}
      */
-    vexflowNote(options) {
-        const params = {};
-        common.merge(params, options);
-        const clef = params.clef;
-
+    vexflowNote({ clef=undefined }={}) {
         let useStemDirection = this.stemDirection;
 
         // fixup stem direction -- must happen before Vex.Flow.Note is created...
@@ -674,9 +652,9 @@ export class Note extends NotRest {
             useStemDirection = this.activeSite.renderOptions.stemDirection;
         } else if (
             [undefined, 'unspecified'].includes(this.stemDirection)
-            && options.clef !== undefined
+            && clef !== undefined
         ) {
-            useStemDirection = this.getStemDirectionFromClef(options.clef);
+            useStemDirection = this.getStemDirectionFromClef(clef);
         }
 
         if (this.duration === undefined) {
@@ -700,7 +678,7 @@ export class Note extends NotRest {
             duration: vfd,
             stem_direction: vfnStemDirection,
         });
-        this.vexflowAccidentalsAndDisplay(vfn, params); // clean up stuff...
+        this.vexflowAccidentalsAndDisplay(vfn, { clef }); // clean up stuff...
         if (this.pitch.accidental !== undefined) {
             if (
                 this.pitch.accidental.vexflowModifier !== 'n'
@@ -745,6 +723,53 @@ export class Note extends NotRest {
         this.activeVexflowNote = vfn;
         return vfn;
     }
+
+    playMidi(
+        tempo=120,
+        nextElement=undefined,
+        {
+            instrument=undefined,
+            channel=undefined,
+        }={}
+    ): number {
+        const milliseconds = super.playMidi(tempo, nextElement, { instrument, channel });
+        if (channel === undefined) {
+            channel = this.activeChannel();
+        }
+        let midNum;
+        const volume = this.midiVolume;
+
+        // Note, not rest
+        midNum = this.pitch.midi;
+        let stopTime = milliseconds / 1000;
+        if (nextElement instanceof Note) {
+            if (nextElement.pitch.midi !== this.pitch.midi) {
+                stopTime += 60 * 0.25 / tempo; // legato -- play 16th note longer
+            } else if (
+                this.tie !== undefined
+                && (this.tie.type === 'start' || this.tie.type === 'continue')
+            ) {
+                stopTime += 60 * nextElement.duration.quarterLength / tempo;
+                // this does not take into account 3 or more notes tied.
+                // TODO: look ahead at next nexts, etc.
+            }
+        } else if (nextElement === undefined) {
+            // let last note ring an extra beat...
+            stopTime += 60 / tempo;
+        }
+        // console.log(stopTime);
+        // console.log(this.tie);
+        if (this.tie === undefined || this.tie.type === 'start') {
+            // console.log(volume);
+            try {
+                MIDI.noteOn(channel, midNum, volume, 0);
+                MIDI.noteOff(channel, midNum, stopTime);
+            } catch (e) {
+                // do nothing -- might not have an output channel because of audio not connected
+            }
+        } // else { console.log ('not going to play ', this.nameWithOctave); }
+        return milliseconds;
+    }
 }
 
 /* ------ TODO: Unpitched ------ */
@@ -756,7 +781,6 @@ export class Note extends NotRest {
  *
  * @class Rest
  * @memberof music21.note
- * @extends music21.note.GeneralNote
  * @param {number} [ql=1.0] - length in number of quarterNotes
  * @property {Boolean} [isNote=false]
  * @property {Boolean} [isRest=true]
@@ -767,14 +791,12 @@ export class Note extends NotRest {
 export class Rest extends GeneralNote {
     static get className() { return 'music21.note.Rest'; }
 
-    constructor(ql) {
-        super(ql);
-        this.isNote = false; // for speed
-        this.isRest = true; // for speed
-        this.name = 'rest'; // for note compatibility
-        this.lineShift = undefined;
-        this.color = 'black';
-    }
+    // noinspection JSUnusedGlobalSymbols
+    isNote: boolean = false;
+    isRest: boolean = true;
+    name: string = 'rest';
+    lineShift: number = 0;
+    color: string = 'black';
 
     /**
      *

@@ -16,6 +16,7 @@
  * @requires music21/note
  */
 import Vex from 'vexflow';
+import * as MIDI from 'midicube';
 
 import { Music21Exception } from './exceptions21';
 import * as interval from './interval';
@@ -668,6 +669,33 @@ export class Chord extends note.NotRest {
         }
         this.activeVexflowNote = vfn;
         return vfn;
+    }
+
+    playMidi(
+        tempo=120,
+        nextElement=undefined,
+        {
+            instrument=undefined,
+            channel=undefined,
+        }={}
+    ) {
+        const milliseconds = super.playMidi(tempo, nextElement, { instrument, channel });
+        if (channel === undefined) {
+            channel = this.activeChannel();
+        }
+        let midNum;
+        const volume = this.midiVolume;
+        // TODO: Tied Chords.
+        for (let j = 0; j < this._notes.length; j++) {
+            midNum = this._notes[j].pitch.midi;
+            try {
+                MIDI.noteOn(channel, midNum, volume, 0);
+                MIDI.noteOff(channel, midNum, milliseconds / 1000);
+            } catch (e) {
+                // do nothing -- might not have an output channel because of audio not connected
+            }
+        }
+        return milliseconds;
     }
 
     /**

@@ -620,10 +620,12 @@ export class Pitch extends prebase.ProtoM21Object {
     /**
      * Returns the vexflow name for the pitch in the given clef.
      *
+     * if clefObj is undefined, then the clef is treated as TrebleClef.
+     *
      * @param {music21.clef.Clef} [clefObj] - the active {@link music21.clef.Clef} object
      * @returns {string} - representation in vexflow
      */
-    vexflowName(clefObj) {
+    vexflowName(clefObj=undefined) {
         // returns a vexflow Key name for this pitch.
         let tempPitch = this;
         if (clefObj !== undefined) {
