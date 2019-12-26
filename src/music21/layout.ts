@@ -3,7 +3,6 @@
  * THIS IS CURRENTLY UNUSED
  * Does not work yet, so not documented
  *
- * @namespace music21.layout
  */
 // future -- rewrite of Score and Part to Page, System, SystemPart
 // not currently used
@@ -55,7 +54,7 @@ export function makeLayoutFromScore(
     let currentSystem = new System();
     let currentSystemNumber = 1;
     currentSystem.measureStart = 1;
-    let currentStaves = [];
+    let currentStaves: Staff[] = [];
 
     const staffMaker = (staffHolder, numParts, measureStart) => {
         for (let pNum = 0; pNum < numParts; pNum++) {
@@ -86,7 +85,7 @@ export function makeLayoutFromScore(
         if (currentRight > maxSystemWidth && lastSystemBreak !== i) {
             // new system...
             for (let j = 0; j < currentStaves.length; j++) {
-                currentStaves.measureEnd = i;
+                currentStaves[j].measureEnd = i;
                 currentSystem.insert(0, currentStaves[j]);
             }
             currentStaves = [];
@@ -114,7 +113,7 @@ export function makeLayoutFromScore(
         }
     }
     for (let j = 0; j < currentStaves.length; j++) {
-        currentStaves.measureEnd = measureWidths.length - 1;
+        currentStaves[j].measureEnd = measureWidths.length - 1;
         currentSystem.insert(0, currentStaves[j]);
     }
     currentPage.insert(0, currentSystem);
@@ -130,6 +129,14 @@ export function makeLayoutFromScore(
  */
 export class LayoutScore extends stream.Score {
     static get className() { return 'music21.layout.LayoutScore'; }
+
+    scoreLayout;
+    measureStart;
+    measureEnd;
+    protected _width: number;
+    height: number;
+    top: number;
+    left: number;
 
     constructor() {
         super();
@@ -187,6 +194,14 @@ export class LayoutScore extends stream.Score {
 export class Page extends stream.Score {
     static get className() { return 'music21.layout.Page'; }
 
+    pageNumber: number;
+    measureStart;
+    measureEnd;
+    systemStart;
+    systemEnd;
+    pageLayout;
+    _width: number;
+
     constructor() {
         super();
         this.pageNumber = 1;
@@ -224,18 +239,21 @@ export class Page extends stream.Score {
 export class System extends stream.Score {
     static get className() { return 'music21.layout.System'; }
 
+    systemNumber: number;
+    systemLayout;
+    measureStart;
+    measureEnd;
+    protected _width: number;
+    height: number;
+    top: number;
+    left: number;
+
     constructor() {
         super();
         this.systemNumber = 1;
         this.systemLayout = undefined;
         this.measureStart = undefined;
         this.measureEnd = undefined;
-        /**
-         *
-         * @type {number|undefined}
-         * @private
-         */
-        this._width = undefined;
         this.height = undefined;
         this.top = undefined;
         this.left = undefined;
@@ -262,6 +280,17 @@ export class System extends stream.Score {
  */
 export class Staff extends stream.Part {
     static get className() { return 'music21.layout.Staff'; }
+
+    measureStart: number;
+    measureEnd: number;
+    staffNumber: number;
+    optimized: number;
+    top: number;
+    left: number;
+    protected _width: number;
+    height: number;
+    inheritedHeight: number;
+    staffLayout;
 
     constructor() {
         super();

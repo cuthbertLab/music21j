@@ -2,8 +2,7 @@
  * music21j -- Javascript reimplementation of Core music21p features.
  * music21/meter -- TimeSignature objects
  *
- *
- * Copyright (c) 2013-17, Michael Scott Cuthbert and cuthbertLab
+ * Copyright (c) 2013-19, Michael Scott Cuthbert and cuthbertLab
  * Based on music21 (=music21p), Copyright (c) 2006–17, Michael Scott Cuthbert and cuthbertLab
  *
  * meter module. See {@link music21.meter} namespace for details.
@@ -32,7 +31,7 @@ import * as duration from './duration';
  * @param {string} meterString - a string ("4/4", "3/8" etc.) to initialize the TimeSignature.
  * @property {int} [numerator=4]
  * @property {int} [denominator=4]
- * @property {int[][]} beatGroups - groupings of beats; inner arrays are numerator, denominator
+ * @property {number[][]} beatGroups - groupings of beats; inner arrays are numerator, denominator
  * @property {string} ratioString - a string like "4/4"
  * @property {music21.duration.Duration} barDuration - a Duration object
  *     representing the expressed total length of the TimeSignature.
@@ -40,7 +39,13 @@ import * as duration from './duration';
 export class TimeSignature extends base.Music21Object {
     static get className() { return 'music21.meter.TimeSignature'; }
 
-    constructor(meterString) {
+    _numerator: number;
+    _denominator: number;
+    _beatGroups: number[][];
+    _overwrittenBeatCount;
+    _overwrittenBeatDuration;
+
+    constructor(meterString: string ='4/4') {
         super();
         this.classSortOrder = 4;
 
@@ -54,47 +59,31 @@ export class TimeSignature extends base.Music21Object {
         }
     }
 
-    /**
-     *
-     * @returns {string}
-     */
-    stringInfo() {
+    stringInfo(): string {
         return this.ratioString;
     }
 
-    /**
-     *
-     * @type {number}
-     */
-    get numerator() {
+    get numerator(): number {
         return this._numerator;
     }
 
-    set numerator(s) {
+    set numerator(s: number) {
         this._numerator = s;
     }
 
-    /**
-     *
-     * @type {number}
-     */
-    get denominator() {
+    get denominator(): number {
         return this._denominator;
     }
 
-    set denominator(s) {
+    set denominator(s: number) {
         this._denominator = s;
     }
 
-    /**
-     *
-     * @type {string}
-     */
-    get ratioString() {
+    get ratioString(): string {
         return this.numerator.toString() + '/' + this.denominator.toString();
     }
 
-    set ratioString(meterString) {
+    set ratioString(meterString: string) {
         const meterList = meterString.split('/');
         this.numerator = parseInt(meterList[0]);
         this.denominator = parseInt(meterList[1]);
@@ -124,9 +113,8 @@ export class TimeSignature extends base.Music21Object {
     /**
      *  Get the beatCount from the numerator, assuming fast 6/8, etc.
      *  unless .beatCount has been set manually.
-     *  @type {number}
      */
-    get beatCount() {
+    get beatCount(): number {
         if (this._overwrittenBeatCount !== undefined) {
             return this._overwrittenBeatCount;
         }
@@ -140,9 +128,8 @@ export class TimeSignature extends base.Music21Object {
     /**
      *  Manually set the beatCount to an int.
      */
-    set beatCount(overwrite) {
+    set beatCount(overwrite: number) {
         this._overwrittenBeatCount = overwrite;
-        return overwrite;
     }
 
     /**
@@ -217,7 +204,7 @@ export class TimeSignature extends base.Music21Object {
      * @param {music21.stream.Stream} srcStream - a stream of elements.
      * @param {Object} options - an object with measureStartOffset
      */
-    getBeams(srcStream, options) {
+    getBeams(srcStream, options={}) {
         const params = { measureStartOffset: 0.0 };
         common.merge(params, options);
         const measureStartOffset = params.measureStartOffset;
@@ -322,7 +309,7 @@ export class TimeSignature extends base.Music21Object {
      *
      * @returns {Array<Vex.Flow.Fraction>} a list of numerator and denominator groups, for VexFlow
      */
-    vexflowBeatGroups() {
+    vexflowBeatGroups(): Vex.Flow.Fraction[] {
         const tempBeatGroups = this.beatGroups;
         // console.log(tempBeatGroups);
         const vfBeatGroups = [];
