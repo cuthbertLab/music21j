@@ -2607,7 +2607,7 @@ export function forteIndexToInversionsAvailable(card, index) {
     }
 }
 
-function _chordTableAddress(cardinality, forteClass, inversion, pcOriginal) {
+function _chordTableAddress(cardinality, forteClass, inversion=undefined, pcOriginal=undefined) {
     return {
         cardinality,
         forteClass,
@@ -2709,7 +2709,7 @@ export function addressToCommonNames(address) {
     return refDict.name;
 }
 
-export function addressToForteName(address, classification='tn') {
+export function addressToForteName(address, classification: string ='tn') {
     const [card, index, inversion] = _validateAddress(address);
     let iStr;
     if (classification.toLowerCase() === 'tn') {

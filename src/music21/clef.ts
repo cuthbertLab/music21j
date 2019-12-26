@@ -79,23 +79,28 @@ export const nameToSign = {
  * @memberof music21.clef
  * @extends music21.base.Music21Object
  * @param {string} name - clef name
- * @param {int} [octaveChange=0] - ottava
+ * @param {number} [octaveChange=0] - ottava
  * @property {string} [name]
- * @property {int} lowestLine - diatonicNoteNum (C4 = 29) for the
+ * @property {number} lowestLine - diatonicNoteNum (C4 = 29) for the
  *     lowest line (in a five-line staff)
- * @property {int} lowestLineTrebleOffset - difference between the first line
+ * @property {number} lowestLineTrebleOffset - difference between the first line
  *     of this staff and the first line in treble clef
- * @property {int} octaveChange
+ * @property {number} octaveChange
  */
 export class Clef extends base.Music21Object {
     static get className() { return 'music21.clef.Clef'; }
 
-    constructor(name, octaveChange) {
+    name: string = undefined;
+    sign: string = undefined;
+    line: number = 1;
+    octaveChange: number;
+    lowestLine: number = lowestLines.treble;
+    lowestLineTrebleOffset: number = 0;
+
+    constructor(name, octaveChange=0) {
         super();
         this.classSortOrder = 0;
 
-        this.sign = undefined;
-        this.line = 1;
         if (name !== undefined) {
             name = name.toLowerCase();
             this.name = name;
@@ -104,18 +109,11 @@ export class Clef extends base.Music21Object {
             this.line = nameToLine[name] || 1;
             this.lowestLineTrebleOffset
                 = lowestLines.treble - this.lowestLine;
-        } else {
-            this.name = undefined;
-            this.lowestLine = lowestLines.treble;
-            this.lowestLineTrebleOffset = 0;
         }
-        if (octaveChange === undefined) {
-            this.octaveChange = 0;
-        } else {
-            this.octaveChange = octaveChange;
-            this.lowestLine += 7 * octaveChange;
-            this.lowestLineTrebleOffset -= 7 * octaveChange;
-        }
+
+        this.octaveChange = octaveChange;
+        this.lowestLine += 7 * octaveChange;
+        this.lowestLineTrebleOffset -= 7 * octaveChange;
     }
 
     stringInfo() {
@@ -388,7 +386,7 @@ export function clefFromString(clefString, octaveShift=0) {
     let thisType;
     let lineNum;
     if (xnStr.toLowerCase() === 'percussion') {
-        return new PercussionClef(clefString, octaveShift);
+        return new PercussionClef();
     } // todo: tab, none, jianpu
 
     if (xnStr.length === 2) {
