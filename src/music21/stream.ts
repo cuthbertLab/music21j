@@ -42,7 +42,7 @@ import * as base from './base';
 import * as beam from './beam';
 import * as clef from './clef';
 import * as common from './common';
-import * as duration from './duration';
+import { Duration } from './duration';
 import * as instrument from './instrument';
 import * as meter from './meter';
 import * as note from './note';
@@ -84,7 +84,7 @@ function _exportMusicXMLAsText(s) {
  * @property {base.Music21Object[]} elements - the elements in the stream.
  *     DO NOT MODIFY individual components (consider it like a Python tuple)
  * @property {number} length - (readonly) the number of elements in the stream.
- * @property {music21.duration.Duration} duration - the total duration of the stream's elements
+ * @property {Duration} duration - the total duration of the stream's elements
  * @property {number} highestTime -- the highest time point in the stream's elements
  * @property {music21.clef.Clef} clef - the clef for the Stream (if there is
  *     one; if there are multiple, then the first clef)
@@ -171,6 +171,7 @@ export class Stream extends base.Music21Object {
     _tempo = undefined;
     staffLines = 5;
     _stopPlaying = false;
+    _overriddenDuration: Duration = undefined;
 
 
     constructor() {
@@ -226,7 +227,6 @@ export class Stream extends base.Music21Object {
                 canvasOrSVGElement
             );
         };
-        this._duration = undefined;
     }
 
     /**
@@ -255,16 +255,16 @@ export class Stream extends base.Music21Object {
     }
 
 
-    get duration(): duration.Duration {
-        if (this._duration !== undefined) {
+    get duration(): Duration {
+        if (this._overriddenDuration instanceof Duration) {
             // return new duration.Duration(32.0);
-            return this._duration;
+            return this._overriddenDuration;
         }
-        return new duration.Duration(this.highestTime);
+        return new Duration(this.highestTime);
     }
 
-    set duration(newDuration: duration.Duration) {
-        this._duration = newDuration;
+    set duration(newDuration: Duration) {
+        this._overriddenDuration = newDuration;
     }
 
     get highestTime() {

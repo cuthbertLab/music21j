@@ -278,17 +278,13 @@ export function TinyNotation(textIn) {
  * @param {HTMLElement|jQuery} [selector]
  */
 export function renderNotationDivs(
-    classTypes='.music21.tinyNotation',
+    classTypes: string = '.music21.tinyNotation',
     selector
 ) {
-    /**
-     *
-     * @type {jQuery[]}
-     */
-    let allRender = [];
+    let $allRender: JQuery<HTMLElement>;
 
     if (selector === undefined) {
-        allRender = $(classTypes);
+        $allRender = $(classTypes);
     } else {
         /**
          * @type {jQuery}
@@ -299,10 +295,11 @@ export function renderNotationDivs(
         } else {
             $selector = selector;
         }
-        allRender = $selector.find(classTypes);
+        $allRender = $selector.find(classTypes);
     }
-    for (let i = 0; i < allRender.length; i++) {
-        const thisTN = allRender[i];
+
+    for (let i = 0; i < $allRender.length; i++) {
+        const thisTN = $allRender[i];
         const $thisTN = $(thisTN);
         let thisTNContents;
         if ($thisTN.attr('tinynotationcontents') !== undefined) {

@@ -32,6 +32,17 @@ export const MotionType = {
 export class VoiceLeadingQuartet extends Music21Object {
     static get className() { return 'music21.voiceLeading.VoiceLeadingQuartet'; }
 
+    unison: interval.Interval;
+    fifth: interval.Interval;
+    octave: interval.Interval;
+    protected _v1n1: note.Note;
+    protected _v1n2: note.Note;
+    protected _v2n1: note.Note;
+    protected _v2n2: note.Note;
+    vIntervals: interval.Interval[];
+    hIntervals: interval.Interval[];
+    _key: key.Key;
+
     constructor(v1n1, v1n2, v2n1, v2n2, analyticKey) {
         super();
         if (!intervalCache.length) {
@@ -70,7 +81,7 @@ export class VoiceLeadingQuartet extends Music21Object {
         }
     }
 
-    _setVoiceNote(value, which) {
+    _setVoiceNote(value: note.Note, which: string) {
         if (value === undefined) {
             this[which] = value;
         } else if (typeof value === 'string') {
@@ -84,52 +95,53 @@ export class VoiceLeadingQuartet extends Music21Object {
         }
     }
 
-    get v1n1() {
+    get v1n1(): note.Note {
         return this._v1n1;
     }
 
-    set v1n1(value) {
+    set v1n1(value: note.Note) {
         this._setVoiceNote(value, '_v1n1');
     }
 
-    get v1n2() {
+    get v1n2(): note.Note {
         return this._v1n2;
     }
 
-    set v1n2(value) {
+    set v1n2(value: note.Note) {
         this._setVoiceNote(value, '_v1n2');
     }
 
-    get v2n1() {
+    get v2n1(): note.Note {
         return this._v2n1;
     }
 
-    set v2n1(value) {
+    set v2n1(value: note.Note) {
         this._setVoiceNote(value, '_v2n1');
     }
 
-    get v2n2() {
+    get v2n2(): note.Note {
         return this._v2n2;
     }
 
-    set v2n2(value) {
+    set v2n2(value: note.Note) {
         this._setVoiceNote(value, '_v2n2');
     }
 
-    get key() {
+    get key(): key.Key {
         return this._key;
     }
 
-    set key(keyValue) {
-        if (typeof keyValue === 'string') {
-            keyValue = new key.Key(
-                key.convertKeyStringToMusic21KeyString(keyValue)
-            );
-        }
+    // turning off string entry because of Typescript deficiency
+    set key(keyValue: key.Key) {
+        // if (typeof keyValue === 'string') {
+        //     keyValue = new key.Key(
+        //         key.convertKeyStringToMusic21KeyString(keyValue)
+        //     );
+        // }
         this._key = keyValue;
     }
 
-    _findIntervals() {
+    protected _findIntervals(): void {
         this.vIntervals.push(new interval.Interval(this.v1n1, this.v2n1));
         this.vIntervals.push(new interval.Interval(this.v1n2, this.v2n2));
         this.hIntervals.push(new interval.Interval(this.v1n1, this.v1n2));
@@ -153,7 +165,7 @@ export class VoiceLeadingQuartet extends Music21Object {
         return undefined;
     }
 
-    noMotion() {
+    noMotion(): boolean {
         for (const iV of this.hIntervals) {
             if (iV.name !== 'P1') {
                 return false;
@@ -162,7 +174,7 @@ export class VoiceLeadingQuartet extends Music21Object {
         return true;
     }
 
-    obliqueMotion() {
+    obliqueMotion(): boolean {
         if (this.noMotion()) {
             return false;
         }
@@ -175,7 +187,7 @@ export class VoiceLeadingQuartet extends Music21Object {
         return false;
     }
 
-    similarMotion() {
+    similarMotion(): boolean {
         if (this.noMotion()) {
             return false;
         }
@@ -187,7 +199,7 @@ export class VoiceLeadingQuartet extends Music21Object {
         }
     }
 
-    parallelMotion(requiredInterval) {
+    parallelMotion(requiredInterval: interval.Interval|string|undefined=undefined): boolean {
         if (!this.similarMotion()) {
             return false;
         }
@@ -210,7 +222,7 @@ export class VoiceLeadingQuartet extends Music21Object {
         }
     }
 
-    contraryMotion() {
+    contraryMotion(): boolean {
         if (this.noMotion()) {
             return false;
         }
@@ -224,21 +236,21 @@ export class VoiceLeadingQuartet extends Music21Object {
         }
     }
 
-    outwardContraryMotion() {
+    outwardContraryMotion(): boolean {
         return (
             this.contraryMotion()
             && this.hIntervals[0].direction === interval.Direction.ASCENDING
         );
     }
 
-    inwardContraryMotion() {
+    inwardContraryMotion(): boolean {
         return (
             this.contraryMotion()
             && this.hIntervals[0].direction === interval.Direction.DESCENDING
         );
     }
 
-    antiParallelMotion(simpleName) {
+    antiParallelMotion(simpleName: interval.Interval|string|undefined=undefined): boolean {
         if (!this.contraryMotion()) {
             return false;
         }
@@ -261,7 +273,7 @@ export class VoiceLeadingQuartet extends Music21Object {
         }
     }
 
-    parallelInterval(thisInterval) {
+    parallelInterval(thisInterval: interval.Interval|string): boolean {
         if (!(this.parallelMotion() || this.antiParallelMotion())) {
             return false;
         }
@@ -276,23 +288,23 @@ export class VoiceLeadingQuartet extends Music21Object {
         }
     }
 
-    parallelFifth() {
+    parallelFifth(): boolean {
         return this.parallelInterval(this.fifth);
     }
 
-    parallelOctave() {
+    parallelOctave(): boolean {
         return this.parallelInterval(this.octave);
     }
 
-    parallelUnison() {
+    parallelUnison(): boolean {
         return this.parallelInterval(this.unison);
     }
 
-    parallelUnisonOrOctave() {
+    parallelUnisonOrOctave(): boolean {
         return this.parallelUnison() || this.parallelOctave();
     }
 
-    hiddenInterval(thisInterval) {
+    hiddenInterval(thisInterval: interval.Interval|string): boolean {
         if (this.parallelMotion()) {
             return false;
         }
@@ -310,23 +322,23 @@ export class VoiceLeadingQuartet extends Music21Object {
         }
     }
 
-    hiddenFifth() {
+    hiddenFifth(): boolean {
         return this.hiddenInterval(this.fifth);
     }
 
-    hiddenOctave() {
+    hiddenOctave(): boolean {
         return this.hiddenInterval(this.octave);
     }
 
     // True if either note in voice 1 is lower than the corresponding voice 2 note
-    voiceCrossing() {
+    voiceCrossing(): boolean {
         return (
             this.v1n1.pitch.ps < this.v2n1.pitch.ps
             || this.v1n2.pitch.ps < this.v2n2.pitch.ps
         );
     }
 
-    voiceOverlap() {
+    voiceOverlap(): boolean {
         return (
             this.v1n2.pitch.ps < this.v2n1.pitch.ps
             || this.v2n2.pitch.ps > this.v1n1.pitch.ps
@@ -349,7 +361,7 @@ export class VoiceLeadingQuartet extends Music21Object {
      * @return {boolean}  true if proper or rules do not apply; false if improper
      */
 
-    isProperResolution() {
+    isProperResolution(): boolean {
         if (this.noMotion()) {
             return true;
         }

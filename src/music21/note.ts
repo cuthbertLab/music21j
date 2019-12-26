@@ -30,6 +30,11 @@ import * as beam from './beam';
 import { debug } from './debug';
 import { Music21Exception } from './exceptions21';
 
+// imports just for typechecking
+import * as articulations from './articulations';
+import * as expressions from './expressions';
+
+
 export class NotRestException extends Music21Exception {
     // no need
 }
@@ -239,15 +244,19 @@ export class GeneralNote extends base.Music21Object {
     isRest: boolean = false;
     isChord: boolean = false;
     volume: number = 60;
-    expressions = [];
-    articulations = [];
-    lyrics: Lyric[] = [];
+    expressions: expressions.Expression[];
+    articulations: articulations.Articulation[];
+    lyrics: Lyric[];
     tie;
 
     activeVexflowNote: Vex.Flow.Note;
 
     constructor(ql=1.0) {
         super();
+        this.expressions = [];
+        this.articulations = [];
+        this.lyrics = [];
+
         this.duration.quarterLength = ql;
         /* TODO: editorial objects, style(color), addLyric, insertLyric, hasLyrics */
         /* Later: augmentOrDiminish, getGrace, */
@@ -657,10 +666,6 @@ export class Note extends NotRest {
             useStemDirection = this.getStemDirectionFromClef(clef);
         }
 
-        if (this.duration === undefined) {
-            // console.log(this);
-            return undefined;
-        }
         const vfd = this.duration.vexflowDuration;
         if (vfd === undefined) {
             return undefined;
@@ -796,6 +801,13 @@ export class Rest extends GeneralNote {
     name: string = 'rest';
     lineShift: number = 0;
     color: string = 'black';
+
+    // this dummy constructor is here for JetBrains typescript linter
+    // which otherwise complains that Rests have no durations, etc.
+    constructor(ql=1.0) {
+        super(ql);
+        this.name = 'rest';
+    }
 
     /**
      *
