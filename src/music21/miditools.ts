@@ -28,17 +28,82 @@ import * as common from './common';
 import * as instrument from './instrument';
 import * as note from './note';
 
-// expose midicube's MIDI to window for soundfonts to load.
-window.MIDI = MIDI;
+// imports for typechecking only
+import * as tempo from './tempo';
 
-export const config = {};
-/**
- * Number of octaves to transpose all incoming midi signals
- *
- * @type {number}
- * @default 0
- */
-config.transposeOctave = 0;
+declare interface MIDIWindow extends Window {
+    MIDI?: MIDI,
+}
+
+export interface CallbackInterface {
+    raw: (t, a, b, c) => Event,
+    general: Function|Function[],
+    sendOutChord: Function,
+}
+
+
+// expose midicube's MIDI to window for soundfonts to load.
+(<MIDIWindow> window).MIDI = MIDI;
+
+class _ConfigSingletonClass {
+    /**
+     * Number of octaves to transpose all incoming midi signals
+     */
+    transposeOctave: number = 0;
+    /**
+     * How long to wait in milliseconds before deciding
+     * that a note belongs to another chord. Default 100ms
+     */
+    maxDelay: number = 100;  // in ms
+    /**
+     * At what time (in ms since Epoch) the chord started.
+     */
+    heldChordTime: number = 0;  // in ms
+    /**
+     * An Array (or undefined) of currently held Notes that have not been sent out yet.
+     */
+    heldChordNotes: any[] = undefined;
+
+    /**
+     * When, in MS since Jan 1, 1970, was the last {@link note.Note} played.
+     * Defaults to the time that the module was loaded.
+     */
+    timeOfLastNote: number = Date.now(); // in ms
+
+    /**
+     * The last Note or Chord to be sent out from miditools.  This is an important semi-global
+     * attribute, since the last element may need to be quantized by quantizeLastNote() to
+     * determine its length, since the note may need to be placed into a staff before its total
+     * length can be determined.
+     */
+    lastElement: chord.Chord|note.Note = undefined;
+
+    protected _baseTempo = 60;
+    /**
+     * Assign (or query) a Metronome object to run all timing information.
+     */
+    metronome: tempo.Metronome = undefined;
+
+    get tempo(): number {
+        if (this.metronome === undefined) {
+            return this._baseTempo;
+        } else {
+            return this.metronome.tempo;
+        }
+    }
+
+    set tempo(t: number) {
+        if (this.metronome === undefined) {
+            this._baseTempo = t;
+        } else {
+            this.metronome.tempo = t;
+        }
+    }
+}
+
+export const config = new _ConfigSingletonClass();
+
+
 /**
  * @class Event
  * @memberof music21.miditools
@@ -48,6 +113,16 @@ config.transposeOctave = 0;
  * @param {number} c - midi data 3
  */
 export class Event {
+    timing: number;
+    data1: number;
+    data2: number;
+    data3: number;
+    midiCommand: number;
+    noteOff: boolean;
+    noteOn: boolean;
+    midiNote: number;
+    velocity: number = undefined;
+
     constructor(t, a, b, c) {
         this.timing = t;
         this.data1 = a;
@@ -86,88 +161,17 @@ export class Event {
     }
 
     /**
-     * Makes a {@link music21.note.Note} object from the event's midiNote number.
+     * Makes a {@link note.Note} object from the event's midiNote number.
      *
-     * @returns {music21.note.Note} - the {@link music21.note.Note} object represented by Event.midiNote
+     * @returns {note.Note} - the {@link note.Note} object represented by Event.midiNote
      */
-    music21Note() {
+    music21Note(): note.Note {
         const m21n = new note.Note();
         m21n.pitch.ps = this.midiNote;
         return m21n;
     }
 }
 
-/**
- * How long to wait in milliseconds before deciding that a note belongs to another chord. Default 100ms
- *
- * @memberof music21.miditools.config
- * @type {number}
- */
-config.maxDelay = 100; // in ms
-/**
- * At what time (in ms since Epoch) the chord started.
- *
- * @memberof music21.miditools.config
- * @type {number}
- */
-config.heldChordTime = 0;
-/**
- * An Array (or undefined) of currently held chords that have not been sent out yet.
- *
- * @memberof music21.miditools.config
- * @type {Array|undefined}
- */
-config.heldChordNotes = undefined;
-
-/**
- * When, in MS since Jan 1, 1970, was the last {@link music21.note.Note} played.
- * Defaults to the time that the module was loaded.
- *
- * @memberof music21.miditools.config
- * @type {number}
- */
-config.timeOfLastNote = Date.now(); // in ms
-
-/**
- * The last Note or Chord to be sent out from miditools.  This is an important semi-global
- * attribute, since the last element may need to be quantized by quantizeLastNote() to
- * determine its length, since the note may need to be placed into a staff before its total
- * length can be determined.
- *
- * @memberof music21.miditools.config
- * @type {music21.chord.Chord|music21.note.Note|undefined}
- */
-config.lastElement = undefined;
-
-
-config._baseTempo = 60;
-/**
- * Assign (or query) a Metronome object to run all timing information.
- *
- * @memberof music21.miditools.config
- * @type {music21.tempo.Metronome}
- */
-config.metronome = undefined;
-
-Object.defineProperties(config, {
-    tempo: {
-        enumerable: true,
-        get() {
-            if (this.metronome === undefined) {
-                return this._baseTempo;
-            } else {
-                return this.metronome.tempo;
-            }
-        },
-        set(t) {
-            if (this.metronome === undefined) {
-                this._baseTempo = t;
-            } else {
-                this.metronome.tempo = t;
-            }
-        },
-    },
-});
 
 /**
  * a mapping of soundfont text names to true, false, or "loading".
@@ -230,7 +234,7 @@ export function makeChords(jEvent) {
 
 /**
  * Take the list of Notes and makes a chord out of it, if appropriate and call
- * {@link music21.miditools.callBacks.sendOutChord} callback with the Chord or Note as a parameter.
+ * {@link music21.miditools.callbacks.sendOutChord} callback with the Chord or Note as a parameter.
  *
  * @memberof music21.miditools
  * @param {Array<music21.note.Note>} chordNoteList - an Array of {@link music21.note.Note} objects
@@ -250,8 +254,8 @@ export function sendOutChord(chordNoteList) {
     appendObject.stemDirection = 'noStem';
     quantizeLastNote();
     config.lastElement = appendObject;
-    if (callBacks.sendOutChord !== undefined) {
-        callBacks.sendOutChord(appendObject);
+    if (callbacks.sendOutChord !== undefined) {
+        callbacks.sendOutChord(appendObject);
     }
     return appendObject;
 }
@@ -269,12 +273,15 @@ export function sendOutChord(chordNoteList) {
  * @returns {music21.note.GeneralNote} The same {@link music21.note.Note} object passed in with
  * duration quantized
  */
-export function quantizeLastNote(lastElement) {
+export function quantizeLastNote(lastElement=undefined) {
+    if (lastElement === undefined) {
+        lastElement = config.lastElement;
+    }
     if (lastElement === undefined) {
         return undefined;
     }
 
-    if (lastElement instanceof note.GeneralNote) {
+    if (lastElement instanceof note.NotRest) {
         lastElement.stemDirection = undefined;
     }
     const nowInMS = Date.now();
@@ -332,8 +339,6 @@ export function postLoadCallback(soundfont, callback) {
     }
     $('.loadingSoundfont').remove();
 
-    // noinspection JSUnresolvedVariable
-    const isFirefox = typeof InstallTrigger !== 'undefined'; // Firefox 1.0+
     const isAudioTag = MIDI.config.api === 'audiotag';
     const instrumentObj = instrument.find(soundfont);
     if (instrumentObj !== undefined) {
@@ -347,9 +352,10 @@ export function postLoadCallback(soundfont, callback) {
                 instrumentObj.midiChannel
             );
         }
-        if (isFirefox === false && isAudioTag === false) {
+        if (isAudioTag === false) {
             // Firefox ignores sound volume! so don't play!
             // as does IE and others using HTML audio tag.
+            // these old browsers don't have auto prevention anyhow.
             const channel = instrumentObj.midiChannel;
             MIDI.noteOn(channel, 36, 1, 0);    // if no notes have been played before then
             MIDI.noteOff(channel, 36, 1, 0.1); // the second note to be played is always
@@ -447,13 +453,16 @@ export function loadSoundfont(soundfont, callback) {
  * @class MidiPlayer
  * @memberOf music21.miditools
  * @property {number} speed - playback speed scaling (1=default).
- * @property {jQuery|undefined} $playDiv - div holding the player,
+ * @property {JQuery|undefined} $playDiv - div holding the player,
  */
 export class MidiPlayer {
+    player: MIDI.Player;
+    speed: number = 1.0;
+    $playDiv: JQuery;
+    state: string = '';  // up, down, or empty...
+
     constructor() {
         this.player = new MIDI.Player();
-        this.speed = 1.0;
-        this.$playDiv = undefined;
     }
 
     /**
@@ -568,7 +577,7 @@ export class MidiPlayer {
         return common.urls.midiPlayer + '/stop.png';
     }
 
-    pausePlayStop(stop) {
+    pausePlayStop(stop='no') {
         let d;
         if (this.$playDiv === undefined) {
             d = { src: 'doesnt matter' };
@@ -622,7 +631,6 @@ export class MidiPlayer {
     }
 
     updatePlaying() {
-        const self = this;
         const player = this.player;
         if (this.$playDiv === undefined) {
             return;
@@ -635,16 +643,16 @@ export class MidiPlayer {
         const $capsule = $d.find('.capsule');
         //
         $capsule.on('dragstart', e => {
-            player.currentTime = (e.pageX - $capsule.left) / 420 * player.endTime;
+            player.currentTime = (e.pageX - $capsule.offset().left) / 420 * player.endTime;
             if (player.currentTime < 0) {
                 player.currentTime = 0;
             }
             if (player.currentTime > player.endTime) {
                 player.currentTime = player.endTime;
             }
-            if (self.state === 'down') {
+            if (this.state === 'down') {
                 this.pausePlayStop('pause');
-            } else if (self.state === 'up') {
+            } else if (this.state === 'up') {
                 this.pausePlayStop('play');
             }
         });
@@ -664,7 +672,7 @@ export class MidiPlayer {
             const end = Math.floor(data.end); // end of song
             if (now === end) {
                 // go to next song
-                self.songFinished();
+                this.songFinished();
             }
             // display the information to the user
             timeCursor.style.width = percent * 100 + '%';
@@ -675,7 +683,7 @@ export class MidiPlayer {
 }
 
 /**
- * callBacks is an object with three keys:
+ * callbacks is an object with three keys:
  *
  * - raw: function (t, a, b,c) to call when any midi event arrives.
  *     Default: `function (t, a, b, c) { return new miditools.Event(t, a, b, c); }`
@@ -693,8 +701,11 @@ export class MidiPlayer {
  *
  * @memberof music21.miditools
  */
-export const callBacks = {
+export const callbacks: CallbackInterface = {
     raw: (t, a, b, c) => new Event(t, a, b, c),
     general: [sendToMIDIjs, quantizeLastNote],
     sendOutChord: arrayOfNotes => {},
 };
+
+// For backwards compatibility -- this used to have a capital b.
+export const callBacks = callbacks;

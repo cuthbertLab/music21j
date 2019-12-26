@@ -30,6 +30,7 @@
       <w>castel</w>
       <w>charang</w>
       <w>chiff</w>
+      <w>classid</w>
       <w>clavinet</w>
       <w>contrabass</w>
       <w>corejs</w>
@@ -122,6 +123,8 @@
       <w>octamirror</w>
       <w>octatonic</w>
       <w>octaveless</w>
+      <w>oninputempty</w>
+      <w>oninputsuccess</w>
       <w>ottava</w>
       <w>overdriven</w>
       <w>pantuvarali</w>

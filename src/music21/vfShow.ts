@@ -23,6 +23,9 @@ import { debug } from './debug';
 import * as clef from './clef';
 import * as duration from './duration';
 
+// imports for typechecking only
+import * as stream from './stream';
+
 const _clefSingleton = new clef.TrebleClef();
 
 /**
@@ -32,24 +35,22 @@ const _clefSingleton = new clef.TrebleClef();
  *
  * @class RenderStack
  * @memberof music21.vfShow
- * @property {Array<Vex.Flow.Voice>} voices - Vex.Flow.Voice objects
- * @property {Array<music21.stream.Stream>} streams - {@link music21.stream.Stream} objects
+ * @property {Array<stream.Stream>} streams - {@link music21.stream.Stream} objects
  * associated with the voices
+ * @property {Array<Vex.Flow.Voice>} voices - Vex.Flow.Voice objects
  * @property {Array} textVoices - Vex.Flow.Voice objects for the text.
  */
 export class RenderStack {
-    constructor() {
-        this.voices = [];
-        this.streams = [];
-        this.textVoices = [];
-        this.voiceToStreamMapping = new Map();
-    }
+    streams: stream.Stream[] = [];
+    voices: Vex.Flow.Voice[] = [];
+    textVoices: Vex.Flow.Voice[] = [];
+    voiceToStreamMapping = new Map();
 
     /**
      * @returns {Array} this.voices and this.textVoices as one array
      */
-    allTickables() {
-        const t = [];
+    allTickables(): Vex.Flow.Voice[] {
+        const t: Vex.Flow.Voice[] = [];
         t.push(...this.voices);
         t.push(...this.textVoices);
         return t;
@@ -112,31 +113,25 @@ export class RenderStack {
  * @property {Array<music21.vfShow.RenderStack>} stacks - array of RenderStack objects
  */
 export class Renderer {
-    constructor(s, div, where) {
+    stream: stream.Stream;
+    rendererType = 'svg';
+    div = undefined;
+    $div = undefined;
+    $where = undefined;
+    activeFormatter = undefined;
+    _vfRenderer = undefined;
+    _ctx = undefined;
+    beamGroups = [];
+    stacks = []; // an Array of RenderStacks: {voices: [Array of Vex.Flow.Voice objects],
+    //                                           streams: [Array of Streams, usually Measures]}
+    vfTies = [];
+    systemBreakOffsets = [];
+    vfTuplets = [];
+    // measureFormatters = [];
+
+    constructor(s, div=undefined, where=undefined) {
         this.stream = s;
         // this.streamType = s.classes[-1];
-        this.rendererType = 'svg';
-
-        this.div = undefined;
-        this.$div = undefined;
-        this.$where = undefined;
-        this.activeFormatter = undefined;
-        this._vfRenderer = undefined;
-        this._ctx = undefined;
-        this.beamGroups = [];
-        this.stacks = []; // an Array of RenderStacks: {voices: [Array of Vex.Flow.Voice objects],
-        //                                           streams: [Array of Streams, usually Measures]}
-        this.vfTies = [];
-        this.systemBreakOffsets = [];
-        this.vfTuplets = [];
-        // this.measureFormatters = [];
-        if (where !== undefined) {
-            if (where.jquery !== undefined) {
-                this.$where = where;
-            } else {
-                this.$where = $(where);
-            }
-        }
         if (div !== undefined) {
             if (div.jquery !== undefined) {
                 this.$div = div;
@@ -144,6 +139,14 @@ export class Renderer {
             } else {
                 this.div = div;
                 this.$div = $(div);
+            }
+        }
+
+        if (where !== undefined) {
+            if (where.jquery !== undefined) {
+                this.$where = where;
+            } else {
+                this.$where = $(where);
             }
         }
     }
@@ -207,7 +210,7 @@ export class Renderer {
      *
      * @param {music21.stream.Stream} [s=this.stream]
      */
-    render(s) {
+    render(s=undefined) {
         if (s === undefined) {
             s = this.stream;
         }
@@ -245,7 +248,7 @@ export class Renderer {
      *
      * @param {music21.stream.Score} s - prepare a stream of parts (i.e., Score)
      */
-    prepareScorelike(s) {
+    prepareScorelike(s: stream.Score) {
         // console.log('prepareScorelike called');
         //
         const parts = s.parts;
@@ -263,7 +266,7 @@ export class Renderer {
      *
      * @param {music21.stream.Part} p
      */
-    preparePartlike(p) {
+    preparePartlike(p: stream.Part) {
         // console.log('preparePartlike called');
         this.systemBreakOffsets = [];
         const measureList = p.measures;
@@ -290,7 +293,7 @@ export class Renderer {
      *
      * @param {music21.stream.Stream} m - a flat stream (maybe a measure or voice)
      */
-    prepareArrivedFlat(m) {
+    prepareArrivedFlat(m: stream.Stream) {
         const stack = new RenderStack();
         this.prepareMeasure(m, stack);
         this.stacks[0] = stack;
@@ -311,21 +314,22 @@ export class Renderer {
             this.prepareFlat(m, stack);
         } else {
             // get elements outside of voices;
-            const firstVoiceCopy = m.getElementsByClass('Voice').get(0).clone(false);
+            const firstVoiceCopy = <stream.Voice> m.getElementsByClass('Voice').get(0).clone(false);
             for (const el of m.getElementsNotOfClass('Voice')) {
                 firstVoiceCopy.insert(el.offset, el);
             }
             const rendOp = m.renderOptions; // get render options from Measure;
             let stave;
             for (const [i, voiceStream] of Array.from(m.getElementsByClass('Voice')).entries()) {
-                let voiceToRender = voiceStream;
+                let voiceToRender = <stream.Voice> voiceStream;
                 if (i === 0) {
                     voiceToRender = firstVoiceCopy;
                 }
+                // noinspection JSUnusedAssignment
                 stave = this.prepareFlat(voiceToRender, stack, stave, rendOp);
                 if (i === 0) {
-                    voiceStream.activeVFStave = voiceToRender.activeVFStave;
-                    voiceStream.storedVexflowStave = voiceToRender.activeVFStave;
+                    (<stream.Voice> voiceStream).activeVFStave = voiceToRender.activeVFStave;
+                    (<stream.Voice> voiceStream).storedVexflowStave = voiceToRender.activeVFStave;
                 }
             }
         }
@@ -343,7 +347,7 @@ export class Renderer {
      * @returns {Vex.Flow.Stave} staff to return too
      * (also changes the `stack` parameter and runs `makeNotation` on s)
      */
-    prepareFlat(s, stack, optionalStave, optional_renderOp) {
+    prepareFlat(s, stack, optionalStave=undefined, optional_renderOp=undefined) {
         s.makeNotation();
         let stave;
         if (optionalStave !== undefined) {
@@ -374,7 +378,7 @@ export class Renderer {
      * to {@link music21.vfShow.Renderer#newStave} and {@link music21.vfShow.Renderer#setClefEtc}
      * @returns {Vex.Flow.Stave} stave
      */
-    renderStave(m, optional_rendOp) {
+    renderStave(m=undefined, optional_rendOp=undefined) {
         if (m === undefined) {
             m = this.stream;
         }
@@ -431,7 +435,7 @@ export class Renderer {
      *
      * @param {music21.stream.Stream} p - a Part or similar object
      */
-    prepareTies(p) {
+    prepareTies(p: stream.Stream) {
         const pf = p.flat.notesAndRests;
         // console.log('newSystemsAt', this.systemBreakOffsets);
         for (let i = 0; i < pf.length - 1; i++) {
@@ -481,11 +485,11 @@ export class Renderer {
      *
      * Does not draw it...
      *
-     * @param {music21.stream.Stream} [s=this.stream] -- usually a Measure or Voice
+     * @param {stream.Stream} [s=this.stream] -- usually a Measure or Voice
      * @param {Vex.Flow.Stave} stave - not optional (would never fly in Python...)
      * @returns {Vex.Flow.Voice}
      */
-    getVoice(s, stave) {
+    getVoice(s: stream.Stream=undefined, stave) {
         if (s === undefined) {
             s = this.stream;
         }
@@ -540,7 +544,7 @@ export class Renderer {
      * @param {boolean} [autoBeam=measures[0].autoBeam]
      * @returns {Vex.Flow.Formatter}
      */
-    formatVoiceGroup(stack, autoBeam) {
+    formatVoiceGroup(stack, autoBeam: boolean =undefined) {
         // formats a group of voices to use the same formatter; returns the formatter
         // if autoBeam is true then it will apply beams for each voice and put them in
         // this.beamGroups;
@@ -904,7 +908,7 @@ export class Renderer {
      * @returns {Array<Vex.Flow.TextNote>}
      */
     vexflowLyrics(s, stave) {
-        const getTextNote = (text, font, d, lyricObj) => {
+        const getTextNote = (text, font, d, lyricObj=undefined) => {
             // console.log(text, font, d);
             const t1 = new Vex.Flow.TextNote({
                 text,
@@ -935,7 +939,7 @@ export class Renderer {
             }
             let text;
             let d = el.duration;
-            let addConnector = false;
+            let addConnector: boolean|string = false;
             let firstLyric;
             const font = {
                 family: 'Serif',
