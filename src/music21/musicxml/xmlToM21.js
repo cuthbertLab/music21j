@@ -1,5 +1,6 @@
 import * as $ from 'jquery';
 
+import { hyphenToCamelCase } from '../common';
 import * as chord from '../chord';
 import * as clef from '../clef';
 import * as duration from '../duration';
@@ -13,13 +14,6 @@ import * as tie from '../tie';
 const DEFAULTS = {
     divisionsPerQuarter: 32 * 3 * 3 * 5 * 7,
 };
-
-function hyphenToCamelCase(tag) {
-    return tag.replace(
-        /-([a-z])/g,
-        firstLetter => firstLetter[1].toUpperCase()
-    );
-}
 
 function seta(m21El, xmlEl, tag, attributeName, transform) {
     const $matchEl = $(xmlEl).children(tag);

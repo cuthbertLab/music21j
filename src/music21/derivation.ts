@@ -1,28 +1,22 @@
+import { Music21Object } from './base';  // just for typing
 
-/**
- * @namespace music21.derivation
- * @memberOf music21.derivation
- */
 export class Derivation {
-    /**
-     *
-     * @param {music21.base.Music21Object} [client]
-     * @property {string} [method]
-     * @property {music21.base.Music21Object} [origin]
-     */
-    constructor(client) {
+    client: Music21Object;  // base.Music21Object
+    method: string;
+    origin: Music21Object;  // base.Music21Object
+
+    constructor(client: Music21Object) {
         this.client = client;
-        this.method = undefined;
-        this.origin = undefined;
     }
 
-    clone() {
+    clone(): Derivation {
         const newThing = new Derivation(this.client);
         newThing.method = this.method;
         newThing.origin = this.origin;
+        return newThing;
     }
 
-    * chain() {
+    * chain(): Generator<Music21Object, void, void> {
         let origin = this.origin;
         while (origin !== undefined) {
             yield origin;
@@ -30,7 +24,7 @@ export class Derivation {
         }
     }
 
-    rootDerivation() {
+    rootDerivation(): Music21Object|undefined {
         const derivationChain = Array.from(this.chain());
         if (derivationChain.length) {
             return derivationChain[derivationChain.length - 1];
@@ -39,5 +33,6 @@ export class Derivation {
         }
     }
 }
+
 
 export default Derivation;

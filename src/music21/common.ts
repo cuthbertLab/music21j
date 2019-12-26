@@ -3,7 +3,6 @@
  * functions that are useful everywhere...
  *
  * @exports music21/common
- * @namespace music21.common
  * @memberof music21
  */
 
@@ -82,42 +81,41 @@ export function mixin(OtherParent, thisClassOrObject) {
  *
  *  not currently used...
  */
-
-export const aggregation = (baseClass, ...mixins) => {
-    class base extends baseClass {
-        constructor(...args) {
-            super(...args);
-            mixins.forEach(mixin => {
-                copyProps(this, new mixin());
-            });
-        }
-    }
-    const copyProps = (target, source) => {
-        // this function copies all properties and symbols, filtering out some special ones
-        // noinspection JSUnresolvedFunction,JSCheckFunctionSignatures
-        Object.getOwnPropertyNames(source)
-            .concat(Object.getOwnPropertySymbols(source))
-            .forEach(prop => {
-                if (
-                    !prop.match(
-                        /^(?:constructor|prototype|arguments|caller|name|bind|call|apply|toString|length)$/
-                    )
-                ) {
-                    Object.defineProperty(
-                        target,
-                        prop,
-                        Object.getOwnPropertyDescriptor(source, prop)
-                    );
-                }
-            });
-    };
-    mixins.forEach(mixin => {
-        // outside constructor() to allow aggregation(A,B,C).staticFunction() to be called etc.
-        copyProps(base.prototype, mixin.prototype);
-        copyProps(base, mixin);
-    });
-    return base;
-};
+// export const aggregation = (baseClass, ...mixins) => {
+//     class base extends baseClass {
+//         constructor(...args) {
+//             super(...args);
+//             mixins.forEach(mixin => {
+//                 copyProps(this, new mixin());
+//             });
+//         }
+//     }
+//     const copyProps = (target, source) => {
+//         // this function copies all properties and symbols, filtering out some special ones
+//         // noinspection JSUnresolvedFunction,JSCheckFunctionSignatures
+//         Object.getOwnPropertyNames(source)
+//             .concat(Object.getOwnPropertySymbols(source))
+//             .forEach(prop => {
+//                 if (
+//                     !prop.match(
+//                         /^(?:constructor|prototype|arguments|caller|name|bind|call|apply|toString|length)$/
+//                     )
+//                 ) {
+//                     Object.defineProperty(
+//                         target,
+//                         prop,
+//                         Object.getOwnPropertyDescriptor(source, prop)
+//                     );
+//                 }
+//             });
+//     };
+//     mixins.forEach(mixin => {
+//         // outside constructor() to allow aggregation(A,B,C).staticFunction() to be called etc.
+//         copyProps(base.prototype, mixin.prototype);
+//         copyProps(base, mixin);
+//     });
+//     return base;
+// };
 
 
 /**
@@ -276,12 +274,12 @@ export function makeSVGright(tag='svg', attrs) {
  * (for "32nd") etc.
  *
  * @function music21.common.ordinalAbbreviation
- * @param {int} value
- * @param {Boolean} [plural=false] - make plural (note that "21st" plural is "21st")
+ * @param {number} value
+ * @param {boolean} [plural=false] - make plural (note that "21st" plural is "21st")
  * @return {string}
  */
-export function ordinalAbbreviation(value, plural) {
-    let post = '';
+export function ordinalAbbreviation(value: number, plural: boolean = false) {
+    let post: string;
     const valueHundredths = value % 100;
     if (
         valueHundredths === 11
@@ -316,10 +314,7 @@ export function ordinalAbbreviation(value, plural) {
  * @param {int} [maxDenominator=50] - maximum denominator
  * @returns {object|undefined} {'numerator: numerator, 'denominator': denominator}
  */
-export function rationalize(ql, epsilon, maxDenominator) {
-    epsilon = epsilon || 0.001;
-    maxDenominator = maxDenominator || 50;
-
+export function rationalize(ql: number, epsilon=0.001, maxDenominator=50) {
     for (let i = 2; i < maxDenominator; i++) {
         if (Math.abs(ql * i - Math.round(ql * i)) < epsilon) {
             const numerator = Math.round(ql * i);
@@ -382,8 +377,9 @@ export function arrayEquals(a1, a2) {
     return true;
 }
 
-const _singletonCounter = {};
-_singletonCounter.value = 0;
+const _singletonCounter = {
+    value: 0,
+};
 
 export class SingletonCounter {
     call() {
@@ -393,76 +389,6 @@ export class SingletonCounter {
     }
 }
 
-/**
- * runs a callback with either "visible" or "hidden" as the argument anytime the
- * window or document state changes.
- *
- * Depending on the browser, may be called multiple times with the same argument
- * for a single event.  For instance, Safari calls once on losing focus completely
- * but twice for a tab change.
- *
- * @function music21.common.setWindowVisibilityWatcher
- * @param {function} callback
- */
-export function setWindowVisibilityWatcher(
-    callback
-) {
-    function windowFocusChanged(evt) {
-        const v = 'visible';
-        const h = 'hidden';
-        const evtMap = {
-            focus: v,
-            focusin: v,
-            pageshow: v,
-            blur: h,
-            focusout: h,
-            pagehide: h,
-        };
-
-        // noinspection JSDeprecatedSymbols
-        evt = evt || window.event;
-        let callbackState = '';
-        if (evt.type in evtMap) {
-            callbackState = evtMap[evt.type];
-        } else {
-            callbackState = this[hidden] ? 'hidden' : 'visible';
-        }
-        callback(callbackState, evt);
-    }
-    let hidden = 'hidden';
-
-    // Standards:
-    if (hidden in document) {
-        document.addEventListener('visibilitychange', windowFocusChanged);
-    } else if ('mozHidden' in document) {
-        hidden = 'mozHidden';
-        document.addEventListener('mozvisibilitychange', windowFocusChanged);
-    } else if ('webkitHidden' in document) {
-        hidden = 'webkitHidden';
-        document.addEventListener('webkitvisibilitychange', windowFocusChanged);
-    } else if ('msHidden' in document) {
-        hidden = 'msHidden';
-        document.addEventListener('msvisibilitychange', windowFocusChanged);
-    } else if ('onfocusin' in document) {
-        // IE 9 and lower:
-        document.onfocusin = windowFocusChanged;
-        document.onfocusout = windowFocusChanged;
-    }
-
-    // Also catch window... -- get two calls for a tab shift, but one for window losing focus
-    // noinspection AssignmentResultUsedJS
-    window.onpageshow = windowFocusChanged;
-    window.onpagehide = windowFocusChanged;
-    window.onfocus = windowFocusChanged;
-    window.onblur = windowFocusChanged;
-
-    // set the initial state
-    const initialState
-        = document.visibilityState === 'visible' ? 'focus' : 'blur';
-    const initialStateEvent = { type: initialState };
-    windowFocusChanged(initialStateEvent);
-}
-
 export const urls = {
     css: '/css',
     webResources: '/webResources',
@@ -470,11 +396,11 @@ export const urls = {
     soundfontUrl: '/soundfonts/midi-js-soundfonts-master/FluidR3_GM/',
 };
 
-export function hyphenToCamelCase(usrStr) {
-    return usrStr.replace(/-([a-zA-Z])/, (all, match) => match.toUpperCase());
+export function hyphenToCamelCase(usrStr: string): string {
+    return usrStr.replace(/-([a-zA-Z])/g, (all, match) => match.toUpperCase());
 }
 
-export function numToIntOrFloat(value) {
+export function numToIntOrFloat(value: number): number {
     const intVal = Math.round(value);
     if (Math.abs(value - intVal) < 0.000001) {
         return intVal;
