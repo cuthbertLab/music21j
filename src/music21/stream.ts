@@ -1502,7 +1502,7 @@ export class Stream extends base.Music21Object {
      * matching class will work.
      *
      * @param {string[]|string} classList - a list of classes to find
-     * @returns {music21.stream.Stream}
+     * @returns {Stream}
      */
     getElementsNotOfClass(classList) {
         return this.iter.getElementsNotOfClass(classList);

@@ -12,6 +12,9 @@
 import * as common from './common';
 import { Music21Exception } from './exceptions21';
 
+// for typing only...
+import { Stream } from './stream';
+
 /**
  */
 export class SitesException extends Music21Exception {}
@@ -32,7 +35,7 @@ export class SiteRef {
     classString: string;
     globalSiteIndex: boolean|number = false;
     siteIndex: number;
-    site;  // stream.Stream
+    site: Stream;
 }
 
 const _NoneSiteRef = new SiteRef();
@@ -73,11 +76,7 @@ export class Sites {
         return this.siteDict.size;
     }
 
-    /**
-     *
-     * @param {music21.stream.Stream} [checkSite]
-     */
-    includes(checkSite): boolean {
+    includes(checkSite: Stream): boolean {
         // noinspection JSUnusedLocalSymbols
         for (const [unused_key, siteRef] of this.siteDict) {
             if (siteRef.site === checkSite) {
@@ -156,17 +155,12 @@ export class Sites {
     }
 
     /**
-     *
-     * @param {boolean|string} [sortByCreationTime=false]
-     * @param {music21.stream.Stream|undefined} [priorityTarget]
-     * @param {boolean} [excludeNone=false]
-     * @returns {IterableIterator<music21.stream.Stream|undefined>}
      */
     * yieldSites(
-        sortByCreationTime: boolean|string =false,
-        priorityTarget=undefined,
-        excludeNone=false
-    ) {
+        sortByCreationTime: boolean|string = false,
+        priorityTarget: Stream = undefined,
+        excludeNone: boolean = false
+    ): Generator<Stream, void, void> {
         let keyRepository;
         if (sortByCreationTime === true) {
             keyRepository = this._keysByTime(false);
@@ -200,14 +194,11 @@ export class Sites {
         }
     }
 
-    /**
-     *
-     * @param {boolean} [sortByCreationTime=false]
-     * @param {music21.stream.Stream} [priorityTarget]
-     * @param {boolean} [excludeNone=false]
-     * @returns {Array<(music21.stream.Stream|undefined)>}
-     */
-    get(sortByCreationTime=false, priorityTarget=undefined, excludeNone=false) {
+    get(
+        sortByCreationTime: boolean = false,
+        priorityTarget: Stream = undefined,
+        excludeNone: boolean = false
+    ): Stream[] {
         const post = Array.from(
             this.yieldSites(sortByCreationTime, priorityTarget, excludeNone)
         );
@@ -245,9 +236,9 @@ export class Sites {
      *
      * @param {string} className
      * @param {Object} [options]
-     * @returns {music21.stream.Stream}
+     * @returns {Stream}
      */
-    getObjByClass(className, options={}) {
+    getObjByClass(className: string, options={}): Stream {
         const params = {
             callerFirst: this,
             sortByCreationTime: false,
