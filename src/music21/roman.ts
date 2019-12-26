@@ -5,11 +5,10 @@
  * Copyright (c) 2013-19, Michael Scott Cuthbert and cuthbertLab
  * Based on music21 (=music21p), Copyright (c) 2006–19, Michael Scott Cuthbert and cuthbertLab
  *
- * Roman numeral module. See {@link music21.roman} namespace
+ * Roman numeral module. See  namespace
  * music21.roman -- namespace for dealing with RomanNumeral analysis.
  *
  * @exports music21/roman
- * @namespace music21.roman
  * @memberof music21
  * @requires music21/chord
  * @requires music21/common
@@ -143,14 +142,14 @@ export function expandShortHand(shorthand) {
  *     chord of various qualities.
  *
  * @memberof music21.roman
- * @param  {music21.chord.Chord} chordObj
+ * @param  {chord.Chord} chordObj
  * @param  {string} inversionString a string like '6' to fix.
  * @return {string}           corrected inversionString
   */
 export function correctSuffixForChordQuality(
-    chordObj,
-    inversionString
-) {
+    chordObj: chord.Chord,
+    inversionString: string
+): string {
     const fifthType = chordObj.semitonesFromChordStep(5);
     let qualityName = '';
     if (fifthType === 6) {
@@ -200,7 +199,6 @@ export const romanToNumber = [undefined, 'i', 'ii', 'iii', 'iv', 'v', 'vi', 'vii
  *
  * @class RomanNumeral
  * @memberof music21.roman
- * @extends music21.harmony.Harmony
  * @param {string} figure - the roman numeral as a string, e.g., 'IV', 'viio', 'V7'
  * @param {string|music21.key.Key} [keyStr='C']
  * @property {Array<music21.pitch.Pitch>} scale - (readonly) returns the scale
@@ -227,14 +225,44 @@ export const romanToNumber = [undefined, 'i', 'ii', 'iii', 'iv', 'v', 'vi', 'vii
 export class RomanNumeral extends harmony.Harmony {
     static get className() { return 'music21.roman.RomanNumeral'; }
 
-    constructor(figure='', keyStr, keywords) {
-        const params = { updatePitches: false, parseFigure: false };
-        common.merge(params, keywords);
+    // do not set up initial values here because super is not first.
+    _parsingComplete: boolean;
+    primaryFigure;
+    secondaryRomanNumeral: RomanNumeral;
+    secondaryRomanNumeralKey: key.Key;
+    pivotChord;
+    scaleCardinality: number;
+    _figure: string;
+    caseMatters: boolean;
+    scaleDegree: number;
+    frontAlterationString: string;
+    frontAlterationTransposeInterval: interval.Interval;
+    frontAlterationAccidental: pitch.Accidental;
+    romanNumeralAlone;
+    quality;
+    impliedQuality;
+    impliedScale;
+    scaleOffset;
+    useImpliedScale: boolean;
+    bracketedAlterations;
+    omittedSteps;
+    followsKeyChange: boolean;
+    protected _functionalityScore: number;
+    protected _scale: scale.ConcreteScale;
+    protected _tempRoot: pitch.Pitch;
+    numbers: number;
+    figuresNotationObj: figuredBass.Notation;
 
-        if (typeof figure === 'string') {
-            figure = figure.replace('/o', 'ø');
-        }
-        super(figure, params);
+    constructor(
+        figure: string = '',
+        keyStr: key.Key|string|undefined = undefined,
+        {
+            parseFigure=false,
+            updatePitches=false,
+        }={}
+    ) {
+        super(figure, { updatePitches, parseFigure });
+        figure = figure.replace('/o', 'ø');
         this._parsingComplete = false;
 
         // not yet used...
@@ -268,18 +296,18 @@ export class RomanNumeral extends harmony.Harmony {
         this.omittedSteps = [];
         this.followsKeyChange = false;
         this._functionalityScore = undefined;
-        /**
-         *
-         * @type {music21.key.Key|music21.scale.Scale|undefined}
-         * @private
-         */
-        this._scale = undefined; // the Key or Scale
+        this._scale = undefined; // the Key
 
         this.figure = figure;
-        this.key = keyStr;
+
+        if (typeof keyStr === 'string') {
+            this.key = new key.Key(keyStr);
+        } else {
+            this.key = keyStr;
+        }
 
         // to remove...
-        this.numbers = '';
+        this.numbers = undefined;
 
         if (figure !== '') {
             this._parseFigure();
@@ -515,17 +543,17 @@ export class RomanNumeral extends harmony.Harmony {
         }
     }
 
-    get key() {
-        return this._scale;
+    get key(): key.Key {
+        return this._key;
     }
 
-    set key(keyOrScale) {
+    set key(keyOrScale: key.Key) {
         if (typeof keyOrScale === 'string') {
-            this._scale = new key.Key(keyOrScale);
+            this._key = new key.Key(keyOrScale);
         } else if (typeof keyOrScale === 'undefined') {
-            this._scale = new key.Key('C');
+            this._key = new key.Key('C');
         } else {
-            this._scale = keyOrScale;
+            this._key = keyOrScale;
         }
         if (keyOrScale === undefined) {
             this.useImpliedScale = true;
@@ -745,7 +773,7 @@ export class RomanNumeral extends harmony.Harmony {
         }
     }
 
-    _correctForSecondaryRomanNumeral(useScale, figure) {
+    _correctForSecondaryRomanNumeral(useScale, figure=undefined) {
         if (figure === undefined) {
             figure = this._figure;
         }
@@ -758,7 +786,6 @@ export class RomanNumeral extends harmony.Harmony {
             const secondaryRomanNumeral = new RomanNumeral(
                 secondaryFigure,
                 useScale,
-                this.caseMatters
             );
             this.secondaryRomanNumeral = secondaryRomanNumeral;
             let secondaryMode;
@@ -786,8 +813,8 @@ export class RomanNumeral extends harmony.Harmony {
         const rx = new RegExp(/\[no(\d+)]s*/);
         let match = rx.exec(workingFigure);
         while (match !== null) {
-            let thisStep = match[1];
-            thisStep = parseInt(thisStep);
+            const thisStepStr = match[1];
+            let thisStep = parseInt(thisStepStr);
             thisStep = thisStep % 7 || 7;
             omittedSteps.push(thisStep);
             workingFigure = workingFigure.replace(rx, '');
@@ -839,10 +866,10 @@ export class RomanNumeral extends harmony.Harmony {
      * Inverting 7th chords does not work.
      *
      * @param {string} displayType - ['roman', 'bassName', 'nameOnly', other]
-     * @param {int} [inversion=0]
+     * @param {number} [inversion=0]
      * @returns {string}
      */
-    asString(displayType, inversion) {
+    asString(displayType: string, inversion: number = 0): string {
         const keyObj = this.key;
         const tonicName = keyObj.tonic.name;
         const mode = keyObj.mode;

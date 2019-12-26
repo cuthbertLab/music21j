@@ -387,7 +387,7 @@ export function postLoadCallback(soundfont, callback) {
  *         s.instrument = i;
  * });
  */
-export function loadSoundfont(soundfont, callback) {
+export function loadSoundfont(soundfont, callback=undefined) {
     if (loadedSoundfonts[soundfont] === true) {
         // this soundfont has already been loaded once, so just call the callback.
         if (callback !== undefined) {

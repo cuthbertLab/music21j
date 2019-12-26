@@ -43,31 +43,24 @@ const VALID_TIE_TYPES = ['start', 'stop', 'continue', 'let-ring', 'continue-let-
 export class Tie extends prebase.ProtoM21Object {
     static get className() { return 'music21.tie.Tie'; }
 
+    protected _type: string;
+    style: string = 'normal';
+    placement: string;
+
     constructor(type='start') {
         super();
-        this._type = undefined;
-        this.style = 'normal';
         this.type = type;
-        this.placement = undefined;
     }
 
-    /**
-     *
-     * @returns {string}
-     */
-    stringInfo() {
+    stringInfo(): string {
         return this.type;
     }
 
-    /**
-     *
-     * @type {string}
-     */
-    get type() {
+    get type(): string {
         return this._type;
     }
 
-    set type(newType) {
+    set type(newType: string) {
         if (!VALID_TIE_TYPES.includes(newType)) {
             throw new Music21Exception(
                 `Type must be one of ${VALID_TIE_TYPES}, not ${newType}`

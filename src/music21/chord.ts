@@ -347,7 +347,7 @@ export class Chord extends note.NotRest {
         }
 
         if (this._overrides.root !== undefined) {
-            return this._cache.root;
+            return this._overrides.root;
         }
 
         if (this._cache.root !== undefined) {
@@ -429,7 +429,21 @@ export class Chord extends note.NotRest {
      *
      * @returns {[Pitch]} bass pitch
      */
-    bass(): Pitch|undefined {
+    bass(newBass=undefined): Pitch|undefined {
+        if (newBass !== undefined) {
+            this._overrides.bass = newBass;
+            this._cache.bass = newBass;
+            this._cache.inversion = undefined;
+        }
+
+        if (this._overrides.bass !== undefined) {
+            return this._overrides.bass;
+        }
+
+        if (this._cache.bass !== undefined) {
+            return this._cache.bass;
+        }
+
         let lowest;
         const pitches = this.pitches;
         for (let i = 0; i < pitches.length; i++) {

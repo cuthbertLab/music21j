@@ -1,39 +1,28 @@
-/**
- * @namespace music21.harmony
- */
-
 import * as chord from './chord';
 import * as key from './key';
 
-/**
- * @memberOf music21.harmony
- * @extends music21.chord.Chord
- */
 export class Harmony extends chord.Chord {
     static get className() { return 'music21.harmony.Harmony'; }
 
-    /**
-     *
-     * @param {string} figure
-     * @param {Object} keywords
-     */
-    constructor(figure, keywords={}) {
-        super();
-        this._writeAsChord = false;
-        this._roman = undefined;
-        this.chordStepModifications = [];
-        this._degreesList = [];
+    protected _writeAsChord: boolean = false;
+    protected _roman;
+    chordStepModifications = [];
+    protected _degreesList = [];
+    protected _key: key.Key;
+    protected _figure: string;
 
-        /**
-         *
-         * @type {music21.key.Key|undefined}
-         * @private
-         */
-        this._key = undefined;
+    constructor(
+        figure: string,
+        {
+            parseFigure=true,
+            updatePitches=false,
+        }={}
+    ) {
+        super();
         // this._updateBasedOnXMLInput(keywords);
         figure = figure.replace('/o', 'ø');
         this._figure = figure;
-        if (keywords.parseFigure !== false && this._figure !== undefined) {
+        if (parseFigure !== false && this._figure !== undefined) {
             this._parseFigure();
         }
         if (
@@ -43,7 +32,7 @@ export class Harmony extends chord.Chord {
             this.bass(this._overrides.root);
         }
         if (
-            (keywords.updatePitches && this._figure !== undefined)
+            (updatePitches && this._figure !== undefined)
             || this._overrides.root !== undefined
             || this._overrides.bass !== undefined
         ) {
@@ -51,7 +40,7 @@ export class Harmony extends chord.Chord {
         }
         // this._updateBasedOnXMLInput(keywords);
         if (
-            keywords.parseFigure !== false
+            parseFigure !== false
             && this._figure !== undefined
             && this._figure.indexOf('sus') !== -1
             && this._figure.indexOf('sus2') === -1
@@ -64,15 +53,14 @@ export class Harmony extends chord.Chord {
 
     _updatePitches() {}
 
-    get figure() {
+    get figure(): string {
         if (this._figure === undefined) {
-            return this.findFigure();
-        } else {
-            return this._figure;
+            this.findFigure();
         }
+        return this._figure;
     }
 
-    set figure(newFigure) {
+    set figure(newFigure: string) {
         this._figure = newFigure;
         if (this._figure !== undefined) {
             this._parseFigure();
@@ -80,11 +68,11 @@ export class Harmony extends chord.Chord {
         }
     }
 
-    get key() {
+    get key(): key.Key {
         return this._key;
     }
 
-    set key(keyOrScale) {
+    set key(keyOrScale: key.Key) {
         if (typeof keyOrScale === 'string') {
             this._key = new key.Key(keyOrScale);
         } else {

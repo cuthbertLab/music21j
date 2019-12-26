@@ -279,7 +279,7 @@ export function TinyNotation(textIn) {
  */
 export function renderNotationDivs(
     classTypes: string = '.music21.tinyNotation',
-    selector
+    selector=undefined
 ) {
     let $allRender: JQuery<HTMLElement>;
 

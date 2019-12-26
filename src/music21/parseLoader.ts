@@ -10,9 +10,9 @@ import * as tinyNotation from './tinyNotation';
 export function runConfiguration() {
     let conf;
     // noinspection JSUnresolvedVariable
-    if (typeof window.m21conf !== 'undefined') {
+    if (typeof (<any> window).m21conf !== 'undefined') {
         // noinspection JSUnresolvedVariable
-        conf = window.m21conf;
+        conf = (<any> window).m21conf;
     } else {
         conf = loadConfiguration();
     }

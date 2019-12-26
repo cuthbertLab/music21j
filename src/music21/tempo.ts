@@ -80,44 +80,43 @@ export const baseTempo = 60;
  * @extends music21.prebase.ProtoM21Object
  * @param {number} [tempo=music21.tempo.baseTempo] - the tempo of the metronome to start
  * @property {number} tempo
- * @property {int} [numBeatsPerMeasure=4]
+ * @property {number} [numBeatsPerMeasure=4]
  * @property {number} [minTempo=10]
  * @property {number} [maxTempo=600]
- * @property {bool} [flash=false] - flash the tempo
- * @property {bool} [silent=false] - play silently
- * @property {int} beat - current beat number
- * @property {int} chirpTimeout - an index of a timeout object for chirping
+ * @property {boolean} [flash=false] - flash the tempo
+ * @property {boolean} [silent=false] - play silently
+ * @property {number} beat - current beat number
+ * @property {number} chirpTimeout - an index of a timeout object for chirping
  */
 export class Metronome extends prebase.ProtoM21Object {
     static get className() { return 'music21.tempo.Metronome'; }
 
-    constructor(tempoInt) {
+    _tempo: number = baseTempo;
+    numBeatsPerMeasure = 4;
+    minTempo = 10;
+    maxTempo = 600;
+    beat = 4;
+    chirpTimeout = undefined;
+    silent = false;
+    flash = false;
+    tempoRanges = [0, 40, 60, 72, 120, 144, 240, 999];
+    tempoIncreases = [0, 1, 2, 3, 4, 6, 8, 15, 100];
+    $metronomeDiv: JQuery<HTMLElement>;
+
+    constructor(tempoInt: number = baseTempo) {
         super();
-        this._tempo = 60; // overridden by music21.tempo.baseTempo;
         if (tempoInt === undefined) {
             this.tempo = baseTempo;
         } else {
             this.tempo = tempoInt;
         }
-        this.numBeatsPerMeasure = 4;
-        this.minTempo = 10;
-        this.maxTempo = 600;
-        this.beat = this.numBeatsPerMeasure;
-        this.chirpTimeout = undefined;
-        this.silent = false;
-        this.flash = false;
-        this.tempoRanges = [0, 40, 60, 72, 120, 144, 240, 999];
-        this.tempoIncreases = [0, 1, 2, 3, 4, 6, 8, 15, 100];
     }
 
-    /**
-     * @type {number}
-     */
-    get tempo() {
+    get tempo(): number {
         return this._tempo;
     }
 
-    set tempo(t) {
+    set tempo(t: number) {
         this._tempo = t;
         if (this._tempo > this.maxTempo) {
             this._tempo = this.maxTempo;
@@ -126,11 +125,7 @@ export class Metronome extends prebase.ProtoM21Object {
         }
     }
 
-    /**
-     *
-     * @returns {number}
-     */
-    get beatLength() {
+    get beatLength(): number {
         return 60.0 / this.tempo;
     }
 
@@ -342,7 +337,8 @@ export class Metronome extends prebase.ProtoM21Object {
 }
 
 class TempoText {
-    constructor(text) {
+    text: string;
+    constructor(text: string = '') {
         this.text = text;
     }
 }
@@ -356,13 +352,20 @@ class TempoText {
  * @param {string} metronome.text - tempo text
  * @param {number} metronome.number - beats per minute
  * @param {number|music21.duration.Duration} metronome.referent - duration value of tempo
- * @param {bool} metronome.parentheses - ???
+ * @param {boolean} metronome.parentheses - ???
  * @property {string} text - tempo text
  * @property {number} number - beats per minute
  * @property {music21.duration.Duration} referent - duration value of tempo
  */
 export class MetronomeMark extends base.Music21Object {
     static get className() { return 'music21.tempo.MetronomeMark'; }
+
+    protected _number: number;
+    numberImplicit: boolean;
+    protected _tempoText: TempoText;
+    textImplicit;
+    protected _referent;
+    parentheses: boolean = false;
 
     constructor({
         text=undefined,
@@ -373,7 +376,6 @@ export class MetronomeMark extends base.Music21Object {
         super();
 
         this._number = number;
-        this.numberImplicit = undefined;
         if (this._number !== undefined) {
             this.numberImplicit = false;
         }
@@ -409,14 +411,15 @@ export class MetronomeMark extends base.Music21Object {
         }
     }
 
-    get text() {
+    // sigh, again the TypeScript limitation...
+    get text(): undefined|string|TempoText {
         if (this._tempoText === undefined) {
             return undefined;
         }
         return this._tempoText.text;
     }
 
-    set text(value) {
+    set text(value: undefined|string|TempoText) {
         if (value === undefined) {
             this._tempoText = undefined;
         } else if (value instanceof TempoText) {
@@ -424,11 +427,11 @@ export class MetronomeMark extends base.Music21Object {
             this.textImplicit = false;
         } else {
             this._tempoText = new TempoText(value);
-            if (this.hasStyleInformation) { // TODO: where is this?
-                this._tempoText.style = this.style;
-            } else {
-                this.style = this._tempoText.style;
-            }
+            // if (this.hasStyleInformation) { // TODO: where is this?
+            //     this._tempoText.style = this.style;
+            // } else {
+            //     this.style = this._tempoText.style;
+            // }
             this.textImplicit = false;
         }
     }
