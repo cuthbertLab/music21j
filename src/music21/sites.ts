@@ -15,7 +15,6 @@ import { Music21Exception } from './exceptions21';
 /**
  */
 export class SitesException extends Music21Exception {}
-
 /**
  * SiteRef.site is held strongly in Javascript.  This is
  * actually NOT a problem because of the difference between
@@ -29,20 +28,11 @@ export class SitesException extends Music21Exception {}
  * https://stackoverflow.com/questions/7347203/circular-references-in-javascript-garbage-collector
  */
 export class SiteRef {
-    /**
-     * @property {boolean} isDead
-     * @property {string|undefined} classString
-     * @property {boolean|number} globalSiteIndex
-     * @property {number|undefined} siteIndex
-     * @property {music21.stream.Stream|undefined} site
-     */
-    constructor() {
-        this.isDead = false;
-        this.classString = undefined;
-        this.globalSiteIndex = false;
-        this.siteIndex = undefined;
-        this.site = undefined;
-    }
+    isDead: boolean = false;
+    classString: string;
+    globalSiteIndex: boolean|number = false;
+    siteIndex: number;
+    site;  // stream.Stream
 }
 
 const _NoneSiteRef = new SiteRef();
@@ -70,27 +60,24 @@ export function getId(obj) {
  * @memberOf music21.sites
  */
 export class Sites {
+    siteDict;
+    protected _siteIndex: number = 0;
+    protected _lastID: number = -1;
+
     constructor() {
         this.siteDict = new Map();
         this.siteDict.set(_NoneSiteRef.siteIndex, _NoneSiteRef);
-        this._siteIndex = 0;
-        this._lastID = -1;
     }
 
-    /**
-     *
-     * @returns {number}
-     */
-    get length() {
+    get length(): number {
         return this.siteDict.size;
     }
 
     /**
      *
      * @param {music21.stream.Stream} [checkSite]
-     * @returns {boolean}
      */
-    includes(checkSite) {
+    includes(checkSite): boolean {
         // noinspection JSUnusedLocalSymbols
         for (const [unused_key, siteRef] of this.siteDict) {
             if (siteRef.site === checkSite) {
@@ -102,11 +89,9 @@ export class Sites {
 
     /**
      *
-     * @param {boolean} [newFirst=true]
      * @returns {Array<*>}
-     * @private
      */
-    _keysByTime(newFirst=true) {
+    protected _keysByTime(newFirst: boolean = true) {
         const post = [];
         for (const [key, siteRef] of this.siteDict) {
             const keyVal = [siteRef.siteIndex, key];
@@ -119,7 +104,7 @@ export class Sites {
         return post.map(innerList => innerList[1]);
     }
 
-    add(obj, idKey, classString) {
+    add(obj, idKey=undefined, classString: string = undefined) {
         if (idKey === undefined && obj !== undefined) {
             idKey = getId(obj);
         }
@@ -154,11 +139,9 @@ export class Sites {
     }
 
     /**
-     *
      * @param obj
-     * @returns {boolean}
      */
-    remove(obj) {
+    remove(obj): boolean {
         const idKey = getId(obj);
         if (idKey === undefined) {
             return false;
@@ -166,7 +149,7 @@ export class Sites {
         return this.siteDict.delete(idKey);
     }
 
-    clear() {
+    clear(): void {
         this.siteDict = new Map();
         this.siteDict.set(_NoneSiteRef.siteIndex, _NoneSiteRef);
         this._lastID = -1;
@@ -180,7 +163,7 @@ export class Sites {
      * @returns {IterableIterator<music21.stream.Stream|undefined>}
      */
     * yieldSites(
-        sortByCreationTime=false,
+        sortByCreationTime: boolean|string =false,
         priorityTarget=undefined,
         excludeNone=false
     ) {
@@ -224,7 +207,7 @@ export class Sites {
      * @param {boolean} [excludeNone=false]
      * @returns {Array<(music21.stream.Stream|undefined)>}
      */
-    get(sortByCreationTime=false, priorityTarget, excludeNone=false) {
+    get(sortByCreationTime=false, priorityTarget=undefined, excludeNone=false) {
         const post = Array.from(
             this.yieldSites(sortByCreationTime, priorityTarget, excludeNone)
         );
@@ -264,7 +247,7 @@ export class Sites {
      * @param {Object} [options]
      * @returns {music21.stream.Stream}
      */
-    getObjByClass(className, options) {
+    getObjByClass(className, options={}) {
         const params = {
             callerFirst: this,
             sortByCreationTime: false,

@@ -255,7 +255,7 @@ export class Stream extends base.Music21Object {
     }
 
 
-    get duration() {
+    get duration(): duration.Duration {
         if (this._duration !== undefined) {
             // return new duration.Duration(32.0);
             return this._duration;
@@ -263,7 +263,7 @@ export class Stream extends base.Music21Object {
         return new duration.Duration(this.highestTime);
     }
 
-    set duration(newDuration) {
+    set duration(newDuration: duration.Duration) {
         this._duration = newDuration;
     }
 
