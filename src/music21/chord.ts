@@ -23,20 +23,25 @@ import * as interval from './interval';
 import * as note from './note';
 import * as chordTables from './chordTables';
 
+// imports for typing
+import { Pitch } from './pitch';
+import * as prebase from './prebase';
+
 export { chordTables };
+
 
 /**
  * Chord related objects (esp. {@link music21.chord.Chord}) and methods.
  *
  * @class Chord
  * @memberof music21.chord
- * @param {Array<string|music21.note.Note|music21.pitch.Pitch>} [notes] -
+ * @param {Array<string|note.Note|Pitch>} [notes] -
  *     an Array of strings
- *     (see {@link music21.pitch.Pitch} for valid formats), note.Note,
+ *     (see {@link Pitch} for valid formats), note.Note,
  *     or pitch.Pitch objects.
  * @extends music21.note.NotRest
  * @property {number} length - the number of pitches in the Chord (readonly)
- * @property {music21.pitch.Pitch[]} pitches - an Array of Pitch objects in the
+ * @property {Pitch[]} pitches - an Array of Pitch objects in the
  *     chord. (Consider the Array read only and pass in a new Array to change)
  * @property {Boolean} [isChord=true]
  * @property {Boolean} [isNote=false]
@@ -45,28 +50,22 @@ export { chordTables };
 export class Chord extends note.NotRest {
     static get className() { return 'music21.chord.Chord'; }
 
-    constructor(notes) {
+    protected _notes: note.Note[] = [];
+    isChord = true; // for speed
+    isNote = false; // for speed
+    isRest = false; // for speed
+    _overrides: any = {};
+    _cache: any = {};
+    protected _chordTablesAddress: any = undefined;
+    protected _chordTablesAddressNeedsUpdating: boolean = true; // only update when needed
+
+    constructor(notes: string|Array<any> = undefined) {
         super();
         if (typeof notes === 'undefined') {
             notes = [];
         } else if (typeof notes === 'string') {
             notes = notes.split(/\s+/);
         }
-        this.isChord = true; // for speed
-        this.isNote = false; // for speed
-        this.isRest = false; // for speed
-
-        this._overrides = {};
-        this._cache = {};
-
-        this._notes = [];
-        /**
-         *
-         * @type {Object|undefined}
-         * @private
-         */
-        this._chordTablesAddress = undefined;
-        this._chordTablesAddressNeedsUpdating = true; // only update when needed
 
         notes.forEach(x => this.add(x, false), this);
         if (notes.length > 0
@@ -78,27 +77,19 @@ export class Chord extends note.NotRest {
         this.sortPitches();
     }
 
-    /**
-     *
-     * @returns {string}
-     */
-    stringInfo() {
+    stringInfo(): string {
         const info = this.pitches.map(x => x.nameWithOctave);
         return info.join(' ');
     }
 
-    /**
-     *
-     * @returns {number}
-     */
-    get length() {
+    get length(): number {
         return this._notes.length;
     }
 
-    /**
-     * @type {music21.pitch.Pitch[]}
-     */
-    get pitches() {
+    // Typescript restriction... preventing full allowing of set pitches()
+    // to take string[] or Note[].
+    // https://github.com/microsoft/TypeScript/issues/2521
+    get pitches(): Pitch[] {
         const tempPitches = [];
         for (let i = 0; i < this._notes.length; i++) {
             tempPitches.push(this._notes[i].pitch);
@@ -106,16 +97,16 @@ export class Chord extends note.NotRest {
         return tempPitches;
     }
 
-    set pitches(tempPitches) {
+    set pitches(tempPitches: Pitch[]) {
         this._notes = [];
         for (let i = 0; i < tempPitches.length; i++) {
             let addNote;
             if (typeof tempPitches[i] === 'string') {
                 addNote = new note.Note(tempPitches[i]);
-            } else if (tempPitches[i].isClassOrSubclass('Pitch')) {
+            } else if ((<prebase.ProtoM21Object> tempPitches[i]).isClassOrSubclass('Pitch')) {
                 addNote = new note.Note();
                 addNote.pitch = tempPitches[i];
-            } else if (tempPitches[i].isClassOrSubclass('Note')) {
+            } else if ((<prebase.ProtoM21Object> tempPitches[i]).isClassOrSubclass('Note')) {
                 addNote = tempPitches[i];
             } else {
                 console.warn('bad pitch', tempPitches[i]);
@@ -130,7 +121,7 @@ export class Chord extends note.NotRest {
     }
 
 
-    get orderedPitchClasses() {
+    get orderedPitchClasses(): number[] {
         const pcGroup = [];
         for (const p of this.pitches) {
             if (pcGroup.includes(p.pitchClass)) {
@@ -150,7 +141,7 @@ export class Chord extends note.NotRest {
         return this._chordTablesAddress;
     }
 
-    get commonName() {
+    get commonName(): string {
         // TODO: many more exemptions from music21p
         const cta = this.chordTablesAddress;
         const ctn = chordTables.addressToCommonNames(cta);
@@ -285,13 +276,13 @@ export class Chord extends note.NotRest {
      * Adds a note to the chord, sorting the note array
      *
      * @param {
-     *     string|string[]|music21.note.Note|music21.pitch.Pitch|
-     *     music21.note.Note[]|music21.pitch.Pitch[]} notes - the
+     *     string|string[]|note.Note|Pitch|
+     *     music21.note.Note[]|Pitch[]} notes - the
      *     Note or Pitch to be added or a string defining a pitch.
      * @param {boolean} runSort - Sort after running (default true)
      * @returns {music21.chord.Chord} the original chord.
      */
-    add(notes, runSort=true) {
+    add(notes, runSort: boolean = true) {
         if (!(notes instanceof Array)) {
             notes = [notes];
         }
@@ -325,9 +316,9 @@ export class Chord extends note.NotRest {
      * Removes any pitches that appear more than once (in any octave),
      * removing the higher ones, and returns a new Chord.
      *
-     * @returns {music21.chord.Chord} A new Chord object with duplicate pitches removed.
+     * @returns {Chord} A new Chord object with duplicate pitches removed.
      */
-    removeDuplicatePitches() {
+    removeDuplicatePitches(): Chord {
         const stepsFound = [];
         const nonDuplicatingPitches = [];
         const pitches = this.pitches;
@@ -345,10 +336,10 @@ export class Chord extends note.NotRest {
     /**
      * Finds the Root of the chord.
      *
-     * @param {music21.pitch.Pitch} [newroot]
-     * @returns {music21.pitch.Pitch} the root of the chord.
+     * @param {Pitch} [newroot]
+     * @returns {Pitch} the root of the chord.
      */
-    root(newroot) {
+    root(newroot: Pitch = undefined): Pitch {
         if (newroot !== undefined) {
             this._overrides.root = newroot;
             this._cache.root = newroot;
@@ -413,11 +404,11 @@ export class Chord extends note.NotRest {
      * return 4 for chordStep=3, since the third of the chord (B) is four semitones above G.
      *
      * @param {number} chordStep - the step to find, e.g., 1, 2, 3, etc.
-     * @param {music21.pitch.Pitch} [testRoot] - the pitch to temporarily consider the root.
+     * @param {Pitch} [testRoot] - the pitch to temporarily consider the root.
      * @returns {number|undefined} Number of semitones above the root for this
      *     chord step or undefined if no pitch matches that chord step.
      */
-    semitonesFromChordStep(chordStep, testRoot) {
+    semitonesFromChordStep(chordStep: number, testRoot: Pitch = undefined): number|undefined {
         if (testRoot === undefined) {
             testRoot = this.root();
         }
@@ -436,9 +427,9 @@ export class Chord extends note.NotRest {
     /**
      * Gets the lowest note (based on .ps not name) in the chord.
      *
-     * @returns {music21.pitch.Pitch} bass pitch
+     * @returns {[Pitch]} bass pitch
      */
-    bass() {
+    bass(): Pitch|undefined {
         let lowest;
         const pitches = this.pitches;
         for (let i = 0; i < pitches.length; i++) {
@@ -629,7 +620,7 @@ export class Chord extends note.NotRest {
      * @param {Object} options - a dictionary of options `{clef: {@music21.clef.Clef} }` is especially important
      * @returns {Vex.Flow.StaveNote}
      */
-    vexflowNote(options) {
+    vexflowNote(options={clef: undefined}) {
         const clef = options.clef;
 
         const pitchKeys = [];
@@ -705,11 +696,11 @@ export class Chord extends note.NotRest {
      * In case there is more that one note with that designation (e.g., `[A-C-C#-E].getChordStep(3)`)
      * the first one in `.pitches` is returned.
      *
-     * @param {int} chordStep a positive integer representing the chord step
-     * @param {music21.pitch.Pitch} [testRoot] - the Pitch to use as a temporary root
-     * @returns {music21.pitch.Pitch|undefined}
+     * @param {number} chordStep a positive integer representing the chord step
+     * @param {Pitch} [testRoot] - the Pitch to use as a temporary root
+     * @returns {Pitch|undefined}
      */
-    getChordStep(chordStep, testRoot) {
+    getChordStep(chordStep: number, testRoot: Pitch = undefined): Pitch|undefined {
         if (testRoot === undefined) {
             testRoot = this.root();
         }
