@@ -27,6 +27,8 @@ export default function tests() {
     });
     test('music21.stream.Stream clone', assert => {
         const [s, n] = get_stream_and_note();
+        s.renderOptions.left = 20;
+        s.renderOptions.scaleFactor.x = 2.0;
         s.insert(5.0, n);
         const t = s.clone(true);
         assert.ok(t instanceof music21.stream.Stream);
@@ -40,6 +42,23 @@ export default function tests() {
             assert.equal(tEl.offset, sEl.offset);
             assert.equal(tEl.pitch.name, sEl.pitch.name);
         }
+        assert.notStrictEqual(
+            s.renderOptions,
+            t.renderOptions,
+            'after cloning renderOptions should not be shared'
+        );
+        assert.equal(t.renderOptions.left, 20);
+        s.renderOptions.left = 10;
+        s.renderOptions.scaleFactor.x = 1.5;
+        assert.equal(t.renderOptions.left, 20);
+        // assert.notStrictEqual(
+        //     s.renderOptions.scaleFactor,
+        //     t.renderOptions.scaleFactor,
+        //     'after cloning renderOptions.scaleFactor should not be shared'
+        // );
+        // KNOWN BUG!
+        // assert.equal(t.renderOptions.scaleFactor.x, 2.0);
+
     });
 
 

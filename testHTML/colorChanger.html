@@ -2,9 +2,12 @@
 <head>
   <meta http-equiv="content-type" content="text/html; charset=utf-8" />
   <title>Music21j Color Picker</title>
-  <script data-main="../src/music21.js" src="../ext/require/require.js"></script>
+  <script src="../build/music21.debug.js"></script>
 </head>
 <body>
+<h3>Click a note, then click a color to label it.</h3>
+<div id="SVGDiv">DOM goes here...<br/></div>
+
 <script>
 function getColorDOM(s, width, height) {
     const $d = $('<div/>')
@@ -84,7 +87,6 @@ function getColorToolbar(s, $siblingDOM) {
 
 s = undefined;
 
-require(['music21'], music21 => {
     const k = new music21.key.Key('D');
 
     s = new music21.stream.Measure();
@@ -108,9 +110,7 @@ require(['music21'], music21 => {
     sChord.keySignature = k;
     sChord.append(ch);
     sChord.appendNewDOM($('#SVGDiv'));
-});
 </script>
-<div id="SVGDiv">DOM goes here...<br/></div>
 
 </body>
 </html>
