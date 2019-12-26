@@ -14,6 +14,10 @@ import * as note from './note';
 
 import { Music21Object } from './base';
 
+// imports just for type checking
+import { ConcreteScale } from './scale';
+
+
 const intervalCache = [];
 
 export const MotionType = {
@@ -380,7 +384,7 @@ export class VoiceLeadingQuartet extends Music21Object {
             && this.key.mode === 'minor'
             && (n1degree === undefined || n2degree === undefined)
         ) {
-            const scale2 = this.key.getScale('melodic-minor'); // gets ascending form
+            const scale2 = <ConcreteScale> this.key.getScale('melodic-minor'); // gets ascending form
             if (n1degree === undefined) {
                 n1degree = scale2.getScaleDegreeFromPitch(this.v2n1);
             }

@@ -792,7 +792,6 @@ export class MeasureParser {
         seta(ks, $mxKey, 'fifths', 'sharps', parseInt);
         // mode!
         // non-standard and key-octaves
-        ks._alteredPitchesCache = undefined; // TODO: remove private access...
         return ks;
     }
 }

@@ -30,6 +30,9 @@ import * as common from './common';
 import * as interval from './interval';
 import * as pitch from './pitch';
 
+// imports just for typechecking
+import * as note from './note';
+
 // const DIRECTION_BI = 'bi';
 // const DIRECTION_DESCENDING = 'descending';
 // const DIRECTION_ASCENDING = 'ascending';
@@ -39,10 +42,11 @@ export
  * A generalized Scale object.
  *
  * @memberOf music21.scale
- * @extends music21.base.Music21Object
  */
 class Scale extends base.Music21Object {
     static get className() { return 'music21.scale.Scale'; }
+
+    type: string = 'Scale';
 
     constructor() {
         super();
@@ -54,7 +58,7 @@ class Scale extends base.Music21Object {
      * @returns {string}
      * @readonly
      */
-    get name() {
+    get name(): string {
         return this.type;
     }
 
@@ -62,7 +66,7 @@ class Scale extends base.Music21Object {
      * @readonly
      * @returns {boolean}
      */
-    get isConcrete() {
+    get isConcrete(): boolean {
         return false;
     }
 }
@@ -72,28 +76,36 @@ export
  * An Abstract Scale
  *
  * @memberOf music21.scale
- * @extends music21.scale.Scale
  */
 class AbstractScale extends Scale {
     static get className() { return 'music21.scale.AbstractScale'; }
 
+    protected _net: interval.Interval[] = [];
+    tonicDegree: number = 1;
+    octaveDuplicating: boolean = true;
+    deterministic: boolean = true;
+    protected _alteredDegrees = {};
+    protected _oneOctaveRealizationCache = undefined;
+
     constructor() {
         super();
-        this._net = []; // simplified -- no IntervalNetwork, just list of intervals
-        this.tonicDegree = 1;
-        this.octaveDuplicating = true;
-        this.deterministic = true;
-        this._alteredDegrees = {};
-        this._oneOctaveRealizationCache = undefined;
+        this.type = 'Abstract';
+    }
+
+    /**
+     * To be subclassed
+     */
+    buildNetwork(mode=undefined): void {
+        this._net = [];
     }
 
     /**
      * One scale equals another
      *
-     * @param {music21.scale.AbstractScale} other - the scale compared to.
+     * @param {AbstractScale} other - the scale compared to.
      * @returns {boolean}
      */
-    equals(other) {
+    equals(other: AbstractScale): boolean {
         if (
             common.arrayEquals(this.classes, other.classes)
             && this.tonicDegree === other.tonicDegree
@@ -105,23 +117,22 @@ class AbstractScale extends Scale {
         }
     }
 
-    buildNetworkFromPitches(pitchList) {
-        const pitchListReal = [];
+    buildNetworkFromPitches(pitchList: string[]|pitch.Pitch[]|note.Note[]) {
+        const pitchListReal: pitch.Pitch[] = [];
         for (const p of pitchList) {
             if (typeof p === 'string') {
                 pitchListReal.push(new pitch.Pitch(p));
             } else if (p.classes.includes('Note')) {
-                pitchListReal.push(p.pitch);
+                pitchListReal.push((<note.Note> p).pitch);
             } else {
-                pitchListReal.push(p);
+                pitchListReal.push((<pitch.Pitch> p));
             }
         }
-        pitchList = pitchListReal;
 
-        const pLast = pitchList[pitchList.length - 1];
-        if (pLast.name === pitchList[0]) {
-            const p = pitchList[0].clone();
-            if (pLast.ps > pitchList[0]) {
+        const pLast = pitchListReal[pitchListReal.length - 1];
+        if (pLast.name === pitchListReal[0].name) {
+            const p = pitchListReal[0].clone();
+            if (pLast.ps > pitchListReal[0]) {
                 // ascending;
                 while (p.ps < pLast.ps) {
                     p.octave += 1;
@@ -131,32 +142,32 @@ class AbstractScale extends Scale {
                     p.octave += -1;
                 }
             }
-            pitchList.push(p);
+            pitchListReal.push(p);
         }
 
         const intervalList = [];
-        for (let i = 0; i < pitchList.length - 1; i++) {
+        for (let i = 0; i < pitchListReal.length - 1; i++) {
             const thisInterval = new interval.Interval(
-                pitchList[i],
-                pitchList[i + 1]
+                pitchListReal[i],
+                pitchListReal[i + 1]
             );
             intervalList.push(thisInterval);
         }
         this._net = intervalList;
     }
 
-    getDegreeMaxUnique() {
+    getDegreeMaxUnique(): number {
         return this._net.length;
     }
 
     // noinspection JSUnusedLocalSymbols
     getRealization(
         pitchObj,
-        unused_stepOfPitch,
-        unused_minPitch,
-        unused_maxPitch,
-        unused_direction,
-        unused_reverse
+        unused_stepOfPitch=undefined,
+        unused_minPitch=undefined,
+        unused_maxPitch=undefined,
+        unused_direction=undefined,
+        unused_reverse=undefined
     ) {
         // if (direction === undefined) {
         //     direction = DIRECTION_ASCENDING;
@@ -191,8 +202,8 @@ class AbstractScale extends Scale {
         pitchReference,
         unused_nodeName,
         pitchTarget,
-        unused_comparisonAttribute,
-        unused_direction
+        unused_comparisonAttribute=undefined,
+        unused_direction=undefined
     ) {
         if (typeof pitchTarget === 'string') {
             pitchTarget = new pitch.Pitch(pitchTarget);
@@ -219,11 +230,14 @@ class AbstractScale extends Scale {
 
 /**
  * @memberOf music21.scale
- * @extends music21.scale.AbstractScale
  *
  */
 export class AbstractDiatonicScale extends AbstractScale {
     static get className() { return 'music21.scale.AbstractDiatonicScale'; }
+
+    dominantDegree: number;
+    relativeMajorDegree: number;
+    relativeMinorDegree: number;
 
     /**
      *
@@ -233,21 +247,21 @@ export class AbstractDiatonicScale extends AbstractScale {
      * @property {number|undefined} dominantDegree
      * @property {boolean} octaveDuplicating
      */
-    constructor(mode) {
+    constructor(mode='major') {
         super();
         this.type = 'Abstract diatonic';
         this.tonicDegree = undefined;
         this.dominantDegree = undefined;
         this.octaveDuplicating = true;
-        this._buildNetwork(mode);
+        this.buildNetwork(mode);
     }
 
-    _buildNetwork(mode) {
+    buildNetwork(mode: string) {
         const srcList = ['M2', 'M2', 'm2', 'M2', 'M2', 'M2', 'm2'];
         let intervalList;
         this.tonicDegree = 1;
         this.dominantDegree = 5;
-        if (['major', 'ionian', undefined].includes(mode)) {
+        if (['major', 'ionian'].includes(mode)) {
             intervalList = srcList;
             this.relativeMajorDegree = 1;
             this.relativeMinorDegree = 6;
@@ -266,7 +280,6 @@ export class AbstractDiatonicScale extends AbstractScale {
 
 /**
  * @memberOf music21.scale
- * @extends music21.scale.AbstractScale
  *
  */
 export class AbstractHarmonicMinorScale extends AbstractScale {
@@ -276,10 +289,10 @@ export class AbstractHarmonicMinorScale extends AbstractScale {
         super();
         this.type = 'Abstract harmonic minor';
         this.octaveDuplicating = true;
-        this._buildNetwork();
+        this.buildNetwork();
     }
 
-    _buildNetwork() {
+    buildNetwork() {
         const intervalList = ['M2', 'm2', 'M2', 'M2', 'm2', 'A2', 'm2'];
         this._net = [];
         for (const intVStr of intervalList) {
@@ -292,7 +305,6 @@ export class AbstractHarmonicMinorScale extends AbstractScale {
 // no need for descending, since minor takes care of that.
 /**
  * @memberOf music21.scale
- * @extends music21.scale.AbstractScale
  */
 export class AbstractAscendingMelodicMinorScale extends AbstractScale {
     static get className() { return 'music21.scale.AbstractAscendingMelodicMinorScale'; }
@@ -301,10 +313,10 @@ export class AbstractAscendingMelodicMinorScale extends AbstractScale {
         super();
         this.type = 'Abstract ascending melodic minor';
         this.octaveDuplicating = true;
-        this._buildNetwork();
+        this.buildNetwork();
     }
 
-    _buildNetwork() {
+    buildNetwork() {
         const intervalList = ['M2', 'm2', 'M2', 'M2', 'M2', 'M2', 'm2'];
         this._net = [];
         for (const intVStr of intervalList) {
@@ -315,10 +327,12 @@ export class AbstractAscendingMelodicMinorScale extends AbstractScale {
 
 /**
  * @memberOf music21.scale
- * @extends music21.scale.Scale
  */
 export class ConcreteScale extends Scale {
     static get className() { return 'music21.scale.ConcreteScale'; }
+
+    tonic: pitch.Pitch;
+    abstract: AbstractScale;
 
     constructor(tonic) {
         super();
@@ -350,7 +364,11 @@ export class ConcreteScale extends Scale {
     // }
 
     // noinspection JSUnusedLocalSymbols
-    getPitches(unused_minPitch, unused_maxPitch, unused_direction) {
+    getPitches(
+        unused_minPitch=undefined,
+        unused_maxPitch=undefined,
+        unused_direction=undefined
+    ) {
         let pitchObj;
         if (this.tonic === undefined) {
             pitchObj = new pitch.Pitch('C4');
@@ -363,10 +381,10 @@ export class ConcreteScale extends Scale {
     // noinspection JSUnusedLocalSymbols
     pitchFromDegree(
         degree,
-        unused_minPitch,
-        unused_maxPitch,
-        unused_direction,
-        unused_equateTermini
+        unused_minPitch=undefined,
+        unused_maxPitch=undefined,
+        unused_direction=undefined,
+        unused_equateTermini=undefined
     ) {
         return this.abstract.getPitchFromNodeDegree(
             this.tonic,
@@ -378,8 +396,8 @@ export class ConcreteScale extends Scale {
     // noinspection JSUnusedLocalSymbols
     getScaleDegreeFromPitch(
         pitchTarget,
-        unused_direction,
-        unused_comparisonAttribute
+        unused_direction=undefined,
+        unused_comparisonAttribute=undefined
     ) {
         return this.abstract.getRelativeNodeDegree(
             this.tonic,
@@ -391,7 +409,6 @@ export class ConcreteScale extends Scale {
 
 /**
  * @memberOf music21.scale
- * @extends music21.scale.ConcreteScale
  */
 export class DiatonicScale extends ConcreteScale {
     static get className() { return 'music21.scale.DiatonicScale'; }
@@ -405,7 +422,6 @@ export class DiatonicScale extends ConcreteScale {
 
 /**
  * @memberOf music21.scale
- * @extends music21.scale.DiatonicScale
  */
 export class MajorScale extends DiatonicScale {
     static get className() { return 'music21.scale.MajorScale'; }
@@ -413,14 +429,13 @@ export class MajorScale extends DiatonicScale {
     constructor(tonic) {
         super(tonic); // a.k.a. ^2 :-)
         this.type = 'major';
-        this.abstract._buildNetwork(this.type);
+        this.abstract.buildNetwork(this.type);
     }
 }
 
 
 /**
  * @memberOf music21.scale
- * @extends music21.scale.DiatonicScale
  */
 export class MinorScale extends DiatonicScale {
     static get className() { return 'music21.scale.MinorScale'; }
@@ -428,13 +443,12 @@ export class MinorScale extends DiatonicScale {
     constructor(tonic) {
         super(tonic); // a.k.a. ^2 :-)
         this.type = 'minor';
-        this.abstract._buildNetwork(this.type);
+        this.abstract.buildNetwork(this.type);
     }
 }
 
 /**
  * @memberOf music21.scale
- * @extends music21.scale.ConcreteScale
  */
 export class HarmonicMinorScale extends ConcreteScale {
     static get className() { return 'music21.scale.HarmonicMinorScale'; }
@@ -448,7 +462,6 @@ export class HarmonicMinorScale extends ConcreteScale {
 
 /**
  * @memberOf music21.scale
- * @extends music21.scale.ConcreteScale
  */
 export class AscendingMelodicMinorScale extends ConcreteScale {
     static get className() { return 'music21.scale.AscendingMelodicMinorScale'; }
@@ -465,10 +478,10 @@ export class AscendingMelodicMinorScale extends ConcreteScale {
  *
  * @memberOf music21.scale
  * @function music21.scale.SimpleDiatonicScale
- * @param {music21.pitch.Pitch} [tonic]
+ * @param {pitch.Pitch} [tonic]
  * @param {Array<string>} scaleSteps - an array of diatonic prefixes,
  *     generally 'M' (major) or 'm' (minor) describing the seconds.
- * @returns {Array<music21.pitch.Pitch>} an octave of scale objects.
+ * @returns {Array<pitch.Pitch>} an octave of scale objects.
  */
 export function SimpleDiatonicScale(tonic, scaleSteps) {
     if (tonic === undefined) {
@@ -484,11 +497,7 @@ export function SimpleDiatonicScale(tonic, scaleSteps) {
         scaleSteps = ['M', 'M', 'm', 'M', 'M', 'M', 'm'];
     }
     const gi = new interval.GenericInterval(2);
-    /**
-     *
-     * @type {music21.pitch.Pitch[]}
-     */
-    const pitches = [tonic];
+    const pitches: pitch.Pitch[] = [tonic];
     let lastPitch = tonic;
     for (let i = 0; i < scaleSteps.length; i++) {
         const di = new interval.DiatonicInterval(scaleSteps[i], gi);
@@ -508,10 +517,10 @@ export function SimpleDiatonicScale(tonic, scaleSteps) {
  *
  * @memberOf music21.scale
  * @function music21.scale.ScaleSimpleMajor
- * @param {music21.pitch.Pitch} tonic
- * @returns {Array<music21.pitch.Pitch>} an octave of scale objects.
+ * @param {pitch.Pitch} tonic
+ * @returns {Array<pitch.Pitch>} an octave of scale objects.
  */
-export function ScaleSimpleMajor(tonic) {
+export function ScaleSimpleMajor(tonic: pitch.Pitch): pitch.Pitch[] {
     const scaleSteps = ['M', 'M', 'm', 'M', 'M', 'M', 'm'];
     return SimpleDiatonicScale(tonic, scaleSteps);
 }
@@ -521,11 +530,11 @@ export function ScaleSimpleMajor(tonic) {
  *
  * @memberOf music21.scale
  * @function music21.scale.ScaleSimpleMinor
- * @param {music21.pitch.Pitch} tonic
+ * @param {pitch.Pitch} tonic
  * @param {string} [minorType='natural'] - 'harmonic', 'harmonic-minor',
  *     'melodic', 'melodic-minor', 'melodic-minor-ascending',
  *     'melodic-ascending' or other (=natural/melodic-descending)
- * @returns {Array<music21.pitch.Pitch>} an octave of scale objects.
+ * @returns {Array<pitch.Pitch>} an octave of scale objects.
  */
 export function ScaleSimpleMinor(tonic, minorType) {
     const scaleSteps = ['M', 'm', 'M', 'M', 'm', 'M', 'M'];
