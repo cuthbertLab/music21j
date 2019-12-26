@@ -1,6 +1,7 @@
 import * as QUnit from 'qunit';
 import * as music21 from '../../src/music21_modules';
 
+const key = music21.key;
 const { test } = QUnit;
 
 export default function tests() {
@@ -54,7 +55,7 @@ export default function tests() {
             v2n2 = new N('D4');
             vlq1 = new VLQ(v1n1, v1n2, v2n1, v2n2);
             assert.ok(!vlq1.isProperResolution(), 'd5 resolves outward');
-            vlq1.key = 'B-';
+            vlq1.key = new key.Key('B-');
             assert.ok(
                 vlq1.isProperResolution(),
                 'not on scale degrees that need resolution'
@@ -68,7 +69,7 @@ export default function tests() {
             v2n2 = new N('D4');
             vlq1 = new VLQ(v1n1, v1n2, v2n1, v2n2);
             assert.ok(!vlq1.isProperResolution(), 'A4 resolves inward');
-            vlq1.key = 'B-';
+            vlq1.key = new key.Key('B-');
             assert.ok(
                 vlq1.isProperResolution(),
                 'not on scale degrees that need resolution'
@@ -86,12 +87,12 @@ export default function tests() {
 
             v2n2 = new N('F#4');
             vlq1 = new VLQ(v1n1, v1n2, v2n1, v2n2);
-            vlq1.key = 'B-';
+            vlq1.key = new key.Key('B-');
             assert.ok(
                 vlq1.isProperResolution(),
                 'm7 not on scale degrees that need resolution'
             );
-            vlq1.key = 'F';
+            vlq1.key = new key.Key('F');
             assert.ok(
                 !vlq1.isProperResolution(),
                 'm7 on scale degrees that need resolution'

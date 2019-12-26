@@ -20,6 +20,7 @@ import roman from './moduleTests/roman';
 import scale from './moduleTests/scale';
 import sites from './moduleTests/sites';
 import stream from './moduleTests/stream';
+import tempo from './moduleTests/tempo';
 import tie from './moduleTests/tie';
 import voiceLeading from './moduleTests/voiceLeading';
 import * as music21 from '../src/music21_modules';
@@ -45,6 +46,7 @@ const allTests = {
     scale,
     sites,
     stream,
+    tempo,
     tie,
     voiceLeading,
 };

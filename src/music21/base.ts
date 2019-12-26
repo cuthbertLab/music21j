@@ -24,16 +24,19 @@ import * as editorial from './editorial';
 import * as prebase from './prebase';
 import * as sites from './sites';
 
+// imports for typing only
+import { Stream, Measure } from './stream';
+
 
 declare interface StreamRecursionLike {
     recursionType: string;
 }
 
 /**
- * Base class for any object that can be placed in a {@link music21.stream.Stream}.
+ * Base class for any object that can be placed in a {@link Stream}.
  *
- * @property {music21.stream.Stream} [activeSite] - hardlink to a
- *     {@link music21.stream.Stream} containing the element.
+ * @property {Stream} [activeSite] - hardlink to a
+ *     {@link Stream} containing the element.
  * @property {number} classSortOrder - Default sort order for this class
  *     (default 20; override in other classes). Lower numbered objects will sort
  *     before other objects in the staff if priority and offset are the same.
@@ -70,17 +73,10 @@ export class Music21Object extends prebase.ProtoM21Object {
 
     constructor(keywords={}) {
         super();
-        this._duration = new duration.Duration();
+        this._duration = new duration.Duration(0.0);
         this.id = sites.getId(this);
         this.sites = new sites.Sites();
-        // noinspection JSUnusedLocalSymbols
-        this._cloneCallbacks._activeSite = function Music21Object_cloneCallbacks_activeSite(
-            keyName,
-            newObj,
-            self
-        ) {
-            newObj[keyName] = undefined;
-        };
+        this._cloneCallbacks._activeSite = false;
         this._cloneCallbacks._derivation = function Music21Music21Object_cloneCallbacks_derivation(
             keyName,
             newObj,
@@ -98,7 +94,7 @@ export class Music21Object extends prebase.ProtoM21Object {
             newObj,
             self
         ) {
-            newObj[keyName] = new sites.Sites();
+            newObj.sites = new sites.Sites();
         };
     }
 
@@ -165,11 +161,12 @@ export class Music21Object extends prebase.ProtoM21Object {
 
     get measureNumber() {
         if (this.activeSite !== undefined && this.activeSite.classes.includes('Measure')) {
-            return this.activeSite.number;
+            const activeMeasure = <Measure> this.activeSite;
+            return activeMeasure.number;
         } else {
             const m = this.sites.getObjByClass('Measure');
             if (m !== undefined) {
-                return m.number;
+                return (<Measure> m).number;
             } else {
                 return undefined;
             }
@@ -237,11 +234,14 @@ export class Music21Object extends prebase.ProtoM21Object {
      *
      * Does not change activeSite or .offset
      *
-     * @param {music21.stream.Stream} site
+     * @param {Stream} site
      * @param {boolean} [stringReturns=false] -- allow strings to be returned
      * @returns {number|string|undefined}
      */
-    getOffsetBySite(site, stringReturns: boolean=false): number|string|undefined {
+    getOffsetBySite(
+        site: Stream|undefined = undefined,
+        stringReturns: boolean=false
+    ): number|string|undefined {
         if (site === undefined) {
             return this._naiveOffset;
         }
@@ -251,10 +251,13 @@ export class Music21Object extends prebase.ProtoM21Object {
     /**
      * setOffsetBySite - sets the offset for a given Stream
      *
-     * @param {music21.stream.Stream} site Stream object
+     * @param {Stream} site Stream object
      * @param {number} value offset
      */
-    setOffsetBySite(site, value) {
+    setOffsetBySite(
+        site: Stream|undefined,
+        value: number
+    ) {
         if (site !== undefined) {
             site.setElementOffset(this, value);
         } else {
@@ -271,12 +274,12 @@ export class Music21Object extends prebase.ProtoM21Object {
      * See also music21.stream.iterator.RecursiveIterator.currentHierarchyOffset for
      * a method that is about 10x faster when running through a recursed stream.
      *
-     * @param {music21.stream.Stream} site
-     * @returns {Number|undefined}
+     * @param {Stream} site
+     * @returns {number|undefined}
      */
-    getOffsetInHierarchy(site) {
+    getOffsetInHierarchy(site: Stream): number|undefined {
         try {
-            return this.getOffsetBySite(site);
+            return <number> this.getOffsetBySite(site);
         } catch (e) {} // eslint-disable-line no-empty
         // noinspection JSUnusedLocalSymbols
         for (const [csSite, csOffset, unused_csRecursionType] of this.contextSites()) {
@@ -289,7 +292,10 @@ export class Music21Object extends prebase.ProtoM21Object {
 
     // ---------- Contexts -------------
 
-    getContextByClass(className, options) {
+    getContextByClass(
+        className,
+        options={}
+    ) {
         const payloadExtractor = function payloadExtractor(
             useSite,
             flatten,
@@ -306,7 +312,7 @@ export class Music21Object extends prebase.ProtoM21Object {
             for (let i = 0; i < useSite.length; i++) {
                 const thisElement = useSite._elements[i];
                 const indexOffset = useSite.elementOffset(thisElement);
-                const matchClass = thisElement.isClassOrSubclass(classList);
+                const matchClass: boolean = thisElement.isClassOrSubclass(classList);
                 if (flatten === false && !matchClass) {
                     continue;
                 } else if (!thisElement.isStream && !matchClass) {
@@ -314,14 +320,10 @@ export class Music21Object extends prebase.ProtoM21Object {
                 }
                 // is a stream or an element of the appropriate class...
                 // first check normal elements
-                if (
-                    getElementMethod.includes('Before')
-                    && indexOffset >= positionStart
-                ) {
-                    if (
-                        getElementMethod.includes('At')
-                        && lastElement === undefined
-                    ) {
+                if (getElementMethod.includes('Before')
+                        && indexOffset >= positionStart) {
+                    if (getElementMethod.includes('At')
+                            && lastElement === undefined) {
                         lastElement = thisElement;
                         try {
                             lastElement.activeSite = useSite;
@@ -337,11 +339,9 @@ export class Music21Object extends prebase.ProtoM21Object {
                 } else {
                     lastElement = thisElement;
                 }
-                if (
-                    getElementMethod.includes('After')
-                    && indexOffset > positionStart
-                    && matchClass
-                ) {
+                if (getElementMethod.includes('After')
+                        && indexOffset > positionStart
+                        && matchClass) {
                     return thisElement;
                 }
                 // now check stream... already filtered out flatten == false;

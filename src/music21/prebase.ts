@@ -24,9 +24,9 @@ declare interface Constructable<T> {
  * @memberof music21.prebase
  * @property {Array<string>} classes - An Array of strings of classes
  * that the object belongs to (default ['ProtoM21Object'])
- * @property {Boolean} isProtoM21Object - Does this object descend
+ * @property {boolean} isProtoM21Object - Does this object descend
  * from {@link music21.prebase.ProtoM21Object}: obviously true.
- * @property {Boolean} isMusic21Object - Does this object descend
+ * @property {boolean} isMusic21Object - Does this object descend
  * from Music21Object; default false.
  */
 export class ProtoM21Object {
@@ -92,9 +92,9 @@ export class ProtoM21Object {
      * Works similarly to Python's copy.deepcopy().
      *
      * Every ProtoM21Object has a `._cloneCallbacks` object which maps
-     * `{attribute: callbackFunction}`
+     * `{attribute: callbackFunction|boolean}`
      * to handle custom clone cases.  See, for instance, Music21Object which
-     * uses a custom callback to NOT clone the `.activeSite` attribute.
+     * uses a custom callback to NOT clone the `.derivation` attribute directly.
      *
      * @example
      * var n1 = new music21.note.Note("C#");
@@ -174,7 +174,7 @@ export class ProtoM21Object {
      * Check to see if an object is of this class or subclass.
      *
      * @param {string|string[]} testClass - a class or Array of classes to test
-     * @returns {Boolean}
+     * @returns {boolean}
      * @example
      * var n = new music21.note.Note();
      * n.isClassOrSubclass('Note'); // true
@@ -183,7 +183,7 @@ export class ProtoM21Object {
      * n.isClassOrSubclass(['Note', 'Rest']); // true
      * n.isClassOrSubclass(['Duration', 'NotRest']); // true // NotRest
      */
-    isClassOrSubclass(testClass) {
+    isClassOrSubclass(testClass: string|string[]): boolean {
         if (!(testClass instanceof Array)) {
             testClass = [testClass];
         }
