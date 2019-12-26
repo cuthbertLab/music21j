@@ -874,7 +874,7 @@ export class Stream extends base.Music21Object {
      * Remove and return the last element in the stream,
      * or return undefined if the stream is empty
      *
-     * @returns {music21.base.Music21Object|undefined} last element in the stream
+     * @returns {base.Music21Object|undefined} last element in the stream
      */
     pop() {
         if (!this.isSorted && this.autoSort) {

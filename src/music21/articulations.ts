@@ -18,7 +18,6 @@ import * as prebase from './prebase';
  *
  * @class Articulation
  * @memberof music21.articulations
- * @extends music21.prebase.ProtoM21Object
  * @property {string} name
  * @property {string} [placement='above']
  * @property {string|undefined} vexflowModifier - the string code to get this accidental in Vexflow
@@ -28,22 +27,19 @@ import * as prebase from './prebase';
 export class Articulation extends prebase.ProtoM21Object {
     static get className() { return 'music21.articulation.Articulation'; }
 
-    constructor() {
-        super();
-        this.name = undefined;
-        this.placement = 'above';
-        this.vexflowModifier = undefined;
-        this.setPosition = undefined;
-        this.dynamicScale = 1.0;
-        this.lengthScale = 1.0;
-    }
+    name: string;
+    placement: string = 'above';
+    vexflowModifier: string;
+    setPosition;  // ?
+    dynamicScale: number = 1.0;
+    lengthScale: number = 1.0;
 
     /**
      * Generates a Vex.Flow.Articulation for this articulation.
      *
      * @returns {Vex.Flow.Articulation}
      */
-    vexflow() {
+    vexflow(): Vex.Flow.Articulation {
         const vfa = new Vex.Flow.Articulation(this.vexflowModifier);
         if (this.setPosition) {
             vfa.setPosition(this.setPosition);
@@ -57,7 +53,6 @@ export class Articulation extends prebase.ProtoM21Object {
  *
  * @class LengthArticulation
  * @memberof music21.articulations
- * @extends music21.articulations.Articulation
  */
 export class LengthArticulation extends Articulation {
     static get className() { return 'music21.articulation.LengthArticulation'; }
@@ -73,7 +68,6 @@ export class LengthArticulation extends Articulation {
  *
  * @class DynamicArticulation
  * @memberof music21.articulations
- * @extends music21.articulations.Articulation
  */
 export class DynamicArticulation extends Articulation {
     static get className() { return 'music21.articulation.DynamicArticulation'; }
@@ -89,7 +83,6 @@ export class DynamicArticulation extends Articulation {
  *
  * @class PitchArticulation
  * @memberof music21.articulations
- * @extends music21.articulations.Articulation
  */
 export class PitchArticulation extends Articulation {
     static get className() { return 'music21.articulation.PitchArticulation'; }
@@ -105,7 +98,6 @@ export class PitchArticulation extends Articulation {
  *
  * @class TimbreArticulation
  * @memberof music21.articulations
- * @extends music21.articulations.Articulation
  */
 export class TimbreArticulation extends Articulation {
     static get className() { return 'music21.articulation.TimbreArticulation'; }
@@ -121,7 +113,6 @@ export class TimbreArticulation extends Articulation {
  *
  * @class Accent
  * @memberof music21.articulations
- * @extends music21.articulations.DynamicArticulation
  */
 export class Accent extends DynamicArticulation {
     static get className() { return 'music21.articulation.Accent'; }
@@ -139,7 +130,6 @@ export class Accent extends DynamicArticulation {
  *
  * @class StrongAccent
  * @memberof music21.articulations
- * @extends music21.articulations.Accent
  */
 export class StrongAccent extends Accent {
     static get className() { return 'music21.articulation.StrongAccent'; }
@@ -157,7 +147,6 @@ export class StrongAccent extends Accent {
  *
  * @class Staccato
  * @memberof music21.articulations
- * @extends music21.articulations.LengthArticulation
  */
 export class Staccato extends LengthArticulation {
     static get className() { return 'music21.articulation.Staccato'; }
@@ -174,7 +163,6 @@ export class Staccato extends LengthArticulation {
  *
  * @class Staccatissimo
  * @memberof music21.articulations
- * @extends music21.articulations.Staccato
  */
 export class Staccatissimo extends Staccato {
     static get className() { return 'music21.articulation.Staccatissimo'; }
@@ -191,7 +179,6 @@ export class Staccatissimo extends Staccato {
  *
  * @class Spiccato
  * @memberof music21.articulations
- * @extends music21.articulations.Staccato
  */
 export class Spiccato extends Staccato {
     static get className() { return 'music21.articulation.Spiccato'; }
@@ -206,8 +193,9 @@ export class Spiccato extends Staccato {
 /**
  * @class Marcato
  * @memberof music21.articulations
- * @extends music21.articulations.DynamicArticulation
- * @extends music21.articulations.LengthArticulation
+ *
+ * is both a DynamicArticulation and a LengthArticulation
+ * TODO(msc): check that `.classes` reflects that
  */
 export class Marcato extends DynamicArticulation {
     static get className() { return 'music21.articulation.Marcato'; }
@@ -224,7 +212,6 @@ export class Marcato extends DynamicArticulation {
 /**
  * @class Tenuto
  * @memberof music21.articulations
- * @extends music21.articulations.LengthArticulation
  */
 export class Tenuto extends LengthArticulation {
     static get className() { return 'music21.articulation.Tenuto'; }

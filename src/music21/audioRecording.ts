@@ -1,20 +1,36 @@
-/**
- * @namespace music21.audioRecording
- */
-
 import * as audioSearch from './audioSearch';
+
+interface RecorderConfig {
+    bufferLen?: number,
+    callback?: Function,
+    type?: string,
+}
+
+interface CanvasInfo {
+    id: string,
+    width: number,
+    height: number,
+    canvasContext: CanvasRenderingContext2D,
+    animationFrameID?: number,
+}
 
 /**
  * Adopted from Matt Diamond's recorder.js code MIT License
- *
- * @memberOf music21.audioRecording
  */
 export class Recorder {
-    /**
-     *
-     * @param {Object} [cfg]
-     */
-    constructor(cfg) {
+    bufferLen: number;
+    config: RecorderConfig;
+    recording: boolean = false;
+    currCallback;
+    audioContext: AudioContext;  // or webkitAudioContext in Safari
+    frequencyCanvasInfo: CanvasInfo;
+    waveformCanvasInfo: CanvasInfo;
+    analyserNode: any;
+    context: BaseAudioContext;
+    worker: Worker;
+    node: ScriptProcessorNode;
+
+    constructor(cfg: RecorderConfig = {}) {
         const config = cfg || {};
         this.bufferLen = config.bufferLen || 4096;
         this.config = config;
@@ -47,31 +63,21 @@ export class Recorder {
      * Start here -- polyfills navigator, runs getUserMedia and then sends to audioStreamConnected
      */
     initAudio() {
-        this.polyfillNavigator();
-        // not sure what function signature this wants.
-        // noinspection JSCheckFunctionSignatures
-        navigator.getUserMedia(
-            {
-                audio: {
-                    mandatory: {
-                        googEchoCancellation: 'false',
-                        googAutoGainControl: 'false',
-                        googNoiseSuppression: 'false',
-                        googHighpassFilter: 'false',
-                        // 'echoCancellation': false,
-                        // 'autoGainControl': false,
-                        // 'noiseSuppression': false,
-                        // 'highpassFilter': false,
-                    },
-                    optional: [],
-                },
+        const constraints: MediaStreamConstraints = {
+            audio: {
+                echoCancellation: false,
+                autoGainControl: false,
+                noiseSuppression: false,
             },
-            s => this.audioStreamConnected(s),
-            error => {
+            video: false,
+        };
+
+        navigator.mediaDevices.getUserMedia(constraints)
+            .then(s => this.audioStreamConnected(s))
+            .catch(error => {
                 console.log('Error getting audio -- try on google Chrome?');
                 console.log(error);
-            }
-        );
+            });
     }
 
     /**
@@ -153,6 +159,7 @@ export class Recorder {
          *
          * The 'record' command sends no message back.
          */
+        // should be replaced by workers somehow.
         this.node.onaudioprocess = e => {
             if (!this.recording) {
                 return;
@@ -185,21 +192,11 @@ export class Recorder {
     setNode() {
         const numInputChannels = 2;
         const numOutputChannels = 2;
-        if (!this.context.createScriptProcessor) {
-            // Old style BaseAudioContext -- not used anymore.
-            // noinspection JSUnresolvedFunction
-            this.node = this.context.createJavaScriptNode(
-                this.bufferLen,
-                numInputChannels,
-                numOutputChannels
-            );
-        } else {
-            this.node = this.context.createScriptProcessor(
-                this.bufferLen,
-                numInputChannels,
-                numOutputChannels
-            );
-        }
+        this.node = this.context.createScriptProcessor(
+            this.bufferLen,
+            numInputChannels,
+            numOutputChannels
+        );
         return this.node;
     }
 
@@ -263,35 +260,28 @@ export class Recorder {
         this.exportWAV(cb, type, true);
     }
 
-    setupDownload(blob, filename, elementId) {
-        elementId = elementId || 'save';
+    setupDownload(
+        blob,
+        filename: string = 'output.wav',
+        elementId: string ='save'
+    ) {
         const url = (window.URL || window.webkitURL).createObjectURL(blob);
-        const link = document.getElementById(elementId);
+        const link = <HTMLAnchorElement> document.getElementById(elementId);
         link.href = url;
-        link.download = filename || 'output.wav';
+        link.download = filename;
     }
 
-    /**
-     * Polyfills for getUserMedia (requestAnimationFrame polyfills not needed.)
-     * As of 2016 September, only Edge support unprefixed.
-     */
-    polyfillNavigator() {
-        if (!navigator.getUserMedia) {
-            // polyfill...
-            // noinspection JSUnresolvedVariable
-            navigator.getUserMedia
-                = navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
+    setContextForCanvasInfo(canvasInfo: CanvasInfo): void {
+        if (canvasInfo.canvasContext) {
+            return;
         }
-        if (window.AnalyserNode && !window.AnalyserNode.prototype.getFloatTimeDomainData) {
-            const uint8 = new Uint8Array(2048);
-            window.AnalyserNode.prototype.getFloatTimeDomainData = function getFloatTimeDomainData(array) {
-                this.getByteTimeDomainData(uint8);
-                const imax = array.length;
-                for (let i = 0; i < imax; i++) {
-                    array[i] = (uint8[i] - 128) * 0.0078125;
-                }
-            };
+        const canvas = <HTMLCanvasElement> document.getElementById(canvasInfo.id);
+        if (!canvas) {
+            return;
         }
+        canvasInfo.width = canvas.width;
+        canvasInfo.height = canvas.height;
+        canvasInfo.canvasContext = canvas.getContext('2d');
     }
 
     /**
@@ -300,16 +290,7 @@ export class Recorder {
      * @param {number} [time]
      */
     updateAnalysers(time) {
-        if (!this.frequencyCanvasInfo.canvasContext) {
-            const canvas = document.getElementById(this.frequencyCanvasInfo.id);
-            if (!canvas) {
-                return;
-            }
-            this.frequencyCanvasInfo.width = canvas.width;
-            this.frequencyCanvasInfo.height = canvas.height;
-            this.frequencyCanvasInfo.canvasContext = canvas.getContext('2d');
-        }
-
+        this.setContextForCanvasInfo(this.frequencyCanvasInfo);
         // analyser draw code here
         const SPACING = 3;
         const BAR_WIDTH = 1;
@@ -363,16 +344,8 @@ export class Recorder {
      */
     drawWaveformCanvas(buffers) {
         const data = buffers[0]; // one track of stereo recording.
-        if (!this.waveformCanvasInfo.context) {
-            const canvas = document.getElementById(this.waveformCanvasInfo.id);
-            if (!canvas) {
-                return;
-            }
-            this.waveformCanvasInfo.width = canvas.width;
-            this.waveformCanvasInfo.height = canvas.height;
-            this.waveformCanvasInfo.context = canvas.getContext('2d');
-        }
-        const context = this.waveformCanvasInfo.context;
+        this.setContextForCanvasInfo(this.waveformCanvasInfo);
+        const context = this.waveformCanvasInfo.canvasContext;
         const step = Math.ceil(data.length / this.waveformCanvasInfo.width);
         const amp = this.waveformCanvasInfo.height / 2;
         context.fillStyle = 'silver';
