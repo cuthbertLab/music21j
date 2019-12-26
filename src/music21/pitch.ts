@@ -25,42 +25,23 @@ import * as common from './common';
  * @property {number} alter
  * @property {string} displayType
  * @property {boolean|undefined} displayStatus
- * @extends music21.prebase.ProtoM21Object
  */
 export class Accidental extends prebase.ProtoM21Object {
     static get className() { return 'music21.pitch.Accidental'; }
 
-    constructor(accName) {
+    protected _name: string = '';
+    protected _alter: number = 0.0;
+    protected _modifier: string = '';
+    protected _unicodeModifier: string = '';
+    displayType: string = 'normal';  // "normal", "always" supported currently
+    displayStatus: boolean = undefined;  // true, false, undefined
+
+    constructor(accName: string|number) {
         super();
-        this._name = '';
-        /**
-         *
-         * @type {number}
-         * @private
-         */
-        this._alter = 0.0;
-        /**
-         *
-         * @type {string}
-         * @private
-         */
-        this._modifier = '';
-        /**
-         *
-         * @type {string}
-         * @private
-         */
-        this._unicodeModifier = '';
-        this.displayType = 'normal'; // "normal", "always" supported currently
-        this.displayStatus = undefined; // true, false, undefined
         this.set(accName);
     }
 
-    /**
-     *
-     * @returns {string}
-     */
-    stringInfo() {
+    stringInfo(): string {
         return this.name;
     }
 
@@ -71,8 +52,8 @@ export class Accidental extends prebase.ProtoM21Object {
      * @param {number|string} accName - the name, number, or modifier to set
      * @returns {undefined}
      */
-    set(accName) {
-        if (accName !== undefined && accName.toLowerCase !== undefined) {
+    set(accName: number|string) {
+        if (typeof accName === 'string') {
             accName = accName.toLowerCase();
         }
 
@@ -305,13 +286,12 @@ export const midiToName = [
  *
  * @class Pitch
  * @memberof music21.pitch
- * @param {string} pn - name of the pitch, with or without octave, see above.
- * @extends music21.prebase.ProtoM21Object
- * @property {music21.pitch.Accidental|undefined} accidental - link to an accidental
+ * @param {string|number} pn - name of the pitch, with or without octave, see above.
+ * @property {Accidental|undefined} accidental - link to an accidental
  * @property {number} diatonicNoteNum - diatonic number of the pitch,
  *     where 29 = C4, C#4, C-4, etc.; 30 = D-4, D4, D#4, etc. updates other properties.
  * @property {number} midi - midi number of the pitch (C4 = 60); readonly.
- *     See {@link music21.pitch.Pitch#ps} for settable version.
+ *     See {@link Pitch#ps} for settable version.
  * @property {string} name - letter name of pitch + accidental modifier;
  *     e.g., B-flat = 'B-'; changes automatically w/ step and accidental
  * @property {string} nameWithOctave - letter name of pitch + accidental
@@ -325,23 +305,14 @@ export const midiToName = [
  */
 export class Pitch extends prebase.ProtoM21Object {
     static get className() { return 'music21.pitch.Pitch'; }
+    protected _step: string = 'C';
+    protected _octave: number = 4;
+    protected _accidental: Accidental = undefined;
+    spellingIsInferred: boolean = false;
+    microtone = undefined;
 
-    constructor(pn='C') {
+    constructor(pn: string|number='C') {
         super();
-        this._step = 'C';
-        /**
-         *
-         * @type {number}
-         * @private
-         */
-        this._octave = 4;
-        /**
-         *
-         * @type {music21.pitch.Accidental|undefined}
-         * @private
-         */
-        this._accidental = undefined;
-        this.spellingIsInferred = false;
 
         /* pn can be a nameWithOctave */
         if (typeof pn === 'number') {
@@ -356,25 +327,17 @@ export class Pitch extends prebase.ProtoM21Object {
         }
     }
 
-    /**
-     *
-     * @returns {string}
-     */
-    stringInfo() {
+    stringInfo(): string {
         return this.nameWithOctave;
     }
 
     // N.B. cannot use transpose here, because of circular import.
 
-    /**
-     *
-     * @type {string}
-     */
-    get step() {
+    get step(): string {
         return this._step;
     }
 
-    set step(s) {
+    set step(s: string) {
         if (s === '') {
             throw new TypeError('All notes must have a step');
         }
@@ -389,23 +352,15 @@ export class Pitch extends prebase.ProtoM21Object {
         this.spellingIsInferred = false;
     }
 
-    /**
-     *
-     * @type {number}
-     */
-    get octave() {
+    get octave(): number {
         return this._octave;
     }
 
-    set octave(o) {
+    set octave(o: number) {
         this._octave = o;
     }
 
-    /**
-     *
-     * @type {number}
-     */
-    get implicitOctave() {
+    get implicitOctave(): number {
         const o = this._octave;
         if (o === undefined) {
             return 4; // TODO(msc): get from defaults.
@@ -414,57 +369,44 @@ export class Pitch extends prebase.ProtoM21Object {
         }
     }
 
-    /**
-     *
-     * @type {music21.pitch.Accidental|undefined}
-     */
-    get accidental() {
+    get accidental(): Accidental|undefined {
         return this._accidental;
     }
 
-    set accidental(a) {
-        if (typeof a !== 'object' && a !== undefined) {
-            a = new Accidental(a);
-        }
+    set accidental(a: Accidental|undefined) {
         this._accidental = a;
         this.spellingIsInferred = false;
     }
 
-    /**
-     *
-      * @type {string}
-     */
-    get name() {
-        if (this.accidental === undefined) {
+    get name(): string {
+        const a = this.accidental;
+        if (a === undefined) {
             return this.step;
         } else {
-            return this.step + this.accidental.modifier;
+            return this.step + a.modifier;
         }
     }
 
-    set name(nn) {
+    set name(nn: string) {
         this.step = nn.slice(0, 1);
         const tempAccidental = nn.slice(1);
         if (tempAccidental) {
             // not the empty string
-            this.accidental = tempAccidental; // converts automatically
+            this.accidental = new Accidental(tempAccidental);
         } else {
             this.accidental = undefined;
         }
     }
 
-    /**
-     * @type {string}
-     */
-    get nameWithOctave() {
+    get nameWithOctave(): string {
         return this.name + this.octave.toString();
     }
 
-    set nameWithOctave(pn) {
+    set nameWithOctave(pn: string) {
         const storedOctave = pn.match(/\d+/);
         if (storedOctave !== undefined) {
             pn = pn.replace(/\d+/, '');
-            this.octave = parseInt(storedOctave);
+            this.octave = parseInt(storedOctave[0]);
             this.name = pn;
         } else {
             this.name = pn;
@@ -562,7 +504,7 @@ export class Pitch extends prebase.ProtoM21Object {
     /**
      * @param {boolean} inPlace
      * @param {int} directionInt -- -1 = down, 1 = up
-     * @returns {music21.pitch.Pitch}
+     * @returns {Pitch}
      */
     _getEnharmonicHelper(inPlace=false, directionInt) {
         // differs from Python version because
@@ -601,7 +543,7 @@ export class Pitch extends prebase.ProtoM21Object {
     /**
      *
      * @param {boolean} [inPlace=false]
-     * @returns {music21.pitch.Pitch}
+     * @returns {Pitch}
      */
     getHigherEnharmonic(inPlace=false) {
         return this._getEnharmonicHelper(inPlace, 1);
@@ -610,7 +552,7 @@ export class Pitch extends prebase.ProtoM21Object {
     /**
      *
      * @param {boolean} [inPlace=false]
-     * @returns {music21.pitch.Pitch}
+     * @returns {Pitch}
      */
     getLowerEnharmonic(inPlace=false) {
         return this._getEnharmonicHelper(inPlace, -1);

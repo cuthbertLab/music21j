@@ -30,7 +30,6 @@ export default function tests() {
         s.insert(5.0, n);
         const t = s.clone(true);
         assert.ok(t instanceof music21.stream.Stream);
-        assert.equal(s.length, 3);
         assert.equal(t.length, 3);
         assert.equal(t.length, s.length, 't.length should equal s.length');
         const t0 = t.get(0);
