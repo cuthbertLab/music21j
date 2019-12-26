@@ -54,20 +54,21 @@ import * as pitch from './pitch';
  * @property {number} height - height of key
  */
 export class Key {
-    constructor() {
-        this.classes = ['Key']; // name conflict with key.Key
-        this.callbacks = [];
-        this.scaleFactor = 1;
-        this.parent = undefined;
-        this.id = 0;
-        this.width = 23;
-        this.height = 120;
-        this.pitchObj = undefined;
-        this.svgObj = undefined;
-        this.noteNameSvgObj = undefined;
-        this.keyStyle = '';
-        this.keyClass = '';
-    }
+    classes = ['Key']; // name conflict with key.Key
+    callbacks = {
+        click: undefined,
+    };
+
+    scaleFactor = 1;
+    parent = undefined;
+    id = 0;
+    width = 23;
+    height = 120;
+    pitchObj = undefined;
+    svgObj = undefined;
+    noteNameSvgObj = undefined;
+    keyStyle = '';
+    keyClass = '';
 
     /**
      * Gets an SVG object for the key
@@ -264,26 +265,39 @@ export class BlackKey extends Key {
  * @property {Boolean} scrollable - default false -- add scroll bars to change octave
  */
 export class Keyboard {
+    whiteKeyWidth = 23;
+    _defaultWhiteKeyWidth = 23;
+    _defaultBlackKeyWidth = 13;
+    scaleFactor = 1;
+    height = 120; // does nothing right now...
+    keyObjects = {};
+    svgObj = undefined;
+
+    markC = true;
+    showNames = false;
+    showOctaves = false;
+
+    startPitch: string|number = 'C3';
+    endPitch: string|number = 'C5';
+    _startDNN = undefined;
+    _endDNN = undefined;
+
+    hideable = false;
+    scrollable = false;
+    callbacks = {
+        click: undefined,
+    };
+
+    //   more accurate offsets from http://www.mathpages.com/home/kmath043.htm
+    sharpOffsets = {
+        0: 14.3333,
+        1: 18.6666,
+        3: 13.25,
+        4: 16.25,
+        5: 19.75,
+    };
+
     constructor() {
-        this.whiteKeyWidth = 23;
-        this._defaultWhiteKeyWidth = 23;
-        this._defaultBlackKeyWidth = 13;
-        this.scaleFactor = 1;
-        this.height = 120; // does nothing right now...
-        this.keyObjects = {};
-        this.svgObj = undefined;
-
-        this.markC = true;
-        this.showNames = false;
-        this.showOctaves = false;
-
-        this.startPitch = 'C3';
-        this.endPitch = 'C5';
-        this._startDNN = undefined;
-        this._endDNN = undefined;
-
-        this.hideable = false;
-        this.scrollable = false;
         /**
          * An object of callbacks on events.
          *
@@ -296,14 +310,6 @@ export class Keyboard {
          */
         this.callbacks = {
             click: (keyClicked) => this.clickHandler(keyClicked),
-        };
-        //   more accurate offsets from http://www.mathpages.com/home/kmath043.htm
-        this.sharpOffsets = {
-            0: 14.3333,
-            1: 18.6666,
-            3: 13.25,
-            4: 16.25,
-            5: 19.75,
         };
     }
 
@@ -339,7 +345,7 @@ export class Keyboard {
             }
         }
 
-        let svgDOM = this.createSVG();
+        let svgDOM: HTMLElement|SVGElement = this.createSVG();
 
         if (this.scrollable) {
             svgDOM = this.wrapScrollable(svgDOM)[0];
@@ -383,10 +389,8 @@ export class Keyboard {
 
     /**
      * Draws the SVG associated with this Keyboard
-     *
-     * @returns {SVGElement} new svgDOM
      */
-    createSVG() {
+    createSVG(): SVGElement {
         // DNN = pitch.diatonicNoteNum;
         // this._endDNN = final key note. I.e., the last note to be included, not the first note not included.
         // 6, 57 gives a standard 88-key keyboard;
@@ -500,10 +504,10 @@ export class Keyboard {
      *
      * @param {string} [strokeColor='red']
      */
-    markMiddleC(strokeColor) {
+    markMiddleC(strokeColor='red') {
         const midC = this.keyObjects[60];
         if (midC !== undefined) {
-            midC.addCircle('red');
+            midC.addCircle(strokeColor);
         }
     }
 
@@ -544,9 +548,9 @@ export class Keyboard {
      * scrollable property on the keyboard to True.
      *
      * @param {SVGElement} svgDOM
-     * @returns {jQuery}
+     * @returns {JQuery}
      */
-    wrapScrollable(svgDOM) {
+    wrapScrollable(svgDOM: SVGElement): JQuery<HTMLElement> {
         const $wrapper = $(
             "<div class='keyboardScrollableWrapper'></div>"
         ).css({
@@ -685,12 +689,12 @@ export function jazzHighlight(e) {
         if (this.keyObjects[midiNote] !== undefined) {
             const keyObj = this.keyObjects[midiNote];
             const svgObj = keyObj.svgObj;
-            let intensityRGB = '';
             let normalizedVelocity = (e.velocity + 25) / 127;
             if (normalizedVelocity > 1) {
                 normalizedVelocity = 1.0;
             }
 
+            let intensityRGB: string;
             if (keyObj.keyClass === 'whitekey') {
                 const intensity = normalizedVelocity.toString();
                 intensityRGB = 'rgba(255, 255, 0, ' + intensity + ')';

@@ -16,16 +16,8 @@
  */
 import * as base from './base';
 
-/**
- *
- * @type {number[]}
- */
-export const global_usedChannels = []; // differs from m21p -- stored midiProgram numbers
-/**
- *
- * @type {number}
- */
-export const maxMidi = 16;
+export const global_usedChannels: number[] = []; // differs from m21p -- stored midiProgram numbers
+export const maxMidi: number = 16;
 
 /**
  *
@@ -199,7 +191,6 @@ export const info = [
  *
  * @class Instrument
  * @memberof music21.instrument
- * @extends music21.base.Music21Object
  * @param {string} instrumentName
  * @property {string|undefined} partId
  * @property {string|undefined} partName
@@ -220,29 +211,31 @@ export const info = [
 export class Instrument extends base.Music21Object {
     static get className() { return 'music21.instrument.Instrument'; }
 
-    constructor(instrumentName) {
+    partId = undefined;
+    partName = undefined;
+    partAbbreviation = undefined;
+
+    instrumentId = undefined;
+    instrumentName = '';
+    instrumentAbbreviation = undefined;
+    midiProgram = undefined;
+    _midiChannel = undefined;
+
+    lowestNote = undefined;
+    highestNote = undefined;
+
+    transpostion = undefined;
+
+    inGMPercMap = false;
+    soundfontFn = undefined;
+
+
+    constructor(instrumentName='') {
         super();
         this.classSortOrder = -25;
-
-        this.partId = undefined;
-        this.partName = undefined;
-        this.partAbbreviation = undefined;
-
-        this.instrumentId = undefined;
         this.instrumentName = instrumentName;
-        this.instrumentAbbreviation = undefined;
-        this.midiProgram = undefined;
-        this._midiChannel = undefined;
 
-        this.lowestNote = undefined;
-        this.highestNote = undefined;
-
-        this.transpostion = undefined;
-
-        this.inGMPercMap = false;
-        this.soundfontFn = undefined;
-
-        if (instrumentName !== undefined) {
+        if (instrumentName !== '') {
             find(instrumentName, this);
         }
     }
@@ -257,7 +250,7 @@ export class Instrument extends base.Music21Object {
      * @param {int[]} [usedChannels]
      * @returns {number|undefined}
      */
-    autoAssignMidiChannel(usedChannels) {
+    autoAssignMidiChannel(usedChannels=undefined) {
         if (usedChannels === undefined) {
             usedChannels = global_usedChannels;
         }
@@ -312,7 +305,7 @@ export class Instrument extends base.Music21Object {
  * @param {music21.instrument.Instrument} [inst] - instrument object to load into
  * @returns {music21.instrument.Instrument|undefined}
  */
-export function find(fn, inst) {
+export function find(fn, inst=undefined) {
     if (inst === undefined) {
         inst = new Instrument();
     }

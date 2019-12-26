@@ -138,8 +138,29 @@ export const MusicOrdinals = [
  */
 export class GenericInterval extends prebase.ProtoM21Object {
     static get className() { return 'music21.interval.GenericInterval'; }
+    value: number;
+    directed: number;
+    undirected: number;
+    direction: number;  // TODO: enum...
+    isSkip: boolean;
+    isDiatonicStep: boolean;
+    isStep: boolean;
+    isUnison: boolean;
+    simpleUndirected: number;
+    undirectedOctaves: number;
+    semiSimpleUndirected: number;
+    octaves: number;
+    simpleDirected: number;
+    semiSimpleDirected: number;
+    perfectable: boolean;
+    niceName: string;
+    simpleNiceName: string;
+    semiSimpleNiceName: string;
+    staffDistance: number;
+    mod7inversion: number;
+    mod7: number;
 
-    constructor(gi) {
+    constructor(gi: number) {
         super();
         if (gi === undefined) {
             gi = 1;
@@ -274,7 +295,7 @@ export class GenericInterval extends prebase.ProtoM21Object {
      * @param {string|number} specifier - a specifier such as "P", "m", "M", "A", "dd" etc.
      * @returns {music21.interval.DiatonicInterval}
      */
-    getDiatonic(specifier) {
+    getDiatonic(specifier: string|number) {
         return new DiatonicInterval(specifier, this);
     }
 
@@ -284,7 +305,7 @@ export class GenericInterval extends prebase.ProtoM21Object {
      * @param {music21.pitch.Pitch} p
      * @returns {music21.pitch.Pitch}
      */
-    transposePitch(p) {
+    transposePitch(p: pitch.Pitch): pitch.Pitch {
         const pitch2 = new pitch.Pitch();
         pitch2.step = p.step;
         pitch2.octave = p.octave;
@@ -464,7 +485,32 @@ export const IntervalAdjustImperf = {
 export class DiatonicInterval extends prebase.ProtoM21Object {
     static get className() { return 'music21.interval.DiatonicInterval'; }
 
-    constructor(specifier, generic) {
+    name: string;
+    specifier: number;
+    generic: GenericInterval;
+    direction: number;
+    niceName: string;
+    simpleName: string;
+    simpleNiceName: string;
+    semiSimpleName: string;
+    semiSimpleNiceName: string;
+    directedName: string;
+    directedNiceName: string;
+    directedSimpleName: string;
+    directedSimpleNiceName: string;
+    directedSemiSimpleNiceName: string;
+    directedSemiSimpleName: string;
+    specificName: string;
+    perfectable: boolean;
+    isDiatonicStep: boolean;
+    isStep: boolean;
+    isSkip: boolean;
+    orderedSpecifierIndex: number;
+    invertedOrderedSpecIndex: number;
+    invertedOrderedSpecifier: string;  // this is messed up -- should be number...
+    mod7inversion: string;
+
+    constructor(specifier: string|number, generic) {
         super();
 
         if (specifier === undefined) {
@@ -491,7 +537,7 @@ export class DiatonicInterval extends prebase.ProtoM21Object {
         ) {
             this.direction = generic.direction;
         } else if (
-            IntervalPerfSpecifiers.indexOf(specifier)
+            IntervalPerfSpecifiers.indexOf(this.specifier)
             <= IntervalPerfSpecifiers.indexOf(
                 IntervalSpecifiersEnum.DIMINISHED
             )
@@ -589,7 +635,7 @@ export class DiatonicInterval extends prebase.ProtoM21Object {
      *
      * @returns {music21.interval.ChromaticInterval}
      */
-    getChromatic() {
+    getChromatic(): ChromaticInterval {
         const octaveOffset = Math.floor(
             Math.abs(this.generic.staffDistance) / 7
         );
@@ -597,7 +643,7 @@ export class DiatonicInterval extends prebase.ProtoM21Object {
             = IntervalSemitonesGeneric[this.generic.simpleUndirected];
         const specName = IntervalPrefixSpecs[this.specifier];
 
-        let semitonesAdjust = 0;
+        let semitonesAdjust: number;
         if (this.generic.perfectable) {
             semitonesAdjust = IntervalAdjustPerfect[specName];
         } else {
@@ -638,7 +684,7 @@ export class DiatonicInterval extends prebase.ProtoM21Object {
      * @param {music21.pitch.Pitch} p
      * @returns {music21.pitch.Pitch}
      */
-    transposePitch(p) {
+    transposePitch(p: pitch.Pitch): pitch.Pitch {
         const fullIntervalObject = new Interval(this, this.getChromatic());
         return fullIntervalObject.transposePitch(p);
     }
@@ -647,7 +693,7 @@ export class DiatonicInterval extends prebase.ProtoM21Object {
      *
      * @type {string}
      */
-    get specifierAbbreviation() {
+    get specifierAbbreviation(): string {
         return IntervalPrefixSpecs[this.specifier];
     }
 
@@ -655,7 +701,7 @@ export class DiatonicInterval extends prebase.ProtoM21Object {
      *
      * @returns {number}
      */
-    get cents() {
+    get cents(): number {
         return this.getChromatic().cents;
     }
 }
@@ -674,7 +720,18 @@ export class DiatonicInterval extends prebase.ProtoM21Object {
 export class ChromaticInterval extends prebase.ProtoM21Object {
     static get className() { return 'music21.interval.ChromaticInterval'; }
 
-    constructor(value) {
+    semitones: number;
+    cents: number;
+    directed: number;
+    undirected: number;
+    direction: number;
+    mod12: number;
+    simpleUndirected: number;
+    simpleDirected: number;
+    intervalClass: number;
+    isChromaticStep: boolean;
+
+    constructor(value: number=0) {
         super();
 
         this.semitones = value;
@@ -714,7 +771,7 @@ export class ChromaticInterval extends prebase.ProtoM21Object {
      *
      * @returns {music21.interval.ChromaticInterval}
      */
-    reverse() {
+    reverse(): ChromaticInterval {
         return new ChromaticInterval(
             this.undirected * (-1 * this.direction)
         );
@@ -728,7 +785,7 @@ export class ChromaticInterval extends prebase.ProtoM21Object {
      * @property {music21.pitch.Pitch} p - pitch to transpose
      * @returns {music21.pitch.Pitch}
      */
-    transposePitch(p) {
+    transposePitch(p: pitch.Pitch): pitch.Pitch {
         let useImplicitOctave = false;
         if (p.octave === undefined) {
             // not yet implemented in m21j
@@ -749,12 +806,12 @@ export const IntervalStepNames = ['C', 'D', 'E', 'F', 'G', 'A', 'B'];
 /**
  * @function music21.interval.convertDiatonicNumberToStep
  * @memberof music21.interval
- * @param {int} dn - diatonic number, where 29 = C4, C#4 etc.
- * @returns {Array} two element array of {string} stepName and {Int} octave
+ * @param {number} dn - diatonic number, where 29 = C4, C#4 etc.
+ * @returns {Array} two element array of {string} stepName and {number} octave
  */
 export function convertDiatonicNumberToStep(
-    dn
-) {
+    dn: number
+): [string, number] {
     let stepNumber;
     let octave;
     if (dn === 0) {
@@ -793,6 +850,31 @@ export function convertDiatonicNumberToStep(
  */
 export class Interval extends prebase.ProtoM21Object {
     static get className() { return 'music21.interval.Interval'; }
+    diatonic: DiatonicInterval;
+    generic: GenericInterval;
+    chromatic: ChromaticInterval;
+    protected _noteStart: note.Note;
+    protected _noteEnd: note.Note;
+    direction: number;
+    specifier: number;
+    diatonicType: number;
+    name: string;
+    niceName: string;
+    simpleName: string;
+    simpleNiceName: string;
+    semiSimpleName: string;
+    semiSimpleNiceName: string;
+    directedName: string;
+    directedNiceName: string;
+    directedSimpleName: string;
+    directedSimpleNiceName: string;
+    isDiatonicStep: boolean;
+    isChromaticStep: boolean;
+    semitones: number;
+    intervalClass: number;
+    cents: number;
+    isStep: boolean;
+    isSkip: boolean;
 
     constructor(...restArgs) {
         super();
@@ -1047,7 +1129,7 @@ export function intervalsToDiatonic(gInt, cInt) {
 export function _getSpecifierFromGenericChromatic(
     gInt,
     cInt
-) {
+): number {
     const noteVals = [undefined, 0, 2, 4, 5, 7, 9, 11];
     const normalSemis
         = noteVals[gInt.simpleUndirected] + 12 * gInt.undirectedOctaves;
@@ -1067,7 +1149,7 @@ export function _getSpecifierFromGenericChromatic(
         theseSemis = cInt.undirected;
     }
     const semisRounded = Math.round(theseSemis);
-    let specifier = '';
+    let specifier: number;
     if (gInt.perfectable) {
         specifier
             = IntervalPerfSpecifiers[
