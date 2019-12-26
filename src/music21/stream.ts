@@ -184,7 +184,9 @@ export class Stream extends base.Music21Object {
             newObj,
             self
         ) {
-            newObj[keyName] = common.merge({}, self.renderOptions);
+            const newRenderOptions = JSON.parse(JSON.stringify(self.renderOptions));
+            newRenderOptions.events = {...self.renderOptions.events};
+            newObj.renderOptions = newRenderOptions;
         };
 
         this._cloneCallbacks._elements = function cloneElements(

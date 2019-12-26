@@ -26,9 +26,13 @@ export default function tests() {
         }
     });
     test('music21.stream.Stream clone', assert => {
+        const clickCallback = e => console.log('hi');
+
         const [s, n] = get_stream_and_note();
         s.renderOptions.left = 20;
         s.renderOptions.scaleFactor.x = 2.0;
+        s.renderOptions.events.click = clickCallback;
+
         s.insert(5.0, n);
         const t = s.clone(true);
         assert.ok(t instanceof music21.stream.Stream);
@@ -50,15 +54,15 @@ export default function tests() {
         assert.equal(t.renderOptions.left, 20);
         s.renderOptions.left = 10;
         s.renderOptions.scaleFactor.x = 1.5;
+        s.renderOptions.events.click = 'play';
         assert.equal(t.renderOptions.left, 20);
-        // assert.notStrictEqual(
-        //     s.renderOptions.scaleFactor,
-        //     t.renderOptions.scaleFactor,
-        //     'after cloning renderOptions.scaleFactor should not be shared'
-        // );
-        // KNOWN BUG!
-        // assert.equal(t.renderOptions.scaleFactor.x, 2.0);
-
+        assert.notStrictEqual(
+            s.renderOptions.scaleFactor,
+            t.renderOptions.scaleFactor,
+            'after cloning renderOptions.scaleFactor should not be shared'
+        );
+        assert.equal(t.renderOptions.scaleFactor.x, 2.0);
+        assert.equal(t.renderOptions.events.click, clickCallback);
     });
 
 
