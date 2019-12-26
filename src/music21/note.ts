@@ -7,7 +7,6 @@
  *
  * Module for note classes. See the namespace {@link music21.note}
  *
- * @requires music21/common
  * @requires music21/prebase
  * @requires music21/base
  * @requires music21/pitch

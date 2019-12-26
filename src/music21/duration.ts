@@ -93,20 +93,20 @@ export const vexflowDurationArray = [
  *
  * @class Duration
  * @memberof music21.duration
- * @extends music21.prebase.ProtoM21Object
  * @param {(number|undefined)} ql - quarterLength (default 1.0)
  */
 export class Duration extends prebase.ProtoM21Object {
     static get className() { return 'music21.duration.Duration'; }
+    isGrace: boolean = false;
+    protected _quarterLength: number = 0.0;
+    protected _dots: number = 0;
+    protected _durationNumber = undefined;
+    protected _type: string = 'zero';
+    protected _tuplets: Tuplet[] = [];
 
-    constructor(ql) {
+
+    constructor(ql: string|number = 0.0) {
         super();
-        this.isGrace = false;
-        this._quarterLength = 0.0;
-        this._dots = 0;
-        this._durationNumber = undefined;
-        this._type = 'zero';
-        this._tuplets = [];
         if (typeof ql === 'string') {
             this.type = ql;
         } else if (ql !== undefined) {
@@ -115,7 +115,7 @@ export class Duration extends prebase.ProtoM21Object {
         this._cloneCallbacks._tuplets = this.cloneCallbacksTupletFunction;
     }
 
-    stringInfo() {
+    stringInfo(): string {
         return this.quarterLength.toString();
     }
 
@@ -132,11 +132,11 @@ export class Duration extends prebase.ProtoM21Object {
      * d.dots = 1;
      * d.quarterLength == 3; // true;
      */
-    get dots() {
+    get dots(): number {
         return this._dots;
     }
 
-    set dots(numDots) {
+    set dots(numDots: number) {
         this._dots = numDots;
         this.updateQlFromFeatures();
     }
@@ -155,11 +155,11 @@ export class Duration extends prebase.ProtoM21Object {
      * d.dots == 2; // true
      * d.type == 'quarter'; // true
      */
-    get quarterLength() {
+    get quarterLength(): number {
         return this._quarterLength;
     }
 
-    set quarterLength(ql) {
+    set quarterLength(ql: number) {
         if (ql === undefined) {
             ql = 1.0;
         }
@@ -183,11 +183,11 @@ export class Duration extends prebase.ProtoM21Object {
      * d.type = 'quarter'; // will not change dots
      * d.quarterLength == 1.5; // true
      */
-    get type() {
+    get type(): string {
         return this._type;
     }
 
-    set type(typeIn) {
+    set type(typeIn: string) {
         const typeNumber = ordinalTypeFromNum.indexOf(typeIn);
         if (typeNumber === -1) {
             console.log('invalid type ' + typeIn);
@@ -204,10 +204,10 @@ export class Duration extends prebase.ProtoM21Object {
      * Use {@link music21.duration.Duration#appendTuplet} to
      * add a tuplet (no way to remove yet)
      *
-     * @type {music21.duration.Tuplet[]}
+     * @type {Tuplet[]}
      * @default []
      */
-    get tuplets() {
+    get tuplets(): Tuplet[] {
         return this._tuplets;
     }
 
@@ -223,7 +223,7 @@ export class Duration extends prebase.ProtoM21Object {
      * d.dots = 2;
      * d.vexflowDuration == 'hdd'; // true;
      */
-    get vexflowDuration() {
+    get vexflowDuration(): string {
         const typeNumber = ordinalTypeFromNum.indexOf(this.type);
         let vd = vexflowDurationArray[typeNumber];
         if (this.dots > 0) {
@@ -331,11 +331,11 @@ export class Duration extends prebase.ProtoM21Object {
     /**
      * Add a tuplet to music21j
      *
-     * @param {music21.duration.Tuplet} newTuplet - tuplet to add to `.tuplets`
+     * @param {Tuplet} newTuplet - tuplet to add to `.tuplets`
      * @param {boolean} [skipUpdateQl=false] - update the quarterLength afterwards?
      * @returns {this}
      */
-    appendTuplet(newTuplet, skipUpdateQl) {
+    appendTuplet(newTuplet: Tuplet, skipUpdateQl=false) {
         newTuplet.frozen = true;
         this._tuplets.push(newTuplet);
         if (skipUpdateQl !== true) {
@@ -349,7 +349,6 @@ export class Duration extends prebase.ProtoM21Object {
  * Represents a Tuplet; found in {@link music21.duration.Duration#tuplets}
  *
  * @memberof music21.duration
- * @extends music21.prebase.ProtoM21Object
  * @param {number} [numberNotesActual=3] - numerator of the tuplet
  * @param {number} [numberNotesNormal=2] - denominator of the tuplet
  * @param {(music21.duration.Duration|number)} [durationActual] - duration or
@@ -359,12 +358,22 @@ export class Duration extends prebase.ProtoM21Object {
  */
 export class Tuplet extends prebase.ProtoM21Object {
     static get className() { return 'music21.duration.Tuplet'; }
+    numberNotesActual: number;
+    numberNotesNormal: number;
+    durationActual: Duration;
+    durationNormal: Duration;
+    frozen: boolean = false;
+    type;
+    bracket: boolean = true;
+    placement: string = 'above';
+    tupletActualShow: string;
+    tupletNormalShow: string;
 
     constructor(
         numberNotesActual=3,
         numberNotesNormal=2,
-        durationActual,
-        durationNormal
+        durationActual=undefined,
+        durationNormal=undefined
     ) {
         super();
         this.numberNotesActual = numberNotesActual;
@@ -379,16 +388,10 @@ export class Tuplet extends prebase.ProtoM21Object {
         this.type = undefined;
         /**
          * Show a bracket above the tuplet
-         *
-         * @property {boolean} bracket
-         * @default true
          */
         this.bracket = true;
         /**
          * Bracket placement. Options are `above` or `below`.
-         *
-         * @property {string} placement
-         * @default 'above'
          */
         this.placement = 'above';
 

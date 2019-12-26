@@ -70,7 +70,7 @@ export class Music21Object extends prebase.ProtoM21Object {
 
     constructor(keywords={}) {
         super();
-        this._duration = new duration.Duration();
+        this._duration = new duration.Duration(0.0);
         this.id = sites.getId(this);
         this.sites = new sites.Sites();
         this._cloneCallbacks._activeSite = false;
