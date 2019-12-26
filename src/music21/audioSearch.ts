@@ -15,69 +15,53 @@ import * as common from './common';
 
 // TODO(msc): Rewrite as a class -- config is just a class in disguise
 
-// noinspection JSUnresolvedVariable
-/**
- *
- * @type {
- *     {
- *     _audioContext: null,
- *     lastCentsDeviationsDetected: Array<number>,
- *     sampleBuffer: (Float32Array|null),
- *     maxFrequency: number,
- *     lastPitchesDetected: number[],
- *     fftSize: number,
- *     animationFrameCallbackId: number,
- *     AudioContextCaller: *,
- *     currentAnalyser: null,
- *     pitchSmoothingSize: number,
- *     minFrequency: number,
- *     lastPitchClassesDetected: number[]
- *     }
- * }
- */
-export const config = {
-    fftSize: 2048,
-    AudioContextCaller: window.AudioContext || window.webkitAudioContext,
-    _audioContext: null,
-    animationFrameCallbackId: -1,
-    sampleBuffer: null,
-    currentAnalyser: null,
-    minFrequency: 55,
-    maxFrequency: 1050,
-    pitchSmoothingSize: 40,
-    lastPitchClassesDetected: [],
-    lastPitchesDetected: [],
-    lastCentsDeviationsDetected: [],
+class _ConfigSingletonCreator {
+    fftSize: number = 2048;
+    AudioContextCaller: any;
+    _audioContext: AudioContext = null;
+    animationFrameCallbackId: number =-1;
+    sampleBuffer: Float32Array = null;
+    currentAnalyser;
+    minFrequency: number = 55;
+    maxFrequency: number =1050;
+    pitchSmoothingSize: number =40;
+    lastPitchClassesDetected: number[] = [];
+    lastPitchesDetected: number[] = [];
+    lastCentsDeviationsDetected: number[] = [];
 
-};
+    constructor() {
+        this.AudioContextCaller = window.AudioContext || (<any> window).webkitAudioContext;
+    }
 
-Object.defineProperties(config, {
-    audioContext: {
-        get: () => {
-            if (config._audioContext !== null) {
-                return config._audioContext;
-            } else {
-                // AudioContext should be a singleton, but MIDI reports loaded before it is!
-                if (
-                    MIDI !== undefined
-                    && MIDI.WebAudio !== undefined
-                    && MIDI.WebAudio.getContext() !== undefined
-                ) {
-                    window.globalAudioContext = MIDI.WebAudio.getContext();
-                } else if (typeof window.globalAudioContext === 'undefined') {
-                    window.globalAudioContext = new config.AudioContextCaller();
-                }
-                config._audioContext = window.globalAudioContext;
-                return config._audioContext;
+    get audioContext() {
+        if (this._audioContext !== null) {
+            return this._audioContext;
+        } else {
+            // AudioContext should be a singleton, but MIDI reports loaded before it is!
+            if (
+                MIDI !== undefined
+                && MIDI.WebAudio !== undefined
+                && MIDI.WebAudio.getContext() !== undefined
+            ) {
+                (<any> window).globalAudioContext = MIDI.WebAudio.getContext();
+            } else if (typeof (<any> window).globalAudioContext === 'undefined') {
+                (<any> window).globalAudioContext = new this.AudioContextCaller();
             }
-        },
-        set: ac => {
-            config._audioContext = ac;
-        },
-    },
-});
+            this._audioContext = (<any> window).globalAudioContext;
+            return this._audioContext;
+        }
+    }
+
+    set audioContext(ac: AudioContext) {
+        this._audioContext = ac;
+    }
+}
+
+export const config = new _ConfigSingletonCreator();
 
 /**
+ * Note: audioRecording uses the newer getUserMedia routines, so
+ * this should be ported to be similar to there.
  *
  * @function music21.audioSearch.getUserMedia
  * @memberof music21.audioSearch
@@ -99,7 +83,7 @@ export function getUserMedia(dictionary, callback, error) {
             userMediaStarted(mediaStream);
         };
     }
-    const n = navigator;
+    const n = <any> navigator;
     // need to polyfill navigator, or binding problems are hard...
     // noinspection JSUnresolvedVariable
     n.getUserMedia
@@ -149,7 +133,7 @@ export const animateLoop = () => {
         config.minFrequency,
         config.maxFrequency
     );
-    const retValue = sampleCallback(frequencyDetected);
+    const retValue = <number> sampleCallback(frequencyDetected);
     // callback can be anything.
     // noinspection JSIncompatibleTypesComparison
     if (retValue !== -1) {
@@ -213,6 +197,7 @@ export function sampleCallback(frequency) {
     const [unused_midiNum, unused_centsOff] = smoothPitchExtraction(
         frequency
     );
+    return 0;
 }
 
 // from Chris Wilson. Replace with Jordi's

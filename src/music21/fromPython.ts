@@ -45,20 +45,26 @@ const unpickler = jp.unpickler;
  * (too complicated to explain; read the code)
  */
 export class Converter {
+    debug: boolean = true;
+    knownUnparsables = [
+        'music21.spanner.Line',
+        'music21.instrument.Instrument',
+        'music21.layout.StaffGroup',
+        'music21.layout.StaffLayout',
+        'music21.layout.SystemLayout',
+        'music21.layout.PageLayout',
+        'music21.expressions.TextExpression',
+        'music21.bar.Barline', // Soon...
+        'music21.tempo.MetronomeMark', // should be possible
+        'music21.metadata.Metadata', // Soon...
+    ];
+    handlers: any;
+    currentPart = undefined;
+    lastClef = undefined;
+    lastKeySignature = undefined;
+    lastTimeSignature = undefined;
+
     constructor() {
-        this.debug = true;
-        this.knownUnparsables = [
-            'music21.spanner.Line',
-            'music21.instrument.Instrument',
-            'music21.layout.StaffGroup',
-            'music21.layout.StaffLayout',
-            'music21.layout.SystemLayout',
-            'music21.layout.PageLayout',
-            'music21.expressions.TextExpression',
-            'music21.bar.Barline', // Soon...
-            'music21.tempo.MetronomeMark', // should be possible
-            'music21.metadata.Metadata', // Soon...
-        ];
         this.handlers = {
             'music21.duration.Duration': {
                 post_restore: d => {
@@ -97,10 +103,6 @@ export class Converter {
                 post_restore: this.streamPostRestore.bind(this),
             },
         };
-        this.currentPart = undefined;
-        this.lastClef = undefined;
-        this.lastKeySignature = undefined;
-        this.lastTimeSignature = undefined;
     }
 
     /**

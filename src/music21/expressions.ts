@@ -19,17 +19,14 @@ import * as base from './base';
  * @extends music21.base.Music21Object
  * @property {string} name
  * @property {string} vexflowModifier
- * @property {int} setPosition
+ * @property {number} setPosition
  */
 export class Expression extends base.Music21Object {
     static get className() { return 'music21.expressions.Expression'; }
 
-    constructor() {
-        super();
-        this.name = 'expression';
-        this.vexflowModifier = '';
-        this.setPosition = undefined;
-    }
+    name: string = 'expression';
+    vexflowModifier: string = '';
+    setPosition: number = undefined;
 
     /**
      * Renders this Expression as a Vex.Flow.Articulation

@@ -26,6 +26,15 @@ const shorthandNotation = {
  * @memberof music21.figuredBass
  */
 export class Notation {
+    notationColumn: string;
+    figureStrings: string[] = undefined;
+    origNumbers: number[] = undefined;
+    origModStrings = undefined;
+    numbers: number[] = undefined;
+    modifierStrings: string[] = undefined;
+    modifiers: Modifier[];
+    figures: Figure[];
+
     /**
      *
      * @param {string} [notationColumn='']
@@ -36,18 +45,13 @@ export class Notation {
      * @property {Modifier[]} modifiers
      * @property {Figure[]} figures
      */
-    constructor(notationColumn='') {
+    constructor(notationColumn: string = '') {
         this.notationColumn = notationColumn;
-        this.figureStrings = undefined;
-        this.origNumbers = undefined;
-        this.origModStrings = undefined;
-        this.numbers = undefined;
-        this.modifierStrings = undefined;
         this._parseNotationColumn();
         this._translateToLonghand();
 
-        this.modifiers = undefined;
-        this.figures = undefined;
+        this.modifiers = [];
+        this.figures = [];
         this._getModifiers();
         this._getFigures();
     }
@@ -165,6 +169,10 @@ export class Notation {
  * @memberOf music21.figuredBass
  */
 export class Figure {
+    number: number;
+    modifierString: string;
+    modifier: Modifier;
+
     constructor(number, modifierString) {
         this.number = number;
         this.modifierString = modifierString;
@@ -189,7 +197,10 @@ const specialModifiers = {
  * @memberOf music21.figuredBass
  */
 export class Modifier {
-    constructor(modifierString) {
+    modifierString: string;
+    accidental: pitch.Accidental;
+
+    constructor(modifierString: string) {
         this.modifierString = modifierString;
         this.accidental = this._toAccidental();
     }
@@ -199,11 +210,10 @@ export class Modifier {
         if (modStr === undefined || modStr === '') {
             return undefined;
         }
-        const a = new pitch.Accidental();
         if (specialModifiers[modStr] !== undefined) {
             modStr = specialModifiers[modStr];
         }
-        a.set(modStr);
+        const a = new pitch.Accidental(modStr);
         return a;
     }
 
@@ -228,10 +238,9 @@ export class Modifier {
         ) {
             pitchToAlter.accidental = this.accidental.clone();
         } else {
-            const newAccidental = new pitch.Accidental();
             const newAlter
                 = pitchToAlter.accidental.alter + this.accidental.alter;
-            newAccidental.set(newAlter);
+            const newAccidental = new pitch.Accidental(newAlter);
             pitchToAlter.accidental = newAccidental;
         }
         return pitchToAlter;
