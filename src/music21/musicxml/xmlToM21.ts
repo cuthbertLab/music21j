@@ -11,11 +11,20 @@ import * as pitch from '../pitch';
 import * as stream from '../stream';
 import * as tie from '../tie';
 
+// imports just for typing:
+import { Music21Object } from '../base';
+
 const DEFAULTS = {
     divisionsPerQuarter: 32 * 3 * 3 * 5 * 7,
 };
 
-function seta(m21El, xmlEl, tag, attributeName, transform) {
+function seta(
+    m21El,
+    xmlEl,
+    tag: string,
+    attributeName=undefined,
+    transform=undefined
+) {
     const $matchEl = $(xmlEl).children(tag);
     if (!$matchEl) {
         return;
@@ -37,21 +46,22 @@ function seta(m21El, xmlEl, tag, attributeName, transform) {
 }
 
 export class ScoreParser {
+    xmlText;
+    xmlUrl;
+    $xmlRoot;
+    stream: stream.Score;
+    definesExplicitSystemBreaks: boolean = false;
+    definesExplicitPageBreaks: boolean = false;
+
+    mxScorePartDict = {};
+    m21PartObjectsById = {};
+    partGroupList = [];
+    parts = [];
+
+    musicXmlVersion: string = '1.0';
+
     constructor() {
-        this.xmlText = undefined;
-        this.xmlUrl = undefined;
-        this.$xmlRoot = undefined;
         this.stream = new stream.Score();
-
-        this.definesExplicitSystemBreaks = false;
-        this.definesExplicitPageBreaks = false;
-
-        this.mxScorePartDict = {};
-        this.m21PartObjectsById = {};
-        this.partGroupList = [];
-        this.parts = [];
-
-        this.musicXmlVersion = '1.0';
     }
 
     scoreFromUrl(url) {
@@ -133,7 +143,35 @@ export class ScoreParser {
  * @property {jQuery|undefined} $activeAttributes
  */
 export class PartParser {
-    constructor($mxPart, $mxScorePart, parent) {
+    parent: ScoreParser;
+    $mxPart;
+    $mxScorePart;
+    partId: string;
+    stream: stream.Part;
+    atSoundingPitch = true;
+    staffReferenceList = [];
+
+    lastTimeSignature = undefined;
+    lastMeasureWasShort = false;
+    lastMeasureOffset = 0.0;
+    lastClefs;
+    activeTuplets = [undefined, undefined, undefined, undefined, undefined, undefined, undefined];
+    maxStaves = 1;
+    lastMeasureNumber = 0;
+    lastNumberSuffix = undefined;
+
+    multiMeasureRestsToCapture = 0;
+    activeMultimeasureRestSpanner = undefined;
+
+    activeInstrument = undefined;
+    firstMeasureParsed = false;
+    $activeAttributes = undefined;
+    lastDivisions = DEFAULTS.divisionsPerQuarter;
+
+    appendToScoreAfterParse = true;
+    lastMeasureParser = undefined;
+
+    constructor($mxPart, $mxScorePart, parent=undefined) {
         this.parent = parent;
         this.$mxPart = $mxPart;
         this.$mxScorePart = $mxScorePart;
@@ -142,35 +180,11 @@ export class PartParser {
             this.partId = $mxPart.attr('id');
             // ignore empty partId for now
         }
-        // spannerBundles
+        // TODO(msc): spannerBundles
         this.stream = new stream.Part();
-        this.atSoundingPitch = true;
-        this.staffReferenceList = [];
-
-        this.lastTimeSignature = undefined;
-        this.lastMeasureWasShort = false;
-        this.lastMeasureOffset = 0.0;
         this.lastClefs = {
             0: new clef.TrebleClef(),
         };
-        this.activeTuplets = [];
-        this.activeTuplets.length = 7;
-        this.activeTuplets.fill(undefined);
-
-        this.maxStaves = 1;
-        this.lastMeasureNumber = 0;
-        this.lastNumberSuffix = undefined;
-
-        this.multiMeasureRestsToCapture = 0;
-        this.activeMultimeasureRestSpanner = undefined;
-
-        this.activeInstrument = undefined;
-        this.firstMeasureParsed = false;
-        this.$activeAttributes = undefined;
-        this.lastDivisions = DEFAULTS.divisionsPerQuarter;
-
-        this.appendToScoreAfterParse = true;
-        this.lastMeasureParser = undefined;
     }
 
     parse() {
@@ -219,7 +233,7 @@ export class PartParser {
 
         // TODO: offsets!!!
         // this.stream.insert(this.lastMeasureOffset, m);
-        this.stream.append(m);
+        this.stream.append(<Music21Object><any> m);
 
         this.adjustTimeAttributesFromMeasure(m);
     }
@@ -246,6 +260,69 @@ export class PartParser {
 }
 
 export class MeasureParser {
+    $mxMeasure;
+    parent: PartParser;
+    $mxMeasureElements = [];
+    stream: stream.Measure;
+
+    divisions = undefined;
+    transposition = undefined;
+    // spannerBundles
+    staffReference = {};
+    // activeTuplets
+    useVoices = false;
+    voicesById = {};
+    voiceIndices;
+    staves = 1;
+    $activeAttributes = undefined;
+    attributesAreInternal = true;
+    measureNumber: number = undefined;
+    numberSuffix: string = undefined;
+    staffLayoutObjects = [];
+
+    $mxNoteList = [];
+    $mxLyricList = [];
+    nLast = undefined;
+    chordVoice = undefined;
+    fullMeasureRest = false;
+    restAndNoteCount = {
+        rest: 0,
+        note: 0,
+    };
+
+    lastClefs = {
+        0: undefined,
+    };
+
+    parseIndex = 0;
+    offsetMeasureNote = 0.0;
+
+    // class attributes in m21p
+    attributeTagsToMethods = {
+        time: 'handleTimeSignature',
+        clef: 'handleClef',
+        key: 'handleKeySignature',
+        // 'staff-details': 'handleStaffDetails',
+        // 'measure-style': 'handleMeasureStyle',
+    };
+
+    musicDataMethods = {
+        note: 'xmlToNote',
+        // 'backup': 'xmlBackup',
+        // 'forward': 'xmlForward',
+        // 'direction': 'xmlDirection',
+        attributes: 'parseAttributesTag',
+        // 'harmony': 'xmlHarmony',
+        // 'figured-bass': undefined,
+        // 'sound': undefined,
+        // 'barline': 'xmlBarline',
+        // 'grouping': undefined,
+        // 'link': undefined,
+        // 'bookmark': undefined,
+
+        // Note: <print> is handled separately...
+    };
+
     /**
      *
      * @param {jQuery} $mxMeasure
@@ -253,33 +330,15 @@ export class MeasureParser {
      * @property {music21.note.GeneralNote|undefined} nLast
      * @property {jQuery|undefined} $activeAttributes
      */
-    constructor($mxMeasure, parent) {
+    constructor($mxMeasure, parent: PartParser = undefined) {
         this.$mxMeasure = $mxMeasure;
-        this.$mxMeasureElements = [];
-
-        this.divisions = undefined;
         this.parent = parent;
+        this.stream = new stream.Measure();
 
-        this.transposition = undefined;
-        // spannerBundles
-        this.staffReference = {};
-        // activeTuplets
-        this.useVoices = false;
-        this.voicesById = {};
         this.voiceIndices = new Set();
         this.staves = 1;
         this.$activeAttributes = undefined;
         this.attributesAreInternal = true;
-        /**
-         *
-         * @type {number|undefined}
-         */
-        this.measureNumber = undefined;
-        /**
-         *
-         * @type {string|undefined}
-         */
-        this.numberSuffix = undefined;
 
         if (parent !== undefined) {
             this.divisions = parent.lastDivisions;
@@ -287,48 +346,6 @@ export class MeasureParser {
             this.divisions = DEFAULTS.divisionsPerQuarter;
         }
 
-        this.staffLayoutObjects = [];
-        this.stream = new stream.Measure();
-
-        this.$mxNoteList = [];
-        this.$mxLyricList = [];
-        this.nLast = undefined;
-        this.chordVoice = undefined;
-        this.fullMeasureRest = false;
-        this.restAndNoteCount = {
-            rest: 0,
-            note: 0,
-        };
-        this.lastClefs = {
-            0: undefined,
-        };
-        this.parseIndex = 0;
-        this.offsetMeasureNote = 0.0;
-
-        // class attributes in m21p
-        this.attributeTagsToMethods = {
-            time: 'handleTimeSignature',
-            clef: 'handleClef',
-            key: 'handleKeySignature',
-            // 'staff-details': 'handleStaffDetails',
-            // 'measure-style': 'handleMeasureStyle',
-        };
-        this.musicDataMethods = {
-            note: 'xmlToNote',
-            // 'backup': 'xmlBackup',
-            // 'forward': 'xmlForward',
-            // 'direction': 'xmlDirection',
-            attributes: 'parseAttributesTag',
-            // 'harmony': 'xmlHarmony',
-            // 'figured-bass': undefined,
-            // 'sound': undefined,
-            // 'barline': 'xmlBarline',
-            // 'grouping': undefined,
-            // 'link': undefined,
-            // 'bookmark': undefined,
-
-            // Note: <print> is handled separately...
-        };
     }
 
     parse() {
@@ -442,7 +459,7 @@ export class MeasureParser {
         return c;
     }
 
-    xmlToSimpleNote($mxNote, freeSpanners) {
+    xmlToSimpleNote($mxNote, freeSpanners=true) {
         const n = new note.Note();
         this.xmlToPitch($mxNote, n.pitch);
         // beams;
@@ -495,7 +512,7 @@ export class MeasureParser {
     }
 
     xmlToAccidental($mxAccidental) {
-        const acc = new pitch.Accidental();
+        const acc = new pitch.Accidental(0);
         // to-do m21/musicxml accidental name differences;
         let name = $($mxAccidental[0])
             .text()
@@ -630,10 +647,10 @@ export class MeasureParser {
      * @param {music21.note.Lyric} [inputM21]
      * @returns {*|music21.note.Lyric|undefined}
      */
-    xmlToLyric($mxLyric, inputM21) {
+    xmlToLyric($mxLyric, inputM21=undefined) {
         let l = inputM21;
         if (inputM21 === undefined) {
-            l = new note.Lyric();
+            l = new note.Lyric('');
         }
         try {
             l.text = $mxLyric.children('text').text().trim();

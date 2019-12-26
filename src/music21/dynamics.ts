@@ -97,30 +97,22 @@ export const dynamicStrToScalar = {
 export class Dynamic extends base.Music21Object {
     static get className() { return 'music21.dynamics.Dynamic'; }
 
-    constructor(value) {
+    protected _value: string;
+    protected _volumeScalar: number;
+    longName: string;
+    englishName: string;
+
+
+    constructor(value: string|number) {
         super();
-        /**
-         *
-         * @type {string|undefined}
-         * @private
-         */
-        this._value = undefined;
-        /**
-         *
-         * @type {number|undefined}
-         * @private
-         */
-        this._volumeScalar = undefined;
-        this.longName = undefined;
-        this.englishName = undefined;
         this.value = value;
     }
 
-    get value() {
+    get value(): string|number {
         return this._value;
     }
 
-    set value(value) {
+    set value(value: string|number) {
         if (typeof value !== 'string') {
             // assume number
             this._volumeScalar = value;
@@ -161,7 +153,7 @@ export class Dynamic extends base.Music21Object {
         }
     }
 
-    get volumeScalar() {
+    get volumeScalar(): number {
         if (this._volumeScalar !== undefined) {
             return this._volumeScalar;
         } else if (this._value in dynamicStrToScalar) {
@@ -171,7 +163,7 @@ export class Dynamic extends base.Music21Object {
         }
     }
 
-    set volumeScalar(value) {
+    set volumeScalar(value: number) {
         if (typeof value === 'number' && value <= 1 && value >= 0) {
             this._volumeScalar = value;
         }

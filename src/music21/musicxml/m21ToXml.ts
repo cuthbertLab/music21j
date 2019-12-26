@@ -9,6 +9,10 @@ import {  // eslint-disable-line import/no-cycle
 
 import { Music21Exception } from '../exceptions21';
 
+// imports for type checking only
+import { Music21Object } from '../base';
+import { GeneralNote, Note } from '../note';
+
 class MusicXMLExportException extends Music21Exception {
 
 }
@@ -100,11 +104,13 @@ const _classMapping = [
 ];
 
 export class GeneralObjectExporter {
-    constructor(obj) {
+    generalObj: Music21Object;
+
+    constructor(obj: Music21Object) {
         this.generalObj = obj;
     }
 
-    parse(obj) {
+    parse(obj=undefined) {
         if (obj === undefined) {
             obj = this.generalObj;
         }
@@ -129,7 +135,10 @@ export class GeneralObjectExporter {
             }
         }
         if (outObj === undefined) {
-            throw new MusicXMLExportException(`Cannot translate the object ${obj} to a complete musicXML document; put it in a Stream first!`);
+            throw new MusicXMLExportException(
+                `Cannot translate the object ${obj} to a complete musicXML document; `
+                + 'put it in a Stream first!'
+            );
         }
         return outObj;
     }
@@ -193,6 +202,9 @@ const _musicxmlVersion = '3.0';
  * @memberOf music21.musicxml.m21ToXml
  */
 export class XMLExporterBase {
+    doc: XMLDocument;
+    xmlRoot;
+
     constructor() {
         this.doc = document.implementation.createDocument('', '', null);
         this.xmlRoot = undefined;
@@ -216,7 +228,13 @@ export class XMLExporterBase {
     /**
      * Note: this is not a method in music21p, but it needs access to this.doc in music21j
      */
-    _setTagTextFromAttribute(m21El, xmlEl, tag, attributeName, { transform, forceEmpty=false }={}) {
+    _setTagTextFromAttribute(
+        m21El,
+        xmlEl,
+        tag: string,
+        attributeName: string=undefined,
+        { transform=undefined, forceEmpty=false }={}
+    ) {
         if (attributeName === undefined) {
             attributeName = common.hyphenToCamelCase(tag);
         }
@@ -235,11 +253,16 @@ export class XMLExporterBase {
         return subElement;
     }
 
-    seta(m21El, xmlEl, tag, options) {
-        return this._setTagTextFromAttribute(m21El, xmlEl, tag, options);
+    seta(m21El, xmlEl, tag, options={}) {
+        return this._setTagTextFromAttribute(m21El, xmlEl, tag, undefined, options);
     }
 
-    _setAttributeFromAttribute(m21El, xmlEl, xmlAttributeName, { attributeName, transform }={}) {
+    _setAttributeFromAttribute(
+        m21El,
+        xmlEl,
+        xmlAttributeName,
+        { attributeName=undefined, transform=undefined }={}
+    ) {
         if (attributeName === undefined) {
             attributeName = common.hyphenToCamelCase(xmlAttributeName);
         }
@@ -253,7 +276,7 @@ export class XMLExporterBase {
         xmlEl.setAttribute(xmlAttributeName, value.toString());
     }
 
-    setb(m21El, xmlEl, xmlAttributeName, options) {
+    setb(m21El, xmlEl, xmlAttributeName, options={}) {
         return this._setAttributeFromAttribute(m21El, xmlEl, xmlAttributeName, options);
     }
 
@@ -342,6 +365,20 @@ export class XMLExporterBase {
  * @extends music21.musicxml.m21ToXml.XMLExporterBase
  */
 export class ScoreExporter extends XMLExporterBase {
+    stream: Score;
+    xmIdentification = undefined;
+    scoreMetadata = undefined;
+    spannerBundle = undefined;
+    meterStream = undefined;
+    scoreLayouts = undefined;
+    firstScoreLayout = undefined;
+    highestTime = 0.0;
+    refStreamOrTimeRange = [0.0, this.highestTime];
+    partExporterList = [];
+    instrumentList = [];
+    midiChannelList = [];
+    parts = [];
+
     constructor(score) {
         super();
         if (score === undefined) {
@@ -351,18 +388,6 @@ export class ScoreExporter extends XMLExporterBase {
         }
         this.xmlRoot = this.doc.createElement('score-partwise');
         this.xmlRoot.setAttribute('version', _musicxmlVersion);
-        this.xmIdentification = undefined;
-        this.scoreMetadata = undefined;
-        this.spannerBundle = undefined;
-        this.meterStream = undefined;
-        this.scoreLayouts = undefined;
-        this.firstScoreLayout = undefined;
-        this.highestTime = 0.0;
-        this.refStreamOrTimeRange = [0.0, this.highestTime];
-        this.partExporterList = [];
-        this.instrumentList = [];
-        this.midiChannelList = [];
-        this.parts = [];
     }
 
     parse() {
@@ -402,7 +427,7 @@ export class ScoreExporter extends XMLExporterBase {
             }
             this.refStreamOrTimeRange = [0.0, this.highestTime];
         }
-        this.parts = streamOfStreams;
+        this.parts = streamOfStreams.stream();
     }
 
     // TODO(msc): setMeterStream
@@ -468,7 +493,18 @@ export class ScoreExporter extends XMLExporterBase {
  * @extends music21.musicxml.m21ToXml.XMLExporterBase
  */
 export class PartExporter extends XMLExporterBase {
-    constructor(partObj, { parent }={}) {
+    stream: Part;
+    parent: ScoreExporter;
+    meterStream: Stream;
+    refStreamOrTimeRange;
+    midiChannelList;
+    instrumentStream;
+    firstInstrumentObject;
+    lastDivisions: number;
+    spannerBundle;
+    xmlPartId;
+
+    constructor(partObj, { parent=undefined }={}) {
         super();
         this.stream = partObj;
         this.parent = parent;
@@ -548,19 +584,25 @@ const divisionsPerQuarter = 32 * 3 * 3 * 5 * 7; // TODO(msc): create defaults.js
  * @extends music21.musicxml.m21ToXml.XMLExporterBase
  */
 export class MeasureExporter extends XMLExporterBase {
-    constructor(measureObj, { parent }={}) {
+    stream: Measure;
+    parent: PartExporter;
+    currentDivisions: number = divisionsPerQuarter;
+    transpositionInterval = undefined;
+    mxTranspose = undefined;
+    measureOffsetStart = 0.0;
+    offsetInMeasure = 0.0;
+    currentVoiceId = undefined;
+
+    rbSpanners = [];
+    spannerBundle;
+    objectSpannerBundle;
+
+
+    constructor(measureObj, { parent=undefined }={}) {
         super();
         this.stream = measureObj;
         this.parent = parent;
         this.xmlRoot = this.doc.createElement('measure');
-        this.currentDivisions = divisionsPerQuarter;
-        this.transpositionInterval = undefined;
-        this.mxTranspose = undefined;
-        this.measureOffsetStart = 0.0;
-        this.offsetInMeasure = 0.0;
-        this.currentVoiceId = undefined;
-
-        this.rbSpanners = [];
         this.spannerBundle = parent.spannerBundle;
 
         this.objectSpannerBundle = this.spannerBundle;
@@ -675,7 +717,7 @@ export class MeasureExporter extends XMLExporterBase {
      * @param chordParent
      * @returns {Node}
      */
-    noteToXml(n, { noteIndexInChord=0, chordParent }={}) {
+    noteToXml(n: GeneralNote, { noteIndexInChord=0, chordParent=undefined }={}) {
         const addChordTag = (noteIndexInChord !== 0);
         let chordOrN;
         if (chordParent === undefined) {
@@ -697,8 +739,8 @@ export class MeasureExporter extends XMLExporterBase {
         if (addChordTag) {
             this.subElement(mxNote, 'chord');
         }
-        if (n.pitch !== undefined) {
-            const mxPitch = this.pitchToXml(n.pitch);
+        if (n.isNote) {
+            const mxPitch = this.pitchToXml((<Note> n).pitch);
             mxNote.appendChild(mxPitch);
         } else {
             this.subElement(mxNote, 'rest');
@@ -736,7 +778,7 @@ export class MeasureExporter extends XMLExporterBase {
         }
 
         // components.
-        if (n.pitch !== undefined
+        if (n instanceof Note
                 && n.pitch.accidental !== undefined
                 && n.pitch.accidental.displayStatus !== false) {
             const mxAccidental = this.accidentalToMx(n.pitch.accidental);
@@ -752,17 +794,19 @@ export class MeasureExporter extends XMLExporterBase {
         if (!addChordTag
                 && ![undefined, 'unspecified'].includes(chordOrN.stemDirection)) {
             stemDirection = chordOrN.stemDirection;
-        } else if (chordOrN !== n
+        } else if (
+            chordOrN !== n
+                && n instanceof Note
                 && ![undefined, 'unspecified'].includes(n.stemDirection)) {
             stemDirection = n.stemDirection;
         }
         if (stemDirection !== undefined) {
             const mxStem = this.subElement(mxNote, 'stem');
-            let sdtext = stemDirection;
-            if (sdtext === 'noStem') {
-                sdtext = 'none';
+            let sdText = stemDirection;
+            if (sdText === 'noStem') {
+                sdText = 'none';
             }
-            mxStem.innerHTML = sdtext;
+            mxStem.innerHTML = sdText;
             // TODO: stemStyle
         }
 
@@ -795,7 +839,13 @@ export class MeasureExporter extends XMLExporterBase {
     chordToXml(c) {
         const mxNoteList = [];
         for (const [i, n] of Array.from(c).entries()) {
-            const mxNote = this.noteToXml(n, { noteIndexInChord: i, chordParent: c });
+            const mxNote = this.noteToXml(
+                <Note> n,
+                {
+                    noteIndexInChord: i,
+                    chordParent: c,
+                }
+            );
             mxNoteList.push(mxNote);
         }
         return mxNoteList;

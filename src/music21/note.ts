@@ -235,6 +235,8 @@ export class Lyric extends prebase.ProtoM21Object {
 export class GeneralNote extends base.Music21Object {
     static get className() { return 'music21.note.GeneralNote'; }
 
+    isNote: boolean = false;
+    isRest: boolean = false;
     isChord: boolean = false;
     volume: number = 60;
     expressions = [];
