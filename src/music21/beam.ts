@@ -39,23 +39,24 @@ export const beamableDurationTypes = [
  *
  * @class Beam
  * @memberof music21.beam
- * @extends music21.prebase.ProtoM21Object
  * @param {string} type - "start", "stop", "continue", "partial"
  * @param {string} direction - only needed for partial beams: "left" or "right"
- * @property {int|undefined} number - which beam line does this refer to;
+ * @property {number|undefined} number - which beam line does this refer to;
  *     8th = 1, 16th = 2, etc.
  * @property {number|undefined} independentAngle - the angle of this beam
  *     if it is different than others (feathered beams)
  */
 export class Beam extends prebase.ProtoM21Object {
     static get className() { return 'music21.beam.Beam'; }
+    type: string;
+    direction: string|undefined;
+    number: number;
+    independentAngle: number;
 
-    constructor(type, direction) {
+    constructor(type, direction=undefined) {
         super();
         this.type = type;
         this.direction = direction;
-        this.independentAngle = undefined;
-        this.number = undefined;
     }
 }
 
@@ -64,15 +65,14 @@ export class Beam extends prebase.ProtoM21Object {
  *
  * @class Beams
  * @memberof music21.beam
- * @extends music21.prebase.ProtoM21Object
- * @property {Array<music21.beam.Beam>} beamsList - a list of Beam objects
- * @property {Boolean} [feathered=false] - is this a feathered beam.
- * @property {int} length - length of beamsList
+ * @property {Beam[]} beamsList - a list of Beam objects
+ * @property {boolean} [feathered=false] - is this a feathered beam.
+ * @property {number} length - length of beamsList
  */
 export class Beams extends prebase.ProtoM21Object {
     static get className() { return 'music21.beam.Beams'; }
 
-    static naiveBeams(srcList) {
+    static naiveBeams(srcList): Beams[] {
         const beamsList = [];
         for (const el of srcList) {
             if (!beamableDurationTypes.includes(el.duration.type)) {
@@ -105,7 +105,7 @@ export class Beams extends prebase.ProtoM21Object {
         return beamsList;
     }
 
-    static sanitizePartialBeams(beamsList) {
+    static sanitizePartialBeams(beamsList: Beams[]): Beams[] {
         for (let i = 0; i < beamsList.length; i++) {
             if (beamsList[i] === undefined) {
                 continue;
@@ -139,7 +139,7 @@ export class Beams extends prebase.ProtoM21Object {
         return beamsList;
     }
 
-    static mergeConnectingPartialBeams(beamsList) {
+    static mergeConnectingPartialBeams(beamsList: Beams[]): Beams[] {
         for (let i = 0; i < beamsList.length - 1; i++) {
             const bThis = beamsList[i];
             const bNext = beamsList[i + 1];
@@ -207,26 +207,22 @@ export class Beams extends prebase.ProtoM21Object {
         return beamsList;
     }
 
+    beamsList: Beam[] = [];
+    feathered: boolean = false;
 
-    constructor() {
-        super();
-        this.beamsList = [];
-        this.feathered = false;
-    }
-
-    get length() {
+    get length(): number {
         return this.beamsList.length;
     }
 
     /**
-     * Append a new {@link music21.beam.Beam} object to this Beams, automatically creating the Beam
+     * Append a new {@link Beam} object to this Beams, automatically creating the Beam
      *   object and incrementing the number count.
      *
-     * @param {string} type - the type (passed to {@link music21.beam.Beam})
+     * @param {string} type - the type (passed to {@link Beam})
      * @param {string} [direction=undefined] - the direction if type is "partial"
-     * @returns {music21.beam.Beam} newly appended object
+     * @returns {Beam} newly appended object
      */
-    append(type, direction) {
+    append(type: string, direction=undefined): Beam {
         const obj = new Beam(type, direction);
         obj.number = this.beamsList.length + 1;
         this.beamsList.push(obj);
@@ -246,11 +242,11 @@ export class Beams extends prebase.ProtoM21Object {
      * Both "eighth" and "8th" work.  Adding more than six beams (i.e. things
             like 512th notes) raises an error.
 
-     * @param {string|int} level - either a string like "eighth" or a number like 1 (="eighth")
+     * @param {string|number} level - either a string like "eighth" or a number like 1 (="eighth")
      * @param {string} [type] - type to fill all beams to.
      * @returns {this}
      */
-    fill(level, type) {
+    fill(level: string|number, type: string|undefined = undefined): Beams {
         this.beamsList = [];
         let count = 1;
         if (
@@ -273,12 +269,9 @@ export class Beams extends prebase.ProtoM21Object {
             throw new Music21Exception('cannot fill beams for level ' + level);
         }
         for (let i = 1; i <= count; i++) {
-            const obj = new Beam();
+            const obj = new Beam(type);
             obj.number = i;
             this.beamsList.push(obj);
-        }
-        if (type !== undefined) {
-            this.setAll(type);
         }
         return this;
     }
@@ -286,10 +279,10 @@ export class Beams extends prebase.ProtoM21Object {
     /**
      * Get the beam with the given number or throw an exception.
      *
-     * @param {int} number - the beam number to retrieve (usually one less than the position in `.beamsList`)
-     * @returns {music21.beam.Beam|undefined}
+     * @param {number} number - the beam number to retrieve (usually one less than the position in `.beamsList`)
+     * @returns {Beam|undefined}
      */
-    getByNumber(number) {
+    getByNumber(number: number): Beam|undefined {
         if (!this.getNumbers().includes(number)) {
             throw new Music21Exception('beam number error: ' + number);
         }
@@ -304,9 +297,9 @@ export class Beams extends prebase.ProtoM21Object {
     /**
      * Get an Array of all the numbers for the beams
      *
-     * @returns {Array<int>} all the numbers
+     * @returns {Array<number>} all the numbers
      */
-    getNumbers() {
+    getNumbers(): number[] {
         const numbers = [];
         for (const thisBeam of this.beamsList) {
             numbers.push(thisBeam.number);
@@ -318,11 +311,14 @@ export class Beams extends prebase.ProtoM21Object {
      * Returns the type + "-" + direction (if direction is defined)
      * for the beam with the given number.
      *
-     * @param {int} number
-     * @returns {music21.beam.Beam|undefined}
+     * @param {number} number
+     * @returns {string|undefined}
      */
-    getTypeByNumber(number) {
+    getTypeByNumber(number: number): string|undefined {
         const beamObj = this.getByNumber(number);
+        if (beamObj === undefined) {
+            return undefined;
+        }
         if (beamObj.direction === undefined) {
             return beamObj.type;
         } else {
@@ -336,7 +332,7 @@ export class Beams extends prebase.ProtoM21Object {
      *
      * @returns {Array<string>} all the types
      */
-    getTypes() {
+    getTypes(): string[] {
         const types = [];
         for (let i = 0; i < this.length; i++) {
             types.push(this.beamsList[i].type);
@@ -345,13 +341,13 @@ export class Beams extends prebase.ProtoM21Object {
     }
 
     /**
-     * Set all the {@link music21.beam.Beam} objects to a given type/direction
+     * Set all the {@link Beam} objects to a given type/direction
      *
      * @param {string} type - beam type
      * @param {string} [direction] - beam direction
      * @returns {this}
      */
-    setAll(type, direction) {
+    setAll(type: string, direction: string = undefined): Beams {
         if (validBeamTypes[type] === undefined) {
             throw new Music21Exception('invalid beam type: ' + type);
         }
@@ -364,14 +360,18 @@ export class Beams extends prebase.ProtoM21Object {
     }
 
     /**
-     * Set the {@link music21.beam.Beam} object specified by `number` to a given type/direction
+     * Set the {@link Beam} object specified by `number` to a given type/direction
      *
-     * @param {int} number
+     * @param {number} number
      * @param {string} type
      * @param {string} [direction]
      * @returns {this}
      */
-    setByNumber(number, type, direction) {
+    setByNumber(
+        number: number,
+        type: string,
+        direction: string|undefined = undefined
+    ): Beams {
         if (direction === undefined) {
             const splitIt = type.split('-');
             type = splitIt[0];
