@@ -254,14 +254,16 @@ export function TinyNotation(textIn) {
         }
         for (let i = 0; i < optionalScore.parts.length; i++) {
             const innerPart = optionalScore.parts.get(i);
-            innerPart.clef = clef.bestClef(innerPart);
+            const innerPartClef = clef.bestClef(innerPart);
             const innerMeasure = innerPart.getElementsByClass('Measure').get(0);
-            innerMeasure.clef = innerPart.clef;
+            if (innerMeasure !== undefined) {
+                innerMeasure.insert(0, innerPartClef);
+            }
         }
         returnObject = optionalScore;
     } else {
-        p.clef = clef.bestClef(p);
-        p.getElementsByClass('Measure').get(0).clef = p.clef;
+        const bestClef = clef.bestClef(p);
+        p.getElementsByClass('Measure').get(0).insert(0, bestClef);
         returnObject = p;
     }
     return returnObject;

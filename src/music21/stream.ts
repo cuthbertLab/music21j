@@ -179,12 +179,14 @@ export class Stream extends base.Music21Object {
         this._cloneCallbacks.activeVexflowNote = false;
         this._cloneCallbacks.storedVexflowStave = false;
         this._cloneCallbacks._offsetDict = false;
-        this._cloneCallbacks._renderOptions = function cloneRenderOptions(
+        this._cloneCallbacks.renderOptions = function cloneRenderOptions(
             keyName,
             newObj,
             self
         ) {
-            newObj[keyName] = common.merge({}, self.renderOptions);
+            const newRenderOptions = JSON.parse(JSON.stringify(self.renderOptions));
+            newRenderOptions.events = {...self.renderOptions.events};
+            newObj.renderOptions = newRenderOptions;
         };
 
         this._cloneCallbacks._elements = function cloneElements(
@@ -579,6 +581,9 @@ export class Stream extends base.Music21Object {
      * function signature.
      */
     get elements(): base.Music21Object[]|Stream {
+        if (!this.isSorted) {
+            this.sort();
+        }
         return this._elements;
     }
 
@@ -2152,15 +2157,11 @@ export class Stream extends base.Music21Object {
      *
      */
     appendNewDOM(
-        appendElement: JQuery|HTMLElement,
+        appendElement: JQuery|HTMLElement = document.body,
         width: number|string = undefined,
         height: number|string = undefined,
         elementType: string = 'svg'
     ) {
-        if (appendElement === undefined) {
-            appendElement = document.body;
-        }
-
         // noinspection JSMismatchedCollectionQueryUpdate
         let $appendElement: JQuery<HTMLElement>;
         if (appendElement instanceof $) {
