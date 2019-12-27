@@ -296,34 +296,36 @@ export class Stream extends base.Music21Object {
         return highestTime;
     }
 
-    get semiFlat() {
+    get semiFlat(): this {
         return this._getFlatOrSemiFlat(true);
     }
 
-    get flat() {
+    get flat(): this {
         return this._getFlatOrSemiFlat(false);
     }
 
-    _getFlatOrSemiFlat(retainContainers) {
+    _getFlatOrSemiFlat(retainContainers): this {
         const newSt = this.clone(false);
+        // console.log('done cloning...');
         if (!this.isFlat) {
             newSt.elements = [];
-            for (const el of this) {
-                if (el.isStream) {
-                    if (retainContainers) {
-                        newSt.append(el);
-                    }
-                    const offsetShift = this.elementOffset(el);
-                    // console.log('offsetShift', offsetShift, el.classes[el.classes.length -1]);
-                    const elFlat = el._getFlatOrSemiFlat(retainContainers);
-                    for (const elFlatElement of elFlat) {
-                        // offset should NOT be null because already in Stream
-                        const elFlatElementOffset = elFlat.elementOffset(elFlatElement);
-                        newSt.insert(elFlatElementOffset + offsetShift, elFlatElement);
-                    }
-                } else {
-                    newSt.insert(this.elementOffset(el), el);
+            const ri = new iterator.RecursiveIterator(this, {
+                restoreActiveSites: false,
+                includeSelf: false,
+                ignoreSorting: true,
+            });
+            for (const e of ri) {
+                if (e.isStream && !retainContainers) {
+                    continue;
                 }
+                newSt.insert(
+                    ri.currentHierarchyOffset(),
+                    e,
+                    {
+                        setActiveSite: false,
+                        ignoreSort: true,
+                    }
+                );
             }
         }
         if (!retainContainers) {
@@ -332,7 +334,7 @@ export class Stream extends base.Music21Object {
         } else {
             this.coreElementsChanged();
         }
-        return newSt;
+        return newSt as this;
     }
 
     get notes() {
@@ -502,7 +504,7 @@ export class Stream extends base.Music21Object {
     }
 
     get clef() {
-        return this.getSpecialContext('clef', true);
+        return this.getSpecialContext('clef', false);
     }
 
     set clef(newClef) {
@@ -516,7 +518,7 @@ export class Stream extends base.Music21Object {
     }
 
     get keySignature() {
-        return this.getSpecialContext('keySignature', true);
+        return this.getSpecialContext('keySignature', false);
     }
 
     set keySignature(newKeySignature) {
@@ -530,7 +532,7 @@ export class Stream extends base.Music21Object {
     }
 
     get timeSignature() {
-        return this.getSpecialContext('timeSignature', true);
+        return this.getSpecialContext('timeSignature', false);
     }
 
     set timeSignature(newTimeSignature) {
@@ -1908,12 +1910,16 @@ export class Stream extends base.Music21Object {
         } else {
             const rendOp = this.renderOptions;
             totalLength = 30 * this.notesAndRests.length;
-            totalLength += rendOp.displayClef ? 30 : 0;
-            totalLength
-                += rendOp.displayKeySignature && this.getSpecialContext('keySignature')
-                    ? this.getSpecialContext('keySignature').width
-                    : 0;
-            totalLength += rendOp.displayTimeSignature ? 30 : 0;
+            if (rendOp.displayClef) {
+                totalLength += 30;
+            }
+            if (rendOp.displayKeySignature) {
+                const ks = this.getSpecialContext('keySignature');
+                totalLength += ks?.width ?? 0;
+            }
+            if (rendOp.displayTimeSignature) {
+                totalLength += 30;
+            }
             // totalLength += rendOp.staffPadding;
             return totalLength;
         }

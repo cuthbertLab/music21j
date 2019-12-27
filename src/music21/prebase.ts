@@ -103,25 +103,15 @@ export class ProtoM21Object {
      * n2.duration.quarterLength == 4; // true
      * n2 === n1; // false
      */
-    clone(deep=true, memo=undefined, unused_junk_call=false): this {
-        if (unused_junk_call) {
-            // I cannot get Typescript to understand that we are returning
-            // a new object of type this...but by not documenting the
-            // return value and having this junk first return, I am tricking
-            // it into thinking so.
-            return Object.assign(
-                Object.create(Object.getPrototypeOf(this)),
-                this
-            );
-        }
-
+    clone(deep=true, memo=undefined): this {
+        // console.log(`cloning ${this + ''} as ${deep ? 'deep' : 'shallow'}`);
         const classConstructor = <Constructable<ProtoM21Object>> this.constructor;
         const ret = <Record<string, any>> new classConstructor();
         if (memo === undefined) {
             memo = new WeakMap();
         }
 
-        // todo: do Arrays work?
+        // TODO(msc): test if Arrays work?
         for (const key in this) {
             // not that we ONLY copy the keys in Ret -- it's easier that way.
             if ({}.hasOwnProperty.call(this, key) === false) {

@@ -24,6 +24,7 @@ import * as clef from './clef';
 import * as duration from './duration';
 
 // imports for typechecking only
+import * as note from './note';
 import * as stream from './stream';
 
 const _clefSingleton = new clef.TrebleClef();
@@ -436,14 +437,14 @@ export class Renderer {
      * @param {music21.stream.Stream} p - a Part or similar object
      */
     prepareTies(p: stream.Stream) {
-        const pf = p.flat.notesAndRests;
+        const pf = <note.GeneralNote[]> Array.from(p.recurse().notesAndRests);
         // console.log('newSystemsAt', this.systemBreakOffsets);
         for (let i = 0; i < pf.length - 1; i++) {
-            const thisNote = pf.get(i);
+            const thisNote = pf[i];
             if (thisNote.tie === undefined || thisNote.tie.type === 'stop') {
                 continue;
             }
-            const nextNote = pf.get(i + 1);
+            const nextNote = pf[i + 1];
             let onSameSystem = true;
             // this.systemBreakOffsets.length will be 0 for a flat score
             for (let sbI = 0; sbI < this.systemBreakOffsets.length; sbI++) {

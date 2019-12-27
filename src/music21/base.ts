@@ -413,7 +413,14 @@ export class Music21Object extends prebase.ProtoM21Object {
 
             // let offset = this.getOffsetBySite(siteObj);
             // followDerivation;
-            const offsetInStream = siteObj.elementOffset(this);
+            let offsetInStream: number;
+            try {
+                offsetInStream = siteObj.elementOffset(this);
+            } catch (e) {
+                console.error(`${this + ''} is not in ${siteObj + ''}`);
+                continue;
+            }
+
             const newOffset = offsetInStream + params.offsetAppend;
             const positionInStream = newOffset;
             const recursionType = siteObj.recursionType;

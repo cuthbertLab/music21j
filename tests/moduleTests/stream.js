@@ -269,6 +269,13 @@ export default function tests() {
             4.0,
             '.flat.flat does not change offset'
         );
+
+        const semiFlatP = p.semiFlat;
+        assert.equal(
+            semiFlatP.length,
+            pf.length + 2,
+            'SemiFlat is same as flat + 2'
+        );
     });
 
     test('music21.stream.Stream insertAndShift', assert => {
