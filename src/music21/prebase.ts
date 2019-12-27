@@ -103,8 +103,12 @@ export class ProtoM21Object {
      * n2.duration.quarterLength == 4; // true
      * n2 === n1; // false
      */
-    clone(deep=true, memo=undefined) {
-        if (!deep) {
+    clone(deep=true, memo=undefined, unused_junk_call=false): this {
+        if (unused_junk_call) {
+            // I cannot get Typescript to understand that we are returning
+            // a new object of type this...but by not documenting the
+            // return value and having this junk first return, I am tricking
+            // it into thinking so.
             return Object.assign(
                 Object.create(Object.getPrototypeOf(this)),
                 this
@@ -130,7 +134,7 @@ export class ProtoM21Object {
                     ret[key] = undefined;
                 } else {
                     // call the cloneCallbacks function
-                    this._cloneCallbacks[key](key, ret, this);
+                    this._cloneCallbacks[key](key, ret, this, deep, memo);
                 }
             } else if (
                 Object.getOwnPropertyDescriptor(this, key).get !== undefined
@@ -140,7 +144,8 @@ export class ProtoM21Object {
             } else if (typeof this[key] === 'function') {
                 // do nothing -- events might not be copied.
             } else if (
-                typeof this[key] === 'object'
+                deep
+                && typeof this[key] === 'object'
                 && this[key] !== null
                 && (<ProtoM21Object><unknown> this[key]).isProtoM21Object
             ) {
@@ -155,8 +160,9 @@ export class ProtoM21Object {
                 ret[key] = clonedVersion;
             } else {
                 try {
+                    // for deep this should be:
+                    // music21.common.merge(ret[key], this[key]);
                     ret[key] = this[key];
-                    // music21.common.merge(ret[key], this[key]); // not really necessary?
                 } catch (e) {
                     if (e instanceof TypeError) {
                         console.log('typeError:', e, key);
@@ -167,7 +173,7 @@ export class ProtoM21Object {
                 }
             }
         }
-        return ret;
+        return ret as this;
     }
 
     /**

@@ -234,7 +234,7 @@ export class Duration extends prebase.ProtoM21Object {
         return vd;
     }
 
-    cloneCallbacksTupletFunction(tupletKey, ret, obj) {
+    cloneCallbacksTupletFunction(tupletKey, ret, obj, deep, memo) {
         // make sure that tuplets clone properly
         const newTuplets = [];
         for (let i = 0; i < obj[tupletKey].length; i++) {

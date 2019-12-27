@@ -182,8 +182,15 @@ export class Stream extends base.Music21Object {
         this._cloneCallbacks.renderOptions = function cloneRenderOptions(
             keyName,
             newObj,
-            self
+            self,
+            deep: boolean,
+            memo
         ) {
+            if (!deep) {
+                newObj.renderOptions = self.renderOptions;
+                return;
+            }
+
             const newRenderOptions = JSON.parse(JSON.stringify(self.renderOptions));
             newRenderOptions.events = {...self.renderOptions.events};
             newObj.renderOptions = newRenderOptions;
@@ -192,14 +199,20 @@ export class Stream extends base.Music21Object {
         this._cloneCallbacks._elements = function cloneElements(
             keyName,
             newObj,
-            self
+            self,
+            deep,
+            memo,
         ) {
+            if (!deep) {
+                newObj.elements = self;
+                return;
+            }
             newObj.clear();
             for (let j = 0; j < self._elements.length; j++) {
                 const el = self._elements[j];
                 // console.log('cloning el: ', el.name);
                 // TODO: get memo back here somehow.
-                const elCopy = el.clone(true);
+                const elCopy = el.clone(true, memo);
                 newObj._elements[j] = elCopy;
                 newObj._offsetDict.set(elCopy, self._offsetDict.get(el));
                 elCopy.activeSite = newObj;
@@ -652,27 +665,6 @@ export class Stream extends base.Music21Object {
         this._offsetDict = new WeakMap();
         this.isFlat = true;
         this.isSorted = true;
-    }
-
-    /* override protoM21Object.clone() */
-    clone(deep=true, memo=undefined) {
-        if (!deep) {
-            const post = Object.assign(
-                Object.create(Object.getPrototypeOf(this)),
-                this
-            );
-            post.elements = this.elements;
-            post._offsetDict = new WeakMap();
-            post.renderOptions = common.merge({}, this.renderOptions);
-            for (const el of this._elements) {
-                post._offsetDict.set(el, this._offsetDict.get(el));
-            }
-            return post;
-        }
-
-        const ret = super.clone(deep, memo);
-        ret.coreElementsChanged();
-        return ret;
     }
 
     coreElementsChanged({

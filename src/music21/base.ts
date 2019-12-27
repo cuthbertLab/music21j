@@ -77,10 +77,13 @@ export class Music21Object extends prebase.ProtoM21Object {
         this.id = sites.getId(this);
         this.sites = new sites.Sites();
         this._cloneCallbacks._activeSite = false;
+        this._cloneCallbacks._activeSiteStoredOffset = false;
         this._cloneCallbacks._derivation = function Music21Music21Object_cloneCallbacks_derivation(
             keyName,
             newObj,
-            self
+            self,
+            deep,
+            memo
         ) {
             const newDerivation = new derivation.Derivation(newObj);
             newDerivation.origin = self;
@@ -92,7 +95,9 @@ export class Music21Object extends prebase.ProtoM21Object {
         this._cloneCallbacks.sites = function Music21Object_cloneCallbacks_sites(
             keyName,
             newObj,
-            self
+            self,
+            deep,
+            memo
         ) {
             newObj.sites = new sites.Sites();
         };
@@ -296,75 +301,6 @@ export class Music21Object extends prebase.ProtoM21Object {
         className,
         options={}
     ) {
-        const payloadExtractor = function payloadExtractor(
-            useSite,
-            flatten,
-            positionStart,
-            getElementMethod,
-            classList
-        ) {
-            // this should all be done as a tree...
-            // do not use .flat or .semiFlat so as not
-            // to create new sites.
-
-            // VERY HACKY...
-            let lastElement;
-            for (let i = 0; i < useSite.length; i++) {
-                const thisElement = useSite._elements[i];
-                const indexOffset = useSite.elementOffset(thisElement);
-                const matchClass: boolean = thisElement.isClassOrSubclass(classList);
-                if (flatten === false && !matchClass) {
-                    continue;
-                } else if (!thisElement.isStream && !matchClass) {
-                    continue;
-                }
-                // is a stream or an element of the appropriate class...
-                // first check normal elements
-                if (getElementMethod.includes('Before')
-                        && indexOffset >= positionStart) {
-                    if (getElementMethod.includes('At')
-                            && lastElement === undefined) {
-                        lastElement = thisElement;
-                        try {
-                            lastElement.activeSite = useSite;
-                        } catch (e) {
-                            // do nothing... should not happen.
-                        }
-                    } else if (lastElement !== undefined
-                                && lastElement.isClassOrSubclass(classList)) {
-                        return lastElement;
-                    } else if (matchClass) {
-                        return thisElement;
-                    }
-                } else {
-                    lastElement = thisElement;
-                }
-                if (getElementMethod.includes('After')
-                        && indexOffset > positionStart
-                        && matchClass) {
-                    return thisElement;
-                }
-                // now check stream... already filtered out flatten == false;
-                if (thisElement.isStream) {
-                    const potentialElement = payloadExtractor(
-                        thisElement,
-                        flatten,
-                        positionStart + indexOffset,
-                        getElementMethod,
-                        classList
-                    );
-                    if (potentialElement !== undefined) {
-                        return potentialElement;
-                    }
-                }
-            }
-            if (lastElement !== undefined && lastElement.isClassOrSubclass(classList)) {
-                return lastElement;
-            } else {
-                return undefined;
-            }
-        };
-
         const params = {
             getElementMethod: 'getElementAtOrBefore',
             sortByCreationTime: false,
@@ -388,18 +324,13 @@ export class Music21Object extends prebase.ProtoM21Object {
             returnSortTuples: true,
             sortByCreationTime,
         })) {
-            if (
-                getElementMethod.includes('At')
-                && site.isClassOrSubclass(className)
-            ) {
+            if (getElementMethod.includes('At')
+                    && site.isClassOrSubclass(className)) {
                 return site;
             }
 
-            if (
-                searchType === 'elementsOnly'
-                || searchType === 'elementsFirst'
-            ) {
-                const contextEl = payloadExtractor(
+            if (searchType === 'elementsOnly' || searchType === 'elementsFirst') {
+                const contextEl = getContextByClassPayloadExtractor(
                     site,
                     false,
                     positionStart,
@@ -407,27 +338,18 @@ export class Music21Object extends prebase.ProtoM21Object {
                     className
                 );
                 if (contextEl !== undefined) {
-                    try {
-                        contextEl.activeSite = site;
-                    } catch (e) {
-                        // do nothing.
-                    }
                     return contextEl;
                 }
             } else if (searchType !== 'elementsOnly') {
-                if (
-                    getElementMethod.includes('After')
-                    && (className === undefined
-                        || site.isClassOrSubclass(className))
-                ) {
-                    if (
-                        !getElementMethod.includes('NotSelf')
-                        && this !== site
-                    ) {
+                if (getElementMethod.includes('After')
+                        && (className === undefined
+                            || site.isClassOrSubclass(className))) {
+                    if (!getElementMethod.includes('NotSelf')
+                        && this !== site) {
                         return site;
                     }
                 }
-                const contextEl = payloadExtractor(
+                const contextEl = getContextByClassPayloadExtractor(
                     site,
                     'semiFlat',
                     positionStart,
@@ -435,22 +357,13 @@ export class Music21Object extends prebase.ProtoM21Object {
                     className
                 );
                 if (contextEl !== undefined) {
-                    try {
-                        contextEl.activeSite = site;
-                    } catch (e) {
-                        // do nothing.
-                    }
                     return contextEl;
                 }
-                if (
-                    getElementMethod.includes('Before')
+                if (getElementMethod.includes('Before')
                     && (className === undefined
-                        || site.isClassOrSubclass(className))
-                ) {
-                    if (
-                        !getElementMethod.includes('NotSelf')
-                        || this !== site
-                    ) {
+                        || site.isClassOrSubclass(className))) {
+                    if (!getElementMethod.includes('NotSelf')
+                           || this !== site) {
                         return site;
                     }
                 }
@@ -552,6 +465,80 @@ export class Music21Object extends prebase.ProtoM21Object {
         }
     }
 }
+
+
+function getContextByClassPayloadExtractor(
+    useSite: Stream,
+    flatten: boolean|string,  // true, false, or semiflat
+    positionStart: number,
+    getElementMethod: string,
+    classList: string[]
+) {
+    // this should all be done as a tree...
+    // do not use .flat or .semiFlat so as not
+    // to create new sites.
+
+    // VERY HACKY...
+    let lastElement;
+    const useSiteElements = useSite.elements; // we want sorting.
+
+    for (let i = 0; i < useSiteElements.length; i++) {
+        const thisElement = useSiteElements[i];
+        const matchClass: boolean = thisElement.isClassOrSubclass(classList);
+        if (flatten === false && !matchClass) {
+            continue;
+        } else if (!thisElement.isStream && !matchClass) {
+            continue;
+        }
+        const indexOffset = useSite.elementOffset(thisElement);
+
+        // thisElement is a stream or has the appropriate class...
+        // first check normal elements
+        if (getElementMethod.includes('Before')
+                && indexOffset >= positionStart) {
+            if (getElementMethod.includes('At')
+                    && lastElement === undefined) {
+                lastElement = thisElement;
+            } else if (lastElement !== undefined
+                        && lastElement.isClassOrSubclass(classList)) {
+                lastElement.activeSite = useSite;
+                return lastElement;
+            } else if (matchClass) {
+                thisElement.activeSite = useSite;
+                return thisElement;
+            }
+        } else {
+            lastElement = thisElement;
+        }
+        if (getElementMethod.includes('After')
+                && indexOffset > positionStart
+                && matchClass) {
+            thisElement.activeSite = useSite;
+            return thisElement;
+        }
+        // now check stream... already filtered out flatten == false;
+        if (thisElement.isStream) {
+            const potentialElement = getContextByClassPayloadExtractor(
+                <Stream> thisElement,
+                flatten,
+                positionStart + indexOffset,
+                getElementMethod,
+                classList
+            );
+            if (potentialElement !== undefined) {
+                return potentialElement;
+            }
+        }
+    }
+    if (lastElement !== undefined && lastElement.isClassOrSubclass(classList)) {
+        lastElement.activeSite = useSite;
+        return lastElement;
+    } else {
+        return undefined;
+    }
+}
+
+
 
 // TODO(msc) -- ElementWrapper
 

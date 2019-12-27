@@ -982,7 +982,7 @@ export class Interval extends prebase.ProtoM21Object {
         return this._noteStart;
     }
 
-    set noteStart(n) {
+    set noteStart(n: note.Note) {
         this._noteStart = n;
         const p1 = n.pitch;
         const p2 = this.transposePitch(p1);
