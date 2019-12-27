@@ -91,7 +91,7 @@ using the python server above).
 
 Version
 --------
-0.9.20 alpha
+0.9.36 alpha
 
 
 License
@@ -115,9 +115,9 @@ Thanks to the following packages (among others) for making music21j possible:
 * [qUnit] - testing framework
 * [jsdoc] - makes this documentation possible
 
-Music21j in the Music and Theater Arts section at [MIT].
 The Python version of music21 was supported by grants from
-the Seaver Institute and the National Endowment for the Humanities.
+the Seaver Institute and the National Endowment for the Humanities
+and supported by the Music and Theater Arts section of [MIT].
 
 
 [MIT]:http://web.mit.edu
@@ -160,6 +160,6 @@ grunt jsdoc
 
 The template is specified in jsdoc-template/jsdoc.conf.json
 
-These docs will be changing as we are moving from rollup to grunt in preparation
+These docs will be changing as we are moving from rollup to wepback in preparation
 for v. 1.0 release.
 

@@ -34,7 +34,7 @@ export function makeLayoutFromScore(
 ) {
     // var systemHeight = score.systemHeight; /* part.show() called... */
     // var systemPadding = score.systemPadding;
-    const parts = score.parts;
+    const parts = score.parts.stream();
     // console.log(parts);
     const numParts = parts.length;
     const partZero = parts.get(0);
@@ -109,7 +109,7 @@ export function makeLayoutFromScore(
             currentLeft = currentRight;
         }
         for (let pNum = 0; pNum < currentStaves.length; pNum++) {
-            currentStaves[pNum].append(parts[pNum].get(i));
+            currentStaves[pNum].append(parts.get(pNum).get(i));
         }
     }
     for (let j = 0; j < currentStaves.length; j++) {

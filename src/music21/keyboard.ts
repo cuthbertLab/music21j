@@ -363,6 +363,8 @@ export class Keyboard {
     /**
      * Handle a click on a given SVG object
      *
+     * TODO(msc) - 2019-Dec -- separate into two calls, one for highlighting and one for playing.
+     *
      * @param {SVGElement} keyRect - the dom object with the keyboard.
      */
     clickHandler(keyRect) {
