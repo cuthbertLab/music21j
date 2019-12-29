@@ -1,5 +1,5 @@
 /**
- * music21j 0.9.35 built on 2019-12-20.
+ * music21j 0.9.37 built on 2019-12-29.
  * Copyright (c) 2013-2019 Michael Scott Cuthbert and cuthbertLab
  * BSD License, see LICENSE
  *
@@ -4822,31 +4822,6 @@ $({ target: 'Array', proto: true, forced: FORCED }, {
 
 /***/ }),
 
-/***/ "./node_modules/core-js/modules/es.array.filter.js":
-/*!*********************************************************!*\
-  !*** ./node_modules/core-js/modules/es.array.filter.js ***!
-  \*********************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-var $ = __webpack_require__(/*! ../internals/export */ "./node_modules/core-js/internals/export.js");
-var $filter = __webpack_require__(/*! ../internals/array-iteration */ "./node_modules/core-js/internals/array-iteration.js").filter;
-var arrayMethodHasSpeciesSupport = __webpack_require__(/*! ../internals/array-method-has-species-support */ "./node_modules/core-js/internals/array-method-has-species-support.js");
-
-// `Array.prototype.filter` method
-// https://tc39.github.io/ecma262/#sec-array.prototype.filter
-// with adding support of @@species
-$({ target: 'Array', proto: true, forced: !arrayMethodHasSpeciesSupport('filter') }, {
-  filter: function filter(callbackfn /* , thisArg */) {
-    return $filter(this, callbackfn, arguments.length > 1 ? arguments[1] : undefined);
-  }
-});
-
-
-/***/ }),
-
 /***/ "./node_modules/core-js/modules/es.array.flat.js":
 /*!*******************************************************!*\
   !*** ./node_modules/core-js/modules/es.array.flat.js ***!
@@ -5332,41 +5307,6 @@ var $entries = __webpack_require__(/*! ../internals/object-to-array */ "./node_m
 $({ target: 'Object', stat: true }, {
   entries: function entries(O) {
     return $entries(O);
-  }
-});
-
-
-/***/ }),
-
-/***/ "./node_modules/core-js/modules/es.object.get-own-property-descriptors.js":
-/*!********************************************************************************!*\
-  !*** ./node_modules/core-js/modules/es.object.get-own-property-descriptors.js ***!
-  \********************************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-var $ = __webpack_require__(/*! ../internals/export */ "./node_modules/core-js/internals/export.js");
-var DESCRIPTORS = __webpack_require__(/*! ../internals/descriptors */ "./node_modules/core-js/internals/descriptors.js");
-var ownKeys = __webpack_require__(/*! ../internals/own-keys */ "./node_modules/core-js/internals/own-keys.js");
-var toIndexedObject = __webpack_require__(/*! ../internals/to-indexed-object */ "./node_modules/core-js/internals/to-indexed-object.js");
-var getOwnPropertyDescriptorModule = __webpack_require__(/*! ../internals/object-get-own-property-descriptor */ "./node_modules/core-js/internals/object-get-own-property-descriptor.js");
-var createProperty = __webpack_require__(/*! ../internals/create-property */ "./node_modules/core-js/internals/create-property.js");
-
-// `Object.getOwnPropertyDescriptors` method
-// https://tc39.github.io/ecma262/#sec-object.getownpropertydescriptors
-$({ target: 'Object', stat: true, sham: !DESCRIPTORS }, {
-  getOwnPropertyDescriptors: function getOwnPropertyDescriptors(object) {
-    var O = toIndexedObject(object);
-    var getOwnPropertyDescriptor = getOwnPropertyDescriptorModule.f;
-    var keys = ownKeys(O);
-    var result = {};
-    var index = 0;
-    var key, descriptor;
-    while (keys.length > index) {
-      descriptor = getOwnPropertyDescriptor(O, key = keys[index++]);
-      if (descriptor !== undefined) createProperty(result, key, descriptor);
-    }
-    return result;
   }
 });
 
@@ -38538,9 +38478,9 @@ module.exports = g;
 
 /***/ }),
 
-/***/ "./src/music21/articulations.js":
+/***/ "./src/music21/articulations.ts":
 /*!**************************************!*\
-  !*** ./src/music21/articulations.js ***!
+  !*** ./src/music21/articulations.ts ***!
   \**************************************/
 /*! exports provided: Articulation, LengthArticulation, DynamicArticulation, PitchArticulation, TimbreArticulation, Accent, StrongAccent, Staccato, Staccatissimo, Spiccato, Marcato, Tenuto */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -38559,10 +38499,17 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Spiccato", function() { return Spiccato; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Marcato", function() { return Marcato; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Tenuto", function() { return Tenuto; });
-/* harmony import */ var vexflow__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vexflow */ "./node_modules/vexflow/releases/vexflow-debug.js");
-/* harmony import */ var vexflow__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(vexflow__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./common */ "./src/music21/common.js");
-/* harmony import */ var _prebase__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./prebase */ "./src/music21/prebase.ts");
+/* harmony import */ var core_js_modules_es_array_iterator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es.array.iterator */ "./node_modules/core-js/modules/es.array.iterator.js");
+/* harmony import */ var core_js_modules_es_array_iterator__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_iterator__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! core-js/modules/web.dom-collections.iterator */ "./node_modules/core-js/modules/web.dom-collections.iterator.js");
+/* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var vexflow__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! vexflow */ "./node_modules/vexflow/releases/vexflow-debug.js");
+/* harmony import */ var vexflow__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(vexflow__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./common */ "./src/music21/common.ts");
+/* harmony import */ var _prebase__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./prebase */ "./src/music21/prebase.ts");
+
+
+
 /**
  * articulations module. See {@link music21.articulations} namespace
  *
@@ -38581,7 +38528,6 @@ __webpack_require__.r(__webpack_exports__);
  *
  * @class Articulation
  * @memberof music21.articulations
- * @extends music21.prebase.ProtoM21Object
  * @property {string} name
  * @property {string} [placement='above']
  * @property {string|undefined} vexflowModifier - the string code to get this accidental in Vexflow
@@ -38589,19 +38535,16 @@ __webpack_require__.r(__webpack_exports__);
  * @property {number} [lengthScale=1.0] - multiplier for the length of a note that this is attached to.
  */
 
-class Articulation extends _prebase__WEBPACK_IMPORTED_MODULE_2__["ProtoM21Object"] {
-  static get className() {
-    return 'music21.articulation.Articulation';
-  }
-
+class Articulation extends _prebase__WEBPACK_IMPORTED_MODULE_4__["ProtoM21Object"] {
   constructor() {
-    super();
-    this.name = undefined;
+    super(...arguments);
     this.placement = 'above';
-    this.vexflowModifier = undefined;
-    this.setPosition = undefined;
     this.dynamicScale = 1.0;
     this.lengthScale = 1.0;
+  }
+
+  static get className() {
+    return 'music21.articulation.Articulation';
   }
   /**
    * Generates a Vex.Flow.Articulation for this articulation.
@@ -38611,7 +38554,7 @@ class Articulation extends _prebase__WEBPACK_IMPORTED_MODULE_2__["ProtoM21Object
 
 
   vexflow() {
-    var vfa = new vexflow__WEBPACK_IMPORTED_MODULE_0___default.a.Flow.Articulation(this.vexflowModifier);
+    var vfa = new vexflow__WEBPACK_IMPORTED_MODULE_2___default.a.Flow.Articulation(this.vexflowModifier);
 
     if (this.setPosition) {
       vfa.setPosition(this.setPosition);
@@ -38626,7 +38569,6 @@ class Articulation extends _prebase__WEBPACK_IMPORTED_MODULE_2__["ProtoM21Object
  *
  * @class LengthArticulation
  * @memberof music21.articulations
- * @extends music21.articulations.Articulation
  */
 
 class LengthArticulation extends Articulation {
@@ -38645,7 +38587,6 @@ class LengthArticulation extends Articulation {
  *
  * @class DynamicArticulation
  * @memberof music21.articulations
- * @extends music21.articulations.Articulation
  */
 
 class DynamicArticulation extends Articulation {
@@ -38664,7 +38605,6 @@ class DynamicArticulation extends Articulation {
  *
  * @class PitchArticulation
  * @memberof music21.articulations
- * @extends music21.articulations.Articulation
  */
 
 class PitchArticulation extends Articulation {
@@ -38683,7 +38623,6 @@ class PitchArticulation extends Articulation {
  *
  * @class TimbreArticulation
  * @memberof music21.articulations
- * @extends music21.articulations.Articulation
  */
 
 class TimbreArticulation extends Articulation {
@@ -38702,7 +38641,6 @@ class TimbreArticulation extends Articulation {
  *
  * @class Accent
  * @memberof music21.articulations
- * @extends music21.articulations.DynamicArticulation
  */
 
 class Accent extends DynamicArticulation {
@@ -38723,7 +38661,6 @@ class Accent extends DynamicArticulation {
  *
  * @class StrongAccent
  * @memberof music21.articulations
- * @extends music21.articulations.Accent
  */
 
 class StrongAccent extends Accent {
@@ -38744,7 +38681,6 @@ class StrongAccent extends Accent {
  *
  * @class Staccato
  * @memberof music21.articulations
- * @extends music21.articulations.LengthArticulation
  */
 
 class Staccato extends LengthArticulation {
@@ -38764,7 +38700,6 @@ class Staccato extends LengthArticulation {
  *
  * @class Staccatissimo
  * @memberof music21.articulations
- * @extends music21.articulations.Staccato
  */
 
 class Staccatissimo extends Staccato {
@@ -38784,7 +38719,6 @@ class Staccatissimo extends Staccato {
  *
  * @class Spiccato
  * @memberof music21.articulations
- * @extends music21.articulations.Staccato
  */
 
 class Spiccato extends Staccato {
@@ -38802,8 +38736,9 @@ class Spiccato extends Staccato {
 /**
  * @class Marcato
  * @memberof music21.articulations
- * @extends music21.articulations.DynamicArticulation
- * @extends music21.articulations.LengthArticulation
+ *
+ * is both a DynamicArticulation and a LengthArticulation
+ * TODO(msc): check that `.classes` reflects that
  */
 
 class Marcato extends DynamicArticulation {
@@ -38813,7 +38748,7 @@ class Marcato extends DynamicArticulation {
 
   constructor() {
     super();
-    _common__WEBPACK_IMPORTED_MODULE_1__["mixin"](LengthArticulation, this);
+    _common__WEBPACK_IMPORTED_MODULE_3__["mixin"](LengthArticulation, this);
     this.name = 'marcato';
     this.vexflowModifier = 'a^';
     this.dynamicScale = 1.7;
@@ -38823,7 +38758,6 @@ class Marcato extends DynamicArticulation {
 /**
  * @class Tenuto
  * @memberof music21.articulations
- * @extends music21.articulations.LengthArticulation
  */
 
 class Tenuto extends LengthArticulation {
@@ -38841,9 +38775,9 @@ class Tenuto extends LengthArticulation {
 
 /***/ }),
 
-/***/ "./src/music21/audioRecording.js":
+/***/ "./src/music21/audioRecording.ts":
 /*!***************************************!*\
-  !*** ./src/music21/audioRecording.js ***!
+  !*** ./src/music21/audioRecording.ts ***!
   \***************************************/
 /*! exports provided: Recorder */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -38867,7 +38801,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_6__);
 /* harmony import */ var core_js_modules_web_url__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! core-js/modules/web.url */ "./node_modules/core-js/modules/web.url.js");
 /* harmony import */ var core_js_modules_web_url__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_url__WEBPACK_IMPORTED_MODULE_7__);
-/* harmony import */ var _audioSearch__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./audioSearch */ "./src/music21/audioSearch.js");
+/* harmony import */ var _audioSearch__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./audioSearch */ "./src/music21/audioSearch.ts");
 
 
 
@@ -38876,23 +38810,15 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-
-/**
- * @namespace music21.audioRecording
- */
 
 /**
  * Adopted from Matt Diamond's recorder.js code MIT License
- *
- * @memberOf music21.audioRecording
  */
 
 class Recorder {
-  /**
-   *
-   * @param {Object} [cfg]
-   */
-  constructor(cfg) {
+  constructor() {
+    var cfg = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+    this.recording = false;
     var config = cfg || {};
     this.bufferLen = config.bufferLen || 4096;
     this.config = config;
@@ -38926,24 +38852,15 @@ class Recorder {
 
 
   initAudio() {
-    this.polyfillNavigator(); // not sure what function signature this wants.
-    // noinspection JSCheckFunctionSignatures
-
-    navigator.getUserMedia({
+    var constraints = {
       audio: {
-        mandatory: {
-          googEchoCancellation: 'false',
-          googAutoGainControl: 'false',
-          googNoiseSuppression: 'false',
-          googHighpassFilter: 'false' // 'echoCancellation': false,
-          // 'autoGainControl': false,
-          // 'noiseSuppression': false,
-          // 'highpassFilter': false,
-
-        },
-        optional: []
-      }
-    }, s => this.audioStreamConnected(s), error => {
+        echoCancellation: false,
+        autoGainControl: false,
+        noiseSuppression: false
+      },
+      video: false
+    };
+    navigator.mediaDevices.getUserMedia(constraints).then(s => this.audioStreamConnected(s)).catch(error => {
       console.log('Error getting audio -- try on google Chrome?');
       console.log(error);
     });
@@ -39025,6 +38942,7 @@ class Recorder {
      *
      * The 'record' command sends no message back.
      */
+    // should be replaced by workers somehow.
 
     this.node.onaudioprocess = e => {
       if (!this.recording) {
@@ -39057,15 +38975,7 @@ class Recorder {
   setNode() {
     var numInputChannels = 2;
     var numOutputChannels = 2;
-
-    if (!this.context.createScriptProcessor) {
-      // Old style BaseAudioContext -- not used anymore.
-      // noinspection JSUnresolvedFunction
-      this.node = this.context.createJavaScriptNode(this.bufferLen, numInputChannels, numOutputChannels);
-    } else {
-      this.node = this.context.createScriptProcessor(this.bufferLen, numInputChannels, numOutputChannels);
-    }
-
+    this.node = this.context.createScriptProcessor(this.bufferLen, numInputChannels, numOutputChannels);
     return this.node;
   }
   /**
@@ -39137,38 +39047,29 @@ class Recorder {
     this.exportWAV(cb, type, true);
   }
 
-  setupDownload(blob, filename, elementId) {
-    elementId = elementId || 'save';
+  setupDownload(blob) {
+    var filename = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'output.wav';
+    var elementId = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'save';
     var url = (window.URL || window.webkitURL).createObjectURL(blob);
     var link = document.getElementById(elementId);
     link.href = url;
-    link.download = filename || 'output.wav';
+    link.download = filename;
   }
-  /**
-   * Polyfills for getUserMedia (requestAnimationFrame polyfills not needed.)
-   * As of 2016 September, only Edge support unprefixed.
-   */
 
-
-  polyfillNavigator() {
-    if (!navigator.getUserMedia) {
-      // polyfill...
-      // noinspection JSUnresolvedVariable
-      navigator.getUserMedia = navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
+  setContextForCanvasInfo(canvasInfo) {
+    if (canvasInfo.canvasContext) {
+      return;
     }
 
-    if (window.AnalyserNode && !window.AnalyserNode.prototype.getFloatTimeDomainData) {
-      var uint8 = new Uint8Array(2048);
+    var canvas = document.getElementById(canvasInfo.id);
 
-      window.AnalyserNode.prototype.getFloatTimeDomainData = function getFloatTimeDomainData(array) {
-        this.getByteTimeDomainData(uint8);
-        var imax = array.length;
-
-        for (var i = 0; i < imax; i++) {
-          array[i] = (uint8[i] - 128) * 0.0078125;
-        }
-      };
+    if (!canvas) {
+      return;
     }
+
+    canvasInfo.width = canvas.width;
+    canvasInfo.height = canvas.height;
+    canvasInfo.canvasContext = canvas.getContext('2d');
   }
   /**
    * Update the Analysers.
@@ -39178,18 +39079,7 @@ class Recorder {
 
 
   updateAnalysers(time) {
-    if (!this.frequencyCanvasInfo.canvasContext) {
-      var canvas = document.getElementById(this.frequencyCanvasInfo.id);
-
-      if (!canvas) {
-        return;
-      }
-
-      this.frequencyCanvasInfo.width = canvas.width;
-      this.frequencyCanvasInfo.height = canvas.height;
-      this.frequencyCanvasInfo.canvasContext = canvas.getContext('2d');
-    } // analyser draw code here
-
+    this.setContextForCanvasInfo(this.frequencyCanvasInfo); // analyser draw code here
 
     var SPACING = 3;
     var BAR_WIDTH = 1;
@@ -39226,19 +39116,8 @@ class Recorder {
   drawWaveformCanvas(buffers) {
     var data = buffers[0]; // one track of stereo recording.
 
-    if (!this.waveformCanvasInfo.context) {
-      var canvas = document.getElementById(this.waveformCanvasInfo.id);
-
-      if (!canvas) {
-        return;
-      }
-
-      this.waveformCanvasInfo.width = canvas.width;
-      this.waveformCanvasInfo.height = canvas.height;
-      this.waveformCanvasInfo.context = canvas.getContext('2d');
-    }
-
-    var context = this.waveformCanvasInfo.context;
+    this.setContextForCanvasInfo(this.waveformCanvasInfo);
+    var context = this.waveformCanvasInfo.canvasContext;
     var step = Math.ceil(data.length / this.waveformCanvasInfo.width);
     var amp = this.waveformCanvasInfo.height / 2;
     context.fillStyle = 'silver';
@@ -39298,9 +39177,9 @@ var recorderWorkerJs = "function recorderWorkerJs() {\n    /**\n     *\n     *  
 
 /***/ }),
 
-/***/ "./src/music21/audioSearch.js":
+/***/ "./src/music21/audioSearch.ts":
 /*!************************************!*\
-  !*** ./src/music21/audioSearch.js ***!
+  !*** ./src/music21/audioSearch.ts ***!
   \************************************/
 /*! exports provided: config, getUserMedia, userMediaStarted, animateLoop, smoothPitchExtraction, sampleCallback, autoCorrelate, midiNumDiffFromFrequency */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -39333,7 +39212,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_7__);
 /* harmony import */ var midicube__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! midicube */ "./node_modules/midicube/releases/midicube.js");
 /* harmony import */ var midicube__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(midicube__WEBPACK_IMPORTED_MODULE_8__);
-/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./common */ "./src/music21/common.js");
+/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./common */ "./src/music21/common.ts");
 
 
 
@@ -39364,65 +39243,48 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
  // functions based on the prototype created by Chris Wilson's MIT License version
 // and on Jordi Bartolome Guillen's audioSearch module for music21
 // TODO(msc): Rewrite as a class -- config is just a class in disguise
-// noinspection JSUnresolvedVariable
 
-/**
- *
- * @type {
- *     {
- *     _audioContext: null,
- *     lastCentsDeviationsDetected: Array<number>,
- *     sampleBuffer: (Float32Array|null),
- *     maxFrequency: number,
- *     lastPitchesDetected: number[],
- *     fftSize: number,
- *     animationFrameCallbackId: number,
- *     AudioContextCaller: *,
- *     currentAnalyser: null,
- *     pitchSmoothingSize: number,
- *     minFrequency: number,
- *     lastPitchClassesDetected: number[]
- *     }
- * }
- */
+class _ConfigSingletonCreator {
+  constructor() {
+    this.fftSize = 2048;
+    this._audioContext = null;
+    this.animationFrameCallbackId = -1;
+    this.sampleBuffer = null;
+    this.minFrequency = 55;
+    this.maxFrequency = 1050;
+    this.pitchSmoothingSize = 40;
+    this.lastPitchClassesDetected = [];
+    this.lastPitchesDetected = [];
+    this.lastCentsDeviationsDetected = [];
+    this.AudioContextCaller = window.AudioContext || window.webkitAudioContext;
+  }
 
-var config = {
-  fftSize: 2048,
-  AudioContextCaller: window.AudioContext || window.webkitAudioContext,
-  _audioContext: null,
-  animationFrameCallbackId: -1,
-  sampleBuffer: null,
-  currentAnalyser: null,
-  minFrequency: 55,
-  maxFrequency: 1050,
-  pitchSmoothingSize: 40,
-  lastPitchClassesDetected: [],
-  lastPitchesDetected: [],
-  lastCentsDeviationsDetected: []
-};
-Object.defineProperties(config, {
-  audioContext: {
-    get: () => {
-      if (config._audioContext !== null) {
-        return config._audioContext;
-      } else {
-        // AudioContext should be a singleton, but MIDI reports loaded before it is!
-        if (midicube__WEBPACK_IMPORTED_MODULE_8__ !== undefined && midicube__WEBPACK_IMPORTED_MODULE_8__["WebAudio"] !== undefined && midicube__WEBPACK_IMPORTED_MODULE_8__["WebAudio"].getContext() !== undefined) {
-          window.globalAudioContext = midicube__WEBPACK_IMPORTED_MODULE_8__["WebAudio"].getContext();
-        } else if (typeof window.globalAudioContext === 'undefined') {
-          window.globalAudioContext = new config.AudioContextCaller();
-        }
-
-        config._audioContext = window.globalAudioContext;
-        return config._audioContext;
+  get audioContext() {
+    if (this._audioContext !== null) {
+      return this._audioContext;
+    } else {
+      // AudioContext should be a singleton, but MIDI reports loaded before it is!
+      if (midicube__WEBPACK_IMPORTED_MODULE_8__ !== undefined && midicube__WEBPACK_IMPORTED_MODULE_8__["WebAudio"] !== undefined && midicube__WEBPACK_IMPORTED_MODULE_8__["WebAudio"].getContext() !== undefined) {
+        window.globalAudioContext = midicube__WEBPACK_IMPORTED_MODULE_8__["WebAudio"].getContext();
+      } else if (typeof window.globalAudioContext === 'undefined') {
+        window.globalAudioContext = new this.AudioContextCaller();
       }
-    },
-    set: ac => {
-      config._audioContext = ac;
+
+      this._audioContext = window.globalAudioContext;
+      return this._audioContext;
     }
   }
-});
+
+  set audioContext(ac) {
+    this._audioContext = ac;
+  }
+
+}
+
+var config = new _ConfigSingletonCreator();
 /**
+ * Note: audioRecording uses the newer getUserMedia routines, so
+ * this should be ported to be similar to there.
  *
  * @function music21.audioSearch.getUserMedia
  * @memberof music21.audioSearch
@@ -39547,6 +39409,8 @@ function sampleCallback(frequency) {
       _smoothPitchExtractio2 = _slicedToArray(_smoothPitchExtractio, 2),
       unused_midiNum = _smoothPitchExtractio2[0],
       unused_centsOff = _smoothPitchExtractio2[1];
+
+  return 0;
 } // from Chris Wilson. Replace with Jordi's
 
 function autoCorrelate(buf, sampleRate, minFrequency, maxFrequency) {
@@ -39767,12 +39631,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_8__);
 /* harmony import */ var regenerator_runtime_runtime__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! regenerator-runtime/runtime */ "./node_modules/regenerator-runtime/runtime.js");
 /* harmony import */ var regenerator_runtime_runtime__WEBPACK_IMPORTED_MODULE_9___default = /*#__PURE__*/__webpack_require__.n(regenerator_runtime_runtime__WEBPACK_IMPORTED_MODULE_9__);
-/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./common */ "./src/music21/common.js");
-/* harmony import */ var _derivation__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./derivation */ "./src/music21/derivation.js");
-/* harmony import */ var _duration__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./duration */ "./src/music21/duration.js");
+/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./common */ "./src/music21/common.ts");
+/* harmony import */ var _derivation__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./derivation */ "./src/music21/derivation.ts");
+/* harmony import */ var _duration__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./duration */ "./src/music21/duration.ts");
 /* harmony import */ var _editorial__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./editorial */ "./src/music21/editorial.ts");
 /* harmony import */ var _prebase__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./prebase */ "./src/music21/prebase.ts");
-/* harmony import */ var _sites__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./sites */ "./src/music21/sites.js");
+/* harmony import */ var _sites__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./sites */ "./src/music21/sites.ts");
 
 
 
@@ -39818,10 +39682,10 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
 
 /**
- * Base class for any object that can be placed in a {@link music21.stream.Stream}.
+ * Base class for any object that can be placed in a {@link Stream}.
  *
- * @property {music21.stream.Stream} [activeSite] - hardlink to a
- *     {@link music21.stream.Stream} containing the element.
+ * @property {Stream} [activeSite] - hardlink to a
+ *     {@link Stream} containing the element.
  * @property {number} classSortOrder - Default sort order for this class
  *     (default 20; override in other classes). Lower numbered objects will sort
  *     before other objects in the staff if priority and offset are the same.
@@ -39852,15 +39716,13 @@ class Music21Object extends _prebase__WEBPACK_IMPORTED_MODULE_14__["ProtoM21Obje
 
     this.isMusic21Object = true;
     this.isStream = false;
-    this._duration = new _duration__WEBPACK_IMPORTED_MODULE_12__["Duration"]();
+    this._duration = new _duration__WEBPACK_IMPORTED_MODULE_12__["Duration"](0.0);
     this.id = _sites__WEBPACK_IMPORTED_MODULE_15__["getId"](this);
-    this.sites = new _sites__WEBPACK_IMPORTED_MODULE_15__["Sites"](); // noinspection JSUnusedLocalSymbols
+    this.sites = new _sites__WEBPACK_IMPORTED_MODULE_15__["Sites"]();
+    this._cloneCallbacks._activeSite = false;
+    this._cloneCallbacks._activeSiteStoredOffset = false;
 
-    this._cloneCallbacks._activeSite = function Music21Object_cloneCallbacks_activeSite(keyName, newObj, self) {
-      newObj[keyName] = undefined;
-    };
-
-    this._cloneCallbacks._derivation = function Music21Music21Object_cloneCallbacks_derivation(keyName, newObj, self) {
+    this._cloneCallbacks._derivation = function Music21Music21Object_cloneCallbacks_derivation(keyName, newObj, self, deep, memo) {
       var newDerivation = new _derivation__WEBPACK_IMPORTED_MODULE_11__["Derivation"](newObj);
       newDerivation.origin = self;
       newDerivation.method = 'clone';
@@ -39868,13 +39730,29 @@ class Music21Object extends _prebase__WEBPACK_IMPORTED_MODULE_14__["ProtoM21Obje
     }; // noinspection JSUnusedLocalSymbols
 
 
-    this._cloneCallbacks.sites = function Music21Object_cloneCallbacks_sites(keyName, newObj, self) {
-      newObj[keyName] = new _sites__WEBPACK_IMPORTED_MODULE_15__["Sites"]();
+    this._cloneCallbacks.sites = function Music21Object_cloneCallbacks_sites(keyName, newObj, self, deep, memo) {
+      newObj.sites = new _sites__WEBPACK_IMPORTED_MODULE_15__["Sites"]();
     };
   }
 
   static get className() {
     return 'music21.base.Music21Object';
+  }
+  /**
+   * Override clone on prebase to add a derivation.
+   */
+
+
+  clone() {
+    var deep = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
+    var memo = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
+    var ret = super.clone(deep, memo);
+    var newDerivation = new _derivation__WEBPACK_IMPORTED_MODULE_11__["Derivation"](ret);
+    newDerivation.origin = this;
+    newDerivation.method = 'clone'; // '__deepcopy__' in m21p
+
+    ret.derivation = newDerivation;
+    return ret;
   }
 
   stringInfo() {
@@ -39946,7 +39824,8 @@ class Music21Object extends _prebase__WEBPACK_IMPORTED_MODULE_14__["ProtoM21Obje
 
   get measureNumber() {
     if (this.activeSite !== undefined && this.activeSite.classes.includes('Measure')) {
-      return this.activeSite.number;
+      var activeMeasure = this.activeSite;
+      return activeMeasure.number;
     } else {
       var m = this.sites.getObjByClass('Measure');
 
@@ -40017,13 +39896,14 @@ class Music21Object extends _prebase__WEBPACK_IMPORTED_MODULE_14__["ProtoM21Obje
    *
    * Does not change activeSite or .offset
    *
-   * @param {music21.stream.Stream} site
+   * @param {Stream} site
    * @param {boolean} [stringReturns=false] -- allow strings to be returned
    * @returns {number|string|undefined}
    */
 
 
-  getOffsetBySite(site) {
+  getOffsetBySite() {
+    var site = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : undefined;
     var stringReturns = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
 
     if (site === undefined) {
@@ -40035,7 +39915,7 @@ class Music21Object extends _prebase__WEBPACK_IMPORTED_MODULE_14__["ProtoM21Obje
   /**
    * setOffsetBySite - sets the offset for a given Stream
    *
-   * @param {music21.stream.Stream} site Stream object
+   * @param {Stream} site Stream object
    * @param {number} value offset
    */
 
@@ -40055,8 +39935,8 @@ class Music21Object extends _prebase__WEBPACK_IMPORTED_MODULE_14__["ProtoM21Obje
    * See also music21.stream.iterator.RecursiveIterator.currentHierarchyOffset for
    * a method that is about 10x faster when running through a recursed stream.
    *
-   * @param {music21.stream.Stream} site
-   * @returns {Number|undefined}
+   * @param {Stream} site
+   * @returns {number|undefined}
    */
 
 
@@ -40101,65 +39981,8 @@ class Music21Object extends _prebase__WEBPACK_IMPORTED_MODULE_14__["ProtoM21Obje
   } // ---------- Contexts -------------
 
 
-  getContextByClass(className, options) {
-    var payloadExtractor = function payloadExtractor(useSite, flatten, positionStart, getElementMethod, classList) {
-      // this should all be done as a tree...
-      // do not use .flat or .semiFlat so as not
-      // to create new sites.
-      // VERY HACKY...
-      var lastElement;
-
-      for (var i = 0; i < useSite.length; i++) {
-        var thisElement = useSite._elements[i];
-        var indexOffset = useSite.elementOffset(thisElement);
-        var matchClass = thisElement.isClassOrSubclass(classList);
-
-        if (flatten === false && !matchClass) {
-          continue;
-        } else if (!thisElement.isStream && !matchClass) {
-          continue;
-        } // is a stream or an element of the appropriate class...
-        // first check normal elements
-
-
-        if (getElementMethod.includes('Before') && indexOffset >= positionStart) {
-          if (getElementMethod.includes('At') && lastElement === undefined) {
-            lastElement = thisElement;
-
-            try {
-              lastElement.activeSite = useSite;
-            } catch (e) {// do nothing... should not happen.
-            }
-          } else if (lastElement !== undefined && lastElement.isClassOrSubclass(classList)) {
-            return lastElement;
-          } else if (matchClass) {
-            return thisElement;
-          }
-        } else {
-          lastElement = thisElement;
-        }
-
-        if (getElementMethod.includes('After') && indexOffset > positionStart && matchClass) {
-          return thisElement;
-        } // now check stream... already filtered out flatten == false;
-
-
-        if (thisElement.isStream) {
-          var potentialElement = payloadExtractor(thisElement, flatten, positionStart + indexOffset, getElementMethod, classList);
-
-          if (potentialElement !== undefined) {
-            return potentialElement;
-          }
-        }
-      }
-
-      if (lastElement !== undefined && lastElement.isClassOrSubclass(classList)) {
-        return lastElement;
-      } else {
-        return undefined;
-      }
-    };
-
+  getContextByClass(className) {
+    var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
     var params = {
       getElementMethod: 'getElementAtOrBefore',
       sortByCreationTime: false
@@ -40195,14 +40018,9 @@ class Music21Object extends _prebase__WEBPACK_IMPORTED_MODULE_14__["ProtoM21Obje
         }
 
         if (searchType === 'elementsOnly' || searchType === 'elementsFirst') {
-          var contextEl = payloadExtractor(site, false, positionStart, getElementMethod, className);
+          var contextEl = getContextByClassPayloadExtractor(site, false, positionStart, getElementMethod, className);
 
           if (contextEl !== undefined) {
-            try {
-              contextEl.activeSite = site;
-            } catch (e) {// do nothing.
-            }
-
             return contextEl;
           }
         } else if (searchType !== 'elementsOnly') {
@@ -40212,14 +40030,9 @@ class Music21Object extends _prebase__WEBPACK_IMPORTED_MODULE_14__["ProtoM21Obje
             }
           }
 
-          var _contextEl = payloadExtractor(site, 'semiFlat', positionStart, getElementMethod, className);
+          var _contextEl = getContextByClassPayloadExtractor(site, 'semiFlat', positionStart, getElementMethod, className);
 
           if (_contextEl !== undefined) {
-            try {
-              _contextEl.activeSite = site;
-            } catch (e) {// do nothing.
-            }
-
             return _contextEl;
           }
 
@@ -40309,7 +40122,7 @@ class Music21Object extends _prebase__WEBPACK_IMPORTED_MODULE_14__["ProtoM21Obje
 
               case 19:
                 if (_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done) {
-                  _context.next = 65;
+                  _context.next = 73;
                   break;
                 }
 
@@ -40320,7 +40133,7 @@ class Music21Object extends _prebase__WEBPACK_IMPORTED_MODULE_14__["ProtoM21Obje
                   break;
                 }
 
-                return _context.abrupt("continue", 62);
+                return _context.abrupt("continue", 70);
 
               case 23:
                 if (!siteObj.classes.includes('SpannerStorage')) {
@@ -40328,19 +40141,31 @@ class Music21Object extends _prebase__WEBPACK_IMPORTED_MODULE_14__["ProtoM21Obje
                   break;
                 }
 
-                return _context.abrupt("continue", 62);
+                return _context.abrupt("continue", 70);
 
               case 25:
                 // let offset = this.getOffsetBySite(siteObj);
                 // followDerivation;
+                offsetInStream = void 0;
+                _context.prev = 26;
                 offsetInStream = siteObj.elementOffset(_this);
+                _context.next = 34;
+                break;
+
+              case 30:
+                _context.prev = 30;
+                _context.t0 = _context["catch"](26);
+                console.error("".concat(_this + '', " is not in ").concat(siteObj + ''));
+                return _context.abrupt("continue", 70);
+
+              case 34:
                 newOffset = offsetInStream + params.offsetAppend;
                 positionInStream = newOffset;
                 _recursionType = siteObj.recursionType;
-                _context.next = 31;
+                _context.next = 39;
                 return [siteObj, positionInStream, _recursionType];
 
-              case 31:
+              case 39:
                 memo.set(siteObj, true);
                 newParams = {
                   callerFirst: params.callerFirst,
@@ -40352,12 +40177,12 @@ class Music21Object extends _prebase__WEBPACK_IMPORTED_MODULE_14__["ProtoM21Obje
                 _iteratorNormalCompletion6 = true;
                 _didIteratorError6 = false;
                 _iteratorError6 = undefined;
-                _context.prev = 36;
+                _context.prev = 44;
                 _iterator6 = siteObj.contextSites(newParams)[Symbol.iterator]();
 
-              case 38:
+              case 46:
                 if (_iteratorNormalCompletion6 = (_step6 = _iterator6.next()).done) {
-                  _context.next = 48;
+                  _context.next = 56;
                   break;
                 }
 
@@ -40366,109 +40191,109 @@ class Music21Object extends _prebase__WEBPACK_IMPORTED_MODULE_14__["ProtoM21Obje
                 // const hypotheticalPosition = inStreamOffset; // more complex w/ sortTuples
 
                 if (memo.has(topLevelInner)) {
-                  _context.next = 45;
+                  _context.next = 53;
                   break;
                 }
 
-                _context.next = 44;
+                _context.next = 52;
                 return [topLevelInner, inStreamOffset, recurType];
 
-              case 44:
+              case 52:
                 memo.set(topLevelInner, true);
 
-              case 45:
+              case 53:
                 _iteratorNormalCompletion6 = true;
-                _context.next = 38;
+                _context.next = 46;
                 break;
 
-              case 48:
-                _context.next = 54;
+              case 56:
+                _context.next = 62;
                 break;
 
-              case 50:
-                _context.prev = 50;
-                _context.t0 = _context["catch"](36);
+              case 58:
+                _context.prev = 58;
+                _context.t1 = _context["catch"](44);
                 _didIteratorError6 = true;
-                _iteratorError6 = _context.t0;
+                _iteratorError6 = _context.t1;
 
-              case 54:
-                _context.prev = 54;
-                _context.prev = 55;
+              case 62:
+                _context.prev = 62;
+                _context.prev = 63;
 
                 if (!_iteratorNormalCompletion6 && _iterator6.return != null) {
                   _iterator6.return();
                 }
 
-              case 57:
-                _context.prev = 57;
+              case 65:
+                _context.prev = 65;
 
                 if (!_didIteratorError6) {
-                  _context.next = 60;
+                  _context.next = 68;
                   break;
                 }
 
                 throw _iteratorError6;
 
-              case 60:
-                return _context.finish(57);
+              case 68:
+                return _context.finish(65);
 
-              case 61:
-                return _context.finish(54);
+              case 69:
+                return _context.finish(62);
 
-              case 62:
+              case 70:
                 _iteratorNormalCompletion3 = true;
                 _context.next = 19;
                 break;
 
-              case 65:
-                _context.next = 71;
+              case 73:
+                _context.next = 79;
                 break;
 
-              case 67:
-                _context.prev = 67;
-                _context.t1 = _context["catch"](17);
+              case 75:
+                _context.prev = 75;
+                _context.t2 = _context["catch"](17);
                 _didIteratorError3 = true;
-                _iteratorError3 = _context.t1;
+                _iteratorError3 = _context.t2;
 
-              case 71:
-                _context.prev = 71;
-                _context.prev = 72;
+              case 79:
+                _context.prev = 79;
+                _context.prev = 80;
 
                 if (!_iteratorNormalCompletion3 && _iterator3.return != null) {
                   _iterator3.return();
                 }
 
-              case 74:
-                _context.prev = 74;
+              case 82:
+                _context.prev = 82;
 
                 if (!_didIteratorError3) {
-                  _context.next = 77;
+                  _context.next = 85;
                   break;
                 }
 
                 throw _iteratorError3;
 
-              case 77:
-                return _context.finish(74);
+              case 85:
+                return _context.finish(82);
 
-              case 78:
-                return _context.finish(71);
+              case 86:
+                return _context.finish(79);
 
-              case 79:
+              case 87:
                 if (!params.followDerivation) {
-                  _context.next = 131;
+                  _context.next = 139;
                   break;
                 }
 
                 _iteratorNormalCompletion4 = true;
                 _didIteratorError4 = false;
                 _iteratorError4 = undefined;
-                _context.prev = 83;
+                _context.prev = 91;
                 _iterator4 = topLevel.derivation.chain()[Symbol.iterator]();
 
-              case 85:
+              case 93:
                 if (_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done) {
-                  _context.next = 117;
+                  _context.next = 125;
                   break;
                 }
 
@@ -40476,7 +40301,7 @@ class Music21Object extends _prebase__WEBPACK_IMPORTED_MODULE_14__["ProtoM21Obje
                 _iteratorNormalCompletion5 = true;
                 _didIteratorError5 = false;
                 _iteratorError5 = undefined;
-                _context.prev = 90;
+                _context.prev = 98;
                 _iterator5 = derivedObject.contextSites({
                   callerFirst: undefined,
                   memo,
@@ -40485,112 +40310,171 @@ class Music21Object extends _prebase__WEBPACK_IMPORTED_MODULE_14__["ProtoM21Obje
                   sortByCreationTime: params.sortByCreationTime
                 })[Symbol.iterator]();
 
-              case 92:
+              case 100:
                 if (_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done) {
-                  _context.next = 100;
+                  _context.next = 108;
                   break;
                 }
 
                 _step5$value = _slicedToArray(_step5.value, 3), derivedSite = _step5$value[0], derivedOffset = _step5$value[1], derivedRecurseType = _step5$value[2];
                 offsetAdjustedCsTuple = [derivedSite, derivedOffset + params.offsetAppend, derivedRecurseType];
-                _context.next = 97;
+                _context.next = 105;
                 return offsetAdjustedCsTuple;
 
-              case 97:
+              case 105:
                 _iteratorNormalCompletion5 = true;
-                _context.next = 92;
+                _context.next = 100;
                 break;
 
-              case 100:
-                _context.next = 106;
+              case 108:
+                _context.next = 114;
                 break;
 
-              case 102:
-                _context.prev = 102;
-                _context.t2 = _context["catch"](90);
+              case 110:
+                _context.prev = 110;
+                _context.t3 = _context["catch"](98);
                 _didIteratorError5 = true;
-                _iteratorError5 = _context.t2;
+                _iteratorError5 = _context.t3;
 
-              case 106:
-                _context.prev = 106;
-                _context.prev = 107;
+              case 114:
+                _context.prev = 114;
+                _context.prev = 115;
 
                 if (!_iteratorNormalCompletion5 && _iterator5.return != null) {
                   _iterator5.return();
                 }
 
-              case 109:
-                _context.prev = 109;
+              case 117:
+                _context.prev = 117;
 
                 if (!_didIteratorError5) {
-                  _context.next = 112;
+                  _context.next = 120;
                   break;
                 }
 
                 throw _iteratorError5;
 
-              case 112:
-                return _context.finish(109);
+              case 120:
+                return _context.finish(117);
 
-              case 113:
-                return _context.finish(106);
+              case 121:
+                return _context.finish(114);
 
-              case 114:
+              case 122:
                 _iteratorNormalCompletion4 = true;
-                _context.next = 85;
+                _context.next = 93;
                 break;
 
-              case 117:
-                _context.next = 123;
+              case 125:
+                _context.next = 131;
                 break;
 
-              case 119:
-                _context.prev = 119;
-                _context.t3 = _context["catch"](83);
+              case 127:
+                _context.prev = 127;
+                _context.t4 = _context["catch"](91);
                 _didIteratorError4 = true;
-                _iteratorError4 = _context.t3;
+                _iteratorError4 = _context.t4;
 
-              case 123:
-                _context.prev = 123;
-                _context.prev = 124;
+              case 131:
+                _context.prev = 131;
+                _context.prev = 132;
 
                 if (!_iteratorNormalCompletion4 && _iterator4.return != null) {
                   _iterator4.return();
                 }
 
-              case 126:
-                _context.prev = 126;
+              case 134:
+                _context.prev = 134;
 
                 if (!_didIteratorError4) {
-                  _context.next = 129;
+                  _context.next = 137;
                   break;
                 }
 
                 throw _iteratorError4;
 
-              case 129:
-                return _context.finish(126);
+              case 137:
+                return _context.finish(134);
 
-              case 130:
-                return _context.finish(123);
+              case 138:
+                return _context.finish(131);
 
-              case 131:
+              case 139:
               case "end":
                 return _context.stop();
             }
           }
-        }, _callee, null, [[17, 67, 71, 79], [36, 50, 54, 62], [55,, 57, 61], [72,, 74, 78], [83, 119, 123, 131], [90, 102, 106, 114], [107,, 109, 113], [124,, 126, 130]]);
+        }, _callee, null, [[17, 75, 79, 87], [26, 30], [44, 58, 62, 70], [63,, 65, 69], [80,, 82, 86], [91, 127, 131, 139], [98, 110, 114, 122], [115,, 117, 121], [132,, 134, 138]]);
       })()
     );
   }
 
+}
+
+function getContextByClassPayloadExtractor(useSite, flatten, // true, false, or semiflat
+positionStart, getElementMethod, classList) {
+  // this should all be done as a tree...
+  // do not use .flat or .semiFlat so as not
+  // to create new sites.
+  // VERY HACKY...
+  var lastElement;
+  var useSiteElements = useSite.elements; // we want sorting.
+
+  for (var i = 0; i < useSiteElements.length; i++) {
+    var thisElement = useSiteElements[i];
+    var matchClass = thisElement.isClassOrSubclass(classList);
+
+    if (flatten === false && !matchClass) {
+      continue;
+    } else if (!thisElement.isStream && !matchClass) {
+      continue;
+    }
+
+    var indexOffset = useSite.elementOffset(thisElement); // thisElement is a stream or has the appropriate class...
+    // first check normal elements
+
+    if (getElementMethod.includes('Before') && indexOffset >= positionStart) {
+      if (getElementMethod.includes('At') && lastElement === undefined) {
+        lastElement = thisElement;
+      } else if (lastElement !== undefined && lastElement.isClassOrSubclass(classList)) {
+        lastElement.activeSite = useSite;
+        return lastElement;
+      } else if (matchClass) {
+        thisElement.activeSite = useSite;
+        return thisElement;
+      }
+    } else {
+      lastElement = thisElement;
+    }
+
+    if (getElementMethod.includes('After') && indexOffset > positionStart && matchClass) {
+      thisElement.activeSite = useSite;
+      return thisElement;
+    } // now check stream... already filtered out flatten == false;
+
+
+    if (thisElement.isStream) {
+      var potentialElement = getContextByClassPayloadExtractor(thisElement, flatten, positionStart + indexOffset, getElementMethod, classList);
+
+      if (potentialElement !== undefined) {
+        return potentialElement;
+      }
+    }
+  }
+
+  if (lastElement !== undefined && lastElement.isClassOrSubclass(classList)) {
+    lastElement.activeSite = useSite;
+    return lastElement;
+  } else {
+    return undefined;
+  }
 } // TODO(msc) -- ElementWrapper
 
 /***/ }),
 
-/***/ "./src/music21/beam.js":
+/***/ "./src/music21/beam.ts":
 /*!*****************************!*\
-  !*** ./src/music21/beam.js ***!
+  !*** ./src/music21/beam.ts ***!
   \*****************************/
 /*! exports provided: validBeamTypes, beamableDurationTypes, Beam, Beams */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -40615,7 +40499,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_5__);
 /* harmony import */ var _exceptions21__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./exceptions21 */ "./src/music21/exceptions21.ts");
 /* harmony import */ var _prebase__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./prebase */ "./src/music21/prebase.ts");
-/* harmony import */ var _duration__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./duration */ "./src/music21/duration.js");
+/* harmony import */ var _duration__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./duration */ "./src/music21/duration.ts");
 
 
 
@@ -40654,26 +40538,24 @@ var beamableDurationTypes = [_duration__WEBPACK_IMPORTED_MODULE_8__["typeFromNum
  *
  * @class Beam
  * @memberof music21.beam
- * @extends music21.prebase.ProtoM21Object
  * @param {string} type - "start", "stop", "continue", "partial"
  * @param {string} direction - only needed for partial beams: "left" or "right"
- * @property {int|undefined} number - which beam line does this refer to;
+ * @property {number|undefined} number - which beam line does this refer to;
  *     8th = 1, 16th = 2, etc.
  * @property {number|undefined} independentAngle - the angle of this beam
  *     if it is different than others (feathered beams)
  */
 
 class Beam extends _prebase__WEBPACK_IMPORTED_MODULE_7__["ProtoM21Object"] {
-  static get className() {
-    return 'music21.beam.Beam';
-  }
-
-  constructor(type, direction) {
+  constructor(type) {
+    var direction = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
     super();
     this.type = type;
     this.direction = direction;
-    this.independentAngle = undefined;
-    this.number = undefined;
+  }
+
+  static get className() {
+    return 'music21.beam.Beam';
   }
 
 }
@@ -40682,13 +40564,18 @@ class Beam extends _prebase__WEBPACK_IMPORTED_MODULE_7__["ProtoM21Object"] {
  *
  * @class Beams
  * @memberof music21.beam
- * @extends music21.prebase.ProtoM21Object
- * @property {Array<music21.beam.Beam>} beamsList - a list of Beam objects
- * @property {Boolean} [feathered=false] - is this a feathered beam.
- * @property {int} length - length of beamsList
+ * @property {Beam[]} beamsList - a list of Beam objects
+ * @property {boolean} [feathered=false] - is this a feathered beam.
+ * @property {number} length - length of beamsList
  */
 
 class Beams extends _prebase__WEBPACK_IMPORTED_MODULE_7__["ProtoM21Object"] {
+  constructor() {
+    super(...arguments);
+    this.beamsList = [];
+    this.feathered = false;
+  }
+
   static get className() {
     return 'music21.beam.Beams';
   }
@@ -40943,26 +40830,21 @@ class Beams extends _prebase__WEBPACK_IMPORTED_MODULE_7__["ProtoM21Object"] {
     return beamsList;
   }
 
-  constructor() {
-    super();
-    this.beamsList = [];
-    this.feathered = false;
-  }
-
   get length() {
     return this.beamsList.length;
   }
   /**
-   * Append a new {@link music21.beam.Beam} object to this Beams, automatically creating the Beam
+   * Append a new {@link Beam} object to this Beams, automatically creating the Beam
    *   object and incrementing the number count.
    *
-   * @param {string} type - the type (passed to {@link music21.beam.Beam})
+   * @param {string} type - the type (passed to {@link Beam})
    * @param {string} [direction=undefined] - the direction if type is "partial"
-   * @returns {music21.beam.Beam} newly appended object
+   * @returns {Beam} newly appended object
    */
 
 
-  append(type, direction) {
+  append(type) {
+    var direction = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
     var obj = new Beam(type, direction);
     obj.number = this.beamsList.length + 1;
     this.beamsList.push(obj);
@@ -40978,13 +40860,14 @@ class Beams extends _prebase__WEBPACK_IMPORTED_MODULE_7__["ProtoM21Object"] {
           object afterwards.
     * Both "eighth" and "8th" work.  Adding more than six beams (i.e. things
           like 512th notes) raises an error.
-    * @param {string|int} level - either a string like "eighth" or a number like 1 (="eighth")
+    * @param {string|number} level - either a string like "eighth" or a number like 1 (="eighth")
    * @param {string} [type] - type to fill all beams to.
    * @returns {this}
    */
 
 
-  fill(level, type) {
+  fill(level) {
+    var type = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
     this.beamsList = [];
     var count = 1;
 
@@ -41005,13 +40888,9 @@ class Beams extends _prebase__WEBPACK_IMPORTED_MODULE_7__["ProtoM21Object"] {
     }
 
     for (var i = 1; i <= count; i++) {
-      var obj = new Beam();
+      var obj = new Beam(type);
       obj.number = i;
       this.beamsList.push(obj);
-    }
-
-    if (type !== undefined) {
-      this.setAll(type);
     }
 
     return this;
@@ -41019,8 +40898,8 @@ class Beams extends _prebase__WEBPACK_IMPORTED_MODULE_7__["ProtoM21Object"] {
   /**
    * Get the beam with the given number or throw an exception.
    *
-   * @param {int} number - the beam number to retrieve (usually one less than the position in `.beamsList`)
-   * @returns {music21.beam.Beam|undefined}
+   * @param {number} number - the beam number to retrieve (usually one less than the position in `.beamsList`)
+   * @returns {Beam|undefined}
    */
 
 
@@ -41061,7 +40940,7 @@ class Beams extends _prebase__WEBPACK_IMPORTED_MODULE_7__["ProtoM21Object"] {
   /**
    * Get an Array of all the numbers for the beams
    *
-   * @returns {Array<int>} all the numbers
+   * @returns {Array<number>} all the numbers
    */
 
 
@@ -41097,13 +40976,17 @@ class Beams extends _prebase__WEBPACK_IMPORTED_MODULE_7__["ProtoM21Object"] {
    * Returns the type + "-" + direction (if direction is defined)
    * for the beam with the given number.
    *
-   * @param {int} number
-   * @returns {music21.beam.Beam|undefined}
+   * @param {number} number
+   * @returns {string|undefined}
    */
 
 
   getTypeByNumber(number) {
     var beamObj = this.getByNumber(number);
+
+    if (beamObj === undefined) {
+      return undefined;
+    }
 
     if (beamObj.direction === undefined) {
       return beamObj.type;
@@ -41129,7 +41012,7 @@ class Beams extends _prebase__WEBPACK_IMPORTED_MODULE_7__["ProtoM21Object"] {
     return types;
   }
   /**
-   * Set all the {@link music21.beam.Beam} objects to a given type/direction
+   * Set all the {@link Beam} objects to a given type/direction
    *
    * @param {string} type - beam type
    * @param {string} [direction] - beam direction
@@ -41137,7 +41020,9 @@ class Beams extends _prebase__WEBPACK_IMPORTED_MODULE_7__["ProtoM21Object"] {
    */
 
 
-  setAll(type, direction) {
+  setAll(type) {
+    var direction = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
+
     if (validBeamTypes[type] === undefined) {
       throw new _exceptions21__WEBPACK_IMPORTED_MODULE_6__["Music21Exception"]('invalid beam type: ' + type);
     }
@@ -41151,16 +41036,18 @@ class Beams extends _prebase__WEBPACK_IMPORTED_MODULE_7__["ProtoM21Object"] {
     return this;
   }
   /**
-   * Set the {@link music21.beam.Beam} object specified by `number` to a given type/direction
+   * Set the {@link Beam} object specified by `number` to a given type/direction
    *
-   * @param {int} number
+   * @param {number} number
    * @param {string} type
    * @param {string} [direction]
    * @returns {this}
    */
 
 
-  setByNumber(number, type, direction) {
+  setByNumber(number, type) {
+    var direction = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : undefined;
+
     if (direction === undefined) {
       var splitIt = type.split('-');
       type = splitIt[0];
@@ -41185,9 +41072,9 @@ class Beams extends _prebase__WEBPACK_IMPORTED_MODULE_7__["ProtoM21Object"] {
 
 /***/ }),
 
-/***/ "./src/music21/chord.js":
+/***/ "./src/music21/chord.ts":
 /*!******************************!*\
-  !*** ./src/music21/chord.js ***!
+  !*** ./src/music21/chord.ts ***!
   \******************************/
 /*! exports provided: chordTables, Chord, chordDefinitions */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -41220,11 +41107,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var regenerator_runtime_runtime__WEBPACK_IMPORTED_MODULE_10___default = /*#__PURE__*/__webpack_require__.n(regenerator_runtime_runtime__WEBPACK_IMPORTED_MODULE_10__);
 /* harmony import */ var vexflow__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! vexflow */ "./node_modules/vexflow/releases/vexflow-debug.js");
 /* harmony import */ var vexflow__WEBPACK_IMPORTED_MODULE_11___default = /*#__PURE__*/__webpack_require__.n(vexflow__WEBPACK_IMPORTED_MODULE_11__);
-/* harmony import */ var _exceptions21__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./exceptions21 */ "./src/music21/exceptions21.ts");
-/* harmony import */ var _interval__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./interval */ "./src/music21/interval.js");
-/* harmony import */ var _note__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./note */ "./src/music21/note.js");
-/* harmony import */ var _chordTables__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./chordTables */ "./src/music21/chordTables.js");
-/* harmony reexport (module object) */ __webpack_require__.d(__webpack_exports__, "chordTables", function() { return _chordTables__WEBPACK_IMPORTED_MODULE_15__; });
+/* harmony import */ var midicube__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! midicube */ "./node_modules/midicube/releases/midicube.js");
+/* harmony import */ var midicube__WEBPACK_IMPORTED_MODULE_12___default = /*#__PURE__*/__webpack_require__.n(midicube__WEBPACK_IMPORTED_MODULE_12__);
+/* harmony import */ var _exceptions21__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./exceptions21 */ "./src/music21/exceptions21.ts");
+/* harmony import */ var _interval__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./interval */ "./src/music21/interval.ts");
+/* harmony import */ var _note__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./note */ "./src/music21/note.ts");
+/* harmony import */ var _chordTables__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ./chordTables */ "./src/music21/chordTables.ts");
+/* harmony reexport (module object) */ __webpack_require__.d(__webpack_exports__, "chordTables", function() { return _chordTables__WEBPACK_IMPORTED_MODULE_16__; });
 
 
 
@@ -41260,38 +41149,30 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+
 /**
  * Chord related objects (esp. {@link music21.chord.Chord}) and methods.
  *
  * @class Chord
  * @memberof music21.chord
- * @param {Array<string|music21.note.Note|music21.pitch.Pitch>} [notes] -
+ * @param {Array<string|note.Note|Pitch>} [notes] -
  *     an Array of strings
- *     (see {@link music21.pitch.Pitch} for valid formats), note.Note,
+ *     (see {@link Pitch} for valid formats), note.Note,
  *     or pitch.Pitch objects.
  * @extends music21.note.NotRest
  * @property {number} length - the number of pitches in the Chord (readonly)
- * @property {music21.pitch.Pitch[]} pitches - an Array of Pitch objects in the
+ * @property {Pitch[]} pitches - an Array of Pitch objects in the
  *     chord. (Consider the Array read only and pass in a new Array to change)
  * @property {Boolean} [isChord=true]
  * @property {Boolean} [isNote=false]
  * @property {Boolean} [isRest=false]
  */
 
-class Chord extends _note__WEBPACK_IMPORTED_MODULE_14__["NotRest"] {
-  static get className() {
-    return 'music21.chord.Chord';
-  }
-
-  constructor(notes) {
+class Chord extends _note__WEBPACK_IMPORTED_MODULE_15__["NotRest"] {
+  constructor() {
+    var notes = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : undefined;
     super();
-
-    if (typeof notes === 'undefined') {
-      notes = [];
-    } else if (typeof notes === 'string') {
-      notes = notes.split(/\s+/);
-    }
-
+    this._notes = [];
     this.isChord = true; // for speed
 
     this.isNote = false; // for speed
@@ -41300,15 +41181,14 @@ class Chord extends _note__WEBPACK_IMPORTED_MODULE_14__["NotRest"] {
 
     this._overrides = {};
     this._cache = {};
-    this._notes = [];
-    /**
-     *
-     * @type {Object|undefined}
-     * @private
-     */
-
     this._chordTablesAddress = undefined;
     this._chordTablesAddressNeedsUpdating = true; // only update when needed
+
+    if (typeof notes === 'undefined') {
+      notes = [];
+    } else if (typeof notes === 'string') {
+      notes = notes.split(/\s+/);
+    }
 
     notes.forEach(x => this.add(x, false), this);
 
@@ -41318,28 +41198,21 @@ class Chord extends _note__WEBPACK_IMPORTED_MODULE_14__["NotRest"] {
 
     this.sortPitches();
   }
-  /**
-   *
-   * @returns {string}
-   */
 
+  static get className() {
+    return 'music21.chord.Chord';
+  }
 
   stringInfo() {
     var info = this.pitches.map(x => x.nameWithOctave);
     return info.join(' ');
   }
-  /**
-   *
-   * @returns {number}
-   */
-
 
   get length() {
     return this._notes.length;
-  }
-  /**
-   * @type {music21.pitch.Pitch[]}
-   */
+  } // Typescript restriction... preventing full allowing of set pitches()
+  // to take string[] or Note[].
+  // https://github.com/microsoft/TypeScript/issues/2521
 
 
   get pitches() {
@@ -41359,15 +41232,15 @@ class Chord extends _note__WEBPACK_IMPORTED_MODULE_14__["NotRest"] {
       var addNote = void 0;
 
       if (typeof tempPitches[i] === 'string') {
-        addNote = new _note__WEBPACK_IMPORTED_MODULE_14__["Note"](tempPitches[i]);
+        addNote = new _note__WEBPACK_IMPORTED_MODULE_15__["Note"](tempPitches[i]);
       } else if (tempPitches[i].isClassOrSubclass('Pitch')) {
-        addNote = new _note__WEBPACK_IMPORTED_MODULE_14__["Note"]();
+        addNote = new _note__WEBPACK_IMPORTED_MODULE_15__["Note"]();
         addNote.pitch = tempPitches[i];
       } else if (tempPitches[i].isClassOrSubclass('Note')) {
         addNote = tempPitches[i];
       } else {
         console.warn('bad pitch', tempPitches[i]);
-        throw new _exceptions21__WEBPACK_IMPORTED_MODULE_12__["Music21Exception"]('Cannot add pitch from ' + tempPitches[i]);
+        throw new _exceptions21__WEBPACK_IMPORTED_MODULE_13__["Music21Exception"]('Cannot add pitch from ' + tempPitches[i]);
       }
 
       this._notes.push(addNote);
@@ -41414,7 +41287,7 @@ class Chord extends _note__WEBPACK_IMPORTED_MODULE_14__["NotRest"] {
 
   get chordTablesAddress() {
     if (this._chordTablesAddressNeedsUpdating) {
-      this._chordTablesAddress = _chordTables__WEBPACK_IMPORTED_MODULE_15__["seekChordTablesAddress"](this);
+      this._chordTablesAddress = _chordTables__WEBPACK_IMPORTED_MODULE_16__["seekChordTablesAddress"](this);
     }
 
     this._chordTablesAddressNeedsUpdating = false;
@@ -41424,7 +41297,7 @@ class Chord extends _note__WEBPACK_IMPORTED_MODULE_14__["NotRest"] {
   get commonName() {
     // TODO: many more exemptions from music21p
     var cta = this.chordTablesAddress;
-    var ctn = _chordTables__WEBPACK_IMPORTED_MODULE_15__["addressToCommonNames"](cta);
+    var ctn = _chordTables__WEBPACK_IMPORTED_MODULE_16__["addressToCommonNames"](cta);
     var forteClass = this.forteClass;
     var enharmonicTests = {
       '3-11A': () => this.isMinorTriad(),
@@ -41452,7 +41325,7 @@ class Chord extends _note__WEBPACK_IMPORTED_MODULE_14__["NotRest"] {
   }
 
   get forteClass() {
-    return _chordTables__WEBPACK_IMPORTED_MODULE_15__["addressToForteName"](this.chordTablesAddress, 'tn');
+    return _chordTables__WEBPACK_IMPORTED_MODULE_16__["addressToForteName"](this.chordTablesAddress, 'tn');
   }
 
   get forteClassNumber() {
@@ -41460,7 +41333,7 @@ class Chord extends _note__WEBPACK_IMPORTED_MODULE_14__["NotRest"] {
   }
 
   get forteClassTnI() {
-    return _chordTables__WEBPACK_IMPORTED_MODULE_15__["addressToForteName"](this.chordTablesAddress, 'tni');
+    return _chordTables__WEBPACK_IMPORTED_MODULE_16__["addressToForteName"](this.chordTablesAddress, 'tni');
   }
 
   get(i) {
@@ -41509,7 +41382,7 @@ class Chord extends _note__WEBPACK_IMPORTED_MODULE_14__["NotRest"] {
   }
 
   areZRelations(other) {
-    var zRelationAddress = _chordTables__WEBPACK_IMPORTED_MODULE_15__["addressToZAddress"](this.chordTablesAddress);
+    var zRelationAddress = _chordTables__WEBPACK_IMPORTED_MODULE_16__["addressToZAddress"](this.chordTablesAddress);
 
     if (zRelationAddress === undefined) {
       return false;
@@ -41532,8 +41405,8 @@ class Chord extends _note__WEBPACK_IMPORTED_MODULE_14__["NotRest"] {
     }
 
     var chordTablesAddress = this.chordTablesAddress;
-    var v = _chordTables__WEBPACK_IMPORTED_MODULE_15__["addressToIntervalVector"](chordTablesAddress);
-    var addresses = _chordTables__WEBPACK_IMPORTED_MODULE_15__["intervalVectorToAddress"](v);
+    var v = _chordTables__WEBPACK_IMPORTED_MODULE_16__["addressToIntervalVector"](chordTablesAddress);
+    var addresses = _chordTables__WEBPACK_IMPORTED_MODULE_16__["intervalVectorToAddress"](v);
     var other;
     var _iteratorNormalCompletion2 = true;
     var _didIteratorError2 = false;
@@ -41563,12 +41436,12 @@ class Chord extends _note__WEBPACK_IMPORTED_MODULE_14__["NotRest"] {
       }
     }
 
-    var prime = _chordTables__WEBPACK_IMPORTED_MODULE_15__["addressToTransposedNormalForm"](other);
+    var prime = _chordTables__WEBPACK_IMPORTED_MODULE_16__["addressToTransposedNormalForm"](other);
     return new Chord(prime);
   }
 
   get hasZRelation() {
-    var post = _chordTables__WEBPACK_IMPORTED_MODULE_15__["addressToZAddress"](this.chordTablesAddress);
+    var post = _chordTables__WEBPACK_IMPORTED_MODULE_16__["addressToZAddress"](this.chordTablesAddress);
 
     if (post !== undefined) {
       return true;
@@ -41578,7 +41451,7 @@ class Chord extends _note__WEBPACK_IMPORTED_MODULE_14__["NotRest"] {
   }
 
   get intervalVector() {
-    return _chordTables__WEBPACK_IMPORTED_MODULE_15__["addressToIntervalVector"](this.chordTablesAddress);
+    return _chordTables__WEBPACK_IMPORTED_MODULE_16__["addressToIntervalVector"](this.chordTablesAddress);
   } //    get intervalVectorString() {
   //
   //    }
@@ -41619,8 +41492,8 @@ class Chord extends _note__WEBPACK_IMPORTED_MODULE_14__["NotRest"] {
    * Adds a note to the chord, sorting the note array
    *
    * @param {
-   *     string|string[]|music21.note.Note|music21.pitch.Pitch|
-   *     music21.note.Note[]|music21.pitch.Pitch[]} notes - the
+   *     string|string[]|note.Note|Pitch|
+   *     music21.note.Note[]|Pitch[]} notes - the
    *     Note or Pitch to be added or a string defining a pitch.
    * @param {boolean} runSort - Sort after running (default true)
    * @returns {music21.chord.Chord} the original chord.
@@ -41644,10 +41517,10 @@ class Chord extends _note__WEBPACK_IMPORTED_MODULE_14__["NotRest"] {
 
         // takes in either a note or a pitch
         if (typeof noteObj === 'string') {
-          noteObj = new _note__WEBPACK_IMPORTED_MODULE_14__["Note"](noteObj);
+          noteObj = new _note__WEBPACK_IMPORTED_MODULE_15__["Note"](noteObj);
         } else if (noteObj.isClassOrSubclass('Pitch')) {
           var pitchObj = noteObj;
-          var noteObj2 = new _note__WEBPACK_IMPORTED_MODULE_14__["Note"]();
+          var noteObj2 = new _note__WEBPACK_IMPORTED_MODULE_15__["Note"]();
           noteObj2.pitch = pitchObj;
           noteObj = noteObj2;
         }
@@ -41686,7 +41559,7 @@ class Chord extends _note__WEBPACK_IMPORTED_MODULE_14__["NotRest"] {
    * Removes any pitches that appear more than once (in any octave),
    * removing the higher ones, and returns a new Chord.
    *
-   * @returns {music21.chord.Chord} A new Chord object with duplicate pitches removed.
+   * @returns {Chord} A new Chord object with duplicate pitches removed.
    */
 
 
@@ -41710,12 +41583,14 @@ class Chord extends _note__WEBPACK_IMPORTED_MODULE_14__["NotRest"] {
   /**
    * Finds the Root of the chord.
    *
-   * @param {music21.pitch.Pitch} [newroot]
-   * @returns {music21.pitch.Pitch} the root of the chord.
+   * @param {Pitch} [newroot]
+   * @returns {Pitch} the root of the chord.
    */
 
 
-  root(newroot) {
+  root() {
+    var newroot = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : undefined;
+
     if (newroot !== undefined) {
       this._overrides.root = newroot;
       this._cache.root = newroot;
@@ -41723,7 +41598,7 @@ class Chord extends _note__WEBPACK_IMPORTED_MODULE_14__["NotRest"] {
     }
 
     if (this._overrides.root !== undefined) {
-      return this._cache.root;
+      return this._overrides.root;
     }
 
     if (this._cache.root !== undefined) {
@@ -41736,7 +41611,7 @@ class Chord extends _note__WEBPACK_IMPORTED_MODULE_14__["NotRest"] {
     var closedPitches = closedChord.pitches;
 
     if (closedPitches.length === 0) {
-      throw new _exceptions21__WEBPACK_IMPORTED_MODULE_12__["Music21Exception"]('No notes in Chord!');
+      throw new _exceptions21__WEBPACK_IMPORTED_MODULE_13__["Music21Exception"]('No notes in Chord!');
     } else if (closedPitches.length === 1) {
       return this.pitches[0];
     } // const indexOfPitchesWithPerfectlyStackedThirds = [];
@@ -41787,13 +41662,15 @@ class Chord extends _note__WEBPACK_IMPORTED_MODULE_14__["NotRest"] {
    * return 4 for chordStep=3, since the third of the chord (B) is four semitones above G.
    *
    * @param {number} chordStep - the step to find, e.g., 1, 2, 3, etc.
-   * @param {music21.pitch.Pitch} [testRoot] - the pitch to temporarily consider the root.
+   * @param {Pitch} [testRoot] - the pitch to temporarily consider the root.
    * @returns {number|undefined} Number of semitones above the root for this
    *     chord step or undefined if no pitch matches that chord step.
    */
 
 
-  semitonesFromChordStep(chordStep, testRoot) {
+  semitonesFromChordStep(chordStep) {
+    var testRoot = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
+
     if (testRoot === undefined) {
       testRoot = this.root();
     }
@@ -41815,11 +41692,27 @@ class Chord extends _note__WEBPACK_IMPORTED_MODULE_14__["NotRest"] {
   /**
    * Gets the lowest note (based on .ps not name) in the chord.
    *
-   * @returns {music21.pitch.Pitch} bass pitch
+   * @returns {[Pitch]} bass pitch
    */
 
 
   bass() {
+    var newBass = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : undefined;
+
+    if (newBass !== undefined) {
+      this._overrides.bass = newBass;
+      this._cache.bass = newBass;
+      this._cache.inversion = undefined;
+    }
+
+    if (this._overrides.bass !== undefined) {
+      return this._overrides.bass;
+    }
+
+    if (this._cache.bass !== undefined) {
+      return this._cache.bass;
+    }
+
     var lowest;
     var pitches = this.pitches;
 
@@ -41942,7 +41835,7 @@ class Chord extends _note__WEBPACK_IMPORTED_MODULE_14__["NotRest"] {
 
   isSeventhOfType(intervalArray) {
     if (intervalArray === undefined) {
-      throw new _exceptions21__WEBPACK_IMPORTED_MODULE_12__["Music21Exception"]('intervalArray is required');
+      throw new _exceptions21__WEBPACK_IMPORTED_MODULE_13__["Music21Exception"]('intervalArray is required');
     }
 
     var third = this.third;
@@ -41961,7 +41854,7 @@ class Chord extends _note__WEBPACK_IMPORTED_MODULE_14__["NotRest"] {
     try {
       for (var _iterator4 = this.pitches[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
         var thisPitch = _step4.value;
-        var thisInterval = new _interval__WEBPACK_IMPORTED_MODULE_13__["Interval"](root, thisPitch);
+        var thisInterval = new _interval__WEBPACK_IMPORTED_MODULE_14__["Interval"](root, thisPitch);
 
         if (!intervalArray.includes(thisInterval.chromatic.mod12)) {
           return false;
@@ -42048,7 +41941,10 @@ class Chord extends _note__WEBPACK_IMPORTED_MODULE_14__["NotRest"] {
    */
 
 
-  vexflowNote(options) {
+  vexflowNote() {
+    var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {
+      clef: undefined
+    };
     var clef = options.clef;
     var pitchKeys = [];
 
@@ -42077,6 +41973,41 @@ class Chord extends _note__WEBPACK_IMPORTED_MODULE_14__["NotRest"] {
     this.activeVexflowNote = vfn;
     return vfn;
   }
+
+  playMidi() {
+    var tempo = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 120;
+    var nextElement = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
+
+    var _ref = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {},
+        _ref$instrument = _ref.instrument,
+        instrument = _ref$instrument === void 0 ? undefined : _ref$instrument,
+        _ref$channel = _ref.channel,
+        channel = _ref$channel === void 0 ? undefined : _ref$channel;
+
+    var milliseconds = super.playMidi(tempo, nextElement, {
+      instrument,
+      channel
+    });
+
+    if (channel === undefined) {
+      channel = this.activeChannel();
+    }
+
+    var midNum;
+    var volume = this.midiVolume; // TODO: Tied Chords.
+
+    for (var j = 0; j < this._notes.length; j++) {
+      midNum = this._notes[j].pitch.midi;
+
+      try {
+        midicube__WEBPACK_IMPORTED_MODULE_12__["noteOn"](channel, midNum, volume, 0);
+        midicube__WEBPACK_IMPORTED_MODULE_12__["noteOff"](channel, midNum, milliseconds / 1000);
+      } catch (e) {// do nothing -- might not have an output channel because of audio not connected
+      }
+    }
+
+    return milliseconds;
+  }
   /**
    * Returns the Pitch object that is a Generic interval (2, 3, 4, etc., but not 9, 10, etc.) above
    * the `.root()`
@@ -42084,13 +42015,15 @@ class Chord extends _note__WEBPACK_IMPORTED_MODULE_14__["NotRest"] {
    * In case there is more that one note with that designation (e.g., `[A-C-C#-E].getChordStep(3)`)
    * the first one in `.pitches` is returned.
    *
-   * @param {int} chordStep a positive integer representing the chord step
-   * @param {music21.pitch.Pitch} [testRoot] - the Pitch to use as a temporary root
-   * @returns {music21.pitch.Pitch|undefined}
+   * @param {number} chordStep a positive integer representing the chord step
+   * @param {Pitch} [testRoot] - the Pitch to use as a temporary root
+   * @returns {Pitch|undefined}
    */
 
 
-  getChordStep(chordStep, testRoot) {
+  getChordStep(chordStep) {
+    var testRoot = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
+
     if (testRoot === undefined) {
       testRoot = this.root();
     }
@@ -42145,9 +42078,9 @@ var chordDefinitions = {
 
 /***/ }),
 
-/***/ "./src/music21/chordTables.js":
+/***/ "./src/music21/chordTables.ts":
 /*!************************************!*\
-  !*** ./src/music21/chordTables.js ***!
+  !*** ./src/music21/chordTables.ts ***!
   \************************************/
 /*! exports provided: FORTE, SCDICT, TNMAX, TNIMAX, TNREF, SCREF, forteIndexToInversionsAvailable, addressToTransposedNormalForm, addressToPrimeForm, addressToIntervalVector, intervalVectorToAddress, addressToZAddress, addressToCommonNames, addressToForteName, seekChordTablesAddress */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -42187,7 +42120,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var core_js_modules_es_string_includes__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_includes__WEBPACK_IMPORTED_MODULE_7__);
 /* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! core-js/modules/web.dom-collections.iterator */ "./node_modules/core-js/modules/web.dom-collections.iterator.js");
 /* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_8__);
-/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./common */ "./src/music21/common.js");
+/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./common */ "./src/music21/common.ts");
 
 
 
@@ -42713,1443 +42646,390 @@ var FORTE = [undefined, monad, diad, trichord, tetrachord, pentachord, hexachord
 // cardinality 1
 
 var card_1 = {
-  '1,0': [FORTE[1][1][0], // 1
-  FORTE[1][1][2], // var
-  FORTE[1][1][1] //icv
-  ]
+  '1,0': [FORTE[1][1][0], FORTE[1][1][2], FORTE[1][1][1]]
 }; // cardinality 2
 
 var card_2 = {
-  '1,0': [FORTE[2][1][0], // 2
-  FORTE[2][1][2], // var
-  FORTE[2][1][1] //icv
-  ],
-  '2,0': [FORTE[2][2][0], // 3
-  FORTE[2][2][2], // var
-  FORTE[2][2][1] //icv
-  ],
-  '3,0': [FORTE[2][3][0], // 4
-  FORTE[2][3][2], // var
-  FORTE[2][3][1] //icv
-  ],
-  '4,0': [FORTE[2][4][0], // 5
-  FORTE[2][4][2], // var
-  FORTE[2][4][1] //icv
-  ],
-  '5,0': [FORTE[2][5][0], // 6
-  FORTE[2][5][2], // var
-  FORTE[2][5][1] //icv
-  ],
-  '6,0': [FORTE[2][6][0], // 7
-  FORTE[2][6][2], // var
-  FORTE[2][6][1] //icv
-  ]
+  '1,0': [FORTE[2][1][0], FORTE[2][1][2], FORTE[2][1][1]],
+  '2,0': [FORTE[2][2][0], FORTE[2][2][2], FORTE[2][2][1]],
+  '3,0': [FORTE[2][3][0], FORTE[2][3][2], FORTE[2][3][1]],
+  '4,0': [FORTE[2][4][0], FORTE[2][4][2], FORTE[2][4][1]],
+  '5,0': [FORTE[2][5][0], FORTE[2][5][2], FORTE[2][5][1]],
+  '6,0': [FORTE[2][6][0], FORTE[2][6][2], FORTE[2][6][1]]
 }; // cardinality 3
 
 var card_3 = {
-  '1,0': [FORTE[3][1][0], // 8
-  FORTE[3][1][2], // var
-  FORTE[3][1][1] //icv
-  ],
-  '2,1': [FORTE[3][2][0], // 9
-  FORTE[3][2][2], // var
-  FORTE[3][2][1] //icv
-  ],
-  '2,-1': [[0, 2, 3], // 10
-  FORTE[3][2][2], // var
-  FORTE[3][2][1] //icv
-  ],
-  '3,1': [FORTE[3][3][0], // 11
-  FORTE[3][3][2], // var
-  FORTE[3][3][1] //icv
-  ],
-  '3,-1': [[0, 3, 4], // 12
-  FORTE[3][3][2], // var
-  FORTE[3][3][1] //icv
-  ],
-  '4,1': [FORTE[3][4][0], // 13
-  FORTE[3][4][2], // var
-  FORTE[3][4][1] //icv
-  ],
-  '4,-1': [[0, 4, 5], // 14
-  FORTE[3][4][2], // var
-  FORTE[3][4][1] //icv
-  ],
-  '5,1': [FORTE[3][5][0], // 15
-  FORTE[3][5][2], // var
-  FORTE[3][5][1] //icv
-  ],
-  '5,-1': [[0, 5, 6], // 16
-  FORTE[3][5][2], // var
-  FORTE[3][5][1] //icv
-  ],
-  '6,0': [FORTE[3][6][0], // 17
-  FORTE[3][6][2], // var
-  FORTE[3][6][1] //icv
-  ],
-  '7,1': [FORTE[3][7][0], // 18
-  FORTE[3][7][2], // var
-  FORTE[3][7][1] //icv
-  ],
-  '7,-1': [[0, 3, 5], // 19
-  FORTE[3][7][2], // var
-  FORTE[3][7][1] //icv
-  ],
-  '8,1': [FORTE[3][8][0], // 20
-  FORTE[3][8][2], // var
-  FORTE[3][8][1] //icv
-  ],
-  '8,-1': [[0, 4, 6], // 21
-  FORTE[3][8][2], // var
-  FORTE[3][8][1] //icv
-  ],
-  '9,0': [FORTE[3][9][0], // 22
-  FORTE[3][9][2], // var
-  FORTE[3][9][1] //icv
-  ],
-  '10,0': [FORTE[3][10][0], // 23
-  FORTE[3][10][2], // var
-  FORTE[3][10][1] //icv
-  ],
-  '11,1': [FORTE[3][11][0], // 24
-  FORTE[3][11][2], // var
-  FORTE[3][11][1] //icv
-  ],
-  '11,-1': [[0, 4, 7], // 25
-  FORTE[3][11][2], // var
-  FORTE[3][11][1] //icv
-  ],
-  '12,0': [FORTE[3][12][0], // 26
-  FORTE[3][12][2], // var
-  FORTE[3][12][1] //icv
-  ]
+  '1,0': [FORTE[3][1][0], FORTE[3][1][2], FORTE[3][1][1]],
+  '2,1': [FORTE[3][2][0], FORTE[3][2][2], FORTE[3][2][1]],
+  '2,-1': [[0, 2, 3], FORTE[3][2][2], FORTE[3][2][1]],
+  '3,1': [FORTE[3][3][0], FORTE[3][3][2], FORTE[3][3][1]],
+  '3,-1': [[0, 3, 4], FORTE[3][3][2], FORTE[3][3][1]],
+  '4,1': [FORTE[3][4][0], FORTE[3][4][2], FORTE[3][4][1]],
+  '4,-1': [[0, 4, 5], FORTE[3][4][2], FORTE[3][4][1]],
+  '5,1': [FORTE[3][5][0], FORTE[3][5][2], FORTE[3][5][1]],
+  '5,-1': [[0, 5, 6], FORTE[3][5][2], FORTE[3][5][1]],
+  '6,0': [FORTE[3][6][0], FORTE[3][6][2], FORTE[3][6][1]],
+  '7,1': [FORTE[3][7][0], FORTE[3][7][2], FORTE[3][7][1]],
+  '7,-1': [[0, 3, 5], FORTE[3][7][2], FORTE[3][7][1]],
+  '8,1': [FORTE[3][8][0], FORTE[3][8][2], FORTE[3][8][1]],
+  '8,-1': [[0, 4, 6], FORTE[3][8][2], FORTE[3][8][1]],
+  '9,0': [FORTE[3][9][0], FORTE[3][9][2], FORTE[3][9][1]],
+  '10,0': [FORTE[3][10][0], FORTE[3][10][2], FORTE[3][10][1]],
+  '11,1': [FORTE[3][11][0], FORTE[3][11][2], FORTE[3][11][1]],
+  '11,-1': [[0, 4, 7], FORTE[3][11][2], FORTE[3][11][1]],
+  '12,0': [FORTE[3][12][0], FORTE[3][12][2], FORTE[3][12][1]]
 }; // cardinality 4
 
 var card_4 = {
-  '1,0': [FORTE[4][1][0], // 27
-  FORTE[4][1][2], // var
-  FORTE[4][1][1] //icv
-  ],
-  '2,1': [FORTE[4][2][0], // 28
-  FORTE[4][2][2], // var
-  FORTE[4][2][1] //icv
-  ],
-  '2,-1': [[0, 2, 3, 4], // 29
-  FORTE[4][2][2], // var
-  FORTE[4][2][1] //icv
-  ],
-  '3,0': [FORTE[4][3][0], // 30
-  FORTE[4][3][2], // var
-  FORTE[4][3][1] //icv
-  ],
-  '4,1': [FORTE[4][4][0], // 31
-  FORTE[4][4][2], // var
-  FORTE[4][4][1] //icv
-  ],
-  '4,-1': [[0, 3, 4, 5], // 32
-  FORTE[4][4][2], // var
-  FORTE[4][4][1] //icv
-  ],
-  '5,1': [FORTE[4][5][0], // 33
-  FORTE[4][5][2], // var
-  FORTE[4][5][1] //icv
-  ],
-  '5,-1': [[0, 4, 5, 6], // 34
-  FORTE[4][5][2], // var
-  FORTE[4][5][1] //icv
-  ],
-  '6,0': [FORTE[4][6][0], // 35
-  FORTE[4][6][2], // var
-  FORTE[4][6][1] //icv
-  ],
-  '7,0': [FORTE[4][7][0], // 36
-  FORTE[4][7][2], // var
-  FORTE[4][7][1] //icv
-  ],
-  '8,0': [FORTE[4][8][0], // 37
-  FORTE[4][8][2], // var
-  FORTE[4][8][1] //icv
-  ],
-  '9,0': [FORTE[4][9][0], // 38
-  FORTE[4][9][2], // var
-  FORTE[4][9][1] //icv
-  ],
-  '10,0': [FORTE[4][10][0], // 39
-  FORTE[4][10][2], // var
-  FORTE[4][10][1] //icv
-  ],
-  '11,1': [FORTE[4][11][0], // 40
-  FORTE[4][11][2], // var
-  FORTE[4][11][1] //icv
-  ],
-  '11,-1': [[0, 2, 4, 5], // 41
-  FORTE[4][11][2], // var
-  FORTE[4][11][1] //icv
-  ],
-  '12,1': [FORTE[4][12][0], // 42
-  FORTE[4][12][2], // var
-  FORTE[4][12][1] //icv
-  ],
-  '12,-1': [[0, 3, 4, 6], // 43
-  FORTE[4][12][2], // var
-  FORTE[4][12][1] //icv
-  ],
-  '13,1': [FORTE[4][13][0], // 44
-  FORTE[4][13][2], // var
-  FORTE[4][13][1] //icv
-  ],
-  '13,-1': [[0, 3, 5, 6], // 45
-  FORTE[4][13][2], // var
-  FORTE[4][13][1] //icv
-  ],
-  '14,1': [FORTE[4][14][0], // 46
-  FORTE[4][14][2], // var
-  FORTE[4][14][1] //icv
-  ],
-  '14,-1': [[0, 4, 5, 7], // 47
-  FORTE[4][14][2], // var
-  FORTE[4][14][1] //icv
-  ],
-  '15,1': [FORTE[4][15][0], // 48
-  FORTE[4][15][2], // var
-  FORTE[4][15][1] //icv
-  ],
-  '15,-1': [[0, 2, 5, 6], // 49
-  FORTE[4][15][2], // var
-  FORTE[4][15][1] //icv
-  ],
-  '16,1': [FORTE[4][16][0], // 50
-  FORTE[4][16][2], // var
-  FORTE[4][16][1] //icv
-  ],
-  '16,-1': [[0, 2, 6, 7], // 51
-  FORTE[4][16][2], // var
-  FORTE[4][16][1] //icv
-  ],
-  '17,0': [FORTE[4][17][0], // 52
-  FORTE[4][17][2], // var
-  FORTE[4][17][1] //icv
-  ],
-  '18,1': [FORTE[4][18][0], // 53
-  FORTE[4][18][2], // var
-  FORTE[4][18][1] //icv
-  ],
-  '18,-1': [[0, 3, 6, 7], // 54
-  FORTE[4][18][2], // var
-  FORTE[4][18][1] //icv
-  ],
-  '19,1': [FORTE[4][19][0], // 55
-  FORTE[4][19][2], // var
-  FORTE[4][19][1] //icv
-  ],
-  '19,-1': [[0, 4, 7, 8], // 56
-  FORTE[4][19][2], // var
-  FORTE[4][19][1] //icv
-  ],
-  '20,0': [FORTE[4][20][0], // 57
-  FORTE[4][20][2], // var
-  FORTE[4][20][1] //icv
-  ],
-  '21,0': [FORTE[4][21][0], // 58
-  FORTE[4][21][2], // var
-  FORTE[4][21][1] //icv
-  ],
-  '22,1': [FORTE[4][22][0], // 59
-  FORTE[4][22][2], // var
-  FORTE[4][22][1] //icv
-  ],
-  '22,-1': [[0, 3, 5, 7], // 60
-  FORTE[4][22][2], // var
-  FORTE[4][22][1] //icv
-  ],
-  '23,0': [FORTE[4][23][0], // 61
-  FORTE[4][23][2], // var
-  FORTE[4][23][1] //icv
-  ],
-  '24,0': [FORTE[4][24][0], // 62
-  FORTE[4][24][2], // var
-  FORTE[4][24][1] //icv
-  ],
-  '25,0': [FORTE[4][25][0], // 63
-  FORTE[4][25][2], // var
-  FORTE[4][25][1] //icv
-  ],
-  '26,0': [FORTE[4][26][0], // 64
-  FORTE[4][26][2], // var
-  FORTE[4][26][1] //icv
-  ],
-  '27,1': [FORTE[4][27][0], // 65
-  FORTE[4][27][2], // var
-  FORTE[4][27][1] //icv
-  ],
-  '27,-1': [[0, 3, 6, 8], // 66
-  FORTE[4][27][2], // var
-  FORTE[4][27][1] //icv
-  ],
-  '28,0': [FORTE[4][28][0], // 67
-  FORTE[4][28][2], // var
-  FORTE[4][28][1] //icv
-  ],
-  '29,1': [FORTE[4][29][0], // 68
-  FORTE[4][29][2], // var
-  FORTE[4][29][1] //icv
-  ],
-  '29,-1': [[0, 4, 6, 7], // 69
-  FORTE[4][29][2], // var
-  FORTE[4][29][1] //icv
-  ]
+  '1,0': [FORTE[4][1][0], FORTE[4][1][2], FORTE[4][1][1]],
+  '2,1': [FORTE[4][2][0], FORTE[4][2][2], FORTE[4][2][1]],
+  '2,-1': [[0, 2, 3, 4], FORTE[4][2][2], FORTE[4][2][1]],
+  '3,0': [FORTE[4][3][0], FORTE[4][3][2], FORTE[4][3][1]],
+  '4,1': [FORTE[4][4][0], FORTE[4][4][2], FORTE[4][4][1]],
+  '4,-1': [[0, 3, 4, 5], FORTE[4][4][2], FORTE[4][4][1]],
+  '5,1': [FORTE[4][5][0], FORTE[4][5][2], FORTE[4][5][1]],
+  '5,-1': [[0, 4, 5, 6], FORTE[4][5][2], FORTE[4][5][1]],
+  '6,0': [FORTE[4][6][0], FORTE[4][6][2], FORTE[4][6][1]],
+  '7,0': [FORTE[4][7][0], FORTE[4][7][2], FORTE[4][7][1]],
+  '8,0': [FORTE[4][8][0], FORTE[4][8][2], FORTE[4][8][1]],
+  '9,0': [FORTE[4][9][0], FORTE[4][9][2], FORTE[4][9][1]],
+  '10,0': [FORTE[4][10][0], FORTE[4][10][2], FORTE[4][10][1]],
+  '11,1': [FORTE[4][11][0], FORTE[4][11][2], FORTE[4][11][1]],
+  '11,-1': [[0, 2, 4, 5], FORTE[4][11][2], FORTE[4][11][1]],
+  '12,1': [FORTE[4][12][0], FORTE[4][12][2], FORTE[4][12][1]],
+  '12,-1': [[0, 3, 4, 6], FORTE[4][12][2], FORTE[4][12][1]],
+  '13,1': [FORTE[4][13][0], FORTE[4][13][2], FORTE[4][13][1]],
+  '13,-1': [[0, 3, 5, 6], FORTE[4][13][2], FORTE[4][13][1]],
+  '14,1': [FORTE[4][14][0], FORTE[4][14][2], FORTE[4][14][1]],
+  '14,-1': [[0, 4, 5, 7], FORTE[4][14][2], FORTE[4][14][1]],
+  '15,1': [FORTE[4][15][0], FORTE[4][15][2], FORTE[4][15][1]],
+  '15,-1': [[0, 2, 5, 6], FORTE[4][15][2], FORTE[4][15][1]],
+  '16,1': [FORTE[4][16][0], FORTE[4][16][2], FORTE[4][16][1]],
+  '16,-1': [[0, 2, 6, 7], FORTE[4][16][2], FORTE[4][16][1]],
+  '17,0': [FORTE[4][17][0], FORTE[4][17][2], FORTE[4][17][1]],
+  '18,1': [FORTE[4][18][0], FORTE[4][18][2], FORTE[4][18][1]],
+  '18,-1': [[0, 3, 6, 7], FORTE[4][18][2], FORTE[4][18][1]],
+  '19,1': [FORTE[4][19][0], FORTE[4][19][2], FORTE[4][19][1]],
+  '19,-1': [[0, 4, 7, 8], FORTE[4][19][2], FORTE[4][19][1]],
+  '20,0': [FORTE[4][20][0], FORTE[4][20][2], FORTE[4][20][1]],
+  '21,0': [FORTE[4][21][0], FORTE[4][21][2], FORTE[4][21][1]],
+  '22,1': [FORTE[4][22][0], FORTE[4][22][2], FORTE[4][22][1]],
+  '22,-1': [[0, 3, 5, 7], FORTE[4][22][2], FORTE[4][22][1]],
+  '23,0': [FORTE[4][23][0], FORTE[4][23][2], FORTE[4][23][1]],
+  '24,0': [FORTE[4][24][0], FORTE[4][24][2], FORTE[4][24][1]],
+  '25,0': [FORTE[4][25][0], FORTE[4][25][2], FORTE[4][25][1]],
+  '26,0': [FORTE[4][26][0], FORTE[4][26][2], FORTE[4][26][1]],
+  '27,1': [FORTE[4][27][0], FORTE[4][27][2], FORTE[4][27][1]],
+  '27,-1': [[0, 3, 6, 8], FORTE[4][27][2], FORTE[4][27][1]],
+  '28,0': [FORTE[4][28][0], FORTE[4][28][2], FORTE[4][28][1]],
+  '29,1': [FORTE[4][29][0], FORTE[4][29][2], FORTE[4][29][1]],
+  '29,-1': [[0, 4, 6, 7], FORTE[4][29][2], FORTE[4][29][1]]
 }; // cardinality 5
 
 var card_5 = {
-  '1,0': [FORTE[5][1][0], // 70
-  FORTE[5][1][2], // var
-  FORTE[5][1][1] //icv
-  ],
-  '2,1': [FORTE[5][2][0], // 71
-  FORTE[5][2][2], // var
-  FORTE[5][2][1] //icv
-  ],
-  '2,-1': [[0, 2, 3, 4, 5], // 72
-  FORTE[5][2][2], // var
-  FORTE[5][2][1] //icv
-  ],
-  '3,1': [FORTE[5][3][0], // 73
-  FORTE[5][3][2], // var
-  FORTE[5][3][1] //icv
-  ],
-  '3,-1': [[0, 1, 3, 4, 5], // 74
-  FORTE[5][3][2], // var
-  FORTE[5][3][1] //icv
-  ],
-  '4,1': [FORTE[5][4][0], // 75
-  FORTE[5][4][2], // var
-  FORTE[5][4][1] //icv
-  ],
-  '4,-1': [[0, 3, 4, 5, 6], // 76
-  FORTE[5][4][2], // var
-  FORTE[5][4][1] //icv
-  ],
-  '5,1': [FORTE[5][5][0], // 77
-  FORTE[5][5][2], // var
-  FORTE[5][5][1] //icv
-  ],
-  '5,-1': [[0, 4, 5, 6, 7], // 78
-  FORTE[5][5][2], // var
-  FORTE[5][5][1] //icv
-  ],
-  '6,1': [FORTE[5][6][0], // 79
-  FORTE[5][6][2], // var
-  FORTE[5][6][1] //icv
-  ],
-  '6,-1': [[0, 1, 4, 5, 6], // 80
-  FORTE[5][6][2], // var
-  FORTE[5][6][1] //icv
-  ],
-  '7,1': [FORTE[5][7][0], // 81
-  FORTE[5][7][2], // var
-  FORTE[5][7][1] //icv
-  ],
-  '7,-1': [[0, 1, 5, 6, 7], // 82
-  FORTE[5][7][2], // var
-  FORTE[5][7][1] //icv
-  ],
-  '8,0': [FORTE[5][8][0], // 83
-  FORTE[5][8][2], // var
-  FORTE[5][8][1] //icv
-  ],
-  '9,1': [FORTE[5][9][0], // 84
-  FORTE[5][9][2], // var
-  FORTE[5][9][1] //icv
-  ],
-  '9,-1': [[0, 2, 4, 5, 6], // 85
-  FORTE[5][9][2], // var
-  FORTE[5][9][1] //icv
-  ],
-  '10,1': [FORTE[5][10][0], // 86
-  FORTE[5][10][2], // var
-  FORTE[5][10][1] //icv
-  ],
-  '10,-1': [[0, 2, 3, 5, 6], // 87
-  FORTE[5][10][2], // var
-  FORTE[5][10][1] //icv
-  ],
-  '11,1': [FORTE[5][11][0], // 88
-  FORTE[5][11][2], // var
-  FORTE[5][11][1] //icv
-  ],
-  '11,-1': [[0, 3, 4, 5, 7], // 89
-  FORTE[5][11][2], // var
-  FORTE[5][11][1] //icv
-  ],
-  '12,0': [FORTE[5][12][0], // 90
-  FORTE[5][12][2], // var
-  FORTE[5][12][1] //icv
-  ],
-  '13,1': [FORTE[5][13][0], // 91
-  FORTE[5][13][2], // var
-  FORTE[5][13][1] //icv
-  ],
-  '13,-1': [[0, 4, 6, 7, 8], // 92
-  FORTE[5][13][2], // var
-  FORTE[5][13][1] //icv
-  ],
-  '14,1': [FORTE[5][14][0], // 93
-  FORTE[5][14][2], // var
-  FORTE[5][14][1] //icv
-  ],
-  '14,-1': [[0, 2, 5, 6, 7], // 94
-  FORTE[5][14][2], // var
-  FORTE[5][14][1] //icv
-  ],
-  '15,0': [FORTE[5][15][0], // 95
-  FORTE[5][15][2], // var
-  FORTE[5][15][1] //icv
-  ],
-  '16,1': [FORTE[5][16][0], // 96
-  FORTE[5][16][2], // var
-  FORTE[5][16][1] //icv
-  ],
-  '16,-1': [[0, 3, 4, 6, 7], // 97
-  FORTE[5][16][2], // var
-  FORTE[5][16][1] //icv
-  ],
-  '17,0': [FORTE[5][17][0], // 98
-  FORTE[5][17][2], // var
-  FORTE[5][17][1] //icv
-  ],
-  '18,1': [FORTE[5][18][0], // 99
-  FORTE[5][18][2], // var
-  FORTE[5][18][1] //icv
-  ],
-  '18,-1': [[0, 2, 3, 6, 7], // 100
-  FORTE[5][18][2], // var
-  FORTE[5][18][1] //icv
-  ],
-  '19,1': [FORTE[5][19][0], // 101
-  FORTE[5][19][2], // var
-  FORTE[5][19][1] //icv
-  ],
-  '19,-1': [[0, 1, 4, 6, 7], // 102
-  FORTE[5][19][2], // var
-  FORTE[5][19][1] //icv
-  ],
-  '20,1': [FORTE[5][20][0], // 103
-  FORTE[5][20][2], // var
-  FORTE[5][20][1] //icv
-  ],
-  '20,-1': [[0, 1, 5, 7, 8], // 104
-  FORTE[5][20][2], // var
-  FORTE[5][20][1] //icv
-  ],
-  '21,1': [FORTE[5][21][0], // 105
-  FORTE[5][21][2], // var
-  FORTE[5][21][1] //icv
-  ],
-  '21,-1': [[0, 3, 4, 7, 8], // 106
-  FORTE[5][21][2], // var
-  FORTE[5][21][1] //icv
-  ],
-  '22,0': [FORTE[5][22][0], // 107
-  FORTE[5][22][2], // var
-  FORTE[5][22][1] //icv
-  ],
-  '23,1': [FORTE[5][23][0], // 108
-  FORTE[5][23][2], // var
-  FORTE[5][23][1] //icv
-  ],
-  '23,-1': [[0, 2, 4, 5, 7], // 109
-  FORTE[5][23][2], // var
-  FORTE[5][23][1] //icv
-  ],
-  '24,1': [FORTE[5][24][0], // 110
-  FORTE[5][24][2], // var
-  FORTE[5][24][1] //icv
-  ],
-  '24,-1': [[0, 2, 4, 6, 7], // 111
-  FORTE[5][24][2], // var
-  FORTE[5][24][1] //icv
-  ],
-  '25,1': [FORTE[5][25][0], // 112
-  FORTE[5][25][2], // var
-  FORTE[5][25][1] //icv
-  ],
-  '25,-1': [[0, 3, 5, 6, 8], // 113
-  FORTE[5][25][2], // var
-  FORTE[5][25][1] //icv
-  ],
-  '26,1': [FORTE[5][26][0], // 114
-  FORTE[5][26][2], // var
-  FORTE[5][26][1] //icv
-  ],
-  '26,-1': [[0, 3, 4, 6, 8], // 115
-  FORTE[5][26][2], // var
-  FORTE[5][26][1] //icv
-  ],
-  '27,1': [FORTE[5][27][0], // 116
-  FORTE[5][27][2], // var
-  FORTE[5][27][1] //icv
-  ],
-  '27,-1': [[0, 3, 5, 7, 8], // 117
-  FORTE[5][27][2], // var
-  FORTE[5][27][1] //icv
-  ],
-  '28,1': [FORTE[5][28][0], // 118
-  FORTE[5][28][2], // var
-  FORTE[5][28][1] //icv
-  ],
-  '28,-1': [[0, 2, 5, 6, 8], // 119
-  FORTE[5][28][2], // var
-  FORTE[5][28][1] //icv
-  ],
-  '29,1': [FORTE[5][29][0], // 120
-  FORTE[5][29][2], // var
-  FORTE[5][29][1] //icv
-  ],
-  '29,-1': [[0, 2, 5, 7, 8], // 121
-  FORTE[5][29][2], // var
-  FORTE[5][29][1] //icv
-  ],
-  '30,1': [FORTE[5][30][0], // 122
-  FORTE[5][30][2], // var
-  FORTE[5][30][1] //icv
-  ],
-  '30,-1': [[0, 2, 4, 7, 8], // 123
-  FORTE[5][30][2], // var
-  FORTE[5][30][1] //icv
-  ],
-  '31,1': [FORTE[5][31][0], // 124
-  FORTE[5][31][2], // var
-  FORTE[5][31][1] //icv
-  ],
-  '31,-1': [[0, 3, 6, 8, 9], // 125
-  FORTE[5][31][2], // var
-  FORTE[5][31][1] //icv
-  ],
-  '32,1': [FORTE[5][32][0], // 126
-  FORTE[5][32][2], // var
-  FORTE[5][32][1] //icv
-  ],
-  '32,-1': [[0, 3, 5, 8, 9], // 127
-  FORTE[5][32][2], // var
-  FORTE[5][32][1] //icv
-  ],
-  '33,0': [FORTE[5][33][0], // 128
-  FORTE[5][33][2], // var
-  FORTE[5][33][1] //icv
-  ],
-  '34,0': [FORTE[5][34][0], // 129
-  FORTE[5][34][2], // var
-  FORTE[5][34][1] //icv
-  ],
-  '35,0': [FORTE[5][35][0], // 130
-  FORTE[5][35][2], // var
-  FORTE[5][35][1] //icv
-  ],
-  '36,1': [FORTE[5][36][0], // 131
-  FORTE[5][36][2], // var
-  FORTE[5][36][1] //icv
-  ],
-  '36,-1': [[0, 3, 5, 6, 7], // 132
-  FORTE[5][36][2], // var
-  FORTE[5][36][1] //icv
-  ],
-  '37,0': [FORTE[5][37][0], // 133
-  FORTE[5][37][2], // var
-  FORTE[5][37][1] //icv
-  ],
-  '38,1': [FORTE[5][38][0], // 134
-  FORTE[5][38][2], // var
-  FORTE[5][38][1] //icv
-  ],
-  '38,-1': [[0, 3, 6, 7, 8], // 135
-  FORTE[5][38][2], // var
-  FORTE[5][38][1] //icv
-  ]
+  '1,0': [FORTE[5][1][0], FORTE[5][1][2], FORTE[5][1][1]],
+  '2,1': [FORTE[5][2][0], FORTE[5][2][2], FORTE[5][2][1]],
+  '2,-1': [[0, 2, 3, 4, 5], FORTE[5][2][2], FORTE[5][2][1]],
+  '3,1': [FORTE[5][3][0], FORTE[5][3][2], FORTE[5][3][1]],
+  '3,-1': [[0, 1, 3, 4, 5], FORTE[5][3][2], FORTE[5][3][1]],
+  '4,1': [FORTE[5][4][0], FORTE[5][4][2], FORTE[5][4][1]],
+  '4,-1': [[0, 3, 4, 5, 6], FORTE[5][4][2], FORTE[5][4][1]],
+  '5,1': [FORTE[5][5][0], FORTE[5][5][2], FORTE[5][5][1]],
+  '5,-1': [[0, 4, 5, 6, 7], FORTE[5][5][2], FORTE[5][5][1]],
+  '6,1': [FORTE[5][6][0], FORTE[5][6][2], FORTE[5][6][1]],
+  '6,-1': [[0, 1, 4, 5, 6], FORTE[5][6][2], FORTE[5][6][1]],
+  '7,1': [FORTE[5][7][0], FORTE[5][7][2], FORTE[5][7][1]],
+  '7,-1': [[0, 1, 5, 6, 7], FORTE[5][7][2], FORTE[5][7][1]],
+  '8,0': [FORTE[5][8][0], FORTE[5][8][2], FORTE[5][8][1]],
+  '9,1': [FORTE[5][9][0], FORTE[5][9][2], FORTE[5][9][1]],
+  '9,-1': [[0, 2, 4, 5, 6], FORTE[5][9][2], FORTE[5][9][1]],
+  '10,1': [FORTE[5][10][0], FORTE[5][10][2], FORTE[5][10][1]],
+  '10,-1': [[0, 2, 3, 5, 6], FORTE[5][10][2], FORTE[5][10][1]],
+  '11,1': [FORTE[5][11][0], FORTE[5][11][2], FORTE[5][11][1]],
+  '11,-1': [[0, 3, 4, 5, 7], FORTE[5][11][2], FORTE[5][11][1]],
+  '12,0': [FORTE[5][12][0], FORTE[5][12][2], FORTE[5][12][1]],
+  '13,1': [FORTE[5][13][0], FORTE[5][13][2], FORTE[5][13][1]],
+  '13,-1': [[0, 4, 6, 7, 8], FORTE[5][13][2], FORTE[5][13][1]],
+  '14,1': [FORTE[5][14][0], FORTE[5][14][2], FORTE[5][14][1]],
+  '14,-1': [[0, 2, 5, 6, 7], FORTE[5][14][2], FORTE[5][14][1]],
+  '15,0': [FORTE[5][15][0], FORTE[5][15][2], FORTE[5][15][1]],
+  '16,1': [FORTE[5][16][0], FORTE[5][16][2], FORTE[5][16][1]],
+  '16,-1': [[0, 3, 4, 6, 7], FORTE[5][16][2], FORTE[5][16][1]],
+  '17,0': [FORTE[5][17][0], FORTE[5][17][2], FORTE[5][17][1]],
+  '18,1': [FORTE[5][18][0], FORTE[5][18][2], FORTE[5][18][1]],
+  '18,-1': [[0, 2, 3, 6, 7], FORTE[5][18][2], FORTE[5][18][1]],
+  '19,1': [FORTE[5][19][0], FORTE[5][19][2], FORTE[5][19][1]],
+  '19,-1': [[0, 1, 4, 6, 7], FORTE[5][19][2], FORTE[5][19][1]],
+  '20,1': [FORTE[5][20][0], FORTE[5][20][2], FORTE[5][20][1]],
+  '20,-1': [[0, 1, 5, 7, 8], FORTE[5][20][2], FORTE[5][20][1]],
+  '21,1': [FORTE[5][21][0], FORTE[5][21][2], FORTE[5][21][1]],
+  '21,-1': [[0, 3, 4, 7, 8], FORTE[5][21][2], FORTE[5][21][1]],
+  '22,0': [FORTE[5][22][0], FORTE[5][22][2], FORTE[5][22][1]],
+  '23,1': [FORTE[5][23][0], FORTE[5][23][2], FORTE[5][23][1]],
+  '23,-1': [[0, 2, 4, 5, 7], FORTE[5][23][2], FORTE[5][23][1]],
+  '24,1': [FORTE[5][24][0], FORTE[5][24][2], FORTE[5][24][1]],
+  '24,-1': [[0, 2, 4, 6, 7], FORTE[5][24][2], FORTE[5][24][1]],
+  '25,1': [FORTE[5][25][0], FORTE[5][25][2], FORTE[5][25][1]],
+  '25,-1': [[0, 3, 5, 6, 8], FORTE[5][25][2], FORTE[5][25][1]],
+  '26,1': [FORTE[5][26][0], FORTE[5][26][2], FORTE[5][26][1]],
+  '26,-1': [[0, 3, 4, 6, 8], FORTE[5][26][2], FORTE[5][26][1]],
+  '27,1': [FORTE[5][27][0], FORTE[5][27][2], FORTE[5][27][1]],
+  '27,-1': [[0, 3, 5, 7, 8], FORTE[5][27][2], FORTE[5][27][1]],
+  '28,1': [FORTE[5][28][0], FORTE[5][28][2], FORTE[5][28][1]],
+  '28,-1': [[0, 2, 5, 6, 8], FORTE[5][28][2], FORTE[5][28][1]],
+  '29,1': [FORTE[5][29][0], FORTE[5][29][2], FORTE[5][29][1]],
+  '29,-1': [[0, 2, 5, 7, 8], FORTE[5][29][2], FORTE[5][29][1]],
+  '30,1': [FORTE[5][30][0], FORTE[5][30][2], FORTE[5][30][1]],
+  '30,-1': [[0, 2, 4, 7, 8], FORTE[5][30][2], FORTE[5][30][1]],
+  '31,1': [FORTE[5][31][0], FORTE[5][31][2], FORTE[5][31][1]],
+  '31,-1': [[0, 3, 6, 8, 9], FORTE[5][31][2], FORTE[5][31][1]],
+  '32,1': [FORTE[5][32][0], FORTE[5][32][2], FORTE[5][32][1]],
+  '32,-1': [[0, 3, 5, 8, 9], FORTE[5][32][2], FORTE[5][32][1]],
+  '33,0': [FORTE[5][33][0], FORTE[5][33][2], FORTE[5][33][1]],
+  '34,0': [FORTE[5][34][0], FORTE[5][34][2], FORTE[5][34][1]],
+  '35,0': [FORTE[5][35][0], FORTE[5][35][2], FORTE[5][35][1]],
+  '36,1': [FORTE[5][36][0], FORTE[5][36][2], FORTE[5][36][1]],
+  '36,-1': [[0, 3, 5, 6, 7], FORTE[5][36][2], FORTE[5][36][1]],
+  '37,0': [FORTE[5][37][0], FORTE[5][37][2], FORTE[5][37][1]],
+  '38,1': [FORTE[5][38][0], FORTE[5][38][2], FORTE[5][38][1]],
+  '38,-1': [[0, 3, 6, 7, 8], FORTE[5][38][2], FORTE[5][38][1]]
 }; // cardinality 6
 
 var card_6 = {
-  '1,0': [FORTE[6][1][0], // 136
-  FORTE[6][1][2], // var
-  FORTE[6][1][1] //icv
-  ],
-  '2,1': [FORTE[6][2][0], // 137
-  FORTE[6][2][2], // var
-  FORTE[6][2][1] //icv
-  ],
-  '2,-1': [[0, 2, 3, 4, 5, 6], // 138
-  FORTE[6][2][2], // var
-  FORTE[6][2][1] //icv
-  ],
-  '3,1': [FORTE[6][3][0], // 139
-  FORTE[6][3][2], // var
-  FORTE[6][3][1] //icv
-  ],
-  '3,-1': [[0, 1, 3, 4, 5, 6], // 140
-  FORTE[6][3][2], // var
-  FORTE[6][3][1] //icv
-  ],
-  '4,0': [FORTE[6][4][0], // 141
-  FORTE[6][4][2], // var
-  FORTE[6][4][1] //icv
-  ],
-  '5,1': [FORTE[6][5][0], // 142
-  FORTE[6][5][2], // var
-  FORTE[6][5][1] //icv
-  ],
-  '5,-1': [[0, 1, 4, 5, 6, 7], // 143
-  FORTE[6][5][2], // var
-  FORTE[6][5][1] //icv
-  ],
-  '6,0': [FORTE[6][6][0], // 144
-  FORTE[6][6][2], // var
-  FORTE[6][6][1] //icv
-  ],
-  '7,0': [FORTE[6][7][0], // 145
-  FORTE[6][7][2], // var
-  FORTE[6][7][1] //icv
-  ],
-  '8,0': [FORTE[6][8][0], // 146
-  FORTE[6][8][2], // var
-  FORTE[6][8][1] //icv
-  ],
-  '9,1': [FORTE[6][9][0], // 147
-  FORTE[6][9][2], // var
-  FORTE[6][9][1] //icv
-  ],
-  '9,-1': [[0, 2, 4, 5, 6, 7], // 148
-  FORTE[6][9][2], // var
-  FORTE[6][9][1] //icv
-  ],
-  '10,1': [FORTE[6][10][0], // 149
-  FORTE[6][10][2], // var
-  FORTE[6][10][1] //icv
-  ],
-  '10,-1': [[0, 2, 3, 4, 6, 7], // 150
-  FORTE[6][10][2], // var
-  FORTE[6][10][1] //icv
-  ],
-  '11,1': [FORTE[6][11][0], // 151
-  FORTE[6][11][2], // var
-  FORTE[6][11][1] //icv
-  ],
-  '11,-1': [[0, 2, 3, 5, 6, 7], // 152
-  FORTE[6][11][2], // var
-  FORTE[6][11][1] //icv
-  ],
-  '12,1': [FORTE[6][12][0], // 153
-  FORTE[6][12][2], // var
-  FORTE[6][12][1] //icv
-  ],
-  '12,-1': [[0, 1, 3, 5, 6, 7], // 154
-  FORTE[6][12][2], // var
-  FORTE[6][12][1] //icv
-  ],
-  '13,0': [FORTE[6][13][0], // 155
-  FORTE[6][13][2], // var
-  FORTE[6][13][1] //icv
-  ],
-  '14,1': [FORTE[6][14][0], // 156
-  FORTE[6][14][2], // var
-  FORTE[6][14][1] //icv
-  ],
-  '14,-1': [[0, 3, 4, 5, 7, 8], // 157
-  FORTE[6][14][2], // var
-  FORTE[6][14][1] //icv
-  ],
-  '15,1': [FORTE[6][15][0], // 158
-  FORTE[6][15][2], // var
-  FORTE[6][15][1] //icv
-  ],
-  '15,-1': [[0, 3, 4, 6, 7, 8], // 159
-  FORTE[6][15][2], // var
-  FORTE[6][15][1] //icv
-  ],
-  '16,1': [FORTE[6][16][0], // 160
-  FORTE[6][16][2], // var
-  FORTE[6][16][1] //icv
-  ],
-  '16,-1': [[0, 2, 3, 4, 7, 8], // 161
-  FORTE[6][16][2], // var
-  FORTE[6][16][1] //icv
-  ],
-  '17,1': [FORTE[6][17][0], // 162
-  FORTE[6][17][2], // var
-  FORTE[6][17][1] //icv
-  ],
-  '17,-1': [[0, 1, 4, 6, 7, 8], // 163
-  FORTE[6][17][2], // var
-  FORTE[6][17][1] //icv
-  ],
-  '18,1': [FORTE[6][18][0], // 164
-  FORTE[6][18][2], // var
-  FORTE[6][18][1] //icv
-  ],
-  '18,-1': [[0, 1, 3, 6, 7, 8], // 165
-  FORTE[6][18][2], // var
-  FORTE[6][18][1] //icv
-  ],
-  '19,1': [FORTE[6][19][0], // 166
-  FORTE[6][19][2], // var
-  FORTE[6][19][1] //icv
-  ],
-  '19,-1': [[0, 1, 4, 5, 7, 8], // 167
-  FORTE[6][19][2], // var
-  FORTE[6][19][1] //icv
-  ],
-  '20,0': [FORTE[6][20][0], // 168
-  FORTE[6][20][2], // var
-  FORTE[6][20][1] //icv
-  ],
-  '21,1': [FORTE[6][21][0], // 169
-  FORTE[6][21][2], // var
-  FORTE[6][21][1] //icv
-  ],
-  '21,-1': [[0, 2, 4, 5, 6, 8], // 170
-  FORTE[6][21][2], // var
-  FORTE[6][21][1] //icv
-  ],
-  '22,1': [FORTE[6][22][0], // 171
-  FORTE[6][22][2], // var
-  FORTE[6][22][1] //icv
-  ],
-  '22,-1': [[0, 2, 4, 6, 7, 8], // 172
-  FORTE[6][22][2], // var
-  FORTE[6][22][1] //icv
-  ],
-  '23,0': [FORTE[6][23][0], // 173
-  FORTE[6][23][2], // var
-  FORTE[6][23][1] //icv
-  ],
-  '24,1': [FORTE[6][24][0], // 174
-  FORTE[6][24][2], // var
-  FORTE[6][24][1] //icv
-  ],
-  '24,-1': [[0, 2, 4, 5, 7, 8], // 175
-  FORTE[6][24][2], // var
-  FORTE[6][24][1] //icv
-  ],
-  '25,1': [FORTE[6][25][0], // 176
-  FORTE[6][25][2], // var
-  FORTE[6][25][1] //icv
-  ],
-  '25,-1': [[0, 2, 3, 5, 7, 8], // 177
-  FORTE[6][25][2], // var
-  FORTE[6][25][1] //icv
-  ],
-  '26,0': [FORTE[6][26][0], // 178
-  FORTE[6][26][2], // var
-  FORTE[6][26][1] //icv
-  ],
-  '27,1': [FORTE[6][27][0], // 179
-  FORTE[6][27][2], // var
-  FORTE[6][27][1] //icv
-  ],
-  '27,-1': [[0, 3, 5, 6, 8, 9], // 180
-  FORTE[6][27][2], // var
-  FORTE[6][27][1] //icv
-  ],
-  '28,0': [FORTE[6][28][0], // 181
-  FORTE[6][28][2], // var
-  FORTE[6][28][1] //icv
-  ],
-  '29,0': [FORTE[6][29][0], // 182
-  FORTE[6][29][2], // var
-  FORTE[6][29][1] //icv
-  ],
-  '30,1': [FORTE[6][30][0], // 183
-  FORTE[6][30][2], // var
-  FORTE[6][30][1] //icv
-  ],
-  '30,-1': [[0, 2, 3, 6, 8, 9], // 184
-  FORTE[6][30][2], // var
-  FORTE[6][30][1] //icv
-  ],
-  '31,1': [FORTE[6][31][0], // 185
-  FORTE[6][31][2], // var
-  FORTE[6][31][1] //icv
-  ],
-  '31,-1': [[0, 1, 4, 6, 8, 9], // 186
-  FORTE[6][31][2], // var
-  FORTE[6][31][1] //icv
-  ],
-  '32,0': [FORTE[6][32][0], // 187
-  FORTE[6][32][2], // var
-  FORTE[6][32][1] //icv
-  ],
-  '33,1': [FORTE[6][33][0], // 188
-  FORTE[6][33][2], // var
-  FORTE[6][33][1] //icv
-  ],
-  '33,-1': [[0, 2, 4, 6, 7, 9], // 189
-  FORTE[6][33][2], // var
-  FORTE[6][33][1] //icv
-  ],
-  '34,1': [FORTE[6][34][0], // 190
-  FORTE[6][34][2], // var
-  FORTE[6][34][1] //icv
-  ],
-  '34,-1': [[0, 2, 4, 6, 8, 9], // 191
-  FORTE[6][34][2], // var
-  FORTE[6][34][1] //icv
-  ],
-  '35,0': [FORTE[6][35][0], // 192
-  FORTE[6][35][2], // var
-  FORTE[6][35][1] //icv
-  ],
-  '36,1': [FORTE[6][36][0], // 193
-  FORTE[6][36][2], // var
-  FORTE[6][36][1] //icv
-  ],
-  '36,-1': [[0, 3, 4, 5, 6, 7], // 194
-  FORTE[6][36][2], // var
-  FORTE[6][36][1] //icv
-  ],
-  '37,0': [FORTE[6][37][0], // 195
-  FORTE[6][37][2], // var
-  FORTE[6][37][1] //icv
-  ],
-  '38,0': [FORTE[6][38][0], // 196
-  FORTE[6][38][2], // var
-  FORTE[6][38][1] //icv
-  ],
-  '39,1': [FORTE[6][39][0], // 197
-  FORTE[6][39][2], // var
-  FORTE[6][39][1] //icv
-  ],
-  '39,-1': [[0, 3, 4, 5, 6, 8], // 198
-  FORTE[6][39][2], // var
-  FORTE[6][39][1] //icv
-  ],
-  '40,1': [FORTE[6][40][0], // 199
-  FORTE[6][40][2], // var
-  FORTE[6][40][1] //icv
-  ],
-  '40,-1': [[0, 3, 5, 6, 7, 8], // 200
-  FORTE[6][40][2], // var
-  FORTE[6][40][1] //icv
-  ],
-  '41,1': [FORTE[6][41][0], // 201
-  FORTE[6][41][2], // var
-  FORTE[6][41][1] //icv
-  ],
-  '41,-1': [[0, 2, 5, 6, 7, 8], // 202
-  FORTE[6][41][2], // var
-  FORTE[6][41][1] //icv
-  ],
-  '42,0': [FORTE[6][42][0], // 203
-  FORTE[6][42][2], // var
-  FORTE[6][42][1] //icv
-  ],
-  '43,1': [FORTE[6][43][0], // 204
-  FORTE[6][43][2], // var
-  FORTE[6][43][1] //icv
-  ],
-  '43,-1': [[0, 2, 3, 6, 7, 8], // 205
-  FORTE[6][43][2], // var
-  FORTE[6][43][1] //icv
-  ],
-  '44,1': [FORTE[6][44][0], // 206
-  FORTE[6][44][2], // var
-  FORTE[6][44][1] //icv
-  ],
-  '44,-1': [[0, 3, 4, 7, 8, 9], // 207
-  FORTE[6][44][2], // var
-  FORTE[6][44][1] //icv
-  ],
-  '45,0': [FORTE[6][45][0], // 208
-  FORTE[6][45][2], // var
-  FORTE[6][45][1] //icv
-  ],
-  '46,1': [FORTE[6][46][0], // 209
-  FORTE[6][46][2], // var
-  FORTE[6][46][1] //icv
-  ],
-  '46,-1': [[0, 3, 5, 7, 8, 9], // 210
-  FORTE[6][46][2], // var
-  FORTE[6][46][1] //icv
-  ],
-  '47,1': [FORTE[6][47][0], // 211
-  FORTE[6][47][2], // var
-  FORTE[6][47][1] //icv
-  ],
-  '47,-1': [[0, 2, 5, 7, 8, 9], // 212
-  FORTE[6][47][2], // var
-  FORTE[6][47][1] //icv
-  ],
-  '48,0': [FORTE[6][48][0], // 213
-  FORTE[6][48][2], // var
-  FORTE[6][48][1] //icv
-  ],
-  '49,0': [FORTE[6][49][0], // 214
-  FORTE[6][49][2], // var
-  FORTE[6][49][1] //icv
-  ],
-  '50,0': [FORTE[6][50][0], // 215
-  FORTE[6][50][2], // var
-  FORTE[6][50][1] //icv
-  ]
+  '1,0': [FORTE[6][1][0], FORTE[6][1][2], FORTE[6][1][1]],
+  '2,1': [FORTE[6][2][0], FORTE[6][2][2], FORTE[6][2][1]],
+  '2,-1': [[0, 2, 3, 4, 5, 6], FORTE[6][2][2], FORTE[6][2][1]],
+  '3,1': [FORTE[6][3][0], FORTE[6][3][2], FORTE[6][3][1]],
+  '3,-1': [[0, 1, 3, 4, 5, 6], FORTE[6][3][2], FORTE[6][3][1]],
+  '4,0': [FORTE[6][4][0], FORTE[6][4][2], FORTE[6][4][1]],
+  '5,1': [FORTE[6][5][0], FORTE[6][5][2], FORTE[6][5][1]],
+  '5,-1': [[0, 1, 4, 5, 6, 7], FORTE[6][5][2], FORTE[6][5][1]],
+  '6,0': [FORTE[6][6][0], FORTE[6][6][2], FORTE[6][6][1]],
+  '7,0': [FORTE[6][7][0], FORTE[6][7][2], FORTE[6][7][1]],
+  '8,0': [FORTE[6][8][0], FORTE[6][8][2], FORTE[6][8][1]],
+  '9,1': [FORTE[6][9][0], FORTE[6][9][2], FORTE[6][9][1]],
+  '9,-1': [[0, 2, 4, 5, 6, 7], FORTE[6][9][2], FORTE[6][9][1]],
+  '10,1': [FORTE[6][10][0], FORTE[6][10][2], FORTE[6][10][1]],
+  '10,-1': [[0, 2, 3, 4, 6, 7], FORTE[6][10][2], FORTE[6][10][1]],
+  '11,1': [FORTE[6][11][0], FORTE[6][11][2], FORTE[6][11][1]],
+  '11,-1': [[0, 2, 3, 5, 6, 7], FORTE[6][11][2], FORTE[6][11][1]],
+  '12,1': [FORTE[6][12][0], FORTE[6][12][2], FORTE[6][12][1]],
+  '12,-1': [[0, 1, 3, 5, 6, 7], FORTE[6][12][2], FORTE[6][12][1]],
+  '13,0': [FORTE[6][13][0], FORTE[6][13][2], FORTE[6][13][1]],
+  '14,1': [FORTE[6][14][0], FORTE[6][14][2], FORTE[6][14][1]],
+  '14,-1': [[0, 3, 4, 5, 7, 8], FORTE[6][14][2], FORTE[6][14][1]],
+  '15,1': [FORTE[6][15][0], FORTE[6][15][2], FORTE[6][15][1]],
+  '15,-1': [[0, 3, 4, 6, 7, 8], FORTE[6][15][2], FORTE[6][15][1]],
+  '16,1': [FORTE[6][16][0], FORTE[6][16][2], FORTE[6][16][1]],
+  '16,-1': [[0, 2, 3, 4, 7, 8], FORTE[6][16][2], FORTE[6][16][1]],
+  '17,1': [FORTE[6][17][0], FORTE[6][17][2], FORTE[6][17][1]],
+  '17,-1': [[0, 1, 4, 6, 7, 8], FORTE[6][17][2], FORTE[6][17][1]],
+  '18,1': [FORTE[6][18][0], FORTE[6][18][2], FORTE[6][18][1]],
+  '18,-1': [[0, 1, 3, 6, 7, 8], FORTE[6][18][2], FORTE[6][18][1]],
+  '19,1': [FORTE[6][19][0], FORTE[6][19][2], FORTE[6][19][1]],
+  '19,-1': [[0, 1, 4, 5, 7, 8], FORTE[6][19][2], FORTE[6][19][1]],
+  '20,0': [FORTE[6][20][0], FORTE[6][20][2], FORTE[6][20][1]],
+  '21,1': [FORTE[6][21][0], FORTE[6][21][2], FORTE[6][21][1]],
+  '21,-1': [[0, 2, 4, 5, 6, 8], FORTE[6][21][2], FORTE[6][21][1]],
+  '22,1': [FORTE[6][22][0], FORTE[6][22][2], FORTE[6][22][1]],
+  '22,-1': [[0, 2, 4, 6, 7, 8], FORTE[6][22][2], FORTE[6][22][1]],
+  '23,0': [FORTE[6][23][0], FORTE[6][23][2], FORTE[6][23][1]],
+  '24,1': [FORTE[6][24][0], FORTE[6][24][2], FORTE[6][24][1]],
+  '24,-1': [[0, 2, 4, 5, 7, 8], FORTE[6][24][2], FORTE[6][24][1]],
+  '25,1': [FORTE[6][25][0], FORTE[6][25][2], FORTE[6][25][1]],
+  '25,-1': [[0, 2, 3, 5, 7, 8], FORTE[6][25][2], FORTE[6][25][1]],
+  '26,0': [FORTE[6][26][0], FORTE[6][26][2], FORTE[6][26][1]],
+  '27,1': [FORTE[6][27][0], FORTE[6][27][2], FORTE[6][27][1]],
+  '27,-1': [[0, 3, 5, 6, 8, 9], FORTE[6][27][2], FORTE[6][27][1]],
+  '28,0': [FORTE[6][28][0], FORTE[6][28][2], FORTE[6][28][1]],
+  '29,0': [FORTE[6][29][0], FORTE[6][29][2], FORTE[6][29][1]],
+  '30,1': [FORTE[6][30][0], FORTE[6][30][2], FORTE[6][30][1]],
+  '30,-1': [[0, 2, 3, 6, 8, 9], FORTE[6][30][2], FORTE[6][30][1]],
+  '31,1': [FORTE[6][31][0], FORTE[6][31][2], FORTE[6][31][1]],
+  '31,-1': [[0, 1, 4, 6, 8, 9], FORTE[6][31][2], FORTE[6][31][1]],
+  '32,0': [FORTE[6][32][0], FORTE[6][32][2], FORTE[6][32][1]],
+  '33,1': [FORTE[6][33][0], FORTE[6][33][2], FORTE[6][33][1]],
+  '33,-1': [[0, 2, 4, 6, 7, 9], FORTE[6][33][2], FORTE[6][33][1]],
+  '34,1': [FORTE[6][34][0], FORTE[6][34][2], FORTE[6][34][1]],
+  '34,-1': [[0, 2, 4, 6, 8, 9], FORTE[6][34][2], FORTE[6][34][1]],
+  '35,0': [FORTE[6][35][0], FORTE[6][35][2], FORTE[6][35][1]],
+  '36,1': [FORTE[6][36][0], FORTE[6][36][2], FORTE[6][36][1]],
+  '36,-1': [[0, 3, 4, 5, 6, 7], FORTE[6][36][2], FORTE[6][36][1]],
+  '37,0': [FORTE[6][37][0], FORTE[6][37][2], FORTE[6][37][1]],
+  '38,0': [FORTE[6][38][0], FORTE[6][38][2], FORTE[6][38][1]],
+  '39,1': [FORTE[6][39][0], FORTE[6][39][2], FORTE[6][39][1]],
+  '39,-1': [[0, 3, 4, 5, 6, 8], FORTE[6][39][2], FORTE[6][39][1]],
+  '40,1': [FORTE[6][40][0], FORTE[6][40][2], FORTE[6][40][1]],
+  '40,-1': [[0, 3, 5, 6, 7, 8], FORTE[6][40][2], FORTE[6][40][1]],
+  '41,1': [FORTE[6][41][0], FORTE[6][41][2], FORTE[6][41][1]],
+  '41,-1': [[0, 2, 5, 6, 7, 8], FORTE[6][41][2], FORTE[6][41][1]],
+  '42,0': [FORTE[6][42][0], FORTE[6][42][2], FORTE[6][42][1]],
+  '43,1': [FORTE[6][43][0], FORTE[6][43][2], FORTE[6][43][1]],
+  '43,-1': [[0, 2, 3, 6, 7, 8], FORTE[6][43][2], FORTE[6][43][1]],
+  '44,1': [FORTE[6][44][0], FORTE[6][44][2], FORTE[6][44][1]],
+  '44,-1': [[0, 3, 4, 7, 8, 9], FORTE[6][44][2], FORTE[6][44][1]],
+  '45,0': [FORTE[6][45][0], FORTE[6][45][2], FORTE[6][45][1]],
+  '46,1': [FORTE[6][46][0], FORTE[6][46][2], FORTE[6][46][1]],
+  '46,-1': [[0, 3, 5, 7, 8, 9], FORTE[6][46][2], FORTE[6][46][1]],
+  '47,1': [FORTE[6][47][0], FORTE[6][47][2], FORTE[6][47][1]],
+  '47,-1': [[0, 2, 5, 7, 8, 9], FORTE[6][47][2], FORTE[6][47][1]],
+  '48,0': [FORTE[6][48][0], FORTE[6][48][2], FORTE[6][48][1]],
+  '49,0': [FORTE[6][49][0], FORTE[6][49][2], FORTE[6][49][1]],
+  '50,0': [FORTE[6][50][0], FORTE[6][50][2], FORTE[6][50][1]]
 }; // cardinality 7
 
 var card_7 = {
-  '1,0': [FORTE[7][1][0], // 216
-  FORTE[7][1][2], // var
-  FORTE[7][1][1] //icv
-  ],
-  '2,1': [FORTE[7][2][0], // 217
-  FORTE[7][2][2], // var
-  FORTE[7][2][1] //icv
-  ],
-  '2,-1': [[0, 2, 3, 4, 5, 6, 7], // 218
-  FORTE[7][2][2], // var
-  FORTE[7][2][1] //icv
-  ],
-  '3,1': [FORTE[7][3][0], // 219
-  FORTE[7][3][2], // var
-  FORTE[7][3][1] //icv
-  ],
-  '3,-1': [[0, 3, 4, 5, 6, 7, 8], // 220
-  FORTE[7][3][2], // var
-  FORTE[7][3][1] //icv
-  ],
-  '4,1': [FORTE[7][4][0], // 221
-  FORTE[7][4][2], // var
-  FORTE[7][4][1] //icv
-  ],
-  '4,-1': [[0, 1, 3, 4, 5, 6, 7], // 222
-  FORTE[7][4][2], // var
-  FORTE[7][4][1] //icv
-  ],
-  '5,1': [FORTE[7][5][0], // 223
-  FORTE[7][5][2], // var
-  FORTE[7][5][1] //icv
-  ],
-  '5,-1': [[0, 1, 2, 4, 5, 6, 7], // 224
-  FORTE[7][5][2], // var
-  FORTE[7][5][1] //icv
-  ],
-  '6,1': [FORTE[7][6][0], // 225
-  FORTE[7][6][2], // var
-  FORTE[7][6][1] //icv
-  ],
-  '6,-1': [[0, 1, 4, 5, 6, 7, 8], // 226
-  FORTE[7][6][2], // var
-  FORTE[7][6][1] //icv
-  ],
-  '7,1': [FORTE[7][7][0], // 227
-  FORTE[7][7][2], // var
-  FORTE[7][7][1] //icv
-  ],
-  '7,-1': [[0, 1, 2, 5, 6, 7, 8], // 228
-  FORTE[7][7][2], // var
-  FORTE[7][7][1] //icv
-  ],
-  '8,0': [FORTE[7][8][0], // 229
-  FORTE[7][8][2], // var
-  FORTE[7][8][1] //icv
-  ],
-  '9,1': [FORTE[7][9][0], // 230
-  FORTE[7][9][2], // var
-  FORTE[7][9][1] //icv
-  ],
-  '9,-1': [[0, 2, 4, 5, 6, 7, 8], // 231
-  FORTE[7][9][2], // var
-  FORTE[7][9][1] //icv
-  ],
-  '10,1': [FORTE[7][10][0], // 232
-  FORTE[7][10][2], // var
-  FORTE[7][10][1] //icv
-  ],
-  '10,-1': [[0, 3, 5, 6, 7, 8, 9], // 233
-  FORTE[7][10][2], // var
-  FORTE[7][10][1] //icv
-  ],
-  '11,1': [FORTE[7][11][0], // 234
-  FORTE[7][11][2], // var
-  FORTE[7][11][1] //icv
-  ],
-  '11,-1': [[0, 2, 3, 4, 5, 7, 8], // 235
-  FORTE[7][11][2], // var
-  FORTE[7][11][1] //icv
-  ],
-  '12,0': [FORTE[7][12][0], // 236
-  FORTE[7][12][2], // var
-  FORTE[7][12][1] //icv
-  ],
-  '13,1': [FORTE[7][13][0], // 237
-  FORTE[7][13][2], // var
-  FORTE[7][13][1] //icv
-  ],
-  '13,-1': [[0, 2, 3, 4, 6, 7, 8], // 238
-  FORTE[7][13][2], // var
-  FORTE[7][13][1] //icv
-  ],
-  '14,1': [FORTE[7][14][0], // 239
-  FORTE[7][14][2], // var
-  FORTE[7][14][1] //icv
-  ],
-  '14,-1': [[0, 1, 3, 5, 6, 7, 8], // 240
-  FORTE[7][14][2], // var
-  FORTE[7][14][1] //icv
-  ],
-  '15,0': [FORTE[7][15][0], // 241
-  FORTE[7][15][2], // var
-  FORTE[7][15][1] //icv
-  ],
-  '16,1': [FORTE[7][16][0], // 242
-  FORTE[7][16][2], // var
-  FORTE[7][16][1] //icv
-  ],
-  '16,-1': [[0, 3, 4, 6, 7, 8, 9], // 243
-  FORTE[7][16][2], // var
-  FORTE[7][16][1] //icv
-  ],
-  '17,0': [FORTE[7][17][0], // 244
-  FORTE[7][17][2], // var
-  FORTE[7][17][1] //icv
-  ],
-  '18,1': [FORTE[7][18][0], // 245
-  FORTE[7][18][2], // var
-  FORTE[7][18][1] //icv
-  ],
-  '18,-1': [[0, 1, 4, 6, 7, 8, 9], // 246
-  FORTE[7][18][2], // var
-  FORTE[7][18][1] //icv
-  ],
-  '19,1': [FORTE[7][19][0], // 247
-  FORTE[7][19][2], // var
-  FORTE[7][19][1] //icv
-  ],
-  '19,-1': [[0, 2, 3, 6, 7, 8, 9], // 248
-  FORTE[7][19][2], // var
-  FORTE[7][19][1] //icv
-  ],
-  '20,1': [FORTE[7][20][0], // 249
-  FORTE[7][20][2], // var
-  FORTE[7][20][1] //icv
-  ],
-  '20,-1': [[0, 1, 2, 5, 7, 8, 9], // 250
-  FORTE[7][20][2], // var
-  FORTE[7][20][1] //icv
-  ],
-  '21,1': [FORTE[7][21][0], // 251
-  FORTE[7][21][2], // var
-  FORTE[7][21][1] //icv
-  ],
-  '21,-1': [[0, 1, 4, 5, 7, 8, 9], // 252
-  FORTE[7][21][2], // var
-  FORTE[7][21][1] //icv
-  ],
-  '22,0': [FORTE[7][22][0], // 253
-  FORTE[7][22][2], // var
-  FORTE[7][22][1] //icv
-  ],
-  '23,1': [FORTE[7][23][0], // 254
-  FORTE[7][23][2], // var
-  FORTE[7][23][1] //icv
-  ],
-  '23,-1': [[0, 2, 4, 5, 6, 7, 9], // 255
-  FORTE[7][23][2], // var
-  FORTE[7][23][1] //icv
-  ],
-  '24,1': [FORTE[7][24][0], // 256
-  FORTE[7][24][2], // var
-  FORTE[7][24][1] //icv
-  ],
-  '24,-1': [[0, 2, 4, 6, 7, 8, 9], // 257
-  FORTE[7][24][2], // var
-  FORTE[7][24][1] //icv
-  ],
-  '25,1': [FORTE[7][25][0], // 258
-  FORTE[7][25][2], // var
-  FORTE[7][25][1] //icv
-  ],
-  '25,-1': [[0, 2, 3, 5, 6, 7, 9], // 259
-  FORTE[7][25][2], // var
-  FORTE[7][25][1] //icv
-  ],
-  '26,1': [FORTE[7][26][0], // 260
-  FORTE[7][26][2], // var
-  FORTE[7][26][1] //icv
-  ],
-  '26,-1': [[0, 2, 4, 5, 6, 8, 9], // 261
-  FORTE[7][26][2], // var
-  FORTE[7][26][1] //icv
-  ],
-  '27,1': [FORTE[7][27][0], // 262
-  FORTE[7][27][2], // var
-  FORTE[7][27][1] //icv
-  ],
-  '27,-1': [[0, 2, 4, 5, 7, 8, 9], // 263
-  FORTE[7][27][2], // var
-  FORTE[7][27][1] //icv
-  ],
-  '28,1': [FORTE[7][28][0], // 264
-  FORTE[7][28][2], // var
-  FORTE[7][28][1] //icv
-  ],
-  '28,-1': [[0, 2, 3, 4, 6, 8, 9], // 265
-  FORTE[7][28][2], // var
-  FORTE[7][28][1] //icv
-  ],
-  '29,1': [FORTE[7][29][0], // 266
-  FORTE[7][29][2], // var
-  FORTE[7][29][1] //icv
-  ],
-  '29,-1': [[0, 2, 3, 5, 7, 8, 9], // 267
-  FORTE[7][29][2], // var
-  FORTE[7][29][1] //icv
-  ],
-  '30,1': [FORTE[7][30][0], // 268
-  FORTE[7][30][2], // var
-  FORTE[7][30][1] //icv
-  ],
-  '30,-1': [[0, 1, 3, 5, 7, 8, 9], // 269
-  FORTE[7][30][2], // var
-  FORTE[7][30][1] //icv
-  ],
-  '31,1': [FORTE[7][31][0], // 270
-  FORTE[7][31][2], // var
-  FORTE[7][31][1] //icv
-  ],
-  '31,-1': [[0, 2, 3, 5, 6, 8, 9], // 271
-  FORTE[7][31][2], // var
-  FORTE[7][31][1] //icv
-  ],
-  '32,1': [FORTE[7][32][0], // 272
-  FORTE[7][32][2], // var
-  FORTE[7][32][1] //icv
-  ],
-  '32,-1': [[0, 1, 3, 5, 6, 8, 9], // 273
-  FORTE[7][32][2], // var
-  FORTE[7][32][1] //icv
-  ],
-  '33,0': [FORTE[7][33][0], // 274
-  FORTE[7][33][2], // var
-  FORTE[7][33][1] //icv
-  ],
-  '34,0': [FORTE[7][34][0], // 275
-  FORTE[7][34][2], // var
-  FORTE[7][34][1] //icv
-  ],
-  '35,0': [FORTE[7][35][0], // 276
-  FORTE[7][35][2], // var
-  FORTE[7][35][1] //icv
-  ],
-  '36,1': [FORTE[7][36][0], // 277
-  FORTE[7][36][2], // var
-  FORTE[7][36][1] //icv
-  ],
-  '36,-1': [[0, 2, 3, 5, 6, 7, 8], // 278
-  FORTE[7][36][2], // var
-  FORTE[7][36][1] //icv
-  ],
-  '37,0': [FORTE[7][37][0], // 279
-  FORTE[7][37][2], // var
-  FORTE[7][37][1] //icv
-  ],
-  '38,1': [FORTE[7][38][0], // 280
-  FORTE[7][38][2], // var
-  FORTE[7][38][1] //icv
-  ],
-  '38,-1': [[0, 1, 3, 4, 6, 7, 8], // 281
-  FORTE[7][38][2], // var
-  FORTE[7][38][1] //icv
-  ]
+  '1,0': [FORTE[7][1][0], FORTE[7][1][2], FORTE[7][1][1]],
+  '2,1': [FORTE[7][2][0], FORTE[7][2][2], FORTE[7][2][1]],
+  '2,-1': [[0, 2, 3, 4, 5, 6, 7], FORTE[7][2][2], FORTE[7][2][1]],
+  '3,1': [FORTE[7][3][0], FORTE[7][3][2], FORTE[7][3][1]],
+  '3,-1': [[0, 3, 4, 5, 6, 7, 8], FORTE[7][3][2], FORTE[7][3][1]],
+  '4,1': [FORTE[7][4][0], FORTE[7][4][2], FORTE[7][4][1]],
+  '4,-1': [[0, 1, 3, 4, 5, 6, 7], FORTE[7][4][2], FORTE[7][4][1]],
+  '5,1': [FORTE[7][5][0], FORTE[7][5][2], FORTE[7][5][1]],
+  '5,-1': [[0, 1, 2, 4, 5, 6, 7], FORTE[7][5][2], FORTE[7][5][1]],
+  '6,1': [FORTE[7][6][0], FORTE[7][6][2], FORTE[7][6][1]],
+  '6,-1': [[0, 1, 4, 5, 6, 7, 8], FORTE[7][6][2], FORTE[7][6][1]],
+  '7,1': [FORTE[7][7][0], FORTE[7][7][2], FORTE[7][7][1]],
+  '7,-1': [[0, 1, 2, 5, 6, 7, 8], FORTE[7][7][2], FORTE[7][7][1]],
+  '8,0': [FORTE[7][8][0], FORTE[7][8][2], FORTE[7][8][1]],
+  '9,1': [FORTE[7][9][0], FORTE[7][9][2], FORTE[7][9][1]],
+  '9,-1': [[0, 2, 4, 5, 6, 7, 8], FORTE[7][9][2], FORTE[7][9][1]],
+  '10,1': [FORTE[7][10][0], FORTE[7][10][2], FORTE[7][10][1]],
+  '10,-1': [[0, 3, 5, 6, 7, 8, 9], FORTE[7][10][2], FORTE[7][10][1]],
+  '11,1': [FORTE[7][11][0], FORTE[7][11][2], FORTE[7][11][1]],
+  '11,-1': [[0, 2, 3, 4, 5, 7, 8], FORTE[7][11][2], FORTE[7][11][1]],
+  '12,0': [FORTE[7][12][0], FORTE[7][12][2], FORTE[7][12][1]],
+  '13,1': [FORTE[7][13][0], FORTE[7][13][2], FORTE[7][13][1]],
+  '13,-1': [[0, 2, 3, 4, 6, 7, 8], FORTE[7][13][2], FORTE[7][13][1]],
+  '14,1': [FORTE[7][14][0], FORTE[7][14][2], FORTE[7][14][1]],
+  '14,-1': [[0, 1, 3, 5, 6, 7, 8], FORTE[7][14][2], FORTE[7][14][1]],
+  '15,0': [FORTE[7][15][0], FORTE[7][15][2], FORTE[7][15][1]],
+  '16,1': [FORTE[7][16][0], FORTE[7][16][2], FORTE[7][16][1]],
+  '16,-1': [[0, 3, 4, 6, 7, 8, 9], FORTE[7][16][2], FORTE[7][16][1]],
+  '17,0': [FORTE[7][17][0], FORTE[7][17][2], FORTE[7][17][1]],
+  '18,1': [FORTE[7][18][0], FORTE[7][18][2], FORTE[7][18][1]],
+  '18,-1': [[0, 1, 4, 6, 7, 8, 9], FORTE[7][18][2], FORTE[7][18][1]],
+  '19,1': [FORTE[7][19][0], FORTE[7][19][2], FORTE[7][19][1]],
+  '19,-1': [[0, 2, 3, 6, 7, 8, 9], FORTE[7][19][2], FORTE[7][19][1]],
+  '20,1': [FORTE[7][20][0], FORTE[7][20][2], FORTE[7][20][1]],
+  '20,-1': [[0, 1, 2, 5, 7, 8, 9], FORTE[7][20][2], FORTE[7][20][1]],
+  '21,1': [FORTE[7][21][0], FORTE[7][21][2], FORTE[7][21][1]],
+  '21,-1': [[0, 1, 4, 5, 7, 8, 9], FORTE[7][21][2], FORTE[7][21][1]],
+  '22,0': [FORTE[7][22][0], FORTE[7][22][2], FORTE[7][22][1]],
+  '23,1': [FORTE[7][23][0], FORTE[7][23][2], FORTE[7][23][1]],
+  '23,-1': [[0, 2, 4, 5, 6, 7, 9], FORTE[7][23][2], FORTE[7][23][1]],
+  '24,1': [FORTE[7][24][0], FORTE[7][24][2], FORTE[7][24][1]],
+  '24,-1': [[0, 2, 4, 6, 7, 8, 9], FORTE[7][24][2], FORTE[7][24][1]],
+  '25,1': [FORTE[7][25][0], FORTE[7][25][2], FORTE[7][25][1]],
+  '25,-1': [[0, 2, 3, 5, 6, 7, 9], FORTE[7][25][2], FORTE[7][25][1]],
+  '26,1': [FORTE[7][26][0], FORTE[7][26][2], FORTE[7][26][1]],
+  '26,-1': [[0, 2, 4, 5, 6, 8, 9], FORTE[7][26][2], FORTE[7][26][1]],
+  '27,1': [FORTE[7][27][0], FORTE[7][27][2], FORTE[7][27][1]],
+  '27,-1': [[0, 2, 4, 5, 7, 8, 9], FORTE[7][27][2], FORTE[7][27][1]],
+  '28,1': [FORTE[7][28][0], FORTE[7][28][2], FORTE[7][28][1]],
+  '28,-1': [[0, 2, 3, 4, 6, 8, 9], FORTE[7][28][2], FORTE[7][28][1]],
+  '29,1': [FORTE[7][29][0], FORTE[7][29][2], FORTE[7][29][1]],
+  '29,-1': [[0, 2, 3, 5, 7, 8, 9], FORTE[7][29][2], FORTE[7][29][1]],
+  '30,1': [FORTE[7][30][0], FORTE[7][30][2], FORTE[7][30][1]],
+  '30,-1': [[0, 1, 3, 5, 7, 8, 9], FORTE[7][30][2], FORTE[7][30][1]],
+  '31,1': [FORTE[7][31][0], FORTE[7][31][2], FORTE[7][31][1]],
+  '31,-1': [[0, 2, 3, 5, 6, 8, 9], FORTE[7][31][2], FORTE[7][31][1]],
+  '32,1': [FORTE[7][32][0], FORTE[7][32][2], FORTE[7][32][1]],
+  '32,-1': [[0, 1, 3, 5, 6, 8, 9], FORTE[7][32][2], FORTE[7][32][1]],
+  '33,0': [FORTE[7][33][0], FORTE[7][33][2], FORTE[7][33][1]],
+  '34,0': [FORTE[7][34][0], FORTE[7][34][2], FORTE[7][34][1]],
+  '35,0': [FORTE[7][35][0], FORTE[7][35][2], FORTE[7][35][1]],
+  '36,1': [FORTE[7][36][0], FORTE[7][36][2], FORTE[7][36][1]],
+  '36,-1': [[0, 2, 3, 5, 6, 7, 8], FORTE[7][36][2], FORTE[7][36][1]],
+  '37,0': [FORTE[7][37][0], FORTE[7][37][2], FORTE[7][37][1]],
+  '38,1': [FORTE[7][38][0], FORTE[7][38][2], FORTE[7][38][1]],
+  '38,-1': [[0, 1, 3, 4, 6, 7, 8], FORTE[7][38][2], FORTE[7][38][1]]
 }; // cardinality 8
 
 var card_8 = {
-  '1,0': [FORTE[8][1][0], // 282
-  FORTE[8][1][2], // var
-  FORTE[8][1][1] //icv
-  ],
-  '2,1': [FORTE[8][2][0], // 283
-  FORTE[8][2][2], // var
-  FORTE[8][2][1] //icv
-  ],
-  '2,-1': [[0, 2, 3, 4, 5, 6, 7, 8], // 284
-  FORTE[8][2][2], // var
-  FORTE[8][2][1] //icv
-  ],
-  '3,0': [FORTE[8][3][0], // 285
-  FORTE[8][3][2], // var
-  FORTE[8][3][1] //icv
-  ],
-  '4,1': [FORTE[8][4][0], // 286
-  FORTE[8][4][2], // var
-  FORTE[8][4][1] //icv
-  ],
-  '4,-1': [[0, 1, 3, 4, 5, 6, 7, 8], // 287
-  FORTE[8][4][2], // var
-  FORTE[8][4][1] //icv
-  ],
-  '5,1': [FORTE[8][5][0], // 288
-  FORTE[8][5][2], // var
-  FORTE[8][5][1] //icv
-  ],
-  '5,-1': [[0, 1, 2, 4, 5, 6, 7, 8], // 289
-  FORTE[8][5][2], // var
-  FORTE[8][5][1] //icv
-  ],
-  '6,0': [FORTE[8][6][0], // 290
-  FORTE[8][6][2], // var
-  FORTE[8][6][1] //icv
-  ],
-  '7,0': [FORTE[8][7][0], // 291
-  FORTE[8][7][2], // var
-  FORTE[8][7][1] //icv
-  ],
-  '8,0': [FORTE[8][8][0], // 292
-  FORTE[8][8][2], // var
-  FORTE[8][8][1] //icv
-  ],
-  '9,0': [FORTE[8][9][0], // 293
-  FORTE[8][9][2], // var
-  FORTE[8][9][1] //icv
-  ],
-  '10,0': [FORTE[8][10][0], // 294
-  FORTE[8][10][2], // var
-  FORTE[8][10][1] //icv
-  ],
-  '11,1': [FORTE[8][11][0], // 295
-  FORTE[8][11][2], // var
-  FORTE[8][11][1] //icv
-  ],
-  '11,-1': [[0, 2, 4, 5, 6, 7, 8, 9], // 296
-  FORTE[8][11][2], // var
-  FORTE[8][11][1] //icv
-  ],
-  '12,1': [FORTE[8][12][0], // 297
-  FORTE[8][12][2], // var
-  FORTE[8][12][1] //icv
-  ],
-  '12,-1': [[0, 2, 3, 4, 5, 6, 8, 9], // 298
-  FORTE[8][12][2], // var
-  FORTE[8][12][1] //icv
-  ],
-  '13,1': [FORTE[8][13][0], // 299
-  FORTE[8][13][2], // var
-  FORTE[8][13][1] //icv
-  ],
-  '13,-1': [[0, 2, 3, 5, 6, 7, 8, 9], // 300
-  FORTE[8][13][2], // var
-  FORTE[8][13][1] //icv
-  ],
-  '14,1': [FORTE[8][14][0], // 301
-  FORTE[8][14][2], // var
-  FORTE[8][14][1] //icv
-  ],
-  '14,-1': [[0, 2, 3, 4, 5, 7, 8, 9], // 302
-  FORTE[8][14][2], // var
-  FORTE[8][14][1] //icv
-  ],
-  '15,1': [FORTE[8][15][0], // 303
-  FORTE[8][15][2], // var
-  FORTE[8][15][1] //icv
-  ],
-  '15,-1': [[0, 1, 3, 5, 6, 7, 8, 9], // 304
-  FORTE[8][15][2], // var
-  FORTE[8][15][1] //icv
-  ],
-  '16,1': [FORTE[8][16][0], // 305
-  FORTE[8][16][2], // var
-  FORTE[8][16][1] //icv
-  ],
-  '16,-1': [[0, 1, 2, 4, 6, 7, 8, 9], // 306
-  FORTE[8][16][2], // var
-  FORTE[8][16][1] //icv
-  ],
-  '17,0': [FORTE[8][17][0], // 307
-  FORTE[8][17][2], // var
-  FORTE[8][17][1] //icv
-  ],
-  '18,1': [FORTE[8][18][0], // 308
-  FORTE[8][18][2], // var
-  FORTE[8][18][1] //icv
-  ],
-  '18,-1': [[0, 1, 3, 4, 6, 7, 8, 9], // 309
-  FORTE[8][18][2], // var
-  FORTE[8][18][1] //icv
-  ],
-  '19,1': [FORTE[8][19][0], // 310
-  FORTE[8][19][2], // var
-  FORTE[8][19][1] //icv
-  ],
-  '19,-1': [[0, 1, 3, 4, 5, 7, 8, 9], // 311
-  FORTE[8][19][2], // var
-  FORTE[8][19][1] //icv
-  ],
-  '20,0': [FORTE[8][20][0], // 312
-  FORTE[8][20][2], // var
-  FORTE[8][20][1] //icv
-  ],
-  '21,0': [FORTE[8][21][0], // 313
-  FORTE[8][21][2], // var
-  FORTE[8][21][1] //icv
-  ],
-  '22,1': [FORTE[8][22][0], // 314
-  FORTE[8][22][2], // var
-  FORTE[8][22][1] //icv
-  ],
-  '22,-1': [[0, 2, 4, 5, 7, 8, 9, 10], // 315
-  FORTE[8][22][2], // var
-  FORTE[8][22][1] //icv
-  ],
-  '23,0': [FORTE[8][23][0], // 316
-  FORTE[8][23][2], // var
-  FORTE[8][23][1] //icv
-  ],
-  '24,0': [FORTE[8][24][0], // 317
-  FORTE[8][24][2], // var
-  FORTE[8][24][1] //icv
-  ],
-  '25,0': [FORTE[8][25][0], // 318
-  FORTE[8][25][2], // var
-  FORTE[8][25][1] //icv
-  ],
-  '26,0': [FORTE[8][26][0], // 319
-  FORTE[8][26][2], // var
-  FORTE[8][26][1] //icv
-  ],
-  '27,1': [FORTE[8][27][0], // 320
-  FORTE[8][27][2], // var
-  FORTE[8][27][1] //icv
-  ],
-  '27,-1': [[0, 2, 3, 5, 6, 8, 9, 10], // 321
-  FORTE[8][27][2], // var
-  FORTE[8][27][1] //icv
-  ],
-  '28,0': [FORTE[8][28][0], // 322
-  FORTE[8][28][2], // var
-  FORTE[8][28][1] //icv
-  ],
-  '29,1': [FORTE[8][29][0], // 323
-  FORTE[8][29][2], // var
-  FORTE[8][29][1] //icv
-  ],
-  '29,-1': [[0, 2, 3, 4, 6, 7, 8, 9], // 324
-  FORTE[8][29][2], // var
-  FORTE[8][29][1] //icv
-  ]
+  '1,0': [FORTE[8][1][0], FORTE[8][1][2], FORTE[8][1][1]],
+  '2,1': [FORTE[8][2][0], FORTE[8][2][2], FORTE[8][2][1]],
+  '2,-1': [[0, 2, 3, 4, 5, 6, 7, 8], FORTE[8][2][2], FORTE[8][2][1]],
+  '3,0': [FORTE[8][3][0], FORTE[8][3][2], FORTE[8][3][1]],
+  '4,1': [FORTE[8][4][0], FORTE[8][4][2], FORTE[8][4][1]],
+  '4,-1': [[0, 1, 3, 4, 5, 6, 7, 8], FORTE[8][4][2], FORTE[8][4][1]],
+  '5,1': [FORTE[8][5][0], FORTE[8][5][2], FORTE[8][5][1]],
+  '5,-1': [[0, 1, 2, 4, 5, 6, 7, 8], FORTE[8][5][2], FORTE[8][5][1]],
+  '6,0': [FORTE[8][6][0], FORTE[8][6][2], FORTE[8][6][1]],
+  '7,0': [FORTE[8][7][0], FORTE[8][7][2], FORTE[8][7][1]],
+  '8,0': [FORTE[8][8][0], FORTE[8][8][2], FORTE[8][8][1]],
+  '9,0': [FORTE[8][9][0], FORTE[8][9][2], FORTE[8][9][1]],
+  '10,0': [FORTE[8][10][0], FORTE[8][10][2], FORTE[8][10][1]],
+  '11,1': [FORTE[8][11][0], FORTE[8][11][2], FORTE[8][11][1]],
+  '11,-1': [[0, 2, 4, 5, 6, 7, 8, 9], FORTE[8][11][2], FORTE[8][11][1]],
+  '12,1': [FORTE[8][12][0], FORTE[8][12][2], FORTE[8][12][1]],
+  '12,-1': [[0, 2, 3, 4, 5, 6, 8, 9], FORTE[8][12][2], FORTE[8][12][1]],
+  '13,1': [FORTE[8][13][0], FORTE[8][13][2], FORTE[8][13][1]],
+  '13,-1': [[0, 2, 3, 5, 6, 7, 8, 9], FORTE[8][13][2], FORTE[8][13][1]],
+  '14,1': [FORTE[8][14][0], FORTE[8][14][2], FORTE[8][14][1]],
+  '14,-1': [[0, 2, 3, 4, 5, 7, 8, 9], FORTE[8][14][2], FORTE[8][14][1]],
+  '15,1': [FORTE[8][15][0], FORTE[8][15][2], FORTE[8][15][1]],
+  '15,-1': [[0, 1, 3, 5, 6, 7, 8, 9], FORTE[8][15][2], FORTE[8][15][1]],
+  '16,1': [FORTE[8][16][0], FORTE[8][16][2], FORTE[8][16][1]],
+  '16,-1': [[0, 1, 2, 4, 6, 7, 8, 9], FORTE[8][16][2], FORTE[8][16][1]],
+  '17,0': [FORTE[8][17][0], FORTE[8][17][2], FORTE[8][17][1]],
+  '18,1': [FORTE[8][18][0], FORTE[8][18][2], FORTE[8][18][1]],
+  '18,-1': [[0, 1, 3, 4, 6, 7, 8, 9], FORTE[8][18][2], FORTE[8][18][1]],
+  '19,1': [FORTE[8][19][0], FORTE[8][19][2], FORTE[8][19][1]],
+  '19,-1': [[0, 1, 3, 4, 5, 7, 8, 9], FORTE[8][19][2], FORTE[8][19][1]],
+  '20,0': [FORTE[8][20][0], FORTE[8][20][2], FORTE[8][20][1]],
+  '21,0': [FORTE[8][21][0], FORTE[8][21][2], FORTE[8][21][1]],
+  '22,1': [FORTE[8][22][0], FORTE[8][22][2], FORTE[8][22][1]],
+  '22,-1': [[0, 2, 4, 5, 7, 8, 9, 10], FORTE[8][22][2], FORTE[8][22][1]],
+  '23,0': [FORTE[8][23][0], FORTE[8][23][2], FORTE[8][23][1]],
+  '24,0': [FORTE[8][24][0], FORTE[8][24][2], FORTE[8][24][1]],
+  '25,0': [FORTE[8][25][0], FORTE[8][25][2], FORTE[8][25][1]],
+  '26,0': [FORTE[8][26][0], FORTE[8][26][2], FORTE[8][26][1]],
+  '27,1': [FORTE[8][27][0], FORTE[8][27][2], FORTE[8][27][1]],
+  '27,-1': [[0, 2, 3, 5, 6, 8, 9, 10], FORTE[8][27][2], FORTE[8][27][1]],
+  '28,0': [FORTE[8][28][0], FORTE[8][28][2], FORTE[8][28][1]],
+  '29,1': [FORTE[8][29][0], FORTE[8][29][2], FORTE[8][29][1]],
+  '29,-1': [[0, 2, 3, 4, 6, 7, 8, 9], FORTE[8][29][2], FORTE[8][29][1]]
 }; // cardinality 9
 
 var card_9 = {
-  '1,0': [FORTE[9][1][0], // 325
-  FORTE[9][1][2], // var
-  FORTE[9][1][1] //icv
-  ],
-  '2,1': [FORTE[9][2][0], // 326
-  FORTE[9][2][2], // var
-  FORTE[9][2][1] //icv
-  ],
-  '2,-1': [[0, 2, 3, 4, 5, 6, 7, 8, 9], // 327
-  FORTE[9][2][2], // var
-  FORTE[9][2][1] //icv
-  ],
-  '3,1': [FORTE[9][3][0], // 328
-  FORTE[9][3][2], // var
-  FORTE[9][3][1] //icv
-  ],
-  '3,-1': [[0, 1, 3, 4, 5, 6, 7, 8, 9], // 329
-  FORTE[9][3][2], // var
-  FORTE[9][3][1] //icv
-  ],
-  '4,1': [FORTE[9][4][0], // 330
-  FORTE[9][4][2], // var
-  FORTE[9][4][1] //icv
-  ],
-  '4,-1': [[0, 1, 2, 4, 5, 6, 7, 8, 9], // 331
-  FORTE[9][4][2], // var
-  FORTE[9][4][1] //icv
-  ],
-  '5,1': [FORTE[9][5][0], // 332
-  FORTE[9][5][2], // var
-  FORTE[9][5][1] //icv
-  ],
-  '5,-1': [[0, 1, 2, 3, 5, 6, 7, 8, 9], // 333
-  FORTE[9][5][2], // var
-  FORTE[9][5][1] //icv
-  ],
-  '6,0': [FORTE[9][6][0], // 334
-  FORTE[9][6][2], // var
-  FORTE[9][6][1] //icv
-  ],
-  '7,1': [FORTE[9][7][0], // 335
-  FORTE[9][7][2], // var
-  FORTE[9][7][1] //icv
-  ],
-  '7,-1': [[0, 2, 3, 5, 6, 7, 8, 9, 10], // 336
-  FORTE[9][7][2], // var
-  FORTE[9][7][1] //icv
-  ],
-  '8,1': [FORTE[9][8][0], // 337
-  FORTE[9][8][2], // var
-  FORTE[9][8][1] //icv
-  ],
-  '8,-1': [[0, 2, 3, 4, 6, 7, 8, 9, 10], // 338
-  FORTE[9][8][2], // var
-  FORTE[9][8][1] //icv
-  ],
-  '9,0': [FORTE[9][9][0], // 339
-  FORTE[9][9][2], // var
-  FORTE[9][9][1] //icv
-  ],
-  '10,0': [FORTE[9][10][0], // 340
-  FORTE[9][10][2], // var
-  FORTE[9][10][1] //icv
-  ],
-  '11,1': [FORTE[9][11][0], // 341
-  FORTE[9][11][2], // var
-  FORTE[9][11][1] //icv
-  ],
-  '11,-1': [[0, 1, 3, 4, 5, 7, 8, 9, 10], // 342
-  FORTE[9][11][2], // var
-  FORTE[9][11][1] //icv
-  ],
-  '12,0': [FORTE[9][12][0], // 343
-  FORTE[9][12][2], // var
-  FORTE[9][12][1] //icv
-  ]
+  '1,0': [FORTE[9][1][0], FORTE[9][1][2], FORTE[9][1][1]],
+  '2,1': [FORTE[9][2][0], FORTE[9][2][2], FORTE[9][2][1]],
+  '2,-1': [[0, 2, 3, 4, 5, 6, 7, 8, 9], FORTE[9][2][2], FORTE[9][2][1]],
+  '3,1': [FORTE[9][3][0], FORTE[9][3][2], FORTE[9][3][1]],
+  '3,-1': [[0, 1, 3, 4, 5, 6, 7, 8, 9], FORTE[9][3][2], FORTE[9][3][1]],
+  '4,1': [FORTE[9][4][0], FORTE[9][4][2], FORTE[9][4][1]],
+  '4,-1': [[0, 1, 2, 4, 5, 6, 7, 8, 9], FORTE[9][4][2], FORTE[9][4][1]],
+  '5,1': [FORTE[9][5][0], FORTE[9][5][2], FORTE[9][5][1]],
+  '5,-1': [[0, 1, 2, 3, 5, 6, 7, 8, 9], FORTE[9][5][2], FORTE[9][5][1]],
+  '6,0': [FORTE[9][6][0], FORTE[9][6][2], FORTE[9][6][1]],
+  '7,1': [FORTE[9][7][0], FORTE[9][7][2], FORTE[9][7][1]],
+  '7,-1': [[0, 2, 3, 5, 6, 7, 8, 9, 10], FORTE[9][7][2], FORTE[9][7][1]],
+  '8,1': [FORTE[9][8][0], FORTE[9][8][2], FORTE[9][8][1]],
+  '8,-1': [[0, 2, 3, 4, 6, 7, 8, 9, 10], FORTE[9][8][2], FORTE[9][8][1]],
+  '9,0': [FORTE[9][9][0], FORTE[9][9][2], FORTE[9][9][1]],
+  '10,0': [FORTE[9][10][0], FORTE[9][10][2], FORTE[9][10][1]],
+  '11,1': [FORTE[9][11][0], FORTE[9][11][2], FORTE[9][11][1]],
+  '11,-1': [[0, 1, 3, 4, 5, 7, 8, 9, 10], FORTE[9][11][2], FORTE[9][11][1]],
+  '12,0': [FORTE[9][12][0], FORTE[9][12][2], FORTE[9][12][1]]
 }; // cardinality 10
 
 var card_10 = {
-  '1,0': [FORTE[10][1][0], // 344
-  FORTE[10][1][2], // var
-  FORTE[10][1][1] //icv
-  ],
-  '2,0': [FORTE[10][2][0], // 345
-  FORTE[10][2][2], // var
-  FORTE[10][2][1] //icv
-  ],
-  '3,0': [FORTE[10][3][0], // 346
-  FORTE[10][3][2], // var
-  FORTE[10][3][1] //icv
-  ],
-  '4,0': [FORTE[10][4][0], // 347
-  FORTE[10][4][2], // var
-  FORTE[10][4][1] //icv
-  ],
-  '5,0': [FORTE[10][5][0], // 348
-  FORTE[10][5][2], // var
-  FORTE[10][5][1] //icv
-  ],
-  '6,0': [FORTE[10][6][0], // 349
-  FORTE[10][6][2], // var
-  FORTE[10][6][1] //icv
-  ]
+  '1,0': [FORTE[10][1][0], FORTE[10][1][2], FORTE[10][1][1]],
+  '2,0': [FORTE[10][2][0], FORTE[10][2][2], FORTE[10][2][1]],
+  '3,0': [FORTE[10][3][0], FORTE[10][3][2], FORTE[10][3][1]],
+  '4,0': [FORTE[10][4][0], FORTE[10][4][2], FORTE[10][4][1]],
+  '5,0': [FORTE[10][5][0], FORTE[10][5][2], FORTE[10][5][1]],
+  '6,0': [FORTE[10][6][0], FORTE[10][6][2], FORTE[10][6][1]]
 }; // cardinality 11
 
 var card_11 = {
-  '1,0': [FORTE[11][1][0], // 350
-  FORTE[11][1][2], // var
-  FORTE[11][1][1] //icv
-  ]
+  '1,0': [FORTE[11][1][0], FORTE[11][1][2], FORTE[11][1][1]]
 }; // cardinality 12
 
 var card_12 = {
-  '1,0': [FORTE[12][1][0], // 351
-  FORTE[12][1][2], // var
-  FORTE[12][1][1] //icv
-  ]
+  '1,0': [FORTE[12][1][0], FORTE[12][1][2], FORTE[12][1][1]]
 }; //-------------------------------------------------------------------------------
 
 var SCDICT = {
@@ -45393,7 +44273,9 @@ function forteIndexToInversionsAvailable(card, index) {
   }
 }
 
-function _chordTableAddress(cardinality, forteClass, inversion, pcOriginal) {
+function _chordTableAddress(cardinality, forteClass) {
+  var inversion = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : undefined;
+  var pcOriginal = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : undefined;
   return {
     cardinality,
     forteClass,
@@ -45730,9 +44612,9 @@ function seekChordTablesAddress(c) {
 
 /***/ }),
 
-/***/ "./src/music21/clef.js":
+/***/ "./src/music21/clef.ts":
 /*!*****************************!*\
-  !*** ./src/music21/clef.js ***!
+  !*** ./src/music21/clef.ts ***!
   \*****************************/
 /*! exports provided: lowestLines, nameToLine, nameToSign, Clef, TrebleClef, Treble8vbClef, Treble8vaClef, BassClef, Bass8vbClef, AltoClef, TenorClef, SopranoClef, MezzoSopranoClef, PercussionClef, all_clefs, bestClef, clefFromString */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -45763,7 +44645,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var core_js_modules_es_string_trim__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! core-js/modules/es.string.trim */ "./node_modules/core-js/modules/es.string.trim.js");
 /* harmony import */ var core_js_modules_es_string_trim__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_trim__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var _base__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./base */ "./src/music21/base.ts");
-/* harmony import */ var _pitch__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./pitch */ "./src/music21/pitch.js");
+/* harmony import */ var _pitch__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./pitch */ "./src/music21/pitch.ts");
 
 
 
@@ -45847,25 +44729,25 @@ var nameToSign = {
  * @memberof music21.clef
  * @extends music21.base.Music21Object
  * @param {string} name - clef name
- * @param {int} [octaveChange=0] - ottava
+ * @param {number} [octaveChange=0] - ottava
  * @property {string} [name]
- * @property {int} lowestLine - diatonicNoteNum (C4 = 29) for the
+ * @property {number} lowestLine - diatonicNoteNum (C4 = 29) for the
  *     lowest line (in a five-line staff)
- * @property {int} lowestLineTrebleOffset - difference between the first line
+ * @property {number} lowestLineTrebleOffset - difference between the first line
  *     of this staff and the first line in treble clef
- * @property {int} octaveChange
+ * @property {number} octaveChange
  */
 
 class Clef extends _base__WEBPACK_IMPORTED_MODULE_3__["Music21Object"] {
-  static get className() {
-    return 'music21.clef.Clef';
-  }
-
-  constructor(name, octaveChange) {
+  constructor(name) {
+    var octaveChange = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
     super();
-    this.classSortOrder = 0;
+    this.name = undefined;
     this.sign = undefined;
     this.line = 1;
+    this.lowestLine = lowestLines.treble;
+    this.lowestLineTrebleOffset = 0;
+    this.classSortOrder = 0;
 
     if (name !== undefined) {
       name = name.toLowerCase();
@@ -45874,19 +44756,15 @@ class Clef extends _base__WEBPACK_IMPORTED_MODULE_3__["Music21Object"] {
       this.sign = nameToSign[name];
       this.line = nameToLine[name] || 1;
       this.lowestLineTrebleOffset = lowestLines.treble - this.lowestLine;
-    } else {
-      this.name = undefined;
-      this.lowestLine = lowestLines.treble;
-      this.lowestLineTrebleOffset = 0;
     }
 
-    if (octaveChange === undefined) {
-      this.octaveChange = 0;
-    } else {
-      this.octaveChange = octaveChange;
-      this.lowestLine += 7 * octaveChange;
-      this.lowestLineTrebleOffset -= 7 * octaveChange;
-    }
+    this.octaveChange = octaveChange;
+    this.lowestLine += 7 * octaveChange;
+    this.lowestLineTrebleOffset -= 7 * octaveChange;
+  }
+
+  static get className() {
+    return 'music21.clef.Clef';
   }
 
   stringInfo() {
@@ -46204,7 +45082,7 @@ function clefFromString(clefString) {
   var lineNum;
 
   if (xnStr.toLowerCase() === 'percussion') {
-    return new PercussionClef(clefString, octaveShift);
+    return new PercussionClef();
   } // todo: tab, none, jianpu
 
 
@@ -46269,11 +45147,11 @@ function clefFromString(clefString) {
 
 /***/ }),
 
-/***/ "./src/music21/common.js":
+/***/ "./src/music21/common.ts":
 /*!*******************************!*\
-  !*** ./src/music21/common.js ***!
+  !*** ./src/music21/common.ts ***!
   \*******************************/
-/*! exports provided: merge, range, mixin, aggregation, posMod, statisticalMode, fromRoman, toRoman, makeSVGright, ordinalAbbreviation, rationalize, stripPx, urlParam, arrayEquals, SingletonCounter, setWindowVisibilityWatcher, urls, hyphenToCamelCase, numToIntOrFloat, pathSimplify */
+/*! exports provided: merge, range, mixin, posMod, statisticalMode, fromRoman, toRoman, makeSVGright, ordinalAbbreviation, rationalize, stripPx, urlParam, arrayEquals, SingletonCounter, urls, hyphenToCamelCase, numToIntOrFloat, pathSimplify */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -46281,7 +45159,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "merge", function() { return merge; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "range", function() { return range; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "mixin", function() { return mixin; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "aggregation", function() { return aggregation; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "posMod", function() { return posMod; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "statisticalMode", function() { return statisticalMode; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "fromRoman", function() { return fromRoman; });
@@ -46293,44 +45170,34 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "urlParam", function() { return urlParam; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "arrayEquals", function() { return arrayEquals; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SingletonCounter", function() { return SingletonCounter; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "setWindowVisibilityWatcher", function() { return setWindowVisibilityWatcher; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "urls", function() { return urls; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "hyphenToCamelCase", function() { return hyphenToCamelCase; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "numToIntOrFloat", function() { return numToIntOrFloat; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "pathSimplify", function() { return pathSimplify; });
 /* harmony import */ var core_js_modules_es_symbol_description__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es.symbol.description */ "./node_modules/core-js/modules/es.symbol.description.js");
 /* harmony import */ var core_js_modules_es_symbol_description__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_symbol_description__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var core_js_modules_es_array_concat__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! core-js/modules/es.array.concat */ "./node_modules/core-js/modules/es.array.concat.js");
-/* harmony import */ var core_js_modules_es_array_concat__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_concat__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var core_js_modules_es_array_includes__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! core-js/modules/es.array.includes */ "./node_modules/core-js/modules/es.array.includes.js");
-/* harmony import */ var core_js_modules_es_array_includes__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_includes__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var core_js_modules_es_array_index_of__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! core-js/modules/es.array.index-of */ "./node_modules/core-js/modules/es.array.index-of.js");
-/* harmony import */ var core_js_modules_es_array_index_of__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_index_of__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var core_js_modules_es_array_iterator__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! core-js/modules/es.array.iterator */ "./node_modules/core-js/modules/es.array.iterator.js");
-/* harmony import */ var core_js_modules_es_array_iterator__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_iterator__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var core_js_modules_es_array_map__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! core-js/modules/es.array.map */ "./node_modules/core-js/modules/es.array.map.js");
-/* harmony import */ var core_js_modules_es_array_map__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_map__WEBPACK_IMPORTED_MODULE_5__);
-/* harmony import */ var core_js_modules_es_array_slice__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! core-js/modules/es.array.slice */ "./node_modules/core-js/modules/es.array.slice.js");
-/* harmony import */ var core_js_modules_es_array_slice__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_slice__WEBPACK_IMPORTED_MODULE_6__);
-/* harmony import */ var core_js_modules_es_regexp_constructor__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! core-js/modules/es.regexp.constructor */ "./node_modules/core-js/modules/es.regexp.constructor.js");
-/* harmony import */ var core_js_modules_es_regexp_constructor__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_regexp_constructor__WEBPACK_IMPORTED_MODULE_7__);
-/* harmony import */ var core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! core-js/modules/es.regexp.to-string */ "./node_modules/core-js/modules/es.regexp.to-string.js");
-/* harmony import */ var core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_8__);
-/* harmony import */ var core_js_modules_es_string_match__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! core-js/modules/es.string.match */ "./node_modules/core-js/modules/es.string.match.js");
-/* harmony import */ var core_js_modules_es_string_match__WEBPACK_IMPORTED_MODULE_9___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_match__WEBPACK_IMPORTED_MODULE_9__);
-/* harmony import */ var core_js_modules_es_string_replace__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! core-js/modules/es.string.replace */ "./node_modules/core-js/modules/es.string.replace.js");
-/* harmony import */ var core_js_modules_es_string_replace__WEBPACK_IMPORTED_MODULE_10___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_replace__WEBPACK_IMPORTED_MODULE_10__);
-/* harmony import */ var core_js_modules_es_string_search__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! core-js/modules/es.string.search */ "./node_modules/core-js/modules/es.string.search.js");
-/* harmony import */ var core_js_modules_es_string_search__WEBPACK_IMPORTED_MODULE_11___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_search__WEBPACK_IMPORTED_MODULE_11__);
-/* harmony import */ var core_js_modules_es_string_split__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! core-js/modules/es.string.split */ "./node_modules/core-js/modules/es.string.split.js");
-/* harmony import */ var core_js_modules_es_string_split__WEBPACK_IMPORTED_MODULE_12___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_split__WEBPACK_IMPORTED_MODULE_12__);
-/* harmony import */ var core_js_modules_web_dom_collections_for_each__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! core-js/modules/web.dom-collections.for-each */ "./node_modules/core-js/modules/web.dom-collections.for-each.js");
-/* harmony import */ var core_js_modules_web_dom_collections_for_each__WEBPACK_IMPORTED_MODULE_13___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_for_each__WEBPACK_IMPORTED_MODULE_13__);
-/* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! core-js/modules/web.dom-collections.iterator */ "./node_modules/core-js/modules/web.dom-collections.iterator.js");
-/* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_14___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_14__);
-
-
-
+/* harmony import */ var core_js_modules_es_array_includes__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! core-js/modules/es.array.includes */ "./node_modules/core-js/modules/es.array.includes.js");
+/* harmony import */ var core_js_modules_es_array_includes__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_includes__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var core_js_modules_es_array_index_of__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! core-js/modules/es.array.index-of */ "./node_modules/core-js/modules/es.array.index-of.js");
+/* harmony import */ var core_js_modules_es_array_index_of__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_index_of__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var core_js_modules_es_array_iterator__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! core-js/modules/es.array.iterator */ "./node_modules/core-js/modules/es.array.iterator.js");
+/* harmony import */ var core_js_modules_es_array_iterator__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_iterator__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var core_js_modules_es_array_map__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! core-js/modules/es.array.map */ "./node_modules/core-js/modules/es.array.map.js");
+/* harmony import */ var core_js_modules_es_array_map__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_map__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var core_js_modules_es_array_slice__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! core-js/modules/es.array.slice */ "./node_modules/core-js/modules/es.array.slice.js");
+/* harmony import */ var core_js_modules_es_array_slice__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_slice__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var core_js_modules_es_regexp_constructor__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! core-js/modules/es.regexp.constructor */ "./node_modules/core-js/modules/es.regexp.constructor.js");
+/* harmony import */ var core_js_modules_es_regexp_constructor__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_regexp_constructor__WEBPACK_IMPORTED_MODULE_6__);
+/* harmony import */ var core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! core-js/modules/es.regexp.to-string */ "./node_modules/core-js/modules/es.regexp.to-string.js");
+/* harmony import */ var core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_7__);
+/* harmony import */ var core_js_modules_es_string_replace__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! core-js/modules/es.string.replace */ "./node_modules/core-js/modules/es.string.replace.js");
+/* harmony import */ var core_js_modules_es_string_replace__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_replace__WEBPACK_IMPORTED_MODULE_8__);
+/* harmony import */ var core_js_modules_es_string_search__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! core-js/modules/es.string.search */ "./node_modules/core-js/modules/es.string.search.js");
+/* harmony import */ var core_js_modules_es_string_search__WEBPACK_IMPORTED_MODULE_9___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_search__WEBPACK_IMPORTED_MODULE_9__);
+/* harmony import */ var core_js_modules_es_string_split__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! core-js/modules/es.string.split */ "./node_modules/core-js/modules/es.string.split.js");
+/* harmony import */ var core_js_modules_es_string_split__WEBPACK_IMPORTED_MODULE_10___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_split__WEBPACK_IMPORTED_MODULE_10__);
+/* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! core-js/modules/web.dom-collections.iterator */ "./node_modules/core-js/modules/web.dom-collections.iterator.js");
+/* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_11___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_11__);
 
 
 
@@ -46349,7 +45216,6 @@ __webpack_require__.r(__webpack_exports__);
  * functions that are useful everywhere...
  *
  * @exports music21/common
- * @namespace music21.common
  * @memberof music21
  */
 
@@ -46432,39 +45298,42 @@ function mixin(OtherParent, thisClassOrObject) {
  *
  *  not currently used...
  */
+// export const aggregation = (baseClass, ...mixins) => {
+//     class base extends baseClass {
+//         constructor(...args) {
+//             super(...args);
+//             mixins.forEach(mixin => {
+//                 copyProps(this, new mixin());
+//             });
+//         }
+//     }
+//     const copyProps = (target, source) => {
+//         // this function copies all properties and symbols, filtering out some special ones
+//         // noinspection JSUnresolvedFunction,JSCheckFunctionSignatures
+//         Object.getOwnPropertyNames(source)
+//             .concat(Object.getOwnPropertySymbols(source))
+//             .forEach(prop => {
+//                 if (
+//                     !prop.match(
+//                         /^(?:constructor|prototype|arguments|caller|name|bind|call|apply|toString|length)$/
+//                     )
+//                 ) {
+//                     Object.defineProperty(
+//                         target,
+//                         prop,
+//                         Object.getOwnPropertyDescriptor(source, prop)
+//                     );
+//                 }
+//             });
+//     };
+//     mixins.forEach(mixin => {
+//         // outside constructor() to allow aggregation(A,B,C).staticFunction() to be called etc.
+//         copyProps(base.prototype, mixin.prototype);
+//         copyProps(base, mixin);
+//     });
+//     return base;
+// };
 
-var aggregation = function aggregation(baseClass) {
-  for (var _len = arguments.length, mixins = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-    mixins[_key - 1] = arguments[_key];
-  }
-
-  class base extends baseClass {
-    constructor() {
-      super(...arguments);
-      mixins.forEach(mixin => {
-        copyProps(this, new mixin());
-      });
-    }
-
-  }
-
-  var copyProps = (target, source) => {
-    // this function copies all properties and symbols, filtering out some special ones
-    // noinspection JSUnresolvedFunction,JSCheckFunctionSignatures
-    Object.getOwnPropertyNames(source).concat(Object.getOwnPropertySymbols(source)).forEach(prop => {
-      if (!prop.match(/^(?:constructor|prototype|arguments|caller|name|bind|call|apply|toString|length)$/)) {
-        Object.defineProperty(target, prop, Object.getOwnPropertyDescriptor(source, prop));
-      }
-    });
-  };
-
-  mixins.forEach(mixin => {
-    // outside constructor() to allow aggregation(A,B,C).staticFunction() to be called etc.
-    copyProps(base.prototype, mixin.prototype);
-    copyProps(base, mixin);
-  });
-  return base;
-};
 /**
  * posMod - return a modulo value that is not negative
  *
@@ -46648,13 +45517,14 @@ function makeSVGright() {
  * (for "32nd") etc.
  *
  * @function music21.common.ordinalAbbreviation
- * @param {int} value
- * @param {Boolean} [plural=false] - make plural (note that "21st" plural is "21st")
+ * @param {number} value
+ * @param {boolean} [plural=false] - make plural (note that "21st" plural is "21st")
  * @return {string}
  */
 
-function ordinalAbbreviation(value, plural) {
-  var post = '';
+function ordinalAbbreviation(value) {
+  var plural = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+  var post;
   var valueHundredths = value % 100;
 
   if (valueHundredths === 11 || valueHundredths === 12 || valueHundredths === 13) {
@@ -46689,9 +45559,9 @@ function ordinalAbbreviation(value, plural) {
  * @returns {object|undefined} {'numerator: numerator, 'denominator': denominator}
  */
 
-function rationalize(ql, epsilon, maxDenominator) {
-  epsilon = epsilon || 0.001;
-  maxDenominator = maxDenominator || 50;
+function rationalize(ql) {
+  var epsilon = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0.001;
+  var maxDenominator = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 50;
 
   for (var i = 2; i < maxDenominator; i++) {
     if (Math.abs(ql * i - Math.round(ql * i)) < epsilon) {
@@ -46757,8 +45627,9 @@ function arrayEquals(a1, a2) {
 
   return true;
 }
-var _singletonCounter = {};
-_singletonCounter.value = 0;
+var _singletonCounter = {
+  value: 0
+};
 class SingletonCounter {
   call() {
     var post = _singletonCounter.value;
@@ -46767,75 +45638,6 @@ class SingletonCounter {
   }
 
 }
-/**
- * runs a callback with either "visible" or "hidden" as the argument anytime the
- * window or document state changes.
- *
- * Depending on the browser, may be called multiple times with the same argument
- * for a single event.  For instance, Safari calls once on losing focus completely
- * but twice for a tab change.
- *
- * @function music21.common.setWindowVisibilityWatcher
- * @param {function} callback
- */
-
-function setWindowVisibilityWatcher(callback) {
-  function windowFocusChanged(evt) {
-    var v = 'visible';
-    var h = 'hidden';
-    var evtMap = {
-      focus: v,
-      focusin: v,
-      pageshow: v,
-      blur: h,
-      focusout: h,
-      pagehide: h
-    }; // noinspection JSDeprecatedSymbols
-
-    evt = evt || window.event;
-    var callbackState = '';
-
-    if (evt.type in evtMap) {
-      callbackState = evtMap[evt.type];
-    } else {
-      callbackState = this[hidden] ? 'hidden' : 'visible';
-    }
-
-    callback(callbackState, evt);
-  }
-
-  var hidden = 'hidden'; // Standards:
-
-  if (hidden in document) {
-    document.addEventListener('visibilitychange', windowFocusChanged);
-  } else if ('mozHidden' in document) {
-    hidden = 'mozHidden';
-    document.addEventListener('mozvisibilitychange', windowFocusChanged);
-  } else if ('webkitHidden' in document) {
-    hidden = 'webkitHidden';
-    document.addEventListener('webkitvisibilitychange', windowFocusChanged);
-  } else if ('msHidden' in document) {
-    hidden = 'msHidden';
-    document.addEventListener('msvisibilitychange', windowFocusChanged);
-  } else if ('onfocusin' in document) {
-    // IE 9 and lower:
-    document.onfocusin = windowFocusChanged;
-    document.onfocusout = windowFocusChanged;
-  } // Also catch window... -- get two calls for a tab shift, but one for window losing focus
-  // noinspection AssignmentResultUsedJS
-
-
-  window.onpageshow = windowFocusChanged;
-  window.onpagehide = windowFocusChanged;
-  window.onfocus = windowFocusChanged;
-  window.onblur = windowFocusChanged; // set the initial state
-
-  var initialState = document.visibilityState === 'visible' ? 'focus' : 'blur';
-  var initialStateEvent = {
-    type: initialState
-  };
-  windowFocusChanged(initialStateEvent);
-}
 var urls = {
   css: '/css',
   webResources: '/webResources',
@@ -46843,7 +45645,7 @@ var urls = {
   soundfontUrl: '/soundfonts/midi-js-soundfonts-master/FluidR3_GM/'
 };
 function hyphenToCamelCase(usrStr) {
-  return usrStr.replace(/-([a-zA-Z])/, (all, match) => match.toUpperCase());
+  return usrStr.replace(/-([a-zA-Z])/g, (all, match) => match.toUpperCase());
 }
 function numToIntOrFloat(value) {
   var intVal = Math.round(value);
@@ -46928,9 +45730,9 @@ var pathSimplify = path => {
 
 /***/ }),
 
-/***/ "./src/music21/converter.js":
+/***/ "./src/music21/converter.ts":
 /*!**********************************!*\
-  !*** ./src/music21/converter.js ***!
+  !*** ./src/music21/converter.ts ***!
   \**********************************/
 /*! exports provided: parse */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -46938,7 +45740,7 @@ var pathSimplify = path => {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "parse", function() { return parse; });
-/* harmony import */ var _musicxml_xmlToM21__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./musicxml/xmlToM21 */ "./src/music21/musicxml/xmlToM21.js");
+/* harmony import */ var _musicxml_xmlToM21__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./musicxml/xmlToM21 */ "./src/music21/musicxml/xmlToM21.ts");
 
 function parse(txt) {
   var sp = new _musicxml_xmlToM21__WEBPACK_IMPORTED_MODULE_0__["ScoreParser"]();
@@ -46947,9 +45749,9 @@ function parse(txt) {
 
 /***/ }),
 
-/***/ "./src/music21/debug.js":
+/***/ "./src/music21/debug.ts":
 /*!******************************!*\
-  !*** ./src/music21/debug.js ***!
+  !*** ./src/music21/debug.ts ***!
   \******************************/
 /*! exports provided: debug */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -46961,9 +45763,9 @@ var debug = false;
 
 /***/ }),
 
-/***/ "./src/music21/derivation.js":
+/***/ "./src/music21/derivation.ts":
 /*!***********************************!*\
-  !*** ./src/music21/derivation.js ***!
+  !*** ./src/music21/derivation.ts ***!
   \***********************************/
 /*! exports provided: Derivation, default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -46977,28 +45779,16 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var regenerator_runtime_runtime__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(regenerator_runtime_runtime__WEBPACK_IMPORTED_MODULE_1__);
 
 
-
-/**
- * @namespace music21.derivation
- * @memberOf music21.derivation
- */
 class Derivation {
-  /**
-   *
-   * @param {music21.base.Music21Object} [client]
-   * @property {string} [method]
-   * @property {music21.base.Music21Object} [origin]
-   */
   constructor(client) {
     this.client = client;
-    this.method = undefined;
-    this.origin = undefined;
   }
 
   clone() {
     var newThing = new Derivation(this.client);
     newThing.method = this.method;
     newThing.origin = this.origin;
+    return newThing;
   }
 
   chain() {
@@ -47053,9 +45843,9 @@ class Derivation {
 
 /***/ }),
 
-/***/ "./src/music21/duration.js":
+/***/ "./src/music21/duration.ts":
 /*!*********************************!*\
-  !*** ./src/music21/duration.js ***!
+  !*** ./src/music21/duration.ts ***!
   \*********************************/
 /*! exports provided: typeFromNumDict, quarterTypeIndex, ordinalTypeFromNum, vexflowDurationArray, Duration, Tuplet */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -47075,8 +45865,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var core_js_modules_web_dom_collections_for_each__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! core-js/modules/web.dom-collections.for-each */ "./node_modules/core-js/modules/web.dom-collections.for-each.js");
 /* harmony import */ var core_js_modules_web_dom_collections_for_each__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_for_each__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var _exceptions21__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./exceptions21 */ "./src/music21/exceptions21.ts");
-/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./common */ "./src/music21/common.js");
-/* harmony import */ var _debug__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./debug */ "./src/music21/debug.js");
+/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./common */ "./src/music21/common.ts");
+/* harmony import */ var _debug__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./debug */ "./src/music21/debug.ts");
 /* harmony import */ var _prebase__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./prebase */ "./src/music21/prebase.ts");
 
 
@@ -47141,16 +45931,12 @@ var vexflowDurationArray = [undefined, undefined, undefined, undefined, 'w', 'h'
  *
  * @class Duration
  * @memberof music21.duration
- * @extends music21.prebase.ProtoM21Object
  * @param {(number|undefined)} ql - quarterLength (default 1.0)
  */
 
 class Duration extends _prebase__WEBPACK_IMPORTED_MODULE_6__["ProtoM21Object"] {
-  static get className() {
-    return 'music21.duration.Duration';
-  }
-
-  constructor(ql) {
+  constructor() {
+    var ql = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0.0;
     super();
     this.isGrace = false;
     this._quarterLength = 0.0;
@@ -47166,6 +45952,10 @@ class Duration extends _prebase__WEBPACK_IMPORTED_MODULE_6__["ProtoM21Object"] {
     }
 
     this._cloneCallbacks._tuplets = this.cloneCallbacksTupletFunction;
+  }
+
+  static get className() {
+    return 'music21.duration.Duration';
   }
 
   stringInfo() {
@@ -47262,7 +46052,7 @@ class Duration extends _prebase__WEBPACK_IMPORTED_MODULE_6__["ProtoM21Object"] {
    * Use {@link music21.duration.Duration#appendTuplet} to
    * add a tuplet (no way to remove yet)
    *
-   * @type {music21.duration.Tuplet[]}
+   * @type {Tuplet[]}
    * @default []
    */
 
@@ -47297,7 +46087,7 @@ class Duration extends _prebase__WEBPACK_IMPORTED_MODULE_6__["ProtoM21Object"] {
     return vd;
   }
 
-  cloneCallbacksTupletFunction(tupletKey, ret, obj) {
+  cloneCallbacksTupletFunction(tupletKey, ret, obj, deep, memo) {
     // make sure that tuplets clone properly
     var newTuplets = [];
 
@@ -47396,13 +46186,14 @@ class Duration extends _prebase__WEBPACK_IMPORTED_MODULE_6__["ProtoM21Object"] {
   /**
    * Add a tuplet to music21j
    *
-   * @param {music21.duration.Tuplet} newTuplet - tuplet to add to `.tuplets`
+   * @param {Tuplet} newTuplet - tuplet to add to `.tuplets`
    * @param {boolean} [skipUpdateQl=false] - update the quarterLength afterwards?
    * @returns {this}
    */
 
 
-  appendTuplet(newTuplet, skipUpdateQl) {
+  appendTuplet(newTuplet) {
+    var skipUpdateQl = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
     newTuplet.frozen = true;
 
     this._tuplets.push(newTuplet);
@@ -47419,7 +46210,6 @@ class Duration extends _prebase__WEBPACK_IMPORTED_MODULE_6__["ProtoM21Object"] {
  * Represents a Tuplet; found in {@link music21.duration.Duration#tuplets}
  *
  * @memberof music21.duration
- * @extends music21.prebase.ProtoM21Object
  * @param {number} [numberNotesActual=3] - numerator of the tuplet
  * @param {number} [numberNotesNormal=2] - denominator of the tuplet
  * @param {(music21.duration.Duration|number)} [durationActual] - duration or
@@ -47429,16 +46219,15 @@ class Duration extends _prebase__WEBPACK_IMPORTED_MODULE_6__["ProtoM21Object"] {
  */
 
 class Tuplet extends _prebase__WEBPACK_IMPORTED_MODULE_6__["ProtoM21Object"] {
-  static get className() {
-    return 'music21.duration.Tuplet';
-  }
-
   constructor() {
     var numberNotesActual = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 3;
     var numberNotesNormal = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 2;
-    var durationActual = arguments.length > 2 ? arguments[2] : undefined;
-    var durationNormal = arguments.length > 3 ? arguments[3] : undefined;
+    var durationActual = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : undefined;
+    var durationNormal = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : undefined;
     super();
+    this.frozen = false;
+    this.bracket = true;
+    this.placement = 'above';
     this.numberNotesActual = numberNotesActual;
     this.numberNotesNormal = numberNotesNormal;
     this.durationActual = durationActual || new Duration(0.5);
@@ -47452,17 +46241,11 @@ class Tuplet extends _prebase__WEBPACK_IMPORTED_MODULE_6__["ProtoM21Object"] {
     this.type = undefined;
     /**
      * Show a bracket above the tuplet
-     *
-     * @property {boolean} bracket
-     * @default true
      */
 
     this.bracket = true;
     /**
      * Bracket placement. Options are `above` or `below`.
-     *
-     * @property {string} placement
-     * @default 'above'
      */
 
     this.placement = 'above';
@@ -47475,6 +46258,10 @@ class Tuplet extends _prebase__WEBPACK_IMPORTED_MODULE_6__["ProtoM21Object"] {
 
     this.tupletActualShow = 'number';
     this.tupletNormalShow = undefined; // undefined, 'ratio' for ratios, 'type' for ratioed notes (does not work)
+  }
+
+  static get className() {
+    return 'music21.duration.Tuplet';
   }
   /**
    * A nice name for the tuplet.
@@ -47563,9 +46350,9 @@ class Tuplet extends _prebase__WEBPACK_IMPORTED_MODULE_6__["ProtoM21Object"] {
 
 /***/ }),
 
-/***/ "./src/music21/dynamics.js":
+/***/ "./src/music21/dynamics.ts":
 /*!*********************************!*\
-  !*** ./src/music21/dynamics.js ***!
+  !*** ./src/music21/dynamics.ts ***!
   \*********************************/
 /*! exports provided: shortNames, longNames, englishNames, dynamicStrToScalar, Dynamic */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -47626,7 +46413,6 @@ var englishNames = {
 };
 var dynamicStrToScalar = {
   None: [0.5],
-  // default value
   n: [0.0],
   pppp: [0.1],
   ppp: [0.15],
@@ -47655,29 +46441,13 @@ var dynamicStrToScalar = {
  */
 
 class Dynamic extends _base__WEBPACK_IMPORTED_MODULE_0__["Music21Object"] {
-  static get className() {
-    return 'music21.dynamics.Dynamic';
-  }
-
   constructor(value) {
     super();
-    /**
-     *
-     * @type {string|undefined}
-     * @private
-     */
-
-    this._value = undefined;
-    /**
-     *
-     * @type {number|undefined}
-     * @private
-     */
-
-    this._volumeScalar = undefined;
-    this.longName = undefined;
-    this.englishName = undefined;
     this.value = value;
+  }
+
+  static get className() {
+    return 'music21.dynamics.Dynamic';
   }
 
   get value() {
@@ -47835,9 +46605,9 @@ class StreamException extends Music21Exception {}
 
 /***/ }),
 
-/***/ "./src/music21/expressions.js":
+/***/ "./src/music21/expressions.ts":
 /*!************************************!*\
-  !*** ./src/music21/expressions.js ***!
+  !*** ./src/music21/expressions.ts ***!
   \************************************/
 /*! exports provided: Expression, Fermata */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -47846,9 +46616,16 @@ class StreamException extends Music21Exception {}
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Expression", function() { return Expression; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Fermata", function() { return Fermata; });
-/* harmony import */ var vexflow__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vexflow */ "./node_modules/vexflow/releases/vexflow-debug.js");
-/* harmony import */ var vexflow__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(vexflow__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _base__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./base */ "./src/music21/base.ts");
+/* harmony import */ var core_js_modules_es_array_iterator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es.array.iterator */ "./node_modules/core-js/modules/es.array.iterator.js");
+/* harmony import */ var core_js_modules_es_array_iterator__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_iterator__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! core-js/modules/web.dom-collections.iterator */ "./node_modules/core-js/modules/web.dom-collections.iterator.js");
+/* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var vexflow__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! vexflow */ "./node_modules/vexflow/releases/vexflow-debug.js");
+/* harmony import */ var vexflow__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(vexflow__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _base__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./base */ "./src/music21/base.ts");
+
+
+
 /**
  * Expressions module.  See {@link music21.expressions}
  * Expressions can be note attached (`music21.note.Note.expressions[]`) or floating...
@@ -47868,19 +46645,19 @@ __webpack_require__.r(__webpack_exports__);
  * @extends music21.base.Music21Object
  * @property {string} name
  * @property {string} vexflowModifier
- * @property {int} setPosition
+ * @property {number} setPosition
  */
 
-class Expression extends _base__WEBPACK_IMPORTED_MODULE_1__["Music21Object"] {
-  static get className() {
-    return 'music21.expressions.Expression';
-  }
-
+class Expression extends _base__WEBPACK_IMPORTED_MODULE_3__["Music21Object"] {
   constructor() {
-    super();
+    super(...arguments);
     this.name = 'expression';
     this.vexflowModifier = '';
     this.setPosition = undefined;
+  }
+
+  static get className() {
+    return 'music21.expressions.Expression';
   }
   /**
    * Renders this Expression as a Vex.Flow.Articulation
@@ -47892,7 +46669,7 @@ class Expression extends _base__WEBPACK_IMPORTED_MODULE_1__["Music21Object"] {
 
 
   vexflow() {
-    var vfe = new vexflow__WEBPACK_IMPORTED_MODULE_0___default.a.Flow.Articulation(this.vexflowModifier);
+    var vfe = new vexflow__WEBPACK_IMPORTED_MODULE_2___default.a.Flow.Articulation(this.vexflowModifier);
 
     if (this.setPosition) {
       vfe.setPosition(this.setPosition);
@@ -47926,9 +46703,9 @@ class Fermata extends Expression {
 
 /***/ }),
 
-/***/ "./src/music21/figuredBass.js":
+/***/ "./src/music21/figuredBass.ts":
 /*!************************************!*\
-  !*** ./src/music21/figuredBass.js ***!
+  !*** ./src/music21/figuredBass.ts ***!
   \************************************/
 /*! exports provided: Notation, Figure, Modifier */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -47958,7 +46735,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var core_js_modules_es_string_trim__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_trim__WEBPACK_IMPORTED_MODULE_8__);
 /* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! core-js/modules/web.dom-collections.iterator */ "./node_modules/core-js/modules/web.dom-collections.iterator.js");
 /* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_9___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_9__);
-/* harmony import */ var _pitch__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./pitch */ "./src/music21/pitch.js");
+/* harmony import */ var _pitch__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./pitch */ "./src/music21/pitch.ts");
 
 
 
@@ -48009,19 +46786,19 @@ class Notation {
    */
   constructor() {
     var notationColumn = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
-    this.notationColumn = notationColumn;
     this.figureStrings = undefined;
     this.origNumbers = undefined;
     this.origModStrings = undefined;
     this.numbers = undefined;
     this.modifierStrings = undefined;
+    this.notationColumn = notationColumn;
 
     this._parseNotationColumn();
 
     this._translateToLonghand();
 
-    this.modifiers = undefined;
-    this.figures = undefined;
+    this.modifiers = [];
+    this.figures = [];
 
     this._getModifiers();
 
@@ -48294,13 +47071,11 @@ class Modifier {
       return undefined;
     }
 
-    var a = new _pitch__WEBPACK_IMPORTED_MODULE_10__["Accidental"]();
-
     if (specialModifiers[modStr] !== undefined) {
       modStr = specialModifiers[modStr];
     }
 
-    a.set(modStr);
+    var a = new _pitch__WEBPACK_IMPORTED_MODULE_10__["Accidental"](modStr);
     return a;
   }
 
@@ -48322,9 +47097,8 @@ class Modifier {
     if (this.accidental.alter === 0.0 || pitchToAlter.accidental === undefined) {
       pitchToAlter.accidental = this.accidental.clone();
     } else {
-      var newAccidental = new _pitch__WEBPACK_IMPORTED_MODULE_10__["Accidental"]();
       var newAlter = pitchToAlter.accidental.alter + this.accidental.alter;
-      newAccidental.set(newAlter);
+      var newAccidental = new _pitch__WEBPACK_IMPORTED_MODULE_10__["Accidental"](newAlter);
       pitchToAlter.accidental = newAccidental;
     }
 
@@ -48335,9 +47109,9 @@ class Modifier {
 
 /***/ }),
 
-/***/ "./src/music21/fromPython.js":
+/***/ "./src/music21/fromPython.ts":
 /*!***********************************!*\
-  !*** ./src/music21/fromPython.js ***!
+  !*** ./src/music21/fromPython.ts ***!
   \***********************************/
 /*! exports provided: Converter */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -48399,10 +47173,11 @@ var unpickler = jp.unpickler;
 class Converter {
   constructor() {
     this.debug = true;
-    this.knownUnparsables = ['music21.spanner.Line', 'music21.instrument.Instrument', 'music21.layout.StaffGroup', 'music21.layout.StaffLayout', 'music21.layout.SystemLayout', 'music21.layout.PageLayout', 'music21.expressions.TextExpression', 'music21.bar.Barline', // Soon...
-    'music21.tempo.MetronomeMark', // should be possible
-    'music21.metadata.Metadata' // Soon...
-    ];
+    this.knownUnparsables = ['music21.spanner.Line', 'music21.instrument.Instrument', 'music21.layout.StaffGroup', 'music21.layout.StaffLayout', 'music21.layout.SystemLayout', 'music21.layout.PageLayout', 'music21.expressions.TextExpression', 'music21.bar.Barline', 'music21.tempo.MetronomeMark', 'music21.metadata.Metadata'];
+    this.currentPart = undefined;
+    this.lastClef = undefined;
+    this.lastKeySignature = undefined;
+    this.lastTimeSignature = undefined;
     this.handlers = {
       'music21.duration.Duration': {
         post_restore: d => {
@@ -48441,10 +47216,6 @@ class Converter {
         post_restore: this.streamPostRestore.bind(this)
       }
     };
-    this.currentPart = undefined;
-    this.lastClef = undefined;
-    this.lastKeySignature = undefined;
-    this.lastTimeSignature = undefined;
   }
   /**
    * Fixes up some references that cannot be unpacked from jsonpickle.
@@ -48551,9 +47322,9 @@ class Converter {
 
 /***/ }),
 
-/***/ "./src/music21/harmony.js":
+/***/ "./src/music21/harmony.ts":
 /*!********************************!*\
-  !*** ./src/music21/harmony.js ***!
+  !*** ./src/music21/harmony.ts ***!
   \********************************/
 /*! exports provided: Harmony */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -48565,51 +47336,29 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var core_js_modules_es_array_index_of__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_index_of__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var core_js_modules_es_string_replace__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! core-js/modules/es.string.replace */ "./node_modules/core-js/modules/es.string.replace.js");
 /* harmony import */ var core_js_modules_es_string_replace__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_replace__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _chord__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./chord */ "./src/music21/chord.js");
-/* harmony import */ var _key__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./key */ "./src/music21/key.js");
+/* harmony import */ var _chord__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./chord */ "./src/music21/chord.ts");
+/* harmony import */ var _key__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./key */ "./src/music21/key.ts");
 
 
 
-/**
- * @namespace music21.harmony
- */
-
-
-/**
- * @memberOf music21.harmony
- * @extends music21.chord.Chord
- */
 
 class Harmony extends _chord__WEBPACK_IMPORTED_MODULE_2__["Chord"] {
-  static get className() {
-    return 'music21.harmony.Harmony';
-  }
-  /**
-   *
-   * @param {string} figure
-   * @param {Object} keywords
-   */
-
-
   constructor(figure) {
-    var keywords = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+    var _ref = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
+        _ref$parseFigure = _ref.parseFigure,
+        parseFigure = _ref$parseFigure === void 0 ? true : _ref$parseFigure,
+        _ref$updatePitches = _ref.updatePitches,
+        updatePitches = _ref$updatePitches === void 0 ? false : _ref$updatePitches;
+
     super();
     this._writeAsChord = false;
-    this._roman = undefined;
     this.chordStepModifications = [];
-    this._degreesList = [];
-    /**
-     *
-     * @type {music21.key.Key|undefined}
-     * @private
-     */
-
-    this._key = undefined; // this._updateBasedOnXMLInput(keywords);
+    this._degreesList = []; // this._updateBasedOnXMLInput(keywords);
 
     figure = figure.replace('/o', 'ø');
     this._figure = figure;
 
-    if (keywords.parseFigure !== false && this._figure !== undefined) {
+    if (parseFigure !== false && this._figure !== undefined) {
       this._parseFigure();
     }
 
@@ -48617,14 +47366,18 @@ class Harmony extends _chord__WEBPACK_IMPORTED_MODULE_2__["Chord"] {
       this.bass(this._overrides.root);
     }
 
-    if (keywords.updatePitches && this._figure !== undefined || this._overrides.root !== undefined || this._overrides.bass !== undefined) {
+    if (updatePitches && this._figure !== undefined || this._overrides.root !== undefined || this._overrides.bass !== undefined) {
       this._updatePitches();
     } // this._updateBasedOnXMLInput(keywords);
 
 
-    if (keywords.parseFigure !== false && this._figure !== undefined && this._figure.indexOf('sus') !== -1 && this._figure.indexOf('sus2') === -1) {
+    if (parseFigure !== false && this._figure !== undefined && this._figure.indexOf('sus') !== -1 && this._figure.indexOf('sus2') === -1) {
       this.root(this.bass());
     }
+  }
+
+  static get className() {
+    return 'music21.harmony.Harmony';
   }
 
   _parseFigure() {}
@@ -48633,10 +47386,10 @@ class Harmony extends _chord__WEBPACK_IMPORTED_MODULE_2__["Chord"] {
 
   get figure() {
     if (this._figure === undefined) {
-      return this.findFigure();
-    } else {
-      return this._figure;
+      this.findFigure();
     }
+
+    return this._figure;
   }
 
   set figure(newFigure) {
@@ -48668,9 +47421,9 @@ class Harmony extends _chord__WEBPACK_IMPORTED_MODULE_2__["Chord"] {
 
 /***/ }),
 
-/***/ "./src/music21/instrument.js":
+/***/ "./src/music21/instrument.ts":
 /*!***********************************!*\
-  !*** ./src/music21/instrument.js ***!
+  !*** ./src/music21/instrument.ts ***!
   \***********************************/
 /*! exports provided: global_usedChannels, maxMidi, info, Instrument, find */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -48710,17 +47463,7 @@ __webpack_require__.r(__webpack_exports__);
  * @requires music21/base
  */
 
-/**
- *
- * @type {number[]}
- */
-
 var global_usedChannels = []; // differs from m21p -- stored midiProgram numbers
-
-/**
- *
- * @type {number}
- */
 
 var maxMidi = 16;
 /**
@@ -49249,7 +47992,6 @@ var info = [{
  *
  * @class Instrument
  * @memberof music21.instrument
- * @extends music21.base.Music21Object
  * @param {string} instrumentName
  * @property {string|undefined} partId
  * @property {string|undefined} partName
@@ -49269,18 +48011,14 @@ var info = [{
  */
 
 class Instrument extends _base__WEBPACK_IMPORTED_MODULE_3__["Music21Object"] {
-  static get className() {
-    return 'music21.instrument.Instrument';
-  }
-
-  constructor(instrumentName) {
+  constructor() {
+    var instrumentName = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
     super();
-    this.classSortOrder = -25;
     this.partId = undefined;
     this.partName = undefined;
     this.partAbbreviation = undefined;
     this.instrumentId = undefined;
-    this.instrumentName = instrumentName;
+    this.instrumentName = '';
     this.instrumentAbbreviation = undefined;
     this.midiProgram = undefined;
     this._midiChannel = undefined;
@@ -49289,10 +48027,16 @@ class Instrument extends _base__WEBPACK_IMPORTED_MODULE_3__["Music21Object"] {
     this.transpostion = undefined;
     this.inGMPercMap = false;
     this.soundfontFn = undefined;
+    this.classSortOrder = -25;
+    this.instrumentName = instrumentName;
 
-    if (instrumentName !== undefined) {
+    if (instrumentName !== '') {
       find(instrumentName, this);
     }
+  }
+
+  static get className() {
+    return 'music21.instrument.Instrument';
   }
   /**
    * Assign an instrument to an unused midi channel.
@@ -49306,7 +48050,9 @@ class Instrument extends _base__WEBPACK_IMPORTED_MODULE_3__["Music21Object"] {
    */
 
 
-  autoAssignMidiChannel(usedChannels) {
+  autoAssignMidiChannel() {
+    var usedChannels = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : undefined;
+
     if (usedChannels === undefined) {
       usedChannels = global_usedChannels;
     }
@@ -49365,7 +48111,9 @@ class Instrument extends _base__WEBPACK_IMPORTED_MODULE_3__["Music21Object"] {
  * @returns {music21.instrument.Instrument|undefined}
  */
 
-function find(fn, inst) {
+function find(fn) {
+  var inst = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
+
   if (inst === undefined) {
     inst = new Instrument();
   }
@@ -49405,9 +48153,9 @@ function find(fn, inst) {
 
 /***/ }),
 
-/***/ "./src/music21/interval.js":
+/***/ "./src/music21/interval.ts":
 /*!*********************************!*\
-  !*** ./src/music21/interval.js ***!
+  !*** ./src/music21/interval.ts ***!
   \*********************************/
 /*! exports provided: Direction, IntervalDirectionTerms, MusicOrdinals, GenericInterval, IntervalSpecifiersEnum, IntervalNiceSpecNames, IntervalPrefixSpecs, IntervalOrderedPerfSpecs, IntervalPerfSpecifiers, IntervalPerfOffset, IntervalOrderedImperfSpecs, IntervalSpecifiers, IntervalMajOffset, IntervalSemitonesGeneric, IntervalAdjustPerfect, IntervalAdjustImperf, DiatonicInterval, ChromaticInterval, IntervalStepNames, convertDiatonicNumberToStep, Interval, intervalFromGenericAndChromatic, notesToGeneric, convertStaffDistanceToInterval, notesToChromatic, intervalsToDiatonic, _getSpecifierFromGenericChromatic, add */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -49460,11 +48208,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var core_js_modules_es_string_replace__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_replace__WEBPACK_IMPORTED_MODULE_7__);
 /* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! core-js/modules/web.dom-collections.iterator */ "./node_modules/core-js/modules/web.dom-collections.iterator.js");
 /* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_8__);
-/* harmony import */ var _debug__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./debug */ "./src/music21/debug.js");
-/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./common */ "./src/music21/common.js");
-/* harmony import */ var _note__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./note */ "./src/music21/note.js");
+/* harmony import */ var _debug__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./debug */ "./src/music21/debug.ts");
+/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./common */ "./src/music21/common.ts");
+/* harmony import */ var _note__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./note */ "./src/music21/note.ts");
 /* harmony import */ var _prebase__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./prebase */ "./src/music21/prebase.ts");
-/* harmony import */ var _pitch__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./pitch */ "./src/music21/pitch.js");
+/* harmony import */ var _pitch__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./pitch */ "./src/music21/pitch.ts");
 
 
 
@@ -49604,10 +48352,6 @@ var MusicOrdinals = [undefined, 'Unison', 'Second', 'Third', 'Fourth', 'Fifth', 
  */
 
 class GenericInterval extends _prebase__WEBPACK_IMPORTED_MODULE_12__["ProtoM21Object"] {
-  static get className() {
-    return 'music21.interval.GenericInterval';
-  }
-
   constructor(gi) {
     super();
 
@@ -49714,6 +48458,10 @@ class GenericInterval extends _prebase__WEBPACK_IMPORTED_MODULE_12__["ProtoM21Ob
     } else {
       this.mod7 = this.simpleDirected;
     }
+  }
+
+  static get className() {
+    return 'music21.interval.GenericInterval';
   }
   /**
    * Returns a new GenericInterval which is the mod7inversion; 3rds (and 10ths etc.) to 6ths, etc.
@@ -49864,10 +48612,6 @@ var IntervalAdjustImperf = {
  */
 
 class DiatonicInterval extends _prebase__WEBPACK_IMPORTED_MODULE_12__["ProtoM21Object"] {
-  static get className() {
-    return 'music21.interval.DiatonicInterval';
-  }
-
   constructor(specifier, generic) {
     super();
 
@@ -49893,7 +48637,7 @@ class DiatonicInterval extends _prebase__WEBPACK_IMPORTED_MODULE_12__["ProtoM21O
 
     if (generic.undirected !== 1 || specifier === IntervalSpecifiersEnum.PERFECT) {
       this.direction = generic.direction;
-    } else if (IntervalPerfSpecifiers.indexOf(specifier) <= IntervalPerfSpecifiers.indexOf(IntervalSpecifiersEnum.DIMINISHED)) {
+    } else if (IntervalPerfSpecifiers.indexOf(this.specifier) <= IntervalPerfSpecifiers.indexOf(IntervalSpecifiersEnum.DIMINISHED)) {
       // diminished unisons -- very controversial
       this.direction = Direction.DESCENDING;
     } else {
@@ -49937,6 +48681,10 @@ class DiatonicInterval extends _prebase__WEBPACK_IMPORTED_MODULE_12__["ProtoM21O
     // TODO: reverse()
     // TODO: property cents
   }
+
+  static get className() {
+    return 'music21.interval.DiatonicInterval';
+  }
   /**
    * Returns a ChromaticInterval object of the same size.
    *
@@ -49948,7 +48696,7 @@ class DiatonicInterval extends _prebase__WEBPACK_IMPORTED_MODULE_12__["ProtoM21O
     var octaveOffset = Math.floor(Math.abs(this.generic.staffDistance) / 7);
     var semitonesStart = IntervalSemitonesGeneric[this.generic.simpleUndirected];
     var specName = IntervalPrefixSpecs[this.specifier];
-    var semitonesAdjust = 0;
+    var semitonesAdjust;
 
     if (this.generic.perfectable) {
       semitonesAdjust = IntervalAdjustPerfect[specName];
@@ -50016,11 +48764,8 @@ class DiatonicInterval extends _prebase__WEBPACK_IMPORTED_MODULE_12__["ProtoM21O
  */
 
 class ChromaticInterval extends _prebase__WEBPACK_IMPORTED_MODULE_12__["ProtoM21Object"] {
-  static get className() {
-    return 'music21.interval.ChromaticInterval';
-  }
-
-  constructor(value) {
+  constructor() {
+    var value = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
     super();
     this.semitones = value;
     this.cents = Math.round(value * 100.0);
@@ -50055,6 +48800,10 @@ class ChromaticInterval extends _prebase__WEBPACK_IMPORTED_MODULE_12__["ProtoM21
     } else {
       this.isChromaticStep = false;
     }
+  }
+
+  static get className() {
+    return 'music21.interval.ChromaticInterval';
   }
   /**
    *
@@ -50098,8 +48847,8 @@ var IntervalStepNames = ['C', 'D', 'E', 'F', 'G', 'A', 'B'];
 /**
  * @function music21.interval.convertDiatonicNumberToStep
  * @memberof music21.interval
- * @param {int} dn - diatonic number, where 29 = C4, C#4 etc.
- * @returns {Array} two element array of {string} stepName and {Int} octave
+ * @param {number} dn - diatonic number, where 29 = C4, C#4 etc.
+ * @returns {Array} two element array of {string} stepName and {number} octave
  */
 
 function convertDiatonicNumberToStep(dn) {
@@ -50142,10 +48891,6 @@ function convertDiatonicNumberToStep(dn) {
  */
 
 class Interval extends _prebase__WEBPACK_IMPORTED_MODULE_12__["ProtoM21Object"] {
-  static get className() {
-    return 'music21.interval.Interval';
-  }
-
   constructor() {
     super(); // todo: allow full range of ways of specifying as in m21p
 
@@ -50211,6 +48956,10 @@ class Interval extends _prebase__WEBPACK_IMPORTED_MODULE_12__["ProtoM21Object"] 
     this._noteStart = noteStart;
     this._noteEnd = noteEnd;
     this.reinit();
+  }
+
+  static get className() {
+    return 'music21.interval.Interval';
   }
   /**
    *
@@ -50431,7 +49180,7 @@ function _getSpecifierFromGenericChromatic(gInt, cInt) {
   }
 
   var semisRounded = Math.round(theseSemis);
-  var specifier = '';
+  var specifier;
 
   if (gInt.perfectable) {
     specifier = IntervalPerfSpecifiers[IntervalPerfOffset + semisRounded - normalSemis];
@@ -50479,9 +49228,9 @@ function add(intervalList) {
 
 /***/ }),
 
-/***/ "./src/music21/key.js":
+/***/ "./src/music21/key.ts":
 /*!****************************!*\
-  !*** ./src/music21/key.js ***!
+  !*** ./src/music21/key.ts ***!
   \****************************/
 /*! exports provided: modeSharpsAlter, convertKeyStringToMusic21KeyString, KeySignature, Key */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -50509,11 +49258,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! core-js/modules/web.dom-collections.iterator */ "./node_modules/core-js/modules/web.dom-collections.iterator.js");
 /* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_7__);
 /* harmony import */ var _exceptions21__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./exceptions21 */ "./src/music21/exceptions21.ts");
-/* harmony import */ var _debug__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./debug */ "./src/music21/debug.js");
+/* harmony import */ var _debug__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./debug */ "./src/music21/debug.ts");
 /* harmony import */ var _base__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./base */ "./src/music21/base.ts");
-/* harmony import */ var _interval__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./interval */ "./src/music21/interval.js");
-/* harmony import */ var _pitch__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./pitch */ "./src/music21/pitch.js");
-/* harmony import */ var _scale__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./scale */ "./src/music21/scale.js");
+/* harmony import */ var _interval__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./interval */ "./src/music21/interval.ts");
+/* harmony import */ var _pitch__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./pitch */ "./src/music21/pitch.ts");
+/* harmony import */ var _scale__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./scale */ "./src/music21/scale.ts");
 
 
 
@@ -50593,28 +49342,21 @@ function convertKeyStringToMusic21KeyString(textString) {
  */
 
 class KeySignature extends _base__WEBPACK_IMPORTED_MODULE_10__["Music21Object"] {
-  static get className() {
-    return 'music21.key.KeySignature';
-  }
-
-  constructor(sharps) {
+  constructor() {
+    var sharps = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
     super();
-    this.classSortOrder = 2;
-    this._sharps = sharps || 0; // if undefined
-
-    /**
-     * @type {music21.pitch.Pitch[]}
-     */
-
-    this._alteredPitchesCache = undefined; // 12 flats/sharps enough for now...
+    this._sharps = 0; // 12 flats/sharps enough for now...
 
     this.flatMapping = ['C', 'F', 'B-', 'E-', 'A-', 'D-', 'G-', 'C-', 'F-', 'B--', 'E--', 'A--', 'D--'];
     this.sharpMapping = ['C', 'G', 'D', 'A', 'E', 'B', 'F#', 'C#', 'G#', 'D#', 'A#', 'E#', 'B#'];
+    this.classSortOrder = 2;
+    this._sharps = sharps;
+    this._alteredPitchesCache = undefined;
   }
-  /**
-   * @return string
-   */
 
+  static get className() {
+    return 'music21.key.KeySignature';
+  }
 
   stringInfo() {
     if (this.sharps === 0) {
@@ -50629,10 +49371,6 @@ class KeySignature extends _base__WEBPACK_IMPORTED_MODULE_10__["Music21Object"] 
       return "of ".concat(this.sharps, " sharps");
     }
   }
-  /**
-   * @type {int}
-   */
-
 
   get sharps() {
     return this._sharps;
@@ -50644,9 +49382,6 @@ class KeySignature extends _base__WEBPACK_IMPORTED_MODULE_10__["Music21Object"] 
   }
   /**
    * Gives the width in pixels necessary to represent the key signature.
-   *
-   * @type {number}
-   * @readonly
    */
 
 
@@ -50811,10 +49546,6 @@ class KeySignature extends _base__WEBPACK_IMPORTED_MODULE_10__["Music21Object"] 
     var newPitch = p;
 
     for (var i = 0; i < transTimes; i++) {
-      /**
-       *
-       * @type {music21.pitch.Pitch}
-       */
       newPitch = transInterval.transposePitch(newPitch);
     }
 
@@ -50837,11 +49568,10 @@ class KeySignature extends _base__WEBPACK_IMPORTED_MODULE_10__["Music21Object"] 
  */
 
 class Key extends KeySignature {
-  static get className() {
-    return 'music21.key.Key';
-  }
+  constructor() {
+    var keyName = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'C';
+    var mode = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
 
-  constructor(keyName, mode) {
     if (keyName === undefined) {
       keyName = 'C';
     }
@@ -50876,6 +49606,10 @@ class Key extends KeySignature {
     this._scale = this.getScale();
   }
 
+  static get className() {
+    return 'music21.key.Key';
+  }
+
   stringInfo() {
     return this.tonicPitchNameWithCase + ' ' + this.mode;
   }
@@ -50900,7 +49634,9 @@ class Key extends KeySignature {
    */
 
 
-  getScale(scaleType) {
+  getScale() {
+    var scaleType = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : undefined;
+
     if (scaleType === undefined) {
       scaleType = this.mode;
     }
@@ -50918,7 +49654,8 @@ class Key extends KeySignature {
     } else {
       return new _scale__WEBPACK_IMPORTED_MODULE_13__["ConcreteScale"](pitchObj);
     }
-  } // when scale.js adds functionality, it must be added here.
+  } // Because of lack of multiple inheritance,
+  // whenever scale.js adds functionality, it must be added here.
 
 
   get isConcrete() {
@@ -50929,21 +49666,29 @@ class Key extends KeySignature {
     return this._scale.getPitches(...arguments);
   }
 
-  pitchFromDegree() {
-    return this._scale.pitchFromDegree(...arguments);
+  pitchFromDegree(degree) {
+    for (var _len = arguments.length, args = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+      args[_key - 1] = arguments[_key];
+    }
+
+    return this._scale.pitchFromDegree(degree, ...args);
   }
 
-  getScaleDegreeFromPitch() {
-    return this._scale.getScaleDegreeFromPitch(...arguments);
+  getScaleDegreeFromPitch(pitchTarget) {
+    for (var _len2 = arguments.length, args = new Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
+      args[_key2 - 1] = arguments[_key2];
+    }
+
+    return this._scale.getScaleDegreeFromPitch(pitchTarget, ...args);
   }
 
 }
 
 /***/ }),
 
-/***/ "./src/music21/keyboard.js":
+/***/ "./src/music21/keyboard.ts":
 /*!*********************************!*\
-  !*** ./src/music21/keyboard.js ***!
+  !*** ./src/music21/keyboard.ts ***!
   \*********************************/
 /*! exports provided: Key, WhiteKey, BlackKey, Keyboard, triggerToggleShow, jazzHighlight */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -50962,9 +49707,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(jquery__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var midicube__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! midicube */ "./node_modules/midicube/releases/midicube.js");
 /* harmony import */ var midicube__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(midicube__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./common */ "./src/music21/common.js");
-/* harmony import */ var _miditools__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./miditools */ "./src/music21/miditools.js");
-/* harmony import */ var _pitch__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./pitch */ "./src/music21/pitch.js");
+/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./common */ "./src/music21/common.ts");
+/* harmony import */ var _miditools__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./miditools */ "./src/music21/miditools.ts");
+/* harmony import */ var _pitch__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./pitch */ "./src/music21/pitch.ts");
 
 
 /**
@@ -51025,7 +49770,9 @@ class Key {
   constructor() {
     this.classes = ['Key']; // name conflict with key.Key
 
-    this.callbacks = [];
+    this.callbacks = {
+      click: undefined
+    };
     this.scaleFactor = 1;
     this.parent = undefined;
     this.id = 0;
@@ -51255,6 +50002,17 @@ class Keyboard {
     this._endDNN = undefined;
     this.hideable = false;
     this.scrollable = false;
+    this.callbacks = {
+      click: undefined
+    }; //   more accurate offsets from http://www.mathpages.com/home/kmath043.htm
+
+    this.sharpOffsets = {
+      0: 14.3333,
+      1: 18.6666,
+      3: 13.25,
+      4: 16.25,
+      5: 19.75
+    };
     /**
      * An object of callbacks on events.
      *
@@ -51268,14 +50026,6 @@ class Keyboard {
 
     this.callbacks = {
       click: keyClicked => this.clickHandler(keyClicked)
-    }; //   more accurate offsets from http://www.mathpages.com/home/kmath043.htm
-
-    this.sharpOffsets = {
-      0: 14.3333,
-      1: 18.6666,
-      3: 13.25,
-      4: 16.25,
-      5: 19.75
     };
   }
   /**
@@ -51333,6 +50083,8 @@ class Keyboard {
   /**
    * Handle a click on a given SVG object
    *
+   * TODO(msc) - 2019-Dec -- separate into two calls, one for highlighting and one for playing.
+   *
    * @param {SVGElement} keyRect - the dom object with the keyboard.
    */
 
@@ -51364,8 +50116,6 @@ class Keyboard {
   }
   /**
    * Draws the SVG associated with this Keyboard
-   *
-   * @returns {SVGElement} new svgDOM
    */
 
 
@@ -51471,11 +50221,12 @@ class Keyboard {
    */
 
 
-  markMiddleC(strokeColor) {
+  markMiddleC() {
+    var strokeColor = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'red';
     var midC = this.keyObjects[60];
 
     if (midC !== undefined) {
-      midC.addCircle('red');
+      midC.addCircle(strokeColor);
     }
   }
   /**
@@ -51519,7 +50270,7 @@ class Keyboard {
    * scrollable property on the keyboard to True.
    *
    * @param {SVGElement} svgDOM
-   * @returns {jQuery}
+   * @returns {JQuery}
    */
 
 
@@ -51659,12 +50410,13 @@ function jazzHighlight(e) {
     if (this.keyObjects[midiNote] !== undefined) {
       var keyObj = this.keyObjects[midiNote];
       var svgObj = keyObj.svgObj;
-      var intensityRGB = '';
       var normalizedVelocity = (e.velocity + 25) / 127;
 
       if (normalizedVelocity > 1) {
         normalizedVelocity = 1.0;
       }
+
+      var intensityRGB;
 
       if (keyObj.keyClass === 'whitekey') {
         var intensity = normalizedVelocity.toString();
@@ -51691,9 +50443,9 @@ function jazzHighlight(e) {
 
 /***/ }),
 
-/***/ "./src/music21/layout.js":
+/***/ "./src/music21/layout.ts":
 /*!*******************************!*\
-  !*** ./src/music21/layout.js ***!
+  !*** ./src/music21/layout.ts ***!
   \*******************************/
 /*! exports provided: makeLayoutFromScore, LayoutScore, Page, System, Staff */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -51705,13 +50457,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Page", function() { return Page; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "System", function() { return System; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Staff", function() { return Staff; });
-/* harmony import */ var _stream__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./stream */ "./src/music21/stream.js");
+/* harmony import */ var _stream__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./stream */ "./src/music21/stream.ts");
 /**
  *
  * THIS IS CURRENTLY UNUSED
  * Does not work yet, so not documented
  *
- * @namespace music21.layout
  */
 // future -- rewrite of Score and Part to Page, System, SystemPart
 // not currently used
@@ -51739,7 +50490,7 @@ __webpack_require__.r(__webpack_exports__);
 function makeLayoutFromScore(score, containerWidth) {
   // var systemHeight = score.systemHeight; /* part.show() called... */
   // var systemPadding = score.systemPadding;
-  var parts = score.parts; // console.log(parts);
+  var parts = score.parts.stream(); // console.log(parts);
 
   var numParts = parts.length;
   var partZero = parts.get(0);
@@ -51791,7 +50542,7 @@ function makeLayoutFromScore(score, containerWidth) {
     if (currentRight > maxSystemWidth && lastSystemBreak !== i) {
       // new system...
       for (var j = 0; j < currentStaves.length; j++) {
-        currentStaves.measureEnd = i;
+        currentStaves[j].measureEnd = i;
         currentSystem.insert(0, currentStaves[j]);
       }
 
@@ -51814,12 +50565,12 @@ function makeLayoutFromScore(score, containerWidth) {
     }
 
     for (var pNum = 0; pNum < currentStaves.length; pNum++) {
-      currentStaves[pNum].append(parts[pNum].get(i));
+      currentStaves[pNum].append(parts.get(pNum).get(i));
     }
   }
 
   for (var _j = 0; _j < currentStaves.length; _j++) {
-    currentStaves.measureEnd = measureWidths.length - 1;
+    currentStaves[_j].measureEnd = measureWidths.length - 1;
     currentSystem.insert(0, currentStaves[_j]);
   }
 
@@ -51835,10 +50586,6 @@ function makeLayoutFromScore(score, containerWidth) {
  */
 
 class LayoutScore extends _stream__WEBPACK_IMPORTED_MODULE_0__["Score"] {
-  static get className() {
-    return 'music21.layout.LayoutScore';
-  }
-
   constructor() {
     super();
     this.scoreLayout = undefined;
@@ -51856,6 +50603,10 @@ class LayoutScore extends _stream__WEBPACK_IMPORTED_MODULE_0__["Score"] {
     this.left = 0;
   }
 
+  static get className() {
+    return 'music21.layout.LayoutScore';
+  }
+
   get pages() {
     return this.getElementsByClass('Page');
   }
@@ -51868,20 +50619,7 @@ class LayoutScore extends _stream__WEBPACK_IMPORTED_MODULE_0__["Score"] {
     } else {
       return undefined;
     }
-  } // /**
-  //  * return a tuple of (top, bottom) for a staff, specified by a given pageId,
-  //  * systemId, and staffId in PIXELS.
-  //
-  //  * @param pageId
-  //  * @param systemId
-  //  * @param staffId
-  //  * @param units -- "pixels" or "tenths" (not supported)
-  //  */
-  //
-  // getPositionForStaff(pageId, systemId, staffId, units) {
-  //     units = units || 'pixels';
-  // }
-
+  }
 
 }
 /**
@@ -51895,10 +50633,6 @@ class LayoutScore extends _stream__WEBPACK_IMPORTED_MODULE_0__["Score"] {
  */
 
 class Page extends _stream__WEBPACK_IMPORTED_MODULE_0__["Score"] {
-  static get className() {
-    return 'music21.layout.Page';
-  }
-
   constructor() {
     super();
     this.pageNumber = 1;
@@ -51907,6 +50641,10 @@ class Page extends _stream__WEBPACK_IMPORTED_MODULE_0__["Score"] {
     this.systemStart = undefined;
     this.systemEnd = undefined;
     this.pageLayout = undefined;
+  }
+
+  static get className() {
+    return 'music21.layout.Page';
   }
 
   get systems() {
@@ -51935,26 +50673,19 @@ class Page extends _stream__WEBPACK_IMPORTED_MODULE_0__["Score"] {
  */
 
 class System extends _stream__WEBPACK_IMPORTED_MODULE_0__["Score"] {
-  static get className() {
-    return 'music21.layout.System';
-  }
-
   constructor() {
     super();
     this.systemNumber = 1;
     this.systemLayout = undefined;
     this.measureStart = undefined;
     this.measureEnd = undefined;
-    /**
-     *
-     * @type {number|undefined}
-     * @private
-     */
-
-    this._width = undefined;
     this.height = undefined;
     this.top = undefined;
     this.left = undefined;
+  }
+
+  static get className() {
+    return 'music21.layout.System';
   }
 
   get staves() {
@@ -51978,10 +50709,6 @@ class System extends _stream__WEBPACK_IMPORTED_MODULE_0__["Score"] {
  */
 
 class Staff extends _stream__WEBPACK_IMPORTED_MODULE_0__["Part"] {
-  static get className() {
-    return 'music21.layout.Staff';
-  }
-
   constructor() {
     super();
     this.staffNumber = 1;
@@ -51992,6 +50719,10 @@ class Staff extends _stream__WEBPACK_IMPORTED_MODULE_0__["Part"] {
     this.height = undefined;
     this.inheritedHeight = undefined;
     this.staffLayout = undefined;
+  }
+
+  static get className() {
+    return 'music21.layout.Staff';
   }
 
   get width() {
@@ -52008,9 +50739,9 @@ class Staff extends _stream__WEBPACK_IMPORTED_MODULE_0__["Part"] {
 
 /***/ }),
 
-/***/ "./src/music21/meter.js":
+/***/ "./src/music21/meter.ts":
 /*!******************************!*\
-  !*** ./src/music21/meter.js ***!
+  !*** ./src/music21/meter.ts ***!
   \******************************/
 /*! exports provided: TimeSignature */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -52035,9 +50766,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var vexflow__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! vexflow */ "./node_modules/vexflow/releases/vexflow-debug.js");
 /* harmony import */ var vexflow__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(vexflow__WEBPACK_IMPORTED_MODULE_7__);
 /* harmony import */ var _base__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./base */ "./src/music21/base.ts");
-/* harmony import */ var _beam__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./beam */ "./src/music21/beam.js");
-/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./common */ "./src/music21/common.js");
-/* harmony import */ var _duration__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./duration */ "./src/music21/duration.js");
+/* harmony import */ var _beam__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./beam */ "./src/music21/beam.ts");
+/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./common */ "./src/music21/common.ts");
+/* harmony import */ var _duration__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./duration */ "./src/music21/duration.ts");
 
 
 
@@ -52058,8 +50789,7 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
  * music21j -- Javascript reimplementation of Core music21p features.
  * music21/meter -- TimeSignature objects
  *
- *
- * Copyright (c) 2013-17, Michael Scott Cuthbert and cuthbertLab
+ * Copyright (c) 2013-19, Michael Scott Cuthbert and cuthbertLab
  * Based on music21 (=music21p), Copyright (c) 2006–17, Michael Scott Cuthbert and cuthbertLab
  *
  * meter module. See {@link music21.meter} namespace for details.
@@ -52086,18 +50816,15 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
  * @param {string} meterString - a string ("4/4", "3/8" etc.) to initialize the TimeSignature.
  * @property {int} [numerator=4]
  * @property {int} [denominator=4]
- * @property {int[][]} beatGroups - groupings of beats; inner arrays are numerator, denominator
+ * @property {number[][]} beatGroups - groupings of beats; inner arrays are numerator, denominator
  * @property {string} ratioString - a string like "4/4"
  * @property {music21.duration.Duration} barDuration - a Duration object
  *     representing the expressed total length of the TimeSignature.
  */
 
 class TimeSignature extends _base__WEBPACK_IMPORTED_MODULE_8__["Music21Object"] {
-  static get className() {
-    return 'music21.meter.TimeSignature';
-  }
-
-  constructor(meterString) {
+  constructor() {
+    var meterString = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '4/4';
     super();
     this.classSortOrder = 4;
     this._numerator = 4;
@@ -52110,20 +50837,14 @@ class TimeSignature extends _base__WEBPACK_IMPORTED_MODULE_8__["Music21Object"] 
       this.ratioString = meterString;
     }
   }
-  /**
-   *
-   * @returns {string}
-   */
 
+  static get className() {
+    return 'music21.meter.TimeSignature';
+  }
 
   stringInfo() {
     return this.ratioString;
   }
-  /**
-   *
-   * @type {number}
-   */
-
 
   get numerator() {
     return this._numerator;
@@ -52132,11 +50853,6 @@ class TimeSignature extends _base__WEBPACK_IMPORTED_MODULE_8__["Music21Object"] 
   set numerator(s) {
     this._numerator = s;
   }
-  /**
-   *
-   * @type {number}
-   */
-
 
   get denominator() {
     return this._denominator;
@@ -52145,11 +50861,6 @@ class TimeSignature extends _base__WEBPACK_IMPORTED_MODULE_8__["Music21Object"] 
   set denominator(s) {
     this._denominator = s;
   }
-  /**
-   *
-   * @type {string}
-   */
-
 
   get ratioString() {
     return this.numerator.toString() + '/' + this.denominator.toString();
@@ -52186,7 +50897,6 @@ class TimeSignature extends _base__WEBPACK_IMPORTED_MODULE_8__["Music21Object"] 
   /**
    *  Get the beatCount from the numerator, assuming fast 6/8, etc.
    *  unless .beatCount has been set manually.
-   *  @type {number}
    */
 
 
@@ -52208,7 +50918,6 @@ class TimeSignature extends _base__WEBPACK_IMPORTED_MODULE_8__["Music21Object"] 
 
   set beatCount(overwrite) {
     this._overwrittenBeatCount = overwrite;
-    return overwrite;
   }
   /**
    * Gets a single duration.Duration object representing
@@ -52292,7 +51001,8 @@ class TimeSignature extends _base__WEBPACK_IMPORTED_MODULE_8__["Music21Object"] 
    */
 
 
-  getBeams(srcStream, options) {
+  getBeams(srcStream) {
+    var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
     var params = {
       measureStartOffset: 0.0
     };
@@ -52457,11 +51167,11 @@ class TimeSignature extends _base__WEBPACK_IMPORTED_MODULE_8__["Music21Object"] 
 
 /***/ }),
 
-/***/ "./src/music21/miditools.js":
+/***/ "./src/music21/miditools.ts":
 /*!**********************************!*\
-  !*** ./src/music21/miditools.js ***!
+  !*** ./src/music21/miditools.ts ***!
   \**********************************/
-/*! exports provided: config, Event, loadedSoundfonts, clearOldChords, makeChords, sendOutChord, quantizeLastNote, sendToMIDIjs, postLoadCallback, loadSoundfont, MidiPlayer, callBacks */
+/*! exports provided: config, Event, loadedSoundfonts, clearOldChords, makeChords, sendOutChord, quantizeLastNote, sendToMIDIjs, postLoadCallback, loadSoundfont, MidiPlayer, callbacks, callBacks */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -52477,18 +51187,19 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "postLoadCallback", function() { return postLoadCallback; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "loadSoundfont", function() { return loadSoundfont; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "MidiPlayer", function() { return MidiPlayer; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "callbacks", function() { return callbacks; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "callBacks", function() { return callBacks; });
 /* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
 /* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(jquery__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var midicube__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! midicube */ "./node_modules/midicube/releases/midicube.js");
 /* harmony import */ var midicube__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(midicube__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _debug__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./debug */ "./src/music21/debug.js");
+/* harmony import */ var _debug__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./debug */ "./src/music21/debug.ts");
 /* harmony import */ var _css_midiPlayer_css__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../css/midiPlayer.css */ "./css/midiPlayer.css");
 /* harmony import */ var _css_midiPlayer_css__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_css_midiPlayer_css__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var _chord__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./chord */ "./src/music21/chord.js");
-/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./common */ "./src/music21/common.js");
-/* harmony import */ var _instrument__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./instrument */ "./src/music21/instrument.js");
-/* harmony import */ var _note__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./note */ "./src/music21/note.js");
+/* harmony import */ var _chord__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./chord */ "./src/music21/chord.ts");
+/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./common */ "./src/music21/common.ts");
+/* harmony import */ var _instrument__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./instrument */ "./src/music21/instrument.ts");
+/* harmony import */ var _note__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./note */ "./src/music21/note.ts");
 /**
  * music21j -- Javascript reimplementation of Core music21p features.
  * music21/miditools -- A collection of tools for midi. See the namespace {@link music21.miditools}
@@ -52518,15 +51229,73 @@ __webpack_require__.r(__webpack_exports__);
  // expose midicube's MIDI to window for soundfonts to load.
 
 window.MIDI = midicube__WEBPACK_IMPORTED_MODULE_1__;
-var config = {};
-/**
- * Number of octaves to transpose all incoming midi signals
- *
- * @type {number}
- * @default 0
- */
 
-config.transposeOctave = 0;
+class _ConfigSingletonClass {
+  constructor() {
+    /**
+     * Number of octaves to transpose all incoming midi signals
+     */
+    this.transposeOctave = 0;
+    /**
+     * How long to wait in milliseconds before deciding
+     * that a note belongs to another chord. Default 100ms
+     */
+
+    this.maxDelay = 100; // in ms
+
+    /**
+     * At what time (in ms since Epoch) the chord started.
+     */
+
+    this.heldChordTime = 0; // in ms
+
+    /**
+     * An Array (or undefined) of currently held Notes that have not been sent out yet.
+     */
+
+    this.heldChordNotes = undefined;
+    /**
+     * When, in MS since Jan 1, 1970, was the last {@link note.Note} played.
+     * Defaults to the time that the module was loaded.
+     */
+
+    this.timeOfLastNote = Date.now(); // in ms
+
+    /**
+     * The last Note or Chord to be sent out from miditools.  This is an important semi-global
+     * attribute, since the last element may need to be quantized by quantizeLastNote() to
+     * determine its length, since the note may need to be placed into a staff before its total
+     * length can be determined.
+     */
+
+    this.lastElement = undefined;
+    this._baseTempo = 60;
+    /**
+     * Assign (or query) a Metronome object to run all timing information.
+     */
+
+    this.metronome = undefined;
+  }
+
+  get tempo() {
+    if (this.metronome === undefined) {
+      return this._baseTempo;
+    } else {
+      return this.metronome.tempo;
+    }
+  }
+
+  set tempo(t) {
+    if (this.metronome === undefined) {
+      this._baseTempo = t;
+    } else {
+      this.metronome.tempo = t;
+    }
+  }
+
+}
+
+var config = new _ConfigSingletonClass();
 /**
  * @class Event
  * @memberof music21.miditools
@@ -52538,6 +51307,7 @@ config.transposeOctave = 0;
 
 class Event {
   constructor(t, a, b, c) {
+    this.velocity = undefined;
     this.timing = t;
     this.data1 = a;
     this.data2 = b;
@@ -52576,9 +51346,9 @@ class Event {
     }
   }
   /**
-   * Makes a {@link music21.note.Note} object from the event's midiNote number.
+   * Makes a {@link note.Note} object from the event's midiNote number.
    *
-   * @returns {music21.note.Note} - the {@link music21.note.Note} object represented by Event.midiNote
+   * @returns {note.Note} - the {@link note.Note} object represented by Event.midiNote
    */
 
 
@@ -52589,83 +51359,6 @@ class Event {
   }
 
 }
-/**
- * How long to wait in milliseconds before deciding that a note belongs to another chord. Default 100ms
- *
- * @memberof music21.miditools.config
- * @type {number}
- */
-
-config.maxDelay = 100; // in ms
-
-/**
- * At what time (in ms since Epoch) the chord started.
- *
- * @memberof music21.miditools.config
- * @type {number}
- */
-
-config.heldChordTime = 0;
-/**
- * An Array (or undefined) of currently held chords that have not been sent out yet.
- *
- * @memberof music21.miditools.config
- * @type {Array|undefined}
- */
-
-config.heldChordNotes = undefined;
-/**
- * When, in MS since Jan 1, 1970, was the last {@link music21.note.Note} played.
- * Defaults to the time that the module was loaded.
- *
- * @memberof music21.miditools.config
- * @type {number}
- */
-
-config.timeOfLastNote = Date.now(); // in ms
-
-/**
- * The last Note or Chord to be sent out from miditools.  This is an important semi-global
- * attribute, since the last element may need to be quantized by quantizeLastNote() to
- * determine its length, since the note may need to be placed into a staff before its total
- * length can be determined.
- *
- * @memberof music21.miditools.config
- * @type {music21.chord.Chord|music21.note.Note|undefined}
- */
-
-config.lastElement = undefined;
-config._baseTempo = 60;
-/**
- * Assign (or query) a Metronome object to run all timing information.
- *
- * @memberof music21.miditools.config
- * @type {music21.tempo.Metronome}
- */
-
-config.metronome = undefined;
-Object.defineProperties(config, {
-  tempo: {
-    enumerable: true,
-
-    get() {
-      if (this.metronome === undefined) {
-        return this._baseTempo;
-      } else {
-        return this.metronome.tempo;
-      }
-    },
-
-    set(t) {
-      if (this.metronome === undefined) {
-        this._baseTempo = t;
-      } else {
-        this.metronome.tempo = t;
-      }
-    }
-
-  }
-});
 /**
  * a mapping of soundfont text names to true, false, or "loading".
  *
@@ -52733,7 +51426,7 @@ function makeChords(jEvent) {
 }
 /**
  * Take the list of Notes and makes a chord out of it, if appropriate and call
- * {@link music21.miditools.callBacks.sendOutChord} callback with the Chord or Note as a parameter.
+ * {@link music21.miditools.callbacks.sendOutChord} callback with the Chord or Note as a parameter.
  *
  * @memberof music21.miditools
  * @param {Array<music21.note.Note>} chordNoteList - an Array of {@link music21.note.Note} objects
@@ -52757,8 +51450,8 @@ function sendOutChord(chordNoteList) {
   quantizeLastNote();
   config.lastElement = appendObject;
 
-  if (callBacks.sendOutChord !== undefined) {
-    callBacks.sendOutChord(appendObject);
+  if (callbacks.sendOutChord !== undefined) {
+    callbacks.sendOutChord(appendObject);
   }
 
   return appendObject;
@@ -52775,12 +51468,18 @@ function sendOutChord(chordNoteList) {
  * duration quantized
  */
 
-function quantizeLastNote(lastElement) {
+function quantizeLastNote() {
+  var lastElement = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : undefined;
+
+  if (lastElement === undefined) {
+    lastElement = config.lastElement;
+  }
+
   if (lastElement === undefined) {
     return undefined;
   }
 
-  if (lastElement instanceof _note__WEBPACK_IMPORTED_MODULE_7__["GeneralNote"]) {
+  if (lastElement instanceof _note__WEBPACK_IMPORTED_MODULE_7__["NotRest"]) {
     lastElement.stemDirection = undefined;
   }
 
@@ -52839,10 +51538,7 @@ function postLoadCallback(soundfont, callback) {
     console.log('first playing two notes very softly -- seems to flush the buffer.');
   }
 
-  jquery__WEBPACK_IMPORTED_MODULE_0__('.loadingSoundfont').remove(); // noinspection JSUnresolvedVariable
-
-  var isFirefox = typeof InstallTrigger !== 'undefined'; // Firefox 1.0+
-
+  jquery__WEBPACK_IMPORTED_MODULE_0__('.loadingSoundfont').remove();
   var isAudioTag = midicube__WEBPACK_IMPORTED_MODULE_1__["config"].api === 'audiotag';
   var instrumentObj = _instrument__WEBPACK_IMPORTED_MODULE_6__["find"](soundfont);
 
@@ -52853,9 +51549,10 @@ function postLoadCallback(soundfont, callback) {
       console.log(soundfont + ' (' + instrumentObj.midiProgram + ') loaded on ', instrumentObj.midiChannel);
     }
 
-    if (isFirefox === false && isAudioTag === false) {
+    if (isAudioTag === false) {
       // Firefox ignores sound volume! so don't play!
       // as does IE and others using HTML audio tag.
+      // these old browsers don't have auto prevention anyhow.
       var channel = instrumentObj.midiChannel;
       midicube__WEBPACK_IMPORTED_MODULE_1__["noteOn"](channel, 36, 1, 0); // if no notes have been played before then
 
@@ -52894,7 +51591,9 @@ function postLoadCallback(soundfont, callback) {
  * });
  */
 
-function loadSoundfont(soundfont, callback) {
+function loadSoundfont(soundfont) {
+  var callback = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
+
   if (loadedSoundfonts[soundfont] === true) {
     // this soundfont has already been loaded once, so just call the callback.
     if (callback !== undefined) {
@@ -52955,14 +51654,15 @@ function loadSoundfont(soundfont, callback) {
  * @class MidiPlayer
  * @memberOf music21.miditools
  * @property {number} speed - playback speed scaling (1=default).
- * @property {jQuery|undefined} $playDiv - div holding the player,
+ * @property {JQuery|undefined} $playDiv - div holding the player,
  */
 
 class MidiPlayer {
   constructor() {
-    this.player = new midicube__WEBPACK_IMPORTED_MODULE_1__["Player"]();
     this.speed = 1.0;
-    this.$playDiv = undefined;
+    this.state = ''; // up, down, or empty...
+
+    this.player = new midicube__WEBPACK_IMPORTED_MODULE_1__["Player"]();
   }
   /**
    * @param {jQuery|HTMLElement} [where]
@@ -53076,7 +51776,8 @@ class MidiPlayer {
     return _common__WEBPACK_IMPORTED_MODULE_5__["urls"].midiPlayer + '/stop.png';
   }
 
-  pausePlayStop(stop) {
+  pausePlayStop() {
+    var stop = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'no';
     var d;
 
     if (this.$playDiv === undefined) {
@@ -53108,6 +51809,7 @@ class MidiPlayer {
         // success
         m21MidiPlayer.fileLoaded();
       }, undefined, // loading
+      // loading
       e => {
         // failure
         console.log(e);
@@ -53129,7 +51831,6 @@ class MidiPlayer {
   }
 
   updatePlaying() {
-    var self = this;
     var player = this.player;
 
     if (this.$playDiv === undefined) {
@@ -53144,7 +51845,7 @@ class MidiPlayer {
     var $capsule = $d.find('.capsule'); //
 
     $capsule.on('dragstart', e => {
-      player.currentTime = (e.pageX - $capsule.left) / 420 * player.endTime;
+      player.currentTime = (e.pageX - $capsule.offset().left) / 420 * player.endTime;
 
       if (player.currentTime < 0) {
         player.currentTime = 0;
@@ -53154,9 +51855,9 @@ class MidiPlayer {
         player.currentTime = player.endTime;
       }
 
-      if (self.state === 'down') {
+      if (this.state === 'down') {
         this.pausePlayStop('pause');
-      } else if (self.state === 'up') {
+      } else if (this.state === 'up') {
         this.pausePlayStop('play');
       }
     }); //
@@ -53180,7 +51881,7 @@ class MidiPlayer {
 
       if (now === end) {
         // go to next song
-        self.songFinished();
+        this.songFinished();
       } // display the information to the user
 
 
@@ -53192,7 +51893,7 @@ class MidiPlayer {
 
 }
 /**
- * callBacks is an object with three keys:
+ * callbacks is an object with three keys:
  *
  * - raw: function (t, a, b,c) to call when any midi event arrives.
  *     Default: `function (t, a, b, c) { return new miditools.Event(t, a, b, c); }`
@@ -53211,39 +51912,38 @@ class MidiPlayer {
  * @memberof music21.miditools
  */
 
-var callBacks = {
+var callbacks = {
   raw: (t, a, b, c) => new Event(t, a, b, c),
   general: [sendToMIDIjs, quantizeLastNote],
   sendOutChord: arrayOfNotes => {}
-};
+}; // For backwards compatibility -- this used to have a capital b.
+
+var callBacks = callbacks;
 
 /***/ }),
 
-/***/ "./src/music21/musicxml.js":
+/***/ "./src/music21/musicxml.ts":
 /*!*********************************!*\
-  !*** ./src/music21/musicxml.js ***!
+  !*** ./src/music21/musicxml.ts ***!
   \*********************************/
 /*! exports provided: m21ToXml, xmlToM21 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _musicxml_m21ToXml__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./musicxml/m21ToXml */ "./src/music21/musicxml/m21ToXml.js");
+/* harmony import */ var _musicxml_m21ToXml__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./musicxml/m21ToXml */ "./src/music21/musicxml/m21ToXml.ts");
 /* harmony reexport (module object) */ __webpack_require__.d(__webpack_exports__, "m21ToXml", function() { return _musicxml_m21ToXml__WEBPACK_IMPORTED_MODULE_0__; });
-/* harmony import */ var _musicxml_xmlToM21__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./musicxml/xmlToM21 */ "./src/music21/musicxml/xmlToM21.js");
+/* harmony import */ var _musicxml_xmlToM21__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./musicxml/xmlToM21 */ "./src/music21/musicxml/xmlToM21.ts");
 /* harmony reexport (module object) */ __webpack_require__.d(__webpack_exports__, "xmlToM21", function() { return _musicxml_xmlToM21__WEBPACK_IMPORTED_MODULE_1__; });
-/**
- * @namespace music21.musicxml
- */
 
 
 
 
 /***/ }),
 
-/***/ "./src/music21/musicxml/m21ToXml.js":
+/***/ "./src/music21/musicxml/m21ToXml.ts":
 /*!******************************************!*\
-  !*** ./src/music21/musicxml/m21ToXml.js ***!
+  !*** ./src/music21/musicxml/m21ToXml.ts ***!
   \******************************************/
 /*! exports provided: GeneralObjectExporter, XMLExporterBase, ScoreExporter, PartExporter, MeasureExporter */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -53271,10 +51971,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var core_js_modules_es_string_starts_with__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_starts_with__WEBPACK_IMPORTED_MODULE_6__);
 /* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! core-js/modules/web.dom-collections.iterator */ "./node_modules/core-js/modules/web.dom-collections.iterator.js");
 /* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_7__);
-/* harmony import */ var _clef__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../clef */ "./src/music21/clef.js");
-/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../common */ "./src/music21/common.js");
-/* harmony import */ var _stream__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../stream */ "./src/music21/stream.js");
+/* harmony import */ var _clef__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../clef */ "./src/music21/clef.ts");
+/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../common */ "./src/music21/common.ts");
+/* harmony import */ var _stream__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../stream */ "./src/music21/stream.ts");
 /* harmony import */ var _exceptions21__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../exceptions21 */ "./src/music21/exceptions21.ts");
+/* harmony import */ var _note__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ../note */ "./src/music21/note.ts");
 
 
 
@@ -53295,6 +51996,7 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 /**
  * @namespace music21.musicxml.m21ToXml
  */
+
 
 
 
@@ -53466,16 +52168,15 @@ function normalizeColor(color) {
   }
 }
 
-var _classMapping = ['Score', 'Part', 'Measure', 'Voice', // 'Stream',
-'GeneralNote' // 'Pitch', 'Duration', 'Dynamic', 'DiatonicScale', 'Scale',
-// 'Music21Object',
-];
+var _classMapping = ['Score', 'Part', 'Measure', 'Voice', 'GeneralNote'];
 class GeneralObjectExporter {
   constructor(obj) {
     this.generalObj = obj;
   }
 
-  parse(obj) {
+  parse() {
+    var obj = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : undefined;
+
     if (obj === undefined) {
       obj = this.generalObj;
     }
@@ -53523,7 +52224,7 @@ class GeneralObjectExporter {
     }
 
     if (outObj === undefined) {
-      throw new MusicXMLExportException("Cannot translate the object ".concat(obj, " to a complete musicXML document; put it in a Stream first!"));
+      throw new MusicXMLExportException("Cannot translate the object ".concat(obj, " to a complete musicXML document; ") + 'put it in a Stream first!');
     }
 
     return outObj;
@@ -53582,8 +52283,7 @@ class GeneralObjectExporter {
     out.number = 1;
     out.append(nCopy);
     return this.fromMeasure(out);
-  } // TODO(msc): fromPitch
-
+  }
 
 }
 var _musicxmlVersion = '3.0';
@@ -53617,9 +52317,12 @@ class XMLExporterBase {
    */
 
 
-  _setTagTextFromAttribute(m21El, xmlEl, tag, attributeName) {
+  _setTagTextFromAttribute(m21El, xmlEl, tag) {
+    var attributeName = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : undefined;
+
     var _ref2 = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : {},
-        transform = _ref2.transform,
+        _ref2$transform = _ref2.transform,
+        transform = _ref2$transform === void 0 ? undefined : _ref2$transform,
         _ref2$forceEmpty = _ref2.forceEmpty,
         forceEmpty = _ref2$forceEmpty === void 0 ? false : _ref2$forceEmpty;
 
@@ -53646,14 +52349,17 @@ class XMLExporterBase {
     return subElement;
   }
 
-  seta(m21El, xmlEl, tag, options) {
-    return this._setTagTextFromAttribute(m21El, xmlEl, tag, options);
+  seta(m21El, xmlEl, tag) {
+    var options = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
+    return this._setTagTextFromAttribute(m21El, xmlEl, tag, undefined, options);
   }
 
   _setAttributeFromAttribute(m21El, xmlEl, xmlAttributeName) {
     var _ref3 = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {},
-        attributeName = _ref3.attributeName,
-        transform = _ref3.transform;
+        _ref3$attributeName = _ref3.attributeName,
+        attributeName = _ref3$attributeName === void 0 ? undefined : _ref3$attributeName,
+        _ref3$transform = _ref3.transform,
+        transform = _ref3$transform === void 0 ? undefined : _ref3$transform;
 
     if (attributeName === undefined) {
       attributeName = _common__WEBPACK_IMPORTED_MODULE_9__["hyphenToCamelCase"](xmlAttributeName);
@@ -53672,7 +52378,8 @@ class XMLExporterBase {
     xmlEl.setAttribute(xmlAttributeName, value.toString());
   }
 
-  setb(m21El, xmlEl, xmlAttributeName, options) {
+  setb(m21El, xmlEl, xmlAttributeName) {
+    var options = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
     return this._setAttributeFromAttribute(m21El, xmlEl, xmlAttributeName, options);
   } // TODO(msc): _synchronizeIds;
 
@@ -53764,15 +52471,6 @@ class XMLExporterBase {
 class ScoreExporter extends XMLExporterBase {
   constructor(score) {
     super();
-
-    if (score === undefined) {
-      this.stream = new _stream__WEBPACK_IMPORTED_MODULE_10__["Score"]();
-    } else {
-      this.stream = score;
-    }
-
-    this.xmlRoot = this.doc.createElement('score-partwise');
-    this.xmlRoot.setAttribute('version', _musicxmlVersion);
     this.xmIdentification = undefined;
     this.scoreMetadata = undefined;
     this.spannerBundle = undefined;
@@ -53785,6 +52483,15 @@ class ScoreExporter extends XMLExporterBase {
     this.instrumentList = [];
     this.midiChannelList = [];
     this.parts = [];
+
+    if (score === undefined) {
+      this.stream = new _stream__WEBPACK_IMPORTED_MODULE_10__["Score"]();
+    } else {
+      this.stream = score;
+    }
+
+    this.xmlRoot = this.doc.createElement('score-partwise');
+    this.xmlRoot.setAttribute('version', _musicxmlVersion);
   }
 
   parse() {
@@ -53849,7 +52556,7 @@ class ScoreExporter extends XMLExporterBase {
       }
     }
 
-    this.parts = streamOfStreams;
+    this.parts = streamOfStreams.stream();
   } // TODO(msc): setMeterStream
   // TODO(msc): setScoreLayouts
 
@@ -53942,14 +52649,7 @@ class ScoreExporter extends XMLExporterBase {
     }
 
     return mxPartList;
-  } // TODO(msc): staffGroupToXmlPartGroup;
-  // TODO(msc): setIdentification
-  // TODO(msc): metadataToMiscellaneous
-  // TODO(msc): setEncoding
-  // TODO(msc): getSupports
-  // TODO(msc): setTitles
-  // TODO(msc): contributorToXmlCreator
-
+  }
 
 }
 /**
@@ -53959,7 +52659,8 @@ class ScoreExporter extends XMLExporterBase {
 class PartExporter extends XMLExporterBase {
   constructor(partObj) {
     var _ref4 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
-        parent = _ref4.parent;
+        _ref4$parent = _ref4.parent,
+        parent = _ref4$parent === void 0 ? undefined : _ref4$parent;
 
     super();
     this.stream = partObj;
@@ -54033,17 +52734,13 @@ class PartExporter extends XMLExporterBase {
     // instrument
 
     return mxScorePart;
-  } // TODO(msc): instrumentToXmlScoreInstrument
-  // TODO(msc): instrumentToXmlMidiInstrument
-
+  }
 
 }
 var _classesToMeasureMethods = [['Note', 'noteToXml'], // NoChord
 // ChordWithFretBoard
 // ChordSymbol
-['Chord', 'chordToXml'], ['Rest', 'restToXml'] // Dynamic, Segno, Coda, MetronomeMark, MetricModulation,
-// TextExpression, RepeatExpression, RehersalMark
-];
+['Chord', 'chordToXml'], ['Rest', 'restToXml']];
 var _wrapAttributeMethodClasses = [['Clef', 'clefToXml'], ['KeySignature', 'keySignatureToXml'], ['TimeSignature', 'timeSignatureToXml']];
 var _ignoreOnParseClasses = ['LayoutBase', 'Barline'];
 var divisionsPerQuarter = 32 * 3 * 3 * 5 * 7; // TODO(msc): create defaults.js
@@ -54055,12 +52752,10 @@ var divisionsPerQuarter = 32 * 3 * 3 * 5 * 7; // TODO(msc): create defaults.js
 class MeasureExporter extends XMLExporterBase {
   constructor(measureObj) {
     var _ref5 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
-        parent = _ref5.parent;
+        _ref5$parent = _ref5.parent,
+        parent = _ref5$parent === void 0 ? undefined : _ref5$parent;
 
     super();
-    this.stream = measureObj;
-    this.parent = parent;
-    this.xmlRoot = this.doc.createElement('measure');
     this.currentDivisions = divisionsPerQuarter;
     this.transpositionInterval = undefined;
     this.mxTranspose = undefined;
@@ -54068,6 +52763,9 @@ class MeasureExporter extends XMLExporterBase {
     this.offsetInMeasure = 0.0;
     this.currentVoiceId = undefined;
     this.rbSpanners = [];
+    this.stream = measureObj;
+    this.parent = parent;
+    this.xmlRoot = this.doc.createElement('measure');
     this.spannerBundle = parent.spannerBundle;
     this.objectSpannerBundle = this.spannerBundle;
   }
@@ -54297,7 +52995,8 @@ class MeasureExporter extends XMLExporterBase {
     var _ref7 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
         _ref7$noteIndexInChor = _ref7.noteIndexInChord,
         noteIndexInChord = _ref7$noteIndexInChor === void 0 ? 0 : _ref7$noteIndexInChor,
-        chordParent = _ref7.chordParent;
+        _ref7$chordParent = _ref7.chordParent,
+        chordParent = _ref7$chordParent === void 0 ? undefined : _ref7$chordParent;
 
     var addChordTag = noteIndexInChord !== 0;
     var chordOrN;
@@ -54323,7 +53022,7 @@ class MeasureExporter extends XMLExporterBase {
       this.subElement(mxNote, 'chord');
     }
 
-    if (n.pitch !== undefined) {
+    if (n.isNote) {
       var mxPitch = this.pitchToXml(n.pitch);
       mxNote.appendChild(mxPitch);
     } else {
@@ -54388,7 +53087,7 @@ class MeasureExporter extends XMLExporterBase {
     } // components.
 
 
-    if (n.pitch !== undefined && n.pitch.accidental !== undefined && n.pitch.accidental.displayStatus !== false) {
+    if (n instanceof _note__WEBPACK_IMPORTED_MODULE_12__["Note"] && n.pitch.accidental !== undefined && n.pitch.accidental.displayStatus !== false) {
       var mxAccidental = this.accidentalToMx(n.pitch.accidental);
       mxNote.appendChild(mxAccidental);
     }
@@ -54403,19 +53102,19 @@ class MeasureExporter extends XMLExporterBase {
 
     if (!addChordTag && ![undefined, 'unspecified'].includes(chordOrN.stemDirection)) {
       stemDirection = chordOrN.stemDirection;
-    } else if (chordOrN !== n && ![undefined, 'unspecified'].includes(n.stemDirection)) {
+    } else if (chordOrN !== n && n instanceof _note__WEBPACK_IMPORTED_MODULE_12__["Note"] && ![undefined, 'unspecified'].includes(n.stemDirection)) {
       stemDirection = n.stemDirection;
     }
 
     if (stemDirection !== undefined) {
       var mxStem = this.subElement(mxNote, 'stem');
-      var sdtext = stemDirection;
+      var sdText = stemDirection;
 
-      if (sdtext === 'noStem') {
-        sdtext = 'none';
+      if (sdText === 'noStem') {
+        sdText = 'none';
       }
 
-      mxStem.innerHTML = sdtext; // TODO: stemStyle
+      mxStem.innerHTML = sdText; // TODO: stemStyle
     } // dealWithNotehead
     // beams
     // staff
@@ -54729,17 +53428,15 @@ class MeasureExporter extends XMLExporterBase {
   setMxAttributes() {
     var m = this.stream;
     this.xmlRoot.setAttribute('number', m.measureNumberWithSuffix()); // layoutWidth
-  } // setRbSpanners
-  // transpose
-
+  }
 
 }
 
 /***/ }),
 
-/***/ "./src/music21/musicxml/xmlToM21.js":
+/***/ "./src/music21/musicxml/xmlToM21.ts":
 /*!******************************************!*\
-  !*** ./src/music21/musicxml/xmlToM21.js ***!
+  !*** ./src/music21/musicxml/xmlToM21.ts ***!
   \******************************************/
 /*! exports provided: ScoreParser, PartParser, MeasureParser, default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -54755,23 +53452,22 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var core_js_modules_es_array_iterator__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_iterator__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var core_js_modules_es_set__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! core-js/modules/es.set */ "./node_modules/core-js/modules/es.set.js");
 /* harmony import */ var core_js_modules_es_set__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_set__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var core_js_modules_es_string_replace__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! core-js/modules/es.string.replace */ "./node_modules/core-js/modules/es.string.replace.js");
-/* harmony import */ var core_js_modules_es_string_replace__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_replace__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var core_js_modules_es_string_trim__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! core-js/modules/es.string.trim */ "./node_modules/core-js/modules/es.string.trim.js");
-/* harmony import */ var core_js_modules_es_string_trim__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_trim__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! core-js/modules/web.dom-collections.iterator */ "./node_modules/core-js/modules/web.dom-collections.iterator.js");
-/* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_5__);
-/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
-/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(jquery__WEBPACK_IMPORTED_MODULE_6__);
-/* harmony import */ var _chord__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../chord */ "./src/music21/chord.js");
-/* harmony import */ var _clef__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../clef */ "./src/music21/clef.js");
-/* harmony import */ var _duration__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../duration */ "./src/music21/duration.js");
-/* harmony import */ var _key__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../key */ "./src/music21/key.js");
-/* harmony import */ var _meter__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../meter */ "./src/music21/meter.js");
-/* harmony import */ var _note__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ../note */ "./src/music21/note.js");
-/* harmony import */ var _pitch__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ../pitch */ "./src/music21/pitch.js");
-/* harmony import */ var _stream__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ../stream */ "./src/music21/stream.js");
-/* harmony import */ var _tie__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ../tie */ "./src/music21/tie.js");
+/* harmony import */ var core_js_modules_es_string_trim__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! core-js/modules/es.string.trim */ "./node_modules/core-js/modules/es.string.trim.js");
+/* harmony import */ var core_js_modules_es_string_trim__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_trim__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! core-js/modules/web.dom-collections.iterator */ "./node_modules/core-js/modules/web.dom-collections.iterator.js");
+/* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
+/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(jquery__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../common */ "./src/music21/common.ts");
+/* harmony import */ var _chord__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../chord */ "./src/music21/chord.ts");
+/* harmony import */ var _clef__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../clef */ "./src/music21/clef.ts");
+/* harmony import */ var _duration__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../duration */ "./src/music21/duration.ts");
+/* harmony import */ var _key__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../key */ "./src/music21/key.ts");
+/* harmony import */ var _meter__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../meter */ "./src/music21/meter.ts");
+/* harmony import */ var _note__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ../note */ "./src/music21/note.ts");
+/* harmony import */ var _pitch__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ../pitch */ "./src/music21/pitch.ts");
+/* harmony import */ var _stream__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ../stream */ "./src/music21/stream.ts");
+/* harmony import */ var _tie__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ../tie */ "./src/music21/tie.ts");
 
 
 
@@ -54792,12 +53488,10 @@ var DEFAULTS = {
   divisionsPerQuarter: 32 * 3 * 3 * 5 * 7
 };
 
-function hyphenToCamelCase(tag) {
-  return tag.replace(/-([a-z])/g, firstLetter => firstLetter[1].toUpperCase());
-}
-
-function seta(m21El, xmlEl, tag, attributeName, transform) {
-  var $matchEl = jquery__WEBPACK_IMPORTED_MODULE_6__(xmlEl).children(tag);
+function seta(m21El, xmlEl, tag) {
+  var attributeName = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : undefined;
+  var transform = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : undefined;
+  var $matchEl = jquery__WEBPACK_IMPORTED_MODULE_5__(xmlEl).children(tag);
 
   if (!$matchEl) {
     return;
@@ -54814,7 +53508,7 @@ function seta(m21El, xmlEl, tag, attributeName, transform) {
   }
 
   if (attributeName === undefined) {
-    attributeName = hyphenToCamelCase(tag);
+    attributeName = Object(_common__WEBPACK_IMPORTED_MODULE_6__["hyphenToCamelCase"])(tag);
   }
 
   m21El[attributeName] = value;
@@ -54822,10 +53516,6 @@ function seta(m21El, xmlEl, tag, attributeName, transform) {
 
 class ScoreParser {
   constructor() {
-    this.xmlText = undefined;
-    this.xmlUrl = undefined;
-    this.$xmlRoot = undefined;
-    this.stream = new _stream__WEBPACK_IMPORTED_MODULE_14__["Score"]();
     this.definesExplicitSystemBreaks = false;
     this.definesExplicitPageBreaks = false;
     this.mxScorePartDict = {};
@@ -54833,24 +53523,25 @@ class ScoreParser {
     this.partGroupList = [];
     this.parts = [];
     this.musicXmlVersion = '1.0';
+    this.stream = new _stream__WEBPACK_IMPORTED_MODULE_14__["Score"]();
   }
 
   scoreFromUrl(url) {
     this.xmlUrl = url; // noinspection JSUnusedLocalSymbols
 
-    return jquery__WEBPACK_IMPORTED_MODULE_6__["get"](url, {}, (xmlDoc, textStatus) => this.scoreFromDOMTree(xmlDoc));
+    return jquery__WEBPACK_IMPORTED_MODULE_5__["get"](url, {}, (xmlDoc, textStatus) => this.scoreFromDOMTree(xmlDoc));
   }
 
   scoreFromText(xmlText) {
     this.xmlText = xmlText; // Not sure why this is not being found in jQuery
     // noinspection JSUnresolvedFunction
 
-    var xmlDoc = jquery__WEBPACK_IMPORTED_MODULE_6__["parseXML"](xmlText);
+    var xmlDoc = jquery__WEBPACK_IMPORTED_MODULE_5__["parseXML"](xmlText);
     return this.scoreFromDOMTree(xmlDoc);
   }
 
   scoreFromDOMTree(xmlDoc) {
-    this.$xmlRoot = jquery__WEBPACK_IMPORTED_MODULE_6__(jquery__WEBPACK_IMPORTED_MODULE_6__(xmlDoc).children('score-partwise'));
+    this.$xmlRoot = jquery__WEBPACK_IMPORTED_MODULE_5__(jquery__WEBPACK_IMPORTED_MODULE_5__(xmlDoc).children('score-partwise'));
     this.xmlRootToScore(this.$xmlRoot, this.stream);
     return this.stream;
   }
@@ -54873,7 +53564,7 @@ class ScoreParser {
     try {
       for (var _iterator = $mxScore.children('part')[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
         var p = _step.value;
-        var $p = jquery__WEBPACK_IMPORTED_MODULE_6__(p);
+        var $p = jquery__WEBPACK_IMPORTED_MODULE_5__(p);
         var partId = $p.attr('id'); // if (partId === undefined) {
         //     partId = //something
         // }
@@ -54932,7 +53623,7 @@ class ScoreParser {
     try {
       for (var _iterator2 = mxPartList[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
         var partListElement = _step2.value;
-        var $partListElement = jquery__WEBPACK_IMPORTED_MODULE_6__(partListElement);
+        var $partListElement = jquery__WEBPACK_IMPORTED_MODULE_5__(partListElement);
         var partId = $partListElement.attr('id');
         this.mxScorePartDict[partId] = $partListElement;
       } // deal with part-groups
@@ -54961,28 +53652,14 @@ class ScoreParser {
  */
 
 class PartParser {
-  constructor($mxPart, $mxScorePart, parent) {
-    this.parent = parent;
-    this.$mxPart = $mxPart;
-    this.$mxScorePart = $mxScorePart; // ignore parent for now
-
-    if ($mxPart !== undefined) {
-      this.partId = $mxPart.attr('id'); // ignore empty partId for now
-    } // spannerBundles
-
-
-    this.stream = new _stream__WEBPACK_IMPORTED_MODULE_14__["Part"]();
+  constructor($mxPart, $mxScorePart) {
+    var parent = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : undefined;
     this.atSoundingPitch = true;
     this.staffReferenceList = [];
     this.lastTimeSignature = undefined;
     this.lastMeasureWasShort = false;
     this.lastMeasureOffset = 0.0;
-    this.lastClefs = {
-      0: new _clef__WEBPACK_IMPORTED_MODULE_8__["TrebleClef"]()
-    };
-    this.activeTuplets = [];
-    this.activeTuplets.length = 7;
-    this.activeTuplets.fill(undefined);
+    this.activeTuplets = [undefined, undefined, undefined, undefined, undefined, undefined, undefined];
     this.maxStaves = 1;
     this.lastMeasureNumber = 0;
     this.lastNumberSuffix = undefined;
@@ -54994,6 +53671,19 @@ class PartParser {
     this.lastDivisions = DEFAULTS.divisionsPerQuarter;
     this.appendToScoreAfterParse = true;
     this.lastMeasureParser = undefined;
+    this.parent = parent;
+    this.$mxPart = $mxPart;
+    this.$mxScorePart = $mxScorePart; // ignore parent for now
+
+    if ($mxPart !== undefined) {
+      this.partId = $mxPart.attr('id'); // ignore empty partId for now
+    } // TODO(msc): spannerBundles
+
+
+    this.stream = new _stream__WEBPACK_IMPORTED_MODULE_14__["Part"]();
+    this.lastClefs = {
+      0: new _clef__WEBPACK_IMPORTED_MODULE_8__["TrebleClef"]()
+    };
   }
 
   parse() {
@@ -55021,7 +53711,7 @@ class PartParser {
     try {
       for (var _iterator3 = this.$mxPart.children('measure')[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
         var mxMeasure = _step3.value;
-        var $mxMeasure = jquery__WEBPACK_IMPORTED_MODULE_6__(mxMeasure);
+        var $mxMeasure = jquery__WEBPACK_IMPORTED_MODULE_5__(mxMeasure);
         this.xmlMeasureToMeasure($mxMeasure);
       }
     } catch (err) {
@@ -55095,42 +53785,22 @@ class MeasureParser {
    * @property {music21.note.GeneralNote|undefined} nLast
    * @property {jQuery|undefined} $activeAttributes
    */
-  constructor($mxMeasure, parent) {
-    this.$mxMeasure = $mxMeasure;
+  constructor($mxMeasure) {
+    var parent = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
     this.$mxMeasureElements = [];
     this.divisions = undefined;
-    this.parent = parent;
     this.transposition = undefined; // spannerBundles
 
     this.staffReference = {}; // activeTuplets
 
     this.useVoices = false;
     this.voicesById = {};
-    this.voiceIndices = new Set();
     this.staves = 1;
     this.$activeAttributes = undefined;
     this.attributesAreInternal = true;
-    /**
-     *
-     * @type {number|undefined}
-     */
-
     this.measureNumber = undefined;
-    /**
-     *
-     * @type {string|undefined}
-     */
-
     this.numberSuffix = undefined;
-
-    if (parent !== undefined) {
-      this.divisions = parent.lastDivisions;
-    } else {
-      this.divisions = DEFAULTS.divisionsPerQuarter;
-    }
-
     this.staffLayoutObjects = [];
-    this.stream = new _stream__WEBPACK_IMPORTED_MODULE_14__["Measure"]();
     this.$mxNoteList = [];
     this.$mxLyricList = [];
     this.nLast = undefined;
@@ -55149,25 +53819,28 @@ class MeasureParser {
     this.attributeTagsToMethods = {
       time: 'handleTimeSignature',
       clef: 'handleClef',
-      key: 'handleKeySignature' // 'staff-details': 'handleStaffDetails',
-      // 'measure-style': 'handleMeasureStyle',
-
+      key: 'handleKeySignature'
     };
     this.musicDataMethods = {
       note: 'xmlToNote',
       // 'backup': 'xmlBackup',
       // 'forward': 'xmlForward',
       // 'direction': 'xmlDirection',
-      attributes: 'parseAttributesTag' // 'harmony': 'xmlHarmony',
-      // 'figured-bass': undefined,
-      // 'sound': undefined,
-      // 'barline': 'xmlBarline',
-      // 'grouping': undefined,
-      // 'link': undefined,
-      // 'bookmark': undefined,
-      // Note: <print> is handled separately...
-
+      attributes: 'parseAttributesTag'
     };
+    this.$mxMeasure = $mxMeasure;
+    this.parent = parent;
+    this.stream = new _stream__WEBPACK_IMPORTED_MODULE_14__["Measure"]();
+    this.voiceIndices = new Set();
+    this.staves = 1;
+    this.$activeAttributes = undefined;
+    this.attributesAreInternal = true;
+
+    if (parent !== undefined) {
+      this.divisions = parent.lastDivisions;
+    } else {
+      this.divisions = DEFAULTS.divisionsPerQuarter;
+    }
   }
 
   parse() {
@@ -55183,7 +53856,7 @@ class MeasureParser {
     try {
       for (var _iterator4 = children[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
         var c = _step4.value;
-        var $c = jquery__WEBPACK_IMPORTED_MODULE_6__(c);
+        var $c = jquery__WEBPACK_IMPORTED_MODULE_5__(c);
         this.$mxMeasureElements.push($c);
       }
     } catch (err) {
@@ -55341,7 +54014,8 @@ class MeasureParser {
     return c;
   }
 
-  xmlToSimpleNote($mxNote, freeSpanners) {
+  xmlToSimpleNote($mxNote) {
+    var freeSpanners = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
     var n = new _note__WEBPACK_IMPORTED_MODULE_12__["Note"]();
     this.xmlToPitch($mxNote, n.pitch); // beams;
     // stems;
@@ -55365,7 +54039,7 @@ class MeasureParser {
     if ($mxNote[0].tagName === 'pitch') {
       $mxPitch = $mxNote;
     } else {
-      $mxPitch = jquery__WEBPACK_IMPORTED_MODULE_6__($mxNote.children('pitch')[0]);
+      $mxPitch = jquery__WEBPACK_IMPORTED_MODULE_5__($mxNote.children('pitch')[0]);
 
       if ($mxPitch.length === 0) {
         // whoops!
@@ -55397,9 +54071,9 @@ class MeasureParser {
   }
 
   xmlToAccidental($mxAccidental) {
-    var acc = new _pitch__WEBPACK_IMPORTED_MODULE_13__["Accidental"](); // to-do m21/musicxml accidental name differences;
+    var acc = new _pitch__WEBPACK_IMPORTED_MODULE_13__["Accidental"](0); // to-do m21/musicxml accidental name differences;
 
-    var name = jquery__WEBPACK_IMPORTED_MODULE_6__($mxAccidental[0]).text().trim().toLowerCase();
+    var name = jquery__WEBPACK_IMPORTED_MODULE_5__($mxAccidental[0]).text().trim().toLowerCase();
 
     if (name === 'flat-flat') {
       name = 'double-flat';
@@ -55456,7 +54130,7 @@ class MeasureParser {
     var qLen = 0.0;
 
     if (mxDuration) {
-      var noteDivisions = parseFloat(jquery__WEBPACK_IMPORTED_MODULE_6__(mxDuration).text().trim());
+      var noteDivisions = parseFloat(jquery__WEBPACK_IMPORTED_MODULE_5__(mxDuration).text().trim());
       qLen = noteDivisions / divisions;
     }
 
@@ -55464,7 +54138,7 @@ class MeasureParser {
 
     if (mxType) {
       // long vs longa todo
-      var durationType = jquery__WEBPACK_IMPORTED_MODULE_6__(mxType).text().trim();
+      var durationType = jquery__WEBPACK_IMPORTED_MODULE_5__(mxType).text().trim();
       var numDots = $mxNote.children('dot').length; // tuplets!!!! big to-do!
 
       d.type = durationType;
@@ -55500,7 +54174,7 @@ class MeasureParser {
     if (allTies.length > 1) {
       t.type = 'continue';
     } else {
-      var $t0 = jquery__WEBPACK_IMPORTED_MODULE_6__(allTies[0]);
+      var $t0 = jquery__WEBPACK_IMPORTED_MODULE_5__(allTies[0]);
       t.type = $t0.attr('type');
     } // style
 
@@ -55518,7 +54192,7 @@ class MeasureParser {
     try {
       for (var _iterator7 = lyricList[Symbol.iterator](), _step7; !(_iteratorNormalCompletion7 = (_step7 = _iterator7.next()).done); _iteratorNormalCompletion7 = true) {
         var mxLyric = _step7.value;
-        var lyricObj = this.xmlToLyric(jquery__WEBPACK_IMPORTED_MODULE_6__(mxLyric));
+        var lyricObj = this.xmlToLyric(jquery__WEBPACK_IMPORTED_MODULE_5__(mxLyric));
 
         if (lyricObj === undefined) {
           continue;
@@ -55554,11 +54228,12 @@ class MeasureParser {
    */
 
 
-  xmlToLyric($mxLyric, inputM21) {
+  xmlToLyric($mxLyric) {
+    var inputM21 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
     var l = inputM21;
 
     if (inputM21 === undefined) {
-      l = new _note__WEBPACK_IMPORTED_MODULE_12__["Lyric"]();
+      l = new _note__WEBPACK_IMPORTED_MODULE_12__["Lyric"]('');
     }
 
     try {
@@ -55640,7 +54315,7 @@ class MeasureParser {
       for (var _iterator8 = $mxAttributes.children()[Symbol.iterator](), _step8; !(_iteratorNormalCompletion8 = (_step8 = _iterator8.next()).done); _iteratorNormalCompletion8 = true) {
         var mxSub = _step8.value;
         var tag = mxSub.tagName;
-        var $mxSub = jquery__WEBPACK_IMPORTED_MODULE_6__(mxSub);
+        var $mxSub = jquery__WEBPACK_IMPORTED_MODULE_5__(mxSub);
         var methName = this.attributeTagsToMethods[tag];
 
         if (methName !== undefined) {
@@ -55682,8 +54357,8 @@ class MeasureParser {
   xmlToTimeSignature($mxTime) {
     // senza-misura
     // simple time signature only;
-    var numerator = jquery__WEBPACK_IMPORTED_MODULE_6__($mxTime.children('beats')[0]).text().trim();
-    var denominator = jquery__WEBPACK_IMPORTED_MODULE_6__($mxTime.children('beat-type')[0]).text().trim();
+    var numerator = jquery__WEBPACK_IMPORTED_MODULE_5__($mxTime.children('beats')[0]).text().trim();
+    var denominator = jquery__WEBPACK_IMPORTED_MODULE_5__($mxTime.children('beat-type')[0]).text().trim();
     return new _meter__WEBPACK_IMPORTED_MODULE_11__["TimeSignature"](numerator + '/' + denominator); // symbol
   }
 
@@ -55697,14 +54372,14 @@ class MeasureParser {
   }
 
   xmlToClef($mxClef) {
-    var sign = jquery__WEBPACK_IMPORTED_MODULE_6__($mxClef.children('sign')[0]).text().trim(); // TODO: percussion, etc.
+    var sign = jquery__WEBPACK_IMPORTED_MODULE_5__($mxClef.children('sign')[0]).text().trim(); // TODO: percussion, etc.
 
-    var line = jquery__WEBPACK_IMPORTED_MODULE_6__($mxClef.children('line')[0]).text().trim();
+    var line = jquery__WEBPACK_IMPORTED_MODULE_5__($mxClef.children('line')[0]).text().trim();
     var clefOctaveChange = 0;
     var $coc = $mxClef.children('clef-octave-change');
 
     if ($coc.length > 0) {
-      clefOctaveChange = parseInt(jquery__WEBPACK_IMPORTED_MODULE_6__($coc[0]).text().trim());
+      clefOctaveChange = parseInt(jquery__WEBPACK_IMPORTED_MODULE_5__($coc[0]).text().trim());
     }
 
     return _clef__WEBPACK_IMPORTED_MODULE_8__["clefFromString"](sign + line, clefOctaveChange);
@@ -55720,8 +54395,6 @@ class MeasureParser {
     seta(ks, $mxKey, 'fifths', 'sharps', parseInt); // mode!
     // non-standard and key-octaves
 
-    ks._alteredPitchesCache = undefined; // TODO: remove private access...
-
     return ks;
   }
 
@@ -55735,9 +54408,9 @@ var musicxml = {
 
 /***/ }),
 
-/***/ "./src/music21/note.js":
+/***/ "./src/music21/note.ts":
 /*!*****************************!*\
-  !*** ./src/music21/note.js ***!
+  !*** ./src/music21/note.ts ***!
   \*****************************/
 /*! exports provided: NotRestException, noteheadTypeNames, stemDirectionNames, Lyric, GeneralNote, NotRest, Note, Rest */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -55768,11 +54441,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var midicube__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(midicube__WEBPACK_IMPORTED_MODULE_6__);
 /* harmony import */ var _prebase__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./prebase */ "./src/music21/prebase.ts");
 /* harmony import */ var _base__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./base */ "./src/music21/base.ts");
-/* harmony import */ var _pitch__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./pitch */ "./src/music21/pitch.js");
-/* harmony import */ var _beam__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./beam */ "./src/music21/beam.js");
-/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./common */ "./src/music21/common.js");
-/* harmony import */ var _debug__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./debug */ "./src/music21/debug.js");
-/* harmony import */ var _exceptions21__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./exceptions21 */ "./src/music21/exceptions21.ts");
+/* harmony import */ var _pitch__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./pitch */ "./src/music21/pitch.ts");
+/* harmony import */ var _beam__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./beam */ "./src/music21/beam.ts");
+/* harmony import */ var _debug__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./debug */ "./src/music21/debug.ts");
+/* harmony import */ var _exceptions21__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./exceptions21 */ "./src/music21/exceptions21.ts");
 
 
 
@@ -55788,7 +54460,6 @@ __webpack_require__.r(__webpack_exports__);
  *
  * Module for note classes. See the namespace {@link music21.note}
  *
- * @requires music21/common
  * @requires music21/prebase
  * @requires music21/base
  * @requires music21/pitch
@@ -55809,17 +54480,15 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+class NotRestException extends _exceptions21__WEBPACK_IMPORTED_MODULE_12__["Music21Exception"] {} // noinspection JSUnusedGlobalSymbols
 
-class NotRestException extends _exceptions21__WEBPACK_IMPORTED_MODULE_13__["Music21Exception"] {// no need
-}
 var noteheadTypeNames = ['arrow down', 'arrow up', 'back slashed', 'circle dot', 'circle-x', 'circled', 'cluster', 'cross', 'diamond', 'do', 'fa', 'inverted triangle', 'la', 'left triangle', 'mi', 'none', 'normal', 'other', 're', 'rectangle', 'slash', 'slashed', 'so', 'square', 'ti', 'triangle', 'x'];
 var stemDirectionNames = ['double', 'down', 'noStem', 'none', 'unspecified', 'up'];
 /**
- * Class for a single Lyric attached to a {@link music21.note.GeneralNote}
+ * Class for a single Lyric attached to a {@link GeneralNote}
  *
  * @class Lyric
  * @memberOf music21.note
- * @extends music21.prebase.ProtoM21Object
  * @param {string} text - the text of the lyric
  * @param {number} number=1 - the lyric number
  * @param {string} syllabic=undefined - placement of the syllable
@@ -55838,22 +54507,18 @@ var stemDirectionNames = ['double', 'down', 'noStem', 'none', 'unspecified', 'up
  */
 
 class Lyric extends _prebase__WEBPACK_IMPORTED_MODULE_7__["ProtoM21Object"] {
-  static get className() {
-    return 'music21.note.Lyric';
-  }
-
   constructor(text) {
     var number = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 1;
-    var syllabic = arguments.length > 2 ? arguments[2] : undefined;
-    var applyRaw = arguments.length > 3 ? arguments[3] : undefined;
-    var identifier = arguments.length > 4 ? arguments[4] : undefined;
+    var syllabic = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : undefined;
+    var applyRaw = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : undefined;
+    var identifier = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : undefined;
     super();
     this.lyricConnector = '-'; // override to place something else between two notes...
 
     this.text = text;
     this._number = number;
     this.syllabic = syllabic;
-    this.applyRaw = applyRaw || false;
+    this.applyRaw = applyRaw !== null && applyRaw !== void 0 ? applyRaw : false;
     this.setTextAndSyllabic(this.text, this.applyRaw);
     this._identifier = identifier;
     this.style = {
@@ -55863,6 +54528,10 @@ class Lyric extends _prebase__WEBPACK_IMPORTED_MODULE_7__["ProtoM21Object"] {
       fontSize: 12,
       fontWeight: ''
     };
+  }
+
+  static get className() {
+    return 'music21.note.Lyric';
   }
 
   get identifier() {
@@ -55880,7 +54549,8 @@ class Lyric extends _prebase__WEBPACK_IMPORTED_MODULE_7__["ProtoM21Object"] {
 
   set number(n) {
     this._number = n;
-  }
+  } // noinspection JSUnusedGlobalSymbols
+
   /**
    * get rawText - gets the raw text.
    *
@@ -55898,7 +54568,8 @@ class Lyric extends _prebase__WEBPACK_IMPORTED_MODULE_7__["ProtoM21Object"] {
     } else {
       return this.text;
     }
-  }
+  } // noinspection JSUnusedGlobalSymbols
+
 
   set rawText(t) {
     this.setTextAndSyllabic(t, true);
@@ -55949,7 +54620,6 @@ class Lyric extends _prebase__WEBPACK_IMPORTED_MODULE_7__["ProtoM21Object"] {
  *
  * @class GeneralNote
  * @memberof music21.note
- * @extends music21.base.Music21Object
  * @param {(number|undefined)} [ql=1.0] - quarterLength of the note
  * @property {boolean} [isChord=false] - is this a chord
  * @property {number} quarterLength - shortcut to `.duration.quarterLength`
@@ -55961,8 +54631,8 @@ class Lyric extends _prebase__WEBPACK_IMPORTED_MODULE_7__["ProtoM21Object"] {
  * @property {Array<music21.articulations.Articulation>} articulations - array
  *     of attached articulations
  * @property {string} lyric - the text of the first
- *     {@link music21.note.Lyric} object; can also set one.
- * @property {Array<music21.note.Lyric>} lyrics - array of attached lyrics
+ *     {@link Lyric} object; can also set one.
+ * @property {Array<Lyric>} lyrics - array of attached lyrics
  * @property {number} [volume=60] - how loud is this note, 0-127, before
  *     articulations
  * @property {number} midiVolume - how loud is this note, taking into
@@ -55971,29 +54641,24 @@ class Lyric extends _prebase__WEBPACK_IMPORTED_MODULE_7__["ProtoM21Object"] {
  */
 
 class GeneralNote extends _base__WEBPACK_IMPORTED_MODULE_8__["Music21Object"] {
-  static get className() {
-    return 'music21.note.GeneralNote';
-  }
-
-  constructor(ql) {
+  constructor() {
+    var ql = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1.0;
     super();
+    this.isNote = false;
+    this.isRest = false;
     this.isChord = false;
-
-    if (ql !== undefined) {
-      this.duration.quarterLength = ql;
-    } else {
-      this.duration.quarterLength = 1.0;
-    }
-
     this.volume = 60;
-    this.activeVexflowNote = undefined;
     this.expressions = [];
     this.articulations = [];
     this.lyrics = [];
-    this.tie = undefined;
-    /* TODO: editorial objects, color, addLyric, insertLyric, hasLyrics */
+    this.duration.quarterLength = ql;
+    /* TODO: editorial objects, style(color), addLyric, insertLyric, hasLyrics */
 
     /* Later: augmentOrDiminish, getGrace, */
+  }
+
+  static get className() {
+    return 'music21.note.GeneralNote';
   }
 
   get lyric() {
@@ -56007,7 +54672,7 @@ class GeneralNote extends _base__WEBPACK_IMPORTED_MODULE_8__["Music21Object"] {
   set lyric(value) {
     this.lyrics = [];
 
-    if (value !== undefined && value !== false) {
+    if (value !== undefined) {
       this.lyrics.push(new Lyric(value));
     }
   }
@@ -56033,9 +54698,10 @@ class GeneralNote extends _base__WEBPACK_IMPORTED_MODULE_8__["Music21Object"] {
 
     volume = Math.floor(volume);
     return volume;
-  }
+  } // noinspection JSUnusedGlobalSymbols
+
   /**
-   * Add a {@link music21.note.Lyric} object to the Note
+   * Add a {@link Lyric} object to the Note
    *
    * @param {string} text - text to be added
    * @param {number} [lyricNumber] - integer specifying lyric (defaults to the current `.lyrics.length` + 1)
@@ -56095,41 +54761,37 @@ class GeneralNote extends _base__WEBPACK_IMPORTED_MODULE_8__["Music21Object"] {
    */
 
 
-  vexflowAccidentalsAndDisplay(vfn, options) {
+  vexflowAccidentalsAndDisplay(vfn) {
+    var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
     if (this.duration.dots > 0) {
       for (var i = 0; i < this.duration.dots; i++) {
         vfn.addDotToAll();
       }
     }
+  }
+  /**
+   * Return the active channel for the instrument or activeSite's instrument
+   * @param instrument
+   */
 
-    if (_debug__WEBPACK_IMPORTED_MODULE_12__["debug"]) {
-      console.log(this.stemDirection);
-    }
 
-    if (this.stemDirection === 'noStem') {
-      vfn.hasStem = () => false; // need to override...
-      // vfn.render_options.stem_height = 0;
+  activeChannel() {
+    var instrument = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : undefined;
 
-    } else {
-      // correct VexFlow stem length for notes far from the center line;
-      var staveDNNSpacing = 5;
-
-      if (options.stave) {
-        staveDNNSpacing = Math.floor(options.stave.options.spacing_between_lines_px / 2);
-      }
-
-      if (options.clef !== undefined && this.pitch !== undefined) {
-        var midLine = options.clef.lowestLine + 4; // console.log(midLine);
-
-        var absDNNfromCenter = Math.abs(this.pitch.diatonicNoteNum - midLine);
-        var absOverOctave = absDNNfromCenter - 7; // console.log(absOverOctave);
-
-        if (absOverOctave > 0 && vfn.getStemLength !== undefined) {
-          var stemHeight = absOverOctave * staveDNNSpacing + vfn.getStemLength();
-          vfn.setStemLength(stemHeight);
-        }
+    if (instrument === undefined) {
+      if (this.activeSite !== undefined) {
+        instrument = this.activeSite.instrument;
       }
     }
+
+    var channel = 0;
+
+    if (instrument !== undefined) {
+      channel = instrument.midiChannel;
+    }
+
+    return channel;
   }
   /**
    * Play the current element as a MIDI note.
@@ -56139,82 +54801,24 @@ class GeneralNote extends _base__WEBPACK_IMPORTED_MODULE_8__["Music21Object"] {
    *     the length to play in case of tied notes, etc.
    * @param {Object} [options] - other options (currently just
    *     `{instrument: {@link music21.instrument.Instrument} }`)
-   * @returns {Number} - delay time in milliseconds until the next element (may be ignored)
+   * @returns {number} - delay time in milliseconds until the next element (may be ignored)
    */
 
 
   playMidi() {
     var tempo = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 120;
     var nextElement = arguments.length > 1 ? arguments[1] : undefined;
-    var options = arguments.length > 2 ? arguments[2] : undefined;
+
+    var _ref = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {},
+        _ref$instrument = _ref.instrument,
+        instrument = _ref$instrument === void 0 ? undefined : _ref$instrument,
+        _ref$channel = _ref.channel,
+        channel = _ref$channel === void 0 ? undefined : _ref$channel;
 
     // returns the number of milliseconds to the next element in
     // case that can't be determined otherwise.
-    if (options === undefined) {
-      var inst;
-
-      if (this.activeSite !== undefined) {
-        inst = this.activeSite.instrument;
-      }
-
-      options = {
-        instrument: inst
-      };
-    }
-
-    var volume = this.midiVolume;
-    var channel = 0;
-
-    if (options.instrument !== undefined) {
-      channel = options.instrument.midiChannel;
-    }
-
     var ql = this.duration.quarterLength;
     var milliseconds = 60 * ql * 1000 / tempo;
-    var midNum;
-
-    if (this.isClassOrSubclass('Note')) {
-      // Note, not rest
-      midNum = this.pitch.midi;
-      var stopTime = milliseconds / 1000;
-
-      if (nextElement instanceof _base__WEBPACK_IMPORTED_MODULE_8__["Music21Object"] && nextElement.isClassOrSubclass('Note')) {
-        if (nextElement.pitch.midi !== this.pitch.midi) {
-          stopTime += 60 * 0.25 / tempo; // legato -- play 16th note longer
-        } else if (this.tie !== undefined && (this.tie.type === 'start' || this.tie.type === 'continue')) {
-          stopTime += 60 * nextElement.duration.quarterLength / tempo; // this does not take into account 3 or more notes tied.
-          // TODO: look ahead at next nexts, etc.
-        }
-      } else if (nextElement === undefined) {
-        // let last note ring an extra beat...
-        stopTime += 60 / tempo;
-      } // console.log(stopTime);
-      // console.log(this.tie);
-
-
-      if (this.tie === undefined || this.tie.type === 'start') {
-        // console.log(volume);
-        try {
-          midicube__WEBPACK_IMPORTED_MODULE_6__["noteOn"](channel, midNum, volume, 0);
-          midicube__WEBPACK_IMPORTED_MODULE_6__["noteOff"](channel, midNum, stopTime);
-        } catch (e) {// do nothing -- might not have an output channel because of audio not connected
-        }
-      } // else { console.log ('not going to play ', this.nameWithOctave); }
-
-    } else if (this.isClassOrSubclass('Chord')) {
-      // TODO: Tied Chords.
-      for (var j = 0; j < this._notes.length; j++) {
-        midNum = this._notes[j].pitch.midi;
-
-        try {
-          midicube__WEBPACK_IMPORTED_MODULE_6__["noteOn"](channel, midNum, volume, 0);
-          midicube__WEBPACK_IMPORTED_MODULE_6__["noteOff"](channel, midNum, milliseconds / 1000);
-        } catch (e) {// do nothing -- might not have an output channel because of audio not connected
-        }
-      }
-    } // it's a note.Rest -- do nothing -- milliseconds takes care of it...
-
-
     return milliseconds;
   }
 
@@ -56222,9 +54826,6 @@ class GeneralNote extends _base__WEBPACK_IMPORTED_MODULE_8__["Music21Object"] {
 /**
  * Specifies that a GeneralNote is not a rest (Unpitched, Note, Chord).
  *
- * @class NotRest
- * @memberof music21.note
- * @extends music21.note.GeneralNote
  * @param {number} [ql=1.0] - length in quarter notes
  * @property {music21.beam.Beams} beams - a link to a beam object
  * @property {string} [notehead='normal'] - notehead type
@@ -56236,23 +54837,26 @@ class GeneralNote extends _base__WEBPACK_IMPORTED_MODULE_8__["Music21Object"] {
  */
 
 class NotRest extends GeneralNote {
-  static get className() {
-    return 'music21.note.NotRest';
-  }
+  constructor() {
+    var ql = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1.0;
+    super(ql); // noinspection JSUnusedGlobalSymbols
 
-  constructor(ql) {
-    super(ql);
-    this.notehead = 'normal';
+    this.notehead = 'normal'; // noinspection JSUnusedGlobalSymbols
+
     this.noteheadFill = 'default';
     this.noteheadColor = 'black';
     this.noteheadParenthesis = false;
     this.volume = undefined; // not a real object yet.
 
+    this._stemDirection = 'unspecified';
     this.beams = new _beam__WEBPACK_IMPORTED_MODULE_10__["Beams"]();
     /* TODO: this.duration.linkage -- need durationUnits */
 
-    this._stemDirection = 'unspecified';
     /* TODO: check notehead, noteheadFill, noteheadParentheses */
+  }
+
+  static get className() {
+    return 'music21.note.NotRest';
   }
 
   get stemDirection() {
@@ -56279,51 +54883,51 @@ class NotRest extends GeneralNote {
  * object to describe pitch (highness/lowness) with a {@link music21.duration.Duration} object
  * that defines length, with additional features for drawing the Note, playing it back, etc.
  *
- * Together with {@link music21.stream.Stream} one of the two most important
+ * Together with {@link Stream} one of the two most important
  * classes in `music21`.
  *
- * See {@link music21.note.NotRest}, {@link music21.note.GeneralNote},
+ * See {@link NotRest}, {@link GeneralNote},
  * {@link base.Music21Object}
- * and {@link music21.prebase.ProtoM21Object} (or in general, the **extends** list below) for other
+ * and {@link prebase.ProtoM21Object} (or in general, the **extends** list below) for other
  * things you can do with a `Note` object.
  *
  * Missing from music21p: `transpose(), fullName`.  Transpose cannot be added because of circular imports
  *
  * @class Note
  * @memberof music21.note
- * @extends music21.note.NotRest
  */
 
 class Note extends NotRest {
-  static get className() {
-    return 'music21.note.Note';
-  }
   /**
    *
    * @param {(string|music21.pitch.Pitch|undefined)} [nn='C4'] - pitch
    *     name ("C", "D#", "E-") w/ or w/o octave ("C#4"), or a pitch.Pitch object
    * @param {(number|undefined)} [ql=1.0] - length in quarter notes
-   * @property {Boolean} [isNote=true] - is it a Note? Yes!
-   * @property {Boolean} [isRest=false] - is it a Rest? No!
+   * @property {boolean} [isNote=true] - is it a Note? Yes!
+   * @property {boolean} [isRest=false] - is it a Rest? No!
    * @property {music21.pitch.Pitch} pitch - the {@link music21.pitch.Pitch} associated with the Note.
    * @property {string} name - shortcut to `.pitch.name`
    * @property {string} nameWithOctave - shortcut to `.pitch.nameWithOctave`
    * @property {string} step - shortcut to `.pitch.step`
    * @property {number} octave - shortcut to `.pitch.octave`
    */
+  constructor() {
+    var nn = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'C4';
+    var ql = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 1.0;
+    super(ql); // noinspection JSUnusedGlobalSymbols
 
-
-  constructor(nn, ql) {
-    super(ql);
-    this.isNote = true; // for speed
-
-    this.isRest = false; // for speed
+    this.isNote = true;
+    this.isRest = false;
 
     if (nn instanceof _pitch__WEBPACK_IMPORTED_MODULE_9__["Pitch"]) {
       this.pitch = nn;
     } else {
       this.pitch = new _pitch__WEBPACK_IMPORTED_MODULE_9__["Pitch"](nn);
     }
+  }
+
+  static get className() {
+    return 'music21.note.Note';
   }
   /**
    *
@@ -56435,6 +55039,48 @@ class Note extends NotRest {
       return 'up';
     }
   }
+
+  vexflowAccidentalsAndDisplay(vfn) {
+    var _ref2 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
+        _ref2$stave = _ref2.stave,
+        stave = _ref2$stave === void 0 ? undefined : _ref2$stave,
+        _ref2$clef = _ref2.clef,
+        clef = _ref2$clef === void 0 ? undefined : _ref2$clef;
+
+    super.vexflowAccidentalsAndDisplay(vfn, {
+      stave,
+      clef
+    });
+
+    if (_debug__WEBPACK_IMPORTED_MODULE_11__["debug"]) {
+      console.log(this.stemDirection);
+    }
+
+    if (this.stemDirection === 'noStem') {
+      vfn.hasStem = () => false; // need to override...
+      // vfn.render_options.stem_height = 0;
+
+    } else {
+      // correct VexFlow stem length for notes far from the center line;
+      var staveDNNSpacing = 5;
+
+      if (stave !== undefined) {
+        staveDNNSpacing = Math.floor(stave.options.spacing_between_lines_px / 2);
+      }
+
+      if (clef !== undefined && this.pitch !== undefined) {
+        var midLine = clef.lowestLine + 4; // console.log(midLine);
+
+        var absDNNFromCenter = Math.abs(this.pitch.diatonicNoteNum - midLine);
+        var absOverOctave = absDNNFromCenter - 7; // console.log(absOverOctave);
+
+        if (absOverOctave > 0 && vfn.getStemLength !== undefined) {
+          var stemHeight = absOverOctave * staveDNNSpacing + vfn.getStemLength();
+          vfn.setStemLength(stemHeight);
+        }
+      }
+    }
+  }
   /**
    * Returns a `Vex.Flow.StaveNote` that approximates this note.
    *
@@ -56444,21 +55090,17 @@ class Note extends NotRest {
    */
 
 
-  vexflowNote(options) {
-    var params = {};
-    _common__WEBPACK_IMPORTED_MODULE_11__["merge"](params, options);
-    var clef = params.clef;
+  vexflowNote() {
+    var _ref3 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
+        _ref3$clef = _ref3.clef,
+        clef = _ref3$clef === void 0 ? undefined : _ref3$clef;
+
     var useStemDirection = this.stemDirection; // fixup stem direction -- must happen before Vex.Flow.Note is created...
 
     if (this.activeSite !== undefined && this.activeSite.renderOptions.stemDirection !== undefined && stemDirectionNames.includes(this.activeSite.renderOptions.stemDirection)) {
       useStemDirection = this.activeSite.renderOptions.stemDirection;
-    } else if ([undefined, 'unspecified'].includes(this.stemDirection) && options.clef !== undefined) {
-      useStemDirection = this.getStemDirectionFromClef(options.clef);
-    }
-
-    if (this.duration === undefined) {
-      // console.log(this);
-      return undefined;
+    } else if ([undefined, 'unspecified'].includes(this.stemDirection) && clef !== undefined) {
+      useStemDirection = this.getStemDirectionFromClef(clef);
     }
 
     var vfd = this.duration.vexflowDuration;
@@ -56475,7 +55117,9 @@ class Note extends NotRest {
       duration: vfd,
       stem_direction: vfnStemDirection
     });
-    this.vexflowAccidentalsAndDisplay(vfn, params); // clean up stuff...
+    this.vexflowAccidentalsAndDisplay(vfn, {
+      clef
+    }); // clean up stuff...
 
     if (this.pitch.accidental !== undefined) {
       if (this.pitch.accidental.vexflowModifier !== 'n' && this.pitch.accidental.displayStatus !== false) {
@@ -56512,6 +55156,57 @@ class Note extends NotRest {
     return vfn;
   }
 
+  playMidi() {
+    var tempo = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 120;
+    var nextElement = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
+
+    var _ref4 = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {},
+        _ref4$instrument = _ref4.instrument,
+        instrument = _ref4$instrument === void 0 ? undefined : _ref4$instrument,
+        _ref4$channel = _ref4.channel,
+        channel = _ref4$channel === void 0 ? undefined : _ref4$channel;
+
+    var milliseconds = super.playMidi(tempo, nextElement, {
+      instrument,
+      channel
+    });
+
+    if (channel === undefined) {
+      channel = this.activeChannel();
+    }
+
+    var volume = this.midiVolume; // Note, not rest
+
+    var midNum = this.pitch.midi;
+    var stopTime = milliseconds / 1000;
+
+    if (nextElement instanceof Note) {
+      if (nextElement.pitch.midi !== this.pitch.midi) {
+        stopTime += 60 * 0.25 / tempo; // legato -- play 16th note longer
+      } else if (this.tie !== undefined && (this.tie.type === 'start' || this.tie.type === 'continue')) {
+        stopTime += 60 * nextElement.duration.quarterLength / tempo; // this does not take into account 3 or more notes tied.
+        // TODO: look ahead at next nexts, etc.
+      }
+    } else if (nextElement === undefined) {
+      // let last note ring an extra beat...
+      stopTime += 60 / tempo;
+    } // console.log(stopTime);
+    // console.log(this.tie);
+
+
+    if (this.tie === undefined || this.tie.type === 'start') {
+      // console.log(volume);
+      try {
+        midicube__WEBPACK_IMPORTED_MODULE_6__["noteOn"](channel, midNum, volume, 0);
+        midicube__WEBPACK_IMPORTED_MODULE_6__["noteOff"](channel, midNum, stopTime);
+      } catch (e) {// do nothing -- might not have an output channel because of audio not connected
+      }
+    } // else { console.log ('not going to play ', this.nameWithOctave); }
+
+
+    return milliseconds;
+  }
+
 }
 /* ------ TODO: Unpitched ------ */
 
@@ -56522,7 +55217,6 @@ class Note extends NotRest {
  *
  * @class Rest
  * @memberof music21.note
- * @extends music21.note.GeneralNote
  * @param {number} [ql=1.0] - length in number of quarterNotes
  * @property {Boolean} [isNote=false]
  * @property {Boolean} [isRest=true]
@@ -56532,20 +55226,22 @@ class Note extends NotRest {
  */
 
 class Rest extends GeneralNote {
-  static get className() {
-    return 'music21.note.Rest';
+  // this dummy constructor is here for JetBrains typescript linter
+  // which otherwise complains that Rests have no durations, etc.
+  constructor() {
+    var ql = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1.0;
+    super(ql); // noinspection JSUnusedGlobalSymbols
+
+    this.isNote = false;
+    this.isRest = true;
+    this.name = 'rest';
+    this.lineShift = 0;
+    this.color = 'black';
+    this.name = 'rest';
   }
 
-  constructor(ql) {
-    super(ql);
-    this.isNote = false; // for speed
-
-    this.isRest = true; // for speed
-
-    this.name = 'rest'; // for note compatibility
-
-    this.lineShift = undefined;
-    this.color = 'black';
+  static get className() {
+    return 'music21.note.Rest';
   }
   /**
    *
@@ -56613,9 +55309,9 @@ class Rest extends GeneralNote {
 
 /***/ }),
 
-/***/ "./src/music21/parseLoader.js":
+/***/ "./src/music21/parseLoader.ts":
 /*!************************************!*\
-  !*** ./src/music21/parseLoader.js ***!
+  !*** ./src/music21/parseLoader.ts ***!
   \************************************/
 /*! exports provided: runConfiguration, getBasePath, fixUrls, renderHTML, loadDefaultSoundfont, loadConfiguration, getM21attribute, warnBanner */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -56636,10 +55332,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var core_js_modules_es_array_includes__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_includes__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! core-js/modules/es.regexp.to-string */ "./node_modules/core-js/modules/es.regexp.to-string.js");
 /* harmony import */ var core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _debug__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./debug */ "./src/music21/debug.js");
-/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./common */ "./src/music21/common.js");
-/* harmony import */ var _miditools__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./miditools */ "./src/music21/miditools.js");
-/* harmony import */ var _tinyNotation__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./tinyNotation */ "./src/music21/tinyNotation.js");
+/* harmony import */ var _debug__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./debug */ "./src/music21/debug.ts");
+/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./common */ "./src/music21/common.ts");
+/* harmony import */ var _miditools__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./miditools */ "./src/music21/miditools.ts");
+/* harmony import */ var _tinyNotation__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./tinyNotation */ "./src/music21/tinyNotation.ts");
 
 
 
@@ -56792,9 +55488,9 @@ function warnBanner() {
 
 /***/ }),
 
-/***/ "./src/music21/pitch.js":
+/***/ "./src/music21/pitch.ts":
 /*!******************************!*\
-  !*** ./src/music21/pitch.js ***!
+  !*** ./src/music21/pitch.ts ***!
   \******************************/
 /*! exports provided: Accidental, nameToMidi, nameToSteps, stepsToName, midiToName, Pitch */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -56819,7 +55515,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var core_js_modules_es_string_replace__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_replace__WEBPACK_IMPORTED_MODULE_4__);
 /* harmony import */ var _exceptions21__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./exceptions21 */ "./src/music21/exceptions21.ts");
 /* harmony import */ var _prebase__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./prebase */ "./src/music21/prebase.ts");
-/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./common */ "./src/music21/common.js");
+/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./common */ "./src/music21/common.ts");
 
 
 
@@ -56851,37 +55547,14 @@ __webpack_require__.r(__webpack_exports__);
  * @property {number} alter
  * @property {string} displayType
  * @property {boolean|undefined} displayStatus
- * @extends music21.prebase.ProtoM21Object
  */
 
 class Accidental extends _prebase__WEBPACK_IMPORTED_MODULE_6__["ProtoM21Object"] {
-  static get className() {
-    return 'music21.pitch.Accidental';
-  }
-
   constructor(accName) {
     super();
     this._name = '';
-    /**
-     *
-     * @type {number}
-     * @private
-     */
-
     this._alter = 0.0;
-    /**
-     *
-     * @type {string}
-     * @private
-     */
-
     this._modifier = '';
-    /**
-     *
-     * @type {string}
-     * @private
-     */
-
     this._unicodeModifier = '';
     this.displayType = 'normal'; // "normal", "always" supported currently
 
@@ -56889,11 +55562,10 @@ class Accidental extends _prebase__WEBPACK_IMPORTED_MODULE_6__["ProtoM21Object"]
 
     this.set(accName);
   }
-  /**
-   *
-   * @returns {string}
-   */
 
+  static get className() {
+    return 'music21.pitch.Accidental';
+  }
 
   stringInfo() {
     return this.name;
@@ -56907,7 +55579,7 @@ class Accidental extends _prebase__WEBPACK_IMPORTED_MODULE_6__["ProtoM21Object"]
 
 
   set(accName) {
-    if (accName !== undefined && accName.toLowerCase !== undefined) {
+    if (typeof accName === 'string') {
       accName = accName.toLowerCase();
     }
 
@@ -57110,13 +55782,12 @@ var midiToName = ['C', 'C#', 'D', 'E-', 'E', 'F', 'F#', 'G', 'A-', 'A', 'B-', 'B
  *
  * @class Pitch
  * @memberof music21.pitch
- * @param {string} pn - name of the pitch, with or without octave, see above.
- * @extends music21.prebase.ProtoM21Object
- * @property {music21.pitch.Accidental|undefined} accidental - link to an accidental
+ * @param {string|number} pn - name of the pitch, with or without octave, see above.
+ * @property {Accidental|undefined} accidental - link to an accidental
  * @property {number} diatonicNoteNum - diatonic number of the pitch,
  *     where 29 = C4, C#4, C-4, etc.; 30 = D-4, D4, D#4, etc. updates other properties.
  * @property {number} midi - midi number of the pitch (C4 = 60); readonly.
- *     See {@link music21.pitch.Pitch#ps} for settable version.
+ *     See {@link Pitch#ps} for settable version.
  * @property {string} name - letter name of pitch + accidental modifier;
  *     e.g., B-flat = 'B-'; changes automatically w/ step and accidental
  * @property {string} nameWithOctave - letter name of pitch + accidental
@@ -57130,29 +55801,14 @@ var midiToName = ['C', 'C#', 'D', 'E-', 'E', 'F', 'F#', 'G', 'A-', 'A', 'B-', 'B
  */
 
 class Pitch extends _prebase__WEBPACK_IMPORTED_MODULE_6__["ProtoM21Object"] {
-  static get className() {
-    return 'music21.pitch.Pitch';
-  }
-
   constructor() {
     var pn = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'C';
     super();
     this._step = 'C';
-    /**
-     *
-     * @type {number}
-     * @private
-     */
-
     this._octave = 4;
-    /**
-     *
-     * @type {music21.pitch.Accidental|undefined}
-     * @private
-     */
-
     this._accidental = undefined;
     this.spellingIsInferred = false;
+    this.microtone = undefined;
     /* pn can be a nameWithOctave */
 
     if (typeof pn === 'number') {
@@ -57167,20 +55823,14 @@ class Pitch extends _prebase__WEBPACK_IMPORTED_MODULE_6__["ProtoM21Object"] {
       this.name = pn;
     }
   }
-  /**
-   *
-   * @returns {string}
-   */
 
+  static get className() {
+    return 'music21.pitch.Pitch';
+  }
 
   stringInfo() {
     return this.nameWithOctave;
   } // N.B. cannot use transpose here, because of circular import.
-
-  /**
-   *
-   * @type {string}
-   */
 
 
   get step() {
@@ -57205,11 +55855,6 @@ class Pitch extends _prebase__WEBPACK_IMPORTED_MODULE_6__["ProtoM21Object"] {
     this._step = s;
     this.spellingIsInferred = false;
   }
-  /**
-   *
-   * @type {number}
-   */
-
 
   get octave() {
     return this._octave;
@@ -57218,11 +55863,6 @@ class Pitch extends _prebase__WEBPACK_IMPORTED_MODULE_6__["ProtoM21Object"] {
   set octave(o) {
     this._octave = o;
   }
-  /**
-   *
-   * @type {number}
-   */
-
 
   get implicitOctave() {
     var o = this._octave;
@@ -57233,35 +55873,23 @@ class Pitch extends _prebase__WEBPACK_IMPORTED_MODULE_6__["ProtoM21Object"] {
       return o;
     }
   }
-  /**
-   *
-   * @type {music21.pitch.Accidental|undefined}
-   */
-
 
   get accidental() {
     return this._accidental;
   }
 
   set accidental(a) {
-    if (typeof a !== 'object' && a !== undefined) {
-      a = new Accidental(a);
-    }
-
     this._accidental = a;
     this.spellingIsInferred = false;
   }
-  /**
-   *
-    * @type {string}
-   */
-
 
   get name() {
-    if (this.accidental === undefined) {
+    var a = this.accidental;
+
+    if (a === undefined) {
       return this.step;
     } else {
-      return this.step + this.accidental.modifier;
+      return this.step + a.modifier;
     }
   }
 
@@ -57271,15 +55899,11 @@ class Pitch extends _prebase__WEBPACK_IMPORTED_MODULE_6__["ProtoM21Object"] {
 
     if (tempAccidental) {
       // not the empty string
-      this.accidental = tempAccidental; // converts automatically
+      this.accidental = new Accidental(tempAccidental);
     } else {
       this.accidental = undefined;
     }
   }
-  /**
-   * @type {string}
-   */
-
 
   get nameWithOctave() {
     return this.name + this.octave.toString();
@@ -57290,7 +55914,7 @@ class Pitch extends _prebase__WEBPACK_IMPORTED_MODULE_6__["ProtoM21Object"] {
 
     if (storedOctave !== undefined) {
       pn = pn.replace(/\d+/, '');
-      this.octave = parseInt(storedOctave);
+      this.octave = parseInt(storedOctave[0]);
       this.name = pn;
     } else {
       this.name = pn;
@@ -57393,7 +56017,7 @@ class Pitch extends _prebase__WEBPACK_IMPORTED_MODULE_6__["ProtoM21Object"] {
   /**
    * @param {boolean} inPlace
    * @param {int} directionInt -- -1 = down, 1 = up
-   * @returns {music21.pitch.Pitch}
+   * @returns {Pitch}
    */
 
 
@@ -57444,7 +56068,7 @@ class Pitch extends _prebase__WEBPACK_IMPORTED_MODULE_6__["ProtoM21Object"] {
   /**
    *
    * @param {boolean} [inPlace=false]
-   * @returns {music21.pitch.Pitch}
+   * @returns {Pitch}
    */
 
 
@@ -57455,7 +56079,7 @@ class Pitch extends _prebase__WEBPACK_IMPORTED_MODULE_6__["ProtoM21Object"] {
   /**
    *
    * @param {boolean} [inPlace=false]
-   * @returns {music21.pitch.Pitch}
+   * @returns {Pitch}
    */
 
 
@@ -57468,12 +56092,15 @@ class Pitch extends _prebase__WEBPACK_IMPORTED_MODULE_6__["ProtoM21Object"] {
   /**
    * Returns the vexflow name for the pitch in the given clef.
    *
+   * if clefObj is undefined, then the clef is treated as TrebleClef.
+   *
    * @param {music21.clef.Clef} [clefObj] - the active {@link music21.clef.Clef} object
    * @returns {string} - representation in vexflow
    */
 
 
-  vexflowName(clefObj) {
+  vexflowName() {
+    var clefObj = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : undefined;
     // returns a vexflow Key name for this pitch.
     var tempPitch = this;
 
@@ -57538,8 +56165,6 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
-
 /**
  * module for things that all music21-created objects, not just objects that can live in
  * Stream.elements should inherit. See the {@link music21.prebase} namespace.
@@ -57558,9 +56183,9 @@ function _extends() { _extends = Object.assign || function (target) { for (var i
  * @memberof music21.prebase
  * @property {Array<string>} classes - An Array of strings of classes
  * that the object belongs to (default ['ProtoM21Object'])
- * @property {Boolean} isProtoM21Object - Does this object descend
+ * @property {boolean} isProtoM21Object - Does this object descend
  * from {@link music21.prebase.ProtoM21Object}: obviously true.
- * @property {Boolean} isMusic21Object - Does this object descend
+ * @property {boolean} isMusic21Object - Does this object descend
  * from Music21Object; default false.
  */
 class ProtoM21Object {
@@ -57635,9 +56260,9 @@ class ProtoM21Object {
    * Works similarly to Python's copy.deepcopy().
    *
    * Every ProtoM21Object has a `._cloneCallbacks` object which maps
-   * `{attribute: callbackFunction}`
+   * `{attribute: callbackFunction|boolean}`
    * to handle custom clone cases.  See, for instance, Music21Object which
-   * uses a custom callback to NOT clone the `.activeSite` attribute.
+   * uses a custom callback to NOT clone the `.derivation` attribute directly.
    *
    * @example
    * var n1 = new music21.note.Note("C#");
@@ -57651,17 +56276,13 @@ class ProtoM21Object {
   clone() {
     var deep = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
     var memo = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
-
-    if (!deep) {
-      return _extends(Object.create(Object.getPrototypeOf(this)), this);
-    }
-
+    // console.log(`cloning ${this + ''} as ${deep ? 'deep' : 'shallow'}`);
     var classConstructor = this.constructor;
     var ret = new classConstructor();
 
     if (memo === undefined) {
       memo = new WeakMap();
-    } // todo: do Arrays work?
+    } // TODO(msc): test if Arrays work?
 
 
     for (var key in this) {
@@ -57677,11 +56298,11 @@ class ProtoM21Object {
           ret[key] = undefined;
         } else {
           // call the cloneCallbacks function
-          this._cloneCallbacks[key](key, ret, this);
+          this._cloneCallbacks[key](key, ret, this, deep, memo);
         }
       } else if (Object.getOwnPropertyDescriptor(this, key).get !== undefined || Object.getOwnPropertyDescriptor(this, key).set !== undefined) {// do nothing
       } else if (typeof this[key] === 'function') {// do nothing -- events might not be copied.
-      } else if (typeof this[key] === 'object' && this[key] !== null && this[key].isProtoM21Object) {
+      } else if (deep && typeof this[key] === 'object' && this[key] !== null && this[key].isProtoM21Object) {
         // console.log('cloning ', key);
         var m21Obj = this[key];
         var clonedVersion = void 0;
@@ -57695,7 +56316,9 @@ class ProtoM21Object {
         ret[key] = clonedVersion;
       } else {
         try {
-          ret[key] = this[key]; // music21.common.merge(ret[key], this[key]); // not really necessary?
+          // for deep this should be:
+          // music21.common.merge(ret[key], this[key]);
+          ret[key] = this[key];
         } catch (e) {
           if (e instanceof TypeError) {
             console.log('typeError:', e, key); // do nothing
@@ -57712,7 +56335,7 @@ class ProtoM21Object {
    * Check to see if an object is of this class or subclass.
    *
    * @param {string|string[]} testClass - a class or Array of classes to test
-   * @returns {Boolean}
+   * @returns {boolean}
    * @example
    * var n = new music21.note.Note();
    * n.isClassOrSubclass('Note'); // true
@@ -57786,9 +56409,9 @@ class ProtoM21Object {
 
 /***/ }),
 
-/***/ "./src/music21/renderOptions.js":
+/***/ "./src/music21/renderOptions.ts":
 /*!**************************************!*\
-  !*** ./src/music21/renderOptions.js ***!
+  !*** ./src/music21/renderOptions.ts ***!
   \**************************************/
 /*! exports provided: RenderOptions */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -57796,7 +56419,6 @@ class ProtoM21Object {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "RenderOptions", function() { return RenderOptions; });
-/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./common */ "./src/music21/common.js");
 /**
  * music21j -- Javascript reimplementation of Core music21p features.
  * music21/renderOptions -- an object that defines the render options for a Stream
@@ -57821,83 +56443,50 @@ __webpack_require__.r(__webpack_exports__);
  *
  * @memberof music21.renderOptions
  */
-
 class RenderOptions {
   constructor() {
-    var defaultOptions = {
-      displayClef: true,
-      displayTimeSignature: true,
-      displayKeySignature: true,
-      scaleFactor: {
-        x: 0.7,
-        y: 0.7
-      },
-      top: 0,
-
-      /**
-       * @type {number|undefined}
-       */
-      left: undefined,
-
-      /**
-       * @type {number|undefined}
-       */
-      width: undefined,
-
-      /**
-       * @type {number|undefined}
-       */
-      overriddenWidth: undefined,
-
-      /**
-       * @type {number|undefined}
-       */
-      height: undefined,
-      naiveHeight: 120,
-      systemIndex: 0,
-      partIndex: 0,
-      measureIndex: 0,
-      systemMeasureIndex: 0,
-
-      /**
-       * @type {number|undefined}
-       */
-      systemPadding: undefined,
-      naiveSystemPadding: 40,
-      stemDirection: undefined,
-
-      /**
-       * @type {number|undefined}
-       */
-      maxSystemWidth: undefined,
-      rightBarline: undefined,
-      staffLines: 5,
-      staffConnectors: ['single', 'brace'],
-      staffPadding: 60,
-      // width...
-      events: {
-        click: 'play',
-        dblclick: undefined // resize
-
-      },
-      startNewSystem: false,
-      startNewPage: false,
-
-      /**
-       * @type {boolean|undefined}
-       */
-      showMeasureNumber: undefined
+    this.displayClef = true;
+    this.displayTimeSignature = true;
+    this.displayKeySignature = true;
+    this.scaleFactor = {
+      x: 0.7,
+      y: 0.7
     };
-    _common__WEBPACK_IMPORTED_MODULE_0__["merge"](this, defaultOptions);
+    this.top = 0;
+    this.left = undefined;
+    this.width = undefined;
+    this.overriddenWidth = undefined;
+    this.height = undefined;
+    this.naiveHeight = 120;
+    this.systemIndex = 0;
+    this.partIndex = 0;
+    this.measureIndex = 0;
+    this.systemPadding = undefined;
+    this.naiveSystemPadding = 40;
+    this.stemDirection = undefined;
+    this.maxSystemWidth = undefined;
+    this.rightBarline = undefined;
+    this.staffLines = 5;
+    this.staffConnectors = ['single', 'brace'];
+    this.staffPadding = 60; // width...
+
+    this.events = {
+      click: 'play',
+      dblclick: undefined
+    };
+    this.startNewSystem = false; // noinspection JSUnusedGlobalSymbols
+
+    this.startNewPage = false;
+    this.showMeasureNumber = undefined;
   }
 
 }
 
 /***/ }),
 
-/***/ "./src/music21/roman.js":
+/***/ "./src/music21/roman.ts":
 /*!******************************!*\
-  !*** ./src/music21/roman.js ***!
+  !*** ./src/music21/roman.ts ***!
   \******************************/
 /*! exports provided: figureShorthands, functionalityScores, expandShortHand, correctSuffixForChordQuality, romanToNumber, RomanNumeral */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -57931,14 +56520,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! core-js/modules/web.dom-collections.iterator */ "./node_modules/core-js/modules/web.dom-collections.iterator.js");
 /* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_9___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_9__);
 /* harmony import */ var _exceptions21__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./exceptions21 */ "./src/music21/exceptions21.ts");
-/* harmony import */ var _chord__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./chord */ "./src/music21/chord.js");
-/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./common */ "./src/music21/common.js");
-/* harmony import */ var _figuredBass__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./figuredBass */ "./src/music21/figuredBass.js");
-/* harmony import */ var _harmony__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./harmony */ "./src/music21/harmony.js");
-/* harmony import */ var _interval__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./interval */ "./src/music21/interval.js");
-/* harmony import */ var _key__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ./key */ "./src/music21/key.js");
-/* harmony import */ var _pitch__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ./pitch */ "./src/music21/pitch.js");
-/* harmony import */ var _scale__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ./scale */ "./src/music21/scale.js");
+/* harmony import */ var _chord__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./chord */ "./src/music21/chord.ts");
+/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./common */ "./src/music21/common.ts");
+/* harmony import */ var _figuredBass__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./figuredBass */ "./src/music21/figuredBass.ts");
+/* harmony import */ var _harmony__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./harmony */ "./src/music21/harmony.ts");
+/* harmony import */ var _interval__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./interval */ "./src/music21/interval.ts");
+/* harmony import */ var _key__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ./key */ "./src/music21/key.ts");
+/* harmony import */ var _pitch__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ./pitch */ "./src/music21/pitch.ts");
+/* harmony import */ var _scale__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ./scale */ "./src/music21/scale.ts");
 
 
 
@@ -57965,11 +56554,10 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
  * Copyright (c) 2013-19, Michael Scott Cuthbert and cuthbertLab
  * Based on music21 (=music21p), Copyright (c) 2006–19, Michael Scott Cuthbert and cuthbertLab
  *
- * Roman numeral module. See {@link music21.roman} namespace
+ * Roman numeral module. See  namespace
  * music21.roman -- namespace for dealing with RomanNumeral analysis.
  *
  * @exports music21/roman
- * @namespace music21.roman
  * @memberof music21
  * @requires music21/chord
  * @requires music21/common
@@ -57994,20 +56582,13 @@ var figureShorthands = {
   '63': '6',
   '753': '7',
   '75': '7',
-  // controversial perhaps
   '73': '7',
-  // controversial perhaps
   '9753': '9',
   '975': '9',
-  // controversial perhaps
   '953': '9',
-  // controversial perhaps
   '97': '9',
-  // controversial perhaps
   '95': '9',
-  // controversial perhaps
   '93': '9',
-  // controversial perhaps
   '653': '65',
   '6b53': '6b5',
   '643': '43',
@@ -58048,10 +56629,8 @@ var functionalityScores = {
   viio: 39,
   '#viio': 39,
   iio: 37,
-  // common in Minor
   iio42: 36,
   bII6: 35,
-  // Neapolitan
   iio43: 32,
   iio65: 31,
   '#vio': 28,
@@ -58116,7 +56695,7 @@ function expandShortHand(shorthand) {
  *     chord of various qualities.
  *
  * @memberof music21.roman
- * @param  {music21.chord.Chord} chordObj
+ * @param  {chord.Chord} chordObj
  * @param  {string} inversionString a string like '6' to fix.
  * @return {string}           corrected inversionString
   */
@@ -58166,7 +56745,6 @@ var romanToNumber = [undefined, 'i', 'ii', 'iii', 'iv', 'v', 'vi', 'vii'];
  *
  * @class RomanNumeral
  * @memberof music21.roman
- * @extends music21.harmony.Harmony
  * @param {string} figure - the roman numeral as a string, e.g., 'IV', 'viio', 'V7'
  * @param {string|music21.key.Key} [keyStr='C']
  * @property {Array<music21.pitch.Pitch>} scale - (readonly) returns the scale
@@ -58192,25 +56770,21 @@ var romanToNumber = [undefined, 'i', 'ii', 'iii', 'iv', 'v', 'vi', 'vii'];
  */
 
 class RomanNumeral extends _harmony__WEBPACK_IMPORTED_MODULE_14__["Harmony"] {
-  static get className() {
-    return 'music21.roman.RomanNumeral';
-  }
-
   constructor() {
     var figure = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
-    var keyStr = arguments.length > 1 ? arguments[1] : undefined;
-    var keywords = arguments.length > 2 ? arguments[2] : undefined;
-    var params = {
-      updatePitches: false,
-      parseFigure: false
-    };
-    _common__WEBPACK_IMPORTED_MODULE_12__["merge"](params, keywords);
+    var keyStr = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
 
-    if (typeof figure === 'string') {
-      figure = figure.replace('/o', 'ø');
-    }
+    var _ref = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {},
+        _ref$parseFigure = _ref.parseFigure,
+        parseFigure = _ref$parseFigure === void 0 ? false : _ref$parseFigure,
+        _ref$updatePitches = _ref.updatePitches,
+        updatePitches = _ref$updatePitches === void 0 ? false : _ref$updatePitches;
 
-    super(figure, params);
+    super(figure, {
+      updatePitches,
+      parseFigure
+    });
+    figure = figure.replace('/o', 'ø');
     this._parsingComplete = false; // not yet used...
 
     this.primaryFigure = undefined;
@@ -58240,18 +56814,18 @@ class RomanNumeral extends _harmony__WEBPACK_IMPORTED_MODULE_14__["Harmony"] {
     this.omittedSteps = [];
     this.followsKeyChange = false;
     this._functionalityScore = undefined;
-    /**
-     *
-     * @type {music21.key.Key|music21.scale.Scale|undefined}
-     * @private
-     */
-
-    this._scale = undefined; // the Key or Scale
+    this._scale = undefined; // the Key
 
     this.figure = figure;
-    this.key = keyStr; // to remove...
 
-    this.numbers = '';
+    if (typeof keyStr === 'string') {
+      this.key = new _key__WEBPACK_IMPORTED_MODULE_16__["Key"](keyStr);
+    } else {
+      this.key = keyStr;
+    } // to remove...
+
+
+    this.numbers = undefined;
 
     if (figure !== '') {
       this._parseFigure();
@@ -58260,6 +56834,10 @@ class RomanNumeral extends _harmony__WEBPACK_IMPORTED_MODULE_14__["Harmony"] {
 
       this._updatePitches();
     }
+  }
+
+  static get className() {
+    return 'music21.roman.RomanNumeral';
   }
 
   stringInfo() {
@@ -58523,16 +57101,16 @@ class RomanNumeral extends _harmony__WEBPACK_IMPORTED_MODULE_14__["Harmony"] {
   }
 
   get key() {
-    return this._scale;
+    return this._key;
   }
 
   set key(keyOrScale) {
     if (typeof keyOrScale === 'string') {
-      this._scale = new _key__WEBPACK_IMPORTED_MODULE_16__["Key"](keyOrScale);
+      this._key = new _key__WEBPACK_IMPORTED_MODULE_16__["Key"](keyOrScale);
     } else if (typeof keyOrScale === 'undefined') {
-      this._scale = new _key__WEBPACK_IMPORTED_MODULE_16__["Key"]('C');
+      this._key = new _key__WEBPACK_IMPORTED_MODULE_16__["Key"]('C');
     } else {
-      this._scale = keyOrScale;
+      this._key = keyOrScale;
     }
 
     if (keyOrScale === undefined) {
@@ -58841,7 +57419,9 @@ class RomanNumeral extends _harmony__WEBPACK_IMPORTED_MODULE_14__["Harmony"] {
     }
   }
 
-  _correctForSecondaryRomanNumeral(useScale, figure) {
+  _correctForSecondaryRomanNumeral(useScale) {
+    var figure = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
+
     if (figure === undefined) {
       figure = this._figure;
     }
@@ -58853,7 +57433,7 @@ class RomanNumeral extends _harmony__WEBPACK_IMPORTED_MODULE_14__["Harmony"] {
     if (match !== null) {
       var primaryFigure = match[1];
       var secondaryFigure = match[2];
-      var secondaryRomanNumeral = new RomanNumeral(secondaryFigure, useScale, this.caseMatters);
+      var secondaryRomanNumeral = new RomanNumeral(secondaryFigure, useScale);
       this.secondaryRomanNumeral = secondaryRomanNumeral;
       var secondaryMode;
 
@@ -58881,8 +57461,8 @@ class RomanNumeral extends _harmony__WEBPACK_IMPORTED_MODULE_14__["Harmony"] {
     var match = rx.exec(workingFigure);
 
     while (match !== null) {
-      var thisStep = match[1];
-      thisStep = parseInt(thisStep);
+      var thisStepStr = match[1];
+      var thisStep = parseInt(thisStepStr);
       thisStep = thisStep % 7 || 7;
       omittedSteps.push(thisStep);
       workingFigure = workingFigure.replace(rx, '');
@@ -58937,12 +57517,13 @@ class RomanNumeral extends _harmony__WEBPACK_IMPORTED_MODULE_14__["Harmony"] {
    * Inverting 7th chords does not work.
    *
    * @param {string} displayType - ['roman', 'bassName', 'nameOnly', other]
-   * @param {int} [inversion=0]
+   * @param {number} [inversion=0]
    * @returns {string}
    */
 
 
-  asString(displayType, inversion) {
+  asString(displayType) {
+    var inversion = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
     var keyObj = this.key;
     var tonicName = keyObj.tonic.name;
     var mode = keyObj.mode; // specifying inversion is for backwards compatibility only.
@@ -59004,9 +57585,9 @@ class RomanNumeral extends _harmony__WEBPACK_IMPORTED_MODULE_14__["Harmony"] {
 
 /***/ }),
 
-/***/ "./src/music21/scale.js":
+/***/ "./src/music21/scale.ts":
 /*!******************************!*\
-  !*** ./src/music21/scale.js ***!
+  !*** ./src/music21/scale.ts ***!
   \******************************/
 /*! exports provided: Scale, AbstractScale, AbstractDiatonicScale, AbstractHarmonicMinorScale, AbstractAscendingMelodicMinorScale, ConcreteScale, DiatonicScale, MajorScale, MinorScale, HarmonicMinorScale, AscendingMelodicMinorScale, SimpleDiatonicScale, ScaleSimpleMajor, ScaleSimpleMinor */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -59044,11 +57625,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! core-js/modules/web.dom-collections.iterator */ "./node_modules/core-js/modules/web.dom-collections.iterator.js");
 /* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_7__);
 /* harmony import */ var _exceptions21__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./exceptions21 */ "./src/music21/exceptions21.ts");
-/* harmony import */ var _debug__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./debug */ "./src/music21/debug.js");
+/* harmony import */ var _debug__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./debug */ "./src/music21/debug.ts");
 /* harmony import */ var _base__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./base */ "./src/music21/base.ts");
-/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./common */ "./src/music21/common.js");
-/* harmony import */ var _interval__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./interval */ "./src/music21/interval.js");
-/* harmony import */ var _pitch__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./pitch */ "./src/music21/pitch.js");
+/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./common */ "./src/music21/common.ts");
+/* harmony import */ var _interval__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./interval */ "./src/music21/interval.ts");
+/* harmony import */ var _pitch__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./pitch */ "./src/music21/pitch.ts");
 
 
 
@@ -59093,13 +57674,14 @@ __webpack_require__.r(__webpack_exports__);
 // const DIRECTION_ASCENDING = 'ascending';
 
 class Scale extends _base__WEBPACK_IMPORTED_MODULE_10__["Music21Object"] {
-  static get className() {
-    return 'music21.scale.Scale';
-  }
-
   constructor() {
     super();
     this.type = 'Scale';
+    this.type = 'Scale';
+  }
+
+  static get className() {
+    return 'music21.scale.Scale';
   }
   /**
    *
@@ -59123,24 +57705,33 @@ class Scale extends _base__WEBPACK_IMPORTED_MODULE_10__["Music21Object"] {
 
 }
 class AbstractScale extends Scale {
-  static get className() {
-    return 'music21.scale.AbstractScale';
-  }
-
   constructor() {
     super();
-    this._net = []; // simplified -- no IntervalNetwork, just list of intervals
-
+    this._net = [];
     this.tonicDegree = 1;
     this.octaveDuplicating = true;
     this.deterministic = true;
     this._alteredDegrees = {};
     this._oneOctaveRealizationCache = undefined;
+    this.type = 'Abstract';
+  }
+
+  static get className() {
+    return 'music21.scale.AbstractScale';
+  }
+  /**
+   * To be subclassed
+   */
+
+
+  buildNetwork() {
+    var mode = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : undefined;
+    this._net = [];
   }
   /**
    * One scale equals another
    *
-   * @param {music21.scale.AbstractScale} other - the scale compared to.
+   * @param {AbstractScale} other - the scale compared to.
    * @returns {boolean}
    */
 
@@ -59186,13 +57777,12 @@ class AbstractScale extends Scale {
       }
     }
 
-    pitchList = pitchListReal;
-    var pLast = pitchList[pitchList.length - 1];
+    var pLast = pitchListReal[pitchListReal.length - 1];
 
-    if (pLast.name === pitchList[0]) {
-      var p = pitchList[0].clone();
+    if (pLast.name === pitchListReal[0].name) {
+      var p = pitchListReal[0].clone();
 
-      if (pLast.ps > pitchList[0]) {
+      if (pLast.ps > pitchListReal[0]) {
         // ascending;
         while (p.ps < pLast.ps) {
           p.octave += 1;
@@ -59203,13 +57793,13 @@ class AbstractScale extends Scale {
         }
       }
 
-      pitchList.push(p);
+      pitchListReal.push(p);
     }
 
     var intervalList = [];
 
-    for (var i = 0; i < pitchList.length - 1; i++) {
-      var thisInterval = new _interval__WEBPACK_IMPORTED_MODULE_12__["Interval"](pitchList[i], pitchList[i + 1]);
+    for (var i = 0; i < pitchListReal.length - 1; i++) {
+      var thisInterval = new _interval__WEBPACK_IMPORTED_MODULE_12__["Interval"](pitchListReal[i], pitchListReal[i + 1]);
       intervalList.push(thisInterval);
     }
 
@@ -59221,7 +57811,13 @@ class AbstractScale extends Scale {
   } // noinspection JSUnusedLocalSymbols
 
 
-  getRealization(pitchObj, unused_stepOfPitch, unused_minPitch, unused_maxPitch, unused_direction, unused_reverse) {
+  getRealization(pitchObj) {
+    var unused_stepOfPitch = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
+    var unused_minPitch = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : undefined;
+    var unused_maxPitch = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : undefined;
+    var unused_direction = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : undefined;
+    var unused_reverse = arguments.length > 5 && arguments[5] !== undefined ? arguments[5] : undefined;
+
     // if (direction === undefined) {
     //     direction = DIRECTION_ASCENDING;
     // }
@@ -59275,7 +57871,10 @@ class AbstractScale extends Scale {
   } // noinspection JSUnusedLocalSymbols
 
 
-  getRelativeNodeDegree(pitchReference, unused_nodeName, pitchTarget, unused_comparisonAttribute, unused_direction) {
+  getRelativeNodeDegree(pitchReference, unused_nodeName, pitchTarget) {
+    var unused_comparisonAttribute = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : undefined;
+    var unused_direction = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : undefined;
+
     if (typeof pitchTarget === 'string') {
       pitchTarget = new _pitch__WEBPACK_IMPORTED_MODULE_13__["Pitch"](pitchTarget);
     }
@@ -59326,14 +57925,10 @@ class AbstractScale extends Scale {
 }
 /**
  * @memberOf music21.scale
- * @extends music21.scale.AbstractScale
  *
  */
 
 class AbstractDiatonicScale extends AbstractScale {
-  static get className() {
-    return 'music21.scale.AbstractDiatonicScale';
-  }
   /**
    *
    * @param {string} [mode]
@@ -59342,25 +57937,27 @@ class AbstractDiatonicScale extends AbstractScale {
    * @property {number|undefined} dominantDegree
    * @property {boolean} octaveDuplicating
    */
-
-
-  constructor(mode) {
+  constructor() {
+    var mode = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'major';
     super();
     this.type = 'Abstract diatonic';
     this.tonicDegree = undefined;
     this.dominantDegree = undefined;
     this.octaveDuplicating = true;
-
-    this._buildNetwork(mode);
+    this.buildNetwork(mode);
   }
 
-  _buildNetwork(mode) {
+  static get className() {
+    return 'music21.scale.AbstractDiatonicScale';
+  }
+
+  buildNetwork(mode) {
     var srcList = ['M2', 'M2', 'm2', 'M2', 'M2', 'M2', 'm2'];
     var intervalList;
     this.tonicDegree = 1;
     this.dominantDegree = 5;
 
-    if (['major', 'ionian', undefined].includes(mode)) {
+    if (['major', 'ionian'].includes(mode)) {
       intervalList = srcList;
       this.relativeMajorDegree = 1;
       this.relativeMinorDegree = 6;
@@ -59401,7 +57998,6 @@ class AbstractDiatonicScale extends AbstractScale {
 }
 /**
  * @memberOf music21.scale
- * @extends music21.scale.AbstractScale
  *
  */
 
@@ -59414,11 +58010,10 @@ class AbstractHarmonicMinorScale extends AbstractScale {
     super();
     this.type = 'Abstract harmonic minor';
     this.octaveDuplicating = true;
-
-    this._buildNetwork();
+    this.buildNetwork();
   }
 
-  _buildNetwork() {
+  buildNetwork() {
     var intervalList = ['M2', 'm2', 'M2', 'M2', 'm2', 'A2', 'm2'];
     this._net = [];
 
@@ -59434,7 +58029,6 @@ class AbstractHarmonicMinorScale extends AbstractScale {
 
 /**
  * @memberOf music21.scale
- * @extends music21.scale.AbstractScale
  */
 
 class AbstractAscendingMelodicMinorScale extends AbstractScale {
@@ -59446,11 +58040,10 @@ class AbstractAscendingMelodicMinorScale extends AbstractScale {
     super();
     this.type = 'Abstract ascending melodic minor';
     this.octaveDuplicating = true;
-
-    this._buildNetwork();
+    this.buildNetwork();
   }
 
-  _buildNetwork() {
+  buildNetwork() {
     var intervalList = ['M2', 'm2', 'M2', 'M2', 'M2', 'M2', 'm2'];
     this._net = [];
 
@@ -59464,14 +58057,9 @@ class AbstractAscendingMelodicMinorScale extends AbstractScale {
 }
 /**
  * @memberOf music21.scale
- * @extends music21.scale.Scale
  */
 
 class ConcreteScale extends Scale {
-  static get className() {
-    return 'music21.scale.ConcreteScale';
-  }
-
   constructor(tonic) {
     super();
 
@@ -59481,6 +58069,10 @@ class ConcreteScale extends Scale {
 
     this.tonic = tonic;
     this.abstract = undefined;
+  }
+
+  static get className() {
+    return 'music21.scale.ConcreteScale';
   } // when adding functionality here, must also be added to key.Key.
 
 
@@ -59503,7 +58095,10 @@ class ConcreteScale extends Scale {
   // noinspection JSUnusedLocalSymbols
 
 
-  getPitches(unused_minPitch, unused_maxPitch, unused_direction) {
+  getPitches() {
+    var unused_minPitch = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : undefined;
+    var unused_maxPitch = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
+    var unused_direction = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : undefined;
     var pitchObj;
 
     if (this.tonic === undefined) {
@@ -59516,19 +58111,24 @@ class ConcreteScale extends Scale {
   } // noinspection JSUnusedLocalSymbols
 
 
-  pitchFromDegree(degree, unused_minPitch, unused_maxPitch, unused_direction, unused_equateTermini) {
+  pitchFromDegree(degree) {
+    var unused_minPitch = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
+    var unused_maxPitch = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : undefined;
+    var unused_direction = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : undefined;
+    var unused_equateTermini = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : undefined;
     return this.abstract.getPitchFromNodeDegree(this.tonic, this.abstract.tonicDegree, degree);
   } // noinspection JSUnusedLocalSymbols
 
 
-  getScaleDegreeFromPitch(pitchTarget, unused_direction, unused_comparisonAttribute) {
+  getScaleDegreeFromPitch(pitchTarget) {
+    var unused_direction = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
+    var unused_comparisonAttribute = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : undefined;
     return this.abstract.getRelativeNodeDegree(this.tonic, this.abstract.tonicDegree, pitchTarget);
   }
 
 }
 /**
  * @memberOf music21.scale
- * @extends music21.scale.ConcreteScale
  */
 
 class DiatonicScale extends ConcreteScale {
@@ -59546,7 +58146,6 @@ class DiatonicScale extends ConcreteScale {
 }
 /**
  * @memberOf music21.scale
- * @extends music21.scale.DiatonicScale
  */
 
 class MajorScale extends DiatonicScale {
@@ -59558,14 +58157,12 @@ class MajorScale extends DiatonicScale {
     super(tonic); // a.k.a. ^2 :-)
 
     this.type = 'major';
-
-    this.abstract._buildNetwork(this.type);
+    this.abstract.buildNetwork(this.type);
   }
 
 }
 /**
  * @memberOf music21.scale
- * @extends music21.scale.DiatonicScale
  */
 
 class MinorScale extends DiatonicScale {
@@ -59577,14 +58174,12 @@ class MinorScale extends DiatonicScale {
     super(tonic); // a.k.a. ^2 :-)
 
     this.type = 'minor';
-
-    this.abstract._buildNetwork(this.type);
+    this.abstract.buildNetwork(this.type);
   }
 
 }
 /**
  * @memberOf music21.scale
- * @extends music21.scale.ConcreteScale
  */
 
 class HarmonicMinorScale extends ConcreteScale {
@@ -59602,7 +58197,6 @@ class HarmonicMinorScale extends ConcreteScale {
 }
 /**
  * @memberOf music21.scale
- * @extends music21.scale.ConcreteScale
  */
 
 class AscendingMelodicMinorScale extends ConcreteScale {
@@ -59623,10 +58217,10 @@ class AscendingMelodicMinorScale extends ConcreteScale {
  *
  * @memberOf music21.scale
  * @function music21.scale.SimpleDiatonicScale
- * @param {music21.pitch.Pitch} [tonic]
+ * @param {pitch.Pitch} [tonic]
  * @param {Array<string>} scaleSteps - an array of diatonic prefixes,
  *     generally 'M' (major) or 'm' (minor) describing the seconds.
- * @returns {Array<music21.pitch.Pitch>} an octave of scale objects.
+ * @returns {Array<pitch.Pitch>} an octave of scale objects.
  */
 
 function SimpleDiatonicScale(tonic, scaleSteps) {
@@ -59641,11 +58235,6 @@ function SimpleDiatonicScale(tonic, scaleSteps) {
   }
 
   var gi = new _interval__WEBPACK_IMPORTED_MODULE_12__["GenericInterval"](2);
-  /**
-   *
-   * @type {music21.pitch.Pitch[]}
-   */
-
   var pitches = [tonic];
   var lastPitch = tonic;
 
@@ -59669,8 +58258,8 @@ function SimpleDiatonicScale(tonic, scaleSteps) {
  *
  * @memberOf music21.scale
  * @function music21.scale.ScaleSimpleMajor
- * @param {music21.pitch.Pitch} tonic
- * @returns {Array<music21.pitch.Pitch>} an octave of scale objects.
+ * @param {pitch.Pitch} tonic
+ * @returns {Array<pitch.Pitch>} an octave of scale objects.
  */
 
 function ScaleSimpleMajor(tonic) {
@@ -59682,11 +58271,11 @@ function ScaleSimpleMajor(tonic) {
  *
  * @memberOf music21.scale
  * @function music21.scale.ScaleSimpleMinor
- * @param {music21.pitch.Pitch} tonic
+ * @param {pitch.Pitch} tonic
  * @param {string} [minorType='natural'] - 'harmonic', 'harmonic-minor',
  *     'melodic', 'melodic-minor', 'melodic-minor-ascending',
  *     'melodic-ascending' or other (=natural/melodic-descending)
- * @returns {Array<music21.pitch.Pitch>} an octave of scale objects.
+ * @returns {Array<pitch.Pitch>} an octave of scale objects.
  */
 
 function ScaleSimpleMinor(tonic, minorType) {
@@ -59710,9 +58299,9 @@ function ScaleSimpleMinor(tonic, minorType) {
 
 /***/ }),
 
-/***/ "./src/music21/sites.js":
+/***/ "./src/music21/sites.ts":
 /*!******************************!*\
-  !*** ./src/music21/sites.js ***!
+  !*** ./src/music21/sites.ts ***!
   \******************************/
 /*! exports provided: SitesException, SiteRef, getId, Sites */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -59753,7 +58342,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_13___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_13__);
 /* harmony import */ var regenerator_runtime_runtime__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! regenerator-runtime/runtime */ "./node_modules/regenerator-runtime/runtime.js");
 /* harmony import */ var regenerator_runtime_runtime__WEBPACK_IMPORTED_MODULE_14___default = /*#__PURE__*/__webpack_require__.n(regenerator_runtime_runtime__WEBPACK_IMPORTED_MODULE_14__);
-/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./common */ "./src/music21/common.js");
+/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./common */ "./src/music21/common.ts");
 /* harmony import */ var _exceptions21__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ./exceptions21 */ "./src/music21/exceptions21.ts");
 
 
@@ -59809,19 +58398,9 @@ class SitesException extends _exceptions21__WEBPACK_IMPORTED_MODULE_16__["Music2
  */
 
 class SiteRef {
-  /**
-   * @property {boolean} isDead
-   * @property {string|undefined} classString
-   * @property {boolean|number} globalSiteIndex
-   * @property {number|undefined} siteIndex
-   * @property {music21.stream.Stream|undefined} site
-   */
   constructor() {
     this.isDead = false;
-    this.classString = undefined;
     this.globalSiteIndex = false;
-    this.siteIndex = undefined;
-    this.site = undefined;
   }
 
 }
@@ -59855,26 +58434,15 @@ function getId(obj) {
 
 class Sites {
   constructor() {
-    this.siteDict = new Map();
-    this.siteDict.set(_NoneSiteRef.siteIndex, _NoneSiteRef);
     this._siteIndex = 0;
     this._lastID = -1;
+    this.siteDict = new Map();
+    this.siteDict.set(_NoneSiteRef.siteIndex, _NoneSiteRef);
   }
-  /**
-   *
-   * @returns {number}
-   */
-
 
   get length() {
     return this.siteDict.size;
   }
-  /**
-   *
-   * @param {music21.stream.Stream} [checkSite]
-   * @returns {boolean}
-   */
-
 
   includes(checkSite) {
     // noinspection JSUnusedLocalSymbols
@@ -59911,9 +58479,7 @@ class Sites {
   }
   /**
    *
-   * @param {boolean} [newFirst=true]
    * @returns {Array<*>}
-   * @private
    */
 
 
@@ -59957,7 +58523,10 @@ class Sites {
     return post.map(innerList => innerList[1]);
   }
 
-  add(obj, idKey, classString) {
+  add(obj) {
+    var idKey = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
+    var classString = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : undefined;
+
     if (idKey === undefined && obj !== undefined) {
       idKey = getId(obj);
     }
@@ -59997,9 +58566,7 @@ class Sites {
     }
   }
   /**
-   *
    * @param obj
-   * @returns {boolean}
    */
 
 
@@ -60019,11 +58586,6 @@ class Sites {
     this._lastID = -1;
   }
   /**
-   *
-   * @param {boolean|string} [sortByCreationTime=false]
-   * @param {music21.stream.Stream|undefined} [priorityTarget]
-   * @param {boolean} [excludeNone=false]
-   * @returns {IterableIterator<music21.stream.Stream|undefined>}
    */
 
 
@@ -60158,18 +58720,10 @@ class Sites {
       })()
     );
   }
-  /**
-   *
-   * @param {boolean} [sortByCreationTime=false]
-   * @param {music21.stream.Stream} [priorityTarget]
-   * @param {boolean} [excludeNone=false]
-   * @returns {Array<(music21.stream.Stream|undefined)>}
-   */
-
 
   get() {
     var sortByCreationTime = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
-    var priorityTarget = arguments.length > 1 ? arguments[1] : undefined;
+    var priorityTarget = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
     var excludeNone = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
     var post = Array.from(this.yieldSites(sortByCreationTime, priorityTarget, excludeNone)); // we do this resorting again, because the priority target might not match id and we
     // want to be extra safe.  If you want fast, use .yieldSites
@@ -60229,11 +58783,12 @@ class Sites {
    *
    * @param {string} className
    * @param {Object} [options]
-   * @returns {music21.stream.Stream}
+   * @returns {Stream}
    */
 
 
-  getObjByClass(className, options) {
+  getObjByClass(className) {
+    var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
     var params = {
       callerFirst: this,
       sortByCreationTime: false,
@@ -60283,9 +58838,9 @@ class Sites {
 
 /***/ }),
 
-/***/ "./src/music21/stream.js":
+/***/ "./src/music21/stream.ts":
 /*!*******************************!*\
-  !*** ./src/music21/stream.js ***!
+  !*** ./src/music21/stream.ts ***!
   \*******************************/
 /*! exports provided: filters, iterator, StreamException, Stream, Voice, Measure, Part, Score, OffsetMap */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -60301,66 +58856,61 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "OffsetMap", function() { return OffsetMap; });
 /* harmony import */ var core_js_modules_es_symbol_description__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es.symbol.description */ "./node_modules/core-js/modules/es.symbol.description.js");
 /* harmony import */ var core_js_modules_es_symbol_description__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_symbol_description__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var core_js_modules_es_array_filter__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! core-js/modules/es.array.filter */ "./node_modules/core-js/modules/es.array.filter.js");
-/* harmony import */ var core_js_modules_es_array_filter__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_filter__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var core_js_modules_es_array_flat__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! core-js/modules/es.array.flat */ "./node_modules/core-js/modules/es.array.flat.js");
-/* harmony import */ var core_js_modules_es_array_flat__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_flat__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var core_js_modules_es_array_includes__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! core-js/modules/es.array.includes */ "./node_modules/core-js/modules/es.array.includes.js");
-/* harmony import */ var core_js_modules_es_array_includes__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_includes__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var core_js_modules_es_array_index_of__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! core-js/modules/es.array.index-of */ "./node_modules/core-js/modules/es.array.index-of.js");
-/* harmony import */ var core_js_modules_es_array_index_of__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_index_of__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var core_js_modules_es_array_iterator__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! core-js/modules/es.array.iterator */ "./node_modules/core-js/modules/es.array.iterator.js");
-/* harmony import */ var core_js_modules_es_array_iterator__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_iterator__WEBPACK_IMPORTED_MODULE_5__);
-/* harmony import */ var core_js_modules_es_array_map__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! core-js/modules/es.array.map */ "./node_modules/core-js/modules/es.array.map.js");
-/* harmony import */ var core_js_modules_es_array_map__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_map__WEBPACK_IMPORTED_MODULE_6__);
-/* harmony import */ var core_js_modules_es_array_slice__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! core-js/modules/es.array.slice */ "./node_modules/core-js/modules/es.array.slice.js");
-/* harmony import */ var core_js_modules_es_array_slice__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_slice__WEBPACK_IMPORTED_MODULE_7__);
-/* harmony import */ var core_js_modules_es_array_sort__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! core-js/modules/es.array.sort */ "./node_modules/core-js/modules/es.array.sort.js");
-/* harmony import */ var core_js_modules_es_array_sort__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_sort__WEBPACK_IMPORTED_MODULE_8__);
-/* harmony import */ var core_js_modules_es_array_splice__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! core-js/modules/es.array.splice */ "./node_modules/core-js/modules/es.array.splice.js");
-/* harmony import */ var core_js_modules_es_array_splice__WEBPACK_IMPORTED_MODULE_9___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_splice__WEBPACK_IMPORTED_MODULE_9__);
-/* harmony import */ var core_js_modules_es_array_unscopables_flat__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! core-js/modules/es.array.unscopables.flat */ "./node_modules/core-js/modules/es.array.unscopables.flat.js");
-/* harmony import */ var core_js_modules_es_array_unscopables_flat__WEBPACK_IMPORTED_MODULE_10___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_unscopables_flat__WEBPACK_IMPORTED_MODULE_10__);
-/* harmony import */ var core_js_modules_es_object_entries__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! core-js/modules/es.object.entries */ "./node_modules/core-js/modules/es.object.entries.js");
-/* harmony import */ var core_js_modules_es_object_entries__WEBPACK_IMPORTED_MODULE_11___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_object_entries__WEBPACK_IMPORTED_MODULE_11__);
-/* harmony import */ var core_js_modules_es_object_get_own_property_descriptors__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! core-js/modules/es.object.get-own-property-descriptors */ "./node_modules/core-js/modules/es.object.get-own-property-descriptors.js");
-/* harmony import */ var core_js_modules_es_object_get_own_property_descriptors__WEBPACK_IMPORTED_MODULE_12___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_object_get_own_property_descriptors__WEBPACK_IMPORTED_MODULE_12__);
-/* harmony import */ var core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! core-js/modules/es.regexp.to-string */ "./node_modules/core-js/modules/es.regexp.to-string.js");
-/* harmony import */ var core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_13___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_13__);
-/* harmony import */ var core_js_modules_es_string_includes__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! core-js/modules/es.string.includes */ "./node_modules/core-js/modules/es.string.includes.js");
-/* harmony import */ var core_js_modules_es_string_includes__WEBPACK_IMPORTED_MODULE_14___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_includes__WEBPACK_IMPORTED_MODULE_14__);
-/* harmony import */ var core_js_modules_es_string_replace__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! core-js/modules/es.string.replace */ "./node_modules/core-js/modules/es.string.replace.js");
-/* harmony import */ var core_js_modules_es_string_replace__WEBPACK_IMPORTED_MODULE_15___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_replace__WEBPACK_IMPORTED_MODULE_15__);
-/* harmony import */ var core_js_modules_es_weak_map__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! core-js/modules/es.weak-map */ "./node_modules/core-js/modules/es.weak-map.js");
-/* harmony import */ var core_js_modules_es_weak_map__WEBPACK_IMPORTED_MODULE_16___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_weak_map__WEBPACK_IMPORTED_MODULE_16__);
-/* harmony import */ var core_js_modules_web_dom_collections_for_each__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! core-js/modules/web.dom-collections.for-each */ "./node_modules/core-js/modules/web.dom-collections.for-each.js");
-/* harmony import */ var core_js_modules_web_dom_collections_for_each__WEBPACK_IMPORTED_MODULE_17___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_for_each__WEBPACK_IMPORTED_MODULE_17__);
-/* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! core-js/modules/web.dom-collections.iterator */ "./node_modules/core-js/modules/web.dom-collections.iterator.js");
-/* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_18___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_18__);
-/* harmony import */ var regenerator_runtime_runtime__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! regenerator-runtime/runtime */ "./node_modules/regenerator-runtime/runtime.js");
-/* harmony import */ var regenerator_runtime_runtime__WEBPACK_IMPORTED_MODULE_19___default = /*#__PURE__*/__webpack_require__.n(regenerator_runtime_runtime__WEBPACK_IMPORTED_MODULE_19__);
-/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
-/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_20___default = /*#__PURE__*/__webpack_require__.n(jquery__WEBPACK_IMPORTED_MODULE_20__);
-/* harmony import */ var midicube__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(/*! midicube */ "./node_modules/midicube/releases/midicube.js");
-/* harmony import */ var midicube__WEBPACK_IMPORTED_MODULE_21___default = /*#__PURE__*/__webpack_require__.n(midicube__WEBPACK_IMPORTED_MODULE_21__);
-/* harmony import */ var _exceptions21__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__(/*! ./exceptions21 */ "./src/music21/exceptions21.ts");
-/* harmony import */ var _debug__WEBPACK_IMPORTED_MODULE_23__ = __webpack_require__(/*! ./debug */ "./src/music21/debug.js");
-/* harmony import */ var _base__WEBPACK_IMPORTED_MODULE_24__ = __webpack_require__(/*! ./base */ "./src/music21/base.ts");
-/* harmony import */ var _beam__WEBPACK_IMPORTED_MODULE_25__ = __webpack_require__(/*! ./beam */ "./src/music21/beam.js");
-/* harmony import */ var _clef__WEBPACK_IMPORTED_MODULE_26__ = __webpack_require__(/*! ./clef */ "./src/music21/clef.js");
-/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_27__ = __webpack_require__(/*! ./common */ "./src/music21/common.js");
-/* harmony import */ var _duration__WEBPACK_IMPORTED_MODULE_28__ = __webpack_require__(/*! ./duration */ "./src/music21/duration.js");
-/* harmony import */ var _instrument__WEBPACK_IMPORTED_MODULE_29__ = __webpack_require__(/*! ./instrument */ "./src/music21/instrument.js");
-/* harmony import */ var _meter__WEBPACK_IMPORTED_MODULE_30__ = __webpack_require__(/*! ./meter */ "./src/music21/meter.js");
-/* harmony import */ var _note__WEBPACK_IMPORTED_MODULE_31__ = __webpack_require__(/*! ./note */ "./src/music21/note.js");
-/* harmony import */ var _pitch__WEBPACK_IMPORTED_MODULE_32__ = __webpack_require__(/*! ./pitch */ "./src/music21/pitch.js");
-/* harmony import */ var _renderOptions__WEBPACK_IMPORTED_MODULE_33__ = __webpack_require__(/*! ./renderOptions */ "./src/music21/renderOptions.js");
-/* harmony import */ var _vfShow__WEBPACK_IMPORTED_MODULE_34__ = __webpack_require__(/*! ./vfShow */ "./src/music21/vfShow.js");
-/* harmony import */ var _musicxml_m21ToXml__WEBPACK_IMPORTED_MODULE_35__ = __webpack_require__(/*! ./musicxml/m21ToXml */ "./src/music21/musicxml/m21ToXml.js");
-/* harmony import */ var _stream_filters__WEBPACK_IMPORTED_MODULE_36__ = __webpack_require__(/*! ./stream/filters */ "./src/music21/stream/filters.js");
-/* harmony reexport (module object) */ __webpack_require__.d(__webpack_exports__, "filters", function() { return _stream_filters__WEBPACK_IMPORTED_MODULE_36__; });
-/* harmony import */ var _stream_iterator__WEBPACK_IMPORTED_MODULE_37__ = __webpack_require__(/*! ./stream/iterator */ "./src/music21/stream/iterator.js");
-/* harmony reexport (module object) */ __webpack_require__.d(__webpack_exports__, "iterator", function() { return _stream_iterator__WEBPACK_IMPORTED_MODULE_37__; });
+/* harmony import */ var core_js_modules_es_array_flat__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! core-js/modules/es.array.flat */ "./node_modules/core-js/modules/es.array.flat.js");
+/* harmony import */ var core_js_modules_es_array_flat__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_flat__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var core_js_modules_es_array_includes__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! core-js/modules/es.array.includes */ "./node_modules/core-js/modules/es.array.includes.js");
+/* harmony import */ var core_js_modules_es_array_includes__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_includes__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var core_js_modules_es_array_index_of__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! core-js/modules/es.array.index-of */ "./node_modules/core-js/modules/es.array.index-of.js");
+/* harmony import */ var core_js_modules_es_array_index_of__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_index_of__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var core_js_modules_es_array_iterator__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! core-js/modules/es.array.iterator */ "./node_modules/core-js/modules/es.array.iterator.js");
+/* harmony import */ var core_js_modules_es_array_iterator__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_iterator__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var core_js_modules_es_array_map__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! core-js/modules/es.array.map */ "./node_modules/core-js/modules/es.array.map.js");
+/* harmony import */ var core_js_modules_es_array_map__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_map__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var core_js_modules_es_array_slice__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! core-js/modules/es.array.slice */ "./node_modules/core-js/modules/es.array.slice.js");
+/* harmony import */ var core_js_modules_es_array_slice__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_slice__WEBPACK_IMPORTED_MODULE_6__);
+/* harmony import */ var core_js_modules_es_array_sort__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! core-js/modules/es.array.sort */ "./node_modules/core-js/modules/es.array.sort.js");
+/* harmony import */ var core_js_modules_es_array_sort__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_sort__WEBPACK_IMPORTED_MODULE_7__);
+/* harmony import */ var core_js_modules_es_array_splice__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! core-js/modules/es.array.splice */ "./node_modules/core-js/modules/es.array.splice.js");
+/* harmony import */ var core_js_modules_es_array_splice__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_splice__WEBPACK_IMPORTED_MODULE_8__);
+/* harmony import */ var core_js_modules_es_array_unscopables_flat__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! core-js/modules/es.array.unscopables.flat */ "./node_modules/core-js/modules/es.array.unscopables.flat.js");
+/* harmony import */ var core_js_modules_es_array_unscopables_flat__WEBPACK_IMPORTED_MODULE_9___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_unscopables_flat__WEBPACK_IMPORTED_MODULE_9__);
+/* harmony import */ var core_js_modules_es_object_entries__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! core-js/modules/es.object.entries */ "./node_modules/core-js/modules/es.object.entries.js");
+/* harmony import */ var core_js_modules_es_object_entries__WEBPACK_IMPORTED_MODULE_10___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_object_entries__WEBPACK_IMPORTED_MODULE_10__);
+/* harmony import */ var core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! core-js/modules/es.regexp.to-string */ "./node_modules/core-js/modules/es.regexp.to-string.js");
+/* harmony import */ var core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_11___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_11__);
+/* harmony import */ var core_js_modules_es_string_includes__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! core-js/modules/es.string.includes */ "./node_modules/core-js/modules/es.string.includes.js");
+/* harmony import */ var core_js_modules_es_string_includes__WEBPACK_IMPORTED_MODULE_12___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_includes__WEBPACK_IMPORTED_MODULE_12__);
+/* harmony import */ var core_js_modules_es_string_replace__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! core-js/modules/es.string.replace */ "./node_modules/core-js/modules/es.string.replace.js");
+/* harmony import */ var core_js_modules_es_string_replace__WEBPACK_IMPORTED_MODULE_13___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_replace__WEBPACK_IMPORTED_MODULE_13__);
+/* harmony import */ var core_js_modules_es_weak_map__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! core-js/modules/es.weak-map */ "./node_modules/core-js/modules/es.weak-map.js");
+/* harmony import */ var core_js_modules_es_weak_map__WEBPACK_IMPORTED_MODULE_14___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_weak_map__WEBPACK_IMPORTED_MODULE_14__);
+/* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! core-js/modules/web.dom-collections.iterator */ "./node_modules/core-js/modules/web.dom-collections.iterator.js");
+/* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_15___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_15__);
+/* harmony import */ var regenerator_runtime_runtime__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! regenerator-runtime/runtime */ "./node_modules/regenerator-runtime/runtime.js");
+/* harmony import */ var regenerator_runtime_runtime__WEBPACK_IMPORTED_MODULE_16___default = /*#__PURE__*/__webpack_require__.n(regenerator_runtime_runtime__WEBPACK_IMPORTED_MODULE_16__);
+/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
+/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_17___default = /*#__PURE__*/__webpack_require__.n(jquery__WEBPACK_IMPORTED_MODULE_17__);
+/* harmony import */ var midicube__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! midicube */ "./node_modules/midicube/releases/midicube.js");
+/* harmony import */ var midicube__WEBPACK_IMPORTED_MODULE_18___default = /*#__PURE__*/__webpack_require__.n(midicube__WEBPACK_IMPORTED_MODULE_18__);
+/* harmony import */ var _exceptions21__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! ./exceptions21 */ "./src/music21/exceptions21.ts");
+/* harmony import */ var _debug__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(/*! ./debug */ "./src/music21/debug.ts");
+/* harmony import */ var _base__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(/*! ./base */ "./src/music21/base.ts");
+/* harmony import */ var _beam__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__(/*! ./beam */ "./src/music21/beam.ts");
+/* harmony import */ var _clef__WEBPACK_IMPORTED_MODULE_23__ = __webpack_require__(/*! ./clef */ "./src/music21/clef.ts");
+/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_24__ = __webpack_require__(/*! ./common */ "./src/music21/common.ts");
+/* harmony import */ var _duration__WEBPACK_IMPORTED_MODULE_25__ = __webpack_require__(/*! ./duration */ "./src/music21/duration.ts");
+/* harmony import */ var _instrument__WEBPACK_IMPORTED_MODULE_26__ = __webpack_require__(/*! ./instrument */ "./src/music21/instrument.ts");
+/* harmony import */ var _meter__WEBPACK_IMPORTED_MODULE_27__ = __webpack_require__(/*! ./meter */ "./src/music21/meter.ts");
+/* harmony import */ var _note__WEBPACK_IMPORTED_MODULE_28__ = __webpack_require__(/*! ./note */ "./src/music21/note.ts");
+/* harmony import */ var _pitch__WEBPACK_IMPORTED_MODULE_29__ = __webpack_require__(/*! ./pitch */ "./src/music21/pitch.ts");
+/* harmony import */ var _renderOptions__WEBPACK_IMPORTED_MODULE_30__ = __webpack_require__(/*! ./renderOptions */ "./src/music21/renderOptions.ts");
+/* harmony import */ var _tempo__WEBPACK_IMPORTED_MODULE_31__ = __webpack_require__(/*! ./tempo */ "./src/music21/tempo.ts");
+/* harmony import */ var _vfShow__WEBPACK_IMPORTED_MODULE_32__ = __webpack_require__(/*! ./vfShow */ "./src/music21/vfShow.ts");
+/* harmony import */ var _musicxml_m21ToXml__WEBPACK_IMPORTED_MODULE_33__ = __webpack_require__(/*! ./musicxml/m21ToXml */ "./src/music21/musicxml/m21ToXml.ts");
+/* harmony import */ var _stream_filters__WEBPACK_IMPORTED_MODULE_34__ = __webpack_require__(/*! ./stream/filters */ "./src/music21/stream/filters.ts");
+/* harmony reexport (module object) */ __webpack_require__.d(__webpack_exports__, "filters", function() { return _stream_filters__WEBPACK_IMPORTED_MODULE_34__; });
+/* harmony import */ var _stream_iterator__WEBPACK_IMPORTED_MODULE_35__ = __webpack_require__(/*! ./stream/iterator */ "./src/music21/stream/iterator.ts");
+/* harmony reexport (module object) */ __webpack_require__.d(__webpack_exports__, "iterator", function() { return _stream_iterator__WEBPACK_IMPORTED_MODULE_35__; });
 
 
 
@@ -60378,15 +58928,6 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-
-
-
-
-function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
-
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(source, true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(source).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
-
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest(); }
 
@@ -60395,6 +58936,8 @@ function _nonIterableRest() { throw new TypeError("Invalid attempt to destructur
 function _iterableToArrayLimit(arr, i) { if (!(Symbol.iterator in Object(arr) || Object.prototype.toString.call(arr) === "[object Arguments]")) { return; } var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
 
 function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+
+function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
 
 /**
  * music21j -- Javascript reimplementation of Core music21p features.
@@ -60443,6 +58986,7 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
 
 
+
  // eslint-disable-next-line import/no-cycle
 
 
@@ -60450,41 +58994,38 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
 
 
-class StreamException extends _exceptions21__WEBPACK_IMPORTED_MODULE_22__["Music21Exception"] {}
+class StreamException extends _exceptions21__WEBPACK_IMPORTED_MODULE_19__["Music21Exception"] {}
 
 function _exportMusicXMLAsText(s) {
-  var gox = new _musicxml_m21ToXml__WEBPACK_IMPORTED_MODULE_35__["GeneralObjectExporter"](s);
+  var gox = new _musicxml_m21ToXml__WEBPACK_IMPORTED_MODULE_33__["GeneralObjectExporter"](s);
   return gox.parse();
 }
 /**
  * A generic Stream class -- a holder for other music21 objects
- * Will be subclassed into {@link music21.stream.Score},
- * {@link music21.stream.Part},
- * {@link music21.stream.Measure},
- * {@link music21.stream.Voice}, but most functions will be found here.
+ * Will be subclassed into {@link Score},
+ * {@link Part},
+ * {@link Measure},
+ * {@link Voice}, but most functions will be found here.
  *
- * @class Stream
- * @memberof music21.stream
- *
- * @property {music21.base.Music21Object[]} elements - the elements in the stream.
+ * @property {base.Music21Object[]} elements - the elements in the stream.
  *     DO NOT MODIFY individual components (consider it like a Python tuple)
  * @property {number} length - (readonly) the number of elements in the stream.
- * @property {music21.duration.Duration} duration - the total duration of the stream's elements
+ * @property {Duration} duration - the total duration of the stream's elements
  * @property {number} highestTime -- the highest time point in the stream's elements
  * @property {music21.clef.Clef} clef - the clef for the Stream (if there is
  *     one; if there are multiple, then the first clef)
  * @property {music21.meter.TimeSignature} timeSignature - the first TimeSignature of the Stream
  * @property {music21.key.KeySignature} keySignature - the first KeySignature for the Stream
- * @property {music21.renderOptions.RenderOptions} renderOptions - an object
+ * @property {renderOptions.RenderOptions} renderOptions - an object
  *     specifying how to render the stream
- * @property {music21.stream.Stream} flat - (readonly) a flattened representation of the Stream
- * @property {music21.stream.Stream} notes - (readonly) the stream with
+ * @property {Stream} flat - (readonly) a flattened representation of the Stream
+ * @property {iterator.StreamIterator} notes - (readonly) the stream with
  *     only {@link music21.note.Note} and {@link music21.chord.Chord} objects included
- * @property {music21.stream.Stream} notesAndRests - (readonly) like notes but
+ * @property {iterator.StreamIterator} notesAndRests - (readonly) like notes but
  *     also with {@link music21.note.Rest} objects included
- * @property {music21.stream.Stream} parts - (readonly) a filter on the Stream
+ * @property {iterator.StreamIterator} parts - (readonly) a filter on the Stream
  *     to just get the parts (NON-recursive)
- * @property {music21.stream.Stream} measures - (readonly) a filter on the
+ * @property {iterator.StreamIterator} measures - (readonly) a filter on the
  *     Stream to just get the measures (NON-recursive)
  * @property {number} tempo - tempo in beats per minute (will become more
  *     sophisticated later, but for now the whole stream has one tempo
@@ -60503,24 +59044,40 @@ function _exportMusicXMLAsText(s) {
  */
 
 
-class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
-  static get className() {
-    return 'music21.stream.Stream';
-  }
-
+class Stream extends _base__WEBPACK_IMPORTED_MODULE_21__["Music21Object"] {
   constructor() {
-    super(); // class variables;
+    super(); // from music21p's core.py
+
+    this._offsetDict = new WeakMap();
+    this._elements = []; // TODO(msc): endElements
+
+    this.isSorted = true; // from music21p's __init__.py
+    // class attributes.
 
     this.isStream = true;
     this.isMeasure = false;
     this.classSortOrder = -20;
-    this.recursionType = 'elementsFirst';
-    this._duration = undefined;
-    this._elements = [];
-    this._offsetDict = new WeakMap();
+    this.recursionType = 'elementsFirst'; // this may change to an enum
+    // TODO(msc): _styleClass
+    // individual instance attributes
+    // TODO(msc): StreamStatus
+    // TODO(msc): _unlinkedDuration
+
     this.autoSort = true;
-    this.isSorted = true;
-    this.isFlat = true;
+    this.isFlat = true; // TODO(msc): definesExplicitSystemBreaks
+    // TODO(msc): definesExplicitPageBreaks
+    // TODO(msc): _atSoundingPitch
+    // TODO(msc): _mutable -- experimental
+    // music21j specific attributes NOT to remove:
+
+    this.activeVFStave = undefined;
+    this.activeVFRenderer = undefined;
+    this.changedCallbackFunction = undefined; // for editable svg objects
+    // music21j specific attributes eventually to remove:
+
+    this.storedVexflowStave = undefined; // cannot figure out diff w/ activeVFStave
+
+    this.activeNote = undefined;
     this._clef = undefined;
     this.displayClef = undefined;
     this._keySignature = undefined; // a music21.key.KeySignature object
@@ -60529,26 +59086,47 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
 
     this._instrument = undefined;
     this._autoBeam = undefined;
-    this.activeVFStave = undefined;
-    this.activeVFRenderer = undefined;
-    this.renderOptions = new _renderOptions__WEBPACK_IMPORTED_MODULE_33__["RenderOptions"]();
+    this.renderOptions = new _renderOptions__WEBPACK_IMPORTED_MODULE_30__["RenderOptions"]();
     this._tempo = undefined;
     this.staffLines = 5;
     this._stopPlaying = false;
-    this._allowMultipleSimultaneousPlays = true; // not implemented yet.
+    this._overriddenDuration = undefined;
+    this._cloneCallbacks.activeVexflowNote = false;
+    this._cloneCallbacks.storedVexflowStave = false;
+    this._cloneCallbacks._offsetDict = false;
 
-    this.changedCallbackFunction = undefined; // for editable svges
+    this._cloneCallbacks.renderOptions = function cloneRenderOptions(keyName, newObj, self, deep, memo) {
+      if (!deep) {
+        newObj.renderOptions = self.renderOptions;
+        return;
+      }
 
-    /**
-     * A function bound to the current stream that
-     * will changes the stream. Used in editableAccidentalDOM, among other places.
-     *
-     *      var can = s.appendNewDOM();
-     *      $(can).on('click', s.DOMChangerFunction);
-     *
-     * @param {MouseEvent|TouchEvent} e
-     * @returns {music21.base.Music21Object|undefined} - returns whatever changedCallbackFunction does.
-     */
+      var newRenderOptions = JSON.parse(JSON.stringify(self.renderOptions));
+      newRenderOptions.events = _extends({}, self.renderOptions.events);
+      newObj.renderOptions = newRenderOptions;
+    };
+
+    this._cloneCallbacks._elements = function cloneElements(keyName, newObj, self, deep, memo) {
+      if (!deep) {
+        newObj.elements = self;
+        return;
+      }
+
+      newObj.clear();
+
+      for (var j = 0; j < self._elements.length; j++) {
+        var el = self._elements[j];
+        var elOffset = self.elementOffset(el); // console.log('cloning el: ', el.name);
+
+        var elCopy = el.clone(true, memo); // there may be more efficient ways to do this,
+        // but for now, safety trumps efficiency.
+
+        newObj.insert(elOffset, elCopy, {
+          ignoreSort: true
+        });
+      } // isSorted will be cloned elsewhere.
+
+    };
 
     this.DOMChangerFunction = e => {
       var canvasOrSVGElement = e.currentTarget;
@@ -60563,7 +59141,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
           foundNote = _this$findNoteForClic2[1];
 
       if (foundNote === undefined) {
-        if (_debug__WEBPACK_IMPORTED_MODULE_23__["debug"]) {
+        if (_debug__WEBPACK_IMPORTED_MODULE_20__["debug"]) {
           console.log('No note found');
         }
 
@@ -60573,9 +59151,13 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
       return this.noteChanged(clickedDiatonicNoteNum, foundNote, canvasOrSVGElement);
     };
   }
+
+  static get className() {
+    return 'music21.stream.Stream';
+  }
   /**
    *
-   * @returns {IterableIterator<music21.base.Music21Object>}
+   * @returns {IterableIterator<base.Music21Object>}
    */
 
 
@@ -60653,15 +59235,16 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
   }
 
   get duration() {
-    if (this._duration !== undefined) {
-      return this._duration;
+    if (this._overriddenDuration instanceof _duration__WEBPACK_IMPORTED_MODULE_25__["Duration"]) {
+      // return new duration.Duration(32.0);
+      return this._overriddenDuration;
     }
 
-    return new _duration__WEBPACK_IMPORTED_MODULE_28__["Duration"](this.highestTime);
+    return new _duration__WEBPACK_IMPORTED_MODULE_25__["Duration"](this.highestTime);
   }
 
   set duration(newDuration) {
-    this._duration = newDuration;
+    this._overriddenDuration = newDuration;
   }
 
   get highestTime() {
@@ -60710,55 +59293,34 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
   }
 
   _getFlatOrSemiFlat(retainContainers) {
-    var newSt = this.clone(false);
+    var newSt = this.clone(false); // console.log('done cloning...');
 
     if (!this.isFlat) {
-      newSt.elements = [];
+      // not the most efficient, but safety counts for a lot...
+      // namely, do not set inner streams activeSites to be
+      // in things that they won't have later.
+      newSt.clear();
+      var ri = new _stream_iterator__WEBPACK_IMPORTED_MODULE_35__["RecursiveIterator"](this, {
+        restoreActiveSites: false,
+        includeSelf: false,
+        ignoreSorting: true
+      });
       var _iteratorNormalCompletion3 = true;
       var _didIteratorError3 = false;
       var _iteratorError3 = undefined;
 
       try {
-        for (var _iterator3 = this[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
-          var el = _step3.value;
+        for (var _iterator3 = ri[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+          var e = _step3.value;
 
-          if (el.isStream) {
-            if (retainContainers) {
-              newSt.append(el);
-            }
-
-            var offsetShift = this.elementOffset(el); // console.log('offsetShift', offsetShift, el.classes[el.classes.length -1]);
-
-            var elFlat = el._getFlatOrSemiFlat(retainContainers);
-
-            var _iteratorNormalCompletion4 = true;
-            var _didIteratorError4 = false;
-            var _iteratorError4 = undefined;
-
-            try {
-              for (var _iterator4 = elFlat[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
-                var elFlatElement = _step4.value;
-                // offset should NOT be null because already in Stream
-                var elFlatElementOffset = elFlat.elementOffset(elFlatElement);
-                newSt.insert(elFlatElementOffset + offsetShift, elFlatElement);
-              }
-            } catch (err) {
-              _didIteratorError4 = true;
-              _iteratorError4 = err;
-            } finally {
-              try {
-                if (!_iteratorNormalCompletion4 && _iterator4.return != null) {
-                  _iterator4.return();
-                }
-              } finally {
-                if (_didIteratorError4) {
-                  throw _iteratorError4;
-                }
-              }
-            }
-          } else {
-            newSt.insert(this.elementOffset(el), el);
+          if (e.isStream && !retainContainers) {
+            continue;
           }
+
+          newSt.insert(ri.currentHierarchyOffset(), e, {
+            setActiveSite: false,
+            ignoreSort: true
+          });
         }
       } catch (err) {
         _didIteratorError3 = true;
@@ -60809,6 +59371,86 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
   set tempo(newTempo) {
     this._tempo = newTempo;
   }
+  /**
+   * Return an array of the outer bounds of each MetronomeMark in the stream.
+   * [offsetStart, offsetEnd, tempo.MetronomeMark]
+   *
+   * @returns {Array<number|music21.tempo.MetronomeMark>}
+   */
+
+
+  _metronomeMarkBoundaries() {
+    var mmBoundaries = [];
+    var thisFlat = this.flat;
+    var metronomeMarks = thisFlat.getElementsByClass('MetronomeMark');
+    var highestTime = thisFlat.highestTime;
+    var lowestOffset = 0;
+    var mmDefault = new _tempo__WEBPACK_IMPORTED_MODULE_31__["MetronomeMark"]({
+      number: 120
+    });
+
+    if (!metronomeMarks.length) {
+      mmBoundaries.push([lowestOffset, highestTime, mmDefault]);
+    } else if (metronomeMarks.length === 1) {
+      var metronomeMark = metronomeMarks.get(0);
+      var offset = metronomeMark.getOffsetBySite(thisFlat);
+
+      if (offset > lowestOffset) {
+        mmBoundaries.push([lowestOffset, offset, mmDefault]);
+        mmBoundaries.push([offset, highestTime, metronomeMark]);
+      } else {
+        mmBoundaries.push([lowestOffset, highestTime, metronomeMark]);
+      }
+    } else {
+      var offsetPairs = [];
+
+      for (var i = 0; i < metronomeMarks.length; i++) {
+        var _metronomeMark = metronomeMarks.get(i);
+
+        offsetPairs.push([_metronomeMark.getOffsetBySite(thisFlat), _metronomeMark]);
+      }
+
+      if (offsetPairs[0][0] > lowestOffset) {
+        mmBoundaries.push([lowestOffset, offsetPairs[0][0], mmDefault]);
+      }
+
+      offsetPairs.forEach((offsetPair, i) => {
+        if (i === offsetPairs.length - 1) {
+          mmBoundaries.push([offsetPair[0], highestTime, offsetPair[1]]);
+        } else {
+          mmBoundaries.push([offsetPair[0], offsetPairs[i + 1][0], offsetPair[1]]);
+        }
+      });
+    }
+
+    return mmBoundaries;
+  }
+  /**
+   * Return the average tempo within the span indicated by offset start and end.
+   *
+   * @param {number} oStart - offset start
+   * @param {number} oEnd - offset end
+   * @returns {number}
+   */
+
+
+  _averageTempo(oStart, oEnd) {
+    var overallDuration = oEnd - oStart;
+    return this._metronomeMarkBoundaries().reduce((tempo, mm) => {
+      if (mm[0] >= oStart && mm[0] < oEnd) {
+        var overlapDur = mm[1] <= oEnd ? mm[1] - mm[0] : oEnd - mm[0];
+        tempo += overlapDur / overallDuration * mm[2].number;
+      } else if (mm[1] > oStart && mm[1] <= oEnd) {
+        var _overlapDur = mm[0] >= oStart ? mm[1] - mm[0] : mm[1] - oStart;
+
+        tempo += _overlapDur / overallDuration * mm[2].number;
+      } else if (mm[0] <= oStart && mm[1] >= oEnd) {
+        tempo = mm[2].number;
+      }
+
+      return tempo;
+    }, 0);
+  }
 
   get instrument() {
     if (this._instrument === undefined && this.activeSite !== undefined) {
@@ -60820,11 +59462,20 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
 
   set instrument(newInstrument) {
     if (typeof newInstrument === 'string') {
-      newInstrument = new _instrument__WEBPACK_IMPORTED_MODULE_29__["Instrument"](newInstrument);
+      newInstrument = new _instrument__WEBPACK_IMPORTED_MODULE_26__["Instrument"](newInstrument);
     }
 
     this._instrument = newInstrument;
   }
+  /**
+   * specialContext gets from a private attribute or from zero-position
+   * or from site's first or special context.
+   *
+   * @param attr
+   * @returns {music21.base.Music21Object|undefined|*}
+   * @private
+   */
+
 
   _specialContext(attr) {
     var privAttr = '_' + attr;
@@ -60840,13 +59491,13 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
     //        }
 
 
-    var _iteratorNormalCompletion5 = true;
-    var _didIteratorError5 = false;
-    var _iteratorError5 = undefined;
+    var _iteratorNormalCompletion4 = true;
+    var _didIteratorError4 = false;
+    var _iteratorError4 = undefined;
 
     try {
-      for (var _iterator5 = this.sites.yieldSites()[Symbol.iterator](), _step5; !(_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done); _iteratorNormalCompletion5 = true) {
-        var site = _step5.value;
+      for (var _iterator4 = this.sites.yieldSites()[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
+        var site = _step4.value;
 
         if (site === undefined) {
           continue;
@@ -60863,16 +59514,16 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
         }
       }
     } catch (err) {
-      _didIteratorError5 = true;
-      _iteratorError5 = err;
+      _didIteratorError4 = true;
+      _iteratorError4 = err;
     } finally {
       try {
-        if (!_iteratorNormalCompletion5 && _iterator5.return != null) {
-          _iterator5.return();
+        if (!_iteratorNormalCompletion4 && _iterator4.return != null) {
+          _iterator4.return();
         }
       } finally {
-        if (_didIteratorError5) {
-          throw _iteratorError5;
+        if (_didIteratorError4) {
+          throw _iteratorError4;
         }
       }
     }
@@ -60901,7 +59552,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
   }
 
   get clef() {
-    return this.getSpecialContext('clef', true);
+    return this.getSpecialContext('clef', false);
   }
 
   set clef(newClef) {
@@ -60917,7 +59568,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
   }
 
   get keySignature() {
-    return this.getSpecialContext('keySignature', true);
+    return this.getSpecialContext('keySignature', false);
   }
 
   set keySignature(newKeySignature) {
@@ -60933,12 +59584,12 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
   }
 
   get timeSignature() {
-    return this.getSpecialContext('timeSignature', true);
+    return this.getSpecialContext('timeSignature', false);
   }
 
   set timeSignature(newTimeSignature) {
     if (typeof newTimeSignature === 'string') {
-      newTimeSignature = new _meter__WEBPACK_IMPORTED_MODULE_30__["TimeSignature"](newTimeSignature);
+      newTimeSignature = new _meter__WEBPACK_IMPORTED_MODULE_27__["TimeSignature"](newTimeSignature);
     }
 
     var oldTS = this._firstElementContext('timeSignature');
@@ -60991,8 +59642,18 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
   get length() {
     return this._elements.length;
   }
+  /**
+   * Note that a Stream is never returned from .elements,
+   * but TypeScript requires getter and setters to have the same
+   * function signature.
+   */
+
 
   get elements() {
+    if (!this.isSorted) {
+      this.sort();
+    }
+
     return this._elements;
   }
 
@@ -61003,28 +59664,28 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
     var i;
     var thisEl;
 
-    if (newElements.isStream === true) {
+    if (newElements instanceof Stream) {
       // iterate to set active site;
-      var _iteratorNormalCompletion6 = true;
-      var _didIteratorError6 = false;
-      var _iteratorError6 = undefined;
+      var _iteratorNormalCompletion5 = true;
+      var _didIteratorError5 = false;
+      var _iteratorError5 = undefined;
 
       try {
-        for (var _iterator6 = newElements[Symbol.iterator](), _step6; !(_iteratorNormalCompletion6 = (_step6 = _iterator6.next()).done); _iteratorNormalCompletion6 = true) {
-          var unused = _step6.value;
+        for (var _iterator5 = newElements[Symbol.iterator](), _step5; !(_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done); _iteratorNormalCompletion5 = true) {
+          var unused = _step5.value;
         } // eslint-disable-line no-empty
 
       } catch (err) {
-        _didIteratorError6 = true;
-        _iteratorError6 = err;
+        _didIteratorError5 = true;
+        _iteratorError5 = err;
       } finally {
         try {
-          if (!_iteratorNormalCompletion6 && _iterator6.return != null) {
-            _iterator6.return();
+          if (!_iteratorNormalCompletion5 && _iterator5.return != null) {
+            _iterator5.return();
           }
         } finally {
-          if (_didIteratorError6) {
-            throw _iteratorError6;
+          if (_didIteratorError5) {
+            throw _iteratorError5;
           }
         }
       }
@@ -61095,95 +59756,39 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
   }
 
   clear() {
+    var _iteratorNormalCompletion6 = true;
+    var _didIteratorError6 = false;
+    var _iteratorError6 = undefined;
+
+    try {
+      for (var _iterator6 = this._elements[Symbol.iterator](), _step6; !(_iteratorNormalCompletion6 = (_step6 = _iterator6.next()).done); _iteratorNormalCompletion6 = true) {
+        var e = _step6.value;
+
+        if (e.activeSite === this) {
+          e.activeSite = undefined;
+        }
+
+        e.sites.remove(this);
+      }
+    } catch (err) {
+      _didIteratorError6 = true;
+      _iteratorError6 = err;
+    } finally {
+      try {
+        if (!_iteratorNormalCompletion6 && _iterator6.return != null) {
+          _iterator6.return();
+        }
+      } finally {
+        if (_didIteratorError6) {
+          throw _iteratorError6;
+        }
+      }
+    }
+
     this._elements = [];
     this._offsetDict = new WeakMap();
     this.isFlat = true;
     this.isSorted = true;
-  }
-  /* override protoM21Object.clone() */
-
-
-  clone() {
-    var deep = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
-    var memo = arguments.length > 1 ? arguments[1] : undefined;
-    var ret = Object.create(this.constructor.prototype);
-
-    for (var key in this) {
-      if ({}.hasOwnProperty.call(this, key) === false) {
-        continue;
-      }
-
-      if (key === '_activeSite') {
-        ret[key] = this[key];
-      } else if (key === 'renderOptions') {
-        ret[key] = _common__WEBPACK_IMPORTED_MODULE_27__["merge"]({}, this[key]);
-      } else if (deep !== true && key === '_elements') {
-        ret[key] = this[key].slice(); // shallow copy...
-      } else if (deep !== true && key === '_offsetDict') {
-        ret._offsetDict = new WeakMap();
-        var _iteratorNormalCompletion7 = true;
-        var _didIteratorError7 = false;
-        var _iteratorError7 = undefined;
-
-        try {
-          for (var _iterator7 = this.elements[Symbol.iterator](), _step7; !(_iteratorNormalCompletion7 = (_step7 = _iterator7.next()).done); _iteratorNormalCompletion7 = true) {
-            var el = _step7.value;
-
-            ret._offsetDict.set(el, this._offsetDict.get(el));
-          }
-        } catch (err) {
-          _didIteratorError7 = true;
-          _iteratorError7 = err;
-        } finally {
-          try {
-            if (!_iteratorNormalCompletion7 && _iterator7.return != null) {
-              _iterator7.return();
-            }
-          } finally {
-            if (_didIteratorError7) {
-              throw _iteratorError7;
-            }
-          }
-        }
-      } else if (deep && (key === '_elements' || key === '_offsetDict')) {
-        if (key === '_elements') {
-          // console.log('got elements for deepcopy');
-          ret.clear();
-
-          for (var j = 0; j < this._elements.length; j++) {
-            var _el = this._elements[j]; // console.log('cloning el: ', el.name);
-
-            var elCopy = _el.clone(deep, memo);
-
-            ret._elements[j] = elCopy;
-
-            ret._offsetDict.set(elCopy, this._offsetDict.get(_el));
-
-            elCopy.activeSite = ret;
-          }
-        }
-      } else if (key === 'activeVexflowNote' || key === 'storedVexflowStave') {// do nothing -- do not copy vexflowNotes -- permanent recursion
-      } else if (key in this._cloneCallbacks) {
-        if (this._cloneCallbacks[key] === true) {
-          ret[key] = this[key];
-        } else if (this._cloneCallbacks[key] === false) {
-          ret[key] = undefined;
-        } else {
-          // call the cloneCallbacks function
-          this._cloneCallbacks[key](key, ret, this);
-        }
-      } else if (Object.getOwnPropertyDescriptor(this, key).get !== undefined || Object.getOwnPropertyDescriptor(this, key).set !== undefined) {// do nothing
-      } else if (typeof this[key] === 'function') {// do nothing -- events might not be copied.
-      } else if (this[key] !== null && this[key] !== undefined && this[key].isMusic21Object === true) {
-        // console.log('cloning...', key);
-        ret[key] = this[key].clone(deep);
-      } else {
-        ret[key] = this[key];
-      }
-    }
-
-    ret.coreElementsChanged();
-    return ret;
   }
 
   coreElementsChanged() {
@@ -61203,13 +59808,13 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
 
     if (updateIsFlat) {
       this.isFlat = true;
-      var _iteratorNormalCompletion8 = true;
-      var _didIteratorError8 = false;
-      var _iteratorError8 = undefined;
+      var _iteratorNormalCompletion7 = true;
+      var _didIteratorError7 = false;
+      var _iteratorError7 = undefined;
 
       try {
-        for (var _iterator8 = this._elements[Symbol.iterator](), _step8; !(_iteratorNormalCompletion8 = (_step8 = _iterator8.next()).done); _iteratorNormalCompletion8 = true) {
-          var e = _step8.value;
+        for (var _iterator7 = this._elements[Symbol.iterator](), _step7; !(_iteratorNormalCompletion7 = (_step7 = _iterator7.next()).done); _iteratorNormalCompletion7 = true) {
+          var e = _step7.value;
 
           if (e.isStream) {
             this.isFlat = false;
@@ -61217,16 +59822,16 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
           }
         }
       } catch (err) {
-        _didIteratorError8 = true;
-        _iteratorError8 = err;
+        _didIteratorError7 = true;
+        _iteratorError7 = err;
       } finally {
         try {
-          if (!_iteratorNormalCompletion8 && _iterator8.return != null) {
-            _iterator8.return();
+          if (!_iteratorNormalCompletion7 && _iterator7.return != null) {
+            _iterator7.return();
           }
         } finally {
-          if (_didIteratorError8) {
-            throw _iteratorError8;
+          if (_didIteratorError7) {
+            throw _iteratorError7;
           }
         }
       }
@@ -61245,14 +59850,14 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
         skipSelf = _ref2$skipSelf === void 0 ? true : _ref2$skipSelf;
 
     var includeSelf = !skipSelf;
-    var ri = new _stream_iterator__WEBPACK_IMPORTED_MODULE_37__["RecursiveIterator"](this, {
+    var ri = new _stream_iterator__WEBPACK_IMPORTED_MODULE_35__["RecursiveIterator"](this, {
       streamsOnly,
       restoreActiveSites,
       includeSelf
     });
 
     if (classFilter !== undefined) {
-      ri.addFilter(new _stream_filters__WEBPACK_IMPORTED_MODULE_36__["ClassFilter"](classFilter));
+      ri.addFilter(new _stream_filters__WEBPACK_IMPORTED_MODULE_34__["ClassFilter"](classFilter));
     }
 
     return ri;
@@ -61260,7 +59865,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
   /**
    * Add an element to the end of the stream, setting its `.offset` accordingly
    *
-   * @param {music21.base.Music21Object|Array<music21.base.Music21Object>} elOrElList - element
+   * @param elOrElList - element
    * or list of elements to append
    * @returns {this}
    */
@@ -61268,42 +59873,37 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
 
   append(elOrElList) {
     if (Array.isArray(elOrElList)) {
-      var _iteratorNormalCompletion9 = true;
-      var _didIteratorError9 = false;
-      var _iteratorError9 = undefined;
+      var _iteratorNormalCompletion8 = true;
+      var _didIteratorError8 = false;
+      var _iteratorError8 = undefined;
 
       try {
-        for (var _iterator9 = elOrElList[Symbol.iterator](), _step9; !(_iteratorNormalCompletion9 = (_step9 = _iterator9.next()).done); _iteratorNormalCompletion9 = true) {
-          var _el2 = _step9.value;
-          this.append(_el2);
+        for (var _iterator8 = elOrElList[Symbol.iterator](), _step8; !(_iteratorNormalCompletion8 = (_step8 = _iterator8.next()).done); _iteratorNormalCompletion8 = true) {
+          var _el = _step8.value;
+          this.append(_el);
         }
       } catch (err) {
-        _didIteratorError9 = true;
-        _iteratorError9 = err;
+        _didIteratorError8 = true;
+        _iteratorError8 = err;
       } finally {
         try {
-          if (!_iteratorNormalCompletion9 && _iterator9.return != null) {
-            _iterator9.return();
+          if (!_iteratorNormalCompletion8 && _iterator8.return != null) {
+            _iterator8.return();
           }
         } finally {
-          if (_didIteratorError9) {
-            throw _iteratorError9;
+          if (_didIteratorError8) {
+            throw _iteratorError8;
           }
         }
       }
 
       return this;
     }
-    /**
-     *
-     * @type {music21.base.Music21Object}
-     */
-
 
     var el = elOrElList;
 
-    if (!(el instanceof _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"])) {
-      throw new _exceptions21__WEBPACK_IMPORTED_MODULE_22__["Music21Exception"]('Can only append a music21 object.');
+    if (!(el instanceof _base__WEBPACK_IMPORTED_MODULE_21__["Music21Object"])) {
+      throw new _exceptions21__WEBPACK_IMPORTED_MODULE_19__["Music21Exception"]('Can only append a music21 object.');
     }
 
     try {
@@ -61452,7 +60052,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
    * Remove and return the last element in the stream,
    * or return undefined if the stream is empty
    *
-   * @returns {music21.base.Music21Object|undefined} last element in the stream
+   * @returns {base.Music21Object|undefined} last element in the stream
    */
 
 
@@ -61511,13 +60111,13 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
 
 
     var i = -1;
-    var _iteratorNormalCompletion10 = true;
-    var _didIteratorError10 = false;
-    var _iteratorError10 = undefined;
+    var _iteratorNormalCompletion9 = true;
+    var _didIteratorError9 = false;
+    var _iteratorError9 = undefined;
 
     try {
-      for (var _iterator10 = targetList[Symbol.iterator](), _step10; !(_iteratorNormalCompletion10 = (_step10 = _iterator10.next()).done); _iteratorNormalCompletion10 = true) {
-        var target = _step10.value;
+      for (var _iterator9 = targetList[Symbol.iterator](), _step9; !(_iteratorNormalCompletion9 = (_step9 = _iterator9.next()).done); _iteratorNormalCompletion9 = true) {
+        var target = _step9.value;
         i += 1;
         var indexInStream = void 0;
 
@@ -61574,16 +60174,16 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
         //            }
       }
     } catch (err) {
-      _didIteratorError10 = true;
-      _iteratorError10 = err;
+      _didIteratorError9 = true;
+      _iteratorError9 = err;
     } finally {
       try {
-        if (!_iteratorNormalCompletion10 && _iterator10.return != null) {
-          _iterator10.return();
+        if (!_iteratorNormalCompletion9 && _iterator9.return != null) {
+          _iterator9.return();
         }
       } finally {
-        if (_didIteratorError10) {
-          throw _iteratorError10;
+        if (_didIteratorError9) {
+          throw _iteratorError9;
         }
       }
     }
@@ -61685,7 +60285,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
         this.insert(value, el);
         return;
       } else {
-        throw new StreamException('Cannot set the offset for elemenet ' + el.toString() + ', not in Stream');
+        throw new StreamException('Cannot set the offset for element ' + el.toString() + ', not in Stream');
       }
     }
 
@@ -61729,21 +60329,20 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
       bestClef: false,
       inPlace: false
     };
-    _common__WEBPACK_IMPORTED_MODULE_27__["merge"](params, options);
+    _common__WEBPACK_IMPORTED_MODULE_24__["merge"](params, options);
     var voiceCount;
 
     if (this.hasVoices()) {
       voiceCount = this.getElementsByClass('Voice').length;
     } else {
       voiceCount = 0;
-    } // meterStream
-
-
-    var meterStream = this.getElementsByClass('TimeSignature');
-
-    if (meterStream.length === 0) {
-      meterStream.append(this.timeSignature);
-    } // getContextByClass('Clef')
+    } // MSC 2019 -- this was not working or even being used.
+    // // meterStream
+    // const meterStream = this.getElementsByClass('TimeSignature');
+    // if (meterStream.length === 0) {
+    //     meterStream.append(this.timeSignature);
+    // }
+    // getContextByClass('Clef')
 
 
     var clefObj = this.getSpecialContext('clef') || this.getContextByClass('Clef');
@@ -61754,10 +60353,10 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
       if (offsetMap[i].endTime > oMax) {
         oMax = offsetMap[i].endTime;
       }
-    } // console.log('oMax: ', oMax);
+    }
 
-
-    var post = new this.constructor(); // derivation
+    var classConstructor = this.constructor;
+    var post = new classConstructor(); // derivation
 
     var o = 0.0;
     var measureCount = 0;
@@ -61858,26 +60457,26 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
       this.elements = []; // endElements
       // elementsChanged;
 
-      var _iteratorNormalCompletion11 = true;
-      var _didIteratorError11 = false;
-      var _iteratorError11 = undefined;
+      var _iteratorNormalCompletion10 = true;
+      var _didIteratorError10 = false;
+      var _iteratorError10 = undefined;
 
       try {
-        for (var _iterator11 = post[Symbol.iterator](), _step11; !(_iteratorNormalCompletion11 = (_step11 = _iterator11.next()).done); _iteratorNormalCompletion11 = true) {
-          var _e2 = _step11.value;
+        for (var _iterator10 = post[Symbol.iterator](), _step10; !(_iteratorNormalCompletion10 = (_step10 = _iterator10.next()).done); _iteratorNormalCompletion10 = true) {
+          var _e2 = _step10.value;
           this.insert(_e2.offset, _e2);
         }
       } catch (err) {
-        _didIteratorError11 = true;
-        _iteratorError11 = err;
+        _didIteratorError10 = true;
+        _iteratorError10 = err;
       } finally {
         try {
-          if (!_iteratorNormalCompletion11 && _iterator11.return != null) {
-            _iterator11.return();
+          if (!_iteratorNormalCompletion10 && _iterator10.return != null) {
+            _iterator10.return();
           }
         } finally {
-          if (_didIteratorError11) {
-            throw _iteratorError11;
+          if (_didIteratorError10) {
+            throw _iteratorError10;
           }
         }
       }
@@ -61892,17 +60491,17 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
         setActiveSite = _ref6$setActiveSite === void 0 ? true : _ref6$setActiveSite;
 
     var elSites = el.sites;
-    var _iteratorNormalCompletion12 = true;
-    var _didIteratorError12 = false;
-    var _iteratorError12 = undefined;
+    var _iteratorNormalCompletion11 = true;
+    var _didIteratorError11 = false;
+    var _iteratorError11 = undefined;
 
     try {
-      for (var _iterator12 = this.recurse({
+      for (var _iterator11 = this.recurse({
         skipSelf: false,
-        streamOnly: true,
+        streamsOnly: true,
         restoreActiveSites: false
-      })[Symbol.iterator](), _step12; !(_iteratorNormalCompletion12 = (_step12 = _iterator12.next()).done); _iteratorNormalCompletion12 = true) {
-        var s = _step12.value;
+      })[Symbol.iterator](), _step11; !(_iteratorNormalCompletion11 = (_step11 = _iterator11.next()).done); _iteratorNormalCompletion11 = true) {
+        var s = _step11.value;
 
         if (elSites.includes(s)) {
           if (setActiveSite) {
@@ -61913,16 +60512,16 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
         }
       }
     } catch (err) {
-      _didIteratorError12 = true;
-      _iteratorError12 = err;
+      _didIteratorError11 = true;
+      _iteratorError11 = err;
     } finally {
       try {
-        if (!_iteratorNormalCompletion12 && _iterator12.return != null) {
-          _iterator12.return();
+        if (!_iteratorNormalCompletion11 && _iterator11.return != null) {
+          _iterator11.return();
         }
       } finally {
-        if (_didIteratorError12) {
-          throw _iteratorError12;
+        if (_didIteratorError11) {
+          throw _iteratorError11;
         }
       }
     }
@@ -61987,20 +60586,20 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
       }
 
       var restQL = restInfo.endTime - restInfo.offset;
-      var restObj = new _note__WEBPACK_IMPORTED_MODULE_31__["Rest"]();
+      var restObj = new _note__WEBPACK_IMPORTED_MODULE_28__["Rest"]();
       restObj.duration.quarterLength = restQL;
       out.insert(restInfo.offset, restObj);
       restInfo.offset = undefined;
       restInfo.endTime = undefined;
     };
 
-    var _iteratorNormalCompletion13 = true;
-    var _didIteratorError13 = false;
-    var _iteratorError13 = undefined;
+    var _iteratorNormalCompletion12 = true;
+    var _didIteratorError12 = false;
+    var _iteratorError12 = undefined;
 
     try {
-      for (var _iterator13 = this[Symbol.iterator](), _step13; !(_iteratorNormalCompletion13 = (_step13 = _iterator13.next()).done); _iteratorNormalCompletion13 = true) {
-        var el = _step13.value;
+      for (var _iterator12 = this[Symbol.iterator](), _step12; !(_iteratorNormalCompletion12 = (_step12 = _iterator12.next()).done); _iteratorNormalCompletion12 = true) {
+        var el = _step12.value;
 
         if (el.isStream && (retainVoices || el.classes.includes('Voice'))) {
           optionalAddRest();
@@ -62013,16 +60612,16 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
         }
       }
     } catch (err) {
-      _didIteratorError13 = true;
-      _iteratorError13 = err;
+      _didIteratorError12 = true;
+      _iteratorError12 = err;
     } finally {
       try {
-        if (!_iteratorNormalCompletion13 && _iterator13.return != null) {
-          _iterator13.return();
+        if (!_iteratorNormalCompletion12 && _iterator12.return != null) {
+          _iterator12.return();
         }
       } finally {
-        if (_didIteratorError13) {
-          throw _iteratorError13;
+        if (_didIteratorError12) {
+          throw _iteratorError12;
         }
       }
     }
@@ -62103,39 +60702,39 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
       mColl = [returnObj];
     } else {
       mColl = [];
-      var _iteratorNormalCompletion14 = true;
-      var _didIteratorError14 = false;
-      var _iteratorError14 = undefined;
+      var _iteratorNormalCompletion13 = true;
+      var _didIteratorError13 = false;
+      var _iteratorError13 = undefined;
 
       try {
-        for (var _iterator14 = returnObj.getElementsByClass('Measure')[Symbol.iterator](), _step14; !(_iteratorNormalCompletion14 = (_step14 = _iterator14.next()).done); _iteratorNormalCompletion14 = true) {
-          var m = _step14.value;
+        for (var _iterator13 = returnObj.getElementsByClass('Measure')[Symbol.iterator](), _step13; !(_iteratorNormalCompletion13 = (_step13 = _iterator13.next()).done); _iteratorNormalCompletion13 = true) {
+          var m = _step13.value;
           mColl.push(m);
         }
       } catch (err) {
-        _didIteratorError14 = true;
-        _iteratorError14 = err;
+        _didIteratorError13 = true;
+        _iteratorError13 = err;
       } finally {
         try {
-          if (!_iteratorNormalCompletion14 && _iterator14.return != null) {
-            _iterator14.return();
+          if (!_iteratorNormalCompletion13 && _iterator13.return != null) {
+            _iterator13.return();
           }
         } finally {
-          if (_didIteratorError14) {
-            throw _iteratorError14;
+          if (_didIteratorError13) {
+            throw _iteratorError13;
           }
         }
       }
     }
 
     var lastTimeSignature;
-    var _iteratorNormalCompletion15 = true;
-    var _didIteratorError15 = false;
-    var _iteratorError15 = undefined;
+    var _iteratorNormalCompletion14 = true;
+    var _didIteratorError14 = false;
+    var _iteratorError14 = undefined;
 
     try {
-      for (var _iterator15 = mColl[Symbol.iterator](), _step15; !(_iteratorNormalCompletion15 = (_step15 = _iterator15.next()).done); _iteratorNormalCompletion15 = true) {
-        var _m = _step15.value;
+      for (var _iterator14 = mColl[Symbol.iterator](), _step14; !(_iteratorNormalCompletion14 = (_step14 = _iterator14.next()).done); _iteratorNormalCompletion14 = true) {
+        var _m = _step14.value;
 
         if (_m.timeSignature !== undefined) {
           lastTimeSignature = _m.timeSignature;
@@ -62152,26 +60751,26 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
 
         var noteStream = _m.notesAndRests;
         var durList = [];
-        var _iteratorNormalCompletion16 = true;
-        var _didIteratorError16 = false;
-        var _iteratorError16 = undefined;
+        var _iteratorNormalCompletion15 = true;
+        var _didIteratorError15 = false;
+        var _iteratorError15 = undefined;
 
         try {
-          for (var _iterator16 = noteStream[Symbol.iterator](), _step16; !(_iteratorNormalCompletion16 = (_step16 = _iterator16.next()).done); _iteratorNormalCompletion16 = true) {
-            var _n2 = _step16.value;
+          for (var _iterator15 = noteStream[Symbol.iterator](), _step15; !(_iteratorNormalCompletion15 = (_step15 = _iterator15.next()).done); _iteratorNormalCompletion15 = true) {
+            var _n2 = _step15.value;
             durList.push(_n2.duration);
           }
         } catch (err) {
-          _didIteratorError16 = true;
-          _iteratorError16 = err;
+          _didIteratorError15 = true;
+          _iteratorError15 = err;
         } finally {
           try {
-            if (!_iteratorNormalCompletion16 && _iterator16.return != null) {
-              _iterator16.return();
+            if (!_iteratorNormalCompletion15 && _iterator15.return != null) {
+              _iterator15.return();
             }
           } finally {
-            if (_didIteratorError16) {
-              throw _iteratorError16;
+            if (_didIteratorError15) {
+              throw _iteratorError15;
             }
           }
         }
@@ -62202,22 +60801,22 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
           if (thisBeams !== undefined) {
             n.beams = thisBeams;
           } else {
-            n.beams = new _beam__WEBPACK_IMPORTED_MODULE_25__["Beams"]();
+            n.beams = new _beam__WEBPACK_IMPORTED_MODULE_22__["Beams"]();
           }
         }
       } // returnObj.streamStatus.beams = true;
 
     } catch (err) {
-      _didIteratorError15 = true;
-      _iteratorError15 = err;
+      _didIteratorError14 = true;
+      _iteratorError14 = err;
     } finally {
       try {
-        if (!_iteratorNormalCompletion15 && _iterator15.return != null) {
-          _iterator15.return();
+        if (!_iteratorNormalCompletion14 && _iterator14.return != null) {
+          _iterator14.return();
         }
       } finally {
-        if (_didIteratorError15) {
-          throw _iteratorError15;
+        if (_didIteratorError14) {
+          throw _iteratorError14;
         }
       }
     }
@@ -62239,6 +60838,43 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
 
 
   hasPartLikeStreams() {
+    var _iteratorNormalCompletion16 = true;
+    var _didIteratorError16 = false;
+    var _iteratorError16 = undefined;
+
+    try {
+      for (var _iterator16 = this[Symbol.iterator](), _step16; !(_iteratorNormalCompletion16 = (_step16 = _iterator16.next()).done); _iteratorNormalCompletion16 = true) {
+        var el = _step16.value;
+
+        if (el.classes.includes('Part')) {
+          return true;
+        }
+      }
+    } catch (err) {
+      _didIteratorError16 = true;
+      _iteratorError16 = err;
+    } finally {
+      try {
+        if (!_iteratorNormalCompletion16 && _iterator16.return != null) {
+          _iterator16.return();
+        }
+      } finally {
+        if (_didIteratorError16) {
+          throw _iteratorError16;
+        }
+      }
+    }
+
+    return false;
+  }
+  /**
+   * Returns true if any note in the stream has lyrics, otherwise false
+   *
+   * @returns {boolean}
+   */
+
+
+  hasLyrics() {
     var _iteratorNormalCompletion17 = true;
     var _didIteratorError17 = false;
     var _iteratorError17 = undefined;
@@ -62247,7 +60883,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
       for (var _iterator17 = this[Symbol.iterator](), _step17; !(_iteratorNormalCompletion17 = (_step17 = _iterator17.next()).done); _iteratorNormalCompletion17 = true) {
         var el = _step17.value;
 
-        if (el.classes.includes('Part')) {
+        if (el.lyric !== undefined) {
           return true;
         }
       }
@@ -62269,43 +60905,6 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
     return false;
   }
   /**
-   * Returns true if any note in the stream has lyrics, otherwise false
-   *
-   * @returns {Boolean}
-   */
-
-
-  hasLyrics() {
-    var _iteratorNormalCompletion18 = true;
-    var _didIteratorError18 = false;
-    var _iteratorError18 = undefined;
-
-    try {
-      for (var _iterator18 = this[Symbol.iterator](), _step18; !(_iteratorNormalCompletion18 = (_step18 = _iterator18.next()).done); _iteratorNormalCompletion18 = true) {
-        var el = _step18.value;
-
-        if (el.lyric !== undefined) {
-          return true;
-        }
-      }
-    } catch (err) {
-      _didIteratorError18 = true;
-      _iteratorError18 = err;
-    } finally {
-      try {
-        if (!_iteratorNormalCompletion18 && _iterator18.return != null) {
-          _iterator18.return();
-        }
-      } finally {
-        if (_didIteratorError18) {
-          throw _iteratorError18;
-        }
-      }
-    }
-
-    return false;
-  }
-  /**
    * Returns a list of OffsetMap objects
    *
    * @returns [music21.stream.OffsetMap]
@@ -62318,7 +60917,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
 
     if (this.hasVoices()) {
       // TODO(msc) -- remove jQuery each...
-      jquery__WEBPACK_IMPORTED_MODULE_20__["each"](this.getElementsByClass('Voice'), (i, v) => {
+      jquery__WEBPACK_IMPORTED_MODULE_17__["each"](this.getElementsByClass('Voice'), (i, v) => {
         groups.push([v.flat, i]);
       });
     } else {
@@ -62343,7 +60942,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
   }
 
   get iter() {
-    return new _stream_iterator__WEBPACK_IMPORTED_MODULE_37__["StreamIterator"](this);
+    return new _stream_iterator__WEBPACK_IMPORTED_MODULE_35__["StreamIterator"](this);
   }
   /**
    * Find all elements with a certain class; if an Array is given, then any
@@ -62362,7 +60961,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
    * matching class will work.
    *
    * @param {string[]|string} classList - a list of classes to find
-   * @returns {music21.stream.Stream}
+   * @returns {Stream}
    */
 
 
@@ -62397,7 +60996,9 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
    */
 
 
-  getElementsByOffset(offsetStart, offsetEnd) {
+  getElementsByOffset(offsetStart) {
+    var offsetEnd = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
+
     var _ref11 = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {},
         _ref11$includeEndBoun = _ref11.includeEndBoundary,
         includeEndBoundary = _ref11$includeEndBoun === void 0 ? true : _ref11$includeEndBoun,
@@ -62470,29 +61071,29 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
     } else if (otherElements.length === 1) {
       return otherElements.get(0);
     } else {
-      var _iteratorNormalCompletion19 = true;
-      var _didIteratorError19 = false;
-      var _iteratorError19 = undefined;
+      var _iteratorNormalCompletion18 = true;
+      var _didIteratorError18 = false;
+      var _iteratorError18 = undefined;
 
       try {
-        for (var _iterator19 = otherElements[Symbol.iterator](), _step19; !(_iteratorNormalCompletion19 = (_step19 = _iterator19.next()).done); _iteratorNormalCompletion19 = true) {
-          var thisEl = _step19.value;
+        for (var _iterator18 = otherElements[Symbol.iterator](), _step18; !(_iteratorNormalCompletion18 = (_step18 = _iterator18.next()).done); _iteratorNormalCompletion18 = true) {
+          var thisEl = _step18.value;
 
           if (el.constructor === thisEl.constructor) {
             return thisEl;
           }
         }
       } catch (err) {
-        _didIteratorError19 = true;
-        _iteratorError19 = err;
+        _didIteratorError18 = true;
+        _iteratorError18 = err;
       } finally {
         try {
-          if (!_iteratorNormalCompletion19 && _iterator19.return != null) {
-            _iterator19.return();
+          if (!_iteratorNormalCompletion18 && _iterator18.return != null) {
+            _iterator18.return();
           }
         } finally {
-          if (_didIteratorError19) {
-            throw _iteratorError19;
+          if (_didIteratorError18) {
+            throw _iteratorError18;
           }
         }
       }
@@ -62535,22 +61136,22 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
     var lastOctaveStepList = [];
 
     for (var i = 0; i < 10; i++) {
-      var tempOctaveStepDict = _objectSpread({}, extendableStepList); // clone
+      var tempOctaveStepDict = _extends({}, extendableStepList); // clone
 
 
       lastOctaveStepList.push(tempOctaveStepDict);
     }
 
-    var lastOctavelessStepDict = _objectSpread({}, extendableStepList); // probably unnecessary, but safe...
+    var lastOctavelessStepDict = _extends({}, extendableStepList); // probably unnecessary, but safe...
 
 
-    var _iteratorNormalCompletion20 = true;
-    var _didIteratorError20 = false;
-    var _iteratorError20 = undefined;
+    var _iteratorNormalCompletion19 = true;
+    var _didIteratorError19 = false;
+    var _iteratorError19 = undefined;
 
     try {
-      for (var _iterator20 = this[Symbol.iterator](), _step20; !(_iteratorNormalCompletion20 = (_step20 = _iterator20.next()).done); _iteratorNormalCompletion20 = true) {
-        var el = _step20.value;
+      for (var _iterator19 = this[Symbol.iterator](), _step19; !(_iteratorNormalCompletion19 = (_step19 = _iterator19.next()).done); _iteratorNormalCompletion19 = true) {
+        var el = _step19.value;
 
         if (el.pitch !== undefined) {
           // note
@@ -62560,45 +61161,45 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
           this._makeAccidentalForOnePitch(p, lastStepDict, lastOctavelessStepDict);
         } else if (el._notes !== undefined) {
           // chord
-          var _iteratorNormalCompletion21 = true;
-          var _didIteratorError21 = false;
-          var _iteratorError21 = undefined;
+          var _iteratorNormalCompletion20 = true;
+          var _didIteratorError20 = false;
+          var _iteratorError20 = undefined;
 
           try {
-            for (var _iterator21 = el._notes[Symbol.iterator](), _step21; !(_iteratorNormalCompletion21 = (_step21 = _iterator21.next()).done); _iteratorNormalCompletion21 = true) {
-              var chordNote = _step21.value;
+            for (var _iterator20 = el._notes[Symbol.iterator](), _step20; !(_iteratorNormalCompletion20 = (_step20 = _iterator20.next()).done); _iteratorNormalCompletion20 = true) {
+              var chordNote = _step20.value;
               var _p = chordNote.pitch;
               var _lastStepDict = lastOctaveStepList[_p.octave];
 
               this._makeAccidentalForOnePitch(_p, _lastStepDict, lastOctavelessStepDict);
             }
           } catch (err) {
-            _didIteratorError21 = true;
-            _iteratorError21 = err;
+            _didIteratorError20 = true;
+            _iteratorError20 = err;
           } finally {
             try {
-              if (!_iteratorNormalCompletion21 && _iterator21.return != null) {
-                _iterator21.return();
+              if (!_iteratorNormalCompletion20 && _iterator20.return != null) {
+                _iterator20.return();
               }
             } finally {
-              if (_didIteratorError21) {
-                throw _iteratorError21;
+              if (_didIteratorError20) {
+                throw _iteratorError20;
               }
             }
           }
         }
       }
     } catch (err) {
-      _didIteratorError20 = true;
-      _iteratorError20 = err;
+      _didIteratorError19 = true;
+      _iteratorError19 = err;
     } finally {
       try {
-        if (!_iteratorNormalCompletion20 && _iterator20.return != null) {
-          _iterator20.return();
+        if (!_iteratorNormalCompletion19 && _iterator19.return != null) {
+          _iterator19.return();
         }
       } finally {
-        if (_didIteratorError20) {
-          throw _iteratorError20;
+        if (_didIteratorError19) {
+          throw _iteratorError19;
         }
       }
     }
@@ -62624,7 +61225,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
 
     if (lastStepDict[p.step] !== newAlter || lastOctavelessStepDict[p.step] !== newAlter) {
       if (p.accidental === undefined) {
-        p.accidental = new _pitch__WEBPACK_IMPORTED_MODULE_32__["Accidental"]('natural');
+        p.accidental = new _pitch__WEBPACK_IMPORTED_MODULE_29__["Accidental"]('natural');
       }
 
       p.accidental.displayStatus = true; // console.log("setting displayStatus to true");
@@ -62656,44 +61257,44 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
    * Resets all the RenderOptions back to defaults. Can run recursively
    * and can also preserve the `RenderOptions.events` object.
    *
-   * @param {Boolean} [recursive=false]
-   * @param {Boolean} [preserveEvents=false]
+   * @param {boolean} [recursive=false]
+   * @param {boolean} [preserveEvents=false]
    * @returns {this}
    */
 
 
   resetRenderOptions(recursive, preserveEvents) {
     var oldEvents = this.renderOptions.events;
-    this.renderOptions = new _renderOptions__WEBPACK_IMPORTED_MODULE_33__["RenderOptions"]();
+    this.renderOptions = new _renderOptions__WEBPACK_IMPORTED_MODULE_30__["RenderOptions"]();
 
     if (preserveEvents) {
       this.renderOptions.events = oldEvents;
     }
 
     if (recursive) {
-      var _iteratorNormalCompletion22 = true;
-      var _didIteratorError22 = false;
-      var _iteratorError22 = undefined;
+      var _iteratorNormalCompletion21 = true;
+      var _didIteratorError21 = false;
+      var _iteratorError21 = undefined;
 
       try {
-        for (var _iterator22 = this[Symbol.iterator](), _step22; !(_iteratorNormalCompletion22 = (_step22 = _iterator22.next()).done); _iteratorNormalCompletion22 = true) {
-          var el = _step22.value;
+        for (var _iterator21 = this[Symbol.iterator](), _step21; !(_iteratorNormalCompletion21 = (_step21 = _iterator21.next()).done); _iteratorNormalCompletion21 = true) {
+          var el = _step21.value;
 
           if (el.isClassOrSubclass('Stream')) {
             el.resetRenderOptions(recursive, preserveEvents);
           }
         }
       } catch (err) {
-        _didIteratorError22 = true;
-        _iteratorError22 = err;
+        _didIteratorError21 = true;
+        _iteratorError21 = err;
       } finally {
         try {
-          if (!_iteratorNormalCompletion22 && _iterator22.return != null) {
-            _iterator22.return();
+          if (!_iteratorNormalCompletion21 && _iterator21.return != null) {
+            _iterator21.return();
           }
         } finally {
-          if (_didIteratorError22) {
-            throw _iteratorError22;
+          if (_didIteratorError21) {
+            throw _iteratorError21;
           }
         }
       }
@@ -62731,7 +61332,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
      */
     var canvasOrSVG;
 
-    if ($canvasOrSVG instanceof jquery__WEBPACK_IMPORTED_MODULE_20__) {
+    if ($canvasOrSVG instanceof jquery__WEBPACK_IMPORTED_MODULE_17__) {
       canvasOrSVG = $canvasOrSVG[0];
     } else {
       canvasOrSVG = $canvasOrSVG;
@@ -62758,7 +61359,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
       }
     }
 
-    var vfr = new _vfShow__WEBPACK_IMPORTED_MODULE_34__["Renderer"](this, canvasOrSVG);
+    var vfr = new _vfShow__WEBPACK_IMPORTED_MODULE_32__["Renderer"](this, canvasOrSVG);
 
     if (tagName === 'canvas') {
       vfr.rendererType = 'canvas';
@@ -62782,22 +61383,23 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
    *
    * If there are systems they will be incorporated into the height unless `ignoreSystems` is `true`.
    *
-   * @param {Boolean} [ignoreSystems=false]
+   * @param {boolean} [ignoreSystems=false]
    * @returns {number} height in pixels
    */
 
 
-  estimateStreamHeight(ignoreSystems) {
+  estimateStreamHeight() {
+    var ignoreSystems = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
     var staffHeight = this.renderOptions.naiveHeight;
-    var systemPadding = this.systemPadding;
+    var systemPadding = 0;
 
-    if (systemPadding === undefined) {
-      systemPadding = 0;
+    if (this instanceof Score) {
+      systemPadding = this.systemPadding;
     }
 
     var numSystems;
 
-    if (this.isClassOrSubclass('Score')) {
+    if (this instanceof Score) {
       var numParts = this.parts.length;
       numSystems = this.numSystems();
 
@@ -62814,14 +61416,14 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
 
 
       return scoreHeight;
-    } else if (this.isClassOrSubclass('Part')) {
+    } else if (this instanceof Part) {
       numSystems = 1;
 
       if (!ignoreSystems) {
         numSystems = this.numSystems();
       }
 
-      if (_debug__WEBPACK_IMPORTED_MODULE_23__["debug"]) {
+      if (_debug__WEBPACK_IMPORTED_MODULE_20__["debug"]) {
         console.log('estimateStreamHeight for Part: numSystems [' + numSystems + '] * staffHeight [' + staffHeight + '] + (numSystems [' + numSystems + '] - 1) * systemPadding [' + systemPadding + '].');
       }
 
@@ -62838,6 +61440,8 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
 
 
   estimateStaffLength() {
+    var _a, _b;
+
     var i;
     var totalLength;
 
@@ -62848,13 +61452,13 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
 
     if (this.hasVoices()) {
       var maxLength = 0;
-      var _iteratorNormalCompletion23 = true;
-      var _didIteratorError23 = false;
-      var _iteratorError23 = undefined;
+      var _iteratorNormalCompletion22 = true;
+      var _didIteratorError22 = false;
+      var _iteratorError22 = undefined;
 
       try {
-        for (var _iterator23 = this[Symbol.iterator](), _step23; !(_iteratorNormalCompletion23 = (_step23 = _iterator23.next()).done); _iteratorNormalCompletion23 = true) {
-          var v = _step23.value;
+        for (var _iterator22 = this[Symbol.iterator](), _step22; !(_iteratorNormalCompletion22 = (_step22 = _iterator22.next()).done); _iteratorNormalCompletion22 = true) {
+          var v = _step22.value;
 
           if (v.isClassOrSubclass('Stream')) {
             var thisLength = v.estimateStaffLength() + v.renderOptions.staffPadding;
@@ -62865,16 +61469,16 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
           }
         }
       } catch (err) {
-        _didIteratorError23 = true;
-        _iteratorError23 = err;
+        _didIteratorError22 = true;
+        _iteratorError22 = err;
       } finally {
         try {
-          if (!_iteratorNormalCompletion23 && _iterator23.return != null) {
-            _iterator23.return();
+          if (!_iteratorNormalCompletion22 && _iterator22.return != null) {
+            _iterator22.return();
           }
         } finally {
-          if (_didIteratorError23) {
-            throw _iteratorError23;
+          if (_didIteratorError22) {
+            throw _iteratorError22;
           }
         }
       }
@@ -62900,9 +61504,20 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
     } else {
       var rendOp = this.renderOptions;
       totalLength = 30 * this.notesAndRests.length;
-      totalLength += rendOp.displayClef ? 30 : 0;
-      totalLength += rendOp.displayKeySignature && this.getSpecialContext('keySignature') ? this.getSpecialContext('keySignature').width : 0;
-      totalLength += rendOp.displayTimeSignature ? 30 : 0; // totalLength += rendOp.staffPadding;
+
+      if (rendOp.displayClef) {
+        totalLength += 30;
+      }
+
+      if (rendOp.displayKeySignature) {
+        var ks = this.getSpecialContext('keySignature');
+        totalLength += (_b = (_a = ks) === null || _a === void 0 ? void 0 : _a.width, _b !== null && _b !== void 0 ? _b : 0);
+      }
+
+      if (rendOp.displayTimeSignature) {
+        totalLength += 30;
+      } // totalLength += rendOp.staffPadding;
+
 
       return totalLength;
     }
@@ -62920,14 +61535,15 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
    */
 
 
-  playStream(options) {
+  playStream() {
+    var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
     var params = {
       instrument: this.instrument,
       tempo: this.tempo,
       done: undefined,
       startNote: undefined
     };
-    _common__WEBPACK_IMPORTED_MODULE_27__["merge"](params, options);
+    _common__WEBPACK_IMPORTED_MODULE_24__["merge"](params, options);
     var startNoteIndex = params.startNote;
     var currentNoteIndex = 0;
 
@@ -62953,9 +61569,12 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
           playDuration = el.duration.quarterLength;
         }
 
-        var milliseconds = playDuration * 1000 * 60 / params.tempo;
+        var milliseconds = playDuration * 1000 * 60 / params.tempo; // when we're ready to do full-on tempo marks:  from JV.
+        // const nextOffset = nextNote ? nextNote.offset : el.offset + el.duration.quarterLength;
+        // const tempo = thisStream._averageTempo(el.offset, nextOffset);
+        // const milliseconds = playDuration * 1000 * 60 / tempo;
 
-        if (_debug__WEBPACK_IMPORTED_MODULE_23__["debug"]) {
+        if (_debug__WEBPACK_IMPORTED_MODULE_20__["debug"]) {
           console.log('playing: ', el, playDuration, milliseconds, params.tempo);
         }
 
@@ -62987,7 +61606,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
     this._stopPlaying = true;
 
     for (var i = 0; i < 127; i++) {
-      midicube__WEBPACK_IMPORTED_MODULE_21__["noteOff"](0, i, 0);
+      midicube__WEBPACK_IMPORTED_MODULE_18__["noteOff"](0, i, 0);
     }
 
     return this;
@@ -63018,11 +61637,13 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
    *     `this.renderOptions.height`. If still undefined, will use
    *     `this.estimateStreamHeight()`
    * @param {string} elementType - what type of element, default = svg
-   * @returns {jQuery} svg in jquery.
+   * @returns {JQuery} svg in jquery.
    */
 
 
-  createNewDOM(width, height) {
+  createNewDOM() {
+    var width = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : undefined;
+    var height = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
     var elementType = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'svg';
 
     if (!this.isFlat) {
@@ -63036,14 +61657,14 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
       renderElementType = 'canvas';
     }
 
-    var $newCanvasOrDIV = jquery__WEBPACK_IMPORTED_MODULE_20__('<' + renderElementType + '/>');
+    var $newCanvasOrDIV = jquery__WEBPACK_IMPORTED_MODULE_17__('<' + renderElementType + '/>');
     $newCanvasOrDIV.addClass('streamHolding'); // .css('border', '1px red solid');
 
     $newCanvasOrDIV.css('display', 'inline-block');
 
     if (width !== undefined) {
       if (typeof width === 'string') {
-        width = _common__WEBPACK_IMPORTED_MODULE_27__["stripPx"](width);
+        width = _common__WEBPACK_IMPORTED_MODULE_24__["stripPx"](width);
       }
 
       $newCanvasOrDIV.attr('width', width);
@@ -63082,11 +61703,13 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
    * @param {number|string|undefined} [width]
    * @param {number|string|undefined} [height]
    * @param {string} [elementType='svg'] - what type of element, default = svg
-   * @returns {jQuery} canvas or svg
+   * @returns {JQuery} canvas or svg
    */
 
 
-  createPlayableDOM(width, height) {
+  createPlayableDOM() {
+    var width = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : undefined;
+    var height = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
     var elementType = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'svg';
     this.renderOptions.events.click = 'play';
     return this.createDOM(width, height, elementType);
@@ -63103,11 +61726,13 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
    * @param {number|string|undefined} [width]
    * @param {number|string|undefined} [height]
    * @param {string} elementType - what type of element svg or canvas, default = svg
-   * @returns {jQuery} canvas or SVG
+   * @returns {JQuery} canvas or SVG
    */
 
 
-  createDOM(width, height) {
+  createDOM() {
+    var width = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : undefined;
+    var height = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
     var elementType = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'svg';
     var $newSvg = this.createNewDOM(width, height, elementType); // temporarily append the SVG to the document to fix a Firefox bug
     // where nothing can be measured unless is it in the document.
@@ -63124,7 +61749,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
   /**
    * Creates a new canvas, renders vexflow on it, and appends it to the DOM.
    *
-   * @param {jQuery|HTMLElement} [appendElement=document.body] - where to place the svg
+   * @param {JQuery|HTMLElement} [appendElement=document.body] - where to place the svg
    * @param {number|string} [width]
    * @param {number|string} [height]
    * @param {string} elementType - what type of element, default = svg
@@ -63134,17 +61759,18 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
    */
 
 
-  appendNewDOM(appendElement, width, height) {
+  appendNewDOM() {
+    var appendElement = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : document.body;
+    var width = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
+    var height = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : undefined;
     var elementType = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 'svg';
+    // noinspection JSMismatchedCollectionQueryUpdate
+    var $appendElement;
 
-    if (appendElement === undefined) {
-      appendElement = document.body;
-    }
-
-    var $appendElement = appendElement;
-
-    if (!(appendElement instanceof jquery__WEBPACK_IMPORTED_MODULE_20__)) {
-      $appendElement = jquery__WEBPACK_IMPORTED_MODULE_20__(appendElement);
+    if (appendElement instanceof jquery__WEBPACK_IMPORTED_MODULE_17__) {
+      $appendElement = appendElement;
+    } else {
+      $appendElement = jquery__WEBPACK_IMPORTED_MODULE_17__(appendElement);
     } //      if (width === undefined && this.renderOptions.maxSystemWidth === undefined) {
     //      var $bodyElement = bodyElement;
     //      if (!(bodyElement instanceof $) {
@@ -63154,9 +61780,9 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
     //      };
 
 
-    var svgOrCanvasBlock = this.createDOM(width, height, elementType);
-    $appendElement.append(svgOrCanvasBlock);
-    return svgOrCanvasBlock[0];
+    var $svgOrCanvasBlock = this.createDOM(width, height, elementType);
+    $appendElement.append($svgOrCanvasBlock);
+    return $svgOrCanvasBlock[0];
   }
 
   replaceCanvas(where, preserveSvgSize) {
@@ -63171,7 +61797,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
    *
    * @param {jQuery|HTMLElement} [where] - the canvas or SVG to replace or
    *     a container holding the canvas(es) to replace.
-   * @param {Boolean} [preserveSvgSize=false]
+   * @param {boolean} [preserveSvgSize=false]
    * @param {string} elementType - what type of element, default = svg
    * @returns {jQuery} the svg
    */
@@ -63187,8 +61813,8 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
 
     var $where;
 
-    if (!(where instanceof jquery__WEBPACK_IMPORTED_MODULE_20__)) {
-      $where = jquery__WEBPACK_IMPORTED_MODULE_20__(where);
+    if (!(where instanceof jquery__WEBPACK_IMPORTED_MODULE_17__)) {
+      $where = jquery__WEBPACK_IMPORTED_MODULE_17__(where);
     } else {
       $where = where; // where = $where[0];
     }
@@ -63203,13 +61829,13 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
 
 
     if ($oldSVGOrCanvas.length === 0) {
-      throw new _exceptions21__WEBPACK_IMPORTED_MODULE_22__["Music21Exception"]('No svg defined for replaceDOM!');
+      throw new _exceptions21__WEBPACK_IMPORTED_MODULE_19__["Music21Exception"]('No svg defined for replaceDOM!');
     } else if ($oldSVGOrCanvas.length > 1) {
       // change last svg...
       // replacing each with svgBlock doesn't work
       // anyhow, it just resizes the svg but doesn't
       // draw.
-      $oldSVGOrCanvas = jquery__WEBPACK_IMPORTED_MODULE_20__($oldSVGOrCanvas[$oldSVGOrCanvas.length - 1]);
+      $oldSVGOrCanvas = jquery__WEBPACK_IMPORTED_MODULE_17__($oldSVGOrCanvas[$oldSVGOrCanvas.length - 1]);
     }
 
     var svgBlock;
@@ -63249,8 +61875,8 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
 
     if (canvasOrDiv === undefined) {
       return this;
-    } else if (!(canvasOrDiv instanceof jquery__WEBPACK_IMPORTED_MODULE_20__)) {
-      $svg = jquery__WEBPACK_IMPORTED_MODULE_20__(canvasOrDiv);
+    } else if (!(canvasOrDiv instanceof jquery__WEBPACK_IMPORTED_MODULE_17__)) {
+      $svg = jquery__WEBPACK_IMPORTED_MODULE_17__(canvasOrDiv);
     }
 
     var playFunc = () => {
@@ -63284,9 +61910,9 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
 
 
   recursiveGetStoredVexflowStave() {
-    var storedVFStave = this.storedVexflowStave;
+    var storedVexflowStave = this.storedVexflowStave;
 
-    if (storedVFStave === undefined) {
+    if (storedVexflowStave === undefined) {
       if (this.isFlat) {
         return undefined;
       } else {
@@ -63296,7 +61922,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
       }
     }
 
-    return storedVFStave;
+    return storedVexflowStave;
   }
 
   getUnscaledXYforCanvas(svg, e) {
@@ -63322,7 +61948,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
         top: 0
       };
     } else {
-      offset = jquery__WEBPACK_IMPORTED_MODULE_20__(svg).offset();
+      offset = jquery__WEBPACK_IMPORTED_MODULE_17__(svg).offset();
     }
     /*
      * mouse event handler code from: http://diveintohtml5.org/canvas.html
@@ -63387,21 +62013,21 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
 
 
   diatonicNoteNumFromScaledY(yPxScaled) {
-    var storedVFStave = this.recursiveGetStoredVexflowStave();
+    var storedVexflowStave = this.recursiveGetStoredVexflowStave();
 
-    if (storedVFStave === undefined) {
+    if (storedVexflowStave === undefined) {
       throw new StreamException('Could not find vexflowStave for getting size');
     } // for (var i = -10; i < 10; i++) {
-    //    console.log("line: " + i + " y: " + storedVFStave.getYForLine(i));
+    //    console.log("line: " + i + " y: " + storedVexflowStave.getYForLine(i));
     // }
 
 
     var thisClef = this.clef || this.getContextByClass('Clef');
     var lowestLine = thisClef !== undefined ? thisClef.lowestLine : 31;
-    var lineSpacing = storedVFStave.options.spacing_between_lines_px;
-    var linesAboveStaff = storedVFStave.options.space_above_staff_ln;
+    var lineSpacing = storedVexflowStave.options.spacing_between_lines_px;
+    var linesAboveStaff = storedVexflowStave.options.space_above_staff_ln;
     var notesFromTop = yPxScaled * 2 / lineSpacing;
-    var notesAboveLowestLine = (storedVFStave.options.num_lines - 1 + linesAboveStaff) * 2 - notesFromTop;
+    var notesAboveLowestLine = (storedVexflowStave.options.num_lines - 1 + linesAboveStaff) * 2 - notesFromTop;
     var clickedDiatonicNoteNum = lowestLine + Math.round(notesAboveLowestLine);
     return clickedDiatonicNoteNum;
   }
@@ -63410,14 +62036,15 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
    *
    * Override in subclasses, always returns this; here.
    *
-   * @param {number} [xPxScaled]
+   * @param {number} xPxScaled
    * @param {number} [systemIndex]
    * @returns {this}
    *
    */
 
 
-  getStreamFromScaledXandSystemIndex(xPxScaled, systemIndex) {
+  getStreamFromScaledXandSystemIndex(xPxScaled) {
+    var systemIndex = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
     return this;
   }
   /**
@@ -63440,18 +62067,16 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
    */
 
 
-  noteElementFromScaledX(xPxScaled, allowablePixels, systemIndex, options) {
+  noteElementFromScaledX(xPxScaled) {
+    var allowablePixels = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 10;
+    var systemIndex = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : undefined;
+    var options = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
     var params = {
       allowBackup: true,
       backupMaximum: 70
     };
-    _common__WEBPACK_IMPORTED_MODULE_27__["merge"](params, options);
+    _common__WEBPACK_IMPORTED_MODULE_24__["merge"](params, options);
     var foundNote;
-
-    if (allowablePixels === undefined) {
-      allowablePixels = 10;
-    }
-
     var subStream = this.getStreamFromScaledXandSystemIndex(xPxScaled, systemIndex);
 
     if (subStream === undefined) {
@@ -63463,13 +62088,13 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
       note: undefined
     }; // a backup in case we did not find within allowablePixels
 
-    var _iteratorNormalCompletion24 = true;
-    var _didIteratorError24 = false;
-    var _iteratorError24 = undefined;
+    var _iteratorNormalCompletion23 = true;
+    var _didIteratorError23 = false;
+    var _iteratorError23 = undefined;
 
     try {
-      for (var _iterator24 = subStream.flat.notesAndRests[Symbol.iterator](), _step24; !(_iteratorNormalCompletion24 = (_step24 = _iterator24.next()).done); _iteratorNormalCompletion24 = true) {
-        var n = _step24.value;
+      for (var _iterator23 = subStream.flat.notesAndRests[Symbol.iterator](), _step23; !(_iteratorNormalCompletion23 = (_step23 = _iterator23.next()).done); _iteratorNormalCompletion23 = true) {
+        var n = _step23.value;
 
         /* should also
          * compensate for accidentals...
@@ -63489,16 +62114,16 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
       } // console.log('note here is: ', foundNote);
 
     } catch (err) {
-      _didIteratorError24 = true;
-      _iteratorError24 = err;
+      _didIteratorError23 = true;
+      _iteratorError23 = err;
     } finally {
       try {
-        if (!_iteratorNormalCompletion24 && _iterator24.return != null) {
-          _iterator24.return();
+        if (!_iteratorNormalCompletion23 && _iterator23.return != null) {
+          _iterator23.return();
         }
       } finally {
-        if (_didIteratorError24) {
-          throw _iteratorError24;
+        if (_didIteratorError23) {
+          throw _iteratorError23;
         }
       }
     }
@@ -63527,7 +62152,10 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
    */
 
 
-  findNoteForClick(svg, e, x, y) {
+  findNoteForClick(svg, e) {
+    var x = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : undefined;
+    var y = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : undefined;
+
     if (x === undefined || y === undefined) {
       var _this$getScaledXYforD = this.getScaledXYforDOM(svg, e);
 
@@ -63545,18 +62173,16 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
    * Change the pitch of a note given that it has been clicked and then
    * call changedCallbackFunction
    *
-   * To be removed...
-   *
    * @param {number} clickedDiatonicNoteNum
    * @param {music21.note.Note} foundNote
-   * @param {Node} svg
+   * @param {SVGElement|HTMLElement} svg
    * @returns {*} output of changedCallbackFunction
    */
 
 
   noteChanged(clickedDiatonicNoteNum, foundNote, svg) {
     var n = foundNote;
-    var p = new _pitch__WEBPACK_IMPORTED_MODULE_32__["Pitch"]('C');
+    var p = new _pitch__WEBPACK_IMPORTED_MODULE_29__["Pitch"]('C');
     p.diatonicNoteNum = clickedDiatonicNoteNum;
     p.accidental = n.pitch.accidental;
     n.pitch = p;
@@ -63582,8 +62208,8 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
   /**
    * Redraws an svgDiv, keeping the events of the previous svg.
    *
-   * @param {jQuery|Node} svg
-   * @returns {jQuery}
+   * @param {JQuery|HTMLElement} svg
+   * @returns {JQuery}
    */
 
 
@@ -63593,7 +62219,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
       this.setSubstreamRenderOptions();
     }
 
-    var $svg = jquery__WEBPACK_IMPORTED_MODULE_20__(svg); // works even if svg is already $jquery
+    var $svg = jquery__WEBPACK_IMPORTED_MODULE_17__(svg); // works even if svg is already $jquery
 
     var $newSvg = this.createNewDOM(svg.width, svg.height);
     this.renderVexflow($newSvg);
@@ -63619,12 +62245,12 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
     /*
      * Create an editable svg with an accidental selection bar.
      */
-    var d = jquery__WEBPACK_IMPORTED_MODULE_20__('<div/>').css('text-align', 'left').css('position', 'relative');
+    var d = jquery__WEBPACK_IMPORTED_MODULE_17__('<div/>').css('text-align', 'left').css('position', 'relative');
     this.renderOptions.events.click = this.DOMChangerFunction;
     var $svgDiv = this.createDOM(width, height);
     var buttonDiv = this.getAccidentalToolbar(undefined, undefined, $svgDiv);
     d.append(buttonDiv);
-    d.append(jquery__WEBPACK_IMPORTED_MODULE_20__("<br style='clear: both;' />"));
+    d.append(jquery__WEBPACK_IMPORTED_MODULE_17__("<br style='clear: both;' />"));
     d.append($svgDiv);
     return d;
   }
@@ -63660,7 +62286,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
       var $useSvg = $siblingSvg;
 
       if ($useSvg === undefined) {
-        var $searchParent = jquery__WEBPACK_IMPORTED_MODULE_20__(clickEvent.target).parent();
+        var $searchParent = jquery__WEBPACK_IMPORTED_MODULE_17__(clickEvent.target).parent();
         var maxSearch = 99;
 
         while (maxSearch > 0 && $searchParent !== undefined && ($useSvg === undefined || $useSvg[0] === undefined)) {
@@ -63675,9 +62301,9 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
         }
       }
 
-      if (this.activeNote !== undefined) {
+      if (this.activeNote !== undefined && this.activeNote instanceof _note__WEBPACK_IMPORTED_MODULE_28__["Note"]) {
         var n = this.activeNote;
-        n.pitch.accidental = new _pitch__WEBPACK_IMPORTED_MODULE_32__["Accidental"](newAlter);
+        n.pitch.accidental = new _pitch__WEBPACK_IMPORTED_MODULE_29__["Accidental"](newAlter);
         /* console.log(n.pitch.name); */
 
         var $newSvg = this.redrawDOM($useSvg[0]);
@@ -63691,11 +62317,11 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
       }
     };
 
-    var $buttonDiv = jquery__WEBPACK_IMPORTED_MODULE_20__('<div/>').attr('class', 'accidentalToolbar scoreToolbar');
+    var $buttonDiv = jquery__WEBPACK_IMPORTED_MODULE_17__('<div/>').attr('class', 'accidentalToolbar scoreToolbar');
 
     var _loop = function _loop(i) {
-      var acc = new _pitch__WEBPACK_IMPORTED_MODULE_32__["Accidental"](i);
-      var $button = jquery__WEBPACK_IMPORTED_MODULE_20__('<button>' + acc.unicodeModifier + '</button>').click(e => addAccidental(i, e));
+      var acc = new _pitch__WEBPACK_IMPORTED_MODULE_29__["Accidental"](i);
+      var $button = jquery__WEBPACK_IMPORTED_MODULE_17__('<button>' + acc.unicodeModifier + '</button>').click(e => addAccidental(i, e));
 
       if (Math.abs(i) > 1) {
         $button.css('font-family', 'Bravura Text');
@@ -63718,13 +62344,13 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
 
 
   getPlayToolbar() {
-    var $buttonDiv = jquery__WEBPACK_IMPORTED_MODULE_20__('<div/>').attr('class', 'playToolbar scoreToolbar');
-    var $bPlay = jquery__WEBPACK_IMPORTED_MODULE_20__('<button>&#9658</button>');
+    var $buttonDiv = jquery__WEBPACK_IMPORTED_MODULE_17__('<div/>').attr('class', 'playToolbar scoreToolbar');
+    var $bPlay = jquery__WEBPACK_IMPORTED_MODULE_17__('<button>&#9658</button>');
     $bPlay.click(() => {
       this.playStream();
     });
     $buttonDiv.append($bPlay);
-    var $bStop = jquery__WEBPACK_IMPORTED_MODULE_20__('<button>&#9724</button>');
+    var $bStop = jquery__WEBPACK_IMPORTED_MODULE_17__('<button>&#9724</button>');
     $bStop.click(() => {
       this.stopPlayStream();
     });
@@ -63737,16 +62363,16 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
    * so that on resizing the stream is redrawn and reflowed to the
    * new size.
    *
-   * @param {jQuery} jSvg
+   * @param {JQuery} jSvg
    * @returns {this}
    */
 
 
   windowReflowStart(jSvg) {
     // set up a bunch of windowReflow bindings that affect the svg.
-    var callingStream = this;
     var jSvgNow = jSvg;
-    jquery__WEBPACK_IMPORTED_MODULE_20__(window).bind('resizeEnd', () => {
+
+    var resizeEnd = () => {
       // do something, window hasn't changed size in 500ms
       var jSvgParent = jSvgNow.parent();
       var newWidth = jSvgParent.width();
@@ -63754,65 +62380,63 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_24__["Music21Object"] {
 
       console.log('resizeEnd triggered', newWidth); // console.log(callingStream.renderOptions.events.click);
 
-      callingStream.resetRenderOptions(true, true); // recursive, preserveEvents
+      this.resetRenderOptions(true, true); // recursive, preserveEvents
       // console.log(callingStream.renderOptions.events.click);
 
-      callingStream.maxSystemWidth = svgWidth - 40;
+      this.maxSystemWidth = svgWidth - 40;
       jSvgNow.remove();
-      var svgObj = callingStream.appendNewDOM(jSvgParent);
-      jSvgNow = jquery__WEBPACK_IMPORTED_MODULE_20__(svgObj);
-    });
-    jquery__WEBPACK_IMPORTED_MODULE_20__(window).resize(function resizeSvgTo() {
-      if (this.resizeTO) {
-        clearTimeout(this.resizeTO);
+      var svgObj = this.appendNewDOM(jSvgParent);
+      jSvgNow = jquery__WEBPACK_IMPORTED_MODULE_17__(svgObj);
+    };
+
+    var resizeTimeout = 0;
+    jquery__WEBPACK_IMPORTED_MODULE_17__(window).on('resize', () => {
+      if (resizeTimeout) {
+        clearTimeout(resizeTimeout);
       }
 
-      this.resizeTO = setTimeout(function resizeToTimeout() {
-        jquery__WEBPACK_IMPORTED_MODULE_20__(this).trigger('resizeEnd');
-      }, 200);
+      resizeTimeout = setTimeout(() => resizeEnd(), 200);
     });
-    setTimeout(function triggerResizeOnCreateSvg() {
-      var $window = jquery__WEBPACK_IMPORTED_MODULE_20__(window);
+    setTimeout(() => {
+      var $window = jquery__WEBPACK_IMPORTED_MODULE_17__(window);
       var doResize = $window.data('triggerResizeOnCreateSvg');
 
       if (doResize === undefined || doResize === true) {
-        jquery__WEBPACK_IMPORTED_MODULE_20__(this).trigger('resizeEnd');
+        resizeEnd();
         $window.data('triggerResizeOnCreateSvg', false);
       }
     }, 1000);
     return this;
   }
   /**
-   * Does this stream have a {@link music21.stream.Voice} inside it?
-   *
-   * @returns {Boolean}
+   * Does this stream have a {@link Voice} inside it?
    */
 
 
   hasVoices() {
-    var _iteratorNormalCompletion25 = true;
-    var _didIteratorError25 = false;
-    var _iteratorError25 = undefined;
+    var _iteratorNormalCompletion24 = true;
+    var _didIteratorError24 = false;
+    var _iteratorError24 = undefined;
 
     try {
-      for (var _iterator25 = this[Symbol.iterator](), _step25; !(_iteratorNormalCompletion25 = (_step25 = _iterator25.next()).done); _iteratorNormalCompletion25 = true) {
-        var el = _step25.value;
+      for (var _iterator24 = this[Symbol.iterator](), _step24; !(_iteratorNormalCompletion24 = (_step24 = _iterator24.next()).done); _iteratorNormalCompletion24 = true) {
+        var el = _step24.value;
 
         if (el.isClassOrSubclass('Voice')) {
           return true;
         }
       }
     } catch (err) {
-      _didIteratorError25 = true;
-      _iteratorError25 = err;
+      _didIteratorError24 = true;
+      _iteratorError24 = err;
     } finally {
       try {
-        if (!_iteratorNormalCompletion25 && _iterator25.return != null) {
-          _iterator25.return();
+        if (!_iteratorNormalCompletion24 && _iterator24.return != null) {
+          _iterator24.return();
         }
       } finally {
-        if (_didIteratorError25) {
-          throw _iteratorError25;
+        if (_didIteratorError24) {
+          throw _iteratorError24;
         }
       }
     }
@@ -63846,21 +62470,24 @@ class Voice extends Stream {
  */
 
 class Measure extends Stream {
+  constructor() {
+    super(...arguments);
+    this.recursionType = 'elementsFirst';
+    this.isMeasure = true;
+    this.number = 0;
+    this.numberSuffix = '';
+  }
+
   static get className() {
     return 'music21.stream.Measure';
   }
 
-  constructor() {
-    super();
-    this.recursionType = 'elementsFirst';
-    this.isMeasure = true;
-    this.number = 0; // measure number
-
-    this.numberSuffix = '';
-  }
-
   stringInfo() {
-    return this.measureNumberWithSuffix() + ' offset=' + this.offset.toString();
+    var _a; // avoid using "this.offset" to not infinite loops.
+
+
+    var offset = (_a = this._activeSiteStoredOffset, _a !== null && _a !== void 0 ? _a : this._naiveOffset);
+    return this.measureNumberWithSuffix() + ' offset=' + offset.toString();
   }
 
   measureNumberWithSuffix() {
@@ -63873,25 +62500,22 @@ class Measure extends Stream {
  *
  * @class Part
  * @memberof music21.stream
- * @extends music21.stream.Stream
  */
 
 class Part extends Stream {
-  static get className() {
-    return 'music21.stream.Part';
-  }
-
   constructor() {
     super();
     this.recursionType = 'flatten';
     this.systemHeight = this.renderOptions.naiveHeight;
   }
+
+  static get className() {
+    return 'music21.stream.Part';
+  }
   /**
    * How many systems does this Part have?
    *
    * Does not change any reflow information, so by default it's always 1.
-   *
-   * @returns {Number}
    */
 
 
@@ -63909,21 +62533,19 @@ class Part extends Stream {
   }
   /**
    * Find the width of every measure in the Part.
-   *
-   * @returns {Array<number>}
    */
 
 
   getMeasureWidths() {
     /* call after setSubstreamRenderOptions */
     var measureWidths = [];
-    var _iteratorNormalCompletion26 = true;
-    var _didIteratorError26 = false;
-    var _iteratorError26 = undefined;
+    var _iteratorNormalCompletion25 = true;
+    var _didIteratorError25 = false;
+    var _iteratorError25 = undefined;
 
     try {
-      for (var _iterator26 = this[Symbol.iterator](), _step26; !(_iteratorNormalCompletion26 = (_step26 = _iterator26.next()).done); _iteratorNormalCompletion26 = true) {
-        var el = _step26.value;
+      for (var _iterator25 = this[Symbol.iterator](), _step25; !(_iteratorNormalCompletion25 = (_step25 = _iterator25.next()).done); _iteratorNormalCompletion25 = true) {
+        var el = _step25.value;
 
         if (el.isClassOrSubclass('Measure')) {
           var elRendOp = el.renderOptions;
@@ -63935,16 +62557,16 @@ class Part extends Stream {
        */
 
     } catch (err) {
-      _didIteratorError26 = true;
-      _iteratorError26 = err;
+      _didIteratorError25 = true;
+      _iteratorError25 = err;
     } finally {
       try {
-        if (!_iteratorNormalCompletion26 && _iterator26.return != null) {
-          _iterator26.return();
+        if (!_iteratorNormalCompletion25 && _iterator25.return != null) {
+          _iterator25.return();
         }
       } finally {
-        if (_didIteratorError26) {
-          throw _iteratorError26;
+        if (_didIteratorError25) {
+          throw _iteratorError25;
         }
       }
     }
@@ -63953,8 +62575,6 @@ class Part extends Stream {
   }
   /**
    * Overrides the default music21.stream.Stream#estimateStaffLength
-   *
-   * @returns {number}
    */
 
 
@@ -63968,13 +62588,13 @@ class Part extends Stream {
       // part with Measures underneath
       var totalLength = 0;
       var isFirst = true;
-      var _iteratorNormalCompletion27 = true;
-      var _didIteratorError27 = false;
-      var _iteratorError27 = undefined;
+      var _iteratorNormalCompletion26 = true;
+      var _didIteratorError26 = false;
+      var _iteratorError26 = undefined;
 
       try {
-        for (var _iterator27 = this.getElementsByClass('Measure')[Symbol.iterator](), _step27; !(_iteratorNormalCompletion27 = (_step27 = _iterator27.next()).done); _iteratorNormalCompletion27 = true) {
-          var m = _step27.value;
+        for (var _iterator26 = this.getElementsByClass('Measure')[Symbol.iterator](), _step26; !(_iteratorNormalCompletion26 = (_step26 = _iterator26.next()).done); _iteratorNormalCompletion26 = true) {
+          var m = _step26.value;
           // this looks wrong, but actually seems to be right. moving it to
           // after the break breaks things.
           totalLength += m.estimateStaffLength() + m.renderOptions.staffPadding;
@@ -63986,16 +62606,16 @@ class Part extends Stream {
           isFirst = false;
         }
       } catch (err) {
-        _didIteratorError27 = true;
-        _iteratorError27 = err;
+        _didIteratorError26 = true;
+        _iteratorError26 = err;
       } finally {
         try {
-          if (!_iteratorNormalCompletion27 && _iterator27.return != null) {
-            _iterator27.return();
+          if (!_iteratorNormalCompletion26 && _iterator26.return != null) {
+            _iterator26.return();
           }
         } finally {
-          if (_didIteratorError27) {
-            throw _iteratorError27;
+          if (_didIteratorError26) {
+            throw _iteratorError26;
           }
         }
       }
@@ -64031,7 +62651,7 @@ class Part extends Stream {
     if (systemHeight === undefined) {
       systemHeight = this.systemHeight;
       /* part.show() called... */
-    } else if (_debug__WEBPACK_IMPORTED_MODULE_23__["debug"]) {
+    } else if (_debug__WEBPACK_IMPORTED_MODULE_20__["debug"]) {
       console.log('overridden systemHeight: ' + systemHeight);
     }
 
@@ -64162,13 +62782,13 @@ class Part extends Stream {
     var lastTimeSignature;
     var lastKeySignature;
     var lastClef;
-    var _iteratorNormalCompletion28 = true;
-    var _didIteratorError28 = false;
-    var _iteratorError28 = undefined;
+    var _iteratorNormalCompletion27 = true;
+    var _didIteratorError27 = false;
+    var _iteratorError27 = undefined;
 
     try {
-      for (var _iterator28 = this.getElementsByClass('Measure')[Symbol.iterator](), _step28; !(_iteratorNormalCompletion28 = (_step28 = _iterator28.next()).done); _iteratorNormalCompletion28 = true) {
-        var m = _step28.value;
+      for (var _iterator27 = this.getElementsByClass('Measure')[Symbol.iterator](), _step27; !(_iteratorNormalCompletion27 = (_step27 = _iterator27.next()).done); _iteratorNormalCompletion27 = true) {
+        var m = _step27.value;
         var mRendOp = m.renderOptions;
         mRendOp.measureIndex = currentMeasureIndex;
         mRendOp.top = rendOp.top;
@@ -64212,16 +62832,16 @@ class Part extends Stream {
         currentMeasureIndex += 1;
       }
     } catch (err) {
-      _didIteratorError28 = true;
-      _iteratorError28 = err;
+      _didIteratorError27 = true;
+      _iteratorError27 = err;
     } finally {
       try {
-        if (!_iteratorNormalCompletion28 && _iterator28.return != null) {
-          _iterator28.return();
+        if (!_iteratorNormalCompletion27 && _iterator27.return != null) {
+          _iterator27.return();
         }
       } finally {
-        if (_didIteratorError28) {
-          throw _iteratorError28;
+        if (_didIteratorError27) {
+          throw _iteratorError27;
         }
       }
     }
@@ -64252,7 +62872,7 @@ class Part extends Stream {
    * Overrides the default music21.stream.Stream#findNoteForClick
    * by taking into account systems
    *
-   * @param {HTMLElement | SVGElement} svg
+   * @param {HTMLElement|SVGElement} svg
    * @param {MouseEvent|TouchEvent} e
    * @param {number} [x]
    * @param {number} [y]
@@ -64260,7 +62880,10 @@ class Part extends Stream {
    */
 
 
-  findNoteForClick(svg, e, x, y) {
+  findNoteForClick(svg, e) {
+    var x = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : undefined;
+    var y = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : undefined;
+
     if (x === undefined || y === undefined) {
       var _this$getScaledXYforD3 = this.getScaledXYforDOM(svg, e);
 
@@ -64271,8 +62894,8 @@ class Part extends Stream {
     } // debug = true;
 
 
-    if (_debug__WEBPACK_IMPORTED_MODULE_23__["debug"]) {
-      console.log('this.estimateStreamHeight(): ' + this.estimateStreamHeight() + ' / $(svg).height(): ' + jquery__WEBPACK_IMPORTED_MODULE_20__(svg).height());
+    if (_debug__WEBPACK_IMPORTED_MODULE_20__["debug"]) {
+      console.log('this.estimateStreamHeight(): ' + this.estimateStreamHeight() + ' / $(svg).height(): ' + jquery__WEBPACK_IMPORTED_MODULE_17__(svg).height());
     } // TODO(msc) -- systemPadding was never used -- should it be?
     // let systemPadding = this.renderOptions.systemPadding;
     // if (systemPadding === undefined) {
@@ -64299,23 +62922,24 @@ class Part extends Stream {
    */
 
 
-  getStreamFromScaledXandSystemIndex(xPxScaled, systemIndex) {
+  getStreamFromScaledXandSystemIndex(xPxScaled) {
+    var systemIndex = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
     var gotMeasure;
     var measures = this.measures;
-    var _iteratorNormalCompletion29 = true;
-    var _didIteratorError29 = false;
-    var _iteratorError29 = undefined;
+    var _iteratorNormalCompletion28 = true;
+    var _didIteratorError28 = false;
+    var _iteratorError28 = undefined;
 
     try {
-      for (var _iterator29 = measures[Symbol.iterator](), _step29; !(_iteratorNormalCompletion29 = (_step29 = _iterator29.next()).done); _iteratorNormalCompletion29 = true) {
-        var m = _step29.value;
+      for (var _iterator28 = measures[Symbol.iterator](), _step28; !(_iteratorNormalCompletion28 = (_step28 = _iterator28.next()).done); _iteratorNormalCompletion28 = true) {
+        var m = _step28.value;
         var rendOp = m.renderOptions;
         var left = rendOp.left;
         var right = left + rendOp.width;
         var top = rendOp.top;
         var bottom = top + rendOp.height;
 
-        if (_debug__WEBPACK_IMPORTED_MODULE_23__["debug"]) {
+        if (_debug__WEBPACK_IMPORTED_MODULE_20__["debug"]) {
           console.log('Searching for X:' + Math.round(xPxScaled) + ' in Measure ' + ' with boundaries L:' + left + ' R:' + right + ' T: ' + top + ' B: ' + bottom);
         }
 
@@ -64330,16 +62954,16 @@ class Part extends Stream {
         }
       }
     } catch (err) {
-      _didIteratorError29 = true;
-      _iteratorError29 = err;
+      _didIteratorError28 = true;
+      _iteratorError28 = err;
     } finally {
       try {
-        if (!_iteratorNormalCompletion29 && _iterator29.return != null) {
-          _iterator29.return();
+        if (!_iteratorNormalCompletion28 && _iterator28.return != null) {
+          _iterator28.return();
         }
       } finally {
-        if (_didIteratorError29) {
-          throw _iteratorError29;
+        if (_didIteratorError28) {
+          throw _iteratorError28;
         }
       }
     }
@@ -64357,10 +62981,6 @@ class Part extends Stream {
  */
 
 class Score extends Stream {
-  static get className() {
-    return 'music21.stream.Score';
-  }
-
   constructor() {
     super();
     this.recursionType = 'elementsOnly';
@@ -64368,12 +62988,15 @@ class Score extends Stream {
     this.partSpacing = this.renderOptions.naiveHeight;
   }
 
+  static get className() {
+    return 'music21.stream.Score';
+  }
+
   get clef() {
-    // TODO: remove -- this is unlike m21p
     var c = super.clef;
 
     if (c === undefined) {
-      return new _clef__WEBPACK_IMPORTED_MODULE_26__["TrebleClef"]();
+      return new _clef__WEBPACK_IMPORTED_MODULE_23__["TrebleClef"]();
     } else {
       return c;
     }
@@ -64415,18 +63038,76 @@ class Score extends Stream {
       returnObj = this.clone(true);
     }
 
-    var _iteratorNormalCompletion30 = true;
-    var _didIteratorError30 = false;
-    var _iteratorError30 = undefined;
+    var _iteratorNormalCompletion29 = true;
+    var _didIteratorError29 = false;
+    var _iteratorError29 = undefined;
 
     try {
-      for (var _iterator30 = returnObj.parts[Symbol.iterator](), _step30; !(_iteratorNormalCompletion30 = (_step30 = _iterator30.next()).done); _iteratorNormalCompletion30 = true) {
-        var p = _step30.value;
+      for (var _iterator29 = returnObj.parts[Symbol.iterator](), _step29; !(_iteratorNormalCompletion29 = (_step29 = _iterator29.next()).done); _iteratorNormalCompletion29 = true) {
+        var p = _step29.value;
         p.makeBeams({
           inPlace: true
         });
       } // returnObj.streamStatus.beams = true;
 
+    } catch (err) {
+      _didIteratorError29 = true;
+      _iteratorError29 = err;
+    } finally {
+      try {
+        if (!_iteratorNormalCompletion29 && _iterator29.return != null) {
+          _iterator29.return();
+        }
+      } finally {
+        if (_didIteratorError29) {
+          throw _iteratorError29;
+        }
+      }
+    }
+
+    return returnObj;
+  }
+  /**
+   * Returns the measure that is at X location xPxScaled and system systemIndex.
+   *
+   * Always returns the measure of the top part...
+   *
+   * @param {number} xPxScaled
+   * @param {number} [systemIndex]
+   * @returns {Stream} usually a Measure
+   *
+   */
+
+
+  getStreamFromScaledXandSystemIndex(xPxScaled) {
+    var systemIndex = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
+    var parts = this.parts;
+    return parts.get(0).getStreamFromScaledXandSystemIndex(xPxScaled, systemIndex);
+  }
+  /**
+   * overrides music21.stream.Stream#setSubstreamRenderOptions
+   *
+   * figures out the `.left` and `.top` attributes for all contained parts
+   */
+
+
+  setSubstreamRenderOptions() {
+    var currentPartNumber = 0;
+    var currentPartTop = 0;
+    var partSpacing = this.partSpacing;
+    var _iteratorNormalCompletion30 = true;
+    var _didIteratorError30 = false;
+    var _iteratorError30 = undefined;
+
+    try {
+      for (var _iterator30 = this.parts[Symbol.iterator](), _step30; !(_iteratorNormalCompletion30 = (_step30 = _iterator30.next()).done); _iteratorNormalCompletion30 = true) {
+        var p = _step30.value;
+        p.renderOptions.partIndex = currentPartNumber;
+        p.renderOptions.top = currentPartTop;
+        p.setSubstreamRenderOptions();
+        currentPartTop += partSpacing;
+        currentPartNumber += 1;
+      }
     } catch (err) {
       _didIteratorError30 = true;
       _iteratorError30 = err;
@@ -64442,47 +63123,18 @@ class Score extends Stream {
       }
     }
 
-    return returnObj;
-  }
-  /**
-   * Returns the measure that is at X location xPxScaled and system systemIndex.
-   *
-   * Always returns the measure of the top part...
-   *
-   * @param {number} [xPxScaled]
-   * @param {number} [systemIndex]
-   * @returns {music21.stream.Stream} usually a Measure
-   *
-   */
-
-
-  getStreamFromScaledXandSystemIndex(xPxScaled, systemIndex) {
-    var parts = this.parts;
-    return parts.get(0).getStreamFromScaledXandSystemIndex(xPxScaled, systemIndex);
-  }
-  /**
-   * overrides music21.stream.Stream#setSubstreamRenderOptions
-   *
-   * figures out the `.left` and `.top` attributes for all contained parts
-   */
-
-
-  setSubstreamRenderOptions() {
-    var currentPartNumber = 0;
-    var currentPartTop = 0;
-    var partSpacing = this.partSpacing;
+    this.evenPartMeasureSpacing();
+    var ignoreNumSystems = true;
+    var currentScoreHeight = this.estimateStreamHeight(ignoreNumSystems);
     var _iteratorNormalCompletion31 = true;
     var _didIteratorError31 = false;
     var _iteratorError31 = undefined;
 
     try {
       for (var _iterator31 = this.parts[Symbol.iterator](), _step31; !(_iteratorNormalCompletion31 = (_step31 = _iterator31.next()).done); _iteratorNormalCompletion31 = true) {
-        var p = _step31.value;
-        p.renderOptions.partIndex = currentPartNumber;
-        p.renderOptions.top = currentPartTop;
-        p.setSubstreamRenderOptions();
-        currentPartTop += partSpacing;
-        currentPartNumber += 1;
+        var _p2 = _step31.value;
+
+        _p2.fixSystemInformation(currentScoreHeight);
       }
     } catch (err) {
       _didIteratorError31 = true;
@@ -64495,34 +63147,6 @@ class Score extends Stream {
       } finally {
         if (_didIteratorError31) {
           throw _iteratorError31;
-        }
-      }
-    }
-
-    this.evenPartMeasureSpacing();
-    var ignoreNumSystems = true;
-    var currentScoreHeight = this.estimateStreamHeight(ignoreNumSystems);
-    var _iteratorNormalCompletion32 = true;
-    var _didIteratorError32 = false;
-    var _iteratorError32 = undefined;
-
-    try {
-      for (var _iterator32 = this.parts[Symbol.iterator](), _step32; !(_iteratorNormalCompletion32 = (_step32 = _iterator32.next()).done); _iteratorNormalCompletion32 = true) {
-        var _p2 = _step32.value;
-
-        _p2.fixSystemInformation(currentScoreHeight);
-      }
-    } catch (err) {
-      _didIteratorError32 = true;
-      _iteratorError32 = err;
-    } finally {
-      try {
-        if (!_iteratorNormalCompletion32 && _iterator32.return != null) {
-          _iterator32.return();
-        }
-      } finally {
-        if (_didIteratorError32) {
-          throw _iteratorError32;
         }
       }
     }
@@ -64545,13 +63169,13 @@ class Score extends Stream {
     }
 
     var maxWidth = -1;
-    var _iteratorNormalCompletion33 = true;
-    var _didIteratorError33 = false;
-    var _iteratorError33 = undefined;
+    var _iteratorNormalCompletion32 = true;
+    var _didIteratorError32 = false;
+    var _iteratorError32 = undefined;
 
     try {
-      for (var _iterator33 = this.parts[Symbol.iterator](), _step33; !(_iteratorNormalCompletion33 = (_step33 = _iterator33.next()).done); _iteratorNormalCompletion33 = true) {
-        var p = _step33.value;
+      for (var _iterator32 = this.parts[Symbol.iterator](), _step32; !(_iteratorNormalCompletion32 = (_step32 = _iterator32.next()).done); _iteratorNormalCompletion32 = true) {
+        var p = _step32.value;
         var pWidth = p.estimateStaffLength();
 
         if (pWidth > maxWidth) {
@@ -64559,16 +63183,16 @@ class Score extends Stream {
         }
       }
     } catch (err) {
-      _didIteratorError33 = true;
-      _iteratorError33 = err;
+      _didIteratorError32 = true;
+      _iteratorError32 = err;
     } finally {
       try {
-        if (!_iteratorNormalCompletion33 && _iterator33.return != null) {
-          _iterator33.return();
+        if (!_iteratorNormalCompletion32 && _iterator32.return != null) {
+          _iterator32.return();
         }
       } finally {
-        if (_didIteratorError33) {
-          throw _iteratorError33;
+        if (_didIteratorError32) {
+          throw _iteratorError32;
         }
       }
     }
@@ -64599,29 +63223,29 @@ class Score extends Stream {
 
   playStream(params) {
     // play multiple parts in parallel...
-    var _iteratorNormalCompletion34 = true;
-    var _didIteratorError34 = false;
-    var _iteratorError34 = undefined;
+    var _iteratorNormalCompletion33 = true;
+    var _didIteratorError33 = false;
+    var _iteratorError33 = undefined;
 
     try {
-      for (var _iterator34 = this[Symbol.iterator](), _step34; !(_iteratorNormalCompletion34 = (_step34 = _iterator34.next()).done); _iteratorNormalCompletion34 = true) {
-        var el = _step34.value;
+      for (var _iterator33 = this[Symbol.iterator](), _step33; !(_iteratorNormalCompletion33 = (_step33 = _iterator33.next()).done); _iteratorNormalCompletion33 = true) {
+        var el = _step33.value;
 
         if (el.isClassOrSubclass('Part')) {
           el.playStream(params);
         }
       }
     } catch (err) {
-      _didIteratorError34 = true;
-      _iteratorError34 = err;
+      _didIteratorError33 = true;
+      _iteratorError33 = err;
     } finally {
       try {
-        if (!_iteratorNormalCompletion34 && _iterator34.return != null) {
-          _iterator34.return();
+        if (!_iteratorNormalCompletion33 && _iterator33.return != null) {
+          _iterator33.return();
         }
       } finally {
-        if (_didIteratorError34) {
-          throw _iteratorError34;
+        if (_didIteratorError33) {
+          throw _iteratorError33;
         }
       }
     }
@@ -64636,29 +63260,29 @@ class Score extends Stream {
 
 
   stopPlayStream() {
-    var _iteratorNormalCompletion35 = true;
-    var _didIteratorError35 = false;
-    var _iteratorError35 = undefined;
+    var _iteratorNormalCompletion34 = true;
+    var _didIteratorError34 = false;
+    var _iteratorError34 = undefined;
 
     try {
-      for (var _iterator35 = this[Symbol.iterator](), _step35; !(_iteratorNormalCompletion35 = (_step35 = _iterator35.next()).done); _iteratorNormalCompletion35 = true) {
-        var el = _step35.value;
+      for (var _iterator34 = this[Symbol.iterator](), _step34; !(_iteratorNormalCompletion34 = (_step34 = _iterator34.next()).done); _iteratorNormalCompletion34 = true) {
+        var el = _step34.value;
 
         if (el.isClassOrSubclass('Part')) {
           el.stopPlayStream();
         }
       }
     } catch (err) {
-      _didIteratorError35 = true;
-      _iteratorError35 = err;
+      _didIteratorError34 = true;
+      _iteratorError34 = err;
     } finally {
       try {
-        if (!_iteratorNormalCompletion35 && _iterator35.return != null) {
-          _iterator35.return();
+        if (!_iteratorNormalCompletion34 && _iterator34.return != null) {
+          _iterator34.return();
         }
       } finally {
-        if (_didIteratorError35) {
-          throw _iteratorError35;
+        if (_didIteratorError34) {
+          throw _iteratorError34;
         }
       }
     }
@@ -64687,26 +63311,26 @@ class Score extends Stream {
     var measureWidthsArrayOfArrays = [];
     var i; // TODO: Do not crash on not partlike...
 
-    var _iteratorNormalCompletion36 = true;
-    var _didIteratorError36 = false;
-    var _iteratorError36 = undefined;
+    var _iteratorNormalCompletion35 = true;
+    var _didIteratorError35 = false;
+    var _iteratorError35 = undefined;
 
     try {
-      for (var _iterator36 = this.parts[Symbol.iterator](), _step36; !(_iteratorNormalCompletion36 = (_step36 = _iterator36.next()).done); _iteratorNormalCompletion36 = true) {
-        var p = _step36.value;
+      for (var _iterator35 = this.parts[Symbol.iterator](), _step35; !(_iteratorNormalCompletion35 = (_step35 = _iterator35.next()).done); _iteratorNormalCompletion35 = true) {
+        var p = _step35.value;
         measureWidthsArrayOfArrays.push(p.getMeasureWidths());
       }
     } catch (err) {
-      _didIteratorError36 = true;
-      _iteratorError36 = err;
+      _didIteratorError35 = true;
+      _iteratorError35 = err;
     } finally {
       try {
-        if (!_iteratorNormalCompletion36 && _iterator36.return != null) {
-          _iterator36.return();
+        if (!_iteratorNormalCompletion35 && _iterator35.return != null) {
+          _iterator35.return();
         }
       } finally {
-        if (_didIteratorError36) {
-          throw _iteratorError36;
+        if (_didIteratorError35) {
+          throw _iteratorError35;
         }
       }
     }
@@ -64760,7 +63384,10 @@ class Score extends Stream {
    */
 
 
-  findNoteForClick(svg, e, x, y) {
+  findNoteForClick(svg, e) {
+    var x = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : undefined;
+    var y = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : undefined;
+
     if (x === undefined || y === undefined) {
       var _this$getScaledXYforD5 = this.getScaledXYforDOM(svg, e);
 
@@ -64790,8 +63417,6 @@ class Score extends Stream {
   }
   /**
    * How many systems are there? Calls numSystems() on the first part.
-   *
-   * @returns {int}
    */
 
 
@@ -64802,7 +63427,7 @@ class Score extends Stream {
    * Fixes the part measure spacing for all parts.
    *
    * @param {Object} options
-   * @param {Boolean} [options.setLeft=true]
+   * @param {boolean} [options.setLeft=true]
    * @returns {this}
    */
 
@@ -64817,13 +63442,13 @@ class Score extends Stream {
     var maxMeasureWidth = []; // the maximum measure width among all parts
 
     var j;
-    var _iteratorNormalCompletion37 = true;
-    var _didIteratorError37 = false;
-    var _iteratorError37 = undefined;
+    var _iteratorNormalCompletion36 = true;
+    var _didIteratorError36 = false;
+    var _iteratorError36 = undefined;
 
     try {
-      for (var _iterator37 = this.parts[Symbol.iterator](), _step37; !(_iteratorNormalCompletion37 = (_step37 = _iterator37.next()).done); _iteratorNormalCompletion37 = true) {
-        var p = _step37.value;
+      for (var _iterator36 = this.parts[Symbol.iterator](), _step36; !(_iteratorNormalCompletion36 = (_step36 = _iterator36.next()).done); _iteratorNormalCompletion36 = true) {
+        var p = _step36.value;
         var measureWidths = p.getMeasureWidths();
 
         for (j = 0; j < measureWidths.length; j++) {
@@ -64842,16 +63467,16 @@ class Score extends Stream {
         currentPartNumber += 1;
       }
     } catch (err) {
-      _didIteratorError37 = true;
-      _iteratorError37 = err;
+      _didIteratorError36 = true;
+      _iteratorError36 = err;
     } finally {
       try {
-        if (!_iteratorNormalCompletion37 && _iterator37.return != null) {
-          _iterator37.return();
+        if (!_iteratorNormalCompletion36 && _iterator36.return != null) {
+          _iterator36.return();
         }
       } finally {
-        if (_didIteratorError37) {
-          throw _iteratorError37;
+        if (_didIteratorError36) {
+          throw _iteratorError36;
         }
       }
     }
@@ -64860,13 +63485,13 @@ class Score extends Stream {
 
     for (var i = 0; i < maxMeasureWidth.length; i++) {
       var measureNewWidth = maxMeasureWidth[i];
-      var _iteratorNormalCompletion38 = true;
-      var _didIteratorError38 = false;
-      var _iteratorError38 = undefined;
+      var _iteratorNormalCompletion37 = true;
+      var _didIteratorError37 = false;
+      var _iteratorError37 = undefined;
 
       try {
-        for (var _iterator38 = this.parts[Symbol.iterator](), _step38; !(_iteratorNormalCompletion38 = (_step38 = _iterator38.next()).done); _iteratorNormalCompletion38 = true) {
-          var part = _step38.value;
+        for (var _iterator37 = this.parts[Symbol.iterator](), _step37; !(_iteratorNormalCompletion37 = (_step37 = _iterator37.next()).done); _iteratorNormalCompletion37 = true) {
+          var part = _step37.value;
           var measure = part.getElementsByClass('Measure').get(i);
           var rendOp = measure.renderOptions;
           rendOp.width = measureNewWidth;
@@ -64876,16 +63501,16 @@ class Score extends Stream {
           }
         }
       } catch (err) {
-        _didIteratorError38 = true;
-        _iteratorError38 = err;
+        _didIteratorError37 = true;
+        _iteratorError37 = err;
       } finally {
         try {
-          if (!_iteratorNormalCompletion38 && _iterator38.return != null) {
-            _iterator38.return();
+          if (!_iteratorNormalCompletion37 && _iterator37.return != null) {
+            _iterator37.return();
           }
         } finally {
-          if (_didIteratorError38) {
-            throw _iteratorError38;
+          if (_didIteratorError37) {
+            throw _iteratorError37;
           }
         }
       }
@@ -64911,9 +63536,9 @@ class OffsetMap {
 
 /***/ }),
 
-/***/ "./src/music21/stream/filters.js":
+/***/ "./src/music21/stream/filters.ts":
 /*!***************************************!*\
-  !*** ./src/music21/stream/filters.js ***!
+  !*** ./src/music21/stream/filters.ts ***!
   \***************************************/
 /*! exports provided: FilterException, StopIterationSingleton, StreamFilter, IsFilter, IsNotFilter, ClassFilter, ClassNotFilter, OffsetFilter */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -64935,6 +63560,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _exceptions21__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../exceptions21 */ "./src/music21/exceptions21.ts");
 
 
+ // noinspection JSUnusedGlobalSymbols
 
 class FilterException extends _exceptions21__WEBPACK_IMPORTED_MODULE_2__["Music21Exception"] {}
 
@@ -64957,15 +63583,7 @@ class StreamFilter {
   }
 
 }
-/**
- * @extends music21.stream.filters.StreamFilter
- */
-
 class IsFilter extends StreamFilter {
-  static get derivationStr() {
-    return 'is';
-  }
-
   constructor() {
     var target = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
     super();
@@ -64976,6 +63594,10 @@ class IsFilter extends StreamFilter {
 
     this.target = target;
     this.numToFind = target.length;
+  }
+
+  static get derivationStr() {
+    return 'is';
   }
 
   reset() {
@@ -64996,10 +63618,6 @@ class IsFilter extends StreamFilter {
   }
 
 }
-/**
- * @extends music21.stream.filters.StreamFilter
- */
-
 class IsNotFilter extends IsFilter {
   static get derivationStr() {
     return 'IsNot';
@@ -65024,15 +63642,7 @@ class IsNotFilter extends IsFilter {
 
 } // TODO(msc): IdFilter
 
-/**
- * @extends music21.stream.filters.StreamFilter
- */
-
 class ClassFilter extends StreamFilter {
-  static get derivationStr() {
-    return 'getElementsByClass';
-  }
-
   constructor() {
     var classList = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
     super();
@@ -65042,6 +63652,10 @@ class ClassFilter extends StreamFilter {
     }
 
     this.classList = classList;
+  }
+
+  static get derivationStr() {
+    return 'getElementsByClass';
   } // TODO: __eq__
 
 
@@ -65050,10 +63664,6 @@ class ClassFilter extends StreamFilter {
   }
 
 }
-/**
- * @extends music21.stream.filters.StreamFilter
- */
-
 class ClassNotFilter extends ClassFilter {
   static get derivationStr() {
     return 'getElementsNotOfClass';
@@ -65065,16 +63675,10 @@ class ClassNotFilter extends ClassFilter {
 
 } // TODO: GroupFilter
 
-/**
- * @extends music21.stream.filters.StreamFilter
- */
-
 class OffsetFilter extends StreamFilter {
-  static get derivationStr() {
-    return 'getElementsByOffset';
-  }
+  constructor(offsetStart) {
+    var offsetEnd = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
 
-  constructor(offsetStart, offsetEnd) {
     var _ref = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {},
         _ref$includeEndBounda = _ref.includeEndBoundary,
         includeEndBoundary = _ref$includeEndBounda === void 0 ? true : _ref$includeEndBounda,
@@ -65086,13 +63690,13 @@ class OffsetFilter extends StreamFilter {
         includeElementsThatEndAtStart = _ref$includeElementsT === void 0 ? true : _ref$includeElementsT;
 
     super();
+    this.zeroLengthSearch = false;
     this.offsetStart = offsetStart;
     this.offsetEnd = offsetEnd;
     this.includeEndBoundary = includeEndBoundary;
     this.mustFinishInSpan = mustFinishInSpan;
     this.mustBeginInSpan = mustBeginInSpan;
     this.includeElementsThatEndAtStart = includeElementsThatEndAtStart;
-    this.zeroLengthSearch = false;
 
     if (offsetEnd === undefined) {
       this.offsetEnd = offsetStart;
@@ -65102,8 +63706,14 @@ class OffsetFilter extends StreamFilter {
     }
   }
 
+  static get derivationStr() {
+    return 'getElementsByOffset';
+  }
+
   call(item, iterator) {
-    return this.isElementOffsetInRange(item, item.offset);
+    // N.B. iterator.srcStream.elementOffset is necessary instead
+    // of elementOffset, because we have not set activeSite yet.
+    return this.isElementOffsetInRange(item, iterator.srcStream.elementOffset(item));
   }
 
   isElementOffsetInRange(e, offset) {
@@ -65164,14 +63774,13 @@ class OffsetFilter extends StreamFilter {
     return true;
   }
 
-} // TODO: OffsetFilter (high priority)
-// TODO: OffsetHierarchyFilter
+} // TODO: OffsetHierarchyFilter
 
 /***/ }),
 
-/***/ "./src/music21/stream/iterator.js":
+/***/ "./src/music21/stream/iterator.ts":
 /*!****************************************!*\
-  !*** ./src/music21/stream/iterator.js ***!
+  !*** ./src/music21/stream/iterator.ts ***!
   \****************************************/
 /*! exports provided: StreamIteratorException, StreamIterator, OffsetIterator, RecursiveIterator */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -65199,7 +63808,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var regenerator_runtime_runtime__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! regenerator-runtime/runtime */ "./node_modules/regenerator-runtime/runtime.js");
 /* harmony import */ var regenerator_runtime_runtime__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(regenerator_runtime_runtime__WEBPACK_IMPORTED_MODULE_7__);
 /* harmony import */ var _exceptions21__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../exceptions21 */ "./src/music21/exceptions21.ts");
-/* harmony import */ var _filters__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./filters */ "./src/music21/stream/filters.js");
+/* harmony import */ var _filters__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./filters */ "./src/music21/stream/filters.ts");
 
 
 
@@ -65210,12 +63819,9 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-var StopIterationSingleton = _filters__WEBPACK_IMPORTED_MODULE_9__["StopIterationSingleton"];
+var StopIterationSingleton = _filters__WEBPACK_IMPORTED_MODULE_9__["StopIterationSingleton"]; // noinspection JSUnusedGlobalSymbols
+
 class StreamIteratorException extends _exceptions21__WEBPACK_IMPORTED_MODULE_8__["StreamException"] {}
-/**
- * @memberof music21.stream.iterator
- */
-
 class StreamIterator {
   constructor(srcStream) {
     var _ref = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
@@ -65228,16 +63834,18 @@ class StreamIterator {
         _ref$ignoreSorting = _ref.ignoreSorting,
         ignoreSorting = _ref$ignoreSorting === void 0 ? false : _ref$ignoreSorting;
 
+    this.index = 0;
+    this.iterSection = '_elements';
+    this.cleanupOnStop = false;
+    this.sectionIndex = 0;
+
     if (!ignoreSorting && !srcStream.isSorted && srcStream.autoSort) {
       srcStream.sort();
     }
 
     this.srcStream = srcStream;
-    this.index = 0;
     this.srcStreamElements = srcStream.elements;
     this.streamLength = this.srcStreamElements.length;
-    this.iterSection = '_elements';
-    this.cleanupOnStop = false;
     this.restoreActiveSites = restoreActiveSites;
     this.overrideDerivation = undefined;
 
@@ -65246,20 +63854,6 @@ class StreamIterator {
     }
 
     this.filters = filterList;
-    /**
-     *
-     * @type {number|undefined}
-     * @private
-     */
-
-    this._len = undefined;
-    /**
-     *
-     * @type {music21.base.Music21Object[]|undefined}
-     * @private
-     */
-
-    this._matchingElements = undefined;
     this.sectionIndex = 0; // no endElements yet...
 
     if (activeInformation === undefined) {
@@ -65289,6 +63883,7 @@ class StreamIterator {
                   break;
                 }
 
+                // noinspection DuplicatedCode
                 _this.index += 1;
                 e = void 0;
                 _context.prev = 4;
@@ -65536,7 +64131,8 @@ class StreamIterator {
     }
 
     return found;
-  }
+  } // noinspection JSUnusedGlobalSymbols
+
 
   get activeElementList() {
     return this.activeInformation.stream[this.activeInformation.iterSection];
@@ -65573,7 +64169,8 @@ class StreamIterator {
     this.filters.push(newFilter);
     this.resetCaches();
     return this;
-  }
+  } // noinspection JSUnusedGlobalSymbols
+
 
   removeFilter(oldFilter) {
     var index = this.filters.indexOf(oldFilter);
@@ -65599,12 +64196,12 @@ class StreamIterator {
   // getElementsByOffset;
 
 
-  getElementsByOffset() {
-    for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
-      args[_key] = arguments[_key];
+  getElementsByOffset(offsetStart) {
+    for (var _len = arguments.length, args = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+      args[_key - 1] = arguments[_key];
     }
 
-    return this.addFilter(new _filters__WEBPACK_IMPORTED_MODULE_9__["OffsetFilter"](...args));
+    return this.addFilter(new _filters__WEBPACK_IMPORTED_MODULE_9__["OffsetFilter"](offsetStart, ...args));
   }
 
   get notes() {
@@ -65617,7 +64214,8 @@ class StreamIterator {
 
   get parts() {
     return this.addFilter(new _filters__WEBPACK_IMPORTED_MODULE_9__["ClassFilter"]('Part'));
-  }
+  } // noinspection JSUnusedGlobalSymbols
+
 
   get spanners() {
     return this.addFilter(new _filters__WEBPACK_IMPORTED_MODULE_9__["ClassFilter"]('Spanner'));
@@ -65628,16 +64226,11 @@ class StreamIterator {
   }
 
 }
-/**
- * @extends music21.stream.iterator.StreamIterator
- */
-
 class OffsetIterator extends StreamIterator {
   constructor(srcStream) {
     var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
     super(srcStream, options);
     this.nextToYield = [];
-    this.nextOffsetToYield = undefined;
   }
 
   [Symbol.iterator]() {
@@ -65652,165 +64245,165 @@ class OffsetIterator extends StreamIterator {
           while (1) {
             switch (_context2.prev = _context2.next) {
               case 0:
-                _this2.reset();
+                _this2.reset(); // this.sort();
 
-                _this2.sort();
 
-              case 2:
+              case 1:
                 if (!(_this2.index < _this2.streamLength)) {
-                  _context2.next = 66;
+                  _context2.next = 65;
                   break;
                 }
 
+                // noinspection DuplicatedCode
                 _this2.index += 1;
                 e = void 0;
-                _context2.prev = 5;
+                _context2.prev = 4;
                 e = _this2.srcStreamElements[_this2.index - 1];
-                _context2.next = 12;
+                _context2.next = 11;
                 break;
 
-              case 9:
-                _context2.prev = 9;
-                _context2.t0 = _context2["catch"](5);
-                return _context2.abrupt("continue", 2);
+              case 8:
+                _context2.prev = 8;
+                _context2.t0 = _context2["catch"](4);
+                return _context2.abrupt("continue", 1);
 
-              case 12:
+              case 11:
                 matches = _this2.matchesFilters(e);
 
                 if (!(matches === false)) {
-                  _context2.next = 15;
+                  _context2.next = 14;
                   break;
                 }
 
-                return _context2.abrupt("continue", 2);
+                return _context2.abrupt("continue", 1);
 
-              case 15:
+              case 14:
                 if (!(matches === StopIterationSingleton)) {
-                  _context2.next = 17;
+                  _context2.next = 16;
                   break;
                 }
 
-                return _context2.abrupt("break", 66);
+                return _context2.abrupt("break", 65);
 
-              case 17:
+              case 16:
                 yieldEls = [e];
-                eOffset = _this2.elementOffset(e);
+                eOffset = _this2.srcStream.elementOffset(e);
                 forwardIndex = _this2.index;
 
-              case 20:
+              case 19:
                 if (!(forwardIndex < _this2.streamLength)) {
-                  _context2.next = 41;
+                  _context2.next = 40;
                   break;
                 }
 
                 nextE = void 0;
-                _context2.prev = 22;
+                _context2.prev = 21;
                 nextE = _this2.srcStreamElements[_this2.index - 1];
-                _context2.next = 29;
+                _context2.next = 28;
                 break;
 
-              case 26:
-                _context2.prev = 26;
-                _context2.t1 = _context2["catch"](22);
-                return _context2.abrupt("continue", 38);
+              case 25:
+                _context2.prev = 25;
+                _context2.t1 = _context2["catch"](21);
+                return _context2.abrupt("continue", 37);
 
-              case 29:
-                nextOffset = _this2.elementOffset(nextE);
+              case 28:
+                nextOffset = _this2.srcStream.elementOffset(nextE);
 
                 if (!(nextOffset !== eOffset)) {
-                  _context2.next = 34;
+                  _context2.next = 33;
                   break;
                 }
 
                 _this2.nextToYield = [nextE];
                 _this2.nextOffsetToYield = nextOffset;
-                return _context2.abrupt("break", 41);
+                return _context2.abrupt("break", 40);
 
-              case 34:
+              case 33:
                 if (_this2.matchesFilters(nextE)) {
-                  _context2.next = 36;
+                  _context2.next = 35;
                   break;
                 }
 
-                return _context2.abrupt("continue", 38);
+                return _context2.abrupt("continue", 37);
 
-              case 36:
+              case 35:
                 yieldEls.push(e);
                 _this2.index = forwardIndex;
 
-              case 38:
+              case 37:
                 forwardIndex++;
-                _context2.next = 20;
+                _context2.next = 19;
                 break;
 
-              case 41:
+              case 40:
                 if (!_this2.restoreActiveSites) {
-                  _context2.next = 61;
+                  _context2.next = 60;
                   break;
                 }
 
                 _iteratorNormalCompletion6 = true;
                 _didIteratorError6 = false;
                 _iteratorError6 = undefined;
-                _context2.prev = 45;
+                _context2.prev = 44;
 
                 for (_iterator6 = yieldEls[Symbol.iterator](); !(_iteratorNormalCompletion6 = (_step6 = _iterator6.next()).done); _iteratorNormalCompletion6 = true) {
                   el = _step6.value;
                   el.activeSite = _this2.srcStream;
                 }
 
-                _context2.next = 53;
+                _context2.next = 52;
                 break;
 
-              case 49:
-                _context2.prev = 49;
-                _context2.t2 = _context2["catch"](45);
+              case 48:
+                _context2.prev = 48;
+                _context2.t2 = _context2["catch"](44);
                 _didIteratorError6 = true;
                 _iteratorError6 = _context2.t2;
 
-              case 53:
+              case 52:
+                _context2.prev = 52;
                 _context2.prev = 53;
-                _context2.prev = 54;
 
                 if (!_iteratorNormalCompletion6 && _iterator6.return != null) {
                   _iterator6.return();
                 }
 
-              case 56:
-                _context2.prev = 56;
+              case 55:
+                _context2.prev = 55;
 
                 if (!_didIteratorError6) {
-                  _context2.next = 59;
+                  _context2.next = 58;
                   break;
                 }
 
                 throw _iteratorError6;
 
+              case 58:
+                return _context2.finish(55);
+
               case 59:
-                return _context2.finish(56);
+                return _context2.finish(52);
 
               case 60:
-                return _context2.finish(53);
-
-              case 61:
                 _this2.updateActiveInformation();
 
-                _context2.next = 64;
+                _context2.next = 63;
                 return yieldEls;
 
-              case 64:
-                _context2.next = 2;
+              case 63:
+                _context2.next = 1;
                 break;
 
-              case 66:
+              case 65:
                 _this2.cleanup();
 
-              case 67:
+              case 66:
               case "end":
                 return _context2.stop();
             }
           }
-        }, _callee2, null, [[5, 9], [22, 26], [45, 49, 53, 61], [54,, 56, 60]]);
+        }, _callee2, null, [[4, 8], [21, 25], [44, 48, 52, 60], [53,, 55, 59]]);
       })()
     );
   }
@@ -65822,21 +64415,21 @@ class OffsetIterator extends StreamIterator {
   }
 
 }
-/**
- * @extends music21.stream.iterator.StreamIterator
- */
-
 class RecursiveIterator extends StreamIterator {
   constructor(srcStream) {
     var _ref2 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
-        filterList = _ref2.filterList,
-        restoreActiveSites = _ref2.restoreActiveSites,
-        activeInformation = _ref2.activeInformation,
+        _ref2$filterList = _ref2.filterList,
+        filterList = _ref2$filterList === void 0 ? [] : _ref2$filterList,
+        _ref2$restoreActiveSi = _ref2.restoreActiveSites,
+        restoreActiveSites = _ref2$restoreActiveSi === void 0 ? true : _ref2$restoreActiveSi,
+        _ref2$activeInformati = _ref2.activeInformation,
+        activeInformation = _ref2$activeInformati === void 0 ? undefined : _ref2$activeInformati,
         _ref2$streamsOnly = _ref2.streamsOnly,
         streamsOnly = _ref2$streamsOnly === void 0 ? false : _ref2$streamsOnly,
         _ref2$includeSelf = _ref2.includeSelf,
         includeSelf = _ref2$includeSelf === void 0 ? false : _ref2$includeSelf,
-        ignoreSorting = _ref2.ignoreSorting;
+        _ref2$ignoreSorting = _ref2.ignoreSorting,
+        ignoreSorting = _ref2$ignoreSorting === void 0 ? false : _ref2$ignoreSorting;
 
     super(srcStream, {
       filterList,
@@ -65844,19 +64437,14 @@ class RecursiveIterator extends StreamIterator {
       activeInformation,
       ignoreSorting
     });
+    this.iteratorStartOffsetInHierarchy = 0.0;
     this.returnSelf = includeSelf;
     this.includeSelf = includeSelf;
     this.ignoreSorting = ignoreSorting;
-    this.iteratorStartOffsetInHierarchy = 0.0;
 
     if (streamsOnly) {
       this.filters.push(new _filters__WEBPACK_IMPORTED_MODULE_9__["ClassFilter"]('Stream'));
     }
-    /**
-     *
-     * @type {RecursiveIterator|undefined}
-     */
-
 
     this.childRecursiveIterator = undefined;
   }
@@ -65946,13 +64534,9 @@ class RecursiveIterator extends StreamIterator {
                 _this3.childRecursiveIterator = new RecursiveIterator(e, {
                   restoreActiveSites: _this3.restoreActiveSites,
                   filterList: _this3.filters,
-                  // shared list
                   activeInformation: _this3.activeInformation,
-                  // shared
                   includeSelf: false,
-                  ignoreSorting: _this3.ignoreSorting // parentIterator: this,
-                  //
-
+                  ignoreSorting: _this3.ignoreSorting
                 });
                 newStartOffset = _this3.iteratorStartOffsetInHierarchy + _this3.srcStream.elementOffset(e);
                 _this3.childRecursiveIterator.iteratorStartOffsetInHierarchy = newStartOffset;
@@ -66044,16 +64628,10 @@ class RecursiveIterator extends StreamIterator {
   /**
    *   Returns a stack of RecursiveIterators at this point in the iteration.
    *   Last is most recent.
-   *
-   *   @returns {RecursiveIterator[]}
    */
 
 
   iteratorStack() {
-    /**
-     *
-     * @type {RecursiveIterator[]}
-     */
     var iterStack = [this];
     var x = this;
 
@@ -66063,7 +64641,8 @@ class RecursiveIterator extends StreamIterator {
     }
 
     return iterStack;
-  }
+  } // noinspection JSUnusedGlobalSymbols
+
   /**
    *   Returns a stack of Streams at this point.  Last is most recent.
    */
@@ -66071,7 +64650,8 @@ class RecursiveIterator extends StreamIterator {
 
   streamStack() {
     return this.iteratorStack().map(iter => iter.srcStream);
-  }
+  } // noinspection JSUnusedGlobalSymbols
+
   /**
    *  Called on the current iterator, returns the current offset
    *  in the hierarchy. or undefined if we are not currently iterating.
@@ -66095,32 +64675,54 @@ class RecursiveIterator extends StreamIterator {
     } else {
       return lastStartOffset + lastStream.elementOffset(lastYield);
     }
-  } // TODO(msc): getElementsByOffsetInHierarchy
-
+  }
 
 }
 
 /***/ }),
 
-/***/ "./src/music21/tempo.js":
+/***/ "./src/music21/tempo.ts":
 /*!******************************!*\
-  !*** ./src/music21/tempo.js ***!
+  !*** ./src/music21/tempo.ts ***!
   \******************************/
-/*! exports provided: defaultTempoValues, baseTempo, Metronome */
+/*! exports provided: TempoException, defaultTempoValues, baseTempo, Metronome, MetronomeMark */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "TempoException", function() { return TempoException; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "defaultTempoValues", function() { return defaultTempoValues; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "baseTempo", function() { return baseTempo; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Metronome", function() { return Metronome; });
-/* harmony import */ var core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es.regexp.to-string */ "./node_modules/core-js/modules/es.regexp.to-string.js");
-/* harmony import */ var core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
-/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(jquery__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var midicube__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! midicube */ "./node_modules/midicube/releases/midicube.js");
-/* harmony import */ var midicube__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(midicube__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _prebase__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./prebase */ "./src/music21/prebase.ts");
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "MetronomeMark", function() { return MetronomeMark; });
+/* harmony import */ var core_js_modules_es_symbol_description__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es.symbol.description */ "./node_modules/core-js/modules/es.symbol.description.js");
+/* harmony import */ var core_js_modules_es_symbol_description__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_symbol_description__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var core_js_modules_es_array_includes__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! core-js/modules/es.array.includes */ "./node_modules/core-js/modules/es.array.includes.js");
+/* harmony import */ var core_js_modules_es_array_includes__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_includes__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var core_js_modules_es_array_iterator__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! core-js/modules/es.array.iterator */ "./node_modules/core-js/modules/es.array.iterator.js");
+/* harmony import */ var core_js_modules_es_array_iterator__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_iterator__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! core-js/modules/es.regexp.to-string */ "./node_modules/core-js/modules/es.regexp.to-string.js");
+/* harmony import */ var core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var core_js_modules_es_string_includes__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! core-js/modules/es.string.includes */ "./node_modules/core-js/modules/es.string.includes.js");
+/* harmony import */ var core_js_modules_es_string_includes__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_includes__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var core_js_modules_es_string_split__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! core-js/modules/es.string.split */ "./node_modules/core-js/modules/es.string.split.js");
+/* harmony import */ var core_js_modules_es_string_split__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_split__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! core-js/modules/web.dom-collections.iterator */ "./node_modules/core-js/modules/web.dom-collections.iterator.js");
+/* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_6__);
+/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
+/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(jquery__WEBPACK_IMPORTED_MODULE_7__);
+/* harmony import */ var midicube__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! midicube */ "./node_modules/midicube/releases/midicube.js");
+/* harmony import */ var midicube__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(midicube__WEBPACK_IMPORTED_MODULE_8__);
+/* harmony import */ var _prebase__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./prebase */ "./src/music21/prebase.ts");
+/* harmony import */ var _base__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./base */ "./src/music21/base.ts");
+/* harmony import */ var _duration__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./duration */ "./src/music21/duration.ts");
+/* harmony import */ var _exceptions21__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./exceptions21 */ "./src/music21/exceptions21.ts");
+
+
+
+
+
+
 
 
 /**
@@ -66135,6 +64737,7 @@ __webpack_require__.r(__webpack_exports__);
  * @exports music21/tempo
  * @namespace music21.tempo
  * @memberof music21
+ * @requires music21/duration
  * @requires music21/prebase
  * @requires music21/base
  * @requires MIDI
@@ -66143,11 +64746,10 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-/**
- * The tempo object itself is a full object in music21p -- TODO(msc): make it one here too.
- * (MetronomeMark)
- */
-// noinspection JSNonASCIINames,NonAsciiCharacters
+
+
+
+class TempoException extends _exceptions21__WEBPACK_IMPORTED_MODULE_12__["Music21Exception"] {} // noinspection JSNonASCIINames,NonAsciiCharacters
 
 /**
  * Object mapping names to tempo values
@@ -66201,44 +64803,40 @@ var baseTempo = 60;
  * @extends music21.prebase.ProtoM21Object
  * @param {number} [tempo=music21.tempo.baseTempo] - the tempo of the metronome to start
  * @property {number} tempo
- * @property {int} [numBeatsPerMeasure=4]
+ * @property {number} [numBeatsPerMeasure=4]
  * @property {number} [minTempo=10]
  * @property {number} [maxTempo=600]
- * @property {bool} [flash=false] - flash the tempo
- * @property {bool} [silent=false] - play silently
- * @property {int} beat - current beat number
- * @property {int} chirpTimeout - an index of a timeout object for chirping
+ * @property {boolean} [flash=false] - flash the tempo
+ * @property {boolean} [silent=false] - play silently
+ * @property {number} beat - current beat number
+ * @property {number} chirpTimeout - an index of a timeout object for chirping
  */
 
-class Metronome extends _prebase__WEBPACK_IMPORTED_MODULE_3__["ProtoM21Object"] {
-  static get className() {
-    return 'music21.tempo.Metronome';
-  }
-
-  constructor(tempoInt) {
+class Metronome extends _prebase__WEBPACK_IMPORTED_MODULE_9__["ProtoM21Object"] {
+  constructor() {
+    var tempoInt = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : baseTempo;
     super();
-    this._tempo = 60; // overridden by music21.tempo.baseTempo;
+    this._tempo = baseTempo;
+    this.numBeatsPerMeasure = 4;
+    this.minTempo = 10;
+    this.maxTempo = 600;
+    this.beat = 4;
+    this.chirpTimeout = undefined;
+    this.silent = false;
+    this.flash = false;
+    this.tempoRanges = [0, 40, 60, 72, 120, 144, 240, 999];
+    this.tempoIncreases = [0, 1, 2, 3, 4, 6, 8, 15, 100];
 
     if (tempoInt === undefined) {
       this.tempo = baseTempo;
     } else {
       this.tempo = tempoInt;
     }
-
-    this.numBeatsPerMeasure = 4;
-    this.minTempo = 10;
-    this.maxTempo = 600;
-    this.beat = this.numBeatsPerMeasure;
-    this.chirpTimeout = undefined;
-    this.silent = false;
-    this.flash = false;
-    this.tempoRanges = [0, 40, 60, 72, 120, 144, 240, 999];
-    this.tempoIncreases = [0, 1, 2, 3, 4, 6, 8, 15, 100];
   }
-  /**
-   * @type {number}
-   */
 
+  static get className() {
+    return 'music21.tempo.Metronome';
+  }
 
   get tempo() {
     return this._tempo;
@@ -66253,11 +64851,6 @@ class Metronome extends _prebase__WEBPACK_IMPORTED_MODULE_3__["ProtoM21Object"] 
       this._tempo = this.minTempo;
     }
   }
-  /**
-   *
-   * @returns {number}
-   */
-
 
   get beatLength() {
     return 60.0 / this.tempo;
@@ -66265,7 +64858,7 @@ class Metronome extends _prebase__WEBPACK_IMPORTED_MODULE_3__["ProtoM21Object"] 
 
   _silentFlash(flashColor) {
     this.$metronomeDiv.find('.metroFlash').css('background-color', flashColor).fadeOut(this.beatLength * 1000 / 4, function silentFadeOut() {
-      jquery__WEBPACK_IMPORTED_MODULE_1__(this).css('background-color', '#ffffff').fadeIn(1);
+      jquery__WEBPACK_IMPORTED_MODULE_7__(this).css('background-color', '#ffffff').fadeIn(1);
     });
   }
   /**
@@ -66280,8 +64873,8 @@ class Metronome extends _prebase__WEBPACK_IMPORTED_MODULE_3__["ProtoM21Object"] 
       this.beat = 1;
 
       if (this.silent !== true) {
-        midicube__WEBPACK_IMPORTED_MODULE_2__["noteOn"](0, 96, 100, 0);
-        midicube__WEBPACK_IMPORTED_MODULE_2__["noteOff"](0, 96, 0.1);
+        midicube__WEBPACK_IMPORTED_MODULE_8__["noteOn"](0, 96, 100, 0);
+        midicube__WEBPACK_IMPORTED_MODULE_8__["noteOff"](0, 96, 0.1);
       }
 
       if (this.flash === true) {
@@ -66289,8 +64882,8 @@ class Metronome extends _prebase__WEBPACK_IMPORTED_MODULE_3__["ProtoM21Object"] 
       }
     } else {
       if (this.silent !== true) {
-        midicube__WEBPACK_IMPORTED_MODULE_2__["noteOn"](0, 84, 70, 0);
-        midicube__WEBPACK_IMPORTED_MODULE_2__["noteOff"](0, 84, 0.1);
+        midicube__WEBPACK_IMPORTED_MODULE_8__["noteOn"](0, 84, 70, 0);
+        midicube__WEBPACK_IMPORTED_MODULE_8__["noteOff"](0, 84, 0.1);
       }
 
       if (this.flash === true) {
@@ -66398,12 +64991,12 @@ class Metronome extends _prebase__WEBPACK_IMPORTED_MODULE_3__["ProtoM21Object"] 
      */
     var $where;
 
-    if (where !== undefined && where instanceof jquery__WEBPACK_IMPORTED_MODULE_1__) {
+    if (where !== undefined && where instanceof jquery__WEBPACK_IMPORTED_MODULE_7__) {
       $where = where;
-    } else if (where !== undefined && !(where instanceof jquery__WEBPACK_IMPORTED_MODULE_1__)) {
-      $where = jquery__WEBPACK_IMPORTED_MODULE_1__(where);
+    } else if (where !== undefined && !(where instanceof jquery__WEBPACK_IMPORTED_MODULE_7__)) {
+      $where = jquery__WEBPACK_IMPORTED_MODULE_7__(where);
     } else {
-      $where = jquery__WEBPACK_IMPORTED_MODULE_1__('body');
+      $where = jquery__WEBPACK_IMPORTED_MODULE_7__('body');
     }
 
     var metroThis = this;
@@ -66412,7 +65005,7 @@ class Metronome extends _prebase__WEBPACK_IMPORTED_MODULE_3__["ProtoM21Object"] 
      * @type {jQuery}
      */
 
-    var $tempoHolder = jquery__WEBPACK_IMPORTED_MODULE_1__('<span class="tempoHolder">' + this.tempo.toString() + '</span>');
+    var $tempoHolder = jquery__WEBPACK_IMPORTED_MODULE_7__('<span class="tempoHolder">' + this.tempo.toString() + '</span>');
     $tempoHolder.css({
       'font-size': '24px',
       'padding-left': '10px',
@@ -66423,14 +65016,14 @@ class Metronome extends _prebase__WEBPACK_IMPORTED_MODULE_3__["ProtoM21Object"] 
      * @type {jQuery}
      */
 
-    var $newDiv = jquery__WEBPACK_IMPORTED_MODULE_1__('<div class="metronomeRendered"></div>');
+    var $newDiv = jquery__WEBPACK_IMPORTED_MODULE_7__('<div class="metronomeRendered"></div>');
     $newDiv.append($tempoHolder);
     /**
      *
      * @type {jQuery}
      */
 
-    var b1 = jquery__WEBPACK_IMPORTED_MODULE_1__('<button>start</button>');
+    var b1 = jquery__WEBPACK_IMPORTED_MODULE_7__('<button>start</button>');
     b1.on('click', () => {
       metroThis.chirp();
     });
@@ -66439,7 +65032,7 @@ class Metronome extends _prebase__WEBPACK_IMPORTED_MODULE_3__["ProtoM21Object"] 
      * @type {jQuery}
      */
 
-    var b2 = jquery__WEBPACK_IMPORTED_MODULE_1__('<button>stop</button>');
+    var b2 = jquery__WEBPACK_IMPORTED_MODULE_7__('<button>stop</button>');
     b2.on('click', () => {
       metroThis.stopChirp();
     });
@@ -66450,20 +65043,20 @@ class Metronome extends _prebase__WEBPACK_IMPORTED_MODULE_3__["ProtoM21Object"] 
      * @type {jQuery}
      */
 
-    var b3 = jquery__WEBPACK_IMPORTED_MODULE_1__('<button>up</button>');
+    var b3 = jquery__WEBPACK_IMPORTED_MODULE_7__('<button>up</button>');
     b3.on('click', function increaseSpeedButton() {
       metroThis.increaseSpeed();
-      jquery__WEBPACK_IMPORTED_MODULE_1__(this).prevAll('.tempoHolder').html(metroThis.tempo.toString());
+      jquery__WEBPACK_IMPORTED_MODULE_7__(this).prevAll('.tempoHolder').html(metroThis.tempo.toString());
     });
     /**
      *
      * @type {jQuery}
      */
 
-    var b4 = jquery__WEBPACK_IMPORTED_MODULE_1__('<button>down</button>');
+    var b4 = jquery__WEBPACK_IMPORTED_MODULE_7__('<button>down</button>');
     b4.on('click', function decreaseSpeedButton() {
       metroThis.decreaseSpeed();
-      jquery__WEBPACK_IMPORTED_MODULE_1__(this).prevAll('.tempoHolder').html(metroThis.tempo.toString());
+      jquery__WEBPACK_IMPORTED_MODULE_7__(this).prevAll('.tempoHolder').html(metroThis.tempo.toString());
     });
     $newDiv.append(b3);
     $newDiv.append(b4);
@@ -66472,7 +65065,7 @@ class Metronome extends _prebase__WEBPACK_IMPORTED_MODULE_3__["ProtoM21Object"] 
      * @type {jQuery}
      */
 
-    var $flash = jquery__WEBPACK_IMPORTED_MODULE_1__('<span class="metroFlash">' + '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>');
+    var $flash = jquery__WEBPACK_IMPORTED_MODULE_7__('<span class="metroFlash">' + '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>');
     $flash.css('margin-left', '40px');
     $flash.css('height', '40px');
     $newDiv.append($flash);
@@ -66483,11 +65076,199 @@ class Metronome extends _prebase__WEBPACK_IMPORTED_MODULE_3__["ProtoM21Object"] 
 
 }
 
+class TempoText {
+  constructor() {
+    var text = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
+    this.text = text;
+  }
+
+}
+/**
+ *
+ * @class MetronomeMark
+ * @memberof music21.tempo
+ * @extends base.Music21Object
+ * @param {Object} metronome - metronome
+ * @param {string} metronome.text - tempo text
+ * @param {number} metronome.number - beats per minute
+ * @param {number|music21.duration.Duration} metronome.referent - duration value of tempo
+ * @param {boolean} metronome.parentheses - ???
+ * @property {string} text - tempo text
+ * @property {number} number - beats per minute
+ * @property {music21.duration.Duration} referent - duration value of tempo
+ */
+
+
+class MetronomeMark extends _base__WEBPACK_IMPORTED_MODULE_10__["Music21Object"] {
+  constructor() {
+    var _ref = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
+        _ref$text = _ref.text,
+        text = _ref$text === void 0 ? undefined : _ref$text,
+        _ref$number = _ref.number,
+        number = _ref$number === void 0 ? undefined : _ref$number,
+        _ref$referent = _ref.referent,
+        referent = _ref$referent === void 0 ? undefined : _ref$referent,
+        _ref$parentheses = _ref.parentheses,
+        parentheses = _ref$parentheses === void 0 ? false : _ref$parentheses;
+
+    super();
+    this.parentheses = false;
+    this._number = number;
+
+    if (this._number !== undefined) {
+      this.numberImplicit = false;
+    }
+
+    this._tempoText = undefined;
+    this.textImplicit = undefined;
+    this.text = text;
+    this._referent = undefined;
+    this.referent = referent;
+    this.parentheses = parentheses;
+
+    this._updateNumberFromText();
+
+    this._updateTextFromNumber();
+  }
+
+  static get className() {
+    return 'music21.tempo.MetronomeMark';
+  }
+
+  _updateNumberFromText() {
+    if (this._number === undefined && this._tempoText !== undefined) {
+      this._number = this._getDefaultNumber(this._tempoText);
+
+      if (this._number !== undefined) {
+        this.numberImplicit = true;
+      }
+    }
+  }
+
+  _updateTextFromNumber() {
+    if (this._tempoText === undefined && this._number !== undefined) {
+      this.text = this._getDefaultText(this._number);
+
+      if (this.text !== undefined) {
+        this.textImplicit = true;
+      }
+    }
+  } // sigh, again the TypeScript limitation...
+
+
+  get text() {
+    if (this._tempoText === undefined) {
+      return undefined;
+    }
+
+    return this._tempoText.text;
+  }
+
+  set text(value) {
+    if (value === undefined) {
+      this._tempoText = undefined;
+    } else if (value instanceof TempoText) {
+      this._tempoText = value;
+      this.textImplicit = false;
+    } else {
+      this._tempoText = new TempoText(value); // if (this.hasStyleInformation) { // TODO: where is this?
+      //     this._tempoText.style = this.style;
+      // } else {
+      //     this.style = this._tempoText.style;
+      // }
+
+      this.textImplicit = false;
+    }
+  }
+
+  get number() {
+    return this._number;
+  }
+
+  set number(value) {
+    if (typeof value !== 'number') {
+      throw new TempoException('cannot set number to a string');
+    }
+
+    this._number = value;
+    this.numberImplicit = false;
+  }
+
+  get referent() {
+    return this._referent;
+  }
+
+  set referent(value) {
+    if (value === undefined) {
+      this._referent = new _duration__WEBPACK_IMPORTED_MODULE_11__["Duration"](1);
+    } else if (['number', 'string'].includes(typeof value)) {
+      this._referent = new _duration__WEBPACK_IMPORTED_MODULE_11__["Duration"](value);
+    } else if (value.classes.includes('Duration')) {
+      this._referent = value;
+    } else if (value.duration) {
+      this._referent = value.duration;
+    } else {
+      throw new TempoException("Cannot get a Duration from the supplied object: ".concat(value));
+    }
+  }
+
+  _getDefaultNumber(tempoText) {
+    var tempoStr = tempoText instanceof TempoText ? tempoText.text : tempoText;
+    var post;
+    var tempoNames = Object.keys(defaultTempoValues);
+
+    if (tempoNames.includes(tempoStr.toLowerCase())) {
+      post = defaultTempoValues[tempoStr.toLowerCase()];
+    } else if (tempoNames.includes(tempoStr)) {
+      post = defaultTempoValues[tempoStr];
+    } else {
+      var _iteratorNormalCompletion = true;
+      var _didIteratorError = false;
+      var _iteratorError = undefined;
+
+      try {
+        for (var _iterator = tempoStr.split(' ')[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+          var word = _step.value;
+
+          if (tempoNames.includes(word.toLowerCase())) {
+            post = defaultTempoValues[tempoStr.toLowerCase()];
+          }
+        }
+      } catch (err) {
+        _didIteratorError = true;
+        _iteratorError = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion && _iterator.return != null) {
+            _iterator.return();
+          }
+        } finally {
+          if (_didIteratorError) {
+            throw _iteratorError;
+          }
+        }
+      }
+    }
+
+    return post;
+  }
+
+  _getDefaultText(number) {
+    var spread = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 2;
+    var tempoNumber = typeof number === 'number' ? number : parseFloat(number);
+    return Object.keys(defaultTempoValues).find(tempoName => {
+      var tempoValue = defaultTempoValues[tempoName];
+      return tempoValue - spread <= tempoNumber && tempoValue + spread >= tempoNumber;
+    });
+  }
+
+}
+
 /***/ }),
 
-/***/ "./src/music21/tie.js":
+/***/ "./src/music21/tie.ts":
 /*!****************************!*\
-  !*** ./src/music21/tie.js ***!
+  !*** ./src/music21/tie.ts ***!
   \****************************/
 /*! exports provided: Tie */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -66542,32 +65323,20 @@ var VALID_TIE_TYPES = ['start', 'stop', 'continue', 'let-ring', 'continue-let-ri
  */
 
 class Tie extends _prebase__WEBPACK_IMPORTED_MODULE_1__["ProtoM21Object"] {
+  constructor() {
+    var type = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'start';
+    super();
+    this.style = 'normal';
+    this.type = type;
+  }
+
   static get className() {
     return 'music21.tie.Tie';
   }
 
-  constructor() {
-    var type = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'start';
-    super();
-    this._type = undefined;
-    this.style = 'normal';
-    this.type = type;
-    this.placement = undefined;
-  }
-  /**
-   *
-   * @returns {string}
-   */
-
-
   stringInfo() {
     return this.type;
   }
-  /**
-   *
-   * @type {string}
-   */
-
 
   get type() {
     return this._type;
@@ -66585,9 +65354,9 @@ class Tie extends _prebase__WEBPACK_IMPORTED_MODULE_1__["ProtoM21Object"] {
 
 /***/ }),
 
-/***/ "./src/music21/tinyNotation.js":
+/***/ "./src/music21/tinyNotation.ts":
 /*!*************************************!*\
-  !*** ./src/music21/tinyNotation.js ***!
+  !*** ./src/music21/tinyNotation.ts ***!
   \*************************************/
 /*! exports provided: TinyNotation, renderNotationDivs */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -66614,13 +65383,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_7__);
 /* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
 /* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(jquery__WEBPACK_IMPORTED_MODULE_8__);
-/* harmony import */ var _clef__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./clef */ "./src/music21/clef.js");
-/* harmony import */ var _duration__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./duration */ "./src/music21/duration.js");
-/* harmony import */ var _pitch__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./pitch */ "./src/music21/pitch.js");
-/* harmony import */ var _note__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./note */ "./src/music21/note.js");
-/* harmony import */ var _meter__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./meter */ "./src/music21/meter.js");
-/* harmony import */ var _stream__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./stream */ "./src/music21/stream.js");
-/* harmony import */ var _tie__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./tie */ "./src/music21/tie.js");
+/* harmony import */ var _clef__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./clef */ "./src/music21/clef.ts");
+/* harmony import */ var _duration__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./duration */ "./src/music21/duration.ts");
+/* harmony import */ var _pitch__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./pitch */ "./src/music21/pitch.ts");
+/* harmony import */ var _note__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./note */ "./src/music21/note.ts");
+/* harmony import */ var _meter__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./meter */ "./src/music21/meter.ts");
+/* harmony import */ var _stream__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./stream */ "./src/music21/stream.ts");
+/* harmony import */ var _tie__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./tie */ "./src/music21/tie.ts");
 
 
 
@@ -66683,22 +65452,16 @@ var regularExpressions = {
   EDFLAT: /\((-+)\)/,
   EDNAT: /\(n\)/,
   SHARP: /^[A-Ga-g]+'*(#+)/,
-  // simple notation finds
   FLAT: /^[A-Ga-g]+'*(-+)/,
-  //   double accidentals too
   NAT: /^[A-Ga-g]+'*n/,
-  // explicit naturals
   TYPE: /(\d+)/,
   TIE: /.~/,
-  // not preceding ties
   PRECTIE: /~/,
-  // front ties
   ID_EL: /=([A-Za-z0-9]*)/,
   LYRIC: /_(.*)/,
   DOT: /\.+/,
   TIMESIG: /(\d+)\/(\d+)/,
   PARTBREAK: /partBreak/,
-  // nonstandard...fix later...
   TRIP: /trip{/,
   QUAD: /quad{/,
   ENDBRAC: /}$/
@@ -66924,15 +65687,18 @@ function TinyNotation(textIn) {
 
     for (var _i2 = 0; _i2 < optionalScore.parts.length; _i2++) {
       var innerPart = optionalScore.parts.get(_i2);
-      innerPart.clef = _clef__WEBPACK_IMPORTED_MODULE_9__["bestClef"](innerPart);
+      var innerPartClef = _clef__WEBPACK_IMPORTED_MODULE_9__["bestClef"](innerPart);
       var innerMeasure = innerPart.getElementsByClass('Measure').get(0);
-      innerMeasure.clef = innerPart.clef;
+
+      if (innerMeasure !== undefined) {
+        innerMeasure.insert(0, innerPartClef);
+      }
     }
 
     returnObject = optionalScore;
   } else {
-    p.clef = _clef__WEBPACK_IMPORTED_MODULE_9__["bestClef"](p);
-    p.getElementsByClass('Measure').get(0).clef = p.clef;
+    var bestClef = _clef__WEBPACK_IMPORTED_MODULE_9__["bestClef"](p);
+    p.getElementsByClass('Measure').get(0).insert(0, bestClef);
     returnObject = p;
   }
 
@@ -66951,16 +65717,11 @@ function TinyNotation(textIn) {
 
 function renderNotationDivs() {
   var classTypes = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '.music21.tinyNotation';
-  var selector = arguments.length > 1 ? arguments[1] : undefined;
-
-  /**
-   *
-   * @type {jQuery[]}
-   */
-  var allRender = [];
+  var selector = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
+  var $allRender;
 
   if (selector === undefined) {
-    allRender = jquery__WEBPACK_IMPORTED_MODULE_8__(classTypes);
+    $allRender = jquery__WEBPACK_IMPORTED_MODULE_8__(classTypes);
   } else {
     /**
      * @type {jQuery}
@@ -66973,11 +65734,11 @@ function renderNotationDivs() {
       $selector = selector;
     }
 
-    allRender = $selector.find(classTypes);
+    $allRender = $selector.find(classTypes);
   }
 
-  for (var i = 0; i < allRender.length; i++) {
-    var thisTN = allRender[i];
+  for (var i = 0; i < $allRender.length; i++) {
+    var thisTN = $allRender[i];
     var $thisTN = jquery__WEBPACK_IMPORTED_MODULE_8__(thisTN);
     var thisTNContents = void 0;
 
@@ -67010,9 +65771,9 @@ function renderNotationDivs() {
 
 /***/ }),
 
-/***/ "./src/music21/vfShow.js":
+/***/ "./src/music21/vfShow.ts":
 /*!*******************************!*\
-  !*** ./src/music21/vfShow.js ***!
+  !*** ./src/music21/vfShow.ts ***!
   \*******************************/
 /*! exports provided: RenderStack, Renderer */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -67023,37 +65784,31 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Renderer", function() { return Renderer; });
 /* harmony import */ var core_js_modules_es_symbol_description__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es.symbol.description */ "./node_modules/core-js/modules/es.symbol.description.js");
 /* harmony import */ var core_js_modules_es_symbol_description__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_symbol_description__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var core_js_modules_es_array_flat__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! core-js/modules/es.array.flat */ "./node_modules/core-js/modules/es.array.flat.js");
-/* harmony import */ var core_js_modules_es_array_flat__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_flat__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var core_js_modules_es_array_from__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! core-js/modules/es.array.from */ "./node_modules/core-js/modules/es.array.from.js");
-/* harmony import */ var core_js_modules_es_array_from__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_from__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var core_js_modules_es_array_index_of__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! core-js/modules/es.array.index-of */ "./node_modules/core-js/modules/es.array.index-of.js");
-/* harmony import */ var core_js_modules_es_array_index_of__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_index_of__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var core_js_modules_es_array_iterator__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! core-js/modules/es.array.iterator */ "./node_modules/core-js/modules/es.array.iterator.js");
-/* harmony import */ var core_js_modules_es_array_iterator__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_iterator__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var core_js_modules_es_array_map__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! core-js/modules/es.array.map */ "./node_modules/core-js/modules/es.array.map.js");
-/* harmony import */ var core_js_modules_es_array_map__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_map__WEBPACK_IMPORTED_MODULE_5__);
-/* harmony import */ var core_js_modules_es_array_unscopables_flat__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! core-js/modules/es.array.unscopables.flat */ "./node_modules/core-js/modules/es.array.unscopables.flat.js");
-/* harmony import */ var core_js_modules_es_array_unscopables_flat__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_unscopables_flat__WEBPACK_IMPORTED_MODULE_6__);
-/* harmony import */ var core_js_modules_es_map__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! core-js/modules/es.map */ "./node_modules/core-js/modules/es.map.js");
-/* harmony import */ var core_js_modules_es_map__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_map__WEBPACK_IMPORTED_MODULE_7__);
-/* harmony import */ var core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! core-js/modules/es.regexp.to-string */ "./node_modules/core-js/modules/es.regexp.to-string.js");
-/* harmony import */ var core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_8__);
-/* harmony import */ var core_js_modules_es_string_replace__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! core-js/modules/es.string.replace */ "./node_modules/core-js/modules/es.string.replace.js");
-/* harmony import */ var core_js_modules_es_string_replace__WEBPACK_IMPORTED_MODULE_9___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_replace__WEBPACK_IMPORTED_MODULE_9__);
-/* harmony import */ var core_js_modules_web_dom_collections_for_each__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! core-js/modules/web.dom-collections.for-each */ "./node_modules/core-js/modules/web.dom-collections.for-each.js");
-/* harmony import */ var core_js_modules_web_dom_collections_for_each__WEBPACK_IMPORTED_MODULE_10___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_for_each__WEBPACK_IMPORTED_MODULE_10__);
-/* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! core-js/modules/web.dom-collections.iterator */ "./node_modules/core-js/modules/web.dom-collections.iterator.js");
-/* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_11___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_11__);
-/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
-/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_12___default = /*#__PURE__*/__webpack_require__.n(jquery__WEBPACK_IMPORTED_MODULE_12__);
-/* harmony import */ var vexflow__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! vexflow */ "./node_modules/vexflow/releases/vexflow-debug.js");
-/* harmony import */ var vexflow__WEBPACK_IMPORTED_MODULE_13___default = /*#__PURE__*/__webpack_require__.n(vexflow__WEBPACK_IMPORTED_MODULE_13__);
-/* harmony import */ var _debug__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./debug */ "./src/music21/debug.js");
-/* harmony import */ var _clef__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./clef */ "./src/music21/clef.js");
-/* harmony import */ var _duration__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ./duration */ "./src/music21/duration.js");
-
-
+/* harmony import */ var core_js_modules_es_array_from__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! core-js/modules/es.array.from */ "./node_modules/core-js/modules/es.array.from.js");
+/* harmony import */ var core_js_modules_es_array_from__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_from__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var core_js_modules_es_array_index_of__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! core-js/modules/es.array.index-of */ "./node_modules/core-js/modules/es.array.index-of.js");
+/* harmony import */ var core_js_modules_es_array_index_of__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_index_of__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var core_js_modules_es_array_iterator__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! core-js/modules/es.array.iterator */ "./node_modules/core-js/modules/es.array.iterator.js");
+/* harmony import */ var core_js_modules_es_array_iterator__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_iterator__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var core_js_modules_es_array_map__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! core-js/modules/es.array.map */ "./node_modules/core-js/modules/es.array.map.js");
+/* harmony import */ var core_js_modules_es_array_map__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_map__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var core_js_modules_es_map__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! core-js/modules/es.map */ "./node_modules/core-js/modules/es.map.js");
+/* harmony import */ var core_js_modules_es_map__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_map__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! core-js/modules/es.regexp.to-string */ "./node_modules/core-js/modules/es.regexp.to-string.js");
+/* harmony import */ var core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_6__);
+/* harmony import */ var core_js_modules_es_string_replace__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! core-js/modules/es.string.replace */ "./node_modules/core-js/modules/es.string.replace.js");
+/* harmony import */ var core_js_modules_es_string_replace__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_replace__WEBPACK_IMPORTED_MODULE_7__);
+/* harmony import */ var core_js_modules_web_dom_collections_for_each__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! core-js/modules/web.dom-collections.for-each */ "./node_modules/core-js/modules/web.dom-collections.for-each.js");
+/* harmony import */ var core_js_modules_web_dom_collections_for_each__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_for_each__WEBPACK_IMPORTED_MODULE_8__);
+/* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! core-js/modules/web.dom-collections.iterator */ "./node_modules/core-js/modules/web.dom-collections.iterator.js");
+/* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_9___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_9__);
+/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
+/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_10___default = /*#__PURE__*/__webpack_require__.n(jquery__WEBPACK_IMPORTED_MODULE_10__);
+/* harmony import */ var vexflow__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! vexflow */ "./node_modules/vexflow/releases/vexflow-debug.js");
+/* harmony import */ var vexflow__WEBPACK_IMPORTED_MODULE_11___default = /*#__PURE__*/__webpack_require__.n(vexflow__WEBPACK_IMPORTED_MODULE_11__);
+/* harmony import */ var _debug__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./debug */ "./src/music21/debug.ts");
+/* harmony import */ var _clef__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./clef */ "./src/music21/clef.ts");
+/* harmony import */ var _duration__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./duration */ "./src/music21/duration.ts");
 
 
 
@@ -67096,7 +65851,7 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
 
 
-var _clefSingleton = new _clef__WEBPACK_IMPORTED_MODULE_15__["TrebleClef"]();
+var _clefSingleton = new _clef__WEBPACK_IMPORTED_MODULE_13__["TrebleClef"]();
 /**
  * Represents a stack of objects that need to be rendered together.
  *
@@ -67104,17 +65859,17 @@ var _clefSingleton = new _clef__WEBPACK_IMPORTED_MODULE_15__["TrebleClef"]();
  *
  * @class RenderStack
  * @memberof music21.vfShow
- * @property {Array<Vex.Flow.Voice>} voices - Vex.Flow.Voice objects
- * @property {Array<music21.stream.Stream>} streams - {@link music21.stream.Stream} objects
+ * @property {Array<stream.Stream>} streams - {@link music21.stream.Stream} objects
  * associated with the voices
+ * @property {Array<Vex.Flow.Voice>} voices - Vex.Flow.Voice objects
  * @property {Array} textVoices - Vex.Flow.Voice objects for the text.
  */
 
 
 class RenderStack {
   constructor() {
-    this.voices = [];
     this.streams = [];
+    this.voices = [];
     this.textVoices = [];
     this.voiceToStreamMapping = new Map();
   }
@@ -67213,9 +65968,10 @@ class RenderStack {
  */
 
 class Renderer {
-  constructor(s, div, where) {
-    this.stream = s; // this.streamType = s.classes[-1];
-
+  // measureFormatters = [];
+  constructor(s) {
+    var div = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
+    var where = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : undefined;
     this.rendererType = 'svg';
     this.div = undefined;
     this.$div = undefined;
@@ -67229,15 +65985,8 @@ class Renderer {
 
     this.vfTies = [];
     this.systemBreakOffsets = [];
-    this.vfTuplets = []; // this.measureFormatters = [];
-
-    if (where !== undefined) {
-      if (where.jquery !== undefined) {
-        this.$where = where;
-      } else {
-        this.$where = jquery__WEBPACK_IMPORTED_MODULE_12__(where);
-      }
-    }
+    this.vfTuplets = [];
+    this.stream = s; // this.streamType = s.classes[-1];
 
     if (div !== undefined) {
       if (div.jquery !== undefined) {
@@ -67245,7 +65994,15 @@ class Renderer {
         this.div = div[0];
       } else {
         this.div = div;
-        this.$div = jquery__WEBPACK_IMPORTED_MODULE_12__(div);
+        this.$div = jquery__WEBPACK_IMPORTED_MODULE_10__(div);
+      }
+    }
+
+    if (where !== undefined) {
+      if (where.jquery !== undefined) {
+        this.$where = where;
+      } else {
+        this.$where = jquery__WEBPACK_IMPORTED_MODULE_10__(where);
       }
     }
   }
@@ -67254,15 +66011,15 @@ class Renderer {
     var backend;
 
     if (this.rendererType === 'canvas') {
-      backend = vexflow__WEBPACK_IMPORTED_MODULE_13___default.a.Flow.Renderer.Backends.CANVAS;
+      backend = vexflow__WEBPACK_IMPORTED_MODULE_11___default.a.Flow.Renderer.Backends.CANVAS;
     } else {
-      backend = vexflow__WEBPACK_IMPORTED_MODULE_13___default.a.Flow.Renderer.Backends.SVG;
+      backend = vexflow__WEBPACK_IMPORTED_MODULE_11___default.a.Flow.Renderer.Backends.SVG;
     }
 
     if (this._vfRenderer !== undefined) {
       return this._vfRenderer;
     } else {
-      this._vfRenderer = new vexflow__WEBPACK_IMPORTED_MODULE_13___default.a.Flow.Renderer(this.div, backend);
+      this._vfRenderer = new vexflow__WEBPACK_IMPORTED_MODULE_11___default.a.Flow.Renderer(this.div, backend);
 
       if (this.rendererType === 'svg') {
         this._vfRenderer.resize(this.$div.attr('width'), this.$div.attr('height'));
@@ -67304,7 +66061,9 @@ class Renderer {
    */
 
 
-  render(s) {
+  render() {
+    var s = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : undefined;
+
     if (s === undefined) {
       s = this.stream;
     }
@@ -67483,7 +66242,8 @@ class Renderer {
 
           if (i === 0) {
             voiceToRender = firstVoiceCopy;
-          }
+          } // noinspection JSUnusedAssignment
+
 
           stave = this.prepareFlat(voiceToRender, stack, stave, rendOp);
 
@@ -67523,7 +66283,9 @@ class Renderer {
    */
 
 
-  prepareFlat(s, stack, optionalStave, optional_renderOp) {
+  prepareFlat(s, stack) {
+    var optionalStave = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : undefined;
+    var optional_renderOp = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : undefined;
     s.makeNotation();
     var stave;
 
@@ -67557,7 +66319,10 @@ class Renderer {
    */
 
 
-  renderStave(m, optional_rendOp) {
+  renderStave() {
+    var m = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : undefined;
+    var optional_rendOp = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
+
     if (m === undefined) {
       m = this.stream;
     }
@@ -67622,16 +66387,16 @@ class Renderer {
 
 
   prepareTies(p) {
-    var pf = p.flat.notesAndRests; // console.log('newSystemsAt', this.systemBreakOffsets);
+    var pf = Array.from(p.recurse().notesAndRests); // console.log('newSystemsAt', this.systemBreakOffsets);
 
     for (var i = 0; i < pf.length - 1; i++) {
-      var thisNote = pf.get(i);
+      var thisNote = pf[i];
 
       if (thisNote.tie === undefined || thisNote.tie.type === 'stop') {
         continue;
       }
 
-      var nextNote = pf.get(i + 1);
+      var nextNote = pf[i + 1];
       var onSameSystem = true; // this.systemBreakOffsets.length will be 0 for a flat score
 
       for (var sbI = 0; sbI < this.systemBreakOffsets.length; sbI++) {
@@ -67644,7 +66409,7 @@ class Renderer {
       }
 
       if (onSameSystem) {
-        var vfTie = new vexflow__WEBPACK_IMPORTED_MODULE_13___default.a.Flow.StaveTie({
+        var vfTie = new vexflow__WEBPACK_IMPORTED_MODULE_11___default.a.Flow.StaveTie({
           first_note: thisNote.activeVexflowNote,
           last_note: nextNote.activeVexflowNote,
           first_indices: [0],
@@ -67653,12 +66418,12 @@ class Renderer {
         this.vfTies.push(vfTie);
       } else {
         // console.log('got me a tie across systemBreaks!');
-        var vfTie1 = new vexflow__WEBPACK_IMPORTED_MODULE_13___default.a.Flow.StaveTie({
+        var vfTie1 = new vexflow__WEBPACK_IMPORTED_MODULE_11___default.a.Flow.StaveTie({
           first_note: thisNote.activeVexflowNote,
           first_indices: [0]
         });
         this.vfTies.push(vfTie1);
-        var vfTie2 = new vexflow__WEBPACK_IMPORTED_MODULE_13___default.a.Flow.StaveTie({
+        var vfTie2 = new vexflow__WEBPACK_IMPORTED_MODULE_11___default.a.Flow.StaveTie({
           last_note: nextNote.activeVexflowNote,
           first_indices: [0]
         });
@@ -67671,13 +66436,16 @@ class Renderer {
    *
    * Does not draw it...
    *
-   * @param {music21.stream.Stream} [s=this.stream] -- usually a Measure or Voice
+   * @param {stream.Stream} [s=this.stream] -- usually a Measure or Voice
    * @param {Vex.Flow.Stave} stave - not optional (would never fly in Python...)
    * @returns {Vex.Flow.Voice}
    */
 
 
-  getVoice(s, stave) {
+  getVoice() {
+    var s = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : undefined;
+    var stave = arguments.length > 1 ? arguments[1] : undefined;
+
     if (s === undefined) {
       s = this.stream;
     } // gets a group of notes as a voice, but completely unformatted and not drawn.
@@ -67730,12 +66498,13 @@ class Renderer {
    * Formats a single voice group from a stack.
    *
    * @param {music21.vfShow.RenderStack} stack
-   * @param {Boolean} [autoBeam=measures[0].autoBeam]
+   * @param {boolean} [autoBeam=measures[0].autoBeam]
    * @returns {Vex.Flow.Formatter}
    */
 
 
-  formatVoiceGroup(stack, autoBeam) {
+  formatVoiceGroup(stack) {
+    var autoBeam = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
     // formats a group of voices to use the same formatter; returns the formatter
     // if autoBeam is true then it will apply beams for each voice and put them in
     // this.beamGroups;
@@ -67747,7 +66516,7 @@ class Renderer {
       autoBeam = measuresOrVoices[0].autoBeam;
     }
 
-    var formatter = new vexflow__WEBPACK_IMPORTED_MODULE_13___default.a.Flow.Formatter(); // var minLength = formatter.preCalculateMinTotalWidth([voices]);
+    var formatter = new vexflow__WEBPACK_IMPORTED_MODULE_11___default.a.Flow.Formatter(); // var minLength = formatter.preCalculateMinTotalWidth([voices]);
     // console.log(minLength);
 
     if (vf_voices.length === 0) {
@@ -67826,13 +66595,13 @@ class Renderer {
         var beatGroups = void 0;
 
         if (associatedStream !== undefined && associatedStream.getSpecialContext('timeSignature') !== undefined) {
-          beatGroups = associatedStream.getSpecialContext('timeSignature').vexflowBeatGroups(vexflow__WEBPACK_IMPORTED_MODULE_13___default.a); // TODO: getContextByClass...
+          beatGroups = associatedStream.getSpecialContext('timeSignature').vexflowBeatGroups(vexflow__WEBPACK_IMPORTED_MODULE_11___default.a); // TODO: getContextByClass...
           // console.log(beatGroups);
         } else {
-          beatGroups = [new vexflow__WEBPACK_IMPORTED_MODULE_13___default.a.Flow.Fraction(2, 8)]; // default beam groups
+          beatGroups = [new vexflow__WEBPACK_IMPORTED_MODULE_11___default.a.Flow.Fraction(2, 8)]; // default beam groups
         }
 
-        var beamGroups = vexflow__WEBPACK_IMPORTED_MODULE_13___default.a.Flow.Beam.applyAndGetBeams(vf_voice, undefined, beatGroups);
+        var beamGroups = vexflow__WEBPACK_IMPORTED_MODULE_11___default.a.Flow.Beam.applyAndGetBeams(vf_voice, undefined, beatGroups);
         this.beamGroups.push(...beamGroups);
       }
     }
@@ -67891,11 +66660,11 @@ class Renderer {
     } // console.log('streamLength: ' + streamLength);
 
 
-    if (_debug__WEBPACK_IMPORTED_MODULE_14__["debug"]) {
+    if (_debug__WEBPACK_IMPORTED_MODULE_12__["debug"]) {
       console.log('creating new stave: left:' + left + ' top: ' + top + ' width: ' + width);
     }
 
-    var stave = new vexflow__WEBPACK_IMPORTED_MODULE_13___default.a.Flow.Stave(left, top, width);
+    var stave = new vexflow__WEBPACK_IMPORTED_MODULE_11___default.a.Flow.Stave(left, top, width);
     return stave;
   }
   /**
@@ -67968,7 +66737,7 @@ class Renderer {
       var vxBL = barlineMap[bl];
 
       if (vxBL !== undefined) {
-        stave.setEndBarType(vexflow__WEBPACK_IMPORTED_MODULE_13___default.a.Flow.Barline.type[vxBL]);
+        stave.setEndBarType(vexflow__WEBPACK_IMPORTED_MODULE_11___default.a.Flow.Barline.type[vxBL]);
       }
     }
   }
@@ -68000,8 +66769,7 @@ class Renderer {
           visible: false
         }, {
           visible: true
-        }, // show middle
-        {
+        }, {
           visible: false
         }, {
           visible: false
@@ -68013,8 +66781,7 @@ class Renderer {
           visible: false
         }, {
           visible: true
-        }, // show middle
-        {
+        }, {
           visible: true
         }, {
           visible: false
@@ -68026,8 +66793,7 @@ class Renderer {
           visible: true
         }, {
           visible: true
-        }, // show middle
-        {
+        }, {
           visible: true
         }, {
           visible: false
@@ -68116,7 +66882,7 @@ class Renderer {
                 notes_occupied: activeTuplet.numberNotesNormal
               }; // console.log('tupletOptions', tupletOptions);
 
-              var vfTuplet = new vexflow__WEBPACK_IMPORTED_MODULE_13___default.a.Flow.Tuplet(activeTupletVexflowNotes, tupletOptions);
+              var vfTuplet = new vexflow__WEBPACK_IMPORTED_MODULE_11___default.a.Flow.Tuplet(activeTupletVexflowNotes, tupletOptions);
 
               if (activeTuplet.tupletNormalShow === 'ratio') {
                 vfTuplet.setRatioed(true);
@@ -68165,13 +66931,14 @@ class Renderer {
 
 
   vexflowLyrics(s, stave) {
-    var getTextNote = (text, font, d, lyricObj) => {
+    var getTextNote = function getTextNote(text, font, d) {
+      var lyricObj = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : undefined;
       // console.log(text, font, d);
-      var t1 = new vexflow__WEBPACK_IMPORTED_MODULE_13___default.a.Flow.TextNote({
+      var t1 = new vexflow__WEBPACK_IMPORTED_MODULE_11___default.a.Flow.TextNote({
         text,
         font,
         duration: d.vexflowDuration
-      }).setLine(11).setStave(stave).setJustification(vexflow__WEBPACK_IMPORTED_MODULE_13___default.a.Flow.TextNote.Justification.LEFT);
+      }).setLine(11).setStave(stave).setJustification(vexflow__WEBPACK_IMPORTED_MODULE_11___default.a.Flow.TextNote.Justification.LEFT);
 
       if (lyricObj) {
         t1.setStyle(lyricObj.style);
@@ -68226,7 +66993,7 @@ class Renderer {
           if (firstLyric.syllabic === 'middle' || firstLyric.syllabic === 'begin') {
             addConnector = ' ' + firstLyric.lyricConnector;
             var tempQl = el.duration.quarterLength / 2.0;
-            d = new _duration__WEBPACK_IMPORTED_MODULE_16__["Duration"](tempQl);
+            d = new _duration__WEBPACK_IMPORTED_MODULE_14__["Duration"](tempQl);
           }
 
           if (firstLyric.style.fontFamily) {
@@ -68310,14 +67077,14 @@ class Renderer {
     } // console.log('creating voice');
 
 
-    if (_debug__WEBPACK_IMPORTED_MODULE_14__["debug"]) {
+    if (_debug__WEBPACK_IMPORTED_MODULE_12__["debug"]) {
       console.log('New voice, num_beats: ' + num1024.toString() + ' beat_value: ' + beatValue.toString());
     }
 
-    var vfv = new vexflow__WEBPACK_IMPORTED_MODULE_13___default.a.Flow.Voice({
+    var vfv = new vexflow__WEBPACK_IMPORTED_MODULE_11___default.a.Flow.Voice({
       num_beats: num1024,
       beat_value: beatValue,
-      resolution: vexflow__WEBPACK_IMPORTED_MODULE_13___default.a.Flow.RESOLUTION
+      resolution: vexflow__WEBPACK_IMPORTED_MODULE_11___default.a.Flow.RESOLUTION
     }); // from vexflow/src/voice.js
     //
     // Modes allow the addition of ticks in three different ways:
@@ -68327,16 +67094,16 @@ class Renderer {
     // FULL:   Ticks do not need to fill the voice, but can't exceed the maximum
     //         tick length.
 
-    vfv.setMode(vexflow__WEBPACK_IMPORTED_MODULE_13___default.a.Flow.Voice.Mode.SOFT);
+    vfv.setMode(vexflow__WEBPACK_IMPORTED_MODULE_11___default.a.Flow.Voice.Mode.SOFT);
     return vfv;
   }
 
   staffConnectorsMap(connectorType) {
     var connectorMap = {
-      brace: vexflow__WEBPACK_IMPORTED_MODULE_13___default.a.Flow.StaveConnector.type.BRACE,
-      single: vexflow__WEBPACK_IMPORTED_MODULE_13___default.a.Flow.StaveConnector.type.SINGLE,
-      double: vexflow__WEBPACK_IMPORTED_MODULE_13___default.a.Flow.StaveConnector.type.DOUBLE,
-      bracket: vexflow__WEBPACK_IMPORTED_MODULE_13___default.a.Flow.StaveConnector.type.BRACKET
+      brace: vexflow__WEBPACK_IMPORTED_MODULE_11___default.a.Flow.StaveConnector.type.BRACE,
+      single: vexflow__WEBPACK_IMPORTED_MODULE_11___default.a.Flow.StaveConnector.type.SINGLE,
+      double: vexflow__WEBPACK_IMPORTED_MODULE_11___default.a.Flow.StaveConnector.type.DOUBLE,
+      bracket: vexflow__WEBPACK_IMPORTED_MODULE_11___default.a.Flow.StaveConnector.type.BRACKET
     };
     return connectorMap[connectorType];
   }
@@ -68400,7 +67167,7 @@ class Renderer {
         }
 
         for (var i = 0; i < s.renderOptions.staffConnectors.length; i++) {
-          var sc = new vexflow__WEBPACK_IMPORTED_MODULE_13___default.a.Flow.StaveConnector(topVFStaff, bottomVFStaff);
+          var sc = new vexflow__WEBPACK_IMPORTED_MODULE_11___default.a.Flow.StaveConnector(topVFStaff, bottomVFStaff);
           var scTypeM21 = s.renderOptions.staffConnectors[i];
           var scTypeVF = this.staffConnectorsMap(scTypeM21);
           sc.setType(scTypeVF);
@@ -68487,7 +67254,7 @@ class Renderer {
     if (stave !== undefined) {
       noteOffsetLeft = stave.start_x + stave.glyph_start_x;
 
-      if (_debug__WEBPACK_IMPORTED_MODULE_14__["debug"]) {
+      if (_debug__WEBPACK_IMPORTED_MODULE_12__["debug"]) {
         console.log('noteOffsetLeft: ' + noteOffsetLeft + ' ; stave.start_x: ' + stave.start_x);
         console.log('Bottom y: ' + stave.getBottomY());
       } // staveHeight = stave.height;
@@ -68544,7 +67311,7 @@ class Renderer {
       }
     }
 
-    if (_debug__WEBPACK_IMPORTED_MODULE_14__["debug"]) {
+    if (_debug__WEBPACK_IMPORTED_MODULE_12__["debug"]) {
       var _iteratorNormalCompletion10 = true;
       var _didIteratorError10 = false;
       var _iteratorError10 = undefined;
@@ -68580,9 +67347,9 @@ class Renderer {
 
 /***/ }),
 
-/***/ "./src/music21/voiceLeading.js":
+/***/ "./src/music21/voiceLeading.ts":
 /*!*************************************!*\
-  !*** ./src/music21/voiceLeading.js ***!
+  !*** ./src/music21/voiceLeading.ts ***!
   \*************************************/
 /*! exports provided: MotionType, VoiceLeadingQuartet */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -68601,10 +67368,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var core_js_modules_es_string_includes__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_includes__WEBPACK_IMPORTED_MODULE_3__);
 /* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! core-js/modules/web.dom-collections.iterator */ "./node_modules/core-js/modules/web.dom-collections.iterator.js");
 /* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var _interval__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./interval */ "./src/music21/interval.js");
-/* harmony import */ var _key__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./key */ "./src/music21/key.js");
-/* harmony import */ var _note__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./note */ "./src/music21/note.js");
-/* harmony import */ var _base__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./base */ "./src/music21/base.ts");
+/* harmony import */ var _interval__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./interval */ "./src/music21/interval.ts");
+/* harmony import */ var _note__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./note */ "./src/music21/note.ts");
+/* harmony import */ var _base__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./base */ "./src/music21/base.ts");
 
 
 
@@ -68623,7 +67389,6 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-
 var intervalCache = [];
 var MotionType = {
   antiParallel: 'Anti-Parallel',
@@ -68638,11 +67403,7 @@ var MotionType = {
  * @extends music21.base.Music21Object
  */
 
-class VoiceLeadingQuartet extends _base__WEBPACK_IMPORTED_MODULE_8__["Music21Object"] {
-  static get className() {
-    return 'music21.voiceLeading.VoiceLeadingQuartet';
-  }
-
+class VoiceLeadingQuartet extends _base__WEBPACK_IMPORTED_MODULE_7__["Music21Object"] {
   constructor(v1n1, v1n2, v2n1, v2n2, analyticKey) {
     super();
 
@@ -68676,15 +67437,19 @@ class VoiceLeadingQuartet extends _base__WEBPACK_IMPORTED_MODULE_8__["Music21Obj
     }
   }
 
+  static get className() {
+    return 'music21.voiceLeading.VoiceLeadingQuartet';
+  }
+
   _setVoiceNote(value, which) {
     if (value === undefined) {
       this[which] = value;
     } else if (typeof value === 'string') {
-      this[which] = new _note__WEBPACK_IMPORTED_MODULE_7__["Note"](value);
+      this[which] = new _note__WEBPACK_IMPORTED_MODULE_6__["Note"](value);
     } else if (value.classes.includes('Note')) {
       this[which] = value;
     } else {
-      var n = new _note__WEBPACK_IMPORTED_MODULE_7__["Note"](value.nameWithOctave);
+      var n = new _note__WEBPACK_IMPORTED_MODULE_6__["Note"](value.nameWithOctave);
       n.duration.quarterLength = 0.0;
       this[which] = n;
     }
@@ -68724,13 +67489,15 @@ class VoiceLeadingQuartet extends _base__WEBPACK_IMPORTED_MODULE_8__["Music21Obj
 
   get key() {
     return this._key;
-  }
+  } // turning off string entry because of Typescript deficiency
+
 
   set key(keyValue) {
-    if (typeof keyValue === 'string') {
-      keyValue = new _key__WEBPACK_IMPORTED_MODULE_6__["Key"](_key__WEBPACK_IMPORTED_MODULE_6__["convertKeyStringToMusic21KeyString"](keyValue));
-    }
-
+    // if (typeof keyValue === 'string') {
+    //     keyValue = new key.Key(
+    //         key.convertKeyStringToMusic21KeyString(keyValue)
+    //     );
+    // }
     this._key = keyValue;
   }
 
@@ -68837,7 +67604,9 @@ class VoiceLeadingQuartet extends _base__WEBPACK_IMPORTED_MODULE_8__["Music21Obj
     }
   }
 
-  parallelMotion(requiredInterval) {
+  parallelMotion() {
+    var requiredInterval = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : undefined;
+
     if (!this.similarMotion()) {
       return false;
     }
@@ -68885,7 +67654,9 @@ class VoiceLeadingQuartet extends _base__WEBPACK_IMPORTED_MODULE_8__["Music21Obj
     return this.contraryMotion() && this.hIntervals[0].direction === _interval__WEBPACK_IMPORTED_MODULE_5__["Direction"].DESCENDING;
   }
 
-  antiParallelMotion(simpleName) {
+  antiParallelMotion() {
+    var simpleName = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : undefined;
+
     if (!this.contraryMotion()) {
       return false;
     }
@@ -69072,9 +67843,9 @@ class VoiceLeadingQuartet extends _base__WEBPACK_IMPORTED_MODULE_8__["Music21Obj
 
 /***/ }),
 
-/***/ "./src/music21/webmidi.js":
+/***/ "./src/music21/webmidi.ts":
 /*!********************************!*\
-  !*** ./src/music21/webmidi.js ***!
+  !*** ./src/music21/webmidi.ts ***!
   \********************************/
 /*! exports provided: webmidi, jazzMidiInArrived, midiInArrived, createPlugin, createJazzSelector, selectionChanged, createSelector, populateSelect */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -69093,9 +67864,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var core_js_modules_web_dom_collections_for_each__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_for_each__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
 /* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(jquery__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _debug__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./debug */ "./src/music21/debug.js");
-/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./common */ "./src/music21/common.js");
-/* harmony import */ var _miditools__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./miditools */ "./src/music21/miditools.js");
+/* harmony import */ var _debug__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./debug */ "./src/music21/debug.ts");
+/* harmony import */ var _common__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./common */ "./src/music21/common.ts");
+/* harmony import */ var _miditools__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./miditools */ "./src/music21/miditools.ts");
 
 
 /**
@@ -69153,7 +67924,7 @@ MIDI Input: <div id="putMidiSelectHere" />
             var svgDiv = s.appendNewDOM($svgDiv);
         }
     }
-    music21.miditools.callBacks.general = displayStream;
+    music21.miditools.callbacks.general = displayStream;
 
 </script>
 </body>
@@ -69195,8 +67966,7 @@ var webmidi = {
   $select: undefined,
   jazzDownloadUrl: 'http://jazz-soft.net/download/Jazz-Plugin/',
   storedPlugin: undefined,
-  selectedJazzInterface: undefined // not the same as "" etc. uses last selected interface by default.
-
+  selectedJazzInterface: undefined
 };
 /**
  * Called by Jazz MIDI plugin when an event arrives.
@@ -69239,14 +68009,15 @@ function midiInArrived(midiMessageEvent) {
   var a = midiMessageEvent.data[0];
   var b = midiMessageEvent.data[1];
   var c = midiMessageEvent.data[2];
-  var eventObject = _miditools__WEBPACK_IMPORTED_MODULE_4__["callBacks"].raw(t, a, b, c);
+  var midiCallbacks = _miditools__WEBPACK_IMPORTED_MODULE_4__["callbacks"];
+  var eventObject = midiCallbacks.raw(t, a, b, c);
 
-  if (_miditools__WEBPACK_IMPORTED_MODULE_4__["callBacks"].general instanceof Array) {
-    return _miditools__WEBPACK_IMPORTED_MODULE_4__["callBacks"].general.forEach((el, index, array) => {
+  if (midiCallbacks.general instanceof Array) {
+    return midiCallbacks.general.forEach((el, index, array) => {
       el(eventObject);
     });
-  } else if (_miditools__WEBPACK_IMPORTED_MODULE_4__["callBacks"].general !== undefined) {
-    return _miditools__WEBPACK_IMPORTED_MODULE_4__["callBacks"].general(eventObject);
+  } else if (midiCallbacks.general instanceof Function) {
+    return midiCallbacks.general(eventObject);
   } else {
     return undefined;
   }
@@ -69259,14 +68030,17 @@ function midiInArrived(midiMessageEvent) {
  * It will return the plugin if it can or undefined if it cannot. Caches it in webmidi.storedPlugin.
  *
  * @function music21.webmidi.createPlugin
- * @param {Node} [appendElement=document.body] - where to place this hidden object (does not really matter)
+ * @param {HTMLElement} [appendElement=document.body] - where to place this hidden object (does not really matter)
  * @param {Boolean} [override=false] - if this method has been called
  *     successfully before return the storedPlugin unless override is true.
  * @returns {Jazz|undefined} Jazz MIDI plugin object
  */
 
-function createPlugin(appendElement, override) {
-  if (webmidi.storedPlugin && override !== true) {
+function createPlugin() {
+  var appendElement = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : undefined;
+  var override = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+
+  if (webmidi.storedPlugin && !override) {
     return webmidi.storedPlugin;
   }
 
@@ -69274,7 +68048,8 @@ function createPlugin(appendElement, override) {
     appendElement = jquery__WEBPACK_IMPORTED_MODULE_1__('body')[0];
   }
 
-  var obj = document.createElement('object');
+  var obj = document.createElement('object'); // noinspection SpellCheckingInspection
+
   obj.classid = 'CLSID:1ACE1618-1C7D-4561-AEE1-34842AA85E90';
 
   if (!obj.isJazz) {
@@ -69304,8 +68079,13 @@ function createPlugin(appendElement, override) {
  * @returns {HTMLElement|undefined} DOM object containing the select tag, or undefined if Jazz cannot be loaded.
  */
 
-function createJazzSelector($newSelect, options) {
-  var params = {};
+function createJazzSelector($newSelect) {
+  var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+  var params = {
+    onsuccess: undefined,
+    oninputsuccess: undefined,
+    oninputempty: undefined
+  };
   _common__WEBPACK_IMPORTED_MODULE_3__["merge"](params, options);
   var Jazz = createPlugin();
 
@@ -69313,7 +68093,7 @@ function createJazzSelector($newSelect, options) {
     return undefined;
   }
 
-  $newSelect.change(() => {
+  $newSelect.on('change', () => {
     var selectedInput = jquery__WEBPACK_IMPORTED_MODULE_1__('#midiInSelect option:selected').text();
 
     if (selectedInput !== 'None selected') {
@@ -69323,7 +68103,7 @@ function createJazzSelector($newSelect, options) {
     }
 
     if (_debug__WEBPACK_IMPORTED_MODULE_2__["debug"]) {
-      console.log('current input changed to: ' + webmidi.selectedInterface);
+      console.log('current input changed to: ' + webmidi.selectedJazzInterface);
     }
   });
   var midiOptions = Jazz.MidiInList();
@@ -69336,7 +68116,7 @@ function createJazzSelector($newSelect, options) {
     var $appendOption = jquery__WEBPACK_IMPORTED_MODULE_1__("<option value='" + midiOptions[i] + "'>" + midiOptions[i] + '</option>');
 
     if (midiOptions[i] === webmidi.selectedJazzInterface) {
-      $appendOption.attr('selected', true);
+      $appendOption.prop('selected', true);
       anySelected = true;
     }
 
@@ -69347,11 +68127,11 @@ function createJazzSelector($newSelect, options) {
 
   if (anySelected === false && midiOptions.length > 0) {
     $newSelect.val(midiOptions[0]);
-    allAppendOptions[0].attr('selected', true);
+    allAppendOptions[0].prop('selected', true);
     webmidi.selectedJazzInterface = Jazz.MidiInOpen(midiOptions[0], jazzMidiInArrived);
     anySelected = true;
   } else {
-    noneAppendOption.attr('selected', true);
+    noneAppendOption.prop('selected', true);
   }
 
   if (params.onsuccess !== undefined) {
@@ -69417,7 +68197,10 @@ function selectionChanged() {
 function createSelector(midiSelectDiv, options) {
   var params = {
     autoUpdate: true,
-    existingMidiSelect: false
+    existingMidiSelect: false,
+    onsuccess: undefined,
+    oninputsuccess: undefined,
+    oninputempty: undefined
   };
   _common__WEBPACK_IMPORTED_MODULE_3__["merge"](params, options);
   /**
@@ -69451,7 +68234,7 @@ function createSelector(midiSelectDiv, options) {
     createJazzSelector($newSelect, params);
   } else {
     if (params.existingMidiSelect !== true) {
-      $newSelect.change(selectionChanged);
+      $newSelect.on('change', selectionChanged);
     }
 
     navigator.requestMIDIAccess().then(access => {
@@ -69501,12 +68284,12 @@ function populateSelect() {
 
   if (allAppendOptions.length > 0) {
     webmidi.$select.val(midiOptions[0]);
-    allAppendOptions[0].attr('selected', true);
+    allAppendOptions[0].prop('selected', true);
   } else {
-    $noneAppendOption.attr('selected', true);
+    $noneAppendOption.prop('selected', true);
   }
 
-  webmidi.$select.change();
+  webmidi.$select.trigger('change');
 }
 
 /***/ }),
@@ -69536,87 +68319,87 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony reexport (module object) */ __webpack_require__.d(__webpack_exports__, "prebase", function() { return _music21_prebase__WEBPACK_IMPORTED_MODULE_5__; });
 /* harmony import */ var _music21_base__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./music21/base */ "./src/music21/base.ts");
 /* harmony reexport (module object) */ __webpack_require__.d(__webpack_exports__, "base", function() { return _music21_base__WEBPACK_IMPORTED_MODULE_6__; });
-/* harmony import */ var _music21_common__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./music21/common */ "./src/music21/common.js");
+/* harmony import */ var _music21_common__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./music21/common */ "./src/music21/common.ts");
 /* harmony reexport (module object) */ __webpack_require__.d(__webpack_exports__, "common", function() { return _music21_common__WEBPACK_IMPORTED_MODULE_7__; });
-/* harmony import */ var _music21_articulations__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./music21/articulations */ "./src/music21/articulations.js");
+/* harmony import */ var _music21_articulations__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./music21/articulations */ "./src/music21/articulations.ts");
 /* harmony reexport (module object) */ __webpack_require__.d(__webpack_exports__, "articulations", function() { return _music21_articulations__WEBPACK_IMPORTED_MODULE_8__; });
-/* harmony import */ var _music21_audioRecording__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./music21/audioRecording */ "./src/music21/audioRecording.js");
+/* harmony import */ var _music21_audioRecording__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./music21/audioRecording */ "./src/music21/audioRecording.ts");
 /* harmony reexport (module object) */ __webpack_require__.d(__webpack_exports__, "audioRecording", function() { return _music21_audioRecording__WEBPACK_IMPORTED_MODULE_9__; });
-/* harmony import */ var _music21_audioSearch__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./music21/audioSearch */ "./src/music21/audioSearch.js");
+/* harmony import */ var _music21_audioSearch__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./music21/audioSearch */ "./src/music21/audioSearch.ts");
 /* harmony reexport (module object) */ __webpack_require__.d(__webpack_exports__, "audioSearch", function() { return _music21_audioSearch__WEBPACK_IMPORTED_MODULE_10__; });
 /* harmony import */ var _music21_bar__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./music21/bar */ "./src/music21/bar.ts");
 /* harmony reexport (module object) */ __webpack_require__.d(__webpack_exports__, "bar", function() { return _music21_bar__WEBPACK_IMPORTED_MODULE_11__; });
-/* harmony import */ var _music21_beam__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./music21/beam */ "./src/music21/beam.js");
+/* harmony import */ var _music21_beam__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./music21/beam */ "./src/music21/beam.ts");
 /* harmony reexport (module object) */ __webpack_require__.d(__webpack_exports__, "beam", function() { return _music21_beam__WEBPACK_IMPORTED_MODULE_12__; });
-/* harmony import */ var _music21_chord__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./music21/chord */ "./src/music21/chord.js");
+/* harmony import */ var _music21_chord__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./music21/chord */ "./src/music21/chord.ts");
 /* harmony reexport (module object) */ __webpack_require__.d(__webpack_exports__, "chord", function() { return _music21_chord__WEBPACK_IMPORTED_MODULE_13__; });
-/* harmony import */ var _music21_chordTables__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./music21/chordTables */ "./src/music21/chordTables.js");
+/* harmony import */ var _music21_chordTables__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./music21/chordTables */ "./src/music21/chordTables.ts");
 /* harmony reexport (module object) */ __webpack_require__.d(__webpack_exports__, "chordTables", function() { return _music21_chordTables__WEBPACK_IMPORTED_MODULE_14__; });
-/* harmony import */ var _music21_clef__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./music21/clef */ "./src/music21/clef.js");
+/* harmony import */ var _music21_clef__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./music21/clef */ "./src/music21/clef.ts");
 /* harmony reexport (module object) */ __webpack_require__.d(__webpack_exports__, "clef", function() { return _music21_clef__WEBPACK_IMPORTED_MODULE_15__; });
-/* harmony import */ var _music21_converter__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ./music21/converter */ "./src/music21/converter.js");
+/* harmony import */ var _music21_converter__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ./music21/converter */ "./src/music21/converter.ts");
 /* harmony reexport (module object) */ __webpack_require__.d(__webpack_exports__, "converter", function() { return _music21_converter__WEBPACK_IMPORTED_MODULE_16__; });
-/* harmony import */ var _music21_derivation__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ./music21/derivation */ "./src/music21/derivation.js");
+/* harmony import */ var _music21_derivation__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ./music21/derivation */ "./src/music21/derivation.ts");
 /* harmony reexport (module object) */ __webpack_require__.d(__webpack_exports__, "derivation", function() { return _music21_derivation__WEBPACK_IMPORTED_MODULE_17__; });
-/* harmony import */ var _music21_duration__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ./music21/duration */ "./src/music21/duration.js");
+/* harmony import */ var _music21_duration__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ./music21/duration */ "./src/music21/duration.ts");
 /* harmony reexport (module object) */ __webpack_require__.d(__webpack_exports__, "duration", function() { return _music21_duration__WEBPACK_IMPORTED_MODULE_18__; });
-/* harmony import */ var _music21_dynamics__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! ./music21/dynamics */ "./src/music21/dynamics.js");
+/* harmony import */ var _music21_dynamics__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! ./music21/dynamics */ "./src/music21/dynamics.ts");
 /* harmony reexport (module object) */ __webpack_require__.d(__webpack_exports__, "dynamics", function() { return _music21_dynamics__WEBPACK_IMPORTED_MODULE_19__; });
 /* harmony import */ var _music21_editorial__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(/*! ./music21/editorial */ "./src/music21/editorial.ts");
 /* harmony reexport (module object) */ __webpack_require__.d(__webpack_exports__, "editorial", function() { return _music21_editorial__WEBPACK_IMPORTED_MODULE_20__; });
-/* harmony import */ var _music21_expressions__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(/*! ./music21/expressions */ "./src/music21/expressions.js");
+/* harmony import */ var _music21_expressions__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(/*! ./music21/expressions */ "./src/music21/expressions.ts");
 /* harmony reexport (module object) */ __webpack_require__.d(__webpack_exports__, "expressions", function() { return _music21_expressions__WEBPACK_IMPORTED_MODULE_21__; });
-/* harmony import */ var _music21_figuredBass__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__(/*! ./music21/figuredBass */ "./src/music21/figuredBass.js");
+/* harmony import */ var _music21_figuredBass__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__(/*! ./music21/figuredBass */ "./src/music21/figuredBass.ts");
 /* harmony reexport (module object) */ __webpack_require__.d(__webpack_exports__, "figuredBass", function() { return _music21_figuredBass__WEBPACK_IMPORTED_MODULE_22__; });
-/* harmony import */ var _music21_fromPython__WEBPACK_IMPORTED_MODULE_23__ = __webpack_require__(/*! ./music21/fromPython */ "./src/music21/fromPython.js");
+/* harmony import */ var _music21_fromPython__WEBPACK_IMPORTED_MODULE_23__ = __webpack_require__(/*! ./music21/fromPython */ "./src/music21/fromPython.ts");
 /* harmony reexport (module object) */ __webpack_require__.d(__webpack_exports__, "fromPython", function() { return _music21_fromPython__WEBPACK_IMPORTED_MODULE_23__; });
-/* harmony import */ var _music21_harmony__WEBPACK_IMPORTED_MODULE_24__ = __webpack_require__(/*! ./music21/harmony */ "./src/music21/harmony.js");
+/* harmony import */ var _music21_harmony__WEBPACK_IMPORTED_MODULE_24__ = __webpack_require__(/*! ./music21/harmony */ "./src/music21/harmony.ts");
 /* harmony reexport (module object) */ __webpack_require__.d(__webpack_exports__, "harmony", function() { return _music21_harmony__WEBPACK_IMPORTED_MODULE_24__; });
-/* harmony import */ var _music21_instrument__WEBPACK_IMPORTED_MODULE_25__ = __webpack_require__(/*! ./music21/instrument */ "./src/music21/instrument.js");
+/* harmony import */ var _music21_instrument__WEBPACK_IMPORTED_MODULE_25__ = __webpack_require__(/*! ./music21/instrument */ "./src/music21/instrument.ts");
 /* harmony reexport (module object) */ __webpack_require__.d(__webpack_exports__, "instrument", function() { return _music21_instrument__WEBPACK_IMPORTED_MODULE_25__; });
-/* harmony import */ var _music21_interval__WEBPACK_IMPORTED_MODULE_26__ = __webpack_require__(/*! ./music21/interval */ "./src/music21/interval.js");
+/* harmony import */ var _music21_interval__WEBPACK_IMPORTED_MODULE_26__ = __webpack_require__(/*! ./music21/interval */ "./src/music21/interval.ts");
 /* harmony reexport (module object) */ __webpack_require__.d(__webpack_exports__, "interval", function() { return _music21_interval__WEBPACK_IMPORTED_MODULE_26__; });
-/* harmony import */ var _music21_key__WEBPACK_IMPORTED_MODULE_27__ = __webpack_require__(/*! ./music21/key */ "./src/music21/key.js");
+/* harmony import */ var _music21_key__WEBPACK_IMPORTED_MODULE_27__ = __webpack_require__(/*! ./music21/key */ "./src/music21/key.ts");
 /* harmony reexport (module object) */ __webpack_require__.d(__webpack_exports__, "key", function() { return _music21_key__WEBPACK_IMPORTED_MODULE_27__; });
-/* harmony import */ var _music21_keyboard__WEBPACK_IMPORTED_MODULE_28__ = __webpack_require__(/*! ./music21/keyboard */ "./src/music21/keyboard.js");
+/* harmony import */ var _music21_keyboard__WEBPACK_IMPORTED_MODULE_28__ = __webpack_require__(/*! ./music21/keyboard */ "./src/music21/keyboard.ts");
 /* harmony reexport (module object) */ __webpack_require__.d(__webpack_exports__, "keyboard", function() { return _music21_keyboard__WEBPACK_IMPORTED_MODULE_28__; });
-/* harmony import */ var _music21_layout__WEBPACK_IMPORTED_MODULE_29__ = __webpack_require__(/*! ./music21/layout */ "./src/music21/layout.js");
+/* harmony import */ var _music21_layout__WEBPACK_IMPORTED_MODULE_29__ = __webpack_require__(/*! ./music21/layout */ "./src/music21/layout.ts");
 /* harmony reexport (module object) */ __webpack_require__.d(__webpack_exports__, "layout", function() { return _music21_layout__WEBPACK_IMPORTED_MODULE_29__; });
-/* harmony import */ var _music21_meter__WEBPACK_IMPORTED_MODULE_30__ = __webpack_require__(/*! ./music21/meter */ "./src/music21/meter.js");
+/* harmony import */ var _music21_meter__WEBPACK_IMPORTED_MODULE_30__ = __webpack_require__(/*! ./music21/meter */ "./src/music21/meter.ts");
 /* harmony reexport (module object) */ __webpack_require__.d(__webpack_exports__, "meter", function() { return _music21_meter__WEBPACK_IMPORTED_MODULE_30__; });
-/* harmony import */ var _music21_miditools__WEBPACK_IMPORTED_MODULE_31__ = __webpack_require__(/*! ./music21/miditools */ "./src/music21/miditools.js");
+/* harmony import */ var _music21_miditools__WEBPACK_IMPORTED_MODULE_31__ = __webpack_require__(/*! ./music21/miditools */ "./src/music21/miditools.ts");
 /* harmony reexport (module object) */ __webpack_require__.d(__webpack_exports__, "miditools", function() { return _music21_miditools__WEBPACK_IMPORTED_MODULE_31__; });
-/* harmony import */ var _music21_musicxml__WEBPACK_IMPORTED_MODULE_32__ = __webpack_require__(/*! ./music21/musicxml */ "./src/music21/musicxml.js");
+/* harmony import */ var _music21_musicxml__WEBPACK_IMPORTED_MODULE_32__ = __webpack_require__(/*! ./music21/musicxml */ "./src/music21/musicxml.ts");
 /* harmony reexport (module object) */ __webpack_require__.d(__webpack_exports__, "musicxml", function() { return _music21_musicxml__WEBPACK_IMPORTED_MODULE_32__; });
-/* harmony import */ var _music21_note__WEBPACK_IMPORTED_MODULE_33__ = __webpack_require__(/*! ./music21/note */ "./src/music21/note.js");
+/* harmony import */ var _music21_note__WEBPACK_IMPORTED_MODULE_33__ = __webpack_require__(/*! ./music21/note */ "./src/music21/note.ts");
 /* harmony reexport (module object) */ __webpack_require__.d(__webpack_exports__, "note", function() { return _music21_note__WEBPACK_IMPORTED_MODULE_33__; });
-/* harmony import */ var _music21_parseLoader__WEBPACK_IMPORTED_MODULE_34__ = __webpack_require__(/*! ./music21/parseLoader */ "./src/music21/parseLoader.js");
+/* harmony import */ var _music21_parseLoader__WEBPACK_IMPORTED_MODULE_34__ = __webpack_require__(/*! ./music21/parseLoader */ "./src/music21/parseLoader.ts");
 /* harmony reexport (module object) */ __webpack_require__.d(__webpack_exports__, "parseLoader", function() { return _music21_parseLoader__WEBPACK_IMPORTED_MODULE_34__; });
-/* harmony import */ var _music21_pitch__WEBPACK_IMPORTED_MODULE_35__ = __webpack_require__(/*! ./music21/pitch */ "./src/music21/pitch.js");
+/* harmony import */ var _music21_pitch__WEBPACK_IMPORTED_MODULE_35__ = __webpack_require__(/*! ./music21/pitch */ "./src/music21/pitch.ts");
 /* harmony reexport (module object) */ __webpack_require__.d(__webpack_exports__, "pitch", function() { return _music21_pitch__WEBPACK_IMPORTED_MODULE_35__; });
-/* harmony import */ var _music21_renderOptions__WEBPACK_IMPORTED_MODULE_36__ = __webpack_require__(/*! ./music21/renderOptions */ "./src/music21/renderOptions.js");
+/* harmony import */ var _music21_renderOptions__WEBPACK_IMPORTED_MODULE_36__ = __webpack_require__(/*! ./music21/renderOptions */ "./src/music21/renderOptions.ts");
 /* harmony reexport (module object) */ __webpack_require__.d(__webpack_exports__, "renderOptions", function() { return _music21_renderOptions__WEBPACK_IMPORTED_MODULE_36__; });
-/* harmony import */ var _music21_roman__WEBPACK_IMPORTED_MODULE_37__ = __webpack_require__(/*! ./music21/roman */ "./src/music21/roman.js");
+/* harmony import */ var _music21_roman__WEBPACK_IMPORTED_MODULE_37__ = __webpack_require__(/*! ./music21/roman */ "./src/music21/roman.ts");
 /* harmony reexport (module object) */ __webpack_require__.d(__webpack_exports__, "roman", function() { return _music21_roman__WEBPACK_IMPORTED_MODULE_37__; });
-/* harmony import */ var _music21_scale__WEBPACK_IMPORTED_MODULE_38__ = __webpack_require__(/*! ./music21/scale */ "./src/music21/scale.js");
+/* harmony import */ var _music21_scale__WEBPACK_IMPORTED_MODULE_38__ = __webpack_require__(/*! ./music21/scale */ "./src/music21/scale.ts");
 /* harmony reexport (module object) */ __webpack_require__.d(__webpack_exports__, "scale", function() { return _music21_scale__WEBPACK_IMPORTED_MODULE_38__; });
-/* harmony import */ var _music21_sites__WEBPACK_IMPORTED_MODULE_39__ = __webpack_require__(/*! ./music21/sites */ "./src/music21/sites.js");
+/* harmony import */ var _music21_sites__WEBPACK_IMPORTED_MODULE_39__ = __webpack_require__(/*! ./music21/sites */ "./src/music21/sites.ts");
 /* harmony reexport (module object) */ __webpack_require__.d(__webpack_exports__, "sites", function() { return _music21_sites__WEBPACK_IMPORTED_MODULE_39__; });
-/* harmony import */ var _music21_stream__WEBPACK_IMPORTED_MODULE_40__ = __webpack_require__(/*! ./music21/stream */ "./src/music21/stream.js");
+/* harmony import */ var _music21_stream__WEBPACK_IMPORTED_MODULE_40__ = __webpack_require__(/*! ./music21/stream */ "./src/music21/stream.ts");
 /* harmony reexport (module object) */ __webpack_require__.d(__webpack_exports__, "stream", function() { return _music21_stream__WEBPACK_IMPORTED_MODULE_40__; });
-/* harmony import */ var _music21_tempo__WEBPACK_IMPORTED_MODULE_41__ = __webpack_require__(/*! ./music21/tempo */ "./src/music21/tempo.js");
+/* harmony import */ var _music21_tempo__WEBPACK_IMPORTED_MODULE_41__ = __webpack_require__(/*! ./music21/tempo */ "./src/music21/tempo.ts");
 /* harmony reexport (module object) */ __webpack_require__.d(__webpack_exports__, "tempo", function() { return _music21_tempo__WEBPACK_IMPORTED_MODULE_41__; });
-/* harmony import */ var _music21_tie__WEBPACK_IMPORTED_MODULE_42__ = __webpack_require__(/*! ./music21/tie */ "./src/music21/tie.js");
+/* harmony import */ var _music21_tie__WEBPACK_IMPORTED_MODULE_42__ = __webpack_require__(/*! ./music21/tie */ "./src/music21/tie.ts");
 /* harmony reexport (module object) */ __webpack_require__.d(__webpack_exports__, "tie", function() { return _music21_tie__WEBPACK_IMPORTED_MODULE_42__; });
-/* harmony import */ var _music21_tinyNotation__WEBPACK_IMPORTED_MODULE_43__ = __webpack_require__(/*! ./music21/tinyNotation */ "./src/music21/tinyNotation.js");
+/* harmony import */ var _music21_tinyNotation__WEBPACK_IMPORTED_MODULE_43__ = __webpack_require__(/*! ./music21/tinyNotation */ "./src/music21/tinyNotation.ts");
 /* harmony reexport (module object) */ __webpack_require__.d(__webpack_exports__, "tinyNotation", function() { return _music21_tinyNotation__WEBPACK_IMPORTED_MODULE_43__; });
-/* harmony import */ var _music21_vfShow__WEBPACK_IMPORTED_MODULE_44__ = __webpack_require__(/*! ./music21/vfShow */ "./src/music21/vfShow.js");
+/* harmony import */ var _music21_vfShow__WEBPACK_IMPORTED_MODULE_44__ = __webpack_require__(/*! ./music21/vfShow */ "./src/music21/vfShow.ts");
 /* harmony reexport (module object) */ __webpack_require__.d(__webpack_exports__, "vfShow", function() { return _music21_vfShow__WEBPACK_IMPORTED_MODULE_44__; });
-/* harmony import */ var _music21_voiceLeading__WEBPACK_IMPORTED_MODULE_45__ = __webpack_require__(/*! ./music21/voiceLeading */ "./src/music21/voiceLeading.js");
+/* harmony import */ var _music21_voiceLeading__WEBPACK_IMPORTED_MODULE_45__ = __webpack_require__(/*! ./music21/voiceLeading */ "./src/music21/voiceLeading.ts");
 /* harmony reexport (module object) */ __webpack_require__.d(__webpack_exports__, "voiceLeading", function() { return _music21_voiceLeading__WEBPACK_IMPORTED_MODULE_45__; });
-/* harmony import */ var _music21_webmidi__WEBPACK_IMPORTED_MODULE_46__ = __webpack_require__(/*! ./music21/webmidi */ "./src/music21/webmidi.js");
+/* harmony import */ var _music21_webmidi__WEBPACK_IMPORTED_MODULE_46__ = __webpack_require__(/*! ./music21/webmidi */ "./src/music21/webmidi.ts");
 /* harmony reexport (module object) */ __webpack_require__.d(__webpack_exports__, "webmidi", function() { return _music21_webmidi__WEBPACK_IMPORTED_MODULE_46__; });
-/* harmony import */ var _music21_debug__WEBPACK_IMPORTED_MODULE_47__ = __webpack_require__(/*! ./music21/debug */ "./src/music21/debug.js");
+/* harmony import */ var _music21_debug__WEBPACK_IMPORTED_MODULE_47__ = __webpack_require__(/*! ./music21/debug */ "./src/music21/debug.ts");
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "debug", function() { return _music21_debug__WEBPACK_IMPORTED_MODULE_47__["debug"]; });
 
 /**!
