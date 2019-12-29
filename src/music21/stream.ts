@@ -210,13 +210,20 @@ export class Stream extends base.Music21Object {
             newObj.clear();
             for (let j = 0; j < self._elements.length; j++) {
                 const el = self._elements[j];
+                const elOffset = self.elementOffset(el);
                 // console.log('cloning el: ', el.name);
-                // TODO: get memo back here somehow.
                 const elCopy = el.clone(true, memo);
-                newObj._elements[j] = elCopy;
-                newObj._offsetDict.set(elCopy, self._offsetDict.get(el));
-                elCopy.activeSite = newObj;
+                // there may be more efficient ways to do this,
+                // but for now, safety trumps efficiency.
+                newObj.insert(
+                    elOffset,
+                    elCopy,
+                    {
+                        ignoreSort: true,
+                    }
+                );
             }
+            // isSorted will be cloned elsewhere.
         };
 
         this.DOMChangerFunction = (e: MouseEvent|TouchEvent) => {
@@ -308,7 +315,10 @@ export class Stream extends base.Music21Object {
         const newSt = this.clone(false);
         // console.log('done cloning...');
         if (!this.isFlat) {
-            newSt.elements = [];
+            // not the most efficient, but safety counts for a lot...
+            // namely, do not set inner streams activeSites to be
+            // in things that they won't have later.
+            newSt.clear();
             const ri = new iterator.RecursiveIterator(this, {
                 restoreActiveSites: false,
                 includeSelf: false,
@@ -663,6 +673,13 @@ export class Stream extends base.Music21Object {
     }
 
     clear() {
+        for (const e of this._elements) {
+            if (e.activeSite === this) {
+                e.activeSite = undefined;
+            }
+            e.sites.remove(this);
+        }
+
         this._elements = [];
         this._offsetDict = new WeakMap();
         this.isFlat = true;
@@ -1055,7 +1072,7 @@ export class Stream extends base.Music21Object {
                 return;
             } else {
                 throw new StreamException(
-                    'Cannot set the offset for elemenet '
+                    'Cannot set the offset for element '
                             + el.toString()
                             + ', not in Stream'
                 );
@@ -2805,7 +2822,9 @@ export class Measure extends Stream {
     numberSuffix: string = '';
 
     stringInfo(): string {
-        return this.measureNumberWithSuffix() + ' offset=' + this.offset.toString();
+        // avoid using "this.offset" to not infinite loops.
+        const offset = this._activeSiteStoredOffset ?? this._naiveOffset;
+        return this.measureNumberWithSuffix() + ' offset=' + offset.toString();
     }
 
     measureNumberWithSuffix(): string {

@@ -103,6 +103,19 @@ export class Music21Object extends prebase.ProtoM21Object {
         };
     }
 
+    /**
+     * Override clone on prebase to add a derivation.
+     */
+    clone(deep: boolean = true, memo=undefined): this {
+        const ret: this = super.clone(deep, memo);
+        const newDerivation = new derivation.Derivation(ret);
+        newDerivation.origin = this;
+        newDerivation.method = 'clone';  // '__deepcopy__' in m21p
+        ret.derivation = newDerivation;
+        return ret;
+    }
+
+
     stringInfo(): string {
         let id16 = this.id;
         if (typeof id16 === 'number') {

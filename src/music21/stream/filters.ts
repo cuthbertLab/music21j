@@ -155,7 +155,12 @@ export class OffsetFilter extends StreamFilter {
     }
 
     call(item, iterator) {
-        return this.isElementOffsetInRange(item, item.offset);
+        // N.B. iterator.srcStream.elementOffset is necessary instead
+        // of elementOffset, because we have not set activeSite yet.
+        return this.isElementOffsetInRange(
+            item,
+            iterator.srcStream.elementOffset(item)
+        );
     }
 
     isElementOffsetInRange(e, offset) {
@@ -210,5 +215,4 @@ export class OffsetFilter extends StreamFilter {
     }
 }
 
-// TODO: OffsetFilter (high priority)
 // TODO: OffsetHierarchyFilter
