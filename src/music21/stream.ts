@@ -340,9 +340,9 @@ export class Stream extends base.Music21Object {
         }
         if (!retainContainers) {
             newSt.isFlat = true;
-            this.coreElementsChanged({ updateIsFlat: false });
+            newSt.coreElementsChanged({ updateIsFlat: false });
         } else {
-            this.coreElementsChanged();
+            newSt.coreElementsChanged();
         }
         return newSt as this;
     }

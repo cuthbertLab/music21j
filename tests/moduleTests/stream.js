@@ -392,4 +392,17 @@ export default function tests() {
         assert.ok(c._notes[2].pitch.accidental.displayStatus);
         assert.notOk(c._notes[3].pitch.accidental); // perhaps should exist?
     });
+
+    test('music21.stream.Stream.flat', assert => {
+        const p1 = music21.tinyNotation.TinyNotation('4/4 c2 d2 e2 f2 g1');
+        const p2 = music21.tinyNotation.TinyNotation('4/4 A1    C#1   E#1');
+        const s = new music21.stream.Score();
+        s.insert(0, p1);
+        s.insert(0, p2);
+        const sf = s.flat.notes;
+        const sf_names = Array.from(sf).map(n => n.name);
+        assert.deepEqual(sf_names, ['C', 'A', 'D', 'E', 'C#', 'F', 'G', 'E#']);
+        const sf_offsets = Array.from(sf).map(n => n.offset);
+        assert.deepEqual(sf_offsets, [0, 0, 2, 4, 4, 6, 8, 8]);
+    });
 }
