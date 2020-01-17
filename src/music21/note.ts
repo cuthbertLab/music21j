@@ -387,6 +387,8 @@ export class GeneralNote extends base.Music21Object {
     /**
      * Play the current element as a MIDI note.
      *
+     * For a general note -- same as a rest -- doesn't make a sound.  :-)
+     *
      * @param {number} [tempo=120] - tempo in bpm
      * @param {base.Music21Object} [nextElement] - for determining
      *     the length to play in case of tied notes, etc.
@@ -735,6 +737,7 @@ export class Note extends NotRest {
         {
             instrument=undefined,
             channel=undefined,
+            playLegato=true,
         }={}
     ): number {
         const milliseconds = super.playMidi(tempo, nextElement, { instrument, channel });
@@ -747,7 +750,7 @@ export class Note extends NotRest {
         const midNum = this.pitch.midi;
         let stopTime = milliseconds / 1000;
         if (nextElement instanceof Note) {
-            if (nextElement.pitch.midi !== this.pitch.midi) {
+            if (nextElement.pitch.midi !== this.pitch.midi && playLegato) {
                 stopTime += 60 * 0.25 / tempo; // legato -- play 16th note longer
             } else if (
                 this.tie !== undefined
@@ -757,7 +760,7 @@ export class Note extends NotRest {
                 // this does not take into account 3 or more notes tied.
                 // TODO: look ahead at next nexts, etc.
             }
-        } else if (nextElement === undefined) {
+        } else if (nextElement === undefined && playLegato) {
             // let last note ring an extra beat...
             stopTime += 60 / tempo;
         }
