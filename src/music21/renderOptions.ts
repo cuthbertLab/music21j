@@ -46,6 +46,9 @@ export class RenderOptions {
     height: number = undefined;
     naiveHeight: number = 120;
 
+    // additional padding at the bottom of the stream (not every system).
+    marginBottom: number = 0;
+
     systemIndex: number = 0;
     partIndex: number = 0;
     measureIndex: number = 0;

@@ -1841,6 +1841,7 @@ export class Stream extends base.Music21Object {
      */
     estimateStreamHeight(ignoreSystems=false) {
         const staffHeight = this.renderOptions.naiveHeight;
+        const marginBottom = this.renderOptions.marginBottom;  // extra at end.
         let systemPadding = 0;
         if (this instanceof Score) {
             systemPadding = this.systemPadding;
@@ -1854,7 +1855,9 @@ export class Stream extends base.Music21Object {
             }
             let scoreHeight
                 = numSystems * staffHeight * numParts
-                + (numSystems - 1) * systemPadding;
+                + (numSystems - 1) * systemPadding
+                + marginBottom;
+
             if (numSystems > 1) {
                 // needs a little extra padding for some reason...
                 scoreHeight += systemPadding / 2;
@@ -1880,9 +1883,9 @@ export class Stream extends base.Music21Object {
                         + '].'
                 );
             }
-            return numSystems * staffHeight + (numSystems - 1) * systemPadding;
+            return numSystems * staffHeight + (numSystems - 1) * systemPadding + marginBottom;
         } else {
-            return staffHeight;
+            return staffHeight + marginBottom;
         }
     }
 
@@ -2091,7 +2094,7 @@ export class Stream extends base.Music21Object {
             let computedHeight;
             if (this.renderOptions.height === undefined) {
                 computedHeight = this.estimateStreamHeight();
-                // console.log('computed Height estim: ' + computedHeight);
+                // console.log('computed Height estimate: ' + computedHeight);
             } else {
                 computedHeight = this.renderOptions.height;
                 // console.log('computed Height: ' + computedHeight);
