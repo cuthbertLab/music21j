@@ -1,6 +1,6 @@
 /**
- * music21j 0.9.37 built on 2019-12-29.
- * Copyright (c) 2013-2019 Michael Scott Cuthbert and cuthbertLab
+ * music21j 0.9.38 built on 2020-01-31.
+ * Copyright (c) 2013-2020 Michael Scott Cuthbert and cuthbertLab
  * BSD License, see LICENSE
  *
  * http://github.com/cuthbertLab/music21j
@@ -54796,6 +54796,8 @@ class GeneralNote extends _base__WEBPACK_IMPORTED_MODULE_8__["Music21Object"] {
   /**
    * Play the current element as a MIDI note.
    *
+   * For a general note -- same as a rest -- doesn't make a sound.  :-)
+   *
    * @param {number} [tempo=120] - tempo in bpm
    * @param {base.Music21Object} [nextElement] - for determining
    *     the length to play in case of tied notes, etc.
@@ -55164,7 +55166,9 @@ class Note extends NotRest {
         _ref4$instrument = _ref4.instrument,
         instrument = _ref4$instrument === void 0 ? undefined : _ref4$instrument,
         _ref4$channel = _ref4.channel,
-        channel = _ref4$channel === void 0 ? undefined : _ref4$channel;
+        channel = _ref4$channel === void 0 ? undefined : _ref4$channel,
+        _ref4$playLegato = _ref4.playLegato,
+        playLegato = _ref4$playLegato === void 0 ? true : _ref4$playLegato;
 
     var milliseconds = super.playMidi(tempo, nextElement, {
       instrument,
@@ -55181,13 +55185,13 @@ class Note extends NotRest {
     var stopTime = milliseconds / 1000;
 
     if (nextElement instanceof Note) {
-      if (nextElement.pitch.midi !== this.pitch.midi) {
+      if (nextElement.pitch.midi !== this.pitch.midi && playLegato) {
         stopTime += 60 * 0.25 / tempo; // legato -- play 16th note longer
       } else if (this.tie !== undefined && (this.tie.type === 'start' || this.tie.type === 'continue')) {
         stopTime += 60 * nextElement.duration.quarterLength / tempo; // this does not take into account 3 or more notes tied.
         // TODO: look ahead at next nexts, etc.
       }
-    } else if (nextElement === undefined) {
+    } else if (nextElement === undefined && playLegato) {
       // let last note ring an extra beat...
       stopTime += 60 / tempo;
     } // console.log(stopTime);
@@ -56457,7 +56461,9 @@ class RenderOptions {
     this.width = undefined;
     this.overriddenWidth = undefined;
     this.height = undefined;
-    this.naiveHeight = 120;
+    this.naiveHeight = 120; // additional padding at the bottom of the stream (not every system).
+
+    this.marginBottom = 0;
     this.systemIndex = 0;
     this.partIndex = 0;
     this.measureIndex = 0;
@@ -59340,11 +59346,11 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_21__["Music21Object"] {
 
     if (!retainContainers) {
       newSt.isFlat = true;
-      this.coreElementsChanged({
+      newSt.coreElementsChanged({
         updateIsFlat: false
       });
     } else {
-      this.coreElementsChanged();
+      newSt.coreElementsChanged();
     }
 
     return newSt;
@@ -61391,6 +61397,8 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_21__["Music21Object"] {
   estimateStreamHeight() {
     var ignoreSystems = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
     var staffHeight = this.renderOptions.naiveHeight;
+    var marginBottom = this.renderOptions.marginBottom; // extra at end.
+
     var systemPadding = 0;
 
     if (this instanceof Score) {
@@ -61407,7 +61415,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_21__["Music21Object"] {
         numSystems = 1;
       }
 
-      var scoreHeight = numSystems * staffHeight * numParts + (numSystems - 1) * systemPadding;
+      var scoreHeight = numSystems * staffHeight * numParts + (numSystems - 1) * systemPadding + marginBottom;
 
       if (numSystems > 1) {
         // needs a little extra padding for some reason...
@@ -61427,9 +61435,9 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_21__["Music21Object"] {
         console.log('estimateStreamHeight for Part: numSystems [' + numSystems + '] * staffHeight [' + staffHeight + '] + (numSystems [' + numSystems + '] - 1) * systemPadding [' + systemPadding + '].');
       }
 
-      return numSystems * staffHeight + (numSystems - 1) * systemPadding;
+      return numSystems * staffHeight + (numSystems - 1) * systemPadding + marginBottom;
     } else {
-      return staffHeight;
+      return staffHeight + marginBottom;
     }
   }
   /**
@@ -61679,7 +61687,7 @@ class Stream extends _base__WEBPACK_IMPORTED_MODULE_21__["Music21Object"] {
       var computedHeight;
 
       if (this.renderOptions.height === undefined) {
-        computedHeight = this.estimateStreamHeight(); // console.log('computed Height estim: ' + computedHeight);
+        computedHeight = this.estimateStreamHeight(); // console.log('computed Height estimate: ' + computedHeight);
       } else {
         computedHeight = this.renderOptions.height; // console.log('computed Height: ' + computedHeight);
       }
@@ -66565,27 +66573,27 @@ class Renderer {
       }
     }
 
-    formatter.formatToStave(allTickables, stave); //        const vf_auto_stem = false;
-    //        for (const voice of voices) {
-    //            let activeBeamGroupNotes = [];
-    //            for (let j = 0; j < voice.notes.length; j++) {
-    //                const n = voice.notes[j];
-    //                if (n.beams === undefined || !n.beams.getNumbers().includes(1)) {
-    //                    continue;
-    //                }
-    //                const eighthNoteBeam = n.beams.getByNumber(1);
-    //                if (eighthNoteBeam.type === 'start') {
-    //                    activeBeamGroupNotes = [n];
-    //                } else {
-    //                    activeBeamGroupNotes.push(n);
-    //                }
-    //                if (eighthNoteBeam.type === 'stop') {
-    //                    const vfBeam = new Vex.Flow.Beam(activeBeamGroupNotes, vf_auto_stem);
-    //                    this.beamGroups.push(vfBeam);
-    //                    activeBeamGroupNotes = []; // housekeeping, not really necessary...
-    //                }
-    //            }
-    //        }
+    formatter.formatToStave(allTickables, stave); // const vf_auto_stem = false;
+    // for (const voice of voices) {
+    //     let activeBeamGroupNotes = [];
+    //     for (let j = 0; j < voice.notes.length; j++) {
+    //         const n = voice.notes[j];
+    //         if (n.beams === undefined || !n.beams.getNumbers().includes(1)) {
+    //             continue;
+    //         }
+    //         const eighthNoteBeam = n.beams.getByNumber(1);
+    //         if (eighthNoteBeam.type === 'start') {
+    //             activeBeamGroupNotes = [n];
+    //         } else {
+    //             activeBeamGroupNotes.push(n);
+    //         }
+    //         if (eighthNoteBeam.type === 'stop') {
+    //             const vfBeam = new Vex.Flow.Beam(activeBeamGroupNotes, vf_auto_stem);
+    //             this.beamGroups.push(vfBeam);
+    //             activeBeamGroupNotes = []; // housekeeping, not really necessary...
+    //         }
+    //     }
+    // }
 
     if (autoBeam) {
       for (var _i3 = 0; _i3 < vf_voices.length; _i3++) {
@@ -66595,7 +66603,7 @@ class Renderer {
         var beatGroups = void 0;
 
         if (associatedStream !== undefined && associatedStream.getSpecialContext('timeSignature') !== undefined) {
-          beatGroups = associatedStream.getSpecialContext('timeSignature').vexflowBeatGroups(vexflow__WEBPACK_IMPORTED_MODULE_11___default.a); // TODO: getContextByClass...
+          beatGroups = associatedStream.getSpecialContext('timeSignature').vexflowBeatGroups(); // TODO: getContextByClass...
           // console.log(beatGroups);
         } else {
           beatGroups = [new vexflow__WEBPACK_IMPORTED_MODULE_11___default.a.Flow.Fraction(2, 8)]; // default beam groups
