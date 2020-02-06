@@ -64,4 +64,32 @@ export default function tests() {
 
     });
 
+    test('music21.pitch.Pitch Equality', assert => {
+        const data = [['a', 'b', 'False'], ['a', 'a', 'True'], ['a#', 'a', 'False'],
+            ['a#', 'b-', 'False'], ['a#', 'a-', 'False'], ['a##', 'a#', 'False'],
+            ['a#4', 'a#4', 'True'], ['a-3', 'a-4', 'False'], ['a#3', 'a#4', 'False']];
+ 
+        for (let i = 0; i < data.length; i++) {
+            const p1 = new music21.pitch.Pitch(data[i][0]);
+            const p2 = new music21.pitch.Pitch(data[i][1]);
+            if (data[i][2] === 'False') {
+                assert.notDeepEqual(p1, p2, 'Not Equal');
+            }
+            else if (data[i][2] === 'True') {
+                assert.deepEqual(p1, p2, 'Equal');
+            }
+            
+        }
+        const p1 = new music21.pitch.Pitch('a#');
+        const p2 = new music21.pitch.Pitch('a#');
+        assert.deepEqual(p1, p2, 'Pitch is Equal');
+        p1.octave = 4; 
+        p2.octave = 3;
+        assert.notDeepEqual(p1, p2, 'Pitch with changed octaves are not equal');
+        p1.octave = 4; 
+        p2.octave = 4;
+        assert.deepEqual(p1, p2, 'Pitch with reverted octaves are equal');
+    });
+
+
 }
