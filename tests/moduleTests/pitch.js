@@ -5,6 +5,7 @@ const { test } = QUnit;
 
 
 export default function tests() {
+
     test('music21.pitch.Accidental', assert => {
         const a = new music21.pitch.Accidental('-');
         assert.equal(a.alter, -1.0, 'flat alter passed');
@@ -66,8 +67,6 @@ export default function tests() {
 
     test('music21.pitch.Pitch Equality', assert => {
         const pitch_pairs = [
-            ['a', 'b', false], 
-            ['a', 'a', true], 
             ['a#', 'a', false],
             ['a#', 'b-', false], 
             ['a#', 'a-', false], 
@@ -97,6 +96,33 @@ export default function tests() {
         p1.octave = 4; 
         p2.octave = 4;
         assert.deepEqual(p1, p2, 'Pitch with reverted octaves are equal');
+    });
+
+    test('music21.pitch.Accidentals Cautionary', assert => {
+        //const conv = music21.key.convertKeyStringToMusic21KeyString;
+        const bm = new music21.tinyNotation.TinyNotation("tinynotation: 4/4 fn1 fn1 e-8 e'-8 fn4 en4 e'n4").flat;
+        console.log(bm.flat.elements);
+        // Function does not work, stream.ts 1353
+        //bm.makeNotation(inPlace=True, cautionaryNotImmediateRepeat=False);  
+
+        // Possible bug, first note has accidental information undefined
+        assert.equal(bm.flat.elements[2].pitches.accidental, undefined, 'Undefined');
+        
+        // displayStatus not defined in Note class, or Renamed
+        // assert.equal(bm.flat.elements[2].pitch.accName.displayStatus, 'True');
+        assert.equal(bm.flat.elements[3].pitch.accidental.name, 'natural', 'Natural');
+        //assert.equal(bm.flat.elements[3].pitch.accidental.displayStatus, 'True');
+        assert.equal(bm.flat.elements[4].pitch.accidental.name, 'natural', 'Natural');  
+        //assert.equal(bm.flat.elements[4].pitch.accidental.displayStatus, 'True');
+        assert.equal(bm.flat.elements[5].pitch.accidental.name, 'flat', 'Flat');    
+        //assert.equal(bm.flat.elements[5].pitch.accidental.displayStatus, 'True');
+        assert.equal(bm.flat.elements[6].pitch.accidental.name, 'flat', 'Flat');    
+        //assert.equal(bm.flat.elements[6].pitch.accidental.displayStatus, 'True');
+        assert.equal(bm.flat.elements[7].pitch.accidental.name, 'natural', 'Natural');   
+        //assert.equal(bm.flat.elements[7].pitch.accidental.displayStatus, 'True');
+        assert.notEqual(bm.flat.elements[8].pitch.accidental, 'None', 'None');
+        assert.notEqual(bm.flat.elements[8].pitch.accidental.name, 'flat', 'Natural');
+        //assert.notEqual(bm.flat.notes[8].pitch.accidental.displayStatus, 'True');
     });
 
 
