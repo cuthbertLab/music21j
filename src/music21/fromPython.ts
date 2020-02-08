@@ -58,6 +58,7 @@ export class Converter {
         'music21.tempo.MetronomeMark', // should be possible
         'music21.metadata.Metadata', // Soon...
     ];
+
     handlers: any;
     currentPart = undefined;
     lastClef = undefined;
