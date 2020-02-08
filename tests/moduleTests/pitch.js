@@ -86,8 +86,7 @@ export default function tests() {
             const p2 = new music21.pitch.Pitch(pair[1]);
             if (!pair[2]) {
                 assert.notDeepEqual(p1, p2, 'Not Equal');
-            }
-            else if (pair[2]) {
+            } else (pair[2]) {
                 assert.deepEqual(p1, p2, 'Equal');
             }
                
@@ -118,8 +117,7 @@ export default function tests() {
                 if (p.accidental === null) {
                     //const pName = null;
                     //const pDisplayStatus = null;
-                }
-                else {
+                } else {
                     const pName = p.accidental.name;
                     const pDisplayStatus = p.accidental.displayStatus;
 
@@ -265,5 +263,56 @@ export default function tests() {
         assert.equal(p.ps, 80.90);
 
     });
+   */
+
+    // Waiting on getHarmonic
+   /*
+    test('music21.pitch.Microtone B', assert => {
+        assert.equal(new music21.pitch.Pitch('c4').getHarmonic(1).toString(), 'C4');
+
+        let p = new music21.pitch.Pitch('c4');
+        p.microtone = 20;
+        assert.equal(p.toString(0), 'C4(+20c)');
+        assert.equal(p.getHarmonic(1).toString(), 'C4(+20c)');
+
+        assert.equal(new music21.pitch.Pitch('c4').getHarmonic(2).toString(), 'C5');
+        assert.equal(new music21.pitch.Pitch('c4').getHarmonic(3).toString(), 'G5(+2c)');
+        assert.equal(new music21.pitch.Pitch('c4').getHarmonic(4).toString(), 'C6');
+        assert.equal(new music21.pitch.Pitch('c4').getHarmonic(5).toString(), 'E6(-14c)');
+        assert.equal(new music21.pitch.Pitch('c4').getHarmonic(6).toString(), 'G6(+2c)');
+        assert.equal(new music21.pitch.Pitch('c4').getHarmonic(7).toString(), 'A~6(+19c)');
+
+        assert.equal(new music21.pitch.Pitch('g4').harmonicString('c3'), '3rdH(-2c)/C3');
+
+        // ssert.equal(str(_convertPsToStep(60.0)), "('C', <accidental natural>, None, 0)")
+
+        assert.equal(new music21.pitch.Pitch('c4').getHarmonic(1).toString(), 'C4');
+        assert.equal(new music21.pitch.Pitch('c3').getHarmonic(2).toString(), 'C4');
+        assert.equal(new music21.pitch.Pitch('c2').getHarmonic(2).toString(), 'C3');
+
+        assert.equal(new music21.pitch.Pitch('c4').harmonicString('c3'), '2ndH/C3');
+
+        let f = new music21.pitch.Pitch('c3');
+        f.microtone = -10;
+        assert.equal(f.getHarmonic(2).toString(), 'C4(-10c)');
+
+        p = new music21.pitch.Pitch('c4');
+        f = new music21.pitch.Pitch('c3');
+        f.microtone = -20;
+        // the third harmonic of c3 -20 is closer than the
+        assert.equal(p.harmonicString(f), '2ndH(+20c)/C3(-20c)');
+
+        f.microtone = +20;
+        assert.equal(p.harmonicString(f), '2ndH(-20c)/C3(+20c)');
+
+        const p1 = new music21.pitch.Pitch('c1');
+        assert.equal(p1.getHarmonic(13).toString(), 'G#~4(-9c)');
+
+        const p2 = new music21.pitch.Pitch('a1');
+        assert.equal(p2.getHarmonic(13).toString(0), 'F~5(-9c)');
+
+        assert.equal(p1.transpose('M6').toString(), 'A1');
+    });
     */
+
 }
