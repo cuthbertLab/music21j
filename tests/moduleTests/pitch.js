@@ -315,4 +315,22 @@ export default function tests() {
     });
     */
 
+    // Awaiting Microtone support
+    /* 
+    test('music21.pitch.Microtone C', assert => {
+        const match = [];
+        const p = new music21.pitch.Pitch('C4');
+        p.microtone = 5;
+        for (let i = 0; i < 11; i++) {
+            match.push(p.toString());
+            p.microtone = p.microtone.cents - 1;
+        }
+        
+        assert.equal(match.toString(),
+            "['C4(+5c)', 'C4(+4c)', 'C4(+3c)', 'C4(+2c)', 'C4(+1c)', "
+            + "'C4', 'C4(-1c)', 'C4(-2c)', 'C4(-3c)', 'C4(-4c)', 'C4(-5c)']");
+
+    });
+    */
+
 }
