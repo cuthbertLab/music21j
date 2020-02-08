@@ -58,14 +58,18 @@ nosetests.xml
 
 soundfonts/*
 
-
-
 node_modules/grunt/package.json
-
 node_modules/grunt-contrib-uglify/package.json
+
+# PyCharm
 .idea/encodings.xml
 .idea/misc.xml
 .idea/modules.xml
 .idea/music21j.iml
 .idea/vcs.xml
 .idea/workspace.xml
+
+
+# Built tests
+tests/music21.tests.js
+tests/music21.tests.js.map
