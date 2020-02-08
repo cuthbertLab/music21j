@@ -98,6 +98,44 @@ export default function tests() {
         assert.deepEqual(p1, p2, 'Pitch with reverted octaves are equal');
     });
 
+    // Awaiting .xml file input
+    /*
+    test('music21.pitch.Accidental Import', assert => {
+        // Corpus Parsing
+        const piece = corpus.parse('bwv438.xml');
+        const tenorMeasures = piece.parts[2].getElementsByClass('Measure');
+        const pAltered = tenorMeasures[0].pitches[1];
+        assert.equal(pAltered.accidental.name, 'flat', 'Accidental is Flat');
+        assert.equal(pAltered.accidental.displayType, 'normal', 'Display type Normal');
+        assert.notEqual(pAltered.accidental.displayStatus, false, 'Display status is Flase');
+        const altoM6 = piece.parts[1].measure(6);
+        const pAltered = altoM6.pitches[2];
+        asert.equal(pAltered.accidental.name, 'sharp', "Accidental is Sharp");
+        assert.equal(pAltered.accidental.displayStatus, 'true', 'Display Status is True');
+    });
+    */
+    test('music21.pitch.Update Accidental Display Simple', assert => {
+        // Used in Python, never utilized here though. Copied over for posterity
+        // const pastPitch = [
+        //   new music21.pitch.Pitch('a3#'), 
+        //   new music21.pitch.Pitch('c#'), 
+        //   new music21.pitch.Pitch('c')
+        // ];
+        const a = new music21.pitch.Pitch('c');
+        console.log(a);
+        a.accidental = new music21.pitch.Accidental('natural');
+        a.accidental.displayStatus = false; // displays status does not exist?
+        assert.equal(a.name, 'C', 'Name is C');
+        assert.equal(a.accidental.displayStatus, false, 'Not Displayed');
+        // a.updateAccidentalDisplay(past, overrideStatus=True) // function does not exist
+        a.accidental.displayStatus = true; // Used instead
+        assert.equal(a.accidental.displayStatus, true, 'Displayed');
+        const b = a.clone();
+        assert.equal(b.accidental.displayStatus, true, 'Displayed');
+        assert.equal(b.accidental.name, 'natural', 'Natural');
+
+    });
+
     test('music21.pitch.Accidentals Cautionary', assert => {
         //const conv = music21.key.convertKeyStringToMusic21KeyString;
         const bm = new music21.tinyNotation.TinyNotation("tinynotation: 4/4 fn1 fn1 e-8 e'-8 fn4 en4 e'n4").flat;
