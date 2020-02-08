@@ -65,6 +65,11 @@ export default function tests() {
 
     });
 
+    test('music21.pitch.To String', assert => {
+        const p = new music21.pitch.Pitch('B#3');
+        assert.equal(p.toString(), '<Pitch B#3>', 'Equal');
+    });
+
     test('music21.pitch.Pitch Equality', assert => {
         const pitch_pairs = [
             ['a#', 'a', false],
