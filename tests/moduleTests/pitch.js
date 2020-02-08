@@ -69,7 +69,7 @@ export default function tests() {
         const p = new music21.pitch.Pitch('B#3');
         assert.equal(p.toString(), '<Pitch B#3>', 'Equal');
     });
-
+    
     test('music21.pitch.Pitch Equality', assert => {
         const pitch_pairs = [
             ['a#', 'a', false],
@@ -103,43 +103,117 @@ export default function tests() {
         assert.deepEqual(p1, p2, 'Pitch with reverted octaves are equal');
     });
 
-    // Awaiting .xml file input
     /*
-    test('music21.pitch.Accidental Import', assert => {
-        // Corpus Parsing
-        const piece = corpus.parse('bwv438.xml');
-        const tenorMeasures = piece.parts[2].getElementsByClass('Measure');
-        const pAltered = tenorMeasures[0].pitches[1];
-        assert.equal(pAltered.accidental.name, 'flat', 'Accidental is Flat');
-        assert.equal(pAltered.accidental.displayType, 'normal', 'Display type Normal');
-        assert.notEqual(pAltered.accidental.displayStatus, false, 'Display status is Flase');
-        const altoM6 = piece.parts[1].measure(6);
-        const pAltered = altoM6.pitches[2];
-        asert.equal(pAltered.accidental.name, 'sharp', "Accidental is Sharp");
-        assert.equal(pAltered.accidental.displayStatus, 'true', 'Display Status is True');
+    test('music21.pitch.Update AccidentaDisplaySeries', assert => {
+        const proc = (pList, past) => {
+            for (const p of pList) {
+                p.updateAccidentalDisplay(past);
+                past.append(p);
+            }
+        };
+        const compare = (past, result) => {
+            // environLocal.printDebug(['accidental compare'])
+            for (let i = 0; i < result.length; i++) {
+                const p = past[i];
+                if (p.accidental === null) {
+                    //const pName = null;
+                    //const pDisplayStatus = null;
+                }
+                else {
+                    const pName = p.accidental.name;
+                    const pDisplayStatus = p.accidental.displayStatus;
+
+                    const targetName = result[i][0];
+                    const targetDisplayStatus = result[i][1];
+
+                    assert.equal(pName, targetName,
+                        'name error for %d: %s instead of desired %s' % (
+                            i, pName, targetName));
+                    assert.equal(pDisplayStatus, targetDisplayStatus,
+                        '%d: %s display: %s, target %s' % (
+                            i, p, pDisplayStatus, targetDisplayStatus));
+                }
+            }
+        };
+        const Pitch = (pitch) => {
+            return new music21.pitch.Pitch(pitch);
+        };
+        // alternating, in a sequence, same pitch space
+        let pList = [Pitch('a#3'), Pitch('a3'), Pitch('a#3'),
+            Pitch('a3'), Pitch('a#3')];
+        let result = [('sharp', true), ('natural', true), ('sharp', true),
+            ('natural', true), ('sharp', true)];
+        proc(pList, []);
+        compare(pList, result);
+
+        // alternating, in a sequence, different pitch space
+        pList = [Pitch('a#2'), Pitch('a6'), Pitch('a#1'),
+            Pitch('a5'), Pitch('a#3')];
+        result = [('sharp', true), ('natural', true), ('sharp', true),
+            ('natural', true), ('sharp', true)];
+        proc(pList, []);
+        compare(pList, result);
+
+        // alternating, after gaps
+        pList = [Pitch('a-2'), Pitch('g3'), Pitch('a5'),
+            Pitch('a#5'), Pitch('g-3'), Pitch('a3')];
+        result = [('flat', true), (null, null), ('natural', true),
+            ('sharp', true), ('flat', true), ('natural', true)];
+        proc(pList, []);
+        compare(pList, result);
+
+        // epeats of the same: show at different registers
+        pList = [Pitch('a-2'), Pitch('a-2'), Pitch('a-5'),
+            Pitch('a#5'), Pitch('a#3'), Pitch('a3'), Pitch('a2')];
+        result = [('flat', true), ('flat', false), ('flat', true),
+            ('sharp', true), ('sharp', true), ('natural', true), ('natural', true)];
+        proc(pList, []);
+        compare(pList, result);
+
+        // the always- 'unless-repeated' setting
+        // first, with no modification, repeated accidentals are not shown
+        pList = [Pitch('a-2'), Pitch('a#3'), Pitch('a#5')];
+        result = [('flat', true), ('sharp', true), ('sharp', true)];
+        proc(pList, []);
+        compare(pList, result);
+
+        // second, with status set to always
+        pList = [Pitch('a-2'), Pitch('a#3'), Pitch('a#3')];
+        pList[2].accidental.displayType = 'always';
+        result = [('flat', true), ('sharp', true), ('sharp', true)];
+        proc(pList, []);
+        compare(pList, result);
+
+        // status set to always
+        pList = [Pitch('a2'), Pitch('a3'), Pitch('a5')];
+        pList[2].accidental ='natural';
+        pList[2].accidental.displayType = 'always';
+        result = [(null, null), (null, null), ('natural', true)];
+        proc(pList, []);
+        compare(pList, result);
+
+        // first use after other pitches in different register
+        // note: this will force the display of the accidental
+        pList = [Pitch('a-2'), Pitch('g3'), Pitch('a-5')];
+        result = [('flat', true), (null, null), ('flat', true)];
+        proc(pList, []);
+        compare(pList, result);
+
+        // first use after other pitches in different register
+        // note: this will force the display of the accidental
+        pList = [Pitch('a-2'), Pitch('g3'), Pitch('a-2')];
+        // pairs of accidental, displayStatus
+        result = [('flat', true), (null, null), ('flat', true)];
+        proc(pList, []);
+        compare(pList, result);
+
+        // accidentals, first usage, not first pitch
+        pList = [Pitch('a2'), Pitch('g#3'), Pitch('d-2')];
+        result = [(null, null), ('sharp', true), ('flat', true)];
+        proc(pList, []);
+        compare(pList, result);
     });
     */
-    test('music21.pitch.Update Accidental Display Simple', assert => {
-        // Used in Python, never utilized here though. Copied over for posterity
-        // const pastPitch = [
-        //   new music21.pitch.Pitch('a3#'), 
-        //   new music21.pitch.Pitch('c#'), 
-        //   new music21.pitch.Pitch('c')
-        // ];
-        const a = new music21.pitch.Pitch('c');
-        a.accidental = new music21.pitch.Accidental('natural');
-        a.accidental.displayStatus = false; // displays status does not exist?
-        assert.equal(a.name, 'C', 'Name is C');
-        assert.equal(a.accidental.displayStatus, false, 'Not Displayed');
-        // a.updateAccidentalDisplay(past, overrideStatus=True) // function does not exist
-        a.accidental.displayStatus = true; // Used instead
-        assert.equal(a.accidental.displayStatus, true, 'Displayed');
-        const b = a.clone();
-        assert.equal(b.accidental.displayStatus, true, 'Displayed');
-        assert.equal(b.accidental.name, 'natural', 'Natural');
-
-    });
-
     test('music21.pitch.Accidentals Cautionary', assert => {
         //const conv = music21.key.convertKeyStringToMusic21KeyString;
         const bm = new music21.tinyNotation.TinyNotation("tinynotation: 4/4 fn1 fn1 e-8 e'-8 fn4 en4 e'n4").flat;
