@@ -84,10 +84,10 @@ export default function tests() {
         for (const pair of pitch_pairs) {
             const p1 = new music21.pitch.Pitch(pair[0]);
             const p2 = new music21.pitch.Pitch(pair[1]);
-            if (!pair[2]) {
-                assert.notDeepEqual(p1, p2, 'Not Equal');
-            } else {
+            if (pair[2]) {
                 assert.deepEqual(p1, p2, 'Equal');
+            } else {
+                assert.notDeepEqual(p1, p2, 'Not Equal');                
             }
                
         }
